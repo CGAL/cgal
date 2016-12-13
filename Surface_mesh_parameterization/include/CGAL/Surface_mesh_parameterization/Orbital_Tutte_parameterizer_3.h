@@ -76,7 +76,7 @@ enum Weight_type
 
 template
 <
-  typename TriangleMesh,
+  typename SeamMesh,
   typename SparseLinearAlgebraTraits_d
 #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
     = Eigen_solver_traits<Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
@@ -87,12 +87,12 @@ template
 class Orbital_Tutte_parameterizer_3
 {
 private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
+  typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<SeamMesh>::face_descriptor      face_descriptor;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator      vertex_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator        face_iterator;
+  typedef typename boost::graph_traits<SeamMesh>::vertex_iterator      vertex_iterator;
+  typedef typename boost::graph_traits<SeamMesh>::face_iterator        face_iterator;
 
   // SparseLinearAlgebraTraits_d subtypes:
   typedef SparseLinearAlgebraTraits_d                               Sparse_LA;
@@ -100,8 +100,8 @@ private:
   typedef typename Sparse_LA::Matrix                                Matrix;
 
   // Kernel subtypes
-  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
+  typedef typename internal::Kernel_traits<SeamMesh>::Kernel    Kernel;
+  typedef typename internal::Kernel_traits<SeamMesh>::PPM       PPM;
   typedef typename Kernel::FT                                       NT;
   typedef typename Kernel::Vector_2                                 Vector_2;
   typedef typename Kernel::Vector_3                                 Vector_3;
@@ -112,48 +112,37 @@ private:
   Weight_type weight_type;
 
 private:
-  // check input
-  template<typename ConeMap,
-           typename VertexIndexMap,
-           typename VertexUVMap>
-  Error_code check_input(const TriangleMesh& mesh,
-                         halfedge_descriptor bhd,
-                         ConeMap cmap,
-                         VertexUVMap uvmap,
-                         VertexIndexMap vimap) const
+  /// check input's correctness.
+  template<typename ConeMap>
+  Error_code check_cones(ConeMap cmap) const
   {
     if(orb_type == Parallelogram) {
       if(cmap.size() != 6) {
-        std::cerr << "Using orb_type " << get_orbifold_type(orb_type)
-                  << " requires 4 vertices marked as cones (thus 6 in the seam mesh)" << std::endl;
+        std::cerr << "Using orb_type '" << get_orbifold_type(orb_type)
+                  << "' requires 4 vertices marked as cones (thus 6 in the seam mesh)" << std::endl;
+        std::cerr << "currently: " << cmap.size() << std::endl;
         return ERROR_WRONG_PARAMETER;
       }
     } else if(cmap.size() != 4){ // orb_type == Square, Diamond, Triangle
-      std::cerr << "Using orb_type " << get_orbifold_type(orb_type)
-                << " requires 3 vertices marked as cones (thus 4 in the seam mesh)" << std::endl;
+      std::cerr << "Using orb_type '" << get_orbifold_type(orb_type)
+                << "' requires 3 vertices marked as cones (thus 4 in the seam mesh)" << std::endl;
+      std::cerr << "currently: " << cmap.size() << std::endl;
       return ERROR_WRONG_PARAMETER;
     }
 
     std::cout << "cones and ids" << std::endl;
-    typename ConeMap::const_iterator it = cmap.begin(), end = cmap.end();
-    for(; it!=end; ++it) {
-//      std::cout << target(halfedge(it->first,mesh), mesh.mesh())
-//                << " n°: " << get(vimap, it->first) << std::endl;
+    typename ConeMap::const_iterator cit = cmap.begin(), cend = cmap.end();
+    for(; cit!=cend; ++cit) {
+//      std::cout << target(halfedge(cit->first,mesh), mesh.mesh())
+//                << " n°: " << get(vimap, cit->first) << std::endl;
     }
-
-    // check that the seams don't intersect
-
-    // check that unique vertices are actually unique and duplicated cones are
-    // actually duplicated
-
-    // check that the seam forms one connected component
 
     return OK;
   }
 
   // Linear system
   /// Compute the number of linear constraints in the system.
-  int number_of_linear_constraints(const TriangleMesh& mesh) const
+  int number_of_linear_constraints(const SeamMesh& mesh) const
   {
     if(orb_type == Parallelogram) {
       // number of constraints for orb I, II, III is the number of seam edges
@@ -272,7 +261,7 @@ private:
   /// Cone constraints are also added.
   template<typename ConeMap,
            typename VertexIndexMap>
-  void AddRotationalConstraint(const TriangleMesh& mesh,
+  void AddRotationalConstraint(const SeamMesh& mesh,
                                const ConeMap& cmap,
                                VertexIndexMap vimap,
                                Matrix& A, Vector& B) const
@@ -437,7 +426,7 @@ private:
 
   /// Compute the mean value Laplacian matrix.
   template<typename VertexIndexMap>
-  void mean_value_laplacian(const TriangleMesh& mesh,
+  void mean_value_laplacian(const SeamMesh& mesh,
                             VertexIndexMap vimap,
                             Matrix& L) const
   {
@@ -463,7 +452,7 @@ private:
   }
 
   template<typename VertexIndexMap>
-  void cotangent_laplacien(TriangleMesh& mesh,
+  void cotangent_laplacien(SeamMesh& mesh,
                            VertexIndexMap vimap,
                            Matrix& L) const
   {
@@ -472,8 +461,8 @@ private:
     // not exactly sure which cotan weights should be used:
     // 0.5 (cot a + cot b) ? 1/T1 cot a + 1/T2 cot b ? 1/Vor(i) (cot a + cot b?)
     // Comparing to the matlab code, the basic Cotangent_weight gives the same results.
-    typedef CGAL::internal::Cotangent_weight<TriangleMesh>                      Cotan_weights;
-//    typedef CGAL::internal::Cotangent_weight_with_triangle_area<TriangleMesh>   Cotan_weights;
+    typedef CGAL::internal::Cotangent_weight<SeamMesh>                      Cotan_weights;
+//    typedef CGAL::internal::Cotangent_weight_with_triangle_area<SeamMesh>   Cotan_weights;
 
     Cotan_weights cotan_weight_calculator(mesh, ppmap);
 
@@ -509,7 +498,7 @@ private:
 
   /// Copy the solution into the UV property map.
   template <typename VertexIndexMap, typename VertexUVMap>
-  void assign_solution(const TriangleMesh& mesh,
+  void assign_solution(const SeamMesh& mesh,
                        const Vector& X,
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap) const
@@ -529,7 +518,7 @@ private:
   /// Solves the linear system.
   template <typename VertexUVMap,
             typename VertexIndexMap>
-  Error_code computeFlattening(const TriangleMesh& mesh,
+  Error_code computeFlattening(const SeamMesh& mesh,
                                const Matrix& A, const Vector& B,
                                const Matrix& L,
                                VertexUVMap uvmap, VertexIndexMap vimap) const
@@ -665,7 +654,7 @@ public:
   template<typename ConeMap,
            typename VertexIndexMap,
            typename VertexUVMap>
-  Error_code parameterize(TriangleMesh& mesh,
+  Error_code parameterize(SeamMesh& mesh,
                           halfedge_descriptor bhd,
                           ConeMap cmap,
                           VertexUVMap uvmap,
@@ -674,7 +663,7 @@ public:
     std::cout << "Flattening" << std::endl;
     Error_code status;
 
-    status = check_input(mesh, bhd, cmap, uvmap, vimap);
+    status = check_cones(cmap);
     if(status != OK) {
       return status;
     }

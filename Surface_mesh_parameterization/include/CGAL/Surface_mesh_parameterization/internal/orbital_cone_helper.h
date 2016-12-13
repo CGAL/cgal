@@ -136,65 +136,64 @@ bool are_cones_unique(const Cone_container& cones)
   return (n_of_cones == unique_cones.size());
 }
 
-/// Read the cones from the input file.
-template<typename Polygon_mesh>
-Error_code read_cones(const Polygon_mesh& pm, const char* filename,
-  std::vector<typename boost::graph_traits<Polygon_mesh>::vertex_descriptor>& cone_vds_in_pm)
+/// Locate the cone tagged 'First_unique_cone' and its index in the seam mesh.
+template<typename vertex_descriptor,
+         typename ConeMap,
+         typename VertexIndexMap>
+void find_start_cone(const ConeMap& cmap,
+                     VertexIndexMap vimap,
+                     vertex_descriptor& cone,
+                     int& cone_index)
 {
-  typedef typename boost::graph_traits<Polygon_mesh>::vertex_descriptor PM_vertex_descriptor;
+  CGAL_precondition(!cmap.empty());
 
-  std::ifstream in(filename);
-  std::string vertices_line;
-  std::getline(in, vertices_line); // read the first line of the file
-  std::istringstream iss(vertices_line);
-  std::vector<int> cones;
-  cones.reserve(4);
-  int cone_index;
-  while(iss >> cone_index) {
-    cones.push_back(cone_index);
+  typename ConeMap::const_iterator cmit = cmap.begin(), cend = cmap.end();
+  for(; cmit!=cend; ++cmit) {
+    if(cmit->second != First_unique_cone)
+      continue;
+
+    cone = cmit->first;
+    cone_index = get(vimap, cone);
+
+    return;
   }
 
-  std::cout << "Cones: ";
-  for(std::size_t i=0; i<cones.size(); ++i)
-    std::cout << cones[i] << " ";
-  std::cout << std::endl;
-
-  if(cones.size() < 3 || cones.size() > 4) {
-    std::cerr << "Error: Not enough or too many input cones" << std::endl;
-    return ERROR_WRONG_PARAMETER;
-  }
-
-  if(!are_cones_unique(cones)) {
-    std::cerr << "Error: The input cones are not unique" << std::endl;
-    return ERROR_WRONG_PARAMETER;
-  }
-
-  // Locate the cones in the underlying mesh 'pm'
-  CGAL_assertion(cone_vds_in_pm.empty());
-  cone_vds_in_pm.resize(cones.size());
-
-  for(std::size_t i=0; i<cones.size(); ++i) {
-    int counter = 0;
-    BOOST_FOREACH(PM_vertex_descriptor vd, vertices(pm)) {
-      if(counter == cones[i]) {
-        cone_vds_in_pm[i] = vd;
-        break;
-      }
-      ++counter;
-    }
-    CGAL_postcondition(cone_vds_in_pm[i] != PM_vertex_descriptor());
-  }
-
-  return OK;
+  std::cerr << "Error: did not find first cone" << std::endl;
+  CGAL_postcondition(false);
 }
 
-template<typename TriangleMesh,
+/// Locate the cone tagged 'First_unique_cone' in the seam mesh.
+template<typename vertex_descriptor,
+         typename ConeMap>
+void find_start_cone(const ConeMap& cmap,
+                     vertex_descriptor& cone)
+{
+  CGAL_precondition(!cmap.empty());
+
+  typename ConeMap::const_iterator cmit = cmap.begin(), cend = cmap.end();
+  for(; cmit!=cend; ++cmit) {
+    if(cmit->second != First_unique_cone)
+      continue;
+
+    cone = cmit->first;
+    return;
+  }
+
+  std::cerr << "Error: did not find first cone" << std::endl;
+  CGAL_postcondition(false);
+}
+
+template<typename SeamMesh,
          typename Cones_in_Seam_mesh_map,
          typename Cones_in_Base_mesh_container>
-bool check_seam_validity(const TriangleMesh& mesh,
-                         const Cones_in_Seam_mesh_map& cones,
-                         const Cones_in_Base_mesh_container& cone_tm_vds)
+bool check_input_validity(const SeamMesh& mesh,
+                          const Cones_in_Seam_mesh_map& cones,
+                          const Cones_in_Base_mesh_container& cone_tm_vds)
 {
+  typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<typename SeamMesh::TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
+
   // check cone numbers
   if((cone_tm_vds.size() == 3 && cones.size() != 4) ||
      (cone_tm_vds.size() == 4 && cones.size() != 6)) {
@@ -245,34 +244,132 @@ bool check_seam_validity(const TriangleMesh& mesh,
   }
 
   // check seams
+  vertex_descriptor first_cone;
+  find_start_cone(cones, first_cone);
 
+  halfedge_descriptor hd = halfedge(first_cone, mesh);
+  CGAL_precondition(mesh.has_on_seam(hd));
+  halfedge_descriptor bhd = opposite(hd, mesh);
+  CGAL_precondition(is_border(bhd, mesh));
+
+  // count how many times vertices on a seam appear
+  boost::unordered_map<TM_vertex_descriptor, int> seam_vertices_counter;
+  int number_of_seam_edges;
+
+  BOOST_FOREACH(halfedge_descriptor hdaf, halfedges_around_face(bhd, mesh)) {
+    CGAL_precondition(mesh.has_on_seam(hdaf));
+    ++number_of_seam_edges;
+    TM_vertex_descriptor tm_vds = source(hdaf, mesh.mesh());
+    TM_vertex_descriptor tm_vdt = target(hdaf, mesh.mesh());
+
+    // insert vds
+    std::pair<typename boost::unordered_map<TM_vertex_descriptor, int>::iterator,
+              bool> is_insert_successful =
+                      seam_vertices_counter.insert(std::make_pair(tm_vds, 1));
+    if(!is_insert_successful.second)
+      ++(is_insert_successful.first->second);
+
+    // insert vdt
+    is_insert_successful = seam_vertices_counter.insert(std::make_pair(tm_vdt, 1));
+    if(!is_insert_successful.second)
+      ++(is_insert_successful.first->second);
+  }
+
+  // check that the seam forms one connected component
+  if(seam_vertices_counter.size() != (mesh.number_of_seam_edges() + 1)) {
+    std::cerr << "Seam is not a connected component" << std::endl;
+    return false;
+  }
+
+  // check for self intersections in the seam
+  typename boost::unordered_map<TM_vertex_descriptor, int>::iterator sit = seam_vertices_counter.begin(),
+                                                                     send = seam_vertices_counter.end();
+  for(; sit!=send; ++sit) {
+    if(sit->second != 2 && sit->second != 4) {
+      std::cerr << sit->second << std::endl;
+      std::cerr << "Seam intersect itself (or something bad like that...)" << std::endl;
+      return false;
+    }
+  }
+
+  // check that unique vertices are actually unique and duplicated cones are
+  // actually duplicated
+  it = cones.begin();
+  for(; it!=end; ++it) {
+    vertex_descriptor vd = it->first;
+    TM_vertex_descriptor cvd = target(vd.hd, mesh.mesh());
+    sit = seam_vertices_counter.find(cvd);
+    if(sit == seam_vertices_counter.end()) {
+      std::cerr << "Cone not on the seam" << std::endl;
+      return false;
+    }
+
+    if(it->second == First_unique_cone || it->second == Second_unique_cone) {
+      if(sit->second != 2) {
+        std::cerr << "First or second cone not at the beginning/end of the seam" << std::endl;
+        return false;
+      }
+    } else if(it->second == Duplicated_cone) {
+      if(sit->second != 4) {
+        std::cerr << "Duplicate cone not in the interior of the seam" << std::endl;
+        return false;
+      }
+    }
+  }
 
   return true;
 }
 
-template<typename vertex_descriptor,
-         typename ConeMap,
-         typename VertexIndexMap>
-void find_start_cone(const ConeMap& cmap,
-                     VertexIndexMap vimap,
-                     vertex_descriptor& cone,
-                     int& cone_index)
+/// Read the cones from the input file.
+template<typename Polygon_mesh>
+Error_code read_cones(const Polygon_mesh& pm, const char* filename,
+  std::vector<typename boost::graph_traits<Polygon_mesh>::vertex_descriptor>& cone_vds_in_pm)
 {
-  CGAL_precondition(!cmap.empty());
+  typedef typename boost::graph_traits<Polygon_mesh>::vertex_descriptor PM_vertex_descriptor;
 
-  typename ConeMap::const_iterator cmit = cmap.begin(), cend = cmap.end();
-  for(; cmit!=cend; ++cmit) {
-    if(cmit->second != First_unique_cone)
-      continue;
-
-    cone = cmit->first;
-    cone_index = get(vimap, cone);
-
-    return;
+  std::ifstream in(filename);
+  std::string vertices_line;
+  std::getline(in, vertices_line); // read the first line of the file
+  std::istringstream iss(vertices_line);
+  std::vector<int> cones;
+  cones.reserve(4);
+  int cone_index;
+  while(iss >> cone_index) {
+    cones.push_back(cone_index);
   }
 
-  std::cerr << "Error: did not find first cone" << std::endl;
-  CGAL_postcondition(false);
+  std::cout << "Cones: ";
+  for(std::size_t i=0; i<cones.size(); ++i)
+    std::cout << cones[i] << " ";
+  std::cout << std::endl;
+
+  if(cones.size() < 3 || cones.size() > 4) {
+    std::cerr << "Error: Not enough or too many input cones" << std::endl;
+    return ERROR_WRONG_PARAMETER;
+  }
+
+  if(!are_cones_unique(cones)) {
+    std::cerr << "Error: The input cones are not unique" << std::endl;
+    return ERROR_WRONG_PARAMETER;
+  }
+
+  // Locate the cones in the underlying mesh 'pm'
+  CGAL_assertion(cone_vds_in_pm.empty());
+  cone_vds_in_pm.resize(cones.size());
+
+  for(std::size_t i=0; i<cones.size(); ++i) {
+    int counter = 0;
+    BOOST_FOREACH(PM_vertex_descriptor vd, vertices(pm)) {
+      if(counter == cones[i]) {
+        cone_vds_in_pm[i] = vd;
+        break;
+      }
+      ++counter;
+    }
+    CGAL_postcondition(cone_vds_in_pm[i] != PM_vertex_descriptor());
+  }
+
+  return OK;
 }
 
 /// Locate the cones on the seam mesh (find the corresponding seam mesh
@@ -329,7 +426,7 @@ void locate_cones(const SeamMesh& mesh,
     }
   }
 
-  check_seam_validity(mesh, cones, cone_tm_vds);
+  check_input_validity(mesh, cones, cone_tm_vds);
 }
 
 /// Same as above, but the cones are NOT ordered and we thus use seam mesh
@@ -420,7 +517,7 @@ void locate_unordered_cones(const SeamMesh& mesh,
 
   } while(vertex_on_seam != end);
 
-  check_seam_validity(mesh, cones, cone_tm_vds);
+  check_input_validity(mesh, cones, cone_tm_vds);
 }
 
 } // namespace internal
