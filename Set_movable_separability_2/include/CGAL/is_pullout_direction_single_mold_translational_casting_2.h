@@ -103,7 +103,7 @@ is_pullout_direction_single_mold_translational_casting_2
  * \param[in] d the pullout direction
  * \return pair<if the polygon can be pullout through some edge with direction d, the edge if the first part is true, else  nondeterministic>
  *
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
+ * \pre `png` must be non-degenerate (has at least 3 vertices),simple, and
  * does not have three consecutive collinear vertices.
  */
 #define MAX_SIZE_T (std::numeric_limits<size_t>::max())
