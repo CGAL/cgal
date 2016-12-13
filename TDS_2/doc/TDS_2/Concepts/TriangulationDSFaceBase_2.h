@@ -256,8 +256,8 @@ bool is_valid(bool verbose = false) const;
 /// \name Various 
 /// These member functions are required by
 /// `CGAL::Triangulation_data_structure_2` because it uses
-/// `Compact_container` to store its faces. See the documentation of
-/// `Compact_container` for the exact requirements.
+/// `CGAL::Compact_container` to store its faces. See the documentation of
+/// `CGAL::Compact_container` for the exact requirements.
 /// @{
 
 /*!
