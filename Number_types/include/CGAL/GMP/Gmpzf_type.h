@@ -83,7 +83,7 @@ public:
 
   // exponent type
   // --------------------
-  typedef long Exponent; // may overflow, but if it does, the mantissa is
+  typedef mp_exp_t Exponent; // may overflow, but if it does, the mantissa is
                          // potentially too large to be useful, anyway;
                          // still, repeated squaring of a power of two
                          // quickly brings this type to its limits...
