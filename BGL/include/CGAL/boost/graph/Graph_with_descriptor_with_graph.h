@@ -193,6 +193,10 @@ struct graph_traits< CGAL::Graph_with_descriptor_with_graph<Graph> >
   typedef CGAL::Descriptor2Descriptor<Graph, typename boost::graph_traits<Graph>::face_descriptor,face_descriptor> F2F;
   typedef boost::transform_iterator<F2F,typename boost::graph_traits<Graph>::face_iterator> face_iterator;
 
+  typedef boost::transform_iterator<E2E,typename boost::graph_traits<Graph>::out_edge_iterator> out_edge_iterator;
+
+  typedef boost::transform_iterator<E2E,typename boost::graph_traits<Graph>::in_edge_iterator> in_edge_iterator;
+
   typedef boost::graph_traits<Graph> BGTG;
   typedef typename BGTG::directed_category directed_category;
   typedef typename BGTG::edge_parallel_category edge_parallel_category;
@@ -332,6 +336,32 @@ edges(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::edge_iterator b,e;
   boost::tie(b,e) = edges(*w.graph);
+  return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)),
+                        boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)));
+}
+
+template <class Graph>
+std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::out_edge_iterator,
+          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::out_edge_iterator>
+out_edges(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
+          const Graph_with_descriptor_with_graph<Graph> & w)
+{
+  CGAL_assertion(in_same_graph(v,w));
+  typename boost::graph_traits<Graph>::out_edge_iterator b,e;
+  boost::tie(b,e) = out_edges(v.descriptor, *w.graph);
+  return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)),
+                        boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)));
+}
+
+template <class Graph>
+std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::in_edge_iterator,
+          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::in_edge_iterator>
+in_edges(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
+         const Graph_with_descriptor_with_graph<Graph> & w)
+{
+  CGAL_assertion(in_same_graph(v,w));
+  typename boost::graph_traits<Graph>::in_edge_iterator b,e;
+  boost::tie(b,e) = in_edges(v.descriptor, *w.graph);
   return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)),
                         boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)));
 }
@@ -597,7 +627,7 @@ halfedges(const Graph_with_descriptor_with_graph<Graph> & w)
 
 
 template <class Graph>
-typename boost::graph_traits<Graph>::halfedge_size_type
+typename boost::graph_traits<Graph>::halfedges_size_type
 num_halfedges(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   return num_halfedges(*w.graph);
@@ -712,6 +742,26 @@ get(PropertyTag ptag, const Graph_with_descriptor_with_graph<Graph>& w)
   typedef Graph_with_descriptor_with_graph_property_map<Graph, PM> GPM;
   return GPM(*w.graph, get(ptag,*w.graph));
 }
+
+
+template <class Graph, class PropertyTag, class Descriptor>
+typename boost::property_traits<typename boost::property_map<Graph,PropertyTag>::type>::value_type
+get(PropertyTag ptag, const Graph_with_descriptor_with_graph<Graph>& w, const Descriptor& d)
+{
+  CGAL_assertion(d.graph == w.graph);
+  return get(ptag, *w.graph, d.descriptor);
+}
+
+
+template <class Graph, class PropertyTag, class Descriptor>
+void
+put(PropertyTag ptag, const Graph_with_descriptor_with_graph<Graph>& w, const Descriptor& d, typename boost::property_traits<typename boost::property_map<Graph,PropertyTag>::type>::value_type& v)
+{
+  CGAL_assertion(d.graph == w.graph);
+  put(ptag, *w.graph, d.descriptor, v);
+}
+
+
 
 template <class G, class D>
 std::size_t hash_value(CGAL::Gwdwg_descriptor<G,D> d)
