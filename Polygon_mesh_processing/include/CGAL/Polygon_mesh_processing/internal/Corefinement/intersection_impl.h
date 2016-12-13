@@ -134,7 +134,7 @@ struct Node_id_set {
 
   std::size_t operator[](std::size_t i) const
   {
-    CGAL_assertion( (i < size) && (i == 0 || i == 1));
+    CGAL_assertion( (i < size_) && (i == 0 || i == 1));
     return (i == 0)? first : second;
   }
 };
