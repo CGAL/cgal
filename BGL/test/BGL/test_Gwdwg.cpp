@@ -24,13 +24,10 @@ int main()
   assert( num_vertices(mesh) == num_vertices(sm) );
 
   BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
-    halfedge_descriptor hd = halfedge(vd,mesh);
     std::cout << vd << std::endl;
   }
 
   BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
-    vertex_descriptor vd = target(hd,mesh);
-    halfedge_descriptor oh = opposite(hd,mesh);
     std::cout << hd << std::endl;
   }
 
