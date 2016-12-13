@@ -20,8 +20,10 @@ public:
   /// \name Functor Types
   /// @{
 
-  /*! models the concept `Kernel::Counterclockwise_in_between_2`.
-   */
+  //! The direction type.
+  typedef unspecified_type Direction_2;
+
+  //! models the concept `Kernel::Counterclockwise_in_between_2`.
   typedef unspecified_type Counterclockwise_in_between_2;
 
   /// @}

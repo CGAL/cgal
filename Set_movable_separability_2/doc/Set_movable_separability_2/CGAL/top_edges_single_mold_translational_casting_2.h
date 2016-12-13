@@ -26,6 +26,7 @@ namespace Set_movable_separability_2 {
  *             (ii) the second element is a closed range of pullout directions
  *                  represented as a pair of the extreme directions in the
  *                  range of type `Kernel::Direction_2`.
+ * \param[in] traits the traits to use.
  * \return the past-the-end iterator of the output container.
  * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.
@@ -33,11 +34,19 @@ namespace Set_movable_separability_2 {
 template <typename CastingTraits_2, typename OutputIterator>
 OutputIterator
 top_edges_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits>& pgn, OutputIterator oi);
+(const CGAL::Polygon_2<CastingTraits>& pgn, OutputIterator oi,
+ CastingTraits_2& traits = CastingTraits_2());
+
+} /* end namesapce Set_movable_separability_2 */
+} /* end namesapce CGAL */
 
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
- * Same as above with the additional traits argument.
+ * Same as above with the additional `orientation` argument.
+ * If the orientation of the polygon is known upon invocation, specify it.
+ * Otherwise, it has to be computed.  Note that finding the orientation of a
+ * polygon requires time linear in the number of edges.
+ *
  * \param[in] pgn the input polygon.
  * \param[out] oi the output iterator. Its value type is a pair, where
  *             (i) the first element in the pair identifies a valid top edge
@@ -46,13 +55,18 @@ top_edges_single_mold_translational_casting_2
  *             (ii) the second element is a closed range of pullout directions
  *                  represented as a pair of the extreme directions in the
  *                  range of type `Kernel::Direction_2`.
+ * \param[in] orientation the orientation of `pgn`.
  * \param[in] traits the traits to use.
+ * \return the past-the-end iterator of the output container.
+ * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
+ * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
 OutputIterator
 top_edges_single_mold_translational_casting_2
 (const CGAL::Polygon_2<CastingTraits>& pgn, OutputIterator oi,
- CastingTraits_2& traits);
+ CGAL::Orientation orientation,
+ CastingTraits_2& traits = CastingTraits_2());
 
 } /* end namesapce Set_movable_separability_2 */
 } /* end namesapce CGAL */
