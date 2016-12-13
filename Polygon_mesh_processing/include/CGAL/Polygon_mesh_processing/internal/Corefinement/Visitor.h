@@ -844,33 +844,24 @@ public:
         {
           // collect infinite faces incident to the initial triangle
           typename CDT::Face_handle infinite_faces[3];
-          bool reverse_nodes = true;
           for (int i=0;i<3;++i)
           {
             int oi=-1;
             CGAL_assertion_code(bool is_edge = )
-            cdt.is_edge(triangle_vertices[(i+1)%3], triangle_vertices[i], infinite_faces[i], oi);
+            cdt.is_edge(triangle_vertices[i], triangle_vertices[(i+1)%3], infinite_faces[i], oi);
             CGAL_assertion(is_edge);
-            if ( !cdt.is_infinite( infinite_faces[i]->vertex(oi) ) )
-            {
-              infinite_faces[i]=infinite_faces[i]->neighbor(oi);
-              CGAL_assertion(i==0 || !reverse_nodes);
-              reverse_nodes=false;
-            }
+            CGAL_assertion( cdt.is_infinite( infinite_faces[i]->vertex(oi) ) );
           }
-          
+
           // In this loop, for each original edge of the triangle, we insert
           // the constrained edges and we recover the halfedge_descriptor
           // corresponding to these constrained (they are already in tm)
           Face_boundary& f_boundary=it_fb->second;
-
           for (int i=0;i<3;++i){
             //handle case of halfedge starting at triangle_vertices[i]
             // and ending at triangle_vertices[(i+1)%3]
 
-            Node_ids ids_on_edge=f_boundary.node_ids_array[i];
-            if (reverse_nodes)
-              std::reverse(ids_on_edge.begin(), ids_on_edge.end());
+            const Node_ids& ids_on_edge=f_boundary.node_ids_array[i];
             CDT_Vertex_handle previous=triangle_vertices[i];
             Node_id prev_index=f_indices[i];// node-id of the mesh vertex
             halfedge_descriptor hedge = next(f_boundary.halfedges[(i+2)%3],tm);
