@@ -556,6 +556,24 @@ public:
     }
   }
 
+  // insert a point on the convex_hull using the infinite incident face to the edge the point is inserted into
+  // warning: fh is updated
+  typename CDT::Vertex_handle 
+  insert_point_on_ch_edge(CDT& cdt, typename CDT::Face_handle& fh, const typename CDT::Point& p)
+  {
+    CGAL_assertion(cdt.is_infinite(fh));
+    int fi = fh->index(cdt.infinite_vertex());
+    typename CDT::Vertex_handle wh = fh->vertex(CDT::ccw(fi));
+    typename CDT::Vertex_handle vh = cdt.insert(p, CDT::EDGE, fh, fi);
+    typename CDT::Edge_circulator ec = cdt.incident_edges(vh);
+    while(ec->first->vertex(CDT::ccw(ec->second)) != cdt.infinite_vertex()){
+      ++ec;
+    }
+    fh = ec->first->neighbor(ec->second);
+    CGAL_assertion( cdt.is_valid() );
+    return vh;
+  }
+
   void finalize(Intersection_nodes<TriangleMesh,
                  VertexPointMap, Predicates_on_constructions_needed>& nodes,
                  const TriangleMesh& tm1,
@@ -798,19 +816,13 @@ public:
 
         CDT_traits traits(plane.orthogonal_vector());
         CDT cdt(traits);
-        //insert point inside face
-        BOOST_FOREACH(Node_id node_id, node_ids)
-        {
-          CDT_Vertex_handle vh=cdt.insert(nodes.exact_node(node_id));
-          vh->info()=node_id;
-          id_to_CDT_vh.insert(std::make_pair(node_id,vh));
-        }
 
+        // insert triangle points
         cpp11::array<CDT_Vertex_handle,3> triangle_vertices;
-        //we can do this because these are input points.
-        triangle_vertices[0]=cdt.insert(nodes.to_exact(get(vpm,f_vertices[0])));
-        triangle_vertices[1]=cdt.insert(nodes.to_exact(get(vpm,f_vertices[1])));
-        triangle_vertices[2]=cdt.insert(nodes.to_exact(get(vpm,f_vertices[2])));
+        //we can do this to_exact because these are supposed to be input points.
+        triangle_vertices[0]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[0])));
+        triangle_vertices[1]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[1])));
+        triangle_vertices[2]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[2])));
 
 
         triangle_vertices[0]->info()=f_indices[0];
@@ -830,6 +842,23 @@ public:
         //insert points on edges
         if (it_fb!=face_boundaries.end()) //if f not a triangle?
         {
+          // collect infinite faces incident to the initial triangle
+          typename CDT::Face_handle infinite_faces[3];
+          bool reverse_nodes = true;
+          for (int i=0;i<3;++i)
+          {
+            int oi=-1;
+            CGAL_assertion_code(bool is_edge = )
+            cdt.is_edge(triangle_vertices[(i+1)%3], triangle_vertices[i], infinite_faces[i], oi);
+            CGAL_assertion(is_edge);
+            if ( !cdt.is_infinite( infinite_faces[i]->vertex(oi) ) )
+            {
+              infinite_faces[i]=infinite_faces[i]->neighbor(oi);
+              CGAL_assertion(i==0 || !reverse_nodes);
+              reverse_nodes=false;
+            }
+          }
+          
           // In this loop, for each original edge of the triangle, we insert
           // the constrained edges and we recover the halfedge_descriptor
           // corresponding to these constrained (they are already in tm)
@@ -838,15 +867,20 @@ public:
           for (int i=0;i<3;++i){
             //handle case of halfedge starting at triangle_vertices[i]
             // and ending at triangle_vertices[(i+1)%3]
-            Node_ids& ids_on_edge=f_boundary.node_ids_array[i];
+
+            Node_ids ids_on_edge=f_boundary.node_ids_array[i];
+            if (reverse_nodes)
+              std::reverse(ids_on_edge.begin(), ids_on_edge.end());
             CDT_Vertex_handle previous=triangle_vertices[i];
             Node_id prev_index=f_indices[i];// node-id of the mesh vertex
             halfedge_descriptor hedge = next(f_boundary.halfedges[(i+2)%3],tm);
             CGAL_assertion( source(hedge,tm)==f_boundary.vertices[i] );
             if (!ids_on_edge.empty()){ //is there at least one node on this edge?
+              // fh must be an infinite face
+              // The points must be ordered from fh->vertex(cw(infinite_vertex)) to fh->vertex(ccw(infinite_vertex))
               BOOST_FOREACH(Node_id id, ids_on_edge)
               {
-                CDT_Vertex_handle vh=cdt.insert(nodes.exact_node(id));
+                CDT_Vertex_handle vh=insert_point_on_ch_edge(cdt,infinite_faces[i],nodes.exact_node(id));
                 vh->info()=id;
                 id_to_CDT_vh.insert(std::make_pair(id,vh));
                 edge_to_hedge[std::make_pair(prev_index,id)]=hedge;
@@ -864,6 +898,14 @@ public:
             edge_to_hedge[std::make_pair(prev_index,f_indices[(i+1)%3])] =
               it_fb->second.halfedges[i];
           }
+        }
+
+        //insert point inside face
+        BOOST_FOREACH(Node_id node_id, node_ids)
+        {
+          CDT_Vertex_handle vh=cdt.insert(nodes.exact_node(node_id));
+          vh->info()=node_id;
+          id_to_CDT_vh.insert(std::make_pair(node_id,vh));
         }
 
         std::vector<std::pair<Node_id,Node_id> > constrained_edges;
