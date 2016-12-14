@@ -312,6 +312,7 @@ public:
   // we do not have access to selected polyhedron item
   bool actual_load(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
   {
+
     init(poly_item, mw);
 
     std::vector<Vertex_handle> all_vertices;
@@ -358,6 +359,7 @@ public:
       if(! exists) { return false; }
       selected_edges.insert(edge(hd,*polyhedron()));
     }
+    compute_normal_maps();
     return true;
   }
 

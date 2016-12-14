@@ -1437,7 +1437,6 @@ void MainWindow::on_actionLoad_triggered()
   // we need to special case our way out of this
   filters << "All Files (*)";
 
-  QStringList extensions;
 
   typedef QMap<QString, CGAL::Three::Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
   FilterPluginMap filterPluginMap;
@@ -1455,7 +1454,6 @@ void MainWindow::on_actionLoad_triggered()
       filters << filter;
     }
   }
-
   QSettings settings;
   QString directory = settings.value("OFF open directory",
                                      QDir::current().dirName()).toString();
@@ -1508,6 +1506,10 @@ void MainWindow::on_actionSaveAs_triggered()
       filters += plugin->saveNameFilters();
     }
   }
+  QRegExp extensions("\\(\\*\\..+\\)");
+  extensions.indexIn(filters.first().split(";;").first());
+  QString ext = extensions.cap();
+
   filters << tr("All files (*)");
 
   if(canSavePlugins.isEmpty()) {
@@ -1518,7 +1520,7 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
 
-  QString caption = tr("Save %1 to File...").arg(item->name());
+  QString caption = tr("Save %1 to File...%2").arg(item->name()).arg(ext);
   QString filename = 
     QFileDialog::getSaveFileName(this,
                                  caption,
