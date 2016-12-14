@@ -194,7 +194,7 @@ public:
   typedef typename Kernel::Point_2            Point_2;
 
   // rotation of 'angle' around 'center'
-  Eigen::Matrix3d rot_matrix;
+  Eigen::Matrix3d transformation_matrix;
 
 public:
   /// Apply the affine transformation to the point `p`.
@@ -202,37 +202,54 @@ public:
   {
     Eigen::Vector3d v, res;
     v(0) = p.x(); v(1) = p.y(); v(2) = 1;
-    res = rot_matrix * v;
+    res = transformation_matrix * v;
     Point_2 newp(res(0), res(1));
 //    std::cout << "------------------------------  transformed " << p << " in " << newp << std::endl;
     return newp;
   }
 
-  /// Multiply the current rotation by `new_rot` to get a single transformation matrix.
-  void combine_rotation(const Eigen::Matrix3d& new_rot)
+  const Eigen::Matrix3d& get_tr() const
   {
-    rot_matrix = rot_matrix * new_rot;
+    return transformation_matrix;
   }
 
+  /// Multiply the current transformation by `new_rot` to get a single transformation matrix.
+  void combine_transformations(const Eigen::Matrix3d& new_transf)
+  {
+    transformation_matrix = transformation_matrix * new_transf;
+  }
+
+  /// Create a transformation matrix based on the translation [tx, ty].
+  Affine_transformation(const NT tx, const NT& ty)
+  {
+    transformation_matrix <<  1, 0, tx,
+                              0, 1, ty,
+                              0, 0, 1;
+
+    std::cout << "built (translation) matrix for " << tx << " and " << ty << std::endl;
+    std::cout << transformation_matrix << std::endl;
+  }
+
+  /// Create a transformation matrix based on the rotation around `center` of `angle`.
   Affine_transformation(const NT angle, const Point_2& center)
   {
     const NT c = std::cos(angle);
     const NT s = std::sin(angle);
     const NT center_x = center.x();
     const NT center_y = center.y();
-    rot_matrix <<  c, -s, center_x - c * center_x + s * center_y,
-                   s,  c, center_y - s * center_x - c * center_y,
-                   0, 0,                                       1;
+    transformation_matrix <<  c, -s, center_x - c * center_x + s * center_y,
+                              s,  c, center_y - s * center_x - c * center_y,
+                              0, 0,                                       1;
 
     std::cout << "built matrix for " << center << " and angle: " << angle << std::endl;
-    std::cout << rot_matrix << std::endl;
+    std::cout << transformation_matrix << std::endl;
   }
 
   Affine_transformation()
   {
-    rot_matrix << 1, 0, 0,
-                  0, 1, 0,
-                  0, 0, 1;
+    transformation_matrix << 1, 0, 0,
+                             0, 1, 0,
+                             0, 0, 1;
   }
 };
 
@@ -344,12 +361,20 @@ class Orbifold_sphere_mapper
       ang *= -1;
     }
 
-    Point_2 pb = is_reversed ? get(uvmap, ve_s) : get(uvmap, vf_s);
-    Point_2 pe = is_reversed ? get(uvmap, ve_t) : get(uvmap, vf_t);
+    const Aff_tr identity;
+    Aff_tr trs, trt;
 
-    Aff_tr trs(+ 2 * CGAL_PI / ang /*angle*/, pb /*center*/);
-    Aff_tr trt(- 2 * CGAL_PI / ang /*angle*/, pe /*center*/);
-    Aff_tr identity;
+    if(ang == 1) { // translation
+      trs = Aff_tr(-2., 0.);
+      trt = Aff_tr( 2., 0.);
+    }
+    else {
+      Point_2 pb = is_reversed ? get(uvmap, ve_s) : get(uvmap, vf_s);
+      Point_2 pe = is_reversed ? get(uvmap, ve_t) : get(uvmap, vf_t);
+
+      trs = Aff_tr(+ 2 * CGAL_PI / ang /*angle*/, pb /*center*/);
+      trt = Aff_tr(- 2 * CGAL_PI / ang /*angle*/, pe /*center*/);
+    }
 
     typename Seam_halfedges_segment::const_iterator it = seam_segment.begin(),
                                                     end = seam_segment.end();
@@ -530,7 +555,7 @@ class Orbifold_sphere_mapper
       Aff_tr hd_transformation = hdt.transformation;
 
 //        std::cout << "base transformation: " << std::endl;
-//        std::cout << hd_transformation.rot_matrix << std::endl;
+//        std::cout << hd_transformation.get_tr() << std::endl;
 
       // check if [ab] with the current transformation intersects, otherwise stops
       const Point_2& tpa = hd_transformation.transform(get(uvmap, target(hd, mesh)));
@@ -554,7 +579,7 @@ class Orbifold_sphere_mapper
         typename SeamTransformationMap::const_iterator it = seam_transformations.find(hd);
         CGAL_assertion(it != seam_transformations.end());
         Aff_tr seam_transf = it->second;
-        hd_transformation.combine_rotation(seam_transf.rot_matrix);
+        hd_transformation.combine_transformations(seam_transf.get_tr());
       }
 
       TM_halfedge_descriptor hd_bc = next(ohd, tm);
