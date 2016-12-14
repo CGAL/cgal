@@ -38,9 +38,9 @@ class Filtered_predicate_with_state
 {
   C2E c2e;
   C2A c2a;
+  O1  o1;
   mutable boost::optional<EP>  oep;
   AP  ap;
-  O1  o1;
   typedef typename AP::result_type  Ares;
 
 public:
