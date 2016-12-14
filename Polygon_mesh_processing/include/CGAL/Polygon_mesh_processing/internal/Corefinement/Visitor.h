@@ -822,7 +822,8 @@ public:
         //we can do this to_exact because these are supposed to be input points.
         triangle_vertices[0]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[0])));
         triangle_vertices[1]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[1])));
-        triangle_vertices[2]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[2])));
+        triangle_vertices[2]=cdt.tds().insert_dim_up(cdt.infinite_vertex(), false);
+        triangle_vertices[2]->set_point(nodes.to_exact(get(vpm,f_vertices[2])));
 
 
         triangle_vertices[0]->info()=f_indices[0];
