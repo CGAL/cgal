@@ -733,7 +733,7 @@ void Scene_points_with_normal_item::computes_local_spacing(int k)
             );
   Distance tr_dist(d->m_points->point_map());
 
-  if (!(d->m_points->has_property_map<CGAL_data_type> ("radius")))
+  if (!(d->m_points->has_property_map<double> ("radius")))
     d->m_points->add_radius();
 
   // Compute the radius of each point = (distance max to k nearest neighbors)/2.
