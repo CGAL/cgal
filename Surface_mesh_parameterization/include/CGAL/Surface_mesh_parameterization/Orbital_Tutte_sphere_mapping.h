@@ -38,7 +38,6 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
 #include <cmath>
 #include <iostream>
@@ -255,17 +254,6 @@ public:
   TM_halfedge_descriptor tmhd;
   Transformation transformation;
 
-  // operators to be use sets
-  friend std::size_t hash_value(const Self& hdt)
-  {
-    return hash_value(hdt.tmhd);
-  }
-
-  bool operator==(const Self& hdt) const
-  {
-    return (hdt.tmhd == tmhd);
-  }
-
   halfedge_with_transformation(TM_halfedge_descriptor tmhd,
                                const Transformation& transformation)
     :
@@ -383,8 +371,8 @@ class Orbifold_sphere_mapper
       // do not have a transformation at the beginning
       halfedge_w_tr hdt1(base_hd1, identity);
       halfedge_w_tr hdt2(base_hd2, identity);
-      border_halfedges.insert(hdt1);
-      border_halfedges.insert(hdt2);
+      border_halfedges.push_back(hdt1);
+      border_halfedges.push_back(hdt2);
     }
   }
 
@@ -526,8 +514,8 @@ class Orbifold_sphere_mapper
     const VertexUVMap uvmap = source_embedded_mesh.uvmap;
     const TriangleMesh& tm = mesh.mesh();
 
-    typename BorderHalfedges::iterator bhit = current_border_halfedges.begin(),
-                                       bhend = current_border_halfedges.end();
+    typename BorderHalfedges::const_iterator bhit = current_border_halfedges.begin(),
+                                             bhend = current_border_halfedges.end();
     for(; bhit!=bhend; ++bhit) {
       // Get the next border edge
       halfedge_w_tr hdt = *bhit;
@@ -613,10 +601,10 @@ class Orbifold_sphere_mapper
       TM_halfedge_descriptor hd_ac = prev(ohd, tm);
 
       halfedge_w_tr hdt_ac(hd_ac, hd_transformation);
-      next_border_halfedges.insert(hdt_ac);
+      next_border_halfedges.push_back(hdt_ac);
 
       halfedge_w_tr hdt_bc(hd_bc, hd_transformation);
-      next_border_halfedges.insert(hdt_bc);
+      next_border_halfedges.push_back(hdt_bc);
     }
   }
 
@@ -723,8 +711,11 @@ class Orbifold_sphere_mapper
 
     // Border_halfedes is the border of the expending border of the source mesh.
     // We grow it until the border does not intersect the target mesh anymore.
-    typedef boost::unordered_set<halfedge_w_tr> BorderHalfedges;
+    // note: ideally, it'd be a set, but I don't have a good hash function for it
+    //       and in practice it's not slower to use a vector.
+    typedef std::vector<halfedge_w_tr> BorderHalfedges;
     BorderHalfedges current_border_halfedges, next_border_halfedges;
+    current_border_halfedges.reserve(2 * mesh.number_of_seam_edges());
 
     compute_initial_border(source_embedded_mesh, seam_transformations, current_border_halfedges);
 
