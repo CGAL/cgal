@@ -725,7 +725,9 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
   d->program->bind();
 
-  d->program->setAttributeValue("colors",edge_color);
+  d->program->setAttributeValue("colors",QColor(255,
+                                                color().blue()/2,
+                                                color().green()/2));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::Edges]->release();
@@ -779,7 +781,9 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
   d->program->bind();
-  d->program->setAttributeValue("colors",vertex_color);
+  d->program->setAttributeValue("colors",QColor(255,
+                                                (std::min)(color().blue()+color().red(), 255),
+                                                (std::min)(color().green()+color().red(), 255)));
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_points/3));
   d->program->release();
   vaos[Points]->release();
@@ -1836,10 +1840,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
   d->nb_facets = 0;
   d->nb_points = 0;
   d->nb_lines = 0;
-  facet_color = QColor(87,87,87);
-  edge_color = QColor(173,35,35);
-  vertex_color = QColor(255,205,243);
-  this->setColor(facet_color);
+  this->setColor(QColor(87,87,87));
   d->first_selected = false;
   d->is_treated = false;
   d->poly_need_update = false;
@@ -1870,10 +1871,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_polyhedro
   }
   d->poly = NULL;
   init(poly_item, mw);
-  facet_color = QColor(87,87,87);
-  edge_color = QColor(173,35,35);
-  vertex_color = QColor(255,205,243);
-  this->setColor(facet_color);
+  this->setColor(QColor(87,87,87));
   invalidateOpenGLBuffers();
   compute_normal_maps();
   d->first_selected = false;
