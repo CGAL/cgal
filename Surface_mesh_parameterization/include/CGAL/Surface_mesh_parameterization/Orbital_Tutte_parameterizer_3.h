@@ -108,8 +108,8 @@ private:
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Point_3                                  Point_3;
 
-  Orbifold_type orb_type;
-  Weight_type weight_type;
+  const Orbifold_type orb_type;
+  const Weight_type weight_type;
 
 private:
   /// check input's correctness.
@@ -221,19 +221,21 @@ private:
     std::cout << "constraining segment of length " << seam_segment.size() << std::endl;
 
     // check that if there is a common vertex, it is at the beginning
-    bool is_reversed = (seam_segment.back().first == seam_segment.back().second);
+    const bool is_reversed = (seam_segment.back().first == seam_segment.back().second);
 
     if(is_reversed) {
       ang *= -1;
     }
+
+    std::cout << "with angle " << ang << std::endl;
 
     // the rotation matrix according to the angle 'ang'
     Eigen::Matrix2d R;
     R(0,0) = std::cos(2 * CGAL_PI / ang); R(0,1) = - std::sin(2 * CGAL_PI / ang);
     R(1,0) = std::sin(2 * CGAL_PI / ang); R(1,1) = std::cos(2 * CGAL_PI / ang);
 
-    int s0 = is_reversed ? seam_segment.back().first : seam_segment.front().first;
-    int t0 = is_reversed ? seam_segment.back().second : seam_segment.front().second;
+    const int s0 = is_reversed ? seam_segment.back().first : seam_segment.front().first;
+    const int t0 = is_reversed ? seam_segment.back().second : seam_segment.front().second;
 
     std::cout << "s0/t0: " << s0 << " " << t0 << std::endl;
 
@@ -247,8 +249,8 @@ private:
       ++it;
 
     for(; it!=end; ++it) {
-      int s = it->first;
-      int t = it->second;
+      const int s = it->first;
+      const int t = it->second;
       std::cout << "v1/v2: " << s << " " << t << std::endl;
       CGAL_assertion(s != t);
 
@@ -292,7 +294,7 @@ private:
 
     // by property of the seam mesh, the canonical halfedge that points to start_cone
     // is on the seam, and is not on the border
-    halfedge_descriptor hd = halfedge(start_cone, mesh);
+    const halfedge_descriptor hd = halfedge(start_cone, mesh);
     CGAL_precondition(mesh.has_on_seam(hd));
     halfedge_descriptor bhd = opposite(hd, mesh);
     CGAL_precondition(is_border(bhd, mesh));
@@ -304,18 +306,17 @@ private:
     // Go through the seam, marking rotation and cone constraints
     while(true) { // breaking at the last cone
       // Get the two halfedges on each side of the stream
-      halfedge_descriptor hd1 = bhd; // only for clarity
+      const halfedge_descriptor hd1 = bhd; // only for clarity
 
       // the non-border halfedge with same vertices (in the underlying mesh of the seam
       // mesh) as bhd is simply bhd with the 'seam' boolean set to false
-      halfedge_descriptor hd2 = bhd;
-      hd2.seam = false;
+      const halfedge_descriptor hd2(bhd, false /* not on seam*/);
 
       // Compute the corresponding indices
-      vertex_descriptor hd1_source = source(hd1, mesh);
-      vertex_descriptor hd2_source = source(hd2, mesh);
-      int hd1s_index = get(vimap, hd1_source);
-      int hd2s_index = get(vimap, hd2_source);
+      const vertex_descriptor hd1_source = source(hd1, mesh);
+      const vertex_descriptor hd2_source = source(hd2, mesh);
+      const int hd1s_index = get(vimap, hd1_source);
+      const int hd2s_index = get(vimap, hd2_source);
       std::cout << hd1s_index << " " << hd2s_index << std::endl;
 
       // If orbifold type IV and it is second cone in flattening, add constraint
@@ -329,14 +330,14 @@ private:
       seam_segment.push_back(std::make_pair(hd1s_index, hd2s_index));
 
       // Check if we have reached a cone
-      vertex_descriptor bhd_target = target(bhd, mesh);
+      const vertex_descriptor bhd_target = target(bhd, mesh);
       typename ConeMap::const_iterator is_in_map = cmap.find(bhd_target);
       if(is_in_map != cmap.end()) {
         // add the target to finish the seam segment
-        vertex_descriptor hd1_target = target(hd1, mesh);
-        vertex_descriptor hd2_target = target(hd2, mesh);
-        int hd1t_index = get(vimap, hd1_target);
-        int hd2t_index = get(vimap, hd2_target);
+        const vertex_descriptor hd1_target = target(hd1, mesh);
+        const vertex_descriptor hd2_target = target(hd2, mesh);
+        const int hd1t_index = get(vimap, hd1_target);
+        const int hd2t_index = get(vimap, hd2_target);
 
         seam_segment.push_back(std::make_pair(hd1t_index, hd2t_index));
 
@@ -372,8 +373,8 @@ private:
   {
     //                                                               ->     ->
     // Compute the angle (pj, pi, pk), the angle between the vectors ij and ik
-    NT angle = internal::compute_angle_rad<Kernel>(pj, pi, pk);
-    NT weight = std::tan(0.5 * angle);
+    const NT angle = internal::compute_angle_rad<Kernel>(pj, pi, pk);
+    const NT weight = std::tan(0.5 * angle);
 
     return weight;
   }
@@ -398,28 +399,28 @@ private:
     // is called from the neighboring faces of F_ijk that share the vertex i
 
     // Compute: - tan(alpha / 2)
-    NT w_i_base = 1.0 * compute_w_ij_mvc(pi, pj, pk);
+    const NT w_i_base = 1.0 * compute_w_ij_mvc(pi, pj, pk);
 
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_ij in matrix
-    Vector_3 edge_ij = pi - pj;
-    NT len_ij = CGAL::sqrt(edge_ij * edge_ij);
+    const Vector_3 edge_ij = pi - pj;
+    const NT len_ij = CGAL::sqrt(edge_ij * edge_ij);
     CGAL_assertion(len_ij != 0.0); // two points are identical!
-    NT w_ij = w_i_base / len_ij;
+    const NT w_ij = w_i_base / len_ij;
     L.add_coef(2*i, 2*j, w_ij);
     L.add_coef(2*i +1, 2*j + 1, w_ij);
 
     // Set w_ik in matrix
     Vector_3 edge_ik = pi - pk;
-    NT len_ik = CGAL::sqrt(edge_ik * edge_ik);
+    const NT len_ik = CGAL::sqrt(edge_ik * edge_ik);
     CGAL_assertion(len_ik != 0.0); // two points are identical!
-    NT w_ik = w_i_base / len_ik;
+    const NT w_ik = w_i_base / len_ik;
     L.add_coef(2*i, 2*k, w_ik);
     L.add_coef(2*i + 1, 2*k + 1, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)
-    NT w_ii = - w_ij - w_ik;
+    const NT w_ii = - w_ij - w_ik;
     L.add_coef(2*i, 2*i, w_ii);
     L.add_coef(2*i + 1, 2*i + 1, w_ii);
   }
@@ -433,17 +434,17 @@ private:
     const PPM ppmap = get(vertex_point, mesh);
 
     BOOST_FOREACH(face_descriptor fd, faces(mesh)) {
-      halfedge_descriptor hd = halfedge(fd, mesh);
+      const halfedge_descriptor hd = halfedge(fd, mesh);
 
-      vertex_descriptor vd_i = target(hd, mesh);
-      vertex_descriptor vd_j = target(next(hd, mesh), mesh);
-      vertex_descriptor vd_k = source(hd, mesh);
+      const vertex_descriptor vd_i = target(hd, mesh);
+      const vertex_descriptor vd_j = target(next(hd, mesh), mesh);
+      const vertex_descriptor vd_k = source(hd, mesh);
       const Point_3& pi = get(ppmap, vd_i);
       const Point_3& pj = get(ppmap, vd_j);
       const Point_3& pk = get(ppmap, vd_k);
-      int i = get(vimap, vd_i);
-      int j = get(vimap, vd_j);
-      int k = get(vimap, vd_k);
+      const int i = get(vimap, vd_i);
+      const int j = get(vimap, vd_j);
+      const int k = get(vimap, vd_k);
 
       fill_mvc_matrix(pi, i, pj, j, pk, k, L);
       fill_mvc_matrix(pj, j, pk, k, pi, i, L);
@@ -467,16 +468,16 @@ private:
     Cotan_weights cotan_weight_calculator(mesh, ppmap);
 
     BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)) {
-      vertex_descriptor vi = source(hd, mesh);
-      vertex_descriptor vj = target(hd, mesh);
-      int i = get(vimap, vi);
-      int j = get(vimap, vj);
+      const vertex_descriptor vi = source(hd, mesh);
+      const vertex_descriptor vj = target(hd, mesh);
+      const int i = get(vimap, vi);
+      const int j = get(vimap, vj);
 
       if(i > j)
         continue;
 
       // times 2 because Cotangent_weight returns 1/2 (cot alpha + cot beta)...
-      double w_ij = 2 * cotan_weight_calculator(hd);
+      const NT w_ij = 2 * cotan_weight_calculator(hd);
 
       // ij
       L.set_coef(2*i, 2*j, w_ij, true /* new coef */);
@@ -507,9 +508,9 @@ private:
     CGAL_assertion(X.size() == static_cast<int>(2 * num_vertices(mesh)));
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
-      int index = get(vimap, vd);
-      NT u = X(2*index);
-      NT v = X(2*index + 1);
+      const int index = get(vimap, vd);
+      const NT u = X(2*index);
+      const NT v = X(2*index + 1);
 
       put(uvmap, vd, Point_2(u, v));
     }
@@ -599,7 +600,6 @@ private:
     matoutBf.precision(20);
     matoutBf << Bf << std::endl;
 #endif
-
 #endif
 
     CGAL::Timer task_timer;
@@ -628,7 +628,6 @@ private:
 #endif
 
     assign_solution(mesh, X, uvmap, vimap);
-
     return OK;
   }
 
@@ -671,8 +670,8 @@ public:
     // %%%%%%%%%%%%%%%%%%%%%%%
     //   Boundary conditions
     // %%%%%%%%%%%%%%%%%%%%%%%
-    int lcn = number_of_linear_constraints(mesh);
-    int nbVertices = static_cast<int>(num_vertices(mesh));
+    const int lcn = number_of_linear_constraints(mesh);
+    const int nbVertices = static_cast<int>(num_vertices(mesh));
     Matrix A(2 * lcn, 2 * nbVertices); // change me 2 * n_of_constraints
     Vector B(2 * lcn);
 
@@ -734,8 +733,8 @@ public:
 
 /// Constructor
 public:
-  Orbital_Tutte_parameterizer_3(Orbifold_type orb_type = Square,
-                                Weight_type weight_type = Cotangent)
+  Orbital_Tutte_parameterizer_3(const Orbifold_type orb_type = Square,
+                                const Weight_type weight_type = Cotangent)
     :
       orb_type(orb_type),
       weight_type(weight_type)

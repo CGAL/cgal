@@ -210,6 +210,7 @@ bool check_input_validity(const SeamMesh& mesh,
                                                   end = cones.end();
   for(; it!=end; ++it) {
     if(it->second == First_unique_cone) {
+      std::cout << "Check cones: first at " << it->first << std::endl;
       if(found_first_unique_cone) {
         std::cerr << "Error: More than one 'First_unique_cone'" << std::endl;
         return false;
@@ -217,7 +218,8 @@ bool check_input_validity(const SeamMesh& mesh,
       found_first_unique_cone = true;
     }
     else if(it->second == Second_unique_cone) {
-      if(found_first_unique_cone) {
+      std::cout << "Check cones: second at " << it->first << std::endl;
+      if(found_second_unique_cone) {
         std::cerr << "Error: More than one 'Second_unique_cone'" << std::endl;
         return false;
       }
@@ -233,7 +235,7 @@ bool check_input_validity(const SeamMesh& mesh,
   }
 
   if(!found_first_unique_cone || !found_second_unique_cone) {
-    std::cerr << "Error: Missing unique cones" << std::endl;
+    std::cerr << "Error: Could not find all unique cones" << std::endl;
     return false;
   }
 
@@ -321,11 +323,11 @@ bool check_input_validity(const SeamMesh& mesh,
 }
 
 /// Read the cones from the input file.
-template<typename Polygon_mesh>
-Error_code read_cones(const Polygon_mesh& pm, const char* filename,
-  std::vector<typename boost::graph_traits<Polygon_mesh>::vertex_descriptor>& cone_vds_in_pm)
+template<typename TriangleMesh>
+Error_code read_cones(const TriangleMesh& pm, const char* filename,
+  std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>& cone_vds_in_tm)
 {
-  typedef typename boost::graph_traits<Polygon_mesh>::vertex_descriptor PM_vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
 
   std::ifstream in(filename);
   std::string vertices_line;
@@ -354,19 +356,19 @@ Error_code read_cones(const Polygon_mesh& pm, const char* filename,
   }
 
   // Locate the cones in the underlying mesh 'pm'
-  CGAL_assertion(cone_vds_in_pm.empty());
-  cone_vds_in_pm.resize(cones.size());
+  CGAL_assertion(cone_vds_in_tm.empty());
+  cone_vds_in_tm.resize(cones.size());
 
   for(std::size_t i=0; i<cones.size(); ++i) {
     int counter = 0;
-    BOOST_FOREACH(PM_vertex_descriptor vd, vertices(pm)) {
+    BOOST_FOREACH(TM_vertex_descriptor vd, vertices(pm)) {
       if(counter == cones[i]) {
-        cone_vds_in_pm[i] = vd;
+        cone_vds_in_tm[i] = vd;
         break;
       }
       ++counter;
     }
-    CGAL_postcondition(cone_vds_in_pm[i] != PM_vertex_descriptor());
+    CGAL_postcondition(cone_vds_in_tm[i] != TM_vertex_descriptor());
   }
 
   return OK;
@@ -414,7 +416,7 @@ void locate_cones(const SeamMesh& mesh,
         Cone_type ct;
         if(i == 0)
           ct = First_unique_cone;
-        else if(i == cvdss-1)
+        else if(i == (cvdss - 1))
           ct = Second_unique_cone;
         else
           ct = Duplicated_cone;

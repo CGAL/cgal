@@ -32,6 +32,7 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Timer.h>
 
 #include <Eigen/Dense>
 
@@ -330,7 +331,7 @@ class Orbifold_sphere_mapper
   // Triangulation type
   typedef CGAL::Triangulation_2<Kernel>                                   Triangulation;
 
-  IK_to_EK to_exact;
+  const IK_to_EK to_exact;
 
   /// For all seam edges, mark both halfedges with the transformation to apply
   /// to obtain the next tile's coordinates from the previous tile.
@@ -341,7 +342,7 @@ class Orbifold_sphere_mapper
                         const Seam_halfedges_segment& seam_segment,
                         SeamTransformationMap& seam_transformations,
                         BorderHalfedges& border_halfedges,
-                        NT ang)
+                        NT ang) const
   {
     std::cout << "Segment of length " << seam_segment.size() << std::endl;
 
@@ -355,7 +356,7 @@ class Orbifold_sphere_mapper
     vertex_descriptor ve_s = source(seam_segment.back().first, mesh);
     vertex_descriptor ve_t = target(seam_segment.back().second, mesh);
 
-    bool is_reversed = (get(vimap, ve_s) == get(vimap, ve_t));
+    const bool is_reversed = (get(vimap, ve_s) == get(vimap, ve_t));
 
     if(is_reversed) {
       ang *= -1;
@@ -384,18 +385,18 @@ class Orbifold_sphere_mapper
       // "if I cross this border, which affine transformation must I apply to
       // a triangle of the initial mesh to obtain the coordinates of this triangle
       // in the next tile"
-      halfedge_descriptor hd1 = it->first;
-      TM_halfedge_descriptor base_hd1 = hd1.tmhd;
+      const halfedge_descriptor hd1 = it->first;
+      const TM_halfedge_descriptor base_hd1 = hd1.tmhd;
       seam_transformations[base_hd1] = trs;
 
-      halfedge_descriptor hd2 = it->second;
-      TM_halfedge_descriptor base_hd2 = hd2.tmhd;
+      const halfedge_descriptor hd2 = it->second;
+      const TM_halfedge_descriptor base_hd2 = hd2.tmhd;
       seam_transformations[base_hd2] = trt;
 
       // The initial border edges are by definition in the initial mesh so they
       // do not have a transformation at the beginning
-      halfedge_w_tr hdt1(base_hd1, identity);
-      halfedge_w_tr hdt2(base_hd2, identity);
+      const halfedge_w_tr hdt1(base_hd1, identity);
+      const halfedge_w_tr hdt2(base_hd2, identity);
       border_halfedges.push_back(hdt1);
       border_halfedges.push_back(hdt2);
     }
@@ -407,7 +408,7 @@ class Orbifold_sphere_mapper
            typename BorderHalfedges>
   void compute_initial_border(const EmbeddedMesh& emesh,
                               SeamTransformationMap& seam_transformations,
-                              BorderHalfedges& border_halfedges)
+                              BorderHalfedges& border_halfedges) const
   {
     const Seam_mesh& mesh = emesh.mesh;
 
@@ -422,7 +423,7 @@ class Orbifold_sphere_mapper
 
     // By property of the seam mesh, the canonical halfedge that points to start_cone
     // is on the seam, and is not on the border
-    halfedge_descriptor hd = halfedge(start_cone, mesh);
+    const halfedge_descriptor hd = halfedge(start_cone, mesh);
     CGAL_precondition(mesh.has_on_seam(hd));
     halfedge_descriptor bhd = opposite(hd, mesh);
     CGAL_precondition(is_border(bhd, mesh));
@@ -440,12 +441,11 @@ class Orbifold_sphere_mapper
     // properly in the plane
     while(true) { // breaking at the last cone
       // get the two halfedges that are not on the border
-      halfedge_descriptor hd1 = opposite(bhd, mesh);
+      const halfedge_descriptor hd1 = opposite(bhd, mesh);
 
       // The non-border halfedge with same vertices (in the underlying mesh of the seam
       // mesh) as bhd is simply bhd with the 'seam' boolean set to false
-      halfedge_descriptor hd2 = bhd;
-      hd2.seam = false;
+      const halfedge_descriptor hd2(bhd, false /*not on seam*/);
 
       CGAL_assertion(segment_index < angs.size());
       NT ang = angs[segment_index];
@@ -489,16 +489,16 @@ class Orbifold_sphere_mapper
            typename Face_container>
   void mark_base_mesh_faces(const EmbeddedMesh& emesh,
                             Face_set& inserted_faces,
-                            Face_container& faces_to_draw)
+                            Face_container& faces_to_draw) const
   {
     const Seam_mesh& mesh = emesh.mesh;
     const VertexUVMap uvmap = emesh.uvmap;
 
     BOOST_FOREACH(face_descriptor fd, faces(mesh)) {
-      halfedge_descriptor hd = halfedge(fd, mesh);
-      vertex_descriptor vda = source(hd, mesh);
-      vertex_descriptor vdb = target(hd, mesh);
-      vertex_descriptor vdc = target(next(hd, mesh), mesh);
+      const halfedge_descriptor hd = halfedge(fd, mesh);
+      const vertex_descriptor vda = source(hd, mesh);
+      const vertex_descriptor vdb = target(hd, mesh);
+      const vertex_descriptor vdc = target(next(hd, mesh), mesh);
 
       const Point_2& tpa = get(uvmap, vda);
       const Point_2& tpb = get(uvmap, vdb);
@@ -506,13 +506,13 @@ class Orbifold_sphere_mapper
 
 //      std::cout << "add " << tpa << " " << tpb << " " << tpc << std::endl;
 
-      Triangle_2 tr(tpa, tpb, tpc);
+      const Triangle_2 tr(tpa, tpb, tpc);
       faces_to_draw.push_back(tr);
 
-      Point_2 bar = CGAL::barycenter(tpa, 1., tpb, 1., tpc, 1.);
+      const Point_2 bar = CGAL::barycenter(tpa, 1., tpb, 1., tpc, 1.);
 
       // ugly hack to get rid of imprecisions @fixme
-      // uv values are at the beginnig close to 1 so *1e7 is not too dangerous
+      // uv values are close to 1 so *1e7 is not too dangerous
       NT barx = 1e7 * bar.x();
       NT bary = 1e7 * bar.y();
       barx = static_cast<int>(barx >= 0 ? barx + 0.5 : barx - 0.5);
@@ -533,7 +533,7 @@ class Orbifold_sphere_mapper
                      BorderHalfedges& next_border_halfedges,
                      Face_container& faces_to_draw,
                      Barycenter_set& inserted_faces,
-                     Arr_segments& arr_segments)
+                     Arr_segments& arr_segments) const
   {
     const Seam_mesh& mesh = source_embedded_mesh.mesh;
     const VertexUVMap uvmap = source_embedded_mesh.uvmap;
@@ -543,8 +543,8 @@ class Orbifold_sphere_mapper
                                              bhend = current_border_halfedges.end();
     for(; bhit!=bhend; ++bhit) {
       // Get the next border edge
-      halfedge_w_tr hdt = *bhit;
-      TM_halfedge_descriptor hd = hdt.tmhd;
+      const halfedge_w_tr hdt = *bhit;
+      const TM_halfedge_descriptor hd = hdt.tmhd;
 
 //        std::cout << "at halfedge " << source(hd, tm) << " " << target(hd, tm) << std::endl;
 //        halfedge_descriptor shd(hd);
@@ -561,14 +561,15 @@ class Orbifold_sphere_mapper
       const Point_2& tpa = hd_transformation.transform(get(uvmap, target(hd, mesh)));
       const Point_2& tpb = hd_transformation.transform(get(uvmap, source(hd, mesh)));
       const Segment_2 es_ab(tpa, tpb);
-      if(!is_intersecting(tr, es_ab))
+      if(!is_intersecting(tr, es_ab)) {
+//        std::cout << "no intersection" << std::endl;
         continue;
-
+      }
 
       // There is an intersection and we must insert the face incident to ohd.
       // Get the opposite halfedge, which is incident to the triangle that we will add
       // (with transformed coordinates)
-      TM_halfedge_descriptor ohd = opposite(hd, tm);
+      const TM_halfedge_descriptor ohd = opposite(hd, tm);
 //        TM_vertex_descriptor tmvdc = target(next(ohd, tm), tm); // third point
 //        std::cout << "third " << tmvdc;
 //        std::cout<< " with pos: "  << get(uvmap, target(halfedge_descriptor(next(ohd, tm)), mesh)) << std::endl;
@@ -582,8 +583,8 @@ class Orbifold_sphere_mapper
         hd_transformation.combine_transformations(seam_transf.get_tr());
       }
 
-      TM_halfedge_descriptor hd_bc = next(ohd, tm);
-      vertex_descriptor vdc = target(halfedge_descriptor(hd_bc), mesh);
+      const TM_halfedge_descriptor hd_bc = next(ohd, tm);
+      const vertex_descriptor vdc = target(halfedge_descriptor(hd_bc), mesh);
       const Point_2& tpc = hd_transformation.transform(get(uvmap, vdc));
 
       const Exact_point_2& etpa = to_exact(tpa);
@@ -591,7 +592,7 @@ class Orbifold_sphere_mapper
       const Exact_point_2& etpc = to_exact(tpc);
 
       // Check if we have already inserted the face incident to ohd in the arrangement
-      Point_2 bar = CGAL::barycenter(tpa, 1., tpb, 1., tpc, 1.);
+      const Point_2& bar = CGAL::barycenter(tpa, 1., tpb, 1., tpc, 1.);
 
       // ugly hack to get rid of imprecisions @fixme
       NT barx = 1e7 * bar.x();
@@ -604,17 +605,17 @@ class Orbifold_sphere_mapper
       if(!is_insert_successful.second) // triangle has already been considered
         continue;
 
-      std::cout.precision(20);
-      std::cout << "new triangle with bar: " << barx << " || " << bary << std::endl;
+      // std::cout.precision(20);
+      // std::cout << "new triangle with bar: " << barx << " || " << bary << std::endl;
 
-      Triangle_2 tr(tpa, tpb, tpc);
+//      std::cout << "tps: " << tpa << " " << tpb << " " << tpc << std::endl;
+
+      const Triangle_2 tr(tpa, tpb, tpc);
       faces_to_draw.push_back(tr);
 
-//        std::cout << "tps: " << tpa << " " << tpb << " " << tpc << std::endl;
-
       // Add the new segments
-      Exact_segment_2 es_ac(etpa, etpc);
-      Exact_segment_2 es_bc(etpb, etpc);
+      const Exact_segment_2 es_ac(etpa, etpc);
+      const Exact_segment_2 es_bc(etpb, etpc);
       // There is no need to insert ab because we have already inserted it
       // at previous steps. Leaving it here for clarity.
 //      arr_segments.push_back(Exact_segment_2(etpa, etpb))
@@ -623,12 +624,12 @@ class Orbifold_sphere_mapper
 
       // Insert the (other) edges of the face incident to ohd
       // there are two "new" border edges: ac and bc
-      TM_halfedge_descriptor hd_ac = prev(ohd, tm);
+      const TM_halfedge_descriptor hd_ac = prev(ohd, tm);
 
-      halfedge_w_tr hdt_ac(hd_ac, hd_transformation);
+      const halfedge_w_tr hdt_ac(hd_ac, hd_transformation);
       next_border_halfedges.push_back(hdt_ac);
 
-      halfedge_w_tr hdt_bc(hd_bc, hd_transformation);
+      const halfedge_w_tr hdt_bc(hd_bc, hd_transformation);
       next_border_halfedges.push_back(hdt_bc);
     }
   }
@@ -636,7 +637,7 @@ class Orbifold_sphere_mapper
   /// Check if a given segment intersects the target mesh (actually, a triangulation
   /// of the -- slightly grown -- convex hull of the target mesh)
   bool is_intersecting(const Triangulation& tr,
-                       const Segment_2& segment)
+                       const Segment_2& segment) const
   {
     typename Kernel::Construct_triangle_2 triangle_functor;
     typename Kernel::Do_intersect_2 do_intersect_2_functor;
@@ -645,9 +646,9 @@ class Orbifold_sphere_mapper
     typedef typename Triangulation::Finite_faces_iterator    Finite_faces_iterator;
     Finite_faces_iterator fit = tr.finite_faces_begin(), end = tr.finite_faces_end();
     for(; fit!=end; fit++) {
-      Triangle_2 tr = triangle_functor(fit->vertex(0)->point(),
-                                       fit->vertex(1)->point(),
-                                       fit->vertex(2)->point());
+      const Triangle_2 tr = triangle_functor(fit->vertex(0)->point(),
+                                             fit->vertex(1)->point(),
+                                             fit->vertex(2)->point());
       if(do_intersect_2_functor(segment, tr))
         return true;
     }
@@ -686,7 +687,7 @@ class Orbifold_sphere_mapper
 
     // compute the convex hull of the mesh
     std::vector<Point_2> convex_hull_pts;
-    Vd_to_uv vd_to_uv(uvmap);
+    const Vd_to_uv vd_to_uv(uvmap);
     CGAL::convex_hull_2(boost::make_transform_iterator(mesh.vertices_begin(), vd_to_uv),
                         boost::make_transform_iterator(mesh.vertices_end(), vd_to_uv),
                         std::back_inserter(convex_hull_pts));
@@ -697,7 +698,7 @@ class Orbifold_sphere_mapper
     /// englobe the target mesh
 
     // compute the center point (ish)
-    NT weight = 1. / convex_hull_pts.size();
+    const NT weight = 1. / convex_hull_pts.size();
     NT bx = 0., by = 0.;
     for(std::size_t i=0; i<convex_hull_pts.size(); ++i) {
       bx += convex_hull_pts[i].x();
@@ -712,6 +713,8 @@ class Orbifold_sphere_mapper
     // move points on the convex hull away from that center point
     for(std::size_t i=0; i<convex_hull_pts.size(); ++i) {
       Point_2& pci = convex_hull_pts[i];
+
+      // 0.01 is arbitrary but is enough to grow a bit farther than the cones
       pci = pci + 0.01 * Vector_2(bp, pci);
     }
 
@@ -723,8 +726,11 @@ class Orbifold_sphere_mapper
 
   /// Grow the source mesh until it covers the target mesh.
   Arrangement grow_source_embedding(const EmbeddedMesh& source_embedded_mesh,
-                                    const EmbeddedMesh& target_embedded_mesh)
+                                    const EmbeddedMesh& target_embedded_mesh) const
   {
+    CGAL::Timer task_timer;
+    task_timer.start();
+
     const Seam_mesh& mesh = source_embedded_mesh.mesh;
     const VertexUVMap uvmap = source_embedded_mesh.uvmap;
 
@@ -753,8 +759,8 @@ class Orbifold_sphere_mapper
 
     // Fill the arrangement with the edges of the source mesh
     BOOST_FOREACH(edge_descriptor ed, edges(mesh)) {
-      vertex_descriptor vds = source(ed, mesh);
-      vertex_descriptor vdt = target(ed, mesh);
+      const vertex_descriptor vds = source(ed, mesh);
+      const vertex_descriptor vdt = target(ed, mesh);
       arr_segments.push_back(Exact_segment_2(to_exact(get(uvmap, vds)),
                                              to_exact(get(uvmap, vdt))));
     }
@@ -799,6 +805,7 @@ class Orbifold_sphere_mapper
                     faces_to_draw, inserted_faces, arr_segments);
       ++counter;
 
+      std::cout << "iteration: " << counter << std::endl;
       std::cout << arr_segments.size() << " segments in the arrangement" << std::endl;
       std::cout << next_border_halfedges.size() << " in the next loop" << std::endl;
 
@@ -809,7 +816,7 @@ class Orbifold_sphere_mapper
       next_border_halfedges.clear();
     }
 
-    std::cout << "Finished growing!" << std::endl;
+    std::cout << "Finished growing in " << task_timer.time() << " seconds" << std::endl;
 
     // visualize the grown mesh
     internal::output_triangle_set<std::vector<Triangle_2> >(faces_to_draw, "arr_grown.off");
@@ -826,7 +833,7 @@ class Orbifold_sphere_mapper
   }
 
   /// Build an arrangement from a two-dimensional mesh.
-  Arrangement get_arrangement_from_embedded_mesh(const EmbeddedMesh& emesh)
+  Arrangement get_arrangement_from_embedded_mesh(const EmbeddedMesh& emesh) const
   {
     const Seam_mesh& mesh = emesh.mesh;
     const VertexUVMap uvmap = emesh.uvmap;
@@ -854,7 +861,7 @@ class Orbifold_sphere_mapper
 
   /// Overlay the source and target arrangements.
   void overlay_arrangements(const Arrangement& source_arrangement,
-                            const Arrangement& target_arrangement)
+                            const Arrangement& target_arrangement) const
   {
     std::cout << "The source arrangement size:" << std::endl
               << "   V = " << source_arrangement.number_of_vertices()
@@ -884,7 +891,7 @@ class Orbifold_sphere_mapper
 public:
   /// Compute the map between the source and the target mesh.
   void compute_map_from_sphere_embeddings(const EmbeddedMesh& source_embedded_mesh,
-                                          const EmbeddedMesh& target_embedded_mesh)
+                                          const EmbeddedMesh& target_embedded_mesh) const
   {
     // Grow the source mesh until it covers the target mesh and convert it to arrangement
     const Arrangement& source_arrangement =

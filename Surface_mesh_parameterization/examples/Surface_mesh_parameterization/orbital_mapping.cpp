@@ -234,6 +234,6 @@ int main(int argc, char * argv[])
   typedef SMP::Orbifold_sphere_mapper<Arrangement_2, Embedded_mesh>    Orb_sphere_mapper;
 
   Orb_sphere_mapper mapper;
-  mapper.compute_map_from_sphere_embeddings(emesh_B, emesh_A);
+  mapper.compute_map_from_sphere_embeddings(emesh_A, emesh_B);
   std::cout << "Finished mapping in " << task_timer.time() << " seconds" << std::endl;
 }
