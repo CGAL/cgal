@@ -123,7 +123,7 @@ struct Node_id_set {
       ++size_;
     }
     else{
-      CGAL_assertion((size_ == 2) && ((v == first) || (v == second)));
+      CGAL_assertion( (size_ == 2 && (v == first || v == second) ) || v==first );
     }
   }
 
