@@ -809,21 +809,20 @@ public:
           edge_to_hedge[std::make_pair( f_indices[1],f_indices[2] )] = h2;
         }
 
-        typename EK::Plane_3 plane(
-          nodes.to_exact(get(vpm,f_vertices[0])),
-          nodes.to_exact(get(vpm,f_vertices[1])),
-          nodes.to_exact(get(vpm,f_vertices[2])) );
+        typename EK::Point_3 p = nodes.to_exact(get(vpm,f_vertices[0])),
+                             q = nodes.to_exact(get(vpm,f_vertices[1])),
+                             r = nodes.to_exact(get(vpm,f_vertices[2]));
 
-        CDT_traits traits(plane.orthogonal_vector());
+        CDT_traits traits(typename EK::Construct_normal_3()(p,q,r));
         CDT cdt(traits);
 
         // insert triangle points
         cpp11::array<CDT_Vertex_handle,3> triangle_vertices;
         //we can do this to_exact because these are supposed to be input points.
-        triangle_vertices[0]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[0])));
-        triangle_vertices[1]=cdt.insert_outside_affine_hull(nodes.to_exact(get(vpm,f_vertices[1])));
+        triangle_vertices[0]=cdt.insert_outside_affine_hull(p);
+        triangle_vertices[1]=cdt.insert_outside_affine_hull(q);
         triangle_vertices[2]=cdt.tds().insert_dim_up(cdt.infinite_vertex(), false);
-        triangle_vertices[2]->set_point(nodes.to_exact(get(vpm,f_vertices[2])));
+        triangle_vertices[2]->set_point(r);
 
 
         triangle_vertices[0]->info()=f_indices[0];
