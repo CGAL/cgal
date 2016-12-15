@@ -563,7 +563,6 @@ public:
   {
     CGAL_assertion(cdt.is_infinite(fh));
     int fi = fh->index(cdt.infinite_vertex());
-    typename CDT::Vertex_handle wh = fh->vertex(CDT::ccw(fi));
     typename CDT::Vertex_handle vh = cdt.insert(p, CDT::EDGE, fh, fi);
     typename CDT::Edge_circulator ec = cdt.incident_edges(vh);
     while(ec->first->vertex(CDT::ccw(ec->second)) != cdt.infinite_vertex()){
