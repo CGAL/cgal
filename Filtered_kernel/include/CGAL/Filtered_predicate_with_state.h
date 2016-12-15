@@ -141,7 +141,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none){
+    if(! oep){
       oep.emplace(c2e(o1));
     }
     return (*oep)(c2e(args)...);
@@ -169,7 +169,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(!oep) oep = EP(c2e(o1));
     return *oep(c2e(a1));
 }
 
@@ -192,7 +192,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(! oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2));
 }
 
@@ -215,7 +215,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(!oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2), c2e(a3));
 }
 
@@ -238,7 +238,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(! oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2), c2e(a3), c2e(a4));
 }
 
@@ -262,7 +262,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(!oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5));
 }
 
@@ -286,7 +286,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(!oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6));
 }
 
@@ -337,7 +337,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(!oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
               c2e(a8));
 }
@@ -365,7 +365,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(!oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
               c2e(a8), c2e(a9));
 }
@@ -393,7 +393,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    if(oep == boost::none) oep = EP(c2e(o1));
+    if(!oep) oep = EP(c2e(o1));
     return (*oep)(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
               c2e(a8), c2e(a9), c2e(a10));
 }
