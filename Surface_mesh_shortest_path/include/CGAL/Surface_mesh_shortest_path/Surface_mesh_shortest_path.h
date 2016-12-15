@@ -281,7 +281,7 @@ private:
   typedef internal::Cone_tree_node<Traits> Cone_tree_node;
   typedef internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
-  typedef std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
+  typedef std::priority_queue<Cone_expansion_event*, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
   typedef std::pair<Cone_tree_node*, FT> Node_distance_pair;
 
 private:
