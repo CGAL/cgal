@@ -52,8 +52,8 @@ public:
   {
     return _actions;
   }
-  //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi)
+  //this acts like a constructor for the plugin. It gets the references to the main window and the scene, and connects the action.
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc, Messages_interface* mi)
   {
     //gets the reference to the message interface, to display text in the console widget
     this->messageInterface = mi;

@@ -152,6 +152,7 @@ public :
     void moveDown(int);
 
 public Q_SLOTS:
+    //!Let the scene know that the item has not been drawn yet.
     void resetDraw() { already_drawn = false;}
 private:
     //!Updates the property has_group for each group and sub-groups containing new_item.

@@ -24,7 +24,8 @@ A plugin usually make use of objects that inherit from `CGAL::Three::Scene_item`
 
 \subsection examplePluginItself The Plugin Itself
 
-A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`. It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file.
+A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`.
+It must be created in the corresponding folder named after its package, and containing all the files created for the plugin, and a CMakeLists.txt file.
 Its name must be of the form Xxxx_yyyy_plugin. \n
 
   [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *)
@@ -250,14 +251,13 @@ A group item is a virtual item that is not seen in the viewer, nor drawn, but ac
 interaction with the `SceneView` (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interact
 with several objects at the same time, and organize this view.
 
-To use a group item in your plugin, you will need a `CGAL::Three::Scene_group_item`, of course, and a `CGAL::Three::Scene_interface`.\n As a group item will automatically
-contain all the selected items of the scene when it is created,
-the first thing to do is to clear the selection with `CGAL::Three::Scene_interface::setSelectedItem(-1)`.
+To use a group item in your plugin, you will need a `CGAL::Three::Scene_group_item`, of course, and a `CGAL::Three::Scene_interface`.\n
 
-Then you can create a new `Scene_group_item` and give the
-items you want to regroup to it with `CGAL::Three::Scene_interface::changeGroup()`. Keep in mind that you must pass items to a group only if those
+Create a new `Scene_group_item`, add it to the scene with `CGAL::Three::Scene_interface::addItem()` and give it the
+items you want to regroup with `CGAL::Three::Scene_interface::changeGroup()`.\n Keep in mind that you must pass items to a group only if those
 items are already in the scene.\n
-Once it is done, add the group to the scene with `CGAL::Three::Scene_interface::add_group()`.
+You also have the possibility to "lock" a child of a group with `CGAL::Three::Scene_group_item::lockChild()` to prevent it from being moved or erased.
+
 
 \snippet Three/Example_plugin/Basic_item_plugin.cpp group
 
