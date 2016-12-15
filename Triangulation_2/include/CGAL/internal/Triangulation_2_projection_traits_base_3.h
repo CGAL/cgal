@@ -250,7 +250,7 @@ class Less_along_axis
   // private members
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
-  const Vector_3 base;
+  Vector_3 base;
 public:
   Less_along_axis(const Vector_3& base) : base(base)
   {
