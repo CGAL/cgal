@@ -1154,7 +1154,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1,
                    Vertex_handle v2)
 {
-  // Determine which one of the given vertices mathces the left end of the
+  // Determine which one of the given vertices matches the left end of the
   // given curve.
   const bool at_obnd1 = !m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
   const bool at_obnd2 = !m_geom_traits->is_closed_2_object()(cv, ARR_MAX_END);
@@ -1319,7 +1319,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #endif
 
   // Determine which one of the given vertices (the target vertices of the
-  // given halfedges) mathces the left end of the given curve.
+  // given halfedges) matches the left end of the given curve.
   // Thus, we can determine the comparison result between prev1->target()
   // and prev2->target().
   const bool at_obnd1 = !m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
