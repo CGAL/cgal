@@ -21,7 +21,7 @@ typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 typedef std::vector<Point>::iterator Iterator;
 typedef CGAL::Identity_property_map<Point> Pmap;
 
-typedef CGAL::Classifier<Iterator, Pmap> Classification;
+typedef CGAL::Classifier<Iterator, Pmap> Classifier;
 
 typedef CGAL::Classification::Planimetric_grid<Kernel, Iterator, Pmap>       Planimetric_grid;
 typedef CGAL::Classification::Point_set_neighborhood<Kernel, Iterator, Pmap> Neighborhood;
@@ -99,7 +99,7 @@ int main (int argc, char** argv)
 
   
   // Add attributes to classification object
-  Classification psc (pts.begin (), pts.end(), Pmap());
+  Classifier psc (pts.begin (), pts.end(), Pmap());
   psc.add_attribute (d2p);
   psc.add_attribute (lin);
   psc.add_attribute (omni);
