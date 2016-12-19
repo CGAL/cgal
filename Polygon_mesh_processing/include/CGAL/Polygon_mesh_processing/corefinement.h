@@ -139,7 +139,9 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
- *     a property map containing the index of each face of `tm1` (`tm2`)
+ *     a property map containing the index of each face of `tm1` (`tm2`).
+ *     Note that if the property map is writable, the indices of the faces
+ *     of `tm1` and `tm2` will be set after the corefinement is done.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *

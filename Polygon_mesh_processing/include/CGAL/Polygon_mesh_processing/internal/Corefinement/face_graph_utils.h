@@ -23,11 +23,61 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
+#include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <fstream>
 #include <sstream>
 
 namespace CGAL {
 namespace Corefinement {
+
+// matches read-write property maps
+template <class PolygonMesh, class FaceIndexMap, class Tag>
+void init_face_indices(PolygonMesh& pm,
+                       FaceIndexMap& fid,
+                       boost::read_write_property_map_tag,
+                       Tag)
+{
+  typename boost::property_traits<FaceIndexMap>::value_type i = 0;
+  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
+                faces(pm))
+  {
+    put(fid, fd, i);
+    ++i;
+  }
+}
+
+// matches mutable Lvalue property maps
+template <class PolygonMesh, class FaceIndexMap>
+void init_face_indices(PolygonMesh& pm,
+                       FaceIndexMap& fid,
+                       boost::lvalue_property_map_tag,
+                       boost::false_type)
+{
+  typename boost::property_traits<FaceIndexMap>::value_type i = 0;
+  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
+                faces(pm))
+  {
+    put(fid, fd, i);
+    ++i;
+  }
+}
+
+// matches all other types of property map
+template <class PolygonMesh, class FaceIndexMap, class MapTag, class Tag>
+void init_face_indices(PolygonMesh&, FaceIndexMap, MapTag, Tag)
+{}
+
+template <class PolygonMesh, class FaceIndexMap>
+void init_face_indices(PolygonMesh& pm, FaceIndexMap& fid)
+{
+  init_face_indices(pm, fid,
+                    typename boost::property_traits<FaceIndexMap>::category(),
+                    typename boost::is_const< 
+                      typename boost::remove_reference<
+                        typename boost::property_traits<FaceIndexMap>::reference
+                            >::type >::type() );
+}
 
 template <typename G>
 struct No_mark

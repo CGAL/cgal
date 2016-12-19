@@ -87,6 +87,7 @@ create_single_source_cgal_program( "corefinement_SM.cpp")
 create_single_source_cgal_program( "corefinement_consecutive_bool_op.cpp" )
 create_single_source_cgal_program( "corefinement_difference_remeshed.cpp" )
 create_single_source_cgal_program( "corefinement_mesh_union.cpp" )
+create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
 
 if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
 create_single_source_cgal_program( "hole_filling_example.cpp" )
