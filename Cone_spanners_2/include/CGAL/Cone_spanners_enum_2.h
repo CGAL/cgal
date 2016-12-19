@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Authors: Frédérk Paradis
+// Authors: Frédérik Paradis
 
 /*! \file Cone_spanners_enum_2.h
  *

@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Authors: Weisheng Si, Quincy Tse, Frédérk Paradis
+// Authors: Weisheng Si, Quincy Tse, Frédérik Paradis
 
 /*! \file Construct_yao_graph_2.h
  *
