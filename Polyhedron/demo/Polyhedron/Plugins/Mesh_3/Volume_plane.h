@@ -125,6 +125,9 @@ public:
 
 private:
   bool is_grabbing;
+
+
+
   static const char* vertexShader_source;
 
   static const char* fragmentShader_source;
@@ -183,6 +186,7 @@ private:
   mutable QOpenGLShaderProgram program;
   mutable QOpenGLShaderProgram* spheres_program;
   mutable std::vector< std::pair<QOpenGLBuffer, unsigned int> > ebos;
+  mutable double sphere_radius;
   std::vector< float > colors_;
 
   QString name(x_tag) const { return tr("X Slice for %1").arg(name_); }
@@ -216,7 +220,8 @@ private:
   void drawSpheres(x_tag) const
   {
       int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
-      create_flat_sphere(max_dim/40.0f, v_spheres, n_spheres);
+      sphere_radius = max_dim / 40.0f;
+      create_flat_sphere(1.0f, v_spheres, n_spheres, 18);
 
       c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back(0.0f);
       c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
@@ -228,7 +233,8 @@ private:
   void drawSpheres(y_tag) const
   {
       int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
-      create_flat_sphere(max_dim/40.0f, v_spheres, n_spheres);
+      sphere_radius = max_dim / 40.0f;
+      create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
       c_spheres.push_back((adim_ - 1) * xscale_/2.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
       c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f);
@@ -239,7 +245,8 @@ private:
   void drawSpheres(z_tag) const
   {
       int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
-      create_flat_sphere(max_dim/40.0f, v_spheres, n_spheres);
+      sphere_radius = max_dim / 40.0f;
+      create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
       c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - max_dim/15.0f); c_spheres.push_back(0.0f);
       c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
@@ -289,7 +296,7 @@ private:
 
   void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
   {
-      spheres_program = getShaderProgram(PROGRAM_INSTANCED, viewer);
+      spheres_program = getShaderProgram(PROGRAM_SPHERES, viewer);
 
       spheres_program->bind();
       vaos[0]->bind();
@@ -365,6 +372,10 @@ Volume_plane<T>::Volume_plane()
  {
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     mFrame_->setPosition(offset.x, offset.y, offset.z);
+    sphere_Slider = new QSlider(Qt::Horizontal);
+    sphere_Slider->setValue(40);
+    sphere_Slider->setMinimum(1);
+    sphere_Slider->setMaximum(100);
  }
 template<typename T>
 void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors)
@@ -472,10 +483,12 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
       initializeBuffers(viewer);
   mvp = mvp*f;
   vaos[0]->bind();
-  spheres_program = getShaderProgram(PROGRAM_INSTANCED, viewer);
-  attribBuffers(viewer, PROGRAM_INSTANCED);
-
+  spheres_program = getShaderProgram(PROGRAM_SPHERES, viewer);
+  attribBuffers(viewer, PROGRAM_SPHERES);
   spheres_program->bind();
+  int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+  sphere_radius = max_dim/20.0f * sphere_Slider->value()/100.0f;
+  spheres_program->setAttributeValue("radius", sphere_radius);
   spheres_program->setAttributeValue("colors", this->color());
   spheres_program->setUniformValue("mvp_matrix", mvp);
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
@@ -607,8 +620,7 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             found = false;
             //check the found point is on a sphere
             pos = manipulatedFrame()->inverse().inverseCoordinatesOf(pos);
-            int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
-            float sq_radius = max_dim/40.0f * max_dim/40.0f;
+            float sq_radius = sphere_radius * sphere_radius;
             qglviewer::Vec center;
             //is the picked point on the sphere ?
             for (int i=0; i<4; ++i)

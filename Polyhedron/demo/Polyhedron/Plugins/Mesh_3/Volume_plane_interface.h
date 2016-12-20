@@ -2,6 +2,10 @@
 #define CGAL_VOLUME_PLANE_INTERFACE_H_
 
 #include <QObject>
+#include <QAction>
+#include <QMenu>
+#include <QSlider>
+#include <QWidgetAction>
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/Three/Scene_item.h>
 #include <iostream>
@@ -37,6 +41,29 @@ public:
 
   virtual qglviewer::ManipulatedFrame* manipulatedFrame() { return mFrame_; }
 
+  QMenu* contextMenu()
+  {
+      const char* prop_name = "Menu modified by Scene_c3t3_item.";
+
+      QMenu* menu = Scene_item::contextMenu();
+
+      // Use dynamic properties:
+      // http://doc.qt.io/qt-5/qobject.html#property
+      bool menuChanged = menu->property(prop_name).toBool();
+
+      if (!menuChanged) {
+          QMenu *container = new QMenu(tr("Spheres Size"));
+          QWidgetAction *sliderAction = new QWidgetAction(0);
+          connect(sphere_Slider, &QSlider::valueChanged, this, &Volume_plane_interface::itemChanged);
+
+          sliderAction->setDefaultWidget(sphere_Slider);
+
+          container->addAction(sliderAction);
+          menu->addMenu(container);
+          menu->setProperty(prop_name, true);
+      }
+      return menu;
+  }
 Q_SIGNALS:
   void planeDestructionIncoming(Volume_plane_interface*);
   void manipulated(int);
@@ -47,6 +74,8 @@ private Q_SLOTS:
   }
 protected:
   qglviewer::ManipulatedFrame* mFrame_;
+  bool hide_spheres;
+  QSlider* sphere_Slider;
 };
 
 

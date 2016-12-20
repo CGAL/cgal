@@ -28,6 +28,7 @@
 #include <QInputDialog>
 #include <QSlider>
 #include <QLabel>
+#include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QDockWidget>
@@ -175,6 +176,7 @@ public Q_SLOTS:
     ready_to_move = true;
     QTimer::singleShot(0,this,SLOT(setFramePosition()));
   }
+  unsigned int getScale() const { return scale; }
 Q_SIGNALS:
   void realChange(int);
 
@@ -286,6 +288,40 @@ public:
 
 
 public Q_SLOTS:
+
+  void setXNum(int i)
+  {
+   x_cubeLabel->setText(QString("%1").arg(i));
+  }
+  void setYNum(int i)
+  {
+   y_cubeLabel->setText(QString("%1").arg(i));
+  }
+  void setZNum(int i)
+  {
+   z_cubeLabel->setText(QString("%1").arg(i));
+  }
+
+  void XTextEdited(QString s)
+  {
+    int i = s.toInt();
+    x_slider->setValue(i*qobject_cast<Plane_slider*>(x_slider)->getScale());
+    x_slider->sliderMoved(i);
+  }
+  void YTextEdited(QString s)
+  {
+    int i = s.toInt();
+    y_slider->setValue(i*qobject_cast<Plane_slider*>(y_slider)->getScale());
+    y_slider->sliderMoved(i);
+  }
+  void ZTextEdited(QString s)
+  {
+    int i = s.toInt();
+    z_slider->setValue(i*qobject_cast<Plane_slider*>(z_slider)->getScale());
+    z_slider->sliderMoved(i);
+
+  }
+
   void on_imageType_changed(int index)
   {
     if(index == 0)
@@ -349,10 +385,11 @@ public Q_SLOTS:
       x_slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
                                          Qt::Horizontal, x_control);
       x_slider->setRange(0, (plane->cDim() - 1) * 100);
-      connect(x_slider, SIGNAL(realChange(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(x_slider, SIGNAL(realChange(int)), this, SLOT(setXNum(int)));
+      connect(x_cubeLabel, SIGNAL(textEdited(QString)), this, SLOT(XTextEdited(QString)));
       connect(x_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(x_slider, SIGNAL(sliderMoved(int)), x_slider, SLOT(updateFramePosition()));
-      connect(plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(manipulated(int)), this, SLOT(setXNum(int)));
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
@@ -363,10 +400,11 @@ public Q_SLOTS:
       y_slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
                                          Qt::Horizontal, y_control);
       y_slider->setRange(0, (plane->cDim() - 1) * 100);
-      connect(y_slider, SIGNAL(realChange(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(y_slider, SIGNAL(realChange(int)), this, SLOT(setYNum(int)));
+      connect(y_cubeLabel, SIGNAL(textEdited(QString)), this, SLOT(YTextEdited(QString)));
       connect(y_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(y_slider, SIGNAL(sliderMoved(int)), y_slider, SLOT(updateFramePosition()));
-      connect(plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(manipulated(int)), this, SLOT(setYNum(int)));
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
@@ -377,10 +415,11 @@ public Q_SLOTS:
       z_slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
                                          Qt::Horizontal, z_control);
       z_slider->setRange(0, (plane->cDim() - 1) * 100);
-      connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(z_slider, SIGNAL(realChange(int)), this, SLOT(setZNum(int)));
+      connect(z_cubeLabel, SIGNAL(textEdited(QString)), this, SLOT(ZTextEdited(QString)));
       connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(z_slider, SIGNAL(sliderMoved(int)), z_slider, SLOT(updateFramePosition()));
-      connect(plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(manipulated(int)), this, SLOT(setZNum(int)));
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
@@ -457,7 +496,7 @@ private:
   QAction* planeSwitch;
   QWidget *x_control, *y_control, *z_control;
   QSlider *x_slider, *y_slider, *z_slider;
-  QLabel *x_cubeLabel, *y_cubeLabel, *z_cubeLabel;
+  QLineEdit*x_cubeLabel, *y_cubeLabel, *z_cubeLabel;
   QHBoxLayout *x_box, *y_box, *z_box;
   PixelReader pxr_;
   Ui::ImagePrecisionDialog ui;
@@ -493,12 +532,13 @@ private:
 
       QWidget* vlabels = new QWidget(content);
       layout->addWidget(vlabels);
+      layout->setAlignment(Qt::AlignLeft);
       QHBoxLayout* vbox = new QHBoxLayout(vlabels);
-      vbox->setAlignment(Qt::AlignJustify);
-      QLabel* help = new QLabel(vlabels);
-      help->setText("Cut planes for the \nselected image:");
+      vbox->setAlignment(Qt::AlignLeft);
       QLabel* text = new QLabel(vlabels);
       text->setText("Isovalue at point:");
+      QLabel* help = new QLabel(vlabels);
+      help->setText("Cut planes for the selected image:");
       QLabel* x = new QLabel(vlabels);
 
       connect(&pxr_, SIGNAL(x(int)), x, SLOT(setNum(int)));
@@ -519,6 +559,7 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
+    QRegExpValidator* validator = new QRegExpValidator(QRegExp("\\d*"), this);
     if(x_control == NULL)
     {
       x_control = new QWidget;
@@ -529,12 +570,14 @@ private:
       label->setStyleSheet("QLabel { color : red; }");
       label->setText("X Slice");
 
-      x_cubeLabel = new QLabel(x_control);
+      x_cubeLabel = new QLineEdit(x_control);
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = x_cubeLabel->fontMetrics();
       x_cubeLabel->setFixedWidth(metric.width(QString("9999")));
-      x_cubeLabel->setNum(0);
+      x_cubeLabel->setText("0");
+      x_cubeLabel->setValidator(validator);
+
       x_slider = new QSlider(mw);
 
       x_box->addWidget(label);
@@ -552,13 +595,13 @@ private:
       label->setStyleSheet("QLabel { color : green; }");
       label->setText("Y Slice");
 
-      y_cubeLabel = new QLabel(y_control);
+      y_cubeLabel = new QLineEdit(y_control);
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = y_cubeLabel->fontMetrics();
       y_cubeLabel->setFixedWidth(metric.width(QString("9999")));
-      y_cubeLabel->setNum(0);
-
+      y_cubeLabel->setText("0");
+      y_cubeLabel->setValidator(validator);
       y_slider = new QSlider(mw);
 
       y_box->addWidget(label);
@@ -576,12 +619,13 @@ private:
       label->setStyleSheet("QLabel { color : blue; }");
       label->setText("Z Slice");
 
-      z_cubeLabel = new QLabel(z_control);
+      z_cubeLabel = new QLineEdit(z_control);
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = z_cubeLabel->fontMetrics();
       z_cubeLabel->setFixedWidth(metric.width(QString("9999")));
-      z_cubeLabel->setNum(0);
+      z_cubeLabel->setText("0");
+      z_cubeLabel->setValidator(validator);
       z_slider = new QSlider(mw);
 
       z_box->addWidget(label);
@@ -797,8 +841,9 @@ private Q_SLOTS:
       x_slider = new Plane_slider(x_plane->translationVector(), scene->item_id(x_plane), scene, x_plane->manipulatedFrame(),
                                   Qt::Horizontal, x_control);
       x_slider->setRange(0, (x_plane->cDim() - 1) * 100);
-      connect(x_slider, SIGNAL(realChange(int)), x_cubeLabel, SLOT(setNum(int)));
-      connect(x_plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(x_slider, SIGNAL(realChange(int)), this, SLOT(setXNum(int)));
+      connect(x_plane, SIGNAL(manipulated(int)), this, SLOT(setXNum(int)));
+      connect(x_cubeLabel, SIGNAL(textEdited(QString)), this, SLOT(XTextEdited(QString)));
       connect(x_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
       connect(x_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(x_slider, SIGNAL(sliderMoved(int)), x_slider, SLOT(updateFramePosition()));
@@ -816,8 +861,9 @@ private Q_SLOTS:
       y_slider = new Plane_slider(y_plane->translationVector(), scene->item_id(y_plane), scene, y_plane->manipulatedFrame(),
                                   Qt::Horizontal, z_control);
       y_slider->setRange(0, (y_plane->cDim() - 1) * 100);
-      connect(y_slider, SIGNAL(realChange(int)), y_cubeLabel, SLOT(setNum(int)));
-      connect(y_plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(y_slider, SIGNAL(realChange(int)), this, SLOT(setYNum(int)));
+      connect(y_plane, SIGNAL(manipulated(int)), this, SLOT(setYNum(int)));
+      connect(y_cubeLabel, SIGNAL(textEdited(QString)), this, SLOT(YTextEdited(QString)));
       connect(y_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
       connect(y_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(y_slider, SIGNAL(sliderMoved(int)), y_slider, SLOT(updateFramePosition()));
@@ -834,8 +880,9 @@ private Q_SLOTS:
       z_slider = new Plane_slider(z_plane->translationVector(), scene->item_id(z_plane), scene, z_plane->manipulatedFrame(),
                                   Qt::Horizontal, z_control);
       z_slider->setRange(0, (z_plane->cDim() - 1) * 100);
-      connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
-      connect(z_plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(z_slider, SIGNAL(realChange(int)), this, SLOT(setZNum(int)));
+      connect(z_plane, SIGNAL(manipulated(int)), this, SLOT(setZNum(int)));
+      connect(z_cubeLabel, SIGNAL(textEdited(QString)), this, SLOT(ZTextEdited(QString)));
       connect(z_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
       connect(z_slider, SIGNAL(sliderMoved(int)), z_slider, SLOT(updateFramePosition()));
       connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
