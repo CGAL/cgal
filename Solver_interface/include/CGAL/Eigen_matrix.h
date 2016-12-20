@@ -118,9 +118,9 @@ public:
   }
 
   /// Return the matrix number of rows
-  int row_dimension() const    { return m_matrix.rows(); }
+  int row_dimension() const    { return static_cast<int>(m_matrix.rows()); }
   /// Return the matrix number of columns
-  int column_dimension() const { return m_matrix.cols(); }
+  int column_dimension() const { return static_cast<int>(m_matrix.cols()); }
 
 
   /// Write access to a matrix coefficient: a_ij <- val.
