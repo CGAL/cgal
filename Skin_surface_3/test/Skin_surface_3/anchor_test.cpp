@@ -5,20 +5,18 @@
 // *********************
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cassert>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Regular_traits;
-typedef CGAL::Regular_triangulation_3<Regular_traits>       Regular;
+typedef CGAL::Regular_triangulation_3<K>       Regular;
 
 #include <CGAL/Compute_anchor_3.h>
 
 #include <fstream>
 
 #include <CGAL/Triangulation_simplex_3.h>
-typedef Regular_traits::RT                     Weight;
-typedef Regular_traits::Bare_point             Point;
-typedef Regular_traits::Weighted_point         Weighted_point;
+typedef K::RT                                  Weight;
+typedef K::Point_3                             Point;
+typedef K::Weighted_point_3                    Weighted_point;
 typedef Regular::Vertex_handle                 Vertex_handle;
 typedef Regular::Edge                          Edge;
 typedef Regular::Facet                         Facet;

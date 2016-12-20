@@ -22,17 +22,14 @@
 #include <CGAL/double.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
 #include <CGAL/_test_regular_neighbors_2.cpp>
 
 
-struct K : CGAL::Exact_predicates_exact_constructions_kernel {};
-typedef double W;
+typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K,W>  Gt1;
-typedef CGAL::Regular_triangulation_2<Gt1>                   Rt1;
+typedef CGAL::Regular_triangulation_2<K>                  Rt1;
 
 int main()
 {

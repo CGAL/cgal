@@ -19,20 +19,20 @@
 // Author(s)     : Monique Teillaud (Monique.Teillaud@sophia.inria.fr)
 
 // This stuff is not used (obsolete) at the moment.
-#if 0
+
 #include <iostream>
 #include <fstream>
 #include <list>
-
+#include <CGAL/use.h>
 template <class Triangulation>
 void
 _test_cls_regular_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
   typedef typename Triangulation::Traits Tr;
-  typedef typename Tr::Traits_base Tb;
+  CGAL_USE_TYPE(Tr);
 
-  typedef typename Tb::Point Bare_point;
+  typedef typename Triangulation::Bare_point Bare_point;
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
   //  typedef  typename Cls::Bare_point Point;
@@ -50,8 +50,8 @@ _test_cls_regular_3(const Triangulation &)
   std::cout << " number of inserted points : " ;
   for ( m=0; m<5; m++) {
     if ( (m%2)== 0 ) 
-      T1.insert( Weighted_point( Point( 2*m,0,0 ), 2 ) );
-    else T1.insert( Weighted_point( Point( -2*m+1,0,0 ), 2 ) );
+      T1.insert( Weighted_point( Bare_point( 2*m,0,0 ), 2 ) );
+    else T1.insert( Weighted_point( Bare_point( -2*m+1,0,0 ), 2 ) );
     count++;
     if (count <10)
       std::cout << count << '\b' ;
@@ -69,8 +69,8 @@ _test_cls_regular_3(const Triangulation &)
   std::cout << " number of inserted points : " ;
   for ( m=0; m<5; m++) {
     if ( (m%2)== 0 ) 
-      T1.insert( Weighted_point( Point( 2*m+1,0,0 ), 5 ) );
-    else T1.insert( Weighted_point( Point( -2*m+1,0,0 ), 5 ) );
+      T1.insert( Weighted_point( Bare_point( 2*m+1,0,0 ), 5 ) );
+    else T1.insert( Weighted_point( Bare_point( -2*m+1,0,0 ), 5 ) );
     count++;
     if (count <10)
       std::cout << count << '\b' ;
@@ -88,8 +88,8 @@ _test_cls_regular_3(const Triangulation &)
   std::cout << " number of inserted points : " ;
   for ( m=0; m<10; m++) {
     if ( (m%2)== 0 ) 
-      T1.insert( Weighted_point( Point( m,0,0 ), 1 ) );
-    else T1.insert( Weighted_point( Point( -m,0,0 ), 1 ) );
+      T1.insert( Weighted_point( Bare_point( m,0,0 ), 1 ) );
+    else T1.insert( Weighted_point( Bare_point( -m,0,0 ), 1 ) );
     count++;
     if (count <10)
       std::cout << count << '\b' ;
@@ -114,7 +114,7 @@ _test_cls_regular_3(const Triangulation &)
   int qx=-1, qy=2;
   for (m=0; m<10; m++)
     for (n=0; n<10; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 1 ) );
+      T2.insert( Weighted_point( Bare_point(m*px+n*qx, m*py+n*qy, 0), 1 ) );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
@@ -127,7 +127,7 @@ _test_cls_regular_3(const Triangulation &)
     }
   for (m=10; m<20; m++)
     for (n=0; n<10; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -1 ) );
+      T2.insert( Weighted_point( Bare_point(m*px+n*qx, m*py+n*qy, 0), -1 ) );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
@@ -140,7 +140,7 @@ _test_cls_regular_3(const Triangulation &)
     }
   for (m=0; m<10; m++)
     for (n=10; n<20; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -2 ) );
+      T2.insert( Weighted_point( Bare_point(m*px+n*qx, m*py+n*qy, 0), -2 ) );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
@@ -153,7 +153,7 @@ _test_cls_regular_3(const Triangulation &)
     }
   for (m=10; m<20; m++)
     for (n=10; n<20; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 5 ) );
+      T2.insert( Weighted_point( Bare_point(m*px+n*qx, m*py+n*qy, 0), 5 ) );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
@@ -179,11 +179,11 @@ _test_cls_regular_3(const Triangulation &)
   for (a=0;a!=10;a++)
     for (b=0;b!=10;b++)
       for (d=0;d!=10;d++)
-	lp.push_back(Weighted_point( Point(a*b-d*a + (a-b)*10 +a ,
+	lp.push_back(Weighted_point( Bare_point(a*b-d*a + (a-b)*10 +a ,
 					   a-b+d +5*b,
 					   a*a-d*d+b),
 				     a*b-a*d) );
-  list_point::iterator it;
+  typename list_point::iterator it;
   count = 0 ;
   std::cout << " number of inserted points : " ;
   for (it=lp.begin(); it!=lp.end();it++){
@@ -208,4 +208,4 @@ _test_cls_regular_3(const Triangulation &)
   assert(T.dimension()==3);
 }
 
-#endif
+

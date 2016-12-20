@@ -29,7 +29,6 @@ typedef unsigned int uint;
 
 #include <ipelib.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Weighted_point.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/grabbers.h>
@@ -93,7 +92,7 @@ namespace CGAL{
     //typedefs
     typedef typename Kernel::FT                                               FT;
     typedef typename CGAL::Point_2<Kernel>                                    Point_2;
-    typedef typename CGAL::Weighted_point<Point_2,FT>                         Weighted_point_2;
+    typedef typename CGAL::Weighted_point_2<Kernel>                           Weighted_point_2;
     typedef typename Kernel::Segment_2                                        Segment_2;
     typedef typename Kernel::Ray_2                                            Ray_2;
     typedef typename Kernel::Line_2                                           Line_2;

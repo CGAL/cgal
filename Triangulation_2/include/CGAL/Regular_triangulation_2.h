@@ -22,12 +22,16 @@
 #define CGAL_REGULAR_TRIANGULATION_2_H
 
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/Object.h>
+#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
 
 #include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -35,6 +39,7 @@
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL { 
@@ -54,16 +59,23 @@ template < class Gt,
                         Regular_triangulation_vertex_base_2<Gt>,
 		        Regular_triangulation_face_base_2<Gt> > >
 class Regular_triangulation_2 
-  : public Triangulation_2<Weighted_point_mapper_2<Gt>,Tds>
+  : public Triangulation_2<
+      Weighted_point_mapper_2<Gt>,
+      Tds>
 {
   typedef Regular_triangulation_2<Gt, Tds>                         Self;
-  typedef Triangulation_2<Weighted_point_mapper_2<Gt>,Tds>         Base;
+  typedef Weighted_point_mapper_2<Gt>                              RT_traits;
+  typedef Triangulation_2<RT_traits, Tds>                          Base;
 public:
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
-  typedef typename Gt::Point_2                 Bare_point;
+  typedef typename boost::mpl::eval_if_c<
+      internal::Has_nested_type_Bare_point<Gt>::value,
+      typename internal::Bare_point_type<Gt>,
+      boost::mpl::identity<typename Gt::Point_2>
+    >::type                                    Bare_point;
   typedef typename Gt::Weighted_point_2        Weighted_point;
-  typedef typename Gt::Weight                  Weight;
+  typedef typename Gt::FT                      Weight;
 
   typedef typename Base::size_type             size_type;
   typedef typename Base::Face_handle           Face_handle;
@@ -194,15 +206,25 @@ private:
   size_type _hidden_vertices;
 
 public:
-  Regular_triangulation_2(const Gt& gt=Gt()) 
-    : Base(Weighted_point_mapper_2<Gt>(gt)), _hidden_vertices(0) {}
+  Regular_triangulation_2()
+    : Base(), _hidden_vertices(0) {}
+
+  Regular_triangulation_2(const Gt& gt)
+    : Base(RT_traits(gt)), _hidden_vertices(0) {}
 
   Regular_triangulation_2(const Regular_triangulation_2 &rt);
 
   template < class InputIterator >
   Regular_triangulation_2(InputIterator first, InputIterator last,
-                          const Gt& gt=Gt())
-    : Base(Weighted_point_mapper_2<Gt>(gt)), _hidden_vertices(0)
+                          const Gt& gt)
+    : Base(RT_traits(gt)), _hidden_vertices(0)
+  {
+    insert(first, last);
+  }
+
+  template < class InputIterator >
+  Regular_triangulation_2(InputIterator first, InputIterator last)
+    : Base(), _hidden_vertices(0)
   {
     insert(first, last);
   }
@@ -795,7 +817,7 @@ power_test(const Weighted_point &p0,
 
     using namespace boost;
 
-    Oriented_side os = geom_traits().power_test_2_object()(p0, p1, p2, p);
+    Oriented_side os = geom_traits().power_side_of_oriented_power_circle_2_object()(p0, p1, p2, p);
 
     if ( (os != ON_ORIENTED_BOUNDARY) || (! perturb))
         return os;
@@ -841,7 +863,7 @@ power_test(const Weighted_point &p,
 	   const Weighted_point &q,
 	   const Weighted_point &r) const
 {
-  return geom_traits().power_test_2_object()(p,q,r);
+  return geom_traits().power_side_of_oriented_power_circle_2_object()(p,q,r);
 }
 
 template < class Gt, class Tds >
@@ -851,7 +873,7 @@ Regular_triangulation_2<Gt,Tds>::
 power_test(const Weighted_point &p,
 	   const Weighted_point &r) const
 {
-  return geom_traits().power_test_2_object()(p,r);
+  return geom_traits().power_side_of_oriented_power_circle_2_object()(p,r);
 }
 
 template < class Gt, class Tds >
@@ -1796,10 +1818,10 @@ update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
     const Weighted_point& a1 = f1->vertex(f1->index(f2))->point();
     const Weighted_point& a  = f1->vertex(1-f1->index(f2))->point();
     while ( ! p_list.empty() ) {
-      if ( compare_x(a, p_list.front()->point()) == 
-	   compare_x(a, a1)  &&
-	   compare_y(a, p_list.front()->point()) == 
-	   compare_y(a, a1))
+      if ( this->compare_x(a, p_list.front()->point()) ==
+	   this->compare_x(a, a1)  &&
+	   this->compare_y(a, p_list.front()->point()) ==
+	   this->compare_y(a, a1))
 	{
 	  hide_vertex(f1, p_list.front());
 	} else {

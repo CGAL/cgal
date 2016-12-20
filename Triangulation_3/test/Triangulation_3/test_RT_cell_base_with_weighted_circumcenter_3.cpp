@@ -21,7 +21,6 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -32,15 +31,14 @@
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
 
-typedef CGAL::Triangulation_vertex_base_3<K> Vb;
+typedef CGAL::Regular_triangulation_vertex_base_3<K> Vb;
 typedef CGAL::Triangulation_cell_base_3<K> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb>      Tds;
 
-typedef CGAL::Regular_triangulation_3<Regular_traits, Tds> Regular_triangulation_3;
+typedef CGAL::Regular_triangulation_3<K, Tds> Regular_triangulation_3;
 
-typedef CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<Regular_traits>::Rebind_TDS<Tds>::Other Cell_type;
+typedef CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<K>::Rebind_TDS<Tds>::Other Cell_type;
 
 typedef Cell_type::Vertex_handle Vertex_handle;
 typedef Cell_type::Cell_handle Cell_handle;
@@ -51,9 +49,9 @@ typedef Regular_triangulation_3::Bare_point Bare_point;
 
 // Explicit instantiation of the whole class.
 template class
-CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<Regular_traits,
-    CGAL::Regular_triangulation_cell_base_3<Regular_traits,
-    CGAL::Triangulation_cell_base_3<Regular_traits,
+CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<K,
+    CGAL::Regular_triangulation_cell_base_3<K,
+    CGAL::Triangulation_cell_base_3<K,
     CGAL::Triangulation_ds_cell_base_3<Tds>
     > > >;
 

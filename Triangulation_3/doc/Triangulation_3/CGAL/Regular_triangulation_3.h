@@ -1,5 +1,17 @@
 
 namespace CGAL {
+/*!
+\ingroup PkgTriangulation3
+Helper class used by `Regular_triangulation_3` to pass a weighted point as a point
+to its base class `Triangulation_3`.
+\tparam Traits must be a model of the concept `RegularTriangulationTraits_3`
+*/
+template < typename Traits >
+struct Weighted_point_mapper_3
+  :   public Traits
+{
+  typedef typename Traits::Weighted_point_3 Point_3;
+};
 
 /*!
 \ingroup PkgTriangulation3TriangulationClasses
@@ -27,7 +39,7 @@ the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres 
 of all simplices are regular. 
 
-\tparam  RegularTriangulationTraits_3 is the geometric traits class.
+\tparam  RegularTriangulationTraits_3 is the geometric traits class, model of `RegularTriangulationTraits_3`
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
@@ -51,7 +63,7 @@ the documentation of the operations for more details.
 \sa `CGAL::Delaunay_triangulation_3` 
 */
 template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SurjectiveLockDataStructure >
-class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure> {
+class Regular_triangulation_3 : public Triangulation_3<Weighted_point_mapper<RegularTriangulationTraits_3>,TriangulationDataStructure_3,SurjectiveLockDataStructure> {
 public:
 
 /// \name Types 
@@ -61,7 +73,7 @@ public:
 The type for points 
 `p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
 */ 
-typedef RegularTriangulationTraits_3::Bare_point Bare_point; 
+typedef RegularTriangulationTraits_3::Point_3 Bare_point; 
 
 /*!
 
@@ -287,7 +299,7 @@ int remove(InputIterator first, InputIterator beyond);
 Let us remark that \f$ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f$ is equivalent to `p` lies outside the sphere with center `z` and radius \f$ \sqrt{w_p^2+w_z^2}\f$. This remark helps provide an intuition about the following predicates.
 
 \anchor Triangulation3figsidedim2
-\image html sidedim2.png side_of_power_circle
+\image html sidedim2.svg side_of_power_circle
 \image latex sidedim2.png side_of_power_circle
 */
 

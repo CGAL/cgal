@@ -77,6 +77,7 @@ is opposite to the vertex with the same index. See
 - `TriangulationCellBase_3`
 - `TriangulationCellBaseWithInfo_3`
 - `DelaunayTriangulationCellBase_3`
+- `RegularTriangulationVertexBase_3`
 - `RegularTriangulationCellBase_3`
 - `TriangulationDataStructure_3`
 - `WeightedPoint`
@@ -95,6 +96,7 @@ is opposite to the vertex with the same index. See
 - `CGAL::Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, TriangulationCellBase_3>` (deprecated)
 - `CGAL::Delaunay_triangulation_cell_base_3<DelaunayTriangulationTraits_3,Cb>`
 - `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3,Cb>`
+- `CGAL::Regular_triangulation_vertex_base_3<RegularTriangulationTraits_3,Vb>`
 - `CGAL::Regular_triangulation_cell_base_3<RegularTriangulationTraits_3,Cb>`
 - `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<RegularTriangulationTraits_3,Cb>`
 - `CGAL::Triangulation_simplex_3<Triangulation_3>`

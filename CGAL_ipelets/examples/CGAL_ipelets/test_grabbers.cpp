@@ -12,7 +12,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Segment_2 Segment_2;
 typedef Kernel::Circle_2 Circle_2;
-typedef CGAL::Weighted_point<Point_2,Kernel::FT> Weighted_point;
+typedef Kernel::Weighted_point_2 Weighted_point;
 typedef CGAL::Polygon_2<Kernel> Polygon_2;
 
 

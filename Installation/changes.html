@@ -160,7 +160,12 @@ and <code>src/</code> directories).
   </ul>
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels -->
+<!-- Geometry Kernels --> 
+ <h3>Linear Kernel</h3>
+  <ul>
+    <li>Added a 2D and 3D weighted point class and predicates and constructions.
+    </li>
+  </ul>
 <!-- Convex Hull Algorithms -->
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->
@@ -189,6 +194,36 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
+ <h3>2D Triangulations</h3>
+  <ul>
+    <li><b>Breaking change</b>: Removed the arbitrary dimensional weighted point class.
+      Users must use a version prior to 4.9 if they need this class.</li>
+    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_2</code>.
+      Users must replace it by the filtered kernel that they passed as template argument.</li>
+    <li><b>Breaking change</b>:The number type of weighted points in regular triangulations is no longer
+      a template parameter but the field type of the geometric traits class.
+      Users who need this feature must use a version prior to 4.9</li>
+    <li>Deprecate the class <code>Regular_triangulation_euclidean_traits_2</code>, as the
+        weighted point and the function objects for weighted points are part of the concept <code>Kernel</code>/</li>
+    <li>The class <code>Regular_triangulation_2</code> can take a kernel as template argument,
+      that is one no longer has to use <code>Regular_triangulation_euclidea_traits_2</code>,
+      although this still works.</li>
+  </ul>
+
+ <h3>3D Triangulations</h3>
+  <ul>
+    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_3</code>.
+      Users must replace it by the filtered kernel that they passed as template argument.</li>
+    <li><b>Breaking change</b>: The number type of weighted points in regular triangulations is no longer
+        a template parameter but the field type of the geometric traits class.
+        Users who need this feature must use a version prior to 4.9.</li>
+    <li>Deprecate the class <code>Regular_triangulation_euclidean_traits_3</code>, as the
+        weighted point and the function objects for weighted points are part of the concept <code>Kernel</code>/</li>
+    <li>The class <code>Regular_triangulation_3</code> can take a kernel as template argument,
+      that is one no longer has to use <code>Regular_triangulation_euclidea_traits_3</code>,
+      although this still works.</li>
+  </ul>
+  </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
 <h3> 3D Mesh Generation </h3>

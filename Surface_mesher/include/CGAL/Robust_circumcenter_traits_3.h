@@ -47,8 +47,8 @@ public:
 
   typedef Bare_point       result_type;
 
-  typedef Weighted_converter_3<Cartesian_converter<typename K::Kernel, EK2> >  To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK2, typename K::Kernel> >  Back_from_exact;
+  typedef Cartesian_converter<typename K::Kernel, EK2>  To_exact;
+  typedef Cartesian_converter<EK2, typename K::Kernel>  Back_from_exact;
   
 
   Bare_point operator() ( const Weighted_point_3 & p,

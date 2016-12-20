@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/point_generators_3.h>
 
 #include <iostream>
@@ -11,16 +10,15 @@ int main()
 {
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
-  typedef Traits::Bare_point                                  Point;
+  typedef K::Point_3                                          Point;
 
   // Regular T3
   typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Triangulation_vertex_base_3<Traits>, 
-    CGAL::Regular_triangulation_cell_base_3<Traits>, 
+    CGAL::Regular_triangulation_vertex_base_3<K>, 
+    CGAL::Regular_triangulation_cell_base_3<K>, 
     CGAL::Parallel_tag>                                       Tds;
 
-  typedef CGAL::Regular_triangulation_3<Traits, Tds>          Rt;
+  typedef CGAL::Regular_triangulation_3<K, Tds>               Rt;
   typedef Rt::Vertex_handle                                   Vertex_handle;
 
   const int NUM_INSERTED_POINTS = 5000;

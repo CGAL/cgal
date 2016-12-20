@@ -14,7 +14,7 @@ void extract_balls_from_pdb(const char *filename,
   typedef ESBTL::Generic_classifier<ESBTL::Radius_of_atom<double,typename System::Atom> >     T_Atom_classifier;
   typedef ESBTL::Accept_none_occupancy_policy<ESBTL::PDB::Line_format<> >                     Accept_none_occupancy_policy;
   typedef ESBTL::Weighted_atom_iterator<typename System::Model,
-                                        CGAL::Weighted_point<typename K::Point_3,double>,
+                                        typename K::Weighted_point_3,
                                         ESBTL::Weight_of_atoms<T_Atom_classifier> >  Weighted_atom_iterator;  
   
   ESBTL::PDB_line_selector sel;

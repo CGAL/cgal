@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 	     std::cout << "Instant located outside hull" <<std::endl; 
 	   }
 	   st.insert(sp, h);
-	   pm[sp]= pm.size()-1;
+	   pm[sp]= static_cast<int>(pm.size()-1);
 	 }
 	 simtr.active_points_3_table_handle()->set_is_editing(true);
 	 Simulation_traits::Active_points_3_table::Key vp=simtr.active_points_3_table_handle()->insert(p);

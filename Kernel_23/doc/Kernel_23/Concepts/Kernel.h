@@ -126,6 +126,11 @@ public:
   typedef unspecified_type Point_2; 
 
   /*!
+    a model of `Kernel::WeightedPoint_2` 
+  */ 
+  typedef unspecified_type Weighted_point_2; 
+
+  /*!
     a model of `Kernel::Vector_2` 
   */ 
   typedef unspecified_type Vector_2; 
@@ -301,10 +306,6 @@ public:
   */ 
   typedef unspecified_type Construct_perpendicular_line_2; 
 
-  /*!
-    a model of `Kernel::ConstructMaxVertex_2` 
-  */ 
-  typedef unspecified_type Construct_max_vertex_2; 
 
   /*!
     a model of `Kernel::ConstructMidpoint_2` 
@@ -315,11 +316,6 @@ public:
     a model of `Kernel::ConstructEquidistantLine_3` 
   */ 
   typedef unspecified_type Construct_equidistant_line_3; 
-
-  /*!
-    a model of `Kernel::ConstructMinVertex_2` 
-  */ 
-  typedef unspecified_type Construct_min_vertex_2; 
 
   /*!
     a model of `Kernel::ConstructCenter_2` 
@@ -342,9 +338,19 @@ public:
   typedef unspecified_type Construct_circumcenter_2; 
 
   /*!
+    a model of `Kernel::ConstructWeightedCircumcenter_2`
+  */
+  typedef unspecified_type Construct_weighted_circumcenter_2;
+
+  /*!
     a model of `Kernel::ConstructBisector_2` 
   */ 
   typedef unspecified_type Construct_bisector_2; 
+
+  /*!
+    a model of `Kernel::ConstructRadicalAxis_2`
+  */
+  typedef unspecified_type Construct_radical_axis_2;
 
   /*!
     a model of `Kernel::ConstructRadicalLine_2`
@@ -415,6 +421,11 @@ public:
   a model of `Kernel::Assign_2` 
   */ 
   typedef unspecified_type Assign_2; 
+
+  /*!
+    a model of `Kernel::ComputeWeight_2`
+  */
+  typedef unspecified_type Compute_weight_2;
 
   /*!
     a model of `Kernel::ComputeX_2`
@@ -602,6 +613,11 @@ public:
   typedef unspecified_type Compare_distance_2; 
 
   /*!
+    a model of `Kernel::ComparePowerDistance_2` 
+  */ 
+  typedef unspecified_type Compare_power_distance_2; 
+
+  /*!
     a model of `Kernel::CompareSquaredDistance_2`
   */
   typedef unspecified_type Compare_square_distance_2;
@@ -655,6 +671,11 @@ public:
     a model of `Kernel::SideOfBoundedCircle_2` 
   */ 
   typedef unspecified_type Side_of_bounded_circle_2; 
+
+  /*!
+    a model of `Kernel::PowerSideOfOrientedPowerCircle_2` 
+  */ 
+  typedef unspecified_type Power_side_of_oriented_power_circle_2; 
 
   /*!
     a model of `Kernel::IsHorizontal_2` 
@@ -770,6 +791,11 @@ public:
     a model of `Kernel::Point_3` 
   */ 
   typedef unspecified_type Point_3; 
+
+  /*!
+    a model of `Kernel::WeightedPoint_3` 
+  */ 
+  typedef unspecified_type Weighted_point_3; 
 
   /*!
     a model of `Kernel::Vector_3` 
@@ -1032,6 +1058,11 @@ public:
   typedef unspecified_type Construct_circumcenter_3; 
 
   /*!
+    a model of `Kernel::ConstructWeightedCircumcenter_3` 
+  */ 
+  typedef unspecified_type Construct_weighted_circumcenter_3; 
+
+  /*!
     a model of `Kernel::ConstructBisector_3` 
   */ 
   typedef unspecified_type Construct_bisector_3; 
@@ -1096,6 +1127,11 @@ public:
     a model of `Kernel::Assign_3` 
   */ 
   typedef unspecified_type Assign_3; 
+
+  /*!
+    a model of `Kernel::ComputeWeight_3`
+  */
+  typedef unspecified_type Compute_weight_3;
 
   /*!
     a model of `Kernel::ComputeX_3`
@@ -1262,6 +1298,16 @@ public:
   */ 
   typedef unspecified_type Compute_volume_3; 
 
+  /*!
+    a model of `Kernel::ComputePowerProduct_3` 
+  */ 
+  typedef unspecified_type Compute_power_product_3; 
+
+  /*!
+    a model of `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
+  */
+  typedef unspecified_type Compute_squared_radius_smallest_orthogonal_sphere_3;
+
   /// @} 
 
   /// \name Three-dimensional Generalized Predicates
@@ -1323,6 +1369,11 @@ public:
   typedef unspecified_type Less_xyz_3; 
 
   /*!
+    a model of `Kernel::CompareWeightedSquaredRadius_3`
+  */
+  typedef unspecified_type Compare_weighted_squared_radius_3;
+
+  /*!
     a model of `Kernel::CompareX_3` 
   */ 
   typedef unspecified_type Compare_x_3; 
@@ -1373,6 +1424,16 @@ public:
   typedef unspecified_type Compare_distance_3; 
 
   /*!
+    a model of `Kernel::ComparePowerDistance_3` 
+  */ 
+  typedef unspecified_type Compare_power_distance_3; 
+
+  /*!
+    a model of `Kernel::ComparePowerDistanceToPowerSphere_3` 
+  */ 
+  typedef unspecified_type Compare_power_distance_to_power_sphere_3; 
+
+  /*!
     a model of `Kernel::Collinear_3` 
   */ 
   typedef unspecified_type Collinear_3; 
@@ -1406,6 +1467,16 @@ public:
     a model of `Kernel::SideOfBoundedSphere_3` 
   */ 
   typedef unspecified_type Side_of_bounded_sphere_3; 
+
+  /*!
+    a model of `Kernel::PowerSideOfOrientedPowerSphere_3` 
+  */ 
+  typedef unspecified_type Power_side_of_oriented_power_sphere_3; 
+
+  /*!
+    a model of `Kernel::PowerSideOfBoundedPowerSphere_3` 
+  */ 
+  typedef unspecified_type Power_side_of_bounded_power_sphere_3; 
 
   /*!
     a model of `Kernel::IsDegenerate_3` 

@@ -6,8 +6,10 @@
 // General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -31,12 +33,12 @@
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
   
   template <typename K_base>
-  class Power_test_3:
-    public K_base::Power_test_3
+  class Power_side_of_oriented_power_sphere_3:
+    public K_base::Power_side_of_oriented_power_sphere_3
   {
     typedef typename K_base::Weighted_point_3 Weighted_point_3;
     typedef typename K_base::FT FT;
-    typedef typename K_base::Power_test_3 Base;
+    typedef typename K_base::Power_side_of_oriented_power_sphere_3 Base;
   public:
     typedef typename Base::result_type result_type;
   
@@ -130,8 +132,8 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                              const Weighted_point_3 & s,
                              const Weighted_point_3 & t) const
     {
-      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 4+1 wpoints", tmp);
-      
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_power_sphere_3 with 4+1 wpoints", tmp);
+
       double px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, sx, sy, sz, swt, tx, ty, tz, twt;
       init_double(px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, (FT*)(0));
       init_double(sx, sy, sz, swt, tx, ty, tz, twt, (FT*)(0));
@@ -276,7 +278,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                              const Weighted_point_3 & t) const
     {
 
-      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 3+1 wpoints", tmp);
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_oriented_power_sphere_3 with 3+1 wpoints", tmp);
 
       double px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, tx, ty, tz, twt;
       init_double(px, py, pz, pwt, qx, qy, qz, qwt, (FT*)(0));
@@ -609,7 +611,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                              const Weighted_point_3 & t) const
     {
 
-      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 2+1 wpoints", tmp);
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_oriented_power_sphere_3 with 2+1 wpoints", tmp);
       
       double px, py, pz, pwt, qx, qy, qz, qwt, tx, ty, tz, twt;
       init_double(px, py, pz, pwt, qx, qy, qz, qwt, tx, ty, tz, twt, (FT*)(0));

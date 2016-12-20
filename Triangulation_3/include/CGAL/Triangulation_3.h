@@ -397,6 +397,7 @@ public:
   typedef typename Tds::Concurrency_tag        Concurrency_tag;
 
   typedef typename Tds::Vertex                 Vertex;
+  CGAL_static_assertion((boost::is_same<Point, typename Vertex::Point>::value));
   typedef typename Tds::Cell                   Cell;
   typedef typename Tds::Facet                  Facet;
   typedef typename Tds::Edge                   Edge;
@@ -6135,7 +6136,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
           mp_vps[vv->point()] = vv;
         } else inf = true;
       }
-      spatial_sort(vps.begin(), vps.end());
+      spatial_sort(vps.begin(), vps.end(),geom_traits());
 
       std::size_t svps = vps.size();
 

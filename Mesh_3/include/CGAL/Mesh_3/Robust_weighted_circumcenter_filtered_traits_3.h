@@ -32,7 +32,7 @@
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
+#include <CGAL/constructions/kernel_ftC3.h>
 
 namespace CGAL {
 
@@ -42,8 +42,8 @@ class Robust_filtered_compute_squared_radius_3
 {
 public:
   typedef Exact_predicates_exact_constructions_kernel         EK;
-  typedef Weighted_converter_3<Cartesian_converter<K, EK> >   To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK,K> >    Back_from_exact;
+  typedef Cartesian_converter<K, EK>  To_exact;
+  typedef Cartesian_converter<EK,K>   Back_from_exact;
   
   typedef typename K::Point_3                         Point_3;
   typedef typename K::FT                              FT;
@@ -149,8 +149,8 @@ class Robust_filtered_construct_weighted_circumcenter_3
 {
 public:
   typedef Exact_predicates_exact_constructions_kernel          EK;
-  typedef Weighted_converter_3<Cartesian_converter<K_, EK> >   To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK,K_> >    Back_from_exact;
+  typedef Cartesian_converter<K_, EK>   To_exact;
+  typedef Cartesian_converter<EK,K_>     Back_from_exact;
   
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K_> Rt;
   typedef CGAL::Regular_triangulation_euclidean_traits_3<EK> Exact_Rt;
@@ -170,9 +170,9 @@ public:
   {
     CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
    
-    // We use Power_test_3: it is static filtered and
+    // We use power_side_of_power_sphere_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
-    typename Rt::Power_test_3 power_test = Rt().power_test_3_object();
+    typename Rt::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere = Rt().power_side_of_oriented_power_sphere_3_object();
 
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
@@ -202,7 +202,7 @@ public:
           return res;
       } else {
       // Fast output
-      if ( power_test(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
+      if ( power_side_of_oriented_power_sphere(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
         return res;
     }
     }
@@ -289,8 +289,8 @@ class Robust_filtered_compute_squared_radius_smallest_orthogonal_sphere_3
 {
 public:
   typedef Exact_predicates_exact_constructions_kernel          EK;
-  typedef Weighted_converter_3<Cartesian_converter<K_, EK> >   To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK,K_> >    Back_from_exact;
+  typedef Cartesian_converter<K_, EK>   To_exact;
+  typedef Cartesian_converter<EK,K_>     Back_from_exact;
   
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K_> Rt;
   typedef CGAL::Regular_triangulation_euclidean_traits_3<EK> Exact_Rt;

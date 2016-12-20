@@ -736,22 +736,9 @@ and a power test on these weighted points.
 The concept 
 `RegularTriangulationTraits_2`,
 is a refinement of the concept
-`TriangulationTraits_2`. \cgal provides 
-the class
-`Regular_triangulation_euclidean_traits_2<Rep,Weight>`
-which is a model for the traits concept
+`TriangulationTraits_2`. All \cgal kernels are a model for the traits concept
 `RegularTriangulationTraits_2`.
 
-\attention Note that, since the type `Weighted_point` is not defined 
-in \cgal kernels, plugging a filtered kernel such as 
-`Exact_predicates_exact_constructions_kernel` in
-`Regular_triangulation_euclidean_traits_2<K,Weight>` will in fact
-not provide exact predicates on weighted points.
-To solve this, there is also another model of the traits concept,
-`Regular_triangulation_filtered_traits_2<FK>`, which is providing filtered
-predicates (exact and efficient). The argument `FK` must be a
-model of the `Kernel` concept, and it is also restricted to be a
-instance of the `Filtered_kernel` template.
 
 \subsection Triangulation_2TheVertexTypeandFaceTypeof The Vertex Type and Face Type of a Regular Triangulation
 

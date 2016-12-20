@@ -77,7 +77,7 @@ class Regular_triangulation_edge_tester_2
     Site_2 s3 = v3->point();
     Site_2 s4 = v4->point();
     Oriented_side os =
-      dual.geom_traits().power_test_2_object()(s1,s2,s3,s4);
+      dual.geom_traits().power_side_of_oriented_power_circle_2_object()(s1,s2,s3,s4);
     return os == ON_ORIENTED_BOUNDARY;
   }
 

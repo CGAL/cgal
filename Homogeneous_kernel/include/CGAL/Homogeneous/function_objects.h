@@ -29,6 +29,8 @@
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/predicates/sign_of_determinant.h>
+#include <CGAL/Homogeneous/predicates_on_pointsH2.h>
+#include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 
 namespace CGAL {
 
@@ -739,6 +741,31 @@ namespace HomogeneousKernelFunctors {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
+
+
+
+  template < typename K >
+  class Compare_power_distance_2
+  {
+  public:
+    typedef typename K::Weighted_point_2         Weighted_point_2;
+    typedef typename K::Point_2                  Point_2;
+    typedef typename K::Comparison_result        Comparison_result;
+    
+    typedef Comparison_result   result_type;
+    
+    Comparison_result operator()(const Point_2& r,
+                                 const Weighted_point_2& q,
+                                 const Weighted_point_2& p) const
+    {
+      return CGAL::compare_power_distanceH2(p.hx(), p.hy(), p.hw(), p.weight(),
+                                            q.hx(), q.hy(), q.hw(), q.weight(),
+                                            r.hx(), r.hy(), r.hw());
+    }
+  };
+
+
+
 
   template <typename K>
   class Compare_slope_2
@@ -2567,6 +2594,7 @@ namespace HomogeneousKernelFunctors {
   };
 
 
+
   template <typename K>
   class Construct_sum_of_vectors_2
   {
@@ -3021,11 +3049,26 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::RT         RT;
     typedef typename K::FT         FT;
     typedef typename K::Point_2    Point_2;
+    typedef typename K::Weighted_point_2    Weighted_point_2;
     typedef typename K::Vector_2   Vector_2;
     typedef typename K::Line_2     Line_2;
     typedef typename Point_2::Rep  Rep;
   public:
-    typedef Point_2          result_type;
+
+    template<typename>
+    struct result {
+      typedef Point_2 type;
+    };
+
+    template<typename F>
+    struct result<F(Weighted_point_2)> {
+      typedef const Point_2& type;
+    };
+
+    template<typename F>
+    struct result<F(Point_2)> {
+      typedef const Point_2& type;
+    };
 
     Rep // Point_2
     operator()(Return_base_tag, Origin o) const
@@ -3062,6 +3105,14 @@ namespace HomogeneousKernelFunctors {
     }
 
 
+    const Point_2& 
+    operator()(const Point_2 & p) const
+    { return p; }
+
+    const Point_2& 
+    operator()(const Weighted_point_2 & p) const
+    { return p.rep().point(); }
+
     Point_2
     operator()(Origin o) const
     { return this->operator()(Return_base_tag(), o); }
@@ -3082,9 +3133,25 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::RT         RT;
     typedef typename K::FT         FT;
     typedef typename K::Point_3    Point_3;
+    typedef typename K::Weighted_point_3 Weighted_point_3;
     typedef typename Point_3::Rep  Rep;
+
   public:
-    typedef Point_3          result_type;
+
+  template<typename>
+    struct result {
+      typedef Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Weighted_point_3)> {
+      typedef const Point_3& type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3)> {
+      typedef const Point_3& type;
+    };
 
     Rep // Point_3
     operator()(Return_base_tag, Origin o) const
@@ -3103,6 +3170,13 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
 
+    const Point_3& 
+    operator()(const Point_3 & p) const
+    { return p; }
+
+    const Point_3& 
+    operator()(const Weighted_point_3 & p) const
+    { return p.rep().point(); }
 
     Point_3
     operator()(Origin o) const
@@ -3120,6 +3194,41 @@ namespace HomogeneousKernelFunctors {
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
     { return this->operator()(Return_base_tag(), x, y, z, w); }
+  };
+
+  template <typename K>
+  class Construct_weighted_point_2
+  {
+    typedef typename K::FT                 FT;
+    typedef typename K::Point_2            Point_2;
+    typedef typename K::Weighted_point_2   Weighted_point_2;
+    typedef typename Weighted_point_2::Rep Rep;
+  public:
+    typedef Weighted_point_2               result_type;
+
+    Rep
+    operator()(Return_base_tag, const Point_2& p, const FT& w) const
+    { return Rep(p,w); }
+
+    Rep
+    operator()(Return_base_tag, const FT& x, const FT& y) const
+    { return Rep(x,y); }
+  };
+
+
+  template <typename K>
+  class Construct_weighted_point_3
+  {
+    typedef typename K::RT                 RT;
+    typedef typename K::Point_3            Point_3;
+    typedef typename K::Weighted_point_3   Weighted_point_3;
+    typedef typename Weighted_point_3::Rep Rep;
+  public:
+    typedef Weighted_point_3               result_type;
+
+    Rep
+    operator()(Return_base_tag, const Point_3& p, const RT& w) const
+    { return Rep(p,w); }
   };
 
 
@@ -4267,6 +4376,101 @@ namespace HomogeneousKernelFunctors {
   };
 
 
+
+template < typename K >
+class Power_side_of_oriented_power_sphere_3
+{
+public:
+  typedef typename K::RT                                RT;
+  typedef typename K::FT                                FT;
+  typedef typename K::Weighted_point_3                  Weighted_point_3;
+  typedef typename K::Oriented_side                     Oriented_side;
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r,
+			     const Weighted_point_3 & s,
+			     const Weighted_point_3 & t) const
+    {
+      return power_testH3(p.hx(), p.hy(), p.hz(), p.hw(), p.weight(),
+                          q.hx(), q.hy(), q.hz(), q.hw(), q.weight(),
+                          r.hx(), r.hy(), r.hz(), r.hw(), r.weight(),
+                          s.hx(), s.hy(), s.hz(), s.hw(), s.weight(),
+                          t.hx(), t.hy(), t.hz(), t.hw(), t.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r,
+			     const Weighted_point_3 & s) const
+    {
+      return power_testH3(p.hx(), p.hy(), p.hz(), p.weight(),
+                          q.hx(), q.hy(), q.hz(), q.weight(),
+                          r.hx(), r.hy(), r.hz(), r.weight(),
+                          s.hx(), s.hy(), s.hz(), s.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r) const
+    {
+      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
+                          q.x(), q.y(), q.z(), q.weight(),
+                          r.x(), r.y(), r.z(), r.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q) const
+    {
+      return power_test_3(p.weight(),q.weight());
+    }
+};
+
+
+template < typename K >
+class Power_side_of_oriented_power_circle_2
+{
+public:
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Oriented_side            Oriented_side;
+
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & r,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( ! collinear(p, q, r) );
+      return power_testH2(p.hx(), p.hy(), p.hw(), p.weight(),
+		      q.hx(), q.hy(), q.hw(), q.weight(),
+		      r.hx(), r.hy(), r.hw(), r.weight(),
+		      t.hx(), t.hy(), t.hw(), t.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( collinear(p, q, r) );
+      //CGAL_kernel_precondition( p.point() != q.point() );
+      return power_testH2(p.hx(), p.hy(), p.hw(), p.weight(),
+                        q.hx(), q.hy(), q.hw(), q.weight(),
+                        t.hx(), t.hy(), t.hw(), t.weight());
+    }  
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( p.point() == r.point() );
+      Comparison_result r = CGAL::compare(p.weight(), t.weight());
+      if(r == LARGER)    return ON_NEGATIVE_SIDE;
+      else if (r == SMALLER) return ON_POSITIVE_SIDE;
+      return ON_ORIENTED_BOUNDARY;
+    }
+};
+
   template <typename K>
   class Oriented_side_2
   {
@@ -4586,6 +4790,29 @@ namespace HomogeneousKernelFunctors {
       return - CGAL_NTS sign(det);
     }
   };
+ 
+  template < typename K >
+  class Construct_radical_axis_2
+  {
+  public:
+    typedef typename K::Weighted_point_2                Weighted_point_2;
+    typedef typename K::Line_2                          Line_2;
+    typedef typename K::RT RT;
+
+    typedef Line_2           result_type;
+    
+    Line_2
+    operator() ( const Weighted_point_2 & p, const Weighted_point_2 & q) const
+    { 
+      typedef typename K::RT RT;
+      RT a,b,c;
+      radical_axisH2(p.hx(), p.hy(), p.hw(), p.weight(),
+                     q.hx(), q.hy(), q.hw(), q.weight(),a,b,c);
+
+      return Line_2(a,b,c);
+    }
+  };
+
 
 } // namespace HomogeneousKernelFunctors
 

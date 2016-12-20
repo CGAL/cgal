@@ -2166,7 +2166,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
 {
   Vertex_handle v;
   CGAL_triangulation_precondition(number_of_vertices() != 0);
-  CGAL_triangulation_precondition_code(
+  CGAL_triangulation_assertion_code(
       Locate_type lt_assert; int i_assert; int j_assert;);
   CGAL_triangulation_precondition(side_of_cell(tester.point(),o, c,
       lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);

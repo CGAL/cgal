@@ -681,9 +681,12 @@ locate_in_all(const Point& p,
   Face_handle position;
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
-  typename Geom_traits::Compare_distance_2 
+  typename Geom_traits::Compare_distance_2
     closer = this->geom_traits().compare_distance_2_object();
 
+  typename Geom_traits::Construct_point_2
+    construct_point = this->geom_traits().construct_point_2_object();
+  
   // find the highest level with enough vertices that is at the same time 2D
   while ( (hierarchy[--level]->number_of_vertices() 
 	   < static_cast<size_type> (Triangulation_hierarchy_2__minsize ))
@@ -706,9 +709,9 @@ locate_in_all(const Point& p,
     }
     else if (hierarchy[level]->is_infinite(position->vertex(1))){
       nearest = position->vertex(0);
-}     else if ( closer(p,
-		      position->vertex(0)->point(),
-		       position->vertex(1)->point()) == SMALLER){
+    }     else if ( closer(construct_point(p),
+                           construct_point(position->vertex(0)->point()),
+                           construct_point(position->vertex(1)->point())) == SMALLER){
       nearest = position->vertex(0);
 }
     else{
@@ -716,9 +719,9 @@ locate_in_all(const Point& p,
 }
     // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  NULL
     if ( (hierarchy[level]->dimension()==2) && (!  hierarchy[level]->is_infinite(position->vertex(2)))){
-      if ( closer( p, 
-		   position->vertex(2)->point(),
-		   nearest->point()) == SMALLER ){
+      if ( closer( construct_point(p), 
+		   construct_point(position->vertex(2)->point()),
+		   construct_point(nearest->point())) == SMALLER ){
 	nearest = position->vertex(2);
       }
     }

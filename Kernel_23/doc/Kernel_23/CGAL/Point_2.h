@@ -84,6 +84,11 @@ introduces a point `p` initialized to `(x,y)`.
 */ 
 Point_2(const Kernel::FT &x, const Kernel::FT &y); 
 
+/*!
+introduces a point from a weighted point. 
+*/ 
+Point_2(const Kernel::Weighted_point_2 &wp); 
+
 /// @} 
 
 /// \name Operations 

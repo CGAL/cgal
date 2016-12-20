@@ -1,21 +1,18 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <cassert>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>  Traits;
+typedef K::FT                                          Weight;
+typedef K::Point_3                                     Point;
+typedef K::Weighted_point_3                            Weighted_point;
 
-typedef Traits::RT                                          Weight;
-typedef Traits::Bare_point                                  Point;
-typedef Traits::Weighted_point                              Weighted_point;
+typedef CGAL::Regular_triangulation_3<K>               Rt;
 
-typedef CGAL::Regular_triangulation_3<Traits>               Rt;
-
-typedef Rt::Vertex_iterator                                 Vertex_iterator;
-typedef Rt::Vertex_handle                                   Vertex_handle;
+typedef Rt::Vertex_iterator                            Vertex_iterator;
+typedef Rt::Vertex_handle                              Vertex_handle;
 
 int main()
 {

@@ -49,8 +49,8 @@ public:
   typedef Filtered_predicate<
             typename Exact_traits::Side_of_mixed_cell_3,
             typename Filtering_traits::Side_of_mixed_cell_3,
-            Weighted_converter_3<C2E>,
-            Weighted_converter_3<C2F> >  Side_of_mixed_cell_3;
+            C2E,
+           C2F >  Side_of_mixed_cell_3;
 
   enum { Has_filtered_predicates=true };
   enum { Has_static_filters=false };

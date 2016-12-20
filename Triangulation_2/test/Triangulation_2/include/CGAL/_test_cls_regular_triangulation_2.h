@@ -154,10 +154,13 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   {
     Weighted_point p15_bis(p15.x(), p15.y());
     assert(p15_bis == p15);
-    CGAL::Weighted_point<CGAL::Simple_cartesian<double>::Point_3, double> w3(0, 0, 0);
   }
 
   Cls T;
+  
+  std::cerr << wp1 << " " << wp1.x()  << std::endl;
+  std::cerr << wp2 << std::endl;
+  std::cerr << wp3 << std::endl;
   assert(T.power_test(wp1,wp2,wp3) == CGAL::ON_NEGATIVE_SIDE);
   assert(T.power_test(wp1,wp8,wp2) == CGAL::ON_POSITIVE_SIDE);
   assert(T.power_test(wp2,wp8,wp9) == CGAL::ON_NEGATIVE_SIDE);

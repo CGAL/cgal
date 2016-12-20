@@ -72,7 +72,7 @@ public:
   typedef typename P::Point_3 Weighted_point_3;
   //typedef P::Static_kernel Static_kernel;
 
-  CGAL_MSA(Power_test,power_test, Weighted_point_3, 3);
+  CGAL_MSA(Power_side_of_oriented_power_sphere,power_side_of_oriented_power_sphere, Weighted_point_3, 3);
   CGAL_MSA(Equal, equal, Weighted_point_3, 3);
 };
 #undef CGAL_MSA

@@ -28,6 +28,17 @@
 
 #include <set>
 
+template < typename K_ >
+struct Weighted_point_mapper_3 
+  :   public K_ 
+{
+  typedef typename K_::Weighted_point_3 Point_3;
+
+  Weighted_point_mapper_3() {}
+  Weighted_point_mapper_3(const K_& k) : K_(k) {}
+};
+
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
@@ -35,9 +46,15 @@
 # include <tbb/concurrent_vector.h>
 #endif
 
+
 #include <CGAL/Triangulation_3.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+
 #include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -70,25 +87,26 @@ namespace CGAL {
   template < class Gt, class Tds_ = Default, class Lock_data_structure_ = Default >
   class Regular_triangulation_3
   : public Triangulation_3<
-      Gt,
+    Weighted_point_mapper_3<Gt>,
       typename Default::Get<Tds_, Triangulation_data_structure_3 <
-        Triangulation_vertex_base_3<Gt>,
-        Regular_triangulation_cell_base_3<Gt> > >::type,
+                                    Regular_triangulation_vertex_base_3<Gt>,
+                                    Regular_triangulation_cell_base_3<Gt> > >::type,
       Lock_data_structure_>
   {
+
     typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
+    typedef Weighted_point_mapper_3<Gt> Tr_Base_Gt;
 
     typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
-      Triangulation_vertex_base_3<Gt>,
+      Regular_triangulation_vertex_base_3<Gt>,
       Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
-    typedef Triangulation_3<Gt,Tds,Lock_data_structure_> Tr_Base;
-
   public:
+    typedef Triangulation_3<Tr_Base_Gt,Tds,Lock_data_structure_> Tr_Base;
 
     typedef Tds                                   Triangulation_data_structure;
     typedef Gt                                    Geom_traits;
-
+    typedef Geom_traits                           Traits;
     typedef typename Tr_Base::Concurrency_tag     Concurrency_tag;
     typedef typename Tr_Base::Lock_data_structure Lock_data_structure;
 
@@ -113,7 +131,12 @@ namespace CGAL {
     typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
     typedef typename Gt::Weighted_point_3            Weighted_point;
-    typedef typename Gt::Bare_point                  Bare_point;
+    typedef typename boost::mpl::eval_if_c<
+      internal::Has_nested_type_Bare_point<Gt>::value,
+      typename internal::Bare_point_type<Gt>,
+      boost::mpl::identity<typename Gt::Point_3>
+    >::type                                          Bare_point;
+
     typedef typename Gt::Segment_3                   Segment;
     typedef typename Gt::Triangle_3                  Triangle;
     typedef typename Gt::Tetrahedron_3               Tetrahedron;
@@ -163,11 +186,11 @@ namespace CGAL {
     using Tr_Base::is_valid;
 
     Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
+      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
     {}
 
     Regular_triangulation_3(Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(lock_ds, gt), hidden_point_visitor(this)
+      : Tr_Base(lock_ds, Tr_Base_Gt(gt)), hidden_point_visitor(this)
     {}
 
     Regular_triangulation_3(const Regular_triangulation_3 & rt)
@@ -180,7 +203,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
+      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);
     }
@@ -188,7 +211,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
+      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);
     }
@@ -941,7 +964,7 @@ namespace CGAL {
       power_test(const Weighted_point &p, const Weighted_point &q) const
     {
       CGAL_triangulation_precondition(this->equal(p, q));
-      return geom_traits().power_test_3_object()(p, q);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q);
     }
 
     Oriented_side
@@ -949,7 +972,7 @@ namespace CGAL {
       const Weighted_point &r) const
     {
       CGAL_triangulation_precondition(this->collinear(p, q, r));
-      return geom_traits().power_test_3_object()(p, q, r);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r);
     }
 
     Oriented_side
@@ -957,7 +980,7 @@ namespace CGAL {
       const Weighted_point &r, const Weighted_point &s) const
     {
       CGAL_triangulation_precondition(this->coplanar(p, q, r, s));
-      return geom_traits().power_test_3_object()(p, q, r, s);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s);
     }
 
     Oriented_side
@@ -965,7 +988,7 @@ namespace CGAL {
       const Weighted_point &r, const Weighted_point &s,
       const Weighted_point &t) const
     {
-      return geom_traits().power_test_3_object()(p, q, r, s, t);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s, t);
     }
 
     bool in_conflict_3(const Weighted_point &p, const Cell_handle c) const
@@ -1553,8 +1576,11 @@ dual(Cell_handle c) const
 
     // dimension() == 3
     Cell_handle n = c->neighbor(i);
-    if ( ! is_infinite(c) && ! is_infinite(n) )
-      return construct_object(construct_segment( dual(c), dual(n) ));
+    if ( ! is_infinite(c) && ! is_infinite(n) ){
+      Bare_point bp = dual(c);
+      Bare_point np = dual(n);
+      return construct_object(construct_segment(bp, np));
+    }
 
     // either n or c is infinite
     int in;
@@ -1871,9 +1897,9 @@ dual(Cell_handle c) const
     is_Gabriel(Cell_handle c, int i) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
-    typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
-      geom_traits().side_of_bounded_orthogonal_sphere_3_object();
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
 
     if ((!is_infinite(c->vertex(i))) &&
       side_of_bounded_orthogonal_sphere(
@@ -1910,9 +1936,9 @@ dual(Cell_handle c) const
     is_Gabriel(Cell_handle c, int i, int j) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
-    typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
-      geom_traits().side_of_bounded_orthogonal_sphere_3_object();
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
 
     Facet_circulator fcirc = incident_facets(c,i,j),
       fdone(fcirc);
@@ -2048,9 +2074,9 @@ dual(Cell_handle c) const
   template <class RegularTriangulation_3>
   class Regular_triangulation_3<Gt, Tds, Lds>::Vertex_remover {
     typedef RegularTriangulation_3 Regular;
-    typedef typename Gt::Point_3 Point;
+    typedef typename Gt::Weighted_point_3 Weighted_point;
   public:
-    typedef typename std::vector<Point>::iterator
+    typedef typename std::vector<Weighted_point>::iterator
       Hidden_points_iterator;
 
     Vertex_remover(Regular &tmp_) : tmp(tmp_) {}
@@ -2069,15 +2095,15 @@ dual(Cell_handle c) const
       return hidden.end();
     }
 
-    Bounded_side side_of_bounded_circle(const Point &p, const Point &q,
-      const Point &r, const Point &s, bool perturb = false) const {
+    Bounded_side side_of_bounded_circle(const Weighted_point &p, const Weighted_point &q,
+      const Weighted_point &r, const Weighted_point &s, bool perturb = false) const {
         return tmp.side_of_bounded_power_circle(p,q,r,s,perturb);
     }
 
   private:
     // The removal of v may un-hide some points,
     // Space functions output them.
-    std::vector<Point> hidden;
+    std::vector<Weighted_point> hidden;
   };
 
   // The displacement method works only

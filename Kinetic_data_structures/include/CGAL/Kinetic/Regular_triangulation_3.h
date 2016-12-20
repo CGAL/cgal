@@ -403,14 +403,14 @@ protected:
     typedef TriangulationT Triangulation;
     typedef typename This_RT3::Edge_flip Edge_flip;
     typedef typename This_RT3::Facet_flip Facet_flip;
-    typedef typename TraitsT::Kinetic_kernel::Power_test_3 Side_of_oriented_sphere_3;
+    typedef typename TraitsT::Kinetic_kernel::Power_side_of_oriented_power_sphere_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Weighted_orientation_3 Orientation_3;
     typedef typename TraitsT::Active_points_3_table Active_points_3_table; // here
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
       //std::cout << "Getting power test" << std::endl;
-      return TraitsT::kinetic_kernel_object().power_test_3_object();
+      return TraitsT::kinetic_kernel_object().power_side_of_oriented_power_sphere_3_object();
     }
 
     Orientation_3 orientation_3_object() const

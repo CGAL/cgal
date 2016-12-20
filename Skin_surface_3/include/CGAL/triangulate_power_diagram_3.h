@@ -200,19 +200,14 @@ private:
 
   Triangulation_incremental_builder triangulation_incr_builder;
 
-  Construct_weighted_circumcenter_3<
-    Regular_triangulation_euclidean_traits_3<
-    Triangulated_mixed_complex_traits> >                orthocenter_obj;
+  typename Tmc_traits::Construct_weighted_circumcenter_3 orthocenter_obj;
 
-  Compute_squared_radius_smallest_orthogonal_sphere_3<
-    Regular_triangulation_euclidean_traits_3<
-    Triangulated_mixed_complex_traits> >       orthoweight_obj;
+  typename Tmc_traits::Compute_squared_radius_smallest_orthogonal_sphere_3 orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;
   bool verbose;
 
-  Weighted_converter_3<
     Cartesian_converter<typename Regular_traits::Bare_point::R, 
-			Triangulated_mixed_complex_traits > >
+			Triangulated_mixed_complex_traits > 
   r2t_converter_object;
     
 

@@ -22,6 +22,7 @@
 #define CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS
 
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel_traits.h>
 // Assumes the point is a CGAL point.
 
 #include <boost/graph/graph_traits.hpp>
@@ -64,7 +65,11 @@ struct Graph_manipulations
               << std::boolalpha << a_is_outside << ", "
               <<  std::boolalpha << b_is_outside << ")\n";
 #endif // CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
-    const Point_3 mid = a < b ? midpoint(a, b) : midpoint(b, a);
+
+    typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
+    typename K::Construct_midpoint_3 midpt
+      = K().construct_midpoint_3_object();
+    const Point_3 mid = a < b ? midpt(a, b) : midpt(b, a);
     vertex_descriptor vmid = get_vertex(mid);
     typename std::map<Point_3, vertex_descriptor>::iterator
       it_a = p2v.find(a),

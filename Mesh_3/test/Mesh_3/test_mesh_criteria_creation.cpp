@@ -99,9 +99,10 @@ int main()
   // Test facet criteria
   // -----------------------------------
   typedef Tr::Geom_traits::FT FT;
-  FT radius_facet = CGAL::sqrt(CGAL::squared_radius(ch->vertex(k+1)->point(),
-                                                    ch->vertex(k+2)->point(),
-                                                    ch->vertex(k+3)->point()));
+  Tr::Geom_traits::Compute_squared_radius_3 squared_radius;
+  FT radius_facet = CGAL::sqrt(squared_radius(ch->vertex(k+1)->point(),
+                                              ch->vertex(k+2)->point(),
+                                              ch->vertex(k+3)->point()));
   
   FT facet_size_ok = radius_facet*FT(10);
   FT facet_size_nok = radius_facet/FT(10);
@@ -154,10 +155,10 @@ int main()
   // -----------------------------------
   // Test cell criteria
   // -----------------------------------
-  FT radius_cell = CGAL::sqrt(CGAL::squared_radius(ch->vertex(0)->point(),
-                                                   ch->vertex(1)->point(),
-                                                   ch->vertex(2)->point(),
-                                                   ch->vertex(3)->point()));
+  FT radius_cell = CGAL::sqrt(squared_radius(ch->vertex(0)->point(),
+                                             ch->vertex(1)->point(),
+                                             ch->vertex(2)->point(),
+                                             ch->vertex(3)->point()));
   
   FT cell_size_ok = radius_cell*FT(10);
   FT cell_size_nok = radius_cell/FT(10);

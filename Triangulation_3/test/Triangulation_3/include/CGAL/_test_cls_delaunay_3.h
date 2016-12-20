@@ -35,6 +35,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
 
+
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
 //  Regular::nearest_power_vertex[_in_cell].
@@ -671,22 +672,26 @@ _test_cls_delaunay_3(const Triangulation &)
 	  Vertex_handle v = nearest_vertex(T3_13, p);
 	  for (typename Cls::Finite_vertices_iterator
 	         fvit = T3_13.finite_vertices_begin();
-	       fvit != T3_13.finite_vertices_end(); ++fvit)
-	    assert(CGAL::squared_distance(p, v->point()) <=
-		   CGAL::squared_distance(p, fvit->point()));
-	  Vertex_handle v1 = nearest_vertex_in_cell(T3_13, p, c1);
+	       fvit != T3_13.finite_vertices_end(); ++fvit){
+            
+	    assert(CGAL::squared_distance(p, 
+                                          v->point()) <=
+                   CGAL::squared_distance(p, fvit->point()));
+          }
+                   Vertex_handle v1 = nearest_vertex_in_cell(T3_13, p, c1)
+;
 	  int i1 = c1->index(v1);
  	  for(int i=0; i<4; ++i) {
 	    if (i != i1) 
 	      assert(CGAL::squared_distance(p, v1->point()) <=
-		     CGAL::squared_distance(p, c1->vertex(i)->point()));
+              CGAL::squared_distance(p, c1->vertex(i)->point()));
 	  }
 	  Vertex_handle v2 = nearest_vertex_in_cell(T3_13, p, c2);
 	  int i2 = c2->index(v2);
 	  for(int i=0; i<4; ++i) { 
 	    if (i != i2 && c2->vertex(i) != T3_13.infinite_vertex())
 	      assert(CGAL::squared_distance(p, v2->point()) <=
-		     CGAL::squared_distance(p, c2->vertex(i)->point()));
+              CGAL::squared_distance(p, c2->vertex(i)->point()));
 	  }
 	}
   }

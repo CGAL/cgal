@@ -27,6 +27,7 @@
 #define CGAL_USER_CLASSES_H
 
 #include <CGAL/Point_2.h>
+#include <CGAL/Weighted_point_2.h>
 #include <CGAL/Vector_2.h>
 #include <CGAL/Direction_2.h>
 #include <CGAL/Line_2.h>
@@ -39,6 +40,7 @@
 #include <CGAL/Aff_transformation_2.h>
 
 #include <CGAL/Point_3.h>
+#include <CGAL/Weighted_point_3.h>
 #include <CGAL/Plane_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Direction_3.h>

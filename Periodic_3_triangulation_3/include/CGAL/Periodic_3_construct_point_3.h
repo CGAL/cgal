@@ -47,6 +47,10 @@ public:
   p.z()+(_dom.zmax()-_dom.zmin())*o.z());
   }
 
+  const typename K::Point_3&
+  operator()(const typename K::Weighted_point_3 & p) const
+  { return p.rep().point(); }
+
 private:
   Iso_cuboid_3 _dom;
 };

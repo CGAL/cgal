@@ -1,7 +1,6 @@
 
 namespace CGAL {
 
-
 /*!
 \ingroup PkgTriangulation2
 Helper class used by `Regular_trangulation_2` to pass a weighted point as a point
@@ -127,7 +126,7 @@ points hidden by this facet are reinserted in the triangulation.
 The concept `RegularTriangulationTraits_2` refines the 
 concept `TriangulationTraits_2` by adding the type 
 `Weighted_point_2` to describe weighted points 
-and the type `Power_test_2` to perform 
+and the type `Power_side_of_oriented_power_circle_2` to perform 
 power tests on weighted points. 
 
 \tparam Tds  must be a model of `TriangulationDataStructure_2`. 
@@ -173,12 +172,12 @@ typedef Traits::Ray Ray;
 /*!
 
 */ 
-typedef Traits::Bare_point Bare_point; 
+typedef Traits::Point_2 Bare_point; 
 
 /*!
 
 */ 
-typedef Traits::Weighted_point Weighted_point; 
+typedef Traits::Weighted_point_2 Weighted_point; 
 
 /*!
 An iterator that allows to enumerate the 

@@ -9,16 +9,15 @@
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 typedef CGAL::Simple_cartesian<double>                                    Double_kernel;
 typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >           Exact_kernel;
 typedef CGAL::Filtered_kernel<Double_kernel, true>                        FK_with_SF;
 typedef CGAL::Filtered_kernel<Double_kernel, false>                       FK_without_SF;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<Exact_kernel>      Exact_traits;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK_without_SF>     FTr_without_SF;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK_with_SF>        FTr_with_SF;
+typedef Exact_kernel                                                      Exact_traits;
+typedef FK_without_SF                                                     FTr_without_SF;
+typedef FK_with_SF                                                        FTr_with_SF;
 typedef std::pair<double,double>                                          NT_pair;
 
 template < class K1, class K2, class Cmp = CGAL::dont_check_equal >
@@ -49,7 +48,7 @@ public:
 public:
   
   CGAL_Kernel_pred(Compare_weighted_squared_radius_3,compare_weighted_squared_radius_3_object)
-  CGAL_Kernel_pred(Power_test_3,power_test_3_object)
+  CGAL_Kernel_pred(Power_side_of_oriented_power_sphere_3,power_side_of_oriented_power_sphere_3_object)
 };
 
 
@@ -77,7 +76,7 @@ double my_rand()
 Weighted_point_3 my_rand_wp3()
 {
   double x = my_rand(), y = my_rand(), z = my_rand(), r=my_rand();
-  return Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
+  return Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Point_3(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Point_3(x, y, z),r) );
 }
 
 // Perturbation with given maximum relative epsilon.
@@ -87,7 +86,7 @@ void perturb(Weighted_point_3 &p, double rel_eps)
   double y = CGAL_IA_FORCE_TO_DOUBLE(p.first.y()*(1+rand_base()*rel_eps));
   double z = CGAL_IA_FORCE_TO_DOUBLE(p.first.z()*(1+rand_base()*rel_eps));
   double r = CGAL_IA_FORCE_TO_DOUBLE(p.first.weight()*(1+rand_base()*rel_eps));
-  p=Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
+  p=Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Point_3(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Point_3(x, y, z),r) );
 }
 
 void toto (int){}
@@ -106,7 +105,7 @@ void test_compare_weighted_squared_radius_3(){
   K3().compare_weighted_squared_radius_3_object()(p,q,    NT_pair(alpha,alpha));
   K3().compare_weighted_squared_radius_3_object()(p,      NT_pair(alpha,alpha));
 
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_with_SF,Exact_kernel>,FTr_with_SF,Exact_traits >    convert_to_exact;
+  CGAL::Cartesian_converter<FK_with_SF,Exact_kernel>   convert_to_exact;
   Exact_traits::Weighted_point_3 p_e=convert_to_exact(p.first);
   Exact_traits::Weighted_point_3 q_e=convert_to_exact(q.first);
   Exact_traits::Weighted_point_3 r_e=convert_to_exact(r.first);
@@ -141,16 +140,16 @@ void test_compare_weighted_squared_radius_3(){
 
 Weighted_point_3 convert_to_pair(const Exact_traits::Weighted_point_3& wp)
 {
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<Exact_kernel,FK_with_SF>,Exact_traits,FTr_with_SF >    convert_to_double;
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_with_SF,FK_without_SF>,FTr_with_SF,FTr_without_SF > convert_to_double_noSF;
+  CGAL::Cartesian_converter<Exact_kernel,FK_with_SF>    convert_to_double;
+  CGAL::Cartesian_converter<FK_with_SF,FK_without_SF> convert_to_double_noSF;
   
   FTr_with_SF::Weighted_point_3 wp_with_sf = convert_to_double(wp);
   FTr_without_SF::Weighted_point_3 wp_without_sf = convert_to_double_noSF(wp_with_sf);
   return Weighted_point_3(wp_with_sf, wp_without_sf);
 }
 
-void test_power_test_3(){
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_without_SF,Exact_kernel>,FTr_without_SF,Exact_traits > convert_to_exact;
+void test_power_side_of_power_sphere_3(){
+  CGAL::Cartesian_converter<FK_without_SF,Exact_kernel> convert_to_exact;
   
   Weighted_point_3 p=my_rand_wp3();
   Weighted_point_3 q=my_rand_wp3();
@@ -159,10 +158,10 @@ void test_power_test_3(){
   Weighted_point_3 query_pt=my_rand_wp3();  
 
   //test with random points
-  K3().power_test_3_object()(p,q,r,s,query_pt);  
-  K3().power_test_3_object()(p,q,r,query_pt);  
-  K3().power_test_3_object()(p,q,query_pt);  
-  K3().power_test_3_object()(p,query_pt);
+  K3().power_side_of_oriented_power_sphere_3_object()(p,q,r,s,query_pt);  
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, r, query_pt);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, query_pt);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, query_pt);
   
   //test in degenerate case
   Exact_traits::Weighted_point_3::Point origin(0,0,0);
@@ -176,32 +175,32 @@ void test_power_test_3(){
       CGAL::squared_distance(origin,Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e,r_e,s_e))-
       Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e,r_e,s_e)
   );
-  assert(Exact_traits().power_test_3_object()(p_e,q_e,r_e,s_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);
+  assert(Exact_traits().power_side_of_oriented_power_sphere_3_object()(p_e,q_e,r_e,s_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);
   
   Weighted_point_3 ortho_pqrs = convert_to_pair(tmp);
   tmp=Exact_traits::Weighted_point_3(
       Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e,r_e),
       -Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e,r_e)
     );
-  assert(Exact_traits().power_test_3_object()(p_e,q_e,r_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);    
+  assert(Exact_traits().power_side_of_oriented_power_sphere_3_object()(p_e,q_e,r_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);    
   Weighted_point_3 ortho_pqr = convert_to_pair(tmp);
   tmp=Exact_traits::Weighted_point_3(
       Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e),
       -Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e)
     );
-  assert(Exact_traits().power_test_3_object()(p_e,q_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);        
+  assert(Exact_traits().power_side_of_oriented_power_sphere_3_object()(p_e,q_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);        
   Weighted_point_3 ortho_pq = convert_to_pair(tmp);
   
   
-  K3().power_test_3_object()(p,q,r,s,ortho_pqrs);
-  K3().power_test_3_object()(p,q,r  ,ortho_pqr);
-  K3().power_test_3_object()(p,q    ,ortho_pq);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, r, s, ortho_pqrs);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, r, ortho_pqr);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, ortho_pq);
   // Then with some perturbation on coordinates and weight.
   perturb(p, 1.0/(1<<25)/(1<<20)); // 2^-45
   
-  K3().power_test_3_object()(p,q,r,s,ortho_pqrs);
-  K3().power_test_3_object()(p,q,r  ,ortho_pqr);
-  K3().power_test_3_object()(p,q    ,ortho_pq);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, r, s, ortho_pqrs);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, r, ortho_pqr);
+  K3().power_side_of_oriented_power_sphere_3_object()(p, q, ortho_pq);
 }
 
 
@@ -238,9 +237,9 @@ int main(int argc, char **argv)
   for(int i=0; i<loops; ++i)
     test_compare_weighted_squared_radius_3();  
 
-  std::cout << "Testing Power_test_3" << std::endl;
+  std::cout << "Testing power_side_of_power_sphere_3" << std::endl;
   for(int i=0; i<loops; ++i)
-    test_power_test_3();  
+    test_power_side_of_power_sphere_3();  
 
   return 0;
 }

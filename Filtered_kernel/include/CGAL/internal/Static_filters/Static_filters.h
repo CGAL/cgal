@@ -74,6 +74,9 @@
 #include <CGAL/internal/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_sphere_3.h>
 #include <CGAL/internal/Static_filters/Compare_squared_radius_3.h>
+#include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
+#include <CGAL/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
+
 
 // #include <CGAL/internal/Static_filters/Coplanar_orientation_3.h>
 // #include <CGAL/internal/Static_filters/Coplanar_side_of_bounded_circle_3.h>
@@ -82,7 +85,6 @@
 // - add more predicates :
 //   - all lexicographical comparisons
 //   - left_turn (via generic adapter to orientation)
-//   - power_tests
 //   - others ?
 // - benchmark on more algorithms.
 // - improve fit_in_double() for other NTs (MP_Float, Lazy). cf tools.h.
@@ -139,6 +141,9 @@ public:
   typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
   typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
+
+  typedef Static_filters_predicates::Compare_weighted_squared_radius_3<K_base>     Compare_weighted_squared_radius_3;
+  typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base>                          Power_side_of_oriented_power_sphere_3;
 
   Orientation_2
   orientation_2_object() const
@@ -197,6 +202,14 @@ Compare_y_2
   Compare_squared_radius_3
   compare_squared_radius_3_object() const
   { return Compare_squared_radius_3(); }
+
+  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
+  { return Power_side_of_oriented_power_sphere_3();}
+
+  Compare_weighted_squared_radius_3
+  compare_weighted_squared_radius_3_object() const
+  { return Compare_weighted_squared_radius_3(); }
+
 
   enum { Has_static_filters = true };
 }; // end of class template Static_filters<K_base, false>

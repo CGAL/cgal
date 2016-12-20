@@ -1,4 +1,4 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000, 2016  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -20,7 +20,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Herve Bronnimann, Sylvain Pion
+// Author(s)     : Herve Bronnimann, Sylvain Pion, Oliver Devillers, Mariette Yvinec
+
 
 #ifndef CGAL_PREDICATES_KERNEL_FTC3_H
 #define CGAL_PREDICATES_KERNEL_FTC3_H
@@ -554,6 +555,242 @@ has_smaller_signed_dist_to_planeC3(
     return cmp_signed_dist_to_planeC3(ppx, ppy, ppz, pqx, pqy, pqz,
 	    prx, pry, prz, px, py, pz, qx, qy, qz) == SMALLER;
 }
+
+// return minus the sign of the 5x5 determinant [P,Q,R,S,T]
+// where column [P] = transpose[px,py,pz,p^2 -wp,1]
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
+power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+              const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
+              const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
+              const FT &sx, const FT &sy, const FT &sz, const FT &swt,
+              const FT &tx, const FT &ty, const FT &tz, const FT &twt)
+{
+    // We translate the points so that T becomes the origin.
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = pz - tz;
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) +
+             CGAL_NTS square(dpz) + (twt - pwt);
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = qz - tz;
+    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
+             CGAL_NTS square(dqz) + (twt - qwt);
+    FT drx = rx - tx;
+    FT dry = ry - ty;
+    FT drz = rz - tz;
+    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) +
+             CGAL_NTS square(drz) + (twt - rwt);
+    FT dsx = sx - tx;
+    FT dsy = sy - ty;
+    FT dsz = sz - tz;
+    FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) +
+             CGAL_NTS square(dsz) + (twt - swt);
+
+    return - sign_of_determinant(dpx, dpy, dpz, dpt,
+				 dqx, dqy, dqz, dqt,
+				 drx, dry, drz, drt,
+				 dsx, dsy, dsz, dst);
+}
+
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
+power_side_of_oriented_power_sphereC3(const FT &px, const FT &py, const FT &pz, const FT &pwt,
+	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
+	      const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
+	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
+{
+    // Same translation as above.
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = pz - tz;
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) +
+             CGAL_NTS square(dpz) + (twt - pwt);
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = qz - tz;
+    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
+             CGAL_NTS square(dqz) + (twt - qwt);
+    FT drx = rx - tx;
+    FT dry = ry - ty;
+    FT drz = rz - tz;
+    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) +
+             CGAL_NTS square(drz) + (twt - rwt);
+    Sign cmp;
+
+    // Projection on the (xy) plane.
+    cmp = sign_of_determinant(dpx, dpy, dpt,
+		                 dqx, dqy, dqt,
+				 drx, dry, drt);
+    if (cmp != ZERO)
+	return cmp * sign_of_determinant(px-rx, py-ry,
+		                         qx-rx, qy-ry);
+
+    // Projection on the (xz) plane.
+    cmp = sign_of_determinant(dpx, dpz, dpt,
+		                 dqx, dqz, dqt,
+				 drx, drz, drt);
+    if (cmp != ZERO)
+	return cmp * sign_of_determinant(px-rx, pz-rz,
+		                         qx-rx, qz-rz);
+
+    // Projection on the (yz) plane.
+    cmp = sign_of_determinant(dpy, dpz, dpt,
+		                 dqy, dqz, dqt,
+				 dry, drz, drt);
+    return cmp * sign_of_determinant(py-ry, pz-rz,
+		                     qy-ry, qz-rz);
+}
+
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
+power_side_of_oriented_power_sphereC3(const FT &px, const FT &py, const FT &pz, const FT &pwt,
+	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
+	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
+{
+    // Same translation as above.
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = pz - tz;
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) +
+             CGAL_NTS square(dpz) + (twt - pwt);
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = qz - tz;
+    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
+             CGAL_NTS square (dqz) + (twt - qwt);
+    Comparison_result cmp;
+
+    // We do an orthogonal projection on the (x) axis, if possible.
+    cmp = CGAL_NTS compare(px, qx);
+    if (cmp != EQUAL)
+        return cmp * sign_of_determinant(dpx, dpt, dqx, dqt);
+
+    // We do an orthogonal projection on the (y) axis, if possible.
+    cmp = CGAL_NTS compare(py, qy);
+    if (cmp != EQUAL)
+        return cmp * sign_of_determinant(dpy, dpt, dqy, dqt);
+
+    // We do an orthogonal projection on the (z) axis.
+    cmp = CGAL_NTS compare(pz, qz);
+    return cmp * sign_of_determinant(dpz, dpt, dqz, dqt);
+}
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
+power_side_of_oriented_power_sphereC3(const FT &pwt, const FT &qwt)
+{
+    return CGAL_NTS compare(qwt, pwt);
+}
+
+
+template < class FT >
+Comparison_result
+compare_power_distanceC3(
+		  const FT &px, const FT &py, const FT &pz,
+		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
+		  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
+{
+   FT dqx = qx - px;
+   FT dqy = qy - py;
+   FT dqz = qz - pz;
+   FT drx = rx - px;
+   FT dry = ry - py;
+   FT drz = rz - pz;
+   return CGAL_NTS compare(dqx*dqx + dqy*dqy + dqz*dqz - qw,
+                           drx*drx + dry*dry + drz*drz - rw);
+}
+
+
+//return the sign of the power test of weighted point (sx,sy,sz,sw)
+//with respect to the smallest sphere orthogonal to
+//p,q,r
+template< class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Bounded_side, FT>::type
+power_side_of_bounded_power_sphereC3(
+  const FT &px, const FT &py, const FT &pz, const FT  &pw,
+  const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
+  const FT &rx, const FT &ry, const FT &rz, const FT  &rw,
+  const FT &sx, const FT &sy, const FT &sz, const FT  &sw)
+{
+ // Translate p to origin and compute determinants
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT qpz = qz-pz;
+
+  FT rpx = rx-px;
+  FT rpy = ry-py;
+  FT rpz = rz-pz;
+
+  FT qq = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
+  FT rr = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) + CGAL_NTS square(rpz);
+  FT qr = qpx*rpx + qpy*rpy + qpz*rpz;
+
+  FT qpw = qq - qw + pw ;
+  FT rpw = rr - rw + pw ;
+
+  FT den = determinant(qq,qr,
+			     qr,rr);
+  FT detq = determinant(qpw,qr,
+			      rpw,rr);
+  FT detr = determinant(qq,qpw,
+			      qr,rpw);
+
+  // Smallest  smallest orthogonal sphere center
+  // c =  detq/2*den  q + detr/2*den  r (origin at p)
+  // square radius  c^2 - pw
+
+  FT spx = sx-px;
+  FT spy = sy-py;
+  FT spz = sz-pz;
+  FT ss = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS  square(spz);
+  FT sq = spx*qpx + spy*qpy + spz*qpz;
+  FT sr = spx*rpx + spy*rpy + spz*rpz;
+
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
+  // return - sign of (c- s)^2 - (c^2 - pw) - sw    note that den >= 0 -
+  return enum_cast<Bounded_side>(
+    - CGAL_NTS sign( den*(ss - sw + pw)- detq*sq - detr*sr));
+}
+
+
+// return the sign of the power test of weighted point (rx,ry,rz,rw)
+ // with respect to the smallest sphere orthogoanal to
+// p,q
+template< class FT >
+typename Same_uncertainty_nt<Bounded_side, FT>::type
+power_side_of_bounded_power_sphereC3(
+ const FT &px, const FT &py, const FT &pz, const FT  &pw,
+ const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
+ const FT &rx, const FT &ry, const FT &rz, const FT  &rw)
+{
+  FT FT2(2);
+  FT FT4(4);
+  FT dpx = px - qx;
+  FT dpy = py - qy;
+  FT dpz = pz - qz;
+  FT dpw = pw - qw;
+  FT dp2 = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + CGAL_NTS square(dpz);
+  FT drx = rx - (px + qx)/FT2;
+  FT dry = ry - (py + qy)/FT2;
+  FT drz = rz - (pz + qz)/FT2;
+  FT drw = rw - (pw + qw)/FT2;
+  FT dr2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) + CGAL_NTS square(drz);
+  FT dpr = dpx*drx + dpy*dry +dpz*drz;
+  return enum_cast<Bounded_side>(
+    - CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 - drw ));
+}
+
+
+
 
 } //namespace CGAL
 

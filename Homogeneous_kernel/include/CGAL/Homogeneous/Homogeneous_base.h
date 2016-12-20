@@ -38,6 +38,7 @@
 #include <CGAL/Homogeneous/Iso_rectangleH2.h>
 #include <CGAL/Homogeneous/LineH2.h>
 #include <CGAL/Homogeneous/PointH2.h>
+#include <CGAL/Homogeneous/Weighted_point_2.h>
 #include <CGAL/Cartesian/Ray_2.h>
 #include <CGAL/Cartesian/Segment_2.h>
 #include <CGAL/Cartesian/Triangle_2.h>
@@ -51,6 +52,7 @@
 #include <CGAL/Cartesian/Line_3.h>
 #include <CGAL/Homogeneous/PlaneH3.h>
 #include <CGAL/Homogeneous/PointH3.h>
+#include <CGAL/Homogeneous/Weighted_point_3.h>
 #include <CGAL/Homogeneous/RayH3.h>
 #include <CGAL/Cartesian/Segment_3.h>
 #include <CGAL/Homogeneous/SphereH3.h>
@@ -127,6 +129,7 @@ struct Homogeneous_base
     typedef TriangleC2<Kernel>                      Triangle_2;
     typedef Iso_rectangleH2<Kernel>                 Iso_rectangle_2;
     typedef Aff_transformationH2<Kernel>            Aff_transformation_2;
+    typedef Weighted_pointH2<Kernel>                Weighted_point_2;
 
     typedef PointH3<Kernel>                         Point_3;
     typedef VectorH3<Kernel>                        Vector_3;
@@ -141,6 +144,7 @@ struct Homogeneous_base
     typedef SphereH3<Kernel>                        Sphere_3;
     typedef CircleC3<Kernel>                        Circle_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
+    typedef Weighted_pointH3<Kernel>                Weighted_point_3;
 
     typedef Cartesian_const_iterator_d<typename cpp11::array<RT, 3>::const_iterator> Cartesian_const_iterator_2;
     typedef Cartesian_const_iterator_d<typename cpp11::array<RT, 4>::const_iterator> Cartesian_const_iterator_3;

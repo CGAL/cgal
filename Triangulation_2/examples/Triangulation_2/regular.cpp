@@ -1,13 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
-#include <CGAL/Regular_triangulation_filtered_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_filtered_traits_2<K>  Traits;
-typedef CGAL::Regular_triangulation_2<Traits> Regular_triangulation;
+typedef CGAL::Regular_triangulation_2<K> Regular_triangulation;
 
 int main()
 {
