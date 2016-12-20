@@ -84,7 +84,11 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
     = scene->mainSelectionIndex();
   Scene_polyhedron_item* mainSelectionItem
     = qobject_cast<Scene_polyhedron_item*>(scene->item(mainSelectionIndex));
-
+  if(!mainSelectionItem)
+  {
+    std::cerr<<"No selected polyhedron_item"<<std::endl;
+    return;
+  }
   QList<int> indices_to_remove;
   Q_FOREACH(int index, scene->selectionIndices()) {
     if (index == mainSelectionIndex)
@@ -99,8 +103,9 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
         modifier( *(item->polyhedron()) );
       mainSelectionItem->polyhedron()->delegate(modifier);
     }
+    else
+      std::cerr<<"No selected polyhedron_item"<<std::endl;
   }
-
   mainSelectionItem->invalidateOpenGLBuffers();
   scene->itemChanged(mainSelectionIndex);
 
