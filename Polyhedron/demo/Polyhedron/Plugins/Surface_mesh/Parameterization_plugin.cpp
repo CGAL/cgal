@@ -210,15 +210,29 @@ public :
       bounding_rect(brect),
       components(components),
       m_borders(uv_borders),
+      m_concatenated_borders(),
       m_current_component(0)
-  { }
+  {
+    std::size_t total_border_size = 0;
+    for(std::size_t i=0; i<m_borders.size(); ++i)
+      total_border_size += m_borders[i].size();
+
+    m_concatenated_borders.resize(total_border_size);
+    for(std::size_t i=0; i<m_borders.size(); ++i)
+    {
+      const std::vector<float>& ith_border = m_borders[i];
+      m_concatenated_borders.insert(m_concatenated_borders.end(),
+                                    ith_border.begin(), ith_border.end());
+    }
+  }
 
   ~UVItem()
   {
     delete components;
   }
 
-  std::vector<float> borders() { return m_borders[m_current_component]; }
+  const std::vector<std::vector<float> >& borders() const { return m_borders; }
+  const std::vector<float>& concatenated_borders() const { return m_concatenated_borders; }
 
   QRectF boundingRect() const
   {
@@ -260,6 +274,7 @@ private:
   QRectF bounding_rect;
   Components* components;
   std::vector<std::vector<float> > m_borders;
+  std::vector<float> m_concatenated_borders;
   int m_current_component;
 };
 
@@ -377,8 +392,7 @@ public Q_SLOTS:
       ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(), Qt::KeepAspectRatio);
       ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
       dock_widget->setWindowTitle(tr("UVMapping for %1").arg(current_uv_item->item_name()));
-      qobject_cast<Scene_textured_polyhedron_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->borders());
-
+      qobject_cast<Scene_textured_polyhedron_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders());
     }
   }
 
@@ -635,17 +649,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     std::cout << (s_components.at(current_component)).size() << " faces" << std::endl;
     std::cout << border.size() << " border halfedges" << std::endl;
 
-    BOOST_FOREACH(halfedge_descriptor hd, border)
-    {
-        uv_borders[current_component].push_back(source(hd, tMesh)->point().x());
-        uv_borders[current_component].push_back(source(hd, tMesh)->point().y());
-        uv_borders[current_component].push_back(source(hd, tMesh)->point().z());
-
-        uv_borders[current_component].push_back(target(hd, tMesh)->point().x());
-        uv_borders[current_component].push_back(target(hd, tMesh)->point().y());
-        uv_borders[current_component].push_back(target(hd, tMesh)->point().z());
-    }
-
     // find longest border in the connected component
     halfedge_descriptor bhd; // a halfedge on the (possibly virtual) border
     boost::unordered_set<halfedge_descriptor> visited;
@@ -672,6 +675,18 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
     CGAL_postcondition(bhd != halfedge_descriptor());
     CGAL_postcondition(is_border(bhd, sMesh));
+
+    // collect the border edges for that connected component
+    BOOST_FOREACH(halfedge_descriptor haf, halfedges_around_face(bhd, sMesh))
+    {
+        uv_borders[current_component].push_back(source(haf, tMesh)->point().x());
+        uv_borders[current_component].push_back(source(haf, tMesh)->point().y());
+        uv_borders[current_component].push_back(source(haf, tMesh)->point().z());
+
+        uv_borders[current_component].push_back(target(haf, tMesh)->point().x());
+        uv_borders[current_component].push_back(target(haf, tMesh)->point().y());
+        uv_borders[current_component].push_back(target(haf, tMesh)->point().z());
+    }
 
     switch(method)
     {
@@ -834,10 +849,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   components->resize(number_of_components);
   Textured_polyhedron::Base::Facet_iterator bfit;
   Textured_polyhedron::Facet_iterator tfit;
-  for(bfit = tMesh.facets_begin(),
-      tfit = tpMesh->facets_begin();
-      bfit != tMesh.facets_end()&&
-      tfit != tpMesh->facets_end();
+  for(bfit = tMesh.facets_begin(), tfit = tpMesh->facets_begin();
+      bfit != tMesh.facets_end() && tfit != tpMesh->facets_end();
       ++bfit, ++tfit)
   {
     components->at(fccmap[bfit]).insert(tfit);
@@ -862,7 +875,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   if(current_uv_item)
     qobject_cast<Scene_textured_polyhedron_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0));
   current_uv_item = projection;
-  qobject_cast<Scene_textured_polyhedron_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->borders());
+  qobject_cast<Scene_textured_polyhedron_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders());
   if(dock_widget->isHidden())
     dock_widget->setVisible(true);
   dock_widget->setWindowTitle(tr("UVMapping for %1").arg(new_item->name()));
