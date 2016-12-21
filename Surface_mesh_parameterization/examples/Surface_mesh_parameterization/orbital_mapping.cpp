@@ -10,10 +10,12 @@
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/shortest_path.h>
-
 #include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_sphere_mapping.h>
 
+#include <CGAL/Arr_non_caching_segment_traits_2.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arrangement_2.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/boost/graph/properties.h>
@@ -229,7 +231,8 @@ int main(int argc, char * argv[])
   // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
   typedef CGAL::Exact_predicates_exact_constructions_kernel            Exact_kernel;
-  typedef CGAL::Arr_segment_traits_2<Exact_kernel>                     Traits_2;
+//  typedef CGAL::Arr_segment_traits_2<Exact_kernel>                     Traits_2;
+  typedef CGAL::Arr_non_caching_segment_traits_2<Exact_kernel>         Traits_2;
   typedef CGAL::Arrangement_2<Traits_2>                                Arrangement_2;
   typedef SMP::Orbifold_sphere_mapper<Arrangement_2, Embedded_mesh>    Orb_sphere_mapper;
 

@@ -25,7 +25,6 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
 #include <CGAL/Arr_default_overlay_traits.h>
-#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Cartesian_converter.h>
