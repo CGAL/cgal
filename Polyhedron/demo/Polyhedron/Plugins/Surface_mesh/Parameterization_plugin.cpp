@@ -33,8 +33,8 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
-#include <CGAL/Surface_mesh_parameterization/internal/orbital_cone_helper.h>
-#include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/internal/orbifold_cone_helper.h>
+#include <CGAL/Surface_mesh_parameterization/Orbifold_Tutte_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Textured_polyhedron_builder.h>
@@ -759,7 +759,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
       CGAL_precondition(!unordered_cones.empty());
 
-      typedef SMP::Orbital_Tutte_parameterizer_3<Seam_mesh> Parameterizer;
+      typedef SMP::Orbifold_Tutte_parameterizer_3<Seam_mesh> Parameterizer;
 
       QDialog dialog(mw);
       Ui::OTE_dialog ui;

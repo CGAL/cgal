@@ -18,12 +18,12 @@
 //
 // Author(s)     :
 
-#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ORBITAL_TUTTE_PARAMETERIZER_3_H
-#define CGAL_SURFACE_MESH_PARAMETERIZATION_ORBITAL_TUTTE_PARAMETERIZER_3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_PARAMETERIZER_3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_PARAMETERIZER_3_H
 
 #include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
-#include <CGAL/Surface_mesh_parameterization/internal/orbital_cone_helper.h>
+#include <CGAL/Surface_mesh_parameterization/internal/orbifold_cone_helper.h>
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
@@ -55,9 +55,9 @@
 #include <vector>
 #include <utility>
 
-/// \file Orbital_Tutte_parameterizer_3.h
+/// \file Orbifold_Tutte_parameterizer_3.h
 
-// #define CGAL_SMP_OUTPUT_ORBITAL_MATRICES
+#define CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
 
 // @todo checks that cones are different, are on seams, seam is one connected
 //       component
@@ -84,7 +84,7 @@ template
     = Eigen_solver_traits<Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
 #endif
 >
-class Orbital_Tutte_parameterizer_3
+class Orbifold_Tutte_parameterizer_3
 {
 private:
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor    vertex_descriptor;
@@ -567,7 +567,7 @@ private:
 
     std::cout << "Filled M and Bf" << std::endl;
 
-#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
     std::ofstream outM("matrices/M.txt");
     outM.precision(20);
     outM << M.row_dimension() << " " << M.column_dimension() << std::endl;
@@ -586,7 +586,7 @@ private:
     outBf << Bf.size() << std::endl;
     outBf << Bf << std::endl;
 
-#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES_FOR_MATLAB
+#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES_FOR_MATLAB
     std::ofstream mat_outM("matrices/matrixM.dat");
     mat_outM.precision(20);
     for(int k=0; k<M.eigen_object().outerSize(); ++k) {
@@ -619,7 +619,7 @@ private:
       X[i] = Xf[i];
     }
 
-#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
     std::ofstream outf("matrices/X.txt");
     for(std::size_t i=0; i<n; ++i) {
       outf << X[i] << " ";
@@ -678,7 +678,7 @@ public:
     // add rotational constraints
     AddRotationalConstraint(mesh, cmap, vimap, A, B);
 
-#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
     std::cout << "A and B are filled" << std::endl;
     std::ofstream outA("matrices/A.txt"), outB("matrices/B.txt");
 
@@ -700,7 +700,7 @@ public:
     else // weight_type == Mean_value
       mean_value_laplacian(mesh, vimap, L);
 
-#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
     std::ofstream outL("matrices/L.txt");
     outL.precision(20);
     outL << L.row_dimension() << " " << L.column_dimension() << std::endl;
@@ -725,7 +725,7 @@ public:
     if(status != OK)
       return status;
 
-    std::ofstream out("orbital_result.off");
+    std::ofstream out("orbifold_result.off");
     IO::output_uvmap_to_off(mesh, bhd, uvmap, out);
 
     return OK;
@@ -733,8 +733,8 @@ public:
 
 /// Constructor
 public:
-  Orbital_Tutte_parameterizer_3(const Orbifold_type orb_type = Square,
-                                const Weight_type weight_type = Cotangent)
+  Orbifold_Tutte_parameterizer_3(const Orbifold_type orb_type = Square,
+                                 const Weight_type weight_type = Cotangent)
     :
       orb_type(orb_type),
       weight_type(weight_type)
@@ -745,4 +745,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ORBITAL_TUTTE_PARAMETERIZER_3_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_PARAMETERIZER_3_H

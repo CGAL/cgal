@@ -10,8 +10,8 @@
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/shortest_path.h>
-#include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_parameterizer_3.h>
-#include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_sphere_mapping.h>
+#include <CGAL/Surface_mesh_parameterization/Orbifold_Tutte_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Orbifold_Tutte_sphere_mapping.h>
 
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -84,7 +84,7 @@ int main(int argc, char * argv[])
   const SMP::Orbifold_type orb_type = SMP::Triangle;
 
   // Parameterizer
-  typedef SMP::Orbital_Tutte_parameterizer_3<Mesh>         Parameterizer;
+  typedef SMP::Orbifold_Tutte_parameterizer_3<Mesh>         Parameterizer;
   Parameterizer parameterizer(orb_type, SMP::Cotangent);
 
   // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -151,7 +151,7 @@ int main(int argc, char * argv[])
   parameterizer.parameterize(mesh_A, bhd_A, cmap_A, uvmap_A, vimap_A);
   std::cout << "Parameterized the first domain in " << task_timer.time() << " seconds" << std::endl;
 
-  std::ofstream out_A("orbital_source.off");
+  std::ofstream out_A("orbifold_source.off");
   SMP::IO::output_uvmap_to_off(mesh_A, bhd_A, uvmap_A, out_A);
 
   Embedded_mesh emesh_A(mesh_A, cmap_A, vimap_A, uvmap_A, orb_type);
@@ -221,7 +221,7 @@ int main(int argc, char * argv[])
   parameterizer.parameterize(mesh_B, bhd_B, cmap_B, uvmap_B, vimap_B);
   std::cout << "Parameterized the second domain in " << task_timer.time() << " seconds" << std::endl;
 
-  std::ofstream out_B("orbital_target.off");
+  std::ofstream out_B("orbifold_target.off");
   SMP::IO::output_uvmap_to_off(mesh_B, bhd_B, uvmap_B, out_B);
 
   Embedded_mesh emesh_B(mesh_B, cmap_B, vimap_B, uvmap_B, orb_type);

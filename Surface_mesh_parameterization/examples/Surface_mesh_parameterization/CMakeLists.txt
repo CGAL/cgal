@@ -44,7 +44,7 @@ if ( CGAL_FOUND )
       message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
       add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
     else(SuiteSparse_FOUND)
-      message(STATUS "NOTICE: The example `orbital.cpp` will be compiled without the Sparsesuite library.")
+      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library.")
     endif(SuiteSparse_FOUND)
 
 # ------------------------------------------------------------------
@@ -53,13 +53,15 @@ if ( CGAL_FOUND )
 
     create_single_source_cgal_program( "discrete_authalic.cpp" )
     create_single_source_cgal_program( "lscm.cpp" )
-    create_single_source_cgal_program( "orbital.cpp" )
+    create_single_source_cgal_program( "orbifold.cpp" )
+    create_single_source_cgal_program( "orbifold_mapping.cpp" )
     create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
     create_single_source_cgal_program( "simple_parameterization.cpp" )
     create_single_source_cgal_program( "square_border_parameterizer.cpp" )
     
     if(SuiteSparse_FOUND)
-      target_link_libraries(orbital ${SuiteSparse_LIBRARIES})
+      target_link_libraries(orbifold ${SuiteSparse_LIBRARIES})
+      target_link_libraries(orbifold_mapping ${SuiteSparse_LIBRARIES})
     endif()
 
   else(EIGEN3_FOUND)

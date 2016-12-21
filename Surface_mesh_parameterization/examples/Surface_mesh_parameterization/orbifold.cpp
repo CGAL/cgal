@@ -10,7 +10,7 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/shortest_path.h>
 
-#include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Orbifold_Tutte_parameterizer_3.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
@@ -119,8 +119,8 @@ int main(int argc, char * argv[])
   UV_pmap uvmap = sm.add_property_map<SM_halfedge_descriptor, Point_2>("h:uv").first;
 
   // Parameterizer
-  typedef SMP::Orbital_Tutte_parameterizer_3<Mesh>         Parameterizer;
-  Parameterizer parameterizer(SMP::Parallelogram, SMP::Cotangent);
+  typedef SMP::Orbifold_Tutte_parameterizer_3<Mesh>         Parameterizer;
+  Parameterizer parameterizer(SMP::Triangle, SMP::Cotangent);
 
   // a halfedge on the (possibly virtual) border
   // only used in output (will also be used to handle multiple connected components in the future)

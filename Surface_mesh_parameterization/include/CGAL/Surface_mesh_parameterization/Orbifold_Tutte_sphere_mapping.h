@@ -18,10 +18,10 @@
 //
 // Author(s)     :
 
-#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ORBITAL_TUTTE_SPHERE_MAPPING_H
-#define CGAL_SURFACE_MESH_PARAMETERIZATION_ORBITAL_TUTTE_SPHERE_MAPPING_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_SPHERE_MAPPING_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_SPHERE_MAPPING_H
 
-#include <CGAL/Surface_mesh_parameterization/internal/orbital_cone_helper.h>
+#include <CGAL/Surface_mesh_parameterization/internal/orbifold_cone_helper.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
 #include <CGAL/Arr_default_overlay_traits.h>
@@ -914,4 +914,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ORBITAL_TUTTE_SPHERE_MAPPING_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_SPHERE_MAPPING_H
