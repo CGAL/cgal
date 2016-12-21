@@ -4,8 +4,19 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Unique_hash_map.h>
+
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <exception>
 #include <functional>
+#include <limits>
+#include <set>
+#include <utility>
+#include <vector>
+
 #include "triangulate_primitive.h"
 struct Scene_polyhedron_selection_item_priv{
 
@@ -387,9 +398,9 @@ typedef Polyhedron::Facet Facet;
 typedef Traits::Point_3	            Point;
 typedef Traits::Vector_3	    Vector;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
-typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 
 void
 Scene_polyhedron_selection_item_priv::triangulate_facet(Facet_handle fit,const Vector normal,
@@ -1529,9 +1540,6 @@ class Dijkstra_end_exception : public std::exception
 /// the shortest path is thus known.
 class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
 {
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor  vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor    edge_descriptor;
-
   vertex_descriptor destination_vd;
 
 public:
