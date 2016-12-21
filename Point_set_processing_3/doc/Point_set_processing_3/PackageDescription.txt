@@ -36,6 +36,10 @@
 - `CGAL::read_ply_custom_points()`
 - `CGAL::read_xyz_points()`
 - `CGAL::compute_average_spacing()`
+- `CGAL::estimate_global_k_neighbor_scale()`
+- `CGAL::estimate_global_range_scale()`
+- `CGAL::estimate_local_k_neighbor_scales()`
+- `CGAL::estimate_local_range_scales()`
 - `CGAL::remove_outliers()`
 - `CGAL::grid_simplify_point_set()`
 - `CGAL::random_simplify_point_set()`
