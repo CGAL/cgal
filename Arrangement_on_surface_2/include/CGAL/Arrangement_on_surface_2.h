@@ -54,9 +54,9 @@ namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
  * The arrangement class, representing 2-dimensional subdivisions induced on
- * an arbitrary surface by a set of arbitrary planar.
+ * an arbitrary surface by a set of arbitrary planar curves.
  * The GeomTraits parameter corresponds to a geometry-traits class that
- * is defines the Point_2 and X_monotone_curve_2 types and implements the
+ * defines the Point_2 and X_monotone_curve_2 types and implements the
  * geometric predicates and constructions for the family of curves it defines.
  * The TopTraits parameter corresponds to a topology-traits class that defines
  * the topological structure of the surface. Note that the geometry traits
@@ -1713,23 +1713,23 @@ protected:
   Comparison_result _compare_induced_path_length(const DHalfedge* e1,
                                                  const DHalfedge* e2) const;
 
-  /*
-   * Updates the indices according to boundary locations
+  /*!
+   * Update the indices according to boundary locations
    */
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
                    int& x_index, int& y_index,  boost::mpl::bool_<true>) const;
 
-  /*
-   * Updates the indices according to boundary locations (i.e. does nothing)
+  /*!
+   * Update the indices according to boundary locations (i.e. does nothing)
    */
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
                    int& x_index, int& y_index,  boost::mpl::bool_<false>) const;
 
-  /*
+  /*!
    * Is the first given x-monotone curve above the second given?
    * \param xcv1 the first given curve
    * \param ps_y1 the parameter space in y of xcv1
@@ -1744,7 +1744,7 @@ protected:
                  Arr_parameter_space ps_y1,
                  Arr_has_identified_side_tag) const;
 
-  /*
+  /*!
    * Is the first given x-monotone curve above the second given?
    * \param xcv1 the first given curve
    * \param ps_y1 the parameter space in y of xcv1
@@ -1759,7 +1759,7 @@ protected:
                  Arr_parameter_space ps_y1,
                  Arr_has_contracted_side_tag) const;
 
-  /*
+  /*!
    * Is the first given x-monotone curve above the second given?
    * \param xcv1 the first given curve
    * \param ps_y1 the parameter space in y of xcv1
@@ -1775,7 +1775,7 @@ protected:
                  Arr_boundary_cond_tag) const;
 
   /*!
-   * Computes the signs (in left/right and bottom/top) of a path
+   * Compute the signs (in left/right and bottom/top) of a path
    * induced by the sequence he_to=>cv,cv_dir=>he_away, and reports
    * as side-effect the halfedges pointing to local minima copied
    * to an outputiterator.
@@ -2035,7 +2035,7 @@ protected:
   void _relocate_inner_ccbs_in_new_face(DHalfedge* new_he);
 
   /*!
-   * Relocate all  vertices to their proper position,
+   * Relocate all vertices to their proper position,
    * immediately after a face has split due to the insertion of a new halfedge.
    * \param new_he The new halfedge that caused the split, such that the new
    *               face lies to its left and the old face to its right.
@@ -2113,7 +2113,7 @@ protected:
   DFace* _remove_edge(DHalfedge* e, bool remove_source, bool remove_target);
 
   /*!
-   * Decides whether a hole is created when an edge is removed.
+   * Decide whether a hole is created when an edge is removed.
    *
    * \param signs1 signs of future ccb1
    * \param signs2 signs of future ccb2

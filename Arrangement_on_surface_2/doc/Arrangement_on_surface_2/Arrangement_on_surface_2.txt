@@ -880,7 +880,7 @@ algorithms, each implemented by a separate class. All classes that implement
 the various algorithms are made interchangeable, letting the algorithm in use
 vary according to the user choice.} for answering queries:
 <UL>
-<LI> `Arr_naive_point_location<Arrangement>` employes the
+<LI> `Arr_naive_point_location<Arrangement>` employs the
   <I>naive</I> strategy. It locates the query point naively,
   exhaustively scanning all arrangement cells.
 
@@ -986,7 +986,7 @@ segments that form a pentagonal face, with a single isolated
 vertex in its interior, as depicted in \cgalFigureRef{arr_figex_5}.
 Notice that we use the same arrangement structure in the next
 three example programs. The arrangement construction is performed by
-the function `construct_segment_arr()` defined in the heade file
+the function `construct_segment_arr()` defined in the header file
 `point_location_utils.h`. (Its listing is omitted here.) The
 program employs the naive and the landmark strategies to issue
 several point-location queries on this arrangement.

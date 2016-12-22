@@ -508,9 +508,9 @@ The package provides the overloaded free function
 range defined by the two input iterators `[begin, end)` intersect.
 
 The class `General_polygon_set_2` also provides equivalent member
-functions that aggragately operate on a range of input polygons or
-polygons with holes. When such a member function is called, the general 
-polygons represented by the current object are considered operands as 
+functions that aggregately operate on a range of input polygons or
+polygons with holes. When such a member function is called, the general
+polygons represented by the current object are considered operands as
 well. Thus, you can easily compute the union of our polygon range as
 follows:
 \code{.cpp}
