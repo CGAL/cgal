@@ -95,7 +95,7 @@ public:
     Construct_yao_graph_2 (unsigned int k,
                            Direction_2 initial_direction = Direction_2(1,0),
                            Cones_selected cones_selected = ALL_CONES
-                          ): cone_number(k), rays(std::vector<Direction_2>(k)), cones_choice(cones_selected)
+                          ): cone_number(k), cones_choice(cones_selected), rays(std::vector<Direction_2>(k))
 
     {
         if (k<2) {
