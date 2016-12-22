@@ -65,7 +65,7 @@ public:
   {}
 
   /*!
-   * Create a vertex v that mathces v1, which lies of the edge e2.
+   * Create a vertex v that matches v1, which lies of the edge e2.
    */
   virtual void create_vertex (Vertex_handle_A /* v1 */,
 			      Halfedge_handle_B /* e2 */,
@@ -73,7 +73,7 @@ public:
   {}
 
   /*!
-   * Create a vertex v that mathces v1, contained in the face f2.
+   * Create a vertex v that matches v1, contained in the face f2.
    */
   virtual void create_vertex (Vertex_handle_A /* v1 */,
 			      Face_handle_B /* f2 */,
@@ -81,7 +81,7 @@ public:
   {}
 
   /*!
-   * Create a vertex v that mathces v2, which lies of the edge e1.
+   * Create a vertex v that matches v2, which lies of the edge e1.
    */
   virtual void create_vertex (Halfedge_handle_A /* e1 */,
 			      Vertex_handle_B /* v2 */,
@@ -89,7 +89,7 @@ public:
   {}
 
   /*!
-   * Create a vertex v that mathces v2, contained in the face f1.
+   * Create a vertex v that matches v2, contained in the face f1.
    */
   virtual void create_vertex (Face_handle_A /* f1 */,
 			      Vertex_handle_B /* v2 */,
@@ -97,7 +97,7 @@ public:
   {}
 
   /*!
-   * Create a vertex v that mathces the intersection of the edges e1 and e2.
+   * Create a vertex v that matches the intersection of the edges e1 and e2.
    */
   virtual void create_vertex (Halfedge_handle_A /* e1 */,
 			      Halfedge_handle_B /* e2 */,
