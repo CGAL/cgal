@@ -921,7 +921,8 @@ void extract_patch_simplices(
       {
         if ( !is_marked_edge.count(hedges[i]) )
         {
-          if ( hedges[i] < hedges[i]->opposite() )
+          if ( hedges[i] < hedges[i]->opposite()
+               || hedges[i]->opposite()->is_border())
             interior_halfedges.push_back( hedges[i] );
         }
         else

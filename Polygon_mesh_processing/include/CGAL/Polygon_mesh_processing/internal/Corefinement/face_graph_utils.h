@@ -426,7 +426,7 @@ void extract_patch_simplices(
       {
         if ( !is_intersection_edge.count(edge(h, pm)) )
         {
-          if ( h < opposite(h,pm) )
+          if ( h < opposite(h,pm) || is_border(opposite(h,pm),pm) )
             interior_edges.push_back( h );
         }
         else
