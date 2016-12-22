@@ -181,7 +181,7 @@ class Face_graph_output_builder
           skip_polyline_in_tm1=false;
       }
       bool skip_polyline_in_tm2=true;
-      if (is_border(h2,tm2)){
+      if (!is_border(h2,tm2)){
         std::size_t patch_id = tm2_patch_ids[get(fids2, face(h2,tm2))];
         if (patches_of_tm2_used.test(patch_id))
           skip_polyline_in_tm2=false;
