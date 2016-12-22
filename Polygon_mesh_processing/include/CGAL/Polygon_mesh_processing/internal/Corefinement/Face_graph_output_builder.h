@@ -514,33 +514,6 @@ public:
       CGAL_assertion(ids.first==vertex_to_node_id2[source(h2,tm2)]);
       CGAL_assertion(ids.second==vertex_to_node_id2[target(h2,tm2)]);
 
-      // make sure there is no polyline in the middle of a patch.
-      // If there is one then no operation is possible.
-      if (!is_border_edge(h1, tm1))
-      {
-        std::size_t patch_id =
-            tm1_patch_ids[get(fids1, face(h1,tm1))];
-        std::size_t patch_id_opp =
-            tm1_patch_ids[get(fids1, face(opposite(h1,tm1),tm1))];
-
-        if (patch_id == patch_id_opp){
-          impossible_operation.set();
-          return;
-        }
-      }
-      if (!is_border_edge(h2, tm2))
-      {
-        std::size_t patch_id =
-          tm2_patch_ids[get(fids2, face(h2,tm2))];
-        std::size_t patch_id_opp =
-          tm2_patch_ids[get(fids2, face(opposite(h2,tm2),tm2))];
-
-        if (patch_id == patch_id_opp){
-          impossible_operation.set();
-          return;
-        }
-      }
-
       // different handling depending on the number of incident
       // triangles to the edge. After sewing there are two, three or
       // four volumes if there are two, three or four incident
