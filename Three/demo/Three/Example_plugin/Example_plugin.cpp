@@ -10,6 +10,14 @@
 
 //! [itemdeclaration]
 // The special Scene_item only for triangles
+
+//this is used by the Qt's MOC system to manage the metadata.
+#ifdef scene_triangle_item_EXPORTS
+#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_EXPORT
+#else
+#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_IMPORT
+#endif
+
 class Scene_triangle_item : public CGAL::Three::Scene_item
 {
 

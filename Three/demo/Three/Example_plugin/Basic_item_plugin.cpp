@@ -67,15 +67,13 @@ private Q_SLOTS:
     scene->addItem(new_item);
     //! [additem]
     //! [group]
-    //clears the selection to avoid adding unwanted items to the group.
-    scene->setSelectedItem(-1);
-    //Creates a new group
+    //Create a new group
     Scene_group_item *group = new Scene_group_item("New group");
-    //Then gives it its children
+    //add it to the scene
+    scene->addItem(group);
+    //Then give it its children
     scene->changeGroup(item, group);
     scene->changeGroup(new_item,group);
-    //adds it to the scene
-    scene->addGroup(group);
     //! [group]
   }
 
