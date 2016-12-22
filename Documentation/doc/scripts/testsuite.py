@@ -44,9 +44,9 @@ def count_errors_and_warnings(fn):
         for line in f:
             if re.match('^citelist.*[wW]arning.*$', line):
                 continue
-            if re.match('^.*:.*[wW]arning.*$', line):
+            if re.match('^.*[wW]arning.*$', line):
                 warn_count=warn_count + 1
-            if re.match('^.*:.*[eE]rror.*$', line):
+            if re.match('^.*[eE]rror.*$', line):
                 error_count=error_count + 1
     return (warn_count, error_count)
 
