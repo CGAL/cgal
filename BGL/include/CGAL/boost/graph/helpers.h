@@ -469,6 +469,8 @@ make_triangle(const P& p0, const P& p1, const P& p2, Graph& g)
   return opposite(h2,g);
 }
 
+namespace internal {
+
 template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
@@ -519,6 +521,8 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
   return opposite(h3,g);
 }
 
+} // namespace internal
+
 /** 
  * \ingroup PkgBGLHelperFct
  * Creates an isolated quad with border edges in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
@@ -529,9 +533,7 @@ typename boost::graph_traits<Graph>::halfedge_descriptor
 make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 {
   typedef typename boost::graph_traits<Graph>              Traits;
-  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
   typedef typename Traits::vertex_descriptor               vertex_descriptor;
-  typedef typename Traits::face_descriptor                 face_descriptor;
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   Point_property_map ppmap = get(CGAL::vertex_point, g);
   vertex_descriptor v0, v1, v2, v3;
@@ -544,7 +546,7 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   ppmap[v1] = p1;
   ppmap[v2] = p2;
   ppmap[v3] = p3;
-  return make_quad(v0, v1, v2, v3);
+  return internal::make_quad(v0, v1, v2, v3, g);
 }
 
 /** 
@@ -560,7 +562,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
   typedef typename Traits::vertex_descriptor               vertex_descriptor;
-  typedef typename Traits::face_descriptor                 face_descriptor;
+
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   Point_property_map ppmap = get(CGAL::vertex_point, g);
   vertex_descriptor v0, v1, v2, v3, v4, v5, v6, v7;
@@ -581,8 +583,8 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   ppmap[v6] = p6;
   ppmap[v7] = p7;
 
-  halfedge_descriptor ht = make_quad(v7, v4, v5, v6, g);
-  halfedge_descriptor hb = prev(make_quad(v1, v0, v3, v2, g),g);
+  halfedge_descriptor ht = internal::make_quad(v7, v4, v5, v6, g);
+  halfedge_descriptor hb = prev(internal::make_quad(v1, v0, v3, v2, g),g);
   for(int i=0; i <4; i++){
     halfedge_descriptor h = halfedge(add_edge(g),g);
     set_target(h,target(hb,g),g);
