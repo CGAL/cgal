@@ -107,7 +107,7 @@ sample_triangles(const TriangleRange& triangles, double distance, OutputIterator
         const double d_p0p1 = to_double(approximate_sqrt( squared_distance(p0, p1) ));
 
         const double nb_pts = std::ceil( d_p0p1 / distance );
-        const Vector_3 step_vec =  typename Kernel::Construct_scaled_vector_3()(typename Kernel::Construct_vector_3()(p1, p0), typename Kernel::FT(1)/typename Kernel::FT(nb_pts));
+        const Vector_3 step_vec =  typename Kernel::Construct_scaled_vector_3()(typename Kernel::Construct_vector_3()(p0, p1), typename Kernel::FT(1)/typename Kernel::FT(nb_pts));
         for (double i=1; i<nb_pts; ++i)
         {
           *out++=typename Kernel::Construct_translated_point_3()(p0, typename Kernel::Construct_scaled_vector_3()(step_vec , typename Kernel::FT(i)));
