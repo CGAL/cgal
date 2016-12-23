@@ -31,16 +31,6 @@ public:
     /// 3D vector type
     typedef unspecified_type Vector_3;
 
-    /*!
-     * 3D triangle type
-     * It must be constructible from three points and access to its vertices
-     * must be possible with operator `const Point_3& operator[](int i) const`
-     * with  `0 <= i < 3`.
-     * In addition, it must provide `BBox_3 bbox() const` that returns a
-     * bounding box of the triangle.
-     */
-    typedef unspecified_type Triangle_3;
-
     /// @name Functors
     /// @{
 

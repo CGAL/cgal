@@ -28,7 +28,6 @@
 #include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
-#include <boost/foreach.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
@@ -43,6 +42,8 @@
 #include <CGAL/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
+#include <boost/foreach.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -75,38 +76,39 @@ triangle_grid_sampling( const typename Kernel::Point_3& p0,
   return out;
 }
 
-template <class Kernel, class OutputIterator>
-OutputIterator
-triangle_grid_sampling(const typename Kernel::Triangle_3& t,
-                       double distance,
-                       OutputIterator out)
-{
-  return triangle_grid_sampling<Kernel>(t[0], t[1], t[2], distance, out);
-}
-
 } //end of namespace internal
 
-template <class Kernel, class TriangleRange, class OutputIterator>
+template <class Kernel,
+          class FaceRange,
+          class TriangleMesh,
+          class VertexPointMap,
+          class OutputIterator>
 OutputIterator
-sample_triangles(const TriangleRange& triangles,
+sample_triangles(const FaceRange& triangles,
+                 const TriangleMesh& tm,
+                 VertexPointMap vpm,
                  double distance,
                  OutputIterator out)
 {
-  typedef typename Kernel::Point_3 Point_3;
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Triangle_3 Triangle_3;
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  std::set< std::pair<Point_3, Point_3> > sampled_edges;
+  boost::unordered_set<typename GT::edge_descriptor> sampled_edges;
+  boost::unordered_set<typename GT::vertex_descriptor> endpoints;
 
-  // sample edges but skip endpoints
-  BOOST_FOREACH(const Triangle_3& t, triangles)
+  BOOST_FOREACH(face_descriptor fd, triangles)
   {
+    // sample edges but skip endpoints
+    halfedge_descriptor hd = halfedge(fd, tm);
     for (int i=0;i<3; ++i)
     {
-      const Point_3& p0=t[i];
-      const Point_3& p1=t[(i+1)%3];
-      if ( sampled_edges.insert(CGAL::make_sorted_pair(p0, p1)).second )
+      if ( sampled_edges.insert(edge(hd, tm)).second )
       {
+        Point_ref p0 = get(vpm, source(hd, tm));
+        Point_ref p1 = get(vpm, target(hd, tm));
         typename Kernel::Compute_squared_distance_3 squared_distance;
         const double d_p0p1 = to_double(approximate_sqrt( squared_distance(p0, p1) ));
 
@@ -121,19 +123,18 @@ sample_triangles(const TriangleRange& triangles,
               typename Kernel::FT(i)));
         }
       }
+      //add endpoints once
+      if ( endpoints.insert(target(hd, tm)).second )
+        *out++=get(vpm, target(hd, tm));
+      hd=next(hd, tm);
     }
-  }
-  // sample triangles
-  BOOST_FOREACH(const Triangle_3& t, triangles)
-    out=internal::triangle_grid_sampling<Kernel>(t, distance, out);
 
-  //add endpoints
-  std::set< Point_3 > endpoints;
-  BOOST_FOREACH(const Triangle_3& t, triangles)
-    for(int i=0; i<3; ++i)
-    {
-      if ( endpoints.insert(t[i]).second ) *out++=t[i];
-    }
+    // sample triangles
+    Point_ref p0 = get(vpm, source(hd, tm));
+    Point_ref p1 = get(vpm, target(hd, tm));
+    Point_ref p2 = get(vpm, target(next(hd, tm), tm));
+    out=internal::triangle_grid_sampling<Kernel>(p0, p1, p2, distance, out);
+  }
   return out;
 }
 
@@ -246,20 +247,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     }
     case GRID:
     {
-      std::vector<typename Geom_traits::Triangle_3> triangles;
-      BOOST_FOREACH(face_descriptor f, faces(tm))
-      {
-        //create the triangles and store them
-        typename Geom_traits::Point_3 points[3];
-        halfedge_descriptor hd(halfedge(f,tm));
-        for(int i=0; i<3; ++i)
-        {
-          points[i] = get(pmap, target(hd, tm));
-          hd = next(hd, tm);
-        }
-        triangles.push_back(typename Geom_traits::Triangle_3(points[0], points[1], points[2]));
-      }
-      sample_triangles<Geom_traits>(triangles, parameter, out);
+      sample_triangles<Geom_traits>(faces(tm), tm, pmap, parameter, out);
       return out;
     }
     case MONTE_CARLO:
@@ -438,7 +426,6 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   {
     case GRID:
     {
-      //create the triangles and store them
       typename Geom_traits::Point_3 points[3];
       typename GT::halfedge_descriptor hd(halfedge(f,tm));
       for(int i=0; i<3; ++i)
@@ -447,7 +434,8 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
         hd = next(hd, tm);
       }
 
-      internal::triangle_grid_sampling<Geom_traits>(typename Geom_traits::Triangle_3(points[0], points[1], points[2]), parameter, out);
+      internal::triangle_grid_sampling<Geom_traits>(
+        points[0], points[1], points[2], parameter, out);
       return out;
     }
     case MONTE_CARLO:
