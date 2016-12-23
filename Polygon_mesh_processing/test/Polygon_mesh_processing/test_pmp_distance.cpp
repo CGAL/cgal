@@ -1,7 +1,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 
 #include <CGAL/boost/graph/property_maps.h>
@@ -272,7 +272,7 @@ int main(int, char** argv)
   std::cout << "First mesh has " << num_faces(m1) << " faces\n";
   std::cout << "Second mesh has " << num_faces(m2) << " faces\n";
 
-  CGAL::Timer time;
+  CGAL::Real_timer time;
   time.start();
    std::cout << "Distance between meshes (parallel) "
              << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<CGAL::Parallel_tag>(m1,m2,40000)
@@ -294,5 +294,3 @@ int main(int, char** argv)
 
   return 0;
 }
-
-
