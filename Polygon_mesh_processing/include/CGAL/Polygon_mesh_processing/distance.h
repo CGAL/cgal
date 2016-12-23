@@ -428,16 +428,40 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
     {
       typename Geom_traits::Point_3 points[3];
       typename GT::halfedge_descriptor hd(halfedge(f,tm));
+
+      // add endpoints
       for(int i=0; i<3; ++i)
       {
         points[i] = get(pmap, target(hd, tm));
+        *out++= points[i];
         hd = next(hd, tm);
       }
 
-      internal::triangle_grid_sampling<Geom_traits>(
+      //sample edges
+      for (int i=0;i<3; ++i)
+      {
+        typename Geom_traits::Compute_squared_distance_3 squared_distance;
+        const double d_p0p1 = to_double(approximate_sqrt(
+          squared_distance(points[i], points[(i+1)%3]) ));
+
+        const double nb_pts = std::ceil( d_p0p1 / d_p0p1 );
+        const typename Geom_traits::Vector_3 step_vec =
+          typename Geom_traits::Construct_scaled_vector_3()(
+            typename Geom_traits::Construct_vector_3()(points[i], points[(i+1)%3]),
+              typename Geom_traits::FT(1)/typename Geom_traits::FT(nb_pts));
+        for (double j=1; j<nb_pts; ++j)
+        {
+          *out++=typename Geom_traits::Construct_translated_point_3()(points[i],
+            typename Geom_traits::Construct_scaled_vector_3()(step_vec,
+               typename Geom_traits::FT(j)));
+        }
+      }
+
+      //sample the face interior
+      return internal::triangle_grid_sampling<Geom_traits>(
         points[0], points[1], points[2], parameter, out);
-      return out;
     }
+
     case MONTE_CARLO:
       nb_points = (std::max)(nb_points, std::size_t(1));
     case RANDOM_UNIFORM:
@@ -456,6 +480,17 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
     }
   }
   return out;
+}
+
+template<class OutputIterator, class TriangleMesh>
+OutputIterator
+sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+            const TriangleMesh& tm,
+            double parameter,
+            OutputIterator out,
+            Sampling_method method = RANDOM_UNIFORM)
+{
+  return sample_face(f, tm, parameter, out, parameters::all_default(), method);
 }
 
 /**
