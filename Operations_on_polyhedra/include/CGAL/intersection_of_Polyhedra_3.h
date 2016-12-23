@@ -436,7 +436,7 @@ public:
   template<class Iterator>
   void annotate_graph(Iterator begin,Iterator end){
     for(Iterator it=begin;it!=end;++it){
-      typename Node_to_infos_map::iterator it_res=node_infos.find(std::distance(begin, it));
+      typename Node_to_infos_map::iterator it_res=node_infos.find(static_cast<int>(std::distance(begin, it)));
       if (it_res!=node_infos.end())
         it->make_terminal();
     }
