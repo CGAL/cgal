@@ -157,7 +157,7 @@ void Mesh_3_plugin::splitPolylines() {
   Scene_polylines_item* new_item = new Scene_polylines_item;
   auto new_polylines = split_polylines(polylines_item->polylines);
   new_item->polylines =
-    std::move(Polylines_container{new_polylines.begin(), new_polylines.end()});
+    Polylines_container{new_polylines.begin(), new_polylines.end()};
   new_item->setName(tr("%1 (split)").arg(polylines_item->name()));
   scene->addItem(new_item);
 }
