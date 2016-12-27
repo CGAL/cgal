@@ -483,7 +483,7 @@ the propagation of a connected component index to cross it.
 
 \section PMPDistance Approximate Hausdorff Distance
 
-This package provides methods to compute approximate Hausdorff distances.
+This package provides methods to compute approximate Hausdorff distances \cgalCite{cignoni1998metro}.
 These distances can be computed between two meshes, a mesh and a point set, or a point set and a mesh.
 These computations are performed with :
 - `CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()`
