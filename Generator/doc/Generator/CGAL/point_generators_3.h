@@ -248,7 +248,71 @@ get_default_random());
 /// @}
 
 }; /* end Random_points_in_triangle_3 */
-	
+} /* end namespace CGAL */
+
+namespace CGAL{
+/*!
+
+The class `Random_points_on_segment_3` is an input iterator creating points uniformly
+distributed on a segment. The default `Creator` is
+`Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
+
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
+
+\sa `CGAL::cpp11::copy_n()`
+\sa `CGAL::Counting_iterator`
+\sa `std::random_shuffle`
+
+*/
+template< typename Point_3, typename Creator >
+class Random_points_on_segment_3 {
+public:
+
+/// \name Types
+/// @{
+
+/*!
+
+*/
+typedef std::input_iterator_tag iterator_category;
+
+/*!
+
+*/
+typedef Point_3 value_type;
+
+/*!
+
+*/
+typedef std::ptrdiff_t difference_type;
+
+/*!
+
+*/
+typedef const Point_3* pointer;
+
+/*!
+
+*/
+typedef const Point_3& reference;
+
+
+/*!
+creates an input iterator `g` generating points of type `Point_3` uniformly
+distributed on the segment from \f$ p\f$ to \f$ q\f$ (excluding \f$ q\f$),
+i.e.\ \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$.
+A single random number is needed from `rnd` for each point.
+The expressions `to_double(p.x())`, `to_double(p.y())`, and `to_double(p.z())` must result
+in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$.
+*/
+Random_points_on_segment_3( const Point_3& p, const Point_3& q,
+Random& rnd = get_default_random());
+
+/// @}
+
+}; /* end Random_points_on_segment_3 */
+
 } /* end namespace CGAL */
 
 namespace CGAL {
@@ -264,7 +328,6 @@ distributed inside a tetrahedron. The default `Creator` is
 
 \sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
@@ -344,13 +407,9 @@ The triangle range must be valid and unchanged while the iterator is used.
 
 \sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
-\sa `CGAL::Points_on_segment_2<Point_2>`
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
-\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
-\sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
-\sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
-\sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
+\sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_tetrahedron_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_mesh_3<Point_3, TriangleMesh>`
 \sa `CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3T3>`
 \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`

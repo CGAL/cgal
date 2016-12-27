@@ -251,6 +251,55 @@ void Random_points_in_triangle_3<P, Creator>::generate_point() {
 }
 
 template < class P, class Creator = 
+                   Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
+class Random_points_on_segment_3 : public Random_generator_base<P> {
+    P _p;
+    P _q;
+    void generate_point();
+public:
+    typedef Random_points_on_segment_3<P,Creator> This;
+    Random_points_on_segment_3() {}
+    Random_points_on_segment_3( const P& p,
+                                const P& q,
+                                Random& rnd = CGAL::get_default_random())
+        // g is an input iterator creating points of type `P' uniformly
+        // distributed on the segment from p to q except q, i.e. `*g' ==
+        // \lambda p + (1-\lambda)\, q where 0 <= \lambda < 1 . A single
+        // random number is needed from `rnd' for each point.
+      : Random_generator_base<P>( (std::max)( (std::max)( (std::max)(to_double(p.x()), to_double(q.x())),
+                                                         (std::max)(to_double(p.y()), to_double(q.y()))),
+                                                         (std::max)(to_double(p.z()), to_double(q.z()))),
+                                  rnd) , _p(p), _q(q)
+    {
+        generate_point();
+    }
+    const P&  source() const { return _p; }
+    const P&  target() const { return _q; }
+    This& operator++()    {
+        generate_point();
+        return *this;
+    }
+    This  operator++(int) {
+        This tmp = *this;
+        ++(*this);
+        return tmp;
+    }
+};
+
+template < class P, class Creator >
+void
+Random_points_on_segment_3<P,Creator>::
+generate_point() {
+    typedef typename Creator::argument_type  T;
+    double la = this->_rnd.get_double();
+    double mu = 1.0 - la;
+    Creator creator;
+    this->d_item = creator(T(mu * to_double(_p.x()) + la * to_double(_q.x())),
+                           T(mu * to_double(_p.y()) + la * to_double(_q.y())),
+                           T(mu * to_double(_p.z()) + la * to_double(_q.z())));
+}
+
+template < class P, class Creator =
 Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_in_tetrahedron_3 : public Random_generator_base<P> {
 	P _p,_q,_r,_s;
