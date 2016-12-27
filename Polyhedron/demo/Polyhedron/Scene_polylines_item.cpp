@@ -435,7 +435,7 @@ void Scene_polylines_item::invalidateOpenGLBuffers()
 
 void Scene_polylines_item::change_corner_radii() {
     bool ok = true;
-    double proposed_radius = d->spheres_drawn_square_radius;
+    double proposed_radius = std::sqrt(d->spheres_drawn_square_radius);
     if(proposed_radius == 0) {
         CGAL::Three::Scene_interface::Bbox b = bbox();
         proposed_radius = (std::max)(b.xmax() - b.xmin(),
