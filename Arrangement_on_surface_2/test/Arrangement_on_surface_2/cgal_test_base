@@ -129,13 +129,13 @@ configure()
 {
   echo "Configuring... "
   rm -rf CMakeCache.txt CMakeFiles/
-  echo "cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  echo "cmake --no-warn-unused-cli "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
  -DCGAL_DIR=\"$CGAL_DIR\" \
  -DCGAL_CXX_FLAGS:STRING=\"$TESTSUITE_CXXFLAGS -I../../include\" \
  -DCGAL_EXE_LINKER_FLAGS=\"$TESTSUITE_LDFLAGS\" \
  -DCMAKE_BUILD_TYPE=NOTFOUND \
  ."
-  if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake --no-warn-unused-cli "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                     -DCGAL_DIR="$CGAL_DIR" \
                                     -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS -I../../include" \
                                     -DCGAL_EXE_LINKER_FLAGS="$TESTSUITE_LDFLAGS" \
