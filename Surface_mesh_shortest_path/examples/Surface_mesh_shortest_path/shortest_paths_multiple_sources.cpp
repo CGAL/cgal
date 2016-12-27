@@ -34,7 +34,7 @@ int main(int argc, char** argv)
   input >> polyhedron;
   input.close();
 
-  // initialize indices of vertices, halfedges and facets
+  // initialize indices of vertices, halfedges and faces
   CGAL::set_halfedgeds_items_id(polyhedron);
 
   // pick up some source points inside faces,
@@ -47,7 +47,7 @@ int main(int argc, char** argv)
   std::vector<face_descriptor> face_vector(fit, fit_end);
   // and creating a vector of Face_location objects
   const std::size_t nb_source_points = 30;
-  Traits::Barycentric_coordinate face_location = {{0.25, 0.5, 0.25}};
+  Traits::Barycentric_coordinates face_location = {{0.25, 0.5, 0.25}};
   std::vector<Face_location> faceLocations(nb_source_points, Face_location(face_descriptor(), face_location));
   for (std::size_t i = 0; i < nb_source_points; ++i)
   {

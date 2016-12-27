@@ -54,8 +54,8 @@ public:
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
-  typedef Surface_mesh_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef Surface_mesh_shortest_path_traits::Construct_barycentric_coordinate Construct_barycentric_coordinate;
+  typedef Surface_mesh_shortest_path_traits::Barycentric_coordinates Barycentric_coordinates;
+  typedef Surface_mesh_shortest_path_traits::Construct_barycentric_coordinates Construct_barycentric_coordinates;
   typedef Surface_mesh_shortest_path_traits::Ray_3 Ray_3;
   typedef Surface_mesh_shortest_path_traits::Point_3 Point_3;
   typedef Surface_mesh_shortest_path_traits::FT FT;

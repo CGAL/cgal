@@ -53,8 +53,8 @@ If the traits class used holds some local state, it must also be passed to the c
 
 The set of source points for shortest path queries can be populated one by one or using a range.
 A source point can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
-with some barycentric coordinate.
-Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinate is a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$.
+with some barycentric coordinates.
+Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinates are a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$.
 
 \subsubsection Surface_mesh_shortest_pathClassBuild Building the Internal Sequence Tree
 
@@ -69,7 +69,7 @@ Note that it can also be built manually by a call to `Surface_mesh_shortest_path
 
 As for specifying the source points, the target point for a shortest path query
 can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
-and a barycentric coordinate.
+and some barycentric coordinates.
 
 There are three different kinds of query functions that can be called using the class `Surface_mesh_shortest_path`.
 Given a target point, all these functions compute the shortest path between that target point and the set of
@@ -82,8 +82,8 @@ source points:
 \subsubsection Surface_mesh_shortest_pathClassMore Additional Convenience Functionalities
 
 Some convenience functions are provided to compute:
-- the point on the input surface mesh specified as a face of the input surface mesh and a barycentric coordinate.
-- the closest point on the input surface mesh (specified as a face of the input surface mesh and a barycentric coordinate) to a given 3D point. Those function are using the class `CGAL::AABB_tree`.
+- the point on the input surface mesh specified as a face of the input surface mesh and some barycentric coordinates.
+- the closest point on the input surface mesh (specified as a face of the input surface mesh and some barycentric coordinates) to a given 3D point. Those function are using the class `CGAL::AABB_tree`.
 
 \subsection Surface_mesh_shortest_pathKernelRecommendataions Kernel Recommendations
 In short, we recommend to use a \cgal kernel with exact predicates such as `CGAL::Exact_predicates_inexact_constructions_kernel`.

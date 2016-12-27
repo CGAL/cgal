@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef boost::graph_traits<Polyhedron_3> Graph_traits;
   typedef Graph_traits::vertex_descriptor vertex_descriptor;
@@ -198,8 +198,8 @@ int main(int argc, char* argv[])
     face_descriptor startFace = faces[startFaceIndex];
     face_descriptor endFace = faces[endFaceIndex];
 
-    Barycentric_coordinate startLocation = CGAL::test::random_coordinate<Traits>(rand);
-    Barycentric_coordinate endLocation = CGAL::test::random_coordinate<Traits>(rand);
+    Barycentric_coordinates startLocation = CGAL::test::random_coordinates<Traits>(rand);
+    Barycentric_coordinates endLocation = CGAL::test::random_coordinates<Traits>(rand);
 
     //shortestPaths.m_debugOutput = true;
 
