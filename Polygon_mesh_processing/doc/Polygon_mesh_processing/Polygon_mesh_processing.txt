@@ -491,7 +491,6 @@ These computations are performed with :
 - `CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set()`
 - `CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
-- `CGAL::Polygon_mesh_processing::sample_face()`
 
 \subsection AHDExample Approximate Hausdorff Distance Example
 In the following example, a mesh is isotropically remeshed and the approximate distance between the input and the output is computed.

@@ -215,6 +215,9 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
 
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
 template <class GeomTraits, class TriangleMesh>
@@ -232,24 +235,19 @@ void general_tests(const TriangleMesh& m1,
     points.push_back(typename GeomTraits::Point_3(0,2,0));
 
   std::cout << "Symmetric distance between meshes (sequential) "
-              << CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(m1,m2,4000)
+              << PMP::approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(
+                  m1,m2,
+                  PMP::parameters::set_number_of_points_per_squared_area_unit(4000),
+                  PMP::parameters::set_number_of_points_per_squared_area_unit(4000))
               << "\n";
 
   std::cout << "Max distance to point set "
-            << CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set(m1,points,4000)
+            << PMP::approximate_max_distance_to_point_set(m1,points,4000)
             << "\n";
 
   std::cout << "Max distance to triangle mesh (sequential) "
-            << CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh<CGAL::Sequential_tag>(points,m1)
+            << PMP::max_distance_to_triangle_mesh<CGAL::Sequential_tag>(points,m1)
             << "\n";
-
-  std::vector<typename GeomTraits::Point_3> sample;
-  typename boost::graph_traits<TriangleMesh>::face_descriptor f = *faces(m1).first;
-  CGAL::Polygon_mesh_processing::sample_face(f, m1, 4000, std::back_inserter(sample),CGAL::Polygon_mesh_processing::parameters::all_default());
-  std::cout << "Number of sampled points in the first face of m1 (sequential) "
-            <<sample.size()
-            << "\n";
-
 }
 
 void test_concept()
@@ -275,7 +273,8 @@ int main(int, char** argv)
   CGAL::Real_timer time;
   time.start();
    std::cout << "Distance between meshes (parallel) "
-             << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<CGAL::Parallel_tag>(m1,m2,40000)
+             << PMP::approximate_Hausdorff_distance<CGAL::Parallel_tag>(
+                  m1,m2,PMP::parameters::set_number_of_points_per_squared_area_unit(4000))
              << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -283,7 +282,8 @@ int main(int, char** argv)
   time.reset();
   time.start();
   std::cout << "Distance between meshes (sequential) "
-            << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<CGAL::Sequential_tag>(m1,m2,40000)
+            << PMP::approximate_Hausdorff_distance<CGAL::Sequential_tag>(
+                 m1,m2,PMP::parameters::set_number_of_points_per_squared_area_unit(4000))
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";

@@ -210,7 +210,113 @@ set to `true`, this parameter is ignored.
 \n
 \b Type : `bool` \n
 \b Default value is `true`
+\cgalNPEnd
 
+\cgalNPBegin{use_random_uniform_sampling} \anchor PMP_use_random_uniform_sampling
+Parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+in a random uniform way.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{use_grid_sampling} \anchor PMP_use_grid_sampling
+Parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+in on a grid in each face.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{use_monte_carlo_sampling} \anchor PMP_use_monte_carlo_sampling
+Parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+using a Monte-Carlo approach.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{sample_edges} \anchor PMP_sample_edges
+Parameter used in `sample_triangle_mesh()` to indicate if a dedicated sampling
+of edges should be done.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{sample_vertices} \anchor PMP_sample_vertices
+Parameter used in `sample_triangle_mesh()` to indicate if triangle vertices should
+be copied in the output iterator.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{sample_faces} \anchor PMP_sample_faces
+Parameter used in `sample_triangle_mesh()` to indicate if the interior of faces
+should be considered for the sampling.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{set_number_of_points_on_faces} \anchor PMP_set_number_of_points_on_faces
+Parameter used in `sample_triangle_mesh()` to set the number of points picked
+using the random uniform method on faces.
+\n
+\b Type : `std::size_t` \n
+\b Default value is `0`
+\cgalNPEnd
+
+\cgalNPBegin{set_number_of_points_on_edges} \anchor PMP_set_number_of_points_on_edges
+Parameter used in `sample_triangle_mesh()` to set the number of points picked
+using the random uniform method on edges.
+\n
+\b Type : `std::size_t` \n
+\b Default value is `0`
+\cgalNPEnd
+
+\cgalNPBegin{set_number_of_points_per_face} \anchor PMP_set_number_of_points_per_face
+Parameter used in `sample_triangle_mesh()` to set the number of points picked
+per face using the Monte-Carlo method.
+\n
+\b Type : `std::size_t` \n
+\b Default value is `0`
+\cgalNPEnd
+
+\cgalNPBegin{set_number_of_points_per_edge} \anchor PMP_set_number_of_points_per_edge
+Parameter used in `sample_triangle_mesh()` to set the number of points picked
+per edge using the Monte-Carlo method.
+\n
+\b Type : `std::size_t` \n
+\b Default value is `0`
+\cgalNPEnd
+
+\cgalNPBegin{set_grid_spacing} \anchor PMP_set_grid_spacing
+Parameter used in `sample_triangle_mesh()` to set the grid spacing when using
+the grid sampling method.
+\n
+\b Type : `double` \n
+\b Default value is `0`
+\cgalNPEnd
+
+\cgalNPBegin{set_number_of_points_per_squared_area_unit} \anchor PMP_set_number_of_points_per_squared_area_unit
+Parameter used in `sample_triangle_mesh()` to set the number of points per
+squared area unit to be picked up in faces for the random uniform sampling and
+Monte-Carlo methods.
+\n
+\b Type : `double` \n
+\b Default value is `0`
+\cgalNPEnd
+
+\cgalNPBegin{set_number_of_points_per_distance_unit} \anchor PMP_set_number_of_points_per_distance_unit
+Parameter used in `sample_triangle_mesh()` to set the number of points per
+distance unit to be picked up on edges for the random uniform sampling and
+Monte-Carlo methods.
+\n
+\b Type : `double` \n
+\b Default value is `0`
+\cgalNPEnd
 
 \cgalNPTableEnd
 

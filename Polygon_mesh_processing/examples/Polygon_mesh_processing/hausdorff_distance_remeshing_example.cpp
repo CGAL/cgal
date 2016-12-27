@@ -14,6 +14,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3                     Point;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main()
 {
@@ -28,6 +29,6 @@ int main()
 
   std::cout << "Approximated Hausdorff distance: "
             << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
-                  <TAG>(tm1, tm2, 4000)
+                  <TAG>(tm1, tm2, PMP::parameters::set_number_of_points_per_squared_area_unit(4000))
             << std::endl;
 }

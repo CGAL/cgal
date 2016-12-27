@@ -88,7 +88,10 @@ sample_triangles(const FaceRange& triangles,
                  const TriangleMesh& tm,
                  VertexPointMap vpm,
                  double distance,
-                 OutputIterator out)
+                 OutputIterator out,
+                 bool sample_faces,
+                 bool sample_edges,
+                 bool add_vertices)
 {
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   typedef typename Kernel::Vector_3 Vector_3;
@@ -105,7 +108,7 @@ sample_triangles(const FaceRange& triangles,
     halfedge_descriptor hd = halfedge(fd, tm);
     for (int i=0;i<3; ++i)
     {
-      if ( sampled_edges.insert(edge(hd, tm)).second )
+      if (sample_edges && sampled_edges.insert(edge(hd, tm)).second )
       {
         Point_ref p0 = get(vpm, source(hd, tm));
         Point_ref p1 = get(vpm, target(hd, tm));
@@ -124,16 +127,19 @@ sample_triangles(const FaceRange& triangles,
         }
       }
       //add endpoints once
-      if ( endpoints.insert(target(hd, tm)).second )
+      if ( add_vertices && endpoints.insert(target(hd, tm)).second )
         *out++=get(vpm, target(hd, tm));
       hd=next(hd, tm);
     }
 
     // sample triangles
-    Point_ref p0 = get(vpm, source(hd, tm));
-    Point_ref p1 = get(vpm, target(hd, tm));
-    Point_ref p2 = get(vpm, target(next(hd, tm), tm));
-    out=internal::triangle_grid_sampling<Kernel>(p0, p1, p2, distance, out);
+    if (sample_faces)
+    {
+      Point_ref p0 = get(vpm, source(hd, tm));
+      Point_ref p1 = get(vpm, target(hd, tm));
+      Point_ref p2 = get(vpm, target(next(hd, tm), tm));
+      out=internal::triangle_grid_sampling<Kernel>(p0, p1, p2, distance, out);
+    }
   }
   return out;
 }
@@ -176,90 +182,223 @@ struct Distance_computation{
 };
 #endif
 
-/**
- * \ingroup PMP_distance_grp
- * @brief enum used to select the sampling method in the function `sample_triangle_mesh()`
- */
-enum Sampling_method{
-  RANDOM_UNIFORM =0,
-  GRID,
-  MONTE_CARLO
-};
 /** \ingroup PMP_distance_grp
- * generates points taken on `tm` in a way depending on `method` and
- * outputs them to `out`.
+ * generates points taken on `tm` and outputs them to `out`, the sampling method
+ * is selected using named parameters.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam OutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
  *  the value type of the internal vertex point map of `tm`
- * @tparam Sampling_method defines the sampling method. Possible values are:
- *   - `RANDOM_UNIFORM`: points are generated in a random and uniform way, depending on the area of each triangle.
- *   - `GRID`: points are generated on a grid in each triangle, with a minimum of one point per triangle.
- *   - `MONTE_CARLO`: points are generated randomly in each triangle. The number of points per triangle is proportional to the triangle area with a minimum of 1.
  *
  * @param tm the triangle mesh that will be sampled
- * @param parameter depends on `method`:
- *   - `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
- *   - `GRID`: the distance between two consecutive points in the grid
- *
  * @param out output iterator to be filled with sampled points
  * @param np an optional sequence of \ref namedparameters among the ones listed below
- * @param method defines the sampling method
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map with the points associated to the vertices of `tm`. If this parameter is omitted,
- *    an internal property map for `CGAL::vertex_point_t` should be available for `TriangleMesh` \cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`\cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points
+ *      associated to the vertices of `tm`. If this parameter is omitted,
+ *      an internal property map for `CGAL::vertex_point_t`
+ *      should be available for `TriangleMesh`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`. \cgalParamEnd
+ *    \cgalParamBegin{use_random_uniform_sampling}
+ *      if `true` is passed (the default), points are generated in a random
+ *      and uniform way on the surface of `tm`, and/or on edges of `tm`.
+ *      For faces, the number of sample points is the value passed to the named
+ *      parameter `set_number_of_points_on_faces()`. If not set,
+ *      the value passed to the named parameter `set_number_of_points_per_squared_area_unit()`
+ *      is multiplied by the area of `tm` to get the number of sample points.
+ *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
+ *      For edges, the number of the number of sample points is the value passed to the named
+ *      parameter `set_number_of_points_on_edges()`. If not set,
+ *      the value passed to the named parameter `set_number_of_points_per_distance_unit()`
+ *      is multiplied by the sum of the length of edges of `tm` to get the number of sample points.
+ *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{set_number_of_points_on_faces} an unsigned integral value used
+ *      for the random sampling method as the number of points to pick on the surface.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{set_number_of_points_on_edges} an unsigned integral value used
+ *      for the random sampling method as the number of points to pick exclusively
+ *      on edges.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{set_number_of_points_per_squared_area_unit} a double value
+ *       used for the random sampling and the Monte Carlo sampling methods to
+ *       repectively determine the total number of points inside faces
+ *       and the number of points per face.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{set_number_of_points_per_distance_unit} a double value
+ *       used for the random sampling and the Monte Carlo sampling methods to
+ *       repectively determine the total number of points on edges and the
+ *       number of points per edge.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{use_grid_sampling}
+ *      if `true` is passed, points are generated on a grid in each triangle,
+ *      with a minimum of one point per triangle. The distance between
+ *      two consecutive points in the grid is that of the length of the
+ *      smallest non-null edge of `tm` or the value passed to
+ *      the named parameter `set_grid_spacing()`. Edges are also split using the
+ *      same distance, if requested.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{set_grid_spacing} a double value used as the grid spacing
+ *      for the grid sampling method.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{use_monte_carlo_sampling}
+ *      if `true` is passed, points are generated randomly in each triangle and/or
+ *      on each edge.
+ *      For faces, the number of points per triangle is the value passed to the named
+ *      parameter `set_number_of_points_per_face()`. If not set, the value passed
+ *      to the named parameter `set_number_of_points_per_squared_area_unit()` is
+ *      used to pick a number of points per face proportional to the triangle
+ *      area with a minimum of one point per face. If none of these parameters
+ *      is set, 2 divided by the square of the length of the smallest non-null
+ *      edge of `tm` is used as if it was passed to
+ *      `set_number_of_points_per_squared_area_unit()`.
+ *      For edges, the number of points per edge is the value passed to the named
+ *      parameter `set_number_of_points_per_edge()`. If not set, the value passed
+ *      to the named parameter `set_number_of_points_per_distance_unit()` is
+ *      used to pick a number of points per edge proportional to the length of
+ *      the edge with a minimum of one point per face. If none of these parameters
+ *      is set, 1 divided by the length of the smallest non-null edge of `tm`
+ *      is used as if it was passed to `set_number_of_points_per_distance_unit()`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{set_number_of_points_per_face} an unsigned integral value
+ *      used by the Monte-Carlo sampling method as the number of points per face
+ *      to pick.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{set_number_of_points_per_edge} an unsigned integral value
+ *      used by the Monte-Carlo sampling method as the number of points per edge
+ *      to pick.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
+ *    vertices of `tm` are put into `out`.\cgalParamEnd
+ *    \cgalParamBegin{sample_edges} if `true` is passed (default value),
+ *    edges of `tm` are sampled using a dedicated algorithm.\cgalParamEnd
+ *    \cgalParamBegin{sample_faces} if `true` is passed (default value),
+ *    faces of `tm` are sampled using a dedicated algorithm.\cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template<class OutputIterator, class TriangleMesh, class NamedParameters>
 OutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
-                           double parameter,
                            OutputIterator out,
-                           NamedParameters np,
-                           Sampling_method method = RANDOM_UNIFORM)
+                           NamedParameters np)
 {
-    typedef typename GetGeomTraits<TriangleMesh,
-            NamedParameters>::type Geom_traits;
+  typedef typename GetGeomTraits<TriangleMesh,
+          NamedParameters>::type Geom_traits;
 
-    typedef typename GetVertexPointMap<TriangleMesh,
-            NamedParameters>::const_type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh,
+          NamedParameters>::const_type Vpm;
 
-    typedef boost::graph_traits<TriangleMesh> GT;
-    typedef typename GT::face_descriptor face_descriptor;
-    typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::edge_descriptor edge_descriptor;
 
-    Vpm pmap = choose_param(get_param(np, vertex_point),
-                           get_const_property_map(vertex_point, tm));
-    typedef Creator_uniform_3<typename Geom_traits::FT,
-                              typename Geom_traits::Point_3> Creator;
-  switch(method)
+  Vpm pmap = choose_param(get_param(np, vertex_point),
+                          get_const_property_map(vertex_point, tm));
+  typedef Creator_uniform_3<typename Geom_traits::FT,
+                            typename Geom_traits::Point_3> Creator;
+
+  Geom_traits geomtraits = choose_param(get_param(np, geom_traits), Geom_traits());
+
+  using boost::choose_param;
+  using boost::get_param;
+  using boost::is_default_param;
+
+  bool use_rs = choose_param(get_param(np, random_uniform_sampling), true);
+  bool use_gs = choose_param(get_param(np, grid_sampling), false);
+  bool use_ms = choose_param(get_param(np, monte_carlo_sampling), false);
+
+  if (use_gs || use_ms)
+    if (is_default_param(get_param(np, random_uniform_sampling)))
+      use_rs=false;
+
+  bool smpl_vrtcs = choose_param(get_param(np, do_sample_vertices), true);
+  bool smpl_dgs = choose_param(get_param(np, do_sample_edges), true);
+  bool smpl_fcs = choose_param(get_param(np, do_sample_faces), true);
+
+  double nb_pts_sq_a_u = choose_param(get_param(np, nb_points_per_sq_area_unit), 0.);
+  double nb_pts_l_u = choose_param(get_param(np, nb_points_per_distance_unit), 0.);
+
+  // sample vertices
+  if (smpl_vrtcs)
   {
-    case RANDOM_UNIFORM:
+    Property_map_to_unary_function<Vpm> unary(pmap);
+    out = std::copy(
+      boost::make_transform_iterator(boost::begin(vertices(tm)), unary),
+      boost::make_transform_iterator(boost::end(vertices(tm)), unary),
+      out);
+  }
+
+  // grid sampling
+  if (use_gs)
+  {
+    double grid_spacing_ = choose_param(get_param(np, grid_spacing), 0.);
+    if (grid_spacing_==0.)
     {
-      std::size_t nb_points = static_cast<std::size_t>( std::ceil( to_double(
-        area(tm, parameters::geom_traits(Geom_traits())))*parameter) );
-      Random_points_in_triangle_mesh_3<TriangleMesh, Vpm, Creator> g(tm, pmap);
-      CGAL::cpp11::copy_n(g, nb_points, out);
-      return out;
+      // set grid spacing to the shortest edge length
+      double grid_spacing_ = (std::numeric_limits<double>::max)();
+      typedef typename boost::graph_traits<TriangleMesh>
+        ::edge_descriptor edge_descriptor;
+      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      {
+        double el = std::sqrt(
+          to_double( typename Geom_traits::Compute_squared_distance_3()(
+            get(pmap, source(ed, tm)), get(pmap, target(ed, tm)) )));
+        if (el > 0 && el < grid_spacing_)
+          grid_spacing_ = el;
+      }
     }
-    case GRID:
+    out=sample_triangles<Geom_traits>(
+          faces(tm), tm, pmap, grid_spacing_, out,smpl_fcs, smpl_dgs, false);
+  }
+
+  // monte carlo sampling
+  if (use_ms)
+  {
+    typename Geom_traits::Compute_squared_distance_3 squared_distance;
+    double min_edge_length = (std::numeric_limits<double>::max)();
+
+    std::size_t nb_points_per_face =
+      choose_param(get_param(np, number_of_points_per_face), 0);
+    std::size_t nb_points_per_edge =
+      choose_param(get_param(np, number_of_points_per_edge), 0);
+
+    if ((nb_points_per_face == 0 && nb_pts_sq_a_u ==0.) ||
+        (nb_points_per_edge == 0 && nb_pts_l_u ==0.) )
     {
-      sample_triangles<Geom_traits>(faces(tm), tm, pmap, parameter, out);
-      return out;
+      typedef typename boost::graph_traits<TriangleMesh>
+        ::edge_descriptor edge_descriptor;
+      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      {
+        double el = std::sqrt(
+          to_double( squared_distance(get(pmap, source(ed, tm)),
+                                      get(pmap, target(ed, tm)) )));
+        if (min_edge_length > 0 && el < min_edge_length)
+          min_edge_length = el;
+      }
     }
-    case MONTE_CARLO:
+
+    // sample faces
+    if (smpl_fcs)
     {
+      // set default value
+      if (nb_points_per_face == 0 && nb_pts_sq_a_u ==0.)
+        nb_pts_sq_a_u = 2. / CGAL::square(min_edge_length);
+
       BOOST_FOREACH(face_descriptor f, faces(tm))
       {
-        std::size_t nb_points = (std::max)(
-          static_cast<std::size_t>(
-            std::ceil(to_double(
-              face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter))
-        ,std::size_t(1));
-        //create the triangles and store them
+        std::size_t nb_points = nb_points_per_face;
+        if (nb_points == 0)
+        {
+          nb_points = (std::max)(
+            static_cast<std::size_t>(
+              std::ceil(to_double(
+                face_area(f,tm,parameters::geom_traits(geomtraits)))*nb_pts_sq_a_u))
+          ,std::size_t(1));
+        }
+        // extract triangle face points
         typename Geom_traits::Point_3 points[3];
         halfedge_descriptor hd(halfedge(f,tm));
         for(int i=0; i<3; ++i)
@@ -267,28 +406,81 @@ sample_triangle_mesh(const TriangleMesh& tm,
           points[i] = get(pmap, target(hd, tm));
           hd = next(hd, tm);
         }
+        // sample the triangle face
         Random_points_in_triangle_3<typename Geom_traits::Point_3, Creator>
           g(points[0], points[1], points[2]);
-        CGAL::cpp11::copy_n(g, nb_points, out);
+        out=CGAL::cpp11::copy_n(g, nb_points, out);
+      }
+    }
+    // sample edges
+    if (smpl_dgs)
+    {
+      if (nb_points_per_edge == 0 && nb_pts_l_u == 0)
+        nb_pts_l_u = 1. / min_edge_length;
+      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      {
+        std::size_t nb_points = nb_points_per_edge;
+        if (nb_points == 0)
+        {
+          nb_points = (std::max)(
+            static_cast<std::size_t>( std::ceil( std::sqrt( to_double(
+             squared_distance(get(pmap, source(ed, tm)),
+                              get(pmap, target(ed, tm)) )) )*nb_pts_l_u ) ),
+            std::size_t(1));
+        }
+        // now do the sampling of the edge
+        Random_points_on_segment_3<typename Geom_traits::Point_3, Creator>
+          g(get(pmap, source(ed,tm)), get(pmap, target(ed,tm)));
+        out=CGAL::cpp11::copy_n(g, nb_points, out);
       }
     }
   }
+
+  // random uniform sampling
+  if (use_rs)
+  {
+    // sample faces
+    if(smpl_fcs)
+    {
+      std::size_t nb_points = choose_param(get_param(np, number_of_points_on_faces), 0);
+      Random_points_in_triangle_mesh_3<TriangleMesh, Vpm, Creator> g(tm, pmap);
+      if (nb_points == 0)
+      {
+        if (nb_pts_sq_a_u == 0.)
+          nb_points = num_vertices(tm);
+        else
+          nb_points = static_cast<std::size_t>(
+            std::ceil(g.mesh_area()*nb_pts_sq_a_u) );
+      }
+      out = CGAL::cpp11::copy_n(g, nb_points, out);
+    }
+    // sample edges
+    if (smpl_dgs)
+    {
+      std::size_t nb_points =
+        choose_param(get_param(np, number_of_points_on_edges), 0);
+      Random_points_on_edge_list_graph_3<TriangleMesh, Vpm, Creator> g(tm, pmap);
+      if (nb_points == 0)
+      {
+        if (nb_pts_l_u == 0)
+          nb_points = num_vertices(tm);
+        else
+          nb_points = static_cast<std::size_t>(
+            std::ceil( g.mesh_length()*nb_pts_sq_a_u) );
+      }
+      out = CGAL::cpp11::copy_n(g, nb_points, out);
+    }
+  }
+
   return out;
 }
 
 template<class OutputIterator, class TriangleMesh>
 OutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
-                           double parameter,
-                           OutputIterator out,
-                           Sampling_method method = RANDOM_UNIFORM)
+                           OutputIterator out)
 {
-   return  sample_triangle_mesh(
-                tm,
-                parameter,
-                out,
-                parameters::all_default(),
-                method);
+  return sample_triangle_mesh(tm, parameters::all_default());
 }
 
 template <class Concurrency_tag,
@@ -352,152 +544,27 @@ template <class Concurrency_tag, class Kernel, class TriangleMesh,
           class NamedParameters,
           class VertexPointMap >
 double approximate_Hausdorff_distance(
-   const TriangleMesh& m1,
-   const TriangleMesh& m2,
-   double precision,
+   const TriangleMesh& tm1,
+   const TriangleMesh& tm2,
    NamedParameters np,
-   VertexPointMap vpm,
-   Sampling_method method = RANDOM_UNIFORM)
+   VertexPointMap vpm_2)
 {
     std::vector<typename Kernel::Point_3> sample_points;
     sample_triangle_mesh(
-                m1,
-                precision,
+                tm1,
                 std::back_inserter(sample_points),
-                np,
-                method );
-    return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2, vpm);
+                np);
+    return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, tm2, vpm_2);
 }
 
 // documented functions
-/** \ingroup PMP_distance_grp
- * generates points taken on `f`, a face of `tm`, in a way depending on `method` and
- * outputs them to `out`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam OutputIterator a model of `OutputIterator`
- *  holding objects of the same point type as
- *  the value type of the internal vertex point map of `tm`
- * @tparam Sampling_method defines the sampling method. Possible values are:
-     - `RANDOM_UNIFORM`: points are generated in a random and uniform way, depending on the area of the face.
-     - `GRID`: points are generated on a grid, with a minimum of one point .
-     - `MONTE_CARLO`: points are generated randomly . The number of points is proportional to the face area with a minimum of 1.
- *
- * @param f the face descriptor of the sampled face.
- * @param tm the triangle mesh that contains `f`
- * @param parameter depends on `method`:
-     - `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
-     - `GRID`: the distance between two consecutive points in the grid
- *
- * @param out output iterator to be filled with sampled points
- * @param np an optional sequence of \ref namedparameters among the ones listed below
- * @param method defines the method of sampling
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map with the points associated to the vertices of `tm`. If this parameter is omitted,
- *    an internal property map for `CGAL::vertex_point_t` should be available for `TriangleMesh` \cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`\cgalParamEnd
- * \cgalNamedParamsEnd
- */
-template<class OutputIterator, class TriangleMesh, class NamedParameters>
-OutputIterator
-sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-            const TriangleMesh& tm,
-            double parameter,
-            OutputIterator out,
-            NamedParameters np,
-            Sampling_method method = RANDOM_UNIFORM)
-{
-    typedef typename GetGeomTraits<TriangleMesh,
-            NamedParameters>::type Geom_traits;
-
-    typedef typename GetVertexPointMap<TriangleMesh,
-            NamedParameters>::const_type Vpm;
-
-    typedef boost::graph_traits<TriangleMesh> GT;
-
-    Vpm pmap = choose_param(get_param(np, vertex_point),
-                           get_const_property_map(vertex_point, tm));
-    typedef Creator_uniform_3<typename Geom_traits::FT,
-                              typename Geom_traits::Point_3> Creator;
-    std::size_t nb_points = static_cast<std::size_t>( std::ceil( to_double(
-      face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter));
-  switch(method)
-  {
-    case GRID:
-    {
-      typename Geom_traits::Point_3 points[3];
-      typename GT::halfedge_descriptor hd(halfedge(f,tm));
-
-      // add endpoints
-      for(int i=0; i<3; ++i)
-      {
-        points[i] = get(pmap, target(hd, tm));
-        *out++= points[i];
-        hd = next(hd, tm);
-      }
-
-      //sample edges
-      for (int i=0;i<3; ++i)
-      {
-        typename Geom_traits::Compute_squared_distance_3 squared_distance;
-        const double d_p0p1 = to_double(approximate_sqrt(
-          squared_distance(points[i], points[(i+1)%3]) ));
-
-        const double nb_pts = std::ceil( d_p0p1 / d_p0p1 );
-        const typename Geom_traits::Vector_3 step_vec =
-          typename Geom_traits::Construct_scaled_vector_3()(
-            typename Geom_traits::Construct_vector_3()(points[i], points[(i+1)%3]),
-              typename Geom_traits::FT(1)/typename Geom_traits::FT(nb_pts));
-        for (double j=1; j<nb_pts; ++j)
-        {
-          *out++=typename Geom_traits::Construct_translated_point_3()(points[i],
-            typename Geom_traits::Construct_scaled_vector_3()(step_vec,
-               typename Geom_traits::FT(j)));
-        }
-      }
-
-      //sample the face interior
-      return internal::triangle_grid_sampling<Geom_traits>(
-        points[0], points[1], points[2], parameter, out);
-    }
-
-    case MONTE_CARLO:
-      nb_points = (std::max)(nb_points, std::size_t(1));
-    case RANDOM_UNIFORM:
-    {
-      typename GT::halfedge_descriptor hd(halfedge(f,tm));
-      typename Geom_traits::Point_3 points[3];
-      for(int i=0; i<3; ++i)
-      {
-        points[i] = get(pmap, target(hd, tm));
-        hd = next(hd, tm);
-      }
-      Random_points_in_triangle_3<typename Geom_traits::Point_3, Creator>
-        g(points[0], points[1], points[2]);
-      CGAL::cpp11::copy_n(g, nb_points, out);
-      return out;
-    }
-  }
-  return out;
-}
-
-template<class OutputIterator, class TriangleMesh>
-OutputIterator
-sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-            const TriangleMesh& tm,
-            double parameter,
-            OutputIterator out,
-            Sampling_method method = RANDOM_UNIFORM)
-{
-  return sample_face(f, tm, parameter, out, parameters::all_default(), method);
-}
 
 /**
  * \ingroup PMP_distance_grp
- * computes the approximate Hausdorff distance from `tm1` to `tm2` by
- * generating a uniform random point sampling on `tm1`, and by then
- * returning the distance of the furthest point from `tm2`.
+ * computes the approximate Hausdorff distance from `tm1` to `tm2` by returning
+ * the distance of the furthest point from `tm2` amongst a sampling of `tm1`
+ * generated with the function `sample_triangle_mesh()` with
+ * `tm1` and `np1` as parameter.
  *
  * A parallel version is provided and requires the executable to be
  * linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
@@ -514,16 +581,7 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
  *
  * @param tm1 the triangle mesh that will be sampled
  * @param tm2 the triangle mesh to compute the distance to
- * @param density the number of points per squared area unit returned by the random sampling
- * @param np1 optional sequence of \ref namedparameters for `tm1` among the ones listed below
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1`
- *      If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
- *      and in all places where vertex_point_map is used.
- *    \cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`\cgalParamEnd
- * \cgalNamedParamsEnd
+ * @param np1 optional sequence of \ref namedparameters for `tm1` passed to `sample_triangle_mesh()`.
  *
  * @param np2 optional sequence of \ref namedparameters for `tm2` among the ones listed below
  *
@@ -541,33 +599,23 @@ template< class Concurrency_tag,
           class NamedParameters1,
           class NamedParameters2>
 double approximate_Hausdorff_distance( const TriangleMesh& tm1,
-                                        const TriangleMesh& tm2,
-                                        double density,
-                                        const NamedParameters1& np1,
-                                        const NamedParameters2& np2)
+                                       const TriangleMesh& tm2,
+                                       const NamedParameters1& np1,
+                                       const NamedParameters2& np2)
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters1>::type Geom_traits;
 
   return approximate_Hausdorff_distance<Concurrency_tag, Geom_traits>(
-    tm1, tm2,
-              density,
-              choose_param(get_param(np1, vertex_point),
-                           get_const_property_map(vertex_point, tm1)),
-
-              choose_param(get_param(np2, vertex_point),
-                           get_const_property_map(vertex_point, tm2))
-
-  );
+    tm1, tm2, np1, choose_param(get_param(np2, vertex_point),
+                                get_const_property_map(vertex_point, tm2)));
 }
 
 /**
  * \ingroup PMP_distance_grp
  * computes the approximate symmetric Hausdorff distance between `tm1` and `tm2`.
- * It returns the maximum of `approximate_Hausdorff_distance(tm1,tm2)` and
- * `approximate_Hausdorff_distance(tm2,tm1)`.
- *
- * \copydetails CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()
+ * It returns the maximum of `approximate_Hausdorff_distance(tm1, tm2, np1, np2)`
+ * and `approximate_Hausdorff_distance(tm2, tm1, np2, np1)`.
  */
 template< class Concurrency_tag,
           class TriangleMesh,
@@ -576,13 +624,12 @@ template< class Concurrency_tag,
 double approximate_symmetric_Hausdorff_distance(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
-  double precision,
   const NamedParameters1& np1,
   const NamedParameters2& np2)
 {
   return (std::max)(
-    approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,precision,np1,np2),
-    approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,precision,np2,np1)
+    approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,np1,np2),
+    approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,np2,np1)
   );
 }
 
@@ -701,23 +748,19 @@ template< class Concurrency_tag,
           class NamedParameters>
 double approximate_Hausdorff_distance(const TriangleMesh& tm1,
                                       const TriangleMesh& tm2,
-                                      const double precision,
                                       const NamedParameters& np)
 {
   return approximate_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, precision, np, parameters::all_default());
+    tm1, tm2, np, parameters::all_default());
 }
 
 template< class Concurrency_tag,
           class TriangleMesh>
 double approximate_Hausdorff_distance(const TriangleMesh& tm1,
-                                      const TriangleMesh& tm2,
-                                      const double precision)
+                                      const TriangleMesh& tm2)
 {
   return approximate_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, precision,
-    parameters::all_default(),
-    parameters::all_default());
+    tm1, tm2, parameters::all_default(), parameters::all_default());
 }
 
 
@@ -726,23 +769,19 @@ template< class Concurrency_tag,
           class NamedParameters>
 double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
                                                 const TriangleMesh& tm2,
-                                                const double precision,
                                                 const NamedParameters& np)
 {
   return approximate_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, precision, np, parameters::all_default());
+    tm1, tm2, np, parameters::all_default());
 }
 
 template< class Concurrency_tag,
           class TriangleMesh>
 double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
-                                                const TriangleMesh& tm2,
-                                                const double precision)
+                                                const TriangleMesh& tm2)
 {
   return approximate_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, precision,
-    parameters::all_default(),
-    parameters::all_default());
+    tm1, tm2, parameters::all_default(), parameters::all_default());
 }
 
 }
