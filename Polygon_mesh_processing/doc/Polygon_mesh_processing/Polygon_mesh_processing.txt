@@ -481,9 +481,9 @@ the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
-\section PMPDistance Approximated Hausdorff Distance
+\section PMPDistance Approximate Hausdorff Distance
 
-This package provides methods to compute approximated Hausdorff distances.
+This package provides methods to compute approximate Hausdorff distances.
 These distances can be computed between two meshes, a mesh and a point set, or a point set and a mesh.
 These computations are performed with :
 - `CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()`
@@ -494,16 +494,18 @@ These computations are performed with :
 - `CGAL::Polygon_mesh_processing::sample_face()`
 
 \subsection AHDExample Approximate Hausdorff Distance Example
-In the following example, a mesh is isotropically remeshed and the approximated distance between the input and the output is computed.
+In the following example, a mesh is isotropically remeshed and the approximate distance between the input and the output is computed.
 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
 \subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
-In the following example, a triangulated surface mesh is constructed from a point set using the
-\link PkgPoissonSurfaceReconstructionSummary Poisson reconstruction algorithm \endlink, and the distance between the point set and the reconstructed surface is computed.
+In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
+a triangulated surface mesh is constructed from a point set using the
+\link PkgPoissonSurfaceReconstructionSummary Poisson reconstruction algorithm \endlink,
+and the distance between the point set and the reconstructed surface is computed
+with the following code:
 
-\cgalExample{Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp}
-
+\snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
 
 \section PMPHistory Implementation History
 
