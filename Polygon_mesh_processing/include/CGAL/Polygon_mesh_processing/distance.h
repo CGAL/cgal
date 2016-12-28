@@ -635,7 +635,8 @@ double approximate_symmetric_Hausdorff_distance(
 
 /**
  * \ingroup PMP_distance_grp
- * computes the approximate Hausdorff distance between `points` and `tm`
+ * returns the distance to `tm` of the point from `points`
+ * that is the furthest from `tm`.
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
@@ -669,7 +670,8 @@ double max_distance_to_triangle_mesh(const PointRange& points,
 
 /*!
  *\ingroup PMP_distance_grp
- *  Computes the approximate Hausdorff distance between `tm` and `points`
+ * returns an approximation of the distance to `points` of the triangle from `tm`
+ * that is the furthest from `points`.
  *
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
@@ -691,9 +693,9 @@ template< class TriangleMesh,
           class PointRange,
           class NamedParameters>
 double approximate_max_distance_to_point_set(const TriangleMesh& tm,
-                                 const PointRange& points,
-                                 const double precision,
-                                 const NamedParameters& np)
+                                             const PointRange& points,
+                                             const double precision,
+                                             const NamedParameters& np)
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters>::type Geom_traits;
