@@ -91,13 +91,16 @@ struct Angle_tester
       const typename Kernel::Point_3& p1 = g[v1];
       const typename Kernel::Point_3& p2 = g[v2];
 
-      const typename Kernel::Vector_3 e1 = p1 - p;
-      const typename Kernel::Vector_3 e2 = p2 - p;
-      const typename Kernel::FT sc_prod = e1 * e2;
-      if (sc_prod >= 0 ||   // angle < 135 degrees (3*pi/4)
-        (sc_prod < 0 &&
-          CGAL::square(sc_prod) < (e1 * e1) * (e2 * e2) / 2))
+      if(CGAL::angle(p1, p, p2) == CGAL::ACUTE) {
+        // const typename Kernel::Vector_3 e1 = p1 - p;
+        // const typename Kernel::Vector_3 e2 = p2 - p;
+        // std::cerr << "At point " << p << ": the angle is "
+        //           << ( std::acos(e1 * e2
+        //                          / CGAL::sqrt(e1*e1)
+        //                          / CGAL::sqrt(e2*e2))
+        //                * 180 / CGAL_PI ) << std::endl;
         return true;
+      }
     }
     return false;
   }

@@ -62,10 +62,32 @@ public:
 
   typedef typename boost::graph_traits<G_copy>::vertex_descriptor
     g_copy_vertex_descriptor;
+  typedef typename boost::graph_traits<G_copy>::out_edge_iterator
+    g_copy_out_edge_iterator;
+  typedef typename boost::graph_traits<G_copy>::degree_size_type
+    g_copy_degree_size_type;
 
   bool operator()(g_copy_vertex_descriptor v1,
                   g_copy_vertex_descriptor v2) const {
-    return less(g_copy[v1], g_copy[v2]);
+    if(less(g_copy[v1], g_copy[v2]))
+      return true;
+    else if(less(g_copy[v2], g_copy[v1]))
+      return false;
+    // If g_copy[v1] and g_copy[v2] are equivalent, then compare the
+    // descriptors:
+    if(v1 == v2) return false;
+    //   - compare degrees:
+    const g_copy_degree_size_type dv1 = degree(v1, g_copy);
+    const g_copy_degree_size_type dv2 = degree(v2, g_copy);
+    if(dv1 != dv2)
+      return dv1 < dv2;
+    if(dv1 == 0) return v1 < v2;
+    ///  - then compare an adjacent vertex:
+    g_copy_vertex_descriptor other_v1 = target(*out_edges(v1, g_copy).first,
+                                               g_copy);
+    g_copy_vertex_descriptor other_v2 = target(*out_edges(v2, g_copy).first,
+                                               g_copy);
+    return less(g_copy[other_v1], g_copy[other_v2]);
   }
 }; // end class Less_on_G_copy_vertex_descriptors
 
@@ -89,20 +111,23 @@ void duplicate_terminal_vertices(Graph& graph,
   std::vector<vertex_descriptor> V(b,e);
   BOOST_FOREACH(vertex_descriptor v, V)
   {
-    if (degree(v, graph) > 2 || is_terminal(graph[v], orig))
+    typename boost::graph_traits<OrigGraph>::vertex_descriptor orig_v = graph[v];
+    typename boost::graph_traits<Graph>::degree_size_type deg = degree(v, graph);
+    if ((deg != 0 && is_terminal(orig_v, orig)) || deg > 2)
       {
         out_edge_iterator b, e;
         boost::tie(b, e) = out_edges(v, graph);
-        std::vector<edge_descriptor> E(b, e);
-        for (unsigned int i = 1; i < E.size(); ++i)
+        std::vector<edge_descriptor> out_edges_of_v(b, e);
+        for (unsigned int i = 1; i < out_edges_of_v.size(); ++i)
           {
-            edge_descriptor e = E[i];
+            edge_descriptor e = out_edges_of_v[i];
             vertex_descriptor w = target(e, graph);
             remove_edge(e, graph);
             vertex_descriptor vc = add_vertex(graph);
-            graph[vc] = graph[v];
+            graph[vc] = orig_v;
             add_edge(vc, w, graph);
           }
+        CGAL_assertion(degree(v, graph) == 1);
       }
   }
 
