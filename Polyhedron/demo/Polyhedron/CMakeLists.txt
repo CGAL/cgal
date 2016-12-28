@@ -10,7 +10,7 @@ if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_trailing_return_types has_cpp11)
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
 if(has_cpp11 LESS 0)
   message(STATUS "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
   return()
