@@ -40,7 +40,7 @@ else()
     cache_set( GMP_IN_CGAL_AUXILIARY TRUE )
   endif()
 
-  find_library(GMP_LIBRARIES NAMES gmp libgmp-10
+  find_library(GMP_LIBRARIES NAMES gmp libgmp-10 mpir
     HINTS ENV GMP_LIB_DIR
           ENV GMP_DIR
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
