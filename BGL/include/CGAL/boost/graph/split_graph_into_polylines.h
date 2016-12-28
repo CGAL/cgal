@@ -39,11 +39,49 @@ struct IsTerminalDefault
   }
 };
 
+template <typename T>
+class BGL_sgip_visitor_has_add_edge {
+  typedef char yes;
+  struct no { char t[2]; };
+
+  template <typename C> static yes test( typeof(&C::add_edge) );
+  template <typename C> static no test(...);
+
+public:
+  enum { value = sizeof(test<T>(0)) == sizeof(yes) };
+};
+
+template <typename Visitor, typename Edge_descriptor>
+void
+bgl_sgip_maybe_call_visitor_add_edge_impl(Visitor&,
+                                          Edge_descriptor,
+                                          CGAL::Tag_false /*has_add_edge*/)
+{
+}
+
+template <typename Visitor, typename Edge_descriptor>
+void
+bgl_sgip_maybe_call_visitor_add_edge_impl(Visitor& visitor,
+                                          Edge_descriptor e,
+                                          CGAL::Tag_true /*has_add_edge*/)
+{
+  visitor.add_edge(e);
+}
+
+template <typename Visitor, typename Edge_descriptor>
+void bgl_sgip_maybe_call_visitor_add_edge(Visitor& visitor,
+                                          Edge_descriptor e) {
+  typedef BGL_sgip_visitor_has_add_edge<Visitor> Has_add_edge;
+  bgl_sgip_maybe_call_visitor_add_edge_impl
+    ( visitor, e, CGAL::Boolean_tag<Has_add_edge::value>() );
+}
+
 template <class Graph>
 struct Dummy_visitor_for_split_graph_into_polylines
 {
   void start_new_polyline(){}
   void add_node(typename boost::graph_traits<Graph>::vertex_descriptor){}
+  void add_edge(typename boost::graph_traits<Graph>::edge_descriptor){}
   void end_polyline(){}
 };
 
@@ -117,11 +155,14 @@ void duplicate_terminal_vertices(Graph& graph,
         for (unsigned int i = 1; i < out_edges_of_v.size(); ++i)
           {
             edge_descriptor e = out_edges_of_v[i];
+            typename boost::graph_traits<OrigGraph>::edge_descriptor orig_e =
+              graph[e];
             vertex_descriptor w = target(e, graph);
             remove_edge(e, graph);
             vertex_descriptor vc = add_vertex(graph);
             graph[vc] = orig_v;
-            add_edge(vc, w, graph);
+            const std::pair<edge_descriptor, bool> pair = add_edge(vc, w, graph);
+            graph[pair.first] = orig_e;
           }
         CGAL_assertion(degree(v, graph) == 1);
       }
@@ -196,7 +237,8 @@ split_graph_into_polylines(const Graph& graph,
   typedef boost::adjacency_list <boost::setS, // this avoids parallel edges
                                  boost::vecS, 
                                  boost::undirectedS,
-                                 Graph_vertex_descriptor > G_copy;
+                                 Graph_vertex_descriptor,
+                                 Graph_edge_descriptor> G_copy;
 
   typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<G_copy>::edge_descriptor edge_descriptor;
@@ -239,7 +281,8 @@ split_graph_into_polylines(const Graph& graph,
         }else{
           vtc = it->second;
         }
-        add_edge(vsc,vtc,g_copy);
+        const std::pair<edge_descriptor, bool> pair = add_edge(vsc,vtc,g_copy);
+        g_copy[pair.first] = e;
       }
     }
   }  
@@ -279,6 +322,8 @@ split_graph_into_polylines(const Graph& graph,
       vertex_descriptor v = target(*b, g_copy);
       CGAL_assertion(u!=v);
       polyline_visitor.add_node(g_copy[v]);
+      internal::bgl_sgip_maybe_call_visitor_add_edge(polyline_visitor,
+                                                     g_copy[*b]);
       remove_edge(b, g_copy);
       u = v;
     }
@@ -296,8 +341,10 @@ split_graph_into_polylines(const Graph& graph,
     polyline_visitor.add_node(g_copy[u]);
 
     u = target(first_edge, g_copy);
-    remove_edge(first_edge, g_copy);
     polyline_visitor.add_node(g_copy[u]);
+    internal::bgl_sgip_maybe_call_visitor_add_edge(polyline_visitor,
+                                                   g_copy[first_edge]);
+    remove_edge(first_edge, g_copy);
 
     while (degree(u,g_copy) != 0)
     {
@@ -306,6 +353,8 @@ split_graph_into_polylines(const Graph& graph,
       vertex_descriptor v = target(*b, g_copy);
       CGAL_assertion(u!=v);
       polyline_visitor.add_node(g_copy[v]);
+      internal::bgl_sgip_maybe_call_visitor_add_edge(polyline_visitor,
+                                                     g_copy[*b]);
       remove_edge(b, g_copy);
       u = v;
     }
