@@ -4,7 +4,19 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Unique_hash_map.h>
+
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <exception>
 #include <functional>
+#include <limits>
+#include <set>
+#include <utility>
+#include <vector>
+
 #include "triangulate_primitive.h"
 struct Scene_polyhedron_selection_item_priv{
 
@@ -386,9 +398,9 @@ typedef Polyhedron::Facet Facet;
 typedef Traits::Point_3	            Point;
 typedef Traits::Vector_3	    Vector;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
-typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 
 void
 Scene_polyhedron_selection_item_priv::triangulate_facet(Facet_handle fit,const Vector normal,
@@ -1513,26 +1525,38 @@ void Scene_polyhedron_selection_item::emitTempInstruct()
   Q_EMIT updateInstructions(QString("<font color='black'>%1</font>").arg(d->m_temp_instructs));
 }
 
-
-typedef boost::graph_traits<Polyhedron>::edge_descriptor Polyhedron_edge_descriptor;
-
-struct Edge_length
+/// An exception used while catching a throw that stops Dijkstra's algorithm
+/// once the shortest path to a target has been found.
+class Dijkstra_end_exception : public std::exception
 {
-  typedef double value_type;
-  typedef double reference;
-  typedef Polyhedron_edge_descriptor key_type;
-  typedef boost::readable_property_map_tag category;
-  Polyhedron& p;
-
-  Edge_length(Polyhedron& p)
-    : p(p)
-  {}
-
-  friend
-  double get (const Edge_length el, Polyhedron_edge_descriptor e)
+  const char* what() const throw ()
   {
-    return sqrt(squared_distance(source(e,el.p)->point(),
-                                 target(e,el.p)->point()));
+    return "Dijkstra shortest path: reached the target vertex.";
+  }
+};
+
+/// Visitor to stop Dijkstra's algorithm once the given target turns 'BLACK',
+/// that is when the target has been examined through all its incident edges and
+/// the shortest path is thus known.
+class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
+{
+  vertex_descriptor destination_vd;
+
+public:
+  Stop_at_target_Dijkstra_visitor(vertex_descriptor destination_vd)
+    : destination_vd(destination_vd)
+  { }
+
+  void initialize_vertex(const vertex_descriptor& /*s*/, const Polyhedron& /*mesh*/) const { }
+  void examine_vertex(const vertex_descriptor& /*s*/, const Polyhedron& /*mesh*/) const { }
+  void examine_edge(const edge_descriptor& /*e*/, const Polyhedron& /*mesh*/) const { }
+  void edge_relaxed(const edge_descriptor& /*e*/, const Polyhedron& /*mesh*/) const { }
+  void discover_vertex(const vertex_descriptor& /*s*/, const Polyhedron& /*mesh*/) const { }
+  void edge_not_relaxed(const edge_descriptor& /*e*/, const Polyhedron& /*mesh*/) const { }
+  void finish_vertex(const vertex_descriptor &vd, const Polyhedron& /* mesh*/) const
+  {
+    if(vd == destination_vd)
+      throw Dijkstra_end_exception();
   }
 };
 
@@ -1540,17 +1564,31 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
 {
   item->temp_selected_edges.clear();
   path.clear();
-  Edge_length el(*item->polyhedron());
-  std::map<vertex_descriptor,vertex_descriptor> pred;
-  boost::associative_property_map< std::map<vertex_descriptor,vertex_descriptor> >
-      pred_map(pred);
+
+  typedef boost::unordered_map<vertex_descriptor, vertex_descriptor>     Pred_umap;
+  typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
+
+  Pred_umap predecessor;
+  Pred_pmap pred_pmap(predecessor);
 
   vertex_on_path vop;
   QList<Vertex_handle>::iterator it;
   for(it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
   {
     Vertex_handle t(*it), s(*(it+1));
-    boost::dijkstra_shortest_paths(*item->polyhedron(), s, boost::predecessor_map(pred_map).weight_map(el));
+    Stop_at_target_Dijkstra_visitor vis(t);
+
+    try
+    {
+      boost::dijkstra_shortest_paths(*item->polyhedron(), s,
+                                     boost::predecessor_map(pred_pmap).visitor(vis));
+    }
+    catch (const std::exception& e)
+    {
+      std::cout << e.what() << std::endl;
+    }
+
+    // Walk back from target to source and collect vertices along the way
     do
     {
       vop.vertex = t;
@@ -1561,15 +1599,17 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
       else
         vop.is_constrained = false;
       path.append(vop);
-      t = pred[t];
+      t = get(pred_pmap, t);
     }
     while(t != s);
   }
-    //add the last vertex
-    vop.vertex = constrained_vertices.last();
-    vop.is_constrained = true;
-    path.append(vop);
-  //display path
+
+  // Add the last vertex
+  vop.vertex = constrained_vertices.last();
+  vop.is_constrained = true;
+  path.append(vop);
+
+  // Display path
   QList<vertex_on_path>::iterator path_it;
   for(path_it = path.begin(); path_it!=path.end()-1; ++path_it)
   {
