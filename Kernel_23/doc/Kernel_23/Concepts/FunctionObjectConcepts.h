@@ -8107,7 +8107,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two or three arguments) 
 
-  \sa `CGAL::intersection` 
+  \sa intersection_linear_grp
   \sa `CGAL::cpp11::result_of`
 
 */
@@ -8121,7 +8121,7 @@ public:
   /*!
     computes the intersection region of two geometrical 
     objects of type `Type1` and `Type2`. 
-    For details see the reference manual page for `intersection()`.
+    For details see the reference manual page for \ref intersection_linear_grp.
   */ 
   CGAL::cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::type 
  operator()(Type1 obj1, Type2 obj2); 
