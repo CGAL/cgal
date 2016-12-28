@@ -24,7 +24,7 @@ public:
      * `FT operator[](int i)` with  `0 <= i < 3`.
      *
      * There must be a specialization of `CGAL::Kernel_traits` such that
-     * `CGAL::Kernel_traits<Point_3>::Kernel` is a model implementing this concept.
+     * `CGAL::Kernel_traits<Point_3>::%Kernel` is a model implementing this concept.
      */
     typedef unspecified_type Point_3;
 

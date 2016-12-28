@@ -295,6 +295,10 @@ sample_triangle_mesh(const TriangleMesh& tm,
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
 
+  using boost::choose_param;
+  using boost::get_param;
+  using boost::is_default_param;
+
   Vpm pmap = choose_param(get_param(np, vertex_point),
                           get_const_property_map(vertex_point, tm));
   typedef Creator_uniform_3<typename Geom_traits::FT,
@@ -302,9 +306,6 @@ sample_triangle_mesh(const TriangleMesh& tm,
 
   Geom_traits geomtraits = choose_param(get_param(np, geom_traits), Geom_traits());
 
-  using boost::choose_param;
-  using boost::get_param;
-  using boost::is_default_param;
 
   bool use_rs = choose_param(get_param(np, random_uniform_sampling), true);
   bool use_gs = choose_param(get_param(np, grid_sampling), false);
