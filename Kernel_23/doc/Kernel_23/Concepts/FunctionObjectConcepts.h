@@ -2908,7 +2908,7 @@ public:
   */
   Kernel::FT operator()(const Kernel::WeightedPoint_2& p) const; 
 
-}; /* end Kernel::ComputeWeight_2
+}; /* end Kernel::ComputeWeight_2 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -2929,7 +2929,7 @@ public:
   */
   Kernel::FT operator()(const Kernel::WeightedPoint_3& p) const; 
 
-}; /* end Kernel::ComputeWeight_3
+}; /* end Kernel::ComputeWeight_3 */
 
 
 
@@ -6920,7 +6920,7 @@ public:
   */ 
   Kernel::Point_2 operator()(const Kernel::Weighted_point_2& p, const Kernel::Weighted_point_2& q, const Kernel::Weighted_point_2& s);
 
-}; /* end Kernel::ConstructWeightedCircumcenter_2
+}; /* end Kernel::ConstructWeightedCircumcenter_2 */
 
 
 /*!
@@ -6944,7 +6944,7 @@ public:
   */ 
   Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p, const Kernel::Weighted_point_3& q, const Kernel::Weighted_point_3& r, const Kernel::Weighted_point_3& s);
 
-}; /* end Kernel::ConstructWeightedCircumcenter_3
+}; /* end Kernel::ConstructWeightedCircumcenter_3 */
 
 
 
@@ -9358,4 +9358,4 @@ public:
 
 }; /* end Kernel::SideOfOrientedSphere_3 */
 
-}
+} // end of Kernel namespace

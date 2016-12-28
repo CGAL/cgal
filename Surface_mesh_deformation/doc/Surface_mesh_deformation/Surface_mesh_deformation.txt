@@ -59,7 +59,7 @@ the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from t
 latter method provides unconditional convergence does not produce a symmetric result.
 \cgalFigureEnd
 
-\cgalFigureBegin{Arap_spokes_comparison, sr_arap_comparison.png}
+\cgalFigureBegin{sr_arap_comparison, sr_arap_comparison.png}
 A comparison on a 5261 vertices cactus model (left) between the As-Rigid-As-Possible (middle) and the Smoothed %Rotation Enhanced As-Rigid-As-Possible (right).
 \cgalFigureEnd
 
