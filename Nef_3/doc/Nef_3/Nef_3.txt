@@ -401,7 +401,7 @@ see Section \ref sectionPolyIO.
 
 \cgalExample{Nef_3/interface_polyhedron.cpp}
 
-\subsection Nef_3TheInterfacebetweenPolyhedron3andNefpolyhedron3 Conversion of Nef_polyhedron_3 to Polygon Mesh
+\subsection Nef_3NeftoPolygonMesh Conversion of Nef_polyhedron_3 to Polygon Mesh
 
 \anchor subsectionNef_3PolygonMesh
 
