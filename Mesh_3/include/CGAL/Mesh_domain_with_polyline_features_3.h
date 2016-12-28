@@ -576,6 +576,11 @@ public:
   add_features(InputIterator first, InputIterator last)
   { add_features(first, last, CGAL::Emptyset_iterator()); }
 
+  template <typename InputIterator>
+  void
+  add_features_with_context(InputIterator first, InputIterator last)
+  { add_features_with_context(first, last, CGAL::Emptyset_iterator()); }
+
   /// Insert one edge into domain
   /// InputIterator value type is Point_3
   template <typename InputIterator>
