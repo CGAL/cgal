@@ -724,6 +724,16 @@ lexicographically_xyz_smaller(const typename K::Point_3 &p,
 
 template < class K >
 inline
+typename K::FT
+l_infinity_distance(const typename K::Point_3 &p,
+                    const typename K::Point_3 &q,
+                    const K& k)
+{
+  return k.compute_L_infinity_distance_3_object()(p, q);
+}
+
+template < class K >
+inline
 typename K::Point_3
 midpoint(const typename K::Point_3 &p,
          const typename K::Point_3 &q, const K &k)

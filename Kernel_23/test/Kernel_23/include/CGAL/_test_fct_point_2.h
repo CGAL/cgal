@@ -277,6 +277,8 @@ _test_fct_point_2(const R& )
  
  std::cout << '.';
 
+ assert(CGAL::l_infinity_distance(p1,p2) == FT(1));
+ assert(CGAL::l_infinity_distance(p1,p8) == FT(2));
  std::cout << "done" << std::endl;
  return true;
 }

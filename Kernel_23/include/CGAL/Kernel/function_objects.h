@@ -1139,6 +1139,43 @@ public:
   };
 
   template <typename K>
+  class Compute_L_infinity_distance_2
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Point_2         Point_2;
+
+  public:
+    typedef FT               result_type;
+
+    result_type
+    operator()(const Point_2& p,
+               const Point_2& q) const
+    {
+      return (std::max)( CGAL::abs( K().compute_x_2_object()(p) -  K().compute_x_2_object()(q)),
+                         CGAL::abs( K().compute_y_2_object()(p) -  K().compute_y_2_object()(q)) );
+    }
+  };
+
+  template <typename K>
+  class Compute_L_infinity_distance_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Point_3         Point_3;
+
+  public:
+    typedef FT               result_type;
+
+    result_type
+    operator()(const Point_3& p,
+               const Point_3& q) const
+    {
+      return (std::max)( CGAL::abs( K().compute_x_3_object()(p) -  K().compute_x_3_object()(q)),
+                         (std::max)(CGAL::abs( K().compute_y_3_object()(p) -  K().compute_y_3_object()(q)),
+                                    CGAL::abs( K().compute_z_3_object()(p) -  K().compute_z_3_object()(q))));
+    }
+  };
+
+  template <typename K>
   class Construct_center_2
   {
     typedef typename K::Point_2   Point_2;

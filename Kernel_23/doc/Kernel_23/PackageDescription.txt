@@ -184,6 +184,7 @@
 - \link has_smaller_signed_distance_to_line_grp `CGAL::has_smaller_signed_distance_to_line()` \endlink
 - \link has_smaller_signed_distance_to_plane_grp `CGAL::has_smaller_signed_distance_to_plane()` \endlink
 - \link intersection_grp `CGAL::intersection()` \endlink
+- \link l_infinity_distance_grp `CGAL::l_infinity_distance()` \endlink
 - \link left_turn_grp `CGAL::left_turn()` \endlink
 - \link lexicographically_xyz_smaller_grp `CGAL::lexicographically_xyz_smaller()` \endlink
 - \link lexicographically_xyz_smaller_or_equal_grp `CGAL::lexicographically_xyz_smaller_or_equal()` \endlink
@@ -307,6 +308,8 @@
 - `Kernel::ComputeDy_2`
 - `Kernel::ComputeHx_2`
 - `Kernel::ComputeHy_2`
+- `Kernel::ComputeLInfinityDistance_2`
+- `Kernel::ComputeLInfinityDistance_3`
 - `Kernel::ComputePowerDistanceToPowerSphere_3`
 - `Kernel::ComputeScalarProduct_2`
 - `Kernel::ComputeScalarProduct_3`

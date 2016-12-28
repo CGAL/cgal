@@ -1975,14 +1975,36 @@ const CGAL::Point_3<Kernel>& t);
 /// \defgroup intersection_spherical_grp CGAL::intersection() (3D Spherical Kernel)
 /// \ingroup intersection_grp
 
+
+/// \defgroup l_infinity_distance_grp CGAL::l_infinity_distance()
+/// \ingroup kernel_global_function
+
+/// @{
+
+/*!
+returns the distance between `p` and `q` in the L-infinity metric.
+*/
+template <typename Kernel>
+Kernel::FT l_infinity_distance(const CGAL::Point_2<Kernel> &p,
+                               const CGAL::Point_2<Kernel> &q);
+
+/*!
+returns the distance between `p` and `q` in the L-infinity metric.
+*/
+template <typename Kernel>
+Kernel::FT l_infinity_distance(const CGAL::Point_3<Kernel> &p,
+                               const CGAL::Point_3<Kernel> &q);
+
+/// @}
+
 /// \defgroup left_turn_grp CGAL::left_turn()
 /// \ingroup kernel_global_function
 /// \sa `collinear_grp`
 /// \sa `orientation_grp`
 /// \sa `right_turn_grp`
 
-/// @{
 
+/// @{
 /*!
 returns `true` iff `p`, `q`, and `r` form a left turn.
 */
@@ -1992,7 +2014,6 @@ const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &r);
 
 /// @}
-
 
 
 /// \defgroup lexicographically_xy_larger_grp CGAL::lexicographically_xy_larger()

@@ -233,6 +233,8 @@ _test_fct_point_3(const R& )
    assert( CGAL::compare_squared_radius(p0, p1, p2, p3, four) == CGAL::EQUAL );
  }
 
+ assert(CGAL::l_infinity_distance(p1,p2) == FT(11));
+ assert(CGAL::l_infinity_distance(p1,p5) == FT(6));
  // More tests, that require sqrt().
  {
      typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
