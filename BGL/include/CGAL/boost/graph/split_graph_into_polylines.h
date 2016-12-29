@@ -39,16 +39,26 @@ struct IsTerminalDefault
   }
 };
 
-template <typename T>
-class BGL_sgip_visitor_has_add_edge {
-  typedef char yes;
-  struct no { char t[2]; };
+template<class T, class ED>
+class BGL_sgip_visitor_has_add_edge
+{
+private:
+  template<class U, U>
+  class check {};
 
-  template <typename C> static yes test( typeof(&C::add_edge) );
-  template <typename C> static no test(...);
+  template<class C>
+  static char f(check<void(C::*)(ED), &C::add_edge>*);
 
+  template<class C>
+  static char f(check<void(C::*)(const ED&), &C::add_edge>*);
+
+  template<class C>
+  static char f(check<void(C::*)(ED&), &C::add_edge>*);
+
+  template<class C>
+  static int f(...);
 public:
-  enum { value = sizeof(test<T>(0)) == sizeof(yes) };
+  static const bool value = (sizeof(f<T>(0)) == sizeof(char));
 };
 
 template <typename Visitor, typename Edge_descriptor>
@@ -57,6 +67,7 @@ bgl_sgip_maybe_call_visitor_add_edge_impl(Visitor&,
                                           Edge_descriptor,
                                           CGAL::Tag_false /*has_add_edge*/)
 {
+
 }
 
 template <typename Visitor, typename Edge_descriptor>
@@ -71,7 +82,7 @@ bgl_sgip_maybe_call_visitor_add_edge_impl(Visitor& visitor,
 template <typename Visitor, typename Edge_descriptor>
 void bgl_sgip_maybe_call_visitor_add_edge(Visitor& visitor,
                                           Edge_descriptor e) {
-  typedef BGL_sgip_visitor_has_add_edge<Visitor> Has_add_edge;
+  typedef BGL_sgip_visitor_has_add_edge<Visitor, Edge_descriptor> Has_add_edge;
   bgl_sgip_maybe_call_visitor_add_edge_impl
     ( visitor, e, CGAL::Boolean_tag<Has_add_edge::value>() );
 }
