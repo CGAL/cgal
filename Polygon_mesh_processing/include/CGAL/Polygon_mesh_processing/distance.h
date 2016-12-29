@@ -215,23 +215,6 @@ struct Distance_computation{
  *      is multiplied by the sum of the length of edges of `tm` to get the number of sample points.
  *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
  *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_on_faces} an unsigned integral value used
- *      for the random sampling method as the number of points to pick on the surface.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_on_edges} an unsigned integral value used
- *      for the random sampling method as the number of points to pick exclusively
- *      on edges.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_squared_area_unit} a double value
- *       used for the random sampling and the Monte Carlo sampling methods to
- *       repectively determine the total number of points inside faces
- *       and the number of points per face.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_distance_unit} a double value
- *       used for the random sampling and the Monte Carlo sampling methods to
- *       repectively determine the total number of points on edges and the
- *       number of points per edge.
- *    \cgalParamEnd
  *    \cgalParamBegin{use_grid_sampling}
  *      if `true` is passed, points are generated on a grid in each triangle,
  *      with a minimum of one point per triangle. The distance between
@@ -239,9 +222,6 @@ struct Distance_computation{
  *      smallest non-null edge of `tm` or the value passed to
  *      the named parameter `grid_spacing()`. Edges are also split using the
  *      same distance, if requested.
- *    \cgalParamEnd
- *    \cgalParamBegin{grid_spacing} a double value used as the grid spacing
- *      for the grid sampling method.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
  *      if `true` is passed, points are generated randomly in each triangle and/or
@@ -262,20 +242,40 @@ struct Distance_computation{
  *      is set, 1 divided by the length of the smallest non-null edge of `tm`
  *      is used as if it was passed to `number_of_points_per_distance_unit()`.
  *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_face} an unsigned integral value
- *      used by the Monte-Carlo sampling method as the number of points per face
- *      to pick.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_edge} an unsigned integral value
- *      used by the Monte-Carlo sampling method as the number of points per edge
- *      to pick.
- *    \cgalParamEnd
  *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
  *    vertices of `tm` are put into `out`.\cgalParamEnd
  *    \cgalParamBegin{sample_edges} if `true` is passed (default value),
  *    edges of `tm` are sampled.\cgalParamEnd
  *    \cgalParamBegin{sample_faces} if `true` is passed (default value),
  *    faces of `tm` are sampled.\cgalParamEnd
+ *    \cgalParamBegin{grid_spacing} a double value used as the grid spacing
+ *      for the grid sampling method.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{number_of_points_on_edges} an unsigned integral value used
+ *      for the random sampling method as the number of points to pick exclusively
+ *      on edges.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{number_of_points_on_faces} an unsigned integral value used
+ *      for the random sampling method as the number of points to pick on the surface.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{number_of_points_per_distance_unit} a double value
+ *       used for the random sampling and the Monte Carlo sampling methods to
+ *       repectively determine the total number of points on edges and the
+ *       number of points per edge.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{number_of_points_per_edge} an unsigned integral value
+ *      used by the Monte-Carlo sampling method as the number of points per edge
+ *      to pick.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{number_of_points_per_face} an unsigned integral value
+ *      used by the Monte-Carlo sampling method as the number of points per face
+ *      to pick.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{number_of_points_per_squared_area_unit} a double value
+ *       used for the random sampling and the Monte Carlo sampling methods to
+ *       repectively determine the total number of points inside faces
+ *       and the number of points per face.
+ *    \cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template<class OutputIterator, class TriangleMesh, class NamedParameters>
