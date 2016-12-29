@@ -7,8 +7,6 @@ namespace CGAL {
 [`first`, `last`). The polyhedron `pm` is cleared, then
 the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
 that is `pm` will contain only triangular facets.
- 
-\attention This function does not compute the plane equations of the faces of `pm`.
 
 \pre There are at least four points in the range 
 [`first`, `last`) not all of which are collinear.
@@ -19,8 +17,6 @@ that is `pm` will contain only triangular facets.
 For the purposes of checking the postcondition that the convex hull 
 is valid, `Traits` must also be a model of the concept 
 `IsStronglyConvexTraits_3`. 
-
-
 
 If the kernel `R` of the points determined by the value type of `InputIterator` 
 is a kernel with exact predicates but inexact constructions 
@@ -46,9 +42,6 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
 a triangle, or a polyhedron, is stored in `ch_object`. 
 In the case the result is a polyhedron, the convex hull will be triangulated,
 that is the polyhedron will contain only triangular facets.
-
-\attention This function does not compute the plane equations of the faces of `pm`
-in case the result is a polyhedron.
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`. 
 \tparam Traits must be model of the concept `ConvexHullTraits_3`. 

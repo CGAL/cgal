@@ -7,8 +7,6 @@ fills a polyhedron with the convex hull of a set of 3D points contained in a 3D 
 
 The polyhedron `pm` is cleared and the convex hull of the set of 3D points is stored in `pm`.
 
-\attention This function does not compute the plane equations of the faces of `pm`.
-
 \pre `T.dimension()`==3.
 
 \tparam Triangulation must be a \cgal 3D triangulation
