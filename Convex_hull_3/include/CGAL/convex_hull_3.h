@@ -63,6 +63,7 @@ namespace internal{  namespace Convex_hull_3{
 
 //struct to select the default traits class for computing convex hull
 template< class Point_3,
+          class PolygonMesh = Default,
           class Is_floating_point=typename boost::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<Point_3>::Kernel::Has_filtered_predicates_tag >
 struct Default_traits_for_Chull_3{
@@ -70,9 +71,9 @@ struct Default_traits_for_Chull_3{
 };
 
 //FT is a floating point type and Kernel is a filtered kernel
-template <class Point_3>
-struct Default_traits_for_Chull_3<Point_3,boost::true_type,Tag_true>{
-  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, Default, Tag_true > type;
+template <class Point_3, class PolygonMesh>
+struct Default_traits_for_Chull_3<Point_3, PolygonMesh, boost::true_type,Tag_true>{
+  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, PolygonMesh, Tag_true > type;
 };
 
 template <class Traits>
@@ -872,7 +873,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-   typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+   typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3, Polyhedron_3>::type Traits;
    convex_hull_3(first, beyond, polyhedron, Traits());
 }
 
