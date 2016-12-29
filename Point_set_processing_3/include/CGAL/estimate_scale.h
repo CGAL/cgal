@@ -109,7 +109,7 @@ public:
       {
         first_unused
           = CGAL::hierarchy_simplify_point_set (first, first_unused, point_pmap,
-                                                m_cluster_size, 1./3.);
+                                                static_cast<unsigned int>(m_cluster_size), 1./3.);
 
         m_trees.push_back (new Tree(boost::make_transform_iterator (first, Unary_f(point_pmap)),
                                     boost::make_transform_iterator (first_unused, Unary_f(point_pmap))));
@@ -149,7 +149,7 @@ public:
       {
         std::size_t size = (t == (m_trees.size() - 1)
                             ? m_trees[t]->size()
-                            : m_weights[t+1] / m_weights[t]);
+                            : static_cast<std::size_t>(m_weights[t+1] / m_weights[t]));
         for (std::size_t i = (t == 0 ? 0 : 1); i < size; ++ i)
           {
             nb += m_weights[t];
@@ -180,7 +180,7 @@ public:
         Neighbor_search search (*(m_trees[t]), get(point_pmap, *query),
                                 (t == (m_trees.size() - 1)
                                  ? m_trees[t]->size()
-                                 : m_weights[t+1] / m_weights[t]));
+                                 : static_cast<unsigned int>(m_weights[t+1] / m_weights[t])));
         Iterator it = search.begin();
         
         if (t != 0) // Skip first point except on first scale
@@ -296,7 +296,7 @@ public:
       {
         first_unused
           = CGAL::hierarchy_simplify_point_set (first, first_unused, Pmap_to_3d<PointPMap> (point_pmap),
-                                                m_cluster_size, 1./3.);
+                                                static_cast<unsigned int>(m_cluster_size), 1./3.);
 
         m_point_sets.push_back (new Point_set (boost::make_transform_iterator (first, Unary_f(point_pmap)),
                                                boost::make_transform_iterator (first_unused, Unary_f(point_pmap))));
@@ -338,7 +338,7 @@ public:
       {
         std::size_t size = (t == m_point_sets.size() - 1
                             ? m_point_sets[t]->number_of_vertices()
-                            : m_weights[t+1] / m_weights[t]);
+                            : static_cast<std::size_t>(m_weights[t+1] / m_weights[t]));
         for (std::size_t i = (t == 0 ? 0 : 1); i < size; ++ i)
           {
             nb += m_weights[t];
@@ -369,7 +369,7 @@ public:
       {
         std::size_t size = ((t == m_point_sets.size() - 1)
                             ? m_point_sets[t]->number_of_vertices()
-                            : m_weights[t+1] / m_weights[t]);
+                            : static_cast<std::size_t>(m_weights[t+1] / m_weights[t]));
         std::vector<Vertex_handle> neighbors;
         neighbors.reserve (size);
         m_point_sets[t]->nearest_neighbors (pquery, size, std::back_inserter (neighbors));

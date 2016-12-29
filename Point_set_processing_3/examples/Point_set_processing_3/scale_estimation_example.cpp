@@ -50,7 +50,7 @@ int main (int argc, char** argv)
   // Example: use estimated k as scale for jet smoothing
   CGAL::jet_smooth_point_set<Concurrency_tag>
     (points.begin(), points.end(),
-     k_scale);
+     static_cast<unsigned int>(k_scale));
 
   // estimate range scale
   task_timer.start();
