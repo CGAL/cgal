@@ -22,6 +22,10 @@
 #ifndef CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H
 #define CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/convex_hull_3_to_polyhedron_3.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/convex_hull_3_to_face_graph.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
 
