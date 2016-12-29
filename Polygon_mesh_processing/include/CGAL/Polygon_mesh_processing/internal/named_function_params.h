@@ -286,7 +286,7 @@ namespace CGAL{
     //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_on_faces_t, self>
-    set_number_of_points_on_faces(const NT& n) const
+    number_of_points_on_faces(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, number_of_points_on_faces_t, self> Params;
       return Params(n, *this);
@@ -295,7 +295,7 @@ namespace CGAL{
     //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_per_face_t, self>
-    set_number_of_points_per_face(const NT& n) const
+    number_of_points_per_face(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, number_of_points_per_face_t, self> Params;
       return Params(n, *this);
@@ -304,7 +304,7 @@ namespace CGAL{
     //overload
     template<typename NT>
     pmp_bgl_named_params<NT, grid_spacing_t, self>
-    set_grid_spacing(const NT& n) const
+    grid_spacing(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, grid_spacing_t, self> Params;
       return Params(n, *this);
@@ -313,7 +313,7 @@ namespace CGAL{
     //overload
     template<typename NT>
     pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t, self>
-    set_number_of_points_per_squared_area_unit(const NT& n) const
+    number_of_points_per_squared_area_unit(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t, self> Params;
       return Params(n, *this);
@@ -322,7 +322,7 @@ namespace CGAL{
     //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_per_edge_t, self>
-    set_number_of_points_per_edge(const NT& n) const
+    number_of_points_per_edge(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, number_of_points_per_edge_t, self> Params;
       return Params(n, *this);
@@ -331,7 +331,7 @@ namespace CGAL{
     //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_on_edges_t, self>
-    set_number_of_points_on_edges(const NT& n) const
+    number_of_points_on_edges(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, number_of_points_on_edges_t, self> Params;
       return Params(n, *this);
@@ -340,7 +340,7 @@ namespace CGAL{
     //overload
     template<typename NT>
     pmp_bgl_named_params<NT, nb_points_per_distance_unit_t, self>
-    set_number_of_points_per_distance_unit(const NT& n) const
+    number_of_points_per_distance_unit(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, nb_points_per_distance_unit_t, self> Params;
       return Params(n, *this);
@@ -565,7 +565,7 @@ namespace parameters{
   //overload
   template<typename NT>
   pmp_bgl_named_params<NT, number_of_points_on_faces_t>
-  set_number_of_points_on_faces(const NT& n)
+  number_of_points_on_faces(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, number_of_points_on_faces_t> Params;
     return Params(n);
@@ -574,7 +574,7 @@ namespace parameters{
   //overload
   template<typename NT>
   pmp_bgl_named_params<NT, number_of_points_per_face_t>
-  set_number_of_points_per_face(const NT& n)
+  number_of_points_per_face(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, number_of_points_per_face_t> Params;
     return Params(n);
@@ -583,7 +583,7 @@ namespace parameters{
   //overload
   template<typename NT>
   pmp_bgl_named_params<NT, grid_spacing_t>
-  set_grid_spacing(const NT& n)
+  grid_spacing(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, grid_spacing_t> Params;
     return Params(n);
@@ -592,7 +592,7 @@ namespace parameters{
   //overload
   template<typename NT>
   pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t>
-  set_number_of_points_per_squared_area_unit(const NT& n)
+  number_of_points_per_squared_area_unit(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t> Params;
     return Params(n);
@@ -601,7 +601,7 @@ namespace parameters{
   //overload
   template<typename NT>
   pmp_bgl_named_params<NT, number_of_points_per_edge_t>
-  set_number_of_points_per_edge(const NT& n)
+  number_of_points_per_edge(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, number_of_points_per_edge_t> Params;
     return Params(n);
@@ -610,7 +610,7 @@ namespace parameters{
   //overload
   template<typename NT>
   pmp_bgl_named_params<NT, number_of_points_on_edges_t>
-  set_number_of_points_on_edges(const NT& n)
+  number_of_points_on_edges(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, number_of_points_on_edges_t> Params;
     return Params(n);
@@ -619,7 +619,7 @@ namespace parameters{
   //overload
   template<typename NT>
   pmp_bgl_named_params<NT, nb_points_per_distance_unit_t>
-  set_number_of_points_per_distance_unit(const NT& n)
+  number_of_points_per_distance_unit(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, nb_points_per_distance_unit_t> Params;
     return Params(n);

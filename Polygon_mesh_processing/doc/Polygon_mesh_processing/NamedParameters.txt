@@ -260,7 +260,7 @@ should be considered for the sampling.
 \b Default value is `true`
 \cgalNPEnd
 
-\cgalNPBegin{set_number_of_points_on_faces} \anchor PMP_set_number_of_points_on_faces
+\cgalNPBegin{number_of_points_on_faces} \anchor PMP_number_of_points_on_faces
 Parameter used in `sample_triangle_mesh()` to set the number of points picked
 using the random uniform method on faces.
 \n
@@ -268,7 +268,7 @@ using the random uniform method on faces.
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{set_number_of_points_on_edges} \anchor PMP_set_number_of_points_on_edges
+\cgalNPBegin{number_of_points_on_edges} \anchor PMP_number_of_points_on_edges
 Parameter used in `sample_triangle_mesh()` to set the number of points picked
 using the random uniform method on edges.
 \n
@@ -276,7 +276,7 @@ using the random uniform method on edges.
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{set_number_of_points_per_face} \anchor PMP_set_number_of_points_per_face
+\cgalNPBegin{number_of_points_per_face} \anchor PMP_number_of_points_per_face
 Parameter used in `sample_triangle_mesh()` to set the number of points picked
 per face using the Monte-Carlo method.
 \n
@@ -284,7 +284,7 @@ per face using the Monte-Carlo method.
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{set_number_of_points_per_edge} \anchor PMP_set_number_of_points_per_edge
+\cgalNPBegin{number_of_points_per_edge} \anchor PMP_number_of_points_per_edge
 Parameter used in `sample_triangle_mesh()` to set the number of points picked
 per edge using the Monte-Carlo method.
 \n
@@ -292,7 +292,7 @@ per edge using the Monte-Carlo method.
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{set_grid_spacing} \anchor PMP_set_grid_spacing
+\cgalNPBegin{grid_spacing} \anchor PMP_grid_spacing
 Parameter used in `sample_triangle_mesh()` to set the grid spacing when using
 the grid sampling method.
 \n
@@ -300,7 +300,7 @@ the grid sampling method.
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{set_number_of_points_per_squared_area_unit} \anchor PMP_set_number_of_points_per_squared_area_unit
+\cgalNPBegin{number_of_points_per_squared_area_unit} \anchor PMP_number_of_points_per_squared_area_unit
 Parameter used in `sample_triangle_mesh()` to set the number of points per
 squared area unit to be picked up in faces for the random uniform sampling and
 Monte-Carlo methods.
@@ -309,7 +309,7 @@ Monte-Carlo methods.
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{set_number_of_points_per_distance_unit} \anchor PMP_set_number_of_points_per_distance_unit
+\cgalNPBegin{number_of_points_per_distance_unit} \anchor PMP_number_of_points_per_distance_unit
 Parameter used in `sample_triangle_mesh()` to set the number of points per
 distance unit to be picked up on edges for the random uniform sampling and
 Monte-Carlo methods.
