@@ -198,7 +198,17 @@ file(MAKE_DIRECTORY "${CGAL_DOC_TAG_DIR}")
 set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
-set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources")
+#Setting the resource directory depending on the version of doxygen
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.8.4")
+
+#  first look if resources for the specific doxygen version is available, fallback
+#  on the default otherwise
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
+  set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
+else()
+  set(CGAL_DOC_RESOURCE_DIR "${CGAL_DOC_RESOURCE_DIR_DEFAULT}")
+endif()
+
 set(CGAL_DOC_BIBLIO_DIR "${CMAKE_CURRENT_LIST_DIR}/biblio")
 set(CGAL_DOC_SCRIPT_DIR "${CMAKE_CURRENT_LIST_DIR}/scripts")
 
