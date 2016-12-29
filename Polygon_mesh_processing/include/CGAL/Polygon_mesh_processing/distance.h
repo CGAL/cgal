@@ -273,9 +273,9 @@ struct Distance_computation{
  *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
  *    vertices of `tm` are put into `out`.\cgalParamEnd
  *    \cgalParamBegin{sample_edges} if `true` is passed (default value),
- *    edges of `tm` are sampled using a dedicated algorithm.\cgalParamEnd
+ *    edges of `tm` are sampled.\cgalParamEnd
  *    \cgalParamBegin{sample_faces} if `true` is passed (default value),
- *    faces of `tm` are sampled using a dedicated algorithm.\cgalParamEnd
+ *    faces of `tm` are sampled.\cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template<class OutputIterator, class TriangleMesh, class NamedParameters>
@@ -563,7 +563,7 @@ double approximate_Hausdorff_distance(
 /**
  * \ingroup PMP_distance_grp
  * computes the approximate Hausdorff distance from `tm1` to `tm2` by returning
- * the distance of the furthest point from `tm2` amongst a sampling of `tm1`
+ * the distance of the farthest point from `tm2` amongst a sampling of `tm1`
  * generated with the function `sample_triangle_mesh()` with
  * `tm1` and `np1` as parameter.
  *
