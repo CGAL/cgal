@@ -860,7 +860,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   CGAL_ch_precondition_msg(point3_it != points.end(), 
         "All points are collinear; cannot construct polyhedron.");
   
-  polyhedron.clear();
+  clear(polyhedron);
   // result will be a polyhedron
   internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
                                                      polyhedron, traits);
