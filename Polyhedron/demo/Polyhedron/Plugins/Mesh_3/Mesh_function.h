@@ -63,8 +63,17 @@ struct Mesh_parameters
   inline QStringList log() const;
 };
 
+namespace Mesh_fnt {
+  struct Domain_tag {};
+  struct Polyhedral_domain_tag : public Domain_tag {};
+  struct Labeled_domain_tag : public Domain_tag {};
+  struct Image_domain_tag : Labeled_domain_tag {};
+  struct Implicit_domain_tag : Labeled_domain_tag {};
+  struct Labeled_image_domain_tag : Image_domain_tag {};
+  struct Gray_image_domain_tag : Image_domain_tag {};
+} // end Mesh_fnt
 
-template < typename Domain_, typename Image_tag >
+template < typename Domain_, typename Domain_tag >
 class Mesh_function
   : public Mesh_function_interface
 {
@@ -99,9 +108,12 @@ private:
   typedef Mesh_criteria::Cell_criteria              Cell_criteria;
   
   typedef CGAL::Mesh_3::Mesher_3<C3t3, Mesh_criteria, Domain>   Mesher;
-  
-  void initialize(const Mesh_criteria& criteria, CGAL::Tag_true);
-  void initialize(const Mesh_criteria& criteria, CGAL::Tag_false);
+
+  void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
+  void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
+
+  void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
+  void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag) {}
 
 private:
   C3t3& c3t3_;
@@ -177,7 +189,8 @@ CGAL::Mesh_facet_topology topology(int manifold) {
 template < typename D_, typename Tag >
 void
 Mesh_function<D_,Tag>::
-initialize(const Mesh_criteria& criteria, CGAL::Tag_true) // for an image
+initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag)
+// for a labeled image
 {
   if(p_.detect_connected_components) {
     initialize_triangulation_from_labeled_image(c3t3_
@@ -187,14 +200,15 @@ initialize(const Mesh_criteria& criteria, CGAL::Tag_true) // for an image
                                                 , typename D_::Image_word_type()
                                                 , p_.protect_features);
   } else {
-    initialize(criteria, CGAL::Tag_false());
+    initialize(criteria, Mesh_fnt::Domain_tag());
   }
 }
 
 template < typename D_, typename Tag >
 void
 Mesh_function<D_,Tag>::
-initialize(const Mesh_criteria& criteria, CGAL::Tag_false) // for the other domain types
+initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
+// for the other domain types
 {
   // Initialization of the mesh, either with the protection of sharp
   // features, or with the initial points (or both).
@@ -230,7 +244,8 @@ launch()
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
 
-  initialize(criteria, CGAL::Boolean_tag<Tag::value>());
+  tweak_criteria(criteria, Tag());
+  initialize(criteria, Tag());
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
@@ -290,7 +305,7 @@ status(double time_period) const
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   // If mesher_ is not yet created, it means that either launch() has not
   // been called or that initial points have not been founded
-  if ( NULL == mesher_ )
+  if ( NULL == mesher_ ) /// @TODO: there is a race-condition, here.
   {
     return QString("Initialization in progress...");
   }

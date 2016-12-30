@@ -102,7 +102,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   param.protect_features = protect_features;
 
   typedef ::Mesh_function<Polyhedral_mesh_domain,
-                          CGAL::Tag_false> Mesh_function;
+                          Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                      p_domain, param);
   return new Meshing_thread(p_mesh_function, p_new_item);
@@ -146,7 +146,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.manifold = manifold;
 
   typedef ::Mesh_function<Function_mesh_domain,
-                          CGAL::Tag_false> Mesh_function;
+                          Mesh_fnt::Implicit_domain_tag> Mesh_function;
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                      p_domain, param);
   return new Meshing_thread(p_mesh_function, p_new_item);
@@ -228,7 +228,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     }
     timer.start();
     typedef ::Mesh_function<Image_mesh_domain,
-                            CGAL::Tag_true> Mesh_function;
+                            Mesh_fnt::Labeled_image_domain_tag> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                        p_domain, param);
     return new Meshing_thread(p_mesh_function, p_new_item);
@@ -256,7 +256,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     }
     timer.start();
     typedef ::Mesh_function<Gray_Image_mesh_domain,
-                            CGAL::Tag_false> Mesh_function;
+                            Mesh_fnt::Gray_image_domain_tag> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                        p_domain, param);
     return new Meshing_thread(p_mesh_function, p_new_item);
