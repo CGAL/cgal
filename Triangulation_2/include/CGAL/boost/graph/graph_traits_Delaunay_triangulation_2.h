@@ -53,7 +53,7 @@ namespace boost {
     typedef CGAL::detail::Edge<CGAL::Delaunay_triangulation_2<GT,TDS>, typename CGAL::Delaunay_triangulation_2<GT,TDS>::Edge>  edge_descriptor;
     typedef typename CGAL::Delaunay_triangulation_2<GT,TDS>::All_edges_iterator  edge_iterator;
 
-    typedef CGAL::Prevent_deref<typename Delaunay_triangulation::all_vertices_iterator> vertex_iterator;
+    typedef CGAL::Prevent_deref<typename Delaunay_triangulation::All_vertices_iterator> vertex_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::Out_edge_circulator<typename Delaunay_triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > out_edge_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::In_edge_circulator<typename Delaunay_triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > in_edge_iterator;
     typedef CGAL::Counting_iterator<typename Delaunay_triangulation::Vertex_circulator> Incident_vertices_iterator;
