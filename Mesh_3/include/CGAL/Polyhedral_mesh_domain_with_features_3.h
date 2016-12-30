@@ -467,11 +467,7 @@ detect_borders(const std::vector<Polyhedron>& poly)
   if (borders_detected_)
     return;//border detection has already been done
 
-  BOOST_FOREACH(const Polyhedron& p, poly)
-  {
-    internal::Mesh_3::Is_border_edge<Polyhedron> is_border_edge(p);
-    add_features_from_split_graph_into_polylines(p, is_border_edge);
-  }
+  detect_features(poly, 180);
 
   borders_detected_ = true;
 }
