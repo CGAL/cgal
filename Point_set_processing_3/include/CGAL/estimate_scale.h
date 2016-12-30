@@ -178,9 +178,9 @@ public:
     for (std::size_t t = 0; t < m_trees.size(); ++ t)
       {
         Neighbor_search search (*(m_trees[t]), get(point_pmap, *query),
-                                (t == (m_trees.size() - 1)
-                                 ? m_trees[t]->size()
-                                 : static_cast<unsigned int>(m_weights[t+1] / m_weights[t])));
+                                static_cast<unsigned int>((t == (m_trees.size() - 1)
+                                                           ? m_trees[t]->size()
+                                                           : m_weights[t+1] / m_weights[t])));
         Iterator it = search.begin();
         
         if (t != 0) // Skip first point except on first scale
