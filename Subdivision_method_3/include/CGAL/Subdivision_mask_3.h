@@ -95,7 +95,7 @@ public:
   void facet_node(face_descriptor facet, Point& pt) {
     int n = 0;
     Point p(0,0,0);
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(facet,this->polyhedron))
+    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(halfedge(facet,this->polyhedron),this->polyhedron))
     {
       p = p + ( get(this->vpmap,vd) - ORIGIN);
       ++n;
@@ -154,7 +154,7 @@ public:
   }
   //
   void vertex_node(vertex_descriptor vertex, Point& pt) {
-    Halfedge_around_target_circulator vcir(vertex,this->polyhedron);
+    Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
     int n = degree(vertex,this->polyhedron);    
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
@@ -181,10 +181,10 @@ public:
   //
   void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
     Point& ep1 = get(this->vpmap,target(edge, this->polyhedron));
-    Point& ep2 = get(this->vpmap,target(opposite(edge, this->polyhedron)this->polyhedron));
+    Point& ep2 = get(this->vpmap,target(opposite(edge, this->polyhedron), this->polyhedron));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_target_circulator vcir(target(edge, this->polyhedron), this->polyhedron);
+    Halfedge_around_target_circulator<Poly> vcir(target(edge, this->polyhedron), this->polyhedron);
     Point& vp1  = get(this->vpmap,target(opposite(*vcir, this->polyhedron ), this->polyhedron));
     Point& vp0  = get(this->vpmap, target(*vcir, this->polyhedron));
     --vcir;

@@ -31,6 +31,9 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Polyhedron_decorator_3.h>
 
+#include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
+
 namespace CGAL {
 
 // ======================================================================
@@ -42,21 +45,21 @@ namespace Subdivision_method_3 {
   void PQQ_1step(Poly& p, Mask<Poly> mask) {
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename Poly::Vertex_handle           Vertex_handle;
-    typedef typename Poly::Halfedge_handle         Halfedge_handle;
+    typedef typename boost::graph_traits<Poly>::vertex_descriptor           vertex_descriptor;
+    typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
 
-    typedef typename Poly::Vertex_iterator         Vertex_iterator;
-    typedef typename Poly::Edge_iterator           Edge_iterator;
-    typedef typename Poly::Facet_iterator          Facet_iterator;
+    typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
+    typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
+    typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
 
-    typedef typename Poly::Halfedge_around_facet_circulator  
-                                              Halfedge_around_facet_circulator;
+    typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_facet_circulator;
 
-    typedef typename Poly::Traits                  Traits;
-    typedef typename Traits::Kernel                Kernel;
-    typedef typename Kernel::Point_3               Point;
+    typedef typename boost::property_map<Poly, vertex_point_t>::type Vertex_pmap;
+    typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
+        
+    Vertex_pmap vpm = get(CGAL::vertex_point, p);
 
-    p.normalize_border();
+    // AF p.normalize_border();
 
     // Build a new vertices buffer has the following structure
     //
@@ -66,9 +69,9 @@ namespace Subdivision_method_3 {
     // f_begin ... (end)     : store the positions of the face-vertices
     // The index of the vertices buffer should 1-1 map to the distance
     // of the corresponding iterator to the begin of the iterator.
-    size_t num_vertex = p.size_of_vertices();
-    size_t num_edge = p.size_of_halfedges()/2;
-    size_t num_facet = p.size_of_facets();
+    typename boost::graph_traits<Poly>::vertices_size_type num_vertex = num_vertices(p);
+    typename boost::graph_traits<Poly>::halfedges_size_type num_edge = num_halfedges(p)/2;
+    typename boost::graph_traits<Poly>::faces_size_type num_facet = num_faces(p);
 
     // If Polyhedron is using vector, we need to reserve the memory to prevent 
     // the CGAL_assertion.
@@ -78,27 +81,32 @@ namespace Subdivision_method_3 {
     Point* vertex_point_buffer = new Point[num_vertex + num_edge + num_facet];
     Point* edge_point_buffer = vertex_point_buffer + num_vertex;
     Point* face_point_buffer = edge_point_buffer + num_edge;
-
+    
+    int i=0;
+    boost::unordered_map<vertex_descriptor,int> v_index;
+    BOOST_FOREACH(vertex_descriptor vh, vertices(p)){
+      v_index[vh]= i++;
+    }
+    
     std::vector<bool> v_onborder(num_vertex);
-
-    Facet_iterator fitr = p.facets_begin();
+    face_iterator fitr = faces(p).first;
     for (size_t i = 0; i < num_facet; i++, ++fitr)
-      mask.facet_node(fitr, face_point_buffer[i]);
+      mask.facet_node(*fitr, face_point_buffer[i]);
 
-    size_t sb = p.size_of_border_edges();
+    size_t sb = 0; // AF p.size_of_border_edges();
 
-    Edge_iterator eitr = p.edges_begin();
+    edge_iterator eitr = edges(p).first;
     for (size_t i = 0; i < num_edge-sb; i++, ++eitr)
-      mask.edge_node(eitr, edge_point_buffer[i]);
+      mask.edge_node(halfedge(*eitr,p), edge_point_buffer[i]);
     for (size_t i = num_edge-sb; i < num_edge; i++, ++eitr) {
-      int v = (int) std::distance(p.vertices_begin(), eitr->vertex());
+      int v = v_index[target(*eitr,p)];
       v_onborder[v] = true;
-      mask.border_node(eitr, edge_point_buffer[i], vertex_point_buffer[v]);
+      mask.border_node(halfedge(*eitr,p), edge_point_buffer[i], vertex_point_buffer[v]);
     }
 
-    Vertex_iterator vitr = p.vertices_begin();
+    vertex_iterator vitr = vertices(p).first;
     for (size_t i = 0; i < num_vertex; i++, ++vitr)
-      if (!v_onborder[i]) mask.vertex_node(vitr, vertex_point_buffer[i]);
+      if (!v_onborder[i]) mask.vertex_node(*vitr, vertex_point_buffer[i]);
 
     // Build the connectivity using insert_vertex() and insert_edge()
     // 1. insert_vertex() to all edges and set them to new positions
@@ -108,37 +116,37 @@ namespace Subdivision_method_3 {
     // 4. insert_edge() between all other new inserted vertices of step 1 and
     //    the new inserted vertex of step 3
     // Step 1.
-    eitr = p.edges_begin();
+    eitr = edges(p).first;
     for (size_t i = 0; i < num_edge; i++, ++eitr) {
-      Vertex_handle vh = PD::insert_vertex(p, eitr);
-      vh->point() = edge_point_buffer[i];
+      vertex_descriptor vh = PD::insert_vertex(p, halfedge(*eitr,p));
+      put(vpm, vh, edge_point_buffer[i]);
     }
-    fitr = p.facets_begin();
+    fitr = faces(p).first;
 
     // TODO: the topoloy modification can be done by a template function
     //       and that gives the user a chance to create new topological masks.
     for (size_t i = 0; i < num_facet; i++, ++fitr) {
       // Step 2.
-      Halfedge_around_facet_circulator hcir_begin = fitr->facet_begin();
+      Halfedge_around_facet_circulator hcir_begin(halfedge(*fitr,p),p);
       Halfedge_around_facet_circulator hcir = hcir_begin;
 
-      Halfedge_handle e1 = ++hcir; // e1 points to the newly inserted vertex
+      halfedge_descriptor e1 = * ++hcir; // e1 points to the newly inserted vertex
       ++hcir; // Skips one original vertex 
-      Halfedge_handle e2 = ++hcir; // points to the next newly inserted vertex
+      halfedge_descriptor e2 = * ++hcir; // points to the next newly inserted vertex
       ++hcir; // Must move the cir before inserts the new edge !!
-      Halfedge_handle newe = PD::insert_edge(p, e1, e2);
+      halfedge_descriptor newe = PD::insert_edge(p, e1, e2);
 
       // Step 3.
-      Halfedge_handle newv = PD::insert_vertex_return_edge(p, newe);
-      newv = newv->opposite()->prev(); // change newv to the larger face and 
+      halfedge_descriptor newv = PD::insert_vertex_return_edge(p, newe);
+      newv = prev(opposite(newv,p),p); // change newv to the larger face and 
       // still points to the newly inserted 
       // vertex
       // Update the geometry data of the newly inserted face-vertices
-      newv->vertex()->point() = face_point_buffer[i];
+      put(vpm, target(newv,p), face_point_buffer[i]);
 
       // Step 4.
       while (hcir != hcir_begin) {
-        e1 = ++hcir;
+        e1 = * ++hcir;
         ++hcir; // Must move the cir before inserts the new edge !!
         PD::insert_edge(p, e1, newv); 
       }
@@ -146,9 +154,9 @@ namespace Subdivision_method_3 {
 
     // Update the geometry data of the newly inserted vertices by the 
     // vertices buffer
-    vitr = p.vertices_begin();
+    vitr = vertices(p).first;
     for (size_t i = 0; i < num_vertex; i++, ++vitr) 
-      vitr->point() = vertex_point_buffer[i];
+      put(vpm, *vitr, vertex_point_buffer[i]);
 
     delete []vertex_point_buffer;
   }

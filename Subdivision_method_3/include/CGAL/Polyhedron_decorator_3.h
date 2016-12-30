@@ -32,48 +32,45 @@ template <class Poly>
 class Polyhedron_decorator_3 {
   typedef Poly                                        Polyhedron;
 
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
+  typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Vertex_pmap;
+  typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
+    
+    typedef typename Kernel_traits<Point>::Kernel       Kernel;
 
-  typedef typename Polyhedron::Halfedge_data_structure HDS;
-  typedef typename Polyhedron::Vertex                  Vertex;
-  typedef typename Polyhedron::Halfedge                Halfedge;
-  typedef typename Polyhedron::Facet                   Facet;
-  
-  typedef typename Polyhedron::Vertex_handle           Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
-  typedef typename Polyhedron::Facet_handle            Facet_handle;
+    typedef typename boost::graph_traits<Poly>::vertex_descriptor           Vertex_handle;
+    typedef typename boost::graph_traits<Poly>::halfedge_descriptor         Halfedge_handle;
+  typedef typename boost::graph_traits<Poly>::face_descriptor            Facet_handle;
 
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Edge_iterator           Edge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
+    typedef typename boost::graph_traits<Poly>::vertex_iterator         Vertex_iterator;
+    typedef typename boost::graph_traits<Poly>::edge_iterator           Edge_iterator;
+    typedef typename boost::graph_traits<Poly>::face_iterator          Facet_iterator;
 
-  typedef typename Polyhedron::Halfedge_around_facet_circulator  
+  typedef typename Halfedge_around_face_circulator<Poly>  
                                             Halfedge_around_facet_circulator;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator 
+  typedef typename Halfedge_around_target_circulator<Poly>
                                             Halfedge_around_vertex_circulator;
 
-  typedef typename Polyhedron::Point_3                 Point;
   typedef typename Kernel::FT                          FT;
 
 public:
-  /** Insert a new vertex into an helfedge h (a--b)
+  /** Insert a new vertex into a helfedge h (a--b)
 
       Precondition:
            h
       a <-----> b
           -h
       h is the halfedge connecting vertex a to b
-      -h is the oppsite halfedge connecting b to a
+      -h is the opposite halfedge connecting b to a
 
       Postcondition:
            h         r
       a <-----> V <-----> b  
           -h         -r
       V is the return vertex whose geometry is UNDEFINED.
-      -r is the return halfedge that is pointing to V 
+      -r is the returned halfedge that is pointing to V 
   */
+  
+#if 0
   static Vertex* insert_vertex(Polyhedron& p, Halfedge* h) { 
     return insert_vertex(p, Halfedge_handle(h)).ptr();
   }
@@ -81,15 +78,18 @@ public:
   static Vertex* insert_vertex(Polyhedron& p, Vertex* a, Vertex* b) {
     return insert_vertex(p, Vertex_handle(a), Vertex_handle(b)).ptr();
   }
+#endif
   //
   static Vertex_handle insert_vertex(Polyhedron& p, Halfedge_handle h) {
-    return insert_vertex_return_edge(p, h)->vertex();
+    return target(insert_vertex_return_edge(p, h),p);
   }
   //
   static Vertex_handle insert_vertex(Polyhedron& p,
 				     Vertex_handle a, Vertex_handle b) {
-    return insert_vertex_return_edge(p, a, b)->vertex();
+    return target(insert_vertex_return_edge(p, a, b),p);
   }
+
+#if 0
   //
   static Halfedge* insert_vertex_return_edge(Polyhedron& p, Halfedge* h) { 
     return insert_vertex_return_edge(p, Halfedge_handle(h)).ptr();
@@ -100,6 +100,8 @@ public:
     return insert_vertex_return_edge(p, Vertex_handle(a), 
 				     Vertex_handle(b)).ptr();
   }
+
+#endif 
   //
   static inline Halfedge_handle insert_vertex_return_edge(Polyhedron& p, 
 							  Halfedge_handle h);
@@ -118,14 +120,16 @@ public:
       a <----------> b
       H is the return halfedge connecting vertex a to b.      
   */
+#if 0
   static Halfedge* insert_edge(Polyhedron& /*p*/, Vertex* a, Vertex* b) {
     return insert_edge(Vertex_handle(a), Vertex_handle(b)).ptr();
   }
+#endif
   //
   static Halfedge_handle insert_edge(Polyhedron& p, 
 				     Halfedge_handle a, 
 				     Halfedge_handle b) {
-    return p.split_facet(a, b);
+    return Euler::split_face(a, b, p);
   }
   //
   static inline Halfedge_handle insert_edge(Polyhedron& p, 
@@ -157,13 +161,13 @@ template <class Poly>
 typename Polyhedron_decorator_3<Poly>::Halfedge_handle 
 Polyhedron_decorator_3<Poly>::insert_vertex_return_edge(Polyhedron& p,
 						    Halfedge_handle h) {
-  Halfedge_handle hopp = h->opposite();
-  Halfedge_handle r = p.split_vertex(hopp->prev(), h);
-  if (!h->is_border())
-    ((typename HDS::Face_handle) h->facet())->set_halfedge(r);
-  if (!hopp->is_border())
-    ((typename HDS::Face_handle) hopp->facet())->set_halfedge(hopp);
-  return r->opposite();
+  Halfedge_handle hopp = opposite(h,p);
+  Halfedge_handle r = Euler::split_vertex(prev(hopp,p), h,p);
+  if (! is_border(h,p))
+    set_halfedge(face(h,p), r, p);
+  if (! is_border(hopp,p))
+    set_halfedge(face(hopp, p), hopp, p);
+  return opposite(r,p);
 }
 
 // ======================================================================
