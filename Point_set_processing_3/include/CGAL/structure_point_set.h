@@ -41,14 +41,6 @@
 #include <list>
 #include <limits>
 
-// The following lines only for MS Visual C++
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4244) // boost converts signed to std::size_t
-#endif
-
-
-
 namespace CGAL {
 
 /*!
@@ -714,8 +706,8 @@ private:
 
     typename Pointer_property_map<Point>::type pmap = make_property_map(m_points);
 
-    Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (m_points.size()),
+    Tree tree (boost::counting_iterator<std::size_t, boost::use_default, boost::intmax_t> (0),
+               boost::counting_iterator<std::size_t, boost::use_default, boost::intmax_t> (m_points.size()),
                typename Tree::Splitter(),
                Search_traits (pmap));
 
