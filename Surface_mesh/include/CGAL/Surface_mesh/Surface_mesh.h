@@ -45,6 +45,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/Handle_hash_function.h>
 
 namespace CGAL {
 
@@ -2576,7 +2577,45 @@ collect_garbage()
     garbage_ = false;
 }
 
+namespace internal{
+  namespace handle {
+    template <>
+    struct Hash_functor<SM_Vertex_index>{
+      std::size_t
+      operator()(const SM_Vertex_index i)
+      {
+        return i;
+      }
+    };
 
+    template <>
+    struct Hash_functor<SM_Halfedge_index>{
+      std::size_t
+      operator()(const SM_Halfedge_index i)
+      {
+        return i;
+      }
+    };
+
+    template <>
+    struct Hash_functor<SM_Edge_index>{
+      std::size_t
+      operator()(const SM_Edge_index i)
+      {
+        return i;
+      }
+    };
+
+    template <>
+    struct Hash_functor<SM_Face_index>{
+      std::size_t
+      operator()(const SM_Face_index i)
+      {
+        return i;
+      }
+    };
+  }
+}
 
 } // CGAL
 

@@ -11,7 +11,7 @@
 typedef CGAL::Exact_rational                          NT;
 typedef CGAL::Cartesian<NT>                           K;
 typedef CGAL::Convex_hull_traits_3<K>                 Traits;
-typedef Traits::Polyhedron_3                          Polyhedron_3;
+typedef Traits::Polygon_mesh                          Polyhedron_3;
 
 typedef K::Point_3                                        Point_3;
 typedef K::Segment_3                                      Segment_3;

@@ -13,7 +13,7 @@
 typedef CGAL::Exact_rational Exact_rational;
 typedef CGAL::Cartesian< Exact_rational >     R;
 typedef CGAL::Convex_hull_traits_3<R>           Traits;
-typedef Traits::Polyhedron_3                    Polyhedron_3;
+typedef Traits::Polygon_mesh                    Polyhedron_3;
 
 typedef R::Point_2				Point_2;
 typedef R::Point_3				Point_3;
@@ -150,6 +150,9 @@ void test_collinear()
   assert(ch_seg == orig_seg || ch_seg == orig_seg.opposite() );
 
 }
+
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+
 
 int main()
 {

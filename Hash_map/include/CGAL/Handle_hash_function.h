@@ -31,6 +31,7 @@
 
 namespace CGAL {
 
+
 //mechanism to abuse Handle_hash_function which is the default
 //template parameter of Unique_hash_map
 namespace internal{

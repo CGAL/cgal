@@ -20,8 +20,8 @@
 //                 Pierre Alliez
 //
 
-#ifndef INTERIOR_POLYHEDRON_3_H
-#define INTERIOR_POLYHEDRON_3_H
+#ifndef CGAL_CH3_INTERIOR_POLYHEDRON_3_H
+#define CGAL_CH3_INTERIOR_POLYHEDRON_3_H
 
 // LP solver to compute an interior point of a polyhedron
 #include <CGAL/QP_functions.h>
@@ -57,6 +57,7 @@
 // Then, if [x1,x2,x3,x4] is an optimal m_solution with x3 > 0 we pick
 // the point [x1,x2,x3] as inside point.
 
+namespace CGAL {
 template <class Kernel, class ET>
 class Interior_polyhedron_3 {
         // 3D
@@ -158,5 +159,7 @@ class Interior_polyhedron_3 {
         }
 };
 
-#endif // INTERIOR_POLYHEDRON_3_H
+} // namespace CGAL
+
+#endif // CGAL_CH3_INTERIOR_POLYHEDRON_3_H
 

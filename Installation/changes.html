@@ -178,6 +178,16 @@ and <code>src/</code> directories).
     </li>
   </ul>
 <!-- Convex Hull Algorithms -->
+  <h3>3D Convex Hull</h3>
+  <ul>
+    <li>The convex hull function can also produce a <code>Surface_mesh</code>,
+        and generally speaking any model of the concept <code>MutableFaceGraph</code></li>
+    <li>The function <code>convex_hull_3_to_polyhedron_3()</code> is deprecated and
+        <code>convex_hull_3_to_face_graph.h</code> should be used instead.</li>
+    <li>The class <code>Convex_hull_traits_3</code> now documents a nested type <code>Polygon_mesh</code>
+        instead of <code>Polyhedron_3</code>. The other nested type is kept for backward compatibility.</li>
+    <li>Remove the function <code>CGAL::convex_hull_incremental_3()</code> deprecated since CGAL 4.6.</li>
+  </ul>
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->
   <h3>3D Boolean Operations on Nef Polyhedra</h3>
@@ -219,6 +229,10 @@ and <code>src/</code> directories).
     <li>The class <code>Regular_triangulation_2</code> can take a kernel as template argument,
       that is one no longer has to use <code>Regular_triangulation_euclidea_traits_2</code>,
       although this still works.</li>
+    <li>
+      Add function <code>link_to_face_graph()</code> to copy the set of faces incident to a vertex
+      into a model of <code>FaceGraph</code>.
+    </li>
   </ul>
 
  <h3>3D Triangulations</h3>

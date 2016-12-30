@@ -19,8 +19,8 @@
 // Author(s)     : Jocelyn Meyron
 //
 
-#ifndef PREDICATES_H
-#define PREDICATES_H
+#ifndef CGAL_CH3_DUAL_PREDICATES_H
+#define CGAL_CH3_DUAL_PREDICATES_H
 
 #include <CGAL/predicates/sign_of_determinant.h>
 
@@ -453,5 +453,5 @@ namespace CGAL
     } // namespace Convex_hull_3
 } // namespace CGAL
 
-#endif // PREDICATES_H
+#endif // CGAL_CH3_DUAL_PREDICATES_H
 
