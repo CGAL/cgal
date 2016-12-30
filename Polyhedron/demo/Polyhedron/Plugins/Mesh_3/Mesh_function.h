@@ -42,6 +42,8 @@
 #include <CGAL/make_mesh_3.h> // for C3t3_initializer
 #include <CGAL/use.h>
 
+#include <boost/any.hpp>
+
 namespace CGAL {
   class Image_3;
 }
@@ -59,6 +61,7 @@ struct Mesh_parameters
   bool detect_connected_components;
   int manifold;
   const CGAL::Image_3* image_3_ptr;
+  bool use_sizing_field_with_aabb_tree;
   
   inline QStringList log() const;
 };
@@ -112,10 +115,14 @@ private:
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
 
+  Edge_criteria edge_criteria(double b, Mesh_fnt::Domain_tag);
+  Edge_criteria edge_criteria(double b, Mesh_fnt::Polyhedral_domain_tag);
+
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag) {}
 
 private:
+  boost::any object_to_destroy;
   C3t3& c3t3_;
   Domain* domain_;
   Mesh_parameters p_;
@@ -225,6 +232,59 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
      p_.protect_features);
 }
 
+template < typename D_, typename Tag >
+typename Mesh_function<D_,Tag>::Edge_criteria
+Mesh_function<D_,Tag>::
+edge_criteria(double b, Mesh_fnt::Domain_tag)
+{
+  return Edge_criteria(b);
+}
+
+#include "future/Sizing_field_with_aabb_tree.h"
+
+template < typename D_, typename Tag >
+typename Mesh_function<D_,Tag>::Edge_criteria
+Mesh_function<D_,Tag>::
+edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
+{
+  if(p_.use_sizing_field_with_aabb_tree) {
+    typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
+    typedef Sizing_field_with_aabb_tree
+      <
+      Kernel
+      , Domain
+      , Set_of_patch_ids
+      > Mesh_sizing_field; // type of sizing field for 0D and 1D features
+    typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
+    const std::size_t max_index = domain_->maximal_curve_segment_index();
+    Patches_ids_vector* patches_ids_vector_p =
+      new Patches_ids_vector(max_index+1);
+    for(std::size_t curve_id = 1; curve_id <= max_index; ++curve_id)
+    {
+      (*patches_ids_vector_p)[curve_id] = domain_->get_incidences(curve_id);
+    }
+    Mesh_sizing_field* sizing_field_ptr =
+      new Mesh_sizing_field(edge_size,
+                            domain_->corners_incidences_map().begin(),
+                            domain_->corners_incidences_map().end(),
+                            domain_->aabb_tree(),
+                            *domain_,
+                            *patches_ids_vector_p);
+    // The sizing field object, as well as the `patch_ids_vector` are
+    // allocated on the heap, and the following `boost::any` object,
+    // containing two shared pointers, is used to make the allocated
+    // objects be destroyed at the destruction of the thread object, using
+    // type erasure (`boost::any`).
+    object_to_destroy =
+      std::make_pair(QSharedPointer<Mesh_sizing_field>(sizing_field_ptr),
+                     QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
+
+    std::cerr << "USE SIZING FIELD!\n";
+    return Edge_criteria(*sizing_field_ptr);
+  } else {
+    return Edge_criteria(edge_size);
+  }
+}
 
 template < typename D_, typename Tag >
 void
@@ -236,7 +296,7 @@ launch()
 #endif
 
   // Create mesh criteria
-  Mesh_criteria criteria(Edge_criteria(p_.edge_sizing),
+  Mesh_criteria criteria(edge_criteria(p_.edge_sizing, Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
                                         p_.facet_approx,

@@ -27,6 +27,7 @@
 
 #include <map>
 #include <utility>
+#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
 
 namespace CGAL {
 
@@ -35,7 +36,11 @@ class Mesh_constant_domain_field_3
 {
 public:
   typedef typename Gt::FT         FT;
-  typedef typename Gt::Point_3    Point_3;
+    typedef typename boost::mpl::eval_if_c<
+      internal::Has_nested_type_Bare_point<Gt>::value,
+      typename internal::Bare_point_type<Gt>,
+      boost::mpl::identity<typename Gt::Point_3>
+    >::type                       Point_3;
   typedef Index_                  Index;
   
 private:

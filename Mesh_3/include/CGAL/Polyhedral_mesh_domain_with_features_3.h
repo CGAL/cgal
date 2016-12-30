@@ -283,14 +283,8 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   Mesh_3::detect_polylines<Polyhedron,Polyline,Output_iterator>(
     &p, std::back_inserter(polylines));
     
-  // Insert polylines in domain
-  Mesh_3::Extract_bare_polyline<Polyline> extractor;
-  
-  this->add_features(
-    boost::make_transform_iterator(polylines.begin(),extractor),
-    boost::make_transform_iterator(polylines.end(),extractor));
+  this->add_features_with_context(polylines.begin(), polylines.end());
   }
-
   borders_detected_ = true;/*done by Mesh_3::detect_features*/
 }
 

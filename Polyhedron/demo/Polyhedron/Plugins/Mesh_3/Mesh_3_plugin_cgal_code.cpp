@@ -100,6 +100,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   param.edge_sizing =  edge_size;
   param.manifold = manifold;
   param.protect_features = protect_features;
+  param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
 
   typedef ::Mesh_function<Polyhedral_mesh_domain,
                           Mesh_fnt::Polyhedral_domain_tag> Mesh_function;

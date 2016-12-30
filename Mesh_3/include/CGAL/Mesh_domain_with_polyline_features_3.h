@@ -556,6 +556,16 @@ public:
                             IndicesOutputIterator out /*=
                                                         CGAL::Emptyset_iterator()*/);
 
+  template <typename InputIterator>
+  void
+  add_features(InputIterator first, InputIterator last)
+  { add_features(first, last, CGAL::Emptyset_iterator()); }
+
+  template <typename InputIterator>
+  void
+  add_features_with_context(InputIterator first, InputIterator last)
+  { add_features_with_context(first, last, CGAL::Emptyset_iterator()); }
+
   template <typename IndicesOutputIterator>
   IndicesOutputIterator
   get_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
@@ -570,11 +580,6 @@ public:
   get_incidences(Curve_segment_index id) const;
 
   void display_corner_incidences(std::ostream& os, Point_3, Corner_index id);
-
-  template <typename InputIterator>
-  void
-  add_features(InputIterator first, InputIterator last)
-  { add_features(first, last, CGAL::Emptyset_iterator()); }
 
   /// Insert one edge into domain
   /// InputIterator value type is Point_3
@@ -621,15 +626,25 @@ private:
 
 public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
+  typedef std::set<Surface_patch_index> Set_of_patch_ids;
+  typedef std::map<Point_3, Set_of_patch_ids> Corners_incidence_map;
 
 private:
+  Corners_incidence_map corners_incidence_map_;
   mutable Curves_AABB_tree curves_aabb_tree_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
+  const Corners_incidence_map& corners_incidences_map() const
+  { return corners_incidence_map_; }
+
   const Curves_AABB_tree& curves_aabb_tree() const {
     if(!curves_aabb_tree_is_built) build_curves_aabb_tree();
     return curves_aabb_tree_;
+  }
+  Curve_segment_index maximal_curve_segment_index() const {
+    if(edges_incidences_.empty()) return Curve_segment_index();
+    return boost::prior(edges_incidences_.end())->first;
   }
 
   void build_curves_aabb_tree() const {
@@ -788,6 +803,16 @@ add_features_with_context(InputIterator first, InputIterator last,
   // Insert one edge for each element
   for( ; first != last ; ++first )
   {
+    const typename Gt::Point_3& p1 = first->polyline_content.front();
+    const typename Gt::Point_3& p2 = first->polyline_content.back();
+    Set_of_patch_ids& ids_p1 = corners_incidence_map_[p1];
+    std::copy(first->context.adjacent_patches_ids.begin(),
+              first->context.adjacent_patches_ids.end(),
+              std::inserter(ids_p1, ids_p1.begin()));
+    Set_of_patch_ids& ids_p2 = corners_incidence_map_[p2];
+    std::copy(first->context.adjacent_patches_ids.begin(),
+              first->context.adjacent_patches_ids.end(),
+              std::inserter(ids_p2, ids_p2.begin()));
     Curve_segment_index curve_id =
       insert_edge(first->polyline_content.begin(), first->polyline_content.end());
     edges_incidences_[curve_id] = first->context.adjacent_patches_ids;
