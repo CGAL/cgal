@@ -671,15 +671,15 @@ double max_distance_to_triangle_mesh(const PointRange& points,
 
 /*!
  *\ingroup PMP_distance_grp
- * returns an approximation of the distance to `points` of the triangle from `tm`
- * that is the furthest from `points`.
- *
+ * returns an approximation of the distance between `points` and the point lying on `tm` that is the farthest from `points`
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
- * @param tm the triangle mesh to compute the distance from
- * @param points the range of points of interest.
- * @param precision the precision of the approximate value you want.
+ * @param tm a triangle mesh
+ * @param points a range of points
+ * @param precision for each triangle of `tm`, the distance of its farthest point from `points` is bounded.
+ *                  A triangle is subdivided into sub-triangles so that the difference of its distance bounds
+ *                  is smaller than `precision`. `precision` must be strictly positive to avoid infinite loops.
  * @param np an optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
