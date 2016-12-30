@@ -486,7 +486,7 @@ the propagation of a connected component index to cross it.
 This package provides methods to compute (approximate) distances between meshes and point sets.
 
 The function \link CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
-computes an approximation of Hausdorff <i>distance</i> from a mesh `tm1` to a mesh `tm2`. Given a
+computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
 a sampling of `tm1`, it computes the distance to `tm2` of the farthest sample point to `tm2` \cgalCite{cignoni1998metro}.
 The symmetric version (\link CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance() `approximate_symmetric_Hausdorff_distance()`\endlink)
 is the maximum of the two non-symmetric distances. Internally, points are sampled using
@@ -497,9 +497,9 @@ The quality of the approximation depends on the quality of the sampling and the 
 Three sampling methods with different parameters are provided (see \cgalFigureRef{sampling_bunny}).
 
 \cgalFigureBegin{sampling_bunny, pmp_sampling_bunny.jpg}
-Sampling of a triangle mesh using different sampling methods. From left to right: Grid sampling, Monte-Carlo sampling with fixed number of points per face and per edge,
-Monte-Carlo sampling with a number of points proportional to the area/length, and Uniform random sampling.
-The four pictures represent the sampling on the same portion of a mesh, parameters were ajusted so that the total number of points sampled in faces (blue points) and on
+Sampling of a triangle mesh using different sampling methods. From left to right: (a) Grid sampling, (b) Monte-Carlo sampling with fixed number of points per face and per edge,
+(c) Monte-Carlo sampling with a number of points proportional to the area/length, and (d) Uniform random sampling.
+The four pictures represent the sampling on the same portion of a mesh, parameters were adjusted so that the total number of points sampled in faces (blue points) and on
 edges (red points) are roughly the same.
 Note that when using the random uniform sampling some faces/edges may not contain any point, but this method is the only one that allows to exactly match a given number of points.
 \cgalFigureEnd
