@@ -47,6 +47,7 @@ namespace Subdivision_method_3 {
 
     typedef typename boost::graph_traits<Poly>::vertex_descriptor           vertex_descriptor;
     typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
+    typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
 
     typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
@@ -93,8 +94,8 @@ namespace Subdivision_method_3 {
     for (size_t i = 0; i < num_facet; i++, ++fitr)
       mask.facet_node(*fitr, face_point_buffer[i]);
 
+#if 0
     size_t sb = 0; // AF p.size_of_border_edges();
-
     edge_iterator eitr = edges(p).first;
     for (size_t i = 0; i < num_edge-sb; i++, ++eitr)
       mask.edge_node(halfedge(*eitr,p), edge_point_buffer[i]);
@@ -103,10 +104,25 @@ namespace Subdivision_method_3 {
       v_onborder[v] = true;
       mask.border_node(halfedge(*eitr,p), edge_point_buffer[i], vertex_point_buffer[v]);
     }
-
+#else
+    {
+      std::size_t i = 0;
+      BOOST_FOREACH(edge_descriptor ed, edges(p)){
+        if(is_border(ed,p)){
+          int v = v_index[target(ed,p)];
+          v_onborder[v] = true;
+          mask.border_node(halfedge(ed,p), edge_point_buffer[i], vertex_point_buffer[v]);
+          
+        }else{
+          mask.edge_node(halfedge(ed,p), edge_point_buffer[i]);
+        }
+        ++i;
+      }
+    }
+#endif
     vertex_iterator vitr = vertices(p).first;
     for (size_t i = 0; i < num_vertex; i++, ++vitr)
-      if (!v_onborder[i]) mask.vertex_node(*vitr, vertex_point_buffer[i]);
+      if (!v_onborder[v_index[*vitr]]) mask.vertex_node(*vitr, vertex_point_buffer[i]);
 
     // Build the connectivity using insert_vertex() and insert_edge()
     // 1. insert_vertex() to all edges and set them to new positions
@@ -116,7 +132,7 @@ namespace Subdivision_method_3 {
     // 4. insert_edge() between all other new inserted vertices of step 1 and
     //    the new inserted vertex of step 3
     // Step 1.
-    eitr = edges(p).first;
+    edge_iterator eitr = edges(p).first;
     for (size_t i = 0; i < num_edge; i++, ++eitr) {
       vertex_descriptor vh = PD::insert_vertex(p, halfedge(*eitr,p));
       put(vpm, vh, edge_point_buffer[i]);
