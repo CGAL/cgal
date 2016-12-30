@@ -38,6 +38,9 @@ public:
     /// It provides `FT operator()(const Point_3&, const Point_3&, const Point_3&) const`
     /// and `FT operator()(const Triangle_3&) const` and has `FT` as result_type.
     typedef unspecified_type Compute_squared_area_3;
+    /// Functor for computing squared length of a segment.
+    /// and `FT operator()(const Segment_3&) const` and has `FT` as result_type.
+    typedef unspecified_type Compute_squared_area_3;
     /// Functor for constructing translated points.
     /// It provides `Point_3 operator()(const Point_3 &, const Vector_3 &)`
     typedef unspecified_type Construct_translated_point_3;
@@ -52,6 +55,7 @@ public:
     /// @name Functions
     /// @{
     Compute_squared_area_3 compute_squared_area_3_object();
+    Compute_squared_area_3 compute_squared_length_3_object();
     Construct_translated_point_3 construct_translated_point_3_object();
     Construct_vector_3 construct_vector_3_object();
     Construct_scaled_vector_3 construct_scaled_vector_3_object();

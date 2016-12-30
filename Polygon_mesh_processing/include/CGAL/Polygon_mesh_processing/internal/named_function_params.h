@@ -48,7 +48,7 @@ namespace CGAL{
   enum number_of_points_on_faces_t  { number_of_points_on_faces };
   enum number_of_points_per_face_t  { number_of_points_per_face };
   enum grid_spacing_t               { grid_spacing };
-  enum nb_points_per_sq_area_unit_t { nb_points_per_sq_area_unit };
+  enum nb_points_per_area_unit_t    { nb_points_per_area_unit };
   enum number_of_points_per_edge_t  { number_of_points_per_edge };
   enum number_of_points_on_edges_t  { number_of_points_on_edges };
   enum nb_points_per_distance_unit_t{ nb_points_per_distance_unit };
@@ -312,10 +312,10 @@ namespace CGAL{
 
     //overload
     template<typename NT>
-    pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t, self>
-    number_of_points_per_squared_area_unit(const NT& n) const
+    pmp_bgl_named_params<NT, nb_points_per_area_unit_t, self>
+    number_of_points_per_area_unit(const NT& n) const
     {
-      typedef pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t, self> Params;
+      typedef pmp_bgl_named_params<NT, nb_points_per_area_unit_t, self> Params;
       return Params(n, *this);
     }
 
@@ -591,10 +591,10 @@ namespace parameters{
 
   //overload
   template<typename NT>
-  pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t>
-  number_of_points_per_squared_area_unit(const NT& n)
+  pmp_bgl_named_params<NT, nb_points_per_area_unit_t>
+  number_of_points_per_area_unit(const NT& n)
   {
-    typedef pmp_bgl_named_params<NT, nb_points_per_sq_area_unit_t> Params;
+    typedef pmp_bgl_named_params<NT, nb_points_per_area_unit_t> Params;
     return Params(n);
   }
 

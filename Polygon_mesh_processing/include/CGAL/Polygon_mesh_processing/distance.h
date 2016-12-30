@@ -206,7 +206,7 @@ struct Distance_computation{
  *      and uniform way on the surface of `tm`, and/or on edges of `tm`.
  *      For faces, the number of sample points is the value passed to the named
  *      parameter `number_of_points_on_faces()`. If not set,
- *      the value passed to the named parameter `number_of_points_per_squared_area_unit()`
+ *      the value passed to the named parameter `number_of_points_per_area_unit()`
  *      is multiplied by the area of `tm` to get the number of sample points.
  *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
  *      For edges, the number of the number of sample points is the value passed to the named
@@ -228,12 +228,12 @@ struct Distance_computation{
  *      on each edge.
  *      For faces, the number of points per triangle is the value passed to the named
  *      parameter `number_of_points_per_face()`. If not set, the value passed
- *      to the named parameter `number_of_points_per_squared_area_unit()` is
+ *      to the named parameter `number_of_points_per_area_unit()` is
  *      used to pick a number of points per face proportional to the triangle
  *      area with a minimum of one point per face. If none of these parameters
  *      is set, 2 divided by the square of the length of the smallest non-null
  *      edge of `tm` is used as if it was passed to
- *      `number_of_points_per_squared_area_unit()`.
+ *      `number_of_points_per_area_unit()`.
  *      For edges, the number of points per edge is the value passed to the named
  *      parameter `number_of_points_per_edge()`. If not set, the value passed
  *      to the named parameter `number_of_points_per_distance_unit()` is
@@ -271,7 +271,7 @@ struct Distance_computation{
  *      used by the Monte-Carlo sampling method as the number of points per face
  *      to pick.
  *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_squared_area_unit} a double value
+ *    \cgalParamBegin{number_of_points_per_area_unit} a double value
  *       used for the random sampling and the Monte Carlo sampling methods to
  *       repectively determine the total number of points inside faces
  *       and the number of points per face.
@@ -319,7 +319,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
   bool smpl_dgs = choose_param(get_param(np, do_sample_edges), true);
   bool smpl_fcs = choose_param(get_param(np, do_sample_faces), true);
 
-  double nb_pts_sq_a_u = choose_param(get_param(np, nb_points_per_sq_area_unit), 0.);
+  double nb_pts_a_u = choose_param(get_param(np, nb_points_per_area_unit), 0.);
   double nb_pts_l_u = choose_param(get_param(np, nb_points_per_distance_unit), 0.);
 
   // sample vertices
@@ -366,7 +366,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     std::size_t nb_points_per_edge =
       choose_param(get_param(np, number_of_points_per_edge), 0);
 
-    if ((nb_points_per_face == 0 && nb_pts_sq_a_u ==0.) ||
+    if ((nb_points_per_face == 0 && nb_pts_a_u ==0.) ||
         (nb_points_per_edge == 0 && nb_pts_l_u ==0.) )
     {
       typedef typename boost::graph_traits<TriangleMesh>
@@ -385,8 +385,8 @@ sample_triangle_mesh(const TriangleMesh& tm,
     if (smpl_fcs)
     {
       // set default value
-      if (nb_points_per_face == 0 && nb_pts_sq_a_u ==0.)
-        nb_pts_sq_a_u = 2. / CGAL::square(min_edge_length);
+      if (nb_points_per_face == 0 && nb_pts_a_u ==0.)
+        nb_pts_a_u = 2. / CGAL::square(min_edge_length);
 
       BOOST_FOREACH(face_descriptor f, faces(tm))
       {
@@ -396,7 +396,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
           nb_points = (std::max)(
             static_cast<std::size_t>(
               std::ceil(to_double(
-                face_area(f,tm,parameters::geom_traits(geomtraits)))*nb_pts_sq_a_u))
+                face_area(f,tm,parameters::geom_traits(geomtraits)))*nb_pts_a_u))
           ,std::size_t(1));
         }
         // extract triangle face points
@@ -447,11 +447,11 @@ sample_triangle_mesh(const TriangleMesh& tm,
       Random_points_in_triangle_mesh_3<TriangleMesh, Vpm, Creator> g(tm, pmap);
       if (nb_points == 0)
       {
-        if (nb_pts_sq_a_u == 0.)
+        if (nb_pts_a_u == 0.)
           nb_points = num_vertices(tm);
         else
           nb_points = static_cast<std::size_t>(
-            std::ceil(g.mesh_area()*nb_pts_sq_a_u) );
+            std::ceil(g.mesh_area()*nb_pts_a_u) );
       }
       out = CGAL::cpp11::copy_n(g, nb_points, out);
     }
@@ -467,7 +467,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
           nb_points = num_vertices(tm);
         else
           nb_points = static_cast<std::size_t>(
-            std::ceil( g.mesh_length()*nb_pts_sq_a_u) );
+            std::ceil( g.mesh_length()*nb_pts_a_u) );
       }
       out = CGAL::cpp11::copy_n(g, nb_points, out);
     }

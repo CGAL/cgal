@@ -300,9 +300,9 @@ the grid sampling method.
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{number_of_points_per_squared_area_unit} \anchor PMP_number_of_points_per_squared_area_unit
+\cgalNPBegin{number_of_points_per_area_unit} \anchor PMP_number_of_points_per_area_unit
 Parameter used in `sample_triangle_mesh()` to set the number of points per
-squared area unit to be picked up in faces for the random uniform sampling and
+area unit to be picked up in faces for the random uniform sampling and
 Monte-Carlo methods.
 \n
 \b Type : `double` \n

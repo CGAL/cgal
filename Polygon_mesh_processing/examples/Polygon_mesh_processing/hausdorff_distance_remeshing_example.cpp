@@ -29,6 +29,6 @@ int main()
 
   std::cout << "Approximated Hausdorff distance: "
             << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
-                  <TAG>(tm1, tm2, PMP::parameters::number_of_points_per_squared_area_unit(4000))
+                  <TAG>(tm1, tm2, PMP::parameters::number_of_points_per_area_unit(4000))
             << std::endl;
 }

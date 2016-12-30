@@ -44,10 +44,15 @@ struct Custom_traits_Hausdorff
 
   struct Triangle_3
   {
-    Triangle_3(){}
     Triangle_3(const Point_3&,  const Point_3&, const Point_3&){}
     Point_3 operator[](int)const{return Point_3();}
     CGAL::Bbox_3 bbox(){return CGAL::Bbox_3();}
+  };
+
+  struct Segment_3
+  {
+    Segment_3(const Point_3&,  const Point_3&){}
+    Point_3 operator[](int)const{return Point_3();}
   };
 
   struct Compute_squared_area_3
@@ -55,6 +60,12 @@ struct Custom_traits_Hausdorff
     typedef FT result_type;
     FT operator()(Point_3,Point_3,Point_3)const{return FT();}
     FT operator()(Triangle_3)const{return FT();}
+  };
+
+  struct Compute_squared_length_3
+  {
+    typedef FT result_type;
+    FT operator()(Segment_3)const{return FT();}
   };
 
   struct Construct_translated_point_3
@@ -237,8 +248,8 @@ void general_tests(const TriangleMesh& m1,
   std::cout << "Symmetric distance between meshes (sequential) "
               << PMP::approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(
                   m1,m2,
-                  PMP::parameters::number_of_points_per_squared_area_unit(4000),
-                  PMP::parameters::number_of_points_per_squared_area_unit(4000))
+                  PMP::parameters::number_of_points_per_area_unit(4000),
+                  PMP::parameters::number_of_points_per_area_unit(4000))
               << "\n";
 
   std::cout << "Max distance to point set "
@@ -274,7 +285,7 @@ int main(int, char** argv)
   time.start();
    std::cout << "Distance between meshes (parallel) "
              << PMP::approximate_Hausdorff_distance<CGAL::Parallel_tag>(
-                  m1,m2,PMP::parameters::number_of_points_per_squared_area_unit(4000))
+                  m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
              << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -283,7 +294,7 @@ int main(int, char** argv)
   time.start();
   std::cout << "Distance between meshes (sequential) "
             << PMP::approximate_Hausdorff_distance<CGAL::Sequential_tag>(
-                 m1,m2,PMP::parameters::number_of_points_per_squared_area_unit(4000))
+                 m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
