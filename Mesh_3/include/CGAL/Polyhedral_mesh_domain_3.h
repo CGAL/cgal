@@ -181,8 +181,9 @@ public:
   typedef int Subdomain_index;
   typedef boost::optional<Subdomain_index> Subdomain;
   /// Type of indexes for surface patch of the input complex
-  typedef typename Mesh_3::details::Surface_patch_index_generator<
-    Subdomain_index,Polyhedron,Use_patch_id_tag>::type    Surface_patch_index;
+  typedef Mesh_3::details::Surface_patch_index_generator<
+    Subdomain_index,Polyhedron,Use_patch_id_tag> Surface_patch_index_generator;
+  typedef typename Surface_patch_index_generator::type    Surface_patch_index;
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
