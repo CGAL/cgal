@@ -171,7 +171,7 @@ public:
     k = 0;
     d = 0.;
 
-    FT dist_min = std::numeric_limits<FT>::max();
+    FT dist_min = (std::numeric_limits<FT>::max)();
     FT sum_sq_distances = 0.;
     FT nb = 0.;
     std::size_t index = 0;
@@ -359,7 +359,7 @@ public:
     k = 0;
     d = 0.;
 
-    FT dist_min = std::numeric_limits<FT>::max();
+    FT dist_min = (std::numeric_limits<FT>::max)();
     FT sum_sq_distances = 0.;
     FT nb = 0.;
     std::size_t index = 0;
