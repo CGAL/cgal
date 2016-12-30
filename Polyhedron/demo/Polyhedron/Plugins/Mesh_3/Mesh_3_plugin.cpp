@@ -85,7 +85,7 @@ public:
   }
 
   bool applicable(QAction* a) const {
-    if(actionSplitPolylines) {
+    if(a == actionSplitPolylines) {
       return qobject_cast<Scene_polylines_item*>
         (scene->item(scene->mainSelectionIndex())) != 0;
     }
