@@ -33,6 +33,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/iterator.h>
 
 // The functions and classes in this file allows the user to
 // treat a CGAL Triangulation_2 object as a boost graph "as is". No
@@ -151,116 +152,6 @@ public:
 };
   
 
-  //  The vertex iterator of the bgl must evaluate to a vertex handle, not to a vertex
-template < class T>
-class boost_all_vertices_iterator {
-protected:
- typename T::All_vertices_iterator nt;
-public:
-  typedef typename T::All_vertices_iterator  Iterator;
-  typedef boost_all_vertices_iterator<T> Self;
-
-  typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
-  typedef typename T::Vertex_handle  value_type;
-  typedef typename std::iterator_traits<Iterator>::difference_type           difference_type;
-  typedef value_type      reference;
-  typedef value_type      pointer;
-
-  // CREATION
-  // --------
-
-  boost_all_vertices_iterator()
-  {}
-
-  boost_all_vertices_iterator( Iterator j) : nt(j) {}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-
-  bool operator==( const Self& i) const { return ( nt == i.nt); }
-  bool operator!=( const Self& i) const { return !(nt == i.nt );   }
-  value_type  operator*() const  { return nt; }
-  value_type    operator->()  { return nt; }
-
-  Self& operator++() {
-    ++nt;
-    return *this;
-  }
-
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-
-  Self& operator--() {
-    --nt;
-    return *this;
-  }
-
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-};
-
-template < class T>
-class boost_all_faces_iterator {
-protected:
- typename T::All_faces_iterator nt;
-public:
-  typedef typename T::All_faces_iterator  Iterator;
-  typedef boost_all_faces_iterator<T> Self;
-
-  typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
-  typedef typename T::Face_handle  value_type;
-  typedef typename std::iterator_traits<Iterator>::difference_type           difference_type;
-  typedef value_type      reference;
-  typedef value_type      pointer;
-
-  // CREATION
-  // --------
-
-  boost_all_faces_iterator()
-  {}
-
-  boost_all_faces_iterator( Iterator j) : nt(j) {}
-
-  // OPERATIONS Forward Category
-  // ---------------------------
-
-
-  bool operator==( const Self& i) const { return ( nt == i.nt); }
-  bool operator!=( const Self& i) const { return !(nt == i.nt );   }
-  value_type  operator*() const  { return nt; }
-  value_type    operator->()  { return nt; }
-
-  Self& operator++() {
-    ++nt;
-    return *this;
-  }
-
-  Self  operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
-  }
-
-  Self& operator--() {
-    --nt;
-    return *this;
-  }
-
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-};
-
-    
     template <typename Tr>
     struct T2_halfedge_descriptor
     {
@@ -331,8 +222,8 @@ namespace boost {
 
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_halfedges_iterator  halfedge_iterator;
 
-    typedef CGAL::detail::boost_all_vertices_iterator<Triangulation> vertex_iterator;
-    typedef CGAL::detail::boost_all_faces_iterator<Triangulation> face_iterator;
+    typedef CGAL::Prevent_deref<typename Triangulation::All_vertices_iterator> vertex_iterator;
+    typedef CGAL::Prevent_deref<typename Triangulation::All_faces_iterator> face_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::Out_edge_circulator<typename Triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > out_edge_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::In_edge_circulator<typename Triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > in_edge_iterator;
     typedef CGAL::Counting_iterator<typename Triangulation::Vertex_circulator> Incident_vertices_iterator;
