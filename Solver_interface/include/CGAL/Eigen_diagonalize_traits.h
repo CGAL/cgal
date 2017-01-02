@@ -24,6 +24,17 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 
+
+// If the matrix to diagonalize is of dimension 2x2 or 3x3, Eigen
+// provides a faster implementation using a closed-form
+// algorithm. However, it offers less precision. See:
+// https://eigen.tuxfamily.org/dox/classEigen_1_1SelfAdjointEigenSolver.html
+// This is usually acceptable for CGAL algorithms but one might want
+// to use the slower but more accurate version. In that case, just
+// uncomment the following line:
+
+//#define DO_NOT_USE_EIGEN_COMPUTEDIRECT_FOR_DIAGONALIZATION
+
 #include <CGAL/array.h>
 
 namespace CGAL {
@@ -67,7 +78,14 @@ private:
   diagonalize_selfadjoint_matrix (EigenMatrix& m,
 				  EigenMatrix& eigenvectors,
                                   EigenVector& eigenvalues) {
-      Eigen::SelfAdjointEigenSolver<EigenMatrix> eigensolver(m);
+      Eigen::SelfAdjointEigenSolver<EigenMatrix> eigensolver;
+
+#ifndef DO_NOT_USE_EIGEN_COMPUTEDIRECT_FOR_DIAGONALIZATION
+      if (dim == 2 || dim == 3)
+        eigensolver.computeDirect(m);
+      else
+#endif
+        eigensolver.compute(m);
 
       if (eigensolver.info() != Eigen::Success) {
           return false;
