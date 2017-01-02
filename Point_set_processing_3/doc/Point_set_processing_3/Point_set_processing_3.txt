@@ -408,6 +408,60 @@ points that are on sharp edges:
 \cgalExample{Point_set_processing_3/edges_example.cpp}
 
 
+\section Point_set_processing_3Structuring Structuring
+
+The function `structure_point_set()` generates a structured version of the
+input point set. It requires that a shape detection algorithm is first applied
+to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
+the article \cgalCite{cgal:la-srpss-13}.
+
+- __Planes__: inliers of each detected plane are replaced by sets of
+noise-free points sampled at the vertices of a regular grid: this is
+achieved by filling an occupancy grid aligned on the principal
+components of the inlier sets with a spacing lower than \f$\sqrt{2}\f$
+times the user-defined tolerance.
+
+- __Creases__: adjacencies between 2 planes are detected and regularly
+resampled on an occupancy array along the edge with a spacing equal to
+twice the user-defined tolerance.
+
+- __Corners__: 3-cycles are detected from the primitive adjacency
+graph and sampled using the exact intersection point of the 3 planes
+(provided it exists and remains in the given tolerance). These corners
+are also locally clustered to former corners of degree higher than 3.
+
+
+This algorithm is well suited to point sets sampled on surfaces with
+planar sections and sharp edges.
+
+\cgalFigureBegin{Point_set_processing_3figstructuring,structuring.png}
+Point set structuring. Left: input raw point set. Right: structured point set.
+\cgalFigureEnd
+
+Structure information of points can be used to perform feature
+preserving reconstruction (see
+\ref AFSR_Example_sharp_features "Advancing Front Surface Reconstruction"
+for example). More specifically, the class storing a point set with
+structure provides the user with a method
+`Point_set_with_structure::facet_coherence()` that estimates if a
+triplet of points form a coherent facet.
+
+\cgalFigureBegin{Point_set_processing_3figstructuring, structuring_coherence.png}
+(a) Input point set (and structured output); (b) output with many
+incoherent facets; (c) output with all facets coherent. i, j and k
+each corresponds to a primitive index.
+\cgalFigureEnd
+
+
+
+\subsection Point_set_processing_3Example_9 Example
+
+The following example applies shape detection followed by structuring to a
+point set:
+\cgalExample{Point_set_processing_3/structuring_example.cpp}
+
+
+
 \section Point_set_processing_3ImplementationHistory Implementation History
 
 Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification.

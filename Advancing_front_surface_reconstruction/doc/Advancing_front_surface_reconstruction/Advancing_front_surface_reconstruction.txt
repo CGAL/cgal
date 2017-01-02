@@ -192,7 +192,9 @@ The second example presents a class that enables to traverse the
 surface represented in a 2D triangulation data structure where
 the faces are connected with the facets of underlying 3D Delaunay triangulation.
 The third example shows how to get outliers and the boundaries of
-the surface.
+the surface. The last example shows how to combine this algorithm with
+two \cgal algorithms in order to reconstruct surfaces with sharp
+features.
 
 \subsection AFSR_Example_function Examples for Global Function
 
@@ -266,6 +268,42 @@ It returns an iterator range type \link Advancing_front_surface_reconstruction::
 \link Advancing_front_surface_reconstruction::Vertex_handle `Vertex_handle`\endlink.
 
 \cgalExample{Advancing_front_surface_reconstruction/boundaries.cpp}
+
+\subsection AFSR_Example_sharp_features Example for Sharp Features
+
+The priority queue used by the advancing front surface reconstruction
+algorithm can be modified to achieve robustness to sharp edges and
+provide piecewise-planar or hybrid reconstruction as described in
+\cgalCite{cgal:la-srpss-13}. Two other algorithms available in \cgal
+must be applied first as a preprocessing to the point set:
+
+- \ref Chapter_Point_Set_Shape_Detection "Shape detection": detect planar sections of the input.
+
+- \ref Point_set_processing_3Structuring "Point set structuring":
+resample the planar sections and edges and corners detected among
+them.
+
+\cgalFigureBegin{figAFSRstruct,structured_example.png}
+Comparison of advancing front output.
+
+- Top: input point set and raw advancing front reconstruction
+
+- Bottom: structured point set and advancing front reconstruction with
+structure-dependent priority functor
+
+\cgalFigureEnd
+
+The quality of the reconstruction can be significantly improved thanks
+to point set structuring when dealing with shapes with sharp features,
+as shown on the previous figure. The following example shows how to
+define a priority functor that favors structurally coherent facets and
+makes the advancing front algorithm robust to sharp features.
+
+
+\cgalExample{Advancing_front_surface_reconstruction/reconstruction_structured.cpp}
+
+
+
 
 
 */

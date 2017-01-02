@@ -55,6 +55,8 @@ namespace CGAL {
     ///
     typedef typename Gt::Sphere_3 Sphere_3;
     ///
+    typedef typename Gt::Segment_3 Segment_3;
+    ///
     typedef typename Gt::Line_3 Line_3;
     ///
     typedef typename Gt::Circle_2 Circle_2;
@@ -176,6 +178,12 @@ namespace CGAL {
     Collinear_2 collinear_2_object() const
     { return m_gt.collinear_2_object(); }
 
+    ///
+    typedef typename Gt::Intersect_3 Intersect_3;
+    ///
+    Intersect_3 intersection_3_object() const
+    { return m_gt.intersection_3_object(); }
+    
   private:
     Gt m_gt;
   };
