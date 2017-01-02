@@ -1522,10 +1522,5 @@ structure_point_set (typename Traits::Input_range::iterator first,  ///< iterato
 
 } //namespace CGAL
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-
 #endif // CGAL_STRUCTURE_POINT_SET_3_H
 
