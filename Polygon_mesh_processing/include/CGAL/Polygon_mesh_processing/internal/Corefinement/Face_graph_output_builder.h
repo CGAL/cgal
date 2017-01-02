@@ -600,7 +600,7 @@ public:
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
           // handle case of coplanar facets
           // We choose that a coplanar patch is classified like the other incident patch since they bound the same volume.
-          if ( are_triangles_coplanar_same_side_filtered(
+          if ( are_triangles_coplanar_same_side(
                 ids.first, ids.second,
                 index_p1, index_q1,
                 p1, q1,
@@ -613,14 +613,14 @@ public:
             coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id_q1);
 
             CGAL_assertion(
-              !are_triangles_coplanar_same_side_filtered(
+              !are_triangles_coplanar_same_side(
                 ids.first, ids.second,
                 index_p2, index_q2,
                 p2, q2,
                 vpm1, vpm2,
                 nodes) );
 
-            bool q2_is_between_p1p2 = sorted_around_edge_filtered(
+            bool q2_is_between_p1p2 = sorted_around_edge(
               ids.first, ids.second,
               index_p1, index_p2, index_q2,
               p1, p2, q2,
@@ -631,7 +631,7 @@ public:
             continue;
           }
           else{
-            if ( are_triangles_coplanar_same_side_filtered(
+            if ( are_triangles_coplanar_same_side(
                    ids.first, ids.second,
                    index_p1, index_q2,
                    p1, q2,
@@ -641,7 +641,7 @@ public:
               CGAL_assertion( index_p1!=index_p2 || index_p1==Node_id(-1) );
               coplanar_patches_of_tm1.set(patch_id_p1);
               coplanar_patches_of_tm2.set(patch_id_q2);
-              bool q1_is_between_p1p2 = sorted_around_edge_filtered(
+              bool q1_is_between_p1p2 = sorted_around_edge(
                 ids.first, ids.second,
                 index_p1, index_p2, index_q1,
                 p1, p2, q1,
@@ -656,7 +656,7 @@ public:
             }
             else
             {
-              if ( are_triangles_coplanar_same_side_filtered(
+              if ( are_triangles_coplanar_same_side(
                      ids.first, ids.second,
                      index_p2, index_q1,
                      p2, q1,
@@ -665,7 +665,7 @@ public:
               {
                 coplanar_patches_of_tm1.set(patch_id_p2);
                 coplanar_patches_of_tm2.set(patch_id_q1);
-                bool q2_is_between_p1p2 = sorted_around_edge_filtered(
+                bool q2_is_between_p1p2 = sorted_around_edge(
                   ids.first, ids.second,
                   index_p1, index_p2, index_q2,
                   p1, p2, q2,
@@ -679,7 +679,7 @@ public:
                 continue;
               }
               else{
-                if ( are_triangles_coplanar_same_side_filtered(
+                if ( are_triangles_coplanar_same_side(
                        ids.first, ids.second,
                        index_p2, index_q2,
                        p2, q2,
@@ -690,7 +690,7 @@ public:
                   coplanar_patches_of_tm2.set(patch_id_q2);
                   coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id_p2);
                   coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id_q2);
-                  bool q1_is_between_p1p2 = sorted_around_edge_filtered(
+                  bool q1_is_between_p1p2 = sorted_around_edge(
                     ids.first, ids.second,
                     index_p1, index_p2, index_q1,
                     p1, p2, q1,
@@ -721,13 +721,13 @@ public:
               ( index_q2 == Node_id(-1) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
           );
 
-          bool q1_is_between_p1p2 = sorted_around_edge_filtered(
+          bool q1_is_between_p1p2 = sorted_around_edge(
             ids.first, ids.second,
             index_p1, index_p2, index_q1,
             p1, p2, q1,
             vpm1, vpm2,
             nodes);
-          bool q2_is_between_p1p2 = sorted_around_edge_filtered(
+          bool q2_is_between_p1p2 = sorted_around_edge(
             ids.first, ids.second,
             index_p1, index_p2, index_q2,
             p1, p2, q2,
@@ -739,7 +739,7 @@ public:
             if( q2_is_between_p1p2 )
             {
               is_patch_inside_tm1.set(patch_id_q2);
-              bool p1_is_between_q1q2 = sorted_around_edge_filtered(
+              bool p1_is_between_q1q2 = sorted_around_edge(
                 ids.first, ids.second,
                 index_q1, index_q2, index_p1,
                 q1, q2, p1,
@@ -788,7 +788,7 @@ public:
             }
             else
             {
-              bool p1_is_between_q1q2 = sorted_around_edge_filtered(
+              bool p1_is_between_q1q2 = sorted_around_edge(
                 ids.first, ids.second,
                 index_q1, index_q2, index_p1,
                 q1, q2, p1,

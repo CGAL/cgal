@@ -57,7 +57,7 @@ struct Less_along_a_halfedge{
 
 //Considering the plane with normal vector [o_prime,o] and containing o.
 //We define the counterclockwise order around o when looking from
-//the side of the plane into which the vector [o_prime,o] is pointing.
+//the side of the plane containing o_prime.
 //We consider the portion of the plane defined by rotating a ray starting at o
 //from the planar projection of p1 to the planar projection of p2 in
 //counterclockwise order.
@@ -86,9 +86,15 @@ bool  sorted_around_edge(
   CGAL_precondition( !coplanar(o_prime,o,p2,q)
                      || coplanar_orientation(o,o_prime,p2,q)==NEGATIVE );
 
-  Sign s0 = sign( determinant(o-o_prime,p1-o,p2-o) );
+  typename Kernel::Orientation_3 orientation;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename cpp11::result_of<
+    typename Kernel::Orientation_3(Point_3, Point_3, Point_3, Point_3)>::type
+      Orientation;
 
-  if ( s0==ZERO ) {
+  Orientation s0 = orientation(o_prime, o, p1, p2);
+
+  if ( s0==COPLANAR ) {
     //o, o_prime, p1 and p2 are coplanar
     Orientation orient=orientation(o_prime,o,p1,q);
     CGAL_precondition(orient!=COPLANAR);
@@ -96,16 +102,15 @@ bool  sorted_around_edge(
   }
 
   //o, o_prime, p1 and p2 are not coplanar
-  Sign s1 = sign( determinant(o-o_prime,p1-o,q -o) );
-  Sign s2 = sign( determinant(o-o_prime,q -o,p2-o) );
+  Orientation s1 = orientation(o_prime, o, p1, q);
+  Orientation s2 = orientation(o_prime, o, q , p2);
 
   if (s0 == POSITIVE) // the angle p1,o,p2 is smaller that Pi.
     return ( s1 == POSITIVE )
            && ( s2 ==POSITIVE ); //true if the angles p1,o,q and q,o,p2 are smaller than Pi
   else
     return ( s1 != NEGATIVE )
-           || ( s2 !=
-                NEGATIVE ); //true if the angle p1,o,q or the angle q,o,p2 is smaller than or equal to Pi
+           || ( s2 != NEGATIVE ); //true if the angle p1,o,q or the angle q,o,p2 is smaller than or equal to Pi
 }
 
 template <class Kernel>
@@ -122,15 +127,15 @@ bool  are_triangles_coplanar_same_side(
 
 
 template <class Node_id, class Node_vector, class vertex_descriptor, class Vpm>
-bool are_triangles_coplanar_same_side_filtered(Node_id o_prime_index,
-                                               Node_id o_index,
-                                               Node_id p_index,
-                                               Node_id q_index,
-                                               vertex_descriptor p,
-                                               vertex_descriptor q,
-                                               const Vpm& vpm_p,
-                                               const Vpm& vpm_q,
-                                               const Node_vector& nodes)
+bool are_triangles_coplanar_same_side(Node_id o_prime_index,
+                                      Node_id o_index,
+                                      Node_id p_index,
+                                      Node_id q_index,
+                                      vertex_descriptor p,
+                                      vertex_descriptor q,
+                                      const Vpm& vpm_p,
+                                      const Vpm& vpm_q,
+                                      const Node_vector& nodes)
 {
   const Node_id NID(-1);
     return are_triangles_coplanar_same_side<typename Node_vector::Exact_kernel>(
@@ -142,17 +147,17 @@ bool are_triangles_coplanar_same_side_filtered(Node_id o_prime_index,
 }
 
 template <class Node_id, class Node_vector, class vertex_descriptor, class Vpm>
-bool sorted_around_edge_filtered( Node_id o_prime_index,
-                                  Node_id o_index,
-                                  Node_id p1_index,
-                                  Node_id p2_index,
-                                  Node_id q_index,
-                                  vertex_descriptor p1,
-                                  vertex_descriptor p2,
-                                  vertex_descriptor q,
-                                  const Vpm& vpm_p,
-                                  const Vpm& vpm_q,
-                                  const Node_vector& nodes)
+bool sorted_around_edge( Node_id o_prime_index,
+                         Node_id o_index,
+                         Node_id p1_index,
+                         Node_id p2_index,
+                         Node_id q_index,
+                         vertex_descriptor p1,
+                         vertex_descriptor p2,
+                         vertex_descriptor q,
+                         const Vpm& vpm_p,
+                         const Vpm& vpm_q,
+                         const Node_vector& nodes)
 {
   const Node_id NID(-1);
   return sorted_around_edge<typename Node_vector::Exact_kernel>(
