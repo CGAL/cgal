@@ -25,6 +25,7 @@
 #define CGAL_POLYHEDRON_DECORATOR_H_01282002
 
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 namespace CGAL {
 

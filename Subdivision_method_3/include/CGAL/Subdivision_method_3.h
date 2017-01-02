@@ -66,7 +66,7 @@ namespace Subdivision_method_3 {
   //
   template <class Polyhedron>
   void Loop_subdivision(Polyhedron& p, int step = 1) {
-    PTQ(p, Loop_mask_3<Polyhedron>() , step);
+    PTQ(p, Loop_mask_3<Polyhedron>(p) , step);
   }
   //
   template <class Polyhedron>
