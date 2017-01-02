@@ -23,7 +23,6 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 
@@ -38,14 +37,12 @@ struct Intersect_coplanar_faces_3{
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel Input_kernel;
   typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_kernel;
-  typedef CGAL::Cartesian_converter<Input_kernel,Exact_kernel>  Converter;
 
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
   typedef Coplanar_intersection<TriangleMesh, Exact_kernel> Inter_pt_info;
 // data members
-  Converter converter;
   const TriangleMesh &tm1, &tm2;
   const VertexPointMap &vpm1, &vpm2;
 // constructor
@@ -56,6 +53,12 @@ struct Intersect_coplanar_faces_3{
   : tm1(tm1_), tm2(tm2_), vpm1(vpm1_), vpm2(vpm2_)
   {}
 
+  typename Exact_kernel::Point_3
+  to_exact(const Point& p)
+  {
+    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
+  }
+
 // function construction Inter_pt_info objects
   //build the intersection point as the target vertex of h1 in the face of h2
   Inter_pt_info operator()(halfedge_descriptor h1,halfedge_descriptor h2)
@@ -65,7 +68,7 @@ struct Intersect_coplanar_faces_3{
     res.type_2=ON_FACE;
     res.info_1=h1,
     res.info_2=h2;
-    res.point=converter(get(vpm1,target(h1,tm1)));
+    res.point=to_exact(get(vpm1,target(h1,tm1)));
     return res;
   }
 
@@ -120,11 +123,11 @@ struct Intersect_coplanar_faces_3{
 
           //this is used to select the correct endpoint of the edge of the second facet
           typename Exact_kernel::Collinear_3 is_collinear = Exact_kernel().collinear_3_object();
-          if ( !is_collinear(ipt_prev.point,ipt_curr.point,converter(get(vpm2,target(res.info_2,tm2)) ) ) ){
+          if ( !is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2)) ) ) ){
             res.info_2=prev(res.info_2,tm2);
-            CGAL_assertion( is_collinear(ipt_prev.point,ipt_curr.point,converter(get(vpm2,target(res.info_2,tm2))) ) );
+            CGAL_assertion( is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2))) ) );
           }
-          res.point = converter( get(vpm2, target(res.info_2,tm2)) );
+          res.point = to_exact( get(vpm2, target(res.info_2,tm2)) );
           return res;
         }
       }
@@ -138,38 +141,28 @@ struct Intersect_coplanar_faces_3{
       typename Exact_kernel::Collinear_3 is_collinear = Exact_kernel().collinear_3_object();
       if ( is_collinear(ipt_prev.point,
                         ipt_curr.point,
-                        converter(get(vpm2, source(res.info_2,tm2))) ) )
+                        to_exact(get(vpm2, source(res.info_2,tm2))) ) )
       {
         res.info_2=prev(res.info_2,tm2);
         res.type_2=ON_VERTEX;
-        res.point = converter( get(vpm2, target(res.info_2,tm2)) );
+        res.point = to_exact( get(vpm2, target(res.info_2,tm2)) );
         return res;
       }
       if ( is_collinear(ipt_prev.point,
                         ipt_curr.point,
-                        converter(get(vpm2, target(res.info_2,tm2)) ) ) )
+                        to_exact(get(vpm2, target(res.info_2,tm2)) ) ) )
       {
         res.type_2=ON_VERTEX;
-        res.point = converter( get(vpm2, target(res.info_2,tm2)) );
+        res.point = to_exact( get(vpm2, target(res.info_2,tm2)) );
         return res;
       }
     }
 
     //handle regular intersection of two edges
-    typedef typename Exact_kernel::Line_3 Line_3;
-    typename Exact_kernel::Construct_line_3 line_3=Exact_kernel().construct_line_3_object();
-    Line_3 l1=line_3(converter(get(vpm2, target(res.info_2,tm2))),
-                     converter(get(vpm2, source(res.info_2,tm2))));
-    Line_3 l2=line_3(ipt_prev.point,ipt_curr.point);
-
-    typename cpp11::result_of<typename Exact_kernel::Intersect_3(Line_3,Line_3)>::type
-      inter_res=Exact_kernel().intersect_3_object()(l1,l2);
-    CGAL_assertion(inter_res!=boost::none);
-    const typename Exact_kernel::Point_3* ptptr =
-      boost::get<typename Exact_kernel::Point_3>(&(*inter_res));
-    CGAL_assertion(ptptr!=NULL);
-    res.point=*ptptr;
-
+    typename Exact_kernel::Construct_line_line_intersection_point_3 intersect;
+    res.point = intersect(to_exact(get(vpm2, target(res.info_2,tm2))),
+                          to_exact(get(vpm2, source(res.info_2,tm2))),
+                          ipt_prev.point, ipt_curr.point );
     return res;
   }
 
@@ -180,9 +173,9 @@ struct Intersect_coplanar_faces_3{
     typename Exact_kernel::Coplanar_orientation_3 orient=
       Exact_kernel().coplanar_orientation_3_object();
 
-    Orientation res = orient(converter(get(vpm2,source(h2,tm2))),
-                             converter(get(vpm2,target(h2,tm2))),
-                             converter(get(vpm2,target(next(h2,tm2),tm2))),
+    Orientation res = orient(to_exact(get(vpm2,source(h2,tm2))),
+                             to_exact(get(vpm2,target(h2,tm2))),
+                             to_exact(get(vpm2,target(next(h2,tm2),tm2))),
                              ipt.point);
 
     if ( (ipt.type_1==ON_VERTEX || ipt.type_1==ON_EDGE) && res==COLLINEAR){

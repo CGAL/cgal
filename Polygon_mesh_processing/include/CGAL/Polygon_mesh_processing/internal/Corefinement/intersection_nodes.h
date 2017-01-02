@@ -28,51 +28,6 @@
 namespace CGAL {
 namespace Corefinement {
 
-template <class TriangleMesh,
-          class VertexPointMap,
-          class Exact_kernel>
-typename Exact_kernel::Point_3
-compute_triangle_segment_intersection_point(
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
-  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
-  const Exact_kernel& ek,
-  const TriangleMesh& tm_h,
-  const TriangleMesh& tm_f,
-  const VertexPointMap& vpm_h,
-  const VertexPointMap& vpm_f)
-{
-  typedef typename Kernel_traits<
-   typename boost::property_traits<VertexPointMap>::value_type
-  >::Kernel Input_kernel;
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename Exact_kernel::Line_3 Line_3;
-  typedef typename Exact_kernel::Plane_3 Plane_3;
-
-  CGAL::Cartesian_converter<Input_kernel,Exact_kernel> to_exact;
-  halfedge_descriptor hdf=halfedge(fd,tm_f);
-  vertex_descriptor vf1=source(hdf,tm_f),
-                    vf2=target(hdf,tm_f),
-                    vf3=target(next(hdf,tm_f),tm_f),
-                    vh1=source(hd,tm_h),
-                    vh2=target(hd,tm_h);
-
-  Plane_3 plane(to_exact( get(vpm_f, vf1) ),
-                to_exact( get(vpm_f, vf2) ),
-                to_exact( get(vpm_f, vf3) ) );
-
-  Line_3 line( to_exact( get(vpm_h, vh1) ), to_exact( get(vpm_h, vh2) ) );
-
-  typename cpp11::result_of<typename Exact_kernel::Intersect_3(Plane_3,Line_3)>::type
-    res = ek.intersect_3_object()(plane,line);
-  CGAL_assertion(res!=boost::none);
-  const typename Exact_kernel::Point_3* e_pt =
-    boost::get<typename Exact_kernel::Point_3>(&(*res));
-  CGAL_assertion(e_pt!=NULL);
-  return *e_pt;
-}
-
 // A class responsible for storing the intersection nodes of the intersection
 // polylines. Different specializations are available depending whether
 // predicates on constructions are needed.
@@ -98,7 +53,6 @@ class Intersection_nodes<TriangleMesh,VertexPointMap,false,false>
   typedef std::vector <Point_3>                                    Nodes_vector;
   typedef CGAL::Exact_predicates_exact_constructions_kernel        Exact_kernel;
   typedef CGAL::Cartesian_converter<Exact_kernel,Input_kernel>  Exact_to_double;
-  // typedef CGAL::Interval_nt<true>::Protector                          Protector;
   typedef boost::graph_traits<TriangleMesh>                                  GT;
   typedef typename GT::halfedge_descriptor                  halfedge_descriptor;
   typedef typename GT::face_descriptor                          face_descriptor;
@@ -107,6 +61,13 @@ class Intersection_nodes<TriangleMesh,VertexPointMap,false,false>
   Nodes_vector nodes;
   Exact_kernel ek;
   Exact_to_double exact_to_double;
+
+  typename Exact_kernel::Point_3
+  to_exact(const typename Input_kernel::Point_3& p) const
+  {
+    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
+  }
+
 public:
   const TriangleMesh &tm1, &tm2;
   VertexPointMap vpm1, vpm2;
@@ -125,11 +86,6 @@ public:
     return nodes[i];
   }
 
-  // const Point_3& exact_node(std::size_t i) const {return nodes[i];}
-  // const Point_3& interval_node(std::size_t i) const {return nodes[i];}
-  // const Point_3& to_exact(const typename Kernel::Point_3& p) const {return p;}
-  // const Point_3& to_interval(const typename Kernel::Point_3& p) const {return p;}
-
   size_t size() const {return nodes.size();}
 
   void add_new_node(const Point_3& p)
@@ -144,13 +100,6 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(
-      compute_triangle_segment_intersection_point(edge_1, face_2, ek, tm1, tm2, vpm1, vpm2)
-    );
-  }
-
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
@@ -158,9 +107,19 @@ public:
                     const VertexPointMap vpm_a,
                     const VertexPointMap& vpm_b)
   {
-      add_new_node(
-        compute_triangle_segment_intersection_point(h_a, f_b, ek, tm_a, tm_b, vpm_a, vpm_b)
-      );
+    halfedge_descriptor h_b = halfedge(f_b, tm_b);
+    add_new_node(
+      typename Exact_kernel::Construct_plane_line_intersection_point_3()(
+        to_exact( get(vpm_b, source(h_b,tm_b)) ),
+        to_exact( get(vpm_b, target(h_b,tm_b)) ),
+        to_exact( get(vpm_b, target(next(h_b,tm_b),tm_b)) ),
+        to_exact( get(vpm_a, source(h_a,tm_a)) ),
+        to_exact( get(vpm_a, target(h_a,tm_a)) ) ) );
+  }
+
+  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
+  {
+    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
   }
 
 }; // end specialization
@@ -246,7 +205,7 @@ public:
   Exact_kernel::Point_3
   to_exact(const Point_3& p) const
   {
-    return double_to_exact(p);
+    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
   }
 
   size_t size() const {return enodes.size();}
@@ -268,13 +227,6 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(
-      compute_triangle_segment_intersection_point(edge_1, face_2, ek, tm1, tm2, vpm1, vpm2)
-    );
-  }
-
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
@@ -282,9 +234,19 @@ public:
                     const VertexPointMap vpm_a,
                     const VertexPointMap& vpm_b)
   {
-      add_new_node(
-        compute_triangle_segment_intersection_point(h_a, f_b, ek, tm_a, tm_b, vpm_a, vpm_b)
-      );
+    halfedge_descriptor h_b = halfedge(f_b, tm_b);
+    add_new_node(
+      typename Exact_kernel::Construct_plane_line_intersection_point_3()(
+        to_exact( get(vpm_b, source(h_b,tm_b)) ),
+        to_exact( get(vpm_b, target(h_b,tm_b)) ),
+        to_exact( get(vpm_b, target(next(h_b,tm_b),tm_b)) ),
+        to_exact( get(vpm_a, source(h_a,tm_a)) ),
+        to_exact( get(vpm_a, target(h_a,tm_a)) ) ) );
+  }
+
+  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
+  {
+    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
   }
 
   //the point is an input
@@ -340,13 +302,6 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(
-      compute_triangle_segment_intersection_point(edge_1, face_2, k, tm1, tm2, vpm1, vpm2)
-    );
-  }
-
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
@@ -354,10 +309,22 @@ public:
                     const VertexPointMap vpm_a,
                     const VertexPointMap& vpm_b)
   {
-      add_new_node(
-        compute_triangle_segment_intersection_point(h_a, f_b, k, tm_a, tm_b, vpm_a, vpm_b)
-      );
+    halfedge_descriptor h_b=halfedge(f_b,tm_b);
+
+    add_new_node(
+      typename Exact_kernel::Construct_plane_line_intersection_point_3()(
+        get(vpm_b, source(h_b,tm_b)),
+        get(vpm_b, target(h_b,tm_b)),
+        get(vpm_b, target(next(h_b,tm_b),tm_b)),
+        get(vpm_a, source(h_a,tm_a)),
+        get(vpm_a, target(h_a,tm_a)) ) );
   }
+
+  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
+  {
+    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
+  }
+
 
   void add_new_node(const Point_3& p)
   {
