@@ -20,8 +20,6 @@
 #ifndef CGAL_POISSON_SURFACE_RECONSTRUCTION_H
 #define CGAL_POISSON_SURFACE_RECONSTRUCTION_H
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
@@ -34,26 +32,25 @@ namespace CGAL {
 
   
   template <typename ConcurrencyTag,
-            typename Kernel,
             typename PointInputIterator,
             typename PointMap,
             typename NormalMap,
-            typename Items,
-            template < class T, class I, class A> class HDS,
-            typename Alloc>
+            typename PolygonMesh>
   bool
   poisson_surface_reconstruction(PointInputIterator begin,
                                  PointInputIterator end,
                                  PointMap point_map,
                                  NormalMap normal_map,
-                                 Polyhedron_3<Kernel,Items,HDS,Alloc>& output_mesh,
-                                 typename Kernel::FT sm_angle = 20.0,
-                                 typename Kernel::FT sm_radius = 30.0,
-                                 typename Kernel::FT sm_distance = 0.375)
+                                 PolygonMesh& output_mesh,
+                                 double sm_angle = 20.0,
+                                 double sm_radius = 30.0,
+                                 double sm_distance = 0.375)
   {
+    typedef typename boost::property_traits<PointMap>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Sphere_3 Sphere;
+    
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
     typedef CGAL::Surface_mesh_default_triangulation_3 STr;
     typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
