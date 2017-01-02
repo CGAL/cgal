@@ -184,7 +184,7 @@ public:
     Point& ep2 = get(this->vpmap,target(opposite(edge, this->polyhedron), this->polyhedron));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_target_circulator<Poly> vcir(target(edge, this->polyhedron), this->polyhedron);
+    Halfedge_around_target_circulator<Poly> vcir(edge, this->polyhedron);
     Point& vp1  = get(this->vpmap,target(opposite(*vcir, this->polyhedron ), this->polyhedron));
     Point& vp0  = get(this->vpmap, target(*vcir, this->polyhedron));
     --vcir;
