@@ -1105,6 +1105,31 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Construct_line_line_intersection_point_3
+  {
+    typedef typename K::Line_3 Line;
+    typedef typename K::Point_3 Point;
+    typename K::Construct_line_3 construct_line;
+  public:
+    typedef Point result_type;
+
+    Point
+    operator()(const Point& l11, const Point& l12,
+               const Point& l21, const Point& l22) const
+    {
+      Line l1 = construct_line(l11, l12);
+      Line l2 = construct_line(l21, l22);
+
+      typename cpp11::result_of<typename K::Intersect_3(Line,Line)>::type
+        res = typename K::Intersect_3()(l1,l2);
+      CGAL_assertion(res!=boost::none);
+      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(e_pt!=NULL);
+      return *e_pt;
+    }
+  };
+
+  template <typename K>
   class Construct_max_vertex_2
   {
     typedef typename K::Point_2          Point_2;
@@ -1475,6 +1500,33 @@ namespace CommonKernelFunctors {
     operator()(const Circle_3 & c) const
     { return this->operator()(Return_base_tag(), c); }
 
+  };
+
+  template <typename K>
+  class Construct_plane_line_intersection_point_3
+  {
+    typedef typename K::Plane_3 Plane;
+    typedef typename K::Line_3 Line;
+    typedef typename K::Point_3 Point;
+    typename K::Construct_plane_3 construct_plane;
+    typename K::Construct_line_3 construct_line;
+  public:
+    typedef Point result_type;
+
+    Point
+    operator()(const Point& p1, const Point& p2, const Point& p3,
+               const Point& l1, const Point& l2) const
+    {
+      Plane plane = construct_plane(p1, p2, p3);
+      Line line = construct_line( l1, l2 );
+
+      typename cpp11::result_of<typename K::Intersect_3(Plane,Line)>::type
+        res = typename K::Intersect_3()(plane,line);
+      CGAL_assertion(res!=boost::none);
+      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(e_pt!=NULL);
+      return *e_pt;
+    }
   };
 
   template <typename K>
