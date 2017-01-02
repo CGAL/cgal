@@ -48,22 +48,10 @@ struct Less_along_a_halfedge{
   {}
 
   bool operator()(std::size_t i, std::size_t j) const {
-    //returns true, iff q lies strictly between p and r.
-    typename Node_vector::Protector p;
-    try{
-      CGAL_USE(p);
-
-      return CGAL::collinear_are_strictly_ordered_along_line(
-        nodes.to_interval(get(vpm, target(hedge,tm))),
-        nodes.interval_node(j),
-        nodes.interval_node(i));
-    }
-    catch(CGAL::Uncertain_conversion_exception&){
-      return CGAL::collinear_are_strictly_ordered_along_line(
-        nodes.to_exact(get(vpm, target(hedge,tm))),
-        nodes.exact_node(j),
-        nodes.exact_node(i));
-    }
+    return CGAL::collinear_are_strictly_ordered_along_line(
+      nodes.to_exact(get(vpm, target(hedge,tm))),
+      nodes.exact_node(j),
+      nodes.exact_node(i));
   }
 };
 
@@ -144,25 +132,13 @@ bool are_triangles_coplanar_same_side_filtered(Node_id o_prime_index,
                                                const Vpm& vpm_q,
                                                const Node_vector& nodes)
 {
-  typename Node_vector::Protector protector;
   const Node_id NID(-1);
-  try{
-    CGAL_USE(protector);
-    return are_triangles_coplanar_same_side<typename Node_vector::Interval_kernel>(
-      nodes.interval_node(o_prime_index),
-      nodes.interval_node(o_index),
-      p_index == NID ? nodes.to_interval(get(vpm_p,p)): nodes.interval_node(p_index),
-      q_index == NID ? nodes.to_interval(get(vpm_q,q)): nodes.interval_node(q_index)
-    );
-  }
-  catch(Uncertain_conversion_exception&){
     return are_triangles_coplanar_same_side<typename Node_vector::Exact_kernel>(
       nodes.exact_node(o_prime_index),
       nodes.exact_node(o_index),
       p_index == NID ? nodes.to_exact(get(vpm_p,p)) : nodes.exact_node(p_index),
       q_index == NID ? nodes.to_exact(get(vpm_q,q)) : nodes.exact_node(q_index)
     );
-  }
 }
 
 template <class Node_id, class Node_vector, class vertex_descriptor, class Vpm>
@@ -178,32 +154,16 @@ bool sorted_around_edge_filtered( Node_id o_prime_index,
                                   const Vpm& vpm_q,
                                   const Node_vector& nodes)
 {
-  typename Node_vector::Protector protector;
   const Node_id NID(-1);
-  try {
-    CGAL_USE(protector);
-    return sorted_around_edge<typename Node_vector::Interval_kernel>(
-             nodes.interval_node(o_prime_index),
-             nodes.interval_node(o_index),
-             p1_index == NID ? nodes.to_interval(get(vpm_p,p1))
-                            : nodes.interval_node(p1_index),
-             p2_index == NID ? nodes.to_interval(get(vpm_p,p2))
-                            : nodes.interval_node(p2_index),
-             q_index  == NID ? nodes.to_interval(get(vpm_q,q))
-                            : nodes.interval_node(q_index )
-           );
-  } catch(Uncertain_conversion_exception&) {
-    return sorted_around_edge<typename Node_vector::Exact_kernel>(
-             nodes.exact_node(o_prime_index),
-             nodes.exact_node(o_index),
-             p1_index == NID ? nodes.to_exact(get(vpm_p,p1))
-                            : nodes.exact_node(p1_index),
-             p2_index == NID ? nodes.to_exact(get(vpm_p,p2))
-                            : nodes.exact_node(p2_index),
-             q_index  == NID ? nodes.to_exact(get(vpm_q,q))
-                            : nodes.exact_node(q_index )
-           );
-  }
+  return sorted_around_edge<typename Node_vector::Exact_kernel>(
+           nodes.exact_node(o_prime_index),
+           nodes.exact_node(o_index),
+           p1_index == NID ? nodes.to_exact(get(vpm_p,p1))
+                           : nodes.exact_node(p1_index),
+           p2_index == NID ? nodes.to_exact(get(vpm_p,p2))
+                           : nodes.exact_node(p2_index),
+           q_index  == NID ? nodes.to_exact(get(vpm_q,q))
+                           : nodes.exact_node(q_index ) );
 }
 
 

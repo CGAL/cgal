@@ -125,47 +125,36 @@ public:
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,No_predicates_on_constructions,false>
 
-//second specializations: store an exact copy of the points so that we can answer exactly predicates
-//FYI, it used to have two specializations (one in the case the polyhedron
-//can be edited and on if it cannot) building exact representation on demand.
-//In the former case, we were using facet and halfedge while in the latter
-//triple of vertex_handle and pair of vertex_handle
+// second specializations: store an exact copy of the points so
+// that we can answer exactly predicates
 template <class TriangleMesh, class VertexPointMap>
 class Intersection_nodes<TriangleMesh,VertexPointMap,true,false>
 {
 //typedefs
 public:
-  typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> >     Interval_kernel;
   typedef CGAL::Exact_predicates_exact_constructions_kernel        Exact_kernel;
 private:
   typedef typename boost::property_traits<VertexPointMap>::value_type   Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
 
-  typedef Cartesian_converter<Interval_kernel,Input_kernel>  Interval_to_double;
-  typedef Cartesian_converter<Input_kernel,Interval_kernel>  Double_to_interval;
-  typedef Cartesian_converter<Exact_kernel,Interval_kernel>   Exact_to_interval;
   typedef Cartesian_converter<Input_kernel,Exact_kernel>        Double_to_exact;
+  typedef Cartesian_converter<Exact_kernel, Input_kernel>       Exact_to_double;
 
   typedef boost::graph_traits<TriangleMesh>                                  GT;
   typedef typename GT::halfedge_descriptor                  halfedge_descriptor;
   typedef typename GT::face_descriptor                          face_descriptor;
 
-  typedef std::vector <Interval_kernel::Point_3>                 Interval_nodes;
   typedef std::vector <Exact_kernel::Point_3>                       Exact_nodes;
 //members
-  Interval_nodes  inodes;
   Exact_nodes enodes;
 
-  Interval_to_double  interval_to_double;
-  Exact_to_interval   exact_to_interval;
-  Double_to_interval  double_to_interval;
   Double_to_exact double_to_exact;
+  Exact_to_double exact_to_double;
   Exact_kernel        ek;
 
 public:
   const TriangleMesh &tm1, &tm2;
   VertexPointMap vpm1, vpm2;
-  typedef CGAL::Interval_nt<false>::Protector                         Protector;
 
   Intersection_nodes(const TriangleMesh& tm1_,
                      const TriangleMesh& tm2_,
@@ -177,23 +166,10 @@ public:
   , vpm2(vpm2_)
   {}
 
-
   Point_3
   operator[](std::size_t i) const
   {
-    return interval_to_double(inodes[i]);
-  }
-
-  const Interval_kernel::Point_3&
-  interval_node(std::size_t i) const
-  {
-    return inodes[i];
-  }
-
-  Interval_kernel::Point_3
-  to_interval(const Point_3& p) const
-  {
-    return double_to_interval(p);
+    return exact_to_double(enodes[i]);
   }
 
   const Exact_kernel::Point_3
@@ -205,16 +181,16 @@ public:
   Exact_kernel::Point_3
   to_exact(const Point_3& p) const
   {
-    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
+    return Exact_kernel::Point_3(p.x(), p.y(), p.z());
   }
 
   size_t size() const {return enodes.size();}
 
   void add_new_node(const Exact_kernel::Point_3& p)
   {
-    const Interval_kernel::Point_3& p_approx=p.approx();
+    const Exact_kernel::Approximate_kernel::Point_3& p_approx=p.approx();
     const double precision =
-      Lazy_exact_nt<typename Exact_kernel::FT>::get_relative_precision_of_to_double();
+      Lazy_exact_nt<Exact_kernel::FT>::get_relative_precision_of_to_double();
     if ( !has_smaller_relative_precision(p_approx.x(),precision) ||
          !has_smaller_relative_precision(p_approx.y(),precision) ||
          !has_smaller_relative_precision(p_approx.z(),precision) )
@@ -222,7 +198,6 @@ public:
       p.exact();
     }
     enodes.push_back(p);
-    inodes.push_back( exact_to_interval(p) );
   }
 
   //add a new node in the final graph.
@@ -236,7 +211,7 @@ public:
   {
     halfedge_descriptor h_b = halfedge(f_b, tm_b);
     add_new_node(
-      typename Exact_kernel::Construct_plane_line_intersection_point_3()(
+      Exact_kernel::Construct_plane_line_intersection_point_3()(
         to_exact( get(vpm_b, source(h_b,tm_b)) ),
         to_exact( get(vpm_b, target(h_b,tm_b)) ),
         to_exact( get(vpm_b, target(next(h_b,tm_b),tm_b)) ),
@@ -252,7 +227,6 @@ public:
   //the point is an input
   void add_new_node(const Point_3& p){
     enodes.push_back(to_exact(p));
-    inodes.push_back( double_to_interval(p) );
   }
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,Predicates_on_constructions,false>
@@ -274,9 +248,7 @@ class Intersection_nodes<TriangleMesh,VertexPointMap,Predicates_on_constructions
   Nodes_vector nodes;
   Input_kernel k;
 public:
-  typedef Input_kernel                                          Interval_kernel;
   typedef Input_kernel                                             Exact_kernel;
-  typedef void*                                                       Protector;
 
   const TriangleMesh &tm1, &tm2;
   VertexPointMap vpm1, vpm2;
@@ -298,7 +270,6 @@ public:
 
   size_t size() const {return nodes.size();}
   const Point_3& exact_node(std::size_t i) const {return nodes[i];}
-  const Point_3& interval_node(std::size_t i) const {return nodes[i];}
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
@@ -331,7 +302,6 @@ public:
     nodes.push_back(p);
   }
 
-  const Point_3& to_interval(const Point_3& p) const { return p; }
   const Point_3& to_exact(const Point_3& p) const { return p; }
 
 }; // end specialization
