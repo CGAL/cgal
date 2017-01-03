@@ -1,5 +1,3 @@
-// NOTE: file to remove once Point_set_3 package is available
-
 // Copyright (c) 2016  Geometry Factory
 // All rights reserved.
 //

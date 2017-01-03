@@ -234,7 +234,7 @@ jet_smooth_point_set(
      {
        for(it = first; it != beyond; it++)
 	 {
-	   typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
+	   const typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
 	   put(point_pmap, *it ,
 	       internal::jet_smooth_point<Kernel, SvdTraits>(
 							     p,tree,k,degree_fitting,degree_monge) );

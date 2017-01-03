@@ -1,0 +1,70 @@
+/*!
+\defgroup PkgPointSet3 3D Point Set Reference
+
+\cgalPkgDescriptionBegin{3D Point Set, PkgPointSet3Summary}
+\cgalPkgPicture{point_set_3.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgDesc{This component provides the user with a flexible 3D point set data structure. The user can define any additional property needed such as normal vectors, colors or labels. \cgal algorithms can be easily applied to this data structure.}
+
+\cgalPkgManuals{Chapter_Point_Set_3, PkgPointSet3}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.10}
+\cgalPkgBib{cgal:g-ps}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Class ##
+- `CGAL::Point_set_3<Point,Vector>`
+
+
+\defgroup PkgPointSet3PointSetProcessing3 Point Set Processing
+\ingroup PkgPointSet3
+
+\brief This module offers convenience overloads of functions available in the
+\ref PkgPointSetProcessingSummary package. These overloads allow the
+user to call point set processing algorithms without having to handle
+manually property maps and iterators.
+
+The overloads, available after including
+`CGAL/Point_set_3/Point_set_processing_3.h`, all follow the same
+pattern based on the original point set processing functions:
+
+- Iterators and property maps of the original functions are replaced
+with a single parameter `CGAL::Point_set_3<Point,Vector>`
+
+- The other parameters (and their potential default values) are
+following in the same order as the original function.
+
+For a complete documentation of these functions, please refer to the
+\ref PkgPointSetProcessing manual.
+
+\defgroup PkgPointSet3IO Input/Output
+\ingroup PkgPointSet3
+
+\brief This module offers convenience overloads of input/ouput
+functions available in the \ref PkgPointSetProcessingSummary package.
+These overloads, available after including `CGAL/Point_set_3/IO.h`,
+allow the user to call point set processing algorithms without having
+to handle manually property maps and iterators.
+
+Input functions instanciate all the necessary property maps:
+
+- if found in the input, normal vectors are stored in the usual
+`CGAL::Point_set_3` property `normal` with template type `Vector`
+
+- for PLY input only, other properties are stored as properties in the
+`Point_set_3` class with the name and type given by the PLY header
+
+For a complete documentation of these functions, please refer to the
+\ref PkgPointSetProcessing manual.
+
+*/
