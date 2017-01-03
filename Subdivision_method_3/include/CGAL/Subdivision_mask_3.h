@@ -285,18 +285,28 @@ template <class Poly>
 class DQQ_stencil_3 {
 public:
   typedef Poly                                        Polyhedron;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
+  
+  typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Vertex_pmap;
 
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
 
+  typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
+  
+  typedef typename Kernel_traits<Point>::Kernel       Kernel;
   typedef typename Kernel::FT                          FT;
-  typedef typename Kernel::Point_3                     Point;
   typedef typename Kernel::Vector_3                    Vector;
 
+  Polyhedron& polyhedron;
+  Vertex_pmap vpm;
 public:
   //
   void corner_node(halfedge_descriptor /*edge*/, Point& /*pt*/) {};
+
+  DQQ_stencil_3(Polyhedron& polyhedron)
+    : polyhedron(polyhedron), vpm(get(CGAL::vertex_point, polyhedron))
+  {}
 };
 
 
@@ -305,40 +315,46 @@ public:
 template <class Poly>
 class DooSabin_mask_3 : public DQQ_stencil_3<Poly> {
 public:
+  typedef DQQ_stencil_3<Poly> Base;
   typedef Poly                                        Polyhedron;
-  
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::Halfedge_around_facet_circulator  
-                                            Halfedge_around_facet_circulator;
 
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
+  typedef typename Base::vertex_descriptor           vertex_descriptor;
+  typedef typename Base::halfedge_descriptor         halfedge_descriptor;
+  typedef typename Base::face_descriptor             face_descriptor;
 
-  typedef typename Kernel::FT                          FT;
-  typedef typename Kernel::Point_3                     Point;
-  typedef typename Kernel::Vector_3                    Vector;
+  typedef typename Base::Kernel                      Kernel;
+
+  typedef typename Base::FT                          FT;
+  typedef typename Base::Point                       Point;
+  typedef typename Base::Vector                      Vector;
+ 
 
 public:
+
+  DooSabin_mask_3(Polyhedron& polyhedron)
+    : Base(polyhedron)
+  {}
+
   //
   void corner_node(halfedge_descriptor he, Point& pt) {
-    size_t n =  CGAL::circulator_size(he->facet()->facet_begin()); 
+    const size_t n = 4;
 
     Vector cv(0,0,0);
-    if (n == 4) {
-      cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*9;
-      cv = cv + (he->next()->vertex()->point()-CGAL::ORIGIN)*3;
-      cv = cv + (he->next()->next()->vertex()->point()-CGAL::ORIGIN);
-      cv = cv + (he->prev()->vertex()->point()-CGAL::ORIGIN)*3;
+    if (is_quad(he,this->polyhedron)) {
+      cv = cv + (get(this->vpm, target(he,this->polyhedron))-CGAL::ORIGIN)*9;
+      cv = cv + (get(this->vpm, target(next(he,this->polyhedron),this->polyhedron))-CGAL::ORIGIN)*3;
+      cv = cv + (get(this->vpm, target(next(next(he,this->polyhedron),this->polyhedron),this->polyhedron))-CGAL::ORIGIN);
+      cv = cv + (get(this->vpm, target(prev(he,this->polyhedron),this->polyhedron))-CGAL::ORIGIN)*3;
       cv = cv/16;
-		} else {
-			FT a;
-			for (size_t k = 0; k < n; ++k, he = he->next()) {
-				if (k == 0) a = (FT) ((5.0/n) + 1);
-				else a = (FT) (3+2*std::cos(2*k*CGAL_PI/n))/n;
-				cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
-			}
-			cv = cv/4;
-		}
+    }  else {
+      FT a;
+      for (size_t k = 0; k < n; ++k, he = next(he,this->polyhedron)) {
+        if (k == 0) a = (FT) ((5.0/n) + 1);
+        else a = (FT) (3+2*std::cos(2*k*CGAL_PI/n))/n;
+        cv = cv + (get(this->vpm, target(he,this->polyhedron))-CGAL::ORIGIN)*a;
+      }
+      cv = cv/4;
+    }
     pt = CGAL::ORIGIN + cv;
   }
 };
@@ -347,42 +363,42 @@ public:
 // The geometry mask of Sqrt(3) subdivision
 template <class Poly>
 class Sqrt3_mask_3 : public Linear_mask_3<Poly> {
+  typedef Linear_mask_3<Poly>                          Base;
 public:
   typedef Poly                                        Polyhedron;
   
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
- 
+  typedef typename Base::vertex_descriptor           vertex_descriptor;
+  typedef typename Base::halfedge_descriptor         halfedge_descriptor;
+  typedef typename Base::face_descriptor             face_descriptor;
 
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor            face_descriptor;
+  typedef typename Base::Kernel                    Kernel;
 
-  typedef typename Polyhedron::Halfedge_around_facet_circulator  
-                                            Halfedge_around_facet_circulator;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator 
-                                            Halfedge_around_vertex_circulator;
+  typedef typename Base::FT                          FT;
+  typedef typename Base::Point                       Point;
+  typedef typename Base::Vector                      Vector;
 
-  typedef typename Kernel::FT                          FT;
-  typedef typename Kernel::Point_3                     Point;
-  typedef typename Kernel::Vector_3                    Vector;
-
+  typedef Halfedge_around_target_circulator<Poly> Halfedge_around_target_circulator;
 public:
   //
   //void edge_node(halfedge_descriptor edge, Point& pt) {}
   //
+
+  Sqrt3_mask_3(Polyhedron& poly)
+    : Base(poly)
+  {}
+
   void vertex_node(vertex_descriptor vertex, Point& pt) {
-    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
-    size_t n = circulator_size(vcir);
+    Halfedge_around_target_circulator vcir(vertex,this->polyhedron);
+    size_t n = degree(vertex,this->polyhedron);
 
     FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);
 
-    Vector cv = ((FT)(1.0-a)) * (vertex->point() - CGAL::ORIGIN);
+    Vector cv = ((FT)(1.0-a)) * (get(this->vpmap, vertex) - CGAL::ORIGIN);
     for (size_t i = 1; i <= n; ++i, --vcir) {
-      cv = cv + (a/FT(n))*(vcir->opposite()->vertex()->point()-CGAL::ORIGIN);
+      cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, this->polyhedron), this->polyhedron))-CGAL::ORIGIN);
     }
 
-    pt = CGAL::ORIGIN + cv;    
+    pt = CGAL::ORIGIN + cv;
   }
   //
   // TODO

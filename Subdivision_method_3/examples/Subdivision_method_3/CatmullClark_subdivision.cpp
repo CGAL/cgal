@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Subdivision_method_3.h>
+
 #include <iostream>
 
 typedef CGAL::Simple_cartesian<double>      Kernel;

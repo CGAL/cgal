@@ -71,12 +71,12 @@ namespace Subdivision_method_3 {
   //
   template <class Polyhedron>
   void DooSabin_subdivision(Polyhedron& p, int step = 1) {
-    DQQ(p, DooSabin_mask_3<Polyhedron>(), step);
+    DQQ(p, DooSabin_mask_3<Polyhedron>(p), step);
   }
   //
   template <class Polyhedron>
   void Sqrt3_subdivision(Polyhedron& p, int step = 1) {
-    Sqrt3(p, Sqrt3_mask_3<Polyhedron>(), step);
+    Sqrt3(p, Sqrt3_mask_3<Polyhedron>(p), step);
   }
 }
 
