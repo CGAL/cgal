@@ -121,6 +121,7 @@ struct No_extra_output_from_corefinement
     const Node_vector& /*nodes*/,
     const An_edge_per_polyline_map& /*an_edge_per_polyline*/,
     bool /*input_have_coplanar_faces*/,
+    const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
     const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
   {}
 };
@@ -189,6 +190,7 @@ private:
 private:
   // boost::dynamic_bitset<> non_manifold_nodes;
   std::vector< std::vector<Node_id> > graph_of_constraints;
+  boost::dynamic_bitset<> is_node_of_degree_one;
   An_edge_per_polyline_map an_edge_per_polyline;
   //nb of intersection points between coplanar faces, see fixes XSL_TAG_CPL_VERT
   std::size_t number_coplanar_vertices;
@@ -224,6 +226,7 @@ public:
   {
     std::size_t nb_nodes=graph.size();
     graph_of_constraints.resize(nb_nodes);
+    is_node_of_degree_one.resize(nb_nodes);
     for(std::size_t node_id=0;node_id<nb_nodes;++node_id)
     {
     //   if (non_manifold_nodes.test(node_id))
@@ -231,6 +234,9 @@ public:
       graph_of_constraints[node_id].assign(
         graph[node_id].neighbors.begin(),
         graph[node_id].neighbors.end());
+
+      if (graph_of_constraints[node_id].size()==1)
+        is_node_of_degree_one.set(node_id);
     }
   }
 
@@ -1010,6 +1016,7 @@ public:
                    nodes,
                    an_edge_per_polyline,
                    input_with_coplanar_faces,
+                   is_node_of_degree_one,
                    mesh_to_node_id_to_vertex);
   }
 };

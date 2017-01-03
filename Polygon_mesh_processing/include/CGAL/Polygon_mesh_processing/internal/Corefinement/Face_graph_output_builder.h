@@ -129,6 +129,33 @@ class Face_graph_output_builder
     return it->second;
   }
 
+  bool is_dangling_edge(const std::pair<edge_descriptor,
+                                        std::pair<Node_id, Node_id> >& info,
+                        TriangleMesh& tm,
+                        const boost::dynamic_bitset<>& is_node_of_degree_one) const
+  {
+    halfedge_descriptor hedge = halfedge(info.first, tm);
+    if ( is_node_of_degree_one.test(info.second.first) )
+    {
+      bool res=true;
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hedge, tm))
+        if (is_border(h, tm))
+        {
+          res = false;
+          break;
+        }
+      if (res) return true;
+    }
+    if ( is_node_of_degree_one.test(info.second.second) )
+    {
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hedge, tm))
+        if (is_border(h, tm))
+          return false;
+      return true;
+    }
+    return false;
+  }
+
   struct Intersection_polylines{
     const std::vector<halfedge_descriptor>& tm1;
     const std::vector<halfedge_descriptor>& tm2;
@@ -328,6 +355,7 @@ public:
     const Nodes_vector& nodes,
     An_edge_per_polyline_map& an_edge_per_polyline,
     bool input_have_coplanar_faces,
+    const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
     // first build an unordered_map mapping a vertex to its node id
@@ -340,6 +368,11 @@ public:
     {
       vertex_to_node_id1[source(it->first,tm1)]=it->second.first;
       vertex_to_node_id1[target(it->first,tm1)]=it->second.second;
+      if ( is_dangling_edge(*it, tm1, is_node_of_degree_one) )
+      {
+        impossible_operation.set();
+        return;
+      }
     }
 
     Intersection_edge_map& intersection_edges2 = mesh_to_intersection_edges[&tm2];
@@ -351,6 +384,11 @@ public:
     {
       vertex_to_node_id2[source(it->first,tm2)]=it->second.first;
       vertex_to_node_id2[target(it->first,tm2)]=it->second.second;
+      if ( is_dangling_edge(*it, tm2, is_node_of_degree_one) )
+      {
+        impossible_operation.set();
+        return;
+      }
     }
 
     CGAL_assertion(intersection_edges1.size()==intersection_edges2.size());

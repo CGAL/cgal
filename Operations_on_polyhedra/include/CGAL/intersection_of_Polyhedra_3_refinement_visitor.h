@@ -290,8 +290,8 @@ struct Default_node_vertex_visitor{
 };
 
 struct Default_output_builder{
-  template <class T1, class T2, class T3, class T4>
-  void operator()(const T1&, const T2&, const T3&, const T4&){}
+  template <class T1, class T2, class T3, class T4, class T5>
+  void operator()(const T1&, const T2&, const T3&, const T4&, const T5&){}
   void input_have_coplanar_facets(){}
 };
 
@@ -355,6 +355,7 @@ class Node_visitor_refine_polyhedra{
   In_face_map                           in_face;
   In_halfedge_map                       in_hedge;
   std::map< int,std::set<int> >         graph_of_constraints;
+  boost::dynamic_bitset<>               is_node_of_degree_one;
   std::map< int,std::set<int> >         coplanar_constraints;
   An_edge_per_polyline_map              an_edge_per_polyline;
   typename An_edge_per_polyline_map::iterator last_polyline;
@@ -622,11 +623,14 @@ public:
   {
 //    std::cout << "Annotation graph..." << std::endl;
     int node_id = 0;
+    is_node_of_degree_one.resize(std::distance(begin, end));
     for (Iterator it=begin;it!=end;++it, ++node_id)
     {
       if (non_manifold_nodes.count(node_id)) it->make_terminal();
       const std::set<int>& neighbors = it->neighbors;
       graph_of_constraints.insert(std::make_pair(node_id,neighbors));
+      if (neighbors.size()==1)
+        is_node_of_degree_one.set(node_id);
     }
   }
 
@@ -1110,7 +1114,7 @@ public:
         }
       }
     }
-    output_builder(border_halfedges, nodes, an_edge_per_polyline, polyhedron_to_map_node_to_polyhedron_vertex);
+    output_builder(border_halfedges, nodes, an_edge_per_polyline, is_node_of_degree_one, polyhedron_to_map_node_to_polyhedron_vertex);
   }
 
   template <class PolylineOfHalfedgeOutputIterator, class Marked_set>

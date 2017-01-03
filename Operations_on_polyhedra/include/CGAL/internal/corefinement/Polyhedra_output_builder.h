@@ -1574,6 +1574,37 @@ private:
     }
   }
 
+  bool is_dangling_edge(const std::pair<Halfedge_const_handle,
+                                        std::pair<int, int> >& info,
+                        const boost::dynamic_bitset<>& is_node_of_degree_one) const
+  {
+    if ( is_node_of_degree_one.test(info.second.first) )
+    {
+      bool res=true;
+      Halfedge_const_handle h = info.first->opposite(), start=h;
+      do{
+        if (h->is_border())
+        {
+          res = false;
+          break;
+        }
+        h=h->next()->opposite();
+      } while(h!=start);
+      if (res) return true;
+    }
+    if ( is_node_of_degree_one.test(info.second.second) )
+    {
+      Halfedge_const_handle h = info.first, start=h;
+      do{
+        if (h->is_border())
+          return false;
+        h=h->next()->opposite();
+      } while(h!=start);
+      return true;
+    }
+    return false;
+  }
+
 public:
 
   Polyhedra_output_builder(
@@ -1631,6 +1662,7 @@ public:
              std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
     const Nodes_vector& nodes,
     An_edge_per_polyline_map& an_edge_per_polyline,
+    const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Poly_to_map_node& /* polyhedron_to_map_node_to_polyhedron_vertex */)
   {
     // first create and fill a map from vertex to node_id
@@ -1642,6 +1674,11 @@ public:
     {
       vertex_to_node_id[it->first->vertex()]=it->second.second;
       vertex_to_node_id[it->first->opposite()->vertex()]=it->second.first;
+      if (is_dangling_edge(*it, is_node_of_degree_one))
+      {
+        impossible_operation.set();
+        return;
+      }
     }
 
     std::size_t num_facets_P = internal::corefinement::init_facet_indices(*P_ptr, P_facet_id_pmap);

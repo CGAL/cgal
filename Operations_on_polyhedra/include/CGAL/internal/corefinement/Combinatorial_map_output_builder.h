@@ -845,12 +845,13 @@ public:
 
   void input_have_coplanar_facets(){}
 
-  template <class Nodes_vector>
+  template <class Nodes_vector, class Bitset>
   void operator()(
     const std::map<Halfedge_const_handle,
                    std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
     const Nodes_vector& nodes,
     const An_edge_per_polyline_map& an_edge_per_polyline,
+    const Bitset& /*is_node_of_degree_one*/,
     const Poly_to_map_node& polyhedron_to_map_node_to_polyhedron_vertex) {
     //4) create one output polyhedron per connected component of polyhedron,
     //   connected by an edge which is not an intersection edge
