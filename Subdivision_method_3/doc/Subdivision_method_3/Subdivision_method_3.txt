@@ -214,18 +214,18 @@ for the PQQ refinement.
 
 \code{.cpp}
 
-template <class Polyhedron_3>
+template <class PolygonMesh>
 class PQQ_stencil_3 {
-  void face_node(boost::graph_traits<Polyhedron_3>::face_descriptor facet, Point_3& pt);
-  void edge_node(boost::graph_traits<Polyhedron_3>::halfedge_descriptor edge, Point_3& pt);
-  void vertex_node(boost::graph_traits<Polyhedron_3>::vertex_descriptor vertex, Point_3& pt);
+  void face_node(boost::graph_traits<PolygonMesh>::face_descriptor facet, Point_3& pt);
+  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& pt);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor vertex, Point_3& pt);
 };
 
 \endcode
 
 Each class function in `PQQ_stencil_3` 
 computes a new point based on the neighborhood of the primitive 
-handle, and assigns the new point to `Point_3& pt`.
+descriptor, and assigns the new point to `Point_3& pt`.
 
 We realize each class function with the geometry masks of 
 Catmull-Clark subdivision.
@@ -234,7 +234,7 @@ Catmull-Clark subdivision.
 
 template <class PolygonMesh>
 class CatmullClark_mask_3 {
-  void face_node(Facet_handle facet, Point_3& pt) {
+  void face_node(boost::graph_traits<PolygonMesh>::face_descriptor facet, Point_3& pt) {
     Halfedge_around_facet_circulator hcir = facet->facet_begin();
     int n = 0;
     Point_3 p(0,0,0);
@@ -245,7 +245,7 @@ class CatmullClark_mask_3 {
     pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
   
-  void edge_node(Halfedge_handle edge, Point_3& pt) {
+  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& pt) {
     Point_3 p1 = edge->vertex()->point();
     Point_3 p2 = edge->opposite()->vertex()->point();
     Point_3 f1, f2;
@@ -256,7 +256,7 @@ class CatmullClark_mask_3 {
                  (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
   
-  void vertex_node(Vertex_handle vertex, Point_3& pt) {
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor vertex, Point_3& pt) {
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     int n = circulator_size(vcir); 
   
@@ -288,7 +288,7 @@ class CatmullClark_mask_3 {
 This example shows the default implementation of Catmull-Clark 
 masks in `Subdivision_method_3`.
 This default implementation assumes the <I>types</I> 
-(such as `Point_3` and `Facet_handle`) are defined 
+(such as `Point_3` and `face_descriptor`) are defined 
 within `PolygonMesh`. `CatmullClark_mask_3` 
 is designed to work on a `PolygonMesh` with the %Cartesian
 kernel. You may need to rewrite the geometry computation
@@ -343,10 +343,10 @@ void Sqrt3(TriangleMesh& p, Mask<TriangleMesh> mask, int step)
 
 \endcode
 
-The polyhedron class is a specialization of
-`Polyhedron_3`, and the mask is a policy 
-class realizing the geometry masks of the subdivision 
-method.
+The mesh class is a specialization of
+`MutableFaceGraph` and it must be a triangle mesh or a quad mesh,
+and the mask is a policy class realizing the geometry masks of the 
+subdivision method.
 
 A refinement host refines the input polyhedron, maintains 
 the stencils (i.e., the mapping between the control mesh 
@@ -415,7 +415,7 @@ of a Catmull-Clark geometry policy is in the Section \ref secCC.
 
 template <class PolygonMesh>
 class CatmullClark_mask_3 {
-  void face_node(Facet_handle facet, Point_3& pt) {
+  void face_node(boost::graph_traits<PolygonMesh>::face_descriptor facet, Point_3& pt) {
     Halfedge_around_facet_circulator hcir = facet->facet_begin();
     int n = 0;
     Point_3 p(0,0,0);
@@ -451,7 +451,7 @@ is listed below, where `ept` returns the new point splitting
 
 \code{.cpp}
 
-void border_node(Halfedge_handle edge, Point_3& ept, Point_3& vpt) {
+void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& ept, Point_3& vpt) {
   Point_3& ep1 = edge->vertex()->point();
   Point_3& ep2 = edge->opposite()->vertex()->point();
   ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
