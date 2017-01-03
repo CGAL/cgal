@@ -90,7 +90,7 @@ namespace Subdivision_method_3 {
     std::vector<bool> v_onborder(num_vertex);
     face_iterator fitr = faces(p).first;
     for (size_t i = 0; i < num_facet; i++, ++fitr)
-      mask.facet_node(*fitr, face_point_buffer[i]);
+      mask.face_node(*fitr, face_point_buffer[i]);
 
 
     {
@@ -507,7 +507,7 @@ namespace Subdivision_method_3 {
     std::size_t i = 0;
     BOOST_FOREACH (face_descriptor fd, faces(p)) {
       //ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");
-      mask.facet_node(fd, cpt[i++]);
+      mask.face_node(fd, cpt[i++]);
     }
 
     // smooth the vertex points

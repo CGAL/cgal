@@ -60,7 +60,7 @@ public:
     : polyhedron(polyhedron), vpmap(get(CGAL::vertex_point, polyhedron))
   {}
 
-  void facet_node(face_descriptor, Point&) {};
+  void face_node(face_descriptor, Point&) {};
   void edge_node(halfedge_descriptor, Point&) {};
   void vertex_node(vertex_descriptor, Point&) {};
 
@@ -92,7 +92,7 @@ public:
   {}
 
   //
-  void facet_node(face_descriptor facet, Point& pt) {
+  void face_node(face_descriptor facet, Point& pt) {
     int n = 0;
     Point p(0,0,0);
     BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(halfedge(facet,this->polyhedron),this->polyhedron))
@@ -146,8 +146,8 @@ public:
     Point p1 = get(this->vpmap,target(edge, this->polyhedron));
     Point p2 = get(this->vpmap,source(edge, this->polyhedron));
     Point f1, f2;
-    this->facet_node(face(edge,this->polyhedron), f1);
-    this->facet_node(face(opposite(edge,this->polyhedron),this->polyhedron), f2);
+    this->face_node(face(edge,this->polyhedron), f1);
+    this->face_node(face(opposite(edge,this->polyhedron),this->polyhedron), f2);
     pt = Point((p1[0]+p2[0]+f1[0]+f2[0])/4,
 	       (p1[1]+p2[1]+f1[1]+f2[1])/4,
 	       (p1[2]+p2[2]+f1[2]+f2[2])/4 );
@@ -166,7 +166,7 @@ public:
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
-      this->facet_node(face(*vcir,this->polyhedron), q);
+      this->face_node(face(*vcir,this->polyhedron), q);
       Q[0] += q[0];      
       Q[1] += q[1];      
       Q[2] += q[2];
@@ -260,7 +260,7 @@ public:
     }
   }
   //
-  //void facet_node(face_descriptor facet, Point& pt) {};
+  //void face_node(face_descriptor facet, Point& pt) {};
   //
   void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
     Point& ep1 = get(this->vpmap,target(edge, this->polyhedron));
