@@ -29,9 +29,8 @@
 #include <fstream>
 #include <cassert>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 using namespace std;
 
@@ -48,7 +47,7 @@ using namespace CGAL;
 #define TESTMESH_TRI_OPEN  "data/quint_tris.off"
 
 void test_Subdivision_surface_3() {
-  typedef CGAL::Cartesian<double>            Kernel;
+  typedef CGAL::Simple_cartesian<double>            Kernel;
   typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 
   // test Catmull-Clark subdivision on quad mesh
