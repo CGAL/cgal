@@ -10,6 +10,8 @@ policy concept of geometric computations is used in
 \image html CCBorderMask.png
 \image latex CCBorderMask.png
 
+\cgalRefines `SubdivisionMask`
+
 \cgalHasModel `CGAL::CatmullClark_mask_3<Polyhedron_3>`
 
 \sa `CGAL::Subdivision_method_3`
@@ -22,33 +24,37 @@ public:
 /// \name Operations 
 /// @{
 
-/*!
+/*! Constructor
+ */
 
+  PQQMask_3(PolygonMesh& pm);
+
+/*!
 computes the facet-point `pt` based on the neighborhood 
 of the facet `f`. 
 */ 
-void facet_node(Facet_handle facet, Point_3& pt); 
+void facet_node(face_descriptor facet, Point_3& pt); 
 
 /*!
 
 computes the edge-point `pt` based on the neighborhood 
 of the edge `e`. 
 */ 
-void edge_node(Edge_handle e, Point_3& pt); 
+void edge_node(halfedge_descriptor e, Point_3& pt); 
 
 /*!
 
 computes the vertex-point `pt` based on the neighborhood 
 of the vertex `v`. 
 */ 
-void vertex_node(Vertex_handle v, Point_3& pt); 
+void vertex_node(vertex_descriptor v, Point_3& pt); 
 
 /*!
 
 computes the edge-point `ept` and the vertex-point `vpt` 
 based on the neighborhood of the border edge `e`. 
 */ 
-void border_node(Halfedge_handle e, Point_3& ept, Point_3& vpt); 
+void border_node(halfedge_descriptor e, Point_3& ept, Point_3& vpt); 
 
 /// @}
 

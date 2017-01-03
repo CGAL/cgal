@@ -11,8 +11,8 @@ the computation on the nodes of the stencil.
 `CatmullClark_mask_3` implements the geometry masks of 
 Catmull-Clark subdivision on a `CGAL::Polyhedron_3<Cartesian>`. 
 
-\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
-instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
+\tparam PolygonMesh must be a model of the concept `MutableFaceGraph`.
+\tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
 \image html CCBorderMask.png
 \image latex CCBorderMask.png
@@ -22,7 +22,7 @@ instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vert
 \sa `CGAL::Subdivision_method_3`
 
 */
-template< typename Polyhedron_3 >
+  template< typename PolygonMesh, typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
 class CatmullClark_mask_3 {
 public:
 
@@ -30,9 +30,10 @@ public:
 /// @{
 
 /*!
-default constructor. 
+Constructor. 
 */ 
-CatmullClark_mask_3<Polyhedron_3>(); 
+    CatmullClark_mask_3(PolygonMesh& pm,
+                        VertexPointMap vpm = get(vertex_point,pm) ); 
 
 /// @} 
 
@@ -41,24 +42,24 @@ CatmullClark_mask_3<Polyhedron_3>();
 
 /*!
 
-computes the Catmull-Clark facet-point `pt` of the facet `f`. 
+computes the Catmull-Clark face-point `pt` of the face `f`. 
 
 */ 
-void facet_node(Facet_handle f, Point_3& pt); 
+void face_node(face_descriptor f, Point_3& pt); 
 
 /*!
 
 computes the Catmull-Clark edge-point `pt` of the edge `e`. 
 
 */ 
-void edge_node(Edge_handle e, Point_3& pt); 
+void edge_node(halfedge_descriptor e, Point_3& pt); 
 
 /*!
 
 computes the Catmull-Clark vertex-point `pt` of the vertex `v`. 
 
 */ 
-void vertex_node(Vertex_handle v, Point_3& pt); 
+void vertex_node(vertex_descriptor v, Point_3& pt); 
 
 /*!
 
@@ -66,7 +67,7 @@ computes the Catmull-Clark edge-point `ept` and the
 Catmull-Clark vertex-point `vpt` of the border edge `e`. 
 
 */ 
-void border_node(Halfedge_handle e, Point_3& ept, Point_3& vpt); 
+void border_node(halfedge_descriptor e, Point_3& ept, Point_3& vpt); 
 
 /// @}
 
@@ -85,8 +86,8 @@ the computation on the nodes of the stencil.
 `DooSabin_mask_3` implements the geometry masks of 
 Doo-Sabin subdivision on a `Polyhedron_3<Cartesian>`. 
 
-\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
-instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
+\tparam PolygonMesh must be a model of the concept `MutableFaceGraph`.
+\tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
 \image html DSCornerMask.png
 \image latex DSCornerMask.png
@@ -96,7 +97,7 @@ instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vert
 \sa `CGAL::Subdivision_method_3`
 
 */
-template< typename Polyhedron_3 >
+template< typename PolygonMesh, typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type >
 class DooSabin_mask_3 {
 public:
 
@@ -104,9 +105,10 @@ public:
 /// @{
 
 /*!
-default constructor. 
+Constructor. 
 */ 
-DooSabin_mask_3<Polyhedron_3>(); 
+DooSabin_mask_3(PolygonMesh& pm,
+                VertexPointMap vpm = get(vertex_point,pm) ); 
 
 /// @} 
 
@@ -119,7 +121,7 @@ computes the Doo-Sabin point `pt` of the vertex pointed
 by the halfedge `he`. 
 
 */ 
-void corner_node(Halfedge_handle he, Point_3& pt); 
+void corner_node(halfedge_descriptor he, Point_3& pt); 
 
 /// @}
 
@@ -138,8 +140,8 @@ the computation on the nodes of the stencil.
 `Loop_mask_3` implements the geometry masks of 
 Loop subdivision on a triangulated `Polyhedron_3<Cartesian>`. 
 
-\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
-instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
+\tparam TriangleMesh must be a model of the concept `MutableFaceGraph`.
+\tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
 \image html LoopBorderMask.png
 \image latex LoopBorderMask.png
@@ -149,7 +151,7 @@ instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vert
 \sa `CGAL::Subdivision_method_3`
 
 */
-template< typename Polyhedron_3 >
+template< typename TriangleMesh, typename VertexPointMap = typename boost::property_map<TriangleMesh, vertex_point_t>::type >
 class Loop_mask_3 {
 public:
 
@@ -157,9 +159,10 @@ public:
 /// @{
 
 /*!
-default constructor. 
+Cnstructor. 
 */ 
-Loop_mask_3<Polyhedron_3>(); 
+Loop_mask_3(TriangleMesh& tm,
+            VertexPointMap vpm = get(vertex_point,tm) ); 
 
 /// @} 
 
@@ -171,14 +174,14 @@ Loop_mask_3<Polyhedron_3>();
 computes the Loop edge-point `pt` of the edge `e`. 
 
 */ 
-void edge_node(Edge_handle e, Point_3& pt); 
+void edge_node(halfedge_descriptor e, Point_3& pt); 
 
 /*!
 
 computes the Loop vertex-point `pt` of the vertex `v`. 
 
 */ 
-void vertex_node(Vertex_handle v, Point_3& pt); 
+void vertex_node(vertex_descriptor v, Point_3& pt); 
 
 /*!
 
@@ -186,7 +189,7 @@ computes the Loop edge-point `ept` and the
 Loop vertex-point `vpt` of the border edge `e`. 
 
 */ 
-void border_node(Halfedge_handle e, Point_3& ept, Point_3& vpt); 
+void border_node(halfedge_descriptor e, Point_3& ept, Point_3& vpt); 
 
 /// @}
 
@@ -206,15 +209,15 @@ the computation on the nodes of the stencil.
 \f$ \sqrt{3}\f$ subdivision on a triangulated 
 `CGAL::Polyhedron_3<Cartesian>`. 
 
-\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
-instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
+\tparam TriangleMesh must be a model of the concept `MutableFaceGraph`.
+\tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
 \cgalModels `Sqrt3Mask_3`
 
 \sa `CGAL::Subdivision_method_3`
 
 */
-template< typename Polyhedron_3 >
+template< typename TriangleMesh, typename VertexPointMap = typename boost::property_map<TriangleMesh, vertex_point_t>::type >
 class Sqrt3_mask_3 {
 public:
 
@@ -222,9 +225,10 @@ public:
 /// @{
 
 /*!
-default constructor. 
+Constructor. 
 */ 
-Sqrt3_mask_3<Polyhedron_3>(); 
+  Sqrt3_mask_3(TriangleMesh& tm,
+               VertexPointMap vpm = get(vertex_point,tm) ); 
 
 /// @} 
 
@@ -233,17 +237,17 @@ Sqrt3_mask_3<Polyhedron_3>();
 
 /*!
 
-computes the \f$ \sqrt{3}\f$ facet-point `pt` of the facet `f`. 
+computes the \f$ \sqrt{3}\f$ face-point `pt` of the face `f`. 
 
 */ 
-void facet_node(Facet_handle f, Point_3& pt); 
+void face_node(face_descriptor f, Point_3& pt); 
 
 /*!
 
 computes the \f$ \sqrt{3}\f$ vertex-point `pt` of the vertex `v`. 
 
 */ 
-void vertex_node(Vertex_handle v, Point& pt); 
+void vertex_node(vertex_descriptor v, Point& pt); 
 
 /// @}
 

@@ -9,6 +9,8 @@ policy concept of geometric computations is used in
 \image html LoopBorderMask.png
 \image latex LoopBorderMask.png
 
+\cgalRefines `SubdivisionMask`
+
 \cgalHasModel `CGAL::Loop_mask_3<Polyhedron_3>`
 
 \sa `CGAL::Subdivision_method_3`
@@ -18,6 +20,11 @@ public:
 
 /// \name Operations 
 /// @{
+
+/*! Constructor
+ */
+
+PTQMask_3(TriangleMesh& m);
 
 /*!
 computes the edge-point `pt` based on the neighborhood 

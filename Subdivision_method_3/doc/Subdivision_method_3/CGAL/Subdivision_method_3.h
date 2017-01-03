@@ -47,9 +47,9 @@ Catmull-Clark subdivision.
 \cgalExample{Subdivision_method_3/CatmullClark_subdivision.cpp} 
 
 
-\sa `CGAL::CatmullClark_mask_3<Polyhedron_3>`
-\sa `CGAL::Loop_mask_3<Polyhedron_3>`
-\sa `CGAL::Sqrt3_mask_3<Polyhedron_3>`
+\sa `CGAL::CatmullClark_mask_3<TriangleMesh>`
+\sa `CGAL::Loop_mask_3<PolygonMesh`
+\sa `CGAL::Sqrt3_mask_3<TriangleMesh>`
 */
 /// @{
 
@@ -60,8 +60,8 @@ The geometry of the refined mesh is computed by the geometry policy `mask`.
 This function overwrites the control mesh `p` with the refined mesh. 
 */ 
 
-template <class Polyhedron_3, template <typename> class Mask> 
-void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
+template <class PolygonMesh, template <typename> class Mask> 
+void PQQ(PolygonMesh& p, Mask<PolygonMesh> mask, int step = 1); 
 
 /*!
 
@@ -72,8 +72,8 @@ This function overwrites the control mesh `p` with the refined mesh.
 The result of a non-triangle mesh `p` is undefined. 
 */ 
 
-template <class Polyhedron_3, template <typename> class Mask> 
-void PTQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
+template <class TriangleMesh, template <typename> class Mask> 
+void PTQ(TriangleMesh& p, Mask<TriangleMesh> mask, int step = 1); 
 
 /*!
 
@@ -82,8 +82,8 @@ The geometry of the refined mesh is computed by the geometry policy `mask`.
 This function overwrites the control mesh `p` with the refined mesh. 
 */ 
 
-template <class Polyhedron_3, template <typename> class Mask> 
-void DQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
+template <class PolygonMesh, template <typename> class Mask> 
+void DQQ(PolygonMesh& p, Mask<PolygonMesh> mask, int step = 1); 
 
 /*!
 
@@ -94,8 +94,8 @@ This function overwrites the control mesh `p` with the refined mesh.
 The result of a non-triangle mesh `p` is undefined. 
 */ 
 
-template <class Polyhedron_3, template <typename> class Mask> 
-void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
+template <class TriangleMesh, template <typename> class Mask> 
+void Sqrt3(TriangleMesh& p, Mask<TriangleMesh> mask, int step = 1); 
 
 /*!
 
@@ -103,8 +103,8 @@ applies Catmull-Clark subdivision `step` times on the control mesh `p`.
 This function overwrites the control mesh `p` with the subdivided mesh. 
 */ 
 
-template <class Polyhedron_3> 
-void CatmullClark_subdivision(Polyhedron_3& p, int step = 1); 
+template <class PolygonMesh> 
+void CatmullClark_subdivision(PolygonMesh& p, int step = 1); 
 
 /*!
 
@@ -112,8 +112,8 @@ applies Loop subdivision `step` times on the control mesh `p`.
 This function overwrites the control mesh `p` with the subdivided mesh. 
 */ 
 
-template <class Polyhedron_3> 
-void Loop_subdivision(Polyhedron_3& p, int step = 1); 
+template <class TriangleMesh> 
+void Loop_subdivision(TriangleMesh& p, int step = 1); 
 
 /*!
 
@@ -121,8 +121,8 @@ applies Doo-Sabin subdivision `step` times on the control mesh `p`.
 This function overwrites the control mesh `p` with the subdivided mesh. 
 */ 
 
-template <class Polyhedron_3> 
-void DooSabin_subdivision(Polyhedron_3& p, int step = 1); 
+template <class PolygonMesh> 
+void DooSabin_subdivision(PolygonMesh& p, int step = 1); 
 
 /*!
 
@@ -130,8 +130,8 @@ applies \f$ \sqrt{3}\f$ subdivision `step` times on the control mesh `p`.
 This function overwrites the control mesh `p` with the subdivided mesh. 
 */ 
 
-template <class Polyhedron_3> 
-void Sqrt3_subdivision(Polyhedron_3& p, int step = 1); 
+template <class TriangleMesh> 
+void Sqrt3_subdivision(TriangleMesh& p, int step = 1); 
 
 
 /// @}
