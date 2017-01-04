@@ -223,44 +223,60 @@ public:
                                         Bare_polyline > Polyline_with_context;
   /// Constructors
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-    CGAL::Random* p_rng = NULL);
+                                         CGAL::Random* p_rng = NULL)
+    : Base(p_rng) , borders_detected_(false)
+  {
+    stored_polyhedra.resize(1);
+    stored_polyhedra[0] = p;
+    this->add_primitives(stored_polyhedra[0]);
+    this->build();
+  }
 
-  CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3(const std::string& filename,
-    CGAL::Random* p_rng = NULL);
+  CGAL_DEPRECATED
+  Polyhedral_mesh_domain_with_features_3(const std::string& filename,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(p_rng) , borders_detected_(false)
+  {
+    load_from_file(filename.c_str());
+  }
 
   // The following is needed, because otherwise, when a "const char*" is
   // passed, the constructors templates are a better match, than the
   // constructor with `std::string`.
-  CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3(const char* filename,
-    CGAL::Random* p_rng = NULL);
-
-  // Inherited constructors
-  template <typename T2>
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-                                         const T2& b,
+  CGAL_DEPRECATED
+  Polyhedral_mesh_domain_with_features_3(const char* filename,
                                          CGAL::Random* p_rng = NULL)
-    : Base(p, b)
-    , borders_detected_(false)
+    : Base(p_rng) , borders_detected_(false)
   {
-    poly_.resize(1);
-    poly_[0] = p;
-    this->set_random_generator(p_rng);
+    load_from_file(filename);
+  }
+
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+                                         const Polyhedron& bounding_p,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(p_rng) , borders_detected_(false)
+  {
+    stored_polyhedra.resize(2);
+    stored_polyhedra[0] = p;
+    stored_polyhedra[1] = bounding_p;
+    this->add_primitives(stored_polyhedra[0]);
+    this->add_primitives(stored_polyhedra[1]);
+    this->add_primitives_to_bounding_tree(stored_polyhedra[1]);
   }
 
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_with_features_3(InputPolyhedraPtrIterator begin,
                                          InputPolyhedraPtrIterator end,
                                          CGAL::Random* p_rng = NULL)
-    : Base(begin, end)
-    , borders_detected_(false)
+    : Base(p_rng) , borders_detected_(false)
   {
-    if (begin != end) {
-      for (; begin != end; ++begin)
-        poly_.push_back(**begin);
+    stored_polyhedra.reserve(std::distance(begin, end));
+    for (; begin != end; ++begin) {
+      stored_polyhedra.push_back(**begin);
+      this->add_primitives(stored_polyhedra.back());
     }
-    else
-      poly_.push_back(**begin);
-    this->set_random_generator(p_rng);
+    this->set_surface_only();
+    this->build();
   }
 
   template <typename InputPolyhedraPtrIterator>
@@ -268,16 +284,19 @@ public:
                                          InputPolyhedraPtrIterator end,
                                          const Polyhedron& bounding_polyhedron,
                                          CGAL::Random* p_rng = NULL)
-    : Base(begin, end, bounding_polyhedron)
-    , borders_detected_(false)
+    : Base(p_rng) , borders_detected_(false)
   {
-    if (begin != end) {
-      for (; begin != end; ++begin)
-        poly_.push_back(**begin);
+    stored_polyhedra.reserve(std::distance(begin, end)+1);
+    if(begin != end) {
+      for (; begin != end; ++begin) {
+        stored_polyhedra.push_back(**begin);
+        this->add_primitives(stored_polyhedra.back());
+      }
+      stored_polyhedra.push_back(bounding_polyhedron);
+      this->add_primitives(stored_polyhedra.back());
     }
-    else
-      poly_.push_back(**begin);
-    this->set_random_generator(p_rng);
+    this->add_primitives_to_bounding_tree(stored_polyhedra.back());
+    this->build();
   }
 
   /// Destructor
@@ -287,17 +306,26 @@ public:
   void initialize_ts(Polyhedron& p);
 
   void detect_features(FT angle_in_degree, std::vector<Polyhedron>& p);
-  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, poly_); }
+  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, stored_polyhedra); }
 
-  void detect_borders(const std::vector<Polyhedron>& p);
-  void detect_borders() { detect_borders(poly_); };
+  void detect_borders(std::vector<Polyhedron>& p);
+  void detect_borders() { detect_borders(stored_polyhedra); };
 
 private:
+  void load_from_file(const char* filename) {
+    // Create input polyhedron
+    std::ifstream input(filename);
+    stored_polyhedra.resize(1);
+    input >> stored_polyhedra[0];
+    this->add_primitives(stored_polyhedra[0]);
+    this->build();
+  }
+
   template <typename Edge_predicate>
   void add_features_from_split_graph_into_polylines(const Polyhedron& poly,
                                                     const Edge_predicate& pred);
 
-  std::vector<Polyhedron> poly_;
+  std::vector<Polyhedron> stored_polyhedra;
   bool borders_detected_;
 
 private:
@@ -307,55 +335,6 @@ private:
   Self& operator=(const Self& src);
 
 };  // end class Polyhedral_mesh_domain_with_features_3
-
-
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-                                       CGAL::Random* p_rng)
-  : Base()
-  , borders_detected_(false)
-{
-  poly_.resize(1);
-  poly_[0] = p;
-  this->add_primitives(poly_[0]);
-  this->set_random_generator(p_rng);
-}
-
-
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
-CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const char* filename,
-                                       CGAL::Random* p_rng)
-  : Base()
-  , borders_detected_(false)
-{
-  // Create input polyhedron
-  std::ifstream input(filename);
-  poly_.resize(1);
-  input >> poly_[0];
-  this->add_primitives(poly_[0]);
-  this->set_random_generator(p_rng);
-}
-
-
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
-CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const std::string& filename,
-                                       CGAL::Random* p_rng)
-  : Base()
-  , borders_detected_(false)
-{
-  // Create input polyhedron
-  std::ifstream input(filename.c_str());
-  poly_.resize(1);
-  input >> poly_[0];
-  this->add_primitives(poly_[0]);
-  this->set_random_generator(p_rng);
-}
 
 
 template < typename GT_, typename P_, typename TA_,
@@ -462,7 +441,7 @@ template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-detect_borders(const std::vector<Polyhedron>& poly)
+detect_borders(std::vector<Polyhedron>& poly)
 {
   if (borders_detected_)
     return;//border detection has already been done
