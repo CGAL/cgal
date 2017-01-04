@@ -41,8 +41,8 @@ namespace Subdivision_method_3 {
   
   namespace Private {
   // ======================================================================
-  template <class Poly, template <typename> class Mask>
-  void PQQ_1step(Poly& p, Mask<Poly> mask) {
+    template <class Poly, class VertexPointMap, class Mask>
+    void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     typedef Polyhedron_decorator_3<Poly>           PD;
 
     typedef typename boost::graph_traits<Poly>::vertex_descriptor           vertex_descriptor;
@@ -54,11 +54,6 @@ namespace Subdivision_method_3 {
     typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
 
     typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_facet_circulator;
-
-    typedef typename boost::property_map<Poly, vertex_point_t>::type Vertex_pmap;
-    typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
-        
-    Vertex_pmap vpm = get(CGAL::vertex_point, p);
 
     // Build a new vertices buffer has the following structure
     //
@@ -76,6 +71,8 @@ namespace Subdivision_method_3 {
     // the CGAL_assertion.
     // This function for polyhedron using list is VOID.
     p.reserve(num_vertex+num_edge+num_facet, 4*2*num_edge, 4*num_edge/2);
+
+    typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
     Point* vertex_point_buffer = new Point[num_vertex + num_edge + num_facet];
     Point* edge_point_buffer = vertex_point_buffer + num_vertex;
@@ -166,8 +163,8 @@ namespace Subdivision_method_3 {
   }
 
   // ======================================================================
-  template <class Poly, template <typename> class Mask>
-  void PTQ_1step(Poly& p, Mask<Poly> mask) {
+  template <class Poly,class VertexPointMap, class Mask>
+  void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
@@ -181,10 +178,8 @@ namespace Subdivision_method_3 {
 
     typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_face_circulator;
 
-    typedef typename boost::property_map<Poly, vertex_point_t>::type Vertex_pmap;
-    typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
+    typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
-    Vertex_pmap vpm = get(CGAL::vertex_point, p);
 
     // Build a new vertices buffer has the following structure
     //
@@ -274,8 +269,8 @@ namespace Subdivision_method_3 {
   // ======================================================================
 //#define CGAL_EULER_DQQ_SPLITTING
 //#define CGAL_EULER_DQQ_TILTING   // Tilting is faster
-  template <class Poly, template <typename> class Mask>
-  void DQQ_1step(Poly& p, Mask<Poly> mask) {
+  template <class Poly, class VertexPointMap, class Mask>
+  void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
@@ -289,10 +284,7 @@ namespace Subdivision_method_3 {
 
     typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_face_circulator;
 
-    typedef typename boost::property_map<Poly, vertex_point_t>::type Vertex_pmap;
-    typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
-
-    Vertex_pmap vpm = get(CGAL::vertex_point, p);
+    typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
     typename boost::graph_traits<Poly>::vertices_size_type num_v = num_vertices(p);
     typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;
@@ -478,8 +470,8 @@ namespace Subdivision_method_3 {
   }
 
   // ======================================================================
-  template <class Poly, template <typename> class Mask>
-  void Sqrt3_1step(Poly& p, Mask<Poly> mask) {
+  template <class Poly, class VertexPointMap, class Mask>
+  void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
     typedef typename boost::graph_traits<Poly>::vertex_descriptor         vertex_descriptor;
     typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
@@ -489,11 +481,7 @@ namespace Subdivision_method_3 {
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
     typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
 
-    typedef typename boost::property_map<Poly, vertex_point_t>::type Vertex_pmap;
-    typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
-
-    Vertex_pmap vpm = get(CGAL::vertex_point, p);
-
+    typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
     typename boost::graph_traits<Poly>::vertices_size_type num_v = num_vertices(p);
     typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;

@@ -34,7 +34,7 @@ namespace CGAL {
 
 // ======================================================================
 /// The stencil of the Primal-Quadrilateral-Quadrisection 
-template <class Poly>
+template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
 class PQQ_stencil_3 {
 
 public:
@@ -53,11 +53,11 @@ public:
   typedef typename Kernel::Vector_3                    Vector;
 
   Polyhedron& polyhedron;
-  Vertex_pmap vpmap;
+  VertexPointMap vpmap;
 
 public:
-  PQQ_stencil_3(Polyhedron& polyhedron)
-    : polyhedron(polyhedron), vpmap(get(CGAL::vertex_point, polyhedron))
+  PQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap = get(vertex_point,polyhedron))
+    : polyhedron(polyhedron), vpmap(vpmap)
   {}
 
   void face_node(face_descriptor, Point&) {};
@@ -70,11 +70,11 @@ public:
 
 // ======================================================================
 /// Bi-linear geometry mask for PQQ, PTQ, and Sqrt(3) scheme 
-template <class Poly>
-class Linear_mask_3 : public PQQ_stencil_3<Poly> {
-  typedef PQQ_stencil_3<Poly>                          Base;
+template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
+class Linear_mask_3 : public PQQ_stencil_3<Poly,VertexPointMap> {
+  typedef PQQ_stencil_3<Poly,VertexPointMap>         Base;
 public:
-  typedef Poly                                         Polyhedron;
+  typedef Poly                                       Polyhedron;
 
   typedef typename Base::vertex_descriptor           vertex_descriptor;
   typedef typename Base::halfedge_descriptor         halfedge_descriptor;
@@ -87,8 +87,8 @@ public:
   typedef typename Base::Vector                      Vector;
 
 public:
-  Linear_mask_3(Polyhedron& poly)
-    : Base(poly)
+  Linear_mask_3(Polyhedron& poly, VertexPointMap vpmap = get(vertex_point,poly))
+    : Base(poly,vpmap)
   {}
 
   //
@@ -120,9 +120,9 @@ public:
 
 // ======================================================================
 /// The geometry mask of Catmull-Clark subdivision 
-template <class Poly>
-class CatmullClark_mask_3 : public Linear_mask_3<Poly> {
-  typedef Linear_mask_3<Poly>                          Base;
+  template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
+  class CatmullClark_mask_3 : public Linear_mask_3<Poly,VertexPointMap> {
+  typedef Linear_mask_3<Poly,VertexPointMap>                          Base;
 public:
   typedef typename Base::Polyhedron   Polyhedron;
 
@@ -137,8 +137,9 @@ public:
   typedef typename Base::Vector                      Vector;
 
 public:
-  CatmullClark_mask_3(Polyhedron& poly)
-    : Base(poly)
+  CatmullClark_mask_3(Polyhedron& poly,
+                      VertexPointMap vpmap = get(vertex_point,poly))
+    : Base(poly,vpmap)
   {}
 
   //
@@ -155,7 +156,7 @@ public:
   //
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
-    int n = degree(vertex,this->polyhedron);    
+    typename boost::graph_traits<Poly>::degree_size_type n = degree(vertex,this->polyhedron);    
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
     Point& S = get(this->vpmap,vertex);
@@ -198,11 +199,11 @@ public:
 
 // ======================================================================
 /// The geometry mask of Loop subdivision
-template <class Poly>
-class Loop_mask_3 : public PQQ_stencil_3<Poly> {
-  typedef PQQ_stencil_3<Poly>                          Base;
+template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
+class Loop_mask_3 : public PQQ_stencil_3<Poly,VertexPointMap> {
+  typedef PQQ_stencil_3<Poly,VertexPointMap>         Base;
 public:
-  typedef Poly                                        Polyhedron;
+  typedef Poly                                       Polyhedron;
 
   typedef typename Base::vertex_descriptor           vertex_descriptor;
   typedef typename Base::halfedge_descriptor         halfedge_descriptor;
@@ -223,8 +224,9 @@ public:
 
 public:
 
-  Loop_mask_3(Polyhedron& poly)
-    : Base(poly)
+  Loop_mask_3(Polyhedron& poly,
+              VertexPointMap vpmap= get(vertex_point,poly))
+    : Base(poly,vpmap)
   {}
 
   //
@@ -281,7 +283,7 @@ public:
 
 //==========================================================================
 /// The setncil of the Dual-Quadrilateral-Quadrisection 
-template <class Poly>
+template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
 class DQQ_stencil_3 {
 public:
   typedef Poly                                        Polyhedron;
@@ -304,18 +306,18 @@ public:
   //
   void corner_node(halfedge_descriptor /*edge*/, Point& /*pt*/) {};
 
-  DQQ_stencil_3(Polyhedron& polyhedron)
-    : polyhedron(polyhedron), vpm(get(CGAL::vertex_point, polyhedron))
+  DQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap = get(vertex_point,polyhedron))
+    : polyhedron(polyhedron), vpm(vpmap)
   {}
 };
 
 
 // ======================================================================
 /// The geometry mask of Doo-Sabin subdivision
-template <class Poly>
-class DooSabin_mask_3 : public DQQ_stencil_3<Poly> {
+template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
+class DooSabin_mask_3 : public DQQ_stencil_3<Poly,VertexPointMap> {
 public:
-  typedef DQQ_stencil_3<Poly> Base;
+  typedef DQQ_stencil_3<Poly,VertexPointMap> Base;
   typedef Poly                                        Polyhedron;
 
   typedef typename Base::vertex_descriptor           vertex_descriptor;
@@ -331,8 +333,9 @@ public:
 
 public:
 
-  DooSabin_mask_3(Polyhedron& polyhedron)
-    : Base(polyhedron)
+  DooSabin_mask_3(Polyhedron& polyhedron,
+                      VertexPointMap vpmap = get(vertex_point,polyhedron))
+    : Base(polyhedron,vpmap)
   {}
 
   //
@@ -361,17 +364,17 @@ public:
 
 // ======================================================================
 // The geometry mask of Sqrt(3) subdivision
-template <class Poly>
-class Sqrt3_mask_3 : public Linear_mask_3<Poly> {
-  typedef Linear_mask_3<Poly>                          Base;
+  template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
+  class Sqrt3_mask_3 : public Linear_mask_3<Poly,VertexPointMap> {
+    typedef Linear_mask_3<Poly,VertexPointMap>       Base;
 public:
-  typedef Poly                                        Polyhedron;
+  typedef Poly                                       Polyhedron;
   
   typedef typename Base::vertex_descriptor           vertex_descriptor;
   typedef typename Base::halfedge_descriptor         halfedge_descriptor;
   typedef typename Base::face_descriptor             face_descriptor;
 
-  typedef typename Base::Kernel                    Kernel;
+  typedef typename Base::Kernel                      Kernel;
 
   typedef typename Base::FT                          FT;
   typedef typename Base::Point                       Point;
@@ -383,8 +386,9 @@ public:
   //void edge_node(halfedge_descriptor edge, Point& pt) {}
   //
 
-  Sqrt3_mask_3(Polyhedron& poly)
-    : Base(poly)
+  Sqrt3_mask_3(Polyhedron& poly,
+               VertexPointMap vpmap = get(vertex_point,poly))
+    : Base(poly,vpmap)
   {}
 
   void vertex_node(vertex_descriptor vertex, Point& pt) {

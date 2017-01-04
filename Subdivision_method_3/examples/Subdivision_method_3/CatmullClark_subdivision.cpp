@@ -10,6 +10,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 using namespace std;
 using namespace CGAL;
 
+
 int main(int argc, char** argv) {
   if (argc != 2) {
     cout << "Usage: CatmullClark_subdivision d < filename" << endl;
@@ -23,7 +24,7 @@ int main(int argc, char** argv) {
   Polyhedron P;
   cin >> P; // read the .off
 
-  Subdivision_method_3::CatmullClark_subdivision(P,d);
+  Subdivision_method_3::CatmullClark_subdivision(P, d);
 
   cout << P; // write the .off
 
