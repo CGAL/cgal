@@ -508,16 +508,18 @@ This simple example shows how to create a regular triangulation.
 
 \section TriangulationSecPerf Complexity and Performances
 
-When inserting a set of points into a Delaunay triangulation, 
-the current implementation starts
-by spatially sorting the points. Then, for each point to insert,
-it locates it by walking in the triangulation, using the 
-previously inserted vertex as a "hint". Finally, the point is
+When inserting a batch of points into a Delaunay triangulation, 
+the current implementation starts by spatially sorting the points. 
+Then, for each point to insert, it locates it by walking in the triangulation,
+using the previously inserted vertex as a "hint". Finally, the point is
 inserted.
-In the worst case, the expected complexity is 
-\f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$. When the algorithm is 
-run on \f$ n \f$ random points, the cost of inserting one point is 
-\f$ O(n^{1/d}) \f$.
+In the worst case scenario, without spatial sort, the expected complexity is 
+\f$ O(n^{\lceil\frac{d}{2}\rceil+1}) \f$.
+When the algorithm is run on uniformly distributed points, the localization complexity is
+\f$ O(n^{\frac{1}{d}}) \f$ and the size of the triangulation is \f$ O(n) \f$, which gives
+a complexity of \f$ O(n^{1+\frac{1}{d}}) \f$ for the insertion.
+With spatial sort and random points, one can expect a complexity of \f$ O(n\log n) \f$.
+Please refer to \cgalCite{boissonnat2009Delaunay} for more details.
 
 We provide below (\cgalFigureRef{Triangulationfigbenchmarks100}, 
 \cgalFigureRef{Triangulationfigbenchmarks1000} and 
