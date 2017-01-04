@@ -130,14 +130,14 @@ There is only one line deserving a detailed explanation:
 
 \code{.cpp}
 
-Subdivision_method_3::CatmullClark_subdivision(P,d);
+Subdivision_method_3::CatmullClark_subdivision(pmesh,d);
 
 \endcode
 
 `Subdivision_method_3` specifies the namespace of our
 subdivision functions. `CatmullClark_subdivision(P,d)` computes the 
-Catmull-Clark subdivision surface of the polyhedron `P` after
-`d` iterations of the refinements. The polyhedron `P` is 
+Catmull-Clark subdivision surface of the polyhedron `pmesh` after
+`d` iterations of the refinements. The polyhedron `pmesh` is 
 passed by reference, and is modified (i.e.\ subdivided) by the 
 subdivision function.
 
@@ -185,8 +185,8 @@ three components of the Catmull-Clark subdivision method.
 
 \code{.cpp}
 
-template <class PolygonMesh, template <typename> class Mask>
-void PQQ(PolygonMesh& p, Mask<PolygonMesh>> mask, int depth)
+template <class PolygonMesh, class Mask>
+void PQQ(PolygonMesh& p, Mask mask, int depth)
 
 \endcode
 
@@ -235,7 +235,7 @@ template <class PolygonMesh>
 class CatmullClark_mask_3 {
 
   typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef boost::property_traits<VertexPointMap>::value_type Point;
+  typedef boost::property_traits<VertexPointMap>::value_type Point_3;
 
   Polygonmesh pmesh;
   VertexPointMap vpm;
@@ -244,7 +244,7 @@ class CatmullClark_mask_3 {
   : pmesh(pmesh, vpm(vpm)
   {}
 
-  void face_node(face_descriptor face, Point& pt) {
+  void face_node(face_descriptor face, Point_3& pt) {
     int n = 0;
     Point_3 p(0,0,0);
     for(halfedge_descriptor hd : halfedges_around_face(face,pmesh)){
@@ -255,27 +255,27 @@ class CatmullClark_mask_3 {
   }
 };
 
-  void edge_node(halfedge_descriptor edge, Point& pt) {
-    Point p1 = get(vpm,target(edge, pmesh));
-    Point p2 = get(vpm,source(edge, pmesh));
-    Point f1, f2;
+  void edge_node(halfedge_descriptor edge, Point_3& pt) {
+    Point_3 p1 = get(vpm,target(edge, pmesh));
+    Point_3 p2 = get(vpm,source(edge, pmesh));
+    Point_3 f1, f2;
     face_node(face(edge,pmesh), f1);
     face_node(face(opposite(edge,pmesh),pmesh), f2);
-    pt = Point((p1[0]+p2[0]+f1[0]+f2[0])/4,
+    pt = Point_3((p1[0]+p2[0]+f1[0]+f2[0])/4,
 	       (p1[1]+p2[1]+f1[1]+f2[1])/4,
 	       (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
   
-  void vertex_node(vertex_descriptor vertex, Point& pt) {
+  void vertex_node(vertex_descriptor vertex, Point_3& pt) {
     Halfedge_around_target_circulator<PolygonMesh> vcir(vertex,pmesh);
     typename boost::graph_traits<PolygonMesh>::degree_size_type n = degree(vertex,pmesh);    
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    Point& S = get(vpm,vertex);
+    Point_3& S = get(vpm,vertex);
     
-    Point q;
+    Point_3 q;
     for (int i = 0; i < n; i++, ++vcir) {
-      Point& p2 = get(vpm, target(opposite(*vcir,pmesh),pmesh));
+      Point_3& p2 = get(vpm, target(opposite(*vcir,pmesh),pmesh));
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
@@ -287,7 +287,7 @@ class CatmullClark_mask_3 {
     R[0] /= n;    R[1] /= n;    R[2] /= n;
     Q[0] /= n;    Q[1] /= n;    Q[2] /= n;
       
-    pt = Point((Q[0] + 2*R[0] + S[0]*(n-3))/n,
+    pt = Point_3((Q[0] + 2*R[0] + S[0]*(n-3))/n,
 	       (Q[1] + 2*R[1] + S[1]*(n-3))/n,
 	       (Q[2] + 2*R[2] + S[2]*(n-3))/n );
   }
@@ -303,7 +303,7 @@ call `PQQ()` with the Catmull-Clark masks we just defined.
 
 \code{.cpp}
 
-PQQ(p, CatmullClark_mask_3<PolygonMesh>(), depth);
+PQQ(pmesh, CatmullClark_mask_3(pmesh), depth);
 
 \endcode
 
@@ -333,16 +333,16 @@ and \f$ \sqrt{3}\f$ subdivision.
 
 namespace Subdivision_method_3 {
 template <class PolygonMesh, class Mask>
-void PQQ(PolygonMesh& p, Mask mask, int step);
+void PQQ(PolygonMesh& pmesh, Mask mask, int step);
 
 template <class PolygonMesh, class Mask>
-void PTQ(PolygonMesh& p, Mask mask, int step);
+void PTQ(PolygonMesh& pmesh, Mask mask, int step);
 
 template <class PolygonMesh,  class Mask>
-void DQQ(PolygonMesh& p, Mask mask, int step)
+void DQQ(PolygonMesh& pmesh, Mask mask, int step)
 
 template <class PolygonMesh,  class Mask>
-void Sqrt3(PolygonMesh& p, Mask mask, int step)
+void Sqrt3(PolygonMesh& pmesh, Mask mask, int step)
 }
 
 \endcode
@@ -418,11 +418,11 @@ template <class PolygonMesh, class VertexPointMap>
 class CatmullClark_mask_3 {
 
   typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef boost::property_traits<VertexPointMap>::value_type Point;
+  typedef boost::property_traits<VertexPointMap>::value_type Point_3;
 
   CatmullClark_mask_3(PolygonMesh &pmesh, VertexPointMap vpm);
 
-  void face_node(face_descriptor face, Point& pt) {
+  void face_node(face_descriptor face, Point_3& pt) {
     int n = 0;
     Point_3 p(0,0,0);
     for(halfedge_descriptor hd : halfedges_around_face(face,pmesh)){
@@ -458,17 +458,17 @@ is listed below, where `ept` returns the new point splitting
 
 \code{.cpp}
 
-  void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
-    Point& ep1 = get(vpm, target(edge, pmesh));
-    Point& ep2 = get(vpm, target(opposite(edge, pmesh), pmesh));
-    ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
+  void border_node(halfedge_descriptor edge, Point_3& ept, Point_3& vpt) {
+    Point_3& ep1 = get(vpm, target(edge, pmesh));
+    Point_3& ep2 = get(vpm, target(opposite(edge, pmesh), pmesh));
+    ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
     Halfedge_around_target_circulator<Poly> vcir(edge, pmesh);
-    Point& vp1  = get(vpm,target(opposite(*vcir, pmesh ), pmesh));
-    Point& vp0  = get(vpm, target(*vcir, pmesh));
+    Point_3& vp1  = get(vpm,target(opposite(*vcir, pmesh ), pmesh));
+    Point_3& vp0  = get(vpm, target(*vcir, pmesh));
     --vcir;
-    Point& vp_1 = get(vpm, target(opposite(*vcir, pmesh), pmesh));
-    vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
+    Point_3& vp_1 = get(vpm, target(opposite(*vcir, pmesh), pmesh));
+    vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
 		(vp_1[1] + 6*vp0[1] + vp1[1])/8,
 		(vp_1[2] + 6*vp0[2] + vp1[2])/8 );
   }
@@ -485,31 +485,31 @@ current release. This might be changed in the future releases.
 
 template <class PolygonMesh>
 class PQQMask_3 {
-  void face_node(boost::graph_traits<PolygonMesh>::face_descriptor, Point&);
-  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point&);
-  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor, Point&);
+  void face_node(boost::graph_traits<PolygonMesh>::face_descriptor, Point_3&);
+  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor, Point_3&);
 
-  void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point&, Point&);
+  void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&, Point_3&);
 };
 
 template <class PolygonMesh>
 class PTQMask_3 {
-  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point&);
-  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor, Point&);
+  void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor, Point_3&);
 
-  void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point&, Point_&);
+  void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&, Point_3_&);
 };
 
 template <class PolygonMesh>
 class DQQMask_3 {
 public:
-  void corner_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point& pt);
+  void corner_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& pt);
 };
 
 template <class PolygonMesh>
 class Sqrt3Mask_3 {
 public:
-  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor vertex, Point& pt);
+  void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor vertex, Point_3& pt);
 };
 
 \endcode
