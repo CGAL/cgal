@@ -120,10 +120,10 @@ DooSabin_mask_3(PolygonMesh&  pmesh,
 /*!
 
 computes the Doo-Sabin point `pt` of the vertex pointed 
-by the halfedge `he`. 
+by the halfedge `hd`. 
 
 */ 
-void corner_node(halfedge_descriptor he, Point_3& pt); 
+void corner_node(halfedge_descriptor hd, Point_3& pt); 
 
 /// @}
 
@@ -174,25 +174,25 @@ Loop_mask_3(PolygonMesh& pmesh,
 
 /*!
 
-computes the Loop edge-point `pt` of the edge `e`. 
+computes the Loop edge-point `pt` of the edge `hd`. 
 
 */ 
-void edge_node(halfedge_descriptor e, Point_3& pt); 
+void edge_node(halfedge_descriptor hd, Point_3& pt); 
 
 /*!
 
-computes the Loop vertex-point `pt` of the vertex `v`. 
+computes the Loop vertex-point `pt` of the vertex `vd`. 
 
 */ 
-void vertex_node(vertex_descriptor v, Point_3& pt); 
+void vertex_node(vertex_descriptor vd, Point_3& pt); 
 
 /*!
 
 computes the Loop edge-point `ept` and the 
-Loop vertex-point `vpt` of the border edge `e`. 
+Loop vertex-point `vpt` of the border edge `hd`. 
 
 */ 
-void border_node(halfedge_descriptor e, Point_3& ept, Point_3& vpt); 
+void border_node(halfedge_descriptor hd, Point_3& ept, Point_3& vpt); 
 
 /// @}
 
@@ -241,17 +241,17 @@ Constructor.
 
 /*!
 
-computes the \f$ \sqrt{3}\f$ face-point `pt` of the face `f`. 
+computes the \f$ \sqrt{3}\f$ face-point `pt` of the face `fd`. 
 
 */ 
-void face_node(face_descriptor f, Point_3& pt); 
+void face_node(face_descriptor fd, Point_3& pt); 
 
 /*!
 
-computes the \f$ \sqrt{3}\f$ vertex-point `pt` of the vertex `v`. 
+computes the \f$ \sqrt{3}\f$ vertex-point `pt` of the vertex `vd`. 
 
 */ 
-void vertex_node(vertex_descriptor v, Point& pt); 
+void vertex_node(vertex_descriptor vd, Point& pt); 
 
 /// @}
 
