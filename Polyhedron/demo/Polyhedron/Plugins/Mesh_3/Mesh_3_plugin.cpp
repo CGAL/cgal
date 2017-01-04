@@ -114,12 +114,13 @@ public:
 public Q_SLOTS:
   void mesh_3_volume();
   void mesh_3_surface();
+  void mesh_3_surface_with_defaults() { mesh_3(true, true); }
   void splitPolylines();
   void meshing_done(Meshing_thread* t);
   void status_report(QString str);
 
 private:
-  void mesh_3(const bool surface_only);
+  void mesh_3(const bool surface_only, const bool use_defaults = false);
   void launch_thread(Meshing_thread* mesh_thread);
   void treat_result(Scene_item& source_item, Scene_c3t3_item& result_item) const;
 
@@ -171,7 +172,7 @@ void Mesh_3_plugin::mesh_3_volume()
   mesh_3(false);
 }
 
-void Mesh_3_plugin::mesh_3(const bool surface_only)
+void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 {
   Scene_polyhedron_item* poly_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
@@ -354,8 +355,10 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
 
   //reset cursor from the code for the scripts
   QApplication::restoreOverrideCursor();
-  int i = dialog.exec();
-  if( i == QDialog::Rejected ) { return; }
+  if(!use_defaults) {
+    int i = dialog.exec();
+    if( i == QDialog::Rejected ) { return; }
+  }
 
   // 0 means parameter is not considered
   const double angle = !ui.noAngle->isChecked() ? 0 : ui.facetAngle->value();
