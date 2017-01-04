@@ -111,8 +111,8 @@ Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 
 /*!
 Inserts the weighted points found in range `[s,e)` in the regular triangulation.
-Returns the difference of the number of vertices between after and
-before the insertions (it may be negative due to hidden points).
+Returns the difference between the number of vertices after and before
+the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the points
 following the order of `ForwardIterator` because `spatial_sort()`
 is used to improve efficiency.
