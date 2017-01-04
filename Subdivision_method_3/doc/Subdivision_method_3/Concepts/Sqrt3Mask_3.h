@@ -40,7 +40,7 @@ Sqrt3Mask_3(PolygonMesh& pmesh);
 computes the subdivided point `pt` based on the neighborhood 
 of the face `fd`. 
 */ 
-void facet_node(face_descriptor fd, Point_3& pt); 
+void face_node(face_descriptor fd, Point_3& pt); 
 
 /*!
 computes the subdivided point `pt` based on the neighborhood 

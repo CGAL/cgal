@@ -409,7 +409,7 @@ Catmull-Clark subdivision. The weights shown here are unnormalized,
 and \f$ n\f$ is the valence of the vertex. The new points are 
 computed by the summation of the weighted points on their stencils.
 Following codes show an implementation of the geometry mask of 
-the facet-node. The complete listing
+the face-node. The complete listing
 of a Catmull-Clark geometry policy is in the Section \ref secCC.
 
 \code{.cpp}
@@ -449,7 +449,7 @@ texture coordinates for your subdivision surface.
 The refinement host of Catmull-Clark subdivision
 requires three geometry masks for 
 polyhedrons without open boundaries: a vertex-node 
-mask, an edge-node mask, and a facet-node mask. 
+mask, an edge-node mask, and a face-node mask. 
 To support polyhedrons with boundaries, a border-node mask is 
 also required. The border-node mask for Catmull-Clark subdivision
 is listed below, where `ept` returns the new point splitting 

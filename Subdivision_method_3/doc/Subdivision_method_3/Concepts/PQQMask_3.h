@@ -30,10 +30,10 @@ public:
   PQQMask_3(PolygonMesh& pmesh);
 
 /*!
-computes the facet-point `pt` based on the neighborhood 
+computes the face-point `pt` based on the neighborhood 
 of the face `fd`. 
 */ 
-void facet_node(face_descriptor fd, Point_3& pt); 
+void face_node(face_descriptor fd, Point_3& pt); 
 
 /*!
 

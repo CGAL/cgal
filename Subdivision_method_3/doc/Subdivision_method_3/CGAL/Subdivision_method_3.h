@@ -66,7 +66,7 @@ void PQQ(PolygonMesh& pmesh, Mask mask, int step = 1);
 /*!
 
 applies the PTQ refinement on the control mesh `pmesh` `step` times, 
-where `pmesh` contains only triangle facets. 
+where `pmesh` contains only triangle faces. 
 The geometry of the refined mesh is computed by the geometry policy `mask`. 
 This function overwrites the control mesh `pmesh` with the refined mesh. 
 The result of a non-triangle mesh `pmesh` is undefined. 
@@ -88,7 +88,7 @@ void DQQ(PolygonMesh& pmesh, Mask mask, int step = 1);
 /*!
 
 applies the \f$ \sqrt{3}\f$ triangulation on the control mesh `pmesh` 
-`step` times, where `pmesh` contains only triangle facets. 
+`step` times, where `pmesh` contains only triangle faces. 
 The geometry of the refined mesh is computed by the geometry policy `mask`. 
 This function overwrites the control mesh `pmesh` with the refined mesh. 
 The result of a non-triangle mesh `pmesh` is undefined. 
