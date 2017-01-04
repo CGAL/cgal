@@ -214,7 +214,8 @@ type (a signed integral type)
 typedef TriangulationDataStructure_::difference_type difference_type;
 
 /*!
-\enum used by `Triangulation` to specify which case occurs when locating a point in the triangulation
+\enum Locate_type 
+\brief Used by `Triangulation` to specify which case occurs when locating a point in the triangulation.
 */
 enum Locate_type { ON_VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
                    IN_FACE, /*!< when the point is in the interior of a face of dimension equal or less than `maximal_dimension()` - 2 */
