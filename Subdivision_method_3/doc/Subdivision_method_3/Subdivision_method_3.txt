@@ -22,8 +22,9 @@ the subdivision methods.
 The natural intuition of the geometry suffices to control the 
 subdivision methods.
 
-`Subdivision_method_3`, designed to work on the class 
-`Polyhedron_3`, aims to be easy to use and to extend.
+`Subdivision_method_3` works for the classes 
+`Polyhedron_3` and `Surface_mesh`, as they are models of the concept
+`MutableFaceGraph`, and it aims to be easy to use and to extend.
 `Subdivision_method_3` is not a class, but a namespace 
 which contains four popular subdivision methods and their refinement
 functions. These include Catmull-Clark, Loop, Doo-Sabin and 
@@ -188,15 +189,17 @@ three components of the Catmull-Clark subdivision method.
 
 \code{.cpp}
 
-template <class Polyhedron_3, template <typename> class Mask>
-void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int depth)
+template <class PolygonMesh, template <typename> class Mask>
+void PQQ(PolygonMesh& p, Mask<PolygonMesh>> mask, int depth)
 
 \endcode
 
-`Polyhedron_3` is a generic mesh data structure for 
+`PolygonMesh` must be an instantiation of `Polyhedron_3`,
+`Surface_mesh`, or any other model of the concept `MutableFaceGraph`.
+It is a generic mesh data structure for 
 arbitrary 2-manifolds. `PQQ()`, which refines the control mesh 
 `p`, is a <I>refinement host</I> that uses a policy class
-`Mask<Polyhedron_3>` as part of it geometry computation. 
+`Mask<PolygonMesh>` as part of it geometry computation. 
 During the refinement, `PQQ()` computes and assigns
 new points by cooperating with the `mask`. 
 To implement Catmull-Clark subdivision,
@@ -215,7 +218,7 @@ for the PQQ refinement.
 \code{.cpp}
 
 template <class PolygonMesh>
-class PQQ_stencil_3 {
+class PQQMask_3 {
   void face_node(boost::graph_traits<PolygonMesh>::face_descriptor facet, Point_3& pt);
   void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& pt);
   void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor vertex, Point_3& pt);
@@ -223,7 +226,7 @@ class PQQ_stencil_3 {
 
 \endcode
 
-Each class function in `PQQ_stencil_3` 
+Each class function in `PQQMask_3` 
 computes a new point based on the neighborhood of the primitive 
 descriptor, and assigns the new point to `Point_3& pt`.
 
@@ -344,7 +347,7 @@ void Sqrt3(TriangleMesh& p, Mask<TriangleMesh> mask, int step)
 \endcode
 
 The mesh class is a specialization of
-`MutableFaceGraph` and it must be a triangle mesh or a quad mesh,
+`MutableFaceGraph` and it must be a triangle mesh or a polygon mesh,
 and the mask is a policy class realizing the geometry masks of the 
 subdivision method.
 
@@ -468,7 +471,7 @@ void border_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Poi
 \endcode
 
 The mask interfaces of all four refinement hosts are listed below.
-`DQQ_stencil_3` and `Sqrt3_stencil_3` 
+`DQQMask_3` and `Sqrt3Mask_3` 
 do not have the border-node stencil because the refinement hosts of
 DQQ and \f$ \sqrt{3}\f$ refinements do not support global boundaries in the 
 current release. This might be changed in the future releases.
@@ -476,7 +479,7 @@ current release. This might be changed in the future releases.
 \code{.cpp}
 
 template <class PolygonMesh>
-class PQQ_stencil_3 {
+class PQQMask_3 {
   void face_node(boost::graph_traits<PolygonMesh>::face_descriptor, Point_3&);
   void edge_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor, Point_3&);
   void vertex_node(boost::graph_traits<PolygonMesh>::vertex_descriptor, Point_3&);
@@ -485,7 +488,7 @@ class PQQ_stencil_3 {
 };
 
 template <class TriangleMesh>
-class PTQ_stencil_3 {
+class PTQMask_3 {
   void edge_node(boost::graph_traits<TriangleMesh>::halfedge_descriptor, Point_3&);
   void vertex_node(boost::graph_traits<TriangleMesh>::vertex_descriptor, Point_3&);
 
@@ -493,13 +496,13 @@ class PTQ_stencil_3 {
 };
 
 template <class PolygonMesh>
-class DQQ_stencil_3 {
+class DQQMask_3 {
 public:
   void corner_node(boost::graph_traits<PolygonMesh>::halfedge_descriptor edge, Point_3& pt);
 };
 
 template <class TriangleMesh>
-class Sqrt3_stencil_3 {
+class Sqrt3Mask_3 {
 public:
   void vertex_node(boost::graph_traits<TriangleMesh>::vertex_descriptor vertex, Point_3& pt);
 };

@@ -1,13 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Subdivision_method_3.h>
 
 #include <iostream>
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Polyhedron;
-//typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 using namespace std;
 using namespace CGAL;
