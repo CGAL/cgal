@@ -174,12 +174,18 @@ struct Sizing_field_with_aabb_tree
           {
             std::stringstream s;
        
+            using boost::io::group;
+            using std::setprecision;
             s << boost::format("\nSizing field is %1% at point (%2%)"
                                " on corner!\n"
                                "Closest face id: %3%\n"
+                               "Closest point: %4%\n"
                                "Ids are { ")
-              % result % p
-              % projection_traits.closest_point_and_primitive().second->patch_id();
+              % group(setprecision(17),result)
+              % group(setprecision(17),p)
+              % projection_traits.closest_point_and_primitive().second->patch_id()
+              % group(setprecision(17),
+                      projection_traits.closest_point_and_primitive().first);
             BOOST_FOREACH(int i, ids) {
               s << i << " ";
             }
