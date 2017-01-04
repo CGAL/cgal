@@ -294,7 +294,10 @@ wlop_simplify_and_regularize_point_set(
     (input_point_set.begin(), input_point_set.end(),
      output_point_set.point_back_inserter(),
      input_point_set.point_map(),
-     neighbor_radius, max_iter_number, require_uniform_sampling);
+     select_percentage,
+     neighbor_radius,
+     max_iter_number,
+     require_uniform_sampling);
 }
 
 

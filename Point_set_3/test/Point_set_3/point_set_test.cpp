@@ -75,7 +75,7 @@ int main (int, char**)
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
 
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
-  typename Point_set::Property_map<Color> color_prop;
+  Point_set::Property_map<Color> color_prop;
   bool garbage;
   boost::tie (color_prop, garbage) = point_set.add_property_map ("color", Color());
   test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
@@ -89,7 +89,7 @@ int main (int, char**)
       test ((get (color_prop, *it) == c), "recovered color is incorrect.");
     }
 
-  typename Point_set::Property_map<Color> color_prop_2;
+  Point_set::Property_map<Color> color_prop_2;
   boost::tie (color_prop_2, garbage) = point_set.property_map<Color>("color");
   test ((color_prop_2 == color_prop), "color property not recovered correctly.");
   
