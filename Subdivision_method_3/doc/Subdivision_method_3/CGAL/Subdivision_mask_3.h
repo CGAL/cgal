@@ -9,7 +9,8 @@ whose points contribute to the position of a refined point.
 The geometry mask of a stencil specifies 
 the computation on the nodes of the stencil. 
 `CatmullClark_mask_3` implements the geometry masks of 
-Catmull-Clark subdivision on a `CGAL::Polyhedron_3<Cartesian>`. 
+Catmull-Clark subdivision on models of `MutableFaceGraph`,
+such as `Polyhedron_3` and `Surface_mesh`. 
 
 \tparam PolygonMesh must be a model of the concept `MutableFaceGraph`.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
@@ -32,8 +33,8 @@ public:
 /*!
 Constructor. 
 */ 
-    CatmullClark_mask_3(PolygonMesh& pm,
-                        VertexPointMap vpm = get(vertex_point,pm) ); 
+    CatmullClark_mask_3(PolygonMesh&  pmesh,
+                        VertexPointMap vpm = get(vertex_point, pmesh) ); 
 
 /// @} 
 
@@ -84,7 +85,8 @@ whose points contribute to the position of a refined point.
 The geometry mask of a stencil specifies 
 the computation on the nodes of the stencil. 
 `DooSabin_mask_3` implements the geometry masks of 
-Doo-Sabin subdivision on a `Polyhedron_3<Cartesian>`. 
+Doo-Sabin subdivision on models of `MutableFaceGraph`,
+such as `Polyhedron_3` and `Surface_mesh`. 
 
 \tparam PolygonMesh must be a model of the concept `MutableFaceGraph`.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
@@ -107,8 +109,8 @@ public:
 /*!
 Constructor. 
 */ 
-DooSabin_mask_3(PolygonMesh& pm,
-                VertexPointMap vpm = get(vertex_point,pm) ); 
+DooSabin_mask_3(PolygonMesh&  pmesh,
+                VertexPointMap vpm = get(vertex_point, pmesh) ); 
 
 /// @} 
 
@@ -138,9 +140,10 @@ whose points contribute to the position of a refined point.
 The geometry mask of a stencil specifies 
 the computation on the nodes of the stencil. 
 `Loop_mask_3` implements the geometry masks of 
-Loop subdivision on a triangulated `Polyhedron_3<Cartesian>`. 
+Loop subdivision on a triangulated model of `MutableFaceGraph`,
+such as `Polyhedron_3` and `Surface_mesh`.
 
-\tparam TriangleMesh must be a model of the concept `MutableFaceGraph`.
+\tparam PolygonMesh must be a model of the concept `MutableFaceGraph`. Additionally all faces must be triangles.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
 \image html LoopBorderMask.png
@@ -151,7 +154,7 @@ Loop subdivision on a triangulated `Polyhedron_3<Cartesian>`.
 \sa `CGAL::Subdivision_method_3`
 
 */
-template< typename TriangleMesh, typename VertexPointMap = typename boost::property_map<TriangleMesh, vertex_point_t>::type >
+template< typename PolygonMesh, typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type >
 class Loop_mask_3 {
 public:
 
@@ -161,8 +164,8 @@ public:
 /*!
 Cnstructor. 
 */ 
-Loop_mask_3(TriangleMesh& tm,
-            VertexPointMap vpm = get(vertex_point,tm) ); 
+Loop_mask_3(PolygonMesh& pmesh,
+            VertexPointMap vpm = get(vertex_point,pmesh) ); 
 
 /// @} 
 
@@ -207,9 +210,10 @@ The geometry mask of a stencil specifies
 the computation on the nodes of the stencil. 
 `Sqrt3_mask_3` implements the geometry masks of 
 \f$ \sqrt{3}\f$ subdivision on a triangulated 
-`CGAL::Polyhedron_3<Cartesian>`. 
+model of `MutableFaceGraph`,
+such as `Polyhedron_3` and `Surface_mesh`. 
 
-\tparam TriangleMesh must be a model of the concept `MutableFaceGraph`.
+\tparam PolygonMesh must be a model of the concept `MutableFaceGraph`. Additionally all faces must be triangles.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
 \cgalModels `Sqrt3Mask_3`
@@ -217,7 +221,7 @@ the computation on the nodes of the stencil.
 \sa `CGAL::Subdivision_method_3`
 
 */
-template< typename TriangleMesh, typename VertexPointMap = typename boost::property_map<TriangleMesh, vertex_point_t>::type >
+template< typename PolygonMesh, typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type >
 class Sqrt3_mask_3 {
 public:
 
@@ -227,8 +231,8 @@ public:
 /*!
 Constructor. 
 */ 
-  Sqrt3_mask_3(TriangleMesh& tm,
-               VertexPointMap vpm = get(vertex_point,tm) ); 
+  Sqrt3_mask_3(PolygonMesh& pmesh,
+               VertexPointMap vpm = get(vertex_point,pmesh) ); 
 
 /// @} 
 

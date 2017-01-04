@@ -26,13 +26,13 @@ public:
 /*! Constructor
  */
 
-  DQQMask_3(PolygonMesh& pm);
+  DQQMask_3(PolygonMesh& pmesh);
 
 /*!
 computes the subdivided point `pt` based on the neighborhood 
-of the vertex pointed by the halfedge `he`. 
+of the vertex pointed by the halfedge `hd`. 
 */ 
-void corner_node(halfedge_descriptor he, Point& pt); 
+void corner_node(halfedge_descriptor hd, Point& pt); 
 
 /// @}
 

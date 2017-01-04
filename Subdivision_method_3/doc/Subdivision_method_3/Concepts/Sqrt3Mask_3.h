@@ -17,25 +17,36 @@ policy concept of geometric computations is used in
 class Sqrt3Mask_3 {
 public:
 
+/// \name Types 
+/// @{
+
+/*!  The polygon mesh must be triangulated.
+
+*/ 
+  typedef unspecified_type PolygonMesh;
+
+/// @}
+
+
 /// \name Operations 
 /// @{
 
 /*! Constructor
  */
 
-Sqrt3Mask_3(TriangleMesh& m);
+Sqrt3Mask_3(PolygonMesh& pmesh);
 
 /*!
 computes the subdivided point `pt` based on the neighborhood 
-of the facet `f`. 
+of the face `fd`. 
 */ 
-void facet_node(face_descriptor f, Point_3& pt); 
+void facet_node(face_descriptor fd, Point_3& pt); 
 
 /*!
 computes the subdivided point `pt` based on the neighborhood 
-of the vertex `v`. 
+of the vertex `vd`. 
 */ 
-void vertex_node(vertex_descriptor v, Point& pt); 
+void vertex_node(vertex_descriptor vd, Point& pt); 
 
 /// @}
 

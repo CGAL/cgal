@@ -18,33 +18,44 @@ policy concept of geometric computations is used in
 class PTQMask_3 {
 public:
 
+/// \name Types 
+/// @{
+
+/*!  The polygon mesh must be triangulated.
+
+*/ 
+  typedef unspecified_type PolygonMesh;
+
+/// @}
+
+
 /// \name Operations 
 /// @{
 
 /*! Constructor
  */
 
-PTQMask_3(TriangleMesh& m);
+PTQMask_3(PolygonMesh& pmesh);
 
 /*!
 computes the edge-point `pt` based on the neighborhood 
-of the edge `e`. 
+of the edge `hd`. 
 */ 
-void edge_node(Edge_handle e, Point_3& pt); 
+void edge_node(halfedge_descriptor hd, Point_3& pt); 
 
 /*!
 
 computes the vertex-point `pt` based on the neighborhood 
-of the vertex `v`. 
+of the vertex `vd`. 
 */ 
-void vertex_node(Vertex_handle v, Point_3& pt); 
+void vertex_node(vertex_descriptor vd, Point_3& pt); 
 
 /*!
 
 computes the edge-point `ept` and the vertex-point `vpt` 
-based on the neighborhood of the border edge `e`. 
+based on the neighborhood of the border edge `hd`. 
 */ 
-void border_node(Halfedge_handle e, Point_3& ept, Point_3& vpt); 
+void border_node(halfedge_descriptor hd, Point_3& ept, Point_3& vpt); 
 
 /// @}
 

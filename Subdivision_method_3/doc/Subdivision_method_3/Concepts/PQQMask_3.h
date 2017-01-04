@@ -27,34 +27,34 @@ public:
 /*! Constructor
  */
 
-  PQQMask_3(PolygonMesh& pm);
+  PQQMask_3(PolygonMesh& pmesh);
 
 /*!
 computes the facet-point `pt` based on the neighborhood 
-of the facet `f`. 
+of the face `fd`. 
 */ 
-void facet_node(face_descriptor facet, Point_3& pt); 
+void facet_node(face_descriptor fd, Point_3& pt); 
 
 /*!
 
 computes the edge-point `pt` based on the neighborhood 
-of the edge `e`. 
+of the edge `hd`. 
 */ 
-void edge_node(halfedge_descriptor e, Point_3& pt); 
+void edge_node(halfedge_descriptor hd, Point_3& pt); 
 
 /*!
 
 computes the vertex-point `pt` based on the neighborhood 
-of the vertex `v`. 
+of the vertex `vd`. 
 */ 
-void vertex_node(vertex_descriptor v, Point_3& pt); 
+void vertex_node(vertex_descriptor vd, Point_3& pt); 
 
 /*!
 
 computes the edge-point `ept` and the vertex-point `vpt` 
-based on the neighborhood of the border edge `e`. 
+based on the neighborhood of the border edge `hd`. 
 */ 
-void border_node(halfedge_descriptor e, Point_3& ept, Point_3& vpt); 
+void border_node(halfedge_descriptor hd, Point_3& ept, Point_3& vpt); 
 
 /// @}
 
