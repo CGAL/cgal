@@ -19,12 +19,11 @@ public:
 /*!
 
 */ 
-  typedef unspecified_type Mesh;
-  typedef Mesh TriangleMesh;
-  typedef Mesh PolygonMesh;
-  typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-  typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+  typedef unspecified_type PolygonMesh;
+
+  typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   
 
 /// @}

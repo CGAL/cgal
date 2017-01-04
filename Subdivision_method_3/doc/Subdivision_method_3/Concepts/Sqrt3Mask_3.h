@@ -5,10 +5,10 @@
 
 Required member functions for the `Sqrt3Mask_3` concept. This 
 policy concept of geometric computations is used in 
-`CGAL::Subdivision_method_3::Sqrt3<Polyhedron_3, Mask>`. 
+`CGAL::Subdivision_method_3::Sqrt3<PolygonMesh, Mask>`. 
 
-\cgalRefines `SubdivisionMask`
-\cgalHasModel `CGAL::Sqrt3_mask_3<Polyhedron_3>`
+\cgalRefines `SubdivisionMask_3`
+\cgalHasModel `CGAL::Sqrt3_mask_3<PolygonMesh>`
 
 \sa `CGAL::Subdivision_method_3`
 

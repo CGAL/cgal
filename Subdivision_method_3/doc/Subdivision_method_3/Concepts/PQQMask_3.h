@@ -5,14 +5,14 @@
 
 Required member functions for the `PQQMask_3` concept. This 
 policy concept of geometric computations is used in 
-`CGAL::Subdivision_method_3::PQQ<Polyhedron_3, Mask>`. 
+`CGAL::Subdivision_method_3::PQQ<PolygonMesh, Mask>`. 
 
 \image html CCBorderMask.png
 \image latex CCBorderMask.png
 
-\cgalRefines `SubdivisionMask`
+\cgalRefines `SubdivisionMask_3`
 
-\cgalHasModel `CGAL::CatmullClark_mask_3<Polyhedron_3>`
+\cgalHasModel `CGAL::CatmullClark_mask_3<PolygonMesh>`
 
 \sa `CGAL::Subdivision_method_3`
 

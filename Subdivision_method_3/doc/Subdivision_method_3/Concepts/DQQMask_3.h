@@ -5,14 +5,14 @@
 
 Required member functions for the `DQQMask_3` concept. This 
 policy concept of geometric computations is used in 
-`CGAL::Subdivision_method_3::DQQ<Polyhedron_3, Mask>`. 
+`CGAL::Subdivision_method_3::DQQ<PolygonMesh, Mask>`. 
 
 \image html DSCornerMask.png
 \image latex DSCornerMask.png
 
-\cgalRefines `SubdivisionMask`
+\cgalRefines `SubdivisionMask_3`
 
-\cgalHasModel `CGAL::DooSabin_mask_3<Polyhedron_3>`
+\cgalHasModel `CGAL::DooSabin_mask_3<PolygonMesh>`
 
 \sa `CGAL::Subdivision_method_3`
 
