@@ -626,9 +626,26 @@ public:
 };
 
 
+  template <typename K>
+  class Compare_slope_3
+  {
+    typedef typename K::FT                 FT;
+    typedef typename K::Point_3 Point_3;
+  public:
+    typedef typename K::Comparison_result  result_type;
 
+    result_type operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
+    { 
+      CGAL_assertion((p.z() >= q.z()) && (r.z() >= s.z()));
 
-  //////////////////////
+      if(p.z() == q.z() || r.z() == s.z()){
+        return CGAL::compare(p.z() - q.z(), r.z() - s.z());
+      }
+     
+      return CGAL::compare(squared_distance(p,q) / (p.z() - q.z()) ,
+                           squared_distance(r,s) / (r.z() - s.z())); 
+    } 
+  };
 
 
 

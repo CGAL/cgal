@@ -803,6 +803,15 @@ template <typename Kernel>
 Comparison_result compare_slopes(const CGAL::Segment_2<Kernel> &s1,
 const CGAL::Segment_2<Kernel> &s2);
 
+/*!
+compares the slopes of the segments `(p,q)` and `(r,s)`,
+with `p.z() >= q.z()` and  `r.z() >= s.z()`.
+*/
+template <typename Kernel>
+Comparison_result compare_slopes(const CGAL::Point_3<Kernel> &p,
+                                 const CGAL::Point_3<Kernel> &q,
+                                 const CGAL::Point_3<Kernel> &r,
+                                 const CGAL::Point_3<Kernel> &s);
 /// @}
 
 /// \defgroup compare_squared_distance_grp CGAL::compare_squared_distance()

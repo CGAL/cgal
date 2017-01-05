@@ -1013,6 +1013,40 @@ public:
 
 }; /* end Kernel::CompareSlope_2 */
 
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with two arguments) 
+
+  \sa `compare_slopes_grp`
+
+*/
+class CompareSlope_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+
+  /*!
+    compares the slopes of the segments `(p,q)` and `(r,s)`
+    with `p.z() >= q.z()` and  `r.z() >= s.z()`.
+  */ 
+  Comparison_result operator()(const Kernel::Point_3& p, 
+                               const Kernel::Point_3& q,
+                               const Kernel::Point_3& r, 
+                               const Kernel::Point_3& s); 
+
+
+  /// @}
+
+}; /* end Kernel::CompareSlope_2 */
+
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept

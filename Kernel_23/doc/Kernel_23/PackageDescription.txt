@@ -276,6 +276,7 @@
 - `Kernel::CompareDistance_2`
 - `Kernel::CompareDistance_3`
 - `Kernel::CompareSlope_2`
+- `Kernel::CompareSlope_3`
 - `Kernel::ComparePowerDistance_2`
 - `Kernel::ComparePowerDistance_3`
 - `Kernel::CompareSquaredDistance_2`
