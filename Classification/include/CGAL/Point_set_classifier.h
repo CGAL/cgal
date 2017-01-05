@@ -394,7 +394,7 @@ public:
 #endif
   {
     CGAL::Timer t; t.start();
-    this->add_attribute (Attribute_handle (new Verticality(m_input, normal_map)));
+    this->template add_attribute<Verticality> (normal_map);
     m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
     t.stop();
     std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
@@ -444,17 +444,17 @@ public:
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i <= 8; ++ i)
       {
-        this->add_attribute (Attribute_handle (new Hsv(m_input, color_map, 0, 45 * i, 22.5)));
+        this->template add_attribute<Hsv> (color_map, 0, 45 * i, 22.5);
         m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
     for (std::size_t i = 0; i <= 4; ++ i)
       {
-        this->add_attribute (Attribute_handle (new Hsv(m_input, color_map, 1, 25 * i, 12.5)));
+        this->template add_attribute<Hsv> (color_map, 1, 25 * i, 12.5);
         m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
     for (std::size_t i = 0; i <= 4; ++ i)
       {
-        this->add_attribute (Attribute_handle (new Hsv(m_input, color_map, 2, 25 * i, 12.5)));
+        this->template add_attribute<Hsv> (color_map, 2, 25 * i, 12.5);
         m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
     t.stop();
@@ -487,9 +487,9 @@ public:
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->add_attribute (Attribute_handle (new Echo_scatter(m_input, echo_map, *(m_scales[i]->grid),
-                                                                m_scales[i]->grid_resolution(),
-                                                                m_scales[i]->radius_neighbors())));
+        this->template add_attribute<Echo_scatter>(echo_map, *(m_scales[i]->grid),
+                                          m_scales[i]->grid_resolution(),
+                                          m_scales[i]->radius_neighbors());
         m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
     t.stop();
@@ -667,44 +667,44 @@ public:
 
         // Generate the right attribute if possible
         if (id == "anisotropy")
-          this->add_attribute (Attribute_handle (new Anisotropy(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Anisotropy>(*(m_scales[scale]->eigen));
         else if (id == "distance_to_plane")
-          this->add_attribute (Attribute_handle (new Distance_to_plane(m_input, m_item_map, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Distance_to_plane>(m_item_map, *(m_scales[scale]->eigen));
         else if (id == "eigentropy")
-          this->add_attribute (Attribute_handle (new Eigentropy(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Eigentropy>(*(m_scales[scale]->eigen));
         else if (id == "elevation")
           {
             t.start();
-            this->add_attribute (Attribute_handle (new Elevation(m_input, m_item_map,
-                                                                 *(m_scales[scale]->grid),
-                                                                 m_scales[scale]->grid_resolution(),
-                                                                 m_scales[scale]->radius_dtm())));
+            this->template add_attribute<Elevation>(m_item_map,
+                                           *(m_scales[scale]->grid),
+                                           m_scales[scale]->grid_resolution(),
+                                           m_scales[scale]->radius_dtm());
             t.stop();
           }
         else if (id == "linearity")
-          this->add_attribute (Attribute_handle (new Linearity(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Linearity>(*(m_scales[scale]->eigen));
         else if (id == "omnivariance")
-          this->add_attribute (Attribute_handle (new Omnivariance(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Omnivariance>(*(m_scales[scale]->eigen));
         else if (id == "planarity")
-          this->add_attribute (Attribute_handle (new Planarity(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Planarity>(*(m_scales[scale]->eigen));
         else if (id == "sphericity")
-          this->add_attribute (Attribute_handle (new Sphericity(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Sphericity>(*(m_scales[scale]->eigen));
         else if (id == "sum_eigen")
-          this->add_attribute (Attribute_handle (new Sum_eigen(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Sum_eigen>(*(m_scales[scale]->eigen));
         else if (id == "surface_variation")
-          this->add_attribute (Attribute_handle (new Surface_variation(m_input, *(m_scales[scale]->eigen))));
+          this->template add_attribute<Surface_variation>(*(m_scales[scale]->eigen));
         else if (id == "vertical_dispersion")
-          this->add_attribute (Attribute_handle (new Dispersion(m_input, m_item_map,
-                                                                *(m_scales[scale]->grid),
-                                                                m_scales[scale]->grid_resolution(),
-                                                                m_scales[scale]->radius_neighbors())));
+          this->template add_attribute<Dispersion>(m_item_map,
+                                          *(m_scales[scale]->grid),
+                                          m_scales[scale]->grid_resolution(),
+                                          m_scales[scale]->radius_neighbors());
         else if (id == "verticality")
           {
             if (boost::is_convertible<VectorMap,
                 typename CGAL::Default_property_map<Iterator, typename Kernel::Vector_3> >::value)
-              this->add_attribute (Attribute_handle (new Verticality(m_input, *(m_scales[scale]->eigen))));
+              this->template add_attribute<Verticality>(*(m_scales[scale]->eigen));
             else
-              this->add_attribute (Attribute_handle (new Verticality(m_input, normal_map)));
+              this->template add_attribute<Verticality>(normal_map);
           }
         else if (id == "echo_scatter")
           {
@@ -714,10 +714,9 @@ public:
                 std::cerr << "Warning: echo_scatter required but no echo map given." << std::endl;
                 continue;
               }
-            this->add_attribute (Attribute_handle (new Echo_scatter(m_input, echo_map, *(m_scales[scale]->grid),
-                                                                  m_scales[scale]->grid_resolution(),
-                                                                  m_scales[scale]->radius_neighbors())));
-
+            this->template add_attribute<Echo_scatter>(echo_map, *(m_scales[scale]->grid),
+                                              m_scales[scale]->grid_resolution(),
+                                              m_scales[scale]->radius_neighbors());
           }
         else if (boost::starts_with(id.c_str(), "hue")
                  || boost::starts_with(id.c_str(), "saturation")
@@ -732,17 +731,17 @@ public:
             if (boost::starts_with(id.c_str(), "hue"))
               {
                 double value = boost::lexical_cast<int>(id.c_str() + 4);
-                this->add_attribute (Attribute_handle (new Hsv(m_input, color_map, 0, value, 22.5)));
+                this->template add_attribute<Hsv>(color_map, 0, value, 22.5);
               }
             else if (boost::starts_with(id.c_str(), "saturation"))
               {
                 double value = boost::lexical_cast<int>(id.c_str() + 11);
-                this->add_attribute (Attribute_handle (new Hsv(m_input, color_map, 1, value, 12.5)));
+                this->template add_attribute<Hsv>(color_map, 1, value, 12.5);
               }
             else if (boost::starts_with(id.c_str(), "value"))
               {
                 double value = boost::lexical_cast<int>(id.c_str() + 6);
-                this->add_attribute (Attribute_handle (new Hsv(m_input, color_map, 2, value, 12.5)));
+                this->template add_attribute<Hsv>(color_map, 2, value, 12.5);
               }
           }
         else
@@ -867,7 +866,7 @@ private:
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->add_attribute (Attribute_handle (new Attribute_type(m_input, *(m_scales[i]->eigen))));
+        this->template add_attribute<Attribute_type>(*(m_scales[i]->eigen));
         m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
   }
@@ -877,7 +876,7 @@ private:
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->add_attribute (Attribute_handle (new Attribute_type(m_input, m_item_map, *(m_scales[i]->eigen))));
+        this->template add_attribute<Attribute_type>(m_item_map, *(m_scales[i]->eigen));
         m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
   }
@@ -887,10 +886,10 @@ private:
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->add_attribute (Attribute_handle (new Attribute_type(m_input, m_item_map,
-                                                                  *(m_scales[i]->grid),
-                                                                  m_scales[i]->grid_resolution(),
-                                                                  m_scales[i]->radius_neighbors())));
+        this->template add_attribute<Attribute_type>(m_item_map,
+                                            *(m_scales[i]->grid),
+                                            m_scales[i]->grid_resolution(),
+                                            m_scales[i]->radius_neighbors());
         m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
   }
@@ -900,10 +899,10 @@ private:
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->add_attribute (Attribute_handle (new Attribute_type(m_input, m_item_map,
-                                                                *(m_scales[i]->grid),
-                                                                m_scales[i]->grid_resolution(),
-                                                                m_scales[i]->radius_dtm())));
+        this->template add_attribute<Attribute_type>(m_item_map,
+                                            *(m_scales[i]->grid),
+                                            m_scales[i]->grid_resolution(),
+                                            m_scales[i]->radius_dtm());
         m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
   }

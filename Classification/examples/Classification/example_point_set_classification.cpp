@@ -74,18 +74,19 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Attributes]
 
+  Classifier psc (pts, Pmap());
   std::cerr << "Computing attributes" << std::endl;
-  Attribute_handle d2p (new Distance_to_plane (pts, Pmap(), eigen));
-  Attribute_handle lin (new Linearity (pts, eigen));
-  Attribute_handle omni (new Omnivariance (pts, eigen));
-  Attribute_handle plan (new Planarity (pts, eigen));
-  Attribute_handle surf (new Surface_variation (pts, eigen));
-  Attribute_handle disp (new Dispersion (pts, Pmap(), grid,
-                                         grid_resolution,
-                                         radius_neighbors));
-  Attribute_handle elev (new Elevation (pts, Pmap(), grid,
-                                        grid_resolution,
-                                        radius_dtm));
+  Attribute_handle d2p = psc.add_attribute<Distance_to_plane> (Pmap(), eigen);
+  Attribute_handle lin = psc.add_attribute<Linearity> (eigen);
+  Attribute_handle omni = psc.add_attribute<Omnivariance> (eigen);
+  Attribute_handle plan = psc.add_attribute<Planarity> (eigen);
+  Attribute_handle surf = psc.add_attribute<Surface_variation> (eigen);
+  Attribute_handle disp = psc.add_attribute<Dispersion> (Pmap(), grid,
+                                                         grid_resolution,
+                                                         radius_neighbors);
+  Attribute_handle elev = psc.add_attribute<Elevation> (Pmap(), grid,
+                                                        grid_resolution,
+                                                        radius_dtm);
   
   std::cerr << "Setting weights" << std::endl;
   d2p->set_weight(6.75e-2);
@@ -97,16 +98,6 @@ int main (int argc, char** argv)
   elev->set_weight(1.47e1);
 
   
-  // Add attributes to classification object
-  Classifier psc (pts, Pmap());
-  psc.add_attribute (d2p);
-  psc.add_attribute (lin);
-  psc.add_attribute (omni);
-  psc.add_attribute (plan);
-  psc.add_attribute (surf);
-  psc.add_attribute (disp);
-  psc.add_attribute (elev);
-
   //! [Attributes]
   ///////////////////////////////////////////////////////////////////
 

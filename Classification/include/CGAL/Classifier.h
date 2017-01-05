@@ -418,10 +418,52 @@ public:
 
     \param attribute %Handle of the attribute to add.
    */
-  void add_attribute (Attribute_handle attribute)
+
+#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
+  template <typename Attribute, typename ... T>
+  Attribute_handle add_attribute (T&& ... t)
   {
-    m_attributes.push_back (attribute);
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, std::forward<T>(t)...)));
+    return m_attributes.back();
   }
+#else
+  template <typename Attribute>
+  Attribute_handle add_attribute ()
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1>
+  Attribute_handle add_attribute (T1& t1)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2>
+  Attribute_handle add_attribute (T1& t1, T2& t2)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2, typename T3>
+  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2, typename T3, typename T4>
+  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2, typename T3, typename T4, typename T5>
+  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4, t5)));
+    return m_attributes.back();
+  }
+#endif
 
   /*!
     \brief Removes all attributes.
