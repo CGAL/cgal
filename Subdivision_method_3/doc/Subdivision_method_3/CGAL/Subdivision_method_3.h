@@ -54,60 +54,111 @@ Catmull-Clark subdivision.
 /// @{
 
 /*!
+ *
+ * applies the PQQ refinement several times on the control mesh `pmesh`. 
+ * The geometry of the refined mesh is computed by the geometry policy `mask`. 
+ * This function overwrites the control mesh `pmesh` with the refined mesh.
+ *
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *       If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ **/ 
 
-applies the PQQ refinement on the control mesh `pmesh` `step` times. 
-The geometry of the refined mesh is computed by the geometry policy `mask`. 
-This function overwrites the control mesh `pmesh` with the refined mesh. 
-*/ 
+template <class PolygonMesh, class NamedParameters> 
+void PQQ(PolygonMesh& pmesh, const NamedParameters& np); 
 
-template <class PolygonMesh, class Mask> 
-void PQQ(PolygonMesh& pmesh, Mask mask, int step = 1); 
-
-/*!
-
-applies the PTQ refinement on the control mesh `pmesh` `step` times, 
-where `pmesh` contains only triangle faces. 
-The geometry of the refined mesh is computed by the geometry policy `mask`. 
-This function overwrites the control mesh `pmesh` with the refined mesh. 
-The result of a non-triangle mesh `pmesh` is undefined. 
-*/ 
-
-template <class PolygonMesh, class Mask> 
-void PTQ(PolygonMesh& pmesh, Mask mask, int step = 1); 
-
-/*!
-
-applies the DQQ refinement on the control mesh `pmesh` `step` times. 
-The geometry of the refined mesh is computed by the geometry policy `mask`. 
-This function overwrites the control mesh `pmesh` with the refined mesh. 
-*/ 
-
-template <class PolygonMesh, class Mask> 
-void DQQ(PolygonMesh& pmesh, Mask mask, int step = 1); 
-
-/*!
-
-applies the \f$ \sqrt{3}\f$ triangulation on the control mesh `pmesh` 
-`step` times, where `pmesh` contains only triangle faces. 
-The geometry of the refined mesh is computed by the geometry policy `mask`. 
-This function overwrites the control mesh `pmesh` with the refined mesh. 
-The result of a non-triangle mesh `pmesh` is undefined. 
-*/ 
-
-template <class PolygonMesh, class Mask> 
-void Sqrt3(PolygonMesh& pmesh, Mask mask, int step = 1); 
-
-/*!
-
-applies Catmull-Clark subdivision `step` times on the control mesh `pmesh`. 
-This function overwrites the control mesh `pmesh` with the subdivided mesh. 
-*/ 
-
-template <class PolygonMesh> 
-void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1); 
 /*!
  *
- * applies Catmull-Clark subdivision `step` times on the control mesh `pmesh`. 
+ * applies the PTQ refinement several times on the control mesh `pmesh`. 
+ * The geometry of the refined mesh is computed by the geometry policy `mask`. 
+ * This function overwrites the control mesh `pmesh` with the refined mesh.
+ *
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *       If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ **/ 
+
+template <class PolygonMesh, class NamedParameters> 
+void PTQ(PolygonMesh& pmesh, const NamedParameters& np); 
+
+/*!
+ *
+ * applies the DQQ refinement several times on the control mesh `pmesh`. 
+ * The geometry of the refined mesh is computed by the geometry policy `mask`. 
+ * This function overwrites the control mesh `pmesh` with the refined mesh.
+ *
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *       If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * \precondition `pmesh` must be a triangle mesh.
+ **/ 
+
+template <class PolygonMesh, class NamedParameters> 
+void DQQ(PolygonMesh& pmesh, const NamedParameters& np); 
+
+/*!
+ *
+ * applies the \f$ \sqrt{3}\f$ refinement several times on the control mesh `pmesh`.
+ * The geometry of the refined mesh is computed by the geometry policy `mask`. 
+ * This function overwrites the control mesh `pmesh` with the refined mesh. 
+ *
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *       If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * \precondition `pmesh` must be a triangle mesh.
+ **/ 
+
+template <class PolygonMesh, class NamedParameters> 
+void Sqrt(PolygonMesh& pmesh, const NamedParameters& np); 
+
+
+
+
+/*!
+ *
+ * applies Catmull-Clark subdivision several times on the control mesh `pmesh`. 
  * This function overwrites the control mesh `pmesh` with the subdivided mesh. 
  
  * @tparam PolygonMesh a model of `HalfedgeListGraph`
@@ -119,41 +170,89 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1);
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
  *       If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
- *  \cgalParamBegin{number_of_iterations} the number of subdivision steps.
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
+ *
+ * \precondition `pmesh` must be a triangle mesh.
  **/ 
 
   template <class PolygonMesh, class NamedParameters> 
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np); 
 
 /*!
+ *
+ * applies Loop subdivision several times on the control mesh `pmesh`. 
+ * This function overwrites the control mesh `pmesh` with the subdivided mesh. 
+ 
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *       If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ **/ 
 
-applies Loop subdivision `step` times on the control mesh `pmesh`. 
-This function overwrites the control mesh `pmesh` with the subdivided mesh. 
-*/ 
+  template <class PolygonMesh, class NamedParameters> 
+void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np); 
 
-template <class PolygonMesh> 
-void Loop_subdivision(PolygonMesh& pmesh, int step = 1); 
 
 /*!
+ *
+ * applies DooSabin subdivision several times on the control mesh `pmesh`. 
+ * This function overwrites the control mesh `pmesh` with the subdivided mesh. 
+ 
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *       If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ **/ 
 
-applies Doo-Sabin subdivision `step` times on the control mesh `pmesh`. 
-This function overwrites the control mesh `pmesh` with the subdivided mesh. 
-*/ 
+  template <class PolygonMesh, class NamedParameters> 
+void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np); 
 
-template <class PolygonMesh> 
-void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1); 
-
+ 
 /*!
+ *
+ * applies \f$ \sqrt{3}\f$-subdivision several times on the control mesh `pmesh`. 
+ * This function overwrites the control mesh `pmesh` with the subdivided mesh. 
+ *
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *       If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * \precondition `pmesh` must be a triangle mesh.
+ **/ 
 
-applies \f$ \sqrt{3}\f$ subdivision `step` times on the control mesh `pmesh`. 
-This function overwrites the control mesh `pmesh` with the subdivided mesh. 
-*/ 
-
-template <class PolygonMesh> 
-void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1); 
+template <class PolygonMesh, class NamedParameters> 
+void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np); 
 
 
 /// @}

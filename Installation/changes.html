@@ -148,6 +148,13 @@ and <code>src/</code> directories).
 <!-- Mesh Generation -->
 <!-- Surface Reconstruction -->
 <!-- Geometry Processing -->
+<h3> 3D Surface Subdivision Methods </h3>
+  <ul>
+    <li>
+      The subdivision algorithms work on any model of a `MutableFaceGraph`, and the functions have
+      an optional named parameter that allows to pass a vertex property map.
+    </li>
+  </ul>
 <!-- Spatial Searching and Sorting -->
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
@@ -361,6 +368,7 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
+
   <h3>Point Set Processing</h3>
   <ul>
     <li>Function <code>CGAL::remove_outliers()</code> has an
@@ -371,6 +379,36 @@ and <code>src/</code> directories).
     point sets based on the assumption that they sample a curve in 2D
       or a surface in 3D.</li>
   </ul>
+
+<!-- Surface Reconstruction -->
+<!-- Geometry Processing -->
+<!-- Spatial Searching and Sorting -->
+<!-- Geometric Optimization -->
+<!-- Interpolation -->
+<!-- Kinetic Data Structures -->
+<!-- Support Library -->
+<h3>CGAL and the Boost Graph Library (BGL)</h3>
+<ul>
+  <li>
+    Add function <code>CGAL::convert_nef_polyhedron_to_polygon_mesh()</code> to
+    convert a <code>Nef_polyhedron_3</code> to any model of the <code>MutableFaceGraph</code>
+    concept.
+  </li>
+</ul>
+<h3>Geometric Object Generators</h3>
+<ul>
+  <li>
+    Add point random generators
+    <ul>
+    <li>in a 3D triangle mesh model of the concept <code>FaceListGraph</code> (<code>CGAL::Random_points_in_triangle_mesh_3</code>),</li>
+    <li>on the boundary of a tetrahedral mesh (<code>CGAL::Random_points_in_tetrahedral_mesh_boundary_3</code>),</li>
+    <li>in a tetrahedral mesh (<code>CGAL::Random_points_in_tetrahedral_mesh_3</code>),</li>
+    <li>in a 2D triangle mesh (<code>CGAL::Random_points_in_triangle_mesh_2</code>),</li>
+    <li>in a range of 2D or 3D triangles (<code>CGAL::Random_points_in_triangles_3</code> and <code>CGAL::Random_points_in_triangles_2</code>).</li>
+    </ul>
+  </li>
+</ul>
+<!-- Visualization -->
 
   <h3>CGAL and the Boost Graph Library (BGL)</h3>
   <ul>

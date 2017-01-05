@@ -68,16 +68,58 @@ namespace Subdivision_method_3 {
   void PTQ(PolygonMesh& p, Mask mask, int step = 1) {
     for (int i = 0; i < step; i++) Private::PTQ_1step(p, get(vertex_point,p), mask);
   }
+
+  template <class PolygonMesh, class Mask, class NamedParameters>
+  void PTQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
+    // todo:  static assert that PolygonMesh == Mask::PolygonMesh  
+    using boost::choose_param;
+    using boost::get_param;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+    Vpm vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(CGAL::vertex_point, pmesh));
+
+    unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+    for (int i = 0; i < step; i++) Private::PTQ_1step(p, vpm, mask);
+  }
+
+
   // 
   template <class PolygonMesh, class Mask>
   void DQQ(PolygonMesh& p, Mask mask, int step = 1) {
     for (int i = 0; i < step; ++i) Private::DQQ_1step(p, get(vertex_point,p), mask);
   }
+
+  template <class PolygonMesh, class Mask, class NamedParameters>
+  void DQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
+    // todo:  static assert that PolygonMesh == Mask::PolygonMesh  
+    using boost::choose_param;
+    using boost::get_param;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+    Vpm vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(CGAL::vertex_point, pmesh));
+
+    unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+    for (int i = 0; i < step; i++) Private::DQQ_1step(p, vpm, mask);
+  }
+
   // 
   template <class PolygonMesh, class Mask>
   void Sqrt3(PolygonMesh& p, Mask mask, int step = 1) {
     for (int i = 0; i < step; i++) Private::Sqrt3_1step(p, get(vertex_point,p), mask);
   }  
+
+  template <class PolygonMesh, class Mask, class NamedParameters>
+  void Sqrt3(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
+    // todo:  static assert that PolygonMesh == Mask::PolygonMesh  
+    using boost::choose_param;
+    using boost::get_param;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+    Vpm vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(CGAL::vertex_point, pmesh));
+
+    unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+    for (int i = 0; i < step; i++) Private::Sqrt3_1step(p, vpm, mask);
+  }
 
   //
   template <class PolygonMesh>
@@ -105,16 +147,61 @@ namespace Subdivision_method_3 {
   void Loop_subdivision(PolygonMesh& p, int step = 1) {
     PTQ(p, Loop_mask_3<PolygonMesh>(p,get(vertex_point,p)) , step);
   }
+
+  template <class PolygonMesh, class NamedParameters>
+  void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
+    using boost::choose_param;
+    using boost::get_param;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+    Vpm vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(CGAL::vertex_point, pmesh));
+
+    unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+    Loop_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+
+    for(unsigned int i = 0; i < step; i++) Private::PTQ_1step(pmesh, vpm, mask);
+  }
+  
   //
   template <class PolygonMesh>
   void DooSabin_subdivision(PolygonMesh& p, int step = 1) {
     DQQ(p, DooSabin_mask_3<PolygonMesh>(p,get(vertex_point,p)), step);
   }
+
+  template <class PolygonMesh, class NamedParameters>
+  void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
+    using boost::choose_param;
+    using boost::get_param;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+    Vpm vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(CGAL::vertex_point, pmesh));
+
+    unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+    CatmullClark_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+
+    for(unsigned int i = 0; i < step; i++) Private::DQQ_1step(pmesh, vpm, mask);
+  }
+  
   //
   template <class PolygonMesh>
   void Sqrt3_subdivision(PolygonMesh& p, int step = 1) {
     Sqrt3(p, Sqrt3_mask_3<PolygonMesh>(p,get(vertex_point,p)), step);
   }
+
+  template <class PolygonMesh, class NamedParameters>
+  void Sqrt_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
+    using boost::choose_param;
+    using boost::get_param;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+    Vpm vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(CGAL::vertex_point, pmesh));
+
+    unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+    CatmullClark_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+
+    for(unsigned int i = 0; i < step; i++) Private::Sqrt_1step(pmesh, vpm, mask);
+  }
+  
 }
 
 } //namespace CGAL
