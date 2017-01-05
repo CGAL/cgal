@@ -4,19 +4,16 @@
 #include <string>
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Classifier.h>
-#include <CGAL/Classification/Helper.h>
+#include <CGAL/Point_set_classifier.h>
 #include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
-typedef std::vector<Point>::iterator Iterator;
+typedef std::vector<Point> Point_range;
 typedef CGAL::Identity_property_map<Point> Pmap;
 
-typedef CGAL::Classifier<Iterator, Pmap> Classification;
-typedef CGAL::Classification::Helper<Kernel, Iterator, Pmap> Helper;
-
+typedef CGAL::Point_set_classifier<Kernel, Point_range, Pmap> Point_set_classifier;
 
 /*
  This interpreter is used to read a PLY input that contains training
@@ -76,13 +73,10 @@ int main (int argc, char** argv)
       return EXIT_FAILURE;
     }
 
-  Classification psc (pts.begin (), pts.end(), Pmap());
+  Point_set_classifier psc (pts, Pmap());
   
   std::cerr << "Generating attributes" << std::endl;
-  Helper helper (pts.begin(), pts.end(), Pmap(),
-                 5); // Using 5 scales
-
-  helper.generate_attributes (psc, pts.begin(), pts.end(), Pmap());
+  psc.generate_attributes (5); // Using 5 scales
   
   // Add types to PSC
   CGAL::Classification::Type_handle ground
@@ -98,13 +92,13 @@ int main (int argc, char** argv)
       switch (labels[i])
         {
         case 0:
-          psc.add_training_index(ground, i);
+          psc.set_inlier(ground, i);
           break;
         case 1:
-          psc.add_training_index(vege, i);
+          psc.set_inlier(vege, i);
           break;
         case 2:
-          psc.add_training_index(roof, i);
+          psc.set_inlier(roof, i);
           break;
         default:
           break;
@@ -114,22 +108,17 @@ int main (int argc, char** argv)
   std::cerr << "Training" << std::endl;
   psc.train (800); // 800 trials
 
-  psc.run_with_graphcut (helper.neighborhood().k_neighbor_query(12), 0.5);
+  psc.run_with_graphcut (psc.neighborhood().k_neighbor_query(12), 0.5);
   
   // Save the output in a colored PLY format
   std::ofstream f ("classification.ply");
   f.precision(18);
 
-  std::vector<CGAL::Classification::RGB_Color> colors;
-  colors.push_back(CGAL::make_array ((unsigned char)245, 180, 0)); // Ground
-  colors.push_back(CGAL::make_array ((unsigned char)0, 255, 27));  // Vegetation
-  colors.push_back(CGAL::make_array ((unsigned char)255, 0, 170)); // Roof
-
-  helper.write_ply (f, pts.begin(), pts.end(), Pmap(), psc, &colors);
+  psc.write_classification_to_ply (f);
 
   /// Save the configuration to be able to reload it later
   std::ofstream fconfig ("config.xml");
-  helper.save (fconfig, psc);
+  psc.save_configuration (fconfig);
   
   std::cerr << "All done" << std::endl;
   

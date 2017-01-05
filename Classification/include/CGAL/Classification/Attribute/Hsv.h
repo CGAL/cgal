@@ -95,7 +95,7 @@ public:
     else if (channel == 1) oss << "saturation";
     else if (channel == 2) oss << "value";
     oss << "_" << mean;
-    m_id = oss.str();
+    m_name = oss.str();
   }
 
   /// \cond SKIP_IN_MANUAL

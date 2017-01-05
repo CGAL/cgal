@@ -49,7 +49,6 @@ public:
     \param radius_neighbors radius of local neighborhoods.
   */
   Echo_scatter (const Range& input,
-                RandomAccessIterator end,
                 EchoMap echo_map,
                 Grid& grid,
                 const double grid_resolution,

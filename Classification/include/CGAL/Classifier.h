@@ -107,7 +107,7 @@ public:
   typedef internal::Alpha_expansion_graph_cut_boykov_kolmogorov Alpha_expansion;
 #endif
   
-private:
+protected:
   
   const Range& m_input;
   ItemMap m_item_map;
@@ -830,7 +830,7 @@ public:
   /// \endcond
 
 
-private:
+protected:
 
   double classification_value (const std::size_t& class_type,
                                const std::size_t& pt_index) const
