@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>768</height>
+    <width>468</width>
+    <height>928</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -322,7 +322,7 @@
       <item row="8" column="0" colspan="3">
        <widget class="QFrame" name="advanced">
         <property name="visible">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -354,6 +354,26 @@
            </property>
            <property name="text">
             <string>&amp;manifold</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="facetTopologyLabel">
+           <property name="text">
+            <string>The following option enables the &lt;a href=&quot;http://doc.cgal.org/latest/Mesh_3/group__PkgMesh__3Enum.html#gaac682a581ddebf8daff681621911d1f3&quot;&gt; &lt;code&gt;FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK &lt;/code&gt;&lt;/a&gt; facet topology criterion (click on the link to see the manual page).</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="facetTopology">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>force facets vertices on same surface patch</string>
            </property>
           </widget>
          </item>

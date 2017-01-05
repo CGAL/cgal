@@ -14,6 +14,8 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDesktopServices>
+#include <QUrl>
 #include <fstream>
 
 #include "Scene_polyhedron_item.h"
@@ -261,6 +263,12 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   QDialog dialog(mw);
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
+
+  ui.advanced->setVisible(false);
+  connect(ui.facetTopologyLabel,
+          &QLabel::linkActivated,
+          &QDesktopServices::openUrl);
+
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
@@ -338,6 +346,12 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   if (poly_item == NULL || polylines_item != NULL) {
     ui.sharpEdgesAngleLabel->setVisible(false);
     ui.sharpEdgesAngle->setVisible(false);
+
+    ui.facetTopology->setEnabled(false);
+    ui.facetTopology->setToolTip(tr("<b>Notice:</b> "
+                                    "This option is only available with a"
+                                    " polyhedron, when features are detected"
+                                    " automatically"));
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
@@ -370,7 +384,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   const bool protect_features = ui.protect->isChecked();
   const double sharp_edges_angle = ui.sharpEdgesAngle->value();
   const bool detect_connected_components = ui.detectComponents->isChecked();
-  const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
+  const int manifold =
+    (ui.manifoldCheckBox->isChecked() ? 1 : 0)
+    + (ui.facetTopology->isChecked() ? 2 : 0);
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
   const float inside_is_less =  float(ui.inside_is_less_checkBox->isChecked());

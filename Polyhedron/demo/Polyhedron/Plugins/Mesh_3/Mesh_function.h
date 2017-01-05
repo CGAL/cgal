@@ -119,7 +119,7 @@ private:
   Edge_criteria edge_criteria(double b, Mesh_fnt::Polyhedral_domain_tag);
 
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
-  void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag) {}
+  void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
 
 private:
   boost::any object_to_destroy;
@@ -187,10 +187,16 @@ Mesh_function<D_,Tag>::
 
 
 CGAL::Mesh_facet_topology topology(int manifold) {
-  return manifold == 0 ? CGAL::FACET_VERTICES_ON_SURFACE :
-    static_cast<CGAL::Mesh_facet_topology>
-    (CGAL::MANIFOLD |
-     CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
+  switch(manifold) {
+  case 1: return static_cast<CGAL::Mesh_facet_topology>
+      (CGAL::MANIFOLD |
+       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
+  case 2: return CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK;
+  case 3: return static_cast<CGAL::Mesh_facet_topology>
+      (CGAL::MANIFOLD |
+       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK);
+  default: return CGAL::FACET_VERTICES_ON_SURFACE;
+  }
 }
 
 template < typename D_, typename Tag >
@@ -241,6 +247,7 @@ edge_criteria(double b, Mesh_fnt::Domain_tag)
 }
 
 #include "future/Sizing_field_with_aabb_tree.h"
+#include "future/Facet_topological_criterion_with_adjacency.h"
 
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
@@ -331,6 +338,21 @@ launch()
 
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
+}
+
+
+template < typename D_, typename Tag >
+void
+Mesh_function<D_,Tag>::
+tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
+  typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
+       Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
+
+  if((int(c.facet_criteria().topology()) &
+      CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK) != 0)
+  {
+    c.add_facet_criterion(new New_topo_adj_crit(this->domain_));
+  }
 }
 
 
