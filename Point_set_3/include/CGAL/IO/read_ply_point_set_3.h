@@ -59,6 +59,7 @@ private:
 
   struct Abstract_ply_property_to_point_set_property
   {
+    virtual ~Abstract_ply_property_to_point_set_property() { }
     virtual void assign (Ply_reader& reader, typename Point_set::Index index) = 0;
   };
 

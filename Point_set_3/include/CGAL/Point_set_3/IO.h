@@ -216,6 +216,7 @@ namespace internal
   class Abstract_property_printer
   {
   public:
+    virtual ~Abstract_property_printer() { }
     virtual std::string get_string(const typename CGAL::Point_set_3<Point,Vector>::Index& index) = 0;
   };
 

@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Random.h>
 
 #include <fstream>
 #include <limits>
@@ -35,8 +36,6 @@ void print_point_set (const Point_set& point_set)
 
 int main (int, char**)
 {
-  srand (time (NULL));
-  
   Point_set point_set;
 
   Color black = {{ 0, 0, 0 }};
@@ -53,10 +52,10 @@ int main (int, char**)
   point_set.reserve (10); // For memory optimization
   for (std::size_t i = 0; i < 10; ++ i)
     {
-      Point_set::iterator it = point_set.insert (Point (i, i, i));
-      Color c = {{ (unsigned char)(rand() % 256),
-                   (unsigned char)(rand() % 256),
-                   (unsigned char)(rand() % 256) }};
+      Point_set::iterator it = point_set.insert (Point (double(i), double(i), double(i)));
+      Color c = {{ (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
+                   (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
+                   (unsigned char)(CGAL::get_default_random().get_int(0, 255)) }};
       color[*it] = c;
       intensity[*it] = rand() / (double)(RAND_MAX);
     }

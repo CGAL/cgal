@@ -47,7 +47,7 @@ int main (int, char**)
   ps1.add_normal_map();
 
   for (std::size_t i = 0; i < 5; ++ i)
-    ps1.insert (Point (i, i, i), Vector (i, i, i));
+    ps1.insert (Point (double(i), double(i), double(i)), Vector (double(i), double(i), double(i)));
 
   ps1.remove (ps1.end() - 3);
   

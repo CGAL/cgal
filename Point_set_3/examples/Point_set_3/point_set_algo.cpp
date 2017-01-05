@@ -59,7 +59,7 @@ int main (int, char**)
   ransac.add_shape_factory<Sphere>();
   Efficient_ransac::Parameters parameters;
   parameters.probability = 0.05;
-  parameters.min_points = point_set.size() / 3.;
+  parameters.min_points = std::size_t(point_set.size() / 3);
   parameters.epsilon = 0.01;
   parameters.cluster_epsilon = 0.5;
   parameters.normal_threshold = 0.9;   
