@@ -1,11 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Subdivision_method_3.h>
 
 #include <iostream>
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Surface_mesh<Kernel::Point_3> PolygonMesh;
 
 using namespace std;
 using namespace CGAL;
@@ -21,12 +21,12 @@ int main(int argc, char** argv) {
 
   int d = argv[1][0] - '0';
 
-  Polyhedron P;
-  cin >> P; // read the .off
+  PolygonMesh pmesh;
+  cin >> pmesh; // read the .off
 
-  Subdivision_method_3::CatmullClark_subdivision(P, d);
+  Subdivision_method_3::CatmullClark_subdivision(pmesh, d);
 
-  cout << P; // write the .off
+  cout << pmesh; // write the .off
 
   return 0;
 }

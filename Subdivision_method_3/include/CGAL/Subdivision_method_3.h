@@ -149,7 +149,7 @@ namespace Subdivision_method_3 {
   }
 
   template <class PolygonMesh, class NamedParameters>
-  void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
+  void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
     using boost::choose_param;
     using boost::get_param;
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
@@ -177,7 +177,7 @@ namespace Subdivision_method_3 {
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
     unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
-    CatmullClark_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+    DooSabin_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
 
     for(unsigned int i = 0; i < step; i++) Private::DQQ_1step(pmesh, vpm, mask);
   }
@@ -197,7 +197,7 @@ namespace Subdivision_method_3 {
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
     unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
-    CatmullClark_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+    Sqrt3_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
 
     for(unsigned int i = 0; i < step; i++) Private::Sqrt_1step(pmesh, vpm, mask);
   }

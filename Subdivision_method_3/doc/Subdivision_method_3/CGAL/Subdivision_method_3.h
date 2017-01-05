@@ -121,7 +121,7 @@ void PTQ(PolygonMesh& pmesh, const NamedParameters& np);
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \precondition `pmesh` must be a triangle mesh.
+ * \pre `pmesh` must be a triangle mesh.
  **/ 
 
 template <class PolygonMesh, class NamedParameters> 
@@ -147,7 +147,7 @@ void DQQ(PolygonMesh& pmesh, const NamedParameters& np);
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \precondition `pmesh` must be a triangle mesh.
+ * \pre `pmesh` must be a triangle mesh.
  **/ 
 
 template <class PolygonMesh, class NamedParameters> 
@@ -175,7 +175,7 @@ void Sqrt(PolygonMesh& pmesh, const NamedParameters& np);
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \precondition `pmesh` must be a triangle mesh.
+ * \prec `pmesh` must be a triangle mesh.
  **/ 
 
   template <class PolygonMesh, class NamedParameters> 
@@ -248,7 +248,7 @@ void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np);
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \precondition `pmesh` must be a triangle mesh.
+ * \pre `pmesh` must be a triangle mesh.
  **/ 
 
 template <class PolygonMesh, class NamedParameters> 

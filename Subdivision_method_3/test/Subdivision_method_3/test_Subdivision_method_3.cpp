@@ -31,7 +31,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-
+#include <CGAL/Surface_mesh.h>
 using namespace std;
 
 using namespace CGAL;
@@ -118,9 +118,161 @@ void test_Subdivision_surface_3() {
   }
 }
 
+void test_Subdivision_surface_3_SM() {
+  typedef CGAL::Simple_cartesian<double>            Kernel;
+  typedef CGAL::Surface_mesh<Kernel::Point_3>     Polyhedron;
+
+  // test Catmull-Clark subdivision on quad mesh
+  {
+    ifstream mesh(TESTMESH_QUAD);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
+    assert(P.is_valid());
+  }
+
+  // test Catmull-Clark subdivision on 'opened' quad mesh
+  {
+    ifstream mesh(TESTMESH_QUAD_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
+    assert(P.is_valid());
+  }
+
+
+  // test Loop subdivision on tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
+    assert(P.is_valid());
+  }
+
+  // test Loop subdivision on 'opened' tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
+    assert(P.is_valid());
+  }
+
+  // test Doo-Sabin subdivision on general mesh
+  {
+    ifstream mesh(TESTMESH_TRI_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
+    assert(P.is_valid());
+  }
+
+  // test Sqrt-3 subdivision on tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
+    assert(P.is_valid());
+  }
+}
+
+void test_Subdivision_surface_3_SM_NP() {
+  typedef CGAL::Simple_cartesian<double>            Kernel;
+  typedef CGAL::Surface_mesh<Kernel::Point_3>     Polyhedron;
+
+  // test Catmull-Clark subdivision on quad mesh
+  {
+    ifstream mesh(TESTMESH_QUAD);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::CatmullClark_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                                   .number_of_iterations(TEST_DEPTH));
+    assert(P.is_valid());
+  }
+
+  // test Catmull-Clark subdivision on 'opened' quad mesh
+  {
+    ifstream mesh(TESTMESH_QUAD_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::CatmullClark_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                                   .number_of_iterations(TEST_DEPTH));
+    assert(P.is_valid());
+  }
+
+
+  // test Loop subdivision on tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::Loop_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                           .number_of_iterations(TEST_DEPTH));
+    assert(P.is_valid());
+  }
+
+  // test Loop subdivision on 'opened' tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::Loop_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                           .number_of_iterations(TEST_DEPTH));
+    assert(P.is_valid());
+  }
+
+  // test Doo-Sabin subdivision on general mesh
+  {
+    ifstream mesh(TESTMESH_TRI_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::DooSabin_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                               .number_of_iterations(TEST_DEPTH));
+    assert(P.is_valid());
+  }
+
+  // test Sqrt-3 subdivision on tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI);
+
+    Polyhedron P;
+    mesh >> P;
+    /*
+    Subdivision_method_3::Sqrt3_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                            .number_of_iterations(TEST_DEPTH));
+    */
+    assert(P.is_valid());
+  }
+}
 
 int main() {
     test_Subdivision_surface_3();
+    test_Subdivision_surface_3_SM();
+    test_Subdivision_surface_3_SM_NP();
     return 0;
 }
 // EOF //

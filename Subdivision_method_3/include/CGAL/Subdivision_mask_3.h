@@ -162,7 +162,7 @@ public:
     Point& S = get(this->vpmap,vertex);
     
     Point q;
-    for (int i = 0; i < n; i++, ++vcir) {
+    for (unsigned int i = 0; i < n; i++, ++vcir) {
       Point& p2 = get(this->vpmap, target(opposite(*vcir,this->polyhedron),this->polyhedron));
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
