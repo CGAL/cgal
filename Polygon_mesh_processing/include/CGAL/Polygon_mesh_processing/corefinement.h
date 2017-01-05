@@ -630,7 +630,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
   typedef typename boost::lookup_named_param_def <
     CGAL::edge_is_constrained_t,
-    NamedParameters1,
+    NamedParameters2,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
