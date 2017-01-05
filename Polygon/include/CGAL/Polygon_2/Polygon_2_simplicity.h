@@ -208,7 +208,12 @@ template <class VertexData>
 bool Less_segments<VertexData>::
 operator()(Vertex_index i, Vertex_index j)
 {
-    if (m_vertex_data->edges[j.as_int()].is_in_tree) {
+   if (i.as_int() == j.as_int()) {
+        // Some STL implementations may call comparator(x, x)
+        // to verify irreflexivity.  Don't violate less_than_in_tree's
+        // preconditions in such an environment.
+        return false;
+    } else if (m_vertex_data->edges[j.as_int()].is_in_tree) {
         return less_than_in_tree(i,j);
     } else {
         return !less_than_in_tree(j,i);
