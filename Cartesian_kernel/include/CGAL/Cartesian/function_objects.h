@@ -96,6 +96,13 @@ namespace CartesianKernelFunctors {
 		     r.x(), r.y(), r.z(),
 		     s.x(), s.y(), s.z());
     }
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q,
+               const Point_3& r, const Vector_3& n) const
+    {
+      return enum_cast<Angle>(orientation(p,q,r,r+n));
+    }
   };
 
   template <typename K>

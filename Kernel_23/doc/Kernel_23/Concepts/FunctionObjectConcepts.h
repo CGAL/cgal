@@ -85,7 +85,16 @@ public:
   Angle operator()(const Kernel::Point_3&p, 
                    const Kernel::Point_3&q, 
                    const Kernel::Point_3&r, 
-                   const Kernel::Point_3&s); 
+                   const Kernel::Point_3&s);   
+
+  /*!
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
+    on the angle formed by the twonormal vector of the plane `pqr` and `v`. 
+  */ 
+  Angle operator()(const Kernel::Point_3&p, 
+                   const Kernel::Point_3&q, 
+                   const Kernel::Point_3&r, 
+                   const Kernel::Vector_3&s); 
   /// @}
 
 }; /* end Kernel::Angle_3 */

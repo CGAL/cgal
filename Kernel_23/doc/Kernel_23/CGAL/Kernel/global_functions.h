@@ -37,6 +37,7 @@ const CGAL::Point_2<Kernel>& q,
 const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
 
+
 /*!
 
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
@@ -60,6 +61,17 @@ Kernel::FT approximate_dihedral_angle(const CGAL::Point_3<Kernel>& p,
                                       const CGAL::Point_3<Kernel>& q,
                                       const CGAL::Point_3<Kernel>& r,
                                       const CGAL::Point_3<Kernel>& s);
+
+/*!
+
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
+on the angle formed by the normal vector of the plane `pqr` and `v`. 
+*/
+template <typename Kernel>
+Angle angle(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Vector_3<Kernel>& v);
 
 /// @}
 

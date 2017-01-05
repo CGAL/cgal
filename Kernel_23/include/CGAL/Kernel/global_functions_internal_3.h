@@ -70,6 +70,18 @@ angle(const typename K::Point_3 &p,
   return k.angle_3_object()(p, q, r, s);
 }
 
+template <typename K>
+inline
+typename K::Angle
+angle(const typename K::Point_3 &p,
+      const typename K::Point_3 &q,
+      const typename K::Point_3 &r,
+      const typename K::Vector_3 &v,
+      const K &k)
+{
+  return k.angle_3_object()(p, q, r, v);
+}
+
 template < class K >
 inline
 typename K::FT
