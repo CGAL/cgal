@@ -66,13 +66,14 @@ class Scene_distance_polyhedron_item: public Scene_item
 {
   Q_OBJECT
 public:
-  Scene_distance_polyhedron_item(Polyhedron* poly, Polyhedron* polyB, QString other_name)
+  Scene_distance_polyhedron_item(Polyhedron* poly, Polyhedron* polyB, QString other_name, int sampling_pts)
     :Scene_item(NbOfVbos,NbOfVaos),
       poly(poly),
       poly_B(polyB),
       are_buffers_filled(false),
       other_poly(other_name)
   {
+    nb_pts_per_face = sampling_pts;
     this->setRenderingMode(FlatPlusEdges);
     thermal_ramp.build_thermal();
   }
@@ -124,7 +125,6 @@ public:
                  bbox.xmax(),bbox.ymax(),bbox.zmax());
   }
 private:
-
   Polyhedron* poly;
   Polyhedron* poly_B;
   mutable bool are_buffers_filled;
@@ -134,6 +134,7 @@ private:
   mutable std::vector<float> normals;
   mutable std::vector<float> colors;
   Color_ramp thermal_ramp;
+  int nb_pts_per_face;
 
   enum VAOs {
     Facets=0,
@@ -227,7 +228,11 @@ private:
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
-        CGAL::Polygon_mesh_processing::sample_face(f, *poly, 400, std::back_inserter(sampled_points),CGAL::Polygon_mesh_processing::parameters::all_default());
+        std::size_t nb_points =  (std::max)((int)std::ceil(nb_pts_per_face * PMP::face_area(f,*poly,PMP::parameters::geom_traits(Kernel()))),
+                                            1);
+        CGAL::Random_points_in_triangle_3<typename Kernel::Point_3> g(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
+                                                                      f->halfedge()->next()->next()->vertex()->point());
+        CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
         sampled_points.push_back(f->halfedge()->vertex()->point());
         sampled_points.push_back(f->halfedge()->next()->vertex()->point());
         sampled_points.push_back(f->halfedge()->next()->next()->vertex()->point());
@@ -424,6 +429,12 @@ public:
 public Q_SLOTS:
   void createDistanceItems()
   {
+    bool ok = false;
+    nb_pts_per_face = QInputDialog::getInt(mw, tr("Sampling"),
+                                               tr("Number of points per face:"),400, 1,2147483647,1, &ok);
+    if (!ok)
+      return;
+
     //check the initial conditions
     Scene_polyhedron_item* itemA = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().first()));
     Scene_polyhedron_item* itemB = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().last()));
@@ -433,8 +444,8 @@ public Q_SLOTS:
       return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Scene_distance_polyhedron_item* new_itemA = new Scene_distance_polyhedron_item(itemA->polyhedron(),itemB->polyhedron(), itemB->name() );
-    Scene_distance_polyhedron_item* new_itemB = new Scene_distance_polyhedron_item(itemB->polyhedron(),itemA->polyhedron(), itemA->name());
+    Scene_distance_polyhedron_item* new_itemA = new Scene_distance_polyhedron_item(itemA->polyhedron(),itemB->polyhedron(), itemB->name(), nb_pts_per_face);
+    Scene_distance_polyhedron_item* new_itemB = new Scene_distance_polyhedron_item(itemB->polyhedron(),itemA->polyhedron(), itemA->name(), nb_pts_per_face);
     itemA->setVisible(false);
     itemB->setVisible(false);
     new_itemA->setName(QString("%1 to %2").arg(itemA->name()).arg(itemB->name()));
@@ -444,6 +455,7 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 private:
+  int nb_pts_per_face;
   QList<QAction*> _actions;
   Messages_interface* messageInterface;
   //The reference to the scene
