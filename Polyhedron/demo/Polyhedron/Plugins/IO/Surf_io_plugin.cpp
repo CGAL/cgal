@@ -55,7 +55,14 @@ CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
   }
 
   std::vector<Polyhedron> patches;
-  read_surf_file(in, patches);
+  std::vector<MaterialData> material_data;
+  read_surf(in, patches, material_data);
+  for(std::size_t i=0; i<material_data.size(); ++i)
+  {
+   std::cout<<"The patch #"<<i<<":\n  -inner region : material's id = "<<material_data[i].innerRegion.first<<" material's name = "
+           <<material_data[i].innerRegion.second<<"\n  -outer region: material's id = "<<material_data[i].outerRegion.first<<" material's name = "
+             <<material_data[i].outerRegion.second<<std::endl;
+  }
   std::vector<QColor> colors_;
   compute_color_map(QColor(100, 100, 255), patches.size(),
                     std::back_inserter(colors_));
