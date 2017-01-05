@@ -1,0 +1,331 @@
+body, table, div, p, dl {
+    font: Lucida Grande,sans-serif;
+}
+
+.textsc {
+    font-variant: small-caps;
+}
+
+#projectnumber {
+    display: none;
+}
+
+#back-nav {
+    border-bottom: 1px solid;
+    padding: 0.5em;
+    background-color: #FAF9FB;
+}
+
+#back-nav h2 {
+    display: inline;
+}
+
+#back-nav ul
+{
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+#back-nav li
+{
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+
+.tparams .paramname {
+    font-weight: bold;
+    vertical-align: top;
+}
+
+h1 {
+    font-size: 180%;
+}
+
+h2 {
+    font-size: 120%;
+}
+
+
+h1.groupheader {
+    font-size: 150%;
+}
+
+/* enable this to make sections more alike */
+/* h2.groupheader { */
+/*     border-bottom: none; */
+/*     color: black; */
+/*     font-size: 100%; */
+/*     font-weight: bold; */
+/*     margin-top: 1.75em; */
+/*     padding-bottom: 0; */
+/*     padding-top: 0; */
+/*     width: 100%; */
+/* } */
+
+a.el {
+    font-weight: normal;
+}
+
+.memproto a {
+    font-weight: bold;
+}
+
+.PkgSummary {
+    width: 60%;
+}
+
+.PkgShortInfo {
+    width: 20%;
+}
+
+.PkgSummary, .PkgShortInfo, .PkgImage, .PkgImage .image {
+    display:inline-block;
+    padding:5px;
+    vertical-align:middle;
+}
+
+.PkgAuthors {
+    font-style: italic;
+}
+
+.PkgDescription {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: justify;
+}
+
+/* footnote support */
+
+blockquote sup {
+	position: absolute;
+	right: 3px;
+	top: 3px;
+}
+
+.footnote ol li:hover {
+	text-decoration: underline;
+}
+
+a.footnoteBackref, a.footnoteLink {
+	text-decoration: none;
+}
+
+ol.footnotesList {
+        margin: 0;
+	font-size: 0.8em;
+	padding-top: 5px;
+}
+
+ol.footnotesList > li {
+	text-indent: -1.5em;
+	padding-left: 1.5em;
+	vertical-align: top;
+}
+
+.footnoteBackReferenceGroup {
+	padding-right: 0.5em;
+}
+.footnoteBackref {
+	padding-right: 0.25em;
+}
+span.footnoteContent {
+
+}
+span.footnoteContent > p:first-child, span.footnoteContent > div:first-child { 
+	display: inline; 
+}
+span.footnoteContent p, span.footnoteContent div {
+	text-indent: 0em;
+}
+
+/* footnote support end */
+
+dl
+{
+        padding: 0 0 0 0;
+}
+
+dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines, dl.requires
+{
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+dl.section dt a, dl.hasModels dt a, dl.debugs dt a, 
+dl.models dt a, dl.refines dt a, dl.advanced dt a, 
+dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
+{
+    font-weight: bold;
+    color: black;
+}
+
+div.cgal_figure_caption {
+	text-align: center;
+}
+
+div.cgal_video_caption {
+	text-align: center;
+}
+
+div.groupText {
+    font-style: none;
+}
+
+#projectname
+{
+    font: 200% Tahoma, Arial,sans-serif;
+}
+
+/* fix the back button by hacking the layout */
+/* this becomes unnecessary with the latest doxygen, r834 */
+#top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+#doc-content {
+    /* this is the header/footer padding */
+    /* so the content does not hide behind them */
+    padding-top: 91px;
+    padding-bottom: 32px;
+    overflow: visible;
+}
+
+#side-nav {
+    position: fixed;
+}
+
+#titlearea {
+    background: white;
+}
+
+/* this adjusts the anchors inside the doc-content div by the height of */
+/* the header. this is necessary because anchors are not adjusted by the */
+/* height of the position: fixed top div. */
+#doc-content a.anchor {
+    position: absolute; 
+    padding-top: 91px; 
+    margin-top: -91px;
+}
+
+#doc-content .anchor {
+    padding-top: 91px; 
+    margin-top: -91px;
+}
+
+#MSearchResultsWindow {
+    z-index: 2;
+}
+
+dl.note, dl.warning, dl.attention,
+dl.pre, dl.post, dl.invariant, dl.deprecated,
+dl.todo, dl.test, dl.bug
+{
+  margin-left:-7px;
+  padding-left: 3px;
+}
+
+div.CGALAdvanced
+{
+  background:     #eeb;
+  border:         1px solid #9e9e7d;
+  box-shadow:     0.5ex 0.5ex #ccc;
+}
+div.CGALDebug
+{
+  background:     #c8a8d0;
+  border:         1px solid #846f8a;
+  box-shadow:     0.5ex 0.5ex #777;
+}
+dl.deprecated
+{
+  border-left:    4px solid;
+  border-color:   #505050;
+
+  background:     #d8c0a0;
+  border:         1px solid #94836e;
+  box-shadow:     0.5ex 0.5ex #aaa;
+}
+
+div.CGALAdvanced,
+div.CGALDebug,
+dl.deprecated
+{
+  border-radius:  1ex;
+  padding-top:    0.5ex;
+  padding-bottom: 0.25ex;
+  padding-left:   1ex;
+  padding-right:  1ex;
+  margin-bottom:  1ex;
+}
+
+div.CGALModification
+{
+  background:     #f85858;
+  border:         1px solid #000000;
+  box-shadow:     0.5ex 0.5ex #777;
+  border-radius:  1ex;
+  padding-top:    0.5ex;
+  padding-bottom: 0.25ex;
+  padding-left:   1ex;
+  padding-right:  1ex;
+  margin-bottom:  1ex;
+}
+
+.Modification
+{
+  background:     #f85858;
+  border:         0px;
+  padding-top:    0ex;
+  padding-bottom: 0ex;
+  padding-left:   0ex;
+  padding-right:  0ex;
+  margin-bottom:  0ex;
+}
+
+/* The first div in CGALAdvanced sections is the "Advanced" header */
+div.CGALAdvanced > div,
+div.CGALDebug > div,
+dl.deprecated > dt > b > a
+{
+  font-style:  italic;
+  font-weight: bold;
+}
+/* Everything else is noise and should stay in the normal font */
+div.CGALAdvanced > div ~ div,
+div.CGALDebug > div ~ div,
+dl.deprecated > dt ~ dt
+{
+  font-style:  normal;
+  font-weight: normal;
+}
+
+/* More indentation for the text body */
+div.CGALAdvanced > p,
+div.CGALDebug > p,
+dl.deprecated > dd
+{
+  margin-left:   0;
+  margin-top:    1ex;
+  margin-bottom: 1ex;
+  padding-left:  1em;
+  padding-right: 1em;
+}
+
+/* Adjust the top and bottom margins of div.fragment */
+div.fragment {
+    padding: 4px;
+    margin: 1em 4px 1em 4px;
+}
