@@ -229,7 +229,6 @@ namespace CGAL{
       return Params(p, *this);
     }
 
-    //overload
     template <typename Boolean>
     pmp_bgl_named_params<Boolean, random_uniform_sampling_t, self>
     use_random_uniform_sampling(const Boolean& p) const
@@ -238,7 +237,6 @@ namespace CGAL{
       return Params(p, *this);
     }
 
-    //overload
     template <typename Boolean>
     pmp_bgl_named_params<Boolean, grid_sampling_t, self>
     use_grid_sampling(const Boolean& p) const
@@ -247,7 +245,6 @@ namespace CGAL{
       return Params(p, *this);
     }
 
-    //overload
     template <typename Boolean>
     pmp_bgl_named_params<Boolean, monte_carlo_sampling_t, self>
     use_monte_carlo_sampling(const Boolean& p) const
@@ -256,7 +253,6 @@ namespace CGAL{
       return Params(p, *this);
     }
 
-    //overload
     template <typename Boolean>
     pmp_bgl_named_params<Boolean, do_sample_edges_t, self>
     sample_edges(const Boolean& p) const
@@ -265,7 +261,6 @@ namespace CGAL{
       return Params(p, *this);
     }
 
-    //overload
     template <typename Boolean>
     pmp_bgl_named_params<Boolean, do_sample_vertices_t, self>
     sample_vertices(const Boolean& p) const
@@ -274,7 +269,6 @@ namespace CGAL{
       return Params(p, *this);
     }
 
-    //overload
     template <typename Boolean>
     pmp_bgl_named_params<Boolean, do_sample_faces_t, self>
     sample_faces(const Boolean& p) const
@@ -283,7 +277,6 @@ namespace CGAL{
       return Params(p, *this);
     }
 
-    //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_on_faces_t, self>
     number_of_points_on_faces(const NT& n) const
@@ -292,7 +285,6 @@ namespace CGAL{
       return Params(n, *this);
     }
 
-    //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_per_face_t, self>
     number_of_points_per_face(const NT& n) const
@@ -301,7 +293,6 @@ namespace CGAL{
       return Params(n, *this);
     }
 
-    //overload
     template<typename NT>
     pmp_bgl_named_params<NT, grid_spacing_t, self>
     grid_spacing(const NT& n) const
@@ -310,7 +301,6 @@ namespace CGAL{
       return Params(n, *this);
     }
 
-    //overload
     template<typename NT>
     pmp_bgl_named_params<NT, nb_points_per_area_unit_t, self>
     number_of_points_per_area_unit(const NT& n) const
@@ -319,7 +309,6 @@ namespace CGAL{
       return Params(n, *this);
     }
 
-    //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_per_edge_t, self>
     number_of_points_per_edge(const NT& n) const
@@ -328,7 +317,6 @@ namespace CGAL{
       return Params(n, *this);
     }
 
-    //overload
     template<typename NT>
     pmp_bgl_named_params<NT, number_of_points_on_edges_t, self>
     number_of_points_on_edges(const NT& n) const
@@ -337,7 +325,6 @@ namespace CGAL{
       return Params(n, *this);
     }
 
-    //overload
     template<typename NT>
     pmp_bgl_named_params<NT, nb_points_per_distance_unit_t, self>
     number_of_points_per_distance_unit(const NT& n) const
