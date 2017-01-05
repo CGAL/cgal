@@ -793,15 +793,15 @@ public Q_SLOTS:
 
     // std::cerr << att->weight
     //           << " " << (int)(1001. * 2. * std::atan(att->weight) / CGAL_PI) << std::endl;
-    ui_widget.attribute_weight->setValue ((int)(1001. * 2. * std::atan(att->weight) / CGAL_PI));
+    ui_widget.attribute_weight->setValue ((int)(1001. * 2. * std::atan(att->weight()) / CGAL_PI));
 
     for (std::size_t i = 0; i < classification_item->types().size(); ++ i)
       {
         CGAL::Classification::Type::Attribute_effect
           eff = classification_item->types()[i].first->attribute_effect(att);
-        if (eff == CGAL::Classification::Type::PENALIZED_ATT)
+        if (eff == CGAL::Classification::Type::PENALIZING)
           class_rows[i].effect->setCurrentIndex(0);
-        else if (eff == CGAL::Classification::Type::NEUTRAL_ATT)
+        else if (eff == CGAL::Classification::Type::NEUTRAL)
           class_rows[i].effect->setCurrentIndex(1);
         else
           class_rows[i].effect->setCurrentIndex(2);
@@ -824,11 +824,11 @@ public Q_SLOTS:
     if (att == Scene_point_set_classification_item::Attribute_handle())
       return;
 
-    att->weight = std::tan ((CGAL_PI/2.) * v / 1001.);
+    att->weight() = std::tan ((CGAL_PI/2.) * v / 1001.);
     //    std::cerr << att->weight << std::endl;
 
     for (std::size_t i = 0; i < class_rows.size(); ++ i)
-      class_rows[i].effect->setEnabled(att->weight != 0.);
+      class_rows[i].effect->setEnabled(att->weight() != 0.);
   }
 
   void on_effect_changed (int v)
@@ -854,19 +854,19 @@ public Q_SLOTS:
           if (v == 0)
             {
               classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Classification::Type::PENALIZED_ATT);
+                (att, CGAL::Classification::Type::PENALIZING);
               //              std::cerr << " penalized for ";
             }
           else if (v == 1)
             {
               classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Classification::Type::NEUTRAL_ATT);
+                (att, CGAL::Classification::Type::NEUTRAL);
               //              std::cerr << " neutral for ";
             }
           else
             {
               classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Classification::Type::FAVORED_ATT);
+                (att, CGAL::Classification::Type::FAVORING);
               //              std::cerr << " favored for ";
             }
           //          std::cerr << classification_item->types()[i].first->id() << std::endl;

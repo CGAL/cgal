@@ -28,8 +28,10 @@ namespace CGAL {
 
 namespace Classification {
 
+namespace Attribute {
+
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on local distance to a fitted plane.
 
@@ -44,10 +46,10 @@ namespace Classification {
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_distance_to_plane : public Attribute
+class Distance_to_plane : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
 
   std::vector<double> distance_to_plane_attribute;
   
@@ -60,12 +62,12 @@ public:
     \param point_map Property map to access the input points
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_distance_to_plane (RandomAccessIterator begin,
-                               RandomAccessIterator end,
-                               PointMap point_map,
-                               const Local_eigen_analysis& eigen)
+  Distance_to_plane (RandomAccessIterator begin,
+                     RandomAccessIterator end,
+                     PointMap point_map,
+                     const Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     for(std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       distance_to_plane_attribute.push_back
         (CGAL::sqrt (CGAL::squared_distance (get(point_map, begin[i]), eigen.plane(i))));
@@ -84,6 +86,7 @@ public:
   /// \endcond
 };
 
+} // namespace Attribute
 
 } // namespace Classification
   

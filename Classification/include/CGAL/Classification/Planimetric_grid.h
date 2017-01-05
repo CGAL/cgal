@@ -10,14 +10,20 @@ namespace CGAL {
 namespace Classification {
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationDataStructures
 
-    \brief Class that precomputes a 2D planimetric grid used for
-    digital terrain modeling.
+    \brief Class that precomputes a 2D planimetric grid.
+
+    The grid is composed of squared cells with a user defined size,
+    each cell containing the list of indices of the points whose
+    projection along the Z-axis lies within this cell. The mapping
+    from each point to the its cell is also stored.
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+    \tparam PointMap is a model of `ReadablePropertyMap` whose key
+    type is the value type of `RandomAccessIterator` and value type is
+    `Point_3<Kernel>`.
   */
 
 template <typename Kernel, typename RandomAccessIterator, typename PointMap>
@@ -72,15 +78,22 @@ public:
 
   }
 
+  /*!
+    \brief Returns the number of cells along the X-axis.
+  */
   std::size_t width() const { return m_grid.width(); }
+  /*!
+    \brief Returns the number of cells along the Y-axis.
+  */
   std::size_t height() const { return m_grid.height(); }
 
   /*!
     \brief Returns the indices of points lying in the given indexed cell.
   */
   const std::vector<std::size_t>& indices(std::size_t x, std::size_t y) const { return m_grid(x,y); }
+  
   /*!
-    \brief Returns `true` if the indexed cell is to be used for classification.
+    \brief Returns `false` if the cell indexed by `(x,y)` is empty, `true` otherwise.
   */
   bool mask(std::size_t x, std::size_t y) const { return (!(m_grid(x,y).empty())); }
 

@@ -210,9 +210,9 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
         {
-          colors_points.push_back ((double)(m_points->point_set()->red(*it)) / 255.);
-          colors_points.push_back ((double)(m_points->point_set()->green(*it)) / 255.);
-          colors_points.push_back ((double)(m_points->point_set()->blue(*it)) / 255.);
+          colors_points.push_back (m_points->point_set()->red(*it));
+          colors_points.push_back (m_points->point_set()->green(*it));
+          colors_points.push_back (m_points->point_set()->blue(*it));
         }
     }
   else if (index_color == 1) // classif
@@ -262,8 +262,8 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
   else
     {
       Attribute_handle att = m_psc->get_attribute(index_color - 3);
-      double weight = att->weight;
-      att->weight = att->max;
+      double weight = att->weight();
+      att->weight() = att->max;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
         {
@@ -271,7 +271,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
           colors_points.push_back (ramp.g(att->normalized(*it)));
           colors_points.push_back (ramp.b(att->normalized(*it)));
         }
-      att->weight = weight;
+      att->weight() = weight;
     }
 
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
@@ -519,7 +519,7 @@ void Scene_point_set_classification_item::train()
       return;
     }
 
-  m_psc->training(m_nb_trials);
+  m_psc->train(m_nb_trials);
   m_psc->run();
   m_helper->info();
 

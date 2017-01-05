@@ -8,37 +8,27 @@ namespace Classification {
 /*!
 \ingroup PkgClassification
 
-\brief Classification type.
-
-A type is what is sought after when performing classification on an
-input set (for example: vegetation, ground, etc.). It is defined
-as a set of relationship with classification attributes.
+\brief %Classification type (for example: vegetation, ground, etc.)
+defined as a set of relationship with classification attributes.
 
 */
 class Type
 {
 public:
   
-  enum Attribute_effect /// Defines how an attribute affects this type.
-    {
-      FAVORED_ATT = 0, ///< High values of the attribute favor this type
-      NEUTRAL_ATT = 1, ///< The attribute has no effect on this type
-      PENALIZED_ATT = 2 ///< Low values of the attribute favor this type
-    };
-
 private:
   /// \cond SKIP_IN_MANUAL
-  std::string m_id;
+  std::string m_name;
   std::map<Attribute_handle, Attribute_effect> m_attribute_effects;
   /// \endcond
 
 public:
 
   /*! 
-    \param id The name of the classification type
+    \param name The name of the classification type
     (e.g. vegetation).
   */ 
-  Type (std::string id) : m_id (id) { }
+  Type (std::string name) : m_name (name) { }
 
   /*! 
     \brief Sets how an attribute affects the classification type.
@@ -60,27 +50,24 @@ public:
   {
     std::map<Attribute_handle, Attribute_effect>::iterator
       search = m_attribute_effects.find (att);
-    return (search == m_attribute_effects.end () ? NEUTRAL_ATT : search->second);
+    return (search == m_attribute_effects.end () ? NEUTRAL : search->second);
   }
 
-  /*!
-    \brief Returns the ID of the classification type.
-  */
-  const std::string& id() const { return m_id; }
+  const std::string& name() const { return m_name; }
   
   /// \cond SKIP_IN_MANUAL
   void info()
   {
-    std::cerr << "Attribute " << m_id << ": ";
+    std::cerr << "Attribute " << m_name << ": ";
     for (std::map<Attribute_handle, Attribute_effect>::iterator it = m_attribute_effects.begin();
          it != m_attribute_effects.end(); ++ it)
       {
-        if (it->second == NEUTRAL_ATT)
+        if (it->second == NEUTRAL)
           continue;
         
         std::cerr << it->first;
-        if (it->second == FAVORED_ATT) std::cerr << " (favored), ";
-        else if (it->second == PENALIZED_ATT) std::cerr << " (penalized), ";
+        if (it->second == FAVORING) std::cerr << " (favored), ";
+        else if (it->second == PENALIZING) std::cerr << " (penalized), ";
       }
     std::cerr << std::endl;
   }

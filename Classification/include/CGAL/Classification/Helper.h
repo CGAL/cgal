@@ -51,29 +51,27 @@ namespace Classification {
   
 
 /*!
-\ingroup PkgClassification
+\ingroup PkgClassificationDataStructures
 
 \brief Class designed to help the user using the classification
-algorithm.
-
-The classification algorithm is designed to be as flexible as
-possible, letting the user free to use its own data structures,
-attributes and classification types.
-
-Nevertheless, \cgal provides a predefined framework that should work
-correctly on common urban point sets. Using this class, classification
-can be performed without having to instanciate all attributes and data
-structures separately.
-
-This class also provides functions to save and load a specific
+algorithm. The classification algorithm is designed to be as flexible
+as possible, letting the user free to use its own data structures,
+attributes and classification types. Nevertheless, \cgal provides a
+predefined framework that should work correctly on common urban point
+sets. Using this class, classification can be performed without having
+to instantiate all attributes and data structures separately. This
+class also provides functions to save and load a specific
 configuration (attribute effects and weights), as well as a function
 to write a classified point set in a PLY format with colors and
 labels.
 
-\tparam Kernel The geometric kernel used
+\tparam Kernel is a model of \cgal Kernel
 \tparam RandomAccessIterator Iterator over the input
-\tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-\tparam DiagonalizeTraits Solver used for matrix diagonalization.
+\tparam PointMap is a model of `ReadablePropertyMap` whose key
+type is the value type of `RandomAccessIterator` and value type is
+`Point_3<Kernel>`.
+\tparam DiagonalizeTraits is a model of `DiagonalizeTraits` used
+for matrix diagonalization.
 */
 template <typename Kernel,
           typename RandomAccessIterator,
@@ -102,29 +100,29 @@ public:
   /// \cond SKIP_IN_MANUAL
   typedef typename Kernel::Point_3                            Point;
   
-  typedef Attribute_anisotropy
+  typedef Attribute::Anisotropy
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Anisotropy;
-  typedef Attribute_distance_to_plane
+  typedef Attribute::Distance_to_plane
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Distance_to_plane;
-  typedef Attribute_eigentropy
+  typedef Attribute::Eigentropy
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Eigentropy;
-  typedef Attribute_elevation
+  typedef Attribute::Elevation
   <Kernel, RandomAccessIterator, PointMap>                    Elevation;
-  typedef Attribute_linearity
+  typedef Attribute::Linearity
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Linearity;
-  typedef Attribute_omnivariance
+  typedef Attribute::Omnivariance
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Omnivariance;
-  typedef Attribute_planarity
+  typedef Attribute::Planarity
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Planarity;
-  typedef Attribute_sphericity
+  typedef Attribute::Sphericity
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Sphericity;
-  typedef Attribute_sum_eigenvalues
+  typedef Attribute::Sum_eigenvalues
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Sum_eigen;
-  typedef Attribute_surface_variation
+  typedef Attribute::Surface_variation
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Surface_variation;
-  typedef Attribute_vertical_dispersion
+  typedef Attribute::Vertical_dispersion
   <Kernel, RandomAccessIterator, PointMap>                    Dispersion;
-  typedef Attribute_verticality
+  typedef Attribute::Verticality
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Verticality;
   /// \endcond
   
@@ -197,9 +195,9 @@ public:
   
 
   /*!
-    \brief Constructs an helper object.
+    \brief Constructs a helper object.
 
-    This triggers the instanciation of all necessary data structures
+    This triggers the instantiation of all necessary data structures
     (neighborhood, eigen analysis, etc.) on the specified number of
     scales.
 
@@ -207,7 +205,7 @@ public:
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
 
-    \param nb_scales Number of scales. Default only uses the first
+    \param nb_scales Number of scales. %Default only uses the first
     scale (unaltered point set). Increasing this value generates
     recursively simplified point set and computes the associated
     attributes. Using `nb_scales=5` usually provides satisfying
@@ -238,16 +236,16 @@ public:
 
 
   /*!
-    \brief Constructs an helper object by loading a configuration file.
+    \brief Constructs an helper object by loading the stream `input`.
 
     All data structures, attributes and types specified in the input
-    file `filename` are instanciated if possible (in particular,
+    stream `input` are instantiated if possible (in particular,
     property maps needed should be provided).
 
     \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
     \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
-    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_`.
-    \param filename Name of the output file
+    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
+    \param input Input stream
     \param psc Classification object where to store attributes and types
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
@@ -259,14 +257,14 @@ public:
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
            typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >
-  Helper (const char* filename, Classifier& psc, 
+  Helper (std::istream& input, Classifier& psc, 
           RandomAccessIterator begin, RandomAccessIterator end, 
           PointMap point_map,
           VectorMap normal_map = VectorMap(),
           ColorMap color_map = ColorMap(),
           EchoMap echo_map = EchoMap())
   {
-    load (filename, psc, begin, end, point_map, normal_map, color_map, echo_map);
+    load (input, psc, begin, end, point_map, normal_map, color_map, echo_map);
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -313,16 +311,16 @@ public:
       {
         std::size_t nb_useful = 0;
         for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
-          if (m_scales[i]->attributes[j]->weight != 0.)
+          if (m_scales[i]->attributes[j]->weight() != 0.)
             nb_useful ++;
         std::cerr << " * scale " << i << " with size " << m_scales[i]->voxel_size
                   << ", " << nb_useful << " useful attribute(s)";
         if (nb_useful != 0) std::cerr << ":" << std::endl;
         else std::cerr << std::endl;
         for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
-          if (m_scales[i]->attributes[j]->weight != 0.)
+          if (m_scales[i]->attributes[j]->weight() != 0.)
             std::cerr << "   - " << m_scales[i]->attributes[j]->id()
-                      << " (weight = " << m_scales[i]->attributes[j]->weight << ")" << std::endl;
+                      << " (weight = " << m_scales[i]->attributes[j]->weight() << ")" << std::endl;
       }
   }
   /// \endcond
@@ -383,17 +381,17 @@ public:
 
     Generate, for all precomputed scales, the following attributes:
 
-    - `CGAL::Classification::Attribute_anisotropy`
-    - `CGAL::Classification::Attribute_distance_to_plane`
-    - `CGAL::Classification::Attribute_eigentropy`
-    - `CGAL::Classification::Attribute_elevation`
-    - `CGAL::Classification::Attribute_linearity`
-    - `CGAL::Classification::Attribute_omnivariance`
-    - `CGAL::Classification::Attribute_planarity`
-    - `CGAL::Classification::Attribute_sphericity`
-    - `CGAL::Classification::Attribute_sum_eigenvalues`
-    - `CGAL::Classification::Attribute_surface_variation`
-    - `CGAL::Classification::Attribute_vertical_dispersion`
+    - `CGAL::Classification::Attribute::Anisotropy`
+    - `CGAL::Classification::Attribute::Distance_to_plane`
+    - `CGAL::Classification::Attribute::Eigentropy`
+    - `CGAL::Classification::Attribute::Elevation`
+    - `CGAL::Classification::Attribute::Linearity`
+    - `CGAL::Classification::Attribute::Omnivariance`
+    - `CGAL::Classification::Attribute::Planarity`
+    - `CGAL::Classification::Attribute::Sphericity`
+    - `CGAL::Classification::Attribute::Sum_eigenvalues`
+    - `CGAL::Classification::Attribute::Surface_variation`
+    - `CGAL::Classification::Attribute::Vertical_dispersion`
 
     \param psc The classification object where to store the attributes
     \param begin Iterator to the first input object
@@ -430,7 +428,7 @@ public:
 
     Generate, for all precomputed scales, the following attribute:
 
-    - `CGAL::Classification::Attribute_verticality`
+    - `CGAL::Classification::Attribute::Verticality`
 
     If the normal map is left to its default type
     `CGAL::Empty_property_map`, then the verticality attributes are
@@ -480,15 +478,15 @@ public:
 
     Generate the following attributes:
 
-    - 9 attributes `CGAL::Classification::Attribute_hsv` on
+    - 9 attributes `CGAL::Classification::Attribute::Hsv` on
       channel 0 (hue) with mean ranging from 0° to 360° and standard
       deviation of 22.5.
 
-    - 5 attributes `CGAL::Classification::Attribute_hsv` on
+    - 5 attributes `CGAL::Classification::Attribute::Hsv` on
       channel 1 (saturation) with mean ranging from 0 to 100 and standard
       deviation of 12.5
 
-    - 5 attributes `CGAL::Classification::Attribute_hsv` on
+    - 5 attributes `CGAL::Classification::Attribute::Hsv` on
       channel 2 (value) with mean ranging from 0 to 100 and standard
       deviation of 12.5
 
@@ -507,7 +505,7 @@ public:
                                        ColorMap color_map)
   {
 
-    typedef Attribute_hsv<Kernel, RandomAccessIterator, ColorMap> Hsv;
+    typedef Attribute::Hsv<Kernel, RandomAccessIterator, ColorMap> Hsv;
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i <= 8; ++ i)
       {
@@ -541,7 +539,7 @@ public:
 
     Generate, for all precomputed scales, the following attribute:
 
-    - `CGAL::Classification::Attribute_echo_scatter`
+    - `CGAL::Classification::Attribute::Echo_scatter`
 
     \tparam EchoMap Property map to access the echo values of the input points (if any).
     \param psc The classification object where to store the attributes
@@ -554,7 +552,7 @@ public:
                                       RandomAccessIterator begin, RandomAccessIterator end,
                                       EchoMap echo_map)
   {
-    typedef Attribute_echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap> Echo_scatter;
+    typedef Attribute::Echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap> Echo_scatter;
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
@@ -601,7 +599,7 @@ public:
 
 
   /*!
-    \brief Saves the current configuration in the file `filename`.
+    \brief Saves the current configuration in the stream `output`.
 
     This allows to easily save and recover a specific classification
     configuration, that is to say:
@@ -614,10 +612,10 @@ public:
     the `load()` method and the constructor that takes a file name
     as parameter.
 
-    \param filename Name of the output file
+    \param output Output stream
     \param psc Classification object whose attributes and types must be saved
   */
-  void save (const char* filename, Classifier& psc)
+  void save (std::ostream& output, Classifier& psc)
   {
     boost::property_tree::ptree tree;
 
@@ -631,12 +629,12 @@ public:
     for (std::size_t i = 0; i < psc.number_of_attributes(); ++ i)
       {
         Attribute_handle att = psc.get_attribute(i);
-        if (att->weight == 0)
+        if (att->weight() == 0)
           continue;
         boost::property_tree::ptree ptr;
         
         ptr.put("id", name_att (att, map_scale));
-        ptr.put("weight", att->weight);
+        ptr.put("weight", att->weight());
         tree.add_child("classification.attributes.attribute", ptr);
       }
 
@@ -649,16 +647,16 @@ public:
         for (std::size_t j = 0; j < psc.number_of_attributes(); ++ j)
           {
             Attribute_handle att = psc.get_attribute(j);
-            if (att->weight == 0)
+            if (att->weight() == 0)
               continue;
             boost::property_tree::ptree ptr2;
             ptr2.put("id", name_att (att, map_scale));
-            Type::Attribute_effect effect = type->attribute_effect(att);
-            if (effect == Type::Attribute_effect::PENALIZED_ATT)
+            Attribute::Effect effect = type->attribute_effect(att);
+            if (effect == Attribute::PENALIZING)
               ptr2.put("effect", "penalized");
-            else if (effect == Type::Attribute_effect::NEUTRAL_ATT)
+            else if (effect == Attribute::NEUTRAL)
               ptr2.put("effect", "neutral");
-            else if (effect == Type::Attribute_effect::FAVORED_ATT)
+            else if (effect == Attribute::FAVORING)
               ptr2.put("effect", "favored");
             ptr.add_child("attribute", ptr2);
           }
@@ -667,15 +665,15 @@ public:
 
     // Write property tree to XML file
     boost::property_tree::xml_writer_settings<std::string> settings(' ', 3);
-    boost::property_tree::write_xml(filename, tree, std::locale(), settings);
+    boost::property_tree::write_xml(output, tree, settings);
   }
 
   
   /*!
-    \brief Load a configuration from the file `filename`.
+    \brief Load a configuration from the stream `input`.
 
     All data structures, attributes and types specified in the input
-    file `filename` are instanciated if possible (in particular,
+    stream `input` are instantiated if possible (in particular,
     property maps needed should be provided).
 
     The input file is written in an XML format written by the `save()`
@@ -684,7 +682,7 @@ public:
     \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
     \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
     \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_`.
-    \param filename Name of the output file
+    \param input Input stream
     \param psc Classification object where to store attributes and types
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
@@ -696,7 +694,7 @@ public:
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
            typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >
-  bool load (const char* filename, Classifier& psc, 
+  bool load (std::istream& input, Classifier& psc, 
              RandomAccessIterator begin, RandomAccessIterator end, 
              PointMap point_map,
              VectorMap normal_map = VectorMap(),
@@ -704,8 +702,8 @@ public:
              EchoMap echo_map = EchoMap())
 
   {
-    typedef Attribute_echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap> Echo_scatter;
-    typedef Attribute_hsv<Kernel, RandomAccessIterator, ColorMap> Hsv;
+    typedef Attribute::Echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap> Echo_scatter;
+    typedef Attribute::Hsv<Kernel, RandomAccessIterator, ColorMap> Hsv;
     
     clear();
     
@@ -714,7 +712,7 @@ public:
        boost::make_transform_iterator (end, CGAL::Property_map_to_unary_function<PointMap>(point_map)));
 
     boost::property_tree::ptree tree;
-    boost::property_tree::read_xml(filename, tree);
+    boost::property_tree::read_xml(input, tree);
 
     double voxel_size = tree.get<double>("classification.parameters.voxel_size");
     
@@ -829,7 +827,7 @@ public:
 
         Attribute_handle att = psc.get_attribute (psc.number_of_attributes() - 1);
         m_scales[scale]->attributes.push_back (att);
-        att->weight = weight;
+        att->weight() = weight;
         att_map[full_id] = att;
       }
     std::cerr << "Elevation took " << t.time() << " second(s)" << std::endl;
@@ -851,11 +849,11 @@ public:
             Attribute_handle att = it->second;
             std::string effect = v2.second.get<std::string>("effect");
             if (effect == "penalized")
-              new_type->set_attribute_effect (att, Type::PENALIZED_ATT);
+              new_type->set_attribute_effect (att, Attribute::PENALIZING);
             else if (effect == "neutral")
-              new_type->set_attribute_effect (att, Type::NEUTRAL_ATT);
+              new_type->set_attribute_effect (att, Attribute::NEUTRAL);
             else
-              new_type->set_attribute_effect (att, Type::FAVORED_ATT);
+              new_type->set_attribute_effect (att, Attribute::FAVORING);
           }
       }
     

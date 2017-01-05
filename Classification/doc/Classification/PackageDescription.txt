@@ -4,8 +4,12 @@
 \defgroup PkgClassificationConcepts Concepts
 \ingroup PkgClassification
 
-\defgroup PkgClassificationShapes Shapes
+\defgroup PkgClassificationDataStructures Data Structures
 \ingroup PkgClassification
+
+\defgroup PkgClassificationAttributes Predefined Attributes
+\ingroup PkgClassification
+
 
 \addtogroup PkgClassification
 
@@ -13,14 +17,14 @@
 \cgalPkgPicture{data_classif.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgAuthors{Simon Giraudot, Florent Lafarge}
 \cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can classify any type of data, compute its own local attributes on the data set and define its own classes based on these attributes.}
 \cgalPkgManuals{Chapter_Classification, PkgClassification}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.9}
-\cgalPkgBib{cgal:ovja-pssd}
+\cgalPkgBib{cgal:lm-clscm-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
@@ -54,20 +58,20 @@
 
 ## Predefined Attributes ##
 
-- `CGAL::Classification::Attribute_anisotropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_distance_to_plane<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap>`
-- `CGAL::Classification::Attribute_eigentropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_elevation<Kernel, RandomAccessIterator, PointMap>`
-- `CGAL::Classification::Attribute_hsv<Kernel, RandomAccessIterator, ColorMap>`
-- `CGAL::Classification::Attribute_linearity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_omnivariance<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_planarity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_sphericity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_sum_eigenvalues<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_surface_variation<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute_vertical_dispersion<Kernel, RandomAccessIterator, PointMap>`
-- `CGAL::Classification::Attribute_verticality<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Anisotropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Distance_to_plane<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap>`
+- `CGAL::Classification::Attribute::Eigentropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Elevation<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Classification::Attribute::Hsv<Kernel, RandomAccessIterator, ColorMap>`
+- `CGAL::Classification::Attribute::Linearity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Omnivariance<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Planarity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Sphericity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Sum_eigenvalues<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Surface_variation<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Vertical_dispersion<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Classification::Attribute::Verticality<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
 
 
 */

@@ -7,14 +7,16 @@
 namespace CGAL {
 
 namespace Classification {
+
+namespace Attribute {
   
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on echo scatter.
 
     The number of returns (echo number) is a useful information
-    provided by most LIDAR sensor. It can help identifying trees.
+    provided by most LIDAR sensors. It can help identify trees.
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
@@ -22,10 +24,13 @@ namespace Classification {
     \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap, typename EchoMap>
-class Attribute_echo_scatter : public Attribute
+class Echo_scatter : public Attribute_base
 {
-  typedef Classification::Image<float> Image_float;
+public:
   typedef Classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
+private:  
+  typedef Classification::Image<float> Image_float;
+
 
   std::vector<double> echo_scatter;
   
@@ -40,14 +45,14 @@ public:
     \param grid_resolution Resolution of the planimetric grid
     \param radius_neighbors Radius of local neighborhoods
   */
-  Attribute_echo_scatter (RandomAccessIterator begin,
-                          RandomAccessIterator end,
-                          EchoMap echo_map,
-                          Grid& grid,
-                          const double grid_resolution,
-                          double radius_neighbors = 1.)
+  Echo_scatter (RandomAccessIterator begin,
+                RandomAccessIterator end,
+                EchoMap echo_map,
+                Grid& grid,
+                const double grid_resolution,
+                double radius_neighbors = 1.)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     Image_float Scatter(grid.width(), grid.height());
     for (std::size_t j = 0; j < grid.height(); j++)
       for (std::size_t i = 0; i < grid.width(); i++)
@@ -116,6 +121,8 @@ public:
   virtual std::string id() { return "echo_scatter"; }
   /// \endcond
 };
+
+} // namespace Attribute
 
 } // namespace Classification
   

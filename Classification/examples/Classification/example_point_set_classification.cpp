@@ -30,13 +30,13 @@ typedef CGAL::Classification::Local_eigen_analysis<Kernel, Iterator, Pmap>   Loc
 typedef CGAL::Classification::Type_handle                                           Type_handle;
 typedef CGAL::Classification::Attribute_handle                                      Attribute_handle;
 
-typedef CGAL::Classification::Attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
-typedef CGAL::Classification::Attribute_linearity<Kernel, Iterator, Pmap>           Linearity;
-typedef CGAL::Classification::Attribute_omnivariance<Kernel, Iterator, Pmap>        Omnivariance;
-typedef CGAL::Classification::Attribute_planarity<Kernel, Iterator, Pmap>           Planarity;
-typedef CGAL::Classification::Attribute_surface_variation<Kernel, Iterator, Pmap>   Surface_variation;
-typedef CGAL::Classification::Attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
-typedef CGAL::Classification::Attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
+typedef CGAL::Classification::Attribute::Distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
+typedef CGAL::Classification::Attribute::Linearity<Kernel, Iterator, Pmap>           Linearity;
+typedef CGAL::Classification::Attribute::Omnivariance<Kernel, Iterator, Pmap>        Omnivariance;
+typedef CGAL::Classification::Attribute::Planarity<Kernel, Iterator, Pmap>           Planarity;
+typedef CGAL::Classification::Attribute::Surface_variation<Kernel, Iterator, Pmap>   Surface_variation;
+typedef CGAL::Classification::Attribute::Elevation<Kernel, Iterator, Pmap>           Elevation;
+typedef CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
 
 
   ///////////////////////////////////////////////////////////////////
@@ -89,13 +89,13 @@ int main (int argc, char** argv)
                                         radius_dtm));
   
   std::cerr << "Setting weights" << std::endl;
-  d2p->weight  = 6.75e-2;
-  lin->weight  = 1.19;
-  omni->weight = 1.34e-1;
-  plan->weight = 7.32e-1;
-  surf->weight = 1.36e-1;
-  disp->weight = 5.45e-1;
-  elev->weight = 1.47e1;
+  d2p->weight()  = 6.75e-2;
+  lin->weight()  = 1.19;
+  omni->weight() = 1.34e-1;
+  plan->weight() = 7.32e-1;
+  surf->weight() = 1.36e-1;
+  disp->weight() = 5.45e-1;
+  elev->weight() = 1.47e1;
 
   
   // Add attributes to classification object
@@ -118,31 +118,31 @@ int main (int argc, char** argv)
   
   // Create classification type and define how attributes affect them
   Type_handle ground = psc.add_classification_type ("ground");
-  ground->set_attribute_effect (d2p,  CGAL::Classification::Type::NEUTRAL_ATT);
-  ground->set_attribute_effect (lin,  CGAL::Classification::Type::PENALIZED_ATT);
-  ground->set_attribute_effect (omni, CGAL::Classification::Type::NEUTRAL_ATT);
-  ground->set_attribute_effect (plan, CGAL::Classification::Type::FAVORED_ATT);
-  ground->set_attribute_effect (surf, CGAL::Classification::Type::PENALIZED_ATT);
-  ground->set_attribute_effect (disp, CGAL::Classification::Type::NEUTRAL_ATT);
-  ground->set_attribute_effect (elev, CGAL::Classification::Type::PENALIZED_ATT);
+  ground->set_attribute_effect (d2p,  CGAL::Classification::Attribute::NEUTRAL);
+  ground->set_attribute_effect (lin,  CGAL::Classification::Attribute::PENALIZING);
+  ground->set_attribute_effect (omni, CGAL::Classification::Attribute::NEUTRAL);
+  ground->set_attribute_effect (plan, CGAL::Classification::Attribute::FAVORING);
+  ground->set_attribute_effect (surf, CGAL::Classification::Attribute::PENALIZING);
+  ground->set_attribute_effect (disp, CGAL::Classification::Attribute::NEUTRAL);
+  ground->set_attribute_effect (elev, CGAL::Classification::Attribute::PENALIZING);
 
   Type_handle vege = psc.add_classification_type ("vegetation");
-  vege->set_attribute_effect (d2p,  CGAL::Classification::Type::FAVORED_ATT);
-  vege->set_attribute_effect (lin,  CGAL::Classification::Type::NEUTRAL_ATT);
-  vege->set_attribute_effect (omni, CGAL::Classification::Type::FAVORED_ATT);
-  vege->set_attribute_effect (plan, CGAL::Classification::Type::NEUTRAL_ATT);
-  vege->set_attribute_effect (surf, CGAL::Classification::Type::NEUTRAL_ATT);
-  vege->set_attribute_effect (disp, CGAL::Classification::Type::FAVORED_ATT);
-  vege->set_attribute_effect (elev, CGAL::Classification::Type::NEUTRAL_ATT);
+  vege->set_attribute_effect (d2p,  CGAL::Classification::Attribute::FAVORING);
+  vege->set_attribute_effect (lin,  CGAL::Classification::Attribute::NEUTRAL);
+  vege->set_attribute_effect (omni, CGAL::Classification::Attribute::FAVORING);
+  vege->set_attribute_effect (plan, CGAL::Classification::Attribute::NEUTRAL);
+  vege->set_attribute_effect (surf, CGAL::Classification::Attribute::NEUTRAL);
+  vege->set_attribute_effect (disp, CGAL::Classification::Attribute::FAVORING);
+  vege->set_attribute_effect (elev, CGAL::Classification::Attribute::NEUTRAL);
   
   Type_handle roof = psc.add_classification_type ("roof");
-  roof->set_attribute_effect (d2p,  CGAL::Classification::Type::NEUTRAL_ATT);
-  roof->set_attribute_effect (lin,  CGAL::Classification::Type::PENALIZED_ATT);
-  roof->set_attribute_effect (omni, CGAL::Classification::Type::FAVORED_ATT);
-  roof->set_attribute_effect (plan, CGAL::Classification::Type::FAVORED_ATT);
-  roof->set_attribute_effect (surf, CGAL::Classification::Type::PENALIZED_ATT);
-  roof->set_attribute_effect (disp, CGAL::Classification::Type::NEUTRAL_ATT);
-  roof->set_attribute_effect (elev, CGAL::Classification::Type::FAVORED_ATT);
+  roof->set_attribute_effect (d2p,  CGAL::Classification::Attribute::NEUTRAL);
+  roof->set_attribute_effect (lin,  CGAL::Classification::Attribute::PENALIZING);
+  roof->set_attribute_effect (omni, CGAL::Classification::Attribute::FAVORING);
+  roof->set_attribute_effect (plan, CGAL::Classification::Attribute::FAVORING);
+  roof->set_attribute_effect (surf, CGAL::Classification::Attribute::PENALIZING);
+  roof->set_attribute_effect (disp, CGAL::Classification::Attribute::NEUTRAL);
+  roof->set_attribute_effect (elev, CGAL::Classification::Attribute::FAVORING);
 
   //! [Classification Types]
   ///////////////////////////////////////////////////////////////////

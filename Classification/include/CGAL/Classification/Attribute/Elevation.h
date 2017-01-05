@@ -30,8 +30,10 @@ namespace CGAL {
 
 namespace Classification {
 
+namespace Attribute {
+
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on local elevation.
 
@@ -47,7 +49,7 @@ namespace Classification {
 
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap>
-class Attribute_elevation : public Attribute
+class Elevation : public Attribute_base
 {
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
@@ -68,14 +70,14 @@ public:
     \param radius_dtm Radius for digital terrain modeling (must be bigger than the size of a building)
 
   */
-  Attribute_elevation (RandomAccessIterator begin,
-                       RandomAccessIterator end,
-                       PointMap point_map,
-                       const Grid& grid,
-                       const double grid_resolution,
-                       double radius_dtm = -1.)
+  Elevation (RandomAccessIterator begin,
+             RandomAccessIterator end,
+             PointMap point_map,
+             const Grid& grid,
+             const double grid_resolution,
+             double radius_dtm = -1.)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     if (radius_dtm < 0.)
       radius_dtm = 100. * grid_resolution;
 
@@ -158,6 +160,8 @@ public:
   virtual std::string id() { return "elevation"; }
   /// \endcond
 };
+
+} // namespace Attribute
 
 } // namespace Classification
 

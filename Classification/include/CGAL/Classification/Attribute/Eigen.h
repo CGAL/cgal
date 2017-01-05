@@ -28,9 +28,10 @@ namespace CGAL {
 
 namespace Classification {
 
+namespace Attribute {
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -48,7 +49,7 @@ namespace Classification {
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_linearity : public Attribute
+class Linearity : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -61,11 +62,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_linearity (RandomAccessIterator begin,
-                       RandomAccessIterator end,
-                       Local_eigen_analysis& eigen)
+  Linearity (RandomAccessIterator begin,
+             RandomAccessIterator end,
+             Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
@@ -89,7 +90,7 @@ public:
 };
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -107,10 +108,10 @@ public:
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_planarity : public Attribute
+class Planarity : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
@@ -120,11 +121,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_planarity (RandomAccessIterator begin,
-                       RandomAccessIterator end,
-                       Local_eigen_analysis& eigen)
+  Planarity (RandomAccessIterator begin,
+             RandomAccessIterator end,
+             Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
@@ -148,7 +149,7 @@ public:
 };
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -166,10 +167,10 @@ public:
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_sphericity : public Attribute
+class Sphericity : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
@@ -179,11 +180,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_sphericity (RandomAccessIterator begin,
-                        RandomAccessIterator end,
-                        Local_eigen_analysis& eigen)
+  Sphericity (RandomAccessIterator begin,
+              RandomAccessIterator end,
+              Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
@@ -206,7 +207,7 @@ public:
 };
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -224,10 +225,10 @@ public:
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_omnivariance : public Attribute
+class Omnivariance : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
@@ -237,11 +238,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_omnivariance (RandomAccessIterator begin,
-                          RandomAccessIterator end,
-                          Local_eigen_analysis& eigen)
+  Omnivariance (RandomAccessIterator begin,
+                RandomAccessIterator end,
+                Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
@@ -261,7 +262,7 @@ public:
 };
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -279,10 +280,10 @@ public:
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_anisotropy : public Attribute
+class Anisotropy : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
@@ -292,11 +293,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_anisotropy (RandomAccessIterator begin,
-                        RandomAccessIterator end,
-                        Local_eigen_analysis& eigen)
+  Anisotropy (RandomAccessIterator begin,
+              RandomAccessIterator end,
+              Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
@@ -319,7 +320,7 @@ public:
 };
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -337,7 +338,7 @@ public:
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_eigentropy : public Attribute
+class Eigentropy : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -350,11 +351,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_eigentropy (RandomAccessIterator begin,
-                        RandomAccessIterator end,
-                        Local_eigen_analysis& eigen)
+  Eigentropy (RandomAccessIterator begin,
+              RandomAccessIterator end,
+              Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
@@ -381,7 +382,7 @@ public:
 };
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -399,7 +400,7 @@ public:
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_sum_eigenvalues : public Attribute
+class Sum_eigenvalues : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -412,15 +413,15 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_sum_eigenvalues (RandomAccessIterator begin,
-                             RandomAccessIterator end,
-                             Local_eigen_analysis& eigen)
+  Sum_eigenvalues (RandomAccessIterator begin,
+                   RandomAccessIterator end,
+                   Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
-      attrib.push_back (eigen.sum_eigenvalues(i));
+      attrib.push_back (eigen.sum_of_eigenvalues(i));
 
     this->compute_mean_max (attrib, mean, this->max);
   }
@@ -434,7 +435,7 @@ public:
 };
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on the eigenvalues of the covariance matrix
     of a local neighborhood.
@@ -452,10 +453,10 @@ public:
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_surface_variation : public Attribute
+class Surface_variation : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
@@ -465,11 +466,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_surface_variation (RandomAccessIterator begin,
-                               RandomAccessIterator end,
-                               Local_eigen_analysis& eigen)
+  Surface_variation (RandomAccessIterator begin,
+                     RandomAccessIterator end,
+                     Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
@@ -492,6 +493,7 @@ public:
   /// \endcond
 };
 
+} // namespace Attribute
 
 } // namespace Classification
 

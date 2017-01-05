@@ -28,9 +28,11 @@
 namespace CGAL {
 
 namespace Classification {
+
+namespace Attribute {
   
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on local vertical dispersion of points.
 
@@ -46,7 +48,7 @@ namespace Classification {
     \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap>
-class Attribute_vertical_dispersion : public Attribute
+class Vertical_dispersion : public Attribute_base
 {
   typedef Classification::Image<float> Image_float;
   typedef Classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
@@ -63,14 +65,14 @@ public:
     \param grid_resolution Resolution of the planimetric grid
     \param radius_neighbors Radius of local neighborhoods
   */
-  Attribute_vertical_dispersion (RandomAccessIterator begin,
-                                 RandomAccessIterator end,
-                                 PointMap point_map,
-                                 const Grid& grid,
-                                 const double grid_resolution,
-                                 double radius_neighbors = -1.)
+  Vertical_dispersion (RandomAccessIterator begin,
+                       RandomAccessIterator end,
+                       PointMap point_map,
+                       const Grid& grid,
+                       const double grid_resolution,
+                       double radius_neighbors = -1.)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
     
@@ -152,6 +154,8 @@ public:
   /// \endcond
 };
 
+}
+  
 }
 
 }

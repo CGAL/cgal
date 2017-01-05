@@ -19,14 +19,24 @@ namespace CGAL {
 namespace Classification {
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationDataStructures
 
-    \brief Class that precomputes spatial searching structures and
-    gives easy access to local neighborhoods of points.
+    \brief Class that precomputes spatial searching structures for an
+    input point set and gives easy access to local neighborhoods of
+    points.
 
-    \tparam Kernel The geometric kernel used.
+    It allows the user to generate models of `NeighborQuery` based on
+    a fixed range neighborhood or on a fixed K number of neighbors. In
+    addition, the spatial searching structures can be computed on a
+    simplified version of the point set to allow for neighbor queries
+    at a higher scale.
+
+    \tparam Kernel is a model of \cgal Kernel.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+
+    \tparam PointMap is a model of `ReadablePropertyMap` whose key
+    type is the value type of `RandomAccessIterator` and value type is
+    `Point_3<Kernel>`.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap>
 class Point_set_neighborhood
@@ -69,7 +79,8 @@ class Point_set_neighborhood
 public:
 
   /*!
-    Functor that returns a neighborhood with a fixed number of points.
+    Functor that computes the neighborhood of an input point with a
+    fixed number of neighbors.
 
     \cgalModels NeighborQuery
   */
@@ -99,7 +110,9 @@ public:
   };
 
   /*!
-    Functor that returns a neighborhood with a fixed radius.
+    Functor that computes the neighborhood of an input point defined
+    as the points lying in a sphere of fixed radius centered at the
+    input point.
 
     \cgalModels NeighborQuery
   */

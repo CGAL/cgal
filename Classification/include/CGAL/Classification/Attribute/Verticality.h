@@ -28,8 +28,10 @@ namespace CGAL {
 
 namespace Classification {
 
+namespace Attribute {
+
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on local verticality.
 
@@ -44,7 +46,7 @@ namespace Classification {
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Attribute_verticality : public Attribute
+class Verticality : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -58,11 +60,11 @@ public:
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
   */
-  Attribute_verticality (RandomAccessIterator begin,
-                         RandomAccessIterator end,
-                         const Local_eigen_analysis& eigen)
+  Verticality (RandomAccessIterator begin,
+               RandomAccessIterator end,
+               const Local_eigen_analysis& eigen)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
@@ -85,11 +87,11 @@ public:
     \param normal_map Property map to access the normal vectors of the input points.
   */
   template <typename VectorMap>
-  Attribute_verticality (const RandomAccessIterator& begin,
-                         const RandomAccessIterator& end,
-                         VectorMap normal_map)
+  Verticality (const RandomAccessIterator& begin,
+               const RandomAccessIterator& end,
+               VectorMap normal_map)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
@@ -113,6 +115,8 @@ public:
   virtual std::string id() { return "verticality"; }
   /// \endcond
 };
+
+} // namespace Attribute
 
 } // namespace Classification
 

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_COLOR_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_COLOR_H
+#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_HSV_H
+#define CGAL_CLASSIFICATION_ATTRIBUTE_HSV_H
 
 #include <vector>
 
@@ -28,13 +28,15 @@ namespace CGAL {
 
 namespace Classification {
 
+namespace Attribute {
+  
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationAttributes
 
     \brief Attribute based on HSV colorimetric information.
 
     If the input point cloud has colorimetric information, it can be
-    used for classification purposes. This attribute is based on
+    used for classification purposes. This attribute is based on a
     Gaussian probabilistic model on one of the three HSV channels
     (hue, saturation or value).
 
@@ -43,15 +45,15 @@ namespace Classification {
     deviation.
 
     For example, such an attribute using the channel 0 (hue) with a
-    mean of 90 (which corresponds to a green hue) can help identifying
+    mean of 90 (which corresponds to a green hue) can help identify
     trees.
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.A
+    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
   */
 template <typename Kernel, typename RandomAccessIterator, typename ColorMap>
-class Attribute_hsv : public Attribute
+class Hsv : public Attribute_base
 {
   typedef typename Classification::RGB_Color RGB_Color;
   typedef typename Classification::HSV_Color HSV_Color;
@@ -73,13 +75,13 @@ public:
     \param mean Mean value of the specified channel
     \param sd Standard deviation of the specified channel
   */
-  Attribute_hsv (RandomAccessIterator begin,
-                 RandomAccessIterator end,
-                 ColorMap color_map,
-                 std::size_t channel,
-                 double mean, double sd)
+  Hsv (RandomAccessIterator begin,
+       RandomAccessIterator end,
+       ColorMap color_map,
+       std::size_t channel,
+       double mean, double sd)
   {
-    this->weight = 1.;
+    this->weight() = 1.;
     for(std::size_t i = 0; i < (std::size_t)(end - begin);i++)
       {
         HSV_Color c = Classification::rgb_to_hsv (get(color_map, begin[i]));
@@ -105,8 +107,10 @@ public:
   /// \endcond
 };
 
+} // namespace Attribute
+
 } // namespace Classification
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_COLOR_H
+#endif // CGAL_CLASSIFICATION_ATTRIBUTE_HSV_H

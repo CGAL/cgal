@@ -60,31 +60,31 @@ namespace CGAL {
 
 \brief Classifies a data set based on a set of attribute and a set of classification types.
 
-This class implement the core of the algorithm. It uses a data set as
-input and assign each input iterator to a classification type among a
-set of user defined classification types.
+This class implements the core of the classification algorithm
+\cgalCite{cgal:lm-clscm-12}. It uses a data set as input and assignes
+each input iterator to a classification type among a set of user
+defined classification types.
 
 To achieve this classification algorithm, a set of local geometric
-attributes are used, such as:
+attributes are used, such as planarity, elevation or vertical
+dispersion.
 
-- planarity
-- elevation
-- vertical dispersion
+The user must define a set of classification types such as building,
+ground or vegetation.
 
-The user must define a set of classification types such as:
+Each pair of attribute and type must be assigned an
+[Attribute::Effect](@ref CGAL::Classification::Attribute::Effect) (for
+example, vegetation has a low planarity and a high vertical
+dispersion) and each attribute must be assigned a weight. These
+parameters can be set up by hand or by providing a training set for
+each classification type.
 
-- building
-- ground
-- vegetation
+\tparam RandomAccessIterator %Iterator over the input items, model of
+`RandomAccessIterator`
 
-Each pair of attribute/type must be assigned an effect (for example,
-vegetation has a low planarity and a high vertical dispersion) and
-each attribute must be assigned a weight. These parameters can be set
-up by hand or by providing a training set for each classification
-type.
+\tparam ItemMap is a model of `ReadablePropertyMap` that accesses the
+item type from the value_type of `RandomAccessIterator`
 
-\tparam RandomAccessIterator Iterator over the input items
-\tparam ItemMap is a model of `ReadablePropertyMap`
 
 */
 template <typename RandomAccessIterator,
@@ -143,7 +143,7 @@ private:
   std::vector<Type_handle> m_types; 
   std::vector<Attribute_handle> m_attributes; 
 
-  typedef Classification::Type::Attribute_effect Attribute_effect;
+  typedef Classification::Attribute::Effect Attribute_effect;
   std::vector<std::vector<Attribute_effect> > m_effect_table;
 
   /// \endcond
@@ -155,10 +155,7 @@ public:
   /// @{
   
   /*! 
-    \brief Constructs a classification object based on the input iterators.
-
-    This method just initializes the structure and does not compute
-    anything.
+    \brief Initializes a classification object based on the input iterators.
 
     \param begin Iterator to the first input object
 
@@ -288,10 +285,10 @@ public:
 
   /*! 
     \brief Runs the classification algorithm with a global
-    regularizarion based on a graphcut.
+    regularization based on a graphcut.
 
     The computed classification energy is globally regularized through
-    and alpha-expansion algorithm. This method is slow but provides
+    an alpha-expansion algorithm. This method is slow but provides
     the user with good quality results.
 
     \tparam NeighborQuery is a model of `NeighborQuery`
@@ -357,7 +354,7 @@ public:
   /// @{
   
   /*!
-    \brief Instanciates and adds a classification type.
+    \brief Instantiates and adds a classification type.
 
     \param name ID of the classification type.
 
@@ -450,7 +447,7 @@ public:
   /*!
     \brief Adds an attribute.
 
-    \param attribute Handle of the attribute to add.
+    \param attribute %Handle of the attribute to add.
    */
   void add_attribute (Attribute_handle attribute)
   {
@@ -487,11 +484,11 @@ public:
 
     \note If classification was not performed (using `run()`,
     `run_with_local_smoothing()` or `run_with_graphcut()`), this
-    function always returns the default empty `Type_handle`.
+    function always returns the default `Type_handle`.
 
-    \param index Index of the input item
+    \param index %Index of the input item
 
-    \return Pointer to the classification type
+    \return %Handle to the classification type
   */
   Type_handle classification_type_of (std::size_t index) const
   {
@@ -527,7 +524,7 @@ public:
     `run_with_local_smoothing()` or `run_with_graphcut()`), this
     function always returns 0.
 
-    \param index Index of the input item
+    \param index %Index of the input item
     \return Confidence ranging from 0 (not confident at all) to 1 (very confident).
   */
   double confidence_of (std::size_t index) const
@@ -546,9 +543,9 @@ public:
   /*!
     \brief Runs the training algorithm.
 
-    The object must have been filled with the `Classification::Type`
-    and `Classification::Attribute` objects before running this
-    function.
+    All the `Classification::Type` and `Classification::Attribute`
+    necessary for the classification should have been registered in
+    the object before running this function.
 
     Each classification type must be given a small set of user-defined
     inliers to provide the training algorithm with a ground truth.
@@ -563,7 +560,7 @@ public:
     configuration found.
   */
   
-  double training (std::size_t nb_tests = 300)
+  double train (std::size_t nb_tests = 300)
   {
     if (m_training_type.empty())
       return 0.;
@@ -594,13 +591,13 @@ public:
     for (std::size_t j = 0; j < m_attributes.size(); ++ j)
       {
         Attribute_handle att = m_attributes[j];
-        best_weights[j] = att->weight;
+        best_weights[j] = att->weight();
 
         std::size_t nb_useful = 0;
         double min = (std::numeric_limits<double>::max)();
         double max = -(std::numeric_limits<double>::max)();
 
-        att->weight = wmin;
+        att->weight() = wmin;
         for (std::size_t i = 0; i < 100; ++ i)
           {
             estimate_attribute_effect(training_sets, att);
@@ -608,12 +605,12 @@ public:
               {
                 CGAL_CLASSTRAINING_CERR << "#";
                 nb_useful ++;
-                min = (std::min) (min, att->weight);
-                max = (std::max) (max, att->weight);
+                min = (std::min) (min, att->weight());
+                max = (std::max) (max, att->weight());
               }
             else
               CGAL_CLASSTRAINING_CERR << "-";
-            att->weight *= factor;
+            att->weight() *= factor;
           }
         CGAL_CLASSTRAINING_CERR << std::endl;
         CGAL_CLASSTRAINING_CERR << att->id() << " useful in "
@@ -626,18 +623,18 @@ public:
         if (nb_useful < 2)
           {
             att_train.back().skipped = true;
-            att->weight = 0.;
-            best_weights[j] = att->weight;
+            att->weight() = 0.;
+            best_weights[j] = att->weight();
           }
         else if (best_weights[j] == 1.)
           {
-            att->weight = 0.5 * (att_train.back().wmin + att_train.back().wmax);
-            best_weights[j] = att->weight;
+            att->weight() = 0.5 * (att_train.back().wmin + att_train.back().wmax);
+            best_weights[j] = att->weight();
             ++ att_used;
           }
         else
           {
-            att->weight = best_weights[j];
+            att->weight() = best_weights[j];
             ++ att_used;
           }
         estimate_attribute_effect(training_sets, att);
@@ -677,7 +674,7 @@ public:
             if (j == current_att_changed)
               continue;
             
-            m_attributes[j]->weight = best_weights[j];
+            m_attributes[j]->weight() = best_weights[j];
             estimate_attribute_effect(training_sets, m_attributes[j]);
             if (attribute_useful(m_attributes[j]))
               nb_used ++;
@@ -685,7 +682,7 @@ public:
         Attribute_handle current_att = m_attributes[current_att_changed];
         const Attribute_training& tr = att_train[current_att_changed];
         
-        current_att->weight = tr.wmin;
+        current_att->weight() = tr.wmin;
         for (std::size_t j = 0; j < nb_trials_per_attribute; ++ j)
           {
             estimate_attribute_effect(training_sets, current_att);
@@ -709,11 +706,11 @@ public:
                 for (std::size_t k = 0; k < m_attributes.size(); ++ k)
                   {
                     Attribute_handle att = m_attributes[k];
-                    best_weights[k] = att->weight;
+                    best_weights[k] = att->weight();
                   }
               }
             
-            current_att->weight *= tr.factor;
+            current_att->weight() *= tr.factor;
           }
 
         ++ current_att_changed;
@@ -722,7 +719,7 @@ public:
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
         Attribute_handle att = m_attributes[i];
-        att->weight = best_weights[i];
+        att->weight() = best_weights[i];
       }
 
     estimate_attributes_effects(training_sets);
@@ -735,16 +732,16 @@ public:
       {
         Attribute_handle att = m_attributes[i];
         CGAL_CLASSTRAINING_CERR << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
-        att->weight = best_weights[i];
+        att->weight() = best_weights[i];
 
         Classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
         bool to_remove = true;
         for (std::size_t j = 0; j < m_types.size(); ++ j)
           {
             Type_handle ctype = m_types[j];
-            if (ctype->attribute_effect(att) == Classification::Type::FAVORED_ATT)
+            if (ctype->attribute_effect(att) == Classification::Type::FAVORING)
               CGAL_CLASSTRAINING_CERR << " * Favored for ";
-            else if (ctype->attribute_effect(att) == Classification::Type::PENALIZED_ATT)
+            else if (ctype->attribute_effect(att) == Classification::Type::PENALIZING)
               CGAL_CLASSTRAINING_CERR << " * Penalized for ";
             else
               CGAL_CLASSTRAINING_CERR << " * Neutral for ";
@@ -777,9 +774,9 @@ public:
     \brief Adds the input item specified by index `idx` as an inlier
     of `class_type` for the training algorithm.
 
-    \param class_type Handle to the classification type.
+    \param class_type %Handle to the classification type.
 
-    \param idx Index of the input item.
+    \param idx %Index of the input item.
   */
   bool add_training_index (Type_handle class_type,
                            std::size_t idx)
@@ -805,7 +802,7 @@ public:
     \brief Adds input items specified by a range of indices as
     inliers of `class_type` for the training algorithm.
 
-    \param class_type Handle to the classification type.
+    \param class_type %Handle to the classification type.
     \param first Iterator to the first index to add
     \param beyond Past-the-end iterator
 
@@ -856,7 +853,7 @@ public:
 
     m_effect_table = std::vector<std::vector<Attribute_effect> >
       (m_types.size(), std::vector<Attribute_effect> (m_attributes.size(),
-                                                                 Classification::Type::NEUTRAL_ATT));
+                                                                 Classification::Type::NEUTRAL));
     
     for (std::size_t i = 0; i < m_effect_table.size (); ++ i)
       for (std::size_t j = 0; j < m_effect_table[i].size (); ++ j)
@@ -875,13 +872,13 @@ private:
     double out = 0.;
     for (std::size_t i = 0; i < m_effect_table[class_type].size(); ++ i)
       {
-        if (m_attributes[i]->weight == 0.)
+        if (m_attributes[i]->weight() == 0.)
           continue;
-        if (m_effect_table[class_type][i] == Classification::Type::FAVORED_ATT)
+        if (m_effect_table[class_type][i] == Classification::Type::FAVORING)
           out += m_attributes[i]->favored (pt_index);
-        else if (m_effect_table[class_type][i] == Classification::Type::PENALIZED_ATT)
+        else if (m_effect_table[class_type][i] == Classification::Type::PENALIZING)
           out += m_attributes[i]->penalized (pt_index);
-        else if (m_effect_table[class_type][i] == Classification::Type::NEUTRAL_ATT)
+        else if (m_effect_table[class_type][i] == Classification::Type::NEUTRAL)
           out += m_attributes[i]->ignored (pt_index);
       }
     return out;
@@ -924,11 +921,11 @@ private:
           }
         sd[j] = std::sqrt (sd[j] / training_sets[j].size());
         if (mean[j] - sd[j] > 0.5)
-          ctype->set_attribute_effect (att, Classification::Type::FAVORED_ATT);
+          ctype->set_attribute_effect (att, Classification::Type::FAVORING);
         else if (mean[j] + sd[j] < 0.5)
-          ctype->set_attribute_effect (att, Classification::Type::PENALIZED_ATT);
+          ctype->set_attribute_effect (att, Classification::Type::PENALIZING);
         else
-          ctype->set_attribute_effect (att, Classification::Type::NEUTRAL_ATT);
+          ctype->set_attribute_effect (att, Classification::Type::NEUTRAL);
       }
   }
 

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_H
+#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H
+#define CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H
 
 #include <vector>
 
@@ -29,49 +29,44 @@ namespace Classification {
 /*!
   \ingroup PkgClassification
 
-  \brief Abstract class describing a classification attribute.
-
-  A classification attribute associates a scalar value to each item
-  of the classification input.
+  \brief Abstract class describing a classification attribute that
+  associates a scalar value to each item of the classification input.
 */
 
 
-class Attribute
+class Attribute_base
 {
+  double m_weight; 
 public:
-  double weight; ///< Weight of the attribute between 0 and +&infin;.
 
-  
   /// \cond SKIP_IN_MANUAL
   double mean;
   double max;
 
-  virtual ~Attribute() { }
+  virtual ~Attribute_base() { }
   /// \endcond
 
   /*!
-    \brief Returns the ID of the attribute.
-
-    This method returns _abstract\_attribute_ and should be overloaded
-    by a child class with a specific ID.
+    \brief Returns the weight of the attribute between 0 and +&infin;.
   */
-  virtual std::string id() { return "abstract_attribute"; }
+  double& weight() { return m_weight; }
+  
+  /*!
+    \brief Returns `abstract_attribute` and should be overloaded
+    by a inherited class with a specific name.
+  */
+  virtual std::string name() { return "abstract_attribute"; }
 
   /*!
-    \brief Returns the value taken by the attribute on the given item.
-
-    This method must be implemented by inherited classes.
-
-    \param index Index of the input item.
-
-    \return the value of the attribute on the item of index `index`
+    \brief Returns the value taken by the attribute at the given
+    index. This method must be implemented by inherited classes.
   */
   virtual double value (std::size_t index) = 0;
 
   /// \cond SKIP_IN_MANUAL
   virtual double normalized (std::size_t index)
   {
-    return (std::max) (0., (std::min) (1., value(index) / weight));
+    return (std::max) (0., (std::min) (1., value(index) / m_weight));
   }
   virtual double favored (std::size_t index) { return (1. - normalized (index)); }
   virtual double penalized (std::size_t index) { return normalized (index); }
@@ -92,7 +87,7 @@ public:
         if (vect[i] < min)
           min = vect[i];
       }
-    //    std::cerr << id() << " Min/max = " << min << " / " << max << std::endl;
+    //    std::cerr << name() << " Min/max = " << min << " / " << max << std::endl;
     mean /= vect.size();
 
   }
@@ -104,17 +99,18 @@ public:
 /*!
   \ingroup PkgClassification
 
-  \brief Handle to a classification `Attribute`.
+  \brief Handle to a classification `Attribute_base`.
 
   \cgalModels Handle
 */
 class Attribute_handle { };
 #else
-typedef boost::shared_ptr<Attribute> Attribute_handle;
+typedef boost::shared_ptr<Attribute_base> Attribute_handle;
 #endif
-  
+
+
 } // namespace Classification
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_H
+#endif // CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H

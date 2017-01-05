@@ -14,16 +14,19 @@ namespace CGAL {
 namespace Classification {
 
   /*!
-    \ingroup PkgClassification
+    \ingroup PkgClassificationDataStructures
 
     \brief Class that precomputes and stored the eigenvectors and
     eigenvalues of the covariance matrices of all points of a point
-    set, using a local neighborhood.
+    set using a local neighborhood.
 
-    \tparam Kernel The geometric kernel used.
+    \tparam Kernel is a model of \cgal Kernel.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam PointMap is a model of `ReadablePropertyMap` whose key
+    type is the value type of `RandomAccessIterator` and value type is
+    `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits is a model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
@@ -44,7 +47,7 @@ private:
   std::vector<Vector> m_smallest_eigenvectors;
   std::vector<Vector> m_middle_eigenvectors;
   std::vector<Vector> m_largest_eigenvectors;
-
+  double m_mean_range;
 
   
 public:
@@ -62,18 +65,13 @@ public:
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
-    \param neighbor_query Object used to access neighborhoods of points
-
-    \param mean_range The mean value of the range corresponding to the
-    `knn` number of neighbors is returned by the constructor through
-    this reference.
+    \param neighbor_query %Object used to access neighborhoods of points
   */
   template <typename NeighborQuery>
   Local_eigen_analysis (RandomAccessIterator begin,
                         RandomAccessIterator end,
                         PointMap point_map,
-                        const NeighborQuery& neighbor_query,
-                        double& mean_range)
+                        const NeighborQuery& neighbor_query)
   {
     std::size_t size = end - begin;
     m_eigenvalues.reserve (size);
@@ -82,7 +80,7 @@ public:
     m_middle_eigenvectors.reserve (size);
     m_largest_eigenvectors.reserve (size);
     
-    mean_range = 0.;
+    m_mean_range = 0.;
       
     for (std::size_t i = 0; i < size; i++)
       {
@@ -93,17 +91,17 @@ public:
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(point_map, begin[neighbors[j]]));
 
-        mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, begin[i]),
+        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, begin[i]),
                                                           get(point_map, begin[neighbors.back()])));
         
         compute (get(point_map, begin[i]), neighbor_points);
       }
 
-    mean_range /= size;
+    m_mean_range /= size;
   }
 
   /*!
-    \brief Returns the estimated normal vector of the indexed point.
+    \brief Returns the estimated unoriented normal vector of the indexed point.
   */
   const Vector& normal_vector (std::size_t index) const { return m_smallest_eigenvectors[index]; }
 
@@ -120,7 +118,11 @@ public:
   /*!
     \brief Returns the sum of eigenvalues of the index point.
   */
-  const double& sum_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
+  const double& sum_of_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
+
+  /// \cond SKIP_IN_MANUAL
+  double mean_range() const { return m_mean_range; }
+  /// \endcond
 
 private:
 

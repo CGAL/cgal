@@ -112,7 +112,7 @@ int main (int argc, char** argv)
     }
 
   std::cerr << "Training" << std::endl;
-  psc.training(800); // 800 trials
+  psc.train (800); // 800 trials
 
   psc.run_with_graphcut (helper.neighborhood().k_neighbor_query(12), 0.5);
   
@@ -128,7 +128,8 @@ int main (int argc, char** argv)
   helper.write_ply (f, pts.begin(), pts.end(), Pmap(), psc, &colors);
 
   /// Save the configuration to be able to reload it later
-  helper.save ("config.xml", psc);
+  std::ofstream fconfig ("config.xml");
+  helper.save (fconfig, psc);
   
   std::cerr << "All done" << std::endl;
   
