@@ -80,6 +80,7 @@ public:
       edges_level(tr, clusters_, null_level),
       faces_level(tr, criteria, edges_level),
       visitor(faces_level, edges_level, null_visitor),
+      seeds_mark(false),
       initialized(false)
   {
   }
@@ -94,6 +95,7 @@ public:
       edges_level(edges_level_),
       faces_level(tr, criteria, edges_level),
       visitor(faces_level, null_visitor),
+      seeds_mark(false),
       initialized(false)
   {
   }
