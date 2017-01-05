@@ -118,6 +118,7 @@ namespace HomogeneousKernelFunctors {
                const Point_3& r, const Vector_3& n) const
     {
       return enum_cast<Angle>(orientation(p,q,r,r+n));
+    }
   };
 
 
