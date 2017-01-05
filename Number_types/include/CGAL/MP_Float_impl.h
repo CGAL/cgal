@@ -69,6 +69,9 @@ template < typename T >
 inline
 void MP_Float::construct_from_builtin_fp_type(T d)
 {
+    // Fix "...::exp is used uninitialized" errors. 
+    exp = 0;
+  
     if (d == 0)
       return;
 
