@@ -3,9 +3,9 @@
 #include <CGAL/Subdivision_method_3.h>
 
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 
 typedef CGAL::Simple_cartesian<double>     Kernel;
-
 typedef CGAL::Polyhedron_3<Kernel>         PolygonMesh;
 
 using namespace std;
@@ -14,19 +14,19 @@ using namespace CGAL;
 int main(int argc, char **argv) {
   if (argc != 2) {
     cout << "Usage: DooSabin_subdivision d < filename" << endl;
-    cout << "       d: the depth of the subdivision (0 < d < 10)" << endl;
+    cout << "       d: the depth of the subdivision" << endl;
     cout << "       filename: the input mesh (.off)" << endl;
     return 0;
   }
 
-  int d = argv[1][0] - '0';
+  unsigned int d = boost::lexical_cast<unsigned int>(argv[1]);
 
   PolygonMesh pmesh;
-  cin >> pmesh; // read the .off
+  cin >> pmesh;
 
   Subdivision_method_3::DooSabin_subdivision(pmesh,d);
 
-  cout << pmesh; // write the .off
+  cout << pmesh;
 
   return 0;
 }

@@ -117,15 +117,14 @@ details on designing masks for a quality subdivision surface.
 
 \section secFirstSub A Quick Example: Catmull-Clark Subdivision 
 
-Assuming you are familiar with `Polyhedron_3`,
+Assuming you are familiar with `Surface_mesh`,
 you can integrate `Subdivision_method_3` into your program 
 without much effort.
 
 \cgalExample{Subdivision_method_3/CatmullClark_subdivision.cpp}
 
 This example demonstrates the use of the Catmull-Clark subdivision method
-on a `Polyhedron_3`. The polyhedron is restricted in the %Cartesian
-space, where most subdivision applications are designed to work.
+on a `Surface_mesh`.
 There is only one line deserving a detailed explanation:
 
 \code{.cpp}
@@ -134,7 +133,7 @@ Subdivision_method_3::CatmullClark_subdivision(pmesh,d);
 
 \endcode
 
-`Subdivision_method_3` specifies the namespace of our
+`Subdivision_method_3` specifies the namespace of the
 subdivision functions. `CatmullClark_subdivision(P,d)` computes the 
 Catmull-Clark subdivision surface of the polyhedron `pmesh` after
 `d` iterations of the refinements. The polyhedron `pmesh` is 
@@ -555,11 +554,8 @@ namespace Subdivision_method_3 {
 
 \endcode
 
-The following example demonstrates the use of Doo-Sabin subdivision 
-on a polyhedral mesh.
-\cgalExample{Subdivision_method_3/DooSabin_subdivision.cpp}
 
-\section Subdivision_method_3Other Other Subdivision Methods
+\section Subdivision_method_3Other Example: Customizing a Subdivision Method
 
 `Subdivision_method_3` supports four practical subdivision methods on a
 `Polyhedron_3` with points with %Cartesian coordinates. More subdivision methods can be supported
@@ -579,6 +575,13 @@ the subdivided mesh. A genus-\f$ n\f$ 2-manifold is assured to be subdivided
 into a genus-\f$ n\f$ 2-manifold. But when specialized with ill-designed
 geometry masks, `Subdivision_method_3` may generate a surface that is 
 odd, not smooth, or not even exist.
+
+
+
+\section Subdivision_method_3History: Implementation History
+
+This package was initially developed by  Le-Jeng Andy Shiue.  For \cgal 4.10 it was generalized
+to work on any model of a `MutableFaceGraph`.
 
 */ 
 } /* namespace CGAL */
