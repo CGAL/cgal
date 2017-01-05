@@ -464,9 +464,8 @@ add_features_from_split_graph_into_polylines(const Polyhedron& p,
     BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
       vertex_descriptor vs = p2vmap[source(e,graph)->point()];
       vertex_descriptor vt = p2vmap[target(e,graph)->point()];
-      if(vs == vt){
-        std::cerr << "ignore self loop\n";
-      }else{
+      CGAL_warning_msg(vs != vt, "ignore self loop");
+      if(vs != vt) {
         const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
         typename Polyhedron::Halfedge_handle he = halfedge(e, p);
         if(!is_border(he, p)) {

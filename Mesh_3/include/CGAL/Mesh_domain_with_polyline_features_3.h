@@ -649,9 +649,11 @@ public:
   }
 
   void build_curves_aabb_tree() const {
+#if CGAL_MESH_3_VERBOSE
     std::cerr << "Building curves AABB tree...";
     CGAL::Real_timer timer;
     timer.start();
+#endif
     curves_aabb_tree_.clear();
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),
@@ -669,9 +671,10 @@ public:
     }
     curves_aabb_tree_.build();
     curves_aabb_tree_is_built = true;
+#if CGAL_MESH_3_VERBOSE
     timer.stop();
     std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
-
+#endif
   } // end build_curves_aabb_tree()
 
 private:
