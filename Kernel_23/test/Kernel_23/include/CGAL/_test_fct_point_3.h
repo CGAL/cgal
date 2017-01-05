@@ -233,6 +233,13 @@ _test_fct_point_3(const R& )
    assert( CGAL::compare_squared_radius(p0, p1, p2, p3, four) == CGAL::EQUAL );
  }
 
+ {
+   CGAL::Point_3<R> p0(0,0,1), p1(0,0,2), p2(1,0,0), p3(1,0,1);
+   assert( CGAL::compare_slopes(p0,p2, p1, p2) == CGAL::SMALLER );
+   assert( CGAL::compare_slopes(p0,p2, p1, p3) == CGAL::EQUAL );
+ }
+
+
  assert(CGAL::l_infinity_distance(p1,p2) == FT(11));
  assert(CGAL::l_infinity_distance(p1,p5) == FT(6));
  // More tests, that require sqrt().
