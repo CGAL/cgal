@@ -509,7 +509,7 @@ launch_thread(Meshing_thread* mesh_thread)
   QObject::connect(cancelButton, SIGNAL(clicked()),
                    mesh_thread,  SLOT(stop()));
 
-  message_box_->show();
+  message_box_->open();
 
   // -----------------------------------
   // Connect main thread to meshing thread
@@ -567,7 +567,7 @@ meshing_done(Meshing_thread* thread)
   treat_result(*source_item_, *result_item);
 
   // close message box
-  message_box_->close();
+  message_box_->done(0);
   message_box_ = NULL;
 
   // free memory
