@@ -68,7 +68,7 @@ struct Get_left_side_category< Traits_, false > {
 
 template < class Traits_ >
 struct Arr_complete_left_side_category {
-public:
+npublic:
   typedef Traits_ Traits;
 
   typedef typename
@@ -90,7 +90,7 @@ struct Validate_left_side_category< GeometryTraits_2, false > {
   void missing__Left_side_category()
   { 
     T
-      missing__Left_side_category__assuming__Arr_oblivious_side_tag__instead; 
+      missing__Left_side_category__assuming__Arr_oblivious_side_tag__instead __attribute__((unused)); 
   }
 };
 
@@ -137,7 +137,7 @@ struct Validate_bottom_side_category< GeometryTraits_2, false > {
   void missing__Bottom_side_category()
   { 
     T
-      missing__Bottom_side_category__assuming__Arr_oblivious_side_tag__instead; 
+      missing__Bottom_side_category__assuming__Arr_oblivious_side_tag__instead __attribute__((unused)); 
   }
 };
 
@@ -182,7 +182,7 @@ struct Validate_top_side_category< GeometryTraits_2, false > {
   template <typename T>
   void missing__Top_side_category()
   { 
-    T missing__Top_side_category__assuming__Arr_oblivious_side_tag__instead; 
+    T missing__Top_side_category__assuming__Arr_oblivious_side_tag__instead __attribute__((unused));
   }
 };
 
@@ -229,7 +229,7 @@ struct Validate_right_side_category< GeometryTraits_2, false > {
   void missing__Right_side_category()
   { 
     T
-      missing__Right_side_category__assuming__Arr_oblivious_side_tag__instead; 
+        missing__Right_side_category__assuming__Arr_oblivious_side_tag__instead __attribute__((unused));
   }
 };
 
@@ -643,4 +643,3 @@ public:
 } // namespace CGAL
 
 #endif
-
