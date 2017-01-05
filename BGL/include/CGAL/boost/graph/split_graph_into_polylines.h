@@ -267,36 +267,18 @@ split_graph_into_polylines(const Graph& graph,
       g_copy[vc] = v;
       v2vmap[v] = vc; 
     }
-    
 
     BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
       Graph_vertex_descriptor vs = source(e,graph);
       Graph_vertex_descriptor vt = target(e,graph);
-      vertex_descriptor vsc, vtc;
-      if(vs == vt){
-        std::cerr << "ignore self loop\n";
-      }else{
-        typename V2vmap::iterator it;
-
-        if((it = v2vmap.find(vs)) == v2vmap.end()){
-          vsc = add_vertex(g_copy);
-          g_copy[vsc] = vs;
-          v2vmap[vs] = vsc;
-        }else{
-          vsc = it->second;
-        }
-        if((it = v2vmap.find(vt)) == v2vmap.end()){
-          vtc = add_vertex(g_copy);
-          g_copy[vtc] = vt;
-          v2vmap[vt] = vtc;
-        }else{
-          vtc = it->second;
-        }
-        const std::pair<edge_descriptor, bool> pair = add_edge(vsc,vtc,g_copy);
+      CGAL_warning_msg(vs != vt, "ignore self loops");
+      if(vs != vt){
+        const std::pair<edge_descriptor, bool> pair =
+          add_edge(v2vmap[vs],v2vmap[vt],g_copy);
         g_copy[pair.first] = e;
       }
     }
-  }  
+  }
   // duplicate terminal vertices and vertices of degree more than 2
   internal::duplicate_terminal_vertices(g_copy, graph, is_terminal);
 
