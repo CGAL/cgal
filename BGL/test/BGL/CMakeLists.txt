@@ -63,6 +63,8 @@ create_single_source_cgal_program( "next.cpp" )
 
 create_single_source_cgal_program( "test_circulator.cpp" )
 
+create_single_source_cgal_program( "test_Gwdwg.cpp" )
+
 create_single_source_cgal_program( "graph_concept_Polyhedron_3.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Dual.cpp" )
@@ -70,6 +72,8 @@ create_single_source_cgal_program( "graph_concept_Dual.cpp" )
 create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Surface_mesh.cpp" )
+
+create_single_source_cgal_program( "graph_concept_Gwdwg_Surface_mesh.cpp" )
 
 create_single_source_cgal_program( "test_clear.cpp" )
 

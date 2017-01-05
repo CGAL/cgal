@@ -129,6 +129,8 @@ user might encounter.
 - `CGAL::Polyhedron_items_with_id_3`
 - `CGAL::set_halfedgeds_items_id()`
 - `CGAL::Dual`
+- `CGAL::Graph_with_descriptor_with_graph`
+- `CGAL::Graph_with_descriptor_with_graph_property_map`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
