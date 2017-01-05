@@ -32,13 +32,13 @@ namespace Classification {
     at a higher scale.
 
     \tparam Kernel is a model of \cgal Kernel.
-    \tparam RandomAccessIterator Iterator over the input.
-
-    \tparam PointMap is a model of `ReadablePropertyMap` whose key
-    type is the value type of `RandomAccessIterator` and value type is
-    `Point_3<Kernel>`.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap>
+template <typename Kernel, typename Range, typename PointMap>
 class Point_set_neighborhood
 {
   
@@ -46,7 +46,7 @@ class Point_set_neighborhood
   typedef typename Kernel::Point_3 Point;
   
   class My_point_property_map{
-    RandomAccessIterator begin;
+    const Range* input;
     PointMap point_map;
     
   public:
@@ -55,9 +55,9 @@ class Point_set_neighborhood
     typedef std::size_t key_type;
     typedef boost::lvalue_property_map_tag category;
     My_point_property_map () { }
-    My_point_property_map (RandomAccessIterator begin, PointMap point_map)
-      : begin (begin), point_map (point_map) { }
-    reference operator[] (key_type k) const { return get(point_map, begin[k]); }
+    My_point_property_map (const Range *input, PointMap point_map)
+      : input (input), point_map (point_map) { }
+    reference operator[] (key_type k) const { return get(point_map, (*input)[k]); }
     friend inline reference get (const My_point_property_map& ppmap, key_type i) 
     { return ppmap[i]; }
   };
@@ -151,20 +151,16 @@ public:
   /*!
     \brief Constructs a neighborhood object based on the input range.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
+    \param input input range.
+    \param point_map property map to access the input points.
   */
-  Point_set_neighborhood (const RandomAccessIterator& begin,
-                const RandomAccessIterator& end,
-                PointMap point_map)
+  Point_set_neighborhood (const Range& input,
+                          PointMap point_map)
     : m_tree (NULL)
   {
-    std::size_t size = end - begin;
-    
-    My_point_property_map pmap (begin, point_map);
+    My_point_property_map pmap (&input, point_map);
     m_tree = new Tree (boost::counting_iterator<std::size_t> (0),
-                       boost::counting_iterator<std::size_t> (size),
+                       boost::counting_iterator<std::size_t> (input.size()),
                        Splitter(),
                        Search_traits (pmap));
     m_distance = Distance (pmap);
@@ -179,23 +175,20 @@ public:
     present in one cell, only the point closest to the centroid of
     this subset is used.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param voxel_size
+    \param input input range.
+    \param point_map property map to access the input points.
+    \param voxel_size size of the cells of the 3D grid used for simplification.
   */
-  Point_set_neighborhood (const RandomAccessIterator& begin,
-                const RandomAccessIterator& end,
-                PointMap point_map,
-                double voxel_size)
+  Point_set_neighborhood (const Range& input,
+                          PointMap point_map,
+                          double voxel_size)
     : m_tree (NULL)
   {
     // First, simplify
-    std::size_t size = end - begin;
-    std::vector<std::size_t> indices (size);
+    std::vector<std::size_t> indices (input.size());
     for (std::size_t i = 0; i < indices.size(); ++ i)
       indices[i] = i;
-    My_point_property_map pmap (begin, point_map);
+    My_point_property_map pmap (&input, point_map);
 
     voxelize_point_set(indices, pmap, voxel_size);
     

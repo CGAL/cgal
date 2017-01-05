@@ -47,10 +47,15 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the weight of the attribute between 0 and +&infin;.
+    \brief Returns the weight of the attribute.
   */
-  double& weight() { return m_weight; }
-  
+  double weight() const { return m_weight; }
+
+  /*!
+    \brief Sets the weight of the attribute (`weight` must be positive).
+  */
+  void set_weight (double weight) { m_weight = weight; }
+
   /*!
     \brief Returns `abstract_attribute` and should be overloaded
     by a inherited class with a specific name.

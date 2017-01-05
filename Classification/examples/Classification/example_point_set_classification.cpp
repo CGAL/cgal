@@ -7,36 +7,36 @@
 #include <CGAL/Classifier.h>
 #include <CGAL/Classification/Point_set_neighborhood.h>
 #include <CGAL/Classification/Planimetric_grid.h>
-#include <CGAL/Classification/Attribute.h>
-#include <CGAL/Classification/Attributes_eigen.h>
-#include <CGAL/Classification/Attribute_distance_to_plane.h>
-#include <CGAL/Classification/Attribute_vertical_dispersion.h>
-#include <CGAL/Classification/Attribute_elevation.h>
+#include <CGAL/Classification/Attribute_base.h>
+#include <CGAL/Classification/Attribute/Eigen.h>
+#include <CGAL/Classification/Attribute/Distance_to_plane.h>
+#include <CGAL/Classification/Attribute/Vertical_dispersion.h>
+#include <CGAL/Classification/Attribute/Elevation.h>
 
 #include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
-typedef std::vector<Point>::iterator Iterator;
+typedef std::vector<Point> Point_range;
 typedef CGAL::Identity_property_map<Point> Pmap;
 
-typedef CGAL::Classifier<Iterator, Pmap> Classifier;
+typedef CGAL::Classifier<Point_range, Pmap> Classifier;
 
-typedef CGAL::Classification::Planimetric_grid<Kernel, Iterator, Pmap>       Planimetric_grid;
-typedef CGAL::Classification::Point_set_neighborhood<Kernel, Iterator, Pmap> Neighborhood;
-typedef CGAL::Classification::Local_eigen_analysis<Kernel, Iterator, Pmap>   Local_eigen_analysis;
+typedef CGAL::Classification::Planimetric_grid<Kernel, Point_range, Pmap>       Planimetric_grid;
+typedef CGAL::Classification::Point_set_neighborhood<Kernel, Point_range, Pmap> Neighborhood;
+typedef CGAL::Classification::Local_eigen_analysis<Kernel, Point_range, Pmap>   Local_eigen_analysis;
 
 typedef CGAL::Classification::Type_handle                                           Type_handle;
 typedef CGAL::Classification::Attribute_handle                                      Attribute_handle;
 
-typedef CGAL::Classification::Attribute::Distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
-typedef CGAL::Classification::Attribute::Linearity<Kernel, Iterator, Pmap>           Linearity;
-typedef CGAL::Classification::Attribute::Omnivariance<Kernel, Iterator, Pmap>        Omnivariance;
-typedef CGAL::Classification::Attribute::Planarity<Kernel, Iterator, Pmap>           Planarity;
-typedef CGAL::Classification::Attribute::Surface_variation<Kernel, Iterator, Pmap>   Surface_variation;
-typedef CGAL::Classification::Attribute::Elevation<Kernel, Iterator, Pmap>           Elevation;
-typedef CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
+typedef CGAL::Classification::Attribute::Distance_to_plane<Kernel, Point_range, Pmap>   Distance_to_plane;
+typedef CGAL::Classification::Attribute::Linearity<Kernel, Point_range, Pmap>           Linearity;
+typedef CGAL::Classification::Attribute::Omnivariance<Kernel, Point_range, Pmap>        Omnivariance;
+typedef CGAL::Classification::Attribute::Planarity<Kernel, Point_range, Pmap>           Planarity;
+typedef CGAL::Classification::Attribute::Surface_variation<Kernel, Point_range, Pmap>   Surface_variation;
+typedef CGAL::Classification::Attribute::Elevation<Kernel, Point_range, Pmap>           Elevation;
+typedef CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Point_range, Pmap> Dispersion;
 
 
   ///////////////////////////////////////////////////////////////////
@@ -64,10 +64,9 @@ int main (int argc, char** argv)
 
   Iso_cuboid_3 bbox = CGAL::bounding_box (pts.begin(), pts.end());
 
-  Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
-  Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
-  double garbage;
-  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood.k_neighbor_query(6), garbage);
+  Planimetric_grid grid (pts, Pmap(), bbox, grid_resolution);
+  Neighborhood neighborhood (pts, Pmap());
+  Local_eigen_analysis eigen (pts, Pmap(), neighborhood.k_neighbor_query(6));
   
   //! [Analysis]
   ///////////////////////////////////////////////////////////////////
@@ -76,30 +75,30 @@ int main (int argc, char** argv)
   //! [Attributes]
 
   std::cerr << "Computing attributes" << std::endl;
-  Attribute_handle d2p (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen));
-  Attribute_handle lin (new Linearity (pts.begin(), pts.end(), eigen));
-  Attribute_handle omni (new Omnivariance (pts.begin(), pts.end(), eigen));
-  Attribute_handle plan (new Planarity (pts.begin(), pts.end(), eigen));
-  Attribute_handle surf (new Surface_variation (pts.begin(), pts.end(), eigen));
-  Attribute_handle disp (new Dispersion (pts.begin(), pts.end(), Pmap(), grid,
+  Attribute_handle d2p (new Distance_to_plane (pts, Pmap(), eigen));
+  Attribute_handle lin (new Linearity (pts, eigen));
+  Attribute_handle omni (new Omnivariance (pts, eigen));
+  Attribute_handle plan (new Planarity (pts, eigen));
+  Attribute_handle surf (new Surface_variation (pts, eigen));
+  Attribute_handle disp (new Dispersion (pts, Pmap(), grid,
                                          grid_resolution,
                                          radius_neighbors));
-  Attribute_handle elev (new Elevation (pts.begin(), pts.end(), Pmap(), grid,
+  Attribute_handle elev (new Elevation (pts, Pmap(), grid,
                                         grid_resolution,
                                         radius_dtm));
   
   std::cerr << "Setting weights" << std::endl;
-  d2p->weight()  = 6.75e-2;
-  lin->weight()  = 1.19;
-  omni->weight() = 1.34e-1;
-  plan->weight() = 7.32e-1;
-  surf->weight() = 1.36e-1;
-  disp->weight() = 5.45e-1;
-  elev->weight() = 1.47e1;
+  d2p->set_weight(6.75e-2);
+  lin->set_weight(1.19);
+  omni->set_weight(1.34e-1);
+  plan->set_weight(7.32e-1);
+  surf->set_weight(1.36e-1);
+  disp->set_weight(5.45e-1);
+  elev->set_weight(1.47e1);
 
   
   // Add attributes to classification object
-  Classifier psc (pts.begin (), pts.end(), Pmap());
+  Classifier psc (pts, Pmap());
   psc.add_attribute (d2p);
   psc.add_attribute (lin);
   psc.add_attribute (omni);

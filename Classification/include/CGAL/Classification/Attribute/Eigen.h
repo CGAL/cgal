@@ -42,34 +42,36 @@ namespace Attribute {
     \f[
     \frac{\lambda_1 - \lambda_2}{\lambda_1}
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Linearity : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Linearity (RandomAccessIterator begin,
-             RandomAccessIterator end,
+  Linearity (const Range& input,
              Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
         if (ev[2] < 1e-15)
@@ -85,7 +87,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "linearity"; }
+  virtual std::string name() { return "linearity"; }
   /// \endcond
 };
 
@@ -101,34 +103,35 @@ public:
     \f[
     \frac{\lambda_2 - \lambda_3}{\lambda_1}
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Planarity : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Planarity (RandomAccessIterator begin,
-             RandomAccessIterator end,
+  Planarity (const Range& input,
              Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
         if (ev[2] < 1e-15)
@@ -143,7 +146,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "planarity"; }
+  virtual std::string name() { return "planarity"; }
   /// \endcond
  
 };
@@ -160,34 +163,35 @@ public:
     \f[
     \frac{\lambda_3}{\lambda_1}
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Sphericity : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Sphericity (RandomAccessIterator begin,
-              RandomAccessIterator end,
+  Sphericity (const Range& input,
               Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
         if (ev[2] < 1e-15)
@@ -202,7 +206,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "sphericity"; }
+  virtual std::string name() { return "sphericity"; }
   /// \endcond
 };
 
@@ -218,34 +222,35 @@ public:
     \f[
     (\lambda_1 \times \lambda_2 \times \lambda_3)^{\frac{1}{3}}
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Omnivariance : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Omnivariance (RandomAccessIterator begin,
-                RandomAccessIterator end,
+  Omnivariance (const Range& input,
                 Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
         attrib.push_back (std::pow (std::fabs(ev[0] * ev[1] * ev[2]), 0.333333333));
@@ -257,7 +262,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "omnivariance"; }
+  virtual std::string name() { return "omnivariance"; }
   /// \endcond
 };
 
@@ -273,34 +278,35 @@ public:
     \f[
     \frac{\lambda_1 - \lambda_3}{\lambda_1}
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Anisotropy : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Anisotropy (RandomAccessIterator begin,
-              RandomAccessIterator end,
+  Anisotropy (const Range& input,
               Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
         if (ev[2] < 1e-15)
@@ -315,7 +321,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "anisotropy"; }
+  virtual std::string name() { return "anisotropy"; }
   /// \endcond
 };
 
@@ -331,34 +337,35 @@ public:
     \f[
     - \sum_{i=1}^3 \lambda_i \times \log{\lambda_i}
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Eigentropy : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Eigentropy (RandomAccessIterator begin,
-              RandomAccessIterator end,
+  Eigentropy (const Range& input,
               Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
         if (ev[0] < 1e-15
@@ -377,7 +384,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "eigentropy"; }
+  virtual std::string name() { return "eigentropy"; }
   /// \endcond
 };
 
@@ -393,34 +400,35 @@ public:
     \f[
     \lambda_1 + \lambda_2 + \lambda_3
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Sum_eigenvalues : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Sum_eigenvalues (RandomAccessIterator begin,
-                   RandomAccessIterator end,
+  Sum_eigenvalues (const Range& input,
                    Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       attrib.push_back (eigen.sum_of_eigenvalues(i));
 
     this->compute_mean_max (attrib, mean, this->max);
@@ -430,7 +438,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "sum_eigen"; }
+  virtual std::string name() { return "sum_eigen"; }
   /// \endcond
 };
 
@@ -446,34 +454,35 @@ public:
     \f[
     \frac{\lambda_3}{\lambda_1 + \lambda_2 + \lambda_3}
     \f]
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Surface_variation : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Surface_variation (RandomAccessIterator begin,
-                     RandomAccessIterator end,
+  Surface_variation (const Range& input,
                      Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
+    this->set_weight(1.);
+    attrib.reserve (input.size());
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
 
@@ -489,7 +498,7 @@ public:
   {
     return attrib[pt_index];
   }
-  virtual std::string id() { return "surface_variation"; }
+  virtual std::string name() { return "surface_variation"; }
   /// \endcond
 };
 

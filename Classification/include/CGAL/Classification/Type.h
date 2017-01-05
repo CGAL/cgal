@@ -1,6 +1,8 @@
 #ifndef CGAL_CLASSIFICATION_TYPE_H
 #define CGAL_CLASSIFICATION_TYPE_H
 
+#include <CGAL/Classification/Attribute/Effect.h>
+
 namespace CGAL {
 
 namespace Classification {
@@ -19,7 +21,7 @@ public:
 private:
   /// \cond SKIP_IN_MANUAL
   std::string m_name;
-  std::map<Attribute_handle, Attribute_effect> m_attribute_effects;
+  std::map<Attribute_handle, Attribute::Effect> m_attribute_effects;
   /// \endcond
 
 public:
@@ -38,7 +40,7 @@ public:
     \param effect The effect the attribute has on the classification type
 
   */ 
-  void set_attribute_effect (Attribute_handle att, Attribute_effect effect)
+  void set_attribute_effect (Attribute_handle att, Attribute::Effect effect)
   {
     m_attribute_effects[att] = effect;
   }
@@ -46,11 +48,11 @@ public:
   /*!
     \brief Returns the effect of attribute `att` on the classification type.
    */
-  Attribute_effect attribute_effect (Attribute_handle att) 
+  Attribute::Effect attribute_effect (Attribute_handle att) 
   {
-    std::map<Attribute_handle, Attribute_effect>::iterator
+    std::map<Attribute_handle, Attribute::Effect>::iterator
       search = m_attribute_effects.find (att);
-    return (search == m_attribute_effects.end () ? NEUTRAL : search->second);
+    return (search == m_attribute_effects.end () ? Attribute::NEUTRAL : search->second);
   }
 
   const std::string& name() const { return m_name; }
@@ -59,15 +61,15 @@ public:
   void info()
   {
     std::cerr << "Attribute " << m_name << ": ";
-    for (std::map<Attribute_handle, Attribute_effect>::iterator it = m_attribute_effects.begin();
+    for (std::map<Attribute_handle, Attribute::Effect>::iterator it = m_attribute_effects.begin();
          it != m_attribute_effects.end(); ++ it)
       {
-        if (it->second == NEUTRAL)
+        if (it->second == Attribute::NEUTRAL)
           continue;
         
         std::cerr << it->first;
-        if (it->second == FAVORING) std::cerr << " (favored), ";
-        else if (it->second == PENALIZING) std::cerr << " (penalized), ";
+        if (it->second == Attribute::FAVORING) std::cerr << " (favored), ";
+        else if (it->second == Attribute::PENALIZING) std::cerr << " (penalized), ";
       }
     std::cerr << std::endl;
   }

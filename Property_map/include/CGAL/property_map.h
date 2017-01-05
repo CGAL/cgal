@@ -358,11 +358,11 @@ struct Default_property_map{
   typedef typename InputIterator::value_type key_type;
   typedef boost::readable_property_map_tag category;
 
-  Default_property_map(const Value_Type& default_value) : default_value (default_value) { }
+  Default_property_map(const ValueType& default_value) : default_value (default_value) { }
   
   /// Free function to use a get the value from an iterator using Input_iterator_property_map.
   inline friend ValueType
-  get (const Empty_property_map&, const key_type&){ return ValueType(); }
+  get (const Default_property_map&, const key_type&){ return ValueType(); }
 };
 
 

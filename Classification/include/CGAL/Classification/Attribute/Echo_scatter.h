@@ -18,19 +18,23 @@ namespace Attribute {
     The number of returns (echo number) is a useful information
     provided by most LIDAR sensors. It can help identify trees.
 
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `std::size_t`.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap, typename EchoMap>
+template <typename Kernel, typename Range, typename PointMap, typename EchoMap>
 class Echo_scatter : public Attribute_base
 {
 public:
-  typedef Classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
+  typedef Classification::Planimetric_grid<Kernel, Range, PointMap> Grid;
 private:  
   typedef Classification::Image<float> Image_float;
-
 
   std::vector<double> echo_scatter;
   
@@ -38,21 +42,20 @@ public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param echo_map Property map to access the echo values of the input points
-    \param grid Precomputed `Planimetric_grid`
-    \param grid_resolution Resolution of the planimetric grid
-    \param radius_neighbors Radius of local neighborhoods
+    \param input input range.
+    \param echo_map property map to access the echo values of the input points.
+    \param grid precomputed `Planimetric_grid`.
+    \param grid_resolution resolution of the planimetric grid.
+    \param radius_neighbors radius of local neighborhoods.
   */
-  Echo_scatter (RandomAccessIterator begin,
+  Echo_scatter (const Range& input,
                 RandomAccessIterator end,
                 EchoMap echo_map,
                 Grid& grid,
                 const double grid_resolution,
                 double radius_neighbors = 1.)
   {
-    this->weight() = 1.;
+    this->set_weight(1.);
     Image_float Scatter(grid.width(), grid.height());
     for (std::size_t j = 0; j < grid.height(); j++)
       for (std::size_t i = 0; i < grid.width(); i++)
@@ -83,7 +86,7 @@ public:
                   for(std::size_t t=0; t<grid.indices(k,l).size();t++){
 												
                     std::size_t ip = grid.indices(k,l)[t]; 
-                    if(get(echo_map, begin[ip]) > 1)
+                    if(get(echo_map, input[ip]) > 1)
                       NB_echo_sup++;
                   }
 									
@@ -104,7 +107,7 @@ public:
       }
 		
     }
-    for(std::size_t i = 0; i < (std::size_t)(end - begin); i++){
+    for(std::size_t i = 0; i < input.size(); i++){
       std::size_t I= grid.x(i);
       std::size_t J= grid.y(i);
       echo_scatter.push_back((double)Scatter(I,J));
@@ -118,7 +121,7 @@ public:
     return echo_scatter[pt_index];
   }
 
-  virtual std::string id() { return "echo_scatter"; }
+  virtual std::string name() { return "echo_scatter"; }
   /// \endcond
 };
 

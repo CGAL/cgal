@@ -19,14 +19,15 @@ namespace Classification {
     projection along the Z-axis lies within this cell. The mapping
     from each point to the its cell is also stored.
 
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` whose key
-    type is the value type of `RandomAccessIterator` and value type is
-    `Point_3<Kernel>`.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
   */
 
-template <typename Kernel, typename RandomAccessIterator, typename PointMap>
+template <typename Kernel, typename Range, typename PointMap>
 class Planimetric_grid
 {
 public:
@@ -50,27 +51,23 @@ public:
   /*
     \brief Constructs a planimetric grid based on the input range.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param bbox The bounding box of the input range
-    \param grid_resolution Resolution of the planimetric grid
+    \param input input range.
+    \param point_map property map to access the input points.
+    \param bbox bounding box of the input range.
+    \param grid_resolution resolution of the planimetric grid.
   */
-  Planimetric_grid (const RandomAccessIterator& begin,
-                    const RandomAccessIterator& end,
+  Planimetric_grid (const Range& input,
                     PointMap point_map,
                     const Iso_cuboid_3& bbox,
                     const double grid_resolution)
   {
-
-    std::size_t size = (std::size_t)(end - begin);
     std::size_t width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
     std::size_t height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
     m_grid = Image_indices (width, height);
 
-    for (std::size_t i = 0; i < size; ++ i)
+    for (std::size_t i = 0; i < input.size(); ++ i)
       {
-        const Point_3& p = get(point_map, begin[i]);
+        const Point_3& p = get(point_map, input[i]);
         m_x.push_back ((std::size_t)((p.x() - bbox.xmin()) / grid_resolution));
         m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
         m_grid(m_x.back(), m_y.back()).push_back (i);

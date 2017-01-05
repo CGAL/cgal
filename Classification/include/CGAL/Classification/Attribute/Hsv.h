@@ -48,18 +48,21 @@ namespace Attribute {
     mean of 90 (which corresponds to a green hue) can help identify
     trees.
 
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam ColorMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `CGAL::Classification::RGB_Color`.
   */
-template <typename Kernel, typename RandomAccessIterator, typename ColorMap>
+template <typename Kernel, typename Range, typename ColorMap>
 class Hsv : public Attribute_base
 {
   typedef typename Classification::RGB_Color RGB_Color;
   typedef typename Classification::HSV_Color HSV_Color;
   
   std::vector<double> color_attribute;
-  std::string m_id;
+  std::string m_name;
   
 public:
   
@@ -68,23 +71,21 @@ public:
     \brief Constructs an attribute based on the given color channel,
     mean and standard deviation.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param color_map Property map to access the colors of the input points
-    \param channel Chosen HSV channel (0 for hue, 1 for saturation, 2 for value).
-    \param mean Mean value of the specified channel
-    \param sd Standard deviation of the specified channel
+    \param input input range.
+    \param color_map property map to access the colors of the input points.
+    \param channel chosen HSV channel (0 for hue, 1 for saturation, 2 for value).
+    \param mean mean value of the specified channel.
+    \param sd standard deviation of the specified channel.
   */
-  Hsv (RandomAccessIterator begin,
-       RandomAccessIterator end,
+  Hsv (const Range& input,
        ColorMap color_map,
        std::size_t channel,
        double mean, double sd)
   {
-    this->weight() = 1.;
-    for(std::size_t i = 0; i < (std::size_t)(end - begin);i++)
+    this->set_weight(1.);
+    for(std::size_t i = 0; i < input.size();i++)
       {
-        HSV_Color c = Classification::rgb_to_hsv (get(color_map, begin[i]));
+        HSV_Color c = Classification::rgb_to_hsv (get(color_map, input[i]));
         color_attribute.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
       }
     this->compute_mean_max (color_attribute, this->mean, this->max);
@@ -103,7 +104,7 @@ public:
     return color_attribute[pt_index];
   }
 
-  virtual std::string id() { return m_id; }
+  virtual std::string name() { return m_name; }
   /// \endcond
 };
 

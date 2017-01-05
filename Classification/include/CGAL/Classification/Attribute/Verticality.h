@@ -39,35 +39,37 @@ namespace Attribute {
     of the considered point can be useful to discriminate facades from
     the ground.
 
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Verticality : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
+  typedef Classification::Local_eigen_analysis<Kernel, Range,
+                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> verticality_attribute;
   
 public:
   /*!
     \brief Constructs the attribute using local eigen analysis.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param input input range.
+    \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Verticality (RandomAccessIterator begin,
-               RandomAccessIterator end,
+  Verticality (const Range& input,
                const Local_eigen_analysis& eigen)
   {
-    this->weight() = 1.;
+    this->set_weight(1.);
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
-    for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
+    for (std::size_t i = 0; i < input.size(); i++)
       {
         typename Kernel::Vector_3 normal = eigen.normal_vector(i);
         normal = normal / CGAL::sqrt (normal * normal);
@@ -81,22 +83,22 @@ public:
   /*!
     \brief Constructs the attribute using provided normals of points.
 
-    \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param normal_map Property map to access the normal vectors of the input points.
+    \tparam VectorMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Vector_3<Kernel>`.
+    \param input input range.
+    \param normal_map property map to access the normal vectors of the input points.
   */
   template <typename VectorMap>
-  Verticality (const RandomAccessIterator& begin,
-               const RandomAccessIterator& end,
+  Verticality (const Range& input,
                VectorMap normal_map)
   {
-    this->weight() = 1.;
+    this->set_weight(1.);
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
-    for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
+    for (std::size_t i = 0; i < input.size(); i++)
       {
-        typename Kernel::Vector_3 normal = get(normal_map, begin[i]);
+        typename Kernel::Vector_3 normal = get(normal_map, input[i]);
         normal = normal / CGAL::sqrt (normal * normal);
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }
@@ -112,7 +114,7 @@ public:
     return verticality_attribute[pt_index];
   }
 
-  virtual std::string id() { return "verticality"; }
+  virtual std::string name() { return "verticality"; }
   /// \endcond
 };
 

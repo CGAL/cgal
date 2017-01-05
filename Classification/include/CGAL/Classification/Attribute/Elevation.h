@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include <CGAL/Classification/Attribute.h>
+#include <CGAL/Classification/Attribute_base.h>
 #include <CGAL/Classification/Image.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 
@@ -43,18 +43,21 @@ namespace Attribute {
 
     It is useful to discriminate the ground from horizontal roofs.
 
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
 
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap>
+template <typename Kernel, typename Range, typename PointMap>
 class Elevation : public Attribute_base
 {
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef Image<float> Image_float;
-  typedef Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
+  typedef Planimetric_grid<Kernel, Range, PointMap> Grid;
    
   std::vector<double> elevation_attribute;
   
@@ -62,22 +65,20 @@ public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param grid Precomputed `Planimetric_grid`
-    \param grid_resolution Resolution of the planimetric grid
-    \param radius_dtm Radius for digital terrain modeling (must be bigger than the size of a building)
+    \param input input range.
+    \param point_map property map to access the input points.
+    \param grid precomputed `Planimetric_grid`.
+    \param grid_resolution resolution of the planimetric grid.
+    \param radius_dtm radius for digital terrain modeling (must be bigger than the size of a building).
 
   */
-  Elevation (RandomAccessIterator begin,
-             RandomAccessIterator end,
+  Elevation (const Range& input,
              PointMap point_map,
              const Grid& grid,
              const double grid_resolution,
              double radius_dtm = -1.)
   {
-    this->weight() = 1.;
+    this->set_weight(1.);
     if (radius_dtm < 0.)
       radius_dtm = 100. * grid_resolution;
 
@@ -91,7 +92,7 @@ public:
             continue;
           double mean = 0.;
           for (std::size_t k = 0; k < grid.indices(i,j).size(); ++ k)
-            mean += get(point_map, begin[grid.indices(i,j)[k]]).z();
+            mean += get(point_map, input[grid.indices(i,j)[k]]).z();
           mean /= grid.indices(i,j).size();
           dem(i,j) = mean;
         }
@@ -141,11 +142,11 @@ public:
       }
     dtm_x.free();
 
-    elevation_attribute.reserve(end - begin);
-    for (std::size_t i = 0; i < (std::size_t)(end - begin); i++){
+    elevation_attribute.reserve(input.size());
+    for (std::size_t i = 0; i < input.size(); i++){
       std::size_t I = grid.x(i);
       std::size_t J = grid.y(i);
-      elevation_attribute.push_back ((double)(get(point_map, begin[i]).z()-dtm(I,J)));
+      elevation_attribute.push_back ((double)(get(point_map, input[i]).z()-dtm(I,J)));
     }
 
     this->compute_mean_max (elevation_attribute, this->mean, this->max);
@@ -157,7 +158,7 @@ public:
     return elevation_attribute[pt_index];
   }
   
-  virtual std::string id() { return "elevation"; }
+  virtual std::string name() { return "elevation"; }
   /// \endcond
 };
 

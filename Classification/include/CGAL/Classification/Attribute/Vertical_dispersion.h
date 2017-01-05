@@ -43,36 +43,37 @@ namespace Attribute {
     attribute quantifies the vertical dispersion of the points on a
     local Z-cylinder around the points.
 
-    \tparam Kernel The geometric kernel used.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap>
+template <typename Kernel, typename Range, typename PointMap>
 class Vertical_dispersion : public Attribute_base
 {
   typedef Classification::Image<float> Image_float;
-  typedef Classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
+  typedef Classification::Planimetric_grid<Kernel, Range, PointMap> Grid;
   std::vector<double> vertical_dispersion;
   
 public:
   /*!
     \brief Constructs the attribute.
 
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param grid Precomputed `Planimetric_grid`
-    \param grid_resolution Resolution of the planimetric grid
-    \param radius_neighbors Radius of local neighborhoods
+    \param input input range.
+    \param point_map property map to access the input points.
+    \param grid precomputed `Planimetric_grid`.
+    \param grid_resolution resolution of the planimetric grid.
+    \param radius_neighbors radius of local neighborhoods.
   */
-  Vertical_dispersion (RandomAccessIterator begin,
-                       RandomAccessIterator end,
+  Vertical_dispersion (const Range& input,
                        PointMap point_map,
                        const Grid& grid,
                        const double grid_resolution,
                        double radius_neighbors = -1.)
   {
-    this->weight() = 1.;
+    this->set_weight(1.);
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
     
@@ -104,7 +105,7 @@ public:
               for(std::size_t t=0; t<grid.indices(k,l).size();t++)
                 {
                   std::size_t ip = grid.indices(k,l)[t];
-                  hori.push_back (get(point_map, begin[ip]).z());
+                  hori.push_back (get(point_map, input[ip]).z());
                 }
         if (hori.empty())
           continue;
@@ -135,7 +136,7 @@ public:
       }
 		
     }
-    for (std::size_t i = 0; i < (std::size_t)(end - begin);i++)
+    for (std::size_t i = 0; i < input.size(); i++)
       {
         std::size_t I= grid.x(i);
         std::size_t J= grid.y(i);
@@ -150,7 +151,7 @@ public:
     return vertical_dispersion[pt_index];
   }
 
-  virtual std::string id() { return "vertical_dispersion"; }
+  virtual std::string name() { return "vertical_dispersion"; }
   /// \endcond
 };
 

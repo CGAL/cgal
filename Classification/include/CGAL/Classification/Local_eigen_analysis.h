@@ -20,15 +20,16 @@ namespace Classification {
     eigenvalues of the covariance matrices of all points of a point
     set using a local neighborhood.
 
-    \tparam Kernel is a model of \cgal Kernel.
-    \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap is a model of `ReadablePropertyMap` whose key
-    type is the value type of `RandomAccessIterator` and value type is
-    `Point_3<Kernel>`.
-    \tparam DiagonalizeTraits is a model of `DiagonalizeTraits` used
+    \tparam Kernel model of \cgal Kernel.
+    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `Range` and value type
+    is `Point_3<Kernel>`.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointMap,
+template <typename Kernel, typename Range, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Local_eigen_analysis
 {
@@ -61,43 +62,40 @@ public:
     \brief Computes the local eigen analysis of an input range based
     on a local neighborhood.
 
-    \tparam NeighborQuery is a model of `NeighborQuery`
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param neighbor_query %Object used to access neighborhoods of points
+    \tparam NeighborQuery model of `NeighborQuery`
+    \param input Input range.
+    \param point_map property map to access the input points
+    \param neighbor_query object used to access neighborhoods of points
   */
   template <typename NeighborQuery>
-  Local_eigen_analysis (RandomAccessIterator begin,
-                        RandomAccessIterator end,
+  Local_eigen_analysis (const Range& input,
                         PointMap point_map,
                         const NeighborQuery& neighbor_query)
   {
-    std::size_t size = end - begin;
-    m_eigenvalues.reserve (size);
-    m_centroids.reserve (size);
-    m_smallest_eigenvectors.reserve (size);
-    m_middle_eigenvectors.reserve (size);
-    m_largest_eigenvectors.reserve (size);
+    m_eigenvalues.reserve (input.size());
+    m_centroids.reserve (input.size());
+    m_smallest_eigenvectors.reserve (input.size());
+    m_middle_eigenvectors.reserve (input.size());
+    m_largest_eigenvectors.reserve (input.size());
     
     m_mean_range = 0.;
       
-    for (std::size_t i = 0; i < size; i++)
+    for (std::size_t i = 0; i < input.size(); i++)
       {
         std::vector<std::size_t> neighbors;
-        neighbor_query (get(point_map, begin[i]), std::back_inserter (neighbors));
+        neighbor_query (get(point_map, input[i]), std::back_inserter (neighbors));
 
         std::vector<Point> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
-          neighbor_points.push_back (get(point_map, begin[neighbors[j]]));
+          neighbor_points.push_back (get(point_map, input[neighbors[j]]));
 
-        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, begin[i]),
-                                                          get(point_map, begin[neighbors.back()])));
+        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, input[i]),
+                                                          get(point_map, input[neighbors.back()])));
         
-        compute (get(point_map, begin[i]), neighbor_points);
+        compute (get(point_map, input[i]), neighbor_points);
       }
 
-    m_mean_range /= size;
+    m_mean_range /= input.size();
   }
 
   /*!
