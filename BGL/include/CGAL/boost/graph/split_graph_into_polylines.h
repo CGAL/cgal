@@ -242,8 +242,9 @@ split_graph_into_polylines(const Graph& graph,
                            IsTerminal is_terminal,
                            LessForVertexDescriptors less)
 {
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
+  using boost::graph_traits;
+  typedef typename graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
+  typedef typename graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
   
   typedef boost::adjacency_list <boost::setS, // this avoids parallel edges
                                  boost::vecS, 
@@ -251,15 +252,15 @@ split_graph_into_polylines(const Graph& graph,
                                  Graph_vertex_descriptor,
                                  Graph_edge_descriptor> G_copy;
 
-  typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<G_copy>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<G_copy>::out_edge_iterator out_edge_iterator;
+  typedef typename graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
+  typedef typename graph_traits<G_copy>::edge_descriptor edge_descriptor;
+  typedef typename graph_traits<G_copy>::out_edge_iterator out_edge_iterator;
   
   // we make a copy of the input graph
   G_copy g_copy;
   {
-    typedef std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-                     typename boost::graph_traits<G_copy>::vertex_descriptor> V2vmap;
+    typedef std::map<typename graph_traits<Graph>::vertex_descriptor,
+                     typename graph_traits<G_copy>::vertex_descriptor> V2vmap;
     V2vmap v2vmap;
     
     BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
@@ -290,7 +291,7 @@ split_graph_into_polylines(const Graph& graph,
   std::set<vertex_descriptor, G_copy_less> terminal(g_copy_less);
 
   BOOST_FOREACH(vertex_descriptor v, vertices(g_copy)){
-    typename boost::graph_traits<Graph>::degree_size_type n = degree(v, g_copy);
+    typename graph_traits<Graph>::degree_size_type n = degree(v, g_copy);
     if ( n == 1 ) terminal.insert(v);
     if ( n ==0 ){
       //isolated vertex
