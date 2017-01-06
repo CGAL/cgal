@@ -67,6 +67,7 @@ public:
     is_highlighting = false;
     is_ready_to_highlight = true;
     is_ready_to_paint_select = true;
+    is_lasso_active = false;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -86,6 +87,8 @@ public:
   {
     is_current_selection = b;
   }
+  void set_lasso_mode(bool b) { is_lasso_active = b; }
+
 public Q_SLOTS:
   // slots are called by signals of polyhedron_item
   void vertex_has_been_selected(void* void_ptr) 
@@ -343,6 +346,7 @@ protected:
   bool is_edit_mode;
   bool is_ready_to_highlight;
   bool is_ready_to_paint_select;
+  bool is_lasso_active;
   QPoint hl_pos;
   QPoint paint_pos;
 

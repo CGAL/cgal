@@ -98,6 +98,8 @@ public:
     connect(ui_widget.Create_selection_item_button,  SIGNAL(clicked()), this, SLOT(on_Create_selection_item_button_clicked()));    
     connect(ui_widget.Selection_type_combo_box, SIGNAL(currentIndexChanged(int)), 
             this, SLOT(on_Selection_type_combo_box_changed(int)));
+    connect(ui_widget.lassoCheckBox, &QCheckBox::toggled,
+            this, &Polyhedron_demo_selection_plugin::on_LassoCheckBox_changed);
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
     connect(ui_widget.validateButton, SIGNAL(clicked()), this, SLOT(on_validateButton_clicked()));
@@ -294,11 +296,31 @@ public Q_SLOTS:
     ui_widget.modeBox->setCurrentIndex(last_mode);
     connectItem(new_item);
   }
+  void on_LassoCheckBox_changed(bool b)
+  {
+    for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it)
+    {
+      it->second->set_lasso_mode(b);
+    }
+  }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
       Q_EMIT save_handleType();
+      switch(index)
+      {
+      case 0:
+      case 1:
+      case 2:
+        ui_widget.lassoCheckBox->show();
+        break;
+      default:
+        ui_widget.lassoCheckBox->hide();
+        ui_widget.lassoCheckBox->setChecked(false);
+        it->second->set_lasso_mode(false);
+        break;
+      }
       if(index == 1)
       {
         ui_widget.Select_all_NTButton->show();
