@@ -43,6 +43,6 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "example_point_set_classification.cpp" )
-create_single_source_cgal_program( "example_helper.cpp" )
+create_single_source_cgal_program( "example_classifier.cpp" )
+create_single_source_cgal_program( "example_point_set_classifier.cpp" )
 
