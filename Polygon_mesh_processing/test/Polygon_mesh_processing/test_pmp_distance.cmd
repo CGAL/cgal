@@ -1,1 +1,1 @@
-../data/elephant.off ../data/blobby_3cc.off
+data/elephant.off data/blobby_3cc.off
