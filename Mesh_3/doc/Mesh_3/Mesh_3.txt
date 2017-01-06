@@ -625,25 +625,25 @@ The example code of \ref Mesh_3/mesh_hybrid_mesh_domain.cpp produces a 3D mesh f
 Here, the set of subdomains is given by two subdomains of different types : a domain defined by an implicit sphere,
 and a domain defined by the triangulated surface of a cube.
 
-\cgalFigureRef{mesh3HybridDomainExample} shows the results with or with the
+\cgalFigureRef{mesh3HybridDomainExample} shows the results with or without the
 protection of the 1D-features.
 
 \cgalFigureAnchor{mesh3HybridDomainExample}
 <center>
 <table border=0>
 <tr>
-  <td><img border="0" src="./hybrid_domain.png"></td>
-  <td><img border="0" src="./hybrid_domain_mesh_no_protection.png"></td>
-  <td><img border="0" src="./hybrid_domain_mesh_protection.png"></td>
+  <td><img border="0" src="./hybrid_domain.jpg"></td>
+  <td><img border="0" src="./hybrid_domain_mesh_no_protection.jpg"></td>
+  <td><img border="0" src="./hybrid_domain_mesh_protection.jpg"></td>
 </tr>
 </table>
 </center>
 \cgalFigureCaptionBegin{mesh3HybridDomainExample}
 Left: the input hybrid domain.
 
-Middle : mesh without any call to `%add_features()`.
+Middle : the output mesh without any call to `%add_features()`.
 
-Right : the mesh with added 1D-features at the intersection of subdomains.
+Right : the output mesh with added 1D-features at the intersection of subdomains.
 \cgalFigureCaptionEnd
 
 
