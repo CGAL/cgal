@@ -14,10 +14,10 @@ namespace Classification {
 
     \brief Class that precomputes a 2D planimetric grid.
 
-    The grid is composed of squared cells with a user defined size,
+    The grid is composed of squared cells with a user-defined size,
     each cell containing the list of indices of the points whose
     projection along the Z-axis lies within this cell. The mapping
-    from each point to the its cell is also stored.
+    from each point to the cell it lies in is also stored.
 
     \tparam Kernel model of \cgal Kernel.
     \tparam Range range of items, model of `ConstRange`. Its iterator type
@@ -85,21 +85,21 @@ public:
   std::size_t height() const { return m_grid.height(); }
 
   /*!
-    \brief Returns the indices of points lying in the given indexed cell.
+    \brief Returns the indices of the points lying in the cell at position `(x,y)`.
   */
   const std::vector<std::size_t>& indices(std::size_t x, std::size_t y) const { return m_grid(x,y); }
   
   /*!
-    \brief Returns `false` if the cell indexed by `(x,y)` is empty, `true` otherwise.
+    \brief Returns `false` if the cell at position `(x,y)` is empty, `true` otherwise.
   */
   bool mask(std::size_t x, std::size_t y) const { return (!(m_grid(x,y).empty())); }
 
   /*!
-    \brief Returns the `x` coordinate of the indexed point in the grid.
+    \brief Returns the `x` grid coordinate of the point at position `index`.
   */
   std::size_t x(std::size_t index) const { return m_x[index]; }
   /*!
-    \brief Returns the `y` coordinate of the indexed point in the grid.
+    \brief Returns the `y` grid coordinate of the point at position `index`.
   */
   std::size_t y(std::size_t index) const { return m_y[index]; }
 };

@@ -94,8 +94,8 @@ public:
   public:
     /*!
       \brief Constructs a K neighbor query object.
-      \param neighborhood The point set neighborhood structure.
-      \param k The number of neighbors per query.
+      \param neighborhood point set neighborhood object.
+      \param k number of neighbors per query.
      */
     K_neighbor_query (const Point_set_neighborhood& neighborhood, std::size_t k)
       : neighborhood (neighborhood), k(k) { }
@@ -126,8 +126,8 @@ public:
   public:
     /*!
       \brief Constructs a range neighbor query object.
-      \param neighborhood The point set neighborhood structure.
-      \param radius The radius of the neighbor query.
+      \param neighborhood point set neighborhood object.
+      \param radius radius of the neighbor query sphere.
     */
     Range_neighbor_query (const Point_set_neighborhood& neighborhood, double radius)
       : neighborhood (neighborhood), radius(radius) { }
@@ -242,7 +242,6 @@ private:
       *(output ++) = it->first;
   }
 
-  /// \cond SKIP_IN_MANUAL
   template <typename Map>
   void voxelize_point_set (std::vector<std::size_t>& indices, Map point_map,
                            double voxel_size)
@@ -285,7 +284,6 @@ private:
         indices.push_back (chosen);
       }
   }
-  /// \endcond
 };
   
 

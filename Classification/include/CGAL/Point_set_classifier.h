@@ -50,7 +50,13 @@ namespace CGAL {
 /*!
   \ingroup PkgClassification
 
-  \brief TODO
+  \brief Classifies a point set based on a set of attributes and a set
+  of classification types.
+
+  This class specializes `Classifier` to point sets. It takes care of
+  generating necessary data structures and automatically generate a
+  set of generic attributes. Attributes can be generated at multiple
+  scales to increase the reliability of the classification.
 
   \tparam Kernel model of \cgal Kernel.
   \tparam Range range of items, model of `ConstRange`. Its iterator type
@@ -183,19 +189,93 @@ private:
 public:
 
   
-  /// \cond SKIP_IN_MANUAL
+  /// \name Constructor
+  /// @{
+  
+  /*! 
+    \brief Initializes a classification object.
+
+    \param input input range.
+
+    \param item_map property map to access the input points.
+  */
   Point_set_classifier(const Range& input, PointMap point_map) : Base (input, point_map)
   {
+    m_bbox = CGAL::bounding_box
+      (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_item_map)),
+       boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_item_map)));
+  }
+
+  /// @}
+  
+  /// \cond SKIP_IN_MANUAL
+  virtual ~Point_set_classifier()
+  {
+    clear();
   }
   /// \endcond
 
+  /// \name Attributes
+  /// @{
 
-  template <typename T>
-  const T& get_parameter (const T& t)
-  {
-    return t;
-  }
+  
+  /*!
+    \brief Generate all possible attributes from an input range.
 
+    The smallest scale is automatically estimated and the data
+    structures needed (`Neighborhood`, `Planimetric_grid` and
+    `Local_eigen_analysis`) are computed at `nb_scales` recursively
+    larger scales. At each scale, the following attributes are
+    generated:
+
+    - `CGAL::Classification::Attribute::Anisotropy`
+    - `CGAL::Classification::Attribute::Distance_to_plane`
+    - `CGAL::Classification::Attribute::Eigentropy`
+    - `CGAL::Classification::Attribute::Elevation`
+    - `CGAL::Classification::Attribute::Linearity`
+    - `CGAL::Classification::Attribute::Omnivariance`
+    - `CGAL::Classification::Attribute::Planarity`
+    - `CGAL::Classification::Attribute::Sphericity`
+    - `CGAL::Classification::Attribute::Sum_eigenvalues`
+    - `CGAL::Classification::Attribute::Surface_variation`
+    - `CGAL::Classification::Attribute::Vertical_dispersion`
+
+    If normal vectors are provided (if `VectorMap` is different from
+    `CGAL::Default`), the following attribute is generated at each
+    scale:
+
+    - `CGAL::Classification::Attribute::Vertical_dispersion`
+
+    If colors are provided (if `ColorMap` is different from
+    `CGAL::Default`), the following attributes are generated at each
+    scale:
+
+    - 9 attributes `CGAL::Classification::Attribute::Hsv` on
+      channel 0 (hue) with mean ranging from 0° to 360° and standard
+      deviation of 22.5.
+
+    - 5 attributes `CGAL::Classification::Attribute::Hsv` on
+      channel 1 (saturation) with mean ranging from 0 to 100 and standard
+      deviation of 12.5.
+
+    - 5 attributes `CGAL::Classification::Attribute::Hsv` on channel 2
+      (value) with mean ranging from 0 to 100 and standard deviation
+      of 12.5.
+
+    If echo numbers are provided (if `EchoMap` is different from
+    `CGAL::Default`), the following attribute is computed at each
+    scale:
+
+    - `CGAL::Classification::Attribute::Echo_scatter`
+
+    \tparam VectorMap model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
+    \tparam ColorMap model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
+    \tparam EchoMap model of `ReadablePropertyMap` with value type `std::size_t`.
+    \param nb_scales number of scales to compute.
+    \param normal_map property map to access the normal vectors of the input points (if any).
+    \param color_map property map to access the colors of the input points (if any).
+    \param echo_map property map to access the echo values of the input points (if any).
+  */
   template <typename VectorMap = Default,
             typename ColorMap = Default,
             typename EchoMap = Default>
@@ -217,82 +297,74 @@ public:
                               get_parameter<Emap>(echo_map));
   }
 
+  /// @}
 
-  template <typename T>
-  Default_property_map<Iterator, T>
-  get_parameter (const Default&)
-  {
-    return Default_property_map<Iterator, T>();
-  }
-
-  template<typename VectorMap, typename ColorMap, typename EchoMap>
-  void generate_attributes_impl (std::size_t nb_scales,
-                                 VectorMap normal_map,
-                                 ColorMap color_map,
-                                 EchoMap echo_map)
-  {
-    m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_input.begin(),
-                                       CGAL::Property_map_to_unary_function<PointMap>(m_item_map)),
-       boost::make_transform_iterator (m_input.end(),
-                                       CGAL::Property_map_to_unary_function<PointMap>(m_item_map)));
-
-    CGAL::Timer t; t.start();
-
-    m_scales.reserve (nb_scales);
-    double voxel_size = - 1.;
-
-    m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
-    voxel_size = m_scales[0]->grid_resolution();
-    
-    for (std::size_t i = 1; i < nb_scales; ++ i)
-      {
-        voxel_size *= 2;
-        m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
-      }
-    
-    generate_point_based_attributes ();
-    generate_normal_based_attributes (normal_map);
-    generate_color_based_attributes (color_map);
-    generate_echo_based_attributes (echo_map);
-  }
-
-
-  /// \cond SKIP_IN_MANUAL
-  virtual ~Point_set_classifier()
-  {
-    clear();
-  }
-  /// \endcond
-
+  /// \name Data Structures and Parameters
+  /// @{
+  
   /*!
     \brief Returns the bounding box of the input point set.
   */
   const Iso_cuboid_3& bbox() const { return m_bbox; }
   /*!
     \brief Returns the neighborhood structure at scale `scale`.
+
+    \note `generate_attributes()` must have been called before calling
+    this method.
   */
   const Neighborhood& neighborhood(std::size_t scale = 0) const { return (*m_scales[scale]->neighborhood); }
   /*!
     \brief Returns the planimetric grid structure at scale `scale`.
+
+    \note `generate_attributes()` must have been called before calling
+    this method.
   */
   const Planimetric_grid& grid(std::size_t scale = 0) const { return *(m_scales[scale]->grid); }
   /*!
     \brief Returns the local eigen analysis structure at scale `scale`.
+
+    \note `generate_attributes()` must have been called before calling
+    this method.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
   /*!
     \brief Returns the grid resolution at scale `scale`.
+
+    \note `generate_attributes()` must have been called before calling
+    this method.
   */
   double grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
   /*!
     \brief Returns the radius used for neighborhood queries at scale `scale`.
+
+    \note `generate_attributes()` must have been called before calling
+    this method.
   */
   double radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
   /*!
     \brief Returns the radius used for digital terrain modeling at scale `scale`.
+
+    \note `generate_attributes()` must have been called before calling
+    this method.
   */
   double radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
+
+  /// @}
+  
+  /*!
+    \brief Clears all computed data structures.
+  */
+  void clear()
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      delete m_scales[i];
+    m_scales.clear();
+    
+    this->clear_classification_types();
+    this->clear_attributes();
+  }
+
+  /// @}
 
   /// \cond SKIP_IN_MANUAL  
   void info() const
@@ -314,69 +386,7 @@ public:
                       << " (weight = " << m_scales[i]->attributes[j]->weight() << ")" << std::endl;
       }
   }
-  /// \endcond
 
-  /*!
-    \brief Clears all computed data structures.
-  */
-  void clear()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      delete m_scales[i];
-    m_scales.clear();
-    
-    this->clear_classification_types();
-    this->clear_attributes();
-  }
-
-  /*!
-    \brief Generate all possible attributes from an input range.
-
-    This method calls `generate_point_based_attributes()`,
-    `generate_normal_based_attributes()`,
-    `generate_color_based_attributes()` and
-    `generate_echo_based_attributes()`.
-
-    If a property map is left to its default
-    `CGAL::Default_property_map` type, the corresponding attributes are
-    not computed (this method can thus be called even if a point set
-    does not have associated normal, color or echo properties).
-
-    \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
-    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
-    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_`.
-    \param psc The classification object where to store the attributes
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param normal_map Property map to access the normal vectors of the input points (if any).
-    \param color_map Property map to access the colors of the input points (if any).
-    \param echo_map Property map to access the echo values of the input points (if any).
-  */
-
-  
-  /*!
-    \brief Generate all points attributes from an input range.
-
-    Generate, for all precomputed scales, the following attributes:
-
-    - `CGAL::Classification::Attribute::Anisotropy`
-    - `CGAL::Classification::Attribute::Distance_to_plane`
-    - `CGAL::Classification::Attribute::Eigentropy`
-    - `CGAL::Classification::Attribute::Elevation`
-    - `CGAL::Classification::Attribute::Linearity`
-    - `CGAL::Classification::Attribute::Omnivariance`
-    - `CGAL::Classification::Attribute::Planarity`
-    - `CGAL::Classification::Attribute::Sphericity`
-    - `CGAL::Classification::Attribute::Sum_eigenvalues`
-    - `CGAL::Classification::Attribute::Surface_variation`
-    - `CGAL::Classification::Attribute::Vertical_dispersion`
-
-    \param psc The classification object where to store the attributes
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-  */
   void generate_point_based_attributes ()
   {
     CGAL::Timer teigen, tpoint;
@@ -400,35 +410,9 @@ public:
     std::cerr << "Eigen based attributes computed in " << teigen.time() << " second(s)" << std::endl;
   }
 
-  /*!
-    \brief Generate all normal attributes from an input range.
 
-    Generate, for all precomputed scales, the following attribute:
-
-    - `CGAL::Classification::Attribute::Verticality`
-
-    If the normal map is left to its default type
-    `CGAL::Default_property_map`, then the verticality attributes are
-    still computed by using an approximation of the normal vector
-    provided by the corresponding `Local_eigen_analysis` object.
-
-    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
-    \param psc The classification object where to store the attributes
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param normal_map Property map to access the normal vectors of the input points (if any).
-  */
-  #ifdef DOXYGEN_RUNNING
-  template<typename VectorMap = CGAL::Default_property_map<Iterator, typename Kernel::Vector_3> >
-  #else
   template <typename VectorMap>
-  #endif
-  void generate_normal_based_attributes(
-#ifdef DOXYGEN_RUNNING
-                                        VectorMap normal_map = VectorMap())
-#else
-                                        VectorMap normal_map)
-#endif
+  void generate_normal_based_attributes(VectorMap normal_map)
   {
     CGAL::Timer t; t.start();
     this->template add_attribute<Verticality> (normal_map);
@@ -437,42 +421,12 @@ public:
     std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
-  /// \cond SKIP_IN_MANUAL
-  void generate_normal_based_attributes(const CGAL::Default_property_map<Iterator, typename Kernel::Vector_3>&
-                                        = CGAL::Default_property_map<Iterator, typename Kernel::Vector_3>())
+  void generate_normal_based_attributes(const CGAL::Default_property_map<Iterator, typename Kernel::Vector_3>&)
   {
     CGAL::Timer t; t.start();
     generate_multiscale_attribute_variant_0<Verticality> ();
     std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
-  /// \endcond
-
-  /*!
-    \brief Generate a set of color attributes from an input range.
-
-    Generate the following attributes:
-
-    - 9 attributes `CGAL::Classification::Attribute::Hsv` on
-      channel 0 (hue) with mean ranging from 0° to 360° and standard
-      deviation of 22.5.
-
-    - 5 attributes `CGAL::Classification::Attribute::Hsv` on
-      channel 1 (saturation) with mean ranging from 0 to 100 and standard
-      deviation of 12.5
-
-    - 5 attributes `CGAL::Classification::Attribute::Hsv` on
-      channel 2 (value) with mean ranging from 0 to 100 and standard
-      deviation of 12.5
-
-    This decomposition allows to handle all the color spectrum with a
-    usually sufficiently accurate precision.
-
-    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
-    \param psc The classification object where to store the attributes
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param color_map Property map to access the colors of the input points.
-  */
   template <typename ColorMap>
   void generate_color_based_attributes(ColorMap color_map)
   {
@@ -498,25 +452,10 @@ public:
     std::cerr << "Color based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
-  /// \cond SKIP_IN_MANUAL
   void generate_color_based_attributes(const CGAL::Default_property_map<Iterator, RGB_Color>&)
   {
   }
-  /// \endcond
 
-  /*!
-    \brief Generate all echo attributes from an input range.
-
-    Generate, for all precomputed scales, the following attribute:
-
-    - `CGAL::Classification::Attribute::Echo_scatter`
-
-    \tparam EchoMap Property map to access the echo values of the input points (if any).
-    \param psc The classification object where to store the attributes
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param echo_map Property map to access the echo values of the input points (if any).
-  */
   template <typename EchoMap>
   void generate_echo_based_attributes(EchoMap echo_map)
   {
@@ -533,7 +472,6 @@ public:
     std::cerr << "Echo based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
-  /// \cond SKIP_IN_MANUAL
   void generate_echo_based_attributes(const CGAL::Default_property_map<Iterator, std::size_t>&)
   {
   }
@@ -563,6 +501,8 @@ public:
   }
   /// \endcond
 
+  /// \name Input/Output
+  /// @{
 
   /*!
     \brief Saves the current configuration in the stream `output`.
@@ -570,16 +510,12 @@ public:
     This allows to easily save and recover a specific classification
     configuration, that is to say:
 
-    - The smallest voxel size defined
+    - The computed scales
     - The attributes and their respective weights
     - The classification types and the effect the attributes have on them
 
     The output file is written in an XML format that is readable by
-    the `load()` method and the constructor that takes a file name
-    as parameter.
-
-    \param output Output stream
-    \param psc Classification object whose attributes and types must be saved
+    the `load_configuration()` method.
   */
   void save_configuration (std::ostream& output)
   {
@@ -636,26 +572,23 @@ public:
 
   
   /*!
-    \brief Load a configuration from the stream `input`.
+    \brief Loads a configuration from the stream `input`.
 
     All data structures, attributes and types specified in the input
     stream `input` are instantiated if possible (in particular,
-    property maps needed should be provided).
+    property maps needed should be provided), similarly to what is
+    done in `generate_attributes()`.
 
-    The input file is written in an XML format written by the `save()`
-    method.
+    The input file should be in the XML format written by the
+    `save_configuration()` method.
 
-    \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
-    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
-    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_`.
-    \param input Input stream
-    \param psc Classification object where to store attributes and types
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param normal_map Property map to access the normal vectors of the input points (if any).
-    \param color_map Property map to access the colors of the input points (if any).
-    \param echo_map Property map to access the echo values of the input points (if any).
+    \tparam VectorMap model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
+    \tparam ColorMap model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
+    \tparam EchoMap model of `ReadablePropertyMap` with value type `std::size_t`.
+    \param input input stream.
+    \param normal_map property map to access the normal vectors of the input points (if any).
+    \param color_map property map to access the colors of the input points (if any).
+    \param echo_map property map to access the echo values of the input points (if any).
   */
   template<typename VectorMap = Default,
            typename ColorMap = Default,
@@ -678,6 +611,171 @@ public:
                                     get_parameter<Emap>(echo_map));
   }
 
+
+
+  /*!
+
+    \brief Writes a classification in a colored and labeled PLY format
+    in the stream `output`.
+
+    The input point set is written in a PLY format with the addition
+    of several PLY properties:
+
+    - a property `label` that indicates which classification type is
+    assigned to the point. The types are indexed from 0 to N (the
+    correspondancy is given as comments in the PLY header).
+
+    - 3 properties `red`, `green` and `blue` to associate each label
+    to a color (this is useful to visualize the classification in a
+    viewer that supports PLY colors). Colors are picked randomly.
+
+    \param stream The output stream where to write the content
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_map Property map to access the input points
+    \param psc The classification object to write from
+    \param colors A set of colors to be used to represent the
+    different classification types. If none is given, random colors
+    are picked.
+  */
+  void write_classification_to_ply (std::ostream& output)
+  {
+    output << "ply" << std::endl
+           << "format ascii 1.0" << std::endl
+           << "comment Generated by the CGAL library www.cgal.org" << std::endl
+           << "element vertex " << m_input.size() << std::endl
+           << "property double x" << std::endl
+           << "property double y" << std::endl
+           << "property double z" << std::endl
+           << "property uchar red" << std::endl
+           << "property uchar green" << std::endl
+           << "property uchar blue" << std::endl
+           << "property int label" << std::endl;
+
+    std::vector<RGB_Color> colors;
+    
+    std::map<Type_handle, std::size_t> map_types;
+    output << "comment label -1 is (unclassified)" << std::endl;
+
+    for (std::size_t i = 0; i < this->number_of_classification_types(); ++ i)
+      {
+        map_types.insert (std::make_pair (this->get_classification_type(i), i));
+        output << "comment label " << i << " is " << this->get_classification_type(i)->name() << std::endl;
+        RGB_Color c = {{ (unsigned char)(64 + rand() % 128),
+                         (unsigned char)(64 + rand() % 128),
+                         (unsigned char)(64 + rand() % 128) }};
+        colors.push_back (c);
+      }
+    map_types.insert (std::make_pair (Type_handle(), this->number_of_classification_types()));
+    
+    output << "end_header" << std::endl;
+
+    std::size_t i = 0;
+    for (Iterator it = m_input.begin(); it != m_input.end(); ++ it)
+      {
+        Type_handle t = this->classification_type_of(i);
+        std::size_t idx = map_types[t];
+
+        if (idx == this->number_of_classification_types())
+          output << get(m_item_map, *it) << " 0 0 0 -1" << std::endl;
+        else
+          output << get(m_item_map, *it) << " "
+                 << (int)(colors[idx][0]) << " "
+                 << (int)(colors[idx][1]) << " "
+                 << (int)(colors[idx][2]) << " "
+                 << idx << std::endl;
+        ++ i;
+      }
+  }
+
+  /// @}
+  
+private:
+  template <typename T>
+  const T& get_parameter (const T& t)
+  {
+    return t;
+  }
+
+  template <typename T>
+  Default_property_map<Iterator, T>
+  get_parameter (const Default&)
+  {
+    return Default_property_map<Iterator, T>();
+  }
+
+  template<typename VectorMap, typename ColorMap, typename EchoMap>
+  void generate_attributes_impl (std::size_t nb_scales,
+                                 VectorMap normal_map,
+                                 ColorMap color_map,
+                                 EchoMap echo_map)
+  {
+    CGAL::Timer t; t.start();
+
+    m_scales.reserve (nb_scales);
+    double voxel_size = - 1.;
+
+    m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
+    voxel_size = m_scales[0]->grid_resolution();
+    
+    for (std::size_t i = 1; i < nb_scales; ++ i)
+      {
+        voxel_size *= 2;
+        m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
+      }
+    
+    generate_point_based_attributes ();
+    generate_normal_based_attributes (normal_map);
+    generate_color_based_attributes (color_map);
+    generate_echo_based_attributes (echo_map);
+  }
+
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_0 ()
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        this->template add_attribute<Attribute_type>(*(m_scales[i]->eigen));
+        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+      }
+  }
+
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_1 ()
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        this->template add_attribute<Attribute_type>(m_item_map, *(m_scales[i]->eigen));
+        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+      }
+  }
+
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_2 ()
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        this->template add_attribute<Attribute_type>(m_item_map,
+                                            *(m_scales[i]->grid),
+                                            m_scales[i]->grid_resolution(),
+                                            m_scales[i]->radius_neighbors());
+        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+      }
+  }
+
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_3 ()
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        this->template add_attribute<Attribute_type>(m_item_map,
+                                            *(m_scales[i]->grid),
+                                            m_scales[i]->grid_resolution(),
+                                            m_scales[i]->radius_dtm());
+        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+      }
+  }
+
   template<typename VectorMap,typename ColorMap, typename EchoMap>
   bool load_configuration_impl (std::istream& input, 
                                 VectorMap normal_map,
@@ -689,10 +787,6 @@ public:
     
     clear();
     
-    m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_item_map)),
-       boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_item_map)));
-
     boost::property_tree::ptree tree;
     boost::property_tree::read_xml(input, tree);
 
@@ -840,130 +934,6 @@ public:
     
     return true;
   }
-
-
-  /*!
-    \brief Writes a classification in a colored and labeled PLY format.
-
-    The input point set is written in a PLY format with the addition
-    of several PLY properties:
-
-    - a property `label` to indicate which classification type is
-    assigned to the point. The types are indexed from 0 to N (the
-    correspondancy is given as comments in the PLY header).
-
-    - 3 properties `red`, `green` and `blue` to associate each label
-    to a color (this is useful to visualize the classification in a
-    viewer that supports PLY colors)
-
-    \param stream The output stream where to write the content
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param psc The classification object to write from
-    \param colors A set of colors to be used to represent the
-    different classification types. If none is given, random colors
-    are picked.
-  */
-  void write_classification_to_ply (std::ostream& stream)
-  {
-    stream << "ply" << std::endl
-           << "format ascii 1.0" << std::endl
-           << "comment Generated by the CGAL library www.cgal.org" << std::endl
-           << "element vertex " << m_input.size() << std::endl
-           << "property double x" << std::endl
-           << "property double y" << std::endl
-           << "property double z" << std::endl
-           << "property uchar red" << std::endl
-           << "property uchar green" << std::endl
-           << "property uchar blue" << std::endl
-           << "property int label" << std::endl;
-
-    std::vector<RGB_Color> colors;
-    
-    std::map<Type_handle, std::size_t> map_types;
-    stream << "comment label -1 is (unclassified)" << std::endl;
-
-    for (std::size_t i = 0; i < this->number_of_classification_types(); ++ i)
-      {
-        map_types.insert (std::make_pair (this->get_classification_type(i), i));
-        stream << "comment label " << i << " is " << this->get_classification_type(i)->name() << std::endl;
-        RGB_Color c = {{ (unsigned char)(64 + rand() % 128),
-                         (unsigned char)(64 + rand() % 128),
-                         (unsigned char)(64 + rand() % 128) }};
-        colors.push_back (c);
-      }
-    map_types.insert (std::make_pair (Type_handle(), this->number_of_classification_types()));
-    
-    stream << "end_header" << std::endl;
-
-    std::size_t i = 0;
-    for (Iterator it = m_input.begin(); it != m_input.end(); ++ it)
-      {
-        Type_handle t = this->classification_type_of(i);
-        std::size_t idx = map_types[t];
-
-        if (idx == this->number_of_classification_types())
-          stream << get(m_item_map, *it) << " 0 0 0 -1" << std::endl;
-        else
-          stream << get(m_item_map, *it) << " "
-                 << (int)(colors[idx][0]) << " "
-                 << (int)(colors[idx][1]) << " "
-                 << (int)(colors[idx][2]) << " "
-                 << idx << std::endl;
-        ++ i;
-      }
-  }
-
-private:
-    /// \cond SKIP_IN_MANUAL
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_0 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_attribute<Attribute_type>(*(m_scales[i]->eigen));
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
-      }
-  }
-
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_1 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_attribute<Attribute_type>(m_item_map, *(m_scales[i]->eigen));
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
-      }
-  }
-
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_2 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_attribute<Attribute_type>(m_item_map,
-                                            *(m_scales[i]->grid),
-                                            m_scales[i]->grid_resolution(),
-                                            m_scales[i]->radius_neighbors());
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
-      }
-  }
-
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_3 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_attribute<Attribute_type>(m_item_map,
-                                            *(m_scales[i]->grid),
-                                            m_scales[i]->grid_resolution(),
-                                            m_scales[i]->radius_dtm());
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
-      }
-  }
-
-  /// \endcond
 };
 
 } // namespace CGAL

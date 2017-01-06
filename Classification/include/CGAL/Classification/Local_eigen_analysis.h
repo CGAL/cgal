@@ -63,9 +63,9 @@ public:
     on a local neighborhood.
 
     \tparam NeighborQuery model of `NeighborQuery`
-    \param input Input range.
+    \param input input range.
     \param point_map property map to access the input points
-    \param neighbor_query object used to access neighborhoods of points
+    \param neighbor_query object used to access neighborhoods of points.
   */
   template <typename NeighborQuery>
   Local_eigen_analysis (const Range& input,
@@ -99,22 +99,22 @@ public:
   }
 
   /*!
-    \brief Returns the estimated unoriented normal vector of the indexed point.
+    \brief Returns the estimated unoriented normal vector of the point at position `index`.
   */
   const Vector& normal_vector (std::size_t index) const { return m_smallest_eigenvectors[index]; }
 
   /*!
-    \brief Returns the estimated local tangent plane of the index point.
+    \brief Returns the estimated local tangent plane of the point at position `index`.
   */
   Plane plane (std::size_t index) const { return Plane (m_centroids[index], m_smallest_eigenvectors[index]); }
 
   /*!
-    \brief Returns the normalized eigenvalues of the index point.
+    \brief Returns the normalized eigenvalues of the point at position `index`.
   */
   const Eigenvalues& eigenvalue (std::size_t index) const { return m_eigenvalues[index]; }
 
   /*!
-    \brief Returns the sum of eigenvalues of the index point.
+    \brief Returns the sum of eigenvalues of the point at position `index`.
   */
   const double& sum_of_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
 

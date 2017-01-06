@@ -58,7 +58,8 @@ namespace CGAL {
 /*!
 \ingroup PkgClassification
 
-\brief Classifies a data set based on a set of attribute and a set of classification types.
+\brief Classifies a data set based on a set of attributes and a set of
+classification types.
 
 This class implements the core of the classification algorithm
 \cgalCite{cgal:lm-clscm-12}. It uses a data set as input and assignes
@@ -67,26 +68,23 @@ defined classification types.
 
 To achieve this classification algorithm, a set of local geometric
 attributes are used, such as planarity, elevation or vertical
-dispersion.
-
-The user must define a set of classification types such as building,
-ground or vegetation.
+dispersion. In addition, the user must define a set of classification
+types such as building, ground or vegetation.
 
 Each pair of attribute and type must be assigned an
 [Attribute::Effect](@ref CGAL::Classification::Attribute::Effect) (for
 example, vegetation has a low planarity and a high vertical
 dispersion) and each attribute must be assigned a weight. These
-parameters can be set up by hand or by providing a training set for
-each classification type.
+parameters can be set up by hand or by automatic training, provided a
+small user defined set of inlier is given for each classification
+type.
 
 \tparam Range range of items, model of `ConstRange`. Its iterator type
 is `RandomAccessIterator`.
 
 \tparam ItemMap model of `ReadablePropertyMap` whose key
 type is the value type of the iterator of `Range` and value type is
-`Point_3<Kernel>`.
-
-
+the type of the items that are classified.
 */
 template <typename Range,
           typename ItemMap>
@@ -133,18 +131,22 @@ public:
   /*! 
     \brief Initializes a classification object.
 
-    \param input input range
+    \param input input range.
 
-    \param item_map property map to access the input items
-
+    \param item_map property map to access the input items.
   */
   Classifier (const Range& input,
               ItemMap item_map)
     : m_input (input), m_item_map (item_map)
   {
   }
+
   /// @}
 
+  /// \cond SKIP_IN_MANUAL
+  virtual ~Classifier() { }
+  /// \endcond
+  
   /// \name Classification
   /// @{
 
@@ -197,8 +199,8 @@ public:
     local neighborhood of items. This method is a compromise between
     efficiency and reliability.
 
-    \tparam NeighborQuery model of `NeighborQuery`
-    \param neighbor_query used to access neighborhoods of items
+    \tparam NeighborQuery model of `NeighborQuery`.
+    \param neighbor_query used to access neighborhoods of items.
   */
   template <typename NeighborQuery>
   void run_with_local_smoothing (const NeighborQuery& neighbor_query)
@@ -260,8 +262,8 @@ public:
     an alpha-expansion algorithm. This method is slow but provides
     the user with good quality results.
 
-    \tparam NeighborQuery model of `NeighborQuery`
-    \param neighbor_query used to access neighborhoods of items
+    \tparam NeighborQuery model of `NeighborQuery`.
+    \param neighbor_query used to access neighborhoods of items.
     \param weight weight of the regularization with respect to the
     classification energy. Higher values produce more regularized
     output but may result in a loss of details.
@@ -323,7 +325,7 @@ public:
   /// @{
   
   /*!
-    \brief Instantiates and adds a classification type.
+    \brief Adds a classification type.
 
     \param name name of the classification type.
 
@@ -336,24 +338,13 @@ public:
     return out;
   }
 
-  
-  /*!
-    \brief Adds a classification type.
-
-    \param type the handle to the classification type that must be added.
-   */
-  void add_classification_type (Type_handle type)
-  {
-    m_types.push_back (type);
-  }
-
   /*!
     \brief Removes a classification type.
 
     \param type the handle to the classification type that must be removed.
 
     \return `true` if the classification type was correctly removed,
-    `false` if its handle was not found inside the object.
+    `false` if its handle was not found.
    */ 
  bool remove_classification_type (Type_handle type)
   {
@@ -388,12 +379,15 @@ public:
     return true;
   }
 
-  /// \cond SKIP_IN_MANUAL
+  /*!
+    \brief Returns how many classification types are defined.
+  */  
   std::size_t number_of_classification_types () const
   {
     return m_types.size();
   }
-
+  
+  /// \cond SKIP_IN_MANUAL
   Type_handle get_classification_type (std::size_t idx)
   {
     return m_types[idx];
@@ -419,7 +413,19 @@ public:
     \param attribute %Handle of the attribute to add.
    */
 
-#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
+  /*!
+    \brief Adds an attribute.
+
+    \tparam Attribute type of the attribute, inherited from
+    `Classification::Attribute_base`.
+
+    \tparam T types of the parameters of the attribute's constructor.
+
+    \param t parameters of the attribute's constructor.
+
+    \return a handle to the newly added attribute.
+   */
+#if (!defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)) || DOXYGEN_RUNNING
   template <typename Attribute, typename ... T>
   Attribute_handle add_attribute (T&& ... t)
   {
@@ -466,6 +472,33 @@ public:
 #endif
 
   /*!
+    \brief Removes an attribute.
+
+    \param attribute the handle to attribute type that must be removed.
+
+    \return `true` if the attribute was correctly removed, `false` if
+    its handle was not found.
+   */ 
+  bool remove_attribute (Attribute_handle attribute)
+  {
+    for (std::size_t i = 0; i < m_attributes.size(); ++ i)
+      if (m_attributes[i] == attribute)
+        {
+          m_attributes.erase (m_attributes.begin() + i);
+          return true;
+        }
+    return false;
+  }
+
+  /*!
+    \brief Returns how many attributes are defined.
+  */  
+  std::size_t number_of_attributes() const
+  {
+    return m_attributes.size();
+  }
+
+  /*!
     \brief Removes all attributes.
    */
   void clear_attributes ()
@@ -473,12 +506,9 @@ public:
     m_attributes.clear();
   }
 
-  /// \cond SKIP_IN_MANUAL
-  std::size_t number_of_attributes() const
-  {
-    return m_attributes.size();
-  }
 
+
+  /// \cond SKIP_IN_MANUAL
   Attribute_handle get_attribute(std::size_t idx)
   {
     return m_attributes[idx];
@@ -491,15 +521,12 @@ public:
   /// @{
 
   /*!
-    \brief Gets the classification type of an indexed item.
+    \brief Returns the classification type of the item at position
+    `index`.
 
     \note If classification was not performed (using `run()`,
     `run_with_local_smoothing()` or `run_with_graphcut()`), this
     function always returns the default `Type_handle`.
-
-    \param index index of the input item
-
-    \return handle to the classification type
   */
   Type_handle classification_type_of (std::size_t index) const
   {
@@ -529,14 +556,16 @@ public:
   /// \endcond
 
   /*!
-    \brief Gets the confidence of the classification type of an indexed item.
+
+    \brief Returns the confidence of the classification type of the
+    item at position `index`.
 
     \note If classification was not performed (using `run()`,
     `run_with_local_smoothing()` or `run_with_graphcut()`), this
     function always returns 0.
 
-    \param index index of the input item
-    \return confidence ranging from 0 (not confident at all) to 1 (very confident).
+    \return confidence ranging from 0 (not confident at all) to 1
+    (very confident).
   */
   double confidence_of (std::size_t index) const
   {
@@ -555,8 +584,8 @@ public:
     \brief Runs the training algorithm.
 
     All the `Classification::Type` and `Classification::Attribute`
-    necessary for the classification should have been registered in
-    the object before running this function.
+    necessary for the classification should have been added before
+    running this function.
 
     Each classification type must be given a small set of user-defined
     inliers to provide the training algorithm with a ground truth.
@@ -774,20 +803,24 @@ public:
   
 
   /*!
-    \brief Resets training sets.
+    \brief Resets inlier sets used for training.
   */
-  void reset_training_sets()
+  void reset_inlier_sets()
   {
     std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_training_type);
   }
 
   /*!
-    \brief Adds the input item specified by index `idx` as an inlier
-    of `class_type` for the training algorithm.
+    \brief Adds the item at position `idx` as an inlier of
+    `class_type` for the training algorithm.
 
-    \param class_type handle to the classification type.
+    \note This inlier is only used for training. There is no guarantee
+    that the item at position `idx` will be classified as `class_type`
+    after calling `run()`, `run_with_local_smoothing()` or
+    `run_with_graphcut()`.
 
-    \param idx index of the input item.
+    \return `true` if the inlier was correctly added, `false`
+    otherwise (if `class_type` was not found).
   */
   bool set_inlier (Type_handle class_type, std::size_t idx)
   {
@@ -802,18 +835,21 @@ public:
       return false;
 
     if (m_training_type.empty())
-      reset_training_sets();
+      reset_inlier_sets();
 
     m_training_type[idx] = type_idx;
     return true;
   }
 
   /*!
-    \brief Adds input items specified by a range of indices as
-    inliers of `class_type` for the training algorithm.
 
-    \param class_type handle to the classification type.
-    \param indices Set of incides to add as inliers.
+    \brief Adds the items at positions `indices` as inliers of
+    `class_type` for the training algorithm.
+
+    \note These inliers are only used for training. There is no
+    guarantee that the items at positions `indices` will be classified
+    as `class_type` after calling `run()`,
+    `run_with_local_smoothing()` or `run_with_graphcut()`.
 
     \tparam IndexRange range of `std::size_t`, model of `ConstRange`.
   */
@@ -832,7 +868,7 @@ public:
       return false;
 
     if (m_training_type.empty())
-      reset_training_sets();
+      reset_inlier_sets();
 
     for (typename IndexRange::const_iterator it = indices.begin();
          it != indices.end(); ++ it)

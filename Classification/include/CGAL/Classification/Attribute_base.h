@@ -60,13 +60,14 @@ public:
 
   /*!
     \brief Returns `abstract_attribute` and should be overloaded
-    by a inherited class with a specific name.
+    by an inherited class with a specific name.
   */
   virtual std::string name() { return "abstract_attribute"; }
 
   /*!
-    \brief Returns the value taken by the attribute at the given
-    index. This method must be implemented by inherited classes.
+    \brief Returns the value taken by the attribute for at the item at
+    position `index`. This method must be implemented by inherited
+    classes.
   */
   virtual double value (std::size_t index) = 0;
 
@@ -106,7 +107,7 @@ public:
 /*!
   \ingroup PkgClassification
 
-  \brief Handle to a classification `Attribute_base`.
+  \brief Handle to an `Attribute_base`.
 
   \cgalModels Handle
 */

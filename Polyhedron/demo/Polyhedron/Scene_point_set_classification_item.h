@@ -143,7 +143,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   void reset_training_sets()
   {
     m_psc->prepare_classification();
-    m_psc->reset_training_sets();
+    m_psc->reset_inlier_sets();
     invalidateOpenGLBuffers();
     Q_EMIT itemChanged();
   }

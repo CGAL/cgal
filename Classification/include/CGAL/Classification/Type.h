@@ -13,7 +13,7 @@ namespace Classification {
 \ingroup PkgClassification
 
 \brief %Classification type (for example: vegetation, ground, etc.)
-defined as a set of relationship with classification attributes.
+defined as a set of relationships with classification attributes.
 
 */
 class Type
@@ -29,18 +29,12 @@ private:
 public:
 
   /*! 
-    \param name The name of the classification type
-    (e.g. vegetation).
+    \param name name of the classification type (e.g. vegetation).
   */ 
   Type (std::string name) : m_name (name) { }
 
   /*! 
-    \brief Sets how an attribute affects the classification type.
-
-    \param att Attribute whose effect on the classification type is set
-
-    \param effect The effect the attribute has on the classification type
-
+    \brief Sets the effect of attribute `att` on the classification type.
   */ 
   void set_attribute_effect (Attribute_handle att, Attribute::Effect effect)
   {
