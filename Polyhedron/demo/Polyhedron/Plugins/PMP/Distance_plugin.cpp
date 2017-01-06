@@ -22,6 +22,7 @@
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+#ifdef CGAL_LINKED_WITH_TBB
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
@@ -42,7 +43,6 @@ struct Distance_computation{
     , output(out)
   {
   }
-
   void
   operator()(const tbb::blocked_range<std::size_t>& range) const
   {
@@ -61,6 +61,7 @@ struct Distance_computation{
       distance->store(hdist, CGAL::cpp11::memory_order_release);
   }
 };
+#endif
 
 class Scene_distance_polyhedron_item: public Scene_item
 {
