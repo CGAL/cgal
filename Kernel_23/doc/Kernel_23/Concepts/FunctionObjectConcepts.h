@@ -1042,7 +1042,7 @@ public:
 
   /// @}
 
-}; /* end Kernel::CompareSlope_2 */
+}; /* end Kernel::CompareSlope_3 */
 
 
 
