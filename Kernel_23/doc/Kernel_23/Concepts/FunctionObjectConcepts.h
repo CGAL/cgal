@@ -1013,7 +1013,9 @@ public:
                                const Kernel::Line_2& l2); 
 
   /*!
-    compares the slopes of the segments `s1` and `s2` 
+    compares the slopes of the segments `s1` and `s2`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments. 
   */ 
   Comparison_result operator()(const Kernel::Segment_2& s1, 
                                const Kernel::Segment_2& s2); 
@@ -1041,8 +1043,9 @@ public:
 
 
   /*!
-    compares the slopes of the segments `(p,q)` and `(r,s)`
-    with `p.z() >= q.z()` and  `r.z() >= s.z()`.
+    compares the slopes of the segments `(p,q)` and `(r,s)`,
+    where the slope is the variation of the `z`-coordinate 
+    from the first to the second point of the segment.
   */ 
   Comparison_result operator()(const Kernel::Point_3& p, 
                                const Kernel::Point_3& q,

@@ -356,12 +356,12 @@ compare_distance_to_point(const Point_3<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
-compare_slopes(const Point_3<K> &p,
+compare_slope(const Point_3<K> &p,
                const Point_3<K> &q,
                const Point_3<K> &r,
                const Point_3<K> &s)
 {
-  return internal::compare_slopes(p, q, r, s, K());
+  return internal::compare_slope(p, q, r, s, K());
 }
 
 template < class K >
