@@ -234,9 +234,17 @@ _test_fct_point_3(const R& )
  }
 
  {
-   CGAL::Point_3<R> p0(0,0,1), p1(0,0,2), p2(1,0,0), p3(1,0,1);
-   assert( CGAL::compare_slopes(p0,p2, p1, p2) == CGAL::SMALLER );
-   assert( CGAL::compare_slopes(p0,p2, p1, p3) == CGAL::EQUAL );
+   CGAL::Point_3<R> p0(0,0,1), p1(0,0,2), p2(1,0,1), p3(1,0,2), p4(1,0,3);
+   assert( CGAL::compare_slope(p0, p2, p1, p3) == CGAL::EQUAL );
+   assert( CGAL::compare_slope(p0, p2, p0, p3) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p0, p2, p1, p2) == CGAL::LARGER );
+   assert( CGAL::compare_slope(p0, p3, p0, p2) == CGAL::LARGER );
+   assert( CGAL::compare_slope(p0, p3, p0, p4) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p0, p3, p1, p2) == CGAL::LARGER );
+   assert( CGAL::compare_slope(p1, p2, p0, p2) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p1, p2, p0, p3) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p1, p2, p4, p0) == CGAL::LARGER );
+   
  }
 
 

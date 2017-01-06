@@ -805,25 +805,28 @@ const CGAL::Point_3<Kernel>& t);
 compares the slopes of the lines `l1` and `l2`
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const CGAL::Line_2<Kernel> &l1,
+Comparison_result compare_slope(const CGAL::Line_2<Kernel> &l1,
 const CGAL::Line_2<Kernel> &l2);
 
 /*!
-compares the slopes of the segments `s1` and `s2`
+compares the slopes of the segments `s1` and `s2`,
+where the slope is the variation of the `y`-coordinate
+from the left to the right endpoint of the segments.
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const CGAL::Segment_2<Kernel> &s1,
+Comparison_result compare_slope(const CGAL::Segment_2<Kernel> &s1,
 const CGAL::Segment_2<Kernel> &s2);
 
 /*!
 compares the slopes of the segments `(p,q)` and `(r,s)`,
-with `p.z() >= q.z()` and  `r.z() >= s.z()`.
+where the slope is the variation of the `z`-coordinate from the first
+to the second point of the segment.
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const CGAL::Point_3<Kernel> &p,
-                                 const CGAL::Point_3<Kernel> &q,
-                                 const CGAL::Point_3<Kernel> &r,
-                                 const CGAL::Point_3<Kernel> &s);
+Comparison_result compare_slope(const CGAL::Point_3<Kernel> &p,
+                                const CGAL::Point_3<Kernel> &q,
+                                const CGAL::Point_3<Kernel> &r,
+                                const CGAL::Point_3<Kernel> &s);
 /// @}
 
 /// \defgroup compare_squared_distance_grp CGAL::compare_squared_distance()
