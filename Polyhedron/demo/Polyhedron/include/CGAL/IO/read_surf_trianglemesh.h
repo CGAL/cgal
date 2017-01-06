@@ -27,7 +27,7 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
   std::vector<Point_3> points;
   std::string line;
   std::istringstream iss;
-  int nb_vertices(0);
+  std::size_t nb_vertices(0);
   std::vector<material> materials;
   //ignore header
   while(std::getline(input, line))
@@ -92,7 +92,6 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
       continue;
     else
     {
-      //reserve size for points
       iss.clear();
       iss.str(line);
       std::string dump;
@@ -101,10 +100,12 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
     }
   std::cout<<nb_patches<<" patch(es)"<<std::endl;
   metadata.resize(nb_patches);
-  for(int i=0; i < nb_patches; ++i)
+  output.resize(nb_patches);
+  const vertex_descriptor null_vertex = boost::graph_traits<Mesh>::null_vertex();
+  std::vector<vertex_descriptor> vertices(nb_vertices, null_vertex);
+  for(int i=0; i < nb_patches; /* i is incremented in the body */)
   {
-    std::map<std::size_t, vertex_descriptor> vertices;
-    Mesh mesh;
+    Mesh& mesh = output[i];
     //get metada
     while(std::getline(input, line))
       if(line.compare(0, 11, "InnerRegion") != 0)
@@ -158,20 +159,23 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
       iss.clear();
       iss.str(line);
       iss >> index[0] >> index[1] >> index[2];
+      CGAL::cpp11::array<vertex_descriptor, 3> face;
       for(int id=0; id<3; ++id)
       {
-        if(vertices.find(index[id]) == vertices.end())
+        if(vertices[index[id]] == null_vertex)
         {
-          vertices.insert(std::make_pair(index[id], add_vertex(points[index[id]-1], mesh)));
+          vertices[index[id]] = add_vertex(points[index[id]-1], mesh);
         }
+        face[id] = vertices[index[id]];
       }
-      std::vector<vertex_descriptor> face;
-      for(int id=0; id<3; ++id)
-        face.push_back(vertices[index[id]]);
       CGAL::Euler::add_face(face, mesh);
     }
-    output.push_back(mesh);
-  }
+    // reset the `vertices` vector, unless that was the last iteration of
+    // the loop
+    if(++i < nb_patches) std::fill(vertices.begin(),
+                                   vertices.end(),
+                                   null_vertex);
+  } // end loop on patches
 }
 
 template<class Mesh>
