@@ -92,7 +92,7 @@ public:
             continue;
           double mean = 0.;
           for (std::size_t k = 0; k < grid.indices(i,j).size(); ++ k)
-            mean += get(point_map, input[grid.indices(i,j)[k]]).z();
+            mean += get(point_map, *(input.begin()+grid.indices(i,j)[k])).z();
           mean /= grid.indices(i,j).size();
           dem(i,j) = mean;
         }
@@ -146,7 +146,7 @@ public:
     for (std::size_t i = 0; i < input.size(); i++){
       std::size_t I = grid.x(i);
       std::size_t J = grid.y(i);
-      elevation_attribute.push_back ((double)(get(point_map, input[i]).z()-dtm(I,J)));
+      elevation_attribute.push_back ((double)(get(point_map, *(input.begin()+i)).z()-dtm(I,J)));
     }
 
     this->compute_mean_max (elevation_attribute, this->mean, this->max);

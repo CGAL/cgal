@@ -57,7 +57,7 @@ class Point_set_neighborhood
     My_point_property_map () { }
     My_point_property_map (const Range *input, PointMap point_map)
       : input (input), point_map (point_map) { }
-    reference operator[] (key_type k) const { return get(point_map, (*input)[k]); }
+    reference operator[] (key_type k) const { return get(point_map, *(input->begin()+k)); }
     friend inline reference get (const My_point_property_map& ppmap, key_type i) 
     { return ppmap[i]; }
   };

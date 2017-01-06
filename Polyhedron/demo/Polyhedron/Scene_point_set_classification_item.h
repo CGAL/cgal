@@ -2,16 +2,16 @@
 #define POINT_SET_CLASSIFICATION_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/Classifier.h>
-#include <CGAL/Classification/Attribute.h>
-#include <CGAL/Classification/Attribute_vertical_dispersion.h>
-#include <CGAL/Classification/Attribute_elevation.h>
-#include <CGAL/Classification/Attribute_verticality.h>
-#include <CGAL/Classification/Attribute_distance_to_plane.h>
-#include <CGAL/Classification/Attribute_color.h>
-#include <CGAL/Classification/Attribute_echo_scatter.h>
-#include <CGAL/Classification/Attributes_eigen.h>
-#include <CGAL/Classification/Helper.h>
+#include <CGAL/Point_set_classifier.h>
+#include <CGAL/Classification/Attribute_base.h>
+#include <CGAL/Classification/Attribute/Vertical_dispersion.h>
+#include <CGAL/Classification/Attribute/Elevation.h>
+#include <CGAL/Classification/Attribute/Verticality.h>
+#include <CGAL/Classification/Attribute/Distance_to_plane.h>
+#include <CGAL/Classification/Attribute/Hsv.h>
+#include <CGAL/Classification/Attribute/Echo_scatter.h>
+#include <CGAL/Classification/Attribute/Eigen.h>
+
 
 #include "Scene_point_set_classification_item_config.h"
 #include "Scene_points_with_normal_item.h"
@@ -62,19 +62,17 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   typedef Kernel::Vector_3 Vector_3;
   typedef CGAL::Classification::RGB_Color Color;
   
-  typedef Point_set::iterator Iterator;
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
   typedef Point_set_color_map<Point_set> Color_map;
 
-  typedef CGAL::Classifier<Iterator, Point_map>                                         PSC;
-  typedef CGAL::Classification::Helper<Kernel, Iterator, Point_map>                Helper;
+  typedef CGAL::Point_set_classifier<Kernel, Point_set, Point_map>                          PSC;
   typedef CGAL::Classification::Type_handle                                                Type_handle;
   typedef CGAL::Classification::Attribute_handle                                           Attribute_handle;
-  typedef CGAL::Classification::Attribute_vertical_dispersion<Kernel, Iterator, Point_map> Dispersion;
-  typedef CGAL::Classification::Attribute_elevation<Kernel, Iterator, Point_map>           Elevation;
-  typedef CGAL::Classification::Attribute_verticality<Kernel, Iterator, Point_map>         Verticality;
-  typedef CGAL::Classification::Attribute_distance_to_plane<Kernel, Iterator, Point_map>   Distance_to_plane;
+  typedef CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Point_set, Point_map> Dispersion;
+  typedef CGAL::Classification::Attribute::Elevation<Kernel, Point_set, Point_map>           Elevation;
+  typedef CGAL::Classification::Attribute::Verticality<Kernel, Point_set, Point_map>         Verticality;
+  typedef CGAL::Classification::Attribute::Distance_to_plane<Kernel, Point_set, Point_map>   Distance_to_plane;
 
 
  public:
@@ -126,7 +124,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     for (std::size_t i = 0; i < m_types.size(); ++ i)
       {
         items.push_back (new Item);
-        items.back()->setName (QString("%1 (%2)").arg(name).arg(m_types[i].first->id().c_str()));
+        items.back()->setName (QString("%1 (%2)").arg(name).arg(m_types[i].first->name().c_str()));
         items.back()->setColor (m_types[i].second);
         map_types[m_types[i].first] = i;
       }
@@ -162,7 +160,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   Type_handle get_classification_type (const char* name)
   {
     for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i].first->id() == name)
+      if (m_types[i].first->name() == name)
         return m_types[i].first;
     return Type_handle();
   }
@@ -178,9 +176,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
          it != m_points->point_set()->end(); ++ it)
       m_psc->set_classification_type_of(*it, class_type);
 
-    m_psc->add_training_set(class_type,
-                            m_points->point_set()->first_selected(),
-                            m_points->point_set()->end());
+    m_psc->set_inliers(class_type,
+                       boost::make_iterator_range(m_points->point_set()->first_selected(),
+                                                  m_points->point_set()->end()));
     m_points->resetSelection();
   }
 
@@ -193,7 +191,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
          it != m_points->point_set()->end(); ++ it)
       {
         Type_handle t = m_psc->classification_type_of(*it);
-        m_psc->add_training_index (t, *it);
+        m_psc->set_inlier (t, *it);
       }
 
     m_points->resetSelection();
@@ -202,7 +200,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   double& smoothing() { return m_smoothing; }
   std::size_t& nb_scales() { return m_nb_scales; }
   std::size_t& number_of_trials() { return m_nb_trials; }
-  bool features_computed() const { return (m_helper != NULL); }
+  bool features_computed() const { return (m_psc->number_of_attributes() != 0); }
 
   std::vector<std::pair<Type_handle, QColor> >& types() { return m_types; }
   std::size_t number_of_attributes() const { return m_psc->number_of_attributes(); }
@@ -216,7 +214,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   void remove_type (const char* name)
   {
     for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i].first->id() == name)
+      if (m_types[i].first->name() == name)
         {
           m_psc->remove_classification_type (m_types[i].first);
           m_types.erase (m_types.begin() + i);
@@ -229,7 +227,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   void change_type_color (const char* name, const QColor& color)
   {
     for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i].first->id() == name)
+      if (m_types[i].first->name() == name)
         {
           m_types[i].second = color;
           break;
@@ -241,9 +239,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   {
     for (std::size_t i = 0; i < m_psc->number_of_attributes(); ++ i)
       {
-        std::size_t scale = m_helper->scale_of_attribute(m_psc->get_attribute(i));
+        std::size_t scale = m_psc->scale_of_attribute(m_psc->get_attribute(i));
         std::ostringstream oss;
-        oss << "Attribute " << m_psc->get_attribute(i)->id() << "_" << scale;
+        oss << "Attribute " << m_psc->get_attribute(i)->name() << "_" << scale;
         cb->addItem (oss.str().c_str());
         cb1->addItem (oss.str().c_str());
       }
@@ -251,23 +249,21 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
   void save_config(const char* filename)
   {
-    if (m_helper == NULL)
+    if (m_psc->number_of_attributes() == 0)
       {
         std::cerr << "Error: features not computed" << std::endl;
         return;
       }
 
     std::ofstream f (filename);
-    m_helper->save (f, *m_psc);
+    m_psc->save_configuration (f);
   }
 
   void load_config(const char* filename)
   {
-    if (m_helper != NULL)
-      delete m_helper;
+    if (m_psc->number_of_attributes() != 0)
+      m_psc->clear();
 
-    m_psc->clear_classification_types();
-    m_psc->clear_attributes();
     reset_indices();
     
     bool normals = m_points->point_set()->has_normal_map();
@@ -278,62 +274,21 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
     std::ifstream f (filename);
     if (!normals && !colors && !echo)
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map());
+      m_psc->load_configuration (f);
     else if (!normals && !colors && echo)
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map(),
-                             CGAL::Empty_property_map<Iterator, Vector_3>(),
-                             CGAL::Empty_property_map<Iterator, Color>(),
-                             echo_map);
+      m_psc->load_configuration (f, CGAL::Default(), CGAL::Default(), echo_map);
     else if (!normals && colors && !echo)
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map(),
-                             CGAL::Empty_property_map<Iterator, Vector_3>(),
-                             Color_map(m_points->point_set()));
+      m_psc->load_configuration (f, CGAL::Default(), Color_map(m_points->point_set()));
     else if (!normals && colors && echo)
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map(),
-                             CGAL::Empty_property_map<Iterator, Vector_3>(),
-                             Color_map(m_points->point_set()),
-                             echo_map);
+      m_psc->load_configuration (f, CGAL::Default(), Color_map(m_points->point_set()), echo_map);
     else if (normals && !colors && !echo)
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map(),
-                             m_points->point_set()->normal_map());
+      m_psc->load_configuration (f, m_points->point_set()->normal_map());
     else if (normals && !colors && echo)
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map(),
-                             m_points->point_set()->normal_map(),
-                             CGAL::Empty_property_map<Iterator, Color>(),
-                             echo_map);
+      m_psc->load_configuration (f, m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
     else if (normals && colors && !echo)
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map(),
-                             m_points->point_set()->normal_map(),
-                             CGAL::Empty_property_map<Iterator, Color>());
+      m_psc->load_configuration (f, m_points->point_set()->normal_map(), Color_map(m_points->point_set()));
     else
-      m_helper = new Helper (f, *m_psc,
-                             m_points->point_set()->begin(),
-                             m_points->point_set()->end(),
-                             m_points->point_set()->point_map(),
-                             m_points->point_set()->normal_map(),
-                             Color_map(m_points->point_set()),
-                             echo_map);
+      m_psc->load_configuration (f, m_points->point_set()->normal_map(), Color_map(m_points->point_set()), echo_map);
     
     std::vector<std::pair<Type_handle, QColor> > new_types;
     for (std::size_t i = 0; i < m_psc->number_of_classification_types(); ++ i)
@@ -344,7 +299,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
                       192 + rand() % 60);
 
         for (std::size_t j = 0; j < m_types.size(); ++ j)
-          if (t->id() == m_types[j].first->id())
+          if (t->name() == m_types[j].first->name())
             {
               color = m_types[j].second;
               break;
@@ -362,7 +317,6 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   
   Scene_points_with_normal_item* m_points;
   PSC* m_psc;
-  Helper* m_helper;
 
   std::size_t m_nb_scales;
 

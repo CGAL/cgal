@@ -105,7 +105,7 @@ public:
               for(std::size_t t=0; t<grid.indices(k,l).size();t++)
                 {
                   std::size_t ip = grid.indices(k,l)[t];
-                  hori.push_back (get(point_map, input[ip]).z());
+                  hori.push_back (get(point_map, *(input.begin()+ip)).z());
                 }
         if (hori.empty())
           continue;

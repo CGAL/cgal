@@ -324,6 +324,9 @@ public:
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       delete m_scales[i];
     m_scales.clear();
+    
+    this->clear_classification_types();
+    this->clear_attributes();
   }
 
   /*!

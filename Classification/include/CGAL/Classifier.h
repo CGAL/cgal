@@ -215,7 +215,7 @@ public:
     for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
-        neighbor_query (get (m_item_map, m_input[s]), std::back_inserter (neighbors));
+        neighbor_query (get (m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
 
         std::vector<double> mean (values.size(), 0.);
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
@@ -286,7 +286,7 @@ public:
       {
         std::vector<std::size_t> neighbors;
 
-        neighbor_query (get(m_item_map, m_input[s]), std::back_inserter (neighbors));
+        neighbor_query (get(m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
 
         for (std::size_t i = 0; i < neighbors.size(); ++ i)
           if (s != neighbors[i])
@@ -818,8 +818,8 @@ public:
     \tparam IndexRange range of `std::size_t`, model of `ConstRange`.
   */
   template <class IndexRange>
-  bool add_training_set (Type_handle class_type,
-                         IndexRange indices)
+  bool set_inliers (Type_handle class_type,
+                    IndexRange indices)
   {
     std::size_t type_idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_types.size(); ++ i)

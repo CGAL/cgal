@@ -67,7 +67,7 @@ public:
 
     for (std::size_t i = 0; i < input.size(); ++ i)
       {
-        const Point_3& p = get(point_map, input[i]);
+        const Point_3& p = get(point_map, *(input.begin()+i));
         m_x.push_back ((std::size_t)((p.x() - bbox.xmin()) / grid_resolution));
         m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
         m_grid(m_x.back(), m_y.back()).push_back (i);

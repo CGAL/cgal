@@ -83,16 +83,16 @@ public:
     for (std::size_t i = 0; i < input.size(); i++)
       {
         std::vector<std::size_t> neighbors;
-        neighbor_query (get(point_map, input[i]), std::back_inserter (neighbors));
+        neighbor_query (get(point_map, *(input.begin()+i)), std::back_inserter (neighbors));
 
         std::vector<Point> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
-          neighbor_points.push_back (get(point_map, input[neighbors[j]]));
+          neighbor_points.push_back (get(point_map, *(input.begin()+neighbors[j])));
 
-        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, input[i]),
-                                                          get(point_map, input[neighbors.back()])));
+        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin() + i)),
+                                                            get(point_map, *(input.begin() + neighbors.back()))));
         
-        compute (get(point_map, input[i]), neighbor_points);
+        compute (get(point_map, *(input.begin()+i)), neighbor_points);
       }
 
     m_mean_range /= input.size();

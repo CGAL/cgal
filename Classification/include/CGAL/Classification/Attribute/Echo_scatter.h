@@ -85,7 +85,7 @@ public:
                   for(std::size_t t=0; t<grid.indices(k,l).size();t++){
 												
                     std::size_t ip = grid.indices(k,l)[t]; 
-                    if(get(echo_map, input[ip]) > 1)
+                    if(get(echo_map, *(input.begin()+ip)) > 1)
                       NB_echo_sup++;
                   }
 									

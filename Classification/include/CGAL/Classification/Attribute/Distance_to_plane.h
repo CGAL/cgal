@@ -72,7 +72,7 @@ public:
     this->set_weight(1.);
     for(std::size_t i = 0; i < input.size(); i++)
       distance_to_plane_attribute.push_back
-        (CGAL::sqrt (CGAL::squared_distance (get(point_map, input[i]), eigen.plane(i))));
+        (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane(i))));
     
     this->compute_mean_max (distance_to_plane_attribute, this->mean, this->max);
     //    max *= 2;

@@ -3,6 +3,8 @@
 
 #include <CGAL/Classification/Attribute/Effect.h>
 
+#include <boost/shared_ptr.hpp>
+
 namespace CGAL {
 
 namespace Classification {

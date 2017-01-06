@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H
 #define CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H
 
+#include <boost/shared_ptr.hpp>
+
 #include <vector>
 
 namespace CGAL {

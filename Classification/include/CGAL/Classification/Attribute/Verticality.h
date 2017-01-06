@@ -98,7 +98,7 @@ public:
 
     for (std::size_t i = 0; i < input.size(); i++)
       {
-        typename Kernel::Vector_3 normal = get(normal_map, input[i]);
+        typename Kernel::Vector_3 normal = get(normal_map, *(input.begin()+i));
         normal = normal / CGAL::sqrt (normal * normal);
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }

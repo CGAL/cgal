@@ -18,8 +18,7 @@
 Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* psc)
 : Scene_item(NbOfVbos,NbOfVaos),
   m_points (NULL),
-  m_psc (psc),
-  m_helper (NULL)
+  m_psc (psc)
 {
   setRenderingMode(PointsPlusNormals);
   m_nb_scales = 5;
@@ -34,8 +33,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
 Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_points_with_normal_item* points)
   : Scene_item(NbOfVbos,NbOfVaos),
     m_points (points),
-    m_psc (NULL),
-    m_helper (NULL)
+    m_psc (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_nb_scales = 5;
@@ -45,7 +43,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
 
   reset_indices();
   
-  m_psc = new PSC(m_points->point_set()->begin(), m_points->point_set()->end(), m_points->point_set()->point_map());
+  m_psc = new PSC(*(m_points->point_set()), m_points->point_set()->point_map());
 
   Type_handle ground = m_psc->add_classification_type("ground");
   Type_handle vegetation = m_psc->add_classification_type("vegetation");
@@ -66,8 +64,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
 Scene_point_set_classification_item::Scene_point_set_classification_item(const Scene_point_set_classification_item&)
   :Scene_item(NbOfVbos,NbOfVaos), // do not call superclass' copy constructor
    m_points (NULL),
-   m_psc (NULL),
-   m_helper (NULL)
+   m_psc (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_nb_scales = 5;
@@ -83,8 +80,6 @@ Scene_point_set_classification_item::~Scene_point_set_classification_item()
 {
   if (m_psc != NULL)
     delete m_psc;
-  if (m_helper != NULL)
-    delete m_helper;
 }
 
 void Scene_point_set_classification_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
@@ -263,7 +258,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       Attribute_handle att = m_psc->get_attribute(index_color - 3);
       double weight = att->weight();
-      att->weight() = att->max;
+      att->set_weight(att->max);
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
         {
@@ -271,7 +266,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
           colors_points.push_back (ramp.g(att->normalized(*it)));
           colors_points.push_back (ramp.b(att->normalized(*it)));
         }
-      att->weight() = weight;
+      att->set_weight(weight);
     }
 
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
@@ -294,9 +289,9 @@ Scene_point_set_classification_item::clone() const
 // Write point set to .PLY file
 bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stream)
 {
-  if (m_helper == NULL)
+  if (m_psc->number_of_attributes() == 0)
     return false;
-    
+  
   stream.precision (std::numeric_limits<double>::digits10 + 2);
 
   reset_indices();
@@ -310,12 +305,7 @@ bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stre
       colors.push_back (c);
     }
   
-  m_helper->write_ply (stream,
-                       m_points->point_set()->begin(),
-                       m_points->point_set()->end(),
-                       m_points->point_set()->point_map(),
-                       *m_psc,
-                       &colors);
+  m_psc->write_classification_to_ply (stream);
   return true;
 }
 
@@ -448,10 +438,8 @@ int Scene_point_set_classification_item::real_index_color() const
 
 void Scene_point_set_classification_item::reset_indices ()
 {
-  Point_set::Property_map<Point_set::Index> indices;
-
-  boost::tie (indices, boost::tuples::ignore)
-    = m_points->point_set()->property_map<Point_set::Index>("index");
+  Point_set::Property_map<Point_set::Index> indices
+    = m_points->point_set()->property_map<Point_set::Index>("index").first;
 
   m_points->point_set()->unselect_all();
   Point_set::Index idx;
@@ -468,44 +456,32 @@ void Scene_point_set_classification_item::compute_features ()
   reset_indices();
   
   std::cerr << "Computing features with " << m_nb_scales << " scale(s)" << std::endl;
+  if (m_psc->number_of_attributes() != 0)
+    m_psc->clear();
   compute_bbox();
-  if (m_helper != NULL) delete m_helper;
 
-
-  m_helper = new Helper (m_points->point_set()->begin(),
-                         m_points->point_set()->end(),
-                         m_points->point_set()->point_map(),
-                         m_nb_scales);
-  
-  m_helper->generate_point_based_attributes (*m_psc,
-                                             m_points->point_set()->begin(),
-                                             m_points->point_set()->end(),
-                                             m_points->point_set()->point_map());
-
-  if (m_points->point_set()->has_normal_map())
-    m_helper->generate_normal_based_attributes (*m_psc,
-                                                m_points->point_set()->begin(),
-                                                m_points->point_set()->end(),
-                                                m_points->point_set()->normal_map());
-  else
-    m_helper->generate_normal_based_attributes (*m_psc,
-                                                m_points->point_set()->begin(),
-                                                m_points->point_set()->end());
-
+  bool normals = m_points->point_set()->has_normal_map();
+  bool colors = m_points->point_set()->has_colors();
   Point_set::Property_map<boost::uint8_t> echo_map;
-  bool okay;
-  boost::tie (echo_map, okay) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
-  if (okay)
-    m_helper->generate_echo_based_attributes (*m_psc,
-                                              m_points->point_set()->begin(),
-                                              m_points->point_set()->end(),
-                                              echo_map);
+  bool echo;
+  boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
 
-  if (m_points->point_set()->has_colors())
-    m_helper->generate_color_based_attributes (*m_psc,
-                                               m_points->point_set()->begin(),
-                                               m_points->point_set()->end(),
-                                               Color_map(m_points->point_set()));
+  if (!normals && !colors && !echo)
+    m_psc->generate_attributes (m_nb_scales);
+  else if (!normals && !colors && echo)
+    m_psc->generate_attributes (m_nb_scales, CGAL::Default(), CGAL::Default(), echo_map);
+  else if (!normals && colors && !echo)
+    m_psc->generate_attributes (m_nb_scales, CGAL::Default(), Color_map(m_points->point_set()));
+  else if (!normals && colors && echo)
+    m_psc->generate_attributes (m_nb_scales, CGAL::Default(), Color_map(m_points->point_set()), echo_map);
+  else if (normals && !colors && !echo)
+    m_psc->generate_attributes (m_nb_scales, m_points->point_set()->normal_map());
+  else if (normals && !colors && echo)
+    m_psc->generate_attributes (m_nb_scales, m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
+  else if (normals && colors && !echo)
+    m_psc->generate_attributes (m_nb_scales, m_points->point_set()->normal_map(), Color_map(m_points->point_set()));
+  else
+    m_psc->generate_attributes (m_nb_scales, m_points->point_set()->normal_map(), Color_map(m_points->point_set()), echo_map);
 
 }
 
@@ -513,7 +489,7 @@ void Scene_point_set_classification_item::compute_features ()
 
 void Scene_point_set_classification_item::train()
 {
-  if (m_helper == NULL)
+  if (m_psc->number_of_attributes() == 0)
     {
       std::cerr << "Error: features not computed" << std::endl;
       return;
@@ -521,13 +497,12 @@ void Scene_point_set_classification_item::train()
 
   m_psc->train(m_nb_trials);
   m_psc->run();
-  m_helper->info();
-
+  m_psc->info();
 }
 
 bool Scene_point_set_classification_item::run (int method)
 {
-  if (m_helper == NULL)
+  if (m_psc->number_of_attributes() == 0)
     {
       std::cerr << "Error: features not computed" << std::endl;
       return false;
@@ -537,9 +512,9 @@ bool Scene_point_set_classification_item::run (int method)
   if (method == 0)
     m_psc->run();
   else if (method == 1)
-    m_psc->run_with_local_smoothing (m_helper->neighborhood().range_neighbor_query(m_helper->radius_neighbors()));
+    m_psc->run_with_local_smoothing (m_psc->neighborhood().range_neighbor_query(m_psc->radius_neighbors()));
   else if (method == 2)
-    m_psc->run_with_graphcut (m_helper->neighborhood().k_neighbor_query(12), m_smoothing);
+    m_psc->run_with_graphcut (m_psc->neighborhood().k_neighbor_query(12), m_smoothing);
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
   

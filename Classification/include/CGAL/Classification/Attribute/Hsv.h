@@ -85,7 +85,7 @@ public:
     this->set_weight(1.);
     for(std::size_t i = 0; i < input.size();i++)
       {
-        HSV_Color c = Classification::rgb_to_hsv (get(color_map, input[i]));
+        HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
         color_attribute.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
       }
     this->compute_mean_max (color_attribute, this->mean, this->max);
