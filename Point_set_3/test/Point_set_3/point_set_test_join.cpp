@@ -52,7 +52,7 @@ int main (int, char**)
   ps1.remove (ps1.end() - 3);
   
   for (std::size_t i = 5; i < 10; ++ i)
-    ps2.insert (Point (i, i, i));
+    ps2.insert (Point (double(i), double(i), double(i)));
 
   ps2.remove (ps2.end() - 3);
 
