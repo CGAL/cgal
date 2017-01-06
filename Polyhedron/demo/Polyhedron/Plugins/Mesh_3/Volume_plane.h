@@ -174,7 +174,7 @@ private:
   unsigned int adim_, bdim_, cdim_;
   double xscale_, yscale_, zscale_;
   mutable int currentCube;
-
+  mutable double max_dim;
   mutable QOpenGLBuffer vVBO;
   mutable QOpenGLBuffer cbuffer;
   mutable QOpenGLBuffer rectBuffer;
@@ -193,6 +193,18 @@ private:
   QString name(y_tag) const { return tr("Y Slice for %2").arg(name_); }
   QString name(z_tag) const { return tr("Z Slice for %2").arg(name_); }
 
+  void update_maxDim() const
+  {
+    double ax((adim_ - 1) * xscale_), ay((adim_ - 1) * yscale_), az((adim_ - 1) * zscale_),
+           bx((bdim_ - 1) * xscale_), by((bdim_ - 1) * yscale_), bz((bdim_ - 1) * zscale_),
+           cx((cdim_ - 1) * xscale_), cy((cdim_ - 1) * yscale_), cz((cdim_ - 1) * zscale_);
+
+    double max_a = (std::max)((std::max)(ax, ay), az);
+    double max_b = (std::max)((std::max)(bx, by), bz);
+    double max_c = (std::max)((std::max)(cx, cy), cz);
+    max_dim = (std::max)((std::max)(max_a, max_b), max_c);
+
+  }
   void drawRectangle(x_tag) const {
 
 
@@ -200,6 +212,7 @@ private:
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back((bdim_ - 1) * zscale_);
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+
 
   }
 
@@ -219,7 +232,7 @@ private:
 
   void drawSpheres(x_tag) const
   {
-      int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+      update_maxDim();
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres, 18);
 
@@ -232,7 +245,7 @@ private:
 
   void drawSpheres(y_tag) const
   {
-      int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+      update_maxDim();
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
@@ -244,7 +257,7 @@ private:
 
   void drawSpheres(z_tag) const
   {
-      int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+      update_maxDim();
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
@@ -486,7 +499,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   spheres_program = getShaderProgram(PROGRAM_SPHERES, viewer);
   attribBuffers(viewer, PROGRAM_SPHERES);
   spheres_program->bind();
-  int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+  update_maxDim();
   sphere_radius = max_dim/20.0f * sphere_Slider->value()/100.0f;
   spheres_program->setAttributeValue("radius", sphere_radius);
   spheres_program->setAttributeValue("colors", this->color());
