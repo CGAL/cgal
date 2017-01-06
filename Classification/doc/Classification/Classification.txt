@@ -41,7 +41,7 @@ Organization of the package.
 
 The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual).
 
-\snippet Classification/example_point_set_classification.cpp Analysis
+\snippet Classification/example_classifier.cpp Analysis
 
 \subsection Classification_attributes Attributes
 
@@ -76,7 +76,7 @@ Finally, if the input point set has additional properties, these can also be use
 
 In the following code snippet, a subset of these attributes are instantiated, their weights are set and they are added to a newly created classifier:
 
-\snippet Classification/example_point_set_classification.cpp Attributes
+\snippet Classification/example_classifier.cpp Attributes
 
 \subsection Classification_types Classification Types
 
@@ -99,7 +99,7 @@ Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$
 
 The following code snippet shows how to add types to the classification object and how to set the effects of the attributes on these types:
 
-\snippet Classification/example_point_set_classification.cpp Classification Types
+\snippet Classification/example_classifier.cpp Classification Types
 
 \subsection Classification_regularization Regularization
 
@@ -203,11 +203,11 @@ The following example:
 - classifies the point set
 - saves the result in a colored PLY format.
 
-\cgalExample{Classification/example_point_set_classification.cpp}
+\cgalExample{Classification/example_classifier.cpp}
 
 \section Classification_helper Helper
 
-The classification algorithm is designed to be as flexible as possible: users may define their own attributes and classification types. Nevertheless, \cgal provides a predefined framework that should work correctly on common urban point sets. The class `CGAL::Classification::Helper` makes it easier for the user to classify its input point set:
+The classification algorithm is designed to be as flexible as possible: users may define their own attributes and classification types. Nevertheless, \cgal provides a predefined framework that should work correctly on common urban point sets. The class `CGAL::Point_set_classification` makes it easier for the user to classify its input point set:
 
 - it takes care of generating all needed analysis structures
 - it generates all possible attributes (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.)
@@ -248,7 +248,7 @@ The following example:
 - runs the algorithm using the graphcut regularization
 - saves the output using the helper.
 
-\cgalExample{Classification/example_helper.cpp}
+\cgalExample{Classification/example_point_set_classifier.cpp}
 
 \section Classification_history History
 

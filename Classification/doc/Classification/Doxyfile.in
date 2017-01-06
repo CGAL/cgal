@@ -2,5 +2,6 @@
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Classification"
 INPUT        = ${CMAKE_SOURCE_DIR}/Classification/doc/Classification/ \
                ${CMAKE_SOURCE_DIR}/Classification/include/CGAL/Classifier.h \
+               ${CMAKE_SOURCE_DIR}/Classification/include/CGAL/Point_set_classifier.h \
                ${CMAKE_SOURCE_DIR}/Classification/include/CGAL/Classification/Attribute/ \
                ${CMAKE_SOURCE_DIR}/Classification/include/CGAL/Classification/

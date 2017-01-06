@@ -34,17 +34,20 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
+
 - `CGAL::NeighborQuery`
 
 ## Classification ##
-- `CGAL::Classifier<RandomAccessIterator, ItemMap>`
+
+- `CGAL::Classifier<Range, ItemMap>`
+- `CGAL::Point_set_classifier<Kernel, Range, PointMap, DiagonalizeTraits>`     
 
 ## Data Structures ##
 
-- `CGAL::Classification::Helper<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Point_set_neighborhood<Kernel, RandomAccessIterator, PointMap>`
-- `CGAL::Classification::Local_eigen_analysis<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap>`
+
+- `CGAL::Classification::Point_set_neighborhood<Kernel, Range, PointMap>`
+- `CGAL::Classification::Local_eigen_analysis<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Planimetric_grid<Kernel, Range, PointMap>`
 
 ## Classification Type ##
 
@@ -58,20 +61,20 @@
 
 ## Predefined Attributes ##
 
-- `CGAL::Classification::Attribute::Anisotropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Distance_to_plane<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap>`
-- `CGAL::Classification::Attribute::Eigentropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Elevation<Kernel, RandomAccessIterator, PointMap>`
-- `CGAL::Classification::Attribute::Hsv<Kernel, RandomAccessIterator, ColorMap>`
-- `CGAL::Classification::Attribute::Linearity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Omnivariance<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Planarity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Sphericity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Sum_eigenvalues<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Surface_variation<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Vertical_dispersion<Kernel, RandomAccessIterator, PointMap>`
-- `CGAL::Classification::Attribute::Verticality<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Anisotropy<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Distance_to_plane<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Echo_scatter<Kernel, Range, PointMap, EchoMap>`
+- `CGAL::Classification::Attribute::Eigentropy<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Elevation<Kernel, Range, PointMap>`
+- `CGAL::Classification::Attribute::Hsv<Kernel, Range, ColorMap>`
+- `CGAL::Classification::Attribute::Linearity<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Omnivariance<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Planarity<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Sphericity<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Sum_eigenvalues<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Surface_variation<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Range, PointMap>`
+- `CGAL::Classification::Attribute::Verticality<Kernel, Range, PointMap, DiagonalizeTraits>`
 
 
 */

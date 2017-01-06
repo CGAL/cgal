@@ -410,12 +410,6 @@ public:
   /*!
     \brief Adds an attribute.
 
-    \param attribute %Handle of the attribute to add.
-   */
-
-  /*!
-    \brief Adds an attribute.
-
     \tparam Attribute type of the attribute, inherited from
     `Classification::Attribute_base`.
 

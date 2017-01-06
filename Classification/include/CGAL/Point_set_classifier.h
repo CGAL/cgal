@@ -197,7 +197,7 @@ public:
 
     \param input input range.
 
-    \param item_map property map to access the input points.
+    \param point_map property map to access the input points.
   */
   Point_set_classifier(const Range& input, PointMap point_map) : Base (input, point_map)
   {
@@ -349,8 +349,6 @@ public:
   */
   double radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
-  /// @}
-  
   /*!
     \brief Clears all computed data structures.
   */
@@ -364,6 +362,8 @@ public:
     this->clear_attributes();
   }
 
+  /// @}
+  
   /// @}
 
   /// \cond SKIP_IN_MANUAL  
@@ -628,15 +628,6 @@ public:
     - 3 properties `red`, `green` and `blue` to associate each label
     to a color (this is useful to visualize the classification in a
     viewer that supports PLY colors). Colors are picked randomly.
-
-    \param stream The output stream where to write the content
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param psc The classification object to write from
-    \param colors A set of colors to be used to represent the
-    different classification types. If none is given, random colors
-    are picked.
   */
   void write_classification_to_ply (std::ostream& output)
   {
