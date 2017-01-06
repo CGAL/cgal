@@ -19,6 +19,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <Scene.h>
 
 struct Is_terminal
@@ -457,6 +458,97 @@ public Q_SLOTS:
         return;
       }
       selection_item->keep_connected_components();
+      break;
+    }
+      //Convert from Edge Selection to Facet Selection
+    case 5:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_edges.empty()) {
+        print_message("Error: there is no selected edge in this polyhedron selection item!");
+        return;
+      }
+      Polyhedron poly = *selection_item->polyhedron();
+      BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
+      {
+        selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
+        selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
+      //Convert from Edge Selection to Point Selection
+    case 6:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_edges.empty()) {
+        print_message("Error: there is no selected edge in this polyhedron selection item!");
+        return;
+      }
+      Polyhedron poly = *selection_item->polyhedron();
+
+      BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
+      {
+        selection_item->selected_vertices.insert(target(halfedge(ed, poly), poly));
+        selection_item->selected_vertices.insert(source(halfedge(ed, poly), poly));
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
+    case 7:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_facets.empty()) {
+        print_message("Error: there is no selected facet in this polyhedron selection item!");
+        return;
+      }
+      Polyhedron poly = *selection_item->polyhedron();
+      std::vector<Scene_polyhedron_selection_item::Halfedge_handle> boundary_edges;
+      CGAL::Polygon_mesh_processing::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
+      BOOST_FOREACH(Scene_polyhedron_selection_item::Halfedge_handle h, boundary_edges)
+      {
+        selection_item->selected_edges.insert(edge(h, poly));
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
+      //Convert from Facet Selection to Points Selection
+    case 8:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_facets.empty()) {
+        print_message("Error: there is no selected facet in this polyhedron selection item!");
+        return;
+      }
+      Polyhedron poly = *selection_item->polyhedron();
+      BOOST_FOREACH(Scene_polyhedron_selection_item::Facet_handle fh, selection_item->selected_facets)
+      {
+        BOOST_FOREACH(Scene_polyhedron_selection_item::halfedge_descriptor h, CGAL::halfedges_around_face(fh->halfedge(), poly) )
+        {
+          selection_item->selected_vertices.insert(target(h, poly));
+        }
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
       break;
     }
     default :

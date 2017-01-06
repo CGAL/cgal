@@ -416,6 +416,26 @@
                <string>Keep Connected Components of Selected Facets</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>Convert from Edge Selection to Facets Selection</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Convert from Edge Selection to Point Selection</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Convert from Facet Selection to Boundary Edge Selection</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Convert from Facet Selection to Point Selection</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
