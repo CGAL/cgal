@@ -619,6 +619,33 @@ resulting mesh.
 View of a 3D mesh of the relative complement of a torus in a sphere.
 \cgalFigureEnd
 
+\subsubsection Mesh_3MeshingMultipleDomains_3 Construction of an Hybrid domain : from an Implicit and a Polyhedral domain
+
+The example code of \ref Mesh_3/mesh_hybrid_mesh_domain.cpp produces a 3D mesh for a domain consisting of several subdomains too.
+Here, the set of subdomains is given by two subdomains of different types : a domain defined by an implicit sphere,
+and a domain defined by the triangulated surface of a cube.
+
+\cgalFigureRef{mesh3HybridDomainExample} shows the results with or with the
+protection of the 1D-features.
+
+\cgalFigureAnchor{mesh3HybridDomainExample}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="./hybrid_domain.png"></td>
+  <td><img border="0" src="./hybrid_domain_mesh_no_protection.png"></td>
+  <td><img border="0" src="./hybrid_domain_mesh_protection.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3HybridDomainExample}
+Left: the input hybrid domain.
+
+Middle : mesh without any call to `%add_features()`.
+
+Right : the mesh with added 1D-features at the intersection of subdomains.
+\cgalFigureCaptionEnd
+
 
 \subsection Mesh_3PolyhedralDomains Polyhedral Domains
 

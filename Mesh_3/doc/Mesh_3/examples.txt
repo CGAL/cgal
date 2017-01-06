@@ -6,6 +6,7 @@
 \example Mesh_3/random_labeled_image.h
 \example CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h
 \example Mesh_3/mesh_3D_image_variable_size.cpp
+\example Mesh_3/mesh_hybrid_mesh_domain.cpp
 \example Mesh_3/mesh_implicit_domains.cpp
 \example Mesh_3/mesh_implicit_domains_2.cpp
 \example Mesh_3/mesh_implicit_ellipsoid.cpp
