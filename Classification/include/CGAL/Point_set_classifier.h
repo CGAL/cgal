@@ -190,13 +190,46 @@ public:
   /// \endcond
 
 
-  template<typename VectorMap = CGAL::Default_property_map<Iterator, typename Kernel::Vector_3>,
-           typename ColorMap = CGAL::Default_property_map<Iterator, RGB_Color>,
-           typename EchoMap  = CGAL::Default_property_map<Iterator, std::size_t> >
-  void generate_attributes (std::size_t nb_scales = 1,
+  template <typename T>
+  const T& get_parameter (const T& t)
+  {
+    return t;
+  }
+
+  template <typename VectorMap = Default,
+            typename ColorMap = Default,
+            typename EchoMap = Default>
+  void generate_attributes (std::size_t nb_scales,
                             VectorMap normal_map = VectorMap(),
                             ColorMap color_map = ColorMap(),
                             EchoMap echo_map = EchoMap())
+  {
+    typedef typename Default::Get<VectorMap, typename Kernel::Vector_3 >::type
+      Vmap;
+    typedef typename Default::Get<ColorMap, RGB_Color >::type
+      Cmap;
+    typedef typename Default::Get<EchoMap, std::size_t >::type
+      Emap;
+
+    generate_attributes_impl (nb_scales,
+                              get_parameter<Vmap>(normal_map),
+                              get_parameter<Cmap>(color_map),
+                              get_parameter<Emap>(echo_map));
+  }
+
+
+  template <typename T>
+  Default_property_map<Iterator, T>
+  get_parameter (const Default&)
+  {
+    return Default_property_map<Iterator, T>();
+  }
+
+  template<typename VectorMap, typename ColorMap, typename EchoMap>
+  void generate_attributes_impl (std::size_t nb_scales,
+                                 VectorMap normal_map,
+                                 ColorMap color_map,
+                                 EchoMap echo_map)
   {
     m_bbox = CGAL::bounding_box
       (boost::make_transform_iterator (m_input.begin(),
@@ -223,6 +256,7 @@ public:
     generate_color_based_attributes (color_map);
     generate_echo_based_attributes (echo_map);
   }
+
 
   /// \cond SKIP_IN_MANUAL
   virtual ~Point_set_classifier()
@@ -620,13 +654,32 @@ public:
     \param color_map Property map to access the colors of the input points (if any).
     \param echo_map Property map to access the echo values of the input points (if any).
   */
-  template<typename VectorMap = CGAL::Default_property_map<Iterator, typename Kernel::Vector_3>,
-           typename ColorMap = CGAL::Default_property_map<Iterator, RGB_Color>,
-           typename EchoMap  = CGAL::Default_property_map<Iterator, std::size_t> >
+  template<typename VectorMap = Default,
+           typename ColorMap = Default,
+           typename EchoMap  = Default>
   bool load_configuration (std::istream& input, 
                            VectorMap normal_map = VectorMap(),
                            ColorMap color_map = ColorMap(),
                            EchoMap echo_map = EchoMap())
+  {
+    typedef typename Default::Get<VectorMap, typename Kernel::Vector_3 >::type
+      Vmap;
+    typedef typename Default::Get<ColorMap, RGB_Color >::type
+      Cmap;
+    typedef typename Default::Get<EchoMap, std::size_t >::type
+      Emap;
+
+    return load_configuration_impl (input,
+                                    get_parameter<Vmap>(normal_map),
+                                    get_parameter<Cmap>(color_map),
+                                    get_parameter<Emap>(echo_map));
+  }
+
+  template<typename VectorMap,typename ColorMap, typename EchoMap>
+  bool load_configuration_impl (std::istream& input, 
+                                VectorMap normal_map,
+                                ColorMap color_map,
+                                EchoMap echo_map)
   {
     typedef Classification::Attribute::Echo_scatter<Kernel, Range, PointMap, EchoMap> Echo_scatter;
     typedef Classification::Attribute::Hsv<Kernel, Range, ColorMap> Hsv;
