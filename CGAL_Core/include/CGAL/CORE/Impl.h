@@ -51,6 +51,7 @@
   #define CORE_NEW(T)
   #define CORE_DELETE(T)
   #define CORE_MEMORY_IMPL(T)
+  #define CORE_MEMORY_IMPL_TEMPLATE_WITH_ONE_ARG(T)
 #else
   #include <CGAL/CORE/MemoryPool.h>
   #define CORE_NEW(T)  void *operator new( size_t size);
@@ -61,6 +62,13 @@
     { return MemoryPool<T>::global_allocator().allocate(size); }         \
     CGAL_INLINE_FUNCTION void T::operator delete( void *p, size_t )      \
     { MemoryPool<T>::global_allocator().free(p); }
+  #define CORE_MEMORY_IMPL_TEMPLATE_WITH_ONE_ARG(C)                       \
+  template <typename T>                                                   \
+  CGAL_INLINE_FUNCTION void *C<T>::operator new( size_t size)             \
+  { return MemoryPool<C<T> >::global_allocator().allocate(size); }        \
+  template <typename T>                                                   \
+  CGAL_INLINE_FUNCTION void C<T>::operator delete( void *p, size_t )      \
+  { MemoryPool<C<T> >::global_allocator().free(p); }
 #endif
 
 // include some common header files

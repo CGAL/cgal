@@ -94,8 +94,8 @@ template <class T>
 class Realbase_for : public RealRep {
 public:
 
-  CGAL_CORE_EXPORT CORE_NEW(Realbase_for)
-  CGAL_CORE_EXPORT CORE_DELETE(Realbase_for)
+  CORE_NEW(Realbase_for)
+  CORE_DELETE(Realbase_for)
 
   Realbase_for(const T& k);
   ~Realbase_for() {}
@@ -157,6 +157,14 @@ public:
 private:
   T ker;
 };//Realbase_for class
+
+template <class T>
+void * Realbase_for<T>::operator new( size_t size)
+{ return MemoryPool<Realbase_for<T> >::global_allocator().allocate(size); }
+
+template <class T>
+void Realbase_for<T>::operator delete( void *p, size_t )
+{ MemoryPool<Realbase_for<T> >::global_allocator().free(p); }
 
 typedef Realbase_for<long> RealLong;
 typedef Realbase_for<double> RealDouble;
