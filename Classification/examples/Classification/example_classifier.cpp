@@ -39,8 +39,8 @@ typedef CGAL::Classification::Attribute::Elevation<Kernel, Point_range, Pmap>   
 typedef CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Point_range, Pmap> Dispersion;
 
 
-  ///////////////////////////////////////////////////////////////////
-  //! [Analysis]
+///////////////////////////////////////////////////////////////////
+//! [Analysis]
 
 int main (int argc, char** argv)
 {
@@ -67,26 +67,27 @@ int main (int argc, char** argv)
   Planimetric_grid grid (pts, Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts, Pmap());
   Local_eigen_analysis eigen (pts, Pmap(), neighborhood.k_neighbor_query(6));
-  
+
+  Classifier classifier (pts, Pmap());
+
   //! [Analysis]
   ///////////////////////////////////////////////////////////////////
   
   ///////////////////////////////////////////////////////////////////
   //! [Attributes]
 
-  Classifier psc (pts, Pmap());
   std::cerr << "Computing attributes" << std::endl;
-  Attribute_handle d2p = psc.add_attribute<Distance_to_plane> (Pmap(), eigen);
-  Attribute_handle lin = psc.add_attribute<Linearity> (eigen);
-  Attribute_handle omni = psc.add_attribute<Omnivariance> (eigen);
-  Attribute_handle plan = psc.add_attribute<Planarity> (eigen);
-  Attribute_handle surf = psc.add_attribute<Surface_variation> (eigen);
-  Attribute_handle disp = psc.add_attribute<Dispersion> (Pmap(), grid,
-                                                         grid_resolution,
-                                                         radius_neighbors);
-  Attribute_handle elev = psc.add_attribute<Elevation> (Pmap(), grid,
-                                                        grid_resolution,
-                                                        radius_dtm);
+  Attribute_handle d2p = classifier.add_attribute<Distance_to_plane> (Pmap(), eigen);
+  Attribute_handle lin = classifier.add_attribute<Linearity> (eigen);
+  Attribute_handle omni = classifier.add_attribute<Omnivariance> (eigen);
+  Attribute_handle plan = classifier.add_attribute<Planarity> (eigen);
+  Attribute_handle surf = classifier.add_attribute<Surface_variation> (eigen);
+  Attribute_handle disp = classifier.add_attribute<Dispersion> (Pmap(), grid,
+                                                                grid_resolution,
+                                                                radius_neighbors);
+  Attribute_handle elev = classifier.add_attribute<Elevation> (Pmap(), grid,
+                                                               grid_resolution,
+                                                               radius_dtm);
   
   std::cerr << "Setting weights" << std::endl;
   d2p->set_weight(6.75e-2);
@@ -107,7 +108,7 @@ int main (int argc, char** argv)
   std::cerr << "Setting up classification types" << std::endl;
   
   // Create classification type and define how attributes affect them
-  Type_handle ground = psc.add_classification_type ("ground");
+  Type_handle ground = classifier.add_classification_type ("ground");
   ground->set_attribute_effect (d2p,  CGAL::Classification::Attribute::NEUTRAL);
   ground->set_attribute_effect (lin,  CGAL::Classification::Attribute::PENALIZING);
   ground->set_attribute_effect (omni, CGAL::Classification::Attribute::NEUTRAL);
@@ -116,7 +117,7 @@ int main (int argc, char** argv)
   ground->set_attribute_effect (disp, CGAL::Classification::Attribute::NEUTRAL);
   ground->set_attribute_effect (elev, CGAL::Classification::Attribute::PENALIZING);
 
-  Type_handle vege = psc.add_classification_type ("vegetation");
+  Type_handle vege = classifier.add_classification_type ("vegetation");
   vege->set_attribute_effect (d2p,  CGAL::Classification::Attribute::FAVORING);
   vege->set_attribute_effect (lin,  CGAL::Classification::Attribute::NEUTRAL);
   vege->set_attribute_effect (omni, CGAL::Classification::Attribute::FAVORING);
@@ -125,7 +126,7 @@ int main (int argc, char** argv)
   vege->set_attribute_effect (disp, CGAL::Classification::Attribute::FAVORING);
   vege->set_attribute_effect (elev, CGAL::Classification::Attribute::NEUTRAL);
   
-  Type_handle roof = psc.add_classification_type ("roof");
+  Type_handle roof = classifier.add_classification_type ("roof");
   roof->set_attribute_effect (d2p,  CGAL::Classification::Attribute::NEUTRAL);
   roof->set_attribute_effect (lin,  CGAL::Classification::Attribute::PENALIZING);
   roof->set_attribute_effect (omni, CGAL::Classification::Attribute::FAVORING);
@@ -138,7 +139,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
 
   // Run classification
-  psc.run_with_graphcut (neighborhood.k_neighbor_query(12), 0.2);
+  classifier.run_with_graphcut (neighborhood.k_neighbor_query(12), 0.2);
   
   // Save the output in a colored PLY format
 
@@ -158,7 +159,7 @@ int main (int argc, char** argv)
     {
       f << pts[i] << " ";
       
-      Type_handle type = psc.classification_type_of (i);
+      Type_handle type = classifier.classification_type_of (i);
       if (type == ground)
         f << "245 180 0" << std::endl;
       else if (type == vege)

@@ -6,7 +6,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Simon Giraudot, Florent Lafarge
 
-This component implements a generalization of the algorithm described in \cgalCite{cgal:lm-clscm-12}. It classifies a data set into a user-defined set of classification types, such as ground, vegetation and buildings. A flexible API is provided so that the user can classify any type of data, compute its own local attributes on the point cloud and define its own classification types based on these attributes.
+This component implements a generalization of the algorithm described in \cgalCite{cgal:lm-clscm-12}. It classifies a data set into a user-defined set of classification types, such as ground, vegetation and buildings. A flexible API is provided so that the user can classify any type of data, compute its own local attributes on the input data set and define its own classification types based on these attributes.
 
 \section Classification_Organization Package Organization
 
@@ -15,11 +15,11 @@ This component implements a generalization of the algorithm described in \cgalCi
 - some analysis is performed on the input data set
 - attributes are computed based on this analysis
 - a set of classification types (for example: ground, building, vegetation) is defined by the user
-- attributes are given weights and each pair of attribute/type is assigned a relationship
+- attributes are given weights and each pair of attribute/type is assigned a relationship. This can either be done by hand or using training (see \ref Classification_training)
 - classification is computed item-wise by minimizing an energy defined as the sum of the values taken by attributes on input items (which depend on the attribute/type relationship)
 - additional regularization can be used by smoothing either locally or globally through an Alpha Expansion approach.
 
-This package is designed to be easily extended by the user: more specifically, attributes and types can be defined by the user to handle any data he/she needs to classify (although \cgal provides a predefined framework for common urban scenes).
+This package is designed to be easily extended by the users: more specifically, attributes and types can be defined by users to handle any data they need to classify (although \cgal provides a predefined framework for common urban scenes).
 
 Currently, \cgal provides data structures to handle classification of point sets.
 
@@ -39,19 +39,17 @@ Organization of the package.
 - [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues
 - [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
 
-The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual).
+The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual). The class `CGAL::Classifier` that handles classification is also instanciated (see \ref Classification_classifier).
 
 \snippet Classification/example_classifier.cpp Analysis
 
 \subsection Classification_attributes Attributes
 
-Attributes are defined as scalar fields that associate each input point with a specific value. The user may want to define its own attributes, especially if the input point set comes with additional properties that were not anticipated by \cgal.
-
-A user-defined attribute must inherit from `CGAL::Classification::Attribute` and provide a method [value()](@ref CGAL::Classification::Attribute_base::value) that associate a scalar value to each input point.
+Attributes are defined as scalar fields that associate each input item with a specific value. Users may want to define their own attributes, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined attribute must inherit from `CGAL::Classification::Attribute` and provide a method [value()](@ref CGAL::Classification::Attribute_base::value) that associate a scalar value to each input item. Each attribute has a weight that measure its strength with respect to the other attributes (see \ref Classification_types).
 
 Attributes are accessed through `Handle` objects, `CGAL::Classification::Attribute_handle`.
 
-\cgal provides some predefined attributes that are relevant for classification of urban scenes:
+\cgal provides some predefined attributes that are relevant for classification of urban point sets:
 
 - [Distance_to_plane](@ref CGAL::Classification::Attribute::Distance_to_plane) measures how far away a point is from a locally estimated plane
 - [Elevation](@ref CGAL::Classification::Attribute::Elevation) computes the local distance to an estimation of the ground
@@ -69,18 +67,18 @@ For more details about how these different attributes can help identifying one c
 - [Sum_eigenvalues](@ref CGAL::Classification::Attribute::Sum_eigenvalues)
 - [Surface_variation](@ref CGAL::Classification::Attribute::Surface_variation)
 
-Finally, if the input point set has additional properties, these can also be used as attributes. For example, \cgal provides the following attributes:
+Finally, if the input data set has additional properties, these can also be used as attributes. For example, \cgal provides the following attributes:
 
 - [Echo_scatter](@ref CGAL::Classification::Attribute::Echo_scatter) uses the number of returns (echo) provided by most LIDAR scanners if available
 - [Hsv](@ref CGAL::Classification::Attribute::Hsv) uses input color information if available.
 
-In the following code snippet, a subset of these attributes are instantiated, their weights are set and they are added to a newly created classifier:
+In the following code snippet, a subset of these attributes are instantiated and their respective weights are set. Note that these weights can also be automatically set up by training (see \ref Classification_training).
 
 \snippet Classification/example_classifier.cpp Attributes
 
 \subsection Classification_types Classification Types
 
-A classification type represents how a point should be classified, for example: vegetation, building, road, etc. It is defined by the values the attributes are expected to take for a specific type. For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
+A classification type represents how an item should be classified, for example: vegetation, building, road, etc. It is defined by the values the attributes are expected to take for a specific type. For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
 
 \cgal provides a class `CGAL::Classification::Type` to define such a set of attribute effects, along with the associated `Handle` object: `CGAL::Classification::Type_handle`. Each type may define how a specific attribute affects it:
 
@@ -88,7 +86,7 @@ A classification type represents how a point should be classified, for example: 
 - [NEUTRAL](@ref CGAL::Classification::Attribute::NEUTRAL): the type is not affected by the attribute
 - [PENALIZING](@ref CGAL::Classification::Attribute::PENALIZING): the type is favored by low values of the attribute
 
-Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input points and \f$x_i\f$ the class of the \f$i^{th}\f$ point (for example: vegetation, ground, etc.). Let \f$a_j(i)\f$ be the raw value of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ point and \f$w_j\f$ be the weight of this attribute. We define the normalized value of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ point as follows:
+Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). Let \f$a_j(i)\f$ be the raw value of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this attribute. We define the normalized value of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ item as follows:
 
 \f{eqnarray*}{
     A_j(x_i) = & (1 - \min(\max(0,\frac{a_j(i)}{w_j}), 1)) & \mbox{if } a_j \mbox{ favors } x_i \\
@@ -97,13 +95,13 @@ Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$
 \f}
 
 
-The following code snippet shows how to add types to the classification object and how to set the effects of the attributes on these types:
+The following code snippet shows how to add types to the classification object and how to set the effects of the attributes on these types. Note that these effects can also be automatically set up by training (see \ref Classification_training).
 
 \snippet Classification/example_classifier.cpp Classification Types
 
-\subsection Classification_regularization Regularization
+\section Classification_classifier Classifier
 
-%Classification is performed by minizing an energy over the input point set that may include regularization. \cgal provides 3 different methods for classification, ranging from high speed / low quality to low speed / high quality:
+%Classification is performed by minizing an energy over the input data set that may include regularization. \cgal provides 3 different methods for classification, ranging from high speed / low quality to low speed / high quality:
 
 - `CGAL::Classifier::run()` 
 - `CGAL::Classifier::run_with_local_smoothing()`
@@ -118,20 +116,20 @@ Top-Left: input point set. Top-Right: raw output classification represented by a
 
 Mathematical details are provided hereafter.
 
-\subsubsection Classification_regularized_no No Regularization
+\subsection Classification_regularized_no No Regularization
 
 - `CGAL::Classifier::run()`: this is the fastest method
 that provides acceptable but usually noisy results (see Figure
 \cgalFigureRef{Classification_image}, top-right).
 
-Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input points and \f$x_i\f$ the class of the \f$i^{th}\f$ point (for example: vegetation, ground, etc.). The classification is performed by minimizing the following energy:
+Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). The classification is performed by minimizing the following energy:
 
 \f[
   E(x) = \sum_{i = 1..N_c} E_{di}(x_i)
 \f]
 
-This energy is a sum of pointwise energies and involves no regularization. Let \f$A=(A_j)_{j=1..N_a}\f$ be the set of normalized attributes
-(see \ref Classification_types). The pointwise energy measures the coherence of the class \f$x_i\f$ at the \f$i^{th}\f$ point and is defined as:
+This energy is a sum of itemwise energies and involves no regularization. Let \f$A=(A_j)_{j=1..N_a}\f$ be the set of normalized attributes
+(see \ref Classification_types). The itemwise energy measures the coherence of the class \f$x_i\f$ at the \f$i^{th}\f$ item and is defined as:
 
 \f[
   E_{di}(x_i) = \sum_{j = 1..N_a} A_j(x_i)
@@ -139,7 +137,7 @@ This energy is a sum of pointwise energies and involves no regularization. Let \
 
 
 
-\subsubsection Classification_regularized_local Local Smoothing
+\subsection Classification_regularized_local Local Smoothing
 
 - `CGAL::Classifier::run_with_local_smoothing()`: this
 method is a tradeoff between quality and efficiency (see Figure
@@ -151,9 +149,9 @@ energy is defined as follows:
   E(x) = \sum_{i = 1..N_c} E_{si}(x_i)
 \f]
 
-The pointwise energy \f$E_{di}(x_i)\f$ is replaced by
+The itemwise energy \f$E_{di}(x_i)\f$ is replaced by
 \f$E_{si}(x_i)\f$ defined on a small local neighborhood \f$N(i)\f$ of
-the \f$i^{th}\f$ point:
+the \f$i^{th}\f$ item:
 
 \f[
   E_{si}(x_i) = \sum_{j = 1..N_a} \frac{\sum_{k \in N(i)} A_j(x_k)}{\left| N(i) \right|}
@@ -164,7 +162,7 @@ classification types. Increasing the size of the neighborhood
 increases the noise reduction at the cost of higher computation times.
 
 
-\subsubsection Classification_regularized_graphcut Global Regularization (Graph Cut)
+\subsection Classification_regularized_graphcut Global Regularization (Graph Cut)
 
 - `CGAL::Classifier::run_with_graphcut()`: this method
 offers the best quality but requires longer computation time (see
@@ -179,35 +177,21 @@ standard Potts model \cgalCite{cgal:l-mrfmi-09} :
 
 where \f$\gamma>0\f$ is the parameter of the Potts model that
 quantifies the strengh of the regularization, \f$i \sim j\f$
-represents the pairs of neighboring points and
+represents the pairs of neighboring items and
 \f$\mathbf{1}_{\{.\}}\f$ the characteristic function.
 
 A Graph Cut based algorithm (Alpha Expansion) is used to quickly reach
 an approximate solution close to the global optimum of this energy.
 
-This method allows to consistently segment the input point set in
+This method allows to consistently segment the input data set in
 piecewise constant parts and to correct large wrongly classified
 clusters. Increasing \f$\gamma\f$ produces more regular result with a
 constant computation time.
 
 
+\section Classification_point_set_classifier Point Set Classifier
 
-\subsection Classification_example Example
-
-The following example:
-
-- reads an input file (LIDAR point set in PLY format)
-- computes useful structures from this input
-- computes segmentation attributes from the input and the precomputed structures
-- defines 3 classification types (vegetation, ground and roof) along with the effects of attributes on them
-- classifies the point set
-- saves the result in a colored PLY format.
-
-\cgalExample{Classification/example_classifier.cpp}
-
-\section Classification_helper Helper
-
-The classification algorithm is designed to be as flexible as possible: users may define their own attributes and classification types. Nevertheless, \cgal provides a predefined framework that should work correctly on common urban point sets. The class `CGAL::Point_set_classification` makes it easier for the user to classify its input point set:
+The classification algorithm is designed to be as flexible as possible: users may classify any type of item they need and define their own attributes and classification types. Nevertheless, \cgal provides a predefined specialization of `CGAL::Classifier` to handle common urban point sets: the class `CGAL::Point_set_classifier`. In addition to all the methods inherited from `CGAL::Classifier`, it provides additional features:
 
 - it takes care of generating all needed analysis structures
 - it generates all possible attributes (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.)
@@ -215,40 +199,61 @@ The classification algorithm is designed to be as flexible as possible: users ma
 - input/ouput methods are provided to save and recover a specific configuration (with all attributes, types and relationships between them)
 - classification can be saved as a PLY format with colors and labels.
 
+Note that using this class in order to classify point sets is not mandatory, as `CGAL::Classifier` can handle points as well. It is mainly provided to simplify the whole process of defining data structures and attributes in the specific case of urban point sets. Users can still add their own data structures and attributes within `CGAL::Point_set_classifier` similarly to what can be done with `CGAL::Classifier`.
+
+The example \ref Classification_example_training shows how to generate attributes and save the configuration and classification.
+
 \section Classification_training Training
 
 %Classification is based on relationships between attributes and types. Each attribute has a specific weight and each pair of attribute/type has a specific effect. This means that the number of parameters to set up can quickly explode: if 6 attributes are used to classify between 4 classification types, 30 parameters have to be set up.
 
-Though it is possible to set them up one by one, \cgal also provides a training algorithm that requires a small set of ground truth points provided by the user. More specifically, the user must provide, for each classification type he/she wants to classify, a set of known inliers among the input point set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
+Though it is possible to set them up one by one, \cgal also provides a training algorithm that requires a small set of ground truth items provided by the user. More specifically, users must provide, for each classification type they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
 
 - for each attribute, a range of weights is tested: the effect each attribute have on each type is estimated. For a given weight, if an attribute has the same effect on each type, it is non-relevant for classification. The range of weights such that the attribute is relevant is estimated
 
 - for each attribute, uniformly picked weight values are tested and their effects estimated
 
-- each ground truth point provided by the user is classified using this set of weights and effects
+- each ground truth item provided by the user is classified using this set of weights and effects
 
-- for each classification type, the ratio of correctly classified ground truth points is computed. The minimum of these ratios is used as a score for this set of weights and effects: a ratio of 0.8 means that for each classification type, at least 80\% of the provided ground truth point were correctly classified
+- for each classification type, the ratio of correctly classified ground truth items is computed. The minimum of these ratios is used as a score for this set of weights and effects: a ratio of 0.8 means that for each classification type, at least 80\% of the provided ground truth item were correctly classified
 
 - the same mechanism is repeated until all attributes' ranges have been tested. Weights are only changed one by one, the other ones kept to the previous value that gave the best score.
 
-This usually converges to a satisfying solution. The number of trials is user defined, set to 300 by default. Using at least 10 times the number of attributes is advised. If the solution is not satisfying, more ground truth points can be selected,for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new ground truth points into account.
+This usually converges to a satisfying solution. The number of trials is user defined, set to 300 by default. Using at least 10 times the number of attributes is advised. If the solution is not satisfying, more ground truth items can be selected,for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new ground truth items into account.
 
 \cgalFigureBegin{Classification_training_fig,classif_training.png}
 Example of evolution of training score. The purple curve is the score computed at the current iteration, green curve is the best score found so far. Iterations where better solutions are found are marked by vertical gray lines.
 \cgalFigureEnd
 
+The example \ref Classification_example_training shows how to set inliers and run the training algorithm.
 
-\subsection Classification_helper_example Example with Helper and Training
+\section Classification_examples Examples
+
+\subsection Classification_example_simple Simple classification
+
+The following example:
+
+- reads an input file (LIDAR point set in PLY format)
+- computes useful structures from this input
+- computes segmentation attributes from the input and the precomputed structures
+- defines 3 classification types (vegetation, ground and roof) along with the effects of attributes on them
+- classifies the point set using `CGAL::Classifier`
+- saves the result in a colored PLY format.
+
+\cgalExample{Classification/example_classifier.cpp}
+
+\subsection Classification_example_training Point set classification with training
 
 The following example:
 
 - reads a point set with a training set (embedded as a PLY attribute _label_)
-- uses the helper to generate attributes on 5 scales
+- uses `CGAL::Point_set_classifier` to generate attributes on 5 scales
 - trains the algorithm using 800 trials
 - runs the algorithm using the graphcut regularization
-- saves the output using the helper.
+- saves the output to PLY.
 
 \cgalExample{Classification/example_point_set_classifier.cpp}
+
 
 \section Classification_history History
 
