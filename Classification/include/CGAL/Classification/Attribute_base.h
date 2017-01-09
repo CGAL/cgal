@@ -107,7 +107,7 @@ public:
 /*!
   \ingroup PkgClassification
 
-  \brief Handle to an `Attribute_base`.
+  \brief %Handle to an `Attribute_base`.
 
   \cgalModels Handle
 */

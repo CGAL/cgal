@@ -33,26 +33,26 @@ namespace Attribute {
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on local distance to a fitted plane.
-
-    Characterizing a level of non-planarity can help identify noisy
-    parts of the input such as vegetation. This attribute computes the
-    distance of a point to a locally fitted plane.
+    %Attribute based on local distance to a fitted
+    plane. Characterizing a level of non-planarity can help to
+    identify noisy parts of the input such as vegetation. This
+    attribute computes the distance of a point to a locally fitted
+    plane.
     
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Distance_to_plane : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
 
   std::vector<double> distance_to_plane_attribute;
@@ -65,7 +65,7 @@ public:
     \param point_map property map to access the input points.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Distance_to_plane (const Range& input,
+  Distance_to_plane (const PointRange& input,
                      PointMap point_map,
                      const Local_eigen_analysis& eigen)
   {

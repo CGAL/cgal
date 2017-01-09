@@ -19,20 +19,20 @@ namespace Classification {
     projection along the Z-axis lies within this cell. The mapping
     from each point to the cell it lies in is also stored.
 
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type is
+    `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
   */
 
-template <typename Kernel, typename Range, typename PointMap>
+template <typename Geom_traits, typename PointRange, typename PointMap>
 class Planimetric_grid
 {
 public:
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::Point_3 Point_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
 
 private:
   typedef Image<std::vector<std::size_t> > Image_indices;
@@ -56,7 +56,7 @@ public:
     \param bbox bounding box of the input range.
     \param grid_resolution resolution of the planimetric grid.
   */
-  Planimetric_grid (const Range& input,
+  Planimetric_grid (const PointRange& input,
                     PointMap point_map,
                     const Iso_cuboid_3& bbox,
                     const double grid_resolution)

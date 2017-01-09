@@ -15,17 +15,17 @@ This component implements a generalization of the algorithm described in \cgalCi
 - some analysis is performed on the input data set
 - attributes are computed based on this analysis
 - a set of classification types (for example: ground, building, vegetation) is defined by the user
-- attributes are given weights and each pair of attribute/type is assigned a relationship. This can either be done by hand or using training (see \ref Classification_training)
-- classification is computed item-wise by minimizing an energy defined as the sum of the values taken by attributes on input items (which depend on the attribute/type relationship)
+- attributes are given weights and each pair of attribute and type is assigned a relationship. This can either be done by hand or using training (see \ref Classification_training)
+- classification is computed itemwise by minimizing an energy defined as the sum of the values taken by attributes on input items (which depend on the attribute/type relationship)
 - additional regularization can be used by smoothing either locally or globally through an Alpha Expansion approach.
-
-This package is designed to be easily extended by the users: more specifically, attributes and types can be defined by users to handle any data they need to classify (although \cgal provides a predefined framework for common urban scenes).
-
-Currently, \cgal provides data structures to handle classification of point sets.
 
 \cgalFigureBegin{Classification_Organization,organization.png}
 Organization of the package.
 \cgalFigureEnd
+
+This package is designed to be easily extended by users: more specifically, attributes and types can be defined by users to handle any data they need to classify (although \cgal provides a predefined framework for common urban scenes).
+
+Currently, \cgal provides data structures to handle classification of point sets.
 
 \section Classification_structures Data Structures
 
@@ -39,7 +39,7 @@ Organization of the package.
 - [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues
 - [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
 
-The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual). The class `CGAL::Classifier` that handles classification is also instanciated (see \ref Classification_classifier).
+The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual). The class `CGAL::Classifier` that handles classification is also instantiated (see \ref Classification_classifier).
 
 \snippet Classification/example_classifier.cpp Analysis
 
@@ -56,7 +56,7 @@ Attributes are accessed through `Handle` objects, `CGAL::Classification::Attribu
 - [Vertical_dispersion](@ref CGAL::Classification::Attribute::Vertical_dispersion) computes how noisy the point set is on a local Z-cylinder
 - [Verticality](@ref CGAL::Classification::Attribute::Verticality) compares the local normal vector to the vertical vector.
 
-For more details about how these different attributes can help identifying one classification type or the other, please refer to their associated reference manual pages. In addition, \cgal also provides attributes solely based on the local eigen values \cgalCite{cgal:mbrsh-raofw-11}. Such attributes are more theoretical and harder to relate to a specific use case, but they can help differenciating some classification types:
+For more details about how these different attributes can help to identify one classification type or the other, please refer to their associated reference manual pages. In addition, \cgal also provides attributes solely based on the local eigen values \cgalCite{cgal:mbrsh-raofw-11}. Such attributes are more theoretical and harder to relate to a specific use case, but they can help to differentiate some classification types:
 
 - [Anisotropy](@ref CGAL::Classification::Attribute::Anisotropy)
 - [Eigentropy](@ref CGAL::Classification::Attribute::Eigentropy)
@@ -86,7 +86,7 @@ A classification type represents how an item should be classified, for example: 
 - [NEUTRAL](@ref CGAL::Classification::Attribute::NEUTRAL): the type is not affected by the attribute
 - [PENALIZING](@ref CGAL::Classification::Attribute::PENALIZING): the type is favored by low values of the attribute
 
-Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). Let \f$a_j(i)\f$ be the raw value of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this attribute. We define the normalized value of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ item as follows:
+Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). Let \f$a_j(i)\f$ be the raw value of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this attribute. We define the normalized value \f$A_j(x_i) \in [0:1]\f$ of the \f$j^{th}\f$ attribute at the \f$i^{th}\f$ item as follows:
 
 \f{eqnarray*}{
     A_j(x_i) = & (1 - \min(\max(0,\frac{a_j(i)}{w_j}), 1)) & \mbox{if } a_j \mbox{ favors } x_i \\
@@ -229,7 +229,7 @@ The example \ref Classification_example_training shows how to set inliers and ru
 
 \section Classification_examples Examples
 
-\subsection Classification_example_simple Simple classification
+\subsection Classification_example_general General classification
 
 The following example:
 

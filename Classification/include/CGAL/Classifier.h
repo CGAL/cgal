@@ -62,43 +62,41 @@ namespace CGAL {
 classification types.
 
 This class implements the core of the classification algorithm
-\cgalCite{cgal:lm-clscm-12}. It uses a data set as input and assignes
-each input item to a classification type among a set of user
-defined classification types.
-
-To achieve this classification algorithm, a set of local geometric
-attributes are used, such as planarity, elevation or vertical
-dispersion. In addition, the user must define a set of classification
-types such as building, ground or vegetation.
+\cgalCite{cgal:lm-clscm-12}. It uses a data set as input and assigns
+each input item to a classification type among a set of user defined
+classification types. To achieve this classification, a set of local
+geometric attributes are used, such as planarity, elevation or
+vertical dispersion. In addition, the user must define a set of
+classification types such as building, ground or vegetation.
 
 Each pair of attribute and type must be assigned an
 [Attribute::Effect](@ref CGAL::Classification::Attribute::Effect) (for
 example, vegetation has a low planarity and a high vertical
 dispersion) and each attribute must be assigned a weight. These
 parameters can be set up by hand or by automatic training, provided a
-small user defined set of inlier is given for each classification
+small user-defined set of inlier is given for each classification
 type.
 
-\tparam Range range of items, model of `ConstRange`. Its iterator type
-is `RandomAccessIterator`.
+\tparam ItemRange model of `ConstRange`. Its iterator type is
+`RandomAccessIterator`.
 
 \tparam ItemMap model of `ReadablePropertyMap` whose key
-type is the value type of the iterator of `Range` and value type is
+type is the value type of the iterator of `ItemRange` and value type is
 the type of the items that are classified.
 */
-template <typename Range,
+template <typename ItemRange,
           typename ItemMap>
 class Classifier
 {
 
   
 public:
-  /// \cond SKIP_IN_MANUAL
-  typedef typename ItemMap::value_type Item;
-
   typedef typename Classification::Type_handle      Type_handle;
   typedef typename Classification::Attribute_handle Attribute_handle;
   
+  /// \cond SKIP_IN_MANUAL
+  typedef typename ItemMap::value_type Item;
+
 #ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
   typedef internal::Alpha_expansion_graph_cut_boost             Alpha_expansion;
 #else
@@ -107,7 +105,7 @@ public:
   
 protected:
   
-  const Range& m_input;
+  const ItemRange& m_input;
   ItemMap m_item_map;
 
   std::vector<std::size_t> m_assigned_type;
@@ -135,7 +133,7 @@ public:
 
     \param item_map property map to access the input items.
   */
-  Classifier (const Range& input,
+  Classifier (const ItemRange& input,
               ItemMap item_map)
     : m_input (input), m_item_map (item_map)
   {
@@ -147,6 +145,195 @@ public:
   virtual ~Classifier() { }
   /// \endcond
   
+  /// \name Attributes
+  /// @{
+
+  /*!
+    \brief Adds an attribute.
+
+    \tparam Attribute type of the attribute, inherited from
+    `Classification::Attribute_base`.
+
+    \tparam T types of the parameters of the attribute's constructor.
+
+    \param t parameters of the attribute's constructor.
+
+    \return a handle to the newly added attribute.
+   */
+#if (!defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)) || DOXYGEN_RUNNING
+  template <typename Attribute, typename ... T>
+  Attribute_handle add_attribute (T&& ... t)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, std::forward<T>(t)...)));
+    return m_attributes.back();
+  }
+#else
+  template <typename Attribute>
+  Attribute_handle add_attribute ()
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1>
+  Attribute_handle add_attribute (T1& t1)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2>
+  Attribute_handle add_attribute (T1& t1, T2& t2)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2, typename T3>
+  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2, typename T3, typename T4>
+  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4)));
+    return m_attributes.back();
+  }
+  template <typename Attribute, typename T1, typename T2, typename T3, typename T4, typename T5>
+  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
+  {
+    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4, t5)));
+    return m_attributes.back();
+  }
+#endif
+
+  /*!
+    \brief Removes an attribute.
+
+    \param attribute the handle to attribute type that must be removed.
+
+    \return `true` if the attribute was correctly removed, `false` if
+    its handle was not found.
+   */ 
+  bool remove_attribute (Attribute_handle attribute)
+  {
+    for (std::size_t i = 0; i < m_attributes.size(); ++ i)
+      if (m_attributes[i] == attribute)
+        {
+          m_attributes.erase (m_attributes.begin() + i);
+          return true;
+        }
+    return false;
+  }
+
+  /*!
+    \brief Returns how many attributes are defined.
+  */  
+  std::size_t number_of_attributes() const
+  {
+    return m_attributes.size();
+  }
+
+  /*!
+    \brief Removes all attributes.
+   */
+  void clear_attributes ()
+  {
+    m_attributes.clear();
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  Attribute_handle get_attribute(std::size_t index)
+  {
+    return m_attributes[index];
+  }
+  /// \endcond
+  
+  /// @}
+
+
+  /// \name Classification Types
+  /// @{
+  
+  /*!
+    \brief Adds a classification type.
+
+    \param name name of the classification type.
+
+    \return a handle to the newly added classification type.
+   */
+  Type_handle add_classification_type (const char* name)
+  {
+    Type_handle out (new Classification::Type (name));
+    m_types.push_back (out);
+    return out;
+  }
+
+  /*!
+    \brief Removes a classification type.
+
+    \param type the handle to the classification type that must be removed.
+
+    \return `true` if the classification type was correctly removed,
+    `false` if its handle was not found.
+   */ 
+ bool remove_classification_type (Type_handle type)
+  {
+    std::size_t idx = (std::size_t)(-1);
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i] == type)
+        {
+          m_types.erase (m_types.begin() + i);
+          idx = i;
+          break;
+        }
+    if (idx == (std::size_t)(-1))
+      return false;
+    std::cerr << idx << std::endl;
+    
+    for (std::size_t i = 0; i < m_assigned_type.size(); ++ i)
+      if (m_assigned_type[i] == (std::size_t)(-1))
+          continue;
+      else if (m_assigned_type[i] > idx)
+        m_assigned_type[i] --;
+      else if (m_assigned_type[i] == idx)
+        m_assigned_type[i] = (std::size_t)(-1);
+
+    for (std::size_t i = 0; i < m_training_type.size(); ++ i)
+      if (m_assigned_type[i] == (std::size_t)(-1))
+        continue;
+      else if (m_training_type[i] > idx)
+        m_training_type[i] --;
+      else if (m_training_type[i] == idx)
+        m_training_type[i] = (std::size_t)(-1);
+
+    return true;
+  }
+
+  /*!
+    \brief Returns how many classification types are defined.
+  */  
+  std::size_t number_of_classification_types () const
+  {
+    return m_types.size();
+  }
+  
+  /// \cond SKIP_IN_MANUAL
+  Type_handle get_classification_type (std::size_t index)
+  {
+    return m_types[index];
+  }
+  /// \endcond
+
+  /*!
+    \brief Removes all classification types.
+   */
+  void clear_classification_types ()
+  {
+    m_types.clear();
+  }
+
+  /// @}
+
   /// \name Classification
   /// @{
 
@@ -271,7 +458,7 @@ public:
   */
   template <typename NeighborQuery>
   void run_with_graphcut (const NeighborQuery& neighbor_query,
-                          const double& weight)
+                          const double weight)
   {
     prepare_classification ();
     
@@ -320,196 +507,6 @@ public:
   /// @}
   
 
-
-  /// \name Classification Types
-  /// @{
-  
-  /*!
-    \brief Adds a classification type.
-
-    \param name name of the classification type.
-
-    \return a handle to the newly added classification type.
-   */
-  Type_handle add_classification_type (const char* name)
-  {
-    Type_handle out (new Classification::Type (name));
-    m_types.push_back (out);
-    return out;
-  }
-
-  /*!
-    \brief Removes a classification type.
-
-    \param type the handle to the classification type that must be removed.
-
-    \return `true` if the classification type was correctly removed,
-    `false` if its handle was not found.
-   */ 
- bool remove_classification_type (Type_handle type)
-  {
-    std::size_t idx = (std::size_t)(-1);
-    for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i] == type)
-        {
-          m_types.erase (m_types.begin() + i);
-          idx = i;
-          break;
-        }
-    if (idx == (std::size_t)(-1))
-      return false;
-    std::cerr << idx << std::endl;
-    
-    for (std::size_t i = 0; i < m_assigned_type.size(); ++ i)
-      if (m_assigned_type[i] == (std::size_t)(-1))
-          continue;
-      else if (m_assigned_type[i] > idx)
-        m_assigned_type[i] --;
-      else if (m_assigned_type[i] == idx)
-        m_assigned_type[i] = (std::size_t)(-1);
-
-    for (std::size_t i = 0; i < m_training_type.size(); ++ i)
-      if (m_assigned_type[i] == (std::size_t)(-1))
-        continue;
-      else if (m_training_type[i] > idx)
-        m_training_type[i] --;
-      else if (m_training_type[i] == idx)
-        m_training_type[i] = (std::size_t)(-1);
-
-    return true;
-  }
-
-  /*!
-    \brief Returns how many classification types are defined.
-  */  
-  std::size_t number_of_classification_types () const
-  {
-    return m_types.size();
-  }
-  
-  /// \cond SKIP_IN_MANUAL
-  Type_handle get_classification_type (std::size_t idx)
-  {
-    return m_types[idx];
-  }
-  /// \endcond
-
-  /*!
-    \brief Removes all classification types.
-   */
-  void clear_classification_types ()
-  {
-    m_types.clear();
-  }
-
-  /// @}
-
-  /// \name Attributes
-  /// @{
-
-  /*!
-    \brief Adds an attribute.
-
-    \tparam Attribute type of the attribute, inherited from
-    `Classification::Attribute_base`.
-
-    \tparam T types of the parameters of the attribute's constructor.
-
-    \param t parameters of the attribute's constructor.
-
-    \return a handle to the newly added attribute.
-   */
-#if (!defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)) || DOXYGEN_RUNNING
-  template <typename Attribute, typename ... T>
-  Attribute_handle add_attribute (T&& ... t)
-  {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, std::forward<T>(t)...)));
-    return m_attributes.back();
-  }
-#else
-  template <typename Attribute>
-  Attribute_handle add_attribute ()
-  {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input)));
-    return m_attributes.back();
-  }
-  template <typename Attribute, typename T1>
-  Attribute_handle add_attribute (T1& t1)
-  {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1)));
-    return m_attributes.back();
-  }
-  template <typename Attribute, typename T1, typename T2>
-  Attribute_handle add_attribute (T1& t1, T2& t2)
-  {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2)));
-    return m_attributes.back();
-  }
-  template <typename Attribute, typename T1, typename T2, typename T3>
-  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3)
-  {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3)));
-    return m_attributes.back();
-  }
-  template <typename Attribute, typename T1, typename T2, typename T3, typename T4>
-  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4)
-  {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4)));
-    return m_attributes.back();
-  }
-  template <typename Attribute, typename T1, typename T2, typename T3, typename T4, typename T5>
-  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
-  {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4, t5)));
-    return m_attributes.back();
-  }
-#endif
-
-  /*!
-    \brief Removes an attribute.
-
-    \param attribute the handle to attribute type that must be removed.
-
-    \return `true` if the attribute was correctly removed, `false` if
-    its handle was not found.
-   */ 
-  bool remove_attribute (Attribute_handle attribute)
-  {
-    for (std::size_t i = 0; i < m_attributes.size(); ++ i)
-      if (m_attributes[i] == attribute)
-        {
-          m_attributes.erase (m_attributes.begin() + i);
-          return true;
-        }
-    return false;
-  }
-
-  /*!
-    \brief Returns how many attributes are defined.
-  */  
-  std::size_t number_of_attributes() const
-  {
-    return m_attributes.size();
-  }
-
-  /*!
-    \brief Removes all attributes.
-   */
-  void clear_attributes ()
-  {
-    m_attributes.clear();
-  }
-
-
-
-  /// \cond SKIP_IN_MANUAL
-  Attribute_handle get_attribute(std::size_t idx)
-  {
-    return m_attributes[idx];
-  }
-  /// \endcond
-  
-  /// @}
 
   /// \name Output
   /// @{
@@ -575,17 +572,100 @@ public:
   /// @{
 
   /*!
+    \brief Adds the item at position `index` as an inlier of
+    `class_type` for the training algorithm.
+
+    \note This inlier is only used for training. There is no guarantee
+    that the item at position `index` will be classified as `class_type`
+    after calling `run()`, `run_with_local_smoothing()` or
+    `run_with_graphcut()`.
+
+    \return `true` if the inlier was correctly added, `false`
+    otherwise (if `class_type` was not found).
+  */
+  bool set_inlier (Type_handle class_type, std::size_t index)
+  {
+    std::size_t type_idx = (std::size_t)(-1);
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i] == class_type)
+        {
+          type_idx = i;
+          break;
+        }
+    if (type_idx == (std::size_t)(-1))
+      return false;
+
+    if (m_training_type.empty())
+      reset_inlier_sets();
+
+    m_training_type[index] = type_idx;
+    return true;
+  }
+
+  /*!
+
+    \brief Adds the items at positions `indices` as inliers of
+    `class_type` for the training algorithm.
+
+    \note These inliers are only used for training. There is no
+    guarantee that the items at positions `indices` will be classified
+    as `class_type` after calling `run()`,
+    `run_with_local_smoothing()` or `run_with_graphcut()`.
+
+    \tparam IndexRange range of `std::size_t`, model of `ConstRange`.
+  */
+  template <class IndexRange>
+  bool set_inliers (Type_handle class_type,
+                    IndexRange indices)
+  {
+    std::size_t type_idx = (std::size_t)(-1);
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i] == class_type)
+        {
+          type_idx = i;
+          break;
+        }
+    if (type_idx == (std::size_t)(-1))
+      return false;
+
+    if (m_training_type.empty())
+      reset_inlier_sets();
+
+    for (typename IndexRange::const_iterator it = indices.begin();
+         it != indices.end(); ++ it)
+      m_training_type[*it] = type_idx;
+
+    return true;
+  }
+  
+  /*!
+    \brief Resets inlier sets used for training.
+  */
+  void reset_inlier_sets()
+  {
+    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_training_type);
+  }
+
+  /*!
     \brief Runs the training algorithm.
 
     All the `Classification::Type` and `Classification::Attribute`
-    necessary for the classification should have been added before
-    running this function.
+    necessary for classification should have been added before running
+    this function. Each classification type must have ben given a small set
+    of user-defined inliers to provide the training algorithm with a
+    ground truth (see `set_inlier()` and `set_inliers()`).
 
-    Each classification type must be given a small set of user-defined
-    inliers to provide the training algorithm with a ground truth.
+    This methods estimates the set of attribute weights and of
+    [effects](@ref Classification::Attribute::Effect) that make the
+    classifier succeed in correctly classifying the sets of inliers
+    given by the user. These parameters are directly modified within
+    the `Classification::Attribute_base` and `Classification::Type`
+    objects. After training, the user can call `run()`,
+    `run_with_local_smoothing()` or `run_with_graphcut()` to compute
+    the classification using the estimated parameters.
 
     \param nb_tests number of tests to perform. Higher values may
-    provide the user with better results at the cost of higher
+    provide the user with better results at the cost of a higher
     computation time. Using a value of at least 10 times the number of
     attributes is advised.
 
@@ -796,81 +876,6 @@ public:
   }
   
 
-  /*!
-    \brief Resets inlier sets used for training.
-  */
-  void reset_inlier_sets()
-  {
-    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_training_type);
-  }
-
-  /*!
-    \brief Adds the item at position `idx` as an inlier of
-    `class_type` for the training algorithm.
-
-    \note This inlier is only used for training. There is no guarantee
-    that the item at position `idx` will be classified as `class_type`
-    after calling `run()`, `run_with_local_smoothing()` or
-    `run_with_graphcut()`.
-
-    \return `true` if the inlier was correctly added, `false`
-    otherwise (if `class_type` was not found).
-  */
-  bool set_inlier (Type_handle class_type, std::size_t idx)
-  {
-    std::size_t type_idx = (std::size_t)(-1);
-    for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i] == class_type)
-        {
-          type_idx = i;
-          break;
-        }
-    if (type_idx == (std::size_t)(-1))
-      return false;
-
-    if (m_training_type.empty())
-      reset_inlier_sets();
-
-    m_training_type[idx] = type_idx;
-    return true;
-  }
-
-  /*!
-
-    \brief Adds the items at positions `indices` as inliers of
-    `class_type` for the training algorithm.
-
-    \note These inliers are only used for training. There is no
-    guarantee that the items at positions `indices` will be classified
-    as `class_type` after calling `run()`,
-    `run_with_local_smoothing()` or `run_with_graphcut()`.
-
-    \tparam IndexRange range of `std::size_t`, model of `ConstRange`.
-  */
-  template <class IndexRange>
-  bool set_inliers (Type_handle class_type,
-                    IndexRange indices)
-  {
-    std::size_t type_idx = (std::size_t)(-1);
-    for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i] == class_type)
-        {
-          type_idx = i;
-          break;
-        }
-    if (type_idx == (std::size_t)(-1))
-      return false;
-
-    if (m_training_type.empty())
-      reset_inlier_sets();
-
-    for (typename IndexRange::const_iterator it = indices.begin();
-         it != indices.end(); ++ it)
-      m_training_type[*it] = type_idx;
-
-    return true;
-  }
-  
   /// @}
 
   
@@ -904,6 +909,8 @@ public:
 
 protected:
 
+  /// \cond SKIP_IN_MANUAL
+  
   double classification_value (const std::size_t& class_type,
                                const std::size_t& pt_index) const
   {
@@ -1057,6 +1064,7 @@ protected:
     return false;
   }
 
+  /// \endcond
 };
 
 

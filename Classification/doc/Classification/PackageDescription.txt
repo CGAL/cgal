@@ -39,15 +39,15 @@
 
 ## Classification ##
 
-- `CGAL::Classifier<Range, ItemMap>`
-- `CGAL::Point_set_classifier<Kernel, Range, PointMap, DiagonalizeTraits>`     
+- `CGAL::Classifier<ItemRange, ItemMap>`
+- `CGAL::Point_set_classifier<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`     
 
 ## Data Structures ##
 
 
-- `CGAL::Classification::Point_set_neighborhood<Kernel, Range, PointMap>`
-- `CGAL::Classification::Local_eigen_analysis<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Planimetric_grid<Kernel, Range, PointMap>`
+- `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Local_eigen_analysis<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
 
 ## Classification Type ##
 
@@ -61,20 +61,20 @@
 
 ## Predefined Attributes ##
 
-- `CGAL::Classification::Attribute::Anisotropy<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Distance_to_plane<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Echo_scatter<Kernel, Range, PointMap, EchoMap>`
-- `CGAL::Classification::Attribute::Eigentropy<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Elevation<Kernel, Range, PointMap>`
-- `CGAL::Classification::Attribute::Hsv<Kernel, Range, ColorMap>`
-- `CGAL::Classification::Attribute::Linearity<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Omnivariance<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Planarity<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Sphericity<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Sum_eigenvalues<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Surface_variation<Kernel, Range, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Range, PointMap>`
-- `CGAL::Classification::Attribute::Verticality<Kernel, Range, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Anisotropy<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Distance_to_plane<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap>`
+- `CGAL::Classification::Attribute::Eigentropy<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Elevation<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Attribute::Hsv<Geom_traits, PointRange, ColorMap>`
+- `CGAL::Classification::Attribute::Linearity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Omnivariance<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Planarity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Sphericity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Sum_eigenvalues<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Surface_variation<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute::Vertical_dispersion<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Attribute::Verticality<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
 
 
 */

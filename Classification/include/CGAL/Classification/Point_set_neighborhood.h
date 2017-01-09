@@ -22,8 +22,8 @@ namespace Classification {
     \ingroup PkgClassificationDataStructures
 
     \brief Class that precomputes spatial searching structures for an
-    input point set and gives easy access to local neighborhoods of
-    points.
+    input point set and gives access to the local neighborhood of a
+    point as a set of indices.
 
     It allows the user to generate models of `NeighborQuery` based on
     a fixed range neighborhood or on a fixed K number of neighbors. In
@@ -31,22 +31,22 @@ namespace Classification {
     simplified version of the point set to allow for neighbor queries
     at a higher scale.
 
-    \tparam Kernel is a model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    \tparam Geom_traits is a model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type is
+    `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
   */
-template <typename Kernel, typename Range, typename PointMap>
+template <typename Geom_traits, typename PointRange, typename PointMap>
 class Point_set_neighborhood
 {
   
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_3 Point;
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_3 Point;
   
   class My_point_property_map{
-    const Range* input;
+    const PointRange* input;
     PointMap point_map;
     
   public:
@@ -55,14 +55,14 @@ class Point_set_neighborhood
     typedef std::size_t key_type;
     typedef boost::lvalue_property_map_tag category;
     My_point_property_map () { }
-    My_point_property_map (const Range *input, PointMap point_map)
+    My_point_property_map (const PointRange *input, PointMap point_map)
       : input (input), point_map (point_map) { }
     reference operator[] (key_type k) const { return get(point_map, *(input->begin()+k)); }
     friend inline reference get (const My_point_property_map& ppmap, key_type i) 
     { return ppmap[i]; }
   };
 
-  typedef Search_traits_3<Kernel> SearchTraits_3;
+  typedef Search_traits_3<Geom_traits> SearchTraits_3;
   typedef Search_traits_adapter <std::size_t, My_point_property_map, SearchTraits_3> Search_traits;
   typedef Sliding_midpoint<Search_traits> Splitter;
   typedef Distance_adapter<std::size_t, My_point_property_map, Euclidean_distance<SearchTraits_3> > Distance;
@@ -102,9 +102,10 @@ public:
 
     /// \cond SKIP_IN_MANUAL
     template <typename OutputIterator>
-    void operator() (const value_type& query, OutputIterator output) const
+    OutputIterator operator() (const value_type& query, OutputIterator output) const
     {
       neighborhood.k_neighbors (query, k, output);
+      return output;
     }
     /// \endcond
   };
@@ -134,9 +135,10 @@ public:
 
     /// \cond SKIP_IN_MANUAL
     template <typename OutputIterator>
-    void operator() (const value_type& query, OutputIterator output) const
+    OutputIterator operator() (const value_type& query, OutputIterator output) const
     {
       neighborhood.range_neighbors (query, radius, output);
+      return output;
     }
     /// \endcond
   };
@@ -154,7 +156,7 @@ public:
     \param input input range.
     \param point_map property map to access the input points.
   */
-  Point_set_neighborhood (const Range& input,
+  Point_set_neighborhood (const PointRange& input,
                           PointMap point_map)
     : m_tree (NULL)
   {
@@ -179,7 +181,7 @@ public:
     \param point_map property map to access the input points.
     \param voxel_size size of the cells of the 3D grid used for simplification.
   */
-  Point_set_neighborhood (const Range& input,
+  Point_set_neighborhood (const PointRange& input,
                           PointMap point_map,
                           double voxel_size)
     : m_tree (NULL)

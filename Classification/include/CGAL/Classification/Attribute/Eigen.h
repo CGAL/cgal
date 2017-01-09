@@ -33,39 +33,37 @@ namespace Attribute {
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    Linearity is defined, for the 3 eigenvalues \f$\lambda_1 \ge
-    \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance matrix of a
+    local neighborhood. Linearity is defined, for the 3 eigenvalues
+    \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
     \f[
     \frac{\lambda_1 - \lambda_2}{\lambda_1}
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Linearity : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Linearity (const Range& input,
+  Linearity (const PointRange& input,
              Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
@@ -94,39 +92,37 @@ public:
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    Planarity is defined, for the 3 eigenvalues \f$\lambda_1 \ge
-    \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance matrix of a
+    local neighborhood. Planarity is defined, for the 3 eigenvalues
+    \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
     \f[
     \frac{\lambda_2 - \lambda_3}{\lambda_1}
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Planarity : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Planarity (const Range& input,
+  Planarity (const PointRange& input,
              Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
@@ -154,39 +150,37 @@ public:
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    Sphericity is defined, for the 3 eigenvalues \f$\lambda_1 \ge
-    \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance matrix of a
+    local neighborhood. Sphericity is defined, for the 3 eigenvalues
+    \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
     \f[
     \frac{\lambda_3}{\lambda_1}
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Sphericity : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Sphericity (const Range& input,
+  Sphericity (const PointRange& input,
               Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
@@ -213,39 +207,37 @@ public:
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    Omnivariance is defined, for the 3 eigenvalues \f$\lambda_1 \ge
-    \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance matrix of a
+    local neighborhood. Omnivariance is defined, for the 3 eigenvalues
+    \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
     \f[
     (\lambda_1 \times \lambda_2 \times \lambda_3)^{\frac{1}{3}}
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Omnivariance : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Omnivariance (const Range& input,
+  Omnivariance (const PointRange& input,
                 Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
@@ -269,39 +261,37 @@ public:
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    Anisotropy is defined, for the 3 eigenvalues \f$\lambda_1 \ge
-    \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance matrix of a
+    local neighborhood. Anisotropy is defined, for the 3 eigenvalues
+    \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
     \f[
     \frac{\lambda_1 - \lambda_3}{\lambda_1}
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Anisotropy : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Anisotropy (const Range& input,
+  Anisotropy (const PointRange& input,
               Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
@@ -328,39 +318,37 @@ public:
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    Eigentropy is defined, for the 3 eigenvalues \f$\lambda_1 \ge
-    \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance matrix of a
+    local neighborhood. Eigentropy is defined, for the 3 eigenvalues
+    \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
     \f[
     - \sum_{i=1}^3 \lambda_i \times \log{\lambda_i}
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Eigentropy : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Eigentropy (const Range& input,
+  Eigentropy (const PointRange& input,
               Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
@@ -391,39 +379,38 @@ public:
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    The sum of the eigenvalues is defined, for the 3 eigenvalues
-    \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance matrix of a
+    local neighborhood. The sum of the eigenvalues is defined, for the
+    3 eigenvalues \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$,
+    as:
 
     \f[
     \lambda_1 + \lambda_2 + \lambda_3
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Sum_eigenvalues : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Sum_eigenvalues (const Range& input,
+  Sum_eigenvalues (const PointRange& input,
                    Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
@@ -445,39 +432,38 @@ public:
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on the eigenvalues of the covariance matrix
-    of a local neighborhood.
-
-    Surface variation is defined, for the 3 eigenvalues \f$\lambda_1
-    \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
+    %Attribute based on the eigenvalues of the covariance
+    matrix of a local neighborhood. Surface variation is defined, for
+    the 3 eigenvalues \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge
+    0\f$, as:
 
     \f[
     \frac{\lambda_3}{\lambda_1 + \lambda_2 + \lambda_3}
     \f]
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Surface_variation : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> attrib;
 public:
   /*!
-    \brief Constructs the attribute.
+    Constructs the attribute.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Surface_variation (const Range& input,
+  Surface_variation (const PointRange& input,
                      Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);

@@ -35,29 +35,26 @@ namespace Attribute {
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on local elevation.
+    %Attribute based on local elevation. The local position of the
+    ground can be computed for urban scenes. This attribute computes
+    the distance to the local estimation of the ground. It is useful
+    to discriminate the ground from horizontal roofs.
 
-    The local position of the ground can be computed for urban
-    scenes. This attribute computes the distance to the local
-    estimation of the ground.
-
-    It is useful to discriminate the ground from horizontal roofs.
-
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
 
   */
-template <typename Kernel, typename Range, typename PointMap>
+template <typename Geom_traits, typename PointRange, typename PointMap>
 class Elevation : public Attribute_base
 {
-  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef Image<float> Image_float;
-  typedef Planimetric_grid<Kernel, Range, PointMap> Grid;
+  typedef Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
    
   std::vector<double> elevation_attribute;
   
@@ -69,10 +66,10 @@ public:
     \param point_map property map to access the input points.
     \param grid precomputed `Planimetric_grid`.
     \param grid_resolution resolution of the planimetric grid.
-    \param radius_dtm radius for digital terrain modeling (must be bigger than the size of a building).
-
+    \param radius_dtm radius for digital terrain modeling (should be
+    larger than the width and length of the largest building).
   */
-  Elevation (const Range& input,
+  Elevation (const PointRange& input,
              PointMap point_map,
              const Grid& grid,
              const double grid_resolution,

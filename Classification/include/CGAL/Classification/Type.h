@@ -77,7 +77,7 @@ public:
 /*!
   \ingroup PkgClassification
 
-  \brief Handle to a classification `Type`.
+  \brief %Handle to a classification `Type`.
 
   \cgalModels Handle
 */

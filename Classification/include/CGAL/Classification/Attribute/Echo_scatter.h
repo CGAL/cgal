@@ -13,26 +13,25 @@ namespace Attribute {
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on echo scatter.
+    %Attribute based on echo scatter. The number of returns (echo
+    number) is a useful information provided by most LIDAR sensors. It
+    can help to identify trees.
 
-    The number of returns (echo number) is a useful information
-    provided by most LIDAR sensors. It can help identify trees.
-
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
+    \tparam EchoMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `PointRange` and value type
     is `std::size_t`.
   */
-template <typename Kernel, typename Range, typename PointMap, typename EchoMap>
+template <typename Geom_traits, typename PointRange, typename PointMap, typename EchoMap>
 class Echo_scatter : public Attribute_base
 {
 public:
-  typedef Classification::Planimetric_grid<Kernel, Range, PointMap> Grid;
+  typedef Classification::Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
 private:  
   typedef Classification::Image<float> Image_float;
 
@@ -48,7 +47,7 @@ public:
     \param grid_resolution resolution of the planimetric grid.
     \param radius_neighbors radius of local neighborhoods.
   */
-  Echo_scatter (const Range& input,
+  Echo_scatter (const PointRange& input,
                 EchoMap echo_map,
                 Grid& grid,
                 const double grid_resolution,

@@ -20,23 +20,23 @@ namespace Classification {
     eigenvalues of the covariance matrices of all points of a point
     set using a local neighborhood.
 
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type is
+    `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Local_eigen_analysis
 {
 public:
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::Plane_3 Plane;
+  typedef typename Geom_traits::Point_3 Point;
+  typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Geom_traits::Plane_3 Plane;
   
   typedef CGAL::cpp11::array<double, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
 
@@ -68,7 +68,7 @@ public:
     \param neighbor_query object used to access neighborhoods of points.
   */
   template <typename NeighborQuery>
-  Local_eigen_analysis (const Range& input,
+  Local_eigen_analysis (const PointRange& input,
                         PointMap point_map,
                         const NeighborQuery& neighbor_query)
   {

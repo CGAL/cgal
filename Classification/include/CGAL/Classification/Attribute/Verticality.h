@@ -33,26 +33,26 @@ namespace Attribute {
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on local verticality.
+    %Attribute based on local verticality. The orientation of the
+    local tangent plane of the considered point can be useful to
+    discriminate facades from the ground. This attribute can use
+    normal vectors if available or eigen analysis that estimates
+    tangent planes from local neighborhoods.
 
-    The orientation of the best fitting plane of a local neighborhood
-    of the considered point can be useful to discriminate facades from
-    the ground.
-
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
   */
-template <typename Kernel, typename Range, typename PointMap,
+template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Verticality : public Attribute_base
 {
-  typedef Classification::Local_eigen_analysis<Kernel, Range,
+  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> verticality_attribute;
   
@@ -63,15 +63,15 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Verticality (const Range& input,
+  Verticality (const PointRange& input,
                const Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
-    typename Kernel::Vector_3 vertical (0., 0., 1.);
+    typename Geom_traits::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < input.size(); i++)
       {
-        typename Kernel::Vector_3 normal = eigen.normal_vector(i);
+        typename Geom_traits::Vector_3 normal = eigen.normal_vector(i);
         normal = normal / CGAL::sqrt (normal * normal);
         verticality_attribute.push_back (1. - CGAL::abs(normal * vertical));
       }
@@ -84,21 +84,21 @@ public:
     \brief Constructs the attribute using provided normals of points.
 
     \tparam VectorMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Vector_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Vector_3`.
     \param input input range.
     \param normal_map property map to access the normal vectors of the input points.
   */
   template <typename VectorMap>
-  Verticality (const Range& input,
+  Verticality (const PointRange& input,
                VectorMap normal_map)
   {
     this->set_weight(1.);
-    typename Kernel::Vector_3 vertical (0., 0., 1.);
+    typename Geom_traits::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < input.size(); i++)
       {
-        typename Kernel::Vector_3 normal = get(normal_map, *(input.begin()+i));
+        typename Geom_traits::Vector_3 normal = get(normal_map, *(input.begin()+i));
         normal = normal / CGAL::sqrt (normal * normal);
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }

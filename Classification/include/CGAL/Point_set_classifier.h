@@ -58,73 +58,74 @@ namespace CGAL {
   set of generic attributes. Attributes can be generated at multiple
   scales to increase the reliability of the classification.
 
-  \tparam Kernel model of \cgal Kernel.
-  \tparam Range range of items, model of `ConstRange`. Its iterator type
-  is `RandomAccessIterator`.
+  \tparam Geom_traits model of \cgal Kernel.
+  \tparam PointRange model of `ConstRange`. Its iterator type is
+  `RandomAccessIterator`.
   \tparam PointMap model of `ReadablePropertyMap` whose key
-  type is the value type of the iterator of `Range` and value type
-  is `Point_3<Kernel>`.
+  type is the value type of the iterator of `PointRange` and value type
+  is `Geom_traits::Point_3`.
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
   for matrix diagonalization.
 
 */
-template <typename Kernel,
-          typename Range,
+template <typename Geom_traits,
+          typename PointRange,
           typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Point_set_classifier : public Classifier<Range, PointMap>
+class Point_set_classifier : public Classifier<PointRange, PointMap>
 {
   
 public:
-  typedef typename Kernel::Iso_cuboid_3                       Iso_cuboid_3;
+  typedef typename Geom_traits::Iso_cuboid_3                       Iso_cuboid_3;
 
-  typedef Classifier<Range, PointMap> Base;
-  typedef typename Range::const_iterator Iterator;
+  /// \cond SKIP_IN_MANUAL
+  typedef Classifier<PointRange, PointMap> Base;
+  typedef typename PointRange::const_iterator Iterator;
   using Base::m_input;
   using Base::m_item_map;
+  /// \endcond
   
   typedef Classification::Planimetric_grid
-  <Kernel, Range, PointMap>                    Planimetric_grid;
+  <Geom_traits, PointRange, PointMap>                    Planimetric_grid;
   typedef Classification::Point_set_neighborhood
-  <Kernel, Range, PointMap>                    Neighborhood;
+  <Geom_traits, PointRange, PointMap>                    Neighborhood;
   typedef Classification::Local_eigen_analysis
-  <Kernel, Range, PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Local_eigen_analysis;
+
+  /// \cond SKIP_IN_MANUAL
   typedef Classification::Attribute_handle         Attribute_handle;
   typedef Classification::Type                     Type;
   typedef Classification::Type_handle              Type_handle;
 
-  /// \cond SKIP_IN_MANUAL
-  typedef typename Kernel::Point_3                            Point;
+  typedef typename Geom_traits::Point_3                            Point;
   
   typedef Classification::Attribute::Anisotropy
-  <Kernel, Range, PointMap, DiagonalizeTraits> Anisotropy;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Anisotropy;
   typedef Classification::Attribute::Distance_to_plane
-  <Kernel, Range, PointMap, DiagonalizeTraits> Distance_to_plane;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Distance_to_plane;
   typedef Classification::Attribute::Eigentropy
-  <Kernel, Range, PointMap, DiagonalizeTraits> Eigentropy;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Eigentropy;
   typedef Classification::Attribute::Elevation
-  <Kernel, Range, PointMap>                    Elevation;
+  <Geom_traits, PointRange, PointMap>                    Elevation;
   typedef Classification::Attribute::Linearity
-  <Kernel, Range, PointMap, DiagonalizeTraits> Linearity;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Linearity;
   typedef Classification::Attribute::Omnivariance
-  <Kernel, Range, PointMap, DiagonalizeTraits> Omnivariance;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Omnivariance;
   typedef Classification::Attribute::Planarity
-  <Kernel, Range, PointMap, DiagonalizeTraits> Planarity;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Planarity;
   typedef Classification::Attribute::Sphericity
-  <Kernel, Range, PointMap, DiagonalizeTraits> Sphericity;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Sphericity;
   typedef Classification::Attribute::Sum_eigenvalues
-  <Kernel, Range, PointMap, DiagonalizeTraits> Sum_eigen;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Sum_eigen;
   typedef Classification::Attribute::Surface_variation
-  <Kernel, Range, PointMap, DiagonalizeTraits> Surface_variation;
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Surface_variation;
   typedef Classification::Attribute::Vertical_dispersion
-  <Kernel, Range, PointMap>                    Dispersion;
+  <Geom_traits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Attribute::Verticality
-  <Kernel, Range, PointMap, DiagonalizeTraits> Verticality;
-  /// \endcond
-  
+  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Verticality;
   typedef typename Classification::RGB_Color RGB_Color;
-  
+  /// \endcond
+    
 private:
 
   struct Scale
@@ -135,7 +136,7 @@ private:
     double voxel_size;
     std::vector<Attribute_handle> attributes;
     
-    Scale (const Range& input, PointMap point_map,
+    Scale (const PointRange& input, PointMap point_map,
            const Iso_cuboid_3& bbox, double voxel_size)
       : voxel_size (voxel_size)
     {
@@ -199,7 +200,7 @@ public:
 
     \param point_map property map to access the input points.
   */
-  Point_set_classifier(const Range& input, PointMap point_map) : Base (input, point_map)
+  Point_set_classifier(const PointRange& input, PointMap point_map) : Base (input, point_map)
   {
     m_bbox = CGAL::bounding_box
       (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_item_map)),
@@ -222,8 +223,8 @@ public:
   /*!
     \brief Generate all possible attributes from an input range.
 
-    The smallest scale is automatically estimated and the data
-    structures needed (`Neighborhood`, `Planimetric_grid` and
+    The size of the smallest scale is automatically estimated and the
+    data structures needed (`Neighborhood`, `Planimetric_grid` and
     `Local_eigen_analysis`) are computed at `nb_scales` recursively
     larger scales. At each scale, the following attributes are
     generated:
@@ -238,13 +239,13 @@ public:
     - `CGAL::Classification::Attribute::Sphericity`
     - `CGAL::Classification::Attribute::Sum_eigenvalues`
     - `CGAL::Classification::Attribute::Surface_variation`
-    - `CGAL::Classification::Attribute::Vertical_dispersion`
+    - `CGAL::Classification::Attribute::Vertical_dispersion` based on eigenvalues
 
     If normal vectors are provided (if `VectorMap` is different from
     `CGAL::Default`), the following attribute is generated at each
     scale:
 
-    - `CGAL::Classification::Attribute::Vertical_dispersion`
+    - `CGAL::Classification::Attribute::Vertical_dispersion` based on normal vectors
 
     If colors are provided (if `ColorMap` is different from
     `CGAL::Default`), the following attributes are generated at each
@@ -268,9 +269,15 @@ public:
 
     - `CGAL::Classification::Attribute::Echo_scatter`
 
-    \tparam VectorMap model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
-    \tparam ColorMap model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
-    \tparam EchoMap model of `ReadablePropertyMap` with value type `std::size_t`.
+    \tparam VectorMap model of `ReadablePropertyMap` whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `Geom_traits::Vector_3`.
+    \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `CGAL::Classification::RGB_Color`.
+    \tparam EchoMap model of `ReadablePropertyMap` whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `std::size_t`.
     \param nb_scales number of scales to compute.
     \param normal_map property map to access the normal vectors of the input points (if any).
     \param color_map property map to access the colors of the input points (if any).
@@ -284,7 +291,7 @@ public:
                             ColorMap color_map = ColorMap(),
                             EchoMap echo_map = EchoMap())
   {
-    typedef typename Default::Get<VectorMap, typename Kernel::Vector_3 >::type
+    typedef typename Default::Get<VectorMap, typename Geom_traits::Vector_3 >::type
       Vmap;
     typedef typename Default::Get<ColorMap, RGB_Color >::type
       Cmap;
@@ -328,21 +335,34 @@ public:
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
   /*!
-    \brief Returns the grid resolution at scale `scale`.
+    \brief Returns the number of scales that were computed.
+   */
+  std::size_t number_of_scales() const { return m_scales.size(); }
+  
+  /*!
+    \brief Returns the grid resolution at scale `scale`. This
+    resolution is the length and width of a cell of the
+    `Planimetric_grid` defined at this scale.
 
     \note `generate_attributes()` must have been called before calling
     this method.
   */
   double grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
   /*!
-    \brief Returns the radius used for neighborhood queries at scale `scale`.
+
+    \brief Returns the radius used for neighborhood queries at scale
+    `scale`. This radius is the smallest radius that is relevant from
+    a geometric point of view at this scale (that is to say that
+    encloses a few cells of `Planimetric_grid`).
 
     \note `generate_attributes()` must have been called before calling
     this method.
   */
   double radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
   /*!
-    \brief Returns the radius used for digital terrain modeling at scale `scale`.
+    \brief Returns the radius used for digital terrain modeling at
+    scale `scale`. This radius represents the minimum size of a
+    building at this scale.
 
     \note `generate_attributes()` must have been called before calling
     this method.
@@ -421,7 +441,7 @@ public:
     std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
-  void generate_normal_based_attributes(const CGAL::Default_property_map<Iterator, typename Kernel::Vector_3>&)
+  void generate_normal_based_attributes(const CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3>&)
   {
     CGAL::Timer t; t.start();
     generate_multiscale_attribute_variant_0<Verticality> ();
@@ -431,7 +451,7 @@ public:
   void generate_color_based_attributes(ColorMap color_map)
   {
 
-    typedef Classification::Attribute::Hsv<Kernel, Range, ColorMap> Hsv;
+    typedef Classification::Attribute::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i <= 8; ++ i)
       {
@@ -459,7 +479,7 @@ public:
   template <typename EchoMap>
   void generate_echo_based_attributes(EchoMap echo_map)
   {
-    typedef Classification::Attribute::Echo_scatter<Kernel, Range, PointMap, EchoMap> Echo_scatter;
+    typedef Classification::Attribute::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
@@ -510,9 +530,9 @@ public:
     This allows to easily save and recover a specific classification
     configuration, that is to say:
 
-    - The computed scales
+    - The size of the smallest scale
     - The attributes and their respective weights
-    - The classification types and the effect the attributes have on them
+    - The classification types and the effects of the attributes on them
 
     The output file is written in an XML format that is readable by
     the `load_configuration()` method.
@@ -582,9 +602,15 @@ public:
     The input file should be in the XML format written by the
     `save_configuration()` method.
 
-    \tparam VectorMap model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
-    \tparam ColorMap model of `ReadablePropertyMap` with value type `CGAL::Classification::RGB_Color`.
-    \tparam EchoMap model of `ReadablePropertyMap` with value type `std::size_t`.
+    \tparam VectorMap model of `ReadablePropertyMap` whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `Geom_traits::Vector_3`.
+    \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `CGAL::Classification::RGB_Color`.
+    \tparam EchoMap model of `ReadablePropertyMap` whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `std::size_t`.
     \param input input stream.
     \param normal_map property map to access the normal vectors of the input points (if any).
     \param color_map property map to access the colors of the input points (if any).
@@ -598,7 +624,7 @@ public:
                            ColorMap color_map = ColorMap(),
                            EchoMap echo_map = EchoMap())
   {
-    typedef typename Default::Get<VectorMap, typename Kernel::Vector_3 >::type
+    typedef typename Default::Get<VectorMap, typename Geom_traits::Vector_3 >::type
       Vmap;
     typedef typename Default::Get<ColorMap, RGB_Color >::type
       Cmap;
@@ -615,11 +641,11 @@ public:
 
   /*!
 
-    \brief Writes a classification in a colored and labeled PLY format
-    in the stream `output`.
+    \brief Writes the classified point set in a colored and labeled
+    PLY format in the stream `output`.
 
-    The input point set is written in a PLY format with the addition
-    of several PLY properties:
+    The input points are written in a PLY format with the addition of
+    the following PLY properties:
 
     - a property `label` that indicates which classification type is
     assigned to the point. The types are indexed from 0 to N (the
@@ -773,8 +799,8 @@ private:
                                 ColorMap color_map,
                                 EchoMap echo_map)
   {
-    typedef Classification::Attribute::Echo_scatter<Kernel, Range, PointMap, EchoMap> Echo_scatter;
-    typedef Classification::Attribute::Hsv<Kernel, Range, ColorMap> Hsv;
+    typedef Classification::Attribute::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
+    typedef Classification::Attribute::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
     
     clear();
     
@@ -842,7 +868,7 @@ private:
         else if (id == "verticality")
           {
             if (boost::is_convertible<VectorMap,
-                typename CGAL::Default_property_map<Iterator, typename Kernel::Vector_3> >::value)
+                typename CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3> >::value)
               this->template add_attribute<Verticality>(*(m_scales[scale]->eigen));
             else
               this->template add_attribute<Verticality>(normal_map);

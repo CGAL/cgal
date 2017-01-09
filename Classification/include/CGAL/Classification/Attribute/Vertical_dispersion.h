@@ -34,27 +34,26 @@ namespace Attribute {
   /*!
     \ingroup PkgClassificationAttributes
 
-    \brief Attribute based on local vertical dispersion of points.
-
-    Urban scenes can often be decomposed as a set of 2D regions with
+    %Attribute based on local vertical dispersion of points. Urban
+    scenes can often be decomposed as a set of 2D regions with
     different heights. While these heights are usually piecewise
     constant or piecewise linear, on some specific parts of the scene
     such as vegetation, they can become extremely unstable. This
     attribute quantifies the vertical dispersion of the points on a
     local Z-cylinder around the points.
 
-    \tparam Kernel model of \cgal Kernel.
-    \tparam Range range of items, model of `ConstRange`. Its iterator type
+    \tparam Geom_traits model of \cgal Kernel.
+    \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `Range` and value type
-    is `Point_3<Kernel>`.
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
   */
-template <typename Kernel, typename Range, typename PointMap>
+template <typename Geom_traits, typename PointRange, typename PointMap>
 class Vertical_dispersion : public Attribute_base
 {
   typedef Classification::Image<float> Image_float;
-  typedef Classification::Planimetric_grid<Kernel, Range, PointMap> Grid;
+  typedef Classification::Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
   std::vector<double> vertical_dispersion;
   
 public:
@@ -67,7 +66,7 @@ public:
     \param grid_resolution resolution of the planimetric grid.
     \param radius_neighbors radius of local neighborhoods.
   */
-  Vertical_dispersion (const Range& input,
+  Vertical_dispersion (const PointRange& input,
                        PointMap point_map,
                        const Grid& grid,
                        const double grid_resolution,
@@ -83,7 +82,7 @@ public:
         Dispersion(i,j)=0;
     
     std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid_resolution) + 1;
-    typename Kernel::Vector_3 verti (0., 0., 1.);
+    typename Geom_traits::Vector_3 verti (0., 0., 1.);
     
     for (std::size_t j = 0; j < grid.height(); j++){	
       for (std::size_t i = 0; i < grid.width(); i++){
