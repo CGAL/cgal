@@ -28,7 +28,8 @@ typedef CGAL::Implicit_mesh_domain_3<Function,K> Implicit_domain;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Polyhedron_domain;
 
-class Hybrid_domain {
+class Hybrid_domain
+{
   const Implicit_domain& implicit_domain;
   const Polyhedron_domain& polyhedron_domain;
 
@@ -48,6 +49,9 @@ public:
   typedef K::Point_3 Point_3;
   typedef CGAL::cpp11::tuple<Point_3, Index, int> Intersection;
 
+  CGAL::Bbox_3 bbox() const {
+    return implicit_domain.bbox() + polyhedron_domain.bbox();
+  }
 
   struct Construct_initial_points
   {
@@ -55,7 +59,9 @@ public:
       : r_domain_(domain) {}
 
     template<class OutputIterator>
-    OutputIterator operator()(OutputIterator pts, const int n = 20) const {
+    OutputIterator operator()(OutputIterator pts, const int n = 20) const
+    {
+      //construct initial points on implicit domain
       typedef Implicit_domain::Index Implicit_Index;
       std::vector<std::pair<Point_3,
                             Implicit_Index> > implicit_points_vector;
@@ -64,8 +70,10 @@ public:
       cstr_implicit_initial_points(std::back_inserter(implicit_points_vector),
                                    n/2);
       for(std::size_t i = 0, end = implicit_points_vector.size(); i<end; ++i) {
-        *pts++=std::make_pair(implicit_points_vector[i].first, 2);
+        *pts++ = std::make_pair(implicit_points_vector[i].first, 2);
       }
+
+      //construct initial points on polyhedral domain
       typedef Polyhedron_domain::Index Polyhedron_Index;
       std::vector<std::pair<Point_3,
                             Polyhedron_Index> > polyhedron_points_vector;
@@ -74,10 +82,11 @@ public:
       cstr_polyhedron_initial_points(std::back_inserter(polyhedron_points_vector),
                                      n/2);
       for(std::size_t i = 0, end = polyhedron_points_vector.size(); i<end; ++i) {
-        *pts++=std::make_pair(polyhedron_points_vector[i].first, 1);
+        *pts++ = std::make_pair(polyhedron_points_vector[i].first, 1);
       }
       return pts;
     }
+
   private:
     const Hybrid_domain& r_domain_;
   }; // end Construct_initial_points_object
@@ -85,10 +94,6 @@ public:
   Construct_initial_points construct_initial_points_object() const
   {
     return Construct_initial_points(*this);
-  }
-
-  CGAL::Bbox_3 bbox() const {
-    return implicit_domain.bbox() + polyhedron_domain.bbox();
   }
 
   struct Is_in_domain
@@ -116,19 +121,25 @@ public:
     template <typename Query>
     Intersection operator()(const Query& query) const
     {
+      //intersection with implicit domain
       Implicit_domain::Intersection implicit_inter =
         r_domain_.implicit_domain.construct_intersection_object()(query);
+      //if found, return it
       if(get<2>(implicit_inter) != 0) {
         return Intersection(get<0>(implicit_inter), 2, get<2>(implicit_inter));
       }
+
+      //intersection with polyhedral domain
       Polyhedron_domain::Intersection polyhedron_inter =
         r_domain_.polyhedron_domain.construct_intersection_object()(query);
+      //if found, return it
       if(get<2>(polyhedron_inter) != 0) {
         const Point_3 inter_point = get<0>(polyhedron_inter);
         if(!r_domain_.implicit_domain.is_in_domain_object()(inter_point)) {
           return Intersection(inter_point, 1, get<2>(polyhedron_inter));
         }
       }
+      //no intersection found
       return Intersection();
     }
   private:
@@ -140,6 +151,7 @@ public:
     return Construct_intersection(*this);
   }
 
+  //Index types converters
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return index; }
 
@@ -160,10 +172,10 @@ typedef CGAL::Mesh_triangulation_3<Domain, K>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-typedef Mesh_criteria::Edge_criteria Edge_criteria;
+typedef CGAL::Mesh_criteria_3<Tr>     Mesh_criteria;
+typedef Mesh_criteria::Edge_criteria  Edge_criteria;
 typedef Mesh_criteria::Facet_criteria Facet_criteria;
-typedef Mesh_criteria::Cell_criteria Cell_criteria;
+typedef Mesh_criteria::Cell_criteria  Cell_criteria;
 
 // Function
 FT sphere_centered_at_111 (const Point& p)
@@ -250,7 +262,6 @@ int main()
   domain.add_features(featured_curves.begin(), featured_curves.end());
 
   // Criteria
-
   Edge_criteria edge_criteria(0.08);
   Facet_criteria facet_criteria(30, 0.08, 0.025); // angle, size, approximation
   Cell_criteria cell_criteria(2, 0.1); // radius-edge ratio, size
