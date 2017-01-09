@@ -50,23 +50,24 @@ void run(std::list<Point> all_points){
   vec.resize(result.size());
   typename V::iterator it = tree.search(vec.begin(), exact_range);
   assert(it == vec.end());
- 
+
   tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, 0.25) ); //test compilation when Point != Traits::Point_d
-  
+
   // test the results of the exact query
   std::list<Point> copy_all_points(all_points);
   for (typename std::list<typename Traits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
-    assert(CGAL::squared_distance(center,get_point(*pt))<=0.0625);
+    // a point with distance d to the center may be reported if d <= r
+    assert(CGAL::squared_distance(center, get_point(*pt)) <= 0.0625);
     copy_all_points.remove(get_point(*pt));
   }
-  
+
   for (std::list<Point>::iterator pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
-    if(CGAL::squared_distance(center,*pt)<=0.0625){
+    if(CGAL::squared_distance(center, *pt) < 0.0625){
+      // all points with a distance d < r must be reported
       std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
     }
-    assert(CGAL::squared_distance(center,*pt)>0.0625);
+    assert(CGAL::squared_distance(center, *pt) >= 0.0625);
   }
-
 
   result.clear();
   // approximate range searching using value 0.125 for fuzziness parameter
@@ -81,11 +82,11 @@ void run(std::list<Point> all_points){
   }
   
   for (std::list<Point>::iterator pt=all_points.begin(); (pt != all_points.end()); ++pt) {
-    if(CGAL::squared_distance(center,*pt)<=0.015625){ // 0.125²
+    // all points with a distance d < r - eps must be reported
+    if(CGAL::squared_distance(center, *pt) < 0.015625){ // (0.25 - 0.125)²
       std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
     }
-    //all points with a distance d <= r-eps must be reported
-    assert(CGAL::squared_distance(center,*pt)> 0.015625);
+    assert(CGAL::squared_distance(center,*pt) >= 0.015625);
   }
   std::cout << "done" << std::endl;  
 }
