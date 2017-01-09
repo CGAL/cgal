@@ -30,12 +30,15 @@ int main(void)
     }
 
   Polyhedron output_mesh;
+  
+  double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
+    (points.begin(), points.end(), CGAL::First_of_pair_property_map<Pwn>(), 6);
 
-  if (CGAL::poisson_surface_reconstruction<CGAL::Sequential_tag>
+  if (CGAL::poisson_surface_reconstruction
       (points.begin(), points.end(),
        CGAL::First_of_pair_property_map<Pwn>(),
        CGAL::Second_of_pair_property_map<Pwn>(),
-       output_mesh))
+       output_mesh, average_spacing))
     {
         std::ofstream out("kitten_poisson-20-30-0.375.off");
         out << output_mesh;

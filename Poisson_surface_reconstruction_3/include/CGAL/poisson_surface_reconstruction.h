@@ -26,13 +26,50 @@
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/property_map.h>
-#include <CGAL/compute_average_spacing.h>
 
 namespace CGAL {
 
   
-  template <typename ConcurrencyTag,
-            typename PointInputIterator,
+  /*!
+    \ingroup PkgPoissonSurfaceReconstruction
+
+    Performs surface reconstruction as follows:
+
+    - compute the Poisson implicit function
+    - meshes the function with a user-defined precision
+    - outputs the result in a polygon mesh
+
+    This function relies mainly on the size parameter `spacing`. A
+    reasonable solution is to use the average spacing of the input
+    point set (using `compute_average_spacing()` for example). Higher
+    values increase the precision of the output mesh at the cost of
+    higher computation time.
+
+    Parameters `sm_angle`, `sm_radius` and `sm_distance` work
+    similarly to the parameters of `SurfaceMeshFacetsCriteria_3`. The
+    latest two are defined with respect to `spacing`.
+
+    \tparam PointInputIterator is a model of `InputIterator`.
+
+    \tparam PointMap is a model of `ReadablePropertyMap` with value
+    type `Point_3<Kernel>`.
+
+    \tparam NormalMap is a model of `ReadablePropertyMap` with value
+    type `Vector_3<Kernel>`.
+
+    \tparam PolygonMesh a model of `MutableFaceGraph` with an internal
+    point property map.
+
+    \param begin iterator on the first point of the sequence.
+    \param end past the end iterator of the point sequence.
+    \param point_map property map: value_type of `InputIterator` -> Point_3.
+    \param normal_map property map: value_type of `InputIterator` -> Vector_3.
+    \param spacing size parameter.
+    \param sm_angle bound for the minimum facet angle in degrees.
+    \param sm_radius bound for the radius of the surface Delaunay balls (relatively to the `average_spacing`).
+    \param sm_distance bound for the center-center distances (relatively to the `average_spacing`).
+  */
+  template <typename PointInputIterator,
             typename PointMap,
             typename NormalMap,
             typename PolygonMesh>
@@ -42,13 +79,13 @@ namespace CGAL {
                                  PointMap point_map,
                                  NormalMap normal_map,
                                  PolygonMesh& output_mesh,
+                                 double spacing,
                                  double sm_angle = 20.0,
                                  double sm_radius = 30.0,
                                  double sm_distance = 0.375)
   {
     typedef typename boost::property_traits<PointMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
-    typedef typename Kernel::FT FT;
     typedef typename Kernel::Sphere_3 Sphere;
     
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
@@ -60,23 +97,20 @@ namespace CGAL {
     if ( ! function.compute_implicit_function() ) 
       return false;
 
-    FT average_spacing = CGAL::compute_average_spacing<ConcurrencyTag>
-      (begin, end, point_map, 6);
-
     Point inner_point = function.get_inner_point();
     Sphere bsphere = function.bounding_sphere();
-    FT radius = std::sqrt(bsphere.squared_radius());
+    double radius = std::sqrt(bsphere.squared_radius());
 
-    FT sm_sphere_radius = 5.0 * radius;
-    FT sm_dichotomy_error = sm_distance * average_spacing / 1000.0;
+    double sm_sphere_radius = 5.0 * radius;
+    double sm_dichotomy_error = sm_distance * spacing / 1000.0;
     
     Surface_3 surface(function,
                       Sphere (inner_point, sm_sphere_radius * sm_sphere_radius),
                       sm_dichotomy_error / sm_sphere_radius);
 
     CGAL::Surface_mesh_default_criteria_3<STr> criteria (sm_angle,
-                                                         sm_radius * average_spacing,
-                                                         sm_distance * average_spacing);
+                                                         sm_radius * spacing,
+                                                         sm_distance * spacing);
 
     STr tr;
     C2t3 c2t3(tr);
