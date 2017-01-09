@@ -60,6 +60,9 @@ namespace CGAL {
     \tparam PolygonMesh a model of `MutableFaceGraph` with an internal
     point property map.
 
+    \tparam Tag is a tag whose type affects the behavior of the 
+    meshing algorithm (see `make_surface_mesh()`).
+
     \param begin iterator on the first point of the sequence.
     \param end past the end iterator of the point sequence.
     \param point_map property map: value_type of `InputIterator` -> Point_3.
@@ -72,7 +75,8 @@ namespace CGAL {
   template <typename PointInputIterator,
             typename PointMap,
             typename NormalMap,
-            typename PolygonMesh>
+            typename PolygonMesh,
+            typename Tag = CGAL::Manifold_with_boundary_tag>
   bool
   poisson_surface_reconstruction(PointInputIterator begin,
                                  PointInputIterator end,
@@ -82,7 +86,8 @@ namespace CGAL {
                                  double spacing,
                                  double sm_angle = 20.0,
                                  double sm_radius = 30.0,
-                                 double sm_distance = 0.375)
+                                 double sm_distance = 0.375,
+                                 Tag tag = Tag())
   {
     typedef typename boost::property_traits<PointMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -118,7 +123,7 @@ namespace CGAL {
     CGAL::make_surface_mesh(c2t3,
                             surface,
                             criteria,
-                            CGAL::Manifold_with_boundary_tag());
+                            tag);
 
     if(tr.number_of_vertices() == 0)
       return false;
