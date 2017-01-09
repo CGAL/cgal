@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup RangeQueryItemClasses 
+\ingroup RangeQueryItemClasses
 
 The class `Fuzzy_iso_box` implements fuzzy `d`-dimensional iso boxes. A fuzzy iso
 box with fuzziness value \f$ \epsilon\f$ has as inner and outer approximations
@@ -13,19 +13,19 @@ points may or may not be reported. Subsequently, points on the boundary of the
 inner and outer approximations may or may not be reported. Specifically when \f$ \epsilon = 0\f$,
 points on the boundary of the box may or may not be reported.
 
-\tparam Traits must be a model of the concept 
-`SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`. 
+\tparam Traits must be a model of the concept
+`SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`.
 
 \cgalModels `FuzzyQueryItem`
 
-\sa `FuzzyQueryItem` 
+\sa `FuzzyQueryItem`
 
 */
 template< typename Traits >
 class Fuzzy_iso_box {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
@@ -34,18 +34,18 @@ Dimension Tag.
 typedef unspecified_type D;
 
 /*!
-Point type. 
-*/ 
-typedef Traits::Point_d Point_d; 
+Point type.
+*/
+typedef Traits::Point_d Point_d;
 
 /*!
-Number type. 
-*/ 
-typedef Traits::FT FT; 
+Number type.
+*/
+typedef Traits::FT FT;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -62,13 +62,13 @@ Construct a fuzzy iso box specified by the minimal iso box containing `p` and `q
 \attention Only available in case `Traits` is
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>`.
 
-\pre `p` must be lexicographically smaller than `q`. 
-*/ 
-Fuzzy_iso_box(Traits::Base::Point_d p, Traits::Base::Point_d q, FT epsilon=FT(0), Traits t=Traits()); 
+\pre `p` must be lexicographically smaller than `q`.
+*/
+Fuzzy_iso_box(Traits::Base::Point_d p, Traits::Base::Point_d q, FT epsilon=FT(0), Traits t=Traits());
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!

@@ -22,14 +22,14 @@ of radius \f$ r\f$ may or may not be reported.
 
 \cgalModels `FuzzyQueryItem`
 
-\sa `FuzzyQueryItem` 
+\sa `FuzzyQueryItem`
 
 */
 template< typename Traits >
 class Fuzzy_sphere {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
@@ -38,19 +38,19 @@ Dimension Tag.
 typedef unspecified_type D;
 
 /*!
-Point type. 
-*/ 
-typedef Traits::Point_d Point_d; 
+Point type.
+*/
+typedef Traits::Point_d Point_d;
 
 /*!
-Number type. 
-*/ 
-typedef Traits::FT FT; 
+Number type.
+*/
+typedef Traits::FT FT;
 
-/// @} 
+/// @}
 
-/// \name Creation 
-/// 
+/// \name Creation
+///
 /// @{
 
 /*!
@@ -62,12 +62,12 @@ Fuzzy_sphere(Point_d center, FT radius, FT epsilon=FT(0),Traits t=Traits());
 /*!
 Construct a fuzzy sphere centered at `center` with radius `radius` and fuzziness value `epsilon`.
 \attention Only available in case `Traits` is `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>`.
-*/ 
-Fuzzy_sphere(Traits::Base::Point_d center, FT radius, FT epsilon=FT(0), Traits t=Traits()); 
+*/
+Fuzzy_sphere(Traits::Base::Point_d center, FT radius, FT epsilon=FT(0), Traits t=Traits());
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!

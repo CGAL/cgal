@@ -1,7 +1,7 @@
 // file          : test/Spatial_searching/Circular_query.C
 // test whether circular queries are computed correctly for random data
-// 
-// 1) generate list of query points using report_all  
+//
+// 1) generate list of query points using report_all
 // 2) remove and check reported points from these list
 // 3) check if no remaining points should have been reported
 
@@ -26,12 +26,11 @@ typedef Point_with_info_helper<Point>::type                                     
 typedef Point_property_map<Point>                                                    Ppmap;
 typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,Traits>                    Traits_with_info;
 
-
 template <class Traits>
 void run(std::list<Point> all_points){
   typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
-  typedef CGAL::Kd_tree<Traits> Tree;  
-  
+  typedef CGAL::Kd_tree<Traits> Tree;
+
   // Insert also the N points in the tree
   Tree tree(
     boost::make_transform_iterator(all_points.begin(),Create_point_with_info<typename Traits::Point_d>()),
@@ -41,7 +40,7 @@ void run(std::list<Point> all_points){
   // define exact circular range query  (fuzziness=0)
   Point center(0.25, 0.25);
   Fuzzy_circle exact_range(typename Traits::Point_d(center), 0.25);
-    
+
   std::list<typename Traits::Point_d> result;
   tree.search(std::back_inserter( result ), exact_range);
 
@@ -80,7 +79,7 @@ void run(std::list<Point> all_points){
     assert(CGAL::squared_distance(center,get_point(*pt))<=0.140625); // (0.25 + 0.125)²
     all_points.remove(get_point(*pt));
   }
-  
+
   for (std::list<Point>::iterator pt=all_points.begin(); (pt != all_points.end()); ++pt) {
     // all points with a distance d < r - eps must be reported
     if(CGAL::squared_distance(center, *pt) < 0.015625){ // (0.25 - 0.125)²
@@ -88,23 +87,22 @@ void run(std::list<Point> all_points){
     }
     assert(CGAL::squared_distance(center,*pt) >= 0.015625);
   }
-  std::cout << "done" << std::endl;  
+  std::cout << "done" << std::endl;
 }
 
 int main() {
 
   const int N=1000;
 
-  // generator for random data points in the square ( (-1,-1), (1,1) ) 
-  Random_points_iterator rpit( 1.0);
+  // generator for random data points in the square ( (-1,-1), (1,1) )
+  Random_points_iterator rpit(1.0);
 
   // construct list containing N random points
   std::list<Point> all_points(N_Random_points_iterator(rpit,0),
-			      N_Random_points_iterator(N));
-  
+                              N_Random_points_iterator(N));
+
   run<Traits>(all_points);
   run<Traits_with_info>(all_points);
 
   return 0;
 }
-

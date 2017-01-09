@@ -28,13 +28,13 @@ template <class SearchTraits>
 void run(std::list<Point> all_points)
 {
   typedef CGAL::Fuzzy_iso_box<SearchTraits> Fuzzy_box;
-  
+
   // Insert also the N points in the tree
   CGAL::Kd_tree<SearchTraits> tree(
     boost::make_transform_iterator(all_points.begin(),Create_point_with_info<typename SearchTraits::Point_d>()),
     boost::make_transform_iterator(all_points.end(),Create_point_with_info<typename SearchTraits::Point_d>())
   );
-  
+
   Point p(0.1, 0.2);
   Point q(0.3, 0.5);
   typename SearchTraits::Point_d pp(p);
@@ -57,7 +57,7 @@ void run(std::list<Point> all_points)
     assert(! ic.has_on_unbounded_side(get_point(*pt)) || ic.has_on_boundary(get_point(*pt)));
     copy_all_points.remove(get_point(*pt));
   }
-  
+
   for (std::list<Point>::iterator pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
     assert(ic.has_on_unbounded_side(*pt) || ic.has_on_boundary(*pt));
   }
@@ -76,27 +76,27 @@ void run(std::list<Point> all_points)
     assert(! outer_ic.has_on_unbounded_side(get_point(*pt)) || outer_ic.has_on_boundary(get_point(*pt)));
     all_points.remove(get_point(*pt));
   }
-  
+
   for (std::list<Point>::iterator pt=all_points.begin(); (pt != all_points.end()); ++pt) {
     assert(inner_ic.has_on_unbounded_side(*pt) || inner_ic.has_on_boundary(*pt));
   }
-  std::cout << "done" << std::endl;  
+  std::cout << "done" << std::endl;
 }
 
 int main() {
 
   const int N=10000;
-  
-  // generator for random data points in the square ( (-1,-1), (1,1) ) 
+
+  // generator for random data points in the square ( (-1,-1), (1,1) )
   Random_points_iterator rpit( 1.0);
-  
+
   // construct list containing N random points
   std::list<Point> all_points(N_Random_points_iterator(rpit,0),
-			      N_Random_points_iterator(N));
-  
+            N_Random_points_iterator(N));
+
   run<Traits>(all_points);
   run<Traits_with_info>(all_points);
-  
+
   return 0;
 }
 
