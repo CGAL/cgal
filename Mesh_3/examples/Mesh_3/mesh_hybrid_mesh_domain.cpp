@@ -17,6 +17,9 @@
 // Ouput
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
+// Read 1D features from input file
+#include "read_polylines.h"
+
 // Sphere Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
@@ -215,50 +218,16 @@ int main()
 
   Domain domain(sphere_domain, polyhedron_domain);
 
+  // Read polyline features
+  const char* lines_fname = "data/hybrid_example.polylines.txt";
   std::vector<std::vector<Point> > featured_curves;
-  featured_curves.resize(15);
-  featured_curves[ 0].push_back(Point(-1, -1, -1));
-  featured_curves[ 0].push_back(Point( 1, -1, -1));
-  featured_curves[ 1].push_back(Point(-1, -1, -1));
-  featured_curves[ 1].push_back(Point(-1,  1, -1));
-  featured_curves[ 2].push_back(Point(-1, -1, -1));
-  featured_curves[ 2].push_back(Point(-1, -1,  1));
-
-  featured_curves[ 3].push_back(Point( 1, -1, -1));
-  featured_curves[ 3].push_back(Point( 1,  1, -1));
-  featured_curves[ 4].push_back(Point( 1, -1, -1));
-  featured_curves[ 4].push_back(Point( 1, -1,  1));
-
-  featured_curves[ 5].push_back(Point(-1,  1, -1));
-  featured_curves[ 5].push_back(Point( 1,  1, -1));
-  featured_curves[ 6].push_back(Point(-1,  1, -1));
-  featured_curves[ 6].push_back(Point(-1,  1,  1));
-
-  featured_curves[ 7].push_back(Point(-1, -1,  1));
-  featured_curves[ 7].push_back(Point( 1, -1,  1));
-  featured_curves[ 8].push_back(Point(-1, -1,  1));
-  featured_curves[ 8].push_back(Point(-1,  1,  1));
-
-  featured_curves[ 9].push_back(Point( 1,  1, -1));
-  featured_curves[ 9].push_back(Point( 1,  1,  0));
-  featured_curves[10].push_back(Point(-1,  1,  1));
-  featured_curves[10].push_back(Point( 0,  1,  1));
-  featured_curves[11].push_back(Point( 1, -1,  1));
-  featured_curves[11].push_back(Point( 1,  0,  1));
-
-  featured_curves[12].push_back(Point(0, 1, 1));
-  featured_curves[13].push_back(Point(1, 1, 0));
-  featured_curves[14].push_back(Point(0, 1, 1));
-  for(double x = 0.05; x < 0.98; x+=0.05) {
-    const double y = 1 - CGAL::sqrt(1 - CGAL::square(x - 1));
-    featured_curves[12].push_back(Point(x, y, 1));
-    featured_curves[13].push_back(Point(1, y, x));
-    featured_curves[14].push_back(Point(x, 1, y));
+  if (!read_polylines(lines_fname, featured_curves))
+  { // see file "read_polylines.h"
+    std::cerr << "Error: Cannot read file " << lines_fname << std::endl;
+    return false;
   }
-  featured_curves[12].push_back(Point(1, 0, 1));
-  featured_curves[13].push_back(Point(1, 0, 1));
-  featured_curves[14].push_back(Point(1, 1, 0));
 
+  // Add features for protection
   domain.add_features(featured_curves.begin(), featured_curves.end());
 
   // Criteria
