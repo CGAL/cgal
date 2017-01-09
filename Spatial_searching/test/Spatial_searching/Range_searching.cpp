@@ -48,22 +48,22 @@ void run(std::list<Point> all_points)
   std::list<typename SearchTraits::Point_d> result;
   // Searching the box r exactly
   tree.search( std::back_inserter( result ), exact_range);
-  
+
   // test the results of the exact query
   std::list<Point> copy_all_points(all_points);
-  
+
   for (typename std::list<typename SearchTraits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
     assert(! exact_ic.has_on_unbounded_side(get_point(*pt)));
     copy_all_points.remove(get_point(*pt));
   }
-  
+
   for (std::list<Point>::iterator pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
     assert(exact_ic.has_on_unbounded_side(*pt));
   }
 
 
   result.clear();
-  // approximate range searching using value 0.1 for fuzziness parameter
+  // approximate range searching using value 0.05 for fuzziness parameter
   Fuzzy_box approximate_range(pp,qq,0.05);
   Iso_cuboid inner_ic(p+ 0.05*Vector(1,1,1),q-0.05*Vector(1,1,1));
   Iso_cuboid outer_ic(p- 0.05*Vector(1,1,1),q+0.05*Vector(1,1,1));

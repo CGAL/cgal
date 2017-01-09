@@ -39,27 +39,27 @@ void run(std::list<Point> all_points)
   Point q(0.3, 0.5);
   typename SearchTraits::Point_d pp(p);
   typename SearchTraits::Point_d qq(q);
-  
-  
-  Iso_rectangle exact_ic(p,q);
 
-  Fuzzy_box exact_range(pp,qq);
+
+  Iso_rectangle ic(p,q);
+
+  Fuzzy_box default_range(pp,qq);
 
   std::list<typename SearchTraits::Point_d> result;
-  // Searching the box r exactly
-  tree.search( std::back_inserter( result ), exact_range);
-  
+  // Searching the box ic
+  tree.search( std::back_inserter( result ), default_range);
+
   tree.search(CGAL::Emptyset_iterator(), Fuzzy_box(p,q) ); //test compilation when Point != Traits::Point_d
-  
-  // test the results of the exact query
+
+  // test the results of the default query
   std::list<Point> copy_all_points(all_points);
   for (typename std::list<typename SearchTraits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
-    assert(! exact_ic.has_on_unbounded_side(get_point(*pt)) || exact_ic.has_on_boundary(get_point(*pt)));
+    assert(! ic.has_on_unbounded_side(get_point(*pt)) || ic.has_on_boundary(get_point(*pt)));
     copy_all_points.remove(get_point(*pt));
   }
   
   for (std::list<Point>::iterator pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
-    assert(exact_ic.has_on_unbounded_side(*pt) || exact_ic.has_on_boundary(*pt));
+    assert(ic.has_on_unbounded_side(*pt) || ic.has_on_boundary(*pt));
   }
 
 
