@@ -148,23 +148,22 @@ GeneralDistance, Splitter, SpatialTree>`
 
 \subsection Spatial_searchingRangeSearching Range Searching
 
-<I>Exact range searching</I> and <I>approximate range searching</I> is
+<I>Exact range searching</I> and <I>approximate range searching</I> are
 supported using exact or fuzzy `d`-dimensional objects enclosing a
 region. The fuzziness of the query object is specified by a parameter
-\f$ \epsilon\f$ denoting a maximal allowed distance to the boundary of a
-query object. If the distance to the boundary is at least
-\f$ \epsilon\f$, points inside the object are always reported and points
-outside the object are never reported. Points within distance
-\f$ \epsilon\f$ to the boundary may be or may be not reported. For exact
-range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
+\f$ \epsilon\f$ used to define inner and outer approximations of the query object.
+Points in the interior of the inner approximation are always reported and points
+that are not in the closure of the outer approximation are never reported. Other
+points may or may not be reported. For exact range searching,
+the fuzziness parameter \f$ \epsilon\f$ is set to zero.
 
 The class `Kd_tree` implements range searching in the method `search`,
 which is a template method with an output iterator and a model of the
-concept `FuzzyQueryItem` as `Fuzzy_iso_box` 
-or `Fuzzy_sphere`. 
-For range searching of large data sets the user may set the parameter `bucket_size` 
-used in building the `kd` tree to a large value (e.g. 100), 
-because in general the query time will be less then using the default value.
+concept `FuzzyQueryItem` as `Fuzzy_iso_box`
+or `Fuzzy_sphere`.
+For range searching of large data sets, the user may set the parameter `bucket_size`
+used in building the `kd` tree to a large value (e.g. 100),
+because in general the query time will be less than using the default value.
 
 \section Spatial_SearchingSplitting_rule_section Splitting Rules 
 
