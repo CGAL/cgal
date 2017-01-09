@@ -46,21 +46,19 @@ struct Cached_extended_euclidean_algorithm{
   typedef std::pair<UFD,UFD> PAIR; 
   typedef Extended_euclidean_algorithm FUNC;
   typedef CGAL::Cache<PAIR,PAIR,FUNC> CACHE;
-  
-  static CACHE cache;
-  
+  static CACHE& get_cache()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(CACHE,cache);
+    return cache;
+  }
+
   void operator()(const UFD& p, const UFD& q, UFD& s, UFD& t){
     PAIR pq(p,q);
-    PAIR result = cache(pq);
+    PAIR result = get_cache()(pq);
     s = result.first;
     t = result.second;
-  }    
+  }
 };
-
-template <class UFD, int i> 
-typename Cached_extended_euclidean_algorithm<UFD,i>::CACHE 
-Cached_extended_euclidean_algorithm<UFD,i>::cache;
-
 
 } // namespace internal
 } //namespace CGAL
