@@ -197,7 +197,7 @@ public:
   CRefiner ()
   {
     m_lower_bound = 0.;
-    m_upper_bound = std::numeric_limits<FT>::max ();
+    m_upper_bound = (std::numeric_limits<FT>::max) ();
   }
 
   bool empty ()
@@ -208,7 +208,7 @@ public:
   {
     m_queue = std::priority_queue<RefTriangle> ();
     m_lower_bound = lower_bound;
-    m_upper_bound = std::numeric_limits<FT>::max ();
+    m_upper_bound = (std::numeric_limits<FT>::max) ();
   }
 
   inline FT uncertainty () const
