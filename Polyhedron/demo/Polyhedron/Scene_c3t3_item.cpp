@@ -765,21 +765,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->d->computeElements();
     ncthis->d->initializeBuffers(viewer);
   }
-  if(d->is_grid_shown)
-  {
-    vaos[Scene_c3t3_item_priv::Grid]->bind();
-    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    d->program->bind();
-    d->program->setAttributeValue("colors", QColor(Qt::black));
-    QMatrix4x4 f_mat;
-    for (int i = 0; i<16; i++)
-      f_mat.data()[i] = d->frame->matrix()[i];
-    d->program->setUniformValue("f_matrix", f_mat);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
-    d->program->release();
-    vaos[Scene_c3t3_item_priv::Grid]->release();
-  }
+
   vaos[Scene_c3t3_item_priv::Facets]->bind();
   d->program = getShaderProgram(PROGRAM_C3T3);
   attribBuffers(viewer, PROGRAM_C3T3);
@@ -810,6 +796,21 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     d->spheres->setPlane(this->plane());
   }
 
+  if(d->is_grid_shown)
+  {
+    vaos[Scene_c3t3_item_priv::Grid]->bind();
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setAttributeValue("colors", QColor(Qt::black));
+    QMatrix4x4 f_mat;
+    for (int i = 0; i<16; i++)
+      f_mat.data()[i] = d->frame->matrix()[i];
+    d->program->setUniformValue("f_matrix", f_mat);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
+    d->program->release();
+    vaos[Scene_c3t3_item_priv::Grid]->release();
+  }
 
   Scene_group_item::draw(viewer);
 }
