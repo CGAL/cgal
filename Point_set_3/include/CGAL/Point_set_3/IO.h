@@ -1,5 +1,3 @@
-// NOTE: file to remove once Point_set_3 package is available
-
 // Copyright (c) 2016  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -218,6 +216,7 @@ namespace internal
   class Abstract_property_printer
   {
   public:
+    virtual ~Abstract_property_printer() { }
     virtual std::string get_string(const typename CGAL::Point_set_3<Point,Vector>::Index& index) = 0;
   };
 
@@ -269,7 +268,7 @@ namespace internal
   
   \ingroup PkgPointSet3IO
 
-  \brief Inserts the point set in an output stream in Ascii PLY
+  \brief Inserts the point set in an output stream in ASCII PLY
   format. All properties are inserted in their instantiation order.
 
   \relates Point_set_3

@@ -1,5 +1,3 @@
-// NOTE: file to remove once Point_set_3 package is available
-
 // Copyright (c) 2016  Geometry Factory
 // All rights reserved.
 //
@@ -61,6 +59,7 @@ private:
 
   struct Abstract_ply_property_to_point_set_property
   {
+    virtual ~Abstract_ply_property_to_point_set_property() { }
     virtual void assign (Ply_reader& reader, typename Point_set::Index index) = 0;
   };
 
