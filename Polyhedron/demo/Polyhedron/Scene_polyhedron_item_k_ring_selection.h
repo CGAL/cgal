@@ -14,11 +14,34 @@
 #include <queue>
 
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_3.h>
 #include <CGAL/Polygon_2.h>
 
+typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+
+struct Is_selected_edge_property_map{
+  std::vector<bool>* is_selected_ptr;
+  Is_selected_edge_property_map()
+    : is_selected_ptr(NULL) {}
+  Is_selected_edge_property_map(std::vector<bool>& is_selected)
+    : is_selected_ptr( &is_selected) {}
+
+  std::size_t id(edge_descriptor ed) { return ed.halfedge()->id()/2; }
+
+  friend bool get(Is_selected_edge_property_map map, edge_descriptor ed)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    return (*map.is_selected_ptr)[map.id(ed)];
+  }
+
+  friend void put(Is_selected_edge_property_map map, edge_descriptor ed, bool b)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    (*map.is_selected_ptr)[map.id(ed)]=b;
+  }
+};
 
 class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring_selection 
   : public QObject
@@ -29,7 +52,6 @@ public:
     enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 , CONNECTED_COMPONENT = 3, PATH = 4};
   };
 
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
   typedef CGAL::Polygon_2<Kernel> Polygon_2;
   typedef std::vector<Kernel::Point_2> Polyline_2;
   typedef std::vector<Polyline_2> Polylines;
@@ -147,94 +169,136 @@ public Q_SLOTS:
 
   void lasso_selection()
   {
-
-    typedef CGAL::Search_traits_3<Kernel> TreeTraits;
-    typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
-    typedef Neighbor_search::Tree Tree;
-
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    //const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
 
     qglviewer::Camera* camera = viewer->camera();
     const Polyhedron& poly = *poly_item->polyhedron();
 
-      std::vector<Polyhedron::Vertex_handle> v_sel;
-      std::vector<Kernel::Point_3> p_sel;
-      QMap<Kernel::Point_3, Polyhedron::Vertex_handle> pv_map;
-      std::set<Polyhedron::Vertex_handle> final_vertex_sel;
-      //select all vertices if their screen projection is inside the lasso
-      BOOST_FOREACH(Polyhedron::Vertex_handle v, vertices(poly))
+    std::set<Polyhedron::Face_handle> face_sel;
+    //select all faces if their screen projection is inside the lasso
+    BOOST_FOREACH(Polyhedron::Face_handle f, faces(poly))
+    {
+      BOOST_FOREACH(Polyhedron::Vertex_handle v, CGAL::vertices_around_face(f->halfedge(), poly))
       {
         qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
-        qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
+        qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
         if(is_vertex_selected(vsp))
         {
-          v_sel.push_back(v);
-        }
-      }
-      //fill points vector and points-vertex map
-      BOOST_FOREACH(Polyhedron::Vertex_handle v, v_sel)
-      {
-          p_sel.push_back(v->point());
-          pv_map[v->point()] = v;
-      }
-      if(v_sel.empty())
-        return;
-      //fill a Kd-tree with the selected points
-      Tree tree(p_sel.begin(), p_sel.end());
-      //Only keep the visible points
-      BOOST_FOREACH(Polyhedron::Vertex_handle v, v_sel)
-      {
-        //get the point from the selected vertex
-        qglviewer::Vec point(v->point()[0], v->point()[1], v->point()[2]);
-        //project it on screen
-        qglviewer::Vec proj(camera->projectedCoordinatesOf(point));
-        //get the point under pixel corresponding to this projection
-        qglviewer::Vec visible_point;
-        bool found;
-        visible_point = camera->pointUnderPixel(QPoint(proj.x, proj.y), found);
-        if(!found)
-          continue;
-        //as the precision of this method is not absolute, use the tree to find the closest point of the result
-        Neighbor_search search(tree, Kernel::Point_3(visible_point[0],visible_point[1],visible_point[2]) , 3);
-        for(int i=0; i<3; ++i)
-        {
-          final_vertex_sel.insert(pv_map[(search.begin()+i)->first]);
-        }
-      }
-      switch(active_handle_type)
-      {
-      case Active_handle::VERTEX:
-      {
-        selected(final_vertex_sel);
-        break;
-      }
-      case Active_handle::EDGE:
-      {
-        std::set<edge_descriptor> e_sel;
-        BOOST_FOREACH(Polyhedron::Vertex_handle v, final_vertex_sel)
-        {
-          BOOST_FOREACH(Polyhedron::Halfedge_handle h, CGAL::halfedges_around_source(v, poly))
-          e_sel.insert(edge(h, poly));
-        }
-        selected(e_sel);
-        break;
-      }
-      case Active_handle::FACET:
-      {
-        std::set<Polyhedron::Facet_handle> face_sel;
-        BOOST_FOREACH(Polyhedron::Vertex_handle v, final_vertex_sel)
-        {
-          BOOST_FOREACH(Polyhedron::Facet_handle f, CGAL::faces_around_target(v->halfedge(), poly))
           face_sel.insert(f);
+          break;
         }
-        selected(face_sel);
-        break;
       }
-      default:
+    }
+    if(face_sel.empty())
+    {
+      contour_2d.clear();
+      return;
+    }
+    //get border edges of the selected patches
+    std::vector<Polyhedron::Halfedge_handle> boundary_edges;
+    CGAL::Polygon_mesh_processing::border_halfedges(face_sel, poly, std::back_inserter(boundary_edges));
+    std::vector<bool> mark(edges(poly).size(), false);
+    Is_selected_edge_property_map spmap(mark);
+    BOOST_FOREACH(Polyhedron::Halfedge_handle h, boundary_edges)
+      put(spmap, edge(h, poly), true);
+
+    boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
+      = get(boost::face_external_index, poly);
+    boost::vector_property_map<int,
+      boost::property_map<Polyhedron, boost::face_external_index_t>::type>
+      fccmap(fim);
+
+    //get connected componant from the picked face
+    std::set<Polyhedron::Face_handle> final_sel;
+    //std::vector<Polyhedron::Face_handle> cc;
+    std::size_t nb_cc = CGAL::Polygon_mesh_processing::connected_components(poly
+          , fccmap
+          , CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(spmap)
+          .face_index_map(fim));
+    std::vector<bool> is_cc_done(nb_cc, false);
+
+    BOOST_FOREACH(Polyhedron::Face_handle f, face_sel)
+    {
+
+      int cc_id = get(fccmap, f);
+      if(is_cc_done[cc_id])
+      {
+        continue;
+      }
+      Polyhedron::Halfedge_around_facet_circulator hafc = f->facet_begin();
+      Polyhedron::Halfedge_around_facet_circulator end = hafc;
+      double x(0), y(0), z(0);
+      int total(0);
+      CGAL_For_all(hafc, end)
+      {
+        x+=hafc->vertex()->point().x(); y+=hafc->vertex()->point().y(); z+=hafc->vertex()->point().z();
+        total++;
+      }
+      if(total == 0)
+        continue;
+      qglviewer::Vec center(x/(double)total, y/(double)total, z/(double)total);
+      const qglviewer::Vec& orig = camera->position() - offset;
+      qglviewer::Vec direction = center - orig;
+      if(poly_item->intersect_face(orig.x,
+                                   orig.y,
+                                   orig.z,
+                                   direction.x,
+                                   direction.y,
+                                   direction.z,
+                                   f))
+      {
+        is_cc_done[cc_id] = true;
+      }
+    }
+    BOOST_FOREACH(Polyhedron::Face_handle f, faces(poly))
+    {
+      if(is_cc_done[get(fccmap, f)])
+        final_sel.insert(f);
+    }
+    switch(active_handle_type)
+    {
+    case Active_handle::FACET:
+      selected(final_sel);
+      break;
+    case Active_handle::EDGE:
+    {
+      std::set<edge_descriptor> e_sel;
+      BOOST_FOREACH(Polyhedron::Face_handle f, final_sel)
+      {
+        BOOST_FOREACH(Polyhedron::Halfedge_handle h, CGAL::halfedges_around_face(f->halfedge(), poly))
+        {
+          qglviewer::Vec vp1(h->vertex()->point().x(), h->vertex()->point().y(), h->vertex()->point().z());
+          qglviewer::Vec vsp1 = camera->projectedCoordinatesOf(vp1+offset);
+          qglviewer::Vec vp2(h->opposite()->vertex()->point().x(), h->opposite()->vertex()->point().y(), h->opposite()->vertex()->point().z());
+          qglviewer::Vec vsp2 = camera->projectedCoordinatesOf(vp2+offset);
+          if(is_vertex_selected(vsp1) || is_vertex_selected(vsp2))
+            e_sel.insert(edge(h, poly));
+        }
+      }
+      selected(e_sel);
       break;
     }
-      contour_2d.clear();
+    case Active_handle::VERTEX:
+    {
+      std::set<Polyhedron::Vertex_handle> v_sel;
+      BOOST_FOREACH(Polyhedron::Face_handle f, final_sel)
+      {
+        BOOST_FOREACH(Polyhedron::Vertex_handle v, CGAL::vertices_around_face(f->halfedge(), poly))
+        {
+          qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
+          qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
+          if(is_vertex_selected(vsp))
+            v_sel.insert(v);
+        }
+      }
+      selected(v_sel);
+      break;
+    }
+    default:
+      break;
+    }
+    contour_2d.clear();
   }
 
   void highlight()

@@ -527,6 +527,7 @@ public Q_SLOTS:
       selection_item->itemChanged();
       break;
     }
+      //Convert from Facet Selection to Bounding Edge Selection
     case 7:
     {
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -671,6 +672,7 @@ public Q_SLOTS:
       ui_widget.docImage_Label->clear();
       break;
     }
+    on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
   }
   void on_Select_sharp_edges_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -741,6 +743,7 @@ public Q_SLOTS:
     if (scene_ptr)
       connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(selection_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
+    on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
   }
   void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
     // if polyhedron item
