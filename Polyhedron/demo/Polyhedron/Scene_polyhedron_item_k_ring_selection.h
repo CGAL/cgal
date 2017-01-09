@@ -15,6 +15,11 @@
 
 #include <CGAL/boost/graph/selection.h>
 
+#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Search_traits_3.h>
+#include <CGAL/Polygon_2.h>
+
+
 class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring_selection 
   : public QObject
 {
@@ -25,6 +30,9 @@ public:
   };
 
   typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+  typedef CGAL::Polygon_2<Kernel> Polygon_2;
+  typedef std::vector<Kernel::Point_2> Polyline_2;
+  typedef std::vector<Polyline_2> Polylines;
 
   // Hold mouse keyboard state together
   struct Mouse_keyboard_state
@@ -63,6 +71,8 @@ public:
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
+    polyline = new Polylines(0);
+    polyline->push_back(Polyline_2());
     mainwindow = mw;
     is_highlighting = false;
     is_ready_to_highlight = true;
@@ -133,6 +143,98 @@ public Q_SLOTS:
       }
       is_ready_to_paint_select = false;
     }
+  }
+
+  void lasso_selection()
+  {
+
+    typedef CGAL::Search_traits_3<Kernel> TreeTraits;
+    typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+    typedef Neighbor_search::Tree Tree;
+
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    //const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+
+    qglviewer::Camera* camera = viewer->camera();
+    const Polyhedron& poly = *poly_item->polyhedron();
+
+      std::vector<Polyhedron::Vertex_handle> v_sel;
+      std::vector<Kernel::Point_3> p_sel;
+      QMap<Kernel::Point_3, Polyhedron::Vertex_handle> pv_map;
+      std::set<Polyhedron::Vertex_handle> final_vertex_sel;
+      //select all vertices if their screen projection is inside the lasso
+      BOOST_FOREACH(Polyhedron::Vertex_handle v, vertices(poly))
+      {
+        qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
+        qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
+        if(is_vertex_selected(vsp))
+        {
+          v_sel.push_back(v);
+        }
+      }
+      //fill points vector and points-vertex map
+      BOOST_FOREACH(Polyhedron::Vertex_handle v, v_sel)
+      {
+          p_sel.push_back(v->point());
+          pv_map[v->point()] = v;
+      }
+      if(v_sel.empty())
+        return;
+      //fill a Kd-tree with the selected points
+      Tree tree(p_sel.begin(), p_sel.end());
+      //Only keep the visible points
+      BOOST_FOREACH(Polyhedron::Vertex_handle v, v_sel)
+      {
+        //get the point from the selected vertex
+        qglviewer::Vec point(v->point()[0], v->point()[1], v->point()[2]);
+        //project it on screen
+        qglviewer::Vec proj(camera->projectedCoordinatesOf(point));
+        //get the point under pixel corresponding to this projection
+        qglviewer::Vec visible_point;
+        bool found;
+        visible_point = camera->pointUnderPixel(QPoint(proj.x, proj.y), found);
+        if(!found)
+          continue;
+        //as the precision of this method is not absolute, use the tree to find the closest point of the result
+        Neighbor_search search(tree, Kernel::Point_3(visible_point[0],visible_point[1],visible_point[2]) , 3);
+        for(int i=0; i<3; ++i)
+        {
+          final_vertex_sel.insert(pv_map[(search.begin()+i)->first]);
+        }
+      }
+      switch(active_handle_type)
+      {
+      case Active_handle::VERTEX:
+      {
+        selected(final_vertex_sel);
+        break;
+      }
+      case Active_handle::EDGE:
+      {
+        std::set<edge_descriptor> e_sel;
+        BOOST_FOREACH(Polyhedron::Vertex_handle v, final_vertex_sel)
+        {
+          BOOST_FOREACH(Polyhedron::Halfedge_handle h, CGAL::halfedges_around_source(v, poly))
+          e_sel.insert(edge(h, poly));
+        }
+        selected(e_sel);
+        break;
+      }
+      case Active_handle::FACET:
+      {
+        std::set<Polyhedron::Facet_handle> face_sel;
+        BOOST_FOREACH(Polyhedron::Vertex_handle v, final_vertex_sel)
+        {
+          BOOST_FOREACH(Polyhedron::Facet_handle f, CGAL::faces_around_target(v->halfedge(), poly))
+          face_sel.insert(f);
+        }
+        selected(face_sel);
+        break;
+      }
+      default:
+      break;
+    }
+      contour_2d.clear();
   }
 
   void highlight()
@@ -292,11 +394,15 @@ protected:
         if(is_edit_mode)
           Q_EMIT clearHL();
         if (!state.left_button_pressing)
+        {
           if (is_active)
           {
             Q_EMIT endSelection();
             is_active=false;
           }
+          apply_path();
+          lasso_selection();
+        }
       }
       //to avoid the contextual menu to mess up the states.
       else if(mouse_event->button() == Qt::RightButton) {
@@ -319,11 +425,18 @@ protected:
         viewer->setFocus();
         return false;
       }
-      is_ready_to_paint_select = true;
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-      paint_pos = mouse_event->pos();
-      if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
-        QTimer::singleShot(0,this,SLOT(paint_selection()));
+      if(!is_lasso_active)
+      {
+        is_ready_to_paint_select = true;
+        QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+        paint_pos = mouse_event->pos();
+        if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
+          QTimer::singleShot(0,this,SLOT(paint_selection()));
+      }
+      else
+      {
+        sample_mouse_path();
+      }
     }
     //if in edit_mode and the mouse is moving without left button pressed :
     // highlight the primitive under cursor
@@ -349,7 +462,87 @@ protected:
   bool is_lasso_active;
   QPoint hl_pos;
   QPoint paint_pos;
+  Polyline_2 contour_2d;
+  Polylines* polyline;
+  Polyline_2& poly() const  { return polyline->front(); }
+  Polygon_2 lasso;
+  CGAL::Bbox_2 domain_rectangle;
+  bool update_polyline () const
+  {
+    if (contour_2d.size() < 2 ||
+        (!(poly().empty()) && contour_2d.back () == poly().back()))
+      return false;
 
+
+    if (!(poly().empty()) && contour_2d.back () == poly().back())
+      return false;
+
+    poly().clear();
+
+    for (unsigned int i = 0; i < contour_2d.size (); ++ i)
+      poly().push_back (contour_2d[i]);
+
+    return true;
+  }
+
+  void sample_mouse_path()
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
+    contour_2d.push_back (Kernel::Point_2 (p.x(), p.y()));
+
+    if (update_polyline ())
+    {
+      //update draw
+      QPainter *painter = viewer->getPainter();
+      QPen pen;
+      pen.setColor(QColor(Qt::green));
+      pen.setWidth(3);
+      //Create a QImage of the screen and paint the lasso on top of it
+      QImage image = viewer->grabFrameBuffer();
+      painter->begin(viewer);
+      painter->drawImage(QPoint(0,0), image);
+      painter->setPen(pen);
+      for(std::size_t i=0; i<polyline->size(); ++i)
+      {
+        Polyline_2 poly = (*polyline)[i];
+        if(!poly.empty())
+          for(std::size_t j=0; j<poly.size()-1; ++j)
+          {
+            painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
+          }
+      }
+      painter->end();
+    }
+  }
+  void apply_path()
+  {
+    update_polyline ();
+    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
+    lasso = Polygon_2 (contour_2d.begin (), contour_2d.end ());
+  }
+
+  bool is_vertex_selected (qglviewer::Vec& p)
+  {
+    if (domain_rectangle.xmin () < p.x &&
+        p.x < domain_rectangle.xmax () &&
+        domain_rectangle.ymin () < p.y &&
+        p.y < domain_rectangle.ymax ())
+      {
+/*
+ * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
+ * However, it works very well even if the polygon is not simple, so we use this instead to avoid
+ * the cgal_assertion on is_simple().*/
+
+
+        if (CGAL::bounded_side_2(lasso.container().begin(),
+                                 lasso.container().end(),
+                                 Kernel::Point_2(p.x, p.y),
+                                 lasso.traits_member())  == CGAL::ON_BOUNDED_SIDE)
+          return true;
+      }
+    return false;
+  }
 };
 
 #endif

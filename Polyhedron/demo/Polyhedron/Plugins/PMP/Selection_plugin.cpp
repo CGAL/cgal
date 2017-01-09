@@ -494,7 +494,7 @@ public Q_SLOTS:
         print_message("Error: there is no selected edge in this polyhedron selection item!");
         return;
       }
-      Polyhedron poly = *selection_item->polyhedron();
+      const Polyhedron& poly = *selection_item->polyhedron();
       BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
       {
         selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
@@ -516,7 +516,7 @@ public Q_SLOTS:
         print_message("Error: there is no selected edge in this polyhedron selection item!");
         return;
       }
-      Polyhedron poly = *selection_item->polyhedron();
+      const Polyhedron& poly = *selection_item->polyhedron();
 
       BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
       {
@@ -538,7 +538,7 @@ public Q_SLOTS:
         print_message("Error: there is no selected facet in this polyhedron selection item!");
         return;
       }
-      Polyhedron poly = *selection_item->polyhedron();
+      const Polyhedron& poly = *selection_item->polyhedron();
       std::vector<Scene_polyhedron_selection_item::Halfedge_handle> boundary_edges;
       CGAL::Polygon_mesh_processing::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
       BOOST_FOREACH(Scene_polyhedron_selection_item::Halfedge_handle h, boundary_edges)
@@ -561,7 +561,7 @@ public Q_SLOTS:
         print_message("Error: there is no selected facet in this polyhedron selection item!");
         return;
       }
-      Polyhedron poly = *selection_item->polyhedron();
+      const Polyhedron& poly = *selection_item->polyhedron();
       BOOST_FOREACH(Scene_polyhedron_selection_item::Facet_handle fh, selection_item->selected_facets)
       {
         BOOST_FOREACH(Scene_polyhedron_selection_item::halfedge_descriptor h, CGAL::halfedges_around_face(fh->halfedge(), poly) )
