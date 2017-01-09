@@ -481,7 +481,7 @@ OutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
                            OutputIterator out)
 {
-  return sample_triangle_mesh(tm, parameters::all_default());
+  return sample_triangle_mesh(tm, out, parameters::all_default());
 }
 
 template <class Concurrency_tag,

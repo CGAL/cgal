@@ -149,8 +149,8 @@ private:
     Colors,
     NbOfVbos};
 
-  mutable int nb_pos;
-  mutable int nb_edge_pos;
+  mutable std::size_t nb_pos;
+  mutable std::size_t nb_edge_pos;
   mutable QOpenGLShaderProgram *program;
 
   //fills 'out' and returns the hausdorff distance for calibration of the color_ramp.
