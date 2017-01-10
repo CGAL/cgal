@@ -73,7 +73,7 @@ const Expr& Expr::getZero() {
 }
 CGAL_INLINE_FUNCTION
 const Expr& Expr::getOne() {
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, One1);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, One,1);
   return One;
 }
 
