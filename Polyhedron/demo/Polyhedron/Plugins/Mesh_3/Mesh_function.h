@@ -263,10 +263,11 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       , Set_of_patch_ids
       > Mesh_sizing_field; // type of sizing field for 0D and 1D features
     typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
-    const std::size_t max_index = domain_->maximal_curve_segment_index();
+    typedef typename Domain::Curve_segment_index Curve_segment_index;
+    const Curve_segment_index max_index = domain_->maximal_curve_segment_index();
     Patches_ids_vector* patches_ids_vector_p =
       new Patches_ids_vector(max_index+1);
-    for(std::size_t curve_id = 1; curve_id <= max_index; ++curve_id)
+    for(Curve_segment_index curve_id = 1; curve_id <= max_index; ++curve_id)
     {
       (*patches_ids_vector_p)[curve_id] = domain_->get_incidences(curve_id);
     }
