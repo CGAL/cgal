@@ -47,8 +47,8 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
 
   typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
-  
-  typedef typename Kernel_traits<Point>::Kernel       Kernel;
+
+  typedef typename Kernel_traits<Point>::Kernel        Kernel;
   typedef typename Kernel::FT                          FT;
   typedef typename Kernel::Vector_3                    Vector;
 
@@ -56,15 +56,19 @@ public:
   VertexPointMap vpmap;
 
 public:
-  PQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap = get(vertex_point,polyhedron))
+  PQQ_stencil_3(Polyhedron& polyhedron)
+    : polyhedron(polyhedron), vpmap(get(vertex_point,polyhedron))
+  { }
+
+  PQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap)
     : polyhedron(polyhedron), vpmap(vpmap)
-  {}
+  { }
 
-  void face_node(face_descriptor, Point&) {};
-  void edge_node(halfedge_descriptor, Point&) {};
-  void vertex_node(vertex_descriptor, Point&) {};
+  void face_node(face_descriptor, Point&) { }
+  void edge_node(halfedge_descriptor, Point&) { }
+  void vertex_node(vertex_descriptor, Point&) { }
 
-  void border_node(halfedge_descriptor, Point&, Point&) {};
+  void border_node(halfedge_descriptor, Point&, Point&) { }
 };
 
 
@@ -87,9 +91,13 @@ public:
   typedef typename Base::Vector                      Vector;
 
 public:
-  Linear_mask_3(Polyhedron& poly, VertexPointMap vpmap = get(vertex_point,poly))
-    : Base(poly,vpmap)
-  {}
+  Linear_mask_3(Polyhedron& poly)
+    : Base(poly, get(vertex_point,poly))
+  { }
+
+  Linear_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+    : Base(poly, vpmap)
+  { }
 
   //
   void face_node(face_descriptor facet, Point& pt) {
@@ -137,10 +145,13 @@ public:
   typedef typename Base::Vector                      Vector;
 
 public:
-  CatmullClark_mask_3(Polyhedron& poly,
-                      VertexPointMap vpmap = get(vertex_point,poly))
-    : Base(poly,vpmap)
-  {}
+  CatmullClark_mask_3(Polyhedron& poly)
+    : Base(poly, get(vertex_point, poly))
+  { }
+
+  CatmullClark_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+    : Base(poly, vpmap)
+  { }
 
   //
   void edge_node(halfedge_descriptor edge, Point& pt) {
@@ -217,17 +228,19 @@ public:
 
   typedef Halfedge_around_face_circulator<Polyhedron>  
                                             Halfedge_around_facet_circulator;
-  typedef typename Halfedge_around_target_circulator<Polyhedron>  
+  typedef Halfedge_around_target_circulator<Polyhedron>
                                             Halfedge_around_vertex_circulator;
 
   
 
 public:
+  Loop_mask_3(Polyhedron& poly)
+    : Base(poly, get(vertex_point, poly))
+  { }
 
-  Loop_mask_3(Polyhedron& poly,
-              VertexPointMap vpmap= get(vertex_point,poly))
-    : Base(poly,vpmap)
-  {}
+  Loop_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+    : Base(poly, vpmap)
+  { }
 
   //
   void edge_node(halfedge_descriptor edge, Point& pt) {
@@ -304,11 +317,15 @@ public:
   Vertex_pmap vpm;
 public:
   //
-  void corner_node(halfedge_descriptor /*edge*/, Point& /*pt*/) {};
+  void corner_node(halfedge_descriptor /*edge*/, Point& /*pt*/) { }
 
-  DQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap = get(vertex_point,polyhedron))
+  DQQ_stencil_3(Polyhedron& polyhedron)
+    : polyhedron(polyhedron), vpm(get(vertex_point, polyhedron))
+  { }
+
+  DQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap)
     : polyhedron(polyhedron), vpm(vpmap)
-  {}
+  { }
 };
 
 
@@ -332,11 +349,13 @@ public:
  
 
 public:
+  DooSabin_mask_3(Polyhedron& polyhedron)
+    : Base(polyhedron, get(vertex_point, polyhedron))
+  { }
 
-  DooSabin_mask_3(Polyhedron& polyhedron,
-                      VertexPointMap vpmap = get(vertex_point,polyhedron))
-    : Base(polyhedron,vpmap)
-  {}
+  DooSabin_mask_3(Polyhedron& polyhedron, VertexPointMap vpmap)
+    : Base(polyhedron, vpmap)
+  { }
 
   //
   void corner_node(halfedge_descriptor he, Point& pt) {
@@ -385,19 +404,21 @@ public:
   typedef typename Base::Point                       Point;
   typedef typename Base::Vector                      Vector;
 
-  typedef Halfedge_around_target_circulator<Poly> Halfedge_around_target_circulator;
 public:
   //
   //void edge_node(halfedge_descriptor edge, Point& pt) {}
   //
 
-  Sqrt3_mask_3(Polyhedron& poly,
-               VertexPointMap vpmap = get(vertex_point,poly))
-    : Base(poly,vpmap)
-  {}
+  Sqrt3_mask_3(Polyhedron& poly)
+    : Base(poly, get(vertex_point,poly))
+  { }
+
+  Sqrt3_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+    : Base(poly, vpmap)
+  { }
 
   void vertex_node(vertex_descriptor vertex, Point& pt) {
-    Halfedge_around_target_circulator vcir(vertex,this->polyhedron);
+    Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
     size_t n = degree(vertex,this->polyhedron);
 
     FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);

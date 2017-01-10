@@ -279,7 +279,6 @@ namespace Subdivision_method_3 {
 
     typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-    typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
 
     typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_face_circulator;
 
@@ -485,7 +484,6 @@ namespace Subdivision_method_3 {
     typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
     typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
-    typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
     typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
 

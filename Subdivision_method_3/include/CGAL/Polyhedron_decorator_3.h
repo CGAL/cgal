@@ -46,9 +46,9 @@ class Polyhedron_decorator_3 {
     typedef typename boost::graph_traits<Poly>::edge_iterator           Edge_iterator;
     typedef typename boost::graph_traits<Poly>::face_iterator          Facet_iterator;
 
-  typedef typename Halfedge_around_face_circulator<Poly>  
+  typedef Halfedge_around_face_circulator<Poly>
                                             Halfedge_around_facet_circulator;
-  typedef typename Halfedge_around_target_circulator<Poly>
+  typedef Halfedge_around_target_circulator<Poly>
                                             Halfedge_around_vertex_circulator;
 
   typedef typename Kernel::FT                          FT;

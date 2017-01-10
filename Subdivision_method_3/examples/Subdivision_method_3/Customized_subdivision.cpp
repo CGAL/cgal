@@ -19,8 +19,6 @@ class WLoop_mask_3 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef Halfedge_around_target_circulator<Poly> Halfedge_around_target_circulator;
-
   typedef typename boost::property_map<PolygonMesh, vertex_point_t>::type Vertex_pmap;
   typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
   
@@ -71,7 +69,7 @@ public:
     Point& ep2 = get(vpm, target(opposite(hd,pmesh),pmesh));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_target_circulator vcir(hd,pmesh);
+    Halfedge_around_target_circulator<Poly> vcir(hd,pmesh);
     Point& vp1  = get(vpm, target(opposite(*vcir,pmesh),pmesh));
     Point& vp0  = get(vpm, target(*vcir,pmesh));
     --vcir;
