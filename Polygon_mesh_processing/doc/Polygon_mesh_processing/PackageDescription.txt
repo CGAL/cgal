@@ -59,7 +59,7 @@ ranging from basic operations on simplices, to complex geometry processing algor
 \cgalPkgDependsOn{documented for each function; \ref PkgSolverSummary}
 \cgalPkgBib{cgal:lty-pmp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
  
 \cgalPkgDescriptionEnd
