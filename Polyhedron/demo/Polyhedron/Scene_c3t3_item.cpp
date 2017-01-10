@@ -349,6 +349,7 @@ struct Scene_c3t3_item_priv {
   QPixmap histogram_;
   typedef std::set<int> Indices;
   Indices indices_;
+  std::set<Tr::Cell_handle> intersected_cells;
 
   //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
@@ -1252,35 +1253,46 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
 
 void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
 {
-  const Kernel::Point_3& pa = facet.id().first->vertex(0)->point();
-  const Kernel::Point_3& pb = facet.id().first->vertex(1)->point();
-  const Kernel::Point_3& pc = facet.id().first->vertex(2)->point();
-  const Kernel::Point_3& pd = facet.id().first->vertex(3)->point();
 
-  QColor c = this->colors[facet.id().first->subdomain_index()].darker(150);
+  if(intersected_cells.find(facet.id().first) == intersected_cells.end())
+  {
 
-  CGAL::Color color(c.red(), c.green(), c.blue());
+    const Kernel::Point_3& pa = facet.id().first->vertex(0)->point();
+    const Kernel::Point_3& pb = facet.id().first->vertex(1)->point();
+    const Kernel::Point_3& pc = facet.id().first->vertex(2)->point();
+    const Kernel::Point_3& pd = facet.id().first->vertex(3)->point();
 
-  intersection->addTriangle(pb, pa, pc, color);
-  intersection->addTriangle(pa, pb, pd, color);
-  intersection->addTriangle(pa, pd, pc, color);
-  intersection->addTriangle(pb, pc, pd, color);
+    QColor c = this->colors[facet.id().first->subdomain_index()].darker(150);
 
+    CGAL::Color color(c.red(), c.green(), c.blue());
+
+    intersection->addTriangle(pb, pa, pc, color);
+    intersection->addTriangle(pa, pb, pd, color);
+    intersection->addTriangle(pa, pd, pc, color);
+    intersection->addTriangle(pb, pc, pd, color);
+    intersected_cells.insert(facet.id().first);
+  }
   {
     Tr::Cell_handle nh = facet.id().first->neighbor(facet.id().second);
     if(c3t3.is_in_complex(nh)){
-      const Kernel::Point_3& pa = nh->vertex(0)->point();
-      const Kernel::Point_3& pb = nh->vertex(1)->point();
-      const Kernel::Point_3& pc = nh->vertex(2)->point();
-      const Kernel::Point_3& pd = nh->vertex(3)->point();
+      if(intersected_cells.find(nh) == intersected_cells.end())
+      {
+        const Kernel::Point_3& pa = nh->vertex(0)->point();
+        const Kernel::Point_3& pb = nh->vertex(1)->point();
+        const Kernel::Point_3& pc = nh->vertex(2)->point();
+        const Kernel::Point_3& pd = nh->vertex(3)->point();
 
-      intersection->addTriangle(pb, pa, pc, color);
-      intersection->addTriangle(pa, pb, pd, color);
-      intersection->addTriangle(pa, pd, pc, color);
-      intersection->addTriangle(pb, pc, pd, color);
+        QColor c = this->colors[nh->subdomain_index()].darker(150);
+
+        CGAL::Color color(c.red(), c.green(), c.blue());
+        intersection->addTriangle(pb, pa, pc, color);
+        intersection->addTriangle(pa, pb, pd, color);
+        intersection->addTriangle(pa, pd, pc, color);
+        intersection->addTriangle(pb, pc, pd, color);
+        intersected_cells.insert(nh);
+      }
     }
   }
-
 }
 
 struct ComputeIntersection {
@@ -1307,6 +1319,7 @@ void Scene_c3t3_item_priv::computeIntersections()
   const Kernel::Plane_3& plane = item->plane();
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
+  intersected_cells.clear();
 }
 
 void Scene_c3t3_item_priv::computeSpheres()
