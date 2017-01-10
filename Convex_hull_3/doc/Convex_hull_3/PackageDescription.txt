@@ -35,7 +35,7 @@ degenerate hull may also be possible.
 \cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3Summary "3D Triangulations".}
 \cgalPkgBib{cgal:hs-ch3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
