@@ -1,15 +1,107 @@
 language: cpp
 dist: trusty
+env: 
+ matrix:
+  - PACKAGE='AABB_tree'
+  - PACKAGE='Advancing_front_surface_reconstruction'
+  - PACKAGE='Algebraic_foundations'
+  - PACKAGE='Algebraic_kernel_d'
+  - PACKAGE='Alpha_shapes_2'
+  - PACKAGE='Alpha_shapes_3'
+  - PACKAGE='Apollonius_graph_2'
+  - PACKAGE='Arrangement_on_surface_2'
+  - PACKAGE='Barycentric_coordinates_2'
+  - PACKAGE='Boolean_set_operations_2'
+  - PACKAGE='Box_intersection_d'
+  - PACKAGE='CGAL_ipelets'
+  - PACKAGE='Circular_kernel_2'
+  - PACKAGE='Circular_kernel_3'
+  - PACKAGE='Circulator'
+  - PACKAGE='Combinatorial_map'
+  - PACKAGE='Cone_spanners_2'
+  - PACKAGE='Convex_decomposition_3'
+  - PACKAGE='Convex_hull_2'
+  - PACKAGE='Convex_hull_3'
+  - PACKAGE='Envelope_2'
+  - PACKAGE='Envelope_3'
+  - PACKAGE='Filtered_kernel'
+  - PACKAGE='Generalized_map'
+  - PACKAGE='Generator'
+  - PACKAGE='HalfedgeDS'
+  - PACKAGE='Inscribed_areas'
+  - PACKAGE='Interpolation'
+  - PACKAGE='Interval_skip_list'
+  - PACKAGE='Jet_fitting_3'
+  - PACKAGE='Kernel_23'
+  - PACKAGE='Kinetic_data_structures'
+  - PACKAGE='Kinetic_framework'
+  - PACKAGE='Linear_cell_complex'
+  - PACKAGE='Matrix_search'
+  - PACKAGE='Mesh_2'
+  - PACKAGE='Mesh_3'
+  - PACKAGE='Minkowski_sum_2'
+  - PACKAGE='Minkowski_sum_3'
+  - PACKAGE='Modular_arithmetic'
+  - PACKAGE='Nef_2'
+  - PACKAGE='Nef_3'
+  - PACKAGE='Nef_S2'
+  - PACKAGE='Operations_on_polyhedra'
+  - PACKAGE='Optimal_transportation_reconstruction_2'
+  - PACKAGE='Partition_2'
+  - PACKAGE='Periodic_2_triangulation_2'
+  - PACKAGE='Periodic_3_triangulation_3'
+  - PACKAGE='Point_set_2'
+  - PACKAGE='Point_set_3'
+  - PACKAGE='Point_set_processing_3'
+  - PACKAGE='Point_set_shape_detection_3'
+  - PACKAGE='Poisson_surface_reconstruction_3'
+  - PACKAGE='Polygon'
+  - PACKAGE='Polygon_mesh_processing'
+  - PACKAGE='Polyhedron'
+  - PACKAGE='Polyhedron_IO'
+  - PACKAGE='Polyline_simplification_2'
+  - PACKAGE='Polynomial'
+  - PACKAGE='Polytope_distance_d'
+  - PACKAGE='Principal_component_analysis'
+  - PACKAGE='Profiling_tools'
+  - PACKAGE='QP_solver'
+  - PACKAGE='Ridges_3'
+  - PACKAGE='Scale_space_reconstruction_3'
+  - PACKAGE='Segment_Delaunay_graph_2'
+  - PACKAGE='Segment_Delaunay_graph_Linf_2'
+  - PACKAGE='Skin_surface_3'
+  - PACKAGE='Snap_rounding_2'
+  - PACKAGE='Solver_interface'
+  - PACKAGE='Spatial_searching'
+  - PACKAGE='Spatial_sorting'
+  - PACKAGE='STL_Extension'
+  - PACKAGE='Straight_skeleton_2'
+  - PACKAGE='Stream_lines_2'
+  - PACKAGE='Subdivision_method_3'
+  - PACKAGE='Surface_mesh'
+  - PACKAGE='Surface_mesh_deformation'
+  - PACKAGE='Surface_mesher'
+  - PACKAGE='Surface_mesh_parameterization'
+  - PACKAGE='Surface_mesh_segmentation'
+  - PACKAGE='Surface_mesh_shortest_path'
+  - PACKAGE='Surface_mesh_simplification'
+  - PACKAGE='Surface_mesh_skeletonization'
+  - PACKAGE='Sweep_line_2'
+  - PACKAGE='TDS_3'
+  - PACKAGE='Triangulation'
+  - PACKAGE='Triangulation_2'
+  - PACKAGE='Triangulation_3'
+  - PACKAGE='Visibility_2'
+  - PACKAGE='Voronoi_diagram_2'
 install:
 before_script:
-  - mkdir build
-  - cd build
-  - cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ..
+- mkdir -p build
+- cd build
+- cmake -DCGAL_HEADER_ONLY=ON ..
+- make
+- cd ..
 script:
-  - make
-  - make -k examples
-#  - make -k tests
-#  - make -k demos
+- travis_wait 120 bash -x ./build_package.sh $PACKAGE
 compiler:
   - clang
   - gcc
@@ -40,3 +132,5 @@ addons:
     sources:
       - kalakris-cmake
       - boost-latest
+
+
