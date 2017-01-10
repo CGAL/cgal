@@ -39,6 +39,7 @@ class TextListItem;
 namespace CGAL{
 namespace Three{
 class Scene_draw_interface;
+class Scene_item;
 //! Base class to interact with the viewer from the plugins, the items and the scene.
 class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_2_1 {
 
@@ -83,6 +84,8 @@ public:
   * \param z the Z coordinate of the id's position.
   * \return true if the ID is visible. */
   virtual bool testDisplayId(double x, double y, double z) = 0;
+  //!Recomputes the ids of the selected item.
+  virtual void updateIds(CGAL::Three::Scene_item *) = 0;
   //!Returns true if the primitive ids are displayed
   virtual bool hasText() const { return false; }
 

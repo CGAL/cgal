@@ -1781,5 +1781,13 @@ qglviewer::Vec Viewer::offset()const { return d->offset; }
 void Viewer::setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max)
 {
   QGLViewer::setSceneBoundingBox(min+d->offset, max+d->offset);
+
+void Viewer::updateIds(CGAL::Three::Scene_item * item)
+{
+  //all ids are computed when they are displayed the first time.
+  //Calling printPrimitiveIds twice hides and show the ids again, so they are re-computed.
+
+  d->scene->updatePrimitiveIds(this, item);
+  d->scene->updatePrimitiveIds(this, item);
 }
  #include "Viewer.moc"

@@ -1158,6 +1158,19 @@ void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
       item->printPrimitiveIds(viewer);
   }
 }
+void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Three::Scene_item* it)
+{
+  if(it)
+  {
+    //Only call printPrimitiveIds if the item is a Scene_print_interface_item
+    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    if(item)
+    {
+      item->printPrimitiveIds(viewer);
+       item->printPrimitiveIds(viewer);
+    }
+  }
+}
 bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
     CGAL::Three::Scene_item *i = item(mainSelectionIndex());

@@ -27,6 +27,7 @@ namespace CGAL
 {
 namespace Three {
   class Viewer_interface;
+  class Scene_item;
 
 
 // Base class to interact with the scene from the viewer.
@@ -41,6 +42,7 @@ public:
   virtual bool keyPressEvent(QKeyEvent* e) = 0;
   virtual float get_bbox_length() const = 0;
   virtual void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*) = 0;
+  virtual void updatePrimitiveIds(CGAL::Three::Viewer_interface* , CGAL::Three::Scene_item*) = 0;
 
   /*!
    * \brief testDisplayId checks if the id at position (x,y,z) is visible or not.
