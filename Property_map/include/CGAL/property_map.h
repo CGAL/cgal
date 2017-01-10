@@ -31,6 +31,7 @@
 
 #endif
 #include <boost/tuple/tuple.hpp>
+#include <CGAL/tuple.h>
 
 #include <utility> // defines std::pair
 
@@ -233,17 +234,21 @@ Second_of_pair_property_map<Pair>
 
 /// \ingroup PkgProperty_map
 /// 
-/// Property map that accesses the Nth item of a `boost::tuple`. 
+/// Property map that accesses the Nth item of a `boost::tuple` or a `std::tuple`.
 /// 
 /// \tparam N %Index of the item to access.
-/// \tparam Tuple Instance of `boost::tuple`.
+/// \tparam Tuple Instance of `boost::tuple` or `std::tuple`.
 /// 
 /// \cgalModels `LvaluePropertyMap`
 template <int N, typename Tuple>
 struct Nth_of_tuple_property_map
 {
   typedef Tuple key_type; ///< typedef to `Tuple`
-  typedef typename boost::tuples::element<N,Tuple>::type value_type; ///< typedef to `boost::tuples::element<N,Tuple>::%type`
+  #ifdef DOXYGEN_RUNNING
+  typedef unspecified_type value_type;  ///< typedef to the N-th type of the tuple
+  #else
+  typedef typename boost::tuples::element<N,Tuple>::type value_type;
+  #endif
   typedef const value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
   /// Access a property map element.
@@ -257,6 +262,25 @@ struct Nth_of_tuple_property_map
   friend void put(const Self&,key_type& k, const value_type& v) {k.template get<N>()=v;}
   /// @}
 };
+
+#ifndef CGAL_CFG_NO_CPP0X_TUPLE
+template <int N, typename ... T>
+struct Nth_of_tuple_property_map<N,std::tuple<T...> >
+{
+  typedef std::tuple<T...> Tuple;
+  typedef Tuple key_type;
+  typedef typename cpp11::tuple_element<N,Tuple>::type value_type;
+  typedef const value_type& reference;
+  typedef boost::lvalue_property_map_tag category;
+
+  value_type& operator[](key_type& tuple) const { return get<N>(tuple); }
+
+  typedef Nth_of_tuple_property_map<N,Tuple> Self;
+  friend reference get(const Self&,const key_type& k) {return get<N>(k);}
+  friend void put(const Self&,key_type& k, const value_type& v) {get<N>(k)=v;}
+};
+#endif
+
 
 /// Free function to create a Nth_of_tuple_property_map property map.
 ///
