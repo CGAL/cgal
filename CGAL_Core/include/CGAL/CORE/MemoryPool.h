@@ -81,7 +81,12 @@ public:
 
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
+    if(memPool_ptr.get() == NULL) {memPool_ptr.reset(new Self());}
+    Self& memPool =  * memPool_ptr.get();
+#else // CGAL_STATIC_THREAD_LOCAL uses C++11 thread_local
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Self, memPool);
+#endif
     return memPool;
   }
  
@@ -89,8 +94,16 @@ private:
    Thunk* head; // next available block in the pool
   std::vector<void*> blocks;
 
-  
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
+  static boost::thread_specific_ptr<Self> memPool_ptr;
+#endif
 };
+
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
+template <class T, int nObjects >
+boost::thread_specific_ptr<MemoryPool<T, nObjects> >
+MemoryPool<T, nObjects>::memPool_ptr;
+#endif // CGAL_STATIC_THREAD_LOCAL_USE_BOOST
 
 template< class T, int nObjects >
 void* MemoryPool< T, nObjects >::allocate(std::size_t) {

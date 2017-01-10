@@ -31,6 +31,7 @@
 
 
 #  ifdef CGAL_USE_BOOST_THREAD
+#    define CGAL_STATIC_THREAD_LOCAL_USE_BOOST 1
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(TYPE, VAR)               \
        static boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
