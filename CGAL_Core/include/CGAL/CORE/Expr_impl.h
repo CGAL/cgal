@@ -68,12 +68,12 @@ const char* Sub::name = "-";
  ********************************************************/
 CGAL_INLINE_FUNCTION
 const Expr& Expr::getZero() {
-  static const Expr Zero(0);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, Zero,0);
   return Zero;
 }
 CGAL_INLINE_FUNCTION
 const Expr& Expr::getOne() {
-  static const Expr One(1);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, One1);
   return One;
 }
 

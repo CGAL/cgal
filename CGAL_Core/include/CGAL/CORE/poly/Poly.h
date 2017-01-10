@@ -61,6 +61,7 @@
 #include <CGAL/CORE/Promote.h>
 #include <vector>
 #include <CGAL/assertions.h>
+#include <CGAL/tss.h>
 
 namespace CORE { 
 using namespace std;
@@ -262,7 +263,7 @@ public:
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyZero() {
-  static const Polynomial<NT> zeroP;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Polynomial<NT>, zeroP);
   return zeroP;
 }
 
@@ -270,7 +271,7 @@ template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyUnity() {
   static const NT c[] = {1};
-  static const Polynomial<NT> unityP(0, c);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Polynomial<NT>, unityP, 0, c);
   return unityP;
 }
 
