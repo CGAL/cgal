@@ -27,7 +27,6 @@
 #include <CGAL/basic.h>
 
 #include <vector>
-
 #include <CGAL/circulator.h>
 #include <CGAL/Polyhedron_decorator_3.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -290,8 +289,15 @@ namespace Subdivision_method_3 {
     typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;
     typename boost::graph_traits<Poly>::faces_size_type num_f = num_faces(p);
 
-    size_t num_be ;// AF= p.size_of_border_edges();
-
+  
+    std::vector<halfedge_descriptor> border_halfedges;
+    size_t num_be = 0 ;// AF= p.size_of_border_edges();
+    BOOST_FOREACH(edge_descriptor ed, edges(p)){
+      if(is_border(ed,p)){
+        ++num_be;
+        border_halfedges.push_back(halfedge(ed,p));
+      }
+    }
     Point* point_buffer = new Point[num_e*2];
 
     //
@@ -367,7 +373,7 @@ namespace Subdivision_method_3 {
       ++vitr;
       p.erase_center_vertex(vcir);    
     }
-
+    
     //
 #else
     //
@@ -409,7 +415,7 @@ namespace Subdivision_method_3 {
       vcir = Halfedge_around_target_circulator<Poly>(vh,p);
       for (size_t j = 0; j < vn; ++j) {
         if (! is_border(*vcir,p)) {
-          halfedge_descriptor e1 = * CGAL::cpp11::prev(vcir);
+          halfedge_descriptor e1 = prev(*vcir, p);
           ++vcir;
           if (! is_border(*vcir,p)) {
             halfedge_descriptor e2 = opposite(*vcir,p);
@@ -437,19 +443,21 @@ namespace Subdivision_method_3 {
           PD::insert_edge(p, prev(prev(eh,p),p), eh);
       }
     }
-
     // after this point, the original border edges are in front!
-    eitr = edges(p).first;
-    for (size_t i = 0; i < num_be; ++i) {
-      halfedge_descriptor eh = halfedge(*eitr,p);
-      ++eitr;
-
+    //eitr = edges(p).first;
+    //for (size_t i = 0; i < num_be; ++i) {
+    //halfedge_descriptor eh = halfedge(*eitr,p);
+      //++eitr;
+    BOOST_FOREACH(halfedge_descriptor eeh, border_halfedges){
+      halfedge_descriptor eh = eeh;
       if (is_border(eh,p)){
         eh = opposite(eh,p);
       }
+      assert(is_border(eh,p));
       halfedge_descriptor ehe = eh;
       eh = opposite(prev(eh,p),p);
       while (! is_border(eh,p)) {
+        std::cerr << "before remove_face"<< std::endl;
         Euler::remove_face(ehe,p);
         ehe = eh;
         eh = opposite(prev(eh,p),p);

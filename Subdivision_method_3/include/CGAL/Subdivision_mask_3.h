@@ -340,10 +340,15 @@ public:
 
   //
   void corner_node(halfedge_descriptor he, Point& pt) {
-    const size_t n = 4;
-
+    size_t n = 0;
+    halfedge_descriptor hd = he;
+    do{
+      hd = next(hd,this->polyhedron);
+      ++n;
+    }while(hd != he);
+      
     Vector cv(0,0,0);
-    if (is_quad(he,this->polyhedron)) {
+    if (n == 4) {
       cv = cv + (get(this->vpm, target(he,this->polyhedron))-CGAL::ORIGIN)*9;
       cv = cv + (get(this->vpm, target(next(he,this->polyhedron),this->polyhedron))-CGAL::ORIGIN)*3;
       cv = cv + (get(this->vpm, target(next(next(he,this->polyhedron),this->polyhedron),this->polyhedron))-CGAL::ORIGIN);
