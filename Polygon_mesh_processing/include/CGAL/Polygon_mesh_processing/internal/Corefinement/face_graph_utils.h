@@ -46,6 +46,20 @@ void init_face_indices(PolygonMesh& pm,
     ++i;
   }
 }
+template <class PolygonMesh, class VertexIndexMap, class Tag>
+void init_vertex_indices(PolygonMesh& pm,
+                         VertexIndexMap& vid,
+                         boost::read_write_property_map_tag,
+                         Tag)
+{
+  typename boost::property_traits<VertexIndexMap>::value_type i = 0;
+  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+                vertices(pm))
+  {
+    put(vid, vd, i);
+    ++i;
+  }
+}
 
 // matches mutable Lvalue property maps
 template <class PolygonMesh, class FaceIndexMap>
@@ -62,10 +76,27 @@ void init_face_indices(PolygonMesh& pm,
     ++i;
   }
 }
+template <class PolygonMesh, class VertexIndexMap>
+void init_vertex_indices(PolygonMesh& pm,
+                         VertexIndexMap& vid,
+                         boost::lvalue_property_map_tag,
+                         boost::false_type)
+{
+  typename boost::property_traits<VertexIndexMap>::value_type i = 0;
+  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+                vertices(pm))
+  {
+    put(vid, vd, i);
+    ++i;
+  }
+}
 
 // matches all other types of property map
 template <class PolygonMesh, class FaceIndexMap, class MapTag, class Tag>
 void init_face_indices(PolygonMesh&, FaceIndexMap, MapTag, Tag)
+{}
+template <class PolygonMesh, class VertexIndexMap, class MapTag, class Tag>
+void init_vertex_indices(PolygonMesh&, VertexIndexMap, MapTag, Tag)
 {}
 
 template <class PolygonMesh, class FaceIndexMap>
@@ -73,9 +104,20 @@ void init_face_indices(PolygonMesh& pm, FaceIndexMap& fid)
 {
   init_face_indices(pm, fid,
                     typename boost::property_traits<FaceIndexMap>::category(),
-                    typename boost::is_const< 
+                    typename boost::is_const<
                       typename boost::remove_reference<
                         typename boost::property_traits<FaceIndexMap>::reference
+                            >::type >::type() );
+}
+
+template <class PolygonMesh, class VertexIndexMap>
+void init_vertex_indices(PolygonMesh& pm, VertexIndexMap& vid)
+{
+  init_vertex_indices(pm, vid,
+                      typename boost::property_traits<VertexIndexMap>::category(),
+                      typename boost::is_const<
+                        typename boost::remove_reference<
+                          typename boost::property_traits<VertexIndexMap>::reference
                             >::type >::type() );
 }
 
@@ -819,7 +861,7 @@ void append_patches_to_triangle_mesh(
     BOOST_FOREACH(halfedge_descriptor h, patch.interior_edges)
     {
       edge_descriptor new_edge = add_edge(output), ed = edge(h,tm);
-     
+
       // copy the mark on input edge to the output edge
       copy_edge_mark<TriangleMesh>(ed, new_edge,
                                    edge_mark_map_in, edge_mark_map_out);
