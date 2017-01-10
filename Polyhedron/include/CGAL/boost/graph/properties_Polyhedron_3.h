@@ -39,9 +39,9 @@ class Polyhedron_index_map_external
   : public boost::put_get_helper<std::size_t, Polyhedron_index_map_external<Handle> >
 {
 public:
-  typedef boost::readable_property_map_tag category;
+  typedef boost::lvalue_property_map_tag   category;
   typedef std::size_t                      value_type;
-  typedef std::size_t                      reference;
+  typedef std::size_t&                     reference;
   typedef Handle                           key_type;
 
 private:
