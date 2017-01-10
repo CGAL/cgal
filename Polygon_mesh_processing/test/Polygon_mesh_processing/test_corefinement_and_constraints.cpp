@@ -80,7 +80,7 @@ count_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm
   std::size_t n=0;
   BOOST_FOREACH(Triangle_mesh::Edge_index e, tm.edges())
   {
-    if ( get(ecm, e) ) ++n;
+    if ( ecm[e] ) ++n;
   }
   return n;
 }
