@@ -1166,8 +1166,10 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
     Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
     if(item)
     {
+      //As this function works as a toggle, the first call hides the ids and the second one  shows them again,
+      //thereby triggering their re-computation.
       item->printPrimitiveIds(viewer);
-       item->printPrimitiveIds(viewer);
+      item->printPrimitiveIds(viewer);
     }
   }
 }
