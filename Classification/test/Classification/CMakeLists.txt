@@ -53,5 +53,5 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 
 create_single_source_cgal_program( "test_classifier.cpp" )
-
+create_single_source_cgal_program( "test_point_set_classifier.cpp" )
 
