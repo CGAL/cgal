@@ -52,7 +52,6 @@ include( CGAL_CreateSingleSourceCGALProgram )
 #add_definitions("-DCGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE")
 
 
-create_single_source_cgal_program( "test_features.cpp" )
-create_single_source_cgal_program( "test_graphcut.cpp" )
+create_single_source_cgal_program( "test_classifier.cpp" )
 
 
