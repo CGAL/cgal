@@ -15,7 +15,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
@@ -37,7 +37,7 @@ namespace CGAL {
 
 // ======================================================================
 namespace Subdivision_method_3 {
-  
+
   namespace Private {
   // ======================================================================
     template <class Poly, class VertexPointMap, class Mask>
@@ -66,7 +66,7 @@ namespace Subdivision_method_3 {
     typename boost::graph_traits<Poly>::halfedges_size_type num_edge = num_halfedges(p)/2;
     typename boost::graph_traits<Poly>::faces_size_type num_facet = num_faces(p);
 
-    // If Polyhedron is using vector, we need to reserve the memory to prevent 
+    // If Polyhedron is using vector, we need to reserve the memory to prevent
     // the CGAL_assertion.
     // This function for polyhedron using list is VOID.
     p.reserve(num_vertex+num_edge+num_facet, 4*2*num_edge, 4*num_edge/2);
@@ -76,13 +76,13 @@ namespace Subdivision_method_3 {
     Point* vertex_point_buffer = new Point[num_vertex + num_edge + num_facet];
     Point* edge_point_buffer = vertex_point_buffer + num_vertex;
     Point* face_point_buffer = edge_point_buffer + num_edge;
-    
+
     int i=0;
     boost::unordered_map<vertex_descriptor,int> v_index;
     BOOST_FOREACH(vertex_descriptor vh, vertices(p)){
       v_index[vh]= i++;
     }
-    
+
     std::vector<bool> v_onborder(num_vertex);
     face_iterator fitr = faces(p).first;
     for (size_t i = 0; i < num_facet; i++, ++fitr)
@@ -96,7 +96,7 @@ namespace Subdivision_method_3 {
           int v = v_index[target(ed,p)];
           v_onborder[v] = true;
           mask.border_node(halfedge(ed,p), edge_point_buffer[i], vertex_point_buffer[v]);
-          
+
         }else{
           mask.edge_node(halfedge(ed,p), edge_point_buffer[i]);
         }
@@ -110,7 +110,7 @@ namespace Subdivision_method_3 {
 
     // Build the connectivity using insert_vertex() and insert_edge()
     // 1. insert_vertex() to all edges and set them to new positions
-    // 2. insert_edge() between 2 randomly selected neighboring new inserted 
+    // 2. insert_edge() between 2 randomly selected neighboring new inserted
     //    vertices
     // 3. insert_vertex() to the new inserted edge and set them to new positions
     // 4. insert_edge() between all other new inserted vertices of step 1 and
@@ -131,15 +131,15 @@ namespace Subdivision_method_3 {
       Halfedge_around_facet_circulator hcir = hcir_begin;
 
       halfedge_descriptor e1 = * ++hcir; // e1 points to the newly inserted vertex
-      ++hcir; // Skips one original vertex 
+      ++hcir; // Skips one original vertex
       halfedge_descriptor e2 = * ++hcir; // points to the next newly inserted vertex
       ++hcir; // Must move the cir before inserts the new edge !!
       halfedge_descriptor newe = PD::insert_edge(p, e1, e2);
 
       // Step 3.
       halfedge_descriptor newv = PD::insert_vertex_return_edge(p, newe);
-      newv = prev(opposite(newv,p),p); // change newv to the larger face and 
-      // still points to the newly inserted 
+      newv = prev(opposite(newv,p),p); // change newv to the larger face and
+      // still points to the newly inserted
       // vertex
       // Update the geometry data of the newly inserted face-vertices
       put(vpm, target(newv,p), face_point_buffer[i]);
@@ -148,14 +148,14 @@ namespace Subdivision_method_3 {
       while (hcir != hcir_begin) {
         e1 = * ++hcir;
         ++hcir; // Must move the cir before inserts the new edge !!
-        PD::insert_edge(p, e1, newv); 
+        PD::insert_edge(p, e1, newv);
       }
     }
 
-    // Update the geometry data of the newly inserted vertices by the 
+    // Update the geometry data of the newly inserted vertices by the
     // vertices buffer
     vitr = vertices(p).first;
-    for (size_t i = 0; i < num_vertex; i++, ++vitr) 
+    for (size_t i = 0; i < num_vertex; i++, ++vitr)
       put(vpm, *vitr, vertex_point_buffer[i]);
 
     delete []vertex_point_buffer;
@@ -191,7 +191,7 @@ namespace Subdivision_method_3 {
     typename boost::graph_traits<Poly>::halfedges_size_type num_edge = num_halfedges(p)/2;
     typename boost::graph_traits<Poly>::faces_size_type num_facet = num_faces(p);
 
-    // If Polyhedron is using vector, we need to reserve the memory to prevent 
+    // If Polyhedron is using vector, we need to reserve the memory to prevent
     // the CGAL_assertion.
     // This function for polyhedron using list is VOID.
     p.reserve(num_vertex+num_edge, 2*2*num_edge, 4*num_edge/2);
@@ -225,7 +225,7 @@ namespace Subdivision_method_3 {
 
     // Build the connectivity using insert_vertex() and insert_edge()
     // 1. insert_vertex() to all edges and set them to new positions
-    // 2. insert_edge() between 2 randomly selected neighboring new inserted 
+    // 2. insert_edge() between 2 randomly selected neighboring new inserted
     //    vertices
     // 3. insert_vertex() to the new inserted edge and set them to new positions
     // 4. insert_edge() between all other new inserted vertices of step 1 and
@@ -255,7 +255,7 @@ namespace Subdivision_method_3 {
       PD::insert_edge(p, e3, e1);
     }
 
-    // Update the geometry data of the newly inserted vertices by the 
+    // Update the geometry data of the newly inserted vertices by the
     // vertices buffer
     vitr = vertices(p).first;
     for (size_t i = 0; i < num_vertex; i++, ++vitr)
@@ -288,7 +288,7 @@ namespace Subdivision_method_3 {
     typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;
     typename boost::graph_traits<Poly>::faces_size_type num_f = num_faces(p);
 
-  
+
     std::vector<halfedge_descriptor> border_halfedges;
     size_t num_be = 0 ;// AF= p.size_of_border_edges();
     BOOST_FOREACH(edge_descriptor ed, edges(p)){
@@ -316,7 +316,7 @@ namespace Subdivision_method_3 {
       } while (--cir != fitr->facet_begin());
     }
 
-    // If Polyhedron is using vector, we need to reserve the memory to prevent 
+    // If Polyhedron is using vector, we need to reserve the memory to prevent
     // the CGAL_assertion. This function for polyhedron using list is VOID.
     p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
@@ -330,7 +330,7 @@ namespace Subdivision_method_3 {
       Vertex_handle vh = (p.create_center_vertex(fh->facet_begin()))->vertex();
 
       // 1.1 add vertex on each new edges
-      Halfedge_around_vertex_circulator vcir = vh->vertex_begin();  
+      Halfedge_around_vertex_circulator vcir = vh->vertex_begin();
       int vn = circulator_size(vcir);
       for (int j = 0; j < vn; ++j) {
         Halfedge_handle e = vcir;
@@ -357,11 +357,11 @@ namespace Subdivision_method_3 {
       p.join_facet(eh);
     }
 
-    // 3. connect new vertices surround old vertices and then remove 
+    // 3. connect new vertices surround old vertices and then remove
     //    old vertices.
     vertex_iterator vitr = p.vertices_begin();
     for (size_t i = 0; i < num_v; ++i) {
-      Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();  
+      Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
       int vn = circulator_size(vcir);
       for (int j = 0; j < vn; ++j) {
         Halfedge_handle e1 = vcir->prev();
@@ -370,9 +370,9 @@ namespace Subdivision_method_3 {
         PD::insert_edge(p, e1, e2);
       }
       ++vitr;
-      p.erase_center_vertex(vcir);    
+      p.erase_center_vertex(vcir);
     }
-    
+
     //
 #else
     //
@@ -390,7 +390,7 @@ namespace Subdivision_method_3 {
       }
     }
 
-    // If Polyhedron is using vector, we need to reserve the memory to prevent 
+    // If Polyhedron is using vector, we need to reserve the memory to prevent
     // the CGAL_assertion. This function for polyhedron using list is VOID.
     p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
@@ -438,7 +438,7 @@ namespace Subdivision_method_3 {
         if (is_border(eh,p)) {
           eh = opposite(eh,p);
           PD::insert_edge(p, eh, prev(prev(eh,p),p));
-        } else 
+        } else
           PD::insert_edge(p, prev(prev(eh,p),p), eh);
       }
     }
@@ -496,8 +496,8 @@ namespace Subdivision_method_3 {
     p.reserve(num_v+num_f, (num_e+3*num_f)*2, 3*num_f);
 
     // prepare the smoothed center points
-    Point* cpt = new Point[num_f]; 
-    
+    Point* cpt = new Point[num_f];
+
     std::size_t i = 0;
     BOOST_FOREACH (face_descriptor fd, faces(p)) {
       //ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");

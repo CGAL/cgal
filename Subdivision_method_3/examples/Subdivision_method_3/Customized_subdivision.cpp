@@ -21,7 +21,7 @@ class WLoop_mask_3 {
 
   typedef typename boost::property_map<PolygonMesh, vertex_point_t>::type Vertex_pmap;
   typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
-  
+
   PolygonMesh& pmesh;
   Vertex_pmap vpm;
 
@@ -37,8 +37,8 @@ public:
     Point& f2 = get(vpm, target(next(opposite(hd,pmesh),pmesh),pmesh));
 
     pt = Point((3*(p1[0]+p2[0])+f1[0]+f2[0])/8,
-	       (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
-	       (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
+               (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
+               (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
   }
   void vertex_node(vertex_descriptor vd, Point& pt) {
     double R[] = {0.0, 0.0, 0.0};

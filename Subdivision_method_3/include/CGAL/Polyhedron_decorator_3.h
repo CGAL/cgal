@@ -15,7 +15,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
@@ -35,7 +35,7 @@ class Polyhedron_decorator_3 {
 
   typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Vertex_pmap;
   typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
-    
+
     typedef typename Kernel_traits<Point>::Kernel       Kernel;
 
     typedef typename boost::graph_traits<Poly>::vertex_descriptor           Vertex_handle;
@@ -65,14 +65,14 @@ public:
 
       Postcondition:
            h         r
-      a <-----> V <-----> b  
+      a <-----> V <-----> b
           -h         -r
       V is the return vertex whose geometry is UNDEFINED.
-      -r is the returned halfedge that is pointing to V 
+      -r is the returned halfedge that is pointing to V
   */
-  
+
 #if 0
-  static Vertex* insert_vertex(Polyhedron& p, Halfedge* h) { 
+  static Vertex* insert_vertex(Polyhedron& p, Halfedge* h) {
     return insert_vertex(p, Halfedge_handle(h)).ptr();
   }
   //
@@ -86,40 +86,39 @@ public:
   }
   //
   static Vertex_handle insert_vertex(Polyhedron& p,
-				     Vertex_handle a, Vertex_handle b) {
+                                     Vertex_handle a, Vertex_handle b) {
     return target(insert_vertex_return_edge(p, a, b),p);
   }
 
 #if 0
   //
-  static Halfedge* insert_vertex_return_edge(Polyhedron& p, Halfedge* h) { 
+  static Halfedge* insert_vertex_return_edge(Polyhedron& p, Halfedge* h) {
     return insert_vertex_return_edge(p, Halfedge_handle(h)).ptr();
   }
   //
-  static Halfedge* insert_vertex_return_edge(Polyhedron& p, 
-					     Vertex* a, Vertex* b) {
-    return insert_vertex_return_edge(p, Vertex_handle(a), 
-				     Vertex_handle(b)).ptr();
+  static Halfedge* insert_vertex_return_edge(Polyhedron& p,
+                                             Vertex* a, Vertex* b) {
+    return insert_vertex_return_edge(p, Vertex_handle(a), Vertex_handle(b)).ptr();
   }
 
-#endif 
+#endif
   //
-  static inline Halfedge_handle insert_vertex_return_edge(Polyhedron& p, 
-							  Halfedge_handle h);
+  static inline Halfedge_handle insert_vertex_return_edge(Polyhedron& p,
+                                                          Halfedge_handle h);
   //
-  static inline Halfedge_handle insert_vertex_return_edge(Polyhedron& p, 
-							  Vertex_handle a, 
-							  Vertex_handle b);
+  static inline Halfedge_handle insert_vertex_return_edge(Polyhedron& p,
+                                                          Vertex_handle a,
+                                                          Vertex_handle b);
 
   /** Insert a new edge (two halfedges) between the two vertices
-      
+
       Precondition:
-      vertex a and b are in the SAME facet and do NOT connect to each other 
+      vertex a and b are in the SAME facet and do NOT connect to each other
 
       Postcondition:
              H
       a <----------> b
-      H is the return halfedge connecting vertex a to b.      
+      H is the return halfedge connecting vertex a to b.
   */
 #if 0
   static Halfedge* insert_edge(Polyhedron& /*p*/, Vertex* a, Vertex* b) {
@@ -127,22 +126,22 @@ public:
   }
 #endif
   //
-  static Halfedge_handle insert_edge(Polyhedron& p, 
-				     Halfedge_handle a, 
-				     Halfedge_handle b) {
+  static Halfedge_handle insert_edge(Polyhedron& p,
+                                     Halfedge_handle a,
+                                     Halfedge_handle b) {
     return Euler::split_face(a, b, p);
   }
   //
-  static inline Halfedge_handle insert_edge(Polyhedron& p, 
-					    Vertex_handle a, 
-					    Vertex_handle b);
+  static inline Halfedge_handle insert_edge(Polyhedron& p,
+                                            Vertex_handle a,
+                                            Vertex_handle b);
 
-  /** Set the vertex of index vidx to the new position to the new 
+  /** Set the vertex of index vidx to the new position to the new
       position (x,y,z)
 
       Precondition:
-      0 <= vidx < p.size_of_vertices() 
-      
+      0 <= vidx < p.size_of_vertices()
+
       Postcondition:
       If failed procondition, do nothing.
       The new vertex of index vidx has the new position (x,y,z)
@@ -158,10 +157,10 @@ public:
 
 // ======================================================================
 //
-template <class Poly> 
-typename Polyhedron_decorator_3<Poly>::Halfedge_handle 
+template <class Poly>
+typename Polyhedron_decorator_3<Poly>::Halfedge_handle
 Polyhedron_decorator_3<Poly>::insert_vertex_return_edge(Polyhedron& p,
-						    Halfedge_handle h) {
+                                                        Halfedge_handle h) {
   Halfedge_handle hopp = opposite(h,p);
   Halfedge_handle r = Euler::split_vertex(prev(hopp,p), h,p);
   if (! is_border(h,p))
@@ -173,28 +172,28 @@ Polyhedron_decorator_3<Poly>::insert_vertex_return_edge(Polyhedron& p,
 
 // ======================================================================
 //
-template <class Poly> 
-typename Polyhedron_decorator_3<Poly>::Halfedge_handle 
+template <class Poly>
+typename Polyhedron_decorator_3<Poly>::Halfedge_handle
 Polyhedron_decorator_3<Poly>::insert_vertex_return_edge(Polyhedron& p,
-						    Vertex_handle a, 
-						    Vertex_handle b) {
+                                                        Vertex_handle a,
+                                                        Vertex_handle b) {
   Halfedge_around_vertex_circulator a_cir_begin = a->vertex_begin();
   Halfedge_around_vertex_circulator a_cir = a_cir_begin;
   do {
     if (a_cir->opposite()->vertex() == b)
       return insert_vertex_return_edge(p, a_cir->opposite());
   } while (++a_cir != a_cir_begin);
-  CGAL_precondition_msg(0, "vertex a and b must be incident to each other");  
+  CGAL_precondition_msg(0, "vertex a and b must be incident to each other");
   return Halfedge_handle(NULL);
 }
 
 // ======================================================================
 //
-template <class Poly> 
-typename Polyhedron_decorator_3<Poly>::Halfedge_handle 
+template <class Poly>
+typename Polyhedron_decorator_3<Poly>::Halfedge_handle
 Polyhedron_decorator_3<Poly>::insert_edge(Polyhedron& p,
-				      Vertex_handle a, 
-				      Vertex_handle b) {
+                                          Vertex_handle a,
+                                          Vertex_handle b) {
   Halfedge_around_vertex_circulator a_cir_begin = a->vertex_begin();
   Halfedge_around_vertex_circulator a_cir = a_cir_begin;
   Halfedge_around_vertex_circulator b_cir_begin = b->vertex_begin();
@@ -202,10 +201,10 @@ Polyhedron_decorator_3<Poly>::insert_edge(Polyhedron& p,
   do {
     do {
       if (a_cir->facet() == b_cir->facet())
-	return p.split_facet(a_cir, b_cir);
+        return p.split_facet(a_cir, b_cir);
     } while (++b_cir != b_cir_begin);
   } while (++a_cir != a_cir_begin);
-  CGAL_precondition_msg(0, "vertex a and b must share the same face");  
+  CGAL_precondition_msg(0, "vertex a and b must share the same face");
   return Halfedge_handle(NULL);
 }
 

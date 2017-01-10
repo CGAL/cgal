@@ -15,7 +15,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
@@ -33,13 +33,13 @@
 namespace CGAL {
 
 // ======================================================================
-/// The stencil of the Primal-Quadrilateral-Quadrisection 
+/// The stencil of the Primal-Quadrilateral-Quadrisection
 template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
 class PQQ_stencil_3 {
 
 public:
   typedef Poly                                         Polyhedron;
-  
+
   typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Vertex_pmap;
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor   vertex_descriptor;
@@ -73,7 +73,7 @@ public:
 
 
 // ======================================================================
-/// Bi-linear geometry mask for PQQ, PTQ, and Sqrt(3) scheme 
+/// Bi-linear geometry mask for PQQ, PTQ, and Sqrt(3) scheme
 template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
 class Linear_mask_3 : public PQQ_stencil_3<Poly,VertexPointMap> {
   typedef PQQ_stencil_3<Poly,VertexPointMap>         Base;
@@ -107,7 +107,7 @@ public:
     {
       p = p + ( get(this->vpmap,vd) - ORIGIN);
       ++n;
-    } 
+    }
     pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
   //
@@ -127,7 +127,7 @@ public:
 };
 
 // ======================================================================
-/// The geometry mask of Catmull-Clark subdivision 
+/// The geometry mask of Catmull-Clark subdivision
   template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
   class CatmullClark_mask_3 : public Linear_mask_3<Poly,VertexPointMap> {
   typedef Linear_mask_3<Poly,VertexPointMap>                          Base;
@@ -161,17 +161,17 @@ public:
     this->face_node(face(edge,this->polyhedron), f1);
     this->face_node(face(opposite(edge,this->polyhedron),this->polyhedron), f2);
     pt = Point((p1[0]+p2[0]+f1[0]+f2[0])/4,
-	       (p1[1]+p2[1]+f1[1]+f2[1])/4,
-	       (p1[2]+p2[2]+f1[2]+f2[2])/4 );
+               (p1[1]+p2[1]+f1[1]+f2[1])/4,
+               (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
   //
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
-    typename boost::graph_traits<Poly>::degree_size_type n = degree(vertex,this->polyhedron);    
+    typename boost::graph_traits<Poly>::degree_size_type n = degree(vertex,this->polyhedron);
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
     Point& S = get(this->vpmap,vertex);
-    
+
     Point q;
     for (unsigned int i = 0; i < n; i++, ++vcir) {
       Point& p2 = get(this->vpmap, target(opposite(*vcir,this->polyhedron),this->polyhedron));
@@ -179,16 +179,16 @@ public:
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
       this->face_node(face(*vcir,this->polyhedron), q);
-      Q[0] += q[0];      
-      Q[1] += q[1];      
+      Q[0] += q[0];
+      Q[1] += q[1];
       Q[2] += q[2];
     }
     R[0] /= n;    R[1] /= n;    R[2] /= n;
     Q[0] /= n;    Q[1] /= n;    Q[2] /= n;
-      
+
     pt = Point((Q[0] + 2*R[0] + S[0]*(n-3))/n,
-	       (Q[1] + 2*R[1] + S[1]*(n-3))/n,
-	       (Q[2] + 2*R[2] + S[2]*(n-3))/n );
+               (Q[1] + 2*R[1] + S[1]*(n-3))/n,
+               (Q[2] + 2*R[2] + S[2]*(n-3))/n );
   }
   //
   void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
@@ -202,8 +202,8 @@ public:
     --vcir;
       Point& vp_1 = get(this->vpmap, target(opposite(*vcir, this->polyhedron), this->polyhedron));
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
-		(vp_1[1] + 6*vp0[1] + vp1[1])/8,
-		(vp_1[2] + 6*vp0[2] + vp1[2])/8 );
+                (vp_1[1] + 6*vp0[1] + vp1[1])/8,
+                (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
   }
 };
 
@@ -226,12 +226,10 @@ public:
   typedef typename Base::Point                       Point;
   typedef typename Base::Vector                      Vector;
 
-  typedef Halfedge_around_face_circulator<Polyhedron>  
+  typedef Halfedge_around_face_circulator<Polyhedron>
                                             Halfedge_around_facet_circulator;
   typedef Halfedge_around_target_circulator<Polyhedron>
                                             Halfedge_around_vertex_circulator;
-
-  
 
 public:
   Loop_mask_3(Polyhedron& poly)
@@ -248,19 +246,20 @@ public:
     Point& p2 = get(this->vpmap,target(opposite(edge, this->polyhedron), this->polyhedron));
     Point& f1 = get(this->vpmap,target(next(edge, this->polyhedron), this->polyhedron));
     Point& f2 = get(this->vpmap,target(next(opposite(edge, this->polyhedron), this->polyhedron), this->polyhedron));
-      
+
     pt = Point((3*(p1[0]+p2[0])+f1[0]+f2[0])/8,
-	       (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
-	       (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
+               (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
+               (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
   }
+
   //
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir(vertex, this->polyhedron);
-    size_t n = circulator_size(vcir);    
+    size_t n = circulator_size(vcir);
 
     FT R[] = {0.0, 0.0, 0.0};
     Point& S = get(this->vpmap,vertex);
-    
+
     for (size_t i = 0; i < n; i++, ++vcir) {
       Point& p = get(this->vpmap,target(opposite(*vcir, this->polyhedron), this->polyhedron));
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
@@ -288,19 +287,19 @@ public:
     --vcir;
     Point& vp_1 = get(this->vpmap,target(opposite(*vcir,this->polyhedron),this->polyhedron));
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
-		(vp_1[1] + 6*vp0[1] + vp1[1])/8,
-		(vp_1[2] + 6*vp0[2] + vp1[2])/8 );
+                (vp_1[1] + 6*vp0[1] + vp1[1])/8,
+                (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
   }
 };
 
 
 //==========================================================================
-/// The setncil of the Dual-Quadrilateral-Quadrisection 
+/// The stencil of the Dual-Quadrilateral-Quadrisection
 template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
 class DQQ_stencil_3 {
 public:
   typedef Poly                                        Polyhedron;
-  
+
   typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Vertex_pmap;
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor   vertex_descriptor;
@@ -308,7 +307,7 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
 
   typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
-  
+
   typedef typename Kernel_traits<Point>::Kernel       Kernel;
   typedef typename Kernel::FT                          FT;
   typedef typename Kernel::Vector_3                    Vector;
@@ -346,7 +345,7 @@ public:
   typedef typename Base::FT                          FT;
   typedef typename Base::Point                       Point;
   typedef typename Base::Vector                      Vector;
- 
+
 
 public:
   DooSabin_mask_3(Polyhedron& polyhedron)
@@ -365,7 +364,7 @@ public:
       hd = next(hd,this->polyhedron);
       ++n;
     }while(hd != he);
-      
+
     Vector cv(0,0,0);
     if (n == 4) {
       cv = cv + (get(this->vpm, target(he,this->polyhedron))-CGAL::ORIGIN)*9;
@@ -393,7 +392,7 @@ public:
     typedef Linear_mask_3<Poly,VertexPointMap>       Base;
 public:
   typedef Poly                                       Polyhedron;
-  
+
   typedef typename Base::vertex_descriptor           vertex_descriptor;
   typedef typename Base::halfedge_descriptor         halfedge_descriptor;
   typedef typename Base::face_descriptor             face_descriptor;
@@ -405,9 +404,7 @@ public:
   typedef typename Base::Vector                      Vector;
 
 public:
-  //
   //void edge_node(halfedge_descriptor edge, Point& pt) {}
-  //
 
   Sqrt3_mask_3(Polyhedron& poly)
     : Base(poly, get(vertex_point,poly))
