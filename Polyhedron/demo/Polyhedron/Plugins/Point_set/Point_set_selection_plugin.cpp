@@ -28,9 +28,8 @@
 
 // Class for visualizing selection 
 // provides mouse selection functionality
-class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public CGAL::Three::Scene_item
+class Q_DECL_EXPORT Scene_point_set_selection_visualizer
 {
-  Q_OBJECT
 
  private:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -39,11 +38,12 @@ class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public CGAL::Three::S
   typedef CGAL::Polygon_2<K> Polygon_2;
   typedef std::vector<Point_2> Polyline_2;
   typedef std::vector<Polyline_2> Polylines;
+  typedef Scene_item::Bbox Bbox;
   
   bool rectangle;
   std::vector<Point_2> contour_2d;
   Polylines* polyline;
-  Bbox point_set_bbox;
+  Scene_item::Bbox point_set_bbox;
   CGAL::Bbox_2 domain_rectangle;
   Polygon_2 domain_freeform;
   
@@ -57,45 +57,29 @@ public:
   }
   ~Scene_point_set_selection_visualizer() {
   }
-  bool isFinite() const { return true; }
-  bool isEmpty() const { return poly().empty(); }
-  void compute_bbox() const {
-    _bbox = point_set_bbox;
-  }
-  Scene_point_set_selection_visualizer* clone() const {
-    return 0;
-  }
-  QString toolTip() const {
-    return tr("%1").arg(name());
-  }
 
-  bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Points);
-  }
-  /*
-   * We use drawPoints because it is the last drawing function to be called
-   * This way, as this item is always the last in the list, it is always the last
-   * thing to be drawn. It allow us to safely call glClear(GL_DEPTH_BUFFER_BIT)
-   * and have the selection lines always on top of the other items.
-   */
-  void drawPoints(CGAL::Three::Viewer_interface* viewer) const {
+  void render(QImage& image) const {
 
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
     QPainter *painter = viewer->getPainter();
     QPen pen;
     pen.setColor(QColor(Qt::green));
     pen.setWidth(5);
 
+
+    painter->begin(viewer);
+    painter->drawImage(QPoint(0,0), image);
     painter->setPen(pen);
-    glClear(GL_DEPTH_BUFFER_BIT);
     for(std::size_t i=0; i<polyline->size(); ++i)
     {
       Polyline_2 poly = (*polyline)[i];
       if(!poly.empty())
         for(std::size_t j=0; j<poly.size()-1; ++j)
         {
-          viewer->getPainter()->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
+          painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
         }
     }
+    painter->end();
   }
 
   Polyline_2& poly() const
@@ -137,7 +121,7 @@ public:
   }
 
   
-  void sample_mouse_path()
+  void sample_mouse_path(QImage& image)
   {
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
@@ -153,7 +137,7 @@ public:
     if (update_polyline ())
       {
 
-	Q_EMIT itemChanged();
+        render(image);
       }
   }
 
@@ -252,6 +236,7 @@ public:
 protected:
 
   bool eventFilter(QObject *, QEvent *event) {
+    static QImage background;
     if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || ui_widget.Selection_tool_combo_box->currentIndex()==2)
       return false;
     
@@ -260,7 +245,6 @@ protected:
     if(!point_set_item) {
       return false; 
     }
-    int item_id = scene->item_id (point_set_item);
       
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
     {
@@ -268,6 +252,8 @@ protected:
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
       shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
+
+      background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
     }
 
     // mouse events
@@ -284,23 +270,13 @@ protected:
 	
 	    visualizer = new Scene_point_set_selection_visualizer(rectangle,
 								  point_set_item->bbox());
-	    visualizer->setName(tr("Point set selection visualizer"));
-            visualizer->setRenderingMode (Points);
-	    visualizer->setVisible (true);
 
-	    // Hack to prevent camera for "jumping" when creating new item
-	    scene->addItem(visualizer);
-	
-	    scene->setSelectedItem(item_id);
-	    visualizer->sample_mouse_path();
+            visualizer->sample_mouse_path(background);
             return true;
 	  }
 	// Cancel selection
 	else if (mouseEvent->button() == Qt::RightButton && visualizer)
 	  {
-
-	    scene->erase( scene->item_id(visualizer) );
-	    scene->setSelectedItem(item_id);
 	    visualizer = NULL;
 	    QApplication::restoreOverrideCursor();
             return true;
@@ -312,8 +288,6 @@ protected:
       {
 	visualizer->apply_path();
 	select_points();
-	scene->erase( scene->item_id(visualizer) );
-	scene->setSelectedItem(item_id);
 	visualizer = NULL;
 	QApplication::restoreOverrideCursor();
 	return true;
@@ -321,7 +295,7 @@ protected:
     // Update selection
     else if (event->type() == QEvent::MouseMove && visualizer)
       {
-	visualizer->sample_mouse_path();
+        visualizer->sample_mouse_path(background);
 	return true;
       }
 
@@ -577,9 +551,10 @@ public Q_SLOTS:
     }
     else
     {
-     scene->erase(scene->item_id(edit_box));
-     edit_box = NULL;
-     ui_widget.Add_to_selection_Button->setVisible(false);
+      if(edit_box)
+        scene->erase(scene->item_id(edit_box));
+      edit_box = NULL;
+      ui_widget.Add_to_selection_Button->setVisible(false);
     }
 
 
