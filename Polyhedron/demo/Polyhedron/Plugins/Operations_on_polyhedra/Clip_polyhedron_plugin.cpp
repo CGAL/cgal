@@ -7,7 +7,8 @@
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/internal/Polyhedron_plane_clipping_3.h>
+#include <CGAL/Polygon_mesh_processing/internal/clip.h>
+
 #include "ui_Clip_polyhedron_plugin.h"
 #include "Viewer.h"
 
@@ -187,100 +188,43 @@ public Q_SLOTS:
       //apply the clipping function
       Q_FOREACH(Scene_polyhedron_item* poly, polyhedra)
       {
-
-        if(ui_widget.close_checkBox->isChecked() && poly->polyhedron()->is_closed())
+        if (ui_widget.clip_radioButton->isChecked())
         {
-          std::pair<Polyhedron*, Polyhedron*>polyhedron;
-          if(ui_widget.clip_radioButton->isChecked())
-          {
-            polyhedron.first = CGAL::corefinement::clip_polyhedron(*(poly->polyhedron()),plane->plane());
-            polyhedron.second = NULL;
-          }
-          else
-          {
-            polyhedron = CGAL::corefinement::split_polyhedron(*(poly->polyhedron()),plane->plane());
-          }
-          if(polyhedron.first != NULL)
-          {
-            Scene_polyhedron_item* new_item = new Scene_polyhedron_item(polyhedron.first);
-            if(polyhedron.second != NULL)
-              new_item->setName(QString("%1 %2").arg(poly->name()).arg("1"));
-            else
-              new_item->setName(poly->name());
-            new_item->setColor(poly->color());
-            new_item->setRenderingMode(poly->renderingMode());
-            new_item->setVisible(poly->visible());
-            new_item->invalidateOpenGLBuffers();
-            new_item->setProperty("source filename", poly->property("source filename"));
-            scene->replaceItem(scene->item_id(poly),new_item);
-            new_item->invalidateOpenGLBuffers();
-            viewer->updateGL();
-            if(ui_widget.clip_radioButton->isChecked())
-              messages->information(QString("%1 clipped").arg(new_item->name()));
-          }
-          else
-          {
-            messages->information(QString("Could not clip %1 : returned polyhedron is null.").arg(poly->name()));
-            delete polyhedron.first;
-          }
-          if(polyhedron.second!= NULL)
-          {
-            Scene_polyhedron_item* new_item = new Scene_polyhedron_item(polyhedron.second);
-            new_item->setName(QString("%1 %2").arg(poly->name()).arg("2"));
-            new_item->setColor(poly->color());
-            new_item->setRenderingMode(poly->renderingMode());
-            new_item->setVisible(poly->visible());
-            new_item->invalidateOpenGLBuffers();
-            new_item->setProperty("source filename", poly->property("source filename"));
-            scene->addItem(new_item);
-            new_item->invalidateOpenGLBuffers();
-            viewer->updateGL();
-            if(!ui_widget.clip_radioButton->isChecked())
-            messages->information(QString("%1 splitted").arg(poly->name()));
-          }
-          if(polyhedron.first != NULL)
-            delete poly;
+          CGAL::Polygon_mesh_processing::clip(*(poly->polyhedron()),
+                                              plane->plane(),
+                                              ui_widget.close_checkBox->isChecked());
+          poly->invalidateOpenGLBuffers();
+          viewer->updateGL();
         }
-
         else
         {
-          Scene_polyhedron_item* poly1 = new Scene_polyhedron_item(*(poly->polyhedron()));
-          poly1->setProperty("source filename", poly->property("source filename"));
-          Scene_polyhedron_item* poly2 = NULL;
-          if(!ui_widget.clip_radioButton->isChecked())
-          {
-            poly2 = new Scene_polyhedron_item(*(poly->polyhedron()));
-            poly2->setProperty("source filename", poly->property("source filename"));
-          }
+          //part on the negative side
+          Polyhedron* neg_side = new Polyhedron(*poly->polyhedron());
 
+          CGAL::Polygon_mesh_processing::clip(*neg_side,
+                                              plane->plane(),
+                                              ui_widget.close_checkBox->isChecked());
+          Scene_polyhedron_item* new_item = new Scene_polyhedron_item(neg_side);
+          new_item->setName(QString("%1 on %2").arg(poly->name()).arg("negative side"));
+          new_item->setColor(poly->color());
+          new_item->setRenderingMode(poly->renderingMode());
+          new_item->setVisible(poly->visible());
+          scene->addItem(new_item);
+          new_item->invalidateOpenGLBuffers();
+          // part on the positive side
+          Polyhedron* pos_side = new Polyhedron(*poly->polyhedron());
+          CGAL::Polygon_mesh_processing::clip(*pos_side,
+                                              plane->plane().opposite(),
+                                              ui_widget.close_checkBox->isChecked());
+          new_item = new Scene_polyhedron_item(pos_side);
+          new_item->setName(QString("%1 on %2").arg(poly->name()).arg("positive side"));
+          new_item->setColor(poly->color());
+          new_item->setRenderingMode(poly->renderingMode());
+          new_item->setVisible(poly->visible());
+          scene->addItem(new_item);
+          new_item->invalidateOpenGLBuffers();
 
-            CGAL::corefinement::inplace_clip_open_polyhedron(*(poly1->polyhedron()),plane->plane());
-            if(poly2 != NULL)
-              poly1->setName(QString("%1 %2").arg(poly->name()).arg("1"));
-            else
-              poly1->setName(poly->name());
-            poly1->setColor(poly->color());
-            poly1->setRenderingMode(poly->renderingMode());
-            poly1->setVisible(poly->visible());
-            scene->replaceItem(scene->item_id(poly),poly1);
-            poly1->invalidateOpenGLBuffers();
-            viewer->updateGL();
-            if(ui_widget.clip_radioButton->isChecked())
-              messages->information(QString("%1 clipped").arg(poly->name()));
-
-          if(poly2 != NULL)
-          {
-            CGAL::corefinement::inplace_clip_open_polyhedron(*(poly2->polyhedron()),plane->plane().opposite());
-            poly2->setName(QString("%1 %2").arg(poly->name()).arg("2"));
-            poly2->setColor(poly->color());
-            poly2->setRenderingMode(poly->renderingMode());
-            poly2->setVisible(poly->visible());
-            scene->addItem(poly2);
-            poly2->invalidateOpenGLBuffers();
-            viewer->updateGL();
-            messages->information(QString("%1 splitted").arg(poly->name()));
-          }
-          delete poly;
+          viewer->updateGL();
         }
       }
     }
