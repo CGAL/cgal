@@ -336,9 +336,9 @@ boolean_operation(      TriangleMesh& tm1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = boost::choose_param( get_param(np1, edge_is_constrained),
+  Ecm1 ecm1 = boost::choose_param( boost::get_param(np1, edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = boost::choose_param( get_param(np2, edge_is_constrained),
+  Ecm2 ecm2 = boost::choose_param( boost::get_param(np2, edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;

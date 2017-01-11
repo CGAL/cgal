@@ -237,10 +237,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
-  add_item(scene_combinatorial_map_item Plugins/Operations_on_polyhedra/Scene_combinatorial_map_item.cpp)
-  # special
-  target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
-
   add_item(scene_polylines_item Scene_polylines_item.cpp)
   target_link_libraries(scene_polylines_item scene_basic_objects)
 
