@@ -36,7 +36,7 @@ namespace internal {
 
 template<class Handle>
 class Polyhedron_index_map_external
-  : public boost::put_get_helper<std::size_t, Polyhedron_index_map_external<Handle> >
+  : public boost::put_get_helper<std::size_t&, Polyhedron_index_map_external<Handle> >
 {
 public:
   typedef boost::lvalue_property_map_tag   category;
