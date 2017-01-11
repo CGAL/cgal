@@ -857,19 +857,23 @@ void MainWindow::updateViewerBBox()
   const double xmax = bbox.xmax();
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
+
    //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
    //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
   qglviewer::Vec 
     vec_min(xmin, ymin, zmin),
-    vec_max(xmax, ymax, zmax);
+    vec_max(xmax, ymax, zmax),
+    bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
   qglviewer::Vec offset(0,0,0);
-  for(int i=0; i<3; ++i)
-  {
-    if(std::log2(bbox.min(i)) > 13.0 )
+  double l_dist = (std::max)((std::abs)(bbox_center.x + viewer->offset().x),
+                      (std::max)((std::abs)(bbox_center.y + viewer->offset().y),
+                          (std::abs)(bbox_center.z + viewer->offset().z)));
+  if((std::log2)(l_dist) > 13.0 )
+    for(int i=0; i<3; ++i)
     {
-      offset[i] = -bbox.min(i);
+      offset[i] = -bbox_center[i];
+
     }
-  }
   if(offset != viewer->offset())
   {
     viewer->setOffset(offset);
@@ -891,8 +895,7 @@ void MainWindow::reloadItem() {
   if(!sender_action) return;
   
   Scene_item* item = (Scene_item*)sender_action->data().value<void*>();
-  QObject* item_object = item;
-  if(!item || !item_object) {
+  if(!item) {
     std::cerr << "Cannot reload item: "
               << "the reload action has not item attached\n";
     return;
