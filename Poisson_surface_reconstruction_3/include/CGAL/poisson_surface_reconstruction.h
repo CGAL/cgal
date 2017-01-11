@@ -78,16 +78,16 @@ namespace CGAL {
             typename PolygonMesh,
             typename Tag = CGAL::Manifold_with_boundary_tag>
   bool
-  poisson_surface_reconstruction(PointInputIterator begin,
-                                 PointInputIterator end,
-                                 PointMap point_map,
-                                 NormalMap normal_map,
-                                 PolygonMesh& output_mesh,
-                                 double spacing,
-                                 double sm_angle = 20.0,
-                                 double sm_radius = 30.0,
-                                 double sm_distance = 0.375,
-                                 Tag tag = Tag())
+  poisson_surface_reconstruction_delaunay (PointInputIterator begin,
+                                           PointInputIterator end,
+                                           PointMap point_map,
+                                           NormalMap normal_map,
+                                           PolygonMesh& output_mesh,
+                                           double spacing,
+                                           double sm_angle = 20.0,
+                                           double sm_radius = 30.0,
+                                           double sm_distance = 0.375,
+                                           Tag tag = Tag())
   {
     typedef typename boost::property_traits<PointMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
