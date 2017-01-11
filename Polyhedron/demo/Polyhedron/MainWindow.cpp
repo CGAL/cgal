@@ -873,7 +873,11 @@ void MainWindow::updateViewerBBox()
   if(offset != viewer->offset())
   {
     viewer->setOffset(offset);
-    recomputeItems();
+    for(int i=0; i<scene->numberOfEntries(); ++i)
+    {
+      scene->item(i)->invalidateOpenGLBuffers();
+      scene->item(i)->itemChanged();
+    }
   }
 
 
@@ -1948,12 +1952,4 @@ void MainWindow::resetHeader()
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
 
-}
-void MainWindow::recomputeItems()
-{
-  for(int i=0; i<scene->numberOfEntries(); ++i)
-  {
-    scene->item(i)->invalidateOpenGLBuffers();
-    scene->item(i)->itemChanged();
-  }
 }
