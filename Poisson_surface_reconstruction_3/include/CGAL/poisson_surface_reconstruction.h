@@ -67,10 +67,12 @@ namespace CGAL {
     \param end past the end iterator of the point sequence.
     \param point_map property map: value_type of `InputIterator` -> Point_3.
     \param normal_map property map: value_type of `InputIterator` -> Vector_3.
+    \param output_mesh where the reconstruction is stored.
     \param spacing size parameter.
     \param sm_angle bound for the minimum facet angle in degrees.
     \param sm_radius bound for the radius of the surface Delaunay balls (relatively to the `average_spacing`).
     \param sm_distance bound for the center-center distances (relatively to the `average_spacing`).
+    \param tag surface mesher tag.
   */
   template <typename PointInputIterator,
             typename PointMap,
