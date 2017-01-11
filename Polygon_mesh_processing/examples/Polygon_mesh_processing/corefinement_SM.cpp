@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
   PMP::corefine(mesh1,mesh2);
 
-  std::cout << "Number of vertices before corefinement "
+  std::cout << "Number of vertices after corefinement "
             << num_vertices(mesh1) << " and "
             << num_vertices(mesh2) << "\n";
 
