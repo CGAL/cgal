@@ -276,8 +276,8 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
   value_type& operator[](key_type& tuple) const { return get<N>(tuple); }
 
   typedef Nth_of_tuple_property_map<N,Tuple> Self;
-  friend reference get(const Self&,const key_type& k) {return get<N>(k);}
-  friend void put(const Self&,key_type& k, const value_type& v) {get<N>(k)=v;}
+  friend reference get(const Self&,const key_type& k) {return std::get<N>(k);}
+  friend void put(const Self&,key_type& k, const value_type& v) {std::get<N>(k)=v;}
 };
 #endif
 
