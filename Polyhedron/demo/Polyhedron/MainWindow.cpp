@@ -521,22 +521,22 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
     i++;
     for(int j = i; j<name.size(); j++)
       subMenuName.append(name.at(j));
-    setMenus(subMenuName, name, a);
+    setMenus(subMenuName, menuName, a);
   }
 
   //Create the menu and sub menu
   QMenu* menu = 0;
   QMenu* parentMenu = 0;
   //If the menu already exists, don't create a new one.
-  if(menu_map.contains(name))
+  if(menu_map.contains(menuName))
   {
-    menu = menu_map[name];
+    menu = menu_map[menuName];
   }
 
   bool hasAction = false;
   if(menu == 0){
     menu = new QMenu(menuName, this);
-    menu_map[name] = menu;
+    menu_map[menuName] = menu;
   }
   else //checks the action is not already in the menu
     if(a->property("added").toBool())
@@ -553,11 +553,8 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
     parentMenu = menu_map[parentName];
   }
   if(parentMenu == 0)
-  {//get the parentMenu title :
-    QString parentTitle;
-    for(int i=0; parentName.at(i)!='/'; i++)
-      parentTitle.append(parentName.at(i));
-    parentMenu = new QMenu(parentTitle, this);
+  {
+    parentMenu = new QMenu(parentName, this);
     menu_map[parentName] = parentMenu;
   }
   parentMenu->addMenu(menu);
