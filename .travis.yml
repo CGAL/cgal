@@ -96,11 +96,11 @@ install:
 before_script:
 - mkdir -p build
 - cd build
-- cmake -DCGAL_HEADER_ONLY=ON ..
+- cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DNDEBUG ..
 - make
 - cd ..
 script:
-- bash -x ./build_package.sh $PACKAGE
+- bash -x -e ./build_package.sh $PACKAGE
 compiler:
   - clang
   - gcc
