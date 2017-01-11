@@ -45,7 +45,6 @@ env:
   - PACKAGE='Nef_2'
   - PACKAGE='Nef_3'
   - PACKAGE='Nef_S2'
-  - PACKAGE='Operations_on_polyhedra'
   - PACKAGE='Optimal_transportation_reconstruction_2'
   - PACKAGE='Partition_2'
   - PACKAGE='Periodic_2_triangulation_2'
@@ -101,7 +100,7 @@ before_script:
 - make
 - cd ..
 script:
-- travis_wait 120 bash -x ./build_package.sh $PACKAGE
+- bash -x ./build_package.sh $PACKAGE
 compiler:
   - clang
   - gcc
