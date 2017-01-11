@@ -124,6 +124,7 @@ public:
     template <typename Query>
     Intersection operator()(const Query& query) const
     {
+      using boost::get;
       //intersection with implicit domain
       Implicit_domain::Intersection implicit_inter =
         r_domain_.implicit_domain.construct_intersection_object()(query);
