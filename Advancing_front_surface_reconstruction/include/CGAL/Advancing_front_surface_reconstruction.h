@@ -24,6 +24,7 @@
 // #define LAZY
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Cartesian_converter.h>
@@ -1260,7 +1261,17 @@ namespace CGAL {
                   value = lazy_squared_radius(cc);
 #else
                   // qualified with CGAL, to avoid a compilation error with clang
-                  value = CGAL::squared_radius(pp0, pp1, pp2, pp3);
+                  if(volume(pp0, pp1, pp2, pp3) != 0){
+                    value = CGAL::squared_radius(pp0, pp1, pp2, pp3);
+                  } else {
+                    typedef Exact_predicates_exact_constructions_kernel EK;
+                    Cartesian_converter<Kernel, EK> to_exact;
+                    Cartesian_converter<EK, Kernel> back_from_exact;
+                    value = back_from_exact(CGAL::squared_radius(to_exact(pp0),
+                                                                 to_exact(pp1),
+                                                                 to_exact(pp2),
+                                                                 to_exact(pp3)));
+                  }
 #endif
                 }
               else
