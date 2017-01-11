@@ -597,12 +597,13 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         if (best_candidate->indices_of_assigned_points().size() <
           m_options.min_points) 
         {
-          for (std::size_t i = 0;i < candidates.size() - 1;i++) {
-            if (best_candidate->is_same(candidates[i])) {
-              delete candidates[i];
-              candidates[i] = NULL;
+          if (!(best_candidate->indices_of_assigned_points().empty()))
+            for (std::size_t i = 0;i < candidates.size() - 1;i++) {
+              if (best_candidate->is_same(candidates[i])) {
+                delete candidates[i];
+                candidates[i] = NULL;
+              }
             }
-          }
 
           candidates.back() = NULL;
           delete best_candidate;
