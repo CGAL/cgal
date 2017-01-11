@@ -9,16 +9,16 @@ then
   cd $ROOT/$EXAMPLES
   mkdir -p build
   cd build
-  cmake -DCGAL_DIR="$ROOT/build" ..
-  make
+  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG" ..
+  make -j2
 fi
 if [ -d "$ROOT/$TEST" ]
 then
   cd $ROOT/$TEST
   mkdir -p build
   cd build
-  cmake -DCGAL_DIR="$ROOT/build" ..
-  make
+  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG" ..
+  make -j2
 fi
 #if [ "$1" != Polyhedron ]
 #then
