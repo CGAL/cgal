@@ -43,7 +43,7 @@
 
 #include <ctype.h>
 #include <CGAL/CORE/Real.h>
-
+#include <CGAL/tss.h>
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/CORE/BigFloat.h> // for FiveTo
 #endif
@@ -52,7 +52,7 @@ namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const Real& Real::getZero() {
-  static Real Zero(0);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Real, Zero, 0);
   return Zero;
 }
 

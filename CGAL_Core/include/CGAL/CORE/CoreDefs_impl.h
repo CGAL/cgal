@@ -57,15 +57,22 @@ int IOErrorFlag = 0;
 /**
  * If AbortFlag is true when invalid expression is constructed, system will abort
  */
-
+#ifdef CGAL_NO_ATOMIC
 bool AbortFlag = true;
+#else
+CGAL::cpp11::atomic<bool> AbortFlag(true);
+#endif
 
 /**
  * InvalidFlag is set to negative whenever an invalid expression is constructed.
  * The user has the responsibility to reset to non-negative value.
  */
 
+#ifdef CGAL_NO_ATOMIC
 int InvalidFlag = 0;
+#else
+CGAL::cpp11::atomic<int> InvalidFlag(0);
+#endif
 
 /* ************************************************************
  * PRECISION PARAMETERS 
@@ -97,7 +104,11 @@ long EscapePrecFlag = 0;
 /// Escape Precision Warning Flag
 /** this flag is true by default, and will cause a warning to be printed
     when EscapePrec is reached */
+#ifdef CGAL_NO_ATOMIC
 bool EscapePrecWarning = true;
+#else
+CGAL::cpp11::atomic<bool> EscapePrecWarning(true);
+#endif
 
 /** The Composite Precision [defAbsPrec, defRelPrec]
  *  determines the precision to which an Expr evaluates its 
@@ -113,11 +124,19 @@ extLong defAbsPrec = CORE_posInfty;
 extLong defRelPrec = 60;
 
 /**  number of BigFloat digits to print out */
+#ifdef CGAL_NO_ATOMIC
 long defBigFloatOutputDigits = 10;
+#else
+CGAL::cpp11::atomic<long> defBigFloatOutputDigits(10);
+#endif
 
 /**  NORMALLY, we like to make this equal to defBigFloatOutputDigits
   *  8/3/01, Chee: re-introduced this parameter */
-long defOutputDigits = defBigFloatOutputDigits;
+#ifdef CGAL_NO_ATOMIC
+long defOutputDigits = 10;
+#else
+CGAL::cpp11::atomic<long> defOutputDigits(10); // == defBigFloatOutputDigits;
+#endif
 
 /** String Input Precision */
 
@@ -130,7 +149,11 @@ extLong defInputDigits = CORE_posInfty;
 
 /** This controls the absolute error in converting from string to BigFloat
  *  The absolute error will be at most 10^{-defInputDigits} */
+#ifdef CGAL_NO_ATOMIC
 long defBigFloatInputDigits = 16;
+#else
+CGAL::cpp11::atomic<long> defBigFloatInputDigits(16);
+#endif
 
 /* ************************************************************
  * EVALUATION FLAGS
@@ -138,25 +161,44 @@ long defBigFloatInputDigits = 16;
 
 /** Floating Point filter
  *  true = turn on floating point filter */
+#ifdef CGAL_NO_ATOMIC
 bool fpFilterFlag = true;
+#else
+CGAL::cpp11::atomic<bool> fpFilterFlag(true);
+#endif
 
 /** IncrementaL evaluation flag
  *  incremental evaluation is requested, This means, we try to use previous
  *  approximate values to improve an approximation */
+#ifdef CGAL_NO_ATOMIC
 bool incrementalEvalFlag = true;
+#else
+CGAL::cpp11::atomic<bool> incrementalEvalFlag(true);
+#endif
 
 /** Progressive evaluation flag
  *  true = turn on progressive evaluation flag */
+#ifdef CGAL_NO_ATOMIC
 bool progressiveEvalFlag = true;
+#else
+CGAL::cpp11::atomic<bool> progressiveEvalFlag(true);
+#endif
 
 /** Initial progressive evaluation precision
  *  Used by AddSubRep */
+#ifdef CGAL_NO_ATOMIC
 long defInitialProgressivePrec = 64;
+#else
+CGAL::cpp11::atomic<long> defInitialProgressivePrec(64);
+#endif
 
 /** RATIONAL REDUCTION FLAG
  *  true = turn on rational reduction */
+#ifdef CGAL_NO_ATOMIC
 bool rationalReduceFlag = false;
-
+#else
+CGAL::cpp11::atomic<bool> rationalReduceFlag(false);
+#endif
 #endif // CGAL_HEADER_ONLY
 
 } //namespace CORE

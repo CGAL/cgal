@@ -148,7 +148,7 @@ private:
   std::string round(std::string inRep, long& L10, unsigned int width) const;
   DecimalOutput toDecimal(unsigned int width=get_static_defBigFloatOutputDigits(),
                           bool Scientific=false) const;
-  void fromString(const char *p, const extLong & prec = get_static_defBigFloatInputDigits());
+  void fromString(const char *p, extLong  prec = getBigFloatInputDigits());
 
   void dump() const;  //inline
   long adjustE(long E, BigInt M, long e) const;

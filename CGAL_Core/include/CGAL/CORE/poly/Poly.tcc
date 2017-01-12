@@ -50,9 +50,7 @@
 
 
 template <class NT>
-int Polynomial<NT>::COEFF_PER_LINE  = 4;           // pretty print parameters
-template <class NT>
-const char* Polynomial<NT>::INDENT_SPACE ="   ";  // pretty print parameters
+const char Polynomial<NT>::INDENT_SPACE[3] = { ' ', ' ', ' ' };  // pretty print parameters
 
 // ==================================================
 // Polynomial Constructors

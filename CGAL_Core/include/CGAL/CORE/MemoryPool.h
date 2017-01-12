@@ -37,6 +37,7 @@
 #include <new>           // for placement new
 #include <cassert>
 #include <CGAL/assertions.h>
+#include <CGAL/tss.h>
 #include <vector>
 
 namespace CORE { 
@@ -50,6 +51,7 @@ private:
       Thunk* next;
    };
 
+  typedef MemoryPool<T,nObjects> Self;
 public:
    MemoryPool() : head( 0 ) {}
 
@@ -78,7 +80,13 @@ public:
    void free(void* p);
 
   // Access the corresponding static global allocator.
-  static MemoryPool<T>& global_allocator() {
+  static MemoryPool<T,nObjects>& global_allocator() {
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
+    if(memPool_ptr.get() == NULL) {memPool_ptr.reset(new Self());}
+    Self& memPool =  * memPool_ptr.get();
+#else // CGAL_STATIC_THREAD_LOCAL uses C++11 thread_local
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Self, memPool);
+#endif
     return memPool;
   }
  
@@ -86,13 +94,16 @@ private:
    Thunk* head; // next available block in the pool
   std::vector<void*> blocks;
 
-private:
-  // Static global allocator.
-  static MemoryPool<T, nObjects> memPool;   
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
+  static boost::thread_specific_ptr<Self> memPool_ptr;
+#endif
 };
 
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
 template <class T, int nObjects >
-MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
+boost::thread_specific_ptr<MemoryPool<T, nObjects> >
+MemoryPool<T, nObjects>::memPool_ptr;
+#endif // CGAL_STATIC_THREAD_LOCAL_USE_BOOST
 
 template< class T, int nObjects >
 void* MemoryPool< T, nObjects >::allocate(std::size_t) {

@@ -544,19 +544,6 @@ inline long ceilLg(int a) { // need this for Polynomial<int>
   return ceilLg(BigInt(a));
 }
 
-
-// return a gmp_randstate_t structure
-extern gmp_randstate_t* getRandstate();
-/// seed function
-inline void seed(const BigInt& a) {
-  gmp_randseed(*getRandstate(), a.get_mp());
-}
-/// randomize function
-inline BigInt randomize(const BigInt& a) {
-  BigInt r;
-  mpz_urandomm(r.get_mp(), *getRandstate(), a.get_mp());
-  return r;
-}
 //@}
 
 

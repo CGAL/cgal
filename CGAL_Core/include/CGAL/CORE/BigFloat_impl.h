@@ -50,6 +50,7 @@
 #include <ctype.h>
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Expr.h>
+#include <CGAL/tss.h>
 
 namespace CORE { 
 
@@ -84,13 +85,13 @@ BigInt FiveTo(unsigned long exp) {
 // ZERO
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getZero() {
-  static BigFloat Zero(0);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(BigFloat, Zero,0);
   return Zero;
 }
 // ONE
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getOne() {
-  static BigFloat One(1);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(BigFloat, One,1);
   return One;
 }
 
@@ -1009,7 +1010,7 @@ std::string BigFloatRep::round(std::string inRep, long& L10, unsigned int width)
 // See the file Real.cc for the differences
 
 CGAL_INLINE_FUNCTION
-void BigFloatRep :: fromString(const char *str, const extLong & prec ) {
+void BigFloatRep :: fromString(const char *str, extLong prec ) {
   // NOTE: prec defaults to get_static_defBigFloatInputDigits() (see BigFloat.h)
   // check that prec is not INFTY
   if (prec.isInfty())

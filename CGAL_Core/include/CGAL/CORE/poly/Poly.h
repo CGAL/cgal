@@ -61,6 +61,7 @@
 #include <CGAL/CORE/Promote.h>
 #include <vector>
 #include <CGAL/assertions.h>
+#include <CGAL/tss.h>
 
 namespace CORE { 
 using namespace std;
@@ -103,17 +104,10 @@ public:
 
   // STATIC MEMBERS
   // static NT ccc_; // THIS IS A TEMPORARY HACK
-  static  int COEFF_PER_LINE;		// pretty print parameters
-  static const char * INDENT_SPACE;		// pretty print parameters
-
+  static const int COEFF_PER_LINE = 4;		// pretty print parameters
+  static const char INDENT_SPACE[];  		// pretty print parameters
   static const Polynomial<NT> & polyZero();
   static const Polynomial<NT> & polyUnity();
-  static Polynomial polyWilkinson;	      // a sample polynomial
-  static int NT_TYPE; // NT_TYPE = 1 if NT is integer type (int,long,BigInt)
-                      // NT_TYPE = 2 if NT is BigFloat 
-                      // NT_TYPE = 3 if NT is BigRat 
-                      // NT_TYPE = 4 if NT is Expr 
-                      // Hack?  NT_TYPE is needed for root bounds, etc.
 
   // Constructors:
   Polynomial(void);	// the Zero Polynomial
@@ -269,15 +263,15 @@ public:
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyZero() {
-  static Polynomial<NT> zeroP;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Polynomial<NT>, zeroP);
   return zeroP;
 }
 
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyUnity() {
-  static NT c[] = {1};
-  static Polynomial<NT> unityP(0, c);
+  static const NT c[] = {1};
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Polynomial<NT>, unityP, 0, c);
   return unityP;
 }
 

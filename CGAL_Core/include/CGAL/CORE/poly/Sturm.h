@@ -82,8 +82,7 @@ public:
   Polynomial<NT> g;//GCD of input polynomial P and it's derivative P'
   NT cont;//Content of the square-free part of input polynomial P
   //Thus P = g * cont * seq[0]
-  static int N_STOP_ITER;    // Stop IterE after this many iterations. This
-  // is initialized below, outside the Newton class
+  static const int N_STOP_ITER = 10000;    // Stop IterE after this many iterations. 
   bool NEWTON_DIV_BY_ZERO;   // This is set to true when there is divide by
   // zero in Newton iteration (at critical value)
   // User is responsible to check this and to reset.
@@ -1075,12 +1074,6 @@ std::cout << "In newtonRefine, input J=" << J.first
 
 };// Sturm class
 
-// ==================================================
-// Static initialization
-// ==================================================
-template <class NT>
-int Sturm<NT>:: N_STOP_ITER = 10000;   // stop IterE after this many loops
-// Reset this as needed
 
 // ==================================================
 // Helper Functions 

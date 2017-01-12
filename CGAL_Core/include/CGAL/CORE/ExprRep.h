@@ -935,11 +935,9 @@ protected:
     return Operator::get_name();
   }
 private:
-  static Operator Op;
+  Operator Op;
 };//AddSubRep class
 
-template <class Operator>
-Operator AddSubRep<Operator>::Op;
 
   /// AddSubRep<Op>::computeExactFlags()
   ///     This function is the heart of Expr class,
@@ -1122,7 +1120,7 @@ void AddSubRep<Operator>::computeExactFlags() {
 	//     larger than lowBound AND the defaultInitialProgressivePrec,
 	//     so that we do at least one iteration of the for-loop. So:
 	// i is the variable for iteration.
-        extLong i = core_min(get_static_defInitialProgressivePrec(), lowBound.asLong());
+        extLong i = core_min(getInitialProgressivePrec(), lowBound.asLong());
         extLong ua = lowBound.asLong() + EXTLONG_ONE;
         //   NOTE: ua is allowed to be CORE_INFTY
 	
