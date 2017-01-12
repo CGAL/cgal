@@ -1781,6 +1781,7 @@ qglviewer::Vec Viewer::offset()const { return d->offset; }
 void Viewer::setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max)
 {
   QGLViewer::setSceneBoundingBox(min+d->offset, max+d->offset);
+}
 
 void Viewer::updateIds(CGAL::Three::Scene_item * item)
 {
