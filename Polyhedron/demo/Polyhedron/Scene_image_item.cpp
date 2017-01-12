@@ -449,7 +449,6 @@ struct Scene_image_item_priv
   std::vector<float> color;
   static const int vaoSize = 2;
   static const int vboSize = 6;
-
   mutable int poly_vertexLocation[1];
   mutable int normalsLocation[1];
   mutable int mvpLocation[1];
