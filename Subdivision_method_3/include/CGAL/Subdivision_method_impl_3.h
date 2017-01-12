@@ -479,7 +479,6 @@ namespace Subdivision_method_3 {
 
   template <class Poly, class VertexPointMap, class Mask>
   void DQQ_1step_alt(Poly& p, VertexPointMap vpm, Mask mask) {
-    std::cout << "Call DQQ_1step alt" << std::endl;
 
     typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
     typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
