@@ -102,14 +102,9 @@ struct Scene_edit_box_item_priv{
     pool[1] = bb.ymin(); pool[4] = bb.ymax();
     pool[2] = bb.zmin(); pool[5] = bb.zmax();
 
-    double sq_diag =
-        (bb.xmax() - bb.xmin()) * (bb.xmax() - bb.xmin()) +
-        (bb.ymax() - bb.ymin()) * (bb.ymax() - bb.ymin()) +
-        (bb.zmax() - bb.zmin()) * (bb.zmax() - bb.zmin()) ;
-
     vertex_spheres.resize(0);
     normal_spheres.resize(0);
-    create_flat_sphere((float)(0.01*sqrt(sq_diag)), vertex_spheres, normal_spheres,10);
+    create_flat_sphere(1.0f, vertex_spheres, normal_spheres,10);
     //      5-----6
     //  .   |  .  |
     // 4------7   |
@@ -371,7 +366,10 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
   mv_mat = mv_mat*f_matrix;
   QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
   light_pos = light_pos*f_matrix;
-
+  double radius =std::sqrt(
+      (point(6,0) - point(0,0)) * (point(6,0) - point(0,0)) +
+      (point(6,1) - point(0,1)) * (point(6,1) - point(0,1)) +
+      (point(6,2) - point(0,2)) * (point(6,2) - point(0,2))) *0.02 ;
 
   attribBuffers(viewer, PROGRAM_SPHERES);
   d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
@@ -379,7 +377,7 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
   d->program->setUniformValue("mvp_matrix", mvp_mat);
   d->program->setUniformValue("mv_matrix", mv_mat);
   d->program->setUniformValue("light_pos", light_pos);
-  d->program->setAttributeValue("radius",2);
+  d->program->setAttributeValue("radius",radius);
   d->program->setAttributeValue("colors", QColor(Qt::red));
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                 static_cast<GLsizei>(d->vertex_spheres.size()/3),
@@ -550,6 +548,7 @@ Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
     program->disableAttributeArray("colors");
 
     viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
+    viewer->glVertexAttribDivisor(program->attributeLocation("radius"), 1);
     item->vaos[Spheres]->release();
     program->release();
 
@@ -572,7 +571,7 @@ Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
     item->buffers[CenterSpheres].release();
 
     pick_sphere_program.disableAttributeArray("radius");
-    pick_sphere_program.setAttributeValue("radius",2);
+    viewer->glVertexAttribDivisor(program->attributeLocation("radius"), 1);
 
     item->buffers[ColorsSpheres].bind();
     item->buffers[ColorsSpheres].allocate(color_spheres.data(),
@@ -1393,7 +1392,11 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     d->program->setUniformValue("mv_matrix", mv_mat);
     d->program->setUniformValue("light_pos", light_pos);
     d->program->setAttributeValue("colors", QColor(Qt::yellow));
-    d->program->setAttributeValue("radius",2);
+    double radius =std::sqrt(
+        (point(6,0) - point(0,0)) * (point(6,0) - point(0,0)) +
+        (point(6,1) - point(0,1)) * (point(6,1) - point(0,1)) +
+        (point(6,2) - point(0,2)) * (point(6,2) - point(0,2))) *0.02 ;
+    d->program->setAttributeValue("radius", radius);
     viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                   static_cast<GLsizei>(d->vertex_spheres.size()/3),
                                   static_cast<GLsizei>(d->hl_vertex.size()/3));
