@@ -40,9 +40,9 @@ public:
   typedef typename Visitor::Facet_quality Facet_quality;
   typedef typename Visitor::Facet_badness Facet_badness;
   
+  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Geom_traits::FT FT;
@@ -206,15 +206,9 @@ private:
       }
         
       case FACET_VERTICES_ON_SAME_SURFACE_PATCH:
-      {
-        typedef Mesh_3::Facet_on_same_surface_criterion<Tr,Visitor> Same_surface_criterion;
-        criteria_.add(new Same_surface_criterion());
-        break;
-      }
-      
       case FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK:
-      {
         // @TODO: Implement adjacency check !
+      {
         typedef Mesh_3::Facet_on_same_surface_criterion<Tr,Visitor> Same_surface_criterion;
         criteria_.add(new Same_surface_criterion());
         break;

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>730</height>
+    <width>468</width>
+    <height>928</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -101,14 +101,24 @@
       <string>Sharp features</string>
      </property>
      <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0">
-      <item row="1" column="2">
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="protect">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
        <widget class="QCheckBox" name="noEdgeSizing">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="4" column="1">
        <widget class="QDoubleSpinBox" name="edgeSizing">
         <property name="decimals">
          <number>4</number>
@@ -121,27 +131,20 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="edgeLabel">
         <property name="text">
-         <string>Edge size</string>
+         <string>Edge &amp;size</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="protect">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
+        <property name="buddy">
+         <cstring>edgeSizing</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="protectLabel">
         <property name="text">
          <string>&amp;Protect sharp edges</string>
@@ -151,6 +154,32 @@
         </property>
         <property name="buddy">
          <cstring>protect</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="sharpEdgesAngleLabel">
+        <property name="toolTip">
+         <string>For the detection of sharp edges, this is the lower bound on the angle between normals of incident facets of sharp edges</string>
+        </property>
+        <property name="text">
+         <string>Angle bound for &amp;sharp edges (deg)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>sharpEdgesAngle</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="sharpEdgesAngle">
+        <property name="maximum">
+         <double>180.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>60.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -267,7 +296,7 @@
          </size>
         </property>
         <property name="minimum">
-         <double>1.000000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
          <double>30.000000000000000</double>
@@ -293,7 +322,7 @@
       <item row="8" column="0" colspan="3">
        <widget class="QFrame" name="advanced">
         <property name="visible">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -325,6 +354,26 @@
            </property>
            <property name="text">
             <string>&amp;manifold</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="facetTopologyLabel">
+           <property name="text">
+            <string>The following option enables the &lt;a href=&quot;http://doc.cgal.org/latest/Mesh_3/group__PkgMesh__3Enum.html#gaac682a581ddebf8daff681621911d1f3&quot;&gt; &lt;code&gt;FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK &lt;/code&gt;&lt;/a&gt; facet topology criterion (click on the link to see the manual page).</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="facetTopology">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>force facets vertices on same surface patch</string>
            </property>
           </widget>
          </item>

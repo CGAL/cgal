@@ -14,7 +14,7 @@
 #include "Mesh_function.h"
 #include "Facet_extra_criterion.h"
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 using namespace CGAL::Three;
 
 typedef Tr::Point Point_3;
@@ -30,6 +30,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
+                                 const double sharp_edges_angle,
                                  const int manifold,
                                  const bool surface_only,
                                  CGAL::Three::Scene_interface* scene)
@@ -45,7 +46,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
     std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
 
   std::cerr << "Build AABB tree...";
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
 
   // Create domain
@@ -60,14 +61,15 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   
   // Features
   if(polylines.empty() && protect_features) {
-      p_domain->detect_features();//includes detection of borders in the surface case
+      //includes detection of borders in the surface case
+      p_domain->detect_features(sharp_edges_angle);
   }
   if(! polylines.empty()){
     p_domain->add_features(polylines.begin(), polylines.end());
     protect_features = true; // so that it will be passed in make_mesh_3
   }
 
-  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
+  std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->setScene(scene);
@@ -98,9 +100,10 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   param.edge_sizing =  edge_size;
   param.manifold = manifold;
   param.protect_features = protect_features;
+  param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
 
   typedef ::Mesh_function<Polyhedral_mesh_domain,
-                          CGAL::Tag_false> Mesh_function;
+                          Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                      p_domain, param);
   return new Meshing_thread(p_mesh_function, p_new_item);
@@ -144,7 +147,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.manifold = manifold;
 
   typedef ::Mesh_function<Function_mesh_domain,
-                          CGAL::Tag_false> Mesh_function;
+                          Mesh_fnt::Implicit_domain_tag> Mesh_function;
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                      p_domain, param);
   return new Meshing_thread(p_mesh_function, p_new_item);
@@ -206,7 +209,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
-  CGAL::Timer timer;
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->setScene(scene);
   if(!is_gray)
@@ -224,9 +226,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       // Insert edge in domain
       p_domain->add_features(polylines.begin(), polylines.end());
     }
-    timer.start();
     typedef ::Mesh_function<Image_mesh_domain,
-                            CGAL::Tag_true> Mesh_function;
+                            Mesh_fnt::Labeled_image_domain_tag> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                        p_domain, param);
     return new Meshing_thread(p_mesh_function, p_new_item);
@@ -252,9 +253,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       // Insert edge in domain
       p_domain->add_features(polylines.begin(), polylines.end());
     }
-    timer.start();
     typedef ::Mesh_function<Gray_Image_mesh_domain,
-                            CGAL::Tag_false> Mesh_function;
+                            Mesh_fnt::Gray_image_domain_tag> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                        p_domain, param);
     return new Meshing_thread(p_mesh_function, p_new_item);

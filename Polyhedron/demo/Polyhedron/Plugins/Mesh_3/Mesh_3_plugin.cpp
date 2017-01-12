@@ -14,6 +14,8 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDesktopServices>
+#include <QUrl>
 #include <fstream>
 
 #include "Scene_polyhedron_item.h"
@@ -114,12 +116,13 @@ public:
 public Q_SLOTS:
   void mesh_3_volume();
   void mesh_3_surface();
+  void mesh_3_surface_with_defaults() { mesh_3(true, true); }
   void splitPolylines();
   void meshing_done(Meshing_thread* t);
   void status_report(QString str);
 
 private:
-  void mesh_3(const bool surface_only);
+  void mesh_3(const bool surface_only, const bool use_defaults = false);
   void launch_thread(Meshing_thread* mesh_thread);
   void treat_result(Scene_item& source_item, Scene_c3t3_item& result_item) const;
 
@@ -171,7 +174,7 @@ void Mesh_3_plugin::mesh_3_volume()
   mesh_3(false);
 }
 
-void Mesh_3_plugin::mesh_3(const bool surface_only)
+void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 {
   Scene_polyhedron_item* poly_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
@@ -260,6 +263,12 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   QDialog dialog(mw);
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
+
+  ui.advanced->setVisible(false);
+  connect(ui.facetTopologyLabel,
+          &QLabel::linkActivated,
+          &QDesktopServices::openUrl);
+
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
@@ -334,18 +343,36 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
     ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
   else
     ui.volumeGroup->setVisible(!surface_only);
+  if (poly_item == NULL || polylines_item != NULL) {
+    ui.sharpEdgesAngleLabel->setVisible(false);
+    ui.sharpEdgesAngle->setVisible(false);
+
+    ui.facetTopology->setEnabled(false);
+    ui.facetTopology->setToolTip(tr("<b>Notice:</b> "
+                                    "This option is only available with a"
+                                    " polyhedron, when features are detected"
+                                    " automatically"));
+  }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
 
+#if CGAL_CONCURRENT_MESH_3
+  ui.manifoldCheckBox->setEnabled(false);
+  ui.manifoldCheckBox->setToolTip(tr("<b>Notice:</b> The manifold option cannot"
+                                     " be used with the parallel version of "
+                                     "Mesh_3."));
+#endif
   // -----------------------------------
   // Get values
   // -----------------------------------
 
   //reset cursor from the code for the scripts
   QApplication::restoreOverrideCursor();
-  int i = dialog.exec();
-  if( i == QDialog::Rejected ) { return; }
+  if(!use_defaults) {
+    int i = dialog.exec();
+    if( i == QDialog::Rejected ) { return; }
+  }
 
   // 0 means parameter is not considered
   const double angle = !ui.noAngle->isChecked() ? 0 : ui.facetAngle->value();
@@ -355,11 +382,14 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const double edge_size = !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   const bool protect_features = ui.protect->isChecked();
+  const double sharp_edges_angle = ui.sharpEdgesAngle->value();
   const bool detect_connected_components = ui.detectComponents->isChecked();
-  const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
-  const float iso_value = ui.iso_value_spinBox->value();
-  const float value_outside = ui.value_outside_spinBox->value();
-  const float inside_is_less =  ui.inside_is_less_checkBox->isChecked();
+  const int manifold =
+    (ui.manifoldCheckBox->isChecked() ? 1 : 0)
+    + (ui.facetTopology->isChecked() ? 2 : 0);
+  const float iso_value = float(ui.iso_value_spinBox->value());
+  const float value_outside = float(ui.value_outside_spinBox->value());
+  const float inside_is_less =  float(ui.inside_is_less_checkBox->isChecked());
 
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -388,6 +418,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
                                  edge_size,
                                  radius_edge,
                                  protect_features,
+                                 sharp_edges_angle,
                                  manifold,
                                  surface_only,
                                  scene);
@@ -478,7 +509,7 @@ launch_thread(Meshing_thread* mesh_thread)
   QObject::connect(cancelButton, SIGNAL(clicked()),
                    mesh_thread,  SLOT(stop()));
 
-  message_box_->show();
+  message_box_->open();
 
   // -----------------------------------
   // Connect main thread to meshing thread
@@ -536,7 +567,7 @@ meshing_done(Meshing_thread* thread)
   treat_result(*source_item_, *result_item);
 
   // close message box
-  message_box_->close();
+  message_box_->done(0);
   message_box_ = NULL;
 
   // free memory
@@ -555,9 +586,9 @@ treat_result(Scene_item& source_item,
   result_item.c3t3_changed();
 
   const Scene_item::Bbox& bbox = result_item.bbox();
-  result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
-                          (bbox.ymin() + bbox.ymax())/2.f,
-                          (bbox.zmin() + bbox.zmax())/2.f);
+  result_item.setPosition(float((bbox.xmin() + bbox.xmax())/2.f),
+                          float((bbox.ymin() + bbox.ymax())/2.f),
+                          float((bbox.zmin() + bbox.zmax())/2.f));
 
   result_item.setColor(default_mesh_color);
   result_item.setRenderingMode(source_item.renderingMode());

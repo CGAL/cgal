@@ -57,8 +57,8 @@ public :
         :x(p_x), y(p_y), z(p_z),_3D(p_3D), _is_always_visible(always_visible), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
-       _width = fm.width(m_text);
-       _height = fm.height();
+       _width = float(fm.width(m_text));
+       _height = float(fm.height());
     }
     QString text()const {return m_text;}
     //!Returns the position of the center of the text, in world coordinates.

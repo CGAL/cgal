@@ -103,7 +103,9 @@ detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
   for(typename Polyhedron::Halfedge_iterator he = polyhedron.edges_begin(),
       end = polyhedron.edges_end() ; he != end ; ++he)
   {
-    if(he->is_border() || angle_in_deg == FT() || is_sharp(he,cos_angle))
+    if(he->is_border() || angle_in_deg == FT() ||
+       (angle_in_deg != FT(180) && is_sharp(he,cos_angle))
+       )
     {
       he->set_feature_edge(true);
       he->opposite()->set_feature_edge(true);

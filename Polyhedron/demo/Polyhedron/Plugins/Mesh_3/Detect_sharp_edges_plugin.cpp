@@ -105,15 +105,23 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   // Detect edges
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
+
+  CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron> detect_features;
   Q_FOREACH(Poly_tuple tuple, polyhedrons)
   {
+    Scene_polyhedron_item* item =
+      qobject_cast<Scene_polyhedron_item*>(scene->item(tuple.first));
     Polyhedron* pMesh = tuple.second;
     if (!pMesh) continue;
 
-    CGAL::detect_sharp_edges(pMesh, angle);
+    // Get sharp features
+    detect_features.detect_sharp_edges(*pMesh, angle);
+    detect_features.detect_surface_patches(*pMesh);
+    detect_features.detect_vertices_incident_patches(*pMesh);
 
     //update item
-    scene->item(tuple.first)->invalidateOpenGLBuffers();
+    item->setItemIsMulticolor(true);
+    item->invalidateOpenGLBuffers();
 
     // update scene
     scene->itemChanged(tuple.first);

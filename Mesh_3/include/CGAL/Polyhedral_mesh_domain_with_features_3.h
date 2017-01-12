@@ -41,6 +41,9 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
@@ -51,6 +54,128 @@
 
 
 namespace CGAL {
+
+namespace internal {
+namespace Mesh_3 {
+
+template <typename Kernel>
+struct Angle_tester
+{
+  template <typename vertex_descriptor, typename Graph>
+  bool operator()(vertex_descriptor& v, const Graph& g) const
+  {
+    typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
+    if (out_degree(v, g) != 2)
+      return true;
+    else
+    {
+      out_edge_iterator out_edge_it, out_edges_end;
+      boost::tie(out_edge_it, out_edges_end) = out_edges(v, g);
+
+      vertex_descriptor v1 = target(*out_edge_it++, g);
+      vertex_descriptor v2 = target(*out_edge_it++, g);
+      CGAL_assertion(out_edge_it == out_edges_end);
+
+      const typename Kernel::Point_3& p = g[v];
+      const typename Kernel::Point_3& p1 = g[v1];
+      const typename Kernel::Point_3& p2 = g[v2];
+
+      return (CGAL::angle(p1, p, p2) == CGAL::ACUTE);
+    }
+  }
+};
+
+template <typename Polyhedron>
+struct Is_featured_edge {
+  const Polyhedron* polyhedron;
+  Is_featured_edge() : polyhedron(0) {} // required by boost::filtered_graph
+  Is_featured_edge(const Polyhedron& polyhedron) : polyhedron(&polyhedron) {}
+
+  bool operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor e) const {
+    return halfedge(e, *polyhedron)->is_feature_edge();
+  }
+}; // end Is_featured_edge<Polyhedron>
+
+template <typename Polyhedron>
+struct Is_border_edge {
+  const Polyhedron* polyhedron;
+  Is_border_edge() : polyhedron(0) {} // required by boost::filtered_graph
+  Is_border_edge(const Polyhedron& polyhedron) : polyhedron(&polyhedron) {}
+
+  bool operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor e) const {
+    return is_border(halfedge(e, *polyhedron), *polyhedron) ||
+      is_border(opposite(halfedge(e, *polyhedron), *polyhedron), *polyhedron);
+  }
+}; // end Is_featured_edge<Polyhedron>
+
+template<typename Polyhedral_mesh_domain,
+         typename Polyline_with_context,
+         typename Graph>
+struct Extract_polyline_with_context_visitor
+{
+  typedef typename Polyhedral_mesh_domain::Polyhedron Polyhedron;
+  std::vector<Polyline_with_context>& polylines;
+  const Polyhedron& polyhedron;
+  const Graph& graph;
+
+  Extract_polyline_with_context_visitor
+  (const Polyhedron& polyhedron,
+   const Graph& graph,
+   typename std::vector<Polyline_with_context>& polylines)
+    : polylines(polylines), polyhedron(polyhedron), graph(graph)
+  {}
+
+  void start_new_polyline()
+  {
+    polylines.push_back(Polyline_with_context());
+  }
+
+  void add_node(typename boost::graph_traits<Graph>::vertex_descriptor vd)
+  {
+    if(polylines.back().polyline_content.empty()) {
+      polylines.back().polyline_content.push_back(graph[vd]);
+    }
+  }
+
+  void add_edge(typename boost::graph_traits<Graph>::edge_descriptor ed)
+  {
+    typename boost::graph_traits<Graph>::vertex_descriptor
+      s = source(ed, graph),
+      t = target(ed, graph);
+    Polyline_with_context& polyline = polylines.back();
+    CGAL_assertion(!polyline.polyline_content.empty());
+    if(polyline.polyline_content.back() != graph[s]) {
+      polyline.polyline_content.push_back(graph[s]);
+    } else if(polyline.polyline_content.back() != graph[t]) {
+      // if the edge is zero-length, it is ignored
+      polyline.polyline_content.push_back(graph[t]);
+    }
+    const typename boost::edge_bundle_type<Graph>::type &
+      set_of_indices = graph[ed];
+    polyline.context.adjacent_patches_ids.insert(set_of_indices.begin(),
+                                                 set_of_indices.end());
+  }
+
+  void end_polyline()
+  {
+    // ignore degenerated polylines
+    if(polylines.back().polyline_content.size() < 2)
+      polylines.resize(polylines.size() - 1);
+    // else {
+    //   std::cerr << "Polyline with " << polylines.back().polyline_content.size()
+    //             << " vertices, incident to "
+    //             << polylines.back().context.adjacent_patches_ids.size()
+    //             << " patches:\n ";
+    //   for(auto p: polylines.back().polyline_content)
+    //     std::cerr << " " << p;
+    //   std::cerr << "\n";
+    // }
+  }
+};
+
+
+} // end CGAL::internal::Mesh_3
+} // end CGAL::internal
 
 /**
  * @class Polyhedral_mesh_domain_with_features_3
@@ -75,9 +200,16 @@ class Polyhedral_mesh_domain_with_features_3
       Polyhedron_, IGT_, TriangleAccessor,
       Use_patch_id_tag, Use_exact_intersection_construction_tag > > Base;
 
-  typedef Polyhedron_ Polyhedron;
+  typedef boost::adjacency_list<
+    boost::setS, // this avoids parallel edges
+    boost::vecS,
+    boost::undirectedS,
+    typename Polyhedron_::Point,
+    typename Polyhedron_::Vertex::Set_of_indices> Featured_edges_copy;
 
 public:
+  typedef Polyhedron_ Polyhedron;
+
   // Index types
   typedef typename Base::Index                Index;
   typedef typename Base::Corner_index         Corner_index;
@@ -96,46 +228,65 @@ public:
   
   typedef CGAL::Tag_true           Has_features;
 
+  typedef std::vector<Point_3> Bare_polyline;
+  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
+                                        Bare_polyline > Polyline_with_context;
   /// Constructors
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-    CGAL::Random* p_rng = NULL);
+                                         CGAL::Random* p_rng = NULL)
+    : Base(p_rng) , borders_detected_(false)
+  {
+    stored_polyhedra.resize(1);
+    stored_polyhedra[0] = p;
+    this->add_primitives(stored_polyhedra[0]);
+    this->build();
+  }
 
-  CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3(const std::string& filename,
-    CGAL::Random* p_rng = NULL);
+  CGAL_DEPRECATED
+  Polyhedral_mesh_domain_with_features_3(const std::string& filename,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(p_rng) , borders_detected_(false)
+  {
+    load_from_file(filename.c_str());
+  }
 
   // The following is needed, because otherwise, when a "const char*" is
   // passed, the constructors templates are a better match, than the
   // constructor with `std::string`.
-  CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3(const char* filename,
-    CGAL::Random* p_rng = NULL);
-
-  // Inherited constructors
-  template <typename T2>
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-                                         const T2& b,
+  CGAL_DEPRECATED
+  Polyhedral_mesh_domain_with_features_3(const char* filename,
                                          CGAL::Random* p_rng = NULL)
-    : Base(p, b)
-    , borders_detected_(false)
+    : Base(p_rng) , borders_detected_(false)
   {
-    poly_.resize(1);
-    poly_[0] = p;
-    this->set_random_generator(p_rng);
+    load_from_file(filename);
+  }
+
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+                                         const Polyhedron& bounding_p,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(p_rng) , borders_detected_(false)
+  {
+    stored_polyhedra.resize(2);
+    stored_polyhedra[0] = p;
+    stored_polyhedra[1] = bounding_p;
+    this->add_primitives(stored_polyhedra[0]);
+    this->add_primitives(stored_polyhedra[1]);
+    this->add_primitives_to_bounding_tree(stored_polyhedra[1]);
   }
 
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_with_features_3(InputPolyhedraPtrIterator begin,
                                          InputPolyhedraPtrIterator end,
                                          CGAL::Random* p_rng = NULL)
-    : Base(begin, end)
-    , borders_detected_(false)
+    : Base(p_rng) , borders_detected_(false)
   {
-    if (begin != end) {
-      for (; begin != end; ++begin)
-        poly_.push_back(**begin);
+    stored_polyhedra.reserve(std::distance(begin, end));
+    for (; begin != end; ++begin) {
+      stored_polyhedra.push_back(**begin);
+      this->add_primitives(stored_polyhedra.back());
     }
-    else
-      poly_.push_back(**begin);
-    this->set_random_generator(p_rng);
+    this->set_surface_only();
+    this->build();
   }
 
   template <typename InputPolyhedraPtrIterator>
@@ -143,16 +294,19 @@ public:
                                          InputPolyhedraPtrIterator end,
                                          const Polyhedron& bounding_polyhedron,
                                          CGAL::Random* p_rng = NULL)
-    : Base(begin, end, bounding_polyhedron)
-    , borders_detected_(false)
+    : Base(p_rng) , borders_detected_(false)
   {
-    if (begin != end) {
-      for (; begin != end; ++begin)
-        poly_.push_back(**begin);
+    stored_polyhedra.reserve(std::distance(begin, end)+1);
+    if(begin != end) {
+      for (; begin != end; ++begin) {
+        stored_polyhedra.push_back(**begin);
+        this->add_primitives(stored_polyhedra.back());
+      }
+      stored_polyhedra.push_back(bounding_polyhedron);
+      this->add_primitives(stored_polyhedra.back());
     }
-    else
-      poly_.push_back(**begin);
-    this->set_random_generator(p_rng);
+    this->add_primitives_to_bounding_tree(stored_polyhedra.back());
+    this->build();
   }
 
   /// Destructor
@@ -162,13 +316,26 @@ public:
   void initialize_ts(Polyhedron& p);
 
   void detect_features(FT angle_in_degree, std::vector<Polyhedron>& p);
-  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, poly_); }
+  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, stored_polyhedra); }
 
-  void detect_borders(const std::vector<Polyhedron>& p);
-  void detect_borders() { detect_borders(poly_); };
+  void detect_borders(std::vector<Polyhedron>& p);
+  void detect_borders() { detect_borders(stored_polyhedra); };
 
 private:
-  std::vector<Polyhedron> poly_;
+  void load_from_file(const char* filename) {
+    // Create input polyhedron
+    std::ifstream input(filename);
+    stored_polyhedra.resize(1);
+    input >> stored_polyhedra[0];
+    this->add_primitives(stored_polyhedra[0]);
+    this->build();
+  }
+
+  template <typename Edge_predicate>
+  void add_features_from_split_graph_into_polylines(const Polyhedron& poly,
+                                                    const Edge_predicate& pred);
+
+  std::vector<Polyhedron> stored_polyhedra;
   bool borders_detected_;
 
 private:
@@ -178,55 +345,6 @@ private:
   Self& operator=(const Self& src);
 
 };  // end class Polyhedral_mesh_domain_with_features_3
-
-
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-                                       CGAL::Random* p_rng)
-  : Base()
-  , borders_detected_(false)
-{
-  poly_.resize(1);
-  poly_[0] = p;
-  this->add_primitives(poly_[0]);
-  this->set_random_generator(p_rng);
-}
-
-
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
-CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const char* filename,
-                                       CGAL::Random* p_rng)
-  : Base()
-  , borders_detected_(false)
-{
-  // Create input polyhedron
-  std::ifstream input(filename);
-  poly_.resize(1);
-  input >> poly_[0];
-  this->add_primitives(poly_[0]);
-  this->set_random_generator(p_rng);
-}
-
-
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
-CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const std::string& filename,
-                                       CGAL::Random* p_rng)
-  : Base()
-  , borders_detected_(false)
-{
-  // Create input polyhedron
-  std::ifstream input(filename.c_str());
-  poly_.resize(1);
-  input >> poly_[0];
-  this->add_primitives(poly_[0]);
-  this->set_random_generator(p_rng);
-}
 
 
 template < typename GT_, typename P_, typename TA_,
@@ -254,6 +372,30 @@ initialize_ts(Polyhedron& p)
 }
 
 
+
+
+template <typename Graph>
+void dump_graph_edges(std::ostream& out, const Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
+
+  out.precision(17);
+  BOOST_FOREACH(edge_descriptor e, edges(g))
+  {
+    vertex_descriptor s = source(e, g);
+    vertex_descriptor t = target(e, g);
+    out << "2 " << g[s] << " " << g[t] << "\n";
+  }
+}
+
+template <typename Graph>
+void dump_graph_edges(const char* filename, const Graph& g)
+{
+  std::ofstream out(filename);
+  dump_graph_edges(out, g);
+}
+
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 void
@@ -264,34 +406,113 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   if (borders_detected_)
     return;//prevent from not-terminating
 
-  for (std::size_t i = 0; i < poly.size(); ++i)
+  CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron> detect_features;
+  BOOST_FOREACH(Polyhedron& p, poly)
   {
-  Polyhedron& p = poly[i];
-  initialize_ts(p);
+    initialize_ts(p);
 
-  // Get sharp features
-  Mesh_3::detect_features(p,angle_in_degree);
-  
-  // Get polylines
-  typedef std::vector<Point_3> Bare_polyline;
-  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
-    Bare_polyline > Polyline;
-  
-  std::vector<Polyline> polylines;
-  typedef std::back_insert_iterator<std::vector<Polyline> > Output_iterator;
+    // Get sharp features
+    detect_features.detect_sharp_edges(p, angle_in_degree);
+    detect_features.detect_surface_patches(p);
+    detect_features.detect_vertices_incident_patches(p);
 
-  Mesh_3::detect_polylines<Polyhedron,Polyline,Output_iterator>(
-    &p, std::back_inserter(polylines));
-    
-  // Insert polylines in domain
-  Mesh_3::Extract_bare_polyline<Polyline> extractor;
-  
-  this->add_features(
-    boost::make_transform_iterator(polylines.begin(),extractor),
-    boost::make_transform_iterator(polylines.end(),extractor));
+    internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);
+
+    add_features_from_split_graph_into_polylines(p, is_featured_edge);
+  }
+  borders_detected_ = true;/*done by Mesh_3::detect_features*/
+}
+
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
+template <typename Edge_predicate>
+void
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+add_features_from_split_graph_into_polylines(const Polyhedron& p,
+                                             const Edge_predicate& pred)
+{
+  typedef boost::filtered_graph<Polyhedron,
+                                Edge_predicate > Featured_edges_graph;
+  Featured_edges_graph orig_graph(p, pred);
+
+  typedef Featured_edges_graph Graph;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
+  typedef Featured_edges_copy G_copy;
+  typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<G_copy>::edge_descriptor edge_descriptor;
+
+  G_copy g_copy;
+  {
+    const Featured_edges_graph& graph = orig_graph;
+
+    typedef std::map<typename Polyhedron::Point,
+                     vertex_descriptor> P2vmap;
+    // TODO: replace this map by and unordered_map
+    P2vmap p2vmap;
+
+    BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
+      vertex_descriptor vc;
+      typename P2vmap::iterator it = p2vmap.find(v->point());
+      if(it == p2vmap.end()) {
+        vc = add_vertex(g_copy);
+        g_copy[vc] = v->point();
+        p2vmap[v->point()] = vc;
+      }
+    }
+
+    BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
+      vertex_descriptor vs = p2vmap[source(e,graph)->point()];
+      vertex_descriptor vt = p2vmap[target(e,graph)->point()];
+      CGAL_warning_msg(vs != vt, "ignore self loop");
+      if(vs != vt) {
+        const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
+        typename Polyhedron::Halfedge_handle he = halfedge(e, p);
+        if(!is_border(he, p)) {
+          g_copy[pair.first].insert(he->face()->patch_id());;
+        }
+        he = he->opposite();
+        if(!is_border(he, p)) {
+          g_copy[pair.first].insert(he->face()->patch_id());;
+        }
+      }
+    }
   }
 
-  borders_detected_ = true;/*done by Mesh_3::detect_features*/
+#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+  {// DEBUG
+    dump_graph_edges("edges-graph.polylines.txt", g_copy);
+  }
+#endif
+
+  std::vector<Polyline_with_context> polylines;
+
+  internal::Mesh_3::Extract_polyline_with_context_visitor<
+    Polyhedral_mesh_domain_with_features_3,
+    Polyline_with_context,
+    Featured_edges_copy
+    > visitor(p, g_copy, polylines);
+  internal::Mesh_3::Angle_tester<GT_> angle_tester;
+  split_graph_into_polylines(g_copy, visitor, angle_tester);
+
+  this->add_features_with_context(polylines.begin(),
+                                  polylines.end());
+
+#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+  {//DEBUG
+    std::ofstream og("polylines_graph.polylines.txt");
+    og.precision(17);
+    BOOST_FOREACH(const Polyline_with_context& poly, polylines)
+    {
+      og << poly.polyline_content.size() << " ";
+      BOOST_FOREACH(const Point_3& p, poly.polyline_content)
+        og << p << " ";
+      og << std::endl;
+    }
+    og.close();
+  }
+#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
+
 }
 
 
@@ -299,41 +520,13 @@ template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-detect_borders(const std::vector<Polyhedron>& poly)
+detect_borders(std::vector<Polyhedron>& poly)
 {
   if (borders_detected_)
     return;//border detection has already been done
 
-  typedef std::vector<Point_3> Polyline;
-  typedef std::vector<Polyline>Polylines;
+  detect_features(poly, 180);
 
-  Polylines polylines;
-  Polyline empty;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-
-
-  for (std::size_t i = 0; i < poly.size(); ++i)
-  {
-    const Polyhedron& p = poly[i];
-  std::set<halfedge_descriptor> visited;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(p)){
-    if(visited.find(h) == visited.end()){
-      if(is_border(h,p)){
-        polylines.push_back(empty);
-        Polyline&  polyline = polylines.back();
-        polyline.push_back(source(h,p)->point());
-        BOOST_FOREACH(halfedge_descriptor h,halfedges_around_face(h,p)){
-          polyline.push_back(target(h,p)->point());
-          visited.insert(h);
-        }
-      } else {
-        visited.insert(h);
-      }
-    }
-  }
-  }
-
-  this->add_features(polylines.begin(), polylines.end());
   borders_detected_ = true;
 }
 

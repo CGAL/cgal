@@ -181,8 +181,9 @@ public:
   typedef int Subdomain_index;
   typedef boost::optional<Subdomain_index> Subdomain;
   /// Type of indexes for surface patch of the input complex
-  typedef typename Mesh_3::details::Surface_patch_index_generator<
-    Subdomain_index,Polyhedron,Use_patch_id_tag>::type    Surface_patch_index;
+  typedef Mesh_3::details::Surface_patch_index_generator<
+    Subdomain_index,Polyhedron,Use_patch_id_tag> Surface_patch_index_generator;
+  typedef typename Surface_patch_index_generator::type    Surface_patch_index;
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
@@ -210,13 +211,11 @@ private:
 public:
 
   /// Default constructor
-  Polyhedral_mesh_domain_3()
+  Polyhedral_mesh_domain_3(CGAL::Random* p_rng = NULL)
     : tree_()
     , bounding_tree_(&tree_)
-    , p_rng_(NULL)
-    , delete_rng_(true)
+    , p_rng_(p_rng)
   {
-    p_rng_ = new CGAL::Random(0);
   }
 
   /**
@@ -225,42 +224,29 @@ public:
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            CGAL::Random* p_rng = NULL)
-    : tree_(TriangleAccessor().triangles_begin(p),
-            TriangleAccessor().triangles_end(p))
+    : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
-    , delete_rng_(false)
   {
+    this->add_primitives(p);
     if(!p.is_pure_triangle()) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
       CGAL_error_msg("Your input polyhedron must be triangulated!");
     }
-    if(!p_rng_)
-    {
-      p_rng_ = new CGAL::Random(0);
-      delete_rng_ = true;
-    }
+    this->build();
   }
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            const Polyhedron& bounding_polyhedron,
                            CGAL::Random* p_rng = NULL)
-    : tree_(TriangleAccessor().triangles_begin(p),
-            TriangleAccessor().triangles_end(p))
-    , bounding_tree_(new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
-                                    TriangleAccessor().triangles_end(bounding_polyhedron)))
+    : tree_()
+    , bounding_tree_(new AABB_tree_)
     , p_rng_(p_rng)
-    , delete_rng_(false)
   {
-    tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
-                 TriangleAccessor().triangles_end(bounding_polyhedron));
-    tree_.build();
-    bounding_tree_->build();
-    if(!p_rng_)
-    {
-      p_rng_ = new CGAL::Random(0);
-      delete_rng_ = true;
-    }
+    this->add_primitives(p);
+    this->add_primitives(bounding_polyhedron);
+    this->add_primitives_to_bounding_tree(bounding_polyhedron);
+    this->build();
   }
 
   /**
@@ -284,31 +270,12 @@ public:
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
-        tree_.insert(TriangleAccessor().triangles_begin(**begin),
-                     TriangleAccessor().triangles_end(**begin));
+        this->add_primitives(**begin);
       }
-      tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
-                   TriangleAccessor().triangles_end(bounding_polyhedron));
-      tree_.build();
-      bounding_tree_ =
-        bounding_polyhedron.empty() ?
-        0 :
-        new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
-                       TriangleAccessor().triangles_end(bounding_polyhedron));
-      if(!bounding_polyhedron.empty()) {
-        bounding_tree_->build();
-      }
+      this->add_primitives(bounding_polyhedron);
     }
-    else {
-      tree_.rebuild(TriangleAccessor().triangles_begin(bounding_polyhedron),
-                    TriangleAccessor().triangles_end(bounding_polyhedron));
-      bounding_tree_ = &tree_;
-    }
-    if(!p_rng_)
-    {
-      p_rng_ = new CGAL::Random(0);
-      delete_rng_ = true;
-    }
+    this->add_primitives_to_bounding_tree(bounding_polyhedron);
+    this->build();
   }
 
   /**
@@ -326,21 +293,14 @@ public:
                            InputPolyhedraPtrIterator end,
                            CGAL::Random* p_rng = NULL)
     : p_rng_(p_rng)
-    , delete_rng_(false)
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
-        tree_.insert(TriangleAccessor().triangles_begin(**begin),
-                     TriangleAccessor().triangles_end(**begin));
+        this->add_primitives(**begin);
       }
       tree_.build();
     }
     bounding_tree_ = 0;
-    if(!p_rng_)
-    {
-      p_rng_ = new CGAL::Random(0);
-      delete_rng_ = true;
-    }
   }
 
   /// Destructor
@@ -348,8 +308,10 @@ public:
     if(bounding_tree_ != 0 && bounding_tree_ != &tree_) {
       delete bounding_tree_;
     }
-    if(delete_rng_)
-      delete p_rng_;
+  }
+
+  void set_surface_only() {
+    bounding_tree_ = 0;
   }
 
   /**
@@ -636,8 +598,22 @@ protected:
   {
     tree_.insert(TriangleAccessor().triangles_begin(p),
                  TriangleAccessor().triangles_end(p));
+  }
 
+  void add_primitives_to_bounding_tree(const Polyhedron& p)
+  {
+    if(bounding_tree_ == &tree_ || bounding_tree_ == 0) {
+      bounding_tree_ = new AABB_tree_;
+    }
+    bounding_tree_->insert(TriangleAccessor().triangles_begin(p),
+                           TriangleAccessor().triangles_end(p));
+  }
+
+  void build() {
     tree_.build();
+    if(bounding_tree_ != &tree_ && bounding_tree_ != 0) {
+      bounding_tree_->build();
+    }
   }
 
 private:
@@ -704,16 +680,7 @@ public:
 
   void set_random_generator(CGAL::Random* p_rng)
   {
-    if(delete_rng_) delete p_rng_;
-    if(!p_rng)
-    {
-      p_rng_ = new CGAL::Random(0);
-      delete_rng_ = true;
-    }
-    else {
-      p_rng_ = p_rng;
-      delete_rng_ = false;
-    }
+    p_rng_ = p_rng;
   }
 
 private:
@@ -744,7 +711,9 @@ Construct_initial_points::operator()(OutputIterator pts,
                         FT( (bbox.ymin() + bbox.ymax()) / 2),
                         FT( (bbox.zmin() + bbox.zmax()) / 2) );
 
-  CGAL::Random& rng = *(r_domain_.p_rng_);
+  CGAL::Random& rng = *(r_domain_.p_rng_ != 0 ?
+                        r_domain_.p_rng_ :
+                        new Random(0));
   Random_points_on_sphere_3<Point_3> random_point(1., rng);
 
   int i = n;
@@ -781,6 +750,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << std::endl;
 #endif
+  if(r_domain_.p_rng_ == 0) delete &rng;
   return pts;
 }
 
