@@ -65,7 +65,6 @@ A functor object to construct the sphere centered at one point and passing throu
 typedef unspecified_type Construct_sphere_3; 
 
 /*!
-\todo This is not correct! that is not used!
 A functor object to compute the point on a geometric primitive which is closest from a query. Provides the operator: 
 `Point_3 operator()(const Type_2& type_2, const Point_3& p);` where `Type_2` is any type among `Segment_3` and `Triangle_3`. The operator returns the point on `type_2` which is closest to `p`. 
 */ 
@@ -76,7 +75,7 @@ A functor object to compare the distance of two points wrt a third one.
 Provides the operator:
 `CGAL::Comparision_result operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3)`. The operator compare the distance between `p1 and `p2`, and between `p2` and `p3`.
 */
-typedef unspecified_type Compare_distance_3
+typedef unspecified_type Compare_distance_3;
 
 /*!
 A functor object to detect if a point lies inside a sphere or not. 

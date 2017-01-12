@@ -481,11 +481,53 @@ the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
+\section PMPDistance Approximate Hausdorff Distance
+
+This package provides methods to compute (approximate) distances between meshes and point sets.
+
+The function \link CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
+computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
+a sampling of `tm1`, it computes the distance to `tm2` of the farthest sample point to `tm2` \cgalCite{cignoni1998metro}.
+The symmetric version (\link CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance() `approximate_symmetric_Hausdorff_distance()`\endlink)
+is the maximum of the two non-symmetric distances. Internally, points are sampled using
+\link CGAL::Polygon_mesh_processing::sample_triangle_mesh() `sample_triangle_mesh()`\endlink and the distance
+to each sample point is computed using
+\link CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh() `max_distance_to_triangle_mesh()`\endlink.
+The quality of the approximation depends on the quality of the sampling and the runtime depends on the number of sample points.
+Three sampling methods with different parameters are provided (see \cgalFigureRef{sampling_bunny}).
+
+\cgalFigureBegin{sampling_bunny, pmp_sampling_bunny.jpg}
+Sampling of a triangle mesh using different sampling methods. From left to right: (a) Grid sampling, (b) Monte-Carlo sampling with fixed number of points per face and per edge,
+(c) Monte-Carlo sampling with a number of points proportional to the area/length, and (d) Uniform random sampling.
+The four pictures represent the sampling on the same portion of a mesh, parameters were adjusted so that the total number of points sampled in faces (blue points) and on
+edges (red points) are roughly the same.
+Note that when using the random uniform sampling some faces/edges may not contain any point, but this method is the only one that allows to exactly match a given number of points.
+\cgalFigureEnd
+
+The function \link CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set() `approximate_max_distance_to_point_set()`\endlink
+computes an approximation of the Hausdorff distance from a mesh to a point set.
+For each triangle, a lower and upper bound of the Hausdorff distance to the point set are computed.
+Triangles are refined until the difference between the bounds is lower than a user-defined precision threshold.
+
+\subsection AHDExample Approximate Hausdorff Distance Example
+In the following example, a mesh is isotropically remeshed and the approximate distance between the input and the output is computed.
+
+\cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
+
+\subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
+In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
+a triangulated surface mesh is constructed from a point set using the
+\link PkgPoissonSurfaceReconstructionSummary Poisson reconstruction algorithm \endlink,
+and the distance between the point set and the reconstructed surface is computed
+with the following code:
+
+\snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
 
 \section PMPHistory Implementation History
 
 A first version of this package was started by Ilker %O. Yaz and Sébastien Loriot.
 Jane Tournois worked on the finalization of the API, code, and documentation.
+
 
 */
 } /* namespace CGAL */

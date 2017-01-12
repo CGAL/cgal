@@ -13,4 +13,6 @@
 \example Polygon_mesh_processing/mesh_slicer_example.cpp
 \example Polygon_mesh_processing/isotropic_remeshing_example.cpp
 \example Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp
+\example Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp
+\example Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp
 */

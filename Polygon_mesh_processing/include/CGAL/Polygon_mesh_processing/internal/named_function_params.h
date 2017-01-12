@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Jane Tournois
 
@@ -39,6 +39,19 @@ namespace CGAL{
   enum relax_constraints_t          { relax_constraints };
   enum vertex_is_constrained_t      { vertex_is_constrained };
   enum face_patch_t                 { face_patch };
+  enum random_uniform_sampling_t    { random_uniform_sampling };
+  enum grid_sampling_t              { grid_sampling };
+  enum monte_carlo_sampling_t       { monte_carlo_sampling };
+  enum do_sample_edges_t            { do_sample_edges };
+  enum do_sample_vertices_t         { do_sample_vertices };
+  enum do_sample_faces_t            { do_sample_faces };
+  enum number_of_points_on_faces_t  { number_of_points_on_faces };
+  enum number_of_points_per_face_t  { number_of_points_per_face };
+  enum grid_spacing_t               { grid_spacing };
+  enum nb_points_per_area_unit_t    { nb_points_per_area_unit };
+  enum number_of_points_per_edge_t  { number_of_points_per_edge };
+  enum number_of_points_on_edges_t  { number_of_points_on_edges };
+  enum nb_points_per_distance_unit_t{ nb_points_per_distance_unit };
 
   //to be documented
   enum face_normal_t                { face_normal };
@@ -216,6 +229,109 @@ namespace CGAL{
       return Params(p, *this);
     }
 
+    template <typename Boolean>
+    pmp_bgl_named_params<Boolean, random_uniform_sampling_t, self>
+    use_random_uniform_sampling(const Boolean& p) const
+    {
+      typedef pmp_bgl_named_params<Boolean, random_uniform_sampling_t, self> Params;
+      return Params(p, *this);
+    }
+
+    template <typename Boolean>
+    pmp_bgl_named_params<Boolean, grid_sampling_t, self>
+    use_grid_sampling(const Boolean& p) const
+    {
+      typedef pmp_bgl_named_params<Boolean, grid_sampling_t, self> Params;
+      return Params(p, *this);
+    }
+
+    template <typename Boolean>
+    pmp_bgl_named_params<Boolean, monte_carlo_sampling_t, self>
+    use_monte_carlo_sampling(const Boolean& p) const
+    {
+      typedef pmp_bgl_named_params<Boolean, monte_carlo_sampling_t, self> Params;
+      return Params(p, *this);
+    }
+
+    template <typename Boolean>
+    pmp_bgl_named_params<Boolean, do_sample_edges_t, self>
+    sample_edges(const Boolean& p) const
+    {
+      typedef pmp_bgl_named_params<Boolean, do_sample_edges_t, self> Params;
+      return Params(p, *this);
+    }
+
+    template <typename Boolean>
+    pmp_bgl_named_params<Boolean, do_sample_vertices_t, self>
+    sample_vertices(const Boolean& p) const
+    {
+      typedef pmp_bgl_named_params<Boolean, do_sample_vertices_t, self> Params;
+      return Params(p, *this);
+    }
+
+    template <typename Boolean>
+    pmp_bgl_named_params<Boolean, do_sample_faces_t, self>
+    sample_faces(const Boolean& p) const
+    {
+      typedef pmp_bgl_named_params<Boolean, do_sample_faces_t, self> Params;
+      return Params(p, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, number_of_points_on_faces_t, self>
+    number_of_points_on_faces(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, number_of_points_on_faces_t, self> Params;
+      return Params(n, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, number_of_points_per_face_t, self>
+    number_of_points_per_face(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, number_of_points_per_face_t, self> Params;
+      return Params(n, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, grid_spacing_t, self>
+    grid_spacing(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, grid_spacing_t, self> Params;
+      return Params(n, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, nb_points_per_area_unit_t, self>
+    number_of_points_per_area_unit(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, nb_points_per_area_unit_t, self> Params;
+      return Params(n, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, number_of_points_per_edge_t, self>
+    number_of_points_per_edge(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, number_of_points_per_edge_t, self> Params;
+      return Params(n, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, number_of_points_on_edges_t, self>
+    number_of_points_on_edges(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, number_of_points_on_edges_t, self> Params;
+      return Params(n, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, nb_points_per_distance_unit_t, self>
+    number_of_points_per_distance_unit(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, nb_points_per_distance_unit_t, self> Params;
+      return Params(n, *this);
+    }
   };
 
 namespace Polygon_mesh_processing{
@@ -377,6 +493,123 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<IndexMap, boost::vertex_index_t> Params;
     return Params(p);
+  }
+
+  //overload
+  template <typename Boolean>
+  pmp_bgl_named_params<Boolean, random_uniform_sampling_t>
+  use_random_uniform_sampling(const Boolean& p)
+  {
+    typedef pmp_bgl_named_params<Boolean, random_uniform_sampling_t> Params;
+    return Params(p);
+  }
+
+  //overload
+  template <typename Boolean>
+  pmp_bgl_named_params<Boolean, grid_sampling_t>
+  use_grid_sampling(const Boolean& p)
+  {
+    typedef pmp_bgl_named_params<Boolean, grid_sampling_t> Params;
+    return Params(p);
+  }
+
+  //overload
+  template <typename Boolean>
+  pmp_bgl_named_params<Boolean, monte_carlo_sampling_t>
+  use_monte_carlo_sampling(const Boolean& p)
+  {
+    typedef pmp_bgl_named_params<Boolean, monte_carlo_sampling_t> Params;
+    return Params(p);
+  }
+
+  //overload
+  template <typename Boolean>
+  pmp_bgl_named_params<Boolean, do_sample_edges_t>
+  sample_edges(const Boolean& p)
+  {
+    typedef pmp_bgl_named_params<Boolean, do_sample_edges_t> Params;
+    return Params(p);
+  }
+
+  //overload
+  template <typename Boolean>
+  pmp_bgl_named_params<Boolean, do_sample_vertices_t>
+  sample_vertices(const Boolean& p)
+  {
+    typedef pmp_bgl_named_params<Boolean, do_sample_vertices_t> Params;
+    return Params(p);
+  }
+
+  //overload
+  template <typename Boolean>
+  pmp_bgl_named_params<Boolean, do_sample_faces_t>
+  sample_faces(const Boolean& p)
+  {
+    typedef pmp_bgl_named_params<Boolean, do_sample_faces_t> Params;
+    return Params(p);
+  }
+
+  //overload
+  template<typename NT>
+  pmp_bgl_named_params<NT, number_of_points_on_faces_t>
+  number_of_points_on_faces(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, number_of_points_on_faces_t> Params;
+    return Params(n);
+  }
+
+  //overload
+  template<typename NT>
+  pmp_bgl_named_params<NT, number_of_points_per_face_t>
+  number_of_points_per_face(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, number_of_points_per_face_t> Params;
+    return Params(n);
+  }
+
+  //overload
+  template<typename NT>
+  pmp_bgl_named_params<NT, grid_spacing_t>
+  grid_spacing(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, grid_spacing_t> Params;
+    return Params(n);
+  }
+
+  //overload
+  template<typename NT>
+  pmp_bgl_named_params<NT, nb_points_per_area_unit_t>
+  number_of_points_per_area_unit(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, nb_points_per_area_unit_t> Params;
+    return Params(n);
+  }
+
+  //overload
+  template<typename NT>
+  pmp_bgl_named_params<NT, number_of_points_per_edge_t>
+  number_of_points_per_edge(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, number_of_points_per_edge_t> Params;
+    return Params(n);
+  }
+
+  //overload
+  template<typename NT>
+  pmp_bgl_named_params<NT, number_of_points_on_edges_t>
+  number_of_points_on_edges(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, number_of_points_on_edges_t> Params;
+    return Params(n);
+  }
+
+  //overload
+  template<typename NT>
+  pmp_bgl_named_params<NT, nb_points_per_distance_unit_t>
+  number_of_points_per_distance_unit(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, nb_points_per_distance_unit_t> Params;
+    return Params(n);
   }
 
 } //namespace parameters

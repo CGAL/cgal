@@ -145,7 +145,7 @@ private:
       FT diff2 = val - node->upper_low_value();
       if ( (diff1 + diff2 >= FT(0.0)) ) 
       {
-          new_off = 2*val < node->upper_low_value()+node->upper_high_value() ?
+          new_off = node->upper_low_value()+node->upper_high_value() > val*2?
                     val - node->upper_high_value():
                     val - node->upper_low_value();
           bestChild = node->lower();
@@ -153,7 +153,7 @@ private:
       }
       else // compute new distance
       {
-          new_off = 2*val < node->lower_low_value()+node->lower_high_value() ?
+          new_off = node->lower_low_value()+node->lower_high_value() > val*2 ?
                     val - node->lower_high_value():
                     val - node->lower_low_value();
           bestChild = node->upper();

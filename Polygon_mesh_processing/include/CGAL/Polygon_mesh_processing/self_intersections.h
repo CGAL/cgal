@@ -241,7 +241,7 @@ self_intersections( const FaceRange& face_range,
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return `out`
@@ -300,7 +300,7 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
 
  */
@@ -386,7 +386,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return true if `tmesh` self-intersects

@@ -115,13 +115,16 @@ void test_point_generators_3() {
 
     /* Create test point set. */
     std::vector<Point_3> points;
-    points.reserve(500);
+    points.reserve(600);
     Random_points_in_sphere_3<Point_3,Creator>      g1( 100.0);
     CGAL::cpp11::copy_n( g1, 100, std::back_inserter(points));
     Random_points_on_sphere_3<Point_3,Creator>      g2( 100.0);
     Random_points_in_cube_3<Point_3,Creator>        g3( 100.0);
+    Random_points_on_segment_3<Point_3,Creator>     g4( Point_3(-100,-100, -100),
+                                                        Point_3( 100, 100, 100));
     CGAL::cpp11::copy_n( g2, 100, std::back_inserter(points));
     CGAL::cpp11::copy_n( g3, 100, std::back_inserter(points));
+    CGAL::cpp11::copy_n( g4, 100, std::back_inserter(points));
     points_on_cube_grid_3( 50.0, (std::size_t)1,
                            std::back_inserter(points), Creator());
     points_on_cube_grid_3( 50.0, (std::size_t)2,
@@ -133,7 +136,7 @@ void test_point_generators_3() {
     random_selection( points.begin(), points.end(), 100,
                       std::back_inserter(points));
 
-    assert( points.size() == 500);
+    assert( points.size() == 600);
     for ( std::vector<Point_3>::iterator i = points.begin();
           i != points.end(); i++){
         assert( i->x() <=  100);
