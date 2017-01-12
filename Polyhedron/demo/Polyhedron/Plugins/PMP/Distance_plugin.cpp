@@ -419,7 +419,7 @@ public:
     //creates the action
     QAction *actionComputeDistance= new QAction(QString("Compute Distance Between Polyhedra"), mw);
     //specifies the subMenu
-    actionComputeDistance->setProperty("submenuName", "Polygon Mesh Processing");
+    actionComputeDistance->setProperty("subMenuName", "Polygon Mesh Processing");
     //links the action
     if(actionComputeDistance) {
       connect(actionComputeDistance, SIGNAL(triggered()),
@@ -432,7 +432,7 @@ public Q_SLOTS:
   {
     bool ok = false;
     nb_pts_per_face = QInputDialog::getInt(mw, tr("Sampling"),
-                                               tr("Number of points per face:"),400, 1,2147483647,1, &ok);
+                                               tr("Number of points per face:"),40, 1,2147483647,1, &ok);
     if (!ok)
       return;
 
