@@ -76,7 +76,7 @@ public:
 
   void setNormal(float x, float y, float z) ;
 
-  Kernel::Plane_3 plane() const;
+  Kernel::Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
 
   bool isFinite() const { return true; }
   bool isEmpty() const {

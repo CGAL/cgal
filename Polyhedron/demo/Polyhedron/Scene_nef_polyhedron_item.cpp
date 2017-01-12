@@ -169,6 +169,7 @@ void Scene_nef_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inter
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
         item->buffers[Facets_normals].release();
+        item->vaos[Facets]->release();
 
         nb_facets = positions_facets.size();
         positions_facets.resize(0);
@@ -176,7 +177,6 @@ void Scene_nef_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inter
 
         normals.resize(0);
         std::vector<double>(normals).swap(normals);
-
         program->release();
 
     }
@@ -193,11 +193,11 @@ void Scene_nef_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inter
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         item->buffers[Edges_vertices].release();
 
+        item->vaos[Edges]->release();
 
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
         std::vector<double>(positions_lines).swap(positions_lines);
-        item->vaos[Edges]->release();
         program->release();
     }
     //vao for the points
@@ -230,6 +230,8 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
     positions_points.resize(0);
     normals.resize(0);
     positions_lines.resize(0);
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
     //The Facets
     {
         for(Nef_polyhedron::Halffacet_const_iterator
@@ -311,9 +313,9 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
                         if(ffit->info().is_external){ continue;}
                         for(int i = 0; i<3; i++)
                         {
-                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().x()));
-                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().y()));
-                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().z()));
+                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().x())+offset.x);
+                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().y())+offset.y);
+                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().z())+offset.z);
 
                         }
 
@@ -364,13 +366,13 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
             const Nef_polyhedron::Point_3& a = s->point();
             const Nef_polyhedron::Point_3& b = t->point();
 
-            positions_lines.push_back(CGAL::to_double(a.x()));
-            positions_lines.push_back(CGAL::to_double(a.y()));
-            positions_lines.push_back(CGAL::to_double(a.z()));
+            positions_lines.push_back(CGAL::to_double(a.x())+offset.x);
+            positions_lines.push_back(CGAL::to_double(a.y())+offset.y);
+            positions_lines.push_back(CGAL::to_double(a.z())+offset.z);
 
-            positions_lines.push_back(CGAL::to_double(b.x()));
-            positions_lines.push_back(CGAL::to_double(b.y()));
-            positions_lines.push_back(CGAL::to_double(b.z()));
+            positions_lines.push_back(CGAL::to_double(b.x())+offset.x);
+            positions_lines.push_back(CGAL::to_double(b.y())+offset.y);
+            positions_lines.push_back(CGAL::to_double(b.z())+offset.z);
 
 
         }
@@ -383,9 +385,9 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
             v != end; ++v)
         {
             const Nef_polyhedron::Point_3& p = v->point();
-            positions_points.push_back(CGAL::to_double(p.x()));
-            positions_points.push_back(CGAL::to_double(p.y()));
-            positions_points.push_back(CGAL::to_double(p.z()));
+            positions_points.push_back(CGAL::to_double(p.x())+offset.x);
+            positions_points.push_back(CGAL::to_double(p.y())+offset.y);
+            positions_points.push_back(CGAL::to_double(p.z())+offset.z);
 
                 color_points.push_back(item->color().lighter(50).redF());
                 color_points.push_back(item->color().lighter(50).greenF());
@@ -479,6 +481,7 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
     attribBuffers(viewer,PROGRAM_WITH_LIGHT);
     d->program->bind();
     d->program->setUniformValue("is_two_side", 1);
+    d->program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
     vaos[Scene_nef_polyhedron_item_priv::Facets]->release();
     d->program->release();
@@ -502,6 +505,7 @@ void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attribBuffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     d->program->bind();
+    d->program->setAttributeValue("colors", QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(d->nb_lines/3));
     vaos[Scene_nef_polyhedron_item_priv::Edges]->release();
     d->program->release();

@@ -124,11 +124,13 @@ public:
     bool oldState = frame->blockSignals(true); // do not let it Q_EMIT modified, which will cause a deformation
                                   // but we are just adjusting the center so it does not require a deformation
     // frame->setOrientation(qglviewer::Quaternion());
-    frame->setPosition(frame_initial_center);
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    frame->setPosition(frame_initial_center+offset);
     frame->blockSignals(oldState);
   }
   void set_target_positions()
   {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     std::vector<vertex_descriptor>::iterator hb = ctrl_vertices_group.begin();
     for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
     {
@@ -136,7 +138,7 @@ public:
       qglviewer::Vec rotated = frame->orientation() * dif_from_initial_center;
       qglviewer::Vec rotated_and_translated = rotated + frame->position();
 
-      deform_mesh->set_target_position(*hb, Point(rotated_and_translated.x, rotated_and_translated.y, rotated_and_translated.z) );
+      deform_mesh->set_target_position(*hb, Point(rotated_and_translated.x-offset.x, rotated_and_translated.y-offset.y, rotated_and_translated.z-offset.z) );
     }
   }
   qglviewer::Vec calculate_initial_center() const

@@ -1082,7 +1082,7 @@ Scene::Bbox Scene::bbox() const
     Bbox bbox = Bbox(0,0,0,0,0,0);
     Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
     {
-        if(item->isFinite() && !item->isEmpty()) {
+        if(item->isFinite() && !item->isEmpty() && item->visible()) {
             if(bbox_initialized) {
 
                 bbox = bbox + item->bbox();

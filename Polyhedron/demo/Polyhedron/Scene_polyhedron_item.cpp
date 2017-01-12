@@ -383,6 +383,8 @@ void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
                                                      const VertexNormalPmap& vnmap,
                                                      const bool colors_only)const
 {
+  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
   Polyhedron::Traits::Point_3 p0,p1,p2;
   Facet::Halfedge_around_facet_circulator
       he = f->facet_begin(),
@@ -411,11 +413,11 @@ void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
     p0 = he_end->vertex()->point();
     p1 = he->vertex()->point();
     p2 = next(he, *poly)->vertex()->point();
-    push_back_xyz(p0, positions_facets);
+    push_back_xyz(p0+offset, positions_facets);
     positions_facets.push_back(1.0);
-    push_back_xyz(p1, positions_facets);
+    push_back_xyz(p1+offset, positions_facets);
     positions_facets.push_back(1.0);
-    push_back_xyz(p2, positions_facets);
+    push_back_xyz(p2+offset, positions_facets);
     positions_facets.push_back(1.0);
 
     push_back_xyz(normal, normals_flat);
@@ -443,6 +445,8 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
                                          const bool colors_only) const
 {
   typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
+  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
   double diagonal;
   if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->diagonalBbox();
@@ -478,13 +482,13 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
     if (colors_only)
      continue;
 
-    push_back_xyz(ffit->vertex(0)->point(), positions_facets);
+    push_back_xyz(ffit->vertex(0)->point()+offset, positions_facets);
     positions_facets.push_back(1.0);
 
-    push_back_xyz(ffit->vertex(1)->point(), positions_facets);
+    push_back_xyz(ffit->vertex(1)->point()+offset, positions_facets);
     positions_facets.push_back(1.0);
 
-    push_back_xyz(ffit->vertex(2)->point(), positions_facets);
+    push_back_xyz(ffit->vertex(2)->point()+offset, positions_facets);
     positions_facets.push_back(1.0);
 
     push_back_xyz(normal, normals_flat);
@@ -655,6 +659,8 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
 void
 Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only) const
 {
+  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_facets.resize(0);
     positions_lines.resize(0);
@@ -672,6 +678,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
     typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
     typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+    Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
 
     CGAL::Unique_hash_map<face_descriptor, Vector> face_normals_map;
     boost::associative_property_map<CGAL::Unique_hash_map<face_descriptor, Vector> >
@@ -716,7 +723,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
 
             //position
             const Point& p = he->vertex()->point();
-            push_back_xyz(p, positions_facets);
+            push_back_xyz(p+offset, positions_facets);
             positions_facets.push_back(1.0);
          }
       }
@@ -740,13 +747,13 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         Point p1 = f->halfedge()->next()->vertex()->point();
         Point p2 = f->halfedge()->next()->next()->vertex()->point();
 
-        push_back_xyz(p0, positions_facets);
+        push_back_xyz(p0+offset, positions_facets);
         positions_facets.push_back(1.0);
 
-        push_back_xyz(p1, positions_facets);
+        push_back_xyz(p1+offset, positions_facets);
         positions_facets.push_back(1.0);
 
-        push_back_xyz(p2, positions_facets);
+        push_back_xyz(p2+offset, positions_facets);
         positions_facets.push_back(1.0);
 
         push_back_xyz(nf, normals_flat);
@@ -767,13 +774,13 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         p1 = f->halfedge()->prev()->vertex()->point();
         p2 = f->halfedge()->vertex()->point();
 
-        push_back_xyz(p0, positions_facets);
+        push_back_xyz(p0+offset, positions_facets);
         positions_facets.push_back(1.0);
 
-        push_back_xyz(p1, positions_facets);
+        push_back_xyz(p1+offset, positions_facets);
         positions_facets.push_back(1.0);
 
-        push_back_xyz(p2, positions_facets);
+        push_back_xyz(p2+offset, positions_facets);
         positions_facets.push_back(1.0);
 
         push_back_xyz(nf, normals_flat);
@@ -817,10 +824,10 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           if (colors_only)
             continue;
 
-          push_back_xyz(a, positions_feature_lines);
+          push_back_xyz(a+offset, positions_feature_lines);
           positions_feature_lines.push_back(1.0);
 
-          push_back_xyz(b, positions_feature_lines);
+          push_back_xyz(b+offset, positions_feature_lines);
           positions_feature_lines.push_back(1.0);
         }
         else
@@ -838,10 +845,10 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           if (colors_only)
             continue;
 
-          push_back_xyz(a, positions_lines);
+          push_back_xyz(a+offset, positions_lines);
           positions_lines.push_back(1.0);
 
-          push_back_xyz(b, positions_lines);
+          push_back_xyz(b+offset, positions_lines);
           positions_lines.push_back(1.0);
         }
     }

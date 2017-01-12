@@ -190,18 +190,18 @@ public Q_SLOTS:
       //apply the clipping function
       Q_FOREACH(Scene_polyhedron_item* poly, polyhedra)
       {
-
+        const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
         if(ui_widget.close_checkBox->isChecked() && poly->polyhedron()->is_closed())
         {
           std::pair<Polyhedron*, Polyhedron*>polyhedron;
           if(ui_widget.clip_radioButton->isChecked())
           {
-            polyhedron.first = CGAL::corefinement::clip_polyhedron(*(poly->polyhedron()),plane->plane());
+            polyhedron.first = CGAL::corefinement::clip_polyhedron(*(poly->polyhedron()),plane->plane(offset));
             polyhedron.second = NULL;
           }
           else
           {
-            polyhedron = CGAL::corefinement::split_polyhedron(*(poly->polyhedron()),plane->plane());
+            polyhedron = CGAL::corefinement::split_polyhedron(*(poly->polyhedron()),plane->plane(offset));
           }
           if(polyhedron.first != NULL)
           {
@@ -215,6 +215,7 @@ public Q_SLOTS:
             new_item->setVisible(poly->visible());
             new_item->invalidateOpenGLBuffers();
             new_item->setProperty("source filename", poly->property("source filename"));
+            new_item->setProperty("loader_name", poly->property("loader_name"));
             scene->replaceItem(scene->item_id(poly),new_item);
             new_item->invalidateOpenGLBuffers();
             viewer->updateGL();
@@ -235,6 +236,7 @@ public Q_SLOTS:
             new_item->setVisible(poly->visible());
             new_item->invalidateOpenGLBuffers();
             new_item->setProperty("source filename", poly->property("source filename"));
+            new_item->setProperty("loader_name", poly->property("loader_name"));
             scene->addItem(new_item);
             new_item->invalidateOpenGLBuffers();
             viewer->updateGL();
@@ -249,15 +251,17 @@ public Q_SLOTS:
         {
           Scene_polyhedron_item* poly1 = new Scene_polyhedron_item(*(poly->polyhedron()));
           poly1->setProperty("source filename", poly->property("source filename"));
+          poly1->setProperty("loader_name", poly->property("loader_name"));
           Scene_polyhedron_item* poly2 = NULL;
           if(!ui_widget.clip_radioButton->isChecked())
           {
             poly2 = new Scene_polyhedron_item(*(poly->polyhedron()));
             poly2->setProperty("source filename", poly->property("source filename"));
+            poly2->setProperty("loader_name", poly->property("loader_name"));
           }
 
 
-            CGAL::corefinement::inplace_clip_open_polyhedron(*(poly1->polyhedron()),plane->plane());
+            CGAL::corefinement::inplace_clip_open_polyhedron(*(poly1->polyhedron()),plane->plane(offset));
             if(poly2 != NULL)
               poly1->setName(QString("%1 %2").arg(poly->name()).arg("1"));
             else
@@ -273,7 +277,7 @@ public Q_SLOTS:
 
           if(poly2 != NULL)
           {
-            CGAL::corefinement::inplace_clip_open_polyhedron(*(poly2->polyhedron()),plane->plane().opposite());
+            CGAL::corefinement::inplace_clip_open_polyhedron(*(poly2->polyhedron()),plane->plane(offset).opposite());
             poly2->setName(QString("%1 %2").arg(poly->name()).arg("2"));
             poly2->setColor(poly->color());
             poly2->setRenderingMode(poly->renderingMode());

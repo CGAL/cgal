@@ -98,8 +98,9 @@ public:
       FT x = -diag/fd + FT(i)/FT(grid_size) * dx;
       {
         FT y = -diag/fd + FT(j)/FT(grid_size) * dy;
-
-        Point query = transfo( Point(x,y,z) );
+        const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+        Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
+        Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
 
         Q_FOREACH(Tree *tree, trees->values())
@@ -284,11 +285,14 @@ private:
 
     void computeElements() const
     {
+       const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
        QApplication::setOverrideCursor(Qt::WaitCursor);
        positions_lines.clear();
 
        CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
        traits.v_edges = &positions_lines;
+       for(int i=0; i<3; ++i)
+         traits.offset[i] = offset[i];
 
        tree.traversal(0, traits);
        QApplication::restoreOverrideCursor();
@@ -403,14 +407,16 @@ private:
     }
     void computeElements() const
     {
+       const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+       Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
        QApplication::setOverrideCursor(Qt::WaitCursor);
        positions_lines.clear();
 
        for(size_t i = 0, end = edges.size();
            i < end; ++i)
        {
-         const Simple_kernel::Point_3& a = edges[i].source();
-         const Simple_kernel::Point_3& b = edges[i].target();
+         const Simple_kernel::Point_3& a = edges[i].source()+offset;
+         const Simple_kernel::Point_3& b = edges[i].target()+offset;
          positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
@@ -1329,7 +1335,8 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     scene->addItem(edges_item);
   }
 
-  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position() - offset;
   const qglviewer::Vec& n =
       plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
   Simple_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);

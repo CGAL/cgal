@@ -70,6 +70,9 @@ public:
   QOpenGLShaderProgram* getShaderProgram(int name) const;
   QPainter* getPainter();
   void saveSnapshot(bool , bool overwrite = false);
+  void setOffset(qglviewer::Vec offset);
+  qglviewer::Vec offset()const;
+  void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
 
 Q_SIGNALS:
   void sendMessage(QString);

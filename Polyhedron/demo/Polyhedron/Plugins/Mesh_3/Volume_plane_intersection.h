@@ -33,7 +33,7 @@ public:
   void setX(Volume_plane_interface* x);
   void setY(Volume_plane_interface* x);
   void setZ(Volume_plane_interface* x);
-
+  void invalidateOpenGLBuffers();
 public Q_SLOTS:
   void planeRemoved(Volume_plane_interface* i);
 protected:

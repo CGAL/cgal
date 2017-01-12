@@ -75,6 +75,7 @@ public:
   void showDistance(QPoint);
   qglviewer::Vec APoint;
   qglviewer::Vec BPoint;
+  qglviewer::Vec offset;
   bool is_d_pressed;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
@@ -108,6 +109,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
+  d->offset = qglviewer::Vec(0,0,0);
   textRenderer = new TextRenderer();
   connect( textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -569,12 +571,12 @@ void Viewer::postSelection(const QPoint& pixel)
 {
   Q_EMIT selected(this->selectedName());
   bool found = false;
-  qglviewer::Vec point = camera()->pointUnderPixel(pixel, found);
+  qglviewer::Vec point = camera()->pointUnderPixel(pixel, found) - d->offset;
   if(found) {
     Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    const qglviewer::Vec orig = camera()->position();
+    const qglviewer::Vec orig = camera()->position() - d->offset;
     const qglviewer::Vec dir = point - orig;
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
@@ -727,7 +729,7 @@ void Viewer::beginSelection(const QPoint &point)
 void Viewer::endSelection(const QPoint&)
 {
     glDisable(GL_SCISSOR_TEST);
-    //redraw thetrue scene for the glReadPixel in postSelection();
+    //redraw the true scene for the glReadPixel in postSelection();
     d->draw_aux(false, this);
 }
 
@@ -1509,9 +1511,9 @@ void Viewer_impl::showDistance(QPoint pixel)
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
         QFont font;
         font.setBold(true);
-        TextItem *ACoord = new TextItem(APoint.x, APoint.y, APoint.z,QString("A(%1,%2,%3)").arg(APoint.x).arg(APoint.y).arg(APoint.z), true, font, Qt::red, true);
+        TextItem *ACoord = new TextItem(APoint.x, APoint.y, APoint.z,QString("A(%1,%2,%3)").arg(APoint.x-offset.x).arg(APoint.y-offset.y).arg(APoint.z-offset.z), true, font, Qt::red, true);
         distance_text.append(ACoord);
-        TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x).arg(BPoint.y).arg(BPoint.z), true, font, Qt::red, true);
+        TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x-offset.x).arg(BPoint.y-offset.y).arg(BPoint.z-offset.z), true, font, Qt::red, true);
         distance_text.append(BCoord);
         qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(centerPoint.x, centerPoint.y, centerPoint.z,QString(" distance: %1").arg(dist), true, font, Qt::red, true);
@@ -1520,12 +1522,12 @@ void Viewer_impl::showDistance(QPoint pixel)
         Q_FOREACH(TextItem* ti, distance_text)
           viewer->textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
-                  .arg(APoint.x)
-                  .arg(APoint.y)
-                  .arg(APoint.z)
-                  .arg(BPoint.x)
-                  .arg(BPoint.y)
-                  .arg(BPoint.z)
+                  .arg(APoint.x-offset.x)
+                  .arg(APoint.y-offset.y)
+                  .arg(APoint.z-offset.z)
+                  .arg(BPoint.x-offset.x)
+                  .arg(BPoint.y-offset.y)
+                  .arg(BPoint.z-offset.z)
                   .arg(dist)));
     }
 
@@ -1772,5 +1774,12 @@ void Viewer::SetOrthoProjection(bool b)
 
 
 
+}
+
+void Viewer::setOffset(qglviewer::Vec offset){ d->offset = offset; }
+qglviewer::Vec Viewer::offset()const { return d->offset; }
+void Viewer::setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max)
+{
+  QGLViewer::setSceneBoundingBox(min+d->offset, max+d->offset);
 }
  #include "Viewer.moc"

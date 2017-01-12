@@ -37,10 +37,10 @@ public:
   void constrainTranslation(qglviewer::Vec& t, qglviewer::Frame* const frame) {
     WorldConstraint::constrainTranslation(t, frame);
     qglviewer::Vec pos = frame->position();
-    double start = pos[Dim];
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    double start = pos[Dim] - offset[Dim];
     double end = t[Dim];
     start += end;
-
     if(start > max_ || (start < 0)) {
       t[Dim] = 0.0;
     }
@@ -59,6 +59,11 @@ class Volume_plane : public Volume_plane_interface, public Tag {
 public:
  Volume_plane();
 
+ void invalidateOpenGLBuffers()
+ {
+     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+     mFrame_->setPosition(offset.x, offset.y, offset.z);
+ }
  void compute_bbox()const
  {
    compute_bbox(*this);
@@ -111,7 +116,7 @@ public:
 
   unsigned int getCurrentCube() const { return currentCube; }
 
-  // uses a public init function to make enable construction in
+  // uses a public init function to enable construction in
   // threads without gl-context
   void init();
 
@@ -221,12 +226,24 @@ private:
     return c;
   }
 
-  void updateCurrentCube() const { currentCube = getTranslation(); }
+  void updateCurrentCube() const {
+      currentCube = getTranslation();
+
+  }
 
   GLdouble getTranslation() const { return getTranslation(*this); }
-  GLdouble getTranslation(x_tag) const { return mFrame_->matrix()[12] / xscale_; }
-  GLdouble getTranslation(y_tag) const { return mFrame_->matrix()[13] / yscale_; }
-  GLdouble getTranslation(z_tag) const { return mFrame_->matrix()[14] / zscale_; }
+  GLdouble getTranslation(x_tag) const {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      return mFrame_->matrix()[12] / xscale_ - offset.x;
+  }
+  GLdouble getTranslation(y_tag) const {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      return mFrame_->matrix()[13] / yscale_ - offset.y;
+  }
+  GLdouble getTranslation(z_tag) const {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      return mFrame_->matrix()[14] / zscale_ - offset.z;
+  }
 
 };
 
@@ -272,6 +289,8 @@ template<typename T>
 Volume_plane<T>::Volume_plane()
   : Volume_plane_interface(new qglviewer::ManipulatedFrame)
  {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    mFrame_->setPosition(offset.x, offset.y, offset.z);
  }
 template<typename T>
 void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors)

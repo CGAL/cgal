@@ -14,7 +14,8 @@ struct Scene_polyhedron_transform_item_priv
       center_(pos)
   {
     item = parent;
-    frame->setPosition(pos);
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    frame->setPosition(pos+offset);
     nb_lines = 0;
   }
   ~Scene_polyhedron_transform_item_priv()
@@ -148,9 +149,6 @@ Scene_polyhedron_transform_item::compute_bbox() const {
     }
     qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
     qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
-
-    min +=d->frame->translation()-center();
-    max += d->frame->translation()-center();
     _bbox = Bbox(min.x,min.y,min.z,
                  max.x,max.y,max.z);
 }

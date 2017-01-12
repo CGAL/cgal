@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "config.h"
 #include "MainWindow.h"
 #include "Scene.h"
@@ -865,11 +867,34 @@ void MainWindow::updateViewerBBox()
   const double xmax = bbox.xmax();
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
+
    //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
    //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
   qglviewer::Vec 
     vec_min(xmin, ymin, zmin),
-    vec_max(xmax, ymax, zmax);
+    vec_max(xmax, ymax, zmax),
+    bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+  qglviewer::Vec offset(0,0,0);
+  double l_dist = (std::max)((std::abs)(bbox_center.x + viewer->offset().x),
+                      (std::max)((std::abs)(bbox_center.y + viewer->offset().y),
+                          (std::abs)(bbox_center.z + viewer->offset().z)));
+  if((std::log2)(l_dist) > 13.0 )
+    for(int i=0; i<3; ++i)
+    {
+      offset[i] = -bbox_center[i];
+
+    }
+  if(offset != viewer->offset())
+  {
+    viewer->setOffset(offset);
+    for(int i=0; i<scene->numberOfEntries(); ++i)
+    {
+      scene->item(i)->invalidateOpenGLBuffers();
+      scene->item(i)->itemChanged();
+    }
+  }
+
+
   viewer->setSceneBoundingBox(vec_min,
                               vec_max);
   viewer->camera()->showEntireScene();
@@ -879,15 +904,12 @@ void MainWindow::reloadItem() {
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(!sender_action) return;
   
-  bool ok;
-  int item_index = sender_action->data().toInt(&ok);
-  QObject* item_object = scene->item(item_index);
-  if(!ok || !item_object || sender_action->data().type() != QVariant::Int) {
+  Scene_item* item = (Scene_item*)sender_action->data().value<void*>();
+  if(!item) {
     std::cerr << "Cannot reload item: "
               << "the reload action has not item attached\n";
     return;
   }
-  CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(item_object);
   if(!item) {
     std::cerr << "Cannot reload item: "
               << "the reload action has a QObject* pointer attached\n"
@@ -915,7 +937,7 @@ void MainWindow::reloadItem() {
   if(property_item)
     property_item->copyProperties(item);
   new_item->invalidateOpenGLBuffers();
-  scene->replaceItem(item_index, new_item, true);
+  scene->replaceItem(scene->item_id(item), new_item, true);
   item->deleteLater();
 }
 
@@ -1049,7 +1071,7 @@ void MainWindow::open(QString filename)
   }
   selectSceneItem(scene->addItem(scene_item));
   if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
   else
     sceneView->resizeColumnToContents(Scene::NameColumn);
 }
@@ -1249,16 +1271,16 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload Item from File"));
-        reload->setData(qVariantFromValue(selectedItemIndex));
+        reload->setData(qVariantFromValue((void*)item));
         connect(reload, SIGNAL(triggered()),
                 this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
-      saveas->setData(qVariantFromValue(selectedItemIndex));
+      saveas->setData(qVariantFromValue((void*)item));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
       QAction* showobject = menu->addAction(tr("&Zoom to this Object"));
-      showobject->setData(qVariantFromValue(selectedItemIndex));
+      showobject->setData(qVariantFromValue((void*)item));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
 
@@ -1340,6 +1362,8 @@ void MainWindow::updateDisplayInfo() {
     ui->displayLabel->setPixmap(item->graphicalToolTip());
   else 
     ui->displayLabel->clear();
+
+  resetHeader();
 }
 
 void MainWindow::readSettings()
@@ -1453,7 +1477,7 @@ void MainWindow::on_actionLoad_triggered()
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
-        qDebug() << "Duplicate Filter: " << it.value();
+        qDebug() << "Duplicate Filter: " << it.value()->name();
         qDebug() << "This filter will not be available.";
       } else {
         filterPluginMap[filter] = plugin;
@@ -1497,19 +1521,11 @@ void MainWindow::on_actionLoad_triggered()
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-  int index = -1;
+  Scene_item* item = NULL;
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(sender_action && !sender_action->data().isNull()) {
-    index = sender_action->data().toInt();
+    item = (Scene_item*)sender_action->data().value<void*>();
   }
-
-  if(index < 0) {
-    QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-    if(selectedRows.size() != 1)
-      return;
-    index = getSelectedSceneItemIndex();
-  }
-  CGAL::Three::Scene_item* item = scene->item(index);
 
   if(!item)
     return;
@@ -1691,15 +1707,15 @@ void MainWindow::on_actionLookAt_triggered()
 
 void MainWindow::viewerShowObject()
 {
-  int index = -1;
+  Scene_item* item = NULL;
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(sender_action && !sender_action->data().isNull()) {
-    index = sender_action->data().toInt();
+    item = (Scene_item*)sender_action->data().value<void*>();
   }
-  if(index >= 0) {
-    const Scene::Bbox bbox = scene->item(index)->bbox();
-    viewerShow((float)bbox.xmin(), (float)bbox.ymin(), (float)bbox.zmin(),
-               (float)bbox.xmax(), (float)bbox.ymax(), (float)bbox.zmax());
+  if(item) {
+    const Scene::Bbox bbox = item->bbox();
+    viewerShow((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z,
+               (float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
   }
 }
 
@@ -1787,7 +1803,7 @@ void MainWindow::makeNewGroup()
     Scene_group_item * group = new Scene_group_item();
     scene->addItem(group);
     if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-      sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+      sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
     else
       sceneView->resizeColumnToContents(Scene::NameColumn);
 }
@@ -1943,9 +1959,10 @@ void MainWindow::resetHeader()
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
   else
     sceneView->resizeColumnToContents(Scene::NameColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
+
 }

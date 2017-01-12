@@ -77,6 +77,7 @@ struct Scene_edit_box_item_priv{
   };
   Scene_edit_box_item_priv(const Scene_interface *scene_interface, Scene_edit_box_item* ebi)
   {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     ready_to_hl = true;
     scene = scene_interface;
     item = ebi;
@@ -90,7 +91,7 @@ struct Scene_edit_box_item_priv{
     remodel_frame = new Scene_item::ManipulatedFrame();
     remodel_frame->setTranslationSensitivity(1.0);
     frame = new Scene_item::ManipulatedFrame();
-    frame->setPosition(center_);
+    frame->setPosition(center_+offset);
     frame->setSpinningSensitivity(100.0); //forbid spinning
     constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
     constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
@@ -468,18 +469,16 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
 
 void Scene_edit_box_item::compute_bbox() const
 {
-  QMatrix4x4 f_matrix;
-  for (int i=0; i<16; ++i){
-    f_matrix.data()[i] = (float)d->frame->matrix()[i];
-  }
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
 
   QVector3D min(d->pool[0], d->pool[1], d->pool[2]);
   QVector3D max(d->pool[3], d->pool[4], d->pool[5]);
 
   for(int i=0; i< 3; ++i)
   {
-    min[i] += d->frame->translation()[i]-d->center_[i];
-    max[i] += d->frame->translation()[i]-d->center_[i];
+    min[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
+    max[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
   }
 
   _bbox = Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z());

@@ -30,6 +30,7 @@ struct Scene_implicit_function_item_priv
     , red_color_ramp_()
     , textureId(-1)
   {
+    init=false;
     item = parent;
     texture = new Texture(grid_size_-1,grid_size_-1);
     blue_color_ramp_.build_blue();
@@ -65,6 +66,7 @@ struct Scene_implicit_function_item_priv
   int grid_size_;
   double max_value_;
   double min_value_;
+  bool init;
   mutable Point_value implicit_grid_[SCENE_IMPLICIT_GRID_SIZE][SCENE_IMPLICIT_GRID_SIZE];
   Color_ramp blue_color_ramp_;
   Color_ramp red_color_ramp_;
@@ -271,124 +273,125 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
     }
     //the Box
     {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmax());
-
-
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmin());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmin()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmin());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymax());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmin()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
 
-        positions_cube.push_back(b.xmax());
-        positions_cube.push_back(b.ymin());
-        positions_cube.push_back(b.zmax());
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymax()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
+
+
+        positions_cube.push_back(b.xmax()+offset.x);
+        positions_cube.push_back(b.ymin()+offset.y);
+        positions_cube.push_back(b.zmax()+offset.z);
 
     }
 
@@ -410,12 +413,6 @@ Scene_implicit_function_item(Implicit_function_interface* f)
   d = new Scene_implicit_function_item_priv(f, this);
   //Generates an integer which will be used as ID for each buffer
   d->compute_min_max();
-  compute_function_grid();
-  double offset_x = (bbox().xmin() + bbox().xmax()) / 2;
-  double offset_y = (bbox().ymin() + bbox().ymax()) / 2;
-  double offset_z = (bbox().zmin() + bbox().zmax()) / 2;
-  d->frame_->setPosition(offset_x, offset_y, offset_z);
-  d->frame_->setOrientation(1., 0, 0, 0);
   connect(d->frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
   plane_was_moved();
   invalidateOpenGLBuffers();
@@ -437,6 +434,17 @@ Scene_implicit_function_item::compute_bbox() const
 void
 Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
+  if(!d->init)
+  {
+    compute_function_grid();
+    double offset_x = (bbox().xmin() + bbox().xmax()) / 2;
+    double offset_y = (bbox().ymin() + bbox().ymax()) / 2;
+    double offset_z = (bbox().zmin() + bbox().zmax()) / 2;
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    d->frame_->setPosition(offset_x+offset.x, offset_y+offset.y, offset_z+offset.z);
+    d->frame_->setOrientation(1., 0, 0, 0);
+    d->init = true;
+  }
     if(!are_buffers_filled)
         d->initialize_buffers(viewer);
     if(d->frame_->isManipulated()) {
@@ -550,6 +558,7 @@ void
 Scene_implicit_function_item::
 compute_function_grid() const
 {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     typedef CGAL::Simple_cartesian<double>  K;
     typedef K::Aff_transformation_3         Aff_transformation;
     typedef K::Point_3                      Point_3;
@@ -558,9 +567,9 @@ compute_function_grid() const
     const GLdouble* m = d->frame_->matrix();
 
     // OpenGL matrices are row-major matrices
-    Aff_transformation t (m[0], m[4], m[8], m[12],
-            m[1], m[5], m[9], m[13],
-            m[2], m[6], m[10], m[14]);
+    Aff_transformation t (m[0], m[4], m[8], m[12]-offset.x,
+            m[1], m[5], m[9], m[13]-offset.y,
+            m[2], m[6], m[10], m[14]-offset.z);
 
     double diag = (CGAL::sqrt((bbox().xmax()-bbox().xmin())*(bbox().xmax()-bbox().xmin()) + (bbox().ymax()-bbox().ymin())*(bbox().ymax()-bbox().ymin())  + (bbox().zmax()-bbox().zmin())*(bbox().zmax()-bbox().zmin()) )) * .6;
 

@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
-const std::size_t limit_fast_drawing = 300000; //arbitraty large valu
+const std::size_t limit_fast_drawing = 300000; //arbitraty large value
 
 struct Scene_points_with_normal_item_priv
 {
@@ -292,6 +292,7 @@ void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_i
 
 void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_points.resize(0);
     positions_lines.resize(0);
@@ -317,18 +318,18 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       for (Point_set::const_iterator it = m_points->begin();
            it != m_points->first_selected(); ++ it)
 	{
-	  positions_points.push_back(m_points->point(*it).x());
-	  positions_points.push_back(m_points->point(*it).y());
-	  positions_points.push_back(m_points->point(*it).z());
+          positions_points.push_back(m_points->point(*it).x()+offset.x);
+          positions_points.push_back(m_points->point(*it).y()+offset.y);
+          positions_points.push_back(m_points->point(*it).z()+offset.z);
 	}
 
         // Draw *selected* points
       for (Point_set::const_iterator it = m_points->first_selected();
            it != m_points->end(); ++ it)
 	{
-	  positions_selected_points.push_back(m_points->point(*it).x());
-	  positions_selected_points.push_back(m_points->point(*it).y());
-	  positions_selected_points.push_back(m_points->point(*it).z());
+          positions_selected_points.push_back(m_points->point(*it).x()+offset.x);
+          positions_selected_points.push_back(m_points->point(*it).y()+offset.y);
+          positions_selected_points.push_back(m_points->point(*it).z()+offset.z);
 	}
     }
 
@@ -359,13 +360,13 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 	    const Kernel::Point_3& p = m_points->point(*it);
 	    const Kernel::Vector_3& n = m_points->normal(*it);
             Point_set_3<Kernel>::Point q = p + normal_length * length_factor* n;
-	    positions_lines.push_back(p.x());
-	    positions_lines.push_back(p.y());
-	    positions_lines.push_back(p.z());
+            positions_lines.push_back(p.x()+offset.x);
+            positions_lines.push_back(p.y()+offset.y);
+            positions_lines.push_back(p.z()+offset.z);
 
-	    positions_lines.push_back(q.x());
-	    positions_lines.push_back(q.y());
-	    positions_lines.push_back(q.z());
+            positions_lines.push_back(q.x()+offset.x);
+            positions_lines.push_back(q.y()+offset.y);
+            positions_lines.push_back(q.z()+offset.z);
 
 
             positions_normals.push_back(n.x());
@@ -377,13 +378,13 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 	    const Kernel::Point_3& p = m_points->point(*it);
 	    const Kernel::Vector_3& n = m_points->normal(*it);
             Point_set_3<Kernel>::Point q = p + normal_length * length_factor* n;
-            positions_lines.push_back(p.x());
-            positions_lines.push_back(p.y());
-            positions_lines.push_back(p.z());
+            positions_lines.push_back(p.x()+offset.x);
+            positions_lines.push_back(p.y()+offset.y);
+            positions_lines.push_back(p.z()+offset.z);
 
-            positions_lines.push_back(q.x());
-            positions_lines.push_back(q.y());
-            positions_lines.push_back(q.z());
+            positions_lines.push_back(q.x()+offset.x);
+            positions_lines.push_back(q.y()+offset.y);
+            positions_lines.push_back(q.z()+offset.z);
 
 
             positions_selected_normals.push_back(n.x());
@@ -586,12 +587,15 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
 
 void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const
 {
+  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+ Kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
+
    // TODO add support for selection
    viewer->glBegin(GL_POINTS);
    if (d->m_points->has_colors())
      for ( Point_set_3<Kernel>::const_iterator it = d->m_points->begin(); it != d->m_points->end(); it++)
        {
-         const Point_set::Point& p = d->m_points->point (*it);
+         Point_set::Point p = d->m_points->point (*it) + offset;
          const Point_set::Vector& n = d->m_points->normal (*it);
          viewer->glColor4d(d->m_points->red(*it),
                            d->m_points->green(*it),
@@ -605,7 +609,7 @@ void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* vi
    else
      for ( Point_set_3<Kernel>::const_iterator it = d->m_points->begin(); it != d->m_points->end(); it++)
        {
-         const Point_set::Point& p = d->m_points->point (*it);
+         const Point_set::Point p = d->m_points->point (*it) + offset;
          const Point_set::Vector& n = d->m_points->normal (*it);
          viewer->glNormal3dv(&n.x());
          viewer->glMultiTexCoord1d(GL_TEXTURE2, d->m_points->radius(*it));

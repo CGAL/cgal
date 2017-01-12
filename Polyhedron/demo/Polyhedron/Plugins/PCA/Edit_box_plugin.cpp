@@ -98,6 +98,8 @@ void Edit_box_plugin::enableAction() {
 void Edit_box_plugin::exportToPoly()
 {
   int id =0;
+  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  Kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
   Scene_edit_box_item* item = NULL;
   for(int i = 0, end = scene->numberOfEntries();
       i < end; ++i)
@@ -112,7 +114,7 @@ void Edit_box_plugin::exportToPoly()
   Polyhedron::Point_3 points[8];
   for(int i=0; i<8; ++i)
   {
-    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,1), item->point(i,2));
+    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
   }
   Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
   CGAL::make_hexahedron(

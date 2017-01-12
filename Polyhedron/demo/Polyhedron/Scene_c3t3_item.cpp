@@ -141,6 +141,7 @@ public :
   }
   void addTriangle(Kernel::Point_3 pa, Kernel::Point_3 pb, Kernel::Point_3 pc, CGAL::Color color)
   {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
     n = n / CGAL::sqrt(n*n);
 
@@ -151,41 +152,41 @@ public :
       normals->push_back(n.y());
       normals->push_back(n.z());
     }
-    vertices->push_back(pa.x());
-    vertices->push_back(pa.y());
-    vertices->push_back(pa.z());
+    vertices->push_back(pa.x()+offset.x);
+    vertices->push_back(pa.y()+offset.y);
+    vertices->push_back(pa.z()+offset.z);
 
-    vertices->push_back(pb.x());
-    vertices->push_back(pb.y());
-    vertices->push_back(pb.z());
+    vertices->push_back(pb.x()+offset.x);
+    vertices->push_back(pb.y()+offset.y);
+    vertices->push_back(pb.z()+offset.z);
 
-    vertices->push_back(pc.x());
-    vertices->push_back(pc.y());
-    vertices->push_back(pc.z());
+    vertices->push_back(pc.x()+offset.x);
+    vertices->push_back(pc.y()+offset.y);
+    vertices->push_back(pc.z()+offset.z);
 
-    edges->push_back(pa.x());
-    edges->push_back(pa.y());
-    edges->push_back(pa.z());
+    edges->push_back(pa.x()+offset.x);
+    edges->push_back(pa.y()+offset.y);
+    edges->push_back(pa.z()+offset.z);
 
-    edges->push_back(pb.x());
-    edges->push_back(pb.y());
-    edges->push_back(pb.z());
+    edges->push_back(pb.x()+offset.x);
+    edges->push_back(pb.y()+offset.y);
+    edges->push_back(pb.z()+offset.z);
 
-    edges->push_back(pb.x());
-    edges->push_back(pb.y());
-    edges->push_back(pb.z());
+    edges->push_back(pb.x()+offset.x);
+    edges->push_back(pb.y()+offset.y);
+    edges->push_back(pb.z()+offset.z);
 
-    edges->push_back(pc.x());
-    edges->push_back(pc.y());
-    edges->push_back(pc.z());
+    edges->push_back(pc.x()+offset.x);
+    edges->push_back(pc.y()+offset.y);
+    edges->push_back(pc.z()+offset.z);
 
-    edges->push_back(pc.x());
-    edges->push_back(pc.y());
-    edges->push_back(pc.z());
+    edges->push_back(pc.x()+offset.x);
+    edges->push_back(pc.y()+offset.y);
+    edges->push_back(pc.z()+offset.z);
 
-    edges->push_back(pa.x());
-    edges->push_back(pa.y());
-    edges->push_back(pa.z());
+    edges->push_back(pa.x()+offset.x);
+    edges->push_back(pa.y()+offset.y);
+    edges->push_back(pa.z()+offset.z);
 
     for(int i=0; i<3; i++)
     {
@@ -721,8 +722,8 @@ Scene_c3t3_item_priv::compute_color_map(const QColor& c)
   }
 }
 
-Kernel::Plane_3 Scene_c3t3_item::plane() const {
-  const qglviewer::Vec& pos = d->frame->position();
+Kernel::Plane_3 Scene_c3t3_item::plane(qglviewer::Vec offset) const {
+  const qglviewer::Vec& pos = d->frame->position() - offset;
   const qglviewer::Vec& n =
     d->frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
   return Kernel::Plane_3(n[0], n[1], n[2], -n * pos);
@@ -936,7 +937,7 @@ void Scene_c3t3_item_priv::draw_triangle(const Kernel::Point_3& pa,
   #undef darker
   Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
   n = n / CGAL::sqrt(n*n);
-
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
   for (int i = 0; i<3; i++)
   {
@@ -944,17 +945,17 @@ void Scene_c3t3_item_priv::draw_triangle(const Kernel::Point_3& pa,
     normals.push_back(n.y());
     normals.push_back(n.z());
   }
-  positions_poly.push_back(pa.x());
-  positions_poly.push_back(pa.y());
-  positions_poly.push_back(pa.z());
+  positions_poly.push_back(pa.x()+offset.x);
+  positions_poly.push_back(pa.y()+offset.y);
+  positions_poly.push_back(pa.z()+offset.z);
 
-  positions_poly.push_back(pb.x());
-  positions_poly.push_back(pb.y());
-  positions_poly.push_back(pb.z());
+  positions_poly.push_back(pb.x()+offset.x);
+  positions_poly.push_back(pb.y()+offset.y);
+  positions_poly.push_back(pb.z()+offset.z);
 
-  positions_poly.push_back(pc.x());
-  positions_poly.push_back(pc.y());
-  positions_poly.push_back(pc.z());
+  positions_poly.push_back(pc.x()+offset.x);
+  positions_poly.push_back(pc.y()+offset.y);
+  positions_poly.push_back(pc.z()+offset.z);
 
 
 
@@ -965,29 +966,30 @@ void Scene_c3t3_item_priv::draw_triangle_edges(const Kernel::Point_3& pa,
   const Kernel::Point_3& pc)const {
 
 #undef darker
-  positions_lines.push_back(pa.x());
-  positions_lines.push_back(pa.y());
-  positions_lines.push_back(pa.z());
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  positions_lines.push_back(pa.x()+offset.x);
+  positions_lines.push_back(pa.y()+offset.y);
+  positions_lines.push_back(pa.z()+offset.z);
 
-  positions_lines.push_back(pb.x());
-  positions_lines.push_back(pb.y());
-  positions_lines.push_back(pb.z());
+  positions_lines.push_back(pb.x()+offset.x);
+  positions_lines.push_back(pb.y()+offset.y);
+  positions_lines.push_back(pb.z()+offset.z);
 
-  positions_lines.push_back(pb.x());
-  positions_lines.push_back(pb.y());
-  positions_lines.push_back(pb.z());
+  positions_lines.push_back(pb.x()+offset.x);
+  positions_lines.push_back(pb.y()+offset.y);
+  positions_lines.push_back(pb.z()+offset.z);
 
-  positions_lines.push_back(pc.x());
-  positions_lines.push_back(pc.y());
-  positions_lines.push_back(pc.z());
+  positions_lines.push_back(pc.x()+offset.x);
+  positions_lines.push_back(pc.y()+offset.y);
+  positions_lines.push_back(pc.z()+offset.z);
 
-  positions_lines.push_back(pc.x());
-  positions_lines.push_back(pc.y());
-  positions_lines.push_back(pc.z());
+  positions_lines.push_back(pc.x()+offset.x);
+  positions_lines.push_back(pc.y()+offset.y);
+  positions_lines.push_back(pc.z()+offset.z);
 
-  positions_lines.push_back(pa.x());
-  positions_lines.push_back(pa.y());
-  positions_lines.push_back(pa.z());
+  positions_lines.push_back(pa.x()+offset.x);
+  positions_lines.push_back(pa.y()+offset.y);
+  positions_lines.push_back(pa.z()+offset.z);
 
 }
 void Scene_c3t3_item_priv::draw_triangle_edges_cnc(const Kernel::Point_3& pa,
@@ -995,29 +997,30 @@ void Scene_c3t3_item_priv::draw_triangle_edges_cnc(const Kernel::Point_3& pa,
                                           const Kernel::Point_3& pc)const {
 
 #undef darker
-  positions_lines_not_in_complex.push_back(pa.x());
-  positions_lines_not_in_complex.push_back(pa.y());
-  positions_lines_not_in_complex.push_back(pa.z());
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  positions_lines_not_in_complex.push_back(pa.x()+offset.x);
+  positions_lines_not_in_complex.push_back(pa.y()+offset.y);
+  positions_lines_not_in_complex.push_back(pa.z()+offset.z);
 
-  positions_lines_not_in_complex.push_back(pb.x());
-  positions_lines_not_in_complex.push_back(pb.y());
-  positions_lines_not_in_complex.push_back(pb.z());
+  positions_lines_not_in_complex.push_back(pb.x()+offset.x);
+  positions_lines_not_in_complex.push_back(pb.y()+offset.y);
+  positions_lines_not_in_complex.push_back(pb.z()+offset.z);
 
-  positions_lines_not_in_complex.push_back(pb.x());
-  positions_lines_not_in_complex.push_back(pb.y());
-  positions_lines_not_in_complex.push_back(pb.z());
+  positions_lines_not_in_complex.push_back(pb.x()+offset.x);
+  positions_lines_not_in_complex.push_back(pb.y()+offset.y);
+  positions_lines_not_in_complex.push_back(pb.z()+offset.z);
 
-  positions_lines_not_in_complex.push_back(pc.x());
-  positions_lines_not_in_complex.push_back(pc.y());
-  positions_lines_not_in_complex.push_back(pc.z());
+  positions_lines_not_in_complex.push_back(pc.x()+offset.x);
+  positions_lines_not_in_complex.push_back(pc.y()+offset.y);
+  positions_lines_not_in_complex.push_back(pc.z()+offset.z);
 
-  positions_lines_not_in_complex.push_back(pc.x());
-  positions_lines_not_in_complex.push_back(pc.y());
-  positions_lines_not_in_complex.push_back(pc.z());
+  positions_lines_not_in_complex.push_back(pc.x()+offset.x);
+  positions_lines_not_in_complex.push_back(pc.y()+offset.y);
+  positions_lines_not_in_complex.push_back(pc.z()+offset.z);
 
-  positions_lines_not_in_complex.push_back(pa.x());
-  positions_lines_not_in_complex.push_back(pa.y());
-  positions_lines_not_in_complex.push_back(pa.z());
+  positions_lines_not_in_complex.push_back(pa.x()+offset.x);
+  positions_lines_not_in_complex.push_back(pa.y()+offset.y);
+  positions_lines_not_in_complex.push_back(pa.z()+offset.z);
 
 }
 
@@ -1298,13 +1301,14 @@ struct ComputeIntersection {
 
 void Scene_c3t3_item_priv::computeIntersections()
 {
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   if(!is_aabb_tree_built) fill_aabb_tree();
 
   positions_poly.clear();
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
-  const Kernel::Plane_3& plane = item->plane();
+  const Kernel::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
 }
@@ -1338,9 +1342,10 @@ void Scene_c3t3_item_priv::computeSpheres()
       c = QColor(Qt::red);
     else
       c = spheres->color().darker(250);
-    Kernel::Point_3 center(vit->point().point().x(),
-    vit->point().point().y(),
-    vit->point().point().z());
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    Kernel::Point_3 center(vit->point().point().x()+offset.x,
+    vit->point().point().y()+offset.y,
+    vit->point().point().z()+offset.z);
     float radius = vit->point().weight() ;
     spheres->add_sphere(Kernel::Sphere_3(center, radius), CGAL::Color(c.red(), c.green(), c.blue()));
   }
@@ -1468,8 +1473,8 @@ Scene_c3t3_item_priv::reset_cut_plane() {
   const float xcenter = static_cast<float>((bbox.xmax()+bbox.xmin())/2.);
   const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
   const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
-
-  frame->setPosition(qglviewer::Vec(xcenter, ycenter, zcenter));
+ const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  frame->setPosition(qglviewer::Vec(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z));
 }
 
 void
@@ -1558,7 +1563,8 @@ CGAL::Three::Scene_item::ManipulatedFrame* Scene_c3t3_item::manipulatedFrame() {
 }
 
 void Scene_c3t3_item::setPosition(float x, float y, float z) {
-  d->frame->setPosition(x, y, z);
+   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  d->frame->setPosition(x+offset.x, y+offset.y, z+offset.z);
 }
 
 bool Scene_c3t3_item::has_spheres()const { return d->spheres_are_shown;}
@@ -1578,7 +1584,8 @@ void Scene_c3t3_item::copyProperties(Scene_item *item)
   Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
   if(!c3t3_item)
     return;
-  d->frame->setPositionAndOrientation(c3t3_item->manipulatedFrame()->position(),
+   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  d->frame->setPositionAndOrientation(c3t3_item->manipulatedFrame()->position() - offset,
                                       c3t3_item->manipulatedFrame()->orientation());
 
   show_intersection(c3t3_item->has_tets());
