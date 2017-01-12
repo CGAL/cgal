@@ -115,14 +115,12 @@ struct Extract_polyline_with_context_visitor
 {
   typedef typename Polyhedral_mesh_domain::Polyhedron Polyhedron;
   std::vector<Polyline_with_context>& polylines;
-  const Polyhedron& polyhedron;
   const Graph& graph;
 
   Extract_polyline_with_context_visitor
-  (const Polyhedron& polyhedron,
-   const Graph& graph,
+  (const Graph& graph,
    typename std::vector<Polyline_with_context>& polylines)
-    : polylines(polylines), polyhedron(polyhedron), graph(graph)
+    : polylines(polylines), graph(graph)
   {}
 
   void start_new_polyline()
@@ -205,7 +203,7 @@ class Polyhedral_mesh_domain_with_features_3
     boost::vecS,
     boost::undirectedS,
     typename Polyhedron_::Point,
-    typename Polyhedron_::Vertex::Set_of_indices> Featured_edges_copy;
+    typename Polyhedron_::Vertex::Set_of_indices> Featured_edges_copy_graph;
 
 public:
   typedef Polyhedron_ Polyhedron;
@@ -331,9 +329,13 @@ private:
     this->build();
   }
 
-  template <typename Edge_predicate>
-  void add_features_from_split_graph_into_polylines(const Polyhedron& poly,
-                                                    const Edge_predicate& pred);
+  void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph);
+
+  template <typename Edge_predicate, typename P2Vmap>
+  void add_featured_edges_to_graph(const Polyhedron& poly,
+                                   const Edge_predicate& pred,
+                                   Featured_edges_copy_graph& graph,
+                                   P2Vmap& p2vmap);
 
   std::vector<Polyhedron> stored_polyhedra;
   bool borders_detected_;
@@ -406,6 +408,14 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   if (borders_detected_)
     return;//prevent from not-terminating
 
+  typedef Featured_edges_copy_graph G_copy;
+  G_copy g_copy;
+  typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
+  typedef std::map<typename Polyhedron::Point,
+                   vertex_descriptor> P2vmap;
+  // TODO: replace this map by and unordered_map
+  P2vmap p2vmap;
+
   CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron> detect_features;
   BOOST_FOREACH(Polyhedron& p, poly)
   {
@@ -418,80 +428,39 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
 
     internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);
 
-    add_features_from_split_graph_into_polylines(p, is_featured_edge);
+    add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
+  add_features_from_split_graph_into_polylines(g_copy);
   borders_detected_ = true;/*done by Mesh_3::detect_features*/
 }
 
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
-template <typename Edge_predicate>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-add_features_from_split_graph_into_polylines(const Polyhedron& p,
-                                             const Edge_predicate& pred)
+detect_borders(std::vector<Polyhedron>& poly)
 {
-  typedef boost::filtered_graph<Polyhedron,
-                                Edge_predicate > Featured_edges_graph;
-  Featured_edges_graph orig_graph(p, pred);
+  if (borders_detected_)
+    return;//border detection has already been done
 
-  typedef Featured_edges_graph Graph;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
-  typedef Featured_edges_copy G_copy;
-  typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<G_copy>::edge_descriptor edge_descriptor;
+  detect_features(poly, 180);
 
-  G_copy g_copy;
-  {
-    const Featured_edges_graph& graph = orig_graph;
+  borders_detected_ = true;
+}
 
-    typedef std::map<typename Polyhedron::Point,
-                     vertex_descriptor> P2vmap;
-    // TODO: replace this map by and unordered_map
-    P2vmap p2vmap;
-
-    BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
-      vertex_descriptor vc;
-      typename P2vmap::iterator it = p2vmap.find(v->point());
-      if(it == p2vmap.end()) {
-        vc = add_vertex(g_copy);
-        g_copy[vc] = v->point();
-        p2vmap[v->point()] = vc;
-      }
-    }
-
-    BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
-      vertex_descriptor vs = p2vmap[source(e,graph)->point()];
-      vertex_descriptor vt = p2vmap[target(e,graph)->point()];
-      CGAL_warning_msg(vs != vt, "ignore self loop");
-      if(vs != vt) {
-        const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
-        typename Polyhedron::Halfedge_handle he = halfedge(e, p);
-        if(!is_border(he, p)) {
-          g_copy[pair.first].insert(he->face()->patch_id());;
-        }
-        he = he->opposite();
-        if(!is_border(he, p)) {
-          g_copy[pair.first].insert(he->face()->patch_id());;
-        }
-      }
-    }
-  }
-
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
-  {// DEBUG
-    dump_graph_edges("edges-graph.polylines.txt", g_copy);
-  }
-#endif
-
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
+void
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
+{
   std::vector<Polyline_with_context> polylines;
 
   internal::Mesh_3::Extract_polyline_with_context_visitor<
     Polyhedral_mesh_domain_with_features_3,
     Polyline_with_context,
-    Featured_edges_copy
-    > visitor(p, g_copy, polylines);
+    Featured_edges_copy_graph
+    > visitor(g_copy, polylines);
   internal::Mesh_3::Angle_tester<GT_> angle_tester;
   split_graph_into_polylines(g_copy, visitor, angle_tester);
 
@@ -515,19 +484,61 @@ add_features_from_split_graph_into_polylines(const Polyhedron& p,
 
 }
 
-
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
+template <typename Edge_predicate, typename P2vmap>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-detect_borders(std::vector<Polyhedron>& poly)
+add_featured_edges_to_graph(const Polyhedron& p,
+                            const Edge_predicate& pred,
+                            Featured_edges_copy_graph& g_copy,
+                            P2vmap& p2vmap)
 {
-  if (borders_detected_)
-    return;//border detection has already been done
+  typedef boost::filtered_graph<Polyhedron,
+                                Edge_predicate > Featured_edges_graph;
+  Featured_edges_graph orig_graph(p, pred);
 
-  detect_features(poly, 180);
+  typedef Featured_edges_graph Graph;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
+  typedef Featured_edges_copy_graph G_copy;
+  typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<G_copy>::edge_descriptor edge_descriptor;
 
-  borders_detected_ = true;
+  const Featured_edges_graph& graph = orig_graph;
+
+  BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
+    vertex_descriptor vc;
+    typename P2vmap::iterator it = p2vmap.find(v->point());
+    if(it == p2vmap.end()) {
+      vc = add_vertex(g_copy);
+      g_copy[vc] = v->point();
+      p2vmap[v->point()] = vc;
+    }
+  }
+
+  BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
+    vertex_descriptor vs = p2vmap[source(e,graph)->point()];
+    vertex_descriptor vt = p2vmap[target(e,graph)->point()];
+    CGAL_warning_msg(vs != vt, "ignore self loop");
+    if(vs != vt) {
+      const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
+      typename Polyhedron::Halfedge_handle he = halfedge(e, p);
+      if(!is_border(he, p)) {
+        g_copy[pair.first].insert(he->face()->patch_id());;
+      }
+      he = he->opposite();
+      if(!is_border(he, p)) {
+        g_copy[pair.first].insert(he->face()->patch_id());;
+      }
+    }
+  }
+
+#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+  {// DEBUG
+    dump_graph_edges("edges-graph.polylines.txt", g_copy);
+  }
+#endif
 }
 
 
