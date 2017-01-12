@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  unsigned int d = boost::lexical_cast<unsigned int>(argv[1]);
+  int d = boost::lexical_cast<int>(argv[1]);
 
   PolygonMesh pmesh;
   cin >> pmesh;
