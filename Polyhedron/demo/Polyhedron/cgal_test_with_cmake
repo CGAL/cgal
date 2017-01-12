@@ -131,6 +131,7 @@ corefinement_plugin \
 create_bbox_mesh_plugin \
 cut_plugin \
 detect_sharp_edges_plugin \
+distance_plugin \
 edit_polyhedron_plugin \
 fairing_plugin \
 features_detection_plugin \
