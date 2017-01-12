@@ -17,10 +17,11 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-  
-    # Allow Windows 32bit applications to use up to 3GB of RAM
-    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
-
+    if ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
+      # Allow Windows 32bit applications to use up to 3GB of RAM
+      SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
+      SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
+    endif()
     # Prints new compilation options
     message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )
     message( STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'" )
