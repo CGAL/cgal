@@ -1,5 +1,6 @@
 language: cpp
 dist: trusty
+sudo: required
 env: 
  matrix:
   - PACKAGE='AABB_tree'
