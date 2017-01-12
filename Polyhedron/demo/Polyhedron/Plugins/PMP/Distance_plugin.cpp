@@ -166,7 +166,7 @@ private:
     tree.accelerate_distance_queries();
     tree.build();
 
-    typename Traits::Point_3 hint = m.vertices_begin()->point();
+    Traits::Point_3 hint = m.vertices_begin()->point();
 
 #ifndef CGAL_LINKED_WITH_TBB
     double hdist = 0;
