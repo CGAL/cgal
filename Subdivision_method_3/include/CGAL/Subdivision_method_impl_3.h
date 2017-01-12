@@ -605,12 +605,12 @@ namespace Subdivision_method_3 {
   template <class Poly, class VertexPointMap, class Mask>
   void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
-    typedef typename boost::graph_traits<Poly>::vertex_descriptor         vertex_descriptor;
-    typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
+    typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
+    typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
     typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-    typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
+    typedef typename boost::graph_traits<Poly>::face_iterator           face_iterator;
 
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 

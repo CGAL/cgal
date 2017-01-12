@@ -31,27 +31,24 @@ namespace CGAL {
 
 template <class Poly>
 class Polyhedron_decorator_3 {
-  typedef Poly                                        Polyhedron;
+  typedef Poly                                                      Polyhedron;
 
   typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Vertex_pmap;
-  typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
+  typedef typename boost::property_traits<Vertex_pmap>::value_type  Point;
 
-    typedef typename Kernel_traits<Point>::Kernel       Kernel;
+  typedef typename Kernel_traits<Point>::Kernel                     Kernel;
+  typedef typename Kernel::FT                                       FT;
 
-    typedef typename boost::graph_traits<Poly>::vertex_descriptor           Vertex_handle;
-    typedef typename boost::graph_traits<Poly>::halfedge_descriptor         Halfedge_handle;
-  typedef typename boost::graph_traits<Poly>::face_descriptor            Facet_handle;
+  typedef typename boost::graph_traits<Poly>::vertex_descriptor     Vertex_handle;
+  typedef typename boost::graph_traits<Poly>::halfedge_descriptor   Halfedge_handle;
+  typedef typename boost::graph_traits<Poly>::face_descriptor       Facet_handle;
 
-    typedef typename boost::graph_traits<Poly>::vertex_iterator         Vertex_iterator;
-    typedef typename boost::graph_traits<Poly>::edge_iterator           Edge_iterator;
-    typedef typename boost::graph_traits<Poly>::face_iterator          Facet_iterator;
+  typedef typename boost::graph_traits<Poly>::vertex_iterator       Vertex_iterator;
+  typedef typename boost::graph_traits<Poly>::edge_iterator         Edge_iterator;
+  typedef typename boost::graph_traits<Poly>::face_iterator         Facet_iterator;
 
-  typedef Halfedge_around_face_circulator<Poly>
-                                            Halfedge_around_facet_circulator;
-  typedef Halfedge_around_target_circulator<Poly>
-                                            Halfedge_around_vertex_circulator;
-
-  typedef typename Kernel::FT                          FT;
+  typedef Halfedge_around_face_circulator<Poly>     Halfedge_around_facet_circulator;
+  typedef Halfedge_around_target_circulator<Poly>   Halfedge_around_vertex_circulator;
 
 public:
   /** Insert a new vertex into a helfedge h (a--b)

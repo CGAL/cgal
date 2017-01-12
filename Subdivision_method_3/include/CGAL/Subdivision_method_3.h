@@ -89,7 +89,7 @@ namespace Subdivision_method_3 {
   template <class PolygonMesh, class Mask>
   void DQQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
     for (int i = 0; i < step; ++i)
-      Private::DQQ_1step(pmesh, get(vertex_point,pmesh), mask);
+      Private::DQQ_1step(pmesh, get(vertex_point, pmesh), mask);
   }
 
   template <class PolygonMesh, class Mask, class NamedParameters>
@@ -172,7 +172,7 @@ namespace Subdivision_method_3 {
   //
   template <class PolygonMesh>
   void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
-    DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh,get(vertex_point,pmesh)), step);
+    DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh, get(vertex_point,pmesh)), step);
   }
 
   template <class PolygonMesh, class NamedParameters>

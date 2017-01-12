@@ -1,6 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Subdivision_method_3.h>
+
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+
+#include <CGAL/Subdivision_method_3.h>
 
 #include <iostream>
 #include <boost/foreach.hpp>
