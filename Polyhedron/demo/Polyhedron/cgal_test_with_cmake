@@ -138,7 +138,7 @@ gocad_plugin \
 hole_filling_plugin \
 hole_filling_polyline_plugin \
 inside_out_plugin \
-intersection_plugin \
+surface_intersection_plugin \
 io_image_plugin \
 io_implicit_function_plugin \
 isotropic_remeshing_plugin \

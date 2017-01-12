@@ -72,16 +72,24 @@ class Side_of_triangle_mesh
   // typedefs
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VertexPointMap> Primitive;
   typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
-  typedef CGAL::AABB_tree<Traits> AABB_tree;
+  typedef CGAL::AABB_tree<Traits> AABB_tree_;
   typedef typename GeomTraits::Point_3 Point;
 
   //members
   typename GeomTraits::Construct_ray_3     ray_functor;
   typename GeomTraits::Construct_vector_3  vector_functor;
-  const AABB_tree* tree_ptr;
+  const AABB_tree_* tree_ptr;
   bool own_tree;
 
 public:
+
+   #ifndef DOXYGEN_RUNNING
+   typedef AABB_tree_ AABB_tree;
+   #else
+   /// AABB-tree accepting faces of `TriangleMesh`
+   typedef unspecified_type AABB_tree;
+   #endif
+
    /**
    * Constructor with one triangulated surface mesh.
    * @param tmesh the triangulated surface mesh bounding the domain to be tested

@@ -497,72 +497,42 @@ bool actionsByName(QAction* x, QAction* y) {
 }
 
 //Recursively creates all subMenus containing an action.
+// In the current implementation, there is a bug if a menu
+// and a submenu have the same name (cf map menu_map).
 void MainWindow::setMenus(QString name, QString parentName, QAction* a )
 {
-  bool hasSub = false;
   QString menuName, subMenuName;
   if (name.isNull())
     return;
-  //Get the menu and submenu names
-  for(int i=0; i<name.size(); i++)
-  {
-    if(name.at(i)=='/')
-    {
-      hasSub = true;
-      break;
-    }
-  }
+  int slash_index = name.indexOf('/');
 
-  if(!hasSub)
-    menuName= name;
+  if(slash_index==-1)
+    menuName= name; // no extra sub-menu
   else
   {
-    int i;
-    for(i = 0; name.at(i)!='/'; i++)
-      menuName.append(name.at(i));
-    i++;
-    for(int j = i; j<name.size(); j++)
-      subMenuName.append(name.at(j));
-    setMenus(subMenuName, name, a);
+    int l = name.length();
+    menuName=name.mid(0,slash_index);
+    subMenuName=name.mid(slash_index+1,l-slash_index-1);
+    // recursively create sub-menus
+    setMenus(subMenuName, menuName, a);
   }
 
-  //Create the menu and sub menu
-  QMenu* menu = 0;
-  QMenu* parentMenu = 0;
-  //If the menu already exists, don't create a new one.
-  if(menu_map.contains(name))
-  {
-    menu = menu_map[name];
-  }
+  //Create the menu if it does not already exist
+  if(!menu_map.contains(menuName))
+    menu_map[menuName] = new QMenu(menuName, this);
 
-  bool hasAction = false;
-  if(menu == 0){
-    menu = new QMenu(menuName, this);
-    menu_map[name] = menu;
-  }
-  else //checks the action is not already in the menu
-    if(a->property("added").toBool())
-      hasAction = true;
-  if(!hasAction)
+  //Create the parent menu if it does not already exist
+  if(!menu_map.contains(parentName))
+    menu_map[parentName] = new QMenu(parentName, this);
+  // add the submenu in the menu
+  menu_map[parentName]->addMenu(menu_map[menuName]);
+
+  // only add the action in the last submenu
+  if(slash_index==-1)
   {
     ui->menuOperations->removeAction(a);
-    menu->addAction(a);
+    menu_map[menuName]->addAction(a);
   }
-  a->setProperty("added", true);
-  //If the parent menu already exists, don't create a new one.
-  if(menu_map.contains(parentName))
-  {
-    parentMenu = menu_map[parentName];
-  }
-  if(parentMenu == 0)
-  {//get the parentMenu title :
-    QString parentTitle;
-    for(int i=0; parentName.at(i)!='/'; i++)
-      parentTitle.append(parentName.at(i));
-    parentMenu = new QMenu(parentTitle, this);
-    menu_map[parentName] = parentMenu;
-  }
-  parentMenu->addMenu(menu);
 }
 
 void MainWindow::load_plugin(QString fileName, bool blacklisted)

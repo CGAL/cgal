@@ -322,6 +322,8 @@ CGAL_Kernel_cons(Construct_line_2,
 		 construct_line_2_object)
 CGAL_Kernel_cons(Construct_line_3,
 		 construct_line_3_object)
+CGAL_Kernel_cons(Construct_line_line_intersection_point_3,
+                 construct_line_line_intersection_point_3_object)
 CGAL_Kernel_cons(Construct_midpoint_2,
 		 construct_midpoint_2_object)
 CGAL_Kernel_cons(Construct_midpoint_3,
@@ -390,6 +392,8 @@ CGAL_Kernel_cons(Construct_perpendicular_vector_2,
 		 construct_perpendicular_vector_2_object)
 CGAL_Kernel_cons(Construct_plane_3,
 		 construct_plane_3_object)
+CGAL_Kernel_cons(Construct_plane_line_intersection_point_3,
+                 construct_plane_line_intersection_point_3_object)
 CGAL_Kernel_cons(Construct_point_on_2,
 		 construct_point_on_2_object)
 CGAL_Kernel_cons(Construct_point_on_3,

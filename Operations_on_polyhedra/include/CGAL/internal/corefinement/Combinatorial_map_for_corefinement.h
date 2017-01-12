@@ -81,31 +81,29 @@ public:
 };
 
 template <typename Traits_,class Polyhedron>
-class Item_with_points_and_volume_info
+struct Item_with_points_and_volume_info
 {
-public:
-  public:
-    static const unsigned int dimension = 3;
-    static const unsigned int NB_MARKS = 32;
-    template<class Refs>
-    struct Dart_wrapper
-    {
-      typedef CGAL::Dart<3, Refs >       Dart;
-      typedef Traits_                    Traits;
-      typedef typename Traits::FT        FT;
-      typedef typename Traits::Point_3   Point;
-      typedef typename Traits::Vector_3  Vector;
-      #ifndef NDEBUG
-      typedef My_cell_attribute_with_point< Refs,CGAL::Tag_true,Point,Point_on_merge>                 Vertex_attribute;
-      #else
-      typedef My_cell_attribute_with_point< Refs,CGAL::Tag_true,Point>                                Vertex_attribute;
-      #endif
-      typedef CGAL::Cell_attribute< Refs,Volume_info<Polyhedron>,CGAL::Tag_true,Volume_on_merge >     Volume_attribute;
-      typedef CGAL::cpp11::tuple< Vertex_attribute,
-                                  void,
-                                  void,
-                                  Volume_attribute>    Attributes;
-    };
+  static const unsigned int dimension = 3;
+  static const unsigned int NB_MARKS = 32;
+
+  template<class CMap>
+  struct Dart_wrapper
+  {
+    typedef Traits_                    Traits;
+    typedef typename Traits::FT        FT;
+    typedef typename Traits::Point_3   Point;
+    typedef typename Traits::Vector_3  Vector;
+    #ifndef NDEBUG
+    typedef My_cell_attribute_with_point<CMap,CGAL::Tag_true,Point,Point_on_merge>                 Vertex_attribute;
+    #else
+    typedef My_cell_attribute_with_point<CMap,CGAL::Tag_true,Point>                                Vertex_attribute;
+    #endif
+    typedef CGAL::Cell_attribute<CMap,Volume_info<Polyhedron>,CGAL::Tag_true,Volume_on_merge >     Volume_attribute;
+    typedef CGAL::cpp11::tuple< Vertex_attribute,
+                                void,
+                                void,
+                                Volume_attribute>    Attributes;
+  };
 };
 
 } } //namespace CGAL::internal_IOP

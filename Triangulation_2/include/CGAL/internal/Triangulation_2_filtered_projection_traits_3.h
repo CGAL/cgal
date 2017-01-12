@@ -23,7 +23,7 @@
 #define CGAL_INTERNAL_TRIANGULATION_2_FILTERED_PROJECTION_TRAITS_3_H
 
 #include <CGAL/internal/Triangulation_2_projection_traits_base_3.h>
-#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Filtered_predicate_with_state.h>
 
 namespace CGAL {
 
@@ -51,11 +51,12 @@ public:
   }
 
 #define CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(P, Pf, ACCESSOR)    \
-  typedef  Filtered_predicate< \
+  typedef  Filtered_predicate_with_state< \
     typename Exact_traits::P, \
     typename Filtering_traits::P, \
     C2E, \
-    C2F > P; \
+    C2F, \
+    typename K::Vector_3> P;      \
   P Pf() const { \
     return P(this->ACCESSOR()); \
   }

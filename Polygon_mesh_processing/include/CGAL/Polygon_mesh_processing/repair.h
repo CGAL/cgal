@@ -150,6 +150,22 @@ bool is_degenerated(
 
 ///\cond SKIP_IN_MANUAL
 
+template <class Traits, class TriangleMesh, class VertexPointMap, class OutputIterator>
+OutputIterator
+degenerate_faces(const TriangleMesh& tm,
+                 const VertexPointMap& vpmap,
+                 const Traits& traits,
+                 OutputIterator out)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  {
+    if ( is_degenerated(fd, tm, vpmap, traits) )
+      *out++=fd;
+  }
+  return out;
+}
+
 // this function remove a border edge even if it does not satisfy the link condition.
 // The only limitation is that the length connected component of the boundary this edge
 // is strictly greater than 3

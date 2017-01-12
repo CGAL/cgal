@@ -34,7 +34,7 @@ template <class Traits>
 class Projected_orientation_with_normal_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private type aliases
   typedef typename Traits::K K;
@@ -65,7 +65,7 @@ template <class Traits>
 class Projected_side_of_oriented_circle_with_normal_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private types aliases
   typedef typename Traits::K K;
@@ -122,7 +122,7 @@ template <class Traits>
 class Projected_squared_distance_with_normal_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private types aliases
   typedef typename Traits::K K;
@@ -172,7 +172,7 @@ template <class Traits>
 class Projected_intersect_3
 {
   // private members
-  const typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal;
 
   // private types aliases
   typedef typename Traits::K K;
@@ -250,7 +250,7 @@ class Less_along_axis
   // private members
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
-  const Vector_3 base;
+  Vector_3 base;
 public:
   Less_along_axis(const Vector_3& base) : base(base)
   {
@@ -271,7 +271,7 @@ class Compare_along_axis
   // private members
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
-  const Vector_3 base;
+  Vector_3 base;
 public:
   Compare_along_axis(const Vector_3& base) : base(base)
   {

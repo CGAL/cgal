@@ -95,6 +95,12 @@ create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")
 #create_single_source_cgal_program( "remove_degeneracies_example.cpp")
 create_single_source_cgal_program( "isotropic_remeshing_example.cpp")
+create_single_source_cgal_program( "surface_mesh_intersection.cpp")
+create_single_source_cgal_program( "corefinement_SM.cpp")
+create_single_source_cgal_program( "corefinement_consecutive_bool_op.cpp" )
+create_single_source_cgal_program( "corefinement_difference_remeshed.cpp" )
+create_single_source_cgal_program( "corefinement_mesh_union.cpp" )
+create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
 
 
 if(OpenMesh_FOUND)

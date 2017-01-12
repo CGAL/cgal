@@ -32,9 +32,7 @@ int main(int argc, char* argv[])
     << std::endl;
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  PMP::self_intersections(mesh,
-    std::back_inserter(intersected_tris),
-    PMP::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
+  PMP::self_intersections(mesh, std::back_inserter(intersected_tris));
 
   std::cout << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
   
