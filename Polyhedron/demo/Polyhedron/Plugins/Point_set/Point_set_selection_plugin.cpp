@@ -336,12 +336,12 @@ protected Q_SLOTS:
           now_selected = visualizer->is_selected (vsp);
         else if(edit_box)
         {
-         if(p.x() >= edit_box->point(0,0) &&
-            p.y() >= edit_box->point(0,1) &&
-            p.z() <= edit_box->point(0,2) &&
-            p.x() <= edit_box->point(6,0) &&
-            p.y() <= edit_box->point(6,1) &&
-            p.z() >= edit_box->point(6,2)
+         if(p.x() >= edit_box->point(0,0) - offset.x &&
+            p.y() >= edit_box->point(0,1) - offset.y &&
+            p.z() <= edit_box->point(0,2) - offset.z &&
+            p.x() <= edit_box->point(6,0) - offset.x &&
+            p.y() <= edit_box->point(6,1) - offset.y &&
+            p.z() >= edit_box->point(6,2) - offset.z
             )
          {
            now_selected = true;
