@@ -623,26 +623,26 @@ namespace parameters{
 } //namespace parameters
 } //namespace Polygon_mesh_processing
 
-#if BOOST_VERSION < 105100
-  template <class Tag1, class Tag2, class T1, class Base>
-  inline
-  typename boost::property_value< pmp_bgl_named_params<T1,Tag1,Base>, Tag2>::type
-  get_param(const pmp_bgl_named_params<T1,Tag1,Base>& p, Tag2 tag2)
-  {
-    enum { match = boost::detail::same_property<Tag1,Tag2>::value };
-    typedef typename
-      boost::property_value< pmp_bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
-    T2* t2 = 0;
-    typedef boost::detail::property_value_dispatch<match> Dispatcher;
-    return Dispatcher::const_get_value(p, t2, tag2);
-  }
-#endif
-
 } //namespace CGAL
 
 // partial specializations hate inheritance and we need to repeat
 // those here. this is rather fragile.
 namespace boost {
+#if BOOST_VERSION < 105100
+  template <class Tag1, class Tag2, class T1, class Base>
+  inline
+  typename property_value< CGAL::pmp_bgl_named_params<T1,Tag1,Base>, Tag2>::type
+  get_param(const CGAL::pmp_bgl_named_params<T1,Tag1,Base>& p, Tag2 tag2)
+  {
+    enum { match = detail::same_property<Tag1,Tag2>::value };
+    typedef typename
+      boost::property_value< CGAL::pmp_bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
+    T2* t2 = 0;
+    typedef detail::property_value_dispatch<match> Dispatcher;
+    return Dispatcher::const_get_value(p, t2, tag2);
+  }
+#endif
+
   template <typename T, typename Tag, typename Base, typename Def>
   struct lookup_named_param_def<Tag, CGAL::pmp_bgl_named_params<T, Tag, Base>, Def> {
     typedef T type;
