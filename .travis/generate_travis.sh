@@ -9,11 +9,20 @@ fi
 
 #find all the packages
 PACKAGES=()
+INDEX=0
+i=0
 for f in *
 do
   if [ -d  "$f/examples/$f" ] || [ -d  "$f/test/$f" ] || [ -d  "$f/demo/$f" ]
 	then
-		PACKAGES+="$f "
+		PACKAGES[$INDEX]+="$f "
+		i=$[i+1]
+		if [ $i == 3 ]
+		then
+			i=0
+			#PACKAGES[$INDEX]+="\n"
+ 			INDEX=$[INDEX+1]
+		fi
   	echo "$f " >> ./.travis/packages.txt
 	fi
 done
@@ -25,8 +34,8 @@ then
   rm .travis.yml
 fi
 #writes the first part of the file	
-old_IFS=$IFS  
-IFS=$'\n'     
+old_IFS=$IFS       
+IFS=$'\n'
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
 	if [ "$LINE" != " matrix: " ]
@@ -37,14 +46,13 @@ do
 	fi
 done
 echo " matrix: " >> .travis.yml
-IFS=$' '
 #writes the matrix
 for package in ${PACKAGES[@]}
 do
  	echo "  - PACKAGE='$package' " >> .travis.yml
 done
  	echo "  - PACKAGE='CHECK' " >> .travis.yml
-IFS=$'\n'     
+
 #writes the end of the file
 COPY=0
 for LINE in $(cat "$PWD/.travis/template.txt")
