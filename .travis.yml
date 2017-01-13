@@ -129,7 +129,7 @@ before_script:
 - make 
 - cd .. 
 script: 
-- bash -x -e ./build_package.sh PACKAGE
+- bash -x -e ./build_package.sh $PACKAGE
 compiler: 
   - clang 
   - gcc 
