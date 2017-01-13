@@ -213,8 +213,10 @@ namespace CGAL {
       return D::value;
     }
 
-    const T* lower() const {return lower_;}
-    const T* upper() const {return upper_;}    
+    T* lower() {return lower_.data();}
+    T* upper() {return upper_.data();}
+    const T* lower() const {return lower_.data();}
+    const T* upper() const {return upper_.data();}
  
     Kd_tree_rectangle&
     operator=(const Kd_tree_rectangle& r)

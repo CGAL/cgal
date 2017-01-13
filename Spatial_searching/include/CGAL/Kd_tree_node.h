@@ -203,9 +203,8 @@ namespace CGAL {
           static_cast<Internal_node_const_handle>(this);
 	// after splitting b denotes the lower part of b
 	Kd_tree_rectangle<FT,D> b_upper(b);
-	b.split(b_upper, node->cutting_dimension(),
-		node->cutting_value());
-                             
+	node->split_bbox(b, b_upper);
+
 	if (q.outer_range_contains(b)) 	
 	  it=node->lower()->tree_items(it);
 	else
@@ -240,8 +239,7 @@ namespace CGAL {
           static_cast<Internal_node_const_handle>(this);
 	// after splitting b denotes the lower part of b
 	Kd_tree_rectangle<FT,D> b_upper(b);
-	b.split(b_upper, node->cutting_dimension(),
-		node->cutting_value());
+	node->split_bbox(b, b_upper);
                              
 	if (q.outer_range_contains(b)){ 	
           result = node->lower()->any_tree_item();
@@ -342,6 +340,7 @@ namespace CGAL {
 
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
+    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::D D;
 
   private:
     
@@ -469,8 +468,13 @@ namespace CGAL {
     {
       return Separator(cutting_dimension,cutting_value);
     }*/
-	
 
+    void split_bbox(Kd_tree_rectangle<FT,D>& l, Kd_tree_rectangle<FT,D>& u) const {
+      l.lower()[cut_dim]=lower_low_val;
+      l.upper()[cut_dim]=lower_high_val;
+      u.lower()[cut_dim]=upper_low_val;
+      u.upper()[cut_dim]=upper_high_val;
+    }
   };//internal node
 
  template < class TreeTraits, class Splitter> 
@@ -484,6 +488,7 @@ namespace CGAL {
 
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::Separator Separator;
+    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::D D;
 
   private:
     
@@ -576,8 +581,11 @@ namespace CGAL {
     {
       return Separator(cutting_dimension,cutting_value);
     }*/
-	
 
+    void split_bbox(Kd_tree_rectangle<FT,D>& l, Kd_tree_rectangle<FT,D>& u) const {
+      l.upper()[cut_dim]=cut_val;
+      u.lower()[cut_dim]=cut_val;
+    }
   };//internal node
 
 
