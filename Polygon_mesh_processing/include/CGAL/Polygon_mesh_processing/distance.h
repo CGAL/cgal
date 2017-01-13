@@ -144,7 +144,7 @@ sample_triangles(const FaceRange& triangles,
   return out;
 }
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_NO_ATOMIC)
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
@@ -513,7 +513,7 @@ double approximate_Hausdorff_distance(
   tree.accelerate_distance_queries();
   tree.build();
   Point_3 hint = get(vpm, *vertices(tm).first);
-#ifndef CGAL_LINKED_WITH_TBB
+#if !defined(CGAL_LINKED_WITH_TBB) || defined(CGAL_NO_ATOMIC)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else

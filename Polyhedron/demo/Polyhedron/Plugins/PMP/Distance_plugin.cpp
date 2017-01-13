@@ -22,7 +22,7 @@
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_NO_ATOMIC)
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
@@ -168,7 +168,7 @@ private:
 
     Traits::Point_3 hint = m.vertices_begin()->point();
 
-#ifndef CGAL_LINKED_WITH_TBB
+#if !defined(CGAL_LINKED_WITH_TBB) || defined(CGAL_NO_ATOMIC)
     double hdist = 0;
     for(std::size_t i = 0; i<sample_points.size(); ++i)
     {

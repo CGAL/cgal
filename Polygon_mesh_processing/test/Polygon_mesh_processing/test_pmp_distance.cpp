@@ -282,7 +282,7 @@ int main(int, char** argv)
   std::cout << "Second mesh has " << num_faces(m2) << " faces\n";
 
   CGAL::Real_timer time;
-  #ifdef CGAL_LINKED_WITH_TBB
+  #if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_NO_ATOMIC)
   time.start();
    std::cout << "Distance between meshes (parallel) "
              << PMP::approximate_Hausdorff_distance<CGAL::Parallel_tag>(
