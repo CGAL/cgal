@@ -73,6 +73,7 @@ public:
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
   bool applicable(QAction*) const { return true;}
+  QList<QAction*> actions() const { return QList<QAction*>(); }
 protected Q_SLOTS:
   //!Opens a dialog to add a point set on the fly.
   void on_actionAdd_point_set_triggered();
