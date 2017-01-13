@@ -187,10 +187,11 @@ private:
       typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
 
       for(int i = 0; i < 3; ++i) {
-        if(v[0] != FT(0.)) {
-          return x[0] / v[0];
+        if(v[i] != FT(0.)) {
+          return x[i] / v[i];
         }
       }
+      CGAL_assertion(false); // should never end-up here
       return FT(0.);
     }
 
