@@ -267,21 +267,14 @@ namespace Subdivision_method_3 {
 
 
   // ======================================================================
-//#define CGAL_EULER_DQQ_SPLITTING
-//#define CGAL_EULER_DQQ_TILTING   // Tilting is faster
   template <class Poly, class VertexPointMap, class Mask>
   void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename boost::graph_traits<Poly>::vertex_descriptor           vertex_descriptor;
-    typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
+    typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
+    typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
     typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
-
-    typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
-    typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-
-    typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_face_circulator;
 
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
@@ -299,85 +292,6 @@ namespace Subdivision_method_3 {
       }
     }
     Point* point_buffer = new Point[num_e*2];
-
-    //
-#ifdef CGAL_EULER_DQQ_SPLITTING
-    //
-    // Splitting
-
-    //! Splitting is not implemented to support border
-
-    // build the point_buffer
-    Facet_iterator fitr, fitr_end = p.facets_end();
-    int pi = 0;
-    for (fitr = p.facets_begin(); fitr != fitr_end; ++fitr) {
-      Halfedge_around_face_circulator cir = fitr->facet_begin();
-      do {
-        mask.corner_node(cir, point_buffer[pi++]);
-      } while (--cir != fitr->facet_begin());
-    }
-
-    // If Polyhedron is using vector, we need to reserve the memory to prevent
-    // the CGAL_assertion. This function for polyhedron using list is VOID.
-    p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
-
-    // Build the connectivity using insert_vertex() and insert_edge()
-    // 1. create barycentric centers of each facet
-    fitr = p.facets_begin();
-    pi = 0;
-    for (size_t i = 0; i < num_f; i++) {
-      Facet_handle fh = fitr;
-      ++fitr;
-      Vertex_handle vh = (p.create_center_vertex(fh->facet_begin()))->vertex();
-
-      // 1.1 add vertex on each new edges
-      Halfedge_around_vertex_circulator vcir = vh->vertex_begin();
-      int vn = circulator_size(vcir);
-      for (int j = 0; j < vn; ++j) {
-        Halfedge_handle e = vcir;
-        ++vcir;
-        Vertex_handle v = PD::insert_vertex(p, e);
-        v->point() = point_buffer[pi++];
-      }
-      // 1.2 connect new vertices surround each barycentric center
-      for (int j = 0; j < vn; ++j) {
-        Halfedge_handle e1 = vcir->prev();
-        ++vcir;
-        Halfedge_handle e2 = vcir->opposite();
-        PD::insert_edge(p, e1, e2);
-      }
-      // 1.3 remove the barycentric centers
-      p.erase_center_vertex(vcir);
-    }
-
-    // 2. remove old edges
-    Edge_iterator eitr = p.edges_begin();
-    for (size_t i = 0; i < num_e; ++i) {
-      Halfedge_handle eh = eitr;
-      ++eitr;
-      p.join_facet(eh);
-    }
-
-    // 3. connect new vertices surround old vertices and then remove
-    //    old vertices.
-    vertex_iterator vitr = p.vertices_begin();
-    for (size_t i = 0; i < num_v; ++i) {
-      Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
-      int vn = circulator_size(vcir);
-      for (int j = 0; j < vn; ++j) {
-        Halfedge_handle e1 = vcir->prev();
-        ++vcir;
-        Halfedge_handle e2 = vcir->opposite();
-        PD::insert_edge(p, e1, e2);
-      }
-      ++vitr;
-      p.erase_center_vertex(vcir);
-    }
-
-    //
-#else
-    //
-    // Tilting
 
     // build the point_buffer
     vertex_iterator vitr, vitr_end;
@@ -471,8 +385,6 @@ namespace Subdivision_method_3 {
       ++vitr;
       Euler::remove_center_vertex(halfedge(vh,p),p);
     }
-
-#endif //CGAL_EULER_DQQ_SPLITTING
 
     delete []point_buffer;
   }
