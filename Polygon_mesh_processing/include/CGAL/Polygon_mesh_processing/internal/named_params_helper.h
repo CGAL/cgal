@@ -29,6 +29,8 @@
 #include <CGAL/boost/graph/properties.h>
 #include <boost/mpl/if.hpp>
 
+namespace CGAL {
+
 // shortcut for accessing the value type of the property map
 template <class Graph, class Property>
 class property_map_value {
@@ -113,7 +115,7 @@ public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 };
 
-template<typename PolygonMesh, typename NamedParameters>
+template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, all_default_t> >
 class GetGeomTraits
 {
   typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
@@ -215,6 +217,6 @@ public:
   > ::type type;
 };
 
-
+} //end of namespace CGAL
 
 #endif //CGAL_NAMED_PARAMETERS_HELPERS_H
