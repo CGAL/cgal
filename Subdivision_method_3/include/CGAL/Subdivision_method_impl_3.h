@@ -484,10 +484,10 @@ namespace Subdivision_method_3 {
 
     // build new vertex-faces
     BOOST_FOREACH(vertex_descriptor vd, vertices(p)) {
-      halfedge_descriptor hd = halfedge(vd, p);
-      if(is_border(hd, p))
+      if(is_border(vd, p))
         continue;
 
+      halfedge_descriptor hd = halfedge(vd, p);
       halfedge_descriptor new_hd = opposite(old_to_new[hd], newp);
       halfedge_descriptor new_face_hd = opposite(prev(new_hd, newp), newp), done = new_face_hd;
       std::list<vertex_descriptor> vertices_of_new_faces;
