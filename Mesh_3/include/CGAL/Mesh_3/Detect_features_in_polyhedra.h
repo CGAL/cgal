@@ -65,6 +65,10 @@ public:
                           FT angle_in_deg = FT(60)) const;
   void detect_surface_patches(Polyhedron& polyhedron);
   void detect_vertices_incident_patches(Polyhedron& p);
+
+  int maximal_surface_patch_index() const {
+    return current_surface_index_ - 1;
+  }
   
 private:
   Vector_3 facet_normal(const Facet_handle& f) const;
