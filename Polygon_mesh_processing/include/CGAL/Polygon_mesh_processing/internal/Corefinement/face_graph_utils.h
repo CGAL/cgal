@@ -60,6 +60,20 @@ void init_vertex_indices(PolygonMesh& pm,
     ++i;
   }
 }
+template <class PolygonMesh, class HalfedgeIndexMap, class Tag>
+void init_halfedge_indices(PolygonMesh& pm,
+                           HalfedgeIndexMap& hid,
+                           boost::read_write_property_map_tag,
+                           Tag)
+{
+  typename boost::property_traits<HalfedgeIndexMap>::value_type i = 0;
+  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
+                halfedges(pm))
+  {
+    put(hid, hd, i);
+    ++i;
+  }
+}
 
 // matches mutable Lvalue property maps
 template <class PolygonMesh, class FaceIndexMap>
@@ -68,13 +82,8 @@ void init_face_indices(PolygonMesh& pm,
                        boost::lvalue_property_map_tag,
                        boost::false_type)
 {
-  typename boost::property_traits<FaceIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
-                faces(pm))
-  {
-    put(fid, fd, i);
-    ++i;
-  }
+  init_face_indices(pm, fid,
+    boost::read_write_property_map_tag(), boost::false_type());
 }
 template <class PolygonMesh, class VertexIndexMap>
 void init_vertex_indices(PolygonMesh& pm,
@@ -82,13 +91,17 @@ void init_vertex_indices(PolygonMesh& pm,
                          boost::lvalue_property_map_tag,
                          boost::false_type)
 {
-  typename boost::property_traits<VertexIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
-                vertices(pm))
-  {
-    put(vid, vd, i);
-    ++i;
-  }
+  init_vertex_indices(pm, vid,
+    boost::read_write_property_map_tag(), boost::false_type());
+}
+template <class PolygonMesh, class HalfedgeIndexMap>
+void init_halfedge_indices(PolygonMesh& pm,
+                         HalfedgeIndexMap& hid,
+                         boost::lvalue_property_map_tag,
+                         boost::false_type)
+{
+  init_halfedge_indices(pm, hid,
+    boost::read_write_property_map_tag(), boost::false_type());
 }
 
 // matches all other types of property map
@@ -98,9 +111,12 @@ void init_face_indices(PolygonMesh&, FaceIndexMap, MapTag, Tag)
 template <class PolygonMesh, class VertexIndexMap, class MapTag, class Tag>
 void init_vertex_indices(PolygonMesh&, VertexIndexMap, MapTag, Tag)
 {}
+template <class PolygonMesh, class HalfedgeIndexMap, class MapTag, class Tag>
+void init_halfedge_indices(PolygonMesh&, HalfedgeIndexMap, MapTag, Tag)
+{}
 
 template <class PolygonMesh, class FaceIndexMap>
-void init_face_indices(PolygonMesh& pm, FaceIndexMap& fid)
+void init_face_indices(PolygonMesh& pm, FaceIndexMap fid)
 {
   init_face_indices(pm, fid,
                     typename boost::property_traits<FaceIndexMap>::category(),
@@ -111,7 +127,7 @@ void init_face_indices(PolygonMesh& pm, FaceIndexMap& fid)
 }
 
 template <class PolygonMesh, class VertexIndexMap>
-void init_vertex_indices(PolygonMesh& pm, VertexIndexMap& vid)
+void init_vertex_indices(PolygonMesh& pm, VertexIndexMap vid)
 {
   init_vertex_indices(pm, vid,
                       typename boost::property_traits<VertexIndexMap>::category(),
@@ -119,6 +135,17 @@ void init_vertex_indices(PolygonMesh& pm, VertexIndexMap& vid)
                         typename boost::remove_reference<
                           typename boost::property_traits<VertexIndexMap>::reference
                             >::type >::type() );
+}
+
+template <class PolygonMesh, class HalfedgeIndexMap>
+void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
+{
+  init_halfedge_indices(pm, hid,
+                        typename boost::property_traits<HalfedgeIndexMap>::category(),
+                        typename boost::is_const<
+                          typename boost::remove_reference<
+                            typename boost::property_traits<HalfedgeIndexMap>::reference
+                              >::type >::type() );
 }
 
 template <typename G>
