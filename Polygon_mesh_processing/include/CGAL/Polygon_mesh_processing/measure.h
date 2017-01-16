@@ -42,6 +42,7 @@ namespace CGAL {
 template<typename CGAL_PMP_NP_TEMPLATE_PARAMETERS, typename NP>
 class GetGeomTraits<CGAL_PMP_NP_CLASS, NP>
 {
+public:
   struct type{};
 };
 
