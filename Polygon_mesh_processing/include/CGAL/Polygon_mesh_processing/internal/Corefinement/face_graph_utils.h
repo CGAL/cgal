@@ -27,7 +27,7 @@
 #include <boost/type_traits/remove_reference.hpp>
 #include <fstream>
 #include <sstream>
-
+#include <set>
 namespace CGAL {
 namespace Corefinement {
 
