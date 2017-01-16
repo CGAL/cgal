@@ -62,7 +62,6 @@ Nef_3
 Nef_S2 
 NewKernel_d 
 Number_types 
-Operations_on_polyhedra 
 Optimal_transportation_reconstruction_2 
 Partition_2 
 Periodic_2_triangulation_2 

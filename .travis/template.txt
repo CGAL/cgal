@@ -8,7 +8,7 @@ install:
 before_script: 
 - mkdir -p build 
 - cd build 
-- cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DNDEBUG .. 
+- cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
 - make 
 - cd .. 
 script: 

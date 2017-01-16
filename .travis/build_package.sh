@@ -31,7 +31,8 @@ do
 	  IFS=$old_IFS
 	  if [ "${DIFFERENCE[0]}" != "" ]
 	  then
-	        echo "Some packages are missing in the matrix."
+	        echo "The matrix and the actual package list differ : ."
+					echo ${DIFFERENCE[*]}
 	        exit 1
 	  fi
 	  echo "Matrix is up to date."
@@ -45,7 +46,7 @@ do
 	  cd $ROOT/$EXAMPLES
 	  mkdir -p build
 	  cd build
-	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG" ..
+	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
 	  make -j2
 	fi
 	if [ -d "$ROOT/$TEST" ]
@@ -53,7 +54,7 @@ do
 	  cd $ROOT/$TEST
 	  mkdir -p build
 	  cd build
-	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG" ..
+	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
   	make -j2
 	fi
 	
