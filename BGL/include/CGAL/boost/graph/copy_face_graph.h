@@ -108,8 +108,8 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   std::vector<tm_vertex_descriptor> v2v_(num_vertices(sm));
   std::vector<tm_face_descriptor> f2f_(num_faces(sm));
 #else
-  boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v_;
-  boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f_;
+  boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v_(num_vertices(sm));
+  boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f_(num_faces(sm));
 #endif
 
   BOOST_FOREACH(sm_vertex_descriptor svd, vertices(sm)){
@@ -175,7 +175,7 @@ void copy_face_graph_2(const SourceMesh& sm, TargetMesh& tm,
 #ifdef CGAL_CFG_USE_VECTOR
   std::vector<tm_halfedge_descriptor> h2h_(num_halfedges(sm));
 #else
-  boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h_; // TODO update me
+  boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h_(num_halfedges(sm)); // TODO update me
 #endif
   std::vector<tm_halfedge_descriptor> tm_border_halfedges;
 
