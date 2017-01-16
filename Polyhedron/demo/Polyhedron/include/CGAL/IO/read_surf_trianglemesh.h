@@ -162,11 +162,11 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
       CGAL::cpp11::array<vertex_descriptor, 3> face;
       for(int id=0; id<3; ++id)
       {
-        if(vertices[index[id]] == null_vertex)
+        if(vertices[index[id]-1] == null_vertex)
         {
-          vertices[index[id]] = add_vertex(points[index[id]-1], mesh);
+          vertices[index[id]-1] = add_vertex(points[index[id]-1], mesh);
         }
-        face[id] = vertices[index[id]];
+        face[id] = vertices[index[id]-1];
       }
       CGAL::Euler::add_face(face, mesh);
     }
