@@ -103,10 +103,14 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   Cartesian_converter<typename Kernel_traits<typename boost::property_traits<Src_vpm>::value_type>::type,
                       typename Kernel_traits<typename boost::property_traits<Tgt_vpm>::value_type>::type >
     conv;
-
+#ifdef CGAL_CFG_USE_VECTOR
   // internal f2f and v2v
+  std::vector<tm_vertex_descriptor> v2v_(num_vertices(sm));
+  std::vector<tm_face_descriptor> f2f_(num_faces(sm));
+#else
   boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v_;
   boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f_;
+#endif
 
   BOOST_FOREACH(sm_vertex_descriptor svd, vertices(sm)){
     tm_vertex_descriptor tvd = add_vertex(tm);
@@ -150,7 +154,7 @@ template <typename SourceMesh, typename TargetMesh,
 void copy_face_graph_2(const SourceMesh& sm, TargetMesh& tm,
                        V2V v2v, H2H h2h, F2F f2f,
                        Src_vpm sm_vpm, Tgt_vpm tm_vpm )
-#endif
+
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
@@ -168,8 +172,11 @@ void copy_face_graph_2(const SourceMesh& sm, TargetMesh& tm,
                       typename Kernel_traits<typename boost::property_traits<Tgt_vpm>::value_type>::type >
     conv;
 
+#ifdef CGAL_CFG_USE_VECTOR
+  std::vector<tm_halfedge_descriptor> h2h_(num_halfedges(sm));
+#else
   boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h_; // TODO update me
-
+#endif
   std::vector<tm_halfedge_descriptor> tm_border_halfedges;
 
   tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
