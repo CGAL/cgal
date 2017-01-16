@@ -21,8 +21,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_POLYHEDRON_SUBDIVISION_IMPL_H_02102006
-#define CGAL_POLYHEDRON_SUBDIVISION_IMPL_H_02102006
+#ifndef CGAL_POLYHEDRON_SUBDIVISION_IMPL_H
+#define CGAL_POLYHEDRON_SUBDIVISION_IMPL_H
 
 #include <CGAL/basic.h>
 
@@ -37,11 +37,10 @@
 
 namespace CGAL {
 
-// ======================================================================
 namespace Subdivision_method_3 {
 
-  namespace Private {
-  // ======================================================================
+namespace Private {
+
     template <class Poly, class VertexPointMap, class Mask>
     void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     typedef Polyhedron_decorator_3<Poly>           PD;
@@ -649,9 +648,9 @@ namespace Subdivision_method_3 {
     CGAL_postcondition(p.is_valid());
     delete []cpt;
   }
-  }
-}
 
-} //namespace CGAL
+} // namespace Private
+} // namespace Subdivision_method_3
+} // namespace CGAL
 
-#endif //CGAL_POLYHEDRON_SUBDIVISION_H_01292002
+#endif //CGAL_POLYHEDRON_SUBDIVISION_IMPL_H
