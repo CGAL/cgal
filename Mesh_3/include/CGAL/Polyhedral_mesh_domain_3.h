@@ -198,14 +198,14 @@ public:
   // Kernel_traits compatibility
   typedef IGT R;
 
-private:
+public:
   typedef Mesh_3::Triangle_accessor_primitive<
     TriangleAccessor, IGT>                              AABB_primitive;
   typedef class AABB_traits<IGT,AABB_primitive>         AABB_traits;
   typedef class AABB_tree<AABB_traits>                  AABB_tree_;
-private:
-  typedef typename AABB_tree_::Primitive_id              AABB_primitive_id;
-  typedef typename AABB_tree_::Primitive Primitive;
+
+  typedef typename AABB_tree_::Primitive_id             AABB_primitive_id;
+  typedef typename AABB_tree_::Primitive                Primitive;
   typedef typename AABB_traits::Bounding_box            Bounding_box;
 
 public:
@@ -591,6 +591,10 @@ public:
   typedef AABB_tree_ AABB_tree;
   const AABB_tree& aabb_tree() const {
     return tree_;
+  }
+
+  const AABB_tree* bounding_aabb_tree_ptr() const {
+    return bounding_tree_;
   }
 
 protected:
