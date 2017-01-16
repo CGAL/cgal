@@ -390,47 +390,76 @@ public:
   template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
   class Sqrt3_mask_3 : public Linear_mask_3<Poly,VertexPointMap> {
     typedef Linear_mask_3<Poly,VertexPointMap>       Base;
-public:
-  typedef Poly                                       Polyhedron;
+  public:
+    typedef Poly                                       Polyhedron;
 
-  typedef typename Base::vertex_descriptor           vertex_descriptor;
-  typedef typename Base::halfedge_descriptor         halfedge_descriptor;
-  typedef typename Base::face_descriptor             face_descriptor;
+    typedef typename Base::vertex_descriptor           vertex_descriptor;
+    typedef typename Base::halfedge_descriptor         halfedge_descriptor;
+    typedef typename Base::face_descriptor             face_descriptor;
 
-  typedef typename Base::Kernel                      Kernel;
+    typedef typename Base::Kernel                      Kernel;
 
-  typedef typename Base::FT                          FT;
-  typedef typename Base::Point                       Point;
-  typedef typename Base::Vector                      Vector;
+    typedef typename Base::FT                          FT;
+    typedef typename Base::Point                       Point;
+    typedef typename Base::Vector                      Vector;
 
-public:
-  //void edge_node(halfedge_descriptor edge, Point& pt) {}
-
-  Sqrt3_mask_3(Polyhedron& poly)
+    public:
+      Sqrt3_mask_3(Polyhedron& poly)
     : Base(poly, get(vertex_point,poly))
-  { }
+    { }
 
-  Sqrt3_mask_3(Polyhedron& poly, VertexPointMap vpmap)
-    : Base(poly, vpmap)
-  { }
+    Sqrt3_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+      : Base(poly, vpmap)
+    { }
 
-  void vertex_node(vertex_descriptor vertex, Point& pt) {
-    Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
-    size_t n = degree(vertex,this->polyhedron);
+    void vertex_node(vertex_descriptor vertex, Point& pt) {
+      Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
+      size_t n = degree(vertex,this->polyhedron);
 
-    FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);
+      FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);
 
-    Vector cv = ((FT)(1.0-a)) * (get(this->vpmap, vertex) - CGAL::ORIGIN);
-    for (size_t i = 1; i <= n; ++i, --vcir) {
-      cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, this->polyhedron), this->polyhedron))-CGAL::ORIGIN);
+      Vector cv = ((FT)(1.0-a)) * (get(this->vpmap, vertex) - CGAL::ORIGIN);
+      for (size_t i = 1; i <= n; ++i, --vcir) {
+        cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, this->polyhedron), this->polyhedron))-CGAL::ORIGIN);
+      }
+
+      pt = CGAL::ORIGIN + cv;
     }
 
-    pt = CGAL::ORIGIN + cv;
-  }
-  //
-  // TODO
-  //void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {}
-};
+    void edge_node(halfedge_descriptor bhd, Point& ept, Point& vpt) {
+      // this function takes a BORDER halfedge
+      CGAL_precondition(is_border(bhd, this->polyhedron));
+      vertex_descriptor prev_s = source(prev(bhd, this->polyhedron), this->polyhedron);
+      Vector prev_sv = get(this->vpmap, prev_s) - CGAL::ORIGIN;
+
+      vertex_descriptor s = source(bhd, this->polyhedron);
+      Vector sv = get(this->vpmap, s) - CGAL::ORIGIN;
+
+      vertex_descriptor t = target(bhd, this->polyhedron);
+      Vector tv = get(this->vpmap, t) - CGAL::ORIGIN;
+
+      vertex_descriptor next_t = target(next(bhd, this->polyhedron), this->polyhedron);
+      Vector next_tv = get(this->vpmap, next_t) - CGAL::ORIGIN;
+
+      FT denom = 1./27.;
+      ept = CGAL::ORIGIN + denom * ( 10.*sv + 16.*tv + next_tv );
+      vpt = CGAL::ORIGIN + denom * ( prev_sv + 16.*sv + 10.*tv );
+    }
+
+    void border_node(halfedge_descriptor bhd, Point& pt) {
+      // this function takes a BORDER halfedge
+      CGAL_precondition(is_border(bhd, this->polyhedron));
+
+      vertex_descriptor s = source(bhd, this->polyhedron);
+      Vector sv = get(this->vpmap, s) - CGAL::ORIGIN;
+      vertex_descriptor c = target(bhd, this->polyhedron);
+      Vector cv = get(this->vpmap, c) - CGAL::ORIGIN;
+      vertex_descriptor n = target(next(bhd, this->polyhedron), this->polyhedron);
+      Vector nv = get(this->vpmap, n) - CGAL::ORIGIN;
+
+      pt = CGAL::ORIGIN + 1./27. * ( 4*sv + 19*cv + 4*nv );
+    }
+  };
 
 } //namespace CGAL
 

@@ -33,6 +33,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL {
 
@@ -514,10 +515,17 @@ namespace Subdivision_method_3 {
 
   // ======================================================================
   template <class Poly, class VertexPointMap, class Mask>
-  void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask) {
+  void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
+                   const bool refine_border = false) {
+    // `refine_border` is a boolean that is meant to be true only every SECOND step
+    // of the subdivision. In particular, this function makes uses of the fact
+    // that there is at most a single border edge in a face, which is true if
+    // the mesh is obtained from a sqrt3 subdivision before, but might otherwise
+    // be wrong.
 
     typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
     typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
+    typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
     typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
@@ -529,37 +537,105 @@ namespace Subdivision_method_3 {
     typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;
     typename boost::graph_traits<Poly>::faces_size_type num_f = num_faces(p);
 
-    p.reserve(num_v+num_f, (num_e+3*num_f)*2, 3*num_f);
+    // reserve enough size for the new points
+    typename boost::graph_traits<Poly>::faces_size_type new_pts_size = num_f;
+    if(refine_border) {
+      BOOST_FOREACH(edge_descriptor ed, CGAL::edges(p)){
+        if(is_border(ed, p))
+          ++new_pts_size;
+      }
+    }
+    Point* cpt = new Point[new_pts_size];
 
-    // prepare the smoothed center points
-    Point* cpt = new Point[num_f];
+    // size of the subdivided mesh
+    p.reserve(num_v + new_pts_size, (num_e + 2*num_f + new_pts_size)*2, 3*num_f);
 
+    // keep in memory whether a face is incident to the border and, if so, which
+    // halfedge corresponds to THE (there can only be one) border edge.
+    std::vector<halfedge_descriptor> face_halfedge_border(num_f,
+                                    boost::graph_traits<Poly>::null_halfedge());
+
+    // compute the positions of new points
     std::size_t i = 0;
+    std::size_t face_id = 0;
     BOOST_FOREACH (face_descriptor fd, faces(p)) {
       //ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");
-      mask.face_node(fd, cpt[i++]);
+      if(refine_border) {
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, p), p)) {
+          if(is_border(opposite(hd, p),p)) {
+            face_halfedge_border[face_id] = hd;
+            halfedge_descriptor bhd = opposite(hd, p);
+            mask.edge_node(bhd, cpt[i], cpt[i+1]);
+            i += 2;
+
+            // the border subdivision is only performed every second subdivision
+            // step and there can thus only be one border edge per face
+            break;
+          }
+        }
+
+        if(face_halfedge_border[face_id] == boost::graph_traits<Poly>::null_halfedge())
+          mask.face_node(fd, cpt[i++]);
+      } else {
+        mask.face_node(fd, cpt[i++]);
+      }
+
+      ++face_id;
     }
 
-    // smooth the vertex points
+    // smooth the position of existing vertices
+    std::list<std::pair<vertex_descriptor, Point> > new_positions;
     BOOST_FOREACH(vertex_descriptor vd, vertices(p)){
-      Point p;
-      mask.vertex_node(vd,p);
-      put(vpm,vd,p);
+      Point pt;
+      if(!is_border(vd, p)) {
+        mask.vertex_node(vd, pt);
+        new_positions.push_back(std::make_pair(vd, pt));
+      }
     }
 
-
-    // insert the facet points
+    // insert the new subdividing points
     face_iterator b,e;
     boost::tie(b,e) = faces(p);
-    for(std::size_t i=0 ; i < num_f; ++i, ++b){
+    for(std::size_t i=0, cpt_id=0; i < num_f; ++i, ++b){
       face_descriptor fd = *b;
-      halfedge_descriptor center = Euler::add_center_vertex(halfedge(fd,p),p);
-      put(vpm, target(center,p), cpt[i]);
+      halfedge_descriptor hd = face_halfedge_border[i];
+      if(refine_border && hd != boost::graph_traits<Poly>::null_halfedge()) {
+        halfedge_descriptor hd_next = next(hd, p);
+        halfedge_descriptor new_e1 = Euler::split_edge(hd, p);
+        halfedge_descriptor new_e2 = Euler::split_edge(hd, p);
+        put(vpm, target(new_e1, p), cpt[cpt_id++]);
+        put(vpm, target(new_e2, p), cpt[cpt_id++]);
+        Euler::split_face(new_e1, hd_next, p);
+        Euler::split_face(new_e2, hd_next, p);
+      } else {
+        halfedge_descriptor center = Euler::add_center_vertex(halfedge(fd,p),p);
+        put(vpm, target(center,p), cpt[cpt_id++]);
+      }
     }
 
-    delete []cpt;
+    if(refine_border) {
+      // collect the new positions for border vertices
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges(p)) {
+        // switch to the border halfedge
+        hd = opposite(hd, p);
+        if(!is_border(hd, p))
+          continue;
 
-    // flip the old edges except the border edges
+        Point pt;
+        mask.border_node(hd, pt);
+        vertex_descriptor vd = target(hd, p);
+        new_positions.push_back(std::make_pair(vd, pt));
+      }
+    }
+
+    // actually inserts the new positions in the vertex point property map
+    typename std::list<std::pair<vertex_descriptor, Point> >::iterator it = new_positions.begin(),
+                                                                       end = new_positions.end();
+    for(; it!=end; ++it) {
+      put(vpm, it->first, it->second);
+    }
+
+    // flip the old edges (except the border edges)
     edge_iterator eitr = edges(p).first;
     for (size_t i = 0; i < num_e; ++i) {
       halfedge_descriptor e = halfedge(*eitr,p);
@@ -570,9 +646,8 @@ namespace Subdivision_method_3 {
       }
     }
 
-    // TODO: border ...
-
     CGAL_postcondition(p.is_valid());
+    delete []cpt;
   }
   }
 }
