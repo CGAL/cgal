@@ -94,7 +94,8 @@ double weight() const;
 
 /*! \cgalModels `Kernel_d::Center_of_sphere_d`
  */
-struct Construct_circumcenter_d {
+class Construct_circumcenter_d {
+public:
 /*! returns the center of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
     \pre A is affinely independant.
     \tparam ForwardIterator has `Epick_d::Point_d` as value type.
@@ -102,7 +103,8 @@ struct Construct_circumcenter_d {
 template<typename ForwardIterator>
 Point_d operator()(ForwardIterator first, ForwardIterator last);
 };
-struct Compute_squared_radius_d {
+class Compute_squared_radius_d {
+public:
 /*! returns the radius of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
     \pre A is affinely independant.
     \tparam ForwardIterator has `Epick_d::Point_d` as value type.
@@ -112,7 +114,8 @@ Point_d operator()(ForwardIterator first, ForwardIterator last);
 };
 /*! \cgalModels `Kernel_d::Side_of_bounded_sphere_d`
  */
-struct Side_of_bounded_sphere_d {
+class Side_of_bounded_sphere_d {
+public:
 /*! returns the relative position of point p to the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
     \pre A is affinely independant.
     \tparam ForwardIterator has `Epick_d::Point_d` as value type.
