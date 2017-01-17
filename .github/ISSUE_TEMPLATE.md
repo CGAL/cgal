@@ -12,7 +12,7 @@ _If your issue arises by using CGAL in your own source code, please provide a mi
 
 * Operating system (Windows/Mac/Linux, 32/64 bits):
 * Compiler:
-* Release or debug mode
+* Release or debug mode:
 * Specific flags used (if any):
 * CGAL version:
 * Boost version:
