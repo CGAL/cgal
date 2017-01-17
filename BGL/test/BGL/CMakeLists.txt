@@ -77,6 +77,8 @@ create_single_source_cgal_program( "graph_concept_Gwdwg_Surface_mesh.cpp" )
 
 create_single_source_cgal_program( "test_clear.cpp" )
 
+create_single_source_cgal_program( "test_reserve.cpp" )
+
 create_single_source_cgal_program( "test_helpers.cpp" )
 
 create_single_source_cgal_program( "test_Has_member_clear.cpp" )

@@ -727,19 +727,20 @@ clear_impl(FaceGraph& g)
 }
 
 
-template<typename FaceGraph, typename T>
+template<typename FaceGraph, typename T1, typename T2, typename T3>
 inline
-typename boost::enable_if<Has_member_reserve<FaceGraph,T>, void>::type
-reserve_impl(FaceGraph& g, T nv, T ne, T nf)
+typename boost::enable_if<Has_member_reserve<FaceGraph,T1, T2, T3>, void>::type
+reserve_impl(FaceGraph& g, T1 nv, T2 ne, T3 nf)
 {
-  g.reserve();
+  g.reserve(nv, ne, nf);
 }
 
-template<typename FaceGraph, typename T>
+template<typename FaceGraph, typename T1, typename T2, typename T3>
 inline
-typename boost::disable_if<Has_member_reserve<FaceGraph,T>, void>::type
-reserve_impl(FaceGraph& g, T, T, T)
-{}
+typename boost::disable_if<Has_member_reserve<FaceGraph,T1,T2,T3>, void>::type
+reserve_impl(FaceGraph&, T1, T2, T3)
+{
+}
 
 }
 
@@ -771,8 +772,9 @@ void clear(FaceGraph& g)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * If the graph has a member function `reserve()`, it will be called.
- * 
+ * If `FaceGraph` has a member function `reserve(nv,ne,nf)`, it will be called.
+ * Otherwise, nothing will be done.
+ *
  * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
  *
  * @param g the graph
@@ -781,8 +783,11 @@ void clear(FaceGraph& g)
  * @param nf number of faces
  *
  **/
-template<typename FaceGraph, typename T>
-void reserve(FaceGraph& g, T nv, T ne, T nf)
+template<typename FaceGraph>
+void reserve(FaceGraph& g,
+             typename boost::graph_traits<FaceGraph>::vertices_size_type nv,
+             typename boost::graph_traits<FaceGraph>::edges_size_type ne,
+             typename boost::graph_traits<FaceGraph>::faces_size_type nf)
 {
   internal::reserve_impl(g,nv, ne, nf);
 }

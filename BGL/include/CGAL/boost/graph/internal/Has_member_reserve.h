@@ -23,7 +23,7 @@
 namespace CGAL {
 namespace internal {
 
-template<class T>
+template<class T, class I1, class I2, class I3>
 class Has_member_reserve
 {
 private:
@@ -31,7 +31,7 @@ private:
   class check {};
 
   template<class C>
-  static char f(check<void(C::*)(void), &C::reserve>*);
+  static char f(check<void(C::*)(I1, I2, I3), &C::reserve>*);
 
   template<class C>
   static int f(...);
