@@ -751,7 +751,47 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
       return;
     }
 
-    overlap_cv = object_cast<X_monotone_curve_2>(obj_vec.front());
+    std::size_t obj_vec_size = obj_vec.size();
+    if (obj_vec_size==1)
+    {
+      //always a curve since an overlap was detected on the right of `event`
+      CGAL_assertion( obj_vec.front().is<X_monotone_curve_2>() );
+      overlap_cv = object_cast<X_monotone_curve_2>(obj_vec.front());
+    }
+    else
+    {
+      CGAL_SL_PRINT_TEXT("Overlap consists of more than one curve");
+      CGAL_SL_PRINT_EOL();
+      // elements in obj_vec are sorted using less-xy,
+      // look for a curve containing the point of `event`.
+      for(std::size_t i=0; i<obj_vec_size; ++i)
+      {
+        const CGAL::Object& obj = obj_vec[i];
+        // we are not interested by intersection point since a curve overlap was reported
+        if ( const X_monotone_curve_2 * xcv_ptr = object_cast<X_monotone_curve_2>(&obj) )
+        {
+          if (this->m_traits->compare_xy_2_object()(
+            this->m_traits->construct_max_vertex_2_object()(*xcv_ptr),
+            event->point()) == LARGER )
+          {
+            CGAL_assertion(this->m_traits->compare_xy_2_object()(
+              this->m_traits->construct_min_vertex_2_object()(*xcv_ptr), event->point()) != LARGER );
+            overlap_cv = *xcv_ptr;
+            break;
+          }
+          else
+          {
+            CGAL_SL_PRINT_TEXT("  Skip a curve");
+            CGAL_SL_PRINT_EOL();
+          }
+        }
+        else
+        {
+          CGAL_SL_PRINT_TEXT("  Skip a point");
+          CGAL_SL_PRINT_EOL();
+        }
+      }
+    }
   }
 
   // Get the right end of overlap_cv (if it is closed from the right).
