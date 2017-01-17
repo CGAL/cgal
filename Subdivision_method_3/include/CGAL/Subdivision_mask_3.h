@@ -52,15 +52,15 @@ public:
   typedef typename Kernel::FT                          FT;
   typedef typename Kernel::Vector_3                    Vector;
 
-  Polyhedron& polyhedron;
+  Polyhedron* polyhedron;
   VertexPointMap vpmap;
 
 public:
-  PQQ_stencil_3(Polyhedron& polyhedron)
+  PQQ_stencil_3(Polyhedron* polyhedron)
     : polyhedron(polyhedron), vpmap(get(vertex_point,polyhedron))
   { }
 
-  PQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap)
+  PQQ_stencil_3(Polyhedron* polyhedron, VertexPointMap vpmap)
     : polyhedron(polyhedron), vpmap(vpmap)
   { }
 
@@ -91,36 +91,35 @@ public:
   typedef typename Base::Vector                      Vector;
 
 public:
-  Linear_mask_3(Polyhedron& poly)
+  Linear_mask_3(Polyhedron* poly)
     : Base(poly, get(vertex_point,poly))
   { }
 
-  Linear_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+  Linear_mask_3(Polyhedron* poly, VertexPointMap vpmap)
     : Base(poly, vpmap)
   { }
 
-  //
   void face_node(face_descriptor facet, Point& pt) {
     int n = 0;
     Point p(0,0,0);
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(halfedge(facet,this->polyhedron),this->polyhedron))
+    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(halfedge(facet, *(this->polyhedron)), *(this->polyhedron)))
     {
       p = p + ( get(this->vpmap,vd) - ORIGIN);
       ++n;
     }
     pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
-  //
+
   void edge_node(halfedge_descriptor edge, Point& pt) {
-    Point p1 = get(this->vpmap, target(edge,this->polyhedron ));
-    Point p2 = get(this->vpmap, source(edge,this->polyhedron ));
+    Point p1 = get(this->vpmap, target(edge, *(this->polyhedron)));
+    Point p2 = get(this->vpmap, source(edge, *(this->polyhedron)));
     pt = Point((p1[0]+p2[0])/2, (p1[1]+p2[1])/2, (p1[2]+p2[2])/2);
   }
-  //
+
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     pt = get(this->vpmap, vertex);
   }
-  //
+
   void border_node(halfedge_descriptor edge, Point& ept, Point& /*vpt*/){
     edge_node(edge, ept);
   }
@@ -145,40 +144,40 @@ public:
   typedef typename Base::Vector                      Vector;
 
 public:
-  CatmullClark_mask_3(Polyhedron& poly)
+  CatmullClark_mask_3(Polyhedron* poly)
     : Base(poly, get(vertex_point, poly))
   { }
 
-  CatmullClark_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+  CatmullClark_mask_3(Polyhedron* poly, VertexPointMap vpmap)
     : Base(poly, vpmap)
   { }
 
   //
   void edge_node(halfedge_descriptor edge, Point& pt) {
-    Point p1 = get(this->vpmap,target(edge, this->polyhedron));
-    Point p2 = get(this->vpmap,source(edge, this->polyhedron));
+    Point p1 = get(this->vpmap,target(edge, *(this->polyhedron)));
+    Point p2 = get(this->vpmap,source(edge, *(this->polyhedron)));
     Point f1, f2;
-    this->face_node(face(edge,this->polyhedron), f1);
-    this->face_node(face(opposite(edge,this->polyhedron),this->polyhedron), f2);
+    this->face_node(face(edge, *(this->polyhedron)), f1);
+    this->face_node(face(opposite(edge, *(this->polyhedron)), *(this->polyhedron)), f2);
     pt = Point((p1[0]+p2[0]+f1[0]+f2[0])/4,
                (p1[1]+p2[1]+f1[1]+f2[1])/4,
                (p1[2]+p2[2]+f1[2]+f2[2])/4 );
   }
   //
   void vertex_node(vertex_descriptor vertex, Point& pt) {
-    Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
-    typename boost::graph_traits<Poly>::degree_size_type n = degree(vertex,this->polyhedron);
+    Halfedge_around_target_circulator<Poly> vcir(vertex, *(this->polyhedron));
+    typename boost::graph_traits<Poly>::degree_size_type n = degree(vertex, *(this->polyhedron));
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
     Point& S = get(this->vpmap,vertex);
 
     Point q;
     for (unsigned int i = 0; i < n; i++, ++vcir) {
-      Point& p2 = get(this->vpmap, target(opposite(*vcir,this->polyhedron),this->polyhedron));
+      Point& p2 = get(this->vpmap, target(opposite(*vcir, *(this->polyhedron)), *(this->polyhedron)));
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
-      this->face_node(face(*vcir,this->polyhedron), q);
+      this->face_node(face(*vcir, *(this->polyhedron)), q);
       Q[0] += q[0];
       Q[1] += q[1];
       Q[2] += q[2];
@@ -192,15 +191,15 @@ public:
   }
   //
   void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
-    Point& ep1 = get(this->vpmap,target(edge, this->polyhedron));
-    Point& ep2 = get(this->vpmap,target(opposite(edge, this->polyhedron), this->polyhedron));
+    Point& ep1 = get(this->vpmap,target(edge, *(this->polyhedron)));
+    Point& ep2 = get(this->vpmap,target(opposite(edge, *(this->polyhedron)), *(this->polyhedron)));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_target_circulator<Poly> vcir(edge, this->polyhedron);
-    Point& vp1  = get(this->vpmap,target(opposite(*vcir, this->polyhedron ), this->polyhedron));
-    Point& vp0  = get(this->vpmap, target(*vcir, this->polyhedron));
+    Halfedge_around_target_circulator<Poly> vcir(edge, *(this->polyhedron));
+    Point& vp1  = get(this->vpmap,target(opposite(*vcir, *(this->polyhedron)), *(this->polyhedron)));
+    Point& vp0  = get(this->vpmap, target(*vcir, *(this->polyhedron)));
     --vcir;
-      Point& vp_1 = get(this->vpmap, target(opposite(*vcir, this->polyhedron), this->polyhedron));
+      Point& vp_1 = get(this->vpmap, target(opposite(*vcir, *(this->polyhedron)), *(this->polyhedron)));
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
@@ -232,20 +231,20 @@ public:
                                             Halfedge_around_vertex_circulator;
 
 public:
-  Loop_mask_3(Polyhedron& poly)
+  Loop_mask_3(Polyhedron* poly)
     : Base(poly, get(vertex_point, poly))
   { }
 
-  Loop_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+  Loop_mask_3(Polyhedron* poly, VertexPointMap vpmap)
     : Base(poly, vpmap)
   { }
 
   //
   void edge_node(halfedge_descriptor edge, Point& pt) {
-    Point& p1 = get(this->vpmap,target(edge, this->polyhedron));
-    Point& p2 = get(this->vpmap,target(opposite(edge, this->polyhedron), this->polyhedron));
-    Point& f1 = get(this->vpmap,target(next(edge, this->polyhedron), this->polyhedron));
-    Point& f2 = get(this->vpmap,target(next(opposite(edge, this->polyhedron), this->polyhedron), this->polyhedron));
+    Point& p1 = get(this->vpmap,target(edge, *(this->polyhedron)));
+    Point& p2 = get(this->vpmap,target(opposite(edge, *(this->polyhedron)), *(this->polyhedron)));
+    Point& f1 = get(this->vpmap,target(next(edge, *(this->polyhedron)), *(this->polyhedron)));
+    Point& f2 = get(this->vpmap,target(next(opposite(edge, *(this->polyhedron)), *(this->polyhedron)), *(this->polyhedron)));
 
     pt = Point((3*(p1[0]+p2[0])+f1[0]+f2[0])/8,
                (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
@@ -254,14 +253,14 @@ public:
 
   //
   void vertex_node(vertex_descriptor vertex, Point& pt) {
-    Halfedge_around_vertex_circulator vcir(vertex, this->polyhedron);
+    Halfedge_around_vertex_circulator vcir(vertex, *(this->polyhedron));
     size_t n = circulator_size(vcir);
 
     FT R[] = {0.0, 0.0, 0.0};
     Point& S = get(this->vpmap,vertex);
 
     for (size_t i = 0; i < n; i++, ++vcir) {
-      Point& p = get(this->vpmap,target(opposite(*vcir, this->polyhedron), this->polyhedron));
+      Point& p = get(this->vpmap,target(opposite(*vcir, *(this->polyhedron)), *(this->polyhedron)));
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
     }
     if (n == 6) {
@@ -277,15 +276,15 @@ public:
   //void face_node(face_descriptor facet, Point& pt) {};
   //
   void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
-    Point& ep1 = get(this->vpmap,target(edge, this->polyhedron));
-    Point& ep2 = get(this->vpmap,target(opposite(edge, this->polyhedron), this->polyhedron));
+    Point& ep1 = get(this->vpmap,target(edge, *(this->polyhedron)));
+    Point& ep2 = get(this->vpmap,target(opposite(edge, *(this->polyhedron)), *(this->polyhedron)));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_vertex_circulator vcir(edge,this->polyhedron);
-    Point& vp1  = get(this->vpmap,target(opposite(*vcir,this->polyhedron ),this->polyhedron));
-    Point& vp0  = get(this->vpmap,target(*vcir,this->polyhedron));
+    Halfedge_around_vertex_circulator vcir(edge, *(this->polyhedron));
+    Point& vp1  = get(this->vpmap,target(opposite(*vcir, *(this->polyhedron) ), *(this->polyhedron)));
+    Point& vp0  = get(this->vpmap,target(*vcir, *(this->polyhedron)));
     --vcir;
-    Point& vp_1 = get(this->vpmap,target(opposite(*vcir,this->polyhedron),this->polyhedron));
+    Point& vp_1 = get(this->vpmap,target(opposite(*vcir, *(this->polyhedron)), *(this->polyhedron)));
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
@@ -312,17 +311,15 @@ public:
   typedef typename Kernel::FT                          FT;
   typedef typename Kernel::Vector_3                    Vector;
 
-  Polyhedron& polyhedron;
+  Polyhedron* polyhedron;
   Vertex_pmap vpm;
-public:
-  //
-  void corner_node(halfedge_descriptor /*edge*/, Point& /*pt*/) { }
 
-  DQQ_stencil_3(Polyhedron& polyhedron)
+public:
+  DQQ_stencil_3(Polyhedron* polyhedron)
     : polyhedron(polyhedron), vpm(get(vertex_point, polyhedron))
   { }
 
-  DQQ_stencil_3(Polyhedron& polyhedron, VertexPointMap vpmap)
+  DQQ_stencil_3(Polyhedron* polyhedron, VertexPointMap vpmap)
     : polyhedron(polyhedron), vpm(vpmap)
   { }
 };
@@ -348,36 +345,35 @@ public:
 
 
 public:
-  DooSabin_mask_3(Polyhedron& polyhedron)
+  DooSabin_mask_3(Polyhedron* polyhedron)
     : Base(polyhedron, get(vertex_point, polyhedron))
   { }
 
-  DooSabin_mask_3(Polyhedron& polyhedron, VertexPointMap vpmap)
+  DooSabin_mask_3(Polyhedron* polyhedron, VertexPointMap vpmap)
     : Base(polyhedron, vpmap)
   { }
 
-  //
   void corner_node(halfedge_descriptor he, Point& pt) {
     size_t n = 0;
     halfedge_descriptor hd = he;
     do{
-      hd = next(hd,this->polyhedron);
+      hd = next(hd, *(this->polyhedron));
       ++n;
-    }while(hd != he);
+    } while(hd != he);
 
     Vector cv(0,0,0);
     if (n == 4) {
-      cv = cv + (get(this->vpm, target(he,this->polyhedron))-CGAL::ORIGIN)*9;
-      cv = cv + (get(this->vpm, target(next(he,this->polyhedron),this->polyhedron))-CGAL::ORIGIN)*3;
-      cv = cv + (get(this->vpm, target(next(next(he,this->polyhedron),this->polyhedron),this->polyhedron))-CGAL::ORIGIN);
-      cv = cv + (get(this->vpm, target(prev(he,this->polyhedron),this->polyhedron))-CGAL::ORIGIN)*3;
+      cv = cv + (get(this->vpm, target(he, *(this->polyhedron))) - CGAL::ORIGIN)*9;
+      cv = cv + (get(this->vpm, target(next(he, *(this->polyhedron)), *(this->polyhedron)))-CGAL::ORIGIN)*3;
+      cv = cv + (get(this->vpm, target(next(next(he, *(this->polyhedron)), *(this->polyhedron)), *(this->polyhedron)))-CGAL::ORIGIN);
+      cv = cv + (get(this->vpm, target(prev(he, *(this->polyhedron)), *(this->polyhedron)))-CGAL::ORIGIN)*3;
       cv = cv/16;
     }  else {
       FT a;
-      for (size_t k = 0; k < n; ++k, he = next(he,this->polyhedron)) {
+      for (size_t k = 0; k < n; ++k, he = next(he, *(this->polyhedron))) {
         if (k == 0) a = (FT) ((5.0/n) + 1);
         else a = (FT) (3+2*std::cos(2*k*CGAL_PI/n))/n;
-        cv = cv + (get(this->vpm, target(he,this->polyhedron))-CGAL::ORIGIN)*a;
+        cv = cv + (get(this->vpm, target(he, *(this->polyhedron)))-CGAL::ORIGIN)*a;
       }
       cv = cv/4;
     }
@@ -404,23 +400,23 @@ public:
     typedef typename Base::Vector                      Vector;
 
     public:
-      Sqrt3_mask_3(Polyhedron& poly)
+      Sqrt3_mask_3(Polyhedron* poly)
     : Base(poly, get(vertex_point,poly))
     { }
 
-    Sqrt3_mask_3(Polyhedron& poly, VertexPointMap vpmap)
+    Sqrt3_mask_3(Polyhedron* poly, VertexPointMap vpmap)
       : Base(poly, vpmap)
     { }
 
     void vertex_node(vertex_descriptor vertex, Point& pt) {
-      Halfedge_around_target_circulator<Poly> vcir(vertex,this->polyhedron);
-      size_t n = degree(vertex,this->polyhedron);
+      Halfedge_around_target_circulator<Poly> vcir(vertex, *(this->polyhedron));
+      size_t n = degree(vertex, *(this->polyhedron));
 
       FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);
 
       Vector cv = ((FT)(1.0-a)) * (get(this->vpmap, vertex) - CGAL::ORIGIN);
       for (size_t i = 1; i <= n; ++i, --vcir) {
-        cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, this->polyhedron), this->polyhedron))-CGAL::ORIGIN);
+        cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, *(this->polyhedron)), *(this->polyhedron)))-CGAL::ORIGIN);
       }
 
       pt = CGAL::ORIGIN + cv;
@@ -428,17 +424,17 @@ public:
 
     void edge_node(halfedge_descriptor bhd, Point& ept, Point& vpt) {
       // this function takes a BORDER halfedge
-      CGAL_precondition(is_border(bhd, this->polyhedron));
-      vertex_descriptor prev_s = source(prev(bhd, this->polyhedron), this->polyhedron);
+      CGAL_precondition(is_border(bhd, *(this->polyhedron)));
+      vertex_descriptor prev_s = source(prev(bhd, *(this->polyhedron)), *(this->polyhedron));
       Vector prev_sv = get(this->vpmap, prev_s) - CGAL::ORIGIN;
 
-      vertex_descriptor s = source(bhd, this->polyhedron);
+      vertex_descriptor s = source(bhd, *(this->polyhedron));
       Vector sv = get(this->vpmap, s) - CGAL::ORIGIN;
 
-      vertex_descriptor t = target(bhd, this->polyhedron);
+      vertex_descriptor t = target(bhd, *(this->polyhedron));
       Vector tv = get(this->vpmap, t) - CGAL::ORIGIN;
 
-      vertex_descriptor next_t = target(next(bhd, this->polyhedron), this->polyhedron);
+      vertex_descriptor next_t = target(next(bhd, *(this->polyhedron)), *(this->polyhedron));
       Vector next_tv = get(this->vpmap, next_t) - CGAL::ORIGIN;
 
       FT denom = 1./27.;
@@ -448,13 +444,13 @@ public:
 
     void border_node(halfedge_descriptor bhd, Point& pt) {
       // this function takes a BORDER halfedge
-      CGAL_precondition(is_border(bhd, this->polyhedron));
+      CGAL_precondition(is_border(bhd, *(this->polyhedron)));
 
-      vertex_descriptor s = source(bhd, this->polyhedron);
+      vertex_descriptor s = source(bhd, *(this->polyhedron));
       Vector sv = get(this->vpmap, s) - CGAL::ORIGIN;
-      vertex_descriptor c = target(bhd, this->polyhedron);
+      vertex_descriptor c = target(bhd, *(this->polyhedron));
       Vector cv = get(this->vpmap, c) - CGAL::ORIGIN;
-      vertex_descriptor n = target(next(bhd, this->polyhedron), this->polyhedron);
+      vertex_descriptor n = target(next(bhd, *(this->polyhedron)), *(this->polyhedron));
       Vector nv = get(this->vpmap, n) - CGAL::ORIGIN;
 
       pt = CGAL::ORIGIN + 1./27. * ( 4*sv + 19*cv + 4*nv );

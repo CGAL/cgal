@@ -68,7 +68,7 @@ namespace Subdivision_method_3 {
 
   template <class PolygonMesh>
   void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
-    PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(pmesh,get(vertex_point,pmesh)), step);
+    PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);
   }
 
   template <class PolygonMesh, class NamedParameters>
@@ -80,7 +80,7 @@ namespace Subdivision_method_3 {
                            get_property_map(CGAL::vertex_point, pmesh));
 
     unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
-    CatmullClark_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+    CatmullClark_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
     for(unsigned int i = 0; i < step; i++)
       Private::PQQ_1step(pmesh, vpm, mask);
@@ -110,7 +110,7 @@ namespace Subdivision_method_3 {
 
   template <class PolygonMesh>
   void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
-    PTQ(pmesh, Loop_mask_3<PolygonMesh>(pmesh,get(vertex_point,pmesh)) , step);
+    PTQ(pmesh, Loop_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)) , step);
   }
 
   template <class PolygonMesh, class NamedParameters>
@@ -122,7 +122,7 @@ namespace Subdivision_method_3 {
                            get_property_map(CGAL::vertex_point, pmesh));
 
     unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
-    Loop_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+    Loop_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
     for(unsigned int i = 0; i < step; i++)
       Private::PTQ_1step(pmesh, vpm, mask);
@@ -153,7 +153,7 @@ namespace Subdivision_method_3 {
 
   template <class PolygonMesh>
   void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
-    DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh, get(vertex_point,pmesh)), step);
+    DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(&pmesh, get(vertex_point, pmesh)), step);
   }
 
   template <class PolygonMesh, class NamedParameters>
@@ -165,7 +165,7 @@ namespace Subdivision_method_3 {
                            get_property_map(CGAL::vertex_point, pmesh));
 
     unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
-    DooSabin_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+    DooSabin_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
     for(unsigned int i = 0; i < step; i++)
       Private::DQQ_1step(pmesh, vpm, mask);
@@ -195,7 +195,7 @@ namespace Subdivision_method_3 {
 
   template <class PolygonMesh>
   void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
-    Sqrt3(pmesh, Sqrt3_mask_3<PolygonMesh>(pmesh,get(vertex_point,pmesh)), step);
+    Sqrt3(pmesh, Sqrt3_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);
   }
 
   template <class PolygonMesh, class NamedParameters>
@@ -207,7 +207,7 @@ namespace Subdivision_method_3 {
                            get_property_map(CGAL::vertex_point, pmesh));
 
     unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
-    Sqrt3_mask_3<PolygonMesh,Vpm> mask(pmesh,vpm);
+    Sqrt3_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
     for(unsigned int i = 0; i < step; i++)
       Private::Sqrt3_1step(pmesh, vpm, mask, (i%2==1));
