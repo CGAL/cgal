@@ -26,14 +26,20 @@
 
 #include <CGAL/basic.h>
 
-#include <vector>
 #include <CGAL/circulator.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Polyhedron_decorator_3.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/tags.h>
+
 #include <boost/foreach.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
+
+#include <iterator>
+#include <list>
+#include <vector>
 
 namespace CGAL {
 
@@ -262,19 +268,22 @@ namespace Private {
     for (size_t i = 0; i < num_vertex; i++, ++vitr)
       put(vpm, *vitr, vertex_point_buffer[i]);
 
+    CGAL_postcondition(p.is_valid());
     delete []vertex_point_buffer;
-    }
+  }
 
 
   // ======================================================================
   template <class Poly, class VertexPointMap, class Mask>
-  void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
-
-    typedef Polyhedron_decorator_3<Poly>           PD;
+  void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
+    typedef Polyhedron_decorator_3<Poly>                                PD;
 
     typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
     typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
     typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
+
+    typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
+    typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
 
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
@@ -282,9 +291,8 @@ namespace Private {
     typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;
     typename boost::graph_traits<Poly>::faces_size_type num_f = num_faces(p);
 
-
     std::vector<halfedge_descriptor> border_halfedges;
-    size_t num_be = 0 ;// AF= p.size_of_border_edges();
+    size_t num_be = 0 ;
     BOOST_FOREACH(edge_descriptor ed, edges(p)){
       if(is_border(ed,p)){
         ++num_be;
@@ -390,126 +398,148 @@ namespace Private {
   }
 
   template <class Poly, class VertexPointMap, class Mask>
-  void DQQ_1step_alt(Poly& p, VertexPointMap vpm, Mask mask) {
-
+  void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_true) {
     typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
     typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
     typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
-    // Note that for types like 'Surface_mesh', num_vertices() returns the TOTAL
-    // number of vertices, which may include removed vertices.
+    // Note that for types like 'Surface_mesh', num_vertices() and other similar functions
+    // return the TOTAL number of elements, which may include removed vertices.
     typename boost::graph_traits<Poly>::vertices_size_type num_v = num_vertices(p);
     typename boost::graph_traits<Poly>::edges_size_type num_e = num_edges(p);
     typename boost::graph_traits<Poly>::faces_size_type num_f = num_faces(p);
 
-    // If Poly is using vector, we need to reserve the memory to prevent
-    // the CGAL_assertion. This function for polyhedron using list is VOID.
-    Poly newp;
-    newp.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
+    // Move `p` into `moved_p`, and build the subdivided polyhedron from scratch in `p`.
+    // This is done to make the algorithm work with CGAL::Surface_mesh,
+    // even though CGAL::Surface_mesh does not insert elements at the end (due to removed elements).
+    // The DooSabin subdivision of a mesh is a completely different mesh so there
+    // is no additional cost to rebuild from scratch (but there is a bit from
+    // using `copy_face_graph`).
+    Poly moved_p;
+    moved_p.reserve(num_v, num_e, num_f);
 
-    boost::unordered_map<vertex_descriptor, Point> buffer;
+    // We must use copy_face_graph rather than an assignement operator because
+    // we need the correspondence between vertex_descriptors
+    boost::unordered_map<vertex_descriptor, vertex_descriptor> v2v(num_v);
+    CGAL::copy_face_graph(p, moved_p, std::inserter(v2v, v2v.end()));
 
-    // map to go from the halfedge in the original mesh to the halfedge in the
-    // subdivided mesh
-    boost::unordered_map<halfedge_descriptor, halfedge_descriptor> old_to_new;
+    VertexPointMap moved_vpm = get(vertex_point, moved_p);
 
-    // build new n-faces
-    BOOST_FOREACH(face_descriptor fd, faces(p)) {
-      halfedge_descriptor hd = halfedge(fd, p);
+    // Move the position information to the internal property map of moved_p
+    typename boost::unordered_map<vertex_descriptor, vertex_descriptor>::iterator it = v2v.begin(),
+                                                                                  end = v2v.end();
+    for(; it!=end; ++it) {
+      put(moved_vpm, it->second, get(vpm, it->first));
+    }
+
+    // Temporarily change the members of the mask to `moved_p`
+    mask.polyhedron = &moved_p;
+    mask.vpm = moved_vpm;
+
+    p.clear();
+    p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
+
+    // Correspondence between halfedges of the original mesh and some of the
+    // halfedges in the subdivided mesh.
+    // Since we have halfedge_index_t, we can simply use a vector!
+    std::vector<halfedge_descriptor> old_to_new(2 * num_e);
+
+    // Build new n-faces
+    BOOST_FOREACH(face_descriptor fd, faces(moved_p)) {
+      halfedge_descriptor hd = halfedge(fd, moved_p);
       std::list<vertex_descriptor> vertices_of_new_face;
 
-      // keep the first outside
-      // it will be used to build the correspondence between old and new halfedges
+      // Keep the first outside; it will be used to build the correspondence
+      // between old and new halfedges
       Point first_pt;
       mask.corner_node(hd, first_pt);
-      vertex_descriptor first_v = add_vertex(newp);
-      buffer[first_v] = first_pt;
+      vertex_descriptor first_v = add_vertex(p);
+      put(vpm, first_v, first_pt);
       vertices_of_new_face.push_back(first_v);
 
-      // loop normally to add the rest of the vertices
+      // Loop normally and add the rest of the vertices
       halfedge_descriptor done = hd;
-      hd = next(hd, p);
+      hd = next(hd, moved_p);
       while(hd != done) {
         Point pt;
         mask.corner_node(hd, pt);
-        vertex_descriptor v = add_vertex(newp);
-        buffer[v] = pt;
+        vertex_descriptor v = add_vertex(p);
+        put(vpm, v, pt);
         vertices_of_new_face.push_back(v);
-        hd = next(hd, p);
+        hd = next(hd, moved_p);
       }
 
-      face_descriptor new_face = Euler::add_face(vertices_of_new_face, newp);
+      face_descriptor new_face = Euler::add_face(vertices_of_new_face, p);
 
-      // find the starting halfedge in new that corresponds to halfedge(fd, p)
-      halfedge_descriptor nf_hd = halfedge(new_face, newp);
-      while(target(nf_hd, newp) != first_v) {
-        nf_hd = next(nf_hd, newp);
+      // Find the starting halfedge in the new face that corresponds to halfedge(fd, p)
+      halfedge_descriptor nf_hd = halfedge(new_face, p);
+      while(target(nf_hd, p) != first_v) {
+        nf_hd = next(nf_hd, p);
       }
 
-      // build the correspondence old to new halfedges
-      hd = halfedge(fd, p);
+      // Build the correspondence between old and new halfedges
+      hd = halfedge(fd, moved_p);
       done = nf_hd;
       do {
         old_to_new[hd] = nf_hd;
-        hd = next(hd, p);
-        nf_hd = next(nf_hd, newp);
+        hd = next(hd, moved_p);
+        nf_hd = next(nf_hd, p);
       } while (nf_hd != done);
     }
 
-    // build new edge-faces
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(p)) {
-      if(is_border(hd, p))
+    // Build new edge-faces
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(moved_p)) {
+      if(is_border(hd, moved_p))
         continue;
 
-      halfedge_descriptor hd_opp = opposite(hd, p);
-      if(is_border(hd_opp, p))
+      halfedge_descriptor hd_opp = opposite(hd, moved_p);
+      if(is_border(hd_opp, moved_p))
         continue;
 
       if(hd > hd_opp)
         continue;
 
-      halfedge_descriptor new_hd = opposite(old_to_new[hd], newp);
-      halfedge_descriptor new_hd_opp = opposite(old_to_new[hd_opp], newp);
+      halfedge_descriptor new_hd = opposite(old_to_new[hd], p);
+      halfedge_descriptor new_hd_opp = opposite(old_to_new[hd_opp], p);
 
-      boost::array<vertex_descriptor, 4> v = {{source(new_hd, newp),
-                                               target(new_hd, newp),
-                                               source(new_hd_opp, newp),
-                                               target(new_hd_opp, newp)}};
+      boost::array<vertex_descriptor, 4> v = {{source(new_hd, p),
+                                               target(new_hd, p),
+                                               source(new_hd_opp, p),
+                                               target(new_hd_opp, p)}};
 
-      Euler::add_face(v, newp);
+      Euler::add_face(v, p);
     }
 
-    // build new vertex-faces
-    BOOST_FOREACH(vertex_descriptor vd, vertices(p)) {
-      if(is_border(vd, p))
+    // Build new vertex-faces
+    BOOST_FOREACH(vertex_descriptor vd, vertices(moved_p)) {
+      if(is_border(vd, moved_p))
         continue;
 
-      halfedge_descriptor hd = halfedge(vd, p);
-      halfedge_descriptor new_hd = opposite(old_to_new[hd], newp);
-      halfedge_descriptor new_face_hd = opposite(prev(new_hd, newp), newp), done = new_face_hd;
+      halfedge_descriptor hd = halfedge(vd, moved_p);
+      halfedge_descriptor new_hd = opposite(old_to_new[hd], p);
+      halfedge_descriptor new_face_hd = opposite(prev(new_hd, p), p), done = new_face_hd;
       std::list<vertex_descriptor> vertices_of_new_faces;
       do {
-        vertices_of_new_faces.push_back(source(new_face_hd, newp));
-        new_face_hd = next(new_face_hd, newp);
+        vertices_of_new_faces.push_back(source(new_face_hd, p));
+        new_face_hd = next(new_face_hd, p);
       } while(new_face_hd != done);
 
-      Euler::add_face(vertices_of_new_faces, newp);
+      Euler::add_face(vertices_of_new_faces, p);
     }
 
-    // copy face graph newp into p to keep a valid pointer to vpm
-    p.clear();
-    boost::unordered_map<vertex_descriptor, vertex_descriptor>     v2v;
-    CGAL::copy_face_graph(newp, p, std::inserter(v2v, v2v.end()));
+    // Reset the members of the mask
+    mask.polyhedron = &p;
+    mask.vpm = vpm;
+  }
 
-    // empty 'buffer' into vpm
-    typename boost::unordered_map<vertex_descriptor, Point>::iterator umit = buffer.begin(),
-                                                                      umend = buffer.end();
-    for(; umit!=umend; ++umit) {
-      vertex_descriptor vd = umit->first;
-      put(vpm, v2v[vd], umit->second);
-    }
+  template <class Poly, class VertexPointMap, class Mask>
+  void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
+    // Check if halfedges are index-based, which allows to use vectors instead of maps
+    DQQ_1step_impl(p, vpm, mask,
+                   boost::graph_has_property<Poly, boost::halfedge_index_t>());
+    CGAL_postcondition(p.is_valid());
   }
 
   // ======================================================================
