@@ -557,9 +557,6 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &c,
 	       OutputIterator res )
   {
-    typedef std::vector<CGAL::Object > solutions_container;
-    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-
 #if defined(CGAL_CK_EXPLOIT_IDENTITY) || \
   defined(CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES)
     typedef typename CK::Line_arc_2 Line_arc_2;
@@ -667,7 +664,8 @@ namespace CircularFunctors {
     }
 #endif // CGAL_CK_EXPLOIT_IDENTITY
 
-    typedef std::vector<CGAL::Object > solutions_container;
+    typedef std::vector<typename CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>::type>
+      solutions_container;
     solutions_container solutions;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
@@ -687,25 +685,30 @@ namespace CircularFunctors {
       }
 #endif
 
+
     for (typename solutions_container::iterator it = solutions.begin();
-	 it != solutions.end(); ++it) {
-      const std::pair<Circular_arc_point_2, unsigned>
-        *result = CGAL::object_cast
-	  <std::pair<Circular_arc_point_2, unsigned> > (&(*it));
-#ifdef CGAL_CK_TEST_BBOX_BEFORE_HAS_ON
-	  Bbox_2 rb = result->first.bbox();
-	  if(do_overlap(l.bbox(), rb) && do_overlap(c.bbox(),rb)){
-	    if (has_on<CK>(l,result->first,true) &&
-		has_on<CK>(c,result->first,true)) {
-	      *res++ = *it;
-	    }
-	  }
-#else
-      if (has_on<CK>(l,result->first,true) &&
-          has_on<CK>(c,result->first,true)) {
+	 it != solutions.end(); ++it)
+    {
+      #if CGAL_INTERSECTION_VERSION  < 2
+      if(const std::pair<typename CK::Circular_arc_point_2, unsigned>* p =
+         object_cast< std::pair< typename CK::Circular_arc_point_2, unsigned> >(& (*it)))
+      {
+        #ifdef CGAL_CK_TEST_BBOX_BEFORE_HAS_ON
+        Bbox_2 rb = p->first.bbox();
+        if(!do_overlap(l.bbox(), rb) || !do_overlap(c.bbox(),rb)) continue;
+        #endif
+        Has_on_visitor<CK, typename CK::Line_arc_2> vis1(&l);
+        Has_on_visitor<CK, typename CK::Circular_arc_2> vis2(&c);
+        if(vis1(*p) && vis2(*p))
+          *res++ = *it;
+      }
+      #else
+      if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it) &&
+         boost::apply_visitor(Has_on_visitor<CK, typename CK::Circular_arc_2>(&c), *it) )
+      {
 	*res++ = *it;
       }
-#endif
+      #endif
     }
     return res;
   }
