@@ -15,8 +15,8 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \tparam PolygonMesh must be a model of the concept `MutableFaceGraph`.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
-\image html CCBorderMask.png
-\image latex CCBorderMask.png
+\image html CCBorderMask.svg
+
 
 \cgalModels `PQQMask_3`
 

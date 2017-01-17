@@ -7,8 +7,7 @@ Required member functions for the `PQQMask_3` concept. This
 policy concept of geometric computations is used in 
 `CGAL::Subdivision_method_3::PQQ<PolygonMesh, Mask>`. 
 
-\image html CCBorderMask.png
-\image latex CCBorderMask.png
+\image html CCBorderMask.svg
 
 \cgalRefines `SubdivisionMask_3`
 

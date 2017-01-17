@@ -7,8 +7,8 @@ Required member functions for the `DQQMask_3` concept. This
 policy concept of geometric computations is used in 
 `CGAL::Subdivision_method_3::DQQ<PolygonMesh, Mask>`. 
 
-\image html DSCornerMask.png
-\image latex DSCornerMask.png
+\image html DSCornerMask.svg
+
 
 \cgalRefines `SubdivisionMask_3`
 

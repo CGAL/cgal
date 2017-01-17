@@ -9,7 +9,6 @@ namespace CGAL {
 \author Le-Jeng Andy Shiue
 
 \image html subdivision-teaser.jpg
-\image latex subdivision-teaser.jpg
 
 \section sectionSubIntro Introduction 
 
@@ -68,8 +67,7 @@ DQQ indicates the <I>D</I>ual <I>Q</I>uadtrateral <I>Q</I>uadrisection.
 \f$ \sqrt{3}\f$ indicates the converging speed of the triangulation toward
 the subdivision surface.
 
-\image html RefSchemes.png
-\image latex RefSchemes.png
+\image html RefSchemes.svg
 
 The figure demonstrates these four refinement patterns on 
 the 1-disk of a valence-5 vertex/face.
@@ -88,8 +86,8 @@ shown in the following figure. The blue neighborhoods in the
 top row indicate the corresponding stencils of the refined nodes 
 in red.
 
-\image html PQQStencil.png
-\image latex PQQStencil.png
+\image html PQQStencil.svg
+
 
 Stencils with weights are called <I>geometry masks</I>.
 A subdivision method defines a geometry mask for each stencil, and 
@@ -99,8 +97,7 @@ certain surface smoothness and shape quality.
 The geometry masks of Catmull-Clark subdivision are shown
 below.
 
-\image html cc_mask.png
-\image latex cc_mask.png
+\image html cc_mask.svg
 
 The weights shown here are unnormalized, and \f$ n\f$ is the valence 
 of the vertex. The generated point, in red, is computed by a summation
@@ -325,8 +322,8 @@ quadrisection (DQQ) and \f$ \sqrt{3}\f$ triangulation.
 Respectively, they are used by Catmull-Clark, Loop, Doo-Sabin 
 and \f$ \sqrt{3}\f$ subdivision.
 
-\image html RefSchemes.png
-\image latex RefSchemes.png
+\image html RefSchemes.svg
+
 
 \code{.cpp}
 
@@ -400,8 +397,8 @@ The function collects the vertex neighbors of the primitive descriptor
 (i.e.\ nodes on the stencil), and computes the new point 
 based on the neighbors and the mask (i.e.\ the stencil weights).
 
-\image html cc_mask.png
-\image latex cc_mask.png
+\image html cc_mask.svg
+
 
 This figure shows the geometry masks of
 Catmull-Clark subdivision. The weights shown here are unnormalized, 
@@ -578,10 +575,10 @@ odd, not smooth, or not even exist.
 
 
 
-\section Subdivision_method_3History: Implementation History
+\section Subdivision_method_3History Implementation History
 
 This package was initially developed by  Le-Jeng Andy Shiue.  For \cgal 4.10 it was generalized
-to work on any model of a `MutableFaceGraph`.
+to work on any model of a `MutableFaceGraph` by Andreas Fabri and Mael Rouxel-Labbé.
 
 */ 
 } /* namespace CGAL */

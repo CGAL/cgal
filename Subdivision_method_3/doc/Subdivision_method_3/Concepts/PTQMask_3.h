@@ -6,8 +6,7 @@ Required member functions for the `PTQMask_3` concept. This
 policy concept of geometric computations is used in 
 `CGAL::Subdivision_method_3::PTQ<PolygonMesh, Mask>`. 
 
-\image html LoopBorderMask.png
-\image latex LoopBorderMask.png
+\image html LoopBorderMask.svg
 
 \cgalRefines `SubdivisionMask_3`
 

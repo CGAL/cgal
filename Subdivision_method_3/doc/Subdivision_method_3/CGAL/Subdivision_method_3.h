@@ -36,8 +36,8 @@ the geometry masks.
 `Subdivision_method_3` supports four refinement hosts: 
 `PQQ`, `PTQ`, `DQQ` and `Sqrt3`. 
 
-\image html RefSchemes.png
-\image latex RefSchemes.png
+\image html RefSchemes.svg
+
 
 \cgalHeading{Example}
 
@@ -175,7 +175,7 @@ void Sqrt(PolygonMesh& pmesh, const NamedParameters& np);
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \prec `pmesh` must be a triangle mesh.
+ * \pre `pmesh` must be a triangle mesh.
  **/ 
 
   template <class PolygonMesh, class NamedParameters> 
