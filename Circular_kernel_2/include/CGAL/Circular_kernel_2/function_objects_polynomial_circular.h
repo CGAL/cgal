@@ -632,6 +632,15 @@ namespace CircularFunctors {
 	       OutputIterator res) const
     { return CircularFunctors::intersect_2<CK> (l,la,res); }
 
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line & l1, const Line & l2,
+	       OutputIterator res) const
+    {
+      *res++=typename CK::Linear_kernel::Intersect_2()(l1, l2);
+      return res;
+    }
+
   };
 
   template < class CK >
