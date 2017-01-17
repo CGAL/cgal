@@ -21,8 +21,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_POLYHEDRON_SUBDIVISION_H_01292002
-#define CGAL_POLYHEDRON_SUBDIVISION_H_01292002
+#ifndef CGAL_POLYHEDRON_SUBDIVISION_H
+#define CGAL_POLYHEDRON_SUBDIVISION_H
 
 #include <CGAL/basic.h>
 
@@ -219,4 +219,4 @@ namespace Subdivision_method_3 {
 
 } //namespace CGAL
 
-#endif //CGAL_POLYHEDRON_SUBDIVISION_H_01292002
+#endif //CGAL_POLYHEDRON_SUBDIVISION_H

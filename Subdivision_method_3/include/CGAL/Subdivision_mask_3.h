@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2005-20176 GeometryFactory (France).  All Rights Reserved.
+// Copyright (c) 2005-2017 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H_01292002
-#define CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H_01292002
+#ifndef CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H
+#define CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
@@ -382,7 +382,7 @@ public:
 };
 
 // ======================================================================
-// The geometry mask of Sqrt(3) subdivision
+/// The geometry mask of Sqrt(3) subdivision
   template <class Poly, class VertexPointMap = typename boost::property_map<Poly, vertex_point_t>::type >
   class Sqrt3_mask_3 : public Linear_mask_3<Poly,VertexPointMap> {
     typedef Linear_mask_3<Poly,VertexPointMap>       Base;
@@ -459,4 +459,4 @@ public:
 
 } //namespace CGAL
 
-#endif //CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H_01292002
+#endif //CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H

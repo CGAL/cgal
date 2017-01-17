@@ -49,15 +49,15 @@ namespace Private {
 
     template <class Poly, class VertexPointMap, class Mask>
     void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
-    typedef Polyhedron_decorator_3<Poly>           PD;
+    typedef Polyhedron_decorator_3<Poly>                                PD;
 
-    typedef typename boost::graph_traits<Poly>::vertex_descriptor           vertex_descriptor;
-    typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
+    typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
+    typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
     typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
 
     typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-    typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
+    typedef typename boost::graph_traits<Poly>::face_iterator           face_iterator;
 
     typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_facet_circulator;
 
@@ -165,6 +165,7 @@ namespace Private {
     for (size_t i = 0; i < num_vertex; i++, ++vitr)
       put(vpm, *vitr, vertex_point_buffer[i]);
 
+    CGAL_postcondition(p.is_valid());
     delete []vertex_point_buffer;
   }
 
@@ -174,13 +175,13 @@ namespace Private {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename boost::graph_traits<Poly>::vertex_descriptor           vertex_descriptor;
-    typedef typename boost::graph_traits<Poly>::halfedge_descriptor         halfedge_descriptor;
+    typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
+    typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
     typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
 
     typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
     typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-    typedef typename boost::graph_traits<Poly>::face_iterator          face_iterator;
+    typedef typename boost::graph_traits<Poly>::face_iterator           face_iterator;
 
     typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_face_circulator;
 
@@ -301,7 +302,7 @@ namespace Private {
     }
     Point* point_buffer = new Point[num_e*2];
 
-    // build the point_buffer
+    // Build the point_buffer
     vertex_iterator vitr, vitr_end;
     boost::tie(vitr,vitr_end) = vertices(p);
     int pi = 0;
@@ -313,8 +314,7 @@ namespace Private {
       }
     }
 
-    // If Polyhedron is using vector, we need to reserve the memory to prevent
-    // the CGAL_assertion. This function for polyhedron using list is VOID.
+    // Reserve to avoid rellocations during insertions
     p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
     // Build the connectivity using insert_vertex() and insert_edge()
@@ -343,9 +343,10 @@ namespace Private {
             halfedge_descriptor e2 = opposite(*vcir,p);
             PD::insert_edge(p, e1, e2);
           }
-        } else ++vcir;
+        } else {
+          ++vcir;
+        }
       }
-      //p.erase_center_vertex(vh->vertex_begin());
     }
 
     edge_iterator eitr = edges(p).first;
@@ -365,21 +366,17 @@ namespace Private {
           PD::insert_edge(p, prev(prev(eh,p),p), eh);
       }
     }
-    // after this point, the original border edges are in front!
-    //eitr = edges(p).first;
-    //for (size_t i = 0; i < num_be; ++i) {
-    //halfedge_descriptor eh = halfedge(*eitr,p);
-      //++eitr;
+
+    // After this point, the original border edges are in front!
     BOOST_FOREACH(halfedge_descriptor eeh, border_halfedges){
       halfedge_descriptor eh = eeh;
       if (is_border(eh,p)){
         eh = opposite(eh,p);
       }
-      assert(is_border(eh,p));
+
       halfedge_descriptor ehe = eh;
       eh = opposite(prev(eh,p),p);
       while (! is_border(eh,p)) {
-        std::cerr << "before remove_face"<< std::endl;
         Euler::remove_face(ehe,p);
         ehe = eh;
         eh = opposite(prev(eh,p),p);
@@ -569,7 +566,7 @@ namespace Private {
     // reserve enough size for the new points
     typename boost::graph_traits<Poly>::faces_size_type new_pts_size = num_f;
     if(refine_border) {
-      BOOST_FOREACH(edge_descriptor ed, CGAL::edges(p)){
+      BOOST_FOREACH(edge_descriptor ed, edges(p)){
         if(is_border(ed, p))
           ++new_pts_size;
       }
