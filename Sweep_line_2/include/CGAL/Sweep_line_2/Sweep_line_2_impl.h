@@ -320,7 +320,11 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
      * the case, then other modifications are necessary. I hope it's not.
      */
     if ((curve)->has_same_leaves(*iter)) {
-      *iter = curve;    // replace the current curve with the new one.
+      // @sloriot says: do not replace the *iter at it can be in the left curves of some
+      // other events. If we do not update those events with curve, then we cannot simply
+      // replace it, otherwise we'll have an inconsistency between the status line and
+      // some left curves
+      // *iter = curve;    // replace the current curve with the new one.
       CGAL_SL_PRINT_END_EOL
         ("adding a Curve to the right (curve completely overlaps)");
       return false;
