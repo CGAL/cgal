@@ -25,6 +25,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
+#include <CGAL/boost/graph/internal/Has_member_reserve.h>
 
 namespace CGAL {
 
@@ -725,6 +726,21 @@ clear_impl(FaceGraph& g)
   }
 }
 
+
+template<typename FaceGraph, typename T>
+inline
+typename boost::enable_if<Has_member_reserve<FaceGraph,T>, void>::type
+reserve_impl(FaceGraph& g, T nv, T ne, T nf)
+{
+  g.reserve();
+}
+
+template<typename FaceGraph, typename T>
+inline
+typename boost::disable_if<Has_member_reserve<FaceGraph,T>, void>::type
+reserve_impl(FaceGraph& g, T, T, T)
+{}
+
 }
 
 /**
@@ -749,6 +765,26 @@ void clear(FaceGraph& g)
   CGAL_postcondition(num_edges(g) == 0);
   CGAL_postcondition(num_vertices(g) == 0);
   CGAL_postcondition(num_faces(g) == 0);
+}
+
+
+/**
+ * \ingroup PkgBGLHelperFct
+ *
+ * If the graph has a member function `reserve()`, it will be called.
+ * 
+ * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
+ *
+ * @param g the graph
+ * @param nv number of vertices
+ * @param ne number of edges
+ * @param nf number of faces
+ *
+ **/
+template<typename FaceGraph, typename T>
+void reserve(FaceGraph& g, T nv, T ne, T nf)
+{
+  internal::reserve_impl(g,nv, ne, nf);
 }
 
 
