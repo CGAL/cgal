@@ -257,69 +257,6 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                             sm_vpm, tm_vpm);
 }
 
-template <typename SourceMesh, typename TargetMesh,
-          typename V2V, typename H2H, typename F2F,
-          typename Src_vpm, typename Tgt_vpm>
-void copy_face_graph_old(const SourceMesh& sm, TargetMesh& tm,
-                       V2V v2v, H2H h2h, F2F f2f,
-                       Src_vpm sm_vpm, Tgt_vpm tm_vpm )
-{
-  typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
-  typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
-
-  typedef typename boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
-  typedef typename boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
-
-  typedef typename boost::graph_traits<SourceMesh>::halfedge_descriptor sm_halfedge_descriptor;
-  typedef typename boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
-
-  Cartesian_converter<typename Kernel_traits<typename boost::property_traits<Src_vpm>::value_type>::type,
-                      typename Kernel_traits<typename boost::property_traits<Tgt_vpm>::value_type>::type >
-    conv;
-#ifdef CGAL_CFG_USE_VECTOR
-  // internal f2f and v2v
-  std::vector<tm_vertex_descriptor> v2v_(num_vertices(sm));
-  std::vector<tm_face_descriptor> f2f_(num_faces(sm));
-#else
-  boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v_(num_vertices(sm));
-  boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f_(num_faces(sm));
-#endif
-
-  BOOST_FOREACH(sm_vertex_descriptor svd, vertices(sm)){
-    tm_vertex_descriptor tvd = add_vertex(tm);
-    v2v_[svd] = tvd;
-    *v2v++ = std::make_pair(svd, tvd);
-    put(tm_vpm, tvd, conv(get(sm_vpm, svd)));
-  }
-
-  BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
-    std::vector<tm_vertex_descriptor> tv;
-    BOOST_FOREACH(sm_vertex_descriptor svd, vertices_around_face(halfedge(sfd,sm),sm)){
-      tv.push_back(v2v_.at(svd));
-    }
-    tm_face_descriptor new_face = Euler::add_face(tv,tm);
-    f2f_[sfd] = new_face;
-    *f2f++ = std::make_pair(sfd, new_face);
-  }
-
-  BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
-    sm_halfedge_descriptor shd = halfedge(sfd,sm), done(shd);
-    tm_halfedge_descriptor thd = halfedge(f2f_[sfd],tm);
-    tm_vertex_descriptor tvd = v2v_.at(target(shd,sm));
-    while(target(thd,tm) != tvd){
-      thd = next(thd,tm);
-    }
-    do {
-      *h2h++ = std::make_pair(shd, thd);
-      if (face(opposite(shd, sm), sm) == boost::graph_traits<SourceMesh>::null_face()){
-        *h2h++  = std::make_pair(opposite(shd, sm), opposite(thd, tm));
-      }
-      shd = next(shd,sm);
-      thd = next(thd,tm);
-    }while(shd != done);
-  }
-}
-
 #if !defined(DOXYGEN_RUNNING)
 template <typename SourceMesh, typename TargetMesh>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
@@ -345,32 +282,6 @@ template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, 
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, F2F f2f, Src_vpm sm_vpm)
 { copy_face_graph(sm, tm, v2v, h2h, f2f,
                   sm_vpm, get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh>
-void copy_face_graph_old(const SourceMesh& sm, TargetMesh& tm)
-{ copy_face_graph_old(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
-                  get(vertex_point, sm), get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh, typename V2V>
-void copy_face_graph_old(const SourceMesh& sm, TargetMesh& tm, V2V v2v)
-{ copy_face_graph_old(sm, tm, v2v, Emptyset_iterator(), Emptyset_iterator(),
-                  get(vertex_point, sm), get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
-void copy_face_graph_old(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h)
-{ copy_face_graph_old(sm, tm, v2v, h2h, Emptyset_iterator(),
-                  get(vertex_point, sm), get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F>
-void copy_face_graph_old(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, F2F f2f)
-{ copy_face_graph_old(sm, tm, v2v, h2h, f2f,
-                  get(vertex_point, sm), get(vertex_point, tm)); }
-
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F, typename Src_vpm>
-void copy_face_graph_old(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, F2F f2f, Src_vpm sm_vpm)
-{ copy_face_graph_old(sm, tm, v2v, h2h, f2f,
-                  sm_vpm, get(vertex_point, tm)); }
-
 #endif
 
 } // namespace CGAL
