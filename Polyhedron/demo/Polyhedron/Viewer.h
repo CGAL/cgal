@@ -36,6 +36,7 @@ public:
   Viewer(QWidget * parent, bool antialiasing = false);
   ~Viewer();
   bool testDisplayId(double, double, double);
+  void updateIds(CGAL::Three::Scene_item *);
   // overload several QGLViewer virtual functions
   //! Draws the scene.
   void draw();
