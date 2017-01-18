@@ -469,7 +469,7 @@ namespace CGAL {
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::vertices_size_type
   num_vertices(const Triangulation_data_structure_2<VB,FB>& g)
   {
-    return g.tds().number_of_vertices();
+    return g.number_of_vertices();
   }  
 
   template <class VB, class FB>
@@ -477,7 +477,7 @@ namespace CGAL {
   num_edges(const Triangulation_data_structure_2<VB,FB>& g)
   {
 
-    return  g.tds().number_of_vertices() + g.tds().number_of_faces() - 2;
+    return  g.number_of_vertices() + g.number_of_faces() - 2;
   }  
 
   template <class VB, class FB>
@@ -491,7 +491,7 @@ namespace CGAL {
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::faces_size_type
   num_faces(const Triangulation_data_structure_2<VB,FB>& g)
   {
-    return  g.tds().number_of_faces();
+    return  g.number_of_faces();
   } 
 
   template <class VB, class FB>
