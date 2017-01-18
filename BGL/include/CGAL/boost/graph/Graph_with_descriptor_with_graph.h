@@ -398,6 +398,15 @@ remove_vertex(typename boost::graph_traits< Graph_with_descriptor_with_graph<Gra
   remove_vertex(v.descriptor, *w.graph);
 }
 
+template<typename Graph>
+void
+reserve(Graph_with_descriptor_with_graph<Graph>& w,
+        typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::vertices_size_type nv,
+        typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::edges_size_type ne,
+        typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::faces_size_type nf)
+{
+  reserve(*w.graph, nv, ne, nf);
+}
 
 template <class Graph>
 typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::edge_descriptor

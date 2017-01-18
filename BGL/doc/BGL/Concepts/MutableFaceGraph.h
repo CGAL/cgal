@@ -27,6 +27,6 @@ Expression              | returns           | Description
 `remove_face(f, g)`     | `void`            | Removes `f` from the graph.
 `set_face(h, f, g)`     | `void`            | Sets the corresponding face of `h` to `f`.
 `set_halfedge(f, h, g)` | `void`            | Sets the corresponding halfedge of `f` to `h`.
-
+`reserve(g, nv, ne, nf)`| `void`            | Called to indicate the expected size of vertices (`nv`), edges (`ed`) and faces (`nf`)
 */
 class MutableFaceGraph{};

@@ -414,7 +414,7 @@ num_faces(const CGAL::Surface_mesh<P>& sm)
 {
   return sm.num_faces();
 }
-  
+
 template <typename P>
 Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_iterator>
 faces(const CGAL::Surface_mesh<P>& sm)
@@ -435,23 +435,17 @@ add_vertex(const typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_pr
   return sm.add_vertex(p);
 }
 
-/*
 // MutableGraph
-// add a vertex with a default constructed property
-template <typename P>
-typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor
-add_vertex(CGAL::Surface_mesh<P>& sm) {
-  return sm.add_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_property_type());
-}
-
-template <typename P>
+template<typename P>
 void
-clear_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor, 
-             CGAL::Surface_mesh<P>&) {
-  CGAL_assertion(false);
+reserve(CGAL::Surface_mesh<P>& sm,
+        typename boost::graph_traits< CGAL::Surface_mesh<P> >::vertices_size_type nv,
+        typename boost::graph_traits< CGAL::Surface_mesh<P> >::edges_size_type ne,
+        typename boost::graph_traits< CGAL::Surface_mesh<P> >::faces_size_type nf)
+{
+  sm.reserve(nv, ne, nf);
 }
 
-  */
 
 template <typename P>
 void
