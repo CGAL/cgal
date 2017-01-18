@@ -173,7 +173,7 @@ private:
     for(std::size_t i = 0; i<sample_points.size(); ++i)
     {
       hint = tree.closest_point(sample_points[i], hint);
-      typename Kernel::FT dist = squared_distance(hint,sample_points[i]);
+      Kernel::FT dist = squared_distance(hint,sample_points[i]);
       double d = CGAL::sqrt(dist);
       out[i]= d;
       if (d>hdist) hdist=d;
@@ -182,7 +182,7 @@ private:
 #else
     tbb::atomic<double> distance;
     distance.store(0);
-    Distance_computation<Tree, typename Kernel::Point_3> f(tree, hint, sample_points, &distance, out);
+    Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, &distance, out);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return distance;
 #endif
@@ -232,7 +232,7 @@ private:
         std::vector<Kernel::Point_3> sampled_points;
         std::size_t nb_points =  (std::max)((int)std::ceil(nb_pts_per_face * PMP::face_area(f,*poly,PMP::parameters::geom_traits(Kernel()))),
                                             1);
-        CGAL::Random_points_in_triangle_3<typename Kernel::Point_3> g(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
+        CGAL::Random_points_in_triangle_3<Kernel::Point_3> g(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
                                                                       f->halfedge()->next()->next()->vertex()->point());
         CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
         sampled_points.push_back(f->halfedge()->vertex()->point());

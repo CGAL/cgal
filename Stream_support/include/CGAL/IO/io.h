@@ -121,7 +121,7 @@ public:
 };
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
-  ( ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
+  ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
 template <>
 class Input_rep<double> : public IO_rep_is_specialized {
     double& t;

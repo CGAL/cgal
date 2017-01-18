@@ -166,7 +166,7 @@ function(cgal_arr_2_add_target exe_name source_file)
 
   # Add a compatibility-mode with the shell script `cgal_test_base`
   if(NOT TARGET ${exe_name})
-    create_single_source_cgal_program( "${source_file}" )
+    create_single_source_cgal_program( "${source_file}" NO_TESTING)
   endif()
 endfunction()
 

@@ -951,7 +951,7 @@ public:
    */
   static unsigned int increment(bool doit = true)
   {
-#if CGAL_NO_ATOMIC
+#ifdef CGAL_NO_ATOMIC
     static unsigned int counter;
 #else
     static CGAL::cpp11::atomic<unsigned int> counter;
