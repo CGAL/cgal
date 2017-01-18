@@ -72,6 +72,42 @@ class OR_property_map {
 
 };
 
+// A property map that uses the result of a property map as key.
+template <class KeyMap, class ValueMap>
+struct Property_map_binder{
+  typedef typename boost::property_traits<KeyMap>::key_type key_type;
+  typedef typename boost::property_traits<ValueMap>::value_type value_type;
+  typedef typename boost::property_traits<ValueMap>::reference reference;
+  typedef boost::read_write_property_map_tag category;
+
+  KeyMap key_map;
+  ValueMap value_map;
+
+  Property_map_binder(const KeyMap& key_map, const ValueMap& value_map)
+    : key_map(key_map)
+    , value_map(value_map)
+  {}
+
+  friend
+  reference get(const Property_map_binder& map, key_type k)
+  {
+    return get(map.value_map, get(map.key_map,k));
+  }
+  friend
+  void put(const Property_map_binder& map, key_type k, const value_type& v)
+  {
+    put(map.value_map, get(map.key_map,k), v);
+  }
+};
+
+template <class KeyMap, class ValueMap>
+Property_map_binder<KeyMap, ValueMap>
+bind_property_maps(const KeyMap& src, const ValueMap& tgt)
+{
+  return Property_map_binder<KeyMap, ValueMap>(src, tgt);
+}
+
+
 /// Property map that accesses a value from an iterator
 ///
 /// \cgalModels `ReadablePropertyMap`

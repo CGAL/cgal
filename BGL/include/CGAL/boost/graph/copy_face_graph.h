@@ -188,8 +188,8 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                                       get(boost::halfedge_index, sm));
 
   copy_face_graph_impl(sm, tm,
-                       Corefinement::bind_maps(get(boost::halfedge_index, sm),
-                                               make_property_map(hedges)),
+                       bind_property_maps(get(boost::halfedge_index, sm),
+                                          make_property_map(hedges)),
                        v2v, h2h, f2f,
                        sm_vpm, tm_vpm);
 }

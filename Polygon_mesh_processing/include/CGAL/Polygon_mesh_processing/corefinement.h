@@ -171,7 +171,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
 
   // set the connected component id of each face
   std::size_t nb_cc = connected_components(tm,
-                                Corefinement::bind_maps(fid_map,make_property_map(face_cc)),
+                                bind_property_maps(fid_map,make_property_map(face_cc)),
                                 parameters::face_index_map(fid_map));
 
   if (nb_cc == 1)

@@ -75,7 +75,7 @@ clip_open_impl(      TriangleMesh& tm,
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
   std::size_t nb_cc =
     connected_components(tm,
-                         Corefinement::bind_maps(fid_map, make_property_map(face_cc)),
+                         bind_property_maps(fid_map, make_property_map(face_cc)),
                          parameters::face_index_map(fid_map).
                          edge_is_constrained_map(ecm));
 
@@ -118,7 +118,7 @@ clip_open_impl(      TriangleMesh& tm,
   //now remove the cc
   remove_connected_components(tm,
     ccs_to_remove,
-    Corefinement::bind_maps(fid_map, make_property_map(face_cc)),
+    bind_property_maps(fid_map, make_property_map(face_cc)),
     np_tm);
 
   return true;

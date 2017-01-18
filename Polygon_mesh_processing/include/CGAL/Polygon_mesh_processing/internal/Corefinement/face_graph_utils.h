@@ -383,41 +383,6 @@ triangulate_a_face(
   }
 }
 
-
-template <class KeyMap, class ValueMap>
-struct Map_binder{
-  typedef typename boost::property_traits<KeyMap>::key_type key_type;
-  typedef typename boost::property_traits<ValueMap>::value_type value_type;
-  typedef typename boost::property_traits<ValueMap>::reference reference;
-  typedef boost::read_write_property_map_tag category;
-
-  KeyMap key_map;
-  ValueMap value_map;
-
-  Map_binder(const KeyMap& key_map, const ValueMap& value_map)
-    : key_map(key_map)
-    , value_map(value_map)
-  {}
-
-  friend
-  reference get(const Map_binder& map, key_type k)
-  {
-    return get(map.value_map, get(map.key_map,k));
-  }
-  friend
-  void put(const Map_binder& map, key_type k, const value_type& v)
-  {
-    put(map.value_map, get(map.key_map,k), v);
-  }
-};
-
-template <class KeyMap, class ValueMap>
-Map_binder<KeyMap, ValueMap>
-bind_maps(const KeyMap& src, const ValueMap& tgt)
-{
-  return Map_binder<KeyMap, ValueMap>(src, tgt);
-}
-
 template <class PolygonMesh>
 class Border_edge_map {
   typedef std::size_t Node_id;
