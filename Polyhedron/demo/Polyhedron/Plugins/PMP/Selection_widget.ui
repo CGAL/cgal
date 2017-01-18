@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
+    <width>508</width>
     <height>713</height>
    </rect>
   </property>
@@ -61,7 +61,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0">
+             <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,0">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,1">
                 <item>
@@ -101,6 +101,13 @@
                  </widget>
                 </item>
                </layout>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="lassoCheckBox">
+                <property name="text">
+                 <string>Lasso</string>
+                </property>
+               </widget>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,1,1">
@@ -414,6 +421,26 @@
              <item>
               <property name="text">
                <string>Keep Connected Components of Selected Facets</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Convert from Edge Selection to Facets Selection</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Convert from Edge Selection to Point Selection</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Convert from Facet Selection to Boundary Edge Selection</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Convert from Facet Selection to Point Selection</string>
               </property>
              </item>
             </widget>

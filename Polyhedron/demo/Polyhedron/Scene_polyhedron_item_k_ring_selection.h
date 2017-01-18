@@ -14,6 +14,34 @@
 #include <queue>
 
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+
+#include <CGAL/Polygon_2.h>
+
+typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+
+struct Is_selected_edge_property_map{
+  std::vector<bool>* is_selected_ptr;
+  Is_selected_edge_property_map()
+    : is_selected_ptr(NULL) {}
+  Is_selected_edge_property_map(std::vector<bool>& is_selected)
+    : is_selected_ptr( &is_selected) {}
+
+  std::size_t id(edge_descriptor ed) { return ed.halfedge()->id()/2; }
+
+  friend bool get(Is_selected_edge_property_map map, edge_descriptor ed)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    return (*map.is_selected_ptr)[map.id(ed)];
+  }
+
+  friend void put(Is_selected_edge_property_map map, edge_descriptor ed, bool b)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    (*map.is_selected_ptr)[map.id(ed)]=b;
+  }
+};
 
 class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring_selection 
   : public QObject
@@ -24,7 +52,9 @@ public:
     enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 , CONNECTED_COMPONENT = 3, PATH = 4};
   };
 
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+  typedef CGAL::Polygon_2<Kernel> Polygon_2;
+  typedef std::vector<Kernel::Point_2> Polyline_2;
+  typedef std::vector<Polyline_2> Polylines;
 
   // Hold mouse keyboard state together
   struct Mouse_keyboard_state
@@ -63,10 +93,13 @@ public:
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
+    polyline = new Polylines(0);
+    polyline->push_back(Polyline_2());
     mainwindow = mw;
     is_highlighting = false;
     is_ready_to_highlight = true;
     is_ready_to_paint_select = true;
+    is_lasso_active = false;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -86,6 +119,8 @@ public:
   {
     is_current_selection = b;
   }
+  void set_lasso_mode(bool b) { is_lasso_active = b; }
+
 public Q_SLOTS:
   // slots are called by signals of polyhedron_item
   void vertex_has_been_selected(void* void_ptr) 
@@ -130,6 +165,140 @@ public Q_SLOTS:
       }
       is_ready_to_paint_select = false;
     }
+  }
+
+  void lasso_selection()
+  {
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+
+    qglviewer::Camera* camera = viewer->camera();
+    const Polyhedron& poly = *poly_item->polyhedron();
+
+    std::set<Polyhedron::Face_handle> face_sel;
+    //select all faces if their screen projection is inside the lasso
+    BOOST_FOREACH(Polyhedron::Face_handle f, faces(poly))
+    {
+      BOOST_FOREACH(Polyhedron::Vertex_handle v, CGAL::vertices_around_face(f->halfedge(), poly))
+      {
+        qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
+        qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
+        if(is_vertex_selected(vsp))
+        {
+          face_sel.insert(f);
+          break;
+        }
+      }
+    }
+    if(face_sel.empty())
+    {
+      contour_2d.clear();
+      return;
+    }
+    //get border edges of the selected patches
+    std::vector<Polyhedron::Halfedge_handle> boundary_edges;
+    CGAL::Polygon_mesh_processing::border_halfedges(face_sel, poly, std::back_inserter(boundary_edges));
+    std::vector<bool> mark(edges(poly).size(), false);
+    Is_selected_edge_property_map spmap(mark);
+    BOOST_FOREACH(Polyhedron::Halfedge_handle h, boundary_edges)
+      put(spmap, edge(h, poly), true);
+
+    boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
+      = get(boost::face_external_index, poly);
+    boost::vector_property_map<int,
+      boost::property_map<Polyhedron, boost::face_external_index_t>::type>
+      fccmap(fim);
+
+    //get connected componant from the picked face
+    std::set<Polyhedron::Face_handle> final_sel;
+    //std::vector<Polyhedron::Face_handle> cc;
+    std::size_t nb_cc = CGAL::Polygon_mesh_processing::connected_components(poly
+          , fccmap
+          , CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(spmap)
+          .face_index_map(fim));
+    std::vector<bool> is_cc_done(nb_cc, false);
+
+    BOOST_FOREACH(Polyhedron::Face_handle f, face_sel)
+    {
+
+      int cc_id = get(fccmap, f);
+      if(is_cc_done[cc_id])
+      {
+        continue;
+      }
+      Polyhedron::Halfedge_around_facet_circulator hafc = f->facet_begin();
+      Polyhedron::Halfedge_around_facet_circulator end = hafc;
+      double x(0), y(0), z(0);
+      int total(0);
+      CGAL_For_all(hafc, end)
+      {
+        x+=hafc->vertex()->point().x(); y+=hafc->vertex()->point().y(); z+=hafc->vertex()->point().z();
+        total++;
+      }
+      if(total == 0)
+        continue;
+      qglviewer::Vec center(x/(double)total, y/(double)total, z/(double)total);
+      const qglviewer::Vec& orig = camera->position() - offset;
+      qglviewer::Vec direction = center - orig;
+      if(poly_item->intersect_face(orig.x,
+                                   orig.y,
+                                   orig.z,
+                                   direction.x,
+                                   direction.y,
+                                   direction.z,
+                                   f))
+      {
+        is_cc_done[cc_id] = true;
+      }
+    }
+    BOOST_FOREACH(Polyhedron::Face_handle f, faces(poly))
+    {
+      if(is_cc_done[get(fccmap, f)])
+        final_sel.insert(f);
+    }
+    switch(active_handle_type)
+    {
+    case Active_handle::FACET:
+      selected(final_sel);
+      break;
+    case Active_handle::EDGE:
+    {
+      std::set<edge_descriptor> e_sel;
+      BOOST_FOREACH(Polyhedron::Face_handle f, final_sel)
+      {
+        BOOST_FOREACH(Polyhedron::Halfedge_handle h, CGAL::halfedges_around_face(f->halfedge(), poly))
+        {
+          qglviewer::Vec vp1(h->vertex()->point().x(), h->vertex()->point().y(), h->vertex()->point().z());
+          qglviewer::Vec vsp1 = camera->projectedCoordinatesOf(vp1+offset);
+          qglviewer::Vec vp2(h->opposite()->vertex()->point().x(), h->opposite()->vertex()->point().y(), h->opposite()->vertex()->point().z());
+          qglviewer::Vec vsp2 = camera->projectedCoordinatesOf(vp2+offset);
+          if(is_vertex_selected(vsp1) || is_vertex_selected(vsp2))
+            e_sel.insert(edge(h, poly));
+        }
+      }
+      selected(e_sel);
+      break;
+    }
+    case Active_handle::VERTEX:
+    {
+      std::set<Polyhedron::Vertex_handle> v_sel;
+      BOOST_FOREACH(Polyhedron::Face_handle f, final_sel)
+      {
+        BOOST_FOREACH(Polyhedron::Vertex_handle v, CGAL::vertices_around_face(f->halfedge(), poly))
+        {
+          qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
+          qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
+          if(is_vertex_selected(vsp))
+            v_sel.insert(v);
+        }
+      }
+      selected(v_sel);
+      break;
+    }
+    default:
+      break;
+    }
+    contour_2d.clear();
   }
 
   void highlight()
@@ -289,11 +458,15 @@ protected:
         if(is_edit_mode)
           Q_EMIT clearHL();
         if (!state.left_button_pressing)
+        {
           if (is_active)
           {
             Q_EMIT endSelection();
             is_active=false;
           }
+          apply_path();
+          lasso_selection();
+        }
       }
       //to avoid the contextual menu to mess up the states.
       else if(mouse_event->button() == Qt::RightButton) {
@@ -316,11 +489,18 @@ protected:
         viewer->setFocus();
         return false;
       }
-      is_ready_to_paint_select = true;
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-      paint_pos = mouse_event->pos();
-      if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
-        QTimer::singleShot(0,this,SLOT(paint_selection()));
+      if(!is_lasso_active)
+      {
+        is_ready_to_paint_select = true;
+        QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+        paint_pos = mouse_event->pos();
+        if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
+          QTimer::singleShot(0,this,SLOT(paint_selection()));
+      }
+      else
+      {
+        sample_mouse_path();
+      }
     }
     //if in edit_mode and the mouse is moving without left button pressed :
     // highlight the primitive under cursor
@@ -343,9 +523,90 @@ protected:
   bool is_edit_mode;
   bool is_ready_to_highlight;
   bool is_ready_to_paint_select;
+  bool is_lasso_active;
   QPoint hl_pos;
   QPoint paint_pos;
+  Polyline_2 contour_2d;
+  Polylines* polyline;
+  Polyline_2& poly() const  { return polyline->front(); }
+  Polygon_2 lasso;
+  CGAL::Bbox_2 domain_rectangle;
+  bool update_polyline () const
+  {
+    if (contour_2d.size() < 2 ||
+        (!(poly().empty()) && contour_2d.back () == poly().back()))
+      return false;
 
+
+    if (!(poly().empty()) && contour_2d.back () == poly().back())
+      return false;
+
+    poly().clear();
+
+    for (unsigned int i = 0; i < contour_2d.size (); ++ i)
+      poly().push_back (contour_2d[i]);
+
+    return true;
+  }
+
+  void sample_mouse_path()
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
+    contour_2d.push_back (Kernel::Point_2 (p.x(), p.y()));
+
+    if (update_polyline ())
+    {
+      //update draw
+      QPainter *painter = viewer->getPainter();
+      QPen pen;
+      pen.setColor(QColor(Qt::green));
+      pen.setWidth(3);
+      //Create a QImage of the screen and paint the lasso on top of it
+      QImage image = viewer->grabFrameBuffer();
+      painter->begin(viewer);
+      painter->drawImage(QPoint(0,0), image);
+      painter->setPen(pen);
+      for(std::size_t i=0; i<polyline->size(); ++i)
+      {
+        Polyline_2 poly = (*polyline)[i];
+        if(!poly.empty())
+          for(std::size_t j=0; j<poly.size()-1; ++j)
+          {
+            painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
+          }
+      }
+      painter->end();
+    }
+  }
+  void apply_path()
+  {
+    update_polyline ();
+    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
+    lasso = Polygon_2 (contour_2d.begin (), contour_2d.end ());
+  }
+
+  bool is_vertex_selected (qglviewer::Vec& p)
+  {
+    if (domain_rectangle.xmin () < p.x &&
+        p.x < domain_rectangle.xmax () &&
+        domain_rectangle.ymin () < p.y &&
+        p.y < domain_rectangle.ymax ())
+      {
+/*
+ * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
+ * However, it works very well even if the polygon is not simple, so we use this instead to avoid
+ * the cgal_assertion on is_simple().*/
+
+
+        if (CGAL::bounded_side_2(lasso.container().begin(),
+                                 lasso.container().end(),
+                                 Kernel::Point_2(p.x, p.y),
+                                 lasso.traits_member())  == CGAL::ON_BOUNDED_SIDE)
+          return true;
+      }
+    return false;
+  }
 };
 
 #endif

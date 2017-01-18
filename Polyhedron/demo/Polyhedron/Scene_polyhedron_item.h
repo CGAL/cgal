@@ -104,6 +104,15 @@ public:
     void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
     bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*);
 
+    //! @returns `true` if `f` is the first facet intersected by a raytracing
+    bool intersect_face(double orig_x,
+                        double orig_y,
+                        double orig_z,
+                        double dir_x,
+                        double dir_y,
+                        double dir_z,
+                        Polyhedron::Facet_handle f);
+
 public Q_SLOTS:
     virtual void invalidateOpenGLBuffers();
     virtual void selection_changed(bool);

@@ -1755,6 +1755,7 @@ bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Th
 
 }
 
+
 std::vector<QColor>& Scene_polyhedron_item::color_vector() {return d->colors_;}
 void Scene_polyhedron_item::set_color_vector_read_only(bool on_off) {d->plugin_has_set_color_vector_m=on_off;}
 bool Scene_polyhedron_item::is_color_vector_read_only() { return d->plugin_has_set_color_vector_m;}
@@ -1764,4 +1765,57 @@ bool Scene_polyhedron_item::triangulated(){return d->poly->is_pure_triangle();}
 bool Scene_polyhedron_item::self_intersected(){return !(d->self_intersect);}
 void Scene_polyhedron_item::setItemIsMulticolor(bool b){ d->is_multicolor = b;}
 bool Scene_polyhedron_item::isItemMulticolor(){ return d->is_multicolor;}
+bool Scene_polyhedron_item::intersect_face(double orig_x,
+                                           double orig_y,
+                                           double orig_z,
+                                           double dir_x,
+                                           double dir_y,
+                                           double dir_z,
+                                           Polyhedron::Facet_handle f)
+{
+  typedef Input_facets_AABB_tree Tree;
+  typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
+  Tree* aabb_tree = static_cast<Tree*>(d->get_aabb_tree());
+  if(aabb_tree)
+  {
+    const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
+    const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
+    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    typedef std::list<Object_and_primitive_id> Intersections;
+    Intersections intersections;
+    aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+    Intersections::iterator closest = intersections.begin();
+    if(closest != intersections.end())
+    {
+      const Kernel::Point_3* closest_point =
+          CGAL::object_cast<Kernel::Point_3>(&closest->first);
+      for(Intersections::iterator
+          it = boost::next(intersections.begin()),
+          end = intersections.end();
+          it != end; ++it)
+      {
+        if(! closest_point) {
+          closest = it;
+        }
+        else {
+          const Kernel::Point_3* it_point =
+              CGAL::object_cast<Kernel::Point_3>(&it->first);
+          if(it_point &&
+             (ray_dir * (*it_point - *closest_point)) < 0)
+          {
+            closest = it;
+            closest_point = it_point;
+          }
+        }
+      }
+      if(closest_point)
+      {
+        Polyhedron::Facet_handle intersected_face = closest->second;
+        return intersected_face == f;
+      }
+    }
+  }
+  return false;
+
+}

@@ -198,7 +198,8 @@ protected:
   { return k_ring_selector.active_handle_type; }
   void set_active_handle_type(Active_handle::Type aht) 
   { k_ring_selector.active_handle_type = aht; }
-
+  void set_lasso_mode(bool b)
+  { k_ring_selector.set_lasso_mode(b); }
   int get_k_ring() { return k_ring_selector.k_ring; }
   void set_k_ring(int k) { k_ring_selector.k_ring = k; }
 

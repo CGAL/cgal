@@ -19,6 +19,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <Scene.h>
 
 struct Is_terminal
@@ -97,6 +98,8 @@ public:
     connect(ui_widget.Create_selection_item_button,  SIGNAL(clicked()), this, SLOT(on_Create_selection_item_button_clicked()));    
     connect(ui_widget.Selection_type_combo_box, SIGNAL(currentIndexChanged(int)), 
             this, SLOT(on_Selection_type_combo_box_changed(int)));
+    connect(ui_widget.lassoCheckBox, &QCheckBox::toggled,
+            this, &Polyhedron_demo_selection_plugin::on_LassoCheckBox_changed);
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
     connect(ui_widget.validateButton, SIGNAL(clicked()), this, SLOT(on_validateButton_clicked()));
@@ -293,11 +296,31 @@ public Q_SLOTS:
     ui_widget.modeBox->setCurrentIndex(last_mode);
     connectItem(new_item);
   }
+  void on_LassoCheckBox_changed(bool b)
+  {
+    for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it)
+    {
+      it->second->set_lasso_mode(b);
+    }
+  }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
       Q_EMIT save_handleType();
+      switch(index)
+      {
+      case 0:
+      case 1:
+      case 2:
+        ui_widget.lassoCheckBox->show();
+        break;
+      default:
+        ui_widget.lassoCheckBox->hide();
+        ui_widget.lassoCheckBox->setChecked(false);
+        it->second->set_lasso_mode(false);
+        break;
+      }
       if(index == 1)
       {
         ui_widget.Select_all_NTButton->show();
@@ -459,6 +482,98 @@ public Q_SLOTS:
       selection_item->keep_connected_components();
       break;
     }
+      //Convert from Edge Selection to Facet Selection
+    case 5:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_edges.empty()) {
+        print_message("Error: there is no selected edge in this polyhedron selection item!");
+        return;
+      }
+      const Polyhedron& poly = *selection_item->polyhedron();
+      BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
+      {
+        selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
+        selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
+      //Convert from Edge Selection to Point Selection
+    case 6:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_edges.empty()) {
+        print_message("Error: there is no selected edge in this polyhedron selection item!");
+        return;
+      }
+      const Polyhedron& poly = *selection_item->polyhedron();
+
+      BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
+      {
+        selection_item->selected_vertices.insert(target(halfedge(ed, poly), poly));
+        selection_item->selected_vertices.insert(source(halfedge(ed, poly), poly));
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
+      //Convert from Facet Selection to Bounding Edge Selection
+    case 7:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_facets.empty()) {
+        print_message("Error: there is no selected facet in this polyhedron selection item!");
+        return;
+      }
+      const Polyhedron& poly = *selection_item->polyhedron();
+      std::vector<Scene_polyhedron_selection_item::Halfedge_handle> boundary_edges;
+      CGAL::Polygon_mesh_processing::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
+      BOOST_FOREACH(Scene_polyhedron_selection_item::Halfedge_handle h, boundary_edges)
+      {
+        selection_item->selected_edges.insert(edge(h, poly));
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
+      //Convert from Facet Selection to Points Selection
+    case 8:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_facets.empty()) {
+        print_message("Error: there is no selected facet in this polyhedron selection item!");
+        return;
+      }
+      const Polyhedron& poly = *selection_item->polyhedron();
+      BOOST_FOREACH(Scene_polyhedron_selection_item::Facet_handle fh, selection_item->selected_facets)
+      {
+        BOOST_FOREACH(Scene_polyhedron_selection_item::halfedge_descriptor h, CGAL::halfedges_around_face(fh->halfedge(), poly) )
+        {
+          selection_item->selected_vertices.insert(target(h, poly));
+        }
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
     default :
       break;
     }
@@ -557,6 +672,7 @@ public Q_SLOTS:
       ui_widget.docImage_Label->clear();
       break;
     }
+    on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
   }
   void on_Select_sharp_edges_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -627,6 +743,7 @@ public Q_SLOTS:
     if (scene_ptr)
       connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(selection_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
+    on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
   }
   void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
     // if polyhedron item
