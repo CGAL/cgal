@@ -1498,6 +1498,10 @@ void MainWindow::on_actionSaveAs_triggered()
   }
 
   if(!item)
+  {
+    item = scene->item(scene->mainSelectionIndex());
+  }
+  if(!item)
     return;
 
   QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> canSavePlugins;
