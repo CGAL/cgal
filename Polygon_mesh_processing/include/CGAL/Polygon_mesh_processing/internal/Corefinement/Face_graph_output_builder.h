@@ -394,8 +394,8 @@ public:
     CGAL_assertion(intersection_edges1.size()==intersection_edges2.size());
 
     // this will initialize face indices if the face index map is writable.
-    init_face_indices(tm1, fids1);
-    init_face_indices(tm2, fids2);
+    helpers::init_face_indices(tm1, fids1);
+    helpers::init_face_indices(tm2, fids2);
 
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);

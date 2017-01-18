@@ -68,8 +68,8 @@ clip_open_impl(      TriangleMesh& tm,
                                   get_property_map(vertex_point, clipper));
 
   // init indices if needed
-  Corefinement::init_face_indices(tm, fid_map);
-  Corefinement::init_vertex_indices(tm, vid_map);
+  helpers::init_face_indices(tm, fid_map);
+  helpers::init_vertex_indices(tm, vid_map);
 
   // set the connected component id of each face
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));

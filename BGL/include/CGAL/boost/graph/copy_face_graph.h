@@ -30,9 +30,6 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
-#include <boost/dynamic_bitset.hpp> /// \TODO not needed
-#include <CGAL/Polygon_mesh_processing/internal/Corefinement/face_graph_utils.h> /// \TODO extract code from this file!
-
 
 namespace CGAL {
 
@@ -184,8 +181,8 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
 
   // init halfedge index map
   /// \TODO shall we keep that?
-  Corefinement::init_halfedge_indices(const_cast<SourceMesh&>(sm),
-                                      get(boost::halfedge_index, sm));
+  helpers::init_halfedge_indices(const_cast<SourceMesh&>(sm),
+                                 get(boost::halfedge_index, sm));
 
   copy_face_graph_impl(sm, tm,
                        bind_property_maps(get(boost::halfedge_index, sm),
