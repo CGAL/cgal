@@ -22,19 +22,19 @@
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined(CGAL_LINKED_WITH_TBB)
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
   const std::vector<Point_3>& sample_points;
   Point_3 initial_hint;
-  CGAL::cpp11::atomic<double>* distance;
+  tbb::atomic<double>* distance;
   std::vector<double>& output;
 
   Distance_computation(const AABB_tree& tree,
                        const Point_3 p,
                        const std::vector<Point_3>& sample_points,
-                       CGAL::cpp11::atomic<double>* d,
+                       tbb::atomic<double>* d,
                        std::vector<double>& out )
     : tree(tree)
     , sample_points(sample_points)
@@ -57,8 +57,8 @@ struct Distance_computation{
       if (d>hdist) hdist=d;
     }
 
-    if (hdist > distance->load(CGAL::cpp11::memory_order_acquire))
-      distance->store(hdist, CGAL::cpp11::memory_order_release);
+    if (hdist > distance->load())
+      distance->store(hdist);
   }
 };
 #endif
@@ -168,7 +168,7 @@ private:
 
     Traits::Point_3 hint = m.vertices_begin()->point();
 
-#ifndef CGAL_LINKED_WITH_TBB
+#if !defined(CGAL_LINKED_WITH_TBB)
     double hdist = 0;
     for(std::size_t i = 0; i<sample_points.size(); ++i)
     {
@@ -180,7 +180,8 @@ private:
     }
       return hdist;
 #else
-    CGAL::cpp11::atomic<double> distance(0);
+    tbb::atomic<double> distance;
+    distance.store(0);
     Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, &distance, out);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return distance;

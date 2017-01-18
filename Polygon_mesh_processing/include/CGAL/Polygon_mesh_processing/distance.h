@@ -39,7 +39,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <CGAL/atomic.h>
+#include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <boost/foreach.hpp>
@@ -144,19 +144,19 @@ sample_triangles(const FaceRange& triangles,
   return out;
 }
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined(CGAL_LINKED_WITH_TBB)
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
   const std::vector<Point_3>& sample_points;
   Point_3 initial_hint;
-  cpp11::atomic<double>* distance;
+  tbb::atomic<double>* distance;
 
   Distance_computation(
           const AABB_tree& tree,
           const Point_3& p,
           const std::vector<Point_3>& sample_points,
-          cpp11::atomic<double>* d)
+          tbb::atomic<double>* d)
     : tree(tree)
     , sample_points(sample_points)
     , initial_hint(p)
@@ -176,8 +176,8 @@ struct Distance_computation{
       if (d>hdist) hdist=d;
     }
 
-    if (hdist > distance->load(cpp11::memory_order_acquire))
-      distance->store(hdist, cpp11::memory_order_release);
+    if (hdist > distance->load())
+      distance->store(hdist);
   }
 };
 #endif
@@ -513,13 +513,14 @@ double approximate_Hausdorff_distance(
   tree.accelerate_distance_queries();
   tree.build();
   Point_3 hint = get(vpm, *vertices(tm).first);
-#ifndef CGAL_LINKED_WITH_TBB
+#if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
-    cpp11::atomic<double> distance(0);
+    tbb::atomic<double> distance;
+    distance.store(0);
     Distance_computation<Tree, Point_3> f(tree, hint, sample_points, &distance);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return distance;
