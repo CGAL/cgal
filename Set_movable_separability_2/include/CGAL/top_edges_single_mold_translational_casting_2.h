@@ -25,127 +25,83 @@
 #include <CGAL/enum.h>
 
 #include "Set_movable_separability_2/Circle_arrangment.h"
+#include "Set_movable_separability_2/Utils.h"
 
 namespace CGAL {
 
-namespace Set_movable_separability_2 {
+  namespace Set_movable_separability_2 {
 
-/* Legend:
- * point = Represented as Direction_2. It is the intersection between the
- *   fitting Direction_2 and the unit circle
- *
- * Arc = Represented as A pair of point. clockwise arc between the first
- *   point and the second point. (each of its sides might be open or closed)
- *
- * SegmentOuterCircle  = Arc that represent all the directions that points
- *   out from the polygon if it start from the
- *   fitting segment. This arc is always open half circle.
- */
+    /* Legend:
+     * point = Represented as Direction_2. It is the intersection between the
+     *   fitting Direction_2 and the unit circle
+     *
+     * Arc = Represented as A pair of point. clockwise arc between the first
+     *   point and the second point. (each of its sides might be open or closed)
+     *
+     * SegmentOuterCircle  = Arc that represent all the directions that points
+     *   out from the polygon if it start from the
+     *   fitting segment. This arc is always open half circle.
+     */
 
-/*! \fn std::pair<typename Kernel::Direction_2,typename Kernel::Direction_2> get_segment_outer_circle(typename Kernel::Segment_2 seg, CGAL::Orientation orientation)
- * \param[in] seg the polygon segment
- * \param[in] orientation the orientation of the segment (and the polygon).
- *   if CLOCKWISE then the outer half circle is to the left.
- * \return the open outer half-circle of the edge.
- */
-template <typename Kernel>
-inline std::pair<typename Kernel::Direction_2, typename Kernel::Direction_2>
-get_segment_outer_circle(const typename Kernel::Segment_2 seg,
-                         const CGAL::Orientation orientation)
-{
-  typename Kernel::Direction_2 forward( seg);
-  typename Kernel::Direction_2 backward(-forward);
-  return (orientation == CGAL::Orientation::CLOCKWISE) ?
-    std::make_pair(backward, forward) : std::make_pair(forward, backward);
-}
+    /*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
+     * \param[in] pgn the input polygon that we want to check if is castable or not.
+     * \param[in,out] oi the output iterator to put the top edges in
+     * \param[in] kernel the kernel to use.
+     * \return all the possible top edges of the polygon and there pullout direction
+     *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+     *   (with no rotation)
+     */
+    template <typename Kernel, typename OutputIterator>
+    OutputIterator
+    top_edges_single_mold_translational_casting_2
+    (const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi, Kernel& kernel)
+    {
+      /* Legend
+       * point = Represented as  Direction_2. It is the intersection between the
+       *   fitting Direction_2 and the unit circle
+       *
+       * arc = Represented as A pair of point. clockwise arc between the first
+       *   point and the second point. (each of its sides might be open or closed)
+       */
+      CGAL_precondition(pgn.is_simple());
+      CGAL_precondition(!internal::is_any_edge_colinear(pgn));
 
-template <typename Kernel>
-bool is_any_edge_colinear(const CGAL::Polygon_2<Kernel>& pgn)
-{
-  typedef typename CGAL::Point_2<Kernel>                Point_2;
-  typedef typename CGAL::Polygon_2<Kernel>              Polygon_2;
-  typedef typename Polygon_2::Vertex_const_iterator     Vertex_const_iterator;
-  Vertex_const_iterator vci = pgn.vertices_begin();
-  Point_2 firstVar = *(vci++);
-  Point_2 secondVar = *(vci++);
-  Point_2 thirdVar = *(vci++);
-  for (; vci != pgn.vertices_end(); ++vci) {
-    firstVar = secondVar;
-    secondVar = thirdVar;
-    thirdVar = *vci;
-    if (CGAL::collinear(firstVar, secondVar, thirdVar)) return true;
-  }
-  vci = pgn.vertices_begin();
-  firstVar = secondVar;
-  secondVar = thirdVar;
-  thirdVar = *(vci++);
-  if(CGAL::collinear(firstVar, secondVar, thirdVar)) return true;
+      auto e_it = pgn.edges_begin();
+      size_t edge_index = 0;
+      CGAL::Orientation poly_orientation = pgn.orientation();
+      auto segment_outer_circle =
+	  internal::get_segment_outer_circle<Kernel>(*e_it++, poly_orientation);
+      internal::Circle_arrangment<Kernel> circle_arrangment(kernel,
+							    segment_outer_circle);
 
-  firstVar = secondVar;
-  secondVar = thirdVar;
-  thirdVar = *(vci++);
-  if (CGAL::collinear(firstVar, secondVar, thirdVar)) return true;
+      ++edge_index;
+      for (; e_it != pgn.edges_end(); ++e_it, ++edge_index) {
+	  segment_outer_circle =
+	      internal::get_segment_outer_circle<Kernel>(*e_it, poly_orientation);
+	  circle_arrangment.add_segment_outer_circle(segment_outer_circle, edge_index);
+	  if (circle_arrangment.all_is_covered_twice()) return oi;
+      }
+      circle_arrangment.get_all_1_edges(oi);
+      return oi;
+    }
 
-  return false;
-}
+    /*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
+     * \param[in] pgn the input polygon that we want to check if is castable or not.
+     * \param[in,out] oi the output iterator to put the top edges in
+     * \return all the possible top edges of the polygon and there pullout direction
+     *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+     *   (with no rotation)
+     */
+    template <typename Kernel, typename OutputIterator>
+    OutputIterator
+    top_edges_single_mold_translational_casting_2
+    (const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
+    {
+      Kernel kernel;
+      return top_edges_single_mold_translational_casting_2(pgn, oi, kernel);
+    }
 
-/*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
- * \param[in] pgn the input polygon that we want to check if is castable or not.
- * \param[in,out] oi the output iterator to put the top edges in
- * \param[in] kernel the kernel to use.
- * \return all the possible top edges of the polygon and there pullout direction
- *   (with no rotation)
- */
-template <typename Kernel, typename OutputIterator>
-OutputIterator
-top_edges_single_mold_translational_casting_2
-(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi, Kernel& kernel)
-{
-  /* Legend
-   * point = Represented as  Direction_2. It is the intersection between the
-   *   fitting Direction_2 and the unit circle
-   *
-   * arc = Represented as A pair of point. clockwise arc between the first
-   *   point and the second point. (each of its sides might be open or closed)
-   */
-  CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!is_any_edge_colinear(pgn));
-
-  auto e_it = pgn.edges_begin();
-  size_t edge_index = 0;
-  CGAL::Orientation poly_orientation = pgn.orientation();
-  auto segment_outer_circle =
-    get_segment_outer_circle<Kernel>(*e_it++, poly_orientation);
-  internal::Circle_arrangment<Kernel> circle_arrangment(kernel,
-                                                        segment_outer_circle);
-
-  ++edge_index;
-  for (; e_it != pgn.edges_end(); ++e_it, ++edge_index) {
-    segment_outer_circle =
-      get_segment_outer_circle<Kernel>(*e_it, poly_orientation);
-    circle_arrangment.add_segment_outer_circle(segment_outer_circle, edge_index);
-    if (circle_arrangment.all_is_covered_twice()) return oi;
-  }
-  circle_arrangment.get_all_1_edges(oi);
-  return oi;
-}
-
-/*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
- * \param[in] pgn the input polygon that we want to check if is castable or not.
- * \param[in,out] oi the output iterator to put the top edges in
- * \return all the possible top edges of the polygon and there pullout direction
- *   (with no rotation)
- */
-template <typename Kernel, typename OutputIterator>
-OutputIterator
-top_edges_single_mold_translational_casting_2
-(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
-{
-  Kernel kernel;
-  return top_edges_single_mold_translational_casting_2(pgn, oi, kernel);
-}
-
-} // end of namespace Set_movable_separability_2
+  } // end of namespace Set_movable_separability_2
 } // end of namespace CGAL
 
 #endif
