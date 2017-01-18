@@ -591,7 +591,7 @@ namespace Private {
           if(is_border(opposite(hd, p),p)) {
             face_halfedge_border[face_id] = hd;
             halfedge_descriptor bhd = opposite(hd, p);
-            mask.edge_node(bhd, cpt[i], cpt[i+1]);
+            mask.border_node(bhd, cpt[i], cpt[i+1]);
             i += 2;
 
             // the border subdivision is only performed every second subdivision

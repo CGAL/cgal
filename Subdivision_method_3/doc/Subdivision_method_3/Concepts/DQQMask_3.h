@@ -3,16 +3,15 @@
 \ingroup PkgSurfaceSubdivisionMethods3Concepts
 \cgalConcept
 
-Required member functions for the `DQQMask_3` concept. This 
-policy concept of geometric computations is used in 
-`CGAL::Subdivision_method_3::DQQ<PolygonMesh, Mask>`. 
+Required member functions for the `DQQMask_3` concept. This
+policy concept of geometric computations is used in
+`CGAL::Subdivision_method_3::DQQ<PolygonMesh, Mask, NamedParameters>`.
 
 \image html DSCornerMask.svg
 
-
 \cgalRefines `SubdivisionMask_3`
 
-\cgalHasModel `CGAL::DooSabin_mask_3<PolygonMesh>`
+\cgalHasModel `CGAL::DooSabin_mask_3<PolygonMesh, VertexPointMap>`
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -20,19 +19,34 @@ policy concept of geometric computations is used in
 class DQQMask_3 {
 public:
 
-/// \name Operations 
+/// \name Types
 /// @{
 
-/*! Constructor
- */
+/*!  The polygon mesh must be triangulated.
 
-  DQQMask_3(PolygonMesh& pmesh);
+*/
+  typedef unspecified_type Polyhedron;
+  typedef unspecified_type VertexPointMap;
+
+/// @}
+
+/// \name Operations
+/// @{
+
+/*! Constructor.
+ * The default vertex point property map is used.
+*/
+DQQMask_3(Polyhedron* pmesh);
+
+/*! Constructor.
+*/
+DQQMask_3(Polyhedron* pmesh, VertexPointMap vpmap);
 
 /*!
-computes the subdivided point `pt` based on the neighborhood 
-of the vertex pointed by the halfedge `hd`. 
-*/ 
-void corner_node(halfedge_descriptor hd, Point& pt); 
+computes the subdivided point `pt` based on the neighborhood
+of the vertex pointed by the halfedge `hd`.
+*/
+void corner_node(halfedge_descriptor hd, Point& pt);
 
 /// @}
 
