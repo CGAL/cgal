@@ -72,6 +72,7 @@ int main(int  argc, char* argv[])
     }
   std::cout << "-----------------------------------"<< std::endl;
   //example for is_pullout_directions_single_mold_translational_casting_2 that accepts the edge
+   index =0;
   for (auto e_it = pgn.edges_begin(); e_it != pgn.edges_end(); ++e_it, ++index)
     {
       auto segment_outer_circle =
