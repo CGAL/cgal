@@ -212,6 +212,7 @@ if ( CGAL_BRANCH_BUILD )
   message(STATUS "CGAL_CREATED_SVN_REVISION is ${CGAL_CREATED_SVN_REVISION} (dummy)")
 
   file(REMOVE ${CMAKE_BINARY_DIR}/include/CGAL/version.h)
+  string(TIMESTAMP CGAL_CREATED_RELEASE_DATE "%Y%m%d")
   configure_file(${CGAL_INSTALLATION_PACKAGE_DIR}/config/version.h.in ${CMAKE_BINARY_DIR}/include/CGAL/version.h @ONLY)
 
   #
