@@ -61,32 +61,49 @@ namespace CGAL {
 namespace Las
 {
 
-  template <typename T>
-  struct Property
+  namespace Property
   {
-    typedef T type;
-    const char* name;
-    Property (const char* name) : name (name) { }
-  };
+    
+    struct X { typedef double type; };
+    struct Y { typedef double type; };
+    struct Z { typedef double type; };
+    struct intensity { typedef unsigned short type; };
+    struct return_number { typedef unsigned char type; };
+    struct number_of_returns { typedef unsigned char type; };
+    struct scan_direction_flag { typedef unsigned char type; };
+    struct edge_of_flight_line { typedef unsigned char type; };
+    struct classification { typedef unsigned char type; };
+    struct synthetic_flag { typedef unsigned char type; };
+    struct keypoint_flag { typedef unsigned char type; };
+    struct withheld_flag { typedef unsigned char type; };
+    struct scan_angle { typedef double type; };
+    struct user_data { typedef unsigned char type; };
+    struct point_source_ID { typedef unsigned short type; };
+    struct deleted_flag { typedef unsigned int type; };
+    struct gps_time { typedef double type; };
+    struct R { typedef unsigned short type; };
+    struct G { typedef unsigned short type; };
+    struct B { typedef unsigned short type; };
+    struct I { typedef unsigned short type; };
+  }
 
-  Property<double> X() { return Property<double>("X"); }
-  Property<double> Y() { return Property<double>("Y"); }
-  Property<double> Z() { return Property<double>("Z"); }
   
 /// \cond SKIP_IN_MANUAL
   
 namespace internal {
 
-  template <class T>
-  void get_value(const LASpoint& r, T& v, Las::Property<T>& wrapper)
-  {
-    if (wrapper.name == "X")
-      v = r.get_x();
-    else if (wrapper.name == "Y")
-      v = r.get_y();
-    else if (wrapper.name == "Z")
-      v = r.get_z();
-  }
+  void get_value(const LASpoint& r, double& v, Las::Property::X&)
+  { v = r.get_x(); }
+  void get_value(const LASpoint& r, double& v, Las::Property::Y&)
+  { v = r.get_y(); }
+  void get_value(const LASpoint& r, double& v, Las::Property::Z&)
+  { v = r.get_z(); }
+  void get_value(const LASpoint& r, unsigned short& v, Las::Property::intensity&)
+  { v = r.get_intensity(); }
+  void get_value(const LASpoint& r, unsigned char& v, Las::Property::return_number&)
+  { v = r.get_return_number(); }
+  void get_value(const LASpoint& r, unsigned char& v, Las::Property::number_of_returns&)
+  { v = r.get_number_of_returns(); }
 
   
   template <std::size_t N>
@@ -137,10 +154,10 @@ namespace internal {
             typename Constructor,
             typename ... T>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, Las::Property<T>...>& current)
+                           std::tuple<PropertyMap, Constructor, T...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    std::tuple<T...> values;
+    std::tuple<typename T::type...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
     put (std::get<0>(current), new_element, new_value);
@@ -153,12 +170,12 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, Las::Property<T>...>& current,
+                           std::tuple<PropertyMap, Constructor, T...>& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    std::tuple<T...> values;
+    std::tuple<typename T::type...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
     put (std::get<0>(current), new_element, new_value);
@@ -167,27 +184,27 @@ namespace internal {
   }
 
 
-  template <typename OutputValueType, typename PropertyMap, typename T>
-  void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, Las::Property<T> >& current)
-  {
-    T new_value = T();
-    // TODO 
-    put (current.first, new_element, new_value);
-  }
+  // template <typename OutputValueType, typename PropertyMap, typename T>
+  // void process_properties (const LASpoint& reader, OutputValueType& new_element,
+  //                          std::pair<PropertyMap, Las::Property<T> >& current)
+  // {
+  //   T new_value = T();
+  //   // TODO 
+  //   put (current.first, new_element, new_value);
+  // }
 
-  template <typename OutputValueType, typename PropertyMap, typename T,
-            typename NextPropertyBinder, typename ... PropertyMapBinders>
-  void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, Las::Property<T> >& current,
-                           NextPropertyBinder& next,
-                           PropertyMapBinders&& ... properties)
-  {
-    T new_value = T();
-    // TODO
-    put (current.first, new_element, new_value);
-    process_properties (reader, new_element, next, properties...);
-  }
+  // template <typename OutputValueType, typename PropertyMap, typename T,
+  //           typename NextPropertyBinder, typename ... PropertyMapBinders>
+  // void process_properties (const LASpoint& reader, OutputValueType& new_element,
+  //                          std::pair<PropertyMap, Las::Property<T> >& current,
+  //                          NextPropertyBinder& next,
+  //                          PropertyMapBinders&& ... properties)
+  // {
+  //   T new_value = T();
+  //   // TODO
+  //   put (current.first, new_element, new_value);
+  //   process_properties (reader, new_element, next, properties...);
+  // }
   
 } // namespace internal
   

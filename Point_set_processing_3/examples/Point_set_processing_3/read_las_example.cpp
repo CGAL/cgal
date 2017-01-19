@@ -26,9 +26,9 @@ int main(int argc, char*argv[])
        CGAL::cpp11::make_tuple
        (CGAL::Identity_property_map<Point>(),
         Kernel::Construct_point_3(),
-        CGAL::Las::X(),
-        CGAL::Las::Y(),
-        CGAL::Las::Z())))
+        CGAL::Las::Property::X(),
+        CGAL::Las::Property::Y(),
+        CGAL::Las::Property::Z())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;
