@@ -21,7 +21,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
-#include <CGAL/license/release_date.h>
 
 
 
