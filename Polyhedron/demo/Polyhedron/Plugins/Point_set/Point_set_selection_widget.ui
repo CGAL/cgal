@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>369</width>
-    <height>239</height>
+    <height>248</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,18 +30,37 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="Selection_tool_combo_box">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <property name="text">
-            <string>Rectangle</string>
-           </property>
+           <widget class="QComboBox" name="Selection_tool_combo_box">
+            <item>
+             <property name="text">
+              <string>Rectangle</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Free Form</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Selection Box</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item>
-           <property name="text">
-            <string>Free Form</string>
-           </property>
+           <widget class="QPushButton" name="Add_to_selection_Button">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Validate</string>
+            </property>
+           </widget>
           </item>
-         </widget>
+         </layout>
         </item>
        </layout>
       </item>
