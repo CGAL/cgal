@@ -81,6 +81,17 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: Some of the executables in this directory need either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
+
+  find_package(LASLIB)
+  if (LASLIB_FOUND)
+    include_directories(${LASLIB_INCLUDE_DIR})
+    include_directories(${LASZIP_INCLUDE_DIR})
+    create_single_source_cgal_program( "read_las_example.cpp" )
+    target_link_libraries(read_las_example ${LASLIB_LIBRARIES})
+  else()
+    message(STATUS "NOTICE : the las reader test needs LAS libraries and will not be compiled.")
+  endif()
+
 else()
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 endif()
