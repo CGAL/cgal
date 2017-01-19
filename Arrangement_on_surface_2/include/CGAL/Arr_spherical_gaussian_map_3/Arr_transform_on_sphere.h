@@ -27,6 +27,9 @@
 #ifndef CGAL_ARR_SGM_3_ATOS_H
 #define CGAL_ARR_SGM_3_ATOS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm.h>
 

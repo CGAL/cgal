@@ -20,6 +20,9 @@
 #ifndef CGAL_AFSR_ORIENT_H
 #define CGAL_AFSR_ORIENT_H
 
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
+
 namespace CGAL {
   namespace AFSR {
 
