@@ -129,7 +129,7 @@ fi
 
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
-txt_not_utf8=$(for i in `find . -type f`; do out=`file $i`; if echo $out | grep -q "text"; then if ! (echo $out | egrep -q "UTF-8|ASCII|XML|EPS"); then echo $i; fi; fi; done)
+txt_not_utf8=$(file -N `git ls-files --stage` | grep "text" | egrep -v "UTF-8|ASCII|XML|EPS")
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}
