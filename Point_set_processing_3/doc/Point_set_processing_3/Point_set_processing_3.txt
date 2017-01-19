@@ -86,13 +86,13 @@ File Format).
 
 - `read_xyz_points()` and `read_xyz_points_and_normals()` 
 - `read_off_points()` and `read_off_points_and_normals()` 
-- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_custom_points()`
+- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_with_properties()`
 - `write_xyz_points()` and `write_xyz_points_and_normals()`
 - `write_off_points()` and `write_off_points_and_normals()`
 - `write_ply_points()` and `write_ply_points_and_normals()` 
 
 Note that PLY reading functions accepts binary PLY format in addition
-of ASCII. `read_ply_custom_points()` provides the user with a means to
+of ASCII. `read_ply_with_properties()` provides the user with a means to
 read any point property from a PLY file (for example, colors), see
 \ref Point_set_processing_3Example_ply.
 
@@ -112,15 +112,26 @@ to provide dedicated functions to every possible combination of PLY
 properties, \cgal provides a simple way to write custom PLY readers so
 that the user can adapt its programs to its PLY input.
 
-The function `read_ply_custom_points()` uses the concept `PlyInterpreter`
-to read specific properties defined by the user. \cgal provides, for this
-concept, the model `CGAL::Ply_interpreter_points_and_normals_3`: it is
-the standard interpreter that is used internally by `read_ply_points()`
-and `read_ply_points_and_normals()`.
+The function `read_ply_with_properties()` allows the user to read any
+property needed. The user must provide a set of property handlers that
+are used to instantiate number types and complex objects from PLY
+properties. The handler can either be:
 
-The following example shows how to define a custom interpreter that
-reads a point set with points, normals and RGB colors, and stores
-these attributes in user-defined containers.
+- A `std::pair<PropertyMap, Ply::Property<T> >` if the user wants
+to read a PLY property as a scalar value T (for example, storing
+an `int` PLY property into an `int` variable).
+
+- A `CGAL::cpp11::tuple<PropertyMap, Constructor,
+Ply::Property<T>...>` if the user wants to use one or several PLY
+properties to construct a complex object (for example, storing 3
+`uchar` PLY properties into a Color object that can for example be a
+`CGAL::cpp11::array<unsigned char, 3>`). In that case, the second
+element of the tuple should be a functor that constructs the value
+type of `PropertyMap` from N objects of types `T`.
+
+The following example shows how to call `read_ply_with_properties()`
+to read a point set with points, normals, RGB colors and intensity and
+stores these attributes in a user-defined container.
 
 \cgalExample{Point_set_processing_3/read_ply_points_with_colors_example.cpp}
 

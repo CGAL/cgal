@@ -1,6 +1,4 @@
 /// \defgroup PkgPointSetProcessing Point Set Processing Reference
-/// \defgroup PkgPointSetProcessingConcepts Concepts
-/// \ingroup PkgPointSetProcessing
 
 /*!
 \addtogroup PkgPointSetProcessing
@@ -22,19 +20,8 @@
 
 \cgalClassifedRefPages
 
-## Concept ##
-- `PlyInterpreter`
+## Algorithms ##
 
-## Classes ##
-- `CGAL::Ply_reader`
-- `CGAL::Ply_interpreter_points_and_normals_3`
-
-## Functions ##
-
-- `CGAL::read_off_points()`
-- `CGAL::read_ply_points()`
-- `CGAL::read_ply_custom_points()`
-- `CGAL::read_xyz_points()`
 - `CGAL::compute_average_spacing()`
 - `CGAL::estimate_global_k_neighbor_scale()`
 - `CGAL::estimate_global_range_scale()`
@@ -55,8 +42,23 @@
 - `CGAL::vcm_estimate_normals()`
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
+
+## IO ##
+
+- `CGAL::read_off_points()`
+- `CGAL::read_ply_points()`
+- `CGAL::read_xyz_points()`
 - `CGAL::write_off_points()`
 - `CGAL::write_ply_points()`
 - `CGAL::write_xyz_points()`
+
+## PLY Utilities ##
+
+- `CGAL::read_ply_points_with_properties()`
+- `CGAL::Ply::Property<T>`
+- `CGAL::Ply::point_property()`
+- `CGAL::Ply::normal_property()`
+
+
 */
 
