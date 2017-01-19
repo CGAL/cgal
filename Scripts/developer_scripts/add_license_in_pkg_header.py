@@ -23,7 +23,7 @@ def add_license_include_in_file(package_name, fname):
     out_fname = fname + ".tmp"
     out = codecs.open(out_fname, "w", encoding='utf-8')
     for line in f:
-      if not inserted and re.search("#\s*define", line):
+      if not inserted and re.search("#\s*define\s+CGAL_.*_H\s*$", line):
         out.write(line+"\n")
         out.write("#include <CGAL/license/"+package_name+".h>\n\n")
         inserted=True
@@ -33,6 +33,8 @@ def add_license_include_in_file(package_name, fname):
     f.close()
     os.remove(fname)
     os.rename(out_fname, fname)
+    if not inserted:
+      print("Warning: file "+fname+" was not modified (no CGAL_*_H defined)")
 
 if len(argv)==0:
   print("Usage: "+argv[0]+" Package_directory [Package_name=Package_directory]\n")
