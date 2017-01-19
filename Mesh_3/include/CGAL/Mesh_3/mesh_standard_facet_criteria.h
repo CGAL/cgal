@@ -27,6 +27,9 @@
 #ifndef CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H
 #define CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/number_utils.h> // for to_double

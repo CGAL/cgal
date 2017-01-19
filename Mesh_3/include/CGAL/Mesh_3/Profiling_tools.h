@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_PROFILING_TOOLS_H
 #define CGAL_MESH_3_PROFILING_TOOLS_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 // TBB timers
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tick_count.h>

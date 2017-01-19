@@ -20,6 +20,9 @@
 #ifndef CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 // include this to avoid a VC15 warning
 #include <CGAL/boost/graph/named_function_params.h>
 

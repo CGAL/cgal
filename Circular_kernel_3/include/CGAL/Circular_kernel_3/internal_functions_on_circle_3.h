@@ -25,6 +25,9 @@
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_ON_CIRCLE_3_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_ON_CIRCLE_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Circle_type.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_plane_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_point_3.h>

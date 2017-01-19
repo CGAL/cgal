@@ -21,6 +21,9 @@
 #ifndef CGAL_CONIC_INTERSECTIONS_2_H
 #define CGAL_CONIC_INTERSECTIONS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/number_utils.h>
 
 /*! \file

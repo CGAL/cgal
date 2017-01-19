@@ -21,6 +21,9 @@
 #ifndef CGAL_AABB_SEARCH_TREE_H
 #define CGAL_AABB_SEARCH_TREE_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 

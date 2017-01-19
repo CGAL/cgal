@@ -22,6 +22,9 @@
 #ifndef CGAL_RANGE_SEGMENT_TREE_TRAITS_H
 #define CGAL_RANGE_SEGMENT_TREE_TRAITS_H
 
+#include <CGAL/license/SearchStructures.h>
+
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/predicates_on_points_2.h>

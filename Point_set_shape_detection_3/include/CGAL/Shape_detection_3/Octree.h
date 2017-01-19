@@ -22,6 +22,9 @@
 #ifndef CGAL_SHAPE_DETECTION_3_OCTREE_H
 #define CGAL_SHAPE_DETECTION_3_OCTREE_H
 
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
+
 #include <limits>
 #include <stack>
 

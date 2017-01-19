@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_INTERSECTION_FUNCTOR_H
 #define CGAL_GPS_INTERSECTION_FUNCTOR_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Boolean_set_operations_2/Gps_base_functor.h>
 
 namespace CGAL {

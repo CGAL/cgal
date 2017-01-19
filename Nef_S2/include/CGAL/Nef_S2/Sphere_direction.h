@@ -21,6 +21,9 @@
 #ifndef CGAL_SPHERE_DIRECTION_H
 #define CGAL_SPHERE_DIRECTION_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Kernel/global_functions_3.h>
 

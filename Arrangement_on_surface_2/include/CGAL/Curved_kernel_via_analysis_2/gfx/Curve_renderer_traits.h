@@ -22,6 +22,9 @@
 #ifndef CGAL_CKVA_CURVE_RENDERER_TRAITS_H
 #define CGAL_CKVA_CURVE_RENDERER_TRAITS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/function_objects.h>
 #include <boost/functional.hpp>

@@ -22,6 +22,9 @@
 #ifndef CGAL_SQUAREBORDERPARAMETERIZER_3_H
 #define CGAL_SQUAREBORDERPARAMETERIZER_3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 

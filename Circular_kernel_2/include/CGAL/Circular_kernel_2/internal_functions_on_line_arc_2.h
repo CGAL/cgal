@@ -26,6 +26,9 @@
 #ifndef CGAL_CIRCULAR_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 #define CGAL_CIRCULAR_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_DELAUNAY_MESHER_NO_EDGE_REFINEMENT_2_H
 #define CGAL_DELAUNAY_MESHER_NO_EDGE_REFINEMENT_2_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesh_2/Do_not_refine_edges.h>
 #include <CGAL/Mesh_2/Refine_faces.h>
 

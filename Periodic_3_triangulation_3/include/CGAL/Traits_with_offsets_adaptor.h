@@ -25,6 +25,9 @@
 #ifndef CGAL_TRAITS_WITH_OFFSETS_ADAPTOR_H
 #define CGAL_TRAITS_WITH_OFFSETS_ADAPTOR_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 namespace CGAL {
 
 template < class K, class Functor_ >

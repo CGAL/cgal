@@ -23,6 +23,9 @@
 #ifndef CGAL_ARRANGEMENT_ZONE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ZONE_2_IMPL_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Member-function definitions for the Arrangement_zone_2 class.
  */

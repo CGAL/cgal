@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <set>
 #include <vector>
 #include <boost/algorithm/minmax_element.hpp>

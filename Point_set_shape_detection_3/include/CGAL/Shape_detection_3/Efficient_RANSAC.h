@@ -22,6 +22,9 @@
 #ifndef CGAL_SHAPE_DETECTION_3_EFFICIENT_RANSAC_H
 #define CGAL_SHAPE_DETECTION_3_EFFICIENT_RANSAC_H
 
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
+
 #include <CGAL/Shape_detection_3/Octree.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
 #include <CGAL/Random.h>

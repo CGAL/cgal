@@ -22,6 +22,9 @@
 #ifndef CGAL_GENERAL_POLYGON_SET_2_H
 #define CGAL_GENERAL_POLYGON_SET_2_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>

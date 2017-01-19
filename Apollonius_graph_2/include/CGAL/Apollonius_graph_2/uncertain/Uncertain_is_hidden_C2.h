@@ -23,6 +23,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_UNCERTAIN_IS_HIDDEN_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_UNCERTAIN_IS_HIDDEN_C2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/enum.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/number_type_basic.h>

@@ -20,6 +20,9 @@
 #ifndef CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
 #define CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
 
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
+
 #include <CGAL/OTR_2/Reconstruction_triangulation_2.h>
 #include <CGAL/OTR_2/Reconstruction_edge_2.h>
 

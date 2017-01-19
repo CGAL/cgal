@@ -21,6 +21,9 @@
 #ifndef CGAL_MESHES_FILTERED_MULTIMAP_CONTAINER_H
 #define CGAL_MESHES_FILTERED_MULTIMAP_CONTAINER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <map>
 #include <deque>
 #ifdef CGAL_LINKED_WITH_TBB

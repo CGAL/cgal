@@ -21,6 +21,9 @@
 #ifndef CGAL_POINT_SET_3_IO
 #define CGAL_POINT_SET_3_IO
 
+#include <CGAL/license/Point_set_3.h>
+
+
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/read_ply_points.h>

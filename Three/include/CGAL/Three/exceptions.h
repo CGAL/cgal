@@ -21,6 +21,9 @@
 #ifndef CGAL_THREE_EXCEPTIONS_H
 #define CGAL_THREE_EXCEPTIONS_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <exception>
 #include <QString>
 #include <QApplication>

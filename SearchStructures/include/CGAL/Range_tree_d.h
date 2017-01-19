@@ -22,6 +22,9 @@
 #ifndef CGAL_RANGE_TREE_D_H
 #define CGAL_RANGE_TREE_D_H
 
+#include <CGAL/license/SearchStructures.h>
+
+
 #include <algorithm>
 #include <iterator>
 #include <functional>

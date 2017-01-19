@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_DEFAULT_DCEL_H
 #define CGAL_ARR_DEFAULT_DCEL_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The definition of the Arr_default_dcel<Traits> class.
  */

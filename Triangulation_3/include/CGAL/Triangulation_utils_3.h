@@ -20,6 +20,9 @@
 #ifndef CGAL_TRIANGULATION_UTILS_3_H
 #define CGAL_TRIANGULATION_UTILS_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>

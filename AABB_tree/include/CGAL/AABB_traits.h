@@ -22,6 +22,9 @@
 #ifndef CGAL_AABB_TRAITS_H_
 #define CGAL_AABB_TRAITS_H_
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/intersections.h>
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>

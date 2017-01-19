@@ -39,6 +39,9 @@
 #if defined(CGAL_CH_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
 #  define CGAL_ch_assertion(EX) (static_cast<void>(0))
+
+#include <CGAL/license/Convex_hull_2.h>
+
 #  define CGAL_ch_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_ch_assertion_code(CODE)
 #else

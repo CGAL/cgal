@@ -23,6 +23,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_CARTESIAN_CONVERTER_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_CARTESIAN_CONVERTER_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 

@@ -22,6 +22,9 @@
 #ifndef POLYHEDRON_DEMO_OPERATION_HELPER_H
 #define POLYHEDRON_DEMO_OPERATION_HELPER_H
 
+#include <CGAL/license/Three.h>
+
+
 #include "Scene_item_config.h" //defines SCENE_ITEM_EXPORT
 
 #include <QString>

@@ -21,6 +21,9 @@
 #ifndef CGAL_INFIMAXIMAL_BOX_H
 #define CGAL_INFIMAXIMAL_BOX_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 191
 #include <CGAL/Nef_2/debug.h>

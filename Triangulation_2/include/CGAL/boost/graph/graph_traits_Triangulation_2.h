@@ -20,6 +20,9 @@
 #ifndef CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <functional>
 
 // include this to avoid a VC15 warning

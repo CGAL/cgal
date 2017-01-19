@@ -25,6 +25,9 @@
 #ifndef CGAL_MIN_SPHERE_ANNULUS_D_TRAITS_3_H
 #define CGAL_MIN_SPHERE_ANNULUS_D_TRAITS_3_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 // includes
 #  include <CGAL/Optimisation/Access_dimension_3.h>
 #  include <CGAL/Optimisation/Access_coordinates_begin_3.h>

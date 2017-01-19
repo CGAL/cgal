@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATION_DUMMY_TDS_2_H
 #define CGAL_TRIANGULATION_DUMMY_TDS_2_H
 
+#include <CGAL/license/TDS_2.h>
+
+
 #include <CGAL/config.h>
 
 namespace CGAL {

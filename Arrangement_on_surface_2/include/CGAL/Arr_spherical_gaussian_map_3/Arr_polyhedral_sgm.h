@@ -18,6 +18,9 @@
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_H
 #define CGAL_ARR_POLYHEDRAL_SGM_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Polyhedral _sgm is a data dtructure that represents a 3D convex polyhedron.
  * This representation represents the 2D surface boundary of the shape.

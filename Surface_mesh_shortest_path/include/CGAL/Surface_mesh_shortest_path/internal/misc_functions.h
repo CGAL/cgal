@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_MISC_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_MISC_H
 
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/iterator.h>

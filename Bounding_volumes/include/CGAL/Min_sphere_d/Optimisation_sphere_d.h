@@ -22,6 +22,9 @@
 #ifndef CGAL_OPTIMISATION_SPHERE_D_H
 #define CGAL_OPTIMISATION_SPHERE_D_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/representation_tags.h>
 
 namespace CGAL {

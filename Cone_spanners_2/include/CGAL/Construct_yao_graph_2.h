@@ -26,6 +26,9 @@
 #ifndef CGAL_CONSTRUCT_YAO_GRAPH_2_H
 #define CGAL_CONSTRUCT_YAO_GRAPH_2_H
 
+#include <CGAL/license/Cone_spanners_2.h>
+
+
 #include <iostream>
 #include <cstdlib>
 #include <utility>

@@ -21,6 +21,9 @@
 #ifndef CGAL_SURFACE_MESHER_VERBOSE_FLAG_H
 #define CGAL_SURFACE_MESHER_VERBOSE_FLAG_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 namespace CGAL {
   namespace Surface_mesher {
 

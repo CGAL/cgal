@@ -26,6 +26,9 @@
 #ifndef CGAL_ROBUST_CIRCUMCENTER_TRAITS_3_H
 #define CGAL_ROBUST_CIRCUMCENTER_TRAITS_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Robust_construction.h>

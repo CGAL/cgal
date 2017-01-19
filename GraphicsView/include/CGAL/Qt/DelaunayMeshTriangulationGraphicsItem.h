@@ -21,6 +21,9 @@
 #ifndef CGAL_QT_DELAUNAY_MESH_TRIANGULATION_GRAPHICS_ITEM_H
 #define CGAL_QT_DELAUNAY_MESH_TRIANGULATION_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 #include <QBrush>

@@ -20,6 +20,9 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_TRAITS_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_TRAITS_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>

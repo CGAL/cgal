@@ -21,6 +21,9 @@
 #ifndef CGAL_INDIRECT_NOT_LESS_YX_2_H
 #define CGAL_INDIRECT_NOT_LESS_YX_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 namespace CGAL {
 
 template <class Traits>

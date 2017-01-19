@@ -21,6 +21,9 @@
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <vector>

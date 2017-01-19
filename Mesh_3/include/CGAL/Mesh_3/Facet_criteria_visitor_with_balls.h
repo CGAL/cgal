@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_FACET_CRITERIA_VISITOR_WITH_BALLS_H
 #define CGAL_MESH_3_FACET_CRITERIA_VISITOR_WITH_BALLS_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/mesh_standard_facet_criteria.h>
 #include <CGAL/Mesh_3/Facet_on_same_surface_criterion.h>
 

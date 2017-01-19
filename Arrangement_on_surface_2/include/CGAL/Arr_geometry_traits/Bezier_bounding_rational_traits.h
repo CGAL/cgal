@@ -22,6 +22,9 @@
 #ifndef CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H
 #define CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Bezier_bounding_rational_traits<Kernel> class.
  */

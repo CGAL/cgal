@@ -23,6 +23,9 @@
 #ifndef CGAL_SNC_SM_VISUALIZOR_H
 #define CGAL_SNC_SM_VISUALIZOR_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>

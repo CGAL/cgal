@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
 #define CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>

@@ -23,6 +23,9 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_DUAL_2_H
 #define CGAL_CONVEX_HULL_TRAITS_DUAL_2_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 // Traits classes used during the computation of the dual
 // convex hull when the dual points are coplanar
 // The traits are used by convex_hull_2

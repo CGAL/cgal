@@ -23,6 +23,9 @@
 #ifndef CGAL_SWEEP_LINE_2_ALGORITHMS_H
 #define CGAL_SWEEP_LINE_2_ALGORITHMS_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*!
  * \file Definition of the sweep-line related functions.
  */

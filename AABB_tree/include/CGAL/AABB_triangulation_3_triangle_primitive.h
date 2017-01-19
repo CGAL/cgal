@@ -22,6 +22,9 @@
 #ifndef AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_
 #define AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 

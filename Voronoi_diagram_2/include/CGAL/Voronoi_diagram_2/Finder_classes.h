@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_FINDER_CLASSES_H
 #define CGAL_VORONOI_DIAGRAM_2_FINDER_CLASSES_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <map>
 #include <CGAL/Triangulation_utils_2.h>

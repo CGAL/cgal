@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATION_DS_FACE_2_H
 #define CGAL_TRIANGULATION_DS_FACE_2_H
 
+#include <CGAL/license/TDS_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_utils_2.h>
 

@@ -20,6 +20,9 @@
 #ifndef CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 #define CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Interval_arithmetic.h>

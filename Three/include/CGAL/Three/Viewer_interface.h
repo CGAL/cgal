@@ -21,6 +21,9 @@
 #ifndef VIEWER_INTERFACE_H
 #define VIEWER_INTERFACE_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <QGLViewer/qglviewer.h>
 #include <QWidget>
 #include <QPoint>

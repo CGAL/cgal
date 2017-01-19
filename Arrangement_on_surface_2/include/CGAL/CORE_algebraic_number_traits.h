@@ -21,6 +21,9 @@
 #ifndef CGAL_CORE_ALGEBRAIC_NUMBER_TRAITS_2_H
 #define CGAL_CORE_ALGEBRAIC_NUMBER_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The number-type traits for CORE algebraic numbers.
  */

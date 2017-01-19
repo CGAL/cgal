@@ -21,6 +21,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_SITE_WITH_INFO_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_SITE_WITH_INFO_2_H 1
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <iostream>
 #include <CGAL/assertions.h>
 

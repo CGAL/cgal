@@ -22,6 +22,9 @@
 #ifndef CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 #define CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/boost/graph/property_maps.h>
 

@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYGON_CONVEX_DECOMPOSITION_H
 #define CGAL_POLYGON_CONVEX_DECOMPOSITION_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Minkowski_sum_2/Decomposition_strategy_adapter.h>
 #include <vector>
 

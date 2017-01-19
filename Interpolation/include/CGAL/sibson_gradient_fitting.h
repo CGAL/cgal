@@ -21,6 +21,9 @@
 #ifndef CGAL_SIBSON_GRADIENT_FITTING_H
 #define CGAL_SIBSON_GRADIENT_FITTING_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <utility>
 #include <CGAL/Origin.h>
 #include <CGAL/natural_neighbor_coordinates_2.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_INSERTION_META_TRAITS_H
 #define CGAL_GPS_INSERTION_META_TRAITS_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Boolean_set_operations_2/Gps_traits_decorator.h>
 #include <CGAL/Boolean_set_operations_2/Curve_with_halfedge.h>
 #include <CGAL/Boolean_set_operations_2/Point_with_vertex.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
 #define CGAL_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Polyhedron_3.h>

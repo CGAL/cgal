@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_ENUM_H
 #define CGAL_ARR_ENUM_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the enumeration types for the arrangement package.
  */

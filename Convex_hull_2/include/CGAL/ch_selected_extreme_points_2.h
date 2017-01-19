@@ -22,6 +22,9 @@
 #ifndef CGAL_CH_SELECTED_EXTREME_POINTS_2_H
 #define CGAL_CH_SELECTED_EXTREME_POINTS_2_H
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #include <CGAL/basic.h>
 #include <iterator>
 

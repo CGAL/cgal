@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_DEFAULT_DATA_STRUCTURE_2_H
 #define CGAL_TRIANGULATION_DEFAULT_DATA_STRUCTURE_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 // no longer needed
 // for backwards compatibility only
 

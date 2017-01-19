@@ -22,6 +22,9 @@
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_2_SIDE_OF_ORIENTED_CIRCLE_2_H
 #define CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_2_SIDE_OF_ORIENTED_CIRCLE_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_SEARCH_TRAITS_WITH_INFO
 #define CGAL_SEARCH_TRAITS_WITH_INFO
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
 #include <CGAL/property_map.h>

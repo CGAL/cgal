@@ -21,6 +21,9 @@
 #ifndef CGAL_PARTITION_OPT_CVX_EDGE_H
 #define CGAL_PARTITION_OPT_CVX_EDGE_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <iostream>
 #include <CGAL/Partition_2/Partition_opt_cvx_diagonal_list.h>
 

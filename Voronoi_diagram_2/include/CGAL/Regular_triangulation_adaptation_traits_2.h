@@ -21,6 +21,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_ADAPTATION_TRAITS_2_H
 #define CGAL_REGULAR_TRIANGULATION_ADAPTATION_TRAITS_2_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Regular_triangulation_nearest_site_2.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_base_2.h>

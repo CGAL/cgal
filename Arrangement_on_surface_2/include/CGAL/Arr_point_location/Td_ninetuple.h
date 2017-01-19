@@ -21,6 +21,9 @@
 #ifndef CGAL_TD_NINETUPLE_H
 #define CGAL_TD_NINETUPLE_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 namespace CGAL {
 
 template <class F0,class F1,class F2,class F3,class F4,class F5,class F6,

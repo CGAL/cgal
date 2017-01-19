@@ -21,6 +21,9 @@
 #ifndef CGAL_POINT_SET_3_H
 #define CGAL_POINT_SET_3_H
 
+#include <CGAL/license/Point_set_3.h>
+
+
 #include <stack>
 
 #include <CGAL/Surface_mesh/Properties.h>

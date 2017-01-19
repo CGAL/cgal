@@ -21,6 +21,9 @@
 
 #ifndef CGAL_MESH_3_IO_SIGNATURE_H
 #define CGAL_MESH_3_IO_SIGNATURE_H
+
+#include <CGAL/license/Mesh_3.h>
+
 #define CGAL_MESH_3_IO_H // the old include macro, tested by other files
 
 #include <CGAL/Point_3.h>

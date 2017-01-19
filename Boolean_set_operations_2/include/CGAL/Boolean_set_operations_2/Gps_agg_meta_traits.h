@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_AGG_META_TRAITS_H
 #define CGAL_GPS_AGG_META_TRAITS_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <vector>
 #include <boost/mpl/assert.hpp>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_decorator.h>

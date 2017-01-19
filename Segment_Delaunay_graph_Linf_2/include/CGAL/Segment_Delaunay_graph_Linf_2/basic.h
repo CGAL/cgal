@@ -22,6 +22,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_BASIC_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_BASIC_H
 
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
+
 #include <CGAL/basic.h>
 
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS \

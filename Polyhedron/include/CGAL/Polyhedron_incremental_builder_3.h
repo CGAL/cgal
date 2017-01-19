@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H
 #define CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Random_access_adaptor.h>
 #include <CGAL/HalfedgeDS_decorator.h>

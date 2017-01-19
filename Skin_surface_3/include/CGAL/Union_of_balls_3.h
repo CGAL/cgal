@@ -21,6 +21,9 @@
 #ifndef CGAL_UNION_OF_BALLS_3_H
 #define CGAL_UNION_OF_BALLS_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Skin_surface_base_3.h>
 #include <CGAL/triangulate_power_diagram_3.h>
 

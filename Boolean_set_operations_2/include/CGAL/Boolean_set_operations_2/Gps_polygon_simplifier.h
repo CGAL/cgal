@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_POLYGON_SIMPILFIER_H
 #define CGAL_GPS_POLYGON_SIMPILFIER_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Boolean_set_operations_2/Gps_simplifier_traits.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>

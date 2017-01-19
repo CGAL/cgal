@@ -16,6 +16,9 @@
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_FILTERS_H
 
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 /**
  * @file Filters.h

@@ -21,6 +21,9 @@
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <vector>
 #include <iterator>
 #include <CGAL/internal/AABB_tree/AABB_traversal_traits.h>

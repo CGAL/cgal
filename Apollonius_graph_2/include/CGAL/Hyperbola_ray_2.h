@@ -23,6 +23,9 @@
 #ifndef CGAL_HYPERBOLA_RAY_2_H
 #define CGAL_HYPERBOLA_RAY_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/Hyperbola_segment_2.h>
 
 namespace CGAL {

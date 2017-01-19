@@ -21,6 +21,9 @@
 
 #ifndef CGAL_FUZZY_SPHERE_H
 #define CGAL_FUZZY_SPHERE_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Search_traits_adapter.h>
 

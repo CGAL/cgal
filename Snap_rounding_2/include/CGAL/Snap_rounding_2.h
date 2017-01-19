@@ -20,6 +20,9 @@
 #ifndef CGAL_SNAP_ROUNDING_2_H
 #define CGAL_SNAP_ROUNDING_2_H
 
+#include <CGAL/license/Snap_rounding_2.h>
+
+
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_FUNCTION_OBJECTS_H
 #define CGAL_POLYGON_FUNCTION_OBJECTS_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <CGAL/is_y_monotone_2.h>
 
 namespace CGAL {

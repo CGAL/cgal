@@ -19,6 +19,9 @@
 #ifndef CGAL_RIDGE_3_H_
 #define CGAL_RIDGE_3_H_
 
+#include <CGAL/license/Ridges_3.h>
+
+
 #include <utility>
 #include <list>
 #include <map>

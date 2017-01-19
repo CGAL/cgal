@@ -21,6 +21,9 @@
 #ifndef CGAL_ENVELOPE_OVERLAY_FUNCTOR_H
 #define CGAL_ENVELOPE_OVERLAY_FUNCTOR_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <iostream>
 
 namespace CGAL {

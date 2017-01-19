@@ -21,6 +21,9 @@
 #ifndef CGAL_TRANSFORM_ITERATOR_H
 #define CGAL_TRANSFORM_ITERATOR_H
 
+#include <CGAL/license/Matrix_search.h>
+
+
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator_bases.h>
 #include <iterator>

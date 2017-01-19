@@ -21,6 +21,9 @@
 #ifndef CGAL_AABB_TREE_WITH_JOIN_H
 #define CGAL_AABB_TREE_WITH_JOIN_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <vector>
 #include <iterator>
 #include <CGAL/Minkowski_sum_2/AABB_traversal_traits_with_join.h>

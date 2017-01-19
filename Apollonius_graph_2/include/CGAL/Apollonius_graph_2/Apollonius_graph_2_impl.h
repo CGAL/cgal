@@ -22,6 +22,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_IMPL_H
 #define CGAL_APOLLONIUS_GRAPH_2_IMPL_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/use.h>
 
 // class implementation continued

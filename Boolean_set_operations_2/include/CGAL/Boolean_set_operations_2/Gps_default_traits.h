@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_DEFAULT_TRAITS_H
 #define CGAL_GPS_DEFAULT_TRAITS_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>

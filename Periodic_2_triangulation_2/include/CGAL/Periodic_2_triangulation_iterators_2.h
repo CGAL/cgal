@@ -20,6 +20,9 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>

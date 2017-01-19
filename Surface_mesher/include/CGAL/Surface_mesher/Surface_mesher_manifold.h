@@ -22,6 +22,9 @@
 #ifndef CGAL_SURFACE_MESHER_MANIFOLD_H
 #define CGAL_SURFACE_MESHER_MANIFOLD_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Surface_mesher/Surface_mesher_regular_edges.h>
 
 namespace CGAL {

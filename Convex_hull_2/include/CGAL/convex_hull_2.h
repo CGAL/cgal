@@ -21,6 +21,9 @@
 #ifndef CGAL_CONVEX_HULL_2_H
 #define CGAL_CONVEX_HULL_2_H
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/convex_hull_traits_2.h>
 #include <CGAL/ch_akl_toussaint.h>

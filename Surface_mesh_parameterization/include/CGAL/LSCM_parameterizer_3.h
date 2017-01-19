@@ -22,6 +22,9 @@
 #ifndef CGAL_LSCM_PARAMETERIZER_3_H
 #define CGAL_LSCM_PARAMETERIZER_3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/circulator.h>
 #include <CGAL/Timer.h>
 #include <CGAL/OpenNL/linear_solver.h>

@@ -17,6 +17,9 @@
 #ifndef CGAL_APPROXIMATED_OFFSET_H
 #define CGAL_APPROXIMATED_OFFSET_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Minkowski_sum_2/Approx_offset_base_2.h>
 #include <CGAL/Minkowski_sum_2/Offset_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Offset_decomp_2.h>

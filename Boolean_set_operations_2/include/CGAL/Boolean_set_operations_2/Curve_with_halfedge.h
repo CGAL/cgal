@@ -21,6 +21,9 @@
 #ifndef CGAL_CURVE_WITH_HALFEDGE_H
 #define CGAL_CURVE_WITH_HALFEDGE_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 namespace CGAL {
 
 template <class Arrangement_>

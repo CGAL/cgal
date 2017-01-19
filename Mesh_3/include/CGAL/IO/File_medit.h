@@ -22,6 +22,9 @@
 #ifndef CGAL_IO_FILE_MEDIT_H
 #define CGAL_IO_FILE_MEDIT_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <iostream>

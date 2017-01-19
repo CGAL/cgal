@@ -23,6 +23,9 @@
 #ifndef CGAL_CONVEX_HULL_FACE_BASE_2_H
 #define CGAL_CONVEX_HULL_FACE_BASE_2_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <list>
 #include <CGAL/Triangulation_face_base_2.h>
 

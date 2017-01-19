@@ -20,6 +20,9 @@
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
 #include <CGAL/iterator.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_PARAM_MESH_PATCH_CIRCULATORS_H
 #define CGAL_PARAM_MESH_PATCH_CIRCULATORS_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Convertible_iterator_project.h>

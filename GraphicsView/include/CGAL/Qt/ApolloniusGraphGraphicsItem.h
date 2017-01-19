@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_APOLLONIUS_GRAPH_GRAPHICS_ITEM_H
 #define CGAL_QT_APOLLONIUS_GRAPH_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 
 
 #include <CGAL/Qt/GraphicsItem.h>

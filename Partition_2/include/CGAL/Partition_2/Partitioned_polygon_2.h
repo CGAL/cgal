@@ -21,6 +21,9 @@
 #ifndef CGAL_PARTITIONED_POLYGON_2_H
 #define CGAL_PARTITIONED_POLYGON_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <list>
 #include <vector>
 #include <CGAL/circulator.h>

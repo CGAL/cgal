@@ -22,6 +22,9 @@
 #ifndef CGAL_ENVELOPE_3_H
 #define CGAL_ENVELOPE_3_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/Envelope_3/Envelope_diagram_on_surface_2.h>
 #include <CGAL/Envelope_3/Envelope_divide_and_conquer_3.h>
 #include <CGAL/Arr_accessor.h>

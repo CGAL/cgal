@@ -22,6 +22,9 @@
 #ifndef CGAL_MESH_3_DETECT_POLYLINES_IN_POLYHEDRA_H
 #define CGAL_MESH_3_DETECT_POLYLINES_IN_POLYHEDRA_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra_fwd.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/Default.h>

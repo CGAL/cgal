@@ -23,6 +23,9 @@
 #ifndef CGAL_ENVELOPE_DIAGRAM_ON_SURFACE_2_H
 #define CGAL_ENVELOPE_DIAGRAM_ON_SURFACE_2_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>

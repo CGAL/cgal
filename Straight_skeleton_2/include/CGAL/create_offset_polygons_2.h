@@ -20,6 +20,9 @@
 #ifndef CGAL_CREATE_OFFSET_POLYGONS_2_H
 #define CGAL_CREATE_OFFSET_POLYGONS_2_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_converter_2.h>

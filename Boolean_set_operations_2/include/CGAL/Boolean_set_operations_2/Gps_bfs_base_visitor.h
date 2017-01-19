@@ -22,6 +22,9 @@
 #ifndef CGAL_GPS_BPS_BASE_VISITOR_H
 #define CGAL_GPS_BPS_BASE_VISITOR_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Unique_hash_map.h> 
 
 namespace CGAL {

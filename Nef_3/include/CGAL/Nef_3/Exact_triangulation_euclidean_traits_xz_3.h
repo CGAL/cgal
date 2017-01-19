@@ -17,6 +17,9 @@
 #ifndef CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XZ_3_H
 #define CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XZ_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/intersections.h>
 

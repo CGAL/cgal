@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_POLYHEDRON_3_H
 #define CGAL_MESH_POLYHEDRON_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/Has_timestamp.h>

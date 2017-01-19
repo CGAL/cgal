@@ -21,6 +21,9 @@
 #ifndef CGAL_MIN_SPHERE_OF_POINTS_D_TRAITS_3_H
 #define CGAL_MIN_SPHERE_OF_POINTS_D_TRAITS_3_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/tags.h>
 
 namespace CGAL {

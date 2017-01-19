@@ -22,6 +22,9 @@
 #ifndef CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H
 #define CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <CGAL/Origin.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/assertions.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_SWEEP_LINE_2_VISITORS_H
 #define CGAL_SWEEP_LINE_2_VISITORS_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Definition of the basic sweep-line visitors, for the usage of the global
  * sweep-line functions.

@@ -24,6 +24,9 @@
 #ifndef CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
 #define CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <cmath>
 #include <vector>
 

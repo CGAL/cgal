@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_APOLLONIUS_GRAPH_NEAREST_SITE_2_H
 #define CGAL_VORONOI_DIAGRAM_2_APOLLONIUS_GRAPH_NEAREST_SITE_2_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Apollonius_graph_2/Orientation_2.h>

@@ -17,6 +17,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_DECOMP_2_H
 #define CGAL_MINKOWSKI_SUM_DECOMP_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 

@@ -25,6 +25,9 @@
 #ifndef CGAL_SPHERICAL_KERNEL_3_H
 #define CGAL_SPHERICAL_KERNEL_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Circular_kernel_3/Circular_arc_point_3.h>
 #include <CGAL/Circular_arc_point_3.h>
 

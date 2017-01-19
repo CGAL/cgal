@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
 #define CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/GraphicsItem.h>

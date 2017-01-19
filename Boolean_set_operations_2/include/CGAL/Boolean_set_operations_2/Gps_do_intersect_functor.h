@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_DO_INTERSECT_FUNCTOR_H
 #define CGAL_GPS_DO_INTERSECT_FUNCTOR_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 namespace CGAL {
 
 template <class Arrangement_>

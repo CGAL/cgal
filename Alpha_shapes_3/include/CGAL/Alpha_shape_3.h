@@ -23,6 +23,9 @@
 #ifndef CGAL_ALPHA_SHAPE_3_H
 #define CGAL_ALPHA_SHAPE_3_H
 
+#include <CGAL/license/Alpha_shapes_3.h>
+
+
 #include <CGAL/basic.h>
 
 #include <set>

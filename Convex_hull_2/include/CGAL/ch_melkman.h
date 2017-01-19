@@ -22,6 +22,9 @@
 #ifndef CGAL_CH_MELKMAN_H
 #define CGAL_CH_MELKMAN_H
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #include <CGAL/basic.h>
 #include <iterator>
 

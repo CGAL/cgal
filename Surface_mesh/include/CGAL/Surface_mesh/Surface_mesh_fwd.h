@@ -18,6 +18,9 @@
 #ifndef CGAL_SURFACE_MESH_FWD_H
 #define CGAL_SURFACE_MESH_FWD_H
 
+#include <CGAL/license/Surface_mesh.h>
+
+
 /// \file Surface_mesh_fwd.h
 /// Forward declarations of the Surface_mesh package.
 

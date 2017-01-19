@@ -21,6 +21,9 @@
 #ifndef CGAL_TDS_INCREMENTAL_BUILDER_3_H
 #define CGAL_TDS_INCREMENTAL_BUILDER_3_H 1
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/array.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_NATURAL_NEIGHBOR_COORDINATES_2_H
 #define CGAL_NATURAL_NEIGHBOR_COORDINATES_2_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <utility>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Polygon_2.h>

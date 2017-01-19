@@ -25,6 +25,9 @@
 #ifndef CGAL_SPHERICAL_KERNEL_GET_EQUATION_OBJECT_3_H
 #define CGAL_SPHERICAL_KERNEL_GET_EQUATION_OBJECT_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_line_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_plane_3.h>

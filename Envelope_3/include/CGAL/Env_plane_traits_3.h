@@ -20,6 +20,9 @@
 #ifndef CGAL_ENV_PLANE_TRAITS_3_H
 #define CGAL_ENV_PLANE_TRAITS_3_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>

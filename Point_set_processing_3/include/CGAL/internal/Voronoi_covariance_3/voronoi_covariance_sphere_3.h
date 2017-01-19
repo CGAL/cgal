@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_H
 #define CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/point_generators_3.h>
 #include <cmath>
 #include <cstddef>

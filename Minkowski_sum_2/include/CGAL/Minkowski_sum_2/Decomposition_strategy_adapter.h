@@ -18,6 +18,9 @@
 #ifndef CGAL_POLYGON_DECOMPOSITION_STRATEGY_ADAPTER_H
 #define CGAL_POLYGON_DECOMPOSITION_STRATEGY_ADAPTER_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Partition_traits_2.h>

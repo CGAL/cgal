@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_ITERATOR_ADAPTATOR_H
 #define CGAL_TRIANGULATION_ITERATOR_ADAPTATOR_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/triangulation_assertions.h>
 
 namespace CGAL {

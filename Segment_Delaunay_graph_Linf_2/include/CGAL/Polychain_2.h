@@ -22,6 +22,9 @@
 #ifndef CGAL_POLYCHAIN_2_H
 #define CGAL_POLYCHAIN_2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/intersections.h>

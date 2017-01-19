@@ -21,6 +21,9 @@
 #ifndef CGAL_APPROX_MIN_ELL_CONFIGURE_H
 #define CGAL_APPROX_MIN_ELL_CONFIGURE_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/basic.h>
 #include <iostream>
 #include <iomanip>

@@ -20,6 +20,9 @@
 #ifndef CGAL_PM_POINT_LOCATOR_H
 #define CGAL_PM_POINT_LOCATOR_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Constrained_triang_traits.h>

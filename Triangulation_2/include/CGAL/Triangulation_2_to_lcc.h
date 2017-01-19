@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATION_2_TO_LCC_H
 #define CGAL_TRIANGULATION_2_TO_LCC_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/assertions.h>
 #include <map>
 

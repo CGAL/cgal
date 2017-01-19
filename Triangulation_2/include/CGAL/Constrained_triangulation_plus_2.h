@@ -21,6 +21,9 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polyline_constraint_hierarchy_2.h>

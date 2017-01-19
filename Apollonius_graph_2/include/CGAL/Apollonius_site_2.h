@@ -21,6 +21,9 @@
 #ifndef CGAL_APOLLONIUS_SITE_2_H
 #define CGAL_APOLLONIUS_SITE_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <iostream>
 #include <CGAL/basic.h>
 

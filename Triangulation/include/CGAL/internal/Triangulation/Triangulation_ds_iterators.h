@@ -20,6 +20,9 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
 #define CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 namespace CGAL {
 
 namespace internal {

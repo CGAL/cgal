@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_TRIANGULATION_SIZING_FIELD_H
 #define CGAL_MESH_3_TRIANGULATION_SIZING_FIELD_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Regular_triangulation_3.h>

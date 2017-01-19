@@ -21,6 +21,9 @@
 #ifndef CGAL_MESH_SKIN_SURFACE_3_H
 #define CGAL_MESH_SKIN_SURFACE_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/marching_tetrahedra_3.h>
 #include <CGAL/Marching_tetrahedra_traits_skin_surface_3.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_POINT_PAIR_LESS_XY_2_H
 #define CGAL_POINT_PAIR_LESS_XY_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <utility>
 
 namespace CGAL {

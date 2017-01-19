@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_COREFINEMENT_POLYHEDRA_OUTPUT_BUILDER_H
 #define CGAL_INTERNAL_COREFINEMENT_POLYHEDRA_OUTPUT_BUILDER_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>

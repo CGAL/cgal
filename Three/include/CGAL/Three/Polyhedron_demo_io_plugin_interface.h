@@ -21,6 +21,9 @@
 #ifndef POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
 #define POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <QFileInfo>
 #include <QStringList>
 

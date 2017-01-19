@@ -25,6 +25,9 @@
 #ifndef CGAL_POLYTOPE_DISTANCE_D_TRAITS_D_H
 #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_D_H
 
+#include <CGAL/license/Polytope_distance_d.h>
+
+
 // includes
 #  include <CGAL/Optimisation/Access_dimension_d.h>
 #  include <CGAL/Optimisation/Access_coordinates_begin_d.h>

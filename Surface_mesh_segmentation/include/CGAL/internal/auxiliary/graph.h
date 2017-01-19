@@ -176,6 +176,9 @@ void main()
 	///////////////////////////////////////////////////
 	#include "block.h"
 	#define BLOCK_SIZE 1024
+
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
 	typedef struct { int a, b; } MyType;
 	MyType *ptr, *array[10000];
 

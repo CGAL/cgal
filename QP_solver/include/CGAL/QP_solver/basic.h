@@ -24,6 +24,9 @@
 #ifndef CGAL_QP_SOLVER_BASIC_H
 #define CGAL_QP_SOLVER_BASIC_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/QP_solver/assertions.h>

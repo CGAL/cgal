@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_SPHERICAL_CONSTRUCTION_HELPER_H
 #define CGAL_ARR_SPHERICAL_CONSTRUCTION_HELPER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_spherical_construction_helper class-template.
  */

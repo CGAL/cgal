@@ -22,6 +22,9 @@
 #ifndef CGAL_TD_ACTIVE_VERTEX_H
 #define CGAL_TD_ACTIVE_VERTEX_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Defintion of the Td_active_vertex<Td_traits> class.
  */

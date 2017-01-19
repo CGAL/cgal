@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERPOLATION_GRADIENT_FITTING_TRAITS_2_H
 #define CGAL_INTERPOLATION_GRADIENT_FITTING_TRAITS_2_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <CGAL/aff_transformation_tags.h>
 
 namespace CGAL {

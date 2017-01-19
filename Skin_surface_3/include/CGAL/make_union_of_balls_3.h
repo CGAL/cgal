@@ -21,6 +21,9 @@
 #ifndef CGAL_MAKE_UNION_OF_BALLS_MESH_3_H
 #define CGAL_MAKE_UNION_OF_BALLS_MESH_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Union_of_balls_3.h>
 #include <CGAL/mesh_union_of_balls_3.h>

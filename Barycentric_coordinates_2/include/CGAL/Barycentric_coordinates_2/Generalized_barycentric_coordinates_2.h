@@ -24,6 +24,9 @@
 #ifndef CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H
 #define CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H
 
+#include <CGAL/license/Barycentric_coordinates_2.h>
+
+
 // CGAL headers.
 #include <CGAL/Polygon_2_algorithms.h>
 

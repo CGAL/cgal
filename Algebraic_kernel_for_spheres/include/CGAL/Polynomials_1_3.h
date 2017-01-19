@@ -30,6 +30,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_1_3_H
 #define CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_1_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/enum.h>
 
 namespace CGAL {

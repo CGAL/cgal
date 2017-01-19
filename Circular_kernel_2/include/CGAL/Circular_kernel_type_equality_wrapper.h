@@ -27,6 +27,9 @@
 #ifndef CGAL_CIRCULAR_KERNEL_TYPE_EQUALITY_WRAPPER_H
 #define CGAL_CIRCULAR_KERNEL_TYPE_EQUALITY_WRAPPER_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/user_classes.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Circular_arc_2.h>

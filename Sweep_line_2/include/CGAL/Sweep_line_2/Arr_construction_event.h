@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_CONSTRUCTION_EVENT_H
 #define CGAL_ARR_CONSTRUCTION_EVENT_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Definition of the Arr_construction_event class-template.
  */

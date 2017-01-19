@@ -22,6 +22,9 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 #define CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <CGAL/Convex_hull_3/dual/predicates.h>
 #include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_2.h>
 #include <CGAL/Filtered_predicate.h>

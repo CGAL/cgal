@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_AABB_TREE_PRIMITIVE_HELPER
 #define CGAL_INTERNAL_AABB_TREE_PRIMITIVE_HELPER
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <boost/mpl/has_xxx.hpp>
 

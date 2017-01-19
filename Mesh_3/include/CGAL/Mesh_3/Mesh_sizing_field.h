@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_MESH_SIZING_FIELD_H
 #define CGAL_MESH_3_MESH_SIZING_FIELD_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/enumerable_thread_specific.h>
 #endif

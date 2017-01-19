@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF3_MARK_BOUNDED_VOLUMES_H
 #define CGAL_NEF3_MARK_BOUNDED_VOLUMES_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_polyhedron_3.h>
 
 namespace CGAL {

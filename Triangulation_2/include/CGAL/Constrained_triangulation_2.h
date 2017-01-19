@@ -22,6 +22,9 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <set>
 
 #include <CGAL/triangulation_assertions.h>

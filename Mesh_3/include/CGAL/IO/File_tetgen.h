@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_FILE_TETGEN_H
 #define CGAL_IO_FILE_TETGEN_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/IO/File_medit.h>
 #include <iostream>
 #include <map>

@@ -23,6 +23,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTERED_TRAITS_CONCEPT_CHECK_TAGS_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTERED_TRAITS_CONCEPT_CHECK_TAGS_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 namespace CGAL {

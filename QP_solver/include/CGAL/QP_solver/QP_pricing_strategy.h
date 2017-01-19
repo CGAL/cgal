@@ -24,6 +24,9 @@
 #ifndef CGAL_QP_PRICING_STRATEGY_H
 #define CGAL_QP_PRICING_STRATEGY_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 // includes
 #include <CGAL/QP_solver/QP_solver.h>
 #include <CGAL/IO/Verbose_ostream.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
 #define CGAL_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <list>
 #include <vector>
 #include <cmath>

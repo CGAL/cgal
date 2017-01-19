@@ -21,6 +21,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_ADAPTATION_POLICIES_2_H
 #define CGAL_APOLLONIUS_GRAPH_ADAPTATION_POLICIES_2_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Apollonius_graph_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Policy_base.h>

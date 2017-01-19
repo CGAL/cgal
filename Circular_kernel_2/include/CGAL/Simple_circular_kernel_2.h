@@ -26,6 +26,9 @@
 #ifndef CGAL_SIMPLE_CIRCULAR_KERNEL_2_H
 #define CGAL_SIMPLE_CIRCULAR_KERNEL_2_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #if 0
 
 #include <CGAL/Circular_arc_2.h>

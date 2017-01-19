@@ -22,6 +22,9 @@
 #ifndef CGAL_ONE_ROOT_NUMBER_H
 #define CGAL_ONE_ROOT_NUMBER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Header file for the One_root_number<NT> class.
  */

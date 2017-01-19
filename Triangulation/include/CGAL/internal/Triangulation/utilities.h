@@ -20,6 +20,9 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_UTILITIES_H
 #define CGAL_INTERNAL_TRIANGULATION_UTILITIES_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/basic.h>
 
 namespace CGAL {

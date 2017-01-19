@@ -22,6 +22,9 @@
 #ifndef CGAL_SHAPE_DETECTION_3_PLANE_H
 #define CGAL_SHAPE_DETECTION_3_PLANE_H
 
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
+
 #include <CGAL/Shape_detection_3/Shape_base.h>
 #include <CGAL/number_utils.h>
 

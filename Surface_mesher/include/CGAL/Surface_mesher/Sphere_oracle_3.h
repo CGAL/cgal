@@ -21,6 +21,9 @@
 #ifndef CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H
 #define CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/number_utils.h>

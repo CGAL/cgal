@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_POLYLINES_GRAPHICS_ITEM_H
 #define CGAL_QT_POLYLINES_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/Qt/PainterOstream.h>

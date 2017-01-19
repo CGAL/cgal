@@ -21,6 +21,9 @@
 #ifndef CGAL_WIDTH_DEFAULT_TRAITS_3_H
 #define CGAL_WIDTH_DEFAULT_TRAITS_3_H
 
+#include <CGAL/license/Polytope_distance_d.h>
+
+
 #include <CGAL/Convex_hull_traits_3.h>
 
 namespace CGAL {

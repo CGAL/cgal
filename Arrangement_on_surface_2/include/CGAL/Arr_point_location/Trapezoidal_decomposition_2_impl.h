@@ -22,6 +22,9 @@
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_FUNCTIONS_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_FUNCTIONS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
 * Member-function definitions for the Trapezoidal_decomposition_2<Traits>
 * class.

@@ -21,6 +21,9 @@
 #ifndef CGAL_PM_PERSISTENT_PL_H
 #define CGAL_PM_PERSISTENT_PL_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/Nef_2/gen_point_location.h>
 
 template <typename PMPL>

@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_DISTANCE_H
 #define CGAL_POLYGON_MESH_PROCESSING_DISTANCE_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <algorithm>
 #include <cmath>
 #include <CGAL/AABB_tree.h>

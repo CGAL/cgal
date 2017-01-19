@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_K_NEIGHBOR_SEARCH_H
 #define CGAL_INTERNAL_K_NEIGHBOR_SEARCH_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <cstring>
 #include <set>
 #include <memory>

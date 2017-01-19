@@ -21,6 +21,9 @@
 #ifndef CGAL_SEGMENT_TREE_D_H
 #define CGAL_SEGMENT_TREE_D_H
 
+#include <CGAL/license/SearchStructures.h>
+
+
 #include <iostream>
 #include <iterator>
 #include <algorithm>

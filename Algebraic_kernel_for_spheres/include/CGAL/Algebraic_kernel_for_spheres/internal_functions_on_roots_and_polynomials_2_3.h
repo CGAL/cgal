@@ -28,6 +28,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_2_3_H
 #define CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_2_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Algebraic_kernel_for_spheres/internal_functions_on_roots_and_polynomial_1_3_and_2_3.h>
 
 namespace CGAL {

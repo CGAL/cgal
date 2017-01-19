@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATE_MIXED_COMPLEX_3
 #define CGAL_TRIANGULATE_MIXED_COMPLEX_3
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 // #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
 

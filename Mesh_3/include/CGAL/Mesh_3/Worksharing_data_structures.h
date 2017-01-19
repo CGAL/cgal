@@ -20,6 +20,9 @@
 #ifndef CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 #define CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #ifdef CGAL_LINKED_WITH_TBB
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>

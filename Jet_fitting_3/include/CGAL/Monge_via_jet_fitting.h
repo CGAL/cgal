@@ -19,6 +19,9 @@
 #ifndef CGAL_MONGE_VIA_JET_FITTING_H_
 #define CGAL_MONGE_VIA_JET_FITTING_H_
 
+#include <CGAL/license/Jet_fitting_3.h>
+
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Linear_algebraCd.h>

@@ -24,6 +24,9 @@
 #ifndef CGAL_IO_DXF_WRITER_H
 #define CGAL_IO_DXF_WRITER_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <iostream>

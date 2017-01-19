@@ -19,6 +19,9 @@
 
 #ifndef SCENE_PRINT_INTERFACE_ITEM_H
 #define SCENE_PRINT_INTERFACE_ITEM_H
+
+#include <CGAL/license/Three.h>
+
 #include <QPoint>
 namespace CGAL
 {

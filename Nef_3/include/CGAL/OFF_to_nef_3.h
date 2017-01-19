@@ -21,6 +21,9 @@
 #ifndef CGAL_OFF_TO_NEF_3_H
 #define CGAL_OFF_TO_NEF_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_polyhedron_3.h>
 
 

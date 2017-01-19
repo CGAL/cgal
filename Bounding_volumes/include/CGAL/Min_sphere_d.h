@@ -22,6 +22,9 @@
 #ifndef CGAL_MIN_SPHERE_D_H
 #define CGAL_MIN_SPHERE_D_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 // Class declarations
 // ==================
 

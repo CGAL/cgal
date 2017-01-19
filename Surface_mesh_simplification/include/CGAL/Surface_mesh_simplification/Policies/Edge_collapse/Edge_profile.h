@@ -19,6 +19,9 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_PROFILE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_PROFILE_H 1
 
+#include <CGAL/license/Surface_mesh_simplification.h>
+
+
 #include <vector>
 #include <set>
 

@@ -20,6 +20,9 @@
 #ifndef CGAL_ENVELOPE_DIAGRAM_1_H
 #define CGAL_ENVELOPE_DIAGRAM_1_H
 
+#include <CGAL/license/Envelope_2.h>
+
+
 #include <list>
 
 #include <CGAL/basic.h>

@@ -17,6 +17,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_LABELS_H
 #define CGAL_MINKOWSKI_SUM_LABELS_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 namespace CGAL {
 
 /*! \class

@@ -27,6 +27,9 @@
 #ifndef CGAL_MESH_CRITERIA_3_H
 #define CGAL_MESH_CRITERIA_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_edge_criteria_3.h>

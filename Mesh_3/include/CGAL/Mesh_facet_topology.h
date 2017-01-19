@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_FACET_TOPOLOGY_H
 #define CGAL_MESH_FACET_TOPOLOGY_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 namespace CGAL {
 
 enum Mesh_facet_topology {

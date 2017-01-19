@@ -21,6 +21,9 @@
 #ifndef CGAL_MESH_2_REFINE_FACES_H
 #define CGAL_MESH_2_REFINE_FACES_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/Double_map.h>
 #include <boost/iterator/transform_iterator.hpp>

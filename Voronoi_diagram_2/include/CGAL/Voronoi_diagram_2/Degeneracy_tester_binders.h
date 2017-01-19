@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_DEGENERACY_TESTER_BINDERS_H
 #define CGAL_VORONOI_DIAGRAM_2_DEGENERACY_TESTER_BINDERS_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
 namespace CGAL {

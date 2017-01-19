@@ -21,6 +21,9 @@
 #ifndef CGAL_PM_IO_PARSER_H
 #define CGAL_PM_IO_PARSER_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/Nef_2/PM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <vector>

@@ -22,6 +22,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
 #define CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>

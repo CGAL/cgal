@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_POLYGON_WITH_HOLES_GRAPHICS_ITEM_H
 #define CGAL_QT_POLYGON_WITH_HOLES_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/apply_to_range.h>

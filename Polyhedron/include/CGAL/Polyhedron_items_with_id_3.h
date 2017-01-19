@@ -20,6 +20,9 @@
 #ifndef CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H
 #define CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/HalfedgeDS_vertex_max_base_with_id.h>
 #include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>
 #include <CGAL/HalfedgeDS_face_max_base_with_id.h>

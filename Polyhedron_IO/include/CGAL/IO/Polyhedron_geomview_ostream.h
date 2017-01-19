@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_POLYHEDRON_GEOMVIEW_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_GEOMVIEW_OSTREAM_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_3.h>

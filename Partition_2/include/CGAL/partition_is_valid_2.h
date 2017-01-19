@@ -21,6 +21,9 @@
 #ifndef CGAL_PARTITION_IS_VALID_2_H
 #define CGAL_PARTITION_IS_VALID_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <list>
 #include <utility>
 #include <iterator>

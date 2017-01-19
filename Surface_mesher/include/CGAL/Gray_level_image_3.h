@@ -20,6 +20,9 @@
 #ifndef CGAL_MESH_3_GRAY_LEVEL_IMAGE_3_H
 #define CGAL_MESH_3_GRAY_LEVEL_IMAGE_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/basic.h>
 
 #include <CGAL/auto_link/ImageIO.h>

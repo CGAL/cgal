@@ -21,6 +21,9 @@
 #ifndef CGAL_QP_FUNCTIONS_H
 #define CGAL_QP_FUNCTIONS_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 #include <iostream>
 #include <string>
 #include <CGAL/QP_options.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_SEGMENT_LESS_YX_2_H
 #define CGAL_SEGMENT_LESS_YX_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <utility>
 #include <CGAL/Partition_2/Turn_reverser.h>
 

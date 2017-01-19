@@ -24,6 +24,9 @@
 #ifndef CGAL_QP_SOLVER_UNBOUNDED_DIRECTION_H
 #define CGAL_QP_SOLVER_UNBOUNDED_DIRECTION_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 namespace CGAL {
 template < typename Q, typename ET, typename Tags >
 ET QP_solver<Q, ET, Tags>::unbounded_direction_value(int i) const

@@ -24,6 +24,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_3_H
 #define CGAL_REGULAR_TRIANGULATION_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 
 #include <set>

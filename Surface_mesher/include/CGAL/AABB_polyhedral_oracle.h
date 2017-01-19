@@ -22,6 +22,9 @@
 #ifndef CGAL_AABB_POLYHEDRAL_ORACLE_H
 #define CGAL_AABB_POLYHEDRAL_ORACLE_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <utility>
 #include <CGAL/iterator.h>
 

@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_SNC_K3_TREE_TRAITS_H
 #define CGAL_NEF_SNC_K3_TREE_TRAITS_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_3/Bounding_box_3.h>
 #include <CGAL/Lazy_kernel.h>
 #include <list>

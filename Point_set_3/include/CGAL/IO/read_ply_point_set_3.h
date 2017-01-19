@@ -20,6 +20,9 @@
 #ifndef CGAL_READ_PLY_POINT_SET_3_H
 #define CGAL_READ_PLY_POINT_SET_3_H
 
+#include <CGAL/license/Point_set_3.h>
+
+
 #include <CGAL/Point_set_3.h>
 
 /// \cond SKIP_IN_MANUAL

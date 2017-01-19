@@ -21,6 +21,9 @@
 #ifndef CGAL_MONOTONE_MATRIX_SEARCH_H
 #define CGAL_MONOTONE_MATRIX_SEARCH_H 1
 
+#include <CGAL/license/Matrix_search.h>
+
+
 #include <CGAL/Optimisation/assertions.h>
 #include <vector>
 #include <functional>

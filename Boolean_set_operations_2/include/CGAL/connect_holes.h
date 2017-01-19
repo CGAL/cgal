@@ -21,6 +21,9 @@
 #ifndef CGAL_CONNECT_HOLES_H
 #define CGAL_CONNECT_HOLES_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Arrangement_2.h>

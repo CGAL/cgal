@@ -22,6 +22,9 @@
 #ifndef CGAL_SURFACE_MESHER_NULL_ORACLE_VISITOR_H
 #define CGAL_SURFACE_MESHER_NULL_ORACLE_VISITOR_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 namespace CGAL {
 
   namespace Surface_mesher {

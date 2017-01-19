@@ -21,6 +21,9 @@
 #ifndef CGAL_ARRANGEMENT_WITH_HISTORY_2_H
 #define CGAL_ARRANGEMENT_WITH_HISTORY_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The header file for the Arrangement_with_history_2<Traits,Dcel> class.
  */

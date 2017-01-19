@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H
 #define CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
 
 namespace CGAL {

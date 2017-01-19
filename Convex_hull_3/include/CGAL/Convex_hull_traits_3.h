@@ -21,6 +21,9 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_3_H
 #define CGAL_CONVEX_HULL_TRAITS_3_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_face_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>

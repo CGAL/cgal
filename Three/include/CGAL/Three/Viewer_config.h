@@ -21,6 +21,9 @@
 #ifndef VIEWER_CONFIG_H
 #define VIEWER_CONFIG_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <QtCore/qglobal.h>
 
 #ifdef demo_framework_EXPORTS

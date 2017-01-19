@@ -21,6 +21,9 @@
 #ifndef CGAL_POINT_TRAITS_H
 #define CGAL_POINT_TRAITS_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Weighted_point.h>
 #include <boost/config.hpp>
 #include <boost/mpl/bool.hpp>

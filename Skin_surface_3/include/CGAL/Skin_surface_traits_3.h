@@ -21,6 +21,9 @@
 #ifndef CGAL_SKIN_SURFACE_TRAITS_3_H
 #define CGAL_SKIN_SURFACE_TRAITS_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/predicates/predicates_for_mixed_complex_3.h>
 

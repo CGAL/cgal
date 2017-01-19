@@ -23,6 +23,9 @@
 #ifndef CGAL_SWEEP_LINE_2_UTILS
 #define CGAL_SWEEP_LINE_2_UTILS
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Auxiliary functions for the usage of the various sweep-line visitors.
  */

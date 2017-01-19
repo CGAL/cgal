@@ -21,6 +21,9 @@
 #ifndef CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H
 #define CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H
 
+#include <CGAL/license/Surface_mesh_deformation.h>
+
+
 #include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>
 #include <CGAL/FPU_extension.h>
 #include <CGAL/Profile_counter.h>

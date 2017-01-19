@@ -23,6 +23,9 @@
 #ifndef CGAL_TD_DAG_NODE_H
 #define CGAL_TD_DAG_NODE_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/kernel_assertions.h>

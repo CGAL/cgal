@@ -21,6 +21,9 @@
 #ifndef CGAL_RATIONAL_FUNCTION_ORDERED_PAIR_H
 #define CGAL_RATIONAL_FUNCTION_ORDERED_PAIR_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Arr_rat_arc/Rational_function.h>

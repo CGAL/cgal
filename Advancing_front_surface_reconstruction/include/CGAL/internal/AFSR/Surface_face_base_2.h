@@ -20,6 +20,9 @@
 #ifndef CGAL_AFSR_SURFACE_FACE_BASE_2_H
 #define CGAL_AFSR_SURFACE_FACE_BASE_2_H
 
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
+
 // This face class stores a facet in the tetrahedrization
 // When it gets reoriented by the TDS, it also changes the facet
 

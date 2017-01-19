@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_PLANAR_INC_INSERTION_ZONE_VISITOR_H
 #define CGAL_ARR_PLANAR_INC_INSERTION_ZONE_VISITOR_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the arr_planar_inc_insertion_zone_visitor_2 class.
  */

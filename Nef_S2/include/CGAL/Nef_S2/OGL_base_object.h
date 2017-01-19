@@ -21,6 +21,9 @@
 #ifndef CGAL_OGL_BASE_OBJECT_H
 #define CGAL_OGL_BASE_OBJECT_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/Simple_cartesian.h>
 
 namespace CGAL {

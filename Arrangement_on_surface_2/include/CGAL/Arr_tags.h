@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_TAGS_H
 #define CGAL_ARR_TAGS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/config.h>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>

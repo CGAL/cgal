@@ -16,6 +16,9 @@
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_SDF_CALCULATION_H
 
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>

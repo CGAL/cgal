@@ -22,6 +22,9 @@
 #ifndef CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 #define CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 
+#include <CGAL/license/Visibility_2.h>
+
+
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/bounding_box.h>

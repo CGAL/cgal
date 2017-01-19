@@ -21,6 +21,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_HIERARCHY_VERTEX_BASE_2_H
 #define CGAL_APOLLONIUS_GRAPH_HIERARCHY_VERTEX_BASE_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/basic.h>
 
 namespace CGAL {

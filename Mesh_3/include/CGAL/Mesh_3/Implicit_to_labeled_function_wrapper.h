@@ -30,6 +30,9 @@
 #ifndef CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored

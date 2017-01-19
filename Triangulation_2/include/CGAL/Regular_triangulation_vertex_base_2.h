@@ -22,6 +22,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_REGULAR_TRIANGULATION_VERTEX_BASE_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 
 namespace CGAL {

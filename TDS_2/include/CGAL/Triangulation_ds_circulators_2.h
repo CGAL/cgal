@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
 #define CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
 
+#include <CGAL/license/TDS_2.h>
+
+
 #include <utility>
 #include <iterator>
 #include <CGAL/circulator.h>

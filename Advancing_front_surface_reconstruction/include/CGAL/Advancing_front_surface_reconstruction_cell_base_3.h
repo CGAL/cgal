@@ -20,6 +20,9 @@
 #ifndef CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_CELL_BASE_3_H
 #define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_CELL_BASE_3_H
 
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
+
 #include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {

@@ -20,6 +20,9 @@
 #ifndef CGAL_GENERIC_SWEEP_H
 #define CGAL_GENERIC_SWEEP_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 /*{\Moptions print_title=yes}*/
 /*{\Moptions section=subsection}*/
 

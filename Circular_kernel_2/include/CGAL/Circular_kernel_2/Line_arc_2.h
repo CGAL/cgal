@@ -26,6 +26,9 @@
 #ifndef CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H
 #define CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/global_functions_circular_kernel_2.h>
 #include <CGAL/Algebraic_kernel_for_circles/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>

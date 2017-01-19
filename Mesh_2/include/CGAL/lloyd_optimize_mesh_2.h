@@ -21,6 +21,9 @@
 #ifndef CGAL_LLOYD_OPTIMIZE_MESH_2_H
 #define CGAL_LLOYD_OPTIMIZE_MESH_2_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 
 
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_BEZIER_CACHE_H
 #define CGAL_BEZIER_CACHE_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Header file for the _Bezier_cache class.
  */

@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_TEXT_FORMATTER_H
 #define CGAL_ARR_TEXT_FORMATTER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The header file for the text-formatter classes.
  */

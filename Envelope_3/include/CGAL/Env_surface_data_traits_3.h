@@ -20,6 +20,9 @@
 #ifndef CGAL_ENV_SURFACE_DATA_TRAITS_3_H
 #define CGAL_ENV_SURFACE_DATA_TRAITS_3_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 /*! \file
  * Definition of the env_surface_data_traits_3<> class template.
  */

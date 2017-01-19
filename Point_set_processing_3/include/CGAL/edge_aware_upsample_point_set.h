@@ -20,6 +20,9 @@
 #ifndef CGAL_UPSAMPLE_POINT_SET_H
 #define CGAL_UPSAMPLE_POINT_SET_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/internal/Rich_grid.h>

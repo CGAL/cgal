@@ -20,6 +20,9 @@
 #ifndef CGAL_AFSR_SURFACE_VERTEX_BASE_2_H
 #define CGAL_AFSR_SURFACE_VERTEX_BASE_2_H
 
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 

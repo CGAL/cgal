@@ -20,6 +20,9 @@
 #ifndef CGAL_JET_ESTIMATE_NORMALS_H
 #define CGAL_JET_ESTIMATE_NORMALS_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/trace.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>

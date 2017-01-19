@@ -21,6 +21,9 @@
 #ifndef CGAL_ALPHA_SHAPE_VERTEX_BASE_2_H
 #define CGAL_ALPHA_SHAPE_VERTEX_BASE_2_H
 
+#include <CGAL/license/Alpha_shapes_2.h>
+
+
 #include <utility>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/internal/Lazy_alpha_nt_2.h>

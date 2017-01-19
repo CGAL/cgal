@@ -63,6 +63,9 @@
 #ifndef CGAL_PARTITION_OPTIMAL_CONVEX_H
 #define CGAL_PARTITION_OPTIMAL_CONVEX_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include<CGAL/IO/Tee_for_output_iterator.h>
 #include<CGAL/Partition_2/Partition_opt_cvx_edge.h>
 #include<CGAL/Partition_2/Partition_opt_cvx_vertex.h>

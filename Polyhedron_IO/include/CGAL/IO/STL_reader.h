@@ -19,6 +19,9 @@
 #ifndef CGAL_IO_STL_READER_H
 #define CGAL_IO_STL_READER_H
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/array.h>
 #include <boost/cstdint.hpp> 
 #include <vector>

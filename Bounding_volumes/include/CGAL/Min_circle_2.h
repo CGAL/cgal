@@ -21,6 +21,9 @@
 #ifndef CGAL_MIN_CIRCLE_2_H
 #define CGAL_MIN_CIRCLE_2_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 // includes
 #  include <CGAL/Optimisation/basic.h>
 #  include <CGAL/Random.h>

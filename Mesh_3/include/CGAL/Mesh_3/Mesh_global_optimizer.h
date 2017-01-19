@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_MESH_GLOBAL_OPTIMIZER_H
 #define CGAL_MESH_3_MESH_GLOBAL_OPTIMIZER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Real_timer.h>

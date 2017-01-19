@@ -22,6 +22,9 @@
 #ifndef CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H
 #define CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/convex_hull_3_to_polyhedron_3.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/convex_hull_3_to_face_graph.h>"
 #include <CGAL/internal/deprecation_warning.h>

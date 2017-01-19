@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_POLYNOMIAL_FWD_H
 #define CGAL_NEF_POLYNOMIAL_FWD_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/enum.h>
 
 // Forward declarations of functions over Polynomial and Nef_polynomial

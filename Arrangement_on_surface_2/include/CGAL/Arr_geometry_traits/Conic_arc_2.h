@@ -21,6 +21,9 @@
 #ifndef CGAL_CONIC_ARC_2_H
 #define CGAL_CONIC_ARC_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Header file for the _Conic_arc_2<Int_kernel, Alg_kernel, Nt_traits> class.
  */

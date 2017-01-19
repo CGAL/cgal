@@ -21,6 +21,9 @@
 #ifndef CGAL_PM_EXPLORER_H
 #define CGAL_PM_EXPLORER_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_2/PM_const_decorator.h>
 

@@ -21,6 +21,9 @@
 #ifndef CGAL_MESH_3_POLYLINES_TO_PROTECT_H
 #define CGAL_MESH_3_POLYLINES_TO_PROTECT_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <vector>
 #include <map>
 #include <utility> // std::swap

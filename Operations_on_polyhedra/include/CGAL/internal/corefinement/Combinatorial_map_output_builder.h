@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_COREFINEMENT_COMBINATORIAL_MAP_OUTPUT_BUILDER_H
 #define CGAL_INTERNAL_COREFINEMENT_COMBINATORIAL_MAP_OUTPUT_BUILDER_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/internal/corefinement/predicates.h>

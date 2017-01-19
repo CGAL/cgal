@@ -21,6 +21,9 @@
 #ifndef CGAL_TREE_TRAITS_H
 #define CGAL_TREE_TRAITS_H
 
+#include <CGAL/license/SearchStructures.h>
+
+
 // Implementation of a minimal tree traits for CGAL trees, derived 
 // from Tree_base.h
 // (e.g. Range_tree_d.h and Segment_tree_d.h).

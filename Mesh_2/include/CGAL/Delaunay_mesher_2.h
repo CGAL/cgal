@@ -21,6 +21,9 @@
 #ifndef CGAL_DELAUNAY_MESHER_2_H
 #define CGAL_DELAUNAY_MESHER_2_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesh_2/Refine_edges_with_clusters.h>
 #include <CGAL/Mesh_2/Refine_edges_visitor.h>
 #include <CGAL/Mesh_2/Refine_faces.h>

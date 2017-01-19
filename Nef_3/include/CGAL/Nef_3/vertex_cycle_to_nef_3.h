@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_VERTEX_CYCLE_TO_NEF_3_H
 #define CGAL_NEF_VERTEX_CYCLE_TO_NEF_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <iostream>
 #include <sstream>
 

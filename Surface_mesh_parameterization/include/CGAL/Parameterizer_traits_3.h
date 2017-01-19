@@ -22,6 +22,9 @@
 #ifndef CGAL_PARAMETERIZER_3_H
 #define CGAL_PARAMETERIZER_3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 

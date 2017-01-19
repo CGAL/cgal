@@ -21,6 +21,9 @@
 #ifndef CGAL_SNC_SM_EXPLORER_H
 #define CGAL_SNC_SM_EXPLORER_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 

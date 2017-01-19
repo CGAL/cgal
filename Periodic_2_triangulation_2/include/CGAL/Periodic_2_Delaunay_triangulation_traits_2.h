@@ -20,6 +20,9 @@
 #ifndef CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
 #define CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 #include <CGAL/Periodic_2_triangulation_traits_2.h>
 
 namespace CGAL

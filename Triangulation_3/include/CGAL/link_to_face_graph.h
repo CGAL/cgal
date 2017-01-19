@@ -23,6 +23,9 @@
 #ifndef CGAL_LINK_TO_FACE_GRAPH_H
 #define CGAL_LINK_TO_FACE_GRAPH_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 #include <CGAL/array.h>

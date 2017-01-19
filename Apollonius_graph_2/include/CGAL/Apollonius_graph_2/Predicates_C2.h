@@ -23,6 +23,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_PREDICATES_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_PREDICATES_C2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/Apollonius_graph_2/Compare_x_2.h>
 #include <CGAL/Apollonius_graph_2/Compare_y_2.h>
 #include <CGAL/Apollonius_graph_2/Compare_weight_2.h>

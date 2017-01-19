@@ -44,6 +44,9 @@
 #if defined(CGAL_POINT_SET_PROCESSING_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
 #  define CGAL_point_set_processing_assertion(EX) (static_cast<void>(0))
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 #  define CGAL_point_set_processing_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_point_set_processing_assertion_code(CODE)
 #else

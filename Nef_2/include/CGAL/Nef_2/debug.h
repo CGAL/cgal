@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_2_DEBUG_H
 #define CGAL_NEF_2_DEBUG_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <iostream>
 
 #ifdef NDEBUG

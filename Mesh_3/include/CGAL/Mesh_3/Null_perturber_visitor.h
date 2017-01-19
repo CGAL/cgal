@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_NULL_PERTURBER_VISITOR_H
 #define CGAL_MESH_3_NULL_PERTURBER_VISITOR_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <cstddef>
 
 namespace CGAL {

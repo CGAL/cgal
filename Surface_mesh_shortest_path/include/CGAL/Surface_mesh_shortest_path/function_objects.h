@@ -31,6 +31,9 @@
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+
 namespace CGAL {
 
 namespace Surface_mesh_shortest_paths_3 {

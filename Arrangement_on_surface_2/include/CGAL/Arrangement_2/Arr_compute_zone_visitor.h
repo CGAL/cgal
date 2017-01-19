@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_COMPUTE_ZONE_VISITOR_H
 #define CGAL_ARR_COMPUTE_ZONE_VISITOR_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_compute_zone_visitor class.
  */

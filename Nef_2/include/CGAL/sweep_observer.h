@@ -20,6 +20,9 @@
 #ifndef CGAL_SWEEP_OBSERVER_H
 #define CGAL_SWEEP_OBSERVER_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <list>
 
 namespace CGAL {

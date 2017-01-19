@@ -21,6 +21,9 @@
 #ifndef CGAL_MESH_2_REFINE_EDGES_H
 #define CGAL_MESH_2_REFINE_EDGES_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
 #include <CGAL/Meshes/Filtered_queue_container.h>

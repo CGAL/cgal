@@ -22,6 +22,9 @@
 #ifndef CGAL_SHAPE_DETECTION_3_SHAPE_BASE_H
 #define CGAL_SHAPE_DETECTION_3_SHAPE_BASE_H
 
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
+
 #include <vector>
 #include <set>
 #include <stack>

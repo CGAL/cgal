@@ -17,6 +17,9 @@
 #ifndef CGAL_DECOMPOSITION_STRATEGY_ADAPTER_H
 #define CGAL_DECOMPOSITION_STRATEGY_ADAPTER_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/partition_2.h>
 
 namespace CGAL {

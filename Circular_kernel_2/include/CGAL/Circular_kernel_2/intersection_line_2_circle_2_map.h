@@ -26,6 +26,9 @@
 #ifndef CGAL_INTERSECTION_LINE_2_CIRCLE_2_MAP_H
 #define CGAL_INTERSECTION_LINE_2_CIRCLE_2_MAP_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <map>
 #include <vector>
 

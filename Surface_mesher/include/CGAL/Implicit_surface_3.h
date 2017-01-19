@@ -20,6 +20,9 @@
 #ifndef CGAL_IMPLICIT_SURFACE_3_H
 #define CGAL_IMPLICIT_SURFACE_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 

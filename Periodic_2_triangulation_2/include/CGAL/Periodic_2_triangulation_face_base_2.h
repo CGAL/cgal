@@ -20,6 +20,9 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>

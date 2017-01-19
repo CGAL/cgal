@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_COREFINEMENT_PREDICATES_H
 #define CGAL_INTERNAL_COREFINEMENT_PREDICATES_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 namespace CGAL{
 
 namespace Corefinement{

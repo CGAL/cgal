@@ -22,6 +22,9 @@
 #ifndef CGAL_SNC_SPHERE_MAP_H
 #define CGAL_SNC_SPHERE_MAP_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Object_handle.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_AABB_TRAVERSAL_TRAITS_H
 #define CGAL_AABB_TRAVERSAL_TRAITS_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <boost/optional.hpp>
 

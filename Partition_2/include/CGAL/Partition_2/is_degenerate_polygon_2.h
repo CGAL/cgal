@@ -21,6 +21,9 @@
 #ifndef CGAL_IS_DEGENERATE_POLYGON_2_H
 #define CGAL_IS_DEGENERATE_POLYGON_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 namespace CGAL {
 
 // tests if a sequence of points represents a degenerate polygon (i.e.

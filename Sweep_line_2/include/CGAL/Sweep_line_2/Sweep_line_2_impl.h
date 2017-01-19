@@ -19,6 +19,9 @@
 #ifndef CGAL_SWEEP_LINE_2_IMPL_H
 #define CGAL_SWEEP_LINE_2_IMPL_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Member-function definitions of the Sweep_line_2 class-template.
  */

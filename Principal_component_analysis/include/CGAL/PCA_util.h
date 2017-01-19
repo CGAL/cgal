@@ -20,6 +20,9 @@
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H
 
+#include <CGAL/license/Principal_component_analysis.h>
+
+
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/Dimension.h>
 

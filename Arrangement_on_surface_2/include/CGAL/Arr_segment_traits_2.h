@@ -19,6 +19,9 @@
 #ifndef CGAL_ARR_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_SEGMENT_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The segment traits-class for the arrangement package.
  */

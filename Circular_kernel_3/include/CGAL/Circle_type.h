@@ -27,6 +27,9 @@
 #ifndef CGAL_CIRCLE_TYPE_H
 #define CGAL_CIRCLE_TYPE_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 namespace CGAL {
   enum Circle_type {NORMAL, THREADED, POLAR, BIPOLAR};
 } //CGAL

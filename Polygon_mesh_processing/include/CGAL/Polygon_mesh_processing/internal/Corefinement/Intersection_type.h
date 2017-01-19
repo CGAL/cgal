@@ -21,6 +21,9 @@
 #ifndef CGAL_PMP_INTERNAL_COREFINEMENT_INTERSECTION_TYPE_H
 #define CGAL_PMP_INTERNAL_COREFINEMENT_INTERSECTION_TYPE_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
 

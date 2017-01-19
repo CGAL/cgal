@@ -21,6 +21,9 @@
 #ifndef CGAL_SEGMENT_ASSERTIONS_H
 #define CGAL_SEGMENT_ASSERTIONS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 namespace CGAL {
 
 template <class Traits_>

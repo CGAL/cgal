@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_H
 
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+
 /**
  * \ingroup PkgSurfaceMeshShortestPath
  * \file CGAL/Surface_mesh_shortest_path.h

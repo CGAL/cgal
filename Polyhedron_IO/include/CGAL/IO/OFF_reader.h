@@ -19,6 +19,9 @@
 #ifndef CGAL_IO_OFF_READER_H
 #define CGAL_IO_OFF_READER_H
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/IO/File_scanner_OFF.h>
 
 #include <vector>

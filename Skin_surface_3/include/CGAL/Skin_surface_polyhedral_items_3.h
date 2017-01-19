@@ -21,6 +21,9 @@
 #ifndef CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
 #define CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/HalfedgeDS_face_base.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/assertions.h>

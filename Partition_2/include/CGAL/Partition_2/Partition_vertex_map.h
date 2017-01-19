@@ -21,6 +21,9 @@
 #ifndef CGAL_PARTITION_VERTEX_MAP_H
 #define CGAL_PARTITION_VERTEX_MAP_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <map>
 #include <iostream>
 #include <CGAL/circulator.h>

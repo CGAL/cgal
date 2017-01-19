@@ -24,6 +24,9 @@
 #ifndef CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 #define CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <vector>

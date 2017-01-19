@@ -21,6 +21,9 @@
 #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
 #define CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 // includes
 #  include <CGAL/Homogeneous/ConicHPA2.h>
 #  include <CGAL/Optimisation/assertions.h>

@@ -26,6 +26,9 @@
 #ifndef CONE_SPANNERS_ENUM_2_H
 #define CONE_SPANNERS_ENUM_2_H
 
+#include <CGAL/license/Cone_spanners_2.h>
+
+
 namespace CGAL {
   /*! \ingroup PkgConeBasedSpanners
 

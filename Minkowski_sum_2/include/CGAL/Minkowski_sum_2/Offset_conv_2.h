@@ -17,6 +17,9 @@
 #ifndef CGAL_OFFSET_CONV_H
 #define CGAL_OFFSET_CONV_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Minkowski_sum_2/Union_of_curve_cycles_2.h>
 #include <list>
 

@@ -20,6 +20,9 @@
 #ifndef CGAL_BASIC_SWEEP_LINE_2_IMPL_H
 #define CGAL_BASIC_SWEEP_LINE_2_IMPL_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Member-function definitions for the Basic_sweep_line_2 class.
  */

@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_CIRCULAR_ARC_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_CIRCULAR_ARC_INPUT_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <QGraphicsView>
 #include <QRectF>
 #include <QPointF>

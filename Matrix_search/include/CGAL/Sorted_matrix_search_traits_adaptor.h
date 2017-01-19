@@ -21,6 +21,9 @@
 #ifndef CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 #define CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
 
+#include <CGAL/license/Matrix_search.h>
+
+
 #include <functional>
 
 namespace CGAL {

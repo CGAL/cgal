@@ -21,6 +21,9 @@
 #ifndef CGAL_RECTANGULAR_3_CENTER_2_H
 #define CGAL_RECTANGULAR_3_CENTER_2_H 1
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/algorithm.h>

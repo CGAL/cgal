@@ -20,6 +20,9 @@
 #ifndef CGAL_ARR_POLYCURVE_BASIC_TRAITS_2_H
 #define CGAL_ARR_POLYCURVE_BASIC_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The traits-class for the general piece-wise (polycurve) type of curves of the
  * arrangement package.

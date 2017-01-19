@@ -24,6 +24,9 @@
 #ifndef CGAL_SEGMENT_COORDINATES_2_H
 #define CGAL_SEGMENT_COORDINATES_2_H
 
+#include <CGAL/license/Barycentric_coordinates_2.h>
+
+
 // STL headers.  
 #include <vector>
 

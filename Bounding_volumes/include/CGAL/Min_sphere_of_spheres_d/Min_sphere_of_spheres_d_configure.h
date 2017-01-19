@@ -22,6 +22,9 @@
 #ifndef CGAL_MINIBALL_CONFIGURE
 #define CGAL_MINIBALL_CONFIGURE
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 // Remark: In case you want to fine-tune the code, feel free to change
 // the options below.
 

@@ -21,6 +21,9 @@
 #ifndef CGAL_PARAMETERIZE_H
 #define CGAL_PARAMETERIZE_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 
 /// \file parameterize.h

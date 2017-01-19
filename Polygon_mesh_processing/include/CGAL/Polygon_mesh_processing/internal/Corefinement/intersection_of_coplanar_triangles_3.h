@@ -21,6 +21,9 @@
 #ifndef CGAL_PMP_INTERNAL_COREFINEMENT_INTERSECTION_OF_COPLANAR_TRIANGLES_3_H
 #define CGAL_PMP_INTERNAL_COREFINEMENT_INTERSECTION_OF_COPLANAR_TRIANGLES_3_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Kernel_traits.h>

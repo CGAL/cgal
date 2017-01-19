@@ -23,6 +23,9 @@
 #ifndef CGAL_COMPACT_MESH_CELL_BASE_3_H
 #define CGAL_COMPACT_MESH_CELL_BASE_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/basic.h>

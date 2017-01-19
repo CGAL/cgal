@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
 #define CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
 
+#include <CGAL/license/Polyline_simplification_2.h>
+
+
 #include <CGAL/Triangulation_vertex_base_2.h>
 
 namespace CGAL {

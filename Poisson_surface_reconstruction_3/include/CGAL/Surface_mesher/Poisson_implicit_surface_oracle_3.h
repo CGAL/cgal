@@ -22,6 +22,9 @@
 #ifndef CGAL_SURFACE_MESHER_POISSON_IMPLICIT_SURFACE_ORACLE_3_H
 #define CGAL_SURFACE_MESHER_POISSON_IMPLICIT_SURFACE_ORACLE_3_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Surface_mesher/Sphere_oracle_3.h>

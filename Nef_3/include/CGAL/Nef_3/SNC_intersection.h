@@ -21,6 +21,9 @@
 #ifndef CGAL_SNC_INTERSECTION_H
 #define CGAL_SNC_INTERSECTION_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 
 #undef CGAL_NEF_DEBUG

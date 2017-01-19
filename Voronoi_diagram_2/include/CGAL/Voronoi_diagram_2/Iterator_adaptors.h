@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_ITERATOR_ADAPTORS_H
 #define CGAL_VORONOI_DIAGRAM_2_ITERATOR_ADAPTORS_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <iterator>
 #include <CGAL/Unique_hash_map.h>

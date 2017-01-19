@@ -22,6 +22,9 @@
 #ifndef CGAL_CONVERTIBLE_FILTER_ITERATOR_H
 #define CGAL_CONVERTIBLE_FILTER_ITERATOR_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/iterator.h>
 
 namespace CGAL {

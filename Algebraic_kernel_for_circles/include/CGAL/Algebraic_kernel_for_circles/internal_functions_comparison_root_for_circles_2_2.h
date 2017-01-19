@@ -26,6 +26,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_COMPARISON_ROOT_FOR_CIRCLES_2_2_H
 #define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_COMPARISON_ROOT_FOR_CIRCLES_2_2_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 
 namespace CGAL {
   namespace AlgebraicFunctors{

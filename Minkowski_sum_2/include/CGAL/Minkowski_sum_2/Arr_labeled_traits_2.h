@@ -17,6 +17,9 @@
 #ifndef CGAL_ARR_LABELED_TRAITS_2_H
 #define CGAL_ARR_LABELED_TRAITS_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Minkowski_sum_2/Labels.h>
 #include <list>
 

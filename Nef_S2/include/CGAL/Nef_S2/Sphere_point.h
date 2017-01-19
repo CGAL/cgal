@@ -21,6 +21,9 @@
 #ifndef CGAL_SPHERE_POINT_H
 #define CGAL_SPHERE_POINT_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 

@@ -27,6 +27,9 @@
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_COMPARE_TO_RIGHT_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_COMPARE_TO_RIGHT_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 namespace CGAL {
   namespace SphericalFunctors {
 

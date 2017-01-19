@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_PS_STREAM_H
 #define CGAL_TRIANGULATION_PS_STREAM_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 
 #ifdef CGAL_TRIANGULATION_2_H
 namespace CGAL {

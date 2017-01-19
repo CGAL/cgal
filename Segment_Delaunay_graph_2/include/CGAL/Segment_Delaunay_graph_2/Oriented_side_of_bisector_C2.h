@@ -24,6 +24,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>

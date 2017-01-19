@@ -43,6 +43,9 @@
 #if defined(CGAL_SURFACE_RECONSTRUCTION_POINTS_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
 #  define CGAL_surface_reconstruction_points_assertion(EX) (static_cast<void>(0))
+
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
 #  define CGAL_surface_reconstruction_points_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_reconstruction_points_assertion_code(CODE)
 #else

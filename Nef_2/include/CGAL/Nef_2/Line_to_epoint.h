@@ -21,6 +21,9 @@
 #ifndef CGAL_LINE_TO_EPOINT_H
 #define CGAL_LINE_TO_EPOINT_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 namespace CGAL {
 
 template <class Kernel_>

@@ -22,6 +22,9 @@
 #ifndef CGAL_PREDICATES_FOR_MIXED_COMPLEX_3_H
 #define CGAL_PREDICATES_FOR_MIXED_COMPLEX_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/determinant.h>
 #include <CGAL/enum.h>
 

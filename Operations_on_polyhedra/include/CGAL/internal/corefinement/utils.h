@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_COREFINEMENT_UTILS_H
 #define CGAL_INTERNAL_COREFINEMENT_UTILS_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 namespace CGAL{
 
 namespace internal_IOP {

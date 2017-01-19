@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_2_PROJECTION_TRAITS_3_H
 #define CGAL_TRIANGULATION_2_PROJECTION_TRAITS_3_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/internal/Triangulation_2_filtered_projection_traits_3.h>
 
 namespace CGAL{

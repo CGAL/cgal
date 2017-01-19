@@ -22,6 +22,9 @@
 #ifndef CGAL_MINIBALL_PAIR
 #define CGAL_MINIBALL_PAIR
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 namespace CGAL_MINIBALL_NAMESPACE {
 
   namespace Min_sphere_of_spheres_d_impl {

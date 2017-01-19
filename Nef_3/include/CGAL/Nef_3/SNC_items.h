@@ -23,6 +23,9 @@
 //                 Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_SNC_ITEMS_H
 #define CGAL_SNC_ITEMS_H
+
+#include <CGAL/license/Nef_3.h>
+
 #include <CGAL/Nef_3/Vertex.h>
 #include <CGAL/Nef_3/Halfedge.h>
 #include <CGAL/Nef_3/Halffacet.h>

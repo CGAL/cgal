@@ -16,6 +16,9 @@
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+
 #include <vector>
 #include <cmath>
 #include <algorithm>

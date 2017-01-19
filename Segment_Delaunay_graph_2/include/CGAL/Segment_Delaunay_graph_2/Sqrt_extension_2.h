@@ -24,6 +24,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_SQRT_EXTENSION_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_SQRT_EXTENSION_2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <CGAL/Sqrt_extension.h>
 
 

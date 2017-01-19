@@ -20,6 +20,9 @@
 #ifndef CGAL_EXTENDED_CARTESIAN_H
 #define CGAL_EXTENDED_CARTESIAN_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_DE_CASTELJAU_2_H
 #define CGAL_DE_CASTELJAU_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Template functions for performing generic operations based on the
  * de Casteljau algorithm.

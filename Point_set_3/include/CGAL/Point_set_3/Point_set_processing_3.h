@@ -21,6 +21,9 @@
 #ifndef CGAL_POINT_SET_3_POINT_SET_PROCESSING_3_H
 #define CGAL_POINT_SET_3_POINT_SET_PROCESSING_3_H
 
+#include <CGAL/license/Point_set_3.h>
+
+
 #include <CGAL/bilateral_smooth_point_set.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/edge_aware_upsample_point_set.h>

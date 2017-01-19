@@ -17,6 +17,9 @@
 #ifndef CGAL_ARR_POLYLINE_2_H
 #define CGAL_ARR_POLYLINE_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Header file for the polyline classes used by the
  * Arr_polycurve_basic_traits_2, Arr_polycurve_traits_2, and

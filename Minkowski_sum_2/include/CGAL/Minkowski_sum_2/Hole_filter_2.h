@@ -17,6 +17,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_HOLE_FILTER_2_H
 #define CGAL_MINKOWSKI_SUM_HOLE_FILTER_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/basic.h>
 #include <vector>
 

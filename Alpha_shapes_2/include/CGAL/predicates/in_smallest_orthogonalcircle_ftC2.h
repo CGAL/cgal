@@ -21,6 +21,9 @@
 #ifndef CGAL_IN_SMALLEST_ORTHOGONALCIRCLE_FTC2_H 
 #define CGAL_IN_SMALLEST_ORTHOGONALCIRCLE_FTC2_H
 
+#include <CGAL/license/Alpha_shapes_2.h>
+
+
 #include <CGAL/determinant.h>
 #include <CGAL/enum.h>
 

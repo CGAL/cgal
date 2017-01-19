@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_PRINT_VRML_2_H
 #define CGAL_IO_PRINT_VRML_2_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/IO/Polyhedron_VRML_2_ostream.h>
 
 namespace CGAL {

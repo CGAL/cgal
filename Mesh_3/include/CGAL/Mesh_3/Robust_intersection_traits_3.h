@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_ROBUST_INTERSECTION_TRAITS_3_H
 #define CGAL_MESH_3_ROBUST_INTERSECTION_TRAITS_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Cartesian_converter.h>

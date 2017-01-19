@@ -21,6 +21,9 @@
 #ifndef CGAL_CH_JARVIS_C
 #define CGAL_CH_JARVIS_C
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS

@@ -26,6 +26,9 @@
 
 #ifndef CGAL_CKVA_SUBDIVISION_2_H
 #define CGAL_CKVA_SUBDIVISION_2_H 1
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #warning this file is considered obsolete
 
 #include <vector>

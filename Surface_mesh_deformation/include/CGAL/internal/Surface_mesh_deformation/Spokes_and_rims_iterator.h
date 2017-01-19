@@ -16,6 +16,9 @@
 
 #ifndef CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
 #define CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
+
+#include <CGAL/license/Surface_mesh_deformation.h>
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 namespace CGAL {

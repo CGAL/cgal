@@ -28,6 +28,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_COMPARISON_ROOT_FOR_SPHERES_2_3_H
 #define CGAL_ALGEBRAIC_KERNEL_COMPARISON_ROOT_FOR_SPHERES_2_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 
 namespace CGAL {
   namespace AlgebraicSphereFunctors{

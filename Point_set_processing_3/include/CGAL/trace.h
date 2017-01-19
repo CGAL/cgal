@@ -20,6 +20,9 @@
 #ifndef CGAL_TRACE_H
 #define CGAL_TRACE_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <iostream>

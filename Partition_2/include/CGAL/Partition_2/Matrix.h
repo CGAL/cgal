@@ -21,6 +21,9 @@
 #ifndef   CGAL_MATRIX_H
 #define   CGAL_MATRIX_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <vector>
 #include <iostream>
 #include <cstddef>

@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_INSERTION_TRAITS_2_H
 #define CGAL_ARR_INSERTION_TRAITS_2_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*!
  * Defintion of the Arr_insertion_traits_2<Traits,Arrangement> class.
  */

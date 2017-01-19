@@ -22,6 +22,9 @@
 #ifndef CGAL_CONVERTIBLE_CIRCULATOR_PROJECT_H
 #define CGAL_CONVERTIBLE_CIRCULATOR_PROJECT_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/Circulator_project.h>
 
 namespace CGAL {

@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_TRAITS_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_TRAITS_H
 
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 

@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_MERGE_H
 #define CGAL_GPS_MERGE_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op.h>
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_join_visitor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_xor_visitor.h>

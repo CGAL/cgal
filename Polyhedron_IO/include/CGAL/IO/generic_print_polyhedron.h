@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
 #define CGAL_IO_GENERIC_PRINT_POLYHEDRON_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Inverse_index.h>
 #include <iostream>

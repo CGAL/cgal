@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_H
 #define CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Spherical_gaussian_map is a data dtructure that represents a Gaussinal map
  * embedded on the sphere.

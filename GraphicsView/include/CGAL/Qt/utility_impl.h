@@ -21,6 +21,9 @@
    
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
+
+#include <CGAL/license/GraphicsView.h>
+
 #else
 #define CGAL_INLINE_FUNCTION
 #endif

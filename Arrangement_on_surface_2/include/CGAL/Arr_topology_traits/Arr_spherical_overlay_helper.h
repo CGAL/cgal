@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_SPHERICAL_OVERLAY_HELPER_H
 #define CGAL_ARR_SPHERICAL_OVERLAY_HELPER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_spherical_overlay_helper class-template.
  */

@@ -21,6 +21,9 @@
 #ifndef CGAL_MESH_2_FACE_BADNESS_H
 #define CGAL_MESH_2_FACE_BADNESS_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 namespace CGAL
 {
   namespace Mesh_2

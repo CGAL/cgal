@@ -22,6 +22,9 @@
 #ifndef CGAL_CONSTRAINED_VORONOI_DIAGRAM_2_H
 #define CGAL_CONSTRAINED_VORONOI_DIAGRAM_2_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <utility>
 #include <stack>
 #include <CGAL/iterator.h>

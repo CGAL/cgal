@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_2_H
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
 
+#include <CGAL/license/TDS_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 

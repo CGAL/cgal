@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESH_CELL_BASE_3_H
 #define CGAL_SURFACE_MESH_CELL_BASE_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Complex_2_in_triangulation_cell_base_3.h>
 
 #ifdef CGAL_MESH_3_IO_H

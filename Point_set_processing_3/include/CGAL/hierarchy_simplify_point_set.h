@@ -21,6 +21,9 @@
 #ifndef HIERARCHY_SIMPLIFY_POINT_SET_H
 #define HIERARCHY_SIMPLIFY_POINT_SET_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <cmath>
 #include <stack>
 

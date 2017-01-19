@@ -21,6 +21,9 @@
 #ifndef CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
 #define CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <CGAL/internal/K_neighbor_search.h>
 
 namespace CGAL {

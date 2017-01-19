@@ -23,6 +23,9 @@
 #ifndef CGAL_POINT_CONTAINER_H
 #define CGAL_POINT_CONTAINER_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <list>
 #include <vector>
 #include <functional>

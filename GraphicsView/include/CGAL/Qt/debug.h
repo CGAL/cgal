@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_DEBUG_H
 #define CGAL_QT_DEBUG_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/auto_link/Qt.h>
 #include <CGAL/export/Qt.h>
 

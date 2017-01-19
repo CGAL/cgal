@@ -20,6 +20,9 @@
 #ifndef CGAL_EXTENDED_HOMOGENEOUS_H
 #define CGAL_EXTENDED_HOMOGENEOUS_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h> 
 #include <CGAL/Point_2.h> 

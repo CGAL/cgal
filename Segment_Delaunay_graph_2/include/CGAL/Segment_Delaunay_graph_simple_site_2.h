@@ -23,6 +23,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_SIMPLE_SITE_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_SIMPLE_SITE_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <iostream>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>

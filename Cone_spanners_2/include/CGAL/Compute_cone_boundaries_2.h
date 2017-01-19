@@ -27,6 +27,9 @@
 #ifndef CGAL_COMPUTE_CONE_BOUNDARIES_2_H
 #define CGAL_COMPUTE_CONE_BOUNDARIES_2_H
 
+#include <CGAL/license/Cone_spanners_2.h>
+
+
 #include <iostream>
 #include <cstdlib>
 #include <vector>

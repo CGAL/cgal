@@ -24,6 +24,9 @@
 #ifndef CGAL_QP_SOLUTION_H
 #define CGAL_QP_SOLUTION_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 #include <iostream>
 #include <vector>
 #include <CGAL/basic.h>

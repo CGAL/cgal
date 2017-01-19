@@ -21,6 +21,9 @@
 #ifndef CGAL_PARTITION_2_IS_VALID_TRAITS_H
 #define CGAL_PARTITION_2_IS_VALID_TRAITS_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 namespace CGAL {
 
 template <class Traits, class PolygonIsValid>

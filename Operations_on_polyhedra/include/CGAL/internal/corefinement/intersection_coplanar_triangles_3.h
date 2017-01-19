@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_INTERSECTION_COPLANAR_TRIANGLES_3_H
 #define CGAL_INTERNAL_INTERSECTION_COPLANAR_TRIANGLES_3_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/internal/corefinement/intersection_triangle_segment_3.h> //for Intersection_type
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>

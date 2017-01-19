@@ -24,6 +24,9 @@
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_ON_LINE_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_ON_LINE_ARC_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
 
 namespace CGAL {

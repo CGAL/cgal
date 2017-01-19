@@ -23,6 +23,9 @@
 #ifndef CGAL_HYPERBOLA_2_H
 #define CGAL_HYPERBOLA_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/enum.h>
 #include <CGAL/determinant.h>
 

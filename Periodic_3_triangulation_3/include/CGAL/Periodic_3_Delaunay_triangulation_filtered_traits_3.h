@@ -24,6 +24,9 @@
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>"
 #include <CGAL/internal/deprecation_warning.h>

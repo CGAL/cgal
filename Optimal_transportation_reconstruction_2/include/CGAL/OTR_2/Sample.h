@@ -20,6 +20,9 @@
 #ifndef CGAL_OTR2_SAMPLE_H
 #define CGAL_OTR2_SAMPLE_H
 
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
+
 
 /// \cond SKIP_IN_MANUAL
 

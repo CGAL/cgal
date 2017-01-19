@@ -27,6 +27,9 @@
 #ifndef CGAL_INTERNAL_MESH_3_GET_INDEX_3_H
 #define CGAL_INTERNAL_MESH_3_GET_INDEX_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/IO/io.h>

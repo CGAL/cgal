@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_LANDMARKS_MIDDLE_EDGES_GENERATOR_H
 #define CGAL_ARR_LANDMARKS_MIDDLE_EDGES_GENERATOR_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
 * Definition of the Arr_middle_edges_landmarks_generator<Arrangement> template.
 */

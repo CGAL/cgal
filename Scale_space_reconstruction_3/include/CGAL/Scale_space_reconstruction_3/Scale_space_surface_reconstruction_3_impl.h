@@ -18,6 +18,9 @@
 #ifndef CGAL_SCALE_SPACE_RECONSTRUCTION_3_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
 #define CGAL_SCALE_SPACE_RECONSTRUCTION_3_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
 
+#include <CGAL/license/Scale_space_reconstruction_3.h>
+
+
 //#include <omp.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/blocked_range.h"

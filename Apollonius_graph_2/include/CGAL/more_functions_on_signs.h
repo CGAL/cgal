@@ -23,6 +23,9 @@
 #ifndef CGAL_MORE_FUNCTIONS_ON_SIGNS_H
 #define CGAL_MORE_FUNCTIONS_ON_SIGNS_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/enum.h>
 
 namespace CGAL {

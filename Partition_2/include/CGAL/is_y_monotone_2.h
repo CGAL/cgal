@@ -21,6 +21,9 @@
 #ifndef CGAL_IS_Y_MONOTONE_2_H
 #define CGAL_IS_Y_MONOTONE_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <CGAL/circulator.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <iterator>

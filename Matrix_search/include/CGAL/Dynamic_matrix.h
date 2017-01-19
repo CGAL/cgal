@@ -21,6 +21,9 @@
 #ifndef CGAL_DYNAMIC_MATRIX_H
 #define CGAL_DYNAMIC_MATRIX_H 1
 
+#include <CGAL/license/Matrix_search.h>
+
+
 #include <vector>
 #include <utility>
 #include <CGAL/Optimisation/assertions.h>

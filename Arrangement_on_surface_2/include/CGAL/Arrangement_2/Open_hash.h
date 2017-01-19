@@ -20,6 +20,9 @@
 #ifndef CGAL_OPEN_HASH_H
 #define CGAL_OPEN_HASH_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Open_hash and the Hash_map class-templates.
  */

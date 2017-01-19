@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_GET_DIMENSION_TAG_H
 #define CGAL_INTERNAL_GET_DIMENSION_TAG_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <CGAL/Dimension.h>
 #include <boost/mpl/has_xxx.hpp>
 

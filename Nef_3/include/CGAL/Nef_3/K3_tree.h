@@ -22,6 +22,9 @@
 #ifndef CGAL_NEF_K3_TREE_H
 #define CGAL_NEF_K3_TREE_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>

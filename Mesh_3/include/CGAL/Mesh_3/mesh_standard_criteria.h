@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_MESH_STANDARD_CRITERIA_H
 #define CGAL_MESH_3_MESH_STANDARD_CRITERIA_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 
 #include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>

@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_FILE_BINARY_MESH_3_H
 #define CGAL_IO_FILE_BINARY_MESH_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <iostream>
 #include <string>
 #include <limits>

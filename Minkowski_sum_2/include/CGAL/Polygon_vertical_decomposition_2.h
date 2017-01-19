@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYGON_VERTICAL_DECOMPOSITION_2_H
 #define CGAL_POLYGON_VERTICAL_DECOMPOSITION_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/General_polygon_set_2.h>

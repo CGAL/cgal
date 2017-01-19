@@ -22,6 +22,9 @@
 #ifndef CGAL_FUZZY_ISO_BOX_H
 #define CGAL_FUZZY_ISO_BOX_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <algorithm>
 
 #include <CGAL/Kd_tree_rectangle.h>

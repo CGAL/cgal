@@ -21,6 +21,9 @@
 #ifndef CGAL_MIN_ANNULUS_D_H
 #define CGAL_MIN_ANNULUS_D_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #ifdef _MSC_VER
 # pragma warning(push)
 # pragma warning(disable: 4244) // conversion warning in Boost iterator_adaptor

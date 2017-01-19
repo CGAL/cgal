@@ -21,6 +21,9 @@
 #ifndef CGAL_TREE_BASE_H
 #define CGAL_TREE_BASE_H
 
+#include <CGAL/license/SearchStructures.h>
+
+
 #include <iterator>
 #include <iostream>
 #include <functional>

@@ -27,6 +27,9 @@
 #ifndef CGAL_INTERNAL_MESH_3_CHECK_WEIGHTS_H
 #define CGAL_INTERNAL_MESH_3_CHECK_WEIGHTS_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Has_features.h>
 #include <boost/type_traits/is_same.hpp>

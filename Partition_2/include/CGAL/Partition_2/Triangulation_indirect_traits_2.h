@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATION_INDIRECT_TRAITS_2_H
 #define CGAL_TRIANGULATION_INDIRECT_TRAITS_2_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <CGAL/Kernel/function_objects.h>
 
 namespace CGAL {

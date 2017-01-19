@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_SLIVER_CRITERIA_H
 #define CGAL_MESH_3_SLIVER_CRITERIA_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/min_dihedral_angle.h>
 #include <CGAL/Mesh_3/radius_ratio.h>
 #include <CGAL/FPU.h> // for CGAL::IA_force_to_double

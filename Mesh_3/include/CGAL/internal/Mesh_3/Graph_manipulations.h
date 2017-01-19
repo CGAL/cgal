@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS
 #define CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Kernel_traits.h>
 // Assumes the point is a CGAL point.

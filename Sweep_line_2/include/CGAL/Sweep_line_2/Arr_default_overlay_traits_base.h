@@ -26,6 +26,9 @@
 #ifndef CGAL_ARR_DEFAULT_OVERLAY_TRAITS_BASE_H
 #define CGAL_ARR_DEFAULT_OVERLAY_TRAITS_BASE_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 namespace CGAL {
 
 /*!

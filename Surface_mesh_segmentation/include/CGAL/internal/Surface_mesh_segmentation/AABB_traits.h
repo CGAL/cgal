@@ -16,6 +16,9 @@
 
 #define CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAITS_H
 
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+
 #include <CGAL/AABB_traits.h>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>

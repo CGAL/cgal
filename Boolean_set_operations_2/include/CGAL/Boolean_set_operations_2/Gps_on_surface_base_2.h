@@ -20,6 +20,9 @@
 #ifndef CGAL_GPS_ON_SURFACE_BASE_2_H
 #define CGAL_GPS_ON_SURFACE_BASE_2_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>

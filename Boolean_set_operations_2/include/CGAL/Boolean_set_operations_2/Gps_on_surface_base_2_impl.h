@@ -24,6 +24,9 @@
 #ifndef CGAL_GPS_ON_SURFACE_BASE_2_IMPL_H
 #define CGAL_GPS_ON_SURFACE_BASE_2_IMPL_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h>

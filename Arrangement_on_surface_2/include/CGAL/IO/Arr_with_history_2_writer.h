@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_WITH_HISTORY_2_WRITER_H
 #define CGAL_ARR_WITH_HISTORY_2_WRITER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The header file for the Arr_with_history_2_writer<Arrangement> class.
  */

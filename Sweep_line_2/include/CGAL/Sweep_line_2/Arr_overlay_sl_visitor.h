@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_OVERLAY_SL_VISITOR_H
 #define CGAL_ARR_OVERLAY_SL_VISITOR_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Definition of the Arr_overlay_sl_visitor class-template.
  */

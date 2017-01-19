@@ -21,6 +21,9 @@
 #ifndef CGAL_PARTITION_TRAITS_2_BASE_H
 #define CGAL_PARTITION_TRAITS_2_BASE_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <CGAL/Polygon_2.h>
 #include <list>
 

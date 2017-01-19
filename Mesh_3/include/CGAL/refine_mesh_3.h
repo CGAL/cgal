@@ -25,6 +25,9 @@
 #ifndef CGAL_REFINE_MESH_3_H
 #define CGAL_REFINE_MESH_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/config.h>
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>

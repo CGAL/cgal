@@ -22,6 +22,9 @@
 #ifndef CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H
 #define CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
 #include <CGAL/property_map.h>

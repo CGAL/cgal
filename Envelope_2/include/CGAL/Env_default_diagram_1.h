@@ -22,6 +22,9 @@
 #ifndef CGAL_ENV_DEFAULT_DIAGRAM_1_H
 #define CGAL_ENV_DEFAULT_DIAGRAM_1_H
 
+#include <CGAL/license/Envelope_2.h>
+
+
 #if (defined __GNUC__)
   #if !(defined __STRICT_ANSI__)
   #warning "Env_default_diagram.h is DEPRECATED, please include Envelope_diagram_1.h instead."

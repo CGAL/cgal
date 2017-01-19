@@ -20,6 +20,9 @@
 #ifndef CGAL_CREATE_STRAIGHT_SKELETON_2_H
 #define CGAL_CREATE_STRAIGHT_SKELETON_2_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_2.h>

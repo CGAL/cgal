@@ -26,6 +26,9 @@
 #ifndef CGAL_AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_
 #define CGAL_AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_segment_primitive.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_halfedge_graph_segment_primitive.h>"
 #include <CGAL/internal/deprecation_warning.h>

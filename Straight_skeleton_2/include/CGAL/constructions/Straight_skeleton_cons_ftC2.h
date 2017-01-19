@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_CONS_FTC2_H
 #define CGAL_STRAIGHT_SKELETON_CONS_FTC2_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 
 namespace CGAL { 

@@ -22,6 +22,9 @@
 #ifndef CGAL_FIXED_BORDER_PARAMETERIZER_3_H
 #define CGAL_FIXED_BORDER_PARAMETERIZER_3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/circulator.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Eigen_solver_traits.h>

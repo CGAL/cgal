@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_MESH_3_INTERNAL_HANDLE_IO_FOR_PAIR_OF_INT_H
 #define CGAL_INTERNAL_MESH_3_INTERNAL_HANDLE_IO_FOR_PAIR_OF_INT_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <utility>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <ostream>

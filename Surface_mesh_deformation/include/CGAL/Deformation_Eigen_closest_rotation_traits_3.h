@@ -21,6 +21,9 @@
 #ifndef CGAL_DEFORMATION_EIGEN_CLOSEST_ROTATION_TRAITS_3_H
 #define CGAL_DEFORMATION_EIGEN_CLOSEST_ROTATION_TRAITS_3_H
 
+#include <CGAL/license/Surface_mesh_deformation.h>
+
+
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
 

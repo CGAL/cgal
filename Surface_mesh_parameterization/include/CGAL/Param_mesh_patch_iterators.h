@@ -22,6 +22,9 @@
 #ifndef CGAL_PARAM_MESH_PATCH_ITERATORS_H
 #define CGAL_PARAM_MESH_PATCH_ITERATORS_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/Param_mesh_patch_vertex.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 

@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_TRAPEZOID_RIC_POINT_LOCATION_H
 #define CGAL_ARR_TRAPEZOID_RIC_POINT_LOCATION_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_trapezoid_ric_point_location<Arrangement> template.
  */

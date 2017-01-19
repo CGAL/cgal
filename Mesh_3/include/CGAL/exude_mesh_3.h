@@ -25,6 +25,9 @@
 #ifndef CGAL_EXUDE_MESH_3_H
 #define CGAL_EXUDE_MESH_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 #include <CGAL/Mesh_optimization_return_code.h>

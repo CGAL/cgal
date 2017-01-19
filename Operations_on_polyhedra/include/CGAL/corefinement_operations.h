@@ -21,6 +21,9 @@
 #ifndef CGAL_COREFINEMENT_OPERATIONS_H
 #define CGAL_COREFINEMENT_OPERATIONS_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/intersection_of_Polyhedra_3.h>
 #include <CGAL/intersection_of_Polyhedra_3_refinement_visitor.h>
 #include <CGAL/internal/corefinement/Combinatorial_map_output_builder.h>

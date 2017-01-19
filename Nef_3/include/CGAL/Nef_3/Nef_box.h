@@ -19,6 +19,9 @@
 #ifndef CGAL_NEF_BOX_H
 #define CGAL_NEF_BOX_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 

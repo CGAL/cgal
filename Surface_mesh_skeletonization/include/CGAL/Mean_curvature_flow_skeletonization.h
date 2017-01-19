@@ -20,6 +20,9 @@
 #ifndef CGAL_MEAN_CURVATURE_FLOW_SKELETONIZATION_H
 #define CGAL_MEAN_CURVATURE_FLOW_SKELETONIZATION_H
 
+#include <CGAL/license/Surface_mesh_skeletonization.h>
+
+
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>

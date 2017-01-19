@@ -21,6 +21,9 @@
 #ifndef TEXTRENDERER_H
 #define TEXTRENDERER_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <QObject>
 #include <QVector3D>
 

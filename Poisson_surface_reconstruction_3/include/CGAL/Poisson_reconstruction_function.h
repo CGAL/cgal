@@ -20,6 +20,9 @@
 #ifndef CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
 #define CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 #ifndef CGAL_DIV_NORMALIZED
 #  ifndef CGAL_DIV_NON_NORMALIZED
 #    define CGAL_DIV_NON_NORMALIZED 1

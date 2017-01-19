@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 #define CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 
 #include <CGAL/iterator.h>
 

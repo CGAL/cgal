@@ -22,6 +22,9 @@
 #ifndef CGAL_HALFSPACE_INTERSECTION_3_H
 #define CGAL_HALFSPACE_INTERSECTION_3_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_3.h>
 #include <CGAL/Origin.h>

@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_CONVERTER_2_H
 #define CGAL_STRAIGHT_SKELETON_CONVERTER_2_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <boost/shared_ptr.hpp>
 #include <CGAL/Cartesian_converter.h>
 

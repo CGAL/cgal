@@ -24,6 +24,9 @@
 #ifndef CGAL_ARR_NON_CACHING_SEGMENT_BASIC_TRAITS_2_H
 #define CGAL_ARR_NON_CACHING_SEGMENT_BASIC_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file The basic non-caching segment traits-class for the arrangement
  * package. This traits class handles x-monotone non-intersecting segments.
  * It is a model of the ArrangementBasicTraits_2 concept. The class is

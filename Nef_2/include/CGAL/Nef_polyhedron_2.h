@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_POLYHEDRON_2_H
 #define CGAL_NEF_POLYHEDRON_2_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4800) // complaint about performance in std::map where we can't do anything
