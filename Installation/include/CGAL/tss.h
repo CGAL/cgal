@@ -48,8 +48,19 @@
        if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1,ARG2));}  \
        TYPE& VAR =  * VAR##_ptr.get()
 
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(TYPE, VAR, ARG1, ARG2, ARG3)    \
+       static boost::thread_specific_ptr<TYPE> VAR##_ptr;                       \
+       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1,ARG2,ARG3));} \
+       TYPE& VAR =  * VAR##_ptr.get()
 
-#  else
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_4(TYPE, VAR, ARG1, ARG2, ARG3, ARG4)   \
+       static boost::thread_specific_ptr<TYPE> VAR##_ptr;                            \
+       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1,ARG2,ARG3,ARG4));} \
+       TYPE& VAR =  * VAR##_ptr.get()
+
+
+
+#  else // not CGAL_USE_BOOST_THREAD, -> use C++11 thread_local
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(TYPE, VAR)       \
        static thread_local TYPE VAR
@@ -60,9 +71,15 @@
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(TYPE, VAR, ARG1, ARG2)       \
   static thread_local TYPE VAR(ARG1,ARG2)
 
-#  endif
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(TYPE, VAR, ARG1, ARG2, ARG3) \
+  static thread_local TYPE VAR(ARG1,ARG2,ARG3)
 
-#else 
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_4(TYPE, VAR, ARG1, ARG2, ARG3, ARG4) \
+  static thread_local TYPE VAR(ARG1,ARG2,ARG3,ARG4)
+
+#  endif // not CGAL_USE_BOOST_THREAD
+
+#else // not CGAL_HAS_THREADS
 
 #  define CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(TYPE, VAR) static TYPE VAR
 
@@ -70,6 +87,9 @@
 
 #  define CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(TYPE, VAR,ARG1,ARG2) static TYPE VAR(ARG1,ARG2)
 
-#endif
+#  define CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(TYPE, VAR,ARG1,ARG2,ARG3) static TYPE VAR(ARG1,ARG2,ARG3)
+
+#  define CGAL_STATIC_THREAD_LOCAL_VARIABLE_4(TYPE, VAR,ARG1,ARG2,ARG3,ARG4) static TYPE VAR(ARG1,ARG2,ARG3,ARG4)
+#endif // not CGAL_HAS_THREADS
 
 #endif // CGAL_TSS_H
