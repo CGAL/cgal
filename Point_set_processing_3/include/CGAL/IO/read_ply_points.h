@@ -168,9 +168,10 @@ class Ply_reader
 {
 
   std::vector<internal::Ply_read_number*> m_readers;
-  std::size_t m_nb_points;
+
 
 public:
+  std::size_t m_nb_points;
   
   /// \cond SKIP_IN_MANUAL
   Ply_reader () : m_nb_points (0) { }
@@ -311,24 +312,6 @@ public:
     m_readers.clear();
   }
 
-  template <typename Stream, typename PlyInterpreter>
-  bool read_content (Stream& stream, PlyInterpreter& interpreter)
-  {
-    std::size_t points_read = 0;
-    
-    while (!(stream.eof()) && points_read < m_nb_points)
-      {
-        for (std::size_t i = 0; i < m_readers.size (); ++ i)
-          m_readers[i]->get (stream);
-
-        interpreter.process_line (*this);
-
-        ++ points_read;
-      }
-    // Skip remaining lines
-
-    return (points_read == m_nb_points);
-  }
   /// \endcond
   
   /*!
@@ -407,99 +390,133 @@ public:
   
 };
 
-//===================================================================================
-/// \ingroup PkgPointSetProcessing
-///
-/// PLY interpreter designed to fill an output iterator of points and
-/// normals based on given property maps. It is used internally by the
-/// functions `read_ply_points()` and `read_ply_points_and_normals()`.
-///
-/// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-/// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of `WritablePropertyMap` with  value type `Point_3<Kernel>`.
-/// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `Vector_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///
-/// \cgalModels `PlyInterpreter`
-//-----------------------------------------------------------------------------------
 
-template <typename OutputIteratorValueType,
-          typename OutputIterator,
-          typename PointPMap,
-          typename NormalPMap,
-          typename Kernel>
-class Ply_interpreter_points_and_normals_3
+template <typename T>
+struct Ply_property
 {
-  // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
-  typedef OutputIteratorValueType Enriched_point;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-    
-  OutputIterator m_output;
-  PointPMap& m_point_pmap;
-  NormalPMap& m_normal_pmap;
+  typedef T type;
+  const char* name;
+  Ply_property (const char* name) : name (name) { }
+};
+
+
+template <class Reader, class T>
+void get_value(Reader& r, T& v, Ply_property<T>& wrapper)
+{
+  return r.assign(v, wrapper.name);
+}
+
   
-public:
-  /*!
-    Constructs a PLY interpreter for points and normals.
-   */
-  Ply_interpreter_points_and_normals_3 (OutputIterator output,
-                                        PointPMap& point_pmap,
-                                        NormalPMap& normal_pmap)
-    : m_output (output),
-      m_point_pmap (point_pmap),
-      m_normal_pmap (normal_pmap)
-  { }
-
-  bool is_applicable (Ply_reader& reader)
+template <std::size_t N>
+struct Filler
+{
+  template <class Reader, class Value_tuple, class Ply_property_tuple>
+  static void fill(Reader& r, Value_tuple& values, Ply_property_tuple wrappers)
   {
-    return reader.does_tag_exist<FT> ("x")
-      && reader.does_tag_exist<FT> ("y")
-      && reader.does_tag_exist<FT> ("z");
+    get_value(r, std::get<N>(values), std::get<N+2>(wrappers));
+    Filler<N-1>::fill(r, values, wrappers);
   }
-  
-  void process_line (Ply_reader& reader)
+};
+
+template<int ...>
+struct seq { };
+
+template<int N, int ...S>
+struct gens : gens<N-1, N-1, S...> { };
+
+template<int ...S>
+struct gens<0, S...> {
+  typedef seq<S...> type;
+};
+
+template<class ValueType, class Functor, class Tuple, int ...S>
+ValueType call_functor(Functor f, Tuple t, seq<S...>) {
+  return f(std::get<S>(t) ...);
+}
+
+template <class ValueType, class Functor, typename ... T>
+ValueType call_functor(Functor f, std::tuple<T...>& t)
+{
+  return call_functor<ValueType>(f, t, typename gens<sizeof...(T)>::type());
+}
+
+template<>
+struct Filler<0>
+{
+  template <class Reader, class Value_tuple, class Ply_property_tuple>
+  static void fill(Reader& r, Value_tuple& values, Ply_property_tuple wrappers)
   {
-    FT x = (FT)0.,y = (FT)0., z = (FT)0.,
-      nx = (FT)0., ny = (FT)0., nz = (FT)0.;
-    reader.assign (x, "x");
-    reader.assign (y, "y");
-    reader.assign (z, "z");
-    reader.assign (nx, "nx");
-    reader.assign (ny, "ny");
-    reader.assign (nz, "nz");
-
-    Point point (x, y, z);
-    Vector normal (nx, ny, nz);
-    Enriched_point pwn;
-      
-    put(m_point_pmap,  pwn, point);  // point_pmap[&pwn] = point
-    put(m_normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
-    *m_output++ = pwn;
+    get_value(r, std::get<0>(values), std::get<2>(wrappers));
   }
-
 };
 
 
 
-//===================================================================================
-/// \ingroup PkgPointSetProcessing
-/// Reads points from a .ply stream (ASCII or binary) using a custom
-/// interpreter provided by the user.
-///
-/// @tparam PlyInterpreter Interpreter of Ply input, must be a model of `PlyInterpreter`
-/// @tparam Kernel Geometric traits class.
-///
-/// @return true on success.
-//-----------------------------------------------------------------------------------
-template < typename PlyInterpreter,
-           typename Kernel >
-bool read_ply_custom_points(std::istream& stream, ///< input stream.
-                            PlyInterpreter& interpreter, ///< Custom PLY interpreter
-                            const Kernel& /* kernel */) ///< geometric traits.
+  
+template <typename OutputValueType,
+          typename PropertyMap,
+          typename Constructor,
+          typename ... T>
+void process_properties (Ply_reader& reader, OutputValueType& new_element,
+                         std::tuple<PropertyMap, Constructor, Ply_property<T>...>& current)
 {
+  typedef typename PropertyMap::value_type PmapValueType;
+  std::tuple<T...> values;
+  Filler<sizeof...(T)-1>::fill(reader, values, current);
+  PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
+  put (std::get<0>(current), new_element, new_value);
+}
+  
+template <typename OutputValueType,
+          typename PropertyMap,
+          typename Constructor,
+          typename ... T,
+          typename NextPropertyBinder,
+          typename ... PropertyMapBinders>
+void process_properties (Ply_reader& reader, OutputValueType& new_element,
+                         std::tuple<PropertyMap, Constructor, Ply_property<T>...>& current,
+                         NextPropertyBinder& next,
+                         PropertyMapBinders&& ... properties)
+{
+  typedef typename PropertyMap::value_type PmapValueType;
+  std::tuple<T...> values;
+  Filler<sizeof...(T)-1>::fill(reader, values, current);
+  PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
+  put (std::get<0>(current), new_element, new_value);
+  
+  process_properties (reader, new_element, next, properties...);
+}
+
+
+  template <typename OutputValueType, typename PropertyMap, typename T>
+void process_properties (Ply_reader& reader, OutputValueType& new_element,
+                         std::pair<PropertyMap, Ply_property<T> >& current)
+{
+  T new_value = T();
+  reader.assign (new_value, current.second.name);
+  put (current.first, new_element, new_value);
+}
+
+template <typename OutputValueType, typename PropertyMap, typename T,
+          typename NextPropertyBinder, typename ... PropertyMapBinders>
+void process_properties (Ply_reader& reader, OutputValueType& new_element,
+                         std::pair<PropertyMap, Ply_property<T> >& current,
+                         NextPropertyBinder& next,
+                         PropertyMapBinders&& ... properties)
+{
+  T new_value = T();
+  reader.assign (new_value, current.second.name);
+  put (current.first, new_element, new_value);
+  process_properties (reader, new_element, next, properties...);
+}
+  
+template <typename OutputIterator, typename ... PropertyMapBinder>
+bool read_ply_properties (std::istream& stream,
+                          OutputIterator output,
+                          PropertyMapBinder&& ... properties)
+{
+  typedef typename value_type_traits<OutputIterator>::type OutputValueType;
+    
   if(!stream)
     {
       std::cerr << "Error: cannot open file" << std::endl;
@@ -511,16 +528,26 @@ bool read_ply_custom_points(std::istream& stream, ///< input stream.
   if (!(reader.init (stream)))
     return false;
   
-  if (!(interpreter.is_applicable (reader)))
+  std::size_t points_read = 0;
+  
+  while (!(stream.eof()) && points_read < reader.m_nb_points)
     {
-      std::cerr << "Error: PLY interpreter is not applicable to input file" << std::endl;
-      return false;
+      for (std::size_t i = 0; i < reader.readers().size (); ++ i)
+        reader.readers()[i]->get (stream);
+
+      OutputValueType new_element;
+
+      process_properties (reader, new_element, properties...);
+
+      *(output ++) = new_element;
+      
+      ++ points_read;
     }
+  // Skip remaining lines
 
-  return reader.read_content (stream, interpreter);
+  return (points_read == reader.m_nb_points);
 }
-
-
+  
 
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
@@ -552,11 +579,8 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
                                  const Kernel& kernel) ///< geometric traits.
 {
-  Ply_interpreter_points_and_normals_3
-    <OutputIteratorValueType, OutputIterator, PointPMap, NormalPMap, Kernel>
-    interpreter (output, point_pmap, normal_pmap);
 
-  return read_ply_custom_points (stream, interpreter, kernel);
+  return true;
 }
 
 /// @cond SKIP_IN_MANUAL
