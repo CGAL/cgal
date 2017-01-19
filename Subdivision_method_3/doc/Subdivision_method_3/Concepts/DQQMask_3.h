@@ -25,7 +25,7 @@ public:
 /*!  The polygon mesh must be triangulated.
 
 */
-  typedef unspecified_type Polyhedron;
+  typedef unspecified_type PolygonMesh;
   typedef unspecified_type VertexPointMap;
 
 /// @}
@@ -36,11 +36,11 @@ public:
 /*! Constructor.
  * The default vertex point property map is used.
 */
-DQQMask_3(Polyhedron* pmesh);
+DQQMask_3(PolygonMesh* pmesh);
 
 /*! Constructor.
 */
-DQQMask_3(Polyhedron* pmesh, VertexPointMap vpmap);
+DQQMask_3(PolygonMesh* pmesh, VertexPointMap vpmap);
 
 /*!
 computes the subdivided point `pt` based on the neighborhood

@@ -9,9 +9,9 @@
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 using namespace CGAL::Three;
-class Polyhedron_demo_subdivision_methods_plugin : 
+class Polyhedron_demo_subdivision_methods_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -48,7 +48,7 @@ public:
 
   }
 
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 public Q_SLOTS:
@@ -64,8 +64,8 @@ private :
 void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(!item) return;
@@ -84,8 +84,8 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
 void Polyhedron_demo_subdivision_methods_plugin::on_actionCatmullClark_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(!item) return;
@@ -105,8 +105,8 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionCatmullClark_triggered
 void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(!item) return;
@@ -126,8 +126,8 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
 void Polyhedron_demo_subdivision_methods_plugin::on_actionDooSabin_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(!item) return;

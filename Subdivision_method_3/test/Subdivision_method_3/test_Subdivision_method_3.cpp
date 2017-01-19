@@ -27,7 +27,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -338,7 +338,7 @@ void test_Subdivision_surface_3_SM_NP() {
 
     // some arbitrary new coordinates (different from the internal vpm)
     BOOST_FOREACH(vertex_descriptor vd, vertices(P)) {
-      Point pt = get(vpm, vd);
+      const Point& pt = get(vpm, vd);
       Vector v = pt - Point(0., 0., -3.);
       put(apm, vd, pt + 0.5*v);
     }

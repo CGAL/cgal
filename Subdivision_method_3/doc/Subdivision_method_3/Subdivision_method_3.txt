@@ -13,7 +13,7 @@ namespace CGAL {
 \section sectionSubIntro Introduction
 
 Subdivision methods are simple yet powerful ways to
-generate smooth surfaces from arbitrary polyhedral meshes.
+generate smooth surfaces from arbitrary polygonal meshes.
 Unlike spline-based surfaces (e.g NURBS) or other numeric-based
 modeling techniques, users of subdivision
 methods do not need the mathematical knowledge of
@@ -133,16 +133,16 @@ Subdivision_method_3::CatmullClark_subdivision(pmesh, d);
 
 `Subdivision_method_3` specifies the namespace of the
 subdivision functions. `CatmullClark_subdivision(P, d)` computes the
-Catmull-Clark subdivision surface of the polyhedron `pmesh` after
-`d` iterations of the refinements. The polyhedron `pmesh` is
+Catmull-Clark subdivision surface of the polygon mesh `pmesh` after
+`d` iterations of the refinements. The polygon mesh  `pmesh` is
 passed by reference, and is modified (i.e.\ subdivided) by the
 subdivision function.
 
 This example shows how to subdivide a `Surface_mesh`
 with `Subdivision_method_3`.
-An application-defined polyhedron might use a specialized kernel and/or
+An application-defined polygon mesh might use a specialized kernel and/or
 a specialized internal container. There is one major restriction on the
-application-defined polyhedron to work with
+application-defined polygon mesh to work with
 `Subdivision_method_3`:
 The primitives (such as vertices, halfedges and faces)
 in the internal container are sequentially ordered (e.g.
@@ -258,8 +258,8 @@ class CatmullClark_mask_3 {
 };
 
   void edge_node(halfedge_descriptor edge, Point_3& pt) {
-    Point_3 p1 = get(vpm,target(edge, pmesh));
-    Point_3 p2 = get(vpm,source(edge, pmesh));
+    Point_3& p1 = get(vpm,target(edge, pmesh));
+    Point_3& p2 = get(vpm,source(edge, pmesh));
     Point_3 f1, f2;
     face_node(face(edge,pmesh), f1);
     face_node(face(opposite(edge,pmesh),pmesh), f2);
@@ -319,8 +319,8 @@ explained in the next two sections.
 \section secRefHost Refinement Host
 
 A refinement host is a template function of
-a polyhedron class and a geometry mask class. It refines
-the input polyhedron, and computes new points through the geometry masks.
+a polygon mesh class and a geometry mask class. It refines
+the input polygon mesh, and computes new points through the geometry masks.
 `Subdivision_method_3` supports four refinement hosts:
 primal quadrilateral quadrisection (PQQ),
 primal triangle quadrisection (PTQ), dual quadrilateral
@@ -354,7 +354,7 @@ The mesh class must be a model of
 and the mask is a policy class realizing the geometry masks of the
 subdivision method.
 
-A refinement host refines the input polyhedron, maintains
+A refinement host refines the input polygon mesh, maintains
 the stencils (i.e., the mapping between the control mesh
 and the refined mesh), and calls the geometry masks
 to compute the new points.
@@ -363,12 +363,12 @@ as a sequence of connectivity operations (mainly Euler operations).
 The order of the connectivity operations plays a key role when maintaining
 stencils. By matching the order of the source submeshes to the refined
 vertices, no flag in the primitives is required to register the stencils.
-It avoids the data dependency of the refinement host on the polyhedron class.
-To make the ordering trick work, the polyhedron class must
+It avoids the data dependency of the refinement host on the polygon mesh class.
+To make the ordering trick work, the polygon mesh class must
 have a sequential container, such as a vector or a linked-list, as
 the internal storage.
 A sequential container guarantees that the iterators of the
-polyhedron always traverse the primitives in the order of their
+polygon mesh always traverse the primitives in the order of their
 insertions. Non-sequential structures such as
 trees or maps do not provide the required ordering, and hence
 cannot be used with `Subdivision_method_3`.
@@ -382,9 +382,9 @@ that provides a mapping between vertices and points.
 
 
 Refinement hosts `PQQ` and `DQQ` work on a general
-polyhedron, and `PTQ` and `Sqrt3` work on a triangulated
-polyhedron. The result of `PTQ` and `Sqrt3` on a non-triangulated
-polyhedron is undefined. `Subdivision_method_3` does not verify
+polygon mesh, and `PTQ` and `Sqrt3` work on a triangulated
+polygon mesh. The result of `PTQ` and `Sqrt3` on a non-triangulated
+polygon mesh is undefined. `Subdivision_method_3` does not verify
 the precondition of the mesh characteristics before the refinement.
 
 For details of the refinement implementation,
@@ -442,7 +442,7 @@ In this example, the computation is based on the assumption that
 the `Point_3` is the `CGAL::Point_3`. It is an assumption,
 but not a restriction.
 You are allowed to use any point class as long as it is
-defined as the `Point_3` in your polyhedron.
+defined as the `Point_3` in your polygon mesh.
 You may need to modify the geometry policy to support the computation
 and the assignment of the specialized point. This extension is not unusual
 in graphics applications. For example, you might want to subdivide the
@@ -450,9 +450,9 @@ texture coordinates for your subdivision surface.
 
 The refinement host of Catmull-Clark subdivision
 requires three geometry masks for
-polyhedrons without open boundaries: a vertex-node
+polygon meshes without open boundaries: a vertex-node
 mask, an edge-node mask, and a face-node mask.
-To support polyhedrons with boundaries, a border-node mask is
+To support polygon meshes with boundaries, a border-node mask is
 also required. The border-node mask for Catmull-Clark subdivision
 is listed below, where `ept` returns the new point splitting
 `edge` and `vpt` returns the new point on the vertex pointed by
@@ -526,7 +526,7 @@ Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions by specializing
 their respective refinement hosts.
 They are designed to work on any model of a `MutableFaceGraph`
 such as `Polyhedron_3` and `Surface_mesh`. If your application
-uses a polyhedron with a specialized geometry kernel, you need to
+uses a polygon mesh with a specialized geometry kernel, you need to
 specialize the refinement host with a geometry policy
 based on that kernel.
 

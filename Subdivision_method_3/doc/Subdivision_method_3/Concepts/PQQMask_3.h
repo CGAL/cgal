@@ -26,7 +26,7 @@ public:
 /*!  The polygon mesh must be triangulated.
 
 */
-  typedef unspecified_type Polyhedron;
+  typedef unspecified_type PolygonMesh;
   typedef unspecified_type VertexPointMap;
 
 /// @}
@@ -37,11 +37,11 @@ public:
 /*! Constructor.
  * The default vertex point property map is used.
 */
-PQQMask_3(Polyhedron* pmesh);
+PQQMask_3(PolygonMesh* pmesh);
 
 /*! Constructor
 */
-PQQMask_3(Polyhedron* pmesh, VertexPointMap vpmap);
+PQQMask_3(PolygonMesh* pmesh, VertexPointMap vpmap);
 
 /*!
 computes the face-point `pt` based on the neighborhood

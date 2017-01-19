@@ -23,7 +23,7 @@ public:
 /*!  The polygon mesh must be triangulated.
 
 */
-  typedef unspecified_type Polyhedron;
+  typedef unspecified_type PolygonMesh;
   typedef unspecified_type VertexPointMap;
 /// @}
 
@@ -35,11 +35,11 @@ public:
  *
  * The default vertex point property map is used.
 */
-PTQMask_3(Polyhedron* pmesh);
+PTQMask_3(PolygonMesh* pmesh);
 
 /*! Constructor
 */
-PTQMask_3(Polyhedron* pmesh, VertexPointMap vpmap);
+PTQMask_3(PolygonMesh* pmesh, VertexPointMap vpmap);
 
 /*!
 computes the edge-point `pt` based on the neighborhood

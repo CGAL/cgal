@@ -3,7 +3,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 #include <CGAL/Timer.h>
 
 #include <boost/lexical_cast.hpp>

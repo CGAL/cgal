@@ -4,7 +4,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 #include <CGAL/Timer.h>
 
 #include <boost/lexical_cast.hpp>
@@ -13,8 +13,8 @@
 #include <fstream>
 
 typedef CGAL::Simple_cartesian<double>            Kernel;
-//typedef CGAL::Polyhedron_3<Kernel>                PolygonMesh;
-typedef CGAL::Surface_mesh<Kernel::Point_3>       PolygonMesh;
+typedef CGAL::Polyhedron_3<Kernel>                PolygonMesh;
+//typedef CGAL::Surface_mesh<Kernel::Point_3>       PolygonMesh;
 
 using namespace std;
 using namespace CGAL;
