@@ -117,6 +117,16 @@ if [ -n "${project_name_demo}" ]; then
   exit 1
 fi
 
+#check header files without license include directive
+echo '.. Checking include directives in header files...'
+file_without_license_include=$(for pkg in `ack-grep "^GPL" */package_info/*/license.txt -l | awk -F "/" '{print $1}'`; do find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r grep -L "#include <CGAL/license"; done)
+if [ -n "${file_without_license_include}" ]; then
+  echo "The following files do not have an include directive of the package license header:"
+  echo ${file_without_license_include}
+  exit 1
+fi
+
+
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
 txt_not_utf8=$(for i in `find . -type f`; do out=`file $i`; if echo $out | grep -q "text"; then if ! (echo $out | egrep -q "UTF-8|ASCII|XML|EPS"); then echo $i; fi; fi; done)
