@@ -1,42 +1,85 @@
-language: cpp
-dist: trusty
-install:
-before_script:
-  - mkdir build
-  - cd build
-  - cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ..
-script:
-  - make
-  - make -k examples
-#  - make -k tests
-#  - make -k demos
-compiler:
-  - clang
-  - gcc
-addons:
-  apt:
-    packages:
-      - cmake
-      - libboost1.55-dev
-      - libboost-system1.55-dev
-      - libboost-program-options1.55-dev
-      - libboost-thread1.55-dev
-      - libgmp-dev
-      - libmpfr-dev
-      - zlib1g-dev
-      - libeigen3-dev # too old
-      # Not allowed (yet)
-      # - geomview
-      # - libglew1.5-dev
-      # - libipe-dev
-      # - libmpfi-dev
-      # Not found
-      # - libqglviewer-dev
-      # - qtbase5-dev
-      # - qtscript5-dev
-      # - libqt5svg5-dev
-      # - qttools5-dev
-      # - qttools5-dev-tools
-    sources:
-      - kalakris-cmake
-      - boost-latest
+language: cpp 
+dist: trusty 
+sudo: required 
+env: 
+ matrix: 
+  - PACKAGE='AABB_tree Advancing_front_surface_reconstruction Algebraic_foundations ' 
+  - PACKAGE='Algebraic_kernel_d Algebraic_kernel_for_circles Algebraic_kernel_for_spheres ' 
+  - PACKAGE='Alpha_shapes_2 Alpha_shapes_3 Apollonius_graph_2 ' 
+  - PACKAGE='Arithmetic_kernel Arrangement_on_surface_2 Barycentric_coordinates_2 ' 
+  - PACKAGE='BGL Boolean_set_operations_2 Bounding_volumes ' 
+  - PACKAGE='Box_intersection_d CGAL_ImageIO CGAL_ipelets ' 
+  - PACKAGE='Circular_kernel_2 Circular_kernel_3 Circulator ' 
+  - PACKAGE='Combinatorial_map Cone_spanners_2 Convex_decomposition_3 ' 
+  - PACKAGE='Convex_hull_2 Convex_hull_3 Convex_hull_d ' 
+  - PACKAGE='Distance_2 Distance_3 Envelope_2 ' 
+  - PACKAGE='Envelope_3 Filtered_kernel Generalized_map ' 
+  - PACKAGE='Generator Geomview GraphicsView ' 
+  - PACKAGE='HalfedgeDS Hash_map Inscribed_areas ' 
+  - PACKAGE='Installation Interpolation Intersections_2 ' 
+  - PACKAGE='Intersections_3 Interval_skip_list Interval_support ' 
+  - PACKAGE='Inventor Jet_fitting_3 Kernel_23 ' 
+  - PACKAGE='Kernel_d Kinetic_data_structures Kinetic_framework ' 
+  - PACKAGE='Linear_cell_complex Matrix_search Mesh_2 ' 
+  - PACKAGE='Mesh_3 Minkowski_sum_2 Minkowski_sum_3 ' 
+  - PACKAGE='Modifier Modular_arithmetic Nef_2 ' 
+  - PACKAGE='Nef_3 Nef_S2 NewKernel_d ' 
+  - PACKAGE='Number_types Optimal_transportation_reconstruction_2 Partition_2 ' 
+  - PACKAGE='Periodic_2_triangulation_2 Periodic_3_triangulation_3 Point_set_2 ' 
+  - PACKAGE='Point_set_3 Point_set_processing_3 Point_set_shape_detection_3 ' 
+  - PACKAGE='Poisson_surface_reconstruction_3 Polygon Polygon_mesh_processing ' 
+  - PACKAGE='Polyhedron Polyhedron_IO Polyline_simplification_2 ' 
+  - PACKAGE='Polynomial Polytope_distance_d Principal_component_analysis ' 
+  - PACKAGE='Profiling_tools QP_solver Random_numbers ' 
+  - PACKAGE='Ridges_3 Scale_space_reconstruction_3 Segment_Delaunay_graph_2 ' 
+  - PACKAGE='Segment_Delaunay_graph_Linf_2 Skin_surface_3 Snap_rounding_2 ' 
+  - PACKAGE='Solver_interface Spatial_searching Spatial_sorting ' 
+  - PACKAGE='STL_Extension Straight_skeleton_2 Stream_lines_2 ' 
+  - PACKAGE='Stream_support Subdivision_method_3 Surface_mesh ' 
+  - PACKAGE='Surface_mesh_deformation Surface_mesher Surface_mesh_parameterization ' 
+  - PACKAGE='Surface_mesh_segmentation Surface_mesh_shortest_path Surface_mesh_simplification ' 
+  - PACKAGE='Surface_mesh_skeletonization Sweep_line_2 TDS_2 ' 
+  - PACKAGE='TDS_3 Three Triangulation ' 
+  - PACKAGE='Triangulation_2 Triangulation_3 Union_find ' 
+  - PACKAGE='Visibility_2 Voronoi_diagram_2 ' 
+  - PACKAGE='CHECK' 
+install: 
+before_script: 
+- mkdir -p build 
+- cd build 
+- cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- make 
+- cd .. 
+script: 
+- cd ./.travis
+- bash -x -e ./build_package.sh $PACKAGE
+compiler: 
+  - clang 
+  - gcc 
+addons: 
+  apt: 
+    packages: 
+      - cmake 
+      - libboost1.55-dev 
+      - libboost-system1.55-dev 
+      - libboost-program-options1.55-dev 
+      - libboost-thread1.55-dev 
+      - libgmp-dev 
+      - libmpfr-dev 
+      - zlib1g-dev 
+      - libeigen3-dev # too old 
+      # Not allowed (yet) 
+      # - geomview 
+      # - libglew1.5-dev 
+      # - libipe-dev 
+      # - libmpfi-dev 
+      # Not found 
+      # - libqglviewer-dev 
+      # - qtbase5-dev 
+      # - qtscript5-dev 
+      # - libqt5svg5-dev 
+      # - qttools5-dev 
+      # - qttools5-dev-tools 
+    sources: 
+      - kalakris-cmake 
+      - boost-latest 
