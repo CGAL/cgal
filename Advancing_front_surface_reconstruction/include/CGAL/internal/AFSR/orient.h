@@ -17,7 +17,8 @@
 //
 // Author(s)     : Frank Da, David Cohen-Steiner, Andreas Fabri
 
-#ifndef CGAL_AFSR_ORIENT
+#ifndef CGAL_AFSR_ORIENT_H
+#define CGAL_AFSR_ORIENT_H
 
 namespace CGAL {
   namespace AFSR {
@@ -136,4 +137,4 @@ namespace CGAL {
   } // namespace AFSR
 } // namespace CGAL
 
-#endif //CGAL_AFSR_ORIENT
+#endif //CGAL_AFSR_ORIENT_H
