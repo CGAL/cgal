@@ -46,6 +46,16 @@ namespace cpp0x = cpp11;
 using cpp11::array;
 
 
+struct Construct_array
+{
+  template <typename T, typename... Args>
+  cpp11::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  {
+    cpp11::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
+    return a;
+  }
+};
+
 // The make_array() function simply constructs an std::array.
 // It is needed for cases where a std::array is used as a class data
 // member and you want to initialize it in the member initializers list.
@@ -134,7 +144,7 @@ make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
   cpp11::array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
   return a;
 }
-
+  
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 } //namespace CGAL
