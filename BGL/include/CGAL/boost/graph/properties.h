@@ -24,6 +24,7 @@
 #include <CGAL/property_map.h>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/foreach.hpp>
 
 #include <CGAL/basic.h>
 #include <string>
