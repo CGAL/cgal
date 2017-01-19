@@ -12,6 +12,13 @@ if [ -z "`git --version`" ]; then
 fi
 
 git=git
+ack=ack-grep
+if ! $ack --version >/dev/null 2>&1; then
+    ack=ack
+fi
+if ! $ack --version >/dev/null 2>&1; then
+    ack=NOACK
+fi
 if hub --version 2> /dev/null > /dev/null; then
     case "$(hub --version)" in
 	*hub\ version*) git=hub;;
@@ -119,13 +126,16 @@ fi
 
 #check header files without license include directive
 echo '.. Checking include directives in header files...'
-file_without_license_include=$(for pkg in `ack-grep "^GPL" */package_info/*/license.txt -l | awk -F "/" '{print $1}'`; do find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r grep -L "#include <CGAL/license"; done)
-if [ -n "${file_without_license_include}" ]; then
-  echo "The following files do not have an include directive of the package license header:"
-  echo ${file_without_license_include}
-  exit 1
+if [ $ack = NOACK ]; then
+    echo '   WARNING: test skipped because no `ack` tool was found'
+else
+    file_without_license_include=$(for pkg in `$ack "^GPL" */package_info/*/license.txt -l | awk -F "/" '{print $1}'`; do find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r grep -L "#include <CGAL/license"; done)
+    if [ -n "${file_without_license_include}" ]; then
+        echo "The following files do not have an include directive of the package license header:"
+        echo ${file_without_license_include}
+        exit 1
+    fi
 fi
-
 
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
@@ -142,7 +152,7 @@ trap 'echo "(aborting the merge now)" && ${git} reset --quiet --hard ${current_r
 echo '.. Dummy merge commit...'
 conflicts=( ${(f)"$(${git} status --porcelain | awk '/^[^ ][^ ]/ {print $2}')"} )
 if [ ${#conflicts[@]} -gt 0 ]; then ${git} add $conflicts || exit 1; fi
-${git} commit -m 'dummy merge commit' || exit 1
+${git} commit --allow-empty -m 'dummy merge commit' || exit 1
 
 echo '.. Size of the gzipped bundle'
 trap 'echo "(aborting the merge now)" && rm bundle.gz && ${git} reset --quiet --hard ${current_rev}' EXIT
