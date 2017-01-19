@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Point_set_3 )
+project( Point_set_3_Examples )
 
 
 cmake_minimum_required(VERSION 2.8.11)
