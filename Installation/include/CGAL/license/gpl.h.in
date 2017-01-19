@@ -18,12 +18,13 @@
 //
 // Author(s) : Andreas Fabri
 
-#ifndef CGAL_LICENSE_CHECK_@PACKAGE_CODE_NAME@_H
-#define CGAL_LICENSE_CHECK_@PACKAGE_CODE_NAME@_H
+#ifndef CGAL_LICENSE_@PACKAGE_CODE_NAME@_H
+#define CGAL_LICENSE_@PACKAGE_CODE_NAME@_H
 
 #include <CGAL/config.h>
-#include <CGAL/license_check.h>
-#include <CGAL/license_check/release_date.h>
+#include <CGAL/license.h>
+#include <CGAL/license/release_date.h>
+
 
 
 

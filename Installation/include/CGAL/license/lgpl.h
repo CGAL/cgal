@@ -18,12 +18,12 @@
 //
 // Author(s) : Andreas Fabri
 
-#ifndef CGAL_LICENSE_CHECK_LGPL_H
-#define CGAL_LICENSE_CHECK_LGPL_H
+#ifndef CGAL_LICENSE_LGPL_H
+#define CGAL_LICENSE_LGPL_H
 
 #include <CGAL/config.h>
-#include <CGAL/license_check.h>
-#include <CGAL/license_check/release_date.h>
+#include <CGAL/license.h>
+#include <CGAL/license/release_date.h>
 
 
 
