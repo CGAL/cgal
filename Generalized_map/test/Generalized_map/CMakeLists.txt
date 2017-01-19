@@ -1,7 +1,7 @@
 #  cd debug; cmake .. -DCMAKE_BUILD_TYPE=Debug
 #  cd release; cmake .. -DCMAKE_BUILD_TYPE=Release
 
-project( Generalized_map_test )
+project( Generalized_map_Tests )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
