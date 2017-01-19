@@ -84,6 +84,7 @@ else
 fi
 
 #check cmake scripts of tests, examples are present
+echo '.. Checking if all CMakeLists.txt are present...'
 for i in `ls -d ^build*/examples/*/ ^build*/test/*/`; do
   if ! [ -f $i/CMakeLists.txt ]; then
     echo "Error: $i/CMakeLists.txt does not exist!"
@@ -93,6 +94,7 @@ done
 
 
 # check project in cmake scripts is correct
+echo '.. Checking if all CMakeLists.txt project names are correct...'
 project_name_tests=$(for i in ^build*/test/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Tests\s*\)" -L $i;  done)
 project_name_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Examples\s*\)" -L $i;  done)
 project_name_demo=$(for i in ^build*/demo/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Demo\s*\)" -L $i;  done)
@@ -112,6 +114,15 @@ fi
 if [ -n "${project_name_demo}" ]; then
   echo "CMakeLists with incorrect project name"
   echo ${project_name_demo}
+  exit 1
+fi
+
+#check no file contains non-utf8 characters
+echo '.. Checking if non utf-8 characters are used...'
+txt_not_utf8=$(for i in `find . -type f`; do out=`file $i`; if echo $out | grep -q "text"; then if ! (echo $out | egrep -q "UTF-8|ASCII|XML|EPS"); then echo $i; fi; fi; done)
+if [ -n "${txt_not_utf8}" ]; then
+  echo "The following files have non utf-8 characters:"
+  echo ${txt_not_utf8}
   exit 1
 fi
 
