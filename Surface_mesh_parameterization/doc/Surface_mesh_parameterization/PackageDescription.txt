@@ -104,6 +104,9 @@ The package performs the next checks:
 /// \defgroup PkgSurfaceParameterizationMainFunction Main Function
 /// \ingroup PkgSurfaceParameterization
 
+/// \defgroup PkgSurfaceParameterizationEnums Enums
+/// \ingroup PkgSurfaceParameterization
+
 /// \defgroup PkgSurfaceParameterizationConcepts Concepts
 /// \ingroup PkgSurfaceParameterization
 

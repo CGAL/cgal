@@ -27,6 +27,8 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
+/// \ingroup PkgSurfaceParameterizationEnums
+///
 /// List of errors detected by this package
 enum Error_code
 {

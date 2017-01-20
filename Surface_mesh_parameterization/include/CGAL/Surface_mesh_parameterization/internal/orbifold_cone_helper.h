@@ -37,10 +37,19 @@
 #include <utility>
 #include <vector>
 
+/// \file Orbifold_cone_helper.h
+
 namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
+/// \ingroup PkgSurfaceParameterizationEnums
+///
+/// The types of cones used in Orbifold Tutte parameterization.
+///
+/// `Unique_cones` are found at the beginning and the end of the seam. All other
+/// cones are duplicated in the sense that when the seam is `opened`, the vertex
+/// is duplicated at two different positions.
 enum Cone_type
 {
   First_unique_cone = 0,
@@ -48,6 +57,9 @@ enum Cone_type
   Duplicated_cone
 };
 
+/// \ingroup PkgSurfaceParameterizationEnums
+///
+/// The four Orbifold types available in the Orbifold Tutte parameterization.
 enum Orbifold_type
 {
   Square = 0,
@@ -56,6 +68,9 @@ enum Orbifold_type
   Parallelogram
 };
 
+/// Get message corresponding to an error code
+/// \param orb_type The integer value in the enum
+/// \return         The string describing the Orbifold type
 const char* get_orbifold_type(int orb_type)
 {
   // Messages corresponding to Error_code list above. Must be kept in sync!
@@ -94,10 +109,10 @@ Point_container get_cones_parameterized_coordinates(const Orbifold_type orb_type
   return tcoords;
 }
 
-/// Angles are minus as we go around the seam border in a counterclockwise manner
 template<typename NT_container>
 NT_container get_angles_at_cones(const Orbifold_type orb_type)
 {
+  // Note that angles are minus as we go around the seam border in a counterclockwise manner
   NT_container angs;
   if(orb_type == Square) {
     angs.push_back(4.);
@@ -183,6 +198,7 @@ void find_start_cone(const ConeMap& cmap,
   CGAL_postcondition(false);
 }
 
+/// Check the validity of the input cones in the `Seam_mesh` mesh.
 template<typename SeamMesh,
          typename Cones_in_Seam_mesh_map,
          typename Cones_in_Base_mesh_container>

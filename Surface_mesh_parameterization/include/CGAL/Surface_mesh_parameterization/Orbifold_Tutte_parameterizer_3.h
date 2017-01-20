@@ -57,8 +57,6 @@
 
 /// \file Orbifold_Tutte_parameterizer_3.h
 
-#define CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
-
 // @todo checks that cones are different, are on seams, seam is one connected
 //       component
 // @todo Should the order of cones provided in entry matter ? Map the first cone
@@ -68,12 +66,40 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
+/// \ingroup PkgSurfaceParameterizationEnums
+///
+/// Weight type used in the parameterization computation.
+///
+/// MVC weights are guaranteed to generate positive edge weights, and the parameterization
+/// is guaranteed to be injective.
+///
+/// In case the cotangent weights are used, the orbifold-Tutte embedding globally
+/// minimizes the Dirichlet energy and approximates conformal mappings.
 enum Weight_type
 {
   Cotangent = 0,
   Mean_value
 };
 
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
+/// The class `Orbifold_Tutte_parameterizer_3` implements <em>Orbifold Tutte Planar
+/// Embeddings</em> \cgalCite{aigerman2015orbifold}.
+///
+/// This is a borderless parameterization. A one-to-one mapping is guaranteed.
+///
+/// \cgalModels `Parameterizer_3`
+///
+/// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceGraph`
+/// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system. <br>
+///
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
+/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+///
 template
 <
   typename SeamMesh,
@@ -100,8 +126,8 @@ private:
   typedef typename Sparse_LA::Matrix                                Matrix;
 
   // Kernel subtypes
-  typedef typename internal::Kernel_traits<SeamMesh>::Kernel    Kernel;
-  typedef typename internal::Kernel_traits<SeamMesh>::PPM       PPM;
+  typedef typename internal::Kernel_traits<SeamMesh>::Kernel        Kernel;
+  typedef typename internal::Kernel_traits<SeamMesh>::PPM           PPM;
   typedef typename Kernel::FT                                       NT;
   typedef typename Kernel::Vector_2                                 Vector_2;
   typedef typename Kernel::Vector_3                                 Vector_3;
@@ -112,7 +138,7 @@ private:
   const Weight_type weight_type;
 
 private:
-  /// check input's correctness.
+  /// Check input's correctness.
   template<typename ConeMap>
   Error_code check_cones(ConeMap cmap) const
   {
@@ -203,6 +229,7 @@ private:
     ++id_r; // current line index in A is increased
   }
 
+  /// Add the constraints from a seam segment to the linear system.
   void constrain_seam_segment(const std::vector<std::pair<int, int> >& seam_segment,
                               NT ang, int& current_line_id_in_A,
                               Matrix& A, Vector& B) const
@@ -427,6 +454,7 @@ private:
     }
   }
 
+  /// Compute the system weights using a Cotangent Laplacian.
   template<typename VertexIndexMap>
   void cotangent_laplacien(SeamMesh& mesh,
                            VertexIndexMap vimap,
@@ -594,22 +622,29 @@ private:
   }
 
 public:
-  /// Flattens the mesh to one of the orbifolds. In the end, the
-  /// position of each vertex is stored in the property map `uvmap`.
+  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// to a piece of the 2D space.
+  /// The mapping is piecewise linear (linear in each triangle).
+  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  ///
+  ///
+  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         as value type.
+  /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a unique integer as value type.
+  /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a Boolean as value type.
   ///
   /// \param mesh a model of the `FaceGraph` concept
   /// \param bhd a halfedge on the border of the seam mesh
-  /// \param cmap
+  /// \param cmap a mapping of 4 (or 6) `vertex_descriptor`s that are cones
+  ///             to their respective `Cone_type`.
   /// \param uvmap an instanciation of the class `VertexUVmap`.
   /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param orb the type of orbifold mapping
-  /// \param convexBoundary - omitted or false for free boundary, of one of
-  ///        the 4 sphere orbifolds as specified in the constructor; true
-  ///        for the classic Tutte embedding with fixed boundary into a disk;
-  ///        'square' for "classic" Tutte on a square with prefixed boundary
-  ///        map; 'freesquare' for the square disk orbifold; 'freetri' for
-  ///        the triangle disk orbifold.
-  /// \param wt weight type (cotan weights or MVC weights).
   ///
   /// \pre cones and seams must be valid.
   template<typename ConeMap,
@@ -684,8 +719,8 @@ public:
     return OK;
   }
 
-/// Constructor
 public:
+  /// Constructor.
   Orbifold_Tutte_parameterizer_3(const Orbifold_type orb_type = Square,
                                  const Weight_type weight_type = Cotangent)
     :
