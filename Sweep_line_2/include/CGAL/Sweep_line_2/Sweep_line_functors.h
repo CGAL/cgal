@@ -349,17 +349,34 @@ public:
    */
   Comparison_result operator()(const Subcurve *c1, const Subcurve *c2) const
   {
+    bool is_c1_a_right_curve = ( std::find((*m_curr_event)->right_curves_begin(),
+                                           (*m_curr_event)->right_curves_end(),
+                                           c1) != (*m_curr_event)->right_curves_end() );
+    bool is_c2_a_right_curve = ( std::find((*m_curr_event)->right_curves_begin(),
+                                           (*m_curr_event)->right_curves_end(),
+                                           c2) != (*m_curr_event)->right_curves_end() );
+
     // In case to two curves are right curves at the same event, compare
     // to the right of the event point.
-    if (std::find((*m_curr_event)->right_curves_begin(), 
-                  (*m_curr_event)->right_curves_end(),
-                  c1) != (*m_curr_event)->right_curves_end() &&
-        std::find((*m_curr_event)->right_curves_begin(), 
-                  (*m_curr_event)->right_curves_end(),
-                  c2) != (*m_curr_event)->right_curves_end())
+    if (is_c1_a_right_curve && is_c2_a_right_curve)
     {
       return (m_traits->compare_y_at_x_right_2_object()
               (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point()));
+    }
+
+    if ( !(*m_curr_event)->is_on_boundary() )
+    {
+      if (is_c1_a_right_curve)
+      {
+        return m_traits->compare_y_at_x_2_object()
+          ((*m_curr_event)->point(), c2->last_curve());
+      }
+
+      if (is_c2_a_right_curve)
+      {
+        return opposite( m_traits->compare_y_at_x_2_object()
+          ((*m_curr_event)->point(), c1->last_curve() ) ) ;
+      }
     }
 
     Arr_parameter_space ps_x1 = 
