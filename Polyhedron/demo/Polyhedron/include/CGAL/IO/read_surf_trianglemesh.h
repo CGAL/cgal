@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <CGAL/array.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -18,7 +20,11 @@ struct MaterialData
  * Mesh is a model of FaceListGraph.
  */
 template<class Mesh, class NamedParameters>
-void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<MaterialData>& metadata,  const NamedParameters&)
+void read_surf(std::istream& input, std::vector<Mesh>& output,
+    std::vector<MaterialData>& metadata,
+    CGAL::Bbox_3& grid_box,
+    CGAL::cpp11::array<unsigned int, 3>& grid_size,
+    const NamedParameters&)
 {
   typedef typename CGAL::GetGeomTraits<Mesh,
       NamedParameters>::type Kernel;
@@ -69,6 +75,40 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
     }
   }
 
+  //get grid box
+  while (std::getline(input, line))
+  {
+    line.erase(0, line.find_first_not_of(" \t"));
+    if (line.compare(0, 7, "GridBox") != 0)
+      continue;
+    else
+    {
+      iss.clear();
+      line.erase(0, 7);
+      iss.str(line);
+      double xmin, xmax, ymin, ymax, zmin, zmax;
+      iss >> xmin >> xmax >> ymin >> ymax >> zmin >> zmax;
+      grid_box = CGAL::Bbox_3(xmin, xmax, ymin, ymax, zmin, zmax);
+      break;
+    }
+  }
+
+  //get grid size
+  while (std::getline(input, line))
+  {
+    line.erase(0, line.find_first_not_of(" \t"));
+    if (line.compare(0, 8, "GridSize") != 0)
+      continue;
+    else
+    {
+      iss.clear();
+      line.erase(0, 8);
+      iss.str(line);
+      iss >> grid_size[0] >> grid_size[1] >> grid_size[2];
+      break;
+    }
+  }
+
   //get number of vertices
   while(std::getline(input, line))
   {
@@ -100,7 +140,7 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
     }
     iss.clear();
     iss.str(line);
-    iss >> x >> y >> z;
+    iss >> CGAL::iformat(x) >> CGAL::iformat(y) >> CGAL::iformat(z);
     points.push_back(Point_3(x,y,z));
   }
   std::cout<<nb_vertices<<" vertices"<<std::endl;
@@ -216,8 +256,12 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
 }
 
 template<class Mesh>
-void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<MaterialData>& metadata)
+void read_surf(std::istream& input, std::vector<Mesh>& output,
+  std::vector<MaterialData>& metadata,
+  CGAL::Bbox_3& grid_box,
+  CGAL::cpp11::array<unsigned int, 3> grid_size)
 {
-  read_surf(input, output, metadata, CGAL::Polygon_mesh_processing::parameters::all_default());
+  read_surf(input, output, metadata, grid_box, grid_size,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 

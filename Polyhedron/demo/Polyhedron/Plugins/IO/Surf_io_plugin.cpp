@@ -9,6 +9,10 @@
 #include <CGAL/Three/Scene_group_item.h>
 
 #include <CGAL/IO/read_surf_trianglemesh.h>
+
+#include <CGAL/Bbox_3.h>
+#include <CGAL/array.h>
+
 #include "Color_map.h"
 #include <fstream>
 
@@ -56,7 +60,9 @@ CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
 
   std::vector<Polyhedron> patches;
   std::vector<MaterialData> material_data;
-  read_surf(in, patches, material_data);
+  CGAL::Bbox_3 grid_box;
+  CGAL::cpp11::array<unsigned int, 3> grid_size;
+  read_surf(in, patches, material_data, grid_box, grid_size);
   for(std::size_t i=0; i<material_data.size(); ++i)
   {
    std::cout<<"The patch #"<<i<<":\n  -inner region : material's id = "<<material_data[i].innerRegion.first<<" material's name = "
