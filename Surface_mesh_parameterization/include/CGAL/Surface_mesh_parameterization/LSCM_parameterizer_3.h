@@ -273,7 +273,7 @@ private:
       int index = get(vimap, v);
 
       // Get vertex (u,v) (meaningless if vertex is not parameterized)
-      Point_2 uv = get(uvmap, v);
+      const Point_2& uv = get(uvmap, v);
       // TODO: it is meaningless but must it be called for non-border vertices??
       // Write (u,v) in X (meaningless if vertex is not parameterized)
       // Note  : 2*index     --> u

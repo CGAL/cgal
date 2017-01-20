@@ -369,8 +369,8 @@ class Orbifold_sphere_mapper
       trt = Aff_tr( 2., 0.);
     }
     else {
-      Point_2 pb = is_reversed ? get(uvmap, ve_s) : get(uvmap, vf_s);
-      Point_2 pe = is_reversed ? get(uvmap, ve_t) : get(uvmap, vf_t);
+      const Point_2& pb = is_reversed ? get(uvmap, ve_s) : get(uvmap, vf_s);
+      const Point_2& pe = is_reversed ? get(uvmap, ve_t) : get(uvmap, vf_t);
 
       trs = Aff_tr(+ 2 * CGAL_PI / ang /*angle*/, pb /*center*/);
       trt = Aff_tr(- 2 * CGAL_PI / ang /*angle*/, pe /*center*/);

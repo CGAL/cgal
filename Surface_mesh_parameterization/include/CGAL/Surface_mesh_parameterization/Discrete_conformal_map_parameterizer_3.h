@@ -142,21 +142,21 @@ protected:
   {
     const PPM ppmap = get(vertex_point, mesh);
 
-    Point_3 position_v_i = get(ppmap, main_vertex_v_i);
-    Point_3 position_v_j = get(ppmap, *neighbor_vertex_v_j);
+    const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
+    const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
     // Compute cotangent of (v_i,v_k,v_j) corner (i.e. cotan of v_k corner)
     // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     previous_vertex_v_k--;
-    Point_3 position_v_k = get(ppmap, *previous_vertex_v_k);
+    const Point_3& position_v_k = get(ppmap, *previous_vertex_v_k);
     NT cotg_beta_ij = internal::cotangent<Kernel>(position_v_i, position_v_k, position_v_j);
 
     // Compute cotangent of (v_j,v_l,v_i) corner (i.e. cotan of v_l corner)
     // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     next_vertex_v_l++;
-    Point_3 position_v_l = get(ppmap, *next_vertex_v_l);
+    const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
     NT cotg_alpha_ij = internal::cotangent<Kernel>(position_v_j, position_v_l, position_v_i);
 
     NT weight = cotg_beta_ij + cotg_alpha_ij;

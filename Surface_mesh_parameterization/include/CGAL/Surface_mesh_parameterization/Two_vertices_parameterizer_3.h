@@ -139,7 +139,7 @@ public:
     double zmax = (std::numeric_limits<double>::min)();
 
     BOOST_FOREACH(vertex_descriptor vd, vertices) {
-      Point_3 position = get(ppmap,vd);
+      const Point_3& position = get(ppmap,vd);
 
       xmin = (std::min)(position.x(), xmin);
       ymin = (std::min)(position.y(), ymin);
@@ -234,7 +234,7 @@ public:
     double vmax = (std::numeric_limits<double>::min)();
 
     BOOST_FOREACH(vertex_descriptor vd, vertices) {
-      Point_3  position = get(ppmap, vd);
+      const Point_3& position = get(ppmap, vd);
       Vector_3 position_as_vector = position - Point_3(0, 0, 0);
 
       // coordinate along the bounding box' main axes

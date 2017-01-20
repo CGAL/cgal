@@ -269,7 +269,7 @@ private:
     // of the border, we actually only need to insert points on the border
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       vertex_descriptor s = source(hd, mesh);
-      Point_2 sp = get(uvmap, s);
+      const Point_2& sp = get(uvmap, s);
 
       typename CT::Vertex_handle vh = ct.insert(sp);
       vh->info() = s;
@@ -278,7 +278,7 @@ private:
     // Insert constraints (the border)
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       vertex_descriptor s = source(hd, mesh), t = target(hd, mesh);
-      Point_2 sp = get(uvmap, s), tp = get(uvmap, t);
+      const Point_2& sp = get(uvmap, s), tp = get(uvmap, t);
 
       ct.insert_constraint(sp, tp);
     }
@@ -591,7 +591,7 @@ private:
   {
     BOOST_FOREACH(vertex_descriptor vd, vertices) {
       int index = get(vimap, vd);
-      Point_2 uv = get(uvmap, vd);
+      const Point_2& uv = get(uvmap, vd);
       if(!get(vpmap, vd)) { // not yet parameterized
         Bu[index] = 0.; // might not be needed
         Bv[index] = 0.;

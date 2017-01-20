@@ -309,7 +309,7 @@ protected:
       A.set_coef(index, index, 1, true /*new*/);
       // get the halfedge uv
       // Write constant in Bu and Bv
-      Point_2 uv = get(uvmap, target(hd, mesh));
+      const Point_2& uv = get(uvmap, target(hd, mesh));
       Bu[index] = uv.x();
       Bv[index] = uv.y();
     }

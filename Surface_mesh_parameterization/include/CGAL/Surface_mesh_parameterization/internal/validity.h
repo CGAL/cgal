@@ -78,9 +78,9 @@ bool has_flips(const TriangleMesh& mesh,
     vertex_descriptor vd2 = source(hd, mesh);
 
     // Get the 3 vertices position in 2D
-    Point_2 p0 = get(uvmap, vd0);
-    Point_2 p1 = get(uvmap, vd1);
-    Point_2 p2 = get(uvmap, vd2);
+    const Point_2& p0 = get(uvmap, vd0);
+    const Point_2& p1 = get(uvmap, vd1);
+    const Point_2& p2 = get(uvmap, vd2);
 
     // Compute the facet normal
     Point_3 p0_3D(p0.x(), p0.y(), 0.);
@@ -269,9 +269,9 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
     vertex_descriptor vd2 = source(hd, mesh);
 
     // Get the 3 vertices position in 2D
-    Point_2 p0 = get(uvmap, vd0);
-    Point_2 p1 = get(uvmap, vd1);
-    Point_2 p2 = get(uvmap, vd2);
+    const Point_2& p0 = get(uvmap, vd0);
+    const Point_2& p1 = get(uvmap, vd1);
+    const Point_2& p2 = get(uvmap, vd2);
 
     Bbox_2 b = p0.bbox();
     b += p1.bbox();

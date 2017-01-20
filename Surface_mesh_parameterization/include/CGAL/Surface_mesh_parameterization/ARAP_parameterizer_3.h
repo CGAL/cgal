@@ -355,9 +355,9 @@ private:
                                          boost::vertex_point_t>::const_type PPmap;
     const PPmap ppmap = get(vertex_point, mesh);
 
-    Point_3 position_vi = get(ppmap, vi);
-    Point_3 position_vj = get(ppmap, vj);
-    Point_3 position_vk = get(ppmap, vk);
+    const Point_3& position_vi = get(ppmap, vi);
+    const Point_3& position_vj = get(ppmap, vj);
+    const Point_3& position_vk = get(ppmap, vk);
 
     NT cot = internal::cotangent<Kernel>(position_vi, position_vj, position_vk);
     put(ctmap, hd, cot);
@@ -689,16 +689,16 @@ private:
         NT c = get(ctmap, hd);
 
         // UV positions
-        Point_2 uvpi = get(uvmap, source(hd, mesh));
-        Point_2 uvpj = get(uvmap, target(hd, mesh));
+        const Point_2& uvpi = get(uvmap, source(hd, mesh));
+        const Point_2& uvpj = get(uvmap, target(hd, mesh));
         NT diff_x = uvpi.x() - uvpj.x();
         NT diff_y = uvpi.y() - uvpj.y();
 //        CGAL_warning(diff_x == 0. && diff_y == 0.);
 
         // local positions (in the isometric 2D param)
-        Local_indices li = get(lpmap, hd);
-        Point_2 ppi = lp[ li.first ];
-        Point_2 ppj = lp[ li.second ];
+        const Local_indices& li = get(lpmap, hd);
+        const Point_2& ppi = lp[ li.first ];
+        const Point_2& ppj = lp[ li.second ];
         NT p_diff_x = ppi.x() - ppj.x();
         NT p_diff_y = ppi.y() - ppj.y();
         CGAL_precondition(p_diff_x != 0. || p_diff_y != 0.);
@@ -808,9 +808,9 @@ private:
                                          boost::vertex_point_t>::const_type PPmap;
     const PPmap ppmap = get(vertex_point, mesh);
 
-    Point_3 position_vi = get(ppmap, vi);
-    Point_3 position_vj = get(ppmap, vj);
-    Point_3 position_vk = get(ppmap, vk);
+    const Point_3& position_vi = get(ppmap, vi);
+    const Point_3& position_vj = get(ppmap, vj);
+    const Point_3& position_vk = get(ppmap, vk);
 
     Point_2 pvi, pvj, pvk;
     project_triangle(position_vi, position_vj, position_vk,
@@ -881,12 +881,12 @@ private:
     face_descriptor fd_k = face(hd_opp, mesh);
 
     // Get the matrix L_t corresponding to the face ijk
-    Lt_matrix ltm_k = get(ltmap, fd_k);
+    const Lt_matrix& ltm_k = get(ltmap, fd_k);
     NT a_k = ltm_k.first;
     NT b_k = ltm_k.second;
 
     // Get the local parameterization in the triangle ijk
-    Local_indices loc_indices_k = get(lpmap, hd_opp);
+    const Local_indices& loc_indices_k = get(lpmap, hd_opp);
     const Point_2& pvi_k = lp[ loc_indices_k.first ];
     const Point_2& pvj_k = lp[ loc_indices_k.second ];
 
@@ -905,12 +905,12 @@ private:
     face_descriptor fd_l = face(hd, mesh);
 
     // Get the matrix L_t corresponding to the face ijl
-    Lt_matrix ltm_l = get(ltmap, fd_l);
+    const Lt_matrix& ltm_l = get(ltmap, fd_l);
     NT a_l = ltm_l.first;
     NT b_l = ltm_l.second;
 
     // Get the local parameterization in the triangle ijl
-    Local_indices loc_indices_l = get(lpmap, hd);
+    const Local_indices& loc_indices_l = get(lpmap, hd);
     const Point_2& pvi_l = lp[ loc_indices_l.second ]; // because hd points to vi
     const Point_2& pvj_l = lp[ loc_indices_l.first ];
 
@@ -1001,7 +1001,7 @@ private:
           return status;
       } else { // fixed vertices
         int index = get(vimap, vd);
-        Point_2 uv = get(uvmap, vd);
+        const Point_2& uv = get(uvmap, vd);
         Bu.set(index, uv.x());
         Bv.set(index, uv.y());
         ++count;
@@ -1088,15 +1088,15 @@ private:
       NT nabla_x = 0., nabla_y = 0.;
 
       // UV positions
-      Point_2 pi = get(uvmap, source(hd, mesh));
-      Point_2 pj = get(uvmap, target(hd, mesh));
+      const Point_2& pi = get(uvmap, source(hd, mesh));
+      const Point_2& pj = get(uvmap, target(hd, mesh));
       NT diff_x = pi.x() - pj.x();
       NT diff_y = pi.y() - pj.y();
 
       // local positions (in the 2D param)
-      Local_indices li = get(lpmap, hd);
-      Point_2 ppi = lp[ li.first ];
-      Point_2 ppj = lp[ li.second ];
+      const Local_indices& li = get(lpmap, hd);
+      const Point_2& ppi = lp[ li.first ];
+      const Point_2& ppj = lp[ li.second ];
       NT p_diff_x = ppi.x() - ppj.x();
       NT p_diff_y = ppi.y() - ppj.y();
 
@@ -1124,7 +1124,7 @@ private:
   {
     NT Ef = 0.;
 
-    Lt_matrix ltm = get(ltmap, fd); // the (current) optimal linear transformation
+    const Lt_matrix& ltm = get(ltmap, fd); // the (current) optimal linear transformation
     NT a = ltm.first;
     NT b = ltm.second;
 
