@@ -61,7 +61,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
   std::vector<Polyhedron> patches;
   std::vector<MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
-  CGAL::cpp11::array<unsigned int, 3> grid_size;
+  CGAL::cpp11::array<unsigned int, 3> grid_size = {1, 1, 1};
   read_surf(in, patches, material_data, grid_box, grid_size);
   for(std::size_t i=0; i<material_data.size(); ++i)
   {
