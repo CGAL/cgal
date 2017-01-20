@@ -1975,8 +1975,6 @@ using Nef::gcd;
 
 } //namespace CGAL
 
-#ifdef CGAL_HEADER_ONLY
 #include <CGAL/Nef_2/Polynomial_impl.h>
-#endif // CGAL_HEADER_ONLY
 
 #endif  // CGAL_NEF_2_POLYNOMIAL_H
