@@ -618,7 +618,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   // Next is the gathering of the border halfedges of the connected component.
   // It is wrong to pass the underlying mesh tMesh: a sphere split in half does
-  // not have any border according if border_halfedges() is run with tMesh.
+  // not have any border if border_halfedges() is run with tMesh.
   //
   // The proper way would be to completely redesign the plugin to use Seam meshes
   // everywhere. But that's not worth it. Instead, we abuse the fact that faces
@@ -786,9 +786,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       typedef boost::unordered_map<vertex_descriptor, SMP::Cone_type>  Cones;
       Cones cmap;
 
-      SMP::internal::locate_unordered_cones<Seam_mesh,
-                                            boost::unordered_set<T_vertex_descriptor>,
-                                            Cones>(sMesh, unordered_cones, cmap);
+      if(!SMP::internal::locate_unordered_cones<Seam_mesh,
+                                                boost::unordered_set<T_vertex_descriptor>,
+                                                Cones>(sMesh, unordered_cones, cmap))
+        return;
 
       // vimap and uvmap
       typedef boost::unordered_map<vertex_descriptor, int> Indices;

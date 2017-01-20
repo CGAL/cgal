@@ -461,7 +461,7 @@ private:
             typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
-  void fill_linear_system_matrix_mvc_from_ct_face(const CT& ct,
+  void fill_linear_system_matrix_mvc_from_ct_face(const CT& CGAL_precondition_code(ct),
                                                   typename CT::Finite_faces_iterator fh,
                                                   const VertexUVMap uvmap,
                                                   const VertexIndexMap vimap,

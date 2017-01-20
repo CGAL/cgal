@@ -399,7 +399,7 @@ Error_code read_cones(const TriangleMesh& pm, const char* filename,
 template<typename SeamMesh,
          typename Cones_in_pmesh_vector,
          typename ConeMap>
-void locate_cones(const SeamMesh& mesh,
+bool locate_cones(const SeamMesh& mesh,
                   const Cones_in_pmesh_vector& cone_tm_vds,
                   ConeMap& cones)
 {
@@ -438,7 +438,7 @@ void locate_cones(const SeamMesh& mesh,
     }
   }
 
-  check_input_validity(mesh, cones, cone_tm_vds);
+  return check_input_validity(mesh, cones, cone_tm_vds);
 }
 
 /// Same as above, but the cones are NOT ordered and we thus use seam mesh
@@ -451,11 +451,12 @@ void locate_cones(const SeamMesh& mesh,
 template<typename SeamMesh,
          typename Cones_in_pmesh_set,
          typename ConeMap>
-void locate_unordered_cones(const SeamMesh& mesh,
+bool locate_unordered_cones(const SeamMesh& mesh,
                             const Cones_in_pmesh_set& cone_tm_vds,
                             ConeMap& cones)
 {
   CGAL_precondition(cones.empty());
+  CGAL_precondition(cone_tm_vds.size() == 3 || cone_tm_vds.size() == 4);
 
   typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
 
@@ -527,7 +528,7 @@ void locate_unordered_cones(const SeamMesh& mesh,
 
   } while(vertex_on_seam != end);
 
-  check_input_validity(mesh, cones, cone_tm_vds);
+  return check_input_validity(mesh, cones, cone_tm_vds);
 }
 
 } // namespace internal
