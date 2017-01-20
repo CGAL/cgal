@@ -415,14 +415,14 @@ int main(int, char**)
 
     SMesh sm; // underlying mesh of the seam mesh
 
-    std::ifstream in("data/horse.off");
+    std::ifstream in("data/fandisk.off");
     in >> sm;
     if(!in || num_vertices(sm) == 0) {
       std::cerr << "Problem loading the input data" << std::endl;
       return 1;
     }
 
-    const char* cone_filename = "data/horse.orbifold.selection.txt";
+    const char* cone_filename = "data/fandisk.orbifold.selection.txt";
 
     // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
     typedef std::vector<SM_vertex_descriptor>       Cones_in_smesh_container;
@@ -471,7 +471,7 @@ int main(int, char**)
 
     // Parameterizer
     typedef SMP::Orbifold_Tutte_parameterizer_3<SM_Seam_mesh>         Parameterizer;
-    Parameterizer parameterizer(SMP::Triangle, SMP::Cotangent);
+    Parameterizer parameterizer(SMP::Parallelogram, SMP::Cotangent);
 
     // a halfedge on the (possibly virtual) border
     // only used in output (will also be used to handle multiple connected components in the future)
