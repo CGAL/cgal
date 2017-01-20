@@ -86,15 +86,17 @@ File Format).
 
 - `read_xyz_points()` and `read_xyz_points_and_normals()` 
 - `read_off_points()` and `read_off_points_and_normals()` 
-- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_with_properties()`
+- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_points_with_properties()`
+- `read_las_points()` and `read_las_points_with_properties()`
 - `write_xyz_points()` and `write_xyz_points_and_normals()`
 - `write_off_points()` and `write_off_points_and_normals()`
 - `write_ply_points()` and `write_ply_points_and_normals()` 
 
 Note that PLY reading functions accepts binary PLY format in addition
-of ASCII. `read_ply_with_properties()` provides the user with a means to
-read any point property from a PLY file (for example, colors), see
-\ref Point_set_processing_3Example_ply.
+of ASCII. `read_ply_points_with_properties()` and
+`read_las_points_with_properties()` both provide the user with a means
+to read any point property from the input stream (for example,
+colors), see \ref Point_set_processing_3Example_ply.
 
 \subsection Point_set_processing_3Example_io Example
 
@@ -103,37 +105,43 @@ it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
 \cgalExample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
 
-\subsection Point_set_processing_3Example_ply Example of custom PLY reader
+\subsection Point_set_processing_3Example_ply Example of PLY and LAS readers
 
 PLY files are designed to embed an arbitrary number of additional
 attributes. More specifically, point sets may contain normal vectors,
 visibility vectors, RGB colors, intensity, etc. As it is not possible
 to provide dedicated functions to every possible combination of PLY
-properties, \cgal provides a simple way to write custom PLY readers so
-that the user can adapt its programs to its PLY input.
+properties, \cgal provides a simple way to read PLY properties and
+store them in any structure the user needs.
 
-The function `read_ply_with_properties()` allows the user to read any
+Handling of LAS files works similarly with the difference that the
+properties names and types are fixed and defined by the LAS standard.
+
+Functions `read_ply_points_with_properties()` and
+`read_las_points_with_properties()` allow the user to read any
 property needed. The user must provide a set of property handlers that
-are used to instantiate number types and complex objects from PLY
-properties. The handler can either be:
+are used to instantiate number types and complex objects from PLY/LAS
+properties. This handlers are either:
 
-- A `std::pair<PropertyMap, Ply::Property<T> >` if the user wants
-to read a PLY property as a scalar value T (for example, storing
-an `int` PLY property into an `int` variable).
+- a pair consisting of a property map and of a single PLY/LAS property
+descriptor
 
-- A `CGAL::cpp11::tuple<PropertyMap, Constructor,
-Ply::Property<T>...>` if the user wants to use one or several PLY
-properties to construct a complex object (for example, storing 3
-`uchar` PLY properties into a Color object that can for example be a
-`CGAL::cpp11::array<unsigned char, 3>`). In that case, the second
-element of the tuple should be a functor that constructs the value
-type of `PropertyMap` from N objects of types `T`.
+- a tuple consisting of a property map, a functor to construct the
+objects wanted and multiple PLY/LAS property descriptors
 
-The following example shows how to call `read_ply_with_properties()`
-to read a point set with points, normals, RGB colors and intensity and
-stores these attributes in a user-defined container.
+The following example shows how to call
+`read_ply_points_with_properties()` to read a point set with points,
+normals, RGB colors and intensity and stores these attributes in a
+user-defined container.
 
 \cgalExample{Point_set_processing_3/read_ply_points_with_colors_example.cpp}
+
+The following example shows how to call
+`read_las_points_with_properties()` to read a point set with points
+and RGBI colors and stores these attributes in a user-defined
+container.
+
+\cgalExample{Point_set_processing_3/read_las_example.cpp}
 
 \section Point_set_processing_3Spacing Average Spacing
 

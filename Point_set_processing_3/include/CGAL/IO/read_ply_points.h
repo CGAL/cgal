@@ -58,6 +58,8 @@ namespace Ply
      \ingroup PkgPointSetProcessing
      
      Class used to identify a PLY property as a type and a name.
+
+     \sa `read_ply_points_with_properties()`
   */
   template <typename T>
   struct Property
@@ -73,6 +75,8 @@ namespace Ply
      Generates a PLY property handler to read 3D points. Points are
      constructed from the input using 3 PLY properties of type
      `double` and named `x`, `y` and `z`.
+
+     \sa `read_ply_points_with_properties()`
 
      \tparam PointMap the property map used to store points.
   */
@@ -92,6 +96,8 @@ namespace Ply
      Generates a PLY property handler to read 3D normal
      vectors. Vectors are constructed from the input using 3 PLY
      properties of type `double` and named `nx`, `ny` and `nz`.
+
+     \sa `read_ply_points_with_properties()`
 
      \tparam VectorMap the property map used to store vectors.
   */

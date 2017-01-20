@@ -45,19 +45,22 @@
 
 ## IO ##
 
+- `CGAL::read_las_points()`
+- `CGAL::read_las_points_with_properties()`
 - `CGAL::read_off_points()`
 - `CGAL::read_ply_points()`
+- `CGAL::read_ply_points_and_normals()`
+- `CGAL::read_ply_points_with_properties()`
 - `CGAL::read_xyz_points()`
+- `CGAL::read_xyz_points_and_normals()`
 - `CGAL::write_off_points()`
 - `CGAL::write_ply_points()`
 - `CGAL::write_xyz_points()`
-
-## PLY Utilities ##
-
-- `CGAL::read_ply_points_with_properties()`
+- `CGAL::Las::point_property()`
 - `CGAL::Ply::Property<T>`
 - `CGAL::Ply::point_property()`
 - `CGAL::Ply::normal_property()`
+
 
 
 */
