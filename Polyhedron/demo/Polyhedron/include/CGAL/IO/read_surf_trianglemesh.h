@@ -31,12 +31,21 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
   std::vector<material> materials;
   //ignore header
   while(std::getline(input, line))
-    if(line.compare(0, 13, "    Materials") != 0)
+  {
+    std::size_t fnws=line.find_first_not_of(" \t");
+    if(fnws != std::string::npos)
+      line.erase(0, fnws);
+
+    if(line.compare(0, 9, "Materials") != 0)
       continue;
     else
     {
       while(std::getline(input, line))
-        if(line.compare(0, 5, "    }") == 0)
+      {
+        std::size_t fnws=line.find_first_not_of(" \t");
+        if(fnws != std::string::npos)
+          line.erase(0, fnws);
+        if(line.compare(0, 1, "}") == 0)
           break;
         else
         {
@@ -55,11 +64,17 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
 
           materials.push_back(_material);
         }
+      }
       break;
     }
+  }
 
   //get number of vertices
   while(std::getline(input, line))
+  {
+    std::size_t fnws=line.find_first_not_of(" \t");
+    if(fnws != std::string::npos)
+      line.erase(0, fnws);
     if(line.compare(0, 8, "Vertices") != 0)
       continue;
     else
@@ -71,9 +86,13 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
       points.reserve(nb_vertices);
       break;
     }
+  }
   //get vertices
   while(std::getline(input, line))
   {
+    std::size_t fnws=line.find_first_not_of(" \t");
+    if(fnws != std::string::npos)
+      line.erase(0, fnws);
     double x(0),y(0),z(0);
     if(line.compare(0, 16, "NBranchingPoints") == 0)
     {
@@ -88,6 +107,10 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
   int nb_patches = 0;
   //get number of patches
   while(std::getline(input, line))
+  {
+    std::size_t fnws=line.find_first_not_of(" \t");
+    if(fnws != std::string::npos)
+      line.erase(0, fnws);
     if(line.compare(0, 7, "Patches") != 0)
       continue;
     else
@@ -98,6 +121,7 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
       iss >> dump >> nb_patches;
       break;
     }
+  }
   std::cout<<nb_patches<<" patch(es)"<<std::endl;
   metadata.resize(nb_patches);
   output.resize(nb_patches);
@@ -108,6 +132,10 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
     Mesh& mesh = output[i];
     //get metada
     while(std::getline(input, line))
+    {
+      std::size_t fnws=line.find_first_not_of(" \t");
+      if(fnws != std::string::npos)
+        line.erase(0, fnws);
       if(line.compare(0, 11, "InnerRegion") != 0)
         continue;
       else
@@ -139,18 +167,27 @@ void read_surf(std::istream& input, std::vector<Mesh>& output, std::vector<Mater
         }
         break;
       }
+    }
 
     while(std::getline(input, line))
+    {
+      std::size_t fnws=line.find_first_not_of(" \t");
+      if(fnws != std::string::npos)
+        line.erase(0, fnws);
       if(line.compare(0, 9, "Triangles") != 0)
         continue;
       else
       {
         break;
       }
+    }
     //std::getline(input, line);
     //connect triangles
     while(std::getline(input, line))
     {
+      std::size_t fnws=line.find_first_not_of(" \t");
+      if(fnws != std::string::npos)
+        line.erase(0, fnws);
       std::size_t index[3];
       if(line.compare(0, 1, "}") == 0)
       {
