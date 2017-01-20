@@ -210,7 +210,6 @@ bool check_input_validity(const SeamMesh& mesh,
                                                   end = cones.end();
   for(; it!=end; ++it) {
     if(it->second == First_unique_cone) {
-      std::cout << "Check cones: first at " << it->first << std::endl;
       if(found_first_unique_cone) {
         std::cerr << "Error: More than one 'First_unique_cone'" << std::endl;
         return false;
@@ -218,7 +217,6 @@ bool check_input_validity(const SeamMesh& mesh,
       found_first_unique_cone = true;
     }
     else if(it->second == Second_unique_cone) {
-      std::cout << "Check cones: second at " << it->first << std::endl;
       if(found_second_unique_cone) {
         std::cerr << "Error: More than one 'Second_unique_cone'" << std::endl;
         return false;
@@ -340,7 +338,7 @@ Error_code read_cones(const TriangleMesh& pm, const char* filename,
     cones.push_back(cone_index);
   }
 
-  std::cout << "Cones: ";
+  std::cout << "Input cones: ";
   for(std::size_t i=0; i<cones.size(); ++i)
     std::cout << cones[i] << " ";
   std::cout << std::endl;
@@ -407,8 +405,6 @@ void locate_cones(const SeamMesh& mesh,
   // the cones in the underlying mesh
   std::size_t cvdss = cone_tm_vds.size();
 
-  std::cout << cvdss << " cones to locate" << std::endl;
-
   for(std::size_t i=0; i<cvdss; ++i) {
     TM_vertex_descriptor smvd = cone_tm_vds[i];
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
@@ -420,9 +416,7 @@ void locate_cones(const SeamMesh& mesh,
           ct = Second_unique_cone;
         else
           ct = Duplicated_cone;
-        std::cout << smvd << " and "
-                  << vd << " (" << target(halfedge(vd, mesh), mesh.mesh()) << ")"
-                  << " ct: " << ct << std::endl;
+
         cones.insert(std::make_pair(vd, ct));
       }
     }
@@ -506,8 +500,6 @@ void locate_unordered_cones(const SeamMesh& mesh,
         } else {
           ct = Duplicated_cone;
         }
-
-        std::cout << "new cone with type: " << ct << std::endl;
 
         cones.insert(std::make_pair(vertex_on_seam, ct));
       }

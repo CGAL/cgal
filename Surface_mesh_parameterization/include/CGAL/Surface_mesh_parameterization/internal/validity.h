@@ -292,10 +292,6 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
                                 intersect_facets, cutoff);
-
-//  std::cout << boxes.size() << " boxes" << std::endl;
-//  std::cout << counter << " intersections" << std::endl;
-
   return (counter == 0);
 }
 

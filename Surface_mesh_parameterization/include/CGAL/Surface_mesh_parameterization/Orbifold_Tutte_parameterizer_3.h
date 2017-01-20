@@ -130,13 +130,6 @@ private:
       return ERROR_WRONG_PARAMETER;
     }
 
-    std::cout << "cones and ids" << std::endl;
-    typename ConeMap::const_iterator cit = cmap.begin(), cend = cmap.end();
-    for(; cit!=cend; ++cit) {
-//      std::cout << target(halfedge(cit->first,mesh), mesh.mesh())
-//                << " n°: " << get(vimap, cit->first) << std::endl;
-    }
-
     return OK;
   }
 
@@ -159,8 +152,6 @@ private:
   /// Adds a positional constraint on a vertex x_ind, so that x_ind * w = rhs.
   void addConstraint(Matrix& A, Vector& B, int& id_r, int id_c, double w, Point_2 rhs) const
   {
-    std::cout << "Constraining " << id_c << " to " << rhs << std::endl;
-
     A.set_coef(2*id_r, 2*id_c, w, true /*new_coef*/);
     A.set_coef(2*id_r + 1, 2*id_c + 1, w, true /*new_coef*/);
 
@@ -178,8 +169,6 @@ private:
                            const Eigen::Matrix2d& T,
                            Matrix& A, Vector& B) const
   {
-    std::cout << "transconstraints: " << s << " " << t << std::endl;
-
     // Matlab lines are commented for comparison.
     // Matlab fills together 2*x-1 and 2*x, but C++ fills 2*x and 2*x+1,
     // as everything (including loops!) starts at 0 and not 1.
@@ -218,16 +207,12 @@ private:
                               NT ang, int& current_line_id_in_A,
                               Matrix& A, Vector& B) const
   {
-    std::cout << "constraining segment of length " << seam_segment.size() << std::endl;
-
     // check that if there is a common vertex, it is at the beginning
     const bool is_reversed = (seam_segment.back().first == seam_segment.back().second);
 
     if(is_reversed) {
       ang *= -1;
     }
-
-    std::cout << "with angle " << ang << std::endl;
 
     // the rotation matrix according to the angle 'ang'
     Eigen::Matrix2d R;
@@ -236,8 +221,6 @@ private:
 
     const int s0 = is_reversed ? seam_segment.back().first : seam_segment.front().first;
     const int t0 = is_reversed ? seam_segment.back().second : seam_segment.front().second;
-
-    std::cout << "s0/t0: " << s0 << " " << t0 << std::endl;
 
     typename std::vector<std::pair<int, int> >::const_iterator it = seam_segment.begin(),
                                                                end = seam_segment.end();
@@ -251,7 +234,6 @@ private:
     for(; it!=end; ++it) {
       const int s = it->first;
       const int t = it->second;
-      std::cout << "v1/v2: " << s << " " << t << std::endl;
       CGAL_assertion(s != t);
 
       // sending s to t (and _not_ t to s !)
@@ -286,8 +268,6 @@ private:
     internal::find_start_cone(cmap, vimap, start_cone, start_cone_index);
     CGAL_postcondition(start_cone != vertex_descriptor() && start_cone_index != -1);
 
-//    std::cout << "initial cone is " << start_cone << std::endl;
-
     // parameterize the initial cone
     addConstraint(A, B, current_line_id_in_A, start_cone_index,
                   1. /*entry in A*/, tcoords[0]);
@@ -317,7 +297,6 @@ private:
       const vertex_descriptor hd2_source = source(hd2, mesh);
       const int hd1s_index = get(vimap, hd1_source);
       const int hd2s_index = get(vimap, hd2_source);
-      std::cout << hd1s_index << " " << hd2s_index << std::endl;
 
       // If orbifold type IV and it is second cone in flattening, add constraint
       if(orb_type == Parallelogram && cmap.find(hd1_source) != cmap.end()
@@ -354,7 +333,6 @@ private:
           break;
         }
 
-        std::cout << "-------------------------" << std::endl;
         seam_segment.clear();
         ++segment_index;
       }
@@ -364,7 +342,6 @@ private:
       CGAL_postcondition(mesh.has_on_seam(bhd) && is_border(bhd, mesh));
     }
 
-    std::cout << current_line_id_in_A << " vs " << number_of_linear_constraints(mesh) << std::endl;
     CGAL_postcondition(current_line_id_in_A == number_of_linear_constraints(mesh));
   }
 
@@ -385,8 +362,6 @@ private:
                        const Point_3& pj, int j,
                        const Point_3& pk, int k, Matrix& L) const
   {
-//    std::cout << "compute mvc coef at: " << i << " " << j << " " << k << std::endl;
-
     // For MVC, the entry of L(i,j) is - [ tan(gamma_ij/2) + tan(delta_ij)/2 ] / |ij|
     // where gamma_ij and delta_ij are the angles at i around the edge ij
 
@@ -504,7 +479,6 @@ private:
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap) const
   {
-    std::cout << "size of X: " << X.size() << std::endl;
     CGAL_assertion(X.size() == static_cast<int>(2 * num_vertices(mesh)));
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
@@ -528,8 +502,6 @@ private:
     std::size_t n = L.column_dimension();
     std::size_t big_n = n + A.row_dimension();
 
-    std::cout << "n: " << n << " and big_n: " << big_n << std::endl;
-
     // Fill the large system M.Xf = Bf:
     // ( L A' ) ( Xf ) = ( B )
     // ( A 0  ) ( Xf ) = ( 0 )
@@ -543,29 +515,21 @@ private:
       Bf[n+i] = B[i];
     }
 
-    std::cout << "filled Bf" << std::endl;
-
     // matrix M
     for(int k=0; k<L.eigen_object().outerSize(); ++k) {
       for(typename Eigen::SparseMatrix<double>::InnerIterator
                                             it(L.eigen_object(), k); it; ++it) {
         M.set_coef(it.row(), it.col(), it.value(), true /*new_coef*/);
-//        std::cout <<  it.row() << " " << it.col() << " " << it.value() << '\n';
       }
     }
-
-    std::cout << "filled topleft of M" << std::endl;
 
     for(int k=0; k<A.eigen_object().outerSize(); ++k) {
       for(typename Eigen::SparseMatrix<double>::InnerIterator
                                             it(A.eigen_object(), k); it; ++it) {
         M.set_coef(it.col(), it.row() + n, it.value(), true /*new_coef*/); // A
         M.set_coef(it.row() + n, it.col(), it.value(), true /*new_coef*/); // A'
-//        std::cout <<  it.row() << " " << it.col() << " " << it.value() << '\n';
       }
     }
-
-    std::cout << "Filled M and Bf" << std::endl;
 
 #ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
     std::ofstream outM("matrices/M.txt");
@@ -605,14 +569,12 @@ private:
     CGAL::Timer task_timer;
     task_timer.start();
 
-    std::cout << "Solving..." << std::endl;
     SparseLinearAlgebraTraits_d solver;
     if(!solver.linear_solver(M, Bf, Xf, D)) {
-      std::cout << "Could not solve linear system" << std::endl;
+      std::cerr << "Could not solve linear system" << std::endl;
       return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
     CGAL_assertion(D == 1.0);
-    std::cout << "Solved the linear system in " << task_timer.time() << " seconds" << std::endl;
 
     Vector X(n);
     for(std::size_t i=0; i<n; ++i) {
@@ -659,7 +621,6 @@ public:
                           VertexUVMap uvmap,
                           VertexIndexMap vimap) const
   {
-    std::cout << "Flattening" << std::endl;
     Error_code status;
 
     status = check_cones(cmap);
@@ -679,7 +640,6 @@ public:
     AddRotationalConstraint(mesh, cmap, vimap, A, B);
 
 #ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
-    std::cout << "A and B are filled" << std::endl;
     std::ofstream outA("matrices/A.txt"), outB("matrices/B.txt");
 
     for(int k=0; k<A.eigen_object().outerSize(); ++k) {
@@ -714,13 +674,6 @@ public:
 
     // compute the flattening by solving the boundary conditions
     // while satisfying the convex combination property with L
-    std::cout << "Solving the system ";
-#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
-    std::cout << "with a sparse linear solver from Sparsesuite." << std::endl;
-#else
-    std::cout << "with a sparse linear solver from Eigen." << std::endl;
-#endif
-
     status = computeFlattening(mesh, A, B, L, uvmap, vimap);
     if(status != OK)
       return status;

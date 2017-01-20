@@ -885,24 +885,22 @@ public:
   {
     std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tmvd_s, tmvd_t, tm);
     if(!tmed.second) {
-      std::cout << "was ignored because it is not a valid edge of the mesh (Warning!)" << std::endl;
+      std::cerr << "Warning: Ignored a constraint because it is not a valid edge of the mesh" << std::endl;
       return false;
     }
 
     if(!is_border(tmed.first, tm)) { // ignore seams that are also a border edge
       if(get(sem, tmed.first) == true) {
-        std::cout << "was ignored because it is already marked as a seam (Warning!)" << std::endl;
+        std::cerr << "Warning: Ignored a constraint because it is already marked as a seam" << std::endl;
         return false;
       }
-
-      std::cout << "was added to the seam mesh" << std::endl;
 
       put(sem, tmed.first, true);
       put(svm, tmvd_s, true);
       put(svm, tmvd_t, true);
       ++number_of_seams;
     } else {
-      std::cout << "was ignored because it is on the border of the mesh (Warning!)" << std::endl;
+      std::cerr << "Warning: Ignored a constraint because it is on the border of the mesh" << std::endl;
       return false;
     }
 
@@ -960,7 +958,6 @@ public:
       assert(s < tmvds.size() && t < tmvds.size());
       TM_vertex_descriptor tmvd_s = tmvds[s], tmvd_t = tmvds[t];
 
-      std::cout << "Seam " << s << " " << t << " ";
       if(!add_seam(tmvd_s, tmvd_t))
         continue;
 

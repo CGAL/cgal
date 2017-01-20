@@ -263,7 +263,6 @@ private:
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
-    std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
 
     if (vertices.empty() || faces.empty())
       return ERROR_EMPTY_MESH;
@@ -304,7 +303,6 @@ private:
       status = lscm_parameterizer.parameterize(mesh, bhd, uvmap, vimap, vpmap);
     }
 
-    std::cout << "Computed initial parameterization" << std::endl;
     return status;
   }
 
@@ -454,7 +452,6 @@ private:
       return ERROR_NON_TRIANGULAR_MESH;
 
     // Set w_ii in matrix
-//    std::cout << "setting wii at " << i << " : " << w_ii << std::endl;
     A.set_coef(i, i, w_ii, true /*new*/);
     return OK;
   }
@@ -482,7 +479,6 @@ private:
           return status;
       } else { // fixed vertices
         int index = get(vimap, vd);
-        std::cout << index << " is fixed in A " << std::endl;
         A.set_coef(index, index, 1, true /*new*/);
         ++count;
       }
@@ -505,9 +501,6 @@ private:
       roots.push_back(r2);
     if(root_n > 2)
       roots.push_back(r3);
-
-//    std::cout << "coeffs: " << a3 << " " << a2 << " " << a1 << " " << a0 << std::endl;
-//    std::cout << root_n << " roots: " << r1 << " " << r2 << " " << r3 << std::endl;
 
     return roots.size();
   }
@@ -551,7 +544,6 @@ private:
     for(std::size_t i=0; i<ak_roots.size(); i++)
     {
       roots.push_back(ak_roots[i].first.to_double());
-      std::cout << CGAL::to_double(ak_roots[i].first) << std::endl;
     }
 
     return roots.size();
@@ -599,32 +591,24 @@ private:
     Polynomial_2 pol1 = C1q * x + 2 * m_lambda * x * ( x*x + y*y - 1) - C2q;
     Polynomial_2 pol2 = C1q * y + 2 * m_lambda * y * ( x*x + y*y - 1) - C3q;
 
-    std::cout << "init" << std::endl;
-    std::cout << "pol1: " << pol1 << std::endl << "pol2: " << pol2 << std::endl;
-
     CGAL_precondition(is_square_free_2(pol1));
     CGAL_precondition(is_square_free_2(pol2));
     if(!is_coprime_2(pol1, pol2)) {
-      std::cout << "not coprime" << std::endl;
       CGAL_assertion(false); // @todo handle that case
 
       Polynomial_2 g, q1, q2;
       make_coprime_2(pol1, pol2, g, q1, q2);
-      std::cout << "g: " << g << std::endl;
       pol1 = q1;
       pol2 = q2;
     }
 
     std::vector<std::pair<Algebraic_real_2, Multiplicity_type> > roots;
     solve_2(pol1, pol2, std::back_inserter(roots));
-    std::cout << "solved with " << roots.size() << " roots." << std::endl;
 
     for(std::size_t i=0; i<roots.size(); i++)
     {
       a_roots.push_back(roots[i].first.to_double().first);
       b_roots.push_back(roots[i].first.to_double().second);
-      std::cout << CGAL::to_double(roots[i].first.to_double().first) << std::endl;
-      std::cout << CGAL::to_double(roots[i].first.to_double().second) << std::endl;
     }
 
     return a_roots.size();
@@ -719,27 +703,10 @@ private:
         NT p_diff_y = ppi.y() - ppj.y();
         CGAL_precondition(p_diff_x != 0. || p_diff_y != 0.);
 
-        std::cout << "c: " << c << std::endl;
-        std::cout << "diff: " << diff_x << " " << diff_y << std::endl;
-        std::cout << "pdiff: " << p_diff_x << " " << p_diff_y << std::endl;
-
-        typedef typename boost::property_map<TriangleMesh,
-                                             boost::vertex_point_t>::const_type PPmap;
-        const PPmap ppmap = get(vertex_point, mesh);
-
-        std::cout << "Point_3: " << get(ppmap, source(hd, mesh)) << " || "
-                                 << get(ppmap, target(hd, mesh)) << std::endl;
-
-        std::cout << "ADD1: " << c * ( p_diff_x*p_diff_x + p_diff_y*p_diff_y ) << std::endl;
-        std::cout << "ADD2: " << c * ( diff_x*p_diff_x + diff_y*p_diff_y ) << std::endl;
-        std::cout << "ADD3: " << c * ( diff_x*p_diff_y - diff_y*p_diff_x ) << std::endl;
-
         C1 += c * ( p_diff_x*p_diff_x + p_diff_y*p_diff_y );
         C2 += c * ( diff_x*p_diff_x + diff_y*p_diff_y );
         C3 += c * ( diff_x*p_diff_y - diff_y*p_diff_x );
       }
-
-//      std::cout << "C1: " << C1 << " , C2: " <<  C2 << " , C3: " << C3 << std::endl;
 
       // Compute a and b
       NT a = 0., b = 0.;
@@ -791,8 +758,6 @@ private:
         a = a_roots[ind];
         b = b_roots[ind];
 #endif
-
-//        std::cout << "ab: " << a << " " << b << std::endl;
       }
 
       // Update the map faces --> optimal Lt matrices
@@ -959,10 +924,6 @@ private:
     // cot_l * Lt_l * (xi - xj)_l
     x += ct_l * (  a_l * diff_l_x + b_l * diff_l_y );
     y += ct_l * ( -b_l * diff_l_x + a_l * diff_l_y );
-
-    std::cout << "akbk: " << a_k << " " << b_k << std::endl;
-    std::cout << "albl: " << a_l << " " << b_l << std::endl;
-    std::cout << "xy: " << x << " " << y << std::endl;
   }
 
   /// Compute the line i of right hand side vectors Bu and Bv
@@ -1044,8 +1005,6 @@ private:
         Bu.set(index, uv.x());
         Bv.set(index, uv.y());
         ++count;
-        std::cout << index << " is fixed in B: ";
-        std::cout << uv.x() << " " << uv.y() << std::endl;
       }
     }
     return status;
@@ -1079,14 +1038,12 @@ private:
     if (status != OK)
       return status;
 
-    std::cout << "A, B: " << std::endl << A.eigen_object() << std::endl << Bu << std::endl << Bv << std::endl;
-
     // Solve "A*Xu = Bu". On success, the solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, the solution is (1/Dv) * Xv.
     NT Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
-      std::cout << "Could not solve linear system" << std::endl;
+      std::cerr << "Could not solve linear system" << std::endl;
       status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
       return status;
     }
@@ -1305,8 +1262,6 @@ public:
     if(status != OK)
       return status;
 
-    std::cout << "All data structures initialized" << std::endl;
-
     // The matrix A is constant and can be initialized outside of the loop
     int nbVertices = static_cast<int>(vertices.size());
     Matrix A(nbVertices, nbVertices); // the constant matrix using in the linear system A*X = B
@@ -1318,6 +1273,7 @@ public:
                                             ltmap, uvmap);
     NT energy_last;
     std::cout << "Initial energy: " << energy_this << std::endl;
+    std::cout << m_iterations << " max iterations" << std::endl;
 
     // main loop
     for(unsigned int ite=1; ite<=m_iterations; ++ite)
@@ -1354,7 +1310,7 @@ public:
 
     if(!is_one_to_one_mapping(mesh, faces, uvmap)) {
      // Use post processing to handle flipped elements
-      std::cout << "Parameterization is not valid; calling post processor" << std::endl;
+      std::cerr << "Parameterization is not valid; calling post processor" << std::endl;
       status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);
     }
 

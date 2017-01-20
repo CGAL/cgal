@@ -118,7 +118,6 @@ int main(int argc, char * argv[])
 
     // Add the seams to the seam mesh
     BOOST_FOREACH(SM_edge_descriptor e, seam_edges_A) {
-      std::cout << "Seam " << source(e, sm_A) << " " << target(e, sm_A) << " ";
       mesh_A.add_seam(source(e, sm_A), target(e, sm_A));
     }
   }
@@ -188,7 +187,6 @@ int main(int argc, char * argv[])
 
     // Add the seams to the seam mesh
     BOOST_FOREACH(SM_edge_descriptor e, seam_edges_B) {
-      std::cout << "Seam " << source(e, sm_B) << " " << target(e, sm_B) << " ";
       mesh_B.add_seam(source(e, sm_B), target(e, sm_B));
     }
   }

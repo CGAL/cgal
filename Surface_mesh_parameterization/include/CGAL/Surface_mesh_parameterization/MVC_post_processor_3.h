@@ -186,7 +186,6 @@ private:
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
-    std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
   }
 
   /// Checks whether the polygon's border is simple.
@@ -274,7 +273,6 @@ private:
 
       typename CT::Vertex_handle vh = ct.insert(sp);
       vh->info() = s;
-//      std::cout << "Added point: " << sp << '\n';
     }
 
     // Insert constraints (the border)
@@ -283,7 +281,6 @@ private:
       Point_2 sp = get(uvmap, s), tp = get(uvmap, t);
 
       ct.insert_constraint(sp, tp);
-//      std::cout << "Constrained edge: " << sp << " " << tp << std::endl;
     }
 
     std::ofstream out("constrained_triangulation.cgal");
@@ -450,7 +447,6 @@ private:
     // if vh_i is fixed, there is nothing to do: A(i,i)=1 and A(i,j)=0 for j!=i
     if(get(vpmap, vd_i))
     {
-//      std::cout << i << " is fixed in A " << std::endl;
       // @fixme unefficient: A(i,i) is written as many times as i has neighbors
       A.set_coef(i, i, 1);
       return;
@@ -511,7 +507,6 @@ private:
     // if vh_i is fixed, there is nothing to do: A(i,i)=1 and A(i,j)=0 for j!=i
     if(get(vpmap, vd_i))
     {
-//      std::cout << i << " is fixed in A " << std::endl;
       // @fixme unefficient A(i,i) is written as many times as i has neighbors
       A.set_coef(i, i, 1);
       return;
@@ -566,7 +561,6 @@ private:
     // but not in 'ct'.
 
     // Loop over the "outside" faces of ct
-//    std::cout << "add from ct" << std::endl;
     typename CT::Finite_faces_iterator fit = ct.finite_faces_begin(),
                                        fend = ct.finite_faces_end();
     for(; fit!=fend; ++fit)
@@ -578,7 +572,6 @@ private:
     }
 
     // Loop over the faces of 'mesh'
-//    std::cout << "add from mesh" << std::endl;
     BOOST_FOREACH(face_descriptor fd, faces) {
       fill_linear_system_matrix_mvc_from_mesh_face(mesh, fd, uvmap, vimap, vpmap, A);
     }
@@ -709,7 +702,7 @@ public:
 
     // Not sure how to handle non-simple yet @fixme
     if(!is_param_border_simple) {
-      std::cout << "Border is not simple!" << std::endl;
+      std::cerr << "Border is not simple!" << std::endl;
       return ERROR_NON_CONVEX_BORDER;
     }
 
@@ -726,7 +719,7 @@ public:
     // Run the MVC
     parameterize_convex_hull_with_MVC(mesh, vertices, faces, ct, uvmap, vimap, vpmap);
 
-    std::cout << "End of post processing: Ok" << std::endl;
+    std::cout << "End of post processing" << std::endl;
     return OK;
   }
 

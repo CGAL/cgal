@@ -41,7 +41,7 @@ class Dijkstra_end_exception : public std::exception
 {
   const char* what() const throw ()
   {
-    return "Reached the target vertex";
+    return "Dijkstra: reached the target vertex";
   }
 };
 
