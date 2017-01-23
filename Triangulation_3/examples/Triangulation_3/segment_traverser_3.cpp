@@ -11,6 +11,9 @@
 
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Random.h>
+#include <CGAL/Timer.h>
+
+//#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
@@ -26,6 +29,7 @@ typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Cell_traverser;
 int main(int argc, char* argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/blobby.xyz";
+  int nb_seg = (argc > 2) ? atoi(argv[2]) : 100;
 
   // Reads a .xyz point set file in points.
   // As the point is the second element of the tuple (that is with index 1)
@@ -49,10 +53,11 @@ int main(int argc, char* argv[])
 
     CGAL::default_random = CGAL::Random(0);
     CGAL::Random rng(0);
+    CGAL::Timer time;
+    time.start();
 
     unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
 
-    unsigned int nb_seg = 100;
     for (unsigned int i = 0; i < nb_seg; ++i)
     {
       // Construct a traverser.
@@ -63,9 +68,11 @@ int main(int argc, char* argv[])
                  rng.get_double(-0.22, 0.22),
                  rng.get_double(-0.19, 0.19));
 
+#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "Traverser " << (i + 1)
         << "\n\t(" << p1
         << ")\n\t(" << p2 << ")" << std::endl;
+#endif
       Cell_traverser ct(dt, p1, p2);
 
       // Count the number of finite cells traversed.
@@ -100,12 +107,22 @@ int main(int argc, char* argv[])
         }
       }
 
+#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "While traversing from " << ct.source()
                 << " to " << ct.target() << std::endl;
       std::cout << inf << " infinite and "
                 << fin << " finite cells were visited." << std::endl;
       std::cout << std::endl << std::endl;
+#endif
     }
+
+    time.stop();
+    std::cout << "Traversing cells of triangulation with "
+      << nb_seg << " segments took " << time.time() << " seconds."
+      << std::endl;
+    std::cout << "\tnb facets    : " << nb_facets << std::endl;
+    std::cout << "\tnb edges     : " << nb_edges << std::endl;
+    std::cout << "\tnb vertices  : " << nb_vertex << std::endl;
 
      return 0;
 }

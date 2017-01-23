@@ -9,6 +9,9 @@
 
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Random.h>
+#include <CGAL/Timer.h>
+
+//#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
@@ -48,6 +51,11 @@ int main(int argc, char* argv[])
 
     CGAL::default_random = CGAL::Random(0);
     CGAL::Random rng(0);
+    CGAL::Timer time;
+    time.start();
+
+    unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
+    unsigned int nb_collinear = 0;
 
     for (int i = 0; i < nb_seg; ++i)
     {
@@ -59,15 +67,15 @@ int main(int argc, char* argv[])
                  rng.get_double(-0.22, 0.22),
                  rng.get_double(-0.19, 0.19));
 
+#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "Traverser " << (i + 1)
                 << "\n\t(" << p1
                 << ")\n\t(" << p2 << ")" << std::endl;
+#endif
       Simplex_traverser st(dt, p1, p2);
 
       // Count the number of finite cells traversed.
       unsigned int inf = 0, fin = 0;
-      unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-      unsigned int nb_collinear = 0;
       for (; st != st.end(); ++st)
       {
         if( dt.is_infinite(st) )
@@ -78,7 +86,11 @@ int main(int argc, char* argv[])
           if (st.is_facet())       ++nb_facets;
           else if (st.is_edge())   ++nb_edges;
           else if (st.is_vertex()) ++nb_vertex;
+          else if (st.is_cell())   ++nb_cells;
 
+          if (st.is_collinear())   ++nb_collinear;
+
+#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
           if (st.is_facet())
             std::cout << "facet " << std::endl;
           else if (st.is_edge())
@@ -90,11 +102,11 @@ int main(int argc, char* argv[])
             CGAL_assertion(st.is_cell());
             std::cout << "cell " << std::endl;
           }
-
-          if (st.is_collinear())   ++nb_collinear;
+#endif
         }
       }
 
+#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "While traversing from " << st.source()
                 << " to " << st.target() << std::endl;
       std::cout << "\tinfinite cells : " << inf << std::endl;
@@ -103,6 +115,7 @@ int main(int argc, char* argv[])
       std::cout << "\tedges    : " << nb_edges << std::endl;
       std::cout << "\tvertices : " << nb_vertex << std::endl;
       std::cout << std::endl << std::endl;
+#endif
     }
 
     // TODO : add cases with degeneracies, with query :
@@ -113,6 +126,16 @@ int main(int argc, char* argv[])
     // - along 2 successive facets (vertex/facet/edge/facet/edge)
     // - along 2 successive edges (vertex/edge/vertex/edge/vertex)
     // - along a facet and an edge successively
-    
+
+    time.stop();
+    std::cout << "Traversing simplices of triangulation with "
+      << nb_seg << " segments took " << time.time() << " seconds."
+      << std::endl;
+    std::cout << "\tnb cells     : " << nb_cells << std::endl;
+    std::cout << "\tnb facets    : " << nb_facets << std::endl;
+    std::cout << "\tnb edges     : " << nb_edges << std::endl;
+    std::cout << "\tnb vertices  : " << nb_vertex << std::endl;
+    std::cout << "\tnb collinear : " << nb_collinear << std::endl;
+
     return 0;
 }
