@@ -322,17 +322,29 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
      * the switch. If this is the case, then other modifications are necessary.
      * I hope it's not. It will be resolved when exhastive tests are introduced.
      */
-    const Point_2& left_new =
-      this->m_traits->construct_min_vertex_2_object()(curve->last_curve());
-    const Point_2& left_cur =
-      this->m_traits->construct_min_vertex_2_object()((*iter)->last_curve());
-    if ((curve)->has_same_leaves(*iter) &&
-        (LARGER == this->m_traits->compare_xy_2_object()(left_new, left_cur)))
+    typename Traits_adaptor_2::Parameter_space_in_x_2 psx =
+      this->m_traits->parameter_space_in_x_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_y_2 psy =
+      this->m_traits->parameter_space_in_y_2_object();
+    Arr_parameter_space ps_x1 = psx(curve->last_curve(), ARR_MIN_END);
+    Arr_parameter_space ps_y1 = psy(curve->last_curve(), ARR_MIN_END);
+    Arr_parameter_space ps_x2 = psx((*iter)->last_curve(), ARR_MIN_END);
+    Arr_parameter_space ps_y2 = psy((*iter)->last_curve(), ARR_MIN_END);
+    if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR) &&
+        (ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR))
     {
-      *iter = curve;    // replace the current curve with the new one.
-      CGAL_SL_PRINT_END_EOL
-        ("adding a Curve to the right (curve completely overlaps)");
-      return false;
+      const Point_2& left_new =
+        this->m_traits->construct_min_vertex_2_object()(curve->last_curve());
+      const Point_2& left_cur =
+        this->m_traits->construct_min_vertex_2_object()((*iter)->last_curve());
+      if ((curve)->has_same_leaves(*iter) &&
+          (LARGER == this->m_traits->compare_xy_2_object()(left_new, left_cur)))
+      {
+        *iter = curve;    // replace the current curve with the new one.
+        CGAL_SL_PRINT_END_EOL
+          ("adding a Curve to the right (curve completely overlaps)");
+        return false;
+      }
     }
 
     if ((curve)->has_common_leaf(*iter)) {
