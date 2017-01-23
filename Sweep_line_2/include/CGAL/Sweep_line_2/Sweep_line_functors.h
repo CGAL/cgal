@@ -34,6 +34,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 namespace CGAL {
@@ -63,21 +64,18 @@ public:
 private:
 
   // Data members:
-  const Traits_2 * m_traits;                // The geometric-traits object.
-  
-  Arr_parameter_space  m_ps_in_x;           // Storing curve information when
-  Arr_parameter_space  m_ps_in_y;           // comparing a curve end with
-  Arr_curve_end        m_index;             // boundary conditions.
+  const Traits_2* m_traits;             // The geometric-traits object.
+
+  Arr_parameter_space m_ps_in_x;        // Storing curve information when
+  Arr_parameter_space m_ps_in_y;        // comparing a curve end with
+  Arr_curve_end m_index;                // boundary conditions.
 
 public:
   
   /*! Cosntructor. */
-  Compare_events (const Traits_2 * traits) :
-    m_traits (traits)
-  {}
-  
-  /*!
-   * Compare two existing events.
+  Compare_events(const Traits_2* traits) : m_traits(traits) {}
+
+  /*! Compare two existing events.
    * This operator is called by the multiset assertions only in
    * debug mode (to verify that event was inserted at the right place).
    */
@@ -316,82 +314,99 @@ class Sweep_line_event;
  * y-order. Used to maintain the order of the status line (the Y-structure)
  * in the sweep-line algorithm.
  */
-template <class Traits_, class Subcurve_> 
-class Curve_comparer 
-{
+template <typename GeomTraits_, typename Subcurve_>
+class Curve_comparer {
 public:
+  // Backward compatibility
+  typedef GeomTraits_                                    Traits_2;
 
-  typedef Traits_                                        Traits_2;
+  typedef GeomTraits_                                    Geometry_traits_2;
   typedef Subcurve_                                      Subcurve;
-  typedef Arr_traits_basic_adaptor_2<Traits_2>           Traits_adaptor_2;
+  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
 
   typedef typename Traits_adaptor_2::Point_2 Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2  X_monotone_curve_2;
-  typedef Sweep_line_event<Traits_2, Subcurve>           Event;
+  typedef Sweep_line_event<Geometry_traits_2, Subcurve>  Event;
 
 private:
+  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
-  const Traits_adaptor_2 * m_traits;    // A geometric-traits object.
-  Event            **m_curr_event;      // Points to the current event point.
+  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
+                                                   Bottom_side_category,
+                                                   Top_side_category,
+                                                   Right_side_category>::result
+    Are_all_sides_oblivious_category;
 
-public:
-  
-  /*! Constructor. */
-  template <class Sweep_event>
-  Curve_comparer (const Traits_adaptor_2 * t, Sweep_event** e_ptr) :
-    m_traits(t),
-    m_curr_event(reinterpret_cast<Event**>(e_ptr))
-  {}
+  const Traits_adaptor_2* m_traits;     // A geometric-traits object.
+  Event** m_curr_event;                 // Points to the current event point.
 
-  /*!
-   * Compare the vertical position of two subcurves in the status line.
-   * This operator is called only in debug mode.
+  /*! Compare the vertical position of two subcurves in the status line.
+   * This is the implementation for the case where all 4 boundary sides are
+   * oblivious.
    */
-  Comparison_result operator()(const Subcurve *c1, const Subcurve *c2) const
+  Comparison_result operator()(const Subcurve* c1, const Subcurve* c2,
+                               bool is_c1_right_curve, bool is_c2_right_curve,
+                               Arr_all_sides_oblivious_tag) const
   {
-    bool is_c1_a_right_curve = ( std::find((*m_curr_event)->right_curves_begin(),
-                                           (*m_curr_event)->right_curves_end(),
-                                           c1) != (*m_curr_event)->right_curves_end() );
-    bool is_c2_a_right_curve = ( std::find((*m_curr_event)->right_curves_begin(),
-                                           (*m_curr_event)->right_curves_end(),
-                                           c2) != (*m_curr_event)->right_curves_end() );
-
-    // In case to two curves are right curves at the same event, compare
+    // If the two curves are right curves at the same event, compare
     // to the right of the event point.
-    if (is_c1_a_right_curve && is_c2_a_right_curve)
-    {
-      return (m_traits->compare_y_at_x_right_2_object()
-              (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point()));
+    if (is_c1_right_curve && is_c2_right_curve) {
+      return m_traits->compare_y_at_x_right_2_object()
+        (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point());
     }
 
-    if ( !(*m_curr_event)->is_on_boundary() )
-    {
-      if (is_c1_a_right_curve)
-      {
-        return m_traits->compare_y_at_x_2_object()
-          ((*m_curr_event)->point(), c2->last_curve());
-      }
+    // If c1 is a right curve, but c2 is not, simply compare the y-coordinate
+    // of the event and the y-coordinate of c2 at the event.
+    if (is_c1_right_curve)
+      return m_traits->compare_y_at_x_2_object()
+        ((*m_curr_event)->point(), c2->last_curve());
 
-      if (is_c2_a_right_curve)
-      {
-        return opposite( m_traits->compare_y_at_x_2_object()
-          ((*m_curr_event)->point(), c1->last_curve() ) ) ;
-      }
-    }
+    // If c2 is a right curve, but c1 is not, simply compare the y-coordinate
+    // of c2 at the event and the y-coordinate of the event, and return the
+    // opposite.
+    CGAL_assertion(is_c2_right_curve);
+    return opposite(m_traits->compare_y_at_x_2_object()
+                    ((*m_curr_event)->point(), c1->last_curve()));
+  }
 
-    Arr_parameter_space ps_x1 = 
+  /*! Compare the vertical position of two subcurves in the status line.
+   * This implementation is for the case where any boundary side is not
+   * necessarily oblivious.
+   */
+  Comparison_result operator()(const Subcurve* c1, const Subcurve* c2,
+                               bool is_c1_right_curve, bool is_c2_right_curve,
+                               Arr_not_all_sides_oblivious_tag) const
+  {
+    Arr_parameter_space ps_x = (*m_curr_event)->parameter_space_in_x();
+    CGAL_assertion(ps_x != ARR_RIGHT_BOUNDARY);
+    Arr_parameter_space ps_y = (*m_curr_event)->parameter_space_in_y();
+    if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR))
+      return operator()(c1, c2, is_c1_right_curve, is_c2_right_curve,
+                        Arr_all_sides_oblivious_tag());
+
+    /*! \todo fix!
+     * - Distinguish between the open and closed case.
+     * - If both curves are the right curves of the event, then
+     * -- distinguish betwen left, bottom, and top.
+     * - If c1 is a right curve of the event, but c2 is not
+     * -- distinguish betwen left, bottom, and top.
+     * - c2 is a right curve of the event, but c1 is not
+     * - distinguish betwen left, bottom, and top.
+     */
+    Arr_parameter_space ps_x1 =
       m_traits->parameter_space_in_x_2_object()(c1->last_curve(), ARR_MIN_END);
     Arr_parameter_space ps_y1 = 
       m_traits->parameter_space_in_y_2_object()(c1->last_curve(), ARR_MIN_END);
 
     if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR))
-    {
       // The first curve has a valid left endpoint. Compare the y-position
       // of this endpoint to the second subcurve. 
       return m_traits->compare_y_at_x_2_object()
         (m_traits->construct_min_vertex_2_object()(c1->last_curve()),
          c2->last_curve());
-    }
 
     // We use the fact that the two curves are interior disjoint. As c2 is
     // already in the status line, then if c1 left end has a negative boundary
@@ -403,12 +418,36 @@ public:
 
     // For similar reasons, if c1 begins on the bottom boundary it is below
     // c2, if it is on the top boundary it is above it.
-    CGAL_assertion (ps_y1 != ARR_INTERIOR);
+    CGAL_assertion(ps_y1 != ARR_INTERIOR);
     return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
   }
 
-  /*!
-   * Compare the relative y-order of the given point and the given subcurve.
+public:
+  /*! Constructor. */
+  template <typename Sweep_event>
+  Curve_comparer(const Traits_adaptor_2* t, Sweep_event** e_ptr) :
+    m_traits(t),
+    m_curr_event(reinterpret_cast<Event**>(e_ptr))
+  {}
+
+  /*! Compare the vertical position of two subcurves in the status line.
+   * This operator is called only in debug mode.
+   */
+  Comparison_result operator()(const Subcurve* c1, const Subcurve* c2) const
+  {
+    bool is_c1_right_curve =
+      (std::find((*m_curr_event)->right_curves_begin(),
+                 (*m_curr_event)->right_curves_end(), c1) !=
+       (*m_curr_event)->right_curves_end());
+    bool is_c2_right_curve =
+      (std::find((*m_curr_event)->right_curves_begin(),
+                 (*m_curr_event)->right_curves_end(), c2) !=
+       (*m_curr_event)->right_curves_end());
+    return operator()(c1, c2, is_c1_right_curve, is_c2_right_curve,
+                      Are_all_sides_oblivious_category());
+  }
+
+  /*! Compare the relative y-order of the given point and the given subcurve.
    */
   Comparison_result operator() (const Point_2& pt, const Subcurve *sc) const
   {
