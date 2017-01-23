@@ -88,7 +88,7 @@ void read_surf(std::istream& input, std::vector<Mesh>& output,
       iss.str(line);
       double xmin, xmax, ymin, ymax, zmin, zmax;
       iss >> xmin >> xmax >> ymin >> ymax >> zmin >> zmax;
-      grid_box = CGAL::Bbox_3(xmin, xmax, ymin, ymax, zmin, zmax);
+      grid_box = CGAL::Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
       break;
     }
   }
@@ -259,7 +259,7 @@ template<class Mesh>
 void read_surf(std::istream& input, std::vector<Mesh>& output,
   std::vector<MaterialData>& metadata,
   CGAL::Bbox_3& grid_box,
-  CGAL::cpp11::array<unsigned int, 3> grid_size)
+  CGAL::cpp11::array<unsigned int, 3>& grid_size)
 {
   read_surf(input, output, metadata, grid_box, grid_size,
     CGAL::Polygon_mesh_processing::parameters::all_default());
