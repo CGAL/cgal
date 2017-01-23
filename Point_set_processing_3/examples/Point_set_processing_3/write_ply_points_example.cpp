@@ -42,7 +42,10 @@ int main(int, char**)
                                                                  (unsigned char)(64 / (i + 1))),
                                                i));
 
-  std::ofstream f("out.ply", std::ios_base::binary);
+  std::ofstream f("out.ply");
+  if (CGAL::get_mode(f) == CGAL::IO::ASCII)
+    std::cerr << "Okay!" << std::endl;
+  
   CGAL::write_ply_points_with_properties
     (f, points.begin(), points.end(),
      CGAL::Ply::point_writer (Point_map()),
