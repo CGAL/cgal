@@ -75,10 +75,18 @@ namespace Ply {
 
 namespace internal {
 
-  template <typename T> void property_header_type (std::ostream& stream) { stream << "unknown"; }
-  template <> void property_header_type<double> (std::ostream& stream) { stream << "double"; }
-  template <> void property_header_type<int> (std::ostream& stream) { stream << "int"; }
+  template <typename T> void property_header_type (std::ostream& stream) { stream << "undefined_type"; }
+
+  template <> void property_header_type<char> (std::ostream& stream) { stream << "char"; }
   template <> void property_header_type<unsigned char> (std::ostream& stream) { stream << "uchar"; }
+  template <> void property_header_type<short> (std::ostream& stream) { stream << "short"; }
+  template <> void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
+  template <> void property_header_type<int> (std::ostream& stream) { stream << "int"; }
+  template <> void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
+  template <> void property_header_type<float> (std::ostream& stream) { stream << "float"; }
+  template <> void property_header_type<double> (std::ostream& stream) { stream << "double"; }
+
+
   
   template <typename T>
   void property_header (std::ostream& stream, const Ply::Property<T>& prop)
