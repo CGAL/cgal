@@ -260,12 +260,11 @@ void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_i
           program = item->getShaderProgram(Scene_points_with_normal_item::PROGRAM_WITH_LIGHT, viewer);
         else
           program = item->getShaderProgram(Scene_points_with_normal_item::PROGRAM_NO_SELECTION, viewer);
-
         program->bind();
         item->vaos[Selected_points]->bind();
         item->buffers[Selected_points_vertices].bind();
         item->buffers[Selected_points_vertices].allocate(positions_selected_points.data(),
-                            static_cast<int>(positions_selected_points.size()*sizeof(double)));
+                            static_cast<int>(positions_selected_points.size()*sizeof(CGAL_data_type)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",CGAL_GL_data_type,0,3);
         item->buffers[Selected_points_vertices].release();
@@ -274,7 +273,7 @@ void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_i
         {
           item->buffers[Selected_points_normals].bind();
           item->buffers[Selected_points_normals].allocate(positions_selected_normals.data(),
-                                          static_cast<int>(positions_selected_normals.size()*sizeof(double)));
+                                          static_cast<int>(positions_selected_normals.size()*sizeof(CGAL_data_type)));
           program->enableAttributeArray("normals");
           program->setAttributeBuffer("normals",CGAL_GL_data_type,0,3);
           item->buffers[Selected_points_normals].release();
