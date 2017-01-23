@@ -10,32 +10,36 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
+typedef CGAL::cpp11::array<unsigned short, 4> Color;
+typedef std::pair<Point, Color> PointWithColor;
 
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/pig_points.las";
   // Reads a .ply point set file with normal vectors and colors
 
-  std::vector<Point> points; // store points
+  std::vector<PointWithColor> points; // store points
   std::ifstream in(fname);
 
   if (!in ||
       !CGAL::read_las_points_with_properties
       (in,
        std::back_inserter (points),
+       CGAL::Las::point_property (CGAL::First_of_pair_property_map<PointWithColor>()),
        CGAL::cpp11::make_tuple
-       (CGAL::Identity_property_map<Point>(),
-        Kernel::Construct_point_3(),
-        CGAL::Las::Property::X(),
-        CGAL::Las::Property::Y(),
-        CGAL::Las::Property::Z())))
+       (CGAL::Second_of_pair_property_map<PointWithColor>(),
+        CGAL::Construct_array(),
+        CGAL::Las::Property::R(),
+        CGAL::Las::Property::G(),
+        CGAL::Las::Property::B(),
+        CGAL::Las::Property::I())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;
     }
 
   for (std::size_t i = 0; i < points.size(); ++ i)
-    std::cout << points[i] << std::endl;
+    std::cout << points[i].first << std::endl;
   
   return EXIT_SUCCESS;
 }
