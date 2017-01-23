@@ -151,7 +151,7 @@ void output_arrangement_to_off(const Arrangement& arr,
   out << std::endl;
 }
 
-/// A type to regroup all the info and avoid having to pass it all in each function.
+// A type to regroup all the info and avoid having to pass it all in each function.
 template<typename SeamMesh_,
          typename ConeMap_,
          typename VertexIndexMap_,
@@ -184,7 +184,7 @@ public:
   { }
 };
 
-/// Affine transformation to express A = T*B + V
+// Affine transformation to express A = T*B + V
 // @fixme transf needs a translation component too (for orb type IV)
 template<typename Kernel>
 class Affine_transformation
@@ -253,8 +253,8 @@ public:
   }
 };
 
-/// halfedge that carries a transformation that is used to compute the coordinates
-/// of the incident faces in the tiled space.
+// halfedge that carries a transformation that is used to compute the coordinates
+// of the incident faces in the tiled space.
 template<typename SeamMesh>
 class halfedge_with_transformation
 {
@@ -279,6 +279,7 @@ public:
 };
 
 } // namespace internal
+
 
 template<typename Arrangement,
          typename EmbeddedMesh>

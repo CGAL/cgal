@@ -460,7 +460,7 @@ When we circulate in the seam graph we will traverse `h7`, `h1`, `h3*`, and we a
 When we start at `h3`, we will traverse `h3`, `h5`, `h7*`, and we are back at `h3`.
 
 
-\cgalFigureBegin{fig_Seam_mesh_1, Seam_mesh_1.png}
+\cgalFigureBegin{fig_Seam_mesh_1, seam_mesh_1.svg}
 A seam mesh with two seam edges `(2,3)` and `(6,7)`.
 \cgalFigureEnd
 

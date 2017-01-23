@@ -88,10 +88,19 @@ enum Weight_type
 ///
 /// This is a borderless parameterization. A one-to-one mapping is guaranteed.
 ///
+/// The main function of the class `Orbifold_Tutte_parameterizer_3` is `parameterize()`,
+/// to which the user provides a `Seam_mesh` with marked edges (the seams)
+/// and a set of vertices of the mesh (the cones). The choice of cones influences
+/// the resulting parameterization, but not the choice of the seam path between these cones.
+///
+/// The example \ref Surface_mesh_parameterization/orbifold.cpp "orbifold.cpp"
+/// shows how to select cones on the input mesh and automatically construct
+/// the seams and the cones on the `Seam_mesh`.
+///
 /// \cgalModels `Parameterizer_3`
 ///
 /// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceGraph`
-/// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system. <br>
+/// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -627,26 +636,39 @@ public:
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
   ///
-  ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Seam_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` as key type and
   ///         a Boolean as value type.
   ///
-  /// \param mesh a model of the `FaceGraph` concept
+  /// \param mesh a `Seam_mesh` parameterized by any model of a `FaceGraph`
   /// \param bhd a halfedge on the border of the seam mesh
-  /// \param cmap a mapping of 4 (or 6) `vertex_descriptor`s that are cones
+  /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
   ///             to their respective `Cone_type`.
   /// \param uvmap an instanciation of the class `VertexUVmap`.
   /// \param vimap an instanciation of the class `VertexIndexMap`.
   ///
-  /// \pre cones and seams must be valid.
+  /// \pre `mesh` must be a triangular mesh.
+  /// \pre The underlying mesh of `mesh` is a topological ball.
+  /// \pre The vertices must be indexed (vimap must be initialized).
+  /// \pre The cones are vertices of `mesh` and their number is adapted to
+  ///      the orbifold type (4 for types I, II or III and 6 for type IV).
+  /// \pre The seam edges form a set of segments that contains the different cones,
+  ///      and starts and ends at two different cones.
+  /// \pre The seam edges form a set of segments that is homotopic to a
+  ///      line. Specifically, the paths between cones should not self intersect
+  ///      or intersect other paths (see Figure below).
+  ///
+  /// \cgalFigureBegin{Surface_mesh_parameterizationfigorbifold, orbifold_path.svg}
+  /// Bad (left) and good (right) seam paths. The seam edges are shown in dark red.
+  /// Cones are marked in yellow and blue.
+  /// \cgalFigureEnd
   template<typename ConeMap,
            typename VertexIndexMap,
            typename VertexUVMap>

@@ -56,7 +56,7 @@ namespace Surface_mesh_parameterization {
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
 ///         traits of TriangleMesh.
 /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
 ///         as value type.
 ///
@@ -65,10 +65,11 @@ namespace Surface_mesh_parameterization {
 /// \param bhd a halfedge descriptor on the boundary of `mesh`.
 /// \param uvm an instanciation of the class `VertexUVmap`.
 ///
-/// \pre `mesh` must be a surface with one connected component.
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The mesh border must be mapped onto a convex polygon
 ///   (for fixed border parameterizations).
+/// \pre The vertices must be indexed (vimap must be initialized).
+///
 template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>
 Error_code parameterize(TriangleMesh& mesh,
                         Parameterizer parameterizer,
@@ -105,7 +106,7 @@ Error_code parameterize(TriangleMesh& mesh,
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
 ///         traits of TriangleMesh.
 /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
 ///         as value type.
 ///
@@ -113,8 +114,9 @@ Error_code parameterize(TriangleMesh& mesh,
 /// \param bhd a halfedge descriptor on the boundary of `mesh`.
 /// \param uvm an instanciation of the class `VertexUVmap`.
 ///
-/// \pre `mesh` must be a surface with one connected component.
 /// \pre `mesh` must be a triangular mesh.
+/// \pre The vertices must be indexed (vimap must be initialized).
+///
 template <class TriangleMesh, class HD, class VertexUVmap>
 Error_code parameterize(TriangleMesh& mesh,
                         HD bhd,

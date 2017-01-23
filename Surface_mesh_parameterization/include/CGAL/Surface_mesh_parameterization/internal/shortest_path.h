@@ -70,10 +70,8 @@ void output_shortest_paths_to_selection_file(const TriangleMesh& mesh,
   os << std::endl;
 }
 
-/// Visitor to stop Dijkstra when a target turns 'BLACK' (the point has been examined
-/// through all its edges)
-///
-/// \tparam TriangleMesh
+// Visitor to stop Dijkstra when a target turns 'BLACK' (the point has been examined
+// through all its edges)
 template<typename TriangleMesh>
 class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
 {

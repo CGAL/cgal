@@ -275,14 +275,14 @@ public:
   /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
   ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
   ///         a Boolean as value type.
   ///
   /// \param mesh a triangulated surface.
@@ -291,8 +291,8 @@ public:
   /// \param vimap an instanciation of the class `VertexIndexMap`.
   /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
   ///
-  /// \pre `mesh` must be a surface with one connected component.
   /// \pre `mesh` must be a triangular mesh.
+  /// \pre The vertices must be indexed (vimap must be initialized).
   ///
   template <typename VertexUVmap,
             typename VertexIndexMap,

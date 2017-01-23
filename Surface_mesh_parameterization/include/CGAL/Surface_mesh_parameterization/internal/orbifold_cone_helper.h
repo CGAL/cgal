@@ -37,7 +37,7 @@
 #include <utility>
 #include <vector>
 
-/// \file Orbifold_cone_helper.h
+/// \file orbifold_cone_helper.h
 
 namespace CGAL {
 

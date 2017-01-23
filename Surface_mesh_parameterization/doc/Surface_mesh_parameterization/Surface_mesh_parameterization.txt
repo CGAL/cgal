@@ -115,9 +115,9 @@ using the `Surface_mesh` built-in property mechanism.
 \section secSurfaceParameterizationMethods Surface Parameterization Methods
 
 This \cgal package implements surface parameterization methods, such
-as Least Squares Conformal Maps, Discrete Conformal Map, Discrete
-Authalic Parameterization, Floater Mean Value Coordinates or Tutte
-Barycentric Mapping. These methods are provided as models of the
+as As Rigid as Possible, Least Squares Conformal Maps, Discrete Conformal Map,
+Discrete Authalic Parameterization, Floater Mean Value Coordinates or Tutte
+Barycentric and Orbifold Mappings. These methods are provided as models of the
 `Parameterizer_3` concept.
 
 \subsection Surface_mesh_parameterizationFixedBorder Fixed Border Surface Parameterizations
@@ -271,7 +271,7 @@ Least squares conformal maps.
 
 `Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
-An as rigid as possible parameterization was introduced by Liu et al. \cgalCite{liu2008local}.
+An as-rigid-as-possible parameterization was introduced by Liu et al. \cgalCite{liu2008local}.
 It is a shape-preserving method based on an iterative energy minimization process.
 Each step alternates a local optimization technique to find the best local mapping
 and a global stitching technique equivalent to the resolution of a linear system
@@ -281,6 +281,14 @@ A generalization of the formulation of the local optimization introduces a scala
 coefficient &lambda; that allows the user to choose to give importance to angle
 preservation (conforming parameterization) when &lambda; = 0, to shape preservation (as rigid as
 possible) when &lambda; goes to infinity, or a balance of both.
+
+\cgalFigureAnchor{Surface_mesh_parameterizationfigARAP}
+<center>
+<img src="ARAP.png" style="width:800px"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigARAP}
+As Rigid As Possible parameterization (the cut is traced in red).
+\cgalFigureCaptionEnd
 
 \subsection secBorderParameterizationsforFreeMethods Border Parameterizations for Free Methods
 
@@ -300,7 +308,7 @@ in the current version of this package.
 
 </UL>
 
-\subsection Surface_mesh_parameterizationBorderless Borderless Parameterizations
+\subsection Surface_mesh_parameterizationBorderless Borderless Surface Parameterizations
 
 \subsubsection Surface_mesh_parameterizationOrbi Orbifold Tutte Embedding
 
@@ -320,6 +328,15 @@ for its computation.
 The parameterization process intrinsically requires the uses of seams, but whose choice
 have no influence on the result. The `Seam_mesh` structure (see also next Section)
 is used for this purpose.
+
+\cgalFigureAnchor{Surface_mesh_parameterizationfigOrbifold}
+<center>
+<img src="orbifold.png" style="width:800px"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigOrbifold}
+Type IV Orbifold Tutte Embedding. The (four) base cones are shown in green and the
+virtual cut is shown in red.
+\cgalFigureCaptionEnd
 
 \section secCuttingaMesh Cutting a Mesh
 
@@ -406,7 +423,7 @@ who worked as an engineer at Inria Sophia-Antipolis.
 
 For CGAL 4.10 the package has undergone a major rewrite by Andreas Fabri.
 The algorithms are the same, but they are now based on the `FaceGraph` API.
-Additionally, the class `Seam_mesh` got introduced, which is also a model of
+Additionally, the class `Seam_mesh` was introduced, which is also a model of
 a `FaceGraph`, and replaces a wrapper which had a more complicated API.
 
 */
