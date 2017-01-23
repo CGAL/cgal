@@ -312,19 +312,24 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
       return false;
     }
 
-    /*! If the two curves have the exact same leaves, then use the new curve
-     * as a right curve instead of the existing one.
-     * \todo EF, this may not be a sufficient condition. It is possible that
-     * we also need to check whether the event at the right endpoint has a
-     * matching left curve, and only if it has, make the switch. If this is
-     * the case, then other modifications are necessary. I hope it's not.
+    /*! If the two curves have the exact same leaves and the left endpoint of
+     * the new curve is to the right of the left endpoint of the existing
+     * curve, then use the new curve as a right curve instead of the existing
+     * one.
+     * \todo EF, While this is a necessary condition, it may not be a sufficient
+     * condition. It is possible that we also need to check whether the event at
+     * the right endpoint has a matching left curve, and only if it has, make
+     * the switch. If this is the case, then other modifications are necessary.
+     * I hope it's not. It will be resolved when exhastive tests are introduced.
      */
-    if ((curve)->has_same_leaves(*iter)) {
-      // @sloriot says: do not replace the *iter at it can be in the left curves of some
-      // other events. If we do not update those events with curve, then we cannot simply
-      // replace it, otherwise we'll have an inconsistency between the status line and
-      // some left curves
-      // *iter = curve;    // replace the current curve with the new one.
+    const Point_2& left_new =
+      this->m_traits->construct_min_vertex_2_object()(curve->last_curve());
+    const Point_2& left_cur =
+      this->m_traits->construct_min_vertex_2_object()((*iter)->last_curve());
+    if ((curve)->has_same_leaves(*iter) &&
+        (LARGER == this->m_traits->compare_xy_2_object()(left_new, left_cur)))
+    {
+      *iter = curve;    // replace the current curve with the new one.
       CGAL_SL_PRINT_END_EOL
         ("adding a Curve to the right (curve completely overlaps)");
       return false;
@@ -744,6 +749,7 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
   if (overlap_exist) overlap_cv = sub_cv1;
   else {
     // compute the overlap.
+    CGAL_assertion(iter != event->right_curves_end());
     std::vector<Object>  obj_vec;
     vector_inserter vit(obj_vec);
     this->m_traits->intersect_2_object()(curve->last_curve(),
@@ -756,41 +762,39 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
     }
 
     std::size_t obj_vec_size = obj_vec.size();
-    if (obj_vec_size==1)
-    {
+    if (1 == obj_vec_size) {
       //always a curve since an overlap was detected on the right of `event`
       CGAL_assertion( obj_vec.front().is<X_monotone_curve_2>() );
       overlap_cv = object_cast<X_monotone_curve_2>(obj_vec.front());
     }
-    else
-    {
+    else {
       CGAL_SL_PRINT_TEXT("Overlap consists of more than one curve");
       CGAL_SL_PRINT_EOL();
-      // elements in obj_vec are sorted using less-xy,
-      // look for a curve containing the point of `event`.
-      for(std::size_t i=0; i<obj_vec_size; ++i)
-      {
+      // Elements in obj_vec are sorted using less-xy.
+      for (std::size_t i = 0; i < obj_vec_size; ++i) {
         const CGAL::Object& obj = obj_vec[i];
-        // we are not interested by intersection point since a curve overlap was reported
-        if ( const X_monotone_curve_2 * xcv_ptr = object_cast<X_monotone_curve_2>(&obj) )
+        if (const X_monotone_curve_2* xcv_ptr =
+            object_cast<X_monotone_curve_2>(&obj))
         {
-          if (this->m_traits->compare_xy_2_object()(
-            this->m_traits->construct_max_vertex_2_object()(*xcv_ptr),
-            event->point()) == LARGER )
+          // We are only interested in overlapping curves.
+          // Look for a curve containing the event point.
+          if (this->m_traits->compare_xy_2_object()
+              (this->m_traits->construct_max_vertex_2_object()(*xcv_ptr),
+               event->point()) == LARGER)
           {
-            CGAL_assertion(this->m_traits->compare_xy_2_object()(
-              this->m_traits->construct_min_vertex_2_object()(*xcv_ptr), event->point()) != LARGER );
+            CGAL_assertion(this->m_traits->compare_xy_2_object()
+                           (this->m_traits->construct_min_vertex_2_object()
+                            (*xcv_ptr), event->point()) != LARGER);
             overlap_cv = *xcv_ptr;
             break;
           }
-          else
-          {
+          else {
             CGAL_SL_PRINT_TEXT("  Skip a curve");
             CGAL_SL_PRINT_EOL();
           }
         }
-        else
-        {
+        else {
+          // We are not interested in intersection points.
           CGAL_SL_PRINT_TEXT("  Skip a point");
           CGAL_SL_PRINT_EOL();
         }
