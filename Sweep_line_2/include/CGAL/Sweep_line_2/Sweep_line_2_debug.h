@@ -172,7 +172,8 @@ PrintEvent(const Event* e)
     Arr_parameter_space x = e->parameter_space_in_x();
     Arr_parameter_space y = e->parameter_space_in_y();
     PrintOpenBoundaryType(x, y);
-    std::cout << " with open curve: " << e->curve();
+    if (e->has_left_curves() || e->has_right_curves())
+      std::cout << " with open curve: " << e->curve();
   }
 }
 

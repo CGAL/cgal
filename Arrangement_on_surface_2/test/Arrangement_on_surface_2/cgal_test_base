@@ -1711,9 +1711,6 @@ compile_and_run test_spherical_removal
 
 compile_and_run test_io
 
-compile_and_run argt_segment_polycurve_bug
-compile_and_run vladaburian
-
 # if any error occured then append the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
