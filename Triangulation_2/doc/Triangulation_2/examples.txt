@@ -13,6 +13,7 @@
 \example Triangulation_2/print_cropped_voronoi.cpp
 \example Triangulation_2/regular.cpp
 \example Triangulation_2/terrain.cpp
+\example Triangulation_2/terrain_with_info.cpp
 \example Triangulation_2/triangulation_prog1.cpp
 \example Triangulation_2/voronoi.cpp
 \example Triangulation_2/copy_triangulation_2.cpp
