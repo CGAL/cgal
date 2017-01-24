@@ -71,3 +71,10 @@ target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
 polyhedron_demo_plugin(ply_to_xyz_plugin PLY_to_xyz_io_plugin)
 target_link_libraries(ply_to_xyz_plugin scene_points_with_normal_item)
+
+if (LASLIB_FOUND)
+  polyhedron_demo_plugin(las_plugin LAS_io_plugin)
+  target_link_libraries(las_plugin scene_points_with_normal_item ${LASLIB_LIBRARIES})
+else()
+  message(STATUS "NOTICE : the LAS IO plugin needs LAS libraries and will not be compiled.")
+endif()
