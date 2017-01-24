@@ -3,14 +3,15 @@ from collections import defaultdict
 from sys import argv 
 import os.path as op
 
+# if _in is part of args, return true.
 def check_type(_in, args):
-  res = False;
-  for arg in args:
-    res = res or _in == arg
-  return res
+  if _in in args:
+    return True
+  else:
+    return False
 
 root_path=argv[1]
-d = pq(filename=root_path+'/index.xml', parser="xml")
+d = pq(filename=op.join(op.sep, root_path,'index.xml'), parser="xml")
 compounds=[p.text() for p in d('compound').items()]
 types=[p.attr('kind') for p in d('compound').items()]
 type_map = defaultdict(list) #map <type, name>
@@ -28,10 +29,12 @@ for i in xrange(0,len(compounds)):
     if (types[i] == "class"):#check if the class is a concept class
       compound=d('compound').children("name").eq(i).text().replace('_', '__').replace('::', '_1_1')
       filepath='class'+compound+'.xml'
-      if(op.isfile(root_path+filepath)):
-        e = pq(filename=root_path+filepath, parser="xml")
+      total_path=op.join(op.sep, root_path,filepath)
+      if(op.isfile(total_path)):
+        e = pq(filename=total_path, parser="xml")
         compoundnames=[p.text() for p in e('includes').items()]
-        if(compoundnames[0].find("Concept") != -1):
+        
+        if(len(compoundnames) > 1 and compoundnames[0].find("Concept") != -1):
           types[i] = 'Concept '+types[i].lower()
     type_map[types[i]].append(name)
 
@@ -69,8 +72,8 @@ for btype in type_map:
     elif btype == 'namespace':
       filepath='/namespace'+name.replace('_', '__').replace('::', '_1_1')+'.xml'
     templates=[]
-    if op.isfile(root_path+filepath):
-      f=pq(filename=root_path+filepath, parser="xml")
+    if op.isfile(op.join(op.sep, root_path,filepath)):
+      f=pq(filename=op.join(op.sep, root_path,filepath), parser="xml")
       templateparams=f("compounddef").children("templateparamlist").eq(0).children("param").items()
       for param in templateparams:
         template_type=""
@@ -117,8 +120,8 @@ for btype in type_map:
         return_type="" #will contain the return type of a function/method
         
         #look for arguments
-        if op.isfile(root_path+filepath):
-          f=pq(filename=root_path+filepath, parser="xml")
+        if op.isfile(op.join(op.sep, root_path,filepath)):
+          f=pq(filename=op.join(op.sep, root_path,filepath), parser="xml")
           index=0
           memberdefs=[m.text() for m in f("memberdef").items()]
           for i in xrange(0,len(memberdefs)):
