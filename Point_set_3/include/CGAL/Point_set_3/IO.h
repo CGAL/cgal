@@ -33,6 +33,10 @@
 #include <CGAL/IO/write_ply_points.h>
 
 
+#ifdef CGAL_LINKED_WITH_LASLIB
+#include <CGAL/IO/read_las_points.h>
+#endif
+
 namespace CGAL {
 
 /*!
@@ -142,6 +146,106 @@ read_ply_point_set(
 /*!
   \ingroup PkgPointSet3IO
  */
+#ifdef CGAL_LINKED_WITH_LASLIB
+
+namespace internal
+{
+  template <typename PointSet, typename PropertyMap>
+  void check_if_property_is_used (PointSet& point_set,
+                                  PropertyMap& map)
+  {
+    for (typename PointSet::iterator it = point_set.begin(); it != point_set.end(); ++ it)
+      if (get(map, *it) != typename PropertyMap::value_type())
+        return;
+
+    point_set.remove_property_map (map);
+  }
+
+}
+  
+template <typename Point, typename Vector>
+bool
+read_las_point_set(
+  std::istream& stream, ///< input stream.
+  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+{
+  if(!stream)
+    {
+      std::cerr << "Error: cannot open file" << std::endl;
+      return false;
+    }
+
+  typedef CGAL::Point_set_3<Point, Vector> Point_set;
+  typedef typename Point_set::template Property_map<float> Float_map;
+  typedef typename Point_set::template Property_map<unsigned short> Ushort_map;
+  typedef typename Point_set::template Property_map<unsigned char> Uchar_map;
+  typedef typename Point_set::template Property_map<unsigned int> Uint_map;
+
+  Ushort_map intensity = point_set.template add_property_map<unsigned short>("intensity", 0).first;
+  Uchar_map return_number = point_set.template add_property_map<unsigned char>("return_number", 3).first;
+  Uchar_map number_of_returns = point_set.template add_property_map<unsigned char>("number_of_returns", 3).first;
+  Uchar_map scan_direction_flag = point_set.template add_property_map<unsigned char>("scan_direction_flag", 1).first;
+  Uchar_map edge_of_flight_line = point_set.template add_property_map<unsigned char>("edge_of_flight_line", 1).first;
+  Uchar_map classification = point_set.template add_property_map<unsigned char>("classification", 5).first;
+  Uchar_map synthetic_flag = point_set.template add_property_map<unsigned char>("synthetic_flag", 1).first;
+  Uchar_map keypoint_flag = point_set.template add_property_map<unsigned char>("keypoint_flag", 1).first;
+  Uchar_map withheld_flag = point_set.template add_property_map<unsigned char>("withheld_flag", 1).first;
+  Float_map scan_angle = point_set.template add_property_map<float>("scan_angle", 0.).first;
+  Uchar_map user_data = point_set.template add_property_map<unsigned char>("user_data", 0).first;
+  Ushort_map point_source_ID = point_set.template add_property_map<unsigned short>("point_source_ID", 0).first;
+  Uint_map deleted_flag = point_set.template add_property_map<unsigned int>("deleted_flag", 0).first;
+  Ushort_map R = point_set.template add_property_map<unsigned short>("R", 0).first;
+  Ushort_map G = point_set.template add_property_map<unsigned short>("G", 0).first;
+  Ushort_map B = point_set.template add_property_map<unsigned short>("B", 0).first;
+  Ushort_map I = point_set.template add_property_map<unsigned short>("I", 0).first;
+
+  bool okay
+    = read_las_points_with_properties
+    (stream, point_set.index_back_inserter(),
+     Las::point_property (point_set.point_push_map()),
+     std::make_pair (point_set.push_property_map (intensity), Las::Property::intensity()),
+     std::make_pair (point_set.push_property_map (return_number), Las::Property::return_number()),
+     std::make_pair (point_set.push_property_map (number_of_returns), Las::Property::number_of_returns()),
+     std::make_pair (point_set.push_property_map (scan_direction_flag), Las::Property::scan_direction_flag()),
+     std::make_pair (point_set.push_property_map (edge_of_flight_line), Las::Property::edge_of_flight_line()),
+     std::make_pair (point_set.push_property_map (classification), Las::Property::classification()),
+     std::make_pair (point_set.push_property_map (synthetic_flag), Las::Property::synthetic_flag()),
+     std::make_pair (point_set.push_property_map (keypoint_flag), Las::Property::keypoint_flag()),
+     std::make_pair (point_set.push_property_map (withheld_flag), Las::Property::withheld_flag()),
+     std::make_pair (point_set.push_property_map (scan_angle), Las::Property::scan_angle()),
+     std::make_pair (point_set.push_property_map (user_data), Las::Property::user_data()),
+     std::make_pair (point_set.push_property_map (point_source_ID), Las::Property::point_source_ID()),
+     std::make_pair (point_set.push_property_map (deleted_flag), Las::Property::deleted_flag()),
+     std::make_pair (point_set.push_property_map (R), Las::Property::R()),
+     std::make_pair (point_set.push_property_map (G), Las::Property::G()),
+     std::make_pair (point_set.push_property_map (B), Las::Property::B()),
+     std::make_pair (point_set.push_property_map (I), Las::Property::I()));
+
+  internal::check_if_property_is_used (point_set, intensity);
+  internal::check_if_property_is_used (point_set, return_number);
+  internal::check_if_property_is_used (point_set, number_of_returns);
+  internal::check_if_property_is_used (point_set, scan_direction_flag);
+  internal::check_if_property_is_used (point_set, edge_of_flight_line);
+  internal::check_if_property_is_used (point_set, classification);
+  internal::check_if_property_is_used (point_set, synthetic_flag);
+  internal::check_if_property_is_used (point_set, keypoint_flag);
+  internal::check_if_property_is_used (point_set, withheld_flag);
+  internal::check_if_property_is_used (point_set, scan_angle);
+  internal::check_if_property_is_used (point_set, user_data);
+  internal::check_if_property_is_used (point_set, point_source_ID);
+  internal::check_if_property_is_used (point_set, deleted_flag);
+  internal::check_if_property_is_used (point_set, R);
+  internal::check_if_property_is_used (point_set, G);
+  internal::check_if_property_is_used (point_set, B);
+  internal::check_if_property_is_used (point_set, I);
+  
+  return okay;
+}
+#endif
+  
+/*!
+  \ingroup PkgPointSet3IO
+ */
 template <typename Point, typename Vector>
 bool
 write_xyz_point_set(
@@ -221,6 +325,10 @@ std::istream& operator>>(std::istream& is,
     CGAL::read_off_point_set (is, ps);
   else if (line.find("ply") == 0)
     CGAL::read_ply_point_set (is, ps);
+#ifdef CGAL_LINKED_WITH_LASLIB
+  else if (line == "LASF")
+    CGAL::read_las_point_set (is, ps);
+#endif
   else
     CGAL::read_xyz_point_set (is, ps);
     
