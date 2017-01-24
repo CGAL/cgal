@@ -67,7 +67,7 @@ namespace internal {
   based on solving a linear bi-Laplacian system with boundary constraints,
   described in \cgalCite{Botsch2008OnLinearVariational}.
   The optional parameter `fairing_continuity` gives the ability to control the tangential
-  continuity C<sup>\a n</sup> of the output mesh.
+  continuity C<sup>\a n </sup>of the output mesh.
 
   The region described by `vertices` might contain multiple disconnected components.
   Note that the mesh connectivity is not altered in any way,
