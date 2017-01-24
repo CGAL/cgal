@@ -85,6 +85,7 @@ if ( CGAL_FOUND )
 
   find_package(LASLIB)
   if (LASLIB_FOUND)
+    include(${LASLIB_USE_FILE})
     include_directories(${LASLIB_INCLUDE_DIR})
     include_directories(${LASZIP_INCLUDE_DIR})
     create_single_source_cgal_program( "read_las_example.cpp" )

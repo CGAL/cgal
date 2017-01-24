@@ -28,5 +28,6 @@ find_library(LASLIB_LIBRARIES
 
 if(LASLIB_LIBRARIES)
   set(LASLIB_FOUND TRUE)
+  set(LASLIB_USE_FILE "UseLASLIB")
 endif()
 
