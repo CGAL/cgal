@@ -179,8 +179,14 @@ private:
     as_ray_param_visitor(const Ray* ray) : ray(ray) {}
 
     template<typename T>
-    FT operator()(const T&)
-    { std::cout << "not handled" << std::endl; return FT(); }
+    FT operator()(const T& s)
+    {
+      // intersection is a segment, returns the min relative distance
+      // of its endpoints
+      FT r1 = this->operator()(s[0]);
+      FT r2 = this->operator()(s[1]);
+      return (std::min)(r1,r2);
+    }
 
     FT operator()(const Point& point) {
       typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
