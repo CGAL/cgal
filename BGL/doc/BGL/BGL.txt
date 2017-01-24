@@ -461,7 +461,7 @@ When we start at `h3`, we will traverse `h3`, `h5`, `h7*`, and we are back at `h
 
 
 \cgalFigureBegin{fig_Seam_mesh_1, seam_mesh_1.svg}
-A seam mesh with two seam edges `(2,3)` and `(6,7)`.
+A seam mesh with two seam edges `(h2, h3)` and `(h6, h7)`.
 \cgalFigureEnd
 
 Because a vertex `v` in the adapted mesh which lies on the seam can have several circular
@@ -489,9 +489,11 @@ more than once. A seam can also connect different borders, which changes the gen
 Finally, a seam may have more than one connected component.
 </UL>
 
-\cgalFigureBegin{fig_Seam_mesh_2, Seam_mesh_2.png}
+\cgalFigureBegin{fig_Seam_mesh_2, seam_mesh_2.svg}
 Walking around a seam <em>(a)</em> with no seam vertex on the real border,
 <em>(b)</em> with a seam vertex on the real border, <em>(c)</em> with a closed polyline.
+Vertices linked by a green dashed segment correspond to the same vertex in the
+underlying mesh.
 \cgalFigureEnd
 
 Seam meshes are used in the Chapter \ref PkgSurfaceParameterizationSummary.
