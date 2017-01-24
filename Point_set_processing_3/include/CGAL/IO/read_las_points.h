@@ -61,7 +61,7 @@ namespace Las
     struct synthetic_flag      { typedef unsigned char type; };
     struct keypoint_flag       { typedef unsigned char type; };
     struct withheld_flag       { typedef unsigned char type; };
-    struct scan_angle          { typedef double type; };
+    struct scan_angle          { typedef float type; };
     struct user_data           { typedef unsigned char type; };
     struct point_source_ID     { typedef unsigned short type; };
     struct deleted_flag        { typedef unsigned int type; };
@@ -121,6 +121,8 @@ namespace internal {
   { v = r.get_synthetic_flag(); }
   void get_value(const LASpoint& r, unsigned char& v, Las::Property::keypoint_flag&)
   { v = r.get_keypoint_flag(); }
+  void get_value(const LASpoint& r, unsigned char& v, Las::Property::withheld_flag&)
+  { v = r.get_withheld_flag(); }
   void get_value(const LASpoint& r, float& v, Las::Property::scan_angle&)
   { v = r.get_scan_angle(); }
   void get_value(const LASpoint& r, unsigned char& v, Las::Property::user_data&)
@@ -184,6 +186,17 @@ namespace internal {
     }
   };
   
+  template <typename OutputValueType, typename PropertyMap, typename T>
+  void process_properties (const LASpoint& reader, OutputValueType& new_element,
+                           std::pair<PropertyMap, T>& current);
+
+  template <typename OutputValueType, typename PropertyMap, typename T,
+            typename NextPropertyBinder, typename ... PropertyMapBinders>
+  void process_properties (const LASpoint& reader, OutputValueType& new_element,
+                           std::pair<PropertyMap, T>& current,
+                           NextPropertyBinder& next,
+                           PropertyMapBinders&& ... properties);
+  
   template <typename OutputValueType,
             typename PropertyMap,
             typename Constructor,
@@ -223,7 +236,7 @@ namespace internal {
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
                            std::pair<PropertyMap, T>& current)
   {
-    typename T::type new_value = T::type();
+    typename T::type new_value = typename T::type();
     get_value (reader, new_value, current.second);
     put (current.first, new_element, new_value);
   }
@@ -235,7 +248,7 @@ namespace internal {
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
-    typename T::type new_value = T::type();
+    typename T::type new_value = typename T::type();
     get_value (reader, new_value, current.second);
     put (current.first, new_element, new_value);
     process_properties (reader, new_element, next, properties...);
