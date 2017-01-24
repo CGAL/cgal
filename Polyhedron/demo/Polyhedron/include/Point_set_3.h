@@ -231,9 +231,9 @@ public:
     m_blue = this->template add_property_map<unsigned char>("b").first;
     for (iterator it = begin(); it != end(); ++ it)
       {
-        put (m_red, *it, (get(red, *it) >> bit_short_to_char));
-        put (m_green, *it, (get(green, *it) >> bit_short_to_char));
-        put (m_blue, *it, (get(blue, *it) >> bit_short_to_char));
+        put (m_red, *it, (unsigned char)((get(red, *it) >> bit_short_to_char)));
+        put (m_green, *it, (unsigned char)((get(green, *it) >> bit_short_to_char)));
+        put (m_blue, *it, (unsigned char)((get(blue, *it) >> bit_short_to_char)));
       }
     this->remove_property_map(red);
     this->remove_property_map(green);
