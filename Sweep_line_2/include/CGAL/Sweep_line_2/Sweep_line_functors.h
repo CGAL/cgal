@@ -344,47 +344,42 @@ private:
   Event** m_curr_event;                 // Points to the current event point.
 
   /*! Compare the vertical position of two subcurves in the status line.
+   * \pre c2 is already in the status line.
+   * \pre c1 is a right curve of the current event.
    * This is the implementation for the case where all 4 boundary sides are
    * oblivious.
    */
   Comparison_result operator()(const Subcurve* c1, const Subcurve* c2,
-                               bool is_c1_right_curve, bool is_c2_right_curve,
+                               bool is_c2_right_curve,
                                Arr_all_sides_oblivious_tag) const
   {
-    // If the two curves are right curves at the same event, compare
-    // to the right of the event point.
-    if (is_c1_right_curve && is_c2_right_curve) {
+    // c1 is a right curve of the current event. If c2 is also a right curve
+    // of the current event, compare to the right of the event point.
+    if (is_c2_right_curve)
       return m_traits->compare_y_at_x_right_2_object()
         (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point());
-    }
 
-    // If c1 is a right curve, but c2 is not, simply compare the y-coordinate
-    // of the event and the y-coordinate of c2 at the event.
-    if (is_c1_right_curve)
-      return m_traits->compare_y_at_x_2_object()
-        ((*m_curr_event)->point(), c2->last_curve());
-
-    // If c2 is a right curve, but c1 is not, simply compare the y-coordinate
-    // of c2 at the event and the y-coordinate of the event, and return the
-    // opposite.
-    CGAL_assertion(is_c2_right_curve);
-    return opposite(m_traits->compare_y_at_x_2_object()
-                    ((*m_curr_event)->point(), c1->last_curve()));
+    // c1 is a right curve of the current event, but c2 is not, compare the
+    // y-coordinate of the event and the y-coordinate of c2 at the event.
+    return m_traits->compare_y_at_x_2_object()
+      ((*m_curr_event)->point(), c2->last_curve());
   }
 
   /*! Compare the vertical position of two subcurves in the status line.
+   * \pre c2 is already in the status line.
+   * \pre c1 is a right curve of the current event.
    * This implementation is for the case where any boundary side is not
    * necessarily oblivious.
    */
   Comparison_result operator()(const Subcurve* c1, const Subcurve* c2,
-                               bool is_c1_right_curve, bool is_c2_right_curve,
+                               bool is_c2_right_curve,
                                Arr_not_all_sides_oblivious_tag) const
   {
     Arr_parameter_space ps_x = (*m_curr_event)->parameter_space_in_x();
     CGAL_assertion(ps_x != ARR_RIGHT_BOUNDARY);
     Arr_parameter_space ps_y = (*m_curr_event)->parameter_space_in_y();
     if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR))
-      return operator()(c1, c2, is_c1_right_curve, is_c2_right_curve,
+      return operator()(c1, c2, is_c2_right_curve,
                         Arr_all_sides_oblivious_tag());
 
     /*! \todo fix!
@@ -432,18 +427,20 @@ public:
 
   /*! Compare the vertical position of two subcurves in the status line.
    * This operator is called only in debug mode.
+   * \pre c2 is already in the status line.
+   * \pre c1 is a right curve of the current event.
    */
   Comparison_result operator()(const Subcurve* c1, const Subcurve* c2) const
   {
-    bool is_c1_right_curve =
-      (std::find((*m_curr_event)->right_curves_begin(),
-                 (*m_curr_event)->right_curves_end(), c1) !=
-       (*m_curr_event)->right_curves_end());
+    CGAL_assertion(std::find((*m_curr_event)->right_curves_begin(),
+                             (*m_curr_event)->right_curves_end(), c1) !=
+                   (*m_curr_event)->right_curves_end());
+
     bool is_c2_right_curve =
       (std::find((*m_curr_event)->right_curves_begin(),
                  (*m_curr_event)->right_curves_end(), c2) !=
        (*m_curr_event)->right_curves_end());
-    return operator()(c1, c2, is_c1_right_curve, is_c2_right_curve,
+    return operator()(c1, c2, is_c2_right_curve,
                       Are_all_sides_oblivious_category());
   }
 
