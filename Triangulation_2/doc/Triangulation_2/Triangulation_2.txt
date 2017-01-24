@@ -1238,14 +1238,20 @@ or `Triangulation_face_base_with_info_2<Info,Traits,Vb>`
 can be used. Those classes have
 a template parameter `Info` devoted to
 handle additional information.
-The following examples show how to add a 
+The following example shows how to add a 
 `Color` in the triangulation faces.
 
 \cgalExample{Triangulation_2/colored_face.cpp}
 
+The second example adds a `std::string` in the vertices of a terrain.
+
+
+\cgalExample{Triangulation_2/terrain_with_info.cpp}
+
+
 \subsection Triangulation_2AddingHandles Adding Handles
 
-The second example shows how the user can still
+This example shows how the user can still
 derive and plug in his own vertex 
 or face class when he would like to have 
 additional functionalities depending on types provided by the triangulation
