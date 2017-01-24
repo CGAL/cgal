@@ -738,14 +738,14 @@ class Polynomial<int> :
 
   /*{\Xtext \headerline{Static member functions}}*/
 
-  CGAL_EXPORT static Polynomial<int> gcd
+  static Polynomial<int> gcd
     (const Polynomial<int>& p1, const Polynomial<int>& p2);
   /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |int=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |int| to be a unique
   factorization domain, i.e. to provide a |gcd| operation.}*/
 
-  CGAL_EXPORT static void pseudo_div
+  static void pseudo_div
     (const Polynomial<int>& f, const Polynomial<int>& g, 
      Polynomial<int>& q, Polynomial<int>& r, int& D);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -753,7 +753,7 @@ class Polynomial<int> :
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |int|.}*/
 
-  CGAL_EXPORT static void euclidean_div 
+  static void euclidean_div 
     (const Polynomial<int>& f, const Polynomial<int>& g, 
      Polynomial<int>& q, Polynomial<int>& r);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -1040,14 +1040,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   /*{\Xtext \headerline{Static member functions}}*/
 
-  CGAL_EXPORT static Polynomial<double> gcd
+  static Polynomial<double> gcd
     (const Polynomial<double>& p1, const Polynomial<double>& p2);
   /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |double=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |double| to be a unique
   factorization domain, i.e. to provide a |gdc| operation.}*/
 
-  CGAL_EXPORT static void pseudo_div
+  static void pseudo_div
     (const Polynomial<double>& f, const Polynomial<double>& g, 
      Polynomial<double>& q, Polynomial<double>& r, double& D);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -1055,7 +1055,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |double|.}*/
 
-  CGAL_EXPORT static void euclidean_div 
+  static void euclidean_div 
     (const Polynomial<double>& f, const Polynomial<double>& g, 
      Polynomial<double>& q, Polynomial<double>& r);
   /*{\Xstatic implements division with remainder on polynomials of 
