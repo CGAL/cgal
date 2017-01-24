@@ -325,9 +325,9 @@ The orbifold-Tutte embedding yields a seamless, globally bijective parameterizat
 similarly to the classic Tutte embedding, only requires solving a sparse linear system
 for its computation.
 
-The parameterization process intrinsically requires the uses of seams, but whose choice
-have no influence on the result. The `Seam_mesh` structure (see also next Section)
-is used for this purpose.
+The parameterization process internally requires the uses of seams, but the choice
+of these seams have no influence on the result. The `Seam_mesh` structure
+(see also next Section) is used for this purpose.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigOrbifold}
 <center>
