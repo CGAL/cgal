@@ -24,7 +24,15 @@ namespace std
 {
   std::ostream& operator<< (std::ostream& stream, const Color& c)
   {
-    stream << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
+    if (CGAL::get_mode(stream) == CGAL::IO::ASCII)
+      stream << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
+    else if (CGAL::get_mode(stream) == CGAL::IO::BINARY)
+      stream.write(reinterpret_cast<const char*>(&c), sizeof(c));
+    else
+      {
+        std::cerr << "Error: mode pretty not handled." << std::endl;
+        abort();
+      }
     return stream;
   }
 }
@@ -43,8 +51,7 @@ int main(int, char**)
                                                i));
 
   std::ofstream f("out.ply");
-  if (CGAL::get_mode(f) == CGAL::IO::ASCII)
-    std::cerr << "Okay!" << std::endl;
+  CGAL::set_binary_mode(f);
   
   CGAL::write_ply_points_with_properties
     (f, points.begin(), points.end(),
