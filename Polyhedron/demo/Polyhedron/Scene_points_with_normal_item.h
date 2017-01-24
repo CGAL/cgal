@@ -49,7 +49,7 @@ public:
   bool read_las_point_set(std::istream& in);
 #endif
   bool read_ply_point_set(std::istream& in);
-  bool write_ply_point_set(std::ostream& out) const;
+  bool write_ply_point_set(std::ostream& out, bool binary) const;
   bool read_off_point_set(std::istream& in);
   bool write_off_point_set(std::ostream& out) const;
   bool read_xyz_point_set(std::istream& in);

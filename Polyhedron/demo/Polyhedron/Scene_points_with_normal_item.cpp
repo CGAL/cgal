@@ -584,14 +584,15 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 }
 
 // Write point set to .PLY file
-bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) const
+bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bool binary) const
 {
   Q_ASSERT(d->m_points != NULL);
 
   if (!stream)
     return false;
 
-  CGAL::set_binary_mode (stream);
+  if (binary)
+    CGAL::set_binary_mode (stream);
   stream << *(d->m_points);
 
   return true;

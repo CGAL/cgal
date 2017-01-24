@@ -1,6 +1,6 @@
 #include "Scene_points_with_normal_item.h"
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-
+#include <QInputDialog>
 #include <fstream>
 
 class Polyhedron_demo_ply_to_xyz_plugin :
@@ -57,6 +57,16 @@ bool Polyhedron_demo_ply_to_xyz_plugin::save(const CGAL::Three::Scene_item* item
   if (extension != "ply" && extension != "PLY")
     return false;
 
+  QStringList list;
+  list << tr("Binary");
+  list << tr("Ascii");
+  bool ok = false;
+  QString choice
+    = QInputDialog::getItem(NULL, tr("Save PLY file"), tr("Format"), list, 0, false, &ok);
+
+  if (!ok)
+    return false;
+  
   // This plugin supports point sets
   const Scene_points_with_normal_item* point_set_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);
@@ -66,7 +76,7 @@ bool Polyhedron_demo_ply_to_xyz_plugin::save(const CGAL::Three::Scene_item* item
   // Save point set as .xyz
   std::ofstream out(fileinfo.filePath().toUtf8().data());
   out.precision (std::numeric_limits<double>::digits10 + 2);
-  return point_set_item->write_ply_point_set(out);
+  return point_set_item->write_ply_point_set(out, (choice == tr("Binary")));
 }
 
 
