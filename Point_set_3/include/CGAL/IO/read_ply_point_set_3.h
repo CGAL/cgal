@@ -29,28 +29,12 @@
 namespace CGAL
 {
 
-/*!
+namespace Ply
+{
 
-  \ingroup PkgPointSet3
-
-  \brief PLY interpreter designed to fill a `CGAL::Point_set_3` object.
-
-  This interpreter will instanciate any number of property needed to
-  store all PLY properties read in the header:
-
-  - points and normals are stored as usual `CGAL::Point_set_3`
-     properties (property "point" of type `CGAL::Point_3` and property
-     "normal" of type `CGAL::Vector_3`)
-
-  - other PLY properties are stored on point set properties with the
-    name and type given by the PLY header
-
-  \tparam Point Point type.
-  \tparam Vector Normal vector type.
-
-  \cgalModels `PlyInterpreter`
- */
-
+namespace internal
+{
+  
 template <typename Point,
           typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
 class Ply_interpreter_point_set_3
@@ -100,7 +84,7 @@ public:
     : m_point_set (point_set), m_use_floats (false)
   { }
 
-  bool is_applicable (Ply_reader& reader)
+  void instantiate_properties  (Ply_reader& reader)
   {
     const std::vector<internal::Ply_read_number*>& readers
       = reader.readers();
@@ -187,11 +171,6 @@ public:
 
     if (has_normal[0] && has_normal[1] && has_normal[2])
       m_point_set.add_normal_map();
-   
-    
-    return (reader.does_tag_exist<float> ("x") || reader.does_tag_exist<double> ("x"))
-      && (reader.does_tag_exist<float> ("y") || reader.does_tag_exist<double> ("y"))
-      && (reader.does_tag_exist<float> ("z") || reader.does_tag_exist<double> ("z"));
   }
   
   void process_line (Ply_reader& reader)
@@ -229,6 +208,10 @@ public:
   }
 };
 
+}
+
+}
+  
 }
 /// \endcond
 
