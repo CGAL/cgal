@@ -111,6 +111,10 @@ public:
                              const FT minimal_size = FT());
   
   void operator()(const bool refine=true);
+
+  void set_nonlinear_growth_of_balls(bool b = true) {
+    nonlinear_growth_of_balls = b;
+  }
   
 private:
   typedef std::vector<std::pair<Curve_segment_index,Bare_point> >    Incident_edges;
@@ -338,6 +342,7 @@ private:
   Weight minimal_weight_;
   std::set<Curve_segment_index> treated_edges_;
   std::set<Vertex_handle> unchecked_vertices_;
+  bool nonlinear_growth_of_balls;
 };
 
 
@@ -350,7 +355,11 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , size_(size)
   , minimal_size_(minimal_size)
   , minimal_weight_(CGAL::square(minimal_size))
+  , nonlinear_growth_of_balls(false)
 {
+#ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
+  set_nonlinear_growth_of_balls();
+#endif
 }
 
 
@@ -955,55 +964,55 @@ insert_balls(const Vertex_handle& vp,
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
   // if( minimal_weight_ != 0 && n == 0 ) return;
 
-#ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
-  // This block tries not to apply the general rule that the size of
-  // protecting balls is a linear interpolation of the size of protecting
-  // balls at corner. When the curve segment is long enough, pick a point
-  // at the middle and choose a new size.
-  if(n >= internal::max_nb_vertices_to_reevaluate_size && 
-     d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
+  if(nonlinear_growth_of_balls) {
+    // This block tries not to apply the general rule that the size of
+    // protecting balls is a linear interpolation of the size of protecting
+    // balls at corner. When the curve segment is long enough, pick a point
+    // at the middle and choose a new size.
+    if(n >= internal::max_nb_vertices_to_reevaluate_size &&
+       d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "Number of to-be-inserted balls is: " 
-              << n << "\n  between points ("
-              << vp->point() << ") and (" << vq->point()
-              << ") (geodesic distance: "
-              << domain_.geodesic_distance(vp->point(), vq->point(),
-                                           curve_index)
-              << ")\n";
+      std::cerr << "Number of to-be-inserted balls is: "
+                << n << "\n  between points ("
+                << vp->point() << ") and (" << vq->point()
+                << ") (geodesic distance: "
+                << domain_.geodesic_distance(vp->point(), vq->point(),
+                                             curve_index)
+                << ")\n";
 #endif
-    const Bare_point new_point =
-      domain_.construct_point_on_curve_segment(vp->point().point(),
-                                               curve_index,
-                                               d_sign * d / 2);
-    const int dim = 1; // new_point is on edge
-    const Index index = domain_.index_from_curve_segment_index(curve_index);
-    const FT point_weight = CGAL::square(size_(new_point, dim, index));
+      const Bare_point new_point =
+        domain_.construct_point_on_curve_segment(vp->point().point(),
+                                                 curve_index,
+                                                 d_sign * d / 2);
+      const int dim = 1; // new_point is on edge
+      const Index index = domain_.index_from_curve_segment_index(curve_index);
+      const FT point_weight = CGAL::square(size_(new_point, dim, index));
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "  middle point: " << new_point << std::endl;
-    std::cerr << "  new weight: " << point_weight << std::endl;
+      std::cerr << "  middle point: " << new_point << std::endl;
+      std::cerr << "  new weight: " << point_weight << std::endl;
 #endif
-    std::pair<Vertex_handle, ErasedVeOutIt> pair =
-      smart_insert_point(new_point,
-			 point_weight,
-			 dim,
-			 index,
-			 out);
-    const Vertex_handle new_vertex = pair.first;
-    out = pair.second;
-    const FT sn = get_size(new_vertex);
-    if(sp <= sn) {
-      out=insert_balls(vp, new_vertex, sp, sn, d/2, d_sign, curve_index, out);
-    } else {
-      out=insert_balls(new_vertex, vp, sn, sp, d/2, -d_sign, curve_index, out);
+      std::pair<Vertex_handle, ErasedVeOutIt> pair =
+        smart_insert_point(new_point,
+                           point_weight,
+                           dim,
+                           index,
+                           out);
+      const Vertex_handle new_vertex = pair.first;
+      out = pair.second;
+      const FT sn = get_size(new_vertex);
+      if(sp <= sn) {
+        out=insert_balls(vp, new_vertex, sp, sn, d/2, d_sign, curve_index, out);
+      } else {
+        out=insert_balls(new_vertex, vp, sn, sp, d/2, -d_sign, curve_index, out);
+      }
+      if(sn <= sq) {
+        out=insert_balls(new_vertex, vq, sn, sq, d/2, d_sign, curve_index, out);
+      } else {
+        out=insert_balls(vq, new_vertex, sq, sn, d/2, -d_sign, curve_index, out);
+      }
+      return out;
     }
-    if(sn <= sq) {
-      out=insert_balls(new_vertex, vq, sn, sq, d/2, d_sign, curve_index, out);
-    } else {
-      out=insert_balls(vq, new_vertex, sq, sn, d/2, -d_sign, curve_index, out);
-    }
-    return out;
-  }
-#endif // not CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
+  } // nonlinear_growth_of_balls
 
   FT r = (sq - sp) / FT(n+1);
 
