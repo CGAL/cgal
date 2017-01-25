@@ -216,7 +216,7 @@ public:
     if (!found)
       return false;
 
-    unsigned int bit_short_to_char = 1;
+    unsigned int bit_short_to_char = 0;
     for (iterator it = begin(); it != end(); ++ it)
       if (get(red, *it) > 255
           || get(green, *it) > 255
