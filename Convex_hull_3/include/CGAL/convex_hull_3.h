@@ -22,6 +22,9 @@
 
 #ifndef CGAL_CONVEX_HULL_3_H
 #define CGAL_CONVEX_HULL_3_H
+
+#include <CGAL/license/Convex_hull_3.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h> 
 #include <CGAL/convex_hull_2.h>

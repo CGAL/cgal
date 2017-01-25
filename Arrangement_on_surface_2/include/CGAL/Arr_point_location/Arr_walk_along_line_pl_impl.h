@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_WALK_ALONG_LINE_POINT_LOCATION_IMPL_H
 #define CGAL_ARR_WALK_ALONG_LINE_POINT_LOCATION_IMPL_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Member-function definitions for the
  * Arr_walk_along_line_point_location<Arrangement> class.

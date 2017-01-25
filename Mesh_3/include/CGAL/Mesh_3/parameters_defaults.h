@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_PARAMETERS_DEFAULTS_H
 #define CGAL_MESH_3_PARAMETERS_DEFAULTS_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/sliver_criteria.h>
 
 namespace CGAL {

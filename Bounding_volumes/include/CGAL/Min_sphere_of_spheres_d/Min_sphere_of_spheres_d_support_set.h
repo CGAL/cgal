@@ -21,6 +21,9 @@
 #ifndef CGAL_MINIBALL_SUPPORTSET
 #define CGAL_MINIBALL_SUPPORTSET
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <utility>
 #include <functional>
 #include <cmath>

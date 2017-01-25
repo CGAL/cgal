@@ -21,6 +21,9 @@
 #ifndef CGAL_SKIN_SURFACE_MARCHING_TETRAHEDRA_OBSERVER_3_H
 #define CGAL_SKIN_SURFACE_MARCHING_TETRAHEDRA_OBSERVER_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Marching_tetrahedra_observer_default_3.h>
 #include <CGAL/Skin_surface_polyhedral_items_3.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_ENVELOPE_SET_DIVIDORS_H
 #define CGAL_ENVELOPE_SET_DIVIDORS_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/Random.h>
 
 namespace CGAL

@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_NAIVE_POINT_LOCATION_FUNCTIONS_H
 #define CGAL_ARR_NAIVE_POINT_LOCATION_FUNCTIONS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Member-function definitions for the Arr_naive_point_location<Arrangement>
  * class.

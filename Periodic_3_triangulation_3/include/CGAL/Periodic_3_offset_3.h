@@ -22,6 +22,9 @@
 #ifndef CGAL_PERIODIC_3_OFFSET_H
 #define CGAL_PERIODIC_3_OFFSET_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Cartesian.h>

@@ -23,6 +23,9 @@
 #ifndef CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H
 #define CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>

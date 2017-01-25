@@ -22,6 +22,9 @@
 #ifndef SCENE_INTERFACE_H
 #define SCENE_INTERFACE_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <QString>
 #include <QColor>
 #include <QList>

@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGLE_ACCESSOR_WITH_PPMAP_3_H
 #define CGAL_TRIANGLE_ACCESSOR_WITH_PPMAP_3_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 

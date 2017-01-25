@@ -18,6 +18,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_2_H
 #define CGAL_MINKOWSKI_SUM_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Minkowski_sum_2/Hole_filter_2.h>

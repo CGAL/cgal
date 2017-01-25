@@ -21,6 +21,9 @@
 #ifndef CGAL_SURFACE_MESHER_EDGES_LEVEL_H
 #define CGAL_SURFACE_MESHER_EDGES_LEVEL_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Mesh_2/Output_stream.h>
 
 #include <CGAL/Mesher_level.h>

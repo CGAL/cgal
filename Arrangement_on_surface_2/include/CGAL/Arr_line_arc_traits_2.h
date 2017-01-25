@@ -26,6 +26,9 @@
 #ifndef CGAL_CIRCULAR_KERNEL_LINE_ARC_TRAITS_2_H
 #define CGAL_CIRCULAR_KERNEL_LINE_ARC_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * This file was developed at Inria, France, and copied over to the
  * Arrangement_2 package, which it is now part of. It contains a traits

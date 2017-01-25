@@ -24,6 +24,9 @@
 #ifndef CGAL_QP_DEBUG_H
 #define CGAL_QP_DEBUG_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 // macro definitions
 // =================
 

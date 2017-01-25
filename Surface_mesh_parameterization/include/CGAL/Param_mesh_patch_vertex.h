@@ -22,6 +22,9 @@
 #ifndef CGAL_PARAM_MESH_PATCH_VERTEX_H
 #define CGAL_PARAM_MESH_PATCH_VERTEX_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 
 #include <list>

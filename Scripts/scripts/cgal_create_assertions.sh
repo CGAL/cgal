@@ -21,7 +21,7 @@
 # $Id$
 # 
 #
-# Author(s)     : Geert-Jan Giezeman, Sven Schönherr
+# Author(s)     : Geert-Jan Giezeman, Sven SchÃ¶nherr
 
 if test $# -ne 1
 then

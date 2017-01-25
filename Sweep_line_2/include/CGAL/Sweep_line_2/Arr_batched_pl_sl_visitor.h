@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_BATCHED_PL_SL_VISITOR_H
 #define CGAL_ARR_BATCHED_PL_SL_VISITOR_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*!
  * Definition of the Arr_batched_pl_sl_visitor class-template.
  */

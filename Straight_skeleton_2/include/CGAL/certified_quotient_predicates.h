@@ -18,6 +18,9 @@
 //
 #ifndef CGAL_CERTIFIED_QUOTIENT_PREDICATES_H 
 #define CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
  
 #include <CGAL/certified_numeric_predicates.h>
 #include <CGAL/Quotient.h>

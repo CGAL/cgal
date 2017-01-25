@@ -23,6 +23,9 @@
 #ifndef CGAL_BOUNDED_SIDE_3_H
 #define CGAL_BOUNDED_SIDE_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Iterator_project.h>

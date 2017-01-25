@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_UNB_PLANAR_INSERTION_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_INSERTION_HELPER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*!
  * Definition of the Arr_unb_planar_insertion_helper class-template.
  */

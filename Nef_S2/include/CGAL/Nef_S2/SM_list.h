@@ -21,6 +21,9 @@
 #ifndef CGAL_SM_LIST_H
 #define CGAL_SM_LIST_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>

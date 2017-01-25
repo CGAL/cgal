@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_COREFINEMENT_INTERSECTION_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_COREFINEMENT_INTERSECTION_IMPL_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Box_intersection_d/Box_with_info_d.h>

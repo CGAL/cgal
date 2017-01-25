@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERSECTION_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERSECTION_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
 #include <boost/type_traits/is_same.hpp>
 

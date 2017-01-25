@@ -21,6 +21,9 @@
 #ifndef CGAL_CARTESIAN_MATRIX_H
 #define CGAL_CARTESIAN_MATRIX_H 1
 
+#include <CGAL/license/Matrix_search.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 

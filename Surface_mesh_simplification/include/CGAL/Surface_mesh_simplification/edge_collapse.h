@@ -19,6 +19,9 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H 1
 
+#include <CGAL/license/Surface_mesh_simplification.h>
+
+
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/named_function_params.h>
 

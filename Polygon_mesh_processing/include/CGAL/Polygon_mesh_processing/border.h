@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 #define CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <boost/type_traits/is_same.hpp>

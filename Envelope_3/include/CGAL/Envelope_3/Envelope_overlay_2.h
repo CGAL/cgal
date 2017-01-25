@@ -22,6 +22,9 @@
 #ifndef CGAL_ENVELOPE_OVERLAY_2_H
 #define CGAL_ENVELOPE_OVERLAY_2_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Envelope_3/Envelope_overlay_functor.h>
 

@@ -22,6 +22,9 @@
 #ifndef CGAL_MESH_2_CLUSTERS_H
 #define CGAL_MESH_2_CLUSTERS_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Filter_circulator.h>
 #include <CGAL/Unique_hash_map.h>
 

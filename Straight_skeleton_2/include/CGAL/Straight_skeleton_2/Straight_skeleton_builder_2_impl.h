@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_2_IMPL_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_2_IMPL_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <boost/bind.hpp>
 #include <boost/utility.hpp>
 #include <boost/version.hpp>

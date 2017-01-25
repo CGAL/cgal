@@ -35,6 +35,9 @@
 #ifndef  CGAL_ROTATION_TREE_H
 #define  CGAL_ROTATION_TREE_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <CGAL/vector.h>
 #include <CGAL/Partition_2/Rotation_tree_node_2.h>
 #include <boost/bind.hpp>

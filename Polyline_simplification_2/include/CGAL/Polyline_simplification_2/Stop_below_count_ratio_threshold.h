@@ -20,6 +20,9 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_STOP_BELOW_COUNT_RATIO_THRESHOLD_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_STOP_BELOW_COUNT_RATIO_THRESHOLD_H
 
+#include <CGAL/license/Polyline_simplification_2.h>
+
+
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
 namespace CGAL {

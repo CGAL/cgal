@@ -24,6 +24,9 @@
 #ifndef CGAL_SNC_CONSTRUCTOR_H
 #define CGAL_SNC_CONSTRUCTOR_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/function_objects.h> 
 #include <CGAL/Circulator_project.h>
 #include <CGAL/Nef_S2/Normalizing.h>

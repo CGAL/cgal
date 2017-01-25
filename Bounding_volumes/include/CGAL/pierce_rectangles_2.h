@@ -21,6 +21,9 @@
 #ifndef CGAL_PIERCE_RECTANGLES_2_H
 #define CGAL_PIERCE_RECTANGLES_2_H 1
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/algorithm.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_DETECT_POLYLINES_IN_POLYHEDRA_FWD_H
 #define CGAL_DETECT_POLYLINES_IN_POLYHEDRA_FWD_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 namespace CGAL { namespace Mesh_3 {
 
 template <typename Polyhedron>

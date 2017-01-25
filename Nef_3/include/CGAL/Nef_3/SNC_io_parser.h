@@ -24,6 +24,9 @@
 #ifndef CGAL_SNC_IO_PARSER_H
 #define CGAL_SNC_IO_PARSER_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_S2/SM_decorator.h>

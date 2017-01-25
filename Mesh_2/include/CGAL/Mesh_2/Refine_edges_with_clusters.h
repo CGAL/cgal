@@ -21,6 +21,9 @@
 #ifndef CGAL_MESH_2_REFINE_EDGES_WITH_CLUSTERS_H
 #define CGAL_MESH_2_REFINE_EDGES_WITH_CLUSTERS_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesh_2/Refine_edges.h>
 #include <CGAL/Mesh_2/Clusters.h>
 #include <CGAL/utils.h>

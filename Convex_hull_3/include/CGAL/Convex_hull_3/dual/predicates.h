@@ -22,6 +22,9 @@
 #ifndef CGAL_CH3_DUAL_PREDICATES_H
 #define CGAL_CH3_DUAL_PREDICATES_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <CGAL/predicates/sign_of_determinant.h>
 
 // Predicates used during the computation of the dual convex hull

@@ -29,9 +29,9 @@ Concerning the main code:
 - Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
-  Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
-  (ça évite de le faire inutilement pour les variables intermédiaires,
-  mais ça prend un chouia plus de place... mais en comparaison du reste...)
+  Hum, rajouter un boolÃ©en pour calculer le cache seulement sur demande ?
+  (Ã§a Ã©vite de le faire inutilement pour les variables intermÃ©diaires,
+  mais Ã§a prend un chouia plus de place... mais en comparaison du reste...)
 - Replace CGAL_IA_MAX_DOUBLE by standard DBL_MAX in <cfloat>, if portable
   (add a test).  Not possible for CGAL_IA_MIN_DOUBLE, since DBL_MIN is the
   _normalized_ minimum.

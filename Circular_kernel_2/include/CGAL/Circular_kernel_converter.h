@@ -26,6 +26,9 @@
 #ifndef CGAL_CCIRCULAR_KERNEL_CONVERTER_H
 #define CGAL_CCIRCULAR_KERNEL_CONVERTER_H 
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Algebraic_kernel_converter.h>
 

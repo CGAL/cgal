@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_POLYHEDRON_IOSTREAM_3_H
 #define CGAL_NEF_POLYHEDRON_IOSTREAM_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
 

@@ -16,6 +16,9 @@
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_K_MEANS_CLUSTERING_H
 
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+
 #include <vector>
 #include <set>
 #include <cmath>

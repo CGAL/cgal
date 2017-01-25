@@ -17,6 +17,9 @@
 #ifndef CGAL_OFFSET_POLYGON_H
 #define CGAL_OFFSET_POLYGON_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Minkowski_sum_2/Exact_offset_base_2.h>
 #include <CGAL/Minkowski_sum_2/Offset_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Offset_decomp_2.h>

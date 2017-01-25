@@ -29,6 +29,9 @@
 #ifndef CGAL_ARR_TRAITS_ADAPTOR_2_H
 #define CGAL_ARR_TRAITS_ADAPTOR_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definitions of the adaptor classes for the arrangement traits class.
  */

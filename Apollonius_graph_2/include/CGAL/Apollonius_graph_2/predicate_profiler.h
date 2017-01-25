@@ -23,6 +23,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_PREDICATE_PROFILER
 #define CGAL_APOLLONIUS_GRAPH_2_PREDICATE_PROFILER 1
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/Apollonius_graph_2/basic.h>
 #include <CGAL/atomic.h>
 

@@ -24,6 +24,9 @@
 #ifndef CGAL_SNC_DECORATOR_H
 #define CGAL_SNC_DECORATOR_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>

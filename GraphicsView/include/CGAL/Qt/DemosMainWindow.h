@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_DEMOS_MAIN_WINDOW_H
 #define CGAL_QT_DEMOS_MAIN_WINDOW_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <iostream>
 #include <QVector>
 #include <QMainWindow>

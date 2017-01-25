@@ -26,6 +26,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_POLYNOMIALS_2_2_H
 #define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_POLYNOMIALS_2_2_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 //////////// FIXME - pb RT (cas general Polynomial_2_2) ou FT (ici)
 
 #include <CGAL/enum.h>

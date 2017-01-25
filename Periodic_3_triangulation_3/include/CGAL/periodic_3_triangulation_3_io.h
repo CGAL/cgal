@@ -21,6 +21,9 @@
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_3_IO_H
 #define CGAL_PERIODIC_3_TRIANGULATION_3_IO_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 #include <CGAL/array.h>
 #include <iostream>
 

@@ -22,6 +22,9 @@
 #ifndef CGAL_CONVEXITY_CHECK_3_H
 #define CGAL_CONVEXITY_CHECK_3_H
 
+#include <CGAL/license/Convex_hull_3.h>
+
+
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/foreach.hpp>

@@ -20,6 +20,9 @@
 #ifndef CGAL_POISSON_REFINE_TRIANGULATION_H
 #define CGAL_POISSON_REFINE_TRIANGULATION_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 // CGAL
 #include <CGAL/trace.h>
 #include <CGAL/Mesher_level.h>

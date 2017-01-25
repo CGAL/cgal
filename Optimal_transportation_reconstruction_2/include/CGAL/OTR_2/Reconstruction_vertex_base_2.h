@@ -20,6 +20,9 @@
 #ifndef CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
 #define CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
 
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
+
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/OTR_2/Sample.h>
 

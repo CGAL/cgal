@@ -20,6 +20,9 @@
 #ifndef CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 #define CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 
+#include <CGAL/license/Surface_mesh.h>
+
+
 // include this to avoid a VC15 warning
 #include <CGAL/boost/graph/named_function_params.h>
 

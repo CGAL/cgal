@@ -26,6 +26,9 @@
 #ifndef CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H
 #define CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Random.h>

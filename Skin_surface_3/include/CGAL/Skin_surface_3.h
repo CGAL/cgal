@@ -21,6 +21,9 @@
 #ifndef CGAL_SKIN_SURFACE_3_H
 #define CGAL_SKIN_SURFACE_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Skin_surface_base_3.h>
 #include <CGAL/triangulate_mixed_complex_3.h>
 #include <CGAL/FPU.h>

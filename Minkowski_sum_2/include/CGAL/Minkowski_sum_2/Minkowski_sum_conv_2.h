@@ -18,6 +18,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_CONV_H
 #define CGAL_MINKOWSKI_SUM_CONV_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Minkowski_sum_2/Labels.h>
 #include <CGAL/Minkowski_sum_2/Arr_labeled_traits_2.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_IO_ARRANGEMENT_2_READER_H
 #define CGAL_IO_ARRANGEMENT_2_READER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The header file for the Arrangement_2_reader<Arrangement> class.
  */

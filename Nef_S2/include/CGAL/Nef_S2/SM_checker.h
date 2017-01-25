@@ -21,6 +21,9 @@
 #ifndef CGAL_SM_CHECKER_H
 #define CGAL_SM_CHECKER_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 

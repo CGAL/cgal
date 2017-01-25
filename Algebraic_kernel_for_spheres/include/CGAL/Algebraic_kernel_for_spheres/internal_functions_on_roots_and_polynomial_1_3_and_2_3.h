@@ -28,6 +28,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_3_AND_2_3_H
 #define CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_3_AND_2_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <vector>
 #include <iterator> // for std::back_inserter
 #include <utility>  // for std::pair and std::make_pair

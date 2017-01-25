@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Member-function definitions for the
  * Arr_bounded_planar_topology_traits_2<GeomTraits> class.

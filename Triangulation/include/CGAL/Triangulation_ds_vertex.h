@@ -20,6 +20,9 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_H
 #define CGAL_TRIANGULATION_DS_VERTEX_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/Compact_container.h>
 #include <CGAL/internal/Triangulation/Dummy_TDS.h>
 

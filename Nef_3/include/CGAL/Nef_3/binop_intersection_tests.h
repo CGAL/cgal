@@ -20,6 +20,9 @@
 #ifndef CGAL_BINOP_INTERSECTION_TESTS_H
 #define CGAL_BINOP_INTERSECTION_TESTS_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_3/Nef_box.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
 #include <vector>

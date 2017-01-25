@@ -19,6 +19,9 @@
 #ifndef CGAL_CERTIFIED_NUMERIC_PREDICATES_H
 #define CGAL_CERTIFIED_NUMERIC_PREDICATES_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/number_utils.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Uncertain.h>

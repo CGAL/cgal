@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_AUX_H
 #define CGAL_STRAIGHT_SKELETON_AUX_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 #include <boost/type_traits/is_same.hpp>

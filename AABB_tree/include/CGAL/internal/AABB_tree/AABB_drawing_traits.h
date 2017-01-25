@@ -21,6 +21,9 @@
 #ifndef CGAL_AABB_DRAWING_TRAITS_H
 #define CGAL_AABB_DRAWING_TRAITS_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/gl.h>
 #include <vector>

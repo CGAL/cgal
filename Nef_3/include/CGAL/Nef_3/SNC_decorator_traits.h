@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF3_SNC_DECORATOR_TRAITS_H
 #define CGAL_NEF3_SNC_DECORATOR_TRAITS_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 

@@ -21,6 +21,9 @@
 #ifndef CGAL_POISSON_MESH_CRITERIA_3_H
 #define CGAL_POISSON_MESH_CRITERIA_3_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 #include <iostream>
 #include <CGAL/number_utils.h>
 #include <CGAL/utils.h> // for min

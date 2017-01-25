@@ -18,6 +18,9 @@
 #ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
 #define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
 
+#include <CGAL/license/Scale_space_reconstruction_3.h>
+
+
 #include <iostream>
 #include <list>
 #include <map>

@@ -28,6 +28,9 @@
 #ifndef CGAL_PLANE_SCAN_TREE_H
 #define CGAL_PLANE_SCAN_TREE_H
 
+#include <CGAL/license/Cone_spanners_2.h>
+
+
 #include <iostream>
 #include <algorithm>
 #include <functional>

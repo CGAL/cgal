@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_CIRCULATOR_ADAPTORS_H
 #define CGAL_VORONOI_DIAGRAM_2_CIRCULATOR_ADAPTORS_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/circulator_bases.h>
 #include <CGAL/Voronoi_diagram_2/Handle_adaptor.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Periodic_3_construct_point_3.h>

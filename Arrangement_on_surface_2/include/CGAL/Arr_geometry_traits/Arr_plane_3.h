@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_PLANE_3_h
 #define CGAL_ARR_PLANE_3_h
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Construct and maintain a plane in 3D that contains the origin. A plane is
  * defined by 4 coordinates, namely a, b, c, and d. When the plane contains

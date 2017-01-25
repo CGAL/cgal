@@ -21,6 +21,9 @@
 #ifndef CGAL_LESS_BY_DIRECTION_2_H
 #define CGAL_LESS_BY_DIRECTION_2_H
 
+#include <CGAL/license/Cone_spanners_2.h>
+
+
 #include <iostream>
 #include <cstdlib>
 #include <utility>

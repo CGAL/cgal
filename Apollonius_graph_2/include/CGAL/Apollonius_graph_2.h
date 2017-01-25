@@ -23,6 +23,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #define CGAL_APOLLONIUS_GRAPH_PSEUDO_CIRCLE_DESIGN 1
 
 

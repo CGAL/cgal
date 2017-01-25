@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MEASURE_H
 #define CGAL_POLYGON_MESH_PROCESSING_MEASURE_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>

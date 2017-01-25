@@ -25,6 +25,9 @@
 #ifndef CGAL_TRIANGLE_ACCESSOR_3_H
 #define CGAL_TRIANGLE_ACCESSOR_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 
 namespace CGAL {

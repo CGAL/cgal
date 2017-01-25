@@ -18,6 +18,9 @@
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 //#define CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
 
 #include <CGAL/Arr_tags.h>

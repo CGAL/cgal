@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
 #define CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include<set>
 #include<vector>
 

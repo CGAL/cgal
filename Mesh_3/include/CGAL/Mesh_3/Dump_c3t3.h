@@ -21,6 +21,9 @@
 #ifndef CGAL_MESH_3_DUMP_C3T3_H
 #define CGAL_MESH_3_DUMP_C3T3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <string>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>

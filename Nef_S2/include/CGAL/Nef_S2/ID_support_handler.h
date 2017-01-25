@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_S2_ID_SUPPORT_HANDLER
 #define CGAL_NEF_S2_ID_SUPPORT_HANDLER
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/Unique_hash_map.h>
 #include <map>
 

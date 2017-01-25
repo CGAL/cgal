@@ -20,6 +20,9 @@
 #ifndef CGAL_SM_POINT_LOCATOR_H
 #define CGAL_SM_POINT_LOCATOR_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <vector>
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>

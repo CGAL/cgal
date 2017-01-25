@@ -20,6 +20,9 @@
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_IOSTREAM_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_IOSTREAM_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #endif

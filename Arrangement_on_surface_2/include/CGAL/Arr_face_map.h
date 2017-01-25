@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_FACE_MAP_H
 #define CGAL_ARR_FACE_MAP_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_face_index_map<Arrangement> class.
  */

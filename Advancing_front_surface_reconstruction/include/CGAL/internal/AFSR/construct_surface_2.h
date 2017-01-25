@@ -20,6 +20,9 @@
 #ifndef CGAL_AFSR_CONSTRUCT_SURFACE_2
 #define CGAL_AFSR_CONSTRUCT_SURFACE_2
 
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
+
 namespace CGAL {
 
   template <class Triangulation, class Filter>

@@ -24,6 +24,9 @@
 #ifndef CGAL_INTERNAL_BOUNDED_PRIORITY_QUEUE_H
 #define CGAL_INTERNAL_BOUNDED_PRIORITY_QUEUE_H
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <vector>
 #include <functional>
 #include <algorithm>

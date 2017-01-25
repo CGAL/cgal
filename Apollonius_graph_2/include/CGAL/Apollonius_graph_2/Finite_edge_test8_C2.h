@@ -22,6 +22,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST8_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST8_C2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/Apollonius_graph_2/Finite_edge_test_C2.h>
 #include <CGAL/Apollonius_graph_2/Orientation8_C2.h>
 #include <CGAL/Apollonius_graph_2/Oriented_side_of_bisector_C2.h>

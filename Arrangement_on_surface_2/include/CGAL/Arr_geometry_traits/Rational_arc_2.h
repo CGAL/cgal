@@ -21,6 +21,9 @@
 #ifndef CGAL_RATIONAL_ARC_2_H
 #define CGAL_RATIONAL_ARC_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Header file for the _Rational_arc_2 and _Continuous_rational_arc_2 classes.
  */

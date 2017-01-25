@@ -21,6 +21,9 @@
 #ifndef CGAL_FILE_POLY_H
 #define CGAL_FILE_POLY_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 namespace CGAL {
 
 template <class CDT>

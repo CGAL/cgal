@@ -20,6 +20,9 @@
 #ifndef CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H
 #define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H
 
+#include <CGAL/license/Advancing_front_surface_reconstruction.h>
+
+
 // In order to activate lazy evaluation:
 // #define LAZY
 

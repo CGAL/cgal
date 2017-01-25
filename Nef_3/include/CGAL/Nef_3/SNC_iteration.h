@@ -23,6 +23,9 @@
 #ifndef CGAL_SNC_ITERATION_H
 #define CGAL_SNC_ITERATION_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_S2/SM_iteration.h>
 
 #define CGAL_forall_vertices(x,SNC)\

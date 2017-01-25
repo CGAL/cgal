@@ -17,6 +17,9 @@
 #ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 // #define CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED 1
 
 /*! \file

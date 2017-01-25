@@ -22,6 +22,9 @@
 #ifndef CGAL_MINIBALL_PIVOT_C
 #define CGAL_MINIBALL_PIVOT_C
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/Min_sphere_of_spheres_d.h>
 
 namespace CGAL_MINIBALL_NAMESPACE {

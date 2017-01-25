@@ -18,6 +18,9 @@
 #ifndef CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H
 #define CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/Straight_skeleton_builder_traits_2.h>

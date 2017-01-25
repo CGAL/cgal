@@ -20,6 +20,9 @@
 #ifndef CGAL_NORMALIZING_H
 #define CGAL_NORMALIZING_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/Nef_S2/Sphere_point.h>
 #include <CGAL/Nef_S2/Sphere_circle.h>
 #include <CGAL/Nef_S2/Sphere_direction.h>

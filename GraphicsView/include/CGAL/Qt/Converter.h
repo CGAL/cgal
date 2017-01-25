@@ -21,6 +21,9 @@
 #ifndef CGAL_QT_CONVERTER_H
 #define CGAL_QT_CONVERTER_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <QPointF>
 #include <QLineF>
 #include <QRectF>

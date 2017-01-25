@@ -20,6 +20,9 @@
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_H
 #define CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 // #define CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG 1
 
 #include <iostream>

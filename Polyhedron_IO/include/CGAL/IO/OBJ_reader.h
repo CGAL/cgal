@@ -18,6 +18,9 @@
 
 #ifndef CGAL_IO_OBJ_READER_H
 #define CGAL_IO_OBJ_READER_H
+
+#include <CGAL/license/Polyhedron.h>
+
 #include <istream>
 #include <vector>
 

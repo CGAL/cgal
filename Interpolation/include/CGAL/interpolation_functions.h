@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERPOLATION_FUNCTIONS_H
 #define CGAL_INTERPOLATION_FUNCTIONS_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <utility>
 #include <CGAL/double.h>
 #include <CGAL/use.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 // TODO: add the iterators
 // TODO: document the output/input function of C2T3?
 

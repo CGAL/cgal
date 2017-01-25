@@ -25,6 +25,9 @@
 #ifndef CGAL_ODT_OPTIMIZE_MESH_3_H
 #define CGAL_ODT_OPTIMIZE_MESH_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesh_global_optimizer.h>

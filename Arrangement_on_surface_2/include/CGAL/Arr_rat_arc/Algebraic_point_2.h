@@ -21,6 +21,9 @@
 #ifndef CGAL_ALBERAIC_POINT_D_1_H
 #define CGAL_ALBERAIC_POINT_D_1_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <ostream>
 
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>

@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_EXPANSION_EVENT_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_CONE_EXPANSION_EVENT_H
 
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+
 namespace CGAL {
 
 namespace internal {

@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_INTERSECTION_2_TRAITS_3_H
 #define CGAL_VORONOI_INTERSECTION_2_TRAITS_3_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <CGAL/Origin.h>
 #include <CGAL/tags.h>
 #include <CGAL/number_utils_classes.h>

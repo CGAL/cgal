@@ -20,6 +20,9 @@
 #ifndef CGAL_TRIANGULATION_VERTEX_H
 #define CGAL_TRIANGULATION_VERTEX_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/Triangulation_ds_vertex.h>
 #include <CGAL/Default.h>
 #include <CGAL/Random.h>

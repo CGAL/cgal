@@ -21,6 +21,9 @@
 #ifndef CGAL_LEDA_SPHERE_MAP_H
 #define CGAL_LEDA_SPHERE_MAP_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>

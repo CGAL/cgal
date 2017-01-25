@@ -21,6 +21,9 @@
 #ifndef CGAL_POINT_WITH_NORMAL_3_H
 #define CGAL_POINT_WITH_NORMAL_3_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>

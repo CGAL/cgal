@@ -20,6 +20,9 @@
 
 #ifndef CGAL_PMP_WEIGHTS_H
 #define CGAL_PMP_WEIGHTS_H
+
+#include <CGAL/license/Polygon_mesh_processing.h>
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <CGAL/boost/graph/helpers.h>

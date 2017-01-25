@@ -20,6 +20,9 @@
 #ifndef CGAL_MINKOWSKI_GAUSSIAN_MAP_TO_NEF_3_H
 #define CGAL_MINKOWSKI_GAUSSIAN_MAP_TO_NEF_3_H
 
+#include <CGAL/license/Minkowski_sum_3.h>
+
+
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Minkowski_sum_3/Gaussian_map.h>
 #include <CGAL/Modifier_base.h>

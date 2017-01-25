@@ -21,6 +21,9 @@
 #ifndef CGAL_SPHERE_SEGMENT_H
 #define CGAL_SPHERE_SEGMENT_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <vector>

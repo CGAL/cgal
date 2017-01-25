@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_ON_SURFACE_WITH_HISTORY_2_FUNCTIONS_H
 #define CGAL_ARR_ON_SURFACE_WITH_HISTORY_2_FUNCTIONS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Member-function definitions for the Arrangement_on_surface_with_history_2
  * class.

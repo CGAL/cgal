@@ -21,6 +21,9 @@
 #ifndef CGAL_apply_to_range_h
 #define CGAL_apply_to_range_h
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Unique_hash_map.h>
 #include <stack>

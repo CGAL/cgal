@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYHEDRON_COPY_3_H
 #define CGAL_POLYHEDRON_COPY_3_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Inverse_index.h>

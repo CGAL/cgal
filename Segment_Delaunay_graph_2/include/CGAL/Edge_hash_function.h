@@ -21,6 +21,9 @@
 #ifndef CGAL_EDGE_HASH_FUNCTION_H
 #define CGAL_EDGE_HASH_FUNCTION_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Handle_hash_function.h>
 

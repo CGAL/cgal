@@ -22,6 +22,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_FINITE_EDGE_INTERIOR_CONFLICT_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_FINITE_EDGE_INTERIOR_CONFLICT_C2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
+
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>

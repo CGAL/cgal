@@ -23,6 +23,9 @@
 #ifndef CGAL_CHECK_FILTER_H
 #define CGAL_CHECK_FILTER_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #undef CGAL_IA_NEW_FILTERS
 
 namespace CGAL {

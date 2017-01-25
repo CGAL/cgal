@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_EDGE_CRITERIA_3_H
 #define CGAL_MESH_EDGE_CRITERIA_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_constant_domain_field_3.h>
 #include <boost/type_traits.hpp>
 

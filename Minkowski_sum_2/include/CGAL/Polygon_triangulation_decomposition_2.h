@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYGON_TRIANGULATION_DECOMPOSITION_2_H
 #define CGAL_POLYGON_TRIANGULATION_DECOMPOSITION_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/General_polygon_set_2.h>
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>

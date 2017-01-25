@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_POLYNOMIAL_H
 #define CGAL_NEF_POLYNOMIAL_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/Nef_2/Polynomial.h>
 #include <cstddef>
 #undef CGAL_NEF_DEBUG

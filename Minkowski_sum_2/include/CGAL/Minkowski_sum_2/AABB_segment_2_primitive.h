@@ -17,6 +17,9 @@
 #ifndef CGAL_AABB_SEGMENT_2_PRIMITIVE_H
 #define CGAL_AABB_SEGMENT_2_PRIMITIVE_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 namespace CGAL {
 
 // Wraps around a Segment_2 and provides its iterator as Id

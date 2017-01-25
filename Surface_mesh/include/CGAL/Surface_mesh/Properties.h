@@ -19,6 +19,9 @@
 #ifndef CGAL_SURFACE_MESH_PROPERTY_H
 #define CGAL_SURFACE_MESH_PROPERTY_H
 
+#include <CGAL/license/Surface_mesh.h>
+
+
 #include <vector>
 #include <string>
 #include <algorithm>

@@ -24,6 +24,9 @@
 #ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_FILTERED_TRAITS_3_H
 #define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_FILTERED_TRAITS_3_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 #include <string>
 #include <CGAL/basic.h>
 #include <CGAL/config.h>

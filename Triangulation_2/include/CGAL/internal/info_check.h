@@ -22,6 +22,9 @@
 #ifndef CGAL_INTERNAL_INFO_CHECK_H
 #define CGAL_INTERNAL_INFO_CHECK_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {

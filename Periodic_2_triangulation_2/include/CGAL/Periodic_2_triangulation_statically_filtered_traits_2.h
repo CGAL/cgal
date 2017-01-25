@@ -20,6 +20,9 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_STATICALLY_FILTERED_TRAITS_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_STATICALLY_FILTERED_TRAITS_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 // This class gathers optimized predicates written by hand, using
 // a few steps of filtering.  It should work if the initial traits has
 // cartesian coordinates which fit exactly in doubles.

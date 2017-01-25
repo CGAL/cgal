@@ -21,6 +21,9 @@
 #ifndef CGAL_GREENE_APPROX_H
 #define CGAL_GREENE_APPROX_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include<vector>
 #include<algorithm>
 #include<iterator>

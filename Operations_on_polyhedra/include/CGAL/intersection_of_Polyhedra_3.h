@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERSECTION_OF_POLYHEDRA_3_H
 #define CGAL_INTERSECTION_OF_POLYHEDRA_3_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/box_intersection_d.h>

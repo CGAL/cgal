@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_TRAPEZOID_RIC_POINT_LOCATION_FUNCTIONS_H
 #define CGAL_ARR_TRAPEZOID_RIC_POINT_LOCATION_FUNCTIONS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
 * Member-function definitions for the
 * Arr_trapezoid_ric_point_location<Arrangement> class.

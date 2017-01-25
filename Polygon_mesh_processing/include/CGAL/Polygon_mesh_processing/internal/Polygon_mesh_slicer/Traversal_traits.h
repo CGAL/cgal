@@ -22,6 +22,9 @@
 #ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_TRAVERSAL_TRAITS_H
 #define CGAL_INTERNAL_POLYGON_MESH_SLICER_TRAVERSAL_TRAITS_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Triangle_3_Ray_3_do_intersect.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>

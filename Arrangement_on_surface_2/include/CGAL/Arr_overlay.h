@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_OVERLAY_H
 #define CGAL_ARR_OVERLAY_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Helping file to include Arr_overlay_2 for backward compatibility.
  */

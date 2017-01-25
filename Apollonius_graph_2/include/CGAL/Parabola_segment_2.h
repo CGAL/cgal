@@ -23,6 +23,9 @@
 #ifndef CGAL_PARABOLA_SEGMENT_2_H
 #define CGAL_PARABOLA_SEGMENT_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/Parabola_2.h>
 
 namespace CGAL {

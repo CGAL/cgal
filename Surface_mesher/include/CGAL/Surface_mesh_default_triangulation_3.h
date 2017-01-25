@@ -21,6 +21,9 @@
 #ifndef CGAL_SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
 #define CGAL_SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 // traits class
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Robust_circumcenter_traits_3.h>

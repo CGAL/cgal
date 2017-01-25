@@ -22,6 +22,9 @@
 #ifndef CGAL_MESH_3_POLYLINE_WITH_CONTEXT_H
 #define CGAL_MESH_3_POLYLINE_WITH_CONTEXT_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <set>
 #include <functional>
 

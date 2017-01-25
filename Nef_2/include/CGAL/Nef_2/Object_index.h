@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_2_OBJECT_INDEX_H
 #define CGAL_NEF_2_OBJECT_INDEX_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <string>

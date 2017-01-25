@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_ROBUST_INTERSECTION_KERNEL_3_H
 #define CGAL_MESH_3_ROBUST_INTERSECTION_KERNEL_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>

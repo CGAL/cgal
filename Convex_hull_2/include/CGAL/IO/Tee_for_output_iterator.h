@@ -22,6 +22,9 @@
 #ifndef CGAL_IO_TEE_FOR_OUTPUT_ITERATOR_H
 #define CGAL_IO_TEE_FOR_OUTPUT_ITERATOR_H
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #include <CGAL/basic.h>
 #include <iterator>
 #include <vector>

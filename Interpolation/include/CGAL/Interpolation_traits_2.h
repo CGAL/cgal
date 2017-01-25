@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERPOLATION_TRAITS_2_H
 #define CGAL_INTERPOLATION_TRAITS_2_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 namespace CGAL {
 
 //-----------------------------------------------------------------------//

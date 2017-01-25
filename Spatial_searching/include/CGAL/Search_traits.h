@@ -21,6 +21,9 @@
 
 #ifndef CGAL_KD_TREE_TRAITS_POINT_H
 #define CGAL_KD_TREE_TRAITS_POINT_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 #include <CGAL/Dimension.h>
 
 

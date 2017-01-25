@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_POLICY_BASE_H
 #define CGAL_VORONOI_DIAGRAM_2_POLICY_BASE_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
 #include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>

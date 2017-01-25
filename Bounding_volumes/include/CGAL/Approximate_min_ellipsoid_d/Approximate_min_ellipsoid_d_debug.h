@@ -21,6 +21,9 @@
 #ifndef CGAL_APPROX_MIN_ELL_D_DEBUG_H
 #define CGAL_APPROX_MIN_ELL_D_DEBUG_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <cmath>
 #include <map>
 #include <iostream>

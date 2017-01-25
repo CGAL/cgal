@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_NARY_INTERSECTION_3_H
 #define CGAL_NEF_NARY_INTERSECTION_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <list>
 
 namespace CGAL {

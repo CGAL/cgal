@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/tags.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Uncertain.h>

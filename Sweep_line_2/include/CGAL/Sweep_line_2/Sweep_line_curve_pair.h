@@ -22,6 +22,9 @@
 #ifndef CGAL_SWEEP_LINE_CURVE_PAIR_H
 #define CGAL_SWEEP_LINE_CURVE_PAIR_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Definition of the Curve_pair<Subcurve> class and related functors.
  */

@@ -21,6 +21,9 @@
 #ifndef CGAL_QT_RESOURCES_H
 #define CGAL_QT_RESOURCES_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/export/Qt.h>
 
 // cannot use namespaces because of the Q_INIT_RESOURCE macro

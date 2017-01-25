@@ -22,6 +22,9 @@
 #ifndef CGAL_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 #define CGAL_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the specialized Dual<Arrangement_2> class,
  * and the specialized boost::graph_traits<Dual<Arrangement_2> >class.

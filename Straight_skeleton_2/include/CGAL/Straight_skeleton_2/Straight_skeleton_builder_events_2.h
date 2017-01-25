@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_EVENTS_2_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_EVENTS_2_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include<ostream>
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>

@@ -24,6 +24,9 @@
 #ifndef CGAL_SNC_EXTERNAL_STRUCTURE_H
 #define CGAL_SNC_EXTERNAL_STRUCTURE_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>
 #include <CGAL/Nef_3/SNC_decorator.h>

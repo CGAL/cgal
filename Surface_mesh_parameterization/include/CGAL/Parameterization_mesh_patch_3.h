@@ -22,6 +22,9 @@
 #ifndef CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 #define CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <cstdio>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>

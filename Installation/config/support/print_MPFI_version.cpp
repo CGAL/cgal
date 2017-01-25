@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@gmx.com>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #include <iostream>
 #include <string>

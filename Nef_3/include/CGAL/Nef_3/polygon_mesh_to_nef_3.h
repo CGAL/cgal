@@ -25,6 +25,9 @@
 #ifndef CGAL_POLYGON_MESH_TO_NEF_3_H
 #define CGAL_POLYGON_MESH_TO_NEF_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/normal_vector_newell_3.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>

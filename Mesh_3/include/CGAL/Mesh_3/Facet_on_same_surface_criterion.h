@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_FACET_ON_SAME_SURFACE_CRITERION_H
 #define CGAL_MESH_3_FACET_ON_SAME_SURFACE_CRITERION_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 

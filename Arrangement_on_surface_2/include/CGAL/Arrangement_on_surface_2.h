@@ -28,6 +28,9 @@
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The header file for the Arrangement_on_surface_2<Traits,Dcel> class.
  */

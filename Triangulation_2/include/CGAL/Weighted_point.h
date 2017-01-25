@@ -22,6 +22,9 @@
 #ifndef CGAL_WEIGHTED_POINT_H
 #define CGAL_WEIGHTED_POINT_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>

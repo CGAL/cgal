@@ -44,6 +44,9 @@
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
 #  define CGAL_surface_mesh_parameterization_assertion(EX) (static_cast<void>(0))
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
 #  define CGAL_surface_mesh_parameterization_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_assertion_code(CODE)
 #else

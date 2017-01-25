@@ -24,6 +24,9 @@
 #ifndef CGAL_EXACT_SPHERICAL_3_KERNEL_H
 #define CGAL_EXACT_SPHERICAL_3_KERNEL_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Spherical_kernel_3.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_TD_PREDICATES_H
 #define CGAL_TD_PREDICATES_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/basic.h>
 
 #include <functional>

@@ -21,6 +21,9 @@
 #ifndef CGAL_INDIRECT_EDGE_COMPARE_H
 #define CGAL_INDIRECT_EDGE_COMPARE_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 namespace CGAL {
 
 //

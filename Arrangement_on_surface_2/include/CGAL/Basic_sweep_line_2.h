@@ -19,6 +19,9 @@
 #ifndef CGAL_BASIC_SWEEP_LINE_2_H
 #define CGAL_BASIC_SWEEP_LINE_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Basic_sweep_line_2 class.
  */

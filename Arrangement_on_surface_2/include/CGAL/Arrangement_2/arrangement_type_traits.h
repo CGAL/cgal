@@ -29,6 +29,9 @@
 #ifndef CGAL_ARRANGEMENT_TYPE_TRAITS_H
 #define CGAL_ARRANGEMENT_TYPE_TRAITS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <boost/type_traits/integral_constant.hpp>
 
 namespace CGAL

@@ -22,6 +22,9 @@
 #ifndef CGAL_BOOST_GRAPH_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H
 #define CGAL_BOOST_GRAPH_GRAPH_TRAITS_ARRANGEMENT_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/graph_traits_Dual_Arrangement_2.h>
 
 #endif //CGAL_BOOST_GRAPH_GRAPH_TRAITS_DUAL_ARRANGEMENT_2_H

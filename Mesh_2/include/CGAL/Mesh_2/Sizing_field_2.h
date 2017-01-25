@@ -23,6 +23,9 @@
 #ifndef CGAL_SIZING_FIELD_2_H
 #define CGAL_SIZING_FIELD_2_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <list>
 
 #include <CGAL/basic.h>

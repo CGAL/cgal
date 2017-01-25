@@ -23,6 +23,9 @@
 #ifndef CGAL_AABB_SEGMENT_PRIMITIVE_H_
 #define CGAL_AABB_SEGMENT_PRIMITIVE_H_
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/result_of.h>
 #include <iterator>

@@ -22,6 +22,9 @@
 #ifndef CGAL_MESH_2_DO_NOT_REFINE_EDGES_H
 #define CGAL_MESH_2_DO_NOT_REFINE_EDGES_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Mesh_2/Refine_edges.h>
 
 namespace CGAL {

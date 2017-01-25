@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_TRIANGULATION_HELPERS_H
 #define CGAL_MESH_3_TRIANGULATION_HELPERS_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <vector>
 #include <CGAL/squared_distance_3.h>
 

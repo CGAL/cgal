@@ -22,6 +22,9 @@
 #ifndef CGAL_SNC_SIMPLIFY_H
 #define CGAL_SNC_SIMPLIFY_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>

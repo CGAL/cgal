@@ -20,6 +20,9 @@
 #ifndef CGAL_MAKE_SURFACE_MESH_H
 #define CGAL_MAKE_SURFACE_MESH_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Surface_mesher_generator.h>
 
 #include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>

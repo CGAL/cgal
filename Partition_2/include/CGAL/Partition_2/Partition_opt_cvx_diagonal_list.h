@@ -21,6 +21,9 @@
 #ifndef   CGAL_PARTITION_OPT_CVX_DIAGONAL_LIST_H
 #define   CGAL_PARTITION_OPT_CVX_DIAGONAL_LIST_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <utility>
 #include <list>
 #include <iostream>

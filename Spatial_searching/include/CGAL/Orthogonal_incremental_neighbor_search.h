@@ -21,6 +21,9 @@
 #ifndef CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
 #define CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
 
+#include <CGAL/license/Spatial_searching.h>
+
+
 #include <cstring>
 #include <list>
 #include <queue>

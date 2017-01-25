@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYCURVE_2_IOSTREAM_H
 #define CGAL_POLYCURVE_2_IOSTREAM_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <iostream>
 
 #include <CGAL/basic.h>

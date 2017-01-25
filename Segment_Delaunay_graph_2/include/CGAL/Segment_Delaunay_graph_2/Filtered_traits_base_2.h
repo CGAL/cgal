@@ -23,6 +23,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTERED_TRAITS_BASE_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTERED_TRAITS_BASE_2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>

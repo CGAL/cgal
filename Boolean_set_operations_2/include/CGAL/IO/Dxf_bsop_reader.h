@@ -22,6 +22,9 @@
 #ifndef CGAL_DXF_BSOP_READER_H
 #define CGAL_DXF_BSOP_READER_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/IO/Dxf_reader.h>
 #include <iostream>
 

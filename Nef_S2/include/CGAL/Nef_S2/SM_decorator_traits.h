@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_SM_DECORATOR_TRAITS_H
 #define CGAL_NEF_SM_DECORATOR_TRAITS_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 namespace CGAL {
 
 template <class Refs_>

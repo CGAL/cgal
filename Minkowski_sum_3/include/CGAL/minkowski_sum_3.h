@@ -20,6 +20,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_3_H
 #define CGAL_MINKOWSKI_SUM_3_H
 
+#include <CGAL/license/Minkowski_sum_3.h>
+
+
 #include <CGAL/convex_decomposition_3.h>
 #include <CGAL/Minkowski_sum_3/bipartite_nary_union_sorted_combined.h> 
 #include <CGAL/Is_extended_kernel.h>

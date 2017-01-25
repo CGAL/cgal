@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYGON_NOP_DECOMPOSITION_2_H
 #define CGAL_POLYGON_NOP_DECOMPOSITION_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Polygon_2.h>
 
 namespace CGAL {

@@ -19,6 +19,9 @@
 #ifndef CGAL_UMBILIC_H_
 #define CGAL_UMBILIC_H_
 
+#include <CGAL/license/Ridges_3.h>
+
+
 #include <list>
 #include <vector>
 #include <math.h>

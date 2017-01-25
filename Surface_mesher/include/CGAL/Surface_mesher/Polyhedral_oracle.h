@@ -21,6 +21,9 @@
 #ifndef CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
 #define CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <utility>
 
 #include <CGAL/config.h> // CGAL_DEPRECATED

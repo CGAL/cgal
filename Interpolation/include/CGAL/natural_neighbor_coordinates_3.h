@@ -21,6 +21,9 @@
 #ifndef CGAL_NATURAL_NEIGHBORS_3_H
 #define CGAL_NATURAL_NEIGHBORS_3_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <set>
 #include <vector>
 #include <CGAL/tags.h>

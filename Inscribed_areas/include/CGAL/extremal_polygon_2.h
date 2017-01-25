@@ -21,6 +21,9 @@
 #ifndef CGAL_EXTREMAL_POLYGON_2_H
 #define CGAL_EXTREMAL_POLYGON_2_H 1
 
+#include <CGAL/license/Inscribed_areas.h>
+
+
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/monotone_matrix_search.h>
 #include <CGAL/Dynamic_matrix.h>

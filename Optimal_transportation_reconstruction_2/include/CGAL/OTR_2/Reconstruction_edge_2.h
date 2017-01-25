@@ -20,6 +20,9 @@
 #ifndef CGAL_RECONSTRUCTION_EDGE_2_H_
 #define CGAL_RECONSTRUCTION_EDGE_2_H_
 
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
+
 namespace CGAL {
 namespace OTR_2 {
 

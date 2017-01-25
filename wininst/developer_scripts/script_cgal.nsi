@@ -57,7 +57,7 @@
   VIProductVersion "4.8.0.0"
   VIAddVersionKey "ProductName"     "CGAL Windows Installer"
   VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
-  VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
+  VIAddVersionKey "LegalCopyright"  "Â© The CGAL Project and GeometryFactory"
   VIAddVersionKey "FileDescription" "Windows Installer for CGAL"
   VIAddVersionKey "FileVersion"     "4.8"
   

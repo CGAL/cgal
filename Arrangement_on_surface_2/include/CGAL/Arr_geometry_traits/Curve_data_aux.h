@@ -22,6 +22,9 @@
 #ifndef CGAL_CURVE_DATA_AUX_H
 #define CGAL_CURVE_DATA_AUX_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of auxiliary classes for the Arr_curve_data_traits_2<> template.
  */

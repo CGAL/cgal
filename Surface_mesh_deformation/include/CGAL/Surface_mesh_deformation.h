@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESH_DEFORMATION_H
 #define CGAL_SURFACE_MESH_DEFORMATION_H
 
+#include <CGAL/license/Surface_mesh_deformation.h>
+
+
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>

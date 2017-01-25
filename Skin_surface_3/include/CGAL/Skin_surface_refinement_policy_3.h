@@ -21,6 +21,9 @@
 #ifndef CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
 #define CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_converter.h>
 

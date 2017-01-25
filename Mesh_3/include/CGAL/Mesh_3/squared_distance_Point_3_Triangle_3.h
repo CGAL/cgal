@@ -22,6 +22,9 @@
 #ifndef CGAL_SQUARED_DISTANCE_POINT_3_TRIANGLE_3_H
 #define CGAL_SQUARED_DISTANCE_POINT_3_TRIANGLE_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/squared_distance_3_2.h>
 
 #endif // CGAL_SQUARED_DISTANCE_POINT_3_TRIANGLE_3_H

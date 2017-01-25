@@ -21,6 +21,9 @@
 #ifndef   CGAL_TURN_REVERSER_H
 #define   CGAL_TURN_REVERSER_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 namespace CGAL {
 
 template <class Point_2, class TurnPredicate>

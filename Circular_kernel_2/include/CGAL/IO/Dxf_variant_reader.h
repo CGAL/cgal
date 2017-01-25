@@ -31,6 +31,9 @@
 #ifndef CGAL_IO_DXF_VARIANT_READER_H
 #define CGAL_IO_DXF_VARIANT_READER_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/IO/Dxf_reader_doubles.h>
 #include <iostream>
 #include <string>

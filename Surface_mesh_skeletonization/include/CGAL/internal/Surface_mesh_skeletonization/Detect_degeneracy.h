@@ -20,6 +20,9 @@
 #ifndef CGAL_MCFSKEL_DETECT_DEGENERACY_H
 #define CGAL_MCFSKEL_DETECT_DEGENERACY_H
 
+#include <CGAL/license/Surface_mesh_skeletonization.h>
+
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 /**

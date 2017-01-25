@@ -21,6 +21,9 @@
 #ifndef CGAL_SPHERE_PREDICATES_H
 #define CGAL_SPHERE_PREDICATES_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/basic.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 23

@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_TRAITS_H
 #define CGAL_ARR_POLYHEDRAL_SGM_TRAITS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 

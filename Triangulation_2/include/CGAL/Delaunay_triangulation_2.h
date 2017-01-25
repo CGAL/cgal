@@ -25,6 +25,9 @@
 #ifndef CGAL_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_DELAUNAY_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Object.h>

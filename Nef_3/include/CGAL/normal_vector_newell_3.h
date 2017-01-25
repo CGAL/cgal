@@ -23,6 +23,9 @@
 #ifndef CGAL_NORMAL_VECTOR_NEWELL_3_H
 #define CGAL_NORMAL_VECTOR_NEWELL_3_H 1
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/iterator.h>
 
 #undef CGAL_NEF_DEBUG

@@ -21,6 +21,9 @@
 #ifndef CGAL_CONIC_POINT_2_H
 #define CGAL_CONIC_POINT_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Header file for the _Conic_point_2<Alg_kernel> class.
  */

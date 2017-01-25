@@ -20,6 +20,9 @@
 #ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_H
 #define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_H
 
+#include <CGAL/license/Envelope_2.h>
+
+
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 

@@ -25,6 +25,9 @@
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Nef_3/Default_items.h>

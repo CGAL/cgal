@@ -20,6 +20,9 @@
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Defintion of the Sweep_line_event class.
  */

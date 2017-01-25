@@ -19,6 +19,9 @@
 #ifndef CGAL_COMPUTE_OUTER_FRAME_MARGIN_H
 #define CGAL_COMPUTE_OUTER_FRAME_MARGIN_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <vector>
 #include <algorithm>
 

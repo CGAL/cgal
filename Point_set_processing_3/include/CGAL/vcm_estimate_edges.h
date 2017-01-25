@@ -21,6 +21,9 @@
 #ifndef CGAL_VCM_ESTIMATE_EDGES_H
 #define CGAL_VCM_ESTIMATE_EDGES_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/vcm_estimate_normals.h>
 
 namespace CGAL {

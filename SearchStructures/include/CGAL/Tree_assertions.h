@@ -39,6 +39,9 @@
 #if defined(CGAL_TREE_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
 #  define CGAL_Tree_assertion(EX) (static_cast<void>(0))
+
+#include <CGAL/license/SearchStructures.h>
+
 #  define CGAL_Tree_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_Tree_assertion_code(CODE)
 #else

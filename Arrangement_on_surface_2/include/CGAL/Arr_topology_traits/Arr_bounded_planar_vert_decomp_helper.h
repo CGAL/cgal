@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_BOUNDED_PLANAR_VERT_DEOCMP_HELPER_H
 #define CGAL_ARR_BOUNDED_PLANAR_VERT_DEOCMP_HELPER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_bounded_planar_vert_decomp_helper class-template.
  */

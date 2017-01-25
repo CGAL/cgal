@@ -20,6 +20,9 @@
 #ifndef CGAL_INTERNAL_DELAUNAY_TRIANGULATION_HIERARCHY_3_H
 #define CGAL_INTERNAL_DELAUNAY_TRIANGULATION_HIERARCHY_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #if !defined CGAL_DELAUNAY_TRIANGULATION_3_H
 #  error  "Other header files need to be included first..."
 #endif

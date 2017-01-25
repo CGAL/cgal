@@ -20,6 +20,9 @@
 #ifndef CGAL_CD3_SM_WALLS_H
 #define CGAL_CD3_SM_WALLS_H
 
+#include <CGAL/license/Convex_decomposition_3.h>
+
+
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 227
 #include <CGAL/Nef_2/debug.h>

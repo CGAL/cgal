@@ -29,6 +29,9 @@
 #ifndef CGAL_REGULARIZE_PLANES_H
 #define CGAL_REGULARIZE_PLANES_H
 
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
+
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/centroid.h>
 #include <CGAL/squared_distance_3.h>

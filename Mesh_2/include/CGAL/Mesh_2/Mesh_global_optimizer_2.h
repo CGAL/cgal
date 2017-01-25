@@ -16,11 +16,14 @@
 // $URL$
 // $Id$
 // 
-// Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez, Stéphane Tayeb
+// Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez, StÃ©phane Tayeb
 //
 
 #ifndef CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
 #define CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #ifdef CGAL_MESH_2_VERBOSE
   #define CGAL_MESH_2_OPTIMIZER_VERBOSE 

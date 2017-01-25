@@ -22,6 +22,9 @@
 #ifndef CGAL_TAUCS_VECTOR
 #define CGAL_TAUCS_VECTOR
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/config.h>
 
 #ifdef CGAL_USE_TAUCS

@@ -21,6 +21,9 @@
 #ifndef CGAL_EXTREMAL_POLYGON_TRAITS_2_H
 #define CGAL_EXTREMAL_POLYGON_TRAITS_2_H 1
 
+#include <CGAL/license/Inscribed_areas.h>
+
+
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>

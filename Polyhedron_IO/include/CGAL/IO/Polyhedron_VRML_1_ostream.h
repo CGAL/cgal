@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_POLYHEDRON_VRML_1_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_VRML_1_OSTREAM_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/IO/VRML_1_ostream.h>
 #include <CGAL/IO/Polyhedron_inventor_ostream.h>
 

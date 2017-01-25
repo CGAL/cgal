@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_TEST_H
 #define CGAL_STRAIGHT_SKELETON_TEST_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 //
 // INTRINSIC UNIT TESTING macros.
 //

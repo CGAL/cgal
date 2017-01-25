@@ -21,6 +21,9 @@
 #ifndef CGAL_SKIN_SURFACE_QUADRATIC_SURFACE_H
 #define CGAL_SKIN_SURFACE_QUADRATIC_SURFACE_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Skin_surface_traits_3.h>
 
 namespace CGAL {

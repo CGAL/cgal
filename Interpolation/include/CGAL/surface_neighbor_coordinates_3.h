@@ -23,6 +23,9 @@
 #ifndef CGAL_SURFACE_NEIGHBOR_COORDINATES_3_H
 #define CGAL_SURFACE_NEIGHBOR_COORDINATES_3_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <utility>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Voronoi_intersection_2_traits_3.h>

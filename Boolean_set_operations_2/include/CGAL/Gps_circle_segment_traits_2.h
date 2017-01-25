@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_CIRCLE_SEGMENT_TRAITS_2_H
 #define CGAL_GPS_CIRCLE_SEGMENT_TRAITS_2_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 

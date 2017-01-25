@@ -23,6 +23,9 @@
 #ifndef CGAL_SINGLETON_H_
 #define SINGLETON_H_
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/assertions.h>
 
 namespace CGAL {

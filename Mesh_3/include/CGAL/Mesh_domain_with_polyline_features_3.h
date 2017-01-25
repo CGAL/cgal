@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_DOMAIN_WITH_POLYLINE_FEATURES_3_H
 #define CGAL_MESH_DOMAIN_WITH_POLYLINE_FEATURES_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/iterator.h>
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>

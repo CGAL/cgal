@@ -22,6 +22,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/basic.h>
 
 

@@ -19,6 +19,9 @@
 #ifndef CGAL_NULL_MATRIX_H
 #define CGAL_NULL_MATRIX_H
 
+#include <CGAL/license/Surface_mesh_simplification.h>
+
+
 namespace CGAL {
 
 class Null_matrix {};

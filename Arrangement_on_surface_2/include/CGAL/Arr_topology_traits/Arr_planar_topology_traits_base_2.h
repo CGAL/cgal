@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
 #define CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_planar_topology_traits_base_2<GeomTraits> class.
  */

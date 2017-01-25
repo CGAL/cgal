@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERSECTION_OF_POLYHEDRA_3_REFINEMENT_VISITOR_H
 #define CGAL_INTERSECTION_OF_POLYHEDRA_3_REFINEMENT_VISITOR_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/intersection_of_Polyhedra_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>

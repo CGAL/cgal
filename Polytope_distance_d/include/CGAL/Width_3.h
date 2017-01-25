@@ -21,6 +21,9 @@
 #ifndef CGAL_WIDTH_3_H
 #define CGAL_WIDTH_3_H
 
+#include <CGAL/license/Polytope_distance_d.h>
+
+
 #include <CGAL/basic.h>
 #include <cstdlib>
 #include <iostream>

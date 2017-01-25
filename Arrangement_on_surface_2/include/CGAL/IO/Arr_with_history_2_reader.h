@@ -20,6 +20,9 @@
 #ifndef CGAL_ARR_WITH_HISTORY_2_READER_H
 #define CGAL_ARR_WITH_HISTORY_2_READER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The header file for the Arr_with_history_2_reader<Arrangement> class.
  */

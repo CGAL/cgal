@@ -19,6 +19,9 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H 1
 
+#include <CGAL/license/Surface_mesh_simplification.h>
+
+
 #include <vector>
 
 #include <CGAL/Cartesian_converter.h>

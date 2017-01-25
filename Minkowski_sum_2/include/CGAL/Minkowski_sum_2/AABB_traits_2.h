@@ -17,6 +17,9 @@
 #ifndef CGAL_AABB_TRAITS_2_H
 #define CGAL_AABB_TRAITS_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 namespace CGAL {
 
 template<typename GeomTraits, typename AABB_primitive_>

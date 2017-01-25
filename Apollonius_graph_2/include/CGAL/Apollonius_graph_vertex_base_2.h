@@ -21,6 +21,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H
 #define CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <list>
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>

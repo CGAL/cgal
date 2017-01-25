@@ -21,6 +21,9 @@
 #ifndef CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H
 #define CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H 1
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>

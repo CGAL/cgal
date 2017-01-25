@@ -20,6 +20,9 @@
 #ifndef CGAL_TRIANGULATION_DS_FULL_CELL_H
 #define CGAL_TRIANGULATION_DS_FULL_CELL_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/TDS_full_cell_default_storage_policy.h>
 #include <CGAL/TDS_full_cell_mirror_storage_policy.h>
 #include <CGAL/internal/Triangulation/Dummy_TDS.h>

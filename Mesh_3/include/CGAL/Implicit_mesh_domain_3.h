@@ -26,6 +26,9 @@
 #ifndef CGAL_IMPLICIT_MESH_DOMAIN_3_H
 #define CGAL_IMPLICIT_MESH_DOMAIN_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored

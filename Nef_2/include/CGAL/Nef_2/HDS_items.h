@@ -21,6 +21,9 @@
 #ifndef CGAL_HDS_ITEMS_H
 #define CGAL_HDS_ITEMS_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <list>

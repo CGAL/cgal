@@ -26,6 +26,9 @@
 #ifndef CGAL_OBJECT_HANDLE_H
 #define CGAL_OBJECT_HANDLE_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/Object.h>
 
 namespace CGAL {

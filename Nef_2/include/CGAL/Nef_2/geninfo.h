@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_2_GENINFO_H
 #define CGAL_NEF_2_GENINFO_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 
 //This file is deprecated and something like boost::any or boost::variant should 
 //be used instead

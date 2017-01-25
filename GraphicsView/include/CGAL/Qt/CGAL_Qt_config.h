@@ -20,6 +20,9 @@
 #ifndef CGAL_QT_CONFIG_H
 #define CGAL_QT_CONFIG_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <QtCore/qglobal.h>
 
 #if defined(CGAL_Qt5_DLL)

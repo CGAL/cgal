@@ -20,6 +20,9 @@
 #ifndef CGAL_INTERNAL_COMBINATION_ENUMERATOR_H
 #define CGAL_INTERNAL_COMBINATION_ENUMERATOR_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/basic.h>
 #include <vector>
 

@@ -21,6 +21,9 @@
 #ifndef CGAL_SUBDIVIDE_UNION_OF_BALLS_MESH_3_H
 #define CGAL_SUBDIVIDE_UNION_OF_BALLS_MESH_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/Polyhedron_3.h>
 

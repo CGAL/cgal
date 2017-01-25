@@ -20,6 +20,9 @@
 #ifndef CGAL_EXTRACT_MEAN_CURVATURE_FLOW_SKELETON_H
 #define CGAL_EXTRACT_MEAN_CURVATURE_FLOW_SKELETON_H
 
+#include <CGAL/license/Surface_mesh_skeletonization.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #ifdef CGAL_EIGEN3_ENABLED

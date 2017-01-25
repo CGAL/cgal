@@ -21,6 +21,9 @@
 #ifndef CGAL_PM_CHECKER_H
 #define CGAL_PM_CHECKER_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/PM_const_decorator.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/Periodic_2_offset_2.h>

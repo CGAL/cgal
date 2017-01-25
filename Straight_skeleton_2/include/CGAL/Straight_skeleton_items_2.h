@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_ITEMS_2_H
 #define CGAL_STRAIGHT_SKELETON_ITEMS_2_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/Straight_skeleton_vertex_base_2.h>
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/Straight_skeleton_face_base_2.h>

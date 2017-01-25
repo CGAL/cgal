@@ -17,6 +17,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
 #define CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_segment_traits_2.h>

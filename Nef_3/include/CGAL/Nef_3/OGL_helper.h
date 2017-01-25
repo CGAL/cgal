@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_OPENGL_HELPER_H
 #define CGAL_NEF_OPENGL_HELPER_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_S2/OGL_base_object.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Nef_3/SNC_decorator.h>

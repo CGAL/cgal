@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_COREFINEMENT_H
 #define CGAL_POLYGON_MESH_PROCESSING_COREFINEMENT_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Visitor.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Face_graph_output_builder.h>

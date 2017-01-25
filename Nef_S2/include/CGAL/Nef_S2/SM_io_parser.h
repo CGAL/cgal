@@ -22,6 +22,9 @@
 #ifndef CGAL_SM_IO_PARSER_H
 #define CGAL_SM_IO_PARSER_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>

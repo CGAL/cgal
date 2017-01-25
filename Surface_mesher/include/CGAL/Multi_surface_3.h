@@ -20,6 +20,9 @@
 #ifndef CGAL_MULTI_SURFACE_3_H
 #define CGAL_MULTI_SURFACE_3_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 namespace CGAL {
 
   template<

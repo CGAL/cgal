@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_UTILITY_H
 #define CGAL_QT_UTILITY_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <QRectF>
 #include <QRect>
 

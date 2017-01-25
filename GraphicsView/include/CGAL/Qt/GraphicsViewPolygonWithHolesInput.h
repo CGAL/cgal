@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_POLYGON_WITH_HOLES_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_POLYGON_WITH_HOLES_INPUT_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <list>
 
 #include <QGraphicsView>

@@ -23,6 +23,9 @@
 #ifndef CGAL_PARABOLA_2_H
 #define CGAL_PARABOLA_2_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <vector>
 #include <CGAL/determinant.h>
 #include <CGAL/Algebraic_structure_traits.h>

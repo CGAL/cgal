@@ -21,6 +21,9 @@
 #ifndef CGAL_PM_CONST_DECORATOR_H
 #define CGAL_PM_CONST_DECORATOR_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <string>

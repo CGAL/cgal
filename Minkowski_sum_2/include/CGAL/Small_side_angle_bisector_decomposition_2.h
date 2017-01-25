@@ -19,6 +19,9 @@
 #ifndef CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
 #define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/number_utils.h>
 #include <vector>

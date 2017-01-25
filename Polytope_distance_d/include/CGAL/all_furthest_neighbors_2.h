@@ -21,6 +21,9 @@
 #ifndef CGAL_ALL_FURTHEST_NEIGHBORS_2_H
 #define CGAL_ALL_FURTHEST_NEIGHBORS_2_H 1
 
+#include <CGAL/license/Polytope_distance_d.h>
+
+
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/Dynamic_matrix.h>

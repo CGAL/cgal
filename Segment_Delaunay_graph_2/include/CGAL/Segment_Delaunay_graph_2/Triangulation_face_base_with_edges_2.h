@@ -23,6 +23,9 @@
 #ifndef CGAL_TRIANGULATION_FACE_BASE_WITH_EDGES_2_H
 #define CGAL_TRIANGULATION_FACE_BASE_WITH_EDGES_2_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/triangulation_assertions.h>

@@ -27,6 +27,9 @@
 #ifndef CGAL_BBOX_FILTERED_PREDICATES_H  
 #define CGAL_BBOX_FILTERED_PREDICATES_H  
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>

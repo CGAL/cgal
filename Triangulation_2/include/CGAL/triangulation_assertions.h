@@ -39,6 +39,9 @@
 #if defined(CGAL_TRIANGULATION_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
 #  define CGAL_triangulation_assertion(EX) (static_cast<void>(0))
+
+#include <CGAL/license/Triangulation_2.h>
+
 #  define CGAL_triangulation_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_triangulation_assertion_code(CODE)
 #else

@@ -22,6 +22,9 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_POINT_INSIDE_VERTICAL_RAY_CAST_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_POINT_INSIDE_VERTICAL_RAY_CAST_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Ray_3_Triangle_3_traversal_traits.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Origin.h>

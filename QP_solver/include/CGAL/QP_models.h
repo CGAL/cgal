@@ -21,6 +21,9 @@
 #ifndef CGAL_QP_MODELS_H
 #define CGAL_QP_MODELS_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/iterator.h>
 #include <CGAL/algorithm.h>

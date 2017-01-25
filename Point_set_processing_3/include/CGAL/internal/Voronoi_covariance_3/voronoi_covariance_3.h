@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_3_HPP
 #define CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_3_HPP
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 // See mail on cgal-develop from 1.Dec 2016
 #define CGAL_VORONOI_COVARIANCE_USE_CONSTRUCTIONS
 

@@ -22,6 +22,9 @@
 #ifndef CGAL_ORIENT_POLYGON_MESH_H
 #define CGAL_ORIENT_POLYGON_MESH_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>

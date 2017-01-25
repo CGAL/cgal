@@ -24,6 +24,9 @@
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/functors.h>

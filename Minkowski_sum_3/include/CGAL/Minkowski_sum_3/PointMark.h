@@ -20,6 +20,9 @@
 #ifndef CGAL_MS3_POINTMARK_H
 #define CGAL_MS3_POINTMARK_H
 
+#include <CGAL/license/Minkowski_sum_3.h>
+
+
 namespace CGAL {
 
 template <class K>

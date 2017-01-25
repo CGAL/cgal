@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_LANDMARKS_PL_IMPL_H
 #define CGAL_ARR_LANDMARKS_PL_IMPL_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Member-function definitions for the 
  * Arr_landmarks_point_location<Arrangement, Generator> class.

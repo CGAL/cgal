@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_PRINT_WAVEFRONT_H
 #define CGAL_IO_PRINT_WAVEFRONT_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/IO/File_writer_wavefront.h>
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_3.h>

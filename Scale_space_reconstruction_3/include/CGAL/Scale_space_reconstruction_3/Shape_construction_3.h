@@ -19,6 +19,9 @@
 #ifndef CGAL_SCALE_SPACE_RECONSTRUCTION_3_SHAPE_CONSTRUCTION_3_H
 #define CGAL_SCALE_SPACE_RECONSTRUCTION_3_SHAPE_CONSTRUCTION_3_H
 
+#include <CGAL/license/Scale_space_reconstruction_3.h>
+
+
 #include <CGAL/Scale_space_reconstruction_3/internal/Auto_count.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>

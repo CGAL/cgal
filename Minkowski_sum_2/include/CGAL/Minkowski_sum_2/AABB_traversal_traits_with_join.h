@@ -21,6 +21,9 @@
 #ifndef CGAL_AABB_TRAVERSAL_TRAITS_WITH_JOIN_H
 #define CGAL_AABB_TRAVERSAL_TRAITS_WITH_JOIN_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Minkowski_sum_2/AABB_node_with_join.h>
 #include <boost/optional.hpp>
 

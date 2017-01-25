@@ -20,6 +20,9 @@
 #ifndef CGAL_INTERNAL_STATIC_OR_DYNAMIC_ARRAY_H
 #define CGAL_INTERNAL_STATIC_OR_DYNAMIC_ARRAY_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/Compact_container.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_BOUNDING_BOX_3_H
 #define CGAL_BOUNDING_BOX_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/box_intersection_d.h>

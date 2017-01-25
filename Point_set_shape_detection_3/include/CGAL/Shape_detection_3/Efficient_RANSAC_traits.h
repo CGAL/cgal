@@ -22,6 +22,9 @@
 #ifndef CGAL_SHAPE_DETECTION_3_EFFICIENT_RANSAC_TRAITS_H
 #define CGAL_SHAPE_DETECTION_3_EFFICIENT_RANSAC_TRAITS_H
 
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
+
 #include <CGAL/Search_traits_3.h>
 
 namespace CGAL {

@@ -21,6 +21,9 @@
 #ifndef CGAL_AABB_NODE_WITH_JOIN_H
 #define CGAL_AABB_NODE_WITH_JOIN_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/intersections.h>

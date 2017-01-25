@@ -22,6 +22,9 @@
 #ifndef CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
 #define CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <cmath>
 #include <vector>
 #include <CGAL/number_utils.h>

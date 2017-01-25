@@ -22,6 +22,9 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_FACE_BASE_2_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_FACE_BASE_2_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 

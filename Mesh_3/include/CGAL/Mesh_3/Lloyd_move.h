@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_LLOYD_MOVE_H
 #define CGAL_MESH_3_LLOYD_MOVE_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/convex_hull_2.h>

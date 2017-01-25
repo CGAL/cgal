@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_3_H
 #define CGAL_TRIANGULATION_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING

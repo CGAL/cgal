@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>

@@ -21,6 +21,9 @@
 #ifndef CGAL_WEIGHTED_POINT_WITH_SURFACE_INDEX_GEOM_TRAITS_H
 #define CGAL_WEIGHTED_POINT_WITH_SURFACE_INDEX_GEOM_TRAITS_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Weighted_point_with_surface_index.h>
 
 namespace CGAL {

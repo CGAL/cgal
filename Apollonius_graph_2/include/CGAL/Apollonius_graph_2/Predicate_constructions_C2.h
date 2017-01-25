@@ -23,6 +23,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_2_H 1
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/Apollonius_graph_2/basic.h>
 
 namespace CGAL {

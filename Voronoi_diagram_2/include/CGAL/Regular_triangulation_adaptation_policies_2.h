@@ -21,6 +21,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_ADAPTATION_POLICIES_2_H
 #define CGAL_REGULAR_TRIANGULATION_ADAPTATION_POLICIES_2_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Regular_triangulation_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Policy_base.h>

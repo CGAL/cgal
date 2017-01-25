@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_DEBUG_H
 #define CGAL_STRAIGHT_SKELETON_DEBUG_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/config.h>
 
 #ifdef CGAL_USE_CORE

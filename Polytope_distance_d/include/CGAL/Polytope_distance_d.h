@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYTOPE_DISTANCE_D_H
 #define CGAL_POLYTOPE_DISTANCE_D_H
 
+#include <CGAL/license/Polytope_distance_d.h>
+
+
 #ifdef _MSC_VER
 # pragma warning(push)
 # pragma warning(disable: 4244) // conversion warning in Boost iterator_adaptor

@@ -19,6 +19,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H
 #define CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H 1
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/circulator.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_EXTENDED_DCEL_H
 #define CGAL_ARR_EXTENDED_DCEL_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * The definition of the extended DCEL classes.
  */

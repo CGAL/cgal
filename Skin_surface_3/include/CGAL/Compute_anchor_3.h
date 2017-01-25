@@ -21,6 +21,9 @@
 #ifndef CGAL_COMPUTE_ANCHOR_3_H
 #define CGAL_COMPUTE_ANCHOR_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 

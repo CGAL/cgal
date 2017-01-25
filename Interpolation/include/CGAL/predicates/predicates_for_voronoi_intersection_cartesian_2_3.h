@@ -21,6 +21,9 @@
 #ifndef CGAL_PREDICATES_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H
 #define CGAL_PREDICATES_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <CGAL/number_utils.h>
 
 namespace CGAL {

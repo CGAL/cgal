@@ -21,6 +21,9 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_DELAUNAY_TRIANGULATION_DEGENERACY_TESTERS_H
 #define CGAL_VORONOI_DIAGRAM_2_DELAUNAY_TRIANGULATION_DEGENERACY_TESTERS_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_base_2.h>
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>

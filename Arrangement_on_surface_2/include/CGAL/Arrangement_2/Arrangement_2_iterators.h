@@ -21,6 +21,9 @@
 #ifndef CGAL_ARRANGEMENT_2_ITERATORS_H
 #define CGAL_ARRANGEMENT_2_ITERATORS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <functional>
 
 /*! \file

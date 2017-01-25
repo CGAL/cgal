@@ -22,6 +22,9 @@
 #ifndef CGAL_OVERLAY_SUBCURVE_H
 #define CGAL_OVERLAY_SUBCURVE_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 /*! \file
  * Definition of the Arr_overlay_subcurve class-template.
  */

@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
 #define CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
 #include <CGAL/Fraction_traits.h>

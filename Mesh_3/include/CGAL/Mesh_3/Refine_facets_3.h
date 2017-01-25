@@ -26,6 +26,9 @@
 #ifndef CGAL_MESH_3_REFINE_FACETS_3_H
 #define CGAL_MESH_3_REFINE_FACETS_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/Mesher_level.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB

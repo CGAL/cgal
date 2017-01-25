@@ -21,6 +21,9 @@
 #ifndef CGAL_APPROX_MIN_ELL_D_TRAITS_3_H
 #define CGAL_APPROX_MIN_ELL_D_TRAITS_3_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 namespace CGAL {
 
   template<typename K_, typename ET_>    // kernel and exact number-type

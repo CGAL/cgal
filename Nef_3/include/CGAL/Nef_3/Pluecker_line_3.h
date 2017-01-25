@@ -23,6 +23,9 @@
 #ifndef CGAL_PLUECKER_LINE_3_H
 #define CGAL_PLUECKER_LINE_3_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <algorithm>

@@ -24,6 +24,9 @@
 #ifndef CGAL_BARYCENTRIC_ENUM_2_H
 #define CGAL_BARYCENTRIC_ENUM_2_H
 
+#include <CGAL/license/Barycentric_coordinates_2.h>
+
+
 // CGAL namespace.
 namespace CGAL {
 

@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_2_IMSERT_CONSTRAINTS_H
 #define CGAL_INTERNAL_TRIANGULATION_2_IMSERT_CONSTRAINTS_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/property_map.h>
 #include <boost/iterator/counting_iterator.hpp>

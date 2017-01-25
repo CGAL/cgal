@@ -25,6 +25,9 @@
 #ifndef CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
 #include <boost/tuple/tuple.hpp>

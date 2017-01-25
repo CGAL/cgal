@@ -19,6 +19,9 @@
 #ifndef CGAL_POLYHEDRALSURF_NEIGHBORS_H_
 #define CGAL_POLYHEDRALSURF_NEIGHBORS_H_
 
+#include <CGAL/license/Ridges_3.h>
+
+
 #include <queue>
 #include <algorithm>
 #include <list>

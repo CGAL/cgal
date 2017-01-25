@@ -20,6 +20,9 @@
 #ifndef CGAL_ITERATORTOOLS_H
 #define CGAL_ITERATORTOOLS_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/circulator.h>
 

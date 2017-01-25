@@ -22,6 +22,9 @@
 #ifndef CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_2_H
 #define CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_2_H 1
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/min_quadrilateral_2.h>
 #endif // CGAL_NO_DEPRECATED_CODE

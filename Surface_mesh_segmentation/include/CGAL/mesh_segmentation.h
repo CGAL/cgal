@@ -16,6 +16,9 @@
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
 
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+
 /**
  * @file mesh_segmentation.h
  * @brief The API which contains free template functions for SDF computation and mesh segmentation.

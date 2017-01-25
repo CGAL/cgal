@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 
+#include <CGAL/license/Alpha_shapes_3.h>
+
+
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/internal/Exact_type_selector.h>

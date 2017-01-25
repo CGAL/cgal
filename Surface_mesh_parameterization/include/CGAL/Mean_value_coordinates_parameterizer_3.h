@@ -22,6 +22,9 @@
 #ifndef CGAL_MEAN_VALUE_COORDINATES_PARAMETERIZER_3_H
 #define CGAL_MEAN_VALUE_COORDINATES_PARAMETERIZER_3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Eigen_solver_traits.h>

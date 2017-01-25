@@ -22,6 +22,9 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_2_PROJECTION_TRAITS_BASE_3_H
 #define CGAL_INTERNAL_TRIANGULATION_2_PROJECTION_TRAITS_BASE_3_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Profile_timer.h>
 #include <CGAL/intersections.h>
 #include <CGAL/predicates/sign_of_determinant.h>

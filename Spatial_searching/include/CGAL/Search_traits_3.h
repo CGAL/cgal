@@ -21,6 +21,9 @@
 
 #ifndef CGAL_SEARCH_TRAITS_3_H
 #define CGAL_SEARCH_TRAITS_3_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

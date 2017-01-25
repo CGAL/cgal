@@ -19,6 +19,9 @@
 #ifndef CGAL_TRIANGULATION_HAS_NESTED_TYPE_BARE_POINT_H
 #define CGAL_TRIANGULATION_HAS_NESTED_TYPE_BARE_POINT_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {

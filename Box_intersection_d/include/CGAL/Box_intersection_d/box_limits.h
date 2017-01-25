@@ -22,6 +22,9 @@
 #ifndef CGAL_BOX_INTERSECTION_D_BOX_LIMITS_H
 #define CGAL_BOX_INTERSECTION_D_BOX_LIMITS_H
 
+#include <CGAL/license/Box_intersection_d.h>
+
+
 #include <CGAL/basic.h>
 #include <limits>
 

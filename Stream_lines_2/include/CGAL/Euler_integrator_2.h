@@ -21,6 +21,9 @@
 #ifndef CGAL_EULER_INTEGRATOR_2_H_
 #define CGAL_EULER_INTEGRATOR_2_H_
 
+#include <CGAL/license/Stream_lines_2.h>
+
+
 #include <CGAL/basic.h>
 
 namespace CGAL {

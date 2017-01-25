@@ -20,6 +20,9 @@
 #ifndef CGAL_MESH_3_REFINE_CELLS_3_H
 #define CGAL_MESH_3_REFINE_CELLS_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Profile_counter.h>

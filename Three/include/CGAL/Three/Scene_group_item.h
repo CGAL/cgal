@@ -22,6 +22,9 @@
 #ifndef SCENE_GROUP_ITEM_H
 #define SCENE_GROUP_ITEM_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 using namespace CGAL::Three;

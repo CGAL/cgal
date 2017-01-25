@@ -22,6 +22,9 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_FILTERED_TRAITS_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_FILTERED_TRAITS_2_H
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
+
 #include <string>
 #include <CGAL/basic.h>
 #include <CGAL/config.h>

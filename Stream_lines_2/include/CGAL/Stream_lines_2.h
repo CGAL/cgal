@@ -21,6 +21,9 @@
 #ifndef CGAL_STREAM_LINES_2_H_ 
 #define CGAL_STREAM_LINES_2_H_
 
+#include <CGAL/license/Stream_lines_2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 

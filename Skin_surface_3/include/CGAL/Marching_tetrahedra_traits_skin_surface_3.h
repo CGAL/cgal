@@ -21,6 +21,9 @@
 #ifndef CGAL_MARCHING_TETRAHEDRA_TRAITS_SKIN_SURFACE_3_H
 #define CGAL_MARCHING_TETRAHEDRA_TRAITS_SKIN_SURFACE_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Cartesian_converter.h>

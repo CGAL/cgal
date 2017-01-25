@@ -21,6 +21,9 @@
 #ifndef CGAL_CD3_EXTERNAL_STRUCTURE_BUILDER_H
 #define CGAL_CD3_EXTERNAL_STRUCTURE_BUILDER_H
 
+#include <CGAL/license/Convex_decomposition_3.h>
+
+
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 

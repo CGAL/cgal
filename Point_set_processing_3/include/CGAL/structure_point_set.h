@@ -22,6 +22,9 @@
 #ifndef CGAL_STRUCTURE_POINT_SET_3_H
 #define CGAL_STRUCTURE_POINT_SET_3_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>

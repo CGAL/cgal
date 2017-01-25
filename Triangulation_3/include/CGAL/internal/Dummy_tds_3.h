@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
 #define CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 namespace CGAL { namespace internal {
 
 // Dummy TDS which provides all types that a vertex_base or cell_base can use.

@@ -20,6 +20,9 @@
 #ifndef CGAL_DELAUNAY_COMPLEX_H
 #define CGAL_DELAUNAY_COMPLEX_H
 
+#include <CGAL/license/Triangulation.h>
+
+
 #include <CGAL/tss.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>

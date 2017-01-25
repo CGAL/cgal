@@ -25,6 +25,9 @@
 #ifndef CGAL_CONVEX_HULL_CONSTRUCTIVE_TRAITS_2_H 
 #define CGAL_CONVEX_HULL_CONSTRUCTIVE_TRAITS_2_H
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #include <CGAL/ch_function_objects_2.h>
 
 namespace CGAL {

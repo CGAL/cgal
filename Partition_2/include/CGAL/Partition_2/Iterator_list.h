@@ -21,6 +21,9 @@
 #ifndef CGAL_ITERATOR_LIST_H
 #define CGAL_ITERATOR_LIST_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <list>
 
 namespace CGAL {

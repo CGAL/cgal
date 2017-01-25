@@ -21,6 +21,9 @@
 #ifndef CGAL_MARCHING_TETRAHEDRA_OBSERVER_DEFAULT_3_H
 #define CGAL_MARCHING_TETRAHEDRA_OBSERVER_DEFAULT_3_H
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/basic.h>
 
 namespace CGAL {

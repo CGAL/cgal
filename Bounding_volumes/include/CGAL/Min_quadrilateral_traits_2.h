@@ -22,6 +22,9 @@
 #ifndef CGAL_MIN_QUADRILATERAL_TRAITS_2_H
 #define CGAL_MIN_QUADRILATERAL_TRAITS_2_H 1
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/Point_2.h>

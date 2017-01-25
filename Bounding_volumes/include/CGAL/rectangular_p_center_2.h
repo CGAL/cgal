@@ -21,6 +21,9 @@
 #ifndef CGAL_RECTANGULAR_P_CENTER_2_H
 #define CGAL_RECTANGULAR_P_CENTER_2_H 1
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/pierce_rectangles_2.h>
 #include <CGAL/sorted_matrix_search.h>
 #include <CGAL/rectangular_3_center_2.h>

@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
 #define CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of default overlay-traits classes.
  */

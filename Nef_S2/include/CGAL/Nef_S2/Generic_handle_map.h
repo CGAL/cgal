@@ -21,6 +21,9 @@
 #ifndef CGAL_GENERIC_HANDLE_MAP_H
 #define CGAL_GENERIC_HANDLE_MAP_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {

@@ -18,6 +18,9 @@
 #ifndef CGAL_SURFACE_MESH_IO_H
 #define CGAL_SURFACE_MESH_IO_H
 
+#include <CGAL/license/Surface_mesh.h>
+
+
 
 //== INCLUDES =================================================================
 

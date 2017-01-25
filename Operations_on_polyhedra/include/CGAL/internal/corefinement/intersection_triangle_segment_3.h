@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_INTERSECTION_TRIANGLE_SEGMENT_3_H
 #define CGAL_INTERNAL_INTERSECTION_TRIANGLE_SEGMENT_3_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 //TODO rename this file when doing proper integration
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
 #include <CGAL/internal/Intersections_3/Triangle_3_Segment_3_intersection.h>

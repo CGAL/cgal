@@ -17,6 +17,9 @@
 #ifndef CGAL_AABB_COLLISION_DETECTOR_2_H
 #define CGAL_AABB_COLLISION_DETECTOR_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Minkowski_sum_2/AABB_tree_with_join.h>
 #include <CGAL/Minkowski_sum_2/AABB_traits_2.h>
 #include <CGAL/Minkowski_sum_2/AABB_segment_2_primitive.h>

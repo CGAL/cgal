@@ -22,6 +22,9 @@
 #ifndef CGAL_INTERVAL_SKIP_LIST_H
 #define CGAL_INTERVAL_SKIP_LIST_H
 
+#include <CGAL/license/Interval_skip_list.h>
+
+
 #include <CGAL/basic.h>
 #include <list>
 #include <iostream>

@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_STREAM_LINES_GRAPHICS_ITEM_H
 #define CGAL_QT_STREAM_LINES_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 
 
 #include <CGAL/Qt/GraphicsItem.h>

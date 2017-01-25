@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_PAINTER_OSTREAM_H
 #define CGAL_QT_PAINTER_OSTREAM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <QPainter>
 #include <QPen>
 #include <QRectF>

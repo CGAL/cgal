@@ -19,6 +19,9 @@
 
 #ifndef SCENE_ITEM_WITH_PROPERTIES_H
 #define SCENE_ITEM_WITH_PROPERTIES_H
+
+#include <CGAL/license/Three.h>
+
 namespace CGAL
 {
 namespace Three {

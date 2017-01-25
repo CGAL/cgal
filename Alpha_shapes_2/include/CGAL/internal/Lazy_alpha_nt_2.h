@@ -20,6 +20,9 @@
 
 #ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
+
+#include <CGAL/license/Alpha_shapes_2.h>
+
 #include <CGAL/number_type_basic.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/assertions.h>

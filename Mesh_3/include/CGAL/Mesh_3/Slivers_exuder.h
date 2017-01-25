@@ -23,6 +23,9 @@
 #ifndef CGAL_MESH_3_SLIVERS_EXUDER_H
 #define CGAL_MESH_3_SLIVERS_EXUDER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Bbox_3.h>

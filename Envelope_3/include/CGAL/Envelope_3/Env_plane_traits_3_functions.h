@@ -20,6 +20,9 @@
 #ifndef CGAL_ENV_PLANE_TRAITE_3_FUNCTIONS_H
 #define CGAL_ENV_PLANE_TRAITE_3_FUNCTIONS_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
 #include <CGAL/use.h>

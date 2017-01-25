@@ -22,6 +22,9 @@
 #ifndef CGAL_ENVELOPE_BASE_H
 #define CGAL_ENVELOPE_BASE_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 namespace CGAL {
 
 // Envelope types:

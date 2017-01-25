@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_BARYCENTRIC_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_BARYCENTRIC_H
 
+#include <CGAL/license/Surface_mesh_shortest_path.h>
+
+
 #include <CGAL/number_utils.h>
 
 #include <utility>

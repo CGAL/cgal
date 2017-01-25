@@ -21,6 +21,9 @@
 #ifndef CGAL_CH_FUNCTION_OBJECTS_2_H
 #define CGAL_CH_FUNCTION_OBJECTS_2_H
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #include <CGAL/enum.h>
 
 namespace CGAL {

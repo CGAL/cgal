@@ -20,6 +20,9 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 
+#include <CGAL/license/Polyline_simplification_2.h>
+
+
 #include <list>
 
 #include <CGAL/Polyline_simplification_2/Vertex_base_2.h>

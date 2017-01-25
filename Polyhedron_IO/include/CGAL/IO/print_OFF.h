@@ -21,6 +21,9 @@
 #ifndef CGAL_IO_PRINT_OFF_H
 #define CGAL_IO_PRINT_OFF_H 1
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/IO/File_writer_OFF.h>
 #include <CGAL/IO/generic_print_polyhedron.h>

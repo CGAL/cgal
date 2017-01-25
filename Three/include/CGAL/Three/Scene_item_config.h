@@ -21,6 +21,9 @@
 #ifndef SCENE_ITEM_CONFIG_H
 #define SCENE_ITEM_CONFIG_H
 
+#include <CGAL/license/Three.h>
+
+
 #include <QtCore/qglobal.h>
 
 #ifdef demo_framework_EXPORTS

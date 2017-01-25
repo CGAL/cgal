@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_3_ID_SUPPORT_HANDLER
 #define CGAL_NEF_3_ID_SUPPORT_HANDLER
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Unique_hash_map.h>

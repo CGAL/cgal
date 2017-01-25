@@ -21,6 +21,9 @@
 #ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #define CGAL_SORTED_MATRIX_SEARCH_H 1
 
+#include <CGAL/license/Matrix_search.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 #include <boost/bind.hpp>

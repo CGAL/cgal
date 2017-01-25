@@ -26,6 +26,9 @@
 #ifndef CGAL_ENV_TRIANGLE_TRAITS_3_H
 #define CGAL_ENV_TRIANGLE_TRAITS_3_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>

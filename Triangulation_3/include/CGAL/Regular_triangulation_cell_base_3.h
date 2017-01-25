@@ -23,6 +23,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_CELL_BASE_3_H
 #define CGAL_REGULAR_TRIANGULATION_CELL_BASE_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #include <list>
 #include <CGAL/Triangulation_cell_base_3.h>
 

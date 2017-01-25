@@ -21,6 +21,9 @@
 #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
 #define CGAL_OPTIMISATION_CIRCLE_2_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 // includes
 
 #  include <CGAL/basic_constructions_2.h>

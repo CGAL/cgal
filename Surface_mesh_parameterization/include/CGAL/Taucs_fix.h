@@ -21,6 +21,9 @@
 #ifndef CGAL_TAUCS_FIX_H
 #define CGAL_TAUCS_FIX_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
+
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
 #ifdef CGAL_USE_TAUCS

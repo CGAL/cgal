@@ -20,6 +20,9 @@
 
 #ifndef SCENE_DRAW_INTERFACE_H
 #define SCENE_DRAW_INTERFACE_H
+
+#include <CGAL/license/Three.h>
+
 #include <QPoint>
 class QKeyEvent;
 class QPoint;

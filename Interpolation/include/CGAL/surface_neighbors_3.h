@@ -21,6 +21,9 @@
 #ifndef CGAL_SURFACE_NEIGHBORS_3_H
 #define CGAL_SURFACE_NEIGHBORS_3_H
 
+#include <CGAL/license/Interpolation.h>
+
+
 #include <utility>
 #include <CGAL/Voronoi_intersection_2_traits_3.h>
 #include <CGAL/Regular_triangulation_2.h>

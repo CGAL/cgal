@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_DEFAULT_PLANAR_TOPOLOGY_H
 #define CGAL_ARR_DEFAULT_PLANAR_TOPOLOGY_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of a helper template that uses partial specialization to
  * select the default planar topology-traits class best fit for a

@@ -22,6 +22,9 @@
 #ifndef CGAL_BOX_INTERSECTION_D_BOX_D_H
 #define CGAL_BOX_INTERSECTION_D_BOX_D_H
 
+#include <CGAL/license/Box_intersection_d.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>

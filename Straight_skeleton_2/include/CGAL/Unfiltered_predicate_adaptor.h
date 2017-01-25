@@ -21,6 +21,9 @@
 #ifndef CGAL_UNFILTERED_PREDICATE_ADAPTOR_H
 #define CGAL_UNFILTERED_PREDICATE_ADAPTOR_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/basic.h>
 
 namespace CGAL {

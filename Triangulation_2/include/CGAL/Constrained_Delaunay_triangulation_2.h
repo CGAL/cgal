@@ -21,6 +21,9 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>

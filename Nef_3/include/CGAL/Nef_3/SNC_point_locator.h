@@ -21,6 +21,9 @@
 #ifndef CGAL_NEF_SNC_POINT_LOCATOR_H
 #define CGAL_NEF_SNC_POINT_LOCATOR_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>

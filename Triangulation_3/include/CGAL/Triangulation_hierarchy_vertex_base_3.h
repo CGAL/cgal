@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATION_HIERARCHY_VERTEX_BASE_3_H
 #define CGAL_TRIANGULATION_HIERARCHY_VERTEX_BASE_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 
 namespace CGAL {

@@ -23,6 +23,9 @@
 #ifndef CGAL_SDG_IN_PLACE_EDGE_LIST_FOR_SDG_H
 #define CGAL_SDG_IN_PLACE_EDGE_LIST_FOR_SDG_H
 
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
+
 namespace CGAL {
 
 namespace internal {

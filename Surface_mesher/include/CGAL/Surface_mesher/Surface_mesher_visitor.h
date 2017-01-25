@@ -22,6 +22,9 @@
 #ifndef CGAL_SURFACE_MESHER_VISITOR_H
 #define CGAL_SURFACE_MESHER_VISITOR_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 
 namespace CGAL {

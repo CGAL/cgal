@@ -25,6 +25,9 @@
 #ifndef CGAL_MESH_3_MESH_CONSTANT_DOMAIN_FIELD_3_H
 #define CGAL_MESH_3_MESH_CONSTANT_DOMAIN_FIELD_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <map>
 #include <utility>
 #include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>

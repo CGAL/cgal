@@ -22,6 +22,9 @@
 #ifndef CGAL_ARR_OVERLAY_2_H
 #define CGAL_ARR_OVERLAY_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the global Arr_overlay_2() function.
  */

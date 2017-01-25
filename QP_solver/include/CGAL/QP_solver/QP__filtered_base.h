@@ -24,6 +24,9 @@
 #ifndef CGAL_QP__FILTERED_BASE_H
 #define CGAL_QP__FILTERED_BASE_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 // includes
 #include <CGAL/QP_solver/QP_pricing_strategy.h>
 #include <CGAL/QP_solver/QP_solver.h>

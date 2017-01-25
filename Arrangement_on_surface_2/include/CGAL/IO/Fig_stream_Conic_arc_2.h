@@ -20,6 +20,9 @@
 #ifndef CGAL_FIG_STREAM_CONIC_ARC_2_H
 #define CGAL_FIG_STREAM_CONIC_ARC_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/IO/Fig_stream.h>
 #include <list>
 

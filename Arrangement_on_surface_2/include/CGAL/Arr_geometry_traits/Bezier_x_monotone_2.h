@@ -18,6 +18,9 @@
 #ifndef CGAL_BEZIER_X_MONOTONE_2_H
 #define CGAL_BEZIER_X_MONOTONE_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Header file for the _Bezier_x_monotone_2 class.
  */

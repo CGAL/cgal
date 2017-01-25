@@ -21,6 +21,9 @@
 #ifndef CGAL_LIGHTWEIGHT_VECTOR_3_H
 #define CGAL_LIGHTWEIGHT_VECTOR_3_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
 

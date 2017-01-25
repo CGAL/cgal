@@ -23,6 +23,9 @@
 #ifndef CGAL_ARR_BATCHED_POINT_LOCATION_TRAITS_2_H
 #define CGAL_ARR_BATCHED_POINT_LOCATION_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*!
  * Definition of the Arr_batched_point_location_traits_2<Arrangement> class.
  */

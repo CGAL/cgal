@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_POINT_LOCATION_RESULT_H
 #define CGAL_ARR_POINT_LOCATION_RESULT_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 // The macro CGAL_ARR_POINT_LOCATION_VERSION controls which version of the
 // point location is used. Currently two values are supported:
 // 1. Point location with CGAL::Object

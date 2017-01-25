@@ -22,6 +22,9 @@
 #ifndef CGAL_ROBUST_CIRCUMCENTER_FILTERED_TRAITS_3_H_INCLUDED
 #define CGAL_ROBUST_CIRCUMCENTER_FILTERED_TRAITS_3_H_INCLUDED
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
+
 
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>

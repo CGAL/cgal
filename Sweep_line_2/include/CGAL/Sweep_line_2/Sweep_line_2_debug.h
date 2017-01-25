@@ -18,6 +18,9 @@
 #ifndef CGAL_SWEEP_LINE_2_DEBUG_H
 #define CGAL_SWEEP_LINE_2_DEBUG_H
 
+#include <CGAL/license/Sweep_line_2.h>
+
+
 #include <CGAL/Basic_sweep_line_2.h>
 
 ////////////////////////////////////////////////////////////////////////////

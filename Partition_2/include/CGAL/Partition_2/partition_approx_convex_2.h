@@ -21,6 +21,9 @@
 #ifndef CGAL_PARTITION_APPROX_CONVEX_H
 #define CGAL_PARTITION_APPROX_CONVEX_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <boost/config.hpp>
 #if  (BOOST_GCC >= 40800)
 _Pragma("GCC diagnostic push")

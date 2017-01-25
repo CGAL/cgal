@@ -19,6 +19,9 @@
 #ifndef CGAL_ARR_NON_CACHING_SEGMENT_TRAITS_H
 #define CGAL_ARR_NON_CACHING_SEGMENT_TRAITS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file The non-caching segment traits-class for the arrangement package.
  * This traits class handles general segments. It is a model of the
  * ArrangementTraits_2 concept, a refinement of the ArrangementBasicTraits_2

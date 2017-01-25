@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_INTERSECTION_TRIANGLE_SEGMENT_3_COPLANAR_H
 #define CGAL_INTERNAL_INTERSECTION_TRIANGLE_SEGMENT_3_COPLANAR_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 
 namespace CGAL{
   namespace internal_IOP{

@@ -21,6 +21,9 @@
 #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
 #define CGAL_OPTIMISATION_ELLIPSE_2_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <CGAL/Conic_2.h>
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/Kernel/global_functions_2.h>

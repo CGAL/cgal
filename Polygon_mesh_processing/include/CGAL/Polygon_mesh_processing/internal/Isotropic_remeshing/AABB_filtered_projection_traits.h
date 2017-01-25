@@ -25,6 +25,9 @@
 #ifndef CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
 #define CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/property_map.h>
 
 #include <CGAL/AABB_tree.h>

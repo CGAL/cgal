@@ -21,6 +21,9 @@
 #ifndef CGAL_MESHES_FILTERED_DEQUE_CONTAINER_H
 #define CGAL_MESHES_FILTERED_DEQUE_CONTAINER_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <algorithm>
 #include <utility>
 #include <deque>

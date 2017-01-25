@@ -24,6 +24,9 @@
 #ifndef CGAL_SURFACE_MESHER_PROFILE_COUNTER_H
 #define CGAL_SURFACE_MESHER_PROFILE_COUNTER_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <CGAL/Profile_counter.h>
 
 #ifdef CGAL_SURFACE_MESHER_PROFILE

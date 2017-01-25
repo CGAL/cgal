@@ -20,6 +20,9 @@
 
 #ifndef CGAL_QP_OPTIONS_H
 #define CGAL_QP_OPTIONS_H
+
+#include <CGAL/license/QP_solver.h>
+
 // this file defines a class for passing options to the linear and
 // quadratic programming solvers
 

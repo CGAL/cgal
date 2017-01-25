@@ -22,6 +22,9 @@
 #ifndef CGAL_SIDE_OF_TRIANGLE_MESH_H
 #define CGAL_SIDE_OF_TRIANGLE_MESH_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 

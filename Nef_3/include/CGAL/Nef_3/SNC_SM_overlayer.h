@@ -22,6 +22,9 @@
 #ifndef CGAL_SNC_SM_OVERLAYER_H
 #define CGAL_SNC_SM_OVERLAYER_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>

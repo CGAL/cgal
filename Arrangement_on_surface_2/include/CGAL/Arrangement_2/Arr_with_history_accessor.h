@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_WITH_HISTORY_ACCESSOR_H
 #define CGAL_ARR_WITH_HISTORY_ACCESSOR_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Definition of the Arr_with_history_accessor<Arrangement> class.
  */

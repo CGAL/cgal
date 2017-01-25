@@ -22,6 +22,9 @@
 #ifndef CGAL_QT_GRAPHICS_ITEM_H
 #define CGAL_QT_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/export/Qt.h>
 #include <CGAL/auto_link/Qt.h>
 

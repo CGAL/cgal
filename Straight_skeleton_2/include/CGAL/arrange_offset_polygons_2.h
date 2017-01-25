@@ -20,6 +20,9 @@
 #ifndef CGAL_ARRANGE_OFFSET_POLYGONS_2_H
 #define CGAL_ARRANGE_OFFSET_POLYGONS_2_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <boost/shared_ptr.hpp>
 #include <CGAL/Polygon_with_holes_2.h>
 

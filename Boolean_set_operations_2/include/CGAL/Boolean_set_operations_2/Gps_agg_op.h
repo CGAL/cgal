@@ -22,6 +22,9 @@
 #ifndef CGAL_GPS_AGG_OP_H
 #define CGAL_GPS_AGG_OP_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 /*!
   \file   Gps_agg_op.h
   \brief  The class Gps_agg_op is responsible for aggregated Boolean set 

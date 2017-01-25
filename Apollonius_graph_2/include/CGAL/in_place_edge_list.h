@@ -23,6 +23,9 @@
 #ifndef CGAL_IN_PLACE_EDGE_LIST_H
 #define CGAL_IN_PLACE_EDGE_LIST_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 namespace CGAL {
 
 template<class Edge>

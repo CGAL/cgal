@@ -39,6 +39,9 @@
 #ifndef CGAL_PARTITION_Y_MONOTONE_H
 #define CGAL_PARTITION_Y_MONOTONE_H
 
+#include <CGAL/license/Partition_2.h>
+
+
 #include <CGAL/Partition_2/Indirect_not_less_yx_2.h>
 #include <CGAL/Partition_2/Indirect_edge_compare.h>
 #include <CGAL/Segment_2_Ray_2_intersection.h>

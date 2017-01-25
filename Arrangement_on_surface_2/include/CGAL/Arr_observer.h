@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_OBSERVER_H
 #define CGAL_ARR_OBSERVER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/Arr_enums.h>
 
 /*! \file

@@ -21,6 +21,9 @@
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>

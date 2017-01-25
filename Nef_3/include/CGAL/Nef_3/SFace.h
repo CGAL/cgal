@@ -24,6 +24,9 @@
 #ifndef CGAL_NEF_SFACE_H
 #define CGAL_NEF_SFACE_H
 
+#include <CGAL/license/Nef_3.h>
+
+
 #include <string>
 #include <sstream>
 #include <CGAL/IO/Verbose_ostream.h>

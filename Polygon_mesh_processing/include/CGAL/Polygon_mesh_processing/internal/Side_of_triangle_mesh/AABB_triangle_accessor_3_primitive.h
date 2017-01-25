@@ -21,6 +21,9 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_AABB_TRIANGLE_ACCESSOR_3_PRIMITIVE_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_AABB_TRIANGLE_ACCESSOR_3_PRIMITIVE_H
 
+#include <CGAL/license/Polygon_mesh_processing.h>
+
+
 namespace CGAL {
 namespace internal {
 

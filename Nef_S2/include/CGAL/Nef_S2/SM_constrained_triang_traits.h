@@ -20,6 +20,9 @@
 #ifndef CGAL_SM_CONSTRAINED_TRIANG_TRAITS_H
 #define CGAL_SM_CONSTRAINED_TRIANG_TRAITS_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/generic_sweep.h>

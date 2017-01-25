@@ -22,6 +22,9 @@
 #ifndef CGAL_IS_RAY_INTERSECTION_GEOMTRAITS_H
 #define CGAL_IS_RAY_INTERSECTION_GEOMTRAITS_H
 
+#include <CGAL/license/AABB_tree.h>
+
+
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/and.hpp>
 

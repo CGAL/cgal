@@ -21,6 +21,9 @@
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_H
 #define CGAL_PROPERTIES_SURFACE_MESH_H
 
+#include <CGAL/license/Surface_mesh.h>
+
+
 #include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/Properties.h>

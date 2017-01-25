@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_POLYHEDRON_3_H
 #define CGAL_ARR_POLYHEDRAL_SGM_POLYHEDRON_3_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * Related definition of a Polyhedron_3 data structure, an instance of which
  * can be used to initialize a Arr_polyhedral_sgm data structure.

@@ -17,6 +17,9 @@
 #ifndef CGAL_ARR_DIRECTIONAL_NON_CACHING_SEGMENT_BASIC_TRAITS_2_H
 #define CGAL_ARR_DIRECTIONAL_NON_CACHING_SEGMENT_BASIC_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 
 namespace CGAL {

@@ -19,6 +19,9 @@
 #ifndef CGAL_CARTESIAN_MATRIXC33_H
 #define CGAL_CARTESIAN_MATRIXC33_H
 
+#include <CGAL/license/Surface_mesh_simplification.h>
+
+
 #include <CGAL/Vector_3.h>
 #include <CGAL/determinant.h>
 #include <CGAL/number_utils.h>

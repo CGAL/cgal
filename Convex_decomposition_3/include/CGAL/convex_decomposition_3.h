@@ -20,6 +20,9 @@
 #ifndef CGAL_CONVEX_DECOMPOSITION_3_H
 #define CGAL_CONVEX_DECOMPOSITION_3_H
 
+#include <CGAL/license/Convex_decomposition_3.h>
+
+
 #include <CGAL/Convex_decomposition_3/Single_wall_creator.h>
 #include <CGAL/Convex_decomposition_3/Single_wall_creator2.h>
 #include <CGAL/Convex_decomposition_3/Reflex_edge_searcher.h>

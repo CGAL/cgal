@@ -21,6 +21,9 @@
 #ifndef CGAL_DELAUNAY_MESH_LOCAL_SIZE_CRITERIA_2_H
 #define CGAL_DELAUNAY_MESH_LOCAL_SIZE_CRITERIA_2_H
 
+#include <CGAL/license/Mesh_2.h>
+
+
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
 namespace CGAL {

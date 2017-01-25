@@ -20,6 +20,9 @@
 #ifndef CGAL_OTR2_COST_H_
 #define CGAL_OTR2_COST_H_
 
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
+
 #include <algorithm>
 
 namespace CGAL {

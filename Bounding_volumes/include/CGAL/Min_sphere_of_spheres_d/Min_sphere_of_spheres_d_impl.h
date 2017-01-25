@@ -22,6 +22,9 @@
 #ifndef CGAL_MINIBALL_MINIBALL_C
 #define CGAL_MINIBALL_MINIBALL_C
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <numeric>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 

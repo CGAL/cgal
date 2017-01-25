@@ -21,6 +21,9 @@
 #ifndef CGAL_CIRCULAR_KERNEL_3_INTERSECTION_TRAITS_H
 #define CGAL_CIRCULAR_KERNEL_3_INTERSECTION_TRAITS_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 //this include is needed to know the value of CGAL_INTERSECTION_VERSION
 #include <CGAL/Intersection_traits.h>
 

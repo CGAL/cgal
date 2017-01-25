@@ -23,6 +23,9 @@
 #ifndef CGAL_BSO_INTERNAL_FUNCTIONS_H
 #define CGAL_BSO_INTERNAL_FUNCTIONS_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
 #include <iterator>
 

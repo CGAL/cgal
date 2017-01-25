@@ -21,6 +21,9 @@
 #ifndef CGAL_SPHERE_GEOMETRY_OGL_H
 #define CGAL_SPHERE_GEOMETRY_OGL_H
 
+#include <CGAL/license/Nef_S2.h>
+
+
 #include <CGAL/Nef_S2/OGL_base_object.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>

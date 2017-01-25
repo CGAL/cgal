@@ -24,6 +24,9 @@
 #ifndef CGAL_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
 #define CGAL_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+
 #define CGAL_DEPRECATED_HEADER \
   "<CGAL/Triangulation_cell_base_with_circumcenter_3.h>"
 #define CGAL_REPLACEMENT_HEADER \

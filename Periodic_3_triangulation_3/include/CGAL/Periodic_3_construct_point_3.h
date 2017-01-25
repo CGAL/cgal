@@ -25,6 +25,9 @@
 #ifndef CGAL_PERIODIC_3_CONSTRUCT_POINT_3_H
 #define CGAL_PERIODIC_3_CONSTRUCT_POINT_3_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
+
 namespace CGAL
 {
 template < typename K, typename Construct_point_3_base>

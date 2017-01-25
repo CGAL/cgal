@@ -22,6 +22,9 @@
 #ifndef CGAL_SURFACE_MESHER_COMBINING_ORACLE_H
 #define CGAL_SURFACE_MESHER_COMBINING_ORACLE_H
 
+#include <CGAL/license/Surface_mesher.h>
+
+
 #include <list>
 #include <algorithm>
 

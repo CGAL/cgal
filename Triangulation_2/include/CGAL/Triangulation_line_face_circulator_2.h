@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
 #define CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/circulator.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/triangulation_assertions.h>

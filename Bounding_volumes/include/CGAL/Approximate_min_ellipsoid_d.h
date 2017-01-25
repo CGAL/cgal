@@ -21,6 +21,9 @@
 #ifndef CGAL_CGAL_APPROX_MIN_ELL_D_H
 #define CGAL_CGAL_APPROX_MIN_ELL_D_H
 
+#include <CGAL/license/Bounding_volumes.h>
+
+
 #include <cstdlib>
 #include <cmath>
 #include <vector>

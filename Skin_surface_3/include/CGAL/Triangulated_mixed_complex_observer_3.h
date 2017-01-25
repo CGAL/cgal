@@ -21,6 +21,9 @@
 #ifndef CGAL_TRIANGULATED_MIXED_COMPLEX_OBSERVER_3
 #define CGAL_TRIANGULATED_MIXED_COMPLEX_OBSERVER_3
 
+#include <CGAL/license/Skin_surface_3.h>
+
+
 #include <CGAL/Skin_surface_quadratic_surface_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 

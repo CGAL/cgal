@@ -20,6 +20,9 @@
 #ifndef CGAL_MS3_BIPARTITE_NARY_UNION_SORTED_COMBINED_H
 #define CGAL_MS3_BIPARTITE_NARY_UNION_SORTED_COMBINED_H
 
+#include <CGAL/license/Minkowski_sum_3.h>
+
+
 #include <CGAL/Minkowski_sum_3/Gaussian_map.h>
 #include <CGAL/Minkowski_sum_3/Gaussian_map_to_nef_3.h>
 #ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP

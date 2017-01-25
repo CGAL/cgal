@@ -21,6 +21,9 @@
 #ifndef CGAL_ARR_COUNTING_TRAITS_H
 #define CGAL_ARR_COUNTING_TRAITS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*! \file
  * A counting traits-class for the arrangement package.
  * This is a meta-traits class. It is parameterized with another traits class

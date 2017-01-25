@@ -22,6 +22,9 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_2_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_2_H
 
+#include <CGAL/license/Alpha_shapes_2.h>
+
+
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 
 namespace CGAL {

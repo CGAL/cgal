@@ -26,6 +26,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_CONVERTER_H
 #define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_CONVERTER_H
 
+#include <CGAL/license/Circular_kernel_2.h>
+
+
 #include <CGAL/NT_converter.h>
 
 namespace CGAL {

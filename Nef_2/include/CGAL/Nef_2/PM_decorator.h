@@ -20,6 +20,9 @@
 
 #ifndef CGAL_PM_DECORATOR_H
 #define CGAL_PM_DECORATOR_H
+
+#include <CGAL/license/Nef_2.h>
+
 #include <CGAL/Nef_2/PM_const_decorator.h>
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>

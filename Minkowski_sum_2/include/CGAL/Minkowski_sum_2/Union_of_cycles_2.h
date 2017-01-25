@@ -17,6 +17,9 @@
 #ifndef CGAL_UNION_OF_CYCLES_2_H
 #define CGAL_UNION_OF_CYCLES_2_H
 
+#include <CGAL/license/Minkowski_sum_2.h>
+
+
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
