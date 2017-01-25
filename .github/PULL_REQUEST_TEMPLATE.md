@@ -7,6 +7,6 @@ _Describe what your pull request changes to CGAL (this can be skipped if it solv
 ## Release Management
 
 * Affected package(s):
-* Issue(s) solved (if any):
+* Issue(s) solved (if any): fix #0000, fix #0000,...
 * Feature/Small Feature (if any):
 
