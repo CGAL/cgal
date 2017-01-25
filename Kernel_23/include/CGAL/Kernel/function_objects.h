@@ -2474,8 +2474,6 @@ public:
                              const typename K::Point_3& q,
                              typename K::Point_3& result,
                              bool& outside,
-                             int& dim,
-                             int& i,
                              const K& k)
     {
       typedef typename K::Vector_3 Vector_3;
@@ -2495,11 +2493,9 @@ public:
       const Vector_3 v = cross_product(vector(p1,p2), vector(p1,q));
       if ( scalar_product(v,w) < FT(0))
       {
-        if (   scalar_product(vector(p1,q), vector(p1,p2)) >= FT(0)
-            && scalar_product(vector(p2,q), vector(p2,p1)) >= FT(0) )
+        if (   scalar_product(vector(p1,q), vector(p1,p2)) > FT(0)
+            && scalar_product(vector(p2,q), vector(p2,p1)) > FT(0) )
         {
-          // dim = ;
-          // i = 
           result = projection(line(p1, p2), q);
           return true;
         }
@@ -2588,12 +2584,22 @@ public:
       Vector_3 w = cross_product(vector(t0,t1), vector(t1,t2));
 
       bool outside = false;
-      int ldim, li;
-      if (   is_inside_triangle_3_aux(w, t0, t1, p, result, outside, ldim, li, k)
-          || is_inside_triangle_3_aux(w, t1, t2, p, result, outside, ldim, li, k)
-          || is_inside_triangle_3_aux(w, t2, t0, p, result, outside, ldim, li, k) )
+      if ( is_inside_triangle_3_aux(w, t0, t1, p, result, outside, k) )
       {
         dim = 1;
+        i = 2;
+        return false;
+      }
+      if (is_inside_triangle_3_aux(w, t1, t2, p, result, outside, k)
+      {
+        dim = 1;
+        i = 0;
+        return false;
+      }
+      if ( is_inside_triangle_3_aux(w, t2, t0, p, result, outside, k) )
+      {
+        dim = 1;
+        i = 1
         return false;
       }
 
