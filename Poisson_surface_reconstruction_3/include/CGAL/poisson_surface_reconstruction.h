@@ -73,6 +73,7 @@ namespace CGAL {
     \param sm_radius bound for the radius of the surface Delaunay balls (relatively to the `average_spacing`).
     \param sm_distance bound for the center-center distances (relatively to the `average_spacing`).
     \param tag surface mesher tag.
+    \return `true` if reconstruction succeeded, `false` otherwise.
   */
   template <typename PointInputIterator,
             typename PointMap,
