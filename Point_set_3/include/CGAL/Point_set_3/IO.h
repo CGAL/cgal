@@ -35,6 +35,7 @@
 
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>
+#include <CGAL/IO/write_las_points.h>
 #endif
 
 namespace CGAL {
@@ -182,14 +183,14 @@ read_las_point_set(
   typedef typename Point_set::template Property_map<unsigned int> Uint_map;
 
   Ushort_map intensity = point_set.template add_property_map<unsigned short>("intensity", 0).first;
-  Uchar_map return_number = point_set.template add_property_map<unsigned char>("return_number", 3).first;
-  Uchar_map number_of_returns = point_set.template add_property_map<unsigned char>("number_of_returns", 3).first;
-  Uchar_map scan_direction_flag = point_set.template add_property_map<unsigned char>("scan_direction_flag", 1).first;
-  Uchar_map edge_of_flight_line = point_set.template add_property_map<unsigned char>("edge_of_flight_line", 1).first;
-  Uchar_map classification = point_set.template add_property_map<unsigned char>("classification", 5).first;
-  Uchar_map synthetic_flag = point_set.template add_property_map<unsigned char>("synthetic_flag", 1).first;
-  Uchar_map keypoint_flag = point_set.template add_property_map<unsigned char>("keypoint_flag", 1).first;
-  Uchar_map withheld_flag = point_set.template add_property_map<unsigned char>("withheld_flag", 1).first;
+  Uchar_map return_number = point_set.template add_property_map<unsigned char>("return_number", 0).first;
+  Uchar_map number_of_returns = point_set.template add_property_map<unsigned char>("number_of_returns", 0).first;
+  Uchar_map scan_direction_flag = point_set.template add_property_map<unsigned char>("scan_direction_flag", 0).first;
+  Uchar_map edge_of_flight_line = point_set.template add_property_map<unsigned char>("edge_of_flight_line", 0).first;
+  Uchar_map classification = point_set.template add_property_map<unsigned char>("classification", 0).first;
+  Uchar_map synthetic_flag = point_set.template add_property_map<unsigned char>("synthetic_flag", 0).first;
+  Uchar_map keypoint_flag = point_set.template add_property_map<unsigned char>("keypoint_flag", 0).first;
+  Uchar_map withheld_flag = point_set.template add_property_map<unsigned char>("withheld_flag", 0).first;
   Float_map scan_angle = point_set.template add_property_map<float>("scan_angle", 0.).first;
   Uchar_map user_data = point_set.template add_property_map<unsigned char>("user_data", 0).first;
   Ushort_map point_source_ID = point_set.template add_property_map<unsigned short>("point_source_ID", 0).first;
@@ -241,6 +242,174 @@ read_las_point_set(
   
   return okay;
 }
+
+/*!
+  \ingroup PkgPointSet3IO
+ */
+template <typename Point, typename Vector>
+bool
+write_las_point_set(
+  std::ostream& stream, ///< output stream.
+  CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+{
+  if(!stream)
+    {
+      std::cerr << "Error: cannot open file" << std::endl;
+      return false;
+    }
+
+  typedef CGAL::Point_set_3<Point, Vector> Point_set;
+  typedef typename Point_set::template Property_map<float> Float_map;
+  typedef typename Point_set::template Property_map<unsigned short> Ushort_map;
+  typedef typename Point_set::template Property_map<unsigned char> Uchar_map;
+  typedef typename Point_set::template Property_map<unsigned int> Uint_map;
+
+  Ushort_map intensity;
+  bool remove_intensity;
+  boost::tie(intensity, remove_intensity)
+    = point_set.template add_property_map<unsigned short>("intensity", 0);
+  
+  Uchar_map return_number;
+  bool remove_return_number;
+  boost::tie (return_number, remove_return_number)
+    = point_set.template add_property_map<unsigned char>("return_number", 0);
+  
+  Uchar_map number_of_returns;
+  bool remove_number_of_returns;
+  boost::tie (number_of_returns, remove_number_of_returns)
+    = point_set.template add_property_map<unsigned char>("number_of_returns", 0);
+    
+  Uchar_map scan_direction_flag;
+  bool remove_scan_direction_flag;
+  boost::tie (scan_direction_flag, remove_scan_direction_flag)
+    = point_set.template add_property_map<unsigned char>("scan_direction_flag", 0);
+  
+  Uchar_map edge_of_flight_line;
+  bool remove_edge_of_flight_line;
+  boost::tie (edge_of_flight_line, remove_edge_of_flight_line)
+    = point_set.template add_property_map<unsigned char>("edge_of_flight_line", 0);
+  
+  Uchar_map classification;
+  bool remove_classification;
+  boost::tie (classification, remove_classification)
+    = point_set.template add_property_map<unsigned char>("classification", 0);
+  
+  Uchar_map synthetic_flag;
+  bool remove_synthetic_flag;
+  boost::tie (synthetic_flag, remove_synthetic_flag)
+    = point_set.template add_property_map<unsigned char>("synthetic_flag", 0);
+  
+  Uchar_map keypoint_flag;
+  bool remove_keypoint_flag;
+  boost::tie (keypoint_flag, remove_keypoint_flag)
+    = point_set.template add_property_map<unsigned char>("keypoint_flag", 0);
+  
+  Uchar_map withheld_flag;
+  bool remove_withheld_flag;
+  boost::tie (withheld_flag, remove_withheld_flag)
+    = point_set.template add_property_map<unsigned char>("withheld_flag", 0);
+  
+  Float_map scan_angle;
+  bool remove_scan_angle;
+  boost::tie (scan_angle, remove_scan_angle)
+    = point_set.template add_property_map<float>("scan_angle", 0.);
+  
+  Uchar_map user_data;
+  bool remove_user_data;
+  boost::tie (user_data, remove_user_data)
+    = point_set.template add_property_map<unsigned char>("user_data", 0);
+  
+  Ushort_map point_source_ID;
+  bool remove_point_source_ID;
+  boost::tie (point_source_ID, remove_point_source_ID)
+    = point_set.template add_property_map<unsigned short>("point_source_ID", 0);
+  
+  Uint_map deleted_flag;
+  bool remove_deleted_flag;
+  boost::tie (deleted_flag, remove_deleted_flag)
+    = point_set.template add_property_map<unsigned int>("deleted_flag", 0);
+  
+  Ushort_map R;
+  bool remove_R;
+  boost::tie (R, remove_R) = point_set.template add_property_map<unsigned short>("R", 0);
+  Ushort_map G;
+  bool remove_G;
+  boost::tie (G, remove_G) = point_set.template add_property_map<unsigned short>("G", 0);
+  Ushort_map B;
+  bool remove_B;
+  boost::tie (B, remove_B) = point_set.template add_property_map<unsigned short>("B", 0);
+  Ushort_map I;
+  bool remove_I;
+  boost::tie (I, remove_I) = point_set.template add_property_map<unsigned short>("I", 0);
+
+  if (remove_R)
+    {
+      Uchar_map charR, charG, charB;
+      bool foundR, foundG, foundB;
+      boost::tie (charR, foundR) = point_set.template property_map<unsigned char>("r");
+      if (!foundR)
+        boost::tie (charR, foundR) = point_set.template property_map<unsigned char>("red");
+      boost::tie (charG, foundG) = point_set.template property_map<unsigned char>("g");
+      if (!foundG)
+        boost::tie (charG, foundG) = point_set.template property_map<unsigned char>("green");
+      boost::tie (charB, foundB) = point_set.template property_map<unsigned char>("b");
+      if (!foundB)
+        boost::tie (charB, foundB) = point_set.template property_map<unsigned char>("blue");
+
+      if (foundR && foundG && foundB)
+        {
+          for (typename Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
+            {
+              put (R, *it, (unsigned short)(get(charR, *it)));
+              put (G, *it, (unsigned short)(get(charG, *it)));
+              put (B, *it, (unsigned short)(get(charB, *it)));
+            }
+        }
+    }
+  
+  bool okay
+    = write_las_points_with_properties
+    (stream, point_set.begin(), point_set.end(),
+     Las::point_writer (point_set.point_map()),
+     std::make_pair (intensity, Las::Property::intensity()),
+     std::make_pair (return_number, Las::Property::return_number()),
+     std::make_pair (number_of_returns, Las::Property::number_of_returns()),
+     std::make_pair (scan_direction_flag, Las::Property::scan_direction_flag()),
+     std::make_pair (edge_of_flight_line, Las::Property::edge_of_flight_line()),
+     std::make_pair (classification, Las::Property::classification()),
+     std::make_pair (synthetic_flag, Las::Property::synthetic_flag()),
+     std::make_pair (keypoint_flag, Las::Property::keypoint_flag()),
+     std::make_pair (withheld_flag, Las::Property::withheld_flag()),
+     std::make_pair (scan_angle, Las::Property::scan_angle()),
+     std::make_pair (user_data, Las::Property::user_data()),
+     std::make_pair (point_source_ID, Las::Property::point_source_ID()),
+     std::make_pair (deleted_flag, Las::Property::deleted_flag()),
+     std::make_pair (R, Las::Property::R()),
+     std::make_pair (G, Las::Property::G()),
+     std::make_pair (B, Las::Property::B()),
+     std::make_pair (I, Las::Property::I()));
+
+  if (remove_intensity) point_set.remove_property_map (intensity);
+  if (remove_return_number) point_set.remove_property_map (return_number);
+  if (remove_number_of_returns) point_set.remove_property_map (number_of_returns);
+  if (remove_scan_direction_flag) point_set.remove_property_map (scan_direction_flag);
+  if (remove_edge_of_flight_line) point_set.remove_property_map (edge_of_flight_line);
+  if (remove_classification) point_set.remove_property_map (classification);
+  if (remove_synthetic_flag) point_set.remove_property_map (synthetic_flag);
+  if (remove_keypoint_flag) point_set.remove_property_map (keypoint_flag);
+  if (remove_withheld_flag) point_set.remove_property_map (withheld_flag);
+  if (remove_scan_angle) point_set.remove_property_map (scan_angle);
+  if (remove_user_data) point_set.remove_property_map (user_data);
+  if (remove_point_source_ID) point_set.remove_property_map (point_source_ID);
+  if (remove_deleted_flag) point_set.remove_property_map (deleted_flag);
+  if (remove_R) point_set.remove_property_map (R);
+  if (remove_G) point_set.remove_property_map (G);
+  if (remove_B) point_set.remove_property_map (B);
+  if (remove_I) point_set.remove_property_map (I);
+  
+  return okay;
+}
+  
 #endif
   
 /*!
