@@ -54,5 +54,26 @@ and `Weighted_point_3`/`Triangle_3`.
 */
 template <typename Kernel>
 Kernel::FT squared_distance(Type1<Kernel> obj1, Type2<Kernel> obj2);
+
+/*!
+computes the squared distance and information on where the closest point is located.
+
+@param dim is 0, or 1 if the closest point is on a vertex or on the interior of the segment, respectively.
+@param i is 0, or 1, if `dim==0` and the closest point is on the source or target of the segment, respectively.
+
+ */
+template <typename Kernel>
+Kernel::FT squared_distance(Point_3<Kernel> pt, Segment_3<Kernel> seg, int& dim, int& i);
+
+/*!
+computes the squared distance and information on where the closest point is located.
+
+@param dim is 0, 1, or 2 if the closest point is on a vertex, on an edge, or on the interior of the triangle.
+@param i is 0, 1 or 2, if `dim==0` and the closest point is on the ith vertex  of the triangle, respectively.
+       It is 0, 1 or 2, if `dim==1` and the closest point is on the edge opposite to the ith vertex of the triangle.
+
+ */
+template <typename Kernel>
+Kernel::FT squared_distance(Point_3<Kernel> pt, Triangle_3<Kernel> tri, int& dim, int& i);
 /// @}
 }

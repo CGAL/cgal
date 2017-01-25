@@ -282,6 +282,100 @@ squared_distance(
                                       k);
 }
 
+
+template <class K>
+inline typename K::FT
+squared_distance_to_triangle(
+    const typename K::Point_3 & pt,
+    const typename K::Point_3 & t0,
+    const typename K::Point_3 & t1,
+    const typename K::Point_3 & t2,
+    int& dim,
+    int& i,
+    const K& k)
+{
+  typename K::Construct_vector_3 vector;
+  typedef typename K::Vector_3 Vector_3;
+  const Vector_3 e1 = vector(t0, t1);
+  const Vector_3 oe3 = vector(t0, t2);
+  const Vector_3 normal = wcross(e1, oe3, k);
+
+  if(normal != NULL_VECTOR
+     && on_left_of_triangle_edge(pt, normal, t0, t1, k)
+     && on_left_of_triangle_edge(pt, normal, t1, t2, k)
+     && on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        // the projection of pt is inside the triangle
+        dim = 2;
+        return squared_distance_to_plane(normal, vector(t0, pt), k);
+      }
+      else {
+        // The case normal==NULL_VECTOR covers the case when the triangle
+        // is collinear, or even more degenerate. In that case, we can
+        // simply take also the distance to the three segments.
+        int ldim,li;
+        typename K::FT d1 = squared_distance(pt, 
+                                             typename K::Segment_3(t2, t0),
+                                             ldim,
+                                             li,
+                                             k);
+        dim = ldim;
+        if(dim == 1){
+          i = 1;
+        } else {
+          i = (li==0)?2:0;
+        }
+        typename K::FT d2 = squared_distance(pt, 
+                                             typename K::Segment_3(t1, t2),
+                                             ldim,
+                                             li,
+                                             k);
+        if(d2 < d1){
+          d1 = d2;
+          dim = ldim;
+          if(dim == 1){
+            i = 0;
+          } else {
+            i = (li==0)?1:2;
+          }
+        }
+        d2 = squared_distance(pt, 
+                              typename K::Segment_3(t0, t1),
+                                             ldim,
+                                             li,
+                              k);
+        if(d2 < d1){
+          d1 = d2;
+          dim = ldim;
+          if(dim == 1){
+            i = 2;
+          } else {
+            i = (li==0)?0:1;
+          }
+        }
+        return d1;
+      }
+}
+
+
+template <class K>
+inline typename K::FT
+squared_distance(
+    const typename K::Point_3 & pt,
+    const typename K::Triangle_3 & t,
+    int& dim,
+    int& i,
+    const K& k)
+{
+  typename K::Construct_vertex_3 vertex;
+  return squared_distance_to_triangle(pt,
+                                      vertex(t, 0),
+                                      vertex(t, 1),
+                                      vertex(t, 2),
+                                      dim,
+                                      i,
+                                      k);
+}
 } // namespace internal
 
 
@@ -343,7 +437,7 @@ squared_distance(
     const Ray_3<K> &ray,
     const Plane_3<K> &plane)
 {
-  return internal::squared_distance(ray, plane, K());
+    return internal::squared_distance(ray, plane, K());
 }
 
 
@@ -396,6 +490,17 @@ squared_distance(const Triangle_3<K> & t,
                  const Point_3<K> & pt) {
   return internal::squared_distance(pt, t, K());
 }
+
+template <class K>
+inline
+typename K::FT
+squared_distance(const Point_3<K> & pt,
+                 const Triangle_3<K> & t,
+                 int& dim,
+                 int& i) {
+  return internal::squared_distance(pt, t, dim, i, K());
+}
+
 
 
 } //namespace CGAL

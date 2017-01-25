@@ -750,8 +750,10 @@ public:
   template <typename K>
   class Compute_squared_distance_3
   {
-    typedef typename K::FT        FT;
-    typedef typename K::Point_3   Point_3;
+    typedef typename K::FT         FT;
+    typedef typename K::Point_3    Point_3;
+    typedef typename K::Triangle_3 Triangle_3;
+    typedef typename K::Segment_3  Segment_3;
   public:
     typedef FT               result_type;
 
@@ -767,6 +769,18 @@ public:
       typedef typename K::Vector_3 Vector_3;
       Vector_3 vec = pt2 - pt1;
       return vec*vec;
+    }
+
+    FT
+    operator()( const Point_3& pt, const Segment_3& seg, int& dim, int& i) const
+    {
+      return internal::squared_distance(pt, seg, dim, i, K());
+    }
+
+    FT
+    operator()( const Point_3& pt, const Triangle_3& tr, int& dim, int& i) const
+    {
+      return internal::squared_distance(pt, tr, dim, i, K());
     }
   };
 

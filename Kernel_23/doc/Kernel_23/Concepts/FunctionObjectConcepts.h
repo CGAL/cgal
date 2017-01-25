@@ -2692,6 +2692,27 @@ public:
   */ 
   Kernel::FT operator()(Type1 obj1, Type2 obj2); 
 
+/*!
+computes the squared distance and information on where the closest point is located.
+
+@param dim is 0, or 1 if the closest point is on a vertex or on the interior of the segment, respectively.
+@param i is 0, or 1, if `dim==0` and the closest point is on the source or target of the segment, respectively.
+
+ */
+template <typename Kernel>
+Kernel::FT squared_distance(Kernel::Point_3 pt, Kernel::Segment_3 seg, int& dim, int& i);
+
+/*!
+computes the squared distance and information on where the closest point is located.
+
+@param dim is 0, 1, or 2 if the closest point is on a vertex, on an edge, or on the interior of the triangle.
+@param i is 0, 1 or 2, if `dim==0` and the closest point is on the ith vertex  of the triangle, respectively.
+       It is 0, 1 or 2, if `dim==1` and the closest point is on the edge opposite to the ith vertex of the triangle.
+
+ */
+template <typename Kernel>
+Kernel::FT squared_distance(Kernel::Point_3 pt, Kernel::Triangle_3 tri, int& dim, int& i);
+
   /// @}
 
 }; /* end Kernel::ComputeSquaredDistance_3 */

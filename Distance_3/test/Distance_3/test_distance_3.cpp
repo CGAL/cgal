@@ -117,8 +117,28 @@ struct Test {
 
   void P_T()
   {
-    std::cout << "Point - Segment\n";
+    std::cout << "Point - Triange\n";
+
     check_squared_distance (p(0, 1, 2), T(p(0, 0, 0), p( 2, 0, 0), p( 0, 2, 0)), 4);
+
+    T t(P(0, 0, 0), P( 3, 0, 0), P( 0, 3, 0));
+    int dim, i;
+    squared_distance(P(-1, -1, 0), t, dim, i);
+    assert((dim == 0) && (i == 0));
+    squared_distance(P(4, -1, 0), t, dim, i);
+    assert((dim == 0) && (i == 1));
+    squared_distance(P(-1, 4, 0), t, dim, i);
+    assert((dim == 0) && (i == 2));
+
+    squared_distance(P(-1, 1, 0), t, dim, i);
+    assert((dim == 1) && (i == 1));
+    squared_distance(P(1, -1, 0), t, dim, i);
+    assert((dim == 1) && (i == 2));
+    squared_distance(P(3, 3, 0), t, dim, i);
+    assert((dim == 1) && (i == 0));
+
+    squared_distance(P(1, 1, 1), t, dim, i);
+    assert(dim == 2);
   }
 
   void S_S()

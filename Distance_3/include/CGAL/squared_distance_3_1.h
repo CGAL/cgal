@@ -122,6 +122,42 @@ squared_distance(
     return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
 }
 
+
+template <class K>
+typename K::FT
+squared_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg,
+    int& dim,
+    int& i,
+    const K& k,
+    const Homogeneous_tag)
+{
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    // assert that the segment is valid (non zero length).
+    Vector_3 diff = construct_vector(seg.source(), pt);
+    Vector_3 segvec = construct_vector(seg.source(), seg.target());
+    RT d = wdot(diff,segvec, k);
+    if (d <= (RT)0){
+      dim = 0;
+      i = 0;
+      return (FT(diff*diff));
+    }
+    RT e = wdot(segvec,segvec, k);
+    if ( (d * segvec.hw()) > (e * diff.hw())){
+      dim = 0;
+      i = 1;
+      return squared_distance(pt, seg.target(), k);
+    }
+    Vector_3 wcr = wcross(segvec, diff, k);
+    dim = 1;
+    return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
+}
+
+
 template <class K>
 typename K::FT
 squared_distance(
@@ -148,6 +184,40 @@ squared_distance(
     return FT(wcr*wcr)/e;
 }
 
+template <class K>
+typename K::FT
+squared_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg,
+    int& dim,
+    int& i,
+    const K& k,
+    const Cartesian_tag&)
+{
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    // assert that the segment is valid (non zero length).
+    Vector_3 diff = construct_vector(seg.source(), pt);
+    Vector_3 segvec = construct_vector(seg.source(), seg.target());
+    RT d = wdot(diff,segvec, k);
+    if (d <= (RT)0){
+      dim = 0;
+      i = 0;
+      return (FT(diff*diff));
+    }
+    RT e = wdot(segvec,segvec, k);
+    if (d > e){
+      dim = 0;
+      i = 1;
+      return squared_distance(pt, seg.target(), k);
+    }
+    dim = 1;
+    Vector_3 wcr = wcross(segvec, diff, k);
+    return FT(wcr*wcr)/e;
+}
+
 
 template <class K>
 inline
@@ -160,6 +230,21 @@ squared_distance(
   typedef typename K::Kernel_tag Tag;
   Tag tag;
   return squared_distance(pt, seg, k, tag);
+}
+
+template <class K>
+inline
+typename K::FT
+squared_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg,
+    int& dim,
+    int& i,
+    const K& k)
+{ 
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return squared_distance(pt, seg, dim, i, k, tag);
 }
 
 
@@ -847,6 +932,19 @@ squared_distance(
     const Segment_3<K> &seg)
 {
   return internal::squared_distance(pt, seg, K());
+}
+
+
+template <class K>
+inline
+typename K::FT
+squared_distance(
+    const Point_3<K> &pt,
+    const Segment_3<K> &seg,
+    int& dim,
+    int& i)
+{
+  return internal::squared_distance(pt, seg, dim, i, K());
 }
 
 
