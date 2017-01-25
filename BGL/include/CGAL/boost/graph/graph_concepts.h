@@ -162,7 +162,7 @@ BOOST_concept(MutableFaceGraph,(G))
     remove_face(f, g);
     set_face(h, f, g);
     set_halfedge(f, h, g);
-    int i;
+    int i=33;
     reserve(g, i, i, i);
   }
   G g;
