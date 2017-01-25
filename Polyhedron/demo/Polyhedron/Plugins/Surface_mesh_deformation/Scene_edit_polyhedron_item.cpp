@@ -210,28 +210,29 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
 {
     //vao for the facets
     {
-        std::vector<GLdouble> *vertices;
+        std::vector<GLdouble> vertices;
+        std::vector<GLdouble> *vertices_ptr;
         const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
         if(offset.norm() !=0)
         {
-          vertices = new std::vector<GLdouble>();
-          vertices->resize(positions.size());
+          vertices.resize(positions.size());
           for(std::size_t i=0; i<positions.size(); ++i)
           {
-            (*vertices)[i] = positions[i]+offset[i%3];
+            (vertices)[i] = positions[i]+offset[i%3];
           }
+          vertices_ptr = &vertices;
         }
         else
         {
-          vertices = &positions;
+          vertices_ptr = &positions;
         }
         program = item->getShaderProgram(Scene_edit_polyhedron_item::PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
         item->vaos[Facets]->bind();
         item->buffers[Facet_vertices].bind();
-        item->buffers[Facet_vertices].allocate(vertices->data(),
-                            static_cast<int>(vertices->size()*sizeof(double)));
+        item->buffers[Facet_vertices].allocate(vertices_ptr->data(),
+                            static_cast<int>(vertices_ptr->size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         item->buffers[Facet_vertices].release();
@@ -244,7 +245,6 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
         item->buffers[Facet_normals].release();
         item->vaos[Facets]->release();
         program->release();
-        delete vertices;
     }
     //vao for the ROI points
     {   program = item->getShaderProgram(Scene_edit_polyhedron_item::PROGRAM_NO_SELECTION, viewer);
