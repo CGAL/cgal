@@ -744,6 +744,9 @@ public Q_SLOTS:
       connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(selection_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
+    on_ModeBox_changed(ui_widget.modeBox->currentIndex());
+    if(last_mode == 0)
+      on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
     // if polyhedron item
