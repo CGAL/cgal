@@ -44,14 +44,26 @@ Polyhedron_demo_las_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_las_plugin::canSave(const CGAL::Three::Scene_item*)
+bool Polyhedron_demo_las_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
-  return false;
+  return qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
-bool Polyhedron_demo_las_plugin::save(const CGAL::Three::Scene_item*, QFileInfo)
+bool Polyhedron_demo_las_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
-  return false;
+  // Check extension (quietly)
+  std::string extension = fileinfo.suffix().toUtf8().data();
+  if (extension != "las" && extension != "LAS")
+    return false;
+  
+  // This plugin supports point sets
+  const Scene_points_with_normal_item* point_set_item =
+    qobject_cast<const Scene_points_with_normal_item*>(item);
+  if(!point_set_item)
+    return false;
+
+  std::ofstream out(fileinfo.filePath().toUtf8().data());
+  return point_set_item->write_las_point_set(out);
 }
 
 

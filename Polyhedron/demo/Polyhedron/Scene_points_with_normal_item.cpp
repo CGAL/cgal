@@ -559,6 +559,16 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
   invalidateOpenGLBuffers();
   return ok;
 }
+
+// Write point set to .LAS file
+bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
+{
+  Q_ASSERT(d->m_points != NULL);
+
+  return stream &&
+    CGAL::write_las_point_set (stream, *(d->m_points));
+}
+
 #endif
 
 // Loads point set from .PLY file
