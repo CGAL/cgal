@@ -874,6 +874,18 @@ test_construction_spherical_arcs()
 }
 
 #---------------------------------------------------------------------#
+# construction with polylines
+#---------------------------------------------------------------------#
+test_construction_polylines()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$POLYLINE_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_construction polylines "$flags"
+}
+
+#---------------------------------------------------------------------#
 # overlay with segments
 #---------------------------------------------------------------------#
 test_overlay_segments()
@@ -1674,6 +1686,7 @@ compile_and_run test_vert_ray_shoot_vert_segments
 test_construction_segments
 test_construction_linear
 test_construction_spherical_arcs
+test_construction_polylines
 
 test_overlay_segments
 test_overlay_spherical_arcs
@@ -1711,7 +1724,7 @@ compile_and_run test_spherical_removal
 
 compile_and_run test_io
 
-# if any error occured then append the full error description file to error file
+if any error occured then append the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
     echo "******************** appending all error outputs ********************" >> $ERRORFILE
