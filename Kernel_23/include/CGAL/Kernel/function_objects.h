@@ -740,7 +740,7 @@ public:
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -757,7 +757,7 @@ public:
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -2474,6 +2474,8 @@ public:
                              const typename K::Point_3& q,
                              typename K::Point_3& result,
                              bool& outside,
+                             int& dim,
+                             int& i,
                              const K& k)
     {
       typedef typename K::Vector_3 Vector_3;
@@ -2496,12 +2498,14 @@ public:
         if (   scalar_product(vector(p1,q), vector(p1,p2)) >= FT(0)
             && scalar_product(vector(p2,q), vector(p2,p1)) >= FT(0) )
         {
+          // dim = ;
+          // i = 
           result = projection(line(p1, p2), q);
           return true;
         }
         outside = true;
       }
-
+      
       return false;
     }
 
@@ -2515,11 +2519,12 @@ public:
      * @param k the kernel
      * @return the nearest point from origin
      */
-    typename K::Point_3
+    typename const K::Point_3&
     nearest_point_3(const typename K::Point_3& origin,
                     const typename K::Point_3& p1,
                     const typename K::Point_3& p2,
                     const typename K::Point_3& p3,
+                    int& i,
                     const K& k)
     {
       typedef typename K::FT FT;
@@ -2534,13 +2539,15 @@ public:
       if (   dist_origin_p2 >= dist_origin_p1
           && dist_origin_p3 >= dist_origin_p1 )
       {
+        i = 0;
         return p1;
       }
       if ( dist_origin_p3 >= dist_origin_p2 )
       {
+        i = 1;
         return p2;
       }
-
+      i = 2;
       return p3;
     }
 
@@ -2551,6 +2558,8 @@ public:
      * @param p the reference point
      * @param t the triangle
      * @param result if p is not inside t, the nearest point of t from p
+     * @param dim the dimension of the facet where the reference point lies
+     * @param i the index of the reference point on the facet
      * @param k the kernel
      * @return true if p is inside t
      */
@@ -2558,6 +2567,8 @@ public:
     is_inside_triangle_3(const typename K::Point_3& p,
                          const typename K::Triangle_3& t,
                          typename K::Point_3& result,
+                         int& dim,
+                         int& i,
                          const K& k)
     {
       typedef typename K::Point_3 Point_3;
@@ -2577,20 +2588,24 @@ public:
       Vector_3 w = cross_product(vector(t0,t1), vector(t1,t2));
 
       bool outside = false;
-      if (   is_inside_triangle_3_aux(w, t0, t1, p, result, outside, k)
-          || is_inside_triangle_3_aux(w, t1, t2, p, result, outside, k)
-          || is_inside_triangle_3_aux(w, t2, t0, p, result, outside, k) )
+      int ldim, li;
+      if (   is_inside_triangle_3_aux(w, t0, t1, p, result, outside, ldim, li, k)
+          || is_inside_triangle_3_aux(w, t1, t2, p, result, outside, ldim, li, k)
+          || is_inside_triangle_3_aux(w, t2, t0, p, result, outside, ldim, li, k) )
       {
+        dim = 1;
         return false;
       }
 
       if ( outside )
       {
-        result = nearest_point_3(p,t0,t1,t2,k);
+        dim = 0;
+        result = nearest_point_3(p,t0,t1,t2,i, k);
         return false;
       }
       else
       {
+        dim = 2;
         return true;
       }
     }
@@ -2609,6 +2624,8 @@ public:
     is_inside_segment_3(const typename K::Point_3& query,
                         const typename K::Segment_3 & s,
                         typename K::Point_3& closest_point_on_segment,
+                        int& dim,
+                        int& i,
                         const K& k)
     {
       typename K::Construct_vector_3 vector =
@@ -2625,16 +2642,21 @@ public:
       const Point& b = vertex_on(s, 1);
       if( scalar_product(vector(a,b), vector(a, query)) < FT(0) )
       {
+        dim = 0;
+        i = 0;
         closest_point_on_segment = a;
         return false;
       }
       if( scalar_product(vector(b,a), vector(b, query)) < FT(0) )
       {
+        dim = 0;
+        i = 1;
         closest_point_on_segment = b;
         return false;
       }
-
+      
       // query is on segment
+      dim = 1;
       return true;
     }
 
@@ -2642,6 +2664,8 @@ public:
     typename K::Point_3
     operator()(const typename K::Point_3& origin,
                const typename K::Triangle_3& triangle,
+               int& dim,
+               int& i,
                const K& k)
     {
       typedef typename K::Point_3 Point_3;
@@ -2678,18 +2702,18 @@ public:
         if(linf_ab > linf_ac) {
           if(linf_ab > linf_bc) {
             // ab is the maximal segment
-            return this->operator()(origin, seg(a, b), k);
+            return this->operator()(origin, seg(a, b), dim, i, k);
           } else {
             // ab > ac, bc >= ab, use bc
-            return this->operator()(origin, seg(b, c), k);
+            return this->operator()(origin, seg(b, c), dim, i, k);
           }
         } else { // ab <= ac
           if(linf_ac > linf_bc) {
             // ac is the maximal segment
-            return this->operator()(origin, seg(a, c), k);
+            return this->operator()(origin, seg(a, c), dim, i, k);
           } else {
             // ab <= ac, ac <= bc, use bc
-            return this->operator()(origin, seg(b, c), k);
+            return this->operator()(origin, seg(b, c), dim, i, k);
           }
         }
       } // degenerate plane
@@ -2699,7 +2723,7 @@ public:
 
 
       Point_3 moved_point;
-      bool inside = is_inside_triangle_3(proj,triangle,moved_point,k);
+      bool inside = is_inside_triangle_3(proj,triangle,moved_point,dim, i, k);
 
       // If proj is inside triangle, return it
       if ( inside )
@@ -2711,9 +2735,22 @@ public:
       return moved_point;
     }
 
+
+    typename K::Point_3
+    operator()(const typename K::Point_3& origin,
+               const typename K::Triangle_3& triangle,
+               const K& k)
+    {
+      int dim, i;
+      return this->operator()(origin, triangle, dim, i, k);
+    }
+
+
     typename K::Point_3
     operator()(const typename K::Point_3& query,
                const typename K::Segment_3& segment,
+               int& dim,
+               int& i,
                const K& k)
     {
       typedef typename K::Point_3 Point_3;
@@ -2725,14 +2762,17 @@ public:
       typename K::Construct_vertex_3 vertex =
           k.construct_vertex_3_object();
 
-      if(is_degenerate(segment))
+      if(is_degenerate(segment)){
+        dim = 0;
+        i = 0;
         return vertex(segment, 0);
-
+      }
       // Project query on segment supporting line
       const Point_3 proj = projection(segment.supporting_line(), query);
 
       Point_3 closest_point_on_segment;
-      bool inside = is_inside_segment_3(proj,segment,closest_point_on_segment,k);
+
+      bool inside = is_inside_segment_3(proj,segment, closest_point_on_segment, dim, i, k);
 
       // If proj is inside segment, returns it
       if ( inside )
@@ -2741,6 +2781,16 @@ public:
       // Else returns the constructed point
       return closest_point_on_segment;
     }
+
+    typename K::Point_3
+    operator()(const typename K::Point_3& query,
+               const typename K::Segment_3& segment,
+               const K& k)
+    {
+      int dim, i;
+      return this->operator()(query, segment, dim, i, k);  
+    }
+
 
     // code for operator for plane and point is defined in
     // CGAL/Cartesian/function_objects.h and CGAL/Homogeneous/function_objects.h
