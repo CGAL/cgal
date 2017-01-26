@@ -1,4 +1,4 @@
-file(STRINGS package_list.txt package_list)
+file(STRINGS gpl_package_list.txt package_list)
 
 foreach(LINE ${package_list})
   string(REGEX MATCH "^[^ ]*" PACKAGE_NAME ${LINE})
