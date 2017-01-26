@@ -86,6 +86,13 @@ intersection(const Line_2 <K> &c1, const Circle_2 <K> &c2, OutputIterator res)
   return typename K::Intersect_2()(c1, c2, res);
 }
 
+template < class OutputIterator, class K >
+OutputIterator
+intersection(const Line_2 <K> &c1, const Line_2 <K> &c2, OutputIterator res)
+{
+  return typename K::Intersect_2()(c1, c2, res);
+}
+
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Circular_arc_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Line_arc_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Circle_2)
