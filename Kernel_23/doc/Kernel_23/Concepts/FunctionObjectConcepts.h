@@ -2695,6 +2695,8 @@ public:
 /*!
 computes the squared distance between `pt` and `seg`, and information on where the point of `seg` closest to `pt` is located.
 
+@param pt the input point
+@param seg the input segment
 @param dim is 0, or 1 if the closest point is on a vertex or on the interior of the segment, respectively.
 @param i is 0, or 1, if `dim==0` and the closest point is on the source or target of the segment, respectively.
 
@@ -5891,9 +5893,28 @@ public:
                              const Kernel::Point_3& p);
 
   /*!
-    returns the point of `t` that is the closest to `p`.
+    returns the point of `s` that is the closest to `p`, and information on where this point is located.
+
+    @param s the input segment
+    @param p the input point
+    @param dim is 0, or 1 if the closest point is on a vertex or on the interior of the segment, respectively.
+    @param i is 0, or 1, if `dim==0` and the closest point is on the source or target of the segment, respectively.
   */
-  Kernel::Point_3 operator()(const Kernel::Triangle_3& h,
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s,
+                             const Kernel::Point_3& p
+                             int& dim,
+                             int& i);
+
+  /*!
+    returns the point of `t` that is the closest to `p`, and information on where the point of `t` closest to `pt` is located.
+
+    @param t the input triangle
+    @param p the input point
+    @param dim is 0, 1, or 2 if the closest point is on a vertex, on an edge, or on the interior of the triangle.
+    @param i is 0, 1 or 2, if `dim==0` and the closest point is on the ith vertex  of the triangle, respectively.
+    It is 0, 1 or 2, if `dim==1` and the closest point is on the edge opposite to the ith vertex of the triangle.
+  */
+  Kernel::Point_3 operator()(const Kernel::Triangle_3& t,
                              const Kernel::Point_3& p);
 
   /// @}
