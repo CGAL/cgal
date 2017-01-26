@@ -17,8 +17,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef COPY_FACE_GRAPH_PATCH_H
-#define COPY_FACE_GRAPH_PATCH_H
+#ifndef  CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_PATCH_H
+#define  CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_PATCH_H
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Connected_component_graph.h>
@@ -257,4 +257,4 @@ void copy_face_graph_patch(const SourceMesh& sm, const typename boost::graph_tra
                   sm_vpm, get(vertex_point, tm)); }
 #endif
 }//end CGAL
-#endif // COPY_FACE_GRAPH_PATCH_H
+#endif //  CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_PATCH_H
