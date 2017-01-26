@@ -316,6 +316,7 @@ user might encounter.
 - `CGAL::Dual`
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
+- `CGAL::Connected_component_graph`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
@@ -343,6 +344,7 @@ user might encounter.
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
 - `CGAL::reserve()`
+- `CGAL::copy_face_graph_patch()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`

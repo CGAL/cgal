@@ -15,6 +15,26 @@
 namespace CGAL
 {
 
+/*!
+\ingroup PkgBGLHelper
+
+The class `Connected_component_graph` wraps a graph  into another graph in such a way that only the specified connected component is seen from the outside.
+
+For example, calling `vertices(graph)` will return an iterator range of all but only the vertices that belong to the connected component whose id in `fccmap` is `pid`.
+
+\attention The functions `num_vertices()`, `num_edges()`, `num_halfedges()`, `num_faces()`, are forwarded from the underlying graph,
+which means that `num_vertices(graph)` is different from `std::distance(vertices(graph).first,vertices(graph).second)`
+
+Property maps can be wrapped with `Connected_component_graph_property_map`.
+\tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
+\tparam FaceComponentMap a model of `WritablePropertyMap` with
+        `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+        `graph_traits<PolygonMesh>::faces_size_type` as value type.
+
+\cgalModels `FaceListGraph`
+\cgalModels `HalfedgeListGraph`
+*/
+
 template<typename Graph, typename FaceComponentMap>
 struct Connected_component_graph
 {
@@ -520,51 +540,11 @@ is_valid(const Connected_component_graph<Graph, FaceComponentMap> & w, bool verb
     return is_valid(w.graph(),verbose);
 }
 
-template <typename Graph, typename PM>
-struct Connected_component_graph_property_map {
-
-  typedef typename boost::property_traits<PM>::category category;
-  typedef typename boost::property_traits<PM>::value_type value_type;
-  typedef typename boost::property_traits<PM>::reference reference;
-  typedef typename boost::property_traits<PM>::key_type key_type;
-
-  Graph* graph;
-  PM pm;
-
-  Connected_component_graph_property_map()
-    : graph(NULL)
-  {}
-
-  Connected_component_graph_property_map(const Graph& graph, const PM& pm)
-    : graph(const_cast<Graph*>(&graph)), pm(pm)
-  {}
-
-  friend
-  reference
-  get(const Connected_component_graph_property_map<Graph,PM>& gpm, const key_type& k)
-  {
-    CGAL_assertion(gpm.graph!=NULL);
-    return get(gpm.pm, k);
-  }
-
-  friend
-  void
-  put(const Connected_component_graph_property_map<Graph,PM>& gpm, const key_type& k,   const value_type& v)
-  {
-    CGAL_assertion(gpm.graph!=NULL);
-    put(gpm.pm, k, v);
-  }
-}; // class Connected_component_graph_property_map
-
-
-
 template <class Graph, typename FaceComponentMap, class PropertyTag>
-Connected_component_graph_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type>
+typename boost::property_map<Graph, PropertyTag >::type
 get(PropertyTag ptag, const Connected_component_graph<Graph,FaceComponentMap>& w)
 {
-  typedef typename boost::property_map<Graph,PropertyTag>::type PM;
-  typedef Connected_component_graph_property_map<Graph, PM> GPM;
-  return GPM(w.graph(), get(ptag,w.graph()));
+  return get(ptag, w.graph());
 }
 
 
@@ -592,8 +572,8 @@ put(PropertyTag ptag, const Connected_component_graph<Graph, FaceComponentMap>& 
 namespace boost {
   template <typename Graph, typename FaceComponentMap, typename PropertyTag>
   struct property_map<CGAL::Connected_component_graph<Graph, FaceComponentMap>,PropertyTag> {
-    typedef CGAL::Connected_component_graph_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type> type;
-    typedef CGAL::Connected_component_graph_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::const_type> const_type;
+    typedef typename boost::property_map<Graph, PropertyTag >::type type;
+    typedef typename boost::property_map<Graph, PropertyTag >::const_type const_type;
   };
 
   template<typename Graph, typename FaceComponentMap, typename PropertyTag>

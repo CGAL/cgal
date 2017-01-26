@@ -1,4 +1,4 @@
-#include <CGAL/boost/graph/connected_component_graph.h>
+#include <CGAL/boost/graph/Connected_component_graph.h>
 
 #include "test_Prefix.h"
 #include <boost/numeric/conversion/cast.hpp>
@@ -406,5 +406,6 @@ main()
   //check in_edges and out_edges
   CGAL_assertion(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 2 );
   CGAL_assertion(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 2 );
+
   return 0;
 }
