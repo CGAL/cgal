@@ -72,11 +72,6 @@ struct Connected_component_graph
     }
 
 
-    Connected_component_graph(const Connected_component_graph&f)
-        : _graph(f.graph()), property_map(f.propertyMap()), patch_index(f.patchIndex())
-    {
-    }
-
     const Graph& graph()const{ return _graph; }
 
     FaceComponentMap propertyMap()const{ return property_map; }
@@ -95,6 +90,7 @@ struct Connected_component_graph
         template<typename Simplex>
         bool operator()(Simplex s)
         {
+            CGAL_assertion(adapter!=NULL);
             return (is_valid(s, *adapter));
         }
         const Self* adapter;
@@ -513,7 +509,10 @@ face(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponen
      const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
     CGAL_assertion(CGAL::is_valid(h, w));
-    return face(h,w.graph());
+    if(is_valid(face(h,w.graph()), w))
+        return face(h,w.graph());
+    else
+        return boost::graph_traits< CGAL::Connected_component_graph<Graph, FaceComponentMap> >::null_face();
 }
 
 template <class Graph, typename FaceComponentMap >

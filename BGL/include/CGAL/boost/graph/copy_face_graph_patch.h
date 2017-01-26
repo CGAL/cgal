@@ -180,10 +180,10 @@ void copy_face_graph_patch(const SourceMesh& sm, const typename boost::graph_tra
 
     typedef typename boost::graph_traits<SourceMesh>::face_descriptor g_face_descriptor;
     typedef typename boost::graph_traits<SourceMesh>::faces_size_type faces_size_t;
-    typedef boost::associative_property_map< std::map< g_face_descriptor, faces_size_t>  >FCMap;
+    typedef boost::associative_property_map< boost::unordered_map< g_face_descriptor, faces_size_t>  >FCMap;
     typedef CGAL::Connected_component_graph<SourceMesh, FCMap> Adapter;
 
-    std::map<g_face_descriptor, faces_size_t> map;
+    boost::unordered_map<g_face_descriptor, faces_size_t> map(CGAL::num_faces(sm));
     Polygon_mesh_processing::connected_components(sm, boost::make_assoc_property_map(map), np);
     copy_face_graph(Adapter(sm, boost::make_assoc_property_map(map), map[seed_face]), tm, v2v, h2h, f2f, sm_vpm, tm_vpm);
 }

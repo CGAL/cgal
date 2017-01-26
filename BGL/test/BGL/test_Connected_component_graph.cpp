@@ -4,6 +4,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 #include <CGAL/use.h>
 
 typedef boost::unordered_set<std::size_t> id_map;
@@ -12,10 +13,10 @@ template <typename Graph>
 void test_halfedge_around_vertex_iterator(const  Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
-  typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
+  typedef boost::associative_property_map< boost::unordered_map< g_face_descriptor, std::size_t > >FCMap;
   typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
-  std::map<g_face_descriptor, std::size_t> map;
+  boost::unordered_map<g_face_descriptor, std::size_t> map(CGAL::num_faces(g));
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
 
 
