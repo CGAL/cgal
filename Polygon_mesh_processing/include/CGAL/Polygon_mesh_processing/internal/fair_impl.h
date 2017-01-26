@@ -28,8 +28,9 @@
 #include <set>
 #include <CGAL/assertions.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
+#ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
-#include <CGAL/trace.h>
+#endif
 #include <iterator>
 
 namespace CGAL {
@@ -133,7 +134,9 @@ public:
                                                   boost::end(vertices));
     if(interior_vertices.empty()) { return true; }
 
+    #ifdef CGAL_PMP_FAIR_DEBUG
     CGAL::Timer timer; timer.start();
+    #endif
     const std::size_t nb_vertices = interior_vertices.size();
     Solver_vector X(nb_vertices), Bx(nb_vertices);
     Solver_vector Y(nb_vertices), By(nb_vertices);
@@ -157,7 +160,9 @@ public:
       int v_id = static_cast<int>(vertex_id_map[vd]);
       compute_row(vd, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
-    CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
+    #ifdef CGAL_PMP_FAIR_DEBUG
+    std:cerr << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
+    #endif
 
     // factorize
     double D;
@@ -166,7 +171,9 @@ public:
       CGAL_warning(!"pre_factor failed!");
       return false;
     }
-    CGAL_TRACE_STREAM << "**Timer** System factorization: " << timer.time() << std::endl; timer.reset();
+    #ifdef CGAL_PMP_FAIR_DEBUG
+    std::cerr << "**Timer** System factorization: " << timer.time() << std::endl; timer.reset();
+    #endif
 
     // solve
     bool is_all_solved = solver.linear_solver(Bx, X) && solver.linear_solver(By, Y) && solver.linear_solver(Bz, Z);
@@ -174,7 +181,9 @@ public:
       CGAL_warning(!"linear_solver failed!"); 
       return false; 
     }
-    CGAL_TRACE_STREAM << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
+    #ifdef CGAL_PMP_FAIR_DEBUG
+    std::cerr << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
+    #endif
 
     
     /* This relative error is to large for cases that the results are not good */ 
