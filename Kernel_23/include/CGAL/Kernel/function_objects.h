@@ -2474,7 +2474,7 @@ public:
                              const typename K::Point_3& q,
                              typename K::Point_3& result,
                              bool& outside,
-                             const K& k)
+                             const K& k) const
     {
       typedef typename K::Vector_3 Vector_3;
       typedef typename K::FT FT;
@@ -2521,7 +2521,7 @@ public:
                     const typename K::Point_3& p2,
                     const typename K::Point_3& p3,
                     int& i,
-                    const K& k)
+                    const K& k) const
     {
       typedef typename K::FT FT;
 
@@ -2565,7 +2565,7 @@ public:
                          typename K::Point_3& result,
                          int& dim,
                          int& i,
-                         const K& k)
+                         const K& k) const
     {
       typedef typename K::Point_3 Point_3;
       typedef typename K::Vector_3 Vector_3;
@@ -2590,7 +2590,7 @@ public:
         i = 2;
         return false;
       }
-      if (is_inside_triangle_3_aux(w, t1, t2, p, result, outside, k)
+      if (is_inside_triangle_3_aux(w, t1, t2, p, result, outside, k) )
       {
         dim = 1;
         i = 0;
@@ -2599,12 +2599,13 @@ public:
       if ( is_inside_triangle_3_aux(w, t2, t0, p, result, outside, k) )
       {
         dim = 1;
-        i = 1
+        i = 1;
         return false;
       }
 
       if ( outside )
       {
+        
         dim = 0;
         result = nearest_point_3(p,t0,t1,t2,i, k);
         return false;
@@ -2615,6 +2616,7 @@ public:
         return true;
       }
     }
+  
 
     /**
     * @brief returns true if p is inside segment s. If p is not inside s,
@@ -2632,7 +2634,7 @@ public:
                         typename K::Point_3& closest_point_on_segment,
                         int& dim,
                         int& i,
-                        const K& k)
+                        const K& k) const
     {
       typename K::Construct_vector_3 vector =
         k.construct_vector_3_object();
@@ -2665,14 +2667,15 @@ public:
       dim = 1;
       return true;
     }
-
+  
   public:
+    
     typename K::Point_3
     operator()(const typename K::Point_3& origin,
                const typename K::Triangle_3& triangle,
                int& dim,
                int& i,
-               const K& k)
+               const K& k) const
     {
       typedef typename K::Point_3 Point_3;
 
@@ -2745,7 +2748,7 @@ public:
     typename K::Point_3
     operator()(const typename K::Point_3& origin,
                const typename K::Triangle_3& triangle,
-               const K& k)
+               const K& k) const
     {
       int dim, i;
       return this->operator()(origin, triangle, dim, i, k);
@@ -2757,7 +2760,7 @@ public:
                const typename K::Segment_3& segment,
                int& dim,
                int& i,
-               const K& k)
+               const K& k) const
     {
       typedef typename K::Point_3 Point_3;
 
@@ -2791,7 +2794,7 @@ public:
     typename K::Point_3
     operator()(const typename K::Point_3& query,
                const typename K::Segment_3& segment,
-               const K& k)
+               const K& k) const
     {
       int dim, i;
       return this->operator()(query, segment, dim, i, k);  
