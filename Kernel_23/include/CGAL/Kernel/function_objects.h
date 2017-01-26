@@ -772,15 +772,27 @@ public:
     }
 
     FT
-    operator()( const Point_3& pt, const Segment_3& seg, int& dim, int& i) const
+    operator()( const Point_3& pt, const Segment_3& seg) const
     {
-      return internal::squared_distance(pt, seg, dim, i, K());
+      return internal::squared_distance(pt, seg, K()).squared_distance;
     }
 
     FT
-    operator()( const Point_3& pt, const Triangle_3& tr, int& dim, int& i) const
+    operator()( const Point_3& pt, const Triangle_3& tr) const
     {
-      return internal::squared_distance(pt, tr, dim, i, K());
+      return internal::squared_distance(pt, tr, K()).squared_distance;
+    }
+
+    Squared_distance_dimension_index<FT>
+    operator()( const Point_3& pt, const Segment_3& seg, const Tag_true& tag) const
+    {
+      return internal::squared_distance(pt, seg, K());
+    }
+
+    Squared_distance_dimension_index<FT>
+    operator()( const Point_3& pt, const Triangle_3& tr, const Tag_true) const
+    {
+      return internal::squared_distance(pt, tr, K());
     }
   };
 

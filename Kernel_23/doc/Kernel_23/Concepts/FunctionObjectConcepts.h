@@ -2664,9 +2664,11 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
   \sa `squared_distance_grp`
+
 
 */
 class ComputeSquaredDistance_3 {
@@ -2695,25 +2697,48 @@ public:
 /*!
 computes the squared distance between `pt` and `seg`, and information on where the point of `seg` closest to `pt` is located.
 
+
+\code{cpp}
+template <typename FT>
+struct Squared_distance_dimension_index {
+  FT squared_distance;
+  unsigned int dimension;
+  unsigned int index;
+  operator FT() const { return squared_distance;}
+};
+\endcode
+
+
 @param pt the input point
 @param seg the input segment
-@param dim is 0, or 1 if the closest point is on a vertex or on the interior of the segment, respectively.
-@param i is 0, or 1, if `dim==0` and the closest point is on the source or target of the segment, respectively.
-
+@returns an object `res` where `res.squared_distance` is the squared distance, where `res.dimension` is `0`, or `1` if the closest point is on a vertex or on the interior of the segment `seg`, respectively,
+and where `res.index` is `0`, or `1`, if `res.dimension==0` and the closest point is on the source or target of the segment, respectively.
  */
 template <typename Kernel>
-Kernel::FT squared_distance(Kernel::Point_3 pt, Kernel::Segment_3 seg, int& dim, int& i);
+Squared_distance_dimension_index<Kernel::FT> squared_distance(Kernel::Point_3 pt, Kernel::Segment_3 seg, Tag_true);
 
 /*!
 computes the squared distance between `pt` and `tri`, and information on where the point of `tri` closest to `pt` is located.
 
-@param dim is 0, 1, or 2 if the closest point is on a vertex, on an edge, or on the interior of the triangle.
-@param i is 0, 1 or 2, if `dim==0` and the closest point is on the ith vertex  of the triangle, respectively.
-       It is 0, 1 or 2, if `dim==1` and the closest point is on the edge opposite to the ith vertex of the triangle.
+\code{cpp}
+template <typename FT>
+struct Squared_distance_dimension_index {
+  FT squared_distance;
+  unsigned int dimension;
+  unsigned int index;
+  operator FT() const { return squared_distance;}
+};
+\endcode
+
+@param pt the input point
+@param tri the input segment
+
+@returns an object `res` where `res.squared_distance` is the squared distance, where `res.dimension` is `0`, `1`, or`2`, if the closest point is on a vertex, on an edge, or on the interior of the triangle `tri`, respectively,
+and where `res.index` is `0`, `1`, or `2`, if `res.dimension==1` and the closest point is on the edge opposite to the ith vertex of the triangle.
 
  */
 template <typename Kernel>
-Kernel::FT squared_distance(Kernel::Point_3 pt, Kernel::Triangle_3 tri, int& dim, int& i);
+Squared_distance_dimension_index<Kernel::FT> squared_distance(Kernel::Point_3 pt, Kernel::Triangle_3 tri, Tag_true);
 
   /// @}
 

@@ -36,6 +36,14 @@
 
 namespace CGAL {
 
+template <typename FT>
+struct Squared_distance_dimension_index {
+  FT squared_distance;
+  unsigned int dimension;
+  unsigned int index;
+  operator FT() const { return squared_distance;}
+};
+
 namespace internal {
 
 template <class K>
@@ -95,7 +103,7 @@ squared_distance(
 
 
 
-
+#if 0
 template <class K>
 typename K::FT
 squared_distance(
@@ -121,18 +129,18 @@ squared_distance(
     Vector_3 wcr = wcross(segvec, diff, k);
     return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
 }
-
+#endif
 
 template <class K>
-typename K::FT
+Squared_distance_dimension_index<typename K::FT>
 squared_distance(
     const typename K::Point_3 &pt,
     const typename K::Segment_3 &seg,
-    int& dim,
-    int& i,
     const K& k,
     const Homogeneous_tag)
 {
+    Squared_distance_dimension_index<typename K::FT> res;
+
     typename K::Construct_vector_3 construct_vector;
     typedef typename K::Vector_3 Vector_3;
     typedef typename K::RT RT;
@@ -142,22 +150,25 @@ squared_distance(
     Vector_3 segvec = construct_vector(seg.source(), seg.target());
     RT d = wdot(diff,segvec, k);
     if (d <= (RT)0){
-      dim = 0;
-      i = 0;
-      return (FT(diff*diff));
+      res.dimension = 0;
+      res.index = 0;
+      res.squared_distance = FT(diff*diff);
+      return res;
     }
     RT e = wdot(segvec,segvec, k);
     if ( (d * segvec.hw()) > (e * diff.hw())){
-      dim = 0;
-      i = 1;
-      return squared_distance(pt, seg.target(), k);
+      res.dimension = 0;
+      res.index = 1;
+      res.squared_distance = squared_distance(pt, seg.target(), k);
+      return res;
     }
     Vector_3 wcr = wcross(segvec, diff, k);
-    dim = 1;
-    return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
+    res.dimension = 1;
+    res.squared_distance = FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
+    return res;
 }
 
-
+#if 0
 template <class K>
 typename K::FT
 squared_distance(
@@ -183,17 +194,18 @@ squared_distance(
     Vector_3 wcr = wcross(segvec, diff, k);
     return FT(wcr*wcr)/e;
 }
+#endif
 
 template <class K>
-typename K::FT
+Squared_distance_dimension_index<typename K::FT>
 squared_distance(
     const typename K::Point_3 &pt,
     const typename K::Segment_3 &seg,
-    int& dim,
-    int& i,
     const K& k,
     const Cartesian_tag&)
 {
+    Squared_distance_dimension_index<typename K::FT> res;
+
     typename K::Construct_vector_3 construct_vector;
     typedef typename K::Vector_3 Vector_3;
     typedef typename K::RT RT;
@@ -203,25 +215,28 @@ squared_distance(
     Vector_3 segvec = construct_vector(seg.source(), seg.target());
     RT d = wdot(diff,segvec, k);
     if (d <= (RT)0){
-      dim = 0;
-      i = 0;
-      return (FT(diff*diff));
+      res.dimension = 0;
+      res.index = 0;
+      res.squared_distance = FT(diff*diff);
+      return res;
     }
     RT e = wdot(segvec,segvec, k);
     if (d > e){
-      dim = 0;
-      i = 1;
-      return squared_distance(pt, seg.target(), k);
+     res.dimension = 0;
+      res.index = 1;
+      res.squared_distance = squared_distance(pt, seg.target(), k);
+      return res;
     }
-    dim = 1;
+    res.dimension = 1;
     Vector_3 wcr = wcross(segvec, diff, k);
-    return FT(wcr*wcr)/e;
+    res.squared_distance = FT(wcr*wcr)/e;
+    return res;
 }
 
 
 template <class K>
 inline
-typename K::FT
+Squared_distance_dimension_index<typename K::FT>
 squared_distance(
     const typename K::Point_3 &pt,
     const typename K::Segment_3 &seg,
@@ -232,20 +247,6 @@ squared_distance(
   return squared_distance(pt, seg, k, tag);
 }
 
-template <class K>
-inline
-typename K::FT
-squared_distance(
-    const typename K::Point_3 &pt,
-    const typename K::Segment_3 &seg,
-    int& dim,
-    int& i,
-    const K& k)
-{ 
-  typedef typename K::Kernel_tag Tag;
-  Tag tag;
-  return squared_distance(pt, seg, dim, i, k, tag);
-}
 
 
 template <class K>
@@ -937,14 +938,13 @@ squared_distance(
 
 template <class K>
 inline
-typename K::FT
+Squared_distance_dimension_index<typename K::FT>
 squared_distance(
     const Point_3<K> &pt,
     const Segment_3<K> &seg,
-    int& dim,
-    int& i)
+    const Tag_true&)
 {
-  return internal::squared_distance(pt, seg, dim, i, K());
+  return internal::squared_distance(pt, seg, K());
 }
 
 
@@ -955,7 +955,7 @@ squared_distance(
     const Segment_3<K> & seg,
     const Point_3<K> & pt)
 {
-    return internal::squared_distance(pt, seg, K());
+  return internal::squared_distance(pt, seg, K()).squared_distance;
 }
 
 
