@@ -79,6 +79,82 @@ triangle_grid_sampling( const typename Kernel::Point_3& p0,
   return out;
 }
 
+#if defined(CGAL_LINKED_WITH_TBB)
+template <class AABB_tree, class Point_3>
+struct Distance_computation{
+  const AABB_tree& tree;
+  const std::vector<Point_3>& sample_points;
+  Point_3 initial_hint;
+  tbb::atomic<double>* distance;
+
+  Distance_computation(
+          const AABB_tree& tree,
+          const Point_3& p,
+          const std::vector<Point_3>& sample_points,
+          tbb::atomic<double>* d)
+    : tree(tree)
+    , sample_points(sample_points)
+    , initial_hint(p)
+    , distance(d)
+  {}
+
+  void
+  operator()(const tbb::blocked_range<std::size_t>& range) const
+  {
+    Point_3 hint = initial_hint;
+    double hdist = 0;
+    for( std::size_t i = range.begin(); i != range.end(); ++i)
+    {
+      hint = tree.closest_point(sample_points[i], hint);
+      typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
+      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,sample_points[i]) ));
+      if (d>hdist) hdist=d;
+    }
+
+    if (hdist > distance->load())
+      distance->store(hdist);
+  }
+};
+#endif
+
+template <class Concurrency_tag,
+          class Kernel,
+          class PointRange,
+          class AABBTree>
+double approximate_Hausdorff_distance_impl(
+  const PointRange& sample_points,
+  const AABBTree& tree,
+  typename Kernel::Point_3 hint)
+{
+#if !defined(CGAL_LINKED_WITH_TBB)
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+  {
+    tbb::atomic<double> distance;
+    distance.store(0);
+    Distance_computation<Tree, Point_3> f(tree, hint, sample_points, &distance);
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
+    return distance;
+  }
+  else
+#endif
+  {
+    double hdist = 0;
+    BOOST_FOREACH(const typename Kernel::Point_3& pt, sample_points)
+    {
+      hint = tree.closest_point(pt, hint);
+      typename Kernel::Compute_squared_distance_3 squared_distance;
+      typename Kernel::FT dist = squared_distance(hint,pt);
+      double d = to_double(CGAL::approximate_sqrt(dist));
+      if(d>hdist)
+        hdist=d;
+    }
+    return hdist;
+  }
+}
+
 } //end of namespace internal
 
 template <class Kernel,
@@ -146,44 +222,6 @@ sample_triangles(const FaceRange& triangles,
   }
   return out;
 }
-
-#if defined(CGAL_LINKED_WITH_TBB)
-template <class AABB_tree, class Point_3>
-struct Distance_computation{
-  const AABB_tree& tree;
-  const std::vector<Point_3>& sample_points;
-  Point_3 initial_hint;
-  tbb::atomic<double>* distance;
-
-  Distance_computation(
-          const AABB_tree& tree,
-          const Point_3& p,
-          const std::vector<Point_3>& sample_points,
-          tbb::atomic<double>* d)
-    : tree(tree)
-    , sample_points(sample_points)
-    , initial_hint(p)
-    , distance(d)
-  {}
-
-  void
-  operator()(const tbb::blocked_range<std::size_t>& range) const
-  {
-    Point_3 hint = initial_hint;
-    double hdist = 0;
-    for( std::size_t i = range.begin(); i != range.end(); ++i)
-    {
-      hint = tree.closest_point(sample_points[i], hint);
-      typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
-      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,sample_points[i]) ));
-      if (d>hdist) hdist=d;
-    }
-
-    if (hdist > distance->load())
-      distance->store(hdist);
-  }
-};
-#endif
 
 /** \ingroup PMP_distance_grp
  * generates points taken on `tm` and outputs them to `out`, the sampling method
@@ -516,33 +554,9 @@ double approximate_Hausdorff_distance(
   tree.accelerate_distance_queries();
   tree.build();
   Point_3 hint = get(vpm, *vertices(tm).first);
-#if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
-#else
-  if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
-  {
-    tbb::atomic<double> distance;
-    distance.store(0);
-    Distance_computation<Tree, Point_3> f(tree, hint, sample_points, &distance);
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
-    return distance;
-  }
-  else
-#endif
-  {
-    double hdist = 0;
-    BOOST_FOREACH(const Point_3& pt, sample_points)
-    {
-      hint = tree.closest_point(pt, hint);
-      typename Kernel::Compute_squared_distance_3 squared_distance;
-      typename Kernel::FT dist = squared_distance(hint,pt);
-      double d = to_double(CGAL::approximate_sqrt(dist));
-      if(d>hdist)
-        hdist=d;
-    }
-    return hdist;
-  }
+
+  return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>
+    (original_sample_points, tree, hint);
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh,
