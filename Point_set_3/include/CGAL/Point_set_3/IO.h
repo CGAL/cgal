@@ -144,10 +144,7 @@ read_ply_point_set(
   return (points_read == reader.m_nb_points);
 }
 
-/*!
-  \ingroup PkgPointSet3IO
- */
-#ifdef CGAL_LINKED_WITH_LASLIB
+#ifdef CGAL_LINKED_WITH_LASLIB || DOXYGEN_RUNNING
 
 namespace internal
 {
@@ -164,6 +161,9 @@ namespace internal
 
 }
   
+/*!
+  \ingroup PkgPointSet3IO
+ */
 template <typename Point, typename Vector>
 bool
 read_las_point_set(

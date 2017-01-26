@@ -553,6 +553,9 @@ namespace internal {
 ///  second element of the tuple should be a functor that constructs
 ///  the value type of `PropertyMap` from N objects of types `T`.
 ///
+/// @sa `Ply::point_reader()`
+/// @sa `Ply::normal_reader()`
+///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.

@@ -60,6 +60,8 @@ namespace Las
   {
     return cpp11::make_tuple (point_map, Property::X(), Property::Y(), Property::Z());
   }
+
+  /// \cond SKIP_IN_MANUAL
   
 namespace internal {
 
@@ -139,17 +141,36 @@ namespace internal {
 
 }
 
+//===================================================================================
+/// \ingroup PkgPointSetProcessing
+/// Saves the [first, beyond) range of points with properties to a
+/// .las stream.
+///
+/// Properties are handled through a variadic list of property
+/// handlers. A property handle is a `std::pair<PropertyMap,
+/// LasProperty >` used to write a scalar value `LasProperty::type` as
+/// a LAS property (for example, writing an `int` vairable as an `int`
+/// LAS property). An exception is used for points that are written
+/// using a `cpp11::tuple` object.
+///
+/// @sa `Las::point_writer()`
+///
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
+/// @tparam PropertyHandler handlers to recover properties.
+///
+/// @return true on success.
 template <typename ForwardIterator,
           typename PointMap,
           typename ... PropertyHandler>
-bool write_las_points_with_properties (std::ostream& stream,
-                                       ForwardIterator first,
-                                       ForwardIterator beyond,
+bool write_las_points_with_properties (std::ostream& stream,  ///< output stream.
+                                       ForwardIterator first, ///< iterator over the first input point.
+                                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                                        cpp11::tuple<PointMap,
                                                     Las::Property::X,
                                                     Las::Property::Y,
-                                                    Las::Property::Z> point_property,
-                                       PropertyHandler&& ... properties)
+                                                    Las::Property::Z> point_property,  ///< property handler for points
+                                       PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
   CGAL_point_set_processing_precondition(first != beyond);
 
@@ -199,6 +220,47 @@ bool write_las_points_with_properties (std::ostream& stream,
   return ! stream.fail();
 }
 
+//===================================================================================
+/// \ingroup PkgPointSetProcessing
+/// Saves the [first, beyond) range of points (positions only) to a
+/// .las stream. 
+///
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
+///
+/// @return true on success.
+
+// This variant requires all parameters.
+template < typename ForwardIterator,
+           typename PointMap >
+bool
+write_las_points(
+  std::ostream& stream, ///< output stream.
+  ForwardIterator first, ///< first input point.
+  ForwardIterator beyond, ///< past-the-end input point.
+  PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
+{
+  return write_las_points_with_properties (stream, first, beyond, Las::point_writer(point_map));
+}
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Identity_property_map.
+template < typename ForwardIterator >
+bool
+write_las_points(
+  std::ostream& stream, ///< output stream.
+  ForwardIterator first, ///< first input point.
+  ForwardIterator beyond) ///< past-the-end input point.
+{
+  return write_las_points(
+    stream,
+    first, beyond,
+    make_identity_property_map(
+    typename std::iterator_traits<ForwardIterator>::value_type())
+    );
+}
+/// @endcond
 
 
 } //namespace CGAL

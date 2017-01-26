@@ -43,23 +43,36 @@
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
 
-## IO ##
+## IO (Points and Normals) ##
 
 - `CGAL::read_las_points()`
-- `CGAL::read_las_points_with_properties()`
 - `CGAL::read_off_points()`
+- `CGAL::read_off_points_and_normals()`
 - `CGAL::read_ply_points()`
 - `CGAL::read_ply_points_and_normals()`
-- `CGAL::read_ply_points_with_properties()`
 - `CGAL::read_xyz_points()`
 - `CGAL::read_xyz_points_and_normals()`
+- `CGAL::write_las_points()`
 - `CGAL::write_off_points()`
+- `CGAL::write_off_points_and_normals()`
 - `CGAL::write_ply_points()`
+- `CGAL::write_ply_points_and_normals()`
 - `CGAL::write_xyz_points()`
-- `CGAL::Las::point_property()`
+- `CGAL::write_xyz_points_and_normals()`
+
+## IO (Points with Properties) ##
+
+- `CGAL::read_las_points_with_properties()`
+- `CGAL::write_las_points_with_properties()`
+- `CGAL::Las::point_reader()`
+- `CGAL::Las::point_writer()`
+- `CGAL::read_ply_points_with_properties()`
+- `CGAL::write_ply_points_with_properties()`
 - `CGAL::Ply::Property<T>`
-- `CGAL::Ply::point_property()`
-- `CGAL::Ply::normal_property()`
+- `CGAL::Ply::point_reader()`
+- `CGAL::Ply::point_writer()`
+- `CGAL::Ply::normal_reader()`
+- `CGAL::Ply::normal_writer()`
 
 
 

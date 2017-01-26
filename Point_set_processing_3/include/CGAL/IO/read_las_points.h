@@ -89,7 +89,7 @@ namespace Las
   cpp11::tuple<PointMap,
                typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
                Property::X, Property::Y, Property::Z >
-  point_property(PointMap point_map)
+  point_reader(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
                               Property::X(), Property::Y(), Property::Z());
@@ -309,6 +309,8 @@ namespace internal {
 ///  - `LAS::Property::B` with type `unsigned short`
 ///  - `LAS::Property::I` with type `unsigned short`
 ///
+/// @sa `Las::point_reader()`
+///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
@@ -330,6 +332,8 @@ bool read_las_points_with_properties (std::istream& stream,
   LASreaderLAS lasreader;
   lasreader.open(stream);
 
+  const LASheader& header = lasreader.header;
+
   while (lasreader.read_point())
     {
       const LASpoint& laspoint = lasreader.point;
@@ -346,6 +350,8 @@ bool read_las_points_with_properties (std::istream& stream,
 
 }
 
+
+/// \cond SKIP_IN_MANUAL
 template <typename OutputIterator,
           typename ... PropertyHandler>
 bool read_las_points_with_properties (std::istream& stream,
@@ -357,7 +363,7 @@ bool read_las_points_with_properties (std::istream& stream,
   return read_las_points_with_properties<OutputValueType>
     (stream, output, properties...);
 }
-
+/// \endcond
 
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
@@ -382,7 +388,7 @@ bool read_las_points(std::istream& stream, ///< input stream.
                      PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   return read_las_points_with_properties (stream, output,
-                                          Las::point_property(point_pmap));
+                                          Las::point_reader(point_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL

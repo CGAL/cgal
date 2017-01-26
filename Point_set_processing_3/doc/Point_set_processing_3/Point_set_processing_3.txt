@@ -75,28 +75,34 @@ a property map.
 
 \section Point_set_processing_3InputOutput Input/Output
 
-\subsection Point_set_processing_3Streams Streams
+\subsection Point_set_processing_3Points_io Points and Normals
 
-We provide functions to read and write sets of points or sets of
-points with normals from the following ASCII file formats: XYZ (three
-point coordinates `x y z` per line or three point coordinates and
-three normal vector coordinates `x y z nx ny nz` per line), OFF
-(%Object File Format) \cgalCite{cgal:p-gmgv16-96} and PLY (Polygon
-File Format).
+\cgal provides functions to read and write sets of points or sets of
+points with normals from the following file formats:
+
+- XYZ (ASCII file three point coordinates `x y z` per line or three
+point coordinates and three normal vector coordinates `x y z nx ny nz`
+per line)
+- OFF (%Object File Format) \cgalCite{cgal:p-gmgv16-96}
+- PLY (Polygon File Format) \cgalCite{cgal:b-ply-11}
+- LAS (Lidar Format). \cgalCite{cgal:asprs-lasf-13} This format does
+not handle normals and requires the \ref thirdpartyLASlib library.
+
+The following functions are available:
 
 - `read_xyz_points()` and `read_xyz_points_and_normals()` 
 - `read_off_points()` and `read_off_points_and_normals()` 
-- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_points_with_properties()`
-- `read_las_points()` and `read_las_points_with_properties()`
+- `read_ply_points()` and `read_ply_points_and_normals()`
+- `read_las_points()`
 - `write_xyz_points()` and `write_xyz_points_and_normals()`
 - `write_off_points()` and `write_off_points_and_normals()`
-- `write_ply_points()` and `write_ply_points_and_normals()` 
+- `write_ply_points()` and `write_ply_points_and_normals()`
+- `write_las_points()`
 
-Note that PLY reading functions accepts binary PLY format in addition
-of ASCII. `read_ply_points_with_properties()` and
-`read_las_points_with_properties()` both provide the user with a means
-to read any point property from the input stream (for example,
-colors), see \ref Point_set_processing_3Example_ply.
+Note that the PLY format handles both ASCII and binary formats. In
+addition, PLY and LAS are extensible formats that can embed additional
+properties. These can also be read by \cgal (see section \ref
+Point_set_processing_3Properties_io).
 
 \subsection Point_set_processing_3Example_io Example
 
@@ -105,17 +111,16 @@ it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
 \cgalExample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
 
-\subsection Point_set_processing_3Example_ply Example of PLY and LAS readers
+\subsection Point_set_processing_3Properties_io Points with Properties
 
 PLY files are designed to embed an arbitrary number of additional
-attributes. More specifically, point sets may contain normal vectors,
-visibility vectors, RGB colors, intensity, etc. As it is not possible
-to provide dedicated functions to every possible combination of PLY
-properties, \cgal provides a simple way to read PLY properties and
-store them in any structure the user needs.
-
-Handling of LAS files works similarly with the difference that the
-properties names and types are fixed and defined by the LAS standard.
+attributes. More specifically, point sets may contain visibility
+vectors, RGB colors, intensity, etc. As it is not possible to provide
+dedicated functions to every possible combination of PLY properties,
+\cgal provides a simple way to read PLY properties and store them in
+any structure the user needs. Handling of LAS files works similarly
+with the difference that the properties names and types are fixed and
+defined by the LAS standard.
 
 Functions `read_ply_points_with_properties()` and
 `read_las_points_with_properties()` allow the user to read any
@@ -128,6 +133,11 @@ descriptor
 
 - a tuple consisting of a property map, a functor to construct the
 objects wanted and multiple PLY/LAS property descriptors
+
+Output functions `write_ply_points_with_properties()` and
+`write_las_points_with_properties()` work similarly.
+
+\subsection Point_set_processing_3Example_ply Examples of PLY and LAS readers
 
 The following example shows how to call
 `read_ply_points_with_properties()` to read a point set with points,
