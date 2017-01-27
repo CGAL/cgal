@@ -23,7 +23,6 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -67,16 +66,18 @@ struct Connected_component_graph
     Connected_component_graph(const Graph& graph,
                      FaceComponentMap fccmap,
                      typename boost::property_traits<FaceComponentMap>::value_type pid)
-        : _graph(graph), property_map(fccmap), patch_index(pid)
+        : _graph(graph), _property_map(fccmap), _patch_index(pid)
     {
     }
 
 
     const Graph& graph()const{ return _graph; }
 
-    FaceComponentMap propertyMap()const{ return property_map; }
+    FaceComponentMap property_map()const{ return _property_map; }
 
-    typename boost::property_traits<FaceComponentMap>::value_type patchIndex()const{ return patch_index; }
+    typename boost::property_traits<FaceComponentMap>::value_type patch_index()const{ return _patch_index; }
+
+    void change_patch_id(typename boost::property_traits<FaceComponentMap>::value_type pid) { _patch_index = pid;}
 
     struct Is_simplex_valid
     {
@@ -91,15 +92,15 @@ struct Connected_component_graph
         bool operator()(Simplex s)
         {
             CGAL_assertion(adapter!=NULL);
-            return (is_valid(s, *adapter));
+            return (in_CC(s, *adapter));
         }
         const Self* adapter;
     };
 
 private:
     const Graph& _graph;
-    FaceComponentMap property_map;
-    typename boost::property_traits<FaceComponentMap>::value_type patch_index;
+    FaceComponentMap _property_map;
+    typename boost::property_traits<FaceComponentMap>::value_type _patch_index;
 };
 
 } // namespace CGAL
@@ -136,12 +137,12 @@ struct graph_traits< CGAL::Connected_component_graph<Graph, FaceComponentMap> >
 
     static vertex_descriptor null_vertex()
     {
-        return vertex_descriptor(BGTG::null_vertex());
+        return BGTG::null_vertex();
     }
 
     static halfedge_descriptor null_halfedge()
     {
-        return halfedge_descriptor(BGTG::null_halfedge());
+        return BGTG::null_halfedge();
     }
 
     static edge_descriptor null_edge()
@@ -151,7 +152,7 @@ struct graph_traits< CGAL::Connected_component_graph<Graph, FaceComponentMap> >
 
     static face_descriptor null_face()
     {
-        return face_descriptor(BGTG::null_face());
+        return BGTG::null_face();
     }
 };
 
@@ -167,39 +168,39 @@ struct graph_traits< const CGAL::Connected_component_graph<Graph, FaceComponentM
 namespace CGAL {
 template <class Graph, typename FaceComponentMap >
 bool
-is_valid(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::face_descriptor f,
+in_CC(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::face_descriptor f,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    return boost::get(w.propertyMap(), f) == w.patchIndex();
+    return boost::get(w.property_map(), f) == w.patch_index();
 }
 
 template <class Graph, typename FaceComponentMap >
 bool
-is_valid(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
+in_CC(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    return is_valid(face(h, w.graph()), w) ||
-            is_valid(face(opposite(h, w.graph()), w.graph()), w);
+    return in_CC(face(h, w.graph()), w) ||
+            in_CC(face(opposite(h, w.graph()), w.graph()), w);
 }
 
 template <class Graph, typename FaceComponentMap >
 bool
-is_valid(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::edge_descriptor e,
+in_CC(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::edge_descriptor e,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    return is_valid(halfedge(e, w.graph()), w);
+    return in_CC(halfedge(e, w.graph()), w);
 }
 
 template <class Graph, typename FaceComponentMap >
 bool
-is_valid(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
+in_CC(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h = halfedge(v, w.graph());
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor hcirc = h;
     do
     {
-        if(is_valid(face(hcirc, w.graph()), w))
+        if(in_CC(face(hcirc, w.graph()), w))
             return true;
         hcirc = opposite(next(hcirc, w.graph()), w.graph());
     }while(hcirc != h);
@@ -226,13 +227,13 @@ typename boost::graph_traits<Graph>::degree_size_type
 degree(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
        const Connected_component_graph<Graph, FaceComponentMap>& w)
 {
-    CGAL_assertion(is_valid(v, w));
+    CGAL_assertion(in_CC(v, w));
     typename boost::graph_traits<Graph>::degree_size_type v_deg = 0;
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h = halfedge(v, w);
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor hcirc = h;
     do
     {
-        if(is_valid(hcirc, w))
+        if(in_CC(hcirc, w))
             ++v_deg;
         hcirc = opposite(next(hcirc, w.graph()), w.graph());
     }while(hcirc != h);
@@ -244,7 +245,7 @@ typename boost::graph_traits<Graph>::degree_size_type
 out_degree(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
            const Connected_component_graph<Graph, FaceComponentMap>& w)
 {
-    CGAL_assertion(is_valid(v, w));
+    CGAL_assertion(in_CC(v, w));
     return std::distance(out_edges(v, w).first ,out_edges(v, w).second);
 }
 
@@ -253,7 +254,7 @@ typename boost::graph_traits<Graph>::degree_size_type
 in_degree(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
           const Connected_component_graph<Graph, FaceComponentMap>& w)
 {
-    CGAL_assertion(is_valid(v, w));
+    CGAL_assertion(in_CC(v, w));
     return std::distance(in_edges(v, w).first ,in_edges(v, w).second);
 }
 
@@ -262,7 +263,7 @@ typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> 
 source(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::edge_descriptor e,
        const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(e, w));
+    CGAL_assertion(in_CC(e, w));
     return source(e, w.graph());
 }
 
@@ -271,7 +272,7 @@ typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> 
 target(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::edge_descriptor e,
        const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(e, w));
+    CGAL_assertion(in_CC(e, w));
     return target(e, w.graph());
 }
 
@@ -281,46 +282,43 @@ edge(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponent
      typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
      const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(u, w) && is_valid(v, w));
+    CGAL_assertion(in_CC(u, w) && in_CC(v, w));
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::edge_descriptor e = edge(u, v, w.graph()).first;
-    bool res = is_valid(e, w);
+    bool res = in_CC(e, w);
     return std::make_pair(e, res);
 }
 
 
 template <class Graph, typename FaceComponentMap >
-std::pair<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_iterator,
-typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_iterator>
 vertices(const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
     typedef typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_iterator vertex_iterator;
     typedef typename boost::graph_traits<Graph >::vertex_iterator g_vertex_iterator;
 
     typename Connected_component_graph<Graph, FaceComponentMap> ::Is_simplex_valid predicate(&w);
-    std::pair<g_vertex_iterator, g_vertex_iterator> original_vertices = vertices(w.graph());
-
-    return make_range(vertex_iterator(predicate, original_vertices.first, original_vertices.second),
-                      vertex_iterator(predicate, original_vertices.second, original_vertices.second));
+    g_vertex_iterator b,e;
+    boost::tie(b,e) = vertices(w.graph());
+    return make_range(vertex_iterator(predicate, b, e),
+                      vertex_iterator(predicate, e, e));
 }
 
 template <class Graph, typename FaceComponentMap >
-std::pair<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::edge_iterator,
-typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::edge_iterator>
 edges(const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
     typedef typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::edge_iterator edge_iterator;
     typedef typename boost::graph_traits<Graph >::edge_iterator g_edge_iterator;
 
     typename Connected_component_graph<Graph, FaceComponentMap> ::Is_simplex_valid predicate(&w);
-    std::pair<g_edge_iterator, g_edge_iterator> original_edges = edges(w.graph());
-
-    return make_range(edge_iterator(predicate, original_edges.first, original_edges.second),
-                      edge_iterator(predicate, original_edges.second, original_edges.second));
+    g_edge_iterator b,e;
+    boost::tie(b,e) = edges(w.graph());
+    return make_range(edge_iterator(predicate, b, e),
+                      edge_iterator(predicate, e, e));
 }
 
 template <class Graph, typename FaceComponentMap >
-std::pair<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::out_edge_iterator,
-typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::out_edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::out_edge_iterator>
 out_edges(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
           const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
@@ -336,8 +334,7 @@ out_edges(typename boost::graph_traits<Connected_component_graph<Graph, FaceComp
 }
 
 template <class Graph, typename FaceComponentMap >
-std::pair<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::in_edge_iterator,
-typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::in_edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::in_edge_iterator>
 in_edges(typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
@@ -360,7 +357,7 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 edge(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
      const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(CGAL::is_valid(h, w));
+    CGAL_assertion(CGAL::in_CC(h, w));
     return edge(h, w.graph());
 }
 
@@ -369,7 +366,7 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 halfedge(typename boost::graph_traits<  Connected_component_graph<Graph, FaceComponentMap> >::edge_descriptor e,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(CGAL::is_valid(e, w));
+    CGAL_assertion(CGAL::in_CC(e, w));
     return halfedge(e, w.graph());
 }
 
@@ -378,12 +375,12 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 halfedge(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(v, w));
+    CGAL_assertion(in_CC(v, w));
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h = halfedge(v, w.graph());
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor hcirc = h;
     do
     {
-        if(is_valid(hcirc, w))
+        if(in_CC(hcirc, w))
             return hcirc;
         hcirc = opposite(next(hcirc, w.graph()), w.graph());
     }while(hcirc != h);
@@ -397,9 +394,9 @@ halfedge(typename boost::graph_traits< Connected_component_graph<Graph, FaceComp
          typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::vertex_descriptor v,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(u, w) && is_valid(v, w));
+    CGAL_assertion(in_CC(u, w) && in_CC(v, w));
     typename boost::graph_traits<Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h = halfedge(u, v, w.graph()).first;
-    return std::make_pair(h, is_valid(h, w));
+    return std::make_pair(h, in_CC(h, w));
 }
 
 
@@ -408,7 +405,7 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 opposite(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(h, w) );
+    CGAL_assertion(in_CC(h, w) );
     return opposite(h, w.graph());
 }
 
@@ -417,7 +414,7 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 source(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
        const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(h, w) );
+    CGAL_assertion(in_CC(h, w) );
     return source(h, w.graph());
 }
 
@@ -426,7 +423,7 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 target(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
        const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(h, w) );
+    CGAL_assertion(in_CC(h, w) );
     return target(h, w.graph());
 }
 
@@ -435,15 +432,15 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 next(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
      const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(is_valid(h, w));
-    if(is_valid(face(h, w.graph()), w))
+    CGAL_assertion(in_CC(h, w));
+    if(in_CC(face(h, w.graph()), w))
         return next(h, w.graph());
 
     //act as a border
     typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor hcirc = h;
     do
     {
-        if(is_valid(hcirc, w))
+        if(in_CC(hcirc, w))
         {
             return hcirc;
         }
@@ -458,15 +455,15 @@ prev(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponen
      const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
 
-    CGAL_assertion(is_valid(h, w));
-    if(is_valid(face(h, w.graph()), w))
+    CGAL_assertion(in_CC(h, w));
+    if(in_CC(face(h, w.graph()), w))
         return prev(h, w.graph());
 
     //act as a border
     typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor hcirc = h;
     do
     {
-        if(is_valid(hcirc, w))
+        if(in_CC(hcirc, w))
         {
             return hcirc;
         }
@@ -508,8 +505,8 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 face(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::halfedge_descriptor h,
      const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(CGAL::is_valid(h, w));
-    if(is_valid(face(h,w.graph()), w))
+    CGAL_assertion(CGAL::in_CC(h, w));
+    if(in_CC(face(h,w.graph()), w))
         return face(h,w.graph());
     else
         return boost::graph_traits< CGAL::Connected_component_graph<Graph, FaceComponentMap> >::null_face();
@@ -520,7 +517,7 @@ typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap>
 halfedge(typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::face_descriptor f,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    CGAL_assertion(CGAL::is_valid(f, w));
+    CGAL_assertion(CGAL::in_CC(f, w));
     return halfedge(f,w.graph());
 }
 
@@ -552,9 +549,9 @@ num_faces(const Connected_component_graph<Graph, FaceComponentMap> & w)
 
 template <class Graph, typename FaceComponentMap >
 bool
-is_valid(const Connected_component_graph<Graph, FaceComponentMap> & w, bool verbose = false)
+in_CC(const Connected_component_graph<Graph, FaceComponentMap> & w, bool verbose = false)
 {
-    return is_valid(w.graph(),verbose);
+    return in_CC(w.graph(),verbose);
 }
 
 template <class Graph, typename FaceComponentMap, class PropertyTag>

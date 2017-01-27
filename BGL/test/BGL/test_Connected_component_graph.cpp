@@ -1,5 +1,5 @@
 #include <CGAL/boost/graph/Connected_component_graph.h>
-
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include "test_Prefix.h"
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/foreach.hpp>
@@ -401,7 +401,6 @@ main()
   CGAL_assertion(
         prev(prev(prev(h, fga), fga), fga) == h
         );
-
   //check degree
   CGAL_assertion(degree(v, fga) == 2);
   //check in_edges and out_edges
