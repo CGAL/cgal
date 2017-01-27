@@ -469,7 +469,9 @@ public:
 		/// \pre `!empty()`
 		Point_and_primitive_id closest_point_and_primitive(const Point& query) const;
 
+		Point_and_primitive_id closest_point_and_primitive_dimension_index(const Point& query, unsigned int& dim, unsigned int& index) const;
 
+		Point_and_primitive_id closest_point_and_primitive_dimension_index(const Point& query, const Point_and_primitive_id& hint, unsigned int& dim, unsigned int& index) const;
     ///@}
 
     /// \name Accelerating the Distance Queries
@@ -1274,6 +1276,32 @@ public:
 		return projection_traits.closest_point_and_primitive();
 	}
 
+
+
+	// closest point with user-specified hint
+	template<typename Tr>
+	typename AABB_tree<Tr>::Point_and_primitive_id
+		AABB_tree<Tr>::closest_point_and_primitive_dimension_index(const Point& query, unsigned int& dim, unsigned int& index) const
+	{
+		CGAL_precondition(!empty());
+		return closest_point_and_primitive_dimension_index(query,best_hint(query),dim,index);
+	}
+
+	// closest point with user-specified hint
+	template<typename Tr>
+	typename AABB_tree<Tr>::Point_and_primitive_id
+		AABB_tree<Tr>::closest_point_and_primitive_dimension_index(const Point& query,
+			const Point_and_primitive_id& hint, unsigned int& dim, unsigned int& index) const
+	{
+		CGAL_precondition(!empty());
+    using namespace CGAL::internal::AABB_tree;
+    typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
+		Projection_traits_dimension_index<AABBTraits> projection_traits(hint.first,hint.second,m_traits);
+		this->traversal(query, projection_traits);
+		dim = projection_traits.closest_projection_dimension_index().dimension;
+		index = projection_traits.closest_projection_dimension_index().index;
+		return projection_traits.closest_point_and_primitive();
+	}
 } // end namespace CGAL
 
 #include <CGAL/internal/AABB_tree/AABB_ray_intersection.h>

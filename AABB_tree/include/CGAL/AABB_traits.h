@@ -401,10 +401,23 @@ public:
     {
       GeomTraits geom_traits;
       Point closest_point = geom_traits.construct_projected_point_3_object()(
-        internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
+      internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
       return
         geom_traits.compare_distance_3_object()(p, closest_point, bound)==LARGER ?
         bound : closest_point;
+    }
+
+  Projection_dimension_index<Point>
+  operator()(const Point& p, const Primitive& pr, const Projection_dimension_index<Point>& bound, Tag_true tag) const
+  {
+    GeomTraits geom_traits;
+    Projection_dimension_index<Point> pddi = geom_traits.construct_projected_point_3_object()(
+                        p, internal::Primitive_helper<AT>::get_datum(pr,m_traits), tag);
+    Point closest_point = pddi.projected_point;
+
+      return
+        geom_traits.compare_distance_3_object()(p, closest_point, bound.projected_point)==LARGER ?
+        bound : pddi;
     }
   };
 

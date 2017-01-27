@@ -288,7 +288,7 @@ private:
  * @class Projection_traits
  */
 template <typename AABBTraits>
-class Projection_traits
+class Projection_traits_dimension_index
 {
   typedef typename AABBTraits::FT FT;
   typedef typename AABBTraits::Point_3 Point;
@@ -300,24 +300,27 @@ class Projection_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Projection_traits(const Point& hint,
-                    const typename Primitive::Id& hint_primitive,
-                    const AABBTraits& traits)
-    : m_closest_point(hint),
-      m_closest_primitive(hint_primitive), 
+  Projection_traits_dimension_index(const Point& hint,
+                                    const typename Primitive::Id& hint_primitive,
+                                    const AABBTraits& traits)
+    : m_closest_primitive(hint_primitive),
       m_traits(traits)
-  {}
+  {
+    m_closest_point.projected_point = hint;
+  }
 
   bool go_further() const { return true; }
 
   void intersection(const Point& query, const Primitive& primitive)
   {
-    Point new_closest_point = m_traits.closest_point_object()
-      (query, primitive, m_closest_point);
-    if( !m_traits.equal_3_object()(new_closest_point, m_closest_point) )
+    Projection_dimension_index<Point> pddi  = m_traits.closest_point_object()
+      (query, primitive, m_closest_point, Tag_true());
+    Point new_closest_point = pddi.projected_point;
+
+if( !m_traits.equal_3_object()(new_closest_point, m_closest_point.projected_point) )
     {
-      m_closest_primitive = primitive.id();
-      m_closest_point = new_closest_point; // this effectively shrinks the sphere 
+      m_closest_primitive = primitive.id();  //  + dimension_index 
+      m_closest_point = pddi; // this effectively shrinks the sphere 
     }
   }
 
@@ -327,15 +330,22 @@ public:
       (query, node.bbox(), m_closest_point) == CGAL::SMALLER;
   }
 
-  Point closest_point() const { return m_closest_point; }
+  Point closest_point() const { return m_closest_point.projected_point; }
+
   Point_and_primitive_id closest_point_and_primitive() const
   {
     return Point_and_primitive_id(m_closest_point, m_closest_primitive);
   }
 
+  Projection_dimension_index<Point> closest_projection_dimension_index() const
+  {
+    return m_closest_point;
+  }
+
 private:
-  Point m_closest_point;
+  Projection_dimension_index<Point> m_closest_point;
   typename Primitive::Id m_closest_primitive;
+
   const AABBTraits& m_traits;
 };
 
