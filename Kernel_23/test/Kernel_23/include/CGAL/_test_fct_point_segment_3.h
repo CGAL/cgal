@@ -32,29 +32,29 @@ _test_fct_point_segment_3(const R& )
   R k;
   typename R::Construct_projected_point_3 project = k.construct_projected_point_3_object();
   CGAL::Triangle_3<R> t(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>( 3, 0, 0), CGAL::Point_3<R>( 0, 3, 0));
-  int dim, i;
-  
+
+  CGAL::Projection_dimension_index< CGAL::Point_3<R> > pdi;
+  CGAL::Tag_true tag;
+
   CGAL::Point_3<R> p(-1, -1, 0);
-  project.operator()(p,
-                     t,
-                     dim,
-                     i);
-  assert(dim == 0);
-  assert(i == 0);
-    project(CGAL::Point_3<R>(4, -1, 0), t, dim, i);
-    assert((dim == 0) && (i == 1));
-    project(CGAL::Point_3<R>(-1, 4, 0), t, dim, i);
-    assert((dim == 0) && (i == 2));
+  pdi = project(p, t,tag);
+  assert(pdi.dimension == 0);
+  assert(pdi.index == 0);
+    pdi = project(CGAL::Point_3<R>(4, -1, 0), t, tag);
+    assert(pdi.dimension == 0);
+    assert(pdi.index == 1);
+    pdi = project(CGAL::Point_3<R>(-1, 4, 0), t, tag);
+    assert((pdi.dimension == 0) && (pdi.index == 2));
 
-    project(CGAL::Point_3<R>(-1, 1, 0), t, dim, i);
-    assert((dim == 1) && (i == 1));
-    project(CGAL::Point_3<R>(1, -1, 0), t, dim, i);
-    assert((dim == 1) && (i == 2));
-    project(CGAL::Point_3<R>(3, 3, 0), t, dim, i);
-    assert((dim == 1) && (i == 0));
+    pdi = project(CGAL::Point_3<R>(-1, 1, 0), t, tag);
+    assert((pdi.dimension == 1) && (pdi.index == 1));
+    pdi = project(CGAL::Point_3<R>(1, -1, 0), t, tag);
+    assert((pdi.dimension == 1) && (pdi.index == 2));
+    pdi = project(CGAL::Point_3<R>(3, 3, 0), t, tag);
+    assert((pdi.dimension == 1) && (pdi.index == 0));
 
-    project(CGAL::Point_3<R>(1, 1, 1), t, dim, i);
-    assert(dim == 2);
+    pdi = project(CGAL::Point_3<R>(1, 1, 1), t, tag);
+    assert(pdi.dimension == 2);
 
  std::cout << "done" << std::endl;
  return true;

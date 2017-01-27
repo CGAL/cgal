@@ -3150,13 +3150,16 @@ namespace CartesianKernelFunctors {
     operator()( const Segment_3& s, const Point_3& p ) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
 
-    Point_3
-    operator()( const Point_3& p, const Triangle_3& t, int& dim, int& i) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,dim,i,K()); }
+    Projection_dimension_index<Point_3>
+    operator()( const Point_3& p, const Triangle_3& t, const Tag_true& tag) const
+    { Projection_dimension_index<Point_3> pdi = 
+CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,tag,K());
+      return pdi;
+}
 
-    Point_3
-    operator()( const Point_3& p, const Segment_3& s, int& dim, int& i) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,dim,i,K()); }
+    Projection_dimension_index<Point_3>
+    operator()( const Point_3& p, const Segment_3& s, const Tag_true& tag) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,tag,K()); }
   };
 
 
