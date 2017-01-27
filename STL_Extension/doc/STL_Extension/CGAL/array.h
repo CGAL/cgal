@@ -23,7 +23,7 @@ dimension of the array.
 \cgal provides a `make_array` function for this purpose, up to a
 certain number of arguments.
 */
-template< typename T, int >
+template< typename T, std::size_t >
 class array {
 }; /* end cpp11::array */
 
