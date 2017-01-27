@@ -32,7 +32,7 @@ class array {
 /*!
 \relates cpp11::array 
 
-\returns `array<T, N>` where `N` is the number of arguments given to
+\returns `cpp11::array<T, N>` where `N` is the number of arguments given to
 the function. The position of each argument in the array is the same
 as its position in the argument list.
 
