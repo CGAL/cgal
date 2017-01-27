@@ -56,7 +56,7 @@ namespace PLY
   /**
      \ingroup PkgPointSetProcessing
      
-     Class used to identify a PLY property as a type and a name.
+     Class used to identify a %PLY property as a type and a name.
 
      \sa `read_ply_points_with_properties()`
   */
@@ -71,8 +71,8 @@ namespace PLY
   /**
      \ingroup PkgPointSetProcessing
      
-     Generates a PLY property handler to read 3D points. Points are
-     constructed from the input using 3 PLY properties of type
+     Generates a %PLY property handler to read 3D points. Points are
+     constructed from the input using 3 %PLY properties of type
      `double` and named `x`, `y` and `z`.
 
      \sa `read_ply_points_with_properties()`
@@ -92,7 +92,7 @@ namespace PLY
   /**
      \ingroup PkgPointSetProcessing
      
-     Generates a PLY property handler to read 3D normal
+     Generates a %PLY property handler to read 3D normal
      vectors. Vectors are constructed from the input using 3 PLY
      properties of type `double` and named `nx`, `ny` and `nz`.
 
@@ -542,13 +542,13 @@ namespace internal {
 /// handlers. A property handle can either be:
 ///
 ///  - A `std::pair<PropertyMap, PLY::Property<T> >` if the user wants
-///  to read a PLY property as a scalar value T (for example, storing
-///  an `int` PLY property into an `int` variable).
+///  to read a %PLY property as a scalar value T (for example, storing
+///  an `int` %PLY property into an `int` variable).
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, Constructor,
 ///  PLY::Property<T>...>` if the user wants to use one or several PLY
 ///  properties to construct a complex object (for example, storing 3
-///  `uchar` PLY properties into a %Color object that can for example
+///  `uchar` %PLY properties into a %Color object that can for example
 ///  be a `CGAL::cpp11::array<unsigned char, 3>`). In that case, the
 ///  second element of the tuple should be a functor that constructs
 ///  the value type of `PropertyMap` from N objects of types `T`.

@@ -48,7 +48,7 @@ namespace LAS
   /**
      \ingroup PkgPointSetProcessing
      
-     Generates a LAS property handler to write 3D points. 
+     Generates a %LAS property handler to write 3D points. 
 
      \sa `write_las_points_with_properties()`
 
@@ -148,10 +148,13 @@ namespace internal {
 ///
 /// Properties are handled through a variadic list of property
 /// handlers. A property handle is a `std::pair<PropertyMap,
-/// LasProperty >` used to write a scalar value `LasProperty::type` as
-/// a LAS property (for example, writing an `int` vairable as an `int`
-/// LAS property). An exception is used for points that are written
-/// using a `cpp11::tuple` object.
+/// LAS::Property::Tag >` used to write a scalar value
+/// `LAS::Property::Tag::type` as a %LAS property (for example,
+/// writing an `int` vairable as an `int` %LAS property). An exception
+/// is used for points that are written using a `cpp11::tuple` object.
+///
+/// See documentation of `read_las_points_with_properties()` for the
+/// list of available `LAS::Property::Tag` classes.
 ///
 /// @sa `LAS::make_point_writer()`
 ///

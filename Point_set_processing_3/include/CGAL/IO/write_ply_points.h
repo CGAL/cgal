@@ -39,8 +39,8 @@ namespace PLY {
   /**
      \ingroup PkgPointSetProcessing
      
-     Generates a PLY property handler to write 3D points. Points are
-     written as 3 PLY properties of type `double` and named `x`, `y`
+     Generates a %PLY property handler to write 3D points. Points are
+     written as 3 %PLY properties of type `double` and named `x`, `y`
      and `z`.
 
      \sa `write_ply_points_with_properties()`
@@ -57,8 +57,8 @@ namespace PLY {
   /**
      \ingroup PkgPointSetProcessing
      
-     Generates a PLY property handler to write 3D normal
-     vectors. Vectors are written as 3 PLY properties of type `double`
+     Generates a %PLY property handler to write 3D normal
+     vectors. Vectors are written as 3 %PLY properties of type `double`
      and named `nx`, `ny` and `nz`.
 
      \sa `write_ply_points_with_properties()`
@@ -249,15 +249,15 @@ namespace internal {
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
 /// Saves the [first, beyond) range of points with properties to a
-/// .ply stream. PLY is either ASCII or binary depending on the value
+/// .ply stream. %PLY is either ASCII or binary depending on the value
 /// of `CGAL::get_mode(stream)`.
 ///
 /// Properties are handled through a variadic list of property
 /// handlers. A property handle can either be:
 ///
 ///  - A `std::pair<PropertyMap, PLY::Property<T> >` if the user wants
-///  to write a scalar value T as a PLY property (for example, writing
-///  an `int` variable as an `int` PLY property).
+///  to write a scalar value T as a %PLY property (for example, writing
+///  an `int` variable as an `int` %PLY property).
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, PLY::Property<T>...>` if the
 ///  user wants to write a complex object as several PLY
@@ -314,7 +314,7 @@ write_ply_points_with_properties(
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
 /// Saves the [first, beyond) range of points (positions + normals) to
-/// a .ply stream. PLY is either ASCII or binary depending on the
+/// a .ply stream. %PLY is either ASCII or binary depending on the
 /// value of `CGAL::get_mode(stream)`.
 ///
 /// \pre normals must be unit vectors
@@ -370,7 +370,7 @@ write_ply_points_and_normals(
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
 /// Saves the [first, beyond) range of points (positions only) to a
-/// .ply stream. PLY is either ASCII or binary depending on the value
+/// .ply stream. %PLY is either ASCII or binary depending on the value
 /// of `CGAL::get_mode(stream)`.
 ///
 /// @tparam ForwardIterator iterator over input points.

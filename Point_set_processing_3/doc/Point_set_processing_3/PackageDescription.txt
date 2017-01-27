@@ -64,15 +64,15 @@
 
 - `CGAL::read_las_points_with_properties()`
 - `CGAL::write_las_points_with_properties()`
-- `CGAL::Las::point_reader()`
-- `CGAL::Las::point_writer()`
+- `CGAL::LAS::make_point_reader()`
+- `CGAL::LAS::make_point_writer()`
 - `CGAL::read_ply_points_with_properties()`
 - `CGAL::write_ply_points_with_properties()`
-- `CGAL::Ply::Property<T>`
-- `CGAL::Ply::point_reader()`
-- `CGAL::Ply::point_writer()`
-- `CGAL::Ply::normal_reader()`
-- `CGAL::Ply::normal_writer()`
+- `CGAL::PLY::Property<T>`
+- `CGAL::PLY::make_point_reader()`
+- `CGAL::PLY::make_point_writer()`
+- `CGAL::PLY::make_normal_reader()`
+- `CGAL::PLY::make_normal_writer()`
 
 
 

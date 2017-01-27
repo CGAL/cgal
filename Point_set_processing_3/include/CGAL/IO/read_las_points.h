@@ -77,8 +77,8 @@ namespace LAS
   /**
      \ingroup PkgPointSetProcessing
      
-     Generates a LAS property handler to read 3D points. Points are
-     constructed from the input the using 3 LAS properties
+     Generates a %LAS property handler to read 3D points. Points are
+     constructed from the input the using 3 %LAS properties
      `LAS::Property::X`, `LAS::Property::Y` and `LAS::Property::Z`.
 
      \sa `read_las_points_with_properties()`
@@ -270,20 +270,20 @@ namespace internal {
 /// Properties are handled through a variadic list of property
 /// handlers. A property handler can either be:
 ///
-///  - A `std::pair<PropertyMap, LASProperty >` if the user wants to
-///  read a LAS property as a scalar value `LASProperty::type` (for
-///  example, storing an `int` LAS property into an `int` variable).
+///  - A `std::pair<PropertyMap, LAS::Property::Tag >` if the user wants to
+///  read a %LAS property as a scalar value `LAS::Property::Tag::type` (for
+///  example, storing an `int` %LAS property into an `int` variable).
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, Constructor,
-///  LASProperty...>` if the user wants to use one or several LAS
-///  properties to construct a complex object (for example, storing 4
-///  `unsigned short` LAS properties into a %Color object that can for
-///  example be a `CGAL::cpp11::array<unsigned short, 4>`). In that
-///  case, the second element of the tuple should be a functor that
-///  constructs the value type of `PropertyMap` from N objects of
-///  of type `LASProperty::type`.
+///  LAS::Property::Tag...>` if the user wants to use one or several
+///  %LAS properties to construct a complex object (for example,
+///  storing 4 `unsigned short` %LAS properties into a %Color object
+///  that can for example be a `CGAL::cpp11::array<unsigned short,
+///  4>`). In that case, the second element of the tuple should be a
+///  functor that constructs the value type of `PropertyMap` from N
+///  objects of of type `LAS::Property::Tag::type`.
 ///
-/// The LAS standard defines a fixed set of properties accessible
+/// The %LAS standard defines a fixed set of properties accessible
 /// through the following tag classes:
 ///
 ///  - `LAS::Property::X` with type `double`
