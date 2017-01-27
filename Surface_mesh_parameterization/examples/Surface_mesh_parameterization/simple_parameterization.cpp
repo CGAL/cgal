@@ -24,7 +24,7 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/three_peaks.off");
+  std::ifstream in((argc>1) ? argv[1] : "data/nefertiti.off");
   if(!in) {
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;

@@ -30,7 +30,7 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/nefertiti.off");
+  std::ifstream in((argc>1) ? argv[1] : "data/three_peaks.off");
   if(!in) {
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
@@ -39,17 +39,17 @@ int main(int argc, char * argv[])
   SurfaceMesh sm;
   in >> sm;
 
+  // A halfedge on the border
   halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(sm).first;
 
   // The 2D points of the uv parametrisation will be written into this map
-  SurfaceMesh::Property_map<vertex_descriptor, Point_2> uvpm;
-  bool created;
-  boost::tie(uvpm, created) = sm.add_property_map<vertex_descriptor, Point_2>("v:uv");
+  typedef SurfaceMesh::Property_map<vertex_descriptor, Point_2>  UV_pmap;
+  UV_pmap uv_map = sm.add_property_map<vertex_descriptor, Point_2>("v:uv").first;
 
   typedef SMP::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
   typedef SMP::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
 
-  SMP::Error_code err = SMP::parameterize(sm, Parameterizer(), bhd, uvpm);
+  SMP::Error_code err = SMP::parameterize(sm, Parameterizer(), bhd, uv_map);
 
   if(err != SMP::OK) {
     std::cerr << "Error: " << SMP::get_error_message(err) << std::endl;
@@ -57,7 +57,7 @@ int main(int argc, char * argv[])
   }
 
   std::ofstream out("result.off");
-  SMP::IO::output_uvmap_to_off(sm, bhd, uvpm, out);
+  SMP::IO::output_uvmap_to_off(sm, bhd, uv_map, out);
 
   return 0;
 }

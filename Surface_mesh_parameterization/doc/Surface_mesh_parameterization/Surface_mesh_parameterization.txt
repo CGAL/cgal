@@ -66,8 +66,9 @@ Error_code parameterize(TriangleMesh & mesh,
 \endcode
 
 The function `parameterize()` applies a default surface parameterization
-method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03},
-to the connected component of the mesh of type `TriangleMesh` with the border given by the halfedge `bhd`.
+method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03} (see Section
+\ref Surface_mesh_parameterizationFloaterMean), to the connected component of the
+mesh of type `TriangleMesh` with the border given by the halfedge `bhd`.
 This border is parameterized with an arc-length circular border parameterization.
 The sparse linear solver of the \ref thirdpartyEigen library is used.
 
@@ -80,11 +81,24 @@ The result is stored in a property map (whose type is here VertexUVMap)
 for the mesh vertices. See also Chapter \ref PkgProperty_mapSummary.
 
 \subsection Surface_mesh_parameterizationDefaultExample Default Parameterization Example
-In the following example, we apply the default parameterization to a
-`Surface_mesh` mesh. We store the UV-coordinates as a vertex property
+In the following example, we apply the default parameterization (Floater Mean Value
+Coordinates) to a `Surface_mesh` mesh. We store the UV-coordinates as a vertex property
 using the `Surface_mesh` built-in property mechanism.
 
 \cgalExample{Surface_mesh_parameterization/simple_parameterization.cpp}
+
+Figure \cgalFigureRef{Surface_mesh_parameterizationfigsimple} illustrates the input and output
+of this program.
+
+\cgalFigureAnchor{Surface_mesh_parameterizationfigsimple}
+<center>
+<img src="nefertiti.png" style="width:800px"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigsimple}
+Input (left), parameter space (middle), and textured mesh (right) corresponding to the
+example \ref Surface_mesh_parameterization/simple_parameterization.cpp
+"simple_parameterization.cpp".
+\cgalFigureCaptionEnd
 
 \subsection Surface_mesh_parameterizationEnhancedparameterize Choosing a Parameterization Algorithm
 
@@ -106,25 +120,63 @@ A one-to-one mapping may be guaranteed or not, depending on the choice of the
 Parameterizer_3 algorithm.
 
 In the following example, we use the Discrete Authalic parameterizer with a
-a circular border parameterization.
+circular border parameterization.
 We use a `Surface_mesh` for the mesh and store the UV-coordinates as a vertex property
 using the `Surface_mesh` built-in property mechanism.
 
 \cgalExample{Surface_mesh_parameterization/discrete_authalic.cpp}
 
+Other parameterization methods can easily be swapped in by simply replacing the lines
+
+\code{.cpp}
+
+#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
+
+// ...
+
+typedef SMP::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
+typedef SMP::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
+
+// ...
+
+\endcode
+
+with other compatible border and domain parameterizers, e.g.
+
+\code{.cpp}
+
+#include <CGAL/Surface_mesh_parameterization/Square_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Barycentric_mapping_parameterizer_3.h>
+
+// ...
+
+typedef SMP::Square_border_uniform_parameterizer_3<SurfaceMesh> Border_parameterizer;
+typedef SMP::Barycentric_mapping_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
+
+// ...
+
+\endcode
+
+Which border and which domain parameterizers can be combined is explained in the next section.
+
 \section secSurfaceParameterizationMethods Surface Parameterization Methods
 
 This \cgal package implements surface parameterization methods, such
-as As Rigid as Possible, Least Squares Conformal Maps, Discrete Conformal Map,
-Discrete Authalic Parameterization, Floater Mean Value Coordinates or Tutte
-Barycentric and Orbifold Mappings. These methods are provided as models of the
+as As Rigid as Possible, Tutte Barycentric, Discrete Authalic Parameterization,
+Discrete Conformal Map, Least Squares Conformal Maps, Floater Mean Value Coordinates,
+or Orbifold Tutte Embeddings. These methods are provided as models of the
 `Parameterizer_3` concept.
+
+The different parameterization methods can be classified into three categories
+depending on the type of border parameterization that is required: fixed border,
+free border, and borderless.
 
 \subsection Surface_mesh_parameterizationFixedBorder Fixed Border Surface Parameterizations
 
-Fixed border surface parameterizations need a set of constraints: two
-(u,v) coordinates for each vertex along the border.
-Such border parameterizations are described in Section
+Fixed border surface parameterizations are characterized by having a constrained border
+in parameter space: two (u,v) coordinates for each vertex along the border.
+Different choices exist for such border parameterization methods, described in Section
 \ref secBorderParameterizationsforFixedMethods.
 
 \subsubsection Surface_mesh_parameterizationTutteBarycentric Tutte Barycentric Mapping
@@ -162,7 +214,7 @@ the border is convex. This method solves two
 for both systems) is asymmetric.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigauthalic,authalic.png}
-Discrete Authalic Parameterization
+Discrete Authalic Parameterization. Right: parameter space.
 \cgalFigureEnd
 
 \subsubsection Surface_mesh_parameterizationDiscreteConformal Discrete Conformal Map
@@ -202,7 +254,7 @@ This method solves two \#vertices x \#vertices sparse linear systems. The matrix
 same for both systems) is asymmetric.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigfloater,floater.png}
-Floater Mean Value Coordinates
+Floater Mean Value Coordinates. Right: parameter space.
 \cgalFigureEnd
 
 \subsubsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods
@@ -251,6 +303,8 @@ example \ref Surface_mesh_parameterization/square_border_parameterizer.cpp
 
 \subsection Surface_mesh_parameterizationFreeBorderSurface Free Border Surface Parameterizations
 
+For free border parameterization methods, the vertices of the border are free to move.
+
 \subsubsection Surface_mesh_parameterizationLeastSquares Least Squares Conformal Maps
 
 `Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -265,7 +319,7 @@ is not guaranteed by this method. It solves a (2 \f$ \times\f$
 which implies solving a symmetric matrix.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigLSCM,LSCM.png}
-Least Squares Conformal Maps.
+Least Squares Conformal Maps. Right: parameter space.
 \cgalFigureEnd
 
 \subsubsection Surface_mesh_parameterizationARAP As Rigid As Possible Parameterization
@@ -288,7 +342,7 @@ possible) when &lambda; goes to infinity, or a balance of both.
 <img src="ARAP.png" style="width:800px"/>
 </center>
 \cgalFigureCaptionBegin{Surface_mesh_parameterizationfigARAP}
-As Rigid As Possible parameterization (the cut is traced in red).
+As Rigid As Possible parameterization (the cut is traced in red). Right: parameter space.
 \cgalFigureCaptionEnd
 
 \subsubsection secBorderParameterizationsforFreeMethods Border Parameterizations for Free Methods
@@ -311,16 +365,19 @@ in the current version of this package.
 
 \subsection Surface_mesh_parameterizationBorderless Borderless Surface Parameterizations
 
+Borderless parameterization methods do not require in input a mesh that is homeomorphic
+to a disk.
+
 \subsubsection Surface_mesh_parameterizationOrbi Orbifold Tutte Embeddings
 
 `Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SparseLinearAlgebraTraits_d>`
 
 Orbifold-Tutte Planar Embedding was introduced by Aigerman and Lipman \cgalCite{aigerman2015orbifold}
 and is a generalization of Tutte’s embedding to other topologies, and in particular
-spheres. The orbifold-Tutte embedding bijectively maps the original surface to
-a canonical, topologically equivalent, two-dimensional flat surface called
-an Euclidean orbifold. There are 17 Euclidean orbifolds, of which only the 4 sphere
-orbifolds are implemented here.
+spheres. The orbifold-Tutte embedding bijectively maps the original surface, that is
+required to be a topological ball, to a canonical, topologically equivalent,
+two-dimensional flat surface called an Euclidean orbifold. There are 17 Euclidean
+orbifolds, of which only the 4 sphere orbifolds are implemented here.
 
 The orbifold-Tutte embedding yields a seamless, globally bijective parameterization that,
 similarly to the classic Tutte embedding, only requires solving a sparse linear system
@@ -336,7 +393,7 @@ of these seams have no influence on the result. The `Seam_mesh` structure
 </center>
 \cgalFigureCaptionBegin{Surface_mesh_parameterizationfigOrbifold}
 Type IV Orbifold Tutte Embedding. The (four) base cones are shown in green and the
-virtual cut is shown in red.
+virtual cut is shown in red. Right: parameter space.
 \cgalFigureCaptionEnd
 
 \section secCuttingaMesh Cutting a Mesh

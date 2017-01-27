@@ -79,7 +79,7 @@ int main(int argc, char * argv[])
   // are only stored for the canonical halfedges representing a vertex
   UV_pmap uv_pm = sm.add_property_map<SM_halfedge_descriptor, Point_2>("h:uv").first;
 
-  // a halfedge on the (possibly virtual) border
+  // A halfedge on the (possibly virtual) border
   halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh, CGAL::Polygon_mesh_processing::parameters::all_default()).first;
 
   typedef SMP::Two_vertices_parameterizer_3<Mesh>                Border_parameterizer;
