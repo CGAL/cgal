@@ -46,16 +46,6 @@ namespace cpp0x = cpp11;
 using cpp11::array;
 
 
-struct Construct_array
-{
-  template <typename T, typename... Args>
-  cpp11::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
-  {
-    cpp11::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
-    return a;
-  }
-};
-
 // The make_array() function simply constructs an std::array.
 // It is needed for cases where a std::array is used as a class data
 // member and you want to initialize it in the member initializers list.
@@ -93,6 +83,17 @@ make_array(const T & t, const Args & ... args)
   cpp11::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
   return a;
 }
+
+
+// Functor version
+struct Construct_array
+{
+  template <typename T, typename... Args>
+  cpp11::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  {
+    return make_array (t, args...);
+  }
+};
 
 #else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
@@ -144,6 +145,54 @@ make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
   cpp11::array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
   return a;
 }
+
+// Functor version
+struct Construct_array
+{
+  template < typename T >
+  cpp11::array<T, 1>
+  operator()(const T& b1)
+  {
+    return make_array (b1);
+  }
+
+  template < typename T >
+  cpp11::array<T, 2>
+  operator()(const T& b1, const T& b2)
+  {
+    return make_array (b1, b2);
+  }
+
+  template < typename T >
+  cpp11::array<T, 3>
+  operator()(const T& b1, const T& b2, const T& b3)
+  {
+    return make_array (b1, b2, b3);
+  }
+
+  template < typename T >
+  cpp11::array<T, 4>
+  operator()(const T& b1, const T& b2, const T& b3, const T& b4)
+  {
+    return make_array (b1, b2, b3, b4);
+  }
+
+  template < typename T >
+  cpp11::array<T, 5>
+  operator()(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
+  {
+    return make_array (b1, b2, b3, b4, b5);
+  }
+
+  template < typename T >
+  cpp11::array<T, 6>
+  operator()(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
+             const T& b6)
+  {
+    return make_array (b1, b2, b3, b4, b5, b6);
+  }
+};
+
   
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
