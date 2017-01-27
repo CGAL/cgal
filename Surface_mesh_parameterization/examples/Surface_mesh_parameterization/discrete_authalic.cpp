@@ -30,10 +30,13 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
-  SurfaceMesh sm;
-
   std::ifstream in((argc>1) ? argv[1] : "data/nefertiti.off");
+  if(!in) {
+    std::cerr << "Problem loading the input data" << std::endl;
+    return 1;
+  }
 
+  SurfaceMesh sm;
   in >> sm;
 
   halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(sm).first;

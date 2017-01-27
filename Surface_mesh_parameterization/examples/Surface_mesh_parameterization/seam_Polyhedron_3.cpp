@@ -42,14 +42,13 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
-  PolyMesh sm;
-
   std::ifstream in_mesh((argc>1)?argv[1]:"data/lion.off");
   if(!in_mesh) {
     std::cerr << "Error: problem loading the input data" << std::endl;
     return 1;
   }
 
+  PolyMesh sm;
   in_mesh >> sm;
 
   // Two property maps to store the seam edges and vertices
@@ -73,7 +72,7 @@ int main(int argc, char * argv[])
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 
-  // a halfedge on the (possibly virtual) border
+  // A halfedge on the (possibly virtual) border
   halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
 
   SMP::parameterize(mesh, bhd, uv_pm);

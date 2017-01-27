@@ -42,14 +42,13 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
-  SurfaceMesh sm;
-
   std::ifstream in_mesh((argc>1) ? argv[1] : "data/lion.off");
   if(!in_mesh){
     std::cerr << "Error: problem loading the input data" << std::endl;
     return 1;
   }
 
+  SurfaceMesh sm;
   in_mesh >> sm;
 
   // Two property maps to store the seam edges and vertices
