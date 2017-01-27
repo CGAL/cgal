@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
 #include <CGAL/Surface_mesh_parameterization/ARAP_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Barycentric_mapping_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Discrete_conformal_map_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
@@ -311,18 +312,21 @@ public:
     QAction* actionDAP = new QAction("Discrete Authalic", mw);
     QAction* actionARAP = new QAction("As Rigid As Possible", mw);
     QAction* actionOTE = new QAction("Orbifold Tutte Embedding", mw);
+    QAction* actionBTP = new QAction("Tutte Barycentric", mw);
     actionMVC->setObjectName("actionMVC");
     actionDCP->setObjectName("actionDCP");
     actionLSC->setObjectName("actionLSC");
     actionDAP->setObjectName("actionDAP");
     actionARAP->setObjectName("actionARAP");
     actionOTE->setObjectName("actionOTE");
+    actionBTP->setObjectName("actionBTP");
 
-    _actions << actionMVC
+    _actions << actionARAP
+             << actionBTP
+             << actionDAP
              << actionDCP
              << actionLSC
-             << actionDAP
-             << actionARAP
+             << actionMVC
              << actionOTE;
     autoConnectActions();
     Q_FOREACH(QAction *action, _actions)
@@ -361,6 +365,7 @@ public Q_SLOTS:
   void on_actionDAP_triggered();
   void on_actionARAP_triggered();
   void on_actionOTE_triggered();
+  void on_actionBTP_triggered();
   void on_prevButton_pressed();
   void on_nextButton_pressed();
 
@@ -421,7 +426,7 @@ public Q_SLOTS:
 
 protected:
   enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC,
-                                 PARAM_DAP, PARAM_ARAP, PARAM_OTE};
+                                 PARAM_DAP, PARAM_ARAP, PARAM_OTE, PARAM_BTP};
   void parameterize(Parameterization_method method);
 
 private:
@@ -616,7 +621,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
           edge_pmap));
 
-
   // Next is the gathering of the border halfedges of the connected component.
   // It is wrong to pass the underlying mesh tMesh: a sphere split in half does
   // not have any border if border_halfedges() is run with tMesh.
@@ -805,6 +809,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       status =  parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
       break;
     }
+    case PARAM_BTP:
+    {
+      std::cout << "Parameterize (BTP)..." << std::endl;
+      new_item_name = tr("%1 (parameterized (BTP))").arg(poly_item->name());
+      typedef SMP::Barycentric_mapping_parameterizer_3<Seam_mesh> Parameterizer;
+      status = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
+      break;
+    }
     } //end switch
 
     std::cout << "Connected component " << current_component << ": ";
@@ -921,6 +933,12 @@ void Polyhedron_demo_parameterization_plugin::on_actionOTE_triggered()
 {
   std::cerr << "OTE...";
   parameterize(PARAM_OTE);
+}
+
+void Polyhedron_demo_parameterization_plugin::on_actionBTP_triggered()
+{
+  std::cerr << "BTP...";
+  parameterize(PARAM_BTP);
 }
 
 #include "Parameterization_plugin.moc"
