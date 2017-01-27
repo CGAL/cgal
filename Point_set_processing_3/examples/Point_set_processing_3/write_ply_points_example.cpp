@@ -56,7 +56,7 @@ int main(int, char**)
   
   CGAL::write_ply_points_with_properties
     (f, points.begin(), points.end(),
-     CGAL::PLY::point_writer (Point_map()),
+     CGAL::PLY::make_point_writer (Point_map()),
      CGAL::cpp11::make_tuple(Color_map(),
                              CGAL::PLY::Property<unsigned char>("red"),
                              CGAL::PLY::Property<unsigned char>("green"),

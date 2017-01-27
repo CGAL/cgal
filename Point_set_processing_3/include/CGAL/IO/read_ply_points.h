@@ -83,7 +83,7 @@ namespace PLY
   cpp11::tuple<PointMap,
                typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
                Property<double>, Property<double>, Property<double> >
-  point_reader(PointMap point_map)
+  make_point_reader(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
                               Property<double>("x"), Property<double>("y"), Property<double>("z"));
@@ -104,7 +104,7 @@ namespace PLY
   cpp11::tuple<VectorMap,
                typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
                Property<double>, Property<double>, Property<double> >
-  normal_reader(VectorMap normal_map)
+  make_normal_reader(VectorMap normal_map)
   {
     return cpp11::make_tuple (normal_map, typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3(),
                               Property<double>("nx"), Property<double>("ny"), Property<double>("nz"));
@@ -553,8 +553,8 @@ namespace internal {
 ///  second element of the tuple should be a functor that constructs
 ///  the value type of `PropertyMap` from N objects of types `T`.
 ///
-/// @sa `PLY::point_reader()`
-/// @sa `PLY::normal_reader()`
+/// @sa `PLY::make_point_reader()`
+/// @sa `PLY::make_normal_reader()`
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
@@ -646,8 +646,8 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 {
 
   return read_ply_points_with_properties (stream, output,
-                              PLY::point_reader (point_pmap),
-                              PLY::normal_reader (normal_pmap));
+                              PLY::make_point_reader (point_pmap),
+                              PLY::make_normal_reader (normal_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -726,7 +726,7 @@ bool read_ply_points(std::istream& stream, ///< input stream.
                      PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   return read_ply_points_with_properties (stream, output,
-                              PLY::point_reader (point_pmap));
+                              PLY::make_point_reader (point_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL

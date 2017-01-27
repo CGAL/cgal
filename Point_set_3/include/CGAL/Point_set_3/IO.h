@@ -178,6 +178,7 @@ read_las_point_set(
 
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::template Property_map<float> Float_map;
+  typedef typename Point_set::template Property_map<double> Double_map;
   typedef typename Point_set::template Property_map<unsigned short> Ushort_map;
   typedef typename Point_set::template Property_map<unsigned char> Uchar_map;
   typedef typename Point_set::template Property_map<unsigned int> Uint_map;
@@ -195,6 +196,7 @@ read_las_point_set(
   Uchar_map user_data = point_set.template add_property_map<unsigned char>("user_data", 0).first;
   Ushort_map point_source_ID = point_set.template add_property_map<unsigned short>("point_source_ID", 0).first;
   Uint_map deleted_flag = point_set.template add_property_map<unsigned int>("deleted_flag", 0).first;
+  Double_map gps_time = point_set.template add_property_map<double>("gps_time", 0).first;
   Ushort_map R = point_set.template add_property_map<unsigned short>("R", 0).first;
   Ushort_map G = point_set.template add_property_map<unsigned short>("G", 0).first;
   Ushort_map B = point_set.template add_property_map<unsigned short>("B", 0).first;
@@ -203,20 +205,21 @@ read_las_point_set(
   bool okay
     = read_las_points_with_properties
     (stream, point_set.index_back_inserter(),
-     LAS::point_property (point_set.point_push_map()),
-     std::make_pair (point_set.push_property_map (intensity), LAS::Property::intensity()),
-     std::make_pair (point_set.push_property_map (return_number), LAS::Property::return_number()),
-     std::make_pair (point_set.push_property_map (number_of_returns), LAS::Property::number_of_returns()),
-     std::make_pair (point_set.push_property_map (scan_direction_flag), LAS::Property::scan_direction_flag()),
-     std::make_pair (point_set.push_property_map (edge_of_flight_line), LAS::Property::edge_of_flight_line()),
-     std::make_pair (point_set.push_property_map (classification), LAS::Property::classification()),
-     std::make_pair (point_set.push_property_map (synthetic_flag), LAS::Property::synthetic_flag()),
-     std::make_pair (point_set.push_property_map (keypoint_flag), LAS::Property::keypoint_flag()),
-     std::make_pair (point_set.push_property_map (withheld_flag), LAS::Property::withheld_flag()),
-     std::make_pair (point_set.push_property_map (scan_angle), LAS::Property::scan_angle()),
-     std::make_pair (point_set.push_property_map (user_data), LAS::Property::user_data()),
-     std::make_pair (point_set.push_property_map (point_source_ID), LAS::Property::point_source_ID()),
-     std::make_pair (point_set.push_property_map (deleted_flag), LAS::Property::deleted_flag()),
+     LAS::make_point_reader (point_set.point_push_map()),
+     std::make_pair (point_set.push_property_map (intensity), LAS::Property::Intensity()),
+     std::make_pair (point_set.push_property_map (return_number), LAS::Property::Return_number()),
+     std::make_pair (point_set.push_property_map (number_of_returns), LAS::Property::Number_of_returns()),
+     std::make_pair (point_set.push_property_map (scan_direction_flag), LAS::Property::Scan_direction_flag()),
+     std::make_pair (point_set.push_property_map (edge_of_flight_line), LAS::Property::Edge_of_flight_line()),
+     std::make_pair (point_set.push_property_map (classification), LAS::Property::Classification()),
+     std::make_pair (point_set.push_property_map (synthetic_flag), LAS::Property::Synthetic_flag()),
+     std::make_pair (point_set.push_property_map (keypoint_flag), LAS::Property::Keypoint_flag()),
+     std::make_pair (point_set.push_property_map (withheld_flag), LAS::Property::Withheld_flag()),
+     std::make_pair (point_set.push_property_map (scan_angle), LAS::Property::Scan_angle()),
+     std::make_pair (point_set.push_property_map (user_data), LAS::Property::User_data()),
+     std::make_pair (point_set.push_property_map (point_source_ID), LAS::Property::Point_source_ID()),
+     std::make_pair (point_set.push_property_map (deleted_flag), LAS::Property::Deleted_flag()),
+     std::make_pair (point_set.push_property_map (gps_time), LAS::Property::GPS_time()),
      std::make_pair (point_set.push_property_map (R), LAS::Property::R()),
      std::make_pair (point_set.push_property_map (G), LAS::Property::G()),
      std::make_pair (point_set.push_property_map (B), LAS::Property::B()),
@@ -235,6 +238,7 @@ read_las_point_set(
   internal::check_if_property_is_used (point_set, user_data);
   internal::check_if_property_is_used (point_set, point_source_ID);
   internal::check_if_property_is_used (point_set, deleted_flag);
+  internal::check_if_property_is_used (point_set, gps_time);
   internal::check_if_property_is_used (point_set, R);
   internal::check_if_property_is_used (point_set, G);
   internal::check_if_property_is_used (point_set, B);
@@ -260,6 +264,7 @@ write_las_point_set(
 
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::template Property_map<float> Float_map;
+  typedef typename Point_set::template Property_map<double> Double_map;
   typedef typename Point_set::template Property_map<unsigned short> Ushort_map;
   typedef typename Point_set::template Property_map<unsigned char> Uchar_map;
   typedef typename Point_set::template Property_map<unsigned int> Uint_map;
@@ -328,7 +333,12 @@ write_las_point_set(
   bool remove_deleted_flag;
   boost::tie (deleted_flag, remove_deleted_flag)
     = point_set.template add_property_map<unsigned int>("deleted_flag", 0);
-  
+
+  Double_map gps_time;
+  bool remove_gps_time;
+  boost::tie (gps_time, remove_gps_time)
+    = point_set.template add_property_map<double>("gps_time", 0);
+
   Ushort_map R;
   bool remove_R;
   boost::tie (R, remove_R) = point_set.template add_property_map<unsigned short>("R", 0);
@@ -370,20 +380,21 @@ write_las_point_set(
   bool okay
     = write_las_points_with_properties
     (stream, point_set.begin(), point_set.end(),
-     LAS::point_writer (point_set.point_map()),
-     std::make_pair (intensity, LAS::Property::intensity()),
-     std::make_pair (return_number, LAS::Property::return_number()),
-     std::make_pair (number_of_returns, LAS::Property::number_of_returns()),
-     std::make_pair (scan_direction_flag, LAS::Property::scan_direction_flag()),
-     std::make_pair (edge_of_flight_line, LAS::Property::edge_of_flight_line()),
-     std::make_pair (classification, LAS::Property::classification()),
-     std::make_pair (synthetic_flag, LAS::Property::synthetic_flag()),
-     std::make_pair (keypoint_flag, LAS::Property::keypoint_flag()),
-     std::make_pair (withheld_flag, LAS::Property::withheld_flag()),
-     std::make_pair (scan_angle, LAS::Property::scan_angle()),
-     std::make_pair (user_data, LAS::Property::user_data()),
-     std::make_pair (point_source_ID, LAS::Property::point_source_ID()),
-     std::make_pair (deleted_flag, LAS::Property::deleted_flag()),
+     LAS::make_point_writer (point_set.point_map()),
+     std::make_pair (intensity, LAS::Property::Intensity()),
+     std::make_pair (return_number, LAS::Property::Return_number()),
+     std::make_pair (number_of_returns, LAS::Property::Number_of_returns()),
+     std::make_pair (scan_direction_flag, LAS::Property::Scan_direction_flag()),
+     std::make_pair (edge_of_flight_line, LAS::Property::Edge_of_flight_line()),
+     std::make_pair (classification, LAS::Property::Classification()),
+     std::make_pair (synthetic_flag, LAS::Property::Synthetic_flag()),
+     std::make_pair (keypoint_flag, LAS::Property::Keypoint_flag()),
+     std::make_pair (withheld_flag, LAS::Property::Withheld_flag()),
+     std::make_pair (scan_angle, LAS::Property::Scan_angle()),
+     std::make_pair (user_data, LAS::Property::User_data()),
+     std::make_pair (point_source_ID, LAS::Property::Point_source_ID()),
+     std::make_pair (deleted_flag, LAS::Property::Deleted_flag()),
+     std::make_pair (gps_time, LAS::Property::GPS_time()),
      std::make_pair (R, LAS::Property::R()),
      std::make_pair (G, LAS::Property::G()),
      std::make_pair (B, LAS::Property::B()),
@@ -402,6 +413,7 @@ write_las_point_set(
   if (remove_user_data) point_set.remove_property_map (user_data);
   if (remove_point_source_ID) point_set.remove_property_map (point_source_ID);
   if (remove_deleted_flag) point_set.remove_property_map (deleted_flag);
+  if (remove_gps_time) point_set.remove_property_map (gps_time);
   if (remove_R) point_set.remove_property_map (R);
   if (remove_G) point_set.remove_property_map (G);
   if (remove_B) point_set.remove_property_map (B);

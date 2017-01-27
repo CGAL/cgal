@@ -25,7 +25,7 @@ int main(int argc, char*argv[])
       !CGAL::read_las_points_with_properties
       (in,
        std::back_inserter (points),
-       CGAL::LAS::point_reader (CGAL::First_of_pair_property_map<PointWithColor>()),
+       CGAL::LAS::make_point_reader (CGAL::First_of_pair_property_map<PointWithColor>()),
        CGAL::cpp11::make_tuple
        (CGAL::Second_of_pair_property_map<PointWithColor>(),
         CGAL::Construct_array(),

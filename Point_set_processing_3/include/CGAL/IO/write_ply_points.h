@@ -49,7 +49,7 @@ namespace PLY {
   */
   template <typename PointMap>
   cpp11::tuple<PointMap, Property<double>, Property<double>, Property<double> >
-  point_writer(PointMap point_map)
+  make_point_writer(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, Property<double>("x"), Property<double>("y"), Property<double>("z"));
   }
@@ -67,7 +67,7 @@ namespace PLY {
   */
   template <typename VectorMap>
   cpp11::tuple<VectorMap, Property<double>, Property<double>, Property<double> >
-  normal_writer(VectorMap normal_map)
+  make_normal_writer(VectorMap normal_map)
   {
     return cpp11::make_tuple (normal_map, Property<double>("nx"), Property<double>("ny"), Property<double>("nz"));
   }
@@ -266,8 +266,8 @@ namespace internal {
 ///  `PropertyMap::value_type` that handles both ASCII and binary
 ///  output (see `CGAL::get_mode()`).
 ///
-/// @sa `PLY::point_writer()`
-/// @sa `PLY::normal_writer()`
+/// @sa `PLY::make_point_writer()`
+/// @sa `PLY::make_normal_writer()`
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PropertyHandler handlers to recover properties.
@@ -341,8 +341,8 @@ write_ply_points_and_normals(
   return write_ply_points_with_properties(
     stream,
     first, beyond,
-    PLY::point_writer(point_map),
-    PLY::normal_writer(normal_map));
+    PLY::make_point_writer(point_map),
+    PLY::make_normal_writer(normal_map));
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -389,7 +389,7 @@ write_ply_points(
   ForwardIterator beyond, ///< past-the-end input point.
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return write_ply_points_with_properties (stream, first, beyond, PLY::point_writer(point_map));
+  return write_ply_points_with_properties (stream, first, beyond, PLY::make_point_writer(point_map));
 }
 
 /// @cond SKIP_IN_MANUAL

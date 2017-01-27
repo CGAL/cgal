@@ -52,20 +52,20 @@ namespace LAS
     struct X                   { typedef double type; };
     struct Y                   { typedef double type; };
     struct Z                   { typedef double type; };
-    struct intensity           { typedef unsigned short type; };
-    struct return_number       { typedef unsigned char type; };
-    struct number_of_returns   { typedef unsigned char type; };
-    struct scan_direction_flag { typedef unsigned char type; };
-    struct edge_of_flight_line { typedef unsigned char type; };
-    struct classification      { typedef unsigned char type; };
-    struct synthetic_flag      { typedef unsigned char type; };
-    struct keypoint_flag       { typedef unsigned char type; };
-    struct withheld_flag       { typedef unsigned char type; };
-    struct scan_angle          { typedef float type; };
-    struct user_data           { typedef unsigned char type; };
-    struct point_source_ID     { typedef unsigned short type; };
-    struct deleted_flag        { typedef unsigned int type; };
-    struct gps_time            { typedef double type; };
+    struct Intensity           { typedef unsigned short type; };
+    struct Return_number       { typedef unsigned char type; };
+    struct Number_of_returns   { typedef unsigned char type; };
+    struct Scan_direction_flag { typedef unsigned char type; };
+    struct Edge_of_flight_line { typedef unsigned char type; };
+    struct Classification      { typedef unsigned char type; };
+    struct Synthetic_flag      { typedef unsigned char type; };
+    struct Keypoint_flag       { typedef unsigned char type; };
+    struct Withheld_flag       { typedef unsigned char type; };
+    struct Scan_angle          { typedef float type; };
+    struct User_data           { typedef unsigned char type; };
+    struct Point_source_ID     { typedef unsigned short type; };
+    struct Deleted_flag        { typedef unsigned int type; };
+    struct GPS_time            { typedef double type; };
     struct R                   { typedef unsigned short type; };
     struct G                   { typedef unsigned short type; };
     struct B                   { typedef unsigned short type; };
@@ -89,7 +89,7 @@ namespace LAS
   cpp11::tuple<PointMap,
                typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
                Property::X, Property::Y, Property::Z >
-  point_reader(PointMap point_map)
+  make_point_reader(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
                               Property::X(), Property::Y(), Property::Z());
@@ -105,33 +105,33 @@ namespace internal {
   { v = r.get_y(); }
   void get_value(const LASpoint& r, double& v, LAS::Property::Z&)
   { v = r.get_z(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::intensity&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::Intensity&)
   { v = r.get_intensity(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::return_number&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Return_number&)
   { v = r.get_return_number(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::number_of_returns&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Number_of_returns&)
   { v = r.get_number_of_returns(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::scan_direction_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Scan_direction_flag&)
   { v = r.get_scan_direction_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::edge_of_flight_line&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Edge_of_flight_line&)
   { v = r.get_edge_of_flight_line(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::classification&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Classification&)
   { v = r.get_classification(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::synthetic_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Synthetic_flag&)
   { v = r.get_synthetic_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::keypoint_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Keypoint_flag&)
   { v = r.get_keypoint_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::withheld_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::Withheld_flag&)
   { v = r.get_withheld_flag(); }
-  void get_value(const LASpoint& r, float& v, LAS::Property::scan_angle&)
+  void get_value(const LASpoint& r, float& v, LAS::Property::Scan_angle&)
   { v = r.get_scan_angle(); }
-  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::user_data&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::User_data&)
   { v = r.get_user_data(); }
-  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::point_source_ID&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::Point_source_ID&)
   { v = r.get_point_source_ID(); }
-  void get_value(const LASpoint& r, unsigned int& v, LAS::Property::deleted_flag&)
+  void get_value(const LASpoint& r, unsigned int& v, LAS::Property::Deleted_flag&)
   { v = r.get_deleted_flag(); }
-  void get_value(const LASpoint& r, double& v, LAS::Property::gps_time&)
+  void get_value(const LASpoint& r, double& v, LAS::Property::GPS_time&)
   { v = r.get_gps_time(); }
   void get_value(const LASpoint& r, unsigned short& v, LAS::Property::R&)
   { v = r.get_R(); }
@@ -289,27 +289,26 @@ namespace internal {
 ///  - `LAS::Property::X` with type `double`
 ///  - `LAS::Property::Y` with type `double`
 ///  - `LAS::Property::Z` with type `double`
-///  - `LAS::Property::intensity` with type `unsigned short`
-///  - `LAS::Property::return_number` with type `unsigned char`
-///  - `LAS::Property::number_of_returns` with type `unsigned char`
-///  - `LAS::Property::number_of_returns` with type `unsigned char`
-///  - `LAS::Property::scan_direction_flag` with type `unsigned char`
-///  - `LAS::Property::edge_of_flight_line` with type `unsigned char`
-///  - `LAS::Property::classification` with type `unsigned char`
-///  - `LAS::Property::synthetic_flag` with type `unsigned char`
-///  - `LAS::Property::keypoint_flag` with type `unsigned char`
-///  - `LAS::Property::withheld_flag` with type `unsigned char`
-///  - `LAS::Property::scan_angle` with type `double`
-///  - `LAS::Property::user_data` with type `unsigned char`
-///  - `LAS::Property::point_source_ID` with type `unsigned short`
-///  - `LAS::Property::deleted_flag` with type `unsigned int`
-///  - `LAS::Property::gps_time` with type `double`
+///  - `LAS::Property::Intensity` with type `unsigned short`
+///  - `LAS::Property::Return_number` with type `unsigned char`
+///  - `LAS::Property::Number_of_returns` with type `unsigned char`
+///  - `LAS::Property::Scan_direction_flag` with type `unsigned char`
+///  - `LAS::Property::Edge_of_flight_line` with type `unsigned char`
+///  - `LAS::Property::Classification` with type `unsigned char`
+///  - `LAS::Property::Synthetic_flag` with type `unsigned char`
+///  - `LAS::Property::Keypoint_flag` with type `unsigned char`
+///  - `LAS::Property::Withheld_flag` with type `unsigned char`
+///  - `LAS::Property::Scan_angle` with type `double`
+///  - `LAS::Property::User_data` with type `unsigned char`
+///  - `LAS::Property::Point_source_ID` with type `unsigned short`
+///  - `LAS::Property::Deleted_flag` with type `unsigned int`
+///  - `LAS::Property::GPS_time` with type `double`
 ///  - `LAS::Property::R` with type `unsigned short`
 ///  - `LAS::Property::G` with type `unsigned short`
 ///  - `LAS::Property::B` with type `unsigned short`
 ///  - `LAS::Property::I` with type `unsigned short`
 ///
-/// @sa `LAS::point_reader()`
+/// @sa `LAS::make_point_reader()`
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
@@ -386,7 +385,7 @@ bool read_las_points(std::istream& stream, ///< input stream.
                      PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   return read_las_points_with_properties (stream, output,
-                                          LAS::point_reader(point_pmap));
+                                          LAS::make_point_reader(point_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL

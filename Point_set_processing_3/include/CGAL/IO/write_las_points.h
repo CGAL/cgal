@@ -56,7 +56,7 @@ namespace LAS
   */
   template <typename PointMap>
   cpp11::tuple<PointMap, Property::X, Property::Y, Property::Z >
-  point_writer(PointMap point_map)
+  make_point_writer(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, Property::X(), Property::Y(), Property::Z());
   }
@@ -65,33 +65,33 @@ namespace LAS
   
 namespace internal {
 
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::intensity&)
+  void output_value(LASpoint& r, unsigned short& v, LAS::Property::Intensity&)
   { r.set_intensity(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::return_number&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Return_number&)
   { r.set_return_number(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::number_of_returns&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Number_of_returns&)
   { r.set_number_of_returns(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::scan_direction_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Scan_direction_flag&)
   { r.set_scan_direction_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::edge_of_flight_line&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Edge_of_flight_line&)
   { r.set_edge_of_flight_line(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::classification&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Classification&)
   { r.set_classification(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::synthetic_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Synthetic_flag&)
   { r.set_synthetic_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::keypoint_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Keypoint_flag&)
   { r.set_keypoint_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::withheld_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Withheld_flag&)
   { r.set_withheld_flag(v); }
-  void output_value(LASpoint& r, float& v, LAS::Property::scan_angle&)
+  void output_value(LASpoint& r, float& v, LAS::Property::Scan_angle&)
   { r.set_scan_angle_rank(char(v)); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::user_data&)
+  void output_value(LASpoint& r, unsigned char& v, LAS::Property::User_data&)
   { r.set_user_data(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::point_source_ID&)
+  void output_value(LASpoint& r, unsigned short& v, LAS::Property::Point_source_ID&)
   { r.set_point_source_ID(v); }
-  void output_value(LASpoint& r, unsigned int& v, LAS::Property::deleted_flag&)
+  void output_value(LASpoint& r, unsigned int& v, LAS::Property::Deleted_flag&)
   { r.set_deleted_flag(v); }
-  void output_value(LASpoint& r, double& v, LAS::Property::gps_time&)
+  void output_value(LASpoint& r, double& v, LAS::Property::GPS_time&)
   { r.set_gps_time(v); }
   void output_value(LASpoint& r, unsigned short& v, LAS::Property::R&)
   { r.set_R(v); }
@@ -153,7 +153,7 @@ namespace internal {
 /// LAS property). An exception is used for points that are written
 /// using a `cpp11::tuple` object.
 ///
-/// @sa `LAS::point_writer()`
+/// @sa `LAS::make_point_writer()`
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
@@ -241,7 +241,7 @@ write_las_points(
   ForwardIterator beyond, ///< past-the-end input point.
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return write_las_points_with_properties (stream, first, beyond, LAS::point_writer(point_map));
+  return write_las_points_with_properties (stream, first, beyond, LAS::make_point_writer(point_map));
 }
 
 /// @cond SKIP_IN_MANUAL

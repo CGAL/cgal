@@ -75,7 +75,7 @@ a property map.
 
 \section Point_set_processing_3InputOutput Input/Output
 
-\subsection Point_set_processing_3Points_io Points and Normals
+\subsection Point_set_processing_3Points_io Points And Normals
 
 \cgal provides functions to read and write sets of points or sets of
 points with normals from the following file formats:
@@ -111,7 +111,7 @@ it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
 \cgalExample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
 
-\subsection Point_set_processing_3Properties_io Points with Properties
+\subsection Point_set_processing_3Properties_io Points With Properties
 
 PLY files are designed to embed an arbitrary number of additional
 attributes. More specifically, point sets may contain visibility
@@ -137,7 +137,7 @@ objects wanted and multiple PLY/LAS property descriptors
 Output functions `write_ply_points_with_properties()` and
 `write_las_points_with_properties()` work similarly.
 
-\subsection Point_set_processing_3Example_ply Examples of PLY and LAS readers
+\subsection Point_set_processing_3Example_ply Examples Of PLY And LAS readers
 
 The following example shows how to call
 `read_ply_points_with_properties()` to read a point set with points,

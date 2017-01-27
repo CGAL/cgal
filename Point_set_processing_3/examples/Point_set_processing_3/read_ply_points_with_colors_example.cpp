@@ -32,7 +32,7 @@ int main(int argc, char*argv[])
       !CGAL::read_ply_points_with_properties
       (in,
        std::back_inserter (points),
-       CGAL::PLY::point_reader (Point_map()),
+       CGAL::PLY::make_point_reader (Point_map()),
        std::make_pair (Intensity_map(),
                        CGAL::PLY::Property<int>("intensity")),
        CGAL::cpp11::make_tuple (Color_map(),
@@ -40,7 +40,7 @@ int main(int argc, char*argv[])
                                 CGAL::PLY::Property<unsigned char>("red"),
                                 CGAL::PLY::Property<unsigned char>("green"),
                                 CGAL::PLY::Property<unsigned char>("blue")),
-       CGAL::PLY::normal_reader (Normal_map())
+       CGAL::PLY::make_normal_reader (Normal_map())
        ))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
