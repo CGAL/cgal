@@ -27,6 +27,8 @@ template< typename T, int >
 class array {
 }; /* end cpp11::array */
 
+} /* end namespace cpp11 */
+
 /*!
 \relates cpp11::array 
 
@@ -36,7 +38,6 @@ as its position in the argument list.
 
 The maximal number of arguments is `6`.
 */ 
-template <class T> array<T, N> make_array(const T&...); 
+template <class T> cpp11::array<T, N> make_array(const T&...);
 
-} /* end namespace cpp11 */
 } /* end namespace CGAL */
