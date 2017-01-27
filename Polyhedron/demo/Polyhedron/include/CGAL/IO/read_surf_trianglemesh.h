@@ -15,12 +15,50 @@ struct MaterialData
   material outerRegion;
 };
 
+bool get_material_metadata(std::istream& input,
+                           std::string& line,
+                           material& _material)
+{
+  std::istringstream iss;
+  iss.str(line);
+
+  iss >> _material.second;//name
+
+  while (std::getline(input, line))
+  {
+    std::string prop; //property
+    iss.clear();
+    iss.str(line);
+    iss >> prop;
+
+    if (prop.compare("Id") == 0)
+      iss >> _material.first;
+    else if (prop.compare("}") == 0)
+      return true; //end of this material
+    else
+      CGAL_assertion(prop.compare("Color") == 0);
+  }
+  return false;
+}
+
+bool line_starts_with(const std::string& line, const char* cstr)
+{
+  std::string line_copy = line;
+  std::size_t fnws = line_copy.find_first_not_of(" \t");
+  if (fnws != std::string::npos)
+  {
+    line_copy.erase(0, fnws);
+    return (line_copy.find(cstr) == 0);
+  }
+  return false;
+}
+
 /*!
  * read_surf reads a file which extension is .surf and fills `output` with one `Mesh` per patch.
  * Mesh is a model of FaceListGraph.
  */
 template<class Mesh, class NamedParameters>
-void read_surf(std::istream& input, std::vector<Mesh>& output,
+bool read_surf(std::istream& input, std::vector<Mesh>& output,
     std::vector<MaterialData>& metadata,
     CGAL::Bbox_3& grid_box,
     CGAL::cpp11::array<unsigned int, 3>& grid_size,
@@ -42,9 +80,7 @@ void read_surf(std::istream& input, std::vector<Mesh>& output,
     if(fnws != std::string::npos)
       line.erase(0, fnws);
 
-    if(line.compare(0, 9, "Materials") != 0)
-      continue;
-    else
+    if (line_starts_with(line, "Materials"))
     {
       while(std::getline(input, line))
       {
@@ -55,19 +91,9 @@ void read_surf(std::istream& input, std::vector<Mesh>& output,
           break;
         else
         {
-          //get materials metadata
           material _material;
-          iss.clear();
-          iss.str(line);
-          std::string dump;
-          iss >> _material.second;
-          std::getline(input, line);
-          std::getline(input, line);
-          iss.clear();
-          iss.str(line);
-          iss >> dump >> _material.first;
-          std::getline(input, line);
-
+          if (!get_material_metadata(input, line, _material))
+            return false;
           materials.push_back(_material);
         }
       }
@@ -253,15 +279,17 @@ void read_surf(std::istream& input, std::vector<Mesh>& output,
                                    vertices.end(),
                                    null_vertex);
   } // end loop on patches
+
+  return true;
 }
 
 template<class Mesh>
-void read_surf(std::istream& input, std::vector<Mesh>& output,
+bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::vector<MaterialData>& metadata,
   CGAL::Bbox_3& grid_box,
   CGAL::cpp11::array<unsigned int, 3>& grid_size)
 {
-  read_surf(input, output, metadata, grid_box, grid_size,
+  return read_surf(input, output, metadata, grid_box, grid_size,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
