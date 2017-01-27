@@ -121,12 +121,12 @@ read_ply_point_set(
       return false;
     }
 
-  Ply::internal::Ply_reader reader;
+  PLY::internal::PLY_reader reader;
   
   if (!(reader.init (stream)))
     return false;
   
-  Ply::internal::Ply_interpreter_point_set_3<Point, Vector> interpreter (point_set);
+  PLY::internal::PLY_interpreter_point_set_3<Point, Vector> interpreter (point_set);
   interpreter.instantiate_properties (reader);
   
   std::size_t points_read = 0;
@@ -144,7 +144,7 @@ read_ply_point_set(
   return (points_read == reader.m_nb_points);
 }
 
-#ifdef CGAL_LINKED_WITH_LASLIB || DOXYGEN_RUNNING
+#if defined(CGAL_LINKED_WITH_LASLIB) || defined(DOXYGEN_RUNNING)
 
 namespace internal
 {
@@ -203,24 +203,24 @@ read_las_point_set(
   bool okay
     = read_las_points_with_properties
     (stream, point_set.index_back_inserter(),
-     Las::point_property (point_set.point_push_map()),
-     std::make_pair (point_set.push_property_map (intensity), Las::Property::intensity()),
-     std::make_pair (point_set.push_property_map (return_number), Las::Property::return_number()),
-     std::make_pair (point_set.push_property_map (number_of_returns), Las::Property::number_of_returns()),
-     std::make_pair (point_set.push_property_map (scan_direction_flag), Las::Property::scan_direction_flag()),
-     std::make_pair (point_set.push_property_map (edge_of_flight_line), Las::Property::edge_of_flight_line()),
-     std::make_pair (point_set.push_property_map (classification), Las::Property::classification()),
-     std::make_pair (point_set.push_property_map (synthetic_flag), Las::Property::synthetic_flag()),
-     std::make_pair (point_set.push_property_map (keypoint_flag), Las::Property::keypoint_flag()),
-     std::make_pair (point_set.push_property_map (withheld_flag), Las::Property::withheld_flag()),
-     std::make_pair (point_set.push_property_map (scan_angle), Las::Property::scan_angle()),
-     std::make_pair (point_set.push_property_map (user_data), Las::Property::user_data()),
-     std::make_pair (point_set.push_property_map (point_source_ID), Las::Property::point_source_ID()),
-     std::make_pair (point_set.push_property_map (deleted_flag), Las::Property::deleted_flag()),
-     std::make_pair (point_set.push_property_map (R), Las::Property::R()),
-     std::make_pair (point_set.push_property_map (G), Las::Property::G()),
-     std::make_pair (point_set.push_property_map (B), Las::Property::B()),
-     std::make_pair (point_set.push_property_map (I), Las::Property::I()));
+     LAS::point_property (point_set.point_push_map()),
+     std::make_pair (point_set.push_property_map (intensity), LAS::Property::intensity()),
+     std::make_pair (point_set.push_property_map (return_number), LAS::Property::return_number()),
+     std::make_pair (point_set.push_property_map (number_of_returns), LAS::Property::number_of_returns()),
+     std::make_pair (point_set.push_property_map (scan_direction_flag), LAS::Property::scan_direction_flag()),
+     std::make_pair (point_set.push_property_map (edge_of_flight_line), LAS::Property::edge_of_flight_line()),
+     std::make_pair (point_set.push_property_map (classification), LAS::Property::classification()),
+     std::make_pair (point_set.push_property_map (synthetic_flag), LAS::Property::synthetic_flag()),
+     std::make_pair (point_set.push_property_map (keypoint_flag), LAS::Property::keypoint_flag()),
+     std::make_pair (point_set.push_property_map (withheld_flag), LAS::Property::withheld_flag()),
+     std::make_pair (point_set.push_property_map (scan_angle), LAS::Property::scan_angle()),
+     std::make_pair (point_set.push_property_map (user_data), LAS::Property::user_data()),
+     std::make_pair (point_set.push_property_map (point_source_ID), LAS::Property::point_source_ID()),
+     std::make_pair (point_set.push_property_map (deleted_flag), LAS::Property::deleted_flag()),
+     std::make_pair (point_set.push_property_map (R), LAS::Property::R()),
+     std::make_pair (point_set.push_property_map (G), LAS::Property::G()),
+     std::make_pair (point_set.push_property_map (B), LAS::Property::B()),
+     std::make_pair (point_set.push_property_map (I), LAS::Property::I()));
 
   internal::check_if_property_is_used (point_set, intensity);
   internal::check_if_property_is_used (point_set, return_number);
@@ -370,24 +370,24 @@ write_las_point_set(
   bool okay
     = write_las_points_with_properties
     (stream, point_set.begin(), point_set.end(),
-     Las::point_writer (point_set.point_map()),
-     std::make_pair (intensity, Las::Property::intensity()),
-     std::make_pair (return_number, Las::Property::return_number()),
-     std::make_pair (number_of_returns, Las::Property::number_of_returns()),
-     std::make_pair (scan_direction_flag, Las::Property::scan_direction_flag()),
-     std::make_pair (edge_of_flight_line, Las::Property::edge_of_flight_line()),
-     std::make_pair (classification, Las::Property::classification()),
-     std::make_pair (synthetic_flag, Las::Property::synthetic_flag()),
-     std::make_pair (keypoint_flag, Las::Property::keypoint_flag()),
-     std::make_pair (withheld_flag, Las::Property::withheld_flag()),
-     std::make_pair (scan_angle, Las::Property::scan_angle()),
-     std::make_pair (user_data, Las::Property::user_data()),
-     std::make_pair (point_source_ID, Las::Property::point_source_ID()),
-     std::make_pair (deleted_flag, Las::Property::deleted_flag()),
-     std::make_pair (R, Las::Property::R()),
-     std::make_pair (G, Las::Property::G()),
-     std::make_pair (B, Las::Property::B()),
-     std::make_pair (I, Las::Property::I()));
+     LAS::point_writer (point_set.point_map()),
+     std::make_pair (intensity, LAS::Property::intensity()),
+     std::make_pair (return_number, LAS::Property::return_number()),
+     std::make_pair (number_of_returns, LAS::Property::number_of_returns()),
+     std::make_pair (scan_direction_flag, LAS::Property::scan_direction_flag()),
+     std::make_pair (edge_of_flight_line, LAS::Property::edge_of_flight_line()),
+     std::make_pair (classification, LAS::Property::classification()),
+     std::make_pair (synthetic_flag, LAS::Property::synthetic_flag()),
+     std::make_pair (keypoint_flag, LAS::Property::keypoint_flag()),
+     std::make_pair (withheld_flag, LAS::Property::withheld_flag()),
+     std::make_pair (scan_angle, LAS::Property::scan_angle()),
+     std::make_pair (user_data, LAS::Property::user_data()),
+     std::make_pair (point_source_ID, LAS::Property::point_source_ID()),
+     std::make_pair (deleted_flag, LAS::Property::deleted_flag()),
+     std::make_pair (R, LAS::Property::R()),
+     std::make_pair (G, LAS::Property::G()),
+     std::make_pair (B, LAS::Property::B()),
+     std::make_pair (I, LAS::Property::I()));
 
   if (remove_intensity) point_set.remove_property_map (intensity);
   if (remove_return_number) point_set.remove_property_map (return_number);

@@ -22,6 +22,7 @@ typedef CGAL::Nth_of_tuple_property_map<2, PCI> Intensity_map;
 
 namespace std
 {
+  // Define how a color should be stored
   std::ostream& operator<< (std::ostream& stream, const Color& c)
   {
     if (CGAL::get_mode(stream) == CGAL::IO::ASCII)
@@ -51,17 +52,17 @@ int main(int, char**)
                                                i));
 
   std::ofstream f("out.ply");
-  CGAL::set_binary_mode(f);
+  CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
   
   CGAL::write_ply_points_with_properties
     (f, points.begin(), points.end(),
-     CGAL::Ply::point_writer (Point_map()),
+     CGAL::PLY::point_writer (Point_map()),
      CGAL::cpp11::make_tuple(Color_map(),
-                             CGAL::Ply::Property<unsigned char>("red"),
-                             CGAL::Ply::Property<unsigned char>("green"),
-                             CGAL::Ply::Property<unsigned char>("blue"),
-                             CGAL::Ply::Property<unsigned char>("alpha")),
-     std::make_pair (Intensity_map(), CGAL::Ply::Property<int>("intensity")));
+                             CGAL::PLY::Property<unsigned char>("red"),
+                             CGAL::PLY::Property<unsigned char>("green"),
+                             CGAL::PLY::Property<unsigned char>("blue"),
+                             CGAL::PLY::Property<unsigned char>("alpha")),
+     std::make_pair (Intensity_map(), CGAL::PLY::Property<int>("intensity")));
   
   return EXIT_SUCCESS;
 }

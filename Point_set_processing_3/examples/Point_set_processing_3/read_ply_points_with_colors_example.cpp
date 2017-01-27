@@ -32,15 +32,15 @@ int main(int argc, char*argv[])
       !CGAL::read_ply_points_with_properties
       (in,
        std::back_inserter (points),
-       CGAL::Ply::point_reader (Point_map()),
+       CGAL::PLY::point_reader (Point_map()),
        std::make_pair (Intensity_map(),
-                       CGAL::Ply::Property<int>("intensity")),
+                       CGAL::PLY::Property<int>("intensity")),
        CGAL::cpp11::make_tuple (Color_map(),
                                 CGAL::Construct_array(),
-                                CGAL::Ply::Property<unsigned char>("red"),
-                                CGAL::Ply::Property<unsigned char>("green"),
-                                CGAL::Ply::Property<unsigned char>("blue")),
-       CGAL::Ply::normal_reader (Normal_map())
+                                CGAL::PLY::Property<unsigned char>("red"),
+                                CGAL::PLY::Property<unsigned char>("green"),
+                                CGAL::PLY::Property<unsigned char>("blue")),
+       CGAL::PLY::normal_reader (Normal_map())
        ))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;

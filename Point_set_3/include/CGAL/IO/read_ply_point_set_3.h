@@ -29,7 +29,7 @@
 namespace CGAL
 {
 
-namespace Ply
+namespace PLY
 {
 
 namespace internal
@@ -37,7 +37,7 @@ namespace internal
   
 template <typename Point,
           typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
-class Ply_interpreter_point_set_3
+class PLY_interpreter_point_set_3
 {
 public:
   typedef Point_set_3<Point> Point_set;
@@ -47,11 +47,11 @@ private:
   struct Abstract_ply_property_to_point_set_property
   {
     virtual ~Abstract_ply_property_to_point_set_property() { }
-    virtual void assign (Ply_reader& reader, typename Point_set::Index index) = 0;
+    virtual void assign (PLY_reader& reader, typename Point_set::Index index) = 0;
   };
 
   template <typename Type>
-  class Ply_property_to_point_set_property : public Abstract_ply_property_to_point_set_property
+  class PLY_property_to_point_set_property : public Abstract_ply_property_to_point_set_property
   {
     typedef typename Point_set::template Property_map<Type> Map;
     typedef typename Point_set::template Push_property_map<Map> Pmap;
@@ -59,14 +59,14 @@ private:
     Pmap m_pmap;
     std::string m_name;
   public:
-    Ply_property_to_point_set_property (Point_set& ps, const std::string& name)
+    PLY_property_to_point_set_property (Point_set& ps, const std::string& name)
       : m_name (name)
     {
       boost::tie (m_map, boost::tuples::ignore) = ps.add_property_map(name, Type());
       m_pmap = ps.push_property_map (m_map);
     }
     
-    virtual void assign (Ply_reader& reader, typename Point_set::Index index)
+    virtual void assign (PLY_reader& reader, typename Point_set::Index index)
     {
       Type t;
       reader.assign (t, m_name.c_str());
@@ -80,13 +80,13 @@ private:
 
 public:
   
-  Ply_interpreter_point_set_3 (Point_set& point_set)
+  PLY_interpreter_point_set_3 (Point_set& point_set)
     : m_point_set (point_set), m_use_floats (false)
   { }
 
-  void instantiate_properties  (Ply_reader& reader)
+  void instantiate_properties  (PLY_reader& reader)
   {
-    const std::vector<internal::Ply_read_number*>& readers
+    const std::vector<internal::PLY_read_number*>& readers
       = reader.readers();
 
     bool has_normal[3] = { false, false, false };
@@ -99,7 +99,7 @@ public:
             name == "y" ||
             name == "z")
           {
-            if (dynamic_cast<internal::Ply_read_typed_number<float>*>(readers[i]))
+            if (dynamic_cast<internal::PLY_read_typed_number<float>*>(readers[i]))
               m_use_floats = true;
             continue;
           }
@@ -119,52 +119,52 @@ public:
             continue;
           }
 
-        if (dynamic_cast<internal::Ply_read_typed_number<boost::int8_t>*>(readers[i]))
+        if (dynamic_cast<internal::PLY_read_typed_number<boost::int8_t>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<boost::int8_t>(m_point_set,
+              (new PLY_property_to_point_set_property<boost::int8_t>(m_point_set,
                                                                      name));
           }
-        else if (dynamic_cast<internal::Ply_read_typed_number<boost::uint8_t>*>(readers[i]))
+        else if (dynamic_cast<internal::PLY_read_typed_number<boost::uint8_t>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<boost::uint8_t>(m_point_set,
+              (new PLY_property_to_point_set_property<boost::uint8_t>(m_point_set,
                                                                       name));
           }
-        else if (dynamic_cast<internal::Ply_read_typed_number<boost::int16_t>*>(readers[i]))
+        else if (dynamic_cast<internal::PLY_read_typed_number<boost::int16_t>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<boost::int16_t>(m_point_set,
+              (new PLY_property_to_point_set_property<boost::int16_t>(m_point_set,
                                                                       name));
           }
-        else if (dynamic_cast<internal::Ply_read_typed_number<boost::uint16_t>*>(readers[i]))
+        else if (dynamic_cast<internal::PLY_read_typed_number<boost::uint16_t>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<boost::uint16_t>(m_point_set,
+              (new PLY_property_to_point_set_property<boost::uint16_t>(m_point_set,
                                                                        name));
           }
-        else if (dynamic_cast<internal::Ply_read_typed_number<boost::int32_t>*>(readers[i]))
+        else if (dynamic_cast<internal::PLY_read_typed_number<boost::int32_t>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<boost::int32_t>(m_point_set,
+              (new PLY_property_to_point_set_property<boost::int32_t>(m_point_set,
                                                                       name));
           }
-        else if (dynamic_cast<internal::Ply_read_typed_number<boost::uint32_t>*>(readers[i]))
+        else if (dynamic_cast<internal::PLY_read_typed_number<boost::uint32_t>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<boost::uint32_t>(m_point_set,
+              (new PLY_property_to_point_set_property<boost::uint32_t>(m_point_set,
                                                                        name));
           }
-        else if (dynamic_cast<internal::Ply_read_typed_number<float>*>(readers[i]))
+        else if (dynamic_cast<internal::PLY_read_typed_number<float>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<float>(m_point_set,
+              (new PLY_property_to_point_set_property<float>(m_point_set,
                                                              name));
           }
-        else if (dynamic_cast<internal::Ply_read_typed_number<double>*>(readers[i]))
+        else if (dynamic_cast<internal::PLY_read_typed_number<double>*>(readers[i]))
           {
             m_properties.push_back
-              (new Ply_property_to_point_set_property<double>(m_point_set,
+              (new PLY_property_to_point_set_property<double>(m_point_set,
                                                              name));
           }
       }
@@ -173,7 +173,7 @@ public:
       m_point_set.add_normal_map();
   }
   
-  void process_line (Ply_reader& reader)
+  void process_line (PLY_reader& reader)
   {
     m_point_set.insert();
     
@@ -187,7 +187,7 @@ public:
   }
 
   template <typename FT>
-  void process_line (Ply_reader& reader)
+  void process_line (PLY_reader& reader)
   {
     FT x = (FT)0.,y = (FT)0., z = (FT)0.,
       nx = (FT)0., ny = (FT)0., nz = (FT)0.;

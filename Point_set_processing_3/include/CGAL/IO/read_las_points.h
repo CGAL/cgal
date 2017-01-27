@@ -42,7 +42,7 @@
 namespace CGAL {
 
 
-namespace Las
+namespace LAS
 {
 
   /// \cond SKIP_IN_MANUAL
@@ -79,7 +79,7 @@ namespace Las
      
      Generates a LAS property handler to read 3D points. Points are
      constructed from the input the using 3 LAS properties
-     `Las::Property::X`, `Las::Property::Y` and `Las::Property::Z`.
+     `LAS::Property::X`, `LAS::Property::Y` and `LAS::Property::Z`.
 
      \sa `read_las_points_with_properties()`
 
@@ -99,55 +99,55 @@ namespace Las
   
 namespace internal {
 
-  void get_value(const LASpoint& r, double& v, Las::Property::X&)
+  void get_value(const LASpoint& r, double& v, LAS::Property::X&)
   { v = r.get_x(); }
-  void get_value(const LASpoint& r, double& v, Las::Property::Y&)
+  void get_value(const LASpoint& r, double& v, LAS::Property::Y&)
   { v = r.get_y(); }
-  void get_value(const LASpoint& r, double& v, Las::Property::Z&)
+  void get_value(const LASpoint& r, double& v, LAS::Property::Z&)
   { v = r.get_z(); }
-  void get_value(const LASpoint& r, unsigned short& v, Las::Property::intensity&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::intensity&)
   { v = r.get_intensity(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::return_number&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::return_number&)
   { v = r.get_return_number(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::number_of_returns&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::number_of_returns&)
   { v = r.get_number_of_returns(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::scan_direction_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::scan_direction_flag&)
   { v = r.get_scan_direction_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::edge_of_flight_line&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::edge_of_flight_line&)
   { v = r.get_edge_of_flight_line(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::classification&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::classification&)
   { v = r.get_classification(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::synthetic_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::synthetic_flag&)
   { v = r.get_synthetic_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::keypoint_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::keypoint_flag&)
   { v = r.get_keypoint_flag(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::withheld_flag&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::withheld_flag&)
   { v = r.get_withheld_flag(); }
-  void get_value(const LASpoint& r, float& v, Las::Property::scan_angle&)
+  void get_value(const LASpoint& r, float& v, LAS::Property::scan_angle&)
   { v = r.get_scan_angle(); }
-  void get_value(const LASpoint& r, unsigned char& v, Las::Property::user_data&)
+  void get_value(const LASpoint& r, unsigned char& v, LAS::Property::user_data&)
   { v = r.get_user_data(); }
-  void get_value(const LASpoint& r, unsigned short& v, Las::Property::point_source_ID&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::point_source_ID&)
   { v = r.get_point_source_ID(); }
-  void get_value(const LASpoint& r, unsigned int& v, Las::Property::deleted_flag&)
+  void get_value(const LASpoint& r, unsigned int& v, LAS::Property::deleted_flag&)
   { v = r.get_deleted_flag(); }
-  void get_value(const LASpoint& r, double& v, Las::Property::gps_time&)
+  void get_value(const LASpoint& r, double& v, LAS::Property::gps_time&)
   { v = r.get_gps_time(); }
-  void get_value(const LASpoint& r, unsigned short& v, Las::Property::R&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::R&)
   { v = r.get_R(); }
-  void get_value(const LASpoint& r, unsigned short& v, Las::Property::G&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::G&)
   { v = r.get_G(); }
-  void get_value(const LASpoint& r, unsigned short& v, Las::Property::B&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::B&)
   { v = r.get_B(); }
-  void get_value(const LASpoint& r, unsigned short& v, Las::Property::I&)
+  void get_value(const LASpoint& r, unsigned short& v, LAS::Property::I&)
   { v = r.get_I(); }
 
   
   template <std::size_t N>
   struct Filler
   {
-    template <class Value_tuple, class Las_property_tuple>
-    static void fill(const LASpoint& r, Value_tuple& values, Las_property_tuple wrappers)
+    template <class Value_tuple, class LAS_property_tuple>
+    static void fill(const LASpoint& r, Value_tuple& values, LAS_property_tuple wrappers)
     {
       get_value(r, std::get<N>(values), std::get<N+2>(wrappers));
       Filler<N-1>::fill(r, values, wrappers);
@@ -179,8 +179,8 @@ namespace internal {
   template<>
   struct Filler<0>
   {
-    template <class Value_tuple, class Las_property_tuple>
-    static void fill(const LASpoint& r, Value_tuple& values, Las_property_tuple wrappers)
+    template <class Value_tuple, class LAS_property_tuple>
+    static void fill(const LASpoint& r, Value_tuple& values, LAS_property_tuple wrappers)
     {
       get_value(r, std::get<0>(values), std::get<2>(wrappers));
     }
@@ -270,18 +270,18 @@ namespace internal {
 /// Properties are handled through a variadic list of property
 /// handlers. A property handle can either be:
 ///
-///  - A `std::pair<PropertyMap, LasProperty >` if the user wants to
-///  read a LAS property as a scalar value `LasProperty::type` (for
+///  - A `std::pair<PropertyMap, LASProperty >` if the user wants to
+///  read a LAS property as a scalar value `LASProperty::type` (for
 ///  example, storing an `int` LAS property into an `int` variable).
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, Constructor,
-///  LasProperty...>` if the user wants to use one or several LAS
+///  LASProperty...>` if the user wants to use one or several LAS
 ///  properties to construct a complex object (for example, storing 4
-///  `unsigned short` LAS properties into a Color object that can for
+///  `unsigned short` LAS properties into a %Color object that can for
 ///  example be a `CGAL::cpp11::array<unsigned short, 4>`). In that
 ///  case, the second element of the tuple should be a functor that
 ///  constructs the value type of `PropertyMap` from N objects of
-///  of type `LasProperty::type`.
+///  of type `LASProperty::type`.
 ///
 /// The LAS standard defines a fixed set of properties accessible
 /// through the following tag classes:
@@ -309,7 +309,7 @@ namespace internal {
 ///  - `LAS::Property::B` with type `unsigned short`
 ///  - `LAS::Property::I` with type `unsigned short`
 ///
-/// @sa `Las::point_reader()`
+/// @sa `LAS::point_reader()`
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
@@ -332,14 +332,12 @@ bool read_las_points_with_properties (std::istream& stream,
   LASreaderLAS lasreader;
   lasreader.open(stream);
 
-  const LASheader& header = lasreader.header;
-
   while (lasreader.read_point())
     {
       const LASpoint& laspoint = lasreader.point;
       Enriched_point new_point;
 
-      Las::internal::process_properties (laspoint, new_point, properties...);
+      LAS::internal::process_properties (laspoint, new_point, properties...);
 
       *(output ++) = new_point;
     }
@@ -388,7 +386,7 @@ bool read_las_points(std::istream& stream, ///< input stream.
                      PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   return read_las_points_with_properties (stream, output,
-                                          Las::point_reader(point_pmap));
+                                          LAS::point_reader(point_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL

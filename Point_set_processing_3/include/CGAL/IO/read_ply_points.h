@@ -51,7 +51,7 @@ namespace CGAL {
 // float      single-precision float    4
 // double     double-precision float    8
 
-namespace Ply
+namespace PLY
 {
   /**
      \ingroup PkgPointSetProcessing
@@ -114,16 +114,16 @@ namespace Ply
 
 namespace internal {
 
-  class Ply_read_number
+  class PLY_read_number
   {
   protected:
     std::string m_name;
     std::size_t m_format;
     
   public:
-    Ply_read_number (std::string name, std::size_t format)
+    PLY_read_number (std::string name, std::size_t format)
       : m_name (name), m_format (format) { }
-    virtual ~Ply_read_number() { }
+    virtual ~PLY_read_number() { }
 
     const std::string& name () const { return m_name; }
 
@@ -189,12 +189,12 @@ namespace internal {
   };
 
   template <typename Type>
-  class Ply_read_typed_number : public Ply_read_number
+  class PLY_read_typed_number : public PLY_read_number
   {
     mutable Type m_buffer;
   public:
-    Ply_read_typed_number (std::string name, std::size_t format)
-      : Ply_read_number (name, format)
+    PLY_read_typed_number (std::string name, std::size_t format)
+      : PLY_read_number (name, format)
     {
     }
     void get (std::istream& stream) const
@@ -209,18 +209,18 @@ namespace internal {
 
   
 
-  class Ply_reader
+  class PLY_reader
   {
 
-    std::vector<Ply_read_number*> m_readers;
+    std::vector<PLY_read_number*> m_readers;
 
 
   public:
     std::size_t m_nb_points;
 
-    Ply_reader () : m_nb_points (0) { }
+    PLY_reader () : m_nb_points (0) { }
 
-    const std::vector<Ply_read_number*>& readers() const { return m_readers; }
+    const std::vector<PLY_read_number*>& readers() const { return m_readers; }
 
     template <typename Stream>
     bool init (Stream& stream)
@@ -295,21 +295,21 @@ namespace internal {
                     }
 
                   if (     type == "char"   || type == "int8")
-                    m_readers.push_back (new Ply_read_typed_number<boost::int8_t> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<boost::int8_t> (name, format));
                   else if (type == "uchar"  || type == "uint8")
-                    m_readers.push_back (new Ply_read_typed_number<boost::uint8_t> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<boost::uint8_t> (name, format));
                   else if (type == "short"  || type == "int16")
-                    m_readers.push_back (new Ply_read_typed_number<boost::int16_t> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<boost::int16_t> (name, format));
                   else if (type == "ushort" || type == "uint16")
-                    m_readers.push_back (new Ply_read_typed_number<boost::uint16_t> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<boost::uint16_t> (name, format));
                   else if (type == "int"    || type == "int32")
-                    m_readers.push_back (new Ply_read_typed_number<boost::int32_t> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<boost::int32_t> (name, format));
                   else if (type == "uint"   || type == "uint32")
-                    m_readers.push_back (new Ply_read_typed_number<boost::uint32_t> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<boost::uint32_t> (name, format));
                   else if (type == "float"  || type == "float32")
-                    m_readers.push_back (new Ply_read_typed_number<float> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<float> (name, format));
                   else if (type == "double" || type == "float64")
-                    m_readers.push_back (new Ply_read_typed_number<double> (name, format));
+                    m_readers.push_back (new PLY_read_typed_number<double> (name, format));
                 
                   continue;
                 }
@@ -349,7 +349,7 @@ namespace internal {
       return true;
     }
 
-    ~Ply_reader ()
+    ~PLY_reader ()
     {
       for (std::size_t i = 0; i < m_readers.size (); ++ i)
         delete m_readers[i];
@@ -368,8 +368,8 @@ namespace internal {
       for (std::size_t i = 0; i < m_readers.size (); ++ i)
         if (m_readers[i]->name () == tag)
           {
-            Ply_read_typed_number<Type>*
-              reader = dynamic_cast<Ply_read_typed_number<Type>*>(m_readers[i]);
+            PLY_read_typed_number<Type>*
+              reader = dynamic_cast<PLY_read_typed_number<Type>*>(m_readers[i]);
             CGAL_assertion (reader != NULL);
             t = reader->buffer();
             return;
@@ -381,15 +381,15 @@ namespace internal {
     {
       for (std::size_t i = 0; i < m_readers.size (); ++ i)
         if (m_readers[i]->name () == tag)
-          return (dynamic_cast<Ply_read_typed_number<Type>*>(m_readers[i]) != NULL);
+          return (dynamic_cast<PLY_read_typed_number<Type>*>(m_readers[i]) != NULL);
       return false;
     }
     bool does_tag_exist (const char* tag, double)
     {
       for (std::size_t i = 0; i < m_readers.size (); ++ i)
         if (m_readers[i]->name () == tag)
-          return (dynamic_cast<Ply_read_typed_number<double>*>(m_readers[i]) != NULL
-                  || dynamic_cast<Ply_read_typed_number<float>*>(m_readers[i]) != NULL);
+          return (dynamic_cast<PLY_read_typed_number<double>*>(m_readers[i]) != NULL
+                  || dynamic_cast<PLY_read_typed_number<float>*>(m_readers[i]) != NULL);
 
       return false;
     }
@@ -398,12 +398,12 @@ namespace internal {
       for (std::size_t i = 0; i < m_readers.size (); ++ i)
         if (m_readers[i]->name () == tag)
           {
-            Ply_read_typed_number<double>*
-              reader_double = dynamic_cast<Ply_read_typed_number<double>*>(m_readers[i]);
+            PLY_read_typed_number<double>*
+              reader_double = dynamic_cast<PLY_read_typed_number<double>*>(m_readers[i]);
             if (reader_double == NULL)
               {
-                Ply_read_typed_number<float>*
-                  reader_float = dynamic_cast<Ply_read_typed_number<float>*>(m_readers[i]);
+                PLY_read_typed_number<float>*
+                  reader_float = dynamic_cast<PLY_read_typed_number<float>*>(m_readers[i]);
                 CGAL_assertion (reader_float != NULL);
                 t = reader_float->buffer();
               }
@@ -417,7 +417,7 @@ namespace internal {
   };
 
   template <class Reader, class T>
-  void get_value(Reader& r, T& v, Ply::Property<T>& wrapper)
+  void get_value(Reader& r, T& v, PLY::Property<T>& wrapper)
   {
     return r.assign(v, wrapper.name);
   }
@@ -426,8 +426,8 @@ namespace internal {
   template <std::size_t N>
   struct Filler
   {
-    template <class Reader, class Value_tuple, class Ply_property_tuple>
-    static void fill(Reader& r, Value_tuple& values, Ply_property_tuple wrappers)
+    template <class Reader, class Value_tuple, class PLY_property_tuple>
+    static void fill(Reader& r, Value_tuple& values, PLY_property_tuple wrappers)
     {
       get_value(r, std::get<N>(values), std::get<N+2>(wrappers));
       Filler<N-1>::fill(r, values, wrappers);
@@ -459,8 +459,8 @@ namespace internal {
   template<>
   struct Filler<0>
   {
-    template <class Reader, class Value_tuple, class Ply_property_tuple>
-    static void fill(Reader& r, Value_tuple& values, Ply_property_tuple wrappers)
+    template <class Reader, class Value_tuple, class PLY_property_tuple>
+    static void fill(Reader& r, Value_tuple& values, PLY_property_tuple wrappers)
     {
       get_value(r, std::get<0>(values), std::get<2>(wrappers));
     }
@@ -470,8 +470,8 @@ namespace internal {
             typename PropertyMap,
             typename Constructor,
             typename ... T>
-  void process_properties (Ply_reader& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, Ply::Property<T>...>& current)
+  void process_properties (PLY_reader& reader, OutputValueType& new_element,
+                           cpp11::tuple<PropertyMap, Constructor, PLY::Property<T>...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
     cpp11::tuple<T...> values;
@@ -486,8 +486,8 @@ namespace internal {
             typename ... T,
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
-  void process_properties (Ply_reader& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, Ply::Property<T>...>& current,
+  void process_properties (PLY_reader& reader, OutputValueType& new_element,
+                           cpp11::tuple<PropertyMap, Constructor, PLY::Property<T>...>& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
@@ -502,8 +502,8 @@ namespace internal {
 
 
   template <typename OutputValueType, typename PropertyMap, typename T>
-  void process_properties (Ply_reader& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, Ply::Property<T> >& current)
+  void process_properties (PLY_reader& reader, OutputValueType& new_element,
+                           std::pair<PropertyMap, PLY::Property<T> >& current)
   {
     T new_value = T();
     reader.assign (new_value, current.second.name);
@@ -512,8 +512,8 @@ namespace internal {
 
   template <typename OutputValueType, typename PropertyMap, typename T,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
-  void process_properties (Ply_reader& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, Ply::Property<T> >& current,
+  void process_properties (PLY_reader& reader, OutputValueType& new_element,
+                           std::pair<PropertyMap, PLY::Property<T> >& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
@@ -541,20 +541,20 @@ namespace internal {
 /// Properties are handled through a variadic list of property
 /// handlers. A property handle can either be:
 ///
-///  - A `std::pair<PropertyMap, Ply::Property<T> >` if the user wants
+///  - A `std::pair<PropertyMap, PLY::Property<T> >` if the user wants
 ///  to read a PLY property as a scalar value T (for example, storing
 ///  an `int` PLY property into an `int` variable).
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, Constructor,
-///  Ply::Property<T>...>` if the user wants to use one or several PLY
+///  PLY::Property<T>...>` if the user wants to use one or several PLY
 ///  properties to construct a complex object (for example, storing 3
-///  `uchar` PLY properties into a Color object that can for example
+///  `uchar` PLY properties into a %Color object that can for example
 ///  be a `CGAL::cpp11::array<unsigned char, 3>`). In that case, the
 ///  second element of the tuple should be a functor that constructs
 ///  the value type of `PropertyMap` from N objects of types `T`.
 ///
-/// @sa `Ply::point_reader()`
-/// @sa `Ply::normal_reader()`
+/// @sa `PLY::point_reader()`
+/// @sa `PLY::normal_reader()`
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
@@ -580,7 +580,7 @@ bool read_ply_points_with_properties (std::istream& stream,
       return false;
     }
 
-  Ply::internal::Ply_reader reader;
+  PLY::internal::PLY_reader reader;
   
   if (!(reader.init (stream)))
     return false;
@@ -594,7 +594,7 @@ bool read_ply_points_with_properties (std::istream& stream,
 
       OutputValueType new_element;
 
-      Ply::internal::process_properties (reader, new_element, properties...);
+      PLY::internal::process_properties (reader, new_element, properties...);
 
       *(output ++) = new_element;
       
@@ -646,8 +646,8 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 {
 
   return read_ply_points_with_properties (stream, output,
-                              Ply::point_reader (point_pmap),
-                              Ply::normal_reader (normal_pmap));
+                              PLY::point_reader (point_pmap),
+                              PLY::normal_reader (normal_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -726,7 +726,7 @@ bool read_ply_points(std::istream& stream, ///< input stream.
                      PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   return read_ply_points_with_properties (stream, output,
-                              Ply::point_reader (point_pmap));
+                              PLY::point_reader (point_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL
