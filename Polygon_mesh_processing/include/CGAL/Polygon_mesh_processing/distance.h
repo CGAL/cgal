@@ -134,7 +134,7 @@ double approximate_Hausdorff_distance_impl(
   {
     tbb::atomic<double> distance;
     distance.store(0);
-    Distance_computation<Tree, Point_3> f(tree, hint, sample_points, &distance);
+    Distance_computation<AABBTree, typename Kernel::Point_3> f(tree, hint, sample_points, &distance);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return distance;
   }
