@@ -313,7 +313,9 @@ public:
     calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
     std::vector<face_descriptor> all_faces(boost::begin(faces), boost::end(faces));
+    #ifdef CGAL_PMP_REFINE_DEBUG
     CGAL::Timer total_timer; total_timer.start();
+    #endif
     for(int i = 0; i < 10; ++i)
     {
       std::vector<face_descriptor> new_faces;
