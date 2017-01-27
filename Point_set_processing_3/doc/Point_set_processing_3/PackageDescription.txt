@@ -43,7 +43,7 @@
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
 
-## IO (Points and Normals) ##
+## IO (Points And Normals) ##
 
 - `CGAL::read_las_points()`
 - `CGAL::read_off_points()`
@@ -60,7 +60,7 @@
 - `CGAL::write_xyz_points()`
 - `CGAL::write_xyz_points_and_normals()`
 
-## IO (Points with Properties) ##
+## IO (Points With Properties) ##
 
 - `CGAL::read_las_points_with_properties()`
 - `CGAL::write_las_points_with_properties()`
