@@ -57,8 +57,9 @@ Input functions instanciate all the necessary property maps:
 - if found in the input, normal vectors are stored in the usual
 `CGAL::Point_set_3` property `normal` with template type `Vector`
 
-- for PLY input only, other properties are stored as properties in the
-`Point_set_3` class with the name and type given by the PLY header
+- for PLY and LAS input, other properties are stored as properties in
+the `CGAL::Point_set_3` class with the name and type given by the PLY
+header or by the LAS standard.
 
 For a complete documentation of these functions, please refer to the
 \ref PkgPointSetProcessing manual.
