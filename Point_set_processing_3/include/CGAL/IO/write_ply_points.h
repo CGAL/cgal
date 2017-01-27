@@ -272,7 +272,7 @@ namespace internal {
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PropertyHandler handlers to recover properties.
 ///
-/// @return true on success.
+/// @return `true` on success.
 template < typename ForwardIterator,
            typename ... PropertyHandler>
 bool
@@ -324,7 +324,7 @@ write_ply_points_with_properties(
 ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam VectorMap is a model of `ReadablePropertyMap` with a value type  `Vector_3<Kernel>`.
 ///
-/// @return true on success.
+/// @return `true` on success.
 
 // This variant requires all parameters.
 template < typename ForwardIterator,
@@ -377,7 +377,7 @@ write_ply_points_and_normals(
 /// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Point_3<Kernel>`.
 ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
 ///
-/// @return true on success.
+/// @return `true` on success.
 
 // This variant requires all parameters.
 template < typename ForwardIterator,

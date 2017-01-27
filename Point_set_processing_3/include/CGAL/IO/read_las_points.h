@@ -268,7 +268,7 @@ namespace internal {
 /// Potential additional properties are ignored.
 ///
 /// Properties are handled through a variadic list of property
-/// handlers. A property handle can either be:
+/// handlers. A property handler can either be:
 ///
 ///  - A `std::pair<PropertyMap, LASProperty >` if the user wants to
 ///  read a LAS property as a scalar value `LASProperty::type` (for
@@ -315,7 +315,7 @@ namespace internal {
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PropertyHandler handlers to recover properties.
 ///
-/// @return true on success.
+/// @return `true` on success.
 
 // This variant requires all parameters.
 //-----------------------------------------------------------------------------------

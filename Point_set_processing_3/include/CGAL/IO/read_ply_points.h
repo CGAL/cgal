@@ -561,7 +561,7 @@ namespace internal {
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PropertyHandler handlers to recover properties.
 ///
-/// @return true on success.
+/// @return `true` on success.
 
 // This variant requires all parameters.
 //-----------------------------------------------------------------------------------
@@ -631,7 +631,7 @@ bool read_ply_points_with_properties (std::istream& stream,
 /// @tparam PointPMap is a model of `WritablePropertyMap` with  value type `CGAL::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `CGAL::Vector_3`.
 ///
-/// @return true on success.
+/// @return `true` on success.
 
 // This variant requires all parameters.
 //-----------------------------------------------------------------------------------

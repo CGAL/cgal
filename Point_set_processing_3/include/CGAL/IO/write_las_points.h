@@ -159,7 +159,7 @@ namespace internal {
 /// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
 /// @tparam PropertyHandler handlers to recover properties.
 ///
-/// @return true on success.
+/// @return `true` on success.
 template <typename ForwardIterator,
           typename PointMap,
           typename ... PropertyHandler>
@@ -229,7 +229,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 /// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Point_3<Kernel>`.
 ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
 ///
-/// @return true on success.
+/// @return `true` on success.
 
 // This variant requires all parameters.
 template < typename ForwardIterator,
