@@ -236,10 +236,6 @@ and <code>src/</code> directories).
     <li>The class <code>Regular_triangulation_2</code> can take a kernel as template argument,
       that is one no longer has to use <code>Regular_triangulation_euclidea_traits_2</code>,
       although this still works.</li>
-    <li>
-      Add function <code>link_to_face_graph()</code> to copy the set of faces incident to a vertex
-      into a model of <code>FaceGraph</code>.
-    </li>
   </ul>
 
  <h3>3D Triangulations</h3>
@@ -252,8 +248,12 @@ and <code>src/</code> directories).
     <li>Deprecate the class <code>Regular_triangulation_euclidean_traits_3</code>, as the
         weighted point and the function objects for weighted points are part of the concept <code>Kernel</code>/</li>
     <li>The class <code>Regular_triangulation_3</code> can take a kernel as template argument,
-      that is one no longer has to use <code>Regular_triangulation_euclidea_traits_3</code>,
+      that is one no longer has to use <code>Regular_triangulation_euclidean_traits_3</code>,
       although this still works.</li>
+    <li>
+      Add function <code>link_to_face_graph()</code> to copy the set of faces incident to a vertex
+      into a model of <code>FaceGraph</code>.
+    </li>
   </ul>
   </ul>
 <!-- Voronoi Diagrams -->
