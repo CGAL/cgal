@@ -147,7 +147,7 @@ namespace internal {
 /// .las stream.
 ///
 /// Properties are handled through a variadic list of property
-/// handlers. A property handle is a `std::pair<PropertyMap,
+/// handlers. A `PropertyHandle` is a `std::pair<PropertyMap,
 /// LAS::Property::Tag >` used to write a scalar value
 /// `LAS::Property::Tag::type` as a %LAS property (for example,
 /// writing an `int` vairable as an `int` %LAS property). An exception

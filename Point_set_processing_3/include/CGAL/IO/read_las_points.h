@@ -268,7 +268,7 @@ namespace internal {
 /// Potential additional properties are ignored.
 ///
 /// Properties are handled through a variadic list of property
-/// handlers. A property handler can either be:
+/// handlers. A `PropertyHandler` can either be:
 ///
 ///  - A `std::pair<PropertyMap, LAS::Property::Tag >` if the user wants to
 ///  read a %LAS property as a scalar value `LAS::Property::Tag::type` (for

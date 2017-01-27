@@ -253,14 +253,14 @@ namespace internal {
 /// of `CGAL::get_mode(stream)`.
 ///
 /// Properties are handled through a variadic list of property
-/// handlers. A property handle can either be:
+/// handlers. A `PropertyHandler` can either be:
 ///
 ///  - A `std::pair<PropertyMap, PLY::Property<T> >` if the user wants
 ///  to write a scalar value T as a %PLY property (for example, writing
 ///  an `int` variable as an `int` %PLY property).
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, PLY::Property<T>...>` if the
-///  user wants to write a complex object as several PLY
+///  user wants to write a complex object as several %PLY
 ///  properties. In that case, and overload of the stream operator
 ///  `std::operator<<()` must be provided for
 ///  `PropertyMap::value_type` that handles both ASCII and binary
@@ -320,9 +320,9 @@ write_ply_points_with_properties(
 /// \pre normals must be unit vectors
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with  value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam VectorMap is a model of `ReadablePropertyMap` with a value type  `Vector_3<Kernel>`.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with  value type `CGAL::Point_3`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `CGAL::Point_3`.
+/// @tparam VectorMap is a model of `ReadablePropertyMap` with a value type  `CGAL::Vector_3`.
 ///
 /// @return `true` on success.
 
@@ -374,8 +374,8 @@ write_ply_points_and_normals(
 /// of `CGAL::get_mode(stream)`.
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `CGAL::Point_3`.
 ///
 /// @return `true` on success.
 

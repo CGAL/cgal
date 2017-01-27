@@ -539,7 +539,7 @@ namespace internal {
 /// Potential additional point properties and faces are ignored.
 ///
 /// Properties are handled through a variadic list of property
-/// handlers. A property handle can either be:
+/// handlers. A `PropertyHandler` can either be:
 ///
 ///  - A `std::pair<PropertyMap, PLY::Property<T> >` if the user wants
 ///  to read a %PLY property as a scalar value T (for example, storing
