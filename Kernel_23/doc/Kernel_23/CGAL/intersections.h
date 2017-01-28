@@ -68,6 +68,7 @@ In three-dimensional space, the types `Type1` and
 - `Ray_3<Kernel>`
 - `Segment_3<Kernel>`
 - `Triangle_3<Kernel>`.
+- `Iso_cuboid_3<Kernel>`
 - `Bbox_3`.
 
 Also, `Type1` and `Type2` can be respectively of types
