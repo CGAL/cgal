@@ -1,6 +1,6 @@
 #include <CGAL/Mesh_3/io_signature.h>
 #include "Scene_c3t3_item.h"
-
+#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/IO/File_avizo.h>
@@ -56,19 +56,18 @@ bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad() const {
 CGAL::Three::Scene_item*
 Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
-
+    // Open file
+    std::ifstream in(fileinfo.filePath().toUtf8(),
+                     std::ios_base::in|std::ios_base::binary);
+    if(!in) {
+      std::cerr << "Error! Cannot open file "
+                << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+      return NULL;
+    }
+    Scene_c3t3_item* item = new Scene_c3t3_item();
     if(fileinfo.suffix().toLower() == "cgal")
     {
-        // Open file
-        std::ifstream in(fileinfo.filePath().toUtf8(),
-                         std::ios_base::in|std::ios_base::binary);
-        if(!in) {
-          std::cerr << "Error! Cannot open file "
-                    << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-          return NULL;
-        }
 
-        Scene_c3t3_item* item = new Scene_c3t3_item();
         item->setName(fileinfo.baseName());
         item->setScene(scene);
 
@@ -93,11 +92,61 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
           return item;
         }
     }
+    else if (fileinfo.suffix().toLower() == "mesh")
+    {
+      Scene_c3t3_item* item = new Scene_c3t3_item();
+      item->setName(fileinfo.baseName());
+      item->setScene(scene);
+      std::vector<bool> border_infos;
+      bool facets_in_complex = false;
+      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), border_infos))
+      {
+        for( C3t3::Triangulation::All_cells_iterator cit = item->c3t3().triangulation().all_cells_begin();
+             cit != item->c3t3().triangulation().all_cells_end();
+             ++cit)
+        {
+          if(!item->c3t3().triangulation().is_infinite(cit))
+          {
+            CGAL_assertion(cit->info() >= 0);
+            item->c3t3().add_to_complex(cit, cit->info());
+            for(std::size_t i=0; i<4; ++i)
+            {
+              if(cit->surface_patch_index(i)>0)
+              {
+                item->c3t3().add_to_complex(cit, i, cit->info());
+                facets_in_complex = true;
+              }
+            }
+          }
+        }
+        //if there is no facet in the complex, we add the border facets.
+        if(!facets_in_complex)
+        {
+          for( C3t3::Triangulation::All_cells_iterator cit = item->c3t3().triangulation().all_cells_begin();
+               cit != item->c3t3().triangulation().all_cells_end();
+               ++cit)
+          {
+            if(item->c3t3().triangulation().is_infinite(cit))
+            {
+              for(int i=0; i<4; ++i)
+              {
+               if(!item->c3t3().triangulation().is_infinite(cit, i))
+                 item->c3t3().add_to_complex(cit, i, 1);
+              }
+
+            }
+
+          }
+        }
+        item->c3t3_changed();
+        return item;
+      }
+    }
 
 
-
-  // if all loading failed...
-  return NULL;
+    // if all loading failed...
+    delete item;
+    return NULL;
 }
 
 bool Polyhedron_demo_c3t3_binary_io_plugin::canSave(const CGAL::Three::Scene_item* item)
