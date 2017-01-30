@@ -1239,7 +1239,8 @@ invalidateOpenGLBuffers()
     are_buffers_filled = false;
 
     d->invalidate_stats();
-    static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->updateIds(this);
+    if(d->all_ids_displayed)
+      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->updateIds(this);
 }
 
 void

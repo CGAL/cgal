@@ -373,7 +373,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   //vao containing the data for the smooth facets
   item->vaos[Scene_surface_mesh_item_priv::Smooth_facets]->bind();
   item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].bind();
-  if(!floated||viewer->offset() == qglviewer::Vec(0,0,0))
+  if(!(floated||viewer->offset() == qglviewer::Vec(0,0,0)))
   {
     item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].allocate(positions.data(),
                              static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
