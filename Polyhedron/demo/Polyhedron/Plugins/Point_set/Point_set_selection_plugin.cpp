@@ -502,31 +502,29 @@ public Q_SLOTS:
     new_item->setVisible(point_set_item->visible());
 
     typedef Point_set_3<Kernel> Point_set;
-    for(Point_set::iterator it = point_set_item->point_set()->begin ();
-	it != point_set_item->point_set()->end(); ++ it) {
-      if (point_set_item->point_set()->is_selected (it))
-        {
-          Point_set::iterator new_point =
-            new_item->point_set()->insert(point_set_item->point_set()->point(*it));
-          if (point_set_item->has_normals())
-            new_item->point_set()->normal(*new_point) = point_set_item->point_set()->normal(*it);
-          if (point_set_item->point_set()->has_colors())
-            {
-              if (point_set_item->point_set()->has_byte_colors())
-                {
-                  red[*new_point] = (unsigned char)(255. * point_set_item->point_set()->red(*it));
-                  green[*new_point] = (unsigned char)(255. * point_set_item->point_set()->green(*it));
-                  blue[*new_point] = (unsigned char)(255. * point_set_item->point_set()->blue(*it));
-                }
-              else
-                {
-                  fred[*new_point] = point_set_item->point_set()->red(*it);
-                  fgreen[*new_point] = point_set_item->point_set()->green(*it);
-                  fblue[*new_point] = point_set_item->point_set()->blue(*it);
-                }
-            }
-        }
-    }
+    for(Point_set::iterator it = point_set_item->point_set()->first_selected ();
+	it != point_set_item->point_set()->end(); ++ it)
+      {
+        Point_set::iterator new_point =
+          new_item->point_set()->insert(point_set_item->point_set()->point(*it));
+        if (point_set_item->has_normals())
+          new_item->point_set()->normal(*new_point) = point_set_item->point_set()->normal(*it);
+        if (point_set_item->point_set()->has_colors())
+          {
+            if (point_set_item->point_set()->has_byte_colors())
+              {
+                red[*new_point] = (unsigned char)(255. * point_set_item->point_set()->red(*it));
+                green[*new_point] = (unsigned char)(255. * point_set_item->point_set()->green(*it));
+                blue[*new_point] = (unsigned char)(255. * point_set_item->point_set()->blue(*it));
+              }
+            else
+              {
+                fred[*new_point] = point_set_item->point_set()->red(*it);
+                fgreen[*new_point] = point_set_item->point_set()->green(*it);
+                fblue[*new_point] = point_set_item->point_set()->blue(*it);
+              }
+          }
+      }
     new_item->resetSelection();
     new_item->invalidateOpenGLBuffers();
 
