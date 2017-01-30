@@ -3298,14 +3298,6 @@ namespace HomogeneousKernelFunctors {
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
-
-    Point_3
-    operator()( const Point_3& p, const Triangle_3& t, const Tag_true& tag) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,tag,K()); }
-
-    Point_3
-    operator()( const Point_3& p, const Segment_3& s, const Tag_true& tag) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,tag,K()); }
   };
 
   template <class K> 

@@ -44,7 +44,7 @@
 namespace CGAL {
 
 template <typename Point>
-struct Projection_dimension_index {
+struct Projected_point_and_location {
   Point projected_point;
   unsigned int dimension;
   unsigned int index;
@@ -2688,13 +2688,13 @@ public:
   
   public:
     
-    Projection_dimension_index<typename K::Point_3>
+    Projected_point_and_location<typename K::Point_3>
     operator()(const typename K::Point_3& origin,
                const typename K::Triangle_3& triangle,
                Tag_true,
                const K& k) const
     {
-      Projection_dimension_index<typename K::Point_3> res;
+      Projected_point_and_location<typename K::Point_3> res;
 
       typedef typename K::Point_3 Point_3;
 
@@ -2780,13 +2780,13 @@ public:
     }
 
 
-    Projection_dimension_index<typename K::Point_3>
+    Projected_point_and_location<typename K::Point_3>
     operator()(const typename K::Point_3& query,
                const typename K::Segment_3& segment,
                const Tag_true&,
                const K& k) const
     {
-      Projection_dimension_index<typename K::Point_3> res;
+      Projected_point_and_location<typename K::Point_3> res;
       typedef typename K::Point_3 Point_3;
 
       typename K::Construct_projected_point_3 projection =
