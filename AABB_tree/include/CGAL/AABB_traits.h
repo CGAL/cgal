@@ -407,17 +407,17 @@ public:
         bound : closest_point;
     }
 
-  Projection_dimension_index<Point>
-  operator()(const Point& p, const Primitive& pr, const Projection_dimension_index<Point>& bound, Tag_true tag) const
+  Projected_point_and_location<Point>
+  operator()(const Point& p, const Primitive& pr, const Projected_point_and_location<Point>& bound) const
   {
     GeomTraits geom_traits;
-    Projection_dimension_index<Point> pddi = geom_traits.construct_projected_point_3_object()(
-                        p, internal::Primitive_helper<AT>::get_datum(pr,m_traits), tag);
-    Point closest_point = pddi.projected_point;
+    Projected_point_and_location<Point> ppal = geom_traits.construct_projected_point_and_location_3_object()(
+                        p, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
+    Point closest_point = ppal.projected_point;
 
       return
         geom_traits.compare_distance_3_object()(p, closest_point, bound.projected_point)==LARGER ?
-        bound : pddi;
+        bound : ppal;
     }
   };
 

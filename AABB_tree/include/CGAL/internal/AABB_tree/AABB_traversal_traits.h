@@ -313,8 +313,8 @@ public:
 
   void intersection(const Point& query, const Primitive& primitive)
   {
-    Projection_dimension_index<Point> pddi  = m_traits.closest_point_object()
-      (query, primitive, m_closest_point, Tag_true());
+    Projected_point_and_location<Point> pddi  = m_traits.closest_point_object()
+      (query, primitive, m_closest_point);
     Point new_closest_point = pddi.projected_point;
 
 if( !m_traits.equal_3_object()(new_closest_point, m_closest_point.projected_point) 
@@ -340,13 +340,13 @@ if( !m_traits.equal_3_object()(new_closest_point, m_closest_point.projected_poin
     return Point_and_primitive_id(m_closest_point, m_closest_primitive);
   }
 
-  Projection_dimension_index<Point> closest_projection_dimension_index() const
+  Projected_point_and_location<Point> closest_projection_dimension_index() const
   {
     return m_closest_point;
   }
 
 private:
-  Projection_dimension_index<Point> m_closest_point;
+  Projected_point_and_location<Point> m_closest_point;
   typename Primitive::Id m_closest_primitive;
 
   const AABBTraits& m_traits;
