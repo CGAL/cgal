@@ -4,6 +4,8 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Planar Parameterization of Triangulat
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
-
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/nefertiti.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/ARAP.png  \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/orbifold.png 
 
 
