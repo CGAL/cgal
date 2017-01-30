@@ -24,20 +24,20 @@ int main() {
 
   // Insert also the N points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),
-			      N_Random_points_iterator(N));
+            N_Random_points_iterator(N));
 
-  // define exact circular range query
+  // define default circular range query
   Point center(0.2, 0.2);
-  Fuzzy_circle exact_range(center, 0.2);
+  Fuzzy_circle default_range(center, 0.2);
 
-  boost::optional<Point> any = tree.search_any_point(exact_range);
+  boost::optional<Point> any = tree.search_any_point(default_range);
   if(any){
     std::cout << *any << " is in the query circle\n";
   }else{
     std::cout << "Empty query circle\n";
   }
   std::list<Point> result;
-  tree.search(std::back_inserter( result ), exact_range);
+  tree.search(std::back_inserter(result), default_range);
 
   std::cout << "\nPoints in cirle with center " << center << " and radius 0.2" << std::endl;
 
