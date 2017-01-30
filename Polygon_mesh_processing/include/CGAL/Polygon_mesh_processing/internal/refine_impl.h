@@ -30,8 +30,9 @@
 #include <list>
 
 #include <CGAL/assertions.h>
-#include <CGAL/trace.h>
+#ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
+#endif
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -168,7 +169,9 @@ private:
     collect_interior_edges(faces, border_edges, interior_edges, included_map);
     collect_interior_edges(new_faces, border_edges, interior_edges, included_map);
 
-    CGAL_TRACE_STREAM << "Test " << interior_edges.size() << " edges " << std::endl;
+    #ifndef CGAL_PMP_REFINE_DEBUG
+    std::cerr << "Test " << interior_edges.size() << " edges " << std::endl;
+    #endif
     //do not just use std::set (included_map) for iteration, the order effects the output (we like to make it deterministic)
     BOOST_FOREACH(halfedge_descriptor h, interior_edges)
     {
@@ -177,7 +180,9 @@ private:
       }
     }
 
-    CGAL_TRACE_STREAM << "|flips| = " << flips << std::endl;
+    #ifndef CGAL_PMP_REFINE_DEBUG
+    std::cerr  << "|flips| = " << flips << std::endl;
+    #endif
     return flips > 0;
   }
 
@@ -308,24 +313,34 @@ public:
     calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
     std::vector<face_descriptor> all_faces(boost::begin(faces), boost::end(faces));
+    #ifdef CGAL_PMP_REFINE_DEBUG
     CGAL::Timer total_timer; total_timer.start();
+    #endif
     for(int i = 0; i < 10; ++i)
     {
       std::vector<face_descriptor> new_faces;
+      #ifdef CGAL_PMP_REFINE_DEBUG
       CGAL::Timer timer; timer.start();
+      #endif
       bool is_subdivided = subdivide(all_faces, border_edges, scale_attribute, vertex_out, facet_out, new_faces, alpha);
-      CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
+      #ifdef CGAL_PMP_REFINE_DEBUG
+      std::cerr  << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
+      #endif
       if(!is_subdivided)
         break;
 
       bool is_relaxed = relax(faces, new_faces, border_edges);
-      CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
+      #ifdef CGAL_PMP_REFINE_DEBUG
+      std::cerr << "**Timer** relax() :" << timer.time() << std::endl;
+      #endif
       if(!is_relaxed)
         break;
       all_faces.insert(all_faces.end(), new_faces.begin(), new_faces.end());
     }
 
-    CGAL_TRACE_STREAM << "**Timer** TOTAL: " << total_timer.time() << std::endl;
+    #ifdef CGAL_PMP_REFINE_DEBUG
+    std::cerr << "**Timer** TOTAL: " << total_timer.time() << std::endl;
+    #endif
   }
 
 }; //end class Refine_Polyhedron_3
