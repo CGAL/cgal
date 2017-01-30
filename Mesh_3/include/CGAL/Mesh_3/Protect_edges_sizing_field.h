@@ -47,6 +47,19 @@ namespace internal {
   const double weight_modifier = .81; //0.9025;//0.81;
   const double distance_divisor = 2.1;
   const int max_nb_vertices_to_reevaluate_size = 10;
+
+  const int refine_balls_max_nb_of_loops = 29;
+// for the origins of `refine_balls_max_nb_of_loops`, that dates from the
+// very beginning of this file:
+//
+//     commit e9b3ff3e5730dab319a8cd581e3eb191559c98db
+//     Author: Stéphane Tayeb <Stephane.Tayeb@sophia.inria.fr>
+//     Date:   Tue Apr 20 14:53:11 2010 +0000
+//     
+//         Add draft of _with_features classes.
+//
+// That constant has had different values in the Git history: 9, 99, and now 29.
+
 } // end namespace internal
 } // end namespace Mesh_3
 } // end namespace CGAL
@@ -345,6 +358,7 @@ private:
   Weight minimal_weight_;
   std::set<Curve_segment_index> treated_edges_;
   std::set<Vertex_handle> unchecked_vertices_;
+  int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
 };
 
@@ -358,6 +372,7 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , size_(size)
   , minimal_size_(minimal_size)
   , minimal_weight_(CGAL::square(minimal_size))
+  , refine_balls_iteration_nb(0)
   , nonlinear_growth_of_balls(false)
 {
 #ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
@@ -967,7 +982,7 @@ insert_balls(const Vertex_handle& vp,
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
   // if( minimal_weight_ != 0 && n == 0 ) return;
 
-  if(nonlinear_growth_of_balls) {
+  if(nonlinear_growth_of_balls && refine_balls_iteration_nb == 0) {
     // This block tries not to apply the general rule that the size of
     // protecting balls is a linear interpolation of the size of protecting
     // balls at corner. When the curve segment is long enough, pick a point
@@ -1113,14 +1128,16 @@ refine_balls()
   
   // Loop
   bool restart = true;
-  int nb=0;
-  while ( (!unchecked_vertices_.empty() || restart) && nb<29)
+  using CGAL::Mesh_3::internal::refine_balls_max_nb_of_loops;
+  this->refine_balls_iteration_nb = 0;
+  while ( (!unchecked_vertices_.empty() || restart) &&
+          this->refine_balls_iteration_nb < refine_balls_max_nb_of_loops)
   {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "RESTART REFINE LOOP (" << nb << ")\n"
+    std::cerr << "RESTART REFINE LOOP (" << refine_balls_iteration_nb << ")\n"
               << "\t unchecked_vertices size: " << unchecked_vertices_.size() <<"\n";
 #endif
-    ++nb;
+    ++refine_balls_iteration_nb;
     restart = false;
     std::map<Vertex_handle, FT> new_sizes;
     
