@@ -23,20 +23,21 @@ dimension of the array.
 \cgal provides a `make_array` function for this purpose, up to a
 certain number of arguments.
 */
-template< typename T, int >
+template< typename T, std::size_t >
 class array {
 }; /* end cpp11::array */
+
+} /* end namespace cpp11 */
 
 /*!
 \relates cpp11::array 
 
-\returns `array<T, N>` where `N` is the number of arguments given to
+\returns `cpp11::array<T, N>` where `N` is the number of arguments given to
 the function. The position of each argument in the array is the same
 as its position in the argument list.
 
 The maximal number of arguments is `6`.
 */ 
-template <class T> array<T, N> make_array(const T&...); 
+template <class T> cpp11::array<T, N> make_array(const T&...);
 
-} /* end namespace cpp11 */
 } /* end namespace CGAL */
