@@ -567,7 +567,7 @@ public:
 
   // insert a point on the convex_hull using the infinite incident face to the edge the point is inserted into
   // warning: fh is updated
-  typename CDT::Vertex_handle 
+  typename CDT::Vertex_handle
   insert_point_on_ch_edge(CDT& cdt, typename CDT::Face_handle& fh, const typename CDT::Point& p)
   {
     CGAL_assertion(cdt.is_infinite(fh));
@@ -589,6 +589,8 @@ public:
                  const VertexPointMap& vpm1,
                  const VertexPointMap& vpm2)
   {
+    nodes.all_nodes_created();
+
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
 
@@ -738,7 +740,7 @@ public:
           CGAL_assertion(expected_src==source(hnew,tm));
           vertex_descriptor vnew=target(hnew,tm);
           new_node_visitor.new_vertex_added(node_id, vnew, tm);
-          put(vpm, vnew, nodes[node_id]);
+          nodes.call_put(vpm, vnew, node_id, tm);
 
           node_id_to_vertex[node_id]=vnew;
           if (first){
@@ -1013,6 +1015,8 @@ public:
         }
       }
     }
+
+    nodes.finalize();
 
     // additional operations
     output_builder(mesh_to_intersection_edges,
