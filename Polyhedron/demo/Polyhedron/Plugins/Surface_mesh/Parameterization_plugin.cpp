@@ -761,7 +761,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       // @todo (need to remove the assertions such as cones.size() == 4
       //        and check where and when cones are used (passed by ID, for ex.?))
       CGAL_assertion(number_of_components == 1);
-      CGAL_precondition(!unordered_cones.empty());
+      if(unordered_cones.empty()) {
+        std::cerr << "No cones selected; Aborting." << std::endl;
+        return;
+      }
 
       typedef SMP::Orbifold_Tutte_parameterizer_3<Seam_mesh> Parameterizer;
 
