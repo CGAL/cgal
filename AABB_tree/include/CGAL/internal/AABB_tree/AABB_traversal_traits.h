@@ -288,7 +288,7 @@ private:
  * @class Projection_traits
  */
 template <typename AABBTraits>
-class Projection_traits_dimension_index
+class Projection_traits_point_and_location
 {
   typedef typename AABBTraits::FT FT;
   typedef typename AABBTraits::Point_3 Point;
@@ -296,13 +296,14 @@ class Projection_traits_dimension_index
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Point_location_and_primitive_id Point_location_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Projection_traits_dimension_index(const Point& hint,
-                                    const typename Primitive::Id& hint_primitive,
-                                    const AABBTraits& traits)
+  Projection_traits_point_and_location(const Point& hint,
+                                       const typename Primitive::Id& hint_primitive,
+                                       const AABBTraits& traits)
     : m_closest_primitive(hint_primitive),
       m_traits(traits)
   {
@@ -340,9 +341,9 @@ if( !m_traits.equal_3_object()(new_closest_point, m_closest_point.projected_poin
     return Point_and_primitive_id(m_closest_point, m_closest_primitive);
   }
 
-  Projected_point_and_location<Point> closest_projection_dimension_index() const
+  Point_location_and_primitive_id closest_point_location_and_primitive() const
   {
-    return m_closest_point;
+    return Point_location_and_primitive_id(m_closest_point, m_closest_primitive);
   }
 
 private:

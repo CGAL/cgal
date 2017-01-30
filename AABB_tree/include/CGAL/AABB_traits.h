@@ -211,6 +211,8 @@ public:
 
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
 
+  typedef typename std::pair<Projected_point_and_location<typename GeomTraits::Point_3>, typename Primitive::Id> Point_location_and_primitive_id;
+
   /// `Intersection_and_primitive_id<Query>::%Type::first_type` is found according to
   /// the result type of `GeomTraits::Intersect_3::operator()`,
   /// (that is cpp11::result_of<GeomTraits::Intersect_3(Query, Primitive::Datum)>::type). If it is
