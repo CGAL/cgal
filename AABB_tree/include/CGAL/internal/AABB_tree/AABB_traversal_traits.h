@@ -317,9 +317,12 @@ public:
       (query, primitive, m_closest_point, Tag_true());
     Point new_closest_point = pddi.projected_point;
 
-if( !m_traits.equal_3_object()(new_closest_point, m_closest_point.projected_point) )
+if( !m_traits.equal_3_object()(new_closest_point, m_closest_point.projected_point) 
+    || (m_traits.equal_3_object()(new_closest_point, m_closest_point.projected_point)
+        && (pddi.dimension != m_closest_point.dimension)
+        ||  (pddi.index != m_closest_point.index)))
     {
-      m_closest_primitive = primitive.id();  //  + dimension_index 
+    m_closest_primitive = primitive.id();
       m_closest_point = pddi; // this effectively shrinks the sphere 
     }
   }
