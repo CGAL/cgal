@@ -844,7 +844,7 @@ struct Lazy_construction_bbox
     }
   }
 };
-// The magic functor for Construct_bbox_[2,3], as there is no Lazy<Projected_point_and_location_3>
+// The magic functor for Construct_bbox_[2,3], as there is no Lazy<Projected_point_and_location>
 
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_projected_point_and_location_3
@@ -852,7 +852,9 @@ struct Lazy_construction_projected_point_and_location_3
   static const bool Protection = true;
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename AC::result_type result_type;
+  typedef typename LK::Point_3  PPP;
+
+  typedef Projected_point_and_location<PPP> result_type;
 
   AC ac;
   EC ec;
@@ -863,12 +865,20 @@ struct Lazy_construction_projected_point_and_location_3
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     Protect_FPU_rounding<Protection> P;
+    result_type result;
     try {
-      return ac(CGAL::approx(l1), CGAL::approx(l2));
+      typename AC::result_type acres = ac(CGAL::approx(l1), CGAL::approx(l2));
+      // result.projected_point = ;
+      result.dimension = acres.dimension;
+      result.index = acres.index;
+      return result;
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-      return ec(CGAL::exact(l1), CGAL::exact(l2));
+      typename EC::result_type ecres = ec(CGAL::exact(l1), CGAL::exact(l2));
+       result.dimension = ecres.dimension;
+      result.index = ecres.index;
+      return result;
     }
   }
 };
