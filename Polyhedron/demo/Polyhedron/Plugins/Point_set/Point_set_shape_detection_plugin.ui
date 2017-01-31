@@ -15,47 +15,83 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QCheckBox" name="planeCB">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="ransac">
        <property name="text">
-        <string>Plane</string>
+        <string>RANSAC</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="m_region_growing">
+       <property name="text">
+        <string>Region growing</string>
        </property>
        <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QCheckBox" name="cylinderCB">
-       <property name="text">
-        <string>Cylinder</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="torusCB">
-       <property name="text">
-        <string>Torus</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="coneCB">
-       <property name="text">
-        <string>Cone</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="sphereCB">
-       <property name="text">
-        <string>Sphere</string>
-       </property>
-      </widget>
+     <item row="1" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QCheckBox" name="planeCB">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Plane</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="cylinderCB">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Cylinder</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="torusCB">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Torus</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="coneCB">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Cone</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="sphereCB">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Sphere</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -174,6 +210,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
      <item>
       <widget class="QLabel" name="label_5">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Search Rigorosity (Probability):</string>
        </property>
@@ -181,6 +220,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="m_probability_field">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Probability to overlook the largest primitive in one extraction iteration</string>
        </property>
@@ -284,6 +326,118 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>planeCB</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>170</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cylinderCB</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>torusCB</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>coneCB</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sphereCB</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>465</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>214</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ransac</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_probability_field</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>214</y>
     </hint>
    </hints>
   </connection>
