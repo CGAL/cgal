@@ -59,6 +59,8 @@ public:
 
   void c3t3_changed();
 
+  void set_valid(bool);
+
   const C3t3& c3t3() const;
   C3t3& c3t3();
 
@@ -70,6 +72,7 @@ public:
   bool has_grid() const;
   bool has_cnc() const;
   bool has_tets() const;
+  bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
   ManipulatedFrame* manipulatedFrame();
 
   void setPosition(float x, float y, float z) ;

@@ -97,6 +97,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
       Scene_c3t3_item* item = new Scene_c3t3_item();
       item->setName(fileinfo.baseName());
       item->setScene(scene);
+      item->set_valid(false);
       std::vector<bool> border_infos;
       bool facets_in_complex = false;
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), border_infos))
