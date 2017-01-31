@@ -852,9 +852,10 @@ struct Lazy_construction_projected_point_and_location_3
   static const bool Protection = true;
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename LK::Point_3  PPP;
+  typedef typename LK::Point_3  Point_3;
+  typedef typename LK::E2A E2A;
 
-  typedef Projected_point_and_location<PPP> result_type;
+  typedef Projected_point_and_location<Point_3> result_type;
 
   AC ac;
   EC ec;
@@ -867,8 +868,8 @@ struct Lazy_construction_projected_point_and_location_3
     Protect_FPU_rounding<Protection> P;
     result_type result;
     try {
-      typename AC::result_type acres = ac(CGAL::approx(l1), CGAL::approx(l2));
-      // result.projected_point = ;
+      typename AC::result_type acres = ac(CGAL::approx(l1), CGAL::approx(l2)); // gets called again inside the constructor of Lazy_rep_2
+      result.projected_point = Point_3(new Lazy_rep_2<typename AK::Point_3, typename EK::Point_3,AC,EC,E2A, L1, L2>(ac,ec,l1,l2));
       result.dimension = acres.dimension;
       result.index = acres.index;
       return result;
@@ -878,6 +879,7 @@ struct Lazy_construction_projected_point_and_location_3
       typename EC::result_type ecres = ec(CGAL::exact(l1), CGAL::exact(l2));
        result.dimension = ecres.dimension;
       result.index = ecres.index;
+      result.projected_point = Point_3(new Lazy_rep_0<typename AK::Point_3, typename EK::Point_3,E2A>(ecres.projected_point));
       return result;
     }
   }
