@@ -95,7 +95,7 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
 
 
-  CGAL::Bbox_3 bb = PMP::bbox_3(pmesh);
+  CGAL::Bbox_3 bb = PMP::bbox(pmesh);
   std::cout << "bbox x[" << bb.xmin() << "; " << bb.xmax() << "]" << std::endl;
   std::cout << "     y[" << bb.ymin() << "; " << bb.ymax() << "]" << std::endl;
   std::cout << "     z[" << bb.zmin() << "; " << bb.zmax() << "]" << std::endl;
