@@ -68,9 +68,6 @@ int main()
   Mesh_domain domain(patches.begin(), patches.end(),
                      incident_subdomains, incident_subdomains+nb_patches);
 
-  // Get sharp features
-  domain.detect_features();
-
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 8,
                          facet_angle = 25, facet_size = 8, facet_distance = 0.2,

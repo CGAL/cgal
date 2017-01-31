@@ -52,9 +52,31 @@
 
 
 namespace CGAL {
-
+/// @cond DEVELOPERS
 namespace internal {
 namespace Mesh_3 {
+
+template <typename Graph>
+void dump_graph_edges(std::ostream& out, const Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
+
+  out.precision(17);
+  BOOST_FOREACH(edge_descriptor e, edges(g))
+  {
+    vertex_descriptor s = source(e, g);
+    vertex_descriptor t = target(e, g);
+    out << "2 " << g[s] << " " << g[t] << "\n";
+  }
+}
+
+template <typename Graph>
+void dump_graph_edges(const char* filename, const Graph& g)
+{
+  std::ofstream out(filename);
+  dump_graph_edges(out, g);
+}
 
 template <typename Kernel>
 struct Angle_tester
@@ -111,7 +133,7 @@ template<typename Polyhedral_mesh_domain,
          typename Graph>
 struct Extract_polyline_with_context_visitor
 {
-  typedef typename Polyhedral_mesh_domain::Polyhedron Polyhedron;
+  typedef typename Polyhedral_mesh_domain::Polyhedron_type Polyhedron;
   std::vector<Polyline_with_context>& polylines;
   const Graph& graph;
 
@@ -173,48 +195,110 @@ struct Extract_polyline_with_context_visitor
 } // end CGAL::internal::Mesh_3
 } // end CGAL::internal
 
-/**
- * @class Polyhedral_complex_mesh_domain_3
- *
- *
- */
-template < class IGT_,
-           class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor=Triangle_accessor_3<Polyhedron_,IGT_>,
-           class Use_patch_id_tag = Tag_true,
-           class Use_exact_intersection_construction_tag = Tag_true >
+/// @endcond
+
+/*! The class `Polyhedral_complex_mesh_domain_3` implements a domain
+defined by a collection of polyhedral surfaces, forming a complex.
+
+The constraints on the complex are:
+  - a polyhedral surface of the complex cannot self-intersect,
+  - two polyhedral surfaces of the complex are either disjoint, or
+share a subset of their border edges.
+
+It is a model of the concept `MeshDomainWithFeatures_3`. It also provides a
+member function to automatically detect sharp features and boundaries from
+the input polyhedral surface(s).
+
+The union of the polyhedral surfaces is a non-manifold surface, called the
+2D surface of the domain. It is locally manifold, with or without borders,
+but at the intersections of polyhedral surfaces.
+
+The complement of the 2D surface is decomposed into:
+ - zero, one, of many sub-domains of the mesh domain,
+ - plus the exterior of the mesh domain.
+
+If the domain has sub-domains, each one of must be the union of one or many
+connected components of the complement of the 2D surface. The sub-domains
+have indices, of integral type `Subdomain_index`, and the exterior of the
+mesh domain is associated with the subdomain index `0`, like for any mesh
+domain in CGAL.
+
+Each polyhedral surface is oriented, and has two sides. The positive side
+is union of the positive side of all of its facets, usually named the
+"exterior" of the surface. The negative side is the other side. The use of
+`Polyhedral_complex_mesh_domain_3` assumes that for each polyhedral
+surface, the sub-domain indices on both sides are known.
+
+\tparam Polyhedron stands for the type of the input polyhedral surface(s).
+The only requirements for this type is that the triangles of the surfaces
+must be accessible through an object of the class
+`TriangleAccessor`. @todo Document the requirements.
+
+\tparam IGT stands for a geometric traits class
+providing the types and functors required to implement
+the intersection tests and intersection computations
+for polyhedral boundary surfaces. This parameter has to be instantiated
+with a model of the concept `IntersectionGeometricTraits_3`.
+
+\tparam TriangleAccessor provides access to the triangles
+of the input polyhedral
+surface. It must be a model of the concept
+`TriangleAccessor_3`. It defaults to
+`Triangle_accessor_3<Polyhedron,IGT>`. The type `IGT::Triangle_3` must
+be identical to the type `TriangleAccessor::Triangle_3`.
+
+\cgalModels `MeshDomainWithFeatures_3`
+
+\sa `TriangleAccessor_3`
+\sa `IntersectionGeometricTraits_3`
+\sa `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>`
+\sa `CGAL::make_mesh_3()`.
+\sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Mesh_polyhedron_3<IGT>`
+*/
+template < class IGT,
+           class Polyhedron = typename Mesh_polyhedron_3<IGT>::type,
+           class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT>
+           >
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
-      Polyhedral_mesh_domain_3< Polyhedron_,
-                                IGT_,
+      Polyhedral_mesh_domain_3< Polyhedron,
+                                IGT,
                                 TriangleAccessor,
-                                Use_patch_id_tag,
-                                Use_exact_intersection_construction_tag > >
+                                Tag_true,
+                                Tag_true > >
 {
-  typedef Mesh_domain_with_polyline_features_3<
-    Polyhedral_mesh_domain_3<
-      Polyhedron_, IGT_, TriangleAccessor,
-      Use_patch_id_tag, Use_exact_intersection_construction_tag > > Base;
-
   typedef boost::adjacency_list<
     boost::setS, // this avoids parallel edges
     boost::vecS,
     boost::undirectedS,
-    typename Polyhedron_::Point,
-    typename Polyhedron_::Vertex::Set_of_indices> Featured_edges_copy_graph;
+    typename Polyhedron::Point,
+    typename Polyhedron::Vertex::Set_of_indices> Featured_edges_copy_graph;
 
 public:
-  typedef Polyhedron_ Polyhedron;
+  /// The base class
+  typedef Mesh_domain_with_polyline_features_3<
+    Polyhedral_mesh_domain_3<
+      Polyhedron, IGT, TriangleAccessor,
+      Tag_true, Tag_true > > Base;
 
-  typedef IGT_                                IGT;
-  typedef typename Base::Ray_3                Ray_3;
-  typedef typename Base::Index                Index;
-  // Index types
+  /// The polyhedron type
+  typedef Polyhedron Polyhedron_type;
+
+  /// \name Index types
+  /// @{
+  /// The types are `int` or types compatible with `int`.
   typedef typename Base::Corner_index         Corner_index;
   typedef typename Base::Curve_segment_index  Curve_segment_index;
   typedef typename Base::Surface_patch_index  Surface_patch_index;
-  typedef Surface_patch_index Patch_id;
   typedef typename Base::Subdomain_index      Subdomain_index;
+  /// @}
+
+  /// @cond DEVELOPERS
+  typedef typename Base::Ray_3                Ray_3;
+  typedef typename Base::Index                Index;
+  typedef Surface_patch_index Patch_id;
 
   typedef typename Base::Subdomain            Subdomain;
   typedef typename Base::Bounding_box         Bounding_box;
@@ -235,7 +319,9 @@ public:
   typedef std::vector<Point_3> Bare_polyline;
   typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
                                         Bare_polyline > Polyline_with_context;
-  /// Constructors
+  /// @endcond
+
+  /// Constructor
   template <typename InputPolyhedraIterator,
             typename InputPairOfSubdomainIndicesIterator>
   Polyhedral_complex_mesh_domain_3
@@ -243,7 +329,11 @@ public:
     InputPolyhedraIterator end,
     InputPairOfSubdomainIndicesIterator indices_begin,
     InputPairOfSubdomainIndicesIterator indices_end,
-    CGAL::Random* p_rng = NULL )
+    bool detect_sharp_features_on_boundary_of_domain = false
+#ifndef DOXYGEN_RUNNING
+    , CGAL::Random* p_rng = NULL
+#endif
+    )
     : Base(p_rng)
     , patch_indices(indices_begin, indices_end)
     , borders_detected_(false)
@@ -256,17 +346,13 @@ public:
       this->add_primitives(stored_polyhedra.back());
     }
     this->build();
+    detect_features(detect_sharp_features_on_boundary_of_domain);
   }
+  /// @cond DEVELOPERS
+  void detect_features(bool sharp, std::vector<Polyhedron>& p);
+  void detect_features(bool sharp) { detect_features(sharp, stored_polyhedra); }
 
-  /// Destructor
-  ~Polyhedral_complex_mesh_domain_3() {}
-
-  /// Detect features
-  void initialize_ts(Polyhedron& p);
-
-  void detect_features(std::vector<Polyhedron>& p);
-  void detect_features() { detect_features(stored_polyhedra); }
-
+  /// @cond DEVELOPERS
   const std::vector<Polyhedron>& polyhedra() const {
     return stored_polyhedra;
   }
@@ -521,8 +607,10 @@ public:
     const Polyhedral_complex_mesh_domain_3& r_domain_;
   };
   Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); }
-
+  /// @endcond
 private:
+  void initialize_ts(Polyhedron& p);
+
   void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph);
 
   template <typename Edge_predicate, typename P2Vmap>
@@ -551,60 +639,34 @@ private:
 };  // end class Polyhedral_complex_mesh_domain_3
 
 
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_>
 void
-Polyhedral_complex_mesh_domain_3<GT_,P_,TA_,Tag_,E_tag_>::
-initialize_ts(Polyhedron& p)
+Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
+initialize_ts(Polyhedron_type& p)
 {
   std::size_t ts = 0;
-  for(typename Polyhedron::Vertex_iterator v = p.vertices_begin(),
+  for(typename Polyhedron_type::Vertex_iterator v = p.vertices_begin(),
       end = p.vertices_end() ; v != end ; ++v)
   {
     v->set_time_stamp(ts++);
   }
-  for(typename Polyhedron::Facet_iterator fit = p.facets_begin(),
+  for(typename Polyhedron_type::Facet_iterator fit = p.facets_begin(),
        end = p.facets_end() ; fit != end ; ++fit )
   {
     fit->set_time_stamp(ts++);
   }
-  for(typename Polyhedron::Halfedge_iterator hit = p.halfedges_begin(),
+  for(typename Polyhedron_type::Halfedge_iterator hit = p.halfedges_begin(),
        end = p.halfedges_end() ; hit != end ; ++hit )
   {
     hit->set_time_stamp(ts++);
   }
 }
 
-
-
-
-template <typename Graph>
-void dump_graph_edges(std::ostream& out, const Graph& g)
-{
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
-
-  out.precision(17);
-  BOOST_FOREACH(edge_descriptor e, edges(g))
-  {
-    vertex_descriptor s = source(e, g);
-    vertex_descriptor t = target(e, g);
-    out << "2 " << g[s] << " " << g[t] << "\n";
-  }
-}
-
-template <typename Graph>
-void dump_graph_edges(const char* filename, const Graph& g)
-{
-  std::ofstream out(filename);
-  dump_graph_edges(out, g);
-}
-
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
+///@cond DEVELOPERS
+template < typename GT_, typename P_, typename TA_>
 void
-Polyhedral_complex_mesh_domain_3<GT_,P_,TA_,Tag_,E_tag_>::
-detect_features(std::vector<Polyhedron>& poly)
+Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
+detect_features(bool sharp, std::vector<Polyhedron_type>& poly)
 {
   CGAL_assertion(!borders_detected_);
   if (borders_detected_)
@@ -613,13 +675,13 @@ detect_features(std::vector<Polyhedron>& poly)
   typedef Featured_edges_copy_graph G_copy;
   G_copy g_copy;
   typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
-  typedef std::map<typename Polyhedron::Point,
+  typedef std::map<typename Polyhedron_type::Point,
                    vertex_descriptor> P2vmap;
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
 
-  CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron> detect_features;
-  BOOST_FOREACH(Polyhedron& p, poly)
+  CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron_type> detect_features;
+  BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
 
@@ -630,8 +692,8 @@ detect_features(std::vector<Polyhedron>& poly)
     std::cerr << "  material #" << patch_indices[poly_id].first << "\n";
     std::cerr << "  material #" << patch_indices[poly_id].second << "\n";
 #endif // CGAL_MESH_3_VERBOSE
-    if(patch_indices[poly_id].first == 0 ||
-       patch_indices[poly_id].second == 0)
+    if(sharp && (patch_indices[poly_id].first == 0 ||
+                 patch_indices[poly_id].second == 0))
     {
       angle = 60;
     }
@@ -646,7 +708,7 @@ detect_features(std::vector<Polyhedron>& poly)
     detect_features.detect_surface_patches(p);
     detect_features.detect_vertices_incident_patches(p);
 
-    internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);
+    internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
@@ -658,21 +720,21 @@ detect_features(std::vector<Polyhedron>& poly)
 #if CGAL_MESH_3_VERBOSE
   std::cerr << "Number of patches: " << (nb_of_patch_plus_one - 1) << std::endl;
 #endif
-  BOOST_FOREACH(Polyhedron& p, poly)
+  BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     const std::size_t polyhedron_id = &p - &poly[0];
-    BOOST_FOREACH(typename Polyhedron::Facet_const_handle fh, faces(p))
+    BOOST_FOREACH(typename Polyhedron_type::Facet_const_handle fh, faces(p))
     {
       patch_id_to_polyhedron_id[fh->patch_id()] = polyhedron_id;
     }
-    for(typename Polyhedron::Halfedge_iterator
+    for(typename Polyhedron_type::Halfedge_iterator
           heit = p.halfedges_begin(), end  = p.halfedges_end();
         heit != end; ++heit)
     {
       if(is_border(heit, p) || !heit->is_feature_edge()) continue;
       patch_has_featured_edges.set(heit->face()->patch_id());
     }
-    for(typename Polyhedron::Vertex_iterator
+    for(typename Polyhedron_type::Vertex_iterator
           vit = p.vertices_begin(), end  = p.vertices_end();
         vit != end; ++vit)
     {
@@ -702,10 +764,9 @@ detect_features(std::vector<Polyhedron>& poly)
   this->compute_boundary_patches();
 }
 
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_>
 void
-Polyhedral_complex_mesh_domain_3<GT_,P_,TA_,Tag_,E_tag_>::
+Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
 {
   std::vector<Polyline_with_context> polylines;
@@ -738,17 +799,16 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
 
 }
 
-template < typename GT_, typename P_, typename TA_,
-           typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_>
 template <typename Edge_predicate, typename P2vmap>
 void
-Polyhedral_complex_mesh_domain_3<GT_,P_,TA_,Tag_,E_tag_>::
-add_featured_edges_to_graph(const Polyhedron& p,
+Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
+add_featured_edges_to_graph(const Polyhedron_type& p,
                             const Edge_predicate& pred,
                             Featured_edges_copy_graph& g_copy,
                             P2vmap& p2vmap)
 {
-  typedef boost::filtered_graph<Polyhedron,
+  typedef boost::filtered_graph<Polyhedron_type,
                                 Edge_predicate > Featured_edges_graph;
   Featured_edges_graph orig_graph(p, pred);
 
@@ -777,7 +837,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
     CGAL_warning_msg(vs != vt, "ignore self loop");
     if(vs != vt) {
       const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
-      typename Polyhedron::Halfedge_handle he = halfedge(e, p);
+      typename Polyhedron_type::Halfedge_handle he = halfedge(e, p);
       if(!is_border(he, p)) {
         g_copy[pair.first].insert(he->face()->patch_id());;
       }
@@ -790,11 +850,11 @@ add_featured_edges_to_graph(const Polyhedron& p,
 
 #if CGAL_MESH_3_PROTECTION_DEBUG > 1
   {// DEBUG
-    dump_graph_edges("edges-graph.polylines.txt", g_copy);
+    internal::Mesh_3::dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }
 #endif
 }
-
+/// @endcond
 
 } //namespace CGAL
 
