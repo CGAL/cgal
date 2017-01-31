@@ -332,6 +332,10 @@ public:
   construct_bbox_3_object() const
   { return Construct_bbox_3(); }
 
+  Construct_projected_point_and_location_3
+  construct_projected_point_and_location_3_object() const
+  { return Construct_projected_point_and_location_3(); }
+
   Construct_cartesian_const_iterator_2
   construct_cartesian_const_iterator_2_object() const
   { return Construct_cartesian_const_iterator_2(); }
