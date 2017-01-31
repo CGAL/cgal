@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2003  
+// Copyright (c) 1999,2002,2005
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
-// Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// Max-Planck-Institute Saarbruecken (Germany)
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,20 +18,25 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Stefan Schirra
- 
-#ifndef CGAL_KERNEL_BASIC_H
-#define CGAL_KERNEL_BASIC_H
+//
+// Author(s)     : Andreas Fabri
 
-#include <CGAL/kernel_config.h>
 
-#include <CGAL/kernel_assertions.h>
-#include <CGAL/enum.h>
-#include <CGAL/aff_transformation_tags.h>
-#include <CGAL/Object.h>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Projected_point_and_location.h>
+#ifndef CGAL_PROJECTED_POINT_AND_LOCATION_H
+#define CGAL_PROJECTED_POINT_AND_LOCATION_H
 
-#endif // CGAL_KERNEL_BASIC_H
+namespace CGAL {
+  
+template <typename Point>
+struct Projected_point_and_location {
+  Point projected_point;
+  unsigned int dimension;
+  unsigned int index;
+  operator Point() const { return projected_point; }
+};
+  
+
+} // namespace
+
+#endif // CGAL_PROJECTED_POINT_AND_LOCATION_H

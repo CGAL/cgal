@@ -43,14 +43,6 @@
 
 namespace CGAL {
 
-template <typename Point>
-struct Projected_point_and_location {
-  Point projected_point;
-  unsigned int dimension;
-  unsigned int index;
-  operator Point() const { return projected_point; }
-};
-
 namespace CommonKernelFunctors {
 
   template <typename K>
