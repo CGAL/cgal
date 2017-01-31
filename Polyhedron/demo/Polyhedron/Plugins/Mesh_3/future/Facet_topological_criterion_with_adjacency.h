@@ -70,43 +70,39 @@ protected:
     const Cell_handle& ch = f.first;
     const int& i = f.second;
 
-    Vertex_handle v[3];
-    for(int k = 0; k < 3; ++k) {
-      v[k] = ch->vertex((i+k+1)&3);
-    }
-
-    if(v[0]->in_dimension() > 1 
-       && v[1]->in_dimension() > 1 
-       && v[2]->in_dimension() > 1) return Badness();
-
     typedef typename MeshDomain::Surface_patch_index Patch_index;
+
+    const Patch_index patch_index = ch->surface_patch_index(i);
+
     typedef std::vector<Patch_index> Index_set;
 
-    CGAL::cpp0x::array<Index_set,3> sets;
-
     for(int k = 0; k < 3; ++k) {
-      switch(v[k]->in_dimension()) {
+      const Vertex_handle v = ch->vertex((i+k+1)&3);
+      switch(v->in_dimension()) {
       case 0:
         {
           typename MeshDomain::Corner_index corner_id = 
-            domain->corner_index(v[k]->index());
+            domain->corner_index(v->index());
 
-          domain->get_corner_incidences(corner_id,
-                                        std::inserter(sets[k],
-                                                      sets[k].end()));
+          Index_set set;
+          domain->get_corner_incidences(corner_id, std::back_inserter(set));
+          if(std::find(set.begin(), set.end(), patch_index) == set.end())
+            return Badness(Quality(1)); // bad!
         }
         break;
       case 1: 
         {
           typename MeshDomain::Curve_segment_index curve_id =
-            domain->curve_segment_index(v[k]->index());
-          domain->get_incidences(curve_id,
-                                 std::inserter(sets[k],
-                                               sets[k].end()));
+            domain->curve_segment_index(v->index());
+          Index_set set;
+          domain->get_incidences(curve_id, std::back_inserter(set));
+          if(std::find(set.begin(), set.end(), patch_index) == set.end())
+            return Badness(Quality(1)); // bad!
         }
         break;
       case 2:
-        sets[k].push_back(domain->surface_patch_index(v[k]->index()));
+        if(domain->surface_patch_index(v->index()) != patch_index)
+          return Badness(Quality(1)); // bad!
         break;
       default:
         return Badness(Quality(1));
@@ -114,22 +110,7 @@ protected:
       }
     }
 
-    Index_set v0_v1;
-    std::set_intersection(sets[0].begin(),
-                          sets[0].end(),
-                          sets[1].begin(),
-                          sets[1].end(),
-                          std::inserter(v0_v1, v0_v1.end()));
-    Index_set v0_v1_v2;
-    std::set_intersection(sets[2].begin(),
-                          sets[2].end(),
-                          v0_v1.begin(),
-                          v0_v1.end(),
-                          std::inserter(v0_v1_v2, v0_v1_v2.end()));
-    if(v0_v1_v2.empty())
-      return Badness(Quality(1)); // bad!
-    else
-      return Badness();
+    return Badness();
   }
 }; // end class Facet_topological_criterion_with_adjacency
 
