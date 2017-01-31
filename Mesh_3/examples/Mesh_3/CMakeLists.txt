@@ -77,7 +77,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "remesh_polyhedral_surface.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_lipschitz_sizing.cpp" )
-    
+    create_single_source_cgal_program( "mesh_polyhedral_complex.cpp" )
     if( WITH_CGAL_ImageIO )
       if( VTK_FOUND AND "${VTK_VERSION_MAJOR}" GREATER "5" )
         add_executable ( mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp )
