@@ -488,7 +488,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-        `boost::graph_traits<PolygonMesh>::faces_size_type` as value type.
+        `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
  *  \tparam NamedParameters a sequence of \ref namedparameters
 
  * \param pmesh the polygon mesh
@@ -874,7 +874,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-*         `boost::graph_traits<PolygonMesh>::faces_size_type` as value type.
+*         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
 *
 * \param components_to_keep the range of ids of connected components to keep
 * \param pmesh the polygon mesh
@@ -918,7 +918,7 @@ void keep_connected_components(PolygonMesh& pmesh
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-*         `boost::graph_traits<PolygonMesh>::faces_size_type` as value type.
+*         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
 *
 * \param components_to_remove the range of ids of connected components to remove
 * \param pmesh the polygon mesh
