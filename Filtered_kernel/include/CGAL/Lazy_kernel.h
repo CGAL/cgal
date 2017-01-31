@@ -87,7 +87,7 @@ struct Lazy_result_type
 
 class Enum_holder {
 protected:
-  enum { NONE, NT, VARIANT, OBJECT, BBOX };
+  enum { NONE, NT, VARIANT, OBJECT, BBOX, POINT_LOCATION };
 };
 
 } // internal
@@ -263,6 +263,12 @@ private:
   };
   
   template <typename Construction>
+  struct Select_wrapper_impl<Construction, POINT_LOCATION> {
+    template<typename Kernel, typename AKC, typename EKC>
+    struct apply { typedef Lazy_construction_projected_point_and_location_3<Kernel, AKC, EKC> type; };
+  };
+
+  template <typename Construction>
   struct Select_wrapper : Select_wrapper_impl<Construction> {};
 
 public:
@@ -298,6 +304,9 @@ public:
   typedef CommonKernelFunctors::Assign_3<Kernel>        Assign_3;
   typedef Lazy_construction_bbox<Kernel, typename Approximate_kernel::Construct_bbox_2, typename Exact_kernel::Construct_bbox_2>             Construct_bbox_2;
   typedef Lazy_construction_bbox<Kernel, typename Approximate_kernel::Construct_bbox_3, typename Exact_kernel::Construct_bbox_3>             Construct_bbox_3;
+
+  typedef Lazy_construction_projected_point_and_location_3<Kernel, typename Approximate_kernel::Construct_projected_point_and_location_3, typename Exact_kernel::Construct_projected_point_and_location_3> Construct_projected_point_and_location_3;
+
   typedef Lazy_cartesian_const_iterator_2<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_2, typename Exact_kernel::Construct_cartesian_const_iterator_2>   Construct_cartesian_const_iterator_2;
   typedef Lazy_cartesian_const_iterator_3<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_3, typename Exact_kernel::Construct_cartesian_const_iterator_3>   Construct_cartesian_const_iterator_3;
 

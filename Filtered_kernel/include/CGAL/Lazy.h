@@ -844,6 +844,34 @@ struct Lazy_construction_bbox
     }
   }
 };
+// The magic functor for Construct_bbox_[2,3], as there is no Lazy<Projected_point_and_location_3>
+
+template <typename LK, typename AC, typename EC>
+struct Lazy_construction_projected_point_and_location_3
+{
+  static const bool Protection = true;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename AC::result_type result_type;
+
+  AC ac;
+  EC ec;
+
+  template <typename L1, typename L2>
+  result_type operator()(const L1& l1, const L2& l2) const
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+    Protect_FPU_rounding<Protection> P;
+    try {
+      return ac(CGAL::approx(l1), CGAL::approx(l2));
+    } catch (Uncertain_conversion_exception) {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      return ec(CGAL::exact(l1)CGAL::exact(l2));
+    }
+  }
+};
 
 
 template <typename LK, typename AC, typename EC>
