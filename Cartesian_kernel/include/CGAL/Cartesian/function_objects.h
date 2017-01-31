@@ -3149,9 +3149,7 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
-
   };
-
 
   template <class K> 
   class Construct_radical_line_2

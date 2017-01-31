@@ -226,7 +226,6 @@ on_left_of_triangle_edge(const typename K::Point_3 & pt,
   return result;
 }
 
-#if 0
 template <class K>
 inline typename K::FT
 squared_distance_to_triangle(
@@ -269,7 +268,7 @@ squared_distance_to_triangle(
 }
 
 template <class K>
-inline Squared_distance_dimension_index<typename K::FT>
+inline typename K::FT
 squared_distance(
     const typename K::Point_3 & pt,
     const typename K::Triangle_3 & t,
@@ -282,92 +281,7 @@ squared_distance(
                                       vertex(t, 2),
                                       k);
 }
-#endif
 
-
-template <class K>
-inline
-Squared_distance_dimension_index<typename K::FT>
-squared_distance_to_triangle(
-    const typename K::Point_3 & pt,
-    const typename K::Point_3 & t0,
-    const typename K::Point_3 & t1,
-    const typename K::Point_3 & t2,
-    const K& k)
-{
-  Squared_distance_dimension_index<typename K::FT> res;
-  typename K::Construct_vector_3 vector;
-  typedef typename K::Vector_3 Vector_3;
-  const Vector_3 e1 = vector(t0, t1);
-  const Vector_3 oe3 = vector(t0, t2);
-  const Vector_3 normal = wcross(e1, oe3, k);
-
-  if(normal != NULL_VECTOR
-     && on_left_of_triangle_edge(pt, normal, t0, t1, k)
-     && on_left_of_triangle_edge(pt, normal, t1, t2, k)
-     && on_left_of_triangle_edge(pt, normal, t2, t0, k))
-      {
-        // the projection of pt is inside the triangle
-        res.dimension = 2;
-        res.squared_distance = squared_distance_to_plane(normal, vector(t0, pt), k);
-        return res;
-      }
-      else {
-        // The case normal==NULL_VECTOR covers the case when the triangle
-        // is collinear, or even more degenerate. In that case, we can
-        // simply take also the distance to the three segments.
-        //int ldim,li;
-        res = squared_distance(pt, 
-                               typename K::Segment_3(t2, t0),
-                               k);
-
-        if(res.dimension == 1){
-          res.index = 1;
-        } else {
-          res.index = (res.index==0)?2:0;
-        }
-        Squared_distance_dimension_index<typename K::FT> sddi;
-        sddi = squared_distance(pt, 
-                                typename K::Segment_3(t1, t2),
-                                k);
-        if(sddi.squared_distance < res.squared_distance){
-          res = sddi;
-          if(res.dimension == 1){
-            res.index = 0;
-          } else {
-            res.index = (res.index==0)?1:2;
-          }
-        }
-        sddi = squared_distance(pt, 
-                                typename K::Segment_3(t0, t1),
-                                k);
-        if(sddi.squared_distance < res.squared_distance){
-          res = sddi;
-          if(res.dimension == 1){
-            res.index = 2;
-          } else {
-            res.index = (res.index==0)?0:1;
-          }
-        }
-        return res;
-      }
-}
-
-
-template <class K>
-inline Squared_distance_dimension_index<typename K::FT>
-squared_distance(
-    const typename K::Point_3 & pt,
-    const typename K::Triangle_3 & t,
-    const K& k)
-{
-  typename K::Construct_vertex_3 vertex;
-  return squared_distance_to_triangle(pt,
-                                      vertex(t, 0),
-                                      vertex(t, 1),
-                                      vertex(t, 2),
-                                      k);
-}
 } // namespace internal
 
 
@@ -429,7 +343,7 @@ squared_distance(
     const Ray_3<K> &ray,
     const Plane_3<K> &plane)
 {
-    return internal::squared_distance(ray, plane, K());
+  return internal::squared_distance(ray, plane, K());
 }
 
 
@@ -468,29 +382,10 @@ squared_distance(
 
 template <class K>
 inline
-Squared_distance_dimension_index<typename K::FT>
-squared_distance(const Point_3<K> & pt,
-                 const Triangle_3<K> & t,
-                 const Tag_true& ) {
-  return internal::squared_distance(pt, t, K());
-}
-
-
-template <class K>
-inline
-Squared_distance_dimension_index<typename K::FT>
-squared_distance(const Triangle_3<K> & t,
-                 const Point_3<K> & pt,
-                 const Tag_true&) {
-  return internal::squared_distance(pt, t, K());
-}
-
-template <class K>
-inline
 typename K::FT
 squared_distance(const Point_3<K> & pt,
                  const Triangle_3<K> & t) {
-  return internal::squared_distance(pt, t, K()).squared_distance;
+  return internal::squared_distance(pt, t, K());
 }
 
 
@@ -499,10 +394,8 @@ inline
 typename K::FT
 squared_distance(const Triangle_3<K> & t,
                  const Point_3<K> & pt) {
-  return internal::squared_distance(pt, t, K()).squared_distance;
+  return internal::squared_distance(pt, t, K());
 }
-
-
 
 
 } //namespace CGAL

@@ -19,6 +19,7 @@
 //
 // Author(s)     : Sylvain Pion
  
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Quotient.h>
 #include <cassert>
@@ -81,6 +82,6 @@ main()
   std::cout << "Testing 3d-2d with Simple_cartesian<Quotient<Precise_integer>>:";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-  std::cout << "done" << std::endl;
+
   return 0;
 }

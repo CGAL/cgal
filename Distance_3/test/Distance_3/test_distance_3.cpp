@@ -80,7 +80,7 @@ struct Test {
   template < typename O1, typename O2 >
   void check_squared_distance(const O1& o1, const O2& o2, const FT& result)
   {
-    assert(approx_equal_nt(FT(CGAL::squared_distance(o1, o2)), result));
+	assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
 	assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
   }
 
@@ -120,27 +120,6 @@ struct Test {
     std::cout << "Point - Triange\n";
 
     check_squared_distance (p(0, 1, 2), T(p(0, 0, 0), p( 2, 0, 0), p( 0, 2, 0)), 4);
-
-    CGAL::Tag_true tag;
-    T t(P(0, 0, 0), P( 3, 0, 0), P( 0, 3, 0));
-    CGAL::Squared_distance_dimension_index<FT> sddi;
-    sddi = squared_distance(P(-1, -1, 0), t, tag);
-    assert((sddi.dimension == 0) && (sddi.index == 0));
-    sddi = squared_distance(P(4, -1, 0), t, tag);
-    assert((sddi.dimension == 0) && (sddi.index == 1));
-    sddi = squared_distance(P(-1, 4, 0), t, tag);
-    assert((sddi.dimension == 0) && (sddi.index == 2));
-
-    sddi = squared_distance(P(-1, 1, 0), t, tag);
-    assert((sddi.dimension == 1) && (sddi.index == 1));
-    sddi = squared_distance(P(1, -1, 0), t, tag);
-    assert(sddi.dimension == 1); 
-    assert(sddi.index == 2);
-    sddi = squared_distance(P(3, 3, 0), t, tag);
-    assert((sddi.dimension == 1) && (sddi.index == 0));
-
-    sddi = squared_distance(P(1, 1, 1), t, tag);
-    assert(sddi.dimension == 2);
   }
 
   void S_S()

@@ -750,10 +750,8 @@ public:
   template <typename K>
   class Compute_squared_distance_3
   {
-    typedef typename K::FT         FT;
-    typedef typename K::Point_3    Point_3;
-    typedef typename K::Triangle_3 Triangle_3;
-    typedef typename K::Segment_3  Segment_3;
+    typedef typename K::FT        FT;
+    typedef typename K::Point_3   Point_3;
   public:
     typedef FT               result_type;
 
@@ -769,30 +767,6 @@ public:
       typedef typename K::Vector_3 Vector_3;
       Vector_3 vec = pt2 - pt1;
       return vec*vec;
-    }
-
-    FT
-    operator()( const Point_3& pt, const Segment_3& seg) const
-    {
-      return internal::squared_distance(pt, seg, K()).squared_distance;
-    }
-
-    FT
-    operator()( const Point_3& pt, const Triangle_3& tr) const
-    {
-      return internal::squared_distance(pt, tr, K()).squared_distance;
-    }
-
-    Squared_distance_dimension_index<FT>
-    operator()( const Point_3& pt, const Segment_3& seg, const Tag_true& tag) const
-    {
-      return internal::squared_distance(pt, seg, K());
-    }
-
-    Squared_distance_dimension_index<FT>
-    operator()( const Point_3& pt, const Triangle_3& tr, const Tag_true) const
-    {
-      return internal::squared_distance(pt, tr, K());
     }
   };
 
@@ -2440,7 +2414,6 @@ public:
     }
   };
 
-
   template <typename K>
   class Construct_cartesian_const_iterator_3
   {
@@ -2476,7 +2449,6 @@ public:
       return v.rep().cartesian_end();
     }
   };
-
 
   template <typename K>
   class Construct_projected_point_3
@@ -2515,7 +2487,7 @@ public:
         }
         outside = true;
       }
-      
+
       return false;
     }
 
@@ -2544,6 +2516,7 @@ public:
       const FT dist_origin_p1 = sq_distance(origin,p1);
       const FT dist_origin_p2 = sq_distance(origin,p2);
       const FT dist_origin_p3 = sq_distance(origin,p3);
+
       if (   dist_origin_p2 >= dist_origin_p1
           && dist_origin_p3 >= dist_origin_p1 )
       {
@@ -2553,6 +2526,7 @@ public:
       {
         return p2;
       }
+
       return p3;
     }
 
@@ -2613,7 +2587,6 @@ public:
         return true;
       }
     }
-  
 
     /**
     * @brief returns true if p is inside segment s. If p is not inside s,
@@ -2659,7 +2632,6 @@ public:
     }
   
   public:
-    
     typename K::Point_3
     operator()(const typename K::Point_3& origin,
                const typename K::Triangle_3& triangle,
@@ -2736,9 +2708,6 @@ public:
       // Else return the constructed point
       return moved_point;
     }
-
-
-
 
     typename K::Point_3
     operator()(const typename K::Point_3& query,
