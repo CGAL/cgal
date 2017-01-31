@@ -472,6 +472,16 @@ struct Approx_converter
   const Bbox_3&
   operator()(const Bbox_3& b) const
   { return b; }
+
+  Projected_point_and_location<typename K2::Point_3>
+  operator()(const Projected_point_and_location<typename K1::Point_3>& p)
+  {
+    Projected_point_and_location<typename K2::Point_3> res;
+    res.projected_point  = (*this).operator(p.projected_point);
+    res.dimension = p.dimension;
+    res.index = p.index;
+  }
+  
 };
 
 template < typename K1, typename K2 >
@@ -497,6 +507,16 @@ struct Exact_converter
   const Bbox_3&
   operator()(const Bbox_3& b) const
   { return b; }
+
+  Projected_point_and_location<typename K2::Point_3>
+  operator()(const Projected_point_and_location<typename K1::Point_3>& p)
+  {
+    Projected_point_and_location<typename K2::Point_3> res;
+    res.projected_point  = (*this).operator(p.projected_point);
+    res.dimension = p.dimension;
+    res.index = p.index;
+  }
+  
 };
 
 //____________________________________________________________

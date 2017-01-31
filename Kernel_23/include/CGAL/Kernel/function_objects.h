@@ -2994,6 +2994,8 @@ public:
   
   public:
     
+    typedef Projected_point_and_location<typename K::Point_3> result_type;
+
     Projected_point_and_location<typename K::Point_3>
     operator()(const typename K::Point_3& origin,
                const typename K::Triangle_3& triangle,

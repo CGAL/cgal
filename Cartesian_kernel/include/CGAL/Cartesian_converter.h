@@ -293,11 +293,13 @@ public:
 	return Point_3(c(a.x()), c(a.y()), c(a.z()));
     }
 
-    typename K2::Weighted_point_3
-    operator()(const typename K1::Weighted_point_3 &a) const
+    Projected_point_and_location<typename K2::Point_3>
+    operator()(const Projected_point_and_location<typename K1::Point_3> &a) const
     {
-        typedef typename K2::Weighted_point_3 Weighted_point_3;
-	return Weighted_point_3((*this)(a.point()), c(a.weight()));
+      Projected_point_and_location<typename K2::Point_3> res;
+      res.projected_point =  (*this)(a.projected_point);
+      res.dimension = a.dimension;
+      res.index = a.index;
     }
 
     typename K2::Vector_3
