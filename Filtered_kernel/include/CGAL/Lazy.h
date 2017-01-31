@@ -868,7 +868,7 @@ struct Lazy_construction_projected_point_and_location_3
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-      return ec(CGAL::exact(l1)CGAL::exact(l2));
+      return ec(CGAL::exact(l1), CGAL::exact(l2));
     }
   }
 };
