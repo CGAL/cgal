@@ -10,6 +10,7 @@
 #include <CGAL/Three/Scene_group_item.h>
 
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 
@@ -121,6 +122,10 @@ private:
     typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
     typedef CGAL::Search_traits_adapter <Index,
                                          typename PointSet::Point_map, SearchTraits_3> Search_traits;
+#define QUERY_SPHERE
+#ifdef QUERY_SPHERE
+    typedef CGAL::Fuzzy_sphere<Search_traits> Sphere;
+#endif
     typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
     typedef typename Neighbor_search::Tree Tree;
     typedef typename Neighbor_search::Distance Distance;
@@ -163,7 +168,17 @@ private:
             for (std::size_t k = 0; k < index_container_former_ring.size(); k++)
               {
                 Index point_index = index_container_former_ring[k];
+
+#ifdef QUERY_SPHERE
+
+                std::vector<Index> neighbors;
+                Sphere fs (point_set.point(point_index), cluster_epsilon, 0, tree.traits());
+                tree.search (std::back_inserter (neighbors), fs);
                 
+                for (std::size_t nb = 0; nb < neighbors.size(); ++ nb)
+                  {
+                    Index neighbor_index = neighbors[nb];
+#else
                 Neighbor_search search(tree, point_set.point(point_index), 10, 0, true, tr_dist);
                 
                 for (typename Neighbor_search::iterator nit = search.begin();
@@ -173,7 +188,8 @@ private:
                       break;
                     
                     Index neighbor_index = nit->first;
-
+#endif
+                    
                     if (label_subregion[neighbor_index] != -1)
                       continue;
 
@@ -511,12 +527,14 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
               point_item->setRbgColor(r, g, b);
 
               if (dialog.generate_colored_point_set())
-                BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
-                  {
-                    Point_set::iterator it = colored_item->point_set()->insert(points->point(*(points->begin()+i)));
-                    colored_item->point_set()->set_color(*it, r, g, b);
-                  }
-
+                {
+                  BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
+                    {
+                      Point_set::iterator it = colored_item->point_set()->insert(points->point(*(points->begin()+i)));
+                      colored_item->point_set()->set_color(*it, r, g, b);
+                    }
+                }
+              
               // Providing a useful name consisting of the order of detection, name of type and number of inliers
               std::stringstream ss;
               if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get())){
