@@ -43,12 +43,12 @@ const char* const filenames[] = {
 };
 
 const std::pair<int, int> incident_subdomains[] = {
-  { 0, 1 },
-  { 1, 3 },
-  { 2, 0 },
-  { 2, 1 },
-  { 2, 3 },
-  { 3, 0 },
+  std::make_pair(0, 1),
+  std::make_pair(1, 3),
+  std::make_pair(2, 0),
+  std::make_pair(2, 1),
+  std::make_pair(2, 3),
+  std::make_pair(3, 0),
 };
 
 int main()
