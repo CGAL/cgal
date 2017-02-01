@@ -27,7 +27,7 @@ polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin ${segme
 target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item scene_surface_mesh_item)
 
 qt5_wrap_ui( mesh_plane_detectionUI_FILES  Mesh_plane_detection_dialog.ui)
-polyhedron_demo_plugin(mesh_plane_detection_plugin Mesh_plane_detection_plugin Mesh_plane_detection_impl ${mesh_plane_detectionUI_FILES})
+polyhedron_demo_plugin(mesh_plane_detection_plugin Mesh_plane_detection_plugin ${mesh_plane_detectionUI_FILES})
 target_link_libraries(mesh_plane_detection_plugin scene_polyhedron_item)
 
 qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
