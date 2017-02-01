@@ -953,6 +953,10 @@ public:
   typedef unspecified_type Construct_projected_point_3; 
 
   /*!
+    a model of `Kernel::ConstructProjectedPointAndLocation_3` 
+  */ 
+  typedef unspecified_type Construct_projected_point_and_location_3; 
+  /*!
     a model of `Kernel::ConstructLiftedPoint_3` 
   */ 
   typedef unspecified_type Construct_lifted_point_3; 

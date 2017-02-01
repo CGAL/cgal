@@ -414,7 +414,7 @@ public:
   {
     GeomTraits geom_traits;
     Projected_point_and_location<Point> ppal = geom_traits.construct_projected_point_and_location_3_object()(
-                        p, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
+    internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
     Point closest_point = ppal.projected_point;
 
       return

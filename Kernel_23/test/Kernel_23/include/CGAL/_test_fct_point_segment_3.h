@@ -17,7 +17,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Andreas Fabri
  
 
 #ifndef CGAL__TEST_FCT_POINT_3_SEGMENT_3_H
@@ -35,25 +35,26 @@ _test_fct_point_segment_3(const R& )
 
   CGAL::Projected_point_and_location< CGAL::Point_3<R> > pdi;
 
-  CGAL::Point_3<R> p(-1, -1, 0);
-  pdi = project(p, t);
-  assert(pdi.dimension == 0);
-  assert(pdi.index == 0);
-    pdi = project(CGAL::Point_3<R>(4, -1, 0), t);
-    assert(pdi.dimension == 0);
-    assert(pdi.index == 1);
-    pdi = project(CGAL::Point_3<R>(-1, 4, 0), t);
-    assert((pdi.dimension == 0) && (pdi.index == 2));
+  pdi = project(t, CGAL::Point_3<R>(-1, -1, 0));
+  assert((pdi.dimension == 0) && (pdi.index == 0));
 
-    pdi = project(CGAL::Point_3<R>(-1, 1, 0), t);
-    assert((pdi.dimension == 1) && (pdi.index == 1));
-    pdi = project(CGAL::Point_3<R>(1, -1, 0), t);
-    assert((pdi.dimension == 1) && (pdi.index == 2));
-    pdi = project(CGAL::Point_3<R>(3, 3, 0), t);
-    assert((pdi.dimension == 1) && (pdi.index == 0));
+  pdi = project(t, CGAL::Point_3<R>(4, -1, 0));
+  assert((pdi.dimension == 0) && (pdi.index == 1));
 
-    pdi = project(CGAL::Point_3<R>(1, 1, 1), t);
-    assert(pdi.dimension == 2);
+  pdi = project(t, CGAL::Point_3<R>(-1, 4, 0));
+  assert((pdi.dimension == 0) && (pdi.index == 2));
+
+  pdi = project(t, CGAL::Point_3<R>(-1, 1, 0));
+  assert((pdi.dimension == 1) && (pdi.index == 1));
+  
+  pdi = project(t, CGAL::Point_3<R>(1, -1, 0));
+  assert((pdi.dimension == 1) && (pdi.index == 2));
+  
+  pdi = project(t, CGAL::Point_3<R>(3, 3, 0));
+  assert((pdi.dimension == 1) && (pdi.index == 0));
+  
+  pdi = project(t, CGAL::Point_3<R>(1, 1, 1));
+  assert(pdi.dimension == 2);
 
  std::cout << "done" << std::endl;
  return true;

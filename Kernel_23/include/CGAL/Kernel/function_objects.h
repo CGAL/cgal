@@ -3038,8 +3038,8 @@ public:
 
     
     Projected_point_and_location<typename K::Point_3>
-    operator()(const typename K::Point_3& origin,
-               const typename K::Triangle_3& triangle) const
+    operator()(const typename K::Triangle_3& triangle,
+               const typename K::Point_3& origin) const
     {
       K k;
       return this->operator()(origin, triangle, k);
@@ -3087,8 +3087,8 @@ public:
 
 
     Projected_point_and_location<typename K::Point_3>
-    operator()(const typename K::Point_3& query,
-               const typename K::Segment_3& segment) const
+    operator()(const typename K::Segment_3& segment,
+               const typename K::Point_3& query) const
     {
       return this->operator()(query, segment, k);  
     }
