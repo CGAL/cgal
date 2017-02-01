@@ -146,6 +146,15 @@ if [ -n "${txt_not_utf8}" ]; then
   exit 1
 fi
 
+#check all headers in documentation actually exist
+echo '.. Checking if all documentation headers exist'
+not_existing_headers=$(bash ./Scripts/developer_scripts/check_headers.sh $PWD)
+if [ -n "${not_existing_headers}" ]; then
+  echo "The following files are referenced in the documentation but do not exist:"
+  echo ${not_existing_headers}
+  exit 1
+fi
+
 current_rev=$(${git} rev-parse HEAD)
 trap 'echo "(aborting the merge now)" && ${git} reset --quiet --hard ${current_rev}' EXIT
 
