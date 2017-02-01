@@ -5884,6 +5884,8 @@ public:
 class ConstructProjectedPointAndLocation_3 {
 public:
 
+  typedef unspecified_type result_type;
+
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -5897,9 +5899,8 @@ public:
     and where `res.index` is `0`, or `1`, if `res.dimension==0` and the closest point is on the source or target of the segment, 
     respectively, and the value of `res.index` is undefined if `res.dimension==1`.
   */
-  Projected_point_and_location
-  operator()(const Kernel::Segment_3& s,
-             const Kernel::Point_3& p);
+  result_type operator()(const Kernel::Segment_3& s,
+                         const Kernel::Point_3& p);
 
   /*!
     returns the point of `t` that is the closest to `p`, and information on where the point of `t` closest to `pt` is located.
@@ -5913,7 +5914,7 @@ public:
     and it is 0, 1 or 2, if `dim==1` and the closest point is on the edge opposite to the ith vertex of the triangle.
 
   */
-  Kernel::Point_3 operator()(const Kernel::Triangle_3& t,
+  result_type operator()(const Kernel::Triangle_3& t,
                              const Kernel::Point_3& p);
 
   /// @}

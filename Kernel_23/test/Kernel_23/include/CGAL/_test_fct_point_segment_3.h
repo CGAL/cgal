@@ -33,7 +33,7 @@ _test_fct_point_segment_3(const R& )
   typename R::Construct_projected_point_and_location_3 project = k.construct_projected_point_and_location_3_object();
   CGAL::Triangle_3<R> t(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>( 3, 0, 0), CGAL::Point_3<R>( 0, 3, 0));
 
-  CGAL::Projected_point_and_location< CGAL::Point_3<R> > pdi;
+  typename R::Construct_projected_point_and_location_3::result_type pdi;
 
   pdi = project(t, CGAL::Point_3<R>(-1, -1, 0));
   assert((pdi.dimension == 0) && (pdi.index == 0));
