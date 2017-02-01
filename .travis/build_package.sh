@@ -7,6 +7,7 @@ do
   if [ "$ARG" == "CHECK" ]
 	then
   	#parse current matrix and check that no package has been forgotten
+    zsh -x -e $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
 	  old_IFS=$IFS
 	  IFS=$'\n'
 	  COPY=0

@@ -12,7 +12,6 @@ before_script:
 - cmake -DCGAL_HEADER_ONLY=ON -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
 - make 
 - cd .. 
-- zsh -x -e ./Scripts/developer_scripts/test_merge_of_branch HEAD
 script: 
 - cd ./.travis
 - bash -x -e ./build_package.sh $PACKAGE
@@ -22,6 +21,7 @@ compiler:
 addons: 
   apt: 
     packages: 
+      - zsh
       - cmake 
       - libboost1.55-dev 
       - libboost-system1.55-dev 

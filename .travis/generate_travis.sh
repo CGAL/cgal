@@ -47,11 +47,11 @@ do
 done
 echo " matrix: " >> .travis.yml
 #writes the matrix
+echo "  - PACKAGE='CHECK' " >> .travis.yml
 for package in ${PACKAGES[@]}
 do
  	echo "  - PACKAGE='$package' " >> .travis.yml
 done
- 	echo "  - PACKAGE='CHECK' " >> .travis.yml
 
 #writes the end of the file
 COPY=0
