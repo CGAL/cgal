@@ -45,11 +45,13 @@ env:
   - PACKAGE='CHECK' 
 install: 
 before_script: 
+- sudo apt-get install zsh -y
 - mkdir -p build 
 - cd build 
-- cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- cmake -DCGAL_HEADER_ONLY=ON -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
 - make 
 - cd .. 
+- zsh -x -e ./Scripts/developer_scripts/test_merge_of_branch HEAD
 script: 
 - cd ./.travis
 - bash -x -e ./build_package.sh $PACKAGE
