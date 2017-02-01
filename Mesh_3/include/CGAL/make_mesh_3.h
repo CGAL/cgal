@@ -296,7 +296,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  bool nonlinear = false,
+                  bool /* nonlinear */ = false,
                   const int nb_initial_points = -1)
   {
     if ( with_features )
