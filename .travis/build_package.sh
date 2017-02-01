@@ -6,7 +6,7 @@ for ARG in $(echo "$@")
 do
   if [ "$ARG" == "CHECK" ]
 	then
-    zsh -x $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
+    zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
 
   	#parse current matrix and check that no package has been forgotten
 	  old_IFS=$IFS
