@@ -48,12 +48,15 @@ public :
       std::vector<float> *p_vertices,
       std::vector<float> *p_normals,
       std::vector<float> *p_edges,
-      std::vector<float> *p_colors)
+      std::vector<float> *p_colors,
+      std::vector<float> *p_bary)
   {
     vertices = p_vertices;
     normals = p_normals;
     edges = p_edges;
     colors = p_colors;
+    barycenters = p_bary;
+
   }
   void setColor(QColor c)
   {
@@ -188,11 +191,17 @@ public :
     edges->push_back(pa.y()+offset.y);
     edges->push_back(pa.z()+offset.z);
 
+
+    Kernel::Point_3 bary = (pa+pb+pc)/3.0;
     for(int i=0; i<3; i++)
     {
       colors->push_back((float)color.red()/255);
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
+      barycenters->push_back(bary.x());
+      barycenters->push_back(bary.y());
+      barycenters->push_back(bary.z());
+
     }
   }
 
@@ -218,6 +227,7 @@ private:
   mutable std::vector<float> *normals;
   mutable std::vector<float> *edges;
   mutable std::vector<float> *colors;
+  mutable std::vector<float> *barycenters;
   mutable QOpenGLShaderProgram *program;
 }; //end of class Scene_triangle_item
 
@@ -373,6 +383,7 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> positions_lines_not_in_complex;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
+  mutable std::vector<float> positions_barycenter;
 
   mutable std::vector<float> normals;
   mutable std::vector<float> f_colors;
@@ -977,6 +988,13 @@ void Scene_c3t3_item_priv::draw_triangle(const Kernel::Point_3& pa,
   positions_poly.push_back(pc.y()+offset.y);
   positions_poly.push_back(pc.z()+offset.z);
 
+  Kernel::Point_3 bary = (pa+pb+pc)/3.0;
+  for(int i=0; i<3; ++i)
+  {
+   positions_barycenter.push_back(bary.x());
+   positions_barycenter.push_back(bary.y());
+   positions_barycenter.push_back(bary.z());
+  }
 
 
 }
