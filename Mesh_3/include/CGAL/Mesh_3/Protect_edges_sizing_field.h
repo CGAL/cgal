@@ -986,7 +986,8 @@ insert_balls(const Vertex_handle& vp,
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
   // if( minimal_weight_ != 0 && n == 0 ) return;
 
-  if(nonlinear_growth_of_balls && refine_balls_iteration_nb == 0) {
+  if(nonlinear_growth_of_balls && refine_balls_iteration_nb < 3)
+  {
     // This block tries not to apply the general rule that the size of
     // protecting balls is a linear interpolation of the size of protecting
     // balls at corner. When the curve segment is long enough, pick a point
