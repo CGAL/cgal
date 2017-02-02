@@ -1040,6 +1040,12 @@ void MainWindow::open(QString filename)
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
   selectSceneItem(scene->addItem(scene_item));
+
+  CGAL::Three::Scene_group_item* group =
+          qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
+  if(group)
+    scene->redraw_model();
+
   if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
     sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
   else
@@ -1066,6 +1072,12 @@ bool MainWindow::open(QString filename, QString loader_name) {
     return false;
   }
   selectSceneItem(scene->addItem(item));
+
+  CGAL::Three::Scene_group_item* group =
+          qobject_cast<CGAL::Three::Scene_group_item*>(item);
+  if(group)
+    scene->redraw_model();
+
   return true;
 }
 
@@ -1480,6 +1492,10 @@ void MainWindow::on_actionLoad_triggered()
       item = loadItem(info, selectedPlugin);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);
+      CGAL::Three::Scene_group_item* group =
+              qobject_cast<CGAL::Three::Scene_group_item*>(item);
+      if(group)
+        scene->redraw_model();
       this->addToRecentFiles(filename);
     } else {
       open(filename);
