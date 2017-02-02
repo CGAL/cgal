@@ -588,7 +588,7 @@ public:
   */
   bool is_removed (const_iterator it) const
   {
-    return (std::distance (it, garbage_begin()) < 0);
+    return (std::distance (it, garbage_begin()) <= 0);
   }
 
   /*!
