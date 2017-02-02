@@ -477,7 +477,7 @@ struct Approx_converter
   operator()(const Projected_point_and_location<typename K1::Point_3>& p)
   {
     Projected_point_and_location<typename K2::Point_3> res;
-    res.projected_point  = (*this).operator(p.projected_point);
+    res.projected_point  = (*this).operator()(p.projected_point);
     res.dimension = p.dimension;
     res.index = p.index;
   }
@@ -512,7 +512,7 @@ struct Exact_converter
   operator()(const Projected_point_and_location<typename K1::Point_3>& p)
   {
     Projected_point_and_location<typename K2::Point_3> res;
-    res.projected_point  = (*this).operator(p.projected_point);
+    res.projected_point  = (*this).operator()(p.projected_point);
     res.dimension = p.dimension;
     res.index = p.index;
   }
