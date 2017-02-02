@@ -2501,7 +2501,7 @@ public:
      * @param k the kernel
      * @return the nearest point from origin
      */
-    typename const K::Point_3&
+    const typename K::Point_3&
     nearest_point_3(const typename K::Point_3& origin,
                     const typename K::Point_3& p1,
                     const typename K::Point_3& p2,
@@ -2803,7 +2803,7 @@ public:
      * @param k the kernel
      * @return the nearest point from origin
      */
-    typename const K::Point_3&
+    const typename K::Point_3&
     nearest_point_3(const typename K::Point_3& origin,
                     const typename K::Point_3& p1,
                     const typename K::Point_3& p2,
@@ -3090,6 +3090,7 @@ public:
     operator()(const typename K::Segment_3& segment,
                const typename K::Point_3& query) const
     {
+      K k;
       return this->operator()(query, segment, k);  
     }
     
