@@ -9,6 +9,9 @@
 #include <QPainter>
 #include <QtCore/qglobal.h>
 #include <QGuiApplication>
+#include <QSlider>
+#include <QWidgetAction>
+#include <QKeyEvent>
 
 #include <map>
 #include <vector>
@@ -71,7 +74,7 @@ public :
   {
    //vao containing the data for the facets
     {
-      program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+      program = getShaderProgram(PROGRAM_C3T3_TETS, viewer);
       program->bind();
 
       vaos[Facets]->bind();
@@ -95,6 +98,13 @@ public :
       program->enableAttributeArray("colors");
       program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
       buffers[Colors].release();
+
+      buffers[Barycenters].bind();
+      buffers[Barycenters].allocate(barycenters->data(),
+        static_cast<int>(barycenters->size()*sizeof(float)));
+      program->enableAttributeArray("barycenter");
+      program->setAttributeBuffer("barycenter", GL_FLOAT, 0, 3);
+      buffers[Barycenters].release();
 
       vaos[Facets]->release();
       program->release();
@@ -121,10 +131,11 @@ public :
   void draw(CGAL::Three::Viewer_interface* viewer) const
   {
     vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
+    program = getShaderProgram(PROGRAM_C3T3_TETS);
+    attribBuffers(viewer, PROGRAM_C3T3_TETS);
     program->bind();
-
+    float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
+    program->setUniformValue("shrink_factor", shrink_factor);
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices->size() / 3));
@@ -192,15 +203,15 @@ public :
     edges->push_back(pa.z()+offset.z);
 
 
-    Kernel::Point_3 bary = (pa+pb+pc)/3.0;
     for(int i=0; i<3; i++)
     {
       colors->push_back((float)color.red()/255);
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
-      barycenters->push_back(bary.x());
-      barycenters->push_back(bary.y());
-      barycenters->push_back(bary.z());
+
+      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0);
+      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0);
+      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0);
 
     }
   }
@@ -214,6 +225,7 @@ private:
       Normals,
       Colors,
       Edges,
+      Barycenters,
       NumberOfBuffers
   };
   enum Vao
@@ -244,6 +256,10 @@ struct Scene_c3t3_item_priv {
     , is_valid(true)
   {
     init_default_values();
+    tet_Slider = new QSlider(Qt::Horizontal);
+    tet_Slider->setValue(100);
+    tet_Slider->setMinimum(0);
+    tet_Slider->setMaximum(100);
   }
   Scene_c3t3_item_priv(const C3t3& c3t3_, Scene_c3t3_item* item)
     : item(item), c3t3(c3t3_)
@@ -255,10 +271,15 @@ struct Scene_c3t3_item_priv {
     , is_valid(true)
   {
     init_default_values();
+    tet_Slider = new QSlider(Qt::Horizontal);
+    tet_Slider->setValue(100);
+    tet_Slider->setMinimum(0);
+    tet_Slider->setMaximum(100);
   }
   ~Scene_c3t3_item_priv()
   {
      delete frame;
+    delete tet_Slider;
   }
 
   void init_default_values() {
@@ -332,6 +353,7 @@ struct Scene_c3t3_item_priv {
       Facet_vertices =0,
       Facet_normals,
       Facet_colors,
+      Facet_barycenters,
       Edges_vertices,
       Edges_CNC,
       Grid_vertices,
@@ -366,6 +388,7 @@ struct Scene_c3t3_item_priv {
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
   std::set<Tr::Cell_handle> intersected_cells;
+  QSlider* tet_Slider;
 
   //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
@@ -804,6 +827,8 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   d->program->bind();
   QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
   d->program->setUniformValue("cutplane", cp);
+  float shrink_factor = getShrinkFactor();
+  d->program->setUniformValue("shrink_factor", shrink_factor);
   // positions_poly_size is the number of total facets in the C3T3
   // it is only computed once and positions_poly is emptied at the end
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->positions_poly_size / 3));
@@ -988,12 +1013,11 @@ void Scene_c3t3_item_priv::draw_triangle(const Kernel::Point_3& pa,
   positions_poly.push_back(pc.y()+offset.y);
   positions_poly.push_back(pc.z()+offset.z);
 
-  Kernel::Point_3 bary = (pa+pb+pc)/3.0;
   for(int i=0; i<3; ++i)
   {
-   positions_barycenter.push_back(bary.x());
-   positions_barycenter.push_back(bary.y());
-   positions_barycenter.push_back(bary.z());
+   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0);
+   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0);
+   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0);
   }
 
 
@@ -1143,6 +1167,13 @@ QMenu* Scene_c3t3_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {
+
+    QMenu *container = new QMenu(tr("Tetrahedra's Shrink Factor"));
+    QWidgetAction *sliderAction = new QWidgetAction(0);
+    connect(d->tet_Slider, &QSlider::valueChanged, this, &Scene_c3t3_item::itemChanged);
+    sliderAction->setDefaultWidget(d->tet_Slider);
+    container->addAction(sliderAction);
+    menu->addMenu(container);
     QAction* actionExportFacetsInComplex =
       menu->addAction(tr("Export facets in complex"));
     actionExportFacetsInComplex->setObjectName("actionExportFacetsInComplex");
@@ -1215,9 +1246,15 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
     item->buffers[Facet_colors].release();
 
+    item->buffers[Facet_barycenters].bind();
+    item->buffers[Facet_barycenters].allocate(positions_barycenter.data(),
+      static_cast<int>(positions_barycenter.size()*sizeof(float)));
+    program->enableAttributeArray("barycenter");
+    program->setAttributeBuffer("barycenter", GL_FLOAT, 0, 3);
+    item->buffers[Facet_barycenters].release();
+
     item->vaos[Facets]->release();
     program->release();
-
     positions_poly_size = positions_poly.size();
     positions_poly.clear();
     positions_poly.swap(positions_poly);
@@ -1225,6 +1262,8 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     normals.swap(normals);
     f_colors.clear();
     f_colors.swap(f_colors);
+    positions_barycenter.clear();
+    positions_barycenter.swap(positions_barycenter);
   }
 
   //vao containing the data for the lines
@@ -1358,6 +1397,7 @@ void Scene_c3t3_item_priv::computeIntersections()
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
+  positions_barycenter.clear();
   const Kernel::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
@@ -1575,7 +1615,8 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->init_vectors(&d->positions_poly,
                                   &d->normals,
                                   &d->positions_lines,
-                                  &d->f_colors);
+                                  &d->f_colors,
+                                  &d->positions_barycenter);
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
@@ -1655,5 +1696,23 @@ bool Scene_c3t3_item::is_valid() const
 void Scene_c3t3_item::set_valid(bool b)
 {
   d->is_valid = b;
+}
+float Scene_c3t3_item::getShrinkFactor() const
+{
+ return d->tet_Slider->value()/100.0f;
+}
+bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
+{
+ if(event->key() == Qt::Key_Plus)
+ {
+   d->tet_Slider->setValue(d->tet_Slider->value() + 5);
+   itemChanged();
+ }
+ else if(event->key() == Qt::Key_Minus)
+ {
+   d->tet_Slider->setValue(d->tet_Slider->value() -5);
+   itemChanged();
+ }
+ return true;
 }
 #include "Scene_c3t3_item.moc"

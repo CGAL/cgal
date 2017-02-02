@@ -118,6 +118,8 @@ public:
   public:
     QMenu* contextMenu();
     void copyProperties(Scene_item *);
+    float getShrinkFactor() const;
+    bool keyPressEvent(QKeyEvent *);
   public Q_SLOTS:
   void export_facets_in_complex();
 

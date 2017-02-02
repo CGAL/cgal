@@ -683,6 +683,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_WITH_TEXTURE:
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
+    case PROGRAM_C3T3_TETS:
         program->setUniformValue("light_pos", position);
         program->setUniformValue("light_diff",diffuse);
         program->setUniformValue("light_spec", specular);
@@ -699,6 +700,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_INSTANCED:
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
+      case PROGRAM_C3T3_TETS:
       program->setUniformValue("mv_matrix", mv_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
@@ -1347,6 +1349,27 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
         program->bindAttributeLocation("colors", 1);
         program->link();
         d->shader_programs[PROGRAM_CUTPLANE_SPHERES] = program;
+        return program;
+      }
+    case PROGRAM_C3T3_TETS:
+      if( d->shader_programs[PROGRAM_C3T3_TETS])
+      {
+          return d->shader_programs[PROGRAM_C3T3_TETS];
+      }
+      else
+      {
+        QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3_tets.v"))
+        {
+            std::cerr<<"adding vertex shader FAILED"<<std::endl;
+        }
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+        {
+            std::cerr<<"adding fragment shader FAILED"<<std::endl;
+        }
+        program->bindAttributeLocation("colors", 1);
+        program->link();
+        d->shader_programs[PROGRAM_C3T3_TETS] = program;
         return program;
       }
     case PROGRAM_SPHERES:
