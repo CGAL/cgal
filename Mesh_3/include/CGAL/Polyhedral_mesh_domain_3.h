@@ -224,11 +224,10 @@ template<class Polyhedron,
          class Use_exact_intersection_construction_tag = CGAL::Tag_true>
 class Polyhedral_mesh_domain_3
 {
-
+public:
   typedef typename Mesh_3::details::IGT_generator<
     IGT_,Use_exact_intersection_construction_tag>::type IGT;
 
-public:
 
   typedef Patch_id_ Patch_id;
 
