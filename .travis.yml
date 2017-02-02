@@ -3,6 +3,7 @@ dist: trusty
 sudo: required 
 env: 
  matrix: 
+  - PACKAGE='CHECK' 
   - PACKAGE='AABB_tree Advancing_front_surface_reconstruction Algebraic_foundations ' 
   - PACKAGE='Algebraic_kernel_d Algebraic_kernel_for_circles Algebraic_kernel_for_spheres ' 
   - PACKAGE='Alpha_shapes_2 Alpha_shapes_3 Apollonius_graph_2 ' 
@@ -42,12 +43,11 @@ env:
   - PACKAGE='TDS_3 Three Triangulation ' 
   - PACKAGE='Triangulation_2 Triangulation_3 Union_find ' 
   - PACKAGE='Visibility_2 Voronoi_diagram_2 ' 
-  - PACKAGE='CHECK' 
 install: 
 before_script: 
 - mkdir -p build 
 - cd build 
-- cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- cmake -DCGAL_HEADER_ONLY=ON -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
 - make 
 - cd .. 
 script: 
@@ -59,6 +59,7 @@ compiler:
 addons: 
   apt: 
     packages: 
+      - zsh
       - cmake 
       - libboost1.55-dev 
       - libboost-system1.55-dev 

@@ -12,13 +12,6 @@ if [ -z "`git --version`" ]; then
 fi
 
 git=git
-ack=ack-grep
-if ! $ack --version >/dev/null 2>&1; then
-    ack=ack
-fi
-if ! $ack --version >/dev/null 2>&1; then
-    ack=NOACK
-fi
 if hub --version 2> /dev/null > /dev/null; then
     case "$(hub --version)" in
 	*hub\ version*) git=hub;;
@@ -126,23 +119,28 @@ fi
 
 #check header files without license include directive
 echo '.. Checking include directives in header files...'
-if [ $ack = NOACK ]; then
-    echo '   WARNING: test skipped because no `ack` tool was found'
-else
-    file_without_license_include=$(for pkg in `$ack "^GPL" */package_info/*/license.txt -l | awk -F "/" '{print $1}'`; do find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r grep -L "#include <CGAL/license"; done)
-    if [ -n "${file_without_license_include}" ]; then
-        echo "The following files do not have an include directive of the package license header:"
-        echo ${file_without_license_include}
-        exit 1
-    fi
+file_without_license_include=$(for pkg in `egrep "^GPL" */package_info/*/license.txt -l | awk -F "/" '{print $1}'`; do find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r grep -L "#include <CGAL/license"; done)
+if [ -n "${file_without_license_include}" ]; then
+    echo "The following files do not have an include directive of the package license header:"
+    echo ${file_without_license_include}
+    exit 1
 fi
 
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
-txt_not_utf8=$(file -N `git ls-files --stage` | grep "text" | egrep -v "UTF-8|ASCII|XML|EPS")
+txt_not_utf8=$(file -N `git ls-files --stage` | grep "text" | egrep -v "UTF-8|ASCII|XML|EPS|FIG|assembler source|from flex")
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}
+  exit 1
+fi
+
+#check all headers in documentation actually exist
+echo '.. Checking if all documentation headers exist'
+not_existing_headers=$(bash ./Scripts/developer_scripts/check_headers.sh $PWD)
+if [ -n "${not_existing_headers}" ]; then
+  echo "The following files are referenced in the documentation but do not exist:"
+  echo ${not_existing_headers}
   exit 1
 fi
 
