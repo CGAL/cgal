@@ -1487,8 +1487,38 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
   // Get sizes
   FT size_v1 = get_size(v1);
   FT size_v2 = get_size(v2);
-  FT distance_v1v2 = compute_distance(v1,v2);
+
+  Curve_segment_index curve_index = Curve_segment_index();
+  if(get_dimension(v1) == 1) {
+    curve_index = domain_.curve_segment_index(v1->index());
+  } else if(get_dimension(v2) == 1) {
+    curve_index = domain_.curve_segment_index(v2->index());
+  }
+  if(curve_index != Curve_segment_index()) {
+    FT geodesic_distance = domain_.geodesic_distance(v1->point().point(),
+                                                     v2->point().point(),
+                                                     curve_index);
+    if(domain_.is_cycle(v1->point().point(), curve_index)) {
+      geodesic_distance =
+        (std::min)(geodesic_distance,
+                   domain_.geodesic_distance(v2->point().point(),
+                                             v1->point().point(),
+                                             curve_index));
+    } else {
+      geodesic_distance = CGAL::abs(geodesic_distance);
+    }
+    // Sufficient condition so that the curve portion between v1 and v2 is
+    // inside the union of the two balls.
+    if(geodesic_distance > (size_v1 + size_v2)) {
+      std::cerr << "Note: on curve #" << curve_index << ", between ("
+                << v1->point() << ") and (" << v2->point() << "), the "
+                << "geodesic distance is " << geodesic_distance << " and the"
+                << " sum of radii is " << size_v1 + size_v2 << std::endl;
+      return false;
+    }
+  }
   
+  const FT distance_v1v2 = compute_distance(v1,v2);
   // Ensure size_v1 > size_v2
   if ( size_v1 < size_v2 ) { std::swap(size_v1, size_v2); }
   
