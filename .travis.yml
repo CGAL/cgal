@@ -82,5 +82,4 @@ addons:
       # - qttools5-dev 
       # - qttools5-dev-tools 
     sources: 
-      - kalakris-cmake 
       - boost-latest 
