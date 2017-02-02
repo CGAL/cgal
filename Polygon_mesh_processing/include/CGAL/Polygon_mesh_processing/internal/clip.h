@@ -341,7 +341,7 @@ void clip(      TriangleMesh& tm,
           bool close)
 {
   if( boost::begin(faces(tm))==boost::end(faces(tm)) ) return;
-  CGAL::Bbox_3 bbox = bbox(tm);
+  CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
   //extend the bbox a bit to avoid border cases
   double xd=(bbox.xmax()-bbox.xmin())/100;
   double yd=(bbox.ymax()-bbox.ymin())/100;
