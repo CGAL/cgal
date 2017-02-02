@@ -59,6 +59,7 @@ class Intersection_nodes<TriangleMesh,VertexPointMap,false,false>
   typedef boost::graph_traits<TriangleMesh>                                  GT;
   typedef typename GT::halfedge_descriptor                  halfedge_descriptor;
   typedef typename GT::face_descriptor                          face_descriptor;
+  typedef typename GT::vertex_descriptor                      vertex_descriptor;
 
 //members
   Nodes_vector nodes;
@@ -125,6 +126,14 @@ public:
     add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
   }
 
+  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
+  {
+    put(vpm, vd, nodes[i]);
+  }
+
+  void all_nodes_created(){}
+  void finalize() {}
+
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,No_predicates_on_constructions,false>
 
@@ -146,6 +155,7 @@ private:
   typedef boost::graph_traits<TriangleMesh>                                  GT;
   typedef typename GT::halfedge_descriptor                  halfedge_descriptor;
   typedef typename GT::face_descriptor                          face_descriptor;
+  typedef typename GT::vertex_descriptor                      vertex_descriptor;
 
   typedef std::vector <Exact_kernel::Point_3>                       Exact_nodes;
 //members
@@ -154,6 +164,7 @@ private:
   Double_to_exact double_to_exact;
   Exact_to_double exact_to_double;
   Exact_kernel        ek;
+  std::vector<vertex_descriptor> tm1_vertices, tm2_vertices;
 
 public:
   const TriangleMesh &tm1, &tm2;
@@ -231,6 +242,33 @@ public:
   void add_new_node(const Point_3& p){
     enodes.push_back(to_exact(p));
   }
+
+  void all_nodes_created()
+  {
+    tm1_vertices.resize(enodes.size(), GT::null_vertex());
+    tm2_vertices.resize(enodes.size(), GT::null_vertex());
+  }
+
+  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh& tm)
+  {
+    put(vpm, vd, exact_to_double(enodes[i]));
+    if (&tm1==&tm)
+      tm1_vertices[i] = vd;
+    else
+      tm2_vertices[i] = vd;
+  }
+
+  void finalize()
+  {
+    for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
+    {
+      Point_3 pt = exact_to_double(enodes[i]);
+      if ( tm1_vertices[i] != GT::null_vertex() )
+        put(vpm1, tm1_vertices[i], pt);
+      if ( tm2_vertices[i] != GT::null_vertex() )
+        put(vpm2, tm2_vertices[i], pt);
+    }
+  }
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,Predicates_on_constructions,false>
 
@@ -247,6 +285,7 @@ class Intersection_nodes<TriangleMesh,VertexPointMap,Predicates_on_constructions
   typedef boost::graph_traits<TriangleMesh>                                  GT;
   typedef typename GT::halfedge_descriptor                  halfedge_descriptor;
   typedef typename GT::face_descriptor                          face_descriptor;
+  typedef typename GT::vertex_descriptor                      vertex_descriptor;
 //members
   Nodes_vector nodes;
   Input_kernel k;
@@ -306,6 +345,15 @@ public:
   }
 
   const Point_3& to_exact(const Point_3& p) const { return p; }
+
+  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
+  {
+    put(vpm, vd, nodes[i]);
+  }
+
+  void all_nodes_created(){}
+  void finalize() {}
+
 
 }; // end specialization
 

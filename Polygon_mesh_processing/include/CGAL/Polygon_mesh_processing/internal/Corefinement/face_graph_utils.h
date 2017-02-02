@@ -252,7 +252,7 @@ void
 triangulate_a_face(
   typename boost::graph_traits<TriangleMesh>::face_descriptor current_face,
   TriangleMesh& tm,
-  const Node_vector& nodes,
+  Node_vector& nodes,
   const std::vector<Node_id>& node_ids,
   typename std::vector<typename boost::graph_traits<TriangleMesh>
                             ::vertex_descriptor>& node_id_to_vertex,
@@ -276,7 +276,7 @@ triangulate_a_face(
   {
     vertex_descriptor v=add_vertex(tm);
     new_node_visitor.new_vertex_added(node_id, v, tm);
-    put(vpm, v, nodes[node_id]);
+    nodes.call_put(vpm, v, node_id, tm);
     CGAL_assertion(node_id_to_vertex.size()>node_id);
     node_id_to_vertex[node_id]=v;
   }
