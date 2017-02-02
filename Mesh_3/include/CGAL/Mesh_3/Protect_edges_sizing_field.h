@@ -1510,10 +1510,12 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
     // Sufficient condition so that the curve portion between v1 and v2 is
     // inside the union of the two balls.
     if(geodesic_distance > (size_v1 + size_v2)) {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "Note: on curve #" << curve_index << ", between ("
                 << v1->point() << ") and (" << v2->point() << "), the "
                 << "geodesic distance is " << geodesic_distance << " and the"
                 << " sum of radii is " << size_v1 + size_v2 << std::endl;
+#endif
       return false;
     }
   }
