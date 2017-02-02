@@ -40,6 +40,10 @@
 #if ! defined(CGAL_NO_PRECONDITIONS)
 #  include <sstream>
 #endif
+#ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
+#include <CGAL/IO/File_binary_mesh_3.h>
+#endif
+
 namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
@@ -1133,6 +1137,13 @@ refine_balls()
   while ( (!unchecked_vertices_.empty() || restart) &&
           this->refine_balls_iteration_nb < refine_balls_max_nb_of_loops)
   {
+#ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
+    std::ostringstream oss;
+    oss << "dump_protecting_balls_" << refine_balls_iteration_nb << ".cgal";
+    std::ofstream outfile(oss.str(), std::ios_base::binary | std::ios_base::out);
+    CGAL::Mesh_3::save_binary_file(outfile, c3t3_, true);
+#endif //CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
+
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     std::cerr << "RESTART REFINE LOOP (" << refine_balls_iteration_nb << ")\n"
               << "\t unchecked_vertices size: " << unchecked_vertices_.size() <<"\n";
