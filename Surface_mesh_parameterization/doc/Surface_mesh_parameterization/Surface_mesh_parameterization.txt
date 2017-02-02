@@ -231,9 +231,9 @@ condition (each vertex in parameter space is a convex combination of
 its neighboring vertices), and the border is convex.
 This method solves two \#vertices x \#vertices sparse linear
 systems. The matrix (the same for both systems) is sparse and symmetric positive
-definite(if the border vertices are eliminated from the linear system
-and if the mesh contains no hole),
-thus can be efficiently solved using dedicated linear solvers.
+definite (if the border vertices are eliminated from the linear system
+and if the mesh contains no hole), and thus can be efficiently solved using
+dedicated linear solvers.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigconformal,conformal.png}
 Left: Discrete Conformal Map. Right: parameter space.
@@ -243,15 +243,13 @@ Left: Discrete Conformal Map. Right: parameter space.
 
 `Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
-The mean value coordinates parameterization method has been introduced
+The Mean Value Coordinates parameterization method has been introduced
 by Floater \cgalCite{cgal:f-mvc-03}. Each vertex in parameter space is
-optimized so as to be a convex combination of its neighboring
-vertices. The barycentric coordinates are this time unconditionally
-positive, by deriving an application of the mean theorem for harmonic
-functions. This method is in essence an approximation of the Discrete Conformal
-Map, with a guaranteed one-to-one mapping when the border is convex.
-This method solves two \#vertices x \#vertices sparse linear systems. The matrix (the
-same for both systems) is asymmetric.
+optimized to be a convex combination of its neighboring vertices.
+This method is in essence an approximation of the Discrete Conformal Map,
+with a guaranteed one-to-one mapping when the border is convex. This method
+solves two \#vertices x \#vertices sparse linear systems. The matrix (the same
+for both systems) is asymmetric.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigfloater,floater.png}
 Floater Mean Value Coordinates. Right: parameter space.
