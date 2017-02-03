@@ -20,15 +20,16 @@
 //                 Manuel Caroli
 //                 Aymeric Pelle
 
+#include "_test_cls_periodic_3_iterator.h"
+#include "_test_cls_periodic_3_circulator.h"
+
 #include <cassert>
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <sstream>
 #include <list>
 #include <vector>
-
-#include "_test_cls_periodic_3_iterator.h"
-#include "_test_cls_periodic_3_circulator.h"
 
 template <class PeriodicTriangulation>
 void
@@ -189,12 +190,14 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(PT1_deg.is_valid());
 
   std::cout<<"Constructor"<<std::endl;
-  typename P3T3::FT ft1(-0.1);
-  typename P3T3::FT ft2(0.2);
-  Iso_cuboid domain(ft1,ft1,ft1,ft2,ft2,ft2);
-  std::cout<<"x-length: "<<domain.xmax()-domain.xmin()<<'\t'
-	   <<"y-length: "<<domain.ymax()-domain.ymin()<<'\t'
-	   <<"z-length: "<<domain.zmax()-domain.zmin()<<std::endl;
+
+  // RT used to make it work with homogeneous kernels
+  typename Geometric_traits::K::RT ft1(1);
+  typename Geometric_traits::K::RT ft2(2);
+  Iso_cuboid domain(ft1, ft1, ft1, ft2, ft2, ft2, 10);
+  std::cout << "x-length: "<<domain.xmax()-domain.xmin()<<'\t'
+            << "y-length: "<<domain.ymax()-domain.ymin()<<'\t'
+            << "z-length: "<<domain.zmax()-domain.zmin()<<std::endl;
 
   std::cout<<"Comparisons: "
 	   <<(domain.xmax()-domain.xmin() == domain.ymax()-domain.ymin())
