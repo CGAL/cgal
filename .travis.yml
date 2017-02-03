@@ -81,5 +81,3 @@ addons:
       # - libqt5svg5-dev 
       # - qttools5-dev 
       # - qttools5-dev-tools 
-    sources: 
-      - boost-latest 
