@@ -7,19 +7,14 @@ namespace CGAL {
 The class `Periodic_3_Delaunay_triangulation_3` represents a 
 Delaunay triangulation in three-dimensional periodic space. 
 
-\cgalHeading{Template Parameters}
+\tparam Periodic_3DelaunayTriangulationTraits_3 is the geometric traits class. 
 
-The first template argument `PT` must be a model of the 
-`Periodic_3DelaunayTriangulationTraits_3` concept. 
-
-The second template argument `TDS` must be a model of the 
-`TriangulationDataStructure_3` concept with some additional 
-functionality in cells and vertices. 
+\tparam TriangulationDataStructure_3 is the triangulation data structure.
 Its default value is 
 `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`. 
 
 */
-template< typename PT, typename TDS >
+template< typename Periodic_3DelaunayTriangulationTraits_3, typename TriangulationDataStructure_3 >
 class Periodic_3_Delaunay_triangulation_3 : 
     public Periodic_3_triangulation_3<Periodic_3DelaunayTriangulationTraits_3,
                                       TriangulationDataStructure_3>

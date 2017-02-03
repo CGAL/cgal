@@ -82,7 +82,7 @@ public:
   Point_const_iterator hidden_points_end() const { return _hidden.end(); }
 
   void hide_point (const Point &p) { _hidden.push_back(p); }
-  //  void unhide_point (Point_iterator i) { _hidden.delete(i); }
+  void unhide_point (Point_iterator i) { _hidden.erase(i); }
 
   //note this function is not requested by the RegularTriangulationCellBase_3
   //it should be replaced everywhere by weighted_circumcenter()

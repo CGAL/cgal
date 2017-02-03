@@ -51,3 +51,32 @@ example demonstrates how to use the geometric access functions.
 
 -------------------------------------------------------------------------------
 
+------- p3rt3_insert_remove ------------------------------------------------------
+
+This example shows the incremental construction of a 3D regular triangulation,
+and the removal of a vextex. It uses the default parameter of the Periodic_3_regular_triangulation_3
+class for the triangulation data structure.
+
+-------------------------------------------------------------------------------
+
+------- p3rt3_insert_only ------------------------------------------------------
+
+This example shows the incremental construction of a 3D regular triangulation.
+It uses a more appropriate triangulation data structure, which saves some memory resources.
+
+-------------------------------------------------------------------------------
+
+------- p3rt3_hidden_points ------------------------------------------------------
+
+This example shows that points can be hidden during the incremental construction
+of a 3D regular triangulation.
+
+-------------------------------------------------------------------------------
+
+------- p3rt3_insert_point_with_bad_weight ------------------------------------------------------
+
+This example shows how points whose weight does not
+satisfy the precondition are handled during the incremental construction
+of a 3D regular triangulation.
+
+-------------------------------------------------------------------------------
