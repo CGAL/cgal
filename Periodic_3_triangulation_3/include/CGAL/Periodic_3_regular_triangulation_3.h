@@ -296,28 +296,26 @@ public:
     }
   }
 
-  FT squared_orthoball_radius (const Periodic_point& p0, const Periodic_point& p1, const Periodic_point& p2, const Periodic_point& p3) const
+  CGAL::Comparison_result compare_orthsphere_radius_to_threshold (
+      const Periodic_weighted_point& p0, const Periodic_weighted_point& p1,
+      const Periodic_weighted_point& p2, const Periodic_weighted_point& p3,
+      const FT threshold) const
   {
-    typename Geometric_traits::Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3
-                                          = geom_traits().construct_weighted_circumcenter_3_object();
-
-    Bare_point weighted_circumcenter = construct_weighted_circumcenter_3(
-        p0.first,  p1.first,  p2.first,  p3.first,
-        p0.second, p1.second, p2.second, p3.second);
-    Weighted_point pt = point(p0);
-    FT ao_2 = squared_distance(static_cast<const Bare_point&>(pt), weighted_circumcenter);
-    FT io_2 = ao_2 - pt.weight();
-    return io_2;
+    return geom_traits().compare_weighted_squared_radius_3_object()(
+             p0.first,  p1.first,  p2.first,  p3.first,
+             p0.second, p1.second, p2.second, p3.second,
+             threshold);
   }
 
-  FT squared_orthoball_radius (Cell_handle cell)
+  CGAL::Comparison_result compare_orthsphere_radius_to_threshold (Cell_handle cell,
+                                                                  const FT threshold) const
   {
-    Periodic_point p0 = periodic_point(cell, 0);
-    Periodic_point p1 = periodic_point(cell, 1);
-    Periodic_point p2 = periodic_point(cell, 2);
-    Periodic_point p3 = periodic_point(cell, 3);
+    Periodic_weighted_point p0 = Tr_Base::periodic_point(cell, 0);
+    Periodic_weighted_point p1 = Tr_Base::periodic_point(cell, 1);
+    Periodic_weighted_point p2 = Tr_Base::periodic_point(cell, 2);
+    Periodic_weighted_point p3 = Tr_Base::periodic_point(cell, 3);
 
-    return squared_orthoball_radius(p0, p1, p2, p3);
+    return compare_orthsphere_radius_to_threshold(p0, p1, p2, p3, threshold);
   }
 
   template <class CellIt>
@@ -326,7 +324,7 @@ public:
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
     for (; begin != end; ++begin)
     {
-      if (squared_orthoball_radius(*begin) >= threshold)
+      if (compare_orthsphere_radius_to_threshold(*begin, threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(*begin);
       }
@@ -338,7 +336,7 @@ public:
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
     for (; begin != end; ++begin)
     {
-      if (squared_orthoball_radius(begin) >= threshold)
+      if (compare_orthsphere_radius_to_threshold(begin, threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(begin);
       }
@@ -355,7 +353,7 @@ public:
     bool result = false;
     FT threshold = FT(0.015625) * (domain().xmax() - domain().xmin()) * (domain().xmax() - domain().xmin());
 
-    if (squared_orthoball_radius(new_ch) >= threshold)
+    if (compare_orthsphere_radius_to_threshold(new_ch, threshold) != CGAL::SMALLER)
     {
       if (is_1_cover())
       {
@@ -375,7 +373,7 @@ public:
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax() - domain().xmin());
     for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
     {
-      if (squared_orthoball_radius(iter) >= threshold)
+      if (compare_orthsphere_radius_to_threshold(iter, threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(iter);
       }
@@ -862,20 +860,15 @@ public:
   inline bool
   is_extensible_triangulation_in_1_sheet_h2() const
   {
-    typedef typename Geometric_traits::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
-    typedef typename Geometric_traits::FT FT;
-
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
-    Construct_weighted_circumcenter_3 construct_weighted_circumcenter = geom_traits().construct_weighted_circumcenter_3_object();
 
-    for (Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Base::UNIQUE);
-         tit != this->periodic_tetrahedra_end(Base::UNIQUE);
+    for (Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Tr_Base::UNIQUE);
+         tit != this->periodic_tetrahedra_end(Tr_Base::UNIQUE);
          ++tit)
     {
-      Bare_point cc = construct_weighted_circumcenter(tit->at(0).first, tit->at(1).first, tit->at(2).first, tit->at(3).first,
-                                        tit->at(0).second, tit->at(1).second, tit->at(2).second, tit->at(3).second);
-
-      if (squared_orthoball_radius(tit->at(0), tit->at(1), tit->at(2), tit->at(3)) >= threshold)
+      if (compare_orthsphere_radius_to_threshold(tit->at(0), tit->at(1),
+                                                 tit->at(2), tit->at(3),
+                                                 threshold) != CGAL::SMALLER)
         return false;
     }
     return true;
