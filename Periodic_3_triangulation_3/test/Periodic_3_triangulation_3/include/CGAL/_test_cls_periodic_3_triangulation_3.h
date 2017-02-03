@@ -1,4 +1,4 @@
-// Copyright (c) 1998  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1998, 2015  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -18,6 +18,7 @@
 //
 // Author(s)     : Francois Rebufat
 //                 Manuel Caroli
+//                 Aymeric Pelle
 
 #include <cassert>
 #include <iostream>
@@ -49,6 +50,9 @@ _test_periodic_3_triangulation_3_constructors(const PeriodicTriangulation &)
 template <class PeriodicTriangulation>
 void
 _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
+    const typename PeriodicTriangulation::Point& pointtt,
+    const char* covering_test_HOM_filename,
+    const char* covering_test_filename,
     bool ex = false, bool hom = false)
 {
   typedef PeriodicTriangulation                  P3T3;
@@ -145,13 +149,21 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   std::cout<<"  non-degenerate, 1-sheeted covering"<<std::endl;
   std::ifstream fin;
-  if (hom) fin.open("data/P3DT3_covering_test_HOM.tri");
-  else fin.open("data/P3DT3_covering_test.tri");
+  if (hom)
+    fin.open(covering_test_HOM_filename);
+  else
+    fin.open(covering_test_filename);
   P3T3 PT1;
   fin >> PT1;
-  PT1.insert(Point(0.711476,-0.0713565,-0.52312));
+//  assert(PT1.number_of_vertices() == 70);
+  assert(PT1.is_valid());
+//  assert(!PT1.is_extensible_triangulation_in_1_sheet_h1());
+//  assert(!PT1.is_extensible_triangulation_in_1_sheet_h2());
+  PT1.insert(pointtt);
+  assert(PT1.is_extensible_triangulation_in_1_sheet_h1());
+  assert(PT1.is_extensible_triangulation_in_1_sheet_h2());
   assert(PT1.number_of_sheets() == CGAL::make_array(1,1,1));
-  assert(PT1.number_of_vertices() == 71);
+//  assert(PT1.number_of_vertices() == 71);
   assert(PT1.is_valid());
 
   std::cout<<"  degenerate, 3-sheeted covering"<<std::endl;
@@ -166,14 +178,14 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(PT3_deg.is_valid());
 
   std::cout<<"  degenerate, 1-sheeted covering"<<std::endl;
-  P3T3 PT1_deg(PT3_deg);
-  for (int i=1 ; i<6 ; i+=2)
-    for (int j=1 ; j<6 ; j+=2)
-      for (int k=1 ; k<6 ; k+=2)
-	PT1_deg.insert(Point(i,j,k));
+  P3T3 PT1_deg(Iso_cuboid(0,0,0,4,4,4));;
+  for (unsigned i = 0; i < 8; ++i)
+    for (unsigned j = 0; j < 8; ++j)
+      for (unsigned k = 0; k < 8; ++k)
+  PT1_deg.insert(Point(static_cast<float>(i)*4./8.,static_cast<float>(j)*4./8.,static_cast<float>(k)*4./8.));
 
   assert(PT1_deg.number_of_sheets() == CGAL::make_array(1,1,1));
-  assert(PT1_deg.number_of_vertices() == 54);
+//  assert(PT1_deg.number_of_vertices() == 54);
   assert(PT1_deg.is_valid());
 
   std::cout<<"Constructor"<<std::endl;

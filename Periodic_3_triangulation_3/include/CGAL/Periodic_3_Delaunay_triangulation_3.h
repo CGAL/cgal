@@ -38,6 +38,10 @@
 
 namespace CGAL {
 
+template < class GT, class TDS > class Periodic_3_Delaunay_triangulation_3;
+template < class GT, class TDS > std::istream& operator>>
+    (std::istream& is, Periodic_3_Delaunay_triangulation_3<GT,TDS> &tr);
+
 template < class Gt,
             class Tds = Triangulation_data_structure_3 <
               Triangulation_vertex_base_3<
@@ -51,6 +55,9 @@ template < class Gt,
 class Periodic_3_Delaunay_triangulation_3 :
     public Periodic_3_triangulation_3<Gt,Tds>
 {
+  friend std::istream& operator>> <>
+  (std::istream& is, Periodic_3_Delaunay_triangulation_3<Gt, Tds> &tr);
+
   typedef Periodic_3_Delaunay_triangulation_3<Gt,Tds>          Self;
 public:
   typedef Periodic_3_triangulation_3<Gt,Tds>                   Base;
@@ -104,6 +111,8 @@ public:
   typedef typename Base::Offset                 Offset;
   typedef typename Base::Iso_cuboid             Iso_cuboid;
   typedef typename Base::Covering_sheets        Covering_sheets;
+  typedef typename Base::Periodic_segment_iterator  Periodic_segment_iterator;
+  typedef typename Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
   //@}
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
@@ -121,6 +130,8 @@ public:
   using Base::cells_end;
   using Base::vertices_begin;
   using Base::vertices_end;
+  using Base::edges_begin;
+  using Base::edges_end;
   using Base::facets_begin;
   using Base::facets_end;
   using Base::tds;
@@ -141,7 +152,7 @@ public:
   using Base::get_offset;
   using Base::get_original_vertex;
   using Base::get_location_offset;
-  using Base::get_neighbor_offset;
+  using Base::neighbor_offset;
   using Base::incident_edges;
   using Base::incident_facets;
   using Base::incident_cells;
@@ -149,41 +160,323 @@ public:
   using Base::locate;
   using Base::periodic_point;
   using Base::segment;
+  using Base::construct_point;
+  using Base::convert_to_27_sheeted_covering;
+
+private:
+  /// This threshold should be chosen such that if all edges are shorter,
+  /// we can be sure that there are no self-edges anymore.
+  FT edge_length_threshold;
+
+  /// This adjacency list stores all edges that are longer than
+  /// edge_length_threshold.
+  std::map< Vertex_handle, std::list<Vertex_handle> > too_long_edges;
+  unsigned int too_long_edge_counter;
+
+  class Cover_manager
+  {
+    Periodic_3_Delaunay_triangulation_3& tr;
+
+  public:
+    Cover_manager (Periodic_3_Delaunay_triangulation_3& tr)
+    : tr(tr)
+    {}
+
+    void create_initial_triangulation()
+    {
+      tr.create_initial_triangulation();
+    }
+
+    template <class CellIt>
+    void delete_unsatisfying_elements(const CellIt begin, const CellIt end)
+    {
+      tr.delete_too_long_edges(begin, end);
+    }
+
+    template <class CellIt>
+    void insert_unsatisfying_elements(Vertex_handle v, const CellIt begin, const CellIt end)
+    {
+      tr.insert_too_long_edges(v, begin, end);
+    }
+
+    bool can_be_converted_to_1_sheet () const
+    {
+      return tr.can_be_converted_to_1_sheet();
+    }
+
+    bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+    {
+      return tr.update_cover_data_during_management(new_ch, new_cells);
+    }
+  };
 
 public:
   /** @name Creation */ //@{
   Periodic_3_Delaunay_triangulation_3(
       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
       const Geometric_traits& gt = Geometric_traits())
-    : Base(domain, gt) {}
+    : Base(domain, gt),
+      too_long_edge_counter(0)
+  {
+    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
+                                      * (domain.xmax()-domain.xmin());
+  }
 
   // copy constructor duplicates vertices and cells
   Periodic_3_Delaunay_triangulation_3(
-      const Periodic_3_Delaunay_triangulation_3& tr) : Base(tr) { 
+      const Periodic_3_Delaunay_triangulation_3& tr) : Base(tr),
+          edge_length_threshold(tr.edge_length_threshold)
+  {
+    if (is_1_cover()) {
+      tds() = tr.tds();
+    } else {
+      this->copy_multiple_covering(tr);
+    }
+    CGAL_triangulation_expensive_postcondition(*this == tr);
     CGAL_triangulation_expensive_postcondition( is_valid() );  
+  }
+
+  void copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3 & tr);
+
+  Periodic_3_Delaunay_triangulation_3 operator= (Periodic_3_Delaunay_triangulation_3 tr)
+  {
+    tr.swap(*this);
+    return *this;
+  }
+
+  void swap(Periodic_3_Delaunay_triangulation_3&tr) {
+    std::swap(edge_length_threshold,tr.edge_length_threshold);
+    std::swap(too_long_edges,tr.too_long_edges);
+    std::swap(too_long_edge_counter,tr.too_long_edge_counter);
+    Base::swap(tr);
+  }
+
+  virtual void clear_covering_data()
+  {
+    too_long_edges.clear();
+    too_long_edge_counter = 0;
+  }
+
+  virtual void update_cover_data_after_setting_domain ()
+  {
+    edge_length_threshold = FT(0.166) * (domain().xmax()-domain().xmin())
+                                      * (domain().xmax()-domain().xmin());
+  }
+
+  virtual void update_cover_data_after_converting_to_27_sheeted_covering()
+  {
+    // Set up too long edges data structure
+    int i=0;
+    for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) {
+      too_long_edges[vit] = std::list<Vertex_handle>();
+      ++i;
+    }
+    too_long_edge_counter = this->find_too_long_edges(too_long_edges);
+  }
+
+  bool is_extensible_triangulation_in_1_sheet_h1() const;
+  bool is_extensible_triangulation_in_1_sheet_h2() const;
+
+  // iterate over all edges and store the ones that are longer than
+  // edge_length_threshold in edges. Return the number of too long edges.
+  int find_too_long_edges(
+      std::map<Vertex_handle, std::list<Vertex_handle> >& edges)
+  const {
+    Point p1, p2;
+    int counter = 0;
+    Vertex_handle v_no,vh;
+    for (Edge_iterator eit = edges_begin();
+         eit != edges_end() ; eit++) {
+      p1 = construct_point(eit->first->vertex(eit->second)->point(),
+    get_offset(eit->first, eit->second));
+      p2 = construct_point(eit->first->vertex(eit->third)->point(),
+    get_offset(eit->first, eit->third));
+      if (squared_distance(p1,p2) > edge_length_threshold) {
+        if (&*(eit->first->vertex(eit->second)) <
+      &*(eit->first->vertex(eit->third))) {
+    v_no = eit->first->vertex(eit->second);
+    vh = eit->first->vertex(eit->third);
+        } else {
+    v_no = eit->first->vertex(eit->third);
+    vh = eit->first->vertex(eit->second);
+        }
+        edges[v_no].push_back(vh);
+        counter++;
+      }
+    }
+    return counter;
   }
 
   template < typename InputIterator >
   Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
       const Geometric_traits& gt = Geometric_traits() )
-    : Base(domain, gt) {
+    : Base(domain, gt),
+      too_long_edge_counter(0)
+  {
+    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
+                                      * (domain.xmax()-domain.xmin());
     insert(first, last);
   }
   //@}
+
+  void create_initial_triangulation()
+  {
+    // create the base for too_long_edges;
+    CGAL_triangulation_assertion( too_long_edges.empty() );
+    CGAL_triangulation_assertion(too_long_edge_counter == 0);
+
+    for (Vertex_iterator vit = vertices_begin() ;
+         vit !=vertices_end() ; ++vit )
+      too_long_edges[vit] = std::list<Vertex_handle>();;
+
+    std::vector<Cell_handle> temp_inc_cells;
+    for (Vertex_iterator vit = vertices_begin() ;
+         vit !=vertices_end() ; ++vit ) {
+      temp_inc_cells.clear();
+      incident_cells(vit, std::back_inserter(temp_inc_cells));
+      for (unsigned int i=0 ; i<temp_inc_cells.size() ; i++) {
+        int k = temp_inc_cells[i]->index(vit);
+        for (int j=0; j<4 ; j++) {
+          if (j==k) continue;
+          if (&*vit > &*(temp_inc_cells[i]->vertex(j))) continue;
+          if ((find(too_long_edges[vit].begin(),
+                    too_long_edges[vit].end(),
+              temp_inc_cells[i]->vertex(j)) ==
+      too_long_edges[vit].end())
+          ){
+      too_long_edges[vit].push_back(temp_inc_cells[i]->vertex(j));
+            too_long_edge_counter++;
+          }
+        }
+      }
+    }
+  }
+
+  template <class CellIt>
+  void delete_too_long_edges(const CellIt begin, const CellIt end)
+  {
+    std::pair< Vertex_handle, Vertex_handle > edge_to_delete, edge_to_delete2;
+    typename std::list< Vertex_handle >::iterator sit;
+    // Iterate over all cells that are in the star. That means that those cells
+    // are going to be deleted. Therefore, all of them have to be deleted from
+    // too_long_edges, if they are contained in it.
+    for (CellIt it = begin ; it != end ; ++it) {
+      for (int j=0; j<4 ; j++) {
+        for (int k=0; k<4; k++) {
+          if (&*((*it)->vertex(j)) < &*((*it)->vertex(k))) {
+            edge_to_delete = std::make_pair((*it)->vertex(j),(*it)->vertex(k));
+          } else {
+            edge_to_delete = std::make_pair((*it)->vertex(k),(*it)->vertex(j));
+          }
+          Vertex_handle v_no = edge_to_delete.first;
+          sit = std::find(too_long_edges[v_no].begin(),
+              too_long_edges[v_no].end(),
+              edge_to_delete.second);
+          if (sit != too_long_edges[v_no].end()) {
+            too_long_edges[v_no].erase(sit);
+            too_long_edge_counter--;
+          }
+        }
+      }
+    }
+  }
+
+  template <class CellIt>
+  void insert_too_long_edges(Vertex_handle v, const CellIt begin, const CellIt end)
+  {
+    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    // add newly added edges to too_long_edges, if necessary.
+    Point p1,p2;
+    Offset omin;
+    std::pair< Vertex_handle, Vertex_handle > edge_to_add;
+    std::pair< Offset, Offset > edge_to_add_off;
+    std::list<Vertex_handle> empty_list;
+    too_long_edges[v] = empty_list;
+    // Iterate over all cells of the new star.
+    for (CellIt it = begin ; it != end ; ++it) {
+      // Consider all possible vertex pairs.
+      for (int k=0; k<4 ; k++) {
+        for (int j=0; j<4 ; j++) {
+          if (j==k) continue;
+          if (&*((*it)->vertex(j)) > &*((*it)->vertex(k))) continue;
+          // make the offsets canonical (wrt. to some notion)
+          // add to too_long_edges, if not yet added and if "too long"
+          CGAL_triangulation_precondition(
+              &*((*it)->vertex(j))< &*((*it)->vertex(k)));
+
+          edge_to_add = std::make_pair((*it)->vertex(j), (*it)->vertex(k));
+
+          p1 = construct_point((*it)->vertex(j)->point(), get_offset(*it, j));
+          p2 = construct_point((*it)->vertex(k)->point(), get_offset(*it, k));
+
+          if ((squared_distance(p1,p2) > edge_length_threshold)
+              && (find(too_long_edges[(*it)->vertex(j)].begin(),
+                  too_long_edges[(*it)->vertex(j)].end(),
+                  edge_to_add.second)
+                  == too_long_edges[(*it)->vertex(j)].end())
+          ){
+            too_long_edges[(*it)->vertex(j)].push_back(edge_to_add.second);
+            too_long_edge_counter++;
+          }
+        } }
+    }
+  }
+
+  bool can_be_converted_to_1_sheet () const
+  {
+    return too_long_edge_counter == 0;
+  }
+
+  bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+  {
+    for( int i=0 ; i < 4 ; i++ ) {
+      for (int j=0 ; j < 4 ; j++) {
+        if (j==i) continue;
+        if (&*(new_ch->vertex(i)) > &*(new_ch->vertex(j))) continue;
+
+        Point p1 = construct_point(new_ch->vertex(i)->point(),
+            get_offset(new_ch, i));
+        Point p2 = construct_point(new_ch->vertex(j)->point(),
+            get_offset(new_ch, j));
+        Vertex_handle v_no = new_ch->vertex(i);
+
+        if (squared_distance(p1,p2) > edge_length_threshold) {
+          // If the cell does not fulfill the edge-length criterion
+          // revert all changes to the triangulation and transform it
+          // to a triangulation in the needed covering space.
+          if (is_1_cover()) {
+            tds().delete_cells(new_cells.begin(), new_cells.end());
+            convert_to_27_sheeted_covering();
+            return true;
+          }
+          else if (find(too_long_edges[v_no].begin(),
+              too_long_edges[v_no].end(),
+              new_ch->vertex(j))
+              == too_long_edges[v_no].end()) {
+            too_long_edges[v_no].push_back(new_ch->vertex(j));
+            too_long_edge_counter++;
+          }
+        }
+      }
+    }
+    return false;
+  }
 
   /** @name Insertion */ //@{
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle()) {
     Conflict_tester tester(p, this);
     Point_hider hider;
-    return Base::insert_in_conflict(p, start, tester, hider);
+    Cover_manager cover_manager(*this);
+    return Base::insert_in_conflict(p, start, tester, hider, cover_manager);
   }
 
   Vertex_handle insert(const Point & p, Locate_type lt, Cell_handle c,
       int li, int lj) {
     Conflict_tester tester(p, this);
     Point_hider hider;
-    return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider);
+    Cover_manager cover_manager(*this);
+    return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider, cover_manager);
   }
 
   template < class InputIterator >
@@ -215,8 +508,9 @@ public:
 
     Conflict_tester tester(*pbegin,this);
     Point_hider hider;
+    Cover_manager cover_manager(*this);
     double_vertices = Base::insert_in_conflict(
-	points.begin(),points.end(),hint,tester,hider); 
+	points.begin(),points.end(),hint,tester,hider, cover_manager);
    
     if (is_large_point_set) {
       typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
@@ -229,7 +523,7 @@ public:
       for (unsigned int i=0; i<dummy_points.size(); i++) {
 	if (std::find(double_vertices.begin(), double_vertices.end(),
 		dummy_points[i]) == double_vertices.end())
-	  Base::remove(dummy_points[i],remover,t);
+	  Base::remove(dummy_points[i],remover,t, cover_manager);
       }
     }
 
@@ -355,121 +649,17 @@ private:
   //@}
 public:
   Periodic_point periodic_circumcenter(Cell_handle c) const {
-    CGAL_triangulation_precondition(c != Cell_handle());
-    Point v = geom_traits().construct_circumcenter_3_object()(
-        c->vertex(0)->point(), c->vertex(1)->point(),
-	c->vertex(2)->point(), c->vertex(3)->point(),
-        get_offset(c,0), get_offset(c,1),
-	get_offset(c,2), get_offset(c,3));
-
-    // check that v lies within the domain. If not: translate
-    Iso_cuboid dom = domain();
-    if (   !(v.x() < dom.xmin()) && v.x()<dom.xmax()
-	&& !(v.y() < dom.ymin()) && v.y()<dom.ymax()
-	&& !(v.z() < dom.zmin()) && v.z()<dom.zmax() )
-      return std::make_pair(v,Offset());
-
-    int ox=-1, oy=-1, oz=-1;
-    if (v.x() < dom.xmin()) ox = 1;
-    else if (v.x() < dom.xmax()) ox = 0;
-    if (v.y() < dom.ymin()) oy = 1;
-    else if (v.y() < dom.ymax()) oy = 0;
-    if (v.z() < dom.zmin()) oz = 1;
-    else if (v.z() < dom.zmax()) oz = 0;
-    Offset transl_offx(0,0,0);
-    Offset transl_offy(0,0,0);
-    Offset transl_offz(0,0,0);
-    Point dv(v);
-
-    // Find the right offset such that the translation will yield a
-    // point inside the original domain.
-    while ( dv.x() < dom.xmin() || !(dv.x() < dom.xmax()) ) {
-      transl_offx.x() = transl_offx.x() + ox;
-      dv = point(std::make_pair(v,transl_offx));
-    }
-    while ( dv.y() < dom.ymin() || !(dv.y() < dom.ymax()) ) {
-      transl_offy.y() = transl_offy.y() + oy;
-      dv = point(std::make_pair(v,transl_offy));
-    }
-    while ( dv.z() < dom.zmin() || !(dv.z() < dom.zmax()) ) {
-      transl_offz.z() = transl_offz.z() + oz;
-      dv = point(std::make_pair(v,transl_offz));
-    }
-
-    Offset transl_off(transl_offx.x(),transl_offy.y(),transl_offz.z());
-    Periodic_point ppv(std::make_pair(v,transl_off));
-
-    CGAL_triangulation_assertion_code(Point rv(point(ppv));)
-    CGAL_triangulation_assertion( !(rv.x() < dom.xmin()) && rv.x() < dom.xmax() );
-    CGAL_triangulation_assertion( !(rv.y() < dom.ymin()) && rv.y() < dom.ymax() );
-    CGAL_triangulation_assertion( !(rv.z() < dom.zmin()) && rv.z() < dom.zmax() );
-    return ppv;
-  }
-
-private:
-bool is_canonical(const Facet &f) const {
-  if (number_of_sheets() == make_array(1,1,1)) return true;
-  Offset cell_off0 = int_to_off(f.first->offset((f.second+1)&3));
-  Offset cell_off1 = int_to_off(f.first->offset((f.second+2)&3));
-  Offset cell_off2 = int_to_off(f.first->offset((f.second+3)&3));
-  Offset diff_off((cell_off0.x() == 1 
-	  && cell_off1.x() == 1 
-	  && cell_off2.x() == 1)?-1:0,
-      (cell_off0.y() == 1 
-	  && cell_off1.y() == 1
-	  && cell_off2.y() == 1)?-1:0,
-      (cell_off0.z() == 1 
-	  && cell_off1.z() == 1
-	  && cell_off2.z() == 1)?-1:0);
-  Offset off0 = combine_offsets(get_offset(f.first, (f.second+1)&3),
-      diff_off);
-  Offset off1 = combine_offsets(get_offset(f.first, (f.second+2)&3),
-      diff_off);
-  Offset off2 = combine_offsets(get_offset(f.first, (f.second+3)&3),
-      diff_off);
-  
-  // If there is one offset with entries larger than 1 then we are
-  // talking about a vertex that is too far away from the original
-  // domain to belong to a canonical triangle.
-  if (off0.x() > 1) return false;
-  if (off0.y() > 1) return false;
-  if (off0.z() > 1) return false;
-  if (off1.x() > 1) return false;
-  if (off1.y() > 1) return false;
-  if (off1.z() > 1) return false;
-  if (off2.x() > 1) return false;
-  if (off2.y() > 1) return false;
-  if (off2.z() > 1) return false;
-  
-  // If there is one direction of space for which all offsets are
-  // non-zero then the edge is not canonical because we can
-  // take the copy closer towards the origin in that direction.
-  int offx = off0.x() & off1.x() & off2.x();
-  int offy = off0.y() & off1.y() & off2.y();
-  int offz = off0.z() & off1.z() & off2.z();
-  
-  return (offx == 0 && offy == 0 && offz == 0);
-}
-  
-  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
-    CGAL_triangulation_precondition(c != Cell_handle());
-    Offset off = get_neighbor_offset(c,i,c->neighbor(i));
-    Periodic_point p1 = periodic_circumcenter(c);
-    Periodic_point p2 = periodic_circumcenter(c->neighbor(i));
-    Offset o1 = -p1.second;
-    Offset o2 = combine_offsets(-p2.second,-off);
-    Offset cumm_off((std::min)(o1.x(),o2.x()),
-	(std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
-    const std::pair<Point,Offset> pp1 = std::make_pair(point(p1), o1-cumm_off);
-    const std::pair<Point,Offset> pp2 = std::make_pair(point(p2), o2-cumm_off);
-    ps = make_array(pp1,pp2);
-    return (cumm_off == Offset(0,0,0));
+    return Base::periodic_circumcenter(c, geom_traits().construct_circumcenter_3_object());
   }
 
 public:
   /** @name Voronoi diagram */ //@{
   Point dual(Cell_handle c) const {
     return point(periodic_circumcenter(c));
+  }
+
+  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
+    return Base::canonical_dual_segment(c, i, ps, geom_traits().construct_circumcenter_3_object());
   }
   Periodic_segment dual(const Facet & f) const {
     return dual( f.first, f.second );
@@ -488,146 +678,31 @@ public:
   template <class OutputIterator>
   OutputIterator dual(Cell_handle c, int i, int j,
       OutputIterator points) const {
-    Cell_circulator cstart = incident_cells(c, i, j);
-
-    Offset offv = periodic_point(c,i).second;
-    Vertex_handle v = c->vertex(i);
-
-    Cell_circulator ccit = cstart;
-    do {
-      Point dual_orig = periodic_circumcenter(ccit).first;
-      int idx = ccit->index(v);
-      Offset off = periodic_point(ccit,idx).second;
-      Point dual = point(std::make_pair(dual_orig,-off+offv));
-      *points++ = dual;
-      ++ccit;
-    } while (ccit != cstart);
+    Base::dual(c, i, j, points, geom_traits().construct_circumcenter_3_object());
     return points;
   }
 
   template <class OutputIterator>
   OutputIterator dual(Vertex_handle v, OutputIterator points) const {
-    std::vector<Cell_handle> cells;
-    incident_cells(v,std::back_inserter(cells));
-
-    for (unsigned int i=0; i<cells.size() ; i++) {
-      Point dual_orig = periodic_circumcenter(cells[i]).first;
-      int idx = cells[i]->index(v);
-      Offset off = periodic_point(cells[i],idx).second;
-      Point dual = point(std::make_pair(dual_orig,-off));
-      *points++ = dual;
-    }
+    Base::dual(v, points, geom_traits().construct_circumcenter_3_object());
     return points;
   }
 
   template <class Stream>
   Stream& draw_dual(Stream& os) const {
-    CGAL_triangulation_assertion_code( unsigned int i = 0; )
-    for (Facet_iterator fit = facets_begin(), end = facets_end();
-	 fit != end; ++fit) {
-      if (!is_canonical(*fit)) continue;
-      Periodic_segment pso = dual(*fit);
-      Segment so = segment(pso);
-      CGAL_triangulation_assertion_code ( ++i; )
-	os << so.source()<<' '<<so.target()<<' ';
-    }
-    CGAL_triangulation_assertion( i == number_of_facets() );
-    return os;
+    return Base::draw_dual(os, geom_traits().construct_circumcenter_3_object());
   }
 
   /// Volume computations
 
-  // Note: Polygon area computation requires to evaluate square roots
-  // and thus cannot be done without changing the Traits concept.
-
   FT dual_volume(Vertex_handle v) const {
-    std::list<Edge> edges;
-    incident_edges(v, std::back_inserter(edges));
-
-    FT vol(0);
-    for (typename std::list<Edge>::iterator eit = edges.begin() ; 
-	 eit != edges.end() ; ++eit) {
-
-      // compute the dual of the edge *eit but handle the translations
-      // with respect to the dual of v. That is why we cannot use one
-      // of the existing dual functions here.
-      Facet_circulator fstart = incident_facets(*eit);
-      Facet_circulator fcit = fstart;
-      std::vector<Point> pts;
-      do {
-	// TODO: possible speed-up by caching the circumcenters
-	Point dual_orig = periodic_circumcenter(fcit->first).first;
-	int idx = fcit->first->index(v);
-	Offset off = periodic_point(fcit->first,idx).second;
-	pts.push_back(point(std::make_pair(dual_orig,-off)));
-	++fcit;
-      } while (fcit != fstart);
-
-      Point orig(0,0,0);
-      for (unsigned int i=1 ; i<pts.size()-1 ; i++) 
-	vol += Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
-    }
-    return vol;
+    return Base::dual_volume(v, geom_traits().construct_circumcenter_3_object());
   }
 
   /// Centroid computations
 
-  // Note: Centroid computation for polygons requires to evaluate
-  // square roots and thus cannot be done without changing the
-  // Traits concept.
-
-  // TODO: reuse the centroid computation from the PCA package
   Point dual_centroid(Vertex_handle v) const {
-    std::list<Edge> edges;
-    incident_edges(v, std::back_inserter(edges));
-
-    FT vol(0);
-    FT x(0), y(0), z(0);
-    for (typename std::list<Edge>::iterator eit = edges.begin() ; 
-	 eit != edges.end() ; ++eit) {
-
-      // compute the dual of the edge *eit but handle the translations
-      // with respect to the dual of v. That is why we cannot use one
-      // of the existing dual functions here.
-      Facet_circulator fstart = incident_facets(*eit);
-      Facet_circulator fcit = fstart;
-      std::vector<Point> pts;
-      do {
-	// TODO: possible speed-up by caching the circumcenters
-	Point dual_orig = periodic_circumcenter(fcit->first).first;
-	int idx = fcit->first->index(v);
-	Offset off = periodic_point(fcit->first,idx).second;
-	pts.push_back(point(std::make_pair(dual_orig,-off)));
-	++fcit;
-      } while (fcit != fstart);
-
-      Point orig(0,0,0);
-      FT tetvol;
-      for (unsigned int i=1 ; i<pts.size()-1 ; i++) {
-	tetvol = Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
-	x += (pts[0].x() + pts[i].x() + pts[i+1].x()) * tetvol;
-	y += (pts[0].y() + pts[i].y() + pts[i+1].y()) * tetvol;
-	z += (pts[0].z() + pts[i].z() + pts[i+1].z()) * tetvol;
-	vol += tetvol;
-      }
-    }
-    x /= ( 4 * vol );
-    y /= ( 4 * vol );
-    z /= ( 4 * vol );
-
-    Iso_cuboid d = domain();
-    x = (x < d.xmin() ? x+d.xmax()-d.xmin() 
-	: (x >= d.xmax() ? x-d.xmax()+d.xmin() : x));
-    y = (y < d.ymin() ? y+d.ymax()-d.ymin() 
-	: (y >= d.ymax() ? y-d.ymax()+d.ymin() : y));
-    z = (z < d.zmin() ? z+d.zmax()-d.zmin() 
-	: (z >= d.zmax() ? z-d.zmax()+d.zmin() : z));
-
-    CGAL_triangulation_postcondition((d.xmin()<=x)&&(x<d.xmax()));
-    CGAL_triangulation_postcondition((d.ymin()<=y)&&(y<d.ymax()));
-    CGAL_triangulation_postcondition((d.zmin()<=z)&&(z<d.zmax()));
-
-    return Point(x,y,z);
+    return Base::dual_centroid(v, geom_traits().construct_circumcenter_3_object());
   }
   //@}
   
@@ -825,8 +900,9 @@ void Periodic_3_Delaunay_triangulation_3<Gt,Tds>::remove(Vertex_handle v)
   Euclidean_triangulation tmp(remove_traits);
   Remover remover(this, tmp);
   Conflict_tester ct(this);
+  Cover_manager cover_manager(*this);
 
-  Base::remove(v, remover, ct);
+  Base::remove(v, remover, ct, cover_manager);
   CGAL_triangulation_expensive_assertion(is_valid());
 }
 
@@ -1162,6 +1238,8 @@ class Periodic_3_Delaunay_triangulation_3<GT,Tds>::Point_hider
 public:
   Point_hider() {}
 
+  void set_original_cube (bool) const {}
+
   template <class InputIterator>
   inline void set_vertices(InputIterator, InputIterator) const {}
   inline void reinsert_vertices(Vertex_handle ) {}
@@ -1239,6 +1317,162 @@ struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover
 };
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 
+template < class GT, class TDS >
+inline bool
+Periodic_3_Delaunay_triangulation_3<GT,TDS>::
+is_extensible_triangulation_in_1_sheet_h1() const {
+  if (!is_1_cover()) {
+    if (too_long_edge_counter == 0) return true;
+    else return false;
+  } else {
+    typename Geometric_traits::FT longest_edge_squared_length(0);
+    Segment s;
+    for (Periodic_segment_iterator psit = this->periodic_segments_begin(Base::UNIQUE);
+   psit != this->periodic_segments_end(Base::UNIQUE) ; ++psit) {
+      s = this->construct_segment(*psit);
+      longest_edge_squared_length = (std::max)(longest_edge_squared_length,
+    s.squared_length());
+    }
+    return (longest_edge_squared_length < edge_length_threshold);
+  }
+}
+
+template < class GT, class TDS >
+inline bool
+Periodic_3_Delaunay_triangulation_3<GT,TDS>::
+is_extensible_triangulation_in_1_sheet_h2() const {
+  typedef typename Geometric_traits::Construct_circumcenter_3
+    Construct_circumcenter;
+  typedef typename Geometric_traits::FT FT;
+  Construct_circumcenter construct_circumcenter
+    = geom_traits().construct_circumcenter_3_object();
+  for (Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Base::UNIQUE) ;
+       tit != this->periodic_tetrahedra_end(Base::UNIQUE) ; ++tit) {
+    Point cc = construct_circumcenter(
+  tit->at(0).first, tit->at(1).first,
+  tit->at(2).first, tit->at(3).first,
+  tit->at(0).second, tit->at(1).second,
+  tit->at(2).second, tit->at(3).second);
+
+    if ( !(FT(16)*squared_distance(cc,point(tit->at(0)))
+      < (domain().xmax()-domain().xmin())*(domain().xmax()-domain().xmin())) )
+      return false;
+  }
+  return true;
+}
+
+template < class GT, class TDS >
+inline void
+Periodic_3_Delaunay_triangulation_3<GT,TDS>::
+copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3<GT,TDS> & tr) {
+  // Write the respective offsets in the vertices to make them
+  // automatically copy with the tds.
+  for (Vertex_iterator vit = tr.vertices_begin() ;
+       vit != tr.vertices_end() ; ++vit) {
+    vit->set_offset(tr.get_offset(vit));
+  }
+  // copy the tds
+  tds() = tr.tds();
+  // make a list of all vertices that belong to the original
+  // domain and initialize the basic structure of
+  // virtual_vertices_reverse
+  std::list<Vertex_handle> vlist;
+  for (Vertex_iterator vit = vertices_begin() ;
+       vit != vertices_end() ; ++vit) {
+    if (vit->offset() == Offset()) {
+      vlist.push_back(vit);
+      this->virtual_vertices_reverse.insert(
+    std::make_pair(vit,std::vector<Vertex_handle>(26)));
+      CGAL_triangulation_assertion(this->virtual_vertices_reverse.find(vit)
+    ->second.size() == 26);
+    }
+  }
+  // Iterate over all vertices that are not in the original domain
+  // and construct the respective entries to virtual_vertices and
+  // virtual_vertices_reverse
+  for (Vertex_iterator vit2 = vertices_begin() ;
+       vit2 != vertices_end() ; ++vit2) {
+    if (vit2->offset() != Offset()) {
+      //TODO: use some binding, maybe boost instead of the Finder.
+      typename std::list<Vertex_handle>::iterator vlist_it
+  = std::find_if(vlist.begin(), vlist.end(),
+           typename Base::Finder(this,vit2->point()));
+      Offset off = vit2->offset();
+      this->virtual_vertices.insert(std::make_pair(vit2,
+               std::make_pair(*vlist_it,off)));
+      this->virtual_vertices_reverse.find(*vlist_it)
+  ->second[9*off[0]+3*off[1]+off[2]-1]=vit2;
+      CGAL_triangulation_assertion(get_offset(vit2) == off);
+    }
+  }
+  // Cleanup vertex offsets
+  for (Vertex_iterator vit = vertices_begin() ;
+       vit != vertices_end() ; ++vit)
+    vit->clear_offset();
+  for (Vertex_iterator vit = tr.vertices_begin() ;
+       vit != tr.vertices_end() ; ++vit)
+    vit->clear_offset();
+  // Build up the too_long_edges container
+  too_long_edge_counter = 0;
+  too_long_edges.clear();
+  for (Vertex_iterator vit = vertices_begin() ;
+       vit != vertices_end() ; ++vit)
+    too_long_edges[vit] = std::list<Vertex_handle>();
+  std::pair<Vertex_handle, Vertex_handle> edge_to_add;
+  Point p1,p2;
+  int i,j;
+  for (Edge_iterator eit = edges_begin() ;
+       eit != edges_end() ; ++eit) {
+    if (&*(eit->first->vertex(eit->second))
+  < &*(eit->first->vertex(eit->third))) {
+      i = eit->second; j = eit->third;
+    } else {
+      i = eit->third; j = eit->second;
+    }
+    edge_to_add = std::make_pair(eit->first->vertex(i),
+         eit->first->vertex(j));
+    p1 = construct_point(eit->first->vertex(i)->point(),
+  get_offset(eit->first, i));
+    p2 = construct_point(eit->first->vertex(j)->point(),
+  get_offset(eit->first, j));
+    Vertex_handle v_no = eit->first->vertex(i);
+    if (squared_distance(p1,p2) > edge_length_threshold) {
+      CGAL_triangulation_assertion(
+    find(too_long_edges[v_no].begin(),
+         too_long_edges[v_no].end(),
+         edge_to_add.second) == too_long_edges[v_no].end());
+      too_long_edges[v_no].push_back(edge_to_add.second);
+      too_long_edge_counter++;
+    }
+  }
+}
+
+template < class GT, class TDS >
+std::istream &
+operator>> (std::istream& is, Periodic_3_Delaunay_triangulation_3<GT,TDS> &tr)
+{
+  typedef Periodic_3_Delaunay_triangulation_3<GT,TDS>   P3DT3;
+  typedef typename P3DT3::Base                          Base;
+  typedef typename P3DT3::Vertex_iterator               Vertex_iterator;
+  typedef typename GT::FT FT;
+  typedef typename P3DT3::Vertex_handle                 Vertex_handle;
+
+  is >> static_cast<Base&>(tr);
+
+  int i=0;
+  for (Vertex_iterator vi = tr.vertices_begin();
+      vi != tr.vertices_end(); ++vi) {
+    tr.too_long_edges[vi]=std::list<Vertex_handle>();
+    ++i;
+  }
+
+  tr.edge_length_threshold = FT(0.166) * (tr.domain().xmax()-tr.domain().xmin())
+                                       * (tr.domain().xmax()-tr.domain().xmin());
+  tr.too_long_edge_counter = tr.find_too_long_edges(tr.too_long_edges);
+
+  CGAL_triangulation_expensive_assertion( tr.is_valid() );
+  return is;
+}
 } //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_3_H
