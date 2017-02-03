@@ -19,8 +19,6 @@
 //
 // Author(s)     : Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 
-#include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/MP_Float.h>
@@ -32,8 +30,7 @@
 
 #include <CGAL/_test_cls_periodic_3_regular_triangulation_traits_3.h>
 
-#include <cassert>
-
+#include <iostream>
 
 void test_periodic_3_regular_triangulation_traits_3()
 {

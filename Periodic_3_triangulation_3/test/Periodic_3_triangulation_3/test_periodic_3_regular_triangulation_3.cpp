@@ -19,9 +19,6 @@
 //
 // Author(s)     : Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 
-#include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -30,27 +27,27 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
+#include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
+
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <iterator>
 #include <fstream>
-#include <set>
+#include <vector>
 
-
-typedef CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Epeck> RT_Epeck;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT_Epeck> Traits_Epeck;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<CGAL::Epeck> Traits_Epeck;
 /* Explicit instantiation.
  * It allows us to test if the template class, instantiated with given template parameters, compiles.
  */
 template class CGAL::Periodic_3_regular_triangulation_3<Traits_Epeck>;
 
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Epick> RT_Epick;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT_Epick> Traits_Epick;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<CGAL::Epick> Traits_Epick;
 /* Explicit instantiation.
  * It allows us to test if the template class, instantiated with given template parameters, compiles.
  */
@@ -61,31 +58,30 @@ template <class Kernel>
 class Tests
 {
 public:
-  typedef Kernel K;
-  typedef typename K::FT FT;
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<K> RT;
-  typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT> Traits;
+  typedef Kernel                                              K;
+  typedef typename K::FT                                      FT;
+  typedef CGAL::Periodic_3_regular_triangulation_traits_3<K>  Traits;
 
-  typedef CGAL::Periodic_3_regular_triangulation_3<Traits> P3RT3;
-  typedef typename P3RT3::Vertex_handle Vertex_handle;
-  typedef typename P3RT3::Cell_handle Cell_handle;
-  typedef typename P3RT3::Facet Facet;
-  typedef typename P3RT3::Cell_iterator Cell_iterator;
-  typedef typename P3RT3::Vertex_iterator Vertex_iterator;
-  typedef typename P3RT3::Segment Segment;
-  typedef typename P3RT3::Triangle Triangle;
-  typedef typename P3RT3::Tetrahedron Tetrahedron;
-  typedef typename P3RT3::Periodic_tetrahedron Periodic_tetrahedron;
-  typedef typename P3RT3::Locate_type Locate_type;
-  typedef typename P3RT3::Cell Cell;
-  typedef typename P3RT3::Offset Offset;
+  typedef CGAL::Periodic_3_regular_triangulation_3<Traits>    P3RT3;
+  typedef typename P3RT3::Vertex_handle                       Vertex_handle;
+  typedef typename P3RT3::Cell_handle                         Cell_handle;
+  typedef typename P3RT3::Facet                               Facet;
+  typedef typename P3RT3::Cell                                Cell;
+  typedef typename P3RT3::Vertex_iterator                     Vertex_iterator;
+  typedef typename P3RT3::Cell_iterator                       Cell_iterator;
+  typedef typename P3RT3::Segment                             Segment;
+  typedef typename P3RT3::Triangle                            Triangle;
+  typedef typename P3RT3::Tetrahedron                         Tetrahedron;
+  typedef typename P3RT3::Periodic_tetrahedron                Periodic_tetrahedron;
+  typedef typename P3RT3::Locate_type                         Locate_type;
+  typedef typename P3RT3::Offset                              Offset;
 
-  typedef typename Traits::Weighted_point Weighted_point;
-  typedef typename Traits::Bare_point Bare_point;
-  typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
+  typedef typename Traits::Weighted_point_3                   Weighted_point_3;
+  typedef typename Traits::Point_3                            Point_3;
+  typedef typename Traits::Iso_cuboid_3                       Iso_cuboid;
 
 
-  static Weighted_point read_wpoint (std::istream& stream)
+  static Weighted_point_3 read_wpoint (std::istream& stream)
   {
     FT x = 0., y = 0., z = 0., w = 0.;
     stream >> x;
@@ -96,7 +92,7 @@ public:
     assert(stream && !stream.eof());
     stream >> w;
     assert(stream);
-    return Weighted_point(Bare_point(x, y, z), w);
+    return Weighted_point_3(Point_3(x, y, z), w);
   }
 
   static void test_construction ()
@@ -113,7 +109,7 @@ public:
 
     P3RT3 p3rt3;
 
-    Weighted_point p(Bare_point(0,0,0), 0.01);
+    Weighted_point_3 p(Point_3(0,0,0), 0.01);
     p3rt3.insert(p);
 
     assert(p3rt3.is_valid());
@@ -133,19 +129,19 @@ public:
     P3RT3 p3rt3(Iso_cuboid(0,0,0, 1,1,1));
 
     Vertex_handle vh;
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.9,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.9,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.9),0.01));
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 4);
     assert(p3rt3.number_of_stored_vertices() == 108);
 
-    Weighted_point p(Bare_point(0.4, 0.4, 0.4), 0.001);
+    Weighted_point_3 p(Point_3(0.4, 0.4, 0.4), 0.001);
     vh = p3rt3.insert(p);
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
@@ -165,13 +161,13 @@ public:
     P3RT3 p3rt3(Iso_cuboid(0,0,0, 1,1,1));
 
     Vertex_handle vh;
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.9,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.9,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.9),0.01));
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 4);
@@ -182,7 +178,7 @@ public:
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
 
-    Weighted_point hidden_point(Bare_point(0.101, 0.101, 0.101), 0.001);
+    Weighted_point_3 hidden_point(Point_3(0.101, 0.101, 0.101), 0.001);
     vh = p3rt3.insert(hidden_point);
     assert(vh == Vertex_handle());
     assert(p3rt3.is_valid());
@@ -207,13 +203,13 @@ public:
     P3RT3 p3rt3(Iso_cuboid(0,0,0, 1,1,1));
 
     Vertex_handle vh;
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.9,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.9,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.9),0.01));
     assert(vh != Vertex_handle());
-    Weighted_point hidden_point(Bare_point(0.101, 0.101, 0.101), 0.001);
+    Weighted_point_3 hidden_point(Point_3(0.101, 0.101, 0.101), 0.001);
     vh = p3rt3.insert(hidden_point);
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
@@ -225,7 +221,7 @@ public:
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
 
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 4);
@@ -248,13 +244,13 @@ public:
 
     P3RT3 p3rt3(Iso_cuboid(0,0,0, 1,1,1));
 
-    Vertex_handle vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+    Vertex_handle vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 1);
     assert(p3rt3.number_of_stored_vertices() == 27);
 
-    Vertex_handle vh2 = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+    Vertex_handle vh2 = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.01));
     assert(vh2 == vh);
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 1);
@@ -272,14 +268,14 @@ public:
 
     P3RT3 p3rt3(Iso_cuboid(0,0,0, 1,1,1));
 
-    Weighted_point hidden_point(Bare_point(0.1,0.1,0.1),0.01);
+    Weighted_point_3 hidden_point(Point_3(0.1,0.1,0.1),0.01);
     Vertex_handle vh = p3rt3.insert(hidden_point);
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 1);
     assert(p3rt3.number_of_stored_vertices() == 27);
 
-    Vertex_handle vh2 = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.015));
+    Vertex_handle vh2 = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.015));
     assert(vh2 != Vertex_handle());
     assert(vh2 != vh);
     assert(p3rt3.is_valid());
@@ -304,19 +300,19 @@ public:
     P3RT3 p3rt3(Iso_cuboid(0,0,0, 1,1,1));
 
     Vertex_handle vh;
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.9,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.9,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.9),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 4);
     assert(p3rt3.number_of_stored_vertices() == 108);
 
-    Weighted_point hidden_point(Bare_point(0.101, 0.101, 0.101), 0.001);
+    Weighted_point_3 hidden_point(Point_3(0.101, 0.101, 0.101), 0.001);
     Vertex_handle vhh = p3rt3.insert(hidden_point);
     assert(vhh == Vertex_handle());
     assert(p3rt3.is_valid());
@@ -344,15 +340,15 @@ public:
     std::cout << "--- test_insert_rnd_as_delaunay (" << pt_count << ',' << weight << ')' << std::endl;
 
     CGAL::Random random(7);
-    typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
-    CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
 
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
     {
-      Weighted_point p(*in_cube++, weight);
+      Weighted_point_3 p(*in_cube++, weight);
       //    std::cout << cnt << " : " << p << std::endl;
       assert(iso_cuboid.has_on_bounded_side(p));
       assert(p.weight() < 0.015625);
@@ -383,7 +379,7 @@ public:
     unsigned cnt = 1;
     while (stream && !(stream.eof()))
     {
-      Weighted_point p = read_wpoint(stream);
+      Weighted_point_3 p = read_wpoint(stream);
       std::cout << cnt << " : " << p << std::endl;
       assert(p.weight() < 0.015625);
       std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
@@ -397,13 +393,13 @@ public:
 
   static void test_insert_rt3_pointset ()
   {
-    P3RT3 p3rt3(Iso_cuboid(Bare_point(-100,-100,-100),Bare_point(100,100,100)));
+    P3RT3 p3rt3(Iso_cuboid(Point_3(-100,-100,-100), Point_3(100,100,100)));
 
     for (int a=0;a!=10;a++)
       for (int b=0;b!=5;b++)
         for (int d=0;d!=5;d++)
         {
-          Weighted_point p( Bare_point(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b),  a*b-a*d ); // TODO check weight
+          Weighted_point_3 p( Point_3(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b),  a*b-a*d ); // TODO check weight
           std::cout << p << std::endl;
           p3rt3.insert(p);
         }
@@ -429,7 +425,7 @@ public:
             y += FT(1) / FT(12);
           FT z = FT(k) / FT(8);
           std::cout << count++ << " - " << i << " " << j << " " << k << std::endl;
-          Weighted_point point(Bare_point(x, y, z), 0);
+          Weighted_point_3 point(Point_3(x, y, z), 0);
           p3rt3.insert(point);
           if (CGAL::make_array(i,j,k) != CGAL::make_array<unsigned>(5,5,7))
           {
@@ -470,7 +466,7 @@ public:
             y += FT(1) / FT(12);
           FT z = FT(k) / FT(8);
           std::cout << count++ << " - " << i << " " << j << " " << k << std::endl;
-          Weighted_point point(Bare_point(x, y, z), 0);
+          Weighted_point_3 point(Point_3(x, y, z), 0);
           vertices.push_back(p3rt3.insert(point));
           if (CGAL::make_array(i,j,k) != CGAL::make_array<unsigned>(5,5,7))
           {
@@ -497,22 +493,22 @@ public:
     std::cout << "--- test_insert_range" << std::endl;
 
     CGAL::Random random(seed);
-    typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
-    CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
 
-    std::vector<Weighted_point> points;
+    std::vector<Weighted_point_3> points;
     points.reserve(pt_count);
 
     std::ifstream input_stream("data/p3rt3_point_set__s7_n800");
 
     while (points.size() != pt_count)
     {
-//      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
-    	Weighted_point p;
-    	input_stream >> p;
+//      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
+      Weighted_point_3 p;
+      input_stream >> p;
       points.push_back(p);
     }
         std::cout << "--- done " << std::endl;
@@ -520,7 +516,7 @@ public:
 
     for (Vertex_iterator iter = p3rt3.vertices_begin(), end_iter = p3rt3.vertices_end(); iter != end_iter; ++iter)
     {
-      typename std::vector<Weighted_point>::iterator it = std::find(points.begin(), points.end(), iter->point());
+      typename std::vector<Weighted_point_3>::iterator it = std::find(points.begin(), points.end(), iter->point());
       assert(it != points.end());
     }
     unsigned hidden_point_count = 0;
@@ -544,17 +540,17 @@ public:
     std::cout << "--- test_construction_and_insert_range" << std::endl;
 
     CGAL::Random random(seed);
-    typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
-    CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 
-    std::vector<Weighted_point> points;
+    std::vector<Weighted_point_3> points;
     points.reserve(pt_count);
 
     while (points.size() != pt_count)
     {
-      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
       points.push_back(p);
     }
 
@@ -562,7 +558,7 @@ public:
 
     for (Vertex_iterator iter = p3rt3.vertices_begin(), end_iter = p3rt3.vertices_end(); iter != end_iter; ++iter)
     {
-      typename std::vector<Weighted_point>::iterator it = std::find(points.begin(), points.end(), iter->point());
+      typename std::vector<Weighted_point_3>::iterator it = std::find(points.begin(), points.end(), iter->point());
       assert(it != points.end());
     }
     unsigned hidden_point_count = 0;
@@ -588,24 +584,24 @@ public:
     unsigned pt_count = 600;
 
     CGAL::Random random(7);
-    typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
-    CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
 
-    std::vector<Weighted_point> points;
+    std::vector<Weighted_point_3> points;
     points.reserve(pt_count);
 
     while (points.size() != pt_count)
     {
-      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
       points.push_back(p);
     }
 
     p3rt3.insert(points.begin(), points.end(), true);
 
-    Bare_point point(-0.49, -0.49, -0.49);
+    Point_3 point(-0.49, -0.49, -0.49);
     Offset lo;
     Cell_handle ch = p3rt3.locate(point, lo);
     Periodic_tetrahedron p_tetra = p3rt3.periodic_tetrahedron(ch, lo);
@@ -642,13 +638,13 @@ public:
     P3RT3 p3rt3(Iso_cuboid(0,0,0, 1,1,1));
 
     Vertex_handle vh;
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.9,0.1,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.9,0.1),0.01));
     assert(vh != Vertex_handle());
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.1,0.1,0.9),0.01));
     assert(vh != Vertex_handle());
     assert(p3rt3.is_valid());
     assert(p3rt3.number_of_vertices() == 4);
@@ -660,7 +656,7 @@ public:
     assert(hidden_point_count == 0);
     assert(p3rt3.number_of_hidden_points() == 0);
 
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.101), 0.001));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.101, 0.101, 0.101), 0.001));
     assert(vh == Vertex_handle());
     hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
@@ -668,7 +664,7 @@ public:
     assert(hidden_point_count == 1);
     assert(p3rt3.number_of_hidden_points() == 1);
 
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.102), 0.001));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.101, 0.101, 0.102), 0.001));
     assert(vh == Vertex_handle());
     hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
@@ -676,7 +672,7 @@ public:
     assert(hidden_point_count == 2);
     assert(p3rt3.number_of_hidden_points() == 2);
 
-    vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.102, 0.101), 0.001));
+    vh = p3rt3.insert(Weighted_point_3(Point_3(0.101, 0.102, 0.101), 0.001));
     assert(vh == Vertex_handle());
     hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
@@ -690,27 +686,27 @@ public:
     std::cout << "--- test_find_conflicts" << std::endl;
 
     CGAL::Random random(7);
-    typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
-    CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
 
-    std::vector<Weighted_point> points;
-    points.reserve(7);
+    std::vector<Weighted_point_3> points;
+    points.reserve(800);
 
-    while (points.size() != 800)
+    for(int i=0; i<800; ++i)
     {
-      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
       points.push_back(p);
     }
 
-    p3rt3.insert(points.begin(), points.end(), true);
+    p3rt3.insert(points.begin(), points.end(), false);
 
     std::vector<Facet> bd_facets;
     std::vector<Cell_handle> conflict_cells;
     std::vector<Facet> int_facets;
-    Bare_point bp(-0.5,-0.5,0.5);
+    Point_3 bp(-0.5,-0.5,0.5);
     Cell_handle ch = p3rt3.locate(bp);
     p3rt3.find_conflicts(bp, ch, std::back_inserter(bd_facets), std::back_inserter(conflict_cells),
         std::back_inserter(int_facets));

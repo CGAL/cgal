@@ -22,7 +22,12 @@
 #ifndef CGAL_TEST_CLS_CIRCULATOR_C
 #define CGAL_TEST_CLS_CIRCULATOR_C
 
+#include <CGAL/circulator.h>
+
 #include <cassert>
+#include <iterator>
+#include <utility>
+#include <vector>
 
 template < class Triangulation >
 int

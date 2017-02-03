@@ -18,45 +18,43 @@
 //
 // Author(s)     : Aymeric Pelle
 
-#include <iostream>
-#include <cassert>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/_test_cls_periodic_3_triangulation_3.h>
 
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+typedef CGAL::Exact_predicates_exact_constructions_kernel         Epeck;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epeck>    PRTT_Exact;
+// Explicit instantiation of the whole class:
+template class CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>;
 
-#include <CGAL/_test_cls_periodic_3_triangulation_3.h>
-
-
-typedef CGAL::Exact_predicates_exact_constructions_kernel Epeck;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<Epeck> RT_Exact;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT_Exact> PRTT_Exact;
-//// Explicit instantiation of the whole class:
-//template class CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>;
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<Epick> RT_Inexact;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT_Inexact> PRTT_Inexact;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel       Epick;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epick>    PRTT_Inexact;
 // Explicit instantiation of the whole class:
 template class CGAL::Periodic_3_regular_triangulation_3<PRTT_Inexact>;
 
 
 int main()
 {
-  typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>            P3RT3_Exact;
+  typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>    P3RT3_Exact;
   _test_periodic_3_triangulation_3_constructors( P3RT3_Exact() );
-  _test_cls_periodic_3_triangulation_3( P3RT3_Exact(), PRTT_Exact::Weighted_point( 0.816982, 0.161518, -0.0942375),
-      "data/P3RT3_covering_test_HOM.tri", "data/P3RT3_covering_test.tri", true );
+  _test_cls_periodic_3_triangulation_3(P3RT3_Exact(),
+                                       PRTT_Exact::Point_3(0.816982, 0.161518, -0.0942375),
+                                       "data/P3RT3_covering_test_HOM.tri",
+                                       "data/P3RT3_covering_test.tri",
+                                       true);
 
-  typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Inexact>            P3RT3_Inexact;
+  typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Inexact>  P3RT3_Inexact;
   _test_periodic_3_triangulation_3_constructors( P3RT3_Inexact() );
-  _test_cls_periodic_3_triangulation_3( P3RT3_Inexact(), PRTT_Inexact::Weighted_point( 0.816982, 0.161518, -0.0942375),
-      "data/P3RT3_covering_test_HOM.tri", "data/P3RT3_covering_test.tri" );
+  _test_cls_periodic_3_triangulation_3(P3RT3_Inexact(),
+                                       PRTT_Inexact::Point_3(0.816982, 0.161518, -0.0942375),
+                                       "data/P3RT3_covering_test_HOM.tri",
+                                       "data/P3RT3_covering_test.tri");
 
   return 0;
 }

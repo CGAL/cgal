@@ -21,17 +21,21 @@
 #  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
+#include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
+
 #include <CGAL/use.h>
 
 #include <cassert>
 
 template<class Traits>
-void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_point* wp)
+void _test_for_given_domain (const Traits& traits,
+                             typename Traits::Weighted_point_3* wp)
 {
-  typedef typename Traits::Weighted_point Weighted_point;
-  typedef typename Traits::Bare_point Bare_point;
+  typedef typename Traits::Weighted_point_3             Weighted_point_3;
+  typedef typename Traits::Point_3                      Point_3;
+  typedef typename Traits::Periodic_3_offset_3          Offset;
+
   CGAL_USE_TYPE(typename Traits::Vector_3);
-  typedef typename Traits::Periodic_3_offset_3 Offset;
   CGAL_USE_TYPE(typename Traits::Iso_cuboid_3);
   CGAL_USE_TYPE(typename Traits::Segment_3);
   CGAL_USE_TYPE(typename Traits::Triangle_3);
@@ -54,31 +58,74 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
 
   typedef typename Traits::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
 
+  typedef typename Traits::Power_side_of_oriented_power_sphere_3 Power_side_of_oriented_power_sphere_3;
+  typedef typename Traits::Compare_weighted_squared_radius_3 Compare_weighted_squared_radius_3;
+
+#if 0
+  // fixme filthy sandbox
+  Power_side_of_oriented_power_sphere_3 psops = traits.power_side_of_oriented_power_sphere_3_object();
+  Compare_weighted_squared_radius_3 cwsr = traits.compare_weighted_squared_radius_3_object();
+
+  Weighted_point_3 wwwwp;
+  Point_3 pppp = Traits().construct_point_3_object()(wwwwp);
+  pppp = Traits().construct_point_3_object()(wwwwp, Offset());
+
+
+#if 0
+  typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Traits > P3removeT;
+  typedef CGAL::Regular_triangulation_3< P3removeT > Regular_triangulation;
+  typedef typename Regular_triangulation::Cell_handle Cell_handle;
+  typedef typename Regular_triangulation::Point RTPoint;
+  typedef typename P3removeT::Iso_cuboid_3 Iso_cuboid_3;
+
+  Iso_cuboid_3 domain;
+  P3removeT remove_traits(domain);
+  Regular_triangulation RT(remove_traits);
+  RTPoint rtp = std::make_pair(Weighted_point_3(), Offset());
+  RT.insert(rtp, Cell_handle());
+#endif
+
+  typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<typename Traits::K> DTT;
+  typedef CGAL::Periodic_3_triangulation_remove_traits_3< DTT > P3removeT;
+  typedef CGAL::Delaunay_triangulation_3< P3removeT > DT;
+  typedef typename DT::Cell_handle Cell_handle;
+  typedef typename DT::Point DTPoint;
+  typedef typename P3removeT::Iso_cuboid_3 Iso_cuboid_3;
+
+  Iso_cuboid_3 domain;
+  P3removeT remove_traits(domain);
+  DT dt(remove_traits);
+  DTPoint dtp = std::make_pair(Point_3(), Offset());
+  dt.insert(dtp, Cell_handle());
+#endif
+
+  ////////// ------------ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   // Create offset array for tests
   Offset o[9] = { Offset(0, 0, 0), Offset(0, 1, 1), Offset(1, 0, 1), Offset(1, 1, 0),
                   Offset(1, 1, 1), Offset(1, 0, 0), Offset(-1, 0, 0), Offset(0, 0, 1), Offset(1, 0, -1) };
 
-  Weighted_point wp0 = wp[0];
-  Weighted_point wp1 = wp[1];
-  Weighted_point wp2 = wp[2];
-  Weighted_point wp3 = wp[3];
-  Weighted_point wp01 = wp[4];
-  Weighted_point wp02 = wp[5];
-  Weighted_point wp03 = wp[6];
-  Weighted_point wp04 = wp[7];
-  Weighted_point wp05 = wp[8];
+  Weighted_point_3 wp0 = wp[0];
+  Weighted_point_3 wp1 = wp[1];
+  Weighted_point_3 wp2 = wp[2];
+  Weighted_point_3 wp3 = wp[3];
+  Weighted_point_3 wp01 = wp[4];
+  Weighted_point_3 wp02 = wp[5];
+  Weighted_point_3 wp03 = wp[6];
+  Weighted_point_3 wp04 = wp[7];
+  Weighted_point_3 wp05 = wp[8];
 
-  Bare_point q0 = wp[9].point();
-  Weighted_point wq0 = wp[9];
-  Weighted_point wq1 = wp[10];
-  Weighted_point wq2 = wp[11];
-  Weighted_point wq3 = wp[12];
-  Weighted_point wq4 = wp[13];
-  Weighted_point wq01 = wp[14];
-  Weighted_point wq11 = wp[15];
-  Weighted_point wq21 = wp[16];
-  Weighted_point wq31 = wp[17];
-  Weighted_point wq41 = wp[18];
+  Point_3 q0 = wp[9].point();
+  Weighted_point_3 wq0 = wp[9];
+  Weighted_point_3 wq1 = wp[10];
+  Weighted_point_3 wq2 = wp[11];
+  Weighted_point_3 wq3 = wp[12];
+  Weighted_point_3 wq4 = wp[13];
+  Weighted_point_3 wq01 = wp[14];
+  Weighted_point_3 wq11 = wp[15];
+  Weighted_point_3 wq21 = wp[16];
+  Weighted_point_3 wq31 = wp[17];
+  Weighted_point_3 wq41 = wp[18];
 
   // test of Construct_weighted_circumcenter_3 and compare_power_distance
   std::cout << "test of Construct_weighted_circumcenter_3" << std::endl;
@@ -87,7 +134,7 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
   Compare_power_distance_3 compare_power_distance = traits.compare_power_distance_3_object();
 
   {
-    Bare_point c;
+    Point_3 c;
     c = weighted_circumcenter(wp[0],wp[1],wp[2],wp[3]);
     assert (compare_power_distance(c,wp[0],wp[1]) == CGAL::EQUAL);
     assert (compare_power_distance(c,wp[4],wp[1]) == CGAL::LARGER);
@@ -98,7 +145,7 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
     assert (compare_power_distance(c,wp[5],wp[3]) ==  CGAL::EQUAL);
   }
   {
-    Bare_point c;
+    Point_3 c;
     c = weighted_circumcenter(wp[0],wp[1],wp[2],wp[3]);
     assert (compare_power_distance(c,wp[0],wp[1], o[0],o[0],o[0]) == CGAL::EQUAL);
     assert (compare_power_distance(c,wp[4],wp[1], o[0],o[0],o[0]) == CGAL::LARGER);
@@ -109,7 +156,7 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
     assert (compare_power_distance(c,wp[5],wp[3], o[0],o[0],o[0]) ==  CGAL::EQUAL);
   }
   {
-    Bare_point c;
+    Point_3 c;
     c = weighted_circumcenter(wp[0],wp[1],wp[2],wp[3]);
     assert (compare_power_distance(c,wp[0],wp[1], o[1],o[1],o[1]) == CGAL::EQUAL);
     assert (compare_power_distance(c,wp[4],wp[1], o[1],o[1],o[1]) == CGAL::LARGER);
@@ -120,7 +167,7 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
     assert (compare_power_distance(c,wp[5],wp[3], o[1],o[1],o[1]) ==  CGAL::EQUAL);
   }
   {
-    Bare_point c;
+    Point_3 c;
     c = weighted_circumcenter(wp[0],wp[1],wp[2],wp[3]);
     assert (compare_power_distance(c,wp[0],wp[1], o[1],o[1],o[1]) == CGAL::EQUAL);
     assert (compare_power_distance(c,wp[4],wp[1], o[1],o[1],o[1]) == CGAL::LARGER);
@@ -131,7 +178,7 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
     assert (compare_power_distance(c,wp[5],wp[3], o[1],o[1],o[1]) ==  CGAL::EQUAL);
   }
   {
-    Bare_point c;
+    Point_3 c;
     c = weighted_circumcenter(wp[0],wp[1],wp[2],wp[3]);
     assert (compare_power_distance(c,wp[4],wp[1], o[0],o[0],o[1]) == CGAL::SMALLER);
     assert (compare_power_distance(c,wp[6],wp[1], o[0],o[1],o[0]) == CGAL::LARGER);
@@ -141,11 +188,10 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
 template<class K>
 void _test_cls_periodic_3_regular_triangulation_traits_3 ()
 {
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<K> RT;
-  typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT> Traits;
-  typedef typename Traits::Weighted_point Weighted_point;
-  typedef typename Traits::Bare_point Bare_point;
-  typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
+  typedef CGAL::Periodic_3_regular_triangulation_traits_3<K>    Traits;
+  typedef typename Traits::Weighted_point_3                     Weighted_point_3;
+  typedef typename Traits::Point_3                              Point_3;
+  typedef typename Traits::Iso_cuboid_3                         Iso_cuboid;
 
   Traits traits;
 
@@ -153,98 +199,79 @@ void _test_cls_periodic_3_regular_triangulation_traits_3 ()
   std::cout << "Iso_cuboid(0,0,0,4,4,4)" << std::endl;
   {
     traits.set_domain(Iso_cuboid(0, 0, 0, 4, 4, 4));
-    Bare_point p0(0.,0.,0.);
-    Bare_point p1(3.,0.,0.);
-    Bare_point p2(0.,3.,0.);
-    Bare_point p3(0.,0.,3.);
+    Point_3 p0(0.,0.,0.);
+    Point_3 p1(3.,0.,0.);
+    Point_3 p2(0.,3.,0.);
+    Point_3 p3(0.,0.,3.);
 
-    Bare_point q0(0.,0.,0.);
-    Bare_point q1(2.,0.,0.);
-    Bare_point q2(0.,2.,0.);
-    Bare_point q3(0.,0.,2.);
-    Bare_point q4(2.,2.,2.);
+    Point_3 q0(0.,0.,0.);
+    Point_3 q1(2.,0.,0.);
+    Point_3 q2(0.,2.,0.);
+    Point_3 q3(0.,0.,2.);
+    Point_3 q4(2.,2.,2.);
 
-    Weighted_point p[19] =
+    Weighted_point_3 wp[19] =
     {
-        Weighted_point(p0,9.),
-        Weighted_point(p1,9.),
-        Weighted_point(p2,9.),
-        Weighted_point(p3,9.),
-        Weighted_point(p0,6.),
-        Weighted_point(p0,3.),
-        Weighted_point(p0,12.),
-        Weighted_point(p0,18.),
-        Weighted_point(p0,24.),
+      Weighted_point_3(p0,9.),
+      Weighted_point_3(p1,9.),
+      Weighted_point_3(p2,9.),
+      Weighted_point_3(p3,9.),
+      Weighted_point_3(p0,6.),
+      Weighted_point_3(p0,3.),
+      Weighted_point_3(p0,12.),
+      Weighted_point_3(p0,18.),
+      Weighted_point_3(p0,24.),
 
-        Weighted_point(q0,0.),
-        Weighted_point(q1,0.),
-        Weighted_point(q2,0.),
-        Weighted_point(q3,0.),
-        Weighted_point(q4,0.),
-        Weighted_point(q0,2.),
-        Weighted_point(q1,2.),
-        Weighted_point(q2,2.),
-        Weighted_point(q3,2.),
-        Weighted_point(q4,2.)
+      Weighted_point_3(q0,0.),
+      Weighted_point_3(q1,0.),
+      Weighted_point_3(q2,0.),
+      Weighted_point_3(q3,0.),
+      Weighted_point_3(q4,0.),
+      Weighted_point_3(q0,2.),
+      Weighted_point_3(q1,2.),
+      Weighted_point_3(q2,2.),
+      Weighted_point_3(q3,2.),
+      Weighted_point_3(q4,2.)
     };
-    _test_for_given_domain(traits, p);
+    _test_for_given_domain(traits, wp);
   }
   std::cout << "Iso_cuboid(-2,-2,-2,2,2,2)" << std::endl;
   {
     traits.set_domain(Iso_cuboid(-2, -2, -2, 2, 2, 2));
-    Bare_point p0(-2.,-2.,-2.);
-    Bare_point p1(1.,-2.,-2.);
-    Bare_point p2(-2.,1.,-2.);
-    Bare_point p3(-2.,-2.,1.);
+    Point_3 p0(-2.,-2.,-2.);
+    Point_3 p1(1.,-2.,-2.);
+    Point_3 p2(-2.,1.,-2.);
+    Point_3 p3(-2.,-2.,1.);
 
-    Bare_point q0(-1.,-1.,-1.);
-    Bare_point q1(1.,-1.,-1.);
-    Bare_point q2(-1.,1.,-1.);
-    Bare_point q3(-1.,-1.,1.);
-    Bare_point q4(1.,1.,1.);
+    Point_3 q0(-1.,-1.,-1.);
+    Point_3 q1(1.,-1.,-1.);
+    Point_3 q2(-1.,1.,-1.);
+    Point_3 q3(-1.,-1.,1.);
+    Point_3 q4(1.,1.,1.);
 
-    Weighted_point p[19] =
+    Weighted_point_3 wp[19] =
     {
-        Weighted_point(p0,9.),
-        Weighted_point(p1,9.),
-        Weighted_point(p2,9.),
-        Weighted_point(p3,9.),
-        Weighted_point(p0,6.),
-        Weighted_point(p0,3.),
-        Weighted_point(p0,12.),
-        Weighted_point(p0,18.),
-        Weighted_point(p0,24.),
+      Weighted_point_3(p0,9.),
+      Weighted_point_3(p1,9.),
+      Weighted_point_3(p2,9.),
+      Weighted_point_3(p3,9.),
+      Weighted_point_3(p0,6.),
+      Weighted_point_3(p0,3.),
+      Weighted_point_3(p0,12.),
+      Weighted_point_3(p0,18.),
+      Weighted_point_3(p0,24.),
 
-        Weighted_point(q0,0.),
-        Weighted_point(q1,0.),
-        Weighted_point(q2,0.),
-        Weighted_point(q3,0.),
-        Weighted_point(q4,0.),
-        Weighted_point(q0,2.),
-        Weighted_point(q1,2.),
-        Weighted_point(q2,2.),
-        Weighted_point(q3,2.),
-        Weighted_point(q4,2.)
+      Weighted_point_3(q0,0.),
+      Weighted_point_3(q1,0.),
+      Weighted_point_3(q2,0.),
+      Weighted_point_3(q3,0.),
+      Weighted_point_3(q4,0.),
+      Weighted_point_3(q0,2.),
+      Weighted_point_3(q1,2.),
+      Weighted_point_3(q2,2.),
+      Weighted_point_3(q3,2.),
+      Weighted_point_3(q4,2.)
     };
-    _test_for_given_domain(traits, p);
+    _test_for_given_domain(traits, wp);
   }
-
-//  _test_for_given_domain(traits, p);
-//
-//  // Test Iso_cuboid(-0.5,-0.5,-0.5,0.5,0.5,0.5)
-//  traits.set_domain(Iso_cuboid(-1, -1, -1, 1, 1, 1, 2));
-//
-//  p[0] = Point(-4, -4, -4, 8);
-//  p[1] = Point(0, -4, -4, 8);
-//  p[2] = Point(-4, 0, -4, 8);
-//  p[3] = Point(-4, -4, 0, 8);
-//  p[4] = Point(0, 0, 0, 8);
-//  p[5] = Point(-2, 0, -2, 8);
-//  p[6] = Point(0, 2, 2, 8);
-//  p[7] = Point(0, -4, 0, 8);
-//  p[8] = Point(-2, -4, -2, 8);
-//  p[9] = Point(0, -4, 2, 8);
-//  p[10] = Point(-3, -3, -2, 8);
-//
-//  _test_for_given_domain(traits, p);
 }

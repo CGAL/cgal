@@ -19,9 +19,6 @@
 //
 // Author(s)     : Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 
-#include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 #include <CGAL/Gmpz.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -30,27 +27,26 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <string>
 
-
-typedef CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Epeck> RT_Epeck;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT_Epeck> Traits_Epeck;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<CGAL::Epeck> Traits_Epeck;
 /* Explicit instantiation.
  * It allows us to test if the template class, instantiated with given template parameters, compiles.
  */
 template class CGAL::Periodic_3_regular_triangulation_3<Traits_Epeck>;
 
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Epick> RT_Epick;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT_Epick> Traits_Epick;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<CGAL::Epick> Traits_Epick;
 /* Explicit instantiation.
  * It allows us to test if the template class, instantiated with given template parameters, compiles.
  */
@@ -61,37 +57,36 @@ template <class Kernel>
 class Tests
 {
 public:
-  typedef Kernel K;
-  typedef typename K::FT FT;
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<K> RT;
-  typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT> Traits;
+  typedef Kernel                                                K;
+  typedef CGAL::Periodic_3_regular_triangulation_traits_3<K>    Traits;
 
-  typedef CGAL::Periodic_3_regular_triangulation_3<Traits> P3RT3;
-  typedef typename P3RT3::Vertex_handle Vertex_handle;
-  typedef typename P3RT3::Cell_handle Cell_handle;
-  typedef typename P3RT3::Facet Facet;
-  typedef typename P3RT3::Cell_iterator Cell_iterator;
-  typedef typename P3RT3::Vertex_iterator Vertex_iterator;
-  typedef typename P3RT3::Segment Segment;
-  typedef typename P3RT3::Triangle Triangle;
-  typedef typename P3RT3::Tetrahedron Tetrahedron;
-  typedef typename P3RT3::Periodic_tetrahedron Periodic_tetrahedron;
-  typedef typename P3RT3::Locate_type Locate_type;
-  typedef typename P3RT3::Cell Cell;
-  typedef typename P3RT3::Offset Offset;
+  typedef CGAL::Periodic_3_regular_triangulation_3<Traits>      P3RT3;
+  typedef typename P3RT3::Vertex_handle                         Vertex_handle;
+  typedef typename P3RT3::Facet                                 Facet;
+  typedef typename P3RT3::Cell                                  Cell;
+  typedef typename P3RT3::Cell_handle                           Cell_handle;
+  typedef typename P3RT3::Vertex_iterator                       Vertex_iterator;
+  typedef typename P3RT3::Cell_iterator                         Cell_iterator;
+  typedef typename P3RT3::Segment                               Segment;
+  typedef typename P3RT3::Triangle                              Triangle;
+  typedef typename P3RT3::Tetrahedron                           Tetrahedron;
+  typedef typename P3RT3::Periodic_tetrahedron                  Periodic_tetrahedron;
+  typedef typename P3RT3::Locate_type                           Locate_type;
+  typedef typename P3RT3::Offset                                Offset;
 
-  typedef typename Traits::Weighted_point Weighted_point;
-  typedef typename Traits::Bare_point Bare_point;
-  typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
+  typedef typename Traits::Weighted_point_3                     Weighted_point_3;
+  typedef typename Traits::Point_3                              Point_3;
+  typedef typename Traits::Iso_cuboid_3                         Iso_cuboid;
 
-
-  static void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed, const std::string& path)
+  static void test_insert_rnd_then_remove_all (unsigned pt_count,
+                                               unsigned seed,
+                                               const std::string& path)
   {
     std::cout << "--- test_insert_rnd (" << pt_count << ", " << seed << ')' << std::endl;
 
     CGAL::Random random(seed);
-    typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
-    CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
@@ -100,18 +95,18 @@ public:
     assert(stream);
     std::ifstream input_stream(path.c_str());
 
-    std::vector<Weighted_point> insert_set;
+    std::vector<Weighted_point_3> insert_set;
     insert_set.reserve(pt_count);
-    std::vector<Weighted_point> remove_set;
+    std::vector<Weighted_point_3> remove_set;
     remove_set.reserve(pt_count);
 
     std::cout << "-- insert" << std::endl;
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
     {
-//      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
-      //    std::cout << cnt << " : " << p << std::endl;
-    	Weighted_point p;
-    	input_stream >> p;
+//      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
+//      std::cout << cnt << " : " << p << std::endl;
+      Weighted_point_3 p;
+      input_stream >> p;
       assert(p.weight() < 0.015625);
       stream << p << std::endl;
 
