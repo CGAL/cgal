@@ -143,19 +143,4 @@ public:
 
 } //namespace CGAL
 
-#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
-
-
-namespace CGAL
-{
-template < typename K, typename Off, bool Has_filtered_predicates >
-class Periodic_3_Delaunay_triangulation_traits_3;
-
-// Periodic_3_triangulation_traits_3 should not be used as traits for Periodic_3_Delaunay_triangulation_3 anymore.
-template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
-class CGAL_DEPRECATED Periodic_3_triangulation_traits_3 : public Periodic_3_Delaunay_triangulation_traits_3<Kernel, Off>
-{
-};
-}
-
 #endif // CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
