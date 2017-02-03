@@ -394,7 +394,6 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup menu filtering
   connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
-  ui->sceneDockWidget->installEventFilter(this);
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
@@ -1046,7 +1045,6 @@ void MainWindow::open(QString filename)
           qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
   if(group)
     scene->redraw_model();
-  resetHeader();
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
@@ -1789,7 +1787,6 @@ void MainWindow::makeNewGroup()
 {
     Scene_group_item * group = new Scene_group_item();
     scene->addItem(group);
-    resetHeader();
 }
 
 void MainWindow::on_upButton_pressed()
@@ -1934,8 +1931,9 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
 
 void MainWindow::resetHeader()
 {
+  sceneView->header()->setStretchLastSection(false);
   scene->invisibleRootItem()->setColumnCount(5);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Interactive);
+  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
@@ -1944,20 +1942,6 @@ void MainWindow::resetHeader()
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
-
-  int name_width = sceneView->width() -
-      (sceneView->columnWidth(Scene::ColorColumn)
-      + sceneView->columnWidth(Scene::RenderingModeColumn)
-      + sceneView->header()->fontMetrics().width(QString("__AB__"))
-      + sceneView->columnWidth(Scene::VisibleColumn));
-    sceneView->header()->resizeSection(Scene::NameColumn, name_width);
 }
 
-bool MainWindow::eventFilter(QObject *, QEvent *event)
-{
-  if(event->type() == QEvent::Resize)
-  {
-    resetHeader();
-  }
-  return false;
-}
+

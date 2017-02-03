@@ -70,7 +70,7 @@ public:
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
   CGAL::Three::Scene_item* loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
-  bool eventFilter(QObject *, QEvent *event);
+
 Q_SIGNALS:
   void on_closure();
   void expanded(QModelIndex);
@@ -212,7 +212,6 @@ public Q_SLOTS:
 
   /// This slot is used to test exception handling in Qt Scripts.
   void throw_exception();
-
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the sceneView and updates the scene
