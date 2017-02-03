@@ -22,40 +22,38 @@
 //                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 //                 Aymeric Pellé <Aymeric.Pelle@sophia.inria.fr>
-#ifndef CGAL_PERIODIC_3_CONSTRUCT_POINT_3_H
-#define CGAL_PERIODIC_3_CONSTRUCT_POINT_3_H
+#ifndef CGAL_PERIODIC_3_CONSTRUCT_WEIGHTED_POINT_3_H
+#define CGAL_PERIODIC_3_CONSTRUCT_WEIGHTED_POINT_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 namespace CGAL
 {
-template < typename K, typename Construct_point_3_base>
-class Periodic_3_construct_point_3 : public Construct_point_3_base
+
+template < typename PRT, typename Construct_point_3_base>
+class Periodic_3_construct_weighted_point_3
+  : public Construct_point_3_base
 {
-  typedef K Kernel;
+  typedef PRT                                     PRTraits;
 
 public:
-  typedef typename Kernel::Point_3           Point;
-  typedef typename Kernel::Weighted_point_3  Weighted_point;
-  typedef typename Kernel::Offset            Offset;
-  typedef typename Kernel::Iso_cuboid_3      Iso_cuboid_3;
+  typedef typename PRTraits::Point_3              Point_3;
+  typedef typename PRTraits::Weighted_point_3     Weighted_point_3;
+  typedef typename PRTraits::Offset               Offset;
+  typedef typename PRTraits::Iso_cuboid_3         Iso_cuboid_3;
 
-  typedef Point       result_type;
-
-  Periodic_3_construct_point_3(const Iso_cuboid_3 & dom) : _dom(dom) { }
+  Periodic_3_construct_weighted_point_3 (const Iso_cuboid_3& dom)
+    : _dom(dom)
+  { }
 
   using Construct_point_3_base::operator();
 
-  Point operator() ( const Point& p, const Offset& o ) const {
-    return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-                 p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
-                 p.z()+(_dom.zmax()-_dom.zmin())*o.z());
-  }
-
-  Point operator() ( const Weighted_point& p, const Offset& o ) const {
-    return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-                 p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
-                 p.z()+(_dom.zmax()-_dom.zmin())*o.z());
+  Weighted_point_3 operator() (const Weighted_point_3& p, const Offset& o) const
+  {
+    return Weighted_point_3(Point_3(p.x() + (_dom.xmax() - _dom.xmin()) * o.x(),
+                                    p.y() + (_dom.ymax() - _dom.ymin()) * o.y(),
+                                    p.z() + (_dom.zmax() - _dom.zmin()) * o.z()),
+                            p.weight());
   }
 
 private:
@@ -64,4 +62,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_PERIODIC_3_CONSTRUCT_POINT_3_H
+#endif // CGAL_PERIODIC_3_CONSTRUCT_WEIGHTED_POINT_3_H
