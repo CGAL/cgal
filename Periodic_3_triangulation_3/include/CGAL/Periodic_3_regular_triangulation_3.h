@@ -21,121 +21,142 @@
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
-#include <CGAL/Periodic_3_triangulation_3.h>
-#include <CGAL/spatial_sort.h>
-
 // Needed by remove to fill the hole.
 #include <CGAL/internal/Periodic_3_regular_triangulation_remove_traits_3.h>
-#include <CGAL/Regular_triangulation_3.h>
 
-#include <boost/unordered_set.hpp>
+#include <CGAL/Periodic_3_triangulation_3.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+
+#include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/spatial_sort.h>
+#include <CGAL/enum.h>
+
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
 
 
 namespace CGAL
 {
 template < class Gt,
-		   class Tds = Triangulation_data_structure_3 < Triangulation_vertex_base_3<Gt, Periodic_3_triangulation_ds_vertex_base_3<> >,
-		                                                Regular_triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3<> > >
-		 >
-class Periodic_3_regular_triangulation_3 : public Periodic_3_triangulation_3<Gt,Tds>
+           class Tds =
+             Triangulation_data_structure_3 <
+               Regular_triangulation_vertex_base_3<Gt,
+                 Periodic_3_triangulation_ds_vertex_base_3<> >,
+               Regular_triangulation_cell_base_3<Gt,
+                 Periodic_3_triangulation_ds_cell_base_3<> >
+             >
+         >
+class Periodic_3_regular_triangulation_3
+  : public Periodic_3_triangulation_3<Weighted_point_mapper_3<Gt>, Tds>
 {
-	typedef Periodic_3_regular_triangulation_3<Gt,Tds>  Self;
+  typedef Periodic_3_regular_triangulation_3<Gt, Tds>             Self;
+  typedef Weighted_point_mapper_3<Gt>                             Tr_Base_Gt;
 
 public:
-	typedef Periodic_3_triangulation_3<Gt,Tds>  Base;
+  typedef Periodic_3_triangulation_3<Gt, Tds>                     Base;
+  typedef Periodic_3_triangulation_3<Tr_Base_Gt, Tds>             Tr_Base;
 
-	typedef Gt                                    Geometric_traits;
-	typedef Tds                                   Triangulation_data_structure;
+  typedef Gt                                    Geometric_traits;
+  typedef Geometric_traits                      Geom_traits;
+  typedef Tds                                   Triangulation_data_structure;
 
-	typedef Geometric_traits                      Geom_traits;
-	typedef typename Gt::FT                       FT;
+  typedef typename Gt::FT                          FT;
 
-	typedef typename Gt::Weighted_point_3         Weighted_point;
-	typedef typename Gt::Bare_point               Bare_point;
-	typedef typename Gt::Segment_3                Segment;
-	typedef typename Gt::Triangle_3               Triangle;
-	typedef typename Gt::Tetrahedron_3            Tetrahedron;
+  typedef typename Tr_Base::Periodic_segment               Periodic_segment;
+  typedef typename Tr_Base::Periodic_triangle              Periodic_triangle;
+  typedef typename Tr_Base::Periodic_tetrahedron           Periodic_tetrahedron;
+  typedef typename Tr_Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
 
-	typedef typename Base::Periodic_point         Periodic_point;
-	typedef typename Base::Periodic_segment       Periodic_segment;
-	typedef typename Base::Periodic_triangle      Periodic_triangle;
-	typedef typename Base::Periodic_tetrahedron   Periodic_tetrahedron;
+  typedef typename Tr_Base::Vertex_handle          Vertex_handle;
+  typedef typename Tr_Base::Cell_handle            Cell_handle;
 
-  typedef typename Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
+  typedef typename Tr_Base::Vertex                 Vertex;
+  typedef typename Tr_Base::Edge                   Edge;
+  typedef typename Tr_Base::Facet                  Facet;
+  typedef typename Tr_Base::Cell                   Cell;
 
-	typedef typename Base::Cell_handle            Cell_handle;
-	typedef typename Base::Vertex_handle          Vertex_handle;
+  typedef typename Tr_Base::Vertex_iterator        Vertex_iterator;
+  typedef typename Tr_Base::Edge_iterator          Edge_iterator;
+  typedef typename Tr_Base::Facet_iterator         Facet_iterator;
+  typedef typename Tr_Base::Facet_circulator       Facet_circulator;
+  typedef typename Tr_Base::Cell_iterator          Cell_iterator;
+  typedef typename Tr_Base::Cell_circulator        Cell_circulator;
 
-	typedef typename Base::Cell                   Cell;
-	typedef typename Base::Vertex                 Vertex;
-	typedef typename Base::Facet                  Facet;
-	typedef typename Base::Edge                   Edge;
+  typedef typename Tr_Base::All_vertices_iterator  All_vertices_iterator;
+  typedef typename Tr_Base::All_edges_iterator     All_edges_iterator;
+  typedef typename Tr_Base::All_facets_iterator    All_facets_iterator;
+  typedef typename Tr_Base::All_cells_iterator     All_cells_iterator;
 
-	typedef typename Base::Cell_circulator        Cell_circulator;
-	typedef typename Base::Facet_circulator       Facet_circulator;
-	typedef typename Base::Cell_iterator          Cell_iterator;
-	typedef typename Base::Facet_iterator         Facet_iterator;
-	typedef typename Base::Edge_iterator          Edge_iterator;
-	typedef typename Base::Vertex_iterator        Vertex_iterator;
+  typedef typename Tr_Base::size_type              size_type;
+  typedef typename Tr_Base::difference_type        difference_type;
+  typedef typename Tr_Base::Locate_type            Locate_type;
 
-	typedef typename Base::All_cells_iterator     All_cells_iterator;
-	typedef typename Base::All_facets_iterator    All_facets_iterator;
-	typedef typename Base::All_edges_iterator     All_edges_iterator;
-	typedef typename Base::All_vertices_iterator  All_vertices_iterator;
+  typedef typename Tr_Base::Offset                 Offset;
+  typedef typename Tr_Base::Iso_cuboid             Iso_cuboid;
+  typedef typename Tr_Base::Covering_sheets        Covering_sheets;
 
-  typedef typename Base::size_type              size_type;
-	typedef typename Base::difference_type        difference_type;
+  typedef typename Gt::Weighted_point_3            Weighted_point;
+  typedef typename boost::mpl::eval_if_c<
+    internal::Has_nested_type_Bare_point<Gt>::value,
+    typename internal::Bare_point_type<Gt>,
+    boost::mpl::identity<typename Gt::Point_3>
+  >::type                                          Bare_point;
 
-	typedef typename Base::Locate_type            Locate_type;
-	typedef typename Base::Iterator_type          Iterator_type;
+  typedef typename Gt::Segment_3                   Segment;
+  typedef typename Gt::Triangle_3                  Triangle;
+  typedef typename Gt::Tetrahedron_3               Tetrahedron;
 
-	typedef typename Base::Offset                 Offset;
-	typedef typename Base::Iso_cuboid             Iso_cuboid;
-	typedef typename Base::Covering_sheets        Covering_sheets;
+  typedef typename Gt::Object_3                    Object;
+
+  typedef typename Base::Periodic_point            Periodic_point;
+  typedef typename Tr_Base::Periodic_point         Periodic_weighted_point;
+
+  //Tag to distinguish Delaunay from Regular triangulations
+  typedef Tag_true                                 Weighted_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-using Base::cw;
-using Base::ccw;
-using Base::domain;
-using Base::geom_traits;
-using Base::int_to_off;
-using Base::number_of_sheets;
-using Base::number_of_vertices;
-using Base::number_of_edges;
-using Base::number_of_facets;
-using Base::number_of_cells;
-using Base::cells_begin;
-using Base::cells_end;
-using Base::vertices_begin;
-using Base::vertices_end;
-using Base::facets_begin;
-using Base::facets_end;
-using Base::tds;
-using Base::next_around_edge;
-using Base::vertex_triple_index;
-using Base::mirror_vertex;
-using Base::orientation;
-using Base::swap;
-using Base::is_1_cover;
-using Base::is_virtual;
-using Base::point;
-using Base::set_offsets;
+  using Tr_Base::cw;
+  using Tr_Base::ccw;
+  using Tr_Base::domain;
+  using Tr_Base::geom_traits;
+  using Tr_Base::int_to_off;
+  using Tr_Base::number_of_sheets;
+  using Tr_Base::number_of_vertices;
+  using Tr_Base::number_of_edges;
+  using Tr_Base::number_of_facets;
+  using Tr_Base::number_of_cells;
+  using Tr_Base::cells_begin;
+  using Tr_Base::cells_end;
+  using Tr_Base::vertices_begin;
+  using Tr_Base::vertices_end;
+  using Tr_Base::facets_begin;
+  using Tr_Base::facets_end;
+  using Tr_Base::tds;
+  using Tr_Base::next_around_edge;
+  using Tr_Base::vertex_triple_index;
+  using Tr_Base::mirror_vertex;
+  using Tr_Base::orientation;
+  using Tr_Base::swap;
+  using Tr_Base::is_1_cover;
+  using Tr_Base::is_virtual;
+  using Tr_Base::set_offsets;
 #endif
 
-// For strict-ansi compliance
-using Base::adjacent_vertices;
-using Base::combine_offsets;
-using Base::get_offset;
-using Base::get_original_vertex;
-using Base::get_location_offset;
-using Base::neighbor_offset;
-using Base::incident_edges;
-using Base::incident_facets;
-using Base::incident_cells;
-using Base::is_valid_conflict;
-using Base::locate;
-using Base::periodic_point;
-using Base::segment;
+  // For strict-ansi compliance
+  using Tr_Base::adjacent_vertices;
+  using Tr_Base::combine_offsets;
+  using Tr_Base::get_offset;
+  using Tr_Base::get_original_vertex;
+  using Tr_Base::get_location_offset;
+  using Tr_Base::neighbor_offset;
+  using Tr_Base::incident_edges;
+  using Tr_Base::incident_facets;
+  using Tr_Base::incident_cells;
+  using Tr_Base::is_valid_conflict;
+  using Tr_Base::locate;
+  using Tr_Base::segment;
 
 private:
   struct Cell_handle_hash : public std::unary_function<Cell_handle, std::size_t>
@@ -182,16 +203,15 @@ private:
   };
 
 public:
-	/** @name Creation */ //@{
-	Periodic_3_regular_triangulation_3 (const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
-			                            const Geometric_traits& gt = Geometric_traits())
-	: Base(domain, gt)
-	{
-	}
+  /** @name Creation */ //@{
+  Periodic_3_regular_triangulation_3 (const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
+                                      const Geometric_traits& gt = Geometric_traits())
+    : Tr_Base(domain, Tr_Base_Gt(gt))
+  { }
 
   // copy constructor duplicates vertices and cells
   Periodic_3_regular_triangulation_3 (const Periodic_3_regular_triangulation_3& tr)
-  : Base(tr)
+    : Tr_Base(tr)
   {
     if (is_1_cover()) {
       tds() = tr.tds();
@@ -200,6 +220,16 @@ public:
     }
     CGAL_triangulation_expensive_postcondition(*this == tr);
     CGAL_triangulation_expensive_postcondition( is_valid() );
+  }
+
+  template < typename InputIterator >
+  Periodic_3_regular_triangulation_3(InputIterator first, InputIterator last,
+                                     const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+                                     const Geometric_traits& gt = Geometric_traits(),
+                                     bool is_large_point_set = false)
+    : Tr_Base(domain, Tr_Base_Gt(gt))
+  {
+    insert(first, last, is_large_point_set);
   }
 
   void copy_multiple_covering(const Periodic_3_regular_triangulation_3& tr) {
@@ -233,8 +263,8 @@ public:
       if (vit2->offset() != Offset()) {
         //TODO: use some binding, maybe boost instead of the Finder.
         typename std::list<Vertex_handle>::iterator vlist_it
-    = std::find_if(vlist.begin(), vlist.end(),
-             typename Base::Finder(this,vit2->point()));
+            = std::find_if(vlist.begin(), vlist.end(),
+                           typename Tr_Base::Finder(this,vit2->point()));
         Offset off = vit2->offset();
         this->virtual_vertices.insert(std::make_pair(vit2,
                  std::make_pair(*vlist_it,off)));
@@ -254,16 +284,6 @@ public:
     insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
   }
 
-  template < typename InputIterator >
-  Periodic_3_regular_triangulation_3(InputIterator first, InputIterator last,
-      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geometric_traits& gt = Geometric_traits(),
-      bool is_large_point_set = false)
-    : Base(domain, gt)
-  {
-    insert(first, last, is_large_point_set);
-  }
-
   Periodic_3_regular_triangulation_3 operator= (Periodic_3_regular_triangulation_3 tr)
   {
     tr.swap(*this);
@@ -271,8 +291,8 @@ public:
   }
 
   void swap(Periodic_3_regular_triangulation_3&tr) {
-    std::swap(cells_with_too_big_orthoball,tr.cells_with_too_big_orthoball);
-    Base::swap(tr);
+    std::swap(cells_with_too_big_orthoball, tr.cells_with_too_big_orthoball);
+    Tr_Base::swap(tr);
   }
 
   void create_initial_triangulation()
@@ -399,7 +419,7 @@ public:
      CGAL_triangulation_precondition(point.weight() >= 0);
      CGAL_triangulation_precondition_msg(point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
          "point.weight() < 1/64 * domain_size * domain_size");
-     return Base::insert_in_conflict(point, start, tester, hider, cover_manager);
+     return Tr_Base::insert_in_conflict(point, start, tester, hider, cover_manager);
    }
 
    Vertex_handle insert(const Weighted_point& point, Locate_type lt, Cell_handle c,
@@ -410,7 +430,7 @@ public:
       CGAL_triangulation_precondition(point.weight() >= 0);
       CGAL_triangulation_precondition_msg(point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
           "point.weight() < 1/64 * domain_size * domain_size");
-      return Base::insert_in_conflict(point,lt,c,li,lj, tester,hider,cover_manager);
+      return Tr_Base::insert_in_conflict(point,lt,c,li,lj, tester,hider,cover_manager);
     }
 
    template < class InputIterator >
@@ -470,7 +490,7 @@ public:
     Conflict_tester tester(*pbegin, this);
     Point_hider hider(this);
     Cover_manager cover_manager(*this);
-    double_vertices = Base::insert_in_conflict(pbegin, points.end(), hint, tester, hider, cover_manager);
+    double_vertices = Tr_Base::insert_in_conflict(pbegin, points.end(), hint, tester, hider, cover_manager);
 
     if (is_large_point_set)
     {
@@ -508,7 +528,7 @@ public:
      Conflict_tester ct(this);
      Cover_manager cover_manager(*this);
 
-     Base::remove(v, remover, ct, cover_manager);
+     Tr_Base::remove(v, remover, ct, cover_manager);
 
      // Re-insert the points that v was hiding.
      for (typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();
@@ -632,7 +652,7 @@ public:
     Locate_type lt;
     int li, lj;
     Cell_handle c = locate(p, lt, li, lj, start);
-    if (lt == Base::VERTEX)
+    if (lt == Tr_Base::VERTEX)
       return c->vertex(li);
     const Conflict_tester tester(p, this);
     Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
@@ -770,22 +790,26 @@ private:
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 
 public:
-  Periodic_point periodic_weighted_circumcenter(Cell_handle c) const {
-    return Base::periodic_circumcenter(c, geom_traits().construct_weighted_circumcenter_3_object());
+  Periodic_weighted_point periodic_weighted_circumcenter(Cell_handle c) const {
+    return Tr_Base::periodic_circumcenter(c,
+      geom_traits().construct_weighted_circumcenter_3_object());
   }
 
   /** @name Voronoi diagram */ //@{
   Bare_point dual(Cell_handle c) const {
-    return point(periodic_weighted_circumcenter(c));
+    return Gt().construct_point_3_object()(
+      construct_weighted_point(periodic_weighted_circumcenter(c)));
   }
 
   bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
-    return Base::canonical_dual_segment(c, i, ps, geom_traits().construct_weighted_circumcenter_3_object());
+    return Tr_Base::canonical_dual_segment(c, i, ps,
+      geom_traits().construct_weighted_circumcenter_3_object());
   }
 
   Periodic_segment dual(const Facet & f) const {
     return dual( f.first, f.second );
   }
+
   Periodic_segment dual(Cell_handle c, int i) const{
     Periodic_segment ps;
     canonical_dual_segment(c,i,ps);
@@ -794,13 +818,13 @@ public:
 
   template <class OutputIterator>
   OutputIterator dual(const Edge & e, OutputIterator points) const {
-    return dual(e.first, e.second, e.third, points);
+    return Tr_Base::dual(e.first, e.second, e.third, points);
   }
 
   template <class OutputIterator>
   OutputIterator dual(Cell_handle c, int i, int j,
       OutputIterator points) const {
-    Base::dual(c, i, j, points, geom_traits().construct_weighted_circumcenter_3_object());
+    Tr_Base::dual(c, i, j, points, geom_traits().construct_weighted_circumcenter_3_object());
     return points;
   }
 
@@ -818,13 +842,15 @@ public:
   /// Volume computations
 
   FT dual_volume(Vertex_handle v) const {
-    return Base::dual_volume(v, geom_traits().construct_weighted_circumcenter_3_object());
+    return Tr_Base::dual_volume(v, geom_traits().construct_weighted_circumcenter_3_object());
   }
 
   /// Centroid computations
 
   Bare_point dual_centroid(Vertex_handle v) const {
-    return Base::dual_centroid(v, geom_traits().construct_weighted_circumcenter_3_object());
+    return Gt().construct_point_3_object()(
+      Tr_Base::dual_centroid(
+        v, geom_traits().construct_weighted_circumcenter_3_object()));
   }
 //@}
 
@@ -833,7 +859,7 @@ public:
   find_conflicts(const Weighted_point &p, Cell_handle c,
       OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit) const {
     Triple<OutputIteratorBoundaryFacets,OutputIteratorCells,Emptyset_iterator>
-    t = find_conflicts(p, c, bfit, cit, Emptyset_iterator());
+    t = Tr_Base::find_conflicts(p, c, bfit, cit, Emptyset_iterator());
     return std::make_pair(t.first, t.second);
   }
 
@@ -917,7 +943,7 @@ Periodic_3_regular_triangulation_3<Gt,Tds>::find_conflicts( const Weighted_point
   Conflict_tester tester(p, this);
   Triple<typename std::back_insert_iterator<std::vector<Facet> >,
          typename std::back_insert_iterator<std::vector<Cell_handle> >,
-         OutputIteratorInternalFacets> tit = Base::find_conflicts(c, tester,
+         OutputIteratorInternalFacets> tit = Tr_Base::find_conflicts(c, tester,
               make_triple(std::back_inserter(facets),
                       std::back_inserter(cells), ifit));
   ifit = tit.third;
@@ -976,8 +1002,9 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
          std::make_pair(q,oq)};
   const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
 
-  std::sort(points, points+5,
-      typename Base::template Perturbation_order< typename Gt::Compare_xyz_3 >(geom_traits().compare_xyz_3_object()));
+  std::sort(points, points+5, typename Base::template
+    Perturbation_order< typename Gt::Compare_xyz_3 >(
+      geom_traits().compare_xyz_3_object()));
 
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
@@ -1016,7 +1043,7 @@ bool
 Periodic_3_regular_triangulation_3<Gt,Tds>::
 is_valid(bool verbose, int level) const
 {
-  if (!Base::is_valid(verbose, level)) {
+  if (!Tr_Base::is_valid(verbose, level)) {
     if (verbose)
       std::cerr << "Regular: invalid base" << std::endl;
     return false;
@@ -1039,7 +1066,7 @@ bool
 Periodic_3_regular_triangulation_3<GT,TDS>::
 is_valid(Cell_handle ch, bool verbose, int level) const {
   bool error = false;
-  if (!Base::is_valid(ch, verbose, level)) {
+  if (!Tr_Base::is_valid(ch, verbose, level)) {
     error = true;
     if (verbose) {
       std::cerr << "geometrically invalid cell" << std::endl;
@@ -1049,32 +1076,32 @@ is_valid(Cell_handle ch, bool verbose, int level) const {
     }
   }
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++ vit) {
-    for (int i=-1; i<=1; i++)
-      for (int j=-1; j<=1; j++)
-  for (int k=-1; k<=1; k++) {
-    if (periodic_point(ch,0) == std::make_pair(periodic_point(vit).first,
-      periodic_point(vit).second+Offset(i,j,k))
-    || periodic_point(ch,1) == std::make_pair(periodic_point(vit).first,
-      periodic_point(vit).second+Offset(i,j,k))
-          || periodic_point(ch,2) == std::make_pair(periodic_point(vit).first,
-      periodic_point(vit).second+Offset(i,j,k))
-    || periodic_point(ch,3) == std::make_pair(periodic_point(vit).first,
-                  periodic_point(vit).second+Offset(i,j,k)) )
-      continue;
-    if (_side_of_power_sphere(ch, periodic_point(vit).first,
-      periodic_point(vit).second+Offset(i,j,k),true)
-        != ON_UNBOUNDED_SIDE) {
-      error = true;
-      if (verbose) {
-        std::cerr << "Regular invalid cell" << std::endl;
-        for (int i=0; i<4; i++ ) {
-    Periodic_point pp = periodic_point(ch,i);
-    std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
+    const Periodic_weighted_point& pwp = Tr_Base::periodic_point(vit);
+    for (int i=-1; i<=1; i++) {
+      for (int j=-1; j<=1; j++) {
+        for (int k=-1; k<=1; k++) {
+          const Periodic_weighted_point& ofpwp = std::make_pair(pwp.first,
+                                                                pwp.second + Offset(i,j,k));
+          if (Tr_Base::periodic_point(ch,0) == ofpwp
+              || Tr_Base::periodic_point(ch,1) == ofpwp
+              || Tr_Base::periodic_point(ch,2) == ofpwp
+              || Tr_Base::periodic_point(ch,3) == ofpwp)
+            continue;
+          if (_side_of_power_sphere(ch, ofpwp.first, ofpwp.second, true)
+              != ON_UNBOUNDED_SIDE) {
+            error = true;
+            if (verbose) {
+              std::cerr << "Regular invalid cell" << std::endl;
+              for (int i=0; i<4; i++) {
+                Periodic_weighted_point pp = Tr_Base::periodic_point(ch, i);
+                std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
+              }
+              std::cerr << std::endl;
+            }
+          }
         }
-        std::cerr << std::endl;
       }
     }
-  }
   }
   return !error;
 }
@@ -1283,12 +1310,12 @@ struct Periodic_3_regular_triangulation_3<GT,Tds>::Vertex_remover
 
 template < class GT, class TDS >
 std::istream &
-operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT,TDS> &tr)
+operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS> &tr)
 {
   typedef Periodic_3_regular_triangulation_3<GT,TDS>   P3RT3;
-  typedef typename P3RT3::Base                          Base;
+  typedef typename P3RT3::Tr_Base                      Tr_Base;
 
-  is >> static_cast<Base&>(tr);
+  is >> static_cast<Tr_Base&>(tr);
 
   tr.insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
 
