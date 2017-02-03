@@ -1,4 +1,4 @@
-#include <CGAL/boost/graph/Connected_component_graph.h>
+#include <CGAL/boost/graph/Connected_components_graph.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include "test_Prefix.h"
 #include <boost/numeric/conversion/cast.hpp>
@@ -14,7 +14,7 @@ void test_halfedge_around_vertex_iterator(const  Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< boost::unordered_map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   boost::unordered_map<g_face_descriptor, std::size_t> map(CGAL::num_faces(g));
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -43,7 +43,7 @@ void test_halfedge_around_face_iterator(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -64,7 +64,7 @@ void test_edge_iterators(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -91,7 +91,7 @@ void test_vertex_iterators(Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -122,7 +122,7 @@ void test_out_edges(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -152,7 +152,7 @@ void test_in_edges(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -180,7 +180,7 @@ void test_in_out_edges(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -223,7 +223,7 @@ void test_edge_find(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -248,7 +248,7 @@ void test_faces(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -275,7 +275,7 @@ void test_read(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef boost::associative_property_map< std::map< g_face_descriptor, std::size_t > >FCMap;
-  typedef CGAL::Connected_component_graph<Graph, FCMap> Adapter;
+  typedef CGAL::Connected_components_graph<Graph, FCMap> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -364,7 +364,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<VertexPointPMap
 int
 main()
 {
-  typedef CGAL::Connected_component_graph<SM, SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> > Adapter;
+  typedef CGAL::Connected_components_graph<SM, SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> > Adapter;
  // test(sm_data());
   //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
   SM* sm = new SM();

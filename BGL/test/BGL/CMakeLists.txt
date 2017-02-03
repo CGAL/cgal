@@ -87,9 +87,9 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
-create_single_source_cgal_program( "test_Connected_component_graph.cpp" )
+create_single_source_cgal_program( "test_Connected_components_graph.cpp" )
 
-create_single_source_cgal_program( "graph_concept_Connected_component_graph.cpp" )
+create_single_source_cgal_program( "graph_concept_Connected_components_graph.cpp" )
 
 
 
