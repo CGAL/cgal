@@ -340,6 +340,16 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<VertexPointPMap
         boost::get(vppmap, source(e, g)) == Point_3(0,0,1)) &&
        (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
         boost::get(vppmap, source(e, g)) == Point_3(0,0,0))
+      ||
+      (boost::get(vppmap, target(e, g)) == Point_3(1,0,1) ||
+       boost::get(vppmap, source(e, g)) == Point_3(1,0,1)) &&
+      (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
+       boost::get(vppmap, source(e, g)) == Point_3(0,0,0))
+      ||
+      (boost::get(vppmap, target(e, g)) == Point_3(1,1,1) ||
+       boost::get(vppmap, source(e, g)) == Point_3(1,1,1)) &&
+      (boost::get(vppmap, target(e, g)) == Point_3(1,0,1) ||
+       boost::get(vppmap, source(e, g)) == Point_3(1,0,1))
        )
       return true;
     else
@@ -355,8 +365,8 @@ int
 main()
 {
   typedef CGAL::Connected_component_graph<SM, SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> > Adapter;
-  test(sm_data());
-  //Make a tetrahedron and test the adapter for a patch that only contains the front face
+ // test(sm_data());
+  //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
   SM* sm = new SM();
   CGAL::make_tetrahedron(
         Point_3(1,1,1),
@@ -371,17 +381,19 @@ main()
   CGAL::Polygon_mesh_processing::connected_components(*sm, fccmap, CGAL::Polygon_mesh_processing::parameters::
                                                       edge_is_constrained_map(Constraint<CGAL::Properties::Property_map<boost::graph_traits<SM>::vertex_descriptor,
                                                                               SM::Point> >(*sm, positions)));
-
-  Adapter fga(*sm, fccmap, boost::get(fccmap, *faces(*sm).first));
+  boost::unordered_set<long unsigned int> pids;
+  pids.insert(0);
+  pids.insert(2);
+  Adapter fga(*sm, fccmap, pids);
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   //check that there is the right number of simplices in fga
   CGAL_assertion(CGAL::is_valid(fga));
-  CGAL_assertion(std::distance(faces(fga).first,faces(fga).second) == 1);
-  CGAL_assertion(std::distance(edges(fga).first,edges(fga).second) == 3);
-  CGAL_assertion(std::distance(halfedges(fga).first,halfedges(fga).second) == 6);
-  CGAL_assertion(std::distance(vertices(fga).first,vertices(fga).second) == 3);
+  CGAL_assertion(std::distance(faces(fga).first,faces(fga).second) == 2);
+  CGAL_assertion(std::distance(edges(fga).first,edges(fga).second) == 5);
+  CGAL_assertion(std::distance(halfedges(fga).first,halfedges(fga).second) == 10);
+  CGAL_assertion(std::distance(vertices(fga).first,vertices(fga).second) == 4);
   halfedge_descriptor h = halfedge(*faces(fga).first, fga);
-  vertex_descriptor v = target(h, fga);
+  vertex_descriptor v = source(h, fga);
   //check that next() works inside the patch
   CGAL_assertion(
         next(next(next(h, fga), fga), fga) == h
@@ -389,7 +401,7 @@ main()
   //check that next() works on bordure of the patch
   h = opposite(h, fga);
   CGAL_assertion(
-        next(next(next(h, fga), fga), fga) == h
+        next(next(next(next(h, fga), fga), fga), fga) == h
         );
   //check that prev() works inside the patch
    h = halfedge(*faces(fga).first, fga);
@@ -399,13 +411,13 @@ main()
   //check that prev() works on bordure of the patch
   h = opposite(h, fga);
   CGAL_assertion(
-        prev(prev(prev(h, fga), fga), fga) == h
+        prev(prev(prev(prev(h, fga), fga), fga), fga) == h
         );
   //check degree
-  CGAL_assertion(degree(v, fga) == 2);
+  CGAL_assertion(degree(v, fga) == 3);
   //check in_edges and out_edges
-  CGAL_assertion(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 2 );
-  CGAL_assertion(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 2 );
+  CGAL_assertion(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 3 );
+  CGAL_assertion(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 3 );
 
   return 0;
 }

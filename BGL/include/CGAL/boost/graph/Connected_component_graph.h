@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/assertions.h>
 #include <boost/foreach.hpp>
+#include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
@@ -35,9 +36,9 @@ namespace CGAL
 /*!
 \ingroup PkgBGLHelper
 
-The class `Connected_component_graph` wraps a graph  into another graph in such a way that only the specified connected component is seen from the outside.
+The class `Connected_component_graph` wraps a graph into another graph in such a way that only the specified connected components are seen from the outside.
 
-For example, calling `vertices(graph)` will return an iterator range of all but only the vertices that belong to the connected component whose id in `fccmap` is `pid`.
+For example, calling `vertices(graph)` will return an iterator range of all but only the vertices that belong to the connected components whose ids in `fccmap` are contained in  `pids`.
 
 \attention The functions `num_vertices()`, `num_edges()`, `num_halfedges()`, `num_faces()`, are forwarded from the underlying graph,
 which means that `num_vertices(graph)` is different from `std::distance(vertices(graph).first,vertices(graph).second)`
@@ -62,22 +63,42 @@ struct Connected_component_graph
     typedef typename gt::face_descriptor                face_descriptor;
     typedef Connected_component_graph<Graph, FaceComponentMap>   Self;
 
-
+    /*!
+     * \brief Creates a Connected_component_graph of the connected components of `graph` that are listed in `pids`.
+     * \param graph the graph containing the wanted patches.
+     * \param fccmap the property_map that assigns a patch to each face
+     * \param pids the indices of the patches of interest.
+     */
     Connected_component_graph(const Graph& graph,
                      FaceComponentMap fccmap,
-                     typename boost::property_traits<FaceComponentMap>::value_type pid)
-        : _graph(graph), _property_map(fccmap), _patch_index(pid)
+                     boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> pids)
+        : _graph(graph), _property_map(fccmap), _patch_indices(pids)
     {
     }
 
-
+    /*!
+     * \brief Creates a Connected_component_graph of the connected component `pid` of `graph`.
+     * \param graph the graph containing the wanted patch.
+     * \param fccmap the property_map that assigns a patch to each face
+     * \param pid the index of the patch of interest.
+     */
+    Connected_component_graph(const Graph& graph,
+                     FaceComponentMap fccmap,
+                     typename boost::property_traits<FaceComponentMap>::value_type pid)
+        : _graph(graph), _property_map(fccmap)
+    {
+        _patch_indices = boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type>();
+        _patch_indices.insert(pid);
+    }
+    ///returns the graph of the Connected_component_graph.
     const Graph& graph()const{ return _graph; }
 
+    ///returns the property map of the Connected_component_graph.
     FaceComponentMap property_map()const{ return _property_map; }
-
-    typename boost::property_traits<FaceComponentMap>::value_type patch_index()const{ return _patch_index; }
-
-    void change_patch_id(typename boost::property_traits<FaceComponentMap>::value_type pid) { _patch_index = pid;}
+    ///returns the unordered set of patch ids of the Connected_component_graph.
+    boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> patch_indices()const{ return _patch_indices; }
+    /// Replaces the current unordered set of patches by `pids`
+    void change_patch_id(boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> pids) { _patch_indices = pids;}
 
     struct Is_simplex_valid
     {
@@ -100,7 +121,7 @@ struct Connected_component_graph
 private:
     const Graph& _graph;
     FaceComponentMap _property_map;
-    typename boost::property_traits<FaceComponentMap>::value_type _patch_index;
+    boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> _patch_indices;
 };
 
 } // namespace CGAL
@@ -171,7 +192,7 @@ bool
 in_CC(const typename boost::graph_traits< Connected_component_graph<Graph, FaceComponentMap> >::face_descriptor f,
          const Connected_component_graph<Graph, FaceComponentMap> & w)
 {
-    return boost::get(w.property_map(), f) == w.patch_index();
+    return  w.patch_indices().find(boost::get(w.property_map(), f)) != w.patch_indices().end();
 }
 
 template <class Graph, typename FaceComponentMap >
