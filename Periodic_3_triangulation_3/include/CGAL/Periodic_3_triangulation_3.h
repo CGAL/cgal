@@ -1368,7 +1368,7 @@ protected:
       int level = 0) const;
   //@}
 
-protected:
+public:
   /** @name Functors */ //@{
   template < class Cmp >
   class Perturbation_order;
