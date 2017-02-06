@@ -67,7 +67,6 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
     Scene_c3t3_item* item = new Scene_c3t3_item();
     if(fileinfo.suffix().toLower() == "cgal")
     {
-
         item->setName(fileinfo.baseName());
         item->setScene(scene);
 
@@ -94,6 +93,10 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
     }
     else if (fileinfo.suffix().toLower() == "mesh")
     {
+      in.close();
+      in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
+      CGAL_assertion(!(!in));
+
       Scene_c3t3_item* item = new Scene_c3t3_item();
       item->setName(fileinfo.baseName());
       item->setScene(scene);
@@ -110,7 +113,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
           {
             CGAL_assertion(cit->info() >= 0);
             item->c3t3().add_to_complex(cit, cit->info());
-            for(std::size_t i=0; i<4; ++i)
+            for(int i=0; i < 4; ++i)
             {
               if(cit->surface_patch_index(i)>0)
               {
