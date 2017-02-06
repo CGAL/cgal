@@ -18,206 +18,6 @@
 
 namespace CGAL
 {
-// the output gives all the cells :
-// - the cells in complex are under 'Tetrahedra', with a reference field that is
-//   their subdomain's index
-// - the finite cells not in complex are also given under 'Tetrahedra', but their
-//   reference field is '-1'
-// - the infinite cells are given under 'InfiniteCells', which is not a medit
-//   keyword and will get ignored by medit, but it is useful information (to me)
-//   to build a triangulation from the output file
-
-template <class C3T3,
-          class Vertex_index_property_map,
-          class Facet_index_property_map,
-          class Facet_index_property_map_twice,
-          class Cell_index_property_map>
-void
-output_to_medit_all_cells(std::ostream& os,
-                          const C3T3& c3t3,
-                          const Vertex_index_property_map& vertex_pmap,
-                          const Facet_index_property_map& facet_pmap,
-                          const Cell_index_property_map& cell_pmap,
-                          const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice(),
-                          const bool print_each_facet_twice = false)
-{
-  typedef typename C3T3::Triangulation                  Tr;
-  typedef typename C3T3::Facets_in_complex_iterator     Facet_iterator;
-
-  typedef typename Tr::Finite_vertices_iterator         Finite_vertices_iterator;
-  typedef typename Tr::All_cells_iterator               All_cells_iterator;
-  typedef typename Tr::Finite_cells_iterator            Finite_cells_iterator;
-  typedef typename Tr::Vertex_handle                    Vertex_handle;
-  typedef typename Tr::Point                            Point_3;
-
-  const Tr& tr = c3t3.triangulation();
-
-  //-------------------------------------------------------
-  // Header
-  //-------------------------------------------------------
-  os << std::setprecision(17);
-
-  os << "MeshVersionFormatted 1" << std::endl
-     << "Dimension 3" << std::endl;
-
-  //-------------------------------------------------------
-  // Vertices
-  //-------------------------------------------------------
-  os << "Vertices" << std::endl
-     << tr.number_of_vertices() << std::endl;
-
-  std::map<Vertex_handle, int> V;
-  int inum = 1;
-
-  Finite_vertices_iterator fvend = tr.finite_vertices_end();
-  for(Finite_vertices_iterator vit = tr.finite_vertices_begin();
-      vit != fvend; ++vit)
-  {
-    V[vit] = inum++;
-    Point_3 p = vit->point();
-    os << CGAL::to_double(p.x()) << " "
-       << CGAL::to_double(p.y()) << " "
-       << CGAL::to_double(p.z()) << " "
-       << get(vertex_pmap, vit)
-       << std::endl;
-  }
-
-  //-------------------------------------------------------
-  // Facets
-  //-------------------------------------------------------
-  typename C3T3::size_type number_of_triangles = c3t3.number_of_facets_in_complex();
-
-  if(print_each_facet_twice)
-    number_of_triangles += number_of_triangles;
-
-  os << "Triangles" << std::endl
-     << number_of_triangles << std::endl;
-
-  Facet_iterator ficend = c3t3.facets_in_complex_end();
-  for(Facet_iterator fit = c3t3.facets_in_complex_begin();
-      fit != ficend; ++fit)
-  {
-    for(int i=0; i<4; i++)
-    {
-      if(i != fit->second)
-      {
-        const Vertex_handle vh = (*fit).first->vertex(i);
-        os << V[vh] << " ";
-      }
-    }
-    os << get(facet_pmap, *fit) << std::endl;
-
-    // Print triangle again if needed
-    if(print_each_facet_twice)
-    {
-      for(int i=0; i<4; i++)
-      {
-        if(i != fit->second)
-        {
-          const Vertex_handle vh = (*fit).first->vertex(i);
-          os << V[vh] << " ";
-        }
-      }
-      os << get(facet_twice_pmap, *fit) << std::endl;
-    }
-  }
-
-  std::cout << "output: " << std::endl;
-  std::cout << tr.number_of_vertices() << " vertices" << std::endl;
-  std::cout << c3t3.number_of_cells_in_complex() << " finite cells in complex" << std::endl;
-  std::cout << tr.number_of_finite_cells() << " finite cells" << std::endl;
-  std::cout << tr.number_of_cells() << " total cells" << std::endl;
-
-  //-------------------------------------------------------
-  // Tetrahedra
-  //-------------------------------------------------------
-
-  os << "Tetrahedra" << std::endl
-     << tr.number_of_finite_cells() << std::endl;
-
-  Finite_cells_iterator fcend = tr.finite_cells_end();
-  for(Finite_cells_iterator cit = tr.finite_cells_begin();
-      cit != fcend; ++cit )
-  {
-    for(int i=0; i<4; i++)
-      os << V[cit->vertex(i)] << " ";
-    os << get(cell_pmap, cit) << std::endl;
-  }
-
-  //-------------------------------------------------------
-  // Infinite cells
-  //-------------------------------------------------------
-
-  os << "InfiniteCells" << std::endl
-     << tr.number_of_cells() - tr.number_of_finite_cells() << std::endl;
-
-  All_cells_iterator acend = tr.all_cells_end();
-  for(All_cells_iterator cit=tr.all_cells_begin();
-      cit!=acend; ++cit )
-  {
-    if(!tr.is_infinite(cit))
-      continue;
-
-    for (int i=0; i<4; i++)
-    {
-      Vertex_handle vh = cit->vertex(i);
-      if(tr.is_infinite(vh))
-        os << "0 ";
-      else
-        os << V[vh] << " ";
-    }
-    os << "-1" << std::endl;
-  }
-
-  //-------------------------------------------------------
-  // End
-  //-------------------------------------------------------
-  os << "End" << std::endl;
-}
-
-
-template <class C3T3, bool rebind, bool no_patch>
-void
-output_to_medit_all_cells(std::ostream& os,
-                          const C3T3& c3t3)
-{
-  typedef CGAL::Mesh_3::Medit_pmap_generator<C3T3,rebind,no_patch> Generator;
-  typedef typename Generator::Cell_pmap Cell_pmap;
-  typedef typename Generator::Facet_pmap Facet_pmap;
-  typedef typename Generator::Facet_pmap_twice Facet_pmap_twice;
-  typedef typename Generator::Vertex_pmap Vertex_pmap;
-
-  Cell_pmap cell_pmap(c3t3);
-  Facet_pmap facet_pmap(c3t3,cell_pmap);
-  Facet_pmap_twice facet_pmap_twice(c3t3,cell_pmap);
-  Vertex_pmap vertex_pmap(c3t3,cell_pmap,facet_pmap);
-
-  output_to_medit_all_cells(os,
-                            c3t3,
-                            vertex_pmap,
-                            facet_pmap,
-                            cell_pmap,
-                            facet_pmap_twice,
-                            Generator().print_twice());
-
-#ifdef CGAL_MESH_3_IO_VERBOSE
-  std::cerr << "done.\n";
-#endif
-}
-
-// The function below reads a medit file and builds a triangulation from it.
-
-// -- If we're given every cell (finite & infinite), we can easily build
-//    the full triangulation with the same connectivity than the input !
-// -- If we're only given every finite cell, we can deduce the infinite cells and
-//    build the full triangulation
-// -- If we're only given the cells in complex, well... Since the cells in complex
-//    are usually not the convex hull of the points it's problematic and the input
-//    is remeshed (or rejected)
-
-// Side note on the numbering: since the vertex n° 0 is the infinite vertex,
-// we have to shift everything by one (but in the other direction than medit...)
-
 template<class Tr>
 void build_vertices(Tr& tr,
                     const std::vector<typename Tr::Point>& points,
@@ -544,8 +344,7 @@ bool build_triangulation(Tr& tr,
 
 template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr,
-                                   std::vector<bool>& border_info_vec)
+                                   Tr& tr)
 {
   typedef typename Tr::Point                                  Point_3;
 
@@ -561,7 +360,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   // grab the vertices
   int dim;
-  int nv, nf, ntet, nic, border_info;
+  int nv, nf, ntet;
   std::string word;
 
   is >> word >> dim; // MeshVersionFormatted 1
@@ -577,8 +376,7 @@ bool build_triangulation_from_file(std::istream& is,
       for(int i=0; i<nv; ++i)
       {
         double x,y,z;
-        is >> x >> y >> z >> border_info;
-        border_info_vec.push_back(border_info);
+        is >> x >> y >> z;
         points.push_back(Point_3(x,y,z));
       }
     }
@@ -617,7 +415,6 @@ bool build_triangulation_from_file(std::istream& is,
       {
         int n0, n1, n2, n3, reference;
         is >> n0 >> n1 >> n2 >> n3 >> reference;
-        CGAL_assertion(reference >= 0);
         Tet_with_ref t;
         t[0] = n0 - 1;
         t[1] = n1 - 1;
@@ -627,35 +424,14 @@ bool build_triangulation_from_file(std::istream& is,
         finite_cells.push_back(t);
       }
     }
-
-    if(word == "InfiniteCells")
-    {
-      is >> nic;
-      for(int i=0; i<nic; ++i)
-      {
-        int n0, n1, n2, n3, reference;
-        is >> n0 >> n1 >> n2 >> n3 >> reference;
-        Tet t;
-        t[0] = n0 - 1;
-        t[1] = n1 - 1;
-        t[2] = n2 - 1;
-        t[3] = n3 - 1;
-        t[4] = reference;
-        infinite_cells.push_back(t);
-      }
-    }
   }
 
 
-
-  if(infinite_cells.empty())
-    std::cerr << "WARNING: no infinite cell information provided" << std::endl;
 
   if(!finite_exterior_cells_counter)
   {
     // The finite interior cells MUST be the convex hulls of the point
     std::cerr << "WARNING: no finite exterior cell provided..." << std::endl;
-    // todo, remesh the provided triangulation with Mesh_3
   }
 
   CGAL_precondition(!finite_cells.empty());
