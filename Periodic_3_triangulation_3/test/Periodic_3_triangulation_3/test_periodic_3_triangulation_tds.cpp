@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Francois Rebufat
 //                 Manuel Caroli
@@ -37,7 +37,7 @@ typedef CGAL::Triangulation_data_structure_3<
     K,
     CGAL::Periodic_3_triangulation_ds_vertex_base_3<> >,
   CGAL::Triangulation_cell_base_3<
-    K, 
+    K,
     CGAL::Periodic_3_triangulation_ds_cell_base_3<> > >       Tds;
 
 // Explicit instantiation :
@@ -51,9 +51,9 @@ template class CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_ds_cell_base_3<> >
   >;
 
-// just reusing the tests from the T3 package to check whether the 
+// just reusing the tests from the T3 package to check whether the
 // periodic vertices and cells fulfill the requirements.
-int main()
+int main(int, char**)
 {
   CGAL::Timer timer;
   timer.start();

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Francois Rebufat
 //                 Manuel Caroli
@@ -55,7 +55,7 @@ template class CGAL::Periodic_3_triangulation_3<PDTT3>;
 // thus we cannot construct non-trivial triangulations without using
 // the insert from the periodic Delaunay triangulation.
 
-int main()
+int main(int, char**)
 {
   CGAL::Timer timer;
   timer.start();

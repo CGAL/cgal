@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
@@ -27,7 +27,6 @@
 #define CGAL_PERIODIC_3_TRIANGULATION_DS_CELL_BASE_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
-
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
@@ -70,7 +69,7 @@ public:
       const Vertex_handle& v0, const Vertex_handle& v1,
       const Vertex_handle& v2, const Vertex_handle& v3,
       const Cell_handle&   n0, const Cell_handle&   n1,
-      const Cell_handle&   n2, const Cell_handle&   n3) 
+      const Cell_handle&   n2, const Cell_handle&   n3)
 #ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : N{n0, n1, n2, n3},
       V{v0, v1, v2, v3},
@@ -223,7 +222,7 @@ public:
       off = ((off&511 ) | ((_off3)<<9));
     }
   }
- 
+
   // CHECKING
 
   // the following trivial is_valid allows
@@ -250,7 +249,7 @@ public:
   unsigned char get_additional_flag() const {
     return _additional_flag;
   }
-  
+
 private:
   Cell_handle   N[4];
   Vertex_handle V[4];

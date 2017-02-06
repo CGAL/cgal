@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Aymeric Pelle
 
@@ -38,8 +38,7 @@ typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epick>    PRTT_Inexact;
 // Explicit instantiation of the whole class:
 template class CGAL::Periodic_3_regular_triangulation_3<PRTT_Inexact>;
 
-
-int main()
+int main(int, char**)
 {
   typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>    P3RT3_Exact;
   _test_periodic_3_triangulation_3_constructors( P3RT3_Exact() );

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -24,14 +24,17 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
 
 #include <CGAL/Periodic_3_offset_3.h>
 
-namespace CGAL { namespace internal { namespace Static_filters_predicates {
+namespace CGAL {
+
+namespace internal {
+
+namespace Static_filters_predicates {
 
 template < typename K_base >
 class Periodic_3_side_of_oriented_sphere_3
@@ -51,8 +54,8 @@ public:
 
   template <class EX, class AP>
   Periodic_3_side_of_oriented_sphere_3(const Iso_cuboid_3 * dom,
-					    const EX * dom_e,
-					    const AP * dom_f)
+                                       const EX * dom_e,
+                                       const AP * dom_f)
       : Base(dom_e,dom_f), _dom(dom) { }
 
   Oriented_side
@@ -83,22 +86,22 @@ public:
           double pty = py - ty;
           double ptz = pz - tz;
           double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
-	             + CGAL_NTS square(ptz);
+                       + CGAL_NTS square(ptz);
           double qtx = qx - tx;
           double qty = qy - ty;
           double qtz = qz - tz;
           double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
-	             + CGAL_NTS square(qtz);
+                       + CGAL_NTS square(qtz);
           double rtx = rx - tx;
           double rty = ry - ty;
           double rtz = rz - tz;
           double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
-	             + CGAL_NTS square(rtz);
+                       + CGAL_NTS square(rtz);
           double stx = sx - tx;
           double sty = sy - ty;
           double stz = sz - tz;
           double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
-	             + CGAL_NTS square(stz);
+                       + CGAL_NTS square(stz);
 
           // Compute the semi-static bound.
           double maxx = CGAL::abs(ptx);
@@ -116,7 +119,7 @@ public:
           double astx = CGAL::abs(stx);
           double asty = CGAL::abs(sty);
           double astz = CGAL::abs(stz);
-          
+
           if (maxx < aqtx) maxx = aqtx;
           if (maxx < artx) maxx = artx;
           if (maxx < astx) maxx = astx;
@@ -190,12 +193,12 @@ public:
         fit_in_double(get_approx(s).z(), sz) &&
         fit_in_double(get_approx(t).x(), tx) && fit_in_double(get_approx(t).y(), ty) &&
         fit_in_double(get_approx(t).z(), tz) &&
-	fit_in_double(_dom->xmax(), domxmax) &&
-	fit_in_double(_dom->xmin(), domxmin) &&
-	fit_in_double(_dom->ymax(), domymax) &&
-	fit_in_double(_dom->ymin(), domymin) &&
-	fit_in_double(_dom->zmax(), domzmax) &&
-	fit_in_double(_dom->zmin(), domzmin))
+        fit_in_double(_dom->xmax(), domxmax) &&
+        fit_in_double(_dom->xmin(), domxmin) &&
+        fit_in_double(_dom->ymax(), domymax) &&
+        fit_in_double(_dom->ymin(), domymin) &&
+        fit_in_double(_dom->zmax(), domzmax) &&
+        fit_in_double(_dom->zmin(), domzmin))
     {
       CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 semi-static attempts");
 
@@ -228,7 +231,7 @@ public:
       double maxx = CGAL::abs(ptx);
       double maxy = CGAL::abs(pty);
       double maxz = CGAL::abs(ptz);
-      
+
       double aqtx = CGAL::abs(qtx);
       double aqty = CGAL::abs(qty);
       double aqtz = CGAL::abs(qtz);
@@ -240,7 +243,7 @@ public:
       double astx = CGAL::abs(stx);
       double asty = CGAL::abs(sty);
       double astz = CGAL::abs(stz);
-      
+
       if (maxx < aqtx) maxx = aqtx;
       if (maxx < artx) maxx = artx;
       if (maxx < astx) maxx = astx;
@@ -299,11 +302,15 @@ public:
     err += err * 3 * F::ulp(); // Correction due to "eps * maxx * ...".
 
     std::cerr << "*** epsilon for Periodic_3_side_of_oriented_sphere_3 = "
-	      << err << std::endl;
+              << err << std::endl;
     return err;
   }
 };
 
-} } } // namespace CGAL::internal::Static_filters_predicates
+} // namespace Static_filters_predicates
+
+} // namespace internal
+
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H

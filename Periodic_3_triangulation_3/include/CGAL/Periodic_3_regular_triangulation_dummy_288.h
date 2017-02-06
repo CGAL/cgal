@@ -33,7 +33,9 @@ std::vector<Vertex_handle> insert_dummy_points ()
   FT domain_z(domain().zmax() - domain().zmin());
 
   for (unsigned i = 0; i < 6; ++i)
+  {
     for (unsigned j = 0; j < 6; ++j)
+    {
       for (unsigned k = 0; k < 8; ++k)
       {
         Vertex_handle vh = tds().create_vertex();
@@ -49,8 +51,10 @@ std::vector<Vertex_handle> insert_dummy_points ()
 
         vh->set_point(Weighted_point(Bare_point(x, y, z), 0));
       }
+    }
+  }
 
-  for (Cell_handle* iter = cells, * end_iter = cells + 1728; iter != end_iter; ++iter)
+  for (Cell_handle* iter=cells, *end_iter=cells+1728; iter!=end_iter; ++iter)
     *iter = tds().create_cell();
 
   cells[0]->set_vertices(vertices[31],vertices[279],vertices[32],vertices[39]);

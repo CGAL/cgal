@@ -13,9 +13,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
 // $Date$
-// 
+//
 //
 // Author(s)     : Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 
@@ -51,7 +51,6 @@ typedef CGAL::Periodic_3_regular_triangulation_traits_3<CGAL::Epick> Traits_Epic
  * It allows us to test if the template class, instantiated with given template parameters, compiles.
  */
 template class CGAL::Periodic_3_regular_triangulation_3<Traits_Epick>;
-
 
 template <class Kernel>
 class Tests
@@ -174,7 +173,7 @@ public:
   }
 };
 
-int main (int argc, char** argv)
+int main (int, char**)
 {
   std::cout << "TESTING ..." << std::endl;
 

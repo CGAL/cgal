@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -23,7 +23,6 @@
 #define CGAL_PERIODIC_3_TRIANGULATION_ITERATORS_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
-
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/array.h>
@@ -49,7 +48,6 @@ class Periodic_3_triangulation_tetrahedron_iterator_3 {
 // UNIQUE_COVER_DOMAIN.
 
 public:
-
   typedef typename T::Periodic_tetrahedron                value_type;
   typedef const typename T::Periodic_tetrahedron *        pointer;
   typedef const typename T::Periodic_tetrahedron &        reference;
@@ -59,7 +57,7 @@ public:
 
   typedef typename T::Periodic_tetrahedron                Periodic_tetrahedron;
   typedef Periodic_3_triangulation_tetrahedron_iterator_3<T>
-                                                 Periodic_tetrahedron_iterator;
+                                                          Periodic_tetrahedron_iterator;
   typedef typename T::Cell                                Cell;
   typedef typename T::Cell_iterator                       Cell_iterator;
 
@@ -70,17 +68,17 @@ public:
     : _t(NULL), _it(it), _off(0) {}
 
   Periodic_3_triangulation_tetrahedron_iterator_3(const T * t,
-      Iterator_type it = T::STORED)
+                                                  Iterator_type it = T::STORED)
     : _t(t), pos(_t->cells_begin()), _it(it), _off(0) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
       while (pos != _t->cells_end() && !is_canonical() )
-	++pos;
+        ++pos;
     }
   }
 
   // used to initialize the past-the-end iterator
   Periodic_3_triangulation_tetrahedron_iterator_3(const T* t, int,
-					      Iterator_type it = T::STORED)
+                                                  Iterator_type it = T::STORED)
     : _t(t), pos(_t->cells_end()), _it(it), _off(0) {}
 
   Periodic_tetrahedron_iterator& operator++() {
@@ -117,41 +115,41 @@ public:
   }
 
   Periodic_tetrahedron_iterator operator++(int)
-    {
-      Periodic_tetrahedron_iterator tmp(*this);
-      ++(*this);
-      return tmp;
-    }
+  {
+    Periodic_tetrahedron_iterator tmp(*this);
+    ++(*this);
+    return tmp;
+  }
 
   Periodic_tetrahedron_iterator operator--(int)
-    {
-      Periodic_tetrahedron_iterator tmp(*this);
-      --(*this);
-      return tmp;
-    }
+  {
+    Periodic_tetrahedron_iterator tmp(*this);
+    --(*this);
+    return tmp;
+  }
 
   bool operator==(const Periodic_tetrahedron_iterator& ti) const
-    {
-      CGAL_triangulation_assertion(_it == ti._it);
-      return _t == ti._t && pos == ti.pos && _off == ti._off;
-    }
+  {
+    CGAL_triangulation_assertion(_it == ti._it);
+    return _t == ti._t && pos == ti.pos && _off == ti._off;
+  }
 
   bool operator!=(const Periodic_tetrahedron_iterator& ti) const
-    {
-      return !(*this == ti);
-    }
+  {
+    return !(*this == ti);
+  }
 
   reference operator*() const
-    {
-      periodic_tetrahedron = construct_periodic_tetrahedron();
-      return periodic_tetrahedron;
-    }
+  {
+    periodic_tetrahedron = construct_periodic_tetrahedron();
+    return periodic_tetrahedron;
+  }
 
   pointer operator->() const
-    {
-      periodic_tetrahedron = construct_periodic_tetrahedron();
-      return &periodic_tetrahedron;
-    }
+  {
+    periodic_tetrahedron = construct_periodic_tetrahedron();
+    return &periodic_tetrahedron;
+  }
 
   Cell_iterator get_cell() const
   {
@@ -173,7 +171,7 @@ private:
     // fetch all offsets
     Offset off0, off1, off2, off3;
     get_edge_offsets(off0, off1, off2, off3);
-    
+
     if (_t->number_of_sheets() != make_array(1,1,1)) {
       // If there is one offset with entries larger than 1 then we are
       // talking about a vertex that is too far away from the original
@@ -210,12 +208,12 @@ private:
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
-			   && pos != _t->cells_end() && !is_canonical());
+                           && pos != _t->cells_end() && !is_canonical());
     } else {
       do {
-	++_off;
+        ++_off;
       } while ((((~_off)|off)&7)!=7); // Increment until a valid
-				      // offset has been found
+                                      // offset has been found
     }
   }
 
@@ -229,32 +227,32 @@ private:
     } else {
       int off = get_drawing_offsets();
       do {
-	--_off;
+        --_off;
       } while ((((~_off)|off)&7)!=7); // Decrement until a valid
-				      // offset has been found
+                                      // offset has been found
     }
   }
 
   // Get the canonicalized offsets of an edge.
   // This works in any cover that is encoded in _t->combine_offsets
   void get_edge_offsets(Offset &off0, Offset &off1,
-			Offset &off2, Offset &off3) const {
+                        Offset &off2, Offset &off3) const {
     Offset cell_off0 = _t->int_to_off(pos->offset(0));
     Offset cell_off1 = _t->int_to_off(pos->offset(1));
     Offset cell_off2 = _t->int_to_off(pos->offset(2));
     Offset cell_off3 = _t->int_to_off(pos->offset(3));
-    Offset diff_off((cell_off0.x() == 1 
-		     && cell_off1.x() == 1 
-		     && cell_off2.x() == 1
-		     && cell_off3.x() == 1)?-1:0,
-		    (cell_off0.y() == 1 
-		     && cell_off1.y() == 1
-		     && cell_off2.y() == 1
-		     && cell_off3.y() == 1)?-1:0,
-		    (cell_off0.z() == 1 
-		     && cell_off1.z() == 1
-		     && cell_off2.z() == 1
-		     && cell_off3.z() == 1)?-1:0);
+    Offset diff_off((cell_off0.x() == 1
+                     && cell_off1.x() == 1
+                     && cell_off2.x() == 1
+                     && cell_off3.x() == 1)?-1:0,
+                    (cell_off0.y() == 1
+                     && cell_off1.y() == 1
+                     && cell_off2.y() == 1
+                     && cell_off3.y() == 1)?-1:0,
+                    (cell_off0.z() == 1
+                     && cell_off1.z() == 1
+                     && cell_off2.z() == 1
+                     && cell_off3.z() == 1)?-1:0);
     off0 = _t->combine_offsets(_t->get_offset(pos,0), diff_off);
     off1 = _t->combine_offsets(_t->get_offset(pos,1), diff_off);
     off2 = _t->combine_offsets(_t->get_offset(pos,2), diff_off);
@@ -293,20 +291,20 @@ private:
     CGAL_triangulation_assertion(off3.x() == 0 || off3.x() == 1);
     CGAL_triangulation_assertion(off3.y() == 0 || off3.y() == 1);
     CGAL_triangulation_assertion(off3.z() == 0 || off3.z() == 1);
-    
-    int offx = ( ((off0.x() == 0 && off1.x() == 0 
-		   && off2.x() == 0 && off3.x() == 0)
-	       || (off0.x() == 1 && off1.x() == 1 
-		   && off2.x() == 1 && off3.x() == 1)) ? 0 : 1);
-    int offy = ( ((off0.y() == 0 && off1.y() == 0 
-		   && off2.y() == 0 && off3.y() == 0)
-	       || (off0.y() == 1 && off1.y() == 1 
-		   && off2.y() == 1 && off3.y() == 1)) ? 0 : 1);
-    int offz = ( ((off0.z() == 0 && off1.z() == 0 
-		   && off2.z() == 0 && off3.z() == 0)
-	       || (off0.z() == 1 && off1.z() == 1 
-		   && off2.z() == 1 && off3.z() == 1)) ? 0 : 1);
-    
+
+    int offx = ( ((off0.x() == 0 && off1.x() == 0
+                   && off2.x() == 0 && off3.x() == 0)
+                  || (off0.x() == 1 && off1.x() == 1
+                      && off2.x() == 1 && off3.x() == 1)) ? 0 : 1);
+    int offy = ( ((off0.y() == 0 && off1.y() == 0
+                   && off2.y() == 0 && off3.y() == 0)
+                  || (off0.y() == 1 && off1.y() == 1
+                      && off2.y() == 1 && off3.y() == 1)) ? 0 : 1);
+    int offz = ( ((off0.z() == 0 && off1.z() == 0
+                   && off2.z() == 0 && off3.z() == 0)
+                  || (off0.z() == 1 && off1.z() == 1
+                      && off2.z() == 1 && off3.z() == 1)) ? 0 : 1);
+
     return( 4*offx + 2*offy + offz );
   }
 
@@ -315,8 +313,8 @@ private:
     Offset off0, off1, off2, off3;
     get_edge_offsets(off0, off1, off2, off3);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
-			       (((_off>>1)&1)==1 ? -1:0),
-    			       (( _off    &1)==1 ? -1:0));
+                               (((_off>>1)&1)==1 ? -1:0),
+                               (( _off    &1)==1 ? -1:0));
     if (_it == T::STORED_COVER_DOMAIN) {
       off0 = _t->combine_offsets(off0,transl_off);
       off1 = _t->combine_offsets(off1,transl_off);
@@ -330,10 +328,10 @@ private:
       off3 += transl_off;
     }
     return make_array(
-	std::make_pair(pos->vertex(0)->point(),off0),
-	std::make_pair(pos->vertex(1)->point(),off1),
-	std::make_pair(pos->vertex(2)->point(),off2),
-	std::make_pair(pos->vertex(3)->point(),off3));
+          std::make_pair(pos->vertex(0)->point(),off0),
+          std::make_pair(pos->vertex(1)->point(),off1),
+          std::make_pair(pos->vertex(2)->point(),off2),
+          std::make_pair(pos->vertex(3)->point(),off3));
   }
 };
 
@@ -365,7 +363,7 @@ public:
 
   typedef typename T::Periodic_triangle                   Periodic_triangle;
   typedef Periodic_3_triangulation_triangle_iterator_3<T>
-                                                    Periodic_triangle_iterator;
+                                                          Periodic_triangle_iterator;
   typedef typename T::Facet                               Facet;
   typedef typename T::Facet_iterator                      Facet_iterator;
 
@@ -376,17 +374,17 @@ public:
     : _t(NULL), _it(it), _off(0) {}
 
   Periodic_3_triangulation_triangle_iterator_3(const T * t,
-					      Iterator_type it = T::STORED)
+                                               Iterator_type it = T::STORED)
     : _t(t), pos(_t->facets_begin()), _it(it), _off(0) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
       while (pos != _t->facets_end() && !is_canonical() )
-	++pos;
+        ++pos;
     }
   }
 
   // used to initialize the past-the-end iterator
   Periodic_3_triangulation_triangle_iterator_3(const T* t, int,
-					      Iterator_type it = T::STORED)
+                                               Iterator_type it = T::STORED)
     : _t(t), pos(_t->facets_end()), _it(it), _off(0) {}
 
   Periodic_triangle_iterator& operator++() {
@@ -423,41 +421,41 @@ public:
   }
 
   Periodic_triangle_iterator operator++(int)
-    {
-      Periodic_triangle_iterator tmp(*this);
-      ++(*this);
-      return tmp;
-    }
+  {
+    Periodic_triangle_iterator tmp(*this);
+    ++(*this);
+    return tmp;
+  }
 
   Periodic_triangle_iterator operator--(int)
-    {
-      Periodic_triangle_iterator tmp(*this);
-      --(*this);
-      return tmp;
-    }
+  {
+    Periodic_triangle_iterator tmp(*this);
+    --(*this);
+    return tmp;
+  }
 
   bool operator==(const Periodic_triangle_iterator& ti) const
-    {
-      CGAL_triangulation_assertion(_it == ti._it);
-      return _t == ti._t && pos == ti.pos && _off == ti._off;
-    }
+  {
+    CGAL_triangulation_assertion(_it == ti._it);
+    return _t == ti._t && pos == ti.pos && _off == ti._off;
+  }
 
   bool operator!=(const Periodic_triangle_iterator& ti) const
-    {
-      return !(*this == ti);
-    }
+  {
+    return !(*this == ti);
+  }
 
   reference operator*() const
-    {
-      periodic_triangle = construct_periodic_triangle();
-      return periodic_triangle;
-    }
+  {
+    periodic_triangle = construct_periodic_triangle();
+    return periodic_triangle;
+  }
 
   pointer operator->() const
-    {
-      periodic_triangle = construct_periodic_triangle();
-      return &periodic_triangle;
-    }
+  {
+    periodic_triangle = construct_periodic_triangle();
+    return &periodic_triangle;
+  }
 
   Facet_iterator get_facet() const
   {
@@ -479,7 +477,7 @@ private:
     // fetch all offsets
     Offset off0, off1, off2;
     get_edge_offsets(off0, off1, off2);
-    
+
     if (_t->number_of_sheets() != make_array(1,1,1)) {
       // If there is one offset with entries larger than 1 then we are
       // talking about a vertex that is too far away from the original
@@ -513,12 +511,12 @@ private:
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
-			   && pos != _t->facets_end() && !is_canonical());
+                           && pos != _t->facets_end() && !is_canonical());
     } else {
       do {
-	++_off;
+        ++_off;
       } while ((((~_off)|off)&7)!=7); // Increment until a valid
-				      // offset has been found
+                                      // offset has been found
     }
   }
 
@@ -532,9 +530,9 @@ private:
     } else {
       int off = get_drawing_offsets();
       do {
-	--_off;
+        --_off;
       } while ((((~_off)|off)&7)!=7); // Decrement until a valid
-				      // offset has been found
+                                      // offset has been found
     }
   }
 
@@ -544,24 +542,24 @@ private:
     Offset cell_off0 = _t->int_to_off(pos->first->offset((pos->second+1)&3));
     Offset cell_off1 = _t->int_to_off(pos->first->offset((pos->second+2)&3));
     Offset cell_off2 = _t->int_to_off(pos->first->offset((pos->second+3)&3));
-    Offset diff_off((cell_off0.x() == 1 
-		     && cell_off1.x() == 1 
-		     && cell_off2.x() == 1)?-1:0,
-		    (cell_off0.y() == 1 
-		     && cell_off1.y() == 1
-		     && cell_off2.y() == 1)?-1:0,
-		    (cell_off0.z() == 1 
-		     && cell_off1.z() == 1
-		     && cell_off2.z() == 1)?-1:0);
+    Offset diff_off((cell_off0.x() == 1
+                     && cell_off1.x() == 1
+                     && cell_off2.x() == 1)?-1:0,
+                    (cell_off0.y() == 1
+                     && cell_off1.y() == 1
+                     && cell_off2.y() == 1)?-1:0,
+                    (cell_off0.z() == 1
+                     && cell_off1.z() == 1
+                     && cell_off2.z() == 1)?-1:0);
     off0 = _t->combine_offsets(_t->get_offset(pos->first,
-						     (pos->second+1)&3),
-			       diff_off);
+                                              (pos->second+1)&3),
+                               diff_off);
     off1 = _t->combine_offsets(_t->get_offset(pos->first,
-						     (pos->second+2)&3),
-			       diff_off);
+                                              (pos->second+2)&3),
+                               diff_off);
     off2 = _t->combine_offsets(_t->get_offset(pos->first,
-						     (pos->second+3)&3),
-			       diff_off);
+                                              (pos->second+3)&3),
+                               diff_off);
   }
 
   // return an integer that encodes the translations which have to be
@@ -592,14 +590,14 @@ private:
     CGAL_triangulation_assertion(off2.x() == 0 || off2.x() == 1);
     CGAL_triangulation_assertion(off2.y() == 0 || off2.y() == 1);
     CGAL_triangulation_assertion(off2.z() == 0 || off2.z() == 1);
-    
+
     int offx = ( ((off0.x() == 0 && off1.x() == 0 && off2.x() == 0)
-	       || (off0.x() == 1 && off1.x() == 1 && off2.x() == 1)) ? 0 : 1);
+                  || (off0.x() == 1 && off1.x() == 1 && off2.x() == 1)) ? 0 : 1);
     int offy = ( ((off0.y() == 0 && off1.y() == 0 && off2.y() == 0)
-	       || (off0.y() == 1 && off1.y() == 1 && off2.y() == 1)) ? 0 : 1);
+                  || (off0.y() == 1 && off1.y() == 1 && off2.y() == 1)) ? 0 : 1);
     int offz = ( ((off0.z() == 0 && off1.z() == 0 && off2.z() == 0)
-	       || (off0.z() == 1 && off1.z() == 1 && off2.z() == 1)) ? 0 : 1);
-    
+                  || (off0.z() == 1 && off1.z() == 1 && off2.z() == 1)) ? 0 : 1);
+
     return( 4*offx + 2*offy + offz );
   }
 
@@ -608,8 +606,8 @@ private:
     Offset off0, off1, off2;
     get_edge_offsets(off0, off1, off2);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
-			       (((_off>>1)&1)==1 ? -1:0),
-    			       (( _off    &1)==1 ? -1:0));
+                               (((_off>>1)&1)==1 ? -1:0),
+                               (( _off    &1)==1 ? -1:0));
     if (_it == T::STORED_COVER_DOMAIN) {
       off0 = _t->combine_offsets(off0,transl_off);
       off1 = _t->combine_offsets(off1,transl_off);
@@ -621,9 +619,9 @@ private:
       off2 += transl_off;
     }
     return make_array(
-	std::make_pair(pos->first->vertex((pos->second+1)&3)->point(),off0),
-	std::make_pair(pos->first->vertex((pos->second+2)&3)->point(),off1),
-	std::make_pair(pos->first->vertex((pos->second+3)&3)->point(),off2));
+          std::make_pair(pos->first->vertex((pos->second+1)&3)->point(),off0),
+          std::make_pair(pos->first->vertex((pos->second+2)&3)->point(),off1),
+          std::make_pair(pos->first->vertex((pos->second+3)&3)->point(),off2));
   }
 };
 
@@ -655,7 +653,7 @@ public:
 
   typedef typename T::Periodic_segment                    Periodic_segment;
   typedef Periodic_3_triangulation_segment_iterator_3<T>
-                                                     Periodic_segment_iterator;
+                                                          Periodic_segment_iterator;
   typedef typename T::Edge                                Edge;
   typedef typename T::Edge_iterator                       Edge_iterator;
 
@@ -666,17 +664,17 @@ public:
     : _t(NULL), _it(it), _off(0) {}
 
   Periodic_3_triangulation_segment_iterator_3(const T * t,
-					      Iterator_type it = T::STORED)
+                                              Iterator_type it = T::STORED)
     : _t(t), pos(_t->edges_begin()), _it(it), _off(0) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
       while (pos != _t->edges_end() && !is_canonical() )
-	++pos;
+        ++pos;
     }
   }
 
   // used to initialize the past-the-end iterator
   Periodic_3_triangulation_segment_iterator_3(const T* t, int,
-					      Iterator_type it = T::STORED)
+                                              Iterator_type it = T::STORED)
     : _t(t), pos(_t->edges_end()), _it(it), _off(0) {}
 
   Periodic_segment_iterator& operator++() {
@@ -713,41 +711,41 @@ public:
   }
 
   Periodic_segment_iterator operator++(int)
-    {
-      Periodic_segment_iterator tmp(*this);
-      ++(*this);
-      return tmp;
-    }
+  {
+    Periodic_segment_iterator tmp(*this);
+    ++(*this);
+    return tmp;
+  }
 
   Periodic_segment_iterator operator--(int)
-    {
-      Periodic_segment_iterator tmp(*this);
-      --(*this);
-      return tmp;
-    }
+  {
+    Periodic_segment_iterator tmp(*this);
+    --(*this);
+    return tmp;
+  }
 
   bool operator==(const Periodic_segment_iterator& ti) const
-    {
-      CGAL_triangulation_assertion(_it == ti._it);
-      return _t == ti._t && pos == ti.pos && _off == ti._off;
-    }
+  {
+    CGAL_triangulation_assertion(_it == ti._it);
+    return _t == ti._t && pos == ti.pos && _off == ti._off;
+  }
 
   bool operator!=(const Periodic_segment_iterator& ti) const
-    {
-      return !(*this == ti);
-    }
+  {
+    return !(*this == ti);
+  }
 
   reference operator*() const
-    {
-      periodic_segment = construct_periodic_segment();
-      return periodic_segment;
-    }
+  {
+    periodic_segment = construct_periodic_segment();
+    return periodic_segment;
+  }
 
   pointer operator->() const
-    {
-      periodic_segment = construct_periodic_segment();
-      return &periodic_segment;
-    }
+  {
+    periodic_segment = construct_periodic_segment();
+    return &periodic_segment;
+  }
 
   Edge_iterator get_edge() const
   {
@@ -768,7 +766,7 @@ private:
     // fetch all offsets
     Offset off0, off1;
     get_edge_offsets(off0, off1);
-    
+
     if (_t->number_of_sheets() != make_array(1,1,1)) {
       // If there is one offset with entries larger than 1 then we are
       // talking about a vertex that is too far away from the original
@@ -799,12 +797,12 @@ private:
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
-			   && pos != _t->edges_end() && !is_canonical());
+                           && pos != _t->edges_end() && !is_canonical());
     } else {
       do {
-	++_off;
+        ++_off;
       } while ((((~_off)|off)&7)!=7); // Increment until a valid
-				      // offset has been found
+                                      // offset has been found
     }
   }
 
@@ -818,9 +816,9 @@ private:
     } else {
       int off = get_drawing_offsets();
       do {
-	--_off;
+        --_off;
       } while ((((~_off)|off)&7)!=7); // Decrement until a valid
-				      // offset has been found
+                                      // offset has been found
     }
   }
 
@@ -830,12 +828,12 @@ private:
     Offset cell_off0 = _t->int_to_off(pos->first->offset(pos->second));
     Offset cell_off1 = _t->int_to_off(pos->first->offset(pos->third));
     Offset diff_off((cell_off0.x()==1 && cell_off1.x()==1)?-1:0,
-		    (cell_off0.y()==1 && cell_off1.y()==1)?-1:0,
-		    (cell_off0.z()==1 && cell_off1.z()==1)?-1:0);
+                    (cell_off0.y()==1 && cell_off1.y()==1)?-1:0,
+                    (cell_off0.z()==1 && cell_off1.z()==1)?-1:0);
     off0 = _t->combine_offsets(_t->get_offset(pos->first,pos->second),
-			       diff_off);
+                               diff_off);
     off1 = _t->combine_offsets(_t->get_offset(pos->first,pos->third),
-			       diff_off);
+                               diff_off);
   }
 
   // return an integer that encodes the translations which have to be
@@ -856,14 +854,14 @@ private:
       off1 = _t->int_to_off(pos->first->offset(pos->third));
     }
     Offset diff_off = off0 - off1;
-    
+
     CGAL_triangulation_assertion(diff_off.x() >= -1 || diff_off.x() <= 1);
     CGAL_triangulation_assertion(diff_off.y() >= -1 || diff_off.y() <= 1);
     CGAL_triangulation_assertion(diff_off.z() >= -1 || diff_off.z() <= 1);
 
     return( 4*(diff_off.x() == 0 ? 0:1)
-	    + 2*(diff_off.y() == 0 ? 0:1)
-	    + (diff_off.z() == 0 ? 0:1) );
+            + 2*(diff_off.y() == 0 ? 0:1)
+            + (diff_off.z() == 0 ? 0:1) );
   }
 
   Periodic_segment construct_periodic_segment() const {
@@ -871,8 +869,8 @@ private:
     Offset off0, off1;
     get_edge_offsets(off0, off1);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
-			       (((_off>>1)&1)==1 ? -1:0),
-    			       (( _off    &1)==1 ? -1:0));
+                               (((_off>>1)&1)==1 ? -1:0),
+                               (( _off    &1)==1 ? -1:0));
     if (_it == T::STORED_COVER_DOMAIN) {
       off0 = _t->combine_offsets(off0,transl_off);
       off1 = _t->combine_offsets(off1,transl_off);
@@ -882,8 +880,8 @@ private:
       off1 += transl_off;
     }
     return make_array(
-	std::make_pair(pos->first->vertex(pos->second)->point(),off0),
-	std::make_pair(pos->first->vertex(pos->third)->point(),off1));
+          std::make_pair(pos->first->vertex(pos->second)->point(),off0),
+          std::make_pair(pos->first->vertex(pos->third)->point(),off1));
   }
 };
 
@@ -925,17 +923,17 @@ public:
     : _t(NULL), _it(it) {}
 
   Periodic_3_triangulation_point_iterator_3(const T * t,
-					    Iterator_type it = T::STORED)
+                                            Iterator_type it = T::STORED)
     : _t(t), pos(_t->vertices_begin()), _it(it) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
       while (pos != _t->vertices_end() && !is_canonical() )
-	++pos;
+        ++pos;
     }
   }
 
   // used to initialize the past-the-end iterator
   Periodic_3_triangulation_point_iterator_3(const T* t, int,
-					    Iterator_type it = T::STORED)
+                                            Iterator_type it = T::STORED)
     : _t(t), pos(_t->vertices_end()), _it(it) {}
 
   Periodic_point_iterator& operator++() {
@@ -976,37 +974,37 @@ public:
     ++(*this);
     return tmp;
   }
-  
+
   Periodic_point_iterator operator--(int)
   {
     Periodic_point_iterator tmp(*this);
     --(*this);
     return tmp;
   }
-  
+
   bool operator==(const Periodic_point_iterator& pi) const
   {
     CGAL_triangulation_assertion(_it == pi._it);
     return _t == pi._t && pos == pi.pos;
   }
-  
+
   bool operator!=(const Periodic_point_iterator& pi) const
   {
     return !(*this == pi);
   }
-  
+
   reference operator*() const
   {
     periodic_point = construct_periodic_point();
     return periodic_point;
   }
-  
+
   pointer operator->() const
   {
     periodic_point = construct_periodic_point();
     return &periodic_point;
   }
-  
+
   Vertex_iterator get_vertex() const
   {
     return pos;
@@ -1034,7 +1032,7 @@ private:
 };
 
 template <class T>
-class Domain_tester {  
+class Domain_tester {
   const T *t;
 
 public:

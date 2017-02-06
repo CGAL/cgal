@@ -8,18 +8,17 @@
 #include <list>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> GT;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K>   Gt;
+typedef CGAL::Periodic_3_Delaunay_triangulation_3<Gt>         P3DT3;
 
-typedef CGAL::Periodic_3_Delaunay_triangulation_3<GT> PDT;
+typedef P3DT3::Point             Point;
+typedef P3DT3::Iso_cuboid        Iso_cuboid;
+typedef P3DT3::Vertex_handle     Vertex_handle;
+typedef P3DT3::Cell_handle       Cell_handle;
+typedef P3DT3::Locate_type       Locate_type;
 
-typedef PDT::Cell_handle       Cell_handle;
-typedef PDT::Vertex_handle     Vertex_handle;
-typedef PDT::Locate_type       Locate_type;
-typedef PDT::Point             Point;
-typedef PDT::Iso_cuboid        Iso_cuboid;
-
-int main()
+int main(int, char**)
 {
   Iso_cuboid domain(-1,-1,-1,2,2,2);  // The cube for the periodic domain
 
@@ -29,9 +28,9 @@ int main()
   L.push_front(Point(1,0,0));
   L.push_front(Point(0,1,0));
 
-  PDT T(L.begin(), L.end(), domain); // Put the domain with the constructor
+  P3DT3 T(L.begin(), L.end(), domain); // Put the domain with the constructor
 
-  PDT::size_type n = T.number_of_vertices();
+  P3DT3::size_type n = T.number_of_vertices();
 
   // insertion from a vector :
   std::vector<Point> V(3);
@@ -49,7 +48,7 @@ int main()
   Point p(0,0,0);
   Cell_handle c = T.locate(p, lt, li, lj);
   // p is the vertex of c of index li :
-  assert( lt == PDT::VERTEX );
+  assert( lt == P3DT3::VERTEX );
   assert( c->vertex(li)->point() == p );
 
   Vertex_handle v = c->vertex( (li+1)&3 );
@@ -62,13 +61,13 @@ int main()
   // nli is the index of v in nc
 
   std::ofstream oFileT("output.tri",std::ios::out);
-  // writing file output; 
-  oFileT << T; 
+  // writing file output;
+  oFileT << T;
 
-  PDT T1;
+  P3DT3 T1;
   std::ifstream iFileT("output.tri",std::ios::in);
-  // reading file output; 
-  iFileT >> T1; 
+  // reading file output;
+  iFileT >> T1;
   assert( T1.is_valid() );
   assert( T1.number_of_vertices() == T.number_of_vertices() );
   assert( T1.number_of_cells() == T.number_of_cells() );
