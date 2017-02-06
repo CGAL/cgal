@@ -229,7 +229,8 @@ struct Scene_c3t3_item_priv {
     , frame(new ManipulatedFrame())
     , data_item_(NULL)
     , histogram_()
-    , indices_()
+    , surface_patch_indices_()
+    , subdomain_indices_()
   {
     init_default_values();
   }
@@ -238,7 +239,8 @@ struct Scene_c3t3_item_priv {
     , frame(new ManipulatedFrame())
     , data_item_(NULL)
     , histogram_()
-    , indices_()
+    , surface_patch_indices_()
+    , subdomain_indices_()
   {
     init_default_values();
   }
@@ -349,7 +351,8 @@ struct Scene_c3t3_item_priv {
   const Scene_item* data_item_;
   QPixmap histogram_;
   typedef std::set<int> Indices;
-  Indices indices_;
+  Indices surface_patch_indices_;
+  Indices subdomain_indices_;
   std::set<Tr::Cell_handle> intersected_cells;
 
   //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
@@ -382,6 +385,7 @@ struct Scene_c3t3_item_priv {
 
   Tree tree;
   QVector<QColor> colors;
+  QVector<QColor> colors_subdomains;
   bool show_tetrahedra;
   bool is_aabb_tree_built;
   bool cnc_are_shown;
@@ -495,23 +499,26 @@ Scene_c3t3_item::c3t3_changed()
 {
   // Update colors
   // Fill indices map and get max subdomain value
-  d->indices_.clear();
+  d->surface_patch_indices_.clear();
+  d->subdomain_indices_.clear();
 
   int max = 0;
   for (C3t3::Cells_in_complex_iterator cit = this->c3t3().cells_in_complex_begin(),
     end = this->c3t3().cells_in_complex_end(); cit != end; ++cit)
   {
     max = (std::max)(max, cit->subdomain_index());
-    d->indices_.insert(cit->subdomain_index());
+    d->subdomain_indices_.insert(cit->subdomain_index());
   }
+  const int max_subdomain_index = max;
   for (C3t3::Facets_in_complex_iterator fit = this->c3t3().facets_in_complex_begin(),
     end = this->c3t3().facets_in_complex_end(); fit != end; ++fit)
   {
     max = (std::max)(max, fit->first->surface_patch_index(fit->second));
-    d->indices_.insert(fit->first->surface_patch_index(fit->second));
+    d->surface_patch_indices_.insert(fit->first->surface_patch_index(fit->second));
   }
 
   d->colors.resize(max + 1);
+  d->colors_subdomains.resize(max_subdomain_index + 1);
   d->compute_color_map(color_);
 
   // Rebuild histogram
@@ -712,12 +719,21 @@ Scene_c3t3_item_priv::compute_color_map(const QColor& c)
 {
   typedef Indices::size_type size_type;
 
-  size_type nb_domains = indices_.size();
+  const size_type nb_domains = subdomain_indices_.size();
   size_type i = 0;
-  for (Indices::iterator it = indices_.begin(), end = indices_.end();
-    it != end; ++it, ++i)
+  for (Indices::iterator it = subdomain_indices_.begin(),
+         end = subdomain_indices_.end(); it != end; ++it, ++i)
   {
     double hue = c.hueF() + 1. / nb_domains * i;
+    if (hue > 1) { hue -= 1.; }
+    colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+  }
+  const size_type nb_patch_indices = surface_patch_indices_.size();
+  i = 0;
+  for (Indices::iterator it = surface_patch_indices_.begin(),
+         end = surface_patch_indices_.end(); it != end; ++it, ++i)
+  {
+    double hue = c.hueF() + 1. / nb_patch_indices * i;
     if (hue > 1) { hue -= 1.; }
     colors[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
@@ -1256,16 +1272,15 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
 
 void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
 {
-
-  if(intersected_cells.find(facet.id().first) == intersected_cells.end())
+  Tr::Cell_handle ch = facet.id().first;
+  if(intersected_cells.find(ch) == intersected_cells.end())
   {
+    const Kernel::Point_3& pa = ch->vertex(0)->point();
+    const Kernel::Point_3& pb = ch->vertex(1)->point();
+    const Kernel::Point_3& pc = ch->vertex(2)->point();
+    const Kernel::Point_3& pd = ch->vertex(3)->point();
 
-    const Kernel::Point_3& pa = facet.id().first->vertex(0)->point();
-    const Kernel::Point_3& pb = facet.id().first->vertex(1)->point();
-    const Kernel::Point_3& pc = facet.id().first->vertex(2)->point();
-    const Kernel::Point_3& pd = facet.id().first->vertex(3)->point();
-
-    QColor c = this->colors[facet.id().first->subdomain_index()].darker(150);
+    QColor c = this->colors_subdomains[ch->subdomain_index()].darker(150);
 
     CGAL::Color color(c.red(), c.green(), c.blue());
 
@@ -1273,10 +1288,10 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
     intersection->addTriangle(pa, pb, pd, color);
     intersection->addTriangle(pa, pd, pc, color);
     intersection->addTriangle(pb, pc, pd, color);
-    intersected_cells.insert(facet.id().first);
+    intersected_cells.insert(ch);
   }
   {
-    Tr::Cell_handle nh = facet.id().first->neighbor(facet.id().second);
+    Tr::Cell_handle nh = ch->neighbor(facet.id().second);
     if(c3t3.is_in_complex(nh)){
       if(intersected_cells.find(nh) == intersected_cells.end())
       {
@@ -1285,7 +1300,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
         const Kernel::Point_3& pc = nh->vertex(2)->point();
         const Kernel::Point_3& pd = nh->vertex(3)->point();
 
-        QColor c = this->colors[nh->subdomain_index()].darker(150);
+        QColor c = this->colors_subdomains[nh->subdomain_index()].darker(150);
 
         CGAL::Color color(c.red(), c.green(), c.blue());
         intersection->addTriangle(pb, pa, pc, color);
@@ -1535,9 +1550,9 @@ void Scene_c3t3_item::show_intersection(bool b)
   {
     d->intersection = new Scene_intersection_item(this);
     d->intersection->init_vectors(&d->positions_poly,
-                               &d->normals,
-                               &d->positions_lines,
-                               &d->f_colors);
+                                  &d->normals,
+                                  &d->positions_lines,
+                                  &d->f_colors);
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));

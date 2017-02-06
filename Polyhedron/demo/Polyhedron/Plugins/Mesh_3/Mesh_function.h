@@ -235,7 +235,8 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
     (c3t3_,
      *domain_,
      criteria,
-     p_.protect_features);
+     p_.protect_features,
+     p_.use_sizing_field_with_aabb_tree);
 }
 
 template < typename D_, typename Tag >

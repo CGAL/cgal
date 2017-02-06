@@ -192,13 +192,15 @@ template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
 init_c3t3_with_features(C3T3& c3t3,
                         const MeshDomain& domain,
-                        const MeshCriteria& criteria)
+                        const MeshCriteria& criteria,
+                        bool nonlinear = false)
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
 
   CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>     
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
+  protect_edges.set_nonlinear_growth_of_balls(nonlinear);
   
   protect_edges(true);
 }
@@ -221,6 +223,7 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool /* nonlinear */= false,
                   const int nb_initial_points = -1)
   {
     if ( with_features )
@@ -242,10 +245,11 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool nonlinear = false,
                   const int nb_initial_points = -1)
   {
     C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features >()
-      (c3t3,domain,criteria,with_features,nb_initial_points);
+      (c3t3,domain,criteria,with_features,nonlinear,nb_initial_points);
   }  
 };
 
@@ -259,10 +263,11 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool nonlinear = false,
                   const int nb_initial_points = -1)
   {
     if ( with_features ) {
-      init_c3t3_with_features(c3t3,domain,criteria);
+      init_c3t3_with_features(c3t3,domain,criteria,nonlinear);
 
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points
@@ -294,6 +299,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
+                  bool /* nonlinear */ = false,
                   const int nb_initial_points = -1)
   {
     if ( with_features )
@@ -450,6 +456,7 @@ void make_mesh_3_impl(C3T3& c3t3,
             domain,
             criteria,
             with_features,
+            mesh_options.nonlinear_growth_of_balls,
             mesh_options.number_of_initial_points);
 
   CGAL_assertion( c3t3.triangulation().dimension() == 3 );
