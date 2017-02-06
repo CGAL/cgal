@@ -104,6 +104,8 @@ void build_finite_cells(Tr& tr,
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->info() = tet[4]; // the reference encodes the interior/exterior info
 
+    // the reference must either be -1 for finite interior or > 0 for subdomains
+    CGAL_precondition(tet[4] != 0);
     // assign cells to vertices
     for(int j=0; j<4; ++j)
     {
