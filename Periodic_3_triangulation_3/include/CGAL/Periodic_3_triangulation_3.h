@@ -305,7 +305,7 @@ public:
   const TDS & tds() const { return _tds; }
   TDS & tds() { return _tds; }
 
-  virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Point>& hidden_points) {}
+  virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Point>& /* hidden_points*/) {}
 
   const Iso_cuboid & domain() const { return _domain; }
   // TODO: Documentation and tests
@@ -2311,7 +2311,7 @@ template < class Conflict_tester, class Point_hider, class CoverManager >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
     const Point & p, const Offset& o,
-    Locate_type lt, Cell_handle c, const Conflict_tester &tester,
+    Locate_type /*lt*/, Cell_handle c, const Conflict_tester &tester,
     Point_hider &hider, CoverManager& cover_manager, Vertex_handle vh)
 {
   Vertex_handle v;
