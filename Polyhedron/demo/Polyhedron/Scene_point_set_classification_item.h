@@ -1,6 +1,8 @@
 #ifndef POINT_SET_CLASSIFICATION_ITEM_H
 #define POINT_SET_CLASSIFICATION_ITEM_H
 
+#define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Point_set_classifier.h>
 #include <CGAL/Classification/Attribute_base.h>
