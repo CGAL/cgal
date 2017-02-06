@@ -437,29 +437,23 @@ void build_infinite_cells(Tr& tr,
 
       Cell_handle opp_c;
       // the infinite cell that we are creating needs to be well oriented...
-      int inf_vert_position_in_opp_c = -1;
+      int inf_vert_position_in_opp_c = 0;
       if(i == 0 || i == 2)
-      {
-        inf_vert_position_in_opp_c = 1;
-        opp_c = tr.tds().create_cell(c->vertex((i+3)%4),
-                                     tr.infinite_vertex(),
-                                     c->vertex((i+1)%4),
-                                     c->vertex((i+2)%4));
-      }
-      else
-      {
-        inf_vert_position_in_opp_c = 0;
         opp_c = tr.tds().create_cell(tr.infinite_vertex(),
                                      c->vertex((i+1)%4),
                                      c->vertex((i+2)%4),
                                      c->vertex((i+3)%4));
-      }
+      else
+        opp_c = tr.tds().create_cell(tr.infinite_vertex(),
+                                     c->vertex((i+1)%4),
+                                     c->vertex((i+3)%4),
+                                     c->vertex((i+2)%4));
+
       // set the infinite_vertex's incident cell
       if(tr.infinite_vertex()->cell() == Cell_handle())
         tr.infinite_vertex()->set_cell(opp_c);
 
       // add the facets to the incident cells map
-
 
       // the only finite facet
       it->second.push_back(std::make_pair(opp_c, inf_vert_position_in_opp_c));
