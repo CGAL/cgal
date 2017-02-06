@@ -231,11 +231,33 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
   Event_subcurve_iterator rightCurveEnd =
     this->m_currentEvent->right_curves_end();
 
+  // If the left (min) vertex of the right curve is not the event point,
+  // split the rigth curve at the event point.
+  // This test and respective action was added as a bug fix for case
+  // data/test_construction/polylines/test03.txt.
+  // The function _fix_overlap_subcurves() was introduced to split decsendants
+  // of overlapping curves associated with left curves. It seems
+  // that it does not catch all cases; as a consequence, it may happen that
+  // the left point of a right curve is not the event point, because it hasn't
+  // been split yet.
+  Event* event = this->m_currentEvent;
+  Subcurve* sc = *currentOne;
+  if (! event->is_on_boundary()) {
+    const Point_2& left_point =
+      this->m_traits->construct_min_vertex_2_object()(sc->last_curve());
+    Comparison_result res =
+      this->m_traits->compare_xy_2_object()(event->point(), left_point);
+    CGAL_assertion(res != SMALLER);
+    if (res == LARGER) {
+      this->m_traits->split_2_object()(sc->last_curve(), event->point(),
+                                       sub_cv1, sub_cv2);
+      sc->set_last_curve(sub_cv2);
+    }
+  }
+
   CGAL_SL_PRINT_INSERT(*currentOne);
   Status_line_iterator slIter =
-    this->m_statusLine.insert_before(this->m_status_line_insert_hint,
-                                     *currentOne);
-  Subcurve* sc = *currentOne;
+    this->m_statusLine.insert_before(this->m_status_line_insert_hint, sc);
   sc->set_hint(slIter);
 
   CGAL_SL_PRINT_STATUS_LINE();
@@ -248,11 +270,34 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
   Event_subcurve_iterator prevOne = currentOne;
   ++currentOne;
   while (currentOne != rightCurveEnd) {
-    CGAL_SL_PRINT_INSERT(*currentOne);
-    slIter = this->m_statusLine.insert_before
-      (this->m_status_line_insert_hint, *currentOne);
-
     Subcurve* sc = *currentOne;
+
+    // If the left (min) vertex of the right curve is not the event point,
+    // split the rigth curve at the event point.
+    // This test and respective action was added as a bug fix for case
+    // data/test_construction/polylines/test03.txt.
+    // The function _fix_overlap_subcurves() was introduced to split decsendants
+    // of overlapping curves associated with left curves. It seems
+    // that it does not catch all cases; as a consequence, it may happen that
+    // the left point of a right curve is not the event point, because it hasn't
+    // been split yet.
+    if (! event->is_on_boundary()) {
+      const Point_2& left_point =
+        this->m_traits->construct_min_vertex_2_object()(sc->last_curve());
+      Comparison_result res =
+        this->m_traits->compare_xy_2_object()(event->point(), left_point);
+      CGAL_assertion(res != SMALLER);
+      if (res == LARGER) {
+        this->m_traits->split_2_object()(sc->last_curve(), event->point(),
+                                         sub_cv1, sub_cv2);
+        sc->set_last_curve(sub_cv2);
+      }
+    }
+
+    CGAL_SL_PRINT_INSERT(sc);
+
+    slIter =
+      this->m_statusLine.insert_before(this->m_status_line_insert_hint, sc);
     sc->set_hint(slIter);
 
     CGAL_SL_PRINT_STATUS_LINE();
@@ -367,14 +412,16 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
   }
   std::pair<bool, Event_subcurve_iterator> pair_res =
     event->add_curve_to_right(curve, this->m_traits);
+  bool rc_overlap = pair_res.first;
+  Event_subcurve_iterator rc_it = pair_res.second;
 
-  if (! pair_res.first) {
+  if (! rc_overlap) {
     // No overlap occurs.
     CGAL_SL_PRINT_END_EOL("adding a Curve to the right (no overlap)");
     return false;
   }
 
-  _handle_overlap(event, curve, pair_res.second, overlap_exist);
+  _handle_overlap(event, curve, rc_it, overlap_exist);
 
   // Inidicate that an overlap has occured:
   CGAL_SL_PRINT_END_EOL("adding a Curve to the right (overlap)");
@@ -745,8 +792,10 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
  * \param curve the subcurve that its insertion to the list of right subcurves of
  *        'event' causes the overlap (with *iter).
  * \param iter the existing subcurve at the right subcurves of 'event'
- * \param overlap_exist a flag indicates if the overlap X_monotone_curve_2 was
- *         computed already (is true than its stored at sub_cv1 data member).
+ * \param[in] overlap_exist indicates whether information about the
+ *            overlapping curve has been computed already. If overlap_exist
+ *            is true, sub_cv1 is a computed X_monotone_curve_2 curve that
+ *            should be used as the overlapping curve.
  */
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
@@ -755,12 +804,23 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
                 bool overlap_exist)
 {
   // An overlap occurs:
-  CGAL_SL_PRINT_START_EOL("handling overlap at right insertion");
+  CGAL_SL_PRINT_START("handling overlap at right insertion of (");
+  CGAL_SL_DEBUG(this->PrintEvent(event));
+  CGAL_SL_PRINT_TEXT(") ");
+  CGAL_SL_PRINT_EOL();
+  CGAL_SL_PRINT_CURVE(curve);
+  CGAL_SL_PRINT_EOL();
+  CGAL_SL_PRINT_CURVE(*iter);
+  CGAL_SL_PRINT_EOL();
 
   X_monotone_curve_2 overlap_cv;
-  if (overlap_exist) overlap_cv = sub_cv1;
+  if (overlap_exist) {
+    overlap_cv = sub_cv1;
+    // std::cout << "Overlap computed!!!!! " << overlap_cv << std::endl;
+  }
   else {
     // compute the overlap.
+    std::cout << "Computing the overlap!!!!!!!!!!!!!!!!!!" << std::endl;
     CGAL_assertion(iter != event->right_curves_end());
     std::vector<Object>  obj_vec;
     vector_inserter vit(obj_vec);
@@ -834,7 +894,7 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
   else {
     // The overlapping subcurve has a valid right endpoint.
     // Find the event associated with this point (or create a new event).
-    Point_2 end_overlap =
+    const Point_2& end_overlap =
       this->m_traits->construct_max_vertex_2_object()(overlap_cv);
 
     const std::pair<Event*, bool>& pair_res =
@@ -917,14 +977,26 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
   // Add overlap_sc to the left curves
   right_end->add_curve_to_left(overlap_sc);
 
-  // If one of the originating subcurves (or both), does not end
-  // at the right end of the overlap, add them to the right subcurves
-  // of the event associated with the right end of the overlap.
+  // Both 'curve' and '*iter' are the originating subcurves of the overlapping
+  // curve.
+  // Recall that the curve '*iter' is a right-curve of 'event'. The left-end
+  // of both subcurves ('curve' and '*iter') coincide with the event point, and
+  // they overlap immediately the right of the event.
+  // If the originating subcurve 'curve' does not end at the right end of the
+  // overlap, add it to the right subcurves of the event associated with the
+  // right end of the overlap.
+  // EF: Is it possible that the right-end of 'curve' lies to the left of
+  // 'right_end'? If so, it 'curve' must not be added as a right curve!
   if ((Event*)curve->right_event() != right_end)
     _add_curve_to_right(right_end, curve);
 
-  if ((Event*)(*iter)->right_event() != right_end)
-    _add_curve_to_right(right_end, (*iter));
+  // The right-end of the curve 'iter' can lie to the left of, right on, or to
+  // the right of the right-end of the overlap.
+  // If it lies to the right, add '*iter' to the right subcurves of the event
+  // associated with the right end of the overlap.
+  Comparison_result res = this->m_traits->compare_xy_2_object()
+    ((*iter)->right_event()->point(), right_end->point());
+  if (res == LARGER) _add_curve_to_right(right_end, (*iter));
 
   this->m_visitor->found_overlap(curve, *iter, overlap_sc);
 
