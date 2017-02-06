@@ -1810,12 +1810,12 @@ QString Scene_c3t3_item::computeStats(int type)
       }
     }
 
-    typedef typename C3t3::Triangulation::Point Point_3;
-    typename Kernel::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
+    typedef C3t3::Triangulation::Point Point_3;
+    Kernel::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
       = Kernel().compute_approximate_dihedral_angle_3_object();
 
     QVector<int> sub_ids;
-    for (typename C3t3::Cells_in_complex_iterator cit = d->c3t3.cells_in_complex_begin();
+    for (C3t3::Cells_in_complex_iterator cit = d->c3t3.cells_in_complex_begin();
       cit != d->c3t3.cells_in_complex_end();
       ++cit)
     {
