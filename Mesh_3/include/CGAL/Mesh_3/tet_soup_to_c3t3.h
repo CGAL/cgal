@@ -71,7 +71,7 @@ output_to_medit_all_cells(std::ostream& os,
 
   Finite_vertices_iterator fvend = tr.finite_vertices_end();
   for(Finite_vertices_iterator vit = tr.finite_vertices_begin();
-                               vit != fvend; ++vit)
+      vit != fvend; ++vit)
   {
     V[vit] = inum++;
     Point_3 p = vit->point();
@@ -95,7 +95,7 @@ output_to_medit_all_cells(std::ostream& os,
 
   Facet_iterator ficend = c3t3.facets_in_complex_end();
   for(Facet_iterator fit = c3t3.facets_in_complex_begin();
-                     fit != ficend; ++fit)
+      fit != ficend; ++fit)
   {
     for(int i=0; i<4; i++)
     {
@@ -137,7 +137,7 @@ output_to_medit_all_cells(std::ostream& os,
 
   Finite_cells_iterator fcend = tr.finite_cells_end();
   for(Finite_cells_iterator cit = tr.finite_cells_begin();
-                            cit != fcend; ++cit )
+      cit != fcend; ++cit )
   {
     for(int i=0; i<4; i++)
       os << V[cit->vertex(i)] << " ";
@@ -153,7 +153,7 @@ output_to_medit_all_cells(std::ostream& os,
 
   All_cells_iterator acend = tr.all_cells_end();
   for(All_cells_iterator cit=tr.all_cells_begin();
-                         cit!=acend; ++cit )
+      cit!=acend; ++cit )
   {
     if(!tr.is_infinite(cit))
       continue;
@@ -240,8 +240,8 @@ void build_vertices(Tr& tr,
 template<class Tr>
 void add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
                                      std::map<std::set<typename Tr::Vertex_handle>,
-                                              std::vector<std::pair<typename Tr::Cell_handle,
-                                                                    int> > >& incident_cells_map)
+                                     std::vector<std::pair<typename Tr::Cell_handle,
+                                     int> > >& incident_cells_map)
 {
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
@@ -260,7 +260,7 @@ void add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
   std::vector<Incident_cell> vec;
   vec.push_back(e);
   std::pair<typename Incident_cells_map::iterator, bool> is_insert_successful =
-                              incident_cells_map.insert(std::make_pair(f, vec));
+      incident_cells_map.insert(std::make_pair(f, vec));
   if(!is_insert_successful.second) // the entry already exists in the map
   {
     // a facet must have exactly two incident cells
@@ -274,9 +274,9 @@ void build_finite_cells(Tr& tr,
                         const std::vector<boost::array<int,5> >& finite_cells,
                         const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                         std::map<std::set<typename Tr::Vertex_handle>,
-                                 std::vector<std::pair<typename Tr::Cell_handle,
-                                                       int> > >& incident_cells_map,
-                                                 const std::map<boost::array<int,3>, int>& border_facets)
+                        std::vector<std::pair<typename Tr::Cell_handle,
+                        int> > >& incident_cells_map,
+                        const std::map<boost::array<int,3>, int>& border_facets)
 {
   typedef boost::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
 
@@ -299,7 +299,7 @@ void build_finite_cells(Tr& tr,
 
     // this assertion also tests for degeneracy
     CGAL_assertion(CGAL::orientation(vs[0]->point().point(), vs[1]->point().point(),
-                                     vs[2]->point().point(), vs[3]->point().point()) == POSITIVE);
+        vs[2]->point().point(), vs[3]->point().point()) == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->info() = tet[4]; // the reference encodes the interior/exterior info
@@ -335,7 +335,7 @@ void build_finite_cells(Tr& tr,
           ++k;
         }while(f[0] != n0);
         if(border_facets.find(f) != border_facets.end())
-            c->set_surface_patch_index(j, border_facets.at(f));
+          c->set_surface_patch_index(j, border_facets.at(f));
         else
         {
           int temp = f[2];
@@ -355,8 +355,8 @@ template<class Tr>
 void add_infinite_facets_to_incident_cells_map(typename Tr::Cell_handle c,
                                                int inf_vert_pos,
                                                std::map<std::set<typename Tr::Vertex_handle>,
-                                                        std::vector<std::pair<typename Tr::Cell_handle,
-                                                                              int> > >& incident_cells_map)
+                                               std::vector<std::pair<typename Tr::Cell_handle,
+                                               int> > >& incident_cells_map)
 {
   int l = (inf_vert_pos + 1) % 4;
   add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map);
@@ -371,8 +371,8 @@ void build_infinite_cells(Tr& tr,
                           const std::vector<boost::array<int,4> >& infinite_cells,
                           const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                           std::map<std::set<typename Tr::Vertex_handle>,
-                                   std::vector<std::pair<typename Tr::Cell_handle,
-                                                         int> > >& incident_cells_map)
+                          std::vector<std::pair<typename Tr::Cell_handle,
+                          int> > >& incident_cells_map)
 {
   typedef boost::array<int, 4>                            Tet; // 4 ids
 
@@ -475,8 +475,8 @@ void build_infinite_cells(Tr& tr,
 template<class Tr>
 bool assign_neighbors(Tr& tr,
                       const std::map<std::set<typename Tr::Vertex_handle>,
-                                     std::vector<std::pair<typename Tr::Cell_handle,
-                                                           int> > >& incident_cells_map)
+                      std::vector<std::pair<typename Tr::Cell_handle,
+                      int> > >& incident_cells_map)
 {
   typedef typename Tr::Vertex_handle                              Vertex_handle;
   typedef typename Tr::Cell_handle                                Cell_handle;
@@ -486,14 +486,14 @@ bool assign_neighbors(Tr& tr,
 
   // 4 facets per cell, each facet shared by 2 cells
   if(incident_cells_map.size() != tr.number_of_cells() * 2)
-      return false;
+    return false;
 
   typename Incident_cells_map::const_iterator icit = incident_cells_map.begin();
   for(; icit!=incident_cells_map.end(); ++icit)
   {
     const std::vector<Incident_cell>& adjacent_cells = icit->second;
     if(adjacent_cells.size() != 2)
-        return false;
+      return false;
 
     Cell_handle c0 = adjacent_cells[0].first;
     int i0 = adjacent_cells[0].second;
@@ -532,7 +532,7 @@ bool build_triangulation(Tr& tr,
   build_infinite_cells<Tr>(tr, infinite_cells, vertex_handle_vector, incident_cells_map);
   tr.tds().set_dimension(3);
   if(!assign_neighbors<Tr>(tr, incident_cells_map))
-      return false;
+    return false;
 
   std::cout << "built triangulation : " << std::endl;
   std::cout << tr.number_of_vertices() << " vertices" << std::endl;
@@ -540,14 +540,14 @@ bool build_triangulation(Tr& tr,
 
   BOOST_FOREACH(Vertex_handle vh, vertex_handle_vector)
   {
-      vh->set_dimension(3);
+    vh->set_dimension(3);
   }
   if(c3t3_loader_failed)
   {
-      return true;
+    return true;
   }
   else
-      return tr.is_valid(true);
+    return tr.is_valid(true);
 }
 
 template<class Tr, bool c3t3_loader_failed>
