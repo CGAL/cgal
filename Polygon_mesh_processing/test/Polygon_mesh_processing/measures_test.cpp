@@ -95,22 +95,22 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
 
 
-  CGAL::Bbox_3 bb = PMP::bbox_3(pmesh);
+  CGAL::Bbox_3 bb = PMP::bbox(pmesh);
   std::cout << "bbox x[" << bb.xmin() << "; " << bb.xmax() << "]" << std::endl;
   std::cout << "     y[" << bb.ymin() << "; " << bb.ymax() << "]" << std::endl;
   std::cout << "     z[" << bb.zmin() << "; " << bb.zmax() << "]" << std::endl;
 
   CGAL::Bbox_3 bb_v;
   BOOST_FOREACH(vertex_descriptor vd, vertices(pmesh))
-    bb_v+=PMP::vertex_bbox_3(vd, pmesh);
+    bb_v+=PMP::vertex_bbox(vd, pmesh);
 
   CGAL::Bbox_3 bb_f;
   BOOST_FOREACH(face_descriptor fd, faces(pmesh))
-    bb_f+=PMP::face_bbox_3(fd, pmesh);
+    bb_f+=PMP::face_bbox(fd, pmesh);
 
   CGAL::Bbox_3 bb_e;
   BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
-    bb_e+=PMP::edge_bbox_3(ed, pmesh);
+    bb_e+=PMP::edge_bbox(ed, pmesh);
 
   assert(bb==bb_v);
   assert(bb==bb_f);

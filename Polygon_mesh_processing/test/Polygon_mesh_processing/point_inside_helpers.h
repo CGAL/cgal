@@ -77,7 +77,7 @@ void random_points(const PolygonMesh& mesh,
                    int n,
                    OutputIterator out)
 {
-  CGAL::Bbox_3 bb = CGAL::Polygon_mesh_processing::bbox_3(mesh);
+  CGAL::Bbox_3 bb = CGAL::Polygon_mesh_processing::bbox(mesh);
   CGAL::Random rg(1340818006); // seed some value for make it easy to debug
 
   double grid_dx = bb.xmax() - bb.xmin();

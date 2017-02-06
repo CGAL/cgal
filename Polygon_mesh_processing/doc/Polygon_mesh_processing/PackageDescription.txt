@@ -153,10 +153,10 @@ and provides a list of the parameters that are used in this package.
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Side_of_triangle_mesh`
-- `CGAL::Polygon_mesh_processing::bbox_3()`
-- `CGAL::Polygon_mesh_processing::vertex_bbox_3()`
-- `CGAL::Polygon_mesh_processing::edge_bbox_3()`
-- `CGAL::Polygon_mesh_processing::face_bbox_3()`
+- `CGAL::Polygon_mesh_processing::bbox()`
+- `CGAL::Polygon_mesh_processing::vertex_bbox()`
+- `CGAL::Polygon_mesh_processing::edge_bbox()`
+- `CGAL::Polygon_mesh_processing::face_bbox()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 
 \todo add `clip_triangle_mesh()` using the code of `Polyhedron_place_clipping.h` and `PMP::corefine()`
