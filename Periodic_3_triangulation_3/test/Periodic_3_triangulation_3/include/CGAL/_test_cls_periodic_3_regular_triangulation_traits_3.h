@@ -59,44 +59,6 @@ void _test_for_given_domain (const Traits& traits,
 
   typedef typename Traits::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
 
-#if 0
-  // fixme filthy sandbox
-  Power_side_of_oriented_power_sphere_3 psops = traits.power_side_of_oriented_power_sphere_3_object();
-  Compare_weighted_squared_radius_3 cwsr = traits.compare_weighted_squared_radius_3_object();
-
-  Weighted_point_3 wwwwp;
-  Point_3 pppp = Traits().construct_point_3_object()(wwwwp);
-  pppp = Traits().construct_point_3_object()(wwwwp, Offset());
-
-
-#if 0
-  typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Traits > P3removeT;
-  typedef CGAL::Regular_triangulation_3< P3removeT > Regular_triangulation;
-  typedef typename Regular_triangulation::Cell_handle Cell_handle;
-  typedef typename Regular_triangulation::Point RTPoint;
-  typedef typename P3removeT::Iso_cuboid_3 Iso_cuboid_3;
-
-  Iso_cuboid_3 domain;
-  P3removeT remove_traits(domain);
-  Regular_triangulation RT(remove_traits);
-  RTPoint rtp = std::make_pair(Weighted_point_3(), Offset());
-  RT.insert(rtp, Cell_handle());
-#endif
-
-  typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<typename Traits::K> DTT;
-  typedef CGAL::Periodic_3_triangulation_remove_traits_3< DTT > P3removeT;
-  typedef CGAL::Delaunay_triangulation_3< P3removeT > DT;
-  typedef typename DT::Cell_handle Cell_handle;
-  typedef typename DT::Point DTPoint;
-  typedef typename P3removeT::Iso_cuboid_3 Iso_cuboid_3;
-
-  Iso_cuboid_3 domain;
-  P3removeT remove_traits(domain);
-  DT dt(remove_traits);
-  DTPoint dtp = std::make_pair(Point_3(), Offset());
-  dt.insert(dtp, Cell_handle());
-#endif
-
   ////////// ------------ ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   // Create offset array for tests
