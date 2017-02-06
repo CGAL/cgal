@@ -65,7 +65,7 @@ public:
   Detect_features_in_polyhedra() : current_surface_index_(1) {}
   
   void detect_sharp_edges(Polyhedron& polyhedron,
-                          FT angle_in_deg = FT(60)) const;
+                          FT angle_in_deg = FT(120)) const;
   void detect_surface_patches(Polyhedron& polyhedron);
   void detect_vertices_incident_patches(Polyhedron& p);
 
@@ -245,7 +245,7 @@ is_sharp(const Halfedge_handle& he, FT cos_angle) const
   const Vector_3& n1 = facet_normal(f1);
   const Vector_3& n2 = facet_normal(f2);
   
-  if ( n1 * n2 <= cos_angle )
+  if ( - n1 * n2 >= cos_angle ) // cos(dihedral_angle) = - n1 * n2
     return true;
   else
     return false;
