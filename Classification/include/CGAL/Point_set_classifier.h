@@ -1,4 +1,4 @@
-// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2017 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -149,9 +149,9 @@ private:
       t.stop();
       
       if (voxel_size < 0.)
-        std::cerr << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
+        CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
       else
-        std::cerr << "Neighborhood with voxel size " << voxel_size
+        CGAL_CLASSIFICATION_CERR << "Neighborhood with voxel size " << voxel_size
                   << " computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
       t.start();
@@ -161,14 +161,14 @@ private:
       if (this->voxel_size < 0)
         this->voxel_size = range / 3;
       t.stop();
-      std::cerr << "Eigen values computed in " << t.time() << " second(s)" << std::endl;
-      std::cerr << "Range = " << range << std::endl;
+      CGAL_CLASSIFICATION_CERR << "Eigen values computed in " << t.time() << " second(s)" << std::endl;
+      CGAL_CLASSIFICATION_CERR << "Range = " << range << std::endl;
       t.reset();
       t.start();
       
       grid = new Planimetric_grid (input, point_map, bbox, this->voxel_size);
       t.stop();
-      std::cerr << "Planimetric grid computed in " << t.time() << " second(s)" << std::endl;
+      CGAL_CLASSIFICATION_CERR << "Planimetric grid computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
     }
     ~Scale()
@@ -389,20 +389,20 @@ public:
   /// \cond SKIP_IN_MANUAL  
   void info() const
   {
-    std::cerr << m_scales.size() << " scale(s) used:" << std::endl;
+    CGAL_CLASSIFICATION_CERR << m_scales.size() << " scale(s) used:" << std::endl;
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
         std::size_t nb_useful = 0;
         for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
           if (m_scales[i]->attributes[j]->weight() != 0.)
             nb_useful ++;
-        std::cerr << " * scale " << i << " with size " << m_scales[i]->voxel_size
+        CGAL_CLASSIFICATION_CERR << " * scale " << i << " with size " << m_scales[i]->voxel_size
                   << ", " << nb_useful << " useful attribute(s)";
-        if (nb_useful != 0) std::cerr << ":" << std::endl;
-        else std::cerr << std::endl;
+        if (nb_useful != 0) CGAL_CLASSIFICATION_CERR << ":" << std::endl;
+        else CGAL_CLASSIFICATION_CERR << std::endl;
         for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
           if (m_scales[i]->attributes[j]->weight() != 0.)
-            std::cerr << "   - " << m_scales[i]->attributes[j]->name()
+            CGAL_CLASSIFICATION_CERR << "   - " << m_scales[i]->attributes[j]->name()
                       << " (weight = " << m_scales[i]->attributes[j]->weight() << ")" << std::endl;
       }
   }
@@ -426,8 +426,8 @@ public:
     generate_multiscale_attribute_variant_3<Elevation> ();
     tpoint.stop();
     
-    std::cerr << "Point based attributes computed in " << tpoint.time() << " second(s)" << std::endl;
-    std::cerr << "Eigen based attributes computed in " << teigen.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Point based attributes computed in " << tpoint.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Eigen based attributes computed in " << teigen.time() << " second(s)" << std::endl;
   }
 
 
@@ -438,14 +438,14 @@ public:
     this->template add_attribute<Verticality> (normal_map);
     m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
     t.stop();
-    std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
   void generate_normal_based_attributes(const CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3>&)
   {
     CGAL::Timer t; t.start();
     generate_multiscale_attribute_variant_0<Verticality> ();
-    std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
   template <typename ColorMap>
   void generate_color_based_attributes(ColorMap color_map)
@@ -469,7 +469,7 @@ public:
         m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
     t.stop();
-    std::cerr << "Color based attributes computed in " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Color based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
   void generate_color_based_attributes(const CGAL::Default_property_map<Iterator, RGB_Color>&)
@@ -489,7 +489,7 @@ public:
         m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
       }
     t.stop();
-    std::cerr << "Echo based attributes computed in " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Echo based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
   void generate_echo_based_attributes(const CGAL::Default_property_map<Iterator, std::size_t>&)
@@ -878,7 +878,7 @@ private:
             if (boost::is_convertible<EchoMap,
                 typename CGAL::Default_property_map<Iterator, std::size_t> >::value)
               {
-                std::cerr << "Warning: echo_scatter required but no echo map given." << std::endl;
+                CGAL_CLASSIFICATION_CERR << "Warning: echo_scatter required but no echo map given." << std::endl;
                 continue;
               }
             this->template add_attribute<Echo_scatter>(echo_map, *(m_scales[scale]->grid),
@@ -892,7 +892,7 @@ private:
             if (boost::is_convertible<ColorMap,
                 typename CGAL::Default_property_map<Iterator, RGB_Color> >::value)
               {
-                std::cerr << "Warning: color attribute required but no color map given." << std::endl;
+                CGAL_CLASSIFICATION_CERR << "Warning: color attribute required but no color map given." << std::endl;
                 continue;
               }
             if (boost::starts_with(id.c_str(), "hue"))
@@ -913,7 +913,7 @@ private:
           }
         else
           {
-            std::cerr << "Warning: unknown attribute \"" << id << "\"" << std::endl;
+            CGAL_CLASSIFICATION_CERR << "Warning: unknown attribute \"" << id << "\"" << std::endl;
             continue;
           }
 
@@ -922,7 +922,7 @@ private:
         att->set_weight(weight);
         att_map[full_id] = att;
       }
-    std::cerr << "Elevation took " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Elevation took " << t.time() << " second(s)" << std::endl;
 
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.types"))
       {

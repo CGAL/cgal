@@ -1,4 +1,5 @@
-// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2017 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -39,7 +40,7 @@
 
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 
-#define CGAL_CLASSIFICATION_VERBOSE
+//#define CGAL_CLASSIFICATION_VERBOSE
 #if defined(CGAL_CLASSIFICATION_VERBOSE)
 #define CGAL_CLASSIFICATION_CERR std::cerr
 #else
@@ -463,7 +464,11 @@ public:
     prepare_classification ();
     
     // data term initialisation
-    CGAL_CLASSIFICATION_CERR << "Labeling with regularization weight " << weight << "... ";
+#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+    CGAL_CLASSIFICATION_CERR << "Labeling using Boost with regularization weight " << weight << "... ";
+#else
+    CGAL_CLASSIFICATION_CERR << "Labeling using Boyvok Kolmogorov with regularization weight " << weight << "... ";
+#endif
 
     std::vector<std::pair<std::size_t, std::size_t> > edges;
     std::vector<double> edge_weights;
