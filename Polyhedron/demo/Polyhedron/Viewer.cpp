@@ -700,7 +700,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_INSTANCED:
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
-      case PROGRAM_C3T3_TETS:
+    case PROGRAM_C3T3_TETS:
       program->setUniformValue("mv_matrix", mv_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
