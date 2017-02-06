@@ -13,15 +13,15 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
 // $Date$
-// 
+//
 //
 // Author(s)     : Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 
 #include "test_periodic_3_regular_triangulation_traits_3.h"
 
-int main ()
+int main (int, char**)
 {
   test_periodic_3_regular_triangulation_traits_3();
 }

@@ -14,12 +14,11 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#ifdef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H 
-
+#ifdef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 template < class GT, class TDS >
 inline std::vector<typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle >
@@ -28,24 +27,24 @@ Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
 
   Vertex_handle vertices[36];
   Cell_handle cells[216];
-  
+
   // Initialise vertices:
   for (int i=0; i<4; i++) {
     for (int j=0; j<3; j++) {
       for (int k=0; k<3; k++) {
-	// Initialise virtual vertices out of the domain for debugging
-	vertices[9*i+3*j+k] = _tds.create_vertex();
-	Point p(k*(1.0/3.0) + i*(1.0/6.0),
-	    j*(1.0/3.0) + i*(1.0/6.0), i*(1.0/4.0) );
-	p = Point((p.x() > FT(0.9375) ? (std::max)( p.x()-1, FT(0) ) : p.x()),
-	    (p.y() > FT(0.9375) ? (std::max)( p.y()-1, FT(0) ) : p.y()), p.z());
-	p = Point((_domain.xmax()-_domain.xmin())*p.x(),
-	    (_domain.xmax()-_domain.xmin())*p.y(),
-	    (_domain.xmax()-_domain.xmin())*p.z());
-	p = Point(p.x() + _domain.xmin(),
-	    p.y() + _domain.ymin(),
-	    p.z() + _domain.zmin());
-	vertices[9*i+3*j+k]->set_point(p);
+        // Initialise virtual vertices out of the domain for debugging
+        vertices[9*i+3*j+k] = _tds.create_vertex();
+        Point p(k*(1.0/3.0) + i*(1.0/6.0),
+                j*(1.0/3.0) + i*(1.0/6.0), i*(1.0/4.0) );
+        p = Point((p.x() > FT(0.9375) ? (std::max)( p.x()-1, FT(0) ) : p.x()),
+                  (p.y() > FT(0.9375) ? (std::max)( p.y()-1, FT(0) ) : p.y()), p.z());
+        p = Point((_domain.xmax()-_domain.xmin())*p.x(),
+                  (_domain.xmax()-_domain.xmin())*p.y(),
+                  (_domain.xmax()-_domain.xmin())*p.z());
+        p = Point(p.x() + _domain.xmin(),
+                  p.y() + _domain.ymin(),
+                  p.z() + _domain.zmin());
+        vertices[9*i+3*j+k]->set_point(p);
       }
     }
   }
@@ -54,7 +53,7 @@ Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
   for (int i=0; i<216; i++) {
     cells[i] = _tds.create_cell();
   }
-  
+
   cells[0]->set_vertices(vertices[3],vertices[9],vertices[4],vertices[12]);
   cells[1]->set_vertices(vertices[28],vertices[8],vertices[3],vertices[6]);
   cells[2]->set_vertices(vertices[0],vertices[11],vertices[9],vertices[3]);

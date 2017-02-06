@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof
 //                 Manuel Caroli
@@ -47,7 +47,7 @@ typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K3> PTT3;
 template class CGAL::Periodic_3_Delaunay_triangulation_3<PTT3>;
 
 #include <CGAL/_test_cls_periodic_3_delaunay_3.h>
-int main()
+int main(int, char**)
 {
   CGAL::Timer timer;
   timer.start();

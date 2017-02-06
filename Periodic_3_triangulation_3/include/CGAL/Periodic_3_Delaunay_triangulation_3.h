@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
@@ -22,12 +22,10 @@
 //                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-
 #ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
-
 
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
@@ -35,6 +33,11 @@
 // Needed by remove to fill the hole.
 #include <CGAL/internal/Periodic_3_triangulation_remove_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <utility>
 
 namespace CGAL {
 
@@ -45,8 +48,8 @@ template < class GT, class TDS > std::istream& operator>>
 template < class Gt,
             class Tds = Triangulation_data_structure_3 <
               Triangulation_vertex_base_3<
-		Gt, Periodic_3_triangulation_ds_vertex_base_3<>
-	      >,
+                Gt, Periodic_3_triangulation_ds_vertex_base_3<>
+              >,
               Triangulation_cell_base_3<
                 Gt, Periodic_3_triangulation_ds_cell_base_3<>
               >
@@ -233,7 +236,7 @@ public:
       this->copy_multiple_covering(tr);
     }
     CGAL_triangulation_expensive_postcondition(*this == tr);
-    CGAL_triangulation_expensive_postcondition( is_valid() );  
+    CGAL_triangulation_expensive_postcondition( is_valid() );
   }
 
   void copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3 & tr);
@@ -496,10 +499,10 @@ public:
     if (is_large_point_set)
       dummy_points = insert_dummy_points();
     else while (!is_1_cover()) {
-	insert(*pbegin);
-	++pbegin;
-	if (pbegin == points.end()) return number_of_vertices() - n;
-      }
+      insert(*pbegin);
+      ++pbegin;
+      if (pbegin == points.end()) return number_of_vertices() - n;
+    }
 
     // Use Geom_traits::K for efficiency: spatial_sort creates a lot
     // of copies of the traits but does not need the domain that is
@@ -510,8 +513,8 @@ public:
     Point_hider hider;
     Cover_manager cover_manager(*this);
     double_vertices = Base::insert_in_conflict(
-	points.begin(),points.end(),hint,tester,hider, cover_manager);
-   
+      points.begin(), points.end(), hint, tester, hider, cover_manager);
+
     if (is_large_point_set) {
       typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
       typedef CGAL::Delaunay_triangulation_3< P3removeT > DT;
@@ -521,9 +524,9 @@ public:
       Remover remover(this,dt);
       Conflict_tester t(this);
       for (unsigned int i=0; i<dummy_points.size(); i++) {
-	if (std::find(double_vertices.begin(), double_vertices.end(),
-		dummy_points[i]) == double_vertices.end())
-	  Base::remove(dummy_points[i],remover,t, cover_manager);
+        if (std::find(double_vertices.begin(), double_vertices.end(),
+                      dummy_points[i]) == double_vertices.end())
+          Base::remove(dummy_points[i],remover,t, cover_manager);
       }
     }
 
@@ -553,23 +556,27 @@ public:
 public:
   /** @name Wrapping the traits */ //@{
   Oriented_side side_of_oriented_sphere(const Point &p, const Point &q,
-      const Point &r, const Point &s, const Point &t) const {
+                                        const Point &r, const Point &s,
+                                        const Point &t) const {
     return geom_traits().side_of_oriented_sphere_3_object()(p,q,r,s,t);
   }
   Oriented_side side_of_oriented_sphere(const Point &p, const Point &q,
-      const Point &r, const Point &s, const Point &t, const Offset &o_p,
-      const Offset &o_q, const Offset &o_r, const Offset &o_s,
-      const Offset &o_t) const {
+                                        const Point &r, const Point &s,
+                                        const Point &t,
+                                        const Offset &o_p, const Offset &o_q,
+                                        const Offset &o_r, const Offset &o_s,
+                                        const Offset &o_t) const {
     return geom_traits().side_of_oriented_sphere_3_object()(
-	p,q,r,s,t,o_p,o_q,o_r,o_s,o_t);
+          p,q,r,s,t,o_p,o_q,o_r,o_s,o_t);
   }
   Comparison_result compare_distance(const Point &p, const Point &q,
-      const Point &r) const {
+                                     const Point &r) const {
       return geom_traits().compare_distance_3_object()(p, q, r);
   }
   Comparison_result compare_distance(const Point &p, const Point &q,
-      const Point &r, const Offset &o_p, const Offset &o_q,
-      const Offset &o_r) const {
+                                     const Point &r,
+                                     const Offset &o_p, const Offset &o_q,
+                                     const Offset &o_r) const {
     return geom_traits().compare_distance_3_object()(p, q, r, o_p, o_q, o_r);
   }
   //@}
@@ -620,7 +627,7 @@ public:
   find_conflicts(const Point &p, Cell_handle c,
       OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
       OutputIteratorInternalFacets ifit) const;
-  
+
   /// Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
   OutputIterator vertices_in_conflict(const Point&p, Cell_handle c,
@@ -635,7 +642,7 @@ public:
     return is_Gabriel(e.first, e.second, e.third);
   }
   //@}
-  
+
 private:
   /** @name Voronoi diagram helpers */ //@{
   bool is_canonical(const Periodic_segment &ps) const {
@@ -643,7 +650,7 @@ private:
     Offset o0 = ps.at(0).second;
     Offset o1 = ps.at(1).second;
     Offset cumm_off((std::min)(o0.x(),o1.x()),(std::min)(o0.y(),o1.y()),
-	(std::min)(o0.z(),o1.z()));
+                    (std::min)(o0.z(),o1.z()));
     return (cumm_off == Offset(0,0,0));
   }
   //@}
@@ -705,14 +712,14 @@ public:
     return Base::dual_centroid(v, geom_traits().construct_circumcenter_3_object());
   }
   //@}
-  
+
   /** @name Checking */ //@{
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
   //@}
 
 protected:
-  // Protected, because inheritors(e.g. periodic triangulation for meshing) 
+  // Protected, because inheritors(e.g. periodic triangulation for meshing)
   // of the class Periodic_3_Delaunay_triangulation_3 use this class
   class Conflict_tester;
 private:
@@ -725,35 +732,35 @@ private:
   struct Vertex_remover
   {
     typedef TriangulationR3      Triangulation_R3;
-    
+
     typedef typename std::vector<Point>::iterator Hidden_points_iterator;
-    
+
     typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
-    
+
     typedef typename Triangulation_R3::Triangulation_data_structure TDSE;
     typedef typename Triangulation_R3::Cell_handle        CellE_handle;
     typedef typename Triangulation_R3::Vertex_handle      VertexE_handle;
     typedef typename Triangulation_R3::Facet              FacetE;
     typedef typename Triangulation_R3::Finite_cells_iterator Finite_cellsE_iterator;
-    
+
     typedef Triple< VertexE_handle, VertexE_handle, VertexE_handle >
       VertexE_triple;
-    
+
     typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
     typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
     typedef typename Vertex_triple_FacetE_map::iterator
     Vertex_triple_FacetE_map_it;
-    
+
   Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
-    
+
     const Self *_t;
     Triangulation_R3 &tmp;
-    
+
     void add_hidden_points(Cell_handle) {
-      std::copy (hidden_points_begin(), hidden_points_end(), 
-		 std::back_inserter(hidden));
+      std::copy (hidden_points_begin(), hidden_points_end(),
+                 std::back_inserter(hidden));
     }
-    
+
     Hidden_points_iterator hidden_points_begin() {
       return hidden.begin();
     }
@@ -809,10 +816,10 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
     Offset tmp_off = get_min_dist_offset(p,o,tmp);
     adjacent_vertices(nearest, std::back_inserter(vs));
     for (typename std::vector<Vertex_handle>::const_iterator
-	   vsit = vs.begin(); vsit != vs.end(); ++vsit)
+         vsit = vs.begin(); vsit != vs.end(); ++vsit)
       tmp = (compare_distance(p,tmp->point(),(*vsit)->point(),
-	      o,tmp_off,get_min_dist_offset(p,o,*vsit))
-	  == SMALLER) ? tmp : *vsit;
+                              o,tmp_off,get_min_dist_offset(p,o,*vsit))
+             == SMALLER) ? tmp : *vsit;
     if (tmp == nearest)
       break;
     vs.clear();
@@ -829,27 +836,34 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::get_min_dist_offset(
     const Point & p, const Offset & o, const Vertex_handle vh) const {
   Offset mdo = get_offset(vh);
   Offset min_off = Offset(0,0,0);
-  min_off = (compare_distance(p,vh->point(),vh->point(),
-	  o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,0,1)))
-      == SMALLER ? min_off : Offset(0,0,1) );
-  min_off = (compare_distance(p,vh->point(),vh->point(),
-	  o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,1,0)))
-      == SMALLER ? min_off : Offset(0,1,0) );
-  min_off = (compare_distance(p,vh->point(),vh->point(),
-	  o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,1,1)))
-      == SMALLER ? min_off : Offset(0,1,1) );
-  min_off = (compare_distance(p,vh->point(),vh->point(),
-	  o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,0,0)))
-      == SMALLER ? min_off : Offset(1,0,0) );
-  min_off = (compare_distance(p,vh->point(),vh->point(),
-	  o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,0,1)))
-      == SMALLER ? min_off : Offset(1,0,1) );
-  min_off = (compare_distance(p,vh->point(),vh->point(),
-	  o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,0)))
-      == SMALLER ? min_off : Offset(1,1,0) );
-  min_off = (compare_distance(p,vh->point(),vh->point(),
-	  o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,1)))
-      == SMALLER ? min_off : Offset(1,1,1) );
+  min_off = (compare_distance(p, vh->point(), vh->point(),
+                              o, combine_offsets(mdo,min_off),
+                                 combine_offsets(mdo,Offset(0,0,1)))
+             == SMALLER ? min_off : Offset(0,0,1) );
+  min_off = (compare_distance(p, vh->point(), vh->point(),
+                              o, combine_offsets(mdo,min_off),
+                                 combine_offsets(mdo,Offset(0,1,0)))
+             == SMALLER ? min_off : Offset(0,1,0) );
+  min_off = (compare_distance(p, vh->point(), vh->point(),
+                              o, combine_offsets(mdo,min_off),
+                                 combine_offsets(mdo,Offset(0,1,1)))
+             == SMALLER ? min_off : Offset(0,1,1) );
+  min_off = (compare_distance(p, vh->point(), vh->point(),
+                              o, combine_offsets(mdo,min_off),
+                                 combine_offsets(mdo,Offset(1,0,0)))
+             == SMALLER ? min_off : Offset(1,0,0) );
+  min_off = (compare_distance(p, vh->point(), vh->point(),
+                              o, combine_offsets(mdo,min_off),
+                                 combine_offsets(mdo,Offset(1,0,1)))
+             == SMALLER ? min_off : Offset(1,0,1) );
+  min_off = (compare_distance(p, vh->point(), vh->point(),
+                              o, combine_offsets(mdo,min_off),
+                                 combine_offsets(mdo,Offset(1,1,0)))
+             == SMALLER ? min_off : Offset(1,1,0) );
+  min_off = (compare_distance(p, vh->point(), vh->point(),
+                              o, combine_offsets(mdo,min_off),
+                                 combine_offsets(mdo,Offset(1,1,1)))
+             == SMALLER ? min_off : Offset(1,1,1) );
   return combine_offsets(mdo,min_off);
 }
 
@@ -862,8 +876,9 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex_in_cell(
   Vertex_handle nearest = c->vertex(0);
   for (int i=1 ; i<4 ; i++) {
     nearest = (compare_distance(p,nearest->point(),c->vertex(i)->point(),
-	    o,get_offset(c,c->index(nearest)),get_offset(c,i)) == SMALLER) ?
-      nearest : c->vertex(i);
+                                o, get_offset(c,c->index(nearest)),
+                                   get_offset(c,i)) == SMALLER) ?
+                nearest : c->vertex(i);
   }
   return nearest;
 }
@@ -945,7 +960,7 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::find_conflicts( const Point
   }
 
   for (typename std::vector<Vertex_handle>::iterator
-	 voit = this->v_offsets.begin();
+       voit = this->v_offsets.begin();
        voit != this->v_offsets.end() ; ++voit) {
     (*voit)->clear_offset();
   }
@@ -964,7 +979,7 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::vertices_in_conflict(
   // Get the facets on the boundary of the hole.
   std::vector<Facet> facets;
   find_conflicts(p, c, std::back_inserter(facets), Emptyset_iterator());
-  
+
   // Then extract uniquely the vertices.
   std::set<Vertex_handle> vertices;
   for (typename std::vector<Facet>::const_iterator i = facets.begin();
@@ -973,7 +988,7 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::vertices_in_conflict(
     vertices.insert(i->first->vertex((i->second+2)&3));
     vertices.insert(i->first->vertex((i->second+3)&3));
   }
-  
+
   return std::copy(vertices.begin(), vertices.end(), res);
 }
 
@@ -998,17 +1013,16 @@ _side_of_sphere(const Cell_handle &c, const Point &q,
   if (os != ON_ORIENTED_BOUNDARY || !perturb)
     return (Bounded_side) os;
 
-  //We are now in a degenerate case => we do a symbolic perturbation. 
+  //We are now in a degenerate case => we do a symbolic perturbation.
   // We sort the points lexicographically.
   Periodic_point pts[5] = {std::make_pair(p0,o0), std::make_pair(p1,o1),
-			   std::make_pair(p2,o2), std::make_pair(p3,o3),
-			   std::make_pair(q,oq)};
+                           std::make_pair(p2,o2), std::make_pair(p3,o3),
+                           std::make_pair(q,oq)};
   const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
 
   std::sort(points, points+5,
-      typename Base::template Perturbation_order<
-	  typename Gt::Compare_xyz_3 >(
-	  geom_traits().compare_xyz_3_object() ) );
+            typename Base::template Perturbation_order<
+              typename Gt::Compare_xyz_3 >(geom_traits().compare_xyz_3_object()));
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
   // 2 iterations are enough (cf paper)
@@ -1020,19 +1034,19 @@ _side_of_sphere(const Cell_handle &c, const Point &q,
       return ON_UNBOUNDED_SIDE;
     }
     Orientation o;
-    if (points[i] == &pts[3] && 
+    if (points[i] == &pts[3] &&
         (o = orientation(p0, p1, p2, q, o0, o1, o2, oq)) != COPLANAR ) {
       return (Bounded_side) o;
     }
-    if (points[i] == &pts[2] && 
+    if (points[i] == &pts[2] &&
         (o = orientation(p0, p1, q, p3, o0, o1, oq, o3)) != COPLANAR ) {
       return (Bounded_side) o;
     }
-    if (points[i] == &pts[1] && 
+    if (points[i] == &pts[1] &&
         (o = orientation(p0, q, p2, p3, o0, oq, o2, o3)) != COPLANAR ) {
       return (Bounded_side) o;
     }
-    if (points[i] == &pts[0] && 
+    if (points[i] == &pts[0] &&
         (o = orientation(q, p1, p2 ,p3, oq, o1, o2, o3)) != COPLANAR ) {
       return (Bounded_side) o;
     }
@@ -1051,28 +1065,30 @@ is_Gabriel(const Cell_handle c, int i) const {
     geom_traits().side_of_bounded_sphere_3_object();
 
   if (side_of_bounded_sphere (
-          c->vertex(vertex_triple_index(i,0))->point(),
-	  c->vertex(vertex_triple_index(i,1))->point(),
-	  c->vertex(vertex_triple_index(i,2))->point(),
-          c->vertex(i)->point(),
-          get_offset(c,vertex_triple_index(i,0)),
-          get_offset(c,vertex_triple_index(i,1)),
-          get_offset(c,vertex_triple_index(i,2)),
-          get_offset(c,i) ) == ON_BOUNDED_SIDE ) return false;
+        c->vertex(vertex_triple_index(i,0))->point(),
+        c->vertex(vertex_triple_index(i,1))->point(),
+        c->vertex(vertex_triple_index(i,2))->point(),
+        c->vertex(i)->point(),
+        get_offset(c,vertex_triple_index(i,0)),
+        get_offset(c,vertex_triple_index(i,1)),
+        get_offset(c,vertex_triple_index(i,2)),
+        get_offset(c,i) ) == ON_BOUNDED_SIDE )
+    return false;
+
   Cell_handle neighbor = c->neighbor(i);
   int in = neighbor->index(c);
 
   if (side_of_bounded_sphere(
-          neighbor->vertex(vertex_triple_index(in,0))->point(),
-	  neighbor->vertex(vertex_triple_index(in,1))->point(),
-	  neighbor->vertex(vertex_triple_index(in,2))->point(),
-          neighbor->vertex(in)->point(),
-          get_offset(neighbor,vertex_triple_index(in,0)),
-          get_offset(neighbor,vertex_triple_index(in,1)),
-          get_offset(neighbor,vertex_triple_index(in,2)),
-          get_offset(neighbor, in) ) == ON_BOUNDED_SIDE )
+        neighbor->vertex(vertex_triple_index(in,0))->point(),
+        neighbor->vertex(vertex_triple_index(in,1))->point(),
+        neighbor->vertex(vertex_triple_index(in,2))->point(),
+        neighbor->vertex(in)->point(),
+        get_offset(neighbor,vertex_triple_index(in,0)),
+        get_offset(neighbor,vertex_triple_index(in,1)),
+        get_offset(neighbor,vertex_triple_index(in,2)),
+        get_offset(neighbor, in) ) == ON_BOUNDED_SIDE )
     return false;
-  
+
   return true;
 }
 
@@ -1083,8 +1099,7 @@ is_Gabriel(const Cell_handle c, int i, int j) const {
     side_of_bounded_sphere =
     geom_traits().side_of_bounded_sphere_3_object();
 
-  Facet_circulator fcirc = incident_facets(c,i,j),
-    fdone(fcirc);
+  Facet_circulator fcirc = incident_facets(c,i,j), fdone(fcirc);
   Vertex_handle v1 = c->vertex(i);
   Vertex_handle v2 = c->vertex(j);
   do {
@@ -1099,8 +1114,8 @@ is_Gabriel(const Cell_handle c, int i, int j) const {
     Offset off2 = int_to_off(cc->offset(i2));
     Offset off3 = int_to_off(cc->offset(i3));
     if (side_of_bounded_sphere(
-	    v1->point(), v2->point(), cc->vertex(fcirc->second)->point(),
-	    off1, off2, off3) == ON_BOUNDED_SIDE ) return false;
+          v1->point(), v2->point(), cc->vertex(fcirc->second)->point(),
+          off1, off2, off3) == ON_BOUNDED_SIDE ) return false;
   } while(++fcirc != fdone);
   return true;
 }
@@ -1109,7 +1124,7 @@ template < class Gt, class Tds >
 bool
 Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
 is_valid(bool verbose, int level) const
-{ 
+{
   if (!Base::is_valid(verbose, level)) {
     if (verbose)
       std::cerr << "Delaunay: invalid base" << std::endl;
@@ -1138,37 +1153,39 @@ is_valid(Cell_handle ch, bool verbose, int level) const {
     if (verbose) {
       std::cerr << "geometrically invalid cell" << std::endl;
       for (int i=0; i<4; i++ )
-	std::cerr << ch->vertex(i)->point() << ", ";
+        std::cerr << ch->vertex(i)->point() << ", ";
       std::cerr << std::endl;
     }
   }
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++ vit) {
-    for (int i=-1; i<=1; i++)
-      for (int j=-1; j<=1; j++)
-	for (int k=-1; k<=1; k++) {
-	  if (periodic_point(ch,0) == std::make_pair(periodic_point(vit).first,
-		  periodic_point(vit).second+Offset(i,j,k))
-	  || periodic_point(ch,1) == std::make_pair(periodic_point(vit).first,
-		  periodic_point(vit).second+Offset(i,j,k))
-          || periodic_point(ch,2) == std::make_pair(periodic_point(vit).first,
-		  periodic_point(vit).second+Offset(i,j,k))
-	  || periodic_point(ch,3) == std::make_pair(periodic_point(vit).first,
-                  periodic_point(vit).second+Offset(i,j,k)) )
-	    continue;
-	  if (_side_of_sphere(ch, periodic_point(vit).first,
-		  periodic_point(vit).second+Offset(i,j,k),true)
-	      != ON_UNBOUNDED_SIDE) {
-	    error = true;
-	    if (verbose) {
-	      std::cerr << "Delaunay invalid cell" << std::endl;
-	      for (int i=0; i<4; i++ ) {
-		Periodic_point pp = periodic_point(ch,i);
-		std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
-	      }
-	      std::cerr << std::endl;
-	    }
-	  }
-	}
+    for (int i=-1; i<=1; i++) {
+      for (int j=-1; j<=1; j++) {
+        for (int k=-1; k<=1; k++) {
+          if (periodic_point(ch,0) == std::make_pair(periodic_point(vit).first,
+                                                     periodic_point(vit).second+Offset(i,j,k))
+              || periodic_point(ch,1) == std::make_pair(periodic_point(vit).first,
+                                                        periodic_point(vit).second+Offset(i,j,k))
+              || periodic_point(ch,2) == std::make_pair(periodic_point(vit).first,
+                                                        periodic_point(vit).second+Offset(i,j,k))
+              || periodic_point(ch,3) == std::make_pair(periodic_point(vit).first,
+                                                        periodic_point(vit).second+Offset(i,j,k)) )
+            continue;
+          if (_side_of_sphere(ch, periodic_point(vit).first,
+                              periodic_point(vit).second+Offset(i,j,k),true)
+              != ON_UNBOUNDED_SIDE) {
+            error = true;
+            if (verbose) {
+              std::cerr << "Delaunay invalid cell" << std::endl;
+              for (int i=0; i<4; i++ ) {
+                Periodic_point pp = periodic_point(ch,i);
+                std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
+              }
+              std::cerr << std::endl;
+            }
+          }
+        }
+      }
+    }
   }
   return !error;
 }
@@ -1187,7 +1204,7 @@ public:
   /// Constructor
   Conflict_tester(const Self *_t) : t(_t), p(Point()) {}
   Conflict_tester(const Point &pt, const Self *_t) : t(_t), p(pt) { }
-  
+
   /** The functor
     *
     * gives true if the circumcircle of c contains p
@@ -1201,19 +1218,19 @@ public:
       const Offset &off) const {
     return (t->_side_of_sphere(c, pt, o + off, true) == ON_BOUNDED_SIDE);
   }
-  
+
   int compare_weight(Point, Point) const
   {
     return 0;
   }
-  
+
   bool test_initial_cell(Cell_handle c, const Offset &off) const
   {
     if (!(operator()(c, off)))
       CGAL_triangulation_assertion(false);
     return true;
   }
-  
+
   void set_point(const Point &_p) {
     p = _p;
   }
@@ -1221,15 +1238,15 @@ public:
   void set_offset(const Offset &off) const {
     o = off;
   }
-  
+
   const Offset &get_offset() const {
     return o;
   }
-  
+
   const Point &point() const {
     return p;
   }
-  
+
 };
 
 template < class GT, class Tds>
@@ -1256,7 +1273,7 @@ public:
   inline void do_hide(const Point &, Cell_handle ) const {
     CGAL_triangulation_assertion(false);
   }
-  template < class Tester > 
+  template < class Tester >
   inline bool replace_vertex(const Point &, Vertex_handle ,
       const Tester &) const {
     return true;
@@ -1269,41 +1286,41 @@ public:
 
 };
 
-#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG 
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 template <class GT, class Tds>
 template <class TriangulationR3>
 struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover
 {
   typedef TriangulationR3      Triangulation_R3;
-  
+
   typedef typename std::vector<Point>::iterator Hidden_points_iterator;
-  
+
   typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
-  
+
   typedef typename Triangulation_R3::Triangulation_data_structure TDSE;
   typedef typename Triangulation_R3::Cell_handle        CellE_handle;
   typedef typename Triangulation_R3::Vertex_handle      VertexE_handle;
   typedef typename Triangulation_R3::Facet              FacetE;
   typedef typename Triangulation_R3::Finite_cells_iterator Finite_cellsE_iterator;
-    
+
   typedef Triple< VertexE_handle, VertexE_handle, VertexE_handle >
   VertexE_triple;
-  
+
   typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
   typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
   typedef typename Vertex_triple_FacetE_map::iterator
   Vertex_triple_FacetE_map_it;
-  
+
   Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
-    
+
   const Self *_t;
   Triangulation_R3 &tmp;
-    
+
   void add_hidden_points(Cell_handle) {
-    std::copy (hidden_points_begin(), hidden_points_end(), 
-	std::back_inserter(hidden));
+    std::copy (hidden_points_begin(), hidden_points_end(),
+               std::back_inserter(hidden));
   }
-  
+
   Hidden_points_iterator hidden_points_begin() {
     return hidden.begin();
   }

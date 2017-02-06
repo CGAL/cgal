@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -23,7 +23,6 @@
 #define CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
-
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
@@ -60,23 +59,23 @@ public:
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else 
+#else
   result_type
   operator()(const Vector_3& u, const Vector_3& v, const Vector_3& w) const
-  { 
+  {
     return Base::operator()(u,v,w);
-  }  
+  }
 
   result_type
   operator()(const Sphere_3& s) const
-  { 
+  {
     return Base::operator()(s);
   }
 #endif
 
-  result_type 
+  result_type
   operator()(const Point_3 &p, const Point_3 &q,
-	     const Point_3 &r, const Point_3 &s) const
+             const Point_3 &r, const Point_3 &s) const
   {
       CGAL_PROFILER("Periodic_3_orientation_3 calls");
       Get_approx<Point_3> get_approx; // Identity functor for all points
@@ -180,18 +179,18 @@ public:
           fit_in_double(get_approx(r).z(), rz) &&
           fit_in_double(get_approx(s).x(), sx) && fit_in_double(get_approx(s).y(), sy) &&
           fit_in_double(get_approx(s).z(), sz) &&
-	  fit_in_double(_dom->xmax(), domxmax) &&
-	  fit_in_double(_dom->xmin(), domxmin) &&
-	  fit_in_double(_dom->ymax(), domymax) &&
-	  fit_in_double(_dom->ymin(), domymin) &&
-	  fit_in_double(_dom->zmax(), domzmax) &&
-	  fit_in_double(_dom->zmin(), domzmin))
+          fit_in_double(_dom->xmax(), domxmax) &&
+          fit_in_double(_dom->xmin(), domxmin) &&
+          fit_in_double(_dom->ymax(), domymax) &&
+          fit_in_double(_dom->ymin(), domymin) &&
+          fit_in_double(_dom->zmax(), domzmax) &&
+          fit_in_double(_dom->zmin(), domzmin))
       {
           CGAL_PROFILER("Periodic_3_orientation_3 semi-static attempts");
 
-	  double domx = domxmax - domxmin;
-	  double domy = domymax - domymin;
-	  double domz = domzmax - domzmin;
+          double domx = domxmax - domxmin;
+          double domy = domymax - domymin;
+          double domz = domzmax - domzmin;
 
           double pqx = qx - px + domx * ( o_q.x() - opx );
           double pqy = qy - py + domy * ( o_q.y() - opy );
@@ -264,8 +263,8 @@ public:
                               t1, t1, t1); // Full det
     double err = det.error();
     err += err * 2 * F::ulp(); // Correction due to "eps * maxx * maxy...".
-    std::cerr << "*** epsilon for Periodic_3_orientation_3 = " << err 
-	      << std::endl;
+    std::cerr << "*** epsilon for Periodic_3_orientation_3 = " << err
+              << std::endl;
     return err;
   }
 

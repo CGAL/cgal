@@ -26,6 +26,7 @@
 #include <CGAL/use.h>
 
 #include <cassert>
+#include <iostream>
 
 template<class Traits>
 void _test_for_given_domain (const Traits& traits,
@@ -57,9 +58,6 @@ void _test_for_given_domain (const Traits& traits,
   CGAL_USE_TYPE(typename Traits::Construct_tetrahedron_3);
 
   typedef typename Traits::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
-
-  typedef typename Traits::Power_side_of_oriented_power_sphere_3 Power_side_of_oriented_power_sphere_3;
-  typedef typename Traits::Compare_weighted_squared_radius_3 Compare_weighted_squared_radius_3;
 
 #if 0
   // fixme filthy sandbox

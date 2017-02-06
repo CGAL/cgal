@@ -27,7 +27,7 @@ typedef Gt::Point_3                                              Point_3;
 
 typedef P3RT3::Vertex_handle Vertex_handle;
 
-int main ()
+int main(int, char**)
 {
   P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
 

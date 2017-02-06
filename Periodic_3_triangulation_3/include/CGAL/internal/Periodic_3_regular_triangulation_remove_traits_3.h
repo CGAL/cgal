@@ -22,6 +22,8 @@
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_REMOVE_TRAITS_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_REMOVE_TRAITS_3_H
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>
@@ -32,8 +34,8 @@ namespace CGAL
 template<class Traits_, class Functor_>
 class Ppoint_to_point_adaptor
 {
-  typedef Traits_ Traits;
-  typedef Functor_ Functor;
+  typedef Traits_                                 Traits;
+  typedef Functor_                                Functor;
 
   // `Traits::Point_3` is actually a `std::pair<Point_3, Offset>`
   // `Traits::Weighted_point_3` is actually a `std::pair<Weighted_point_3, Offset>`
@@ -44,14 +46,14 @@ public:
   typedef typename Functor::result_type result_type;
 
   Ppoint_to_point_adaptor (const Functor & functor)
-      : _functor(functor)
-  {
-  }
+    : _functor(functor)
+  { }
 
   result_type operator() (const Point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2) const
   {
-    return _functor(p0.first, p1.first, p2.first, p0.second, p1.second, p2.second);
+    return _functor(p0.first, p1.first, p2.first,
+                    p0.second, p1.second, p2.second);
   }
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1) const
   {
@@ -60,18 +62,21 @@ public:
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2) const
   {
-    return _functor(p0.first, p1.first, p2.first, p0.second, p1.second, p2.second);
+    return _functor(p0.first, p1.first, p2.first,
+                    p0.second, p1.second, p2.second);
   }
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2, const Weighted_point_3& p3) const
   {
-    return _functor(p0.first, p1.first, p2.first, p3.first, p0.second, p1.second, p2.second, p3.second);
+    return _functor(p0.first, p1.first, p2.first, p3.first,
+                    p0.second, p1.second, p2.second, p3.second);
   }
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2, const Weighted_point_3& p3,
                           const Weighted_point_3& p4) const
   {
-    return _functor(p0.first, p1.first, p2.first, p3.first, p4.first, p0.second, p1.second, p2.second, p3.second, p4.second);
+    return _functor(p0.first, p1.first, p2.first, p3.first, p4.first,
+                    p0.second, p1.second, p2.second, p3.second, p4.second);
   }
 
 private:
@@ -79,7 +84,8 @@ private:
 };
 
 template<class PTTraits, class Off = typename CGAL::Periodic_3_offset_3>
-class Periodic_3_regular_triangulation_remove_traits_3: public PTTraits::K
+class Periodic_3_regular_triangulation_remove_traits_3
+  : public PTTraits::K
 {
 public:
   typedef PTTraits                      PTraits;

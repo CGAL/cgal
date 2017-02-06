@@ -13,9 +13,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
 // $Date$
-// 
+//
 //
 // Author(s)     : Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 
@@ -511,7 +511,7 @@ public:
       input_stream >> p;
       points.push_back(p);
     }
-        std::cout << "--- done " << std::endl;
+    std::cout << "--- done " << std::endl;
     p3rt3.insert(points.begin(), points.end(), true);
 
     for (Vertex_iterator iter = p3rt3.vertices_begin(), end_iter = p3rt3.vertices_end(); iter != end_iter; ++iter)
@@ -528,6 +528,7 @@ public:
         ++hidden_point_count;
       }
     }
+
     assert(p3rt3.number_of_vertices() == 659);
     assert(p3rt3.number_of_vertices() + hidden_point_count == 800);
 
@@ -753,7 +754,7 @@ public:
   }
 };
 
-int main (int argc, char** argv)
+int main (int, char**)
 {
   std::cout << "TESTING ..." << std::endl;
 
