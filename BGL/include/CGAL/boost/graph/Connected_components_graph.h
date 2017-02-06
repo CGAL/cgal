@@ -66,12 +66,14 @@ struct Connected_components_graph
     /*!
      * \brief Creates a Connected_components_graph of the connected components of `graph` that are listed in `pids`.
      * \param graph the graph containing the wanted patches.
-     * \param fccmap the property_map that assigns a patch to each face
+     * \param fccmap the property_map that assigns a patch to each face, with
+        `boost::graph_traits<Graph>::%face_descriptor` as key type and
+        `graph_traits<Graph>::faces_size_type` as value type.
      * \param pids the indices of the patches of interest.
      */
     Connected_components_graph(const Graph& graph,
                      FaceComponentMap fccmap,
-                     boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> pids)
+                     const boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type>& pids)
         : _graph(graph), _property_map(fccmap), _patch_indices(pids)
     {
     }

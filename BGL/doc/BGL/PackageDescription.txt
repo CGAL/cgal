@@ -316,7 +316,7 @@ user might encounter.
 - `CGAL::Dual`
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
-- `CGAL::Connected_component_graph`
+- `CGAL::Connected_components_graph`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
