@@ -40,22 +40,6 @@ public:
   Scene_c3t3_item(const C3t3& c3t3);
   ~Scene_c3t3_item();
 
-  enum STATS {
-    MIN_EDGES_LENGTH = 0,
-    MAX_EDGES_LENGTH,
-    MEAN_EDGES_LENGTH,
-    MIN_DIHEDRAL_ANGLE,
-    MAX_DIHEDRAL_ANGLE,
-    MEAN_DIHEDRAL_ANGLE,
-    NB_SPHERES,
-    NB_CNC,
-    NB_VERTICES,
-    NB_TETS,
-    SMALLEST_RAD_RAD,
-    SMALLEST_EDGE_RAD,
-    BIGGEST_VL3_CUBE,
-    NB_SUBDOMAINS
-  };
   bool has_stats()const {return true;}
   QString computeStats(int type);
   CGAL::Three::Scene_item::Header_data header() const;

@@ -234,6 +234,7 @@ private:
       Lines,
       NumberOfVaos
   };
+
   //contains the data
   mutable std::vector<float> *vertices;
   mutable std::vector<float> *normals;
@@ -394,6 +395,23 @@ struct Scene_c3t3_item_priv {
       iEdges,
       iFacets,
       NumberOfVaos
+  };
+
+  enum STATS {
+    MIN_EDGES_LENGTH = 0,
+    MAX_EDGES_LENGTH,
+    MEAN_EDGES_LENGTH,
+    MIN_DIHEDRAL_ANGLE,
+    MAX_DIHEDRAL_ANGLE,
+    MEAN_DIHEDRAL_ANGLE,
+    NB_SPHERES,
+    NB_CNC,
+    NB_VERTICES,
+    NB_TETS,
+    SMALLEST_RAD_RAD,
+    SMALLEST_EDGE_RAD,
+    BIGGEST_VL3_CUBE,
+    NB_SUBDOMAINS
   };
   Scene_c3t3_item* item;
   C3t3 c3t3;
@@ -1903,33 +1921,33 @@ QString Scene_c3t3_item::computeStats(int type)
 
   switch (type)
   {
-  case MIN_EDGES_LENGTH:
+  case Scene_c3t3_item_priv::MIN_EDGES_LENGTH:
     return QString::number(d->min_edges_length);
-  case MAX_EDGES_LENGTH:
+  case Scene_c3t3_item_priv::MAX_EDGES_LENGTH:
     return QString::number(d->max_edges_length);
-  case MEAN_EDGES_LENGTH:
+  case Scene_c3t3_item_priv::MEAN_EDGES_LENGTH:
     return QString::number(d->mean_edges_length);
-  case MIN_DIHEDRAL_ANGLE:
+  case Scene_c3t3_item_priv::MIN_DIHEDRAL_ANGLE:
     return QString::number(d->min_dihedral_angle);
-  case MAX_DIHEDRAL_ANGLE:
+  case Scene_c3t3_item_priv::MAX_DIHEDRAL_ANGLE:
     return QString::number(d->max_dihedral_angle);
-  case MEAN_DIHEDRAL_ANGLE:
+  case Scene_c3t3_item_priv::MEAN_DIHEDRAL_ANGLE:
     return QString::number(d->mean_dihedral_angle);
-  case NB_SPHERES:
+  case Scene_c3t3_item_priv::NB_SPHERES:
     return QString::number(d->nb_spheres);
-  case NB_CNC:
+  case Scene_c3t3_item_priv::NB_CNC:
     return QString::number(d->nb_cnc);
-  case NB_VERTICES:
+  case Scene_c3t3_item_priv::NB_VERTICES:
     return QString::number(d->nb_vertices);
-  case NB_TETS:
+  case Scene_c3t3_item_priv::NB_TETS:
     return QString::number(d->nb_tets);
-  case SMALLEST_RAD_RAD:
+  case Scene_c3t3_item_priv::SMALLEST_RAD_RAD:
     return QString::number(d->smallest_radius_radius);
-  case SMALLEST_EDGE_RAD:
+  case Scene_c3t3_item_priv::SMALLEST_EDGE_RAD:
     return QString::number(d->smallest_edge_radius);
-  case BIGGEST_VL3_CUBE:
+  case Scene_c3t3_item_priv::BIGGEST_VL3_CUBE:
     return QString::number(d->biggest_v_sma_cube);
-  case NB_SUBDOMAINS:
+  case Scene_c3t3_item_priv::NB_SUBDOMAINS:
     return QString::number(d->nb_subdomains);
 
   default:
