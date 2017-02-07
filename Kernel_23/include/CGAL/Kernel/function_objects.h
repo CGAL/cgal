@@ -2498,308 +2498,7 @@ public:
      * @param p1 the first point
      * @param p2 the second point
      * @param p3 the third point
-     * @param k the kernel
-     * @return the nearest point from origin
-     */
-    const typename K::Point_3&
-    nearest_point_3(const typename K::Point_3& origin,
-                    const typename K::Point_3& p1,
-                    const typename K::Point_3& p2,
-                    const typename K::Point_3& p3,
-                    const K& k) const
-    {
-      typedef typename K::FT FT;
-
-      typename K::Compute_squared_distance_3 sq_distance =
-        k.compute_squared_distance_3_object();
-
-      const FT dist_origin_p1 = sq_distance(origin,p1);
-      const FT dist_origin_p2 = sq_distance(origin,p2);
-      const FT dist_origin_p3 = sq_distance(origin,p3);
-
-      if (   dist_origin_p2 >= dist_origin_p1
-          && dist_origin_p3 >= dist_origin_p1 )
-      {
-        return p1;
-      }
-      if ( dist_origin_p3 >= dist_origin_p2 )
-      {
-        return p2;
-      }
-
-      return p3;
-    }
-
-    /**
-     * @brief returns true if p is inside triangle t. If p is not inside t,
-     * result is the nearest point of t from p. WARNING: it is assumed that
-     * t and p are on the same plane.
-     * @param p the reference point
-     * @param t the triangle
-     * @param result if p is not inside t, the nearest point of t from p
-     * @param dim the dimension of the facet where the reference point lies
-     * @param i the index of the reference point on the facet
-     * @param k the kernel
-     * @return true if p is inside t
-     */
-    bool
-    is_inside_triangle_3(const typename K::Point_3& p,
-                         const typename K::Triangle_3& t,
-                         typename K::Point_3& result,
-                         const K& k) const
-    {
-      typedef typename K::Point_3 Point_3;
-      typedef typename K::Vector_3 Vector_3;
-
-      typename K::Construct_vector_3 vector =
-        k.construct_vector_3_object();
-      typename K::Construct_vertex_3 vertex_on =
-        k.construct_vertex_3_object();
-      typename K::Construct_cross_product_vector_3 cross_product =
-        k.construct_cross_product_vector_3_object();
-
-      const Point_3& t0 = vertex_on(t,0);
-      const Point_3& t1 = vertex_on(t,1);
-      const Point_3& t2 = vertex_on(t,2);
-
-      Vector_3 w = cross_product(vector(t0,t1), vector(t1,t2));
-
-      bool outside = false;
-      if ( is_inside_triangle_3_aux(w, t0, t1, p, result, outside, k) )
-      {
-        return false;
-      }
-      if (is_inside_triangle_3_aux(w, t1, t2, p, result, outside, k) )
-      {
-        return false;
-      }
-      if ( is_inside_triangle_3_aux(w, t2, t0, p, result, outside, k) )
-      {
-        return false;
-      }
-      if ( outside )
-      {
-        result = nearest_point_3(p,t0,t1,t2, k);
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-    }
-
-    /**
-    * @brief returns true if p is inside segment s. If p is not inside s,
-    * result is the nearest point of s from p. WARNING: it is assumed that
-    * t and p are on the same line.
-    * @param query the query point
-    * @param s the segment
-    * @param closest_point_on_segment if query is not inside s, the nearest point of s from p
-    * @param k the kernel
-    * @return true if p is inside s
-    */
-    bool
-    is_inside_segment_3(const typename K::Point_3& query,
-                        const typename K::Segment_3 & s,
-                        typename K::Point_3& closest_point_on_segment,
-                        const K& k) const
-    {
-      typename K::Construct_vector_3 vector =
-        k.construct_vector_3_object();
-      typename K::Construct_vertex_3 vertex_on =
-        k.construct_vertex_3_object();
-      typename K::Compute_scalar_product_3 scalar_product =
-        k.compute_scalar_product_3_object();
-
-      typedef typename K::FT FT;
-      typedef typename K::Point_3 Point;
-
-      const Point& a = vertex_on(s, 0);
-      const Point& b = vertex_on(s, 1);
-      if( scalar_product(vector(a,b), vector(a, query)) < FT(0) )
-      {
-        closest_point_on_segment = a;
-        return false;
-      }
-      if( scalar_product(vector(b,a), vector(b, query)) < FT(0) )
-      {
-        closest_point_on_segment = b;
-        return false;
-      }
-      
-      // query is on segment
-      return true;
-    }
-  
-  public:
-    typename K::Point_3
-    operator()(const typename K::Point_3& origin,
-               const typename K::Triangle_3& triangle,
-               const K& k) const
-    {
-      typename K::Point_3 res;
-
-      typedef typename K::Point_3 Point_3;
-
-      typename K::Construct_supporting_plane_3 supporting_plane =
-        k.construct_supporting_plane_3_object();
-      typename K::Construct_projected_point_3 projection =
-        k.construct_projected_point_3_object();
-      typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
-
-      if(is_degenerate(triangle)) {
-        // If the triangle is degenerate, try to find to which segment it is equivalent.
-        typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
-        typename K::Construct_vector_3 vector = k.construct_vector_3_object();
-        typename K::Compute_x_3 x = k.compute_x_3_object();
-        typename K::Compute_y_3 y = k.compute_y_3_object();
-        typename K::Compute_z_3 z = k.compute_z_3_object();
-        typedef typename K::FT FT;
-        typedef typename K::Vector_3 Vector_3;
-
-        const Point_3& a = vertex(triangle, 0);
-        const Point_3& b = vertex(triangle, 1);
-        const Point_3& c = vertex(triangle, 2);
-        const Vector_3 ab = vector(a, b);
-        const Vector_3 ac = vector(a, c);
-        const Vector_3 bc = vector(b, c);
-        const FT linf_ab = (std::max)((std::max)(x(ab), y(ab)), z(ab));
-        const FT linf_ac = (std::max)((std::max)(x(ac), y(ac)), z(ac));
-        const FT linf_bc = (std::max)((std::max)(x(bc), y(bc)), z(bc));
-
-        typename K::Construct_segment_3 seg = k.construct_segment_3_object();
-        if(linf_ab > linf_ac) {
-          if(linf_ab > linf_bc) {
-            // ab is the maximal segment
-            res = this->operator()(origin, seg(a, b), k);
-            return res;
-          } else {
-            // ab > ac, bc >= ab, use bc
-            res = this->operator()(origin, seg(b, c), k);
-            return res;
-          }
-        } else { // ab <= ac
-          if(linf_ac > linf_bc) {
-            // ac is the maximal segment
-            res = this->operator()(origin, seg(a, c), k);
-            return res;
-          } else {
-            // ab <= ac, ac <= bc, use bc
-            res = this->operator()(origin, seg(b, c), k);
-            return res;
-          }
-        }
-      } // degenerate triangle
-
-      const typename K::Plane_3 plane = supporting_plane(triangle);
-
-      // Project origin on triangle supporting plane
-      const Point_3 proj = projection(plane, origin);
-
-
-      Point_3 moved_point;
-      bool inside = is_inside_triangle_3(proj,triangle,moved_point, k);
-      // If proj is inside triangle, return it
-      if ( inside )
-      {
-        return proj;
-      }
-
-      // Else return the constructed point
-      return moved_point;
-    }
-
-    typename K::Point_3
-    operator()(const typename K::Point_3& query,
-               const typename K::Segment_3& segment,
-               const K& k) const
-    {
-      typename K::Point_3 res;
-      typedef typename K::Point_3 Point_3;
-
-      typename K::Construct_projected_point_3 projection =
-          k.construct_projected_point_3_object();
-      typename K::Is_degenerate_3 is_degenerate =
-          k.is_degenerate_3_object();
-      typename K::Construct_vertex_3 vertex =
-          k.construct_vertex_3_object();
-
-      if(is_degenerate(segment)){
-        return vertex(segment, 0);
-      }
-      // Project query on segment supporting line
-      const Point_3 proj = projection(segment.supporting_line(), query);
-
-      Point_3 closest_point_on_segment;
-
-      bool inside = is_inside_segment_3(proj,segment, closest_point_on_segment, k);
-
-      // If proj is inside segment, returns it
-      if ( inside ){
-        return proj;
-      }
-
-      // Else returns the constructed point
-      return closest_point_on_segment;
-    }
-
-
-    // code for operator for plane and point is defined in
-    // CGAL/Cartesian/function_objects.h and CGAL/Homogeneous/function_objects.h
-  };
-
-
-
-
-
-  template <typename K>
-  class Construct_projected_point_and_location_3
-  {
-    bool
-    is_inside_triangle_3_aux(const typename K::Vector_3& w,
-                             const typename K::Point_3& p1,
-                             const typename K::Point_3& p2,
-                             const typename K::Point_3& q,
-                             typename K::Point_3& result,
-                             bool& outside,
-                             const K& k) const
-    {
-      typedef typename K::Vector_3 Vector_3;
-      typedef typename K::FT FT;
-
-      typename K::Construct_vector_3 vector =
-        k.construct_vector_3_object();
-      typename K::Construct_projected_point_3 projection =
-        k.construct_projected_point_3_object();
-      typename K::Construct_line_3 line =
-        k.construct_line_3_object();
-      typename K::Compute_scalar_product_3 scalar_product =
-        k.compute_scalar_product_3_object();
-      typename K::Construct_cross_product_vector_3 cross_product =
-        k.construct_cross_product_vector_3_object();
-
-      const Vector_3 v = cross_product(vector(p1,p2), vector(p1,q));
-      if ( scalar_product(v,w) < FT(0))
-      {
-        if (   scalar_product(vector(p1,q), vector(p1,p2)) > FT(0)
-            && scalar_product(vector(p2,q), vector(p2,p1)) > FT(0) )
-        {
-          result = projection(line(p1, p2), q);
-          return true;
-        }
-        outside = true;
-      }
-      
-      return false;
-    }
-
-
-    /**
-     * Returns the nearest point of p1,p2,p3 from origin
-     * @param origin the origin point
-     * @param p1 the first point
-     * @param p2 the second point
-     * @param p3 the third point
+     * @param i the index of the nearest point (0, 1, or 2)
      * @param k the kernel
      * @return the nearest point from origin
      */
@@ -2834,6 +2533,18 @@ public:
       return p3;
     }
 
+    /**
+     * @brief returns true if p is inside triangle t. If p is not inside t,
+     * result is the nearest point of t from p. WARNING: it is assumed that
+     * t and p are on the same plane.
+     * @param p the reference point
+     * @param t the triangle
+     * @param result if p is not inside t, the nearest point of t from p
+     * @param dim the dimension of the facet where the reference point lies
+     * @param i the index of the reference point on the facet
+     * @param k the kernel
+     * @return true if p is inside t
+     */
     /**
      * @brief returns true if p is inside triangle t. If p is not inside t,
      * result is the nearest point of t from p. WARNING: it is assumed that
@@ -2952,13 +2663,9 @@ public:
       dim = 1;
       return true;
     }
-  
-  public:
-    
-    typedef Projected_point_and_location<typename K::Point_3> result_type;
-
+  protected:
     Projected_point_and_location<typename K::Point_3>
-    operator()(const typename K::Point_3& origin,
+    projection_on_triangle_impl(const typename K::Point_3& query,
                const typename K::Triangle_3& triangle,
                const K& k) const
     {
@@ -2996,21 +2703,21 @@ public:
         if(linf_ab > linf_ac) {
           if(linf_ab > linf_bc) {
             // ab is the maximal segment
-            res = this->operator()(origin, seg(a, b),  k);
+            res = projection_on_segment_impl(query, seg(a, b),  k);
             return res;
           } else {
             // ab > ac, bc >= ab, use bc
-            res = this->operator()(origin, seg(b, c), k);
+            res = projection_on_segment_impl(query, seg(b, c), k);
             return res;
           }
         } else { // ab <= ac
           if(linf_ac > linf_bc) {
             // ac is the maximal segment
-            res = this->operator()(origin, seg(a, c), k);
+            res = projection_on_segment_impl(query, seg(a, c), k);
             return res;
           } else {
             // ab <= ac, ac <= bc, use bc
-            res = this->operator()(origin, seg(b, c), k);
+            res = projection_on_segment_impl(query, seg(b, c), k);
             return res;
           }
         }
@@ -3018,8 +2725,8 @@ public:
 
       const typename K::Plane_3 plane = supporting_plane(triangle);
 
-      // Project origin on triangle supporting plane
-      const Point_3 proj = projection(plane, origin);
+      // Project query on triangle supporting plane
+      const Point_3 proj = projection(plane, query);
 
 
       Point_3 moved_point;
@@ -3036,18 +2743,9 @@ public:
       return res;
     }
 
-    
-    Projected_point_and_location<typename K::Point_3>
-    operator()(const typename K::Triangle_3& triangle,
-               const typename K::Point_3& origin) const
-    {
-      K k;
-      return this->operator()(origin, triangle, k);
-    }
-    
 
     Projected_point_and_location<typename K::Point_3>
-    operator()(const typename K::Point_3& query,
+    projection_on_segment_impl(const typename K::Point_3& query,
                const typename K::Segment_3& segment,
                const K& k) const
     {
@@ -3085,16 +2783,73 @@ public:
       return res;
     }
 
+  public:
+    typename K::Point_3
+    operator()(const typename K::Point_3& query,
+               const typename K::Triangle_3& triangle,
+               const K& k) const
+    {
+      return projection_on_triangle_impl(query, triangle, k).projected_point;
+    }
+
+    typename K::Point_3
+    operator()(const typename K::Point_3& query,
+               const typename K::Segment_3& segment,
+               const K& k) const
+    {
+      return projection_on_segment_impl(query, segment, k).projected_point;
+    }
+
+
+    // code for operator for plane and point is defined in
+    // CGAL/Cartesian/function_objects.h and CGAL/Homogeneous/function_objects.h
+  };
+
+
+  template <typename K>
+  class Construct_projected_point_and_location_3 :
+   Construct_projected_point_3<K>
+  {
+    typedef Construct_projected_point_3<K> Base;
+    using Base::projection_on_triangle_impl;
+    using Base::projection_on_segment_impl;
+
+  public:
+
+    typedef Projected_point_and_location<typename K::Point_3> result_type;
+
+    Projected_point_and_location<typename K::Point_3>
+    operator()(const typename K::Point_3& query,
+               const typename K::Triangle_3& triangle,
+               const K& k) const
+    {
+      return projection_on_triangle_impl(query, triangle, k);
+    }
+
+
+    Projected_point_and_location<typename K::Point_3>
+    operator()(const typename K::Point_3& query,
+               const typename K::Segment_3& segment,
+               const K& k) const
+    {
+      return projection_on_segment_impl(query, segment, k);
+    }
+
+    Projected_point_and_location<typename K::Point_3>
+    operator()(const typename K::Triangle_3& triangle,
+               const typename K::Point_3& origin) const
+    {
+      K k;
+      return this->operator()(origin, triangle, k);
+    }
 
     Projected_point_and_location<typename K::Point_3>
     operator()(const typename K::Segment_3& segment,
-               const typename K::Point_3& query) const
+               const typename K::Point_3& origin) const
     {
       K k;
-      return this->operator()(query, segment, k);  
+      return this->operator()(origin, segment, k);
     }
-    
-
   };
 
 
