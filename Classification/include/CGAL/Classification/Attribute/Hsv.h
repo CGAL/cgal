@@ -71,8 +71,16 @@ class Hsv : public Attribute_base
 {
   typedef typename Classification::RGB_Color RGB_Color;
   typedef typename Classification::HSV_Color HSV_Color;
-  
+
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
   std::vector<double> color_attribute;
+#else
+  const PointRange& input;
+  ColorMap color_map;
+  std::size_t channel;
+  double mean;
+  double sd;
+#endif  
   std::string m_name;
   
 public:
@@ -92,8 +100,15 @@ public:
        ColorMap color_map,
        std::size_t channel,
        double mean, double sd)
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+    : input(input), color_map(color_map), channel(channel), mean(mean), sd(sd)
+#endif
   {
     this->set_weight(1.);
+
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+    std::vector<double> color_attribute;
+#endif
     for(std::size_t i = 0; i < input.size();i++)
       {
         HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
@@ -112,7 +127,12 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
     return color_attribute[pt_index];
+#else
+    HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+pt_index)));
+    return std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd));
+#endif
   }
 
   virtual std::string name() { return m_name; }

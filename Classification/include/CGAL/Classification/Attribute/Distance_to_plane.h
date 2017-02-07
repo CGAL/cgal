@@ -55,8 +55,13 @@ class Distance_to_plane : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
   std::vector<double> distance_to_plane_attribute;
+#else
+  const PointRange& input;
+  PointMap point_map;
+  const Local_eigen_analysis& eigen;
+#endif
   
 public:
   /*!
@@ -69,8 +74,15 @@ public:
   Distance_to_plane (const PointRange& input,
                      PointMap point_map,
                      const Local_eigen_analysis& eigen)
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+    : input(input), point_map(point_map), eigen(eigen)
+#endif
   {
     this->set_weight(1.);
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+    std::vector<double> distance_to_plane_attribute;
+#endif
+    
     for(std::size_t i = 0; i < input.size(); i++)
       distance_to_plane_attribute.push_back
         (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane(i))));
@@ -82,7 +94,12 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
     return distance_to_plane_attribute[pt_index];
+#else
+    return CGAL::sqrt (CGAL::squared_distance
+                       (get(point_map, *(input.begin()+pt_index)), eigen.plane(pt_index)));
+#endif
   }
 
   virtual std::string name() { return "distance_to_plane"; }

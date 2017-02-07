@@ -54,6 +54,7 @@ class Verticality : public Attribute_base
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
+
   std::vector<double> verticality_attribute;
   
 public:
