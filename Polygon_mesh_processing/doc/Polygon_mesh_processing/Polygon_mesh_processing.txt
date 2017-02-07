@@ -598,7 +598,7 @@ should be discarded in favour of major connected components.
 
 \subsection CCExample Connected Components Example
 
-The following example shows how to record the connected
+The first example shows how to record the connected
 components of a polygon mesh.
 In particular, we provide an example for the optional parameter \c EdgeConstraintMap,
 a property map that returns information about an edge being a \e constraint or not.
@@ -606,6 +606,12 @@ A \e constraint provides a mean to demarcate the border of a connected component
 the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
+
+The second example shows how to use the class template `Connected_components_graph`
+which enables to treat one or several connected components as a face graph.
+
+\cgalExample{Polygon_mesh_processing/connected_components_graph_example.cpp}
+
 
 \section PMPDistance Approximate Hausdorff Distance
 

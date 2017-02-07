@@ -65,31 +65,32 @@ struct Connected_components_graph
 
     /*!
      * \brief Creates a Connected_components_graph of the connected components of `graph` that are listed in `pids`.
+    typedef unspecified_type Indices;
+
      * \param graph the graph containing the wanted patches.
-     * \param fccmap the property_map that assigns a patch to each face, with
+     * \param fccmap the property_map that assigns a connected component to each face, with
         `boost::graph_traits<Graph>::%face_descriptor` as key type and
         `graph_traits<Graph>::faces_size_type` as value type.
-     * \param pids the indices of the patches of interest.
+     * \param ir the indices of the connected components of interest.
      */
+  template <typename IndexRange>
     Connected_components_graph(const Graph& graph,
-                     FaceComponentMap fccmap,
-                     const boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type>& pids)
-        : _graph(graph), _property_map(fccmap), _patch_indices(pids)
-    {
-    }
+                               FaceComponentMap fccmap,
+                               const IndexRange& ir)
+      : _graph(graph), _property_map(fccmap), _patch_indices(ir.begin(),ir.end())
+    {}
 
     /*!
-     * \brief Creates a Connected_components_graph of the connected component `pid` of `graph`.
+     * \brief Creates a Connected_components_graph of the connected component `id` of `graph`.
      * \param graph the graph containing the wanted patch.
      * \param fccmap the property_map that assigns a patch to each face
-     * \param pid the index of the patch of interest.
+     * \param id the index of the connected component of interest.
      */
     Connected_components_graph(const Graph& graph,
-                     FaceComponentMap fccmap,
-                     typename boost::property_traits<FaceComponentMap>::value_type pid)
+                               FaceComponentMap fccmap,
+                               typename boost::property_traits<FaceComponentMap>::value_type pid)
         : _graph(graph), _property_map(fccmap)
     {
-        _patch_indices = boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type>();
         _patch_indices.insert(pid);
     }
     ///returns the graph of the Connected_components_graph.
@@ -98,10 +99,22 @@ struct Connected_components_graph
     ///returns the property map of the Connected_components_graph.
     FaceComponentMap property_map()const{ return _property_map; }
     ///returns the unordered set of patch ids of the Connected_components_graph.
-    boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> patch_indices()const{ return _patch_indices; }
-    /// Replaces the current unordered set of patches by `pids`
-    void change_patch_id(boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> pids) { _patch_indices = pids;}
+#ifndef DOXYGEN_RUNNING
+    const boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type>& 
+#else
+    Index_range
+#endif
+    indices()const{ return _patch_indices; }
 
+    /// Replaces the current unordered set of patches by `pids`
+    template <typename IndexRange>
+    void set_connected_components(const IndexRange& ir) { _patch_indices = boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type>(ir.begin(), ir.end());}
+
+    void set_connected_component(typename boost::property_traits<FaceComponentMap>::value_type pid) {
+      _patch_indices.clear();
+      _patch_indices.insert(pid);
+    }
+  
     struct Is_simplex_valid
     {
         Is_simplex_valid(const Self* graph)
@@ -194,7 +207,7 @@ bool
 in_CC(const typename boost::graph_traits< Connected_components_graph<Graph, FaceComponentMap> >::face_descriptor f,
          const Connected_components_graph<Graph, FaceComponentMap> & w)
 {
-    return  w.patch_indices().find(boost::get(w.property_map(), f)) != w.patch_indices().end();
+    return  w.indices().find(boost::get(w.property_map(), f)) != w.indices().end();
 }
 
 template <class Graph, typename FaceComponentMap >
@@ -546,8 +559,7 @@ halfedge(typename boost::graph_traits< Connected_components_graph<Graph, FaceCom
 
 
 template <class Graph, typename FaceComponentMap >
-std::pair<typename boost::graph_traits<Connected_components_graph<Graph, FaceComponentMap> >::face_iterator,
-typename boost::graph_traits<Connected_components_graph<Graph, FaceComponentMap> >::face_iterator>
+Iterator_range<typename boost::graph_traits<Connected_components_graph<Graph, FaceComponentMap> >::face_iterator>
 faces(const Connected_components_graph<Graph, FaceComponentMap> & w)
 {
     typedef typename boost::graph_traits<Connected_components_graph<Graph, FaceComponentMap> >::face_iterator face_iterator;
