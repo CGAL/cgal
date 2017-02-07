@@ -228,7 +228,8 @@ void build_infinite_cells(Tr& tr,
     // check the incident cells map for facets who only have one incident cell
     // and build the infinite cell on the opposite side
     typename Incident_cells_map::iterator it = incident_cells_map.begin();
-    for(; it!=incident_cells_map.end(); ++it)
+    typename Incident_cells_map::iterator end = incident_cells_map.end();
+    for(; it != end; ++it)
     {
       if(it->second.size() == 2) // facet already has both its incident cells
         continue;
@@ -259,9 +260,7 @@ void build_infinite_cells(Tr& tr,
 
       // the only finite facet
       it->second.push_back(std::make_pair(opp_c, inf_vert_position_in_opp_c));
-
-      add_infinite_facets_to_incident_cells_map<Tr>(opp_c, inf_vert_position_in_opp_c,
-                                                    incident_cells_map);
+      CGAL_assertion(it->second.size() == 2);
     }
   }
 }
@@ -277,10 +276,6 @@ bool assign_neighbors(Tr& tr,
   typedef std::set<Vertex_handle>                                 Facet;
   typedef std::pair<Cell_handle, int>                             Incident_cell;
   typedef std::map<Facet, std::vector<Incident_cell> >            Incident_cells_map;
-
-  // 4 facets per cell, each facet shared by 2 cells
-  if(incident_cells_map.size() != tr.number_of_cells() * 2)
-    return false;
 
   typename Incident_cells_map::const_iterator icit = incident_cells_map.begin();
   for(; icit!=incident_cells_map.end(); ++icit)
