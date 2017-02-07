@@ -362,7 +362,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   // grab the vertices
   int dim;
-  int nv, nf, ntet;
+  int nv, nf, ntet, ref;
   std::string word;
 
   is >> word >> dim; // MeshVersionFormatted 1
@@ -378,7 +378,7 @@ bool build_triangulation_from_file(std::istream& is,
       for(int i=0; i<nv; ++i)
       {
         double x,y,z;
-        is >> x >> y >> z;
+        is >> x >> y >> z>>ref;
         points.push_back(Point_3(x,y,z));
       }
     }
