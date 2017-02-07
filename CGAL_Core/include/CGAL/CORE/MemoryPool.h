@@ -84,8 +84,6 @@ public:
 #if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
     if(memPool_ptr.get() == NULL) {memPool_ptr.reset(new Self());}
     Self& memPool =  * memPool_ptr.get();
-#else // CGAL_STATIC_THREAD_LOCAL uses C++11 thread_local
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Self, memPool);
 #endif
     return memPool;
   }
@@ -96,14 +94,24 @@ private:
 
 #if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
   static boost::thread_specific_ptr<Self> memPool_ptr;
-#endif
+#elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
+  static thread_local Self memPool;
+#else // not CGAL_HAS_THREADS
+  static Self memPool;
+#endif // not CGAL_HAS_THREADS
 };
 
 #if CGAL_STATIC_THREAD_LOCAL_USE_BOOST
 template <class T, int nObjects >
 boost::thread_specific_ptr<MemoryPool<T, nObjects> >
 MemoryPool<T, nObjects>::memPool_ptr;
-#endif // CGAL_STATIC_THREAD_LOCAL_USE_BOOST
+#else // use C++11 or without CGAL_HAS_THREADS
+template <class T, int nObjects >
+#  ifdef CGAL_HAS_THREADS
+thread_local
+#  endif
+MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
+#endif
 
 template< class T, int nObjects >
 void* MemoryPool< T, nObjects >::allocate(std::size_t) {
