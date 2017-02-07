@@ -90,6 +90,7 @@ namespace CGAL {
 		typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
 
 		typedef typename AABBTraits::Point_location_and_primitive_id Point_location_and_primitive_id;
+		typedef typename AABBTraits::Point_location Point_location;
     /// \deprecated 
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
 
@@ -1271,8 +1272,8 @@ public:
 		const Point_and_primitive_id& hint) const
 	{
 		CGAL_precondition(!empty());
-    using namespace CGAL::internal::AABB_tree;
-    typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
+		using namespace CGAL::internal::AABB_tree;
+		typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
 		Projection_traits<AABBTraits> projection_traits(hint.first,hint.second,m_traits);
 		this->traversal(query, projection_traits);
 		return projection_traits.closest_point_and_primitive();
@@ -1289,6 +1290,7 @@ public:
 		Point_and_primitive_id ppi = best_hint(query);
 		Projected_point_and_location<Point> ppl;
 		ppl.projected_point = ppi.first;
+                ppl.dimension=0;
 		return closest_point_location_and_primitive(query,Point_location_and_primitive_id(ppl,ppi.second));
 	}
 
@@ -1299,8 +1301,8 @@ public:
 			const Point_location_and_primitive_id& hint) const
 	{
 		CGAL_precondition(!empty());
-    using namespace CGAL::internal::AABB_tree;
-    typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
+		using namespace CGAL::internal::AABB_tree;
+		typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
 		Projection_traits_point_and_location<AABBTraits> projection_traits(hint.first,hint.second,m_traits);
 		this->traversal(query, projection_traits);
 		return projection_traits.closest_point_location_and_primitive();

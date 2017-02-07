@@ -211,7 +211,11 @@ public:
 
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
 
-  typedef typename std::pair<Projected_point_and_location<typename GeomTraits::Point_3>, typename Primitive::Id> Point_location_and_primitive_id;
+  class Closest_point;
+
+  typedef typename Closest_point::Point_location Point_location;
+
+  typedef typename std::pair<Point_location, typename Primitive::Id> Point_location_and_primitive_id;
 
   /// `Intersection_and_primitive_id<Query>::%Type::first_type` is found according to
   /// the result type of `GeomTraits::Intersect_3::operator()`,
@@ -388,13 +392,15 @@ public:
 
   Intersection intersection_object() const {return Intersection(*this);}
 
-
-  // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
       typedef typename AT::Point_3 Point;
       typedef typename AT::Primitive Primitive;
     const AABB_traits<GeomTraits,AABBPrimitive>& m_traits;
   public:
+    typedef typename cpp11::result_of<
+      typename Geom_traits::Construct_projected_point_and_location_3(Point)
+        >::type Point_location;
+
     Closest_point(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
       : m_traits(traits) {}
 
@@ -409,16 +415,16 @@ public:
         bound : closest_point;
     }
 
-  Projected_point_and_location<Point>
-  operator()(const Point& p, const Primitive& pr, const Projected_point_and_location<Point>& bound) const
-  {
-    GeomTraits geom_traits;
-    Projected_point_and_location<Point> ppal = geom_traits.construct_projected_point_and_location_3_object()(
-    internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
-    Point closest_point = ppal.projected_point;
+    Point_location
+    operator()(const Point& p, const Primitive& pr, const Point_location& bound) const
+    {
+      GeomTraits geom_traits;
+      Point_location ppal = geom_traits.construct_projected_point_and_location_3_object()(
+      internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
+      Point closest_point = ppal;
 
       return
-        geom_traits.compare_distance_3_object()(p, closest_point, bound.projected_point)==LARGER ?
+        geom_traits.compare_distance_3_object()(p, closest_point, Point_3(bound))==LARGER ?
         bound : ppal;
     }
   };
