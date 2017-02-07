@@ -2647,10 +2647,8 @@ public:
         k.construct_projected_point_3_object();
       typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
 
-      const typename K::Plane_3 plane = supporting_plane(triangle);
-      if(is_degenerate(plane)) {
-        // If the plane is degenerate, then the triangle is degenerate, and
-        // one tries to find to which segment it is equivalent.
+      if(is_degenerate(triangle)) {
+        // If the triangle is degenerate, try to find to which segment it is equivalent.
         typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
         typename K::Construct_vector_3 vector = k.construct_vector_3_object();
         typename K::Compute_x_3 x = k.compute_x_3_object();
@@ -2691,7 +2689,9 @@ public:
             return res;
           }
         }
-      } // degenerate plane
+      } // degenerate triangle
+
+      const typename K::Plane_3 plane = supporting_plane(triangle);
 
       // Project origin on triangle supporting plane
       const Point_3 proj = projection(plane, origin);
@@ -2972,10 +2972,8 @@ public:
         k.construct_projected_point_3_object();
       typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
 
-      const typename K::Plane_3 plane = supporting_plane(triangle);
-      if(is_degenerate(plane)) {
-        // If the plane is degenerate, then the triangle is degenerate, and
-        // one tries to find to which segment it is equivalent.
+      if(is_degenerate(triangle)) {
+        // If the triangle is degenerate, try to find to which segment it is equivalent.
         typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
         typename K::Construct_vector_3 vector = k.construct_vector_3_object();
         typename K::Compute_x_3 x = k.compute_x_3_object();
@@ -3016,7 +3014,9 @@ public:
             return res;
           }
         }
-      } // degenerate plane
+      } // degenerate triangle
+
+      const typename K::Plane_3 plane = supporting_plane(triangle);
 
       // Project origin on triangle supporting plane
       const Point_3 proj = projection(plane, origin);
