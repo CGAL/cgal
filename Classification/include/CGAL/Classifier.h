@@ -38,6 +38,9 @@
 #include <CGAL/Classification/Attribute_base.h>
 #include <CGAL/Classification/Type.h>
 
+#include <CGAL/Memory_sizer.h>
+#include <CGAL/Timer.h>
+
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 
 //#define CGAL_CLASSIFICATION_VERBOSE
@@ -165,7 +168,11 @@ public:
   template <typename Attribute, typename ... T>
   Attribute_handle add_attribute (T&& ... t)
   {
+    CGAL::Timer timer;
+    timer.start();
     m_attributes.push_back (Attribute_handle (new Attribute(m_input, std::forward<T>(t)...)));
+    timer.stop();
+    CGAL_CLASSIFICATION_CERR << m_attributes.back()->name() << " took " << timer.time() << " second(s)" << std::endl;
     return m_attributes.back();
   }
 #else
@@ -476,6 +483,9 @@ public:
       (m_effect_table.size(), std::vector<double>(m_input.size(), 0.));
     std::vector<std::size_t>(m_input.size()).swap(m_assigned_type);
 
+    std::cerr << "Size of probability matrix = " << m_effect_table.size() * m_input.size() << std::endl;
+    std::cerr << "Size of assigned types = " << m_assigned_type.size() << std::endl;
+    
     for (std::size_t s = 0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
@@ -507,6 +517,7 @@ public:
     
     Alpha_expansion graphcut;
     graphcut(edges, edge_weights, probability_matrix, m_assigned_type);
+    std::cerr << ((double)(CGAL::Memory_sizer().virtual_size()) / 1073741824.) << " GB allocated" << std::endl;
   }
   
   /// @}
