@@ -190,7 +190,7 @@ private:
 
 /// @cond CGAL_DOCUMENT_INTERNALS
 
-template<typename>
+template<typename, typename>
 class Property_container;
 /// @endcond 
 
@@ -200,10 +200,7 @@ class Property_container;
 //== CLASS DEFINITION =========================================================
 /// @cond CGAL_DOCUMENT_INTERNALS
 
-template <class, class>
-class Property_map;
-
-template<typename Key>
+template<typename Ref_class, typename Key>
 class Property_container
 {
 public:
@@ -258,26 +255,33 @@ public:
         return names;
     }
 
+    template <typename T>
+    struct Get_pmap_type {
+      typedef typename Ref_class::template Get_property_map<Key, T>::type type;
+    };
+
     template <class T> 
-    std::pair<Property_map<Key, T>,bool>
+    std::pair<typename Get_pmap_type<T>::type, bool>
     get(const std::string& name, std::size_t i) const
     {
+      typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
       if (parrays_[i]->name() == name)
         {
           if (Property_array<T>* array = dynamic_cast<Property_array<T>*>(parrays_[i]))
-            return std::make_pair (Property_map<Key, T>(array), true);
+            return std::make_pair (Pmap(array), true);
         }
-      return std::make_pair(Property_map<Key, T>(), false);
+      return std::make_pair(Pmap(), false);
     }
 
     // add a property with name \c name and default value \c t
     template <class T>
-    std::pair<Property_map<Key, T>, bool>
+    std::pair<typename Get_pmap_type<T>::type, bool>
     add(const std::string& name, const T t=T())
     {
+        typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
         {
-            std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
+            std::pair<Pmap, bool> out = get<T>(name, i);
             if (out.second)
               {
                 out.second = false;
@@ -289,31 +293,32 @@ public:
         Property_array<T>* p = new Property_array<T>(name, t);
         p->resize(size_);
         parrays_.push_back(p);
-        return std::make_pair(Property_map<Key, T>(p), true);
+        return std::make_pair(Pmap(p), true);
     }
 
 
     // get a property by its name. returns invalid property if it does not exist.
     template <class T> 
-    std::pair<Property_map<Key, T>,bool>
+    std::pair<typename Get_pmap_type<T>::type, bool>
     get(const std::string& name) const
     {
+        typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
           {
-            std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
+            std::pair<Pmap, bool> out = get<T>(name, i);
             if (out.second)
               return out;
           }
-        return std::make_pair(Property_map<Key, T>(), false);
+        return std::make_pair(Pmap(), false);
     }
 
 
     // returns a property if it exists, otherwise it creates it first.
     template <class T>
-    Property_map<Key, T> 
+    typename Get_pmap_type<T>::type
     get_or_add(const std::string& name, const T t=T())
     {
-      Property_map<Key, T> p;
+      typename Ref_class::template Get_property_map<Key, T>::type p;
       bool b;
       boost::tie(p,b)= get<T>(name);
         if (!b) p = add<T>(name, t).first;
@@ -335,7 +340,7 @@ public:
     // delete a property
     template <class T> 
     bool
-    remove(Property_map<Key, T>& h)
+    remove(typename Get_pmap_type<T>::type& h)
     {
         typename std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
         for (; it!=end; ++it)
@@ -423,15 +428,15 @@ private:
 ///
 /// \cgalModels `LvaluePropertyMap`
 ///
-template <class I, class T>
-class Property_map
+template <class I, class T, class CRTP_derived_class>
+class Property_map_base
 /// @cond CGAL_DOCUMENT_INTERNALS
   : public boost::put_get_helper< 
            typename Property_array<T>::reference,
-           Property_map< I, T > >
+           CRTP_derived_class>
 /// @endcond
 {
-    typedef void (Property_map::*bool_type)() const;
+    typedef void (Property_map_base::*bool_type)() const;
     void this_type_does_not_support_comparisons() const {}
 public:
     typedef I key_type;
@@ -453,13 +458,13 @@ public:
 #endif
 
 #ifndef DOXYGEN_RUNNING
-    friend class Property_container<I>;
-
+    template <typename Ref_class, typename Key>
+    friend class Property_container;
 #endif
 
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
-    Property_map(Property_array<T>* p=NULL) : parray_(p) {}
+    Property_map_base(Property_array<T>* p=NULL) : parray_(p) {}
 
     void reset()
     {
@@ -477,7 +482,7 @@ public:
 #else
     operator bool_type() const {
         return parray_ != NULL ?
-            &Property_map::this_type_does_not_support_comparisons : 0;
+            &Property_map_base::this_type_does_not_support_comparisons : 0;
     }
 #endif
     /// Access the property associated with the key \c i.
@@ -499,7 +504,7 @@ public:
     const_iterator begin() const { return parray_->begin(); }
     const_iterator end() const { return parray_->end(); }
 
-    bool transfer (const Property_map& other)
+    bool transfer (const Property_map_base& other)
     {
       return parray_->transfer(*(other.parray_));
     }

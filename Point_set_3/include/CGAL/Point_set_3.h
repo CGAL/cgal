@@ -86,15 +86,22 @@ public:
 
   class Index;
 
-  typedef typename Properties::Property_container<Index> Base;
+  typedef typename Properties::Property_container<Point_set, Index> Base;
 
   template <class Type>
   struct Property_map
-    : public Properties::Property_map<Index, Type>
+    : public Properties::Property_map_base<Index, Type, Property_map<Type> >
   {
+    typedef Properties::Property_map_base<Index, Type, Property_map<Type> > Base;
+    Property_map() : Base() {}
+    Property_map(const Base& pm): Base(pm) {}
   };
   typedef Property_map<Index> Index_map;
 
+  template <typename Key, typename T>
+  struct Get_property_map {
+    typedef Property_map<T> type;
+  };
   /// \endcond
   
   /*!
@@ -107,7 +114,7 @@ public:
   {
     /// \cond SKIP_IN_MANUAL
     friend class Point_set_3;
-    friend class Properties::Property_container<Index>;
+    friend class Properties::Property_container<Point_set_3, Index>;
     template <class> friend class Properties::Property_array;
     template <class> friend struct Property_map;
     friend class std::vector<Index>;
@@ -672,7 +679,7 @@ public:
   template <typename T>
   bool has_property_map (const std::string& name) const
   {
-    std::pair<typename Properties::template Property_map<Index, T>, bool>
+    std::pair<Property_map<T>, bool>
       pm = m_base.template get<T> (name);
     return pm.second;
   }
@@ -694,10 +701,10 @@ public:
   std::pair<Property_map<T>, bool>
   add_property_map (const std::string& name, const T t=T())
   {
-    Properties::Property_map<Index,T> pm;
+    Property_map<T> pm;
     bool added = false;
     boost::tie (pm, added) = m_base.template add<T> (name, t);
-    return std::make_pair (reinterpret_cast<Property_map<T>&>(pm), added);
+    return std::make_pair (pm, added);
   }
   
   /*!
@@ -715,10 +722,10 @@ public:
   std::pair<Property_map<T>,bool>
   property_map (const std::string& name) const
   {
-    Properties::Property_map<Index,T> pm;
+    Property_map<T> pm;
     bool okay = false;
     boost::tie (pm, okay) = m_base.template get<T>(name);
-    return std::make_pair (reinterpret_cast<Property_map<T>&>(pm), okay);
+    return std::make_pair (pm, okay);
   }
 
   /*!
@@ -734,7 +741,7 @@ public:
   template <class T> 
   bool remove_property_map (Property_map<T>& prop)
   {
-    return m_base.remove (reinterpret_cast<Properties::Property_map<Index,T>&>(prop));
+    return m_base.template remove<T> (prop);
   }
 
   /*!
@@ -791,7 +798,7 @@ public:
   */
   bool remove_normal_map()
   {
-    return m_base.remove (m_normals);
+    return m_base.template remove<Vector> (m_normals);
   }
   /*!
     \brief Returns the property map of the point property.

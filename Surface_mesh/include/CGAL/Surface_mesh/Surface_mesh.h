@@ -286,25 +286,17 @@ public:
 
 #ifndef DOXYGEN_RUNNING
   template <class I, class T>
-  struct Property_map : Properties::Property_map<I, T>
+  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
   {
-    typedef Properties::Property_map<I, T> Base;
+    typedef Properties::Property_map_base<I, T, Property_map<I, T> > Base;
     typedef typename Base::reference reference;
     Property_map() : Base() {}
     Property_map(const Base& pm): Base(pm) {}
+  };
 
-    friend
-    reference
-    get(const Property_map<I, T>& pa, const I& i) {
-      return pa[i];
-    }
-
-    friend
-    void
-    put(const Property_map<I, T>& pa, I i, const T& t)
-    {
-      pa[i] = t;
-    }
+  template <typename Key, typename T>
+  struct Get_property_map {
+    typedef Property_map<Key, T> type;
   };
 #endif // DOXYGEN_RUNNING
 
@@ -1806,28 +1798,32 @@ private: //--------------------------------------------------- property handling
   struct Property_selector<typename CGAL::Surface_mesh<P>::Vertex_index, dummy> {
     CGAL::Surface_mesh<P>* m_;
     Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
-    Properties::Property_container<typename CGAL::Surface_mesh<P>::Vertex_index>&
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Vertex_index>&
     operator()() { return m_->vprops_; }
   };
   template<bool dummy>
   struct Property_selector<typename CGAL::Surface_mesh<P>::Halfedge_index, dummy> {
     CGAL::Surface_mesh<P>* m_;
     Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
-    Properties::Property_container<typename CGAL::Surface_mesh<P>::Halfedge_index>&
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Halfedge_index>&
     operator()() { return m_->hprops_; }
   };
   template<bool dummy>
   struct Property_selector<typename CGAL::Surface_mesh<P>::Edge_index, dummy> {
     CGAL::Surface_mesh<P>* m_;
     Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
-    Properties::Property_container<typename CGAL::Surface_mesh<P>::Edge_index>&
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Edge_index>&
     operator()() { return m_->eprops_; }
   };
   template<bool dummy>
   struct Property_selector<typename CGAL::Surface_mesh<P>::Face_index, dummy> {
     CGAL::Surface_mesh<P>* m_;
     Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
-    Properties::Property_container<typename CGAL::Surface_mesh<P>::Face_index>&
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Face_index>&
     operator()() { return m_->fprops_; }
   };
 
@@ -1861,7 +1857,7 @@ private: //--------------------------------------------------- property handling
 
   
     template<class I, class T>
-    std::pair<Properties::Property_map<I, T>, bool>
+    std::pair<Property_map<I, T>, bool>
     add_property_map(const std::string& name, const T t=T()) {
       return Property_selector<I>(this)().template add<T>(name, t);
     }
@@ -1872,7 +1868,7 @@ private: //--------------------------------------------------- property handling
     /// In case it does not exist the Boolean is `false` and the behavior of
     /// the property map is undefined.
     template <class I, class T>
-    std::pair<Properties::Property_map<I, T>,bool> property_map(const std::string& name) const
+    std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
     {
       return Property_selector<I>(const_cast<Surface_mesh*>(this))().template get<T>(name);
     }
@@ -1881,9 +1877,9 @@ private: //--------------------------------------------------- property handling
     /// removes property map `p`. The memory allocated for that property map is
     /// freed.
     template<class I, class T>
-    void remove_property_map(Properties::Property_map<I, T>& p)
+    void remove_property_map(Property_map<I, T>& p)
     {
-      (Property_selector<I>(this)()).remove(p);
+      (Property_selector<I>(this)()).template remove<T>(p);
     }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
@@ -1909,10 +1905,10 @@ private: //--------------------------------------------------- property handling
     }
 
     /// returns the property for the string "v:point".
-    Properties::Property_map<Vertex_index, Point>
+    Property_map<Vertex_index, Point>
     points() const { return vpoint_; }
 
-  Properties::Property_map<Vertex_index, Point>&
+    Property_map<Vertex_index, Point>&
     points() { return vpoint_; }
 
     /// returns the point associated to vertex `v`.
@@ -1967,20 +1963,20 @@ private: //--------------------------------------------------- helper functions
     void adjust_incoming_halfedge(Vertex_index v);
 
 private: //------------------------------------------------------- private data
-    Properties::Property_container<Vertex_index> vprops_;
-    Properties::Property_container<Halfedge_index> hprops_;
-    Properties::Property_container<Edge_index> eprops_;
-    Properties::Property_container<Face_index> fprops_;
+    Properties::Property_container<Self, Vertex_index> vprops_;
+    Properties::Property_container<Self, Halfedge_index> hprops_;
+    Properties::Property_container<Self, Edge_index> eprops_;
+    Properties::Property_container<Self, Face_index> fprops_;
 
-    Properties::Property_map<Vertex_index, Vertex_connectivity>      vconn_;
-    Properties::Property_map<Halfedge_index, Halfedge_connectivity>  hconn_;
-    Properties::Property_map<Face_index, Face_connectivity>          fconn_;
+    Property_map<Vertex_index, Vertex_connectivity>      vconn_;
+    Property_map<Halfedge_index, Halfedge_connectivity>  hconn_;
+    Property_map<Face_index, Face_connectivity>          fconn_;
 
-    Properties::Property_map<Vertex_index, bool>  vremoved_;
-    Properties::Property_map<Edge_index, bool>    eremoved_;
-    Properties::Property_map<Face_index, bool>    fremoved_;
+    Property_map<Vertex_index, bool>  vremoved_;
+    Property_map<Edge_index, bool>    eremoved_;
+    Property_map<Face_index, bool>    fremoved_;
 
-    Properties::Property_map<Vertex_index, Point>   vpoint_;
+    Property_map<Vertex_index, Point>   vpoint_;
 
     size_type removed_vertices_;
     size_type removed_edges_;
@@ -2086,8 +2082,8 @@ private: //------------------------------------------------------- private data
     sm.reserve(n,2*f,e);
     P p;
     Vector_3 v;
-    typename Properties::template Property_map<Vertex_index,CGAL::Color> vcolor;
-    typename Properties::template Property_map<Vertex_index,Vector_3> vnormal;
+    typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
+    typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
     bool vcolored = false, v_has_normals = false;
 
     if((off == "NOFF") || (off == "CNOFF")){
@@ -2129,7 +2125,7 @@ private: //------------------------------------------------------- private data
     std::size_t d;
 
     bool fcolored = false;
-    typename Properties::template Property_map<Face_index,CGAL::Color> fcolor;
+    typename Mesh::template Property_map<Face_index,CGAL::Color> fcolor;
 
     for(int i=0; i < f; i++){
       is >> sm_skip_comments;
@@ -2460,9 +2456,9 @@ collect_garbage()
 
 
     // setup index mapping%
-    Properties::Property_map<Vertex_index, Vertex_index>      vmap = add_property_map<Vertex_index, Vertex_index>("v:garbage-collection").first;
-    Properties::Property_map<Halfedge_index, Halfedge_index>  hmap = add_property_map<Halfedge_index, Halfedge_index>("h:garbage-collection").first;
-    Properties::Property_map<Face_index, Face_index>          fmap = add_property_map<Face_index, Face_index>("f:garbage-collection").first;
+    Property_map<Vertex_index, Vertex_index>      vmap = add_property_map<Vertex_index, Vertex_index>("v:garbage-collection").first;
+    Property_map<Halfedge_index, Halfedge_index>  hmap = add_property_map<Halfedge_index, Halfedge_index>("h:garbage-collection").first;
+    Property_map<Face_index, Face_index>          fmap = add_property_map<Face_index, Face_index>("f:garbage-collection").first;
     for (i=0; i<nV; ++i)
         vmap[Vertex_index(i)] = Vertex_index(i);
     for (i=0; i<nH; ++i)
