@@ -284,20 +284,27 @@ bool build_triangulation(Tr& tr,
   Incident_cells_map incident_cells_map;
   std::vector<Vertex_handle> vertex_handle_vector(points.size() + 1); // id to vertex_handle
 
-  CGAL_precondition(!points.empty() && !finite_cells.empty());
+  CGAL_precondition(!points.empty());
+
+  if(finite_cells.empty())
+  {
+    std::cout << "WARNING: No finite cells were provided. Only the points will be loaded."<<std::endl;
+  }
 
   tr.tds().clear(); // not tr.clear() since it calls tr.init() which we don't want
 
   build_vertices<Tr>(tr, points, vertex_handle_vector);
-  build_finite_cells<Tr>(tr, finite_cells, vertex_handle_vector, incident_cells_map, border_facets);
-  build_infinite_cells<Tr>(tr, incident_cells_map);
-  tr.tds().set_dimension(3);
-  if(!assign_neighbors<Tr>(tr, incident_cells_map))
-    return false;
-
-  std::cout << "built triangulation : " << std::endl;
+  if(!finite_cells.empty())
+  {
+    build_finite_cells<Tr>(tr, finite_cells, vertex_handle_vector, incident_cells_map, border_facets);
+    build_infinite_cells<Tr>(tr, incident_cells_map);
+    tr.tds().set_dimension(3);
+    if(!assign_neighbors<Tr>(tr, incident_cells_map))
+      return false;
+    std::cout << "built triangulation : " << std::endl;
+    std::cout << tr.number_of_cells() << " cells" << std::endl;
+  }
   std::cout << tr.number_of_vertices() << " vertices" << std::endl;
-  std::cout << tr.number_of_cells() << " cells" << std::endl;
 
   BOOST_FOREACH(Vertex_handle vh, vertex_handle_vector)
   {
@@ -318,7 +325,6 @@ bool build_triangulation_from_file(std::istream& is,
   typedef typename Tr::Point                                  Point_3;
 
   typedef boost::array<int, 3> Facet; // 3 = id
-  typedef boost::array<int, 4> Tet; // 4 = id
   typedef boost::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
 
   std::vector<Tet_with_ref> finite_cells;
@@ -391,7 +397,10 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
   }
-  CGAL_precondition(!finite_cells.empty());
+  if(finite_cells.empty())
+  {
+    return false;
+  }
 
   bool is_well_built = build_triangulation<Tr, c3t3_loader_failed>(tr, points, finite_cells, border_facets);
   return is_well_built;

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <QMessageBox>
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
@@ -143,6 +144,13 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
         }
         item->c3t3_changed();
         return item;
+      }
+      else if(item->c3t3().triangulation().number_of_finite_cells() == 0)
+      {
+        QMessageBox::warning((QWidget*)NULL, tr("C3t3_io_plugin"),
+                                       tr("No finite cell provided.\n"
+                                          "Nothing to display."),
+                                        QMessageBox::Ok);
       }
     }
 
