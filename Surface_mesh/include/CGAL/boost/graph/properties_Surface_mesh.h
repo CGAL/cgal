@@ -62,8 +62,8 @@ public:
   }
 
 private:
-   typename CGAL::Properties::template Property_map< typename SM::Vertex_index, 
-                                               typename SM::Point > pm_;
+   typename SM::template Property_map< typename SM::Vertex_index,
+                                       typename SM::Point > pm_;
   const SM& sm_;
 };
 
@@ -92,7 +92,7 @@ template <typename Point, typename T>
 struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
-  typedef typename CGAL::Properties:: template Property_map<typename SM::vertex_index,T> type;
+  typedef typename SM:: template Property_map<typename SM::vertex_index,T> type;
   typedef type const_type;
 };
 
@@ -223,9 +223,9 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_point_t >
   typedef CGAL::Surface_mesh<P> SM;
 
   typedef typename
-    CGAL::Properties::template Property_map< typename SM::Vertex_index, 
-                                       P
-                                       > type;
+    SM::template Property_map< typename SM::Vertex_index,
+                               P
+                               > type;
   
   typedef type const_type;
 
@@ -291,7 +291,7 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<Point>& g,
     const Point& point) {
   typedef CGAL::Surface_mesh<Point> SM;
   CGAL_assertion(g.is_valid(x));
-  typename CGAL::Properties::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor, 
+  typename SM::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor,
                     Point> prop = get(p, g);
   prop[x] = point;
 }
