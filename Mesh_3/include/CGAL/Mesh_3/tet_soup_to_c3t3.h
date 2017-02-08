@@ -1,3 +1,27 @@
+// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Mael Rouxel-Labbé, Maxime Gimeno
+//
+//******************************************************************************
+//
+//******************************************************************************
+
 #ifndef CGAL_MESH_3_TET_SOUP_TO_C3T3_H
 #define CGAL_MESH_3_TET_SOUP_TO_C3T3_H
 
@@ -13,8 +37,6 @@
 #include <boost/unordered_map.hpp>
 #include <boost/foreach.hpp>
 
-// The purpose of this file is to rebuild manually a triangulation from a c3t3
-// output file (because generating a new triangulation every time is expensive)
 
 namespace CGAL
 {
@@ -39,15 +61,15 @@ void build_vertices(Tr& tr,
 
 template<class Tr>
 void add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
-                                     std::map<std::set<typename Tr::Vertex_handle>,
+                                     boost::unordered_map<std::set<typename Tr::Vertex_handle>,
                                      std::vector<std::pair<typename Tr::Cell_handle,
                                      int> > >& incident_cells_map)
 {
-  typedef typename Tr::Vertex_handle                            Vertex_handle;
-  typedef typename Tr::Cell_handle                              Cell_handle;
-  typedef std::set<Vertex_handle>                               Facet;
-  typedef std::pair<Cell_handle, int>                           Incident_cell;
-  typedef std::map<Facet, std::vector<Incident_cell> >          Incident_cells_map;
+  typedef typename Tr::Vertex_handle                                Vertex_handle;
+  typedef typename Tr::Cell_handle                                  Cell_handle;
+  typedef std::set<Vertex_handle>                                   Facet;
+  typedef std::pair<Cell_handle, int>                               Incident_cell;
+  typedef boost::unordered_map<Facet, std::vector<Incident_cell> >  Incident_cells_map;
 
   // the opposite vertex of f in c is i
   Facet f;
@@ -73,7 +95,7 @@ template<class Tr>
 void build_finite_cells(Tr& tr,
                         const std::vector<boost::array<int,5> >& finite_cells,
                         const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                        std::map<std::set<typename Tr::Vertex_handle>,
+                        boost::unordered_map<std::set<typename Tr::Vertex_handle>,
                         std::vector<std::pair<typename Tr::Cell_handle,
                         int> > >& incident_cells_map,
                         const std::map<boost::array<int,3>, int>& border_facets)
@@ -102,10 +124,9 @@ void build_finite_cells(Tr& tr,
         vs[2]->point().point(), vs[3]->point().point()) == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
-    c->info() = tet[4]; // the reference encodes the interior/exterior info
+    c->info() = tet[4]; // the cell's info keeps the reference of the tetrahedron
 
-    // the reference must either be -1 for finite interior or > 0 for subdomains
-    CGAL_precondition(tet[4] != 0);
+    CGAL_precondition(tet[4] > 0);
     // assign cells to vertices
     for(int j=0; j<4; ++j)
     {
@@ -168,114 +189,66 @@ void add_infinite_facets_to_incident_cells_map(typename Tr::Cell_handle c,
 
 template<class Tr>
 void build_infinite_cells(Tr& tr,
-                          const std::vector<boost::array<int,4> >& infinite_cells,
-                          const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                          std::map<std::set<typename Tr::Vertex_handle>,
+                          boost::unordered_map<std::set<typename Tr::Vertex_handle>,
                           std::vector<std::pair<typename Tr::Cell_handle,
                           int> > >& incident_cells_map)
 {
-  typedef boost::array<int, 4>                            Tet; // 4 ids
+  typedef typename Tr::Vertex_handle                               Vertex_handle;
+  typedef typename Tr::Cell_handle                                 Cell_handle;
+  typedef std::set<Vertex_handle>                                  Facet;
+  typedef std::pair<Cell_handle, int>                              Incident_cell;
+  typedef boost::unordered_map<Facet, std::vector<Incident_cell> > Incident_cells_map;
 
-  typedef typename Tr::Vertex_handle                      Vertex_handle;
-  typedef typename Tr::Cell_handle                        Cell_handle;
-  typedef std::set<Vertex_handle>                         Facet;
-  typedef std::pair<Cell_handle, int>                     Incident_cell;
-  typedef std::map<Facet, std::vector<Incident_cell> >    Incident_cells_map;
-
-  // build the infinite cells if provided
-  for(std::size_t i=0; i<infinite_cells.size(); ++i)
+  // check the incident cells map for facets who only have one incident cell
+  // and build the infinite cell on the opposite side
+  typename Incident_cells_map::iterator it = incident_cells_map.begin();
+  typename Incident_cells_map::iterator end = incident_cells_map.end();
+  for(; it != end; ++it)
   {
-    const Tet& tet = infinite_cells[i];
+    if(it->second.size() == 2) // facet already has both its incident cells
+      continue;
+    CGAL_assertion(it->second.size() == 1);
 
-    int inf_pos = -1; // position of the infinite vertex
-    boost::array<Vertex_handle, 4> vs;
-    for(int j=0; j<4; ++j)
-    {
-      if(tet[j] == -1)
-      {
-        vs[j] = tr.infinite_vertex();
-        inf_pos = j;
-      }
-      else
-        vs[j] = vertex_handle_vector[tet[j] + 1];
-    }
-    CGAL_precondition(inf_pos != -1);
+    Cell_handle c = it->second[0].first;
+    int i = it->second[0].second;
 
-    Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
+    Cell_handle opp_c;
+    // the infinite cell that we are creating needs to be well oriented...
+    int inf_vert_position_in_opp_c = 0;
+    if(i == 0 || i == 2)
+      opp_c = tr.tds().create_cell(tr.infinite_vertex(),
+                                   c->vertex((i+1)%4),
+                                   c->vertex((i+2)%4),
+                                   c->vertex((i+3)%4));
+    else
+      opp_c = tr.tds().create_cell(tr.infinite_vertex(),
+                                   c->vertex((i+1)%4),
+                                   c->vertex((i+3)%4),
+                                   c->vertex((i+2)%4));
 
-    // could simply be 'if(!i)', but this is clearer
+    // set the infinite_vertex's incident cell
     if(tr.infinite_vertex()->cell() == Cell_handle())
-      tr.infinite_vertex()->set_cell(c);
+      tr.infinite_vertex()->set_cell(opp_c);
 
-    // add the cell to the incident cells map
-    Facet f;
-    for(int j=1; j<=3; ++j)
-      f.insert(vertex_handle_vector[tet[(inf_pos + j) % 4] + 1]);
+    // add the facets to the incident cells map
 
-    // we're adding infinite cells, and have already inserted the finite cells
-    // in the map, so there has to be an entry in the map for this face already
-    typename Incident_cells_map::iterator it = incident_cells_map.find(f);
-    CGAL_assertion(it != incident_cells_map.end());
-    (it->second).push_back(std::make_pair(c, inf_pos));
-
-    // the three infinite facets
-    add_infinite_facets_to_incident_cells_map<Tr>(c, inf_pos, incident_cells_map);
-  }
-
-  // manually build the infinite cells if they were not provided
-  if(infinite_cells.empty())
-  {
-    // check the incident cells map for facets who only have one incident cell
-    // and build the infinite cell on the opposite side
-    typename Incident_cells_map::iterator it = incident_cells_map.begin();
-    typename Incident_cells_map::iterator end = incident_cells_map.end();
-    for(; it != end; ++it)
-    {
-      if(it->second.size() == 2) // facet already has both its incident cells
-        continue;
-      CGAL_assertion(it->second.size() == 1);
-
-      Cell_handle c = it->second[0].first;
-      int i = it->second[0].second;
-
-      Cell_handle opp_c;
-      // the infinite cell that we are creating needs to be well oriented...
-      int inf_vert_position_in_opp_c = 0;
-      if(i == 0 || i == 2)
-        opp_c = tr.tds().create_cell(tr.infinite_vertex(),
-                                     c->vertex((i+1)%4),
-                                     c->vertex((i+2)%4),
-                                     c->vertex((i+3)%4));
-      else
-        opp_c = tr.tds().create_cell(tr.infinite_vertex(),
-                                     c->vertex((i+1)%4),
-                                     c->vertex((i+3)%4),
-                                     c->vertex((i+2)%4));
-
-      // set the infinite_vertex's incident cell
-      if(tr.infinite_vertex()->cell() == Cell_handle())
-        tr.infinite_vertex()->set_cell(opp_c);
-
-      // add the facets to the incident cells map
-
-      // the only finite facet
-      it->second.push_back(std::make_pair(opp_c, inf_vert_position_in_opp_c));
-      CGAL_assertion(it->second.size() == 2);
-    }
+    // the only finite facet
+    it->second.push_back(std::make_pair(opp_c, inf_vert_position_in_opp_c));
+    CGAL_assertion(it->second.size() == 2);
   }
 }
 
 template<class Tr>
 bool assign_neighbors(Tr& tr,
-                      const std::map<std::set<typename Tr::Vertex_handle>,
+                      const boost::unordered_map<std::set<typename Tr::Vertex_handle>,
                       std::vector<std::pair<typename Tr::Cell_handle,
                       int> > >& incident_cells_map)
 {
-  typedef typename Tr::Vertex_handle                              Vertex_handle;
-  typedef typename Tr::Cell_handle                                Cell_handle;
-  typedef std::set<Vertex_handle>                                 Facet;
-  typedef std::pair<Cell_handle, int>                             Incident_cell;
-  typedef std::map<Facet, std::vector<Incident_cell> >            Incident_cells_map;
+  typedef typename Tr::Vertex_handle                                 Vertex_handle;
+  typedef typename Tr::Cell_handle                                   Cell_handle;
+  typedef std::set<Vertex_handle>                                    Facet;
+  typedef std::pair<Cell_handle, int>                                Incident_cell;
+  typedef boost::unordered_map<Facet, std::vector<Incident_cell> >  Incident_cells_map;
 
   typename Incident_cells_map::const_iterator icit = incident_cells_map.begin();
   for(; icit!=incident_cells_map.end(); ++icit)
@@ -298,7 +271,6 @@ template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation(Tr& tr,
                          const std::vector<typename Tr::Point>& points,
                          const std::vector<boost::array<int,5> >& finite_cells,
-                         const std::vector<boost::array<int,4> >& infinite_cells,
                          const std::map<boost::array<int,3>, int>& border_facets)
 {
   typedef typename Tr::Vertex_handle            Vertex_handle;
@@ -307,7 +279,7 @@ bool build_triangulation(Tr& tr,
 
   // associate to a face the two (at most) incident tets and the id of the face in the cell
   typedef std::pair<Cell_handle, int>                   Incident_cell;
-  typedef std::map<Facet, std::vector<Incident_cell> >  Incident_cells_map;
+  typedef boost::unordered_map<Facet, std::vector<Incident_cell> >  Incident_cells_map;
 
   Incident_cells_map incident_cells_map;
   std::vector<Vertex_handle> vertex_handle_vector(points.size() + 1); // id to vertex_handle
@@ -318,7 +290,7 @@ bool build_triangulation(Tr& tr,
 
   build_vertices<Tr>(tr, points, vertex_handle_vector);
   build_finite_cells<Tr>(tr, finite_cells, vertex_handle_vector, incident_cells_map, border_facets);
-  build_infinite_cells<Tr>(tr, infinite_cells, vertex_handle_vector, incident_cells_map);
+  build_infinite_cells<Tr>(tr, incident_cells_map);
   tr.tds().set_dimension(3);
   if(!assign_neighbors<Tr>(tr, incident_cells_map))
     return false;
@@ -349,9 +321,7 @@ bool build_triangulation_from_file(std::istream& is,
   typedef boost::array<int, 4> Tet; // 4 = id
   typedef boost::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
 
-  std::size_t finite_exterior_cells_counter = 0;
   std::vector<Tet_with_ref> finite_cells;
-  std::vector<Tet> infinite_cells;
   std::vector<Point_3> points;
   std::map<Facet, int> border_facets;
 
@@ -385,7 +355,6 @@ bool build_triangulation_from_file(std::istream& is,
       {
         int n1, n2, n3, surface_patch_id;
         is >> n1 >> n2 >> n3 >> surface_patch_id;
-        // no use for boundary facets for now...
         Facet facet;
         facet[0] =n1 -1;
         facet[1] =n2 -1;
@@ -422,18 +391,9 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
   }
-
-
-
-  if(!finite_exterior_cells_counter)
-  {
-    // The finite interior cells MUST be the convex hulls of the point
-    std::cerr << "WARNING: no finite exterior cell provided..." << std::endl;
-  }
-
   CGAL_precondition(!finite_cells.empty());
 
-  bool is_well_built = build_triangulation<Tr, c3t3_loader_failed>(tr, points, finite_cells, infinite_cells, border_facets);
+  bool is_well_built = build_triangulation<Tr, c3t3_loader_failed>(tr, points, finite_cells, border_facets);
   return is_well_built;
 }
 
