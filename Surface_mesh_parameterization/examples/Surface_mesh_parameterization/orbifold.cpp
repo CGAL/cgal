@@ -108,9 +108,9 @@ int main(int argc, char * argv[])
   // Mark the cones in the seam mesh
   typedef boost::unordered_map<vertex_descriptor, SMP::Cone_type>  Cones;
   Cones cmap;
-  bool locate_status = SMP::internal::locate_cones<Mesh,
-                                                   Cones_in_smesh_container,
-                                                   Cones>(mesh, cone_sm_vds, cmap);
+  SMP::internal::locate_cones<Mesh,
+                              Cones_in_smesh_container,
+                              Cones>(mesh, cone_sm_vds, cmap);
 
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that uv values
