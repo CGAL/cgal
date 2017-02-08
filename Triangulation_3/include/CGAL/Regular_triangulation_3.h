@@ -26,21 +26,112 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
-
 #include <CGAL/basic.h>
+#include <CGAL/Regular_traits_adaptor.h>
 
 #include <set>
 
+namespace CGAL {
 template < typename K_ >
 struct Weighted_point_mapper_3 
   :   public K_ 
 {
   typedef typename K_::Weighted_point_3 Point_3;
+  typedef typename K_::Construct_point_3 Construct_point_3_base;
+  typedef typename K_::Compare_xyz_3 Compare_xyz_3_base;
+  typedef typename K_::Less_x_3 Less_x_3_base;
+  typedef typename K_::Less_y_3 Less_y_3_base;
+  typedef typename K_::Less_z_3 Less_z_3_base;
+  typedef typename K_::Orientation_3 Orientation_3_base;
+  typedef typename K_::Construct_segment_3 Construct_segment_3_base;
+  typedef typename K_::Construct_plane_3 Construct_plane_3_base;
+  typedef typename K_::Coplanar_orientation_3 Coplanar_orientation_3_base;
+  //  typedef typename K_::_3 _base;
+
+  Construct_point_3_base cp;
 
   Weighted_point_mapper_3() {}
-  Weighted_point_mapper_3(const K_& k) : K_(k) {}
+  Weighted_point_mapper_3(const K_& k) 
+    : K_(k), cp(k.construct_point_3_object())
+  {}
+    
+    
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Less_x_3_base > Less_x_3;
+    
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Less_y_3_base > Less_y_3;
+    
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Less_z_3_base > Less_z_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Compare_xyz_3_base > Compare_xyz_3;
+  
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Orientation_3_base > Orientation_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Construct_plane_3_base > Construct_plane_3;
+ 
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Coplanar_orientation_3_base > Coplanar_orientation_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Construct_segment_3_base > Construct_segment_3;
+
+  Less_x_3 less_x_3_object() const
+  {
+    return  Less_x_3(cp, static_cast<const K_&>(*this).less_x_3_object());
+  }
+
+  Less_y_3 less_y_3_object() const
+  {
+    return  Less_y_3(cp, static_cast<const K_&>(*this).less_y_3_object());
+  }
+
+  Less_z_3 less_z_3_object() const
+  {
+    return  Less_z_3(cp, static_cast<const K_&>(*this).less_z_3_object());
+  }
+
+  Compare_xyz_3 compare_xyz_3_object() const
+  {
+    return  Compare_xyz_3(cp, static_cast<const K_&>(*this).compare_xyz_3_object());
+  }
+
+
+  Orientation_3 orientation_3_object() const
+  {
+    return  Orientation_3(cp, static_cast<const K_&>(*this).orientation_3_object());
+  }
+
+
+  Construct_segment_3 construct_segment_3_object() const
+  {
+    return  Construct_segment_3(cp, static_cast<const K_&>(*this).construct_segment_3_object());
+  }
+
+  Construct_plane_3 construct_plane_3_object() const
+  {
+    return  Construct_plane_3(cp, static_cast<const K_&>(*this).construct_plane_3_object());
+  }
+
+  Coplanar_orientation_3 coplanar_orientation_3_object() const
+  {
+    return  Coplanar_orientation_3(cp, static_cast<const K_&>(*this).coplanar_orientation_3_object());
+  }
 };
 
+} // nmamespace CGAL
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
@@ -922,7 +1013,7 @@ namespace CGAL {
     }
 
     Plane
-      construct_plane(const Bare_point &p, const Bare_point &q, const Bare_point &r) const
+      construct_plane(const Weighted_point &p, const Weighted_point &q, const Weighted_point &r) const
     {
       return geom_traits().construct_plane_3_object()(p, q, r);
     }
