@@ -1045,11 +1045,6 @@ void MainWindow::open(QString filename)
           qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
   if(group)
     scene->redraw_model();
-
-  if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
-  else
-    sceneView->resizeColumnToContents(Scene::NameColumn);
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
@@ -1222,7 +1217,6 @@ void MainWindow::selectionChanged()
             this, SLOT(updateInfo()));
   }
   viewer->update();
-  resetHeader();
 }
 
 void MainWindow::contextMenuRequested(const QPoint& global_pos) {
@@ -1345,7 +1339,6 @@ void MainWindow::updateDisplayInfo() {
   else 
     ui->displayLabel->clear();
 
-  resetHeader();
 }
 
 void MainWindow::readSettings()
@@ -1794,10 +1787,6 @@ void MainWindow::makeNewGroup()
 {
     Scene_group_item * group = new Scene_group_item();
     scene->addItem(group);
-    if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-      sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
-    else
-      sceneView->resizeColumnToContents(Scene::NameColumn);
 }
 
 void MainWindow::on_upButton_pressed()
@@ -1942,19 +1931,17 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
 
 void MainWindow::resetHeader()
 {
+  sceneView->header()->setStretchLastSection(false);
   scene->invisibleRootItem()->setColumnCount(5);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Interactive);
+  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
-  else
-    sceneView->resizeColumnToContents(Scene::NameColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
-
 }
+
+
