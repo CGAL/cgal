@@ -86,20 +86,16 @@ public:
     //  return map[target(hd, mesh.mesh())];
     //}
 
-  inline friend reference get(const Self& pm, key_type k)
+  inline friend reference get(const Self& pm, key_type vd)
   {
-    return get(pm.map, k);
+    typename boost::graph_traits<TM>::halfedge_descriptor hd = vd;
+    return get(pm.map, target(hd, pm.mesh.mesh()));
   }
 
-  inline friend void put(const Self& pm, key_type k, const value_type& v)
+  inline friend void put(const Self& pm, key_type vd, const value_type& uv)
   {
-    typedef typename boost::graph_traits<typename Self::Mesh>::halfedge_descriptor halfedge_descriptor;
-    BOOST_FOREACH(halfedge_descriptor hd,
-                  halfedges_around_target(halfedge(k, pm.mesh), pm.mesh)){
-      if(!hd.seam){
-        put(pm.map, target(hd, pm.mesh), v);
-      }
-    }
+    typename boost::graph_traits<TM>::halfedge_descriptor hd = vd;
+    put(pm.map, target(hd, pm.mesh.mesh()), uv);
   }
 
 private:
