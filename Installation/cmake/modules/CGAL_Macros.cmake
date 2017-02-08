@@ -279,7 +279,10 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
-      # Nothing to add for Core
+      if (${component} STREQUAL "Core")
+        find_package( Boost 1.48 REQUIRED thread system )
+        add_to_list( CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
+      endif()
 
       if (${component} STREQUAL "ImageIO")
         find_package( ZLIB QUIET )

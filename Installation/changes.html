@@ -147,6 +147,9 @@ and <code>src/</code> directories).
         valid commercial license for the packages they used. This can also be used
         to make sure only LGPL header files are used.
     </li>
+    <li>Because of a bug in the g++ compiler about the C++11
+    keyword <code>thread_local</code>, the CGAL_Core library now always
+    requires <code>Boost.Thread</code> if the g++ compiler is used.</li>
   </ul>
 
 <!-- New packages -->

@@ -299,7 +299,7 @@ We next list the libraries and essential 3rd party software
 
 | Library   | CMake Variable | Functionality | Dependencies |
 | :-------- | :------------- | :------------ | :----------- |
-| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keywords `threadlocal` and the class `mutex` |
+| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keywords `thread_local` and the class `std::mutex` |
 | `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional) |
 | `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 and \sc{OpenGL} |
@@ -372,7 +372,11 @@ installed as binaries.
 \cgal requires the \sc{Boost} libraries. In particular the header files
 and the threading library (`Boost.Thread` and
 `Boost.System` binaries). Version 1.48 (or higher) are needed
-for compilers not supporting the keywords `threadlocal` and the class `mutex` (This is supported for \gcc 4.8 and later when using the \cpp 11 standard, and for Visual C++ starting with 2015, that is VC14).
+for compilers not supporting the keyword `thread_local` and the class `std::mutex` (This is supported for \gcc 4.8 and later when using the \cpp 11 standard, and for Visual C++ starting with 2015, that is VC14).
+
+As an exception, because of a bug in the \gcc compiler about the \cpp 11
+keyword `thread_local`, the `CGAL_Core` library always requires
+`Boost.Thread` if the \gcc compiler is used.
 
 On Windows, as auto-linking is used, you also need the binaries of
 `Boost.Serialization` and `Boost.DateTime`, but the
