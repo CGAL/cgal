@@ -670,6 +670,10 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
     Face_handle f2 = tds.create_face(v3,v2,v1);
     Face_handle f3 = tds.create_face(v3,v0,v2);
     tds.set_dimension(2);
+    v0->set_face(f0);
+    v1->set_face(f0);
+    v2->set_face(f0);
+    v3->set_face(f1);
     f0->set_neighbors(f2, f3, f1);
     f1->set_neighbors(f0, f3, f2);
     f2->set_neighbors(f0, f1, f3);

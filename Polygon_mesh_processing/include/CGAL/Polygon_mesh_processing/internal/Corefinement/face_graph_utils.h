@@ -30,99 +30,9 @@
 #include <boost/type_traits/remove_reference.hpp>
 #include <fstream>
 #include <sstream>
-
+#include <set>
 namespace CGAL {
 namespace Corefinement {
-
-// matches read-write property maps
-template <class PolygonMesh, class FaceIndexMap, class Tag>
-void init_face_indices(PolygonMesh& pm,
-                       FaceIndexMap& fid,
-                       boost::read_write_property_map_tag,
-                       Tag)
-{
-  typename boost::property_traits<FaceIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
-                faces(pm))
-  {
-    put(fid, fd, i);
-    ++i;
-  }
-}
-template <class PolygonMesh, class VertexIndexMap, class Tag>
-void init_vertex_indices(PolygonMesh& pm,
-                         VertexIndexMap& vid,
-                         boost::read_write_property_map_tag,
-                         Tag)
-{
-  typename boost::property_traits<VertexIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
-                vertices(pm))
-  {
-    put(vid, vd, i);
-    ++i;
-  }
-}
-
-// matches mutable Lvalue property maps
-template <class PolygonMesh, class FaceIndexMap>
-void init_face_indices(PolygonMesh& pm,
-                       FaceIndexMap& fid,
-                       boost::lvalue_property_map_tag,
-                       boost::false_type)
-{
-  typename boost::property_traits<FaceIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
-                faces(pm))
-  {
-    put(fid, fd, i);
-    ++i;
-  }
-}
-template <class PolygonMesh, class VertexIndexMap>
-void init_vertex_indices(PolygonMesh& pm,
-                         VertexIndexMap& vid,
-                         boost::lvalue_property_map_tag,
-                         boost::false_type)
-{
-  typename boost::property_traits<VertexIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
-                vertices(pm))
-  {
-    put(vid, vd, i);
-    ++i;
-  }
-}
-
-// matches all other types of property map
-template <class PolygonMesh, class FaceIndexMap, class MapTag, class Tag>
-void init_face_indices(PolygonMesh&, FaceIndexMap, MapTag, Tag)
-{}
-template <class PolygonMesh, class VertexIndexMap, class MapTag, class Tag>
-void init_vertex_indices(PolygonMesh&, VertexIndexMap, MapTag, Tag)
-{}
-
-template <class PolygonMesh, class FaceIndexMap>
-void init_face_indices(PolygonMesh& pm, FaceIndexMap& fid)
-{
-  init_face_indices(pm, fid,
-                    typename boost::property_traits<FaceIndexMap>::category(),
-                    typename boost::is_const<
-                      typename boost::remove_reference<
-                        typename boost::property_traits<FaceIndexMap>::reference
-                            >::type >::type() );
-}
-
-template <class PolygonMesh, class VertexIndexMap>
-void init_vertex_indices(PolygonMesh& pm, VertexIndexMap& vid)
-{
-  init_vertex_indices(pm, vid,
-                      typename boost::property_traits<VertexIndexMap>::category(),
-                      typename boost::is_const<
-                        typename boost::remove_reference<
-                          typename boost::property_traits<VertexIndexMap>::reference
-                            >::type >::type() );
-}
 
 template <typename G>
 struct No_mark
@@ -357,41 +267,6 @@ triangulate_a_face(
     else
       break;
   }
-}
-
-
-template <class KeyMap, class ValueMap>
-struct Map_binder{
-  typedef typename boost::property_traits<KeyMap>::key_type key_type;
-  typedef typename boost::property_traits<ValueMap>::value_type value_type;
-  typedef typename boost::property_traits<ValueMap>::reference reference;
-  typedef boost::read_write_property_map_tag category;
-
-  KeyMap key_map;
-  ValueMap value_map;
-
-  Map_binder(const KeyMap& key_map, const ValueMap& value_map)
-    : key_map(key_map)
-    , value_map(value_map)
-  {}
-
-  friend
-  reference get(const Map_binder& map, key_type k)
-  {
-    return get(map.value_map, get(map.key_map,k));
-  }
-  friend
-  void put(const Map_binder& map, key_type k, const value_type& v)
-  {
-    put(map.value_map, get(map.key_map,k), v);
-  }
-};
-
-template <class KeyMap, class ValueMap>
-Map_binder<KeyMap, ValueMap>
-bind_maps(const KeyMap& src, const ValueMap& tgt)
-{
-  return Map_binder<KeyMap, ValueMap>(src, tgt);
 }
 
 template <class PolygonMesh>

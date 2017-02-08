@@ -71,14 +71,14 @@ clip_open_impl(      TriangleMesh& tm,
                                   get_property_map(vertex_point, clipper));
 
   // init indices if needed
-  Corefinement::init_face_indices(tm, fid_map);
-  Corefinement::init_vertex_indices(tm, vid_map);
+  helpers::init_face_indices(tm, fid_map);
+  helpers::init_vertex_indices(tm, vid_map);
 
   // set the connected component id of each face
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
   std::size_t nb_cc =
     connected_components(tm,
-                         Corefinement::bind_maps(fid_map, make_property_map(face_cc)),
+                         bind_property_maps(fid_map, make_property_map(face_cc)),
                          parameters::face_index_map(fid_map).
                          edge_is_constrained_map(ecm));
 
@@ -121,7 +121,7 @@ clip_open_impl(      TriangleMesh& tm,
   //now remove the cc
   remove_connected_components(tm,
     ccs_to_remove,
-    Corefinement::bind_maps(fid_map, make_property_map(face_cc)),
+    bind_property_maps(fid_map, make_property_map(face_cc)),
     np_tm);
 
   return true;
