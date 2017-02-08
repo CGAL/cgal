@@ -388,6 +388,15 @@ add_edge(OpenMesh::TriMesh_ArrayKernelT<K>& sm)
                           boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::null_vertex() ), sm);
 }
 
+template<typename K>
+void
+reserve(OpenMesh::TriMesh_ArrayKernelT<K>& tm,
+        typename boost::graph_traits< OpenMesh::TriMesh_ArrayKernelT<K> >::vertices_size_type nv,
+        typename boost::graph_traits< OpenMesh::TriMesh_ArrayKernelT<K> >::edges_size_type ne,
+        typename boost::graph_traits< OpenMesh::TriMesh_ArrayKernelT<K> >::faces_size_type nf)
+{
+  tm.reserve(nv, ne, nf);
+}
 
 //
 // FaceGraph

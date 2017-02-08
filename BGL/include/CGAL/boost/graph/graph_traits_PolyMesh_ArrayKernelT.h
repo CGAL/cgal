@@ -504,7 +504,16 @@ set_halfedge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::
   sm.set_halfedge_handle(f, h);
 }
 
- 
+template<typename K>
+void
+reserve(OpenMesh::PolyMesh_ArrayKernelT<K>& tm,
+        typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::vertices_size_type nv,
+        typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::edges_size_type ne,
+        typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::faces_size_type nf)
+{
+  tm.reserve(nv, ne, nf);
+}
+
 //
 // FaceListGraph
 //
