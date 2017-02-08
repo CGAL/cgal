@@ -367,7 +367,7 @@ void test_RT()
   Vertex_handle v8 = T3.insert(wpp8);
   Point query(0.5,0.5,0.5);
   assert(T3.nearest_power_vertex(query) == v8);
-  assert(T3.nearest_power_vertex(Weighted_point(query,1.0)) == v8 );
+
   assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
   
   // test dual

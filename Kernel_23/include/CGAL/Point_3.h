@@ -74,11 +74,11 @@ public:
 
   Point_3(const Rep& p)
       : Rep(p) {}
-
+#if 0
   Point_3(const Weighted_point_3& wp)
     : Rep(wp.point())
   {}
-
+#endif
   template < typename T1, typename T2, typename T3 >
   Point_3(const T1& x, const T2& y, const T3& z)
     : Rep(typename R::Construct_point_3()(Return_base_tag(), x, y, z))
