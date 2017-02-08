@@ -47,6 +47,7 @@
         <file>resources/euler_facet.png</file>
         <file>resources/euler_vertex.png</file>
         <file>javascript/lib.js</file>
+        <file>resources/shader_c3t3_tets.v</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

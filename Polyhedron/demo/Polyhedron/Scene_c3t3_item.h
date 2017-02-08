@@ -39,6 +39,12 @@ public:
   Scene_c3t3_item();
   Scene_c3t3_item(const C3t3& c3t3);
   ~Scene_c3t3_item();
+
+  bool has_stats()const {return true;}
+  QString computeStats(int type);
+  CGAL::Three::Scene_item::Header_data header() const;
+
+
   void setColor(QColor c);
   bool save_binary(std::ostream& os) const
   {
@@ -51,13 +57,11 @@ public:
       return !!(os << c3t3());
   }
 
-  void invalidateOpenGLBuffers()
-  {
-    are_buffers_filled = false;
-    compute_bbox();
-  }
+  void invalidateOpenGLBuffers();
 
   void c3t3_changed();
+
+  void set_valid(bool);
 
   const C3t3& c3t3() const;
   C3t3& c3t3();
@@ -70,6 +74,7 @@ public:
   bool has_grid() const;
   bool has_cnc() const;
   bool has_tets() const;
+  bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
   ManipulatedFrame* manipulatedFrame();
 
   void setPosition(float x, float y, float z) ;
@@ -115,6 +120,8 @@ public:
   public:
     QMenu* contextMenu();
     void copyProperties(Scene_item *);
+    float getShrinkFactor() const;
+    bool keyPressEvent(QKeyEvent *);
   public Q_SLOTS:
   void export_facets_in_complex();
 

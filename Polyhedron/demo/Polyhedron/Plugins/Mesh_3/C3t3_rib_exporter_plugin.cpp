@@ -47,7 +47,9 @@ public:
   {
     return QList<QAction*>() << actionCreateRib;
   }
-  bool applicable(QAction*)const{return qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));}
+  bool applicable(QAction*)const{
+    Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
+    return item && item->is_valid();}
   
 public Q_SLOTS:
   void create_rib();

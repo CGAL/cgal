@@ -63,13 +63,23 @@ typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Function_domain> Function_me
 #endif
 
 // Triangulation
+typedef CGAL::Compact_mesh_cell_base_3<Kernel, Polyhedral_mesh_domain>     Cell_base;
+typedef CGAL::Triangulation_cell_base_with_info_3< int, Kernel, Cell_base> Cell_base_with_info;
+
 #ifdef CGAL_CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, 
                                      CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel,
-                                     CGAL::Parallel_tag>::type Tr;
+                                     CGAL::Parallel_tag,
+                                     CGAL::Default,
+                                     Cell_base_with_info>::type Tr;
 #else
-  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain,
+                                     CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel,
+                                     CGAL::Sequential_tag,
+                                     CGAL::Default,
+                                     Cell_base_with_info>::type Tr;
 #endif
+
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 typedef Tr::Geom_traits Geom_traits;

@@ -9,6 +9,9 @@
 #include <QPainter>
 #include <QtCore/qglobal.h>
 #include <QGuiApplication>
+#include <QSlider>
+#include <QWidgetAction>
+#include <QKeyEvent>
 
 #include <map>
 #include <vector>
@@ -48,12 +51,15 @@ public :
       std::vector<float> *p_vertices,
       std::vector<float> *p_normals,
       std::vector<float> *p_edges,
-      std::vector<float> *p_colors)
+      std::vector<float> *p_colors,
+      std::vector<float> *p_bary)
   {
     vertices = p_vertices;
     normals = p_normals;
     edges = p_edges;
     colors = p_colors;
+    barycenters = p_bary;
+
   }
   void setColor(QColor c)
   {
@@ -68,7 +74,7 @@ public :
   {
    //vao containing the data for the facets
     {
-      program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+      program = getShaderProgram(PROGRAM_C3T3_TETS, viewer);
       program->bind();
 
       vaos[Facets]->bind();
@@ -92,6 +98,13 @@ public :
       program->enableAttributeArray("colors");
       program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
       buffers[Colors].release();
+
+      buffers[Barycenters].bind();
+      buffers[Barycenters].allocate(barycenters->data(),
+        static_cast<int>(barycenters->size()*sizeof(float)));
+      program->enableAttributeArray("barycenter");
+      program->setAttributeBuffer("barycenter", GL_FLOAT, 0, 3);
+      buffers[Barycenters].release();
 
       vaos[Facets]->release();
       program->release();
@@ -118,10 +131,11 @@ public :
   void draw(CGAL::Three::Viewer_interface* viewer) const
   {
     vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
+    program = getShaderProgram(PROGRAM_C3T3_TETS);
+    attribBuffers(viewer, PROGRAM_C3T3_TETS);
     program->bind();
-
+    float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
+    program->setUniformValue("shrink_factor", shrink_factor);
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices->size() / 3));
@@ -188,11 +202,17 @@ public :
     edges->push_back(pa.y()+offset.y);
     edges->push_back(pa.z()+offset.z);
 
+
     for(int i=0; i<3; i++)
     {
       colors->push_back((float)color.red()/255);
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
+
+      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0);
+      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0);
+      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0);
+
     }
   }
 
@@ -205,6 +225,7 @@ private:
       Normals,
       Colors,
       Edges,
+      Barycenters,
       NumberOfBuffers
   };
   enum Vao
@@ -213,11 +234,13 @@ private:
       Lines,
       NumberOfVaos
   };
+
   //contains the data
   mutable std::vector<float> *vertices;
   mutable std::vector<float> *normals;
   mutable std::vector<float> *edges;
   mutable std::vector<float> *colors;
+  mutable std::vector<float> *barycenters;
   mutable QOpenGLShaderProgram *program;
 }; //end of class Scene_triangle_item
 
@@ -231,8 +254,14 @@ struct Scene_c3t3_item_priv {
     , histogram_()
     , surface_patch_indices_()
     , subdomain_indices_()
+    , is_valid(true)
   {
     init_default_values();
+    tet_Slider = new QSlider(Qt::Horizontal);
+    tet_Slider->setValue(100);
+    tet_Slider->setMinimum(0);
+    tet_Slider->setMaximum(100);
+    invalidate_stats();
   }
   Scene_c3t3_item_priv(const C3t3& c3t3_, Scene_c3t3_item* item)
     : item(item), c3t3(c3t3_)
@@ -241,12 +270,19 @@ struct Scene_c3t3_item_priv {
     , histogram_()
     , surface_patch_indices_()
     , subdomain_indices_()
+    , is_valid(true)
   {
     init_default_values();
+    tet_Slider = new QSlider(Qt::Horizontal);
+    tet_Slider->setValue(100);
+    tet_Slider->setMinimum(0);
+    tet_Slider->setMaximum(100);
+    invalidate_stats();
   }
   ~Scene_c3t3_item_priv()
   {
      delete frame;
+    delete tet_Slider;
   }
 
   void init_default_values() {
@@ -315,11 +351,32 @@ struct Scene_c3t3_item_priv {
   void computeElements();
   void computeIntersections();
 
+  void invalidate_stats()
+  {
+    min_edges_length = std::numeric_limits<float>::max();
+    max_edges_length = 0;
+    mean_edges_length = 0;
+    min_dihedral_angle = std::numeric_limits<float>::max();
+    max_dihedral_angle = 0;
+    mean_dihedral_angle = 0;
+    nb_subdomains = 0;
+    nb_spheres = 0;
+    nb_cnc = 0;
+    nb_vertices = 0;
+    nb_tets = 0;
+    smallest_radius_radius = std::numeric_limits<float>::max();
+    smallest_edge_radius = std::numeric_limits<float>::max();
+    biggest_v_sma_cube = 0;
+    computed_stats = false;
+  }
+
+
   enum Buffer
   {
       Facet_vertices =0,
       Facet_normals,
       Facet_colors,
+      Facet_barycenters,
       Edges_vertices,
       Edges_CNC,
       Grid_vertices,
@@ -339,6 +396,23 @@ struct Scene_c3t3_item_priv {
       iFacets,
       NumberOfVaos
   };
+
+  enum STATS {
+    MIN_EDGES_LENGTH = 0,
+    MAX_EDGES_LENGTH,
+    MEAN_EDGES_LENGTH,
+    MIN_DIHEDRAL_ANGLE,
+    MAX_DIHEDRAL_ANGLE,
+    MEAN_DIHEDRAL_ANGLE,
+    NB_SPHERES,
+    NB_CNC,
+    NB_VERTICES,
+    NB_TETS,
+    SMALLEST_RAD_RAD,
+    SMALLEST_EDGE_RAD,
+    BIGGEST_VL3_CUBE,
+    NB_SUBDOMAINS
+  };
   Scene_c3t3_item* item;
   C3t3 c3t3;
   bool is_grid_shown;
@@ -354,6 +428,7 @@ struct Scene_c3t3_item_priv {
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
   std::set<Tr::Cell_handle> intersected_cells;
+  QSlider* tet_Slider;
 
   //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
@@ -371,6 +446,7 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> positions_lines_not_in_complex;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
+  mutable std::vector<float> positions_barycenter;
 
   mutable std::vector<float> normals;
   mutable std::vector<float> f_colors;
@@ -381,6 +457,21 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> s_radius;
   mutable std::vector<float> s_center;
   mutable QOpenGLShaderProgram *program;
+  mutable bool computed_stats;
+  mutable float max_edges_length;
+  mutable float min_edges_length;
+  mutable float mean_edges_length;
+  mutable float min_dihedral_angle;
+  mutable float max_dihedral_angle;
+  mutable float mean_dihedral_angle;
+  mutable std::size_t nb_spheres;
+  mutable std::size_t nb_cnc;
+  mutable std::size_t nb_subdomains;
+  mutable std::size_t nb_vertices;
+  mutable std::size_t nb_tets;
+  mutable float smallest_radius_radius;
+  mutable float smallest_edge_radius;
+  mutable float biggest_v_sma_cube;
 
 
   Tree tree;
@@ -389,6 +480,7 @@ struct Scene_c3t3_item_priv {
   bool show_tetrahedra;
   bool is_aabb_tree_built;
   bool cnc_are_shown;
+  bool is_valid;
 };
 
 struct Set_show_tetrahedra {
@@ -790,6 +882,8 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   d->program->bind();
   QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
   d->program->setUniformValue("cutplane", cp);
+  float shrink_factor = getShrinkFactor();
+  d->program->setUniformValue("shrink_factor", shrink_factor);
   // positions_poly_size is the number of total facets in the C3T3
   // it is only computed once and positions_poly is emptied at the end
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->positions_poly_size / 3));
@@ -974,6 +1068,12 @@ void Scene_c3t3_item_priv::draw_triangle(const Kernel::Point_3& pa,
   positions_poly.push_back(pc.y()+offset.y);
   positions_poly.push_back(pc.z()+offset.z);
 
+  for(int i=0; i<3; ++i)
+  {
+   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0);
+   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0);
+   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0);
+  }
 
 
 }
@@ -1122,6 +1222,13 @@ QMenu* Scene_c3t3_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {
+
+    QMenu *container = new QMenu(tr("Tetrahedra's Shrink Factor"));
+    QWidgetAction *sliderAction = new QWidgetAction(0);
+    connect(d->tet_Slider, &QSlider::valueChanged, this, &Scene_c3t3_item::itemChanged);
+    sliderAction->setDefaultWidget(d->tet_Slider);
+    container->addAction(sliderAction);
+    menu->addMenu(container);
     QAction* actionExportFacetsInComplex =
       menu->addAction(tr("Export facets in complex"));
     actionExportFacetsInComplex->setObjectName("actionExportFacetsInComplex");
@@ -1129,20 +1236,22 @@ QMenu* Scene_c3t3_item::contextMenu()
       SIGNAL(triggered()), this,
       SLOT(export_facets_in_complex()));
 
-    QAction* actionShowSpheres =
-      menu->addAction(tr("Show protecting &spheres"));
-    actionShowSpheres->setCheckable(true);
-    actionShowSpheres->setObjectName("actionShowSpheres");
-    connect(actionShowSpheres, SIGNAL(toggled(bool)),
-            this, SLOT(show_spheres(bool)));
+    if(is_valid())
+    {
+      QAction* actionShowSpheres =
+          menu->addAction(tr("Show protecting &spheres"));
+      actionShowSpheres->setCheckable(true);
+      actionShowSpheres->setObjectName("actionShowSpheres");
+      connect(actionShowSpheres, SIGNAL(toggled(bool)),
+              this, SLOT(show_spheres(bool)));
 
-    QAction* actionShowCNC =
-      menu->addAction(tr("Show cells not in complex"));
-    actionShowCNC->setCheckable(true);
-    actionShowCNC->setObjectName("actionShowCNC");
-    connect(actionShowCNC, SIGNAL(toggled(bool)),
-            this, SLOT(show_cnc(bool)));
-
+      QAction* actionShowCNC =
+          menu->addAction(tr("Show cells not in complex"));
+      actionShowCNC->setCheckable(true);
+      actionShowCNC->setObjectName("actionShowCNC");
+      connect(actionShowCNC, SIGNAL(toggled(bool)),
+              this, SLOT(show_cnc(bool)));
+    }
     QAction* actionShowTets =
       menu->addAction(tr("Show &tetrahedra"));
     actionShowTets->setCheckable(true);
@@ -1192,9 +1301,15 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
     item->buffers[Facet_colors].release();
 
+    item->buffers[Facet_barycenters].bind();
+    item->buffers[Facet_barycenters].allocate(positions_barycenter.data(),
+      static_cast<int>(positions_barycenter.size()*sizeof(float)));
+    program->enableAttributeArray("barycenter");
+    program->setAttributeBuffer("barycenter", GL_FLOAT, 0, 3);
+    item->buffers[Facet_barycenters].release();
+
     item->vaos[Facets]->release();
     program->release();
-
     positions_poly_size = positions_poly.size();
     positions_poly.clear();
     positions_poly.swap(positions_poly);
@@ -1202,6 +1317,8 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     normals.swap(normals);
     f_colors.clear();
     f_colors.swap(f_colors);
+    positions_barycenter.clear();
+    positions_barycenter.swap(positions_barycenter);
   }
 
   //vao containing the data for the lines
@@ -1335,6 +1452,7 @@ void Scene_c3t3_item_priv::computeIntersections()
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
+  positions_barycenter.clear();
   const Kernel::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
@@ -1392,7 +1510,6 @@ void Scene_c3t3_item_priv::computeElements()
   s_center.resize(0);
   s_radius.resize(0);
 
-
   //The grid
   {
     float x = (2 * (float)complex_diag()) / 10.0;
@@ -1443,8 +1560,6 @@ void Scene_c3t3_item_priv::computeElements()
       else draw_triangle(pa, pb, pc);
       draw_triangle_edges(pa, pb, pc);
     }
-    //Kernel::Point_3 p0(10, 10, 10);
-    //c3t3().add_far_point(p0);
     //the cells not in the complex
     for(C3t3::Triangulation::Cell_iterator
         cit = c3t3.triangulation().finite_cells_begin(),
@@ -1474,7 +1589,6 @@ void Scene_c3t3_item_priv::computeElements()
         }
       }
     }
-
   }
   QApplication::restoreOverrideCursor();
 }
@@ -1511,6 +1625,7 @@ Scene_c3t3_item::setColor(QColor c)
   color_ = c;
   d->compute_color_map(c);
   invalidateOpenGLBuffers();
+  d->invalidate_stats();
   d->are_intersection_buffers_filled = false;
 }
 
@@ -1552,7 +1667,8 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->init_vectors(&d->positions_poly,
                                   &d->normals,
                                   &d->positions_lines,
-                                  &d->f_colors);
+                                  &d->f_colors,
+                                  &d->positions_barycenter);
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
@@ -1623,5 +1739,250 @@ void Scene_c3t3_item::copyProperties(Scene_item *item)
   show_cnc(c3t3_item->has_cnc());
 
   show_grid(c3t3_item->has_grid());
+}
+
+bool Scene_c3t3_item::is_valid() const
+{
+  return d->is_valid;
+}
+void Scene_c3t3_item::set_valid(bool b)
+{
+  d->is_valid = b;
+}
+float Scene_c3t3_item::getShrinkFactor() const
+{
+ return d->tet_Slider->value()/100.0f;
+}
+bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
+{
+ if(event->key() == Qt::Key_Plus)
+ {
+   d->tet_Slider->setValue(d->tet_Slider->value() + 5);
+   itemChanged();
+ }
+ else if(event->key() == Qt::Key_Minus)
+ {
+   d->tet_Slider->setValue(d->tet_Slider->value() -5);
+   itemChanged();
+ }
+ return true;
+}
+
+QString Scene_c3t3_item::computeStats(int type)
+{
+  if(!d->computed_stats)
+  {
+    float nb_edges = 0;
+    float total_edges = 0;
+    float nb_angle = 0;
+    float total_angle = 0;
+
+    for (C3t3::Facet_iterator
+      fit = d->c3t3.facets_begin(),
+      end = d->c3t3.facets_end();
+    fit != end; ++fit)
+    {
+      const Tr::Cell_handle& cell = fit->first;
+      const int& index = fit->second;
+      const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point();
+      const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
+      const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
+      float edges[3];
+      edges[0]=(std::sqrt(CGAL::squared_distance(pa, pb)));
+      edges[1]=(std::sqrt(CGAL::squared_distance(pa, pc)));
+      edges[2]=(std::sqrt(CGAL::squared_distance(pb, pc)));
+      for(int i=0; i<3; ++i)
+      {
+        if(edges[i] < d->min_edges_length){ d->min_edges_length = edges[i]; }
+        if(edges[i] > d->max_edges_length){ d->max_edges_length = edges[i]; }
+        total_edges+=edges[i];
+        ++nb_edges;
+      }
+    }
+    d->mean_edges_length = total_edges/(float)nb_edges;
+    for(Tr::Finite_vertices_iterator
+        vit = d->c3t3.triangulation().finite_vertices_begin(),
+        end =  d->c3t3.triangulation().finite_vertices_end();
+        vit != end; ++vit)
+    {
+      if(vit->point().weight()==0) continue;
+      ++d->nb_spheres;
+    }
+    for(C3t3::Triangulation::Cell_iterator
+        cit = d->c3t3.triangulation().finite_cells_begin(),
+        end = d->c3t3.triangulation().finite_cells_end();
+        cit != end; ++cit)
+    {
+      if(!d->c3t3.is_in_complex(cit))
+      {
+
+        bool has_far_point = false;
+        for(int i=0; i<4; i++)
+          if(d->c3t3.in_dimension(cit->vertex(i)) == -1)
+          {
+            has_far_point = true;
+            break;
+          }
+        if(!has_far_point)
+          ++d->nb_cnc;
+      }
+    }
+
+    typedef C3t3::Triangulation::Point Point_3;
+    Kernel::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
+      = Kernel().compute_approximate_dihedral_angle_3_object();
+
+    QVector<int> sub_ids;
+    for (C3t3::Cells_in_complex_iterator cit = d->c3t3.cells_in_complex_begin();
+      cit != d->c3t3.cells_in_complex_end();
+      ++cit)
+    {
+      if (!d->c3t3.is_in_complex(cit))
+        continue;
+      if(!sub_ids.contains(cit->subdomain_index()))
+      {
+        sub_ids.push_back(cit->subdomain_index());
+      }
+
+      const Point_3& p0 = cit->vertex(0)->point();
+      const Point_3& p1 = cit->vertex(1)->point();
+      const Point_3& p2 = cit->vertex(2)->point();
+      const Point_3& p3 = cit->vertex(3)->point();
+      float v = std::abs(CGAL::volume(p0.point(),p1.point(),p2.point(),p3.point()));
+      float circumradius = std::sqrt(CGAL::squared_radius(p0.point(),p1.point(),p2.point(),p3.point()));
+      //find smallest edge
+      float edges[6];
+      edges[0] = std::sqrt(CGAL::squared_distance(p0.point(), p1.point()));
+      edges[1] = std::sqrt(CGAL::squared_distance(p0.point(), p2.point()));
+      edges[2] = std::sqrt(CGAL::squared_distance(p0.point(), p3.point()));
+      edges[3] = std::sqrt(CGAL::squared_distance(p2.point(), p1.point()));
+      edges[4] = std::sqrt(CGAL::squared_distance(p2.point(), p3.point()));
+      edges[5] = std::sqrt(CGAL::squared_distance(p1.point(), p3.point()));
+
+      float min_edge = edges[0];
+      for(int i=1; i<6; ++i)
+      {
+       if(edges[i]<min_edge)
+         min_edge=edges[i];
+      }
+      float sumar = std::sqrt(CGAL::squared_area(p0.point(),p1.point(),p2.point()))+std::sqrt(CGAL::squared_area(p1.point(),p2.point(),p3.point()))+
+          std::sqrt(CGAL::squared_area(p2.point(),p3.point(),p0.point())) + std::sqrt(CGAL::squared_area(p3.point(),p1.point(),p0.point()));
+      float inradius = 3*v/sumar;
+      float smallest_edge_radius = min_edge/circumradius*std::sqrt(6)/4.0;//*sqrt(6)/4 so that the perfect tet ratio is 1
+      float smallest_radius_radius = inradius/circumradius*3; //*3 so that the perfect tet ratio is 1 instead of 1/3
+      float biggest_v_sma_cube = v/std::pow(min_edge,3)*6*std::sqrt(2);//*6*sqrt(2) so that the perfect tet ratio is 1 instead
+
+      if(smallest_edge_radius < d->smallest_edge_radius)
+        d->smallest_edge_radius = smallest_edge_radius;
+
+      if(smallest_radius_radius < d->smallest_radius_radius)
+        d->smallest_radius_radius = smallest_radius_radius;
+
+      if(biggest_v_sma_cube > d->biggest_v_sma_cube)
+        d->biggest_v_sma_cube = biggest_v_sma_cube;
+
+      double a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p1, p2, p3)));
+      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
+      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      total_angle+=a;
+      ++nb_angle;
+      a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p2, p1, p3)));
+      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
+      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      total_angle+=a;
+      ++nb_angle;
+      a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p3, p1, p2)));
+      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
+      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      total_angle+=a;
+      ++nb_angle;
+      a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p1, p2, p0, p3)));
+      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
+      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      total_angle+=a;
+      ++nb_angle;
+      a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p1, p3, p0, p2)));
+      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
+      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      total_angle+=a;
+      ++nb_angle;
+      a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p2, p3, p0, p1)));
+      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
+      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      total_angle+=a;
+      ++nb_angle;
+    }
+    d->mean_dihedral_angle = total_angle/(float)nb_angle;
+    d->nb_subdomains = sub_ids.size();
+    d->nb_vertices = d->c3t3.number_of_vertices_in_complex();
+    d->nb_tets = d->c3t3.number_of_cells();
+    d->computed_stats = true;
+  }
+
+  switch (type)
+  {
+  case Scene_c3t3_item_priv::MIN_EDGES_LENGTH:
+    return QString::number(d->min_edges_length);
+  case Scene_c3t3_item_priv::MAX_EDGES_LENGTH:
+    return QString::number(d->max_edges_length);
+  case Scene_c3t3_item_priv::MEAN_EDGES_LENGTH:
+    return QString::number(d->mean_edges_length);
+  case Scene_c3t3_item_priv::MIN_DIHEDRAL_ANGLE:
+    return QString::number(d->min_dihedral_angle);
+  case Scene_c3t3_item_priv::MAX_DIHEDRAL_ANGLE:
+    return QString::number(d->max_dihedral_angle);
+  case Scene_c3t3_item_priv::MEAN_DIHEDRAL_ANGLE:
+    return QString::number(d->mean_dihedral_angle);
+  case Scene_c3t3_item_priv::NB_SPHERES:
+    return QString::number(d->nb_spheres);
+  case Scene_c3t3_item_priv::NB_CNC:
+    return QString::number(d->nb_cnc);
+  case Scene_c3t3_item_priv::NB_VERTICES:
+    return QString::number(d->nb_vertices);
+  case Scene_c3t3_item_priv::NB_TETS:
+    return QString::number(d->nb_tets);
+  case Scene_c3t3_item_priv::SMALLEST_RAD_RAD:
+    return QString::number(d->smallest_radius_radius);
+  case Scene_c3t3_item_priv::SMALLEST_EDGE_RAD:
+    return QString::number(d->smallest_edge_radius);
+  case Scene_c3t3_item_priv::BIGGEST_VL3_CUBE:
+    return QString::number(d->biggest_v_sma_cube);
+  case Scene_c3t3_item_priv::NB_SUBDOMAINS:
+    return QString::number(d->nb_subdomains);
+
+  default:
+    return QString();
+  }
+}
+CGAL::Three::Scene_item::Header_data Scene_c3t3_item::header() const
+{
+  CGAL::Three::Scene_item::Header_data data;
+  //categories
+  data.categories.append(std::pair<QString,int>(QString("Properties"),14));
+
+
+  //titles
+  data.titles.append(QString("Min Edges Length"));
+  data.titles.append(QString("Max Edges Length"));
+  data.titles.append(QString("Mean Edges Length"));
+  data.titles.append(QString("Min Dihedral Angle"));
+  data.titles.append(QString("Max Dihedral Angle"));
+  data.titles.append(QString("Mean Dihedral Angle"));
+  data.titles.append(QString("#Protecting Spheres"));
+  data.titles.append(QString("#Cells not in Complex"));
+  data.titles.append(QString("#Vertices in Complex"));
+  data.titles.append(QString("#Cells"));
+  data.titles.append(QString("Smallest Radius-Radius Ratio"));
+  data.titles.append(QString("Smallest Edge-Radius Ratio"));
+  data.titles.append(QString("Biggest Vl^3"));
+  data.titles.append(QString("#Subdomains"));
+  return data;
+}
+
+void Scene_c3t3_item::invalidateOpenGLBuffers()
+{
+  are_buffers_filled = false;
+  compute_bbox();
+  d->invalidate_stats();
 }
 #include "Scene_c3t3_item.moc"
