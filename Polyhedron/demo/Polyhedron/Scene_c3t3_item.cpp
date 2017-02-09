@@ -1644,25 +1644,28 @@ void Scene_c3t3_item::show_grid(bool b)
 }
 void Scene_c3t3_item::show_spheres(bool b)
 {
-  d->spheres_are_shown = b;
-  contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
-  if(b && !d->spheres)
+  if(is_valid())
   {
-    d->spheres = new Scene_spheres_item(this, true);
-    d->spheres->setName("Protecting spheres");
-    d->spheres->setRenderingMode(Gouraud);
-    connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-    scene->addItem(d->spheres);
-    scene->changeGroup(d->spheres, this);
-    lockChild(d->spheres);
-    d->computeSpheres();
+    d->spheres_are_shown = b;
+    contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
+    if(b && !d->spheres)
+    {
+      d->spheres = new Scene_spheres_item(this, true);
+      d->spheres->setName("Protecting spheres");
+      d->spheres->setRenderingMode(Gouraud);
+      connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+      scene->addItem(d->spheres);
+      scene->changeGroup(d->spheres, this);
+      lockChild(d->spheres);
+      d->computeSpheres();
+    }
+    else if (!b && d->spheres!=NULL)
+    {
+      unlockChild(d->spheres);
+      scene->erase(scene->item_id(d->spheres));
+    }
+    Q_EMIT redraw();
   }
-  else if (!b && d->spheres!=NULL)
-  {
-    unlockChild(d->spheres);
-    scene->erase(scene->item_id(d->spheres));
-  }
-  Q_EMIT redraw();
 
 }
 void Scene_c3t3_item::show_intersection(bool b)
@@ -1694,10 +1697,12 @@ void Scene_c3t3_item::show_intersection(bool b)
 }
 void Scene_c3t3_item::show_cnc(bool b)
 {
-  d->cnc_are_shown = b;
-  contextMenu()->findChild<QAction*>("actionShowCNC")->setChecked(b);
-  Q_EMIT redraw();
-
+  if(is_valid())
+  {
+    d->cnc_are_shown = b;
+    contextMenu()->findChild<QAction*>("actionShowCNC")->setChecked(b);
+    Q_EMIT redraw();
+  }
 }
 
 void Scene_c3t3_item::reset_intersection_item()
