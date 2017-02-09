@@ -168,11 +168,11 @@ public:
   template <typename Attribute, typename ... T>
   Attribute_handle add_attribute (T&& ... t)
   {
-    CGAL::Timer timer;
-    timer.start();
+    // CGAL::Timer timer;
+    // timer.start();
     m_attributes.push_back (Attribute_handle (new Attribute(m_input, std::forward<T>(t)...)));
-    timer.stop();
-    CGAL_CLASSIFICATION_CERR << m_attributes.back()->name() << " took " << timer.time() << " second(s)" << std::endl;
+    // timer.stop();
+    // CGAL_CLASSIFICATION_CERR << m_attributes.back()->name() << " took " << timer.time() << " second(s)" << std::endl;
     return m_attributes.back();
   }
 #else
