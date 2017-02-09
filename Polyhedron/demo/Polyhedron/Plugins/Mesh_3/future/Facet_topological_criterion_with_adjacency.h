@@ -76,12 +76,15 @@ protected:
 
     typedef std::vector<Patch_index> Index_set;
 
+    int nb_vertices_on_curves = 0;
+
     for(int k = 0; k < 3; ++k) {
       const Vertex_handle v = ch->vertex((i+k+1)&3);
       switch(v->in_dimension()) {
       case 0:
         {
-          typename MeshDomain::Corner_index corner_id = 
+          ++nb_vertices_on_curves; // corners are on curves
+          const typename MeshDomain::Corner_index corner_id =
             domain->corner_index(v->index());
 
           Index_set set;
@@ -92,7 +95,8 @@ protected:
         break;
       case 1: 
         {
-          typename MeshDomain::Curve_segment_index curve_id =
+          ++nb_vertices_on_curves;
+          const typename MeshDomain::Curve_segment_index curve_id =
             domain->curve_segment_index(v->index());
           Index_set set;
           domain->get_incidences(curve_id, std::back_inserter(set));
@@ -109,7 +113,11 @@ protected:
         break;
       }
     }
-
+    if(nb_vertices_on_curves == 3) {
+      return Badness(Quality(1)); // bad!
+      // All vertices are on curves. That means that the facet could be on
+      // several different patches. Let's disallow that.
+    }
     return Badness();
   }
 }; // end class Facet_topological_criterion_with_adjacency
