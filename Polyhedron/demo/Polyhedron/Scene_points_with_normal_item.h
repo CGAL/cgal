@@ -1,11 +1,11 @@
 #ifndef POINT_SET_ITEM_H
 #define POINT_SET_ITEM_H
-#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_with_properties.h>
 #include "Scene_points_with_normal_item_config.h"
 #include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
-
 #include <iostream>
 
 struct Scene_points_with_normal_item_priv;
@@ -17,7 +17,7 @@ class QAction;
 
 // This class represents a point set in the OpenGL scene
 class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
-  : public CGAL::Three::Scene_item
+  : public CGAL::Three::Scene_item, public CGAL::Three::Scene_item_with_properties
 {
   Q_OBJECT
 
@@ -70,6 +70,9 @@ public:
   void computes_local_spacing(int k);
 
   bool has_normals() const;
+  void copyProperties(Scene_item *);
+  int getNormalSliderValue();
+  int getPointSliderValue();
 
 public Q_SLOTS:
   // Delete selection
