@@ -842,14 +842,21 @@ void Scene_c3t3_item::compute_bbox() const {
   if (isEmpty())
     _bbox = Bbox();
   else {
+    bool bbox_init = false;
     CGAL::Bbox_3 result;
     for (Tr::Finite_vertices_iterator
-           vit = ++c3t3().triangulation().finite_vertices_begin(),
+           vit = c3t3().triangulation().finite_vertices_begin(),
            end = c3t3().triangulation().finite_vertices_end();
          vit != end; ++vit)
     {
       if(vit->in_dimension() == -1) continue;
-      result = result + vit->point().bbox();
+      if (bbox_init)
+        result = result + vit->point().bbox();
+      else
+      {
+        result = vit->point().bbox();
+        bbox_init = true;
+      }
     }
     _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
                  result.xmax(), result.ymax(), result.zmax());
