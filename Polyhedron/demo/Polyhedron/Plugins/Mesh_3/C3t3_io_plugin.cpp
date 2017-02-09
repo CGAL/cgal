@@ -27,7 +27,7 @@ public:
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
   QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
-  QString loadNameFilters() const { return "binary files (*.cgal)" ; }
+  QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
   QList<QAction*> actions() const
   {
     return QList<QAction*>();
