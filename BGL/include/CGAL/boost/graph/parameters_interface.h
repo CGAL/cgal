@@ -1,0 +1,13 @@
+#ifndef CGAL_add_pmp_parameter
+#  define CGAL_add_pmp_parameter(X, Y, Z)
+#endif
+
+
+CGAL_add_pmp_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
+CGAL_add_pmp_parameter(edge_is_constrained_params_t, edge_is_constrained_params, edge_is_constrained_map_params)
+CGAL_add_pmp_parameter(vertex_is_fixed_t, vertex_is_fixed, vertex_is_fixed_map)
+CGAL_add_pmp_parameter(set_cache_policy_t, set_cache_policy, set_cache)
+CGAL_add_pmp_parameter(get_cost_policy_t, get_cost_policy, get_cost)
+CGAL_add_pmp_parameter(get_cost_policy_params_t, get_cost_policy_params, get_cost_params)
+CGAL_add_pmp_parameter(get_placement_policy_t, get_placement_policy, get_placement)
+CGAL_add_pmp_parameter(get_placement_policy_params_t, get_placement_policy_params, get_placement_params)

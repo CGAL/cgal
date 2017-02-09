@@ -1,0 +1,33 @@
+#ifndef CGAL_add_pmp_parameter
+#  define CGAL_add_pmp_parameter(X, Y, Z)
+#endif
+
+CGAL_add_pmp_parameter(geom_traits_t, geom_traits, geom_traits)
+CGAL_add_pmp_parameter(density_control_factor_t, density_control_factor, density_control_factor)
+CGAL_add_pmp_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)
+CGAL_add_pmp_parameter(fairing_continuity_t, fairing_continuity, fairing_continuity)
+CGAL_add_pmp_parameter(sparse_linear_solver_t, sparse_linear_solver, sparse_linear_solver)
+CGAL_add_pmp_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
+CGAL_add_pmp_parameter(number_of_relaxation_steps_t, number_of_relaxation_steps, number_of_relaxation_steps)
+CGAL_add_pmp_parameter(protect_constraints_t, protect_constraints, protect_constraints)
+CGAL_add_pmp_parameter(relax_constraints_t, relax_constraints, relax_constraints)
+CGAL_add_pmp_parameter(vertex_is_constrained_t, vertex_is_constrained, vertex_is_constrained)
+CGAL_add_pmp_parameter(face_patch_t, face_patch, face_patch)
+CGAL_add_pmp_parameter(random_uniform_sampling_t, random_uniform_sampling, random_uniform_sampling)
+CGAL_add_pmp_parameter(grid_sampling_t, grid_sampling, grid_sampling)
+CGAL_add_pmp_parameter(monte_carlo_sampling_t, monte_carlo_sampling, monte_carlo_sampling)
+CGAL_add_pmp_parameter(do_sample_edges_t, do_sample_edges, do_sample_edges)
+CGAL_add_pmp_parameter(do_sample_vertices_t, do_sample_vertices, do_sample_vertices)
+CGAL_add_pmp_parameter(do_sample_faces_t, do_sample_faces, do_sample_faces)
+CGAL_add_pmp_parameter(number_of_points_on_faces_t, number_of_points_on_faces, number_of_points_on_faces)
+CGAL_add_pmp_parameter(number_of_points_per_face_t, number_of_points_per_face, number_of_points_per_face)
+CGAL_add_pmp_parameter(grid_spacing_t, grid_spacing, grid_spacing)
+CGAL_add_pmp_parameter(number_of_points_per_edge_t, number_of_points_per_edge, number_of_points_per_edge)
+CGAL_add_pmp_parameter(number_of_points_on_edges_t, number_of_points_on_edges, number_of_points_on_edges)
+CGAL_add_pmp_parameter(nb_points_per_area_unit_t, nb_points_per_area_unit, number_of_points_per_area_unit)
+CGAL_add_pmp_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_unit, number_of_points_per_distance_unit)
+//to be documented
+CGAL_add_pmp_parameter(face_normal_t, face_normal, face_normal_map)
+
+//internal
+CGAL_add_pmp_parameter(weight_calculator_t, weight_calculator, weight_calculator)
