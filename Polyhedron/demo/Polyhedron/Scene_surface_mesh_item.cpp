@@ -57,8 +57,8 @@ struct Scene_surface_mesh_item_priv{
   //! fill the flat data vectors.
   void
   triangulate_facet(face_descriptor fd,
-                    CGAL::Properties::Property_map<face_descriptor, Kernel::Vector_3 > *fnormals,
-                    CGAL::Properties::Property_map<face_descriptor, CGAL::Color> *fcolors,
+                    SMesh::Property_map<face_descriptor, Kernel::Vector_3 > *fnormals,
+                    SMesh::Property_map<face_descriptor, CGAL::Color> *fcolors,
                     boost::property_map< SMesh, boost::vertex_index_t >::type* im,
                     bool index) const;
   void compute_elements();
@@ -114,10 +114,10 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
   d->has_vcolors = false;
   d->has_fcolors = false;
   d->checkFloat();
-  CGAL::Properties::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
+  SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     d->smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
 
-  CGAL::Properties::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
+  SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
       d->smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
   CGAL::Polygon_mesh_processing::compute_face_normals(*d->smesh_,fnormals);
 
@@ -210,18 +210,18 @@ void Scene_surface_mesh_item_priv::compute_elements()
   f_colors.clear();
   v_colors.clear();
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  CGAL::Properties::Property_map<vertex_descriptor, SMesh::Point> positions =
+  SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
-  CGAL::Properties::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
+  SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     smesh_->property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
 
-  CGAL::Properties::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
+  SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
       smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
 
-  CGAL::Properties::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+  SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
 
-  CGAL::Properties::Property_map<face_descriptor, CGAL::Color> fcolors =
+  SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
       smesh_->property_map<face_descriptor, CGAL::Color >("f:color").first;
 
   assert(positions.data() != NULL);
@@ -336,9 +336,9 @@ void Scene_surface_mesh_item_priv::compute_elements()
 }
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
-  CGAL::Properties::Property_map<vertex_descriptor, SMesh::Point> positions =
+  SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
-  CGAL::Properties::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
+  SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     smesh_->property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
   //vao containing the data for the flat facets
 
@@ -540,8 +540,8 @@ void Scene_surface_mesh_item_priv::checkFloat()const
 
 void
 Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
-                                           CGAL::Properties::Property_map<face_descriptor, Kernel::Vector_3> *fnormals,
-                                           CGAL::Properties::Property_map<face_descriptor, CGAL::Color> *fcolors,
+                                           SMesh::Property_map<face_descriptor, Kernel::Vector_3> *fnormals,
+                                           SMesh::Property_map<face_descriptor, CGAL::Color> *fcolors,
                                            boost::property_map< SMesh, boost::vertex_index_t >::type *im,
                                            bool index) const
 {
@@ -611,7 +611,7 @@ const Scene_surface_mesh_item::SMesh* Scene_surface_mesh_item::polyhedron() cons
 
 void Scene_surface_mesh_item::compute_bbox()const
 {
-  CGAL::Properties::Property_map<vertex_descriptor, Point> pprop = d->smesh_->points();
+  SMesh::Property_map<vertex_descriptor, Point> pprop = d->smesh_->points();
   CGAL::Bbox_3 bbox;
 
   BOOST_FOREACH(vertex_descriptor vd,vertices(*d->smesh_))
