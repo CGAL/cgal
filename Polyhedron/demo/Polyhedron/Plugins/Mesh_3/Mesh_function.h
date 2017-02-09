@@ -247,8 +247,8 @@ edge_criteria(double b, Mesh_fnt::Domain_tag)
   return Edge_criteria(b);
 }
 
-#include "future/Sizing_field_with_aabb_tree.h"
-#include "future/Facet_topological_criterion_with_adjacency.h"
+#include <CGAL/Mesh_3/experimental/Sizing_field_with_aabb_tree.h>
+#include <CGAL/Mesh_3/experimental/Facet_topological_criterion_with_adjacency.h>
 
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria

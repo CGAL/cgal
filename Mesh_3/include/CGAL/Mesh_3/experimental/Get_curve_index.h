@@ -22,6 +22,8 @@
 #ifndef CGAL_MESH_3_GET_CURVE_INDEX_H
 #define CGAL_MESH_3_GET_CURVE_INDEX_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/property_map.h>
 
 namespace CGAL { namespace Mesh_3 {

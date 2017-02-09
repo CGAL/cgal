@@ -1,9 +1,10 @@
-// Copyright (c) 2012 GeometryFactory Sarl (France)
+// Copyright (c) 2012-2016 GeometryFactory Sarl (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -11,11 +12,21 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
 //
 // Author(s)     : Laurent Rineau
+//
+//******************************************************************************
+// File Description :
+//
+//
+//******************************************************************************
 
 #ifndef CGAL_MESH_3_FACET_TOPOLOGICAL_CRITERION_WITH_ADJACENCY_H
 #define CGAL_MESH_3_FACET_TOPOLOGICAL_CRITERION_WITH_ADJACENCY_H
+
+#include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/number_utils.h>
@@ -76,12 +87,15 @@ protected:
 
     typedef std::vector<Patch_index> Index_set;
 
+    int nb_vertices_on_curves = 0;
+
     for(int k = 0; k < 3; ++k) {
       const Vertex_handle v = ch->vertex((i+k+1)&3);
       switch(v->in_dimension()) {
       case 0:
         {
-          typename MeshDomain::Corner_index corner_id = 
+          ++nb_vertices_on_curves; // corners are on curves
+          const typename MeshDomain::Corner_index corner_id =
             domain->corner_index(v->index());
 
           Index_set set;
@@ -92,7 +106,8 @@ protected:
         break;
       case 1: 
         {
-          typename MeshDomain::Curve_segment_index curve_id =
+          ++nb_vertices_on_curves;
+          const typename MeshDomain::Curve_segment_index curve_id =
             domain->curve_segment_index(v->index());
           Index_set set;
           domain->get_incidences(curve_id, std::back_inserter(set));
@@ -109,7 +124,11 @@ protected:
         break;
       }
     }
-
+    if(nb_vertices_on_curves == 3) {
+      return Badness(Quality(1)); // bad!
+      // All vertices are on curves. That means that the facet could be on
+      // several different patches. Let's disallow that.
+    }
     return Badness();
   }
 }; // end class Facet_topological_criterion_with_adjacency

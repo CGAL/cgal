@@ -22,6 +22,8 @@
 #ifndef CGAL_MESH_3_GET_FACET_PATCH_ID_H
 #define CGAL_MESH_3_GET_FACET_PATCH_ID_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/property_map.h>
 #include <boost/mpl/has_xxx.hpp>
 

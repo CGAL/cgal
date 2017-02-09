@@ -1,9 +1,10 @@
-// Copyright (c) 2010-2012  GeometryFactory Sarl (France).
+// Copyright (c) 2010-2012-2016 GeometryFactory Sarl (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,12 +15,19 @@
 // $URL$
 // $Id$
 //
-//
 // Author(s)     : Laurent Rineau
 //
+//******************************************************************************
+// File Description :
+//
+//
+//******************************************************************************
+
 
 #ifndef CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
 #define CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
+
+#include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -214,6 +222,7 @@ struct Sizing_field_with_aabb_tree
 
       CGAL_assertion(! ids.empty());
 
+      //Compute distance to surface patches
       CGAL::Mesh_3::Filtered_projection_traits
       <
         typename Input_facets_AABB_tree_::AABB_traits
@@ -295,31 +304,112 @@ struct Sizing_field_with_aabb_tree
 #endif // PROTECTION_DEBUG
 #endif // CGAL_NO_ASSERTIONS
 
+      //Compute distance to the curves, and exclude the one on which p lies
       CGAL::Mesh_3::Filtered_projection_traits<typename Input_curves_AABB_tree_::AABB_traits,
                                                Get_curve_index >
         curves_projection_traits(curve_id,
                                  domain.curves_aabb_tree().traits(),
                                  get_curve_index);
-    
+
       domain.curves_aabb_tree().traversal(p, curves_projection_traits);
+
+      //Compute distance to the curve on which p lies
+      typedef typename GeomTraits::Segment_3                        Segment_3;
+      typedef typename GeomTraits::Plane_3                          Plane_3;
+      typedef typename CGAL::cpp11::result_of<
+        typename GeomTraits::Intersect_3(Segment_3, Plane_3)>::type Intersection_result;
+
+      const typename Input_curves_AABB_tree_::Point_and_primitive_id& ppid
+        = domain.curves_aabb_tree().closest_point_and_primitive(p);
+
+      Segment_3 curr_segment(*ppid.second.second, *(ppid.second.second + 1));
+      Plane_3 curr_ortho_plane(p, curr_segment.to_vector()/*normal*/);
+      Input_curves_AABB_tree_primitive_ curr_prim(ppid.second);
+
+      std::vector<Input_curves_AABB_tree_primitive_> prims;
+      domain.curves_aabb_tree().all_intersected_primitives(curr_ortho_plane,
+                                                           std::back_inserter(prims));
+
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+      std::cout << std::endl;
+      std::cout << "P = " << p << std::endl;
+      std::cout << "PRIMITIVES FOUND : " << prims.size() << std::endl;
+#endif
+
+      Point_3 closest_intersection;
+      Input_curves_AABB_tree_primitive_ closest_primitive = prims[0];
+      FT sqd_intersection = -1;
+      BOOST_FOREACH(Input_curves_AABB_tree_primitive_ prim, prims)
+      {
+        if (prim.id() == curr_prim.id())
+          continue;//curr_prim is the closest primitive
+
+        if (curve_id != prim.id().first->first)
+          continue;//don't deal with the same curves as what is done above
+
+        Intersection_result int_res
+          = CGAL::intersection(prim.datum(), curr_ortho_plane);
+        if (int_res)
+        {
+          if (const Point_3* pp = boost::get<Point_3>(&*int_res))
+          {
+            FT new_sqd = CGAL::squared_distance(p, *pp);
+            FT gdist = (std::min)(CGAL::abs(domain.geodesic_distance(p, *pp, curve_id)),
+              CGAL::abs(domain.geodesic_distance(*pp, p, curve_id)));
+
+#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+            std::cout << "Intersection point : Point_3(" << *pp << ") ";
+            std::cout << " new_sqd = " << new_sqd ;
+            std::cout << " gdist = " << gdist;
+#endif
+
+            if (CGAL_NTS sqrt(new_sqd) > 0.9 * gdist)
+              continue;
+            if (sqd_intersection == -1 || new_sqd < sqd_intersection)
+            {
+              sqd_intersection = new_sqd;
+              closest_intersection = *pp;
+              closest_primitive = prim;
+            }
+          }
+          else
+            continue;// intersection is a segment : collinear case
+        }
+        else
+          CGAL_assertion(false);//prim was returned as an intersected primitive
+      }
+
+      //compare closest_projection and closest_intersection, and keep the closest
+      if (curves_projection_traits.found())
+      {
+        FT tmp_sqd = CGAL::squared_distance(p, curves_projection_traits.closest_point());
+        if (sqd_intersection == -1 || tmp_sqd < sqd_intersection)
+        {
+          sqd_intersection = tmp_sqd;
+          closest_intersection = curves_projection_traits.closest_point();
+          closest_primitive = Input_curves_AABB_tree_primitive_(
+            curves_projection_traits.closest_point_and_primitive().second);
+        }
+      }
+#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+      std::cout << "curve_id = " << curve_id
+                << " proj_cid = " << closest_primitive.id().first->first << std::endl;
       std::cerr << " --- domain.curves_aabb_tree().traversal \n";
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-      if(curves_projection_traits.found()) {
+      if (sqd_intersection > 0)
+      {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
         std::cerr << "FOUND!\n";
-        std::cerr << "  closest_point: " << curves_projection_traits.closest_point() << "\n"
-                  << "  distance = " << CGAL_NTS 
-          sqrt(CGAL::squared_distance(p, 
-                                      curves_projection_traits.closest_point())) << std::endl;
+        std::cerr << "  closest_point: " << closest_intersection << "\n"
+                  << "  distance = " << CGAL_NTS sqrt(sqd_intersection) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
         double new_result = 
           (std::min)(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) * 
-                     CGAL_NTS 
-                     sqrt(CGAL::squared_distance(p, 
-                                                 curves_projection_traits.closest_point())),
+                     CGAL_NTS sqrt(sqd_intersection),
                      d_);
+
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+        std::cerr << "result     = " << result << "\n";
         std::cerr << "new_result = " << new_result << "\n";
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
         if(result > new_result) {
@@ -332,7 +422,7 @@ struct Sizing_field_with_aabb_tree
                              "Closest CURVE id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % curves_projection_traits.closest_point_and_primitive().second.first->first;
+            % closest_primitive.id().first->first;
           BOOST_FOREACH(int i, ids) {
             s << i << " ";
           }
