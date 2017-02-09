@@ -357,7 +357,7 @@ self_intersections( const FaceRange& face_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
   CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
     intersect_facets(tmesh, out, vpmap,
-      boost::choose_param(get_param(np, geom_traits), GeomTraits()));
+      boost::choose_param(get_param(np, CGAL::parameters::geom_traits), GeomTraits()));
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);

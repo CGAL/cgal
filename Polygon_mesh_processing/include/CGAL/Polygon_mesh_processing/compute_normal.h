@@ -138,7 +138,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   using boost::choose_param;
   using boost::get_param;
 
-  GT traits = choose_param(get_param(np, CGAL::geom_traits), GT());
+  GT traits = choose_param(get_param(np, CGAL::parameters::geom_traits), GT());
 
   Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   sum_normals<Point>(pmesh, f
@@ -232,14 +232,14 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GT::Vector_3 Vector;
-  GT traits = choose_param(get_param(np, CGAL::geom_traits), GT());
+  GT traits = choose_param(get_param(np, CGAL::parameters::geom_traits), GT());
 
   typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap DefaultMap;
   typedef typename boost::lookup_named_param_def <
-    CGAL::face_normal_t,
+    CGAL::parameters::face_normal_t,
     NamedParameters,
     DefaultMap> ::type FaceNormalMap;
-  FaceNormalMap fnmap = choose_param(get_param(np, face_normal), DefaultMap());
+  FaceNormalMap fnmap = choose_param(get_param(np, CGAL::parameters::face_normal), DefaultMap());
   bool fnmap_valid
     = !boost::is_same<FaceNormalMap,
                       DefaultMap

@@ -95,7 +95,7 @@ namespace Polygon_mesh_processing {
     refine_functor.refine(faces,
       faces_out,
       vertices_out,
-      choose_param(get_param(np, density_control_factor), CGAL::sqrt(2.)));
+      choose_param(get_param(np, CGAL::parameters::density_control_factor), CGAL::sqrt(2.)));
     return std::make_pair(faces_out, vertices_out);
   }
 

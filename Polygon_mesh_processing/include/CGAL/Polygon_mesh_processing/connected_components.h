@@ -436,12 +436,12 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   using boost::get_param;
 
   typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
+    CGAL::parameters::edge_is_constrained_t,
     NamedParameters,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, edge_is_constrained),
+    = choose_param(get_param(np, CGAL::parameters::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -516,12 +516,12 @@ connected_components(const PolygonMesh& pmesh,
   using boost::get_param;
 
   typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
+    CGAL::parameters::edge_is_constrained_t,
     NamedParameters,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, edge_is_constrained),
+    = choose_param(get_param(np, CGAL::parameters::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
   typedef Dual<PolygonMesh>                              Dual;

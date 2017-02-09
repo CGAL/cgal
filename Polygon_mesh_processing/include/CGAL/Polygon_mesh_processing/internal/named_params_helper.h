@@ -118,7 +118,7 @@ public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 };
 
-template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, all_default_t> >
+template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, parameters::all_default_t> >
 class GetGeomTraits
 {
   typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
@@ -132,7 +132,7 @@ class GetGeomTraits
 
 public:
   typedef typename boost::lookup_named_param_def <
-    CGAL::geom_traits_t,
+    CGAL::parameters::geom_traits_t,
     NamedParameters,
     DefaultKernel
   > ::type  type;
@@ -203,7 +203,7 @@ class GetFaceNormalMap
 public:
   typedef DummyNormalPmap NoMap;
   typedef typename boost::lookup_named_param_def <
-    CGAL::face_normal_t,
+    CGAL::parameters::face_normal_t,
     NamedParameters,
     DummyNormalPmap//default
   > ::type  type;
@@ -214,7 +214,7 @@ class GetSolver
 {
 public:
   typedef typename boost::lookup_named_param_def <
-    CGAL::sparse_linear_solver_t,
+    CGAL::parameters::sparse_linear_solver_t,
     NamedParameters,
     DefaultSolver
   > ::type type;

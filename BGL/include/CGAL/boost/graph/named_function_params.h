@@ -103,11 +103,12 @@ namespace boost{
 
 
 namespace CGAL {
+namespace parameters{
 #define CGAL_add_pmp_parameter(X, Y, Z)            \
-  enum X { Y };                                    \
-
+  enum X { Y };
 #include <CGAL/boost/graph/parameters_interface.h>
 #undef CGAL_add_pmp_parameter
+}//parameters
 
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct cgal_bgl_named_params : boost::bgl_named_params<T, Tag, Base>
@@ -119,13 +120,13 @@ namespace CGAL {
     cgal_bgl_named_params(T v, const Base& b) : base(v, b) {}
 
 
-#define CGAL_add_pmp_parameter(X, Y, Z)              \
-  template<typename K>                               \
-  cgal_bgl_named_params<K, X, self>                  \
-  Z(const K& k) const                                \
-  {                                                  \
-    typedef cgal_bgl_named_params<K, X, self> Params;\
-    return Params(k, *this);                         \
+#define CGAL_add_pmp_parameter(X, Y, Z)                          \
+  template<typename K>                                           \
+  cgal_bgl_named_params<K, parameters::X, self>                  \
+  Z(const K& k) const                                            \
+  {                                                              \
+    typedef cgal_bgl_named_params<K, parameters::X, self> Params;\
+    return Params(k, *this);                                     \
   }
 #include <CGAL/boost/graph/parameters_interface.h>
 #undef CGAL_add_pmp_parameter

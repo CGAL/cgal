@@ -30,14 +30,15 @@
 #define CGAL_PMP_NP_CLASS CGAL::pmp_bgl_named_params<T,Tag,Base>
 
 namespace CGAL{
+namespace parameters{
 enum all_default_t { all_default }; //cannot use macro because it takes no argument
 #define CGAL_add_pmp_parameter(X, Y, Z)            \
-  enum X { Y };                                    \
+  enum X { Y };
 
 #include <CGAL/Polygon_mesh_processing/internal/parameters_interface.h>
 
 #undef CGAL_add_pmp_parameter
-
+}//parameters
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct pmp_bgl_named_params
     : CGAL::cgal_bgl_named_params<T, Tag, Base>
@@ -47,18 +48,18 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
 
     pmp_bgl_named_params(T v = T()) : base(v) {}
     pmp_bgl_named_params(T v, const Base& b) : base(v, b) {}
-    pmp_bgl_named_params<bool, all_default_t, self>
+    pmp_bgl_named_params<bool, parameters::all_default_t, self>
     all_default() const
     {
-      typedef pmp_bgl_named_params<bool, all_default_t, self> Params;
+      typedef pmp_bgl_named_params<bool, parameters::all_default_t, self> Params;
       return Params(*this);
     }
 #define CGAL_add_pmp_parameter(X, Y, Z)              \
   template<typename K>                               \
-  pmp_bgl_named_params<K, X, self>                   \
+  pmp_bgl_named_params<K, parameters::X, self>                   \
   Z(const K& k) const                                \
   {                                                  \
-    typedef pmp_bgl_named_params<K, X, self> Params; \
+    typedef pmp_bgl_named_params<K, parameters::X, self> Params; \
     return Params(k, *this);                         \
   }
 
@@ -81,10 +82,10 @@ namespace Polygon_mesh_processing{
 
 namespace parameters{
 
-pmp_bgl_named_params<bool, all_default_t>
+pmp_bgl_named_params<bool, CGAL::parameters::all_default_t>
  inline all_default()
  {
-   typedef pmp_bgl_named_params<bool, all_default_t> Params;
+   typedef pmp_bgl_named_params<bool, CGAL::parameters::all_default_t> Params;
    return Params();
  }
 
@@ -99,10 +100,10 @@ pmp_bgl_named_params<bool, all_default_t>
 
 #define CGAL_add_pmp_parameter(X, Y, Z)          \
   template<typename K>                           \
-  pmp_bgl_named_params<K, X>                     \
+  pmp_bgl_named_params<K, CGAL::parameters::X>                     \
   Z(const K& k)                                  \
   {                                              \
-    typedef pmp_bgl_named_params<K, X> Params;   \
+    typedef pmp_bgl_named_params<K, CGAL::parameters::X> Params;   \
     return Params(k);                            \
   }
 #include <CGAL/boost/graph/parameters_interface.h>

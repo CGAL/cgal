@@ -231,12 +231,12 @@ bool does_bound_a_volume(const TriangleMesh& tm)
 
 #define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
   typedef typename boost::lookup_named_param_def < \
-    CGAL::edge_is_constrained_t, \
+    CGAL::parameters::edge_is_constrained_t, \
     NamedParametersOut##I, \
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
-      boost::choose_param( get_param(cpp11::get<I>(nps_out), edge_is_constrained),  \
+      boost::choose_param( get_param(cpp11::get<I>(nps_out), CGAL::parameters::edge_is_constrained),  \
                            Corefinement::No_mark<TriangleMesh>() );
 
 
@@ -328,20 +328,20 @@ boolean_operation(      TriangleMesh& tm1,
 // Edge is-constrained maps
   //for input meshes
   typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
+    CGAL::parameters::edge_is_constrained_t,
     NamedParameters1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm1;
 
   typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
+    CGAL::parameters::edge_is_constrained_t,
     NamedParameters2,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = boost::choose_param( boost::get_param(np1, edge_is_constrained),
+  Ecm1 ecm1 = boost::choose_param( boost::get_param(np1, CGAL::parameters::edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = boost::choose_param( boost::get_param(np2, edge_is_constrained),
+  Ecm2 ecm2 = boost::choose_param( boost::get_param(np2, CGAL::parameters::edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
@@ -626,20 +626,20 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
 // Edge is-constrained maps
   typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
+    CGAL::parameters::edge_is_constrained_t,
     NamedParameters1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm1;
 
   typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
+    CGAL::parameters::edge_is_constrained_t,
     NamedParameters2,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = boost::choose_param( get_param(np1, edge_is_constrained),
+  Ecm1 ecm1 = boost::choose_param( get_param(np1, CGAL::parameters::edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = boost::choose_param( get_param(np2, edge_is_constrained),
+  Ecm2 ecm2 = boost::choose_param( get_param(np2, CGAL::parameters::edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;

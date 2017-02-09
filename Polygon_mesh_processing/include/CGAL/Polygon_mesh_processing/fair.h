@@ -151,9 +151,9 @@ namespace internal {
                                 get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_param(get_param(np, sparse_linear_solver), Default_solver()),
-      choose_param(get_param(np, weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
-      choose_param(get_param(np, fairing_continuity), 1),
+      choose_param(get_param(np, CGAL::parameters::sparse_linear_solver), Default_solver()),
+      choose_param(get_param(np, CGAL::parameters::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
+      choose_param(get_param(np, CGAL::parameters::fairing_continuity), 1),
       vpmap_
       );
   }

@@ -94,7 +94,7 @@ namespace Polygon_mesh_processing {
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
-      choose_param(get_param(np, use_delaunay_triangulation), true);
+      choose_param(get_param(np, CGAL::parameters::use_delaunay_triangulation), true);
 #endif
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
@@ -104,7 +104,7 @@ namespace Polygon_mesh_processing {
       out,
       choose_param(get_param(np, vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_param(get_param(np, geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
+      choose_param(get_param(np, CGAL::parameters::geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
       .first;
   }
 
@@ -339,7 +339,7 @@ namespace Polygon_mesh_processing {
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
-      choose_param(get_param(np, use_delaunay_triangulation), true);
+      choose_param(get_param(np, CGAL::parameters::use_delaunay_triangulation), true);
 #endif
 
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
@@ -359,7 +359,7 @@ namespace Polygon_mesh_processing {
 
     triangulate_hole_polyline(points, third_points, tracer, WC(),
       use_dt3,
-      choose_param(get_param(np, CGAL::geom_traits),
+      choose_param(get_param(np, CGAL::parameters::geom_traits),
         typename CGAL::Kernel_traits<Point>::Kernel()));
 
     CGAL_assertion(holes.empty());

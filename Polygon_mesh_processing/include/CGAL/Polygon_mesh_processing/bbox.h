@@ -72,7 +72,7 @@ namespace CGAL {
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, CGAL_PMP_NP_CLASS>::type GT;
-      GT gt = choose_param(get_param(np, geom_traits), GT());
+      GT gt = choose_param(get_param(np, CGAL::parameters::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -123,7 +123,7 @@ namespace CGAL {
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-      GT gt = choose_param(get_param(np, geom_traits), GT());
+      GT gt = choose_param(get_param(np, CGAL::parameters::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       return get_bbox( get(vpm, vd) );
@@ -166,7 +166,7 @@ namespace CGAL {
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-      GT gt = choose_param(get_param(np, geom_traits), GT());
+      GT gt = choose_param(get_param(np, CGAL::parameters::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       return get_bbox( get(vpm, source(ed, pmesh)) ) +
@@ -210,7 +210,7 @@ namespace CGAL {
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-      GT gt = choose_param(get_param(np, geom_traits), GT());
+      GT gt = choose_param(get_param(np, CGAL::parameters::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;

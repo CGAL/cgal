@@ -205,7 +205,7 @@ clip(      TriangleMesh& tm,
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);
 
   return internal::clip_open_impl(tm, clipper,
-      get_param(np_tm, edge_is_constrained), np_tm, np_c);
+      get_param(np_tm, CGAL::parameters::edge_is_constrained), np_tm, np_c);
 }
 
 /// \todo document me
