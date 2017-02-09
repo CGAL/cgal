@@ -851,3 +851,22 @@ void Scene_points_with_normal_item::pointSliderReleased()
   d->is_point_slider_moving = false;
 }
 
+void Scene_points_with_normal_item::copyProperties(Scene_item *item)
+{
+  Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(item);
+  if(!point_item)
+    return;
+  d->point_Slider->setValue(point_item->getPointSliderValue());
+  if(has_normals())
+    d->normal_Slider->setValue(point_item->getNormalSliderValue());
+}
+
+int Scene_points_with_normal_item::getNormalSliderValue()
+{
+  return d->normal_Slider->value();
+}
+
+int Scene_points_with_normal_item::getPointSliderValue()
+{
+  return d->point_Slider->value();
+}
