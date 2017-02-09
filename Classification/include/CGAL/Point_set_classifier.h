@@ -159,7 +159,7 @@ private:
       eigen = new Local_eigen_analysis (input, point_map, neighborhood->k_neighbor_query(6));
       double range = eigen->mean_range();
       if (this->voxel_size < 0)
-        this->voxel_size = range / 3;
+        this->voxel_size = range;
       t.stop();
       CGAL_CLASSIFICATION_CERR << "Eigen values computed in " << t.time() << " second(s)" << std::endl;
       CGAL_CLASSIFICATION_CERR << "Range = " << range << std::endl;
@@ -810,7 +810,7 @@ private:
     double voxel_size = tree.get<double>("classification.parameters.voxel_size");
     
     m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
-
+    
     CGAL::Timer t;
     std::map<std::string, Attribute_handle> att_map;
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.attributes"))
@@ -922,7 +922,6 @@ private:
         att->set_weight(weight);
         att_map[full_id] = att;
       }
-    CGAL_CLASSIFICATION_CERR << "Elevation took " << t.time() << " second(s)" << std::endl;
 
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.types"))
       {
