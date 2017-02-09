@@ -27,6 +27,8 @@
 #ifndef CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
 #define CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include "Get_facet_patch_id.h"

@@ -28,6 +28,8 @@
 #ifndef CGAL_MESH_3_SIZING_FIELD_MINIMUM
 #define CGAL_MESH_3_SIZING_FIELD_MINIMUM
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 
