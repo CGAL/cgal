@@ -279,7 +279,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
-      if (${component} STREQUAL "Core")
+      if (NOT MSVC AND "${component}" STREQUAL "Core")
+        # See the release notes of CGAL-4.10: CGAL_Core now requires
+        # Boost.Thread, with all compilers but MSVC.
         find_package( Boost 1.48 REQUIRED thread system )
         add_to_list( CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
       endif()
