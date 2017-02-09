@@ -45,7 +45,7 @@ protected:
 #endif
   
 public:
-  Eigen_attribute (const PointRange& input,
+  Eigen_attribute (const PointRange&,
                    Local_eigen_analysis& eigen)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
     : eigen (eigen)
