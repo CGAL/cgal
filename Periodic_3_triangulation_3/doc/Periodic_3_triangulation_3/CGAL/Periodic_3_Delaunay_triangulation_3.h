@@ -95,7 +95,8 @@ Cell_handle loc, int li, int lj);
 /// @}
 
 /*! \name
-The following method allows one to insert several points. It returns the number of inserted points.
+The following method allows the insertion of several points and returns
+the number of inserted points.
 */
 /// @{
 
@@ -121,27 +122,28 @@ bool is_large_point_set = false);
 /// @{
 
 /*!
-Moves the point stored in `v` to `p`, while preserving the Delaunay 
-property. This performs an action semantically equivalent to `remove(v)` 
-followed by `insert(p)`, but is supposedly faster when the point has 
-not moved much. Returns the handle to the new vertex. 
-\pre `p` lies in the original domain `domain`. 
-*/ 
-Vertex_handle move_point(Vertex_handle v, const Point & p); 
+Moves the point stored in `v` to `p`, while preserving the Delaunay
+property. This performs an action semantically equivalent to `remove(v)`
+followed by `insert(p)`, but is supposedly faster when the point has
+not moved much. Returns the handle to the new vertex.
+\pre `p` lies in the original domain `domain`.
+*/
+Vertex_handle move_point(Vertex_handle v, const Point & p);
 
-/// @} 
+/// @}
 
-/*! \name Removal 
+/*! \name Removal
+
+The following methods remove points in the triangulation.
 
 When a vertex `v` is removed from a triangulation, all the cells
 incident to `v` must be removed, and the polyhedral region consisting
 of all the tetrahedra that are incident to `v` must be
-re-triangulated. So, the problem reduces to triangulating a polyhedral
+re-triangulated. The problem thus reduces to triangulating a polyhedral
 region, while preserving its boundary, or to compute a
 <I>constrained</I> triangulation. This is known to be sometimes
 impossible: the Sch&ouml;nhardt polyhedron cannot be triangulated
 \cgalCite{cgal:s-cgehd-98}.
-
 However, when dealing with Delaunay triangulations, the case of such
 polyhedra that cannot be re-triangulated cannot happen, so \cgal
 proposes a vertex removal.  

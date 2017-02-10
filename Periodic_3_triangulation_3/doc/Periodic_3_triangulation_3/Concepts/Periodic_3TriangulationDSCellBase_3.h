@@ -11,7 +11,7 @@ and \ref TDS3secdesign), a cell stores handles to its four vertices
 and to its four neighbor cells. The vertices and neighbors are 
 indexed 0, 1, 2 and 3. Neighbor `i` lies opposite to vertex `i`. 
 
-For periodic triangulation the cell base class needs to
+For periodic triangulations, the cell base class needs to
 additionally store an offset for each vertex. Only the last three
 bits of each integer are required to be stored. The remaining part
 does not contain any information.

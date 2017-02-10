@@ -31,10 +31,9 @@ public:
 /// @{
 
 /*!
-A model of the concept 
-`Periodic_3Offset_3` 
-*/ 
-typedef unspecified_type Periodic_3_offset_3; 
+A model of the concept `Periodic_3Offset_3`
+*/
+typedef unspecified_type Periodic_3_offset_3;
 
 /// @} 
 
