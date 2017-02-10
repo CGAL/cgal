@@ -492,18 +492,6 @@ struct Set_show_tetrahedra {
   }
 };
 
-
-double complex_diag(const Scene_item* item) {
-  const Scene_item::Bbox& bbox = item->bbox();
-  const double& xdelta = bbox.xmax()-bbox.xmin();
-  const double& ydelta = bbox.ymax()-bbox.ymin();
-  const double& zdelta = bbox.zmax()-bbox.zmin();
-  const double diag = std::sqrt(xdelta*xdelta +
-                                ydelta*ydelta +
-                                zdelta*zdelta);
-  return diag * 0.7;
-}
-
 Scene_c3t3_item::Scene_c3t3_item()
   : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
   , d(new Scene_c3t3_item_priv(this))
@@ -1519,6 +1507,7 @@ void Scene_c3t3_item_priv::computeElements()
 
   //The grid
   {
+
     float x = (2 * (float)complex_diag()) / 10.0;
     float y = (2 * (float)complex_diag()) / 10.0;
     for (int u = 0; u < 11; u++)
@@ -1644,25 +1633,28 @@ void Scene_c3t3_item::show_grid(bool b)
 }
 void Scene_c3t3_item::show_spheres(bool b)
 {
-  d->spheres_are_shown = b;
-  contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
-  if(b && !d->spheres)
+  if(is_valid())
   {
-    d->spheres = new Scene_spheres_item(this, true);
-    d->spheres->setName("Protecting spheres");
-    d->spheres->setRenderingMode(Gouraud);
-    connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-    scene->addItem(d->spheres);
-    scene->changeGroup(d->spheres, this);
-    lockChild(d->spheres);
-    d->computeSpheres();
+    d->spheres_are_shown = b;
+    contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
+    if(b && !d->spheres)
+    {
+      d->spheres = new Scene_spheres_item(this, true);
+      d->spheres->setName("Protecting spheres");
+      d->spheres->setRenderingMode(Gouraud);
+      connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+      scene->addItem(d->spheres);
+      scene->changeGroup(d->spheres, this);
+      lockChild(d->spheres);
+      d->computeSpheres();
+    }
+    else if (!b && d->spheres!=NULL)
+    {
+      unlockChild(d->spheres);
+      scene->erase(scene->item_id(d->spheres));
+    }
+    Q_EMIT redraw();
   }
-  else if (!b && d->spheres!=NULL)
-  {
-    unlockChild(d->spheres);
-    scene->erase(scene->item_id(d->spheres));
-  }
-  Q_EMIT redraw();
 
 }
 void Scene_c3t3_item::show_intersection(bool b)
@@ -1694,10 +1686,12 @@ void Scene_c3t3_item::show_intersection(bool b)
 }
 void Scene_c3t3_item::show_cnc(bool b)
 {
-  d->cnc_are_shown = b;
-  contextMenu()->findChild<QAction*>("actionShowCNC")->setChecked(b);
-  Q_EMIT redraw();
-
+  if(is_valid())
+  {
+    d->cnc_are_shown = b;
+    contextMenu()->findChild<QAction*>("actionShowCNC")->setChecked(b);
+    Q_EMIT redraw();
+  }
 }
 
 void Scene_c3t3_item::reset_intersection_item()
@@ -1991,5 +1985,9 @@ void Scene_c3t3_item::invalidateOpenGLBuffers()
   are_buffers_filled = false;
   compute_bbox();
   d->invalidate_stats();
+}
+void Scene_c3t3_item::resetCutPlane()
+{
+ d->reset_cut_plane();
 }
 #include "Scene_c3t3_item.moc"
