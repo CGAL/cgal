@@ -354,7 +354,11 @@ protected:
   }
   template<class HandleType>
   void process_selection(HandleType clicked) {
-    const std::set<HandleType>& selection = extract_k_ring(clicked, k_ring);
+    //keeps the highlighting on track if the brush_size is not 0
+    int current_ring = 0;
+    if(active_handle_type != Active_handle::PATH && !is_edit_mode)
+      current_ring = k_ring;
+    const std::set<HandleType>& selection = extract_k_ring(clicked, current_ring);
     if(is_highlighting)
     {
       Q_EMIT selected_HL(selection);
