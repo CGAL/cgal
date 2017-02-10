@@ -32,6 +32,8 @@
 namespace CGAL{
 namespace parameters{
 enum all_default_t { all_default }; //cannot use macro because it takes no argument
+
+// define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
 
@@ -54,6 +56,9 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
       typedef pmp_bgl_named_params<bool, parameters::all_default_t, self> Params;
       return Params(*this);
     }
+
+// define the functions for new named parameters and the one imported from BGL and boost
+// used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)              \
   template<typename K>                               \
   pmp_bgl_named_params<K, parameters::X, self>                   \
@@ -98,6 +103,7 @@ pmp_bgl_named_params<bool, CGAL::parameters::all_default_t>
     return Params();
   }
 
+// define free functions for new named parameters and the one imported from BGL and boost
 #define CGAL_add_named_parameter(X, Y, Z)          \
   template<typename K>                           \
   pmp_bgl_named_params<K, CGAL::parameters::X>                     \

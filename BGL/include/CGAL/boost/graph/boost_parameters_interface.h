@@ -17,8 +17,7 @@
 //
 // Author(s)     : Maxime Gimeno
 
-
-
+// List the named parameters imported from boost we are using in CGAL
 CGAL_add_named_parameter(vertex_index_t, vertex_index_map, vertex_index_map)
 CGAL_add_named_parameter(edge_index_t, edge_index_map, edge_index_map)
 CGAL_add_named_parameter(graph_visitor_t, visitor, visitor)

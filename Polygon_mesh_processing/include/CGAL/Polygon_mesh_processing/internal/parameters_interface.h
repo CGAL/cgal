@@ -18,6 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
+// List of named parameters used in the Polygon Mesh Processing package
+
 CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 CGAL_add_named_parameter(density_control_factor_t, density_control_factor, density_control_factor)
 CGAL_add_named_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)

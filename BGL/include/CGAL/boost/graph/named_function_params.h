@@ -104,6 +104,7 @@ namespace boost{
 
 namespace CGAL {
 namespace parameters{
+// define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
 #include <CGAL/boost/graph/parameters_interface.h>
@@ -119,7 +120,8 @@ namespace parameters{
     cgal_bgl_named_params(T v = T()) : base(v) {}
     cgal_bgl_named_params(T v, const Base& b) : base(v, b) {}
 
-
+// create the functions for new named parameters and the one imported boost
+// used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)                          \
   template<typename K>                                           \
   cgal_bgl_named_params<K, parameters::X, self>                  \
@@ -145,6 +147,7 @@ namespace parameters{
 
   namespace parameters {
 
+// define free functions for new named parameters and the one imported from boost
 #define CGAL_add_named_parameter(X, Y, Z)               \
   template <typename K>                               \
   cgal_bgl_named_params<K, boost::X>                  \
