@@ -17,7 +17,9 @@
 //
 // Author(s)     : Maxime Gimeno
 
-
+CGAL_add_pmp_parameter(vertex_point_t, vertex_point_map, vertex_point_map)
+CGAL_add_pmp_parameter(face_index_t, face_index_map, face_index_map)
+CGAL_add_pmp_parameter(halfedge_index_t, halfedge_index_map, halfedge_index_map)
 CGAL_add_pmp_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
 CGAL_add_pmp_parameter(edge_is_constrained_params_t, edge_is_constrained_params, edge_is_constrained_map_params)
 CGAL_add_pmp_parameter(set_cache_policy_t, set_cache_policy, set_cache)

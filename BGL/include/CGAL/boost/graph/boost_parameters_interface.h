@@ -18,6 +18,7 @@
 // Author(s)     : Maxime Gimeno
 
 
-CGAL_add_pmp_parameter(vertex_point_t, vertex_point_map, vertex_point_map)
-CGAL_add_pmp_parameter(face_index_t, face_index_map, face_index_map)
+
 CGAL_add_pmp_parameter(vertex_index_t, vertex_index_map, vertex_index_map)
+CGAL_add_pmp_parameter(edge_index_t, edge_index_map, edge_index_map)
+CGAL_add_pmp_parameter(graph_visitor_t, visitor, visitor)

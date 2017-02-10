@@ -141,40 +141,10 @@ namespace parameters{
   }
 #include <CGAL/boost/graph/boost_parameters_interface.h>
 #undef CGAL_add_pmp_parameter
-    template <typename IndexMap>
-    cgal_bgl_named_params<IndexMap, boost::edge_index_t, self>
-    edge_index_map(const IndexMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IndexMap, boost::edge_index_t, self> Params;
-      return Params(p, *this);
-    }
-
-      template <typename IndexMap>
-    cgal_bgl_named_params<IndexMap, boost::halfedge_index_t, self>
-    halfedge_index_map(const IndexMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IndexMap, boost::halfedge_index_t, self> Params;
-      return Params(p, *this);
-    }
-
-    template <typename Visitor>
-    cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self>
-    visitor(const Visitor& p) const 
-    {
-      typedef cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self> Params;
-      return Params(p, *this);
-    }
   };
 
   namespace parameters {
-  
-  template <typename IndexMap>
-  cgal_bgl_named_params<IndexMap, boost::halfedge_index_t>
-  halfedge_index_map(IndexMap const& p) 
-  {
-    typedef cgal_bgl_named_params<IndexMap, boost::halfedge_index_t> Params;
-    return Params(p);
-  }
+
 #define CGAL_add_pmp_parameter(X, Y, Z)               \
   template <typename K>                               \
   cgal_bgl_named_params<K, boost::X>                  \
@@ -196,21 +166,7 @@ namespace parameters{
   }
 #include <CGAL/boost/graph/parameters_interface.h>
 #undef CGAL_add_pmp_parameter
-  template <typename IndexMap>
-  cgal_bgl_named_params<IndexMap, boost::edge_index_t>
-  edge_index_map(IndexMap const& pmap) 
-  {
-    typedef cgal_bgl_named_params<IndexMap, boost::edge_index_t> Params;
-    return Params(pmap);
-  }
 
-  template <typename Visitor>
-  cgal_bgl_named_params<Visitor, boost::graph_visitor_t>
-  visitor(const Visitor& p) 
-  {
-    typedef cgal_bgl_named_params<Visitor, boost::graph_visitor_t> Params;
-    return Params(p);
-  }
   } // namespace parameters
 
 } //namespace CGAL
