@@ -1718,7 +1718,7 @@ class Intersection_of_Polyhedra_3{
       CGAL_assertion(neighbors.find(i)!=neighbors.end());
       neighbors.erase(i);
     }
-    void make_terminal() {degree=45;}
+    void make_terminal() {if (degree==2) degree=45;}
     bool is_terminal()const {return degree!=2;}
     bool empty() const {return neighbors.empty();}
     int top() const {return *neighbors.begin();}
