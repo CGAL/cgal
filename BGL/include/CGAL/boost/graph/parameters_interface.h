@@ -20,6 +20,7 @@
 // List of new named parameters that we use in CGAL
 CGAL_add_named_parameter(vertex_point_t, vertex_point_map, vertex_point_map)
 CGAL_add_named_parameter(face_index_t, face_index_map, face_index_map)
+CGAL_add_named_parameter(edge_index_t, edge_index_map, edge_index_map)
 CGAL_add_named_parameter(halfedge_index_t, halfedge_index_map, halfedge_index_map)
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
 CGAL_add_named_parameter(edge_is_constrained_params_t, edge_is_constrained_params, edge_is_constrained_map_params)
