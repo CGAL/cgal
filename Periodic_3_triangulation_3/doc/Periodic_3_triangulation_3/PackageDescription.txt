@@ -46,11 +46,11 @@ as the triangulation data structure as template parameters.
 
 The geometric traits class of each triangulation class must be a model
 of its associated concept, i.e., it must contain all
-predicates and constructions that are needed by the 
+predicates and constructions that are needed by the
 triangulation class.
 
 The package uses `CGAL::Triangulation_data_structure_3` to represent the
-triangulation. 
+triangulation.
 A triangulation is stored as a collection of vertices and cells that
 are linked together through incidence and adjacency relations. Each
 cell gives access to its four incident vertices and to its four
