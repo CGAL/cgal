@@ -727,7 +727,7 @@ class Intersection_of_triangle_meshes
       CGAL_assertion(neighbors.count(i)!= 0);
       neighbors.erase(i);
     }
-    void make_terminal() {degree=45;}
+    void make_terminal() {if (degree==2) degree=45;}
     bool is_terminal()const {return degree!=2;}
     bool empty() const {return neighbors.empty();}
     Node_id top() const {return *neighbors.begin();}
