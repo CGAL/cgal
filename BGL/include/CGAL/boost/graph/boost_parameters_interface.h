@@ -19,6 +19,6 @@
 
 
 
-CGAL_add_pmp_parameter(vertex_index_t, vertex_index_map, vertex_index_map)
-CGAL_add_pmp_parameter(edge_index_t, edge_index_map, edge_index_map)
-CGAL_add_pmp_parameter(graph_visitor_t, visitor, visitor)
+CGAL_add_named_parameter(vertex_index_t, vertex_index_map, vertex_index_map)
+CGAL_add_named_parameter(edge_index_t, edge_index_map, edge_index_map)
+CGAL_add_named_parameter(graph_visitor_t, visitor, visitor)

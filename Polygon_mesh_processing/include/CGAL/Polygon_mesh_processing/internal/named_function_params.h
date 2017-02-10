@@ -32,12 +32,12 @@
 namespace CGAL{
 namespace parameters{
 enum all_default_t { all_default }; //cannot use macro because it takes no argument
-#define CGAL_add_pmp_parameter(X, Y, Z)            \
+#define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
 
 #include <CGAL/Polygon_mesh_processing/internal/parameters_interface.h>
 
-#undef CGAL_add_pmp_parameter
+#undef CGAL_add_named_parameter
 }//parameters
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct pmp_bgl_named_params
@@ -54,7 +54,7 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
       typedef pmp_bgl_named_params<bool, parameters::all_default_t, self> Params;
       return Params(*this);
     }
-#define CGAL_add_pmp_parameter(X, Y, Z)              \
+#define CGAL_add_named_parameter(X, Y, Z)              \
   template<typename K>                               \
   pmp_bgl_named_params<K, parameters::X, self>                   \
   Z(const K& k) const                                \
@@ -65,8 +65,8 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
 
 #include <CGAL/Polygon_mesh_processing/internal/parameters_interface.h>
 #include <CGAL/boost/graph/parameters_interface.h>    
-#undef CGAL_add_pmp_parameter
-#define CGAL_add_pmp_parameter(X, Y, Z)                     \
+#undef CGAL_add_named_parameter
+#define CGAL_add_named_parameter(X, Y, Z)                     \
   template<typename K>                                      \
   pmp_bgl_named_params<K, boost::X, self>                   \
   Z(const K& k) const                                       \
@@ -75,7 +75,7 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
     return Params(k, *this);                                \
   }
 #include <CGAL/boost/graph/boost_parameters_interface.h>
-#undef CGAL_add_pmp_parameter
+#undef CGAL_add_named_parameter
   };
 
 namespace Polygon_mesh_processing{
@@ -98,7 +98,7 @@ pmp_bgl_named_params<bool, CGAL::parameters::all_default_t>
     return Params();
   }
 
-#define CGAL_add_pmp_parameter(X, Y, Z)          \
+#define CGAL_add_named_parameter(X, Y, Z)          \
   template<typename K>                           \
   pmp_bgl_named_params<K, CGAL::parameters::X>                     \
   Z(const K& k)                                  \
@@ -108,8 +108,8 @@ pmp_bgl_named_params<bool, CGAL::parameters::all_default_t>
   }
 #include <CGAL/boost/graph/parameters_interface.h>
 #include <CGAL/Polygon_mesh_processing/internal/parameters_interface.h>
-#undef CGAL_add_pmp_parameter
-#define CGAL_add_pmp_parameter(X, Y, Z)          \
+#undef CGAL_add_named_parameter
+#define CGAL_add_named_parameter(X, Y, Z)          \
   template<typename K>                           \
   pmp_bgl_named_params<K, boost::X>              \
   Z(const K& k)                                  \
@@ -118,7 +118,7 @@ pmp_bgl_named_params<bool, CGAL::parameters::all_default_t>
     return Params(k);                            \
   }
 #include <CGAL/boost/graph/boost_parameters_interface.h>
-#undef CGAL_add_pmp_parameter
+#undef CGAL_add_named_parameter
 } //namespace parameters
 } //namespace Polygon_mesh_processing
 
