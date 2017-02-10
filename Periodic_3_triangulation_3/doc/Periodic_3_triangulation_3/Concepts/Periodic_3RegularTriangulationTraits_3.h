@@ -7,20 +7,20 @@ The concept `Periodic_3RegularTriangulationTraits_3` is the first template param
 of the class `CGAL::Periodic_3_regular_triangulation_3`.
 It refines the concept
 `RegularTriangulationTraits_3` from the \cgal 3D Triangulations.
-It redefines the geometric objects, predicates and constructions to 
-work with point-offset pairs. In most cases the offsets will be 
-(0,0,0) and the predicates from `RegularTriangulationTraits_3` 
-can be used directly. For efficiency reasons we maintain for each 
-functor the version without offsets. 
+It redefines the geometric objects, predicates and constructions to
+work with point-offset pairs. In most cases the offsets will be
+(0,0,0) and the predicates from `RegularTriangulationTraits_3`
+can be used directly. For efficiency reasons we maintain for each
+functor the version without offsets.
 
 \cgalRefines Periodic_3TriangulationTraits_3
 \cgalRefines RegularTriangulationTraits_3
 
-\cgalHasModel CGAL::Periodic_3_regular_triangulation_traits_3 
+\cgalHasModel CGAL::Periodic_3_regular_triangulation_traits_3
 
-In addition to the requirements described for the traits class 
-RegularTriangulationTraits_3, the geometric traits class of a 
-periodic regular triangulation must fulfill the following 
+In addition to the requirements described for the traits class
+RegularTriangulationTraits_3, the geometric traits class of a
+periodic regular triangulation must fulfill the following
 requirements.
 
 \note The optional types must be provided in any case, however they
@@ -142,36 +142,36 @@ typedef unspecified_type Coplanar_orientation_3;
 /*!
 A constructor object that must provide the function operators:
 
-`Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s)`, 
+`Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s)`,
 
-which constructs the weighted circumcenter of four points and 
+which constructs the weighted circumcenter of four points and
 
-`Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, 
-Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`, 
+`Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s,
+Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`,
 
-which constructs the weighted circumcenter of four point-offset pairs. 
-\pre `p`, `q`, `r` and `s` as well as `(p,o_p)`, `(q,o_q)`, `(r,o_r)` and `(s,o_s)` must be non coplanar. `p`, `q`, `r`, `s` lie inside the domain. 
-*/ 
-typedef unspecified_type Construct_weighted_circumcenter_3; 
+which constructs the weighted circumcenter of four point-offset pairs.
+\pre `p`, `q`, `r` and `s` as well as `(p,o_p)`, `(q,o_q)`, `(r,o_r)` and `(s,o_s)` must be non coplanar. `p`, `q`, `r`, `s` lie inside the domain.
+*/
+typedef unspecified_type Construct_weighted_circumcenter_3;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Default constructor. 
-*/ 
-Periodic_3_regular_triangulation_traits_3(); 
+Default constructor.
+*/
+Periodic_3_regular_triangulation_traits_3();
 
 /*!
-Copy constructor. 
-*/ 
-Periodic_3_regular_triangulation_traits_3(const Periodic_3_regular_triangulation_traits_3 & tr); 
+Copy constructor.
+*/
+Periodic_3_regular_triangulation_traits_3(const Periodic_3_regular_triangulation_traits_3 & tr);
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// The following functions give access to the predicate and construction objects:
 /// @{
 
@@ -196,7 +196,7 @@ Coplanar_orientation_3 coplanar_3_orientation_3_object();
 
 /// @}
 
-/// \name 
+/// \name
 /// The following function must be provided only if the methods of
 /// `Periodic_3_regular_triangulation_3` returning elements of the
 /// Voronoi diagram are used; otherwise a dummy function can be
