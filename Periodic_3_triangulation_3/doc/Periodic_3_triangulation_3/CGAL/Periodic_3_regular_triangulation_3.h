@@ -10,8 +10,9 @@ weighted Delaunay triangulation in three-dimensional periodic space.
 \tparam Periodic_3RegularTriangulationTraits_3 is the geometric traits class.
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure.
-Its default value is 
-`Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Regular_triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`. 
+Its default value is
+`Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<> >,
+                                Regular_triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`.
 
 */
 template< typename Periodic_3TriangulationTraits_3, typename TriangulationDataStructure_3 >
@@ -25,8 +26,8 @@ public:
 /// @{
 
 /*!
-*/ 
-typedef Periodic_3RegularTriangulationTraits_3::Bare_point Bare_point;  
+*/
+typedef Periodic_3RegularTriangulationTraits_3::Point_3 Bare_point;
 
 /*!
 The type for points 

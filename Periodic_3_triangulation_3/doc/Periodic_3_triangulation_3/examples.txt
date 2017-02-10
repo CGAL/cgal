@@ -8,5 +8,5 @@
 \example Periodic_3_triangulation_3/p3rt3_insert_remove.cpp
 \example Periodic_3_triangulation_3/p3rt3_insert_only.cpp
 \example Periodic_3_triangulation_3/p3rt3_hidden_points.cpp
-\example Periodic_3_triangulation_3/p3rt3_hidden_point_with_bad_weight.cpp
+\example Periodic_3_triangulation_3/p3rt3_insert_point_with_bad_weight.cpp
 /h*/

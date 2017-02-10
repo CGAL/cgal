@@ -3,15 +3,15 @@
 \ingroup PkgPeriodic3Triangulation3Concepts
 \cgalConcept
 
-The concept `Periodic_3DelaunayTriangulationTraits_3` is the first template parameter of the classes 
-`Periodic_3_Delaunay_triangulation_3`.
-It refines the concept
-`DelaunayTriangulationTraits_3` from the \cgal 3D Triangulations.
-It redefines the geometric objects, predicates and constructions to 
-work with point-offset pairs. In most cases the offsets will be 
-(0,0,0) and the predicates from `DelaunayTriangulationTraits_3` 
-can be used directly. For efficiency reasons we maintain for each 
-functor the version without offsets. 
+The concept `Periodic_3DelaunayTriangulationTraits_3` is the first template parameter
+of the class `CGAL::Periodic_3_Delaunay_triangulation_3`.
+It refines the concept `DelaunayTriangulationTraits_3` from the
+\cgal 3D Triangulations.
+It redefines the geometric objects, predicates and constructions to
+work with point-offset pairs. In most cases the offsets will be
+(0,0,0) and the predicates from `DelaunayTriangulationTraits_3`
+can be used directly. For efficiency reasons we maintain for each
+functor the version without offsets.
 
 \cgalRefines Periodic_3TriangulationTraits_3
 \cgalRefines DelaunayTriangulationTraits_3
@@ -69,7 +69,7 @@ typedef unspecified_type Compare_distance_3;
 /// @}
 
 /// \name
-/// In addition, only when vertex removal is used, the traits class must provide the following predicate objects
+/// When vertex removal is used, the traits class must in addition provide the following predicate objects
 /// @{
 
 /*!
@@ -110,8 +110,8 @@ typedef unspecified_type Coplanar_side_of_bounded_circle_3;
 /// @}
 
 /// \name
-/// In addition, only when `is_Gabriel` is used, the traits class must
-/// provide the following predicate object:
+/// When `is_Gabriel` is used, the traits class must
+/// in addition provide the following predicate object:
 /// @{
 
 /*!
@@ -157,8 +157,8 @@ typedef unspecified_type Side_of_bounded_sphere_3;
 /// @}
 
 /// \name
-/// In addition, only when the dual operations are used, the traits
-/// class must provide the following constructor object:
+/// When the dual operations are used, the traits
+/// class must in addition provide the following constructor object:
 /// @{
 
 /*!
@@ -186,9 +186,9 @@ Default constructor.
 Periodic_3_Delaunay_triangulation_traits_3(); 
 
 /*!
-Copy constructor. 
-*/ 
-Periodic_3_Delaunay_triangulation_traits_3(const Periodic_triangulation_traits_3 & tr); 
+Copy constructor.
+*/
+Periodic_3_Delaunay_triangulation_traits_3(const Periodic_3_Delaunay_triangulation_traits_3 & tr);
 
 /// @} 
 
@@ -227,7 +227,7 @@ coplanar_side_of_bounded_circle_3_object();
 /// @}
 
 /// \name
-/// The following function must be provided only if the `is_Gabriel`
+/// The following function must be provided if the `is_Gabriel`
 /// methods of `Periodic_3_Delaunay_triangulation_3` are used;
 /// otherwise a dummy function can be provided.
 /// @{
@@ -239,8 +239,8 @@ Side_of_bounded_sphere_3 side_of_bounded_sphere_3_object();
 
 /// @}
 
-/// \name 
-/// The following function must be provided only if the methods of
+/// \name
+/// The following function must be provided if the methods of
 /// `Periodic_3_Delaunay_triangulation_3` returning elements of the
 /// Voronoi diagram are used; otherwise a dummy function can be
 /// provided:
