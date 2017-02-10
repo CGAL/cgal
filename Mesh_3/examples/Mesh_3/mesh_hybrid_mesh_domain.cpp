@@ -225,7 +225,7 @@ int main()
   if (!read_polylines(lines_fname, featured_curves))
   { // see file "read_polylines.h"
     std::cerr << "Error: Cannot read file " << lines_fname << std::endl;
-    return false;
+    return EXIT_FAILURE;
   }
 
   // Add features for protection
@@ -244,5 +244,5 @@ int main()
   // Output
   dump_c3t3(c3t3, "out");
 
-  return 0;
+  return EXIT_SUCCESS;
 }
