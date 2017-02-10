@@ -492,18 +492,6 @@ struct Set_show_tetrahedra {
   }
 };
 
-
-double complex_diag(const Scene_item* item) {
-  const Scene_item::Bbox& bbox = item->bbox();
-  const double& xdelta = bbox.xmax()-bbox.xmin();
-  const double& ydelta = bbox.ymax()-bbox.ymin();
-  const double& zdelta = bbox.zmax()-bbox.zmin();
-  const double diag = std::sqrt(xdelta*xdelta +
-                                ydelta*ydelta +
-                                zdelta*zdelta);
-  return diag * 0.7;
-}
-
 Scene_c3t3_item::Scene_c3t3_item()
   : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
   , d(new Scene_c3t3_item_priv(this))
@@ -1519,6 +1507,7 @@ void Scene_c3t3_item_priv::computeElements()
 
   //The grid
   {
+
     float x = (2 * (float)complex_diag()) / 10.0;
     float y = (2 * (float)complex_diag()) / 10.0;
     for (int u = 0; u < 11; u++)
@@ -1996,5 +1985,9 @@ void Scene_c3t3_item::invalidateOpenGLBuffers()
   are_buffers_filled = false;
   compute_bbox();
   d->invalidate_stats();
+}
+void Scene_c3t3_item::resetCutPlane()
+{
+ d->reset_cut_plane();
 }
 #include "Scene_c3t3_item.moc"

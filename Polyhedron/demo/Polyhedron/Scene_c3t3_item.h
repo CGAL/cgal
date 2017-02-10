@@ -61,6 +61,8 @@ public:
 
   void c3t3_changed();
 
+  void resetCutPlane();
+
   void set_valid(bool);
 
   const C3t3& c3t3() const;

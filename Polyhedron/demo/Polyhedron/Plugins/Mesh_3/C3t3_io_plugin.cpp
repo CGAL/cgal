@@ -81,6 +81,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
         if(try_load_other_binary_format(in, item->c3t3())) {
           item->c3t3_changed();
           item->changed();
+          item->resetCutPlane();
           return item;
         }
 
@@ -89,6 +90,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
         if(try_load_a_cdt_3(in, item->c3t3())) {
           item->c3t3_changed();
           item->changed();
+          item->resetCutPlane();
           return item;
         }
     }
@@ -143,6 +145,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
           }
         }
         item->c3t3_changed();
+        item->resetCutPlane();
         return item;
       }
       else if(item->c3t3().triangulation().number_of_finite_cells() == 0)

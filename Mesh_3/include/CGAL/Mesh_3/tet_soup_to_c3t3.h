@@ -115,6 +115,7 @@ void build_finite_cells(Tr& tr,
     {
       CGAL_precondition(static_cast<std::size_t>(tet[j]) < tr.number_of_vertices() &&
                         tet[j] >= 0);
+      vertex_handle_vector[tet[j] + 1]->set_dimension(3);
       vs[j] = vertex_handle_vector[tet[j] + 1];
       CGAL_postcondition(vs[j] != Vertex_handle());
     }
@@ -294,6 +295,10 @@ bool build_triangulation(Tr& tr,
   tr.tds().clear(); // not tr.clear() since it calls tr.init() which we don't want
 
   build_vertices<Tr>(tr, points, vertex_handle_vector);
+  BOOST_FOREACH(Vertex_handle vh, vertex_handle_vector)
+  {
+    vh->set_dimension(-1);
+  }
   if(!finite_cells.empty())
   {
     build_finite_cells<Tr>(tr, finite_cells, vertex_handle_vector, incident_cells_map, border_facets);
@@ -305,11 +310,6 @@ bool build_triangulation(Tr& tr,
     std::cout << tr.number_of_cells() << " cells" << std::endl;
   }
   std::cout << tr.number_of_vertices() << " vertices" << std::endl;
-
-  BOOST_FOREACH(Vertex_handle vh, vertex_handle_vector)
-  {
-    vh->set_dimension(3);
-  }
   if(c3t3_loader_failed)
   {
     return true;
