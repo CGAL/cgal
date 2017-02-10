@@ -16,8 +16,12 @@ a suitable domain to the surface. A good mapping is the one which
 minimizes either angle distortions (conformal parameterization) or
 area distortions (equiareal parameterization) in some sense. In this
 package, we focus on parameterizing triangulated surfaces which are
-homeomorphic to a disk, and on piecewise linear mappings onto a planar
-domain.
+homeomorphic to a disk or a sphere, and on piecewise linear mappings
+onto a planar domain.
+
+\remark The class `Seam_mesh` can be used to virtually cut a mesh,
+allowing to transform an input mesh in subdomain(s) that fit the
+disk-or-sphere topology requirement.
 
 Although the main motivation behind the first parameterization methods
 was the application to texture mapping, it is now frequently used for
@@ -36,7 +40,7 @@ planar domain (convex polygon vs. free border) and by the bijectivity guarantees
 of the mapping.
 
 The package proposes an interface for any model of the concept `FaceGraph`,
-such as the classes `Surface_mesh`, `Polyhedron_3`, or the mesh
+such as the classes `Surface_mesh`, `Polyhedron_3`, `Seam_mesh` or the mesh
 classes of OpenMesh.
 
 Since parameterizing meshes requires an efficient representation of sparse
@@ -142,7 +146,7 @@ typedef SMP::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer
 
 \endcode
 
-with other compatible border and domain parameterizers, e.g.
+with other <i>compatible</i> border and domain parameterizers, e.g.
 
 \code{.cpp}
 
@@ -194,7 +198,7 @@ A coefficient \f$ (i, j)\f$ of the matrix is set to 1 for an edge linking
 the vertex \f$ v_i\f$ to the vertex \f$ v_j\f$, to minus the degree of the
 vertex \f$ v_i\f$ for a diagonal element, and to 0 for any other matrix
 entry. Although a bijective mapping is guaranteed when the border is convex,
-this method does not minimize angles nor areas distortion.
+this method does not minimize either angle nor area distortion.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfiguniform,uniform.png}
 Left: Tutte Barycentric mapping parameterization (the red line depicts the cut graph). Right: parameter space.
@@ -270,7 +274,7 @@ for fixed border methods:
 two commonly used methods: uniform or arc-length parameterization.
 
 <I>Usage:</I> Uniform border parameterizations are more stable,
-although they give poor visual results. The arc-length border
+although they yield poor visual results. The arc-length border
 parameterization is used by default.
 
 <LI>One convex shape specified by one shape among two standard ones:
@@ -331,9 +335,11 @@ and a global stitching technique equivalent to the resolution of a linear system
 to guarantee that the parameterized mesh is a triangulation.
 
 A generalization of the formulation of the local optimization introduces a scalar
-coefficient &lambda; that allows the user to choose to give importance to angle
-preservation (conforming parameterization) when &lambda; = 0, to shape preservation (as rigid as
-possible) when &lambda; goes to infinity, or a balance of both.
+coefficient &lambda; that allows the user to balance angle and shape distortion:
+the closer &lambda; is to 0, the more importance is given to the minimization
+of angle distortion (conforming parameterization); inversely, when &lambda; grows,
+the parameterizer gives more and more importance to the minimization of shape
+distortion (as rigid as possible).
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigARAP}
 <center>
@@ -363,7 +369,7 @@ in the current version of this package.
 
 \subsection Surface_mesh_parameterizationBorderless Borderless Surface Parameterizations
 
-Borderless parameterization methods do not require in input a mesh that is homeomorphic
+Borderless parameterization methods do not require as input a mesh that is homeomorphic
 to a disk.
 
 \subsubsection Surface_mesh_parameterizationOrbi Orbifold Tutte Embeddings
@@ -372,17 +378,19 @@ to a disk.
 
 Orbifold-Tutte Planar Embedding was introduced by Aigerman and Lipman \cgalCite{aigerman2015orbifold}
 and is a generalization of Tutte’s embedding to other topologies, and in particular
-spheres. The orbifold-Tutte embedding bijectively maps the original surface, that is
-required to be a topological ball, to a canonical, topologically equivalent,
-two-dimensional flat surface called an Euclidean orbifold. There are 17 Euclidean
-orbifolds, of which only the 4 sphere orbifolds are implemented here.
+spheres, which we consider here. The orbifold-Tutte embedding bijectively maps
+the original surface, that is required to be a topological ball, to a canonical,
+topologically equivalent, two-dimensional flat surface called an Euclidean orbifold.
+There are 17 Euclidean orbifolds, of which only the 4 sphere orbifolds are implemented for now.
 
 The orbifold-Tutte embedding yields a seamless, globally bijective parameterization that,
 similarly to the classic Tutte embedding, only requires solving a sparse linear system
 for its computation.
 
-The parameterization process internally requires the uses of seams, but the choice
-of these seams have no influence on the result. The `Seam_mesh` structure
+The algorithm requires the user to additionally select a set of vertices of the
+input mesh and mark them as <i>cones</i>, that is singularities of the unfolding.
+Internally, the process requires the uses of seams between the cones, but the choice
+of these seams do not influence the result. The `Seam_mesh` structure
 (see also Section \ref secCuttingaMesh) is used for this purpose.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigOrbifold}

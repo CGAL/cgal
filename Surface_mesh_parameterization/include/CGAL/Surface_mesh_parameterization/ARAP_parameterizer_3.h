@@ -79,9 +79,9 @@ namespace Surface_mesh_parameterization {
 /// The class `ARAP_parameterizer_3` implements the
 /// *Local/Global Approach to Mesh Parameterization* \cgalCite{liu2008local}.
 ///
-/// This parameterization allows the user to choose to give importance to angle preservation,
-/// to shape preservation, or a balance of both.
-/// A parameter &lambda; is used to control whether the priority is given to angle
+/// This parameterization allows the user to prioritize angle preservation,
+/// shape preservation, or a balance of both.
+/// A parameter &lambda; controls whether the priority is given to angle
 /// or to shape preservation: when &lambda; = 0, the parameterization is
 /// as-similar-as-possible (ASAP) and is equivalent to the (conforming) LSCM parameterization.
 /// As &lambda; grows, the shape preservation becomes more and more important,
