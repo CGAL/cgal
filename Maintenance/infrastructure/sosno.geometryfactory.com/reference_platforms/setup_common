@@ -1,0 +1,65 @@
+#import Visual specific variables
+source "${PLATFORM_REFERENCE}/setup_VC${VC_VERSION}-${ARCH}"
+
+if [ -z "${BOOST_VERSION}" ]; then
+  export BOOST_VERSION=1_59_0
+fi
+
+export CMAKE_GENERATOR='-GNMake Makefiles'
+
+#export PATH=$PATH:'/cygdrive/c/dev/jom_1_1_0'
+#export JOM="jom.exe"
+export MAKE_CMD='nmake'
+
+export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-I-REF/scripts:/cygdrive/c/CGAL/CGAL-I-REF/developer_scripts'
+export PATH=$PATH:'/cygdrive/c/dev/depends22_x64'
+export PATH=$PATH:'/cygdrive/c/dev'
+export PATH='/cygdrive/c/dev/CMake3.5.2/bin':$PATH
+
+#Header only
+export BOOST_INCLUDEDIR="C:\dev\boost\boost_${BOOST_VERSION}"
+export EIGEN3_DIR="C:\dev\eigen\eigen.3.2.8"
+#export ESBTL_DIR="C:\3rdPartyLibs\esbtl"
+export ZLIB_INCLUDE_DIR="C:\dev\zlib-1.2.8"
+
+#paths depending on the architecture
+export BOOST_LIBRARYDIR="C:\dev\boost\boost_${BOOST_VERSION}\lib${ARCH}_msvc${VC_VERSION}"
+export GMP_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
+export GMP_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
+export MPFR_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
+export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
+
+#paths depending on the compiler and the architecture
+
+if [ -d /cygdrive/c/3rdPartyLibs/qt-5.7/5.7/msvc${VC_VERSION_YEAR}_${ARCH} ]; then
+   export QTDIR="C:\3rdPartyLibs\qt-5.7\5.7\msvc${VC_VERSION_YEAR}_${ARCH}"
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/qt-5.7/5.7/msvc${VC_VERSION_YEAR}_${ARCH}/lib/cmake/Qt5`
+   
+else
+  export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION_YEAR}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
+fi
+
+if [ -d /cygdrive/c/dev/libQGLViewer-2.6.3 ]; then
+   export QGLVIEWERROOT="C:\dev\libQGLViewer-2.6.3"
+fi
+
+export OPENMESH_DIR="C:\3rdPartyLibs\OpenMesh-6.2"
+export OPENMESH_INC_DIR="${OPENMESH_DIR}\include"
+export OPENMESH_LIB_DIR="${OPENMESH_DIR}\lib"
+
+export PATH="`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $BOOST_LIBRARYDIR`":$PATH
+export PATH="/cygdrive/c/dev/zlib-1.2.8/lib_vs2015":$PATH
+export PATH="`cygpath $QTDIR`/bin:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release":$PATH
+export PATH="/cygdrive/c/Program Files (x86)/Visual Leak Detector/bin/Win64":$PATH
+export PATH=`cygpath $OPENMESH_DIR`:$PATH
+
+#TBB # only when TBB_ARCH is already defined in platform-specific setup
+if [ -n "${TBB_ARCH}" ]; then
+  export TBBROOT="C:\\dev\\tbb44_20160526oss"
+  # bin and lib depend on compiler and architecture
+  export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
+  export PATH="`cygpath ${TBBROOT}`/bin/${TBB_ARCH_PLATFORM}":$PATH
+  #echo "TBBROOT is "${TBBROOT}
+fi
+
+
