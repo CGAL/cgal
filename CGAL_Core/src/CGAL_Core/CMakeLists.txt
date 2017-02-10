@@ -2,6 +2,13 @@ message("Configuring libCGAL_Core")
 
 use_essential_libs()
 
+if (NOT MSVC)
+  # See the release notes of CGAL-4.10: CGAL_Core now requires
+  # Boost.Thread, with all compilers but MSVC.
+  find_package( Boost 1.48 REQUIRED thread system )
+  cache_set(CGAL_Core_3RD_PARTY_LIBRARIES    ${CGAL_Core_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
+endif(NOT MSVC)
+
 include_directories (SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
 add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
