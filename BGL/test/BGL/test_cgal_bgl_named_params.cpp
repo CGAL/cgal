@@ -24,7 +24,6 @@ void test(const NamedParameters& np)
   assert(   get_param(np,boost::halfedge_index).v == 1 );
   assert(   get_param(np,boost::face_index).v == 2 );
   assert(   get_param(np,boost::vertex_point).v == 3 );
-  assert(   get_param(np,CGAL::parameters::vertex_is_fixed).v == 4 );
   assert(   get_param(np,boost::edge_index).v == 5 );
   assert(   get_param(np,boost::graph_visitor).v == 6 );
   assert(   get_param(np,CGAL::parameters::set_cache_policy).v == 7 );

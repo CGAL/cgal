@@ -24,7 +24,6 @@ void test_np(const NamedParameters& np)
 //  assert(   get_param(np,boost::halfedge_index).v == 1 );
   assert(   get_param(np,boost::face_index).v == 2 );
   assert(   get_param(np,boost::vertex_point).v == 3 );
-//  assert(   get_param(np,CGAL::vertex_is_fixed).v == 4 );
 //  assert(   get_param(np,boost::edge_index).v == 5 );
 //  assert(   get_param(np,boost::graph_visitor).v == 6 );
 //  assert(   get_param(np,CGAL::set_cache_policy).v == 7 );
@@ -46,7 +45,6 @@ void test_np(const NamedParameters& np)
 //  check_same_type<1>( get_param(np,boost::halfedge_index) );
   check_same_type<2>( get_param(np,boost::face_index) );
   check_same_type<3>( get_param(np,boost::vertex_point) );
-//  check_same_type<4>( get_param(np,CGAL::vertex_is_fixed) );
 //  check_same_type<5>( get_param(np,boost::edge_index) );
 //  check_same_type<6>( get_param(np,boost::graph_visitor) );
 //  check_same_type<7>( get_param(np,CGAL::set_cache_policy) );
@@ -73,7 +71,6 @@ int main()
 //                      halfedge_index_map(A<1>(1)).
                       face_index_map(A<2>(2)).
                       vertex_point_map(A<3>(3)).
-//                      vertex_is_fixed_map(A<4>(4)).
 //                      edge_index_map(A<5>(5)).
 //                      visitor(A<6>(6)).
 //                      set_cache(A<7>(7)).
