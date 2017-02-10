@@ -16,11 +16,12 @@
 // $Id$
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_MVC_POST_PROCESSOR_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_MVC_POST_PROCESSOR_3_H
 
+#include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>

@@ -16,10 +16,12 @@
 // $Id$
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_SHORTEST_PATH_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_SHORTEST_PATH_H
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/assertions.h>
 

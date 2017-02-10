@@ -16,10 +16,12 @@
 // $Id$
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_CONTAINERS_FILLER_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_CONTAINERS_FILLER_H
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <boost/foreach.hpp>
 #include "boost/tuple/tuple.hpp"

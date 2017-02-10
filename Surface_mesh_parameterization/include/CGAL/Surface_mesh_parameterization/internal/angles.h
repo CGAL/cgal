@@ -16,10 +16,12 @@
 // $Id$
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ANGLES_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_ANGLES_H
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/number_type_config.h>

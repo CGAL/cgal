@@ -16,10 +16,12 @@
 // $Id$
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_SPHERE_MAPPING_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_ORBIFOLD_TUTTE_SPHERE_MAPPING_H
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/orbifold_cone_helper.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>

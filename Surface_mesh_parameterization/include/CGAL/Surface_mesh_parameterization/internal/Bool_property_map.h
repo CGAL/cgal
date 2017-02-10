@@ -16,10 +16,12 @@
 // $Id$
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_BOOL_PROPERTY_MAP_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_BOOL_PROPERTY_MAP_H
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Kernel_traits.h>

@@ -477,10 +477,12 @@ via a sparse linear system.
 The main author of the first version of this package was Laurent Saboret,
 who worked as an engineer at Inria Sophia-Antipolis.
 
-For CGAL 4.10 the package has undergone a major rewrite by Andreas Fabri.
-The algorithms are the same, but they are now based on the `FaceGraph` API.
-Additionally, the class `Seam_mesh` was introduced, which is also a model of
-a `FaceGraph`, and replaces a wrapper which had a more complicated API.
+For CGAL 4.11 the package has undergone a major rewrite by Andreas Fabri and
+Mael Rouxel-Labbé and the Orbifold Tutte Embedding and As-Rigid-As-Possible
+parameterization techniques were added. All algorithms are now based on
+the`FaceGraph` API. Additionally, the class `Seam_mesh` was introduced to handle
+virtual borders. It is also a model of a `FaceGraph`, and replaces a wrapper
+which had a more complicated API.
 
 */
 } /* namespace CGAL */

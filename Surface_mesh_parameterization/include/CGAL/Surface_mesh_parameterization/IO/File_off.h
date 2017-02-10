@@ -16,13 +16,17 @@
 // $Id$
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
+
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_IO_FILE_OFF_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_IO_FILE_OFF_H
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-
 #include <CGAL/circulator.h>
 
 #include <boost/foreach.hpp>
@@ -35,9 +39,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-
-#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_IO_FILE_OFF_H
-#define CGAL_SURFACE_MESH_PARAMETERIZATION_IO_FILE_OFF_H
 
 namespace CGAL {
 
