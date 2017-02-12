@@ -7,7 +7,8 @@ namespace CGAL {
 \anchor chapsurface_mesh_parameterization
 \cgalAutoToc
 
-\authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, and Andreas Fabri
+\authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, Andreas Fabri, and
+Mael Rouxel-Labbé
 
 \section Surface_mesh_parameterizationIntroduction Introduction
 
@@ -40,7 +41,7 @@ planar domain (convex polygon vs. free border) and by the bijectivity guarantees
 of the mapping.
 
 The package proposes an interface for any model of the concept `FaceGraph`,
-such as the classes `Surface_mesh`, `Polyhedron_3`, `Seam_mesh` or the mesh
+such as the classes `Surface_mesh`, `Polyhedron_3`, `Seam_mesh`, or the mesh
 classes of OpenMesh.
 
 Since parameterizing meshes requires an efficient representation of sparse
@@ -52,7 +53,9 @@ Note that linear solvers commonly use double precision floating point
 numbers. Therefore, this package is intended to be used with a \cgal %Cartesian kernel with doubles.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigintroduction,introduction.jpg}
-Texture mapping via Least Squares Conformal Maps parameterization. Top: original mesh and texture. Bottom: parameterized mesh (left: parameter space, right: textured mesh).
+Texture mapping via Least Squares Conformal Maps parameterization.
+Top: original mesh and texture. Bottom: parameterized mesh (left: parameter space,
+right: textured mesh).
 \cgalFigureEnd
 
 \section Surface_mesh_parameterizationBasics Basics
@@ -96,7 +99,7 @@ of this program.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigsimple}
 <center>
-<img src="nefertiti.png" style="width:800px"/>
+<img src="nefertiti.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Surface_mesh_parameterizationfigsimple}
 Input (left), parameter space (middle), and textured mesh (right) corresponding to the
@@ -176,6 +179,22 @@ The different parameterization methods can be classified into three categories
 depending on the type of border parameterization that is required: fixed border,
 free border, and borderless.
 
+Illustrations of the different methods are obtained with the same input model,
+the <i>hand</i> model, shown in Figure \cgalFigureRef{Surface_mesh_parameterizationfigbase}.
+The hand is a topological sphere, and a `Seam_mesh` is used to cut it into
+a topological disk. In Figure \cgalFigureRef{Surface_mesh_parameterizationfigbase},
+the seam is traced in red and the four cones used for Orbifold Tutte
+Parameterization (Section \ref Surface_mesh_parameterizationOrbi) are marked with green dots.
+
+\cgalFigureAnchor{Surface_mesh_parameterizationfigbase}
+<center>
+<img src="hand_base.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigbase}
+The base mesh used in the illustrations of the different methods throughout this
+Section. The seam is traced in red. Vertices marked with green dots are cones.
+\cgalFigureCaptionEnd
+
 \subsection Surface_mesh_parameterizationFixedBorder Fixed Border Surface Parameterizations
 
 Fixed border surface parameterizations are characterized by having a constrained border
@@ -200,9 +219,13 @@ vertex \f$ v_i\f$ for a diagonal element, and to 0 for any other matrix
 entry. Although a bijective mapping is guaranteed when the border is convex,
 this method does not minimize either angle nor area distortion.
 
-\cgalFigureBegin{Surface_mesh_parameterizationfiguniform,uniform.png}
-Left: Tutte Barycentric mapping parameterization (the red line depicts the cut graph). Right: parameter space.
-\cgalFigureEnd
+\cgalFigureAnchor{Surface_mesh_parameterizationfiguniform}
+<center>
+<img src="uniform_new.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfiguniform}
+Tutte Barycentric mapping parameterization (the blue line depicts the cut graph). Rightmost: parameter space.
+\cgalFigureCaptionEnd
 
 \subsubsection Surface_mesh_parameterizationDiscreteAuthalic Discrete Authalic Parameterization
 
@@ -217,9 +240,13 @@ the border is convex. This method solves two
 \#vertices x \#vertices sparse linear systems. The matrix (the same
 for both systems) is asymmetric.
 
-\cgalFigureBegin{Surface_mesh_parameterizationfigauthalic,authalic.png}
-Discrete Authalic Parameterization. Right: parameter space.
-\cgalFigureEnd
+\cgalFigureAnchor{Surface_mesh_parameterizationfigauthalic}
+<center>
+<img src="authalic_new.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigauthalic}
+Discrete Authalic Parameterization (the blue line depicts the cut graph). Rightmost: parameter space.
+\cgalFigureCaptionEnd
 
 \subsubsection Surface_mesh_parameterizationDiscreteConformal Discrete Conformal Map
 
@@ -239,9 +266,13 @@ definite (if the border vertices are eliminated from the linear system
 and if the mesh contains no hole), and thus can be efficiently solved using
 dedicated linear solvers.
 
-\cgalFigureBegin{Surface_mesh_parameterizationfigconformal,conformal.png}
-Left: Discrete Conformal Map. Right: parameter space.
-\cgalFigureEnd
+\cgalFigureAnchor{Surface_mesh_parameterizationfigconformal}
+<center>
+<img src="conformal_new.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigconformal}
+Discrete Conformal Map. Rightmost: parameter space.
+\cgalFigureCaptionEnd
 
 \subsubsection Surface_mesh_parameterizationFloaterMean Floater Mean Value Coordinates
 
@@ -255,9 +286,13 @@ with a guaranteed one-to-one mapping when the border is convex. This method
 solves two \#vertices x \#vertices sparse linear systems. The matrix (the same
 for both systems) is asymmetric.
 
-\cgalFigureBegin{Surface_mesh_parameterizationfigfloater,floater.png}
-Floater Mean Value Coordinates. Right: parameter space.
-\cgalFigureEnd
+\cgalFigureAnchor{Surface_mesh_parameterizationfigfloater}
+<center>
+<img src="floater_new.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigfloater}
+Floater Mean Value Coordinates. Rightmost: parameter space.
+\cgalFigureCaptionEnd
 
 \subsubsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods
 
@@ -320,9 +355,13 @@ is not guaranteed by this method. It solves a (2 \f$ \times\f$
 \#triangles) \f$ \times\f$ \#vertices sparse linear system in the least squares sense,
 which implies solving a symmetric matrix.
 
-\cgalFigureBegin{Surface_mesh_parameterizationfigLSCM,LSCM.png}
-Least Squares Conformal Maps. Right: parameter space.
-\cgalFigureEnd
+\cgalFigureAnchor{Surface_mesh_parameterizationfigLSCM}
+<center>
+<img src="LSCM_new.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigLSCM}
+Least Squares Conformal Maps. Rightmost: parameter space.
+\cgalFigureCaptionEnd
 
 \subsubsection Surface_mesh_parameterizationARAP As Rigid As Possible Parameterization
 
@@ -337,16 +376,16 @@ to guarantee that the parameterized mesh is a triangulation.
 A generalization of the formulation of the local optimization introduces a scalar
 coefficient &lambda; that allows the user to balance angle and shape distortion:
 the closer &lambda; is to 0, the more importance is given to the minimization
-of angle distortion (conforming parameterization); inversely, when &lambda; grows,
+of angle distortion; inversely, when &lambda; grows,
 the parameterizer gives more and more importance to the minimization of shape
-distortion (as rigid as possible).
+distortion.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigARAP}
 <center>
-<img src="ARAP.png" style="width:800px"/>
+<img src="ARAP_new.jpg" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Surface_mesh_parameterizationfigARAP}
-As Rigid As Possible parameterization (the cut is traced in red). Right: parameter space.
+As Rigid As Possible parameterization (the blue line depicts the cut graph). Rightmost: parameter space.
 \cgalFigureCaptionEnd
 
 \subsubsection secBorderParameterizationsforFreeMethods Border Parameterizations for Free Methods
@@ -381,25 +420,26 @@ and is a generalization of Tutte’s embedding to other topologies, and in parti
 spheres, which we consider here. The orbifold-Tutte embedding bijectively maps
 the original surface, that is required to be a topological ball, to a canonical,
 topologically equivalent, two-dimensional flat surface called an Euclidean orbifold.
-There are 17 Euclidean orbifolds, of which only the 4 sphere orbifolds are implemented for now.
+There are 17 Euclidean orbifolds, of which only the 4 sphere orbifolds are currently implemented
+in CGAL.
 
 The orbifold-Tutte embedding yields a seamless, globally bijective parameterization that,
 similarly to the classic Tutte embedding, only requires solving a sparse linear system
 for its computation.
 
-The algorithm requires the user to additionally select a set of vertices of the
-input mesh and mark them as <i>cones</i>, that is singularities of the unfolding.
-Internally, the process requires the uses of seams between the cones, but the choice
+The algorithm requires the user to select a set of vertices of the
+input mesh and mark them as <i>cones</i>, which will be the singularities of the unfolding.
+Internally, the process requires the use of (virtual) seams between the cones, but the choice
 of these seams do not influence the result. The `Seam_mesh` structure
 (see also Section \ref secCuttingaMesh) is used for this purpose.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigOrbifold}
 <center>
-<img src="orbifold.png" style="width:800px"/>
+<img src="orbifold_new.jpg" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Surface_mesh_parameterizationfigOrbifold}
 Type IV Orbifold Tutte Embedding. The (four) base cones are shown in green and the
-virtual cut is shown in red. Right: parameter space.
+virtual cut is traced in blue. Rightmost: parameter space.
 \cgalFigureCaptionEnd
 
 \section secCuttingaMesh Cutting a Mesh
@@ -422,7 +462,7 @@ halfedge property using a `Unique_hash_map`.
 
 Note that vertices on a seam are duplicated in a `Seam_mesh` structure
 and thus the UV-coordinates are here associated to the halfedges of the
-seam mesh.
+underlying (input) mesh.
 
 \cgalExample{Surface_mesh_parameterization/seam_Polyhedron_3.cpp}
 
@@ -486,11 +526,11 @@ The main author of the first version of this package was Laurent Saboret,
 who worked as an engineer at Inria Sophia-Antipolis.
 
 For CGAL 4.11 the package has undergone a major rewrite by Andreas Fabri and
-Mael Rouxel-Labbé and the Orbifold Tutte Embedding and As-Rigid-As-Possible
-parameterization techniques were added. All algorithms are now based on
-the`FaceGraph` API. Additionally, the class `Seam_mesh` was introduced to handle
-virtual borders. It is also a model of a `FaceGraph`, and replaces a wrapper
-which had a more complicated API.
+Mael Rouxel-Labbé. The Orbifold Tutte Embedding and As-Rigid-As-Possible
+parameterization techniques were added and all algorithms are now based on
+the `FaceGraph` API. Additionally, the class `Seam_mesh` was introduced to handle
+virtual borders. The class `Seam_mesh` is also a model of a `FaceGraph`,
+and replaces a wrapper which had a more complicated API.
 
 */
 } /* namespace CGAL */
