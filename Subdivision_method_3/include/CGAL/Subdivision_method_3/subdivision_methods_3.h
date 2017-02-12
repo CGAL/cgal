@@ -26,8 +26,6 @@
 
 #include <CGAL/basic.h>
 
-#include <vector>
-
 #include <CGAL/circulator.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>

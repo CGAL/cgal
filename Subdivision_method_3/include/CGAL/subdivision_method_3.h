@@ -21,9 +21,6 @@
 //
 // ======================================================================
 
-#ifndef CGAL_SUBDIVISION_METHOD_3_H
-#define CGAL_SUBDIVISION_METHOD_3_H
-
 /**
 * \ingroup PkgSurfaceSubdivisionMethods3
 * \file CGAL/subdivision_method_3.h
@@ -32,5 +29,3 @@
 */
 
 #include <CGAL/Subdivision_method_3/subdivision_methods_3.h>
-
-#endif // CGAL_SUBDIVISION_METHOD_3_H
