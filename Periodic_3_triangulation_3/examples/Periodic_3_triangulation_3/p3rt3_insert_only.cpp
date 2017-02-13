@@ -1,14 +1,17 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Regular_triangulation_vertex_base_3.h>
-#include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
+#include <CGAL/periodic_3_triangulation_3_io.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 #include <iostream>
 
-typedef CGAL::Epick                                             K;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<K>      Gt;
+typedef CGAL::Epick                                              K;
+typedef CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>  Gt_base;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<Gt_base> Gt;
 
 /* If remove() isn't called in our program, we can use a triangulation data structure
  * more appropriate, which saves some memory resources.
