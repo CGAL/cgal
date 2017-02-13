@@ -25,9 +25,12 @@
 
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
+#ifdef CGAL_SMSP_USE_ROBUST_TRAITS_CODE
 #if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #endif
+#endif
+
 #include <CGAL/Cartesian_converter.h>
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
@@ -253,6 +256,7 @@ public:
   }
 };
 
+#ifdef CGAL_SMSP_USE_ROBUST_TRAITS_CODE
 #if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 template<class K>
 class Robust_project_triangle_3_to_triangle_2
@@ -283,6 +287,7 @@ public:
     return back_from_exact(ept3t2(to_exact(t3)));
   }
 };
+#endif
 #endif
 
 template<class K>
@@ -377,6 +382,7 @@ public:
   }
 };
 
+#ifdef CGAL_SMSP_USE_ROBUST_TRAITS_CODE
 #if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 template<class K>
 class Robust_flatten_triangle_3_along_segment_2
@@ -409,6 +415,7 @@ public:
     return back_from_exact(eft3as2(to_exact(t3), edgeIndex, to_exact(segment)));
   }
 };
+#endif
 #endif
 
 template <class K>

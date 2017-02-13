@@ -26,7 +26,7 @@ macro(create_link_to_program COMPONENT )
   
 endmacro()
 
-find_package(CGAL QUIET)
+find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
 

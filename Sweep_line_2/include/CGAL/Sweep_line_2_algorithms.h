@@ -37,10 +37,8 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
-#include <CGAL/Arr_rat_arc/Rational_arc_d_1.h>
 
 namespace CGAL {
 
@@ -74,6 +72,14 @@ struct Default_arr_traits<CGAL::_Conic_arc_2<Rat_kernel_, Alg_kernel_,
   typedef CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_, Nt_traits_>
                                                                         Traits;
 };
+
+template <typename AlgebraicKernel_d_1>
+class Arr_rational_function_traits_2;
+
+namespace Arr_rational_arc{
+template <typename Algebraic_kernel_>
+class Rational_arc_d_1;
+}
 
 template <typename Algebraic_kernel_>
 struct Default_arr_traits<CGAL::Arr_rational_arc::Rational_arc_d_1<Algebraic_kernel_> >
