@@ -49,12 +49,13 @@ echo "    </head>" >> result.html
 echo "    <body>" >> result.html
     
 #if there is a diff, give a link to show it
+DATE=`date +%Y-%m-%d`
 if [[ -s ./diff.txt ]]
 then
-  echo "<p> The documentation has changed ! <a href=\"diff.txt\">See logs. </a> <br /> " >> result.html
+  echo "<p> $DATE : The documentation has changed ! <a href=\"diff.txt\">See logs. </a> <br /> " >> result.html
 #else just say that everything is fine
 else
-  echo "<p> The documentation has not changed. <br /><br /> " >> result.html
+  echo "<p> $DATE : The documentation has not changed. <br /><br /> " >> result.html
 fi
 if [ "${FAILURES[0]}" != "" ]; then
   echo " Some packages encountered problems while being parsed : <br /><br /> " >> result.html
