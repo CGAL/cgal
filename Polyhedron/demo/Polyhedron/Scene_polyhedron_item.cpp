@@ -160,6 +160,7 @@ struct Scene_polyhedron_item_priv{
   mutable QOpenGLShaderProgram *program;
   unsigned int number_of_null_length_edges;
   unsigned int number_of_degenerated_faces;
+  int genus;
   bool self_intersect;
   int m_min_patch_id; // the min value of the patch ids initialized in init()
   mutable bool all_ids_displayed;
@@ -860,6 +861,7 @@ invalidate_stats()
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
+  genus = -1;
 }
 
 Scene_polyhedron_item*
@@ -1487,6 +1489,28 @@ QString Scene_polyhedron_item::computeStats(int type)
     else
       return QString("n/a");
   }
+  case GENUS:
+  {
+    if(!d->poly->is_closed())
+    {
+      return QString("n/a");
+    }
+    else if(d->genus == -1)
+    {
+      int s(d->poly->size_of_vertices()), a(d->poly->size_of_halfedges()/2), f(d->poly->size_of_facets());
+      //cast in int to avoid intermediary state containing a negative size_t.
+      d->genus = 1.0 - (s-a+f)/2.0;
+    }
+    if(d->genus < 0)
+    {
+      return QString("n/a");
+    }
+    else
+    {
+      return QString::number(d->genus);
+    }
+
+  }
   case MIN_LENGTH:
     return QString::number(minl);
   case MAX_LENGTH:
@@ -1536,8 +1560,9 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 {
   CGAL::Three::Scene_item::Header_data data;
   //categories
+
   data.categories.append(std::pair<QString,int>(QString("Properties"),9));
-  data.categories.append(std::pair<QString,int>(QString("Faces"),9));
+  data.categories.append(std::pair<QString,int>(QString("Faces"),10));
   data.categories.append(std::pair<QString,int>(QString("Edges"),6));
   data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
@@ -1561,6 +1586,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   data.titles.append(QString("Min Aspect-Ratio"));
   data.titles.append(QString("Max Aspect-Ratio"));
   data.titles.append(QString("Mean Aspect-Ratio"));
+  data.titles.append(QString("Genus"));
   data.titles.append(QString("#Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
