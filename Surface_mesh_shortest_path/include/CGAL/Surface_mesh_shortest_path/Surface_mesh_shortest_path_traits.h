@@ -170,6 +170,7 @@ std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_t
   return os << b[0] << " " << b[1] << " " << b[2];
 }
 
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #ifndef DOXYGEN_RUNNING // needed due to a bug in doxygen
 /*!
 \ingroup PkgSurfaceMeshShortestPathTraitsClasses
@@ -216,6 +217,7 @@ public:
   Construct_triangle_3_to_triangle_2_projection construct_triangle_3_to_triangle_2_projection_object() const { return m_robust_construct_triangle_3_to_triangle_2_projection_object; }
   Construct_triangle_3_along_segment_2_flattening construct_triangle_3_along_segment_2_flattening_object() const { return m_robust_flatten_triangle_3_along_segment_2; }
 };
+#endif
 #endif
 
 } // namespace CGAL
