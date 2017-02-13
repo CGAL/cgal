@@ -332,7 +332,7 @@ bool  triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descripto
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
@@ -382,7 +382,7 @@ bool triangulate_faces(FaceRange face_range,
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;

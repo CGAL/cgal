@@ -436,12 +436,12 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   using boost::get_param;
 
   typedef typename boost::lookup_named_param_def <
-    CGAL::parameters::edge_is_constrained_t,
+    internal_np::edge_is_constrained_t,
     NamedParameters,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, CGAL::parameters::edge_is_constrained),
+    = choose_param(get_param(np, internal_np::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -516,12 +516,12 @@ connected_components(const PolygonMesh& pmesh,
   using boost::get_param;
 
   typedef typename boost::lookup_named_param_def <
-    CGAL::parameters::edge_is_constrained_t,
+    internal_np::edge_is_constrained_t,
     NamedParameters,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, CGAL::parameters::edge_is_constrained),
+    = choose_param(get_param(np, internal_np::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
   typedef Dual<PolygonMesh>                              Dual;
@@ -533,8 +533,8 @@ connected_components(const PolygonMesh& pmesh,
     internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
 
   typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-    fimap = choose_param(get_param(np, face_index),
-                         get_const_property_map(face_index, pmesh));
+    fimap = choose_param(get_param(np, internal_np::face_index),
+                         get_const_property_map(boost::face_index, pmesh));
 
   return boost::connected_components(finite_dual,
     fcm,
@@ -600,7 +600,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
-  FaceIndexMap fimap = choose_param(get_param(np, boost::face_index),
+  FaceIndexMap fimap = choose_param(get_param(np, internal_np::face_index),
                                     get_property_map(boost::face_index, pmesh));
 
   //vector_property_map
@@ -683,7 +683,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
-  FaceIndexMap fim = choose_param(get_param(np, boost::face_index),
+  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
                                   get_property_map(boost::face_index, pmesh));
 
   //vector_property_map
@@ -745,7 +745,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 
   //VertexIndexMap
   typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
-  VertexIndexMap vim = choose_param(get_param(np, boost::vertex_index),
+  VertexIndexMap vim = choose_param(get_param(np, internal_np::vertex_index),
                                     get_const_property_map(boost::vertex_index, pmesh));
 
   std::set<std::size_t> cc_to_keep;
@@ -987,7 +987,7 @@ void remove_connected_components(PolygonMesh& pmesh
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
-  FaceIndexMap fim = choose_param(get_param(np, boost::face_index),
+  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
                                   get_property_map(boost::face_index, pmesh));
 
   //vector_property_map
@@ -1045,7 +1045,7 @@ void keep_connected_components(PolygonMesh& pmesh
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
-  FaceIndexMap fim = choose_param(get_param(np, boost::face_index),
+  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
                                   get_property_map(boost::face_index, pmesh));
 
   //vector_property_map

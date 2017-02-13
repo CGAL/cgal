@@ -366,10 +366,10 @@ std::size_t remove_null_edges(
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, CGAL::parameters::geom_traits), Traits());
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;
 
@@ -687,10 +687,10 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, CGAL::parameters::geom_traits), Traits());
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
 // First remove edges of length 0
   std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);

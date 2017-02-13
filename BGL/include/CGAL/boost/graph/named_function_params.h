@@ -103,13 +103,23 @@ namespace boost{
 
 
 namespace CGAL {
-namespace parameters{
+namespace internal_np{
+
+// for uniformity we import them in this namespace. Note that
+// it is an import so that if we use the named parameter function
+// from boost it will work
+using boost::vertex_index_t;
+using boost::vertex_index;
+using boost::graph_visitor_t;
+using boost::visitor;
+
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
 #include <CGAL/boost/graph/parameters_interface.h>
 #undef CGAL_add_named_parameter
-}//parameters
+
+}//internal_np
 
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct cgal_bgl_named_params : boost::bgl_named_params<T, Tag, Base>
@@ -124,50 +134,30 @@ namespace parameters{
 // used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)                          \
   template<typename K>                                           \
-  cgal_bgl_named_params<K, parameters::X, self>                  \
+  cgal_bgl_named_params<K, internal_np::X, self>                  \
   Z(const K& k) const                                            \
   {                                                              \
-    typedef cgal_bgl_named_params<K, parameters::X, self> Params;\
+    typedef cgal_bgl_named_params<K, internal_np::X, self> Params;\
     return Params(k, *this);                                     \
   }
 #include <CGAL/boost/graph/parameters_interface.h>
-#undef CGAL_add_named_parameter
-
-#define CGAL_add_named_parameter(X, Y, Z)                      \
-  template<typename K>                                       \
-  cgal_bgl_named_params<K, boost::X, self>                   \
-  Z(const K& k) const                                        \
-  {                                                          \
-    typedef cgal_bgl_named_params<K, boost::X, self> Params; \
-    return Params(k, *this);                                 \
-  }
 #include <CGAL/boost/graph/boost_parameters_interface.h>
 #undef CGAL_add_named_parameter
   };
 
   namespace parameters {
 
-// define free functions for new named parameters and the one imported from boost
-#define CGAL_add_named_parameter(X, Y, Z)               \
-  template <typename K>                               \
-  cgal_bgl_named_params<K, boost::X>                  \
-  Z(K const& p)                                       \
-  {                                                   \
-    typedef cgal_bgl_named_params<K, boost::X> Params;\
-    return Params(p);                                 \
-  }
-#include <CGAL/boost/graph/boost_parameters_interface.h>
-#undef CGAL_add_named_parameter
-
+// define free functions for named parameters
 #define CGAL_add_named_parameter(X, Y, Z)        \
   template <typename K>                        \
-  cgal_bgl_named_params<K, X>                  \
+  cgal_bgl_named_params<K, internal_np::X>                  \
   Z(K const& p)                                \
   {                                            \
-    typedef cgal_bgl_named_params<K, X> Params;\
+    typedef cgal_bgl_named_params<K, internal_np::X> Params;\
     return Params(p);                          \
   }
 #include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/boost/graph/boost_parameters_interface.h>
 #undef CGAL_add_named_parameter
 
   } // namespace parameters

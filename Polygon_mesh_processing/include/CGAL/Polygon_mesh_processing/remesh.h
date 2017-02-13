@@ -145,48 +145,48 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
 
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_param(get_param(np, face_index),
+  FIMap fimap = choose_param(get_param(np, internal_np::face_index),
                            get_property_map(face_index, pmesh));
 
   typedef typename boost::lookup_named_param_def <
-      CGAL::parameters::edge_is_constrained_t,
+      internal_np::edge_is_constrained_t,
       NamedParameters,
       internal::Border_constraint_pmap<PM, FaceRange, FIMap>//default
     > ::type ECMap;
   ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FaceRange, FIMap> >::value)
      //avoid constructing the Border_constraint_pmap if it's not used
-    ? choose_param(get_param(np, CGAL::parameters::edge_is_constrained)
+    ? choose_param(get_param(np, internal_np::edge_is_constrained)
                  , internal::Border_constraint_pmap<PM, FaceRange, FIMap>(pmesh, faces, fimap))
-    : choose_param(get_param(np, CGAL::parameters::edge_is_constrained)
+    : choose_param(get_param(np, internal_np::edge_is_constrained)
                  , internal::Border_constraint_pmap<PM, FaceRange, FIMap>());
 
   typedef typename boost::lookup_named_param_def <
-      CGAL::parameters::vertex_is_constrained_t,
+      internal_np::vertex_is_constrained_t,
       NamedParameters,
       internal::No_constraint_pmap<vertex_descriptor>//default
     > ::type VCMap;
-  VCMap vcmap = choose_param(get_param(np, CGAL::parameters::vertex_is_constrained),
+  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::No_constraint_pmap<vertex_descriptor>());
 
   typedef typename boost::lookup_named_param_def <
-      CGAL::parameters::face_patch_t,
+      internal_np::face_patch_t,
       NamedParameters,
       internal::Connected_components_pmap<PM, ECMap, FIMap>//default
     > ::type FPMap;
   FPMap fpmap = (boost::is_same<FPMap, internal::Connected_components_pmap<PM, ECMap, FIMap> >::value)
-    ? choose_param(get_param(np, CGAL::parameters::face_patch),
+    ? choose_param(get_param(np, internal_np::face_patch),
       internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap))
-    : choose_param(get_param(np, CGAL::parameters::face_patch),
+    : choose_param(get_param(np, internal_np::face_patch),
       internal::Connected_components_pmap<PM, ECMap, FIMap>());//do not compute cc's
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
 
-  bool protect = choose_param(get_param(np, CGAL::parameters::protect_constraints), false);
+  bool protect = choose_param(get_param(np, internal_np::protect_constraints), false);
   if(protect)
   {
     std::string msg("Isotropic remeshing : protect_constraints cannot be set to");
@@ -214,9 +214,9 @@ void isotropic_remeshing(const FaceRange& faces
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
 #endif
 
-  unsigned int nb_iterations = choose_param(get_param(np, CGAL::parameters::number_of_iterations), 1);
-  bool smoothing_1d = choose_param(get_param(np, CGAL::parameters::relax_constraints), false);
-  unsigned int nb_laplacian = choose_param(get_param(np, CGAL::parameters::number_of_relaxation_steps), 1);
+  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  bool smoothing_1d = choose_param(get_param(np, internal_np::relax_constraints), false);
+  unsigned int nb_laplacian = choose_param(get_param(np, internal_np::number_of_relaxation_steps), 1);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -313,19 +313,19 @@ void split_long_edges(const EdgeRange& edges
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
 
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_param(get_param(np, face_index),
+  FIMap fimap = choose_param(get_param(np, internal_np::face_index),
                              get_property_map(face_index, pmesh));
 
   typedef typename boost::lookup_named_param_def <
-        CGAL::parameters::edge_is_constrained_t,
+        internal_np::edge_is_constrained_t,
         NamedParameters,
         internal::No_constraint_pmap<edge_descriptor>//default
       > ::type ECMap;
-  ECMap ecmap = choose_param(get_param(np, CGAL::parameters::edge_is_constrained),
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
                              internal::No_constraint_pmap<edge_descriptor>());
   
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,

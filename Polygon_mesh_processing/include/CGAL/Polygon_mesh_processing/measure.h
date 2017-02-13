@@ -96,7 +96,7 @@ namespace Polygon_mesh_processing {
     using boost::get_param;
 
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
-    vpm = choose_param(get_param(np, vertex_point),
+    vpm = choose_param(get_param(np, internal_np::vertex_point),
                        get_const_property_map(CGAL::vertex_point, pmesh));
 
     return CGAL::approximate_sqrt(CGAL::squared_distance(get(vpm, source(h, pmesh)),
@@ -243,7 +243,7 @@ namespace Polygon_mesh_processing {
     CGAL_precondition(boost::graph_traits<TriangleMesh>::null_face() != f);
 
     typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
-    vpm = choose_param(get_param(np, vertex_point),
+    vpm = choose_param(get_param(np, internal_np::vertex_point),
                        get_const_property_map(CGAL::vertex_point, tmesh));
 
     typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -424,7 +424,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   using boost::get_param;
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
-    vpm = choose_param(get_param(np, vertex_point),
+    vpm = choose_param(get_param(np, internal_np::vertex_point),
                        get_const_property_map(CGAL::vertex_point, tmesh));
   typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3
     origin(0, 0, 0);
