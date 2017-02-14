@@ -35,7 +35,7 @@
 #include <CGAL/Mesh_3/experimental/AABB_filtered_projection_traits.h>
 #include <CGAL/Mesh_3/experimental/Get_facet_patch_id.h>
 
-#include <CGAL/Mesh_3/Lipschitz_sizing_parameters.h>
+#include <CGAL/Mesh_3/experimental/Lipschitz_sizing_parameters.h>
 
 #include <CGAL/Default.h>
 #include <CGAL/array.h>
@@ -51,11 +51,15 @@
 
 namespace CGAL
 {
+namespace Mesh_3
+{
 
-template <class Kernel, class C3T3, class MeshDomain
+template <class Kernel, class MeshDomain
         , typename AABBTreeTemplate = CGAL::Default
         , typename Get_facet_patch_id_ = CGAL::Default
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
         , typename Patches_ids_ = CGAL::Default
+#endif
 >
 class Lipschitz_sizing
 {
@@ -72,16 +76,15 @@ public:
 
   typedef typename CGAL::Default::Get<AABBTreeTemplate, AABB_tree>::type Tree;
 
-  typedef typename C3T3::Triangulation                  Tr;
-  typedef typename C3T3::Triangulation::Facet           Facet;
-
   typedef typename MeshDomain::Index                    Index;
   typedef typename MeshDomain::Subdomain_index          Subdomain_index;
   typedef typename MeshDomain::Surface_patch_index      Surface_patch_index;
 
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   typedef typename CGAL::Default::Get<Patches_ids_,
     typename MeshDomain::Surface_patch_index_set>::type Patches_ids;
   typedef std::vector<Patches_ids>                      Patches_ids_map;
+#endif
 
   typedef typename CGAL::Default::Get<
     Get_facet_patch_id_,
@@ -106,47 +109,44 @@ private:
   //help to accelerate aabb_tree queries in m_ptree
   boost::shared_ptr<Kd_tree> m_kd_tree;
 
-  C3T3* m_pc3t3;
   const MeshDomain& m_domain;
   Parameters m_params;
 
-#ifndef CGAL_MESH_3_IMAGE_EXAMPLE//POLYHEDRAL EXAMPLE
   Get_facet_patch_id m_get_facet_patch_id;
-  const Patches_ids_map& patches_ids_map;
   const CGAL::cpp11::array<double, 3>& m_vxyz;
   const CGAL::Bbox_3& m_bbox;
   const bool m_domain_is_a_box;
+
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+  const Patches_ids_map& patches_ids_map;
 #endif
 
 public:
-#ifdef CGAL_MESH_3_IMAGE_EXAMPLE
-  Lipschitz_sizing(C3T3* pc3t3
-    , const MeshDomain& domain
-    )
+  Lipschitz_sizing(const MeshDomain& domain)
     : m_ptree(NULL)
     , m_own_ptree()
-    , m_pc3t3(pc3t3)
     , m_domain(domain)
     , m_params(domain)
   {
-    init_aabb_tree();
   }
 
-#else //POLYHEDRAL EXAMPLE
   Lipschitz_sizing(const MeshDomain& domain
     , const Tree* ptree
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
     , const Patches_ids_map& patches_ids_map
+#endif
     , const CGAL::cpp11::array<double, 3>& vxyz
     , const CGAL::Bbox_3& bbox
     , const bool domain_is_a_box
     )
     : m_ptree(ptree)
     , m_own_ptree()
-    , m_pc3t3(NULL)
     , m_domain(domain)
     , m_params(domain)
     , m_get_facet_patch_id()
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
     , patches_ids_map(patches_ids_map)
+#endif
     , m_vxyz(vxyz)
     , m_bbox(bbox)
     , m_domain_is_a_box(domain_is_a_box)
@@ -163,8 +163,6 @@ public:
 #  endif // CGAL_MESH_3_LIPSCHITZ_SIZING_VERBOSE
     kd_tree();
   }
-#endif // not CGAL_MESH_3_IMAGE_EXAMPLE
-
 
   FT operator()(const Point_3& p, const int dim, const Index& index) const
   {
@@ -178,6 +176,7 @@ public:
     }
     else if (dim == 2)
     {
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
       Surface_patch_index sp_index = m_domain.surface_patch_index(index);
 
       if(!is_on_cube_boundary(sp_index)
@@ -209,12 +208,18 @@ public:
         else
           return size_in_subdomain(p, index.first);
 #endif //CGAL_MESH_3_IMAGE_EXAMPLE
-
       }
+
+#else  //CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+      CGAL_assertion(false);
+      return 0.;
+#endif //CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
     }
+
 #ifndef CGAL_MESH_3_IMAGE_EXAMPLE
     else if (dim == 1)
     {
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
       const typename MeshDomain::Curve_segment_index& curve_id =
         m_domain.curve_segment_index(index);
       const Patches_ids& ids = patches_ids_map[curve_id];
@@ -232,9 +237,14 @@ public:
           return size_in_subdomain(p, subdomains.first);
       }
       return min_size_in_incident_subdomains(ids);
+#else
+      CGAL_assertion(false);//should not be used for dimension 1
+      return 0.;
+#endif
     }
     else if (dim == 0)
     {
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
       const Patches_ids& ids =
         (m_domain.corners_incidences_map().find(p)->second);
 
@@ -252,6 +262,10 @@ public:
       }
 
       return min_size_in_incident_subdomains(ids);;
+#else
+      CGAL_assertion(false);//should not be used for dimension 0
+      return 0;
+#endif
     }
 #endif
 
@@ -260,6 +274,7 @@ public:
   }
 
 private:
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   std::vector<Subdomain_index> incident_subdomains(const Patches_ids& ids) const
   {
     std::vector<Subdomain_index> vec;
@@ -285,48 +300,47 @@ private:
       const std::pair<Subdomain_index, Subdomain_index>& subdomains
         = m_params.incident_subdomains(spi);
 
-      FT k, layer_thickness, size_in_layer, size_max;
+      FT k, size_min, size_max;
       if (is_in_domain(subdomains.first))
       {
-        m_params.get_parameters(subdomains.first,
-          k, layer_thickness, size_in_layer, size_max);
-        size = (std::min)(size, size_in_layer);
+        m_params.get_parameters(subdomains.first, k, size_min, size_max);
+        size = (std::min)(size, size_min);
       }
       if (is_in_domain(subdomains.second))
       {
-        m_params.get_parameters(subdomains.second,
-          k, layer_thickness, size_in_layer, size_max);
-        size = (std::min)(size, size_in_layer);
+        m_params.get_parameters(subdomains.second, k, size_min, size_max);
+        size = (std::min)(size, size_min);
       }
     }
     return size;
   }
+#endif
 
-  void init_aabb_tree()
+public:
+  template <typename C3T3>
+  void init_aabb_tree_from_c3t3(const C3T3* p_c3t3)
   {
-#ifdef CGAL_MESH_3_IMAGE_EXAMPLE
     static std::list<Triangle> triangles;
     for (typename C3T3::Facets_in_complex_iterator
-      fit = m_pc3t3->facets_in_complex_begin();
-      fit != m_pc3t3->facets_in_complex_end();
+      fit = p_c3t3->facets_in_complex_begin();
+      fit != p_c3t3->facets_in_complex_end();
       ++fit)
     {
       if (!is_on_cube_boundary(*fit))
-        triangles.push_back(m_pc3t3->triangulation().triangle(*fit));
+        triangles.push_back(p_c3t3->triangulation().triangle(*fit));
     }
 
     m_own_ptree.reset(new Tree(triangles.begin(), triangles.end()));
     m_own_ptree->build();
     m_own_ptree->accelerate_distance_queries();
-#endif
   }
 
-#ifdef CGAL_MESH_3_IMAGE_EXAMPLE
+private:
+  template <typename Facet>
   bool is_on_cube_boundary(const Facet& f) const
   {
-    return is_on_cube_boundary(m_pc3t3->surface_patch_index(f));
+    return is_on_cube_boundary(f.first->surface_patch_index(f.second));
   }
-#endif //CGAL_MESH_3_IMAGE_EXAMPLE
 
   bool is_on_cube_boundary(const Surface_patch_index& sp_index) const
   {
@@ -377,58 +391,54 @@ private:
 
   FT size_in_subdomain(const Point_3& p, const Subdomain_index& index) const
   {
-    FT k, layer_thickness, size_in_layer, size_max;
-    m_params.get_parameters(index,
-      k, layer_thickness, size_in_layer, size_max);
+    FT k, size_min, size_max;
+    m_params.get_parameters(index, k, size_min, size_max);
 
-#ifdef CGAL_MESH_3_IMAGE_EXAMPLE
-    FT sqdist = (m_ptree->empty())
-      ? m_own_ptree->squared_distance(p)
-      : m_ptree->squared_distance(p);
+    FT sqdist = 0.;
+    if(m_ptree == NULL)
+    {
+      sqdist = m_own_ptree->squared_distance(p);
+    }
+    else
+    {
+      Point_3 closest = compute_closest_point(p);
+      sqdist = CGAL::squared_distance(p, closest);
+    }
 
-#else //POLYHEDRAL EXAMPLE
-
-    Point_3 closest = compute_closest_point(p);
-    FT sqdist = CGAL::squared_distance(p, closest);
-
-#endif
-
-    if (sqdist < layer_thickness * layer_thickness)//inside the constant layer
-      return size_in_layer;
-
-    FT size = k * (CGAL::sqrt(sqdist) - layer_thickness) + size_in_layer;
+    FT size = k * CGAL::sqrt(sqdist) + size_min;
     return (std::min)(size, size_max);
   }
 
+  //comment the kd_tree construction for now
   void kd_tree()
   {
-#ifndef CGAL_MESH_3_IMAGE_EXAMPLE
-    typedef typename MeshDomain::Polyhedron Polyhedron;
-    if(m_kd_tree.get() == 0) {
-      m_kd_tree.reset(new Kd_tree);
-      BOOST_FOREACH(std::size_t poly_id, m_domain.inside_polyhedra()) {
-        const Polyhedron& poly = m_domain.polyhedra()[poly_id];
-        BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
-        {
-          m_kd_tree->insert(v->point());
-        }
-      }
-      BOOST_FOREACH(std::size_t poly_id, m_domain.boundary_polyhedra()) {
-        const Polyhedron& poly = m_domain.polyhedra()[poly_id];
-        BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
-        {
-          if(!is_on_cube_boundary(v->point()))
-            m_kd_tree->insert(v->point());
-        }
-      }
-      m_kd_tree->build();
-    }
-#endif // not CGAL_MESH_3_IMAGE_EXAMPLE
+  //  typedef typename MeshDomain::Polyhedron Polyhedron;
+  //  if(m_kd_tree.get() == 0) {
+  //    m_kd_tree.reset(new Kd_tree);
+  //    BOOST_FOREACH(std::size_t poly_id, m_domain.inside_polyhedra()) {
+  //      const Polyhedron& poly = m_domain.polyhedra()[poly_id];
+  //      BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
+  //      {
+  //        m_kd_tree->insert(v->point());
+  //      }
+  //    }
+  //    BOOST_FOREACH(std::size_t poly_id, m_domain.boundary_polyhedra()) {
+  //      const Polyhedron& poly = m_domain.polyhedra()[poly_id];
+  //      BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
+  //      {
+  //        if(!is_on_cube_boundary(v->point()))
+  //          m_kd_tree->insert(v->point());
+  //      }
+  //    }
+  //    m_kd_tree->build();
+  //  }
   }
 
-#ifndef CGAL_MESH_3_IMAGE_EXAMPLE
   Point_3 compute_closest_point(const Point_3& p) const
   {
+#ifndef CGAL_MESH_3_IMAGE_EXAMPLE //POLYHEDRAL_EXAMPLE
+
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
     const std::vector<Surface_patch_index>& boundary_ids =
       m_domain.boundary_patches();
 
@@ -444,53 +454,29 @@ private:
     m_ptree->traversal(p, projection_traits);
     CGAL_assertion(projection_traits.found());
     return projection_traits.closest_point();
+
+#else //CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+    return m_ptree->closest_point(p);
+#endif //CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+
+#else
+    CGAL_assertion(false);
+    return CGAL::ORIGIN;//not used
+#endif
   }
-#endif // not CGAL_MESH_3_IMAGE_EXAMPLE
 
 public:
   void add_parameters_for_subdomain(const Subdomain_index& id
                                   , const FT& k
-                                  , const FT& layer_thickness
-                                  , const FT& size_in_layer
+                                  , const FT& size_min
                                   , const FT& size_max)
   {
-    m_params.add_subdomain(id, k, layer_thickness, size_in_layer, size_max);
-  }
-
-  bool read_parameters(const char* filename)
-  {
-    std::ifstream infile(filename);
-    if (!infile)
-    {
-      std::cerr << "ERROR : " << filename << " is not a valid file name" << std::endl;
-      return false;
-    }
-    else
-      std::cout << "Reading Lipschitz parameters...";
-
-    std::string line;
-    while (std::getline(infile, line))
-    {
-      if (line.empty() || line.at(0) == '#')
-        continue; //skip comments
-
-      std::istringstream iss(line);
-      Subdomain_index id;
-      FT size_in_layer, size_max, layer_thickness, k;
-      if (!(iss >> id >> size_in_layer >> size_max >> layer_thickness >> k))
-      {
-        std::cerr << "ERROR while reading line : [" << line << "]" << std::endl;
-        return false;
-      }
-
-      add_parameters_for_subdomain(id, k, layer_thickness, size_in_layer, size_max);
-    }
-    std::cout << "\b\b\b done (" << m_params.size() << " subdomains)." << std::endl;
-    return !m_params.empty();
+    m_params.add_subdomain(id, k, size_min, size_max);
   }
 
 };
 
+}//namespace Mesh_3
 }//namespace CGAL
 
 #endif // _LIPSCHITZ_SIZING_

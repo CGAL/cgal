@@ -38,30 +38,25 @@ class Lipschitz_sizing_parameters
   struct SubdomainParam
   {
     FT m_k;
-    FT m_layer_thickness;
-    FT m_size_in_layer;//max size in constant-size boundary layer
-    FT m_size_max;//max size everywhere
+    FT m_size_min;//min size in subdomain
+    FT m_size_max;//max size in subdomain
 
   public:
     SubdomainParam()
       : m_k(0.)
-      , m_layer_thickness(0.)
-      , m_size_in_layer(0.)
+      , m_size_min(0.)
       , m_size_max(0.)
     {}
     SubdomainParam(const FT& k
-                 , const FT& layer_thickness
-                 , const FT& size_in_layer
+                 , const FT& size_min
                  , const FT& size_max)
       : m_k(k)
-      , m_layer_thickness(layer_thickness)
-      , m_size_in_layer(size_in_layer)
+      , m_size_min(size_min)
       , m_size_max(size_max)
     {}
 
     const FT& k() const                   { return m_k; }
-    const FT& layer_thickness() const     { return m_layer_thickness;}
-    const FT& size_in_layer() const       { return m_size_in_layer; }
+    const FT& size_min() const       { return m_size_min; }
     const FT& size_max() const            { return m_size_max; }
   };
 
@@ -81,8 +76,7 @@ public:
 
   void add_subdomain(const Subdomain_index& index
                    , const FT& k
-                   , const FT& layer_thickness
-                   , const FT& size_in_layer
+                   , const FT& size_min
                    , const FT& size_max)
   {
     typename Parameters_map::iterator it = m_parameters.find(index);
@@ -92,16 +86,15 @@ public:
 
     if (index == -1)
       m_default_params
-        = SubdomainParam(k, layer_thickness, size_in_layer, size_max);
+        = SubdomainParam(k, size_min, size_max);
     else
       m_parameters[index]
-        = SubdomainParam(k, layer_thickness, size_in_layer, size_max);
+        = SubdomainParam(k, size_min, size_max);
   }
 
   void get_parameters(const Subdomain_index& index
                     , FT& k
-                    , FT& layer_thickness
-                    , FT& size_in_layer
+                    , FT& size_min
                     , FT& size_max) const
   {
     typename Parameters_map::const_iterator it
@@ -111,8 +104,7 @@ public:
                      ? (*it).second
                      : m_default_params;
     k               = p.k();
-    layer_thickness = p.layer_thickness();
-    size_in_layer   = p.size_in_layer();
+    size_min        = p.size_min();
     size_max        = p.size_max();
   }
 
@@ -144,22 +136,22 @@ public:
     if (!boundary1)
     {
       if (!boundary2)
-        size_max = (std::min)(p1.size_in_layer(), p2.size_in_layer());
+        size_max = (std::min)(p1.size_min(), p2.size_min());
       else
-        size_max = p1.size_in_layer();
+        size_max = p1.size_min();
     }
     else
-      size_max = p2.size_in_layer();
+      size_max = p2.size_min();
   }
 
   const std::pair<Subdomain_index, Subdomain_index> &
     incident_subdomains(const Surface_patch_index& index) const
   {
-#ifdef CGAL_MESH_3_IMAGE_EXAMPLE
+//#ifdef CGAL_MESH_3_IMAGE_EXAMPLE
     return index;
-#else //POLYHEDRAL_EXAMPLE
-    return p_domain_->incident_subdomains_indices(index);
-#endif
+//#else //POLYHEDRAL_EXAMPLE
+//    return p_domain_->incident_subdomains_indices(index);
+//#endif
   }
 
   bool empty() const
