@@ -17,4 +17,4 @@
  * (or const Point_3&  <- for avoiding useless copies).
  */
 
-#endif /* CGAL_PERIODIC_3_MESH_3_CONFIG_H */
+#endif // CGAL_PERIODIC_3_MESH_3_CONFIG_H

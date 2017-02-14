@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Mesh_3/include/CGAL/Mesh_3/implicit_to_labeled_function_wrapper.h $
-// $Id: implicit_to_labeled_function_wrapper.h 56231 2010-05-14 09:46:02Z afabri $
+// $URL:$
+// $Id:$
 //
 //
 // Author(s)     : Mikhail Bogdanov
@@ -26,7 +26,6 @@
 
 #ifndef CGAL_MESH_3_IMPLICIT_TO_LABELED_SUBDOMAINS_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_IMPLICIT_TO_LABELED_SUBDOMAINS_FUNCTION_WRAPPER_H
-
 
 namespace CGAL {
 
@@ -47,12 +46,13 @@ public:
 
   /// Constructor
   Implicit_to_labeled_subdomains_function_wrapper(Function_& f)
-    : r_f_(f) {}
+    : r_f_(f)
+  { }
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Implicit_to_labeled_subdomains_function_wrapper() {}
+  ~Implicit_to_labeled_subdomains_function_wrapper() { }
 
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const

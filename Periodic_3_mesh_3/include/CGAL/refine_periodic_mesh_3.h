@@ -35,7 +35,7 @@ BOOST_PARAMETER_FUNCTION(
   refine_periodic_mesh_3,
   parameters::tag,
   (required (in_out(c3t3),*) (domain,*) (criteria,*) ) // nondeduced
-  (deduced 
+  (deduced
     (optional
       (exude_param, (parameters::internal::Exude_options), parameters::no_exude()) // another default parameter distinct from Mesh_3
       (perturb_param, (parameters::internal::Perturb_options), parameters::no_perturb()) // another default parameter distinct from Mesh_3
@@ -56,8 +56,8 @@ BOOST_PARAMETER_FUNCTION(
                             lloyd_param,
                             reset_param() );
 }
-      
-  
+
+
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria
  *
@@ -129,7 +129,7 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
                           parameters::convergence = lloyd.convergence(),
                           parameters::freeze_bound = lloyd.bound());
   }
-  
+
   // Perturbation
   if ( perturb )
   {

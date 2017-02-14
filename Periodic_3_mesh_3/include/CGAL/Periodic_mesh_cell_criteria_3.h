@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Mesh_3/include/CGAL/Mesh_cell_criteria_3.h $
-// $Id: Mesh_cell_criteria_3.h 60688 2011-01-10 15:43:22Z lrineau $
-// 
+// $URL:$
+// $Id:$
+//
 //
 // Author(s)     : Mikhail Bogdanov
 
@@ -25,25 +25,25 @@
 #include <CGAL/Periodic_mesh_3/config.h>
 
 namespace CGAL {
-  
+
 template <typename Tr,
   typename Visitor_ = Mesh_3::Periodic_mesh_3::Cell_criteria_visitor_with_features<Tr> >
 class Periodic_mesh_cell_criteria_3
 {
-  typedef Visitor_ Visitor;
-  typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
-  
-  typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Geom_traits::FT FT;
-  
+  typedef Visitor_                          Visitor;
+  typedef Mesh_3::Criteria<Tr,Visitor>      Criteria;
+
+  typedef typename Tr::Cell_handle          Cell_handle;
+  typedef typename Tr::Geom_traits::FT      FT;
+
   typedef Periodic_mesh_cell_criteria_3<Tr> Self;
-  
-  typedef typename Tr::Iso_cuboid Iso_cuboid;
-  
+
+  typedef typename Tr::Iso_cuboid           Iso_cuboid;
+
 public:
-  typedef typename Visitor::Cell_quality Cell_quality;
-  typedef typename Visitor::Cell_badness Cell_badness;
-  
+  typedef typename Visitor::Cell_quality    Cell_quality;
+  typedef typename Visitor::Cell_badness    Cell_badness;
+
   /**
    * @brief Constructor
    *
@@ -61,7 +61,7 @@ public:
     if ( FT(0) != radius_edge_bound )
       init_radius_edge(radius_edge_bound);
   }
-  
+
   /**
    * @brief Constructor
    *
@@ -71,34 +71,34 @@ public:
   template<typename MD>
   Periodic_mesh_cell_criteria_3(const MD& periodic_domain,
                                 const FT& radius_edge_bound,
-                                const FT& radius_bound) :
-    helper_(periodic_domain.periodic_bounding_box())
+                                const FT& radius_bound)
+    : helper_(periodic_domain.periodic_bounding_box())
   {
     if ( FT(0) != radius_bound )
       init_radius(radius_bound);
-    
+
     if ( FT(0) != radius_edge_bound )
       init_radius_edge(radius_edge_bound);
   }
-  
+
   // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
   // as int.
   template <typename MD, typename Sizing_field>
   Periodic_mesh_cell_criteria_3(const MD& periodic_domain,
                                 const FT& radius_edge_bound,
                                 const Sizing_field& radius_bound,
-                                typename Sizing_field::FT dummy = 0) :
-    helper_(periodic_domain.periodic_bounding_box())
-  { 
+                                typename Sizing_field::FT dummy = 0)
+    : helper_(periodic_domain.periodic_bounding_box())
+  {
     init_radius(radius_bound);
 
     if ( FT(0) != radius_edge_bound )
       init_radius_edge(radius_edge_bound);
   }
-  
+
   /// Destructor
   ~Periodic_mesh_cell_criteria_3() { }
-  
+
   /**
    * @brief returns the badness of cell \c cell
    * @param cell the cell
@@ -113,27 +113,27 @@ private:
   void init_radius_edge(const FT& radius_edge_bound)
   {
     typedef Mesh_3::Periodic_mesh_3::Cell_radius_edge_criterion<Tr,Visitor> Radius_edge_criterion;
-    criteria_.add(new Radius_edge_criterion(helper_, radius_edge_bound));    
+    criteria_.add(new Radius_edge_criterion(helper_, radius_edge_bound));
   }
-  
+
   void init_radius(const FT& radius_bound)
   {
     typedef Mesh_3::Periodic_mesh_3::Cell_uniform_size_criterion<Tr,Visitor> Radius_criterion;
     criteria_.add(new Radius_criterion(helper_, radius_bound));
   }
-  
+
   template < typename Sizing_field>
   void init_radius(const Sizing_field& radius_bound)
   {
     typedef Mesh_3::Periodic_mesh_3::Cell_variable_size_criterion<Tr,Visitor,Sizing_field>
       Radius_criterion;
-    
+
     criteria_.add(new Radius_criterion(helper_, radius_bound));
   }
-  
+
 private:
   Criteria criteria_;
-  
+
   Tr helper_;
 };  // end class Periodic_mesh_cell_criteria_3
 

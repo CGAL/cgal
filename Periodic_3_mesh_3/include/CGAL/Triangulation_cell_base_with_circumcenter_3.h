@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Triangulation_3/include/CGAL/Triangulation_cell_base_with_circumcenter_3.h $
-// $Id: Triangulation_cell_base_with_circumcenter_3.h 56667 2010-06-09 07:37:13Z sloriot $
+// $URL:$
+// $Id:$
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -77,12 +77,12 @@ public:
   }
 
   Triangulation_cell_base_with_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                      Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3), circumcenter_(NULL) {}
 
   Triangulation_cell_base_with_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                      Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3,
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
@@ -119,7 +119,7 @@ public:
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
     //#warning Patch for the periodic version!
-    
+
     if (circumcenter_ == NULL) {
       circumcenter_ = new Point_3(
                                   gt.construct_weighted_circumcenter_3_object()(this->vertex(0)->point(),

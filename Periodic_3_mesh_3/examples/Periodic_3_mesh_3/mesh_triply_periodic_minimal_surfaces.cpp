@@ -18,7 +18,6 @@
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
 
-
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
@@ -46,123 +45,119 @@ typedef CGAL::Periodic_mesh_cell_criteria_3<Tr> Periodic_cell_criteria;
 // Criteria
 typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria, Periodic_facet_criteria, Periodic_cell_criteria> Mesh_criteria;
 
-
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-
 const FT PI = CGAL_PI;
 
-
 FT schwarz_p(const Point& p) {
-  const FT x2=std::cos( p.x() * 2*PI ),
-    y2=std::cos( p.y() * 2*PI ),
-    z2=std::cos( p.z() * 2*PI );
+  const FT x2 = std::cos( p.x() * 2*PI ),
+           y2 = std::cos( p.y() * 2*PI ),
+           z2 = std::cos( p.z() * 2*PI );
   return x2 + y2 + z2;
 }
 
 FT schwarz_p_transl (const Point& p) {
   const FT x2 = std::cos(p.x() * 2 * PI + PI / 2.0),
-    y2 = std::cos(p.y() * 2 * PI + PI / 2.0),
-    z2 = std::cos(p.z() * 2 * PI + PI / 2.0);
+           y2 = std::cos(p.y() * 2 * PI + PI / 2.0),
+           z2 = std::cos(p.z() * 2 * PI + PI / 2.0);
   return x2 + y2 + z2;
 }
 
 FT gyroid (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI),
-    cy = std::cos(p.y() * 2 * PI),
-    cz = std::cos(p.z() * 2 * PI);
+           cy = std::cos(p.y() * 2 * PI),
+           cz = std::cos(p.z() * 2 * PI);
   const FT sx = std::sin(p.x() * 2 * PI),
-    sy = std::sin(p.y() * 2 * PI),
-    sz = std::sin(p.z() * 2 * PI);
+           sy = std::sin(p.y() * 2 * PI),
+           sz = std::sin(p.z() * 2 * PI);
   return cx * sy + cy * sz + cz * sx;
-
 }
 
 FT diamond (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI),
-    cy = std::cos(p.y() * 2 * PI),
-    cz = std::cos(p.z() * 2 * PI);
+           cy = std::cos(p.y() * 2 * PI),
+           cz = std::cos(p.z() * 2 * PI);
   const FT sx = std::sin(p.x() * 2 * PI),
-    sy = std::sin(p.y() * 2 * PI),
-    sz = std::sin(p.z() * 2 * PI);
+           sy = std::sin(p.y() * 2 * PI),
+           sz = std::sin(p.z() * 2 * PI);
   return sx * sy * sz + sx * cy * cz + cx * sy * cz + cx * cy * sz;
 }
 
 FT double_p (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI),
-    cy = std::cos(p.y() * 2 * PI),
-    cz = std::cos(p.z() * 2 * PI);
+           cy = std::cos(p.y() * 2 * PI),
+           cz = std::cos(p.z() * 2 * PI);
   const FT c2x = std::cos(2 * p.x() * 2 * PI),
-    c2y = std::cos(2 * p.y() * 2 * PI),
-    c2z = std::cos(2 * p.z() * 2 * PI);
+           c2y = std::cos(2 * p.y() * 2 * PI),
+           c2z = std::cos(2 * p.z() * 2 * PI);
   return 0.5 * (cx * cy  + cy * cz + cz * cx ) + 0.2*(c2x + c2y + c2z);
 }
 
 FT G_prime (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI),
-    cy = std::cos(p.y() * 2 * PI),
-    cz = std::cos(p.z() * 2 * PI);
+           cy = std::cos(p.y() * 2 * PI),
+           cz = std::cos(p.z() * 2 * PI);
   const FT c2x = std::cos(2 * p.x() * 2 * PI),
-    c2y = std::cos(2 * p.y() * 2 * PI),
-    c2z = std::cos(2 * p.z() * 2 * PI);
+           c2y = std::cos(2 * p.y() * 2 * PI),
+           c2z = std::cos(2 * p.z() * 2 * PI);
   const FT sx = std::sin(p.x() * 2 * PI),
-    sy = std::sin(p.y() * 2 * PI),
-    sz = std::sin(p.z() * 2 * PI);
+           sy = std::sin(p.y() * 2 * PI),
+           sz = std::sin(p.z() * 2 * PI);
   const FT s2x = std::sin(2 * p.x() * 2 * PI),
-    s2y = std::sin(2 * p.y() * 2 * PI),
-    s2z = std::sin(2 * p.z() * 2 * PI);
-  return 5 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx) +
-    1*(c2x * c2y  + c2y * c2z  + c2z * c2x);
+           s2y = std::sin(2 * p.y() * 2 * PI),
+           s2z = std::sin(2 * p.z() * 2 * PI);
+  return 5 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx)
+         + 1*(c2x * c2y  + c2y * c2z  + c2z * c2x);
 }
 
 FT lidinoid (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI),
-    cy = std::cos(p.y() * 2 * PI),
-    cz = std::cos(p.z() * 2 * PI);
+           cy = std::cos(p.y() * 2 * PI),
+           cz = std::cos(p.z() * 2 * PI);
   const FT c2x = std::cos(2 * p.x() * 2 * PI),
-    c2y = std::cos(2 * p.y() * 2 * PI),
-    c2z = std::cos(2 * p.z() * 2 * PI);
+           c2y = std::cos(2 * p.y() * 2 * PI),
+           c2z = std::cos(2 * p.z() * 2 * PI);
   const FT sx = std::sin(p.x() * 2 * PI),
-    sy = std::sin(p.y() * 2 * PI),
-    sz = std::sin(p.z() * 2 * PI);
+           sy = std::sin(p.y() * 2 * PI),
+           sz = std::sin(p.z() * 2 * PI);
   const FT s2x = std::sin(2 * p.x() * 2 * PI),
-    s2y = std::sin(2 * p.y() * 2 * PI),
-    s2z = std::sin(2 * p.z() * 2 * PI);
-  return 1 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx) -
-    1 * (c2x * c2y  + c2y * c2z  + c2z * c2x) + 0.3;
+           s2y = std::sin(2 * p.y() * 2 * PI),
+           s2z = std::sin(2 * p.z() * 2 * PI);
+  return 1 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx)
+         - 1 * (c2x * c2y  + c2y * c2z  + c2z * c2x) + 0.3;
 }
 
 FT D_prime (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI),
-    cy = std::cos(p.y() * 2 * PI),
-    cz = std::cos(p.z() * 2 * PI);
+           cy = std::cos(p.y() * 2 * PI),
+           cz = std::cos(p.z() * 2 * PI);
   const FT c2x = std::cos(2 * p.x() * 2 * PI),
-    c2y = std::cos(2 * p.y() * 2 * PI),
-    c2z = std::cos(2 * p.z() * 2 * PI);
+           c2y = std::cos(2 * p.y() * 2 * PI),
+           c2z = std::cos(2 * p.z() * 2 * PI);
   const FT sx = std::sin(p.x() * 2 * PI),
-    sy = std::sin(p.y() * 2 * PI),
-    sz = std::sin(p.z() * 2 * PI);
-  return 1 * ( sx * sy * sz) + 1 * ( cx * cy * cz) -
-    1 * ( c2x * c2y  + c2y * c2z  + c2z * c2x) - 0.4;
+           sy = std::sin(p.y() * 2 * PI),
+           sz = std::sin(p.z() * 2 * PI);
+  return 1 * ( sx * sy * sz) + 1 * ( cx * cy * cz)
+         - 1 * ( c2x * c2y  + c2y * c2z  + c2z * c2x) - 0.4;
 }
 
 FT split_p (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI),
-    cy = std::cos(p.y() * 2 * PI),
-    cz = std::cos(p.z() * 2 * PI);
+           cy = std::cos(p.y() * 2 * PI),
+           cz = std::cos(p.z() * 2 * PI);
   const FT c2x = std::cos(2 * p.x() * 2 * PI),
-    c2y = std::cos(2 * p.y() * 2 * PI),
-    c2z = std::cos(2 * p.z() * 2 * PI);
+           c2y = std::cos(2 * p.y() * 2 * PI),
+           c2z = std::cos(2 * p.z() * 2 * PI);
   const FT sx = std::sin(p.x() * 2 * PI),
-    sy = std::sin(p.y() * 2 * PI),
-    sz = std::sin(p.z() * 2 * PI);
+           sy = std::sin(p.y() * 2 * PI),
+           sz = std::sin(p.z() * 2 * PI);
   const FT s2x = std::sin(2 * p.x() * 2 * PI),
-    s2y = std::sin(2 * p.y() * 2 * PI),
-    s2z = std::sin(2 * p.z() * 2 * PI);
+           s2y = std::sin(2 * p.y() * 2 * PI),
+           s2z = std::sin(2 * p.z() * 2 * PI);
   return  1.1 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx)
-    - 0.2 * (c2x * c2y  + c2y * c2z  + c2z * c2x)
-    - 0.4 * (cx + cy + cz);
+          - 0.2 * (c2x * c2y  + c2y * c2z  + c2z * c2x)
+          - 0.4 * (cx + cy + cz);
 }
 
 struct Segments_function : public std::unary_function<Point, FT>
@@ -203,7 +198,6 @@ FT segments(const Point& p) {
   static Segments_function instance;
   return instance(p);
 }
-
 
 std::vector<std::string> make_vps_in ()
 {
@@ -254,36 +248,40 @@ int main(int argc, char** argv)
   v_ncopy.push_back(4);
   v_ncopy.push_back(8);
 
-  for (std::map<std::string, Function>::iterator iter = functions.begin(); iter != functions.end(); ++iter)
-    for (std::map<std::string, Position_vector>::iterator it = v_vps.begin(); it != v_vps.end(); ++it)
+  for (std::map<std::string, Function>::iterator iter = functions.begin();
+       iter != functions.end(); ++iter)
+  {
+    for (std::map<std::string, Position_vector>::iterator it = v_vps.begin();
+         it != v_vps.end(); ++it)
+    {
+      std::ostringstream oss;
+      oss << iter->first << "__" << it->first;
+      std::string mesh_id = oss.str();
+
+      std::cout << "Meshing " << mesh_id << "..." << std::flush;
+
+      std::vector<Function> funcs;
+      funcs.push_back(iter->second);
+
+      Labeling_function labeling_function(funcs, it->second);
+      C3t3 c3t3 = make_mesh(labeling_function);
+
+      std::cout << " Done" << std::flush;
+
+      for (std::vector<unsigned>::iterator i = v_ncopy.begin(); i != v_ncopy.end(); ++i)
       {
-        std::ostringstream oss;
-        oss << iter->first << "__" << it->first;
-        std::string mesh_id = oss.str();
+        std::ostringstream oss_2;
+        oss_2 << iter->first << "__" << it->first << "__" << *i  << ".mesh";
+        std::string output_filename = oss_2.str();
+        std::ofstream medit_file( output_filename.data() );
+        write_complex_to_medit(medit_file, c3t3, *i);
+        medit_file.close();
 
-        std::cout << "Meshing " << mesh_id << "..." << std::flush;
-
-        std::vector<Function> funcs;
-        funcs.push_back(iter->second);
-
-        Labeling_function labeling_function(funcs, it->second);
-        C3t3 c3t3 = make_mesh(labeling_function);
-
-        std::cout << " Done" << std::flush;
-
-        for (std::vector<unsigned>::iterator i = v_ncopy.begin(); i != v_ncopy.end(); ++i)
-        {
-          std::ostringstream oss_2;
-          oss_2 << iter->first << "__" << it->first << "__" << *i  << ".mesh";
-          std::string output_filename = oss_2.str();
-          std::ofstream medit_file( output_filename.data() );
-          write_complex_to_medit(medit_file, c3t3, *i);
-          medit_file.close();
-
-          std::cout << ", " << *i << "-copy Saved" << std::flush;
-        }
-        std::cout << std::endl;
+        std::cout << ", " << *i << "-copy Saved" << std::flush;
       }
+      std::cout << std::endl;
+    }
+  }
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

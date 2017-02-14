@@ -12,14 +12,14 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL:$
+// $Id:$
 //
 //
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_MESH_GLOBAL_OPTIMIZER_H
@@ -44,35 +44,34 @@
 namespace CGAL {
 
 namespace Mesh_3 {
-  
-  
+
 template <typename C3T3,
           typename MeshDomain,
           typename MoveFunction,
           typename Visitor_ = Null_global_optimizer_visitor<C3T3> >
 class Mesh_global_optimizer
-{  
+{
   // Types
   typedef typename C3T3::Triangulation  Tr;
   typedef typename Tr::Geom_traits      Gt;
-  
+
   typedef typename Tr::Point            Point_3;
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Edge             Edge;
   typedef typename Tr::Vertex           Vertex;
-  
+
   typedef typename Gt::FT               FT;
   typedef typename Gt::Vector_3         Vector_3;
-  
+
   typedef typename std::vector<Cell_handle>                 Cell_vector;
   typedef typename std::vector<Vertex_handle>               Vertex_vector;
   typedef typename std::set<Vertex_handle>                  Vertex_set;
   typedef std::vector<std::pair<Vertex_handle, Point_3> >   Moves_vector;
-  
+
 #ifdef CGAL_INTRUSIVE_LIST
   typedef Intrusive_list<Cell_handle>   Outdated_cell_set;
-#else 
+#else
   typedef std::set<Cell_handle>         Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
@@ -83,9 +82,9 @@ class Mesh_global_optimizer
 #endif
 
   typedef typename MoveFunction::Sizing_field Sizing_field;
-  
+
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
-  
+
   // Visitor class
   // Should define:
   //  - after_compute_moves()
@@ -93,7 +92,7 @@ class Mesh_global_optimizer
   //  - after_rebuild_restricted_delaunay()
   //  - end_of_iteration(int iteration_number)
   typedef Visitor_ Visitor;
-    
+
 public:
   /**
    * Constructor
@@ -104,7 +103,7 @@ public:
                         const bool do_freeze,
                         const FT& convergence_ratio,
                         const MoveFunction move_function = MoveFunction());
-  
+
   /**
    * Launch optimization process
    *
@@ -122,25 +121,25 @@ public:
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
-  
+
 private:
   /**
    * Returns moves for vertices of set \c moving_vertices
    */
   Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
-  
+
   /**
    * Returns the move for vertex \c v
    * warning : this function should be called only on moving vertices
    *           even for frozen vertices, it could return a non-zero vector
    */
   Vector_3 compute_move(const Vertex_handle& v);
-  
+
   /**
    * update big_moves_ vector with new_sq_move value
    */
   void update_big_moves(const FT& new_sq_move);
-  
+
   /**
    * Updates mesh using moves of \c moves vector. Updates moving_vertices with
    * the new set of moving vertices after the move.
@@ -148,41 +147,41 @@ private:
   void update_mesh(const Moves_vector& moves,
                    Moving_vertices_set& moving_vertices,
                    Visitor& visitor);
-  
+
   /**
    * Fill sizing field using sizes (avg circumradius) contained in tr_
    */
   void fill_sizing_field();
-  
+
   /**
    * Returns true if convergence is reached
    */
   bool check_convergence() const;
-  
+
   /**
    * Returns the average circumradius length of cells incident to \c v
    */
   FT average_circumradius_length(const Vertex_handle& v) const;
-  
+
   /**
    * Returns the minimum cicumradius length of cells incident to \c v
    */
-  FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;  
-  
+  FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;
+
   /**
    * Returns the squared circumradius length of cell \c cell
    */
   FT sq_circumradius_length(const Cell_handle& cell,
                             const Vertex_handle& v) const;
-  
+
   /**
    * Returns true if time_limit is reached
    */
   bool is_time_limit_reached() const
   {
-    return ( (time_limit() > 0) && (running_time_.time() > time_limit()) );      
+    return ( (time_limit() > 0) && (running_time_.time() > time_limit()) );
   }
-  
+
 private:
   // -----------------------------------
   // Private data
@@ -197,7 +196,7 @@ private:
   Sizing_field sizing_field_;
   double time_limit_;
   CGAL::Timer running_time_;
-  
+
   std::size_t big_moves_size_;
   std::set<FT> big_moves_;
 
@@ -208,8 +207,7 @@ private:
   mutable FT sum_moves_;
 #endif
 };
-  
-  
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 Mesh_global_optimizer(C3T3& c3t3,
@@ -244,16 +242,14 @@ Mesh_global_optimizer(C3T3& c3t3,
   CGAL::Timer timer;
   timer.start();
 #endif
-  
+
   fill_sizing_field();
-  
+
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   std::cerr << "done (" << timer.time() << "s)\n";
 #endif
 }
 
-
-  
 template <typename C3T3, typename Md, typename Mf, typename V_>
 Mesh_optimization_return_code
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
@@ -370,18 +366,18 @@ operator()(int nb_iterations, Visitor visitor)
 
   else if ( check_convergence() )
     return CONVERGENCE_REACHED;
- 
+
   return MAX_ITERATION_NUMBER_REACHED;
 }
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
-void 
+void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 collect_all_vertices(Moving_vertices_set& moving_vertices)
 {
   typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
   for(; vit != tr_.finite_vertices_end(); ++vit )
-    moving_vertices.insert(vit); 
+    moving_vertices.insert(vit);
 }
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
@@ -395,10 +391,10 @@ compute_moves(Moving_vertices_set& moving_vertices)
   // Store new position of points which have to move
   Moves_vector moves;
   moves.reserve(moving_vertices.size());
-  
+
   // reset worst_move list
-  big_moves_.clear();    
-  
+  big_moves_.clear();
+
   // Get move for each moving vertex
   typename Moving_vertices_set::iterator vit = moving_vertices.begin();
   for ( ; vit != moving_vertices.end() ; )
@@ -406,8 +402,8 @@ compute_moves(Moving_vertices_set& moving_vertices)
     Vertex_handle oldv = *vit;
     Vector_3 move = compute_move(oldv);
     ++vit;
-    
-	  if ( CGAL::NULL_VECTOR != move )
+
+    if ( CGAL::NULL_VECTOR != move )
     {
       Point_3 new_position = translate(oldv->point(),move);
       // typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
@@ -416,7 +412,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
       //       maybe for a new global optimizer it should be de-commented
       moves.push_back(std::make_pair(oldv,new_position));
     }
-  	else // CGAL::NULL_VECTOR == move
+    else // CGAL::NULL_VECTOR == move
     {
       if(do_freeze_)
         moving_vertices.erase(oldv);
@@ -425,24 +421,22 @@ compute_moves(Moving_vertices_set& moving_vertices)
     // Stop if time_limit_ is reached
     if ( is_time_limit_reached() )
       break;
-  }   
+  }
 
   return moves;
 }
-  
-  
-  
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_move(const Vertex_handle& v)
-{    
+{
   typename Gt::Compute_squared_length_3 sq_length =
     Gt().compute_squared_length_3_object();
-  
+
   typename Gt::Construct_vector_3 vector =
     Gt().construct_vector_3_object();
-  
+
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();
 
@@ -452,20 +446,20 @@ compute_move(const Vertex_handle& v)
 
   // Get move from move function
   Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
-  
+
   // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
   {
     Point_3 new_position = translate(v->point(),move);
     move = vector(v->point(), helper_.project_on_surface(new_position,v));
   }
-  
+
   FT local_sq_size = min_circumradius_sq_length(v, incident_cells);
   if ( FT(0) == local_sq_size )
     return CGAL::NULL_VECTOR;
-  
+
   FT local_move_sq_ratio = sq_length(move) / local_sq_size;
-  
+
   // The case c3t3_.in_dimension(v) == 2 is note yet adapted. <PERIODIC>
   if ( c3t3_.in_dimension(v) == 2)
   {
@@ -478,22 +472,21 @@ compute_move(const Vertex_handle& v)
     nb_frozen_points_++;
     return CGAL::NULL_VECTOR;
   }
-  
+
   // Update big moves
   update_big_moves(local_move_sq_ratio);
-  
+
   return move;
 }
-  
-  
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 update_big_moves(const FT& new_sq_move)
-{  
+{
   if (big_moves_.size() < big_moves_size_ )
     big_moves_.insert(new_sq_move);
-  else 
+  else
   {
     FT smallest = *(big_moves_.begin());
     if( new_sq_move > smallest )
@@ -503,18 +496,17 @@ update_big_moves(const FT& new_sq_move)
     }
   }
 }
-  
-  
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 update_mesh(const Moves_vector& moves,
             Moving_vertices_set& moving_vertices,
             Visitor& visitor)
-{ 
+{
   // Cells which have to be updated
   Outdated_cell_set outdated_cells;
-  
+
   // Apply moves in triangulation
   for ( typename Moves_vector::const_iterator it = moves.begin() ;
        it != moves.end() ;
@@ -525,8 +517,8 @@ update_mesh(const Moves_vector& moves,
     // Get size at new position
     if ( Sizing_field::is_vertex_update_needed )
     {
-      FT size = sizing_field_(new_position,v);   
-      
+      FT size = sizing_field_(new_position,v);
+
       // Move point
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
 
@@ -537,18 +529,18 @@ update_mesh(const Moves_vector& moves,
     {
       helper_.move_point(v, new_position, outdated_cells, moving_vertices);
     }
-    
+
     // Stop if time_limit_ is reached, here we can't return without rebuilding
     // restricted delaunay
     if ( is_time_limit_reached() )
       break;
   }
   visitor.after_move_points();
-  
+
   // Update c3t3
 #ifdef CGAL_INTRUSIVE_LIST
   // AF:  rebuild_restricted_delaunay does more cell insertion/removal
-  //      which clashes with our inplace list 
+  //      which clashes with our inplace list
   //      That's why we hand it in, and call clear() when we no longer need it
   helper_.rebuild_restricted_delaunay(outdated_cells,
                                       moving_vertices);
@@ -556,11 +548,10 @@ update_mesh(const Moves_vector& moves,
   helper_.rebuild_restricted_delaunay(outdated_cells.begin(),
                                       outdated_cells.end(),
                                       moving_vertices);
-#endif 
-  
+#endif
+
   visitor.after_rebuild_restricted_delaunay();
 }
-
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
 void
@@ -568,45 +559,43 @@ Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 fill_sizing_field()
 {
   std::map<Point_3,FT> value_map;
-  
+
   // Fill map with local size
-  for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin(); 
+  for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
       vit != tr_.finite_vertices_end();
       ++vit)
   {
     value_map.insert(std::make_pair(vit->point(),
                                     average_circumradius_length(vit)));
   }
-  
+
   // fill sizing field
   sizing_field_.fill(value_map);
 }
 
-  
 template <typename C3T3, typename Md, typename Mf, typename V_>
 bool
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 check_convergence() const
 {
   namespace bl = boost::lambda;
-  
+
   FT sum(0);
   for( typename std::set<FT>::const_iterator
        it = big_moves_.begin(), end = big_moves_.end() ; it != end ; ++it )
   {
     sum += CGAL::sqrt(*it);
   }
-  
+
   FT average_move = sum/big_moves_size_;/*even if set is not full, divide*/
        /*by max size so that if only 1 point moves, it goes to 0*/
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   sum_moves_ = average_move;
 #endif
-  
+
   return ( average_move < convergence_ratio_ );
 }
-  
-  
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
@@ -615,10 +604,10 @@ average_circumradius_length(const Vertex_handle& v) const
   Cell_vector incident_cells;
   incident_cells.reserve(64);
   tr_.incident_cells(v, std::back_inserter(incident_cells));
-  
+
   FT sum_len (0);
   unsigned int nb = 0;
-  
+
   for ( typename Cell_vector::iterator cit = incident_cells.begin() ;
        cit != incident_cells.end() ;
        ++cit)
@@ -629,7 +618,7 @@ average_circumradius_length(const Vertex_handle& v) const
       ++nb;
     }
   }
-  
+
   // nb == 0 could happen if there is an isolated point.
   if ( 0 != nb )
   {
@@ -655,35 +644,33 @@ average_circumradius_length(const Vertex_handle& v) const
   }
 }
 
-  
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const
 {
-  // Get first cell sq_circumradius_length 
+  // Get first cell sq_circumradius_length
   typename Cell_vector::const_iterator cit = incident_cells.begin();
   while ( incident_cells.end() != cit && !c3t3_.is_in_complex(*cit) ) { ++cit; }
-  
+
   // if vertex is isolated ...
   if ( incident_cells.end() == cit )
     return FT(0);
-  
+
   // Initialize min
   FT min_sq_len = sq_circumradius_length(*cit++,v);
-  
+
   // Find the minimum value
   for ( ; cit != incident_cells.end() ; ++cit )
   {
     if ( !c3t3_.is_in_complex(*cit) )
       continue;
-    
+
     min_sq_len = (std::min)(min_sq_len,sq_circumradius_length(*cit,v));
   }
-  
+
   return min_sq_len;
 }
-
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
@@ -692,11 +679,11 @@ sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 {
   typename Gt::Compute_squared_distance_3 sq_distance =
     Gt().compute_squared_distance_3_object();
-  
+
   const Point_3 circumcenter = tr_.dual(cell);
   return ( sq_distance(tr_.point(cell, cell->index(v)), circumcenter) );
 }
-  
+
 } // end namespace Mesh_3
 
 } //namespace CGAL

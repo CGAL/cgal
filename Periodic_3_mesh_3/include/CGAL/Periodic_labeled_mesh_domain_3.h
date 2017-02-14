@@ -1,9 +1,26 @@
-/*
- * Periodic_labeled_mesh_domain_3.h
- *
- *  Created on: May 27, 2014
- *      Author: apelle
- */
+// Copyright (c) 2014 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:$
+// $Id:$
+//
+//
+// Author(s)     : Aymeric Pellé
+//
+//******************************************************************************
+// File Description :
+// class Periodic_implicit_mesh_domain_3. See class description.
+//******************************************************************************
 
 #ifndef CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H
 #define CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H
@@ -13,11 +30,11 @@
 
 #include <CGAL/Periodic_mesh_3/config.h>
 
-
 namespace CGAL
 {
 template<class Function, class BGT>
-class Periodic_labeled_mesh_domain_3 : public Labeled_mesh_domain_3<Function, BGT>
+class Periodic_labeled_mesh_domain_3
+    : public Labeled_mesh_domain_3<Function, BGT>
 {
 public:
   /// Base type
@@ -43,15 +60,15 @@ public:
                          const Iso_cuboid_3& bbox,
                          const FT& error_bound = FT(1e-3))
   : Base(f, bbox, error_bound)
-  {
-  }
+  { }
 
   const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
 
   struct Do_intersect_surface
   {
     Do_intersect_surface(const Periodic_labeled_mesh_domain_3& domain)
-      : r_domain_(domain) {}
+      : r_domain_(domain)
+    { }
 
     Surface_patch operator()(const Segment_3& s) const
     {
@@ -155,7 +172,8 @@ public:
   struct Construct_intersection
   {
     Construct_intersection(const Periodic_labeled_mesh_domain_3& domain)
-      : r_domain_(domain) {}
+      : r_domain_(domain)
+    { }
 
     Intersection operator()(const Segment_3& s) const
     {
@@ -192,7 +210,9 @@ public:
                                       BGT().construct_midpoint_3_object();
 
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
-      FT dimension [3] = { pbb.xmax()-pbb.xmin(), pbb.ymax()-pbb.ymin(), pbb.zmax()-pbb.zmin() };
+      FT dimension [3] = { pbb.xmax() - pbb.xmin(),
+                           pbb.ymax() - pbb.ymin(),
+                           pbb.zmax() - pbb.zmin() };
       FT a_t [3] = { a.x(), a.y(), a.z() };
       FT b_t [3] = { b.x(), b.y(), b.z() };
       a_t[0] -= pbb.xmin();

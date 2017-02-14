@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Mesh_3/include/CGAL/Implicit_mesh_domain_3.h $
-// $Id: Implicit_mesh_domain_3.h 52705 2009-10-23 10:27:15Z stayeb $
+// $URL:$
+// $Id:$
 //
 //
 // Author(s)     : Mikhail Bogdanov
@@ -25,15 +25,12 @@
 #ifndef CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
 #define CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
 
-
 #include <CGAL/Periodic_labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
 #include <CGAL/Periodic_mesh_3/config.h>
 
 namespace CGAL {
-
-
 /**
  * @class Periodic_implicit_mesh_domain_3
  *
@@ -65,10 +62,11 @@ public:
   Periodic_implicit_mesh_domain_3(const Function& f,
                          const Iso_cuboid_3& cuboid,
                          FT error_bound = FT(1e-3))
-    : Base(Wrapper(f), cuboid, error_bound) {}
+    : Base(Wrapper(f), cuboid, error_bound)
+  { }
 
   /// Destructor
-  virtual ~Periodic_implicit_mesh_domain_3() {}
+  virtual ~Periodic_implicit_mesh_domain_3() { }
 
 private:
   // Disabled copy constructor & assignment operator
@@ -77,7 +75,6 @@ private:
   Self& operator=(const Self& src);
 
 };  // end class Periodic_implicit_mesh_domain_3
-
 
 }  // end namespace CGAL
 
