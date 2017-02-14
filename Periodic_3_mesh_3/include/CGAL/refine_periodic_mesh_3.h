@@ -48,13 +48,13 @@ BOOST_PARAMETER_FUNCTION(
 {
   // TODO: Can we call refine_mesh_3_impl?
   return refine_periodic_mesh_3_impl(c3t3,
-                            domain,
-                            criteria,
-                            exude_param,
-                            perturb_param,
-                            odt_param,
-                            lloyd_param,
-                            reset_param() );
+                                     domain,
+                                     criteria,
+                                     exude_param,
+                                     perturb_param,
+                                     odt_param,
+                                     lloyd_param,
+                                     reset_param() );
 }
 
 
@@ -84,7 +84,6 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
                         bool reset_c3t3)
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
-  typedef typename C3T3::Triangulation::Geom_traits Gt;
 
   // Reset c3t3 (i.e. remove weights) if needed
   if ( reset_c3t3 )

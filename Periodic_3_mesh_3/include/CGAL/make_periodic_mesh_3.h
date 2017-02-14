@@ -244,7 +244,6 @@ void find_points_to_project(C3T3& c3t3, const MeshDomain& domain, OutputIterator
 {
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef typename C3T3::Cell_handle Cell_handle;
-  typedef typename C3T3::Facet Facet;
 
   for(typename C3T3::Facets_in_complex_iterator face_it = c3t3.facets_in_complex_begin();
       face_it != c3t3.facets_in_complex_end();

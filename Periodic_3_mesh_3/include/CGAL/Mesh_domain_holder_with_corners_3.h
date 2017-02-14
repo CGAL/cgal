@@ -294,8 +294,9 @@ point_corner_index(const Point_3& p) const
 template <class MD_>
 typename Mesh_domain_holder_with_corners_3<MD_>::FT
 Mesh_domain_holder_with_corners_3<MD_>::
-geodesic_distance(const Point_3& p, const Point_3& q,
-                  const Curve_segment_index& curve_index) const
+geodesic_distance(const Point_3& /* p */,
+                  const Point_3& /* q */,
+                  const Curve_segment_index& /* curve_index */) const
 {
   assert(false);
 
@@ -305,9 +306,9 @@ geodesic_distance(const Point_3& p, const Point_3& q,
 template <class MD_>
 typename Mesh_domain_holder_with_corners_3<MD_>::Point_3
 Mesh_domain_holder_with_corners_3<MD_>::
-construct_point_on_curve_segment(const Point_3& starting_point,
-                                 const Curve_segment_index& curve_index,
-                                 FT distance) const
+construct_point_on_curve_segment(const Point_3& /* starting_point */,
+                                 const Curve_segment_index& /* curve_index */,
+                                 FT /* distance */) const
 {
   assert(false);
 
@@ -351,10 +352,10 @@ distance_sign(const Point_3& p, const Point_3& q,
 template <class MD_>
 CGAL::Sign
 Mesh_domain_holder_with_corners_3<MD_>::
-distance_sign_along_cycle(const Point_3& p,
-                          const Point_3& q,
-                          const Point_3& r,
-                          const Curve_segment_index& index) const
+distance_sign_along_cycle(const Point_3& /* p */,
+                          const Point_3& /* q */,
+                          const Point_3& /* r */,
+                          const Curve_segment_index& /* index */) const
 {
   assert(false);
   return CGAL::Sign();
@@ -363,7 +364,7 @@ distance_sign_along_cycle(const Point_3& p,
 template <class MD_>
 bool
 Mesh_domain_holder_with_corners_3<MD_>::
-is_cycle(const Point_3&, const Curve_segment_index& index) const
+is_cycle(const Point_3&, const Curve_segment_index& /* index */) const
 {
   assert(false);
   return bool();

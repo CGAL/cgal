@@ -791,8 +791,6 @@ non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) con
 {
   if ( ! c3t3_.is_in_complex(va,vb) )
   {
-    typedef typename Gt::Sphere_3 Sphere_3;
-
     typename Gt::Construct_sphere_3 sphere =
       c3t3_.triangulation().geom_traits().construct_sphere_3_object();
 

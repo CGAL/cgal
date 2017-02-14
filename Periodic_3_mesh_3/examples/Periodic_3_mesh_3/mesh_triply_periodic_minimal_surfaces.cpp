@@ -225,7 +225,7 @@ C3t3 make_mesh (const Labeling_function& labeling_function, FT domain_size = FT(
 
 typedef std::vector<std::string> Position_vector;
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
   std::map<std::string, Function> functions;
   functions["schwarz_p"] = &schwarz_p;

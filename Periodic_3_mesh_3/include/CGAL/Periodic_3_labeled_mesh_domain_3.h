@@ -104,8 +104,12 @@ public:
       b_t[0] -= pbb.xmin();
       b_t[1] -= pbb.ymin();
       b_t[2] -= pbb.zmin();
-      int o1 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
-      int o2 [3] = { b_t[0] / dimension[0], b_t[1] / dimension[1], b_t[2] / dimension[2] };
+      int o1 [3] = { static_cast<int>(a_t[0] / dimension[0]),
+                     static_cast<int>(a_t[1] / dimension[1]),
+                     static_cast<int>(a_t[2] / dimension[2]) };
+      int o2 [3] = { static_cast<int>(b_t[0] / dimension[0]),
+                     static_cast<int>(b_t[1] / dimension[1]),
+                     static_cast<int>(b_t[2] / dimension[2]) };
 
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };
@@ -222,8 +226,12 @@ public:
       b_t[1] -= pbb.ymin();
       b_t[2] -= pbb.zmin();
 
-      int o1 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
-      int o2 [3] = { b_t[0] / dimension[0], b_t[1] / dimension[1], b_t[2] / dimension[2] };
+      int o1 [3] = { static_cast<int>(a_t[0] / dimension[0]),
+                     static_cast<int>(a_t[1] / dimension[1]),
+                     static_cast<int>(a_t[2] / dimension[2]) };
+      int o2 [3] = { static_cast<int>(b_t[0] / dimension[0]),
+                     static_cast<int>(b_t[1] / dimension[1]),
+                     static_cast<int>(b_t[2] / dimension[2]) };
 
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };

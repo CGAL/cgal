@@ -117,18 +117,18 @@ public:
   template <typename Cell_handle>
   bool try_lock_cell(const Cell_handle &, int = 0) const { return true; }
 
-  bool try_lock_and_get_incident_cells(Vertex_handle v,
-                                       std::vector<Cell_handle>& cells) const
+  bool try_lock_and_get_incident_cells(Vertex_handle /* v */,
+                                       std::vector<Cell_handle>& /* cells */) const
   {
     std::cerr << "ERROR: implement try_lock_and_get_incident_cells()"<< std::endl;
     return true;
   }
 
-  bool is_infinite(const Vertex_handle v) const { return false; }
-  bool is_infinite(const Edge & e) const { return false; }
-  bool is_infinite(const Facet & f) const { return false; }
-  bool is_infinite(const Cell_handle c) const { return false; }
-  bool is_infinite(const Cell_handle c, int i) const { return false; }
+  bool is_infinite(const Vertex_handle) const { return false; }
+  bool is_infinite(const Edge&) const { return false; }
+  bool is_infinite(const Facet&) const { return false; }
+  bool is_infinite(const Cell_handle) const { return false; }
+  bool is_infinite(const Cell_handle, int) const { return false; }
   bool is_infinite(const Cell_handle c, int i, int j) const;
 
   int dimension() const
@@ -210,9 +210,9 @@ public:
   find_conflicts( const Point &p,
                   Cell_handle c, OutputIteratorBoundaryFacets bfit,
                   OutputIteratorCells cit, OutputIteratorInternalFacets ifit,
-                  bool *could_lock_zone = NULL,
-                  const Facet *this_facet_must_be_in_the_cz = NULL,
-                  bool *the_facet_is_in_its_cz = NULL ) const
+                  bool* /* could_lock_zone */ = NULL,
+                  const Facet* /* this_facet_must_be_in_the_cz */ = NULL,
+                  bool* /* the_facet_is_in_its_cz */ = NULL ) const
   {
     clear_v_offsets();
 
@@ -395,7 +395,8 @@ public:
   // Returns the vertices on the interior of the conflict hole.
   template <class OutputIterator>
   OutputIterator
-  vertices_inside_conflict_zone(const /*Weighted_point*/Point& p, Cell_handle c,
+  vertices_inside_conflict_zone(const /*Weighted_point*/Point& /* p */,
+                                Cell_handle /* c */,
                                 OutputIterator res) const
   {
     return res;
@@ -588,8 +589,6 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3,
 {
   typedef typename C3t3::Triangulation           Triangulation;
   typedef Triangulation                          Tr;
-
-  typedef typename Triangulation::Geom_traits    Gt;
 
   typedef typename Triangulation::Iso_cuboid     Iso_cuboid;
 
