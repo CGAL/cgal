@@ -42,7 +42,7 @@ do
 	EXAMPLES="$ARG/examples/$ARG"
 	TEST="$ARG/test/$ARG"
 	DEMO="$ARG/demo/$ARG"
-  if [ ! -d $ROOT/$DEMO ]; then
+  if [ ! -d $ROOT/$DEMO ] || [ ! -f "$ROOT/$DEMO/CmakeLists.txt" ]; then
     DEMO="GraphicsView/demo/$ARG"
    fi
 #If there is no demo subdir, try in GraphicsView
@@ -78,6 +78,13 @@ do
   else
     echo "No demo found for $ARG"
 	fi
+if [ "$ARG" == Polyhedron_demo ]; then
+  cd "$ROOT/Polyhedron/demo/Polyhedron"
+  mkdir ./build
+  cd ./build
+  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
+  make -j2
+fi
 done
 
 # Local Variables:

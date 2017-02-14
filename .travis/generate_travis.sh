@@ -20,13 +20,11 @@ do
 		if [ $i == 3 ]
 		then
 			i=0
-			#PACKAGES[$INDEX]+="\n"
  			INDEX=$[INDEX+1]
 		fi
   	echo "$f " >> ./.travis/packages.txt
 	fi
 done
-
 if [ -f ".travis.yml" ] 
 then
   #copy the current .travis.yml for later check
@@ -52,6 +50,7 @@ for package in ${PACKAGES[@]}
 do
  	echo "  - PACKAGE='$package' " >> .travis.yml
 done
+echo "  - PACKAGE='Polyhedron_demo' " >> .travis.yml
 
 #writes the end of the file
 COPY=0
