@@ -384,8 +384,10 @@ public:
 
     initialize_bounding_sphere();
 
+    typedef std::iterator_traits<InputIterator> Iterator_traits;
+    typedef typename Iterator_traits::difference_type Diff_t;
     boost::rand48 random;
-    boost::random_number_generator<boost::rand48> rng(random);
+    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
     std::random_shuffle (points.begin(), points.end(), rng);
     fraction = 0;
 

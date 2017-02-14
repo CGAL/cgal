@@ -193,7 +193,10 @@ public:
       site_vec.push_back(Site_2(*it));
     }
 
-    boost::random_number_generator<boost::rand48> rng(random);
+    typedef std::iterator_traits<Input_iterator> Iterator_traits;
+    typedef typename Iterator_traits::difference_type Diff_t;
+
+    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
     std::random_shuffle(site_vec.begin(), site_vec.end(),rng);
     return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
