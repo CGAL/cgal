@@ -754,6 +754,9 @@ void MainWindow::viewerShow(float xmin,
   qglviewer::Vec
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
+
+  if(min_ == max_) return viewerShow(xmin, ymin, zmin);
+
 #if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
 #else
