@@ -104,31 +104,29 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
       item->setName(fileinfo.baseName());
       item->setScene(scene);
       item->set_valid(false);
-      bool facets_in_complex = false;
+
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))
       {
-        for( C3t3::Triangulation::All_cells_iterator cit = item->c3t3().triangulation().all_cells_begin();
-             cit != item->c3t3().triangulation().all_cells_end();
+        for( C3t3::Triangulation::Finite_cells_iterator
+             cit = item->c3t3().triangulation().finite_cells_begin();
+             cit != item->c3t3().triangulation().finite_cells_end();
              ++cit)
         {
-          if(!item->c3t3().triangulation().is_infinite(cit))
-          {
             CGAL_assertion(cit->info() >= 0);
             item->c3t3().add_to_complex(cit, cit->info());
             for(int i=0; i < 4; ++i)
             {
               if(cit->surface_patch_index(i)>0)
               {
-                item->c3t3().add_to_complex(cit, i, cit->info());
-                facets_in_complex = true;
+                item->c3t3().add_to_complex(cit, i, cit->surface_patch_index(i));
               }
             }
-          }
         }
         //if there is no facet in the complex, we add the border facets.
-        if(!facets_in_complex)
+        if(item->c3t3().number_of_facets_in_complex() == 0)
         {
-          for( C3t3::Triangulation::All_cells_iterator cit = item->c3t3().triangulation().all_cells_begin();
+          for( C3t3::Triangulation::All_cells_iterator
+               cit = item->c3t3().triangulation().all_cells_begin();
                cit != item->c3t3().triangulation().all_cells_end();
                ++cit)
           {
@@ -139,9 +137,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
                if(!item->c3t3().triangulation().is_infinite(cit, i))
                  item->c3t3().add_to_complex(cit, i, 1);
               }
-
             }
-
           }
         }
         item->c3t3_changed();
