@@ -31,7 +31,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <set>
+#include <map>
 #include <vector>
 #include <utility>
 #include <boost/range.hpp>
@@ -84,23 +84,49 @@ detect_duplicated_boundary_edges
 (PM& pmesh, OutputIterator out, LessHedge less_hedge, const VertexPointMap& vpmap)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-  typedef std::set<halfedge_descriptor, LessHedge> Border_halfedge_set;
+  typedef std::map<halfedge_descriptor, std::pair<int, std::size_t>, LessHedge> Border_halfedge_map;
+  Border_halfedge_map border_halfedge_map(less_hedge);
 
-  Border_halfedge_set border_halfedge_set(less_hedge);
+  std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > halfedge_pairs;
+  std::vector< bool > manifold_halfedge_pairs;
+
   BOOST_FOREACH(halfedge_descriptor he, halfedges(pmesh))
   {
     if ( !CGAL::is_border(he, pmesh) )
       continue;
-    typename Border_halfedge_set::iterator set_it;
+    typename Border_halfedge_map::iterator set_it;
     bool insertion_ok;
     CGAL::cpp11::tie(set_it, insertion_ok)
-      = border_halfedge_set.insert(he);
+      = border_halfedge_map.insert(std::make_pair(he,std::make_pair(1,0)));
 
-    if ( !insertion_ok )
-      if ( get(vpmap, source(he,pmesh))==get(vpmap, target(*set_it,pmesh)) &&
-           get(vpmap, target(he,pmesh))==get(vpmap, source(*set_it,pmesh)) )
-        *out++ = std::make_pair(*set_it, he);
+    if ( !insertion_ok ){ // we found already a halfedge with the points
+      ++set_it->second.first; // increase the multiplicity
+      if(set_it->second.first == 2)
+      {
+        if ( get(vpmap, source(he,pmesh))==get(vpmap, target(set_it->first,pmesh)) &&
+             get(vpmap, target(he,pmesh))==get(vpmap, source(set_it->first,pmesh)) )
+        {
+          set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
+          halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
+          manifold_halfedge_pairs.push_back(true);
+        }
+      }
+      else
+        if ( set_it->second.first > 2 )
+          manifold_halfedge_pairs[ set_it->second.second ] = false;
+    }
   }
+
+  // put in `out` only manifold edges from the set of edges to stitch.
+  // We choose not to allow only a pair out of the whole set to be stitched
+  // as we can produce inconsistent stitching along a sequence of non-manifold edges
+  std::size_t nb_pairs=halfedge_pairs.size();
+  for (std::size_t i=0; i<nb_pairs; ++i)
+  {
+    if( manifold_halfedge_pairs[i] )
+      *out++=halfedge_pairs[i];
+  }
+
   return out;
 }
 
