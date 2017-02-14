@@ -26,8 +26,7 @@ do
 	        then
 	                PACKAGES+="$f "
 	        fi
-	  done
-	
+	  done	
 	
 	  DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
 	  IFS=$old_IFS
@@ -43,6 +42,10 @@ do
 	EXAMPLES="$ARG/examples/$ARG"
 	TEST="$ARG/test/$ARG"
 	DEMO="$ARG/demo/$ARG"
+  if [ ! -d $ROOT/$DEMO ]; then
+    DEMO="GraphicsView/demo/$ARG"
+   fi
+#If there is no demo subdir, try in GraphicsView
 	if [ -d "$ROOT/$EXAMPLES" ]
 	then
 	  cd $ROOT/$EXAMPLES
@@ -50,7 +53,10 @@ do
 	  cd build
 	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
 	  make -j2
+  else
+    echo "No example found for $ARG"
 	fi
+
 	if [ -d "$ROOT/$TEST" ]
 	then
 	  cd $ROOT/$TEST
@@ -58,16 +64,20 @@ do
 	  cd build
 	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
   	make -j2
+  else
+    echo "No test found for $ARG"
 	fi
 	
-	#if [ "$ARG" != Polyhedron ]
-	#then
-	#  cd $ROOT/$DEMO
-	#  mkdir -p build
-	#  cd build
-	#  cmake -DCGAL_DIR="$ROOT/build" ..
-	#  make
-	#fi
+	if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
+	then
+	  cd $ROOT/$DEMO
+	  mkdir -p build
+	  cd build
+	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
+	  make -j2
+  else
+    echo "No demo found for $ARG"
+	fi
 done
 
 # Local Variables:
