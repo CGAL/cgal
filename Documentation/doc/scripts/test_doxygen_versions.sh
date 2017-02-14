@@ -7,8 +7,8 @@ if [ "$1" == '--help' ]; then
   exit 0
 fi
 #build reference
-PATH_TO_1=$1
-PATH_TO_2=$2
+PATH_TO_1="$1"
+PATH_TO_2="$2"
 IS_ARG2=1
 if [ -z $PATH_TO_2 ]; then
   IS_ARG2=0
@@ -42,11 +42,13 @@ if [ $IS_ARG2 == 0 ] || [ $(basename $PATH_TO_2) != "doxygen" ] || [ ! -e $PATH_
   echo "done."
 fi
 #build doc with doxygen master
+rm -rf ./build_doc
+mkdir build_doc
 cd ./build_doc
-cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE=$PATH_TO_2 ../..  &> /dev/null
+cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  &> /dev/null
 make -j7 doc  &> /dev/null
 cd ../
-bash ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_data
+bash ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref
 #clean-up
 rm -rf ./build_doc
 rm -rf ./doc_ref
