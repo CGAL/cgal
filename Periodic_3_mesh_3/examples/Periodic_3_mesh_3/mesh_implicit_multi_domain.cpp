@@ -1,4 +1,4 @@
-#include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -6,13 +6,13 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
-#include <CGAL/Periodic_mesh_facet_criteria_3.h>
-#include <CGAL/Periodic_mesh_cell_criteria_3.h>
-#include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Periodic_mesh_3/Implicit_to_labeled_subdomains_function_wrapper.h>
+#include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_3/Implicit_to_labeled_subdomains_function_wrapper.h>
 
-#include <CGAL/Periodic_implicit_mesh_domain_3.h>
-#include <CGAL/Periodic_labeled_mesh_domain_3.h>
+#include <CGAL/Periodic_3_implicit_mesh_domain_3.h>
+#include <CGAL/Periodic_3_labeled_mesh_domain_3.h>
 #include <CGAL/make_periodic_mesh_3.h>
 #include <CGAL/Mesh_3_periodic_triangulation_3.h>
 

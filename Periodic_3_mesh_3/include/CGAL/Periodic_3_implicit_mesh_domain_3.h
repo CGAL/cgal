@@ -25,10 +25,10 @@
 #ifndef CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
 #define CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
 
-#include <CGAL/Periodic_labeled_mesh_domain_3.h>
+#include <CGAL/Periodic_3_labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
-#include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 namespace CGAL {
 /**

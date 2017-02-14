@@ -27,7 +27,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 
-#include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 namespace CGAL {
 

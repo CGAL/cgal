@@ -31,7 +31,7 @@
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
 
-#include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 namespace CGAL {
 

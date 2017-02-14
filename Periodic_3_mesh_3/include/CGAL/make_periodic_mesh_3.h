@@ -29,7 +29,7 @@
 
 #include <CGAL/Mesh_domain_holder_with_corners_3.h>
 
-#include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 namespace CGAL {
 

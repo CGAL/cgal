@@ -42,7 +42,7 @@
 // IO
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
-#include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 #include <CGAL/tags.h>
 
 namespace CGAL {

@@ -29,7 +29,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
 
-#include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <map>
 
