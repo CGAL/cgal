@@ -22,8 +22,6 @@
 
 #include <CGAL/Qt/PainterOstream.h>
 
-#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
-
 namespace CGAL{
 
 namespace Qt {
@@ -33,17 +31,14 @@ namespace Qt {
   public:
     typedef PainterOstream<K> Base;
     typedef PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > Self;
-    
     typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
     
-  private:
-    typedef typename Gt::Segment_2      Segment_2;
-    typedef typename Gt::Line_segment_2 Line_segment_2;
-    typedef typename Gt::Arc_2          Arc_2;
-    //typedef typename Gt::Line_2         Line_2;
+    typedef typename Gt::Hyperbolic_segment_2      Hyperbolic_segment_2;    
+    typedef typename K::Point_2     Point_2;
     
-    typedef typename K::Point_2    Point_2;
-    typedef typename K::Circle_2   Circle_2;
+    typedef Line_arc_2<K>           Line_arc_2;
+    typedef Circular_arc_2<K>       Circular_arc_2;
+    typedef Circular_arc_point_2<K> Circular_arc_point_2;
     
   public:
     PainterOstream(QPainter* p, QRectF rect = QRectF())
@@ -51,41 +46,27 @@ namespace Qt {
     
     using Base::operator <<;
     
-    PainterOstream& operator << (const Segment_2& s)
-    {
-      if(const Line_segment_2* line_segment = boost::get<Line_segment_2>(&s)){
-        operator << (*line_segment);
+    PainterOstream& operator << (Hyperbolic_segment_2 s) {
+      if (const Line_arc_2* seg = boost::get<Line_arc_2>(&s)) {
+        operator << (*seg);
         return *this;
       }
-      if(const Arc_2* arc = boost::get<Arc_2>(&s)){
-        
-        const Circle_2& circle = get<0>(*arc);
-        const Point_2& center = circle.center();
-        const Point_2& source = get<1>(*arc);
-        const Point_2& target = get<2>(*arc);
-        
-        if (circle.squared_radius() > 10) {
-          const Line_segment_2 seg(source,target);
+      
+      Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+
+      if (arc->squared_radius() > 10 )
+        // due to rounding, the arc drawn does not look like it 
+        // passes through the endpoints
+        // so we replace the arc by a line segment
+        {
+          Point_2 source(to_double(arc->source().x()),to_double(arc->source().y()));
+          Point_2 target(to_double(arc->target().x()),to_double(arc->target().y()));      
+          const Line_arc_2 seg(source,target);
           operator << (seg);
           return *this;
         }
-        
-        double asource = std::atan2( -to_double(source.y() - center.y()),
-                                    to_double(source.x() - center.x())); 
-        double atarget = std::atan2( -to_double(target.y() - center.y()),
-                                    to_double(target.x() - center.x()));
-        
-        std::swap(asource, atarget);
-        double aspan = atarget - asource;
-        
-        if(aspan < 0.)
-          aspan += 2 * CGAL_PI;
-        
-        const double coeff = 180*16/CGAL_PI;
-        this->qp->drawArc(this->convert(circle.bbox()), 
-                          (int)(asource * coeff), 
-                          (int)(aspan * coeff));
-      }
+          
+      operator << (*arc);
       return *this;
     }
     

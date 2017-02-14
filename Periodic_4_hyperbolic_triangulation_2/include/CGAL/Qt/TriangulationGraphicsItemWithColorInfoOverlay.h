@@ -175,7 +175,8 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   typedef typename T::Offset  Offset;
   typedef typename T::Point_2 Point;
   typedef typename T::Segment Segment; 
-  typedef typename T::Geom_traits::Line_segment_2 Arc;
+  typedef typename T::Geom_traits::Line_arc_2 Line_arc_2;
+  typedef typename T::Geom_traits::Circular_arc_2 Circular_arc_2;
   typedef typename T::Edge    Edge;
   vector<Offset> o;
   for (int i = 0; i < 8; i++) {
@@ -196,11 +197,11 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   painter->drawImage(target, image);
 
   if(visibleEdges()) {
-    for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
-        eit != t->finite_edges_end();
+    for(typename T::Edge_iterator eit = t->edges_begin();
+        eit != t->edges_end();
         ++eit){
 
-    	//typename T::Vertex_handle vh = eit->first->finite_vertices_begin();
+    	//typename T::Vertex_handle vh = eit->first->vertices_begin();
     	//std::cout << vh << std::endl;
 
     	//typename T::Geom_traits::Segment_2 sg = t->segment(*eit);
@@ -212,10 +213,9 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       painterostream = PainterOstream<Geom_traits>(painter);
 
       if ( PAINT_COPIES == 1 ) {
-        Point source = get<Arc>(seg).source();
-        Point target = get<Arc>(seg).target();
+ 
         for (int i = 0; i < 8; i++) {
-          painterostream << t->segment( o[i].apply(source), o[i].apply(target) );
+          painterostream << t->segment( t->periodic_segment(*eit, o[i]) );
         }
 
         painter->setPen(old);
@@ -226,7 +226,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     }
 
     
-    for (typename T::Finite_faces_iterator fit = t->finite_faces_begin(); fit != t->finite_faces_end(); ++fit) {
+    for (typename T::Face_iterator fit = t->faces_begin(); fit != t->faces_end(); ++fit) {
       
       double mx = 0.0;
       double my = 0.0;
@@ -301,8 +301,8 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     painter->setPen(verticesPen());
     QMatrix matrix = painter->matrix();
     painter->resetMatrix();
-    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-        it != t->finite_vertices_end();
+    for(typename T::Vertex_iterator it = t->vertices_begin();
+        it != t->vertices_end();
         it++){
 
       // delete
@@ -403,18 +403,18 @@ TriangulationGraphicsItem<T>::updateBoundingBox()
  //    bb_initialized = false;
  //    return;
  //  } else if(! bb_initialized){
- //    bb = t->finite_vertices_begin()->point().bbox();
+ //    bb = t->vertices_begin()->point().bbox();
  //    bb_initialized = true;
  //  }
   
  //  if(t->dimension() <2){
- //    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-	// it != t->finite_vertices_end();
+ //    for(typename T::Finite_vertices_iterator it = t->vertices_begin();
+	// it != t->vertices_end();
 	// ++it){
  //      bb = bb + it->point().bbox();
  //    }
  //  } else {
- //    typename T::Vertex_handle inf = t->infinite_vertex();
+ //    typename T::Vertex_handle inf = t->invertex();
  //    typedef typename T::Vertex_circulator Circ;
  //    Circ vc = t->incident_vertices(inf), done(vc);
  //    do {

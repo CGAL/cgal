@@ -148,7 +148,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visible_edges) {
     for (int i=0; i<3; i++) {
-      if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
+      if (fh < fh->neighbor(i)) {
         m_painter->setPen(this->edgesPen());
         painterostream << t->segment(fh, i);
       }
@@ -183,8 +183,8 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   	painter->drawImage(target, image);
   #endif
 
-    for (typename T::Face_iterator fit = t->finite_faces_begin();
-         fit != t->finite_faces_end(); fit++) {
+    for (typename T::Face_iterator fit = t->faces_begin();
+         fit != t->faces_end(); fit++) {
 
       for (int k = 0; k < 3; k++) {
         painterostream << t->segment(fit, k);
@@ -209,57 +209,9 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     painter->setPen(verticesPen());
     QMatrix matrix = painter->matrix();
     painter->resetMatrix();
-    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-        it != t->finite_vertices_end();
+    for(typename T::Vertex_iterator it = t->vertices_begin();
+        it != t->vertices_end();
         it++){
-      
-      /*
-      switch (it->info().getColor()) {
-        case 0:
-          painter->setPen(QPen(::Qt::red, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 1:
-          painter->setPen(QPen(::Qt::green, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 2:
-          painter->setPen(QPen(::Qt::blue, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 3:
-          painter->setPen(QPen(::Qt::magenta, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 4:
-          painter->setPen(QPen(::Qt::darkGreen, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 5:
-          painter->setPen(QPen(::Qt::darkRed, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 6:
-          painter->setPen(QPen(::Qt::darkBlue, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 7:
-          painter->setPen(QPen(::Qt::darkYellow, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 8:
-          painter->setPen(QPen(::Qt::darkCyan, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 9:
-          painter->setPen(QPen(::Qt::yellow, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 10:
-          painter->setPen(QPen(::Qt::cyan, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 11:
-          painter->setPen(QPen(::Qt::black, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        case 12:
-          painter->setPen(QPen(::Qt::lightGray, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-        default:
-          painter->setPen(QPen(::Qt::gray, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
-          break;
-      } */
-      
-      //
       
       // delete
       QPen temp = painter->pen();
@@ -269,23 +221,6 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       double px = to_double(it->point().x());
       double py = to_double(it->point().y());
       double dist = px*px + py*py;
-      /*
-      if(dist > 0.25) {
-        temp.setWidth(6);//6
-      }
-      if(dist > 0.5) {
-        temp.setWidth(5);//5
-      }
-      if(dist > 0.7) {
-        temp.setWidth(5);//3
-      }
-      if(dist > 0.92) {
-        temp.setWidth(5);//3
-      }
-      if(dist > 0.98) {
-        temp.setWidth(1);//3
-      }
-      */
 
       double width = 5.*(exp(.85) - exp(dist));
       temp.setWidthF(width);
@@ -297,17 +232,6 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       
       painter->setPen(old);
        
-      /*
-      QBrush temp = painter->brush();
-      QBrush old = temp;
-      temp.setColor(painter->pen().color());
-      
-      painter->setBrush(temp);
-      
-      painter->drawEllipse(point, 10, 10);
-      
-      painter->setBrush(old);
-       */
     }
   }
 }
@@ -351,13 +275,6 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
   } else {
     m_painter = painter;
     painterostream = PainterOstream<Geom_traits>(painter);
-    /*
-    CGAL::apply_to_range (*t, 
-                          typename T::Point(option->exposedRect.left(),
-                                            option->exposedRect.bottom()), 
-                          typename T::Point(option->exposedRect.right(),
-                                            option->exposedRect.top()), 
-                          *this); */
   }
 }
 
@@ -368,30 +285,6 @@ void
 TriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
- //  if(t->number_of_vertices() == 0){
- //    bb = Bbox_2(0,0,0,0);
- //    bb_initialized = false;
- //    return;
- //  } else if(! bb_initialized){
- //    bb = t->finite_vertices_begin()->point().bbox();
- //    bb_initialized = true;
- //  }
-  
- //  if(t->dimension() <2){
- //    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-	// it != t->finite_vertices_end();
-	// ++it){
- //      bb = bb + it->point().bbox();
- //    }
- //  } else {
- //    typename T::Vertex_handle inf = t->infinite_vertex();
- //    typedef typename T::Vertex_circulator Circ;
- //    Circ vc = t->incident_vertices(inf), done(vc);
- //    do {
- //      bb = bb + vc->point().bbox();
- //      ++vc;
- //    } while(vc != done);
- //  }
   bounding_rect = QRectF(-1., -1., 2., 2.);
 }
 

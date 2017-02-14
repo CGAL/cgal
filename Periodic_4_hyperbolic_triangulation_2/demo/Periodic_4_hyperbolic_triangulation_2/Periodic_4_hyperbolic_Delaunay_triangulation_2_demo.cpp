@@ -7,6 +7,9 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Hyperbolic_octagon_translation_matrix.h>
 
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+
 // unique words
 #include <CGAL/Square_root_2_field.h>
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
@@ -35,8 +38,6 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 
-#define INITIAL_RECURSION_DEPTH 4
-
 // dummy points
 #include <CGAL/Periodic_4_hyperbolic_triangulation_dummy_14.h>
 
@@ -45,8 +46,10 @@
 
 
 
-typedef CORE::Expr                                                              NT;         
-typedef CGAL::Cartesian<NT>                                                     Kernel;
+typedef CORE::Expr                                                              NT;       
+typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>                              AK;   // Algebraic kernel  
+typedef CGAL::Cartesian<NT>                                                     BK;   // Basic kernel
+typedef CGAL::Circular_kernel_2<BK, AK>                                         Kernel;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef Hyperbolic_octagon_translation_matrix<Traits>                           Octagon_matrix;

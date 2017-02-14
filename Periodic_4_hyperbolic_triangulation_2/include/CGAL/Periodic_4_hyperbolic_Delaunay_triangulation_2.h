@@ -100,28 +100,8 @@ namespace CGAL {
     typedef typename Base::Vertex_circulator                   Vertex_circulator;
     typedef typename Base::Line_face_circulator                Line_face_circulator;
 
-    typedef Face_iterator                                      All_faces_iterator;
-    typedef Edge_iterator                                      All_edges_iterator;
-    typedef Vertex_iterator                                    All_vertices_iterator;
-
-    typedef Face_iterator                                      Finite_faces_iterator;
-    typedef Edge_iterator                                      Finite_edges_iterator;
-    typedef Vertex_iterator                                    Finite_vertices_iterator;
-
-    typedef Periodic_4_hyperbolic_triangulation_unique_vertex_iterator_2<Self>
-    Unique_vertex_iterator;
-
   private:
-    typedef typename GT::FT                                  FT;
-    typedef std::pair< Vertex_handle, Offset >               Virtual_vertex;
-    typedef std::map<Vertex_handle, Virtual_vertex>          Virtual_vertex_map;
-    typedef typename Virtual_vertex_map::const_iterator      Virtual_vertex_map_it;
-    typedef std::map<Vertex_handle, std::vector<Vertex_handle > > 
-    Virtual_vertex_reverse_map;
-    typedef typename Virtual_vertex_reverse_map::const_iterator
-    Virtual_vertex_reverse_map_it;
-    typedef Triple< Vertex_handle, Vertex_handle, Vertex_handle >
-    Vertex_triple;
+    typedef typename GT::FT                                    FT;
 
 
     class Dummy_point {
@@ -146,19 +126,12 @@ namespace CGAL {
     std::vector<Dummy_point> dummy_points;
 
   public:
-    typedef Periodic_4_hyperbolic_triangulation_triangle_iterator_2<Self>
-    Periodic_triangle_iterator;
-    typedef Periodic_4_hyperbolic_triangulation_segment_iterator_2<Self>
-    Periodic_segment_iterator;
-    typedef Periodic_4_hyperbolic_triangulation_point_iterator_2<Self>
-    Periodic_point_iterator;
 
     typedef Point                                            value_type;
     typedef const value_type&                                const_reference;
     typedef Tag_false                                        Weighted_tag;
 
   protected:
-    mutable std::vector<Vertex_handle> v_offsets;
     int f_cnt, v_cnt, n_dpt;
 
 
@@ -361,8 +334,8 @@ insert(const Point  &p,  Face_handle start) {
       Offset loff;
       if ( start == Face_handle() ) {
       Locate_type lt;
-      int li;
-      start = this->euclidean_visibility_locate(p, lt, li, loff);
+      int li, lj;
+      start = this->hyperbolic_locate(p, loff, lt, li, lj, start); //this->euclidean_visibility_locate(p, loff);
       if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
         return Vertex_handle();
       }
