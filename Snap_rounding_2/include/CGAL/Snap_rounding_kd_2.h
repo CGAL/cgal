@@ -416,7 +416,7 @@ public:
     // find the kd trees that have enough candidates  (segments with a close
     // slope)
     int * kd_counter = new int[number_of_trees];
-    int number_of_segments = seg_list.size();
+    std::size_t number_of_segments = seg_list.size();
 
     // auxilary directions
     Direction_list directions;
@@ -529,8 +529,8 @@ public:
     // determine right kd-tree to work on, depending on the segment's slope
     Direction_2 d = get_direction(s);
 
-    int i = 0;
-    int n = kd_trees_list.size();
+    std::size_t i = 0;
+    std::size_t n = kd_trees_list.size();
     bool found = false;
     typename Kd_triple_list::const_iterator iter = kd_trees_list.begin();
 

@@ -362,7 +362,7 @@ public:
   {
   }
 
-  result_type operator() (const Triangle_3& t3, std::size_t edgeIndex, const Segment_2& segment) const
+  result_type operator() (const Triangle_3& t3, int edgeIndex, const Segment_2& segment) const
   {
     Point_3 projectedLocation3d(m_construct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);

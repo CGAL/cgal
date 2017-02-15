@@ -106,8 +106,8 @@ int main(int argc, char* argv[])
 
   for (size_t i = 0; i < numTests; ++i)
   {
-    size_t startVertexIndex = rand.get_int(0, vertices.size());
-    size_t endVertexIndex = rand.get_int(0, vertices.size());
+    size_t startVertexIndex = rand.get_int(0, static_cast<int>(vertices.size()));
+    size_t endVertexIndex = rand.get_int(0, static_cast<int>(vertices.size()));
 
     vertex_descriptor startVertex = vertices[startVertexIndex];
     vertex_descriptor endVertex = vertices[endVertexIndex];
@@ -192,8 +192,8 @@ int main(int argc, char* argv[])
 
   for (size_t i = 0; i < numTests; ++i)
   {
-    size_t startFaceIndex = rand.get_int(0, faces.size());
-    size_t endFaceIndex = rand.get_int(0, faces.size());
+    size_t startFaceIndex = rand.get_int(0, static_cast<int>(faces.size()));
+    size_t endFaceIndex = rand.get_int(0, static_cast<int>(faces.size()));
 
     face_descriptor startFace = faces[startFaceIndex];
     face_descriptor endFace = faces[endFaceIndex];

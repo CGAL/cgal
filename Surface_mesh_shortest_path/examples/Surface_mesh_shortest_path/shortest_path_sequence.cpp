@@ -16,6 +16,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/variant.hpp>
+#include <boost/lexical_cast.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -95,9 +96,9 @@ int main(int argc, char** argv)
   CGAL::set_halfedgeds_items_id(polyhedron);
 
   // pick up a random face
-  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 7915421;
+  const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;
   CGAL::Random rand(randSeed);
-  const int target_face_index = rand.get_int(0, num_faces(polyhedron));
+  const int target_face_index = rand.get_int(0, static_cast<int>(num_faces(polyhedron)));
   face_iterator face_it = faces(polyhedron).first;
   std::advance(face_it,target_face_index);
   // ... and define a barycentric coordinates inside the face
@@ -109,7 +110,7 @@ int main(int argc, char** argv)
 
   // pick a random target point inside a face
   face_it = faces(polyhedron).first;
-  std::advance(face_it, rand.get_int(0, num_faces(polyhedron)));
+  std::advance(face_it, rand.get_int(0, static_cast<int>(num_faces(polyhedron))));
 
   // collect the sequence of simplicies crossed by the shortest path
   Sequence_collector sequence_collector;
