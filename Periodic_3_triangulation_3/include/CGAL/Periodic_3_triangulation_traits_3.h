@@ -67,7 +67,6 @@ public:
   // Triangulation constructions
   typedef Periodic_3_construct_point_3<Self, typename K::Construct_point_3>
       Construct_point_3;
-
   typedef Traits_with_offsets_adaptor<Self, typename K::Construct_segment_3>
       Construct_segment_3;
   typedef Traits_with_offsets_adaptor<Self, typename K::Construct_triangle_3>
