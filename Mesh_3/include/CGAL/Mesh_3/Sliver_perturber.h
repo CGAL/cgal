@@ -482,6 +482,7 @@ class Sliver_perturber
   typedef typename Base::Bad_vertices_vector    Bad_vertices_vector;
 
   typedef typename Gt::FT                       FT;
+  typedef typename Gt::Construct_point_3        Construct_point_3;
 
   // Helper
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
@@ -744,6 +745,7 @@ private:
   SliverCriterion sliver_criterion_;
   Perturbation_vector perturbation_vector_;
   C3T3_helpers helper_;
+  Construct_point_3 wp2p;
 
   // Internal perturbation ordering
   int next_perturbation_order_;
@@ -771,6 +773,7 @@ Sliver_perturber(C3T3& c3t3,
   , domain_(domain)
   , sliver_criterion_(criterion)
   , helper_(c3t3_,domain_,get_lock_data_structure())
+  , wp2p(c3t3_.triangulation().geom_traits().construct_point_3_object())
   , next_perturbation_order_(0)
   , time_limit_(-1)
   , running_time_()
@@ -1308,8 +1311,8 @@ perturb_vertex( PVertex pv
     return;
   }
   
-  Point_3 p = pv.vertex()->point();
-  if (!helper_.try_lock_point_no_spin(p) || ! Gt().equal_3_object()(p,pv.vertex()->point()))
+  Point_3 p = wp2p(pv.vertex()->point());
+  if (!helper_.try_lock_point_no_spin(p) || ! Gt().equal_3_object()(p,wp2p(pv.vertex()->point())))
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!

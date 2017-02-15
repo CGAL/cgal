@@ -34,7 +34,6 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
 namespace CGAL {
@@ -49,6 +48,7 @@ public:
   typedef Cartesian_converter<EK,K>   Back_from_exact;
   
   typedef typename K::Point_3                         Point_3;
+  typedef typename K::Weighted_point_3                Weighted_point_3;
   typedef typename K::FT                              FT;
   typedef FT                                          result_type;
 
@@ -85,6 +85,14 @@ public:
   }
 #endif // CGAL_CFG_MATCHING_BUG_6
   
+  FT operator()( const Weighted_point_3 & p,
+                  const Weighted_point_3 & q,
+                  const Weighted_point_3 & r,
+                  const Weighted_point_3 & s ) const
+  {
+    return this->operator()(p.point(), q.point(), r.point(), s.point());
+  }
+ 
   FT operator() ( const Point_3 & p,
                   const Point_3 & q,
                   const Point_3 & r,
@@ -155,15 +163,17 @@ public:
   typedef Cartesian_converter<K_, EK>   To_exact;
   typedef Cartesian_converter<EK,K_>     Back_from_exact;
   
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<K_> Rt;
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<EK> Exact_Rt;
+  typedef K_ Rt;
+  typedef EK Exact_Rt;
   
   typedef typename Rt::Weighted_point_3               Weighted_point_3;
-  typedef typename Rt::Bare_point                     Bare_point;
+  typedef typename Rt::Point_3                        Bare_point;
   typedef typename Rt::FT                             FT;
   typedef typename Rt::Sphere_3                       Sphere_3;
   
   typedef Bare_point                                  result_type;
+ 
+ typename Rt::Construct_point_3 wp2p = Rt().construct_point_3_object();
   
   Bare_point operator() ( const Weighted_point_3 & p,
                           const Weighted_point_3 & q,
@@ -171,7 +181,7 @@ public:
                           const Weighted_point_3 & s,
                           bool force_exact = false) const
   {
-    CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
+    CGAL_precondition(Rt().orientation_3_object()(p.point(),q.point(),r.point(),s.point()) == CGAL::POSITIVE);
    
     // We use power_side_of_power_sphere_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
@@ -225,7 +235,9 @@ public:
                           const Weighted_point_3 & q,
                           const Weighted_point_3 & r ) const
   {
-    CGAL_precondition(! Rt().collinear_3_object()(p,q,r) );
+    CGAL_precondition(! Rt().collinear_3_object()(wp2p(p),
+                                                  wp2p(q),
+                                                  wp2p(r)) );
         
     typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
       Rt().side_of_bounded_sphere_3_object();
@@ -243,7 +255,7 @@ public:
       Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
       
       // Fast output
-      if ( side_of_bounded_sphere(p,q,r,res) == CGAL::ON_BOUNDED_SIDE )
+      if ( side_of_bounded_sphere(wp2p(p),wp2p(q),wp2p(r),res) == CGAL::ON_BOUNDED_SIDE )
         return res;
     }
     
@@ -271,7 +283,7 @@ public:
     result_type point = weighted_circumcenter(p,q);
     
     // Fast output
-    if ( side_of_bounded_sphere(p,q,point) == CGAL::ON_BOUNDED_SIDE )
+    if ( side_of_bounded_sphere(p.point(),q.point(),point) == CGAL::ON_BOUNDED_SIDE )
       return point;
     
     // Switch to exact
@@ -295,8 +307,8 @@ public:
   typedef Cartesian_converter<K_, EK>   To_exact;
   typedef Cartesian_converter<EK,K_>     Back_from_exact;
   
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<K_> Rt;
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<EK> Exact_Rt;
+  typedef K_ Rt;
+  typedef EK Exact_Rt;
   
   typedef typename Rt::Weighted_point_3               Weighted_point_3;
   typedef typename Rt::FT                             FT;
@@ -402,8 +414,9 @@ public:
  */
 template<class K_>
 struct Robust_weighted_circumcenter_filtered_traits_3
-: public CGAL::Regular_triangulation_euclidean_traits_3<K_>
+: public K_
 {
+  typedef typename K_::Point_3 Bare_point;
   typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K_>
     Construct_weighted_circumcenter_3;
   
