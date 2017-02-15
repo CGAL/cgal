@@ -79,7 +79,6 @@ addons:
       - libqt5gui5
       - libqt5widgets5
       - libqt5xml5
-      - libtbb-dev
       - libqglviewer-dev
       # Not allowed (yet) 
       # - geomview 
