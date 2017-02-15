@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2004,2006-2009,2014-2015   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2017   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,12 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
-//                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
-//                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
-//                 Aymeric Pellé <Aymeric.Pelle@sophia.inria.fr>
+// Author(s)     : Mael Rouxel-Labbé
 #ifndef CGAL_PERIODIC_3_CONSTRUCT_WEIGHTED_POINT_3_H
 #define CGAL_PERIODIC_3_CONSTRUCT_WEIGHTED_POINT_3_H
 

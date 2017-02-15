@@ -18,7 +18,7 @@
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
-
+//                 Mael Rouxel-Labbé
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_TRAITS_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_TRAITS_3_H
 
