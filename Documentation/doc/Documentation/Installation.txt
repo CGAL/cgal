@@ -1166,9 +1166,9 @@ environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compil
 `<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
 used. It should be set to what is used in `$TBBROOT/lib/<arch>`.
 
-The folder `TBBROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
+For windows users, the folder `TBBROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
 
-Note that the variables in the table below are begin used.
+Note that the variables in the table below are being used.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
