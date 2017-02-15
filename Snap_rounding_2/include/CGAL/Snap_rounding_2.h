@@ -617,7 +617,7 @@ find_intersected_hot_pixels(Segment_data & seg,
 
   }
 
-  number_of_intersections = hot_pixels_intersected_set.size();
+  number_of_intersections = static_cast<int>(hot_pixels_intersected_set.size());
 }
 
 /*! */

@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 
   for (size_t i = 0; i < numTrials; ++i)
   {
-    size_t faceIndex = random.get_int(0, facesList.size());
+    size_t faceIndex = random.get_int(0, static_cast<int>(facesList.size()));
     face_descriptor face = facesList[faceIndex];
 
     Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);

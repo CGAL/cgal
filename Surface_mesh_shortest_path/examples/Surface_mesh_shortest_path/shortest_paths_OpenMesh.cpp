@@ -17,6 +17,8 @@
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
 
+#include <boost/lexical_cast.hpp>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT<> Mesh;
@@ -37,9 +39,9 @@ int main(int argc, char** argv)
   OpenMesh::IO::read_mesh(polyhedron, (argc>1)?argv[1]:"data/elephant.off");
 
   // pick up a random face
-  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 7915421;
+  const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;
   CGAL::Random rand(randSeed);
-  const int target_face_index = rand.get_int(0, num_faces(polyhedron));
+  const int target_face_index = rand.get_int(0, static_cast<int>(num_faces(polyhedron)));
   face_iterator face_it = faces(polyhedron).first;
   std::advance(face_it,target_face_index);
   // ... and define a barycentric coordinates inside the face

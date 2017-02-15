@@ -237,7 +237,7 @@ void nonsimple_flattening_triangle_along_edge()
     Traits::Point_3(Kernel::FT(5), Kernel::FT(-9), Kernel::FT(7)),
     Traits::Point_3(Kernel::FT(0), Kernel::FT(4), Kernel::FT(5)));
 
-  for (size_t edgeIndex = 0; edgeIndex < 3; ++edgeIndex)
+  for (int edgeIndex = 0; edgeIndex < 3; ++edgeIndex)
   {
     const Kernel::FT baseDistance = CGAL::sqrt(compute_squared_distance_3(sourceTriangle.vertex(edgeIndex), sourceTriangle.vertex(edgeIndex + 1)));
     const Traits::Vector_2 direction(Kernel::FT(3.0) / Kernel::FT(5.0), Kernel::FT(4.0) / Kernel::FT(5.0));
