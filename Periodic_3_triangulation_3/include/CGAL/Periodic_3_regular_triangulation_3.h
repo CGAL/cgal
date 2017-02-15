@@ -680,8 +680,6 @@ public:
     Locate_type lt;
     int li, lj;
     Cell_handle c = locate(p, lt, li, lj, start);
-    if (lt == Tr_Base::VERTEX)
-      return c->vertex(li);
     const Conflict_tester tester(p, this);
     Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
 
