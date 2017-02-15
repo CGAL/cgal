@@ -71,7 +71,7 @@ class Triangulation_helpers
 
     const Point_3& operator()(const Vertex_handle &vh) const
     {
-      return (vh == m_vh ? m_p : vh->point());
+      return (vh == m_vh ? m_p : vh->point().point()); //  AF: Can this be NOT a weighted point?
     }
 
   private:
@@ -156,8 +156,9 @@ no_topological_change(const Tr& tr,
                       const Point_3& p,
                       Cell_vector& cells_tos) const
 {
+  Tr::Geom_traits::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
   bool np = true;
-  Point_3 fp = v0->point();
+  Point_3 fp = wp2p(v0->point());
   v0->set_point(p);
 
   if(!well_oriented(tr, cells_tos))
@@ -358,6 +359,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits Gt;
   typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
+
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
   {

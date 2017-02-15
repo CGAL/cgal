@@ -118,7 +118,7 @@ private:
   {
     Project_on_plane(const Plane_3& plane) : plane_(plane) {}
     
-    Point_3 operator()(const Point_3& p) const
+    Bare_point_3 operator()(const Bare_point_3& p) const
     { return Gt().construct_projected_point_3_object()(plane_,p); }
     
   private:
@@ -133,7 +133,7 @@ private:
     To_2d(const Aff_transformation_3& to_2d) : to_2d_(to_2d) {}
     
     Point_2 operator()(const Point_3& p) const
-    { return Point_2(to_2d_.transform(p).x(), to_2d_.transform(p).y()); }
+    { return Point_2(to_2d_.transform(p.point()).x(), to_2d_.transform(p.point()).y()); }
     
   private:
     const Aff_transformation_3& to_2d_;
@@ -147,7 +147,7 @@ private:
     To_3d(const Aff_transformation_3& to_3d) : to_3d_(to_3d) {}
     
     Point_3 operator()(const Point_2& p) const
-    { return to_3d_.transform(Point_3(Bare_point_3(p.x(),p.y(),0))); }
+    { return to_3d_.transform((Bare_point_3(p.x(),p.y(),0))); }
     
   private:
     const Aff_transformation_3& to_3d_;
@@ -209,7 +209,7 @@ private:
     CGAL_precondition(c3t3.in_dimension(v) == 2);
     
     // get all surface delaunay ball point
-    std::vector<Point_3> points = extract_lloyd_boundary_points(v,c3t3);
+    std::vector<Bare_point_3> points = extract_lloyd_boundary_points(v,c3t3);
     
     switch(points.size())
     {
@@ -246,14 +246,14 @@ private:
    * Returns a vector containing surface delaunay ball center of surface
    * facets incident to vertex \c v
    */
-  std::vector<Point_3> extract_lloyd_boundary_points(const Vertex_handle& v,
-                                                     const C3T3& c3t3) const
+  std::vector<Bare_point_3> extract_lloyd_boundary_points(const Vertex_handle& v,
+                                                          const C3T3& c3t3) const
   {
     Facet_vector incident_facets;
     incident_facets.reserve(64);
     c3t3.triangulation().finite_incident_facets(v,std::back_inserter(incident_facets));
     
-    std::vector<Point_3> points;
+    std::vector<Bare_point_3> points;
     points.reserve(64);
     
     // Get c3t3's facets incident to v, and add their surface delaunay ball
@@ -328,7 +328,7 @@ private:
     
     // Fit plane using point-based PCA: compute least square fitting plane
     Plane_3 plane;
-    Point_3 point;
+    Bare_point_3 point;
     CGAL::linear_least_squares_fitting_3(first,last,plane, point, Dimension_tag<0>(), Gt(),Default_diagonalize_traits<FT, 3>());
     
     // Project all points to the plane

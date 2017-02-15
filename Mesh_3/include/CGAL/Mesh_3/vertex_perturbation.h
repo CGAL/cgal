@@ -123,13 +123,13 @@ namespace Mesh_3 {
     edge_sq_length(const typename Tr::Edge& e)
     {
       typedef typename Tr::Geom_traits Gt;
-      typedef typename Gt::Point_3 Point_3;
+      typedef typename Gt::Weighted_point_3 Weighted_point_3;
       
       typename Gt::Compute_squared_distance_3 sq_distance 
         = Gt().compute_squared_distance_3_object();
       
-      const Point_3& p = e.first->vertex(e.second)->point();
-      const Point_3& q = e.first->vertex(e.third)->point();
+      const Weighted_point_3& p = e.first->vertex(e.second)->point();
+      const Weighted_point_3& q = e.first->vertex(e.third)->point();
       
       return sq_distance(p,q);
     }
@@ -453,6 +453,9 @@ protected:
     typename Gt::Construct_translated_point_3 translate =
       Gt().construct_translated_point_3_object();
     
+    typename Gt::Construct_point_3 wp2p =
+      Gt().construct_point_3_object();
+    
     // create a helper
     typedef C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
     C3T3_helpers helper(c3t3, domain);
@@ -462,7 +465,7 @@ protected:
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
     FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
-    Point_3 new_loc = translate(v->point(), step_length * gradient_vector);
+    Point_3 new_loc = translate(wp2p(v->point()), step_length * gradient_vector);
     
     Point_3 final_loc = new_loc;
     if ( c3t3.in_dimension(v) < 3 )
@@ -633,13 +636,15 @@ private:
     typedef typename C3T3::Triangulation::Geom_traits Gt;
     typename Gt::Construct_translated_point_3 translate =
       Gt().construct_translated_point_3_object();
+    typename Gt::Construct_point_3 wp2p =
+      Gt().construct_point_3_object();
     
     // translate the tet so that cell->vertex((i+3)&3) is 0_{R^3}
     unsigned int index = cell->index(v);
-    Vector_3 translate_to_origin(CGAL::ORIGIN, cell->vertex((index+3)&3)->point()); //p4
-    const Point_3& p1 = translate(v->point(), - translate_to_origin);
-    const Point_3& p2 = translate(cell->vertex((index+1)&3)->point(), - translate_to_origin);
-                                  const Point_3& p3 = translate(cell->vertex((index+2)&3)->point(), - translate_to_origin);
+    Vector_3 translate_to_origin(CGAL::ORIGIN, wp2p(cell->vertex((index+3)&3)->point())); //p4
+    const Point_3& p1 = translate(wp2p(v->point()), - translate_to_origin);
+    const Point_3& p2 = translate(wp2p(cell->vertex((index+1)&3)->point()), - translate_to_origin);
+  const Point_3& p3 = translate(wp2p(cell->vertex((index+2)&3)->point()), - translate_to_origin);
     
     // pre-compute everything
     FT sq_p1 = p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
@@ -794,7 +799,7 @@ private:
                                    const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
-    
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
     const int i = cell->index(v);
     
     // fixed vertices: (the ones with index != i)
@@ -805,9 +810,9 @@ private:
     if ( (i&1) == 0 )
       std::swap(k1,k3);
     
-    const Point_3& p1 = cell->vertex(k1)->point();
-    const Point_3& p2 = cell->vertex(k2)->point();
-    const Point_3& p3 = cell->vertex(k3)->point();
+    const Point_3& p1 = wp2p(cell->vertex(k1)->point());
+    const Point_3& p2 = wp2p(cell->vertex(k2)->point());
+    const Point_3& p3 = wp2p(cell->vertex(k3)->point());
     
     FT gx =  p2.y()*p3.z() + p1.y()*(p2.z()-p3.z())
             - p3.y()*p2.z() - p1.z()*(p2.y()-p3.y());
@@ -937,8 +942,10 @@ private:
   {
     CGAL_assertion(cell->has_vertex(v));
     
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+
     const int i = cell->index(v);
-    const Point_3& p0 = v->point();
+    const Point_3& p0 = wp2p(v->point());
     
     // Other indices
     int k1 = (i+1)&3;
@@ -957,9 +964,9 @@ private:
       std::swap(k2,k3);
 
     // Here edge k1k2 minimizes dihedral angle
-    const Point_3& p1 = cell->vertex(k1)->point();
-    const Point_3& p2 = cell->vertex(k2)->point();
-    const Point_3& p3 = cell->vertex(k3)->point();
+    const Point_3& p1 = wp2p(cell->vertex(k1)->point());
+    const Point_3& p2 = wp2p(cell->vertex(k2)->point());
+    const Point_3& p3 = wp2p(cell->vertex(k3)->point());
 
     // grad of min dihedral angle (in cell) wrt p0
     const Vector_3 p1p0 (p1,p0);
@@ -992,10 +999,12 @@ private:
   { 
     typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
       = Gt().compute_approximate_dihedral_angle_3_object();
-    return CGAL::abs(approx_dihedral_angle(p,
-                                           cell->vertex(k1)->point(),
-                                           cell->vertex(k2)->point(),
-                                           cell->vertex(k3)->point()));
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+
+    return CGAL::abs(approx_dihedral_angle(wp2p(p),
+                                           wp2p(cell->vertex(k1)->point()),
+                                           wp2p(cell->vertex(k2)->point()),
+                                           wp2p(cell->vertex(k3)->point())));
   }
     
   /**
@@ -1012,6 +1021,7 @@ private:
    */
   Vector_3 normal_estimate(const Cell_handle& ch, const int i) const
   {
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
     int k1 = (i+1)&3;
     int k2 = (i+2)&3;
     int k3 = (i+3)&3;
@@ -1020,9 +1030,9 @@ private:
     if ( (i&1) == 1 )
       std::swap(k1,k2);
     
-    const Point_3& p1 = ch->vertex(k1)->point();
-    const Point_3& p2 = ch->vertex(k2)->point();
-    const Point_3& p3 = ch->vertex(k3)->point();
+    const Point_3& p1 = wp2p(ch->vertex(k1)->point());
+    const Point_3& p2 = wp2p(ch->vertex(k2)->point());
+    const Point_3& p3 = wp2p(ch->vertex(k3)->point());
     
     // compute normal and return it
     Construct_point_3 cp;
@@ -1252,7 +1262,7 @@ private:
     
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, this->sphere_sq_radius());
-    const Point_3 initial_location = v->point();
+    const Point_3 initial_location = v->point().point();
     
     // Initialize loop variables
     bool criterion_improved = false;
@@ -1295,7 +1305,7 @@ private:
       if ( update.first )
       {
         criterion_improved = true;
-        best_location = moving_vertex->point();
+        best_location = moving_vertex->point().point();
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
 
