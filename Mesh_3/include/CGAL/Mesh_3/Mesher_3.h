@@ -147,6 +147,7 @@ public:
 #endif
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;
+  typedef typename Triangulation::Bare_point        Bare_point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
   typedef typename MeshDomain::Index                Index;
@@ -549,7 +550,7 @@ initialize()
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-      Random_points_on_sphere_3<Point> random_point(radius);
+      Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(tbb::task_scheduler_init::default_num_threads())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);

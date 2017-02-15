@@ -125,7 +125,6 @@ protected:
     const Point_3& p3 = f.first->vertex((f.second+3)&3)->point();
 
     const FT triangle_area = area(triangle(p1,p2,p3));
-
     const FT d12 = distance(p1,p2);
     const FT d13 = distance(p1,p3);
     const FT d23 = distance(p2,p3);
@@ -285,7 +284,7 @@ protected:
 
     const Index& index = f.first->get_facet_surface_center_index(f.second);
 
-    const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
+    const FT sq_bound = CGAL::square(size_(ball_center.point(), 2, index));
     CGAL_assertion(sq_bound > FT(0));
 
     if ( sq_dist > sq_bound )
@@ -361,7 +360,7 @@ protected:
     const Index& index = f.first->get_facet_surface_center_index(f.second);
     
     const FT sq_radius = distance(p1,ball_center);
-    const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
+    const FT sq_bound = CGAL::square(size_(ball_center.point(), 2, index));
     CGAL_assertion(sq_bound > FT(0));
     
     if ( sq_radius > sq_bound )
