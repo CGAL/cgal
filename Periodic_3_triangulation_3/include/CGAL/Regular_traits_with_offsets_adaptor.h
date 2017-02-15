@@ -106,6 +106,28 @@ public:
   }
 
   // for `Compare_weighted_squared_radius_3`
+  result_type operator() (const Weighted_point_3& p0, const Offset& o0,
+                          const FT w) const
+  {
+    return Functor()(pp(p0, o0), w);
+  }
+
+  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
+                          const Offset& o0, const Offset& o1,
+                          const FT w) const
+  {
+    return Functor()(pp(p0, o0), pp(p1, o1), w);
+  }
+
+  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
+                          const Weighted_point_3& p2,
+                          const Offset& o0, const Offset& o1,
+                          const Offset& o2,
+                          const FT w) const
+  {
+    return Functor()(pp(p0, o0), pp(p1, o1), pp(p2, o2), w);
+  }
+
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2, const Weighted_point_3& p3,
                           const Offset& o0, const Offset& o1,
@@ -148,6 +170,24 @@ public:
   }
 
   // for `Compare_weighted_squared_radius_3`
+  result_type operator() (const Weighted_point_3& p0, const FT w) const
+  {
+    return Functor()(p0, w);
+  }
+
+  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
+                          const FT w) const
+  {
+    return Functor()(p0, p1, w);
+  }
+
+  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
+                          const Weighted_point_3& p2,
+                          const FT w) const
+  {
+    return Functor()(p0, p1, p2, w);
+  }
+
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2, const Weighted_point_3& p3,
                           const FT w) const
