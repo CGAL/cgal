@@ -638,6 +638,8 @@ class C3T3_helpers
   typedef typename Gt::FT               FT;
   typedef typename Gt::Tetrahedron_3    Tetrahedron;
 
+  typedef typename Gt::Construct_point_3    Construct_point_3;
+
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Cell             Cell;
@@ -711,7 +713,9 @@ public:
     : Base(lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())
-    , domain_(domain) { }
+    , domain_(domain)
+    , wp2p_(tr_.geom_traits().construct_point_3_object())
+  { }
 
   /**
    * @brief tries to move \c old_vertex to \c new_position in the mesh
@@ -2393,6 +2397,7 @@ private:
   C3T3& c3t3_;
   Tr& tr_;
   const MeshDomain& domain_;
+  Construct_point_3 wp2p_;
 }; // class C3T3_helpers
 
 
@@ -2449,7 +2454,6 @@ update_mesh_no_topo_change(const Point_3& new_position,
   //           << new_position << ",\n"
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
-
     //backup metadata
   std::set<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
@@ -2457,7 +2461,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   // Get old values
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
-  Point_3 old_position = old_vertex->point();
+  Point_3 old_position = wp2p_(old_vertex->point());
 
   // Move point
   reset_circumcenter_cache(conflict_cells);
@@ -2510,6 +2514,8 @@ update_mesh_topo_change(const Point_3& new_position,
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
   // check_c3t3(c3t3_);
+
+
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
   Facet_vector insertion_conflict_boundary;
@@ -2539,7 +2545,7 @@ update_mesh_topo_change(const Point_3& new_position,
 
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
-  Point_3 old_position = old_vertex->point();
+  Point_3 old_position = wp2p_(old_vertex->point());
 
   // Keep old boundary
   Vertex_set old_incident_surface_vertices;
@@ -2740,6 +2746,8 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
 
     CGAL_HISTOGRAM_PROFILER("|vertex_to_proj|=", 
                             static_cast<unsigned int>(vertex_to_proj.size()));
+
+
   // Project interior vertices
   // Note: ~0% of rebuild_restricted_delaunay time
   // TODO : iterate to be sure no interior vertice become on the surface
@@ -2748,7 +2756,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        it != vertex_to_proj.end() ;
        ++it )
   {
-    Point_3 new_pos = project_on_surface((*it)->point(),*it);
+    Point_3 new_pos = project_on_surface(wp2p_((*it)->point()),*it);
 
     if ( ! equal(new_pos, Point_3()) )
     {
@@ -3140,7 +3148,7 @@ move_point_topo_change_conflict_zone_known(
                                              //o.w. deleted_cells will point to null pointer or so and crash
                                              const
 {
-  Point_3 old_position = old_vertex->point();
+  Point_3 old_position = wp2p_(old_vertex->point());
   // make one set with conflict zone
   Cell_set conflict_zone;
   std::set_union(insertion_conflict_cells_begin, insertion_conflict_cells_end,
@@ -3353,7 +3361,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
       const Cell_handle& cell = fit->first;
       const int& i = fit->second;
 
-      surface_point_vector.push_back(cell->get_facet_surface_center(i));
+      surface_point_vector.push_back(wp2p_(cell->get_facet_surface_center(i)));
     }
   }
 
@@ -3396,9 +3404,9 @@ project_on_surface(const Point_3& p,
     return p;
 
   // Project
-  if ( ! equal(p, v->point()) )
+  if ( ! equal(p, wp2p_(v->point())) )
     return project_on_surface_aux(p,
-                                  v->point(),
+                                  wp2p_(v->point()),
                                   plane.orthogonal_vector());
   else
     return project_on_surface_aux(p,

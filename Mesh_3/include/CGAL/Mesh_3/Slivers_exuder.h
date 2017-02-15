@@ -1124,7 +1124,7 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   // If best_weight < pumped_vertex weight, nothing to do
   if ( best_weight > pumped_vertex->point().weight() )
   {
-    Weighted_point wp(pumped_vertex->point(), best_weight);
+    Weighted_point wp(pumped_vertex->point().point(), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
@@ -1272,10 +1272,11 @@ expand_prestar(const Cell_handle& cell_to_add,
       // Update ratio (ratio is needed for cells of complex only)
       if ( c3t3_.is_in_complex(cell_to_add) )
       {
-        Tetrahedron_3 tet(pumped_vertex->point(),
-                          cell_to_add->vertex((i+1)&3)->point(),
-                          cell_to_add->vertex((i+2)&3)->point(),
-                          cell_to_add->vertex((i+3)&3)->point());
+        typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+        Tetrahedron_3 tet(wp2p(pumped_vertex->point()),
+                          wp2p(cell_to_add->vertex((i+1)&3)->point()),
+                          wp2p(cell_to_add->vertex((i+2)&3)->point()),
+                          wp2p(cell_to_add->vertex((i+3)&3)->point()));
 
         double new_value = sliver_criteria_(tet);
         criterion_values.insert(std::make_pair(current_facet,new_value));
@@ -1787,6 +1788,8 @@ check_ratios(const Sliver_values& criterion_values,
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
 
+  typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+
   tr_.find_conflicts(wp,
                      vh->cell(),
                      std::back_inserter(boundary_facets),
@@ -1812,10 +1815,10 @@ check_ratios(const Sliver_values& criterion_values,
       continue;
 
     int k = it->second;
-    Tetrahedron_3 tet(vh->point(),
-                      it->first->vertex((k+1)&3)->point(),
-                      it->first->vertex((k+2)&3)->point(),
-                      it->first->vertex((k+3)&3)->point());
+    Tetrahedron_3 tet(wp2p(vh->point()),
+                      wp2p(it->first->vertex((k+1)&3)->point()),
+                      wp2p(it->first->vertex((k+2)&3)->point()),
+                      wp2p(it->first->vertex((k+3)&3)->point()));
 
     double ratio = sliver_criteria_(tet);
     expected_ratios.push_back(ratio);
