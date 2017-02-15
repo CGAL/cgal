@@ -94,8 +94,8 @@ public:
   typedef typename C3T3::Triangulation        Tr;
   typedef typename Tr::Geom_traits            Gt;
   typedef typename Gt::FT                     FT;
-  typedef typename Gt::Point_3                Weighted_point;
-  typedef typename Weighted_point::Point      Bare_point;
+  typedef typename Gt::Weighted_point_3       Weighted_point;
+  typedef typename Gt::Point_3                Bare_point;
   typedef typename Weighted_point::Weight     Weight;
   
   typedef typename C3T3::Cell_handle          Cell_handle;

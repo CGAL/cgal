@@ -30,32 +30,97 @@
 #include <CGAL/Regular_traits_adaptor.h>
 
 #include <set>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
 
 namespace CGAL {
 template < typename K_ >
 struct Weighted_point_mapper_3 
   :   public K_ 
 {
+  Weighted_point_mapper_3()
+    : K_()
+  {}
+
+  Weighted_point_mapper_3(const K_ k)
+    : K_(k)
+  {}
+
   typedef typename K_::Weighted_point_3 Point_3;
+};
+
+namespace internal {
+
+template < typename K_ >
+struct RegTraits 
+  :   public K_ 
+{
+#if 0
+  typedef typename boost::mpl::eval_if_c<
+    internal::Has_nested_type_Bare_point<K_>::value,
+    typename internal::Bare_point_type<K_>,
+    boost::mpl::identity<typename K_::Point_3>
+    >::type                                                Point_3;
+
+#endif
+
   typedef typename K_::Construct_point_3 Construct_point_3_base;
+  typedef typename K_::Construct_projected_point_3 Construct_projected_point_3_base;
+  typedef typename K_::Construct_vector_3 Construct_vector_3_base;
   typedef typename K_::Compare_xyz_3 Compare_xyz_3_base;
+  typedef typename K_::Compute_squared_radius_3 Compute_squared_radius_3_base;
+  typedef typename K_::Compute_squared_distance_3 Compute_squared_distance_3_base;
+  typedef typename K_::Compute_area_3 Compute_area_3_base;
+  typedef typename K_::Compute_volume_3 Compute_volume_3_base;
+  typedef typename K_::Collinear_3 Collinear_3_base;
   typedef typename K_::Less_x_3 Less_x_3_base;
   typedef typename K_::Less_y_3 Less_y_3_base;
   typedef typename K_::Less_z_3 Less_z_3_base;
   typedef typename K_::Orientation_3 Orientation_3_base;
+  typedef typename K_::Construct_centroid_3 Construct_centroid_3_base;
   typedef typename K_::Construct_segment_3 Construct_segment_3_base;
+  typedef typename K_::Construct_triangle_3 Construct_triangle_3_base;
+  typedef typename K_::Construct_tetrahedron_3 Construct_tetrahedron_3_base;
   typedef typename K_::Construct_plane_3 Construct_plane_3_base;
   typedef typename K_::Coplanar_orientation_3 Coplanar_orientation_3_base;
-  //  typedef typename K_::_3 _base;
+  typedef typename K_::Side_of_bounded_sphere_3 Side_of_bounded_sphere_3_base;
+  typedef typename K_::Equal_3 Equal_3_base;
 
   Construct_point_3_base cp;
 
-  Weighted_point_mapper_3() {}
-  Weighted_point_mapper_3(const K_& k) 
+  RegTraits() {}
+  RegTraits(const K_& k) 
     : K_(k), cp(k.construct_point_3_object())
   {}
+     
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Equal_3_base > Equal_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Construct_projected_point_3_base > Construct_projected_point_3;
+   
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Compute_area_3_base > Compute_area_3;
+   
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Compute_volume_3_base > Compute_volume_3;
     
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Compute_squared_radius_3_base > Compute_squared_radius_3;
     
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Compute_squared_distance_3_base > Compute_squared_distance_3;
+    
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Collinear_3_base > Collinear_3;
+
   typedef Regular_traits_adaptor<K_, 
                                  Construct_point_3_base,
                                  Less_x_3_base > Less_x_3;
@@ -86,7 +151,59 @@ struct Weighted_point_mapper_3
 
   typedef Regular_traits_adaptor<K_, 
                                  Construct_point_3_base,
+                                 Construct_vector_3_base > Construct_vector_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Construct_centroid_3_base > Construct_centroid_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
                                  Construct_segment_3_base > Construct_segment_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Construct_triangle_3_base > Construct_triangle_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Construct_tetrahedron_3_base > Construct_tetrahedron_3;
+
+  typedef Regular_traits_adaptor<K_, 
+                                 Construct_point_3_base,
+                                 Side_of_bounded_sphere_3_base > Side_of_bounded_sphere_3;
+
+
+
+  Equal_3 equal_3_object() const
+  {
+    return  Equal_3(cp, static_cast<const K_&>(*this).equal_3_object());
+  }
+
+  Compute_area_3 compute_area_3_object() const
+  {
+    return  Compute_area_3(cp, static_cast<const K_&>(*this).compute_area_3_object());
+  }
+
+  Compute_volume_3 compute_volume_3_object() const
+  {
+    return  Compute_volume_3(cp, static_cast<const K_&>(*this).compute_volume_3_object());
+  }
+
+  Compute_squared_radius_3 compute_squared_radius_3_object() const
+  {
+    return  Compute_squared_radius_3(cp, static_cast<const K_&>(*this).compute_squared_radius_3_object());
+  }
+
+  Compute_squared_distance_3 compute_squared_distance_3_object() const
+  {
+    return  Compute_squared_distance_3(cp, static_cast<const K_&>(*this).compute_squared_distance_3_object());
+  }
+
+  Collinear_3 collinear_3_object() const
+  {
+    return  Collinear_3(cp, static_cast<const K_&>(*this).collinear_3_object());
+  }
 
   Less_x_3 less_x_3_object() const
   {
@@ -108,16 +225,39 @@ struct Weighted_point_mapper_3
     return  Compare_xyz_3(cp, static_cast<const K_&>(*this).compare_xyz_3_object());
   }
 
-
   Orientation_3 orientation_3_object() const
   {
     return  Orientation_3(cp, static_cast<const K_&>(*this).orientation_3_object());
   }
 
+  Construct_vector_3 construct_vector_3_object() const
+  {
+    return  Construct_vector_3(cp, static_cast<const K_&>(*this).construct_vector_3_object());
+  }
+
+  Construct_projected_point_3 construct_projected_point_3_object() const
+  {
+    return  Construct_projected_point_3(cp, static_cast<const K_&>(*this).construct_projected_point_3_object());
+  }
+
+  Construct_centroid_3 construct_centroid_3_object() const
+  {
+    return  Construct_centroid_3(cp, static_cast<const K_&>(*this).construct_centroid_3_object());
+  }
 
   Construct_segment_3 construct_segment_3_object() const
   {
     return  Construct_segment_3(cp, static_cast<const K_&>(*this).construct_segment_3_object());
+  }
+
+  Construct_triangle_3 construct_triangle_3_object() const
+  {
+    return  Construct_triangle_3(cp, static_cast<const K_&>(*this).construct_triangle_3_object());
+  }
+
+  Construct_tetrahedron_3 construct_tetrahedron_3_object() const
+  {
+    return  Construct_tetrahedron_3(cp, static_cast<const K_&>(*this).construct_tetrahedron_3_object());
   }
 
   Construct_plane_3 construct_plane_3_object() const
@@ -129,7 +269,14 @@ struct Weighted_point_mapper_3
   {
     return  Coplanar_orientation_3(cp, static_cast<const K_&>(*this).coplanar_orientation_3_object());
   }
+
+  Side_of_bounded_sphere_3  side_of_bounded_sphere_3_object() const
+  {
+    return  Side_of_bounded_sphere_3(cp, static_cast<const K_&>(*this).side_of_bounded_sphere_3_object());
+  }
 };
+
+  } // namespace internal
 
 } // nmamespace CGAL
 
@@ -147,8 +294,6 @@ struct Weighted_point_mapper_3
 #include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
 
 #include <boost/bind.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/identity.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -181,25 +326,33 @@ namespace CGAL {
   template < class Gt, class Tds_ = Default, class Lock_data_structure_ = Default >
   class Regular_triangulation_3
   : public Triangulation_3<
-    Weighted_point_mapper_3<Gt>,
+    Weighted_point_mapper_3<internal::RegTraits<Gt> >,
       typename Default::Get<Tds_, Triangulation_data_structure_3 <
                                     Regular_triangulation_vertex_base_3<Gt>,
                                     Regular_triangulation_cell_base_3<Gt> > >::type,
       Lock_data_structure_>
   {
 
+  public:
+
+    typedef internal::RegTraits<Gt>               Geom_traits;
+
+  private:
     typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
-    typedef Weighted_point_mapper_3<Gt> Tr_Base_Gt;
+    typedef Weighted_point_mapper_3<Geom_traits> Tr_Base_Gt;
 
     typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
       Regular_triangulation_vertex_base_3<Gt>,
       Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
+    Geom_traits regular_geom_traits;
+
   public:
+
     typedef Triangulation_3<Tr_Base_Gt,Tds,Lock_data_structure_> Tr_Base;
 
     typedef Tds                                   Triangulation_data_structure;
-    typedef Gt                                    Geom_traits;
+
     typedef Geom_traits                           Traits;
     typedef typename Tr_Base::Concurrency_tag     Concurrency_tag;
     typedef typename Tr_Base::Lock_data_structure Lock_data_structure;
@@ -280,15 +433,15 @@ namespace CGAL {
     using Tr_Base::is_valid;
 
     Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
+      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this), regular_geom_traits(gt)
     {}
 
     Regular_triangulation_3(Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(lock_ds, Tr_Base_Gt(gt)), hidden_point_visitor(this)
+      : Tr_Base(lock_ds, Tr_Base_Gt(gt)), hidden_point_visitor(this), regular_geom_traits(gt)
     {}
 
     Regular_triangulation_3(const Regular_triangulation_3 & rt)
-      : Tr_Base(rt), hidden_point_visitor(this)
+      : Tr_Base(rt), hidden_point_visitor(this), regular_geom_traits(rt.regular_geom_traits)
     {
       CGAL_triangulation_postcondition( is_valid() );
     }
@@ -297,7 +450,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
+      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this), regular_geom_traits(gt)
     {
       insert(first, last);
     }
@@ -305,9 +458,14 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
+      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this), regular_geom_traits(gt)
     {
       insert(first, last);
+    }
+
+    const Geom_traits& geom_traits() const
+    {
+      return regular_geom_traits;
     }
 
   private:
@@ -411,7 +569,7 @@ namespace CGAL {
 
       size_type n = number_of_vertices();
       std::vector<Weighted_point> points(first, last);
-      spatial_sort (points.begin(), points.end(), geom_traits());
+      spatial_sort (points.begin(), points.end(), Tr_Base::geom_traits());
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
@@ -509,7 +667,7 @@ namespace CGAL {
 
       spatial_sort( indices.begin(),
                     indices.end(),
-                    Search_traits(make_property_map(points),geom_traits()) );
+                    Search_traits(make_property_map(points),Tr_Base::geom_traits()) );
 #ifdef CGAL_LINKED_WITH_TBB
       if (this->is_parallel())
       {
@@ -1269,7 +1427,7 @@ namespace CGAL {
           return v;
       }
       void hide_point(Cell_handle c, const Weighted_point &p) {
-        c->hide_point(p);
+        // AF c->hide_point(p);  // What do we want to hide, a point or a weighted point?
       }
     };
 
@@ -1649,7 +1807,7 @@ dual(Cell_handle c) const
   CGAL_triangulation_precondition(dimension()==3);
   CGAL_triangulation_precondition( ! is_infinite(c) );
 
-  return c->weighted_circumcenter(geom_traits());
+  return geom_traits().construct_point_3_object()(c->weighted_circumcenter(geom_traits()));
 }
 
   template < class Gt, class Tds, class Lds >
@@ -1722,7 +1880,7 @@ dual(Cell_handle c) const
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
     std::sort(points, points + 5,
-      boost::bind(geom_traits().compare_xyz_3_object(),
+      boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
       boost::bind(Dereference<Weighted_point>(), _1),
       boost::bind(Dereference<Weighted_point>(), _2)) == SMALLER);
 
@@ -1832,7 +1990,7 @@ dual(Cell_handle c) const
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
     std::sort(points, points + 4,
-      boost::bind(geom_traits().compare_xyz_3_object(),
+      boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
       boost::bind(Dereference<Weighted_point>(), _1),
       boost::bind(Dereference<Weighted_point>(), _2)) == SMALLER);
 

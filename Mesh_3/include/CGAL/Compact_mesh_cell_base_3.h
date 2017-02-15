@@ -52,6 +52,7 @@ template <typename GT, typename Concurrency_tag>
 class Compact_mesh_cell_base_3_base
 {
   typedef typename GT::Point_3 Point;
+  typedef typename GT::Weighted_point_3 Weighted_point;
 
 protected:
   Compact_mesh_cell_base_3_base()
@@ -238,6 +239,8 @@ public:
 
   typedef GT                   Geom_traits;
   typedef typename GT::Point_3 Point;
+  typedef typename GT::Weighted_point_3 Weighted_point_3;
+
 
   typedef Point*           Point_container;
   typedef Point*           Point_iterator;
@@ -447,6 +450,7 @@ public:
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }
   Point_iterator hidden_points_end() const { return NULL; }
   void hide_point (const Point &) const { }
+  void hide_point (const Weighted_point_3 &) const { }
 
 
   // We must override the functions that modify the vertices.

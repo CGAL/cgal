@@ -427,8 +427,8 @@ protected:
   {
     const Facet mirror = mirror_facet(f);
 
-    f.first->set_facet_surface_center(f.second, p);
-    mirror.first->set_facet_surface_center(mirror.second, p);
+    f.first->set_facet_surface_center(f.second, p.point());
+    mirror.first->set_facet_surface_center(mirror.second, p.point());
 
     f.first->set_facet_surface_center_index(f.second,index);
     mirror.first->set_facet_surface_center_index(mirror.second,index);
@@ -1826,7 +1826,7 @@ is_facet_encroached(const Facet& facet,
 
   // facet is encroached if the new point is near from center than
   // one vertex of the facet
-  return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
+  return ( compare_distance(center.point(), reference_point, point) != CGAL::SMALLER );
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1834,7 +1834,7 @@ bool
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_encroached_facet_refinable(Facet& facet) const
 {
-  typedef typename Gt::Point_3 Point_3;
+  typedef typename Gt::Weighted_point_3 Weighted_point_3;
   typedef typename Gt::FT      FT;
 
   typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
@@ -1842,6 +1842,8 @@ is_encroached_facet_refinable(Facet& facet) const
 
   typename Gt::Compare_weighted_squared_radius_3 compare =
     Gt().compare_weighted_squared_radius_3_object();
+
+  typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
 
   const Cell_handle& c = facet.first;
   const int& k = facet.second;
@@ -1871,9 +1873,9 @@ is_encroached_facet_refinable(Facet& facet) const
     ++wp_nb;
   }
 
-  const Point_3& p1 = c->vertex(k1)->point();
-  const Point_3& p2 = c->vertex(k2)->point();
-  const Point_3& p3 = c->vertex(k3)->point();
+  const Weighted_point_3& p1 = c->vertex(k1)->point();
+  const Weighted_point_3& p2 = c->vertex(k2)->point();
+  const Weighted_point_3& p3 = c->vertex(k3)->point();
 
   const FT min_ratio (0.16); // (0.2*2)^2
 
