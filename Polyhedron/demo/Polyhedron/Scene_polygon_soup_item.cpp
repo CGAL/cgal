@@ -264,60 +264,21 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
       pointId.id = pit->at(it);
       pointIds.push_back(pointId);
     } while( ++it != it_end );
-
-    FT triangulation(pointIds,normal,diagonal);
-  /*  P_traits cdt_traits(normal);
-
-    CDT cdt(cdt_traits);
-    //A map used to associate the vertices in the triangulation to the points
-    //in the soup. This is needed to retrieve the colors of the points.
-    QMap<CDT::Vertex_handle, std::size_t> p2p;
-
-    std::size_t it = 0;
-    std::size_t it_end =pit->size();
-
-    // Iterates the vector of facet handles
-    CDT::Vertex_handle previous, first;
-    do {
-
-        CDT::Vertex_handle vh = cdt.insert(soup->points[pit->at(it)]);
-        p2p[vh]=pit->at(it);
-        if(first == 0) {
-            first = vh;
-        }
-        if(previous != 0 && previous != vh) {
-            cdt.insert_constraint(previous, vh);
-        }
-        previous = vh;
-    } while( ++it != it_end );
-
-    cdt.insert_constraint(previous, first);
-
-    // sets mark is_external
-    for(CDT::All_faces_iterator
-        pitt = cdt.all_faces_begin(),
-        end = cdt.all_faces_end();
-        pitt != end; ++pitt)
+    //detect degenerated faces
+    std::vector<FT::PointAndId> pid_stack = pointIds;
+    for(std::size_t i = 0; i< pointIds.size(); ++i)
     {
-        pitt->info().is_external = false;
+     FT::PointAndId pid = pid_stack.back();
+     pid_stack.pop_back();
+     BOOST_FOREACH(FT::PointAndId poai, pid_stack)
+     {
+      if (pid.point== poai.point)
+      {
+        return;
+      }
+     }
     }
-
-    //check if the facet is external or internal
-    std::queue<CDT::Face_handle> face_queue;
-    face_queue.push(cdt.infinite_vertex()->face());
-    while(! face_queue.empty() ) {
-        CDT::Face_handle fh = face_queue.front();
-        face_queue.pop();
-        if(fh->info().is_external) continue;
-        fh->info().is_external = true;
-        for(int i = 0; i <3; ++i) {
-            if(!cdt.is_constrained(std::make_pair(fh, i)))
-            {
-                face_queue.push(fh->neighbor(i));
-            }
-        }
-    }
-*/
+    FT triangulation(pointIds,normal,diagonal);
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     for(FT::CDT::Finite_faces_iterator
