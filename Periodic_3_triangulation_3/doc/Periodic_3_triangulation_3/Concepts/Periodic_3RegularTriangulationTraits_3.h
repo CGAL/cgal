@@ -156,21 +156,6 @@ typedef unspecified_type Construct_weighted_circumcenter_3;
 
 /// @}
 
-/// \name Creation
-/// @{
-
-/*!
-Default constructor.
-*/
-Periodic_3_regular_triangulation_traits_3();
-
-/*!
-Copy constructor.
-*/
-Periodic_3_regular_triangulation_traits_3(const Periodic_3_regular_triangulation_traits_3 & tr);
-
-/// @}
-
 /// \name Operations
 /// The following functions give access to the predicate and construction objects:
 /// @{
