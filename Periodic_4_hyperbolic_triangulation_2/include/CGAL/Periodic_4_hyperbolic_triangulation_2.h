@@ -1033,26 +1033,34 @@ hyperbolic_locate(const Point& p, Offset& lo, Locate_type& lt, int& li, int& lj,
 	typedef typename GT::Side_of_hyperbolic_face_2 Side_of_hyperbolic_face_2;
 	Side_of_hyperbolic_face_2 sf;
 
-	cout << "Euclidean location says face " << lf->get_number() << " with offset " << lo << endl;
+	cout << "Euclidean locate says face " << lf->get_number() << " with offset " << lo;
 
 	Bounded_side bs = sf(p, lf, lo);
 	if (bs == ON_BOUNDED_SIDE) {
-		cout << "Location was correct! The point is inside the face!" << endl;
+		// Nothing to do here, the face is really in lf.
 	} else if (bs == ON_BOUNDARY) {
-		cout << "Not clear if correct! The point is on the boundary of the face!" << endl;
+		// here the point is on the boundary of the face, so it is on an edge or on a vertex. Still, it's acceptable to say it is in lf.
 	} else {
-		Bounded_side bs1 = sf(p, lf->neighbor(0), lo);
-		Bounded_side bs2 = sf(p, lf->neighbor(1), lo);
-		Bounded_side bs3 = sf(p, lf->neighbor(2), lo);
-		cout << "The location was not correct! The point is found inside ";
-		if (bs1 == ON_BOUNDED_SIDE) 
-			cout << " neighbor 0! ";
-		if (bs2 == ON_BOUNDED_SIDE) 
-			cout << " neighbor 1! ";
-		if (bs3 == ON_BOUNDED_SIDE) 
-			cout << " neighbor 2! ";
-		cout << endl;
+		// Here we have to find the face containing the point, it's one of the neighbors of lf.
+		Bounded_side bs1 = sf(p, lf->neighbor(0), lo.append(lf->neighbor_offset(0)));
+		if (bs1 != ON_UNBOUNDED_SIDE) {
+			lo = lo.append(lf->neighbor_offset(0));
+			lf = lf->neighbor(0);
+		} else {
+			Bounded_side bs2 = sf(p, lf->neighbor(1), lo.append(lf->neighbor_offset(1)));	
+			if (bs2 != ON_UNBOUNDED_SIDE) {
+				lo = lo.append(lf->neighbor_offset(1));
+				lf = lf->neighbor(1);
+			} else {
+				Bounded_side bs3 = sf(p, lf->neighbor(2), lo.append(lf->neighbor_offset(2)));
+				CGAL_triangulation_assertion(bs3 != ON_UNBOUNDED_SIDE);
+				lo = lo.append(lf->neighbor_offset(2));
+				lf = lf->neighbor(2);
+			}
+		}
 	}
+
+	cout << "; hyperbolic locate says face " << lf->get_number() << " with offset " << lo << endl;
 
 
  //  Orientation o1 = orientation(f->vertex(0)->point(), f->vertex(1)->point(), p,

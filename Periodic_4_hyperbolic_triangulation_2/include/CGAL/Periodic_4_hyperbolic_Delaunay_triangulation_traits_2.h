@@ -540,38 +540,28 @@ public:
 
 		template<class Face_handle, class Offset>
 		Bounded_side operator()(const Point_2 p, const Face_handle fh, const Offset o) const {
-			cout << "o = " << o << ", off[0] = " << fh->offset(0) << ", off[1] = " << fh->offset(1) << ", off[2] = " << fh->offset(2) << endl;
+
+			//cout << "Checking face " << fh->get_number() << " with offset " << o << endl;
+
 			Point_2 p1 = o.append(fh->offset(0)).apply(fh->vertex(0)->point());
-			Point_2 p2 = o.append(fh->offset(2)).apply(fh->vertex(1)->point());
-			Point_2 p3 = o.append(fh->offset(1)).apply(fh->vertex(2)->point());
+			Point_2 p2 = o.append(fh->offset(1)).apply(fh->vertex(1)->point());
+			Point_2 p3 = o.append(fh->offset(2)).apply(fh->vertex(2)->point());
 		
-			Construct_segment_2 bld;
-			Segment_2 s1, s2, s3;
+			// Construct_segment_2 bld;
+			// Segment_2 s1, s2, s3;
 			
-			s1 = bld(p2, p3);
-			s2 = bld(p3, p1);
-			s3 = bld(p1, p2);
+			// s1 = bld(p2, p3);
+			// s2 = bld(p3, p1);
+			// s3 = bld(p1, p2);
 
-			Bounded_side cs1 = side_of_segment_2(p1, s1);
-			Bounded_side cp1 = side_of_segment_2(p,  s1);
+			Bounded_side cs1 = side_of_segment_2(p1, p2, p3);
+			Bounded_side cp1 = side_of_segment_2(p,  p2, p3);
 
-			cout << (cs1 == ON_BOUNDED_SIDE ? "+" : "-");
-			cout << (cp1 == ON_BOUNDED_SIDE ? "+" : "-");
-			cout << " ";
+			Bounded_side cs2 = side_of_segment_2(p2, p3, p1);
+			Bounded_side cp2 = side_of_segment_2(p,  p3, p1);
 
-			Bounded_side cs2 = side_of_segment_2(p2, s2);
-			Bounded_side cp2 = side_of_segment_2(p,  s2);
-
-			cout << (cs2 == ON_BOUNDED_SIDE ? "+" : "-");
-			cout << (cp2 == ON_BOUNDED_SIDE ? "+" : "-");
-			cout << " ";
-
-			Bounded_side cs3 = side_of_segment_2(p3, s3);
-			Bounded_side cp3 = side_of_segment_2(p,  s3);
-
-			cout << (cs3 == ON_BOUNDED_SIDE ? "+" : "-");
-			cout << (cp3 == ON_BOUNDED_SIDE ? "+" : "-");
-			cout << endl;
+			Bounded_side cs3 = side_of_segment_2(p3, p1, p2);
+			Bounded_side cp3 = side_of_segment_2(p,  p1, p2);
 
 			if (cs1 != cp1 || cs2 != cp2 || cs3 != cp3) {
 				return ON_UNBOUNDED_SIDE;
@@ -593,21 +583,21 @@ public:
 			Point_2 p2 = fh->offset(2).apply(fh->vertex(1)->point());
 			Point_2 p3 = fh->offset(1).apply(fh->vertex(2)->point());
 			
-			Construct_segment_2 bld;
-			Segment_2 s1, s2, s3;
+			// Construct_segment_2 bld;
+			// Segment_2 s1, s2, s3;
 
-			s1 = bld(p2, p3);
-			s2 = bld(p3, p1);
-			s3 = bld(p1, p2);
+			// s1 = bld(p2, p3);
+			// s2 = bld(p3, p1);
+			// s3 = bld(p1, p2);
 
-			Bounded_side cs1 = side_of_segment_2(p1, s1);
-			Bounded_side cp1 = side_of_segment_2(p,  s1);
+			Bounded_side cs1 = side_of_segment_2(p1, p2, p3);
+			Bounded_side cp1 = side_of_segment_2(p,  p2, p3);
 
-			Bounded_side cs2 = side_of_segment_2(p2, s2);
-			Bounded_side cp2 = side_of_segment_2(p,  s2);
+			Bounded_side cs2 = side_of_segment_2(p2, p3, p1);
+			Bounded_side cp2 = side_of_segment_2(p,  p3, p1);
 
-			Bounded_side cs3 = side_of_segment_2(p3, s3);
-			Bounded_side cp3 = side_of_segment_2(p,  s3);
+			Bounded_side cs3 = side_of_segment_2(p3, p1, p2);
+			Bounded_side cp3 = side_of_segment_2(p,  p1, p2);
 
 			if (cs1 != cp1 || cs2 != cp2 || cs3 != cp3) {
 				return ON_UNBOUNDED_SIDE;
@@ -622,23 +612,37 @@ public:
 		}
 
 
-// if ( Circle_2* c_pq = boost::get<Circle_2>(&bis_pq) )
-
 	private:
-		Bounded_side side_of_segment_2(const Point_2 p, const Segment_2 s) const {
-			if (const Circular_arc_2* c = boost::get<Circular_arc_2>(&s)) {
-				return c->supporting_circle().bounded_side(p);
+		Bounded_side side_of_segment_2(const Point_2 query, const Point_2 p, const Point_2 q) const {
+			
+			Point_2 o(0, 0);
+
+			// Invert p or q through the unit circle.
+			// The inversion depends on the distance from the origin, so to increase 
+			// numerical stability we choose to invert the point further from (0,0).
+			Point_2 inv;
+			FT dp = squared_distance(o, p), dq = squared_distance(o, q);
+			if (dq < dp) {
+				inv = Point_2( p.x()/dp, p.y()/dp );
 			} else {
-				const Line_arc_2* la = boost::get<Line_arc_2>(&s);
-				Euclidean_line_2 l = la->supporting_line();
-				if (l.has_on(p)) {
+				inv = Point_2( q.x()/dq, q.y()/dq );
+			}
+
+			// If iq is on the line defined by p and q, we need to work with a line instead of a circle
+			if (orientation(p, q, inv) == COLLINEAR) {
+				Orientation oquery = orientation(p, q, query);
+				if (oquery == COLLINEAR) {
 					return ON_BOUNDARY;
-				} else if (l.has_on_positive_side(p)) {
-					return ON_BOUNDED_SIDE;
+				} else if (oquery == LEFT_TURN) {
+					return ON_BOUNDED_SIDE; 	// this is just a convention
 				} else {
 					return ON_UNBOUNDED_SIDE;
 				}
+			} else { // this means that we work in the circle
+				Circle_2 c(p, q, inv);
+				return c.bounded_side(query);
 			}
+
 		}
 
 	};
