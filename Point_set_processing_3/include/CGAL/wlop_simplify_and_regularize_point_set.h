@@ -580,7 +580,7 @@ wlop_simplify_and_regularize_point_set(
                            sample_points,          
                            original_kd_tree,
                            sample_kd_tree,
-                           radius, 
+                           radius2,
                            original_density_weights,
                            sample_density_weights);
 
