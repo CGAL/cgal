@@ -37,8 +37,10 @@ void hilbert_sort_on_sphere (RandomAccessIterator begin,
                    double sq_r,
                    const typename Kernel::Point_3 &p)
 {
+  typedef std::iterator_traits<RandomAccessIterator> ITraits;
+  typedef typename ITraits::difference_type Diff_t;
   boost::rand48 random;
-  boost::random_number_generator<boost::rand48> rng(random);
+  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
   std::random_shuffle(begin,end, rng);
   (Hilbert_sort_on_sphere_3<Kernel, Policy> (k,sq_r,p))(begin, end);
 }

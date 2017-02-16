@@ -46,8 +46,10 @@ namespace internal {
 		       Policy /*policy*/,
 		       typename Kernel::Point_2 *)
     {
+        typedef std::iterator_traits<RandomAccessIterator> ITraits;
+        typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
 #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else
@@ -63,8 +65,10 @@ namespace internal {
 			 Policy /*policy*/,
 			 typename Kernel::Point_3 *)
     {
+        typedef std::iterator_traits<RandomAccessIterator> ITraits;
+        typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
 #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else
@@ -80,8 +84,10 @@ namespace internal {
 			 Policy /*policy*/,
 			 typename Kernel::Point_d *)
     {
+        typedef std::iterator_traits<RandomAccessIterator> ITraits;
+        typedef typename ITraits::difference_type Diff_t;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
 #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else
