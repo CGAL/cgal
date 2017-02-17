@@ -11,7 +11,7 @@ multiprecision integers provided by <span class="textsc">LEDA</span>.
 \cgalModels `EuclideanRing` 
 \cgalModels `RealEmbeddable` 
 
-For more details on the number types of \leda we refer to the \leda manual \cgalCite{cgal:mnsu-lum}. 
+For more details on the number types of \leda we refer to the \leda manual \cgalCite{cgal:as-lum}. 
 
 */
 
