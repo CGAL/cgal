@@ -421,7 +421,7 @@ namespace CGAL {
     using Tr_Base::orientation;
     using Tr_Base::coplanar_orientation;
     using Tr_Base::adjacent_vertices;
-    using Tr_Base::construct_segment;
+
     using Tr_Base::incident_facets;
     using Tr_Base::insert_in_conflict;
     using Tr_Base::is_infinite;
@@ -468,6 +468,15 @@ namespace CGAL {
       return regular_geom_traits;
     }
 
+  protected:
+    
+    Segment
+    construct_segment(const Bare_point &p, const Bare_point &q) const
+    {
+      return geom_traits().construct_segment_3_object()(p, q);
+    }
+
+    
   private:
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
