@@ -358,9 +358,10 @@ public:
 #endif
   }
 
-private:
+public:
   // Initialization function
-  void initialize_manifold_info() {
+  void scan_edges() {
+    if(!m_with_manifold_criterion) return;
 #ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "\nscanning edges ";
     if(m_with_boundary)
@@ -400,8 +401,9 @@ private:
 #endif
   }
 
-  void initialize_bad_vertices()
+  void scan_vertices()
   {
+    if(!m_with_manifold_criterion) return;
     CGAL_assertion(m_bad_vertices_initialized == false);
     CGAL_assertion(m_bad_vertices.empty());
 #ifdef CGAL_MESH_3_VERBOSE
@@ -461,20 +463,10 @@ public:
     if(Base::no_longer_element_to_refine_impl())
     {
       if(!m_with_manifold_criterion) return true;
-      // Disable the manifold criterion
 
-      if( ! m_manifold_info_initialized ) initialize_manifold_info();
-
-      if(m_bad_edges.left.empty() &&
-	 Base::no_longer_element_to_refine_impl() /* for parallel */)
-      {
-        if( ! m_bad_vertices_initialized ) initialize_bad_vertices();
-
-        return m_bad_vertices.empty() &&
-	  Base::no_longer_element_to_refine_impl() /* for parallel */;
-      }
-      else // m_bad_vertices is not empty
-        return false;
+      // Note: with Parallel_tag, `m_bad_vertices` and `m_bad_edges`
+      // are always empty.
+      return m_bad_edges.left.empty() && m_bad_vertices.empty();
     }
     else // Base::no_longer_element_to_refine_impl() returned false
       return false;

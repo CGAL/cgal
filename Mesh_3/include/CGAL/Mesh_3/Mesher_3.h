@@ -331,6 +331,10 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   WallClockTimer t;
 #endif
   facets_mesher_.refine(facets_visitor_);
+  facets_mesher_.scan_edges();
+  facets_mesher_.refine(facets_visitor_);
+  facets_mesher_.scan_vertices();
+  facets_mesher_.refine(facets_visitor_);
 #ifdef CGAL_MESH_3_PROFILING
   double facet_ref_time = t.elapsed();
   std::cerr << "==== Facet refinement: " << facet_ref_time << " seconds ===="
