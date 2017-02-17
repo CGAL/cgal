@@ -2083,6 +2083,20 @@ public:
     return _tds.incident_edges(v, edges, Finite_filter(this));
   }
 
+  template <class OutputIterator>
+  OutputIterator
+  incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
+  {
+      return _tds.incident_edges_threadsafe(v, edges);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  finite_incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
+  {
+    return _tds.incident_edges_threadsafe(v, edges, Finite_filter(this));
+  }
+
   size_type degree(Vertex_handle v) const
   {
       return _tds.degree(v);

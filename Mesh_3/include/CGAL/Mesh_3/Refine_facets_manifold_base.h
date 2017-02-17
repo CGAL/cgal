@@ -196,7 +196,10 @@ private:
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::vector<Facet> facets;
     facets.reserve(64);
-    this->r_tr_.incident_facets(v, std::back_inserter(facets));
+    if(this->r_tr_.is_parallel())
+      this->r_tr_.incident_facets_threadsafe(v, std::back_inserter(facets));
+    else
+      this->r_tr_.incident_facets(v, std::back_inserter(facets));
 
     typename std::vector<Facet>::iterator fit = facets.begin();
     while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
@@ -357,7 +360,7 @@ public:
 
 private:
   // Initialization function
-  void initialize_manifold_info() const {
+  void initialize_manifold_info() {
 #ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "\nscanning edges ";
     if(m_with_boundary)
@@ -373,9 +376,19 @@ private:
            ( (!m_with_boundary) &&
              (this->r_c3t3_.face_status(*eit) == C3t3::BOUNDARY) ) )
       {
-        m_bad_edges.insert(Bad_edge(edge_to_edgevv(*eit),
-                                    (this->r_c3t3_.face_status(*eit) ==
-                                     C3t3::SINGULAR ? 0 : 1)));
+#ifdef CGAL_LINKED_WITH_TBB
+	// Parallel
+	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+	{
+	  this->insert_bad_facet(biggest_incident_facet_in_complex(*eit),
+				 typename Base::Quality());
+	} else
+#endif // CGAL_LINKED_WITH_TBB
+	{ // Sequential
+	  m_bad_edges.insert(Bad_edge(edge_to_edgevv(*eit),
+				      (this->r_c3t3_.face_status(*eit) ==
+				       C3t3::SINGULAR ? 0 : 1)));
+	}
 #ifdef CGAL_MESH_3_VERBOSE
         ++n;
 #endif
@@ -387,7 +400,7 @@ private:
 #endif
   }
 
-  void initialize_bad_vertices() const
+  void initialize_bad_vertices()
   {
     CGAL_assertion(m_bad_vertices_initialized == false);
     CGAL_assertion(m_bad_vertices.empty());
@@ -402,10 +415,20 @@ private:
     {
       if( this->r_c3t3_.face_status(vit) == C3t3::SINGULAR ) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-        std::cerr << "m_bad_edges.insert("
+        std::cerr << "m_bad_vertices.insert("
                   << vit->point() << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-        m_bad_vertices.insert( vit );
+#ifdef CGAL_LINKED_WITH_TBB
+	// Parallel
+	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+	{
+	  this->insert_bad_facet(biggest_incident_facet_in_complex(vit),
+				 typename Base::Quality());
+	} else
+#endif // CGAL_LINKED_WITH_TBB
+	{ // Sequential
+	  m_bad_vertices.insert( vit );
+	}
 #ifdef CGAL_MESH_3_VERBOSE
         ++n;
 #endif
@@ -442,11 +465,13 @@ public:
 
       if( ! m_manifold_info_initialized ) initialize_manifold_info();
 
-      if(m_bad_edges.left.empty())
+      if(m_bad_edges.left.empty() &&
+	 Base::no_longer_element_to_refine_impl() /* for parallel */)
       {
         if( ! m_bad_vertices_initialized ) initialize_bad_vertices();
 
-        return m_bad_vertices.empty();
+        return m_bad_vertices.empty() &&
+	  Base::no_longer_element_to_refine_impl() /* for parallel */;
       }
       else // m_bad_vertices is not empty
         return false;
@@ -551,12 +576,28 @@ public:
                  (this->r_c3t3_.face_status(edge) == C3t3::BOUNDARY) )
                )
           {
-            m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
-                                        (this->r_c3t3_.face_status(edge) ==
-                                         C3t3::SINGULAR ? 0 : 1)));
+#ifdef CGAL_LINKED_WITH_TBB
+	    // Parallel
+	    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+	      {
+		this->insert_bad_facet(biggest_incident_facet_in_complex(edge),
+				       typename Base::Quality());
+	      } else
+#endif // CGAL_LINKED_WITH_TBB
+	      { // Sequential
+		m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
+					    (this->r_c3t3_.face_status(edge) ==
+					     C3t3::SINGULAR ? 0 : 1)));
+	      }
           }
           else {
-            m_bad_edges.left.erase( edge_to_edgevv(edge) ); // @TODO: pourquoi?!
+#ifdef CGAL_LINKED_WITH_TBB
+	    // Sequential only
+	    if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+#endif // CGAL_LINKED_WITH_TBB
+	    {
+	      m_bad_edges.left.erase( edge_to_edgevv(edge) ); // @TODO: pourquoi?!
+	    }
           }
         }
       }
@@ -587,7 +628,17 @@ public:
         std::cerr << "m_bad_vertices.insert("
                   << (*vit)->point() << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-        m_bad_vertices.insert(*vit);
+#ifdef CGAL_LINKED_WITH_TBB
+	// Parallel
+	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+	{
+	  this->insert_bad_facet(biggest_incident_facet_in_complex(*vit),
+				 typename Base::Quality());
+	} else
+#endif // CGAL_LINKED_WITH_TBB
+	{ // Sequential
+	  m_bad_vertices.insert(*vit);
+	}
       }
     }
 
@@ -600,7 +651,17 @@ public:
       std::cerr << "m_bad_vertices.insert("
                 << v->point() << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-      m_bad_vertices.insert(v);
+#ifdef CGAL_LINKED_WITH_TBB
+	// Parallel
+	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+	{
+	  this->insert_bad_facet(biggest_incident_facet_in_complex(v),
+				 typename Base::Quality());
+	} else
+#endif // CGAL_LINKED_WITH_TBB
+	{ // Sequential
+	  m_bad_vertices.insert(v);
+	}
     }
   }
 

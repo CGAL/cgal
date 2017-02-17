@@ -233,7 +233,11 @@ public:
     //test incident edges for REGULARITY and count BOUNDARY edges
     typename std::vector<Edge> edges;
     edges.reserve(64);
-    tr_.incident_edges(v, std::back_inserter(edges));
+    if(tr_.is_parallel()) {
+      tr_.incident_edges_threadsafe(v, std::back_inserter(edges));
+    } else {
+      tr_.incident_edges(v, std::back_inserter(edges));
+    }
     int number_of_boundary_incident_edges = 0; // could be a bool
     for (typename std::vector<Edge>::iterator
            eit=edges.begin(), end = edges.end();
@@ -546,7 +550,11 @@ private:
     Union_find<Facet> facets;
     { // fill the union find
       std::vector<Facet> non_filtered_facets;
-      tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+      if(tr_.is_parallel()) {
+	tr_.incident_facets_threadsafe(v, std::back_inserter(non_filtered_facets));
+      } else {
+	tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+      }
 
       for(typename std::vector<Facet>::iterator
             fit = non_filtered_facets.begin(),

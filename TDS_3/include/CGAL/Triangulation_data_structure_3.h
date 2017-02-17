@@ -1079,6 +1079,25 @@ public:
 
   template <class Filter, class OutputIterator>
   OutputIterator
+  incident_edges_1d(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
+  {
+    CGAL_assertion (dimension() == 1);
+    CGAL_triangulation_assertion( number_of_vertices() >= 3);
+    Cell_handle n0 = v->cell();
+    const int index_v_in_n0 = n0->index(v);
+    CGAL_assume(index_v_in_n0 <= 1);
+    Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
+    const int index_v_in_n1 = n1->index(v);
+    CGAL_assume(index_v_in_n1 <= 1);
+    if(!f(n0->vertex(1-index_v_in_n0)))
+      *edges++ = Edge(n0, n0->index(v), 1-index_v_in_n0);
+    if(!f(n1->vertex(1-index_v_in_n1)))
+      *edges++ = Edge(n1, n1->index(v), 1-index_v_in_n1);
+    return edges;
+  }
+
+  template <class Filter, class OutputIterator>
+  OutputIterator
   incident_edges(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
   {
     CGAL_triangulation_precondition( v != Vertex_handle() );
@@ -1087,20 +1106,30 @@ public:
     CGAL_triangulation_expensive_precondition( is_valid() );
 
     if (dimension() == 1) {
-      CGAL_triangulation_assertion( number_of_vertices() >= 3);
-      Cell_handle n0 = v->cell();
-      const int index_v_in_n0 = n0->index(v);
-      CGAL_assume(index_v_in_n0 <= 1);
-      Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
-      const int index_v_in_n1 = n1->index(v);
-      CGAL_assume(index_v_in_n1 <= 1);
-      if(!f(n0->vertex(1-index_v_in_n0))) *edges++ = Edge(n0, n0->index(v), 1-index_v_in_n0);
-      if(!f(n1->vertex(1-index_v_in_n1))) *edges++ = Edge(n1, n1->index(v), 1-index_v_in_n1);
-      return edges;
+      return incident_edges_1d(v, edges, f);
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
                                                  OutputIterator, Filter, Has_member_visited<Vertex>::value>,
     OutputIterator>(v, edges, f);
+  }
+
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_edges_threadsafe(Vertex_handle v, OutputIterator edges,
+			    Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_precondition( dimension() >= 1 );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_triangulation_expensive_precondition( is_valid() );
+
+    if (dimension() == 1) {
+      return incident_edges_1d(v, edges, f);
+    }
+    return visit_incident_cells_threadsafe<
+      Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
+                       OutputIterator, Filter, Has_member_visited<Vertex>::value>,
+      OutputIterator>(v, edges, f);
   }
 
   template <class OutputIterator>
@@ -1108,6 +1137,13 @@ public:
   incident_edges(Vertex_handle v, OutputIterator edges) const
   {
     return incident_edges<False_filter>(v, edges);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
+  {
+    return incident_edges_threadsafe<False_filter>(v, edges);
   }
 
   template <class Filter, class OutputIterator>
