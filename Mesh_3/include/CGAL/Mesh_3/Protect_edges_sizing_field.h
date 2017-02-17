@@ -1500,10 +1500,10 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
                                                      curve_index);
     if(domain_.is_cycle(v1->point().point(), curve_index)) {
       geodesic_distance =
-        (std::min)(geodesic_distance,
-                   domain_.geodesic_distance(v2->point().point(),
+        (std::min)(CGAL::abs(geodesic_distance),
+                   CGAL::abs(domain_.geodesic_distance(v2->point().point(),
                                              v1->point().point(),
-                                             curve_index));
+                                             curve_index)));
     } else {
       geodesic_distance = CGAL::abs(geodesic_distance);
     }
