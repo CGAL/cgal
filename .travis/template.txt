@@ -39,7 +39,7 @@ addons:
       - libqt5gui5
       - libqt5widgets5
       - libqt5xml5
-      - libqglviewer-dev
+      - qt5-qmake
       # Not allowed (yet) 
       # - geomview 
       # - libglew1.5-dev 

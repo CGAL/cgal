@@ -53,7 +53,7 @@ do
 	  cd build
 	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
 	  make -j2
-  else
+  elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No example found for $ARG"
 	fi
 
@@ -64,7 +64,7 @@ do
 	  cd build
 	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
   	make -j2
-  else
+  elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No test found for $ARG"
 	fi
 	
@@ -75,18 +75,27 @@ do
 	  cd build
 	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
 	  make -j2
-  else
+  elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No demo found for $ARG"
 	fi
 if [ "$ARG" == Polyhedron_demo ]; then
   cd "$ROOT/Polyhedron/demo/Polyhedron"
-  mkdir ./build
+  #install libqglviewer
+  git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
+  cd ./qglviewer/QGLViewer
+  #use qt5 instead of qt4
+  export QT_SELECT=5
+  qmake NO_QT_VERSION_SUFFIX=yes
+  make -j2
+  if [ ! -f libQGLViewer.so ]; then
+    echo "libQGLViewer.so not made"
+    exit 1
+  fi
+#end install qglviewer
+  cd "$ROOT/Polyhedron/demo/Polyhedron"
+  mkdir -p ./build
   cd ./build
-  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
+  cmake -DCGAL_DIR="$ROOT/build" -DQGLVIEWER_INCLUDE_DIR="$ROOT/Polyhedron/demo/Polyhedron/qglviewer" -DQGLVIEWER_LIBRARIES="$ROOT/Polyhedron/demo/Polyhedron/qglviewer/QGLViewer/libQGLViewer.so" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
   make -j2
 fi
 done
-
-# Local Variables:
-# tab-width: 2
-# End:
