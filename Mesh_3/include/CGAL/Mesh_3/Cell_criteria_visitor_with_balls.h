@@ -51,11 +51,11 @@ public:
   typedef typename Base::Handle Handle;
   typedef Handle Cell_handle;
 
-  typedef typename Tr::Point Point_3;
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Geom_traits::Compute_squared_radius_smallest_orthogonal_sphere_3 
   Squared_radius_orthogonal_sphere;
   int nb_weighted_points;
-  std::vector<Point_3> points;
+  std::vector<Weighted_point> points;
   double radius_ortho_shpere;
         
   typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
@@ -66,10 +66,10 @@ public:
     : Base(ch) 
   {
 
-    const Point_3& p = ch->vertex(0)->point();
-    const Point_3& q = ch->vertex(1)->point();
-    const Point_3& r = ch->vertex(2)->point();
-    const Point_3& s = ch->vertex(3)->point();
+    const Weighted_point& p = ch->vertex(0)->point();
+    const Weighted_point& q = ch->vertex(1)->point();
+    const Weighted_point& r = ch->vertex(2)->point();
+    const Weighted_point& s = ch->vertex(3)->point();
 
     if(p.weight() > 0) points.push_back(p);
     if(q.weight() > 0) points.push_back(q);

@@ -110,8 +110,8 @@ protected:
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits Gt;
-    typedef typename Tr::Point Point_3;
+    typedef typename Tr::Geom_traits    Gt;
+    typedef typename Tr::Weighted_point Weighted_point;
 
     const typename Gt::Construct_triangle_3 triangle =
         Gt().construct_triangle_3_object();
@@ -120,9 +120,9 @@ protected:
     const typename Gt::Compute_squared_area_3 area =
         Gt().compute_squared_area_3_object();
 
-    const Point_3& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Point_3& p2 = f.first->vertex((f.second+2)&3)->point();
-    const Point_3& p3 = f.first->vertex((f.second+3)&3)->point();
+    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
+    const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
+    const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
 
     const FT triangle_area = area(triangle(p1,p2,p3));
     const FT d12 = distance(p1,p2);
@@ -194,19 +194,19 @@ protected:
     CGAL_assertion(f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits Gt;
-    typedef typename Tr::Point Point_3;
+    typedef typename Tr::Geom_traits    Gt;
+    typedef typename Tr::Weighted_point Weighted_point;
 
     typename Gt::Compute_squared_distance_3 distance =
         Gt().compute_squared_distance_3_object();
     typename Gt::Construct_weighted_circumcenter_3 circumcenter =
         Gt().construct_weighted_circumcenter_3_object();
 
-    const Point_3& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Point_3& p2 = f.first->vertex((f.second+2)&3)->point();
-    const Point_3& p3 = f.first->vertex((f.second+3)&3)->point();
+    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
+    const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
+    const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
 
-    const Point_3 c = circumcenter(p1,p2,p3);
+    const Weighted_point c = circumcenter(p1,p2,p3);
 
     const FT sq_dist = distance(c, f.first->get_facet_surface_center(f.second));
 
@@ -265,20 +265,20 @@ protected:
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
 
-    typedef typename Tr::Geom_traits Gt;
-    typedef typename Tr::Point Point_3;
+    typedef typename Tr::Geom_traits    Gt;
+    typedef typename Tr::Weighted_point Weighted_point;
 
     typename Gt::Compute_squared_distance_3 distance =
         Gt().compute_squared_distance_3_object();
     typename Gt::Construct_weighted_circumcenter_3 circumcenter =
         Gt().construct_weighted_circumcenter_3_object();
 
-    const Point_3& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Point_3& p2 = f.first->vertex((f.second+2)&3)->point();
-    const Point_3& p3 = f.first->vertex((f.second+3)&3)->point();
+    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
+    const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
+    const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
 
-    const Point_3 c = circumcenter(p1,p2,p3);
-    const Point_3& ball_center = f.first->get_facet_surface_center(f.second);
+    const Weighted_point c = circumcenter(p1,p2,p3);
+    const Weighted_point& ball_center = f.first->get_facet_surface_center(f.second);
 
     const FT sq_dist = distance(c, ball_center);
 
@@ -349,14 +349,14 @@ protected:
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     
-    typedef typename Tr::Geom_traits Gt;
-    typedef typename Tr::Point Point_3;
+    typedef typename Tr::Geom_traits    Gt;
+    typedef typename Tr::Weighted_point Weighted_point;
     
     typename Gt::Compute_squared_distance_3 distance =
       Gt().compute_squared_distance_3_object();
     
-    const Point_3& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Point_3& ball_center = f.first->get_facet_surface_center(f.second);
+    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
+    const Weighted_point& ball_center = f.first->get_facet_surface_center(f.second);
     const Index& index = f.first->get_facet_surface_center_index(f.second);
     
     const FT sq_radius = distance(p1,ball_center);
@@ -419,13 +419,13 @@ protected:
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits Gt;
-    typedef typename Tr::Point Point_3;
+    typedef typename Tr::Geom_traits    Gt;
+    typedef typename Tr::Weighted_point Weighted_point;
 
     typename Gt::Compute_squared_distance_3 distance =
         Gt().compute_squared_distance_3_object();
 
-    const Point_3& p1 = f.first->vertex((f.second+1)&3)->point();
+    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
 
     const FT sq_radius = distance(
         p1, f.first->get_facet_surface_center(f.second));
@@ -654,8 +654,9 @@ public:
     , angle_ratio_(0.5*0.5*4.)
     , size_ratio_(0.4*0.4*4.)
   {
-    typedef typename Tr::Point        Point_3;
-    typedef typename Tr::Cell_handle  Cell_handle;
+    typedef typename Tr::Geom_traits    Gt;
+    typedef typename Tr::Weighted_point Weighted_point;
+    typedef typename Tr::Cell_handle    Cell_handle;
     
     typename Gt::Compare_weighted_squared_radius_3 compare =
       Gt().compare_weighted_squared_radius_3_object();
@@ -690,9 +691,9 @@ public:
       ++wp_nb_;
     }
     
-    const Point_3& p1 = c->vertex(k1)->point();
-    const Point_3& p2 = c->vertex(k2)->point();
-    const Point_3& p3 = c->vertex(k3)->point();
+    const Weighted_point& p1 = c->vertex(k1)->point();
+    const Weighted_point& p2 = c->vertex(k2)->point();
+    const Weighted_point& p3 = c->vertex(k3)->point();
     
     // Compute ratio
     switch ( wp_nb_ )

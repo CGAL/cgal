@@ -77,8 +77,8 @@ protected:
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
   typedef std::vector<cpp11::tuple<
-    typename Tr::Vertex_handle, typename Tr::Point, FT> >   Moves_vector;
-  typedef unsigned int                                      Nb_frozen_points_type ;
+    typename Tr::Vertex_handle, typename Tr::Weighted_point, FT> > Moves_vector;
+  typedef unsigned int                                             Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &, int)
     : big_moves_size_(0) {}
@@ -121,7 +121,7 @@ protected:
   typedef typename Gt::FT                                   FT;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
   typedef tbb::concurrent_vector<cpp11::tuple<
-    typename Tr::Vertex_handle, typename Tr::Point, FT> >   Moves_vector;
+    typename Tr::Vertex_handle, typename Tr::Weighted_point, FT> >   Moves_vector;
   typedef tbb::atomic<unsigned int>                         Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
@@ -224,8 +224,8 @@ class Mesh_global_optimizer
   typedef typename C3T3::Triangulation  Tr;
   typedef typename Tr::Geom_traits      Gt;
 
-  typedef typename Gt::Point_3          Point_3;
-  typedef typename Gt::Weighted_point_3          Weighted_point_3;
+  typedef typename Tr::Bare_point       Bare_point;
+  typedef typename Tr::Weighted_point   Weighted_point;
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Edge             Edge;
@@ -356,7 +356,7 @@ private:
 
       if ( CGAL::NULL_VECTOR != move )
       {
-        Point_3 new_position = translate(wp2p(oldv->point()),move);
+        Bare_point new_position = translate(wp2p(oldv->point()),move);
         FT size = (Sizing_field::is_vertex_update_needed ?
           sizing_field_(new_position, oldv) : 0);
         moves.push_back(cpp11::make_tuple(oldv,new_position,size));
@@ -482,7 +482,7 @@ private:
       typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
       if ( CGAL::NULL_VECTOR != move )
       {
-        Point_3 new_position = m_translate(wp2p(oldv->point()), move);
+        Bare_point new_position = m_translate(wp2p(oldv->point()), move);
         FT size = (MGO::Sizing_field::is_vertex_update_needed ?
           m_sizing_field(new_position, oldv) : 0);
         // typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
@@ -547,8 +547,8 @@ private:
     Moving_vertices_set_                 & m_moving_vertices;
     Outdated_cell_set_                   & m_outdated_cells;
   
-    typedef typename Tr_::Geom_traits::Point_3 Point_3;
-    typedef typename Tr_::Vertex_handle        Vertex_handle;
+    typedef typename Tr_::Bare_point    Bare_point;
+    typedef typename Tr_::Vertex_handle Vertex_handle;
 
   public:
     // Constructor
@@ -574,7 +574,7 @@ private:
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
         const Vertex_handle& v = cpp11::get<0>(m_moves[i]);
-        const Point_3& new_position = wp2p(cpp11::get<1>(m_moves[i]));
+        const Bare_point& new_position = wp2p(cpp11::get<1>(m_moves[i]));
         // Get size at new position
         if ( MGO::Sizing_field::is_vertex_update_needed )
         {
@@ -874,7 +874,7 @@ compute_move(const Vertex_handle& v)
   // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
   {
-    Point_3 new_position = translate(wp2p(v->point()),move);
+    Bare_point new_position = translate(wp2p(v->point()),move);
     move = vector(wp2p(v->point()), helper_.project_on_surface(wp2p(new_position),v));
   }
 
@@ -937,7 +937,7 @@ update_mesh(const Moves_vector& moves,
       typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
 
       const Vertex_handle& v = cpp11::get<0>(*it);
-      const Point_3& new_position = wp2p(cpp11::get<1>(*it));
+      const Bare_point& new_position = wp2p(cpp11::get<1>(*it));
       // Get size at new position
       if ( Sizing_field::is_vertex_update_needed )
       {
@@ -1002,14 +1002,14 @@ void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 fill_sizing_field()
 {
-  std::map<Weighted_point_3,FT> value_map;
+  std::map<Weighted_point,FT> value_map;
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     typedef tbb::enumerable_thread_specific<
-      std::vector< std::pair<Point_3, FT> > > Local_list;
+      std::vector< std::pair<Bare_point, FT> > > Local_list;
     Local_list local_lists;
 
     tbb::parallel_do(
@@ -1160,7 +1160,7 @@ sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
   typename Gt::Compute_squared_distance_3 sq_distance =
     Gt().compute_squared_distance_3_object();
 
-  const Point_3 circumcenter = tr_.dual(cell);
+  const Bare_point circumcenter = tr_.dual(cell);
   return ( sq_distance(v->point(), circumcenter) );
 }
 
