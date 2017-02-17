@@ -116,6 +116,7 @@ def main():
     parser.add_argument('--publish', metavar='/path/to/publish', help='Specify this argument if the results should be published.')
     parser.add_argument('--doc-log-dir', default='.', metavar='/path/to/cgal/build/dir/doc_log', help='The path of the documentation logs.')
     parser.add_argument('--output-dir', default='.', metavar='/path/to/cgal/build/dir/doc_output', help='The path to the build documentation')
+    parser.add_argument('--diff', metavar='/path/to/diff', help='The path to the diff file.')
     parser.add_argument('--cgal-version', help='Path to a version.h file from the current release. If not specified use git hash instead.')
     parser.add_argument('--version-to-keep', help='indicates the number of release testsuites that should be kept at the publishing location.')
     parser.add_argument('--do-copy-results', action="store_true", help='Specify this argument if you want to copy the generated documentation into the publishing location.')
@@ -135,7 +136,14 @@ def main():
     title=d('#maintitle')
     title.text(title.text() + ' for ' + version_string)
     write_out_html(d, './index.html')
-    
+
+    # does the diff exist ?
+    diff='n/a'
+    if args.diff:
+        diff_file=args.diff
+        if not os.path.isfile(diff_file):
+            sys.stderr.write('Diff file ' + diff_file + ' is not a file. Cannot diff.\n')
+            sys.exit(1)    
     if args.publish:
         if args.publish.endswith('/'):
             publish_dir=args.publish
@@ -156,6 +164,13 @@ def main():
             with open(publish_dir + 'index.html') as f: pass
         except IOError as e:
             print('No index.html in the publish directory found. Writing a skeleton.')
+            shutil.copyfile(diff_file, publish_dir+'diff.txt')
+            with open(diff_file, 'r') as myfile:
+                diff=myfile.read()
+            if not diff:
+                diff='none'
+            else:
+                diff='<a href=\"diff.txt\">See diff. </a>'
             with open(publish_dir + 'index.html', 'w') as f:
                 f.write('''<!DOCTYPE html>
 <style type="text/css">
@@ -167,12 +182,12 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th></tr></table></body></html>''')
+<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff</th></tr></table></body></html>''')
 
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
-        new_row='<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td></tr>'.format(
-            revision=version_string, date=version_date, warnings=sum[0], errors=sum[1])
+        new_row='<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td><td>{diffs}</td></tr>'.format(
+            revision=version_string, date=version_date, warnings=sum[0], errors=sum[1], diffs=diff)
         revs.eq(0).after(new_row)
         if args.version_to_keep:
           nb_items=len(revs)
