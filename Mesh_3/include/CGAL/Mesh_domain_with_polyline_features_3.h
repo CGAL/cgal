@@ -99,6 +99,16 @@ public:
     return start_point() == end_point();
   }
 
+  /// Returns the angle at the first point.
+  /// \pre The polyline must be a cycle.
+  Angle angle_at_first_point() const {
+    CGAL_precondition(is_cycle());
+    const Point_3& first = points_.front();
+    const Point_3& next = points_[1];
+    const Point_3& prev = points_[points_.size() - 2];
+    return angle(prev, first, next);
+  }
+
   /// Returns the length of the polyline
   FT length() const
   {
@@ -576,7 +586,11 @@ public:
 
   template <typename IndicesOutputIterator>
   IndicesOutputIterator
-  get_corner_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
+  get_corner_incidences(Corner_index id, IndicesOutputIterator out) const;
+
+  template <typename IndicesOutputIterator>
+  IndicesOutputIterator
+  get_corner_incident_curves(Corner_index id, IndicesOutputIterator out) const;
 
   typedef std::set<Surface_patch_index> Surface_patch_index_set;
 
@@ -862,6 +876,19 @@ get_corner_incidences(Corner_index id,
   return std::copy(incidences.begin(), incidences.end(), indices_out);
 }
 
+template <class MD_>
+template <typename IndicesOutputIterator>
+IndicesOutputIterator
+Mesh_domain_with_polyline_features_3<MD_>::
+get_corner_incident_curves(Corner_index id,
+                           IndicesOutputIterator indices_out) const
+{
+  typename Corners_tmp_incidences::const_iterator it =
+    corners_tmp_incidences_.find(id);
+  const std::set<Curve_segment_index>& incidences = it->second;
+  return std::copy(incidences.begin(), incidences.end(), indices_out);
+}
+
 namespace internal { namespace Mesh_3 {
 
 template <typename MDwPF_, bool curve_id_is_streamable>
@@ -960,14 +987,20 @@ compute_corners_incidences()
       corner_tmp_incidences = corners_tmp_incidences_[id];
 
     // If the corner is incident to only one curve, and that curve is a
-    // cycle, then remove the corner from the set.
+    // cycle, then remove the corner from the set, only if the angle is not
+    // acute. If the angle is acute, the corner must remain as a corner,
+    // to deal correctly with the angle.
     if(corner_tmp_incidences.size() == 1 &&
        is_cycle(Point_3(), *corner_tmp_incidences.begin()))
     {
-      typename Corners::iterator to_erase = cit;
-      ++cit;
-      corners_.erase(to_erase);
-      continue;
+      const Curve_segment_index curve_id = *corner_tmp_incidences.begin();
+      const Polyline& polyline = edges_[curve_id];
+      if(polyline.angle_at_first_point() == OBTUSE) {
+        typename Corners::iterator to_erase = cit;
+        ++cit;
+        corners_.erase(to_erase);
+        continue;
+      }
     }
 
     Surface_patch_index_set& incidences = corners_incidences_[id];
