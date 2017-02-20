@@ -164,12 +164,6 @@ def main():
             with open(publish_dir + 'index.html') as f: pass
         except IOError as e:
             print('No index.html in the publish directory found. Writing a skeleton.')               
-            with open(diff_file, 'r') as myfile:
-              diff=myfile.read()
-            if not diff:
-              diff='none'
-            else:
-              diff='<a href=\"{log_path}/diff.txt\">See diff. </a>'.format(log_path=version_string)
             with open(publish_dir + 'index.html', 'w') as f:
                 f.write('''<!DOCTYPE html>
 <style type="text/css">
@@ -181,8 +175,14 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff</th></tr></table></body></html>''')
+<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th></tr></table></body></html>''')
 
+        with open(diff_file, 'r') as myfile:
+          diff=myfile.read()
+        if not diff:
+          diff='none'
+        else:
+          diff='<a href="{log_path}/diff.txt">Diff</a>'.format(log_path=version_string)
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
         new_row='<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td><td>{diffs}</td></tr>'.format(
