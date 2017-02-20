@@ -38,32 +38,3 @@ fi
 
 #diff the output and the reference output, ignoring the differences in whitespaces
 diff -u -N -w ./doc_data $DOC_REF > ./diff.txt
-
-#generate an html page showing the status of the diff
-CGAL_VERSION=$3
-DATE=`date +%Y-%m-%d`
-echo "<!DOCTYPE html>" > result.html
-echo "<html>" >> result.html
-echo "    <head>" >> result.html
-echo "        <meta charset=\"utf-8\" />" >> result.html
-echo "        <title>Documentation Status</title>" >> result.html
-echo "    </head>" >> result.html
-echo "    <body style=\"background-color: #C0C0D0;\"> " >> result.html
-echo "    <h1 id=\"maintitle\">Documentation Status of $CGAL_VERSION on $DATE</h1> " >> result.html
-echo "    <p> Difference between Doxygen $4 and Doxygen $5:  " >> result.html
-    
-#if there is a diff, give a link to show it
-if [[ -s ./diff.txt ]]
-then
-  echo "<p> There are differences :  <a href=\"diff.txt\">See logs. </a> <br /> " >> result.html
-#else just say that everything is fine
-else
-  echo "<p> There is no difference. <br /><br /> " >> result.html
-fi
-if [ "${FAILURES[0]}" != "" ]; then
-  echo " Some packages encountered problems while being parsed : <br /><br /> " >> result.html
-  echo " ${FAILURE[*]} <br /> ">> result.html
-fi
-echo "    </p>" >> result.html
-echo "    </body>" >> result.html
-echo "</html>" >> result.html
