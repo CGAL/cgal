@@ -1391,6 +1391,8 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     else
         read(is, m, io_Read_write());
 
+	full_cells_.clear();
+
     std::vector<Full_cell_handle> full_cells;
     full_cells.reserve(m);
     // read the vertices of each full_cell
@@ -1406,6 +1408,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
             else
                 read(is, index);
             s->set_vertex(j, vertices[index]);
+			vertices[index]->set_full_cell(s);
         }
         // read other non-combinatorial information for the full_cells
         is >> (*s);
