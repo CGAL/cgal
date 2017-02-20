@@ -158,19 +158,18 @@ def main():
             sys.stderr.write('Logs for this revision have already been publish under: ' 
                              + publish_dir + 'log' + version_string + ' Cannot publish.\n')
             sys.exit(1)
-
+        log_target=publish_dir + version_string
         # does the index file exist? if not write out a skeleton
         try:
             with open(publish_dir + 'index.html') as f: pass
         except IOError as e:
-            print('No index.html in the publish directory found. Writing a skeleton.')
-            shutil.copyfile(diff_file, publish_dir+'diff.txt')
+            print('No index.html in the publish directory found. Writing a skeleton.')               
             with open(diff_file, 'r') as myfile:
-                diff=myfile.read()
+              diff=myfile.read()
             if not diff:
-                diff='none'
+              diff='none'
             else:
-                diff='<a href=\"diff.txt\">See diff. </a>'
+              diff='<a href=\"{log_path}/diff.txt\">See diff. </a>'.format(log_path=version_string)
             with open(publish_dir + 'index.html', 'w') as f:
                 f.write('''<!DOCTYPE html>
 <style type="text/css">
@@ -199,10 +198,11 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
                 sys.stderr.write("Warning: the directory " + publish_dir + dir_to_remove + " does not exist or is not writable!\n")
             revs.eq(k).remove()
         write_out_html(d, publish_dir + 'index.html')
-        log_target=publish_dir + version_string
         try:
           #copy log files
           shutil.copytree('.', log_target)
+          #copy diff
+          shutil.copyfile(diff_file, log_target+'/diff.txt')
           try:
             #copy documentation
             if args.do_copy_results:

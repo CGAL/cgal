@@ -37,20 +37,20 @@ cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
 make -j7 doc  &> /dev/null
 make -j7 doc  &> /dev/null
-cd ../
+cd ../ #scripts
 bash compare_testsuites.sh $PWD/build_doc/doc_output
 mv ./doc_data ./doc_ref
 
 #download and build doxygen_master
 if [ $IS_ARG2 == 0 ] || [ $(basename $PATH_TO_2) != "doxygen" ] || [ ! -e $PATH_TO_2 ]; then
-  echo "No path to doxygen master were detected. Cloning..."
+  echo "No second path detected. Cloning Doxygen master branch..."
   git clone https://github.com/doxygen/doxygen.git doxygen_master  &> /dev/null
   cd doxygen_master
   mkdir build
   cd build
   cmake ..  &> /dev/null
   make -j7 &> /dev/null
-  cd ../..
+  cd ../.. #scripts
   PATH_TO_2="$PWD/doxygen_master/build/bin/doxygen"
   echo "done."
 fi
@@ -60,7 +60,7 @@ mkdir build_doc
 cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  &> /dev/null
 make -j7 doc  &> /dev/null
-cd ../
+cd ../ #scripts
 DOXYGEN_1=$($PATH_TO_1 --version)
 DOXYGEN_2=$($PATH_TO_2 --version)
 bash ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref $CGAL_VERSION $DOXYGEN_1 $DOXYGEN_2
