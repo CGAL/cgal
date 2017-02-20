@@ -94,6 +94,7 @@ struct Scene_surface_mesh_item_priv{
   mutable std::vector<cgal_gl_data> flat_normals;
   mutable std::vector<cgal_gl_data> f_colors;
   mutable std::vector<cgal_gl_data> v_colors;
+  mutable std::size_t nb_flat;
   mutable QOpenGLShaderProgram *program;
   Scene_surface_mesh_item *item;
 
@@ -418,6 +419,21 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   program->setAttributeBuffer("vertex",CGAL_GL_DATA,0,3);
   item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].release();
   program->release();
+
+  nb_flat = flat_vertices.size();
+  smooth_vertices.resize(0);
+  smooth_normals .resize(0);
+  flat_vertices  .resize(0);
+  flat_normals   .resize(0);
+  f_colors       .resize(0);
+  v_colors       .resize(0);
+  smooth_vertices.shrink_to_fit();
+  smooth_normals .shrink_to_fit();
+  flat_vertices  .shrink_to_fit();
+  flat_normals   .shrink_to_fit();
+  f_colors       .shrink_to_fit();
+  v_colors       .shrink_to_fit();
+
   item->are_buffers_filled = true;
 }
 
@@ -456,7 +472,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       d->program->setAttributeValue("is_selected", false);
     if(!d->has_fcolors)
       d->program->setAttributeValue("colors", this->color());
-    glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(d->flat_vertices.size()/3));
+    glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(d->nb_flat/3));
     vaos[Scene_surface_mesh_item_priv::Flat_facets]->release();
   }
 
