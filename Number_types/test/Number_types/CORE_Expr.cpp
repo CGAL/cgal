@@ -5,6 +5,7 @@
 #include <list>
 #include <cstdlib>
 #include <CGAL/CORE_Expr.h>
+#include <CGAL/Gmpq.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 
@@ -36,9 +37,44 @@ void test_istream()
   std::cout << "test istream OK\n";
 }
 
+template <class FT>
+void test_MSB_bug()
+{
+  FT px1(4.7320508075688767), py1(4.0000000000000000), pz1(1.9999999999999969);
+  FT qx1(4.7320508075688767), qy1(4.0000000000000009), qz1(1.9999999999999880);
+  FT rx1(5.1624261825907327), ry1(4.0000000000000000), rz1(2.0000000000000009);
+
+  FT px2(4.7320508075688767), py2(4.0000000000000000), pz2(2.0000000000000044);
+  FT qx2(4.2679491924311224), qy2(4.2679491924311233), qz2(2.0000000000000013);
+  FT rx2(4.7320508075688767), ry2(4.0000000000000009), rz2(1.9999999999999880);
+
+  FT rqy1 = qy1-ry1; // this operation will trigger a -infinity lMSB()
+  FT rpx1 = px1-rx1;
+  FT rpy1 = py1-ry1;
+  FT rpz1 = pz1-rz1;
+  FT rqx1 = qx1-rx1;
+  FT rqz1 = qz1-rz1;
+
+  FT b1 = rpz1*rqx1 - rqz1*rpx1;
+  FT c1 = rpx1*rqy1 - rqx1*rpy1;
+
+  FT rpx2 = px2-rx2;
+  FT rpy2 = py2-ry2; // this operation will trigger a -infinity lMSB()
+  FT rpz2 = pz2-rz2;
+  FT rqx2 = qx2-rx2;
+  FT rqy2 = qy2-ry2;
+  FT rqz2 = qz2-rz2;
+  FT b2 = rpz2*rqx2 - rqz2*rpx2;
+  FT c2 = rpx2*rqy2 - rqx2*rpy2;
+  FT res = b1*c2-c1*b2;
+
+  assert(res != 0);
+}
 
 int main() {
     test_istream();
+    test_MSB_bug<CGAL::Gmpq>();
+    test_MSB_bug<CORE::Expr>();
   
     typedef CORE::Expr NT;
     typedef CGAL::Field_with_root_of_tag Tag;
