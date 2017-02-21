@@ -32,6 +32,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
 
+#include <boost/array.hpp>
 #include <boost/foreach.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
