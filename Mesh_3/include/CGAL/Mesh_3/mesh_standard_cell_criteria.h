@@ -505,8 +505,7 @@ public:
     Base::do_visit(criterion);
   }
 
-  template <typename C3t3>
-  void visit(const No_bridge_cell_criterion<C3t3, Self>& criterion)
+  void visit(const Criterion& criterion)
   {
     Base::do_visit(criterion);
   }
