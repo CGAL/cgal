@@ -1140,7 +1140,14 @@ void AddSubRep<Operator>::computeExactFlags() {
 	std::cout << "Starting iteration at i = " << i << std::endl;
 #endif
 
-        for ( ; i<ua; i*=EXTLONG_TWO) {
+        bool current_precision_lower_than_bound = true;
+        for ( ; current_precision_lower_than_bound; i*=EXTLONG_TWO) {
+          // since at the previous loop i was lower than ua, we need
+          // another loop so that the precision bound is exceeded
+          if ( i>=ua ){
+            current_precision_lower_than_bound = false;
+            i = ua; // do not compute more than needed
+          }
           // relative bits = i
 	  //
 	  // PROBLEM WITH NEXT LINE: you must ensure that
