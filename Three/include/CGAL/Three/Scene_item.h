@@ -81,6 +81,7 @@ public:
   PROGRAM_CUTPLANE_SPHERES,    /** Used to render the spheres of an item with a cut plane.*/
   PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
   PROGRAM_C3T3_TETS,           /** Used to render the tetrahedra of the intersection of a c3t3_item.*/
+  PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
   NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
  };
   typedef CGAL::Bbox_3 Bbox;

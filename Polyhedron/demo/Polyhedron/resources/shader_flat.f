@@ -1,22 +1,25 @@
 #version 120
 varying highp vec4 color;
-varying highp vec4 fP; 
-varying highp vec3 fN;
-uniform highp vec4 light_pos;  
-uniform highp vec4 light_diff; 
-uniform highp vec4 light_spec; 
+varying highp vec4 fP;
+uniform highp vec4 light_pos;
+uniform highp vec4 light_diff;
+uniform highp vec4 light_spec;
 uniform highp vec4 light_amb;
-uniform highp float spec_power ; 
-uniform int is_two_side; 
+uniform highp float spec_power ;
+uniform int is_two_side;
 uniform bool is_selected;
 void main(void) {
    highp vec3 L = light_pos.xyz - fP.xyz;
    highp vec3 V = -fP.xyz;
    highp vec3 N;
-   if(fN == highp vec3(0.0,0.0,0.0))
+   vec3 X = dFdx(fP.xyz);
+   vec3 Y = dFdy(fP.xyz);
+   vec3 normal=normalize(cross(X,Y));
+
+   if(normal == highp vec3(0.0,0.0,0.0))
        N = highp vec3(0.0,0.0,0.0);
    else
-       N = normalize(fN);
+       N = normalize(normal);
    L = normalize(L);
    V = normalize(V);
    highp vec3 R = reflect(-L, N);

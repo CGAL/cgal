@@ -69,6 +69,10 @@ public:
   void attribBuffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
+  //!Declares a program names `name`, using `v_shader` as vertex shader and `f_shader` as fragment shader.
+  QOpenGLShaderProgram* declare_program(int name,
+                                        const char* v_shader,
+                                        const char* f_shader)const;
   QPainter* getPainter();
   void saveSnapshot(bool , bool overwrite = false);
   void setOffset(qglviewer::Vec offset);
