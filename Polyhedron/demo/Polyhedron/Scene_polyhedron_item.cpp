@@ -414,18 +414,14 @@ void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
     push_back_xyz(p1+offset, positions_facets);
     push_back_xyz(p2+offset, positions_facets);
 
+    idx_faces.push_back(he_end->vertex()->id());
+    idx_faces.push_back(he->vertex()->id());
+    idx_faces.push_back(next(he, *poly)->vertex()->id());
+
     push_back_xyz(normal, normals_flat);
     push_back_xyz(normal, normals_flat);
     push_back_xyz(normal, normals_flat);
 
-//    Traits::Vector_3 ng = get(vnmap, he_end->vertex());
-//    push_back_xyz(ng, normals_gouraud);
-
-//    ng = get(vnmap, he->vertex());
-//    push_back_xyz(ng, normals_gouraud);
-
-//    ng = get(vnmap, next(he, *poly)->vertex());
-//    push_back_xyz(ng, normals_gouraud);
   }
 
 
@@ -455,7 +451,6 @@ Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
   const int this_patch_id = fit->patch_id();
-
   for(FT::CDT::Finite_faces_iterator
       ffit = triangulation.cdt->finite_faces_begin(),
       end = triangulation.cdt->finite_faces_end();
@@ -475,23 +470,17 @@ Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
      continue;
 
     push_back_xyz(ffit->vertex(0)->point()+offset, positions_facets);
-
     push_back_xyz(ffit->vertex(1)->point()+offset, positions_facets);
-
     push_back_xyz(ffit->vertex(2)->point()+offset, positions_facets);
 
+    idx_faces.push_back(triangulation.v2v[ffit->vertex(0)]->id());
+    idx_faces.push_back(triangulation.v2v[ffit->vertex(1)]->id());
+    idx_faces.push_back(triangulation.v2v[ffit->vertex(2)]->id());
+
     push_back_xyz(normal, normals_flat);
     push_back_xyz(normal, normals_flat);
     push_back_xyz(normal, normals_flat);
 
-//    Traits::Vector_3 ng = get(vnmap, triangulation.v2v[ffit->vertex(0)]);
-//    push_back_xyz(ng, normals_gouraud);
-
-//    ng = get(vnmap, triangulation.v2v[ffit->vertex(1)]);
-//    push_back_xyz(ng, normals_gouraud);
-
-//    ng = get(vnmap, triangulation.v2v[ffit->vertex(2)]);
-//    push_back_xyz(ng, normals_gouraud);
   }
 }
 
@@ -687,10 +676,6 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
             // If Flat shading:1 normal per polygon added once per vertex
             push_back_xyz(nf, normals_flat);
 
-            //// If Gouraud shading: 1 normal per vertex
-//            Vector nv = get(nv_pmap, he->vertex());
-//            push_back_xyz(nv, normals_gouraud);
-
             //position
             const Point& p = he->vertex()->point();
             push_back_xyz(p+offset, positions_facets);
@@ -718,23 +703,17 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         Point p2 = f->halfedge()->next()->next()->vertex()->point();
 
         push_back_xyz(p0+offset, positions_facets);
-
         push_back_xyz(p1+offset, positions_facets);
-
         push_back_xyz(p2+offset, positions_facets);
 
+        idx_faces.push_back(f->halfedge()->vertex()->id());
+        idx_faces.push_back(f->halfedge()->next()->vertex()->id());
+        idx_faces.push_back(f->halfedge()->next()->next()->vertex()->id());
+
+
         push_back_xyz(nf, normals_flat);
         push_back_xyz(nf, normals_flat);
         push_back_xyz(nf, normals_flat);
-
-//        Vector nv = get(nv_pmap, f->halfedge()->vertex());
-//        push_back_xyz(nv, normals_gouraud);
-
-//        nv = get(nv_pmap, f->halfedge()->next()->vertex());
-//        push_back_xyz(nv, normals_gouraud);
-
-//        nv = get(nv_pmap, f->halfedge()->next()->next()->vertex());
-//        push_back_xyz(nv, normals_gouraud);
 
         //2nd half-quad
         p0 = f->halfedge()->next()->next()->vertex()->point();
@@ -742,23 +721,17 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         p2 = f->halfedge()->vertex()->point();
 
         push_back_xyz(p0+offset, positions_facets);
-
         push_back_xyz(p1+offset, positions_facets);
-
         push_back_xyz(p2+offset, positions_facets);
 
+        idx_faces.push_back(f->halfedge()->next()->next()->vertex()->id());
+        idx_faces.push_back(f->halfedge()->prev()->vertex()->id());
+        idx_faces.push_back(f->halfedge()->vertex()->id());
+
         push_back_xyz(nf, normals_flat);
         push_back_xyz(nf, normals_flat);
         push_back_xyz(nf, normals_flat);
 
-//        nv = get(nv_pmap, f->halfedge()->next()->next()->vertex());
-//        push_back_xyz(nv, normals_gouraud);
-
-//        nv = get(nv_pmap, f->halfedge()->prev()->vertex());
-//        push_back_xyz(nv, normals_gouraud);
-
-//        nv = get(nv_pmap, f->halfedge()->vertex());
-//        push_back_xyz(nv, normals_gouraud);
       }
       else
       {
