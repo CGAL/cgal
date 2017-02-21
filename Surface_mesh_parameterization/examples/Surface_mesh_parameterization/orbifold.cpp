@@ -53,7 +53,7 @@ int main(int argc, char * argv[])
   CGAL::Timer task_timer;
   task_timer.start();
 
-  const char* mesh_filename = (argc>1) ? argv[1] : "../data/bear.off";
+  const char* mesh_filename = (argc>1) ? argv[1] : "data/bear.off";
   std::ifstream in_mesh(mesh_filename);
   if(!in_mesh) {
     std::cerr << "Error: problem loading the input data" << std::endl;
@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
   // -- the first line for the cones indices
   // -- the second line must be empty
   // -- the third line optionally provides the seam edges indices as 'e11 e12 e21 e22 e31 e32' etc.
-  const char* cone_filename = (argc>2) ? argv[2] : "../data/bear.selection.txt";
+  const char* cone_filename = (argc>2) ? argv[2] : "data/bear.selection.txt";
 
   // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
   typedef std::vector<SM_vertex_descriptor>       Cones_in_smesh_container;
