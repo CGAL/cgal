@@ -37,12 +37,11 @@
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Timer.h>
 
-#include <Eigen/Sparse>
-#include <Eigen/SparseLU>
 #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
-#include <Eigen/SPQRSupport>
 #include <Eigen/UmfPackSupport>
 #endif
+#include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 
 #include <boost/array.hpp>
 #include <boost/foreach.hpp>

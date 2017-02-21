@@ -42,6 +42,8 @@ if ( CGAL_FOUND )
 
     if(SuiteSparse_FOUND)
       message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+      message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
+      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
       add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
     else(SuiteSparse_FOUND)
       message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library.")
