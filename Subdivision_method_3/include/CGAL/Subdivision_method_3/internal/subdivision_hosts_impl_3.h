@@ -428,9 +428,17 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_true) {
   p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
   // Correspondence between halfedges of the original mesh and some of the
-  // halfedges in the subdivided mesh.
-  // Since we have halfedge_index_t, we can simply use a vector!
+  // halfedges in the subdivided mesh. Since we have halfedge_index_t,
+  // we can simply use a vector!
+  // Note: need to make sure the halfedge index map is initialized
+  // @fixme this overwrites previous initilizations...
+  helpers::init_halfedge_indices(const_cast<Poly&>(moved_p),
+                                  get(boost::halfedge_index, moved_p));
   std::vector<halfedge_descriptor> old_to_new(2 * num_e);
+  Property_map_binder<typename boost::property_map<Poly, boost::halfedge_index_t>::type,
+                      typename Pointer_property_map<halfedge_descriptor>::type>
+  hmap = bind_property_maps(get(boost::halfedge_index, moved_p),
+                            make_property_map(old_to_new));
 
   // Build new n-faces
   BOOST_FOREACH(face_descriptor fd, faces(moved_p)) {
@@ -469,7 +477,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_true) {
     hd = halfedge(fd, moved_p);
     done = nf_hd;
     do {
-      old_to_new[hd] = nf_hd;
+      put(hmap, hd, nf_hd);
       hd = next(hd, moved_p);
       nf_hd = next(nf_hd, p);
     } while (nf_hd != done);
@@ -487,8 +495,8 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_true) {
     if(hd > hd_opp)
       continue;
 
-    halfedge_descriptor new_hd = opposite(old_to_new[hd], p);
-    halfedge_descriptor new_hd_opp = opposite(old_to_new[hd_opp], p);
+    halfedge_descriptor new_hd = opposite(get(hmap, hd), p);
+    halfedge_descriptor new_hd_opp = opposite(get(hmap, hd_opp), p);
 
     boost::array<vertex_descriptor, 4> v = {{source(new_hd, p),
                                              target(new_hd, p),
@@ -504,7 +512,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_true) {
       continue;
 
     halfedge_descriptor hd = halfedge(vd, moved_p);
-    halfedge_descriptor new_hd = opposite(old_to_new[hd], p);
+    halfedge_descriptor new_hd = opposite(get(hmap, hd), p);
     halfedge_descriptor new_face_hd = opposite(prev(new_hd, p), p), done = new_face_hd;
     std::list<vertex_descriptor> vertices_of_new_faces;
     do {
