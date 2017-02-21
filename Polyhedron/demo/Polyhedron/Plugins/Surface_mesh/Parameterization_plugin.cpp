@@ -510,6 +510,12 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     is_seamed = true;
   }
 
+  if(method == PARAM_OTE &&
+     (sel_item == NULL || sel_item->selected_vertices.empty())) {
+    std::cerr << "No selection or no cones selected; Aborting." << std::endl;
+    return;
+  }
+
   // Two property maps to store the seam edges and vertices
   Seam_edge_uhm seam_edge_uhm(false);
   Seam_edge_pmap seam_edge_pm(seam_edge_uhm);
@@ -760,9 +766,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       // OTE cannot handle multiple connected components right now
       // @todo (need to remove the assertions such as cones.size() == 4
       //        and check where and when cones are used (passed by ID, for ex.?))
-      CGAL_assertion(number_of_components == 1);
-      if(unordered_cones.empty()) {
-        std::cerr << "No cones selected; Aborting." << std::endl;
+      if(number_of_components != 1) {
+        std::cerr << "Orbifold Tutte Embedding can only handle one connected component at the moment" << std::endl;
         return;
       }
 
@@ -783,6 +788,15 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
       SMP::Orbifold_type orb = static_cast<SMP::Orbifold_type>(ui.OrbComboBox->currentIndex());
       std::cout << "selected orbifold type: " << ui.OrbComboBox->currentText().toStdString() << std::endl;
+
+      if((unordered_cones.size() != 3 && unordered_cones.size() != 4) ||
+         (unordered_cones.size() == 3 && orb == SMP::Parallelogram ) ||
+         (unordered_cones.size() == 4 && orb != SMP::Parallelogram)) {
+        std::cerr << "Incompatible orbifold type and number of cones" << std::endl;
+        std::cerr << "Types I, II & III require 3 selected vertices" << std::endl;
+        std::cerr << "Type IV requires 4 selected vertices" << std::endl;
+        return;
+      }
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
