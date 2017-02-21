@@ -1129,6 +1129,10 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 refine_balls()
 {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+  dump_c3t3(c3t3_, "dump-before-refine_balls");
+  dump_c3t3_edges(c3t3_, "dump-before-refine_balls");
+#endif
   Triangulation& tr = c3t3_.triangulation();
   
   // Loop
@@ -1217,6 +1221,10 @@ refine_balls()
       }
     }
     
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+    dump_c3t3(c3t3_, "dump-before-check_and_repopulate_edges");
+    dump_c3t3_edges(c3t3_, "dump-before-check_and_repopulate_edges");
+#endif
     // Check edges
     check_and_repopulate_edges();
   }
@@ -1537,6 +1545,14 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
                 bool /*test_sampling*/,
                 ErasedVeOutIt out) const
 {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+  if(!c3t3_.is_in_complex(start, next)) {
+    std::cerr << "ERROR: the edge ( " << start->point() << " , "
+              << next->point() << " ) is not in complex!\n";
+    dump_c3t3(c3t3_, "dump-bug");
+    dump_c3t3_edges(c3t3_, "dump-bug-c3t3");
+  }
+#endif
   CGAL_precondition( c3t3_.is_in_complex(start, next) );
   
   Vertex_handle previous = start;
