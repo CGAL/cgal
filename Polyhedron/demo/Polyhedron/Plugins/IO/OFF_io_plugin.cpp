@@ -112,6 +112,14 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
                      .arg(item->getNbIsolatedvertices()));
     }
 
+  //if file > 100 MB, assume it is a very big file and disable flat shading to gain memory.
+  if(fileinfo.size() > 100000000)//100 MB
+  {
+    item->set_flat_disabled(true);
+    QMessageBox::warning((QWidget*)NULL,
+                   tr("The file seems to be very big."),
+                   tr("Flat shading has been disabled to gain memory. You can force it in the context menu of the item."));
+  }
   return item;
 }
 
