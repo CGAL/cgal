@@ -23,13 +23,11 @@
 #include <vector>
 #include <map>
 
-#include <CGAL/Square_root_2_field.h>
 #include <CGAL/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_vertex_base_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_face_base_2.h>
 #include <CGAL/Hyperbolic_octagon_word_4.h>
-
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/Circular_kernel_intersections.h>
@@ -39,7 +37,6 @@
 #include <CGAL/result_of.h>
 #include <CGAL/iterator.h>
 #include <boost/bind.hpp>
-
 
 
 namespace CGAL {
@@ -115,9 +112,9 @@ namespace CGAL {
       Dummy_point(FT x, FT y): _pt(x,y), _is_inserted(true) {}
       Dummy_point(Point p):    _pt(p),   _is_inserted(true) {}
 
-      Point operator()()      {  return _pt;          }
-      bool  is_inserted()     {  return _is_inserted; }
-      Vertex_handle vertex()  {  return _vh;          }
+      Point operator()()      const {  return _pt;          }
+      bool  is_inserted()     const {  return _is_inserted; }
+      Vertex_handle vertex()  const {  return _vh;          }
       void  set_inserted(bool val)      { _is_inserted = val; }
       void  set(Point val)              { _pt = val;          }
       void  set_vertex(Vertex_handle v) { _vh = v;            }
@@ -158,6 +155,26 @@ namespace CGAL {
     template < class InputIterator >
     std::ptrdiff_t insert(InputIterator first, 
       InputIterator last);
+
+    Face_handle locate(const Point& p, Locate_type& lt, int& li, const Face_handle fh = Face_handle()) const {
+      Offset lo;
+      return this->hyperbolic_locate(p, lt, li, lo, fh);
+    }
+
+    Face_handle locate(const Point& p, const Face_handle fh = Face_handle()) const {
+      Offset lo;
+      Locate_type lt;
+      int li;
+      return this->hyperbolic_locate(p, lt, li, lo, fh);
+    }
+
+    Face_handle periodic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, const Face_handle fh = Face_handle()) const {
+      return this->hyperbolic_locate(p, lt, li, lo, fh);
+    }
+
+    Point_2 get_dummy_point(int i) const {
+      return dummy_points[i]();
+    }
 
     void remove(Vertex_handle v);
 
@@ -257,14 +274,10 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
   typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
   typedef typename Delaunay::Finite_faces_iterator    Finite_Delaunay_faces_iterator;
 
-  // This is a rational approximation of the limit (1/4 of the squared systole)
-  Circle lc(dummy_points[0](),
-            dummy_points[13](),
-            Offset(1,6,3).apply(dummy_points[13]()));
-  FT lim = hyperbolic_diameter<Gt>(lc)/FT(2);  
-
-  // This is the exact value of the limit (1/4 of the squared systole)
-  //FT lim = FT( pow(acosh(1. + sqrt(2.)),2.)/4. );
+  // This is the exact value of the limit.
+  // The systole is 2*acosh(1+sqrt(2)), and we want half of that.
+  // The max _diameter_ of the hyperbolic circles must be less than this.
+  FT lim( acosh(1. + sqrt(2.)) );
 
   std::vector<Vertex_handle> bdry_verts;
   Face_circulator nbf(tds().incident_faces(v)), done(nbf);
@@ -333,9 +346,9 @@ insert(const Point  &p,  Face_handle start) {
   if (side != CGAL::ON_UNBOUNDED_SIDE) {
       Offset loff;
       if ( start == Face_handle() ) {
-      Locate_type lt;
-      int li, lj;
-      start = this->hyperbolic_locate(p, loff, lt, li, lj, start); //this->euclidean_visibility_locate(p, loff);
+      Locate_type lt = Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::FACE;
+      //start = this->hyperbolic_locate(p, loff, lt, li, lj, start); //this->euclidean_visibility_locate(p, loff);
+      start = this->euclidean_locate(p, loff);
       if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
         return Vertex_handle();
       }
@@ -520,12 +533,15 @@ remove(Vertex_handle v) {
     CGAL_triangulation_assertion(this->is_valid());
 
   } else { // is not removable
-    //cout << "Vertex " << v->idx() << " cannot be removed!" << endl;
+    cout << "   -> vertex cannot be removed!" << endl;
   }
 
 }
 
 
 } // namespace CGAL
+
+
+#include <CGAL/Periodic_4_hyperbolic_triangulation_dummy_14.h>
 
 #endif // CGAL_PERIODIC_4_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H

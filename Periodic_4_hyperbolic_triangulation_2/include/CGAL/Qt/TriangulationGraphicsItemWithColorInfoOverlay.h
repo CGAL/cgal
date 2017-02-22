@@ -175,8 +175,6 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   typedef typename T::Offset  Offset;
   typedef typename T::Point_2 Point;
   typedef typename T::Segment Segment; 
-  typedef typename T::Geom_traits::Line_arc_2 Line_arc_2;
-  typedef typename T::Geom_traits::Circular_arc_2 Circular_arc_2;
   typedef typename T::Edge    Edge;
   vector<Offset> o;
   for (int i = 0; i < 8; i++) {

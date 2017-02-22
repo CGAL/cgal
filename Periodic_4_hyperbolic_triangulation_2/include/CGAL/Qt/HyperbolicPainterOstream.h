@@ -28,55 +28,85 @@ namespace Qt {
   
   template <typename K>
   class PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > : public PainterOstream<K> {
-  public:
-    typedef PainterOstream<K> Base;
-    typedef PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > Self;
-    typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
-    
-    typedef typename Gt::Hyperbolic_segment_2      Hyperbolic_segment_2;    
-    typedef typename K::Point_2     Point_2;
-    
-    typedef Line_arc_2<K>           Line_arc_2;
-    typedef Circular_arc_2<K>       Circular_arc_2;
-    typedef Circular_arc_point_2<K> Circular_arc_point_2;
-    
-  public:
-    PainterOstream(QPainter* p, QRectF rect = QRectF())
-    : Base(p, rect), qp(p), convert(rect) {}
-    
-    using Base::operator <<;
-    
-    PainterOstream& operator << (Hyperbolic_segment_2 s) {
-      if (const Line_arc_2* seg = boost::get<Line_arc_2>(&s)) {
-        operator << (*seg);
-        return *this;
-      }
-      
-      Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
 
-      if (arc->squared_radius() > 10 )
-        // due to rounding, the arc drawn does not look like it 
-        // passes through the endpoints
-        // so we replace the arc by a line segment
-        {
-          Point_2 source(to_double(arc->source().x()),to_double(arc->source().y()));
-          Point_2 target(to_double(arc->target().x()),to_double(arc->target().y()));      
-          const Line_arc_2 seg(source,target);
-          operator << (seg);
-          return *this;
-        }
-          
-      operator << (*arc);
-      return *this;
-    }
-    
+  	typedef PainterOstream<K> 															Base;
+	typedef PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > 	Self;
+	typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> 					Gt;
+	
+	typedef typename Gt::Hyperbolic_segment_2       									Hyperbolic_segment_2;    
+	typedef typename Gt::Circular_arc_2             									Circular_arc_2;
+	typedef typename Gt::Euclidean_segment_2        									Euclidean_segment_2;    
+	typedef typename Gt::Point_2                    									Point_2;
+
+private:  	
+  	PainterOstream& operator<<(const Circular_arc_2& arc) {
+		const typename K::Circle_2 & circ  = arc.circle();
+		const typename K::Point_2 & center = circ.center();
+		const typename K::Point_2 & source = arc.source();
+		const typename K::Point_2 & target = arc.target();
+
+		double asource = std::atan2( -to_double(source.y() - center.y()),
+		   to_double(source.x() - center.x())); 
+		double atarget = std::atan2( -to_double(target.y() - center.y()),
+		   to_double(target.x() - center.x()));
+
+		std::swap(asource, atarget);
+		double aspan = atarget - asource;
+
+		if(aspan < 0.)
+		aspan += 2 * CGAL_PI;
+
+		const double coeff = 180*16/CGAL_PI;
+		qp->drawArc(convert(circ.bbox()), 
+		(int)(asource * coeff), 
+			 (int)(aspan * coeff));
+		return *this;
+	}
+	
+
+	PainterOstream& operator<<(const Euclidean_segment_2& seg) {
+
+		const typename K::Point_2 & source = seg.source();
+		const typename K::Point_2 & target = seg.target();
+
+		QPointF src(to_double(source.x()), to_double(source.y()));
+		QPointF tgt(to_double(target.x()), to_double(target.y()));
+
+		qp->drawLine(src, tgt);
+		return *this;
+	}
+	
+public:
+	PainterOstream(QPainter* p, QRectF rect = QRectF())
+	: Base(p, rect), qp(p), convert(rect) {}
+	
+	using Base::operator <<;
+	
+	PainterOstream& operator << (Hyperbolic_segment_2 s) {
+	  if (const Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&s)) {
+		operator << (*seg);
+		return *this;
+	  }
+	  
+	  Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+
+	  if (arc->squared_radius() > 100) {
+	  	Euclidean_segment_2 seg(arc->source(), arc->target());
+	  	operator << (seg);
+	  	return *this;
+	  }
+
+	  operator << (*arc);
+	  return *this;
+	}
+	
   private:
-    // ToDo: These objects must be deleted
-    // Copies of these objects are in the base class.
-    // We need access to the copies in the base class.
-    QPainter* qp;
-    Converter<K> convert;      
-  };
+	// ToDo: These objects must be deleted
+	// Copies of these objects are in the base class.
+	// We need access to the copies in the base class.
+	QPainter* qp;
+	Converter<K> convert;      
+};
   
 } //namespace Qt
   

@@ -8,25 +8,24 @@
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_dummy_14.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
 
 using namespace CGAL;
 
-typedef CORE::Expr                                              					NT;					
-typedef CGAL::Cartesian<NT>                                     					Kernel;
-typedef Kernel::FT                                                                  FT;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel> 		Traits;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>				Triangulation;
+typedef CORE::Expr                                                                  NT;
+typedef CGAL::Cartesian<NT>                                                         Kernel;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>         Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>                Triangulation;
 typedef Triangulation::Face_handle                                                  Face_handle;
+typedef Triangulation::Vertex_handle                                                Vertex_handle;
 typedef Triangulation::Locate_type                                                  Locate_type;
 typedef Triangulation::Offset                                                       Offset;
 typedef Triangulation::Point                                                        Point;
 
-int ccw(int i) {
-    return (i+1)%3;
-}
 
 std::ostream& operator<<(std::ostream& s, const Locate_type& lt) {
     switch(lt) {
@@ -42,79 +41,36 @@ std::ostream& operator<<(std::ostream& s, const Locate_type& lt) {
 int main(void) {
 
     Triangulation tr;    
-    tr.insert_dummy_points();
+    tr.insert_dummy_points(true);
 
     assert(tr.is_valid());
 
     Locate_type lt;
     int li;
-    Point query(0,0);
+    Face_handle fh;
 
-    Face_handle fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
-    assert(lt == Triangulation::VERTEX);
-
-    FT F0 = FT(0);
-    FT F1 = FT(1);
-    FT F2 = FT(2);
-
-    query = Point(FT( CGAL::sqrt(CGAL::sqrt(F2) - F1)), F0); //  μ(s_0)
-    fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
-    assert(lt == Triangulation::VERTEX);
-
-    query = Point(FT( CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2) ), FT(CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2)) );      //  μ(s_1)
-    fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
-    assert(lt == Triangulation::VERTEX);
-
-    query = Point(F0, FT( CGAL::sqrt(CGAL::sqrt(F2) - F1))); //  μ(s_2)
-    fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
-    assert(lt == Triangulation::VERTEX);
-
-    query = Point(-FT(CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2)), FT(CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2)) );       //  μ(s_3)
-    fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
-    assert(lt == Triangulation::VERTEX);
-
-    query = Point(FT( CGAL::sqrt(CGAL::sqrt(F2) + F1)/ F2 ), - FT( CGAL::sqrt(CGAL::sqrt(F2) - F1)/ F2) );           //  v_0
-    fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
-    assert(lt == Triangulation::VERTEX);
-
-    typedef Aff_transformation_2<Traits> Transformation; 
-    Transformation rotate(ROTATION, FT(1)/CGAL::sqrt(FT(2)), FT(1)/CGAL::sqrt(FT(2))); 
-    Transformation rot8(ROTATION, -CGAL::sqrt(FT(2)-CGAL::sqrt(FT(2)))/FT(2), CGAL::sqrt(FT(2)+CGAL::sqrt(FT(2)))/FT(2));
-    Transformation shrink(SCALING, FT(FT(1)/FT(2)));
-
-    FT i1(CGAL::sqrt(FT(2) - sqrt(FT(2))));
-    FT i2(FT(2)*i1);
-    FT i3(FT(2)*CGAL::sqrt(FT(2)) - i2);
-    FT i4(-1 + i3);
-    query = Point(FT( CGAL::sqrt( i4 )), FT(0));          // internal point
-
-    query = rot8(query);
-    fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
-    assert(lt == Triangulation::VERTEX);
-    for (int i = 1; i < 8; i++) {
-        query = rotate(query);
+    cout << "---- locating dummy points (all should be vertices) ----" << endl;
+    for (int j = 0; j < 14; j++) {
+        Point query = tr.get_dummy_point(j); 
         fh = tr.locate(query, lt, li);
-        cout << "Located " << query << " as " << lt << endl;
         assert(lt == Triangulation::VERTEX);
+        cout << "   dummy point " << j << ": OK " << endl;
     }
 
-    query = shrink(query);
+    cout << "---- locating the midpoint of a Euclidean segment ----" << endl;
+    Point p1 = tr.get_dummy_point(0), p2 = tr.get_dummy_point(1);
+    Point query = midpoint(p1, p2);
     fh = tr.locate(query, lt, li);
-    cout << "Located " << query << " as " << lt << endl;
     assert(lt == Triangulation::EDGE);
-    for (int i = 1; i < 8; i++) {
-        query = rotate(query);
-        fh = tr.locate(query, lt, li);
-        cout << "Located " << query << " as " << lt << endl;
-        assert(lt == Triangulation::EDGE);
-    }
+    cout << "   located as edge OK" << endl;
+
+    cout << "---- inserting a single point and locating it ----" << endl;
+    Vertex_handle v = tr.insert(Point(-0.4, -0.1));
+    fh = tr.locate(v->point(), lt, li);
+    assert(lt == Triangulation::VERTEX);
+    cout << "   located as vertex OK" << endl;
+
+    // TODO: add a test case for a circular edge!
 
     return 0;
 }

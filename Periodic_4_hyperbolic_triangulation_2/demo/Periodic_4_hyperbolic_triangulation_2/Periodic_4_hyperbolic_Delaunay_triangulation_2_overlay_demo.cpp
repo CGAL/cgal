@@ -1,17 +1,12 @@
 #include <fstream>
 
 // CGAL headers
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h> 
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h> 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Hyperbolic_octagon_translation_matrix.h>
 
-#include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-
 // unique words
-#include <CGAL/Square_root_2_field.h>
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
 #include <CGAL/Qt/utility.h>
 
@@ -37,96 +32,19 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 
-#define INITIAL_RECURSION_DEPTH 4
-
-// dummy points
-#include <CGAL/Periodic_4_hyperbolic_triangulation_dummy_14.h>
-
 // the two base classes
 #include "ui_Periodic_4_hyperbolic_Delaunay_triangulation_2.h"
 
 
 
-typedef CORE::Expr                                                              NT;       
-typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>                              AK;   // Algebraic kernel  
-typedef CGAL::Cartesian<NT>                                                     BK;   // Basic kernel
-typedef CGAL::Circular_kernel_2<BK, AK>                                         Kernel;
+typedef CORE::Expr                                                              NT;
+typedef CGAL::Cartesian<NT>                                                     Kernel;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef Hyperbolic_octagon_translation_matrix<Traits>                           Octagon_matrix;
 typedef Kernel::Point_2                                                         Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_fundamental_octagon                                     Side_of_fundamental_octagon;
-
-
-struct PointsComparator {
-  static double eps; 
-  
-  bool operator() (const Point& l, const Point& r) const
-  {
-    if(l.x() < r.x() - eps) {
-      return true;
-    }
-    if(l.x() < r.x() + eps) {
-      if(l.y() < r.y() - eps) {
-        return true;
-      }
-    }
-    return false;
-  }
-};
-
-
-double PointsComparator::eps = 0.0001;
-string glabels[] = { "a", "\\bar{b}", "c", "\\bar{d}", "\\bar{a}", "b", "\\bar{c}", "d" };
-
-
-void recurr(vector<Octagon_matrix>& v, vector<Octagon_matrix> g, int depth = 1) {
-  if (depth > 1) {
-    
-    recurr(v, g, depth-1);
-
-    vector<Octagon_matrix> tmp;
-    vector<string> tmpw;
-    for (int i = 0; i < v.size(); i++) {
-      tmp.push_back(v[i]);
-    }
-
-    for (int i = 0; i < tmp.size(); i++) {
-      for (int j = 0; j < g.size(); j++) {
-        v.push_back(tmp[i]*g[j]);
-      }
-    }
-  } else if (depth == 1) {
-    for (int i = 0; i < g.size(); i++) {
-      v.push_back(g[i]);
-    }
-  } 
-}
-
-
-void my_unique_words(std::vector<Point>& p, Point input, int depth) {
-  std::vector<Octagon_matrix> g;
-  get_generators(g);
-  std::vector<Octagon_matrix> v;
-  recurr(v, g, depth);
-  std::set<Octagon_matrix> s;
-
-  for (int i = 0; i < v.size(); i++) {
-    s.insert( v[i] );
-  }
-
-  cout << "Translating... " << endl;
-  for (set<Octagon_matrix>::iterator it = s.begin(); it != s.end(); it++) {
-    Octagon_matrix m = *it;
-    Point res;
-    res = m.apply(input);
-    p.push_back( res );
-  }
-  cout << "Done! Now I need to draw " << p.size() << " points..." << endl;
-
-}
-
 
 
 
@@ -284,7 +202,6 @@ MainWindow::processInput(CGAL::Object o)
   emit(changed());
 
 }
-
 
 
 

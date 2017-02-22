@@ -8,17 +8,15 @@
 
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
-#include <CGAL/Periodic_4_hyperbolic_triangulation_dummy_14.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
 
 
-typedef CORE::Expr                                              					NT;					
-typedef CGAL::Cartesian<NT>                                     					Kernel;
-typedef Kernel::FT                                                                  FT;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel> 		Traits;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>				Triangulation;
+typedef CORE::Expr                                                                  NT;
+typedef CGAL::Cartesian<NT>                                                         Kernel;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>         Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>                Triangulation;
 typedef Triangulation::Face_iterator                                                Face_iterator;
 typedef Triangulation::Vertex_handle 												Vertex_handle;
 typedef Triangulation::Point 														Point;
@@ -57,6 +55,7 @@ int main(int argc, char** argv) {
         ++g;
         if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
             new_v.push_back(tr.insert(pt));
+            cout << "Triangulation has " << tr.number_of_vertices() << " vertices" << endl;
             cnt++;
         }
     } while (cnt < N);

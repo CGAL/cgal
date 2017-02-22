@@ -59,8 +59,7 @@ public:
 	typedef typename TDS::Edge 				Edge;
 	typedef typename TDS::Face 				Face;
 	typedef Face_data 						TDS_data;
-	typedef unsigned short int 				Int;
-	typedef Hyperbolic_octagon_word_4<Int, GT>		Offset;
+	typedef typename GT::Offset				Offset;
 
 	template< typename TDS2 >
 	struct Rebind_TDS {

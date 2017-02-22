@@ -10,17 +10,23 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
+  	include( ${CGAL_USE_FILE} )
 
-  include( CGAL_CreateSingleSourceCGALProgram )
+  	include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include")
+  	include_directories (BEFORE "../../include" $HOME/include)
 
-  create_single_source_cgal_program( "test_p4ht2_dummy_points.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_locate.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_insertion.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_removal.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_remove_dummy_points.cpp" )
+  	create_single_source_cgal_program( "test_p4ht2_dummy_points.cpp" )
+  	create_single_source_cgal_program( "test_p4ht2_locate.cpp" )
+  	create_single_source_cgal_program( "test_p4ht2_insertion.cpp" )
+  	create_single_source_cgal_program( "test_p4ht2_removal.cpp" )
+  	create_single_source_cgal_program( "test_p4ht2_remove_dummy_points.cpp" )
+	create_single_source_cgal_program( "test_p4ht2_complex.cpp" )
+ 	create_single_source_cgal_program( "test_p4ht2_matrix.cpp" )
+	create_single_source_cgal_program( "test_p4ht2_words.cpp" )
+	create_single_source_cgal_program( "test_p4ht2_triangulation.cpp" )
+#	create_single_source_cgal_program( "test_p4ht2_simple_insertion.cpp" )
+
 
 else()
   

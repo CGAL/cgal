@@ -25,7 +25,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
-#include <CGAL/Hyperbolic_octagon_word_4.h>
 
 namespace CGAL {
 
@@ -36,8 +35,7 @@ public:
 	typedef typename TDS::Vertex_handle     Vertex_handle;
 	typedef typename TDS::Face_handle 		Face_handle;
 	typedef typename GT::Point_2			Point;
-	typedef unsigned short int 				Int;
-	typedef Hyperbolic_octagon_word_4<Int, GT>		Offset;
+	typedef typename GT::Offset 			Offset;
 
 
 	template <typename TDS2>

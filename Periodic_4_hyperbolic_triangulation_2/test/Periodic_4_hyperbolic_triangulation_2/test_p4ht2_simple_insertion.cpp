@@ -32,61 +32,18 @@ typedef CGAL::Creator_uniform_2<double, Point_double >                          
 int main(void) {    
 
     Side_of_fundamental_octagon pred;
-
-    int N = 10000;
-
-    std::vector<Point> pts;
-    cout << "---- for best results, make sure that you have compiled me in Release mode ----" << endl;
-    cout << "generating " << N << " random points in the octagon..." << endl;    
-    vector<Point_double> v;
-    Hyperbolic_random_points_in_disc_2_double(v, 40*N, -1);
-
-    int cnt = 0;
-    int idx = 0;
-    do {    
-        Point pt = Point(v[idx].x(), v[idx].y());
-        if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
-            pts.push_back(pt);
-            cnt++;
-        } 
-        idx++;
-    } while (cnt < N && idx < v.size());
-
-    if (cnt < N) {
-        cout << "FAILED! Exiting..." << endl;
-        return -1;
-    }
-
-    cout << "DONE!" << endl;
-
-    cout << "inserting into triangulation with rational dummy points..." << endl;
-    Triangulation tr2;
-    tr2.insert_dummy_points(true);  
-
-    CGAL::Timer t2;
-    t2.start();
-    for (int j = 0; j < pts.size(); j++) {
-        //cout << "   now at " << j << endl;
-        Vertex_handle vh = tr2.insert(pts[j]);
-    }
-    t2.stop();
-    cout << " DONE!" << endl;
             
     cout << "inserting into triangulation with exact dummy points..." << endl;
     Triangulation tr1;
-    tr1.insert_dummy_points(false);  
+    tr1.insert_dummy_points(true);  
 
-    CGAL::Timer t1;
-    t1.start();
-    for (int j = 0; j < pts.size(); j++) {
-        cout << "   now at " << j << endl;
-        Vertex_handle vh = tr1.insert(pts[j]);
-    }
-    t1.stop();
-    cout << " DONE!" << endl;
+    Point p(0.2, 0.13);
 
-    cout << "Triangulation with exact    dummy points: #vertices = " << tr1.number_of_vertices() << ", insertion time = " << t1.time() << endl;
-    cout << "Triangulation with rational dummy points: #vertices = " << tr2.number_of_vertices() << ", insertion time = " << t2.time() << endl;
+    Vertex_handle vh = tr1.insert(p);
+
+    CGAL_assertion(tr1.is_valid());
+
+    cout << "DONE!" << endl;
 
     return 0;
 }

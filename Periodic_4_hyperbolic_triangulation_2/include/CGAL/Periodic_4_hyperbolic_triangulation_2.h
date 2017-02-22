@@ -32,9 +32,6 @@
 #include <list>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/utility.h>
@@ -43,48 +40,12 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_face_base_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_iterators_2.h>
-#include <CGAL/Unique_hash_map.h>
-#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
-#include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/Hyperbolic_octagon_word_4.h>
-#include <CGAl/Hyperbolic_translation_info.h>
-
 
 
 namespace CGAL {
-
-#ifndef CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
-	#define CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
-#endif // no CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
-
-
-#ifndef CGAL_NO_STRUCTURAL_FILTERING
-namespace internal {
-// structural filtering is performed only for EPIC
-struct Periodic_4_hyperbolic_structural_filtering_2_tag {};
-struct No_periodic_4_hyperbolic_structural_filtering_2_tag {};
-
-template <bool filter>
-struct Periodic_4_hyperbolic_structural_filtering_selector_2 {
-#ifdef FORCE_STRUCTURAL_FILTERING
-  typedef Periodic_4_hyperbolic_structural_filtering_2_tag  Tag;
-#else
-  typedef No_periodic_4_hyperbolic_structural_filtering_2_tag  Tag;
-#endif
-};
-
-template <>
-struct Periodic_4_hyperbolic_structural_filtering_selector_2<true> {
-  typedef Periodic_4_hyperbolic_structural_filtering_2_tag  Tag;
-};
-}
-#endif // no CGAL_NO_STRUCTURAL_FILTERING
-
-
 
 
 template < 	class GT,
@@ -96,7 +57,7 @@ template < 	class GT,
 class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_2<GT, TDS> {
 
 	typedef Periodic_4_hyperbolic_triangulation_2<GT, TDS> 		Self;
-  	typedef Triangulation_2<GT, TDS>                          	Base;
+	typedef Triangulation_2<GT, TDS>                          	Base;
 
 private:
 	typedef typename GT::FT                      				FT;
@@ -111,8 +72,7 @@ public:
 
 	typedef GT 										        Geometric_traits;
 	typedef TDS 									        Triangulation_data_structure;
-	typedef unsigned short int 								Int;
-	typedef Hyperbolic_octagon_word_4<Int, GT>				Offset;
+	typedef typename GT::Offset 							Offset;
 	typedef typename GT::Circle_2 							Circle_2;
 	typedef Circle_2 								      	Circle;
 	typedef typename GT::Point_2 			    			Point_2;
@@ -140,23 +100,11 @@ public:
 	typedef typename TDS::Edge_iterator          	  		Edge_iterator;
 	typedef typename TDS::Vertex_iterator        	  		Vertex_iterator;
 	typedef typename TDS::Face_circulator       	  		Face_circulator;
-  	typedef typename TDS::Edge_circulator         			Edge_circulator;
-  	typedef typename TDS::Vertex_circulator       			Vertex_circulator;
-
-  	typedef typename Base::Line_face_circulator     		Line_face_circulator;
-
-	typedef Periodic_4_hyperbolic_triangulation_triangle_iterator_2<Self>
-															Periodic_triangle_iterator;
-	typedef Periodic_4_hyperbolic_triangulation_segment_iterator_2<Self>
-															Periodic_segment_iterator;
-	typedef Periodic_4_hyperbolic_triangulation_point_iterator_2<Self>
-															Periodic_point_iterator;
+	typedef typename TDS::Edge_circulator         			Edge_circulator;
+	typedef typename TDS::Vertex_circulator       			Vertex_circulator;
 
 	typedef Point                                			value_type;
 	typedef const value_type&                    			const_reference;
-
-	typedef Tag_false 								        Weighted_tag;
-
 
 	enum Iterator_type {
 		STORED=0,
@@ -181,7 +129,7 @@ protected:
 	Circle 	 _domain;
 
 public:
-  	Periodic_4_hyperbolic_triangulation_2(Geometric_traits gt) : 
+	Periodic_4_hyperbolic_triangulation_2(Geometric_traits gt) : 
 		_gt(gt), _domain( Circle_2(Point(0,0), 1*1) ), _tds() 
 	{
 		init_tds();
@@ -219,21 +167,6 @@ public:
 	}
 
 
-  template< class FaceIt >
-  Vertex_handle insert_in_hole(const Point& p, FaceIt face_begin, FaceIt face_end) 
-  {
-	Vertex_handle v = _tds.insert_in_hole(face_begin, face_end);
-	v->set_point(p);
-	return v;
-  }
-
-
-  Vertex_handle insert_in_face(const Point& p, Face_handle fh) {
-	Vertex_handle vh = _tds.insert_in_face(fh);
-	vh->set_point(p);
-	return vh;
-  }
-
 
 private:
 	void init_tds() {
@@ -247,14 +180,14 @@ public:
 
 
 	/// Returns the data structure storing the triangulation.
-  	const TDS & tds() const {
+	const TDS & tds() const {
 		return _tds;
-  	}
-  	
-  	/// Returns the data structure storing the triangulation.
-  	TDS & tds() {
+	}
+	
+	/// Returns the data structure storing the triangulation.
+	TDS & tds() {
 		return _tds;
-  	}
+	}
 
 	const Circle_2& domain() const {
 		return _domain;
@@ -277,10 +210,6 @@ public:
   
 	size_type number_of_vertices() const {
 		return _tds.number_of_vertices();
-	}
-
-	void set_offsets(Face_handle f, Offset o0, Offset o1, Offset o2) {
-		f->set_offsets(o0, o1, o2);
 	}
 
 	Comparison_result compare_x(const Point &p1, const Point &p2) const {
@@ -567,32 +496,10 @@ public:
 	}
 
 
-protected:
-
-	Orientation
-	inexact_orientation(const Point &p, const Point &q, const Point &r) const {
-		return geom_traits().orientation_2_object(p, q, r);	
-	}
-
-	Orientation
-	inexact_orientation(const Point    &p, const Point    &q,
-						const Point    &r, const Point    &s,
-						const Offset& o_p, const Offset& o_q,
-						const Offset& o_r, const Offset& o_s) const {
-		return inexact_orientation(	construct_point(p, o_p),
-									construct_point(q, o_q),
-									construct_point(r, o_r),
-									construct_point(s, o_s) );
-	}
 
 
 protected:
-  template< class Conflict_tester, class OutputEdgeIterator>
-  void find_in_conflict(Face_handle fh, const Offset& noff, const Conflict_tester& tester, OutputEdgeIterator it) const;
-
-  template< class Conflict_tester>
-  void find_in_conflict(Face_handle fh, const Offset& noff, const Conflict_tester& tester, vector<Face_handle>& it) const;
-
+ 
   template<class OutputFaceIterator>
   void 
   find_conflicts( Face_handle         d, 
@@ -626,25 +533,25 @@ protected:
 	  }
    }
 
-// Should be 'private'
-public:
-	Vertex_handle create_initial_triangulation(const Point &p);
 
 public:
 
-	Face_handle euclidean_visibility_locate(const Point& p, Offset& lo, Face_handle f = Face_handle()) const;
-	Face_handle hyperbolic_locate(const Point& p, Offset& lo, Locate_type& lt, int& li, int& lj, Face_handle start = Face_handle()) const;
+	Face_handle euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle f = Face_handle()) const;
 
-protected:
-	// COMMON INSERTION for DELAUNAY and REGULAR TRIANGULATION
-	template < class Conflict_tester, class Point_hider >
-	Vertex_handle insert_in_conflict(const Point 		   &p, 		Face_handle start,
-									 const Conflict_tester &tester, Point_hider &hider) {
-		
-		Locate_type lt = Locate_type();
-		int li = 0, lj = 0;
-		Face_handle c = periodic_locate(p, Offset(), lt, li, lj, start);
-		return insert_in_conflict(p,lt,c,li,lj,tester,hider);
+	Face_handle euclidean_locate(const Point& p, Offset& lo, Face_handle f = Face_handle()) const {
+		Locate_type lt;
+		int li;
+		return euclidean_locate(p, lt, li, lo, f);		
+	}
+
+	Face_handle hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle start = Face_handle()) const;
+
+	
+	template< class FaceIt >
+	Vertex_handle insert_in_hole(const Point& p, FaceIt face_begin, FaceIt face_end) {
+		Vertex_handle v = _tds.insert_in_hole(face_begin, face_end);
+		v->set_point(p);
+		return v;
 	}
 
 
@@ -976,49 +883,70 @@ find_conflicts( Face_handle         d,
 
 template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-euclidean_visibility_locate(const Point& p, Offset& loff, Face_handle f) const
-{
+euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_handle f) const {
 
-  typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
-  
-  Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
-  CGAL::Bounded_side side = check(p);
-  if (side != ON_BOUNDED_SIDE) {
-	return Face_handle();
-  }
+	typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
 
-  // Handle the case where an initial Face_handle is not given
-  if (f == Face_handle()) {
-	f = _tds.faces().begin();
-  }
+	Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+	CGAL::Bounded_side side = check(p);
+	if (side != ON_BOUNDED_SIDE) {
+		return Face_handle();
+	}
 
-  int curr = 0;
-  int succ = ccw(curr);
-  int counter = 0;
+	// Handle the case where an initial Face_handle is not given
+	if (f == Face_handle()) {
+		f = _tds.faces().begin();
+	}
+
+	int curr = 0;
+	int succ = ccw(curr);
+	int counter = 0;
 
 	while (true) {
-	Orientation o = orientation(f->vertex(curr)->point(),       f->vertex(succ)->point(),       p,
-								loff.append(f->offset(curr)),   loff.append(f->offset(succ)),   Offset());
-	  
-	if (o == NEGATIVE) {
-	  loff = loff.append(f->neighbor_offset(cw(curr))); 
-	  f = f->neighbor(cw(curr));
-	  curr = ccw(curr);
-	  succ = ccw(curr);
-	  counter = 0;
+		Orientation o = orientation(f->vertex(curr)->point(),       f->vertex(succ)->point(),       p,
+									loff.append(f->offset(curr)),   loff.append(f->offset(succ)),   Offset());
+		  
+		if (o == NEGATIVE) {
+			loff = loff.append(f->neighbor_offset(cw(curr))); 
+			f = f->neighbor(cw(curr));
+			curr = ccw(curr);
+			succ = ccw(curr);
+			counter = 0;
+		} else {
+			curr = succ;
+			succ = ccw(curr);
+			counter++;
+		}
+
+		if (counter > 2) {
+		  	break;
+		}
+
+	}
+
+	Point_2 p0 = loff.append(f->offset(0)).apply(f->vertex(0)->point());
+	Point_2 p1 = loff.append(f->offset(1)).apply(f->vertex(1)->point());
+	Point_2 p2 = loff.append(f->offset(2)).apply(f->vertex(2)->point());
+
+	lt = FACE;
+	li = -1;
+
+	if (p == p0) {
+		lt = VERTEX;
+		li = 0;
 	} else {
-	  curr = succ;
-	  succ = ccw(curr);
-	  counter++;
+		if (p == p1) {
+			lt = VERTEX;
+			li = 1;
+		} else {
+			if (p == p2) {
+				lt = VERTEX;
+				li = 2;
+			}
+		}
 	}
 
-	if (counter > 2) {
-	  break;
-	}
-
-  }
-
-  return f;
+	return f;
 }
 
 
@@ -1026,63 +954,62 @@ euclidean_visibility_locate(const Point& p, Offset& loff, Face_handle f) const
 
 template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-hyperbolic_locate(const Point& p, Offset& lo, Locate_type& lt, int& li, int& lj, Face_handle start) const
+hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle start) const
 {
 	// Get a hint of where the point is located. It's either in lf or in one of its neighbors.
-	Face_handle lf = euclidean_visibility_locate(p, lo, start);
+	Face_handle lf = euclidean_locate(p, lt, li, lo, start);
+
+	// The input point has been located in a vertex, so we can just return here, nothing more to do.
+	if (lt == VERTEX) {
+		return lf;
+	}
+
 	typedef typename GT::Side_of_hyperbolic_face_2 Side_of_hyperbolic_face_2;
 	Side_of_hyperbolic_face_2 sf;
 
-	cout << "Euclidean locate says face " << lf->get_number() << " with offset " << lo;
+	// cout << "Euclidean locate says face " << lf->get_number() << " with offset " << lo;
 
-	Bounded_side bs = sf(p, lf, lo);
+	Bounded_side sides[3];
+
+	Bounded_side bs = sf(p, sides, lf, lo);
 	if (bs == ON_BOUNDED_SIDE) {
-		// Nothing to do here, the face is really in lf.
+		lt = FACE;
 	} else if (bs == ON_BOUNDARY) {
-		// here the point is on the boundary of the face, so it is on an edge or on a vertex. Still, it's acceptable to say it is in lf.
+		lt = EDGE;
+		if (sides[0] == ON_BOUNDARY) {
+			li = 0;
+		} else {
+			if (sides[1] == ON_BOUNDARY) {
+				li = 1;
+			} else {
+				CGAL_assertion(sides[2] == ON_BOUNDARY);
+				li = 2;
+			}
+		}	
 	} else {
 		// Here we have to find the face containing the point, it's one of the neighbors of lf.
-		Bounded_side bs1 = sf(p, lf->neighbor(0), lo.append(lf->neighbor_offset(0)));
-		if (bs1 != ON_UNBOUNDED_SIDE) {
+		Bounded_side bs1 = sf(p, sides, lf->neighbor(0), lo.append(lf->neighbor_offset(0)));
+		if (bs1 == ON_BOUNDED_SIDE) {
 			lo = lo.append(lf->neighbor_offset(0));
 			lf = lf->neighbor(0);
+			lt = FACE;
 		} else {
-			Bounded_side bs2 = sf(p, lf->neighbor(1), lo.append(lf->neighbor_offset(1)));	
-			if (bs2 != ON_UNBOUNDED_SIDE) {
+			Bounded_side bs2 = sf(p, sides, lf->neighbor(1), lo.append(lf->neighbor_offset(1)));	
+			if (bs2 == ON_BOUNDED_SIDE) {
 				lo = lo.append(lf->neighbor_offset(1));
 				lf = lf->neighbor(1);
+				lt = FACE;
 			} else {
-				Bounded_side bs3 = sf(p, lf->neighbor(2), lo.append(lf->neighbor_offset(2)));
-				CGAL_triangulation_assertion(bs3 != ON_UNBOUNDED_SIDE);
+				Bounded_side bs3 = sf(p, sides, lf->neighbor(2), lo.append(lf->neighbor_offset(2)));
+				CGAL_triangulation_assertion(bs3 == ON_UNBOUNDED_SIDE);
 				lo = lo.append(lf->neighbor_offset(2));
 				lf = lf->neighbor(2);
+				lt = FACE;
 			}
 		}
 	}
 
-	cout << "; hyperbolic locate says face " << lf->get_number() << " with offset " << lo << endl;
-
-
- //  Orientation o1 = orientation(f->vertex(0)->point(), f->vertex(1)->point(), p,
-	// 						   f->offset(0),          f->offset(1),          Offset()); //bu_encode_offset());
-
- //  Orientation o2 = orientation(f->vertex(1)->point(), f->vertex(2)->point(), p,
-	// 						   f->offset(1),          f->offset(2),          Offset()); //bu_encode_offset());
-
- //  Orientation o3 = orientation(f->vertex(2)->point(), f->vertex(0)->point(), p,
-	// 						   f->offset(2),          f->offset(0),          Offset()); //bu_encode_offset());
-  
- //  int sum = (o1 == COLLINEAR) + (o2 == COLLINEAR) + (o3 == COLLINEAR);
- //  if (sum == 0) {
-	// lt = FACE;
- //  }
- //  else if (sum == 1) {
-	// lt = EDGE; 
-	// li = ( o1 == COLLINEAR ? 2 : (o2 == COLLINEAR ? 0 : 1) );
- //  } else {
-	// lt = VERTEX;
-	// li = ( o1 != COLLINEAR ? 2 : (o2 != COLLINEAR ? 0 : 1) );
- //  }
+	// cout << "; hyperbolic locate says face " << lf->get_number() << " with offset " << lo << endl;
 
 
 	return lf;

@@ -27,12 +27,11 @@
 
 namespace CGAL {
 
-template <class Int, class GT>
+template <class Int, class NT>
 class Hyperbolic_octagon_word_4 {
 
-	typedef typename GT::Point_2 						Point;
-  	typedef Hyperbolic_octagon_translation_matrix<GT> 	Octagon_translation_matrix;
-  	typedef Hyperbolic_octagon_word_4<Int, GT> 			Self;
+  	typedef Hyperbolic_octagon_translation_matrix<NT> 	Octagon_translation_matrix;
+  	typedef Hyperbolic_octagon_word_4<Int, NT> 			Self;
 private:
 	Int   w0 : 3;
 	bool  b0 : 1; 
@@ -388,26 +387,26 @@ public:
 	}
 
 public:
-	Hyperbolic_octagon_word_4<Int, GT> inverse() const {
+	Self inverse() const {
 		if (b3) {
-			Hyperbolic_octagon_word_4<Int, GT> r(inv(w3), inv(w2), inv(w1), inv(w0));
+			Self r(inv(w3), inv(w2), inv(w1), inv(w0));
 			r.reduce();
 			return r;
 		} else {
 			if (b2) {
-				return Hyperbolic_octagon_word_4<Int, GT>(inv(w2), inv(w1), inv(w0));
+				return Self(inv(w2), inv(w1), inv(w0));
 			} else {
 				if (b1) {
-					return Hyperbolic_octagon_word_4<Int, GT>(inv(w1), inv(w0));
+					return Self(inv(w1), inv(w0));
 				} else {
 					if (b0) {
-						return Hyperbolic_octagon_word_4<Int, GT>(inv(w0));
+						return Self(inv(w0));
 					}
 				}
 			}
 		}
 
-		return Hyperbolic_octagon_word_4<Int, GT>();
+		return Self();
 	}
 
 	void append(Int val) {
@@ -423,7 +422,7 @@ public:
 	}
 	
 
-	Hyperbolic_octagon_word_4<Int, GT> append(Hyperbolic_octagon_word_4<Int, GT> val) const {
+	Self append(Self val) const {
 		
 		std::vector<Int> o1 = this->get_vector();
 		std::vector<Int> o2 = val.get_vector();
@@ -551,12 +550,12 @@ public:
   	
 
   	Octagon_translation_matrix get_matrix() const {
-  		return gmap[get_string()];
+  		return gmap[this->get_string()];
   	}
 
+  	template <class Point>
   	Point apply(Point p) const {
-  		Octagon_translation_matrix m = get_matrix();
-  		return m.apply(p);
+  		return this->get_matrix().apply(p);
   	}
 
 };
