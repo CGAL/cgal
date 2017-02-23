@@ -1227,20 +1227,24 @@ void AddSubRep<Operator>::computeApproxValue(const extLong& relPrec,
     appValue() = first->getAppValue(relPrec, absPrec);
     return;
   }
-  if (lMSB() < EXTLONG_BIG && lMSB() > EXTLONG_SMALL) {
-    extLong rf = first->uMSB()-lMSB()+relPrec+EXTLONG_FOUR;  // 2 better
-    if (rf < EXTLONG_ZERO)
-      rf = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
-    extLong rs = second->uMSB()-lMSB()+relPrec+EXTLONG_FOUR; // 2 better
-    if (rs < EXTLONG_ZERO)
-      rs = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
-    extLong  a  = absPrec + EXTLONG_THREE;                      // 1 better
-    appValue() = Op(first->getAppValue(rf, a), second->getAppValue(rs, a));
-  } else {
+
+  // warn about large MSB bound but do the computation as extLong is
+  // handling overflow and underflow
+  if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
+  {
     std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
     core_error("CORE WARNING: a huge lMSB in AddSubRep",
 	 	__FILE__, __LINE__, false);
   }
+
+  extLong rf = first->uMSB()-lMSB()+relPrec+EXTLONG_FOUR;  // 2 better
+  if (rf < EXTLONG_ZERO)
+    rf = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
+  extLong rs = second->uMSB()-lMSB()+relPrec+EXTLONG_FOUR; // 2 better
+  if (rs < EXTLONG_ZERO)
+    rs = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
+  extLong  a  = absPrec + EXTLONG_THREE;                      // 1 better
+  appValue() = Op(first->getAppValue(rf, a), second->getAppValue(rs, a));
 }
 
 /// \typedef AddRep

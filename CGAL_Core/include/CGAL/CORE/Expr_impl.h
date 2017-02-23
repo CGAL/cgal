@@ -1024,45 +1024,53 @@ void SqrtRep::computeApproxValue(const extLong& relPrec,
 CGAL_INLINE_FUNCTION
 void MultRep::computeApproxValue(const extLong& relPrec,
                                  const extLong& absPrec) {
-  if (lMSB() < EXTLONG_BIG && lMSB() > EXTLONG_SMALL) {
-    extLong r   = relPrec + EXTLONG_FOUR;
-    extLong  afr = - first->lMSB() + EXTLONG_ONE;
-    extLong  afa = second->uMSB() + absPrec + EXTLONG_FIVE;
-    extLong  af  = afr > afa ? afr : afa;
-    extLong  asr = - second->lMSB() + EXTLONG_ONE;
-    extLong  asa = first->uMSB() + absPrec + EXTLONG_FIVE;
-    extLong  as  = asr > asa ? asr : asa;
-    appValue() = first->getAppValue(r, af)*second->getAppValue(r, as);
-  } else {
-    std::cerr << "lMSB = " << lMSB() << std::endl;
-    core_error("a huge lMSB in MulRep", __FILE__, __LINE__, false);
+  // warn about large MSB bound but do the computation as extLong is
+  // handling overflow and underflow
+  if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
+  {
+    std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
+    core_error("CORE WARNING: a huge lMSB in AddSubRep",
+	 	__FILE__, __LINE__, false);
   }
+
+  extLong r   = relPrec + EXTLONG_FOUR;
+  extLong  afr = - first->lMSB() + EXTLONG_ONE;
+  extLong  afa = second->uMSB() + absPrec + EXTLONG_FIVE;
+  extLong  af  = afr > afa ? afr : afa;
+  extLong  asr = - second->lMSB() + EXTLONG_ONE;
+  extLong  asa = first->uMSB() + absPrec + EXTLONG_FIVE;
+  extLong  as  = asr > asa ? asr : asa;
+  appValue() = first->getAppValue(r, af)*second->getAppValue(r, as);
 }
 
 CGAL_INLINE_FUNCTION
 void DivRep::computeApproxValue(const extLong& relPrec,
                                 const extLong& absPrec) {
-  if (lMSB() < EXTLONG_BIG && lMSB() > EXTLONG_SMALL) {
-    extLong rr  = relPrec + EXTLONG_SEVEN;		// These rules come from
-    extLong ra  = uMSB() + absPrec + EXTLONG_EIGHT;	// Koji's Master Thesis, page 65
-    extLong ra2 = core_max(ra, EXTLONG_TWO);
-    extLong r   = core_min(rr, ra2);
-    extLong  af  = - first->lMSB() + r;
-    extLong  as  = - second->lMSB() + r;
-
-    extLong pr = relPrec + EXTLONG_SIX;
-    extLong pa = uMSB() + absPrec + EXTLONG_SEVEN;
-    extLong p  = core_min(pr, pa);	// Seems to be an error:
-    // p can be negative here!
-    // Also, this does not conform to
-    // Koji's thesis which has a default
-    // relative precision (p.65).
-
-    appValue() = first->getAppValue(r, af).div(second->getAppValue(r, as), p);
-  } else {
-    std::cerr << "lMSB = " << lMSB() << std::endl;
-    core_error("a huge lMSB in DivRep", __FILE__, __LINE__, false);
+  // warn about large MSB bound but do the computation as extLong is
+  // handling overflow and underflow
+  if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
+  {
+    std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
+    core_error("CORE WARNING: a huge lMSB in AddSubRep",
+	 	__FILE__, __LINE__, false);
   }
+
+  extLong rr  = relPrec + EXTLONG_SEVEN;		// These rules come from
+  extLong ra  = uMSB() + absPrec + EXTLONG_EIGHT;	// Koji's Master Thesis, page 65
+  extLong ra2 = core_max(ra, EXTLONG_TWO);
+  extLong r   = core_min(rr, ra2);
+  extLong  af  = - first->lMSB() + r;
+  extLong  as  = - second->lMSB() + r;
+
+  extLong pr = relPrec + EXTLONG_SIX;
+  extLong pa = uMSB() + absPrec + EXTLONG_SEVEN;
+  extLong p  = core_min(pr, pa);	// Seems to be an error:
+  // p can be negative here!
+  // Also, this does not conform to
+  // Koji's thesis which has a default
+  // relative precision (p.65).
+
+  appValue() = first->getAppValue(r, af).div(second->getAppValue(r, as), p);
 }
 
 //
