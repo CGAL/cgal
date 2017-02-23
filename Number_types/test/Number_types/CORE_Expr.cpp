@@ -8,6 +8,49 @@
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 
+void precision_bug()
+{
+  typedef CORE::Expr FT;
+  //computation with forced evaluation of sqrtD1D2
+  {
+    FT zero(0);
+    FT ipx(0.3080532378), iqx(0.3080629044), irx(0.3080725711);
+    FT a1(0.1282376364 - 0.1282279698);
+    FT a2(0.1282473031 - 0.1282376364);
+    FT b1 = ipx - iqx;
+    FT b2 = iqx - irx;
+    FT n1 = a1 * a1 + b1 * b1;
+    FT n2 = a2 * a2 + b2 * b2;
+    FT D1D2 = n1 * n2;
+    FT sqrtD1D2 = CGAL::sqrt(D1D2);
+    FT a1a2b1b2 = a1 * a2 + b1 * b2;
+    FT uz =  sqrtD1D2 -  a1a2b1b2 ;
+
+    sqrtD1D2.approx(53,1075); //force evaluation of sqrtD1D2
+    uz.approx(53,1075);
+
+    CGAL_assertion(!uz.isZero());
+  }
+  //computation without forced evaluation of sqrtD1D2
+  {
+    FT zero(0);
+    FT ipx(0.3080532378), iqx(0.3080629044), irx(0.3080725711);
+    FT a1(0.1282376364 - 0.1282279698);
+    FT a2(0.1282473031 - 0.1282376364);
+    FT b1 = ipx - iqx;
+    FT b2 = iqx - irx;
+    FT n1 = a1 * a1 + b1 * b1;
+    FT n2 = a2 * a2 + b2 * b2;
+    FT D1D2 = n1 * n2;
+    FT sqrtD1D2 = CGAL::sqrt(D1D2);
+    FT a1a2b1b2 = a1 * a2 + b1 * b2;
+    FT uz =  sqrtD1D2 -  a1a2b1b2 ;
+
+    CGAL_assertion(!uz.isZero());
+  }
+  std::cout << "precision bug OK\n";
+}
+
 void test_istream()
 {
   std::list<std::string> strings;
@@ -38,6 +81,7 @@ void test_istream()
 
 
 int main() {
+    precision_bug();
     test_istream();
   
     typedef CORE::Expr NT;
