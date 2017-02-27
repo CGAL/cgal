@@ -5,6 +5,7 @@
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h> 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Hyperbolic_octagon_translation_matrix.h>
+#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
 // for viewportsBbox
@@ -249,7 +250,6 @@ void
 MainWindow::on_actionClear_triggered()
 {
   dt.clear();
-  dt.insert_dummy_points();
   emit(changed());
 }
 
@@ -276,22 +276,28 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
 
-  typedef CGAL::Creator_uniform_2<double, Point> Creator;
-  CGAL::Random_points_in_disc_2<Point, Creator> g( 1.0 );
-  Side_of_fundamental_octagon pred;
+  // typedef CGAL::Creator_uniform_2<double, Point> Creator;
+  // CGAL::Random_points_in_disc_2<Point, Creator> g( 1.0 );
+  typedef CGAL::Cartesian<double>::Point_2  Point_d;
+  vector<Point_d> v;
+  Hyperbolic_random_points_in_disc_2_double(v, 5*number_of_points, -1, 0.159);
+
+  Traits::Side_of_fundamental_octagon pred;
 
   vector<Point> pts;
   int cnt = 0;
-  do {
-    Point pt = *g;
-    ++g;
-    if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
-      pts.push_back(pt);
-      //processInput(make_object(pt));
+  for (int i = 0; cnt < number_of_points && i < v.size(); i++) {
+    if (pred(v[i]) != CGAL::ON_UNBOUNDED_SIDE) {
+      pts.push_back(Point(v[i].x(), v[i].y()));
       cnt++;
     }
-  } while (cnt < number_of_points);
+  } 
   
+  if (pts.size() < number_of_points) {
+    cout << "Creation of random points failed! Please try again..." << endl;
+    return;
+  }
+
   CGAL::Timer tt;
   tt.start();
   for (int i = 0; i < pts.size(); i++) {

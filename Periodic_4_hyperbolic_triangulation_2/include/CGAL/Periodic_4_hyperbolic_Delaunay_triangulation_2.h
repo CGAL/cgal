@@ -196,6 +196,12 @@ namespace CGAL {
       return (cnt == 0);
     }
 
+
+    void clear() {
+        Base::clear();
+        insert_dummy_points(true);
+    }
+
 };  // class Periodic_4_hyperbolic_Delaunay_triangulation_2
 
 
@@ -346,13 +352,13 @@ insert(const Point  &p,  Face_handle start) {
   if (side != CGAL::ON_UNBOUNDED_SIDE) {
       Offset loff;
       if ( start == Face_handle() ) {
-      Locate_type lt = Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::FACE;
-      //start = this->hyperbolic_locate(p, loff, lt, li, lj, start); //this->euclidean_visibility_locate(p, loff);
-      start = this->euclidean_locate(p, loff);
-      if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
-        return Vertex_handle();
+          Locate_type lt;
+          int li;
+          start = this->euclidean_locate(p, lt, li, loff);
+          if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
+              return Vertex_handle();
+          }
       }
-    }
 
     std::vector<Face_handle> faces;
     this->find_conflicts(start, p, loff, std::back_inserter(faces));

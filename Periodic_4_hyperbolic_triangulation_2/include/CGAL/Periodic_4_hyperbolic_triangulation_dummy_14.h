@@ -65,6 +65,8 @@ namespace CGAL {
         f_cnt = fcount;
         v_cnt = vcount;
 
+        dummy_points.clear();
+
         if (rational) {
 
             // Push back the origin

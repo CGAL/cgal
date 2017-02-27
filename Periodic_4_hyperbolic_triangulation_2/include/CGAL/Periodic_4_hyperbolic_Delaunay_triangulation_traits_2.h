@@ -186,7 +186,6 @@ public:
 	typedef Simple_circular_arc_2<R>         						Circular_arc_2;
 	typedef typename R::Segment_2                       			Euclidean_segment_2; //only used internally here
 	typedef boost::variant<Circular_arc_2, Euclidean_segment_2>  	Hyperbolic_segment_2;
-	
 
 	// Wrappers for the offset adapter
 	typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename R::Compare_x_2>                 Compare_x_2;
@@ -508,11 +507,14 @@ public:
 			return *this;
 		}
 
+
+
 		class Side_of_fundamental_octagon {
 		public:
 			Side_of_fundamental_octagon() {}
 
-			CGAL::Bounded_side operator()(Point_2 p) {
+			template <class Point_2_template>
+			CGAL::Bounded_side operator()(Point_2_template p) {
 
 				// Rotation by pi/4
 				CGAL::Aff_transformation_2<R> rotate(CGAL::ROTATION, std::sqrt(0.5), std::sqrt(0.5));

@@ -5,6 +5,7 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
@@ -21,7 +22,9 @@ typedef Triangulation::Face_iterator                                            
 typedef Triangulation::Vertex_handle 												Vertex_handle;
 typedef Triangulation::Point 														Point;
 typedef Traits::Side_of_fundamental_octagon                                         Side_of_fundamental_octagon;
-typedef CGAL::Creator_uniform_2<NT, Point >                                         Creator;
+
+typedef CGAL::Cartesian<double>::Point_2                                            Point_double;
+typedef CGAL::Creator_uniform_2<double, Point_double >                              Creator;
 
 int main(int argc, char** argv) {
 
@@ -31,7 +34,6 @@ int main(int argc, char** argv) {
     }
 
     int iter = atoi(argv[1]);
-    CGAL::Random_points_in_disc_2<Point, Creator> g( 1.0 );
     Side_of_fundamental_octagon pred;  
 
     int min = 1000;
@@ -40,16 +42,19 @@ int main(int argc, char** argv) {
     for (int j = 0; j < iter; j++) {
         cout << "Iteration " << (j+1) << "/" << iter << "..." << endl;
         
+        vector<Point_double> v;
+        Hyperbolic_random_points_in_disc_2_double(v, 500, -1, 0.159);
+
         Triangulation tr;  
-        tr.insert_dummy_points();
+        tr.insert_dummy_points(true);
         assert(tr.is_valid(true));
         
         int cnt = 0;
+        int idx = 0;
         do {
-            Point pt = *g;
-            ++g;
+            Point_double pt = v[idx++];
             if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
-                tr.insert(pt);
+                tr.insert(Point(pt.x(), pt.y()));
                 cnt++;
             }
         } while (tr.number_of_dummy_points() > 0);

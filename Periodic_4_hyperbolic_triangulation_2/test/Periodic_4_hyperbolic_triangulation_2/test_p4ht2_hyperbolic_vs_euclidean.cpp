@@ -1,5 +1,5 @@
 
-#include <CGAL/basic.h>
+
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
@@ -9,16 +9,20 @@
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/CORE_Expr.h>
-//#include <CGAL/leda_real.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
+
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 
 #include <CGAL/Timer.h>
 
 
 
+
+
 typedef CORE::Expr                                                              NT;
-//typedef leda_real                                                               NT;
 typedef CGAL::Cartesian<NT>                                                     Kernel;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
@@ -30,6 +34,9 @@ typedef Traits::Side_of_fundamental_octagon                                     
 typedef CGAL::Cartesian<double>::Point_2                                        Point_double;
 typedef CGAL::Creator_uniform_2<double, Point_double >                          Creator;
 
+typedef CGAL::Delaunay_triangulation_2<Kernel>                                  Euclidean_triangulation;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<Kernel>                Ptraits;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<Ptraits>                      PEuclidean_triangulation;
 
 int main(int argc, char** argv) {    
 
@@ -46,13 +53,17 @@ int main(int argc, char** argv) {
 
     Side_of_fundamental_octagon pred;
 
+    
     cout << "---- for best results, make sure that you have compiled me in Release mode ----" << endl;
     
-    double extime = 0.0;
+    double extime1 = 0.0;
+    double extime3 = 0.0;
 
     for (int exec = 1; exec <= iters; exec++) {
+
         vector<Point_double> v;
         std::vector<Point> pts;
+
         // We can consider points only in the circle circumscribing the fundamental domain 
         Hyperbolic_random_points_in_disc_2_double(v, 5*N, -1, 0.159);
 
@@ -68,27 +79,51 @@ int main(int argc, char** argv) {
         } while (cnt < N && idx < v.size());
 
         if (cnt < N) {
-            cout << "I failed at the generation of random points! Exiting..." << endl;
+            cout << "I failed to generate all the random points! Exiting..." << endl;
             return -1;
         }
 
-        cout << "iteration " << exec << ": inserting into triangulation (rational dummy points)... "; cout.flush();
+        cout << "iteration " << exec << ": inserting into hyperbolic periodic triangulation...    "; cout.flush();
         Triangulation tr;
         tr.insert_dummy_points(true);  
-
-        CGAL::Timer tt;
-        tt.start();
+        CGAL::Timer t1;
+        t1.start();
         for (int j = 0; j < pts.size(); j++) {
             tr.insert(pts[j]);
         }
-        tt.stop();
-        cout << "DONE! (# of vertices = " << tr.number_of_vertices() << ", time = " << tt.time() << " secs)" << endl;
-        extime += tt.time();
+        t1.stop();
+        extime1 += t1.time();
+        cout << "DONE! (# of vertices = " << tr.number_of_vertices() << ", time = " << t1.time() << " secs)" << endl;
+             
+        // cout << "inserting into Euclidean periodic triangulation... "; cout.flush();
+        // PEuclidean_triangulation petr;   
+        // CGAL::Timer t2;
+        // t2.start();
+        // for (int j = 0; j < pts.size(); j++) {
+        //     petr.insert(pts[j]);
+        // }
+        // t2.stop();
+        // cout << "DONE!" << endl;
+
+        cout << "iteration " << exec << ": inserting into Euclidean non-periodic triangulation... "; cout.flush();
+        Euclidean_triangulation etr;   
+        CGAL::Timer t3;
+        t3.start();
+        for (int j = 0; j < pts.size(); j++) {
+            etr.insert(pts[j]);
+        }
+        t3.stop();
+        extime3 += t3.time();
+        cout << "DONE! (# of vertices = " << etr.number_of_vertices() << ", time = " << t3.time() << " secs)" << endl;
+
     }
 
-    double avgtime = extime / (double)iters;
-    cout << "---------------------------------------" << endl;
-    cout << "Average execution time over " << iters << " iterations: " << avgtime << " secs" << endl << endl;
+    extime1 /= (double)iters;
+    extime3 /= (double)iters;
+
+    cout << "Hyperbolic periodic     triangulation: average time = " << extime1 << endl;
+    //cout << "Euclidean  periodic     triangulation: #vertices = " << petr.number_of_vertices() << ", insertion time = " << t2.time() << endl;
+    cout << "Euclidean  non-periodic triangulation: average time = " << extime3 << endl;
 
     return 0;
 }
