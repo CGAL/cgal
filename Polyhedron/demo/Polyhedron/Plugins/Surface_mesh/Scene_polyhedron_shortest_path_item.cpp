@@ -1,4 +1,4 @@
-#include "Scene_polyhedron_shortest_path_item.h"
+﻿#include "Scene_polyhedron_shortest_path_item.h"
 
 #include "Scene_polylines_item.h"
 
@@ -141,7 +141,8 @@ void Scene_polyhedron_shortest_path_item_priv::initialize_buffers(CGAL::Three::V
         item->vaos[Selected_Edges]->bind();
         program->bind();
         item->buffers[Vertices].bind();
-        item->buffers[Vertices].allocate(vertices.data(), vertices.size()*sizeof(float));
+        item->buffers[Vertices].allocate(vertices.data(),
+          static_cast<int>(vertices.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         item->buffers[Vertices].release();
@@ -191,7 +192,7 @@ void Scene_polyhedron_shortest_path_item::drawPoints(CGAL::Three::Viewer_interfa
    vaos[Scene_polyhedron_shortest_path_item_priv::Selected_Edges]->bind();
    d->program->bind();
    d->program->setAttributeValue("colors", QColor(Qt::green));
-   viewer->glDrawArrays(GL_POINTS, 0, d->vertices.size()/3);
+   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->vertices.size() / 3));
    d->program->release();
    vaos[Scene_polyhedron_shortest_path_item_priv::Selected_Edges]->release();
    glPointSize(1.0f);
