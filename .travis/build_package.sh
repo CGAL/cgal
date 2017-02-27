@@ -2,6 +2,7 @@
 set -e
 IFS=$' '
 ROOT="$PWD/../"
+NEED_3D=0
 for ARG in $(echo "$@")
 do
   if [ "$ARG" == "CHECK" ]
@@ -41,11 +42,14 @@ do
 	fi
 	EXAMPLES="$ARG/examples/$ARG"
 	TEST="$ARG/test/$ARG"
-	DEMO="$ARG/demo/$ARG"
-  if [ ! -d $ROOT/$DEMO ] || [ ! -f "$ROOT/$DEMO/CmakeLists.txt" ]; then
-    DEMO="GraphicsView/demo/$ARG"
-   fi
-#If there is no demo subdir, try in GraphicsView
+	DEMOS="$ARG/demo/*"
+  if [ "$ARGS" == AABB_tree ] || [ "$ARGS" == Alpha_shapes_3 ] ||\
+     [ "$ARGS" == Circular_kernel_3 ] || [ "$ARGS" == Linear_cell_complex ] ||\
+     [ "$ARGS" == Periodic_3_triangulation_3 ] || [ "$ARGS" == Principal_component_analysis ] ||\
+     [ "$ARGS" == Surface_mesher ] || [ "$ARGS" == Triangulation_3 ]; then
+    NEED_3D=1
+  fi
+
 	if [ -d "$ROOT/$EXAMPLES" ]
 	then
 	  cd $ROOT/$EXAMPLES
@@ -67,35 +71,60 @@ do
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No test found for $ARG"
 	fi
-	
-	if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
-	then
-	  cd $ROOT/$DEMO
-	  mkdir -p build
-	  cd build
-	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
-	  make -j2
-  elif [ "$ARG" != Polyhedron_demo ]; then
-    echo "No demo found for $ARG"
-	fi
-if [ "$ARG" == Polyhedron_demo ]; then
-  cd "$ROOT/Polyhedron/demo/Polyhedron"
-  #install libqglviewer
-  git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
-  cd ./qglviewer/QGLViewer
-  #use qt5 instead of qt4
-  export QT_SELECT=5
-  qmake NO_QT_VERSION_SUFFIX=yes
-  make -j2
-  if [ ! -f libQGLViewer.so ]; then
-    echo "libQGLViewer.so not made"
-    exit 1
-  fi
-#end install qglviewer
-  cd "$ROOT/Polyhedron/demo/Polyhedron"
-  mkdir -p ./build
-  cd ./build
-  cmake -DCGAL_DIR="$ROOT/build" -DQGLVIEWER_INCLUDE_DIR="$ROOT/Polyhedron/demo/Polyhedron/qglviewer" -DQGLVIEWER_LIBRARIES="$ROOT/Polyhedron/demo/Polyhedron/qglviewer/QGLViewer/libQGLViewer.so" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
-  make -j2
-fi
+  #Packages like Periodic_3_triangulation_3 contain multiple demos
+  for DEMO in $DEMOS; do
+	#If there is no demo subdir, try in GraphicsView
+    if [ ! -d $ROOT/$DEMO ] || [ ! -f "$ROOT/$DEMO/CmakeLists.txt" ]; then
+     DEMO="GraphicsView/demo/$ARG"
+    fi
+	  if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
+  	then
+      if [ $NEED_3D == 1 ]; then
+    	  cd $ROOT/$DEMO
+        #install libqglviewer
+        git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
+        cd ./qglviewer/QGLViewer
+        #use qt5 instead of qt4
+        export QT_SELECT=5
+        qmake NO_QT_VERSION_SUFFIX=yes
+        make -j2
+        if [ ! -f libQGLViewer.so ]; then
+         echo "libQGLViewer.so not made"
+          exit 1
+        fi
+        #end install qglviewer
+      fi
+	    cd $ROOT/$DEMO
+	    mkdir -p build
+	    cd build
+      if [ $NEED_3D == 1 ]; then
+	      cmake -DCGAL_DIR="$ROOT/build" -DQGLVIEWER_INCLUDE_DIR="$ROOT/$DEMO/qglviewer" -DQGLVIEWER_LIBRARIES="$ROOT/$DEMO/qglviewer/QGLViewer/libQGLViewer.so" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
+      else
+        cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
+      fi
+	    make -j2
+    elif [ "$ARG" != Polyhedron_demo ]; then
+      echo "No demo found for $ARG"
+	  fi
+  done
+  if [ "$ARG" == Polyhedron_demo ]; then
+    cd "$ROOT/Polyhedron/demo/Polyhedron"
+    #install libqglviewer
+    git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
+    cd ./qglviewer/QGLViewer
+    #use qt5 instead of qt4
+    export QT_SELECT=5
+    qmake NO_QT_VERSION_SUFFIX=yes
+    make -j2
+    if [ ! -f libQGLViewer.so ]; then
+      echo "libQGLViewer.so not made"
+      exit 1
+    fi
+    #end install qglviewer
+    cd "$ROOT/Polyhedron/demo/Polyhedron"
+    mkdir -p ./build
+    cd ./build
+    cmake -DCGAL_DIR="$ROOT/build" -DQGLVIEWER_INCLUDE_DIR="$ROOT/Polyhedron/demo/Polyhedron/qglviewer" -DQGLVIEWER_LIBRARIES="$ROOT/Polyhedron/demo/Polyhedron/qglviewer/QGLViewer/libQGLViewer.so" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
+    make -j2
+  fi  
 done
