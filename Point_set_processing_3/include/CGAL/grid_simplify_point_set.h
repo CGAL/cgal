@@ -46,18 +46,9 @@ namespace internal {
 
 
 // Round number to multiples of epsilon
-inline int round_epsilon(double value, double epsilon)
+inline double round_epsilon(double value, double epsilon)
 {
-  double x = value / epsilon;
-  if (x > 0.)
-    return static_cast<int> (x);
-  else
-    {
-      int out = static_cast<int> (x - 1);
-      if (double(out + 1) == x)
-        ++ out;
-      return out;
-    }
+  return std::floor(value / epsilon);
 }
   
 /// Utility class for grid_simplify_point_set(): Hash_epsilon_points_3
@@ -114,8 +105,8 @@ public:
       const Point& pa = get(point_pmap,a);
       const Point& pb = get(point_pmap,b);
 
-      int ra = round_epsilon(pa.x(), m_epsilon);
-      int rb = round_epsilon(pb.x(), m_epsilon);
+      double ra = round_epsilon(pa.x(), m_epsilon);
+      double rb = round_epsilon(pb.x(), m_epsilon);
       if (ra != rb)
         return false;
       ra = round_epsilon(pa.y(), m_epsilon);
