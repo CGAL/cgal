@@ -226,7 +226,7 @@ Face_iterator faces_end();
 /*!
 returns a range over handles of the faces in `dcel`.
 */
-unspecified_type faces_handles();
+unspecified_type face_handles();
 
 /*!
 returns a begin-iterator of the faces in `dcel`. 
@@ -241,7 +241,7 @@ Face_const_iterator faces_end() const;
 /*!
 returns a const range over handles of the faces in `dcel`.
 */
-unspecified_type faces_handles() const;
+unspecified_type face_handles() const;
 
 /// @} 
 
