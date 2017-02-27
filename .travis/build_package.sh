@@ -5,7 +5,7 @@ ROOT="$PWD/../"
 NEED_3D=0
 for ARG in $(echo "$@")
 do
-  if [ "$ARG" == "CHECK" ]
+  if [ "$ARG" = "CHECK" ]
 	then
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
 
@@ -43,10 +43,10 @@ do
 	EXAMPLES="$ARG/examples/$ARG"
 	TEST="$ARG/test/$ARG"
 	DEMOS="$ARG/demo/*"
-  if [ "$ARGS" == AABB_tree ] || [ "$ARGS" == Alpha_shapes_3 ] ||\
-     [ "$ARGS" == Circular_kernel_3 ] || [ "$ARGS" == Linear_cell_complex ] ||\
-     [ "$ARGS" == Periodic_3_triangulation_3 ] || [ "$ARGS" == Principal_component_analysis ] ||\
-     [ "$ARGS" == Surface_mesher ] || [ "$ARGS" == Triangulation_3 ]; then
+  if [ "$ARGS" = AABB_tree ] || [ "$ARGS" = Alpha_shapes_3 ] ||\
+     [ "$ARGS" = Circular_kernel_3 ] || [ "$ARGS" = Linear_cell_complex ] ||\
+     [ "$ARGS" = Periodic_3_triangulation_3 ] || [ "$ARGS" = Principal_component_analysis ] ||\
+     [ "$ARGS" = Surface_mesher ] || [ "$ARGS" = Triangulation_3 ]; then
     NEED_3D=1
   fi
 
@@ -74,12 +74,12 @@ do
   #Packages like Periodic_3_triangulation_3 contain multiple demos
   for DEMO in $DEMOS; do
 	#If there is no demo subdir, try in GraphicsView
-    if [ ! -d $ROOT/$DEMO ] || [ ! -f "$ROOT/$DEMO/CmakeLists.txt" ]; then
+    if [ ! -d $ROOT/$DEMO ] || [ ! -f "$ROOT/$DEMO/CMakeLists.txt" ]; then
      DEMO="GraphicsView/demo/$ARG"
     fi
 	  if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
   	then
-      if [ $NEED_3D == 1 ]; then
+      if [ $NEED_3D = 1 ]; then
     	  cd $ROOT/$DEMO
         #install libqglviewer
         git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
@@ -97,7 +97,7 @@ do
 	    cd $ROOT/$DEMO
 	    mkdir -p build
 	    cd build
-      if [ $NEED_3D == 1 ]; then
+      if [ $NEED_3D = 1 ]; then
 	      cmake -DCGAL_DIR="$ROOT/build" -DQGLVIEWER_INCLUDE_DIR="$ROOT/$DEMO/qglviewer" -DQGLVIEWER_LIBRARIES="$ROOT/$DEMO/qglviewer/QGLViewer/libQGLViewer.so" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
       else
         cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
@@ -107,7 +107,7 @@ do
       echo "No demo found for $ARG"
 	  fi
   done
-  if [ "$ARG" == Polyhedron_demo ]; then
+  if [ "$ARG" = Polyhedron_demo ]; then
     cd "$ROOT/Polyhedron/demo/Polyhedron"
     #install libqglviewer
     git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer

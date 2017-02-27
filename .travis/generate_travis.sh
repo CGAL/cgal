@@ -17,7 +17,7 @@ do
 	then
 		PACKAGES[$INDEX]+="$f "
 		i=$[i+1]
-		if [ $i == 3 ]
+		if [ $i = 3 ]
 		then
 			i=0
  			INDEX=$[INDEX+1]
@@ -56,11 +56,11 @@ echo "  - PACKAGE='Polyhedron_demo' " >> .travis.yml
 COPY=0
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
-	if [ "$LINE" == "install: " ]
+	if [ "$LINE" = "install: " ]
 	then
 		COPY=1
 	fi
-	if [ $COPY == 1 ]
+	if [ $COPY = 1 ]
 	then
 		echo "$LINE" >> .travis.yml
 	fi
