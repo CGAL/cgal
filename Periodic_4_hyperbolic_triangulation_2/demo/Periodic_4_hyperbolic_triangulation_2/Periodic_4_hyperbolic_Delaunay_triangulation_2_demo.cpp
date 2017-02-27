@@ -26,7 +26,7 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/TriangulationCircumcircle.h>
 #include <CGAL/Qt/TriangulationPointInputAndConflictZone.h>
-#include <CGAL/Qt/TriangulationGraphicsItemWithColorInfo.h>     // Visualise color
+#include <CGAL/Qt/TriangulationGraphicsItem.h>     // Visualise color
 #include <CGAL/Qt/DemosMainWindow.h>
 
 #include <CGAL/CORE_Expr.h>
@@ -122,21 +122,10 @@ MainWindow::MainWindow()
   rect->setBrush(Qt::white);
   scene.addItem(rect);
   
-  // set disk
-  disk = new QGraphicsEllipseItem(left_top_corner_x, left_top_corner_y, width, height);
-  QPen pen;  // creates a default pen
-  pen.setWidth(0);
-  //pen.setBrush(Qt::black);
-  pen.setBrush(Qt::black);
-  disk->setPen(pen);
-
-  scene.addItem(disk);
-  
   // Add a GraphicItem for the Triangulation triangulation
   dgi = new CGAL::Qt::TriangulationGraphicsItem<Triangulation>(&dt);
 
-  QObject::connect(this, SIGNAL(changed()),
-		   dgi, SLOT(modelChanged()));
+  QObject::connect(this, SIGNAL(changed()), dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   dgi->setEdgesPen(QPen(QColor(200, 200, 0), 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -149,6 +138,7 @@ MainWindow::MainWindow()
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
+
   tcc = new CGAL::Qt::TriangulationCircumcircle<Triangulation>(&scene, &dt, this);
   tcc->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 

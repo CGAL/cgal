@@ -32,7 +32,7 @@
 #include <QStyleOption>
 
 
-#define DRAW_OCTAGON_IMAGE ;
+//#define DRAW_OCTAGON_IMAGE ;
 
 namespace CGAL {
 namespace Qt {
@@ -168,30 +168,53 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   //delete
   QPen temp = painter->pen();
   QPen old = temp;
-  temp.setWidthF(/*0.0035*/0.0025);
+  
+  temp.setWidthF(0.0035);
+  temp.setColor(::Qt::black);
   painter->setPen(temp);
-  //
-  
   painterostream = PainterOstream<Geom_traits>(painter);
+
+  typedef typename Geom_traits::FT        FT;
+  typedef typename Geom_traits::Point_2   Point_2;
+  FT ep = CGAL::sqrt(FT(2)+CGAL::sqrt(FT(2)));
+  FT em = CGAL::sqrt(FT(2)-CGAL::sqrt(FT(2)));
+  FT p14( CGAL::sqrt(CGAL::sqrt(FT(2))) );
+  FT p34( p14*p14*p14 );
   
+  Point_2 v0(ep*p34/FT(4), -em*p34/FT(4));
+  Point_2 v1(p14*(ep + em)/FT(4), p14*(ep - em)/FT(4));
+  Point_2 v2(em*p34/FT(4), ep*p34/FT(4));
+  Point_2 v3(-p14*(ep - em)/FT(4), p14*(ep + em)/FT(4));
+  Point_2 v4(-ep*p34/FT(4), em*p34/FT(4));
+  Point_2 v5(-p14*(ep + em)/FT(4), -p14*(ep - em)/FT(4));
+  Point_2 v6(-em*p34/FT(4), -ep*p34/FT(4));
+  Point_2 v7(p14*(ep - em)/FT(4), -p14*(ep + em)/FT(4));
 
-  #ifndef DRAW_OCTAGON_IMAGE 
-  #else
-  	QImage image(":/icon/bgd.png");
-  	Q_ASSERT(!image.isNull());
-  	QRectF target(-1.0, -1.0, 2.0, 2.0);
-  	painter->drawImage(target, image);
-  #endif
+  painter->drawEllipse(QRectF(-1.0, -1.0, 2.0, 2.0));
 
-    for (typename T::Face_iterator fit = t->faces_begin();
-         fit != t->faces_end(); fit++) {
+  painterostream << t->segment(v0, v1);
+  painterostream << t->segment(v1, v2);
+  painterostream << t->segment(v2, v3);
+  painterostream << t->segment(v3, v4);
+  painterostream << t->segment(v4, v5);
+  painterostream << t->segment(v5, v6);
+  painterostream << t->segment(v6, v7);
+  painterostream << t->segment(v7, v0);
 
-      for (int k = 0; k < 3; k++) {
-        painterostream << t->segment(fit, k);
-      }
+  temp.setWidthF(0.0025);
+  temp.setColor(::Qt::darkGreen);
+  painter->setPen(temp);
+  painterostream = PainterOstream<Geom_traits>(painter);
 
+  for (typename T::Face_iterator fit = t->faces_begin();
+       fit != t->faces_end(); fit++) {
+
+    for (int k = 0; k < 3; k++) {
+      painterostream << t->segment(fit, k);
     }
-  
+
+  }
+
   //delete
   painter->setPen(old);
   //

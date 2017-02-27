@@ -958,7 +958,10 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_han
 {
 	// Get a hint of where the point is located. It's either in lf or in one of its neighbors.
 	Face_handle lf = euclidean_locate(p, lt, li, lo, start);
-
+    if (lf == Face_handle()) {
+        return lf;
+    }
+    
 	// The input point has been located in a vertex, so we can just return here, nothing more to do.
 	if (lt == VERTEX) {
 		return lf;
@@ -970,7 +973,7 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_han
 	// cout << "Euclidean locate says face " << lf->get_number() << " with offset " << lo;
 
 	Bounded_side sides[3];
-
+    
 	Bounded_side bs = sf(p, sides, lf, lo);
 	if (bs == ON_BOUNDED_SIDE) {
 		lt = FACE;
