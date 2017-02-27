@@ -1519,12 +1519,14 @@ void MainWindow::on_actionSaveAs_triggered()
       filters += plugin->saveNameFilters();
     }
   }
-  QRegExp extensions("\\(\\*\\..+\\)");
-  extensions.indexIn(filters.first().split(";;").first());
-  QString ext = extensions.cap();
-
-  filters << tr("All files (*)");
-
+  QString ext;
+  if(!filters.isEmpty())
+  {
+    QRegExp extensions("\\(\\*\\..+\\)");
+    extensions.indexIn(filters.first().split(";;").first());
+    ext = extensions.cap();
+    filters << tr("All files (*)");
+  }
   if(canSavePlugins.isEmpty()) {
     QMessageBox::warning(this,
                          tr("Cannot save"),
@@ -1532,7 +1534,6 @@ void MainWindow::on_actionSaveAs_triggered()
                          .arg(item->name()));
     return;
   }
-
   QString caption = tr("Save %1 to File...%2").arg(item->name()).arg(ext);
   QString filename = 
     QFileDialog::getSaveFileName(this,
