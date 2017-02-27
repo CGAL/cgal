@@ -65,25 +65,40 @@ public:
 
     bool operator() (const Point_3& a, const Point_3& b) const
     {
-        // Round points to multiples of m_epsilon, then compare.
-        return round_epsilon( get(point_pmap,a), m_epsilon ) <
-               round_epsilon( get(point_pmap,b), m_epsilon );
+      const Point& pa = get(point_pmap,a);
+      const Point& pb = get(point_pmap,b);
+
+      // Round points to multiples of m_epsilon, then compare.
+      int ra = round_epsilon(pa.x());
+      int rb = round_epsilon(pb.x());
+      if (ra != rb)
+        return ra < rb;
+      ra = round_epsilon(pa.y());
+      rb = round_epsilon(pb.y());
+      if (ra != rb)
+        return ra < rb;
+      ra = round_epsilon(pa.z());
+      rb = round_epsilon(pb.z());
+      return ra < rb;
     }
 
 private:
 
     // Round number to multiples of epsilon
-    static inline double round_epsilon(double value, double epsilon)
+    inline int round_epsilon(double value) const
     {
-        return std::floor(value/epsilon) * epsilon;
+      double x = value / m_epsilon;
+      if (x > 0.)
+        return static_cast<int> (x);
+      else
+        {
+          int out = static_cast<int> (x - 1);
+          if (double(out + 1) == x)
+            ++ out;
+          return out;
+        }
     }
 
-    static inline Point round_epsilon(const Point& p, double epsilon)
-    {
-        return Point( round_epsilon(p.x(), epsilon),
-                      round_epsilon(p.y(), epsilon),
-                      round_epsilon(p.z(), epsilon) );
-    }
 };
 
 
