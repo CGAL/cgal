@@ -43,8 +43,6 @@ using boost::unordered_map;
 
 } // cpp11
 
-namespace cpp0x = cpp11;
-
 } //namespace CGAL
 
 #endif // CGAL_UNORDERED_H
