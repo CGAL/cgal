@@ -26,7 +26,6 @@ mkdir ./build_doc
 cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
 make -j7 doc  &> /dev/null
-make -j7 doc  &> /dev/null
 cd ../ #scripts
 bash compare_testsuites.sh $PWD/build_doc/doc_output
 mv ./doc_data ./doc_ref
@@ -54,7 +53,14 @@ cd ../ #scripts
 DOXYGEN_1=$($PATH_TO_1 --version)
 DOXYGEN_2=$($PATH_TO_2 --version)
 bash ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref $DOXYGEN_1 $DOXYGEN_2
-
+#rebuild doc with Doxygen_1 to get the right doc_tags
+rm -rf ./doc_dir
+mkdir ./doc_dir
+cd ./doc_dir
+cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
+make -j7 doc  &> /dev/null
+make -j7 doc  &> /dev/null
+cd ..
 #update overview
 python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ --publish $PUBLISH_DIR --diff $PWD/diff.txt
 
