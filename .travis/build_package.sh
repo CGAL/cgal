@@ -41,12 +41,12 @@ do
     exit 0
 	fi
 	EXAMPLES="$ARG/examples/$ARG"
-	TEST="$ARG/test/$ARG"
-	DEMOS="$ARG/demo/*"
-  if [ "$ARGS" = AABB_tree ] || [ "$ARGS" = Alpha_shapes_3 ] ||\
-     [ "$ARGS" = Circular_kernel_3 ] || [ "$ARGS" = Linear_cell_complex ] ||\
-     [ "$ARGS" = Periodic_3_triangulation_3 ] || [ "$ARGS" = Principal_component_analysis ] ||\
-     [ "$ARGS" = Surface_mesher ] || [ "$ARGS" = Triangulation_3 ]; then
+	TEST="$ARG/test/$ARG" 
+	DEMOS=$ROOT/$ARG/demo/*
+  if [ "$ARG" = AABB_tree ] || [ "$ARG" = Alpha_shapes_3 ] ||\
+     [ "$ARG" = Circular_kernel_3 ] || [ "$ARG" = Linear_cell_complex ] ||\
+     [ "$ARG" = Periodic_3_triangulation_3 ] || [ "$ARG" = Principal_component_analysis ] ||\
+     [ "$ARG" = Surface_mesher ] || [ "$ARG" = Triangulation_3 ]; then
     NEED_3D=1
   fi
 
@@ -73,8 +73,10 @@ do
 	fi
   #Packages like Periodic_3_triangulation_3 contain multiple demos
   for DEMO in $DEMOS; do
-	#If there is no demo subdir, try in GraphicsView
-    if [ ! -d $ROOT/$DEMO ] || [ ! -f "$ROOT/$DEMO/CMakeLists.txt" ]; then
+    DEMO=${DEMO#"$ROOT"}
+    echo $DEMO
+  	#If there is no demo subdir, try in GraphicsView
+    if [ ! -d "$ROOT/$DEMO" ] || [ ! -f "$ROOT/$DEMO/CMakeLists.txt" ]; then
      DEMO="GraphicsView/demo/$ARG"
     fi
 	  if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
@@ -89,8 +91,10 @@ do
         qmake NO_QT_VERSION_SUFFIX=yes
         make -j2
         if [ ! -f libQGLViewer.so ]; then
-         echo "libQGLViewer.so not made"
+          echo "libQGLViewer.so not made"
           exit 1
+        else
+          echo "QGLViewer built successfully"
         fi
         #end install qglviewer
       fi
