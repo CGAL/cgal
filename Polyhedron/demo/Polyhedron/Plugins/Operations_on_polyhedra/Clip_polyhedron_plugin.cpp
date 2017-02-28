@@ -3,7 +3,7 @@
 #include <QMainWindow>
 #include <QAction>
 #include <QVector>
-#include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -93,7 +93,7 @@ class Q_DECL_EXPORT Clip_polyhedron_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-
+  typedef Scene_surface_mesh_item::SMesh Polyhedron;
 public :
   // Adds an action to the menu and configures the widget
   void init(QMainWindow* mw,
@@ -122,7 +122,7 @@ public :
   {
     Q_FOREACH(int id, scene->selectionIndices())
     {
-      if(qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
         return true;
     }
     return false;
@@ -173,20 +173,19 @@ public Q_SLOTS:
     {
       QApplication::setOverrideCursor(Qt::WaitCursor);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      QList<Scene_polyhedron_item*> polyhedra;
+      QList<Scene_surface_mesh_item*> polyhedra;
 
       //Fills the list of target polyhedra and the cutting plane
       Q_FOREACH(int id, scene->selectionIndices())
       {
-        Scene_polyhedron_item *target_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
-        if(target_item)
+        Scene_surface_mesh_item *target_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
+        if(target_item && CGAL::is_triangle_mesh(*target_item->polyhedron()))
         {
           polyhedra << target_item;
         }
       }
-
       //apply the clipping function
-      Q_FOREACH(Scene_polyhedron_item* poly, polyhedra)
+      Q_FOREACH(Scene_surface_mesh_item* poly, polyhedra)
       {
         if (ui_widget.clip_radioButton->isChecked())
         {
@@ -204,7 +203,7 @@ public Q_SLOTS:
           CGAL::Polygon_mesh_processing::clip(*neg_side,
                                               plane->plane(),
                                               ui_widget.close_checkBox->isChecked());
-          Scene_polyhedron_item* new_item = new Scene_polyhedron_item(neg_side);
+          Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(neg_side);
           new_item->setName(QString("%1 on %2").arg(poly->name()).arg("negative side"));
           new_item->setColor(poly->color());
           new_item->setRenderingMode(poly->renderingMode());
@@ -216,7 +215,7 @@ public Q_SLOTS:
           CGAL::Polygon_mesh_processing::clip(*pos_side,
                                               plane->plane().opposite(),
                                               ui_widget.close_checkBox->isChecked());
-          new_item = new Scene_polyhedron_item(pos_side);
+          new_item = new Scene_surface_mesh_item(pos_side);
           new_item->setName(QString("%1 on %2").arg(poly->name()).arg("positive side"));
           new_item->setColor(poly->color());
           new_item->setRenderingMode(poly->renderingMode());

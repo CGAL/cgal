@@ -136,6 +136,7 @@ struct Scene_surface_mesh_item_priv{
   mutable bool is_filled;
   mutable bool isinit;
   mutable std::vector<unsigned int> idx_data_;
+  mutable std::map<unsigned int, unsigned int> current_indices; //map im values to ghosts-free values
   std::vector<unsigned int> idx_edge_data_;
   std::vector<unsigned int> idx_feature_edge_data_;
   mutable std::vector<cgal_gl_data> smooth_vertices;
