@@ -88,9 +88,10 @@ int main(int argc, char** argv) {
         tr.insert_dummy_points(true);  
         CGAL::Timer t1;
         t1.start();
-        for (int j = 0; j < pts.size(); j++) {
-            tr.insert(pts[j]);
-        }
+        tr.insert(pts.begin(), pts.end());
+        //for (int j = 0; j < pts.size(); j++) {
+        //    tr.insert(pts[j]);
+        //}
         t1.stop();
         extime1 += t1.time();
         cout << "DONE! (# of vertices = " << tr.number_of_vertices() << ", time = " << t1.time() << " secs)" << endl;
@@ -109,9 +110,10 @@ int main(int argc, char** argv) {
         Euclidean_triangulation etr;   
         CGAL::Timer t3;
         t3.start();
-        for (int j = 0; j < pts.size(); j++) {
-            etr.insert(pts[j]);
-        }
+        etr.insert(pts.begin(), pts.end());
+        //for (int j = 0; j < pts.size(); j++) {
+        //   etr.insert(pts[j]);
+        //}
         t3.stop();
         extime3 += t3.time();
         cout << "DONE! (# of vertices = " << etr.number_of_vertices() << ", time = " << t3.time() << " secs)" << endl;

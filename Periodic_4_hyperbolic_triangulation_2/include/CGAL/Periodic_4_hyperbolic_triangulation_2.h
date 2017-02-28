@@ -885,13 +885,13 @@ template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
 euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_handle f) const {
 
-	typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
+	// typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
 
-	Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
-	CGAL::Bounded_side side = check(p);
-	if (side != ON_BOUNDED_SIDE) {
-		return Face_handle();
-	}
+	// Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+	// CGAL::Bounded_side side = check(p);
+	// if (side != ON_BOUNDED_SIDE) {
+	// 	return Face_handle();
+	// }
 
 	// Handle the case where an initial Face_handle is not given
 	if (f == Face_handle()) {

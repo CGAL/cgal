@@ -5,10 +5,11 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
-#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
-#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
-#include <CGAL/CORE_Expr.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+//#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
+//#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
+//#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
+//#include <CGAL/CORE_Expr.h>
 //#include <CGAL/leda_real.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
@@ -17,19 +18,20 @@
 
 
 
-typedef CORE::Expr                                                              NT;
+//typedef CORE::Expr                                                              NT;
 //typedef leda_real                                                               NT;
+typedef double                                                                  NT;
 typedef CGAL::Cartesian<NT>                                                     Kernel;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
-typedef Hyperbolic_octagon_translation_matrix<NT>                               Octagon_matrix;
+//typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits;
+typedef CGAL::Delaunay_triangulation_2<Kernel>                                  Triangulation;
+//typedef Hyperbolic_octagon_translation_matrix<NT>                               Octagon_matrix;
 typedef Kernel::Point_2                                                         Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
-typedef Traits::Side_of_fundamental_octagon                                     Side_of_fundamental_octagon;
+//typedef Traits::Side_of_fundamental_octagon                                     Side_of_fundamental_octagon;
 
-typedef CGAL::Cartesian<double>::Point_2                                        Point_double;
-typedef CGAL::Creator_uniform_2<double, Point_double >                          Creator;
+typedef CGAL::Creator_uniform_2<double, Point>                                  Creator;
 
+using namespace std;
 
 int main(int argc, char** argv) {    
 
@@ -44,37 +46,19 @@ int main(int argc, char** argv) {
         iters = atoi(argv[2]);
     }
 
-    Side_of_fundamental_octagon pred;
-
     cout << "---- for best results, make sure that you have compiled me in Release mode ----" << endl;
     
     double extime = 0.0;
 
     for (int exec = 1; exec <= iters; exec++) {
-        vector<Point_double> v;
         std::vector<Point> pts;
-        // We can consider points only in the circle circumscribing the fundamental domain 
-        Hyperbolic_random_points_in_disc_2_double(v, 5*N, -1, 0.159);
-
-        int cnt = 0;
-        int idx = 0;
-        do {    
-            Point pt = Point(v[idx].x(), v[idx].y());
-            if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
-                pts.push_back(pt);
-                cnt++;
-            } 
-            idx++;
-        } while (cnt < N && idx < v.size());
-
-        if (cnt < N) {
-            cout << "I failed at the generation of random points! Exiting..." << endl;
-            return -1;
-        }
+        pts.reserve(N);
+        CGAL::Random_points_in_disc_2<Point, Creator> g(1.0);
+        CGAL::cpp11::copy_n( g, N, std::back_inserter(pts));
 
         cout << "iteration " << exec << ": inserting into triangulation (rational dummy points)... "; cout.flush();
         Triangulation tr;
-        tr.insert_dummy_points(true);  
+        //tr.insert_dummy_points(true);  
 
         CGAL::Timer tt;
         tt.start();
