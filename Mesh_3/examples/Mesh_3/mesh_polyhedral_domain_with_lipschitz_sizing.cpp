@@ -7,10 +7,7 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
-#include <CGAL/Mesh_3/experimental/Lipschitz_sizing.h>
-
-#include <CGAL/Bbox_3.h>
-#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Mesh_3/experimental/Lipschitz_sizing_polyhedron.h>
 
 //Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -56,17 +53,9 @@ int main(int argc, char*argv[])
   // Get sharp features
   domain.detect_features();
 
-  //If domain is a cube
-  bool domain_is_a_cube = false;
-  FT eps = 0.05;//epsilon defining cube border
-  std::array<FT, 3> vxyz = {eps, eps, eps};
-  CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(polyhedron);
-
   // Create Lipschitz sizing field
-  Lip_sizing lip_sizing(domain, &domain.aabb_tree(),
-                        vxyz,
-                        bbox,
-                        domain_is_a_cube);
+  Lip_sizing lip_sizing(domain, &domain.aabb_tree());
+
   FT min_size = 0.01;
   lip_sizing.add_parameters_for_subdomain(1,       //subdomain id
                                           0.3,     //k

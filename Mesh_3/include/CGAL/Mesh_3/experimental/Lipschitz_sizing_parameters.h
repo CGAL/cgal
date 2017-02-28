@@ -74,6 +74,9 @@ public:
     : p_domain_(&domain)
   {}
 
+  bool empty()       const {  return m_parameters.empty(); }
+  std::size_t size() const { return m_parameters.size(); }
+
   void add_subdomain(const Subdomain_index& index
                    , const FT& k
                    , const FT& size_min
@@ -108,6 +111,7 @@ public:
     size_max        = p.size_max();
   }
 
+#ifdef CGAL_MESH_3_LIPSCHITZ_SIZING_EXPERIMENTAL
   void get_parameters(const Surface_patch_index& spi
                     , FT& size_max) const
   {
@@ -148,20 +152,12 @@ public:
     incident_subdomains(const Surface_patch_index& index) const
   {
 //#ifdef CGAL_MESH_3_IMAGE_EXAMPLE
-    return index;
+//    return index;
 //#else //POLYHEDRAL_EXAMPLE
-//    return p_domain_->incident_subdomains_indices(index);
+    return p_domain_->incident_subdomains_indices(index);
 //#endif
   }
-
-  bool empty() const
-  {
-    return m_parameters.empty();
-  }
-  std::size_t size() const
-  {
-    return m_parameters.size();
-  }
+#endif
 
 };
 }//namespace CGAL
