@@ -941,7 +941,6 @@ invalidate_stats()
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
-
 }
 
 Scene_polyhedron_item*
@@ -1447,6 +1446,32 @@ QString Scene_polyhedron_item::computeStats(int type)
   case MEAN_ANGLE:
     angles(d->poly, mini, maxi, ave);
   }
+  double min_area, max_area, med_area, mean_area;
+  switch (type)
+  {
+  case MIN_AREA:
+  case MAX_AREA:
+  case MEAN_AREA:
+  case MED_AREA:
+    if(!d->poly->is_pure_triangle())
+    {
+      return QString("n/a");
+    }
+    faces_area(d->poly, min_area, max_area, mean_area, med_area);
+  }
+  double min_altitude, min_ar, max_ar, mean_ar;
+  switch (type)
+  {
+  case MIN_ALTITUDE:
+  case MIN_ASPECT_RATIO:
+  case MAX_ASPECT_RATIO:
+  case MEAN_ASPECT_RATIO:
+    if(!d->poly->is_pure_triangle())
+    {
+      return QString("n/a");
+    }
+    faces_aspect_ratio(d->poly, min_altitude, min_ar, max_ar, mean_ar);
+  }
 
   switch(type)
   {
@@ -1537,9 +1562,30 @@ QString Scene_polyhedron_item::computeStats(int type)
     return QString::number(maxi);
   case MEAN_ANGLE:
     return QString::number(ave);
-
   case HOLES:
     return QString::number(nb_holes(d->poly));
+
+  case MIN_AREA:
+    return QString::number(min_area);
+  case MAX_AREA:
+    return QString::number(max_area);
+  case MED_AREA:
+    return QString::number(med_area);
+  case MEAN_AREA:
+    return QString::number(mean_area);
+  case MIN_ALTITUDE:
+    return QString::number(min_altitude);
+  case MIN_ASPECT_RATIO:
+    return QString::number(min_ar);
+  case MAX_ASPECT_RATIO:
+    return QString::number(max_ar);
+  case MEAN_ASPECT_RATIO:
+    return QString::number(mean_ar);
+  case IS_PURE_TRIANGLE:
+    if(d->poly->is_pure_triangle())
+      return QString("yes");
+    else
+      return QString("no");
   }
   return QString();
 }
@@ -1549,20 +1595,30 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   CGAL::Three::Scene_item::Header_data data;
   //categories
   data.categories.append(std::pair<QString,int>(QString("Properties"),9));
+  data.categories.append(std::pair<QString,int>(QString("Faces"),9));
   data.categories.append(std::pair<QString,int>(QString("Edges"),6));
   data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
 
   //titles
   data.titles.append(QString("#Vertices"));
-  data.titles.append(QString("#Facets"));
   data.titles.append(QString("#Connected Components"));
   data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("#Degenerated Faces"));
   data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
   data.titles.append(QString("Self-Intersecting"));
+  data.titles.append(QString("#Faces"));
+  data.titles.append(QString("Min Area"));
+  data.titles.append(QString("Max Area"));
+  data.titles.append(QString("Median Area"));
+  data.titles.append(QString("Mean Area"));
+  data.titles.append(QString("Min Altitude"));
+  data.titles.append(QString("Min Aspect-Ratio"));
+  data.titles.append(QString("Max Aspect-Ratio"));
+  data.titles.append(QString("Mean Aspect-Ratio"));
   data.titles.append(QString("#Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
