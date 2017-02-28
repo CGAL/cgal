@@ -29,6 +29,20 @@
 namespace CGAL {
 namespace Mesh_3 {
 
+struct Detect_features_less
+{
+  template<typename Handle>
+  bool operator()(const Handle& h1, const Handle& h2) const
+  {
+    typedef typename std::iterator_traits<Handle>::value_type Type;
+    typedef typename boost::mpl::if_c<
+        CGAL::internal::Has_timestamp<Type>::value,
+        CGAL_with_time_stamp<Handle>,
+        CGAL_no_time_stamp<Handle> >::type    Comparator;
+    return Comparator::less(h1, h2);
+  }
+};
+
 template <typename Polyhedron>
 void detect_features(Polyhedron& p,
                      typename Polyhedron::Traits::FT angle_in_deg)
@@ -55,8 +69,8 @@ public:
   typedef typename Polyhedron::Facet            Facet;
   typedef typename Facet::Patch_id              Patch_id;
   
-  typedef std::set<Facet_handle>      Facet_handle_set;
-  typedef std::set<Halfedge_handle>   He_handle_set;
+  typedef std::set<Facet_handle, Detect_features_less> Facet_handle_set;
+  typedef std::set<Halfedge_handle, Detect_features_less> He_handle_set;
   
 public:
   Detect_features_in_polyhedra() : current_surface_index_(1) {}
