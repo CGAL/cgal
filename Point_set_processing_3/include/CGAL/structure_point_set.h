@@ -709,8 +709,8 @@ private:
 
     typename Pointer_property_map<Point>::type pmap = make_property_map(m_points);
 
-    Tree tree (boost::counting_iterator<std::size_t, boost::use_default, boost::intmax_t> (0),
-               boost::counting_iterator<std::size_t, boost::use_default, boost::intmax_t> (m_points.size()),
+    Tree tree (boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t> (0),
+               boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t> (m_points.size()),
                typename Tree::Splitter(),
                Search_traits (pmap));
 
