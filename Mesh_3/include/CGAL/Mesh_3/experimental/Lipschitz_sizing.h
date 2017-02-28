@@ -56,8 +56,8 @@ namespace Mesh_3
 
 template <class Kernel, class MeshDomain
         , typename AABBTreeTemplate = CGAL::Default
-        , typename Get_facet_patch_id_ = CGAL::Default
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+        , typename Get_facet_patch_id_ = CGAL::Default
         , typename Patches_ids_ = CGAL::Default
 #endif
 >
@@ -80,11 +80,12 @@ public:
   typedef typename MeshDomain::Subdomain_index          Subdomain_index;
   typedef typename MeshDomain::Surface_patch_index      Surface_patch_index;
 
+  typedef CGAL::Lipschitz_sizing_parameters<MeshDomain, FT> Parameters;
+
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   typedef typename CGAL::Default::Get<Patches_ids_,
     typename MeshDomain::Surface_patch_index_set>::type Patches_ids;
   typedef std::vector<Patches_ids>                      Patches_ids_map;
-#endif
 
   typedef typename CGAL::Default::Get<
     Get_facet_patch_id_,
@@ -94,30 +95,29 @@ public:
   typedef CGAL::Mesh_3::Filtered_projection_traits<
     typename Tree::AABB_traits, Get_facet_patch_id>     AABB_filtered_traits;
 
-  typedef CGAL::Lipschitz_sizing_parameters<MeshDomain, FT> Parameters;
-
 private:
   typedef CGAL::Search_traits_3<Kernel>                 KdTreeTraits;
   typedef CGAL::Orthogonal_k_neighbor_search<KdTreeTraits> Neighbor_search;
   typedef typename Neighbor_search::Tree                Kd_tree;
+#endif
 
 private:
   //only one of these aabb_trees is needed
   const Tree* m_ptree;
   boost::shared_ptr<Tree> m_own_ptree;
 
-  //help to accelerate aabb_tree queries in m_ptree
-  boost::shared_ptr<Kd_tree> m_kd_tree;
-
   const MeshDomain& m_domain;
   Parameters m_params;
 
-  Get_facet_patch_id m_get_facet_patch_id;
   const CGAL::cpp11::array<double, 3>& m_vxyz;
   const CGAL::Bbox_3& m_bbox;
   const bool m_domain_is_a_box;
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+  //help to accelerate aabb_tree queries in m_ptree
+  boost::shared_ptr<Kd_tree> m_kd_tree;
+
+  Get_facet_patch_id m_get_facet_patch_id;
   const Patches_ids_map& patches_ids_map;
 #endif
 
@@ -132,36 +132,25 @@ public:
 
   Lipschitz_sizing(const MeshDomain& domain
     , const Tree* ptree
-#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-    , const Patches_ids_map& patches_ids_map
-#endif
     , const CGAL::cpp11::array<double, 3>& vxyz
     , const CGAL::Bbox_3& bbox
     , const bool domain_is_a_box
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+    , const Patches_ids_map& patches_ids_map
+#endif
     )
     : m_ptree(ptree)
     , m_own_ptree()
     , m_domain(domain)
     , m_params(domain)
-    , m_get_facet_patch_id()
-#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-    , patches_ids_map(patches_ids_map)
-#endif
     , m_vxyz(vxyz)
     , m_bbox(bbox)
     , m_domain_is_a_box(domain_is_a_box)
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
+    , m_get_facet_patch_id()
+    , patches_ids_map(patches_ids_map)
+#endif
   {
-#  ifdef CGAL_MESH_3_LIPSCHITZ_SIZING_VERBOSE
-    const std::vector<Surface_patch_index>&
-      ids = m_domain.boundary_patches();
-
-    std::cout << "Boundary patch ids : ";
-    if (ids.empty()) std::cout << "empty";
-    BOOST_FOREACH(Surface_patch_index spi, ids)
-      std::cout << spi << " ";
-    std::cout << std::endl;
-#  endif // CGAL_MESH_3_LIPSCHITZ_SIZING_VERBOSE
-    kd_tree();
   }
 
   FT operator()(const Point_3& p, const int dim, const Index& index) const
@@ -409,30 +398,31 @@ private:
     return (std::min)(size, size_max);
   }
 
-  //comment the kd_tree construction for now
+#ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   void kd_tree()
   {
-  //  typedef typename MeshDomain::Polyhedron Polyhedron;
-  //  if(m_kd_tree.get() == 0) {
-  //    m_kd_tree.reset(new Kd_tree);
-  //    BOOST_FOREACH(std::size_t poly_id, m_domain.inside_polyhedra()) {
-  //      const Polyhedron& poly = m_domain.polyhedra()[poly_id];
-  //      BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
-  //      {
-  //        m_kd_tree->insert(v->point());
-  //      }
-  //    }
-  //    BOOST_FOREACH(std::size_t poly_id, m_domain.boundary_polyhedra()) {
-  //      const Polyhedron& poly = m_domain.polyhedra()[poly_id];
-  //      BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
-  //      {
-  //        if(!is_on_cube_boundary(v->point()))
-  //          m_kd_tree->insert(v->point());
-  //      }
-  //    }
-  //    m_kd_tree->build();
-  //  }
+    typedef typename MeshDomain::Polyhedron Polyhedron;
+    if(m_kd_tree.get() == 0) {
+      m_kd_tree.reset(new Kd_tree);
+      BOOST_FOREACH(std::size_t poly_id, m_domain.inside_polyhedra()) {
+        const Polyhedron& poly = m_domain.polyhedra()[poly_id];
+        BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
+        {
+          m_kd_tree->insert(v->point());
+        }
+      }
+      BOOST_FOREACH(std::size_t poly_id, m_domain.boundary_polyhedra()) {
+        const Polyhedron& poly = m_domain.polyhedra()[poly_id];
+        BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
+        {
+          if(!is_on_cube_boundary(v->point()))
+            m_kd_tree->insert(v->point());
+        }
+      }
+      m_kd_tree->build();
+    }
   }
+#endif
 
   Point_3 compute_closest_point(const Point_3& p) const
   {
@@ -448,6 +438,7 @@ private:
                                         boundary_ids.end(),
                                         m_ptree->traits(),
                                         m_get_facet_patch_id);
+    kd_tree();//build it if needed
     Neighbor_search search(*m_kd_tree, p, 1);
     projection_traits.reset(search.begin()->first);
 
