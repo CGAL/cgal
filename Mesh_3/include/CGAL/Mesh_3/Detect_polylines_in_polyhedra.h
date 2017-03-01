@@ -23,7 +23,7 @@
 #define CGAL_MESH_3_DETECT_POLYLINES_IN_POLYHEDRA_H
 
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra_fwd.h>
-#include <CGAL/Has_timestamp.h>
+#include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <CGAL/Default.h>
 
 #include <algorithm>
@@ -31,40 +31,6 @@
 #include <boost/mpl/if.hpp>
 
 namespace CGAL { namespace Mesh_3 {
-
-template <typename Handle>
-struct CGAL_with_time_stamp
-{
-public:
-  static bool less(Handle h1, Handle h2)
-  {
-    return h1->time_stamp() < h2->time_stamp();
-  }
-};
-
-template <typename Handle>
-struct CGAL_no_time_stamp
-{
-public:
-  static bool less(Handle h1, Handle h2)
-  {
-    return &*h1 < &*h2;
-  }
-};
-
-struct Detect_polyline_less
-{
-  template<typename Handle>
-  bool operator()(const Handle& h1, const Handle& h2) const
-  {
-    typedef typename std::iterator_traits<Handle>::value_type Type;
-    typedef typename boost::mpl::if_c<
-        CGAL::internal::Has_timestamp<Type>::value,
-        CGAL_with_time_stamp<Handle>,
-        CGAL_no_time_stamp<Handle> >::type    Comparator;
-    return Comparator::less(h1, h2);
-  }
-};
 
 template <typename Polyhedron>
 struct Detect_polylines {
@@ -75,13 +41,14 @@ struct Detect_polylines {
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
   typedef typename Polyhedron::Vertex_handle Vertex_handle;
   typedef typename Polyhedron::size_type size_type;
+  typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
 
-  typedef std::set<Vertex_handle, Detect_polyline_less> Vertices_set;
+  typedef std::set<Vertex_handle, Compare_handles> Vertices_set;
   typedef std::map<Vertex_handle, 
                    size_type,                    
-                   Detect_polyline_less> Vertices_counter;
+                   Compare_handles> Vertices_counter;
 
-  typedef std::set<Halfedge_handle, Detect_polyline_less> Feature_edges_set;
+  typedef std::set<Halfedge_handle, Compare_handles> Feature_edges_set;
 
   Feature_edges_set edges_to_consider;
   Vertices_set corner_vertices;
@@ -143,7 +110,7 @@ struct Detect_polylines {
   static Halfedge_handle canonical(Halfedge_handle he)
   {
     const Halfedge_handle& op = he->opposite();
-    if(Detect_polyline_less()(he, op))
+    if(Compare_handles()(he, op))
       return he;
     else 
       return op;

@@ -24,24 +24,11 @@
 
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Mesh_3/Detect_features_in_polyhedra_fwd.h>
+#include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <set>
 
 namespace CGAL {
 namespace Mesh_3 {
-
-struct Detect_features_less
-{
-  template<typename Handle>
-  bool operator()(const Handle& h1, const Handle& h2) const
-  {
-    typedef typename std::iterator_traits<Handle>::value_type Type;
-    typedef typename boost::mpl::if_c<
-        CGAL::internal::Has_timestamp<Type>::value,
-        CGAL_with_time_stamp<Handle>,
-        CGAL_no_time_stamp<Handle> >::type    Comparator;
-    return Comparator::less(h1, h2);
-  }
-};
 
 template <typename Polyhedron>
 void detect_features(Polyhedron& p,
@@ -68,9 +55,10 @@ public:
   typedef typename Polyhedron::Halfedge         Halfedge;
   typedef typename Polyhedron::Facet            Facet;
   typedef typename Facet::Patch_id              Patch_id;
+  typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
   
-  typedef std::set<Facet_handle, Detect_features_less> Facet_handle_set;
-  typedef std::set<Halfedge_handle, Detect_features_less> He_handle_set;
+  typedef std::set<Facet_handle, Compare_handles> Facet_handle_set;
+  typedef std::set<Halfedge_handle, Compare_handles> He_handle_set;
   
 public:
   Detect_features_in_polyhedra() : current_surface_index_(1) {}
