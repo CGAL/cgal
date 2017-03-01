@@ -113,6 +113,18 @@ int main (int argc, char** argv)
 
   std::cerr << "Training" << std::endl;
   trainer.train (800); // 800 trials
+
+  std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
+  for (std::size_t i = 0; i < psc.number_of_labels(); ++ i)
+    {
+      std::cerr << " * " << psc.label(i)->name() << ": "
+                << trainer.precision(psc.label(i)) << " ; "
+                << trainer.recall(psc.label(i)) << " ; "
+                << trainer.f1_score(psc.label(i)) << " ; "
+                << trainer.IoU(psc.label(i)) << std::endl;
+    }
+        
+  
   
   psc.run_with_graphcut (psc.neighborhood().k_neighbor_query(12), 0.5);
   

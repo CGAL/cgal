@@ -45,4 +45,5 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "example_classifier.cpp" )
 create_single_source_cgal_program( "example_point_set_classifier.cpp" )
+create_single_source_cgal_program( "example_feature.cpp" )
 

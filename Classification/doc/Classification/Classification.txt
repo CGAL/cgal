@@ -76,6 +76,18 @@ In the following code snippet, a subset of these features are instantiated and t
 
 \snippet Classification/example_classifier.cpp Features
 
+Users can define their own feature classes. Such classes must fulfill the following requirements:
+
+- they must inherit `CGAL::Classification::Feature_base`
+- their constructor(s) must take as first argument the item range used by the classifier object
+- they must provide a method `value()` that associates each input point to a scalar value
+
+The following example shows how to define a feature that discriminates
+points that lie inside a 2D box from the others:
+
+\cgalExample{Classification/example_feature.cpp}
+
+
 \subsection Classification_labels Labels
 
 A label represents how an item should be classified, for example: vegetation, building, road, etc. It is defined by the values the features are expected to take for a specific label. For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.

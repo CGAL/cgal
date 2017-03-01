@@ -103,7 +103,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////
-  //! [Classification Labels]
+  //! [Labels]
   
   std::cerr << "Setting up labels" << std::endl;
   
@@ -135,7 +135,7 @@ int main (int argc, char** argv)
   roof->set_feature_effect (disp, CGAL::Classification::Feature::NEUTRAL);
   roof->set_feature_effect (elev, CGAL::Classification::Feature::FAVORING);
 
-  //! [Classification Labels]
+  //! [Labels]
   ///////////////////////////////////////////////////////////////////
 
   // Run classification
