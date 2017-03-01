@@ -5,7 +5,10 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_classifier.h>
+#include <CGAL/Classification/Trainer.h>
 #include <CGAL/IO/read_ply_points.h>
+
+#include <CGAL/Timer.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -14,6 +17,7 @@ typedef std::vector<Point> Point_range;
 typedef CGAL::Identity_property_map<Point> Pmap;
 
 typedef CGAL::Point_set_classifier<Kernel, Point_range, Pmap> Point_set_classifier;
+typedef CGAL::Classification::Trainer<Point_range, Pmap> Trainer;
 
 /*
  This interpreter is used to read a PLY input that contains training
@@ -85,6 +89,8 @@ int main (int argc, char** argv)
     = psc.add_classification_type ("vegetation");
   CGAL::Classification::Type_handle roof
     = psc.add_classification_type ("roof");
+  
+  Trainer trainer (psc);
 
   // Set training sets
   for (std::size_t i = 0; i < labels.size(); ++ i)
@@ -92,13 +98,13 @@ int main (int argc, char** argv)
       switch (labels[i])
         {
         case 0:
-          psc.set_inlier(ground, i);
+          trainer.set_inlier(ground, i);
           break;
         case 1:
-          psc.set_inlier(vege, i);
+          trainer.set_inlier(vege, i);
           break;
         case 2:
-          psc.set_inlier(roof, i);
+          trainer.set_inlier(roof, i);
           break;
         default:
           break;
@@ -106,8 +112,8 @@ int main (int argc, char** argv)
     }
 
   std::cerr << "Training" << std::endl;
-  psc.train (800); // 800 trials
-
+  trainer.train (800); // 800 trials
+  
   psc.run_with_graphcut (psc.neighborhood().k_neighbor_query(12), 0.5);
   
   // Save the output in a colored PLY format
