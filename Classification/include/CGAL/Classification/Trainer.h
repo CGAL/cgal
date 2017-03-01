@@ -81,7 +81,7 @@ public:
       return false;
 
     if (label_idx >= m_training_sets.size())
-      m_training_sets.resize (label_idx - 1);
+      m_training_sets.resize (label_idx + 1);
 
     m_training_sets[label_idx].push_back (index);
 
@@ -115,7 +115,7 @@ public:
       return false;
 
     if (label_idx >= m_training_sets.size())
-      m_training_sets.resize (label_idx - 1);
+      m_training_sets.resize (label_idx + 1);
 
     std::copy (indices.begin(), indices.end(), std::back_inserter (m_training_sets[label_idx]));
 
@@ -356,10 +356,10 @@ public:
   /// \cond SKIP_IN_MANUAL
   Label_handle training_label_of (std::size_t index) const
   {
-    // if (m_training_label.size() <= index
-    //     || m_training_label[index] == (std::size_t)(-1))
-      return Label_handle();
-      //    return m_classifier->label(m_training_label[index]);
+    for (std::size_t i = 0; i < m_training_sets.size(); ++ i)
+      if (std::find (m_training_sets[i].begin(), m_training_sets[i].end(), index) != m_training_sets[i].end())
+        return m_classifier->label(i);
+    return Label_handle();
   }
 
   /// \endcond

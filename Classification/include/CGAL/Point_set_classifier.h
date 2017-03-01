@@ -436,7 +436,7 @@ public:
   {
     CGAL::Timer t; t.start();
     this->template add_feature<Verticality> (normal_map);
-    m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
+    m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Normal based features computed in " << t.time() << " second(s)" << std::endl;
   }
@@ -456,17 +456,17 @@ public:
     for (std::size_t i = 0; i <= 8; ++ i)
       {
         this->template add_feature<Hsv> (color_map, 0, 45 * i, 22.5);
-        m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
+        m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
       }
     for (std::size_t i = 0; i <= 4; ++ i)
       {
         this->template add_feature<Hsv> (color_map, 1, 25 * i, 12.5);
-        m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
+        m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
       }
     for (std::size_t i = 0; i <= 4; ++ i)
       {
         this->template add_feature<Hsv> (color_map, 2, 25 * i, 12.5);
-        m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
+        m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
       }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Color based features computed in " << t.time() << " second(s)" << std::endl;
@@ -486,7 +486,7 @@ public:
         this->template add_feature<Echo_scatter>(echo_map, *(m_scales[i]->grid),
                                           m_scales[i]->grid_resolution(),
                                           m_scales[i]->radius_neighbors());
-        m_scales[i]->features.push_back (this->get_feature (this->number_of_features() - 1));
+        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
       }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Echo based features computed in " << t.time() << " second(s)" << std::endl;
@@ -927,7 +927,7 @@ private:
             continue;
           }
 
-        Feature_handle att = this->get_feature (this->number_of_features() - 1);
+        Feature_handle att = this->feature (this->number_of_features() - 1);
         m_scales[scale]->features.push_back (att);
         att->set_weight(weight);
         att_map[full_id] = att;

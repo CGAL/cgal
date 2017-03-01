@@ -536,12 +536,10 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  bool classification_prepared() const
-  {
-    return !(m_assigned_label.empty());
-  }
   void set_label_of (std::size_t index, Label_handle label)
   {
+    if (index >= m_assigned_label.size())
+      m_assigned_label.resize (index + 1, (std::size_t)(-1));
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       if (m_labels[i] == label)
         {
