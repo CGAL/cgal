@@ -186,7 +186,7 @@
         <item>
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>Classes</string>
+           <string>Labels</string>
           </property>
          </widget>
         </item>
@@ -266,7 +266,7 @@
               </spacer>
              </item>
              <item row="0" column="5">
-              <widget class="QPushButton" name="add_new_class">
+              <widget class="QPushButton" name="add_new_label">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -434,12 +434,12 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Attribute:</string>
+             <string>Features:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="selected_attribute">
+           <widget class="QComboBox" name="selected_feature">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -464,7 +464,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QSlider" name="attribute_weight">
+         <widget class="QSlider" name="feature_weight">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -531,7 +531,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Class type</string>
+             <string>Label</string>
             </property>
            </widget>
           </item>

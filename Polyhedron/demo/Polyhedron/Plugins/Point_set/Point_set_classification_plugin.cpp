@@ -140,8 +140,8 @@ public:
     connect(ui_widget.number_of_trials,  SIGNAL(valueChanged(int)), this,
             SLOT(on_update_number_of_trials()));
 
-    connect(ui_widget.add_new_class,  SIGNAL(clicked()), this,
-            SLOT(on_add_new_class_clicked()));
+    connect(ui_widget.add_new_label,  SIGNAL(clicked()), this,
+            SLOT(on_add_new_label_clicked()));
     connect(ui_widget.reset_training_sets,  SIGNAL(clicked()), this,
             SLOT(on_reset_training_sets_clicked()));
     connect(ui_widget.validate_selection,  SIGNAL(clicked()), this,
@@ -149,10 +149,10 @@ public:
     connect(ui_widget.train,  SIGNAL(clicked()), this,
             SLOT(on_train_clicked()));
 
-    connect(ui_widget.selected_attribute,  SIGNAL(currentIndexChanged(int)), this,
-            SLOT(on_selected_attribute_changed(int)));
-    connect(ui_widget.attribute_weight,  SIGNAL(valueChanged(int)), this,
-            SLOT(on_attribute_weight_changed(int)));
+    connect(ui_widget.selected_feature,  SIGNAL(currentIndexChanged(int)), this,
+            SLOT(on_selected_feature_changed(int)));
+    connect(ui_widget.feature_weight,  SIGNAL(valueChanged(int)), this,
+            SLOT(on_feature_weight_changed(int)));
 
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
     if(scene_obj)
@@ -258,7 +258,7 @@ public Q_SLOTS:
         ui_widget.number_of_trials->setValue((int)(item->number_of_trials()));
         ui_widget.smoothingDoubleSpinBox->setValue((int)(item->smoothing()));
 
-        // Clear class types
+        // Clear class labels
         for (std::size_t i = 0; i < class_rows.size(); ++ i)
           {
 
@@ -277,10 +277,10 @@ public Q_SLOTS:
           }
         class_rows.clear();
 
-        // Add types
-        for (std::size_t i = 0; i < item->types().size(); ++ i)
-          add_new_class (ClassRow (dock_widget, item->types()[i].first->name().c_str(),
-                                   item->types()[i].second));
+        // Add labels
+        for (std::size_t i = 0; i < item->labels().size(); ++ i)
+          add_new_label (ClassRow (dock_widget, item->labels()[i].first->name().c_str(),
+                                   item->labels()[i].second));
 
         // Enabled classif if features computed
         if (!(item->features_computed()))
@@ -293,13 +293,13 @@ public Q_SLOTS:
         ui_widget.display->addItem("Real colors");
         ui_widget.display->addItem("Classification");
         ui_widget.display->addItem("Training sets");
-        ui_widget.selected_attribute->clear();
-        item->fill_display_combo_box(ui_widget.display, ui_widget.selected_attribute);
+        ui_widget.selected_feature->clear();
+        item->fill_display_combo_box(ui_widget.display, ui_widget.selected_feature);
         if (index >= ui_widget.display->count())
           ui_widget.display->setCurrentIndex(1);
         else
           ui_widget.display->setCurrentIndex(index);
-        ui_widget.selected_attribute->setCurrentIndex(0);
+        ui_widget.selected_feature->setCurrentIndex(0);
       }
   }
 
@@ -574,7 +574,7 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void on_add_new_class_clicked()
+  void on_add_new_label_clicked()
   {
     Scene_point_set_classification_item* classification_item
       = get_classification_item();
@@ -587,19 +587,19 @@ public Q_SLOTS:
     bool ok;
     QString name =
       QInputDialog::getText((QWidget*)mw,
-                            tr("Add new classification type"), // dialog title
+                            tr("Add new label"), // dialog title
                             tr("Name:"), // field label
                             QLineEdit::Normal,
-                            tr("type%1").arg(class_rows.size() + 1),
+                            tr("label%1").arg(class_rows.size() + 1),
                             &ok);
     if (!ok)
       return;
 
-    add_new_class (ClassRow (dock_widget, name.toStdString().c_str(),
+    add_new_label (ClassRow (dock_widget, name.toStdString().c_str(),
                                       QColor (192 + rand() % 60,
                                               192 + rand() % 60,
                                               192 + rand() % 60)));
-    classification_item->add_new_type (class_rows.back().label->text().toStdString().c_str(),
+    classification_item->add_new_label (class_rows.back().label->text().toStdString().c_str(),
                                         class_rows.back().color);
     
 
@@ -655,7 +655,7 @@ public Q_SLOTS:
     update_plugin_from_item(classification_item);
   }
 
-  void add_new_class (const ClassRow& class_row)
+  void add_new_label (const ClassRow& class_row)
   {
     class_rows.push_back (class_row);
     int position = static_cast<int>(class_rows.size());
@@ -696,7 +696,7 @@ public Q_SLOTS:
     ui_widget.gridLayout_3->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
     --row_index;
 
-    classification_item->remove_type (class_rows[row_index].label->text().toStdString().c_str());
+    classification_item->remove_label (class_rows[row_index].label->text().toStdString().c_str());
 
     ui_widget.gridLayout_3->removeWidget (class_rows[row_index].label);
     delete class_rows[row_index].label;
@@ -745,9 +745,9 @@ public Q_SLOTS:
     -- row_index;
     
     QColor color = class_rows[row_index].color;
-    color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of classification type");
+    color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of label");
     class_rows[row_index].change_color (color);
-    classification_item->change_type_color (class_rows[row_index].label->text().toStdString().c_str(),
+    classification_item->change_label_color (class_rows[row_index].label->text().toStdString().c_str(),
                                             color);
 
     scene->itemChanged(classification_item);
@@ -772,7 +772,7 @@ public Q_SLOTS:
       (class_rows[row_index].label->text().toStdString().c_str());
   }
 
-  void on_selected_attribute_changed(int v)
+  void on_selected_feature_changed(int v)
   {
     Scene_point_set_classification_item* classification_item
       = get_classification_item();
@@ -782,26 +782,26 @@ public Q_SLOTS:
         return; 
       }
 
-    if (classification_item->number_of_attributes() <= (std::size_t)v)
+    if (classification_item->number_of_features() <= (std::size_t)v)
       return;
     
-    Scene_point_set_classification_item::Attribute_handle
-      att = classification_item->attribute(v);
+    Scene_point_set_classification_item::Feature_handle
+      att = classification_item->feature(v);
 
-    if (att == Scene_point_set_classification_item::Attribute_handle())
+    if (att == Scene_point_set_classification_item::Feature_handle())
       return;
 
     // std::cerr << att->weight
     //           << " " << (int)(1001. * 2. * std::atan(att->weight) / CGAL_PI) << std::endl;
-    ui_widget.attribute_weight->setValue ((int)(1001. * 2. * std::atan(att->weight()) / CGAL_PI));
+    ui_widget.feature_weight->setValue ((int)(1001. * 2. * std::atan(att->weight()) / CGAL_PI));
 
-    for (std::size_t i = 0; i < classification_item->types().size(); ++ i)
+    for (std::size_t i = 0; i < classification_item->labels().size(); ++ i)
       {
-        CGAL::Classification::Attribute::Effect
-          eff = classification_item->types()[i].first->attribute_effect(att);
-        if (eff == CGAL::Classification::Attribute::PENALIZING)
+        CGAL::Classification::Feature::Effect
+          eff = classification_item->labels()[i].first->feature_effect(att);
+        if (eff == CGAL::Classification::Feature::PENALIZING)
           class_rows[i].effect->setCurrentIndex(0);
-        else if (eff == CGAL::Classification::Attribute::NEUTRAL)
+        else if (eff == CGAL::Classification::Feature::NEUTRAL)
           class_rows[i].effect->setCurrentIndex(1);
         else
           class_rows[i].effect->setCurrentIndex(2);
@@ -809,7 +809,7 @@ public Q_SLOTS:
   }
 
 
-  void on_attribute_weight_changed(int v)
+  void on_feature_weight_changed(int v)
   {
     Scene_point_set_classification_item* classification_item
       = get_classification_item();
@@ -818,10 +818,10 @@ public Q_SLOTS:
         print_message("Error: there is no point set classification item!");
         return; 
       }
-    Scene_point_set_classification_item::Attribute_handle
-      att = classification_item->attribute(ui_widget.selected_attribute->currentIndex());
+    Scene_point_set_classification_item::Feature_handle
+      att = classification_item->feature(ui_widget.selected_feature->currentIndex());
 
-    if (att == Scene_point_set_classification_item::Attribute_handle())
+    if (att == Scene_point_set_classification_item::Feature_handle())
       return;
 
     att->set_weight(std::tan ((CGAL_PI/2.) * v / 1001.));
@@ -840,10 +840,10 @@ public Q_SLOTS:
         print_message("Error: there is no point set classification item!");
         return; 
       }
-    Scene_point_set_classification_item::Attribute_handle
-      att = classification_item->attribute(ui_widget.selected_attribute->currentIndex());
+    Scene_point_set_classification_item::Feature_handle
+      att = classification_item->feature(ui_widget.selected_feature->currentIndex());
 
-    if (att == Scene_point_set_classification_item::Attribute_handle())
+    if (att == Scene_point_set_classification_item::Feature_handle())
       return;
 
     QComboBox* combo = qobject_cast<QComboBox*>(QObject::sender());
@@ -853,23 +853,23 @@ public Q_SLOTS:
           //          std::cerr << att->id() << " is ";
           if (v == 0)
             {
-              classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Classification::Attribute::PENALIZING);
+              classification_item->labels()[i].first->set_feature_effect
+                (att, CGAL::Classification::Feature::PENALIZING);
               //              std::cerr << " penalized for ";
             }
           else if (v == 1)
             {
-              classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Classification::Attribute::NEUTRAL);
+              classification_item->labels()[i].first->set_feature_effect
+                (att, CGAL::Classification::Feature::NEUTRAL);
               //              std::cerr << " neutral for ";
             }
           else
             {
-              classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Classification::Attribute::FAVORING);
+              classification_item->labels()[i].first->set_feature_effect
+                (att, CGAL::Classification::Feature::FAVORING);
               //              std::cerr << " favored for ";
             }
-          //          std::cerr << classification_item->types()[i].first->id() << std::endl;
+          //          std::cerr << classification_item->labels()[i].first->id() << std::endl;
           break;
         }
   }
