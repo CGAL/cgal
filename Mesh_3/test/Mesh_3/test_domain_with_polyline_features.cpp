@@ -105,7 +105,7 @@ public:
     Corners_vector corners;
     domain_.get_corners(std::back_inserter(corners));
     
-    assert(corners.empty());
+    assert(corners.size() == 1);
   }
   
   void test_curve_segments() const
