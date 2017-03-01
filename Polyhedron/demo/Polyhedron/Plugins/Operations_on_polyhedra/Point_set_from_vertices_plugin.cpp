@@ -6,7 +6,7 @@
 #include <QtDebug>
 
 #include "Scene_points_with_normal_item.h"
-#include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -28,7 +28,7 @@ public:
   bool applicable(QAction*) const {
     const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(index))
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(index))
       || qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
   }
 
@@ -63,8 +63,8 @@ void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  Scene_polyhedron_item* poly_item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_surface_mesh_item* poly_item =
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
   if (poly_item)
     {
