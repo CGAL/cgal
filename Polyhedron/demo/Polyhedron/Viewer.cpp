@@ -1173,6 +1173,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
         std::cerr<<"ERROR : Program not found."<<std::endl;
         return 0;
     }
+}
 void Viewer::wheelEvent(QWheelEvent* e)
 {
     if(e->modifiers().testFlag(Qt::ShiftModifier))

@@ -116,7 +116,6 @@ struct Scene_polyhedron_item_priv{
   bool isFacetConvex(Facet_iterator, const Polyhedron::Traits::Vector_3&)const;
 
   void triangulate_convex_facet(Facet_iterator,
-                                const Polyhedron::Traits::Vector_3&,
                                 const bool)const;
 
   void triangulate_facet(Scene_polyhedron_item::Facet_iterator,
@@ -377,8 +376,7 @@ bool Scene_polyhedron_item_priv::isFacetConvex(Facet_iterator f, const Polyhedro
 }
 
 void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
-                                                     const Traits::Vector_3& normal,
-                                                     const bool colors_only)const
+                                                          const bool colors_only)const
 {
   const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
@@ -726,7 +724,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
       {
         if(isFacetConvex(f, nf))
         {
-          triangulate_convex_facet(f, nf, colors_only);
+          triangulate_convex_facet(f, colors_only);
         }
         else
         {
