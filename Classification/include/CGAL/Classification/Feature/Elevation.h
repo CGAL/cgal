@@ -18,12 +18,12 @@
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_ELEVATION_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_ELEVATION_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_ELEVATION_H
+#define CGAL_CLASSIFICATION_FEATURE_ELEVATION_H
 
 #include <vector>
 
-#include <CGAL/Classification/Attribute_base.h>
+#include <CGAL/Classification/Feature_base.h>
 #include <CGAL/Classification/Image.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 
@@ -31,13 +31,13 @@ namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on local elevation. The local position of the
-    ground can be computed for urban scenes. This attribute computes
+    %Feature based on local elevation. The local position of the
+    ground can be computed for urban scenes. This feature computes
     the distance to the local estimation of the ground. It is useful
     to discriminate the ground from horizontal roofs.
 
@@ -50,18 +50,18 @@ namespace Attribute {
 
   */
 template <typename Geom_traits, typename PointRange, typename PointMap>
-class Elevation : public Attribute_base
+class Elevation : public Feature_base
 {
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef Image<float> Image_float;
   typedef Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
    
-  std::vector<double> elevation_attribute;
+  std::vector<double> elevation_feature;
   
 public:
   /*!
-    \brief Constructs the attribute.
+    \brief Constructs the feature.
 
     \param input input range.
     \param point_map property map to access the input points.
@@ -140,31 +140,31 @@ public:
       }
     dtm_x.free();
 
-    elevation_attribute.reserve(input.size());
+    elevation_feature.reserve(input.size());
     for (std::size_t i = 0; i < input.size(); i++){
       std::size_t I = grid.x(i);
       std::size_t J = grid.y(i);
-      elevation_attribute.push_back ((double)(get(point_map, *(input.begin()+i)).z()-dtm(I,J)));
+      elevation_feature.push_back ((double)(get(point_map, *(input.begin()+i)).z()-dtm(I,J)));
     }
 
-    this->compute_mean_max (elevation_attribute, this->mean, this->max);
+    this->compute_mean_max (elevation_feature, this->mean, this->max);
   }
 
   /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
-    return elevation_attribute[pt_index];
+    return elevation_feature[pt_index];
   }
   
   virtual std::string name() { return "elevation"; }
   /// \endcond
 };
 
-} // namespace Attribute
+} // namespace Feature
 
 } // namespace Classification
 
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_ELEVATION_H
+#endif // CGAL_CLASSIFICATION_FEATURE_ELEVATION_H

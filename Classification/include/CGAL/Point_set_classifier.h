@@ -25,15 +25,15 @@
 #include <CGAL/Classification/Point_set_neighborhood.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
-#include <CGAL/Classification/Attribute_base.h>
-#include <CGAL/Classification/Attribute/Hsv.h>
-#include <CGAL/Classification/Attribute/Distance_to_plane.h>
-#include <CGAL/Classification/Attribute/Echo_scatter.h>
-#include <CGAL/Classification/Attribute/Elevation.h>
-#include <CGAL/Classification/Attribute/Vertical_dispersion.h>
-#include <CGAL/Classification/Attribute/Verticality.h>
-#include <CGAL/Classification/Attribute/Eigen.h>
-#include <CGAL/Classification/Type.h>
+#include <CGAL/Classification/Feature_base.h>
+#include <CGAL/Classification/Feature/Hsv.h>
+#include <CGAL/Classification/Feature/Distance_to_plane.h>
+#include <CGAL/Classification/Feature/Echo_scatter.h>
+#include <CGAL/Classification/Feature/Elevation.h>
+#include <CGAL/Classification/Feature/Vertical_dispersion.h>
+#include <CGAL/Classification/Feature/Verticality.h>
+#include <CGAL/Classification/Feature/Eigen.h>
+#include <CGAL/Classification/Label.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -50,12 +50,12 @@ namespace CGAL {
 /*!
   \ingroup PkgClassification
 
-  \brief Classifies a point set based on a set of attributes and a set
-  of classification types.
+  \brief Classifies a point set based on a set of features and a set
+  of labels.
 
   This class specializes `Classifier` to point sets. It takes care of
   generating necessary data structures and automatically generate a
-  set of generic attributes. Attributes can be generated at multiple
+  set of generic features. Features can be generated at multiple
   scales to increase the reliability of the classification.
 
   \tparam Geom_traits model of \cgal Kernel.
@@ -76,7 +76,7 @@ class Point_set_classifier : public Classifier<PointRange, PointMap>
 {
   
 public:
-  typedef typename Geom_traits::Iso_cuboid_3                       Iso_cuboid_3;
+  typedef typename Geom_traits::Iso_cuboid_3             Iso_cuboid_3;
 
   /// \cond SKIP_IN_MANUAL
   typedef Classifier<PointRange, PointMap> Base;
@@ -93,35 +93,35 @@ public:
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Local_eigen_analysis;
 
   /// \cond SKIP_IN_MANUAL
-  typedef Classification::Attribute_handle         Attribute_handle;
-  typedef Classification::Type                     Type;
-  typedef Classification::Type_handle              Type_handle;
+  typedef Classification::Feature_handle                 Feature_handle;
+  typedef Classification::Label                          Label;
+  typedef Classification::Label_handle                   Label_handle;
 
-  typedef typename Geom_traits::Point_3                            Point;
+  typedef typename Geom_traits::Point_3                  Point;
   
-  typedef Classification::Attribute::Anisotropy
+  typedef Classification::Feature::Anisotropy
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Anisotropy;
-  typedef Classification::Attribute::Distance_to_plane
+  typedef Classification::Feature::Distance_to_plane
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Distance_to_plane;
-  typedef Classification::Attribute::Eigentropy
+  typedef Classification::Feature::Eigentropy
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Eigentropy;
-  typedef Classification::Attribute::Elevation
+  typedef Classification::Feature::Elevation
   <Geom_traits, PointRange, PointMap>                    Elevation;
-  typedef Classification::Attribute::Linearity
+  typedef Classification::Feature::Linearity
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Linearity;
-  typedef Classification::Attribute::Omnivariance
+  typedef Classification::Feature::Omnivariance
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Omnivariance;
-  typedef Classification::Attribute::Planarity
+  typedef Classification::Feature::Planarity
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Planarity;
-  typedef Classification::Attribute::Sphericity
+  typedef Classification::Feature::Sphericity
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Sphericity;
-  typedef Classification::Attribute::Sum_eigenvalues
+  typedef Classification::Feature::Sum_eigenvalues
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Sum_eigen;
-  typedef Classification::Attribute::Surface_variation
+  typedef Classification::Feature::Surface_variation
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Surface_variation;
-  typedef Classification::Attribute::Vertical_dispersion
+  typedef Classification::Feature::Vertical_dispersion
   <Geom_traits, PointRange, PointMap>                    Dispersion;
-  typedef Classification::Attribute::Verticality
+  typedef Classification::Feature::Verticality
   <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Verticality;
   typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
@@ -134,7 +134,7 @@ private:
     Planimetric_grid* grid;
     Local_eigen_analysis* eigen;
     double voxel_size;
-    std::vector<Attribute_handle> attributes;
+    std::vector<Feature_handle> features;
     
     Scale (const PointRange& input, PointMap point_map,
            const Iso_cuboid_3& bbox, double voxel_size)
@@ -216,58 +216,58 @@ public:
   }
   /// \endcond
 
-  /// \name Attributes
+  /// \name Features
   /// @{
 
   
   /*!
-    \brief Generate all possible attributes from an input range.
+    \brief Generate all possible features from an input range.
 
     The size of the smallest scale is automatically estimated and the
     data structures needed (`Neighborhood`, `Planimetric_grid` and
     `Local_eigen_analysis`) are computed at `nb_scales` recursively
-    larger scales. At each scale, the following attributes are
+    larger scales. At each scale, the following features are
     generated:
 
-    - `CGAL::Classification::Attribute::Anisotropy`
-    - `CGAL::Classification::Attribute::Distance_to_plane`
-    - `CGAL::Classification::Attribute::Eigentropy`
-    - `CGAL::Classification::Attribute::Elevation`
-    - `CGAL::Classification::Attribute::Linearity`
-    - `CGAL::Classification::Attribute::Omnivariance`
-    - `CGAL::Classification::Attribute::Planarity`
-    - `CGAL::Classification::Attribute::Sphericity`
-    - `CGAL::Classification::Attribute::Sum_eigenvalues`
-    - `CGAL::Classification::Attribute::Surface_variation`
-    - `CGAL::Classification::Attribute::Vertical_dispersion` based on eigenvalues
+    - `CGAL::Classification::Feature::Anisotropy`
+    - `CGAL::Classification::Feature::Distance_to_plane`
+    - `CGAL::Classification::Feature::Eigentropy`
+    - `CGAL::Classification::Feature::Elevation`
+    - `CGAL::Classification::Feature::Linearity`
+    - `CGAL::Classification::Feature::Omnivariance`
+    - `CGAL::Classification::Feature::Planarity`
+    - `CGAL::Classification::Feature::Sphericity`
+    - `CGAL::Classification::Feature::Sum_eigenvalues`
+    - `CGAL::Classification::Feature::Surface_variation`
+    - `CGAL::Classification::Feature::Vertical_dispersion` based on eigenvalues
 
     If normal vectors are provided (if `VectorMap` is different from
-    `CGAL::Default`), the following attribute is generated at each
+    `CGAL::Default`), the following feature is generated at each
     scale:
 
-    - `CGAL::Classification::Attribute::Vertical_dispersion` based on normal vectors
+    - `CGAL::Classification::Feature::Vertical_dispersion` based on normal vectors
 
     If colors are provided (if `ColorMap` is different from
-    `CGAL::Default`), the following attributes are generated at each
+    `CGAL::Default`), the following features are generated at each
     scale:
 
-    - 9 attributes `CGAL::Classification::Attribute::Hsv` on
+    - 9 features `CGAL::Classification::Feature::Hsv` on
       channel 0 (hue) with mean ranging from 0° to 360° and standard
       deviation of 22.5.
 
-    - 5 attributes `CGAL::Classification::Attribute::Hsv` on
+    - 5 features `CGAL::Classification::Feature::Hsv` on
       channel 1 (saturation) with mean ranging from 0 to 100 and standard
       deviation of 12.5.
 
-    - 5 attributes `CGAL::Classification::Attribute::Hsv` on channel 2
+    - 5 features `CGAL::Classification::Feature::Hsv` on channel 2
       (value) with mean ranging from 0 to 100 and standard deviation
       of 12.5.
 
     If echo numbers are provided (if `EchoMap` is different from
-    `CGAL::Default`), the following attribute is computed at each
+    `CGAL::Default`), the following feature is computed at each
     scale:
 
-    - `CGAL::Classification::Attribute::Echo_scatter`
+    - `CGAL::Classification::Feature::Echo_scatter`
 
     \tparam VectorMap model of `ReadablePropertyMap` whose key type is
     the value type of the iterator of `PointRange` and value type is
@@ -286,7 +286,7 @@ public:
   template <typename VectorMap = Default,
             typename ColorMap = Default,
             typename EchoMap = Default>
-  void generate_attributes (std::size_t nb_scales,
+  void generate_features (std::size_t nb_scales,
                             VectorMap normal_map = VectorMap(),
                             ColorMap color_map = ColorMap(),
                             EchoMap echo_map = EchoMap())
@@ -298,7 +298,7 @@ public:
     typedef typename Default::Get<EchoMap, std::size_t >::type
       Emap;
 
-    generate_attributes_impl (nb_scales,
+    generate_features_impl (nb_scales,
                               get_parameter<Vmap>(normal_map),
                               get_parameter<Cmap>(color_map),
                               get_parameter<Emap>(echo_map));
@@ -316,21 +316,21 @@ public:
   /*!
     \brief Returns the neighborhood structure at scale `scale`.
 
-    \note `generate_attributes()` must have been called before calling
+    \note `generate_features()` must have been called before calling
     this method.
   */
   const Neighborhood& neighborhood(std::size_t scale = 0) const { return (*m_scales[scale]->neighborhood); }
   /*!
     \brief Returns the planimetric grid structure at scale `scale`.
 
-    \note `generate_attributes()` must have been called before calling
+    \note `generate_features()` must have been called before calling
     this method.
   */
   const Planimetric_grid& grid(std::size_t scale = 0) const { return *(m_scales[scale]->grid); }
   /*!
     \brief Returns the local eigen analysis structure at scale `scale`.
 
-    \note `generate_attributes()` must have been called before calling
+    \note `generate_features()` must have been called before calling
     this method.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
@@ -344,7 +344,7 @@ public:
     resolution is the length and width of a cell of the
     `Planimetric_grid` defined at this scale.
 
-    \note `generate_attributes()` must have been called before calling
+    \note `generate_features()` must have been called before calling
     this method.
   */
   double grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
@@ -355,7 +355,7 @@ public:
     a geometric point of view at this scale (that is to say that
     encloses a few cells of `Planimetric_grid`).
 
-    \note `generate_attributes()` must have been called before calling
+    \note `generate_features()` must have been called before calling
     this method.
   */
   double radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
@@ -364,7 +364,7 @@ public:
     scale `scale`. This radius represents the minimum size of a
     building at this scale.
 
-    \note `generate_attributes()` must have been called before calling
+    \note `generate_features()` must have been called before calling
     this method.
   */
   double radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
@@ -378,8 +378,8 @@ public:
       delete m_scales[i];
     m_scales.clear();
     
-    this->clear_classification_types();
-    this->clear_attributes();
+    this->clear_labels();
+    this->clear_features();
   }
 
   /// @}
@@ -393,127 +393,127 @@ public:
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
         std::size_t nb_useful = 0;
-        for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
-          if (m_scales[i]->attributes[j]->weight() != 0.)
+        for (std::size_t j = 0; j < m_scales[i]->features.size(); ++ j)
+          if (m_scales[i]->features[j]->weight() != 0.)
             nb_useful ++;
         CGAL_CLASSIFICATION_CERR << " * scale " << i << " with size " << m_scales[i]->voxel_size
-                  << ", " << nb_useful << " useful attribute(s)";
+                  << ", " << nb_useful << " useful feature(s)";
         if (nb_useful != 0) CGAL_CLASSIFICATION_CERR << ":" << std::endl;
         else CGAL_CLASSIFICATION_CERR << std::endl;
-        for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
-          if (m_scales[i]->attributes[j]->weight() != 0.)
-            CGAL_CLASSIFICATION_CERR << "   - " << m_scales[i]->attributes[j]->name()
-                      << " (weight = " << m_scales[i]->attributes[j]->weight() << ")" << std::endl;
+        for (std::size_t j = 0; j < m_scales[i]->features.size(); ++ j)
+          if (m_scales[i]->features[j]->weight() != 0.)
+            CGAL_CLASSIFICATION_CERR << "   - " << m_scales[i]->features[j]->name()
+                      << " (weight = " << m_scales[i]->features[j]->weight() << ")" << std::endl;
       }
   }
 
-  void generate_point_based_attributes ()
+  void generate_point_based_features ()
   {
     CGAL::Timer teigen, tpoint;
     teigen.start();
-    generate_multiscale_attribute_variant_0<Anisotropy> ();
-    generate_multiscale_attribute_variant_1<Distance_to_plane> ();
-    generate_multiscale_attribute_variant_0<Eigentropy> ();
-    generate_multiscale_attribute_variant_0<Linearity> ();
-    generate_multiscale_attribute_variant_0<Omnivariance> ();
-    generate_multiscale_attribute_variant_0<Planarity> ();
-    generate_multiscale_attribute_variant_0<Sphericity> ();
-    generate_multiscale_attribute_variant_0<Sum_eigen> ();
-    generate_multiscale_attribute_variant_0<Surface_variation> ();
+    generate_multiscale_feature_variant_0<Anisotropy> ();
+    generate_multiscale_feature_variant_1<Distance_to_plane> ();
+    generate_multiscale_feature_variant_0<Eigentropy> ();
+    generate_multiscale_feature_variant_0<Linearity> ();
+    generate_multiscale_feature_variant_0<Omnivariance> ();
+    generate_multiscale_feature_variant_0<Planarity> ();
+    generate_multiscale_feature_variant_0<Sphericity> ();
+    generate_multiscale_feature_variant_0<Sum_eigen> ();
+    generate_multiscale_feature_variant_0<Surface_variation> ();
     teigen.stop();
     tpoint.start();
-    generate_multiscale_attribute_variant_2<Dispersion> ();
-    generate_multiscale_attribute_variant_3<Elevation> ();
+    generate_multiscale_feature_variant_2<Dispersion> ();
+    generate_multiscale_feature_variant_3<Elevation> ();
     tpoint.stop();
     
-    CGAL_CLASSIFICATION_CERR << "Point based attributes computed in " << tpoint.time() << " second(s)" << std::endl;
-    CGAL_CLASSIFICATION_CERR << "Eigen based attributes computed in " << teigen.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Point based features computed in " << tpoint.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Eigen based features computed in " << teigen.time() << " second(s)" << std::endl;
   }
 
 
   template <typename VectorMap>
-  void generate_normal_based_attributes(VectorMap normal_map)
+  void generate_normal_based_features(VectorMap normal_map)
   {
     CGAL::Timer t; t.start();
-    this->template add_attribute<Verticality> (normal_map);
-    m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+    this->template add_feature<Verticality> (normal_map);
+    m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
     t.stop();
-    CGAL_CLASSIFICATION_CERR << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Normal based features computed in " << t.time() << " second(s)" << std::endl;
   }
 
-  void generate_normal_based_attributes(const CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3>&)
+  void generate_normal_based_features(const CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3>&)
   {
     CGAL::Timer t; t.start();
-    generate_multiscale_attribute_variant_0<Verticality> ();
-    CGAL_CLASSIFICATION_CERR << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
+    generate_multiscale_feature_variant_0<Verticality> ();
+    CGAL_CLASSIFICATION_CERR << "Normal based features computed in " << t.time() << " second(s)" << std::endl;
   }
   template <typename ColorMap>
-  void generate_color_based_attributes(ColorMap color_map)
+  void generate_color_based_features(ColorMap color_map)
   {
 
-    typedef Classification::Attribute::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
+    typedef Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i <= 8; ++ i)
       {
-        this->template add_attribute<Hsv> (color_map, 0, 45 * i, 22.5);
-        m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        this->template add_feature<Hsv> (color_map, 0, 45 * i, 22.5);
+        m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
       }
     for (std::size_t i = 0; i <= 4; ++ i)
       {
-        this->template add_attribute<Hsv> (color_map, 1, 25 * i, 12.5);
-        m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        this->template add_feature<Hsv> (color_map, 1, 25 * i, 12.5);
+        m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
       }
     for (std::size_t i = 0; i <= 4; ++ i)
       {
-        this->template add_attribute<Hsv> (color_map, 2, 25 * i, 12.5);
-        m_scales[0]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        this->template add_feature<Hsv> (color_map, 2, 25 * i, 12.5);
+        m_scales[0]->features.push_back (this->get_feature (this->number_of_features() - 1));
       }
     t.stop();
-    CGAL_CLASSIFICATION_CERR << "Color based attributes computed in " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Color based features computed in " << t.time() << " second(s)" << std::endl;
   }
 
-  void generate_color_based_attributes(const CGAL::Default_property_map<Iterator, RGB_Color>&)
+  void generate_color_based_features(const CGAL::Default_property_map<Iterator, RGB_Color>&)
   {
   }
 
   template <typename EchoMap>
-  void generate_echo_based_attributes(EchoMap echo_map)
+  void generate_echo_based_features(EchoMap echo_map)
   {
-    typedef Classification::Attribute::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
+    typedef Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
     CGAL::Timer t; t.start();
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->template add_attribute<Echo_scatter>(echo_map, *(m_scales[i]->grid),
+        this->template add_feature<Echo_scatter>(echo_map, *(m_scales[i]->grid),
                                           m_scales[i]->grid_resolution(),
                                           m_scales[i]->radius_neighbors());
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        m_scales[i]->features.push_back (this->get_feature (this->number_of_features() - 1));
       }
     t.stop();
-    CGAL_CLASSIFICATION_CERR << "Echo based attributes computed in " << t.time() << " second(s)" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Echo based features computed in " << t.time() << " second(s)" << std::endl;
   }
 
-  void generate_echo_based_attributes(const CGAL::Default_property_map<Iterator, std::size_t>&)
+  void generate_echo_based_features(const CGAL::Default_property_map<Iterator, std::size_t>&)
   {
   }
 
-  void get_map_scale (std::map<Attribute_handle, std::size_t>& map_scale)
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
-        map_scale[m_scales[i]->attributes[j]] = i;
-  }
-
-  std::size_t scale_of_attribute (Attribute_handle att)
+  void get_map_scale (std::map<Feature_handle, std::size_t>& map_scale)
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      for (std::size_t j = 0; j < m_scales[i]->attributes.size(); ++ j)
-        if (m_scales[i]->attributes[j] == att)
+      for (std::size_t j = 0; j < m_scales[i]->features.size(); ++ j)
+        map_scale[m_scales[i]->features[j]] = i;
+  }
+
+  std::size_t scale_of_feature (Feature_handle att)
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      for (std::size_t j = 0; j < m_scales[i]->features.size(); ++ j)
+        if (m_scales[i]->features[j] == att)
           return i;
     return (std::size_t)(-1);    
   }
 
-  std::string name_att (Attribute_handle att,
-                        std::map<Attribute_handle, std::size_t>& map_scale)
+  std::string name_att (Feature_handle att,
+                        std::map<Feature_handle, std::size_t>& map_scale)
   {
     std::ostringstream oss;
     oss << att->name() << "_" << map_scale[att];
@@ -531,8 +531,8 @@ public:
     configuration, that is to say:
 
     - The size of the smallest scale
-    - The attributes and their respective weights
-    - The classification types and the effects of the attributes on them
+    - The features and their respective weights
+    - The labels and the effects of the features on them
 
     The output file is written in an XML format that is readable by
     the `load_configuration()` method.
@@ -545,44 +545,44 @@ public:
     // tree.put("classification.parameters.radius_neighbors", m_radius_neighbors);
     tree.put("classification.parameters.voxel_size", m_scales[0]->voxel_size);
 
-    std::map<Attribute_handle, std::size_t> map_scale;
+    std::map<Feature_handle, std::size_t> map_scale;
     get_map_scale (map_scale);
 
-    for (std::size_t i = 0; i < this->number_of_attributes(); ++ i)
+    for (std::size_t i = 0; i < this->number_of_features(); ++ i)
       {
-        Attribute_handle att = this->attribute(i);
+        Feature_handle att = this->feature(i);
         if (att->weight() == 0)
           continue;
         boost::property_tree::ptree ptr;
         
         ptr.put("id", name_att (att, map_scale));
         ptr.put("weight", att->weight());
-        tree.add_child("classification.attributes.attribute", ptr);
+        tree.add_child("classification.features.feature", ptr);
       }
 
 
-    for (std::size_t i = 0; i < this->number_of_classification_types(); ++ i)
+    for (std::size_t i = 0; i < this->number_of_labels(); ++ i)
       {
-        Type_handle type = this->classification_type(i);
+        Label_handle label = this->label(i);
         boost::property_tree::ptree ptr;
-        ptr.put("id", type->name());
-        for (std::size_t j = 0; j < this->number_of_attributes(); ++ j)
+        ptr.put("id", label->name());
+        for (std::size_t j = 0; j < this->number_of_features(); ++ j)
           {
-            Attribute_handle att = this->attribute(j);
+            Feature_handle att = this->feature(j);
             if (att->weight() == 0)
               continue;
             boost::property_tree::ptree ptr2;
             ptr2.put("id", name_att (att, map_scale));
-            Classification::Attribute::Effect effect = type->attribute_effect(att);
-            if (effect == Classification::Attribute::PENALIZING)
+            Classification::Feature::Effect effect = label->feature_effect(att);
+            if (effect == Classification::Feature::PENALIZING)
               ptr2.put("effect", "penalized");
-            else if (effect == Classification::Attribute::NEUTRAL)
+            else if (effect == Classification::Feature::NEUTRAL)
               ptr2.put("effect", "neutral");
-            else if (effect == Classification::Attribute::FAVORING)
+            else if (effect == Classification::Feature::FAVORING)
               ptr2.put("effect", "favored");
-            ptr.add_child("attribute", ptr2);
+            ptr.add_child("feature", ptr2);
           }
-        tree.add_child("classification.types.type", ptr);
+        tree.add_child("classification.labels.label", ptr);
       }
 
     // Write property tree to XML file
@@ -594,10 +594,10 @@ public:
   /*!
     \brief Loads a configuration from the stream `input`.
 
-    All data structures, attributes and types specified in the input
+    All data structures, features and labels specified in the input
     stream `input` are instantiated if possible (in particular,
     property maps needed should be provided), similarly to what is
-    done in `generate_attributes()`.
+    done in `generate_features()`.
 
     The input file should be in the XML format written by the
     `save_configuration()` method.
@@ -647,8 +647,8 @@ public:
     The input points are written in a PLY format with the addition of
     the following PLY properties:
 
-    - a property `label` that indicates which classification type is
-    assigned to the point. The types are indexed from 0 to N (the
+    - a property `label` that indicates which label is
+    assigned to the point. The labels are indexed from 0 to N (the
     correspondancy is given as comments in the PLY header).
 
     - 3 properties `red`, `green` and `blue` to associate each label
@@ -671,39 +671,39 @@ public:
 
     std::vector<RGB_Color> colors;
     
-    std::map<Type_handle, std::size_t> map_types;
+    std::map<Label_handle, std::size_t> map_labels;
     output << "comment label -1 is (unclassified)" << std::endl;
 
-    for (std::size_t i = 0; i < this->number_of_classification_types(); ++ i)
+    for (std::size_t i = 0; i < this->number_of_labels(); ++ i)
       {
-        map_types.insert (std::make_pair (this->classification_type(i), i));
-        output << "comment label " << i << " is " << this->classification_type(i)->name() << std::endl;
+        map_labels.insert (std::make_pair (this->label(i), i));
+        output << "comment label " << i << " is " << this->label(i)->name() << std::endl;
         
         RGB_Color c = {{ (unsigned char)(64 + rand() % 128),
                          (unsigned char)(64 + rand() % 128),
                          (unsigned char)(64 + rand() % 128) }};
 
-        if (this->classification_type(i)->name() == "vegetation")
+        if (this->label(i)->name() == "vegetation")
           c = {{ 0, 255, 27 }};
-        else if (this->classification_type(i)->name() == "ground")
+        else if (this->label(i)->name() == "ground")
           c = {{ 245, 180, 0 }};
-        else if (this->classification_type(i)->name() == "roof")
+        else if (this->label(i)->name() == "roof")
           c = {{ 255, 0, 170 }};
-        else if (this->classification_type(i)->name() == "facade")
+        else if (this->label(i)->name() == "facade")
           c = {{ 100, 0, 255 }};
         colors.push_back (c);
       }
-    map_types.insert (std::make_pair (Type_handle(), this->number_of_classification_types()));
+    map_labels.insert (std::make_pair (Label_handle(), this->number_of_labels()));
     
     output << "end_header" << std::endl;
 
     std::size_t i = 0;
     for (Iterator it = m_input.begin(); it != m_input.end(); ++ it)
       {
-        Type_handle t = this->classification_type_of(i);
-        std::size_t idx = map_types[t];
+        Label_handle t = this->label_of(i);
+        std::size_t idx = map_labels[t];
 
-        if (idx == this->number_of_classification_types())
+        if (idx == this->number_of_labels())
           output << get(m_item_map, *it) << " 0 0 0 -1" << std::endl;
         else
           output << get(m_item_map, *it) << " "
@@ -732,7 +732,7 @@ private:
   }
 
   template<typename VectorMap, typename ColorMap, typename EchoMap>
-  void generate_attributes_impl (std::size_t nb_scales,
+  void generate_features_impl (std::size_t nb_scales,
                                  VectorMap normal_map,
                                  ColorMap color_map,
                                  EchoMap echo_map)
@@ -751,55 +751,55 @@ private:
         m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
       }
     
-    generate_point_based_attributes ();
-    generate_normal_based_attributes (normal_map);
-    generate_color_based_attributes (color_map);
-    generate_echo_based_attributes (echo_map);
+    generate_point_based_features ();
+    generate_normal_based_features (normal_map);
+    generate_color_based_features (color_map);
+    generate_echo_based_features (echo_map);
   }
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_0 ()
+  template <typename Feature_type>
+  void generate_multiscale_feature_variant_0 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->template add_attribute<Attribute_type>(*(m_scales[i]->eigen));
-        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
+        this->template add_feature<Feature_type>(*(m_scales[i]->eigen));
+        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
       }
   }
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_1 ()
+  template <typename Feature_type>
+  void generate_multiscale_feature_variant_1 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->template add_attribute<Attribute_type>(m_item_map, *(m_scales[i]->eigen));
-        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
+        this->template add_feature<Feature_type>(m_item_map, *(m_scales[i]->eigen));
+        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
       }
   }
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_2 ()
+  template <typename Feature_type>
+  void generate_multiscale_feature_variant_2 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->template add_attribute<Attribute_type>(m_item_map,
+        this->template add_feature<Feature_type>(m_item_map,
                                             *(m_scales[i]->grid),
                                             m_scales[i]->grid_resolution(),
                                             m_scales[i]->radius_neighbors());
-        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
+        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
       }
   }
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_3 ()
+  template <typename Feature_type>
+  void generate_multiscale_feature_variant_3 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
-        this->template add_attribute<Attribute_type>(m_item_map,
+        this->template add_feature<Feature_type>(m_item_map,
                                             *(m_scales[i]->grid),
                                             m_scales[i]->grid_resolution(),
                                             m_scales[i]->radius_dtm());
-        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
+        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
       }
   }
 
@@ -809,8 +809,8 @@ private:
                                 ColorMap color_map,
                                 EchoMap echo_map)
   {
-    typedef Classification::Attribute::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
-    typedef Classification::Attribute::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
+    typedef Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
+    typedef Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
     
     clear();
     
@@ -822,8 +822,8 @@ private:
     m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
     
     CGAL::Timer t;
-    std::map<std::string, Attribute_handle> att_map;
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.attributes"))
+    std::map<std::string, Feature_handle> att_map;
+    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
       {
         std::string full_id = v.second.get<std::string>("id");
 
@@ -842,36 +842,36 @@ private:
         
         double weight = v.second.get<double>("weight");
 
-        // Generate the right attribute if possible
+        // Generate the right feature if possible
         if (id == "anisotropy")
-          this->template add_attribute<Anisotropy>(*(m_scales[scale]->eigen));
+          this->template add_feature<Anisotropy>(*(m_scales[scale]->eigen));
         else if (id == "distance_to_plane")
-          this->template add_attribute<Distance_to_plane>(m_item_map, *(m_scales[scale]->eigen));
+          this->template add_feature<Distance_to_plane>(m_item_map, *(m_scales[scale]->eigen));
         else if (id == "eigentropy")
-          this->template add_attribute<Eigentropy>(*(m_scales[scale]->eigen));
+          this->template add_feature<Eigentropy>(*(m_scales[scale]->eigen));
         else if (id == "elevation")
           {
             t.start();
-            this->template add_attribute<Elevation>(m_item_map,
+            this->template add_feature<Elevation>(m_item_map,
                                            *(m_scales[scale]->grid),
                                            m_scales[scale]->grid_resolution(),
                                            m_scales[scale]->radius_dtm());
             t.stop();
           }
         else if (id == "linearity")
-          this->template add_attribute<Linearity>(*(m_scales[scale]->eigen));
+          this->template add_feature<Linearity>(*(m_scales[scale]->eigen));
         else if (id == "omnivariance")
-          this->template add_attribute<Omnivariance>(*(m_scales[scale]->eigen));
+          this->template add_feature<Omnivariance>(*(m_scales[scale]->eigen));
         else if (id == "planarity")
-          this->template add_attribute<Planarity>(*(m_scales[scale]->eigen));
+          this->template add_feature<Planarity>(*(m_scales[scale]->eigen));
         else if (id == "sphericity")
-          this->template add_attribute<Sphericity>(*(m_scales[scale]->eigen));
+          this->template add_feature<Sphericity>(*(m_scales[scale]->eigen));
         else if (id == "sum_eigen")
-          this->template add_attribute<Sum_eigen>(*(m_scales[scale]->eigen));
+          this->template add_feature<Sum_eigen>(*(m_scales[scale]->eigen));
         else if (id == "surface_variation")
-          this->template add_attribute<Surface_variation>(*(m_scales[scale]->eigen));
+          this->template add_feature<Surface_variation>(*(m_scales[scale]->eigen));
         else if (id == "vertical_dispersion")
-          this->template add_attribute<Dispersion>(m_item_map,
+          this->template add_feature<Dispersion>(m_item_map,
                                           *(m_scales[scale]->grid),
                                           m_scales[scale]->grid_resolution(),
                                           m_scales[scale]->radius_neighbors());
@@ -879,9 +879,9 @@ private:
           {
             if (boost::is_convertible<VectorMap,
                 typename CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3> >::value)
-              this->template add_attribute<Verticality>(*(m_scales[scale]->eigen));
+              this->template add_feature<Verticality>(*(m_scales[scale]->eigen));
             else
-              this->template add_attribute<Verticality>(normal_map);
+              this->template add_feature<Verticality>(normal_map);
           }
         else if (id == "echo_scatter")
           {
@@ -891,7 +891,7 @@ private:
                 CGAL_CLASSIFICATION_CERR << "Warning: echo_scatter required but no echo map given." << std::endl;
                 continue;
               }
-            this->template add_attribute<Echo_scatter>(echo_map, *(m_scales[scale]->grid),
+            this->template add_feature<Echo_scatter>(echo_map, *(m_scales[scale]->grid),
                                               m_scales[scale]->grid_resolution(),
                                               m_scales[scale]->radius_neighbors());
           }
@@ -902,59 +902,59 @@ private:
             if (boost::is_convertible<ColorMap,
                 typename CGAL::Default_property_map<Iterator, RGB_Color> >::value)
               {
-                CGAL_CLASSIFICATION_CERR << "Warning: color attribute required but no color map given." << std::endl;
+                CGAL_CLASSIFICATION_CERR << "Warning: color feature required but no color map given." << std::endl;
                 continue;
               }
             if (boost::starts_with(id.c_str(), "hue"))
               {
                 double value = boost::lexical_cast<int>(id.c_str() + 4);
-                this->template add_attribute<Hsv>(color_map, 0, value, 22.5);
+                this->template add_feature<Hsv>(color_map, 0, value, 22.5);
               }
             else if (boost::starts_with(id.c_str(), "saturation"))
               {
                 double value = boost::lexical_cast<int>(id.c_str() + 11);
-                this->template add_attribute<Hsv>(color_map, 1, value, 12.5);
+                this->template add_feature<Hsv>(color_map, 1, value, 12.5);
               }
             else if (boost::starts_with(id.c_str(), "value"))
               {
                 double value = boost::lexical_cast<int>(id.c_str() + 6);
-                this->template add_attribute<Hsv>(color_map, 2, value, 12.5);
+                this->template add_feature<Hsv>(color_map, 2, value, 12.5);
               }
           }
         else
           {
-            CGAL_CLASSIFICATION_CERR << "Warning: unknown attribute \"" << id << "\"" << std::endl;
+            CGAL_CLASSIFICATION_CERR << "Warning: unknown feature \"" << id << "\"" << std::endl;
             continue;
           }
 
-        Attribute_handle att = this->get_attribute (this->number_of_attributes() - 1);
-        m_scales[scale]->attributes.push_back (att);
+        Feature_handle att = this->get_feature (this->number_of_features() - 1);
+        m_scales[scale]->features.push_back (att);
         att->set_weight(weight);
         att_map[full_id] = att;
       }
 
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.types"))
+    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
       {
-        std::string type_id = v.second.get<std::string>("id");
+        std::string label_id = v.second.get<std::string>("id");
 
-        Type_handle new_type = this->add_classification_type (type_id.c_str());
+        Label_handle new_label = this->add_label (label_id.c_str());
         
         BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
           {
             if (v2.first == "id")
               continue;
             std::string att_id = v2.second.get<std::string>("id");
-            std::map<std::string, Attribute_handle>::iterator it = att_map.find(att_id);
+            std::map<std::string, Feature_handle>::iterator it = att_map.find(att_id);
             if (it == att_map.end())
               continue;
-            Attribute_handle att = it->second;
+            Feature_handle att = it->second;
             std::string effect = v2.second.get<std::string>("effect");
             if (effect == "penalized")
-              new_type->set_attribute_effect (att, Classification::Attribute::PENALIZING);
+              new_label->set_feature_effect (att, Classification::Feature::PENALIZING);
             else if (effect == "neutral")
-              new_type->set_attribute_effect (att, Classification::Attribute::NEUTRAL);
+              new_label->set_feature_effect (att, Classification::Feature::NEUTRAL);
             else
-              new_type->set_attribute_effect (att, Classification::Attribute::FAVORING);
+              new_label->set_feature_effect (att, Classification::Feature::FAVORING);
           }
       }
     

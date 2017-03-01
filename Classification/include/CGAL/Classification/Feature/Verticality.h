@@ -17,8 +17,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_VERTICALITY_H
+#define CGAL_CLASSIFICATION_FEATURE_VERTICALITY_H
 
 #include <vector>
 
@@ -28,14 +28,14 @@ namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on local verticality. The orientation of the
+    %Feature based on local verticality. The orientation of the
     local tangent plane of the considered point can be useful to
-    discriminate facades from the ground. This attribute can use
+    discriminate facades from the ground. This feature can use
     normal vectors if available or eigen analysis that estimates
     tangent planes from local neighborhoods.
 
@@ -50,16 +50,16 @@ namespace Attribute {
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Verticality : public Attribute_base
+class Verticality : public Feature_base
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
 
-  std::vector<double> verticality_attribute;
+  std::vector<double> verticality_feature;
   
 public:
   /*!
-    \brief Constructs the attribute using local eigen analysis.
+    \brief Constructs the feature using local eigen analysis.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -74,15 +74,15 @@ public:
       {
         typename Geom_traits::Vector_3 normal = eigen.normal_vector(i);
         normal = normal / CGAL::sqrt (normal * normal);
-        verticality_attribute.push_back (1. - CGAL::abs(normal * vertical));
+        verticality_feature.push_back (1. - CGAL::abs(normal * vertical));
       }
     
-    this->compute_mean_max (verticality_attribute, this->mean, this->max);
+    this->compute_mean_max (verticality_feature, this->mean, this->max);
     //    max *= 2;
   }
 
   /*!
-    \brief Constructs the attribute using provided normals of points.
+    \brief Constructs the feature using provided normals of points.
 
     \tparam VectorMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
@@ -101,10 +101,10 @@ public:
       {
         typename Geom_traits::Vector_3 normal = get(normal_map, *(input.begin()+i));
         normal = normal / CGAL::sqrt (normal * normal);
-        verticality_attribute.push_back (1. - std::fabs(normal * vertical));
+        verticality_feature.push_back (1. - std::fabs(normal * vertical));
       }
     
-    this->compute_mean_max (verticality_attribute, this->mean, this->max);
+    this->compute_mean_max (verticality_feature, this->mean, this->max);
     //    max *= 2;
   }
 
@@ -112,17 +112,17 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
-    return verticality_attribute[pt_index];
+    return verticality_feature[pt_index];
   }
 
   virtual std::string name() { return "verticality"; }
   /// \endcond
 };
 
-} // namespace Attribute
+} // namespace Feature
 
 } // namespace Classification
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H
+#endif // CGAL_CLASSIFICATION_FEATURE_VERTICALITY_H

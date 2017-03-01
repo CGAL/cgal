@@ -7,11 +7,11 @@
 #include <CGAL/Classifier.h>
 #include <CGAL/Classification/Point_set_neighborhood.h>
 #include <CGAL/Classification/Planimetric_grid.h>
-#include <CGAL/Classification/Attribute_base.h>
-#include <CGAL/Classification/Attribute/Eigen.h>
-#include <CGAL/Classification/Attribute/Distance_to_plane.h>
-#include <CGAL/Classification/Attribute/Vertical_dispersion.h>
-#include <CGAL/Classification/Attribute/Elevation.h>
+#include <CGAL/Classification/Feature_base.h>
+#include <CGAL/Classification/Feature/Eigen.h>
+#include <CGAL/Classification/Feature/Distance_to_plane.h>
+#include <CGAL/Classification/Feature/Vertical_dispersion.h>
+#include <CGAL/Classification/Feature/Elevation.h>
 
 #include <CGAL/IO/read_ply_points.h>
 
@@ -23,20 +23,20 @@ typedef CGAL::Identity_property_map<Point> Pmap;
 
 typedef CGAL::Classifier<Point_range, Pmap> Classifier;
 
-typedef CGAL::Classification::Planimetric_grid<Kernel, Point_range, Pmap>       Planimetric_grid;
-typedef CGAL::Classification::Point_set_neighborhood<Kernel, Point_range, Pmap> Neighborhood;
-typedef CGAL::Classification::Local_eigen_analysis<Kernel, Point_range, Pmap>   Local_eigen_analysis;
+typedef CGAL::Classification::Planimetric_grid<Kernel, Point_range, Pmap>             Planimetric_grid;
+typedef CGAL::Classification::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
+typedef CGAL::Classification::Local_eigen_analysis<Kernel, Point_range, Pmap>         Local_eigen_analysis;
 
-typedef CGAL::Classification::Type_handle                                           Type_handle;
-typedef CGAL::Classification::Attribute_handle                                      Attribute_handle;
+typedef CGAL::Classification::Label_handle                                            Label_handle;
+typedef CGAL::Classification::Feature_handle                                          Feature_handle;
 
-typedef CGAL::Classification::Attribute::Distance_to_plane<Kernel, Point_range, Pmap>   Distance_to_plane;
-typedef CGAL::Classification::Attribute::Linearity<Kernel, Point_range, Pmap>           Linearity;
-typedef CGAL::Classification::Attribute::Omnivariance<Kernel, Point_range, Pmap>        Omnivariance;
-typedef CGAL::Classification::Attribute::Planarity<Kernel, Point_range, Pmap>           Planarity;
-typedef CGAL::Classification::Attribute::Surface_variation<Kernel, Point_range, Pmap>   Surface_variation;
-typedef CGAL::Classification::Attribute::Elevation<Kernel, Point_range, Pmap>           Elevation;
-typedef CGAL::Classification::Attribute::Vertical_dispersion<Kernel, Point_range, Pmap> Dispersion;
+typedef CGAL::Classification::Feature::Distance_to_plane<Kernel, Point_range, Pmap>   Distance_to_plane;
+typedef CGAL::Classification::Feature::Linearity<Kernel, Point_range, Pmap>           Linearity;
+typedef CGAL::Classification::Feature::Omnivariance<Kernel, Point_range, Pmap>        Omnivariance;
+typedef CGAL::Classification::Feature::Planarity<Kernel, Point_range, Pmap>           Planarity;
+typedef CGAL::Classification::Feature::Surface_variation<Kernel, Point_range, Pmap>   Surface_variation;
+typedef CGAL::Classification::Feature::Elevation<Kernel, Point_range, Pmap>           Elevation;
+typedef CGAL::Classification::Feature::Vertical_dispersion<Kernel, Point_range, Pmap> Dispersion;
 
 
 ///////////////////////////////////////////////////////////////////
@@ -74,18 +74,18 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   
   ///////////////////////////////////////////////////////////////////
-  //! [Attributes]
+  //! [Features]
 
-  std::cerr << "Computing attributes" << std::endl;
-  Attribute_handle d2p = classifier.add_attribute<Distance_to_plane> (Pmap(), eigen);
-  Attribute_handle lin = classifier.add_attribute<Linearity> (eigen);
-  Attribute_handle omni = classifier.add_attribute<Omnivariance> (eigen);
-  Attribute_handle plan = classifier.add_attribute<Planarity> (eigen);
-  Attribute_handle surf = classifier.add_attribute<Surface_variation> (eigen);
-  Attribute_handle disp = classifier.add_attribute<Dispersion> (Pmap(), grid,
+  std::cerr << "Computing features" << std::endl;
+  Feature_handle d2p = classifier.add_feature<Distance_to_plane> (Pmap(), eigen);
+  Feature_handle lin = classifier.add_feature<Linearity> (eigen);
+  Feature_handle omni = classifier.add_feature<Omnivariance> (eigen);
+  Feature_handle plan = classifier.add_feature<Planarity> (eigen);
+  Feature_handle surf = classifier.add_feature<Surface_variation> (eigen);
+  Feature_handle disp = classifier.add_feature<Dispersion> (Pmap(), grid,
                                                                 grid_resolution,
                                                                 radius_neighbors);
-  Attribute_handle elev = classifier.add_attribute<Elevation> (Pmap(), grid,
+  Feature_handle elev = classifier.add_feature<Elevation> (Pmap(), grid,
                                                                grid_resolution,
                                                                radius_dtm);
   
@@ -99,43 +99,43 @@ int main (int argc, char** argv)
   elev->set_weight(1.47e1);
 
   
-  //! [Attributes]
+  //! [Features]
   ///////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////
-  //! [Classification Types]
+  //! [Classification Labels]
   
-  std::cerr << "Setting up classification types" << std::endl;
+  std::cerr << "Setting up labels" << std::endl;
   
-  // Create classification type and define how attributes affect them
-  Type_handle ground = classifier.add_classification_type ("ground");
-  ground->set_attribute_effect (d2p,  CGAL::Classification::Attribute::NEUTRAL);
-  ground->set_attribute_effect (lin,  CGAL::Classification::Attribute::PENALIZING);
-  ground->set_attribute_effect (omni, CGAL::Classification::Attribute::NEUTRAL);
-  ground->set_attribute_effect (plan, CGAL::Classification::Attribute::FAVORING);
-  ground->set_attribute_effect (surf, CGAL::Classification::Attribute::PENALIZING);
-  ground->set_attribute_effect (disp, CGAL::Classification::Attribute::NEUTRAL);
-  ground->set_attribute_effect (elev, CGAL::Classification::Attribute::PENALIZING);
+  // Create label and define how features affect them
+  Label_handle ground = classifier.add_label ("ground");
+  ground->set_feature_effect (d2p,  CGAL::Classification::Feature::NEUTRAL);
+  ground->set_feature_effect (lin,  CGAL::Classification::Feature::PENALIZING);
+  ground->set_feature_effect (omni, CGAL::Classification::Feature::NEUTRAL);
+  ground->set_feature_effect (plan, CGAL::Classification::Feature::FAVORING);
+  ground->set_feature_effect (surf, CGAL::Classification::Feature::PENALIZING);
+  ground->set_feature_effect (disp, CGAL::Classification::Feature::NEUTRAL);
+  ground->set_feature_effect (elev, CGAL::Classification::Feature::PENALIZING);
 
-  Type_handle vege = classifier.add_classification_type ("vegetation");
-  vege->set_attribute_effect (d2p,  CGAL::Classification::Attribute::FAVORING);
-  vege->set_attribute_effect (lin,  CGAL::Classification::Attribute::NEUTRAL);
-  vege->set_attribute_effect (omni, CGAL::Classification::Attribute::FAVORING);
-  vege->set_attribute_effect (plan, CGAL::Classification::Attribute::NEUTRAL);
-  vege->set_attribute_effect (surf, CGAL::Classification::Attribute::NEUTRAL);
-  vege->set_attribute_effect (disp, CGAL::Classification::Attribute::FAVORING);
-  vege->set_attribute_effect (elev, CGAL::Classification::Attribute::NEUTRAL);
+  Label_handle vege = classifier.add_label ("vegetation");
+  vege->set_feature_effect (d2p,  CGAL::Classification::Feature::FAVORING);
+  vege->set_feature_effect (lin,  CGAL::Classification::Feature::NEUTRAL);
+  vege->set_feature_effect (omni, CGAL::Classification::Feature::FAVORING);
+  vege->set_feature_effect (plan, CGAL::Classification::Feature::NEUTRAL);
+  vege->set_feature_effect (surf, CGAL::Classification::Feature::NEUTRAL);
+  vege->set_feature_effect (disp, CGAL::Classification::Feature::FAVORING);
+  vege->set_feature_effect (elev, CGAL::Classification::Feature::NEUTRAL);
   
-  Type_handle roof = classifier.add_classification_type ("roof");
-  roof->set_attribute_effect (d2p,  CGAL::Classification::Attribute::NEUTRAL);
-  roof->set_attribute_effect (lin,  CGAL::Classification::Attribute::PENALIZING);
-  roof->set_attribute_effect (omni, CGAL::Classification::Attribute::FAVORING);
-  roof->set_attribute_effect (plan, CGAL::Classification::Attribute::FAVORING);
-  roof->set_attribute_effect (surf, CGAL::Classification::Attribute::PENALIZING);
-  roof->set_attribute_effect (disp, CGAL::Classification::Attribute::NEUTRAL);
-  roof->set_attribute_effect (elev, CGAL::Classification::Attribute::FAVORING);
+  Label_handle roof = classifier.add_label ("roof");
+  roof->set_feature_effect (d2p,  CGAL::Classification::Feature::NEUTRAL);
+  roof->set_feature_effect (lin,  CGAL::Classification::Feature::PENALIZING);
+  roof->set_feature_effect (omni, CGAL::Classification::Feature::FAVORING);
+  roof->set_feature_effect (plan, CGAL::Classification::Feature::FAVORING);
+  roof->set_feature_effect (surf, CGAL::Classification::Feature::PENALIZING);
+  roof->set_feature_effect (disp, CGAL::Classification::Feature::NEUTRAL);
+  roof->set_feature_effect (elev, CGAL::Classification::Feature::FAVORING);
 
-  //! [Classification Types]
+  //! [Classification Labels]
   ///////////////////////////////////////////////////////////////////
 
   // Run classification
@@ -159,17 +159,17 @@ int main (int argc, char** argv)
     {
       f << pts[i] << " ";
       
-      Type_handle type = classifier.classification_type_of (i);
-      if (type == ground)
+      Label_handle label = classifier.label_of (i);
+      if (label == ground)
         f << "245 180 0" << std::endl;
-      else if (type == vege)
+      else if (label == vege)
         f << "0 255 27" << std::endl;
-      else if (type == roof)
+      else if (label == roof)
         f << "255 0 170" << std::endl;
       else
         {
           f << "0 0 0" << std::endl;
-          std::cerr << "Error: unknown classification type" << std::endl;
+          std::cerr << "Error: unknown classification label" << std::endl;
         }
     }
   

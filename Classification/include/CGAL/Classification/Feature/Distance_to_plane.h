@@ -18,8 +18,8 @@
 //
 // Author(s)     : Simon Giraudot, Florent Lafarge
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_DISTANCE_TO_PLANE_H
+#define CGAL_CLASSIFICATION_FEATURE_DISTANCE_TO_PLANE_H
 
 #include <vector>
 
@@ -29,15 +29,15 @@ namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on local distance to a fitted
+    %Feature based on local distance to a fitted
     plane. Characterizing a level of non-planarity can help to
     identify noisy parts of the input such as vegetation. This
-    attribute computes the distance of a point to a locally fitted
+    feature computes the distance of a point to a locally fitted
     plane.
     
     \tparam Geom_traits model of \cgal Kernel.
@@ -51,12 +51,12 @@ namespace Attribute {
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Distance_to_plane : public Attribute_base
+class Distance_to_plane : public Feature_base
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
-  std::vector<double> distance_to_plane_attribute;
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+  std::vector<double> distance_to_plane_feature;
 #else
   const PointRange& input;
   PointMap point_map;
@@ -65,7 +65,7 @@ class Distance_to_plane : public Attribute_base
   
 public:
   /*!
-    \brief Constructs the attribute.
+    \brief Constructs the feature.
 
     \param input input range.
     \param point_map property map to access the input points.
@@ -74,28 +74,28 @@ public:
   Distance_to_plane (const PointRange& input,
                      PointMap point_map,
                      const Local_eigen_analysis& eigen)
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : input(input), point_map(point_map), eigen(eigen)
 #endif
   {
     this->set_weight(1.);
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
-    std::vector<double> distance_to_plane_attribute;
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+    std::vector<double> distance_to_plane_feature;
 #endif
     
     for(std::size_t i = 0; i < input.size(); i++)
-      distance_to_plane_attribute.push_back
+      distance_to_plane_feature.push_back
         (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane(i))));
     
-    this->compute_mean_max (distance_to_plane_attribute, this->mean, this->max);
+    this->compute_mean_max (distance_to_plane_feature, this->mean, this->max);
     //    max *= 2;
   }
 
   /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
-    return distance_to_plane_attribute[pt_index];
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+    return distance_to_plane_feature[pt_index];
 #else
     return CGAL::sqrt (CGAL::squared_distance
                        (get(point_map, *(input.begin()+pt_index)), eigen.plane(pt_index)));
@@ -106,10 +106,10 @@ public:
   /// \endcond
 };
 
-} // namespace Attribute
+} // namespace Feature
 
 } // namespace Classification
   
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
+#endif // CGAL_CLASSIFICATION_FEATURE_DISTANCE_TO_PLANE_H

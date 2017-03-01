@@ -17,8 +17,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_BASE_H
+#define CGAL_CLASSIFICATION_FEATURE_BASE_H
 
 #include <boost/shared_ptr.hpp>
 
@@ -31,12 +31,12 @@ namespace Classification {
 /*!
   \ingroup PkgClassification
 
-  \brief Abstract class describing a classification attribute that
+  \brief Abstract class describing a classification feature that
   associates a scalar value to each item of the classification input.
 */
 
 
-class Attribute_base
+class Feature_base
 {
   double m_weight; 
 public:
@@ -45,27 +45,27 @@ public:
   double mean;
   double max;
 
-  virtual ~Attribute_base() { }
+  virtual ~Feature_base() { }
   /// \endcond
 
   /*!
-    \brief Returns the weight of the attribute.
+    \brief Returns the weight of the feature.
   */
   double weight() const { return m_weight; }
 
   /*!
-    \brief Sets the weight of the attribute (`weight` must be positive).
+    \brief Sets the weight of the feature (`weight` must be positive).
   */
   void set_weight (double weight) { m_weight = weight; }
 
   /*!
-    \brief Returns `abstract_attribute` and should be overloaded
+    \brief Returns `abstract_feature` and should be overloaded
     by an inherited class with a specific name.
   */
-  virtual std::string name() { return "abstract_attribute"; }
+  virtual std::string name() { return "abstract_feature"; }
 
   /*!
-    \brief Returns the value taken by the attribute for at the item at
+    \brief Returns the value taken by the feature for at the item at
     position `index`. This method must be implemented by inherited
     classes.
   */
@@ -107,13 +107,13 @@ public:
 /*!
   \ingroup PkgClassification
 
-  \brief %Handle to an `Attribute_base`.
+  \brief %Handle to an `Feature_base`.
 
   \cgalModels Handle
 */
-class Attribute_handle { };
+class Feature_handle { };
 #else
-typedef boost::shared_ptr<Attribute_base> Attribute_handle;
+typedef boost::shared_ptr<Feature_base> Feature_handle;
 #endif
 
 
@@ -121,4 +121,4 @@ typedef boost::shared_ptr<Attribute_base> Attribute_handle;
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_BASE_H
+#endif // CGAL_CLASSIFICATION_FEATURE_BASE_H

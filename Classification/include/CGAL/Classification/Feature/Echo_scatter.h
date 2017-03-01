@@ -18,8 +18,8 @@
 //
 // Author(s)     : Simon Giraudot, Florent Lafarge
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_ECHO_SCATTER_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_ECHO_SCATTER_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_ECHO_SCATTER_H
+#define CGAL_CLASSIFICATION_FEATURE_ECHO_SCATTER_H
 
 #include <vector>
 
@@ -28,12 +28,12 @@ namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
   
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on echo scatter. The number of returns (echo
+    %Feature based on echo scatter. The number of returns (echo
     number) is a useful information provided by most LIDAR sensors. It
     can help to identify trees.
 
@@ -48,7 +48,7 @@ namespace Attribute {
     is `std::size_t`.
   */
 template <typename Geom_traits, typename PointRange, typename PointMap, typename EchoMap>
-class Echo_scatter : public Attribute_base
+class Echo_scatter : public Feature_base
 {
 public:
   typedef Classification::Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
@@ -59,7 +59,7 @@ private:
   
 public:
   /*!
-    \brief Constructs the attribute.
+    \brief Constructs the feature.
 
     \param input input range.
     \param echo_map property map to access the echo values of the input points.
@@ -143,10 +143,10 @@ public:
   /// \endcond
 };
 
-} // namespace Attribute
+} // namespace Feature
 
 } // namespace Classification
   
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_ECHO_SCATTER_H
+#endif // CGAL_CLASSIFICATION_FEATURE_ECHO_SCATTER_H

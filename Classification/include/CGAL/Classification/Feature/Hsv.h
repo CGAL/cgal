@@ -17,8 +17,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_HSV_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_HSV_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_HSV_H
+#define CGAL_CLASSIFICATION_FEATURE_HSV_H
 
 #include <vector>
 
@@ -28,14 +28,14 @@ namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
   
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on HSV colorimetric information. If the input
+    %Feature based on HSV colorimetric information. If the input
     point cloud has colorimetric information, it can be used for
-    classification purposes. This attribute is based on a Gaussian
+    classification purposes. This feature is based on a Gaussian
     probabilistic model on one of the three HSV channels (hue,
     saturation or value). It computes the probability of the color of
     the input point to match this specific color channel defined by a
@@ -52,7 +52,7 @@ namespace Attribute {
     - Value ranges from 0 to 100 and measures the "brightness" of the
       color (0 is black and 100 is the fully bright color)
 
-    For example, such an attribute using the channel 0 (hue) with a
+    For example, such an feature using the channel 0 (hue) with a
     mean of 90 (which corresponds to a green hue) can help to identify
     trees.
     
@@ -67,13 +67,13 @@ namespace Attribute {
     is `CGAL::Classification::RGB_Color`.
   */
 template <typename Geom_traits, typename PointRange, typename ColorMap>
-class Hsv : public Attribute_base
+class Hsv : public Feature_base
 {
   typedef typename Classification::RGB_Color RGB_Color;
   typedef typename Classification::HSV_Color HSV_Color;
 
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
-  std::vector<double> color_attribute;
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+  std::vector<double> color_feature;
 #else
   const PointRange& input;
   ColorMap color_map;
@@ -87,7 +87,7 @@ public:
   
   /*!
 
-    \brief Constructs an attribute based on the given color channel,
+    \brief Constructs an feature based on the given color channel,
     mean and standard deviation.
 
     \param input input range.
@@ -100,21 +100,21 @@ public:
        ColorMap color_map,
        std::size_t channel,
        double mean, double sd)
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : input(input), color_map(color_map), channel(channel), mean(mean), sd(sd)
 #endif
   {
     this->set_weight(1.);
 
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
-    std::vector<double> color_attribute;
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+    std::vector<double> color_feature;
 #endif
     for(std::size_t i = 0; i < input.size();i++)
       {
         HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
-        color_attribute.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
+        color_feature.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
       }
-    this->compute_mean_max (color_attribute, this->mean, this->max);
+    this->compute_mean_max (color_feature, this->mean, this->max);
 
     std::ostringstream oss;
     if (channel == 0) oss << "hue";
@@ -127,8 +127,8 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
-    return color_attribute[pt_index];
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+    return color_feature[pt_index];
 #else
     HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+pt_index)));
     return std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd));
@@ -139,10 +139,10 @@ public:
   /// \endcond
 };
 
-} // namespace Attribute
+} // namespace Feature
 
 } // namespace Classification
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_HSV_H
+#endif // CGAL_CLASSIFICATION_FEATURE_HSV_H

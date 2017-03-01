@@ -17,23 +17,23 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_EFFECT_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_EFFECT_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_EFFECT_H
+#define CGAL_CLASSIFICATION_FEATURE_EFFECT_H
 
 namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
 
-enum Effect /// Defines the effect of an attribute on a type.
+enum Effect /// Defines the effect of an feature on a type.
     {
-      FAVORING = 0, ///< High values of the attribute favor this type
-      NEUTRAL = 1, ///< The attribute has no effect on this type
-      PENALIZING = 2 ///< Low values of the attribute favor this type
+      FAVORING = 0, ///< High values of the feature favor this type
+      NEUTRAL = 1, ///< The feature has no effect on this type
+      PENALIZING = 2 ///< Low values of the feature favor this type
     };
   
-} // Attribute
+} // Feature
 
 } // Classification
 

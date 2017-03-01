@@ -17,8 +17,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTES_EIGEN_H
-#define CGAL_CLASSIFICATION_ATTRIBUTES_EIGEN_H
+#ifndef CGAL_CLASSIFICATION_FEATURES_EIGEN_H
+#define CGAL_CLASSIFICATION_FEATURES_EIGEN_H
 
 #include <vector>
 
@@ -28,26 +28,26 @@ namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
 
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Eigen_attribute : public Attribute_base
+class Eigen_feature : public Feature_base
 {
 protected:
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
 
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<double> attrib;
 #else
   Local_eigen_analysis& eigen;
 #endif
   
 public:
-  Eigen_attribute (const PointRange&,
+  Eigen_feature (const PointRange&,
                    Local_eigen_analysis& eigen)
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : eigen (eigen)
 #endif
   {
@@ -56,7 +56,7 @@ public:
   virtual void init (const PointRange& input, Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     std::vector<double> attrib;
 #endif
     attrib.reserve (input.size());
@@ -69,20 +69,20 @@ public:
   virtual double get_value (Local_eigen_analysis& eigen, std::size_t i) = 0;
   virtual double value (std::size_t pt_index)
   {
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_ATTRIBUTES
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     return attrib[pt_index];
 #else
     return get_value(eigen, pt_index);
 #endif
   }
-  virtual std::string name() { return "eigen_attribute"; }
+  virtual std::string name() { return "eigen_feature"; }
 
 };
   
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance matrix of a
+    %Feature based on the eigenvalues of the covariance matrix of a
     local neighborhood. Linearity is defined, for the 3 eigenvalues
     \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
@@ -100,14 +100,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Linearity : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Linearity : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -132,9 +132,9 @@ public:
 };
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance matrix of a
+    %Feature based on the eigenvalues of the covariance matrix of a
     local neighborhood. Planarity is defined, for the 3 eigenvalues
     \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
@@ -152,14 +152,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Planarity : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Planarity : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -185,9 +185,9 @@ public:
 };
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance matrix of a
+    %Feature based on the eigenvalues of the covariance matrix of a
     local neighborhood. Sphericity is defined, for the 3 eigenvalues
     \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
@@ -205,14 +205,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Sphericity : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Sphericity : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -237,9 +237,9 @@ public:
 };
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance matrix of a
+    %Feature based on the eigenvalues of the covariance matrix of a
     local neighborhood. Omnivariance is defined, for the 3 eigenvalues
     \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
@@ -257,14 +257,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Omnivariance : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Omnivariance : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -286,9 +286,9 @@ public:
 };
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance matrix of a
+    %Feature based on the eigenvalues of the covariance matrix of a
     local neighborhood. Anisotropy is defined, for the 3 eigenvalues
     \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
@@ -306,14 +306,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Anisotropy : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Anisotropy : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -338,9 +338,9 @@ public:
 };
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance matrix of a
+    %Feature based on the eigenvalues of the covariance matrix of a
     local neighborhood. Eigentropy is defined, for the 3 eigenvalues
     \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$, as:
 
@@ -358,14 +358,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Eigentropy : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Eigentropy : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -394,9 +394,9 @@ public:
 };
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance matrix of a
+    %Feature based on the eigenvalues of the covariance matrix of a
     local neighborhood. The sum of the eigenvalues is defined, for the
     3 eigenvalues \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$,
     as:
@@ -415,14 +415,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Sum_eigenvalues : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Sum_eigenvalues : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -443,9 +443,9 @@ public:
 };
 
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on the eigenvalues of the covariance
+    %Feature based on the eigenvalues of the covariance
     matrix of a local neighborhood. Surface variation is defined, for
     the 3 eigenvalues \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge
     0\f$, as:
@@ -464,14 +464,14 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Surface_variation : public Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Surface_variation : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_attribute<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
+  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
-    Constructs the attribute.
+    Constructs the feature.
 
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
@@ -495,10 +495,10 @@ public:
   /// \endcond
 };
 
-} // namespace Attribute
+} // namespace Feature
 
 } // namespace Classification
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTES_EIGEN_H
+#endif // CGAL_CLASSIFICATION_FEATURES_EIGEN_H

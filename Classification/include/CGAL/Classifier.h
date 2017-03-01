@@ -35,8 +35,8 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <CGAL/Classification/Planimetric_grid.h>
-#include <CGAL/Classification/Attribute_base.h>
-#include <CGAL/Classification/Type.h>
+#include <CGAL/Classification/Feature_base.h>
+#include <CGAL/Classification/Label.h>
 
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Timer.h>
@@ -55,24 +55,24 @@ namespace CGAL {
 /*!
 \ingroup PkgClassification
 
-\brief Classifies a data set based on a set of attributes and a set of
-classification types.
+\brief Classifies a data set based on a set of features and a set of
+labels.
 
 This class implements the core of the classification algorithm
 \cgalCite{cgal:lm-clscm-12}. It uses a data set as input and assigns
-each input item to a classification type among a set of user defined
-classification types. To achieve this classification, a set of local
-geometric attributes are used, such as planarity, elevation or
+each input item to a label among a set of user defined
+labels. To achieve this classification, a set of local
+geometric features are used, such as planarity, elevation or
 vertical dispersion. In addition, the user must define a set of
-classification types such as building, ground or vegetation.
+labels such as building, ground or vegetation.
 
-Each pair of attribute and type must be assigned an
-[Attribute::Effect](@ref CGAL::Classification::Attribute::Effect) (for
+Each pair of feature and label must be assigned an
+[Feature::Effect](@ref CGAL::Classification::Feature::Effect) (for
 example, vegetation has a low planarity and a high vertical
-dispersion) and each attribute must be assigned a weight. These
+dispersion) and each feature must be assigned a weight. These
 parameters can be set up by hand or by automatic training, provided a
 small user-defined set of inlier is given for each classification
-type.
+label.
 
 \tparam ItemRange model of `ConstRange`. Its iterator type is
 `RandomAccessIterator`.
@@ -88,8 +88,8 @@ class Classifier
 
   
 public:
-  typedef typename Classification::Type_handle      Type_handle;
-  typedef typename Classification::Attribute_handle Attribute_handle;
+  typedef typename Classification::Label_handle      Label_handle;
+  typedef typename Classification::Feature_handle Feature_handle;
   
   /// \cond SKIP_IN_MANUAL
   typedef typename ItemMap::value_type Item;
@@ -105,14 +105,14 @@ protected:
   const ItemRange& m_input;
   ItemMap m_item_map;
 
-  std::vector<std::size_t> m_assigned_type;
+  std::vector<std::size_t> m_assigned_label;
   std::vector<double> m_confidence;
 
-  std::vector<Type_handle> m_types; 
-  std::vector<Attribute_handle> m_attributes; 
+  std::vector<Label_handle> m_labels; 
+  std::vector<Feature_handle> m_features; 
 
-  typedef Classification::Attribute::Effect Attribute_effect;
-  std::vector<std::vector<Attribute_effect> > m_effect_table;
+  typedef Classification::Feature::Effect Feature_effect;
+  std::vector<std::vector<Feature_effect> > m_effect_table;
 
   /// \endcond
 
@@ -141,113 +141,113 @@ public:
   virtual ~Classifier() { }
   /// \endcond
   
-  /// \name Attributes
+  /// \name Features
   /// @{
 
   /*!
-    \brief Adds an attribute.
+    \brief Adds an feature.
 
-    \tparam Attribute type of the attribute, inherited from
-    `Classification::Attribute_base`.
+    \tparam Feature type of the feature, inherited from
+    `Classification::Feature_base`.
 
-    \tparam T types of the parameters of the attribute's constructor.
+    \tparam T types of the parameters of the feature's constructor.
 
-    \param t parameters of the attribute's constructor.
+    \param t parameters of the feature's constructor.
 
-    \return a handle to the newly added attribute.
+    \return a handle to the newly added feature.
    */
 #if (!defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)) || DOXYGEN_RUNNING
-  template <typename Attribute, typename ... T>
-  Attribute_handle add_attribute (T&& ... t)
+  template <typename Feature, typename ... T>
+  Feature_handle add_feature (T&& ... t)
   {
     // CGAL::Timer timer;
     // timer.start();
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, std::forward<T>(t)...)));
+    m_features.push_back (Feature_handle (new Feature(m_input, std::forward<T>(t)...)));
     // timer.stop();
-    // CGAL_CLASSIFICATION_CERR << m_attributes.back()->name() << " took " << timer.time() << " second(s)" << std::endl;
-    return m_attributes.back();
+    // CGAL_CLASSIFICATION_CERR << m_features.back()->name() << " took " << timer.time() << " second(s)" << std::endl;
+    return m_features.back();
   }
 #else
-  template <typename Attribute>
-  Attribute_handle add_attribute ()
+  template <typename Feature>
+  Feature_handle add_feature ()
   {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input)));
-    return m_attributes.back();
+    m_features.push_back (Feature_handle (new Feature(m_input)));
+    return m_features.back();
   }
-  template <typename Attribute, typename T1>
-  Attribute_handle add_attribute (T1& t1)
+  template <typename Feature, typename T1>
+  Feature_handle add_feature (T1& t1)
   {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1)));
-    return m_attributes.back();
+    m_features.push_back (Feature_handle (new Feature(m_input, t1)));
+    return m_features.back();
   }
-  template <typename Attribute, typename T1, typename T2>
-  Attribute_handle add_attribute (T1& t1, T2& t2)
+  template <typename Feature, typename T1, typename T2>
+  Feature_handle add_feature (T1& t1, T2& t2)
   {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2)));
-    return m_attributes.back();
+    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2)));
+    return m_features.back();
   }
-  template <typename Attribute, typename T1, typename T2, typename T3>
-  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3)
+  template <typename Feature, typename T1, typename T2, typename T3>
+  Feature_handle add_feature (T1& t1, T2& t2, T3& t3)
   {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3)));
-    return m_attributes.back();
+    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2, t3)));
+    return m_features.back();
   }
-  template <typename Attribute, typename T1, typename T2, typename T3, typename T4>
-  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4)
+  template <typename Feature, typename T1, typename T2, typename T3, typename T4>
+  Feature_handle add_feature (T1& t1, T2& t2, T3& t3, T4& t4)
   {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4)));
-    return m_attributes.back();
+    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2, t3, t4)));
+    return m_features.back();
   }
-  template <typename Attribute, typename T1, typename T2, typename T3, typename T4, typename T5>
-  Attribute_handle add_attribute (T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
+  template <typename Feature, typename T1, typename T2, typename T3, typename T4, typename T5>
+  Feature_handle add_feature (T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
   {
-    m_attributes.push_back (Attribute_handle (new Attribute(m_input, t1, t2, t3, t4, t5)));
-    return m_attributes.back();
+    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2, t3, t4, t5)));
+    return m_features.back();
   }
 #endif
 
   /*!
-    \brief Removes an attribute.
+    \brief Removes an feature.
 
-    \param attribute the handle to attribute type that must be removed.
+    \param feature the handle to feature type that must be removed.
 
-    \return `true` if the attribute was correctly removed, `false` if
+    \return `true` if the feature was correctly removed, `false` if
     its handle was not found.
    */ 
-  bool remove_attribute (Attribute_handle attribute)
+  bool remove_feature (Feature_handle feature)
   {
-    for (std::size_t i = 0; i < m_attributes.size(); ++ i)
-      if (m_attributes[i] == attribute)
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
+      if (m_features[i] == feature)
         {
-          m_attributes.erase (m_attributes.begin() + i);
+          m_features.erase (m_features.begin() + i);
           return true;
         }
     return false;
   }
 
   /*!
-    \brief Returns how many attributes are defined.
+    \brief Returns how many features are defined.
   */  
-  std::size_t number_of_attributes() const
+  std::size_t number_of_features() const
   {
-    return m_attributes.size();
+    return m_features.size();
   }
 
 
   /*!
-    \brief Returns the i^{th} attribute.
+    \brief Returns the i^{th} feature.
   */  
-  Attribute_handle attribute(std::size_t i)
+  Feature_handle feature(std::size_t i)
   {
-    return m_attributes[i];
+    return m_features[i];
   }
 
   /*!
-    \brief Removes all attributes.
+    \brief Removes all features.
    */
-  void clear_attributes ()
+  void clear_features ()
   {
-    m_attributes.clear();
+    m_features.clear();
   }
 
   /// \endcond
@@ -255,38 +255,38 @@ public:
   /// @}
 
 
-  /// \name Classification Types
+  /// \name Labels
   /// @{
   
   /*!
-    \brief Adds a classification type.
+    \brief Adds a label.
 
-    \param name name of the classification type.
+    \param name name of the label.
 
-    \return a handle to the newly added classification type.
+    \return a handle to the newly added label.
    */
-  Type_handle add_classification_type (const char* name)
+  Label_handle add_label (const char* name)
   {
-    Type_handle out (new Classification::Type (name));
-    m_types.push_back (out);
+    Label_handle out (new Classification::Label (name));
+    m_labels.push_back (out);
     return out;
   }
 
   /*!
-    \brief Removes a classification type.
+    \brief Removes a label.
 
-    \param type the handle to the classification type that must be removed.
+    \param label the handle to the label that must be removed.
 
-    \return `true` if the classification type was correctly removed,
+    \return `true` if the label was correctly removed,
     `false` if its handle was not found.
    */ 
- bool remove_classification_type (Type_handle type)
+ bool remove_label (Label_handle label)
   {
     std::size_t idx = (std::size_t)(-1);
-    for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i] == type)
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      if (m_labels[i] == label)
         {
-          m_types.erase (m_types.begin() + i);
+          m_labels.erase (m_labels.begin() + i);
           idx = i;
           break;
         }
@@ -294,40 +294,40 @@ public:
       return false;
     std::cerr << idx << std::endl;
     
-    for (std::size_t i = 0; i < m_assigned_type.size(); ++ i)
-      if (m_assigned_type[i] == (std::size_t)(-1))
+    for (std::size_t i = 0; i < m_assigned_label.size(); ++ i)
+      if (m_assigned_label[i] == (std::size_t)(-1))
           continue;
-      else if (m_assigned_type[i] > idx)
-        m_assigned_type[i] --;
-      else if (m_assigned_type[i] == idx)
-        m_assigned_type[i] = (std::size_t)(-1);
+      else if (m_assigned_label[i] > idx)
+        m_assigned_label[i] --;
+      else if (m_assigned_label[i] == idx)
+        m_assigned_label[i] = (std::size_t)(-1);
 
     return true;
   }
 
   /*!
-    \brief Returns how many classification types are defined.
+    \brief Returns how many labels are defined.
   */  
-  std::size_t number_of_classification_types () const
+  std::size_t number_of_labels () const
   {
-    return m_types.size();
+    return m_labels.size();
   }
   
   /*!
-    \brief Returns the i^{th} classification type.
+    \brief Returns the i^{th} label.
   */  
-  Type_handle classification_type (std::size_t i) const
+  Label_handle label (std::size_t i) const
   {
-    return m_types[i];
+    return m_labels[i];
   }
 
 
   /*!
-    \brief Removes all classification types.
+    \brief Removes all labels.
    */
-  void clear_classification_types ()
+  void clear_labels ()
   {
-    m_types.clear();
+    m_labels.clear();
   }
 
   /// @}
@@ -369,7 +369,7 @@ public:
               }
           }
 
-        m_assigned_type[s] = nb_class_best;
+        m_assigned_label[s] = nb_class_best;
 
         std::sort (values.begin(), values.end());
         m_confidence[s] = values[1] - values[0];
@@ -396,7 +396,7 @@ public:
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
     std::vector<std::vector<double> > values
-      (m_types.size(),
+      (m_labels.size(),
        std::vector<double> (m_input.size(), -1.));
 
     for (std::size_t s=0; s < m_input.size(); ++ s)
@@ -430,7 +430,7 @@ public:
               }
           }
 
-        m_assigned_type[s] = nb_class_best;
+        m_assigned_label[s] = nb_class_best;
 
         std::sort (mean.begin(), mean.end());
         m_confidence[s] = mean[1] - mean[0];      
@@ -471,10 +471,10 @@ public:
     std::vector<double> edge_weights;
     std::vector<std::vector<double> > probability_matrix
       (m_effect_table.size(), std::vector<double>(m_input.size(), 0.));
-    std::vector<std::size_t>(m_input.size()).swap(m_assigned_type);
+    std::vector<std::size_t>(m_input.size()).swap(m_assigned_label);
 
     std::cerr << "Size of probability matrix = " << m_effect_table.size() * m_input.size() << std::endl;
-    std::cerr << "Size of assigned types = " << m_assigned_type.size() << std::endl;
+    std::cerr << "Size of assigned labels = " << m_assigned_label.size() << std::endl;
     
     for (std::size_t s = 0; s < m_input.size(); ++ s)
       {
@@ -502,11 +502,11 @@ public:
                 nb_class_best = k;
               }
           }
-        m_assigned_type[s] = nb_class_best;
+        m_assigned_label[s] = nb_class_best;
       }
     
     Alpha_expansion graphcut;
-    graphcut(edges, edge_weights, probability_matrix, m_assigned_type);
+    graphcut(edges, edge_weights, probability_matrix, m_assigned_label);
     std::cerr << ((double)(CGAL::Memory_sizer().virtual_size()) / 1073741824.) << " GB allocated" << std::endl;
   }
   
@@ -518,43 +518,43 @@ public:
   /// @{
 
   /*!
-    \brief Returns the classification type of the item at position
+    \brief Returns the label of the item at position
     `index`.
 
     \note If classification was not performed (using `run()`,
     `run_with_local_smoothing()` or `run_with_graphcut()`), this
-    function always returns the default `Type_handle`.
+    function always returns the default `Label_handle`.
   */
-  Type_handle classification_type_of (std::size_t index) const
+  Label_handle label_of (std::size_t index) const
   {
-    if (m_assigned_type.size() <= index
-        || m_assigned_type[index] == (std::size_t)(-1))
+    if (m_assigned_label.size() <= index
+        || m_assigned_label[index] == (std::size_t)(-1))
       {
-      return Type_handle();
+      return Label_handle();
       }
-    return m_types[m_assigned_type[index]];
+    return m_labels[m_assigned_label[index]];
   }
 
   /// \cond SKIP_IN_MANUAL
   bool classification_prepared() const
   {
-    return !(m_assigned_type.empty());
+    return !(m_assigned_label.empty());
   }
-  void set_classification_type_of (std::size_t index, Type_handle class_type)
+  void set_label_of (std::size_t index, Label_handle label)
   {
-    for (std::size_t i = 0; i < m_types.size(); ++ i)
-      if (m_types[i] == class_type)
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      if (m_labels[i] == label)
         {
-          m_assigned_type[index] = i;
+          m_assigned_label[index] = i;
           return;
         }
-    m_assigned_type[index] = (std::size_t)(-1);
+    m_assigned_label[index] = (std::size_t)(-1);
   }
   /// \endcond
 
   /*!
 
-    \brief Returns the confidence of the classification type of the
+    \brief Returns the confidence of the label of the
     item at position `index`.
 
     \note If classification was not performed (using `run()`,
@@ -574,22 +574,22 @@ public:
   /// @}
 
 
-  double classification_value (Type_handle class_type, std::size_t pt_index)
+  double classification_value (Label_handle label, std::size_t pt_index)
   {
     double out = 0.;
-    for (std::size_t i = 0; i < m_attributes.size(); ++ i)
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
       {
-        if (m_attributes[i]->weight() == 0.)
+        if (m_features[i]->weight() == 0.)
           continue;
 
-        Attribute_effect eff = class_type->attribute_effect (m_attributes[i]);
+        Feature_effect eff = label->feature_effect (m_features[i]);
 
-        if (eff == Classification::Attribute::FAVORING)
-          out += m_attributes[i]->favored (pt_index);
-        else if (eff == Classification::Attribute::PENALIZING)
-          out += m_attributes[i]->penalized (pt_index);
-        else if (eff == Classification::Attribute::NEUTRAL)
-          out += m_attributes[i]->ignored (pt_index);
+        if (eff == Classification::Feature::FAVORING)
+          out += m_features[i]->favored (pt_index);
+        else if (eff == Classification::Feature::PENALIZING)
+          out += m_features[i]->penalized (pt_index);
+        else if (eff == Classification::Feature::NEUTRAL)
+          out += m_features[i]->ignored (pt_index);
       }
     return out;
   }
@@ -601,33 +601,33 @@ protected:
   void prepare_classification ()
   {
     // Reset data structure
-    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_assigned_type);
+    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_assigned_label);
     std::vector<double>(m_input.size()).swap (m_confidence);
 
-    m_effect_table = std::vector<std::vector<Attribute_effect> >
-      (m_types.size(), std::vector<Attribute_effect> (m_attributes.size(),
-                                                                 Classification::Attribute::NEUTRAL));
+    m_effect_table = std::vector<std::vector<Feature_effect> >
+      (m_labels.size(), std::vector<Feature_effect> (m_features.size(),
+                                                                 Classification::Feature::NEUTRAL));
     
     for (std::size_t i = 0; i < m_effect_table.size (); ++ i)
       for (std::size_t j = 0; j < m_effect_table[i].size (); ++ j)
-        m_effect_table[i][j] = m_types[i]->attribute_effect (m_attributes[j]);
+        m_effect_table[i][j] = m_labels[i]->feature_effect (m_features[j]);
 
   }
   
-  double classification_value (const std::size_t& class_type,
+  double classification_value (const std::size_t& label,
                                const std::size_t& pt_index) const
   {
     double out = 0.;
-    for (std::size_t i = 0; i < m_effect_table[class_type].size(); ++ i)
+    for (std::size_t i = 0; i < m_effect_table[label].size(); ++ i)
       {
-        if (m_attributes[i]->weight() == 0.)
+        if (m_features[i]->weight() == 0.)
           continue;
-        if (m_effect_table[class_type][i] == Classification::Attribute::FAVORING)
-          out += m_attributes[i]->favored (pt_index);
-        else if (m_effect_table[class_type][i] == Classification::Attribute::PENALIZING)
-          out += m_attributes[i]->penalized (pt_index);
-        else if (m_effect_table[class_type][i] == Classification::Attribute::NEUTRAL)
-          out += m_attributes[i]->ignored (pt_index);
+        if (m_effect_table[label][i] == Classification::Feature::FAVORING)
+          out += m_features[i]->favored (pt_index);
+        else if (m_effect_table[label][i] == Classification::Feature::PENALIZING)
+          out += m_features[i]->penalized (pt_index);
+        else if (m_effect_table[label][i] == Classification::Feature::NEUTRAL)
+          out += m_features[i]->ignored (pt_index);
       }
     return out;
   }

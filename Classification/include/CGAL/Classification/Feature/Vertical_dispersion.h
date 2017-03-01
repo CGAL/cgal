@@ -17,8 +17,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H
-#define CGAL_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H
+#ifndef CGAL_CLASSIFICATION_FEATURE_VERTICAL_DISPERSION_H
+#define CGAL_CLASSIFICATION_FEATURE_VERTICAL_DISPERSION_H
 
 #include <vector>
 
@@ -29,17 +29,17 @@ namespace CGAL {
 
 namespace Classification {
 
-namespace Attribute {
+namespace Feature {
   
   /*!
-    \ingroup PkgClassificationAttributes
+    \ingroup PkgClassificationFeatures
 
-    %Attribute based on local vertical dispersion of points. Urban
+    %Feature based on local vertical dispersion of points. Urban
     scenes can often be decomposed as a set of 2D regions with
     different heights. While these heights are usually piecewise
     constant or piecewise linear, on some specific parts of the scene
     such as vegetation, they can become extremely unstable. This
-    attribute quantifies the vertical dispersion of the points on a
+    feature quantifies the vertical dispersion of the points on a
     local Z-cylinder around the points.
 
     \tparam Geom_traits model of \cgal Kernel.
@@ -50,7 +50,7 @@ namespace Attribute {
     is `Geom_traits::Point_3`.
   */
 template <typename Geom_traits, typename PointRange, typename PointMap>
-class Vertical_dispersion : public Attribute_base
+class Vertical_dispersion : public Feature_base
 {
   typedef Classification::Image<float> Image_float;
   typedef Classification::Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
@@ -58,7 +58,7 @@ class Vertical_dispersion : public Attribute_base
   
 public:
   /*!
-    \brief Constructs the attribute.
+    \brief Constructs the feature.
 
     \param input input range.
     \param point_map property map to access the input points.
@@ -160,4 +160,4 @@ public:
 
 }
 
-#endif // CGAL_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H
+#endif // CGAL_CLASSIFICATION_FEATURE_VERTICAL_DISPERSION_H

@@ -79,16 +79,16 @@ int main (int argc, char** argv)
 
   Point_set_classifier psc (pts, Pmap());
   
-  std::cerr << "Generating attributes" << std::endl;
-  psc.generate_attributes (5); // Using 5 scales
+  std::cerr << "Generating features" << std::endl;
+  psc.generate_features (5); // Using 5 scales
   
   // Add types to PSC
-  CGAL::Classification::Type_handle ground
-    = psc.add_classification_type ("ground");
-  CGAL::Classification::Type_handle vege
-    = psc.add_classification_type ("vegetation");
-  CGAL::Classification::Type_handle roof
-    = psc.add_classification_type ("roof");
+  CGAL::Classification::Label_handle ground
+    = psc.add_label ("ground");
+  CGAL::Classification::Label_handle vege
+    = psc.add_label ("vegetation");
+  CGAL::Classification::Label_handle roof
+    = psc.add_label ("roof");
   
   Trainer trainer (psc);
 
