@@ -1208,7 +1208,7 @@ public:
   Iterator_range<Prevent_deref<Face_iterator> >
   face_handles() const
   {
-    return make_prevent_deref_range(faces_begin(), f_end());
+    return make_prevent_deref_range(faces_begin(), faces_end());
   }
   //! reference_face (const version).
   /*! The function returns a reference face of the arrangement.
