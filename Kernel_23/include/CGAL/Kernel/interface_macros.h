@@ -478,10 +478,10 @@ CGAL_Kernel_cons(Construct_cartesian_const_iterator_2,
 		 construct_cartesian_const_iterator_2_object)
 CGAL_Kernel_cons(Construct_cartesian_const_iterator_3,
 		 construct_cartesian_const_iterator_3_object)
-CGAL_Kernel_pred(Coplanar_orientation_3,
-		 coplanar_orientation_3_object)
-CGAL_Kernel_pred(Coplanar_side_of_bounded_circle_3,
-		 coplanar_side_of_bounded_circle_3_object)
+CGAL_Kernel_pred_RT(Coplanar_orientation_3,
+                    coplanar_orientation_3_object)
+CGAL_Kernel_pred_RT(Coplanar_side_of_bounded_circle_3,
+                    coplanar_side_of_bounded_circle_3_object)
 CGAL_Kernel_pred(Coplanar_3,
 		 coplanar_3_object)
 CGAL_Kernel_pred(Counterclockwise_in_between_2,
