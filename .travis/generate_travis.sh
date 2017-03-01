@@ -17,16 +17,14 @@ do
 	then
 		PACKAGES[$INDEX]+="$f "
 		i=$[i+1]
-		if [ $i == 3 ]
+		if [ $i = 3 ]
 		then
 			i=0
-			#PACKAGES[$INDEX]+="\n"
  			INDEX=$[INDEX+1]
 		fi
   	echo "$f " >> ./.travis/packages.txt
 	fi
 done
-
 if [ -f ".travis.yml" ] 
 then
   #copy the current .travis.yml for later check
@@ -52,16 +50,17 @@ for package in ${PACKAGES[@]}
 do
  	echo "  - PACKAGE='$package' " >> .travis.yml
 done
+echo "  - PACKAGE='Polyhedron_demo' " >> .travis.yml
 
 #writes the end of the file
 COPY=0
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
-	if [ "$LINE" == "install: " ]
+	if [ "$LINE" = "install: " ]
 	then
 		COPY=1
 	fi
-	if [ $COPY == 1 ]
+	if [ $COPY = 1 ]
 	then
 		echo "$LINE" >> .travis.yml
 	fi

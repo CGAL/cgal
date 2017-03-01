@@ -43,6 +43,7 @@ env:
   - PACKAGE='TDS_3 Three Triangulation ' 
   - PACKAGE='Triangulation_2 Triangulation_3 Union_find ' 
   - PACKAGE='Visibility_2 Voronoi_diagram_2 ' 
+  - PACKAGE='Polyhedron_demo' 
 install: 
 before_script: 
 - mkdir -p build 
@@ -69,15 +70,18 @@ addons:
       - libmpfr-dev 
       - zlib1g-dev 
       - libeigen3-dev # too old 
+      - qtbase5-dev 
+      - qtscript5-dev 
+      - libqt5svg5-dev 
+      - qttools5-dev 
+      - qttools5-dev-tools 
+      - libqt5opengl5-dev 
+      - libqt5gui5
+      - libqt5widgets5
+      - libqt5xml5
+      - qt5-qmake
       # Not allowed (yet) 
       # - geomview 
       # - libglew1.5-dev 
       # - libipe-dev 
       # - libmpfi-dev 
-      # Not found 
-      # - libqglviewer-dev 
-      # - qtbase5-dev 
-      # - qtscript5-dev 
-      # - libqt5svg5-dev 
-      # - qttools5-dev 
-      # - qttools5-dev-tools 
