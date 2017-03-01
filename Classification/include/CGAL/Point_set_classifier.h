@@ -550,7 +550,7 @@ public:
 
     for (std::size_t i = 0; i < this->number_of_attributes(); ++ i)
       {
-        Attribute_handle att = this->get_attribute(i);
+        Attribute_handle att = this->attribute(i);
         if (att->weight() == 0)
           continue;
         boost::property_tree::ptree ptr;
@@ -563,12 +563,12 @@ public:
 
     for (std::size_t i = 0; i < this->number_of_classification_types(); ++ i)
       {
-        Type_handle type = this->get_classification_type(i);
+        Type_handle type = this->classification_type(i);
         boost::property_tree::ptree ptr;
         ptr.put("id", type->name());
         for (std::size_t j = 0; j < this->number_of_attributes(); ++ j)
           {
-            Attribute_handle att = this->get_attribute(j);
+            Attribute_handle att = this->attribute(j);
             if (att->weight() == 0)
               continue;
             boost::property_tree::ptree ptr2;
@@ -676,11 +676,21 @@ public:
 
     for (std::size_t i = 0; i < this->number_of_classification_types(); ++ i)
       {
-        map_types.insert (std::make_pair (this->get_classification_type(i), i));
-        output << "comment label " << i << " is " << this->get_classification_type(i)->name() << std::endl;
+        map_types.insert (std::make_pair (this->classification_type(i), i));
+        output << "comment label " << i << " is " << this->classification_type(i)->name() << std::endl;
+        
         RGB_Color c = {{ (unsigned char)(64 + rand() % 128),
                          (unsigned char)(64 + rand() % 128),
                          (unsigned char)(64 + rand() % 128) }};
+
+        if (this->classification_type(i)->name() == "vegetation")
+          c = {{ 0, 255, 27 }};
+        else if (this->classification_type(i)->name() == "ground")
+          c = {{ 245, 180, 0 }};
+        else if (this->classification_type(i)->name() == "roof")
+          c = {{ 255, 0, 170 }};
+        else if (this->classification_type(i)->name() == "facade")
+          c = {{ 100, 0, 255 }};
         colors.push_back (c);
       }
     map_types.insert (std::make_pair (Type_handle(), this->number_of_classification_types()));
@@ -753,7 +763,7 @@ private:
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
         this->template add_attribute<Attribute_type>(*(m_scales[i]->eigen));
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
       }
   }
 
@@ -763,7 +773,7 @@ private:
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
         this->template add_attribute<Attribute_type>(m_item_map, *(m_scales[i]->eigen));
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
       }
   }
 
@@ -776,7 +786,7 @@ private:
                                             *(m_scales[i]->grid),
                                             m_scales[i]->grid_resolution(),
                                             m_scales[i]->radius_neighbors());
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
       }
   }
 
@@ -789,7 +799,7 @@ private:
                                             *(m_scales[i]->grid),
                                             m_scales[i]->grid_resolution(),
                                             m_scales[i]->radius_dtm());
-        m_scales[i]->attributes.push_back (this->get_attribute (this->number_of_attributes() - 1));
+        m_scales[i]->attributes.push_back (this->attribute (this->number_of_attributes() - 1));
       }
   }
 
