@@ -59,12 +59,12 @@ namespace CGAL {
 labels.
 
 This class implements the core of the classification algorithm
-\cgalCite{cgal:lm-clscm-12}. It uses a data set as input and assigns
-each input item to a label among a set of user defined
-labels. To achieve this classification, a set of local
-geometric features are used, such as planarity, elevation or
-vertical dispersion. In addition, the user must define a set of
-labels such as building, ground or vegetation.
+\cgalCite{cgal:lm-clscm-12} (section 2). It uses a data set as input
+and assigns each input item to a label among a set of user defined
+labels. To achieve this classification, a set of local geometric
+features are used, such as planarity, elevation or vertical
+dispersion. In addition, the user must define a set of labels such as
+building, ground or vegetation.
 
 Each pair of feature and label must be assigned an
 [Feature::Effect](@ref CGAL::Classification::Feature::Effect) (for
@@ -145,14 +145,20 @@ public:
   /// @{
 
   /*!
-    \brief Adds an feature.
+    \brief Adds a feature.
 
     \tparam Feature type of the feature, inherited from
     `Classification::Feature_base`.
 
-    \tparam T types of the parameters of the feature's constructor.
+    \tparam T types of the parameters of the feature's constructor
+    (with the exception of the first parameter that is always of type
+    `ItemRange&` and that is automatically passed by the classifier to
+    the feature's constructor).
 
-    \param t parameters of the feature's constructor.
+    \param t parameters of the feature's constructor (with the
+    exception of the first parameter that is always the input item
+    range and that is automatically passed by the classifier to the
+    feature's constructor).
 
     \return a handle to the newly added feature.
    */
@@ -207,7 +213,7 @@ public:
 #endif
 
   /*!
-    \brief Removes an feature.
+    \brief Removes a feature.
 
     \param feature the handle to feature type that must be removed.
 
