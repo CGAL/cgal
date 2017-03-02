@@ -24,6 +24,13 @@
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classifier.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>
+#include <tbb/mutex.h>
+#endif // CGAL_LINKED_WITH_TBB
+
 //#define CGAL_CLASSTRAINING_VERBOSE
 #if defined(CGAL_CLASSTRAINING_VERBOSE)
 #define CGAL_CLASSTRAINING_CERR std::cerr
@@ -57,8 +64,19 @@ by the user. These parameters are directly modified within the
 \tparam ItemMap model of `ReadablePropertyMap` whose key
 type is the value type of the iterator of `ItemRange` and value type is
 the type of the items that are classified.
+
+\tparam Concurrency_tag enables sequential versus parallel
+algorithm. Possible values are `Parallel_tag` (default value is CGAL
+is linked with TBB) or `Sequential_tag` (default value otherwise).
 */
-template <typename ItemRange, typename ItemMap>
+template <typename ItemRange, typename ItemMap,
+#if defined(DOXYGEN_RUNNING)
+          typename ConcurrencyTag>
+#elif defined(CGAL_LINKED_WITH_TBB)
+          typename ConcurrencyTag = CGAL::Parallel_tag>
+#else
+          typename ConcurrencyTag = CGAL::Sequential_tag>
+#endif
 class Trainer
 {
 
@@ -68,6 +86,59 @@ public:
   typedef typename Classification::Feature_handle Feature_handle;
 
 private:
+
+#ifdef CGAL_LINKED_WITH_TBB
+  class Compute_worst_score_and_confidence
+  {
+    std::vector<std::size_t>& m_training_set;
+    Classifier* m_classifier;
+    std::size_t m_label;
+    double& m_confidence;
+    std::size_t& m_nb_okay;
+    tbb::mutex& m_mutex;
+    
+  public:
+
+    Compute_worst_score_and_confidence (std::vector<std::size_t>& training_set,
+                                        Classifier* classifier,
+                                        std::size_t label,
+                                        double& confidence,
+                                        std::size_t& nb_okay,
+                                        tbb::mutex& mutex)
+      : m_training_set (training_set)
+      , m_classifier (classifier)
+      , m_label (label)
+      , m_confidence (confidence)
+      , m_nb_okay (nb_okay)
+      , m_mutex (mutex)
+    { }
+          
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t k = r.begin(); k != r.end(); ++ k)
+        {
+          std::vector<std::pair<double, std::size_t> > values;
+      
+          for(std::size_t l = 0; l < m_classifier->number_of_labels(); ++ l)
+            values.push_back (std::make_pair (m_classifier->energy_of (m_classifier->label(l),
+                                                                       m_training_set[k]),
+                                              l));
+          std::sort (values.begin(), values.end());
+
+          if (values[0].second == m_label)
+            {
+              m_mutex.lock();
+              m_confidence += values[1].first - values[0].first;
+              ++ m_nb_okay;
+              m_mutex.unlock();
+            }
+        }
+    }
+
+  };
+#endif // CGAL_LINKED_WITH_TBB
+
+  
   Classifier* m_classifier;
   std::vector<std::vector<std::size_t> > m_training_sets;
   std::vector<double> m_precision;
@@ -585,21 +656,35 @@ private:
       {
         double confidence = 0.;
         std::size_t nb_okay = 0;
-        
-        for (std::size_t k = 0; k < m_training_sets[j].size(); ++ k)
-          {
-            std::vector<std::pair<double, std::size_t> > values;
-      
-            for(std::size_t l = 0; l < m_classifier->number_of_labels(); ++ l)
-              values.push_back (std::make_pair (m_classifier->energy_of (m_classifier->label(l),
-                                                                         m_training_sets[j][k]),
-                                                l));
-            std::sort (values.begin(), values.end());
 
-            if (values[0].second == j)
+#ifndef CGAL_LINKED_WITH_TBB
+        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                                   "Parallel_tag is enabled but TBB is unavailable.");
+#else
+        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+          {
+            tbb::mutex mutex;
+            Compute_worst_score_and_confidence f(m_training_sets[j], m_classifier, j, confidence, nb_okay, mutex);
+            tbb::parallel_for(tbb::blocked_range<size_t>(0, m_training_sets[j].size ()), f);
+          }
+        else
+#endif
+          {
+            for (std::size_t k = 0; k < m_training_sets[j].size(); ++ k)
               {
-                confidence += values[1].first - values[0].first;
-                ++ nb_okay;
+                std::vector<std::pair<double, std::size_t> > values;
+      
+                for(std::size_t l = 0; l < m_classifier->number_of_labels(); ++ l)
+                  values.push_back (std::make_pair (m_classifier->energy_of (m_classifier->label(l),
+                                                                             m_training_sets[j][k]),
+                                                    l));
+                std::sort (values.begin(), values.end());
+
+                if (values[0].second == j)
+                  {
+                    confidence += values[1].first - values[0].first;
+                    ++ nb_okay;
+                  }
               }
           }
         
