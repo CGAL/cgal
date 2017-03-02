@@ -16,10 +16,10 @@
 //
 // Author(s)     : Jane Tournois
 
-#include <CGAL/Has_timestamp.h>
-
 #ifndef CGAL_TIME_STAMPER_H
 #define CGAL_TIME_STAMPER_H
+
+#include <CGAL/Has_timestamp.h>
 
 namespace CGAL {
 
