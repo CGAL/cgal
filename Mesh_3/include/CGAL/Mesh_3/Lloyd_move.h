@@ -112,7 +112,7 @@ public:
   
 private:
   /**
-   * Project_on_plane defines operator() to project Weighted_point object on plane.
+   * Project_on_plane defines operator() to project point object on plane.
    */
   struct Project_on_plane
   {
@@ -126,14 +126,14 @@ private:
   };
   
   /**
-   * To_2d defines operator() to transform Weighted_point into Point_2
+   * To_2d defines operator() to transform Bare_point into Point_2
    */
   struct To_2d
   {
     To_2d(const Aff_transformation_3& to_2d) : to_2d_(to_2d) {}
     
-    Point_2 operator()(const Weighted_point& p) const
-    { return Point_2(to_2d_.transform(p.point()).x(), to_2d_.transform(p.point()).y()); }
+    Point_2 operator()(const Bare_point& p) const
+    { return Point_2(to_2d_.transform(p).x(), to_2d_.transform(p).y()); }
     
   private:
     const Aff_transformation_3& to_2d_;
@@ -146,7 +146,7 @@ private:
   {
     To_3d(const Aff_transformation_3& to_3d) : to_3d_(to_3d) {}
     
-    Weighted_point operator()(const Point_2& p) const
+    Bare_point operator()(const Point_2& p) const
     { return to_3d_.transform((Bare_point(p.x(),p.y(),0))); }
     
   private:
@@ -221,16 +221,16 @@ private:
       }
       case 2: // centroid 
       {
-        const Weighted_point& a = points.front();
-        const Weighted_point& b = points.back();
+        const Bare_point& a = points.front();
+        const Bare_point& b = points.back();
         return centroid_segment_move(v,a,b,sizing_field);
         break;
       }
       case 3: // triangle centroid 
       {
-        const Weighted_point& a = points.at(0);
-        const Weighted_point& b = points.at(1);
-        const Weighted_point& c = points.at(2);
+        const Bare_point& a = points.at(0);
+        const Bare_point& b = points.at(1);
+        const Bare_point& c = points.at(2);
         return centroid_triangle_move(v,a,b,c,sizing_field);
         break;
       }
@@ -275,14 +275,15 @@ private:
    * Return move from \c v to centroid of segment [a,b]
    */
   Vector_3 centroid_segment_move(const Vertex_handle& v,
-                                 const Weighted_point& a,
-                                 const Weighted_point& b,
+                                 const Bare_point& a,
+                                 const Bare_point& b,
                                  const Sizing_field& sizing_field) const
   {
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
     
-    const Weighted_point& p = v->point();
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    const Bare_point& p = wp2p(v->point());
     
     FT da = density_1d(a,v,sizing_field);
     FT db = density_1d(b,v,sizing_field);
@@ -295,15 +296,16 @@ private:
    * Return move from \c v to centroid of triangle [a,b,c]
    */
   Vector_3 centroid_triangle_move(const Vertex_handle& v,
-                                  const Weighted_point& a,
-                                  const Weighted_point& b,
-                                  const Weighted_point& c,
+                                  const Bare_point& a,
+                                  const Bare_point& b,
+                                  const Bare_point& c,
                                   const Sizing_field& sizing_field) const
   {
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
     
-    const Weighted_point& p = v->point();
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    const Bare_point& p = wp2p(v->point());
     
     FT da = density_2d<true>(a,v,sizing_field);
     FT db = density_2d<false>(b,v,sizing_field);
@@ -353,7 +355,7 @@ private:
                            std::back_inserter(ch_2d));
     
     // Lift back convex hull to 3D 
-    std::vector<Weighted_point> polygon_3d;
+    std::vector<Bare_point> polygon_3d;
     polygon_3d.reserve(ch_2d.size());
     std::transform(ch_2d.begin(), ch_2d.end(),
                    std::back_inserter(polygon_3d), To_3d(to_3d));
@@ -389,13 +391,13 @@ private:
     const Weighted_point& vertex_position = v->point();
     
     // Use as reference point to triangulate
-    const Weighted_point& a = *first++;
-    const Weighted_point* b = &(*first++);
+    const Bare_point& a = *first++;
+    const Bare_point* b = &(*first++);
     
     // Treat first point (optimize density_2d call)
-    const Weighted_point& c = *first++;
+    const Bare_point& c = *first++;
     
-    Weighted_point triangle_centroid = centroid(a,*b,c);
+    Bare_point triangle_centroid = centroid(a,*b,c);
     FT density = density_2d<true>(triangle_centroid, v, sizing_field);
     
     FT sum_masses = density * area(a,*b,c);
@@ -406,9 +408,9 @@ private:
     // Next points
     while ( first != last )
     {
-      const Weighted_point& c = *first++;
+      const Bare_point& c = *first++;
 
-      Weighted_point triangle_centroid = centroid(a,*b,c);
+      Bare_point triangle_centroid = centroid(a,*b,c);
       FT density = density_2d<false>(triangle_centroid, v, sizing_field);
       FT mass = density * area(a,*b,c);
       
@@ -427,7 +429,7 @@ private:
    * Returns the transformation from reference_point to plane
    */
   Aff_transformation_3 compute_to_3d_transform(const Plane_3& plane,
-                                               const Weighted_point& reference_point) const
+                                               const Bare_point& reference_point) const
   {
     typename Gt::Construct_base_vector_3 base =
       Gt().construct_base_vector_3_object();
@@ -453,7 +455,7 @@ private:
    * returns density_1d
    */
   template <typename Sizing_field>
-  FT density_1d(const Weighted_point& p,
+  FT density_1d(const Bare_point& p,
                 const Vertex_handle& v,
                 const Sizing_field& sizing_field) const
   {
@@ -468,7 +470,7 @@ private:
    * returns density_2d
    */
   template <bool use_v, typename Sizing_field>
-  FT density_2d(const Weighted_point& p,
+  FT density_2d(const Bare_point& p,
                 const Vertex_handle& v,
                 const Sizing_field& sizing_field) const
   {
@@ -483,7 +485,7 @@ private:
    * returns density_3d
    */
   template <typename Sizing_field>
-  FT density_3d(const Weighted_point& p,
+  FT density_3d(const Bare_point& p,
                 const Cell_handle& cell,
                 const Sizing_field& sizing_field) const
   {
@@ -519,23 +521,26 @@ private:
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
     
+    typename Gt::Construct_point_3 wp2p =
+      Gt().construct_point_3_object();
+    
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
     
     // a & b are fixed points
-    const Weighted_point& a = v->point();
-    const Weighted_point b = tr.dual(current_cell++);
+    const Bare_point& a = wp2p(v->point());
+    const Bare_point b = tr.dual(current_cell++);
     CGAL_assertion(current_cell != done);
     
     // c & d are moving points
-    Weighted_point c = tr.dual(current_cell++);
+    Bare_point c = tr.dual(current_cell++);
     CGAL_assertion(current_cell != done);
     
     while ( current_cell != done )
     {
-      const Weighted_point d = tr.dual(current_cell++);
+      const Bare_point d = tr.dual(current_cell++);
       
-      Weighted_point tet_centroid = centroid(a,b,c,d);
+      Bare_point tet_centroid = centroid(a,b,c,d);
       
       // Compute mass
       FT density = density_3d(tet_centroid, current_cell, sizing_field);
