@@ -748,8 +748,6 @@ private:
       texture->setData(i,j,255*pos_ramp.r(i00),255*pos_ramp.g(i00),255*pos_ramp.b(i00));
     else
       texture->setData(i,j,255*neg_ramp.r(i00),255*neg_ramp.g(i00),255*neg_ramp.b(i00));
-
-
   }
 
 #ifdef CGAL_LINKED_WITH_TBB
