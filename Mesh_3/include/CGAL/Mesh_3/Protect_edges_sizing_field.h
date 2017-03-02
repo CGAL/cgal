@@ -40,6 +40,10 @@
 #if ! defined(CGAL_NO_PRECONDITIONS)
 #  include <sstream>
 #endif
+#ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
+#include <CGAL/IO/File_binary_mesh_3.h>
+#endif
+
 namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
@@ -47,6 +51,19 @@ namespace internal {
   const double weight_modifier = .81; //0.9025;//0.81;
   const double distance_divisor = 2.1;
   const int max_nb_vertices_to_reevaluate_size = 10;
+
+  const int refine_balls_max_nb_of_loops = 29;
+// for the origins of `refine_balls_max_nb_of_loops`, that dates from the
+// very beginning of this file:
+//
+//     commit e9b3ff3e5730dab319a8cd581e3eb191559c98db
+//     Author: Stéphane Tayeb <Stephane.Tayeb@sophia.inria.fr>
+//     Date:   Tue Apr 20 14:53:11 2010 +0000
+//     
+//         Add draft of _with_features classes.
+//
+// That constant has had different values in the Git history: 9, 99, and now 29.
+
 } // end namespace internal
 } // end namespace Mesh_3
 } // end namespace CGAL
@@ -345,6 +362,7 @@ private:
   Weight minimal_weight_;
   std::set<Curve_segment_index> treated_edges_;
   std::set<Vertex_handle> unchecked_vertices_;
+  int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
 };
 
@@ -358,6 +376,7 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , size_(size)
   , minimal_size_(minimal_size)
   , minimal_weight_(CGAL::square(minimal_size))
+  , refine_balls_iteration_nb(0)
   , nonlinear_growth_of_balls(false)
 {
 #ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
@@ -967,7 +986,8 @@ insert_balls(const Vertex_handle& vp,
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
   // if( minimal_weight_ != 0 && n == 0 ) return;
 
-  if(nonlinear_growth_of_balls) {
+  if(nonlinear_growth_of_balls && refine_balls_iteration_nb < 3)
+  {
     // This block tries not to apply the general rule that the size of
     // protecting balls is a linear interpolation of the size of protecting
     // balls at corner. When the curve segment is long enough, pick a point
@@ -1109,18 +1129,31 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 refine_balls()
 {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+  dump_c3t3(c3t3_, "dump-before-refine_balls");
+  dump_c3t3_edges(c3t3_, "dump-before-refine_balls");
+#endif
   Triangulation& tr = c3t3_.triangulation();
   
   // Loop
   bool restart = true;
-  int nb=0;
-  while ( (!unchecked_vertices_.empty() || restart) && nb<29)
+  using CGAL::Mesh_3::internal::refine_balls_max_nb_of_loops;
+  this->refine_balls_iteration_nb = 0;
+  while ( (!unchecked_vertices_.empty() || restart) &&
+          this->refine_balls_iteration_nb < refine_balls_max_nb_of_loops)
   {
+#ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
+    std::ostringstream oss;
+    oss << "dump_protecting_balls_" << refine_balls_iteration_nb << ".cgal";
+    std::ofstream outfile(oss.str(), std::ios_base::binary | std::ios_base::out);
+    CGAL::Mesh_3::save_binary_file(outfile, c3t3_, true);
+#endif //CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
+
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "RESTART REFINE LOOP (" << nb << ")\n"
+    std::cerr << "RESTART REFINE LOOP (" << refine_balls_iteration_nb << ")\n"
               << "\t unchecked_vertices size: " << unchecked_vertices_.size() <<"\n";
 #endif
-    ++nb;
+    ++refine_balls_iteration_nb;
     restart = false;
     std::map<Vertex_handle, FT> new_sizes;
     
@@ -1188,6 +1221,10 @@ refine_balls()
       }
     }
     
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+    dump_c3t3(c3t3_, "dump-before-check_and_repopulate_edges");
+    dump_c3t3_edges(c3t3_, "dump-before-check_and_repopulate_edges");
+#endif
     // Check edges
     check_and_repopulate_edges();
   }
@@ -1458,8 +1495,40 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
   // Get sizes
   FT size_v1 = get_size(v1);
   FT size_v2 = get_size(v2);
-  FT distance_v1v2 = compute_distance(v1,v2);
+
+  Curve_segment_index curve_index = Curve_segment_index();
+  if(get_dimension(v1) == 1) {
+    curve_index = domain_.curve_segment_index(v1->index());
+  } else if(get_dimension(v2) == 1) {
+    curve_index = domain_.curve_segment_index(v2->index());
+  }
+  if(curve_index != Curve_segment_index()) {
+    FT geodesic_distance = domain_.geodesic_distance(v1->point().point(),
+                                                     v2->point().point(),
+                                                     curve_index);
+    if(domain_.is_cycle(v1->point().point(), curve_index)) {
+      geodesic_distance =
+        (std::min)(CGAL::abs(geodesic_distance),
+                   CGAL::abs(domain_.geodesic_distance(v2->point().point(),
+                                             v1->point().point(),
+                                             curve_index)));
+    } else {
+      geodesic_distance = CGAL::abs(geodesic_distance);
+    }
+    // Sufficient condition so that the curve portion between v1 and v2 is
+    // inside the union of the two balls.
+    if(geodesic_distance > (size_v1 + size_v2)) {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+      std::cerr << "Note: on curve #" << curve_index << ", between ("
+                << v1->point() << ") and (" << v2->point() << "), the "
+                << "geodesic distance is " << geodesic_distance << " and the"
+                << " sum of radii is " << size_v1 + size_v2 << std::endl;
+#endif
+      return false;
+    }
+  }
   
+  const FT distance_v1v2 = compute_distance(v1,v2);
   // Ensure size_v1 > size_v2
   if ( size_v1 < size_v2 ) { std::swap(size_v1, size_v2); }
   
@@ -1476,6 +1545,14 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
                 bool /*test_sampling*/,
                 ErasedVeOutIt out) const
 {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+  if(!c3t3_.is_in_complex(start, next)) {
+    std::cerr << "ERROR: the edge ( " << start->point() << " , "
+              << next->point() << " ) is not in complex!\n";
+    dump_c3t3(c3t3_, "dump-bug");
+    dump_c3t3_edges(c3t3_, "dump-bug-c3t3");
+  }
+#endif
   CGAL_precondition( c3t3_.is_in_complex(start, next) );
   
   Vertex_handle previous = start;
@@ -1712,6 +1789,12 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
     const Vertex_handle& next = vit->first;
     const Curve_segment_index& curve_index = vit->second;
     
+    // if `v` is incident to a cycle, it might be that the full cycle,
+    // including the edge `[next, v]`, has already been processed by
+    // `analyze_and_repopulate()` walking in the other direction.
+    if(domain_.is_cycle(v->point(), curve_index) &&
+       !c3t3_.is_in_complex(v, next)) continue;
+
     // Walk along each incident edge of the corner
     Vertex_vector to_repopulate;
     to_repopulate.push_back(v);
