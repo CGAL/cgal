@@ -7,6 +7,7 @@
 
 #include "Scene_surface_mesh_item_config.h"
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_facegraph_interface.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <vector>
 
@@ -22,7 +23,8 @@
 struct Scene_surface_mesh_item_priv;
 
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
-  : public CGAL::Three::Scene_item
+  : public CGAL::Three::Scene_item,
+    public CGAL::Three::Scene_facegraph_interface_item<CGAL::Surface_mesh<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> >
 {
   Q_OBJECT
 public:
@@ -51,6 +53,8 @@ public:
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
+  SMesh* facegraph(){return polyhedron();}
+  const SMesh* facegraph() const{return polyhedron();}
   void compute_bbox()const;
 public Q_SLOTS:
   virtual void selection_changed(bool);

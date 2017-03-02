@@ -3,6 +3,7 @@
 
 #include "Scene_polyhedron_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
+#include  <CGAL/Three/Scene_facegraph_interface.h>
 #include  <CGAL/Three/TextRenderer.h>
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
@@ -21,7 +22,9 @@ struct Scene_polyhedron_item_priv;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
-        : public CGAL::Three::Scene_item{
+        : public CGAL::Three::Scene_item,
+          public CGAL::Three::Scene_facegraph_interface_item<Polyhedron>
+{
     Q_OBJECT
 public:
     enum STATS {
@@ -81,6 +84,9 @@ public:
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
     const Polyhedron* polyhedron() const;
+
+    Polyhedron* facegraph(){return polyhedron();}
+    const Polyhedron* facegraph() const{return polyhedron();}
 
     // Get dimensions
     bool isFinite() const { return true; }
