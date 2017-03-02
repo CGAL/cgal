@@ -814,14 +814,14 @@ View of a 3D mesh produced from a 3D image with different size for different org
 \anchor Mesh_3_subsubsection_examples_3d_image_lip_sizing
 
 The following example shows how to use another custom sizing function, that is
-K-Lipschitz, with an arbitrary parameter K provided by the user for
-each subdomain. For each subdomain, the user provides a minimal and maximal size
-for cells.
+`k`-Lipschitz. For each subdomain, the user provides the parameter `k`,
+a minimal size and maximal size for cells.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_lipschitz_sizing.cpp}
 
 \cgalFigureBegin{figurefandisk_lip_sizing,fandisk_lip.jpg}
-View of a 3D mesh produced . Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_lip_sizing generates this mesh.
+View of a 3D mesh produced with a Lipschitz sizing field,
+for a single subdomain. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_lip_sizing generates this mesh.
 \cgalFigureEnd
 
 \subsection Mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
