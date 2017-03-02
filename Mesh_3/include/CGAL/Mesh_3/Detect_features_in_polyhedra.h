@@ -24,6 +24,7 @@
 
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Mesh_3/Detect_features_in_polyhedra_fwd.h>
+#include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <set>
 
 namespace CGAL {
@@ -54,9 +55,10 @@ public:
   typedef typename Polyhedron::Halfedge         Halfedge;
   typedef typename Polyhedron::Facet            Facet;
   typedef typename Facet::Patch_id              Patch_id;
+  typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
   
-  typedef std::set<Facet_handle>      Facet_handle_set;
-  typedef std::set<Halfedge_handle>   He_handle_set;
+  typedef std::set<Facet_handle, Compare_handles> Facet_handle_set;
+  typedef std::set<Halfedge_handle, Compare_handles> He_handle_set;
   
 public:
   Detect_features_in_polyhedra() : current_surface_index_(1) {}
