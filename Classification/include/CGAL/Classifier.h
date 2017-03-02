@@ -43,6 +43,13 @@
 
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>
+#include <tbb/mutex.h>
+#endif // CGAL_LINKED_WITH_TBB
+
 //#define CGAL_CLASSIFICATION_VERBOSE
 #if defined(CGAL_CLASSIFICATION_VERBOSE)
 #define CGAL_CLASSIFICATION_CERR std::cerr
@@ -80,16 +87,29 @@ label.
 \tparam ItemMap model of `ReadablePropertyMap` whose key
 type is the value type of the iterator of `ItemRange` and value type is
 the type of the items that are classified.
+
+\tparam ConcurrencyTag enables sequential versus parallel
+algorithm. Possible values are `Parallel_tag` (default value is CGAL
+is linked with TBB) or `Sequential_tag` (default value otherwise).
 */
 template <typename ItemRange,
-          typename ItemMap>
+          typename ItemMap,
+#if defined(DOXYGEN_RUNNING)
+          typename ConcurrencyTag>
+#elif defined(CGAL_LINKED_WITH_TBB)
+          typename ConcurrencyTag = CGAL::Parallel_tag>
+#else
+          typename ConcurrencyTag = CGAL::Sequential_tag>
+#endif
+
 class Classifier
 {
 
   
 public:
-  typedef typename Classification::Label_handle      Label_handle;
+  typedef typename Classification::Label_handle   Label_handle;
   typedef typename Classification::Feature_handle Feature_handle;
+  typedef Classification::Feature::Effect         Feature_effect;
   
   /// \cond SKIP_IN_MANUAL
   typedef typename ItemMap::value_type Item;
@@ -101,6 +121,139 @@ public:
 #endif
   
 protected:
+
+#ifdef CGAL_LINKED_WITH_TBB
+  class Run
+  {
+    Classifier& m_classifier;
+    const std::vector<std::vector<Feature_effect> >& m_effect_table;
+    std::vector<std::size_t>& m_assigned_label;
+    std::vector<double>& m_confidence;
+    
+    
+  public:
+
+    Run (Classifier& classifier,
+         const std::vector<std::vector<Feature_effect> >& effect_table,
+         std::vector<std::size_t>& assigned_label,
+         std::vector<double>& confidence)
+      : m_classifier (classifier), m_effect_table (effect_table),
+        m_assigned_label (assigned_label), m_confidence (confidence)
+    { }
+          
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t s = r.begin(); s != r.end(); ++ s)
+        {
+          std::size_t nb_class_best=0; 
+
+          double val_class_best = (std::numeric_limits<double>::max)();
+          std::vector<double> values;
+      
+          for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
+            {
+              double value = m_classifier.classification_value (k, s);
+              values.push_back (value);
+          
+              if(val_class_best > value)
+                {
+                  val_class_best = value;
+                  nb_class_best=k;
+                }
+            }
+
+          m_assigned_label[s] = nb_class_best;
+
+          std::sort (values.begin(), values.end());
+          m_confidence[s] = values[1] - values[0];
+        }
+    }
+
+  };
+
+  class Run_with_local_smoothing_preprocessing
+  {
+    Classifier& m_classifier;
+    std::vector<std::vector<double> >& m_values;
+    const std::vector<std::vector<Feature_effect> >& m_effect_table;
+    
+  public:
+
+    Run_with_local_smoothing_preprocessing (Classifier& classifier,
+                                            std::vector<std::vector<double> >& values,
+                                            const std::vector<std::vector<Feature_effect> >& effect_table)
+      : m_classifier (classifier), m_values(values), m_effect_table (effect_table)
+    { }
+          
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t s = r.begin(); s != r.end(); ++ s)
+        for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
+          m_values[k][s] = m_classifier.classification_value (k, s);
+    }
+  };
+  
+  template <typename NeighborQuery>
+  class Run_with_local_smoothing
+  {
+    Classifier& m_classifier;
+    const ItemRange& m_input;
+    ItemMap m_item_map;
+    const std::vector<std::vector<double> >& m_values;
+    const NeighborQuery& m_neighbor_query;
+    std::vector<std::size_t>& m_assigned_label;
+    std::vector<double>& m_confidence;
+    
+  public:
+
+    Run_with_local_smoothing (Classifier& classifier,
+                              const ItemRange& input,
+                              ItemMap item_map,
+                              const std::vector<std::vector<double> >& values,
+                              const NeighborQuery& neighbor_query,
+                              std::vector<std::size_t>& assigned_label,
+                              std::vector<double>& confidence)
+    : m_classifier (classifier), m_input (input), m_item_map (item_map),
+      m_values(values),
+      m_neighbor_query (neighbor_query),
+      m_assigned_label (assigned_label), m_confidence (confidence)
+    { }
+          
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t s = r.begin(); s != r.end(); ++ s)
+        {
+          std::vector<std::size_t> neighbors;
+          m_neighbor_query (get (m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
+
+          std::vector<double> mean (m_values.size(), 0.);
+          for (std::size_t n = 0; n < neighbors.size(); ++ n)
+            for (std::size_t j = 0; j < m_values.size(); ++ j)
+              mean[j] += m_values[j][neighbors[n]];
+
+          std::size_t nb_class_best=0; 
+          double val_class_best = (std::numeric_limits<double>::max)();
+          for(std::size_t k = 0; k < mean.size(); ++ k)
+            {
+              mean[k] /= neighbors.size();
+              if(val_class_best > mean[k])
+                {
+                  val_class_best = mean[k];
+                  nb_class_best = k;
+                }
+            }
+
+          m_assigned_label[s] = nb_class_best;
+
+          std::sort (mean.begin(), mean.end());
+          m_confidence[s] = mean[1] - mean[0];      
+        }
+    }
+
+  };
+
+#endif // CGAL_LINKED_WITH_TBB
+
   
   const ItemRange& m_input;
   ItemMap m_item_map;
@@ -111,7 +264,6 @@ protected:
   std::vector<Label_handle> m_labels; 
   std::vector<Feature_handle> m_features; 
 
-  typedef Classification::Feature::Effect Feature_effect;
   std::vector<std::vector<Feature_effect> > m_effect_table;
 
   /// \endcond
@@ -241,7 +393,7 @@ public:
 
 
   /*!
-    \brief Returns the i^{th} feature.
+    \brief Returns the \f$i^{th}\f$ feature.
   */  
   Feature_handle feature(std::size_t i)
   {
@@ -320,7 +472,7 @@ public:
   }
   
   /*!
-    \brief Returns the i^{th} label.
+    \brief Returns the \f$i^{th}\f$ label.
   */  
   Label_handle label (std::size_t i) const
   {
@@ -353,32 +505,44 @@ public:
   {
     prepare_classification ();
     
-    // data term initialisation
-
-    for (std::size_t s = 0; s < m_input.size(); s++)
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+      {
+        Run f (*this, m_effect_table, m_assigned_label, m_confidence);
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, m_input.size ()), f);
+      }
+    else
+#endif
       {
 
-        std::size_t nb_class_best=0; 
-
-        double val_class_best = (std::numeric_limits<double>::max)();
-        std::vector<double> values;
-      
-        for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
+        for (std::size_t s = 0; s < m_input.size(); s++)
           {
-            double value = classification_value (k, s);
-            values.push_back (value);
-          
-            if(val_class_best > value)
+
+            std::size_t nb_class_best=0; 
+
+            double val_class_best = (std::numeric_limits<double>::max)();
+            std::vector<double> values;
+      
+            for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
               {
-                val_class_best = value;
-                nb_class_best=k;
+                double value = classification_value (k, s);
+                values.push_back (value);
+          
+                if(val_class_best > value)
+                  {
+                    val_class_best = value;
+                    nb_class_best=k;
+                  }
               }
+
+            m_assigned_label[s] = nb_class_best;
+
+            std::sort (values.begin(), values.end());
+            m_confidence[s] = values[1] - values[0];
           }
-
-        m_assigned_label[s] = nb_class_best;
-
-        std::sort (values.begin(), values.end());
-        m_confidence[s] = values[1] - values[0];
       }
   }
 
@@ -405,43 +569,60 @@ public:
       (m_labels.size(),
        std::vector<double> (m_input.size(), -1.));
 
-    for (std::size_t s=0; s < m_input.size(); ++ s)
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
       {
-        std::vector<std::size_t> neighbors;
-        neighbor_query (get (m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
-
-        std::vector<double> mean (values.size(), 0.);
-        for (std::size_t n = 0; n < neighbors.size(); ++ n)
-          {
-            if (values[0][neighbors[n]] < 0.)
-              for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
-                {
-                  values[k][neighbors[n]] = classification_value (k, neighbors[n]);
-                  mean[k] += values[k][neighbors[n]];
-                }
-            else
-              for (std::size_t j = 0; j < values.size(); ++ j)
-                mean[j] += values[j][neighbors[n]];
-          }
-
-        std::size_t nb_class_best=0; 
-        double val_class_best = (std::numeric_limits<double>::max)();
-        for(std::size_t k = 0; k < mean.size(); ++ k)
-          {
-            mean[k] /= neighbors.size();
-            if(val_class_best > mean[k])
-              {
-                val_class_best = mean[k];
-                nb_class_best = k;
-              }
-          }
-
-        m_assigned_label[s] = nb_class_best;
-
-        std::sort (mean.begin(), mean.end());
-        m_confidence[s] = mean[1] - mean[0];      
+        Run_with_local_smoothing_preprocessing f1
+          (*this, values, m_effect_table);
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, m_input.size ()), f1);
+        
+        Run_with_local_smoothing<NeighborQuery> f2
+          (*this, m_input, m_item_map, values, neighbor_query,m_assigned_label, m_confidence);
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, m_input.size ()), f2);
       }
+    else
+#endif
+      {
+        for (std::size_t s=0; s < m_input.size(); ++ s)
+          {
+            std::vector<std::size_t> neighbors;
+            neighbor_query (get (m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
 
+            std::vector<double> mean (values.size(), 0.);
+            for (std::size_t n = 0; n < neighbors.size(); ++ n)
+              {
+                if (values[0][neighbors[n]] < 0.)
+                  for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
+                    {
+                      values[k][neighbors[n]] = classification_value (k, neighbors[n]);
+                      mean[k] += values[k][neighbors[n]];
+                    }
+                else
+                  for (std::size_t j = 0; j < values.size(); ++ j)
+                    mean[j] += values[j][neighbors[n]];
+              }
+
+            std::size_t nb_class_best=0; 
+            double val_class_best = (std::numeric_limits<double>::max)();
+            for(std::size_t k = 0; k < mean.size(); ++ k)
+              {
+                mean[k] /= neighbors.size();
+                if(val_class_best > mean[k])
+                  {
+                    val_class_best = mean[k];
+                    nb_class_best = k;
+                  }
+              }
+
+            m_assigned_label[s] = nb_class_best;
+
+            std::sort (mean.begin(), mean.end());
+            m_confidence[s] = mean[1] - mean[0];      
+          }
+      }
   }
 
 
@@ -527,7 +708,7 @@ public:
     \brief Returns the value of the energy of `label` at the item at
     position `index`.
   */
-  double energy_of (Label_handle label, std::size_t index)
+  double energy_of (Label_handle label, std::size_t index) const
   {
     double out = 0.;
     for (std::size_t i = 0; i < m_features.size(); ++ i)
