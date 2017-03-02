@@ -346,6 +346,7 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
   {
     typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    typename Gt::Construct_weighted_point_3 p2wp = Gt().construct_weighted_point_3_object();
     // Get move for each moving vertex
     typename Moving_vertices_set::iterator vit = moving_vertices.begin();
     for ( ; vit != moving_vertices.end() ; )
@@ -359,7 +360,7 @@ private:
         Bare_point new_position = translate(wp2p(oldv->point()),move);
         FT size = (Sizing_field::is_vertex_update_needed ?
           sizing_field_(new_position, oldv) : 0);
-        moves.push_back(cpp11::make_tuple(oldv,new_position,size));
+        moves.push_back(cpp11::make_tuple(oldv,p2wp(new_position),size));
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -480,6 +481,7 @@ private:
     {
       Vector_3 move = m_mgo.compute_move(oldv);
       typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+      typename Gt::Construct_weighted_point_3 p2wp = Gt().construct_weighted_point_3_object();
       if ( CGAL::NULL_VECTOR != move )
       {
         Bare_point new_position = m_translate(wp2p(oldv->point()), move);
@@ -489,7 +491,7 @@ private:
         //if( !Th().inside_protecting_balls(tr_, oldv, new_position))
         //note : this is not happening for Lloyd and ODT so it's commented
         //       maybe for a new global optimizer it should be de-commented
-        m_moves.push_back(cpp11::make_tuple(oldv, new_position, size));
+        m_moves.push_back(cpp11::make_tuple(oldv, p2wp(new_position), size));
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -574,7 +576,7 @@ private:
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
         const Vertex_handle& v = cpp11::get<0>(m_moves[i]);
-        const Bare_point& new_position = wp2p(cpp11::get<1>(m_moves[i]));
+        const Weighted_point& new_position = cpp11::get<1>(m_moves[i]);
         // Get size at new position
         if ( MGO::Sizing_field::is_vertex_update_needed )
         {
@@ -937,7 +939,7 @@ update_mesh(const Moves_vector& moves,
       typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
 
       const Vertex_handle& v = cpp11::get<0>(*it);
-      const Bare_point& new_position = wp2p(cpp11::get<1>(*it));
+      const Weighted_point& new_position = cpp11::get<1>(*it);
       // Get size at new position
       if ( Sizing_field::is_vertex_update_needed )
       {
@@ -1002,7 +1004,7 @@ void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 fill_sizing_field()
 {
-  std::map<Weighted_point,FT> value_map;
+  std::map<Bare_point,FT> value_map;
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
@@ -1032,7 +1034,8 @@ fill_sizing_field()
         vit != tr_.finite_vertices_end();
         ++vit)
     {
-      value_map.insert(std::make_pair(vit->point(),
+      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+      value_map.insert(std::make_pair(wp2p(vit->point()),
                                       average_circumradius_length(vit)));
     }
   }

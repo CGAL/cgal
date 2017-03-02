@@ -3229,6 +3229,15 @@ namespace HomogeneousKernelFunctors {
     Rep
     operator()(Return_base_tag, const Point_3& p, const RT& w) const
     { return Rep(p,w); }
+
+    Rep
+    operator()(const Point_3& p, const RT& w) const
+    { return Rep(p,w); }
+
+    Rep
+    operator()(const Point_3& p) const
+    { return Rep(p,0); }
+
   };
 
 

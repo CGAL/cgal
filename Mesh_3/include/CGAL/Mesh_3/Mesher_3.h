@@ -537,7 +537,8 @@ initialize()
         float(tbb::task_scheduler_init::default_num_threads())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center));
+        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
+                              (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
     
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;

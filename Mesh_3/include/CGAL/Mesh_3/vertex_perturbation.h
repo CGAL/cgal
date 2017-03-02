@@ -445,6 +445,7 @@ protected:
     typedef typename C3T3::Triangulation::Geom_traits Gt;
     typedef typename Gt::FT       FT;
     typedef typename C3T3::Triangulation::Bare_point  Bare_point;
+    typedef typename C3T3::Triangulation::Weighted_point  Weighted_point;
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
     
     typename Gt::Compute_squared_length_3 sq_length =
@@ -456,6 +457,9 @@ protected:
     typename Gt::Construct_point_3 wp2p =
       Gt().construct_point_3_object();
     
+    typename Gt::Construct_weighted_point_3 p2wp =
+      Gt().construct_weighted_point_3_object();
+    
     // create a helper
     typedef C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
     C3T3_helpers helper(c3t3, domain);
@@ -466,8 +470,8 @@ protected:
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
     FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
     Bare_point new_loc = translate(wp2p(v->point()), step_length * gradient_vector);
-    
     Bare_point final_loc = new_loc;
+
     if ( c3t3.in_dimension(v) < 3 )
       final_loc = helper.project_on_surface(new_loc, v);
 
@@ -477,7 +481,7 @@ protected:
     if (could_lock_zone)
     {
       while(Th().no_topological_change__without_set_point(c3t3.triangulation(), 
-                                                          v, final_loc) 
+                                                          v, p2wp(final_loc)) 
             && (++i <= max_step_nb_) )
       {
         new_loc = translate(new_loc, step_length * gradient_vector);
@@ -490,7 +494,7 @@ protected:
     }
     else
     {
-      while( Th().no_topological_change(c3t3.triangulation(), v, final_loc) 
+      while( Th().no_topological_change(c3t3.triangulation(), v, p2wp(final_loc)) 
             && (++i <= max_step_nb_) )
       {
         new_loc = translate(new_loc, step_length * gradient_vector);
@@ -508,7 +512,7 @@ protected:
       return std::make_pair(false,v);
 
     // we know that there will be a combinatorial change
-    return helper.update_mesh_topo_change(final_loc,
+    return helper.update_mesh_topo_change(p2wp(final_loc),
                                           v,
                                           criterion,
                                           std::back_inserter(modified_vertices),
@@ -1255,9 +1259,12 @@ private:
     typename Gt::Construct_translated_point_3 translate =
       Gt().construct_translated_point_3_object();
     
+    typename Gt::Construct_weighted_point_3 p2wp =
+      Gt().construct_weighted_point_3_object();
+    
     modified_vertices.clear();
 
-    // Create an helper
+    // Create a helper
     typedef C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
     C3T3_helpers helper(c3t3, domain);
     
@@ -1291,7 +1298,7 @@ private:
       // try to move vertex
       std::vector<Vertex_handle> tmp_mod_vertices;
       std::pair<bool,Vertex_handle> update =
-        helper.update_mesh(new_location,
+        helper.update_mesh(p2wp(new_location),
                            moving_vertex,
                            criterion,
                            std::back_inserter(tmp_mod_vertices),

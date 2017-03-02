@@ -51,6 +51,7 @@ class Odt_move
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
   
   typedef typename std::vector<Cell_handle>   Cell_vector;
   typedef typename std::vector<Vertex_handle> Vertex_vector;
@@ -133,7 +134,7 @@ private:
     typename Gt::Construct_centroid_3 centroid =
     Gt().construct_centroid_3_object();
     
-    Weighted_point c = centroid(tr.tetrahedron(cell));
+    Bare_point c = centroid(tr.tetrahedron(cell));
     FT s = sizing_field(c,std::make_pair(cell,true));
     CGAL_assertion(!is_zero(s));
 
