@@ -41,6 +41,7 @@ class Triangulation_helpers
 {
   typedef typename Tr::Geom_traits              Gt;
   typedef typename Tr::Bare_point               Bare_point;
+  typedef typename Tr::Weighted_point           Weighted_point;
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef std::vector<Cell_handle>              Cell_vector;
@@ -65,18 +66,18 @@ class Triangulation_helpers
   {
     /// When the requested will be about vh, the returned point will be p
     /// instead of vh->point()
-    Point_getter(const Vertex_handle &vh, const Bare_point&p)
+    Point_getter(const Vertex_handle &vh, const Weighted_point&p)
       : m_vh(vh), m_p(p)
     {}
 
-    const Bare_point& operator()(const Vertex_handle &vh) const
+    const Weighted_point& operator()(const Vertex_handle &vh) const
     {
-      return (vh == m_vh ? m_p : vh->point().point()); //  AF: Can this be NOT a weighted point?
+      return (vh == m_vh ? m_p : vh->point());
     }
 
   private:
     const Vertex_handle m_vh;
-    const Bare_point &m_p;
+    const Weighted_point &m_p;
   };
 
 public:
@@ -89,7 +90,7 @@ public:
    */
   void move_point(Tr& tr,
                   const Vertex_handle& v,
-                  const Bare_point& p) const;
+                  const Weighted_point& p) const;
 
   /**
    * Returns true if moving \c v to \c p makes no topological
@@ -97,21 +98,21 @@ public:
    */
   bool no_topological_change(const Tr& tr,
                              const Vertex_handle& v,
-                             const Bare_point& p,
+                             const Weighted_point& p,
                              Cell_vector& cells_tos) const;
   bool no_topological_change__without_set_point(
                              const Tr& tr,
                              const Vertex_handle& v,
-                             const Bare_point& p,
+                             const Weighted_point& p,
                              Cell_vector& cells_tos) const;
 
   bool no_topological_change(const Tr& tr,
                              const Vertex_handle& v,
-                             const Bare_point& p) const;
+                             const Weighted_point& p) const;
   bool no_topological_change__without_set_point(
                              const Tr& tr,
                              const Vertex_handle& v,
-                             const Bare_point& p) const;
+                             const Weighted_point& p) const;
 
 
   bool inside_protecting_balls(const Tr& tr,
@@ -137,7 +138,7 @@ void
 Triangulation_helpers<Tr>::
 move_point(Tr& tr,
            const Vertex_handle& v,
-           const Bare_point& p) const
+           const Weighted_point& p) const
 {
   if ( no_topological_change(tr, v, p) )
     v->set_point(p);
@@ -153,12 +154,12 @@ bool
 Triangulation_helpers<Tr>::
 no_topological_change(const Tr& tr,
                       const Vertex_handle& v0,
-                      const Bare_point& p,
+                      const Weighted_point& p,
                       Cell_vector& cells_tos) const
 {
   Tr::Geom_traits::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
   bool np = true;
-  Bare_point fp = wp2p(v0->point());
+  const Weighted_point& fp = v0->point();
   v0->set_point(p);
 
   if(!well_oriented(tr, cells_tos))
@@ -222,7 +223,7 @@ Triangulation_helpers<Tr>::
 no_topological_change__without_set_point(
   const Tr& tr,
   const Vertex_handle& v0,
-  const Bare_point& p,
+  const Weighted_point& p,
   Cell_vector& cells_tos) const
 {
   bool np = true;
@@ -311,7 +312,7 @@ bool
 Triangulation_helpers<Tr>::
 no_topological_change(const Tr& tr,
                       const Vertex_handle& v0,
-                      const Bare_point& p) const
+                      const Weighted_point& p) const
 {
   Cell_vector cells_tos;
   cells_tos.reserve(64);
@@ -325,7 +326,7 @@ Triangulation_helpers<Tr>::
 no_topological_change__without_set_point(
                       const Tr& tr,
                       const Vertex_handle& v0,
-                      const Bare_point& p) const
+                      const Weighted_point& p) const
 {
   Cell_vector cells_tos;
   cells_tos.reserve(64);
