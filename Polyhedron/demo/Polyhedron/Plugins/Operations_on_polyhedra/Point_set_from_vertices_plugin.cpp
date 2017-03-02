@@ -66,7 +66,7 @@ template<typename Item>
 void Polyhedron_demo_point_set_from_vertices_plugin::apply(Item *item)
 {
   Scene_points_with_normal_item* points
-    = new Scene_points_with_normal_item(*item->facegraph());
+    = new Scene_points_with_normal_item(*item->polyhedron());
 
   if (points)
     {
