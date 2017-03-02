@@ -69,12 +69,12 @@ class FillGridSize {
   Point_distance (&distance_function)[100][100];
   FT diag;
   FT& max_distance_function;
-  QMap<QObject*, Tree*> *trees;
+  std::vector<Tree*>&trees;
   bool is_signed;
   qglviewer::ManipulatedFrame* frame;
 public:
   FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
-  FT& max_distance_function,QMap<QObject*, Tree*>* trees,
+  FT& max_distance_function, std::vector<Tree*>& trees,
   bool is_signed, qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
     max_distance_function(max_distance_function),
@@ -103,10 +103,8 @@ public:
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
 
-        Q_FOREACH(Tree *tree, trees->values())
+        Q_FOREACH(Tree *tree, trees)
         {
-          if(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed())
-            continue;
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
           {
@@ -685,6 +683,10 @@ private:
     const FT z (0);
     const FT fd =  FT(1);
     Tree *min_tree = NULL;
+    std::vector<Tree*> closed_trees;
+    Q_FOREACH(Tree *tree, trees->values())
+    if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
+      closed_trees.push_back(tree);
     for(int i=0 ; i<m_grid_size ; ++i)
     {
       FT x = -diag/fd + FT(i)/FT(m_grid_size) * dx;
@@ -695,10 +697,8 @@ private:
         Simple_kernel::Point_3 query = t( Simple_kernel::Point_3(x,y,z) );
         FT min = DBL_MAX;
 
-        Q_FOREACH(Tree *tree, trees->values())
+        Q_FOREACH(Tree *tree, closed_trees)
         {
-          if(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed())
-            continue;
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
           {
@@ -733,7 +733,11 @@ private:
         }
     }
 #else
-    FillGridSize<Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, trees, is_signed, frame);
+    std::vector<Tree*> closed_trees;
+    Q_FOREACH(Tree *tree, trees->values())
+    if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
+      closed_trees.push_back(tree);
+    FillGridSize<Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, is_signed, frame);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
 #endif
   }
