@@ -150,7 +150,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         construct_intersection(Segment_3(it->first, test));
       if (CGAL::cpp11::get<2>(intersect) != 0)
       {
-        Bare_point pi = CGAL::cpp11::get<0>(intersect);
+        Weighted_point pi = tr.geom_traits().construct_weighted_point_3_object()(CGAL::cpp11::get<0>(intersect));
 
         // This would cause trouble to optimizers
         // check pi will not be hidden
@@ -196,7 +196,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         {
           if (cv->point().weight() == 0.)
             continue;
-          if (CGAL::compare_squared_distance(pi, cv->point().point(), cv->point().weight())
+          if (CGAL::compare_squared_distance(pi.point(), cv->point().point(), cv->point().weight())
               != CGAL::LARGER)
           {
             pi_inside_protecting_sphere = true;
