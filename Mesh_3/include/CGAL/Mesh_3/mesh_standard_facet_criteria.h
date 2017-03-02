@@ -196,6 +196,7 @@ protected:
 
     typedef typename Tr::Geom_traits    Gt;
     typedef typename Tr::Weighted_point Weighted_point;
+    typedef typename Tr::Bare_point Bare_point;
 
     typename Gt::Compute_squared_distance_3 distance =
         Gt().compute_squared_distance_3_object();
@@ -206,7 +207,7 @@ protected:
     const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
     const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
 
-    const Weighted_point c = circumcenter(p1,p2,p3);
+    const Bare_point c = circumcenter(p1,p2,p3);
 
     const FT sq_dist = distance(c, f.first->get_facet_surface_center(f.second));
 
@@ -267,6 +268,7 @@ protected:
 
     typedef typename Tr::Geom_traits    Gt;
     typedef typename Tr::Weighted_point Weighted_point;
+    typedef typename Tr::Bare_point Bare_point;
 
     typename Gt::Compute_squared_distance_3 distance =
         Gt().compute_squared_distance_3_object();
@@ -277,14 +279,14 @@ protected:
     const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
     const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
 
-    const Weighted_point c = circumcenter(p1,p2,p3);
-    const Weighted_point& ball_center = f.first->get_facet_surface_center(f.second);
+    const Bare_point c = circumcenter(p1,p2,p3);
+    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
 
     const FT sq_dist = distance(c, ball_center);
 
     const Index& index = f.first->get_facet_surface_center_index(f.second);
 
-    const FT sq_bound = CGAL::square(size_(ball_center.point(), 2, index));
+    const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
     CGAL_assertion(sq_bound > FT(0));
 
     if ( sq_dist > sq_bound )
@@ -351,16 +353,19 @@ protected:
     
     typedef typename Tr::Geom_traits    Gt;
     typedef typename Tr::Weighted_point Weighted_point;
+    typedef typename Tr::Bare_point Bare_point;
     
     typename Gt::Compute_squared_distance_3 distance =
       Gt().compute_squared_distance_3_object();
     
-    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Weighted_point& ball_center = f.first->get_facet_surface_center(f.second);
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    
+    const Bare_point& p1 = wp2p(f.first->vertex((f.second+1)&3)->point());
+    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
     const Index& index = f.first->get_facet_surface_center_index(f.second);
     
     const FT sq_radius = distance(p1,ball_center);
-    const FT sq_bound = CGAL::square(size_(ball_center.point(), 2, index));
+    const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
     CGAL_assertion(sq_bound > FT(0));
     
     if ( sq_radius > sq_bound )
