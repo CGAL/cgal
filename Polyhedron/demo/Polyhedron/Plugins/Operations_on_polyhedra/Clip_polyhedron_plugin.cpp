@@ -135,6 +135,34 @@ public :
   void closure() {
     dock_widget->hide();
   }
+  template<typename Mesh, typename Item>
+  void apply(Item *item)
+  {
+    Mesh* neg_side = new Mesh(*item->facegraph());
+
+    CGAL::Polygon_mesh_processing::clip(*neg_side,
+                                        plane->plane(),
+                                        ui_widget.close_checkBox->isChecked());
+    Item* new_item = new Item(neg_side);
+    new_item->setName(QString("%1 on %2").arg(item->name()).arg("negative side"));
+    new_item->setColor(item->color());
+    new_item->setRenderingMode(item->renderingMode());
+    new_item->setVisible(item->visible());
+    scene->addItem(item);
+    new_item->invalidateOpenGLBuffers();
+    // part on the positive side
+    Mesh* pos_side = new Mesh(*item->facegraph());
+    CGAL::Polygon_mesh_processing::clip(*pos_side,
+                                        plane->plane().opposite(),
+                                        ui_widget.close_checkBox->isChecked());
+    new_item = new Item(pos_side);
+    new_item->setName(QString("%1 on %2").arg(item->name()).arg("positive side"));
+    new_item->setColor(item->color());
+    new_item->setRenderingMode(item->renderingMode());
+    new_item->setVisible(item->visible());
+    scene->addItem(new_item);
+    new_item->invalidateOpenGLBuffers();
+  }
 public Q_SLOTS:
   void on_plane_destroyed()
   {
@@ -167,6 +195,7 @@ public Q_SLOTS:
       scene->addItem(plane);
     }
   }
+
   void clip_polyhedron()
   {
     if(!plane)
@@ -198,7 +227,7 @@ public Q_SLOTS:
       Q_FOREACH(Scene_item* item, polyhedra)
       {
         Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);;
+        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
 
         if (ui_widget.clip_radioButton->isChecked())
         {
@@ -222,64 +251,15 @@ public Q_SLOTS:
           //part on the negative side
           if(sm_item)
           {
-            SMesh* neg_side = new SMesh(*sm_item->polyhedron());
-
-            CGAL::Polygon_mesh_processing::clip(*neg_side,
-                                                plane->plane(),
-                                                ui_widget.close_checkBox->isChecked());
-            Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(neg_side);
-            new_item->setName(QString("%1 on %2").arg(sm_item->name()).arg("negative side"));
-            new_item->setColor(sm_item->color());
-            new_item->setRenderingMode(sm_item->renderingMode());
-            new_item->setVisible(sm_item->visible());
-            scene->addItem(new_item);
-            new_item->invalidateOpenGLBuffers();
-            // part on the positive side
-            SMesh* pos_side = new SMesh(*sm_item->polyhedron());
-            CGAL::Polygon_mesh_processing::clip(*pos_side,
-                                                plane->plane().opposite(),
-                                                ui_widget.close_checkBox->isChecked());
-            new_item = new Scene_surface_mesh_item(pos_side);
-            new_item->setName(QString("%1 on %2").arg(sm_item->name()).arg("positive side"));
-            new_item->setColor(sm_item->color());
-            new_item->setRenderingMode(sm_item->renderingMode());
-            new_item->setVisible(sm_item->visible());
-            scene->addItem(new_item);
-            new_item->invalidateOpenGLBuffers();
-
-            viewer->updateGL();
+            apply<SMesh>(sm_item);
           }
           else
           {
-            Polyhedron* neg_side = new Polyhedron(*poly_item->polyhedron());
-
-            CGAL::Polygon_mesh_processing::clip(*neg_side,
-                                                plane->plane(),
-                                                ui_widget.close_checkBox->isChecked());
-            Scene_polyhedron_item* new_item = new Scene_polyhedron_item(neg_side);
-            new_item->setName(QString("%1 on %2").arg(poly_item->name()).arg("negative side"));
-            new_item->setColor(poly_item->color());
-            new_item->setRenderingMode(poly_item->renderingMode());
-            new_item->setVisible(poly_item->visible());
-            scene->addItem(new_item);
-            new_item->invalidateOpenGLBuffers();
-            // part on the positive side
-            Polyhedron* pos_side = new Polyhedron(*poly_item->polyhedron());
-            CGAL::Polygon_mesh_processing::clip(*pos_side,
-                                                plane->plane().opposite(),
-                                                ui_widget.close_checkBox->isChecked());
-            new_item = new Scene_polyhedron_item(pos_side);
-            new_item->setName(QString("%1 on %2").arg(poly_item->name()).arg("positive side"));
-            new_item->setColor(poly_item->color());
-            new_item->setRenderingMode(poly_item->renderingMode());
-            new_item->setVisible(poly_item->visible());
-            scene->addItem(new_item);
-            new_item->invalidateOpenGLBuffers();
-
-            viewer->updateGL();
+            apply<Polyhedron>(poly_item);
           }
         }
       }
+      viewer->updateGL();
     }
     QApplication::restoreOverrideCursor();
   }

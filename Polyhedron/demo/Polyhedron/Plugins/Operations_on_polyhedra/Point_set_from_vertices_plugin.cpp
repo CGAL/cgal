@@ -42,6 +42,8 @@ public Q_SLOTS:
 private:
   CGAL::Three::Scene_interface* scene;
   QAction* actionPointSetFromPolyhedronVertices;
+  template<typename Item>
+  void apply(Item *item);
 
 }; // end Polyhedron_demo_point_set_from_vertices_plugin
 
@@ -60,41 +62,39 @@ QList<QAction*> Polyhedron_demo_point_set_from_vertices_plugin::actions() const 
   return QList<QAction*>() << actionPointSetFromPolyhedronVertices;
 }
 
+template<typename Item>
+void Polyhedron_demo_point_set_from_vertices_plugin::apply(Item *item)
+{
+  Scene_points_with_normal_item* points
+    = new Scene_points_with_normal_item(*item->facegraph());
+
+  if (points)
+    {
+      points->setColor(Qt::blue);
+      points->setName(QString("%1 (vertices)").arg(item->name()));
+      scene->addItem (points);
+    }
+}
 void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
+
   Scene_surface_mesh_item* sm_item =
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
   if (sm_item)
-    {
-      Scene_points_with_normal_item* points
-        = new Scene_points_with_normal_item(*(sm_item->polyhedron()));
-
-      if (points)
-        {
-          points->setColor(Qt::blue);
-          points->setName(QString("%1 (vertices)").arg(sm_item->name()));
-          scene->addItem (points);
-        }
-    }
+  {
+    apply(sm_item);
+  }
   Scene_polyhedron_item* poly_item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if (poly_item)
-    {
-      Scene_points_with_normal_item* points
-        = new Scene_points_with_normal_item(*(poly_item->polyhedron()));
-
-      if (points)
-        {
-          points->setColor(Qt::blue);
-          points->setName(QString("%1 (vertices)").arg(poly_item->name()));
-          scene->addItem (points);
-        }
-    }
+  {
+    apply(poly_item);
+  }
 
   Scene_polygon_soup_item* soup_item =
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
@@ -106,7 +106,7 @@ void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
       points->setColor(Qt::blue);
       points->setName(QString("%1 (vertices)").arg(soup_item->name()));
 
-      // TODO get points from polygon soup
+
       const std::vector<Kernel::Point_3>& pts
         = soup_item->points();
 
@@ -115,7 +115,6 @@ void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
       
       scene->addItem (points);
     }
-
   QApplication::restoreOverrideCursor();
 }
 
