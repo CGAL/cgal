@@ -174,6 +174,7 @@ public:
   typedef Bare_point                                  result_type;
  
  typename Rt::Construct_point_3 wp2p = Rt().construct_point_3_object();
+ typename Rt::Construct_weighted_point_3 p2wp = Rt().construct_weighted_point_3_object();
   
   Bare_point operator() ( const Weighted_point & p,
                           const Weighted_point & q,
@@ -215,7 +216,7 @@ public:
           return res;
       } else {
       // Fast output
-      if ( power_side_of_oriented_power_sphere(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
+        if ( power_side_of_oriented_power_sphere(p,q,r,s,p2wp(res)) == CGAL::ON_POSITIVE_SIDE )
         return res;
     }
     }
