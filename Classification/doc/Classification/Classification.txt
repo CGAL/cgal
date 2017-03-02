@@ -10,16 +10,16 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 
 \section Classification_Organization Package Organization
 
-%Classification of data sets is achieved as follows:
+%Classification of data sets is achieved as follows (see Figure \cgalFigureRef{Classification_organization_fig}):
 
 - some analysis is performed on the input data set
 - features are computed based on this analysis
 - a set of labels (for example: ground, building, vegetation) is defined by the user
-- features are given weights and each pair of feature and label is assigned a relationship. This can either be done by hand or by automatic training if a set of inliers is given for each label (see \ref Classification_training)
+- features are given weights and each pair of feature and label is assigned a relationship. This can either be done by hand or by automatic training if a set of inliers is given for each label (see \ref Classification_trainer)
 - classification is computed itemwise by minimizing an energy defined as the sum of the values taken by features on input items (which depend on the feature-label relationship)
 - additional regularization can be used by smoothing either locally or globally through an Alpha Expansion approach.
 
-\cgalFigureBegin{Classification_Organization,organization.png}
+\cgalFigureBegin{Classification_organization_fig,organization.png}
 Organization of the package.
 \cgalFigureEnd
 
@@ -45,7 +45,7 @@ The following code snippet shows how to instantiate such data structures from an
 
 \subsection Classification_features Features
 
-Features are defined as scalar fields that associate each input item with a specific value. Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from `CGAL::Classification::Feature` and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associate a scalar value to each input item. Each feature has a weight that measure its strength with respect to the other features (see \ref Classification_labels).
+Features are defined as scalar fields that associate each input item with a specific value. Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from `CGAL::Classification::Feature_base` and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associate a scalar value to each input item. Each feature has a weight that measure its strength with respect to the other features (see \ref Classification_labels).
 
 Features are accessed through `Handle` objects, `CGAL::Classification::Feature_handle`.
 
@@ -72,7 +72,7 @@ Finally, if the input data set has additional properties, these can also be used
 - [Echo_scatter](@ref CGAL::Classification::Feature::Echo_scatter) uses the number of returns (echo) provided by most LIDAR scanners if available
 - [Hsv](@ref CGAL::Classification::Feature::Hsv) uses input color information if available.
 
-In the following code snippet, a subset of these features are instantiated and their respective weights are set. Note that these weights can also be automatically set up by training (see \ref Classification_training).
+In the following code snippet, a subset of these features are instantiated and their respective weights are set. Note that these weights can also be automatically set up by training (see \ref Classification_trainer).
 
 \snippet Classification/example_classifier.cpp Features
 
@@ -80,7 +80,7 @@ Users can define their own feature classes. Such classes must fulfill the follow
 
 - they must inherit `CGAL::Classification::Feature_base`
 - their constructor(s) must take as first argument the item range used by the classifier object
-- they must provide a method `value()` that associates each input point to a scalar value
+- they must provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associates each input point to a scalar value
 
 The following example shows how to define a feature that discriminates
 points that lie inside a 2D box from the others:
@@ -107,7 +107,7 @@ Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$
 \f}
 
 
-The following code snippet shows how to add labels to the classification object and how to set the effects of the features on these labels. Note that these effects can also be automatically set up by training (see \ref Classification_training).
+The following code snippet shows how to add labels to the classification object and how to set the effects of the features on these labels. Note that these effects can also be automatically set up by training (see \ref Classification_trainer).
 
 \snippet Classification/example_classifier.cpp Labels
 
@@ -215,27 +215,42 @@ Note that using this class in order to classify point sets is not mandatory, as 
 
 The example \ref Classification_example_training shows how to generate features and save the configuration and classification.
 
-\section Classification_training Training
+\section Classification_trainer Trainer
 
 %Classification is based on relationships between features and labels. Each feature has a specific weight and each pair of feature-label has a specific effect. This means that the number of parameters to set up can quickly explode: if 6 features are used to classify between 4 labels, 30 parameters have to be set up (6 weights + 6x4 feature-label relationships).
 
-Though it is possible to set them up one by one, \cgal also provides a trainer class `CGAL::Classification::Trainer` that requires a small set of ground truth items provided by the user. More specifically, users must provide, for each label they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
+Though it is possible to set them up one by one, \cgal also provides a trainer class `CGAL::Classification::Trainer` that requires a small set of ground truth items provided by users. More specifically, users must provide, for each label they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
 
 - for each feature, a range of weights is tested: the effect each feature have on each label is estimated. For a given weight, if a feature has the same effect on each label, it is non-relevant for classification. The range of weights such that the feature is relevant is estimated
 
 - for each feature, uniformly picked weight values are tested and their effects estimated
 
-- each ground truth item provided by the user is classified using this set of weights and effects
+- each inlier provided by the user is classified using this set of weights and effects
 
-- for each label, the ratio of correctly classified ground truth items is computed. The minimum of these ratios is used as a score for this set of weights and effects: a ratio of 0.8 means that for each label, at least 80\% of the provided ground truth item were correctly classified
+- for each label, the ratio of correctly classified inliers is computed. The minimum of these ratios is used as a score for this set of weights and effects: a ratio of 0.8 means that for each label, at least 80\% of the provided inliers were correctly classified
 
 - the same mechanism is repeated until all features' ranges have been tested. Weights are only changed one by one, the other ones kept to the previous value that gave the best score.
 
-This usually converges to a satisfying solution. The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 attributes are used). If the solution is not satisfying, more ground truth items can be selected,for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new ground truth items into account.
+This usually converges to a satisfying solution (see Figure \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 attributes are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new inliers into account.
 
-\cgalFigureBegin{Classification_training_fig,classif_training.png}
-Example of evolution of training score. The purple curve is the score computed at the current iteration, green curve is the best score found so far. Iterations where better solutions are found are marked by vertical gray lines.
+\cgalFigureBegin{Classification_trainer_fig,classif_training.png}
+Example of evolution of training score. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
 \cgalFigureEnd
+
+Tools to evaluate the reliability of the training are provided, namely:
+
+- [precision()](@ref CGAL::Classification::Trainer::precision) computes, for one label, the ratio of true positives over the total number of detected positives
+- [recall()](@ref CGAL::Classification::Trainer::recall) computes, for one label, the ratio of true positives over the total number of provided inliers of this label
+- [f1_score()](@ref CGAL::Classification::Trainer::f1_score) is the harmonic mean of precision and recall
+- [IoU()](@ref CGAL::Classification::Trainer::IoU) (Intersection over Union) computes the ratio of true positives over the union of the detected positives and of the provided inliers
+- [accuracy()](@ref CGAL::Classification::Trainer::accuracy) computes the ratio of all true positives over the total number of provided inliers
+- [mean_f1_score()](@ref CGAL::Classification::Trainer::mean_f1_score)
+- [mean_IoU()](@ref CGAL::Classification::Trainer::mean_IoU)
+
+
+Note that the [Trainer](@ref CGAL::Classification::Trainer) class only uses documented public methods of the [Classifier](@ref CGAL::Classifier), [Label](@ref CGAL::Classification::Label) and [Feature](@ref CGAL::Classification::Feature_base) classes (for example, [set_weight()](@ref CGAL::Classification::Feature_base::set_weight), [set_feature_effect()](@ref CGAL::Classification::Label::set_feature_effect) or [energy_of()](@ref CGAL::Classifier::energy_of)). Users can therefore define their own classes for training using these methods to set up weights and effects and to estimate what are the best parameters.
+
+
 
 The example \ref Classification_example_training shows how to set inliers and run the training algorithm.
 
