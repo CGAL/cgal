@@ -242,9 +242,9 @@ public:
   typedef typename GT::Weighted_point_3 Weighted_point_3;
 
 
-  typedef Point*           Point_container;
-  typedef Point*           Point_iterator;
-  typedef const Point*     Point_const_iterator;
+  typedef Weighted_point_3*           Point_container;
+  typedef Weighted_point_3*           Point_iterator;
+  typedef const Weighted_point_3*     Point_const_iterator;
 
 public:
   void invalidate_circumcenter() const
