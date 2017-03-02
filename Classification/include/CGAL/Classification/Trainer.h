@@ -278,14 +278,17 @@ public:
                                         1. / (double)nb_trials_per_feature);
     
     
-    double best_score = compute_worst_score(0.);
-    double best_confidence = compute_worst_confidence(0.);
+    double best_score = 0.;
+    double best_confidence = 0.;
+    boost::tie (best_confidence, best_score)
+      = compute_worst_confidence_and_score (0., 0.);
     
     CGAL_CLASSIFICATION_CERR << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
     CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
 
     std::size_t current_att_changed = 0;
+    CGAL::Timer teff, tconf, tscore;
     for (std::size_t i = 0; i < att_used; ++ i)
       {
         while (att_train[current_att_changed].skipped)
@@ -302,7 +305,9 @@ public:
               continue;
             
             m_classifier->feature(j)->set_weight(best_weights[j]);
+            teff.start();
             estimate_feature_effect(m_classifier->feature(j));
+            teff.stop();
             if (feature_useful(m_classifier->feature(j)))
               nb_used ++;
           }
@@ -312,11 +317,15 @@ public:
         current_att->set_weight(tr.wmin);
         for (std::size_t j = 0; j < nb_trials_per_feature; ++ j)
           {
+            teff.start();
             estimate_feature_effect(current_att);
+            teff.stop();
 
-            double worst_confidence = compute_worst_confidence(best_confidence);
-
-            double worst_score = compute_worst_score(best_score);
+            tconf.start();
+            double worst_confidence = 0., worst_score = 0.;
+            boost::tie (worst_confidence, worst_score)
+              = compute_worst_confidence_and_score (best_confidence, best_score);
+            tconf.stop();
 
             if (worst_score > best_score
                 && worst_confidence > best_confidence)
@@ -339,6 +348,10 @@ public:
         ++ current_att_changed;
       }
 
+    std::cerr << "Estimation of effects = " << teff.time() << std::endl
+              << "Confidence computation = " << tconf.time() << std::endl
+              << "Score computation = " << tscore.time() << std::endl;
+    
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
         Feature_handle att = m_classifier->feature(i);
@@ -472,7 +485,7 @@ public:
     the sum of the true positives, of the false positives and of the
     false negatives.
   */
-  double IoU (Label_handle label) const
+  double intersection_over_union (Label_handle label) const
   {
     std::size_t label_idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_classifier->number_of_labels(); ++ i)
@@ -502,10 +515,10 @@ public:
   double mean_f1_score() const { return m_mean_f1; }
   
   /*!
-    \brief Returns the mean IoU of the training over all labels (see
-    `IoU()`).
+    \brief Returns the mean intersection over union of the training
+    over all labels (see `intersection_over_union()`).
   */
-  double mean_IoU() const { return m_mean_iou; }
+  double mean_intersection_over_union() const { return m_mean_iou; }
   
   /// @}
 
@@ -563,50 +576,15 @@ private:
       }
   }
 
-  
-  double compute_worst_score (double lower_bound)
-  {
-    double worst_score = 1.;
-    for (std::size_t j = 0; j < m_classifier->number_of_labels(); ++ j)
-      {
-        std::size_t nb_okay = 0;
-        for (std::size_t k = 0; k < m_training_sets[j].size(); ++ k)
-          {
-            std::size_t nb_class_best=0; 
-            double val_class_best = (std::numeric_limits<double>::max)();
-      
-            for(std::size_t l = 0; l < m_classifier->number_of_labels(); ++ l)
-              {
-                double value = m_classifier->energy_of (m_classifier->label(l),
-                                                        m_training_sets[j][k]);
-          
-                if(val_class_best > value)
-                  {
-                    val_class_best = value;
-                    nb_class_best = l;
-                  }
-              }
-                
-            if (nb_class_best == j)
-              nb_okay ++;
-
-          }
-
-        double score = nb_okay / (double)(m_training_sets[j].size());
-        if (score < worst_score)
-          worst_score = score;
-        if (worst_score < lower_bound)
-          return worst_score;
-      }
-    return worst_score;
-  }
-
-  double compute_worst_confidence (double lower_bound)
+  std::pair<double, double> compute_worst_confidence_and_score (double lower_conf, double lower_score)
   {
     double worst_confidence = (std::numeric_limits<double>::max)();
+    double worst_score = (std::numeric_limits<double>::max)();
+    
     for (std::size_t j = 0; j < m_classifier->number_of_labels(); ++ j)
       {
         double confidence = 0.;
+        std::size_t nb_okay = 0;
         
         for (std::size_t k = 0; k < m_training_sets[j].size(); ++ k)
           {
@@ -619,27 +597,24 @@ private:
             std::sort (values.begin(), values.end());
 
             if (values[0].second == j)
-              confidence += values[1].first - values[0].first;
-            else
               {
-                // for(std::size_t l = 0; l < values.size(); ++ l)
-                //   if (values[l].second == j)
-                //     {
-                //       confidence += values[0].first - values[l].first;
-                //       break;
-                //     }
+                confidence += values[1].first - values[0].first;
+                ++ nb_okay;
               }
-            
           }
-
+        
+        double score = nb_okay / (double)(m_training_sets[j].size());
         confidence /= (double)(m_training_sets[j].size() * m_classifier->number_of_features());
 
         if (confidence < worst_confidence)
           worst_confidence = confidence;
-        if (worst_confidence < lower_bound)
-          return worst_confidence;
+        if (score < worst_score)
+          worst_score = score;
+        
+        if (worst_confidence < lower_conf || worst_score < lower_score)
+          return std::make_pair (worst_confidence, worst_score);
       }
-    return worst_confidence;
+    return std::make_pair (worst_confidence, worst_score);
   }
 
   bool feature_useful (Feature_handle att)
