@@ -524,6 +524,30 @@ public:
   /// @{
 
   /*!
+    \brief Returns the value of the energy of `label` at the item at
+    position `index`.
+  */
+  double energy_of (Label_handle label, std::size_t index)
+  {
+    double out = 0.;
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
+      {
+        if (m_features[i]->weight() == 0.)
+          continue;
+
+        Feature_effect eff = label->feature_effect (m_features[i]);
+
+        if (eff == Classification::Feature::FAVORING)
+          out += m_features[i]->favored (index);
+        else if (eff == Classification::Feature::PENALIZING)
+          out += m_features[i]->penalized (index);
+        else if (eff == Classification::Feature::NEUTRAL)
+          out += m_features[i]->ignored (index);
+      }
+    return out;
+  }
+
+  /*!
     \brief Returns the label of the item at position
     `index`.
 
@@ -578,25 +602,6 @@ public:
   /// @}
 
 
-  double classification_value (Label_handle label, std::size_t pt_index)
-  {
-    double out = 0.;
-    for (std::size_t i = 0; i < m_features.size(); ++ i)
-      {
-        if (m_features[i]->weight() == 0.)
-          continue;
-
-        Feature_effect eff = label->feature_effect (m_features[i]);
-
-        if (eff == Classification::Feature::FAVORING)
-          out += m_features[i]->favored (pt_index);
-        else if (eff == Classification::Feature::PENALIZING)
-          out += m_features[i]->penalized (pt_index);
-        else if (eff == Classification::Feature::NEUTRAL)
-          out += m_features[i]->ignored (pt_index);
-      }
-    return out;
-  }
   
 
 protected:
