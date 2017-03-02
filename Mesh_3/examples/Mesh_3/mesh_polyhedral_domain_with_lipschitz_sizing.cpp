@@ -56,7 +56,7 @@ int main(int argc, char*argv[])
   // Create Lipschitz sizing field
   Lip_sizing lip_sizing(domain, &domain.aabb_tree());
 
-  FT min_size = 0.01;
+  FT min_size = 0.02;
   lip_sizing.add_parameters_for_subdomain(1,       //subdomain id
                                           0.3,     //k
                                           min_size,//min_size
