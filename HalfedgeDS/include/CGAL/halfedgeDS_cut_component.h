@@ -83,7 +83,11 @@ halfedgeDS_cut_component( HDS&                           hds,
             CGAL_assertion( g->next() != h && g->next()->opposite() != h);
             Halfedge_handle gnext = g->next()->opposite();
             D.remove_tip( g);
-            Vertex_handle v = D.vertices_push_back( Vertex());
+
+			/** Substituted Vertex_handle v = D.vertices_push_back( Vertex()) vertex creation by: */
+			Vertex_handle v = D.vertices_push_back(Vertex(pred.plane().projection(h->vertex()->point())));
+			/** Which is the vertex projection onto the cutting plane */
+
             D.close_tip( gnext, v);
             hnew = hds.edges_push_back( Halfedge(), Halfedge());
             hlast = hnew->opposite();
@@ -99,12 +103,12 @@ halfedgeDS_cut_component( HDS&                           hds,
                 // Create dummy edge and dummy vertex and attach it to g
                 g = hds.edges_push_back( Halfedge(), Halfedge());
                 D.insert_tip( g, gnext);
-                D.close_tip(g->opposite(), D.vertices_push_back(Vertex()));
+				D.close_tip(g->opposite(), D.vertices_push_back(Vertex(pred.plane().projection(h->vertex()->point()))));
                 D.set_vertex_halfedge( g);                
                 D.set_vertex_halfedge( g->opposite());                
             }
             D.remove_tip( g);
-            Vertex_handle v = D.vertices_push_back( Vertex());
+			Vertex_handle v = D.vertices_push_back(Vertex(pred.plane().projection(h->vertex()->point())));
             D.close_tip( hnew, v);
             D.insert_tip( gnext, hnew);
             hnew = hds.edges_push_back( Halfedge(), Halfedge());
