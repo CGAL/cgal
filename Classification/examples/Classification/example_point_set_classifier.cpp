@@ -123,7 +123,10 @@ int main (int argc, char** argv)
                 << trainer.f1_score(psc.label(i)) << " ; "
                 << trainer.IoU(psc.label(i)) << std::endl;
     }
-        
+
+  std::cerr << "Accuracy = " << trainer.accuracy() << std::endl
+            << "Mean F1 score = " << trainer.mean_f1_score() << std::endl
+            << "Mean IoU = " << trainer.mean_IoU() << std::endl;
   
   
   psc.run_with_graphcut (psc.neighborhood().k_neighbor_query(12), 0.5);

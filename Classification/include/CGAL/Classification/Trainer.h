@@ -73,6 +73,9 @@ private:
   std::vector<double> m_precision;
   std::vector<double> m_recall;
   std::vector<double> m_iou; // intersection over union
+  double m_accuracy;
+  double m_mean_iou;
+  double m_mean_f1;
 
 public:
 
@@ -330,7 +333,6 @@ public:
                     best_weights[k] = att->weight();
                   }
               }
-            
             current_att->set_weight(current_att->weight() * tr.factor);
           }
 
@@ -397,7 +399,7 @@ public:
     the true positives and the false positives.
 
   */
-  double precision (Label_handle label)
+  double precision (Label_handle label) const
   {
     std::size_t label_idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_classifier->number_of_labels(); ++ i)
@@ -420,7 +422,7 @@ public:
     the true positives and the false negatives.
 
   */
-  double recall (Label_handle label)
+  double recall (Label_handle label) const
   {
     std::size_t label_idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_classifier->number_of_labels(); ++ i)
@@ -446,7 +448,7 @@ public:
     \f]
 
   */
-  double f1_score (Label_handle label)
+  double f1_score (Label_handle label) const
   {
     std::size_t label_idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_classifier->number_of_labels(); ++ i)
@@ -462,8 +464,7 @@ public:
       / (m_precision[label_idx] + m_recall[label_idx]);
   }
 
-/*!
-
+  /*!
     \brief Returns the intersection over union of the training for the
     given label.
 
@@ -471,7 +472,7 @@ public:
     the sum of the true positives, of the false positives and of the
     false negatives.
   */
-  double IoU (Label_handle label)
+  double IoU (Label_handle label) const
   {
     std::size_t label_idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_classifier->number_of_labels(); ++ i)
@@ -485,6 +486,27 @@ public:
     
     return m_iou[label_idx];
   }
+
+  /*!
+    \brief Returns the accuracy of the training.
+
+    Accuracy is the total number of true positives divided by the
+    total number of provided inliers.
+  */
+  double accuracy() const { return m_accuracy; }
+  
+  /*!
+    \brief Returns the mean \f$F_1\f$ score of the training over all
+    labels (see `f1_score()`).
+  */
+  double mean_f1_score() const { return m_mean_f1; }
+  
+  /*!
+    \brief Returns the mean IoU of the training over all labels (see
+    `IoU()`).
+  */
+  double mean_IoU() const { return m_mean_iou; }
+  
   /// @}
 
   /// \cond SKIP_IN_MANUAL
@@ -555,8 +577,8 @@ private:
       
             for(std::size_t l = 0; l < m_classifier->number_of_labels(); ++ l)
               {
-                double value = m_classifier->classification_value (m_classifier->label(l),
-                                                                   m_training_sets[j][k]);
+                double value = m_classifier->energy_of (m_classifier->label(l),
+                                                        m_training_sets[j][k]);
           
                 if(val_class_best > value)
                   {
@@ -591,8 +613,8 @@ private:
             std::vector<std::pair<double, std::size_t> > values;
       
             for(std::size_t l = 0; l < m_classifier->number_of_labels(); ++ l)
-              values.push_back (std::make_pair (m_classifier->classification_value (m_classifier->label(l),
-                                                                                    m_training_sets[j][k]),
+              values.push_back (std::make_pair (m_classifier->energy_of (m_classifier->label(l),
+                                                                         m_training_sets[j][k]),
                                                 l));
             std::sort (values.begin(), values.end());
 
@@ -636,6 +658,9 @@ private:
     std::vector<std::size_t> false_positives (m_classifier->number_of_labels());
     std::vector<std::size_t> false_negatives (m_classifier->number_of_labels());
 
+    std::size_t sum_true_positives = 0;
+    std::size_t total = 0;
+    
     for (std::size_t j = 0; j < m_classifier->number_of_labels(); ++ j)
       {
         for (std::size_t k = 0; k < m_training_sets[j].size(); ++ k)
@@ -645,8 +670,8 @@ private:
       
             for(std::size_t l = 0; l < m_classifier->number_of_labels(); ++ l)
               {
-                double value = m_classifier->classification_value (m_classifier->label(l),
-                                                                   m_training_sets[j][k]);
+                double value = m_classifier->energy_of (m_classifier->label(l),
+                                                        m_training_sets[j][k]);
           
                 if(val_class_best > value)
                   {
@@ -654,9 +679,12 @@ private:
                     nb_class_best = l;
                   }
               }
-
+            ++ total;
             if (nb_class_best == j)
-              ++ true_positives[j];
+              {
+                ++ true_positives[j];
+                ++ sum_true_positives;
+              }
             else
               {
                 ++ false_negatives[j];
@@ -671,12 +699,24 @@ private:
     m_precision.clear();
     m_recall.clear();
 
+    m_mean_iou = 0.;
+    m_mean_f1 = 0.;
+    
     for (std::size_t j = 0; j < m_classifier->number_of_labels(); ++ j)
       {
         m_precision.push_back (true_positives[j] / double(true_positives[j] + false_positives[j]));
         m_recall.push_back (true_positives[j] / double(true_positives[j] + false_negatives[j]));
         m_iou.push_back (true_positives[j] / double(true_positives[j] + false_positives[j] + false_negatives[j]));
+
+        m_mean_iou += m_iou.back();
+        m_mean_f1 += 2. * (m_precision.back() * m_recall.back())
+          / (m_precision.back() + m_recall.back());
       }
+
+    m_mean_iou /= m_classifier->number_of_labels();
+    m_mean_f1 /= m_classifier->number_of_labels();
+    m_accuracy = sum_true_positives / double(total);
+
   }
 
   
