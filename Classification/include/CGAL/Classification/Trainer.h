@@ -283,69 +283,74 @@ public:
       double wmax;
       double factor;
     };
-    std::vector<Feature_training> att_train;
+    std::vector<Feature_training> feature_train;
     std::size_t nb_trials = 100;
     double wmin = 1e-5, wmax = 1e5;
     double factor = std::pow (wmax/wmin, 1. / (double)nb_trials);
-    std::size_t att_used = 0;
+    std::size_t feature_used = 0;
+
+    std::vector<std::pair<std::size_t, std::size_t> > sorted_features;
+    
     for (std::size_t j = 0; j < m_classifier->number_of_features(); ++ j)
       {
-        Feature_handle att = m_classifier->feature(j);
-        best_weights[j] = att->weight();
+        Feature_handle feature = m_classifier->feature(j);
+        best_weights[j] = feature->weight();
 
         std::size_t nb_useful = 0;
         double min = (std::numeric_limits<double>::max)();
         double max = -(std::numeric_limits<double>::max)();
 
-        att->set_weight(wmin);
+        feature->set_weight(wmin);
         for (std::size_t i = 0; i < 100; ++ i)
           {
-            estimate_feature_effect(att);
-            if (feature_useful(att))
+            estimate_feature_effect(feature);
+            if (feature_useful(feature))
               {
                 CGAL_CLASSTRAINING_CERR << "#";
                 nb_useful ++;
-                min = (std::min) (min, att->weight());
-                max = (std::max) (max, att->weight());
+                min = (std::min) (min, feature->weight());
+                max = (std::max) (max, feature->weight());
               }
             else
               CGAL_CLASSTRAINING_CERR << "-";
-            att->set_weight(factor * att->weight());
+            feature->set_weight(factor * feature->weight());
           }
         CGAL_CLASSTRAINING_CERR << std::endl;
-        CGAL_CLASSTRAINING_CERR << att->name() << " useful in "
+        CGAL_CLASSTRAINING_CERR << feature->name() << " useful in "
                                 << nb_useful << "% of the cases, in interval [ "
                                 << min << " ; " << max << " ]" << std::endl;
-        att_train.push_back (Feature_training());
-        att_train.back().skipped = false;
-        att_train.back().wmin = min / factor;
-        att_train.back().wmax = max * factor;
+        feature_train.push_back (Feature_training());
+        feature_train.back().skipped = false;
+        feature_train.back().wmin = min / factor;
+        feature_train.back().wmax = max * factor;
         if (nb_useful < 2)
           {
-            att_train.back().skipped = true;
-            att->set_weight(0.);
-            best_weights[j] = att->weight();
+            feature_train.back().skipped = true;
+            feature->set_weight(0.);
+            best_weights[j] = feature->weight();
           }
         else if (best_weights[j] == 1.)
           {
-            att->set_weight(0.5 * (att_train.back().wmin + att_train.back().wmax));
-            best_weights[j] = att->weight();
-            ++ att_used;
+            feature->set_weight(0.5 * (feature_train.back().wmin + feature_train.back().wmax));
+            best_weights[j] = feature->weight();
+            sorted_features.push_back (std::make_pair (-nb_useful, j));
+            ++ feature_used;
           }
         else
           {
-            att->set_weight(best_weights[j]);
-            ++ att_used;
+            feature->set_weight(best_weights[j]);
+            sorted_features.push_back (std::make_pair (-nb_useful, j));
+            ++ feature_used;
           }
-        estimate_feature_effect(att);
+        estimate_feature_effect(feature);
       }
 
-    std::size_t nb_trials_per_feature = 1 + (std::size_t)(nb_tests / (double)(att_used));
-    CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << att_used
-              << ", trials per att = " << nb_trials_per_feature << std::endl;
-    for (std::size_t i = 0; i < att_train.size(); ++ i)
-      if (!(att_train[i].skipped))
-        att_train[i].factor = std::pow (att_train[i].wmax / att_train[i].wmin,
+    std::size_t nb_trials_per_feature = 1 + (std::size_t)(nb_tests / (double)(feature_used));
+    CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_used
+              << ", trials per feature = " << nb_trials_per_feature << std::endl;
+    for (std::size_t i = 0; i < feature_train.size(); ++ i)
+      if (!(feature_train[i].skipped))
+        feature_train[i].factor = std::pow (feature_train[i].wmax / feature_train[i].wmin,
                                         1. / (double)nb_trials_per_feature);
     
     
@@ -358,21 +363,24 @@ public:
 
     CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
 
-    std::size_t current_att_changed = 0;
+    std::size_t current_feature_changed = 0;
     CGAL::Timer teff, tconf, tscore;
-    for (std::size_t i = 0; i < att_used; ++ i)
+
+    std::sort (sorted_features.begin(), sorted_features.end());
+    for (std::size_t i = 0; i < sorted_features.size(); ++ i)
       {
-        while (att_train[current_att_changed].skipped)
-          {
-            ++ current_att_changed;
-            if (current_att_changed == m_classifier->number_of_features())
-              current_att_changed = 0;
-          }
+        current_feature_changed = sorted_features[i].second;
+        // while (feature_train[current_feature_changed].skipped)
+        //   {
+        //     ++ current_feature_changed;
+        //     if (current_feature_changed == m_classifier->number_of_features())
+        //       current_feature_changed = 0;
+        //   }
 
         std::size_t nb_used = 0;
         for (std::size_t j = 0; j < m_classifier->number_of_features(); ++ j)
           {
-            if (j == current_att_changed)
+            if (j == current_feature_changed)
               continue;
             
             m_classifier->feature(j)->set_weight(best_weights[j]);
@@ -382,14 +390,14 @@ public:
             if (feature_useful(m_classifier->feature(j)))
               nb_used ++;
           }
-        Feature_handle current_att = m_classifier->feature(current_att_changed);
-        const Feature_training& tr = att_train[current_att_changed];
+        Feature_handle current_feature = m_classifier->feature(current_feature_changed);
+        const Feature_training& tr = feature_train[current_feature_changed];
         
-        current_att->set_weight(tr.wmin);
+        current_feature->set_weight(tr.wmin);
         for (std::size_t j = 0; j < nb_trials_per_feature; ++ j)
           {
             teff.start();
-            estimate_feature_effect(current_att);
+            estimate_feature_effect(current_feature);
             teff.stop();
 
             tconf.start();
@@ -405,18 +413,18 @@ public:
                 best_confidence = worst_confidence;
                 CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
                           << (i * nb_trials_per_feature) + j << "/" << nb_tests << ", "
-                          << nb_used + (feature_useful(current_att) ? 1 : 0)
+                          << nb_used + (feature_useful(current_feature) ? 1 : 0)
                           << "/" << m_classifier->number_of_features() << " feature(s) used)" << std::endl;
                 for (std::size_t k = 0; k < m_classifier->number_of_features(); ++ k)
                   {
-                    Feature_handle att = m_classifier->feature(k);
-                    best_weights[k] = att->weight();
+                    Feature_handle feature = m_classifier->feature(k);
+                    best_weights[k] = feature->weight();
                   }
               }
-            current_att->set_weight(current_att->weight() * tr.factor);
+            current_feature->set_weight(current_feature->weight() * tr.factor);
           }
 
-        ++ current_att_changed;
+        ++ current_feature_changed;
       }
 
     std::cerr << "Estimation of effects = " << teff.time() << std::endl
@@ -425,8 +433,8 @@ public:
     
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
-        Feature_handle att = m_classifier->feature(i);
-        att->set_weight(best_weights[i]);
+        Feature_handle feature = m_classifier->feature(i);
+        feature->set_weight(best_weights[i]);
       }
 
     estimate_features_effects();
@@ -437,22 +445,22 @@ public:
     std::size_t nb_removed = 0;
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
-        Feature_handle att = m_classifier->feature(i);
-        CGAL_CLASSTRAINING_CERR << "FEATURE " << att->name() << ": " << best_weights[i] << std::endl;
-        att->set_weight(best_weights[i]);
+        Feature_handle feature = m_classifier->feature(i);
+        CGAL_CLASSTRAINING_CERR << "FEATURE " << feature->name() << ": " << best_weights[i] << std::endl;
+        feature->set_weight(best_weights[i]);
 
-        Classification::Feature::Effect side = m_classifier->label(0)->feature_effect(att);
+        Classification::Feature::Effect side = m_classifier->label(0)->feature_effect(feature);
         bool to_remove = true;
         for (std::size_t j = 0; j < m_classifier->number_of_labels(); ++ j)
           {
             Label_handle clabel = m_classifier->label(j);
-            if (clabel->feature_effect(att) == Classification::Feature::FAVORING)
+            if (clabel->feature_effect(feature) == Classification::Feature::FAVORING)
               CGAL_CLASSTRAINING_CERR << " * Favored for ";
-            else if (clabel->feature_effect(att) == Classification::Feature::PENALIZING)
+            else if (clabel->feature_effect(feature) == Classification::Feature::PENALIZING)
               CGAL_CLASSTRAINING_CERR << " * Penalized for ";
             else
               CGAL_CLASSTRAINING_CERR << " * Neutral for ";
-            if (clabel->feature_effect(att) != side)
+            if (clabel->feature_effect(feature) != side)
               to_remove = false;
             CGAL_CLASSTRAINING_CERR << clabel->name() << std::endl;
           }
@@ -612,7 +620,7 @@ private:
       estimate_feature_effect (m_classifier->feature(i));
   }
 
-  void estimate_feature_effect (Feature_handle att)
+  void estimate_feature_effect (Feature_handle feature)
   {
     std::vector<double> mean (m_classifier->number_of_labels(), 0.);
                                   
@@ -620,7 +628,7 @@ private:
       {
         for (std::size_t k = 0; k < m_training_sets[j].size(); ++ k)
           {
-            double val = att->normalized(m_training_sets[j][k]);
+            double val = feature->normalized(m_training_sets[j][k]);
             mean[j] += val;
           }
         mean[j] /= m_training_sets[j].size();
@@ -634,16 +642,16 @@ private:
             
         for (std::size_t k = 0; k < m_training_sets[j].size(); ++ k)
           {
-            double val = att->normalized(m_training_sets[j][k]);
+            double val = feature->normalized(m_training_sets[j][k]);
             sd[j] += (val - mean[j]) * (val - mean[j]);
           }
         sd[j] = std::sqrt (sd[j] / m_training_sets[j].size());
-        if (mean[j] - sd[j] > 0.5)
-          clabel->set_feature_effect (att, Classification::Feature::FAVORING);
-        else if (mean[j] + sd[j] < 0.5)
-          clabel->set_feature_effect (att, Classification::Feature::PENALIZING);
+        if (mean[j] - sd[j] > 0.75)
+          clabel->set_feature_effect (feature, Classification::Feature::FAVORING);
+        else if (mean[j] + sd[j] < 0.25)
+          clabel->set_feature_effect (feature, Classification::Feature::PENALIZING);
         else
-          clabel->set_feature_effect (att, Classification::Feature::NEUTRAL);
+          clabel->set_feature_effect (feature, Classification::Feature::NEUTRAL);
       }
   }
 
@@ -702,11 +710,11 @@ private:
     return std::make_pair (worst_confidence, worst_score);
   }
 
-  bool feature_useful (Feature_handle att)
+  bool feature_useful (Feature_handle feature)
   {
-    Classification::Feature::Effect side = m_classifier->label(0)->feature_effect(att);
+    Classification::Feature::Effect side = m_classifier->label(0)->feature_effect(feature);
     for (std::size_t k = 1; k < m_classifier->number_of_labels(); ++ k)
-      if (m_classifier->label(k)->feature_effect(att) != side)
+      if (m_classifier->label(k)->feature_effect(feature) != side)
         return true;
     return false;
   }
