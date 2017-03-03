@@ -263,8 +263,10 @@ private:
   r2t_converter_object;
 
   Construct_anchor_point_3<
-    Regular_triangulation_euclidean_traits_3<
-    Triangulated_mixed_complex_traits> >                construct_anchor_point_3_obj;
+    //  Regular_triangulation_euclidean_traits_3<
+    Triangulated_mixed_complex_traits>
+  // >
+                construct_anchor_point_3_obj;
 
   typename Tmc_traits::Compute_squared_radius_smallest_orthogonal_sphere_3  orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;
@@ -1047,7 +1049,7 @@ get_weighted_circumcenter(Rt_Simplex const &s) {
   switch (s.dimension()) {
   case 0:
     vh=s;
-    result = r2t_converter_object(vh->point());
+    result = Tmc_traits().construct_point_3_object()(r2t_converter_object(vh->point()));
     break;
   case 1:
     e=s;
@@ -1269,9 +1271,9 @@ orientation(Tmc_Cell_handle ch) {
     typename EK::Point_3 e_pts[4];
 
     for (int k=0; k<4; k++) {
-      e_pts[k] = 
-        Skin_surface_base_3<Regular_traits>::
-        get_anchor_point(ch->vertex(k)->info(), exact_traits);
+       e_pts[k] = 
+         Skin_surface_base_3<Regular_traits>::
+         get_anchor_point(ch->vertex(k)->info(), exact_traits);
       // Store the more precise point
       ch->vertex(k)->point() = converter(e_pts[k]);
     }
