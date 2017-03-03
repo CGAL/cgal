@@ -12,7 +12,11 @@ void _test_rc_random_1()
 	typedef typename D3::Vertex_handle             Vertex_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
 	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
+        typedef typename D3::Geom_traits::Point_3      Sphere_center;
 	typedef Point                                  Point_3;
+
+        typename D3::Geom_traits::Construct_point_3 cp
+          = (typename D3::Geom_traits()).construct_point_3_object();
 
 	std::cout << "_test_rc_random_1" << std::endl;
 		
@@ -29,10 +33,10 @@ void _test_rc_random_1()
 
 	for(Finite_vertices_iterator fit = dt.finite_vertices_begin(); 
 	fit != dt.finite_vertices_end(); fit++) {
-		Sphere_3 s1 = Sphere_3(Point_3(0.25, 0.25, 0.25), 0.01);
-		Sphere_3 s2 = Sphere_3(Point_3(0.75, 0.75, 0.75), 0.01);
-		if(s1.has_on_unbounded_side(fit->point()) &&
-		   s2.has_on_unbounded_side(fit->point())) to_remove.push_back(fit);
+		Sphere_3 s1 = Sphere_3(Sphere_center(0.25, 0.25, 0.25), 0.01);
+                Sphere_3 s2 = Sphere_3(Sphere_center(0.75, 0.75, 0.75), 0.01);
+		if(s1.has_on_unbounded_side(cp(fit->point())) &&
+		   s2.has_on_unbounded_side(cp(fit->point()))) to_remove.push_back(fit);
   }
 
 	std::size_t s1 = dt.number_of_vertices();
@@ -51,8 +55,12 @@ void _test_rc_random_2()
 	typedef typename D3::Vertex_handle             Vertex_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
 	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
-		
+        typedef typename D3::Geom_traits::Point_3      Sphere_center;
+        typedef Point                                  Point_3;
+
+        typename D3::Geom_traits::Construct_point_3 cp
+          = (typename D3::Geom_traits()).construct_point_3_object();
+
 	std::cout << "_test_rc_random_2" << std::endl;		
 		
 	std::vector<Point> to_insert;
@@ -68,10 +76,10 @@ void _test_rc_random_2()
 
 	for(Finite_vertices_iterator fit = dt.finite_vertices_begin(); 
 	fit != dt.finite_vertices_end(); fit++) {
-		Sphere_3 s1 = Sphere_3(Point_3(0.25, 0.25, 0.25), 0.01);
-		Sphere_3 s2 = Sphere_3(Point_3(0.75, 0.75, 0.75), 0.01);
-		if(s1.has_on_bounded_side(fit->point())) to_remove.push_back(fit);
-		if(s2.has_on_bounded_side(fit->point())) to_remove.push_back(fit);
+		Sphere_3 s1 = Sphere_3(Sphere_center(0.25, 0.25, 0.25), 0.01);
+                Sphere_3 s2 = Sphere_3(Sphere_center(0.75, 0.75, 0.75), 0.01);
+		if(s1.has_on_bounded_side(cp(fit->point()))) to_remove.push_back(fit);
+		if(s2.has_on_bounded_side(cp(fit->point()))) to_remove.push_back(fit);
   }
 
 	std::size_t s1 = dt.number_of_vertices();
