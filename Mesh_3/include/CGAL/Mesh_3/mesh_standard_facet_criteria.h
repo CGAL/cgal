@@ -357,7 +357,9 @@ protected:
     
     typename Gt::Compute_squared_distance_3 distance =
       Gt().compute_squared_distance_3_object();
-    
+    typename Gt::Construct_point_3 cp =
+      Gt().construct_point_3_object();
+
     typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
     
     const Bare_point& p1 = wp2p(f.first->vertex((f.second+1)&3)->point());
@@ -426,11 +428,14 @@ protected:
 
     typedef typename Tr::Geom_traits    Gt;
     typedef typename Tr::Weighted_point Weighted_point;
+    typedef typename Tr::Bare_point     Bare_point;
 
     typename Gt::Compute_squared_distance_3 distance =
         Gt().compute_squared_distance_3_object();
+    typename Gt::Construct_point_3 wp2p =
+        Gt().construct_point_3_object();
 
-    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
+    const Bare_point p1 = wp2p(f.first->vertex((f.second+1)&3)->point());
 
     const FT sq_radius = distance(
         p1, f.first->get_facet_surface_center(f.second));
