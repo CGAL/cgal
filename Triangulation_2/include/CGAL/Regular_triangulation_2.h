@@ -382,9 +382,10 @@ public:
   }
 
   Face_handle
-  locate(const Bare_point& bp)
+  locate(const Bare_point& bp,
+         Face_handle start = Face_handle())
   {
-    return Base::locate(geom_traits().construct_weighted_point_2_object()(bp));
+    return Base::locate(geom_traits().construct_weighted_point_2_object()(bp), start);
   }
 
   Line_face_circulator line_walk(const Bare_point& p,
