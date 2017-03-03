@@ -28,6 +28,13 @@
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>
+#include <tbb/mutex.h>
+#endif // CGAL_LINKED_WITH_TBB
+
 namespace CGAL {
 
 namespace Classification {
@@ -49,7 +56,14 @@ namespace Classification {
     for matrix diagonalization.
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
+          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3>,
+#if defined(DOXYGEN_RUNNING)
+          typename ConcurrencyTag>
+#elif defined(CGAL_LINKED_WITH_TBB)
+          typename ConcurrencyTag = CGAL::Parallel_tag>
+#else
+          typename ConcurrencyTag = CGAL::Sequential_tag>
+#endif
 class Local_eigen_analysis
 {
 public:
@@ -61,6 +75,53 @@ public:
 
 
 private:
+
+#ifdef CGAL_LINKED_WITH_TBB
+  template <typename NeighborQuery>
+  class Compute_eigen_values
+  {
+    Local_eigen_analysis& m_eigen;
+    const PointRange& m_input;
+    PointMap m_point_map;
+    const NeighborQuery& m_neighbor_query;
+    double& m_mean_range;
+    tbb::mutex& m_mutex;
+    
+  public:
+    
+    Compute_eigen_values (Local_eigen_analysis& eigen,
+                          const PointRange& input,
+                          PointMap point_map,
+                          const NeighborQuery& neighbor_query,
+                          double& mean_range,
+                          tbb::mutex& mutex)
+      : m_eigen (eigen), m_input (input), m_point_map (point_map),
+        m_neighbor_query (neighbor_query), m_mean_range (mean_range), m_mutex (mutex)
+    { }
+    
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t i = r.begin(); i != r.end(); ++ i)
+        {
+          std::vector<std::size_t> neighbors;
+          m_neighbor_query (get(m_point_map, *(m_input.begin()+i)), std::back_inserter (neighbors));
+
+          std::vector<Point> neighbor_points;
+          for (std::size_t j = 0; j < neighbors.size(); ++ j)
+            neighbor_points.push_back (get(m_point_map, *(m_input.begin()+neighbors[j])));
+
+          m_mutex.lock();
+          m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(m_point_map, *(m_input.begin() + i)),
+                                                              get(m_point_map, *(m_input.begin() + neighbors.back()))));
+          m_mutex.unlock();
+          
+          m_eigen.compute (i, get(m_point_map, *(m_input.begin()+i)), neighbor_points);
+        }
+    }
+
+  };
+#endif
+  
   std::vector<Eigenvalues> m_eigenvalues;
   std::vector<double> m_sum_eigenvalues;
   std::vector<Point> m_centroids;
@@ -91,29 +152,43 @@ public:
                         PointMap point_map,
                         const NeighborQuery& neighbor_query)
   {
-    m_eigenvalues.reserve (input.size());
-    m_centroids.reserve (input.size());
-    m_smallest_eigenvectors.reserve (input.size());
-    m_middle_eigenvectors.reserve (input.size());
-    m_largest_eigenvectors.reserve (input.size());
+    m_eigenvalues.resize (input.size());
+    m_sum_eigenvalues.resize (input.size());
+    m_centroids.resize (input.size());
+    m_smallest_eigenvectors.resize (input.size());
+    m_middle_eigenvectors.resize (input.size());
+    m_largest_eigenvectors.resize (input.size());
     
     m_mean_range = 0.;
       
-    for (std::size_t i = 0; i < input.size(); i++)
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
       {
-        std::vector<std::size_t> neighbors;
-        neighbor_query (get(point_map, *(input.begin()+i)), std::back_inserter (neighbors));
-
-        std::vector<Point> neighbor_points;
-        for (std::size_t j = 0; j < neighbors.size(); ++ j)
-          neighbor_points.push_back (get(point_map, *(input.begin()+neighbors[j])));
-
-        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin() + i)),
-                                                            get(point_map, *(input.begin() + neighbors.back()))));
-        
-        compute (get(point_map, *(input.begin()+i)), neighbor_points);
+        tbb::mutex mutex;
+        Compute_eigen_values<NeighborQuery> f(*this, input, point_map, neighbor_query, m_mean_range, mutex);
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
       }
+    else
+#endif
+      {
+        for (std::size_t i = 0; i < input.size(); i++)
+          {
+            std::vector<std::size_t> neighbors;
+            neighbor_query (get(point_map, *(input.begin()+i)), std::back_inserter (neighbors));
 
+            std::vector<Point> neighbor_points;
+            for (std::size_t j = 0; j < neighbors.size(); ++ j)
+              neighbor_points.push_back (get(point_map, *(input.begin()+neighbors[j])));
+
+            m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin() + i)),
+                                                                get(point_map, *(input.begin() + neighbors.back()))));
+        
+            compute (i, get(point_map, *(input.begin()+i)), neighbor_points);
+          }
+      }
     m_mean_range /= input.size();
   }
 
@@ -143,21 +218,21 @@ public:
 
 private:
 
-  void compute (const Point& query, std::vector<Point>& neighbor_points)
+  void compute (std::size_t index, const Point& query, std::vector<Point>& neighbor_points)
   {
     if (neighbor_points.size() == 0)
       {
         Eigenvalues v = {{ 0., 0., 0. }};
-        m_eigenvalues.push_back (v);
-        m_centroids.push_back (query);
-        m_smallest_eigenvectors.push_back (Vector (0., 0., 1.));
-        m_middle_eigenvectors.push_back (Vector (0., 1., 0.));
-        m_largest_eigenvectors.push_back (Vector (1., 0., 0.));
+        m_eigenvalues[index] = v;
+        m_centroids[index] = query;
+        m_smallest_eigenvectors[index] = Vector (0., 0., 1.);
+        m_middle_eigenvectors[index] = Vector (0., 1., 0.);
+        m_largest_eigenvectors[index] = Vector (1., 0., 0.);
         return;
       }
 
     Point centroid = CGAL::centroid (neighbor_points.begin(), neighbor_points.end());
-    m_centroids.push_back (centroid);
+    m_centroids[index] = centroid;
     
     CGAL::cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
       
@@ -185,11 +260,11 @@ private:
     if (sum > 0.)
       for (std::size_t i = 0; i < 3; ++ i)
         evalues[i] = evalues[i] / sum;
-    m_sum_eigenvalues.push_back(sum);    
-    m_eigenvalues.push_back (evalues);
-    m_smallest_eigenvectors.push_back (Vector (evectors[0], evectors[1], evectors[2]));
-    m_middle_eigenvectors.push_back (Vector (evectors[3], evectors[4], evectors[5]));
-    m_largest_eigenvectors.push_back (Vector (evectors[6], evectors[7], evectors[8]));
+    m_sum_eigenvalues[index] = sum;
+    m_eigenvalues[index] = evalues;
+    m_smallest_eigenvectors[index] = Vector (evectors[0], evectors[1], evectors[2]);
+    m_middle_eigenvectors[index] = Vector (evectors[3], evectors[4], evectors[5]);
+    m_largest_eigenvectors[index] = Vector (evectors[6], evectors[7], evectors[8]);
 
   }
 
