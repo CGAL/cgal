@@ -90,7 +90,8 @@ public:
                   const Weighted_point & r,
                   const Weighted_point & s ) const
   {
-    return this->operator()(p.point(), q.point(), r.point(), s.point());
+    typename K::Construct_point_3 cp = K().construct_point_3_object();
+    return this->operator()(cp(p), cp(q), cp(r), cp(s));
   }
  
   FT operator() ( const Bare_point & p,
@@ -182,7 +183,8 @@ public:
                           const Weighted_point & s,
                           bool force_exact = false) const
   {
-    CGAL_precondition(Rt().orientation_3_object()(p.point(),q.point(),r.point(),s.point()) == CGAL::POSITIVE);
+    CGAL_precondition(Rt().orientation_3_object()(
+      wp2p(p), wp2p(q), wp2p(r), wp2p(s)) == CGAL::POSITIVE);
    
     // We use power_side_of_power_sphere_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
@@ -211,7 +213,7 @@ public:
       Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
        
       if(unweighted){
-        if(side_of_oriented_sphere(p.point(),q.point(),r.point(),s.point(), res)
+        if (side_of_oriented_sphere(wp2p(p), wp2p(q), wp2p(r), wp2p(s), res)
            == CGAL::ON_POSITIVE_SIDE )
           return res;
       } else {
@@ -279,12 +281,14 @@ public:
     
     typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
       Rt().side_of_bounded_sphere_3_object();
-    
+    typename Rt::Construct_point_3 cp =
+      Rt().construct_point_3_object();
+
     // No division here
     result_type point = weighted_circumcenter(p,q);
     
     // Fast output
-    if ( side_of_bounded_sphere(p.point(),q.point(),point) == CGAL::ON_BOUNDED_SIDE )
+    if ( side_of_bounded_sphere(cp(p), cp(q), point) == CGAL::ON_BOUNDED_SIDE )
       return point;
     
     // Switch to exact
