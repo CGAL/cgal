@@ -565,7 +565,7 @@ get_orthocenter(Rt_Simplex const &s) {
   switch (s.dimension()) {
   case 0:
     vh=s;
-    result = r2t_converter_object(vh->point());
+    result = Tmc_traits().construct_point_3_object()(r2t_converter_object(vh->point()));
     break;
   case 1:
     e=s;
