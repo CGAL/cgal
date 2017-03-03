@@ -386,9 +386,12 @@ private:
     
     typename Gt::Compute_area_3 area = 
       Gt().compute_area_3_object();
+
+    typename Gt::Construct_point_3 cp =
+      Gt().construct_point_3_object();
     
     // Vertex current position
-    const Weighted_point& vertex_position = v->point();
+    const Bare_point vertex_position = cp(v->point());
     
     // Use as reference point to triangulate
     const Bare_point& a = *first++;
