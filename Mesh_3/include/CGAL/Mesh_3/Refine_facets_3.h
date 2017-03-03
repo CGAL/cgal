@@ -425,10 +425,13 @@ protected:
                                 const Point& p,
                                 const Index& index) const
   {
+    typename Gt::Construct_point_3 cp =
+      r_tr_.geom_traits().construct_point_3_object();
+
     const Facet mirror = mirror_facet(f);
 
-    f.first->set_facet_surface_center(f.second, p.point());
-    mirror.first->set_facet_surface_center(mirror.second, p.point());
+    f.first->set_facet_surface_center(f.second, cp(p));
+    mirror.first->set_facet_surface_center(mirror.second, cp(p));
 
     f.first->set_facet_surface_center_index(f.second,index);
     mirror.first->set_facet_surface_center_index(mirror.second,index);
@@ -761,7 +764,7 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Point Point;//Weighted_point
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
@@ -1818,6 +1821,8 @@ is_facet_encroached(const Facet& facet,
 
   typename Gt::Compare_power_distance_3 compare_distance =
     r_tr_.geom_traits().compare_power_distance_3_object();
+  typename Gt::Construct_point_3 cp =
+    r_tr_.geom_traits().construct_point_3_object();
 
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
@@ -1826,7 +1831,7 @@ is_facet_encroached(const Facet& facet,
 
   // facet is encroached if the new point is near from center than
   // one vertex of the facet
-  return ( compare_distance(center.point(), reference_point, point) != CGAL::SMALLER );
+  return ( compare_distance(cp(center), reference_point, point) != CGAL::SMALLER );
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1842,8 +1847,6 @@ is_encroached_facet_refinable(Facet& facet) const
 
   typename Gt::Compare_weighted_squared_radius_3 compare =
     Gt().compare_weighted_squared_radius_3_object();
-
-  typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
 
   const Cell_handle& c = facet.first;
   const int& k = facet.second;
