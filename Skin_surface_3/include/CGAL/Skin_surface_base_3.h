@@ -205,7 +205,7 @@ Skin_surface_base_3(WP_iterator begin, WP_iterator end, FT shrink_,
 
   if (grow_balls) {
     for (; begin != end; begin++) {
-      regular().insert(Weighted_point(*begin, begin->weight()/shrink_factor()));
+      regular().insert(gt.construct_weighted_point_3_object()(gt.construct_point_3_object()(*begin), begin->weight()/shrink_factor()));
     }
   } else {
     regular().insert(begin, end);
@@ -371,8 +371,8 @@ intersect(TMC_Cell_handle ch, int i, int j,
           Bare_point &p) const {
   Cartesian_converter<FK, Gt> converter;
 
-  Bare_point p1 = converter(ch->vertex(i)->point());
-  Bare_point p2 = converter(ch->vertex(j)->point());
+  Bare_point p1 = gt.construct_point_3_object()(converter(ch->vertex(i)->point()));
+  Bare_point p2 = gt.construct_point_3_object()(converter(ch->vertex(j)->point()));
 
   return intersect(p1, p2, ch, ch, p); 
 }
@@ -765,7 +765,7 @@ get_weighted_circumcenter(const Simplex &s, Gt2 &traits) {
   case 0: 
     {
       vh = s;
-      result = converter(vh->point());
+      result = Gt2().construct_point_3_object()(converter(vh->point()));
       break;
     }
   case 1:
