@@ -3200,6 +3200,7 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_weighted_point_2
   {
+    typedef typename K::RT                 RT;
     typedef typename K::FT                 FT;
     typedef typename K::Point_2            Point_2;
     typedef typename K::Weighted_point_2   Weighted_point_2;
