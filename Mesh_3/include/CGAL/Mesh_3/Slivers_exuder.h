@@ -1124,7 +1124,8 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   // If best_weight < pumped_vertex weight, nothing to do
   if ( best_weight > pumped_vertex->point().weight() )
   {
-    Weighted_point wp(pumped_vertex->point().point(), best_weight);
+    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    Weighted_point wp(wp2p(pumped_vertex->point()), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
