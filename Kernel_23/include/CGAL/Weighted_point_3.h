@@ -92,6 +92,10 @@ public:
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), x, y, z))
   {}
 
+  Weighted_point_3(const FT& x, const FT& y, const FT& z, const FT& w)
+    : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), Point_3(x, y, z), w))
+  {}
+
   typename cpp11::result_of<typename R::Construct_point_3( Weighted_point_3)>::type 
   point() const
   {
