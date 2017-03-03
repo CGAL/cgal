@@ -42,8 +42,15 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/demangle.h>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_invoke.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>
+#endif // CGAL_LINKED_WITH_TBB
+
 
 namespace CGAL {
 
@@ -140,7 +147,7 @@ private:
            const Iso_cuboid_3& bbox, double voxel_size)
       : voxel_size (voxel_size)
     {
-      CGAL::Timer t;
+      CGAL::Real_timer t;
       t.start();
       if (voxel_size < 0.)
         neighborhood = new Neighborhood (input, point_map);
@@ -409,10 +416,9 @@ public:
 
   void generate_point_based_features ()
   {
-    CGAL::Timer teigen, tpoint;
+    CGAL::Real_timer teigen, tpoint;
     teigen.start();
     generate_multiscale_feature_variant_0<Anisotropy> ();
-    generate_multiscale_feature_variant_1<Distance_to_plane> ();
     generate_multiscale_feature_variant_0<Eigentropy> ();
     generate_multiscale_feature_variant_0<Linearity> ();
     generate_multiscale_feature_variant_0<Omnivariance> ();
@@ -420,8 +426,10 @@ public:
     generate_multiscale_feature_variant_0<Sphericity> ();
     generate_multiscale_feature_variant_0<Sum_eigen> ();
     generate_multiscale_feature_variant_0<Surface_variation> ();
+
     teigen.stop();
     tpoint.start();
+    generate_multiscale_feature_variant_1<Distance_to_plane> ();
     generate_multiscale_feature_variant_2<Dispersion> ();
     generate_multiscale_feature_variant_3<Elevation> ();
     tpoint.stop();
@@ -434,7 +442,7 @@ public:
   template <typename VectorMap>
   void generate_normal_based_features(VectorMap normal_map)
   {
-    CGAL::Timer t; t.start();
+    CGAL::Real_timer t; t.start();
     this->template add_feature<Verticality> (normal_map);
     m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
     t.stop();
@@ -443,7 +451,7 @@ public:
 
   void generate_normal_based_features(const CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3>&)
   {
-    CGAL::Timer t; t.start();
+    CGAL::Real_timer t; t.start();
     generate_multiscale_feature_variant_0<Verticality> ();
     CGAL_CLASSIFICATION_CERR << "Normal based features computed in " << t.time() << " second(s)" << std::endl;
   }
@@ -452,7 +460,7 @@ public:
   {
 
     typedef Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
-    CGAL::Timer t; t.start();
+    CGAL::Real_timer t; t.start();
     for (std::size_t i = 0; i <= 8; ++ i)
       {
         this->template add_feature<Hsv> (color_map, 0, 45 * i, 22.5);
@@ -480,7 +488,7 @@ public:
   void generate_echo_based_features(EchoMap echo_map)
   {
     typedef Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
-    CGAL::Timer t; t.start();
+    CGAL::Real_timer t; t.start();
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
         this->template add_feature<Echo_scatter>(echo_map, *(m_scales[i]->grid),
@@ -737,7 +745,7 @@ private:
                                  ColorMap color_map,
                                  EchoMap echo_map)
   {
-    CGAL::Timer t; t.start();
+    CGAL::Real_timer t; t.start();
 
     m_scales.reserve (nb_scales);
     double voxel_size = - 1.;
@@ -821,7 +829,7 @@ private:
     
     m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
     
-    CGAL::Timer t;
+    CGAL::Real_timer t;
     std::map<std::string, Feature_handle> att_map;
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
       {
