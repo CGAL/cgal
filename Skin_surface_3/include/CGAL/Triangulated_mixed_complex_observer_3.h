@@ -97,6 +97,8 @@ public:
       Rt_Facet         f;
       Rt_Cell_handle   ch;
 
+      typename Surface_regular_traits::Construct_point_3 wp2p;
+
       switch (s.dimension()) {
         case 0: {
           vh = s;
@@ -118,7 +120,8 @@ public:
                              typename Surface_regular_traits::
                              Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
                              typename Surface_regular_traits::
-                             Construct_vector_3()(p1,p0),
+                             Construct_vector_3()(wp2p(p1),
+                                                  wp2p(p0)),
                              r2s_converter(shrink),
                              1);
           break;
@@ -137,7 +140,7 @@ public:
                              typename Surface_regular_traits::
                              Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1,p2),
                              typename Surface_regular_traits::
-                             Construct_orthogonal_vector_3()(p0,p1,p2),
+                             Construct_orthogonal_vector_3()(wp2p(p0),wp2p(p1),wp2p(p2)),
                              r2s_converter(1-shrink),
                              -1);
           break;
