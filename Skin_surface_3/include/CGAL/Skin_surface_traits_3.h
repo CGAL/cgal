@@ -89,7 +89,7 @@ template <class K>
 class Construct_anchor_point_3 {
 public:
   typedef typename K::FT             FT;
-  typedef typename K::Bare_point     Bare_point;
+  typedef typename K::Point_3     Bare_point;
 
   Construct_anchor_point_3(const FT &shrink) : s(shrink) {}
   
@@ -108,16 +108,17 @@ private:
 
 template <class K_>
 class Skin_surface_traits_base_3 
-  : public Regular_triangulation_euclidean_traits_3<K_>
+  : public K_
+//  : public Regular_triangulation_euclidean_traits_3<K_>
 {
-  typedef Regular_triangulation_euclidean_traits_3<K_> Base;
+  // typedef Regular_triangulation_euclidean_traits_3<K_> Base;
 public:
   typedef K_                                  Kernel;
   typedef Skin_surface_traits_base_3<Kernel>  Self;
 
   typedef typename Kernel::FT                 FT;
   typedef typename Kernel::Point_3            Bare_point;
-  typedef typename Base::Weighted_point       Weighted_point;
+  typedef typename Kernel::Weighted_point_3   Weighted_point;
   typedef Weighted_point                      Weighted_point_3;
 
   typedef CGAL::Side_of_mixed_cell_3<Self>          Side_of_mixed_cell_3;
