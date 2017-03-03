@@ -1162,9 +1162,11 @@ sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 {
   typename Gt::Compute_squared_distance_3 sq_distance =
     Gt().compute_squared_distance_3_object();
+  typename Gt::Construct_point_3 wp2p =
+    Gt().construct_point_3_object();
 
   const Bare_point circumcenter = tr_.dual(cell);
-  return ( sq_distance(v->point(), circumcenter) );
+  return ( sq_distance(wp2p(v->point()), circumcenter) );
 }
 
 } // end namespace Mesh_3
