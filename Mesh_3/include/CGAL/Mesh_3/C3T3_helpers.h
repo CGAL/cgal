@@ -2869,7 +2869,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
         it != vertex_to_proj.end() ;
         ++it )
   {
-    Bare_point new_pos = project_on_surface((it->first)->point(),it->first,it->second);
+    Bare_point new_pos = project_on_surface(wp2p_((it->first)->point()),it->first,it->second);
 
     if ( ! equal(new_pos, Bare_point()) )
     {
@@ -2877,7 +2877,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(it->first);
 
-      Vertex_handle new_vertex = update_mesh(new_pos,it->first);
+      Vertex_handle new_vertex = update_mesh(p2wp_(new_pos), it->first);
       c3t3_.set_dimension(new_vertex,2);
 
       moving_vertices.insert(new_vertex);

@@ -153,21 +153,10 @@ public:
     return f(cp(p0), cp(p1));
   }
 
-   typename cpp11::result_of< Functor(Point_3,Point_3) >::type  operator() (const Point_3& p0, const Weighted_point_3& p1) const
-  {
-    return f(p0, cp(p1));
-  }
-
-   typename cpp11::result_of< Functor(Point_3,Point_3) >::type  operator() (const Weighted_point_3& p0, const Point_3& p1) const
-  {
-    return f(cp(p0), p1);
-  }
-
   typename cpp11::result_of<Functor(Plane_3,Point_3)>::type operator() (const Plane_3& p0, const Weighted_point_3& p1) const
   {
     return f(p0, cp(p1));
   }
-
 
   typename cpp11::result_of<Functor(Point_3,Point_3,Point_3)>::type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2) const
@@ -179,24 +168,6 @@ public:
                           const Weighted_point_3& p2, const Weighted_point_3& p3) const
   {
     return f(cp(p0), cp(p1), cp(p2), cp(p3));
-  }
-  
-  typename cpp11::result_of<Functor(Point_3,Point_3,Point_3)>::type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
-                          const Point_3& p2) const
-  {
-    return f(cp(p0), cp(p1), p2);
-  }
-   
-  typename cpp11::result_of<Functor(Point_3,Point_3,Point_3,Point_3)>::type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
-                          const Weighted_point_3& p2, const Point_3& p3) const
-  {
-    return f(cp(p0), cp(p1), cp(p2), p3);
-  }
-  
-  typename cpp11::result_of<Functor(Point_3,Point_3,Point_3)>::type operator() (const Point_3& p0, const Weighted_point_3& p1,
-                          const Weighted_point_3& p2) const
-  {
-    return f(p0, cp(p1), cp(p2));
   }
 
   typename cpp11::result_of<Functor(Point_3,Point_3,Point_3,FT)>::type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
