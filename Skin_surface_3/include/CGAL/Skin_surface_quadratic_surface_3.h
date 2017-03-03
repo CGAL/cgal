@@ -66,7 +66,8 @@ public:
     Regular_triangulation_euclidean_traits_3<K> reg_traits;
     p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1);
     c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
-    Vector t = reg_traits.construct_vector_3_object()(wp1,wp0);
+    Vector t = reg_traits.construct_vector_3_object()(reg_traits.construct_point_3_object()(wp1),
+                                                      reg_traits.construct_point_3_object()(wp0));
 
     FT den = t*t;
     Q[0] = (-  t.x()*t.x()/den + (1-s));
@@ -90,7 +91,9 @@ public:
     p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2);
     c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2);
     
-    Vector t = K().construct_orthogonal_vector_3_object()(wp0,wp1,wp2);
+    Vector t = K().construct_orthogonal_vector_3_object()(reg_traits.construct_point_3_object()(wp0),
+                                                          reg_traits.construct_point_3_object()(wp1),
+                                                          reg_traits.construct_point_3_object()(wp2));
 
     FT den = t*t;
     Q[0] = -(-  t.x()*t.x()/den + s);
