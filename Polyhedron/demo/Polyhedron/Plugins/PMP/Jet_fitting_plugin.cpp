@@ -49,32 +49,17 @@ private :
   QList<QAction*> _actions;
 }; // end Polyhedron_demo_jet_fitting_plugin
 
-void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
+
+template <typename Poly>
+void compute(Poly* pMesh,
+             Scene_polylines_item* min_curv,
+             Scene_polylines_item* max_curv)
 {
-  // get active polyhedron
-  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* poly_item = 
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  if(!poly_item)
-    return;
 
-  // wait cursor
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  Polyhedron* pMesh = poly_item->polyhedron();
-
-  // types
   typedef CGAL::Monge_via_jet_fitting<Kernel> Fitting;
   typedef Fitting::Monge_form Monge_form;
 
   typedef Kernel::Point_3 Point;
-
-  Scene_polylines_item* max_curv = new Scene_polylines_item;
-  max_curv->setColor(Qt::red);
-  max_curv->setName(tr("%1 (max curvatures)").arg(poly_item->name()));
-  Scene_polylines_item* min_curv = new Scene_polylines_item;
-  min_curv->setColor(Qt::green);
-  min_curv->setName(tr("%1 (min curvatures)").arg(poly_item->name()));
 
   Polyhedron::Vertex_iterator v;
   for(v = pMesh->vertices_begin();
@@ -133,6 +118,32 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
       min_curv->polylines.push_back(min_segment);
     }
   }
+
+}
+
+void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
+{
+  // get active polyhedron
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* poly_item = 
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  if(!poly_item)
+    return;
+
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  Polyhedron* pMesh = poly_item->polyhedron();
+
+  // types
+  Scene_polylines_item* max_curv = new Scene_polylines_item;
+  max_curv->setColor(Qt::red);
+  max_curv->setName(tr("%1 (max curvatures)").arg(poly_item->name()));
+  Scene_polylines_item* min_curv = new Scene_polylines_item;
+  min_curv->setColor(Qt::green);
+  min_curv->setName(tr("%1 (min curvatures)").arg(poly_item->name()));
+
+  compute(pMesh,min_curv, max_curv);
 
   scene->addItem(max_curv);
   scene->addItem(min_curv);
