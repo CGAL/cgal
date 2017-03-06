@@ -57,24 +57,19 @@ class Regular_traits_adaptor_2
   typedef typename RTraits::Circle_2                       Circle_2;
   typedef typename RTraits::Weighted_point_2               Weighted_point_2;
 
-  template <typename T>
-  struct Conv_wp_to_p {
-    typedef T type;
-  };
+  template <class T>
+  struct Conv_wp_to_p
+  {
+    typedef typename boost::remove_reference<T>::type T_no_ref;
 
-  template <>
-  struct Conv_wp_to_p<Weighted_point_2> {
-    typedef Point_2 type;
-  };
-
-  template <>
-  struct Conv_wp_to_p<const Weighted_point_2> {
-    typedef const Point_2 type;
-  };
-
-  template <>
-  struct Conv_wp_to_p<const Weighted_point_2&> {
-    typedef const Point_2& type;
+    typedef typename boost::mpl::if_<
+      typename boost::is_const<T_no_ref>::type,
+      typename boost::mpl::if_<typename boost::is_reference<T>::type,
+                          const Point_2&,
+                          const Point_2>::type,
+      typename boost::mpl::if_<typename boost::is_reference<T>::type,
+                          Point_2&,
+                          Point_2>::type >::type type;
   };
 
   template <typename> struct result {};
