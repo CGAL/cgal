@@ -789,8 +789,8 @@ public Q_SLOTS:
     if (att == Scene_point_set_classification_item::Feature_handle())
       return;
 
-    // std::cerr << att->weight
-    //           << " " << (int)(1001. * 2. * std::atan(att->weight) / CGAL_PI) << std::endl;
+    // std::cerr << att->weight()
+    //           << " " << (int)(1001. * 2. * std::atan(att->weight()) / CGAL_PI) << std::endl;
     ui_widget.feature_weight->setValue ((int)(1001. * 2. * std::atan(att->weight()) / CGAL_PI));
 
     for (std::size_t i = 0; i < classification_item->labels().size(); ++ i)
@@ -823,7 +823,7 @@ public Q_SLOTS:
       return;
 
     att->set_weight(std::tan ((CGAL_PI/2.) * v / 1001.));
-    //    std::cerr << att->weight << std::endl;
+    // std::cerr << att->weight() << std::endl;
 
     for (std::size_t i = 0; i < class_rows.size(); ++ i)
       class_rows[i].effect->setEnabled(att->weight() != 0.);

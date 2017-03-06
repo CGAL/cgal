@@ -500,7 +500,8 @@ void Scene_point_set_classification_item::train()
       std::cerr << "Error: features not computed" << std::endl;
       return;
     }
-
+  reset_indices();
+  
   m_trainer->train(m_nb_trials);
   m_psc->run();
   m_psc->info();
@@ -514,9 +515,12 @@ bool Scene_point_set_classification_item::run (int method)
       return false;
     }
   reset_indices();
-  
+
   if (method == 0)
-    m_psc->run();
+    {
+      m_psc->run();
+      m_psc->info();
+    }
   else if (method == 1)
     m_psc->run_with_local_smoothing (m_psc->neighborhood().range_neighbor_query(m_psc->radius_neighbors()));
   else if (method == 2)

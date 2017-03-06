@@ -66,7 +66,7 @@ type is the value type of the iterator of `ItemRange` and value type is
 the type of the items that are classified.
 
 \tparam ConcurrencyTag enables sequential versus parallel
-algorithm. Possible values are `Parallel_tag` (default value is CGAL
+algorithm. Possible values are `Parallel_tag` (default value is %CGAL
 is linked with TBB) or `Sequential_tag` (default value otherwise).
 */
 template <typename ItemRange, typename ItemMap,
@@ -278,18 +278,21 @@ public:
 
     struct Feature_training
     {
-      bool skipped;
+      std::size_t i;
       double wmin;
       double wmax;
       double factor;
+
+      bool operator<(const Feature_training& other) const
+      {
+        return (wmin / wmax) < (other.wmin / other.wmax);
+      }
     };
     std::vector<Feature_training> feature_train;
     std::size_t nb_trials = 100;
     double wmin = 1e-5, wmax = 1e5;
     double factor = std::pow (wmax/wmin, 1. / (double)nb_trials);
     std::size_t feature_used = 0;
-
-    std::vector<std::pair<std::size_t, std::size_t> > sorted_features;
     
     for (std::size_t j = 0; j < m_classifier->number_of_features(); ++ j)
       {
@@ -319,39 +322,35 @@ public:
         CGAL_CLASSTRAINING_CERR << feature->name() << " useful in "
                                 << nb_useful << "% of the cases, in interval [ "
                                 << min << " ; " << max << " ]" << std::endl;
-        feature_train.push_back (Feature_training());
-        feature_train.back().skipped = false;
-        feature_train.back().wmin = min / factor;
-        feature_train.back().wmax = max * factor;
         if (nb_useful < 2)
           {
-            feature_train.back().skipped = true;
             feature->set_weight(0.);
             best_weights[j] = feature->weight();
+            continue;
           }
-        else if (best_weights[j] == 1.)
+
+        feature_train.push_back (Feature_training());
+        feature_train.back().i = j;
+        feature_train.back().wmin = min / factor;
+        feature_train.back().wmax = max * factor;
+
+        if (best_weights[j] == 1.)
           {
             feature->set_weight(0.5 * (feature_train.back().wmin + feature_train.back().wmax));
             best_weights[j] = feature->weight();
-            sorted_features.push_back (std::make_pair (-nb_useful, j));
-            ++ feature_used;
           }
         else
-          {
-            feature->set_weight(best_weights[j]);
-            sorted_features.push_back (std::make_pair (-nb_useful, j));
-            ++ feature_used;
-          }
+          feature->set_weight(best_weights[j]);
         estimate_feature_effect(feature);
       }
 
-    std::size_t nb_trials_per_feature = 1 + (std::size_t)(nb_tests / (double)(feature_used));
-    CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_used
+    std::size_t nb_trials_per_feature = 1 + (std::size_t)(nb_tests / (double)(feature_train.size()));
+    CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_train.size()
               << ", trials per feature = " << nb_trials_per_feature << std::endl;
     for (std::size_t i = 0; i < feature_train.size(); ++ i)
-      if (!(feature_train[i].skipped))
-        feature_train[i].factor = std::pow (feature_train[i].wmax / feature_train[i].wmin,
-                                        1. / (double)nb_trials_per_feature);
+      feature_train[i].factor
+        = std::pow (feature_train[i].wmax / feature_train[i].wmin,
+                    1. / (double)nb_trials_per_feature);
     
     
     double best_score = 0.;
@@ -363,20 +362,15 @@ public:
 
     CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
 
-    std::size_t current_feature_changed = 0;
     CGAL::Timer teff, tconf, tscore;
 
-    std::sort (sorted_features.begin(), sorted_features.end());
-    for (std::size_t i = 0; i < sorted_features.size(); ++ i)
+    std::sort (feature_train.begin(), feature_train.end());
+    for (std::size_t i = 0; i < feature_train.size(); ++ i)
       {
-        current_feature_changed = sorted_features[i].second;
-        // while (feature_train[current_feature_changed].skipped)
-        //   {
-        //     ++ current_feature_changed;
-        //     if (current_feature_changed == m_classifier->number_of_features())
-        //       current_feature_changed = 0;
-        //   }
-
+        const Feature_training& tr = feature_train[i];
+        std::size_t current_feature_changed = tr.i;
+        Feature_handle current_feature = m_classifier->feature(current_feature_changed);
+        
         std::size_t nb_used = 0;
         for (std::size_t j = 0; j < m_classifier->number_of_features(); ++ j)
           {
@@ -389,9 +383,9 @@ public:
             teff.stop();
             if (feature_useful(m_classifier->feature(j)))
               nb_used ++;
+            else
+              m_classifier->feature(j)->set_weight(0.);
           }
-        Feature_handle current_feature = m_classifier->feature(current_feature_changed);
-        const Feature_training& tr = feature_train[current_feature_changed];
         
         current_feature->set_weight(tr.wmin);
         for (std::size_t j = 0; j < nb_trials_per_feature; ++ j)
@@ -423,8 +417,6 @@ public:
               }
             current_feature->set_weight(current_feature->weight() * tr.factor);
           }
-
-        ++ current_feature_changed;
       }
 
     std::cerr << "Estimation of effects = " << teff.time() << std::endl
