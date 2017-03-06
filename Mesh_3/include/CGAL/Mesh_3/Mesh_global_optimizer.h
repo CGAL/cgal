@@ -936,8 +936,6 @@ update_mesh(const Moves_vector& moves,
          it != moves.end() ;
          ++it )
     {
-      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
-
       const Vertex_handle& v = cpp11::get<0>(*it);
       const Weighted_point& new_position = cpp11::get<1>(*it);
       // Get size at new position
