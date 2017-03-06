@@ -62,7 +62,6 @@ if ( CGAL_FOUND )
     
     if(SuiteSparse_FOUND)
       target_link_libraries(orbifold ${SuiteSparse_LIBRARIES})
-      target_link_libraries(orbifold_mapping ${SuiteSparse_LIBRARIES})
     endif()
 
   else(EIGEN3_FOUND)
