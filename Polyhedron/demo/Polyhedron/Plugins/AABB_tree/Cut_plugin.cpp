@@ -245,19 +245,17 @@ class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const Facet_tree& tree_) : CGAL::Three::Scene_item(1,1), tree(tree_)
+  Scene_aabb_item(const Facet_tree& tree) : CGAL::Three::Scene_item(1,1)
   {
-      positions_lines.resize(0);
-      invalidateOpenGLBuffers();
-  }
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    positions_lines.clear();
 
-    ~Scene_aabb_item()
-    {
-    }
+    CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
+    traits.v_edges = &positions_lines;
+    for(int i=0; i<3; ++i)
+      traits.offset[i] = offset[i];
 
-  bool isFinite() const { return true; }
-  bool isEmpty() const { return tree.empty(); }
-  void compute_bbox() const {
+    tree.traversal(0, traits);
     const CGAL::Bbox_3 bbox = tree.bbox();
     _bbox = Bbox(bbox.xmin(),
                 bbox.ymin(),
@@ -267,7 +265,44 @@ public:
                 bbox.zmax());
     qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
               <<bbox.zmin()<<", "<<bbox.zmax();
+    tree_size = tree.size();
+    is_tree_empty = tree.empty();
+    invalidateOpenGLBuffers();
   }
+
+  Scene_aabb_item(const Facet_sm_tree& tree) : CGAL::Three::Scene_item(1,1)
+  {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      positions_lines.clear();
+
+      CGAL::AABB_drawing_traits<Facet_sm_primitive, CGAL::AABB_node<Facet_sm_traits> > traits;
+      traits.v_edges = &positions_lines;
+      for(int i=0; i<3; ++i)
+        traits.offset[i] = offset[i];
+
+      tree.traversal(0, traits);
+      const CGAL::Bbox_3 bbox = tree.bbox();
+      _bbox = Bbox(bbox.xmin(),
+                  bbox.ymin(),
+                  bbox.zmin(),
+                  bbox.xmax(),
+                  bbox.ymax(),
+                  bbox.zmax());
+      qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
+                <<bbox.zmin()<<", "<<bbox.zmax();
+      tree_size = tree.size();
+      is_tree_empty = tree.empty();
+      invalidateOpenGLBuffers();
+  }
+
+    ~Scene_aabb_item()
+    {
+    }
+
+  bool isFinite() const { return true; }
+  bool isEmpty() const { return is_tree_empty; }
+  //computed in constructor
+  void compute_bbox() const {}
 
   Scene_aabb_item* clone() const {
     return 0;
@@ -281,7 +316,7 @@ public:
       .arg(this->name())
       .arg(this->renderingModeName())
       .arg(this->color().name())
-      .arg(tree.size());
+      .arg(tree_size);
   }
   
 
@@ -293,12 +328,11 @@ public:
   // Wireframe OpenGL drawing in a display list
   void invalidateOpenGLBuffers()
   {
-      computeElements();
       are_buffers_filled = false;
   }
-public:
-  const Facet_tree& tree;
 private:
+   std::size_t tree_size;
+   bool is_tree_empty;
    mutable  std::vector<float> positions_lines;
 
     mutable QOpenGLShaderProgram *program;
@@ -320,21 +354,6 @@ private:
 
         vaos[0]->release();
         are_buffers_filled = true;
-    }
-
-    void computeElements() const
-    {
-       const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-       QApplication::setOverrideCursor(Qt::WaitCursor);
-       positions_lines.clear();
-
-       CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
-       traits.v_edges = &positions_lines;
-       for(int i=0; i<3; ++i)
-         traits.offset[i] = offset[i];
-
-       tree.traversal(0, traits);
-       QApplication::restoreOverrideCursor();
     }
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
@@ -725,6 +744,7 @@ private:
   {
 
     m_max_distance_function = FT(0);
+
     FT diag = scene_diag();
 #ifndef CGAL_LINKED_WITH_TBB
     const GLdouble* m = frame->matrix();
@@ -980,6 +1000,7 @@ private:
     tex_rendering_program->release();
   }
 };
+
 using namespace CGAL::Three;
 class Polyhedron_demo_cut_plugin :
   public QObject,
@@ -1001,7 +1022,8 @@ public:
     // returns true if one polyhedron is in the entries
     for (int i=0; i< scene->numberOfEntries(); ++i)
     {
-      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(i)) )
+      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(i))
+        || qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) )
         return true;
     }
     return false;
@@ -1160,6 +1182,8 @@ private:
 
   Facet_sm_trees facet_sm_trees;
   Edge_sm_trees edge_sm_trees;
+  template<typename Item, typename Mesh, typename Facets_traits, typename Facets_tree, typename Edges_tree>
+  void apply(Item* item, QMap< QObject*, Facets_tree*>& f_trees, QMap<QObject*, Edges_tree*>& e_trees);
 }; // end Polyhedron_demo_cut_plugin
 
 
@@ -1233,8 +1257,58 @@ QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
 void Polyhedron_demo_cut_plugin::updateTrees(int id)
 {
 if(plane_item &&
-   qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+   (qobject_cast<Scene_polyhedron_item*>(scene->item(id))
+   || qobject_cast<Scene_surface_mesh_item*>(scene->item(id))))
   createCutPlane();
+}
+
+template<typename Item, typename Mesh, typename Facets_traits, typename Facets_tree, typename Edges_tree>
+void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>& f_trees, QMap<QObject*, Edges_tree*>& e_trees)
+{
+  const Mesh& mesh = *item->polyhedron();
+  if(!CGAL::is_triangle_mesh(mesh))
+  {
+    messages->warning(QString("%1 ignored (not a triangulated mesh)").arg(item->name()));
+    return;
+  }
+  if(!CGAL::is_closed(mesh))
+  {
+    messages->warning(QString("%1 is not closed. Signed function will not be displayed.").arg(item->name()));
+  }
+  if(f_trees.find(item) == f_trees.end()) {
+    PPMAP<Mesh> pmap(item->polyhedron());
+    Facets_traits traits;
+    traits.set_shared_data(mesh, pmap); //Mandatory for SMesh. If not provided, mesh and PPmap are taken default, saying NULL in tree.traversal().
+    f_trees[item] = new Facets_tree(traits);
+    //filter facets to ignore degenerated ones
+
+    for(typename boost::graph_traits<Mesh>::face_iterator fit = faces(mesh).first,
+        end = faces(mesh).second;
+        fit!=end; ++fit)
+    {
+      typename PPMAP<Mesh>::value_type a(get(pmap, target(halfedge(*fit, mesh), mesh))),
+          b(get(pmap, target(next(halfedge(*fit, mesh), mesh), mesh))),
+          c(get(pmap, target(prev(halfedge(*fit, mesh), mesh), mesh)));
+
+      if(!CGAL::collinear(a,b,c))
+        f_trees[item]->insert(typename Facets_tree::Primitive(fit, mesh, pmap));
+    }
+
+    Scene_aabb_item* aabb_item = new Scene_aabb_item(*f_trees[item]);
+    aabb_item->setName(tr("AABB tree of %1").arg(item->name()));
+    aabb_item->setRenderingMode(Wireframe);
+    aabb_item->setColor(Qt::black);
+    aabb_item->setVisible(false);
+    scene->addItem(aabb_item);
+  }
+  if(e_trees.find(item) == e_trees.end()) {
+    e_trees[item] = new Edges_tree();
+    PPMAP<Mesh> pmap(item->polyhedron());
+    e_trees[item]->insert(edges(mesh).first,
+                                  edges(mesh).second,
+                                  mesh,
+                                  pmap);
+  }
 }
 
 void Polyhedron_demo_cut_plugin::createCutPlane() {
@@ -1279,54 +1353,27 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     if ( NULL != poly_item )
       poly_item->setVisible(false);
+
+    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+    if ( NULL != sm_item )
+      sm_item->setVisible(false);
   }
   //fills the tree maps
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     CGAL::Three::Scene_item* item = scene->item(i);
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if(!poly_item) continue;
-    if(!poly_item->polyhedron()->is_pure_triangle())
+    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+    if(!poly_item)
     {
-      messages->warning(QString("%1 ignored (not a triangulated mesh)").arg(poly_item->name()));
-      continue;
-    }
-    if(!poly_item->polyhedron()->is_closed())
-    {
-      messages->warning(QString("%1 is not closed. Signed function will not be displayed.").arg(poly_item->name()));
-    }
-    if(facet_trees.find(poly_item) == facet_trees.end()) {
-      facet_trees[poly_item] = new Facet_tree();
-      PPMAP<Polyhedron> pmap(poly_item->polyhedron());
-      //filter facets to ignore degenerated ones
-      for(Polyhedron::Facet_iterator
-          fit = poly_item->polyhedron()->facets_begin(),
-          end = poly_item->polyhedron()->facets_end();
-          fit!=end; ++fit)
+      if(sm_item)
       {
-        Polyhedron::Point a(fit->halfedge()->vertex()->point()),
-            b(fit->halfedge()->next()->vertex()->point()),
-            c(fit->halfedge()->prev()->vertex()->point());
-
-        if(!CGAL::collinear(a,b,c))
-          facet_trees[poly_item]->insert(Facet_primitive(fit, *poly_item->polyhedron(), pmap));
+        apply<Scene_surface_mesh_item, SMesh, Facet_sm_traits, Facet_sm_tree, Edge_sm_tree>(sm_item,facet_sm_trees, edge_sm_trees);
       }
-
-      Scene_aabb_item* aabb_item = new Scene_aabb_item(*facet_trees[poly_item]);
-      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
-      aabb_item->setRenderingMode(Wireframe);
-      aabb_item->setColor(Qt::black);
-      aabb_item->setVisible(false);
-      scene->addItem(aabb_item);
     }
-    if(edge_trees.find(poly_item) == edge_trees.end()) {
-      edge_trees[poly_item] = new Edge_tree();
-      PPMAP<Polyhedron> pmap(poly_item->polyhedron());
-      edge_trees[poly_item]->insert(edges(*poly_item->polyhedron()).first,
-                                    edges(*poly_item->polyhedron()).second,
-                                    *poly_item->polyhedron(),
-                                    pmap);
-    }
+    else
+        apply<Scene_polyhedron_item, Polyhedron, Facet_traits, Facet_tree, Edge_tree>(poly_item, facet_trees, edge_trees);
   }
+
   plane_item->set_facet_trees(&facet_trees);
   plane_item->set_edge_trees(&edge_trees);
 
@@ -1420,6 +1467,24 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     it.value()->all_intersections(plane, std::back_inserter(intersections));
 
     for ( std::vector<Facet_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
+          end = intersections.end() ; it != end ; ++it )
+    {
+      const Simple_kernel::Segment_3* inter_seg =
+          CGAL::object_cast<Simple_kernel::Segment_3>(&(it->first));
+
+      if ( NULL != inter_seg )
+        edges_item->edges.push_back(*inter_seg);
+    }
+  }
+  for(Facet_sm_trees::iterator it = facet_sm_trees.begin(); it != facet_sm_trees.end(); ++it)
+  {
+    if(!CGAL::do_intersect(plane, it.value()->bbox()))
+      continue;
+    does_intersect = true;
+    std::vector<Facet_sm_tree::Object_and_primitive_id> intersections;
+    it.value()->all_intersections(plane, std::back_inserter(intersections));
+
+    for ( std::vector<Facet_sm_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
           end = intersections.end() ; it != end ; ++it )
     {
       const Simple_kernel::Segment_3* inter_seg =

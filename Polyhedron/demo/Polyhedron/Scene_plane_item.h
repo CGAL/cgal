@@ -32,12 +32,20 @@ public:
     To avoid that, we need to compute the scene's bbox if the items were visible.
     {
 */
-    Scene_item::Bbox bbox;
-    if(scene->bbox() == Scene_item::Bbox(0,0,0,0,0,0))
+    Scene_item::Bbox bbox = scene->bbox();
+    if(bbox == Scene_item::Bbox(std::numeric_limits<double>::infinity(),
+                                std::numeric_limits<double>::infinity(),
+                                std::numeric_limits<double>::infinity(),
+                                -std::numeric_limits<double>::infinity(),
+                                -std::numeric_limits<double>::infinity(),
+                                -std::numeric_limits<double>::infinity()))
+      bbox = Scene_item::Bbox(0,0,0,0,0,0);
+    if(bbox == Scene_item::Bbox(0,0,0,0,0,0))
     {
       for(int id = 0; id< scene->numberOfEntries(); ++id)
       {
-        bbox = bbox + scene->item(id)->bbox();
+        if(scene->item(id)->isFinite() && !scene->item(id)->isEmpty())
+          bbox = bbox + scene->item(id)->bbox();
       }
     }
     else
