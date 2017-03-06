@@ -185,6 +185,7 @@ _test_cls_delaunay_3(const Triangulation &)
   //typedef typename If<typename Cls::Weighted_tag,
   //                    typename Cls::Point, Cls>::type::Point   Point; 
   typedef typename Cls::Point                Point;
+  typedef typename Cls::Geom_traits::Point_3 Bare_point;
 
   typedef typename Cls::Segment              Segment;
   typedef typename Cls::Triangle             Triangle;
@@ -914,7 +915,7 @@ _test_cls_delaunay_3(const Triangulation &)
   // We only test return types and instantiation, basically.
   {
     Cell_handle c = T4.finite_cells_begin();
-    Point p = T4.dual(c);
+    Bare_point p = T4.dual(c);
     (void)p;
     Facet f = Facet(c, 2);
     CGAL::Object o = T4.dual(f);
