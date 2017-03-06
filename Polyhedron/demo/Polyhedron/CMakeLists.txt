@@ -243,7 +243,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
 
   add_item(scene_point_set_classification_item Scene_point_set_classification_item.cpp)
-  target_link_libraries(scene_point_set_classification_item scene_points_with_normal_item scene_color_ramp)
+  target_link_libraries(scene_point_set_classification_item scene_points_with_normal_item scene_color_ramp ${TBB_LIBRARIES})
 
   add_item(scene_polyhedron_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
 

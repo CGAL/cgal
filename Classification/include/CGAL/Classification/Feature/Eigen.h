@@ -41,19 +41,19 @@ protected:
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<double> attrib;
 #else
-  Local_eigen_analysis& eigen;
+  const Local_eigen_analysis& eigen;
 #endif
   
 public:
   Eigen_feature (const PointRange&,
-                   Local_eigen_analysis& eigen)
+                   const Local_eigen_analysis& eigen)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : eigen (eigen)
 #endif
   {
   }
 
-  virtual void init (const PointRange& input, Local_eigen_analysis& eigen)
+  virtual void init (const PointRange& input, const Local_eigen_analysis& eigen)
   {
     this->set_weight(1.);
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
@@ -66,7 +66,7 @@ public:
     this->compute_mean_max (attrib, mean, this->max);
   }
   
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i) = 0;
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i) = 0;
   virtual double value (std::size_t pt_index)
   {
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
@@ -113,13 +113,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Linearity (const PointRange& input,
-             Local_eigen_analysis& eigen) : Base (input, eigen)
+             const Local_eigen_analysis& eigen) : Base (input, eigen)
   {
     this->init(input, eigen);
   }
 
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
@@ -165,13 +165,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Planarity (const PointRange& input,
-             Local_eigen_analysis& eigen)
+             const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
@@ -218,13 +218,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Sphericity (const PointRange& input,
-              Local_eigen_analysis& eigen)
+              const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
@@ -270,13 +270,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Omnivariance (const PointRange& input,
-                Local_eigen_analysis& eigen)
+                const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     return (std::pow (std::fabs(ev[0] * ev[1] * ev[2]), 0.333333333));
@@ -319,13 +319,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Anisotropy (const PointRange& input,
-              Local_eigen_analysis& eigen)
+              const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
@@ -371,13 +371,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Eigentropy (const PointRange& input,
-              Local_eigen_analysis& eigen)
+              const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[0] < 1e-15
@@ -428,13 +428,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Sum_eigenvalues (const PointRange& input,
-                   Local_eigen_analysis& eigen)
+                   const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     return eigen.sum_of_eigenvalues(i);
   }
@@ -477,13 +477,13 @@ public:
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   Surface_variation (const PointRange& input,
-                     Local_eigen_analysis& eigen)
+                     const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double get_value (Local_eigen_analysis& eigen, std::size_t i)
+  virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[0] + ev[1] + ev[2] < 1e-15)

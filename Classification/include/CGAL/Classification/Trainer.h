@@ -81,9 +81,9 @@ class Trainer
 {
 
 public:
-  typedef CGAL::Classifier<ItemRange, ItemMap>      Classifier;
-  typedef typename Classification::Label_handle      Label_handle;
-  typedef typename Classification::Feature_handle Feature_handle;
+  typedef CGAL::Classifier<ItemRange, ItemMap, ConcurrencyTag>  Classifier;
+  typedef typename Classification::Label_handle                 Label_handle;
+  typedef typename Classification::Feature_handle               Feature_handle;
 
 private:
 

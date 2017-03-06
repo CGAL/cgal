@@ -69,7 +69,7 @@ public:
   */
   Echo_scatter (const PointRange& input,
                 EchoMap echo_map,
-                Grid& grid,
+                const Grid& grid,
                 const double grid_resolution,
                 double radius_neighbors = 1.)
   {

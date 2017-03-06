@@ -56,14 +56,7 @@ namespace Classification {
     for matrix diagonalization.
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3>,
-#if defined(DOXYGEN_RUNNING)
-          typename ConcurrencyTag>
-#elif defined(CGAL_LINKED_WITH_TBB)
-          typename ConcurrencyTag = CGAL::Parallel_tag>
-#else
-          typename ConcurrencyTag = CGAL::Sequential_tag>
-#endif
+          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Local_eigen_analysis
 {
 public:
@@ -143,11 +136,21 @@ public:
     on a local neighborhood.
 
     \tparam NeighborQuery model of `NeighborQuery`
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Parallel_tag` (default value is CGAL
+    is linked with TBB) or `Sequential_tag` (default value otherwise).
     \param input input range.
     \param point_map property map to access the input points
     \param neighbor_query object used to access neighborhoods of points.
   */
-  template <typename NeighborQuery>
+  template <typename NeighborQuery,
+#if defined(DOXYGEN_RUNNING)
+            typename ConcurrencyTag>
+#elif defined(CGAL_LINKED_WITH_TBB)
+            typename ConcurrencyTag = CGAL::Parallel_tag>
+#else
+            typename ConcurrencyTag = CGAL::Sequential_tag>
+#endif
   Local_eigen_analysis (const PointRange& input,
                         PointMap point_map,
                         const NeighborQuery& neighbor_query)

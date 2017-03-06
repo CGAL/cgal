@@ -382,11 +382,9 @@ public Q_SLOTS:
       }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
+
     classification_item->compute_features ();
-    //    run (classification_item, 0);
-    std::cerr << "Features computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+
     update_plugin_from_item(classification_item);
     QApplication::restoreOverrideCursor();
     scene->itemChanged(classification_item);

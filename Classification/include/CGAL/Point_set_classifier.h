@@ -46,9 +46,8 @@
 #include <CGAL/demangle.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/parallel_invoke.h>
-#include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>
+#include <tbb/task_group.h>
+#include <tbb/mutex.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 
@@ -71,6 +70,9 @@ namespace CGAL {
   \tparam PointMap model of `ReadablePropertyMap` whose key
   type is the value type of the iterator of `PointRange` and value type
   is `Geom_traits::Point_3`.
+  \tparam ConcurrencyTag enables sequential versus parallel
+  algorithm. Possible values are `Parallel_tag` (default value is CGAL
+  is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
   for matrix diagonalization.
 
@@ -78,15 +80,22 @@ namespace CGAL {
 template <typename Geom_traits,
           typename PointRange,
           typename PointMap,
+#if defined(DOXYGEN_RUNNING)
+          typename ConcurrencyTag,
+#elif defined(CGAL_LINKED_WITH_TBB)
+          typename ConcurrencyTag = CGAL::Parallel_tag,
+#else
+          typename ConcurrencyTag = CGAL::Sequential_tag,
+#endif
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Point_set_classifier : public Classifier<PointRange, PointMap>
+class Point_set_classifier : public Classifier<PointRange, PointMap, ConcurrencyTag>
 {
   
 public:
   typedef typename Geom_traits::Iso_cuboid_3             Iso_cuboid_3;
 
   /// \cond SKIP_IN_MANUAL
-  typedef Classifier<PointRange, PointMap> Base;
+  typedef Classifier<PointRange, PointMap, ConcurrencyTag> Base;
   typedef typename PointRange::const_iterator Iterator;
   using Base::m_input;
   using Base::m_item_map;
@@ -194,6 +203,37 @@ private:
   Iso_cuboid_3 m_bbox;
   std::vector<Scale*> m_scales;
 
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::mutex m_scale_mutex;
+  tbb::task_group* m_tasks;
+#endif
+
+  struct Feature_adder
+  {
+    mutable Point_set_classifier* classifier;
+    mutable Scale* scale;
+
+    Feature_adder (Point_set_classifier* classifier, Scale* scale)
+      : classifier (classifier), scale (scale) { }
+
+    virtual ~Feature_adder() { }
+
+#ifdef CGAL_LINKED_WITH_TBB
+    void mutex_lock() const { classifier->m_scale_mutex.lock(); }
+    void mutex_unlock() const { classifier->m_scale_mutex.unlock(); }
+#else
+    void mutex_lock() const { }
+    void mutex_unlock() const { }
+#endif
+    
+    virtual void operator()() const = 0;
+  };
+  friend Feature_adder;
+
+  
+  std::vector<Feature_adder*> m_adders;
+
+  
 public:
 
   
@@ -306,9 +346,9 @@ public:
       Emap;
 
     generate_features_impl (nb_scales,
-                              get_parameter<Vmap>(normal_map),
-                              get_parameter<Cmap>(color_map),
-                              get_parameter<Emap>(echo_map));
+                            get_parameter<Vmap>(normal_map),
+                            get_parameter<Cmap>(color_map),
+                            get_parameter<Emap>(echo_map));
   }
 
   /// @}
@@ -416,8 +456,7 @@ public:
 
   void generate_point_based_features ()
   {
-    CGAL::Real_timer teigen, tpoint;
-    teigen.start();
+
     generate_multiscale_feature_variant_0<Anisotropy> ();
     generate_multiscale_feature_variant_0<Eigentropy> ();
     generate_multiscale_feature_variant_0<Linearity> ();
@@ -427,77 +466,141 @@ public:
     generate_multiscale_feature_variant_0<Sum_eigen> ();
     generate_multiscale_feature_variant_0<Surface_variation> ();
 
-    teigen.stop();
-    tpoint.start();
     generate_multiscale_feature_variant_1<Distance_to_plane> ();
     generate_multiscale_feature_variant_2<Dispersion> ();
     generate_multiscale_feature_variant_3<Elevation> ();
-    tpoint.stop();
-    
-    CGAL_CLASSIFICATION_CERR << "Point based features computed in " << tpoint.time() << " second(s)" << std::endl;
-    CGAL_CLASSIFICATION_CERR << "Eigen based features computed in " << teigen.time() << " second(s)" << std::endl;
   }
 
+  template <typename FeatureAdder>
+  void launch_feature_computation (FeatureAdder* adder)
+  {
+    m_adders.push_back (adder);
+    
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+      {
+        m_tasks->run (*adder);
+      }
+    else
+#endif
+      {
+        (*adder)();
+      }
+  }
+
+  template <typename VectorMap>
+  struct Feature_adder_verticality : public Feature_adder
+  {
+    using Feature_adder::classifier;
+    using Feature_adder::scale;
+    VectorMap normal_map;
+
+    // TODO!
+    Feature_adder_verticality (Point_set_classifier* classifier, VectorMap normal_map, Scale* scale)
+      : Feature_adder (classifier, scale), normal_map (normal_map) { }
+    
+    void operator() () const
+    {
+      Feature_handle result = classifier->template add_feature<Verticality> (normal_map);
+      this->mutex_lock();
+      scale->features.push_back (result);
+      this->mutex_unlock();
+    }
+  };
 
   template <typename VectorMap>
   void generate_normal_based_features(VectorMap normal_map)
   {
-    CGAL::Real_timer t; t.start();
-    this->template add_feature<Verticality> (normal_map);
-    m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Normal based features computed in " << t.time() << " second(s)" << std::endl;
+    launch_feature_computation (new Feature_adder_verticality<VectorMap> (this, normal_map, m_scales[0]));
   }
 
   void generate_normal_based_features(const CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3>&)
   {
-    CGAL::Real_timer t; t.start();
     generate_multiscale_feature_variant_0<Verticality> ();
-    CGAL_CLASSIFICATION_CERR << "Normal based features computed in " << t.time() << " second(s)" << std::endl;
   }
+
+  template <typename ColorMap>
+  struct Feature_adder_color : public Feature_adder
+  {
+    typedef Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
+    
+    using Feature_adder::classifier;
+    using Feature_adder::scale;
+    ColorMap color_map;
+    std::size_t channel;
+    double mean;
+    double sd;
+
+    // TODO!
+    Feature_adder_color (Point_set_classifier* classifier, ColorMap color_map, Scale* scale,
+                         std::size_t channel, double mean, double sd)
+      : Feature_adder (classifier, scale), color_map (color_map),
+        channel (channel), mean (mean), sd (sd) { }
+    
+    void operator() () const
+    {
+      Feature_handle result = classifier->template add_feature<Hsv> (color_map, channel, mean, sd);
+      this->mutex_lock();
+      scale->features.push_back (result);
+      this->mutex_unlock();
+    }
+  };
+
   template <typename ColorMap>
   void generate_color_based_features(ColorMap color_map)
   {
-
-    typedef Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
-    CGAL::Real_timer t; t.start();
     for (std::size_t i = 0; i <= 8; ++ i)
-      {
-        this->template add_feature<Hsv> (color_map, 0, 45 * i, 22.5);
-        m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
+      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, m_scales[0],
+                                                                     0, 45 * i, 22.5));
+
     for (std::size_t i = 0; i <= 4; ++ i)
-      {
-        this->template add_feature<Hsv> (color_map, 1, 25 * i, 12.5);
-        m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
+      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, m_scales[0],
+                                                                     1, 25 * i, 12.5));
+    
     for (std::size_t i = 0; i <= 4; ++ i)
-      {
-        this->template add_feature<Hsv> (color_map, 2, 25 * i, 12.5);
-        m_scales[0]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Color based features computed in " << t.time() << " second(s)" << std::endl;
+      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, m_scales[0],
+                                                                     2, 25 * i, 12.5));
   }
 
   void generate_color_based_features(const CGAL::Default_property_map<Iterator, RGB_Color>&)
   {
   }
 
+
+  template <typename EchoMap>
+  struct Feature_adder_echo : public Feature_adder
+  {
+    typedef Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
+    
+    using Feature_adder::classifier;
+    using Feature_adder::scale;
+    EchoMap echo_map;
+
+    // TODO!
+    Feature_adder_echo (Point_set_classifier* classifier, EchoMap echo_map, Scale* scale)
+      : Feature_adder (classifier, scale), echo_map (echo_map) { }
+    
+    void operator() () const
+    {
+      Feature_handle result = classifier->template add_feature<Echo_scatter> (echo_map,
+                                                                              *(scale->grid),
+                                                                              scale->grid_resolution(),
+                                                                              scale->radius_neighbors());
+      this->mutex_lock();
+      scale->features.push_back (result);
+      this->mutex_unlock();
+    }
+  };
+
+
   template <typename EchoMap>
   void generate_echo_based_features(EchoMap echo_map)
   {
-    typedef Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
-    CGAL::Real_timer t; t.start();
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_feature<Echo_scatter>(echo_map, *(m_scales[i]->grid),
-                                          m_scales[i]->grid_resolution(),
-                                          m_scales[i]->radius_neighbors());
-        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Echo based features computed in " << t.time() << " second(s)" << std::endl;
+      launch_feature_computation (new Feature_adder_echo<EchoMap> (this, echo_map, m_scales[i]));
   }
 
   void generate_echo_based_features(const CGAL::Default_property_map<Iterator, std::size_t>&)
@@ -746,7 +849,7 @@ private:
                                  EchoMap echo_map)
   {
     CGAL::Real_timer t; t.start();
-
+    
     m_scales.reserve (nb_scales);
     double voxel_size = - 1.;
 
@@ -758,57 +861,144 @@ private:
         voxel_size *= 2;
         m_scales.push_back (new Scale (m_input, m_item_map, m_bbox, voxel_size));
       }
+    t.stop();
+    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
+    t.reset();
+
+    t.start();
+    
+#ifdef CGAL_LINKED_WITH_TBB
+    m_tasks = new tbb::task_group;
+#endif
     
     generate_point_based_features ();
     generate_normal_based_features (normal_map);
     generate_color_based_features (color_map);
     generate_echo_based_features (echo_map);
+
+#ifdef CGAL_LINKED_WITH_TBB
+    m_tasks->wait();
+    delete m_tasks;
+#endif
+    
+    t.stop();
+    CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;
+    for (std::size_t i = 0; i < m_adders.size(); ++ i)
+      delete m_adders[i];
   }
 
+  template <typename Feature_type>
+  struct Feature_adder_variant_0 : public Feature_adder
+  {
+    using Feature_adder::classifier;
+    using Feature_adder::scale;
+
+    Feature_adder_variant_0 (Point_set_classifier* classifier, Scale* scale)
+      : Feature_adder (classifier, scale) { }
+    
+    void operator() () const
+    {
+      Feature_handle result = classifier->template add_feature<Feature_type> (*(scale->eigen));
+      this->mutex_lock();
+      scale->features.push_back (result);
+      this->mutex_unlock();
+    }
+  };
+  
   template <typename Feature_type>
   void generate_multiscale_feature_variant_0 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_feature<Feature_type>(*(m_scales[i]->eigen));
-        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
+      launch_feature_computation (new Feature_adder_variant_0<Feature_type> (this, m_scales[i]));
   }
 
+  template <typename Feature_type>
+  struct Feature_adder_variant_1 : public Feature_adder
+  {
+    using Feature_adder::classifier;
+    using Feature_adder::scale;
+    PointMap point_map;
+
+    // TODO!
+    Feature_adder_variant_1 (Point_set_classifier* classifier, PointMap point_map, Scale* scale)
+      : Feature_adder (classifier, scale), point_map (point_map) { }
+    
+    void operator() () const
+    {
+      Feature_handle result = classifier->template add_feature<Feature_type> (point_map,
+                                                                              *(scale->eigen));
+      this->mutex_lock();
+      scale->features.push_back (result);
+      this->mutex_unlock();
+    }
+  };
+  
   template <typename Feature_type>
   void generate_multiscale_feature_variant_1 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_feature<Feature_type>(m_item_map, *(m_scales[i]->eigen));
-        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
+      launch_feature_computation (new Feature_adder_variant_1<Feature_type> (this, m_item_map, m_scales[i]));
   }
 
+  template <typename Feature_type>
+  struct Feature_adder_variant_2 : public Feature_adder
+  {
+    using Feature_adder::classifier;
+    using Feature_adder::scale;
+    PointMap point_map;
+
+    // TODO!
+    Feature_adder_variant_2 (Point_set_classifier* classifier, PointMap point_map, Scale* scale)
+      : Feature_adder (classifier, scale), point_map (point_map) { }
+    
+    void operator() () const
+    {
+      Feature_handle result = classifier->template add_feature<Feature_type>
+        (point_map,
+         *(scale->grid),
+         scale->grid_resolution(),
+         scale->radius_neighbors());
+      this->mutex_lock();
+      scale->features.push_back (result);
+      this->mutex_unlock();
+    }
+  };
+  
   template <typename Feature_type>
   void generate_multiscale_feature_variant_2 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_feature<Feature_type>(m_item_map,
-                                            *(m_scales[i]->grid),
-                                            m_scales[i]->grid_resolution(),
-                                            m_scales[i]->radius_neighbors());
-        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
+      launch_feature_computation (new Feature_adder_variant_2<Feature_type> (this, m_item_map, m_scales[i]));
   }
 
+  template <typename Feature_type>
+  struct Feature_adder_variant_3 : public Feature_adder
+  {
+    using Feature_adder::classifier;
+    using Feature_adder::scale;
+    PointMap point_map;
+
+    // TODO!
+    Feature_adder_variant_3 (Point_set_classifier* classifier, PointMap point_map, Scale* scale)
+      : Feature_adder (classifier, scale), point_map (point_map) { }
+    
+    void operator() () const
+    {
+      Feature_handle result = classifier->template add_feature<Feature_type> (point_map,
+                                                                              *(scale->grid),
+                                                                              scale->grid_resolution(),
+                                                                              scale->radius_dtm());
+      this->mutex_lock();
+      scale->features.push_back (result);
+      this->mutex_unlock();
+    }
+  };
+  
   template <typename Feature_type>
   void generate_multiscale_feature_variant_3 ()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        this->template add_feature<Feature_type>(m_item_map,
-                                            *(m_scales[i]->grid),
-                                            m_scales[i]->grid_resolution(),
-                                            m_scales[i]->radius_dtm());
-        m_scales[i]->features.push_back (this->feature (this->number_of_features() - 1));
-      }
+      launch_feature_computation (new Feature_adder_variant_3<Feature_type> (this, m_item_map, m_scales[i]));
   }
 
   template<typename VectorMap,typename ColorMap, typename EchoMap>

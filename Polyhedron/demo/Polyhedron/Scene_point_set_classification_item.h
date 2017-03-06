@@ -70,8 +70,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   typedef Point_set::Vector_map Vector_map;
   typedef Point_set_color_map<Point_set> Color_map;
 
-  typedef CGAL::Point_set_classifier<Kernel, Point_set, Point_map>                         PSC;
-  typedef CGAL::Classification::Trainer<Point_set, Point_map>                              Trainer;
+  typedef CGAL::Point_set_classifier<Kernel, Point_set, Point_map>                     PSC;
+  typedef CGAL::Classification::Trainer<Point_set, Point_map>        Trainer;
   typedef CGAL::Classification::Label_handle                                               Label_handle;
   typedef CGAL::Classification::Feature_handle                                             Feature_handle;
   typedef CGAL::Classification::Feature::Vertical_dispersion<Kernel, Point_set, Point_map> Dispersion;

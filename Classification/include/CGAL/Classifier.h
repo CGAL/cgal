@@ -252,8 +252,13 @@ protected:
 
   };
 
+  tbb::mutex m_mutex;
+  void mutex_lock() { m_mutex.lock(); }
+  void mutex_unlock() { m_mutex.unlock(); }
+#else // CGAL_LINKED_WITH_TBB
+  void mutex_lock() { }
+  void mutex_unlock() { }
 #endif // CGAL_LINKED_WITH_TBB
-
   
   const ItemRange& m_input;
   ItemMap m_item_map;
@@ -265,7 +270,6 @@ protected:
   std::vector<Feature_handle> m_features; 
 
   std::vector<std::vector<Feature_effect> > m_effect_table;
-
   /// \endcond
 
 public:
@@ -318,49 +322,66 @@ public:
   template <typename Feature, typename ... T>
   Feature_handle add_feature (T&& ... t)
   {
-    // CGAL::Timer timer;
-    // timer.start();
-    m_features.push_back (Feature_handle (new Feature(m_input, std::forward<T>(t)...)));
-    // timer.stop();
-    // CGAL_CLASSIFICATION_CERR << m_features.back()->name() << " took " << timer.time() << " second(s)" << std::endl;
-    return m_features.back();
+    Feature_handle fh (new Feature(m_input, std::forward<T>(t)...));
+    mutex_lock();
+    m_features.push_back (fh);
+    mutex_unlock();
+    return fh;
   }
 #else
   template <typename Feature>
   Feature_handle add_feature ()
   {
-    m_features.push_back (Feature_handle (new Feature(m_input)));
-    return m_features.back();
+    Feature_handle fh (new Feature(m_input));
+    mutex_lock();
+    m_features.push_back (fh);
+    mutex_unlock();
+    return fh;
   }
   template <typename Feature, typename T1>
   Feature_handle add_feature (T1& t1)
   {
-    m_features.push_back (Feature_handle (new Feature(m_input, t1)));
-    return m_features.back();
+    Feature_handle fh (new Feature(m_input, t1));
+    mutex_lock();
+    m_features.push_back (fh);
+    mutex_unlock();
+    return fh;
   }
   template <typename Feature, typename T1, typename T2>
   Feature_handle add_feature (T1& t1, T2& t2)
   {
-    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2)));
-    return m_features.back();
+    Feature_handle fh (new Feature(m_input, t1, t2));
+    mutex_lock();
+    m_features.push_back (fh);
+    mutex_unlock();
+    return fh;
   }
   template <typename Feature, typename T1, typename T2, typename T3>
   Feature_handle add_feature (T1& t1, T2& t2, T3& t3)
   {
-    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2, t3)));
-    return m_features.back();
+    Feature_handle fh (new Feature(m_input, t1, t2, t3));
+    mutex_lock();
+    m_features.push_back (fh);
+    mutex_unlock();
+    return fh;
   }
   template <typename Feature, typename T1, typename T2, typename T3, typename T4>
   Feature_handle add_feature (T1& t1, T2& t2, T3& t3, T4& t4)
   {
-    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2, t3, t4)));
-    return m_features.back();
+    Feature_handle fh (new Feature(m_input, t1, t2, t3, t4));
+    mutex_lock();
+    m_features.push_back (fh);
+    mutex_unlock();
+    return fh;
   }
   template <typename Feature, typename T1, typename T2, typename T3, typename T4, typename T5>
   Feature_handle add_feature (T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
   {
-    m_features.push_back (Feature_handle (new Feature(m_input, t1, t2, t3, t4, t5)));
-    return m_features.back();
+    Feature_handle fh (new Feature(m_input, t1, t2, t3, t4, t5));
+    mutex_lock();
+    m_features.push_back (fh);
+    mutex_unlock();
+    return fh;
   }
 #endif
 
