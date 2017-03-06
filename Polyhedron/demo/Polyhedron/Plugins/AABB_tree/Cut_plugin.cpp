@@ -8,6 +8,7 @@
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
@@ -63,22 +64,23 @@ Simple_kernel::Vector_3 random_vector()
 
 #ifdef CGAL_LINKED_WITH_TBB
 //functor for tbb parallelization
-template <typename Tree>
+template <typename Tree, typename SM_Tree>
 class FillGridSize {
   std::size_t grid_size;
   Point_distance (&distance_function)[100][100];
   FT diag;
   FT& max_distance_function;
   std::vector<Tree*>&trees;
+  std::vector<SM_Tree*>&sm_trees;
   bool is_signed;
   qglviewer::ManipulatedFrame* frame;
 public:
   FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
-  FT& max_distance_function, std::vector<Tree*>& trees,
+  FT& max_distance_function, std::vector<Tree*>& trees, std::vector<SM_Tree*>& sm_trees,
   bool is_signed, qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
     max_distance_function(max_distance_function),
-    trees(trees), is_signed(is_signed), frame(frame)
+    trees(trees), sm_trees(sm_trees), is_signed(is_signed), frame(frame)
   {
   }
   void operator()(const tbb::blocked_range<std::size_t>& r) const
@@ -92,6 +94,7 @@ public:
     const FT z (0);
     const FT fd =  FT(1);
     Tree *min_tree = NULL ;
+    SM_Tree *min_sm_tree = NULL;
     for( std::size_t t = r.begin(); t != r.end(); ++t)
     {
       int i = static_cast<int>(t%grid_size), j = static_cast<int>(t/grid_size);
@@ -102,7 +105,7 @@ public:
         Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
-
+        bool is_min_sm = false;
         Q_FOREACH(Tree *tree, trees)
         {
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
@@ -113,13 +116,24 @@ public:
               min_tree = tree;
           }
         }
+        Q_FOREACH(SM_Tree *tree, sm_trees)
+        {
+          FT dist = CGAL::sqrt( tree->squared_distance(query) );
+          if(dist < min)
+          {
+            min = dist;
+            is_min_sm = true;
+            if(is_signed)
+              min_sm_tree = tree;
+          }
+        }
         distance_function[i][j] = Point_distance(query,min);
         max_distance_function = (std::max)(min, max_distance_function);
 
 
         if(is_signed)
         {
-          if(!min_tree)
+          if(!min_tree && !min_sm_tree)
           {
             distance_function[i][j] = Point_distance(query,DBL_MAX);
             max_distance_function = DBL_MAX;//(std::max)(min, max_distance_function);
@@ -133,7 +147,8 @@ public:
 
           // get sign through ray casting (random vector)
           Simple_kernel::Ray_3  ray(p, random_vec);
-          size_type nbi = min_tree->number_of_intersected_primitives(ray);
+          size_type nbi = (is_min_sm) ? min_sm_tree->number_of_intersected_primitives(ray)
+                                      : min_tree->number_of_intersected_primitives(ray);
 
           FT sign ( (nbi&1) == 0 ? 1 : -1);
           distance_function[i][j].second = sign * unsigned_distance;
@@ -175,29 +190,55 @@ public:
 typedef CGAL::Simple_cartesian<double> Simple_kernel;
 
 //typedef CGAL::Exact_predicates_inexact_constructions_kernel         Simple_kernel;
+template< typename Mesh>
 struct PPMAP
 {
   typedef boost::readable_property_map_tag category;
   typedef Simple_kernel::Point_3 value_type;
   typedef const Simple_kernel::Point_3& reference;
-  typedef boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
-  friend reference get(const PPMAP&, key_type v)
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor key_type;
+  typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
+
+  Mesh* _mesh;
+  PPMAP<Mesh>()
+    :_mesh(NULL){}
+  PPMAP<Mesh>(Mesh* mesh)
+    :_mesh(mesh)
   {
-    return reinterpret_cast<const Simple_kernel::Point_3&>(v->point());
+  }
+
+
+
+  friend reference get(const PPMAP<Mesh>&ppmap, key_type v)
+  {
+   VertexPointMap pmap = get(boost::vertex_point, *ppmap._mesh);
+    return reinterpret_cast<const Simple_kernel::Point_3&>(get(pmap, v));
   }
 };
 
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, PPMAP> Facet_primitive;
+typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, PPMAP<Polyhedron> > Facet_primitive;
 typedef CGAL::AABB_traits<Simple_kernel, Facet_primitive>           Facet_traits;
 typedef CGAL::AABB_tree<Facet_traits>                               Facet_tree;
 
-typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron, PPMAP> Edge_primitive;
+typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron, PPMAP<Polyhedron> > Edge_primitive;
 typedef CGAL::AABB_traits<Simple_kernel, Edge_primitive>              Edge_traits;
 typedef CGAL::AABB_tree<Edge_traits>                                Edge_tree;
 
 
 typedef QMap<QObject*, Facet_tree*>                   Facet_trees;
 typedef QMap<QObject*, Edge_tree*>                    Edge_trees;
+
+typedef Scene_surface_mesh_item::SMesh SMesh;
+typedef CGAL::AABB_face_graph_triangle_primitive<SMesh, PPMAP<SMesh> > Facet_sm_primitive;
+typedef CGAL::AABB_traits<Simple_kernel, Facet_sm_primitive>           Facet_sm_traits;
+typedef CGAL::AABB_tree<Facet_sm_traits>                               Facet_sm_tree;
+
+typedef CGAL::AABB_halfedge_graph_segment_primitive<SMesh, PPMAP<SMesh> > Edge_sm_primitive;
+typedef CGAL::AABB_traits<Simple_kernel, Edge_sm_primitive>              Edge_sm_traits;
+typedef CGAL::AABB_tree<Edge_sm_traits>                                Edge_sm_tree;
+
+typedef QMap<QObject*, Facet_sm_tree*>                   Facet_sm_trees;
+typedef QMap<QObject*, Edge_sm_tree*>                    Edge_sm_trees;
 
 
 class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
@@ -564,6 +605,16 @@ public:
   {
     this->edge_trees = edge_trees;
   }
+
+  void set_facet_sm_trees(Facet_sm_trees *facet_trees)
+  {
+    this->facet_sm_trees = facet_trees;
+  }
+
+  void set_edge_sm_trees(Edge_sm_trees *edge_trees)
+  {
+    this->edge_sm_trees = edge_trees;
+  }
   void draw(CGAL::Three::Viewer_interface* viewer) const
   {
     if(!are_buffers_filled)
@@ -638,6 +689,8 @@ public:
 private:
   Edge_trees* edge_trees;
   Facet_trees* facet_trees;
+  Edge_sm_trees* edge_sm_trees;
+  Facet_sm_trees* facet_sm_trees;
   enum VAOs{
     Facets = 0,
     Edges,
@@ -667,8 +720,8 @@ private:
   mutable Cut_planes_types m_cut_plane;
   mutable std::vector<QOpenGLBuffer> buffers;
 
-  template <typename Tree>
-  void compute_distance_function(QMap<QObject*, Tree*> *trees, bool is_signed = false)const
+  template <typename Tree, typename SM_Tree>
+  void compute_distance_function(QMap<QObject*, Tree*> *trees, QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
   {
 
     m_max_distance_function = FT(0);
@@ -734,10 +787,14 @@ private:
     }
 #else
     std::vector<Tree*> closed_trees;
+    std::vector<SM_Tree*> closed_sm_trees;
     Q_FOREACH(Tree *tree, trees->values())
     if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
       closed_trees.push_back(tree);
-    FillGridSize<Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, is_signed, frame);
+    Q_FOREACH(SM_Tree *sm_tree, sm_trees->values())
+    if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
+      closed_sm_trees.push_back(sm_tree);
+    FillGridSize<Tree, SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, closed_sm_trees, is_signed, frame);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
 #endif
   }
@@ -785,17 +842,17 @@ private:
     switch(m_cut_plane)
     {
     case UNSIGNED_FACETS:
-      if ( facet_trees->empty() ) { return; }
-      compute_distance_function(facet_trees);
+      if ( facet_trees->empty() && facet_sm_trees->empty() ) { return; }
+      compute_distance_function(facet_trees, facet_sm_trees);
       break;
     case SIGNED_FACETS:
-      if ( facet_trees->empty() ) { return; }
-      compute_distance_function(facet_trees, true);
+      if ( facet_trees->empty() && facet_sm_trees->empty() ) { return; }
+      compute_distance_function(facet_trees, facet_sm_trees, true);
 
       break;
     case UNSIGNED_EDGES:
-      if ( edge_trees->empty() ) { return; }
-      compute_distance_function(edge_trees);
+      if ( edge_trees->empty() && edge_sm_trees->empty()) { return; }
+      compute_distance_function(edge_trees, edge_sm_trees);
       break;
     default:
       break;
@@ -1100,6 +1157,9 @@ private:
   bool ready_to_cut;
   Facet_trees facet_trees;
   Edge_trees edge_trees;
+
+  Facet_sm_trees facet_sm_trees;
+  Edge_sm_trees edge_sm_trees;
 }; // end Polyhedron_demo_cut_plugin
 
 
@@ -1236,7 +1296,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     }
     if(facet_trees.find(poly_item) == facet_trees.end()) {
       facet_trees[poly_item] = new Facet_tree();
-      PPMAP pmap;
+      PPMAP<Polyhedron> pmap(poly_item->polyhedron());
       //filter facets to ignore degenerated ones
       for(Polyhedron::Facet_iterator
           fit = poly_item->polyhedron()->facets_begin(),
@@ -1260,7 +1320,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     }
     if(edge_trees.find(poly_item) == edge_trees.end()) {
       edge_trees[poly_item] = new Edge_tree();
-      PPMAP pmap;
+      PPMAP<Polyhedron> pmap(poly_item->polyhedron());
       edge_trees[poly_item]->insert(edges(*poly_item->polyhedron()).first,
                                     edges(*poly_item->polyhedron()).second,
                                     *poly_item->polyhedron(),
@@ -1269,6 +1329,10 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   }
   plane_item->set_facet_trees(&facet_trees);
   plane_item->set_edge_trees(&edge_trees);
+
+  plane_item->set_facet_sm_trees(&facet_sm_trees);
+  plane_item->set_edge_sm_trees(&edge_sm_trees);
+
   ready_to_cut = true;
   cut();
 }
