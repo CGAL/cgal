@@ -81,8 +81,22 @@ public:
   const SMesh* polyhedron() const;
   void compute_bbox()const;
   void invalidateOpenGLBuffers();
+
+Q_SIGNALS:
+  void selection_done();
+  void selected_vertex(std::size_t);
+  void selected_facet(std::size_t);
+  void selected_edge(std::size_t);
+  void selected_halfedge(std::size_t);
+
 public Q_SLOTS:
   virtual void selection_changed(bool);
+  void select(double orig_x,
+              double orig_y,
+              double orig_z,
+              double dir_x,
+              double dir_y,
+              double dir_z);
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;

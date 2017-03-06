@@ -358,7 +358,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
     {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
       if (poly_item &&
-          poly_item->polyhedron()->is_pure_triangle())
+          CGAL::is_triangle_mesh(*poly_item->polyhedron()))
       {
         last_RM = poly_item->renderingMode();
         poly_item->update_halfedge_indices();
@@ -368,7 +368,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
           importSelection(selection_item, convert_to_edit_polyhedron(i, poly_item));
       }
       else if(poly_item &&
-              !(poly_item->polyhedron()->is_pure_triangle()) )
+              !CGAL::is_triangle_mesh(*poly_item->polyhedron()))
       {
         QMessageBox::warning(mw,
                              tr("Cannot edit non-triangle polyhedron_items"),
