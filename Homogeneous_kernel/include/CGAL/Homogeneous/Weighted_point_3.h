@@ -55,7 +55,7 @@ public:
   Weighted_pointH3 ()
   {}
 
-  //explicit
+  explicit
   Weighted_pointH3 (const Point_3 &p)
     : base(p,0)
   {}
