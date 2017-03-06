@@ -52,6 +52,7 @@ public:
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
   void compute_bbox()const;
+  void invalidateOpenGLBuffers() { are_buffers_filled = false; }
 public Q_SLOTS:
   virtual void selection_changed(bool);
 protected:
