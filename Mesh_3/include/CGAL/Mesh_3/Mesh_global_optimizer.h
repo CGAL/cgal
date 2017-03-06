@@ -877,7 +877,7 @@ compute_move(const Vertex_handle& v)
   if ( c3t3_.in_dimension(v) == 2 )
   {
     Bare_point new_position = translate(wp2p(v->point()),move);
-    move = vector(wp2p(v->point()), helper_.project_on_surface(wp2p(new_position),v));
+    move = vector(wp2p(v->point()), helper_.project_on_surface(new_position, v));
   }
 
   FT local_sq_size = min_circumradius_sq_length(v, incident_cells);
