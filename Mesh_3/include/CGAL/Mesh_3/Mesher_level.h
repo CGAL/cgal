@@ -290,7 +290,7 @@ public:
     derived().pop_next_element_impl();
   }
 
-  Point circumcenter_of_element(const Element& e)
+  Bare_point circumcenter_of_element(const Element& e)
   {
     return derived().circumcenter_impl(e);
   }
