@@ -388,9 +388,10 @@ public:
     return Base::locate(geom_traits().construct_weighted_point_2_object()(bp), start);
   }
 
-  Line_face_circulator line_walk(const Bare_point& p,
-                                 const Bare_point& q,
-                                 Face_handle f = Face_handle()) const
+  typename Base::Line_face_circulator
+  line_walk(const Bare_point& p,
+            const Bare_point& q,
+            Face_handle f = Face_handle()) const
   {
     return Base::line_walk(this->geom_traits().construct_weighted_point_2_object()(p),
                            this->geom_traits().construct_weighted_point_2_object()(q),
