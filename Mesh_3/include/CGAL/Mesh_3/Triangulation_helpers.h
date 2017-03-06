@@ -157,7 +157,6 @@ no_topological_change(const Tr& tr,
                       const Weighted_point& p,
                       Cell_vector& cells_tos) const
 {
-  Tr::Geom_traits::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
   bool np = true;
   const Weighted_point fp = v0->point();
   v0->set_point(p);
