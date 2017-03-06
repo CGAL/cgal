@@ -71,13 +71,29 @@ public:
   Face_graph*       face_graph() { return polyhedron(); }
   const Face_graph* face_graph() const { return polyhedron(); }
 
+
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
+
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
+
+Q_SIGNALS:
+  void selection_done();
+  void selected_vertex(std::size_t);
+  void selected_facet(std::size_t);
+  void selected_edge(std::size_t);
+  void selected_halfedge(std::size_t);
+
 
 public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   virtual void selection_changed(bool) Q_DECL_OVERRIDE;
+  void select(double orig_x,
+              double orig_y,
+              double orig_z,
+              double dir_x,
+              double dir_y,
+              double dir_z);
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;

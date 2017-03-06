@@ -7,18 +7,56 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 #include <QApplication>
+#include <QVariant>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/intersections.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
 #include "properties.h"
 
+
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
+//Used to triangulate the AABB_Tree
+class Primitive
+{
+public:
+  // types
+  typedef face_descriptor Id; // Id type
+  typedef Scene_surface_mesh_item::Point Point; // point type
+  typedef Scene_surface_mesh_item::Kernel::Triangle_3 Datum; // datum type
 
+private:
+  // member data
+  Id m_it; // iterator
+  Datum m_datum; // 3D triangle
+
+  // constructor
+public:
+  Primitive() {}
+  Primitive(Datum triangle, Id it)
+    : m_it(it), m_datum(triangle)
+  {
+  }
+public:
+  Id& id() { return m_it; }
+  const Id& id() const { return m_it; }
+  Datum& datum() { return m_datum; }
+  const Datum& datum() const { return m_datum; }
+
+  /// Returns a point on the primitive
+  Point reference_point() const { return m_datum.vertex(0); }
+};
+
+
+typedef CGAL::AABB_traits<Scene_surface_mesh_item::Kernel, Primitive> AABB_traits;
+typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 
 struct Scene_surface_mesh_item_priv{
 
@@ -52,9 +90,11 @@ struct Scene_surface_mesh_item_priv{
   }
 
   void initialize_colors();
-
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void addFlatData(Point, Kernel::Vector_3, CGAL::Color *) const;
+  void* get_aabb_tree();
+  QList<Kernel::Triangle_3> triangulate_primitive(face_descriptor fit,
+                                                  Kernel::Vector_3 normal);
 
   //! \brief triangulate_facet Triangulates a facet.
   //! \param fd a face_descriptor of the facet that needs to be triangulated.
@@ -113,6 +153,7 @@ struct Scene_surface_mesh_item_priv{
   void computeElements() const;
 };
 
+const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
 Scene_surface_mesh_item::Scene_surface_mesh_item()
   : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
 {
@@ -707,9 +748,23 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
 
   }
 }
+void delete_aabb_tree(Scene_surface_mesh_item* item)
+{
+    QVariant aabb_tree_property = item->property(aabb_property_name);
+    if(aabb_tree_property.isValid()) {
+        void* ptr = aabb_tree_property.value<void*>();
+        Input_facets_AABB_tree* tree = static_cast<Input_facets_AABB_tree*>(ptr);
+        if(tree) {
+            delete tree;
+            tree = 0;
+        }
+        item->setProperty(aabb_property_name, QVariant());
+    }
+}
 
 Scene_surface_mesh_item::~Scene_surface_mesh_item()
 {
+  delete_aabb_tree(this);
   delete d;
 }
 Scene_surface_mesh_item::SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
@@ -743,4 +798,214 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
 {
   are_buffers_filled = false;
   d->smesh_->collect_garbage();
+}
+void* Scene_surface_mesh_item_priv::get_aabb_tree()
+{
+  QVariant aabb_tree_property = item->property(aabb_property_name);
+  if(aabb_tree_property.isValid()) {
+    void* ptr = aabb_tree_property.value<void*>();
+    return static_cast<Input_facets_AABB_tree*>(ptr);
+  }
+  else {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    SMesh* sm = item->polyhedron();
+    if(sm) {
+
+      Input_facets_AABB_tree* tree =
+          new Input_facets_AABB_tree();
+      int index =0;
+      BOOST_FOREACH( face_descriptor f, faces(*sm))
+      {
+        //if face not triangle, triangulate corresponding primitive before adding it to the tree
+        if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
+        {
+          Kernel::Plane_3 face_plane = Kernel::Plane_3(sm->point(target(halfedge(f, *sm), *sm)),
+                                                       sm->point(target(next(halfedge(f, *sm), *sm), *sm)),
+                                                       sm->point(target(next(next(halfedge(f, *sm), *sm), *sm), *sm)));
+          Kernel::Vector_3 normal = face_plane.orthogonal_vector(); //initialized in compute_normals_and_vertices
+          index +=3;
+          Q_FOREACH(Kernel::Triangle_3 triangle, triangulate_primitive(f,normal))
+          {
+            Primitive primitive(triangle, f);
+            tree->insert(primitive);
+          }
+        }
+        else
+        {
+          Kernel::Triangle_3 triangle(
+                sm->point(target(halfedge(f, *sm), *sm)),
+                sm->point(target(next(halfedge(f, *sm), *sm), *sm)),
+                sm->point(target(next(next(halfedge(f, *sm), *sm), *sm), *sm))
+                );
+          Primitive primitive(triangle, f);
+          tree->insert(primitive);
+        }
+      }
+      item->setProperty(aabb_property_name,
+                        QVariant::fromValue<void*>(tree));
+      QApplication::restoreOverrideCursor();
+      return tree;
+    }
+    else return 0;
+  }
+}
+
+
+void
+Scene_surface_mesh_item::select(double orig_x,
+                              double orig_y,
+                              double orig_z,
+                              double dir_x,
+                              double dir_y,
+                              double dir_z)
+{
+  SMesh *sm = d->smesh_;
+  int vertex_to_emit = 0;
+  typedef Input_facets_AABB_tree Tree;
+  typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Object_and_primitive_id;
+
+  Tree* aabb_tree = static_cast<Tree*>(d->get_aabb_tree());
+  if(aabb_tree)
+  {
+    const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
+    const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
+    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    typedef std::list<Object_and_primitive_id> Intersections;
+    Intersections intersections;
+    aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+    Intersections::iterator closest = intersections.begin();
+    if(closest != intersections.end())
+    {
+
+      const Kernel::Point_3* closest_point =
+          boost::get<Kernel::Point_3>(&(closest->first));
+      for(Intersections::iterator
+          it = boost::next(intersections.begin()),
+          end = intersections.end();
+          it != end; ++it)
+      {
+        if(! closest_point) {
+          closest = it;
+        }
+        else {
+          const Kernel::Point_3* it_point =
+              boost::get<Kernel::Point_3>(&it->first);
+          if(it_point &&
+             (ray_dir * (*it_point - *closest_point)) < 0)
+          {
+            closest = it;
+            closest_point = it_point;
+          }
+        }
+      }
+      if(closest_point) {
+        face_descriptor selected_face = closest->second;
+
+        // The computation of the nearest vertex may be costly.  Only
+        // do it if some objects are connected to the signal
+        // 'selected_vertex'.
+        if(QObject::receivers(SIGNAL(selected_vertex(int))) > 0)
+        {
+
+          SMesh::Halfedge_around_face_circulator he_it(sm->halfedge(selected_face),*sm), around_end(he_it);
+
+          vertex_descriptor v = sm->target(*he_it), nearest_v = v;
+
+          Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+                                                      sm->point(v));
+          while(++he_it != around_end) {
+            v = sm->target(*he_it);
+            Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                                                            sm->point(v));
+            if(new_sq_dist < sq_dist) {
+              sq_dist = new_sq_dist;
+              nearest_v = v;
+            }
+          }
+          //bottleneck
+          vertex_to_emit = static_cast<std::size_t>(nearest_v);
+        }
+
+        if(QObject::receivers(SIGNAL(selected_edge(int))) > 0
+           || QObject::receivers(SIGNAL(selected_halfedge(int))) > 0)
+        {
+          SMesh::Halfedge_around_face_circulator he_it(sm->halfedge(selected_face),*sm), around_end(he_it);
+
+          halfedge_descriptor nearest_h = *he_it;
+          Kernel::FT sq_dist =
+              CGAL::squared_distance(*closest_point,
+                                     Kernel::Segment_3(sm->point(sm->target(*he_it)),
+                                                       sm->point(
+                                                         sm->target(
+                                                           sm->opposite(*he_it)))));
+
+          while(++he_it != around_end)
+          {
+            Kernel::FT new_sq_dist =
+                CGAL::squared_distance(*closest_point,
+                                       Kernel::Segment_3(sm->point(sm->target(*he_it)),
+                                                         sm->point(
+                                                           sm->target(
+                                                             sm->opposite(*he_it)))));
+            if(new_sq_dist < sq_dist) {
+              sq_dist = new_sq_dist;
+              nearest_h = *he_it;
+            }
+          }
+
+          Q_EMIT selected_halfedge(static_cast<std::size_t>(nearest_h));
+          Q_EMIT selected_edge(static_cast<std::size_t>(nearest_h));
+        }
+        Q_EMIT selected_vertex(vertex_to_emit);
+        Q_EMIT selected_facet(static_cast<std::size_t>(selected_face));
+      }
+    }
+  }
+  Scene_item::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
+  Q_EMIT selection_done();
+}
+
+void Scene_surface_mesh_item::invalidateOpenGLBuffers()
+{
+  delete_aabb_tree(this);
+  d->smesh_->collect_garbage();
+  are_buffers_filled = false;
+}
+
+
+QList<Scene_surface_mesh_item::Kernel::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(face_descriptor fit,
+                                                Scene_surface_mesh_item::Kernel::Vector_3 normal)
+{
+  typedef FacetTriangulator<SMesh, Kernel, boost::graph_traits<SMesh>::vertex_descriptor> FT;
+  //The output list
+  QList<Kernel::Triangle_3> res;
+  //check if normal contains NaN values
+  if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+  {
+    qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
+    return QList<Kernel::Triangle_3>();
+  }
+  double diagonal;
+  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
+    diagonal = item->diagonalBbox();
+  else
+    diagonal = 0.0;
+  FT triangulation(fit,normal,smesh_,diagonal);
+  //iterates on the internal faces to add the vertices to the positions
+  //and the normals to the appropriate vectors
+  for( FT::CDT::Finite_faces_iterator
+      ffit = triangulation.cdt->finite_faces_begin(),
+      end = triangulation.cdt->finite_faces_end();
+      ffit != end; ++ffit)
+  {
+    if(ffit->info().is_external)
+      continue;
+
+
+    res << Kernel::Triangle_3(ffit->vertex(0)->point(),
+                              ffit->vertex(1)->point(),
+                              ffit->vertex(2)->point());
+
+  }
+  return res;
 }
