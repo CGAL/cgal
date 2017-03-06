@@ -277,7 +277,7 @@ class Refine_facets_3_base
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
 protected:
-  typedef typename Gt::Bare_point Bare_point;
+  typedef typename Tr::Bare_point Bare_point;
 
 public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
@@ -763,6 +763,7 @@ public:
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
   typedef typename Tr::Point Point;//Weighted_point
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
@@ -796,7 +797,7 @@ public:
 
   int number_of_bad_elements_impl();
 
-  Point circumcenter_impl(const Facet& facet) const
+  Bare_point circumcenter_impl(const Facet& facet) const
   {
     return get_facet_surface_center(facet);
   }
@@ -875,7 +876,6 @@ private:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
   typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::Bare_point Bare_point;
   typedef typename Gt::Ray_3 Ray_3;
 
 private:
