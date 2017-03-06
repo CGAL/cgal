@@ -1697,7 +1697,7 @@ public:
     /// With the default value for
     /// `check_all_incident_halfedges` the function iteratates over the incident halfedges.
     /// With `check_all_incident_halfedges == false` the function returns `true`, if the incident
-    /// halfedge associated to vertex `v` is a border halfedge.
+    /// halfedge associated to vertex `v` is a border halfedge, or if the vertex is isolated.
     /// \cgalAdvancedEnd
   bool is_border(Vertex_index v, bool check_all_incident_halfedges = true) const
     {
@@ -1714,7 +1714,7 @@ public:
           }while(++hatc != done);
           return false;
         }
-        return (!(is_valid(h) && is_border(h)));
+        return is_valid(h) && is_border(h);
     }
 
     /// returns whether `h` is a border halfege, that is if its incident face is `sm.null_face()`.
