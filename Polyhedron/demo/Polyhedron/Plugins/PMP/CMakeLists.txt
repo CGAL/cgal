@@ -2,7 +2,7 @@ include( polyhedron_demo_macros )
 if(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(jet_fitting_plugin Jet_fitting_plugin)
-  target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)
+  target_link_libraries(jet_fitting_plugin scene_polyhedron_item  scene_surface_mesh_item scene_polylines_item)
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
