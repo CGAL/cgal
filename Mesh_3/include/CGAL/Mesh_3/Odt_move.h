@@ -59,6 +59,8 @@ class Odt_move
   
   typedef typename Gt::FT FT;
   typedef typename Gt::Vector_3 Vector_3;
+
+  typedef typename Gt::Construct_point_3 Construct_point_3;
   
 public:
   typedef SizingField Sizing_field;
@@ -81,8 +83,10 @@ public:
     const Tr& tr = c3t3.triangulation();
     Vector_3 move = CGAL::NULL_VECTOR;
     FT sum_volume(0);
-       
-    const Weighted_point& p = v->point();
+
+    Construct_point_3 cp =
+      c3t3.triangulation().geom_traits().construct_point_3_object();
+    const Bare_point p = cp(v->point());
     
     for ( typename Cell_vector::const_iterator cit = incident_cells.begin() ;
          cit != incident_cells.end() ;
@@ -95,8 +99,8 @@ public:
         continue;
       
       // Get points
-      Weighted_point circumcenter = tr.dual(cell);
-      
+      Bare_point circumcenter = tr.dual(cell);
+
       // Compute move
       Vector_3 p_circum = vector(p,circumcenter);
       FT volume = volume_quadrature(cell, tr, sizing_field);
