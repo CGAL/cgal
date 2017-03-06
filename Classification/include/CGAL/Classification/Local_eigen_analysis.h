@@ -137,7 +137,7 @@ public:
 
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value is CGAL
+    algorithm. Possible values are `Parallel_tag` (default value is %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \param input input range.
     \param point_map property map to access the input points

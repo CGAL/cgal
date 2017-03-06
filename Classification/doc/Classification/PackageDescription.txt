@@ -39,15 +39,15 @@
 
 ## Classification ##
 
-- `CGAL::Classifier<ItemRange, ItemMap>`
-- `CGAL::Point_set_classifier<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`     
+- `CGAL::Classifier<ItemRange, ItemMap, ConcurrencyTag>`
+- `CGAL::Point_set_classifier<Geom_traits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
 
 ## Data Structures ##
 
 - `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Local_eigen_analysis<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
 - `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Trainer<PointRange, PointMap>`
+- `CGAL::Classification::Trainer<PointRange, PointMap, ConcurrencyTag>`
 
 ## Label ##
 

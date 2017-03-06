@@ -89,7 +89,7 @@ type is the value type of the iterator of `ItemRange` and value type is
 the type of the items that are classified.
 
 \tparam ConcurrencyTag enables sequential versus parallel
-algorithm. Possible values are `Parallel_tag` (default value is CGAL
+algorithm. Possible values are `Parallel_tag` (default value is %CGAL
 is linked with TBB) or `Sequential_tag` (default value otherwise).
 */
 template <typename ItemRange,

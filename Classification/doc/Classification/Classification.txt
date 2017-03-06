@@ -242,10 +242,10 @@ Tools to evaluate the reliability of the training are provided, namely:
 - [precision()](@ref CGAL::Classification::Trainer::precision) computes, for one label, the ratio of true positives over the total number of detected positives
 - [recall()](@ref CGAL::Classification::Trainer::recall) computes, for one label, the ratio of true positives over the total number of provided inliers of this label
 - [f1_score()](@ref CGAL::Classification::Trainer::f1_score) is the harmonic mean of precision and recall
-- [IoU()](@ref CGAL::Classification::Trainer::IoU) (Intersection over Union) computes the ratio of true positives over the union of the detected positives and of the provided inliers
+- [intersection_over_union()](@ref CGAL::Classification::Trainer::intersection_over_union) computes the ratio of true positives over the union of the detected positives and of the provided inliers
 - [accuracy()](@ref CGAL::Classification::Trainer::accuracy) computes the ratio of all true positives over the total number of provided inliers
 - [mean_f1_score()](@ref CGAL::Classification::Trainer::mean_f1_score)
-- [mean_IoU()](@ref CGAL::Classification::Trainer::mean_IoU)
+- [mean_intersection_over_union()](@ref CGAL::Classification::Trainer::mean_intersection_over_union)
 
 
 Note that the [Trainer](@ref CGAL::Classification::Trainer) class only uses documented public methods of the [Classifier](@ref CGAL::Classifier), [Label](@ref CGAL::Classification::Label) and [Feature](@ref CGAL::Classification::Feature_base) classes (for example, [set_weight()](@ref CGAL::Classification::Feature_base::set_weight), [set_feature_effect()](@ref CGAL::Classification::Label::set_feature_effect) or [energy_of()](@ref CGAL::Classifier::energy_of)). Users can therefore define their own classes for training using these methods to set up weights and effects and to estimate what are the best parameters.

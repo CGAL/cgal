@@ -71,7 +71,7 @@ namespace CGAL {
   type is the value type of the iterator of `PointRange` and value type
   is `Geom_traits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
-  algorithm. Possible values are `Parallel_tag` (default value is CGAL
+  algorithm. Possible values are `Parallel_tag` (default value is %CGAL
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
   for matrix diagonalization.
