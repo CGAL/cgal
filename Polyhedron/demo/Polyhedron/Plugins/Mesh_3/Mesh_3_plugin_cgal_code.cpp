@@ -216,9 +216,9 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
 
     if(protect_features && polylines.empty()){
-      std::vector<std::vector<Point_3> > polylines_on_bbox;
+      std::vector<std::vector<Bare_point_3> > polylines_on_bbox;
       CGAL::polylines_to_protect<
-        Point_3,
+        Bare_point_3,
         Image_mesh_domain::Image_word_type>(*pImage, polylines_on_bbox);
       p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }

@@ -3199,6 +3199,7 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_weighted_point_2
   {
+    typedef typename K::RT                 RT;
     typedef typename K::FT                 FT;
     typedef typename K::Point_2            Point_2;
     typedef typename K::Weighted_point_2   Weighted_point_2;
@@ -3213,6 +3214,15 @@ namespace HomogeneousKernelFunctors {
     Rep
     operator()(Return_base_tag, const FT& x, const FT& y) const
     { return Rep(x,y); }
+
+    Rep
+    operator()(const Point_2& p, const RT& w) const
+    { return Rep(p,w); }
+
+    Rep
+    operator()(const Point_2& p) const
+    { return Rep(p,0); }
+
   };
 
 
