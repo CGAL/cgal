@@ -1,6 +1,6 @@
 project(CGAL_ipelets_Demo)
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -42,14 +42,17 @@ if ( CGAL_FOUND )
         ${IPE_MINOR_VERSION_1} GREATER "1" AND
         ${IPE_MINOR_VERSION_2} GREATER "0")
       message(STATUS "Starting from Ipe 7.2.1 a compiler with c++11 support must be used")
-      include(CheckCXXCompilerFlag)
-      CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-      CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-      if(COMPILER_SUPPORTS_CXX11)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-      elseif(COMPILER_SUPPORTS_CXX0X)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
+      list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
+      if(has_cpp11 LESS 0)
+        message(STATUS "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
+        return()
       endif()
+
+      # Use C++11 for this directory and its sub-directories.
+      set(CMAKE_CXX_STANDARD 11)
+      set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
     endif()
   endif()
 
