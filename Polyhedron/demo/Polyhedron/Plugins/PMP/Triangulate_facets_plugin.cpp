@@ -87,7 +87,6 @@ public Q_SLOTS:
       if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
         messages->warning(tr("Some facets could not be triangulated."));
 
-      std::cerr << *pMesh << std::endl;
       sm_item->invalidateOpenGLBuffers();
       scene->itemChanged(sm_item);
     } // end of if(item)
