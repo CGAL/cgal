@@ -71,11 +71,12 @@ public:
   Face_graph*       face_graph() { return polyhedron(); }
   const Face_graph* face_graph() const { return polyhedron(); }
 
+  void invalidate_aabb_tree();
+  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
+
 
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
-
-  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
   void selection_done();

@@ -135,9 +135,9 @@ public:
     }
     if(sm_item)
     {
-      connect(sm_item, SIGNAL(selected_vertex(void*)), this, SLOT(sm_vertex_has_been_selected(void*)));
-      connect(sm_item, SIGNAL(selected_facet(void*)), this, SLOT(sm_facet_has_been_selected(void*)));
-      connect(sm_item, SIGNAL(selected_edge(void*)), this, SLOT(sm_edge_has_been_selected(void*)));
+      connect(sm_item, SIGNAL(selected_vertex(std::size_t)), this, SLOT(sm_vertex_has_been_selected(std::size_t)));
+      connect(sm_item, SIGNAL(selected_facet(std::size_t)), this, SLOT(sm_facet_has_been_selected(std::size_t)));
+      connect(sm_item, SIGNAL(selected_edge(std::size_t)), this, SLOT(sm_edge_has_been_selected(std::size_t)));
     }
   }
   //Temporary compatibility for Selection_item
