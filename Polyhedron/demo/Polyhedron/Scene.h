@@ -106,6 +106,8 @@ public:
   //!@returns the index of the Item_B
   int selectionBindex() const Q_DECL_OVERRIDE;
 
+  bool isPolyhedronMode() const Q_DECL_OVERRIDE;
+
   /*! Is called by Viewer::initializeGL(). Allows all the initialization
    * of OpenGL code that needs a context.
    */
@@ -266,6 +268,7 @@ private Q_SLOTS:
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
   void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
+  void setPolyhedronMode(bool b);
 private:
   /*! Calls the drawing functions of each visible item according
    * to its current renderingMode. If with_names is true, uses
@@ -286,6 +289,7 @@ private:
   //!Index of the item_B.
   int item_B;
   bool picked;
+  bool is_polyhedron_mode;
   QPoint picked_pixel;
   bool gl_init;
   static GlSplat::SplatRenderer* ms_splatting;

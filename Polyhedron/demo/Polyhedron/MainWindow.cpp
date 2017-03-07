@@ -253,6 +253,8 @@ MainWindow::MainWindow(QWidget* parent)
           viewer, SLOT(setFastDrawing(bool)));
   connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
           viewer, SLOT(SetOrthoProjection(bool)));
+  connect(ui->actionPolyhedron_Mode, SIGNAL(toggled(bool)),
+          scene, SLOT(setPolyhedronMode(bool)));
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();

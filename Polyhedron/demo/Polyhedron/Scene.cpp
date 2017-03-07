@@ -33,7 +33,8 @@ Scene::Scene(QObject* parent)
     : QStandardItemModel(parent),
       selected_item(-1),
       item_A(-1),
-      item_B(-1)
+      item_B(-1),
+      is_polyhedron_mode(true)
 {
 
     connect(this, SIGNAL(selectionRay(double, double, double,
@@ -866,6 +867,14 @@ int Scene::selectionAindex() const {
 
 int Scene::selectionBindex() const {
     return item_B;
+}
+
+bool Scene::isPolyhedronMode() const {
+  return is_polyhedron_mode;
+}
+
+void Scene::setPolyhedronMode(bool b) {
+  is_polyhedron_mode = b;
 }
 
 QItemSelection Scene::createSelection(int i)
