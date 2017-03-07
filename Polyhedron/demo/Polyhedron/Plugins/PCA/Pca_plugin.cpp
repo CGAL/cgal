@@ -2,6 +2,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include "Scene_polyhedron_item.h"
+#include "Scene_points_with_normal_item.h"
 #include "Scene_plane_item.h"
 #include "Polyhedron_type.h"
 
@@ -61,7 +62,8 @@ public:
 
 
   bool applicable(QAction*) const { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+      || qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 
@@ -120,6 +122,42 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
 
     QApplication::restoreOverrideCursor();
   }
+  else
+    {
+      Scene_points_with_normal_item* item = 
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+      if (item)
+        {
+          QApplication::setOverrideCursor(Qt::WaitCursor);
+          Point_set* points = item->point_set();
+
+          // fit plane to triangles
+          Plane plane;
+          Point center_of_mass;
+          std::cout << "Fit plane...";
+         CGAL::linear_least_squares_fitting_3
+           (points->points().begin(),points->points().end(),plane, center_of_mass,
+            CGAL::Dimension_tag<0>());
+          std::cout << "ok" << std::endl;
+
+          // compute centroid
+          Scene_plane_item* new_item = new Scene_plane_item(this->scene);
+          new_item->setPosition(center_of_mass.x(),
+                                center_of_mass.y(),
+                                center_of_mass.z());
+          const Vector& normal = plane.orthogonal_vector();
+          new_item->setNormal(normal.x(), normal.y(), normal.z());
+          new_item->setName(tr("%1 (plane fit)").arg(item->name()));
+          new_item->setColor(Qt::magenta);
+          new_item->setRenderingMode(item->renderingMode());
+          scene->addItem(new_item);
+
+          QApplication::restoreOverrideCursor();
+        }
+
+
+    }
 }
 
 void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
@@ -204,6 +242,75 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
     scene->addItem(new_item);
 
     QApplication::restoreOverrideCursor();
+  }
+  else
+  {
+    Scene_points_with_normal_item* item = 
+      qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+    if (item)
+      {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        Point_set* point_set = item->point_set();
+        Line line;
+        Point center_of_mass;
+        std::cout << "Fit line...";
+        CGAL::linear_least_squares_fitting_3(point_set->points().begin(),
+                                             point_set->points().end(),
+                                             line, center_of_mass,
+                                             CGAL::Dimension_tag<0>());
+        std::cout << "ok" << std::endl;
+
+        // compute bounding box diagonal
+        Iso_cuboid bbox = CGAL::bounding_box(point_set->points().begin(),
+                                             point_set->points().end());
+
+        // compute scale for rendering using diagonal of bbox
+        Point cmin = (bbox.min)();
+        Point cmax = (bbox.max)();
+        FT diag = std::sqrt(CGAL::squared_distance(cmin,cmax));
+
+        // construct a 3D bar
+        Vector u = line.to_vector();
+        u = u / std::sqrt(u*u);
+
+        Point a = center_of_mass + u * diag;
+        Point b = center_of_mass - u * diag;
+
+        Plane plane_a = line.perpendicular_plane(a);
+
+        Vector u1 = plane_a.base1();
+        u1 = u1 / std::sqrt(u1*u1);
+        u1 = u1 * 0.01 * diag;
+        Vector u2 = plane_a.base2();
+        u2 = u2 / std::sqrt(u2*u2);
+        u2 = u2 * 0.01 * diag;
+
+        Point points[8];
+
+        points[0] = a + u1;
+        points[1] = a + u2;
+        points[2] = a - u1;
+        points[3] = a - u2;
+
+        points[4] = b + u1;
+        points[5] = b + u2;
+        points[6] = b - u1;
+        points[7] = b - u2;
+
+        // add best fit line as new polyhedron bar
+        Polyhedron *pFit = new Polyhedron;
+        Make_bar<Polyhedron,Kernel> bar;
+        bar.run(points,*pFit);
+
+        Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pFit);
+        new_item->setName(tr("%1 (line fit)").arg(item->name()));
+        new_item->setColor(Qt::magenta);
+        new_item->setRenderingMode(FlatPlusEdges);
+        scene->addItem(new_item);
+
+        QApplication::restoreOverrideCursor();
+      }
   }
 }
 
