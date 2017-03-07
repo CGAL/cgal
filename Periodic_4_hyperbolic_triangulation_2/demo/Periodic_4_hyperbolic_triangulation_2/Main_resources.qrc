@@ -11,5 +11,6 @@
     <file>icons/fileSave.png</file>
     <file>icons/triangulation.png</file>
     <file alias="bgd.png">icons/bgd.png</file>
+    <file>icons/Voronoi_diagram_2.png</file>
   </qresource>
 </RCC>

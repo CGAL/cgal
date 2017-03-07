@@ -695,40 +695,6 @@ public:
 	return _tds.dimension();
   }
 
-  Object
-  dual(const Edge_iterator& ei) const
-  {
-	return this->dual(*ei);
-  }
-  
-  Object
-  dual(const Edge &e) const
-  {
-	
-	if(this->dimension() == 1) {
-	  const Point& p = (e.first)->vertex(cw(e.second))->point();
-	  const Point& q = (e.first)->vertex(ccw(e.second))->point();
-	  
-	  // hyperbolic line
-	  Segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
-	  return make_object(line);
-	}
-	
-	// incident faces
-	Face_handle f1 = e.first;
-	int i1 = e.second;
-	
-	Face_handle f2 = f1->neighbor(i1);
-	int i2 = f2->index(f1);
-	  
-	Segment s = this->geom_traits().construct_segment_2_object()
-	(dual(f1),dual(f2));
-
-	return make_object(s);
-	
-  }
-
-
 }; // class Periodic_4_hyperbolic_triangulation_2
 
 

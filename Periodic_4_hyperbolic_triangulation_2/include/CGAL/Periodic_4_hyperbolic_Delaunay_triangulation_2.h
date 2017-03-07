@@ -29,8 +29,6 @@
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_face_base_2.h>
 #include <CGAL/Hyperbolic_octagon_word_4.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Exact_circular_kernel_2.h>
-#include <CGAL/Circular_kernel_intersections.h>
 
 #include <iterator>
 #include <CGAL/intersections.h>
@@ -96,6 +94,9 @@ namespace CGAL {
 	typedef typename Base::Edge_circulator                     Edge_circulator;
 	typedef typename Base::Vertex_circulator                   Vertex_circulator;
 	typedef typename Base::Line_face_circulator                Line_face_circulator;
+	typedef typename GT::Construct_intersection_2 			   Construct_intersection_2;
+	typedef typename GT::Construct_inexact_hyperbolic_circumcenter_2   Construct_inexact_hyperbolic_circumcenter_2;
+	typedef typename GT::Construct_segment_2 				   Construct_segment_2;
 
   private:
 	typedef typename GT::FT                                    FT;
@@ -206,6 +207,26 @@ namespace CGAL {
 	}
 
 
+
+
+	Point_2	dual (Face_handle f, Offset nboff = Offset()) const {
+		//cout << "Making dual of Face!" << endl;
+		Point_2 res = Construct_inexact_hyperbolic_circumcenter_2()(	f->vertex(0)->point(), 		f->vertex(1)->point(), 		f->vertex(2)->point(),
+				 								 						nboff.append(f->offset(0)), nboff.append(f->offset(1)), nboff.append(f->offset(2)));
+		//cout << "Dual of Face returns!" << endl;
+		return res;
+	}
+
+
+	Segment_2 dual(const Edge &e) const {
+		//cout << "Making dual of Edge!" << endl;
+		Segment_2 res = Construct_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), e.first->neighbor_offset(e.second)));
+		//cout << "Dual of Edge returns!" << endl;
+		return res;
+	}
+
+
+
 	void clear() {
 		Base::clear();
 		insert_dummy_points(true);
@@ -222,60 +243,44 @@ typename Gt::FT dist(typename Gt::Point_2 p, typename Gt::Point_2 q) {
 
 
 template <class Gt>
-typename Gt::FT 
+double
 hyperbolic_diameter(typename Gt::Circle_2 c) {
-  typedef typename Gt::FT           FT;
-  typedef typename Gt::Kernel       K;
-  typedef typename Gt::Point_2      Point;
-  typedef typename Gt::Line_2       Line;
-  typedef typename Gt::Circle_2     Circle;
+  	typedef typename Gt::FT           				FT;
+  	typedef typename Gt::Point_2      				Point;
+  	typedef typename Gt::Line_2       				Line;
+  	typedef typename Gt::Circle_2     				Circle;
+  	typedef typename Gt::Construct_inexact_intersection_2 	Intersection;
 
+  	Point  p0(0, 0);
+  	Circle c0(p0, 1);
+  	Line  ell(p0, c.center());
 
-  typedef CGAL::Exact_circular_kernel_2        CircK;
-  typedef CGAL::Point_2<CircK>                 Pt2;
-  typedef CGAL::Circle_2<CircK>                Circ2;
-  typedef CGAL::Line_2<CircK>                  Line2;
-  typedef std::pair<CGAL::Circular_arc_point_2<CircK>, unsigned> IsectOutput;
+  	if (ell.is_degenerate()) {
+		return 5.;
+  	} 
 
-  typedef CGAL::Dispatch_output_iterator< 
-				CGAL::cpp11::tuple<IsectOutput>, 
-				CGAL::cpp0x::tuple< std::back_insert_iterator<std::vector<IsectOutput> > > > Dispatcher;
+  	//cout << "intersection 1" << endl;
+	pair<Point, Point> res1 = Intersection()(c0, ell);
+	//cout << "intersection 2" << endl;
+	pair<Point, Point> res2 = Intersection()(c , ell);
+  	//cout << "done" << endl << endl;
 
-  std::vector<IsectOutput> res0, res1;
-  Dispatcher disp1 = CGAL::dispatch_output<IsectOutput>( std::back_inserter(res1) ); 
-  Dispatcher disp0 = CGAL::dispatch_output<IsectOutput>( std::back_inserter(res0) ); 
+  	Point a = res1.first;
+  	Point b = res1.second;
 
-  Pt2 ct(to_double(c.center().x()), to_double(c.center().y()));
-  Pt2 p0(0, 0);
-  double r = to_double(c.squared_radius());
-
-  Line2 ell(p0, ct);
-  Circ2 c2(ct, r);
-  Circ2 c0(p0, 1);
-
-  if (ell.is_degenerate()) {
-	//cout << "\tThis is degenerate case!" << endl;
-	return 5.;
-  } else {
-	CGAL::intersection(c0, ell, disp0);
-	CGAL::intersection(c2, ell, disp1);
-  }
-  Point a(to_double(res0[0].first.x()), to_double(res0[0].first.y()));
-  Point b(to_double(res0[1].first.x()), to_double(res0[1].first.y()));
-
-  Point p(to_double(res1[0].first.x()), to_double(res1[0].first.y()));
-  Point q(to_double(res1[1].first.x()), to_double(res1[1].first.y()));
+  	Point p = res2.first;
+  	Point q = res2.second;
   
-  FT aq = dist<Gt>(a, q);
-  FT pb = dist<Gt>(p, b);
-  FT ap = dist<Gt>(a, p);
-  FT qb = dist<Gt>(q, b);
+  	double aq = sqrt(to_double(squared_distance(a, q)));
+  	double pb = sqrt(to_double(squared_distance(p, b)));
+  	double ap = sqrt(to_double(squared_distance(a, p)));
+  	double qb = sqrt(to_double(squared_distance(q, b)));
 
-  //cout << "aq = " << aq << ", pb = " << pb << " | ap = " << ap << ", qb = " << qb << endl;
+  	//cout << "aq = " << aq << ", pb = " << pb << " | ap = " << ap << ", qb = " << qb << endl;
 
-  double hyperdist = fabs(log(to_double((aq*pb)/(ap*qb))));
+  	double hyperdist = fabs(log(to_double((aq*pb)/(ap*qb))));
 
-  return hyperdist;
+  	return hyperdist;
 }
 
 
@@ -292,7 +297,7 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
   // This is the exact value of the limit.
   // The systole is 2*acosh(1+sqrt(2)), and we want half of that.
   // The max _diameter_ of the hyperbolic circles must be less than this.
-  FT lim( acosh(1. + sqrt(2.)) );
+  double lim( acosh(1. + sqrt(2.)) );
 
   std::vector<Vertex_handle> bdry_verts;
   Face_circulator nbf(tds().incident_faces(v)), done(nbf);
@@ -309,7 +314,7 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
 
 
   int n_verts = bdry_verts.size();
-  FT max_diam = FT(0);
+  double max_diam = 0.;
   for (Finite_Delaunay_faces_iterator fit = dt.finite_faces_begin(); fit != dt.finite_faces_end(); fit++) {
 
 	bool is_good = true;
@@ -330,7 +335,7 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
 	  Circle c(fit->vertex(0)->point(), 
 			   fit->vertex(1)->point(), 
 			   fit->vertex(2)->point());
-	  FT diam = hyperbolic_diameter<Gt>(c);
+	  double diam = hyperbolic_diameter<Gt>(c);
 	  if (max_diam < diam) {
 		max_diam = diam;
 	  }
@@ -394,6 +399,7 @@ insert(const Point  &p,  Face_handle hint) {
 				std::map<Vertex_handle, Vertex_handle> vmap;
 
 				if (is_removable(dummy_points[i].vertex(), dt, vmap)) {
+					//cout << "removing dummy point " << i << endl;
 					remove(dummy_points[i].vertex());
 					dummy_points[i].set_inserted(false);
 				}
@@ -405,7 +411,7 @@ insert(const Point  &p,  Face_handle hint) {
 			if (dummy_points[i].is_inserted())
 				n_dpt++;
 		}
-
+		//cout << "number of dummy points: " << n_dpt << endl;
 		return v;
 	}
 

@@ -201,18 +201,22 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   painterostream << t->segment(v6, v7);
   painterostream << t->segment(v7, v0);
 
-  temp.setWidthF(0.0025);
-  temp.setColor(::Qt::darkGreen);
-  painter->setPen(temp);
-  painterostream = PainterOstream<Geom_traits>(painter);
+  if (visible_edges) {
 
-  for (typename T::Face_iterator fit = t->faces_begin();
-       fit != t->faces_end(); fit++) {
+    temp.setWidthF(0.0025);
+    temp.setColor(::Qt::darkGreen);
+    painter->setPen(temp);
+    painterostream = PainterOstream<Geom_traits>(painter);
 
-    for (int k = 0; k < 3; k++) {
-      painterostream << t->segment(fit, k);
+    for (typename T::Face_iterator fit = t->faces_begin();
+         fit != t->faces_end(); fit++) {
+
+      for (int k = 0; k < 3; k++) {
+        painterostream << t->segment(fit, k);
+      }
+
     }
-
+          
   }
 
   //delete

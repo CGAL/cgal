@@ -26,7 +26,8 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/TriangulationCircumcircle.h>
 #include <CGAL/Qt/TriangulationPointInputAndConflictZone.h>
-#include <CGAL/Qt/TriangulationGraphicsItem.h>     // Visualise color
+#include <CGAL/Qt/TriangulationGraphicsItem.h>    
+#include <CGAL/Qt/VoronoiGraphicsItem.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 
 #include <CGAL/CORE_Expr.h>
@@ -54,18 +55,15 @@ class MainWindow :
 {
   Q_OBJECT
   
-private:  
+private:    
 
+  Triangulation                                                      dt;
+  QGraphicsEllipseItem                                             * disk;
+  QGraphicsScene                                                     scene;  
 
-  int                                                           cidx;
-  std::vector<int>                                              ccol;
-  bool                                                          dummy_mode;
+  CGAL::Qt::TriangulationGraphicsItem<Triangulation>               * dgi;
+  CGAL::Qt::VoronoiGraphicsItem<Triangulation>                     * vgi;
 
-  Triangulation                                                 dt;
-  QGraphicsEllipseItem                                        * disk;
-  QGraphicsScene                                                scene;  
-
-  CGAL::Qt::TriangulationGraphicsItem<Triangulation>          * dgi;
   CGAL::Qt::TriangulationPointInputAndConflictZone<Triangulation>  * pi;
   CGAL::Qt::TriangulationCircumcircle<Triangulation>               * tcc;
 public:
@@ -78,6 +76,8 @@ public slots:
   void on_actionCircumcenter_toggled(bool checked);
 
   void on_actionShowTriangulation_toggled(bool checked);
+
+  void on_actionShowVoronoi_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
   
@@ -100,10 +100,6 @@ MainWindow::MainWindow()
 {
 
   dt.insert_dummy_points(true);
-
-  cidx = 0;
-  for (int i = 0; i < 14; i++)
-    ccol.push_back(i);
   
   setupUi(this);
 
@@ -131,13 +127,22 @@ MainWindow::MainWindow()
   dgi->setEdgesPen(QPen(QColor(200, 200, 0), 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
 
+  // Add a GraphicItem for the Voronoi diagram
+  vgi = new CGAL::Qt::VoronoiGraphicsItem<Triangulation>(&dt);
+
+  QObject::connect(this, SIGNAL(changed()), vgi, SLOT(modelChanged()));
+
+  vgi->setEdgesPen(QPen(Qt::blue, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  scene.addItem(vgi);
+  vgi->hide();
+
+
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
   pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Triangulation>(&scene, &dt, this );
 
-  QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+  QObject::connect(pi, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<Triangulation>(&scene, &dt, this);
   tcc->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -147,8 +152,7 @@ MainWindow::MainWindow()
   // Manual handling of actions
   //
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
@@ -234,6 +238,12 @@ MainWindow::on_actionShowTriangulation_toggled(bool checked)
   dgi->setVisibleEdges(checked);
 }
 
+
+void
+MainWindow::on_actionShowVoronoi_toggled(bool checked)
+{
+  vgi->setVisible(checked);
+}
 
 
 void

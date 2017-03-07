@@ -67,6 +67,7 @@
    <addaction name="actionCircumcenter"/>
    <addaction name="separator"/>
    <addaction name="actionShowTriangulation"/>
+   <addaction name="actionShowVoronoi"/>
    <addaction name="separator"/>
    <addaction name="actionRecenter"/>
   </widget>
@@ -104,6 +105,7 @@
     <addaction name="actionCircumcenter"/>
     <addaction name="separator"/>
     <addaction name="actionShowTriangulation"/>
+    <addaction name="actionShowVoronoi"/>
     <addaction name="separator"/>
     <addaction name="actionRecenter"/>
    </widget>
@@ -168,6 +170,24 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionShowVoronoi">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Main_resources.qrc">
+     <normaloff>:/icon/icons/Voronoi_diagram_2.png</normaloff>:/icon/icons/Voronoi_diagram_2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Voronoi Diagram</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionShowTriangulation">
