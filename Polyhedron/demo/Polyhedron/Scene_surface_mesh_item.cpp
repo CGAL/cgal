@@ -101,6 +101,22 @@ struct Scene_surface_mesh_item_priv{
 
   void computeElements() const;
 };
+
+Scene_surface_mesh_item::Scene_surface_mesh_item()
+  : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
+{
+  d = new Scene_surface_mesh_item_priv(new SMesh(), this);
+  d->floated = false;
+
+  d->has_vcolors = false;
+  d->has_fcolors = false;
+  d->checkFloat();
+
+
+  d->compute_elements();
+  are_buffers_filled = false;
+}
+
 Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
   : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
 {
