@@ -3,6 +3,7 @@
 //#define CGAL_PROFILE 
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 
 
 #include <CGAL/Three/Scene_group_item.h>
@@ -31,6 +32,61 @@
 #include <QGLShader>
 #include <QGLShaderProgram>
 
+//sets/gets the ID of a Mesh vertex descriptor in a different manner if Mesh is a Polyhedron or a SMesh
+struct Id_setter{
+  typedef boost::graph_traits<SMesh>::vertex_descriptor sm_vd;
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor p_vd;
+  typedef boost::graph_traits<SMesh>::face_descriptor sm_fd;
+  typedef boost::graph_traits<Polyhedron>::face_descriptor p_fd;
+
+  Polyhedron* poly;
+
+  SMesh* sm;
+  boost::property_map< SMesh, boost::vertex_index_t >::type im;
+
+  Id_setter(Polyhedron* poly)
+    :poly(poly), sm(NULL){}
+
+    Id_setter(SMesh* sm)
+    :poly(NULL), sm(sm)
+  {
+    im = get(boost::vertex_index, *sm);
+  }
+
+    std::size_t get_id(p_vd vd)
+  {
+      return vd->id();
+  }
+  std::size_t get_id(sm_vd vd)
+  {
+    return static_cast<std::size_t>(im[vd]);
+  }
+
+  void set_id(p_vd vd, std::size_t id)
+  {
+    Polyhedron::Vertex_handle vh(vd);
+    vh->id() = id;
+  }
+  //update the visu map
+  void set_id(sm_vd vd, std::size_t id)
+  {
+  }
+
+  void set_id(p_fd fd, std::size_t id)
+  {
+    typename boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
+        = get(CGAL::face_index, *poly);
+    put(fim, fd, id);
+  }
+  //cannot set a surface_mesh id, but it is only use din case the id = -1 which cannot happen so it's ok
+  void set_id(sm_fd, std::size_t)
+  {
+      return;
+  }
+};
+
+
+
 
 typedef Polyhedron::Vertex_handle                             Vertex_handle;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
@@ -40,84 +96,106 @@ typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descripto
 typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 class Scene_spheres_item;
 namespace PMP = CGAL::Polygon_mesh_processing;
+template<typename Mesh>
 struct Array_based_vertex_point_map
 {
 public:
-  typedef vertex_descriptor            key_type;
-  typedef Polyhedron::Traits::Point_3  value_type;
-  typedef const value_type&                  reference;
-  typedef boost::read_write_property_map_tag category;
-  Array_based_vertex_point_map(std::vector<double>* positions) : positions(positions) {}
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor     key_type;
+  typedef Kernel::Point_3                                           value_type;
+  typedef const value_type&                                         reference;
+  typedef boost::read_write_property_map_tag                        category;
   std::vector<double>* positions;
+  Mesh* mesh;
+  Id_setter* id_setter;
+  Array_based_vertex_point_map(std::vector<double>* positions, Mesh* mesh, Id_setter* id_setter) : positions(positions), mesh(mesh), id_setter(id_setter) {}
+
 };
 
 
-inline
-Array_based_vertex_point_map::reference
-get(Array_based_vertex_point_map,
-  Array_based_vertex_point_map::key_type key) {
-    return key->point();
+template<typename Mesh> inline
+typename Array_based_vertex_point_map<Mesh>::reference
+get(Array_based_vertex_point_map<Mesh> map,
+  typename Array_based_vertex_point_map<Mesh>::key_type key) {
+  typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
+  VertexPointMap pmap = get(boost::vertex_point, *map.mesh);
+  return get(pmap, key);
+
 }
 
-inline
+template<typename Mesh> inline
 void
-put(Array_based_vertex_point_map pmap,
-  Array_based_vertex_point_map::key_type key,
-  Array_based_vertex_point_map::value_type val)
+put(Array_based_vertex_point_map<Mesh> map,
+  typename Array_based_vertex_point_map<Mesh>::key_type key,
+  typename Array_based_vertex_point_map<Mesh>::value_type val)
 {
-  key->point() = val; // to make things easy (ray selection after deformation, save to polyhedron after close etc),
+  typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
+  VertexPointMap vpmap = get(boost::vertex_point, *map.mesh);
+  put(vpmap, key, val);// to make things easy (ray selection after deformation, save to polyhedron after close etc),
   // I also change point() of vertex together with positions list
   // So that we do not need to pmap everywhere other than draw
-  if (key->id() == std::size_t(-1))
+  if (map.id_setter->get_id(key) == std::size_t(-1))
   {
-    key->id() = pmap.positions->size() / 3;
-    pmap.positions->push_back(val.x());
-    pmap.positions->push_back(val.y());
-    pmap.positions->push_back(val.z());
+    map.id_setter->set_id(key, static_cast<std::size_t>(map.positions->size() / 3));
+    map.positions->push_back(val.x());
+    map.positions->push_back(val.y());
+    map.positions->push_back(val.z());
   }
   else
   {
-  std::size_t pos = key->id() * 3;
-  (*pmap.positions)[pos] = val.x();
-  (*pmap.positions)[pos+1] = val.y();
-  (*pmap.positions)[pos+2] = val.z();
+    std::size_t pos = map.id_setter->get_id(key) * 3;
+    if(pos < map.positions->size()-1)
+    {
+      (*map.positions)[pos] = val.x();
+      (*map.positions)[pos+1] = val.y();
+      (*map.positions)[pos+2] = val.z();
+    }
   }
 }
 
 typedef CGAL::Surface_mesh_deformation<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
   ,CGAL::Default, CGAL::Default, CGAL::Default, 
-  Array_based_vertex_point_map> Deform_mesh;
+  Array_based_vertex_point_map<Polyhedron> > Deform_mesh;
 
+typedef CGAL::Surface_mesh_deformation<SMesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
+  ,CGAL::Default, CGAL::Default, CGAL::Default,
+  Array_based_vertex_point_map<SMesh> > Deform_sm_mesh;
 
 typedef Deform_mesh::Point  Point;
+typedef Deform_sm_mesh::Point  SM_Point;
 
 /// For storing associated data with a group of control vertices
+template<typename Mesh>
 class Control_vertices_data
 {
 public:
-  std::vector<vertex_descriptor> ctrl_vertices_group;
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  typedef typename CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
+    ,CGAL::Default, CGAL::Default, CGAL::Default,
+    Array_based_vertex_point_map<Mesh> > M_Deform_mesh;
+
+  std::vector<mesh_vd> ctrl_vertices_group;
   qglviewer::ManipulatedFrame* frame;  // manframe assoc with a group of control vertices
   qglviewer::Vec frame_initial_center; // initial center of frame
   CGAL::Three::Scene_interface::Bbox bbox;          // bbox of control vertices inside group
   qglviewer::Vec rot_direction;        // vector for constraint rotation
 private:
   std::vector<qglviewer::Vec> initial_positions;
-  Deform_mesh* deform_mesh;
+  M_Deform_mesh* deform_mesh;
 
 public:
-  Control_vertices_data(Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
+  Control_vertices_data(M_Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
     : frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
-  void refresh()
+  void refresh(Mesh *mesh)
   {
-    for(std::vector<vertex_descriptor>::iterator it = ctrl_vertices_group.begin(); it != ctrl_vertices_group.end(); ) {
+    for(typename std::vector<mesh_vd>::iterator it = ctrl_vertices_group.begin(); it != ctrl_vertices_group.end(); ) {
       if(!deform_mesh->is_control_vertex(*it)) {
         it = ctrl_vertices_group.erase(it);
       }
       else { ++it; }
     }
 
-    reset_initial_positions();
+    reset_initial_positions(mesh);
     frame_initial_center = calculate_initial_center();
     bbox = calculate_initial_bbox();
 
@@ -131,14 +209,14 @@ public:
   void set_target_positions()
   {
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    std::vector<vertex_descriptor>::iterator hb = ctrl_vertices_group.begin();
-    for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
+    typename std::vector<mesh_vd>::iterator hb = ctrl_vertices_group.begin();
+    for( std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
     {
       qglviewer::Vec dif_from_initial_center = (*it) - frame_initial_center;
       qglviewer::Vec rotated = frame->orientation() * dif_from_initial_center;
       qglviewer::Vec rotated_and_translated = rotated + frame->position();
 
-      deform_mesh->set_target_position(*hb, Point(rotated_and_translated.x-offset.x, rotated_and_translated.y-offset.y, rotated_and_translated.z-offset.z) );
+      deform_mesh->set_target_position(*hb, typename M_Deform_mesh::Point(rotated_and_translated.x-offset.x, rotated_and_translated.y-offset.y, rotated_and_translated.z-offset.z) );
     }
   }
   qglviewer::Vec calculate_initial_center() const
@@ -155,13 +233,15 @@ public:
   }
 
 private:
-  void reset_initial_positions()
+  void reset_initial_positions(Mesh* mesh)
   {
     initial_positions.clear();
-    
-    for(std::vector<vertex_descriptor>::iterator hb = ctrl_vertices_group.begin(); hb != ctrl_vertices_group.end(); ++hb)
+    typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
+    VertexPointMap pmap = get(boost::vertex_point, *mesh);
+    for(typename std::vector<mesh_vd>::iterator hb = ctrl_vertices_group.begin(); hb != ctrl_vertices_group.end(); ++hb)
     {
-      qglviewer::Vec point((*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z() );
+      typename M_Deform_mesh::Point p = get(pmap, (*hb));
+      qglviewer::Vec point(p.x(), p.y(), p.z() );
       initial_positions.push_back(point);
     }
   }
@@ -195,7 +275,8 @@ struct Mouse_keyboard_state_deformation
   { }
 };
 
-typedef std::list<Control_vertices_data> Ctrl_vertices_group_data_list;
+typedef std::list<Control_vertices_data<Polyhedron> > Ctrl_vertices_poly_group_data_list;
+typedef std::list<Control_vertices_data<SMesh> > Ctrl_vertices_sm_group_data_list;
 struct Scene_edit_polyhedron_item_priv;
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
@@ -206,6 +287,7 @@ public:
   /// The ownership of the polyhedron is moved to the new edit_polyhedron
   /// item.
   Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget, QMainWindow* mw);
+  Scene_edit_polyhedron_item(Scene_surface_mesh_item* sm_item, Ui::DeformMesh* ui_widget, QMainWindow* mw);
   ~Scene_edit_polyhedron_item();
 
   /// Returns 0, so that one cannot clone an "edit polyhedron" item.
@@ -234,11 +316,15 @@ public:
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
   const Polyhedron* polyhedron() const;
+  // Get wrapped Surface_mesh
+  SMesh*       surface_mesh();
+  const SMesh* surface_mesh() const;
 
   /// Returns a Scene_polyhedron_item from the edit polyhedron item, and
   /// transfer the ownership of the polyhedron to it.
   /// The item 'this' must be destroy just after a call to this function.
   Scene_polyhedron_item* to_polyhedron_item();
+  Scene_surface_mesh_item* to_sm_item();
 
   // Get dimensions
   bool isFinite() const { return true; }
@@ -254,6 +340,7 @@ public:
   bool eventFilter(QObject *target, QEvent *event);
   void update_frame_plane();
   void ShowAsSphere(bool b);
+  bool wasPolyhedronItem()const;
 
 public Q_SLOTS:
   void reset_spheres();
@@ -262,6 +349,7 @@ public Q_SLOTS:
 
   void invalidateOpenGLBuffers();
   void selected(const std::set<Polyhedron::Vertex_handle>& m);
+  void selected(const std::set<sm_vertex_descriptor>& m);
 
   void select(double orig_x,
               double orig_y,
@@ -280,22 +368,19 @@ protected:
 
 public:
   // Deformation related functions //
-  bool insert_control_vertex(vertex_descriptor v);
+  template<typename Mesh>
+  bool insert_control_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
 
-  bool insert_roi_vertex(vertex_descriptor v);
-  
-  bool erase_control_vertex(vertex_descriptor v);
+  template<typename Mesh>
+  bool insert_roi_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
 
-  bool erase_roi_vertex(vertex_descriptor v);
+  template<typename Mesh>
+  bool erase_control_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
 
-  void set_all_vertices_as_roi()
-  {
-    vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(*polyhedron()); vb != ve; ++vb)
-    {
-      insert_roi_vertex(*vb);
-    }   
-  }
+  template<typename Mesh>
+  bool erase_roi_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
+
+  void set_all_vertices_as_roi();
 
   void clear_roi();
 
@@ -308,6 +393,7 @@ public:
   void pivoting_end();
 
   void pivoting_begin();
+
 
   void save_roi(const char* file_name) const;
   void read_roi(const char* file_name);
@@ -340,13 +426,18 @@ protected:
     // std::cout << message.toStdString() << std::endl;
   }
 
-  bool is_there_any_ctrl_vertices_group(Ctrl_vertices_group_data_list::iterator& hgb, Ctrl_vertices_group_data_list::iterator& hge);
+  bool is_there_any_ctrl_vertices_group(Ctrl_vertices_poly_group_data_list::iterator& hgb,
+                                        Ctrl_vertices_poly_group_data_list::iterator& hge);
+
+  bool is_there_any_ctrl_vertices_group(Ctrl_vertices_sm_group_data_list::iterator& hgb,
+                                        Ctrl_vertices_sm_group_data_list::iterator& hge);
 
   bool is_there_any_ctrl_vertices_group();
 
   bool is_there_any_ctrl_vertices();
   void refresh_all_group_centers();
-  bool activate_closest_manipulated_frame(int x, int y);
+  template<typename Mesh>
+  bool activate_closest_manipulated_frame(int x, int y, Mesh* mesh);
 
   bool keyPressEvent(QKeyEvent* e);
 
@@ -361,7 +452,7 @@ protected:
       zdelta*zdelta);
     return diag * 0.5;
   }
-
+  Id_setter * id_setter; //needed as a class member because of the deform_meshes
 }; // end class Scene_edit_polyhedron_item
 
 #endif // SCENE_EDIT_POLYHEDRON_ITEM_H

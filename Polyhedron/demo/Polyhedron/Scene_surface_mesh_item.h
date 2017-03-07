@@ -80,6 +80,7 @@ public:
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
   void compute_bbox()const;
+  void invalidate_aabb_tree();
   void invalidateOpenGLBuffers();
 
 Q_SIGNALS:
