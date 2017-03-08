@@ -334,7 +334,7 @@ source(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(opposite(h,primal),primal);
+  return face(h,primal);
 }
  
 template <typename P>
@@ -343,7 +343,7 @@ target(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(h,primal);
+  return face(opposite(h,primal),primal);
 }
  
 
@@ -353,7 +353,7 @@ source(typename boost::graph_traits<Dual<P> >::edge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(opposite(halfedge(h,primal),primal),primal);
+  return face(halfedge(h,primal),primal);
 }
  
 template <typename P>
@@ -362,7 +362,7 @@ target(typename boost::graph_traits<Dual<P> >::edge_descriptor h,
        const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return face(halfedge(h,primal),primal);
+  return face(opposite(halfedge(h,primal),primal),primal);
 }
 
 template <typename P>
@@ -370,7 +370,8 @@ typename boost::graph_traits<Dual<P> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
          const Dual<P>& dual)
 {
-  return halfedge(v, dual.primal());
+  const typename Dual<P>::Primal& primal = dual.primal();
+  return opposite(halfedge(v, primal),primal);
 }
 
 template <typename P>
@@ -427,7 +428,7 @@ next(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
          const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return opposite(prev(h,primal),primal);
+  return prev(opposite(h,primal),primal);
 }  
 
 template <typename P>
@@ -436,7 +437,7 @@ prev(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
          const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return next(opposite(h,primal),primal);
+  return opposite(next(h,primal),primal);
 }  
 
 template <typename P>
