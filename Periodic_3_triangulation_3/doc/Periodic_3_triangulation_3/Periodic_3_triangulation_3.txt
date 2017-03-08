@@ -163,7 +163,6 @@ A regular triangulation is a triangulation in which the power sphere
 of each simplex is regular. See Section
 \ref Triangulation3secclassRegulartriangulation for a complete
 definition.
-
 As for Delaunay triangulations, \cgal computes a uniquely defined
 regular triangulation even in degenerate cases \cgalCite{cgal:dt-pvrdr-06}.
 
@@ -414,7 +413,7 @@ exact.
 The following four examples illustrate various features of 3D periodic
 regular triangulations.
 
-\subsubsection Periodic_3_triangulation_3P3TR3FirstExample Point insertion and vertex removal
+\subsubsection Periodic_3_triangulation_3P3TR3FirstExample Point Insertion and Vertex Removal
 
 The first example shows the incremental construction of a 3D regular triangulation,
 and the removal of a vertex. It uses the default parameter of the
@@ -422,7 +421,7 @@ and the removal of a vertex. It uses the default parameter of the
 
 \cgalExample{Periodic_3_triangulation_3/p3rt3_insert_remove.cpp}
 
-\subsubsection Periodic_3_triangulation_3P3TR3SecondExample Data structure
+\subsubsection Periodic_3_triangulation_3P3TR3SecondExample Data Structure
 
 The second example shows the incremental construction of a 3D regular
 triangulation.
@@ -430,14 +429,14 @@ It uses a more appropriate triangulation data structure, which saves some memory
 
 \cgalExample{Periodic_3_triangulation_3/p3rt3_insert_only.cpp}
 
-\subsubsection Periodic_3_triangulation_3P3TR3ThirdExample Hidden points
+\subsubsection Periodic_3_triangulation_3P3TR3ThirdExample Hidden Points
 
 The third example shows that points can be hidden during the incremental construction
 of a 3D regular triangulation.
 
 \cgalExample{Periodic_3_triangulation_3/p3rt3_hidden_points.cpp}
 
-\subsubsection Periodic_3_triangulation_3P3TR3FourthExample Bad weights
+\subsubsection Periodic_3_triangulation_3P3TR3FourthExample Bad Weights
 
 Finally, the following example shows how points whose weight does not
 satisfy the precondition are handled during the incremental construction
