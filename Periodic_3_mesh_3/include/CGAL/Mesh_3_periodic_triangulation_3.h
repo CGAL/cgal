@@ -24,7 +24,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Robust_circumcenter_traits_3.h>
-#include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
+#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 // periodic issues
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
