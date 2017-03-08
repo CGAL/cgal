@@ -177,6 +177,10 @@ public:
   coplanar_side_of_bounded_circle_3_object() const
   { return Coplanar_side_of_bounded_circle_3(&_domain_e,&_domain_f); }
 
+  Compare_distance_3
+  compare_distance_3_object() const
+  { return Compare_distance_3(&_domain_e,&_domain_f); }
+
   // The following are inherited since they are constructions :
   // Construct_segment_3
   // Construct_triangle_3
