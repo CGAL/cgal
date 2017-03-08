@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_LLOYD_MOVE_H
 #define CGAL_MESH_3_LLOYD_MOVE_H
 
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -83,12 +85,15 @@ public:
         return lloyd_move_inside_domain(v,incident_cells,c3t3,sizing_field);
         break;
       case 2:
-//    	  <PERIODIC>  Needs P3RT3
+//        <PERIODIC>  Needs P3RT3
 //        return lloyd_move_on_boundary(v,c3t3,sizing_field);
 //        break;
       case 1:
       case 0:
+      case -1:
         // Don't move edge or corner vertices
+        // N.B.: dimension = -1 is possible if we added points on a far sphere
+        //       during initialization
         return CGAL::NULL_VECTOR;
         break;
       default:
@@ -101,7 +106,8 @@ public:
     return CGAL::NULL_VECTOR;
   }
 
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+#if defined(CGAL_MESH_3_OPTIMIZER_VERBOSE) \
+ || defined (CGAL_MESH_3_EXPORT_PERFORMANCE_DATA)
   static std::string name() { return std::string("Lloyd"); }
 #endif
 
@@ -323,7 +329,8 @@ private:
 
     // Fit plane using point-based PCA: compute least square fitting plane
     Plane_3 plane;
-    CGAL::linear_least_squares_fitting_3(first,last,plane,Dimension_tag<0>());
+    Point_3 point;
+    CGAL::linear_least_squares_fitting_3(first,last,plane, point, Dimension_tag<0>(), Gt(),Default_diagonalize_traits<FT, 3>());
 
     // Project all points to the plane
     std::transform(first, last, first, Project_on_plane(plane));

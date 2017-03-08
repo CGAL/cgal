@@ -1,9 +1,10 @@
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -11,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -25,15 +26,73 @@
 #ifndef CGAL_MESH_3_MESH_SIZING_FIELD_H
 #define CGAL_MESH_3_MESH_SIZING_FIELD_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/enumerable_thread_specific.h>
+#endif
+
 namespace CGAL {
 
 namespace Mesh_3
 {
+
+/**
+ * @class Mesh_sizing_field_base
+ */
+// Sequential
+template <typename Cell_handle, typename Concurrency_tag>
+class Mesh_sizing_field_base
+{
+protected:
+  Cell_handle get_last_cell() const
+  {
+    return last_cell_;
+  }
+
+  void set_last_cell(Cell_handle c) const
+  {
+    last_cell_ = c;
+  }
+
+private:
+  /// A cell that is used to accelerate location queries
+  mutable Cell_handle last_cell_;
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+/**
+ * @class Mesh_sizing_field_base specialization
+ */
+// Parallel
+template <typename Cell_handle>
+class Mesh_sizing_field_base<Cell_handle, Parallel_tag>
+{
+protected:
+  Cell_handle get_last_cell() const
+  {
+    return last_cell_.local();
+  }
+
+  void set_last_cell(Cell_handle c) const
+  {
+    last_cell_.local() = c;
+  }
+
+private:
+  /// A cell that is used to accelerate location queries
+  mutable tbb::enumerable_thread_specific<Cell_handle> last_cell_;
+};
+#endif // CGAL_LINKED_WITH_TBB
+
 /**
  * @class Mesh_sizing_field
  */
 template <typename Tr, bool Need_vertex_update = true>
 class Mesh_sizing_field
+  : public Mesh_sizing_field_base<typename Tr::Cell_handle,
+                                  typename Tr::Concurrency_tag>
 {
   // Types
   typedef typename Tr::Geom_traits   Gt;
@@ -62,7 +121,7 @@ public:
    * Returns size at point \c p.
    */
   FT operator()(const Point_3& p) const
-  { return this->operator()(p,last_cell_); }
+  { return this->operator()(p, this->get_last_cell()); }
 
   /**
    * Returns size at point \c p, using \c v to accelerate \c p location
@@ -98,16 +157,17 @@ private:
 private:
   /// The triangulation
   Tr& tr_;
-  /// A cell that is used to accelerate location queries
-  mutable Cell_handle last_cell_;
 };
+
+
 
 template <typename Tr, bool B>
 Mesh_sizing_field<Tr,B>::
 Mesh_sizing_field(Tr& tr)
   : tr_(tr)
-  , last_cell_()
-{ }
+{
+}
+
 
 template <typename Tr, bool B>
 void
@@ -140,14 +200,23 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 operator()(const Point_3& p, const Cell_handle& c) const
 {
+#ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
+  //use the inexact locate (much faster than locate) to get a hint
+  //and then use locate to check whether p is really inside hint
+  // if not, an exact locate will be performed
+  Cell_handle hint = tr_.inexact_locate(p,c);
+  const Cell_handle cell = tr_.locate(p, hint);
+#else
   const Cell_handle cell = tr_.locate(p,c);
-  last_cell_ = cell;
+#endif
+  this->set_last_cell(cell);
 
   if ( !tr_.is_infinite(cell) )
     return interpolate_on_cell_vertices(p,cell);
   else
     return interpolate_on_facet_vertices(p,cell);
 }
+
 
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
@@ -166,6 +235,7 @@ operator()(const Point_3&, const std::pair<Cell_handle,bool>& c) const
   return ( (va+vb+vc+vd)/4 );
 }
 
+
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
@@ -180,10 +250,12 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
   const FT& vc = cell->vertex(2)->meshing_info();
   const FT& vd = cell->vertex(3)->meshing_info();
 
+  // <PERIODIC>
   const Point_3& a = tr_.point(cell, 0);
   const Point_3& b = tr_.point(cell, 1);
   const Point_3& c = tr_.point(cell, 2);
   const Point_3& d = tr_.point(cell, 3);
+  // <PERIODIC>
 
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,d,b,p));
@@ -196,6 +268,8 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
 
   return ( (abcp*vd + abdp*vc + acdp*vb + bcdp*va) / (abcp+abdp+acdp+bcdp) );
 }
+
+
 
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
@@ -223,9 +297,11 @@ interpolate_on_facet_vertices(const Point_3& p, const Cell_handle& cell) const
   const FT& vb = cell->vertex(k2)->meshing_info();
   const FT& vc = cell->vertex(k3)->meshing_info();
 
+  // <PERIODIC>
   const Point_3& a = tr_.point(cell, k1);
   const Point_3& b = tr_.point(cell, k2);
   const Point_3& c = tr_.point(cell, k3);
+  // </PERIODIC>
 
   const FT abp = area(a,b,p);
   const FT acp = area(a,c,p);
@@ -243,6 +319,7 @@ interpolate_on_facet_vertices(const Point_3& p, const Cell_handle& cell) const
 }
 
 } // end namespace Mesh_3
+
 
 } //namespace CGAL
 
