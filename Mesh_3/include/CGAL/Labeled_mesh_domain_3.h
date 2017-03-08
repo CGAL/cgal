@@ -467,7 +467,7 @@ public:
   // -----------------------------------
 
 
-private:
+protected:
   /// Returns Surface_patch_index from \c i and \c j
   Surface_patch_index make_surface_index(const Subdomain_index i,
                                    const Subdomain_index j) const
@@ -511,6 +511,8 @@ private:
 protected:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return bbox_; }
+  const Function& labeling_function() const { return function_; }
+  FT squared_error_bound_value() const { return squared_error_bound_; }
 
 private:
   /// The function which answers subdomain queries
