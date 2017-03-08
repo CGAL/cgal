@@ -62,7 +62,6 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionShowHide"/>
-    <addaction name="actionPolyhedron_Mode"/>
     <addaction name="actionSetPolyhedronA"/>
     <addaction name="actionSetPolyhedronB"/>
     <addaction name="actionSelectAllItems"/>
@@ -684,20 +683,6 @@
    </property>
    <property name="text">
     <string>Orthographic Projection</string>
-   </property>
-  </action>
-  <action name="actionPolyhedron_Mode">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Polyhedron Mode</string>
-   </property>
-   <property name="toolTip">
-    <string>In Polyhedron Mode, the default type for facegraphs is Polyhedron, by opposition to Surface_mesh.</string>
    </property>
   </action>
  </widget>

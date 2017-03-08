@@ -115,6 +115,10 @@ public:
   virtual Item_id selectionBindex() const = 0;
   /*!
    * \brief isPolyhedronMode determines if the global state is Polyhedron mode or Surface_mesh mode.
+   * In the Polyhedron_demo, a plugin that outputs a Facegraph_item will match the input type for the output.
+   * But when the input is not a Facegraph_item, the plugin will use this state to know what type to use.
+   * If isPolyhedronMode is true, the default output type will be Polyhedron (obviously), and if not, it will
+   * be Surface_mesh.
    * @returns true if the global state is Polyhedron mode
    * @returns false if the global state is Surface_mesh mode
    */

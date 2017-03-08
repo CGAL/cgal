@@ -249,6 +249,7 @@ public Q_SLOTS:
   //!Sets the item_B as the item at index i .
   void setItemB(int i);
 
+  void setPolyhedronMode(bool b);
 Q_SIGNALS:
   //generated automatically by moc
   void itemPicked(const QModelIndex &);
@@ -268,7 +269,6 @@ private Q_SLOTS:
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
   void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
-  void setPolyhedronMode(bool b);
 private:
   /*! Calls the drawing functions of each visible item according
    * to its current renderingMode. If with_names is true, uses

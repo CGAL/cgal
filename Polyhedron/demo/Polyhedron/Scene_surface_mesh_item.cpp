@@ -87,7 +87,6 @@ struct Scene_surface_mesh_item_priv{
   mutable bool is_filled;
   mutable bool isinit;
   mutable std::vector<unsigned int> idx_data_;
-  mutable std::map<unsigned int, unsigned int> current_indices; //map im values to ghosts-free values
   std::vector<unsigned int> idx_edge_data_;
   mutable std::vector<cgal_gl_data> smooth_vertices;
   mutable std::vector<cgal_gl_data> smooth_normals;
@@ -175,6 +174,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
   v_colors.clear();
   idx_data_.clear();
   idx_data_.shrink_to_fit();
+  std::map<unsigned int, unsigned int> current_indices; //map im values to ghosts-free values
 
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
