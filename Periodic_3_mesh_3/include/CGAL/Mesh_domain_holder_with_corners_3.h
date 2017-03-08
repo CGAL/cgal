@@ -209,14 +209,12 @@ public:
   { return boost::get<Corner_index>(index); }
 
   template <typename InputIterator>
-  void
-  add_corners(InputIterator first, InputIterator last);
+  void add_corners(InputIterator first, InputIterator last);
 
-  void
-  add_corner(const Point_3& point);
+  void add_corner(const Point_3& point);
 
-  bool
-  are_incident_surface_patch_corner(typename Base::Surface_patch_index, Corner_index)
+  bool are_incident_surface_patch_corner(typename Base::Surface_patch_index,
+                                         Corner_index)
   {
     // nobody calls this function
     assert(false);
@@ -258,9 +256,9 @@ OutputIterator
 Mesh_domain_holder_with_corners_3<MD_>::
 get_corners(OutputIterator out) const
 {
-  for ( typename Corners::const_iterator
-       cit = corners_.begin(), end = corners_.end() ; cit != end ; ++cit )
-  {
+  for ( typename Corners::const_iterator cit = corners_.begin(),
+                                         end = corners_.end();
+        cit != end ; ++cit ) {
     *out++ = std::make_pair(cit->second,cit->first);
   }
 

@@ -177,9 +177,8 @@ public:
                                         (sizing_field_,*)
                               ))
 
-};  // end class Periodic_3_mesh_criteria_3
+}; // end class Periodic_3_mesh_criteria_3
 
-}  // end namespace CGAL
-
+} // end namespace CGAL
 
 #endif // CGAL_PERIODIC_3_MESH_CRITERIA_3_H

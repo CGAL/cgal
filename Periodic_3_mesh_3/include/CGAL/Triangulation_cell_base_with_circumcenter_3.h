@@ -17,8 +17,7 @@
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
 
-// cell of a triangulation of any dimension <=3,
-// storing its circumcenter lazily.
+// cell of a triangulation of any dimension <=3, storing its circumcenter lazily.
 
 #ifndef CGAL_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
 #define CGAL_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H

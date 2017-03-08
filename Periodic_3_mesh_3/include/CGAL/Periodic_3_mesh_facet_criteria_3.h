@@ -197,9 +197,8 @@ private:
   Criteria criteria_;
 
   Tr helper_;
-};  // end class Periodic_mesh_facet_criteria_3
+}; // end class Periodic_mesh_facet_criteria_3
 
-}  // end namespace CGAL
-
+} // end namespace CGAL
 
 #endif // CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H

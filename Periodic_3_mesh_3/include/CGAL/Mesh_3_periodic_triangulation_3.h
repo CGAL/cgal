@@ -83,7 +83,6 @@ public:
 //  typedef typename Gt::Weighted_point_3   Weighted_point;
   typedef typename Base::Locate_type      Locate_type;
 
-
   typedef typename Base::Segment          Segment;
   typedef typename Base::Periodic_segment Periodic_segment;
 
@@ -95,6 +94,8 @@ public:
   typedef typename Base::Conflict_tester  Conflict_tester;
   typedef typename Base::Covering_sheets  Covering_sheets;
 
+  using Base::dual;
+  using Base::locate;
   using Base::tds;
   using Base::get_offset;
   using Base::incident_cells;
@@ -103,6 +104,7 @@ public:
   using Base::segment;
   using Base::set_offsets;
   using Base::point;
+  using Base::tetrahedron;
   using Base::periodic_tetrahedron;
 //  using Base::nearest_vertex;
 
@@ -138,8 +140,6 @@ public:
     }
     return 3;
   }
-
-  using Base::dual;
 
   Point dual(Cell_handle c) const
   {
@@ -332,8 +332,6 @@ public:
     this->insert_dummy_points();
   }
 
-  using Base::tetrahedron;
-
   Tetrahedron tetrahedron(const Cell_handle c) const
   {
     Periodic_tetrahedron pt = periodic_tetrahedron(c);
@@ -374,8 +372,6 @@ public:
     // not yet implemented
     assert(false);
   }
-
-  using Base::locate;
 
   Cell_handle locate(const Point& p, Locate_type& l, int& i, int& j,
                      Cell_handle start = Cell_handle(),
@@ -663,7 +659,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3,
           << i * 4 + 2 + j * number_of_vertices_on_cells + first_vertex + shift << " "
           << i * 4 + 3 + j * number_of_vertices_on_cells + first_vertex + shift << " "
           << it->subdomain_index() << std::endl;
-      //<< 128 * j + 64 + 1 << std::endl;
+      //  << 128 * j + 64 + 1 << std::endl;
 
       it++;
     }

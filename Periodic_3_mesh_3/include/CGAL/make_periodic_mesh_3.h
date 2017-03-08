@@ -52,7 +52,6 @@ C3T3 make_periodic_mesh_3(const MD& md, const MC& mc, const T& ...t)
   make_periodic_mesh_3_bp(c3t3,mdh,mc,t...);
   return c3t3;
 }
-
 #else
 
 template <typename C3T3, typename MD, typename MC>
@@ -67,8 +66,7 @@ C3T3 make_periodic_mesh_3(const MD& md, const MC& mc)
   return c3t3;
 }
 
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1>
+template <typename C3T3, typename MD, typename MC, typename Arg1>
 C3T3 make_periodic_mesh_3(const MD& md, const MC& mc, const Arg1& a1)
 {
   typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
@@ -80,8 +78,7 @@ C3T3 make_periodic_mesh_3(const MD& md, const MC& mc, const Arg1& a1)
   return c3t3;
 }
 
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2>
+template <typename C3T3, typename MD, typename MC, typename Arg1, typename Arg2>
 C3T3 make_periodic_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2)
 {
   typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
@@ -122,9 +119,11 @@ C3T3 make_periodic_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2
 }
 
 template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
-C3T3 make_periodic_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
-                          const Arg3& a3, const Arg4& a4, const Arg5& a5)
+          typename Arg1, typename Arg2, typename Arg3,
+          typename Arg4, typename Arg5>
+C3T3 make_periodic_mesh_3(const MD& md, const MC& mc,
+                          const Arg1& a1, const Arg2& a2, const Arg3& a3,
+                          const Arg4& a4, const Arg5& a5)
 {
   typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
 
@@ -134,25 +133,23 @@ C3T3 make_periodic_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2
   make_periodic_mesh_3_bp(c3t3,mdh,mc,a1,a2,a3,a4,a5);
   return c3t3;
 }
-
 #endif
 
-
 BOOST_PARAMETER_FUNCTION(
-    (void),
-    make_periodic_mesh_3_bp,
-    parameters::tag,
-    (required (in_out(c3t3),*) (domain,*) (criteria,*) ) // nondeduced
-    (deduced
-     (optional
-      (features_param, (parameters::internal::Features_options), parameters::features(domain))
-      (exude_param, (parameters::internal::Exude_options), parameters::no_exude())
-      (perturb_param, (parameters::internal::Perturb_options), parameters::no_perturb()) // another default parameter distinct from Mesh_3
-      (odt_param, (parameters::internal::Odt_options), parameters::no_odt()) // another default parameter distinct from Mesh_3
-      (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
-      )
-     )
+  (void),
+  make_periodic_mesh_3_bp,
+  parameters::tag,
+  (required (in_out(c3t3),*) (domain,*) (criteria,*) ) // nondeduced
+  (deduced
+   (optional
+    (features_param, (parameters::internal::Features_options), parameters::features(domain))
+    (exude_param, (parameters::internal::Exude_options), parameters::no_exude())
+    (perturb_param, (parameters::internal::Perturb_options), parameters::no_perturb()) // another default parameter distinct from Mesh_3
+    (odt_param, (parameters::internal::Odt_options), parameters::no_odt()) // another default parameter distinct from Mesh_3
+    (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
     )
+   )
+  )
 {
   make_periodic_mesh_3_impl(c3t3, domain, criteria,
                             exude_param, perturb_param, odt_param, lloyd_param,
@@ -160,7 +157,7 @@ BOOST_PARAMETER_FUNCTION(
 }
 
 template<class C3T3, class MeshDomain>
-void init_triangualation(C3T3& c3t3, MeshDomain& domain)
+void init_triangulation(C3T3& c3t3, MeshDomain& domain)
 {
   typedef typename C3T3::Triangulation Tr;
 
@@ -309,7 +306,7 @@ void make_periodic_mesh_3_impl(C3T3& c3t3,
                                const bool with_features)
 {
   // Initialize the triangulation of c3t3
-  init_triangualation(c3t3, const_cast<MeshDomain&>(domain));
+  init_triangulation(c3t3, const_cast<MeshDomain&>(domain));
 
   // Initialize c3t3
   internal::Mesh_3::C3t3_initializer<
@@ -336,8 +333,6 @@ void make_periodic_mesh_3_impl(C3T3& c3t3,
                          parameters::no_reset_c3t3());
 }
 
-
 }  // end namespace CGAL
-
 
 #endif // CGAL_MAKE_PERIODIC_MESH_3_H

@@ -57,7 +57,6 @@ BOOST_PARAMETER_FUNCTION(
                                      reset_param() );
 }
 
-
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria
  *
@@ -162,7 +161,6 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
 
 }
 
-}  // end namespace CGAL
-
+} // end namespace CGAL
 
 #endif // CGAL_REFINE_PERIODIC_MESH_3_H
