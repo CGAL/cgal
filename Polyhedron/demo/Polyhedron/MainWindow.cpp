@@ -254,8 +254,6 @@ MainWindow::MainWindow(QWidget* parent)
           viewer, SLOT(setFastDrawing(bool)));
   connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
           viewer, SLOT(SetOrthoProjection(bool)));
-  connect(ui->actionPolyhedron_Mode, SIGNAL(toggled(bool)),
-          scene, SLOT(setPolyhedronMode(bool)));
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
@@ -1338,6 +1336,8 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
+    scene->setPolyhedronMode(settings.value("polyhedron_mode", false).toBool());
+    qDebug()<<"reading "<<scene->isPolyhedronMode();
 }
 
 void MainWindow::writeSettings()
@@ -1352,6 +1352,10 @@ void MainWindow::writeSettings()
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
+  //setting polyhedorn mode
+  settings.setValue("polyhedron_mode", scene->isPolyhedronMode());
+  qDebug()<<"writing "<<scene->isPolyhedronMode();
+
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -1619,7 +1623,9 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  
+  prefdiag.polyhedronMode_checkbox->setChecked(scene->isPolyhedronMode());
+  connect(prefdiag.polyhedronMode_checkbox, &QCheckBox::clicked,
+          scene, &Scene::setPolyhedronMode);
   
   QStandardItemModel* iStandardModel = new QStandardItemModel(this);
   //add blacklisted plugins

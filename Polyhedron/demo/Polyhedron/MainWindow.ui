@@ -62,7 +62,6 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionShowHide"/>
-    <addaction name="actionPolyhedron_Mode"/>
     <addaction name="actionSetPolyhedronA"/>
     <addaction name="actionSetPolyhedronB"/>
     <addaction name="actionSelectAllItems"/>
@@ -706,6 +705,7 @@
     <string>In Polyhedron Mode, the default type for facegraphs is Polyhedron, by opposition to Surface_mesh.</string>
    </property>
   </action>
+
  </widget>
  <customwidgets>
   <customwidget>
