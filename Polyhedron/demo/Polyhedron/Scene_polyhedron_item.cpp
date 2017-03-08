@@ -409,9 +409,9 @@ void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
     p1 = he->vertex()->point();
     p2 = next(he, *poly)->vertex()->point();
 
-    idx_faces.push_back(he_end->vertex()->id());
-    idx_faces.push_back(he->vertex()->id());
-    idx_faces.push_back(next(he, *poly)->vertex()->id());
+    idx_faces.push_back(static_cast<unsigned int>(he_end->vertex()->id()));
+    idx_faces.push_back(static_cast<unsigned int>(he->vertex()->id()));
+    idx_faces.push_back(static_cast<unsigned int>(next(he, *poly)->vertex()->id()));
 
     if(!no_flat)
     {
@@ -467,9 +467,9 @@ Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
     if (colors_only)
      continue;
 
-    idx_faces.push_back(triangulation.v2v[ffit->vertex(0)]->id());
-    idx_faces.push_back(triangulation.v2v[ffit->vertex(1)]->id());
-    idx_faces.push_back(triangulation.v2v[ffit->vertex(2)]->id());
+    idx_faces.push_back(static_cast<unsigned int>(triangulation.v2v[ffit->vertex(0)]->id()));
+    idx_faces.push_back(static_cast<unsigned int>(triangulation.v2v[ffit->vertex(1)]->id()));
+    idx_faces.push_back(static_cast<unsigned int>(triangulation.v2v[ffit->vertex(2)]->id()));
 
     if(!no_flat)
     {
@@ -672,7 +672,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
               push_back_xyz(p+offset, positions_facets);
             }
 
-            idx_faces.push_back(he->vertex()->id());
+            idx_faces.push_back(static_cast<unsigned int>(he->vertex()->id()));
          }
       }
       else if (is_quad(f->halfedge(), *poly))
@@ -692,9 +692,9 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
 
         //1st half-quad
 
-        idx_faces.push_back(f->halfedge()->vertex()->id());
-        idx_faces.push_back(f->halfedge()->next()->vertex()->id());
-        idx_faces.push_back(f->halfedge()->next()->next()->vertex()->id());
+        idx_faces.push_back(static_cast<unsigned int>(f->halfedge()->vertex()->id()));
+        idx_faces.push_back(static_cast<unsigned int>(f->halfedge()->next()->vertex()->id()));
+        idx_faces.push_back(static_cast<unsigned int>(f->halfedge()->next()->next()->vertex()->id()));
         if(!no_flat)
         {
           Point p0 = f->halfedge()->vertex()->point();
@@ -705,9 +705,9 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           push_back_xyz(p2+offset, positions_facets);
         }
         //2nd half-quad
-        idx_faces.push_back(f->halfedge()->next()->next()->vertex()->id());
-        idx_faces.push_back(f->halfedge()->prev()->vertex()->id());
-        idx_faces.push_back(f->halfedge()->vertex()->id());
+        idx_faces.push_back(static_cast<unsigned int>(f->halfedge()->next()->next()->vertex()->id()));
+        idx_faces.push_back(static_cast<unsigned int>(f->halfedge()->prev()->vertex()->id()));
+        idx_faces.push_back(static_cast<unsigned int>(f->halfedge()->vertex()->id()));
 
         if(!no_flat)
         {
@@ -759,16 +759,16 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           if (colors_only)
             continue;
 
-          idx_feature_lines.push_back(he->vertex()->id());
-          idx_feature_lines.push_back(he->opposite()->vertex()->id());
+          idx_feature_lines.push_back(static_cast<unsigned int>(he->vertex()->id()));
+          idx_feature_lines.push_back(static_cast<unsigned int>(he->opposite()->vertex()->id()));
         }
         else
         {
           if (colors_only)
             continue;
 
-          idx_lines.push_back(he->vertex()->id());
-          idx_lines.push_back(he->opposite()->vertex()->id());
+          idx_lines.push_back(static_cast<unsigned int>(he->vertex()->id()));
+          idx_lines.push_back(static_cast<unsigned int>(he->opposite()->vertex()->id()));
         }
     }
     QApplication::restoreOverrideCursor();
