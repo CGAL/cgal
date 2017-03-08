@@ -811,14 +811,22 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
       CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
 
       //Clears the targeted Id
-      v->textRenderer->removeText(d->targeted_id);
+      if(d)
+        v->textRenderer->removeText(d->targeted_id);
       //Remove textitems
-      v->textRenderer->removeTextList(textItems);
-      delete textItems;
+      if(textItems)
+      {
+        v->textRenderer->removeTextList(textItems);
+        delete textItems;
+        textItems=NULL;
+      }
     }
-
-    d->destroy();
-    delete d;
+    if(d)
+    {
+      d->destroy();
+      delete d;
+      d=NULL;
+    }
 }
 
 #include "Color_map.h"
@@ -1819,6 +1827,7 @@ bool Scene_polyhedron_item::intersect_face(double orig_x,
   return false;
 
 }
+
 bool Scene_polyhedron_item::supportsRenderingMode(RenderingMode m) const
 {
   return (
@@ -1834,4 +1843,14 @@ void Scene_polyhedron_item::set_flat_disabled(bool b)
   d->no_flat = b;
   invalidateOpenGLBuffers();
   itemChanged();
+}
+
+void Scene_polyhedron_item::itemAboutToBeDestroyed(Scene_item *)
+{
+  if(d)
+  {
+    d->destroy();
+    delete d;
+    d=NULL;
+  }
 }
