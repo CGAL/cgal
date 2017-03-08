@@ -37,9 +37,6 @@
 
 
 #include <vector>
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-# include <set>
-#endif
 
 namespace CGAL { namespace Mesh_3 {
 
@@ -371,31 +368,20 @@ private:
 class WorkBatch
 {
 public:
-
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-  typedef std::multiset<WorkItem *, CompareTwoWorkItems> Batch;
-#else
   typedef std::vector<WorkItem *> Batch;
-#endif
-  typedef Batch::const_iterator BatchConstIterator;
-  typedef Batch::iterator       BatchIterator;
+  typedef Batch::const_iterator   BatchConstIterator;
+  typedef Batch::iterator         BatchIterator;
 
   WorkBatch() {}
 
   void add_work_item(WorkItem *p_item)
   {
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-    m_batch.insert(p_item);
-#else
     m_batch.push_back(p_item);
-#endif
   }
 
   void run()
   {
-#ifndef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
     std::sort(m_batch.begin(), m_batch.end(), CompareTwoWorkItems());
-#endif
     BatchIterator it = m_batch.begin();
     BatchIterator it_end = m_batch.end();
     for ( ; it != it_end ; ++it)
