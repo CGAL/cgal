@@ -3,14 +3,17 @@
 #include <QAction>
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
-#include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 using namespace CGAL::Three;
+
+typedef Scene_surface_mesh_item::SMesh SMesh;
+
 namespace PMP = CGAL::Polygon_mesh_processing;
-class Polyhedron_demo_corefinement_plugin :
+class Polyhedron_demo_corefinement_sm_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -65,18 +68,18 @@ public:
   bool applicable(QAction*) const {
     int nb_selected=0;
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
-      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) )
+      if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
         ++nb_selected;
     return nb_selected==2;
   }
 
 public Q_SLOTS:
    void corefine() {
-    Scene_polyhedron_item* first_item = NULL;
+    Scene_surface_mesh_item* first_item = NULL;
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
     {
-      Scene_polyhedron_item* item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+      Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
       if(item)
       {
@@ -86,12 +89,12 @@ public Q_SLOTS:
           continue;
         }
 
-        if(!first_item->polyhedron()->is_pure_triangle()) {
+        if(! CGAL::is_triangle_mesh(*first_item->polyhedron())) {
           messages->warning(tr("The polyhedron \"%1\" is not triangulated.")
                             .arg(first_item->name()));
           return;
         }
-        if(!item->polyhedron()->is_pure_triangle()) {
+        if(! CGAL::is_triangle_mesh(*item->polyhedron())) {
           messages->warning(tr("The polyhedron \"%1\" is not triangulated.")
                             .arg(item->name()));
           return;
@@ -113,11 +116,11 @@ public Q_SLOTS:
 
   void corefine_and_bool_op(bool_op op)
   {
-    Scene_polyhedron_item* first_item = NULL;
+    Scene_surface_mesh_item* first_item = NULL;
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
     {
-      Scene_polyhedron_item* item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+      Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
       if(item)
       {
@@ -127,21 +130,21 @@ public Q_SLOTS:
           continue;
         }
 
-        if(!first_item->polyhedron()->is_pure_triangle()) {
+        if(! CGAL::is_triangle_mesh(*first_item->polyhedron())) {
           messages->warning(tr("The polyhedron \"%1\" is not triangulated.")
                             .arg(first_item->name()));
           return;
         }
-        if(!item->polyhedron()->is_pure_triangle()) {
+        if(! CGAL::is_triangle_mesh(*item->polyhedron())) {
           messages->warning(tr("The polyhedron \"%1\" is not triangulated.")
                             .arg(item->name()));
           return;
         }
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
-        Polyhedron* new_poly = new Polyhedron();
+        SMesh* new_poly = new SMesh();
         QString str_op;
-        Polyhedron P, Q;
+        SMesh P, Q;
         switch(op)
         {
           case CRF_UNION:
@@ -150,22 +153,18 @@ public Q_SLOTS:
             {
               delete new_poly;
               messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
-              QApplication::restoreOverrideCursor();
               return;
             }
             str_op = "Union";
           break;
           case CRF_INTER:
             P = *first_item->polyhedron(), Q = *item->polyhedron();
-            std::cerr << "intersect" << std::endl; 
             if (! PMP::corefine_and_compute_intersection(P, Q, *new_poly) )
             {
               delete new_poly;
               messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
-              QApplication::restoreOverrideCursor();
               return;
             }
-            std::cerr << "done" << std::endl; 
             str_op = "Intersection";
           break;
           case CRF_MINUS_OP:
@@ -176,7 +175,6 @@ public Q_SLOTS:
             {
               delete new_poly;
               messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
-              QApplication::restoreOverrideCursor();
               return;
             }
             str_op = "Difference";
@@ -188,7 +186,7 @@ public Q_SLOTS:
         scene->itemChanged(item);
         scene->itemChanged(first_item);
 
-        Scene_polyhedron_item* new_item = new Scene_polyhedron_item(new_poly);
+        Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(new_poly);
         new_item->setName(QString("%1 of %2 and %3").arg(str_op).arg(first_item->name()).arg(item->name()));
         new_item->setColor(first_item->color());
         new_item->setRenderingMode(first_item->renderingMode());
@@ -230,4 +228,4 @@ private:
   Messages_interface* messages;
 };
 
-#include "Corefinement_plugin.moc"
+#include "Corefinement_sm_plugin.moc"
