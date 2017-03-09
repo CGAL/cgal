@@ -2,6 +2,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_plane_item.h"
 #include "Polyhedron_type.h"
@@ -11,10 +12,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-
-
-#include <CGAL/Make_quad_soup.h> // output for plane fitting
-#include <CGAL/Make_bar.h> // output for line fitting
+#include <CGAL/boost/graph/helpers.h>
 
 #include "Kernel_type.h"
 typedef Kernel::Plane_3 Plane;
@@ -24,6 +22,25 @@ typedef Kernel::Line_3 Line;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
+
+template <typename TriangleMesh, typename OutputIterator>
+CGAL::Bbox_3 triangles(const TriangleMesh& mesh,
+                         OutputIterator out)
+{
+  CGAL::Bbox_3 bb;
+  typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type vpm =
+      get(CGAL::vertex_point, mesh);
+  BOOST_FOREACH(boost::graph_traits<TriangleMesh>::face_descriptor fd, faces(mesh)){
+    boost::graph_traits<TriangleMesh>::halfedge_descriptor hd = halfedge(fd,mesh);
+    Triangle t(get(vpm,source(hd,mesh)),
+               get(vpm,target(hd,mesh)),
+               get(vpm,target(next(hd,mesh),mesh)));
+    *out++ = t;
+    bb = bb + t.bbox();
+  }
+  return bb;
+}
+
 
 using namespace CGAL::Three;
 class Polyhedron_demo_pca_plugin : 
@@ -39,6 +56,7 @@ public:
   QList<QAction*> actions() const {
     return _actions;
   }
+
 
   void init(QMainWindow* mw,
             Scene_interface* scene_interface,
@@ -62,8 +80,9 @@ public:
 
 
   bool applicable(QAction*) const { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
-      || qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+           qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())) ||
+           qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 
@@ -83,24 +102,21 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
   Scene_polyhedron_item* item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  if(item)
-  {
+  Scene_surface_mesh_item* sm_item = 
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+
+  QString item_name = (item)?item->name():sm_item->name();
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Polyhedron* pMesh = item->polyhedron();
 
-    // get triangles from the mesh
     std::list<Triangle> triangles;
-    Polyhedron::Facet_iterator f;
-    for(f = pMesh->facets_begin();
-      f != pMesh->facets_end();
-      ++f)
-    {
-      const Point& a = f->halfedge()->vertex()->point();
-      const Point& b = f->halfedge()->next()->vertex()->point();
-      const Point& c = f->halfedge()->prev()->vertex()->point();
-      triangles.push_back(Triangle(a,b,c));
+  if(item){
+    Polyhedron* pMesh = item->polyhedron();
+    ::triangles(*pMesh,std::back_inserter(triangles));
+  } else {
+    Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
+    ::triangles(*pMesh,std::back_inserter(triangles));
     }
-
+  if(! triangles.empty()){
     // fit plane to triangles
     Plane plane;
     std::cout << "Fit plane...";
@@ -115,11 +131,12 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
                           center_of_mass.z());
     const Vector& normal = plane.orthogonal_vector();
     new_item->setNormal(normal.x(), normal.y(), normal.z());
-    new_item->setName(tr("%1 (plane fit)").arg(item->name()));
+    new_item->setName(tr("%1 (plane fit)").arg(item_name));
     new_item->setColor(Qt::magenta);
-    new_item->setRenderingMode(item->renderingMode());
+    new_item->setRenderingMode((item)?item->renderingMode():sm_item->renderingMode());
     scene->addItem(new_item);
 
+  }
     QApplication::restoreOverrideCursor();
   }
   else
@@ -167,24 +184,24 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
   Scene_polyhedron_item* item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  if(item)
-  {
+  Scene_surface_mesh_item* sm_item = 
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+
+  QString item_name = (item)?item->name():sm_item->name();
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Polyhedron* pMesh = item->polyhedron();
 
-    // get triangles from the mesh
+  CGAL::Bbox_3 bb;
+
     std::list<Triangle> triangles;
-    Polyhedron::Facet_iterator f;
-    for(f = pMesh->facets_begin();
-      f != pMesh->facets_end();
-      ++f)
+   if(item){
+    Polyhedron* pMesh = item->polyhedron();
+    bb = ::triangles(*pMesh,std::back_inserter(triangles));
+  } else {
+    Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
+    bb = ::triangles(*pMesh,std::back_inserter(triangles));
+  }
+  if(! triangles.empty()){
     {
-      const Point& a = f->halfedge()->vertex()->point();
-      const Point& b = f->halfedge()->next()->vertex()->point();
-      const Point& c = f->halfedge()->prev()->vertex()->point();
-      triangles.push_back(Triangle(a,b,c));
-    }
-
     // fit line to triangles
     Line line;
     std::cout << "Fit line...";
@@ -195,7 +212,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
     Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
 
     // compute bounding box diagonal
-    Iso_cuboid bbox = CGAL::bounding_box(pMesh->points_begin(),pMesh->points_end());
+    Iso_cuboid bbox(bb);
 
     // compute scale for rendering using diagonal of bbox
     Point cmin = (bbox.min)();
@@ -231,16 +248,25 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
     points[7] = b - u2;
 
     // add best fit line as new polyhedron bar
-    Polyhedron *pFit = new Polyhedron;
-    Make_bar<Polyhedron,Kernel> bar;
-    bar.run(points,*pFit);
-
-    Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pFit);
-    new_item->setName(tr("%1 (line fit)").arg(item->name()));
+    Scene_surface_mesh_item::SMesh* pFit = new Scene_surface_mesh_item::SMesh;
+    CGAL::make_hexahedron(points[0],
+                          points[1],
+                          points[2],
+                          points[3],
+                          points[4],
+                          points[5],
+                          points[6],
+                          points[7],
+                          *pFit);
+    Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pFit);
+    new_item->setName(tr("%1 (line fit)").arg(item_name));
     new_item->setColor(Qt::magenta);
-    new_item->setRenderingMode(item->renderingMode());
+    new_item->setRenderingMode((item)?item->renderingMode(): sm_item->renderingMode());
     scene->addItem(new_item);
 
+
+  }
+  }
     QApplication::restoreOverrideCursor();
   }
   else
