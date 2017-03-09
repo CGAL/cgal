@@ -44,8 +44,8 @@
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
   #include <tbb/concurrent_hash_map.h>
-namespace tbb {
-namespace interface5 {
+
+namespace CGAL {
   template < class DSC, bool Const >
   std::size_t tbb_hasher(const CGAL::internal::CC_iterator<DSC, Const>& it)
   {
@@ -56,7 +56,7 @@ namespace interface5 {
   {
     return CGAL::CCC_internal::hash_value(it);
   }
-} }
+}
 #endif
 
 namespace CGAL {
