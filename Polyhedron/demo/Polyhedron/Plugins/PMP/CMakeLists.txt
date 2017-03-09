@@ -53,7 +53,7 @@ target_link_libraries(mean_curvature_flow_skeleton_plugin
     
 qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
 polyhedron_demo_plugin(point_inside_polyhedron_plugin Point_inside_polyhedron_plugin ${point_inside_polyhedronUI_FILES})
-target_link_libraries(point_inside_polyhedron_plugin scene_polyhedron_item scene_points_with_normal_item)
+target_link_libraries(point_inside_polyhedron_plugin scene_polyhedron_item scene_surface_mesh_item scene_points_with_normal_item)
 
 
 qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
