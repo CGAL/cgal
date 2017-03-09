@@ -20,7 +20,7 @@ if(EIGEN3_FOUND)
     target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
 
     polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin)
-    target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
+    target_link_libraries(hole_filling_polyline_plugin scene_surface_mesh_item scene_polyhedron_item scene_polylines_item)
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
