@@ -702,7 +702,7 @@ class Mesher_level<Tr, Derived, Element, Previous,
 private:
   typedef Derived Derived_;
   template <typename ML, typename Container_element, 
-            typename Quality, typename Mesh_visitor> class Enqueued_element;
+            typename Quality, typename Mesh_visitor> class Enqueue_element;
 public:
 
   typedef Mesher_level<Tr,
@@ -875,7 +875,7 @@ public:
     CGAL_assertion(m_empty_root_task != 0);
 
     m_worksharing_ds->enqueue_work(
-      Enqueued_element<Self, Container_element, Quality, Mesh_visitor>(
+      Enqueue_element<Self, Container_element, Quality, Mesh_visitor>(
         *this, ce, quality, visitor),
       quality,
       *m_empty_root_task
@@ -1153,7 +1153,7 @@ private:
 
   // Functor for enqueue_task function
   template <typename ML, typename Container_element, typename Quality, typename Mesh_visitor>
-  class Enqueued_element
+  class Enqueue_element
   {
     ML                & m_mesher_level;
     Container_element   m_container_element;
@@ -1162,7 +1162,7 @@ private:
 
   public:
     // Constructor
-    Enqueued_element(ML &ml,
+    Enqueue_element(ML &ml,
                     const Container_element &ce, 
                     const Quality &quality, 
                     Mesh_visitor visitor)
