@@ -1537,9 +1537,7 @@ bool Trapezoidal_decomposition_2<Td_traits>
   typename Arrangement_on_surface_2::Halfedge_around_vertex_const_circulator first, second;
   first = second = v->incident_halfedges();
   ++second;
-  if (he->source() == v)
-    he = he->twin();
-  CGAL_assertion(he == first);
+
   if (second == first) //if he is the only halfedge around v -> return true
     return true;
   return false;
