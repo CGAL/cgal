@@ -41,7 +41,7 @@ endif()
 
   qt5_wrap_ui(point_set_shape_detectionUI_FILES Point_set_shape_detection_plugin.ui)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})
-  target_link_libraries(point_set_shape_detection_plugin scene_polyhedron_item scene_points_with_normal_item scene_polygon_soup_item)
+  target_link_libraries(point_set_shape_detection_plugin scene_surface_mesh_item scene_polyhedron_item scene_points_with_normal_item scene_polygon_soup_item)
 
   qt5_wrap_ui(point_set_simplificationUI_FILES Point_set_simplification_plugin.ui)
   polyhedron_demo_plugin(point_set_simplification_plugin Point_set_simplification_plugin ${point_set_simplificationUI_FILES})
