@@ -137,5 +137,76 @@ unsigned int nb_holes(Polyhedron* poly)
   return n;
 }
 
+template<typename Polyhedron>
+void faces_area(Polyhedron* poly,
+  double& mini, double& maxi, double& mean, double& mid)
+{
+  using namespace boost::accumulators;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+
+  accumulator_set< double,
+    features< tag::min, tag::max, tag::mean , tag::median> > acc;
+
+  typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
+    vpmap = get(CGAL::vertex_point, *poly);
+  BOOST_FOREACH(face_descriptor f, faces(*poly))
+  {
+    halfedge_descriptor h = halfedge(f, *poly);
+    typename Kernel::Point_3 a = get(vpmap, target(h, *poly));
+    typename Kernel::Point_3 b = get(vpmap, target(next(h, *poly), *poly));
+    typename Kernel::Point_3 c = get(vpmap, target(next(next(h, *poly), *poly), *poly));
+    CGAL::squared_area(a,b,c);
+    acc(CGAL::sqrt(CGAL::squared_distance(a, b)));
+  }
+
+  mini = extract_result< tag::min >(acc);
+  maxi = extract_result< tag::max >(acc);
+  mean = extract_result< tag::mean >(acc);
+  mid =  extract_result< tag::median >(acc);
+}
+
+template<typename Polyhedron>
+void faces_aspect_ratio(Polyhedron* poly,
+  double& min_altitude, double& mini, double& maxi, double& mean)
+{
+  using namespace boost::accumulators;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+
+
+  accumulator_set< double,
+    features< tag::min, tag::max, tag::mean> > acc;
+
+  min_altitude = std::numeric_limits<double>::infinity();
+  typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
+    vpmap = get(CGAL::vertex_point, *poly);
+  BOOST_FOREACH(face_descriptor f, faces(*poly))
+  {
+    halfedge_descriptor h = halfedge(f, *poly);
+    typename Kernel::Point_3 points[3];
+    points[0] = get(vpmap, target(h, *poly));
+    points[1] = get(vpmap, target(next(h, *poly), *poly));
+    points[2] = get(vpmap, target(next(next(h, *poly), *poly), *poly));
+    //Compute smallest altitude
+    double min_alt = std::numeric_limits<double>::infinity();
+    double longest_edge = 0;
+    for(int i=0; i<3; ++i)
+    {
+      double alt = CGAL::sqrt(CGAL::squared_distance(points[(0+i)%3], typename Kernel::Line_3(points[(1+i)%3], points[(2+i)%3])));
+      double edge =  CGAL::sqrt(CGAL::squared_distance(points[(1+i)%3], points[(2+i)%3]));
+      if(alt < min_alt) { min_alt = alt; }
+      if(edge > longest_edge) { longest_edge = edge; }
+    }
+    //compute aspect-ratio
+    acc(longest_edge/min_alt);
+
+    if(min_alt < min_altitude) { min_altitude = min_alt; }
+  }
+
+  mini = extract_result< tag::min >(acc);
+  maxi = extract_result< tag::max >(acc);
+  mean = extract_result< tag::mean >(acc);
+}
 #endif // POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 
