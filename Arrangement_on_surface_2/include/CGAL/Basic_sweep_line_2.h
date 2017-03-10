@@ -240,7 +240,7 @@ public:
    */
   Basic_sweep_line_2(const Traits_2* traits, Visitor* visitor);
 
-  /*! Destrcutor. */
+  /*! Destructor. */
   virtual ~Basic_sweep_line_2();
 
   /*! Run the sweep-line algorithm on a given range of x-monotone curves.
@@ -399,7 +399,7 @@ protected:
   /*! Initialize the data structures for the sweep-line algorithm. */
   virtual void _init_structures();
 
-  /*! Complete the sweep (complete data strcures). */
+  /*! Complete the sweep (complete data structures). */
   virtual void _complete_sweep();
 
   /*! Initialize an event associated with a point.
@@ -429,12 +429,12 @@ protected:
 
   /*! Handle an event that does not have any incident left curves.
    * Such an event is usually the left endpoint of its incident right
-   * subcurves, and we locate thei position in the status line.
+   * subcurves, and we locate their position in the status line.
    */
   void _handle_event_without_left_curves();
 
   /*! Sort the left subcurves of an event point according to their order in
-   * their status line (no geometric comprasions are needed).
+   * their status line (no geometric comparisons are needed).
    */
   void _sort_left_curves();
 
