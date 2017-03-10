@@ -293,6 +293,12 @@ private:
   void
   before_insertion_handle_facet_inside_conflict_zone (const Facet& f) 
   {
+#ifdef CGAL_LINKED_WITH_TBB
+    // Sequential only
+    if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+#endif // CGAL_LINKED_WITH_TBB
+    {
+    //Sequential
     if ( this->r_c3t3_.is_in_complex(f) ) {
       // foreach edge of f
       const Cell_handle cell = f.first;
@@ -306,6 +312,7 @@ private:
         m_bad_edges.left.erase( make_edgevv(edge_va, edge_vb));
       }
     }
+    }
   }
 
   // Action to perform on a facet on the boundary of the conflict zone
@@ -315,6 +322,11 @@ private:
     // perform the same operations as for an internal facet
     before_insertion_handle_facet_inside_conflict_zone (f);
 
+#ifdef CGAL_LINKED_WITH_TBB
+    // Sequential only
+    if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+#endif // CGAL_LINKED_WITH_TBB
+    {
     if(m_bad_vertices_initialized) {
       const Cell_handle& c = f.first;
       const int i = f.second;
@@ -328,6 +340,7 @@ private:
                       << c->vertex(j)->point() << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           }
+    }
     }
   }
 
