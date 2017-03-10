@@ -130,7 +130,7 @@ protected:
   // Data members:
   Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
-                                     // creaed by an overlap.
+                                     // created by an overlap.
 
   Curve_pair_set m_curves_pair_set;  // A lookup table of pairs of Subcurves
                                      // that have been intersected.
@@ -138,7 +138,7 @@ protected:
   std::vector<Object> m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
-  X_monotone_curve_2 sub_cv1;        // Auxiliary varibales
+  X_monotone_curve_2 sub_cv1;        // Auxiliary variables
   X_monotone_curve_2 sub_cv2;        // (for splitting curves).
 
 public:
@@ -160,7 +160,7 @@ public:
     m_curves_pair_set(0)
   {}
 
-  /*! Destrcutor. */
+  /*! Destructor. */
   virtual ~Sweep_line_2() {}
 
 protected:
