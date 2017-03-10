@@ -1,6 +1,7 @@
 #include <QtCore/qglobal.h>
 
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_interface.h>
 #include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -13,7 +14,6 @@
 #include <QObject>
 
 #include <CGAL/Polygon_mesh_processing/repair.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_repair_polyhedron_plugin :
@@ -58,9 +58,15 @@ public:
   bool applicable(QAction*) const
   {
     int item_id = scene->mainSelectionIndex();
-    return qobject_cast<Scene_polyhedron_item*>(
-      scene->item(item_id));
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(item_id)) || 
+           qobject_cast<Scene_surface_mesh_item*>(scene->item(item_id));
   }
+  template <typename Item>
+  void on_actionRemoveIsolatedVertices_triggered(Scene_interface::Item_id index);
+  template <typename Item>
+  void on_actionRemoveDegenerateFaces_triggered(Scene_interface::Item_id index);
+  template <typename Item>
+  void on_actionRemoveSelfIntersections_triggered(Scene_interface::Item_id index);
 
 public Q_SLOTS:
   void on_actionRemoveIsolatedVertices_triggered();
@@ -75,13 +81,11 @@ private:
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
 
-
-void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_triggered()
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_triggered(Scene_interface::Item_id index)
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-
-  Scene_polyhedron_item* poly_item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Item* poly_item =
+    qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
     std::size_t nbv =
@@ -94,12 +98,18 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
   }
 }
 
-void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_triggered()
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionRemoveIsolatedVertices_triggered<Scene_polyhedron_item>(index);
+  on_actionRemoveIsolatedVertices_triggered<Scene_surface_mesh_item>(index);
+}
 
-  Scene_polyhedron_item* poly_item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_triggered(Scene_interface::Item_id index)
+{
+  Item* poly_item =
+    qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
     std::size_t nbv =
@@ -112,12 +122,18 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
   }
 }
 
-void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_triggered()
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionRemoveDegenerateFaces_triggered<Scene_polyhedron_item>(index);
+  on_actionRemoveDegenerateFaces_triggered<Scene_surface_mesh_item>(index);
+}
 
-  Scene_polyhedron_item* poly_item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_triggered(Scene_interface::Item_id index)
+{
+  Item* poly_item =
+    qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
     bool solved =
@@ -128,6 +144,13 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_triggered()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionRemoveSelfIntersections_triggered<Scene_polyhedron_item>(index);
+  on_actionRemoveSelfIntersections_triggered<Scene_surface_mesh_item>(index);
 }
 
 #include "Repair_polyhedron_plugin.moc"
