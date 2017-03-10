@@ -29,6 +29,7 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
+  typedef SMesh FaceGraph;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
 
   Scene_surface_mesh_item();

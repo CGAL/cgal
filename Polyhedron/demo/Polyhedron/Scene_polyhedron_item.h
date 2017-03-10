@@ -24,6 +24,7 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
         : public CGAL::Three::Scene_item{
     Q_OBJECT
 public:
+  typedef Polyhedron FaceGraph;
     enum STATS {
       NB_VERTICES = 0,
       NB_CONNECTED_COMPOS,
