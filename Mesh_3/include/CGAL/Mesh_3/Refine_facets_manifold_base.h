@@ -492,8 +492,8 @@ public:
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       return Base::get_next_element_impl();
     else
-    { //Sequential
 #endif
+    { //Sequential
       if (!Base::no_longer_element_to_refine_impl()) {
         return Base::get_next_element_impl();
       }
