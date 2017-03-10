@@ -3,12 +3,14 @@
 #include <iostream>
 #include <string>
 
+//#define CGAL_CLASSIFICATION_VERBOSE
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_classifier.h>
 #include <CGAL/Classification/Trainer.h>
 #include <CGAL/IO/read_ply_points.h>
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -80,7 +82,11 @@ int main (int argc, char** argv)
   Point_set_classifier psc (pts, Pmap());
   
   std::cerr << "Generating features" << std::endl;
+  CGAL::Real_timer t;
+  t.start();
   psc.generate_features (5); // Using 5 scales
+  t.stop();
+  std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
   
   // Add types to PSC
   CGAL::Classification::Label_handle ground
@@ -89,30 +95,44 @@ int main (int argc, char** argv)
     = psc.add_label ("vegetation");
   CGAL::Classification::Label_handle roof
     = psc.add_label ("roof");
+  CGAL::Classification::Label_handle facade
+    = psc.add_label ("facade");
   
   Trainer trainer (psc);
 
   // Set training sets
+  std::size_t nb_inliers = 0;
   for (std::size_t i = 0; i < labels.size(); ++ i)
     {
       switch (labels[i])
         {
         case 0:
-          trainer.set_inlier(ground, i);
+          trainer.set_inlier(vege, i);
+          ++ nb_inliers;
           break;
         case 1:
-          trainer.set_inlier(vege, i);
+          trainer.set_inlier(ground, i);
+          ++ nb_inliers;
           break;
         case 2:
           trainer.set_inlier(roof, i);
+          ++ nb_inliers;
+          break;
+        case 3:
+          trainer.set_inlier(facade, i);
+          ++ nb_inliers;
           break;
         default:
           break;
         }
     }
 
-  std::cerr << "Training" << std::endl;
-  trainer.train (800); // 800 trials
+  std::cerr << "Training using " << nb_inliers << " inliers" << std::endl;
+  t.reset();
+  t.start();
+  trainer.train (400); // 800 trials
+  t.stop();
+  std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
   for (std::size_t i = 0; i < psc.number_of_labels(); ++ i)
@@ -121,22 +141,39 @@ int main (int argc, char** argv)
                 << trainer.precision(psc.label(i)) << " ; "
                 << trainer.recall(psc.label(i)) << " ; "
                 << trainer.f1_score(psc.label(i)) << " ; "
-                << trainer.IoU(psc.label(i)) << std::endl;
+                << trainer.intersection_over_union(psc.label(i)) << std::endl;
     }
 
   std::cerr << "Accuracy = " << trainer.accuracy() << std::endl
             << "Mean F1 score = " << trainer.mean_f1_score() << std::endl
-            << "Mean IoU = " << trainer.mean_IoU() << std::endl;
+            << "Mean IoU = " << trainer.mean_intersection_over_union() << std::endl;
   
-  
+  t.reset();
+  t.start();
   psc.run_with_graphcut (psc.neighborhood().k_neighbor_query(12), 0.5);
+  t.stop();
+  std::cerr << "One graphcut done in " << t.time() << " second(s)" << std::endl;
   
   // Save the output in a colored PLY format
-  std::ofstream f ("classification.ply");
-  f.precision(18);
+  {
+    std::ofstream f ("classification_one.ply");
+    f.precision(18);
+    psc.write_classification_to_ply (f);
+  }
 
-  psc.write_classification_to_ply (f);
-
+  t.reset();
+  t.start();
+  psc.run_with_graphcut (psc.neighborhood().k_neighbor_query(12), 0.5, 30);
+  t.stop();
+  std::cerr << std::size_t(pts.size() / 25000) << " graphcuts done in " << t.time() << " second(s)" << std::endl;
+  
+  // Save the output in a colored PLY format
+  {
+    std::ofstream f ("classification_several.ply");
+    f.precision(18);
+    psc.write_classification_to_ply (f);
+  }
+  
   /// Save the configuration to be able to reload it later
   std::ofstream fconfig ("config.xml");
   psc.save_configuration (fconfig);

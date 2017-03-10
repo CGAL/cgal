@@ -252,6 +252,92 @@ protected:
 
   };
 
+  template <typename NeighborQuery>
+  class Run_with_graphcut
+  {
+    Classifier& m_classifier;
+    const ItemRange& m_input;
+    ItemMap m_item_map;
+    const NeighborQuery& m_neighbor_query;
+    double m_weight;
+    const std::vector<std::vector<Feature_effect> >& m_effect_table;
+    const std::vector<std::vector<std::size_t> >& m_indices;
+    const std::vector<std::pair<std::size_t, std::size_t> >& m_input_to_indices;
+    std::vector<std::size_t>& m_assigned_label;
+    
+  public:
+
+    Run_with_graphcut (Classifier& classifier,
+                       const ItemRange& input,
+                       ItemMap item_map,
+                       const NeighborQuery& neighbor_query,
+                       double weight,
+                       const std::vector<std::vector<Feature_effect> >& effect_table,
+                       const std::vector<std::vector<std::size_t> >& indices,
+                       const std::vector<std::pair<std::size_t, std::size_t> >& input_to_indices,
+                       std::vector<std::size_t>& assigned_label)
+    : m_classifier (classifier), m_input (input), m_item_map (item_map),
+      m_neighbor_query (neighbor_query), m_weight (weight), m_effect_table (effect_table),
+      m_indices (indices), m_input_to_indices (input_to_indices),
+      m_assigned_label (assigned_label)
+    { }
+    
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t sub = r.begin(); sub != r.end(); ++ sub)
+        {
+          if (m_indices[sub].empty())
+            continue;
+        
+          std::vector<std::pair<std::size_t, std::size_t> > edges;
+          std::vector<double> edge_weights;
+          std::vector<std::vector<double> > probability_matrix
+            (m_effect_table.size(), std::vector<double>(m_indices[sub].size(), 0.));
+          std::vector<std::size_t> assigned_label (m_indices[sub].size());
+
+          for (std::size_t j = 0; j < m_indices[sub].size(); ++ j)
+            {
+              std::size_t s = m_indices[sub][j];
+            
+              std::vector<std::size_t> neighbors;
+
+              m_neighbor_query (get(m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
+
+              for (std::size_t i = 0; i < neighbors.size(); ++ i)
+                if (sub == m_input_to_indices[neighbors[i]].first
+                    && j != m_input_to_indices[neighbors[i]].second)
+                  {
+                    edges.push_back (std::make_pair (j, m_input_to_indices[neighbors[i]].second));
+                    edge_weights.push_back (m_weight);
+                  }
+        
+              std::size_t nb_class_best = 0;
+              double val_class_best = (std::numeric_limits<double>::max)();
+              for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
+                {
+                  double value = m_classifier.classification_value (k, s);
+                  probability_matrix[k][j] = value;
+            
+                  if(val_class_best > value)
+                    {
+                      val_class_best = value;
+                      nb_class_best = k;
+                    }
+                }
+              assigned_label[j] = nb_class_best;
+            }
+    
+          Alpha_expansion graphcut;
+          graphcut(edges, edge_weights, probability_matrix, assigned_label);
+
+          for (std::size_t i = 0; i < assigned_label.size(); ++ i)
+            m_assigned_label[m_indices[sub][i]] = assigned_label[i];
+
+        }
+    }
+
+  };
+
   tbb::mutex m_mutex;
   void mutex_lock() { m_mutex.lock(); }
   void mutex_unlock() { m_mutex.unlock(); }
@@ -647,24 +733,11 @@ public:
   }
 
 
-  /*! 
-    \brief Runs the classification algorithm with a global
-    regularization based on a graphcut.
-
-    The computed classification energy is globally regularized through
-    an alpha-expansion algorithm. This method is slow but provides
-    the user with good quality results.
-
-    \tparam NeighborQuery model of `NeighborQuery`.
-    \param neighbor_query used to access neighborhoods of items.
-    \param weight weight of the regularization with respect to the
-    classification energy. Higher values produce more regularized
-    output but may result in a loss of details.
-
-  */
+  /// \cond SKIP_IN_MANUAL
+  // (see below for the documented method)
   template <typename NeighborQuery>
-  void run_with_graphcut (const NeighborQuery& neighbor_query,
-                          const double weight)
+  void run_with_one_graphcut (const NeighborQuery& neighbor_query,
+                              const double weight)
   {
     prepare_classification ();
     
@@ -717,7 +790,166 @@ public:
     graphcut(edges, edge_weights, probability_matrix, m_assigned_label);
     std::cerr << ((double)(CGAL::Memory_sizer().virtual_size()) / 1073741824.) << " GB allocated" << std::endl;
   }
-  
+  /// \endcond  
+
+    /*! 
+    \brief Runs the classification algorithm with a global
+    regularization based on a graphcut.
+
+    The computed classification energy is globally regularized through
+    an alpha-expansion algorithm. This method is slow but provides
+    the user with good quality results.
+
+    \tparam NeighborQuery model of `NeighborQuery`.
+    \param neighbor_query used to access neighborhoods of items.
+    \param weight weight of the regularization with respect to the
+    classification energy. Higher values produce more regularized
+    output but may result in a loss of details.
+
+    \param min_number_of_subdivisions used to make computation
+    faster. The graphcut algorithm is applied separately to a certain
+    number of subdivisions of the input set. If `ConcurrencyTag` is
+    `CGAL::Parallel_tag`, the graphcuts are computed in parallel. The
+    default value (1) implies a unique and therefore sequential
+    graphcut algorithm.
+
+  */
+  template <typename NeighborQuery>
+  void run_with_graphcut (const NeighborQuery& neighbor_query,
+                          const double weight,
+                          std::size_t min_number_of_subdivisions = 1)
+  {
+    if (min_number_of_subdivisions <= 1)
+      return run_with_one_graphcut (neighbor_query, weight);
+
+    
+    prepare_classification ();
+    
+    // data term initialisation
+#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+    CGAL_CLASSIFICATION_CERR << "Labeling using Boost with regularization weight " << weight << "... ";
+#else
+    CGAL_CLASSIFICATION_CERR << "Labeling using Boyvok Kolmogorov with regularization weight " << weight << "... ";
+#endif
+
+    CGAL::Bbox_3 bbox = CGAL::bbox_3
+      (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<ItemMap>(m_item_map)),
+       boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<ItemMap>(m_item_map)));
+
+    double Dx = bbox.xmax() - bbox.xmin();
+    double Dy = bbox.ymax() - bbox.ymin();
+    double A = Dx * Dy;
+    double a = A / min_number_of_subdivisions;
+    double l = std::sqrt(a);
+    std::size_t nb_x = std::size_t(Dx / l) + 1;
+    std::size_t nb_y = std::size_t((A / nb_x) / a) + 1;
+    std::size_t nb = nb_x * nb_y;
+
+    std::vector<CGAL::Bbox_3> bboxes;
+    bboxes.reserve(nb);
+    for (std::size_t x = 0; x < nb_x; ++ x)
+      for (std::size_t y = 0; y < nb_y; ++ y)
+        {
+          bboxes.push_back
+            (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / double(nb_x)),
+                           bbox.ymin() + Dy * (y / double(nb_y)),
+                           bbox.zmin(),
+                           bbox.xmin() + Dx * ((x+1) / double(nb_x)),
+                           bbox.ymin() + Dy * ((y+1) / double(nb_y)),
+                           bbox.zmax()));
+        }
+
+    
+    std::cerr << "Number of divisions = " << nb_x * nb_y << std::endl;
+    std::cerr << " -> Size of division: " << Dx / nb_x << " " << Dy / nb_y << std::endl;
+
+    std::vector<std::vector<std::size_t> > indices (nb);
+    std::vector<std::pair<std::size_t, std::size_t> > input_to_indices(m_input.size());
+    
+    for (std::size_t s = 0; s < m_input.size(); ++ s)
+      {
+        CGAL::Bbox_3 b = get(m_item_map, *(m_input.begin() + s)).bbox();
+        
+        for (std::size_t i = 0; i < bboxes.size(); ++ i)
+          if (CGAL::do_overlap (b, bboxes[i]))
+            {
+              input_to_indices[s] = std::make_pair (i, indices[i].size());
+              indices[i].push_back (s);
+              break;
+            }
+      }
+
+    std::vector<std::size_t>(m_input.size()).swap(m_assigned_label);
+    
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+      {
+        Run_with_graphcut<NeighborQuery> f
+          (*this, m_input, m_item_map, neighbor_query, weight, m_effect_table, indices, input_to_indices,
+           m_assigned_label);
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size ()), f);
+      }
+    else
+#endif
+      {
+        for (std::size_t sub = 0; sub < indices.size(); ++ sub)
+          {
+            if (indices[sub].empty())
+              continue;
+        
+            CGAL_CLASSIFICATION_CERR << "Subset #" << sub << ": "
+            << indices[sub].size() << " points" << std::endl;
+        
+            std::vector<std::pair<std::size_t, std::size_t> > edges;
+            std::vector<double> edge_weights;
+            std::vector<std::vector<double> > probability_matrix
+            (m_effect_table.size(), std::vector<double>(indices[sub].size(), 0.));
+            std::vector<std::size_t> assigned_label (indices[sub].size());
+
+            for (std::size_t j = 0; j < indices[sub].size(); ++ j)
+              {
+                std::size_t s = indices[sub][j];
+            
+                std::vector<std::size_t> neighbors;
+
+                neighbor_query (get(m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
+
+                for (std::size_t i = 0; i < neighbors.size(); ++ i)
+                  if (sub == input_to_indices[neighbors[i]].first
+                      && j != input_to_indices[neighbors[i]].second)
+                    {
+                      edges.push_back (std::make_pair (j, input_to_indices[neighbors[i]].second));
+                      edge_weights.push_back (weight);
+                    }
+        
+                std::size_t nb_class_best = 0;
+                double val_class_best = (std::numeric_limits<double>::max)();
+                for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
+                  {
+                    double value = classification_value (k, s);
+                    probability_matrix[k][j] = value;
+            
+                    if(val_class_best > value)
+                      {
+                        val_class_best = value;
+                        nb_class_best = k;
+                      }
+                  }
+                assigned_label[j] = nb_class_best;
+              }
+    
+            Alpha_expansion graphcut;
+            graphcut(edges, edge_weights, probability_matrix, assigned_label);
+
+            for (std::size_t i = 0; i < assigned_label.size(); ++ i)
+              m_assigned_label[indices[sub][i]] = assigned_label[i];
+          }
+      }
+    
+  }
   /// @}
   
 

@@ -197,6 +197,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   }
 
   double& smoothing() { return m_smoothing; }
+  std::size_t& subdivisions() { return m_subdivisions; }
   std::size_t& nb_scales() { return m_nb_scales; }
   std::size_t& number_of_trials() { return m_nb_trials; }
   bool features_computed() const { return (m_psc->number_of_features() != 0); }
@@ -323,6 +324,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   std::vector<std::pair<Label_handle, QColor> > m_labels;
   std::size_t m_nb_trials;
   double m_smoothing;
+  std::size_t m_subdivisions;
   
   int m_index_color;
   

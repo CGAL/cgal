@@ -25,6 +25,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
   m_nb_scales = 5;
   m_nb_trials = 300;
   m_smoothing = 0.5;
+  m_subdivisions = 16;
   m_index_color = 1;
   is_selected = true;
   nb_points = 0;
@@ -42,7 +43,8 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
   m_index_color = 1;
   m_nb_trials = 300;
   m_smoothing = 0.5;
-
+  m_subdivisions = 16;
+  
   reset_indices();
   
   m_psc = new PSC(*(m_points->point_set()), m_points->point_set()->point_map());
@@ -75,7 +77,8 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(const S
   m_index_color = 1;
   m_nb_trials = 300;
   m_smoothing = 0.5;
-  
+  m_subdivisions = 16;
+    
   nb_points = 0;
   invalidateOpenGLBuffers();
 }
@@ -524,7 +527,7 @@ bool Scene_point_set_classification_item::run (int method)
   else if (method == 1)
     m_psc->run_with_local_smoothing (m_psc->neighborhood().range_neighbor_query(m_psc->radius_neighbors()));
   else if (method == 2)
-    m_psc->run_with_graphcut (m_psc->neighborhood().k_neighbor_query(12), m_smoothing);
+    m_psc->run_with_graphcut (m_psc->neighborhood().k_neighbor_query(12), m_smoothing, m_subdivisions);
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
   

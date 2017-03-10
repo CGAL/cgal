@@ -31,6 +31,13 @@ if ( NOT Boost_FOUND )
 
 endif()
 
+find_package( TBB REQUIRED )
+if( TBB_FOUND )
+  include(${TBB_USE_FILE})
+  list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+endif()
+
+
 # include for local directory
 include_directories( BEFORE include )
 
@@ -46,4 +53,3 @@ include( CGAL_CreateSingleSourceCGALProgram )
 create_single_source_cgal_program( "example_classifier.cpp" )
 create_single_source_cgal_program( "example_point_set_classifier.cpp" )
 create_single_source_cgal_program( "example_feature.cpp" )
-

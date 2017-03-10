@@ -130,6 +130,8 @@ public:
             SLOT(on_run_graphcut_button_clicked()));
     connect(ui_widget.smoothingDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
             SLOT(on_smoothing_value_changed(double)));
+    connect(ui_widget.subdivisionsSpinBox,  SIGNAL(valueChanged(int)), this,
+            SLOT(on_subdivisions_value_changed(int)));
     connect(ui_widget.save,  SIGNAL(clicked()), this,
             SLOT(on_save_button_clicked()));
     connect(ui_widget.generate_point_set_items,  SIGNAL(clicked()), this,
@@ -515,6 +517,15 @@ public Q_SLOTS:
     if(!classification_item)
       return; 
     classification_item->smoothing() = v;
+  }
+
+  void on_subdivisions_value_changed(int v)
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      return; 
+    classification_item->subdivisions() = v;
   }
 
  void on_save_button_clicked()

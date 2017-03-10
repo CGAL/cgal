@@ -15,6 +15,8 @@
 
 #include <CGAL/IO/read_ply_points.h>
 
+#include <CGAL/Real_timer.h>
+
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
@@ -139,7 +141,21 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
 
   // Run classification
+  CGAL::Real_timer t;
+  t.start();
+  classifier.run ();
+  t.stop();
+  std::cerr << "Raw classification performed in " << t.time() << " second(s)" << std::endl;
+  t.reset();
+  t.start();
+  classifier.run_with_local_smoothing (neighborhood.range_neighbor_query(radius_neighbors));
+  t.stop();
+  std::cerr << "Classification with local smoothing performed in " << t.time() << " second(s)" << std::endl;
+  t.reset();
+  t.start();
   classifier.run_with_graphcut (neighborhood.k_neighbor_query(12), 0.2);
+  t.stop();
+  std::cerr << "Classification with graphcut performed in " << t.time() << " second(s)" << std::endl;
   
   // Save the output in a colored PLY format
 
