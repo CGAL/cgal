@@ -812,7 +812,7 @@ void MainWindow::message(QString message, QString colorName, QString font) {
   message = "<font color=\"" + colorName + "\" style=\"font-style: " + font + ";\" >" +
     message + "</font><br>";
   message = "[" + QTime::currentTime().toString() + "] " + message;
-  ui->consoleTextEdit->insertHtml(message);
+  ui->consoleTextEdit->append(message);
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
