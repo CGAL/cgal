@@ -1072,7 +1072,7 @@ public:
   OutputIterator
   incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
   {
-    return incident_facets<False_filter>(v, facets);
+    return incident_facets_threadsafe<False_filter>(v, facets);
   }
 
   BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_visited,Has_visited_for_vertex_extractor,false)
