@@ -292,7 +292,6 @@ public:
     std::size_t nb_trials = 100;
     double wmin = 1e-5, wmax = 1e5;
     double factor = std::pow (wmax/wmin, 1. / (double)nb_trials);
-    std::size_t feature_used = 0;
     
     for (std::size_t j = 0; j < m_classifier->number_of_features(); ++ j)
       {
