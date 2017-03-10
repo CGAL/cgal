@@ -262,6 +262,16 @@ private:
   /// The container of the resulting mesh
   C3T3& r_c3t3_;
 
+  enum Refinement_stage {
+    NOT_INITIALIZED,
+    REFINE_FACETS,
+    REFINE_FACETS_AND_EDGES,
+    REFINE_FACETS_AND_EDGES_AND_VERTICES,
+    REFINE_ALL
+  };
+
+  Refinement_stage refinement_stage;
+
 private:
   // Disabled copy constructor
   Mesher_3(const Self& src);
@@ -332,8 +342,10 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 #endif
   facets_mesher_.refine(facets_visitor_);
   facets_mesher_.scan_edges();
+  refinement_stage = REFINE_FACETS_AND_EDGES;
   facets_mesher_.refine(facets_visitor_);
   facets_mesher_.scan_vertices();
+  refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
   facets_mesher_.refine(facets_visitor_);
 #ifdef CGAL_MESH_3_PROFILING
   double facet_ref_time = t.elapsed();
@@ -366,6 +378,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 
   // Then scan volume and refine it
   cells_mesher_.scan_triangulation();
+  refinement_stage = REFINE_ALL;
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Refining cells..." << std::endl;
   t.reset();
@@ -433,6 +446,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   std::cerr << "Start volume scan...";
   cells_mesher_.scan_triangulation();
+  refinement_stage = REFINE_ALL;
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
@@ -555,6 +569,7 @@ initialize()
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();
+    refinement_stage = REFINE_FACETS;
 
     // From now on, we're multi-thread
     r_c3t3_.triangulation().set_lock_data_structure(get_lock_data_structure());
@@ -614,7 +629,7 @@ initialize()
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();
-
+    refinement_stage = REFINE_FACETS;
   }
 }
 
@@ -652,12 +667,25 @@ one_step()
 
     if ( facets_mesher_.is_algorithm_done() )
     {
-      facets_visitor_.activate();
-      cells_mesher_.scan_triangulation();
+      switch(refinement_stage) {
+      case REFINE_FACETS:
+        facets_mesher_.scan_edges();
+        refinement_stage = REFINE_FACETS_AND_EDGES;
+        break;
+      case REFINE_FACETS_AND_EDGES:
+        facets_mesher_.scan_vertices();
+        refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
+        break;
+      default:
+        facets_visitor_.activate();
+        cells_mesher_.scan_triangulation();
+        refinement_stage = REFINE_ALL;
+      }
     }
   }
   else
   {
+    CGAL_assertion(refinement_stage == REFINE_ALL);
     cells_mesher_.one_step(cells_visitor_);
   }
 }
