@@ -488,11 +488,16 @@ public:
   // Returns the next element to refine
   Facet get_next_element_impl() {
 
-    if (!Base::no_longer_element_to_refine_impl()) {
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       return Base::get_next_element_impl();
-    }
-    else {
-      if(!m_bad_edges.left.empty()) {
+    else
+    { //Sequential
+#endif
+      if (!Base::no_longer_element_to_refine_impl()) {
+        return Base::get_next_element_impl();
+      }
+      else if(!m_bad_edges.left.empty()) {
         Edge first_bad_edge = edgevv_to_edge(m_bad_edges.right.begin()->second);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         const EdgeVV& edgevv = m_bad_edges.right.begin()->second;
@@ -521,7 +526,7 @@ public:
         }
         return biggest_incident_facet_in_complex(v);
       }
-    }
+    } //end Sequential
   }
 
   void before_insertion_impl(const Facet& f, const Point& s,
