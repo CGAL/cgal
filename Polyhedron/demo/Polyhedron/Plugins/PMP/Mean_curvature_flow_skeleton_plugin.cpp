@@ -29,7 +29,8 @@
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
-#include <CGAL/Polyhedron_copy_3.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+
 #include <queue>
 
 
@@ -207,14 +208,14 @@ public:
 
   /// \todo move this function into an include
   bool is_mesh_valid(Polyhedron *pMesh) {
-    if (!pMesh->is_closed())
+    if (! CGAL::is_closed(*pMesh))
     {
       QMessageBox msgBox;
       msgBox.setText("The mesh is not closed.");
       msgBox.exec();
       return false;
     }
-    if (!pMesh->is_pure_triangle())
+    if (! CGAL::is_triangle_mesh(*pMesh))
     {
       QMessageBox msgBox;
       msgBox.setText("The mesh is not a pure triangle mesh.");
@@ -330,8 +331,8 @@ public:
 
   void update_meso_skeleton()
   {
-    CGAL::Polyhedron_copy_3<Mean_curvature_skeleton::Meso_skeleton, Polyhedron::HalfedgeDS> modifier(mcs->meso_skeleton());
-    meso_skeleton->delegate(modifier);
+    clear(*meso_skeleton);
+    copy_face_graph(mcs->meso_skeleton(), *meso_skeleton);
     scene->item(contractedItemIndex)->invalidateOpenGLBuffers();
     scene->itemChanged(contractedItemIndex);
   }
