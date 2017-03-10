@@ -28,6 +28,7 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
     Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
+  typedef Polyhedron FaceGraph;
     enum STATS {
       NB_VERTICES = 0,
       NB_CONNECTED_COMPOS,
