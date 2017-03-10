@@ -17,14 +17,13 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
-#include <CGAL/Polyhedron_copy_3.h>
-#include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
@@ -115,7 +114,6 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
     if(item)
     {
       indices_to_remove.push_front(index);
-      CGAL::copy_face_graph(*item->polyhedron(), *mainSelectionItem->polyhedron());
     }
     else
       std::cerr<<"No selected polyhedron_item"<<std::endl;
