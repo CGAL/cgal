@@ -29,12 +29,10 @@ class Polyhedron_demo_intersection_plugin :
 
 public:
 
-  bool applicable(QAction*) const {
-    int nb_selected=0;
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
-      if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
-        ++nb_selected;
-    return nb_selected==2;
+  bool applicable(QAction*) const { 
+    return scene->selectionIndices().size() == 2 &&
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices().first())) &&
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices().last()));
   }
 
   QList<QAction*> actions() const {
