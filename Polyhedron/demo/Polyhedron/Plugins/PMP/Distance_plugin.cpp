@@ -430,8 +430,8 @@ public Q_SLOTS:
     //check the initial conditions
     Scene_polyhedron_item* itemA = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().first()));
     Scene_polyhedron_item* itemB = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().last()));
-    if(!itemA->polyhedron()->is_pure_triangle() ||
-       !itemB->polyhedron()->is_pure_triangle() ){
+    if(! CGAL::is_triangle_mesh(*itemA->polyhedron()) ||
+       !CGAL::is_triangle_mesh(*itemB->polyhedron()) ){
       messageInterface->error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
       return;
     }
