@@ -9,8 +9,10 @@
 #include <QMap>
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
+#include "Polyhedron_type.h"
 #include "Color_ramp.h"
 #include "triangulate_primitive.h"
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <boost/iterator/counting_iterator.hpp>
@@ -114,23 +116,17 @@ public:
     vaos[Edges]->release();
     program->release();
   }
+
   void compute_bbox() const {
-    const Kernel::Point_3& p = *(poly->points_begin());
-    CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-    for(Polyhedron::Point_iterator it = poly->points_begin();
-        it != poly->points_end();
-        ++it) {
-      bbox = bbox + it->bbox();
-    }
-    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-                 bbox.xmax(),bbox.ymax(),bbox.zmax());
+    _bbox = PMP::bbox(*poly);
   }
+
 private:
   Polyhedron* poly;
   Polyhedron* poly_B;
   mutable bool are_buffers_filled;
   QString other_poly;
-  mutable std::vector<float> vertices;
+  mutable std::vector<float> m_vertices;
   mutable std::vector<float> edge_vertices;
   mutable std::vector<float> normals;
   mutable std::vector<float> colors;
@@ -165,8 +161,8 @@ private:
     Tree tree( faces(m).first, faces(m).second, m);
     tree.accelerate_distance_queries();
     tree.build();
-
-    Traits::Point_3 hint = m.vertices_begin()->point();
+    boost::graph_traits<Polyhedron>::vertex_descriptor vd = *(vertices(m).first);
+    Traits::Point_3 hint = vd->point();
 
 #if !defined(CGAL_LINKED_WITH_TBB)
     double hdist = 0;
@@ -191,17 +187,17 @@ private:
   void computeElements()const
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    vertices.resize(0);
+    m_vertices.resize(0);
     edge_vertices.resize(0);
     normals.resize(0);
     colors.resize(0);
 
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Vector_3	    Vector;
-    typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
     typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
+    boost::property_map<Polyhedron,CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point,*poly);
     //facets
     {
       boost::container::flat_map<face_descriptor, Vector> face_normals_map;
@@ -213,13 +209,10 @@ private:
 
       PMP::compute_normals(*poly, nv_pmap, nf_pmap);
       std::vector<Kernel::Point_3> total_points(0);
-      Facet_iterator f = poly->facets_begin();
-      for(f = poly->facets_begin();
-          f != poly->facets_end();
-          f++)
-      {
+
+      BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor f, faces(*poly)) {
         Vector nf = get(nf_pmap, f);
-        f->plane() = Kernel::Plane_3(f->halfedge()->vertex()->point(), nf);
+        f->plane() = Kernel::Plane_3(get(vpmap,target(halfedge(f,*poly),*poly)), nf);
         typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
         double diagonal;
         if(this->diagonalBbox() != std::numeric_limits<double>::infinity())
@@ -232,12 +225,14 @@ private:
         std::vector<Kernel::Point_3> sampled_points;
         std::size_t nb_points =  (std::max)((int)std::ceil(nb_pts_per_face * PMP::face_area(f,*poly,PMP::parameters::geom_traits(Kernel()))),
                                             1);
-        CGAL::Random_points_in_triangle_3<Kernel::Point_3> g(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
-                                                                      f->halfedge()->next()->next()->vertex()->point());
+        Kernel::Point_3 &p = get(vpmap,target(halfedge(f,*poly),*poly));
+        Kernel::Point_3 &q = get(vpmap,target(next(halfedge(f,*poly),*poly),*poly));
+        Kernel::Point_3 &r = get(vpmap,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
+        CGAL::Random_points_in_triangle_3<Kernel::Point_3> g(p, q, r);
         CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
-        sampled_points.push_back(f->halfedge()->vertex()->point());
-        sampled_points.push_back(f->halfedge()->next()->vertex()->point());
-        sampled_points.push_back(f->halfedge()->next()->next()->vertex()->point());
+        sampled_points.push_back(p);
+        sampled_points.push_back(q);
+        sampled_points.push_back(r);
 
         //triangle facets with sample points for color display
         FT triangulation(f,sampled_points,nf,poly,diagonal);
@@ -262,9 +257,9 @@ private:
           for (int i = 0; i<3; ++i)
           {
             total_points.push_back(ffit->vertex(i)->point());
-            vertices.push_back(ffit->vertex(i)->point().x());
-            vertices.push_back(ffit->vertex(i)->point().y());
-            vertices.push_back(ffit->vertex(i)->point().z());
+            m_vertices.push_back(ffit->vertex(i)->point().x());
+            m_vertices.push_back(ffit->vertex(i)->point().y());
+            m_vertices.push_back(ffit->vertex(i)->point().z());
 
             normals.push_back(nf.x());
             normals.push_back(nf.y());
@@ -310,14 +305,11 @@ private:
     {
       //Lines
       typedef Kernel::Point_3		Point;
-      typedef Polyhedron::Edge_iterator	Edge_iterator;
-      Edge_iterator he;
-      for(he = poly->edges_begin();
-          he != poly->edges_end();
-          he++)
-      {
-        const Point& a = he->vertex()->point();
-        const Point& b = he->opposite()->vertex()->point();
+      typedef boost::graph_traits<Polyhedron>::edge_descriptor	edge_descriptor;
+
+      BOOST_FOREACH(edge_descriptor he, edges(*poly)){
+        const Point& a = get(vpmap,target(he,*poly));
+        const Point& b = get(vpmap,source(he,*poly));
         {
 
           edge_vertices.push_back(a.x());
@@ -339,8 +331,8 @@ private:
     program->bind();
     vaos[Facets]->bind();
     buffers[Vertices].bind();
-    buffers[Vertices].allocate(vertices.data(),
-                               static_cast<GLsizei>(vertices.size()*sizeof(float)));
+    buffers[Vertices].allocate(m_vertices.data(),
+                               static_cast<GLsizei>(m_vertices.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     buffers[Vertices].release();
@@ -371,10 +363,10 @@ private:
     vaos[Facets]->release();
     program->release();
 
-    nb_pos = vertices.size();
-    vertices.resize(0);
+    nb_pos = m_vertices.size();
+    m_vertices.resize(0);
     //"Swap trick" insures that the memory is indeed freed and not kept available
-    std::vector<float>(vertices).swap(vertices);
+    std::vector<float>(m_vertices).swap(m_vertices);
     nb_edge_pos = edge_vertices.size();
     edge_vertices.resize(0);
     std::vector<float>(edge_vertices).swap(edge_vertices);
@@ -398,11 +390,9 @@ public:
   //decides if the plugin's actions will be displayed or not.
   bool applicable(QAction*) const
   {
-
     return scene->selectionIndices().size() == 2 &&
         qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().first())) &&
         qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().last()));
-
   }
   //the list of the actions of the plugin.
   QList<QAction*> actions() const
