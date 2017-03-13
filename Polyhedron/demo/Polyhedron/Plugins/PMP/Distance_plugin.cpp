@@ -162,7 +162,7 @@ private:
     tree.accelerate_distance_queries();
     tree.build();
     boost::graph_traits<Polyhedron>::vertex_descriptor vd = *(vertices(m).first);
-    Traits::Point_3 hint = vd->point();
+    Traits::Point_3 hint = get(CGAL::vertex_point,*poly, vd);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
     double hdist = 0;
