@@ -625,6 +625,13 @@ and <code>src/</code> directories).
       <code>CGAL::write_ply_points()</code>
       and <code>CGAL::write_ply_points_and_normals()</code>.</li>
   </ul>
+  <h3>Point Set Shape Detection</h3>
+  <ul>
+    <li>New post-processing
+      algorithm: <code>CGAL::regularize_planes()</code>. This allows the user
+      to favor parallelism, orthogonality, coplanarity and/or axial
+      symmetry between detected planes.</li>
+  </ul>
   <h3>Surface Mesh Parameterization</h3>
   <ul>
     <li><code>LSCM_parameterizer_3</code> now uses by default Eigen

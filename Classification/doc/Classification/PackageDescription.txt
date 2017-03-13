@@ -1,0 +1,80 @@
+/*!
+\defgroup PkgClassification Classification Reference
+
+\defgroup PkgClassificationConcepts Concepts
+\ingroup PkgClassification
+
+\defgroup PkgClassificationDataStructures Data Structures
+\ingroup PkgClassification
+
+\defgroup PkgClassificationAttributes Predefined Attributes
+\ingroup PkgClassification
+
+
+\addtogroup PkgClassification
+
+\cgalPkgDescriptionBegin{Classification, PkgClassificationSummary}
+\cgalPkgPicture{data_classif.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot, Florent Lafarge}
+\cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of labels (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can classify any type of data, compute its own local features on the data set and define its own labels based on these features.}
+\cgalPkgManuals{Chapter_Classification, PkgClassification}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.9}
+\cgalPkgBib{cgal:lm-clscm-12}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `CGAL::NeighborQuery`
+
+## Classification ##
+
+- `CGAL::Classifier<ItemRange, ItemMap, ConcurrencyTag>`
+- `CGAL::Point_set_classifier<Geom_traits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
+
+## Data Structures ##
+
+- `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Local_eigen_analysis<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Trainer<PointRange, PointMap, ConcurrencyTag>`
+
+## Label ##
+
+- `CGAL::Classification::Label`
+- `CGAL::Classification::Label_handle`
+
+## Feature ##
+
+- `CGAL::Classification::Feature`
+- `CGAL::Classification::Feature_handle`
+
+## Predefined Features ##
+
+- `CGAL::Classification::Feature::Anisotropy<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Distance_to_plane<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap>`
+- `CGAL::Classification::Feature::Eigentropy<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Elevation<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap>`
+- `CGAL::Classification::Feature::Linearity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Omnivariance<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Planarity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Sphericity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Sum_eigenvalues<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Surface_variation<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Vertical_dispersion<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Verticality<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+
+
+*/

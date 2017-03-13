@@ -1751,4 +1751,6 @@ inline Graph::termtype Graph::what_segment(node_id i)
   return SINK;
 }
 
+#undef last_node
+
 #endif

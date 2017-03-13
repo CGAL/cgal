@@ -60,3 +60,13 @@ target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
 polyhedron_demo_plugin(ply_to_xyz_plugin PLY_to_xyz_io_plugin)
 target_link_libraries(ply_to_xyz_plugin scene_points_with_normal_item)
+
+find_package(libLAS)
+if (libLAS_FOUND)
+  include_directories(${libLAS_INCLUDE_DIRS})
+  
+  polyhedron_demo_plugin(las_to_xyz_plugin LAS_to_xyz_io_plugin)
+  target_link_libraries(las_to_xyz_plugin scene_points_with_normal_item ${libLAS_LIBRARIES})
+else()
+  message(STATUS "NOTICE : the las IO plugin needs LAS libraries and will not be compiled.")
+endif()
