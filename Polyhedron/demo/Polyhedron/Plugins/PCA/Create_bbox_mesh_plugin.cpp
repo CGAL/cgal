@@ -49,6 +49,7 @@ public Q_SLOTS:
 
 private:
   Scene_interface* scene;
+  QMainWindow* mw;
   QAction* actionBbox;
   QAction* actionExtendedBbox;
 
@@ -57,6 +58,7 @@ private:
 void Create_bbox_mesh_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
 {
   scene = scene_interface;
+  mw = mainWindow;
   actionBbox = new QAction(tr("Create &Bbox Mesh"), mainWindow);
   actionBbox->setObjectName("createBboxMeshAction");
   connect(actionBbox, SIGNAL(triggered()),
@@ -107,7 +109,7 @@ bbox = Scene_interface::Bbox(
   
   Scene_item* item;
   Kernel::Iso_cuboid_3 ic(bbox);
-  if(scene->isPolyhedronMode()){
+  if(mw->property("is_polyhedorn_mode").toBool()){
     Polyhedron* p = new Polyhedron;
     CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
     item = new Scene_polyhedron_item(p);

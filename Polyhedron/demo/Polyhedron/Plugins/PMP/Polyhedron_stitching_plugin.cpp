@@ -111,7 +111,7 @@ struct Polyline_visitor
 template <typename Item>
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_triggered(Scene_interface::Item_id index)
 {
-  typedef typename Item::FaceGraph  FaceGraph;
+  typedef typename Item::Face_graph  FaceGraph;
   Item* item = qobject_cast<Item*>(scene->item(index));
 
   if(item)
@@ -161,7 +161,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
     qobject_cast<Item*>(scene->item(index));
 
   if(item){
-    typename Item::FaceGraph* pMesh = item->polyhedron();
+    typename Item::Face_graph* pMesh = item->polyhedron();
     CGAL::Polygon_mesh_processing::stitch_borders(*pMesh);
     item->invalidateOpenGLBuffers();
     scene->itemChanged(item);

@@ -53,6 +53,7 @@ public Q_SLOTS:
 
 private:
   CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
   QAction* actionBbox;
   QAction* actionExport;
 
@@ -62,10 +63,11 @@ private:
 void Edit_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
 {
   scene = scene_interface;
+  mw = mainWindow;
   actionBbox = new QAction(tr("Create Bbox"), mainWindow);
   connect(actionBbox, SIGNAL(triggered()),
           this, SLOT(bbox()));
-  actionExport = new QAction(tr("Export to Polyhedron item"), mainWindow);
+  actionExport = new QAction(tr("Export to Face_graph item"), mainWindow);
   connect(actionExport, SIGNAL(triggered()),
           this, SLOT(exportToPoly()));
 }
@@ -116,10 +118,10 @@ void Edit_box_plugin::exportToPoly()
   Polyhedron::Point_3 points[8];
   for(int i=0; i<8; ++i)
   {
-    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
+    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,2), item->point(i,1))-offset;
   }
 
-  if(scene->isPolyhedronMode()){
+  if(mw->property("is_polyhedron_mode").toBool()){
     Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
     CGAL::make_hexahedron(points[0],
                           points[1],

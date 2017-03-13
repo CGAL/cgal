@@ -1,6 +1,7 @@
 #include <QTime>
 #include <QApplication>
 #include <QAction>
+#include <QMainWindow>
 #include <QStringList>
 
 #include "opengl_tools.h"
@@ -30,6 +31,7 @@ public:
               Messages_interface*)
     {
         scene = scene_interface;
+        this->mw = mw;
         QAction *actionConvexHull = new QAction("Convex Hull", mw);
         actionConvexHull->setProperty("subMenuName","3D Convex Hulls");
         connect(actionConvexHull, SIGNAL(triggered()), this, SLOT(on_actionConvexHull_triggered()));
@@ -52,6 +54,7 @@ public Q_SLOTS:
 private:
   QList<QAction*> _actions;
   Scene_interface* scene;
+  QMainWindow* mw;
 }; // end Polyhedron_demo_convex_hull_plugin
 
 // for transform iterator
@@ -140,7 +143,7 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     }
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-    if(scene->isPolyhedronMode()){
+    if(mw->property("is_polyhedron_mode").toBool()){
       Polyhedron *poly = new Polyhedron;
       CGAL::copy_face_graph(*pConvex_hull,*poly);
       delete pConvex_hull;

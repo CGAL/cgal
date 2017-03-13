@@ -118,7 +118,7 @@ public Q_SLOTS:
         continue;
       }
 
-      if(scene->isPolyhedronMode()){
+      if(mw->property("is_polyhedron_mode").toBool()){
         Polyhedron* poly = new Polyhedron;
         CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
                                                                     patch,

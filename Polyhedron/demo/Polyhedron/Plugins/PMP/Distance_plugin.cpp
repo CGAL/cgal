@@ -35,7 +35,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_polyhedron_item Scene_face_graph_item;
 #endif
 
-typedef Scene_face_graph_item::FaceGraph Face_graph;
+typedef Scene_face_graph_item::Face_graph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
 template <class AABB_tree, class Point_3>

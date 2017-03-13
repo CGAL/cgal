@@ -70,6 +70,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
+    mw = mainWindow;
     actionDetect = new QAction(tr("Point Set Shape Detection"), mainWindow);
     actionDetect->setObjectName("actionDetect");
     autoConnectActions();
@@ -282,7 +283,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
               // If plane, build alpha shape
               Scene_polyhedron_item* poly_item = NULL;
               Scene_surface_mesh_item* sm_item = NULL;
-              if(scene->isPolyhedronMode()){
+              if(mw->property("is_polyhedron_mode").toBool()){
                 poly_item = new Scene_polyhedron_item;
               } else {
                 sm_item = new Scene_surface_mesh_item;
