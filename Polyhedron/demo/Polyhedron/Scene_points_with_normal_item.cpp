@@ -84,8 +84,11 @@ struct Scene_points_with_normal_item_priv
   }
   ~Scene_points_with_normal_item_priv()
   {
-    Q_ASSERT(m_points != NULL);
-    delete m_points; m_points = NULL;
+    if(m_points)
+    {
+      delete m_points;
+      m_points = NULL;
+    }
     delete normal_Slider;
     delete point_Slider;
   }
@@ -869,4 +872,13 @@ int Scene_points_with_normal_item::getNormalSliderValue()
 int Scene_points_with_normal_item::getPointSliderValue()
 {
   return d->point_Slider->value();
+}
+
+void Scene_points_with_normal_item::destroyData()
+{
+  if(d && d->m_points)
+  {
+    delete d->m_points;
+    d->m_points = NULL;
+  }
 }

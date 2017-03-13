@@ -149,6 +149,8 @@ public:
 
   QColor get_histogram_color(const double v) const;
 
+  void destroyData();
+
   protected:
     friend struct Scene_c3t3_item_priv;
     Scene_c3t3_item_priv* d;

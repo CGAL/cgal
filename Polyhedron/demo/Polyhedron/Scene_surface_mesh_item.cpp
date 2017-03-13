@@ -42,7 +42,11 @@ struct Scene_surface_mesh_item_priv{
 
   ~Scene_surface_mesh_item_priv()
   {
-    delete smesh_;
+    if(smesh_)
+    {
+      delete smesh_;
+      smesh_ = NULL;
+    }
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
@@ -639,3 +643,11 @@ void Scene_surface_mesh_item::compute_bbox()const
 
 }
 
+void Scene_surface_mesh_item::destroyData()
+{
+  if(d && d->smesh_)
+  {
+    delete d->smesh_;
+    d->smesh_ = NULL;
+  }
+}

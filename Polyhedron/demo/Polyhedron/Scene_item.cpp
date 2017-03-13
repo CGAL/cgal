@@ -37,6 +37,8 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
   has_group = 0;
   parent_group = 0;
   is_selected = false;
+  connect(this, &Scene_item::aboutToBeDestroyed,
+          this, &Scene_item::destroyData);
 }
 
 CGAL::Three::Scene_item::~Scene_item() {
@@ -57,6 +59,10 @@ void CGAL::Three::Scene_item::itemAboutToBeDestroyed(CGAL::Three::Scene_item* it
     {
       Q_EMIT aboutToBeDestroyed();
     }
+}
+
+void CGAL::Three::Scene_item::destroyData()
+{
 }
 
 
