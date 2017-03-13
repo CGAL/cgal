@@ -8,8 +8,13 @@
 #include <QMessageBox>
 #include <QMap>
 #include "Messages_interface.h"
+#ifdef USE_SURFACE_MESH
+#include "Kernel_type.h"
+#include "Scene_surface_mesh_item.h"
+#else
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
+#endif
 #include "Color_ramp.h"
 #include "triangulate_primitive.h"
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -23,6 +28,14 @@
 
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
+
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_face_graph_item;
+#else
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
+typedef Scene_face_graph_item::FaceGraph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
 template <class AABB_tree, class Point_3>
@@ -69,7 +82,7 @@ class Scene_distance_polyhedron_item: public Scene_item
 {
   Q_OBJECT
 public:
-  Scene_distance_polyhedron_item(Polyhedron* poly, Polyhedron* polyB, QString other_name, int sampling_pts)
+  Scene_distance_polyhedron_item(Face_graph* poly, Face_graph* polyB, QString other_name, int sampling_pts)
     :Scene_item(NbOfVbos,NbOfVaos),
       poly(poly),
       poly_B(polyB),
@@ -122,8 +135,8 @@ public:
   }
 
 private:
-  Polyhedron* poly;
-  Polyhedron* poly_B;
+  Face_graph* poly;
+  Face_graph* poly_B;
   mutable bool are_buffers_filled;
   QString other_poly;
   mutable std::vector<float> m_vertices;
@@ -151,17 +164,17 @@ private:
 
   //fills 'out' and returns the hausdorff distance for calibration of the color_ramp.
 
-  double compute_distances(const Polyhedron& m, const std::vector<Kernel::Point_3>& sample_points,
+  double compute_distances(const Face_graph& m, const std::vector<Kernel::Point_3>& sample_points,
                            std::vector<double>& out)const
   {
-    typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+    typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree< Traits > Tree;
 
     Tree tree( faces(m).first, faces(m).second, m);
     tree.accelerate_distance_queries();
     tree.build();
-    boost::graph_traits<Polyhedron>::vertex_descriptor vd = *(vertices(m).first);
+    boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
     Traits::Point_3 hint = get(CGAL::vertex_point,*poly, vd);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
@@ -192,12 +205,13 @@ private:
     normals.resize(0);
     colors.resize(0);
 
-    typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Vector_3	    Vector;
-    typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
-    typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+    typedef boost::graph_traits<Face_graph>::face_descriptor   face_descriptor;
+    typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
 
-    boost::property_map<Polyhedron,CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point,*poly);
+    typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap; 
+    VPmap vpmap = get(CGAL::vertex_point,*poly);
+
     //facets
     {
       boost::container::flat_map<face_descriptor, Vector> face_normals_map;
@@ -210,10 +224,9 @@ private:
       PMP::compute_normals(*poly, nv_pmap, nf_pmap);
       std::vector<Kernel::Point_3> total_points(0);
 
-      BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor f, faces(*poly)) {
+      BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*poly)) {
         Vector nf = get(nf_pmap, f);
-        f->plane() = Kernel::Plane_3(get(vpmap,target(halfedge(f,*poly),*poly)), nf);
-        typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
+        typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
         double diagonal;
         if(this->diagonalBbox() != std::numeric_limits<double>::infinity())
           diagonal = this->diagonalBbox();
@@ -305,7 +318,7 @@ private:
     {
       //Lines
       typedef Kernel::Point_3		Point;
-      typedef boost::graph_traits<Polyhedron>::edge_descriptor	edge_descriptor;
+      typedef boost::graph_traits<Face_graph>::edge_descriptor	edge_descriptor;
 
       BOOST_FOREACH(edge_descriptor he, edges(*poly)){
         const Point& a = get(vpmap,target(he,*poly));
@@ -391,8 +404,8 @@ public:
   bool applicable(QAction*) const
   {
     return scene->selectionIndices().size() == 2 &&
-        qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().first())) &&
-        qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().last()));
+        qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().first())) &&
+        qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().last()));
   }
   //the list of the actions of the plugin.
   QList<QAction*> actions() const
@@ -428,8 +441,8 @@ public Q_SLOTS:
       return;
 
     //check the initial conditions
-    Scene_polyhedron_item* itemA = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().first()));
-    Scene_polyhedron_item* itemB = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->selectionIndices().last()));
+    Scene_face_graph_item* itemA = qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().first()));
+    Scene_face_graph_item* itemB = qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().last()));
     if(! CGAL::is_triangle_mesh(*itemA->polyhedron()) ||
        !CGAL::is_triangle_mesh(*itemB->polyhedron()) ){
       messageInterface->error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
