@@ -72,9 +72,7 @@ int main(int argc, char* argv[])
   fccmap = sm.add_property_map<face_descriptor,std::size_t>("f:CC").first;
   std::size_t num =
     PMP::connected_components(sm,
-      fccmap,
-      CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-        Constraint<Mesh>(sm,bound))
+      fccmap
     );
 
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
