@@ -132,7 +132,6 @@ int main()
 
 
   Efficient_ransac ransac;
-  ransac.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
   
   const std::size_t nb_pts = 5000;
   
@@ -156,6 +155,7 @@ int main()
                             5000, std::back_inserter (points));
 
     ransac.set_input(points);
+    ransac.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
     ransac.detect(op);
     check_ransac_size (ransac, 2);
 
@@ -187,6 +187,7 @@ int main()
 
     
     ransac.set_input(points);
+    ransac.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
     ransac.detect(op);
     check_ransac_size (ransac, 2);
 
@@ -217,6 +218,7 @@ int main()
                             5000, std::back_inserter (points));
 
     ransac.set_input(points);
+    ransac.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
     ransac.detect(op);
     check_ransac_size (ransac, 2);
 
@@ -252,6 +254,7 @@ int main()
                             5000, std::back_inserter (points));
 
     ransac.set_input(points);
+    ransac.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
     ransac.detect(op);
     check_ransac_size (ransac, 2);
 
