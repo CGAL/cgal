@@ -13,6 +13,8 @@ typedef CGAL::Dual<Mesh>               Dual;
 typedef boost::graph_traits<Dual>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Dual>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Dual>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Dual>::out_edge_iterator out_edge_iterator;
+typedef boost::graph_traits<Dual>::in_edge_iterator in_edge_iterator;
 
 int main()
 {
@@ -38,7 +40,18 @@ int main()
   BOOST_FOREACH(halfedge_descriptor lhd, halfedges_around_target(halfedge(vd,dual),dual)){
     assert(target(lhd,dual) == vd); 
   }
-  
+
+  {
+    out_edge_iterator b,e;
+    boost::tie(b,e) = out_edges(vd,dual);
+    std::cerr << vd << " " << source(*b,dual) << std::endl;
+  }
+
+  {
+    in_edge_iterator b,e;
+    boost::tie(b,e) = in_edges(vd,dual);
+    std::cerr << vd << " " << source(*b,dual) << std::endl;
+  }
   std::cerr << "done"<< std::endl;
   return 0;
 }
