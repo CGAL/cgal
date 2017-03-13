@@ -53,9 +53,10 @@ public:
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
+
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
-  void invalidateOpenGLBuffers() { are_buffers_filled = false; }
+  void invalidateOpenGLBuffers();
 public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   virtual void selection_changed(bool) Q_DECL_OVERRIDE;
