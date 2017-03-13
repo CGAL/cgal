@@ -174,7 +174,6 @@ void Scene_surface_mesh_item_priv::compute_elements()
   v_colors.clear();
   idx_data_.clear();
   idx_data_.shrink_to_fit();
-  std::map<unsigned int, unsigned int> current_indices; //map im values to ghosts-free values
 
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
@@ -196,32 +195,28 @@ void Scene_surface_mesh_item_priv::compute_elements()
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
 
-  unsigned int id=0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
-  {
-    current_indices[im[vd]] = id++;
-  }
+
   BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
   {
     if(is_triangle(halfedge(fd,*smesh_),*smesh_))
     {
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
       {
-        idx_data_.push_back(current_indices[source(hd, *smesh_)]);
+        idx_data_.push_back(source(hd, *smesh_));
       }
     }
     else if(is_quad(halfedge(fd,*smesh_),*smesh_))
     {
       halfedge_descriptor hd = halfedge(fd,*smesh_);
       //1st half
-        idx_data_.push_back(current_indices[source(hd, *smesh_)]);
-        idx_data_.push_back(current_indices[source(next(hd, *smesh_), *smesh_)]);
-        idx_data_.push_back(current_indices[source(next(next(hd, *smesh_), *smesh_), *smesh_)]);
+        idx_data_.push_back(source(hd, *smesh_));
+        idx_data_.push_back(source(next(hd, *smesh_), *smesh_));
+        idx_data_.push_back(source(next(next(hd, *smesh_), *smesh_), *smesh_));
 
         //2nd half
-        idx_data_.push_back(current_indices[source(hd, *smesh_)]);
-        idx_data_.push_back(current_indices[source(next(next(hd, *smesh_), *smesh_), *smesh_)]);
-        idx_data_.push_back(current_indices[source(prev(hd, *smesh_), *smesh_)]);
+        idx_data_.push_back(source(hd, *smesh_));
+        idx_data_.push_back(source(next(next(hd, *smesh_), *smesh_), *smesh_));
+        idx_data_.push_back(source(prev(hd, *smesh_), *smesh_));
     }
     else
     {
@@ -233,8 +228,8 @@ void Scene_surface_mesh_item_priv::compute_elements()
   idx_edge_data_.reserve(num_edges(*smesh_) * 2);
   BOOST_FOREACH(edge_descriptor ed, edges(*smesh_))
   {
-    idx_edge_data_.push_back(current_indices[source(ed, *smesh_)]);
-    idx_edge_data_.push_back(current_indices[target(ed, *smesh_)]);
+    idx_edge_data_.push_back(source(ed, *smesh_));
+    idx_edge_data_.push_back(target(ed, *smesh_));
   }
 
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
@@ -679,3 +674,8 @@ void Scene_surface_mesh_item::compute_bbox()const
 
 }
 
+void Scene_surface_mesh_item::invalidateOpenGLBuffers()
+{
+  are_buffers_filled = false;
+  d->smesh_->collect_garbage();
+}
