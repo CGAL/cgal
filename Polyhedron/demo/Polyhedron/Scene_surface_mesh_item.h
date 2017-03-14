@@ -18,6 +18,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#include <QColor>
 
 struct Scene_surface_mesh_item_priv;
 
@@ -40,11 +41,14 @@ public:
 
   ~Scene_surface_mesh_item();
 
+
   Scene_surface_mesh_item* clone() const Q_DECL_OVERRIDE;
   void draw(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
-
+  std::vector<QColor>& color_vector();
+  void set_patch_id(SMesh::Face_index f,int i)const;
+  int patch_id(SMesh::Face_index f)const;
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
   bool isEmpty() const Q_DECL_OVERRIDE;

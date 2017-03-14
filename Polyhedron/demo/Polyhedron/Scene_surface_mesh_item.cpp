@@ -24,7 +24,7 @@ struct Scene_surface_mesh_item_priv{
   typedef Kernel::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
+  typedef std::vector<QColor> Color_vector;
 
   Scene_surface_mesh_item_priv(const Scene_surface_mesh_item& other, Scene_surface_mesh_item* parent):
     smesh_(new SMesh(*other.d->smesh_)),
@@ -84,6 +84,7 @@ struct Scene_surface_mesh_item_priv{
     NbOfVbos
   };
 
+  mutable bool has_fpatch_id;
   mutable bool floated;
   mutable bool has_vcolors;
   mutable bool has_fcolors;
@@ -102,6 +103,8 @@ struct Scene_surface_mesh_item_priv{
   mutable QOpenGLShaderProgram *program;
   Scene_surface_mesh_item *item;
 
+  mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
+  Color_vector colors_;
   void computeElements() const;
 };
 
@@ -114,7 +117,6 @@ Scene_surface_mesh_item::Scene_surface_mesh_item()
   d->has_vcolors = false;
   d->has_fcolors = false;
   d->checkFloat();
-
 
   d->compute_elements();
   are_buffers_filled = false;
@@ -136,7 +138,6 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->has_fcolors = false;
   d->checkFloat();
 
-
   d->compute_elements();
   are_buffers_filled = false;
 }
@@ -155,6 +156,33 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh sm)
 Scene_surface_mesh_item*
 Scene_surface_mesh_item::clone() const
 { return new Scene_surface_mesh_item(*this); }
+
+
+std::vector<QColor>&
+Scene_surface_mesh_item::color_vector()
+{
+  return d->colors_;
+}
+
+
+void
+Scene_surface_mesh_item::set_patch_id(SMesh::Face_index f,int i)const
+{
+  if(! d->has_fpatch_id){
+    d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id").first;
+    d->has_fpatch_id = true;
+  }
+  d->fpatch_id_map[f] = i;
+}
+
+int
+Scene_surface_mesh_item::patch_id(SMesh::Face_index f)const
+{
+  if(! d->has_fpatch_id){
+    return -1;
+  }
+  return d->fpatch_id_map[f];
+}
 
 void Scene_surface_mesh_item_priv::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Color *c) const
 {
@@ -264,6 +292,8 @@ void Scene_surface_mesh_item_priv::compute_elements()
     has_vcolors = true;
   if(smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
     has_fcolors = true;
+
+  has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").second;
 
 //compute the Flat data
   flat_vertices.clear();
@@ -688,7 +718,6 @@ void Scene_surface_mesh_item::compute_bbox()const
 
 }
 
-<<<<<<< HEAD
 void Scene_surface_mesh_item::itemAboutToBeDestroyed(Scene_item *item)
 {
   Scene_item::itemAboutToBeDestroyed(item);
