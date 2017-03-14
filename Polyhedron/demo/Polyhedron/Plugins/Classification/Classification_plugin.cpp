@@ -6,7 +6,7 @@
 
 #include "Messages_interface.h"
 #include "Scene_points_with_normal_item.h"
-#include "Scene_point_set_classification_item.h"
+#include "Point_set_item_classification.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polygon_soup_item.h"
 
@@ -112,8 +112,6 @@ public:
 
     color_att = QColor (75, 75, 77);
     
-    connect(ui_widget.create_from_item,  SIGNAL(clicked()), this,
-            SLOT(on_create_from_item_button_clicked()));
     connect(ui_widget.compute_features,  SIGNAL(clicked()), this,
             SLOT(on_compute_features_button_clicked()));
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
@@ -169,6 +167,13 @@ public:
   virtual void closure()
   {
     dock_widget->hide();
+    for (Item_map::iterator it = item_map.begin(); it != item_map.end(); ++ it)
+      {
+        Point_set_item_classification* classif = it->second;
+        classif->erase_points_item();
+        delete classif;
+      }
+    item_map.clear();
   }
 
 
@@ -182,16 +187,12 @@ public Q_SLOTS:
         Item_map::iterator it = item_map.find(points_item);
         if (it != item_map.end())
           {
-            Scene_point_set_classification_item* classif_item = it->second;
+            Point_set_item_classification* classif = it->second;
             item_map.erase(it); // first erase from map, because scene->erase will cause a call to this function
-            scene->erase( scene->item_id(classif_item) );
+            classif->erase_points_item();
+            delete classif;
           }
       }
-
-    // if classification item
-    Scene_point_set_classification_item* classif_item = qobject_cast<Scene_point_set_classification_item*>(scene_item);
-    if(classif_item)
-      item_map.erase (classif_item->points_item());
   }
 
   void classification_action()
@@ -200,13 +201,19 @@ public Q_SLOTS:
     dock_widget->raise();
     Scene_points_with_normal_item* points_item = getSelectedItem<Scene_points_with_normal_item>();
 
-    if (item_map.find(points_item) == item_map.end())
-      on_create_from_item_button_clicked();
+    create_from_item(points_item);
+  }
+
+  void item_changed (Scene_points_with_normal_item* points_item)
+  {
+    scene->itemChanged(points_item);
+    points_item->invalidateOpenGLBuffers();
   }
 
   void update_plugin(int)
   {
-    update_plugin_from_item(get_classification_item());
+    if (dock_widget->isVisible())
+      update_plugin_from_item(get_classification());
   }
 
   void disable_everything ()
@@ -244,9 +251,9 @@ public Q_SLOTS:
   }
 
 
-  void update_plugin_from_item(Scene_point_set_classification_item* item)
+  void update_plugin_from_item(Point_set_item_classification* classif)
   {
-    if (item == NULL) // Deactivate plugin
+    if (classif == NULL) // Deactivate plugin
       {
         disable_everything();
         ui_widget.tabWidget->setCurrentIndex(0);
@@ -256,9 +263,9 @@ public Q_SLOTS:
         disable_everything();
         enable_computation();
         
-        ui_widget.numberOfScalesSpinBox->setValue((int)(item->nb_scales()));
-        ui_widget.number_of_trials->setValue((int)(item->number_of_trials()));
-        ui_widget.smoothingDoubleSpinBox->setValue((int)(item->smoothing()));
+        ui_widget.numberOfScalesSpinBox->setValue((int)(classif->nb_scales()));
+        ui_widget.number_of_trials->setValue((int)(classif->number_of_trials()));
+        ui_widget.smoothingDoubleSpinBox->setValue((int)(classif->smoothing()));
 
         // Clear class labels
         for (std::size_t i = 0; i < class_rows.size(); ++ i)
@@ -280,12 +287,12 @@ public Q_SLOTS:
         class_rows.clear();
 
         // Add labels
-        for (std::size_t i = 0; i < item->labels().size(); ++ i)
-          add_new_label (ClassRow (dock_widget, item->labels()[i].first->name().c_str(),
-                                   item->labels()[i].second));
+        for (std::size_t i = 0; i < classif->labels().size(); ++ i)
+          add_new_label (ClassRow (dock_widget, classif->labels()[i].first->name().c_str(),
+                                   classif->labels()[i].second));
 
         // Enabled classif if features computed
-        if (!(item->features_computed()))
+        if (!(classif->features_computed()))
           ui_widget.tabWidget->setCurrentIndex(0);
         else
           enable_classif();
@@ -296,7 +303,7 @@ public Q_SLOTS:
         ui_widget.display->addItem("Classification");
         ui_widget.display->addItem("Training sets");
         ui_widget.selected_feature->clear();
-        item->fill_display_combo_box(ui_widget.display, ui_widget.selected_feature);
+        classif->fill_display_combo_box(ui_widget.display, ui_widget.selected_feature);
         if (index >= ui_widget.display->count())
           ui_widget.display->setCurrentIndex(1);
         else
@@ -307,77 +314,64 @@ public Q_SLOTS:
 
   void on_update_nb_scales()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       return; 
-    classification_item->nb_scales() = ui_widget.numberOfScalesSpinBox->value();
+    classif->nb_scales() = ui_widget.numberOfScalesSpinBox->value();
   }
   void on_update_number_of_trials()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       return; 
-    classification_item->number_of_trials() = ui_widget.number_of_trials->value();
+    classif->number_of_trials() = ui_widget.number_of_trials->value();
   }
                            
   
-  Scene_point_set_classification_item* get_classification_item()
+  Point_set_item_classification* get_classification(Scene_points_with_normal_item* points_item = NULL)
   {
-    Scene_point_set_classification_item* out =
-      qobject_cast<Scene_point_set_classification_item*>(scene->item(scene->mainSelectionIndex()));
-    if (out)
-      return out;
-
-    Scene_points_with_normal_item* points_item =
-      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if (!points_item)
+      points_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    
     if (!points_item)
       return NULL;
     
     Item_map::iterator it = item_map.find(points_item);
+
     if (it != item_map.end())
       return it->second;
-
-    return NULL;
+    else
+      return create_from_item(points_item);
   }
   
 
-  void on_create_from_item_button_clicked()
+  Point_set_item_classification* create_from_item(Scene_points_with_normal_item* points_item)
   {
-    Scene_points_with_normal_item* points_item = getSelectedItem<Scene_points_with_normal_item>();
-    if(!points_item)
-      {
-        print_message("Error: there is no selected point set item!");
-        return; 
-      }
     if (item_map.find(points_item) != item_map.end())
-      return;
+      return item_map[points_item];
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Scene_point_set_classification_item* new_item
-      = new Scene_point_set_classification_item (points_item);
-    scene->addItem(new_item);
-    new_item->setName(QString("%1 (classification)").arg(points_item->name()));
-    points_item->setVisible (false);
-    item_map.insert (std::make_pair (points_item, new_item));
+    Point_set_item_classification* classif
+      = new Point_set_item_classification (points_item);
+    item_map.insert (std::make_pair (points_item, classif));
     QApplication::restoreOverrideCursor();
-    connect(points_item, &Scene_points_with_normal_item::itemChanged,
-            new_item, &Scene_point_set_classification_item::invalidateOpenGLBuffers);
-
-    update_plugin_from_item(new_item);
+    update_plugin_from_item(classif);
+    return classif;
   }
 
-  void run (Scene_point_set_classification_item* classification_item, int method)
+  void run (Point_set_item_classification* classif, int method)
   {
-    classification_item->run (method);
+    classif->run (method);
   }
 
   void on_compute_features_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -385,18 +379,18 @@ public Q_SLOTS:
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classification_item->compute_features ();
+    classif->compute_features ();
 
-    update_plugin_from_item(classification_item);
+    update_plugin_from_item(classif);
     QApplication::restoreOverrideCursor();
-    scene->itemChanged(classification_item);
+    item_changed(classif->points_item());
   }
 
   void on_save_config_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -412,7 +406,7 @@ public Q_SLOTS:
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classification_item->save_config (filename.toStdString().c_str());
+    classif->save_config (filename.toStdString().c_str());
     
     QApplication::restoreOverrideCursor();
 
@@ -420,9 +414,9 @@ public Q_SLOTS:
 
   void on_load_config_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -437,46 +431,46 @@ public Q_SLOTS:
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classification_item->load_config (filename.toStdString().c_str());
-    update_plugin_from_item(classification_item);
-    run (classification_item, 0);
+    classif->load_config (filename.toStdString().c_str());
+    update_plugin_from_item(classif);
+    run (classif, 0);
     
     QApplication::restoreOverrideCursor();
-    scene->itemChanged(classification_item);
+    item_changed(classif->points_item());
   }
 
 
   void on_display_button_clicked(int index)
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       return; 
 
-    classification_item->change_color (index);
-    scene->itemChanged(classification_item);
+    classif->change_color (index);
+    item_changed(classif->points_item());
   }
 
   void on_run_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    run (classification_item, 0);
+    run (classif, 0);
     QApplication::restoreOverrideCursor();
-    scene->itemChanged(classification_item);
+    item_changed(classif->points_item());
   }
 
   void on_run_smoothed_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -485,17 +479,17 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
-    run (classification_item, 1);
+    run (classif, 1);
     std::cerr << "Smoothed classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
-    scene->itemChanged(classification_item);
+    item_changed(classif->points_item());
   }
   
   void on_run_graphcut_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -504,35 +498,38 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
-    run (classification_item, 2);
+    run (classif, 2);
     std::cerr << "Graphcut classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
-    scene->itemChanged(classification_item);
+    item_changed(classif->points_item());
   }
 
   void on_smoothing_value_changed(double v)
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       return; 
-    classification_item->smoothing() = v;
+    classif->smoothing() = v;
   }
 
   void on_subdivisions_value_changed(int v)
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       return; 
-    classification_item->subdivisions() = v;
+    classif->subdivisions() = v;
   }
 
  void on_save_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Scene_points_with_normal_item* points_item =
+      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+
+    Point_set_item_classification* classif
+      = get_classification(points_item);
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -540,7 +537,7 @@ public Q_SLOTS:
 
     QString filename = QFileDialog::getSaveFileName(mw,
                                                     tr("Save PLY classified point set"),
-                                                    QString("%1.ply").arg(classification_item->name()),
+                                                    QString("%1.ply").arg(points_item->name()),
                                                     "PLY point set (*.ply);;");
 
     if (filename == QString())
@@ -549,7 +546,7 @@ public Q_SLOTS:
     std::ofstream out(filename.toUtf8());
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    classification_item->write_ply_point_set (out);
+    classif->write_ply_point_set (out);
     QApplication::restoreOverrideCursor();
 
     out.close();
@@ -557,9 +554,9 @@ public Q_SLOTS:
 
   void on_generate_items_button_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -569,8 +566,8 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     std::vector<Scene_points_with_normal_item*> new_items;
-    classification_item->generate_point_set_items<Scene_points_with_normal_item>
-      (new_items, classification_item->points_item()->name().toStdString().c_str());
+    classif->generate_point_set_items<Scene_points_with_normal_item>
+      (new_items, classif->points_item()->name().toStdString().c_str());
 
     for (std::size_t i = 0; i < new_items.size(); ++ i)
       {
@@ -585,9 +582,9 @@ public Q_SLOTS:
 
   void on_add_new_label_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -608,7 +605,7 @@ public Q_SLOTS:
                                       QColor (192 + rand() % 60,
                                               192 + rand() % 60,
                                               192 + rand() % 60)));
-    classification_item->add_new_label (class_rows.back().label->text().toStdString().c_str(),
+    classif->add_new_label (class_rows.back().label->text().toStdString().c_str(),
                                         class_rows.back().color);
     
 
@@ -616,35 +613,35 @@ public Q_SLOTS:
 
   void on_reset_training_sets_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
       }
 
-    classification_item->reset_training_sets();
+    classif->reset_training_sets();
   }
 
   void on_validate_selection_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
       }
 
-    classification_item->validate_selection();
+    classif->validate_selection();
   }
 
   void on_train_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -659,9 +656,9 @@ public Q_SLOTS:
         colors.push_back (class_rows[i].color);
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    classification_item->train();
+    classif->train();
     QApplication::restoreOverrideCursor();
-    update_plugin_from_item(classification_item);
+    update_plugin_from_item(classif);
   }
 
   void add_new_label (const ClassRow& class_row)
@@ -691,9 +688,9 @@ public Q_SLOTS:
 
   void on_remove_class_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -705,7 +702,7 @@ public Q_SLOTS:
     ui_widget.gridLayout_3->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
     --row_index;
 
-    classification_item->remove_label (class_rows[row_index].label->text().toStdString().c_str());
+    classif->remove_label (class_rows[row_index].label->text().toStdString().c_str());
 
     ui_widget.gridLayout_3->removeWidget (class_rows[row_index].label);
     delete class_rows[row_index].label;
@@ -734,14 +731,14 @@ public Q_SLOTS:
 
     class_rows.erase (class_rows.begin() + row_index);
     
-    scene->itemChanged(classification_item);
+    item_changed(classif->points_item());
   }
 
   void on_color_changed_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -756,17 +753,17 @@ public Q_SLOTS:
     QColor color = class_rows[row_index].color;
     color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of label");
     class_rows[row_index].change_color (color);
-    classification_item->change_label_color (class_rows[row_index].label->text().toStdString().c_str(),
+    classif->change_label_color (class_rows[row_index].label->text().toStdString().c_str(),
                                             color);
 
-    scene->itemChanged(classification_item);
+    item_changed(classif->points_item());
   }
 
   void on_add_selection_to_training_set_clicked()
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
@@ -777,37 +774,39 @@ public Q_SLOTS:
     ui_widget.gridLayout_3->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
     --row_index;
 
-    classification_item->add_selection_to_training_set
+    classif->add_selection_to_training_set
       (class_rows[row_index].label->text().toStdString().c_str());
+    
+    item_changed(classif->points_item());
   }
 
   void on_selected_feature_changed(int v)
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
       }
 
-    if (classification_item->number_of_features() <= (std::size_t)v)
+    if (classif->number_of_features() <= (std::size_t)v)
       return;
     
-    Scene_point_set_classification_item::Feature_handle
-      att = classification_item->feature(v);
+    Point_set_item_classification::Feature_handle
+      att = classif->feature(v);
 
-    if (att == Scene_point_set_classification_item::Feature_handle())
+    if (att == Point_set_item_classification::Feature_handle())
       return;
 
     // std::cerr << att->weight()
     //           << " " << (int)(1001. * 2. * std::atan(att->weight()) / CGAL_PI) << std::endl;
     ui_widget.feature_weight->setValue ((int)(1001. * 2. * std::atan(att->weight()) / CGAL_PI));
 
-    for (std::size_t i = 0; i < classification_item->labels().size(); ++ i)
+    for (std::size_t i = 0; i < classif->labels().size(); ++ i)
       {
         CGAL::Classification::Feature::Effect
-          eff = classification_item->labels()[i].first->feature_effect(att);
+          eff = classif->labels()[i].first->feature_effect(att);
         if (eff == CGAL::Classification::Feature::PENALIZING)
           class_rows[i].effect->setCurrentIndex(0);
         else if (eff == CGAL::Classification::Feature::NEUTRAL)
@@ -820,17 +819,17 @@ public Q_SLOTS:
 
   void on_feature_weight_changed(int v)
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
       }
-    Scene_point_set_classification_item::Feature_handle
-      att = classification_item->feature(ui_widget.selected_feature->currentIndex());
+    Point_set_item_classification::Feature_handle
+      att = classif->feature(ui_widget.selected_feature->currentIndex());
 
-    if (att == Scene_point_set_classification_item::Feature_handle())
+    if (att == Point_set_item_classification::Feature_handle())
       return;
 
     att->set_weight(std::tan ((CGAL_PI/2.) * v / 1001.));
@@ -842,17 +841,17 @@ public Q_SLOTS:
 
   void on_effect_changed (int v)
   {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
+    Point_set_item_classification* classif
+      = get_classification();
+    if(!classif)
       {
         print_message("Error: there is no point set classification item!");
         return; 
       }
-    Scene_point_set_classification_item::Feature_handle
-      att = classification_item->feature(ui_widget.selected_feature->currentIndex());
+    Point_set_item_classification::Feature_handle
+      att = classif->feature(ui_widget.selected_feature->currentIndex());
 
-    if (att == Scene_point_set_classification_item::Feature_handle())
+    if (att == Point_set_item_classification::Feature_handle())
       return;
 
     QComboBox* combo = qobject_cast<QComboBox*>(QObject::sender());
@@ -862,23 +861,23 @@ public Q_SLOTS:
           //          std::cerr << att->id() << " is ";
           if (v == 0)
             {
-              classification_item->labels()[i].first->set_feature_effect
+              classif->labels()[i].first->set_feature_effect
                 (att, CGAL::Classification::Feature::PENALIZING);
               //              std::cerr << " penalized for ";
             }
           else if (v == 1)
             {
-              classification_item->labels()[i].first->set_feature_effect
+              classif->labels()[i].first->set_feature_effect
                 (att, CGAL::Classification::Feature::NEUTRAL);
               //              std::cerr << " neutral for ";
             }
           else
             {
-              classification_item->labels()[i].first->set_feature_effect
+              classif->labels()[i].first->set_feature_effect
                 (att, CGAL::Classification::Feature::FAVORING);
               //              std::cerr << " favored for ";
             }
-          //          std::cerr << classification_item->labels()[i].first->id() << std::endl;
+          //          std::cerr << classif->labels()[i].first->id() << std::endl;
           break;
         }
   }
@@ -895,7 +894,7 @@ private:
 
   QColor color_att;
 
-  typedef std::map<Scene_points_with_normal_item*, Scene_point_set_classification_item*> Item_map;
+  typedef std::map<Scene_points_with_normal_item*, Point_set_item_classification*> Item_map;
   Item_map item_map;
 
 }; // end Polyhedron_demo_classification_plugin

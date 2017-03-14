@@ -207,6 +207,22 @@ public:
     return (m_blue != Byte_map());
   }
     
+  void remove_colors()
+  {
+    if (m_blue != Byte_map())
+      {
+        this->template remove_property_map (m_red);
+        this->template remove_property_map (m_green);
+        this->template remove_property_map (m_blue);
+      }
+    if (m_fblue != Double_map())
+      {
+        this->template remove_property_map (m_fred);
+        this->template remove_property_map (m_fgreen);
+        this->template remove_property_map (m_fblue);
+      }
+  }
+  
   double red (const Index& index) const
   { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
   double green (const Index& index) const

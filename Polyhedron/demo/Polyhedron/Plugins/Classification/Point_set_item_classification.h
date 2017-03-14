@@ -1,5 +1,5 @@
-#ifndef POINT_SET_CLASSIFICATION_ITEM_H
-#define POINT_SET_CLASSIFICATION_ITEM_H
+#ifndef POINT_SET_ITEM_CLASSIFICATION_H
+#define POINT_SET_ITEM_CLASSIFICATION_H
 
 //#define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #define CGAL_CLASSIFICATION_VERBOSE
@@ -16,8 +16,6 @@
 #include <CGAL/Classification/Feature/Echo_scatter.h>
 #include <CGAL/Classification/Feature/Eigen.h>
 
-
-#include "Scene_point_set_classification_item_config.h"
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
@@ -26,41 +24,9 @@
 #include <iostream>
 
 
-class QMenu;
-class QAction;
-
 // This class represents a point set in the OpenGL scene
-class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_item
-  : public CGAL::Three::Scene_item
+class Point_set_item_classification
 {
-  Q_OBJECT
-
-  
-  template <typename PointSet>
-    class Point_set_color_map
-  {
-  public:
-    typedef CGAL::Classification::RGB_Color Color;
-    typedef typename PointSet::Index key_type;
-    typedef Color value_type;
-    typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
-    
-    PointSet* ps;
-
-    Point_set_color_map(PointSet* ps = NULL)
-      : ps(ps) { }
-
-    friend value_type get (const Point_set_color_map& pm, const key_type& i)
-    {
-      Color out = {{ (unsigned char)(255 * pm.ps->red(i)),
-                     (unsigned char)(255 * pm.ps->green(i)),
-                     (unsigned char)(255 * pm.ps->blue(i)) }};
-                     
-      return out;
-    }
-  };
-
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
@@ -68,7 +34,6 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
-  typedef Point_set_color_map<Point_set> Color_map;
 
   typedef CGAL::Point_set_classifier<Kernel, Point_set, Point_map>                     PSC;
   typedef CGAL::Classification::Trainer<Point_set, Point_map>        Trainer;
@@ -82,37 +47,11 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
  public:
   
-  Scene_point_set_classification_item(PSC* psc = NULL);
-  Scene_point_set_classification_item(Scene_points_with_normal_item* points);
-  Scene_point_set_classification_item(const Scene_point_set_classification_item& toCopy);
-  ~Scene_point_set_classification_item();
-  
-  Scene_point_set_classification_item* clone() const;
-  
-  // Function to override the context menu
-  QMenu* contextMenu();
+  Point_set_item_classification(Scene_points_with_normal_item* points);
+  ~Point_set_item_classification();
 
   // IO
   bool write_ply_point_set(std::ostream& out);
-  // Function for displaying meta-data of the item
-  virtual QString toolTip() const;
-
-  virtual void invalidateOpenGLBuffers();
-
-  // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const;
-
-  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-  virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
-  
-
-  // Gets dimensions
-  virtual bool isFinite() const { return true; }
-  virtual bool isEmpty() const;
-  virtual void compute_bbox() const;
-
-  virtual void setRenderingMode(RenderingMode m);
 
   void change_color (int index);
   int real_index_color() const;
@@ -120,6 +59,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   void reset_indices();
   void compute_features ();
   bool run (int method);
+
+  void backup_existing_colors_and_add_new();
+  void reset_colors();
 
   template <typename Item>
   void generate_point_set_items(std::vector<Item*>& items,
@@ -144,22 +86,14 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   }
 
   Scene_points_with_normal_item* points_item() { return m_points; }
+  void erase_points_item() { m_points = NULL; }
 
   void reset_training_sets()
   {
     m_trainer->reset_inlier_sets();
-    invalidateOpenGLBuffers();
-    Q_EMIT itemChanged();
   }
 
   void train();
-
-  void callback()
-  {
-    invalidateOpenGLBuffers();
-    Q_EMIT itemChanged();
-  }
-  
 
   Label_handle get_label (const char* name)
   {
@@ -182,6 +116,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
                                                       m_points->point_set()->end()));
 
     m_points->resetSelection();
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
   }
 
   void validate_selection ()
@@ -194,6 +130,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
       }
 
     m_points->resetSelection();
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
   }
 
   double& smoothing() { return m_smoothing; }
@@ -220,8 +158,6 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
           m_labels.erase (m_labels.begin() + i);
           break;
         }
-    invalidateOpenGLBuffers();
-    Q_EMIT itemChanged();
   }
 
   void change_label_color (const char* name, const QColor& color)
@@ -267,7 +203,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     reset_indices();
     
     bool normals = m_points->point_set()->has_normal_map();
-    bool colors = m_points->point_set()->has_colors();
+    bool colors = (m_color != Point_set::Property_map<Color>());
     Point_set::Property_map<boost::uint8_t> echo_map;
     bool echo;
     boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
@@ -278,17 +214,17 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     else if (!normals && !colors && echo)
       m_psc->load_configuration (f, CGAL::Default(), CGAL::Default(), echo_map);
     else if (!normals && colors && !echo)
-      m_psc->load_configuration (f, CGAL::Default(), Color_map(m_points->point_set()));
+      m_psc->load_configuration (f, CGAL::Default(), m_color);
     else if (!normals && colors && echo)
-      m_psc->load_configuration (f, CGAL::Default(), Color_map(m_points->point_set()), echo_map);
+      m_psc->load_configuration (f, CGAL::Default(), m_color, echo_map);
     else if (normals && !colors && !echo)
       m_psc->load_configuration (f, m_points->point_set()->normal_map());
     else if (normals && !colors && echo)
       m_psc->load_configuration (f, m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
     else if (normals && colors && !echo)
-      m_psc->load_configuration (f, m_points->point_set()->normal_map(), Color_map(m_points->point_set()));
+      m_psc->load_configuration (f, m_points->point_set()->normal_map(), m_color);
     else
-      m_psc->load_configuration (f, m_points->point_set()->normal_map(), Color_map(m_points->point_set()), echo_map);
+      m_psc->load_configuration (f, m_points->point_set()->normal_map(), m_color, echo_map);
     
     std::vector<std::pair<Label_handle, QColor> > new_labels;
     for (std::size_t i = 0; i < m_psc->number_of_labels(); ++ i)
@@ -310,12 +246,15 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     m_labels.swap (new_labels);
   }
 
- public Q_SLOTS:
-
-  // Data
  private:
   
   Scene_points_with_normal_item* m_points;
+
+  Point_set::Property_map<unsigned char> m_red;
+  Point_set::Property_map<unsigned char> m_green;
+  Point_set::Property_map<unsigned char> m_blue;
+  Point_set::Property_map<Color> m_color;
+  
   PSC* m_psc;
   Trainer* m_trainer;
 
@@ -328,36 +267,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   
   int m_index_color;
   
-  enum VAOs {
-    Edges=0,
-    ThePoints,
-    NbOfVaos = ThePoints+1
-  };
-  enum VBOs {
-    Edges_vertices = 0,
-    Points_vertices,
-    Points_colors,
-    NbOfVbos = Points_colors+1
-  };
-
-  mutable std::vector<double> positions_lines;
-  mutable std::vector<double> positions_points;
-  mutable std::vector<double> colors_points;
-  mutable std::size_t nb_points;
-  mutable std::size_t nb_lines;
-   
-
-  mutable QOpenGLShaderProgram *program;
-
-  using CGAL::Three::Scene_item::initializeBuffers;
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-
-  void compute_normals_and_vertices() const;
-
-
-}; // end class Scene_point_set_classification_item
+}; // end class Point_set_item_classification
 
 
 
 
-#endif // POINT_SET_CLASSIFICATION_ITEM_H
+#endif // POINT_SET_ITEM_CLASSIFICATION_H

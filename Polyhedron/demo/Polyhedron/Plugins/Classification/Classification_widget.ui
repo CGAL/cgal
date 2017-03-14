@@ -31,19 +31,6 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_8">
       <item>
-       <widget class="QPushButton" name="create_from_item">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Create classification item</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="load_config">
         <property name="text">
          <string>Load config</string>
