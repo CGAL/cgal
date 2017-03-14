@@ -45,7 +45,7 @@ void set_halfedgeds_items_id (const CGAL::Surface_mesh<P>&)
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-
+#include <CGAL/Facet_with_id_pmap.h>
 #include <queue>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -95,26 +95,6 @@ struct Polyline_visitor
   void end_polyline(){}
 };
 
-template<class ValueType>
-struct Facet_with_id_pmap
-    : public boost::put_get_helper<ValueType&,
-             Facet_with_id_pmap<ValueType> >
-{
-  typedef boost::graph_traits<Face_graph>::face_descriptor key_type;
-    typedef ValueType value_type;
-    typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
-
-  Facet_with_id_pmap(const Face_graph& fg,
-                     std::vector<ValueType>& internal_vector)
-    : internal_vector(internal_vector), fg(fg) { }
-  
-  reference operator[](key_type key) const
-  { return internal_vector[get(CGAL::face_index, fg, key)]; }
-private:
-  std::vector<ValueType>& internal_vector;
-  const Face_graph& fg; 
-};
 
 using namespace CGAL::Three;
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
@@ -477,7 +457,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   // create a property-map for sdf values
   std::vector<double> sdf_values( num_faces(*input_triangle_mesh) );
-  Facet_with_id_pmap<double> sdf_property_map(*input_triangle_mesh, sdf_values);
+  Facet_with_id_pmap<Face_graph,double> sdf_property_map(*input_triangle_mesh, sdf_values);
 
   // compute sdf values with skeleton
   BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*input_triangle_mesh))
@@ -493,7 +473,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   // create a property-map for segment-ids (it is an adaptor for this case)
   std::vector<std::size_t> segment_ids( num_faces(*input_triangle_mesh) );
-  Facet_with_id_pmap<std::size_t> segment_property_map(*input_triangle_mesh, segment_ids);
+  Facet_with_id_pmap<Face_graph,std::size_t> segment_property_map(*input_triangle_mesh, segment_ids);
 
   // segment the mesh using default parameters
   std::cout << "Number of segments: "
