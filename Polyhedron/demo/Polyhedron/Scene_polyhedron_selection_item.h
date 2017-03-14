@@ -438,8 +438,8 @@ public:
   boost::optional<std::size_t> get_minimum_isolated_component() {
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     tr.update_indices();
-    Travel_isolated_components::Minimum_visitor visitor;
-    Travel_isolated_components().travel<HandleType>
+    Travel_isolated_components<Polyhedron>::Minimum_visitor visitor;
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<HandleType>
       (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
     return visitor.minimum;
   }
@@ -462,8 +462,8 @@ public:
     typedef std::insert_iterator<typename Tr::Container> Output_iterator;
     Output_iterator out(tr.container(), tr.container().begin());
 
-    Travel_isolated_components::Selection_visitor<Output_iterator> visitor(threshold , out);
-    Travel_isolated_components().travel<HandleType>
+    Travel_isolated_components<Polyhedron>::Selection_visitor<Output_iterator> visitor(threshold , out);
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<HandleType>
       (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
 
     if(visitor.any_inserted) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }

@@ -186,6 +186,7 @@ public:
   Control_vertices_data(M_Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
     : frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
+
   void refresh(Mesh *mesh)
   {
     for(typename std::vector<mesh_vd>::iterator it = ctrl_vertices_group.begin(); it != ctrl_vertices_group.end(); ) {
@@ -311,7 +312,8 @@ public:
   void drawEdges(CGAL::Three::Viewer_interface*) const;
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
-  void draw_frame_plane(QGLViewer *) const;
+  template<typename Mesh>
+  void draw_frame_plane(QGLViewer *, Mesh *mesh) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
@@ -340,7 +342,7 @@ public:
   bool eventFilter(QObject *target, QEvent *event);
   void update_frame_plane();
   void ShowAsSphere(bool b);
-  bool wasPolyhedronItem()const;
+  bool hasPolyhedronItem()const;
 
 public Q_SLOTS:
   void reset_spheres();
@@ -374,6 +376,9 @@ public:
   template<typename Mesh>
   bool insert_roi_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
 
+  //for calls from the plugin
+  bool insert_roi_vertex(Polyhedron::Vertex_handle vh);
+
   template<typename Mesh>
   bool erase_control_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
 
@@ -386,35 +391,51 @@ public:
 
   void create_ctrl_vertices_group();
 
-  void delete_ctrl_vertices_group(bool create_new = true);
+  void delete_ctrl_vertices_group( bool create_new = true);
+
+  void pivoting_end();
+  void pivoting_begin();
 
   void prev_ctrl_vertices_group();
   void next_ctrl_vertices_group();
-  void pivoting_end();
-
-  void pivoting_begin();
-
 
   void save_roi(const char* file_name) const;
   void read_roi(const char* file_name);
   void overwrite_deform_object();
 
   void reset_deform_object();
+  template<typename Mesh>
   struct Is_selected {
-    Deform_mesh* dm;
-    Is_selected(Deform_mesh* dm) : dm(dm) {}
+    typedef typename CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
+      ,CGAL::Default, CGAL::Default, CGAL::Default,
+      Array_based_vertex_point_map<Mesh> > M_Deform_mesh;
+
+    M_Deform_mesh* dm;
+    Is_selected(M_Deform_mesh* dm) : dm(dm) {}
     bool count(Vertex_handle vh) const {
+      return dm->is_roi_vertex(vh);
+    }
+
+    bool count(sm_vertex_descriptor vh) const {
       return dm->is_roi_vertex(vh);
     }
   };
 
   boost::optional<std::size_t> get_minimum_isolated_component();
-  struct Select_roi_output {
-    Select_roi_output(Deform_mesh* dm) : dm(dm) { }
+  template<typename Mesh>
+  struct Select_roi_output{
+    typedef typename CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
+    ,CGAL::Default, CGAL::Default, CGAL::Default,
+    Array_based_vertex_point_map<Mesh> > M_Deform_mesh;
+
+    Select_roi_output(M_Deform_mesh* dm) : dm(dm) { }
     void operator()(Vertex_handle vh) {
       dm->insert_roi_vertex(vh);
     }
-    Deform_mesh* dm;
+    void operator()(sm_vertex_descriptor vd) {
+      dm->insert_roi_vertex(vd);
+    }
+    M_Deform_mesh* dm;
   };
 
   boost::optional<std::size_t> select_isolated_components(std::size_t threshold) ;

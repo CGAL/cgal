@@ -193,7 +193,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->delete_ctrl_vertices_group();
+    edit_item->delete_ctrl_vertices_group();
+
   edit_item->invalidateOpenGLBuffers();
   scene->itemChanged(edit_item); // for repaint
 }
@@ -251,10 +252,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateCh
     if(!edit_item) { continue; }
     
     if(state == Qt::Checked) {
-      edit_item->pivoting_begin();
+        edit_item->pivoting_begin();
     }
     else {
-      edit_item->pivoting_end();
+        edit_item->pivoting_end();
     }
     scene->itemChanged(edit_item);     
   }
@@ -328,6 +329,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ReadROIPushButton_clicked()
   scene->itemChanged(edit_item); 
 }
 
+
 void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool visible)
 {
   if(!visible)
@@ -339,7 +341,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
 
       if(edit_item) {
         edit_item->ShowAsSphere(false);
-        if(edit_item->wasPolyhedronItem())
+        if(edit_item->hasPolyhedronItem())
         {
           Scene_polyhedron_item* item = convert_to_plain_polyhedron(i, edit_item);
           item->setRenderingMode(last_RM);
@@ -438,7 +440,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxRoi_changed(int valu
   }
 }
 
-
 Scene_edit_polyhedron_item* 
 Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
                            Scene_polyhedron_item* poly_item)
@@ -461,6 +462,7 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   scene->setSelectedItem(i);
   return edit_poly;
 }
+
 
 Scene_edit_polyhedron_item*
 Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_sm(Item_id i,
@@ -514,6 +516,7 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_sm(Item_id i,
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_importSelectionPushButton_clicked()
 {
+
 Scene_polyhedron_selection_item* selection_item = NULL;
 Scene_edit_polyhedron_item* edit_item = NULL;
 bool need_sel(true), need_edit(true);
@@ -552,6 +555,7 @@ bool need_sel(true), need_edit(true);
 
 void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_selection_item *selection_item, Scene_edit_polyhedron_item *edit_item)
 {
+
 //converts the selection in selected points
 QVector<Scene_polyhedron_selection_item::Vertex_handle> sel_to_import;
 Q_FOREACH(Scene_polyhedron_selection_item::Vertex_handle vh, selection_item->selected_vertices)
@@ -579,7 +583,9 @@ Q_FOREACH(Scene_polyhedron_selection_item::Facet_handle fh, selection_item->sele
 
 //makes the selected points ROI
 Q_FOREACH(Scene_polyhedron_selection_item::Vertex_handle vh, sel_to_import)
-  edit_item->insert_roi_vertex(vh, edit_item->polyhedron());
+{
+  edit_item->insert_roi_vertex(vh);
+}
 edit_item->invalidateOpenGLBuffers();
 selection_item->setVisible(false);
 (*QGLViewer::QGLViewerPool().begin())->update();
