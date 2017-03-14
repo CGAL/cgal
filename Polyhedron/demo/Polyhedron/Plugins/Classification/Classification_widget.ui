@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PointSetClassification</class>
- <widget class="QDockWidget" name="PointSetClassification">
+ <class>Classification</class>
+ <widget class="QDockWidget" name="Classification">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Point set classification</string>
+   <string>Classification</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -596,13 +596,6 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_9">
       <item>
-       <widget class="QPushButton" name="run_smoothed">
-        <property name="text">
-         <string>Run (smoothed)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="run">
         <property name="font">
          <font>
@@ -612,6 +605,13 @@
         </property>
         <property name="text">
          <string>Run (quick)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="run_smoothed">
+        <property name="text">
+         <string>Run (smoothed)</string>
         </property>
        </widget>
       </item>
@@ -723,14 +723,14 @@
          </font>
         </property>
         <property name="text">
-         <string>Save classified point set</string>
+         <string>Save classification</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="generate_point_set_items">
+       <widget class="QPushButton" name="generate_items">
         <property name="text">
-         <string>Generate point set items</string>
+         <string>Generate one item per label</string>
         </property>
        </widget>
       </item>

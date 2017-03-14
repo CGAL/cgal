@@ -15,7 +15,7 @@
 
 #include <CGAL/Random.h>
 
-#include "ui_Point_set_classification_widget.h"
+#include "ui_Classification_widget.h"
 
 #include <QAction>
 #include <QMainWindow>
@@ -31,7 +31,7 @@
 
 using namespace CGAL::Three;
 
-class Polyhedron_demo_point_set_classification_plugin :
+class Polyhedron_demo_classification_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -94,17 +94,17 @@ public:
         qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
   void print_message(QString message) { messages->information(message); }
-  QList<QAction*> actions() const { return QList<QAction*>() << actionPointSetClassification; }
+  QList<QAction*> actions() const { return QList<QAction*>() << actionClassification; }
   
   using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
-    actionPointSetClassification = new QAction(tr("Point Set Classification"), mw);
-    connect(actionPointSetClassification, SIGNAL(triggered()), this, SLOT(point_set_classification_action()));
+    actionClassification = new QAction(tr("Classification"), mw);
+    connect(actionClassification, SIGNAL(triggered()), this, SLOT(classification_action()));
 
-    dock_widget = new QDockWidget("Point Set Classification", mw);
+    dock_widget = new QDockWidget("Classification", mw);
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
@@ -134,8 +134,8 @@ public:
             SLOT(on_subdivisions_value_changed(int)));
     connect(ui_widget.save,  SIGNAL(clicked()), this,
             SLOT(on_save_button_clicked()));
-    connect(ui_widget.generate_point_set_items,  SIGNAL(clicked()), this,
-            SLOT(on_generate_point_set_items_button_clicked()));
+    connect(ui_widget.generate_items,  SIGNAL(clicked()), this,
+            SLOT(on_generate_items_button_clicked()));
 
     connect(ui_widget.numberOfScalesSpinBox,  SIGNAL(valueChanged(int)), this,
             SLOT(on_update_nb_scales()));
@@ -194,7 +194,7 @@ public Q_SLOTS:
       item_map.erase (classif_item->points_item());
   }
 
-  void point_set_classification_action()
+  void classification_action()
   { 
     dock_widget->show();
     dock_widget->raise();
@@ -221,7 +221,7 @@ public Q_SLOTS:
     ui_widget.run_smoothed->setEnabled(false);
     ui_widget.frame->setEnabled(false);
     ui_widget.save->setEnabled(false);
-    ui_widget.generate_point_set_items->setEnabled(false);
+    ui_widget.generate_items->setEnabled(false);
   }
 
   void enable_computation()
@@ -240,7 +240,7 @@ public Q_SLOTS:
     ui_widget.run_smoothed->setEnabled(true);
     ui_widget.frame->setEnabled(true);
     ui_widget.save->setEnabled(true);
-    ui_widget.generate_point_set_items->setEnabled(true);
+    ui_widget.generate_items->setEnabled(true);
   }
 
 
@@ -555,7 +555,7 @@ public Q_SLOTS:
     out.close();
   }
 
-  void on_generate_point_set_items_button_clicked()
+  void on_generate_items_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
       = get_classification_item();
@@ -885,19 +885,19 @@ public Q_SLOTS:
 
 private:
   Messages_interface* messages;
-  QAction* actionPointSetClassification;
+  QAction* actionClassification;
 
   QDockWidget* dock_widget;
 
   std::vector<ClassRow> class_rows;
   
-  Ui::PointSetClassification ui_widget;
+  Ui::Classification ui_widget;
 
   QColor color_att;
 
   typedef std::map<Scene_points_with_normal_item*, Scene_point_set_classification_item*> Item_map;
   Item_map item_map;
 
-}; // end Polyhedron_demo_point_set_classification_plugin
+}; // end Polyhedron_demo_classification_plugin
 
-#include "Point_set_classification_plugin.moc"
+#include "Classification_plugin.moc"
