@@ -25,8 +25,10 @@
 //******************************************************************************
 
 
-#ifndef _LIPSCHITZ_SIZING_
-#define _LIPSCHITZ_SIZING_
+#ifndef CGAL_LIPSCHITZ_SIZING_H
+#define CGAL_LIPSCHITZ_SIZING_H
+
+#include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -470,4 +472,4 @@ public:
 }//namespace Mesh_3
 }//namespace CGAL
 
-#endif // _LIPSCHITZ_SIZING_
+#endif // CGAL_LIPSCHITZ_SIZING_H

@@ -19,8 +19,10 @@
 // Author(s)     : Jane Tournois
 //
 
-#ifndef CGAL_LIP_SIZING_PARAMETERS
-#define CGAL_LIP_SIZING_PARAMETERS
+#ifndef CGAL_LIP_SIZING_PARAMETERS_H
+#define CGAL_LIP_SIZING_PARAMETERS_H
+
+#include <CGAL/license/Mesh_3.h>
 
 #include <map>
 #include <limits>
@@ -157,4 +159,4 @@ public:
 };
 }//namespace CGAL
 
-#endif //CGAL_LIP_SIZING_PARAMETERS
+#endif //CGAL_LIP_SIZING_PARAMETERS_H

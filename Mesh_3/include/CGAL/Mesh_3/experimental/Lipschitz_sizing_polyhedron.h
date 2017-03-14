@@ -19,8 +19,10 @@
 // Author(s)     : Jane Tournois
 //
 
-#ifndef _LIPSCHITZ_SIZING_POLYHEDRON_
-#define _LIPSCHITZ_SIZING_POLYHEDRON_
+#ifndef CGAL_LIPSCHITZ_SIZING_POLYHEDRON_H
+#define CGAL_LIPSCHITZ_SIZING_POLYHEDRON_H
+
+#include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -181,4 +183,4 @@ public:
 }//namespace Mesh_3
 }//namespace CGAL
 
-#endif // _LIPSCHITZ_SIZING_POLYHEDRON_
+#endif // CGAL_LIPSCHITZ_SIZING_POLYHEDRON_H
