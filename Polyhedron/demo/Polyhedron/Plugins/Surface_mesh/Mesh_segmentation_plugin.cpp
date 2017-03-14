@@ -21,27 +21,9 @@
 #include <algorithm>
 #include <vector>
 #include <CGAL/property_map.h>
+#include <CGAL/Facet_with_id_pmap.h>
 
 
-template<class PolyhedronWithId, class ValueType>
-struct Polyhedron_with_id_to_vector_property_map
-    : public boost::put_get_helper<ValueType&,
-             Polyhedron_with_id_to_vector_property_map<PolyhedronWithId, ValueType> >
-{
-public:
-    typedef typename PolyhedronWithId::Facet_const_handle key_type;
-    typedef ValueType value_type;
-    typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
-
-    Polyhedron_with_id_to_vector_property_map() : internal_vector(NULL) { }
-    Polyhedron_with_id_to_vector_property_map(std::vector<ValueType>* internal_vector)
-         : internal_vector(internal_vector) { }
-        
-    reference operator[](key_type key) const { return (*internal_vector)[key->id()]; }
-private:
-    std::vector<ValueType>* internal_vector;
-};
 using namespace CGAL::Three;
 class Polyhedron_demo_mesh_segmentation_plugin : 
     public QObject,
@@ -183,8 +165,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
             std::make_pair(active_item, std::vector<double>()) ).first; 
     
     check_and_set_ids(pair->first->polyhedron());
-    pair->second.resize(item->polyhedron()->size_of_facets(), 0.0);
-    Polyhedron_with_id_to_vector_property_map<Polyhedron, double>  sdf_pmap(&pair->second);
+    pair->second.resize(num_faces(*item->polyhedron()), 0.0);
+    Facet_with_id_pmap<Polyhedron, double>  sdf_pmap(*item->polyhedron(),pair->second);
     QTime time;
     time.start();
     std::pair<double, double> min_max_sdf = sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);
@@ -251,14 +233,14 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     QTime time;
     time.start();
     if(pair->second.empty()) { // SDF values are empty, calculate
-      pair->second.resize(pair->first->polyhedron()->size_of_facets(), 0.0);
-      Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
+      pair->second.resize(num_faces(*pair->first->polyhedron()), 0.0);
+      Facet_with_id_pmap<Polyhedron, double> sdf_pmap(*pair->first->polyhedron(),pair->second);
       sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays); 
     }
 
-    std::vector<std::size_t> internal_segment_map(pair->first->polyhedron()->size_of_facets());
-    Polyhedron_with_id_to_vector_property_map<Polyhedron, std::size_t> segment_pmap(&internal_segment_map);
-    Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
+    std::vector<std::size_t> internal_segment_map(num_faces(*pair->first->polyhedron()));
+    Facet_with_id_pmap<Polyhedron, std::size_t> segment_pmap(*pair->first->polyhedron(),internal_segment_map);
+    Facet_with_id_pmap<Polyhedron, double> sdf_pmap(*pair->first->polyhedron(),pair->second);
 
     std::size_t nb_segments = segmentation_from_sdf_values(*(pair->first->polyhedron())
         ,sdf_pmap, segment_pmap, number_of_clusters, smoothness, extract_segments); 
@@ -307,10 +289,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
     Polyhedron* polyhedron = item->polyhedron();
     color_vector.clear();
     std::size_t patch_id = 0;
-    for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin(); 
-        facet_it != polyhedron->facets_end(); ++facet_it, ++patch_id)   
-    {
-        double sdf_value = sdf_values[facet_it]; 
+    BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(*polyhedron)){
+        double sdf_value = sdf_values[fd]; 
         int gray_color = static_cast<int>(255 * sdf_value);
         if(gray_color < 0 || gray_color >= 256) {
           color_vector.push_back(QColor::fromRgb(0,0,0));
@@ -318,7 +298,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
         else {
           color_vector.push_back(color_map_sdf[gray_color]);
         }
-        facet_it->set_patch_id(static_cast<int>(patch_id));
+        fd->set_patch_id(static_cast<int>(patch_id++));
     }
 }
 
@@ -332,11 +312,9 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
     Polyhedron* polyhedron = item->polyhedron();
     color_vector.clear();
     std::size_t max_segment = 0;
-    for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin(); 
-        facet_it != polyhedron->facets_end(); ++facet_it)   
-    {
-        std::size_t segment_id = segment_ids[facet_it];
-        facet_it->set_patch_id(static_cast<int>(segment_id));
+    BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(*polyhedron)){
+        std::size_t segment_id = segment_ids[fd];
+        fd->set_patch_id(static_cast<int>(segment_id));
         max_segment = (std::max)(max_segment, segment_id);      
     }
     for(std::size_t i = 0; i <= max_segment; ++i)   
