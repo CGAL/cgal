@@ -2,8 +2,15 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "ui_Mesh_segmentation_widget.h"
+
+#ifdef USE_SURFACE_MESH
+#include "Kernel_type.h"
+#include "Scene_surface_mesh_item.h"
+#else
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
+#endif
+
 #include "Scene.h"
 #include "Color_map.h"
 
@@ -23,6 +30,13 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Facet_with_id_pmap.h>
 
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_face_graph_item;
+#else
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
+typedef Scene_face_graph_item::FaceGraph Face_graph;
 
 using namespace CGAL::Three;
 class Polyhedron_demo_mesh_segmentation_plugin : 
@@ -34,7 +48,7 @@ class Polyhedron_demo_mesh_segmentation_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 private:
-    typedef std::map<Scene_polyhedron_item*, std::vector<double> > Item_sdf_map;
+    typedef std::map<Scene_face_graph_item*, std::vector<double> > Item_sdf_map;
 public:
 
     QList<QAction*> actions() const {
@@ -43,7 +57,7 @@ public:
 
     bool applicable(QAction*) const {
       return 
-        qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+        qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
     }    
     
     void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
@@ -76,10 +90,10 @@ public:
     }
     
     template<class SDFPropertyMap>
-    void colorize_sdf(Scene_polyhedron_item* item, SDFPropertyMap sdf_values, std::vector<QColor>& color_vector);
+    void colorize_sdf(Scene_face_graph_item* item, SDFPropertyMap sdf_values, std::vector<QColor>& color_vector);
     template<class SegmentPropertyMap> 
-    void colorize_segmentation(Scene_polyhedron_item* item, SegmentPropertyMap segment_ids, std::vector<QColor>& color_vector);
-    void check_and_set_ids(Polyhedron* polyhedron);
+    void colorize_segmentation(Scene_face_graph_item* item, SegmentPropertyMap segment_ids, std::vector<QColor>& color_vector);
+    void check_and_set_ids(Face_graph* polyhedron);
     void init_color_map_sdf();
     void init_color_map_segmentation();
     
@@ -134,7 +148,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_segmentation()
 
 void Polyhedron_demo_mesh_segmentation_plugin::itemAboutToBeDestroyed(CGAL::Three::Scene_item* scene_item)
 {
-    if(Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene_item)) {
+    if(Scene_face_graph_item* item = qobject_cast<Scene_face_graph_item*>(scene_item)) {
       item_sdf_map.erase(item);
     }
 }
@@ -145,7 +159,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
 void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 {
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     if(!item) { return; }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
@@ -154,10 +168,10 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     bool create_new_item = ui_widget.New_item_check_box->isChecked();
     
     Item_sdf_map::iterator pair;
-    Scene_polyhedron_item* active_item = item;
+    Scene_face_graph_item* active_item = item;
 
     if(create_new_item) {
-        active_item = new Scene_polyhedron_item(*item->polyhedron()); 
+        active_item = new Scene_face_graph_item(item->polyhedron()); 
         active_item->setGouraudMode();
     }
     
@@ -166,7 +180,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     
     check_and_set_ids(pair->first->polyhedron());
     pair->second.resize(num_faces(*item->polyhedron()), 0.0);
-    Facet_with_id_pmap<Polyhedron, double>  sdf_pmap(*item->polyhedron(),pair->second);
+    Facet_with_id_pmap<Face_graph, double>  sdf_pmap(*item->polyhedron(),pair->second);
     QTime time;
     time.start();
     std::pair<double, double> min_max_sdf = sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);
@@ -174,8 +188,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 
     std::cout << "SDF computation is completed. Min-SDF : " << min_max_sdf.first << " " "Max-SDF : " << min_max_sdf.second << std::endl;
 
-    pair->first->set_color_vector_read_only(true);
-    colorize_sdf(pair->first, sdf_pmap, pair->first->color_vector());
+    // AF pair->first->set_color_vector_read_only(true);
+    // AF colorize_sdf(pair->first, sdf_pmap, pair->first->color_vector());
        
     pair->first->setName(tr("(SDF-%1-%2)").arg(number_of_rays).arg(ui_widget.Cone_angle_spin_box->value()));
     
@@ -197,7 +211,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
 {    
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     if(!item) { return; }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -213,7 +227,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     if(create_new_item)
     {
         // create new item
-        Scene_polyhedron_item* new_item = new Scene_polyhedron_item(*item->polyhedron()); 
+        Scene_face_graph_item* new_item = new Scene_face_graph_item(item->polyhedron()); 
         new_item->setGouraudMode(); 
         
         // copy SDF values of existing poly to new poly
@@ -234,21 +248,21 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     time.start();
     if(pair->second.empty()) { // SDF values are empty, calculate
       pair->second.resize(num_faces(*pair->first->polyhedron()), 0.0);
-      Facet_with_id_pmap<Polyhedron, double> sdf_pmap(*pair->first->polyhedron(),pair->second);
+      Facet_with_id_pmap<Face_graph, double> sdf_pmap(*pair->first->polyhedron(),pair->second);
       sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays); 
     }
 
     std::vector<std::size_t> internal_segment_map(num_faces(*pair->first->polyhedron()));
-    Facet_with_id_pmap<Polyhedron, std::size_t> segment_pmap(*pair->first->polyhedron(),internal_segment_map);
-    Facet_with_id_pmap<Polyhedron, double> sdf_pmap(*pair->first->polyhedron(),pair->second);
+    Facet_with_id_pmap<Face_graph, std::size_t> segment_pmap(*pair->first->polyhedron(),internal_segment_map);
+    Facet_with_id_pmap<Face_graph, double> sdf_pmap(*pair->first->polyhedron(),pair->second);
 
     std::size_t nb_segments = segmentation_from_sdf_values(*(pair->first->polyhedron())
         ,sdf_pmap, segment_pmap, number_of_clusters, smoothness, extract_segments); 
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     std::cout << "Segmentation is completed. Number of segments : " << nb_segments << std::endl;  
-    pair->first->set_color_vector_read_only(true);  
+    // AF pair->first->set_color_vector_read_only(true);  
      
-    colorize_segmentation(pair->first, segment_pmap, pair->first->color_vector());
+    // AF colorize_segmentation(pair->first, segment_pmap, pair->first->color_vector());
     pair->first->setName(tr("(Segmentation-%1-%2)").arg(number_of_clusters).arg(smoothness));   
 
     if(create_new_item) {
@@ -266,30 +280,31 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_mesh_segmentation_plugin::check_and_set_ids(Polyhedron* polyhedron)
+void Polyhedron_demo_mesh_segmentation_plugin::check_and_set_ids(Face_graph* polyhedron)
 {
-    Polyhedron::Facet_iterator a_facet = polyhedron->facets_begin();
-    Polyhedron::Facet_iterator another_facet = ++polyhedron->facets_begin();
-    if(a_facet->id() != another_facet->id()) { return; } // ids are OK
+  boost::graph_traits<Face_graph>::face_iterator b_facet, e_facet, another_facet; 
+  boost::tie(b_facet, e_facet) = faces(*polyhedron);
+    another_facet = b_facet;
+    ++another_facet;
+    // AF if(b_facet->id() != another_facet->id()) { return; } // ids are OK
     std::size_t facet_id = 0;
-    for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin();
-        facet_it != polyhedron->facets_end(); ++facet_it, ++facet_id)
+    for( ; b_facet != e_facet; ++b_facet, ++facet_id)
     {
-        facet_it->id() = facet_id;
+      // AF facet_it->id() = facet_id;
     }
 }
 
 template<class SDFPropertyMap>
 void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
-     Scene_polyhedron_item* item,
+     Scene_face_graph_item* item,
      SDFPropertyMap sdf_values,  
      std::vector<QColor>& color_vector)
 {
     item->setItemIsMulticolor(true);
-    Polyhedron* polyhedron = item->polyhedron();
+    Face_graph* polyhedron = item->polyhedron();
     color_vector.clear();
     std::size_t patch_id = 0;
-    BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(*polyhedron)){
+    BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*polyhedron)){
         double sdf_value = sdf_values[fd]; 
         int gray_color = static_cast<int>(255 * sdf_value);
         if(gray_color < 0 || gray_color >= 256) {
@@ -298,21 +313,21 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
         else {
           color_vector.push_back(color_map_sdf[gray_color]);
         }
-        fd->set_patch_id(static_cast<int>(patch_id++));
+        // AF fd->set_patch_id(static_cast<int>(patch_id++));
     }
 }
 
 template<class SegmentPropertyMap>
 void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
-     Scene_polyhedron_item* item,
+     Scene_face_graph_item* item,
      SegmentPropertyMap segment_ids,
      std::vector<QColor>& color_vector)
 {
     item->setItemIsMulticolor(true);
-    Polyhedron* polyhedron = item->polyhedron();
+    Face_graph* polyhedron = item->polyhedron();
     color_vector.clear();
     std::size_t max_segment = 0;
-    BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(*polyhedron)){
+    BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*polyhedron)){
         std::size_t segment_id = segment_ids[fd];
         fd->set_patch_id(static_cast<int>(segment_id));
         max_segment = (std::max)(max_segment, segment_id);      
