@@ -21,6 +21,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdlib>
+#include <cstring>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -164,6 +165,7 @@ Main(int argc, char* argv[])
   Mesh m;
   if (!input || !(input >> m)){
     std::cerr << "Error: can not read file.\n";
+    assert(false);
     return;
   }
 
@@ -183,6 +185,8 @@ Main(int argc, char* argv[])
   if(!facets.empty())
   {
     std::cout << "Input is self intersecting. STOP" << std::endl;
+    if (strcmp(filename, "data/joint_refined.off") == 0)
+      assert(false);
     return;
   }
   else

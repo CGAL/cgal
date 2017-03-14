@@ -7,7 +7,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <iostream>
 #include <fstream>
-
+#include <cstring>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -48,7 +48,9 @@ void mesh_with_id(const char* argv1)
 
   std::size_t num = PMP::connected_components(sm,
                                               fccmap);
-  
+  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+    assert(num == 3);
+
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
 
   PMP::keep_largest_connected_components(sm,2);
@@ -89,6 +91,9 @@ void mesh_no_id(const char* argv1)
     fccmap,
     PMP::parameters::face_index_map(fim));
   
+  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+    assert(num == 3);
+
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
   //BOOST_FOREACH(face_descriptor f , faces(sm)){
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;

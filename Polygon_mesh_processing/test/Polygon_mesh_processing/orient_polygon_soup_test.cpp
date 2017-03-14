@@ -114,6 +114,7 @@ int test_orient() {
   bool oriented
     = CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
   std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
+  assert(oriented);
 
   if(oriented) {
     Surface_mesh mesh;

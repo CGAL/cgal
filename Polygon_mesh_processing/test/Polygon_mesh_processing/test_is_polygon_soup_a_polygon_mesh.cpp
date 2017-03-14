@@ -84,4 +84,6 @@ int main()
   test_polygon_soup<SC>("data/non_manifold_vertex.off", false);
   test_polygon_soup<SC>("data/two_tris_collinear.off", true);
   test_polygon_soup<SC>("data/U.off", true);
+
+  return EXIT_SUCCESS;
 }
