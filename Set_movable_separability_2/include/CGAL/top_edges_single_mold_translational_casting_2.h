@@ -67,18 +67,16 @@ namespace CGAL {
       CGAL_precondition(!internal::is_any_edge_colinear(pgn));
 
       auto e_it = pgn.edges_begin();
-      size_t edge_index = 0;
       CGAL::Orientation poly_orientation = pgn.orientation();
       auto segment_outer_circle =
 	  internal::get_segment_outer_circle<Kernel>(*e_it++, poly_orientation);
       internal::Circle_arrangment<Kernel> circle_arrangment(kernel,
-							    segment_outer_circle);
+							    segment_outer_circle,pgn.edges_begin());
 
-      ++edge_index;
-      for (; e_it != pgn.edges_end(); ++e_it, ++edge_index) {
+      for (; e_it != pgn.edges_end(); ++e_it) {
 	  segment_outer_circle =
 	      internal::get_segment_outer_circle<Kernel>(*e_it, poly_orientation);
-	  circle_arrangment.add_segment_outer_circle(segment_outer_circle, edge_index);
+	  circle_arrangment.add_segment_outer_circle(segment_outer_circle, e_it);
 	  if (circle_arrangment.all_is_covered_twice()) return oi;
       }
       circle_arrangment.get_all_1_edges(oi);

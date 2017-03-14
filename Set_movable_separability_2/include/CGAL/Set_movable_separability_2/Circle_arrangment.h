@@ -51,6 +51,7 @@ namespace CGAL {
       class Circle_arrangment {
 	typedef typename Kernel::Direction_2            Point;
 	typedef std::pair<Point, Point>                 Arc;
+	typedef typename CGAL::Polygon_2<Kernel>::Edge_const_iterator Edge_iter;
 
 	/* Legend:
 	 * Point = Represented as Direction_2. It is the intersection between the
@@ -118,14 +119,14 @@ namespace CGAL {
 
 	  uint8_t m_count;          // no. of outer circles that cover the edge (0/1/2+)
 
-	  size_t m_edge_index;      // the index of the polygon edge the open
+	  Edge_iter m_edge_iter;      // the iterator of the polygon edge the open
 	  // half-circle of which covers this cell.
 	  // only relevant if m_count ==1
 
-	  /*! \ctor Circle_arrangment_edge(point edge_start_angle, size_t edge_index, bool start_is_closed,bool set_count_to_one=true)
+	  /*! \ctor Circle_arrangment_edge(point edge_start_angle, const Edge_iter edge_iter, bool start_is_closed,bool set_count_to_one=true)
 	   * Creates a new edge (Arc), this edge count must be 0 or 1
 	   * \param[in] edge_start_angle the first point of the arc (clockwise)
-	   * \param[in] edge_index the index of the polygon edge who's open
+	   * \param[in] edge_iter the iterator of the polygon edge who's open
 	   *            half-circle covers this cell - only relevant if m_count == 1
 	   * \param[in] start_is_closed - is the point edge_start_angle contained in
 	   *            this cell
@@ -133,27 +134,27 @@ namespace CGAL {
 	   *            var is false)
 	   */
 	  Circle_arrangment_edge(const Point edge_start_angle,
-				 const size_t edge_index,
+				 const Edge_iter edge_iter,
 				 const bool start_is_closed,
 				 const bool set_count_to_one = true)
 	  {
 	    this->m_start_is_closed = start_is_closed;
 	    this->m_edge_start_angle = edge_start_angle;
 	    this->m_count = (int) set_count_to_one;
-	    this->m_edge_index = edge_index;
+	    this->m_edge_iter = edge_iter;
 	  }
 
-	  /*! \fn void plusplus(size_t edge_index)
+	  /*! \fn void plusplus(const Edge_iter edge_ite)
 	   * Adds new polygon edge who's open half-circle covers this cell
-	   * \param[in] edge_index - the index of this edge
+	   * \param[in] edge_ite - the iterator of this edge
 	   * increase the edge m_count by one (if it is 2+, it will stay 2+)
 	   * set this new edge to be the one covers the cell if the m_count was zero
 	   * before. (only relevant if now m_count == 1)
 	   */
-	  void plusplus(const size_t edge_index)
+	  void plusplus(const Edge_iter edge_iter)
 	  {
 	    if (this->m_count ==0) {
-		this->m_edge_index = edge_index;
+		this->m_edge_iter = edge_iter;
 		this->m_count = 1;
 	    }
 	    else if(this->m_count ==1) this->m_count = 2;
@@ -228,27 +229,27 @@ namespace CGAL {
 	 * depth 0, but it was much easier for me to ignore the case where the all
 	 * circle is a single arc, so I choose this implementation.
 	 */
-	Circle_arrangment(const Kernel& kernel, const Arc first_segment_outer_circle) :
+	Circle_arrangment(const Kernel& kernel, const Arc first_segment_outer_circle, const Edge_iter edge_iter) :
 	  m_kernel(kernel)
       {
 	  m_edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.first,
-						   0, false));
+						   edge_iter, false));
 	  m_edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.second,
-						   0, true, false));
+						   edge_iter, true, false));
       }
 
-	/*! \fn add_segment_outer_circle(arc segment_outer_circle, size_t edge_index)
+	/*! \fn add_segment_outer_circle(arc segment_outer_circle, const Edge_iter edge_ite)
 	 * Updates the arrangement in respect to a new segment outer open circle
 	 * \param[in] segment_outer_circle - the outer circle of the current segment of
 	 *        the polygon.
-	 * \param[in] edge_index this segment id
+	 * \param[in] edge_ite this segment iterator
 	 * This is the main funtion of this code. It separates the cells in which the
 	 * endpoints of the new arc is contained to two parts and increase m_count
 	 * for all the cells that the new arc covers. In the end the function
 	 * merge_adjacent_2_edges_and_remove_empty is called to remove redundant cells
 	 */
 	void add_segment_outer_circle(const Arc segment_outer_circle,
-				      const size_t edge_index)
+				      const Edge_iter edge_iter)
 	{
 	  Arc edge;
 	  bool is_start_closed_segment = m_edges.begin()->m_start_is_closed;
@@ -276,7 +277,7 @@ namespace CGAL {
 	      if (is_a_contained_in_b(is_start_closed_segment, is_end_closed_segment,
 				      edge, segment_outer_circle))
 		{
-		  it->plusplus(edge_index);
+		  it->plusplus(edge_iter);
 		  continue;
 		}
 	      bool is_start_contained =
@@ -303,7 +304,7 @@ namespace CGAL {
 				  struct Circle_arrangment_edge edge2 = *it;
 				  edge2.m_start_is_closed = false;
 				  edge2.m_edge_start_angle = segment_outer_circle.first;
-				  edge2.plusplus(edge_index);
+				  edge2.plusplus(edge_iter);
 				  this->insert_if_legal(it, next_it, edge2);
 				  struct Circle_arrangment_edge edge3 = *it;
 				  edge3.m_start_is_closed = true;
@@ -324,9 +325,9 @@ namespace CGAL {
 				  struct Circle_arrangment_edge edge3 = *it;
 				  edge3.m_start_is_closed = false;
 				  edge3.m_edge_start_angle = segment_outer_circle.first;
-				  edge3.plusplus(edge_index);
+				  edge3.plusplus(edge_iter);
 				  this->insert_if_legal(it, next_it, edge3);
-				  it->plusplus(edge_index);
+				  it->plusplus(edge_iter);
 			      }
 			  }
 			  else {
@@ -338,7 +339,7 @@ namespace CGAL {
 			      struct Circle_arrangment_edge edge2 = *it;
 			      edge2.m_start_is_closed = false;
 			      edge2.m_edge_start_angle = segment_outer_circle.first;
-			      edge2.plusplus(edge_index);
+			      edge2.plusplus(edge_iter);
 			      this->insert_if_legal(it, next_it, edge2);
 			  }
 		      }
@@ -352,7 +353,7 @@ namespace CGAL {
 			      struct Circle_arrangment_edge edge2 = *it;
 			      edge2.m_start_is_closed = true;
 			      edge2.m_edge_start_angle = segment_outer_circle.second;
-			      it->plusplus(edge_index);
+			      it->plusplus(edge_iter);
 			      this->insert_if_legal(it, next_it, edge2);
 			  }
 			  //else -  no intersection, do noting
@@ -388,8 +389,8 @@ namespace CGAL {
 	{
 	  for (auto it = m_edges.begin(); it != m_edges.end();) {
 	      if ((*it).m_count == 1) {
-		  std::pair<size_t, Arc> edge;
-		  edge.first = (*it).m_edge_index;
+		  std::pair<Edge_iter, Arc> edge;
+		  edge.first = (*it).m_edge_iter;
 		  edge.second.first = (*it).m_edge_start_angle;
 		  ++it;
 		  edge.second.second =

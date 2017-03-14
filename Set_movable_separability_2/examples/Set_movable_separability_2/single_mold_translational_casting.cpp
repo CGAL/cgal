@@ -13,7 +13,8 @@ typedef Kernel::Direction_2                               Direction_2;
 typedef Kernel::Vector_2                              	  Vector_2;
 typedef Kernel::Point_2                              	  Point_2;
 typedef std::pair<Direction_2, Direction_2>               Direction_range;
-typedef std::pair<size_t, Direction_range>                Top_edge;
+typedef Polygon_2::Edge_const_iterator Edge_iter;
+typedef std::pair< Edge_iter, Direction_range>                Top_edge;
 
 namespace SMS = CGAL::Set_movable_separability_2;
 
@@ -43,8 +44,8 @@ int main(int  argc, char* argv[])
   else {
       std::cout << "There are " << top_edges.size() << " top edges:" << std::endl;
       for (const auto& top_edge : top_edges) {
-	  std::cout << "Edge number: " << top_edge.first << std::endl
-	      << "\tEdge: "<< pgn.edge(top_edge.first) << std::endl
+	  std::cout
+	      << "\tEdge: "<< *top_edge.first<< std::endl
 	      << "\tPullout directions from: "<< top_edge.second.first
 	      << " to " << top_edge.second.second
 	      << std::endl<< std::endl;
@@ -89,11 +90,11 @@ int main(int  argc, char* argv[])
   {
     Vector_2 v (Point_2(0,0),Point_2(1,0));
     Direction_2  d(v);
-    std::pair<bool, size_t>
+    CGAL::Polygon_2<Kernel>::Edge_const_iterator
     res = SMS::is_pullout_direction_single_mold_translational_casting_2(pgn,d);
-    if (res.first)
+    if (res!= pgn.edges_end())
       {
-	std::cout << "The polygon is castable in direction d ("<<d<<") using edge "<<res.second<<std::endl;
+	std::cout << "The polygon is castable in direction d ("<<d<<") using edge "<<*res<<std::endl;
 
       }
     else {

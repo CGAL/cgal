@@ -72,7 +72,7 @@ namespace CGAL {
     {
       CGAL_precondition(pgn.is_simple());
       CGAL_precondition(!internal::is_any_edge_colinear(pgn));
-      CGAL_precondition(pgn.size()>i);
+      CGAL_precondition(pgn.edges_end()!=i);
       CGAL::Orientation poly_orientation = pgn.orientation();
 
       typedef CastingTraits_2               Casting_traits_2;
@@ -163,7 +163,7 @@ namespace CGAL {
      * a model of the concept `CastingTraits_2`.
      *
      * \param[in] pgn the input polygon.
-     * \param[in] i the index of an edge in pgn.
+     * \param[in] i the iterator of an edge in pgn.
      * \return a pair of elements, where the first is a Boolean that indicates
      *         whether the input edge is a valid top edge, and the second
      *         is a closed range of pull-out directions represented as a pair
