@@ -18,12 +18,6 @@
 //
 // Author(s)     : Jane Tournois
 //
-//******************************************************************************
-// File Description :
-//
-//
-//******************************************************************************
-
 
 #ifndef _LIPSCHITZ_SIZING_POLYHEDRON_
 #define _LIPSCHITZ_SIZING_POLYHEDRON_

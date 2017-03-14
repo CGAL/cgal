@@ -18,11 +18,6 @@
 //
 // Author(s)     : Jane Tournois
 //
-//******************************************************************************
-// File Description :
-//
-//
-//******************************************************************************
 
 #ifndef CGAL_LIP_SIZING_PARAMETERS
 #define CGAL_LIP_SIZING_PARAMETERS
