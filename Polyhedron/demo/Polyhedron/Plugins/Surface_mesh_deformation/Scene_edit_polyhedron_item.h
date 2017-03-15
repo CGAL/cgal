@@ -241,6 +241,7 @@ private:
     VertexPointMap pmap = get(boost::vertex_point, *mesh);
     for(typename std::vector<mesh_vd>::iterator hb = ctrl_vertices_group.begin(); hb != ctrl_vertices_group.end(); ++hb)
     {
+
       typename M_Deform_mesh::Point p = get(pmap, (*hb));
       qglviewer::Vec point(p.x(), p.y(), p.z() );
       initial_positions.push_back(point);

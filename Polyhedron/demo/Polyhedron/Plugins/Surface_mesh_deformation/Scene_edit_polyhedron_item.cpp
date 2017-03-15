@@ -752,28 +752,62 @@ void Scene_edit_polyhedron_item::deform()
 }
 
 template<typename Mesh>
-struct ROI_faces_pmap
+struct ROI_faces_pmap;
+
+template<>
+struct ROI_faces_pmap<Polyhedron>
 {
-  typedef typename boost::graph_traits<Mesh>::face_descriptor   key_type;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor   key_type;
   typedef std::size_t                                           value_type;
   typedef std::size_t&                                          reference;
   typedef boost::read_write_property_map_tag                    category;
   std::map<key_type, value_type>* patch_map;
-  ROI_faces_pmap(std::map<key_type, value_type>* patch_map)
+  ROI_faces_pmap(std::map<key_type, value_type>* patch_map, Polyhedron*)
     :patch_map(patch_map){}
 
-  friend value_type get(const ROI_faces_pmap<Mesh>&pmap, const key_type& f)
+  friend value_type get(const ROI_faces_pmap<Polyhedron>&pmap, const key_type& f)
   {
     /*magic number 12345*/
     if((*pmap.patch_map)[f] == 12345) return 1;
     else                            return 0;
   }
-  friend void put(ROI_faces_pmap<Mesh>&pmap, const key_type& f, const value_type b)
+  friend void put(ROI_faces_pmap<Polyhedron>&pmap, const key_type& f, const value_type b)
   {
     if(b != 0)  (*pmap.patch_map)[f] = 12345;
     else        (*pmap.patch_map)[f] = 0;
   }
 };
+
+template<>
+struct ROI_faces_pmap<SMesh>
+{
+  typedef sm_face_descriptor                        key_type;
+  typedef std::size_t                               value_type;
+  typedef std::size_t&                              reference;
+  typedef boost::read_write_property_map_tag        category;
+  SMesh* mesh;
+  SMesh::Property_map<sm_face_descriptor,bool> irmap;
+  ROI_faces_pmap(std::map<key_type, value_type>*, SMesh* mesh)
+    :mesh(mesh)
+  {
+    //add a is_ROI property_map to mesh
+    irmap = mesh->add_property_map<sm_face_descriptor,bool>("f:is_roi",false).first;
+  }
+
+  friend value_type get(const ROI_faces_pmap<SMesh>&pmap, const key_type& f)
+  {
+    if(get(pmap.irmap, f))     return 1;
+    else                       return 0;
+  }
+  friend void put(ROI_faces_pmap<SMesh>&pmap, const key_type& f, const value_type b)
+  {
+    if(b == 1)
+      put(pmap.irmap, f, true);
+    else
+      put(pmap.irmap, f, false);
+  }
+};
+
 
 template<typename Mesh>
 struct ROI_border_pmap
@@ -831,9 +865,12 @@ void Scene_edit_polyhedron_item::remesh()
 }
 
 template<typename Mesh>
-struct Is_constrained_map
+struct Is_constrained_map;
+
+template<>
+struct Is_constrained_map<Polyhedron>
 {
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor mesh_vd;
   boost::unordered_set<mesh_vd, CGAL::Handle_hash_function>* m_set_ptr;
 
   typedef mesh_vd                  key_type;
@@ -844,21 +881,69 @@ struct Is_constrained_map
   Is_constrained_map()
     : m_set_ptr(NULL)
   {}
-  Is_constrained_map( boost::unordered_set<mesh_vd, CGAL::Handle_hash_function>* set_)
+  Is_constrained_map( boost::unordered_set<mesh_vd, CGAL::Handle_hash_function>* set_, Polyhedron*)
     : m_set_ptr(set_)
   {}
-  friend bool get(const Is_constrained_map<Mesh>& map, const key_type& k)
+  friend bool get(const Is_constrained_map<Polyhedron>& map, const key_type& k)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
     return map.m_set_ptr->count(k);
   }
-  friend void put(Is_constrained_map<Mesh>& map, const key_type& k, const value_type b)
+  friend void put(Is_constrained_map<Polyhedron>& map, const key_type& k, const value_type b)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
     if (b)  map.m_set_ptr->insert(k);
     else    map.m_set_ptr->erase(k);
   }
 };
+
+template<>
+struct Is_constrained_map<SMesh>
+{
+  typedef boost::graph_traits<SMesh>::vertex_descriptor mesh_vd;
+  typedef mesh_vd                            key_type;
+  typedef bool                               value_type;
+  typedef bool                               reference;
+  typedef boost::read_write_property_map_tag category;
+  SMesh* mesh;
+  SMesh::Property_map<sm_vertex_descriptor,bool> icmap;
+
+  Is_constrained_map()
+    : mesh(NULL)
+  {}
+  Is_constrained_map( boost::unordered_set<mesh_vd, CGAL::Handle_hash_function>*set, SMesh* mesh)
+    : mesh(mesh)
+  {
+    icmap = mesh->add_property_map<sm_vertex_descriptor,bool>("v:is_control",false).first;
+    BOOST_FOREACH(sm_vertex_descriptor v, *set)
+    {
+      icmap[v] = true;
+    }
+  }
+  friend bool get(const Is_constrained_map<SMesh>& map, const key_type& k)
+  {
+    return map.icmap[k];
+  }
+  friend void put(Is_constrained_map<SMesh>& map, const key_type& k, const value_type b)
+  {
+    map.icmap[k] = b;
+  }
+};
+
+bool is_valid(sm_vertex_descriptor v, const SMesh& mesh)
+{
+  if(static_cast<int>(v) >= mesh.number_of_vertices()
+    || !mesh.is_valid(v))
+  {
+    return false;
+  }
+  return true;
+}
+
+bool is_valid(vertex_descriptor vd, const Polyhedron& mesh)
+{
+  return (vd->id() < mesh.size_of_vertices());
+}
 
 template<typename Mesh>
 void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
@@ -885,6 +970,8 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   std::set<mesh_vd> roi_vertices(
     fs.get_deform_mesh(mesh)->roi_vertices().begin(),fs.get_deform_mesh(mesh)->roi_vertices().end());
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  //save the ROI list for after remeshing
   for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data =
       fs.get_ctrl_vertex_frame_map(mesh).begin();
       hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
@@ -896,7 +983,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   }
 
   std::map<mesh_fd, std::size_t> patch_map;
-  ROI_faces_pmap<Mesh> roi_faces_pmap(&patch_map);
+  ROI_faces_pmap<Mesh> roi_faces_pmap(&patch_map, mesh);
   //initialize face-patch_id map
   BOOST_FOREACH(mesh_vd v, fs.get_deform_mesh(mesh)->roi_vertices())
   {
@@ -959,7 +1046,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
   std::cout << "Remeshing (target edge length = " << target_length <<")...";
-
+  Is_constrained_map<Mesh> icm(&constrained_set, mesh);
   ROI_border_pmap<Mesh> border_pmap(&roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
       roi_facets
@@ -970,7 +1057,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
     .vertex_point_map(vpmap)
     .edge_is_constrained_map(border_pmap)
     .face_patch_map(roi_faces_pmap)
-    .vertex_is_constrained_map(Is_constrained_map<Mesh>(&constrained_set))
+    .vertex_is_constrained_map(icm)
     );
   std::cout << "done." << std::endl;
   fs.update_ids(mesh, true);
@@ -995,6 +1082,9 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   {
     item->create_ctrl_vertices_group();
     BOOST_FOREACH(mesh_vd vd, control_groups[i]){
+      if(!is_valid(vd, *mesh) //checks that the vertex still exists in the mesh
+         || !get(icm,vd) )//checks that the vertex is still a control point.
+        continue;
       item->insert_control_vertex<Mesh>(vd, mesh);
     }
   }
