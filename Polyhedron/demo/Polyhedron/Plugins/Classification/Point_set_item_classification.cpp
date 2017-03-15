@@ -135,7 +135,7 @@ void Point_set_item_classification::change_color (int index)
   // Colors
   static Color_ramp ramp;
   ramp.build_red();
-
+  reset_indices();
   if (index_color == -1) // item color
     {
       for (Point_set::const_iterator it = m_points->point_set()->begin();
