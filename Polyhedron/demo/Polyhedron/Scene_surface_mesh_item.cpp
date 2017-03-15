@@ -1,5 +1,6 @@
 #include "Scene_surface_mesh_item.h"
 
+#include "Color_map.h"
 #include <queue>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -44,6 +45,8 @@ struct Scene_surface_mesh_item_priv{
   {
     delete smesh_;
   }
+
+  void initialize_colors();
 
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void addFlatData(Point, Kernel::Vector_3, CGAL::Color *) const;
@@ -207,7 +210,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
     smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
 
   SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
-      smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
+      smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("f:normal").first;
   CGAL::Polygon_mesh_processing::compute_face_normals(*smesh_,fnormals);
 
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
@@ -281,6 +284,9 @@ void Scene_surface_mesh_item_priv::compute_elements()
 
   has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").second;
 
+  if(has_fpatch_id && colors_.empty()){
+    initialize_colors();
+  }
 //compute the Flat data
   flat_vertices.clear();
   flat_normals.clear();
@@ -390,6 +396,23 @@ void Scene_surface_mesh_item_priv::compute_elements()
   }
   QApplication::restoreOverrideCursor();
 }
+
+
+void Scene_surface_mesh_item_priv::initialize_colors()
+{
+  // Fill indices map and get max subdomain value
+  int max = 0;
+  int min = (std::numeric_limits<int>::max)();
+  BOOST_FOREACH(face_descriptor fd, faces(*smesh_)){
+    max = (std::max)(max, fpatch_id_map[fd]);
+    min = (std::min)(min, fpatch_id_map[fd]);
+  }
+
+  colors_.clear();
+  compute_color_map(item->color(), (std::max)(0, max + 1 - min),
+                    std::back_inserter(colors_));
+}
+
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
