@@ -564,10 +564,7 @@ public:
         {
           if ( is_border(h1,tm1) != is_border(h2,tm2) )
           {
-            //Union allowed everything else is non_manifold
-            impossible_operation.set();
-            impossible_operation.reset(UNION);
-
+            //No restriction at this level
             std::size_t patch_id1 =
               tm1_patch_ids[ get( fids1, is_border(h1,tm1)
                                             ? face(opposite(h1,tm1),tm1)

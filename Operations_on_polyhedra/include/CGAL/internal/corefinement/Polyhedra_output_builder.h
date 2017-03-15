@@ -1842,10 +1842,7 @@ public:
         {
           if ( first_hedge->is_border() != second_hedge->is_border() )
           {
-            //Union allowed everything else is non_manifold
-            impossible_operation.set();
-            impossible_operation.reset(P_UNION_Q);
-
+            //No restriction at this level
             std::size_t patch_id_P =
               P_patch_ids[ get( P_facet_id_pmap, first_hedge->is_border()
                                                  ? first_hedge->opposite()->facet()

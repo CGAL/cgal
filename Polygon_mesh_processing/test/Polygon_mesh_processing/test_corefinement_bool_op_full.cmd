@@ -4,6 +4,7 @@ data-coref/cube.off data-coref/coplanar_with_cube1.off SM ALL 1 1 1 1
 data-coref/cube.off data-coref/coplanar_with_cube2.off SM ALL 1 1 1 1
 data-coref/cube.off data-coref/with_cube.off SM ALL 1 1 1 0
 data-coref/open_large_cube.off data-coref/open_small_cube.off SM ALL 1 1 1 1
+data-coref/open_large_cube.off data-coref/open_small_cube_inout.off SM ALL 0 0 0 0
 data-coref/elephant.off data-coref/elephant_plane/plane_1.off SM ALL 1 1 1 1
 data-coref/elephant.off data-coref/elephant_plane/plane_2.off SM ALL 1 1 1 1
 data-coref/elephant.off data-coref/elephant_plane/plane_3.off SM ALL 1 1 1 1
