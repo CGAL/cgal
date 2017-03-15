@@ -1354,7 +1354,6 @@ void MainWindow::writeSettings()
     else settings.remove("plugin_blacklist");
   //setting polyhedorn mode
   settings.setValue("polyhedron_mode", scene->isPolyhedronMode());
-  qDebug()<<"writing "<<scene->isPolyhedronMode();
 
   }
   std::cerr << "Write setting... done.\n";
