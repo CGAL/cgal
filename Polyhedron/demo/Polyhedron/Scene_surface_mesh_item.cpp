@@ -301,7 +301,14 @@ void Scene_surface_mesh_item_priv::compute_elements()
         flat_normals.push_back((cgal_gl_data)n.y());
         flat_normals.push_back((cgal_gl_data)n.z());
 
-        if(has_fcolors)
+        if(has_fpatch_id)
+        {
+          QColor c = item->color_vector()[fpatch_id_map[fd]];
+          f_colors.push_back(c.redF());
+          f_colors.push_back(c.greenF());
+          f_colors.push_back(c.blueF());
+        }
+        else if(has_fcolors)
         {
           CGAL::Color c = fcolors[fd];
           f_colors.push_back((float)c.red()/255);
@@ -408,7 +415,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   program->enableAttributeArray("normals");
   program->setAttributeBuffer("normals",CGAL_GL_DATA,0,3);
   item->buffers[Scene_surface_mesh_item_priv::Flat_normals].release();
-  if(has_fcolors)
+  if(has_fcolors || has_fpatch_id)
   {
     item->buffers[Scene_surface_mesh_item_priv::FColors].bind();
     item->buffers[Scene_surface_mesh_item_priv::FColors].allocate(f_colors.data(),
