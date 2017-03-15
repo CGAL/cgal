@@ -37,10 +37,10 @@ void check_and_set_ids(FaceGraph* polyhedron)
   boost::tie(b_facet, e_facet) = faces(*polyhedron);
   another_facet = b_facet;
   ++another_facet;
-  if(b_facet->id() != another_facet->id()) { return; } // ids are OK
+  if((*b_facet)->id() != (*another_facet)->id()) { return; } // ids are OK
   std::size_t facet_id = 0;
   for( ; b_facet != e_facet; ++b_facet, ++facet_id){
-    facet_it->id() = facet_id;
+    (*b_facet)->id() = facet_id;
   }
 }
 

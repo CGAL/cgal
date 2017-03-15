@@ -489,16 +489,15 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
             << CGAL::segmentation_from_sdf_values(*input_triangle_mesh, sdf_property_map, segment_property_map) <<"\n";
 
   Face_graph* segmented_polyhedron = new Face_graph(*input_triangle_mesh);
-  Scene_face_graph_item* item_segmentation = new Scene_face_graph_item(segmented_polyhedron);
 
+  Scene_face_graph_item* item_segmentation = new Scene_face_graph_item(segmented_polyhedron);
   int i=0;
   BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*segmented_polyhedron))
   {
     item_segmentation->set_patch_id(fd, static_cast<int>(segment_ids[i++] ));
   }
-
   scene->item(InputMeshItemIndex)->setVisible(false);
-  set_item_is_multicolor(item,true);
+  set_item_is_multicolor(item_segmentation,true);
   item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation"));
