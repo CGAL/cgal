@@ -5,17 +5,6 @@
 #ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
-
-namespace CGAL {
-
-template<class HalfedgeDS_with_id>
-void set_halfedgeds_items_id ( HalfedgeDS_with_id& hds );
-
-template<class P>
-void set_halfedgeds_items_id (const CGAL::Surface_mesh<P>&)
-{}
-}
-
 #else
 #include "Scene_polyhedron_item.h"
 #endif
@@ -50,8 +39,28 @@ void set_halfedgeds_items_id (const CGAL::Surface_mesh<P>&)
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+template <typename Item>
+void
+set_item_is_multicolor(Item* item, bool b)
+{
+  item->setItemIsMulticolor(b);
+}
+
 #ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
+namespace CGAL {
+
+template<>
+void set_halfedgeds_items_id (Scene_face_graph_item::FaceGraph&)
+{}
+
+} // namespace CGAL
+
+template <>
+void
+set_item_is_multicolor(typename Scene_face_graph_item*, bool)
+{}
+
 #else
 typedef Scene_polyhedron_item Scene_face_graph_item;
 #endif
@@ -434,7 +443,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
     // init the polyhedron simplex indices
-  // AF  CGAL::set_halfedgeds_items_id(*input_triangle_mesh);
+  CGAL::set_halfedgeds_items_id(*input_triangle_mesh);
   boost::property_map<Face_graph, boost::vertex_index_t>::type 
     vimap = get(boost::vertex_index, *input_triangle_mesh);
 
@@ -480,16 +489,16 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
             << CGAL::segmentation_from_sdf_values(*input_triangle_mesh, sdf_property_map, segment_property_map) <<"\n";
 
   Face_graph* segmented_polyhedron = new Face_graph(*input_triangle_mesh);
+  Scene_face_graph_item* item_segmentation = new Scene_face_graph_item(segmented_polyhedron);
 
   int i=0;
   BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*segmented_polyhedron))
   {
-    //AF: FIXME fd->set_patch_id( static_cast<int>(segment_ids[i++] ));
+    item_segmentation->set_patch_id(fd, static_cast<int>(segment_ids[i++] ));
   }
 
   scene->item(InputMeshItemIndex)->setVisible(false);
-  Scene_face_graph_item* item_segmentation = new Scene_face_graph_item(segmented_polyhedron);
-  //AF: FIXME item_segmentation->setItemIsMulticolor(true);
+  set_item_is_multicolor(item,true);
   item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation"));
