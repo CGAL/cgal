@@ -103,7 +103,7 @@ void Point_set_item_classification::reset_colors()
 }
 
 // Write point set to .PLY file
-bool Point_set_item_classification::write_ply_point_set(std::ostream& stream)
+bool Point_set_item_classification::write_output(std::ostream& stream)
 {
   if (m_psc->number_of_features() == 0)
     return false;
