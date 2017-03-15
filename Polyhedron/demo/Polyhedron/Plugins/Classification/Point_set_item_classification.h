@@ -112,15 +112,6 @@ class Point_set_item_classification : public Item_classification_base
   bool run (int method);
 
   void change_color (int index);
-  void change_label_color (const char* name, const QColor& color)
-  {
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      if (m_labels[i].first->name() == name)
-        {
-          m_labels[i].second = color;
-          break;
-        }
-  }
   void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const
   {
     for (std::size_t i = 0; i < m_psc->number_of_features(); ++ i)

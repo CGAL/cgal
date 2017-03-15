@@ -37,7 +37,6 @@ public:
   virtual bool run (int method) = 0;
   
   virtual void change_color (int index) = 0;
-  virtual void change_label_color (const char* name, const QColor& color) = 0;
   virtual void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const = 0;
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
                                            const char* name) const = 0;
@@ -51,6 +50,15 @@ public:
   double& smoothing() { return m_smoothing; }
   std::size_t& subdivisions() { return m_subdivisions; }
   std::vector<std::pair<Label_handle, QColor> >& labels() { return m_labels; }
+  void change_label_color (const char* name, const QColor& color)
+  {
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      if (m_labels[i].first->name() == name)
+        {
+          m_labels[i].second = color;
+          break;
+        }
+  }
 
 protected:
 
