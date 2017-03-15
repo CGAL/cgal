@@ -40,6 +40,17 @@ typedef CGAL::Corefinement
 typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron,
                                             Output_builder&>       Split_visitor;
 
+struct Result_checking
+{
+  bool check;
+  bool union_res;
+  bool inter_res;
+  bool P_minus_Q_res;
+  bool Q_minus_P_res;
+
+  Result_checking() : check(false) {}
+};
+
 void run_boolean_operations(
   Polyhedron& P,
   Polyhedron& Q,
@@ -48,7 +59,8 @@ void run_boolean_operations(
   Polyhedron& P_minus_Q,
   Polyhedron& Q_minus_P,
   std::string scenario,
-  std::size_t id)
+  std::size_t id,
+  const Result_checking& rc)
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
@@ -127,6 +139,20 @@ void run_boolean_operations(
   }
   else
     std::cout << "  Q-P is invalid\n";
+
+  if (rc.check)
+  {
+    if(output_builder.union_valid()!=rc.union_res ||
+       output_builder.intersection_valid()!=rc.inter_res ||
+       output_builder.P_minus_Q_valid()!=rc.P_minus_Q_res ||
+       output_builder.Q_minus_P_valid()!=rc.Q_minus_P_res)
+    {
+      std::cerr << "  ERROR: at least one operation is not as expected!\n";
+      exit(EXIT_FAILURE);
+    }
+    else
+      std::cout << "  All operations are as expected.\n";
+  }
 }
 
 
@@ -138,7 +164,8 @@ void run_boolean_operations(
   Surface_mesh& tm1_minus_tm2,
   Surface_mesh& tm2_minus_tm1,
   std::string scenario,
-  std::size_t id)
+  std::size_t id,
+  const Result_checking& rc)
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
@@ -210,10 +237,25 @@ void run_boolean_operations(
   }
   else
     std::cout << "  tm2-tm1 is invalid\n";
+
+  if ( rc.check )
+  {
+    if (res[CFR::UNION]!=rc.union_res ||
+        res[CFR::INTER]!=rc.inter_res ||
+        res[CFR::TM1_MINUS_TM2]!=rc.P_minus_Q_res ||
+        res[CFR::TM2_MINUS_TM1]!=rc.Q_minus_P_res)
+    {
+      std::cerr << "  ERROR: at least one operation is not as expected!\n";
+      exit(EXIT_FAILURE);
+    }
+    else
+      std::cout << "  All operations are as expected.\n";
+  }
 }
 
 template <class TriangleMesh>
-void run(char* P_fname, char* Q_fname, int k=-1)
+void run(char* P_fname, char* Q_fname, int k,
+         const Result_checking& rc)
 {
   TriangleMesh P, Q, W, X, Y, Z;
   std::vector< CGAL::cpp11::array<TriangleMesh*,4> > scenarios;
@@ -281,7 +323,7 @@ void run(char* P_fname, char* Q_fname, int k=-1)
     run_boolean_operations(
       P, Q,
       *scenarios[k][0], *scenarios[k][1], *scenarios[k][2], *scenarios[k][3],
-      scenarios_str[k], k );
+      scenarios_str[k], k, rc);
   }
   else
     for (std::size_t i=0; i<scenarios.size();++i)
@@ -297,46 +339,41 @@ void run(char* P_fname, char* Q_fname, int k=-1)
       run_boolean_operations(
         P, Q,
         *scenarios[i][0], *scenarios[i][1], *scenarios[i][2], *scenarios[i][3],
-        scenarios_str[i], i );
+        scenarios_str[i], i, rc );
     }
 }
 
 int main(int argc,char** argv)
 {
   if (argc<3){
-    std::cerr << "Usage "<< argv[0] << " file1.off file2.off [SM/POLY] [scenario_id]\n";
+    std::cerr << "Usage "<< argv[0] << " file1.off file2.off [SM/POLY] [scenario_id/ALL] [0/1 0/1 0/1 0/1 (expected valid operations U I P-Q Q-P)]\n";
     return 1;
   }
-  if (argc==3)
-    run<Surface_mesh>(argv[1], argv[2]);
-  else
+
+  Result_checking rc;
+
+  if (argc==9)
   {
-    if (argc==4)
-    {
-      if ( std::string(argv[3])==std::string("SM") )
-        run<Surface_mesh>(argv[1], argv[2]);
-      else
-        if ( std::string(argv[3])==std::string("POLY") )
-          run<Polyhedron>(argv[1], argv[2]);
-        else
-        {
-          std::cout <<"Invalid value, only SM or POLY can be given\n";
-          return 1;
-        }
-    }
+    rc.check=true;
+    rc.union_res = atoi(argv[5])!=0;
+    rc.inter_res = atoi(argv[6])!=0;
+    rc.P_minus_Q_res = atoi(argv[7])!=0;
+    rc.Q_minus_P_res = atoi(argv[8])!=0;
+  }
+
+  int scenario = -1;
+  if (argc>=5 && std::string(argv[4])!=std::string("ALL"))
+    scenario = atoi(argv[4]);
+
+  if ( argc==3 || std::string(argv[3])==std::string("SM") )
+    run<Surface_mesh>(argv[1], argv[2], scenario, rc);
+  else
+    if ( std::string(argv[3])==std::string("POLY") )
+      run<Polyhedron>(argv[1], argv[2], scenario, rc);
     else
     {
-      if ( std::string(argv[3])==std::string("SM") )
-        run<Surface_mesh>(argv[1], argv[2], atoi(argv[4]));
-      else
-        if ( std::string(argv[3])==std::string("POLY") )
-          run<Polyhedron>(argv[1], argv[2], atoi(argv[4]));
-        else
-        {
-          std::cout <<"Invalid value, only SM or POLY can be given\n";
-          return 1;
-        }
+      std::cout <<"Invalid value, only SM or POLY can be given\n";
+      return 1;
     }
-  }
   return 0;
 }
