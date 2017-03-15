@@ -77,9 +77,9 @@ class Hsv : public Feature_base
 #else
   const PointRange& input;
   ColorMap color_map;
-  std::size_t channel;
-  double mean;
-  double sd;
+  std::size_t m_channel;
+  double m_mean;
+  double m_sd;
 #endif  
   std::string m_name;
   
@@ -101,7 +101,7 @@ public:
        std::size_t channel,
        double mean, double sd)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    : input(input), color_map(color_map), channel(channel), mean(mean), sd(sd)
+    : input(input), color_map(color_map), m_channel(channel), m_mean(mean), m_sd(sd)
 #endif
   {
     this->set_weight(1.);
@@ -131,7 +131,7 @@ public:
     return color_feature[pt_index];
 #else
     HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+pt_index)));
-    return std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd));
+    return std::exp (-(c[m_channel] - m_mean) * (c[m_channel] - m_mean) / (2. * m_sd * m_sd));
 #endif
   }
 
