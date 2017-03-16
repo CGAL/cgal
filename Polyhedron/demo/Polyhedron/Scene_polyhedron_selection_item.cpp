@@ -1229,7 +1229,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
           S = get(vpm, source(targt, *polyhedron()));
           T = get(vpm, target(targt, *polyhedron()));
 
-          put(vpm, CGAL::Euler::collapse_edge(ed, *polyhedron()), Point(0.5*(S.x()+T.x()), 0.5*(S.y()+T.y()), 0.5*(S.z()+T.z())));
+          CGAL::Euler::collapse_edge(ed, *polyhedron())->point() = T;
           compute_normal_maps();
           polyhedron_item()->invalidateOpenGLBuffers();
 

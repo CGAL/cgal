@@ -1068,49 +1068,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
 
   vertex_descriptor q = target(pq, g);
   vertex_descriptor p = source(pq, g);
-#if 0
-  if(lTopLeftFaceExists && lBottomRightFaceExists){
-    std::cerr <<    " // do it low level" << std::endl;
-    halfedge_descriptor qt = next(pq,g);
-    halfedge_descriptor pb = next(qp,g);
-    halfedge_descriptor ppt = prev(pt,g);
-    halfedge_descriptor pqb = prev(qb,g);
-    if(halfedge(q,g) == pq){
-      set_halfedge(q, pqb,g);
-    }
-    vertex_descriptor t = target(qt,g);
-    if(halfedge(t,g) == pt){
-      set_halfedge(t, qt,g);
-    } 
-    vertex_descriptor b = target(pb,g);
-    if(halfedge(b,g) == qb){
-      set_halfedge(t, pb,g);
-    }
-    set_face(qt, face(pt,g),g);
-    set_halfedge(face(qt,g),qt,g);
-    set_face(pb, face(qb,g),g);
-    set_halfedge(face(pb,g),pb,g);
-    set_next(qt, next(pt,g),g);
-    set_next(pb, next(qb,g),g);
-    set_next(ppt, qt,g);
-    set_next(pqb,pb,g);
-    remove_face(face(pq,g),g);
-    remove_face(face(qp,g),g);
-    remove_edge(v0v1,g);
-    remove_edge(edge(pt,g),g);
-    remove_edge(edge(qb,g),g);
-    remove_vertex(p,g);
-    Halfedge_around_target_circulator<Graph> beg(ppt,g), end(pqb,g);
-    while(beg != end){
-      CGAL_assertion(target(*beg,g) == p);
-      set_target(*beg,q,g);
-      --beg;
-    }
 
-    return q;
-    // return the vertex kept
-  }
-#endif
 
   bool lP_Erased = false, lQ_Erased = false ;
 
@@ -1137,7 +1095,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
         //CGAL_ECMS_TRACE(3, "Bottom face doesn't exist so vertex P already removed" ) ;
 
         lP_Erased = true ;
-      }  
+      }
     } 
   }
 
@@ -1157,14 +1115,14 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
       //CGAL_ECMS_TRACE(3, "Removing q-b E" << qb.idx() << " (V" 
       //                << q.idx() << "->V" << target(qb, g).idx() 
       //                << ") by erasing bottom face" ) ;
-
-      remove_face(opposite(qb, g),g);
-
-      if ( !lTopFaceExists )
+      if ( lTopFaceExists )
       {
-        //CGAL_ECMS_TRACE(3, "Top face doesn't exist so vertex Q already removed" ) ;
-        lQ_Erased = true ;
-      }  
+        remove_face(opposite(qb, g),g);
+      }
+      else
+      {
+        join_face(opposite(next(qp, g), g), g);
+      }
     }
   }
 
