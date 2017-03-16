@@ -835,15 +835,15 @@ public:
                   Locate_type & lt, int & li, int & lj,
                   Cell_handle start = Cell_handle()) const;
 #else // no CGAL_NO_STRUCTURAL_FILTERING
-#  ifndef CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
-#    define CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
-#  endif // no CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
+#  ifndef CGAL_P3T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
+#    define CGAL_P3T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
+#  endif // no CGAL_P3T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 
 public:
   Cell_handle
   inexact_periodic_locate(const Point& p, const Offset &o_p,
                  Cell_handle start = Cell_handle(),
-                 int max_num_cells = CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
+                 int max_num_cells = CGAL_P3T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 protected:
   Cell_handle
   exact_periodic_locate(const Point& p, const Offset &o_p, Offset& lo,
@@ -934,7 +934,7 @@ public:
   Cell_handle
   inexact_locate(const Point& p,
                  Cell_handle start = Cell_handle(),
-                 int max_num_cells = CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const
+                 int max_num_cells = CGAL_P3T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const
   {
     return inexact_periodic_locate(p, Offset(), start, max_num_cells);
   }
