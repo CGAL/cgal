@@ -34,6 +34,7 @@ template<class Traits>
 void _test_for_given_domain (const Traits& traits,
                              typename Traits::Weighted_point_3* wp)
 {
+  typedef typename Traits::FT                           FT;
   typedef typename Traits::Point_3                      Point_3;
   typedef typename Traits::Periodic_3_offset_3          Offset;
 
@@ -167,44 +168,44 @@ void _test_for_given_domain (const Traits& traits,
   }
 
   std::cout << "test of Compare_weighted_squared_radius_3" << std::endl;
-  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3 = traits.compare_weighted_squared_radius_3_object();
+  Compare_weighted_squared_radius_3 compare_weighted_squared_radius = traits.compare_weighted_squared_radius_3_object();
   {
     // base, no offset
-    assert(compare_weighted_squared_radius_3(wp[0],wp[15],wp[2],wp[3], 0.) == CGAL::LARGER);
-    assert(compare_weighted_squared_radius_3(wp[0],wp[15],wp[2], 1.) == CGAL::SMALLER);
-    assert(compare_weighted_squared_radius_3(wp[0],wp[9], 5.)  == CGAL::SMALLER);
-    assert(compare_weighted_squared_radius_3(wp[15], -2.) == CGAL::EQUAL);
+    assert(compare_weighted_squared_radius(wp[0],wp[15],wp[2],wp[3], FT(0.)) == CGAL::LARGER);
+    assert(compare_weighted_squared_radius(wp[0],wp[15],wp[2], FT(1.)) == CGAL::SMALLER);
+    assert(compare_weighted_squared_radius(wp[0],wp[9], FT(5.))  == CGAL::SMALLER);
+    assert(compare_weighted_squared_radius(wp[15], FT(-2.)) == CGAL::EQUAL);
 
     // with offsets
-    assert(compare_weighted_squared_radius_3(wp[0],wp[15],wp[2],wp[3],
-                                             o[2], o[2], o[2], o[2],
-                                             0.)
-            == compare_weighted_squared_radius_3(wp[0],wp[15],wp[2],wp[3], 0.));
-    assert(compare_weighted_squared_radius_3(wp[0], wp[11], wp[13],
-                                             o[1], o[1], o[1],
-                                             1.)
-            == compare_weighted_squared_radius_3(wp[0],wp[11],wp[13], 1.));
-    assert(compare_weighted_squared_radius_3(wp[0], wp[11], o[3], o[3], 1.)
-            == compare_weighted_squared_radius_3(wp[0],wp[11], 1.));
-    assert(compare_weighted_squared_radius_3(wp[4], o[1], 1.)
-            == compare_weighted_squared_radius_3(wp[4], 1.));
+    assert(compare_weighted_squared_radius(wp[0],wp[15],wp[2],wp[3],
+                                           o[2], o[2], o[2], o[2],
+                                           FT(0.))
+            == compare_weighted_squared_radius(wp[0],wp[15],wp[2],wp[3], FT(0.)));
+    assert(compare_weighted_squared_radius(wp[0], wp[11], wp[13],
+                                           o[1], o[1], o[1],
+                                           FT(1.))
+            == compare_weighted_squared_radius(wp[0],wp[11],wp[13], FT(1.)));
+    assert(compare_weighted_squared_radius(wp[0], wp[11], o[3], o[3], FT(1.))
+            == compare_weighted_squared_radius(wp[0],wp[11], FT(1.)));
+    assert(compare_weighted_squared_radius(wp[4], o[1], FT(1.))
+            == compare_weighted_squared_radius(wp[4], FT(1.)));
   }
 
   std::cout << "test of Coplanar_orientation_3" << std::endl;
-  Coplanar_orientation_3 coplanar_orientation_3 = traits.coplanar_orientation_3_object();
+  Coplanar_orientation_3 coplanar_orientation = traits.coplanar_orientation_3_object();
   {
-    assert(coplanar_orientation_3(wp[0], wp[1], wp[2], wp[3],
-                                  o[3], o[3], o[3], o[3])
-             == coplanar_orientation_3(wp[0], wp[1], wp[2], wp[3]));
-    assert(coplanar_orientation_3(wp[4], wp[3], wp[2], o[4], o[4], o[4])
-             == coplanar_orientation_3(wp[4], wp[3], wp[2]));
+    assert(coplanar_orientation(wp[0], wp[1], wp[2], wp[3],
+                                o[3], o[3], o[3], o[3])
+             == coplanar_orientation(wp[0], wp[1], wp[2], wp[3]));
+    assert(coplanar_orientation(wp[4], wp[3], wp[2], o[4], o[4], o[4])
+             == coplanar_orientation(wp[4], wp[3], wp[2]));
 
-    assert(coplanar_orientation_3(wp[1], wp[1], wp[1], wp[1],
-                                  o[0], o[7], o[1], o[8]) == CGAL::COLLINEAR);
-    assert(coplanar_orientation_3(wp[3], wp[3], wp[3],
-                                  o[0], o[7], o[8]) == CGAL::COLLINEAR);
+    assert(coplanar_orientation(wp[1], wp[1], wp[1], wp[1],
+                                o[0], o[7], o[1], o[8]) == CGAL::COLLINEAR);
+    assert(coplanar_orientation(wp[3], wp[3], wp[3],
+                                o[0], o[7], o[8]) == CGAL::COLLINEAR);
 
-    assert(coplanar_orientation_3(wp[1], wp[2], wp[3], wp[4],
+    assert(coplanar_orientation(wp[1], wp[2], wp[3], wp[4],
                                   o[6], o[7], o[4], o[1]) == CGAL::POSITIVE);
   }
 }
