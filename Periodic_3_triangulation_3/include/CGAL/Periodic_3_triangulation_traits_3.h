@@ -134,7 +134,7 @@ class Periodic_3_triangulation_traits_3
 
 template < typename K, typename Off >
 class Periodic_3_triangulation_traits_3 < K, Off, true>
-  : public Periodic_3_triangulation_filtered_traits_3 < K, Off, internal::Has_static_filters<K>::value >
+  : public Periodic_3_triangulation_filtered_traits_3<K, Off, internal::Has_static_filters<K>::value >
 {
 public:
   typedef K Kernel;

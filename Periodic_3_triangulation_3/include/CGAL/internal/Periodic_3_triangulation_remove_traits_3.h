@@ -30,7 +30,8 @@
 namespace CGAL {
 
 template < class Traits_, class Functor_ >
-class Point_offset_adaptor {
+class Point_offset_adaptor
+{
   typedef Traits_                        Traits;
   typedef Functor_                       Functor;
 
@@ -39,7 +40,7 @@ class Point_offset_adaptor {
 public:
   typedef typename Functor::result_type result_type;
 
-  Point_offset_adaptor(const Functor & functor) : _functor(functor) {}
+  Point_offset_adaptor(const Functor & functor) : _functor(functor) { }
 
   result_type operator()(const Point& p0, const Point& p1) const {
     return _functor(p0.first, p1.first,
@@ -66,40 +67,46 @@ private:
 };
 
 template < class P3DTTraits, class Off = typename CGAL::Periodic_3_offset_3 >
-class Periodic_3_triangulation_remove_traits_3 : public P3DTTraits::K
+class Periodic_3_triangulation_remove_traits_3
+    : public P3DTTraits::K
 {
 public:
   typedef P3DTTraits                                            PT;
-  typedef typename P3DTTraits::K                                Base;
   typedef Off                                                   Offset;
-  typedef Periodic_3_triangulation_remove_traits_3< PT,Offset > Self;
 
-  typedef typename PT::RT                RT;
-  typedef typename PT::FT                FT;
-  typedef typename PT::Point_3           Bare_point;
-  typedef std::pair<Bare_point,Offset>   Point_3;
-  typedef typename PT::Iso_cuboid_3      Iso_cuboid_3;
+private:
+  typedef Periodic_3_triangulation_remove_traits_3<PT, Offset > Self;
+  typedef typename PT::K                                        Base;
+
+public:
+  typedef typename PT::RT                                       RT;
+  typedef typename PT::FT                                       FT;
+  typedef typename PT::Point_3                                  Bare_point;
+  typedef std::pair<Bare_point, Offset>                         Point_3;
+  typedef typename PT::Iso_cuboid_3                             Iso_cuboid_3;
 
   Periodic_3_triangulation_remove_traits_3(const Iso_cuboid_3& domain)
     : _pt() {
     _pt.set_domain(domain);
   }
 
-  // Triangulation traits
+  // Triangulation predicates
   typedef Point_offset_adaptor<Self, typename PT::Compare_xyz_3>
-                                         Compare_xyz_3;
-  typedef Point_offset_adaptor<Self, typename PT::Coplanar_orientation_3>
-                                         Coplanar_orientation_3;
+      Compare_xyz_3;
   typedef Point_offset_adaptor<Self, typename PT::Orientation_3>
-                                         Orientation_3;
+      Orientation_3;
 
-  // Delaunay Triangulation traits
-  typedef Point_offset_adaptor<Self, typename PT::Coplanar_side_of_bounded_circle_3>
-                                         Coplanar_side_of_bounded_circle_3;
-  typedef Point_offset_adaptor<Self, typename PT::Side_of_oriented_sphere_3>
-                                         Side_of_oriented_sphere_3;
+  // Delaunay Triangulation predicates
   typedef Point_offset_adaptor<Self, typename PT::Compare_distance_3>
-                                         Compare_distance_3;
+      Compare_distance_3;
+  typedef Point_offset_adaptor<Self, typename PT::Side_of_oriented_sphere_3>
+      Side_of_oriented_sphere_3;
+
+  // Degenerate dimension predicates
+  typedef Point_offset_adaptor<Self, typename PT::Coplanar_orientation_3>
+      Coplanar_orientation_3;
+  typedef Point_offset_adaptor<Self, typename PT::Coplanar_side_of_bounded_circle_3>
+      Coplanar_side_of_bounded_circle_3;
 
   // Operations
   Compare_xyz_3

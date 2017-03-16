@@ -20,7 +20,6 @@
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
 
-
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
 
@@ -35,10 +34,9 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
 
-#include <string>
-
 namespace CGAL {
 
+// The first template item is supposed to be a Filtered_kernel-like kernel.
 template < typename K, typename Off >
 class Periodic_3_regular_triangulation_filtered_traits_base_3
   : public Periodic_3_regular_triangulation_traits_base_3<K, Off>

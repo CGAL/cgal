@@ -29,11 +29,9 @@
 #include <CGAL/Regular_traits_with_offsets_adaptor.h>
 #include <CGAL/Periodic_3_construct_weighted_point_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
-#include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/representation_tags.h>
-#include <CGAL/Kernel_traits.h>
+#include <CGAL/internal/Has_boolean_tags.h>
 
 namespace CGAL
 {
@@ -63,49 +61,52 @@ public:
   typedef typename Base::Tetrahedron_3               Tetrahedron_3;
 
   typedef Periodic_3_construct_weighted_point_3<Self, typename K::Construct_weighted_point_3>
-                                          Construct_weighted_point_3;
+      Construct_weighted_point_3;
 
   typedef Regular_traits_with_offsets_adaptor<Self, typename K::Power_side_of_oriented_power_sphere_3>
-                                          Power_side_of_oriented_power_sphere_3;
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_power_distance_3>
-                                          Compare_power_distance_3;
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_weighted_circumcenter_3>
-                                          Construct_weighted_circumcenter_3;
+      Power_side_of_oriented_power_sphere_3;
   typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_weighted_squared_radius_3>
-                                          Compare_weighted_squared_radius_3;
+      Compare_weighted_squared_radius_3;
+  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_power_distance_3>
+      Compare_power_distance_3;
 
   // Required for Periodic_3_regular_remove_traits
   typedef Regular_traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3>
-                                          Coplanar_orientation_3;
+       Coplanar_orientation_3;
+
+  // When dual operations are used
+  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_weighted_circumcenter_3>
+      Construct_weighted_circumcenter_3;
 
   // construction
-  Construct_weighted_point_3 construct_weighted_point_3_object () const
-  {
+  Construct_weighted_point_3
+  construct_weighted_point_3_object () const {
     return Construct_weighted_point_3(this->_domain);
   }
 
-  Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object () const
-  {
+  Construct_weighted_circumcenter_3
+  construct_weighted_circumcenter_3_object () const {
     return Construct_weighted_circumcenter_3(&this->_domain);
   }
 
   // predicates
-  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object () const
-  {
+  Power_side_of_oriented_power_sphere_3
+  power_side_of_oriented_power_sphere_3_object () const {
     return Power_side_of_oriented_power_sphere_3(&this->_domain);
   }
 
-  Compare_power_distance_3 compare_power_distance_3_object () const
-  {
+  Compare_power_distance_3
+  compare_power_distance_3_object () const {
     return Compare_power_distance_3(&this->_domain);
   }
 
-  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object() const
-  {
+  Compare_weighted_squared_radius_3
+  compare_weighted_squared_radius_3_object() const {
     return Compare_weighted_squared_radius_3(&this->_domain);
   }
 
-  Coplanar_orientation_3 coplanar_orientation_3_object() const {
+  Coplanar_orientation_3
+  coplanar_orientation_3_object() const {
     return Coplanar_orientation_3(&this->_domain);
   }
 };
@@ -114,6 +115,7 @@ template<typename K,
          typename Off = CGAL::Periodic_3_offset_3,
          bool Has_filtered_predicates = K::Has_filtered_predicates>
 class Periodic_3_regular_triangulation_traits_3;
+
 } // namespace CGAL
 
 // Partial specialization for Filtered_kernel<CK>.
@@ -130,7 +132,7 @@ class Periodic_3_regular_triangulation_traits_3:
   public Periodic_3_regular_triangulation_traits_base_3<K, Off>
 { };
 
-template < typename K, typename Off >
+template <typename K, typename Off >
 class Periodic_3_regular_triangulation_traits_3<K, Off, true>
 : public Periodic_3_regular_triangulation_filtered_traits_3<K, Off>
 {

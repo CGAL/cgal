@@ -25,7 +25,6 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 namespace CGAL
@@ -103,74 +102,85 @@ public:
   typedef typename PTraits::Iso_cuboid_3                        Iso_cuboid_3;
 
   Periodic_3_regular_triangulation_remove_traits_3 (const Iso_cuboid_3& domain)
-      : _traits()
-  {
+      : _traits() {
     _traits.set_domain(domain);
   }
 
   // Triangulation traits
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_xyz_3> Compare_xyz_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Coplanar_orientation_3> Coplanar_orientation_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Orientation_3> Orientation_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_xyz_3>
+      Compare_xyz_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Coplanar_orientation_3>
+      Coplanar_orientation_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Orientation_3>
+      Orientation_3;
 
   // Regular Triangulation traits
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Power_side_of_oriented_power_sphere_3> Power_side_of_oriented_power_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_power_distance_3> Compare_power_distance_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Power_side_of_bounded_power_sphere_3> Power_side_of_bounded_power_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Construct_circumcenter_3> Construct_circumcenter_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_power_product_3> Compute_power_product_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_power_distance_to_power_sphere_3> Compute_power_distance_to_power_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Power_side_of_oriented_power_sphere_3>
+      Power_side_of_oriented_power_sphere_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_power_distance_3>
+      Compare_power_distance_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Power_side_of_bounded_power_sphere_3>
+      Power_side_of_bounded_power_sphere_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Construct_weighted_circumcenter_3>
+      Construct_weighted_circumcenter_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Construct_circumcenter_3>
+      Construct_circumcenter_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_squared_radius_smallest_orthogonal_sphere_3>
+      Compute_squared_radius_smallest_orthogonal_sphere_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_power_product_3>
+      Compute_power_product_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_power_distance_to_power_sphere_3>
+      Compute_power_distance_to_power_sphere_3;
+  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_weighted_squared_radius_3>
+      Compare_weighted_squared_radius_3;
 
   // Operations
-  Compare_xyz_3 compare_xyz_3_object () const
-  {
+  Compare_xyz_3
+  compare_xyz_3_object() const {
     return Compare_xyz_3(_traits.compare_xyz_3_object());
   }
-  Coplanar_orientation_3 coplanar_orientation_3_object () const
-  {
+  Coplanar_orientation_3
+  coplanar_orientation_3_object() const {
     return Coplanar_orientation_3(_traits.coplanar_orientation_3_object());
   }
-  Orientation_3 orientation_3_object () const
-  {
+  Orientation_3
+  orientation_3_object() const {
     return Orientation_3(_traits.orientation_3_object());
   }
-  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object () const
-  {
+  Power_side_of_oriented_power_sphere_3
+  power_side_of_oriented_power_sphere_3_object() const {
     return Power_side_of_oriented_power_sphere_3(_traits.power_side_of_oriented_power_sphere_3_object());
   }
-  Compare_power_distance_3 compare_power_distance_3_object () const
-  {
+  Compare_power_distance_3
+  compare_power_distance_3_object() const {
     return Compare_power_distance_3(_traits.compare_power_distance_3_object());
   }
-  Power_side_of_bounded_power_sphere_3 power_side_of_bounded_power_sphere_3_object () const
-  {
+  Power_side_of_bounded_power_sphere_3
+  power_side_of_bounded_power_sphere_3_object() const {
     return Power_side_of_bounded_power_sphere_3(_traits.power_side_of_bounded_power_sphere_3_object());
   }
-  Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object () const
-  {
+  Construct_weighted_circumcenter_3
+  construct_weighted_circumcenter_3_object() const {
     return Construct_weighted_circumcenter_3(_traits.construct_weighted_circumcenter_3_object());
   }
-  Construct_circumcenter_3 construct_circumcenter_3_object () const
-  {
+  Construct_circumcenter_3
+  construct_circumcenter_3_object() const {
     return Construct_circumcenter_3(_traits.construct_circumcenter_3_object());
   }
-  Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object () const
-  {
+  Compute_squared_radius_smallest_orthogonal_sphere_3
+  compute_squared_radius_smallest_orthogonal_sphere_3_object() const {
     return Compute_squared_radius_smallest_orthogonal_sphere_3(_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object());
   }
-  Compute_power_product_3 compute_power_product_3_object () const
-  {
+  Compute_power_product_3
+  compute_power_product_3_object() const {
     return Compute_power_product_3(_traits.compute_power_product_3_object());
   }
-  Compute_power_distance_to_power_sphere_3 compute_power_distance_to_power_sphere_3_object () const
-  {
+  Compute_power_distance_to_power_sphere_3
+  compute_power_distance_to_power_sphere_3_object() const {
     return Compute_power_distance_to_power_sphere_3(_traits.compute_power_distance_to_power_sphere_3_object());
   }
-  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object () const
-  {
+  Compare_weighted_squared_radius_3
+  compare_weighted_squared_radius_3_object() const {
     return Compare_weighted_squared_radius_3(_traits.compare_weighted_squared_radius_3_object());
   }
 
