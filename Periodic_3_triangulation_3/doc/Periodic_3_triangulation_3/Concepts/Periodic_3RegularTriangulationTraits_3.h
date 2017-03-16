@@ -112,6 +112,29 @@ typedef unspecified_type Compare_weighted_squared_radius_3;
 /// @}
 
 /// \name
+/// @{
+
+/*!
+A predicate object, model of `ComparePowerDistance_3`, that must provide
+the function operator
+
+`Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r)`,
+
+which compares the power distance between `p` and `q` to the power distance
+between `p` and `r` and
+
+`Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r,
+Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r)`,
+
+which is the same for point-offset pairs.
+
+\note This predicate is required if a call to `nearest_power_vertex()` or
+`nearest_power_vertex_in_cell()` is issued.*/
+typedef unspecified_type Compare_power_distance_3;
+
+/// @}
+
+/// \name
 /// When vertex removal is used, the traits class must in addition provide the following predicate object
 /// @{
 
