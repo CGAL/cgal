@@ -1530,7 +1530,7 @@ Trapezoidal_decomposition_2<Td_traits>
 
 template <class Td_traits>
 bool Trapezoidal_decomposition_2<Td_traits>
-::is_last_edge(Halfedge_const_handle he , Td_map_item& vtx_item)
+::is_last_edge(Halfedge_const_handle /* he */ , Td_map_item& vtx_item)
 {
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   CGAL_precondition(traits->is_active(vtx_item));
