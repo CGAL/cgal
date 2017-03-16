@@ -35,29 +35,38 @@
 
 ## Concepts ##
 
+- `CGAL::ClassificationPredicate`
 - `CGAL::NeighborQuery`
 
-## Classification ##
+## Main Functions ##
 
-- `CGAL::Classifier<ItemRange, ItemMap, ConcurrencyTag>`
-- `CGAL::Point_set_classifier<Geom_traits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
+- `CGAL::Classification::classify()`
+- `CGAL::Classification::classify_with_local_smoothing()`
+- `CGAL::Classification::classify_with_graphcut()`
+
+## Classification Predicate ##
+
+- `CGAL::Classification::Sum_of_weighted_features_predicate`
 
 ## Data Structures ##
 
+- `CGAL::Classification::Point_set_feature_generator<Geom_traits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
 - `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Local_eigen_analysis<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
 - `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Trainer<PointRange, PointMap, ConcurrencyTag>`
+
 
 ## Label ##
 
 - `CGAL::Classification::Label`
 - `CGAL::Classification::Label_handle`
+- `CGAL::Classification::Label_set`
 
 ## Feature ##
 
 - `CGAL::Classification::Feature`
 - `CGAL::Classification::Feature_handle`
+- `CGAL::Classification::Feature_set`
 
 ## Predefined Features ##
 

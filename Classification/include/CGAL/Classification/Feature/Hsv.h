@@ -81,7 +81,6 @@ class Hsv : public Feature_base
   double m_mean;
   double m_sd;
 #endif  
-  std::string m_name;
   
 public:
   
@@ -104,8 +103,6 @@ public:
     : input(input), color_map(color_map), m_channel(channel), m_mean(mean), m_sd(sd)
 #endif
   {
-    this->set_weight(1.);
-
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     std::vector<double> color_feature;
 #endif
@@ -114,14 +111,13 @@ public:
         HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
         color_feature.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
       }
-    this->compute_mean_max (color_feature, this->mean, this->max);
 
     std::ostringstream oss;
     if (channel == 0) oss << "hue";
     else if (channel == 1) oss << "saturation";
     else if (channel == 2) oss << "value";
     oss << "_" << mean;
-    m_name = oss.str();
+    this->set_name (oss.str());
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -135,7 +131,6 @@ public:
 #endif
   }
 
-  virtual std::string name() { return m_name; }
   /// \endcond
 };
 

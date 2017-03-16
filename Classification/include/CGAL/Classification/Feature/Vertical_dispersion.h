@@ -72,7 +72,7 @@ public:
                        const double grid_resolution,
                        double radius_neighbors = -1.)
   {
-    this->set_weight(1.);
+    this->set_name ("vertical_dispersion");
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
     
@@ -142,15 +142,12 @@ public:
         vertical_dispersion.push_back((double)Dispersion(I,J));
       }
 
-    this->compute_mean_max (vertical_dispersion, this->mean, this->max);
   }
   /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
     return vertical_dispersion[pt_index];
   }
-
-  virtual std::string name() { return "vertical_dispersion"; }
   /// \endcond
 };
 

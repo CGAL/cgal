@@ -45,32 +45,26 @@ namespace Classification {
 
 class Feature_base
 {
-  double m_weight; 
+  std::string m_name;
+  
 public:
 
   /// \cond SKIP_IN_MANUAL
-  double mean;
-  double max;
-
+  Feature_base() : m_name ("abstract_feature") { }
   virtual ~Feature_base() { }
   /// \endcond
 
   /*!
-    \brief Returns the weight of the feature.
+    \brief Returns the name of the feature (initialized to
+    `abstract_feature` for `Feature_base`).
   */
-  double weight() const { return m_weight; }
+  const std::string& name() const { return m_name; }
 
   /*!
-    \brief Sets the weight of the feature (`weight` must be positive).
+    \brief Changes the name of the feature.
   */
-  void set_weight (double weight) { m_weight = weight; }
-
-  /*!
-    \brief Returns `abstract_feature` and should be overloaded
-    by an inherited class with a specific name.
-  */
-  virtual std::string name() { return "abstract_feature"; }
-
+  void set_name (const std::string& name) { m_name = name; }
+  
   /*!
     \brief Returns the value taken by the feature for at the item at
     position `index`. This method must be implemented by inherited
@@ -78,35 +72,6 @@ public:
   */
   virtual double value (std::size_t index) = 0;
 
-  /// \cond SKIP_IN_MANUAL
-  virtual double normalized (std::size_t index)
-  {
-    return (std::max) (0., (std::min) (1., value(index) / m_weight));
-  }
-  virtual double favored (std::size_t index) { return (1. - normalized (index)); }
-  virtual double penalized (std::size_t index) { return normalized (index); }
-  //  virtual double ignored (std::size_t index) { return (std::min) (favored(index), penalized(index)); }
-  virtual double ignored (std::size_t) { return 0.5; }
-
-  void compute_mean_max (std::vector<double>& vect, double& mean, double& max)
-  {
-    mean = 0.;
-    max = -std::numeric_limits<double>::max();
-    double min = std::numeric_limits<double>::max();
-    
-    for (std::size_t i = 0; i < vect.size(); ++ i)
-      {
-        mean += vect[i];
-        if (vect[i] > max)
-          max = vect[i];
-        if (vect[i] < min)
-          min = vect[i];
-      }
-    //    std::cerr << name() << " Min/max = " << min << " / " << max << std::endl;
-    mean /= vect.size();
-
-  }
-  /// \endcond
 };
 
 

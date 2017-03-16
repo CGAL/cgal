@@ -76,7 +76,7 @@ public:
              const double grid_resolution,
              double radius_dtm = -1.)
   {
-    this->set_weight(1.);
+    this->set_name ("elevation");
     if (radius_dtm < 0.)
       radius_dtm = 100. * grid_resolution;
 
@@ -147,7 +147,6 @@ public:
       elevation_feature.push_back ((double)(get(point_map, *(input.begin()+i)).z()-dtm(I,J)));
     }
 
-    this->compute_mean_max (elevation_feature, this->mean, this->max);
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -155,8 +154,7 @@ public:
   {
     return elevation_feature[pt_index];
   }
-  
-  virtual std::string name() { return "elevation"; }
+
   /// \endcond
 };
 

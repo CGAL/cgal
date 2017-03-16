@@ -23,8 +23,6 @@
 
 #include <vector>
 
-#include <CGAL/Classifier.h>
-
 namespace CGAL {
 
 namespace Classification {
@@ -78,7 +76,8 @@ public:
     : input(input), point_map(point_map), eigen(eigen)
 #endif
   {
-    this->set_weight(1.);
+    this->set_name ("distance_to_plane");
+    
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     std::vector<double> distance_to_plane_feature;
 #endif
@@ -86,9 +85,6 @@ public:
     for(std::size_t i = 0; i < input.size(); i++)
       distance_to_plane_feature.push_back
         (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane(i))));
-    
-    this->compute_mean_max (distance_to_plane_feature, this->mean, this->max);
-    //    max *= 2;
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -101,8 +97,6 @@ public:
                        (get(point_map, *(input.begin()+pt_index)), eigen.plane(pt_index)));
 #endif
   }
-
-  virtual std::string name() { return "distance_to_plane"; }
   /// \endcond
 };
 

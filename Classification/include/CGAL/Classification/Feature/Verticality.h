@@ -67,7 +67,7 @@ public:
   Verticality (const PointRange& input,
                const Local_eigen_analysis& eigen)
   {
-    this->set_weight(1.);
+    this->set_name ("verticality");
     typename Geom_traits::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < input.size(); i++)
@@ -77,8 +77,6 @@ public:
         verticality_feature.push_back (1. - CGAL::abs(normal * vertical));
       }
     
-    this->compute_mean_max (verticality_feature, this->mean, this->max);
-    //    max *= 2;
   }
 
   /*!
@@ -94,7 +92,7 @@ public:
   Verticality (const PointRange& input,
                VectorMap normal_map)
   {
-    this->set_weight(1.);
+    this->set_name ("verticality");
     typename Geom_traits::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < input.size(); i++)
@@ -103,9 +101,6 @@ public:
         normal = normal / CGAL::sqrt (normal * normal);
         verticality_feature.push_back (1. - std::fabs(normal * vertical));
       }
-    
-    this->compute_mean_max (verticality_feature, this->mean, this->max);
-    //    max *= 2;
   }
 
 
@@ -114,8 +109,6 @@ public:
   {
     return verticality_feature[pt_index];
   }
-
-  virtual std::string name() { return "verticality"; }
   /// \endcond
 };
 

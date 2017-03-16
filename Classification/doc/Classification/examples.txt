@@ -1,5 +1,5 @@
 /*!
-\example Classification/example_classifier.cpp
+\example Classification/example_classification.cpp
 \example Classification/example_feature.cpp
-\example Classification/example_point_set_classifier.cpp
+\example Classification/example_generation_and_training.cpp
 */

@@ -73,7 +73,7 @@ public:
                 const double grid_resolution,
                 double radius_neighbors = 1.)
   {
-    this->set_weight(1.);
+    this->set_name ("echo_scatter");
     Image_float Scatter(grid.width(), grid.height());
     for (std::size_t j = 0; j < grid.height(); j++)
       for (std::size_t i = 0; i < grid.width(); i++)
@@ -130,7 +130,6 @@ public:
       std::size_t J= grid.y(i);
       echo_scatter.push_back((double)Scatter(I,J));
     }
-    this->compute_mean_max (echo_scatter, this->mean, this->max);
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -138,8 +137,6 @@ public:
   {
     return echo_scatter[pt_index];
   }
-
-  virtual std::string name() { return "echo_scatter"; }
   /// \endcond
 };
 

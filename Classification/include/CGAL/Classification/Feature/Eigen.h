@@ -55,15 +55,12 @@ public:
 
   virtual void init (const PointRange& input, const Local_eigen_analysis& eigen)
   {
-    this->set_weight(1.);
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     std::vector<double> attrib;
 #endif
     attrib.reserve (input.size());
     for (std::size_t i = 0; i < input.size(); ++ i)
       attrib.push_back (get_value (eigen, i));
-
-    this->compute_mean_max (attrib, mean, this->max);
   }
   
   virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i) = 0;
@@ -75,7 +72,6 @@ public:
     return get_value(eigen, pt_index);
 #endif
   }
-  virtual std::string name() { return "eigen_feature"; }
 
 };
   
@@ -115,6 +111,7 @@ public:
   Linearity (const PointRange& input,
              const Local_eigen_analysis& eigen) : Base (input, eigen)
   {
+    this->set_name("linearity");
     this->init(input, eigen);
   }
 
@@ -127,7 +124,6 @@ public:
     else
       return ((ev[2] - ev[1]) / ev[2]);
   }
-  virtual std::string name() { return "linearity"; }
   /// \endcond
 };
 
@@ -168,6 +164,7 @@ public:
              const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
+    this->set_name("planarity");
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
@@ -179,7 +176,6 @@ public:
     else
       return ((ev[1] - ev[0]) / ev[2]);
   }
-  virtual std::string name() { return "planarity"; }
   /// \endcond
  
 };
@@ -221,6 +217,7 @@ public:
               const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
+    this->set_name("sphericity");
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
@@ -232,7 +229,6 @@ public:
     else
       return (ev[0] / ev[2]);
   }
-  virtual std::string name() { return "sphericity"; }
   /// \endcond
 };
 
@@ -273,6 +269,7 @@ public:
                 const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
+    this->set_name("omnivariance");
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
@@ -281,7 +278,6 @@ public:
     const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     return (std::pow (std::fabs(ev[0] * ev[1] * ev[2]), 0.333333333));
   }
-  virtual std::string name() { return "omnivariance"; }
   /// \endcond
 };
 
@@ -322,6 +318,7 @@ public:
               const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
+    this->set_name("anisotropy");
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
@@ -333,7 +330,6 @@ public:
     else
       return ((ev[2] - ev[0]) / ev[2]);
   }
-  virtual std::string name() { return "anisotropy"; }
   /// \endcond
 };
 
@@ -374,6 +370,7 @@ public:
               const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
+    this->set_name("eigentropy");
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
@@ -389,7 +386,6 @@ public:
               - ev[1] * std::log(ev[1])
               - ev[2] * std::log(ev[2]));
   }
-  virtual std::string name() { return "eigentropy"; }
   /// \endcond
 };
 
@@ -431,6 +427,7 @@ public:
                    const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
+    this->set_name("sum_eigen");
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
@@ -438,7 +435,6 @@ public:
   {
     return eigen.sum_of_eigenvalues(i);
   }
-  virtual std::string name() { return "sum_eigen"; }
   /// \endcond
 };
 
@@ -480,6 +476,7 @@ public:
                      const Local_eigen_analysis& eigen)
     : Base(input, eigen)
   {
+    this->set_name("surface_variation");
     this->init(input, eigen);
   }
   /// \cond SKIP_IN_MANUAL
@@ -491,7 +488,6 @@ public:
     else
       return (ev[0] / (ev[0] + ev[1] + ev[2]));
   }
-  virtual std::string name() { return "surface_variation"; }
   /// \endcond
 };
 
