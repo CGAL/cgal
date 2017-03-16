@@ -19,6 +19,7 @@
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
+
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
@@ -169,7 +170,11 @@ public:
   using Tr_Base::incident_cells;
   using Tr_Base::is_valid_conflict;
   using Tr_Base::locate;
+  using Tr_Base::find_conflicts;
   using Tr_Base::segment;
+#ifndef CGAL_NO_STRUCTURAL_FILTERING
+  using Tr_Base::inexact_locate;
+#endif
 
 private:
   struct Cell_handle_hash : public std::unary_function<Cell_handle, std::size_t>
@@ -245,7 +250,8 @@ public:
     insert(first, last, is_large_point_set);
   }
 
-  void copy_multiple_covering(const Periodic_3_regular_triangulation_3& tr) {
+  void copy_multiple_covering(const Periodic_3_regular_triangulation_3& tr)
+  {
     // Write the respective offsets in the vertices to make them
     // automatically copy with the tds.
     for (Vertex_iterator vit = tr.vertices_begin() ;
@@ -428,40 +434,40 @@ public:
   }
 
   /** @name Insertion */ //@{
-   Vertex_handle insert(const Weighted_point& point,
-                        Cell_handle start = Cell_handle())
-   {
-     Conflict_tester tester(point, this);
-     Point_hider hider(this);
-     Cover_manager cover_manager(*this);
-     CGAL_triangulation_precondition(point.weight() >= 0);
-     CGAL_triangulation_precondition_msg
-     (
-       point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
-       "point.weight() < 1/64 * domain_size * domain_size"
-     );
-     return Tr_Base::insert_in_conflict(point, start, tester, hider, cover_manager);
-   }
+  Vertex_handle insert(const Weighted_point& point,
+                       Cell_handle start = Cell_handle())
+  {
+    Conflict_tester tester(point, this);
+    Point_hider hider(this);
+    Cover_manager cover_manager(*this);
+    CGAL_triangulation_precondition(point.weight() >= 0);
+    CGAL_triangulation_precondition_msg
+        (
+          point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
+          "point.weight() < 1/64 * domain_size * domain_size"
+          );
+    return Tr_Base::insert_in_conflict(point, start, tester, hider, cover_manager);
+  }
 
-   Vertex_handle insert(const Weighted_point& point,
-                        Locate_type lt, Cell_handle c,
-                        int li, int lj)
-   {
-     Conflict_tester tester(point, this);
-     Point_hider hider(this);
-     Cover_manager cover_manager(*this);
-     CGAL_triangulation_precondition(point.weight() >= 0);
-     CGAL_triangulation_precondition_msg
-     (
-       point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
-       "point.weight() < 1/64 * domain_size * domain_size"
-     );
-     return Tr_Base::insert_in_conflict(point,lt,c,li,lj, tester,hider,cover_manager);
-    }
+  Vertex_handle insert(const Weighted_point& point,
+                       Locate_type lt, Cell_handle c,
+                       int li, int lj)
+  {
+    Conflict_tester tester(point, this);
+    Point_hider hider(this);
+    Cover_manager cover_manager(*this);
+    CGAL_triangulation_precondition(point.weight() >= 0);
+    CGAL_triangulation_precondition_msg
+    (
+      point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
+      "point.weight() < 1/64 * domain_size * domain_size"
+    );
+    return Tr_Base::insert_in_conflict(point,lt,c,li,lj, tester,hider,cover_manager);
+  }
 
-   template < class InputIterator >
-   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                         bool is_large_point_set = false)
+  template < class InputIterator >
+  std::ptrdiff_t insert(InputIterator first, InputIterator last,
+                        bool is_large_point_set = false)
   {
     if (first == last)
       return 0;
@@ -471,11 +477,13 @@ public:
       bool precondition_is_satisfied = true;
       FT upper_bound = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
       for (InputIterator pc_first = first, pc_last = last; pc_first != pc_last; ++pc_first)
+      {
         if (pc_first->weight() < FT(0) || pc_first->weight() >= upper_bound)
         {
           precondition_is_satisfied = false;
           break;
         }
+      }
     )
 
     CGAL_triangulation_precondition_msg
@@ -543,32 +551,31 @@ public:
 
     return number_of_vertices() - n;
   }
-   //@}
+//@}
 
-   void remove(Vertex_handle v)
-   {
-     typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Gt > P3removeT;
-     typedef CGAL::Regular_triangulation_3< P3removeT >
-       Euclidean_triangulation;
-     typedef Vertex_remover< Euclidean_triangulation > Remover;
-     P3removeT remove_traits(domain());
-     Euclidean_triangulation tmp(remove_traits);
-     Remover remover(this, tmp);
-     Conflict_tester ct(this);
-     Cover_manager cover_manager(*this);
+  void remove(Vertex_handle v)
+  {
+    typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Gt > P3removeT;
+    typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
+    typedef Vertex_remover< Euclidean_triangulation > Remover;
+    P3removeT remove_traits(domain());
+    Euclidean_triangulation tmp(remove_traits);
+    Remover remover(this, tmp);
+    Conflict_tester ct(this);
+    Cover_manager cover_manager(*this);
 
-     Tr_Base::remove(v, remover, ct, cover_manager);
+    Tr_Base::remove(v, remover, ct, cover_manager);
 
-     // Re-insert the points that v was hiding.
-     for (typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();
-          hi != remover.hidden_points_end();
-          ++hi)
-     {
-         insert(*hi);
-     }
+    // Re-insert the points that v was hiding.
+    for (typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();
+         hi != remover.hidden_points_end();
+         ++hi)
+    {
+      insert(*hi);
+    }
 
-     CGAL_triangulation_expensive_assertion(is_valid());
-   }
+    CGAL_triangulation_expensive_assertion(is_valid());
+  }
 
 protected:
    /** @name Wrapping the traits */ //@{
@@ -739,7 +746,8 @@ public:
   }
 
   Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Weighted_point & p,
-                                       const Offset & o) const {
+                                       const Offset & o) const
+  {
     CGAL_triangulation_precondition(number_of_vertices() != 0);
     Vertex_handle nearest = c->vertex(0);
     for (int i=1 ; i<4 ; i++) {
@@ -769,6 +777,7 @@ protected:
   // Protected, because inheritors(e.g. periodic triangulation for meshing)
   // of the class Periodic_3_Delaunay_triangulation_3 use this class
   class Conflict_tester;
+
 private:
   class Point_hider;
 
@@ -889,9 +898,10 @@ public:
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
   find_conflicts(const Weighted_point &p, Cell_handle c,
-      OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit) const {
+                 OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit) const
+  {
     Triple<OutputIteratorBoundaryFacets,OutputIteratorCells,Emptyset_iterator>
-    t = Tr_Base::find_conflicts(p, c, bfit, cit, Emptyset_iterator());
+      t = find_conflicts(p, c, bfit, cit, Emptyset_iterator());
     return std::make_pair(t.first, t.second);
   }
 
@@ -900,16 +910,17 @@ public:
   Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
          OutputIteratorInternalFacets>
   find_conflicts(const Weighted_point &p, Cell_handle c,
-      OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
-      OutputIteratorInternalFacets ifit) const;
+                 OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
+                 OutputIteratorInternalFacets ifit) const;
 
   /// Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
   OutputIterator vertices_in_conflict(const Weighted_point&p, Cell_handle c,
-      OutputIterator res) const;
+                                      OutputIterator res) const;
 
   inline bool
-  is_extensible_triangulation_in_1_sheet_h1() const {
+  is_extensible_triangulation_in_1_sheet_h1() const
+  {
     if (!is_1_cover())
       return can_be_converted_to_1_sheet();
     return is_extensible_triangulation_in_1_sheet_h2();
@@ -937,8 +948,10 @@ template < class Gt, class Tds >
 template <class OutputIterator>
 OutputIterator
 Periodic_3_regular_triangulation_3<Gt,Tds>::vertices_in_conflict(
-    const Weighted_point&p, Cell_handle c, OutputIterator res) const {
-  if (number_of_vertices() == 0) return res;
+    const Weighted_point&p, Cell_handle c, OutputIterator res) const
+{
+  if (number_of_vertices() == 0)
+    return res;
 
   // Get the facets on the boundary of the hole.
   std::vector<Facet> facets;
@@ -961,10 +974,12 @@ template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
           class OutputIteratorInternalFacets>
 Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
        OutputIteratorInternalFacets>
-Periodic_3_regular_triangulation_3<Gt,Tds>::find_conflicts( const Weighted_point
-&p,
-    Cell_handle c, OutputIteratorBoundaryFacets bfit,
-    OutputIteratorCells cit, OutputIteratorInternalFacets ifit) const {
+Periodic_3_regular_triangulation_3<Gt,Tds>::find_conflicts(
+    const Weighted_point& p, Cell_handle c,
+    OutputIteratorBoundaryFacets bfit,
+    OutputIteratorCells cit,
+    OutputIteratorInternalFacets ifit) const
+{
   CGAL_triangulation_precondition(number_of_vertices() != 0);
 
   std::vector<Facet> facets;
@@ -975,9 +990,11 @@ Periodic_3_regular_triangulation_3<Gt,Tds>::find_conflicts( const Weighted_point
   Conflict_tester tester(p, this);
   Triple<typename std::back_insert_iterator<std::vector<Facet> >,
          typename std::back_insert_iterator<std::vector<Cell_handle> >,
-         OutputIteratorInternalFacets> tit = Tr_Base::find_conflicts(c, tester,
-              make_triple(std::back_inserter(facets),
-                      std::back_inserter(cells), ifit));
+         OutputIteratorInternalFacets> tit =
+           Tr_Base::find_conflicts(c, tester,
+                                   make_triple(std::back_inserter(facets),
+                                               std::back_inserter(cells),
+                                               ifit));
   ifit = tit.third;
 
   // Reset the conflict flag on the boundary.
@@ -1096,7 +1113,8 @@ is_valid(bool verbose, int level) const
 template < class GT, class TDS >
 bool
 Periodic_3_regular_triangulation_3<GT,TDS>::
-is_valid(Cell_handle ch, bool verbose, int level) const {
+is_valid(Cell_handle ch, bool verbose, int level) const
+{
   bool error = false;
   if (!Tr_Base::is_valid(ch, verbose, level)) {
     error = true;
@@ -1107,6 +1125,7 @@ is_valid(Cell_handle ch, bool verbose, int level) const {
       std::cerr << std::endl;
     }
   }
+
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++ vit) {
     const Periodic_weighted_point& pwp = Tr_Base::periodic_point(vit);
     for (int i=-1; i<=1; i++) {
@@ -1204,7 +1223,7 @@ class Periodic_3_regular_triangulation_3<GT,Tds>::Point_hider
   mutable bool is_original_cube;
 
 public:
-  Point_hider(Self *tr) : t(tr), is_original_cube(false) {}
+  Point_hider(Self *tr) : t(tr), is_original_cube(false) { }
 
   void set_original_cube (bool b) const {
     is_original_cube = b;
