@@ -19,6 +19,7 @@
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
+
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_TRAITS_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_TRAITS_3_H
 
@@ -39,16 +40,17 @@ namespace CGAL
 
 template <class Kernel_, class Off = typename CGAL::Periodic_3_offset_3>
 class Periodic_3_regular_triangulation_traits_base_3
-  : public Periodic_3_triangulation_traits_base_3<Kernel_, Off>
+  : public Periodic_3_triangulation_traits_3<Kernel_, Off>
 {
 private:
   typedef Periodic_3_regular_triangulation_traits_base_3<Kernel_, Off>     Self;
-  typedef Periodic_3_triangulation_traits_base_3<Kernel_, Off>             Base;
+  typedef Periodic_3_triangulation_traits_3<Kernel_, Off>                  Base;
 
 public:
   typedef Kernel_                                    K;
   typedef Off                                        Offset;
 
+  typedef typename Base::RT                          RT;
   typedef typename Base::FT                          FT;
   typedef typename Base::Weighted_point_3            Weighted_point_3;
   typedef typename Base::Point_3                     Point_3;

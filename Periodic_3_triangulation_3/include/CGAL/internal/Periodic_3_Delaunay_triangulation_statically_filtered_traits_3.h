@@ -43,7 +43,8 @@ namespace CGAL {
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename Traits >
-class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3 : public Periodic_3_triangulation_statically_filtered_traits_3<Traits>
+class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3
+    : public Traits
 {
   typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<Traits> Self;
 

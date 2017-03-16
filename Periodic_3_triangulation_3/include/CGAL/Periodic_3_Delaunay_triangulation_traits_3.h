@@ -18,6 +18,7 @@
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_TRAITS_3_H
 #define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_TRAITS_3_H
@@ -36,12 +37,12 @@ namespace CGAL {
 
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_Delaunay_triangulation_traits_base_3
-  : public Periodic_3_triangulation_traits_base_3<Kernel, Off>
+  : public Periodic_3_triangulation_traits_3<Kernel, Off>
 {
 public:
   typedef Kernel                                                     K;
   typedef Off                                                        Offset;
-  typedef Periodic_3_triangulation_traits_base_3<K, Offset>          Base;
+  typedef Periodic_3_triangulation_traits_3<K, Offset>               Base;
   typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, Offset> Self;
 
   typedef typename Base::RT                   RT;
