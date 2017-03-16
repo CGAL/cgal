@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -24,7 +24,6 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Traits_with_offsets_adaptor.h>
@@ -33,18 +32,17 @@
 #include <CGAL/internal/Has_boolean_tags.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
-
-namespace CGAL { 
+namespace CGAL {
 
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_Delaunay_triangulation_traits_base_3
   : public Periodic_3_triangulation_traits_base_3<Kernel, Off>
 {
 public:
-  typedef Kernel                                                 K;
-  typedef Off                                                    Offset;
-  typedef Periodic_3_triangulation_traits_base_3<K, Offset>               Base;
-  typedef Periodic_3_Delaunay_triangulation_traits_base_3< K, Offset >    Self;
+  typedef Kernel                                                     K;
+  typedef Off                                                        Offset;
+  typedef Periodic_3_triangulation_traits_base_3<K, Offset>          Base;
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, Offset> Self;
 
   typedef typename Base::RT                   RT;
   typedef typename Base::FT                   FT;
@@ -56,7 +54,7 @@ public:
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
-  typedef Point_3 Point;
+  typedef Point_3                          Point;
 
   typedef typename Base::Segment_3         Segment_3;
   typedef typename Base::Triangle_3        Triangle_3;
@@ -64,12 +62,12 @@ public:
 
   // Delaunay specific predicates
   typedef Traits_with_offsets_adaptor<Self,
-				      typename K::Side_of_oriented_sphere_3>
+              typename K::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;
   typedef Traits_with_offsets_adaptor<Self, typename K::Compare_distance_3>
       Compare_distance_3;
    typedef Traits_with_offsets_adaptor<Self,
- 				      typename K::Side_of_bounded_sphere_3>
+              typename K::Side_of_bounded_sphere_3>
        Side_of_bounded_sphere_3;
 
   // Degenerate dimension predicates
@@ -81,7 +79,7 @@ public:
 
   // Delaunay specific constructions
   typedef Traits_with_offsets_adaptor<Self,
-				      typename K::Construct_circumcenter_3>
+              typename K::Construct_circumcenter_3>
       Construct_circumcenter_3;
 
   // Operations

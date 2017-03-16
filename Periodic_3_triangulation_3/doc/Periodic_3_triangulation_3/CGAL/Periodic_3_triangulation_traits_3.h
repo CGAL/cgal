@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3TraitsClasses
 
-\warning Using this traits class for Periodic_3_Delaunay_triangulation_3 is deprecated. You should use Periodic_3_Delaunay_triangulation_traits_3 instead.
-
 The class `Periodic_3_triangulation_traits_3` is designed as a default traits class for the
 class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationDataStructure_3>`. 
 
@@ -13,7 +11,7 @@ class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationD
 \tparam Periodic_3Offset_3 must be a model of the concept `Periodic_3Offset_3` and defaults to `Periodic_3_offset_3`. 
 
 If `Traits` is a `CGAL::Filtered_kernel` (detected when `Traits::Has_filtered_predicates` exists
-and is `true`), this class automatically provides filtered predicates. Similarly statically filtered predicates
+and is `true`), this class automatically provides filtered predicates. Similarly, statically filtered predicates
 will be used if the flag `Traits::Has_static_filters` exists and is `true`.
 By default, this holds for `CGAL::Exact_predicates_inexact_constructions_kernel` and
 `CGAL::Exact_predicates_exact_constructions_kernel`.
