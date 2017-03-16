@@ -357,6 +357,16 @@ public:
     else return _tds.number_of_vertices()/27;
   }
 
+  size_type number_of_finite_cells() const {
+    return number_of_cells();
+  }
+  size_type number_of_finite_facets() const {
+    return number_of_facets();
+  }
+  size_type number_of_finite_edges() const {
+    return number_of_finite_edges();
+  }
+
   size_type number_of_stored_cells() const {
     return _tds.number_of_cells();
   }
