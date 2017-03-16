@@ -65,6 +65,8 @@ create_single_source_cgal_program( "test_circulator.cpp" )
 
 create_single_source_cgal_program( "test_Gwdwg.cpp" )
 
+create_single_source_cgal_program( "test_bgl_dual.cpp" )
+
 create_single_source_cgal_program( "graph_concept_Polyhedron_3.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Dual.cpp" )
