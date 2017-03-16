@@ -54,7 +54,9 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
                                      const typename PeriodicTriangulation::Point& pointtt,
                                      const char* covering_test_HOM_filename,
                                      const char* covering_test_filename,
-                                     bool ex = false, bool hom = false)
+                                     bool ex = false,
+                                     bool hom = false,
+                                     bool test_input_ouput = true)
 {
   typedef PeriodicTriangulation                  P3T3;
 
@@ -651,56 +653,60 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
          == PT3.mirror_vertex(ch,0));
   assert(PT3.mirror_facet(Facet(ch,0)).first == ch->neighbor(0));
 
-  std::cout << "I/O" << std::endl;
-  std::cout << "  ascii" << std::endl;
 
-  std::stringstream ss1;
-  std::stringstream ss3;
-  ss1 << PT1;
-  ss3 << PT3;
-
-  P3T3 PT1r, PT3r;
-  ss1 >> PT1r;
-  ss3 >> PT3r;
-
-  assert(CGAL::is_ascii(ss1));
-  assert(CGAL::is_ascii(ss3));
-  if (!ex) assert(PT1 == PT1r);
-  if (!ex) assert(PT3 == PT3r);
-
-  std::cout << "  binary" << std::endl;
-
-  PT1r.clear();
-  PT3r.clear();
   // There are problems with the IO of exact number types in binary mode.
-  if (!ex) {
-    std::stringstream ss1b;
-    std::stringstream ss3b;
-    CGAL::set_binary_mode(ss1b);
-    CGAL::set_binary_mode(ss3b);
-    ss1b << PT1;
-    ss3b << PT3;
+  if(test_input_ouput)
+  {
+    std::cout << "I/O" << std::endl;
+    std::cout << "  ascii" << std::endl;
 
-    ss1b >> PT1r;
-    ss3b >> PT3r;
-    assert(CGAL::is_binary(ss1b));
-    assert(CGAL::is_binary(ss3b));
+    std::stringstream ss1;
+    std::stringstream ss3;
+    ss1 << PT1;
+    ss3 << PT3;
 
-    assert(PT1 == PT1r);
-    assert(PT3 == PT3r);
+    P3T3 PT1r, PT3r;
+    ss1 >> PT1r;
+    ss3 >> PT3r;
+
+    assert(CGAL::is_ascii(ss1));
+    assert(CGAL::is_ascii(ss3));
+    if (!ex) assert(PT1 == PT1r);
+    if (!ex) assert(PT3 == PT3r);
+
+    std::cout << "  binary" << std::endl;
+
+    PT1r.clear();
+    PT3r.clear();
+    if (!ex) {
+      std::stringstream ss1b;
+      std::stringstream ss3b;
+      CGAL::set_binary_mode(ss1b);
+      CGAL::set_binary_mode(ss3b);
+      ss1b << PT1;
+      ss3b << PT3;
+
+      ss1b >> PT1r;
+      ss3b >> PT3r;
+      assert(CGAL::is_binary(ss1b));
+      assert(CGAL::is_binary(ss3b));
+
+      assert(PT1 == PT1r);
+      assert(PT3 == PT3r);
+    }
+
+    std::cout << "  pretty" << std::endl;
+
+    PT1r.clear();
+    PT3r.clear();
+    std::stringstream ss1p;
+    std::stringstream ss3p;
+    CGAL::set_pretty_mode(ss1p);
+    CGAL::set_pretty_mode(ss3p);
+    ss1p << PT1;
+    ss3p << PT3;
+
+    assert(CGAL::is_pretty(ss1p));
+    assert(CGAL::is_pretty(ss3p));
   }
-
-  std::cout << "  pretty" << std::endl;
-
-  PT1r.clear();
-  PT3r.clear();
-  std::stringstream ss1p;
-  std::stringstream ss3p;
-  CGAL::set_pretty_mode(ss1p);
-  CGAL::set_pretty_mode(ss3p);
-  ss1p << PT1;
-  ss3p << PT3;
-
-  assert(CGAL::is_pretty(ss1p));
-  assert(CGAL::is_pretty(ss3p));
 }
