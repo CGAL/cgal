@@ -48,6 +48,7 @@
 
 #include <CGAL/Unique_hash_map.h>
 
+#include <CGAL/array.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 
@@ -128,17 +129,17 @@ public:
 
   typedef typename GT::Periodic_3_offset_3     Offset;
   typedef typename GT::Iso_cuboid_3            Iso_cuboid;
-  typedef array<int, 3>                        Covering_sheets;
+  typedef CGAL::cpp11::array<int, 3>           Covering_sheets;
 
   typedef typename GT::Point_3                 Point;
   typedef typename GT::Segment_3               Segment;
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
 
-  typedef std::pair<Point,Offset>              Periodic_point;
-  typedef array< std::pair<Point,Offset>, 2>   Periodic_segment;
-  typedef array< std::pair<Point,Offset>, 3>   Periodic_triangle;
-  typedef array< std::pair<Point,Offset>, 4>   Periodic_tetrahedron;
+  typedef std::pair<Point,Offset>                          Periodic_point;
+  typedef CGAL::cpp11::array<std::pair<Point,Offset>, 2>   Periodic_segment;
+  typedef CGAL::cpp11::array<std::pair<Point,Offset>, 3>   Periodic_triangle;
+  typedef CGAL::cpp11::array<std::pair<Point,Offset>, 4>   Periodic_tetrahedron;
 
   typedef typename TDS::Vertex                 Vertex;
   typedef typename TDS::Cell                   Cell;
@@ -248,7 +249,7 @@ public:
                                     == ntc(_domain.zmax())-ntc(_domain.zmin()));
     CGAL_triangulation_precondition(ntc(_domain.zmax())-ntc(_domain.zmin())
                                     == ntc(_domain.xmax())-ntc(_domain.xmin()));
-    _cover = make_array(3,3,3);
+    _cover = CGAL::make_array(3,3,3);
     init_tds();
   }
 
@@ -288,7 +289,7 @@ public:
     clear_covering_data();
     virtual_vertices.clear();
     virtual_vertices_reverse.clear();
-    _cover = make_array(3,3,3);
+    _cover = CGAL::make_array(3,3,3);
     v_offsets.clear();
   }
   //@}
@@ -326,7 +327,7 @@ public:
   }
   const std::vector<Vertex_handle>& periodic_copies(
       const Vertex_handle v) const {
-    CGAL_triangulation_precondition(number_of_sheets() != make_array(1,1,1) );
+    CGAL_triangulation_precondition(number_of_sheets() != CGAL::make_array(1,1,1));
     CGAL_triangulation_precondition(
         virtual_vertices.find(v) == virtual_vertices.end());
     CGAL_triangulation_assertion(
@@ -518,37 +519,38 @@ public:
   Periodic_tetrahedron construct_periodic_3_tetrahedron(
       const Point &p1, const Point &p2, const Point &p3, const Point &p4)
       const {
-    return make_array(std::make_pair(p1,Offset()), std::make_pair(p2,Offset()),
-                      std::make_pair(p3,Offset()), std::make_pair(p4,Offset()));
+    return CGAL::make_array(std::make_pair(p1,Offset()), std::make_pair(p2,Offset()),
+                            std::make_pair(p3,Offset()), std::make_pair(p4,Offset()));
   }
   Periodic_tetrahedron construct_periodic_3_tetrahedron(
       const Point &p1, const Point &p2, const Point &p3, const Point &p4,
       const Offset &o1, const Offset &o2, const Offset &o3, const Offset &o4)
       const {
-    return make_array(std::make_pair(p1,o1), std::make_pair(p2,o2),
-                      std::make_pair(p3,o3), std::make_pair(p4,o4));
+    return CGAL::make_array(std::make_pair(p1,o1), std::make_pair(p2,o2),
+                            std::make_pair(p3,o3), std::make_pair(p4,o4));
   }
 
   Periodic_triangle construct_periodic_3_triangle(
-      const Point &p1, const Point &p2, const Point &p3) const {
-    return make_array(std::make_pair(p1,Offset()),
-                      std::make_pair(p2,Offset()), std::make_pair(p3,Offset()));
+      const Point& p1, const Point& p2, const Point& p3) const {
+    return CGAL::make_array(std::make_pair(p1,Offset()),
+                            std::make_pair(p2,Offset()), std::make_pair(p3,Offset()));
   }
   Periodic_triangle construct_periodic_3_triangle(
-      const Point &p1, const Point &p2, const Point &p3,
-      const Offset &o1, const Offset &o2, const Offset &o3) const {
-    return make_array(std::make_pair(p1,o1), std::make_pair(p2,o2),
-                      std::make_pair(p3,o3));
+      const Point& p1, const Point& p2, const Point& p3,
+      const Offset& o1, const Offset& o2, const Offset& o3) const {
+    return CGAL::make_array(std::make_pair(p1,o1), std::make_pair(p2,o2),
+                            std::make_pair(p3,o3));
   }
 
   Periodic_segment construct_periodic_3_segment(
-      const Point &p1, const Point &p2) const {
-    return make_array(std::make_pair(p1,Offset()), std::make_pair(p2,Offset()));
+      const Point& p1, const Point& p2) const {
+    return CGAL::make_array(std::make_pair(p1,Offset()),
+                            std::make_pair(p2,Offset()));
   }
   Periodic_segment construct_periodic_3_segment(
-      const Point &p1, const Point &p2,
-      const Offset &o1, const Offset &o2) const {
-    return make_array(std::make_pair(p1,o1), std::make_pair(p2,o2));
+      const Point& p1, const Point& p2,
+      const Offset& o1, const Offset& o2) const {
+    return CGAL::make_array(std::make_pair(p1,o1), std::make_pair(p2,o2));
   }
 
   Tetrahedron construct_tetrahedron(
@@ -636,14 +638,13 @@ public:
   Periodic_segment periodic_segment(const Cell_handle c, int i, int j) const {
     CGAL_triangulation_precondition( i != j );
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
-    CGAL_triangulation_precondition( i >= 0 && i <= 3
-                                     && j >= 0 && j <= 3 );
-    return make_array( std::make_pair(c->vertex(i)->point(),
-                                      get_offset(c,i)),
-                       std::make_pair(c->vertex(j)->point(),
-                                      get_offset(c,j)) );
+    CGAL_triangulation_precondition( i >= 0 && i <= 3 && j >= 0 && j <= 3 );
+    return CGAL::make_array( std::make_pair(c->vertex(i)->point(),
+                                            get_offset(c,i)),
+                             std::make_pair(c->vertex(j)->point(),
+                                            get_offset(c,j)) );
   }
-  Periodic_segment periodic_segment(const Edge & e) const {
+  Periodic_segment periodic_segment(const Edge& e) const {
     return periodic_segment(e.first,e.second,e.third);
   }
 
@@ -654,7 +655,7 @@ public:
 
   Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c) const {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
-    return make_array(
+    return CGAL::make_array(
           std::make_pair(c->vertex(0)->point(), get_offset(c,0)),
           std::make_pair(c->vertex(1)->point(), get_offset(c,1)),
           std::make_pair(c->vertex(2)->point(), get_offset(c,2)),
@@ -1561,8 +1562,11 @@ protected:
   }
 
 private:
-bool is_canonical(const Facet &f) const {
-  if (number_of_sheets() == make_array(1,1,1)) return true;
+bool is_canonical(const Facet& f) const
+{
+  if (number_of_sheets() == CGAL::make_array(1,1,1))
+    return true;
+
   Offset cell_off0 = int_to_off(f.first->offset((f.second+1)&3));
   Offset cell_off1 = int_to_off(f.first->offset((f.second+2)&3));
   Offset cell_off2 = int_to_off(f.first->offset((f.second+3)&3));
@@ -1618,7 +1622,7 @@ protected:
                     (std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
     const std::pair<Point,Offset> pp1 = std::make_pair(point(p1), o1-cumm_off);
     const std::pair<Point,Offset> pp2 = std::make_pair(point(p2), o2-cumm_off);
-    ps = make_array(pp1,pp2);
+    ps = CGAL::make_array(pp1,pp2);
     return (cumm_off == Offset(0,0,0));
   }
 
@@ -1843,18 +1847,18 @@ periodic_triangle(const Cell_handle c, int i) const
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
   CGAL_triangulation_precondition( i >= 0 && i <= 3 );
   if ( (i&1)==0 )
-    return make_array(std::make_pair(c->vertex( (i+2)&3 )->point(),
-                                     get_offset(c,(i+2)&3)),
-                      std::make_pair(c->vertex( (i+1)&3 )->point(),
-                                     get_offset(c,(i+1)&3)),
-                      std::make_pair(c->vertex( (i+3)&3 )->point(),
-                                     get_offset(c,(i+3)&3)) );
-  return make_array(std::make_pair(c->vertex( (i+1)&3 )->point(),
-                                   get_offset(c,(i+1)&3)),
-                    std::make_pair(c->vertex( (i+2)&3 )->point(),
-                                   get_offset(c,(i+2)&3)),
-                    std::make_pair(c->vertex( (i+3)&3 )->point(),
-                                   get_offset(c,(i+3)&3)) );
+    return CGAL::make_array(std::make_pair(c->vertex( (i+2)&3 )->point(),
+                                           get_offset(c,(i+2)&3)),
+                            std::make_pair(c->vertex( (i+1)&3 )->point(),
+                                           get_offset(c,(i+1)&3)),
+                            std::make_pair(c->vertex( (i+3)&3 )->point(),
+                                           get_offset(c,(i+3)&3)) );
+  return CGAL::make_array(std::make_pair(c->vertex( (i+1)&3 )->point(),
+                                         get_offset(c,(i+1)&3)),
+                          std::make_pair(c->vertex( (i+2)&3 )->point(),
+                                         get_offset(c,(i+2)&3)),
+                          std::make_pair(c->vertex( (i+3)&3 )->point(),
+                                         get_offset(c,(i+3)&3)) );
 }
 
 /** Assumes a point, an offset, and a cell to start from.
@@ -3376,7 +3380,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
     }
     _tds.delete_vertices(vertices_to_delete.begin(), vertices_to_delete.end());
   }
-  _cover = make_array(1,1,1);
+  _cover = CGAL::make_array(1,1,1);
   virtual_vertices.clear();
   virtual_vertices_reverse.clear();
   reinsert_hidden_points_after_converting_to_1_sheeted(hidden_points);
@@ -3385,7 +3389,8 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
 template < class GT, class TDS >
 inline void
 Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering() {
-  if (_cover == make_array(3,3,3)) return;
+  if (_cover == CGAL::make_array(3,3,3))
+    return;
   CGAL_triangulation_precondition(is_1_cover());
 
   // Create 27 copies of each vertex and write virtual_vertices and
@@ -3435,10 +3440,10 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering() {
   }
 
   // Store neighboring offsets in a separate data structure
-  std::list< array<Offset,4> > off_nb;
+  std::list<CGAL::cpp11::array<Offset,4> > off_nb;
   for (typename std::list<Cell_handle>::iterator cit = original_cells.begin() ;
        cit != original_cells.end() ; ++cit) {
-    array<Offset,4> off_nb_c;
+    CGAL::cpp11::array<Offset,4> off_nb_c;
     for (int i=0; i<4; i++){
       Cell_handle ccc = *cit;
       Cell_handle nnn = ccc->neighbor(i);
@@ -3499,7 +3504,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering() {
   }
 
   // Set neighboring relations of cell copies
-  typename std::list< array<Offset,4> >::iterator oit = off_nb.begin();
+  typename std::list<CGAL::cpp11::array<Offset,4> >::iterator oit = off_nb.begin();
   for (typename std::list<Cell_handle>::iterator cit = original_cells.begin();
        cit != original_cells.end() ; ++cit, ++oit) {
     CGAL_triangulation_assertion( oit != off_nb.end() );
@@ -3619,7 +3624,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering() {
     CGAL_triangulation_assertion((*cit)->offset(3) == 0);
   }
 
-  _cover = make_array(3,3,3);
+  _cover = CGAL::make_array(3,3,3);
   CGAL_triangulation_expensive_assertion(is_valid());
 
   update_cover_data_after_converting_to_27_sheeted_covering();
@@ -3851,7 +3856,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
   tr.tds().set_dimension((n==0?-2:3));
   tr._domain = domain;
   tr._gt.set_domain(domain);
-  tr._cover = make_array(cx,cy,cz);
+  tr._cover = CGAL::make_array(cx,cy,cz);
 
   if ( n==0 ) return is;
 
