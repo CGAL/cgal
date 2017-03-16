@@ -79,7 +79,7 @@ public:
     _domain = domain;
   }
 
-  Iso_cuboid_3 get_domain() const {
+  const Iso_cuboid_3& get_domain() const {
     return _domain;
   }
 
