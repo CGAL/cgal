@@ -809,6 +809,21 @@ a 3D medical image.
 View of a 3D mesh produced from a 3D image with different size for different organs. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_variable generates this file.
 \cgalFigureEnd
 
+\subsubsection Mesh_3LipschitzSizingField Lipschitz Sizing Field
+
+\anchor Mesh_3_subsubsection_examples_3d_image_lip_sizing
+
+The following example shows how to use another custom sizing function, that is
+`k`-Lipschitz. For each subdomain, the user provides the parameter `k`,
+a minimal size and maximal size for cells.
+
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_lipschitz_sizing.cpp}
+
+\cgalFigureBegin{figurefandisk_lip_sizing,fandisk_lip.jpg}
+View of a 3D mesh produced with a Lipschitz sizing field,
+for a single subdomain. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_lip_sizing generates this mesh.
+\cgalFigureEnd
+
 \subsection Mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
 
 \anchor Mesh_3_subsection_example_polyhedral_with_edges

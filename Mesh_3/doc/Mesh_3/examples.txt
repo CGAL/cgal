@@ -17,6 +17,7 @@
 \example Mesh_3/mesh_polyhedral_domain.cpp
 \example Mesh_3/remesh_polyhedral_surface.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_features.cpp
+\example Mesh_3/mesh_polyhedral_domain_with_lipschitz_sizing.cpp
 \example Mesh_3/mesh_two_implicit_spheres_with_balls.cpp
 \example Mesh_3/mesh_3D_gray_image.cpp
 \example Mesh_3/mesh_3D_gray_vtk_image.cpp
