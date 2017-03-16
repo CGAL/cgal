@@ -54,9 +54,7 @@ public:
     Side_of_oriented_sphere_3;
 
   Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object() const {
-    return Side_of_oriented_sphere_3(&this->_domain,
-                                     &this->_domain_e,
-                                     &this->_domain_f);
+    return Side_of_oriented_sphere_3(&this->_domain, &this->_domain_e, &this->_domain_f);
   }
 };
 

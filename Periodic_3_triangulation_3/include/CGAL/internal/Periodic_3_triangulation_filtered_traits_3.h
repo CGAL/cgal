@@ -93,7 +93,6 @@ struct Offset_converter_3
   typedef typename Periodic_3_triangulation_traits_base_3<Target_kernel>
                    ::Point_3  Target_pt;
 
-
   using Converter::operator();
 
   Target_off
@@ -103,7 +102,7 @@ struct Offset_converter_3
   }
 };
 
-// The argument is supposed to be a Filtered_kernel-like kernel.
+// The first template item is supposed to be a Filtered_kernel-like kernel.
 template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_base_3
   : public Periodic_3_triangulation_traits_base_3<K, Off>

@@ -29,7 +29,6 @@
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Traits_with_offsets_adaptor.h>
 #include <CGAL/Periodic_3_construct_point_3.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Has_boolean_tags.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
@@ -62,25 +61,23 @@ public:
   typedef typename Base::Tetrahedron_3     Tetrahedron_3;
 
   // Delaunay specific predicates
-  typedef Traits_with_offsets_adaptor<Self,
-              typename K::Side_of_oriented_sphere_3>
+  typedef Traits_with_offsets_adaptor<Self, typename K::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;
   typedef Traits_with_offsets_adaptor<Self, typename K::Compare_distance_3>
       Compare_distance_3;
-   typedef Traits_with_offsets_adaptor<Self,
-              typename K::Side_of_bounded_sphere_3>
-       Side_of_bounded_sphere_3;
 
   // Degenerate dimension predicates
   typedef Traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3>
       Coplanar_orientation_3;
-  typedef Traits_with_offsets_adaptor<Self,
-              typename K::Coplanar_side_of_bounded_circle_3>
+  typedef Traits_with_offsets_adaptor<Self, typename K::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
 
+  // When is_Gabriel is used
+   typedef Traits_with_offsets_adaptor<Self, typename K::Side_of_bounded_sphere_3>
+       Side_of_bounded_sphere_3;
+
   // Delaunay specific constructions
-  typedef Traits_with_offsets_adaptor<Self,
-              typename K::Construct_circumcenter_3>
+  typedef Traits_with_offsets_adaptor<Self, typename K::Construct_circumcenter_3>
       Construct_circumcenter_3;
 
   // Operations

@@ -37,7 +37,7 @@
 
 namespace CGAL {
 
-// The argument is supposed to be a Filtered_kernel-like kernel.
+// The first template item is supposed to be a Filtered_kernel-like kernel.
 template < typename K, typename Off >
 class Periodic_3_Delaunay_triangulation_filtered_traits_base_3
   : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>

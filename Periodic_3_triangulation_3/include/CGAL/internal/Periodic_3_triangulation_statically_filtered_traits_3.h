@@ -47,12 +47,12 @@ namespace CGAL {
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename Traits >
-class Periodic_3_triangulation_statically_filtered_traits_3 : public Traits
+class Periodic_3_triangulation_statically_filtered_traits_3
+    : public Traits
 {
   typedef Periodic_3_triangulation_statically_filtered_traits_3<Traits> Self;
 
 public:
-
   typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
     Orientation_3;
 
