@@ -96,7 +96,7 @@ bool planes_differ (const Plane& a, const Plane& b)
           (std::fabs (a.d() - b.d()) > 1e-6));
 }
 
-void check_ransac_size (const Efficient_ransac& ransac, std::ptrdiff_t nb)
+void check_ransac_size (const Efficient_ransac& ransac, std::size_t nb)
 {
   if (ransac.shapes().size() != nb)
     {
