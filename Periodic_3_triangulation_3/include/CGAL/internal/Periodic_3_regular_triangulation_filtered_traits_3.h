@@ -55,55 +55,18 @@ private:
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
-  typedef typename C2E::Target_kernel::Iso_cuboid_3 Exact_iso_cuboid_3;
-  typedef typename C2F::Target_kernel::Iso_cuboid_3 Approximate_iso_cuboid_3;
-
 public:
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
-
-  void set_domain(const Iso_cuboid_3& domain) {
-    C2E c2e;
-    C2F c2f;
-    this->_domain = domain;
-    this->_domain_e = c2e(this->_domain);
-    this->_domain_f = c2f(this->_domain);
-  }
-
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Compare_xyz_3,
-            typename Filtering_traits::Compare_xyz_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Compare_xyz_3;
-
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Coplanar_orientation_3,
-            typename Filtering_traits::Coplanar_orientation_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Coplanar_orientation_3;
-
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Orientation_3,
-            typename Filtering_traits::Orientation_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Orientation_3;
-
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Coplanar_side_of_bounded_circle_3,
-            typename Filtering_traits::Coplanar_side_of_bounded_circle_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Coplanar_side_of_bounded_circle_3;
-
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Compare_distance_3,
-            typename Filtering_traits::Compare_distance_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Compare_distance_3;
-
   typedef Filtered_periodic_predicate<
             typename Exact_traits::Power_side_of_oriented_power_sphere_3,
             typename Filtering_traits::Power_side_of_oriented_power_sphere_3,
             Offset_converter_3<C2E>,
             Offset_converter_3<C2F> >  Power_side_of_oriented_power_sphere_3;
+
+  typedef Filtered_periodic_predicate<
+            typename Exact_traits::Compare_weighted_squared_radius_3,
+            typename Filtering_traits::Compare_weighted_squared_radius_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Compare_weighted_squared_radius_3;
 
   typedef Filtered_periodic_predicate<
             typename Exact_traits::Compare_power_distance_3,
@@ -112,49 +75,35 @@ public:
             Offset_converter_3<C2F> >  Compare_power_distance_3;
 
   typedef Filtered_periodic_predicate<
-            typename Exact_traits::Compare_weighted_squared_radius_3,
-            typename Filtering_traits::Compare_weighted_squared_radius_3,
+            typename Exact_traits::Coplanar_orientation_3,
+            typename Filtering_traits::Coplanar_orientation_3,
             Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Compare_weighted_squared_radius_3;
+            Offset_converter_3<C2F> >  Coplanar_orientation_3;
 
-  Compare_xyz_3 compare_xyz_3_object() const
-  { return Compare_xyz_3(&_domain_e,&_domain_f);}
-
-  Coplanar_orientation_3 coplanar_orientation_3_object() const
-  { return Coplanar_orientation_3(&_domain_e,&_domain_f); }
-
-  Orientation_3 orientation_3_object() const
-  { return Orientation_3(&_domain_e,&_domain_f);}
-
-  Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object() const
-  { return Coplanar_side_of_bounded_circle_3(&_domain_e,&_domain_f); }
-
-  Compare_distance_3 compare_distance_3_object() const
-  { return Compare_distance_3(&_domain_e,&_domain_f); }
-
-  // predicates for the regular triangulation
-  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object () const
-  {
-    return Power_side_of_oriented_power_sphere_3(&_domain_e,&_domain_f);
+  Coplanar_orientation_3
+  coplanar_orientation_3_object() const {
+    return Coplanar_orientation_3(&this->_domain_e,&this->_domain_f);
   }
 
-  Compare_power_distance_3 compare_power_distance_3_object () const
-  {
-    return Compare_power_distance_3(&_domain_e,&_domain_f);
+  Power_side_of_oriented_power_sphere_3
+  power_side_of_oriented_power_sphere_3_object() const {
+    return Power_side_of_oriented_power_sphere_3(&this->_domain_e,&this->_domain_f);
   }
 
-  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object () const
-  {
-    return Compare_weighted_squared_radius_3(&_domain_e,&_domain_f);
+  Compare_power_distance_3
+  compare_power_distance_3_object() const {
+    return Compare_power_distance_3(&this->_domain_e,&this->_domain_f);
   }
 
- protected:
-  Exact_iso_cuboid_3 _domain_e;
-  Approximate_iso_cuboid_3 _domain_f;
+  Compare_weighted_squared_radius_3
+  compare_weighted_squared_radius_3_object() const {
+    return Compare_weighted_squared_radius_3(&this->_domain_e,&this->_domain_f);
+  }
 };
 
 } // namespace CGAL
 
+// no static filters yet for periodic regular triangulations
 // #include <CGAL/Periodic_3_regular_triangulation_statically_filtered_traits_3.h>
 
 namespace CGAL {
