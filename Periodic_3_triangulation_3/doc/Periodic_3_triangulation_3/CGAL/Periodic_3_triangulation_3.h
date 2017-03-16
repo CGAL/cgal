@@ -366,6 +366,12 @@ currently computed in.
 */ 
 Covering_sheets number_of_sheets() const; 
 
+/*!
+Get the offset between the origins of the internal offset coordinate
+systems of two neighboring cells with respect from ch to its i-th neighbor.
+*/
+Offset neighbor_offset(Cell_handle ch, int i) const;
+
 /// @} 
 
 /// \name Non const access 
@@ -536,6 +542,16 @@ Periodic_segment periodic_segment(const Cell_handle c, int
 i, int j) const; 
 
 /*!
+Returns the periodic segment formed by the two point-offset pairs
+corresponding to the two vertices of edge `(c,i,j)`.
+
+A translation in accordance with `offset` is applied on the point-offet pairs.
+\pre \f$ i,j \in\{0,1,2,3\}\f$, \f$ i\neq j\f$
+*/
+Periodic_segment periodic_segment(const Cell_handle c, Offset offset,  int
+i, int j) const;
+
+/*!
 Same as the previous method for edge `e`. 
 */ 
 Periodic_segment periodic_segment(const Edge & e) const; 
@@ -551,6 +567,19 @@ Periodic_triangle periodic_triangle(const Cell_handle c, int
 i) const; 
 
 /*!
+Returns the periodic triangle formed by the three point-offset pairs
+corresponding to the three vertices of facet
+`(c,i)`.
+
+A translation in accordance with `offset` is applied on the point-offet pairs.
+
+The triangle is oriented so that its normal points to the
+inside of cell `c`.
+\pre \f$ i \in\{0,1,2,3\}\f$
+*/
+Periodic_triangle periodic_triangle(const Cell_handle c, Offset offset, int i) const;
+
+/*!
 Same as the previous method for facet `f`. 
 */ 
 Periodic_triangle periodic_triangle(const Facet & f) const; 
@@ -561,6 +590,13 @@ corresponding to the four vertices of `c`.
 */ 
 Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c) const; 
 
+/*!
+Returns the periodic tetrahedron formed by the four point-offset pairs
+corresponding to the four vertices of `c`.
+
+A translation in accordance with `offset` is applied on the point-offet pairs.
+*/
+Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) const;
 
 /// \name 
 /// Note that a traits class providing exact constructions should be
@@ -781,6 +817,21 @@ search.
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle()) const; 
 
+/*!
+Returns the cell that contains the query in its interior. If
+`query` lies on a facet, an edge or on a vertex, one of the cells
+having `query` on its boundary is returned.
+
+`locate_offset` is the offset that must be used by the function  
+periodic_tetrahedron() together with the returned cell, so that the
+constructed Periodic_tetrahedron contains the query point.
+
+The optional argument `start` is used as a starting place for the
+search.
+\pre `query` lies in the original domain `domain`.
+*/
+Cell_handle
+locate(const Point & query, Offset& locate_offset, Cell_handle start = Cell_handle()) const;
 
 /*!
 Same as `locate()` but uses inexact predicates.
@@ -818,6 +869,32 @@ search.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle() ) const; 
+
+/*!
+The \f$ k\f$-face that contains `query` in its interior is
+returned, by means of the cell returned together with `lt`, which
+is set to the locate type of the query (`VERTEX, EDGE, FACET, CELL`) and two indices `li` and `lj` that
+specify the \f$ k\f$-face of the cell containing `query`.
+
+If the \f$ k\f$-face is a cell, `li` and `lj` have no
+meaning; if it is a facet (resp. vertex), `li` gives the index of
+the facet (resp. vertex) and `lj` has no meaning; if it is an
+edge, `li` and `lj` give the indices of its vertices.
+
+If there is no vertex in the triangulation yet, `lt` is set to
+`EMPTY` and `locate` returns the default constructed handle.
+
+`locate_offset` is the offset that must be used by the function  
+periodic_tetrahedron() together with the returned cell, so that the
+constructed Periodic_tetrahedron contains the query point.
+
+The optional argument `start` is used as a starting place for the
+search.
+\pre `query` lies in the original domain `domain`.
+*/
+Cell_handle
+locate(const Point & query, Offset& locate_offset, Locate_type & lt,
+int & li, int & lj, Cell_handle start = Cell_handle() ) const;
 
 /*!
 Returns a value indicating on which side of the oriented boundary 

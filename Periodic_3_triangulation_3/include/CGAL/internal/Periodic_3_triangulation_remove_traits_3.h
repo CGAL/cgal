@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
@@ -23,43 +23,42 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template < class Traits_, class Functor_ >
 class Point_offset_adaptor {
-  typedef Traits_ Traits;
-  typedef Functor_ Functor;
+  typedef Traits_                        Traits;
+  typedef Functor_                       Functor;
 
   typedef typename Traits::Point_3       Point;
 
 public:
   typedef typename Functor::result_type result_type;
 
- Point_offset_adaptor(const Functor & functor) : _functor(functor) {}
+  Point_offset_adaptor(const Functor & functor) : _functor(functor) {}
 
   result_type operator()(const Point& p0, const Point& p1) const {
     return _functor(p0.first, p1.first,
-	p0.second, p1.second);
+                    p0.second, p1.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2) const {
+                         const Point& p2) const {
     return _functor(p0.first, p1.first, p2.first,
-	p0.second, p1.second, p2.second);
+                    p0.second, p1.second, p2.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3) const {
+                         const Point& p2, const Point& p3) const {
     return _functor(p0.first, p1.first, p2.first, p3.first,
-	p0.second, p1.second, p2.second, p3.second);
+                    p0.second, p1.second, p2.second, p3.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3, const Point& p4) const {
+                         const Point& p2, const Point& p3, const Point& p4) const {
     return _functor(p0.first, p1.first, p2.first, p3.first, p4.first,
-	p0.second, p1.second, p2.second, p3.second, p4.second);
+                    p0.second, p1.second, p2.second, p3.second, p4.second);
   }
 
 private:
@@ -73,12 +72,12 @@ public:
   typedef P3DTTraits                                            PT;
   typedef typename P3DTTraits::K                                Base;
   typedef Off                                                   Offset;
-  typedef Periodic_3_triangulation_remove_traits_3< PT,Offset > Self;  
+  typedef Periodic_3_triangulation_remove_traits_3< PT,Offset > Self;
 
   typedef typename PT::RT                RT;
   typedef typename PT::FT                FT;
   typedef typename PT::Point_3           Bare_point;
-  typedef std::pair<Bare_point,Offset>       Point_3;
+  typedef std::pair<Bare_point,Offset>   Point_3;
   typedef typename PT::Iso_cuboid_3      Iso_cuboid_3;
 
   Periodic_3_triangulation_remove_traits_3(const Iso_cuboid_3& domain)
@@ -88,20 +87,19 @@ public:
 
   // Triangulation traits
   typedef Point_offset_adaptor<Self, typename PT::Compare_xyz_3>
-      Compare_xyz_3;
+                                         Compare_xyz_3;
   typedef Point_offset_adaptor<Self, typename PT::Coplanar_orientation_3>
-      Coplanar_orientation_3;
+                                         Coplanar_orientation_3;
   typedef Point_offset_adaptor<Self, typename PT::Orientation_3>
-      Orientation_3;
-  
+                                         Orientation_3;
+
   // Delaunay Triangulation traits
-  typedef Point_offset_adaptor<Self,
-	  typename PT::Coplanar_side_of_bounded_circle_3>
-      Coplanar_side_of_bounded_circle_3;
+  typedef Point_offset_adaptor<Self, typename PT::Coplanar_side_of_bounded_circle_3>
+                                         Coplanar_side_of_bounded_circle_3;
   typedef Point_offset_adaptor<Self, typename PT::Side_of_oriented_sphere_3>
-      Side_of_oriented_sphere_3;
+                                         Side_of_oriented_sphere_3;
   typedef Point_offset_adaptor<Self, typename PT::Compare_distance_3>
-      Compare_distance_3;
+                                         Compare_distance_3;
 
   // Operations
   Compare_xyz_3
