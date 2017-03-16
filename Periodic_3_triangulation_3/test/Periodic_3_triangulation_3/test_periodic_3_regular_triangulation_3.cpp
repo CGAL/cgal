@@ -709,8 +709,10 @@ public:
     std::vector<Facet> int_facets;
     Point_3 bp(-0.5,-0.5,0.5);
     Cell_handle ch = p3rt3.locate(bp);
-    p3rt3.find_conflicts(bp, ch, std::back_inserter(bd_facets), std::back_inserter(conflict_cells),
-        std::back_inserter(int_facets));
+    p3rt3.find_conflicts(bp, ch,
+                         std::back_inserter(bd_facets),
+                         std::back_inserter(conflict_cells),
+                         std::back_inserter(int_facets));
     for (unsigned int i = 0; i < bd_facets.size(); i++)
     {
       assert(
