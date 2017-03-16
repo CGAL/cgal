@@ -68,6 +68,7 @@
    <addaction name="separator"/>
    <addaction name="actionShowTriangulation"/>
    <addaction name="actionShowVoronoi"/>
+   <addaction name="actionShowOctagon"/>
    <addaction name="separator"/>
    <addaction name="actionRecenter"/>
   </widget>
@@ -106,6 +107,7 @@
     <addaction name="separator"/>
     <addaction name="actionShowTriangulation"/>
     <addaction name="actionShowVoronoi"/>
+    <addaction name="actionShowOctagon"/>
     <addaction name="separator"/>
     <addaction name="actionRecenter"/>
    </widget>
@@ -170,6 +172,24 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionShowOctagon">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Main_resources.qrc">
+     <normaloff>:/icon/icons/octagon.png</normaloff>:/icon/icons/octagon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show/hide &amp;Octagon</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionShowVoronoi">

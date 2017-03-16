@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="icon">
     <file>icons/fit-page-32.png</file>
+    <file>icons/octagon.png</file>
     <file>icons/inputPoint.png</file>
     <file>icons/about_CGAL.html</file>
     <file>icons/cgal_logo.xpm</file>

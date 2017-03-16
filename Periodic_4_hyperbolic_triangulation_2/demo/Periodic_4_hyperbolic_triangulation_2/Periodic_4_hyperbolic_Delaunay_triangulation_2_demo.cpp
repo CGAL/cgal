@@ -79,6 +79,8 @@ public slots:
 
   void on_actionShowVoronoi_toggled(bool checked);
 
+  void on_actionShowOctagon_toggled(bool checked);
+
   void on_actionInsertPoint_toggled(bool checked);
   
   void on_actionInsertRandomPoints_triggered();
@@ -162,6 +164,7 @@ MainWindow::MainWindow()
   // Check two actions 
   this->actionInsertPoint->setChecked(true);
   this->actionShowTriangulation->setChecked(true);
+  this->actionShowOctagon->setChecked(true);
 
   // //
   // // Setup the scene and the view
@@ -245,6 +248,11 @@ MainWindow::on_actionShowVoronoi_toggled(bool checked)
   vgi->setVisible(checked);
 }
 
+void
+MainWindow::on_actionShowOctagon_toggled(bool checked)
+{
+  dgi->setVisibleOctagon(checked);
+}
 
 void
 MainWindow::on_actionClear_triggered()
@@ -300,9 +308,10 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 
   CGAL::Timer tt;
   tt.start();
-  for (int i = 0; i < pts.size(); i++) {
-    dt.insert(pts[i]);
-  }
+  dt.insert(pts.begin(), pts.end());
+  // for (int i = 0; i < pts.size(); i++) {
+  //   dt.insert(pts[i]);
+  // }
   tt.stop();
 
   cout << "Time elapsed for the insertion of " << number_of_points << " points: " << tt.time() << " secs." << endl;

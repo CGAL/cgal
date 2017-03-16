@@ -85,6 +85,12 @@ public:
     update();
   }
 
+  void setVisibleOctagon(const bool b)
+  {
+    visible_octagon = b;
+    update();
+  }
+
   bool visibleEdges() const
   {
     return visible_edges;
@@ -117,6 +123,7 @@ protected:
   QPen edges_pen;
   bool visible_edges;
   bool visible_vertices;
+  bool visible_octagon;
 };
 
 
@@ -124,7 +131,7 @@ template <typename T>
 TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
   :  t(t_), painterostream(0),
      bb(0,0,0,0), bb_initialized(false),
-     visible_edges(true), visible_vertices(true)
+     visible_edges(true), visible_vertices(true), visible_octagon(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(t->number_of_vertices() == 0){
@@ -169,41 +176,43 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   QPen temp = painter->pen();
   QPen old = temp;
   
-  temp.setWidthF(0.0035);
+  temp.setWidthF(0.0125);
   temp.setColor(::Qt::black);
   painter->setPen(temp);
   painterostream = PainterOstream<Geom_traits>(painter);
-
-  typedef typename Geom_traits::FT        FT;
-  typedef typename Geom_traits::Point_2   Point_2;
-  FT ep = CGAL::sqrt(FT(2)+CGAL::sqrt(FT(2)));
-  FT em = CGAL::sqrt(FT(2)-CGAL::sqrt(FT(2)));
-  FT p14( CGAL::sqrt(CGAL::sqrt(FT(2))) );
-  FT p34( p14*p14*p14 );
   
-  Point_2 v0(ep*p34/FT(4), -em*p34/FT(4));
-  Point_2 v1(p14*(ep + em)/FT(4), p14*(ep - em)/FT(4));
-  Point_2 v2(em*p34/FT(4), ep*p34/FT(4));
-  Point_2 v3(-p14*(ep - em)/FT(4), p14*(ep + em)/FT(4));
-  Point_2 v4(-ep*p34/FT(4), em*p34/FT(4));
-  Point_2 v5(-p14*(ep + em)/FT(4), -p14*(ep - em)/FT(4));
-  Point_2 v6(-em*p34/FT(4), -ep*p34/FT(4));
-  Point_2 v7(p14*(ep - em)/FT(4), -p14*(ep + em)/FT(4));
-
   painter->drawEllipse(QRectF(-1.0, -1.0, 2.0, 2.0));
 
-  painterostream << t->segment(v0, v1);
-  painterostream << t->segment(v1, v2);
-  painterostream << t->segment(v2, v3);
-  painterostream << t->segment(v3, v4);
-  painterostream << t->segment(v4, v5);
-  painterostream << t->segment(v5, v6);
-  painterostream << t->segment(v6, v7);
-  painterostream << t->segment(v7, v0);
+  if (visible_octagon) {
+    typedef typename Geom_traits::FT        FT;
+    typedef typename Geom_traits::Point_2   Point_2;
+    FT ep = CGAL::sqrt(FT(2)+CGAL::sqrt(FT(2)));
+    FT em = CGAL::sqrt(FT(2)-CGAL::sqrt(FT(2)));
+    FT p14( CGAL::sqrt(CGAL::sqrt(FT(2))) );
+    FT p34( p14*p14*p14 );
+
+    Point_2 v0(ep*p34/FT(4), -em*p34/FT(4));
+    Point_2 v1(p14*(ep + em)/FT(4), p14*(ep - em)/FT(4));
+    Point_2 v2(em*p34/FT(4), ep*p34/FT(4));
+    Point_2 v3(-p14*(ep - em)/FT(4), p14*(ep + em)/FT(4));
+    Point_2 v4(-ep*p34/FT(4), em*p34/FT(4));
+    Point_2 v5(-p14*(ep + em)/FT(4), -p14*(ep - em)/FT(4));
+    Point_2 v6(-em*p34/FT(4), -ep*p34/FT(4));
+    Point_2 v7(p14*(ep - em)/FT(4), -p14*(ep + em)/FT(4));
+
+    painterostream << t->segment(v0, v1);
+    painterostream << t->segment(v1, v2);
+    painterostream << t->segment(v2, v3);
+    painterostream << t->segment(v3, v4);
+    painterostream << t->segment(v4, v5);
+    painterostream << t->segment(v5, v6);
+    painterostream << t->segment(v6, v7);
+    painterostream << t->segment(v7, v0);
+  }
 
   if (visible_edges) {
 
-    temp.setWidthF(0.0025);
+    temp.setWidthF(0.01);
     temp.setColor(::Qt::darkGreen);
     painter->setPen(temp);
     painterostream = PainterOstream<Geom_traits>(painter);
@@ -249,7 +258,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       double py = to_double(it->point().y());
       double dist = px*px + py*py;
 
-      double width = 5.*(exp(.85) - exp(dist));
+      double width = 10.*(exp(.85) - exp(dist));
       temp.setWidthF(width);
 
       painter->setPen(temp);

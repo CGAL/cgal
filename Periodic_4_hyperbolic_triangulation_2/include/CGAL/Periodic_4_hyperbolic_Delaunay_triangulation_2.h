@@ -150,18 +150,38 @@ namespace CGAL {
 
 	std::vector<Vertex_handle> insert_dummy_points(bool rational = true);
 
-	Vertex_handle insert(const Point  &p, Face_handle start = Face_handle() );
+	Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(), bool batch_insertion = false, bool verified_input = false);
 
 	template < class InputIterator >
 	std::ptrdiff_t
-	insert(InputIterator first, InputIterator last) {
+	insert(InputIterator first, InputIterator last, bool verified_input = false) {
 	  size_type n = this->number_of_vertices();
 
 	  std::vector<Point> points(first, last);
 	  spatial_sort(points.begin(), points.end(), geom_traits());
 	  Face_handle f;
-	  for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end(); p != end; ++p)
-		  f = insert(*p, f)->face();
+	  for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end(); p != end; ++p){
+		  f = insert(*p, f, true, verified_input)->face();
+	  }
+
+	  for (int i = 0; i < dummy_points.size(); i++) {
+			if (dummy_points[i].is_inserted()) {
+				typedef Delaunay_triangulation_2<GT, TDS>           Delaunay;
+				Delaunay dt;
+				std::map<Vertex_handle, Vertex_handle> vmap;
+
+				if (is_removable(dummy_points[i].vertex(), dt, vmap)) {
+					remove(dummy_points[i].vertex());
+					dummy_points[i].set_inserted(false);
+				}
+			}
+		}
+
+		n_dpt = 0;
+		for (int i = 0; i < dummy_points.size(); i++) {
+			if (dummy_points[i].is_inserted())
+				n_dpt++;
+		}
 
 	  return this->number_of_vertices() - n;
 	}
@@ -207,8 +227,6 @@ namespace CGAL {
 	}
 
 
-
-
 	Point_2	dual (Face_handle f, Offset nboff = Offset()) const {
 		//cout << "Making dual of Face!" << endl;
 		Point_2 res = Construct_inexact_hyperbolic_circumcenter_2()(	f->vertex(0)->point(), 		f->vertex(1)->point(), 		f->vertex(2)->point(),
@@ -234,12 +252,6 @@ namespace CGAL {
 
 };  // class Periodic_4_hyperbolic_Delaunay_triangulation_2
 
-
-template <class Gt>
-typename Gt::FT dist(typename Gt::Point_2 p, typename Gt::Point_2 q) {
-  typename Gt::FT r = (p.x() - q.x())*(p.x() - q.x()) + (p.y() - q.y())*(p.y() - q.y());
-  return sqrt(r);
-}
 
 
 template <class Gt>
@@ -354,20 +366,24 @@ template < class Gt, class Tds >
 inline
 typename Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
-insert(const Point  &p,  Face_handle hint) {
+insert(const Point  &p,  Face_handle hint, bool batch_insertion, bool verified_input) {
 
 	Vertex_handle v;
 
 	typedef typename Gt::Side_of_fundamental_octagon Side_of_fundamental_octagon;
 
-	Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
-	CGAL::Bounded_side side = check(p);
+	CGAL::Bounded_side side = CGAL::ON_BOUNDED_SIDE;
+
+	if (!verified_input) {
+		Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+		side = check(p);
+	}
 
 	if (side != CGAL::ON_UNBOUNDED_SIDE) {
 		Offset loff;
 		Locate_type lt;
 		int li;
-		Face_handle start = this->euclidean_locate(p, lt, li, loff, hint);
+		Face_handle start = this->euclidean_locate(p, lt, li, loff, hint, true);
 		if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
 			return Vertex_handle();
 		}
@@ -389,29 +405,25 @@ insert(const Point  &p,  Face_handle hint) {
 		do {
 			ivc->remove_offset();
 		} while (++ivc != done_v);
+		
+		if (!batch_insertion) {
+		
+			CGAL_triangulation_assertion(this->is_valid());
 
-		CGAL_triangulation_assertion(this->is_valid());
+			for (int i = 0; i < dummy_points.size(); i++) {
+				if (dummy_points[i].is_inserted()) {
+					typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
+					Delaunay dt;
+					std::map<Vertex_handle, Vertex_handle> vmap;
 
-		for (int i = 0; i < dummy_points.size(); i++) {
-			if (dummy_points[i].is_inserted()) {
-				typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
-				Delaunay dt;
-				std::map<Vertex_handle, Vertex_handle> vmap;
-
-				if (is_removable(dummy_points[i].vertex(), dt, vmap)) {
-					//cout << "removing dummy point " << i << endl;
-					remove(dummy_points[i].vertex());
-					dummy_points[i].set_inserted(false);
+					if (is_removable(dummy_points[i].vertex(), dt, vmap)) {
+						remove(dummy_points[i].vertex());
+						dummy_points[i].set_inserted(false);
+					}
 				}
 			}
 		}
 
-		n_dpt = 0;
-		for (int i = 0; i < dummy_points.size(); i++) {
-			if (dummy_points[i].is_inserted())
-				n_dpt++;
-		}
-		//cout << "number of dummy points: " << n_dpt << endl;
 		return v;
 	}
 
@@ -425,7 +437,7 @@ template < class Gt, class Tds >
 void
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
 remove(Vertex_handle v) {
-
+  cout << "call to remove()" << endl;
   typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
   Delaunay dt;
   std::map<Vertex_handle, Vertex_handle> vmap;

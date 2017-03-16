@@ -82,6 +82,8 @@ public:
 	typedef typename GT::Triangle_2 						Triangle_2;
 	typedef Triangle_2 								    	Triangle;
 
+	typedef typename GT::Bounded_side_2 					Bounded_side_2;
+
 	typedef std::pair<Point, Offset> 				      	Periodic_point;
 	typedef array< std::pair<Point, Offset>, 2 >			Periodic_segment;
 	typedef array< std::pair<Point, Offset>, 3 > 			Periodic_triangle;	
@@ -515,33 +517,40 @@ protected:
 					f->vertex(1)->point(),
 					f->vertex(2)->point()};
 	  
+	  Circle_2 c;
+
+	  if (offset.is_identity()) {
+	  	if ()
+	  }
+
 	  Offset o[]= { offset.append(f->offset(0)),
 					offset.append(f->offset(1)),
 					offset.append(f->offset(2))};
 
-	  Oriented_side os = this->side_of_oriented_circle( p[0], p[1], p[2], q,
-														o[0], o[1], o[2], Offset());
+	  Bounded_side bs = Bounded_side_2()( p[0], p[1], p[2], q,
+										  o[0], o[1], o[2], Offset());
 
-	  if (os == ON_NEGATIVE_SIDE) {
-		return ON_UNBOUNDED_SIDE;
-	  }
-	  else if (os == ON_POSITIVE_SIDE) {
-		return ON_BOUNDED_SIDE;
-	  }
-	  else {
-		return ON_BOUNDARY;
-	  }
+	  return bs;
+	 //  if (os == ON_NEGATIVE_SIDE) {
+		// return ON_UNBOUNDED_SIDE;
+	 //  }
+	 //  else if (os == ON_POSITIVE_SIDE) {
+		// return ON_BOUNDED_SIDE;
+	 //  }
+	 //  else {
+		// return ON_BOUNDARY;
+	 //  }
    }
 
 
 public:
 
-	Face_handle euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle f = Face_handle()) const;
+	Face_handle euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle f = Face_handle(), bool verified_input = false) const;
 
-	Face_handle euclidean_locate(const Point& p, Offset& lo, Face_handle f = Face_handle()) const {
+	Face_handle euclidean_locate(const Point& p, Offset& lo, Face_handle f = Face_handle(), bool verified_input = false) const {
 		Locate_type lt;
 		int li;
-		return euclidean_locate(p, lt, li, lo, f);		
+		return euclidean_locate(p, lt, li, lo, f, verified_input);		
 	}
 
 	Face_handle hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle start = Face_handle()) const;
@@ -849,16 +858,18 @@ find_conflicts( Face_handle         d,
 
 template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_handle f) const {
+euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_handle f, bool verified_input) const {
 
-	// typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
+	if (!verified_input) {
+		typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
 
-	// Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
-	// CGAL::Bounded_side side = check(p);
-	// if (side != ON_BOUNDED_SIDE) {
-	// 	return Face_handle();
-	// }
-
+		Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+		CGAL::Bounded_side side = check(p);
+		if (side != ON_BOUNDED_SIDE) {
+			return Face_handle();
+		}
+	}
+	
 	// Handle the case where an initial Face_handle is not given
 	if (f == Face_handle()) {
 		f = _tds.faces().begin();

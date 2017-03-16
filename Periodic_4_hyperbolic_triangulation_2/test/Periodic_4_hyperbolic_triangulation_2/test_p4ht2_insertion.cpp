@@ -26,6 +26,7 @@ typedef Hyperbolic_octagon_translation_matrix<NT>                               
 typedef Kernel::Point_2                                                         Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_fundamental_octagon                                     Side_of_fundamental_octagon;
+typedef Triangulation::Face_iterator                                            Face_iterator;
 
 typedef CGAL::Cartesian<double>::Point_2                                        Point_double;
 typedef CGAL::Creator_uniform_2<double, Point_double >                          Creator;
@@ -78,18 +79,29 @@ int main(int argc, char** argv) {
 
         CGAL::Timer tt;
         tt.start();
-        tr.insert(pts.begin(), pts.end());
-        //for (int j = 0; j < pts.size(); j++) {
-        //    tr.insert(pts[j]);
-        //}
+        tr.insert(pts.begin(), pts.end(), true);
         tt.stop();
         cout << "DONE! (# of vertices = " << tr.number_of_vertices() << ", time = " << tt.time() << " secs)" << endl;
         extime += tt.time();
+
+        int bfc = 0;
+        for (Face_iterator fit = tr.faces_begin(); fit != tr.faces_end(); fit++) {
+            if (!(fit->offset(0).is_identity() && fit->offset(1).is_identity() && fit->offset(2).is_identity())) {
+                bfc++;
+            }
+        }
+        int Nf = tr.number_of_faces();
+        double perc = (double)bfc/(double)Nf*100.0;
+        cout << "Total number of faces      : " << Nf << endl;
+        cout << "Faces crossing the boundary: " << bfc << endl;
+        cout << "Percentage                 : " << perc << endl;
     }
 
     double avgtime = extime / (double)iters;
     cout << "---------------------------------------" << endl;
     cout << "Average execution time over " << iters << " iterations: " << avgtime << " secs" << endl << endl;
+
+    
 
     return 0;
 }
