@@ -2,15 +2,13 @@
 
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
-#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 #include <iostream>
 
 typedef CGAL::Epick K;
 typedef K::FT FT;
 
-typedef CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>   Gt_base;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<Gt_base>  Gt;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<K>        Gt;
 typedef CGAL::Periodic_3_regular_triangulation_3<Gt>              P3RT3;
 
 typedef Gt::Weighted_point_3                                Weighted_point_3;

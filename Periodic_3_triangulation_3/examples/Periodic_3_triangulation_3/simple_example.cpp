@@ -1,7 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
-#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -10,8 +9,7 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
-typedef CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>   Gt_base;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<Gt_base> Gt;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K>       Gt;
 typedef CGAL::Periodic_3_Delaunay_triangulation_3<Gt>             P3DT3;
 
 typedef P3DT3::Point             Point;

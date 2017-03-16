@@ -2,7 +2,6 @@
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 #include <CGAL/periodic_3_triangulation_3_io.h>
-#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -11,8 +10,7 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
-typedef CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>   Gt_base;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<Gt_base>  Gt;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<K>        Gt;
 typedef CGAL::Periodic_3_regular_triangulation_3<Gt>              P3RT3;
 
 typedef P3RT3::Bare_point        Point;
