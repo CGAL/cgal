@@ -48,12 +48,14 @@ public:
     : _functor(functor)
   { }
 
-  result_type operator() (const Point_3& p0, const Weighted_point_3& p1,
-                          const Weighted_point_3& p2) const
-  {
-    return _functor(p0.first, p1.first, p2.first,
-                    p0.second, p1.second, p2.second);
-  }
+  // disabled until implicit conversions are removed
+//  result_type operator() (const Point_3& p0, const Weighted_point_3& p1,
+//                          const Weighted_point_3& p2) const
+//  {
+//    return _functor(p0.first, p1.first, p2.first,
+//                    p0.second, p1.second, p2.second);
+//  }
+
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1) const
   {
     return _functor(p0.first, p1.first, p0.second, p1.second);
