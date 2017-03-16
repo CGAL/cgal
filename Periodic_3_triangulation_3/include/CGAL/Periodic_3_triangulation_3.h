@@ -606,7 +606,69 @@ public:
   //@}
 
 public:
-  /** @name Geometric access functions */ //@{
+  /** @name Geometric access functions */
+  ///@{
+
+  /// transform a point (living anywhere in space) into a point living inside
+  /// the canonical iso cuboid and an offset
+  Periodic_point periodic_point(const Point& p) const
+  {
+    // check that p lies within the domain. If not: translate
+    const Iso_cuboid& dom = domain();
+    if (!(p.x() < dom.xmin()) && p.x() < dom.xmax() &&
+        !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
+        !(p.z() < dom.zmin()) && p.z() < dom.zmax())
+      return std::make_pair(p, Offset());
+
+    int ox = -1, oy = -1, oz = -1;
+    if (p.x() < dom.xmin())
+      ox = 1;
+    else if (p.x() < dom.xmax())
+      ox = 0;
+
+    if (p.y() < dom.ymin())
+      oy = 1;
+    else if (p.y() < dom.ymax())
+      oy = 0;
+
+    if (p.z() < dom.zmin())
+      oz = 1;
+    else if (p.z() < dom.zmax())
+      oz = 0;
+
+    Offset transl_offx(0, 0, 0);
+    Offset transl_offy(0, 0, 0);
+    Offset transl_offz(0, 0, 0);
+    Point dp(p);
+
+    // Find the right offset such that the translation will yield a
+    // point inside the original domain.
+    while (dp.x() < dom.xmin() || !(dp.x() < dom.xmax()))
+    {
+      transl_offx.x() = transl_offx.x() + ox;
+      dp = point(std::make_pair(p, transl_offx));
+    }
+    while (dp.y() < dom.ymin() || !(dp.y() < dom.ymax()))
+    {
+      transl_offy.y() = transl_offy.y() + oy;
+      dp = point(std::make_pair(p, transl_offy));
+    }
+    while (dp.z() < dom.zmin() || !(dp.z() < dom.zmax()))
+    {
+      transl_offz.z() = transl_offz.z() + oz;
+      dp = point(std::make_pair(p, transl_offz));
+    }
+
+    Offset transl_off(transl_offx.x(), transl_offy.y(), transl_offz.z());
+    Periodic_point pp(std::make_pair(p, transl_off));
+
+    CGAL_triangulation_assertion_code( Point rp(point(pp)); )
+    CGAL_triangulation_assertion(!(rp.x() < dom.xmin()) && rp.x() < dom.xmax());
+    CGAL_triangulation_assertion(!(rp.y() < dom.ymin()) && rp.y() < dom.ymax());
+    CGAL_triangulation_assertion(!(rp.z() < dom.zmin()) && rp.z() < dom.zmax());
+    return pp;
+  }
+
   Periodic_point periodic_point( const Vertex_handle v ) const {
     if (is_1_cover()) return std::make_pair(v->point(), Offset(0,0,0));
     Virtual_vertex_map_it it = virtual_vertices.find(v);
@@ -712,7 +774,7 @@ public:
                                  pt[0].second,pt[1].second,
                                  pt[2].second,pt[3].second);
   }
-  // @}
+  /// @}
 
   /** @name Queries */ //@{
   bool is_vertex(const Point & p, Vertex_handle & v) const;
@@ -1508,57 +1570,7 @@ protected:
                                      get_offset(c, 0), get_offset(c, 1),
                                      get_offset(c, 2), get_offset(c, 3));
 
-    // check that v lies within the domain. If not: translate
-    Iso_cuboid dom = domain();
-    if (!(v.x() < dom.xmin()) && v.x() < dom.xmax() && !(v.y() < dom.ymin()) && v.y() < dom.ymax()
-        && !(v.z() < dom.zmin()) && v.z() < dom.zmax())
-      return std::make_pair(v, Offset());
-
-    int ox = -1, oy = -1, oz = -1;
-    if (v.x() < dom.xmin())
-      ox = 1;
-    else if (v.x() < dom.xmax())
-      ox = 0;
-    if (v.y() < dom.ymin())
-      oy = 1;
-    else if (v.y() < dom.ymax())
-      oy = 0;
-    if (v.z() < dom.zmin())
-      oz = 1;
-    else if (v.z() < dom.zmax())
-      oz = 0;
-    Offset transl_offx(0, 0, 0);
-    Offset transl_offy(0, 0, 0);
-    Offset transl_offz(0, 0, 0);
-    Point dv(v);
-
-    // Find the right offset such that the translation will yield a
-    // point inside the original domain.
-    while (dv.x() < dom.xmin() || !(dv.x() < dom.xmax()))
-    {
-      transl_offx.x() = transl_offx.x() + ox;
-      dv = point(std::make_pair(v, transl_offx));
-    }
-    while (dv.y() < dom.ymin() || !(dv.y() < dom.ymax()))
-    {
-      transl_offy.y() = transl_offy.y() + oy;
-      dv = point(std::make_pair(v, transl_offy));
-    }
-    while (dv.z() < dom.zmin() || !(dv.z() < dom.zmax()))
-    {
-      transl_offz.z() = transl_offz.z() + oz;
-      dv = point(std::make_pair(v, transl_offz));
-    }
-
-    Offset transl_off(transl_offx.x(), transl_offy.y(), transl_offz.z());
-    Periodic_point ppv(std::make_pair(v, transl_off));
-
-    CGAL_triangulation_assertion_code(Point rv(point(ppv));
-    )
-    CGAL_triangulation_assertion(!(rv.x() < dom.xmin()) && rv.x() < dom.xmax());
-    CGAL_triangulation_assertion(!(rv.y() < dom.ymin()) && rv.y() < dom.ymax());
-    CGAL_triangulation_assertion(!(rv.z() < dom.zmin()) && rv.z() < dom.zmax());
-    return ppv;
+    return periodic_point(p);
   }
 
 private:
