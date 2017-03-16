@@ -437,7 +437,6 @@ template < class Gt, class Tds >
 void
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
 remove(Vertex_handle v) {
-  cout << "call to remove()" << endl;
   typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
   Delaunay dt;
   std::map<Vertex_handle, Vertex_handle> vmap;

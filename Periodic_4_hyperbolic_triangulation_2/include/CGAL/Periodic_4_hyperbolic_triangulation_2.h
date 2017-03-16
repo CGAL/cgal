@@ -82,8 +82,6 @@ public:
 	typedef typename GT::Triangle_2 						Triangle_2;
 	typedef Triangle_2 								    	Triangle;
 
-	typedef typename GT::Bounded_side_2 					Bounded_side_2;
-
 	typedef std::pair<Point, Offset> 				      	Periodic_point;
 	typedef array< std::pair<Point, Offset>, 2 >			Periodic_segment;
 	typedef array< std::pair<Point, Offset>, 3 > 			Periodic_triangle;	
@@ -517,29 +515,22 @@ protected:
 					f->vertex(1)->point(),
 					f->vertex(2)->point()};
 	  
-	  Circle_2 c;
-
-	  if (offset.is_identity()) {
-	  	if ()
-	  }
-
 	  Offset o[]= { offset.append(f->offset(0)),
 					offset.append(f->offset(1)),
 					offset.append(f->offset(2))};
 
-	  Bounded_side bs = Bounded_side_2()( p[0], p[1], p[2], q,
-										  o[0], o[1], o[2], Offset());
+	  Oriented_side os = this->side_of_oriented_circle( p[0], p[1], p[2], q,
+														o[0], o[1], o[2], Offset());
 
-	  return bs;
-	 //  if (os == ON_NEGATIVE_SIDE) {
-		// return ON_UNBOUNDED_SIDE;
-	 //  }
-	 //  else if (os == ON_POSITIVE_SIDE) {
-		// return ON_BOUNDED_SIDE;
-	 //  }
-	 //  else {
-		// return ON_BOUNDARY;
-	 //  }
+	  if (os == ON_NEGATIVE_SIDE) {
+		return ON_UNBOUNDED_SIDE;
+	  }
+	  else if (os == ON_POSITIVE_SIDE) {
+		return ON_BOUNDED_SIDE;
+	  }
+	  else {
+		return ON_BOUNDARY;
+	  }
    }
 
 

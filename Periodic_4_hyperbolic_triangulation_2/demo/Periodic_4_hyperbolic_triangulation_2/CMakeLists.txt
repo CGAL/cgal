@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (My_Demo)
+project (Demo)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -31,17 +31,11 @@ qt5_wrap_ui( uis Periodic_4_hyperbolic_Delaunay_triangulation_2.ui )
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources ( RESOURCE_FILES Main_resources.qrc )
 
-
 # cpp files
 
-#add_executable ( Playground playground.cpp )
-#add_executable ( Triangulation triangulation.cpp )
-add_executable ( Demo Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} )
-add_executable ( Overlay_demo Periodic_4_hyperbolic_Delaunay_triangulation_2_overlay_demo.cpp ${RESOURCE_FILES} )
-qt5_use_modules( Demo Widgets )
-qt5_use_modules( Overlay_demo Widgets )
-#target_link_libraries( Playground ${CGAL_LIBRARIES} )
-#target_link_libraries( Triangulation ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
-target_link_libraries( Demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
-target_link_libraries( Overlay_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
+add_executable ( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} )
+
+qt5_use_modules( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo Widgets )
+
+target_link_libraries( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 

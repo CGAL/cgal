@@ -191,7 +191,6 @@ public:
 	typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename R::Compare_x_2>                 Compare_x_2;
 	typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename R::Compare_y_2>                 Compare_y_2;
 	typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename R::Orientation_2>               Orientation_2;
-	typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename R::Bounded_side_2>              Bounded_side_2;
 	typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename R::Compare_distance_2>          Compare_distance_2;
 	typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename R::Side_of_oriented_circle_2>   Side_of_oriented_circle_2;
 
