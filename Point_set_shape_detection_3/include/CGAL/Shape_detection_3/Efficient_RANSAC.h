@@ -397,6 +397,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       m_num_available_points = m_num_total_points;
 
       clear_octrees();
+      clear_shape_factories();
     }
     /// @}
 
