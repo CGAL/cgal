@@ -752,26 +752,25 @@ namespace internal {
           if (!mesh_border_case_opp)
             halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
 
+
           //constrained case
           bool constrained_case = is_constrained(va) || is_constrained(vb);
-          if (constrained_case)
-          {
-            CGAL_assertion(is_constrained(va) ^ is_constrained(vb));//XOR
-            set_constrained(va, false);
-            set_constrained(vb, false);
-          }
-
           //perform collapse
-          Point target_point = get(vpmap_, vb);
-          vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
-          put(vpmap_, vkept, target_point);
+          //Take vb as the target of the collapse_edge so it is kept
+          vertex_descriptor vkept;
+          if(target(halfedge(e, mesh_), mesh_) == vb)
+            vkept = CGAL::Euler::collapse_edge(e, mesh_);
+          else
+            vkept = CGAL::Euler::collapse_edge(edge(opposite(halfedge(e, mesh_), mesh_), mesh_), mesh_);
+          CGAL_assertion(vkept == vb);//is the constrained point still here
           ++nb_collapses;
 
           //fix constrained case
           if (constrained_case)//we have made sure that collapse goes to constrained vertex
-            set_constrained(vkept, true);
-
+            CGAL_assertion(is_constrained(vkept));
           fix_degenerate_faces(vkept, short_edges, sq_low);
+
+
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
           debug_status_map();
