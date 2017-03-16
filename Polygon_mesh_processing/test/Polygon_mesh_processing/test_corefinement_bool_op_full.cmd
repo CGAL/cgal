@@ -44,6 +44,6 @@ data-coref/star_tgt1-1.off data-coref/star_tgt2-5.off SM ALL 1 1 1 0
 data-coref/star_tgt1-2.off data-coref/star_tgt2-0.off SM ALL 1 1 1 0
 data-coref/star_tgt1-2.off data-coref/star_tgt2-1.off SM ALL 1 1 1 0
 data-coref/star_tgt1-2.off data-coref/star_tgt2-2.off SM ALL 0 1 1 1
-data-coref/star_tgt1-2.off data-coref/star_tgt2-3.off SM ALL 1 1 1 0
+data-coref/star_tgt1-2.off data-coref/star_tgt2-3.off SM ALL 1 1 1 1
 data-coref/star_tgt1-2.off data-coref/star_tgt2-4.off SM ALL 0 1 1 1
-data-coref/star_tgt1-2.off data-coref/star_tgt2-5.off SM ALL 1 1 1 0
+data-coref/star_tgt1-2.off data-coref/star_tgt2-5.off SM ALL 1 1 1 1
