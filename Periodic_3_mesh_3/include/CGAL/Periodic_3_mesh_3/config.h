@@ -3,6 +3,10 @@
 
 // Avoid optimisations of Mesh_3
 #define CGAL_NO_STRUCTURAL_FILTERING
+#ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
+  #undef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
+#endif
+
 //#warning "Structural filtering is disabled because this feature isn't compatible with some periodic traits!"
 /*
  * It's a temporary solution.
