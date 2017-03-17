@@ -11,19 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //
-//******************************************************************************
-// File Description :
-// Implicit_to_labeled_subdomains_function_wrapper
-//
-// See classes description to have more information.
-//******************************************************************************
-
 #ifndef CGAL_PERIODIC_3_MESH_3_IMPLICIT_TO_LABELED_SUBDOMAINS_FUNCTION_WRAPPER_H
 #define CGAL_PERIODIC_3_MESH_3_IMPLICIT_TO_LABELED_SUBDOMAINS_FUNCTION_WRAPPER_H
 

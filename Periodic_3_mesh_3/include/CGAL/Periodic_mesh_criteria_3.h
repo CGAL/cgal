@@ -11,18 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Stéphane Tayeb
 //
-//******************************************************************************
-// File Description :
-// Implements default meshing criteria to drive Periodic_3_Mesh_3 process
-//******************************************************************************
-
-
 #ifndef CGAL_PERIODIC_MESH_CRITERIA_3_H
 #define CGAL_PERIODIC_MESH_CRITERIA_3_H
 
@@ -36,30 +26,33 @@
 #include <CGAL/Periodic_mesh_facet_criteria_3.h>
 #include <CGAL/Periodic_mesh_cell_criteria_3.h>
 
+#include <boost/parameter/name.hpp>
+#include <boost/parameter/preprocessor.hpp>
+
 namespace CGAL {
 
 namespace parameters {
 
-  // see <CGAL/config.h>
-  CGAL_PRAGMA_DIAG_PUSH
-  // see <CGAL/Mesh_3/config.h>
-  CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
-  BOOST_PARAMETER_NAME( (periodic_domain, tag) periodic_domain )
-  BOOST_PARAMETER_NAME( (edge_size, tag) edge_size_ )
-  BOOST_PARAMETER_NAME( (edge_sizing_field, tag) edge_sizing_field_ )
-  BOOST_PARAMETER_NAME( (facet_angle, tag) facet_angle_ )
-  BOOST_PARAMETER_NAME( (facet_size, tag) facet_size_ )
-  BOOST_PARAMETER_NAME( (facet_sizing_field, tag) facet_sizing_field_ )
-  BOOST_PARAMETER_NAME( (facet_distance, tag) facet_distance_ )
-  BOOST_PARAMETER_NAME( (facet_topology, tag) facet_topology_ )
-  BOOST_PARAMETER_NAME( (cell_radius_edge, tag) cell_radius_edge_ )
-  BOOST_PARAMETER_NAME( (cell_radius_edge_ratio, tag) cell_radius_edge_ratio_ )
-  BOOST_PARAMETER_NAME( (cell_size, tag) cell_size_ )
-  BOOST_PARAMETER_NAME( (cell_sizing_field, tag) cell_sizing_field_ )
-  BOOST_PARAMETER_NAME( (sizing_field, tag) sizing_field_ )
+BOOST_PARAMETER_NAME( (periodic_domain, tag) periodic_domain )
+BOOST_PARAMETER_NAME( (edge_size, tag) edge_size_ )
+BOOST_PARAMETER_NAME( (edge_sizing_field, tag) edge_sizing_field_ )
+BOOST_PARAMETER_NAME( (facet_angle, tag) facet_angle_ )
+BOOST_PARAMETER_NAME( (facet_size, tag) facet_size_ )
+BOOST_PARAMETER_NAME( (facet_sizing_field, tag) facet_sizing_field_ )
+BOOST_PARAMETER_NAME( (facet_distance, tag) facet_distance_ )
+BOOST_PARAMETER_NAME( (facet_topology, tag) facet_topology_ )
+BOOST_PARAMETER_NAME( (cell_radius_edge, tag) cell_radius_edge_ )
+BOOST_PARAMETER_NAME( (cell_radius_edge_ratio, tag) cell_radius_edge_ratio_ )
+BOOST_PARAMETER_NAME( (cell_size, tag) cell_size_ )
+BOOST_PARAMETER_NAME( (cell_sizing_field, tag) cell_sizing_field_ )
+BOOST_PARAMETER_NAME( (sizing_field, tag) sizing_field_ )
 
-  CGAL_PRAGMA_DIAG_POP
+CGAL_PRAGMA_DIAG_POP
 
 } // end namespace parameters
 
@@ -132,8 +125,8 @@ public:
   template <typename Facet_criterion>
   void add_facet_criterion(Facet_criterion* criterion) {
     CGAL_static_assertion((boost::is_base_of<
-                           typename Facet_criteria::Abstract_criterion,
-                           Facet_criterion
+                             typename Facet_criteria::Abstract_criterion,
+                             Facet_criterion
                            >::value));
     facet_criteria_.add(criterion);
   }
@@ -141,8 +134,8 @@ public:
   template <typename Cell_criterion>
   void add_cell_criterion(Cell_criterion* criterion) {
     CGAL_static_assertion((boost::is_base_of<
-                           typename Cell_criteria::Abstract_criterion,
-                           Cell_criterion
+                             typename Cell_criteria::Abstract_criterion,
+                             Cell_criterion
                            >::value));
     cell_criteria_.add(criterion);
   }

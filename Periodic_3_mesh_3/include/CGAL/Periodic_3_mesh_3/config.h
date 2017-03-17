@@ -19,6 +19,6 @@
  * inexact_orientation(). So, we'd work with a Bare_point instead of a Point in this method.
  * In the 'default' Triangulation_3 traits, Bare_point would be equal to Point_3
  * (or const Point_3&  <- for avoiding useless copies).
- */
+*/
 
 #endif // CGAL_PERIODIC_3_MESH_3_CONFIG_H

@@ -11,10 +11,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Stéphane Tayeb, Mikhail Bogdanov
 //
 //******************************************************************************
@@ -26,12 +22,14 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/make_mesh_3.h>
-#include <CGAL/refine_periodic_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Mesh_domain_holder_with_corners_3.h>
+#include <CGAL/refine_periodic_mesh_3.h>
 
-#include <CGAL/Periodic_3_mesh_3/config.h>
+#include <CGAL/make_mesh_3.h>
+
+#include <boost/parameter/preprocessor.hpp>
 
 namespace CGAL {
 
@@ -40,7 +38,7 @@ namespace CGAL {
 // -----------------------------------
 
 // Manual redirections
-// boost::parameter can't handle make_mesh_3 return_type alone...
+// boost::parameter can't handle make_periodic_mesh_3 return_type alone...
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 template <typename C3T3, typename MD, typename MC, typename ... T>

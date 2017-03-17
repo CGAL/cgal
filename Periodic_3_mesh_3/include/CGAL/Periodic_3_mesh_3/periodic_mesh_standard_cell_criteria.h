@@ -11,23 +11,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
-
 #ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
 #define CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
+
+#include <algorithm>
+#include <iostream>
 
 namespace CGAL {
 

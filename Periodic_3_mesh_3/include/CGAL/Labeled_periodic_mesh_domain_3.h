@@ -11,17 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Aymeric Pellé
 //
-//******************************************************************************
-// File Description :
-// class Labeled_periodic_mesh_domain_3. See class description.
-//******************************************************************************
-
 #ifndef CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H
 #define CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H
 
@@ -30,9 +21,10 @@
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
-#include <CGAL/Implicit_to_labeling_function_wrapper.h>
-
 #include <CGAL/intersections.h>
+#include <CGAL/result_of.h>
+
+#include <algorithm>
 
 namespace CGAL
 {
@@ -46,7 +38,7 @@ namespace CGAL
  *  - f(p)=a, a!=0 means that p is inside subdomain a.
  *
  *  Any boundary facet is labelled <a,b>, a<b, where a and b are the
- *  tags of it's incident subdomain.
+ *  tags of its incident subdomain.
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
 template<class Function, class BGT>
@@ -91,7 +83,7 @@ public:
   const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
 
   /**
-   * Returns true is the element \ccc{type} intersect properly any of the
+   * Returns true if the element \ccc{type} intersect properly any of the
    * surface patches describing the either the domain boundary or some
    * subdomain boundary.
    * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
@@ -121,7 +113,7 @@ public:
     }
 
   private:
-    /// Returns true if points \c a & \c b do not belong to the same subdomain
+    /// Returns true if the points \c a & \c b do not belong to the same subdomain
     /// \c index is set to the surface index of subdomains f(a), f(b)
     Surface_patch operator()(const Point_3& a, const Point_3& b) const
     {
@@ -130,7 +122,9 @@ public:
       // It may be false, further rafinement will improve precision
 
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
-      FT dimension [3] = { pbb.xmax()-pbb.xmin(), pbb.ymax()-pbb.ymin(), pbb.zmax()-pbb.zmin() };
+      FT dimension [3] = { pbb.xmax()-pbb.xmin(),
+                           pbb.ymax()-pbb.ymin(),
+                           pbb.zmax()-pbb.zmin() };
       FT a_t [3] = { a.x(), a.y(), a.z() };
       FT b_t [3] = { b.x(), b.y(), b.z() };
       a_t[0] -= pbb.xmin();
@@ -294,7 +288,7 @@ public:
       // Cannot be const: those values are modified below.
       Subdomain_index value_at_p1 = r_domain_.labeling_function()(p1);
       Subdomain_index value_at_p2 = r_domain_.labeling_function()(p2);
-      Subdomain_index value_at_mid = r_domain_.labeling_function()(mid,true);
+      Subdomain_index value_at_mid = r_domain_.labeling_function()(mid, true);
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
@@ -315,7 +309,7 @@ public:
 
         value_at_p1 = r_domain_.labeling_function()(p1);
         value_at_p2 = r_domain_.labeling_function()(p2);
-        value_at_mid = r_domain_.labeling_function()(mid,true);
+        value_at_mid = r_domain_.labeling_function()(mid, true);
 
         if( value_at_p1 == value_at_p2 )
           return Intersection();
@@ -357,7 +351,7 @@ public:
         }
 
         mid = midpoint(p1, p2);
-        value_at_mid = r_domain_.labeling_function()(mid,true);
+        value_at_mid = r_domain_.labeling_function()(mid, true);
       }
     }
 

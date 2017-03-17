@@ -203,7 +203,7 @@ FT cylinder(const Point& p) {
 }
 
 typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
-Periodic_mesh_domain::Index> Sizing_field;
+                                           Periodic_mesh_domain::Index> Sizing_field;
 
 int main()
 {

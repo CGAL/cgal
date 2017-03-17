@@ -11,12 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
-
+//
 #ifndef CGAL_PERIODIC_MESH_CELL_CRITERIA_3_H
 #define CGAL_PERIODIC_MESH_CELL_CRITERIA_3_H
 
@@ -32,21 +28,22 @@ template <typename Tr,
           typename Visitor_ = Mesh_3::Periodic_mesh_3::Cell_criteria_visitor_with_features<Tr> >
 class Periodic_mesh_cell_criteria_3
 {
+  typedef Periodic_mesh_cell_criteria_3<Tr>       Self;
+
 public:
   typedef Visitor_                                Visitor;
   typedef typename Visitor::Cell_quality          Cell_quality;
   typedef typename Visitor::Cell_badness          Cell_badness;
 
   typedef Mesh_3::Abstract_criterion<Tr, Visitor> Abstract_criterion;
+
 private:
   typedef Mesh_3::Criteria<Tr,Visitor>            Criteria;
 
-  typedef typename Tr::Cell_handle          Cell_handle;
-  typedef typename Tr::Geom_traits::FT      FT;
+  typedef typename Tr::Cell_handle                Cell_handle;
+  typedef typename Tr::Geom_traits::FT            FT;
 
-  typedef Periodic_mesh_cell_criteria_3<Tr> Self;
-
-  typedef typename Tr::Iso_cuboid           Iso_cuboid;
+  typedef typename Tr::Iso_cuboid                 Iso_cuboid;
 
 public:
   /**

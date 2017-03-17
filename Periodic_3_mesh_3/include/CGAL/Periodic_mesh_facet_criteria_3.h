@@ -11,26 +11,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //
-//******************************************************************************
-// File Description :
-// Periodic_mesh_facet_criteria_3 class.
-//******************************************************************************
-
 #ifndef CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H
 #define CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
+#include <CGAL/Periodic_3_mesh_3/config.h>
+
 #include <CGAL/Periodic_3_mesh_3/periodic_mesh_standard_facet_criteria.h>
 #include <CGAL/Mesh_facet_topology.h>
-
-#include <CGAL/Periodic_3_mesh_3/config.h>
 
 namespace CGAL {
 
@@ -39,12 +30,15 @@ template<typename Tr,
            Mesh_3::Periodic_mesh_3::Facet_criterion_visitor_with_features<Tr> >
 class Periodic_mesh_facet_criteria_3
 {
+  typedef Periodic_mesh_facet_criteria_3<Tr>      Self;
+
 public:
   typedef Visitor_                                Visitor;
   typedef typename Visitor::Facet_quality         Facet_quality;
   typedef typename Visitor::Facet_badness         Facet_badness;
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor>  Abstract_criterion;
+
 private:
   typedef Mesh_3::Criteria<Tr,Visitor>            Criteria;
 
@@ -52,8 +46,6 @@ private:
   typedef typename Tr::Geom_traits::FT            FT;
 
   typedef typename Tr::Iso_cuboid                 Iso_cuboid;
-
-  typedef Periodic_mesh_facet_criteria_3<Tr>      Self;
 
 public:
   /**
@@ -246,6 +238,7 @@ private:
         criteria_.add(new Same_surface_criterion());
         break;
       }
+
       case MANIFOLD:
       case MANIFOLD_WITH_BOUNDARY:
       case NO_BOUNDARY:

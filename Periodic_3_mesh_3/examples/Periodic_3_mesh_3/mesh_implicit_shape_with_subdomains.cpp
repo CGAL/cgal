@@ -52,7 +52,7 @@ FT schwarz_p(const Point& p) {
 }
 
 typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
-Periodic_mesh_domain::Index> Field;
+                                           Periodic_mesh_domain::Index> Field;
 
 int main()
 {

@@ -11,29 +11,21 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
-
 #ifndef CGAL_MESH_DOMAIN_HOLDER_WITH_CORNERS_3_H
 #define CGAL_MESH_DOMAIN_HOLDER_WITH_CORNERS_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/iterator.h>
-#include <CGAL/enum.h>
-#include <CGAL/number_utils.h>
-
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
+#include <CGAL/enum.h>
+#include <CGAL/iterator.h>
+#include <CGAL/number_utils.h>
+
 #include <map>
+#include <utility>
 
 namespace CGAL {
 
@@ -370,6 +362,6 @@ is_cycle(const Point_3&, const Curve_segment_index& /* index */) const
   return bool();
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_MESH_DOMAIN_HOLDER_WITH_CORNERS_3_H

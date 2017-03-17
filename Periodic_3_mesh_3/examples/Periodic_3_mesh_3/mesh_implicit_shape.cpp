@@ -52,7 +52,7 @@ FT schwarz_p(const Point& p) {
 }
 
 typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
-Periodic_mesh_domain::Index> Field;
+                                           Periodic_mesh_domain::Index> Field;
 
 int main(int argc, char** argv)
 {
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 
   medit_file.close();
 
-  std::cout << "EXIIT SUCCESS" << std::endl;
+  std::cout << "EXIT SUCCESS" << std::endl;
   return 0;
 }
 

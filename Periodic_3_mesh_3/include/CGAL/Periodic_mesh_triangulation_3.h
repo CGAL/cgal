@@ -11,10 +11,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //                 Aymeric Pellé
 //                 Mael Rouxel-Labbé
@@ -544,9 +540,9 @@ canonicalize_triangle(const typename Triangulation::Periodic_triangle& pt)
   Offset o0 = pt[0].second;
   Offset o1 = pt[1].second;
   Offset o2 = pt[2].second;
-  int diffx = std::min(o0.x(),std::min(o1.x(), o2.x()));
-  int diffy = std::min(o0.y(),std::min(o1.y(), o2.y()));
-  int diffz = std::min(o0.z(),std::min(o1.z(), o2.z()));
+  int diffx = std::min(o0.x(), std::min(o1.x(), o2.x()));
+  int diffy = std::min(o0.y(), std::min(o1.y(), o2.y()));
+  int diffz = std::min(o0.z(), std::min(o1.z(), o2.z()));
   Offset diff_off(diffx, diffy, diffz);
 
   return CGAL::make_array(std::make_pair(pt[0].first, o0 - diff_off),
@@ -565,22 +561,22 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
   Offset o2 = pt[2].second;
   Offset o3 = pt[3].second;
 
-  int diffx = std::min(std::min(o0.x(),o1.x()),std::min(o2.x(),o3.x()));
-  int diffy = std::min(std::min(o0.y(),o1.y()),std::min(o2.y(),o3.y()));
-  int diffz = std::min(std::min(o0.z(),o1.z()),std::min(o2.z(),o3.z()));
-  Offset diff_off(diffx,diffy,diffz);
+  int diffx = std::min(std::min(o0.x(), o1.x()), std::min(o2.x(), o3.x()));
+  int diffy = std::min(std::min(o0.y(), o1.y()), std::min(o2.y(), o3.y()));
+  int diffz = std::min(std::min(o0.z(), o1.z()), std::min(o2.z(), o3.z()));
+  Offset diff_off(diffx, diffy, diffz);
 
-  return CGAL::make_array(std::make_pair(pt[0].first,o0 - diff_off),
-                          std::make_pair(pt[1].first,o1 - diff_off),
-                          std::make_pair(pt[2].first,o2 - diff_off),
-                          std::make_pair(pt[3].first,o3 - diff_off));
+  return CGAL::make_array(std::make_pair(pt[0].first, o0 - diff_off),
+                          std::make_pair(pt[1].first, o1 - diff_off),
+                          std::make_pair(pt[2].first, o2 - diff_off),
+                          std::make_pair(pt[3].first, o3 - diff_off));
 }
 
 // Writing a restricted Delaunay triangulation to the .mesh file format, which
 // can be visualized using medit.
 // Writing the triangulation to 8 domains.
 template <class Stream, class C3t3>
-Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3,
+Stream& write_complex_to_medit(Stream &out, C3t3 &c3t3,
                                unsigned occurence_count = 8)
 {
   typedef typename C3t3::Triangulation           Triangulation;

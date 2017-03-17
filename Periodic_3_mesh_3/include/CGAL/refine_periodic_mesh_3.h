@@ -11,16 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Mesh_3/include/CGAL/refine_mesh_3.h $
-// $Id: refine_mesh_3.h 60688 2011-01-10 15:43:22Z lrineau $
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //
-//******************************************************************************
-// File Description : refine_mesh_3 function declaration and implementation.
-//******************************************************************************
-
 #ifndef CGAL_REFINE_PERIODIC_MESH_3_H
 #define CGAL_REFINE_PERIODIC_MESH_3_H
 
@@ -31,6 +23,10 @@
 
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>
+
+#include <boost/parameter/preprocessor.hpp>
+
+#include <algorithm>
 
 namespace CGAL {
 

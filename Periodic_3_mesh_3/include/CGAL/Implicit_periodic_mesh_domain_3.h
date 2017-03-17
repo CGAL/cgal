@@ -11,17 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //
-//******************************************************************************
-// File Description :
-// class Implicit_periodic_mesh_domain_3. See class description.
-//******************************************************************************
-
 #ifndef CGAL_IMPLICIT_PERIODIC_MESH_DOMAIN_3_H
 #define CGAL_IMPLICIT_PERIODIC_MESH_DOMAIN_3_H
 
@@ -32,10 +23,10 @@
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
+#include <CGAL/Periodic_3_mesh_3/config.h>
+
 #include <CGAL/Labeled_periodic_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
-
-#include <CGAL/Periodic_3_mesh_3/config.h>
 
 namespace CGAL {
 /**

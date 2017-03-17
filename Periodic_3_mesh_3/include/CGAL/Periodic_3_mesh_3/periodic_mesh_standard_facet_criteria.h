@@ -11,18 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
-//
-//
 // Author(s)     : Mikhail Bogdanov
 //                 Mael Rouxel-Labbé
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
-
 #ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_FACET_CRITERIA_H
 #define CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_FACET_CRITERIA_H
 
