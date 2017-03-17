@@ -43,10 +43,15 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
+#include <CGAL/array.h>
 #include <CGAL/tags.h>
 
 namespace CGAL {
 
+/// This class currently provides an interface between the classe
+/// `CGAL::Periodic_3_regular_triangulation_3` and the mesher `Mesh_3`.
+/// As periodic triangulations are parallelized, a lot of these functions will
+/// become obsolete.
 template<class Gt, class Tds>
 class Periodic_3_regular_triangulation_3_mesher_3
     : public Periodic_3_regular_triangulation_3<Gt, Tds> {
@@ -59,7 +64,6 @@ public:
   void set_lock_data_structure(void *) const { }
 
   typedef Periodic_3_regular_triangulation_3<Gt, Tds>  Base;
-  typedef typename Base::Base Base_Base;
 
   typedef Gt                              Geometric_traits;
   typedef Tds                             Triangulation_data_structure;
@@ -79,8 +83,6 @@ public:
   typedef typename Base::Weighted_point   Weighted_point;
   typedef typename Base::Periodic_point   Periodic_point;
 
-//  typedef typename Gt::Bare_point         Bare_point;
-//  typedef typename Gt::Weighted_point_3   Weighted_point;
   typedef typename Base::Locate_type      Locate_type;
 
   typedef typename Base::Segment          Segment;
@@ -95,7 +97,6 @@ public:
   typedef typename Base::Covering_sheets  Covering_sheets;
 
   using Base::dual;
-  using Base::locate;
   using Base::tds;
   using Base::get_offset;
   using Base::incident_cells;
@@ -106,8 +107,11 @@ public:
   using Base::point;
   using Base::tetrahedron;
   using Base::periodic_tetrahedron;
-//  using Base::nearest_vertex;
+#ifndef CGAL_NO_STRUCTURAL_FILTERING
+  using Base::inexact_locate;
+#endif
 
+  /// Constructor
   Periodic_3_regular_triangulation_3_mesher_3(
       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
       const Geometric_traits& gt = Geometric_traits())
@@ -116,6 +120,7 @@ public:
     this->insert_dummy_points();
   }
 
+  /// Concurrency related
   template <typename Cell_handle>
   bool try_lock_cell(const Cell_handle &, int = 0) const { return true; }
 
@@ -126,6 +131,8 @@ public:
     return true;
   }
 
+  /// Basic setters-getters
+  // there are no infinite elements in a periodic triangulation
   bool is_infinite(const Vertex_handle) const { return false; }
   bool is_infinite(const Edge&) const { return false; }
   bool is_infinite(const Facet&) const { return false; }
@@ -133,65 +140,92 @@ public:
   bool is_infinite(const Cell_handle, int) const { return false; }
   bool is_infinite(const Cell_handle c, int i, int j) const;
 
+  Cell_handle infinite_cell() const
+  {
+    // there are no infinite cells in a periodic triangulation
+    assert(false);
+    return Cell_handle();
+  }
+
+  Vertex_handle infinite_vertex() const
+  {
+    // there is no infinite vertex in a periodic triangulation
+    assert(false);
+    return Vertex_handle();
+  }
+
   int dimension() const
   {
-    if (this->number_of_vertices() == 0) {
-      return 0;
-    }
-    return 3;
+    return (this->number_of_vertices() == 0) ? -2 : 3;
   }
 
-  Point dual(Cell_handle c) const
+  /// transform a point (living anywhere in space) into a point living inside
+  /// the canonical iso cuboid and an offset
+  Point canonicalize_point(const Point& p) const
   {
-    // it returns the canonical point
-    //return point(periodic_circumcenter(c));
-
-    // it returns the point with respect to the canonical cell c
-    return this->geom_traits().construct_weighted_circumcenter_3_object()(
-          c->vertex(0)->point(), c->vertex(1)->point(),
-          c->vertex(2)->point(), c->vertex(3)->point(),
-          get_offset(c,0), get_offset(c,1),
-          get_offset(c,2), get_offset(c,3));
+    return point(this->periodic_point(p));
   }
 
-  Object dual(const Facet & f) const
+  void set_domain(const Iso_cuboid& domain)
   {
-    Segment s = segment(Base::dual(f));
-    return make_object(s);
+    Base::set_domain(domain);
+    this->insert_dummy_points();
   }
 
-  Vertex_handle push_back(const Point& p)
+  Tetrahedron tetrahedron(const Cell_handle c) const
   {
-    return insert(p);
+    Periodic_tetrahedron ptet = periodic_tetrahedron(c);
+    return tetrahedron(ptet);
   }
 
-  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle())
+  /*!
+  Copies all finite `Edge`s incident to `v` to the
+  output iterator `edges`. Returns the resulting output iterator.
+
+  Since there are no infinite edges in a periodic triangulation, this
+  function is simply a wrapper around `incident_edges`
+
+  \pre `t.dimension() > 0`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+  */
+  template<class OutputIterator>
+  OutputIterator
+  finite_incident_edges(Vertex_handle v, OutputIterator edges) const
   {
-    return Base::insert(canonicalize_point(p), start);
+    return incident_edges(v, edges);
   }
 
-  template <class CellIt>
-  Vertex_handle insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
-                               Cell_handle begin, int i)
+  /*!
+  Copies the `Cell_handle`s of all finite cells incident to `v` to the output
+  iterator `cells`.
+  Returns the resulting output iterator.
+
+  Since there are no infinite cells in a periodic triangulation, this
+  function is simply a wrapper around `incident_cells`
+
+\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+  */
+  template<class OutputIterator>
+  OutputIterator
+  finite_incident_cells(Vertex_handle v, OutputIterator cells) const
   {
-    Vertex_handle v = tds().insert_in_hole(cell_begin, cell_end, begin, i);
-    v->set_point(canonicalize_point(p));
-    std::vector<Cell_handle> nbs;
-    incident_cells(v, std::back_inserter(nbs));
-    // For all neighbors of the newly added vertex v: fetch their offsets from
-    // the tester and reset them in the triangulation data structure.
-    for (typename std::vector<Cell_handle>::iterator cit = nbs.begin();
-         cit != nbs.end(); cit++) {
-      Offset off[4];
-      for (int i=0 ; i<4 ; i++) {
-        off[i] = (*cit)->vertex(i)->offset();
-      }
-      set_offsets(*cit, off[0], off[1], off[2], off[3]);
-    }
+    return incident_cells(v, cells);
+  }
 
-    clear_v_offsets();
+  /*!
+  Copies all finite `Facet`s incident to `v` to the output iterator
+  `facets`.
+  Returns the resulting output iterator.
 
-    return v;
+  Since there are no infinite facets in a periodic triangulation, this
+  function is simply a wrapper around `incident_facets`
+
+  \pre `t.dimension() > 1`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+  */
+  template<class OutputIterator>
+  OutputIterator
+  finite_incident_facets(Vertex_handle v, OutputIterator facets) const
+  {
+    return incident_facets(v, facets);
   }
 
   void clear_v_offsets() const
@@ -203,24 +237,100 @@ public:
     this->v_offsets.clear();
   }
 
+  /// Call `CGAL::side_of_power_sphere` with a canonicalized point
+  Bounded_side side_of_power_sphere(const Cell_handle& c, const Point& p,
+                                    bool perturb = false) const
+  {
+    Point point = this->canonicalize_point(p);
+    return Base::side_of_power_sphere(c, point, Offset(), perturb);
+  }
+
+  /// \name Locate functions
+  ///
+  /// Locate points within a periodic triangulation.
+  ///
+  /// These functions are temporarily here to interface between Mesh_3 and
+  /// the periodic triangulations, until the latter are made parallel.
+  ///
+  /// \sa `CGAL::Regular_triangulation_3::locate`
+  /// @{
+  Cell_handle locate(const Point & p,
+                     Cell_handle start = Cell_handle(),
+                     bool* could_lock_zone = NULL) const
+  {
+    assert(could_lock_zone == NULL);
+    return Base::locate(p, start);
+  }
+
+  Cell_handle locate(const Point & p,
+                     Vertex_handle hint,
+                     bool* could_lock_zone = NULL) const
+  {
+    assert(could_lock_zone == NULL);
+    // compared to the non-periodic version in T3, the infinite cell cannot
+    // be used; `Cell_handle()` is used instead
+    return Base::locate(p, hint == Vertex_handle() ? Cell_handle() : hint->cell());
+  }
+
+  Cell_handle locate(const Point& p,
+                     Locate_type& l, int& i, int& j,
+                     Cell_handle start = Cell_handle(),
+                     bool* could_lock_zone = NULL) const
+  {
+    assert(could_lock_zone == NULL);
+    return Base::locate(p, l, i, j, start);
+  }
+
+  Cell_handle locate(const Point& p,
+                     Locate_type& l, int& i, int& j,
+                     Vertex_handle hint,
+                     bool* could_lock_zone = NULL) const
+  {
+    assert(could_lock_zone == NULL);
+    return Base::locate(p, l, i, j,
+                        hint == Vertex_handle() ? Cell_handle() : hint->cell());
+  }
+  /// @}
+
+  /// \name Conflict functions
+  /// Returns the vertices on the interior of the conflict hole.
+  ///
+  /// These functions are temporarily here to interface between Mesh_3 and
+  /// the periodic triangulations, until the latter are made parallel.
+  ///
+  /// @{
+  template <class OutputIterator>
+  OutputIterator
+  vertices_inside_conflict_zone(const /*Weighted_point*/Point& /* p */,
+                                Cell_handle /* c */,
+                                OutputIterator res) const
+  {
+    return res;
+    assert(false); // not yet supported
+  }
+
   //template < class Gt, class Tds >
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
             class OutputIteratorInternalFacets>
   Triple<OutputIteratorBoundaryFacets, OutputIteratorCells, OutputIteratorInternalFacets>
-  find_conflicts( const Point &p,
-                  Cell_handle c, OutputIteratorBoundaryFacets bfit,
-                  OutputIteratorCells cit, OutputIteratorInternalFacets ifit,
-                  bool* /* could_lock_zone */ = NULL,
-                  const Facet* /* this_facet_must_be_in_the_cz */ = NULL,
-                  bool* /* the_facet_is_in_its_cz */ = NULL ) const
+  find_conflicts(const Point &p,
+                 Cell_handle c,
+                 OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+                 OutputIteratorInternalFacets ifit,
+                 bool* could_lock_zone = NULL,
+                 const Facet* /* this_facet_must_be_in_the_cz */ = NULL,
+                 bool* /* the_facet_is_in_its_cz */ = NULL ) const
   {
+    assert(could_lock_zone == NULL);
+
     clear_v_offsets();
 
     CGAL_triangulation_precondition( this->number_of_vertices() != 0);
 
     const Point canonic_p = canonicalize_point(p);
 
-    //#warning rewrite these lines
+    // #warning rewrite these lines
     Locate_type lt;
     int li, lj;
     locate( p, lt, li, lj, Cell_handle());
@@ -237,9 +347,9 @@ public:
     Triple<typename std::back_insert_iterator<std::vector<Facet> >,
            typename std::back_insert_iterator<std::vector<Cell_handle> >,
            OutputIteratorInternalFacets> tit =
-             Base_Base::find_conflicts(c, tester,
-                                       make_triple(std::back_inserter(facets),
-                                       std::back_inserter(cells), ifit));
+             Base::find_conflicts(c, tester,
+                                  make_triple(std::back_inserter(facets),
+                                              std::back_inserter(cells), ifit));
     ifit = tit.third;
 
     // Reset the conflict flag on the boundary.
@@ -263,153 +373,108 @@ public:
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
   find_conflicts(const Point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
-                 OutputIteratorCells cit, bool*) const
-  {
-    Triple<OutputIteratorBoundaryFacets,
-        OutputIteratorCells,
-        Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
-                                              Emptyset_iterator());
-    return std::make_pair(t.first, t.second);
-  }
-
-  //TODO: integrate into P3DT3, it almost corresponds to periodic_circumcenter
-  Point canonicalize_point(const Point& p) const
-  {
-    Iso_cuboid dom = this->domain();
-    if ( !(p.x() < dom.xmin()) && p.x() < dom.xmax() &&
-         !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
-         !(p.z() < dom.zmin()) && p.z() < dom.zmax() )
-      return p;
-
-    int ox=-1, oy=-1, oz=-1;
-    if (p.x() < dom.xmin())
-      ox = 1;
-    else if (p.x() < dom.xmax())
-      ox = 0;
-
-    if (p.y() < dom.ymin())
-      oy = 1;
-    else if (p.y() < dom.ymax())
-      oy = 0;
-
-    if (p.z() < dom.zmin())
-      oz = 1;
-    else if (p.z() < dom.zmax())
-      oz = 0;
-
-    Offset transl_offx(0,0,0);
-    Offset transl_offy(0,0,0);
-    Offset transl_offz(0,0,0);
-    Point dp(p);
-
-    // Find the right offset such that the translation will yield a
-    // point inside the original domain.
-    while ( dp.x() < dom.xmin() || !(dp.x() < dom.xmax()) ) {
-      transl_offx.x() = transl_offx.x() + ox;
-      dp = point(std::make_pair(p,transl_offx));
-    }
-    while ( dp.y() < dom.ymin() || !(dp.y() < dom.ymax()) ) {
-      transl_offy.y() = transl_offy.y() + oy;
-      dp = point(std::make_pair(p,transl_offy));
-    }
-    while ( dp.z() < dom.zmin() || !(dp.z() < dom.zmax()) ) {
-      transl_offz.z() = transl_offz.z() + oz;
-      dp = point(std::make_pair(p,transl_offz));
-    }
-
-    Offset transl_off(transl_offx.x(), transl_offy.y(), transl_offz.z());
-    Periodic_point ppp(std::make_pair(p,transl_off));
-    CGAL_triangulation_assertion_code( Point rv(point(ppp)); )
-    CGAL_triangulation_assertion( !(rv.x()<dom.xmin()) && rv.x()<dom.xmax() );
-    CGAL_triangulation_assertion( !(rv.y()<dom.ymin()) && rv.y()<dom.ymax() );
-    CGAL_triangulation_assertion( !(rv.z()<dom.zmin()) && rv.z()<dom.zmax() );
-    return point(ppp);
-  }
-
-  void set_domain(const Iso_cuboid & domain)
-  {
-    Base::set_domain(domain);
-    this->insert_dummy_points();
-  }
-
-  Tetrahedron tetrahedron(const Cell_handle c) const
-  {
-    Periodic_tetrahedron pt = periodic_tetrahedron(c);
-    return tetrahedron(pt);
-  }
-
-  template<class OutputIterator>
-  OutputIterator
-  finite_incident_edges(Vertex_handle v, OutputIterator edges) const
-  {
-    return incident_edges(v, edges);
-  }
-
-  template<class OutputIterator>
-  OutputIterator
-  finite_incident_cells(Vertex_handle v, OutputIterator cells) const
-  {
-    return incident_cells(v, cells);
-  }
-
-  template<class OutputIterator>
-  OutputIterator
-  finite_incident_facets(Vertex_handle v, OutputIterator facets) const
-  {
-    return incident_facets(v, facets);
-  }
-
-  Bounded_side side_of_power_sphere(const Cell_handle& c, const Point& p, bool perturb = false) const
-  {
-    Point point = this->canonicalize_point(p);
-    return Base::side_of_power_sphere(c, point, Offset(), perturb);
-  }
-
-  Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
-  {
-    return Base::nearest_power_vertex(p, start);
-
-    // not yet implemented
-    assert(false);
-  }
-
-  Cell_handle locate(const Point& p, Locate_type& l, int& i, int& j,
-                     Cell_handle start = Cell_handle(),
-                     bool* could_lock_zone = NULL)
+                 OutputIteratorCells cit,
+                 bool* could_lock_zone = NULL) const
   {
     assert(could_lock_zone == NULL);
-    return Base::locate(p,l,i,j,start);
+
+    Triple<OutputIteratorBoundaryFacets,
+           OutputIteratorCells,
+           Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
+                                                 Emptyset_iterator(),
+                                                 could_lock_zone);
+    return std::make_pair(t.first, t.second);
+  }
+  /// @}
+
+  /// \name Insert functions
+  ///
+  /// Insert points in the triangulation.
+  ///
+  /// These functions are temporarily here to interface between Mesh_3 and
+  /// the periodic triangulations, until the latter are made parallel.
+  ///
+  /// @{
+  template <class CellIt>
+  Vertex_handle insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+                               Cell_handle begin, int i)
+  {
+    Vertex_handle v = tds().insert_in_hole(cell_begin, cell_end, begin, i);
+    v->set_point(canonicalize_point(p));
+
+    std::vector<Cell_handle> nbs;
+    incident_cells(v, std::back_inserter(nbs));
+
+    // For all neighbors of the newly added vertex v: fetch their offsets from
+    // the tester and reset them in the triangulation data structure.
+    for (typename std::vector<Cell_handle>::iterator cit = nbs.begin();
+         cit != nbs.end(); cit++) {
+      Offset off[4];
+      for (int i=0 ; i<4 ; i++)
+        off[i] = (*cit)->vertex(i)->offset();
+
+      set_offsets(*cit, off[0], off[1], off[2], off[3]);
+    }
+
+    clear_v_offsets();
+
+    return v;
   }
 
-  Cell_handle locate(const Point & p, Vertex_handle hint) const
+  Vertex_handle insert(const Point& p,
+                       Cell_handle start = Cell_handle(),
+                       bool* could_lock_zone = NULL)
   {
-    return Base::locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell());
-
-    assert(false); // not yet supported
+    assert(could_lock_zone == NULL);
+    return Base::insert(canonicalize_point(p), start);
   }
 
-  // Returns the vertices on the interior of the conflict hole.
-  template <class OutputIterator>
-  OutputIterator
-  vertices_inside_conflict_zone(const /*Weighted_point*/Point& /* p */,
-                                Cell_handle /* c */,
-                                OutputIterator res) const
+  Vertex_handle insert(const Point& p,
+                       Vertex_handle hint,
+                       bool* could_lock_zone = NULL)
   {
-    return res;
-
-    assert(false); // not yet supported
+    assert(could_lock_zone == NULL);
+    // compared to the non-periodic version in T3, the infinite cell cannot
+    // be used; `Cell_handle()` is used instead
+    return Base::insert(canonicalize_point(p),
+                        hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
 
-  Cell_handle infinite_cell() const
+  Vertex_handle insert(const Point& p,
+                       Locate_type lt, Cell_handle loc, int li, int lj,
+                       bool* could_lock_zone = NULL)
   {
-    assert(false);
-    return Cell_handle();
+    assert(could_lock_zone == NULL);
+    return Base::insert(canonicalize_point(p), lt, loc, li, lj);
+  }
+  /// @}
+
+  /// Remove function
+  void remove(Vertex_handle v,
+              bool* could_lock_zone = NULL)
+  {
+    assert(could_lock_zone == NULL);
+    return Base::remove(v);
   }
 
-  Vertex_handle infinite_vertex() const
+  /// Dual computations
+  Point dual(Cell_handle c) const
   {
-    assert(false);
-    return Vertex_handle();
+    // return the canonical point
+    //return canonicalize_point(periodic_circumcenter(c));
+
+    // return the point with respect to the canonical cell c
+    return this->geom_traits().construct_weighted_circumcenter_3_object()(
+          c->vertex(0)->point(), c->vertex(1)->point(),
+          c->vertex(2)->point(), c->vertex(3)->point(),
+          get_offset(c,0), get_offset(c,1),
+          get_offset(c,2), get_offset(c,3));
+  }
+
+  Object dual(const Facet & f) const
+  {
+    Segment s = segment(Base::dual(f));
+    return make_object(s);
   }
 };
 
