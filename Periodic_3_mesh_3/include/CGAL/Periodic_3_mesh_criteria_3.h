@@ -36,6 +36,12 @@
 namespace CGAL {
 
 namespace parameters {
+
+  // see <CGAL/config.h>
+  CGAL_PRAGMA_DIAG_PUSH
+  // see <CGAL/Mesh_3/config.h>
+  CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
   BOOST_PARAMETER_NAME( (periodic_domain, tag) periodic_domain )
   BOOST_PARAMETER_NAME( (edge_size, tag) edge_size_ )
   BOOST_PARAMETER_NAME( (edge_sizing_field, tag) edge_sizing_field_ )
@@ -49,6 +55,9 @@ namespace parameters {
   BOOST_PARAMETER_NAME( (cell_size, tag) cell_size_ )
   BOOST_PARAMETER_NAME( (cell_sizing_field, tag) cell_sizing_field_ )
   BOOST_PARAMETER_NAME( (sizing_field, tag) sizing_field_ )
+
+  CGAL_PRAGMA_DIAG_POP
+
 } // end namespace parameters
 
 namespace internal {
@@ -116,6 +125,24 @@ public:
   const Edge_criteria& edge_criteria_object() const { return edge_criteria_; }
   const Facet_criteria& facet_criteria_object() const { return facet_criteria_; }
   const Cell_criteria& cell_criteria_object() const { return cell_criteria_; }
+
+  template <typename Facet_criterion>
+  void add_facet_criterion(Facet_criterion* criterion) {
+    CGAL_static_assertion((boost::is_base_of<
+                           typename Facet_criteria::Abstract_criterion,
+                           Facet_criterion
+                           >::value));
+    facet_criteria_.add(criterion);
+  }
+
+  template <typename Cell_criterion>
+  void add_cell_criterion(Cell_criterion* criterion) {
+    CGAL_static_assertion((boost::is_base_of<
+                           typename Cell_criteria::Abstract_criterion,
+                           Cell_criterion
+                           >::value));
+    cell_criteria_.add(criterion);
+  }
 
 private:
   Edge_criteria edge_criteria_;

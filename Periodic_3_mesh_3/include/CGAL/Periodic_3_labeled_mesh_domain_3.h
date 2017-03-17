@@ -32,6 +32,19 @@
 
 namespace CGAL
 {
+
+/**
+ * \class Periodic_labeled_mesh_domain_3
+ *
+ * Function f must take his values into N.
+ * Let p be a Point.
+ *  - f(p)=0 means that p is outside domain.
+ *  - f(p)=a, a!=0 means that p is inside subdomain a.
+ *
+ *  Any boundary facet is labelled <a,b>, a<b, where a and b are the
+ *  tags of it's incident subdomain.
+ *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
+ */
 template<class Function, class BGT>
 class Periodic_labeled_mesh_domain_3
     : public Labeled_mesh_domain_3<Function, BGT>
@@ -40,21 +53,30 @@ public:
   /// Base type
   typedef Labeled_mesh_domain_3<Function, BGT> Base;
 
-  /// Public types
-  typedef typename Base::FT FT;
-  typedef BGT Geom_traits;
-  typedef typename Base::Sphere_3 Sphere_3;
-  typedef typename Base::Bbox_3 Bbox_3;
-  typedef typename Base::Iso_cuboid_3 Iso_cuboid_3;
-  typedef typename Base::Surface_patch Surface_patch;
+  /// Geometric object types
+  typedef typename Base::Point_3            Point_3;
+  typedef typename Base::Segment_3          Segment_3;
+  typedef typename Base::Ray_3              Ray_3;
+  typedef typename Base::Line_3             Line_3;
+  typedef typename Base::Iso_cuboid_3       Iso_cuboid_3;
+  typedef typename Base::Bbox_3             Bbox_3;
+  typedef typename Base::Sphere_3           Sphere_3;
+
+  /// Type of indexes for surface patch of the input complex
+  typedef typename Base::Surface_patch       Surface_patch;
   typedef typename Base::Surface_patch_index Surface_patch_index;
-  typedef typename Base::Index Index;
-  typedef typename Base::Intersection Intersection;
-  typedef typename Base::Subdomain_index Subdomain_index;
-  typedef typename Base::Segment_3 Segment_3;
-  typedef typename Base::Ray_3 Ray_3;
-  typedef typename Base::Line_3 Line_3;
-  typedef typename Base::Point_3 Point_3;
+
+  /// Type of indexes to characterize the lowest dimensional face of the input
+  /// complex on which a vertex lie
+  typedef typename Base::Index               Index;
+  typedef typename Base::Intersection        Intersection;
+
+  /// Type of indexes for cells of the input complex
+  typedef typename Base::Subdomain_index     Subdomain_index;
+
+  /// Public types
+  typedef typename Base::FT                  FT;
+  typedef BGT                                Geom_traits;
 
   Periodic_labeled_mesh_domain_3(const Function& f,
                          const Iso_cuboid_3& bbox,
@@ -64,6 +86,15 @@ public:
 
   const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
 
+  /**
+   * Returns true is the element \ccc{type} intersect properly any of the
+   * surface patches describing the either the domain boundary or some
+   * subdomain boundary.
+   * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
+   * Parameter index is set to the index of the intersected surface patch
+   * if \ccc{true} is returned and to the default \ccc{Surface_patch_index}
+   * value otherwise.
+   */
   struct Do_intersect_surface
   {
     Do_intersect_surface(const Periodic_labeled_mesh_domain_3& domain)
@@ -173,6 +204,15 @@ public:
     return Do_intersect_surface(*this);
   }
 
+  /**
+   * Returns a point in the intersection of the primitive \ccc{type}
+   * with some boundary surface.
+   * \ccc{Type1} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
+   * The integer \ccc{dimension} is set to the dimension of the lowest
+   * dimensional face in the input complex containing the returned point, and
+   * \ccc{index} is set to the index to be stored at a mesh vertex lying
+   * on this face.
+   */
   struct Construct_intersection
   {
     Construct_intersection(const Periodic_labeled_mesh_domain_3& domain)
@@ -350,6 +390,7 @@ private:
   Periodic_labeled_mesh_domain_3(const Periodic_labeled_mesh_domain_3&);
   Periodic_labeled_mesh_domain_3& operator=(const Periodic_labeled_mesh_domain_3&);
 };
-}
+
+} // namespace CGAL
 
 #endif /* CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H */

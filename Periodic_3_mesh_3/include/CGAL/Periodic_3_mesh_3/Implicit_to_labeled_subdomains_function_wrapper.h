@@ -27,6 +27,13 @@
 #ifndef CGAL_PERIODIC_3_MESH_3_IMPLICIT_TO_LABELED_SUBDOMAINS_FUNCTION_WRAPPER_H
 #define CGAL_PERIODIC_3_MESH_3_IMPLICIT_TO_LABELED_SUBDOMAINS_FUNCTION_WRAPPER_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
+#endif
+
 namespace CGAL {
 
 /**
@@ -68,5 +75,8 @@ private:
 
 }  // end namespace CGAL
 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_PERIODIC_3_MESH_3_IMPLICIT_TO_LABELED_SUBDOMAINS_FUNCTION_WRAPPER_H

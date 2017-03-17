@@ -30,8 +30,14 @@ template <typename Tr,
   typename Visitor_ = Mesh_3::Periodic_mesh_3::Cell_criteria_visitor_with_features<Tr> >
 class Periodic_mesh_cell_criteria_3
 {
-  typedef Visitor_                          Visitor;
-  typedef Mesh_3::Criteria<Tr,Visitor>      Criteria;
+public:
+  typedef Visitor_                                Visitor;
+  typedef typename Visitor::Cell_quality          Cell_quality;
+  typedef typename Visitor::Cell_badness          Cell_badness;
+
+  typedef Mesh_3::Abstract_criterion<Tr, Visitor> Abstract_criterion;
+private:
+  typedef Mesh_3::Criteria<Tr,Visitor>            Criteria;
 
   typedef typename Tr::Cell_handle          Cell_handle;
   typedef typename Tr::Geom_traits::FT      FT;
@@ -41,9 +47,6 @@ class Periodic_mesh_cell_criteria_3
   typedef typename Tr::Iso_cuboid           Iso_cuboid;
 
 public:
-  typedef typename Visitor::Cell_quality    Cell_quality;
-  typedef typename Visitor::Cell_badness    Cell_badness;
-
   /**
    * @brief Constructor
    *
@@ -107,6 +110,11 @@ public:
   Cell_badness operator()(const Cell_handle& cell) const
   {
     return criteria_(cell);
+  }
+
+  void add(Abstract_criterion* criterion)
+  {
+    criteria_.add(criterion);
   }
 
 private:

@@ -25,6 +25,13 @@
 #ifndef CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
 #define CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
+#endif
+
 #include <CGAL/Periodic_3_labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
@@ -77,5 +84,9 @@ private:
 };  // end class Periodic_implicit_mesh_domain_3
 
 }  // end namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H

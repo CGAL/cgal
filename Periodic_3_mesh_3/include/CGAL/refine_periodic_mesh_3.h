@@ -30,6 +30,11 @@
 
 namespace CGAL {
 
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
 BOOST_PARAMETER_FUNCTION(
   (void),
   refine_periodic_mesh_3,
@@ -42,6 +47,8 @@ BOOST_PARAMETER_FUNCTION(
       (odt_param, (parameters::internal::Odt_options), parameters::no_odt())
       (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
       (reset_param, (parameters::Reset), parameters::reset_c3t3())
+      (mesh_options_param, (parameters::internal::Mesh_3_options),
+                           parameters::internal::Mesh_3_options())
     )
   )
 )
@@ -54,8 +61,11 @@ BOOST_PARAMETER_FUNCTION(
                                      perturb_param,
                                      odt_param,
                                      lloyd_param,
-                                     reset_param() );
+                                     reset_param(),
+                                     mesh_options_param);
 }
+
+CGAL_PRAGMA_DIAG_POP
 
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria
@@ -71,6 +81,8 @@ BOOST_PARAMETER_FUNCTION(
  *   The new c3t3 keeps only the vertices (as NON-weighted points with their
  *   dimension and Index) of the triangulation. That allows to refine a mesh
  *   which has been exuded.
+ * @param mesh_3_options is a struct object used to pass non-documented options,
+ *   for debugging purpose.
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
 void refine_periodic_mesh_3_impl(C3T3& c3t3,
@@ -80,7 +92,9 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
                         const parameters::internal::Perturb_options& perturb,
                         const parameters::internal::Odt_options& odt,
                         const parameters::internal::Lloyd_options& lloyd,
-                        bool reset_c3t3)
+                        bool reset_c3t3,
+                        const parameters::internal::Mesh_3_options&
+                          mesh_options = parameters::internal::Mesh_3_options())
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 
@@ -95,12 +109,16 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
     c3t3.swap(tmp_c3t3);
   }
 
+  dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
+
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria);
-  double refine_time = mesher.refine_mesh();
+  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
 
   // try to project bad vertices
   //projection_of_external_points_of_surface(c3t3, domain);
+
+  dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
 
   // Odt
   if ( odt )
@@ -128,6 +146,10 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
                           parameters::freeze_bound = lloyd.bound());
   }
 
+  if( odt || lloyd) {
+    dump_c3t3(c3t3, mesh_options.dump_after_glob_opt_prefix);
+  }
+
   // Perturbation
   if ( perturb )
   {
@@ -142,6 +164,8 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
                    domain,
                    parameters::time_limit = perturb_time_limit,
                    parameters::sliver_bound = perturb.bound());
+
+    dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
 
 #if 1 // regular stuff is not yet supported by periodic triangulations
@@ -156,9 +180,10 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
     exude_mesh_3(c3t3,
                  parameters::time_limit = exude_time_limit,
                  parameters::sliver_bound = exude.bound());
-  }
-#endif //
 
+    dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
+  }
+#endif
 }
 
 } // end namespace CGAL

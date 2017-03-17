@@ -135,6 +135,11 @@ C3T3 make_periodic_mesh_3(const MD& md, const MC& mc,
 }
 #endif
 
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
 BOOST_PARAMETER_FUNCTION(
   (void),
   make_periodic_mesh_3_bp,
@@ -147,6 +152,8 @@ BOOST_PARAMETER_FUNCTION(
     (perturb_param, (parameters::internal::Perturb_options), parameters::no_perturb()) // another default parameter distinct from Mesh_3
     (odt_param, (parameters::internal::Odt_options), parameters::no_odt()) // another default parameter distinct from Mesh_3
     (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
+    (mesh_options_param, (parameters::internal::Mesh_3_options),
+                         parameters::internal::Mesh_3_options())
     )
    )
   )
@@ -155,6 +162,7 @@ BOOST_PARAMETER_FUNCTION(
                             exude_param, perturb_param, odt_param, lloyd_param,
                             features_param.features());
 }
+CGAL_PRAGMA_DIAG_POP
 
 template<class C3T3, class MeshDomain>
 void init_triangulation(C3T3& c3t3, MeshDomain& domain)
@@ -303,7 +311,9 @@ void make_periodic_mesh_3_impl(C3T3& c3t3,
                                const parameters::internal::Perturb_options& perturb,
                                const parameters::internal::Odt_options& odt,
                                const parameters::internal::Lloyd_options& lloyd,
-                               const bool with_features)
+                               const bool with_features,
+                               const parameters::internal::Mesh_3_options&
+                                 mesh_options = parameters::internal::Mesh_3_options())
 {
   // Initialize the triangulation of c3t3
   init_triangulation(c3t3, const_cast<MeshDomain&>(domain));
@@ -313,10 +323,12 @@ void make_periodic_mesh_3_impl(C3T3& c3t3,
       C3T3,
       MeshDomain,
       MeshCriteria,
-      internal::Mesh_3::has_Has_features<MeshDomain>::value > () (c3t3,
-                                                                  domain,
-                                                                  criteria,
-                                                                  with_features);
+      internal::Mesh_3::has_Has_features<MeshDomain>::value > () (
+          c3t3,
+          domain,
+          criteria,
+          with_features,
+          mesh_options.number_of_initial_points);
 
   // If c3t3 initialization is not sufficient (may happen if there is only
   // a planar curve as feature for example), add some surface points
@@ -330,7 +342,7 @@ void make_periodic_mesh_3_impl(C3T3& c3t3,
   // Don't reset c3t3 as we just created it
   refine_periodic_mesh_3(c3t3, domain, criteria,
                          exude, perturb, odt, lloyd,
-                         parameters::no_reset_c3t3());
+                         parameters::no_reset_c3t3(), mesh_options);
 }
 
 }  // end namespace CGAL
