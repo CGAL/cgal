@@ -19,11 +19,11 @@
 //
 //******************************************************************************
 // File Description :
-// class Periodic_implicit_mesh_domain_3. See class description.
+// class Labeled_periodic_mesh_domain_3. See class description.
 //******************************************************************************
 
-#ifndef CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H
-#define CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H
+#ifndef CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H
+#define CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -38,7 +38,7 @@ namespace CGAL
 {
 
 /**
- * \class Periodic_labeled_mesh_domain_3
+ * \class Labeled_periodic_mesh_domain_3
  *
  * Function f must take his values into N.
  * Let p be a Point.
@@ -50,7 +50,7 @@ namespace CGAL
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
 template<class Function, class BGT>
-class Periodic_labeled_mesh_domain_3
+class Labeled_periodic_mesh_domain_3
     : public Labeled_mesh_domain_3<Function, BGT>
 {
 public:
@@ -82,10 +82,10 @@ public:
   typedef typename Base::FT                  FT;
   typedef BGT                                Geom_traits;
 
-  Periodic_labeled_mesh_domain_3(const Function& f,
-                         const Iso_cuboid_3& bbox,
-                         const FT& error_bound = FT(1e-3))
-  : Base(f, bbox, error_bound)
+  Labeled_periodic_mesh_domain_3(const Function& f,
+                                 const Iso_cuboid_3& bbox,
+                                 const FT& error_bound = FT(1e-3))
+    : Base(f, bbox, error_bound)
   { }
 
   const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
@@ -101,7 +101,7 @@ public:
    */
   struct Do_intersect_surface
   {
-    Do_intersect_surface(const Periodic_labeled_mesh_domain_3& domain)
+    Do_intersect_surface(const Labeled_periodic_mesh_domain_3& domain)
       : r_domain_(domain)
     { }
 
@@ -199,7 +199,7 @@ public:
     }
 
   private:
-    const Periodic_labeled_mesh_domain_3& r_domain_;
+    const Labeled_periodic_mesh_domain_3& r_domain_;
   };
 
   /// Returns Do_intersect_surface object
@@ -219,7 +219,7 @@ public:
    */
   struct Construct_intersection
   {
-    Construct_intersection(const Periodic_labeled_mesh_domain_3& domain)
+    Construct_intersection(const Labeled_periodic_mesh_domain_3& domain)
       : r_domain_(domain)
     { }
 
@@ -381,7 +381,7 @@ public:
     }
 
   private:
-    const Periodic_labeled_mesh_domain_3& r_domain_;
+    const Labeled_periodic_mesh_domain_3& r_domain_;
   };
 
   Construct_intersection construct_intersection_object() const
@@ -391,10 +391,10 @@ public:
 
 private:
   // Disabled copy constructor & assignment operator
-  Periodic_labeled_mesh_domain_3(const Periodic_labeled_mesh_domain_3&);
-  Periodic_labeled_mesh_domain_3& operator=(const Periodic_labeled_mesh_domain_3&);
+  Labeled_periodic_mesh_domain_3(const Labeled_periodic_mesh_domain_3&);
+  Labeled_periodic_mesh_domain_3& operator=(const Labeled_periodic_mesh_domain_3&);
 };
 
 } // namespace CGAL
 
-#endif /* CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H */
+#endif // CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H

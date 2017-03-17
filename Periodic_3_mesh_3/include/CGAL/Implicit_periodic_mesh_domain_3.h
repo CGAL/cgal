@@ -19,11 +19,11 @@
 //
 //******************************************************************************
 // File Description :
-// class Periodic_implicit_mesh_domain_3. See class description.
+// class Implicit_periodic_mesh_domain_3. See class description.
 //******************************************************************************
 
-#ifndef CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
-#define CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
+#ifndef CGAL_IMPLICIT_PERIODIC_MESH_DOMAIN_3_H
+#define CGAL_IMPLICIT_PERIODIC_MESH_DOMAIN_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -32,14 +32,14 @@
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
-#include <CGAL/Periodic_3_labeled_mesh_domain_3.h>
+#include <CGAL/Labeled_periodic_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 namespace CGAL {
 /**
- * @class Periodic_implicit_mesh_domain_3
+ * @class Implicit_periodic_mesh_domain_3
  *
  * Implements mesh_traits for a domain defined as the negative values of
  * an implicit function.
@@ -47,12 +47,12 @@ namespace CGAL {
 template<class Function,
   class BGT,
   class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
-class Periodic_implicit_mesh_domain_3
- : public Periodic_labeled_mesh_domain_3<Wrapper, BGT >
+class Implicit_periodic_mesh_domain_3
+ : public Labeled_periodic_mesh_domain_3<Wrapper, BGT >
 {
 public:
   /// Base type
-  typedef Periodic_labeled_mesh_domain_3<Wrapper, BGT> Base;
+  typedef Labeled_periodic_mesh_domain_3<Wrapper, BGT> Base;
 
   /// Public types
   typedef typename Base::Bbox_3 Bbox_3;
@@ -66,22 +66,22 @@ public:
    * @param cuboid a bounding box of the domain, periodic domain
    * @param error_bound the error bound relative to the sphere radius
    */
-  Periodic_implicit_mesh_domain_3(const Function& f,
-                         const Iso_cuboid_3& cuboid,
-                         FT error_bound = FT(1e-3))
+  Implicit_periodic_mesh_domain_3(const Function& f,
+                                  const Iso_cuboid_3& cuboid,
+                                  FT error_bound = FT(1e-3))
     : Base(Wrapper(f), cuboid, error_bound)
   { }
 
   /// Destructor
-  virtual ~Periodic_implicit_mesh_domain_3() { }
+  virtual ~Implicit_periodic_mesh_domain_3() { }
 
 private:
   // Disabled copy constructor & assignment operator
-  typedef Periodic_implicit_mesh_domain_3<Function,BGT> Self;
-  Periodic_implicit_mesh_domain_3(const Self& src);
+  typedef Implicit_periodic_mesh_domain_3<Function,BGT> Self;
+  Implicit_periodic_mesh_domain_3(const Self& src);
   Self& operator=(const Self& src);
 
-};  // end class Periodic_implicit_mesh_domain_3
+};  // end class Implicit_periodic_mesh_domain_3
 
 }  // end namespace CGAL
 
@@ -89,4 +89,4 @@ private:
 #  pragma warning(pop)
 #endif
 
-#endif // CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
+#endif // CGAL_IMPLICIT_PERIODIC_MESH_DOMAIN_3_H

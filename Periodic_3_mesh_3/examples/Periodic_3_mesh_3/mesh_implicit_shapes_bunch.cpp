@@ -10,7 +10,7 @@
 #include <CGAL/Periodic_mesh_cell_criteria_3.h>
 #include <CGAL/Periodic_mesh_criteria_3.h>
 
-#include <CGAL/Periodic_3_implicit_mesh_domain_3.h>
+#include <CGAL/Implicit_periodic_mesh_domain_3.h>
 #include <CGAL/make_periodic_mesh_3.h>
 #include <CGAL/Periodic_mesh_triangulation_3.h>
 
@@ -21,7 +21,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
-typedef CGAL::Periodic_implicit_mesh_domain_3<Function,K> Periodic_mesh_domain;
+typedef CGAL::Implicit_periodic_mesh_domain_3<Function,K> Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_mesh_triangulation_3<Periodic_mesh_domain>::type   Tr;
