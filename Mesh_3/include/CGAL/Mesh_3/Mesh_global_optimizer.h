@@ -876,6 +876,14 @@ compute_move(const Vertex_handle& v)
 
   FT local_move_sq_ratio = sq_length(move) / local_sq_size;
 
+  // <PERIODIC>
+  // The case c3t3_.in_dimension(v) == 2 is not yet adapted
+  if ( c3t3_.in_dimension(v) == 2 )
+  {
+    return CGAL::NULL_VECTOR;
+  }
+  // </PERIODIC>
+
   // Move point only if displacement is big enough w.r.t local size
   if ( local_move_sq_ratio < sq_freeze_ratio_ )
   {
@@ -1151,7 +1159,9 @@ sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
     Gt().compute_squared_distance_3_object();
 
   const Point_3 circumcenter = tr_.dual(cell);
-  return ( sq_distance(v->point(), circumcenter) );
+  // <PERIODIC>
+  return ( sq_distance(tr_.point(cell, cell->index(v)), circumcenter) );
+  // </PERIODIC>
 }
 
 } // end namespace Mesh_3

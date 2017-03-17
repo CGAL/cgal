@@ -1816,17 +1816,53 @@ is_facet_encroached(const Facet& facet,
     return false;
   }
 
-  typename Gt::Compare_power_distance_3 compare_distance =
-    r_tr_.geom_traits().compare_power_distance_3_object();
-
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
-  const Point& center = get_facet_surface_center(facet);
-  const Point& reference_point = cell->vertex((facet_index+1)&3)->point();
 
-  // facet is encroached if the new point is near from center than
-  // one vertex of the facet
-  return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
+  // <PERIODIC>
+  const Point& center = r_tr_.canonicalize_point(get_facet_surface_center(facet));
+  const Point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
+
+  typename Gt::Compute_squared_distance_3 distance =
+  Gt().compute_squared_distance_3_object();
+
+  Point surface_centers[27];
+  typedef typename Tr::Offset Offset;
+  for( int i = 0; i < 3; i++ ) {
+    for( int j = 0; j < 3; j++) {
+      for( int k = 0; k < 3; k++ ) {
+        surface_centers[9*i+3*j+k] =
+            r_tr_.point(std::make_pair(center, Offset(i-1,j-1,k-1)));
+      }
+    }
+  }
+
+  typedef typename Gt::FT FT;
+
+  FT min_distance_to_ref_point = distance(reference_point, center);
+  FT min_distance_to_point = distance(point, center);
+
+  for( int i = 0; i < 27; i++ ) {
+    FT current_distance_to_ref_point = distance(reference_point, surface_centers[i]);
+    if ( current_distance_to_ref_point < min_distance_to_ref_point )
+    {
+      min_distance_to_ref_point = current_distance_to_ref_point;
+    }
+    FT current_distance_to_point = distance(point, surface_centers[i]);
+    if ( current_distance_to_point < min_distance_to_point )
+    {
+      min_distance_to_point = current_distance_to_point;
+    }
+  }
+
+  assert(min_distance_to_point < 0.5 && min_distance_to_ref_point < 0.5);
+
+  // facet is encroached if the new point is closer to the center than
+  // any vertex of the facet
+
+  // mesh_3: /*compare_distance(center, reference_point, point) != CGAL::SMALLER*/
+  return (!(min_distance_to_ref_point < min_distance_to_point) );
+  // </PERIODIC>
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
