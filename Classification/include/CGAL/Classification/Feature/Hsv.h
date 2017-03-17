@@ -73,13 +73,13 @@ class Hsv : public Feature_base
   typedef typename Classification::HSV_Color HSV_Color;
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-  std::vector<double> color_feature;
+  std::vector<float> color_feature;
 #else
   const PointRange& input;
   ColorMap color_map;
   std::size_t m_channel;
-  double m_mean;
-  double m_sd;
+  float m_mean;
+  float m_sd;
 #endif  
   
 public:
@@ -98,7 +98,7 @@ public:
   Hsv (const PointRange& input,
        ColorMap color_map,
        std::size_t channel,
-       double mean, double sd)
+       float mean, float sd)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : input(input), color_map(color_map), m_channel(channel), m_mean(mean), m_sd(sd)
 #endif
@@ -121,7 +121,7 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  virtual double value (std::size_t pt_index)
+  virtual float value (std::size_t pt_index)
   {
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     return color_feature[pt_index];

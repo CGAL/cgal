@@ -48,13 +48,13 @@ namespace Feature {
     for matrix diagonalization.
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
+          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Distance_to_plane : public Feature_base
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-  std::vector<double> distance_to_plane_feature;
+  std::vector<float> distance_to_plane_feature;
 #else
   const PointRange& input;
   PointMap point_map;
@@ -85,7 +85,7 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  virtual double value (std::size_t pt_index)
+  virtual float value (std::size_t pt_index)
   {
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     return distance_to_plane_feature[pt_index];

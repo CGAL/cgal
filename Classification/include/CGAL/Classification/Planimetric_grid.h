@@ -79,7 +79,7 @@ public:
   Planimetric_grid (const PointRange& input,
                     PointMap point_map,
                     const Iso_cuboid_3& bbox,
-                    const double grid_resolution)
+                    const float grid_resolution)
   {
     std::size_t width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
     std::size_t height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
@@ -92,7 +92,7 @@ public:
         m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
         m_grid(m_x.back(), m_y.back()).push_back (i);
       }
-
+    std::cerr << "Grid size = " << width * height << std::endl;
   }
 
   /*!

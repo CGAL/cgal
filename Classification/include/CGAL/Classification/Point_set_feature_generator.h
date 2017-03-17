@@ -89,7 +89,7 @@ template <typename Geom_traits,
 #else
           typename ConcurrencyTag = CGAL::Sequential_tag,
 #endif
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
+          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Point_set_feature_generator
 {
   
@@ -147,10 +147,10 @@ private:
     Neighborhood* neighborhood;
     Planimetric_grid* grid;
     Local_eigen_analysis* eigen;
-    double voxel_size;
+    float voxel_size;
     
     Scale (const PointRange& input, PointMap point_map,
-           const Iso_cuboid_3& bbox, double voxel_size)
+           const Iso_cuboid_3& bbox, float voxel_size)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
@@ -170,7 +170,7 @@ private:
       t.start();
       
       eigen = new Local_eigen_analysis (input, point_map, neighborhood->k_neighbor_query(6));
-      double range = eigen->mean_range();
+      float range = eigen->mean_range();
       if (this->voxel_size < 0)
         this->voxel_size = range;
       t.stop();
@@ -186,14 +186,27 @@ private:
     }
     ~Scale()
     {
-      delete neighborhood;
-      delete grid;
+      if (neighborhood != NULL)
+        delete neighborhood;
+      if (grid != NULL)
+        delete grid;
       delete eigen;
     }
 
-    double grid_resolution() const { return voxel_size; }
-    double radius_neighbors() const { return voxel_size * 5; }
-    double radius_dtm() const { return voxel_size * 100; }
+    void reduce_memory_footprint(bool delete_neighborhood)
+    {
+      delete grid;
+      grid = NULL;
+      if (delete_neighborhood)
+        {
+          delete neighborhood;
+          neighborhood = NULL;
+        }
+    }
+
+    float grid_resolution() const { return voxel_size; }
+    float radius_neighbors() const { return voxel_size * 5; }
+    float radius_dtm() const { return voxel_size * 100; }
     
   };
 
@@ -335,6 +348,14 @@ public:
   {
     clear();
   }
+
+  void reduce_memory_footprint()
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        m_scales[i]->reduce_memory_footprint(i > 0);
+      }
+  }
   /// \endcond
 
   /// \name Data Structures and Parameters
@@ -378,7 +399,7 @@ public:
     \note `generate_features()` must have been called before calling
     this method.
   */
-  double grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
+  float grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
   /*!
 
     \brief Returns the radius used for neighborhood queries at scale
@@ -389,7 +410,7 @@ public:
     \note `generate_features()` must have been called before calling
     this method.
   */
-  double radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
+  float radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
   /*!
     \brief Returns the radius used for digital terrain modeling at
     scale `scale`. This radius represents the minimum size of a
@@ -398,7 +419,7 @@ public:
     \note `generate_features()` must have been called before calling
     this method.
   */
-  double radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
+  float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
 
     
@@ -488,12 +509,12 @@ private:
     using Feature_adder::scale;
     ColorMap color_map;
     std::size_t channel;
-    double mean;
-    double sd;
+    float mean;
+    float sd;
 
     // TODO!
     Feature_adder_color (Point_set_feature_generator* generator, ColorMap color_map, std::size_t scale,
-                         std::size_t channel, double mean, double sd)
+                         std::size_t channel, float mean, float sd)
       : Feature_adder (generator, scale), color_map (color_map),
         channel (channel), mean (mean), sd (sd) { }
     
@@ -588,11 +609,11 @@ private:
     CGAL::Real_timer t; t.start();
     
     m_scales.reserve (nb_scales);
-    double voxel_size = - 1.;
-
+    //    float voxel_size = 0.05; // WARNING: do not keep (-1 is the right value)
+    float voxel_size = -1;
+    
     m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
     voxel_size = m_scales[0]->grid_resolution();
-    
     for (std::size_t i = 1; i < nb_scales; ++ i)
       {
         voxel_size *= 2;

@@ -54,7 +54,13 @@ class Vertical_dispersion : public Feature_base
 {
   typedef Classification::Image<float> Image_float;
   typedef Classification::Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
-  std::vector<double> vertical_dispersion;
+
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+  std::vector<float> vertical_dispersion;
+#else
+  const Grid& grid;
+  Image_float Dispersion;
+#endif
   
 public:
   /*!
@@ -69,14 +75,22 @@ public:
   Vertical_dispersion (const PointRange& input,
                        PointMap point_map,
                        const Grid& grid,
-                       const double grid_resolution,
-                       double radius_neighbors = -1.)
+                       const float grid_resolution,
+                       float radius_neighbors = -1.)
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+    : grid (grid)
+#endif
   {
     this->set_name ("vertical_dispersion");
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
-    
+
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     Image_float Dispersion(grid.width(), grid.height());
+#else
+    Dispersion = Image_float(grid.width(), grid.height());
+#endif
+    
     for (std::size_t j = 0; j < grid.height(); j++)	
       for (std::size_t i = 0; i < grid.width(); i++)
         Dispersion(i,j)=0;
@@ -89,7 +103,7 @@ public:
 						
         if(!(grid.mask(i,j)))
           continue;
-        std::vector<double> hori;
+        std::vector<float> hori;
             
         std::size_t squareXmin = (i < square ? 0 : i - square);
         std::size_t squareXmax = (std::min) (grid.width()-1, i + square);
@@ -98,8 +112,8 @@ public:
 
         for(std::size_t k = squareXmin; k <= squareXmax; k++)
           for(std::size_t l = squareYmin; l <= squareYmax; l++)
-            if(CGAL::sqrt(pow((double)k-i,2)+pow((double)l-j,2))
-               <=(double)0.5*radius_neighbors/grid_resolution
+            if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))
+               <=(float)0.5*radius_neighbors/grid_resolution
                && (grid.indices(k,l).size()>0))
               for(std::size_t t=0; t<grid.indices(k,l).size();t++)
                 {
@@ -135,18 +149,25 @@ public:
       }
 		
     }
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     for (std::size_t i = 0; i < input.size(); i++)
       {
         std::size_t I= grid.x(i);
         std::size_t J= grid.y(i);
-        vertical_dispersion.push_back((double)Dispersion(I,J));
+        vertical_dispersion.push_back((float)Dispersion(I,J));
       }
-
+#endif
   }
   /// \cond SKIP_IN_MANUAL
-  virtual double value (std::size_t pt_index)
+  virtual float value (std::size_t pt_index)
   {
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     return vertical_dispersion[pt_index];
+#else
+    std::size_t I = grid.x(pt_index);
+    std::size_t J = grid.y(pt_index);
+    return ((float)Dispersion(I,J));
+#endif
   }
   /// \endcond
 };

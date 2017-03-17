@@ -56,8 +56,15 @@ class Elevation : public Feature_base
 
   typedef Image<float> Image_float;
   typedef Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
-   
-  std::vector<double> elevation_feature;
+
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+  std::vector<float> elevation_feature;
+#else
+  const PointRange& input;
+  PointMap point_map;
+  const Grid& grid;
+  Image_float dtm;
+#endif
   
 public:
   /*!
@@ -73,8 +80,11 @@ public:
   Elevation (const PointRange& input,
              PointMap point_map,
              const Grid& grid,
-             const double grid_resolution,
-             double radius_dtm = -1.)
+             const float grid_resolution,
+             float radius_dtm = -1.)
+#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
+    : input(input), point_map(point_map), grid(grid)
+#endif
   {
     this->set_name ("elevation");
     if (radius_dtm < 0.)
@@ -88,7 +98,7 @@ public:
         {
           if (grid.indices(i,j).empty())
             continue;
-          double mean = 0.;
+          float mean = 0.;
           for (std::size_t k = 0; k < grid.indices(i,j).size(); ++ k)
             mean += get(point_map, *(input.begin()+grid.indices(i,j)[k])).z();
           mean /= grid.indices(i,j).size();
@@ -106,7 +116,7 @@ public:
             std::size_t squareXmin = (i < square ? 0 : i - square);
             std::size_t squareXmax = (std::min)(grid.width() - 1, i + square);
 
-            std::vector<double> z;
+            std::vector<float> z;
             z.reserve(squareXmax - squareXmin +1 );
             for(std::size_t k = squareXmin; k <= squareXmax; k++)
               if (dem(k,j) != 0.)
@@ -119,7 +129,11 @@ public:
       }
     dem.free();
 
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     Image_float dtm(grid.width(),grid.height());
+#else
+    dtm = Image_float(grid.width(),grid.height());
+#endif
     
     for (std::size_t i = 0; i < grid.width(); ++ i)
       {
@@ -127,7 +141,7 @@ public:
           {
             std::size_t squareYmin = (j < square ? 0 : j - square);
             std::size_t squareYmax = (std::min)(grid.height() - 1, j + square);
-            std::vector<double> z;
+            std::vector<float> z;
             z.reserve(squareYmax - squareYmin +1 );
             for(std::size_t l = squareYmin; l <= squareYmax; l++)
               if (dtm_x(i,l) != 0.)
@@ -139,20 +153,28 @@ public:
           }
       }
     dtm_x.free();
-
+    
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     elevation_feature.reserve(input.size());
     for (std::size_t i = 0; i < input.size(); i++){
       std::size_t I = grid.x(i);
       std::size_t J = grid.y(i);
-      elevation_feature.push_back ((double)(get(point_map, *(input.begin()+i)).z()-dtm(I,J)));
+      elevation_feature.push_back ((float)(get(point_map, *(input.begin()+i)).z()-dtm(I,J)));
     }
-
+#endif
+    
   }
 
   /// \cond SKIP_IN_MANUAL
-  virtual double value (std::size_t pt_index)
+  virtual float value (std::size_t pt_index)
   {
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     return elevation_feature[pt_index];
+#else
+    std::size_t I = grid.x(pt_index);
+    std::size_t J = grid.y(pt_index);
+    return ((float)(get(point_map, *(input.begin()+pt_index)).z()-dtm(I,J)));
+#endif
   }
 
   /// \endcond

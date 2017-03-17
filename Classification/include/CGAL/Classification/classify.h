@@ -64,10 +64,10 @@ namespace internal {
     inline void apply (std::size_t s) const
     {
       std::size_t nb_class_best=0; 
-      std::vector<double> values;
+      std::vector<float> values;
       m_predicate.probabilities (s, values);
         
-      double val_class_best = (std::numeric_limits<double>::max)();      
+      float val_class_best = (std::numeric_limits<float>::max)();      
       for(std::size_t k = 0; k < m_labels.size(); ++ k)
         {
           if(val_class_best > values[k])
@@ -87,14 +87,14 @@ namespace internal {
   {
     const Label_set& m_labels;
     const ClassificationPredicate& m_predicate;
-    std::vector<std::vector<double> >& m_values;
+    std::vector<std::vector<float> >& m_values;
     
   public:
 
     Classifier_local_smoothing_preprocessing
     (const Label_set& labels,
      const ClassificationPredicate& predicate,
-     std::vector<std::vector<double> >& values)
+     std::vector<std::vector<float> >& values)
       : m_labels (labels), m_predicate (predicate), m_values (values)
     { }
 
@@ -108,7 +108,7 @@ namespace internal {
 
     inline void apply (std::size_t s) const
     {
-      std::vector<double> values;
+      std::vector<float> values;
       m_predicate.probabilities(s, values);
       for(std::size_t k = 0; k < m_labels.size(); ++ k)
         m_values[k][s] = values[k];
@@ -121,7 +121,7 @@ namespace internal {
     const ItemRange& m_input;
     const ItemMap m_item_map;
     const Label_set& m_labels;
-    const std::vector<std::vector<double> >& m_values;
+    const std::vector<std::vector<float> >& m_values;
     const NeighborQuery& m_neighbor_query;
     std::vector<std::size_t>& m_out;
     
@@ -130,7 +130,7 @@ namespace internal {
     Classifier_local_smoothing (const ItemRange& input,
                                 ItemMap item_map,
                                 const Label_set& labels,
-                                const std::vector<std::vector<double> >& values,
+                                const std::vector<std::vector<float> >& values,
                                 const NeighborQuery& neighbor_query,
                                 std::vector<std::size_t>& out)
       : m_input (input), m_item_map (item_map), m_labels (labels),
@@ -152,13 +152,13 @@ namespace internal {
       std::vector<std::size_t> neighbors;
       m_neighbor_query (get (m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
 
-      std::vector<double> mean (m_values.size(), 0.);
+      std::vector<float> mean (m_values.size(), 0.);
       for (std::size_t n = 0; n < neighbors.size(); ++ n)
         for (std::size_t j = 0; j < m_values.size(); ++ j)
           mean[j] += m_values[j][neighbors[n]];
 
       std::size_t nb_class_best=0; 
-      double val_class_best = (std::numeric_limits<double>::max)();
+      float val_class_best = (std::numeric_limits<float>::max)();
       for(std::size_t k = 0; k < mean.size(); ++ k)
         {
           mean[k] /= neighbors.size();
@@ -184,7 +184,7 @@ namespace internal {
     const Label_set& m_labels;
     const ClassificationPredicate& m_predicate;
     const NeighborQuery& m_neighbor_query;
-    double m_weight;
+    float m_weight;
     const std::vector<std::vector<std::size_t> >& m_indices;
     const std::vector<std::pair<std::size_t, std::size_t> >& m_input_to_indices;
     std::vector<std::size_t>& m_out;
@@ -202,7 +202,7 @@ namespace internal {
                          const Label_set& labels,
                          const ClassificationPredicate& predicate,
                          const NeighborQuery& neighbor_query,
-                         double weight,
+                         float weight,
                          const std::vector<std::vector<std::size_t> >& indices,
                          const std::vector<std::pair<std::size_t, std::size_t> >& input_to_indices,
                          std::vector<std::size_t>& out)
@@ -247,13 +247,13 @@ namespace internal {
                 edge_weights.push_back (m_weight);
               }
 
-          std::vector<double> values;
+          std::vector<float> values;
           m_predicate.probabilities(s, values);
           std::size_t nb_class_best = 0;
-          double val_class_best = (std::numeric_limits<double>::max)();
+          float val_class_best = (std::numeric_limits<float>::max)();
           for(std::size_t k = 0; k < m_labels.size(); ++ k)
             {
-              double value = values[k];
+              float value = values[k];
               probability_matrix[k][j] = value;
             
               if(val_class_best > value)
@@ -321,8 +321,8 @@ namespace internal {
   {
     output.resize(input.size());
     
-    std::vector<std::vector<double> > values
-      (labels.size(), std::vector<double> (input.size(), -1.));
+    std::vector<std::vector<float> > values
+      (labels.size(), std::vector<float> (input.size(), -1.));
     internal::Classifier_local_smoothing_preprocessing<ClassificationPredicate>
       f1 (labels, predicate, values);
     internal::Classifier_local_smoothing<ItemRange, ItemMap, NeighborQuery>
@@ -359,7 +359,7 @@ namespace internal {
                                const Label_set& labels,
                                const ClassificationPredicate& predicate,
                                const NeighborQuery& neighbor_query,
-                               const double weight,
+                               const float weight,
                                const std::size_t min_number_of_subdivisions,
                                std::vector<std::size_t>& output)
   {
@@ -367,11 +367,11 @@ namespace internal {
       (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(bbox_map)),
        boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(bbox_map)));
 
-    double Dx = bbox.xmax() - bbox.xmin();
-    double Dy = bbox.ymax() - bbox.ymin();
-    double A = Dx * Dy;
-    double a = A / min_number_of_subdivisions;
-    double l = std::sqrt(a);
+    float Dx = bbox.xmax() - bbox.xmin();
+    float Dy = bbox.ymax() - bbox.ymin();
+    float A = Dx * Dy;
+    float a = A / min_number_of_subdivisions;
+    float l = std::sqrt(a);
     std::size_t nb_x = std::size_t(Dx / l) + 1;
     std::size_t nb_y = std::size_t((A / nb_x) / a) + 1;
     std::size_t nb = nb_x * nb_y;
@@ -382,11 +382,11 @@ namespace internal {
       for (std::size_t y = 0; y < nb_y; ++ y)
         {
           bboxes.push_back
-            (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / double(nb_x)),
-                           bbox.ymin() + Dy * (y / double(nb_y)),
+            (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / float(nb_x)),
+                           bbox.ymin() + Dy * (y / float(nb_y)),
                            bbox.zmin(),
-                           bbox.xmin() + Dx * ((x+1) / double(nb_x)),
-                           bbox.ymin() + Dy * ((y+1) / double(nb_y)),
+                           bbox.xmin() + Dx * ((x+1) / float(nb_x)),
+                           bbox.ymin() + Dy * ((y+1) / float(nb_y)),
                            bbox.zmax()));
         }
     

@@ -142,14 +142,14 @@ public:
     typedef Point_set_neighborhood::Point value_type; ///<
   private:
     const Point_set_neighborhood& neighborhood;
-    double radius;
+    float radius;
   public:
     /*!
       \brief Constructs a range neighbor query object.
       \param neighborhood point set neighborhood object.
       \param radius radius of the neighbor query sphere.
     */
-    Range_neighbor_query (const Point_set_neighborhood& neighborhood, double radius)
+    Range_neighbor_query (const Point_set_neighborhood& neighborhood, float radius)
       : neighborhood (neighborhood), radius(radius) { }
 
     /// \cond SKIP_IN_MANUAL
@@ -202,7 +202,7 @@ public:
   */
   Point_set_neighborhood (const PointRange& input,
                           PointMap point_map,
-                          double voxel_size)
+                          float voxel_size)
     : m_tree (NULL)
   {
     // First, simplify
@@ -239,7 +239,7 @@ public:
   /*!
     \brief Returns a neighbor query object with fixed radius `radius`.
   */
-  Range_neighbor_query range_neighbor_query (const double radius) const
+  Range_neighbor_query range_neighbor_query (const float radius) const
   {
     return Range_neighbor_query (*this, radius);
   }
@@ -265,7 +265,7 @@ private:
 
   template <typename Map>
   void voxelize_point_set (std::vector<std::size_t>& indices, Map point_map,
-                           double voxel_size)
+                           float voxel_size)
   {
     std::map<Point, std::vector<std::size_t> > grid;
 
@@ -292,10 +292,10 @@ private:
                                          (pts.end(),
                                           CGAL::Property_map_to_unary_function<Map>(point_map)));
         std::size_t chosen = 0;
-        double min_dist = (std::numeric_limits<double>::max)();
+        float min_dist = (std::numeric_limits<float>::max)();
         for (std::size_t i = 0; i < pts.size(); ++ i)
           {
-            double dist = CGAL::squared_distance(get(point_map, pts[i]), centroid);
+            float dist = CGAL::squared_distance(get(point_map, pts[i]), centroid);
             if (dist < min_dist)
               {
                 min_dist = dist;

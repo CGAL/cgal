@@ -31,12 +31,12 @@ class Evaluation
 {
   mutable std::map<Label_handle, std::size_t> m_map_labels;
 
-  std::vector<double> m_precision;
-  std::vector<double> m_recall;
-  std::vector<double> m_iou; // intersection over union
-  double m_accuracy;
-  double m_mean_iou;
-  double m_mean_f1;
+  std::vector<float> m_precision;
+  std::vector<float> m_recall;
+  std::vector<float> m_iou; // intersection over union
+  float m_accuracy;
+  float m_mean_iou;
+  float m_mean_f1;
 
 public:
   
@@ -79,9 +79,9 @@ public:
     
     for (std::size_t j = 0; j < labels.size(); ++ j)
       {
-        m_precision[j] = true_positives[j] / double(true_positives[j] + false_positives[j]);
-        m_recall[j] = true_positives[j] / double(true_positives[j] + false_negatives[j]);
-        m_iou[j] = true_positives[j] / double(true_positives[j] + false_positives[j] + false_negatives[j]);
+        m_precision[j] = true_positives[j] / float(true_positives[j] + false_positives[j]);
+        m_recall[j] = true_positives[j] / float(true_positives[j] + false_negatives[j]);
+        m_iou[j] = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
 
         m_mean_iou += m_iou[j];
         m_mean_f1 += 2. * (m_precision[j] * m_recall[j])
@@ -90,7 +90,7 @@ public:
 
     m_mean_iou /= labels.size();
     m_mean_f1 /= labels.size();
-    m_accuracy = sum_true_positives / double(total);
+    m_accuracy = sum_true_positives / float(total);
   }
 
 
@@ -102,7 +102,7 @@ public:
     the true positives and the false positives.
 
   */
-  double precision (Label_handle label) const
+  float precision (Label_handle label) const
   {
     return m_precision[m_map_labels[label]];
   }
@@ -115,7 +115,7 @@ public:
     the true positives and the false negatives.
 
   */
-  double recall (Label_handle label) const
+  float recall (Label_handle label) const
   {
     return m_recall[m_map_labels[label]];
   }
@@ -131,7 +131,7 @@ public:
     \f]
 
   */
-  double f1_score (Label_handle label) const
+  float f1_score (Label_handle label) const
   {
     std::size_t label_idx = m_map_labels[label];
     return 2. * (m_precision[label_idx] * m_recall[label_idx])
@@ -146,7 +146,7 @@ public:
     the sum of the true positives, of the false positives and of the
     false negatives.
   */
-  double intersection_over_union (Label_handle label) const
+  float intersection_over_union (Label_handle label) const
   {
     return m_iou[m_map_labels[label]];
   }
@@ -157,19 +157,19 @@ public:
     Accuracy is the total number of true positives divided by the
     total number of provided inliers.
   */
-  double accuracy() const { return m_accuracy; }
+  float accuracy() const { return m_accuracy; }
   
   /*!
     \brief Returns the mean \f$F_1\f$ score of the training over all
     labels (see `f1_score()`).
   */
-  double mean_f1_score() const { return m_mean_f1; }
+  float mean_f1_score() const { return m_mean_f1; }
   
   /*!
     \brief Returns the mean intersection over union of the training
     over all labels (see `intersection_over_union()`).
   */
-  double mean_intersection_over_union() const { return m_mean_iou; }
+  float mean_intersection_over_union() const { return m_mean_iou; }
   
 };
   

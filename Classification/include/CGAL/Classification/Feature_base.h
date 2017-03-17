@@ -70,7 +70,7 @@ public:
     position `index`. This method must be implemented by inherited
     classes.
   */
-  virtual double value (std::size_t index) = 0;
+  virtual float value (std::size_t index) = 0;
 
 };
 

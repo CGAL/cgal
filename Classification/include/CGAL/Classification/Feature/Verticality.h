@@ -49,17 +49,15 @@ namespace Feature {
     for matrix diagonalization.
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
+          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Verticality : public Feature_base
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
   
   const typename Geom_traits::Vector_3 vertical;
-  std::vector<double> verticality_feature;
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-  const Local_eigen_analysis& eigen;
-#endif
+  std::vector<float> verticality_feature;
+  const Local_eigen_analysis* eigen;
   
 public:
   /*!
@@ -71,7 +69,7 @@ public:
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   Verticality (const PointRange& input,
                const Local_eigen_analysis& eigen)
-    : vertical (0., 0., 1.)
+    : vertical (0., 0., 1.), eigen(NULL)
   {
     this->set_name ("verticality");
 
@@ -85,7 +83,7 @@ public:
 #else
   Verticality (const PointRange&,
                const Local_eigen_analysis& eigen)
-    : vertical (0., 0., 1.), eigen (eigen)
+    : vertical (0., 0., 1.), eigen (&eigen)
   {
     this->set_name ("verticality");
   }
@@ -103,7 +101,7 @@ public:
   template <typename VectorMap>
   Verticality (const PointRange& input,
                VectorMap normal_map)
-    : vertical (0., 0., 1.)
+    : vertical (0., 0., 1.), eigen(NULL)
   {
     this->set_name ("verticality");
     for (std::size_t i = 0; i < input.size(); i++)
@@ -116,12 +114,12 @@ public:
 
 
   /// \cond SKIP_IN_MANUAL
-  virtual double value (std::size_t pt_index)
+  virtual float value (std::size_t pt_index)
   {
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    if (verticality_feature.empty())
+    if (eigen != NULL)
       {
-        typename Geom_traits::Vector_3 normal = eigen.normal_vector(pt_index);
+        typename Geom_traits::Vector_3 normal = eigen->normal_vector(pt_index);
         normal = normal / CGAL::sqrt (normal * normal);
         return (1. - CGAL::abs(normal * vertical));
       }
