@@ -27,7 +27,7 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/Periodic_3_mesh_3/periodic_3_mesh_standard_facet_criteria.h>
+#include <CGAL/Periodic_3_mesh_3/periodic_mesh_standard_facet_criteria.h>
 #include <CGAL/Mesh_facet_topology.h>
 
 #include <CGAL/Periodic_3_mesh_3/config.h>

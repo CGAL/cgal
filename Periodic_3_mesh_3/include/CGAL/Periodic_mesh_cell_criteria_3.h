@@ -24,7 +24,7 @@
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/Periodic_3_mesh_3/periodic_3_mesh_standard_cell_criteria.h>
+#include <CGAL/Periodic_3_mesh_3/periodic_mesh_standard_cell_criteria.h>
 
 namespace CGAL {
 

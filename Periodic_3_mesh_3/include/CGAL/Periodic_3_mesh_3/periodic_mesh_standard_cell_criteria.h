@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
-#define CGAL_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
+#ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
+#define CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -413,4 +413,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // CGAL_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
+#endif // CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H

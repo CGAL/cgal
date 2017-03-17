@@ -23,8 +23,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_PERIODIC_3_MESH_CRITERIA_3_H
-#define CGAL_PERIODIC_3_MESH_CRITERIA_3_H
+#ifndef CGAL_PERIODIC_MESH_CRITERIA_3_H
+#define CGAL_PERIODIC_MESH_CRITERIA_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -33,8 +33,8 @@
 
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_edge_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
+#include <CGAL/Periodic_mesh_facet_criteria_3.h>
+#include <CGAL/Periodic_mesh_cell_criteria_3.h>
 
 namespace CGAL {
 
@@ -65,12 +65,12 @@ namespace parameters {
 
 namespace internal {
 
-// Class Periodic_3_mesh_criteria_3_impl
+// Class Periodic_mesh_criteria_3_impl
 template < typename Tr,
            typename EdgeCriteria,
            typename FacetCriteria,
            typename CellCriteria >
-class Periodic_3_mesh_criteria_3_impl
+class Periodic_mesh_criteria_3_impl
 {
   typedef typename Tr::Geom_traits::FT FT;
 
@@ -80,17 +80,17 @@ public:
   typedef CellCriteria      Cell_criteria;
 
   // Constructor
-  Periodic_3_mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
-                                  const Cell_criteria& cell_criteria)
+  Periodic_mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
+                                const Cell_criteria& cell_criteria)
     : edge_criteria_(0)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
   { }
 
   // Constructor
-  Periodic_3_mesh_criteria_3_impl(const Edge_criteria& edge_criteria,
-                                  const Facet_criteria& facet_criteria,
-                                  const Cell_criteria& cell_criteria)
+  Periodic_mesh_criteria_3_impl(const Edge_criteria& edge_criteria,
+                                const Facet_criteria& facet_criteria,
+                                const Cell_criteria& cell_criteria)
     : edge_criteria_(edge_criteria)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
@@ -100,7 +100,7 @@ public:
   // are not used, so Facet_criteria and Cell_criteria construction from FT
   // is not a problem
   template <class ArgumentPack>
-  Periodic_3_mesh_criteria_3_impl(const ArgumentPack& args)
+  Periodic_mesh_criteria_3_impl(const ArgumentPack& args)
     : edge_criteria_(args[parameters::edge_size
                       | args[parameters::edge_sizing_field
                       | args[parameters::sizing_field | FT(0)] ] ])
@@ -152,26 +152,26 @@ private:
   Facet_criteria facet_criteria_;
   Cell_criteria cell_criteria_;
 
-};  // end class Periodic_3_mesh_criteria_3_impl
+};  // end class Periodic_mesh_criteria_3_impl
 
 } // end namespace internal
 
-// Class Periodic_3_mesh_criteria_3
+// Class Periodic_mesh_criteria_3
 // Provides default mesh criteria to drive Periodic_3_mesh_3 process
 template <typename Tr,
           typename EdgeCriteria = Mesh_edge_criteria_3<Tr>,
           typename FacetCriteria = Periodic_mesh_facet_criteria_3<Tr>,
           typename CellCriteria = Periodic_mesh_cell_criteria_3<Tr> >
-class Periodic_3_mesh_criteria_3
-  : public internal::Periodic_3_mesh_criteria_3_impl< Tr,
-                                                      EdgeCriteria,
-                                                      FacetCriteria,
-                                                      CellCriteria >
+class Periodic_mesh_criteria_3
+  : public internal::Periodic_mesh_criteria_3_impl< Tr,
+                                                    EdgeCriteria,
+                                                    FacetCriteria,
+                                                    CellCriteria >
 {
-  typedef internal::Periodic_3_mesh_criteria_3_impl< Tr,
-                                                     EdgeCriteria,
-                                                     FacetCriteria,
-                                                     CellCriteria>   Base;
+  typedef internal::Periodic_mesh_criteria_3_impl< Tr,
+                                                   EdgeCriteria,
+                                                   FacetCriteria,
+                                                   CellCriteria>   Base;
 
 public:
   typedef typename Base::Edge_criteria    Edge_criteria;
@@ -179,20 +179,20 @@ public:
   typedef typename Base::Cell_criteria    Cell_criteria;
 
   // Constructor
-  Periodic_3_mesh_criteria_3(const Facet_criteria& facet_criteria,
-                             const Cell_criteria& cell_criteria)
+  Periodic_mesh_criteria_3(const Facet_criteria& facet_criteria,
+                           const Cell_criteria& cell_criteria)
     : Base(facet_criteria, cell_criteria)
   { }
 
   // Constructor
-  Periodic_3_mesh_criteria_3(const Edge_criteria& edge_criteria,
-                             const Facet_criteria& facet_criteria,
-                             const Cell_criteria& cell_criteria)
+  Periodic_mesh_criteria_3(const Edge_criteria& edge_criteria,
+                           const Facet_criteria& facet_criteria,
+                           const Cell_criteria& cell_criteria)
     : Base(edge_criteria, facet_criteria, cell_criteria)
   { }
 
   // For convenient constructor call (see examples)
-  BOOST_PARAMETER_CONSTRUCTOR(Periodic_3_mesh_criteria_3, (Base), parameters::tag,
+  BOOST_PARAMETER_CONSTRUCTOR(Periodic_mesh_criteria_3, (Base), parameters::tag,
                               (required (periodic_domain,*))
                               (optional (edge_size_,*)
                                         (edge_sizing_field_,*)
@@ -207,8 +207,8 @@ public:
                                         (sizing_field_,*)
                               ))
 
-}; // end class Periodic_3_mesh_criteria_3
+}; // end class Periodic_mesh_criteria_3
 
 } // end namespace CGAL
 
-#endif // CGAL_PERIODIC_3_MESH_CRITERIA_3_H
+#endif // CGAL_PERIODIC_MESH_CRITERIA_3_H

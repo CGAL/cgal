@@ -7,9 +7,9 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
-#include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_criteria_3.h>
+#include <CGAL/Periodic_mesh_facet_criteria_3.h>
+#include <CGAL/Periodic_mesh_cell_criteria_3.h>
+#include <CGAL/Periodic_mesh_criteria_3.h>
 #include <CGAL/Periodic_3_mesh_3/Implicit_to_labeled_subdomains_function_wrapper.h>
 
 #include <CGAL/Periodic_3_implicit_mesh_domain_3.h>
@@ -36,14 +36,13 @@ typedef CGAL::Periodic_labeled_mesh_domain_3<Labeling_function, K>         Perio
 typedef CGAL::Periodic_mesh_triangulation_3<Periodic_mesh_domain>::type    Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                        C3t3;
 
-// Edge criteria
-typedef CGAL::Mesh_edge_criteria_3<Tr> Edge_criteria;
-// Facet criteria
-typedef CGAL::Periodic_mesh_facet_criteria_3<Tr> Periodic_facet_criteria;
-// Cell criteria
-typedef CGAL::Periodic_mesh_cell_criteria_3<Tr> Periodic_cell_criteria;
 // Criteria
-typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria, Periodic_facet_criteria, Periodic_cell_criteria> Mesh_criteria;
+typedef CGAL::Mesh_edge_criteria_3<Tr>                  Edge_criteria;
+typedef CGAL::Periodic_mesh_facet_criteria_3<Tr>        Periodic_facet_criteria;
+typedef CGAL::Periodic_mesh_cell_criteria_3<Tr>         Periodic_cell_criteria;
+typedef CGAL::Periodic_mesh_criteria_3<Tr, Edge_criteria,
+                                           Periodic_facet_criteria,
+                                           Periodic_cell_criteria> Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -216,9 +215,12 @@ C3t3 make_mesh (const Labeling_function& labeling_function, FT domain_size = FT(
 {
   Periodic_mesh_domain domain(labeling_function, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
 
-  Mesh_criteria criteria(domain,
-      facet_angle=30, facet_size=0.03 * domain_size, facet_distance=0.03 * domain_size,
-      cell_radius_edge_ratio=2, cell_size = 0.05);
+  Periodic_mesh_criteria criteria(domain,
+                                  facet_angle = 30.,
+                                  facet_size = 0.03 * domain_size,
+                                  facet_distance = 0.03 * domain_size,
+                                  cell_radius_edge_ratio = 2.,
+                                  cell_size = 0.05);
 
   return CGAL::make_periodic_mesh_3<C3t3>(domain, criteria);
 }
