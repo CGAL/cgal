@@ -20,6 +20,8 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/enum.h>
 #include <limits>
+#include "Set_movable_separability_2/Utils.h"
+#include "Set_movable_separability_2/Circle_arrangment.h"
 
 namespace CGAL {
 

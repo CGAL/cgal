@@ -19,6 +19,8 @@
 #define CGAL_PULLOUT_DIRECTIONS_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
 
 #include <CGAL/Polygon_2.h>
+#include "Set_movable_separability_2/Utils.h"
+#include "Set_movable_separability_2/Circle_arrangment.h"
 
 namespace CGAL {
 
