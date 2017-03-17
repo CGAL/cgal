@@ -322,7 +322,7 @@ void make_periodic_mesh_3_impl(C3T3& c3t3,
   // a planar curve as feature for example), add some surface points
   //if ( c3t3.triangulation().dimension() != 3 )
   {
-    internal::Mesh_3::init_c3t3(c3t3, domain, criteria);
+    internal::Mesh_3::init_c3t3(c3t3, domain, criteria, 12);
   }
   CGAL_assertion( c3t3.triangulation().dimension() == 3 );
 
