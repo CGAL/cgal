@@ -10,10 +10,12 @@
 #include <CGAL/Periodic_mesh_criteria_3.h>
 #include <CGAL/Periodic_3_mesh_3/Implicit_to_labeled_subdomains_function_wrapper.h>
 #include <CGAL/Implicit_periodic_mesh_domain_3.h>
+#include <CGAL/IO/Medit_IO.h>
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_constant_domain_field_3.h>
-#include <CGAL/Mesh_triangulation_3.h>
+
+namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -80,7 +82,7 @@ int main()
   // Output
   std::ofstream medit_file("schwarz_p.mesh");
 
-  write_complex_to_medit(medit_file, c3t3);
+  P3M3_IO::write_complex_to_medit(medit_file, c3t3);
 
   medit_file.close();
 

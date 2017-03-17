@@ -9,12 +9,15 @@
 #include <CGAL/Periodic_mesh_facet_criteria_3.h>
 #include <CGAL/Periodic_mesh_cell_criteria_3.h>
 #include <CGAL/Periodic_mesh_criteria_3.h>
+#include <CGAL/IO/Medit_IO.h>
 
 #include <CGAL/Implicit_periodic_mesh_domain_3.h>
 #include <CGAL/make_periodic_mesh_3.h>
 #include <CGAL/Periodic_mesh_triangulation_3.h>
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
+
+namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -259,7 +262,7 @@ int main()
       // Output
       std::ofstream medit_file(file_name.c_str());
 
-      write_complex_to_medit(medit_file, c3t3);
+      P3M3_IO::write_complex_to_medit(medit_file, c3t3);
 
       std::cout << i << ": passed" << std::endl;
     } catch(...) {

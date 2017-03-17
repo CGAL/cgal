@@ -3,21 +3,25 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-#include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Labeled_periodic_mesh_domain_3.h>
 #include <CGAL/Periodic_mesh_facet_criteria_3.h>
 #include <CGAL/Periodic_mesh_cell_criteria_3.h>
 #include <CGAL/Periodic_mesh_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_3/Implicit_to_labeled_subdomains_function_wrapper.h>
-
-#include <CGAL/Implicit_periodic_mesh_domain_3.h>
-#include <CGAL/Labeled_periodic_mesh_domain_3.h>
 #include <CGAL/make_periodic_mesh_3.h>
+#include <CGAL/IO/Medit_IO.h>
+
 #include <CGAL/Periodic_mesh_triangulation_3.h>
 
-#include <CGAL/Mesh_constant_domain_field_3.h>
+#include <algorithm>
+#include <cmath>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
+
+namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -276,7 +280,7 @@ int main(int, char**)
         oss_2 << iter->first << "__" << it->first << "__" << *i  << ".mesh";
         std::string output_filename = oss_2.str();
         std::ofstream medit_file( output_filename.data() );
-        write_complex_to_medit(medit_file, c3t3, *i);
+        P3M3_IO::write_complex_to_medit(medit_file, c3t3, *i);
         medit_file.close();
 
         std::cout << ", " << *i << "-copy Saved" << std::flush;
