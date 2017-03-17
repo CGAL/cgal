@@ -24,6 +24,21 @@
 #include <iostream>
 #include <cassert>
 #include <CGAL/Hyperbolic_octagon_translation_matrix.h>
+ 
+
+//-------------------------------------------------------
+// Global variables -- used only for profiling!
+#if defined PROFILING_MODE
+
+extern long calls_apply_identity;
+extern long calls_apply_non_identity;
+extern long calls_append_identity;
+extern long calls_append_non_identity;
+
+#endif
+//-------------------------------------------------------
+
+
 
 namespace CGAL {
 
@@ -409,6 +424,7 @@ public:
 		return Self();
 	}
 
+/*
 	void append(Int val) {
 
 		std::vector<Int> old = this->get_vector();
@@ -419,11 +435,35 @@ public:
 		Self newone(red);
 		this->copy_from(newone);
 
-	}
+		#if defined PROFILING_MODE
+			if (this->is_identity()) {
+				calls_append_identity++;
+			} else {
+				calls_append_non_identity++;
+			}
+		#endif
+
+	}*/
 	
 
 	Self append(Self val) const {
 		
+		if (this->is_identity()) {
+			if (val.is_identity()) {
+				return Self();
+			} else {
+				return Self(val);
+			}
+		}
+
+		if (val.is_identity()) {
+			if (this->is_identity()) {
+				return Self();
+			} else {
+				return Self(*this);
+			}
+		}
+
 		std::vector<Int> o1 = this->get_vector();
 		std::vector<Int> o2 = val.get_vector();
 		for (int i = 0; i < o2.size(); i++) {
@@ -436,6 +476,14 @@ public:
 		
 		Self r(red);
 		
+		#if defined PROFILING_MODE		
+			if (r.is_identity()) {
+				calls_append_identity++;
+			} else {
+				calls_append_non_identity++;
+			}	
+		#endif
+
 		return r;
 	}
 
@@ -555,7 +603,20 @@ public:
 
   	template <class Point>
   	Point apply(Point p) const {
-  		return this->get_matrix().apply(p);
+
+  		#if defined PROFILING_MODE
+	  		if (this->is_identity()) {
+	  			calls_apply_identity++;
+	  		} else {
+	  			calls_apply_non_identity++;
+	  		}
+  		#endif
+
+  		if (this->is_identity()) {
+  			return p;
+  		} else {
+  			return this->get_matrix().apply(p);
+  		}
   	}
 
 };

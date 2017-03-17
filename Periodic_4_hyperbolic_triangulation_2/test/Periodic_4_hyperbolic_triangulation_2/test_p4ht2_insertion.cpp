@@ -1,4 +1,6 @@
 
+#define PROFILING_MODE
+
 #include <CGAL/basic.h>
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -30,6 +32,12 @@ typedef Triangulation::Face_iterator                                            
 
 typedef CGAL::Cartesian<double>::Point_2                                        Point_double;
 typedef CGAL::Creator_uniform_2<double, Point_double >                          Creator;
+
+
+long calls_apply_identity(0);
+long calls_apply_non_identity(0);
+long calls_append_identity(0);
+long calls_append_non_identity(0);
 
 
 int main(int argc, char** argv) {    
@@ -102,6 +110,12 @@ int main(int argc, char** argv) {
     cout << "Average execution time over " << iters << " iterations: " << avgtime << " secs" << endl << endl;
 
     
+    cout << "Calls to append resulting in     identity: " << calls_append_identity << endl;
+    cout << "Calls to append resulting in non-identity: " << calls_append_non_identity << endl;
+    cout << "Percentage                               : " << ((double)(calls_append_non_identity)/(double)(calls_append_non_identity+calls_append_identity)*100.0) << endl << endl;
+    cout << "Calls to apply  with             identity: " << calls_apply_identity << endl;
+    cout << "Calls to apply  with         non-identity: " << calls_apply_non_identity << endl;
+    cout << "Percentage                               : " << ((double)(calls_apply_non_identity)/(double)(calls_apply_non_identity+calls_apply_identity)*100.0) << endl << endl;
 
     return 0;
 }
