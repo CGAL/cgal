@@ -103,14 +103,14 @@ public:
     : input(input), color_map(color_map), m_channel(channel), m_mean(mean), m_sd(sd)
 #endif
   {
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    std::vector<double> color_feature;
-#endif
+
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     for(std::size_t i = 0; i < input.size();i++)
       {
         HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
         color_feature.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
       }
+#endif
 
     std::ostringstream oss;
     if (channel == 0) oss << "hue";

@@ -77,14 +77,11 @@ public:
 #endif
   {
     this->set_name ("distance_to_plane");
-    
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    std::vector<double> distance_to_plane_feature;
-#endif
-    
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES    
     for(std::size_t i = 0; i < input.size(); i++)
       distance_to_plane_feature.push_back
         (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane(i))));
+#endif
   }
 
   /// \cond SKIP_IN_MANUAL

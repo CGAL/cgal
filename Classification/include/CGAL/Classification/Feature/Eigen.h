@@ -53,15 +53,19 @@ public:
   {
   }
 
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   virtual void init (const PointRange& input, const Local_eigen_analysis& eigen)
   {
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    std::vector<double> attrib;
-#endif
+
     attrib.reserve (input.size());
     for (std::size_t i = 0; i < input.size(); ++ i)
       attrib.push_back (get_value (eigen, i));
   }
+#else
+  virtual void init (const PointRange&, const Local_eigen_analysis&)
+  {
+  }
+#endif
   
   virtual double get_value (const Local_eigen_analysis& eigen, std::size_t i) = 0;
   virtual double value (std::size_t pt_index)

@@ -119,8 +119,10 @@ private:
   std::vector<double> m_sum_eigenvalues;
   std::vector<Point> m_centroids;
   std::vector<Vector> m_smallest_eigenvectors;
+#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
   std::vector<Vector> m_middle_eigenvectors;
   std::vector<Vector> m_largest_eigenvectors;
+#endif
   double m_mean_range;
 
   
@@ -159,8 +161,10 @@ public:
     m_sum_eigenvalues.resize (input.size());
     m_centroids.resize (input.size());
     m_smallest_eigenvectors.resize (input.size());
+#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
     m_middle_eigenvectors.resize (input.size());
     m_largest_eigenvectors.resize (input.size());
+#endif
     
     m_mean_range = 0.;
       
@@ -229,8 +233,10 @@ private:
         m_eigenvalues[index] = v;
         m_centroids[index] = query;
         m_smallest_eigenvectors[index] = Vector (0., 0., 1.);
+#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
         m_middle_eigenvectors[index] = Vector (0., 1., 0.);
         m_largest_eigenvectors[index] = Vector (1., 0., 0.);
+#endif
         return;
       }
 
@@ -266,9 +272,10 @@ private:
     m_sum_eigenvalues[index] = sum;
     m_eigenvalues[index] = evalues;
     m_smallest_eigenvectors[index] = Vector (evectors[0], evectors[1], evectors[2]);
+#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
     m_middle_eigenvectors[index] = Vector (evectors[3], evectors[4], evectors[5]);
     m_largest_eigenvectors[index] = Vector (evectors[6], evectors[7], evectors[8]);
-
+#endif
   }
 
 };
