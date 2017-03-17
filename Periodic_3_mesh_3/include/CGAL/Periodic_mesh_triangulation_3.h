@@ -19,8 +19,8 @@
 //                 Aymeric Pellé
 //                 Mael Rouxel-Labbé
 
-#ifndef CGAL_MESH_3_PERIODIC_TRIANGULATION_3_H
-#define CGAL_MESH_3_PERIODIC_TRIANGULATION_3_H
+#ifndef CGAL_PERIODIC_MESH_TRIANGULATION_3_H
+#define CGAL_PERIODIC_MESH_TRIANGULATION_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -506,7 +506,7 @@ public:
 }  // end namespace details
 
 template<class MD, class K = typename Kernel_traits<MD>::Kernel>
-struct Mesh_periodic_3_triangulation_3
+struct Periodic_mesh_triangulation_3
 {
 private:
   // traits
@@ -671,5 +671,5 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3,
 
 } // namespace CGAL
 
-#endif // CGAL_MESH_3_PERIODIC_TRIANGULATION_3_H
+#endif // CGAL_PERIODIC_MESH_TRIANGULATION_3_H
 

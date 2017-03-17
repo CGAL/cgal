@@ -12,7 +12,7 @@
 
 #include <CGAL/Periodic_3_implicit_mesh_domain_3.h>
 #include <CGAL/make_periodic_mesh_3.h>
-#include <CGAL/Mesh_3_periodic_triangulation_3.h>
+#include <CGAL/Periodic_mesh_triangulation_3.h>
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
 
@@ -24,9 +24,8 @@ typedef FT (Function)(const Point&);
 typedef CGAL::Periodic_implicit_mesh_domain_3<Function,K> Periodic_mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_periodic_3_triangulation_3<Periodic_mesh_domain>::type Mesh_3_periodic_triangulation_3;
-typedef Mesh_3_periodic_triangulation_3              Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>  C3t3;
+typedef CGAL::Periodic_mesh_triangulation_3<Periodic_mesh_domain>::type   Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 
 // Edge criteria
 typedef CGAL::Mesh_edge_criteria_3<Tr> Edge_criteria;
