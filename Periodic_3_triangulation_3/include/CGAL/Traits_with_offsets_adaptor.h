@@ -81,6 +81,25 @@ public:
     return Functor()(p0, p1, p2, p3, p4);
   }
 
+  result_type operator()(const Point& p0, const Point& p1,
+                         const Point& p2, const Point& p3, bool b) const {
+    return Functor()(p0, p1, p2, p3, b);
+  }
+  result_type operator()(const Point& p0, const Point& p1,
+                         const Point& p2, const Point& p3,
+                         const Point& p4, bool b) const {
+    return Functor()(p0, p1, p2, p3, p4, b);
+  }
+
+  result_type operator()(const Point& p0, const Point& p1,
+                         const typename Kernel::FT& value) const {
+    return Functor()(p0, p1, value);
+  }
+  result_type operator()(const Point& p0, const Point& p1,
+                         const Point& p2, const typename Kernel::FT& value) const {
+    return Functor()(p0, p1, p2, value);
+  }
+
 protected:
   Point pp(const Point &p, const Offset &o) const {
     return Construct_point_3(*_domain)(p,o);
