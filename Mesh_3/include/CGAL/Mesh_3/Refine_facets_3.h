@@ -1731,11 +1731,28 @@ compute_facet_properties(const Facet& facet,
     }
     if (p1 == p2) { fp = Facet_properties(); return; }
 
+#if 1 // <PERIODIC>
+    // segment here must be canonical for periodic. Dual_segment only calls
+    // the (robust) weighted circumcenter which does not return this canonical
+    // segment. The static cast is because we need to grab the dual function
+    // that is in P3RT3 and not at the level of periodic_mesh_triangulation_3
+    // (due to inconsistencies with names).
+    assert(!force_exact); // code below is only meant to replace the call of dual_segment
+    Segment_3 segment = r_tr_.segment(
+        static_cast<typename Tr::Base*>(&r_tr_)->dual(facet));
+    if ( compare_xyz(segment.source(), segment.target()) == CGAL::LARGER )
+    {
+      typename Gt::Construct_opposite_segment_3 opposite =
+          Gt().construct_opposite_segment_3_object();
+      segment = opposite(segment);
+    }
+#else
     // Trick to have canonical vector : thus, we compute always the same
     // intersection
     Segment_3 segment = ( compare_xyz(p1,p2)== CGAL::SMALLER )
       ? Segment_3(p1, p2)
       : Segment_3(p2, p1);
+#endif
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
