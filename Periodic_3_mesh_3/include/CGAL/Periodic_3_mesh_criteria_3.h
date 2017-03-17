@@ -160,8 +160,8 @@ private:
 // Provides default mesh criteria to drive Periodic_3_mesh_3 process
 template <typename Tr,
           typename EdgeCriteria = Mesh_edge_criteria_3<Tr>,
-          typename FacetCriteria = Mesh_facet_criteria_3<Tr>,
-          typename CellCriteria = Mesh_cell_criteria_3<Tr> >
+          typename FacetCriteria = Periodic_mesh_facet_criteria_3<Tr>,
+          typename CellCriteria = Periodic_mesh_cell_criteria_3<Tr> >
 class Periodic_3_mesh_criteria_3
   : public internal::Periodic_3_mesh_criteria_3_impl< Tr,
                                                       EdgeCriteria,
