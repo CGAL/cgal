@@ -533,21 +533,21 @@ public:
 // less "holes"
 template<class Triangulation>
 typename Triangulation::Periodic_triangle
-canonicalize(const typename Triangulation::Periodic_triangle& pt)
+canonicalize_triangle(const typename Triangulation::Periodic_triangle& pt)
 {
   typedef typename Triangulation::Offset Offset;
 
   Offset o0 = pt[0].second;
   Offset o1 = pt[1].second;
   Offset o2 = pt[2].second;
-  int diffx = std::min(o0.x(),std::min(o1.x(),o2.x()));
-  int diffy = std::min(o0.y(),std::min(o1.y(),o2.y()));
-  int diffz = std::min(o0.z(),std::min(o1.z(),o2.z()));
-  Offset diff_off(diffx,diffy,diffz);
+  int diffx = std::min(o0.x(),std::min(o1.x(), o2.x()));
+  int diffy = std::min(o0.y(),std::min(o1.y(), o2.y()));
+  int diffz = std::min(o0.z(),std::min(o1.z(), o2.z()));
+  Offset diff_off(diffx, diffy, diffz);
 
-  return make_array(std::make_pair(pt[0].first,o0 - diff_off),
-                    std::make_pair(pt[1].first,o1 - diff_off),
-                    std::make_pair(pt[2].first,o2 - diff_off));
+  return CGAL::make_array(std::make_pair(pt[0].first, o0 - diff_off),
+                          std::make_pair(pt[1].first, o1 - diff_off),
+                          std::make_pair(pt[2].first, o2 - diff_off));
 }
 
 template<class Triangulation>
@@ -566,19 +566,10 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
   int diffz = std::min(std::min(o0.z(),o1.z()),std::min(o2.z(),o3.z()));
   Offset diff_off(diffx,diffy,diffz);
 
-  return make_array(std::make_pair(pt[0].first,o0 - diff_off),
-                    std::make_pair(pt[1].first,o1 - diff_off),
-                    std::make_pair(pt[2].first,o2 - diff_off),
-                    std::make_pair(pt[3].first,o3 - diff_off));
-}
-
-template <class Stream, class C3t3>
-Stream &vertices_medit(Stream &out, C3t3 &c3t3)
-{
-  out << std::setprecision(20);
-  out << "MeshVersionFormatted 1" << std::endl;
-  out << "Dimension 3" << std::endl;
-  out << "Vertices " << c3t3.triangulation().nb_of_vertices() * 8 << std::endl;
+  return CGAL::make_array(std::make_pair(pt[0].first,o0 - diff_off),
+                          std::make_pair(pt[1].first,o1 - diff_off),
+                          std::make_pair(pt[2].first,o2 - diff_off),
+                          std::make_pair(pt[3].first,o3 - diff_off));
 }
 
 // Writing a restricted Delaunay triangulation to the .mesh file format
@@ -612,7 +603,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3,
 
   for(unsigned j = 0; j < occurence_count; j++ ) {
     for (Facet_iterator it =c3t3.facets_begin(); it!=c3t3.facets_end(); it++) {
-      Triangle tri = t.triangle(canonicalize<Tr>(t.periodic_triangle(*it)));
+      Triangle tri = t.triangle(canonicalize_triangle<Tr>(t.periodic_triangle(*it)));
       for(int i = 0; i < 3; i++) {
         out << tri[i].x() + (j&1) << " "
             << tri[i].y() + ((j&2) >> 1) << " "
