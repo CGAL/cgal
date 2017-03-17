@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_DOMAIN_HOLDER_WITH_CORNERS_3_H
 #define CGAL_MESH_DOMAIN_HOLDER_WITH_CORNERS_3_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
 #include <CGAL/iterator.h>
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
@@ -38,8 +40,8 @@ namespace CGAL {
 /**
  * @class Mesh_domain_holder_with_corners_3
  *
- * Implements MeshDomain_3 concept through the object owned by this class.
- * Provides functionality of the concept MeshDomainWithFeatures_3
+ * Implements the `MeshDomain_3` concept through the object owned by this class.
+ * Provides functionality of the concept `MeshDomainWithFeatures_3`
  * associated with the corners.
  *
  */
@@ -70,8 +72,8 @@ public:
   ~Mesh_domain_holder_with_corners_3() { }
 
   // -----------------------------------
-  // Delegation. The holder delegates all the functionality of the MeshDomain_3 concept
-  // to the member which implementes a model of the concept.
+  // Delegation. The holder delegates all the functionality of the MeshDomain_3
+  // concept to the member which implements a model of the concept.
   // -----------------------------------
 
   typedef typename Base::Subdomain        Subdomain;

@@ -26,12 +26,15 @@
 #ifndef CGAL_PERIODIC_3_MESH_CRITERIA_3_H
 #define CGAL_PERIODIC_3_MESH_CRITERIA_3_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
+#include <CGAL/Mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_3/config.h>
+
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_edge_criteria_3.h>
-#include <CGAL/Mesh_facet_criteria_3.h>
-#include <CGAL/Mesh_cell_criteria_3.h>
-
-#include <CGAL/Periodic_3_mesh_3/config.h>
+#include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
 
 namespace CGAL {
 
@@ -78,7 +81,7 @@ public:
 
   // Constructor
   Periodic_3_mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
-                       const Cell_criteria& cell_criteria)
+                                  const Cell_criteria& cell_criteria)
     : edge_criteria_(0)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
@@ -86,8 +89,8 @@ public:
 
   // Constructor
   Periodic_3_mesh_criteria_3_impl(const Edge_criteria& edge_criteria,
-                       const Facet_criteria& facet_criteria,
-                       const Cell_criteria& cell_criteria)
+                                  const Facet_criteria& facet_criteria,
+                                  const Cell_criteria& cell_criteria)
     : edge_criteria_(edge_criteria)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
@@ -177,14 +180,14 @@ public:
 
   // Constructor
   Periodic_3_mesh_criteria_3(const Facet_criteria& facet_criteria,
-                  const Cell_criteria& cell_criteria)
+                             const Cell_criteria& cell_criteria)
     : Base(facet_criteria, cell_criteria)
   { }
 
   // Constructor
   Periodic_3_mesh_criteria_3(const Edge_criteria& edge_criteria,
-                  const Facet_criteria& facet_criteria,
-                  const Cell_criteria& cell_criteria)
+                             const Facet_criteria& facet_criteria,
+                             const Cell_criteria& cell_criteria)
     : Base(edge_criteria, facet_criteria, cell_criteria)
   { }
 

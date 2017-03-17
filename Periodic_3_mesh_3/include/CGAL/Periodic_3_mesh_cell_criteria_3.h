@@ -20,14 +20,16 @@
 #ifndef CGAL_PERIODIC_MESH_CELL_CRITERIA_3_H
 #define CGAL_PERIODIC_MESH_CELL_CRITERIA_3_H
 
-#include <CGAL/Periodic_3_mesh_3/periodic_3_mesh_standard_cell_criteria.h>
+#include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
+
+#include <CGAL/Periodic_3_mesh_3/periodic_3_mesh_standard_cell_criteria.h>
 
 namespace CGAL {
 
 template <typename Tr,
-  typename Visitor_ = Mesh_3::Periodic_mesh_3::Cell_criteria_visitor_with_features<Tr> >
+          typename Visitor_ = Mesh_3::Periodic_mesh_3::Cell_criteria_visitor_with_features<Tr> >
 class Periodic_mesh_cell_criteria_3
 {
 public:

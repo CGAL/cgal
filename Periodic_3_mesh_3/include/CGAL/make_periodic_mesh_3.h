@@ -24,6 +24,8 @@
 #ifndef CGAL_MAKE_PERIODIC_MESH_3_H
 #define CGAL_MAKE_PERIODIC_MESH_3_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_periodic_mesh_3.h>
 
@@ -179,7 +181,7 @@ void init_triangulation(C3T3& c3t3, MeshDomain& domain)
 
 /**
  * @brief If the triangulation of a complex contains any vertices, then
- *  we initialize them by the proper informaion
+ *  we initialize them with the proper information
  */
 template<class C3T3, class MD>
 void init_default_triangulation_vertices(C3T3& c3t3, const MD& oracle)

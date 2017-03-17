@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_PERIODIC_MESH_STANDARD_FACET_CRITERIA_H
 #define CGAL_MESH_3_PERIODIC_MESH_STANDARD_FACET_CRITERIA_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
 #include <CGAL/Mesh_3/mesh_standard_facet_criteria.h>
 
 namespace CGAL {
@@ -196,7 +198,7 @@ protected:
       for( int j = 0; j < 3; j++) {
         for( int k = 0; k < 3; k++ ) {
           surface_centers[9*i+3*j+k] = tr_.point(
-                                                   std::make_pair(center, Offset(i-1,j-1,k-1)));
+            std::make_pair(center, Offset(i-1,j-1,k-1)));
         }
       }
     }
@@ -436,7 +438,7 @@ protected:
       for( int j = 0; j < 3; j++) {
         for( int k = 0; k < 3; k++ ) {
           surface_centers[9*i+3*j+k] = tr_.point(
-                                                std::make_pair(surface_center, Offset(i-1,j-1,k-1)));
+            std::make_pair(surface_center, Offset(i-1,j-1,k-1)));
         }
       }
     }

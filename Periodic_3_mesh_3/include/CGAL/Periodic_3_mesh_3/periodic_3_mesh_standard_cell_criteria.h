@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
 #define CGAL_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
 
 namespace CGAL {

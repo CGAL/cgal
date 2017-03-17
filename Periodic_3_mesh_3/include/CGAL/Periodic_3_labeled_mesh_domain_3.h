@@ -25,10 +25,14 @@
 #ifndef CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H
 #define CGAL_PERIODIC_LABELED_MESH_DOMAIN_3_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
+#include <CGAL/Periodic_3_mesh_3/config.h>
+
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
-#include <CGAL/Periodic_3_mesh_3/config.h>
+#include <CGAL/intersections.h>
 
 namespace CGAL
 {

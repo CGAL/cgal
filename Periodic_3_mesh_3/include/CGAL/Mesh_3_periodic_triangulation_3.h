@@ -16,9 +16,15 @@
 //
 //
 // Author(s)     : Mikhail Bogdanov
+//                 Aymeric Pellé
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_MESH_3_PERIODIC_TRIANGULATION_3_H
 #define CGAL_MESH_3_PERIODIC_TRIANGULATION_3_H
+
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
+#include <CGAL/Periodic_3_mesh_3/config.h>
 
 // traits class
 #include <CGAL/Kernel_traits.h>
@@ -26,7 +32,7 @@
 #include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
-// periodic issues
+// periodic triangulations
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
@@ -42,7 +48,6 @@
 // IO
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
-#include <CGAL/Periodic_3_mesh_3/config.h>
 #include <CGAL/array.h>
 #include <CGAL/tags.h>
 
@@ -54,11 +59,11 @@ namespace CGAL {
 /// become obsolete.
 template<class Gt, class Tds>
 class Periodic_3_regular_triangulation_3_mesher_3
-    : public Periodic_3_regular_triangulation_3<Gt, Tds> {
+    : public Periodic_3_regular_triangulation_3<Gt, Tds>
+{
 public:
-
-  typedef Sequential_tag   Concurrency_tag;
-  typedef void             Lock_data_structure;
+  typedef Sequential_tag                 Concurrency_tag;
+  typedef void                           Lock_data_structure;
 
   void *get_lock_data_structure() const { return 0; }
   void set_lock_data_structure(void *) const { }
@@ -500,7 +505,7 @@ public:
 
 }  // end namespace details
 
-template<class MD, class K=typename Kernel_traits<MD>::Kernel>
+template<class MD, class K = typename Kernel_traits<MD>::Kernel>
 struct Mesh_periodic_3_triangulation_3
 {
 private:
@@ -528,14 +533,13 @@ public:
   typedef type Type;
 };  // end struct Mesh_triangulation_3
 
-// helper function moving periodic
-// triangles in some canonical positions in order to get a surface with
-// less "holes"
+// helper function moving periodic triangles in some canonical positions
+// in order to get a surface with fewer "holes"
 template<class Triangulation>
 typename Triangulation::Periodic_triangle
 canonicalize_triangle(const typename Triangulation::Periodic_triangle& pt)
 {
-  typedef typename Triangulation::Offset Offset;
+  typedef typename Triangulation::Offset            Offset;
 
   Offset o0 = pt[0].second;
   Offset o1 = pt[1].second;
@@ -554,7 +558,7 @@ template<class Triangulation>
 typename Triangulation::Periodic_tetrahedron
 canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
 {
-  typedef typename Triangulation::Offset Offset;
+  typedef typename Triangulation::Offset             Offset;
 
   Offset o0 = pt[0].second;
   Offset o1 = pt[1].second;
@@ -572,9 +576,9 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
                           std::make_pair(pt[3].first,o3 - diff_off));
 }
 
-// Writing a restricted Delaunay triangulation to the .mesh file format
+// Writing a restricted Delaunay triangulation to the .mesh file format, which
+// can be visualized using medit.
 // Writing the triangulation to 8 domains.
-// Can be used with the medit (a viewer)
 template <class Stream, class C3t3>
 Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3,
                                unsigned occurence_count = 8)

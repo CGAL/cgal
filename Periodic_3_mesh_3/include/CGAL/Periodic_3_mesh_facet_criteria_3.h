@@ -25,6 +25,8 @@
 #ifndef CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H
 #define CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
 #include <CGAL/Periodic_3_mesh_3/periodic_3_mesh_standard_facet_criteria.h>
 #include <CGAL/Mesh_facet_topology.h>
 
@@ -33,7 +35,8 @@
 namespace CGAL {
 
 template<typename Tr,
-  typename Visitor_ = Mesh_3::Periodic_mesh_3::Facet_criterion_visitor_with_features<Tr> >
+         typename Visitor_ =
+           Mesh_3::Periodic_mesh_3::Facet_criterion_visitor_with_features<Tr> >
 class Periodic_mesh_facet_criteria_3
 {
 public:
@@ -62,7 +65,7 @@ public:
                                  const FT& radius_bound,
                                  const FT& distance_bound,
                                  const Mesh_facet_topology topology =
-                                 FACET_VERTICES_ON_SURFACE)
+                                   FACET_VERTICES_ON_SURFACE)
     : helper_(iso_cuboid)
   {
     if ( FT(0) != angle_bound )
@@ -83,8 +86,8 @@ public:
                                  const FT& radius_bound,
                                  const FT& distance_bound,
                                  const Mesh_facet_topology topology =
-                                 FACET_VERTICES_ON_SURFACE) :
-    helper_(periodic_domain.periodic_bounding_box())
+                                   FACET_VERTICES_ON_SURFACE)
+    : helper_(periodic_domain.periodic_bounding_box())
   {
     if ( FT(0) != angle_bound )
       init_aspect(angle_bound);

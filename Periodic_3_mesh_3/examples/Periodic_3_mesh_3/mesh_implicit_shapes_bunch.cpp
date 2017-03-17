@@ -25,8 +25,8 @@ typedef CGAL::Periodic_implicit_mesh_domain_3<Function,K> Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_periodic_3_triangulation_3<Periodic_mesh_domain>::type Mesh_3_periodic_triangulation_3;
-typedef Mesh_3_periodic_triangulation_3 Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+typedef Mesh_3_periodic_triangulation_3              Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>  C3t3;
 
 // Edge criteria
 typedef CGAL::Mesh_edge_criteria_3<Tr> Edge_criteria;
