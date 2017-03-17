@@ -92,7 +92,7 @@ public:
   Periodic_mesh_cell_criteria_3(const MD& periodic_domain,
                                 const FT& radius_edge_bound,
                                 const Sizing_field& radius_bound,
-                                typename Sizing_field::FT dummy = 0)
+                                typename Sizing_field::FT /* dummy */ = 0)
     : helper_(periodic_domain.periodic_bounding_box())
   {
     init_radius(radius_bound);

@@ -246,6 +246,11 @@ private:
         criteria_.add(new Same_surface_criterion());
         break;
       }
+      case MANIFOLD:
+      case MANIFOLD_WITH_BOUNDARY:
+      case NO_BOUNDARY:
+      default:
+        break;
     }
   }
 
