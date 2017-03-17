@@ -419,74 +419,14 @@ template<typename K>
 struct Periodic_mesh_geom_traits_generator
 {
 private:
-  //TODO: avoid this trick
-  //class K2 : public K { };
-
-  typedef Robust_weighted_circumcenter_filtered_traits_3<K> K3;
-  //typedef Regular_triangulation_euclidean_traits_3<K> K3;
-  typedef Periodic_3_regular_triangulation_traits_3<K3> K4;
-  //typedef Robust_weighted_circumcenter_filtered_traits_3<K3> Geom_traits;
-  class K5 : public K4
-  {
-  public:
-    typedef K5 Self;
-    typedef typename  K4::Weighted_point_3 Weighted_point_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compute_power_product_3> Compute_power_product_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
-    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
-//    typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Construct_circumcenter_3> Construct_circumcenter_3;
-
-//    Construct_circumcenter_3 construct_circumcenter_3_object () const
-//    {
-//      return Construct_circumcenter_3(&_domain);
-//    }
-
-    In_smallest_orthogonal_sphere_3 in_smallest_orthogonal_sphere_3_object () const
-    {
-      return In_smallest_orthogonal_sphere_3(&this->_domain);
-    }
-
-    Side_of_bounded_orthogonal_sphere_3 side_of_bounded_orthogonal_sphere_3_object () const
-    {
-      return Side_of_bounded_orthogonal_sphere_3(&this->_domain);
-    }
-
-    Does_simplex_intersect_dual_support_3 does_simplex_intersect_dual_support_3_object () const
-    {
-      return Does_simplex_intersect_dual_support_3(&this->_domain);
-    }
-
-    Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object () const
-    {
-      return Construct_weighted_circumcenter_3(&this->_domain);
-    }
-
-    Compute_power_product_3 compute_power_product_3_object () const
-    {
-      return Compute_power_product_3(&this->_domain);
-    }
-
-    Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object () const
-    {
-      return Compute_squared_radius_smallest_orthogonal_sphere_3(&this->_domain);
-    }
-
-    Compute_critical_squared_radius_3 compute_critical_squared_radius_3_object () const
-    {
-      return Compute_critical_squared_radius_3(&this->_domain);
-    }
-
-    Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object () const
-    {
-      return Compare_weighted_squared_radius_3(&this->_domain);
-    }
-  };
-  typedef K5 Geom_traits;
+  // Mesh_3 requires the Bare_point / Weighted_point typedef
+  // but `Robust_weighted_circumcenter_filtered_traits_3` no longer
+  // derives from `Regular_triangulation_euclidean_traits_3`.
+  // Since it's just a typedef and the order does not matter, we just
+  // wrap here instead.
+  typedef Regular_triangulation_euclidean_traits_3<
+            Periodic_3_regular_triangulation_traits_3<
+              Robust_weighted_circumcenter_filtered_traits_3<K> > > Geom_traits;
 
 public:
   typedef Geom_traits type;
