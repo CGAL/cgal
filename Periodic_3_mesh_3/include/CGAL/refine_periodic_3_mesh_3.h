@@ -13,8 +13,8 @@
 //
 // Author(s)     : Mikhail Bogdanov
 //
-#ifndef CGAL_REFINE_PERIODIC_MESH_3_H
-#define CGAL_REFINE_PERIODIC_MESH_3_H
+#ifndef CGAL_REFINE_PERIODIC_3_MESH_3_H
+#define CGAL_REFINE_PERIODIC_3_MESH_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -37,7 +37,7 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (void),
-  refine_periodic_mesh_3,
+  refine_periodic_3_mesh_3,
   parameters::tag,
   (required (in_out(c3t3),*) (domain,*) (criteria,*) ) // nondeduced
   (deduced
@@ -54,15 +54,15 @@ BOOST_PARAMETER_FUNCTION(
 )
 {
   // TODO: Can we call refine_mesh_3_impl?
-  return refine_periodic_mesh_3_impl(c3t3,
-                                     domain,
-                                     criteria,
-                                     exude_param,
-                                     perturb_param,
-                                     odt_param,
-                                     lloyd_param,
-                                     reset_param(),
-                                     mesh_options_param);
+  return refine_periodic_3_mesh_3_impl(c3t3,
+                                       domain,
+                                       criteria,
+                                       exude_param,
+                                       perturb_param,
+                                       odt_param,
+                                       lloyd_param,
+                                       reset_param(),
+                                       mesh_options_param);
 }
 
 CGAL_PRAGMA_DIAG_POP
@@ -85,16 +85,16 @@ CGAL_PRAGMA_DIAG_POP
  *   for debugging purpose.
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
-void refine_periodic_mesh_3_impl(C3T3& c3t3,
-                        const MeshDomain&   domain,
-                        const MeshCriteria& criteria,
-                        const parameters::internal::Exude_options& exude,
-                        const parameters::internal::Perturb_options& perturb,
-                        const parameters::internal::Odt_options& odt,
-                        const parameters::internal::Lloyd_options& lloyd,
-                        bool reset_c3t3,
-                        const parameters::internal::Mesh_3_options&
-                          mesh_options = parameters::internal::Mesh_3_options())
+void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
+                          const MeshDomain&   domain,
+                          const MeshCriteria& criteria,
+                          const parameters::internal::Exude_options& exude,
+                          const parameters::internal::Perturb_options& perturb,
+                          const parameters::internal::Odt_options& odt,
+                          const parameters::internal::Lloyd_options& lloyd,
+                          bool reset_c3t3,
+                          const parameters::internal::Mesh_3_options&
+                            mesh_options = parameters::internal::Mesh_3_options())
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 
@@ -188,4 +188,4 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
 
 } // end namespace CGAL
 
-#endif // CGAL_REFINE_PERIODIC_MESH_3_H
+#endif // CGAL_REFINE_PERIODIC_3_MESH_3_H

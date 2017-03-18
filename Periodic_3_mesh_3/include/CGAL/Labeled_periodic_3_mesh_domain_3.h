@@ -13,8 +13,8 @@
 //
 // Author(s)     : Aymeric Pellé
 //
-#ifndef CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H
-#define CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H
+#ifndef CGAL_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
+#define CGAL_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -30,7 +30,7 @@ namespace CGAL
 {
 
 /**
- * \class Labeled_periodic_mesh_domain_3
+ * \class Labeled_periodic_3_mesh_domain_3
  *
  * Function f must take his values into N.
  * Let p be a Point.
@@ -42,7 +42,7 @@ namespace CGAL
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
 template<class Function, class BGT>
-class Labeled_periodic_mesh_domain_3
+class Labeled_periodic_3_mesh_domain_3
     : public Labeled_mesh_domain_3<Function, BGT>
 {
 public:
@@ -74,9 +74,9 @@ public:
   typedef typename Base::FT                  FT;
   typedef BGT                                Geom_traits;
 
-  Labeled_periodic_mesh_domain_3(const Function& f,
-                                 const Iso_cuboid_3& bbox,
-                                 const FT& error_bound = FT(1e-3))
+  Labeled_periodic_3_mesh_domain_3(const Function& f,
+                                   const Iso_cuboid_3& bbox,
+                                   const FT& error_bound = FT(1e-6))
     : Base(f, bbox, error_bound)
   { }
 
@@ -93,7 +93,7 @@ public:
    */
   struct Do_intersect_surface
   {
-    Do_intersect_surface(const Labeled_periodic_mesh_domain_3& domain)
+    Do_intersect_surface(const Labeled_periodic_3_mesh_domain_3& domain)
       : r_domain_(domain)
     { }
 
@@ -193,7 +193,7 @@ public:
     }
 
   private:
-    const Labeled_periodic_mesh_domain_3& r_domain_;
+    const Labeled_periodic_3_mesh_domain_3& r_domain_;
   };
 
   /// Returns Do_intersect_surface object
@@ -213,7 +213,7 @@ public:
    */
   struct Construct_intersection
   {
-    Construct_intersection(const Labeled_periodic_mesh_domain_3& domain)
+    Construct_intersection(const Labeled_periodic_3_mesh_domain_3& domain)
       : r_domain_(domain)
     { }
 
@@ -316,7 +316,7 @@ public:
       }
 
       // Construct the surface patch index and index from the values at 'a'
-      // and 'b'. Even if the bissection find out a different pair of
+      // and 'b'. Even if the bissection finds out a different pair of
       // values, the reported index will be constructed from the initial
       // values.
       const Surface_patch_index sp_index =
@@ -375,7 +375,7 @@ public:
     }
 
   private:
-    const Labeled_periodic_mesh_domain_3& r_domain_;
+    const Labeled_periodic_3_mesh_domain_3& r_domain_;
   };
 
   Construct_intersection construct_intersection_object() const
@@ -385,10 +385,10 @@ public:
 
 private:
   // Disabled copy constructor & assignment operator
-  Labeled_periodic_mesh_domain_3(const Labeled_periodic_mesh_domain_3&);
-  Labeled_periodic_mesh_domain_3& operator=(const Labeled_periodic_mesh_domain_3&);
+  Labeled_periodic_3_mesh_domain_3(const Labeled_periodic_3_mesh_domain_3&);
+  Labeled_periodic_3_mesh_domain_3& operator=(const Labeled_periodic_3_mesh_domain_3&);
 };
 
 } // namespace CGAL
 
-#endif // CGAL_LABELED_PERIODIC_MESH_DOMAIN_3_H
+#endif // CGAL_LABELED_PERIODIC_3_MESH_DOMAIN_3_H

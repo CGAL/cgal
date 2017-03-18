@@ -13,8 +13,8 @@
 //
 // Author(s)     : Mikhail Bogdanov
 //
-#ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
-#define CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
+#ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_3_MESH_STANDARD_CELL_CRITERIA_H
+#define CGAL_PERIODIC_3_MESH_3_PERIODIC_3_MESH_STANDARD_CELL_CRITERIA_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -27,7 +27,7 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-namespace Periodic_mesh_3 {
+namespace Periodic_3_mesh_3 {
 
 template <typename Tr, typename Visitor_>
 class Cell_radius_edge_criterion
@@ -258,7 +258,7 @@ class Cell_criteria_visitor_with_features
 
   typedef Abstract_criterion<Tr, Self>                  Criterion;
   typedef Mesh_3::Cell_size_criterion<Tr, Self>         Cell_size_criterion;
-  typedef Mesh_3::Periodic_mesh_3::Cell_radius_edge_criterion<Tr, Self>  Cell_radius_edge_criterion;
+  typedef Mesh_3::Periodic_3_mesh_3::Cell_radius_edge_criterion<Tr, Self>  Cell_radius_edge_criterion;
 
   typedef typename Tr::Geom_traits  Gt;
   typedef typename Gt::FT           FT;
@@ -401,10 +401,10 @@ private:
   FT size_ratio_;
 };  // end class Cell_criterion_visitor
 
-}  // end namespace Periodic_mesh_3
+}  // end namespace Periodic_3_mesh_3
 
 }  // end namespace Mesh_3
 
 }  // end namespace CGAL
 
-#endif // CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_CELL_CRITERIA_H
+#endif // CGAL_PERIODIC_3_MESH_3_PERIODIC_3_MESH_STANDARD_CELL_CRITERIA_H

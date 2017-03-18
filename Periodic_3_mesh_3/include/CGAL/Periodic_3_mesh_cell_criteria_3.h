@@ -13,22 +13,22 @@
 //
 // Author(s)     : Mikhail Bogdanov
 //
-#ifndef CGAL_PERIODIC_MESH_CELL_CRITERIA_3_H
-#define CGAL_PERIODIC_MESH_CELL_CRITERIA_3_H
+#ifndef CGAL_PERIODIC_3_MESH_CELL_CRITERIA_3_H
+#define CGAL_PERIODIC_3_MESH_CELL_CRITERIA_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/Periodic_3_mesh_3/periodic_mesh_standard_cell_criteria.h>
+#include <CGAL/Periodic_3_mesh_3/periodic_3_mesh_standard_cell_criteria.h>
 
 namespace CGAL {
 
 template <typename Tr,
-          typename Visitor_ = Mesh_3::Periodic_mesh_3::Cell_criteria_visitor_with_features<Tr> >
-class Periodic_mesh_cell_criteria_3
+          typename Visitor_ = Mesh_3::Periodic_3_mesh_3::Cell_criteria_visitor_with_features<Tr> >
+class Periodic_3_mesh_cell_criteria_3
 {
-  typedef Periodic_mesh_cell_criteria_3<Tr>       Self;
+  typedef Periodic_3_mesh_cell_criteria_3<Tr>     Self;
 
 public:
   typedef Visitor_                                Visitor;
@@ -52,9 +52,9 @@ public:
    * @param radius_edge_bound the radius-edge bound
    * @param radius_bound the radius bound (tet sizing)
    */
-  Periodic_mesh_cell_criteria_3(const Iso_cuboid& iso_cuboid,
-                                const FT& radius_edge_bound,
-                                const FT& radius_bound) :
+  Periodic_3_mesh_cell_criteria_3(const Iso_cuboid& iso_cuboid,
+                                  const FT& radius_edge_bound,
+                                  const FT& radius_bound) :
     helper_(iso_cuboid)
   {
     if ( FT(0) != radius_bound )
@@ -71,9 +71,9 @@ public:
    * @param radius_bound the radius bound (tet sizing)
    */
   template<typename MD>
-  Periodic_mesh_cell_criteria_3(const MD& periodic_domain,
-                                const FT& radius_edge_bound,
-                                const FT& radius_bound)
+  Periodic_3_mesh_cell_criteria_3(const MD& periodic_domain,
+                                  const FT& radius_edge_bound,
+                                  const FT& radius_bound)
     : helper_(periodic_domain.periodic_bounding_box())
   {
     if ( FT(0) != radius_bound )
@@ -86,10 +86,10 @@ public:
   // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
   // as int.
   template <typename MD, typename Sizing_field>
-  Periodic_mesh_cell_criteria_3(const MD& periodic_domain,
-                                const FT& radius_edge_bound,
-                                const Sizing_field& radius_bound,
-                                typename Sizing_field::FT /* dummy */ = 0)
+  Periodic_3_mesh_cell_criteria_3(const MD& periodic_domain,
+                                  const FT& radius_edge_bound,
+                                  const Sizing_field& radius_bound,
+                                  typename Sizing_field::FT /* dummy */ = 0)
     : helper_(periodic_domain.periodic_bounding_box())
   {
     init_radius(radius_bound);
@@ -99,7 +99,7 @@ public:
   }
 
   /// Destructor
-  ~Periodic_mesh_cell_criteria_3() { }
+  ~Periodic_3_mesh_cell_criteria_3() { }
 
   /**
    * @brief returns the badness of cell \c cell
@@ -119,20 +119,20 @@ public:
 private:
   void init_radius_edge(const FT& radius_edge_bound)
   {
-    typedef Mesh_3::Periodic_mesh_3::Cell_radius_edge_criterion<Tr,Visitor> Radius_edge_criterion;
+    typedef Mesh_3::Periodic_3_mesh_3::Cell_radius_edge_criterion<Tr,Visitor> Radius_edge_criterion;
     criteria_.add(new Radius_edge_criterion(helper_, radius_edge_bound));
   }
 
   void init_radius(const FT& radius_bound)
   {
-    typedef Mesh_3::Periodic_mesh_3::Cell_uniform_size_criterion<Tr,Visitor> Radius_criterion;
+    typedef Mesh_3::Periodic_3_mesh_3::Cell_uniform_size_criterion<Tr,Visitor> Radius_criterion;
     criteria_.add(new Radius_criterion(helper_, radius_bound));
   }
 
   template < typename Sizing_field>
   void init_radius(const Sizing_field& radius_bound)
   {
-    typedef Mesh_3::Periodic_mesh_3::Cell_variable_size_criterion<Tr,Visitor,Sizing_field>
+    typedef Mesh_3::Periodic_3_mesh_3::Cell_variable_size_criterion<Tr,Visitor,Sizing_field>
       Radius_criterion;
 
     criteria_.add(new Radius_criterion(helper_, radius_bound));
@@ -142,9 +142,9 @@ private:
   Criteria criteria_;
 
   Tr helper_;
-};  // end class Periodic_mesh_cell_criteria_3
+};  // end class Periodic_3_mesh_cell_criteria_3
 
 }  // end namespace CGAL
 
 
-#endif // CGAL_PERIODIC_MESH_CELL_CRITERIA_3_H
+#endif // CGAL_PERIODIC_3_MESH_CELL_CRITERIA_3_H

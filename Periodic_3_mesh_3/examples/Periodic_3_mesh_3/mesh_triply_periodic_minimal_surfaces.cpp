@@ -5,14 +5,14 @@
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-#include <CGAL/Labeled_periodic_mesh_domain_3.h>
-#include <CGAL/Periodic_mesh_facet_criteria_3.h>
-#include <CGAL/Periodic_mesh_cell_criteria_3.h>
-#include <CGAL/Periodic_mesh_criteria_3.h>
-#include <CGAL/make_periodic_mesh_3.h>
+#include <CGAL/Labeled_periodic_3_mesh_domain_3.h>
+#include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_criteria_3.h>
+#include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/IO/Medit_IO.h>
 
-#include <CGAL/Periodic_mesh_triangulation_3.h>
+#include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
 #include <algorithm>
 #include <cmath>
@@ -34,19 +34,19 @@ typedef FT (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function> Labeling_function;
 
 // Domain
-typedef CGAL::Labeled_periodic_mesh_domain_3<Labeling_function, K>         Periodic_mesh_domain;
+typedef CGAL::Labeled_periodic_3_mesh_domain_3<Labeling_function, K>       Periodic_mesh_domain;
 
 // Triangulation
-typedef CGAL::Periodic_mesh_triangulation_3<Periodic_mesh_domain>::type    Tr;
+typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type  Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                        C3t3;
 
 // Criteria
-typedef CGAL::Mesh_edge_criteria_3<Tr>                  Edge_criteria;
-typedef CGAL::Periodic_mesh_facet_criteria_3<Tr>        Periodic_facet_criteria;
-typedef CGAL::Periodic_mesh_cell_criteria_3<Tr>         Periodic_cell_criteria;
-typedef CGAL::Periodic_mesh_criteria_3<Tr, Edge_criteria,
-                                           Periodic_facet_criteria,
-                                           Periodic_cell_criteria> Periodic_mesh_criteria;
+typedef CGAL::Mesh_edge_criteria_3<Tr>                    Edge_criteria;
+typedef CGAL::Periodic_3_mesh_facet_criteria_3<Tr>        Periodic_facet_criteria;
+typedef CGAL::Periodic_3_mesh_cell_criteria_3<Tr>         Periodic_cell_criteria;
+typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria,
+                                             Periodic_facet_criteria,
+                                             Periodic_cell_criteria> Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -226,7 +226,7 @@ C3t3 make_mesh (const Labeling_function& labeling_function, FT domain_size = FT(
                                   cell_radius_edge_ratio = 2.,
                                   cell_size = 0.05);
 
-  return CGAL::make_periodic_mesh_3<C3t3>(domain, criteria);
+  return CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 }
 
 typedef std::vector<std::string> Position_vector;

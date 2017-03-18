@@ -15,8 +15,8 @@
 //                 Aymeric Pellé
 //                 Mael Rouxel-Labbé
 
-#ifndef CGAL_PERIODIC_MESH_TRIANGULATION_3_H
-#define CGAL_PERIODIC_MESH_TRIANGULATION_3_H
+#ifndef CGAL_PERIODIC_3_MESH_TRIANGULATION_3_H
+#define CGAL_PERIODIC_3_MESH_TRIANGULATION_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -482,7 +482,7 @@ public:
 namespace details {
 
 template<typename K>
-struct Periodic_mesh_geom_traits_generator
+struct Periodic_3_mesh_geom_traits_generator
 {
 private:
   // Mesh_3 requires the Bare_point / Weighted_point typedef
@@ -497,16 +497,16 @@ private:
 public:
   typedef Geom_traits type;
   typedef type Type;
-};  // end struct Periodic_mesh_geom_traits_generator
+};  // end struct Periodic_3_mesh_geom_traits_generator
 
 }  // end namespace details
 
 template<class MD, class K = typename Kernel_traits<MD>::Kernel>
-struct Periodic_mesh_triangulation_3
+struct Periodic_3_mesh_triangulation_3
 {
 private:
   // traits
-  typedef typename details::Periodic_mesh_geom_traits_generator<K>::type Geom_traits;
+  typedef typename details::Periodic_3_mesh_geom_traits_generator<K>::type Geom_traits;
 
   // Periodic vertex and cell bases
   typedef Periodic_3_triangulation_ds_vertex_base_3<> VbDS;
@@ -531,5 +531,5 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_PERIODIC_MESH_TRIANGULATION_3_H
+#endif // CGAL_PERIODIC_3_MESH_TRIANGULATION_3_H
 

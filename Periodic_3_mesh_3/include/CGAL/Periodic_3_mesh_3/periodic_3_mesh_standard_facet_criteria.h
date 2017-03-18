@@ -14,8 +14,8 @@
 // Author(s)     : Mikhail Bogdanov
 //                 Mael Rouxel-Labbé
 //
-#ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_FACET_CRITERIA_H
-#define CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_FACET_CRITERIA_H
+#ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_3_MESH_STANDARD_FACET_CRITERIA_H
+#define CGAL_PERIODIC_3_MESH_3_PERIODIC_3_MESH_STANDARD_FACET_CRITERIA_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -25,7 +25,7 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-namespace Periodic_mesh_3 {
+namespace Periodic_3_mesh_3 {
 
 // Aspect_ratio Criterion class
 template <typename Tr, typename Visitor_>
@@ -621,11 +621,11 @@ class Facet_criterion_visitor_with_features
   typedef Facet_criterion_visitor_with_features<Tr> Self;
 
   typedef Mesh_3::Abstract_criterion<Tr, Self>                Criterion;
-  typedef Mesh_3::Periodic_mesh_3::Curvature_size_criterion<Tr, Self>          Curvature_size_criterion;
-  typedef Mesh_3::Periodic_mesh_3::Aspect_ratio_criterion<Tr, Self>            Aspect_ratio_criterion;
-  typedef Mesh_3::Periodic_mesh_3::Facet_on_surface_criterion<Tr, Self>        Facet_on_surface_criterion;
-  typedef Mesh_3::Periodic_mesh_3::Facet_size_criterion<Tr, Self>              Facet_size_criterion;
-  typedef Mesh_3::Periodic_mesh_3::Facet_on_same_surface_criterion<Tr, Self>   Facet_on_same_surface_criterion;
+  typedef Mesh_3::Periodic_3_mesh_3::Curvature_size_criterion<Tr, Self>          Curvature_size_criterion;
+  typedef Mesh_3::Periodic_3_mesh_3::Aspect_ratio_criterion<Tr, Self>            Aspect_ratio_criterion;
+  typedef Mesh_3::Periodic_3_mesh_3::Facet_on_surface_criterion<Tr, Self>        Facet_on_surface_criterion;
+  typedef Mesh_3::Periodic_3_mesh_3::Facet_size_criterion<Tr, Self>              Facet_size_criterion;
+  typedef Mesh_3::Periodic_3_mesh_3::Facet_on_same_surface_criterion<Tr, Self>   Facet_on_same_surface_criterion;
 
   typedef typename Tr::Geom_traits  Gt;
   typedef typename Gt::FT           FT;
@@ -773,10 +773,10 @@ private:
   FT size_ratio_;
 };  // end class Facet_criterion_visitor
 
-}  // end namespace Periodic_mesh_3
+}  // end namespace Periodic_3_mesh_3
 
 }  // end namespace Mesh_3
 
 }  // end namespace CGAL
 
-#endif // CGAL_PERIODIC_3_MESH_3_PERIODIC_MESH_STANDARD_FACET_CRITERIA_H
+#endif // CGAL_PERIODIC_3_MESH_3_PERIODIC_3_MESH_STANDARD_FACET_CRITERIA_H

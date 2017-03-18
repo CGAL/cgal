@@ -3,13 +3,13 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/make_periodic_mesh_3.h>
-#include <CGAL/Periodic_mesh_triangulation_3.h>
-#include <CGAL/Periodic_mesh_facet_criteria_3.h>
-#include <CGAL/Periodic_mesh_cell_criteria_3.h>
-#include <CGAL/Periodic_mesh_criteria_3.h>
+#include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
+#include <CGAL/Periodic_3_mesh_criteria_3.h>
 #include <CGAL/Periodic_3_mesh_3/Implicit_to_labeled_subdomains_function_wrapper.h>
-#include <CGAL/Implicit_periodic_mesh_domain_3.h>
+#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/IO/Medit_IO.h>
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -23,19 +23,19 @@ typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function, K> Function_wrapper;
-typedef CGAL::Implicit_periodic_mesh_domain_3<Function,K, Function_wrapper> Periodic_mesh_domain;
+typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function,K, Function_wrapper> Periodic_mesh_domain;
 
 // Triangulation
-typedef CGAL::Periodic_mesh_triangulation_3<Periodic_mesh_domain>::type   Tr;
+typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 
 // Criteria
-typedef CGAL::Mesh_edge_criteria_3<Tr>                  Edge_criteria;
-typedef CGAL::Periodic_mesh_facet_criteria_3<Tr>        Periodic_facet_criteria;
-typedef CGAL::Periodic_mesh_cell_criteria_3<Tr>         Periodic_cell_criteria;
-typedef CGAL::Periodic_mesh_criteria_3<Tr, Edge_criteria,
-                                       Periodic_facet_criteria,
-                                       Periodic_cell_criteria> Periodic_mesh_criteria;
+typedef CGAL::Mesh_edge_criteria_3<Tr>                    Edge_criteria;
+typedef CGAL::Periodic_3_mesh_facet_criteria_3<Tr>        Periodic_facet_criteria;
+typedef CGAL::Periodic_3_mesh_cell_criteria_3<Tr>         Periodic_cell_criteria;
+typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria,
+                                         Periodic_facet_criteria,
+                                         Periodic_cell_criteria> Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -77,7 +77,7 @@ int main()
                                   cell_size = size);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_periodic_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
   // Output
   std::ofstream medit_file("schwarz_p.mesh");
