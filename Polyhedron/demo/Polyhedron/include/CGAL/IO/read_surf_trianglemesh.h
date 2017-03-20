@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
+
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
@@ -191,11 +193,9 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::cout<<nb_patches<<" patch(es)"<<std::endl;
   metadata.resize(nb_patches);
   output.resize(nb_patches);
-  const vertex_descriptor null_vertex = boost::graph_traits<Mesh>::null_vertex();
-  std::vector<vertex_descriptor> vertices(nb_vertices, null_vertex);
-  for(int i=0; i < nb_patches; /* i is incremented in the body */)
+
+  for(int i=0; i < nb_patches; ++i)
   {
-    Mesh& mesh = output[i];
     //get metada
     while(std::getline(input, line))
     {
@@ -247,8 +247,9 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
         break;
       }
     }
-    //std::getline(input, line);
+
     //connect triangles
+    std::vector<std::vector<std::size_t> > polygons;
     while(std::getline(input, line))
     {
       std::size_t fnws=line.find_first_not_of(" \t");
@@ -262,22 +263,25 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       iss.clear();
       iss.str(line);
       iss >> index[0] >> index[1] >> index[2];
-      CGAL::cpp11::array<vertex_descriptor, 3> face;
-      for(int id=0; id<3; ++id)
-      {
-        if(vertices[index[id]-1] == null_vertex)
-        {
-          vertices[index[id]-1] = add_vertex(points[index[id]-1], mesh);
-        }
-        face[id] = vertices[index[id]-1];
-      }
-      CGAL::Euler::add_face(face, mesh);
+
+      std::vector<std::size_t> polygon = {index[0] - 1, index[1] - 1, index[2] - 1};
+      polygons.push_back(polygon);
     }
-    // reset the `vertices` vector, unless that was the last iteration of
-    // the loop
-    if(++i < nb_patches) std::fill(vertices.begin(),
-                                   vertices.end(),
-                                   null_vertex);
+
+    //build patch
+    namespace PMP = CGAL::Polygon_mesh_processing;
+    if (!PMP::is_polygon_soup_a_polygon_mesh(polygons))
+    {
+      std::cout << "Orientation of patch #" << (i + 1) << "...";
+      std::cout.flush();
+      PMP::orient_polygon_soup(points, polygons);//returns false if some points
+                                                 //were duplicated
+      std::cout << "\rOrientation of patch #" << (i + 1) << " done." << std::endl;
+    }
+    Mesh& mesh = output[i];
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
+      points, polygons, mesh);
+
   } // end loop on patches
 
   return true;
