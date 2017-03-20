@@ -12,10 +12,12 @@ struct Id_getter{
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
   typedef typename boost::graph_traits<Mesh>::face_descriptor mesh_fd;
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor mesh_hd;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor mesh_ed;
   const Mesh& mesh;
   typename boost::property_map<Mesh, boost::vertex_index_t >::type vmap;
   typename boost::property_map<Mesh, boost::face_index_t >::type fmap;
   typename boost::property_map<Mesh, boost::halfedge_index_t >::type hmap;
+  typename boost::property_map<Mesh, boost::edge_index_t >::type emap;
 
   Id_getter(const Mesh& mesh)
     :mesh(mesh)
@@ -23,6 +25,7 @@ struct Id_getter{
     vmap = get(boost::vertex_index, mesh);
     fmap = get(boost::face_index, mesh);
     hmap = get(boost::halfedge_index, mesh);
+    emap = get(boost::edge_index, mesh);
   }
 
   std::size_t id(mesh_vd vd)
@@ -36,6 +39,10 @@ struct Id_getter{
   std::size_t id(mesh_hd hd)
   {
     return get(hmap, hd);
+  }
+  std::size_t id(mesh_ed ed)
+  {
+    return get(emap, ed);
   }
 };
 
@@ -93,11 +100,12 @@ public:
 
   template <class Handle>
   std::size_t id(Handle h) { return id_getter.id(h); }
+  /* AF shouldn't the edge property map do that right?
   std::size_t id(boost::graph_traits<Polyhedron>::edge_descriptor ed)
   {
     return id_getter.id(halfedge(ed, id_getter.mesh)) /2;
   }
-
+  */
   // NOTE: prior to call this function, id fields should be updated
   template<class Descriptor, class InputIterator, class IsSelected, class Visitor>
   void travel(InputIterator begin, 

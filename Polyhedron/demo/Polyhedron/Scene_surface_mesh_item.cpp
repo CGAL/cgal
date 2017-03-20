@@ -19,7 +19,6 @@
 #include "triangulate_primitive.h"
 #include "properties.h"
 
-
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
@@ -1014,3 +1013,5 @@ void Scene_surface_mesh_item::invalidate_aabb_tree()
 {
  delete_aabb_tree(this);
 }
+
+

@@ -31,11 +31,13 @@
 namespace CGAL {
 namespace Mesh_3 {
   
-  template <typename Polyhedron>
+  template <typename Polyhedron, typename PatchId_pmap>
   class Detect_features_in_polyhedra;
 
-  template <typename Polyhedron>
-  void detect_features(Polyhedron& p);
+  template <typename Polyhedron, typename FT, typename PatchId_pmap>
+  void detect_features(Polyhedron& p,
+                       FT angle_in_deg,
+                       PatchId_pmap pid_map);
   
 } // end namespace Mesh_3
   

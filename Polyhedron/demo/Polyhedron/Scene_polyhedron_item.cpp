@@ -918,6 +918,18 @@ invalidate_stats()
   genus = -1;
 }
 
+Scene_polyhedron_item::Vertex_selection_map 
+Scene_polyhedron_item::vertex_selection_map()
+{
+  return get(boost::vertex_index,*d->poly);
+}
+
+Scene_polyhedron_item::Face_selection_map 
+Scene_polyhedron_item::face_selection_map()
+{
+  return get(boost::face_index,*d->poly);
+}
+
 Scene_polyhedron_item*
 Scene_polyhedron_item::clone() const {
     return new Scene_polyhedron_item(*(d->poly));}

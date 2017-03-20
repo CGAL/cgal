@@ -28,43 +28,49 @@
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Mesh_3/Detect_features_in_polyhedra_fwd.h>
 #include <CGAL/Compare_handles_with_or_without_timestamps.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <set>
 
 namespace CGAL {
 namespace Mesh_3 {
 
-template <typename Polyhedron>
+  template <typename Polyhedron, typename FT, typename PatchId_pmap>
 void detect_features(Polyhedron& p,
-                     typename Polyhedron::Traits::FT angle_in_deg)
+                     FT angle_in_deg,
+                     PatchId_pmap pid_map)
 {
-  Detect_features_in_polyhedra<Polyhedron> go;
+  Detect_features_in_polyhedra<Polyhedron> go(pid_map);
   go.detect_sharp_edges(p,angle_in_deg);
   go.detect_surface_patches(p);
   go.detect_vertices_incident_patches(p);
 }
 
   
-template <typename Polyhedron_>
+  template <typename Polyhedron_, typename PatchId_pmap>
 class Detect_features_in_polyhedra
 {
   typedef Polyhedron_ Polyhedron;
 public:
-  typedef typename Polyhedron::Traits       Geom_traits;
+  typedef typename boost::property_traits<typename boost::property_map<Polyhedron,vertex_point_t>::type>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel Geom_traits;
+
   typedef typename Geom_traits::Vector_3    Vector_3;
   typedef typename Geom_traits::FT          FT;
   
-  typedef typename Polyhedron::Halfedge_handle  Halfedge_handle;
-  typedef typename Polyhedron::Facet_handle     Facet_handle;
-  typedef typename Polyhedron::Halfedge         Halfedge;
-  typedef typename Polyhedron::Facet            Facet;
-  typedef typename Facet::Patch_id              Patch_id;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
+
+  typedef typename boost::property_traits<PatchId_pmap>::value_type Patch_id;
+
   typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
   
-  typedef std::set<Facet_handle, Compare_handles> Facet_handle_set;
-  typedef std::set<Halfedge_handle, Compare_handles> He_handle_set;
+  typedef std::set<face_descriptor, Compare_handles> face_descriptor_set;
+  typedef std::set<halfedge_descriptor, Compare_handles> He_handle_set;
   
 public:
-  Detect_features_in_polyhedra() : current_surface_index_(1) {}
+  Detect_features_in_polyhedra(PatchId_pmap pid_map)
+    : current_surface_index_(1), pid_map(pid_map)
+  {}
   
   void detect_sharp_edges(Polyhedron& polyhedron,
                           FT angle_in_deg = FT(60)) const;
@@ -76,10 +82,11 @@ public:
   }
   
 private:
-  Vector_3 facet_normal(const Facet_handle& f) const;
-  bool is_sharp(const Halfedge_handle& he, FT cos_angle) const;
-  void flood(Facet_handle f, const Patch_id id,
-             Facet_handle_set& unsorted_faces) const;
+  Vector_3 facet_normal(const Polyhedron& polyhedron, const face_descriptor& f) const;
+  bool is_sharp(Polyhedron& polyhedron, const halfedge_descriptor& he, FT cos_angle) const;
+  void flood(Polyhedron& polyhedron,
+             face_descriptor f, const Patch_id id,
+             face_descriptor_set& unsorted_faces) const;
 
   template <typename Int>
   Int generate_patch_id(Int, int);
@@ -88,135 +95,138 @@ private:
   std::pair<Int, Int> generate_patch_id(std::pair<Int, Int>, int);
   
 private:
+  PatchId_pmap pid_map;
   // Stores the current surface index (usefull to detect different patches
   // on different polyhedra)
   int current_surface_index_;
 };
 
-  
-template <typename P_>
+
+template <typename P_, typename I_>
 void
-Detect_features_in_polyhedra<P_>::
+Detect_features_in_polyhedra<P_, I_>::
 detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
 {
   // Initialize vertices
-  for(typename Polyhedron::Vertex_iterator v = polyhedron.vertices_begin(),
-      end = polyhedron.vertices_end() ; v != end ; ++v)
+  boost::property_map<Polyhedron,vertex_num_feature_edges_t>::type vnfe
+    = get(vertex_num_feature_edges_t(),polyhedron);
+
+  boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
+    = get(halfedge_is_feature_t(),polyhedron);
+
+  BOOST_FOREACH(boost::graph_traits<P_>::vertex_descriptor vd, vertices(polyhedron))
   {
-    v->nb_of_feature_edges = 0;
+    put(vnfe,vd, 0);
   }
   
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
   
   // Detect sharp edges
-  for(typename Polyhedron::Halfedge_iterator he = polyhedron.edges_begin(),
-      end = polyhedron.edges_end() ; he != end ; ++he)
+  BOOST_FOREACH(boost::graph_traits<P_>::edge_descriptor ed, edges(polyhedron))
   {
-    if(he->is_border() || angle_in_deg == FT() ||
-       (angle_in_deg != FT(180) && is_sharp(he,cos_angle))
+    boost::graph_traits<P_>::halfedge_descriptor he = halfedge(ed,polyhedron);
+    if(is_border(he,polyhedron) || angle_in_deg == FT() ||
+       (angle_in_deg != FT(180) && is_sharp(polyhedron,he,cos_angle))
        )
     {
-      he->set_feature_edge(true);
-      he->opposite()->set_feature_edge(true);
+      put(hif, he, true);
+      put(hif, opposite(he,polyhedron), true);
       
-      ++he->vertex()->nb_of_feature_edges;
-      ++he->opposite()->vertex()->nb_of_feature_edges;
+      put(vnfe, target(he,polyhedron), get(vnfe, target(he,polyhedron))+1);
+      put(vnfe, source(he,polyhedron), get(vnfe, source(he,polyhedron))+1);
     }
   }
 }
 
 
-template <typename P_>
+template <typename P_, typename I_>
 template <typename Int>
 Int
-Detect_features_in_polyhedra<P_>::
+Detect_features_in_polyhedra<P_, I_>::
 generate_patch_id(Int, int i)
 {
   return Int(i);
 }
 
-template <typename P_>
+template <typename P_, typename I_>
 template <typename Int>
 std::pair<Int, Int>
-Detect_features_in_polyhedra<P_>::
+Detect_features_in_polyhedra<P_, I_>::
 generate_patch_id(std::pair<Int, Int>, int i)
 {
   return std::pair<Int, Int>(i, 0);
 }
 
-template <typename P_>
+template <typename P_, typename I_>
 void
-Detect_features_in_polyhedra<P_>::
+Detect_features_in_polyhedra<P_, I_>::
 detect_surface_patches(Polyhedron& polyhedron)
 {
   // Initialize unsorted_faces
-  Facet_handle_set unsorted_faces;
+  face_descriptor_set unsorted_faces;
   for ( typename Polyhedron::Facet_iterator fit = polyhedron.facets_begin(),
        end = polyhedron.facets_end() ; fit != end ; ++fit )
   {
-    Facet_handle fh = fit;
+    face_descriptor fh = fit;
     unsorted_faces.insert(fh);
   }
   
   // Flood
   while ( ! unsorted_faces.empty() )
   {
-    Facet_handle f = *(unsorted_faces.begin());
+    face_descriptor f = *(unsorted_faces.begin());
     unsorted_faces.erase(unsorted_faces.begin());
     
     const Patch_id patch_id = generate_patch_id(Patch_id(),
                                                 current_surface_index_);
-    f->set_patch_id(patch_id);
-    flood(f,patch_id,unsorted_faces);
+    put(pid_map, f, patch_id);
+    flood(polyhedron, f,patch_id,unsorted_faces);
     ++current_surface_index_;
   }
 }
 
 
-template <typename P_>
+template <typename P_, typename I_>
 void
-Detect_features_in_polyhedra<P_>::
+Detect_features_in_polyhedra<P_, I_>::
 detect_vertices_incident_patches(Polyhedron& polyhedron)
 {
-  for( typename Polyhedron::Vertex_iterator vit = polyhedron.vertices_begin(),
-      vend = polyhedron.vertices_end() ; vit != vend ; ++vit )
+  BOOST_FOREACH(vertex_descriptor vit,vertices(polyhedron))
   {
     // Look only at feature vertices
     if( ! vit->is_feature_vertex() ) { continue; }
     
     // Loop on incident facets of vit
-    typename Polyhedron::Halfedge_around_vertex_const_circulator
-      he = vit->vertex_begin(), he_end(he);
-    do
+    BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(vit,polyhedron))
     {
-      if( ! he->is_border() )
+      if( ! is_border(he,polyhedron) )
       {
-        vit->add_incident_patch(he->facet()->patch_id());
+        vit->add_incident_patch(get(pid_map,face(he,polyhedron)));
       }
-      else if( ! he->opposite()->is_border() )
+      else if( ! is_border(opposite(he,polyhedron),polyhedron) )
       {
-        vit->add_incident_patch(he->opposite()->facet()->patch_id());
+        vit->add_incident_patch(get(pid_map, face(opposite(he,polyhedron),polyhedron)));
       }
-    } while(++he != he_end);
+    }
   }
 }
   
 // -----------------------------------
 // Private methods
 // -----------------------------------
-template <typename P_>
-typename Detect_features_in_polyhedra<P_>::Vector_3
-Detect_features_in_polyhedra<P_>::
-facet_normal(const Facet_handle& f) const
+template <typename P_, typename I_>
+typename Detect_features_in_polyhedra<P_, I_>::Vector_3
+Detect_features_in_polyhedra<P_, I_>::
+facet_normal(const Polyhedron& polyhedron, const face_descriptor& f) const
 {
+  return Polygon_mesh_processing::compute_face_normal(f,polyhedron);
+  /*
   Vector_3 sum = CGAL::NULL_VECTOR;
-  typename Facet::Halfedge_around_facet_circulator h = f->facet_begin();
-  
-  do
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f,polyhedron),polyhedron))
   {
     Vector_3 normal = CGAL::cross_product(
-      h->next()->vertex()->point() - h->vertex()->point(), 
-      h->next()->next()->vertex()->point() - h->next()->vertex()->point());
+                                          target(next(h,polyhedron),polyhedron)->point() - target(h,polyhedron)->point(), 
+                                          target(next(next(h,polyhedron),polyhedron)polyhedron)->point() - target(next(h,polyhedron)polyhedron)->point());
     
     FT sqnorm = normal * normal;
     if ( ! CGAL_NTS is_zero(sqnorm) )
@@ -225,27 +235,29 @@ facet_normal(const Facet_handle& f) const
       sum = sum + normal;
     }
   }
-  while (++h != f->facet_begin());
+
   
   FT sqnorm = sum * sum;
   
   return (! CGAL_NTS is_zero(sqnorm)) ? sum / CGAL::sqrt(sqnorm)
                                       : CGAL::NULL_VECTOR;
+  */
 }
 
 
-template <typename P_>
+template <typename P_, typename I_>
 bool
-Detect_features_in_polyhedra<P_>::
-is_sharp(const Halfedge_handle& he, FT cos_angle) const
+Detect_features_in_polyhedra<P_, I_>::
+is_sharp(Polyhedron& polyhedron, const halfedge_descriptor& he, FT cos_angle) const
 {
-  Facet_handle f1 = he->facet();
-  Facet_handle f2 = he->opposite()->facet();
-  if(f1 == NULL || f2 == NULL)
+  if(is_border(edge(he,polyhedron),polyhedron)){
     return false;
-  
-  const Vector_3& n1 = facet_normal(f1);
-  const Vector_3& n2 = facet_normal(f2);
+  }
+  face_descriptor f1 = face(he,polyhedron);
+  face_descriptor f2 = face(opposite(he,polyhedron),polyhedron);
+
+  const Vector_3& n1 = facet_normal(polyhedron, f1);
+  const Vector_3& n2 = facet_normal(polyhedron, f2);
   
   if ( n1 * n2 <= cos_angle )
     return true;
@@ -254,46 +266,42 @@ is_sharp(const Halfedge_handle& he, FT cos_angle) const
 }
   
  
-template <typename P_>
+template <typename P_, typename I_>
 void
-Detect_features_in_polyhedra<P_>::
-flood(Facet_handle f, const Patch_id patch_id, Facet_handle_set& unsorted_faces) const
+Detect_features_in_polyhedra<P_, I_>::
+flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_descriptor_set& unsorted_faces) const
 {
-  typedef typename Facet::Halfedge_around_facet_circulator Facet_he_circ;
-  
-  Facet_he_circ begin = f->facet_begin();
-  Facet_he_circ done = begin;
-  
   // Initialize he_to_explore with halfedges of the starting facet
   He_handle_set he_to_explore;
-  CGAL_For_all(begin,done)
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f,polyhedron)))
   {
-    he_to_explore.insert(begin->opposite());
+    he_to_explore.insert(opposite(hd,polyhedron));
   }
   
   // While there is something to explore
   while ( ! he_to_explore.empty() )
   {
     // Get next halfedge to explore
-    Halfedge_handle he = *(he_to_explore.begin());
+    halfedge_descriptor he = *(he_to_explore.begin());
     he_to_explore.erase(he_to_explore.begin());
     
     // If we don't go through a border of the patch
-    if ( ! he->is_feature_edge() && ! he->is_border() )
+    if ( ! he->is_feature_edge() && ! is_border(he,polyhedron) )
     {
-      Facet_handle explored_facet = he->facet();
+      face_descriptor explored_facet = facet(he,polyhedron);
       
       // Mark facet and delete it from unsorted
-      explored_facet->set_patch_id(patch_id);
+      put(pid_map, explored_facet, patch_id);
       unsorted_faces.erase(explored_facet);
       
       // Add/Remove facet's halfedge to/from explore list
       Facet_he_circ he_begin = explored_facet->facet_begin();
       Facet_he_circ he_done = he_begin;
       
-      CGAL_For_all(he_begin,he_done)
+      //CGAL_For_all(he_begin,he_done)
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(explored_facet,polyhedron)))
       {
-        Halfedge_handle current_he = he_begin;
+        halfedge_descriptor current_he = hd;
         
         // do not explore heh again
         if ( current_he == he ) { continue; }
@@ -302,7 +310,7 @@ flood(Facet_handle f, const Patch_id patch_id, Facet_handle_set& unsorted_faces)
         // (because we just explore the facet he_begin is pointing to)
         if ( he_to_explore.erase(current_he) == 0 )
         {
-          he_to_explore.insert(current_he->opposite());
+          he_to_explore.insert(opposite(current_he,polyhedron));
         }
       }
     }
