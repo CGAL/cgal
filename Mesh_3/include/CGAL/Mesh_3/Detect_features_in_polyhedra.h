@@ -39,7 +39,7 @@ void detect_features(Polyhedron& p,
                      FT angle_in_deg,
                      PatchId_pmap pid_map)
 {
-  Detect_features_in_polyhedra<Polyhedron> go(pid_map);
+  Detect_features_in_polyhedra<Polyhedron, PatchId_pmap> go(pid_map);
   go.detect_sharp_edges(p,angle_in_deg);
   go.detect_surface_patches(p);
   go.detect_vertices_incident_patches(p);
@@ -56,7 +56,8 @@ public:
 
   typedef typename Geom_traits::Vector_3    Vector_3;
   typedef typename Geom_traits::FT          FT;
-  
+
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
 
@@ -69,7 +70,7 @@ public:
   
 public:
   Detect_features_in_polyhedra(PatchId_pmap pid_map)
-    : current_surface_index_(1), pid_map(pid_map)
+    : pid_map(pid_map), current_surface_index_(1)
   {}
   
   void detect_sharp_edges(Polyhedron& polyhedron,
@@ -108,13 +109,13 @@ Detect_features_in_polyhedra<P_, I_>::
 detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
 {
   // Initialize vertices
-  boost::property_map<Polyhedron,vertex_num_feature_edges_t>::type vnfe
+  typename boost::property_map<Polyhedron,vertex_num_feature_edges_t>::type vnfe
     = get(vertex_num_feature_edges_t(),polyhedron);
 
-  boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
+  typename boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
     = get(halfedge_is_feature_t(),polyhedron);
 
-  BOOST_FOREACH(boost::graph_traits<P_>::vertex_descriptor vd, vertices(polyhedron))
+  BOOST_FOREACH(typename boost::graph_traits<P_>::vertex_descriptor vd, vertices(polyhedron))
   {
     put(vnfe,vd, 0);
   }
@@ -122,9 +123,9 @@ detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
   
   // Detect sharp edges
-  BOOST_FOREACH(boost::graph_traits<P_>::edge_descriptor ed, edges(polyhedron))
+  BOOST_FOREACH(typename boost::graph_traits<P_>::edge_descriptor ed, edges(polyhedron))
   {
-    boost::graph_traits<P_>::halfedge_descriptor he = halfedge(ed,polyhedron);
+    typename boost::graph_traits<P_>::halfedge_descriptor he = halfedge(ed,polyhedron);
     if(is_border(he,polyhedron) || angle_in_deg == FT() ||
        (angle_in_deg != FT(180) && is_sharp(polyhedron,he,cos_angle))
        )
@@ -295,10 +296,6 @@ flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_de
       unsorted_faces.erase(explored_facet);
       
       // Add/Remove facet's halfedge to/from explore list
-      Facet_he_circ he_begin = explored_facet->facet_begin();
-      Facet_he_circ he_done = he_begin;
-      
-      //CGAL_For_all(he_begin,he_done)
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(explored_facet,polyhedron)))
       {
         halfedge_descriptor current_he = hd;
