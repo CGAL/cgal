@@ -10,7 +10,7 @@ namespace CGAL
   void reset_sharp_edges(Polyhedron* pMesh)
   {
     typename boost::property_map<Polyhedron,halfedge_is_feature_t>::type if_pm;
-    BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor ed, edges(*pMesh))
+    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::edge_descriptor ed, edges(*pMesh))
     {
       put(if_pm,halfedge(ed,*pMesh),false);
       put(if_pm,opposite(halfedge(ed,*pMesh),*pMesh),false);
