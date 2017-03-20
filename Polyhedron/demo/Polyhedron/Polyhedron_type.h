@@ -14,6 +14,8 @@
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 
+#include "properties.h"
+
 #include <set>
 
 template <typename Refs, typename Tag, typename Point, typename Patch_id>
@@ -108,6 +110,8 @@ public:
   ///@}
 };
 
+
+
 template <typename Integral>
 inline std::pair<Integral, Integral>
 patch_id_default_value(std::pair<Integral, Integral>)
@@ -199,4 +203,121 @@ typedef Polyhedron_demo_items<Patch_id>              Polyhedron_items;
 typedef CGAL::Polyhedron_3<Kernel, Polyhedron_items> Polyhedron;
 
 
+
+struct Is_feature_pmap {
+
+  typedef Polyhedron::Halfedge_handle value_type;
+  typedef bool key_type;
+  friend bool get(const Is_feature_pmap&, Polyhedron::Halfedge_handle h)
+  {
+    return h->is_feature_edge();
+  }
+  
+  friend void put(const Is_feature_pmap&, Polyhedron::Halfedge_handle h, bool b)
+  {
+     h->set_feature_edge(b);
+  }
+
+};
+
+inline Is_feature_pmap get(halfedge_is_feature_t, const Polyhedron&)
+{
+  return Is_feature_pmap();
+}
+
+struct vertex_num_feature_edges_pmap {
+
+  typedef Polyhedron::Vertex_handle value_type;
+  typedef int key_type;
+  friend int get(const vertex_num_feature_edges_pmap&, Polyhedron::Vertex_handle h)
+  {
+    return h->nb_of_feature_edges;
+  }
+  
+  friend void put(const vertex_num_feature_edges_pmap&, Polyhedron::Vertex_handle h, int n)
+  {
+     h->nb_of_feature_edges = n;
+  }
+
+};
+
+inline vertex_num_feature_edges_pmap get(vertex_num_feature_edges_t, const Polyhedron&)
+{
+  return vertex_num_feature_edges_pmap();
+}
+
+
+struct Patch_id_pmap {
+
+  typedef Polyhedron::Face_handle value_type;
+  typedef Polyhedron::Facet::Patch_id key_type;
+  typedef value_type reference;
+  typedef boost::writable_property_map_tag                          category;
+
+  friend Polyhedron::Facet::Patch_id get(const Patch_id_pmap&, Polyhedron::Face_handle h)
+  {
+    return h->patch_id();
+  }
+  
+  friend void put(const Patch_id_pmap&, Polyhedron::Face_handle h,
+                  Polyhedron::Facet::Patch_id pid)
+  {
+     h->set_patch_id(pid);
+  }
+
+};
+
+
+
+inline Patch_id_pmap get(face_patch_id_t, const Polyhedron&)
+{
+  return Patch_id_pmap();
+}
+
+inline
+boost::property_map<Polyhedron, boost::vertex_index_t>::type
+get(vertex_selection_t, const Polyhedron& p)
+{
+  return get(boost::vertex_index,p);
+}
+
+inline
+boost::property_map<Polyhedron, boost::face_index_t>::type
+get(face_selection_t, const Polyhedron& p)
+{
+  return get(boost::face_index,p);
+}
+namespace boost {
+  
+  template <>
+  struct property_map<Polyhedron, halfedge_is_feature_t>
+  {
+    typedef Is_feature_pmap type;
+  };
+  
+  template <>
+  struct property_map<Polyhedron, face_patch_id_t>
+  {
+    typedef Patch_id_pmap type;
+  };
+  
+  template <>
+  struct property_map<Polyhedron, face_selection_t>
+  {
+    typedef boost::property_map<Polyhedron,boost::face_index_t>::type type;
+    typedef boost::property_map<Polyhedron,boost::face_index_t>::const_type const_type;
+  };
+
+  template <>
+  struct property_map<Polyhedron, vertex_selection_t>
+  {
+    typedef boost::property_map<Polyhedron,boost::vertex_index_t>::type type;
+    typedef boost::property_map<Polyhedron,boost::vertex_index_t>::const_type const_type;
+  };
+  template <>
+  struct property_map<Polyhedron, vertex_num_feature_edges_t>
+  {
+    typedef vertex_num_feature_edges_pmap type;
+  };
+}
 #endif // POLYHEDRON_TYPE_H

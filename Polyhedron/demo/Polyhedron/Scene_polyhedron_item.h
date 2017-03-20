@@ -25,6 +25,9 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
     Q_OBJECT
 public:
   typedef Polyhedron FaceGraph;
+  typedef boost::property_map<FaceGraph, boost::vertex_index_t>::type Vertex_selection_map;
+  typedef boost::property_map<FaceGraph, boost::face_index_t>::type Face_selection_map;
+
     enum STATS {
       NB_VERTICES = 0,
       NB_CONNECTED_COMPOS,
@@ -96,6 +99,10 @@ public:
     bool isFinite() const { return true; }
     bool isEmpty() const;
     void compute_bbox() const;
+    
+    Vertex_selection_map vertex_selection_map();
+    Face_selection_map face_selection_map();
+ 
     std::vector<QColor>& color_vector();
     void set_color_vector_read_only(bool on_off);
     bool is_color_vector_read_only();

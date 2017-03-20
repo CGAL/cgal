@@ -63,6 +63,11 @@ qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
 polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES})
 target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item scene_polylines_item)
 
+qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
+polyhedron_demo_plugin(selection_sm_plugin Selection_plugin ${selectionUI_FILES})
+target_link_libraries(selection_sm_plugin scene_surface_mesh_selection_item scene_points_with_normal_item scene_polylines_item)
+target_compile_definitions(selection_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
 polyhedron_demo_plugin(self_intersection_plugin Self_intersection_plugin)
 target_link_libraries(self_intersection_plugin scene_polyhedron_item scene_polyhedron_selection_item scene_surface_mesh_item)
 
