@@ -45,13 +45,9 @@ bool get_material_metadata(std::istream& input,
 
 bool line_starts_with(const std::string& line, const char* cstr)
 {
-  std::string line_copy = line;
-  std::size_t fnws = line_copy.find_first_not_of(" \t");
+  const std::size_t fnws = line.find_first_not_of(" \t");
   if (fnws != std::string::npos)
-  {
-    line_copy.erase(0, fnws);
-    return (line_copy.find(cstr) == 0);
-  }
+    return (line.compare(fnws, strlen(cstr), cstr) == 0);
   return false;
 }
 
@@ -78,18 +74,11 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   //ignore header
   while(std::getline(input, line))
   {
-    std::size_t fnws=line.find_first_not_of(" \t");
-    if(fnws != std::string::npos)
-      line.erase(0, fnws);
-
     if (line_starts_with(line, "Materials"))
     {
       while(std::getline(input, line))
       {
-        std::size_t fnws=line.find_first_not_of(" \t");
-        if(fnws != std::string::npos)
-          line.erase(0, fnws);
-        if(line.compare(0, 1, "}") == 0)
+        if(line_starts_with(line, "}"))
           break;
         else
         {
@@ -106,16 +95,13 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   //get grid box
   while (std::getline(input, line))
   {
-    line.erase(0, line.find_first_not_of(" \t"));
-    if (line.compare(0, 7, "GridBox") != 0)
-      continue;
-    else
+    if (line_starts_with(line, "GridBox"))
     {
       iss.clear();
-      line.erase(0, 7);
       iss.str(line);
+      std::string dump;
       double xmin, xmax, ymin, ymax, zmin, zmax;
-      iss >> xmin >> xmax >> ymin >> ymax >> zmin >> zmax;
+      iss >> dump >> xmin >> xmax >> ymin >> ymax >> zmin >> zmax;
       grid_box = CGAL::Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
       break;
     }
@@ -124,15 +110,12 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   //get grid size
   while (std::getline(input, line))
   {
-    line.erase(0, line.find_first_not_of(" \t"));
-    if (line.compare(0, 8, "GridSize") != 0)
-      continue;
-    else
+    if (line_starts_with(line, "GridSize"))
     {
       iss.clear();
-      line.erase(0, 8);
       iss.str(line);
-      iss >> grid_size[0] >> grid_size[1] >> grid_size[2];
+      std::string dump;
+      iss >> dump >> grid_size[0] >> grid_size[1] >> grid_size[2];
       break;
     }
   }
@@ -140,12 +123,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   //get number of vertices
   while(std::getline(input, line))
   {
-    std::size_t fnws=line.find_first_not_of(" \t");
-    if(fnws != std::string::npos)
-      line.erase(0, fnws);
-    if(line.compare(0, 8, "Vertices") != 0)
-      continue;
-    else
+    if (line_starts_with(line, "Vertices"))
     {
       iss.clear();
       iss.str(line);
@@ -158,14 +136,9 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   //get vertices
   while(std::getline(input, line))
   {
-    std::size_t fnws=line.find_first_not_of(" \t");
-    if(fnws != std::string::npos)
-      line.erase(0, fnws);
-    double x(0),y(0),z(0);
-    if(line.compare(0, 16, "NBranchingPoints") == 0)
-    {
+    if (line_starts_with(line, "NBranchingPoints"))
       break;
-    }
+    double x(0),y(0),z(0);
     iss.clear();
     iss.str(line);
     iss >> CGAL::iformat(x) >> CGAL::iformat(y) >> CGAL::iformat(z);
@@ -176,12 +149,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   //get number of patches
   while(std::getline(input, line))
   {
-    std::size_t fnws=line.find_first_not_of(" \t");
-    if(fnws != std::string::npos)
-      line.erase(0, fnws);
-    if(line.compare(0, 7, "Patches") != 0)
-      continue;
-    else
+    if (line_starts_with(line, "Patches"))
     {
       iss.clear();
       iss.str(line);
@@ -199,12 +167,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     //get metada
     while(std::getline(input, line))
     {
-      std::size_t fnws=line.find_first_not_of(" \t");
-      if(fnws != std::string::npos)
-        line.erase(0, fnws);
-      if(line.compare(0, 11, "InnerRegion") != 0)
-        continue;
-      else
+      if (line_starts_with(line, "InnerRegion"))
       {
         std::string name;
         iss.clear();
@@ -235,15 +198,15 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       }
     }
 
+    std::size_t nb_triangles(0);
     while(std::getline(input, line))
     {
-      std::size_t fnws=line.find_first_not_of(" \t");
-      if(fnws != std::string::npos)
-        line.erase(0, fnws);
-      if(line.compare(0, 9, "Triangles") != 0)
-        continue;
-      else
+      if (line_starts_with(line, "Triangles"))
       {
+        iss.clear();
+        iss.str(line);
+        std::string dump;
+        iss >> dump >> nb_triangles;
         break;
       }
     }
@@ -267,6 +230,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       std::vector<std::size_t> polygon = {index[0] - 1, index[1] - 1, index[2] - 1};
       polygons.push_back(polygon);
     }
+    CGAL_assertion(nb_triangles == polygons.size());
 
     //build patch
     namespace PMP = CGAL::Polygon_mesh_processing;
