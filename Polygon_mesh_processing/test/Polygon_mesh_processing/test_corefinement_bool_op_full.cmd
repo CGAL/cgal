@@ -1,30 +1,49 @@
-data-coref/sphere.off data-coref/sphere-2.off
-data-coref/cube.off data-coref/coplanar_with_cube.off
-data-coref/cube.off data-coref/coplanar_with_cube1.off
-data-coref/cube.off data-coref/coplanar_with_cube2.off
-data-coref/cube.off data-coref/with_cube.off
-data-coref/open_large_cube.off data-coref/open_small_cube.off
-data-coref/elephant.off data-coref/elephant_plane/plane_1.off
-data-coref/elephant.off data-coref/elephant_plane/plane_2.off
-data-coref/elephant.off data-coref/elephant_plane/plane_3.off
-data-coref/open_tet_1.off data-coref/open_tet_2.off
-data-coref/small_cube_coplanar_inside.off data-coref/small_cube_coplanar_outside.off
-data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_inside.off
-data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_outside.off
-data-coref/P7.off data-coref/Q7.off
-data-coref/square1.off data-coref/square2.off
-data-coref/square_pair.off data-coref/square2.off
-data-coref/elephant.off data-coref/sphere.off
-data-coref/elephant_split_1.off data-coref/elephant_split_2.off
-data-coref/cube.off data-coref/cube_on_cube_edge.off
-data-coref/cube.off data-coref/cube_on_cube_corner.off
-data-coref/cow.off data-coref/cross.off
-data-coref/sphere.off data-coref/sphere_trans_cut.off
-data-coref/open_t11.off data-coref/open_t12.off
-data-coref/cube.off data-coref/coplanar_with_cube3.off
-data-coref/cube.off data-coref/coplanar_with_cube4.off
-data-coref/square1.off data-coref/square_pair.off
-data-coref/cube_meshed.off data-coref/cube.off
-data-coref/cube.off data-coref/cube_interior_tgt.off
-data-coref/cube.off data-coref/edge_tangent_to_cube.off
-data-coref/cube_dig.off data-coref/wedge.off
+data-coref/sphere.off data-coref/sphere-2.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/coplanar_with_cube.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/coplanar_with_cube1.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/coplanar_with_cube2.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/with_cube.off SM ALL 1 1 1 0
+data-coref/open_large_cube.off data-coref/open_small_cube.off SM ALL 1 1 1 1
+data-coref/open_large_cube.off data-coref/open_small_cube_inout.off SM ALL 0 0 0 0
+data-coref/elephant.off data-coref/elephant_plane/plane_1.off SM ALL 1 1 1 1
+data-coref/elephant.off data-coref/elephant_plane/plane_2.off SM ALL 1 1 1 1
+data-coref/elephant.off data-coref/elephant_plane/plane_3.off SM ALL 1 1 1 1
+data-coref/open_tet_1.off data-coref/open_tet_2.off SM ALL 1 1 1 1
+data-coref/small_cube_coplanar_inside.off data-coref/small_cube_coplanar_outside.off SM ALL 1 1 1 1
+data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_inside.off SM ALL 1 1 1 1
+data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_outside.off SM ALL 1 1 1 1
+data-coref/P7.off data-coref/Q7.off SM ALL 1 1 1 1
+data-coref/square1.off data-coref/square2.off SM ALL 1 1 1 1
+data-coref/square_pair.off data-coref/square2.off SM ALL 1 1 1 1
+data-coref/elephant.off data-coref/sphere.off SM ALL 1 1 1 1
+data-coref/elephant_split_1.off data-coref/elephant_split_2.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/cube_on_cube_edge.off SM ALL 0 1 1 1
+data-coref/cube.off data-coref/cube_on_cube_corner.off SM ALL 1 1 1 1
+data-coref/cow.off data-coref/cross.off SM ALL 1 1 1 1
+data-coref/sphere.off data-coref/sphere_trans_cut.off SM ALL 0 0 0 0
+data-coref/open_t11.off data-coref/open_t12.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/coplanar_with_cube3.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/coplanar_with_cube4.off SM ALL 1 1 1 1
+data-coref/square1.off data-coref/square_pair.off SM ALL 1 1 1 1
+data-coref/cube_meshed.off data-coref/cube.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/cube_interior_tgt.off SM ALL 1 1 1 1
+data-coref/cube.off data-coref/edge_tangent_to_cube.off SM ALL 1 1 0 1
+data-coref/cube_dig.off data-coref/wedge.off SM ALL 1 1 1 1
+data-coref/star_tgt1-0.off data-coref/star_tgt2-0.off SM ALL 1 1 1 0
+data-coref/star_tgt1-0.off data-coref/star_tgt2-1.off SM ALL 1 1 1 0
+data-coref/star_tgt1-0.off data-coref/star_tgt2-2.off SM ALL 0 1 1 1
+data-coref/star_tgt1-0.off data-coref/star_tgt2-3.off SM ALL 1 1 1 0
+data-coref/star_tgt1-0.off data-coref/star_tgt2-4.off SM ALL 0 1 1 1
+data-coref/star_tgt1-0.off data-coref/star_tgt2-5.off SM ALL 1 1 1 0
+data-coref/star_tgt1-1.off data-coref/star_tgt2-0.off SM ALL 1 1 1 0
+data-coref/star_tgt1-1.off data-coref/star_tgt2-1.off SM ALL 1 1 1 0
+data-coref/star_tgt1-1.off data-coref/star_tgt2-2.off SM ALL 0 1 1 1
+data-coref/star_tgt1-1.off data-coref/star_tgt2-3.off SM ALL 1 1 1 0
+data-coref/star_tgt1-1.off data-coref/star_tgt2-4.off SM ALL 0 1 1 1
+data-coref/star_tgt1-1.off data-coref/star_tgt2-5.off SM ALL 1 1 1 0
+data-coref/star_tgt1-2.off data-coref/star_tgt2-0.off SM ALL 1 1 1 0
+data-coref/star_tgt1-2.off data-coref/star_tgt2-1.off SM ALL 1 1 1 0
+data-coref/star_tgt1-2.off data-coref/star_tgt2-2.off SM ALL 0 1 1 1
+data-coref/star_tgt1-2.off data-coref/star_tgt2-3.off SM ALL 1 1 1 1
+data-coref/star_tgt1-2.off data-coref/star_tgt2-4.off SM ALL 0 1 1 1
+data-coref/star_tgt1-2.off data-coref/star_tgt2-5.off SM ALL 1 1 1 1

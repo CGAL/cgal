@@ -132,13 +132,12 @@ class Face_graph_output_builder
     return it->second;
   }
 
-  bool is_dangling_edge(const std::pair<edge_descriptor,
-                                        std::pair<Node_id, Node_id> >& info,
+  bool is_dangling_edge(Node_id src_id, Node_id tgt_id,
+                        halfedge_descriptor hedge,
                         TriangleMesh& tm,
                         const boost::dynamic_bitset<>& is_node_of_degree_one) const
   {
-    halfedge_descriptor hedge = halfedge(info.first, tm);
-    if ( is_node_of_degree_one.test(info.second.first) )
+    if ( is_node_of_degree_one.test(src_id) )
     {
       bool res=true;
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hedge, tm))
@@ -149,7 +148,7 @@ class Face_graph_output_builder
         }
       if (res) return true;
     }
-    if ( is_node_of_degree_one.test(info.second.second) )
+    if ( is_node_of_degree_one.test(tgt_id) )
     {
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hedge, tm))
         if (is_border(h, tm))
@@ -371,11 +370,6 @@ public:
     {
       vertex_to_node_id1[source(it->first,tm1)]=it->second.first;
       vertex_to_node_id1[target(it->first,tm1)]=it->second.second;
-      if ( is_dangling_edge(*it, tm1, is_node_of_degree_one) )
-      {
-        impossible_operation.set();
-        return;
-      }
     }
 
     Intersection_edge_map& intersection_edges2 = mesh_to_intersection_edges[&tm2];
@@ -387,11 +381,6 @@ public:
     {
       vertex_to_node_id2[source(it->first,tm2)]=it->second.first;
       vertex_to_node_id2[target(it->first,tm2)]=it->second.second;
-      if ( is_dangling_edge(*it, tm2, is_node_of_degree_one) )
-      {
-        impossible_operation.set();
-        return;
-      }
     }
 
     CGAL_assertion(intersection_edges1.size()==intersection_edges2.size());
@@ -564,10 +553,7 @@ public:
         {
           if ( is_border(h1,tm1) != is_border(h2,tm2) )
           {
-            //Union allowed everything else is non_manifold
-            impossible_operation.set();
-            impossible_operation.reset(UNION);
-
+            //No restriction at this level
             std::size_t patch_id1 =
               tm1_patch_ids[ get( fids1, is_border(h1,tm1)
                                             ? face(opposite(h1,tm1),tm1)
@@ -812,6 +798,12 @@ public:
               // poly_second - poly_first             = p2q2
               // poly_first \cap poly_second          = q1p2
               // opposite( poly_first U poly_second ) = q2p1
+              if ( is_dangling_edge(ids.first, ids.second, h1, tm1, is_node_of_degree_one) ||
+                   is_dangling_edge(ids.first, ids.second, h2, tm2, is_node_of_degree_one) )
+              {
+                impossible_operation.set();
+                return;
+              }
               is_patch_inside_tm2.set(patch_id_p2);
             }
           }
@@ -824,6 +816,12 @@ public:
               // poly_second - poly_first             = q1p1
               // poly_first \cap poly_second          = p1q2
               // opposite( poly_first U poly_second ) = p2q1
+              if ( is_dangling_edge(ids.first, ids.second, h1, tm1, is_node_of_degree_one) ||
+                   is_dangling_edge(ids.first, ids.second, h2, tm2, is_node_of_degree_one) )
+              {
+                impossible_operation.set();
+                return;
+              }
               is_patch_inside_tm1.set(patch_id_q2);
               is_patch_inside_tm2.set(patch_id_p1);
             }
