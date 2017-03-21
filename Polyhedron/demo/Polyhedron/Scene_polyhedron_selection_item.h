@@ -2,7 +2,7 @@
 #define SCENE_POLYHEDRON_SELECTION_ITEM_H
 #include "opengl_tools.h"
 #include "Scene_polyhedron_selection_item_config.h"
-#include "Scene_polyhedron_item_k_ring_selection.h"
+#include "Plugins/PMP/Scene_facegraph_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
 #include "Scene_polyhedron_item_decorator.h"
@@ -208,7 +208,7 @@ public:
   typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
 
-  typedef Scene_polyhedron_item_k_ring_selection::Active_handle Active_handle;
+  typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
 
   Scene_polyhedron_selection_item() ;
   Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw);
@@ -784,7 +784,7 @@ public:
 Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);
-  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
+  void isCurrentlySelected(Scene_facegraph_item_k_ring_selection*);
 
 public Q_SLOTS:
 
@@ -800,27 +800,16 @@ public Q_SLOTS:
   void clearHL();
 
   // slots are called by signals of polyhedron_k_ring_selector
-#ifdef USE_SURFACE_MESH
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>& m)
+  void selected(const std::set<vertex_descriptor>& m)
   { has_been_selected(m); }
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>& m)
+  void selected(const std::set<face_descriptor>& m)
   { has_been_selected(m); }
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>& m)
+  void selected(const std::set<edge_descriptor>& m)
   { has_been_selected(m); }
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>& m);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>& m);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>& m);
-#else
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>& m)
-  { has_been_selected(m); }
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>& m)
-  { has_been_selected(m); }
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>& m)
-  { has_been_selected(m); }
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>& m);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>& m);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>& m);
-#endif
+
+  void selected_HL(const std::set<vertex_descriptor>& m);
+  void selected_HL(const std::set<face_descriptor>& m);
+  void selected_HL(const std::set<edge_descriptor>& m);
   void poly_item_changed() {
     remove_erased_handles<vertex_descriptor>();
     remove_erased_handles<edge_descriptor>();
@@ -968,7 +957,7 @@ public:
 protected:
   // members
   std::string file_name_holder;
-  Scene_polyhedron_item_k_ring_selection k_ring_selector;
+  Scene_facegraph_item_k_ring_selection k_ring_selector;
   // action state
   bool is_insert;
 

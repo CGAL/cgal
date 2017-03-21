@@ -86,10 +86,10 @@ public:
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();
-  void selected_vertex(std::size_t);
-  void selected_facet(std::size_t);
-  void selected_edge(std::size_t);
-  void selected_halfedge(std::size_t);
+  void selected_vertex(void*);
+  void selected_facet(void*);
+  void selected_edge(void*);
+  void selected_halfedge(void*);
 
 public Q_SLOTS:
   virtual void selection_changed(bool);
@@ -99,26 +99,18 @@ public Q_SLOTS:
               double dir_x,
               double dir_y,
               double dir_z);
+  bool intersect_face(double orig_x,
+                      double orig_y,
+                      double orig_z,
+                      double dir_x,
+                      double dir_y,
+                      double dir_z,
+                      const face_descriptor &f);
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
-#if 0
-Scene_surface_mesh_item::Halfedge_is_feature_map
-get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh);
 
-Scene_surface_mesh_item::Face_patch_id_map
-get(face_patch_id_t, Scene_surface_mesh_item::SMesh& smesh);
-
-Scene_surface_mesh_item::Vertex_selection_map
-get(vertex_selection_t, Scene_surface_mesh_item::SMesh& smesh);
-
-Scene_surface_mesh_item::Face_selection_map
-get(face_selection_t, Scene_surface_mesh_item::SMesh& smesh);
-
-Scene_surface_mesh_item::Vertex_num_feature_edges_map
-get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh);
-#else
 Scene_surface_mesh_item::Halfedge_is_feature_map
 inline get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh)
 {
@@ -156,7 +148,6 @@ inline get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh)
   typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
   return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
 }
-#endif
 
 namespace boost {
   

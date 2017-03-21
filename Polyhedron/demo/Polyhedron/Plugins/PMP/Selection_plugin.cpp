@@ -161,7 +161,7 @@ public Q_SLOTS:
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
-    connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
+    connect(new_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
     scene->setSelectedItem(item_id);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
     if(last_mode == 0)
@@ -170,21 +170,13 @@ public Q_SLOTS:
   // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
   // set the k-ring_selector as currently selected. (A k-ring_selector tha tis not "currently selected" will
   // not process selection events)
-  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection* item)
+  void isCurrentlySelected(Scene_facegraph_item_k_ring_selection* item)
   {
-#ifdef USE_SURFACE_MESH
-    if(scene->item_id(selection_item_map.find(item->sm_item)->second) == scene->mainSelectionIndex() ||
-       scene->item_id(item->sm_item)== scene->mainSelectionIndex() )
-      item->setCurrentlySelected(true);
-    else
-      item->setCurrentlySelected(false);
-#else
     if(scene->item_id(selection_item_map.find(item->poly_item)->second) == scene->mainSelectionIndex() ||
        scene->item_id(item->poly_item)== scene->mainSelectionIndex() )
       item->setCurrentlySelected(true);
     else
       item->setCurrentlySelected(false);
-#endif
   }
 
   void setInstructions(QString s)
@@ -772,7 +764,7 @@ public Q_SLOTS:
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
       connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
-    connect(selection_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
+    connect(selection_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
     on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
     if(last_mode == 0)
