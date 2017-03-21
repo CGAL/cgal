@@ -192,7 +192,7 @@ struct Facegraph_selector
     d->deform_mesh = dm;
   }
 
-  void* set_deform_mesh(SMesh*, Deform_sm_mesh *dm)
+  void set_deform_mesh(SMesh*, Deform_sm_mesh *dm)
   {
     d->deform_sm_mesh = dm;
   }
@@ -350,8 +350,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   mw->installEventFilter(this);
   d = new Scene_edit_polyhedron_item_priv(poly_item, ui_widget, mw, this);
   // bind vertex picking
-  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
-          SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
+  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)), this,
+          SLOT(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)));
 
   d->poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in invalidateOpenGLBuffers()
   d->poly_item->update_vertex_indices();
@@ -377,8 +377,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   mw->installEventFilter(this);
   d = new Scene_edit_polyhedron_item_priv(sm_item, ui_widget, mw, this);
   // bind vertex picking
-  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<sm_vertex_descriptor>&)), this,
-          SLOT(selected(const std::set<sm_vertex_descriptor>&)));
+  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)), this,
+          SLOT(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)));
   id_setter = new Id_setter(d->sm_item->polyhedron());
   d->deform_sm_mesh = new Deform_sm_mesh(*(sm_item->polyhedron()),
                                 Deform_sm_mesh::Vertex_index_map(),
@@ -871,30 +871,30 @@ template<>
 struct Is_constrained_map<Polyhedron>
 {
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor mesh_vd;
-  boost::unordered_set<mesh_vd, CGAL::Handle_hash_function>* m_set_ptr;
-
   typedef mesh_vd                  key_type;
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
+  std::map<vertex_descriptor,int> icmap; //not light but the might won't be copied so it is ok
 
   Is_constrained_map()
-    : m_set_ptr(NULL)
   {}
-  Is_constrained_map( boost::unordered_set<mesh_vd, CGAL::Handle_hash_function>* set_, Polyhedron*)
-    : m_set_ptr(set_)
-  {}
+  Is_constrained_map( std::vector<int>* vec, Polyhedron* mesh)
+  {
+    BOOST_FOREACH(mesh_vd v, vertices(*mesh))
+    {
+      icmap[v] = (*vec)[v->id()];
+    }
+  }
   friend bool get(const Is_constrained_map<Polyhedron>& map, const key_type& k)
   {
-    CGAL_assertion(map.m_set_ptr != NULL);
-    return map.m_set_ptr->count(k);
+    std::map<vertex_descriptor, int>::const_iterator it = map.icmap.find(k);
+    if(it != map.icmap.end())
+      return it->second != -1;
+    return false;
   }
-  friend void put(Is_constrained_map<Polyhedron>& map, const key_type& k, const value_type b)
-  {
-    CGAL_assertion(map.m_set_ptr != NULL);
-    if (b)  map.m_set_ptr->insert(k);
-    else    map.m_set_ptr->erase(k);
-  }
+  friend void put(Is_constrained_map<Polyhedron>&, const key_type&, const value_type)//no need
+  {}
 };
 
 template<>
@@ -905,44 +905,37 @@ struct Is_constrained_map<SMesh>
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
-  SMesh* mesh;
-  SMesh::Property_map<sm_vertex_descriptor,bool> icmap;
+  SMesh::Property_map<sm_vertex_descriptor,int> icmap;
 
   Is_constrained_map()
-    : mesh(NULL)
   {}
-  Is_constrained_map( boost::unordered_set<mesh_vd, CGAL::Handle_hash_function>*set, SMesh* mesh)
-    : mesh(mesh)
+  Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
   {
-    icmap = mesh->add_property_map<sm_vertex_descriptor,bool>("v:is_control",false).first;
-    BOOST_FOREACH(sm_vertex_descriptor v, *set)
+    icmap = mesh->add_property_map<sm_vertex_descriptor,int>("v:is_control", -1).first;
+    for(std::size_t i=0; i<vec->size(); ++i)
     {
-      icmap[v] = true;
+      icmap[sm_vertex_descriptor(i)] = (*vec)[i];
     }
   }
   friend bool get(const Is_constrained_map<SMesh>& map, const key_type& k)
   {
-    return map.icmap[k];
+    return map.icmap[k] != -1;
   }
-  friend void put(Is_constrained_map<SMesh>& map, const key_type& k, const value_type b)
-  {
-    map.icmap[k] = b;
-  }
+  friend void put(Is_constrained_map<SMesh>&, const key_type&, const value_type) //no need
+  {}
 };
 
-bool is_valid(sm_vertex_descriptor v, const SMesh& mesh)
+int get_control_number(vertex_descriptor v, const Is_constrained_map<Polyhedron>& map)
 {
-  if(static_cast<int>(v) >= mesh.number_of_vertices()
-    || !mesh.is_valid(v))
-  {
-    return false;
-  }
-  return true;
+  std::map<vertex_descriptor, int>::const_iterator it = map.icmap.find(v);
+  if(it != map.icmap.end())
+    return it->second;
+  return -1;
 }
 
-bool is_valid(vertex_descriptor vd, const Polyhedron& mesh)
+int get_control_number(sm_vertex_descriptor v, const Is_constrained_map<SMesh>& map)
 {
-  return (vd->id() < mesh.size_of_vertices());
+  return get(map.icmap, v);
 }
 
 template<typename Mesh>
@@ -960,7 +953,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   Facegraph_selector fs(this);
   if(fs.get_deform_mesh(mesh)->roi_vertices().empty())
     return;
-  boost::unordered_set<mesh_vd, CGAL::Handle_hash_function> constrained_set;
+  std::vector<int> constrained_vec(num_vertices(*mesh), -1);
   std::vector<std::vector<mesh_vd> > control_groups;
   const Mesh& g = fs.get_deform_mesh(mesh)->halfedge_graph();
 
@@ -972,14 +965,19 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   //save the ROI list for after remeshing
+  //create control_groups and save their vertices in property_map
+  int id_group=0;
   for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data =
       fs.get_ctrl_vertex_frame_map(mesh).begin();
       hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
   {
     std::vector<mesh_vd> group;
     BOOST_FOREACH(mesh_vd vd, hgb_data->ctrl_vertices_group)
-        group.push_back(vd);
+    {
+        constrained_vec[item->id_setter->get_id(vd)] = id_group;
+    }
     control_groups.push_back(group);
+    ++id_group;
   }
 
   std::map<mesh_fd, std::size_t> patch_map;
@@ -987,9 +985,6 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   //initialize face-patch_id map
   BOOST_FOREACH(mesh_vd v, fs.get_deform_mesh(mesh)->roi_vertices())
   {
-    if(fs.get_deform_mesh(mesh)->is_control_vertex(v))
-      constrained_set.insert(v);
-
     BOOST_FOREACH(mesh_fd fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
       if(fv == boost::graph_traits<Mesh>::null_face())
@@ -1046,7 +1041,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
   std::cout << "Remeshing (target edge length = " << target_length <<")...";
-  Is_constrained_map<Mesh> icm(&constrained_set, mesh);
+  Is_constrained_map<Mesh> icm(&constrained_vec, mesh);
   ROI_border_pmap<Mesh> border_pmap(&roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
       roi_facets
@@ -1078,13 +1073,20 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
                                              typename M_Deform_mesh::Hedge_index_map(),
                                              vpmap));
 
+//fill control_groups
+  id_group = -1;
+  BOOST_FOREACH( mesh_vd v, vertices(*mesh) )
+  {
+    id_group = get_control_number(v, icm);
+    if(id_group == -1)
+      continue;
+    control_groups[id_group].push_back(v);
+  }
+//re-create ctrl_groups
   for(std::size_t i=0; i<control_groups.size() ; i++)
   {
     item->create_ctrl_vertices_group();
     BOOST_FOREACH(mesh_vd vd, control_groups[i]){
-      if(!is_valid(vd, *mesh) //checks that the vertex still exists in the mesh
-         || !get(icm,vd) )//checks that the vertex is still a control point.
-        continue;
       item->insert_control_vertex<Mesh>(vd, mesh);
     }
   }
@@ -1238,11 +1240,12 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps, Mesh* mesh)
     }
   }
   if(fs.get_active_group(mesh)->ctrl_vertices_group.empty() && fs.get_ctrl_vertex_frame_map(mesh).size()>1)
+  {
     if(poly_item)
       delete_ctrl_vertices_group(poly_item->polyhedron(), false);
     else
       delete_ctrl_vertices_group(sm_item->polyhedron(), false);
-
+  }
   if(
      (!ctrl_active && fs.get_deform_mesh(mesh)->roi_vertices().size() != original_size)
      || (ctrl_active && fs.get_active_group(mesh)->ctrl_vertices_group.size() != original_size)
@@ -1828,7 +1831,7 @@ void Scene_edit_polyhedron_item::reset_spheres()
   d->spheres = NULL;
 }
 
-void Scene_edit_polyhedron_item::selected(const std::set<Polyhedron::Vertex_handle>& m)
+void Scene_edit_polyhedron_item::selected(const std::set<vertex_descriptor>& m)
 {
   bool any_changes = false;
   for(std::set<vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
@@ -2241,7 +2244,7 @@ boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_co
   if(d->poly_item)
   {
     Travel_isolated_components<Polyhedron>::Minimum_visitor visitor;
-    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<Vertex_handle>
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<vertex_descriptor>
         (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
          polyhedron()->size_of_vertices(), Is_selected<Polyhedron>(d->deform_mesh), visitor);
     return visitor.minimum;
@@ -2265,7 +2268,7 @@ boost::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_compone
     Output_iterator out(d->deform_mesh);
 
     Travel_isolated_components<Polyhedron>::Selection_visitor<Output_iterator> visitor(threshold, out);
-    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<Vertex_handle>
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<vertex_descriptor>
         (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
          polyhedron()->size_of_vertices(), Is_selected<Polyhedron>(d->deform_mesh), visitor);
 
@@ -2299,6 +2302,7 @@ bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group()
     Ctrl_vertices_sm_group_data_list::iterator hgb, hge;
     return is_there_any_ctrl_vertices_group(hgb, hge);
   }
+  return false;
 }
 
 bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices()
@@ -2468,8 +2472,8 @@ void Scene_edit_polyhedron_item::delete_ctrl_vertices_group(bool create_new)
 
 }
 
-bool Scene_edit_polyhedron_item::insert_roi_vertex(Polyhedron::Vertex_handle vh)
+bool Scene_edit_polyhedron_item::insert_roi_vertex(vertex_descriptor vh)
 {
 
-  insert_roi_vertex<Polyhedron>(vh, polyhedron());
+  return insert_roi_vertex<Polyhedron>(vh, polyhedron());
 }

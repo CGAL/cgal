@@ -37,14 +37,14 @@ typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
 typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
-struct Is_selected_edge_property_map{
+struct FG_is_selected_edge_property_map{
   typedef boost::property_map<FaceGraph,boost::edge_index_t>::type EImap;
 
   std::vector<bool>* is_selected_ptr;
   EImap* edge_index_map;
-  Is_selected_edge_property_map()
+  FG_is_selected_edge_property_map()
     : is_selected_ptr(NULL), edge_index_map(NULL) {}
-  Is_selected_edge_property_map(std::vector<bool>& is_selected, EImap* map)
+  FG_is_selected_edge_property_map(std::vector<bool>& is_selected, EImap* map)
     : is_selected_ptr( &is_selected), edge_index_map(map)
   {}
 
@@ -52,13 +52,13 @@ struct Is_selected_edge_property_map{
     return get(*edge_index_map, ed);
   }
 
-  friend bool get(Is_selected_edge_property_map map, edge_descriptor ed)
+  friend bool get(FG_is_selected_edge_property_map map, edge_descriptor ed)
   {
     CGAL_assertion(map.is_selected_ptr!=NULL);
     return (*map.is_selected_ptr)[map.id(ed)];
   }
 
-  friend void put(Is_selected_edge_property_map map, edge_descriptor ed, bool b)
+  friend void put(FG_is_selected_edge_property_map map, edge_descriptor ed, bool b)
   {
     CGAL_assertion(map.is_selected_ptr!=NULL);
     (*map.is_selected_ptr)[map.id(ed)]=b;
@@ -248,7 +248,7 @@ public Q_SLOTS:
     std::vector<bool> mark(edges(poly).size(), false);
     boost::property_map<FaceGraph, boost::edge_index_t>::type edge_index
       = get(boost::edge_index, poly);
-    Is_selected_edge_property_map spmap(mark, &edge_index);
+    FG_is_selected_edge_property_map spmap(mark, &edge_index);
     BOOST_FOREACH(halfedge_descriptor h, boundary_edges)
       put(spmap, edge(h, poly), true);
 
