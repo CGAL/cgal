@@ -800,15 +800,27 @@ public Q_SLOTS:
   void clearHL();
 
   // slots are called by signals of polyhedron_k_ring_selector
-  void selected(const std::set<vertex_descriptor>& m)
+#ifdef USE_SURFACE_MESH
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>& m)
   { has_been_selected(m); }
-  void selected(const std::set<face_descriptor>& m)
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>& m)
   { has_been_selected(m); }
-  void selected(const std::set<edge_descriptor>& m)
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>& m)
   { has_been_selected(m); }
-  void selected_HL(const std::set<vertex_descriptor>& m);
-  void selected_HL(const std::set<face_descriptor>& m);
-  void selected_HL(const std::set<edge_descriptor>& m);
+  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>& m);
+  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>& m);
+  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>& m);
+#else
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>& m)
+  { has_been_selected(m); }
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>& m)
+  { has_been_selected(m); }
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>& m)
+  { has_been_selected(m); }
+  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>& m);
+  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>& m);
+  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>& m);
+#endif
   void poly_item_changed() {
     remove_erased_handles<vertex_descriptor>();
     remove_erased_handles<edge_descriptor>();
