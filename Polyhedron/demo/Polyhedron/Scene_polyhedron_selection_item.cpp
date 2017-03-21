@@ -39,7 +39,7 @@ typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor
 
 struct Scene_polyhedron_selection_item_priv{
 
-  typedef Scene_polyhedron_item_k_ring_selection::Active_handle Active_handle;
+  typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
   typedef boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
   typedef boost::unordered_set<face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
   typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
@@ -2145,50 +2145,30 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
   this->poly_item = poly_item;
   d->poly =poly_item->polyhedron();
   connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed()));
-  //typedefs do not seem to be read by the signal/slot system, so parameters type must be hardcoded
-#ifdef USE_SURFACE_MESH
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)), this,
-    SLOT(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)));
+  //parameters type must be of the same name here and there, so they must be hardcoded.
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<vertex_descriptor>&)), this,
+    SLOT(selected(const std::set<vertex_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&)), this,
-    SLOT(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<face_descriptor>&)), this,
+    SLOT(selected(const std::set<face_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&)), this,
-    SLOT(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
+    SLOT(selected(const std::set<edge_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<vertex_descriptor>&)), this,
+          SLOT(selected_HL(const std::set<vertex_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<face_descriptor>&)), this,
+          SLOT(selected_HL(const std::set<face_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&)));
-#else
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)), this,
-    SLOT(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)));
-
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&)), this,
-    SLOT(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&)));
-
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&)), this,
-    SLOT(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&)));
-
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)));
-
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&)));
-
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&)));
-#endif
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<edge_descriptor>&)), this,
+          SLOT(selected_HL(const std::set<edge_descriptor>&)));
   connect(&k_ring_selector, SIGNAL(clearHL()), this,
           SLOT(clearHL()));
   connect(poly_item, SIGNAL(selection_done()), this, SLOT(update_poly()));
   connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
   connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
-  connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
+  connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
   // AF does not  work for Surface_mesh
    k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
   connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));

@@ -81,10 +81,10 @@ public:
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();
-  void selected_vertex(std::size_t);
-  void selected_facet(std::size_t);
-  void selected_edge(std::size_t);
-  void selected_halfedge(std::size_t);
+  void selected_vertex(void*);
+  void selected_facet(void*);
+  void selected_edge(void*);
+  void selected_halfedge(void*);
 
 
 public Q_SLOTS:
@@ -96,10 +96,104 @@ public Q_SLOTS:
               double dir_x,
               double dir_y,
               double dir_z);
+  bool intersect_face(double orig_x,
+                      double orig_y,
+                      double orig_z,
+                      double dir_x,
+                      double dir_y,
+                      double dir_z,
+                      const face_descriptor &f);
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
+
+Scene_surface_mesh_item::Halfedge_is_feature_map
+inline get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
+  return smesh.add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+}
+
+
+Scene_surface_mesh_item::Face_patch_id_map
+inline get(face_patch_id_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
+  return smesh.add_property_map<face_descriptor,int>("f:patch_id").first;
+}
+
+
+Scene_surface_mesh_item::Face_selection_map
+inline get(face_selection_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
+  return smesh.add_property_map<face_descriptor,int>("f:selection").first;
+}
+
+
+Scene_surface_mesh_item::Vertex_selection_map
+inline get(vertex_selection_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
+  return smesh.add_property_map<vertex_descriptor,int>("v:selection").first;
+}
+
+Scene_surface_mesh_item::Vertex_num_feature_edges_map
+inline get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
+  return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
+}
+
+namespace boost {
+  
+  template <>
+  struct property_map<Scene_surface_mesh_item::SMesh, halfedge_is_feature_t>
+  {
+    typedef Scene_surface_mesh_item::SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
+  
+    typedef SMesh::Property_map<halfedge_descriptor, bool> type;
+  };
+  
+  template <>
+  struct property_map<Scene_surface_mesh_item::SMesh, face_patch_id_t>
+  {
+    typedef Scene_surface_mesh_item::SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  
+    typedef SMesh::Property_map<face_descriptor, int> type;
+  }; 
+
+  template <>
+  struct property_map<Scene_surface_mesh_item::SMesh, vertex_selection_t>
+  {
+    typedef Scene_surface_mesh_item::SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  
+    typedef SMesh::Property_map<vertex_descriptor, int> type;
+  };
+
+  template <>
+  struct property_map<Scene_surface_mesh_item::SMesh, face_selection_t>
+  {
+    typedef Scene_surface_mesh_item::SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  
+    typedef SMesh::Property_map<face_descriptor, int> type;
+  };
+
+  template <>
+  struct property_map<Scene_surface_mesh_item::SMesh, vertex_num_feature_edges_t>
+  {
+    typedef Scene_surface_mesh_item::SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  
+    typedef SMesh::Property_map<vertex_descriptor, int> type;
+  };
+
+}
 
 
 

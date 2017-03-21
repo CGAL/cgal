@@ -859,7 +859,7 @@ Scene_surface_mesh_item::select(double orig_x,
                               double dir_z)
 {
   SMesh *sm = d->smesh_;
-  int vertex_to_emit = 0;
+  std::size_t vertex_to_emit = 0;
   typedef Input_facets_AABB_tree Tree;
   typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Object_and_primitive_id;
 
@@ -903,7 +903,7 @@ Scene_surface_mesh_item::select(double orig_x,
         // The computation of the nearest vertex may be costly.  Only
         // do it if some objects are connected to the signal
         // 'selected_vertex'.
-        if(QObject::receivers(SIGNAL(selected_vertex(std::size_t))) > 0)
+        if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0)
         {
 
           SMesh::Halfedge_around_face_circulator he_it(sm->halfedge(selected_face),*sm), around_end(he_it);
@@ -925,8 +925,8 @@ Scene_surface_mesh_item::select(double orig_x,
           vertex_to_emit = static_cast<std::size_t>(nearest_v);
         }
 
-        if(QObject::receivers(SIGNAL(selected_edge(std::size_t))) > 0
-           || QObject::receivers(SIGNAL(selected_halfedge(std::size_t))) > 0)
+        if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
+           || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0)
         {
           SMesh::Halfedge_around_face_circulator he_it(sm->halfedge(selected_face),*sm), around_end(he_it);
 
@@ -951,12 +951,14 @@ Scene_surface_mesh_item::select(double orig_x,
               nearest_h = *he_it;
             }
           }
-
-          Q_EMIT selected_halfedge(static_cast<std::size_t>(nearest_h));
-          Q_EMIT selected_edge(static_cast<std::size_t>(nearest_h)/2);
+          std::size_t s_nearest_h = static_cast<std::size_t>(nearest_h);
+          std::size_t s_nearest_e = static_cast<std::size_t>(nearest_h)/2;
+          Q_EMIT selected_halfedge(reinterpret_cast<void*>(s_nearest_h));
+          Q_EMIT selected_edge(reinterpret_cast<void*>(s_nearest_e));
         }
-        Q_EMIT selected_vertex(vertex_to_emit);
-        Q_EMIT selected_facet(static_cast<std::size_t>(selected_face));
+        Q_EMIT selected_vertex(reinterpret_cast<void*>(vertex_to_emit));
+        std::size_t s_selected_f = static_cast<std::size_t>(selected_face);
+        Q_EMIT selected_facet(reinterpret_cast<void*>(s_selected_f));
       }
     }
   }
@@ -1016,3 +1018,57 @@ void Scene_surface_mesh_item::invalidate_aabb_tree()
 }
 
 
+bool Scene_surface_mesh_item::intersect_face(double orig_x,
+                                           double orig_y,
+                                           double orig_z,
+                                           double dir_x,
+                                           double dir_y,
+                                           double dir_z,
+                                           const face_descriptor &f)
+{
+  typedef Input_facets_AABB_tree Tree;
+  typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+
+  Tree* aabb_tree = static_cast<Tree*>(d->get_aabb_tree());
+  if(aabb_tree)
+  {
+    const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
+    const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
+    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    typedef std::list<Object_and_primitive_id> Intersections;
+    Intersections intersections;
+    aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+    Intersections::iterator closest = intersections.begin();
+    if(closest != intersections.end())
+    {
+      const Kernel::Point_3* closest_point =
+          CGAL::object_cast<Kernel::Point_3>(&closest->first);
+      for(Intersections::iterator
+          it = boost::next(intersections.begin()),
+          end = intersections.end();
+          it != end; ++it)
+      {
+        if(! closest_point) {
+          closest = it;
+        }
+        else {
+          const Kernel::Point_3* it_point =
+              CGAL::object_cast<Kernel::Point_3>(&it->first);
+          if(it_point &&
+             (ray_dir * (*it_point - *closest_point)) < 0)
+          {
+            closest = it;
+            closest_point = it_point;
+          }
+        }
+      }
+      if(closest_point)
+      {
+        face_descriptor intersected_face = closest->second;
+        return intersected_face == f;
+      }
+    }
+  }
+  return false;
+
+}
