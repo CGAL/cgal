@@ -87,7 +87,7 @@ namespace CGAL {
    *   the template parameter `SubcurveTraits_2` models the concept as well)
    *
    * \sa `Arr_algebraic_segment_traits_2<Coefficient>`
-   * \sa `Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
+   * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
    * \sa `Arr_circle_segment_traits_2<Kernel>`
    * \sa `Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>`
    * \sa `Arr_linear_traits_2<Kernel>`
