@@ -84,6 +84,7 @@ public:
   void invalidateOpenGLBuffers();
 
 Q_SIGNALS:
+  void item_is_about_to_be_changed();
   void selection_done();
   void selected_vertex(std::size_t);
   void selected_facet(std::size_t);

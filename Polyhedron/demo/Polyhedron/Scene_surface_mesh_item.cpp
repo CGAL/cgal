@@ -936,8 +936,8 @@ Scene_surface_mesh_item::select(double orig_x,
           vertex_to_emit = static_cast<std::size_t>(nearest_v);
         }
 
-        if(QObject::receivers(SIGNAL(selected_edge(int))) > 0
-           || QObject::receivers(SIGNAL(selected_halfedge(int))) > 0)
+        if(QObject::receivers(SIGNAL(selected_edge(std::size_t))) > 0
+           || QObject::receivers(SIGNAL(selected_halfedge(std::size_t))) > 0)
         {
           SMesh::Halfedge_around_face_circulator he_it(sm->halfedge(selected_face),*sm), around_end(he_it);
 
@@ -964,7 +964,7 @@ Scene_surface_mesh_item::select(double orig_x,
           }
 
           Q_EMIT selected_halfedge(static_cast<std::size_t>(nearest_h));
-          Q_EMIT selected_edge(static_cast<std::size_t>(nearest_h));
+          Q_EMIT selected_edge(static_cast<std::size_t>(nearest_h)/2);
         }
         Q_EMIT selected_vertex(vertex_to_emit);
         Q_EMIT selected_facet(static_cast<std::size_t>(selected_face));
@@ -977,6 +977,7 @@ Scene_surface_mesh_item::select(double orig_x,
 
 void Scene_surface_mesh_item::invalidateOpenGLBuffers()
 {
+  Q_EMIT item_is_about_to_be_changed();
   delete_aabb_tree(this);
   d->smesh_->collect_garbage();
   are_buffers_filled = false;
