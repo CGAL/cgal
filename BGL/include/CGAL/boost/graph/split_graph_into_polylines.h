@@ -51,6 +51,45 @@ struct Dummy_visitor_for_split_graph_into_polylines
 
 namespace internal {
 
+template <typename G_copy, typename Less_on_orig_vertex_descriptors>
+class Less_on_G_copy_vertex_descriptors {
+  const G_copy& g_copy;
+  const Less_on_orig_vertex_descriptors& less;
+public:
+  Less_on_G_copy_vertex_descriptors ( const G_copy& g_copy,
+    const Less_on_orig_vertex_descriptors& less)
+    : g_copy(g_copy), less(less) {}
+
+  typedef typename boost::graph_traits<G_copy>::vertex_descriptor
+    g_copy_vertex_descriptor;
+  typedef typename boost::graph_traits<G_copy>::out_edge_iterator
+    g_copy_out_edge_iterator;
+  typedef typename boost::graph_traits<G_copy>::degree_size_type
+    g_copy_degree_size_type;
+
+  bool operator()(g_copy_vertex_descriptor v1,
+                  g_copy_vertex_descriptor v2) const {
+    if(less(g_copy[v1], g_copy[v2]))
+      return true;
+    else if(less(g_copy[v2], g_copy[v1]))
+      return false;
+    // If g_copy[v1] and g_copy[v2] are equivalent, then compare the
+    // descriptors:
+    if(v1 == v2) return false;
+    //   - compare degrees:
+    const g_copy_degree_size_type dv1 = degree(v1, g_copy);
+    const g_copy_degree_size_type dv2 = degree(v2, g_copy);
+    if(dv1 != dv2)
+      return dv1 < dv2;
+    if(dv1 == 0) return v1 < v2;
+    ///  - then compare an adjacent vertex:
+    g_copy_vertex_descriptor other_v1 = target(*out_edges(v1, g_copy).first,
+                                               g_copy);
+    g_copy_vertex_descriptor other_v2 = target(*out_edges(v2, g_copy).first,
+                                               g_copy);
+    return less(g_copy[other_v1], g_copy[other_v2]);
+  }
+}; // end class Less_on_G_copy_vertex_descriptors
 
 /// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
 /// The vertices are duplicated, and new incident edges created.
@@ -141,6 +180,21 @@ split_graph_into_polylines(const Graph& graph,
                            IsTerminal is_terminal)
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
+  std::less<Graph_vertex_descriptor> less;
+  split_graph_into_polylines(graph, polyline_visitor, is_terminal, less);
+}
+
+template <typename Graph,
+          typename Visitor,
+          typename IsTerminal,
+          typename LessForVertexDescriptors>
+void
+split_graph_into_polylines(const Graph& graph,
+                           Visitor& polyline_visitor,
+                           IsTerminal is_terminal,
+                           LessForVertexDescriptors less)
+{
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
   
   typedef boost::adjacency_list <boost::setS, // this avoids parallel edges
@@ -197,7 +251,11 @@ split_graph_into_polylines(const Graph& graph,
   internal::duplicate_terminal_vertices(g_copy, graph, is_terminal);
 
   // put polylines endpoint in a set
-  std::set<vertex_descriptor> terminal;
+  typedef internal::Less_on_G_copy_vertex_descriptors<
+    G_copy,
+    LessForVertexDescriptors> G_copy_less;
+  G_copy_less g_copy_less(g_copy, less);
+  std::set<vertex_descriptor, G_copy_less> terminal(g_copy_less);
 
   BOOST_FOREACH(vertex_descriptor v, vertices(g_copy)){
     typename boost::graph_traits<Graph>::degree_size_type n = degree(v, g_copy);
@@ -225,10 +283,11 @@ split_graph_into_polylines(const Graph& graph,
       vertex_descriptor v = target(*b, g_copy);
       CGAL_assertion(u!=v);
       polyline_visitor.add_node(g_copy[v]);
+      if (degree(v, g_copy)==1)
+        terminal.erase(v);
       remove_edge(b, g_copy);
       u = v;
     }
-    terminal.erase(u);
     polyline_visitor.end_polyline();
   }
 
