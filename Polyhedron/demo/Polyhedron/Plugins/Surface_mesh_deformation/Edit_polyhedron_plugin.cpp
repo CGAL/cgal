@@ -557,12 +557,12 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
 {
 
 //converts the selection in selected points
-QVector<Scene_polyhedron_selection_item::Vertex_handle> sel_to_import;
-Q_FOREACH(Scene_polyhedron_selection_item::Vertex_handle vh, selection_item->selected_vertices)
+QVector<Scene_polyhedron_selection_item::vertex_descriptor> sel_to_import;
+Q_FOREACH(Scene_polyhedron_selection_item::vertex_descriptor vh, selection_item->selected_vertices)
   sel_to_import.push_back(vh);
 Q_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
 {
-  Scene_polyhedron_selection_item::Vertex_handle vh = source(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
+  Scene_polyhedron_selection_item::vertex_descriptor vh = source(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
   if(!sel_to_import.contains(vh))
     sel_to_import.push_back(vh);
 
@@ -570,7 +570,7 @@ Q_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->s
   if(!sel_to_import.contains(vh))
     sel_to_import.push_back(vh);
 }
-Q_FOREACH(Scene_polyhedron_selection_item::Facet_handle fh, selection_item->selected_facets)
+Q_FOREACH(Scene_polyhedron_selection_item::face_descriptor fh, selection_item->selected_facets)
 {
   Polyhedron::Halfedge_around_facet_circulator hafc = fh->facet_begin();
   Polyhedron::Halfedge_around_facet_circulator end = hafc;
@@ -582,7 +582,7 @@ Q_FOREACH(Scene_polyhedron_selection_item::Facet_handle fh, selection_item->sele
 }
 
 //makes the selected points ROI
-Q_FOREACH(Scene_polyhedron_selection_item::Vertex_handle vh, sel_to_import)
+Q_FOREACH(Scene_polyhedron_selection_item::vertex_descriptor vh, sel_to_import)
 {
   edit_item->insert_roi_vertex(vh);
 }

@@ -32,6 +32,11 @@
 #include <QGLShader>
 #include <QGLShaderProgram>
 
+typedef Scene_surface_mesh_item::SMesh SMesh;
+typedef boost::graph_traits<SMesh>::vertex_descriptor sm_vertex_descriptor;
+typedef boost::graph_traits<SMesh>::edge_descriptor sm_edge_descriptor;
+typedef boost::graph_traits<SMesh>::face_descriptor sm_face_descriptor;
+typedef boost::graph_traits<SMesh>::halfedge_descriptor sm_halfedge_descriptor;
 //sets/gets the ID of a Mesh vertex descriptor in a different manner if Mesh is a Polyhedron or a SMesh
 struct Id_setter{
   typedef boost::graph_traits<SMesh>::vertex_descriptor sm_vd;
@@ -351,8 +356,8 @@ public Q_SLOTS:
   void change();
 
   void invalidateOpenGLBuffers();
-  void selected(const std::set<Polyhedron::Vertex_handle>& m);
-  void selected(const std::set<sm_vertex_descriptor>& m);
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>& );
 
   void select(double orig_x,
               double orig_y,
@@ -378,7 +383,7 @@ public:
   bool insert_roi_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
 
   //for calls from the plugin
-  bool insert_roi_vertex(Polyhedron::Vertex_handle vh);
+  bool insert_roi_vertex(vertex_descriptor vh);
 
   template<typename Mesh>
   bool erase_control_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
@@ -413,7 +418,7 @@ public:
 
     M_Deform_mesh* dm;
     Is_selected(M_Deform_mesh* dm) : dm(dm) {}
-    bool count(Vertex_handle vh) const {
+    bool count(vertex_descriptor vh) const {
       return dm->is_roi_vertex(vh);
     }
 
@@ -430,7 +435,7 @@ public:
     Array_based_vertex_point_map<Mesh> > M_Deform_mesh;
 
     Select_roi_output(M_Deform_mesh* dm) : dm(dm) { }
-    void operator()(Vertex_handle vh) {
+    void operator()(vertex_descriptor vh) {
       dm->insert_roi_vertex(vh);
     }
     void operator()(sm_vertex_descriptor vd) {

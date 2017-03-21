@@ -140,9 +140,9 @@ public:
     }
     if(sm_item)
     {
-      connect(sm_item, SIGNAL(selected_vertex(std::size_t)), this, SLOT(sm_vertex_has_been_selected(std::size_t)));
-      connect(sm_item, SIGNAL(selected_facet(std::size_t)), this, SLOT(sm_facet_has_been_selected(std::size_t)));
-      connect(sm_item, SIGNAL(selected_edge(std::size_t)), this, SLOT(sm_edge_has_been_selected(std::size_t)));
+      connect(sm_item, SIGNAL(selected_vertex(void*)), this, SLOT(sm_vertex_has_been_selected(void*)));
+      connect(sm_item, SIGNAL(selected_facet(void*)), this, SLOT(sm_facet_has_been_selected(void*)));
+      connect(sm_item, SIGNAL(selected_edge(void*)), this, SLOT(sm_edge_has_been_selected(void*)));
     }
   }
 
@@ -190,23 +190,26 @@ public Q_SLOTS:
   }
 
   // slots are called by signals of surface_mesh_item
-  void sm_vertex_has_been_selected(std::size_t h)
+  void sm_vertex_has_been_selected(void* v)
   {
+    std::size_t h = reinterpret_cast<std::size_t>(v);
     is_active=true;
     if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
       process_selection( static_cast<sm_vertex_descriptor>(h) );
     updateIsTreated();
   }
-  void sm_facet_has_been_selected(std::size_t h)
+  void sm_facet_has_been_selected(void* v)
   {
+    std::size_t h = reinterpret_cast<std::size_t>(v);
     is_active=true;
     if (active_handle_type == Active_handle::FACET
       || active_handle_type == Active_handle::CONNECTED_COMPONENT)
       process_selection(static_cast<sm_face_descriptor>(h) );
     updateIsTreated();
   }
-  void sm_edge_has_been_selected(std::size_t h)
+  void sm_edge_has_been_selected(void* v)
   {
+    std::size_t h = reinterpret_cast<std::size_t>(v);
     is_active=true;
     if(active_handle_type == Active_handle::EDGE)
       process_selection(static_cast<sm_edge_descriptor>(h) );
