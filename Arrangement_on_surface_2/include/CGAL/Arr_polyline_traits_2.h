@@ -50,6 +50,10 @@ class Arr_polyline_traits_2 : public Arr_polycurve_traits_2<SegmentTraits_2> {
 public:
   typedef SegmentTraits_2                             Segment_traits_2;
 
+  // For completeness
+  typedef typename Segment_traits_2::Curve_2            Segment_2;
+  typedef typename Segment_traits_2::X_monotone_curve_2 X_monotone_segment_2;
+
 private:
   typedef Arr_polyline_traits_2<Segment_traits_2>     Self;
   typedef Arr_polycurve_traits_2<Segment_traits_2>    Base;
@@ -72,7 +76,7 @@ public:
   typedef typename Base::Are_all_sides_oblivious_tag
     Are_all_sides_oblivious_tag;
 
-  typedef typename Base::X_monotone_subcurve_2         X_monotone_subcurve_2;
+  typedef typename Base::X_monotone_subcurve_2        X_monotone_subcurve_2;
   typedef typename Base::Subcurve_2                   Subcurve_2;
 
   typedef typename Base::Point_2                      Point_2;
@@ -133,7 +137,7 @@ public:
    */
   class Push_back_2 : public Base::Push_back_2 {
   protected:
-    typedef Arr_polyline_traits_2<SegmentTraits_2>     Polyline_traits_2;
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
 
   public:
     /*! Constructor. */
@@ -246,7 +250,7 @@ public:
    */
   class Push_front_2 : public Base::Push_front_2 {
   protected:
-    typedef Arr_polyline_traits_2<SegmentTraits_2>     Polyline_traits_2;
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
 
   public:
     /*! Constructor. */
@@ -300,7 +304,7 @@ public:
     /*! Append a point `p` to an existing polyline `xcv` at the front. */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
     {
-      const SegmentTraits_2* geom_traits =
+      const Segment_traits_2* geom_traits =
         this->m_poly_traits.subcurve_traits_2();
       CGAL_precondition_code
         (
