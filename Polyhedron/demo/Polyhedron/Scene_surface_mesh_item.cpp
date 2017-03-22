@@ -13,6 +13,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
+#include "properties.h"
 
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
@@ -107,6 +108,9 @@ struct Scene_surface_mesh_item_priv{
   Scene_surface_mesh_item *item;
 
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
+  mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
+  mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
+
   Color_vector colors_;
   void computeElements() const;
 };
@@ -161,6 +165,60 @@ Scene_surface_mesh_item::clone() const
 { return new Scene_surface_mesh_item(*this); }
 
 
+Scene_surface_mesh_item::Vertex_selection_map
+Scene_surface_mesh_item::vertex_selection_map()
+{
+   if(! d->v_selection_map){
+    d->v_selection_map = d->smesh_->add_property_map<vertex_descriptor,int>("v:selection").first;
+   }
+   return d->v_selection_map;
+}
+
+Scene_surface_mesh_item::Face_selection_map
+Scene_surface_mesh_item::face_selection_map()
+{
+   if(! d->f_selection_map){
+    d->f_selection_map = d->smesh_->add_property_map<face_descriptor,int>("f:selection").first;
+   }
+   return d->f_selection_map;
+}
+
+// AF: is this expensive in practice??
+/*
+Scene_surface_mesh_item::Halfedge_is_feature_map
+get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  return smesh.add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+}
+
+
+Scene_surface_mesh_item::Face_patch_id_map
+get(face_patch_id_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  return smesh.add_property_map<face_descriptor,int>("f:patch_id").first;
+}
+
+
+Scene_surface_mesh_item::Face_selection_map
+get(face_selection_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  return smesh.add_property_map<face_descriptor,int>("f:selection").first;
+}
+
+
+Scene_surface_mesh_item::Vertex_selection_map
+get(vertex_selection_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  return smesh.add_property_map<vertex_descriptor,int>("v:selection").first;
+}
+
+inline
+Scene_surface_mesh_item::Vertex_num_feature_edges_map
+get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh)
+{
+  return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
+}
+*/
 std::vector<QColor>&
 Scene_surface_mesh_item::color_vector()
 {
@@ -763,3 +821,5 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
   d->smesh_->collect_garbage();
 
 }
+
+
