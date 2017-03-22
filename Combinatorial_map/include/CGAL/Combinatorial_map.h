@@ -38,7 +38,6 @@
 #include <CGAL/Generic_map_min_items.h>
 #endif
 
-#include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 
@@ -550,7 +549,7 @@ namespace CGAL {
 
       // 2) We update the attribute_ref_counting.
       Helper::template Foreach_enabled_attributes
-        <internal::Restricted_decrease_attribute_functor<Self> >::run(this,adart);
+        <internal::Restricted_decrease_attribute_functor<Self> >::run(*this,adart);
 
       // 3) We erase the dart.
       mdarts.erase(adart);
@@ -645,15 +644,14 @@ namespace CGAL {
 
       if ( this->template attribute<i>(dh)!=null_handle )
       {
-        this->template get_attribute<i>(this->template attribute<i>(dh)).
-          dec_nb_refs();
+        this->template dec_attribute_ref_counting<i>(this->template attribute<i>(dh));
       }
 
       Base::template basic_set_dart_attribute<i>(dh, ah);
 
       if ( ah!=null_handle )
       {
-        this->template get_attribute<i>(ah).inc_nb_refs();
+        this->template inc_attribute_ref_counting<i>(ah);
       }
     }
 
@@ -1243,10 +1241,6 @@ namespace CGAL {
     }
 
     /** Test if the map is valid.
-     * @param reverseextremity to inverse the convention between source and
-     *        target of a dart. With false (default), a dart is associated with
-     *        a 0-attribute for its source (origin);
-     *        with true this is for its target (as in hds or surface mesh).
      * @return true iff the map is valid.
      */
     bool is_valid() const
@@ -1267,10 +1261,7 @@ namespace CGAL {
         if ( !valid )
         { // We continue the traversal to mark all the darts.
           for ( i=0; i<=dimension; ++i)
-            if (marks[i]!=INVALID_MARK)
-            {
-              mark(it,marks[i]);
-            }
+            if (marks[i]!=INVALID_MARK) { mark(it,marks[i]); }
         }
         else
         {

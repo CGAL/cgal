@@ -185,7 +185,7 @@ namespace CGAL {
       Vertex_attribute_handle vh = vertex_map[j];
       for ( ; it!=itend; ++it )
       {
-        if ( lcc.temp_vertex_attribute(lcc.template beta<2>(*it))==vh )
+        if ( lcc.vertex_attribute(lcc.template beta<2>(*it))==vh )
           return (*it);
       }
       return lcc.null_handle;

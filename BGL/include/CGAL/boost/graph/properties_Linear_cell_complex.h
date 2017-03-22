@@ -21,7 +21,7 @@
 #define CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_H
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Unique_hash_map.h>
 
 #define CGAL_LCC_ARGS unsigned int d_, unsigned int ambient_dim,        \
@@ -32,12 +32,14 @@
              class CMap, \
              class Storage_
 
-#define CGAL_LCC_TYPE CGAL::Linear_cell_complex<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>
+#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_for_combinatorial_map\
+           <d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>
 
 namespace CGAL {
 
 template<class LCC>
-class LCC_edge_weight_map : public boost::put_get_helper<double, LCC_edge_weight_map<LCC> >
+class LCC_edge_weight_map :
+    public boost::put_get_helper<double, LCC_edge_weight_map<LCC> >
 { 
 public:
 

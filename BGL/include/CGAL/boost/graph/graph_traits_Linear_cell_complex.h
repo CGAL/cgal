@@ -30,9 +30,10 @@
 #include <CGAL/boost/graph/properties_Linear_cell_complex.h>
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Dart_iterators.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/iterator.h>
 
 #define CGAL_LCC_TEMPLATE_ARGS template < unsigned int d_, unsigned int ambient_dim, \
                                           class Traits_,                \
@@ -49,7 +50,8 @@
                                           class CMap,                   \
                                           class Storage_,
 
-#define CGAL_LCC_TYPE CGAL::Linear_cell_complex<d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_> 
+#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_for_combinatorial_map \
+                <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
 
 namespace CGAL {
 
@@ -81,7 +83,7 @@ struct EdgeHandle : Dart_handle
   { return this->beta(2); }
   
   bool operator==(const EdgeHandle& h)
-  { return (*this)==h || h->beta(2)==*this; }
+  { return (*this)==h  /* TODO || h->beta(2)==*this */ ; }
 };
 
 template <class CMap, typename Dart_Iterator>
@@ -153,9 +155,9 @@ public :
   typedef boost::allow_parallel_edge_tag edge_parallel_category; 
   typedef CMap_graph_traversal_category traversal_category;
 
-  typedef internal::Prevent_deref<typename CMap::template Attribute_range<0>::type::iterator> vertex_iterator;
-  typedef internal::Prevent_deref<typename CMap::template Attribute_range<2>::type::iterator> face_iterator;
-  typedef internal::Prevent_deref<typename CMap::Dart_range::iterator> halfedge_iterator;
+  typedef Prevent_deref<typename CMap::template Attribute_range<0>::type::iterator> vertex_iterator;
+  typedef Prevent_deref<typename CMap::template Attribute_range<2>::type::iterator> face_iterator;
+  typedef Prevent_deref<typename CMap::Dart_range::iterator> halfedge_iterator;
   
   typedef CMap_dart_handle_edge_iterator<CMap, typename CMap::Dart_range::iterator> edge_iterator;
   

@@ -15,7 +15,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
@@ -53,7 +53,7 @@ struct Myitem
   };
 };
 
-typedef CGAL::Linear_cell_complex<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
 
 
 #ifdef CGAL_USE_SURFACE_MESH

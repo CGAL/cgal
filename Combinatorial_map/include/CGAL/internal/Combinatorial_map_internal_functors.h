@@ -216,10 +216,6 @@ struct Test_is_valid_attribute_functor
    * ie all the darts belonging to a i-cell are linked to the same attribute.
    * @param adart a dart.
    * @param amark a mark used to mark darts of the i-cell.
-   * @param reverseextremity to inverse the convention between source and
-   *        target of a dart. With false (default), a dart is associated with
-   *        a 0-attribute for its source (origin);
-   *        with true this is for its target (as in hds or surface mesh).
    * @return true iff all the darts of the i-cell link to the same attribute.
    */
   typedef typename CMap::size_type size_type;
@@ -243,11 +239,6 @@ struct Test_is_valid_attribute_functor
     typename CMap::template Attribute_const_handle<i>::type
         a=amap.template attribute<i>(adart);
 
-    if (i==0 && reverseextremity)
-    {
-      a=amap->template attribute<i>(amap->template beta<2>(adart));
-    }
-
     unsigned int nb = 0;
     for ( typename
             CMap::template Dart_of_cell_basic_const_range<i>::const_iterator
@@ -259,24 +250,14 @@ struct Test_is_valid_attribute_functor
         std::cout<<"ERROR: an attribute of the "<<i<<"-cell is different. cur:";
         amap.template display_attribute<i>(a);
         std::cout<<" != first:";
-        if (i==0 && reverseextremity)
-          amap->template display_attribute<i>(amap->template attribute<i>(amap->template beta<2>(it)));
-        else
-          amap->template display_attribute<i>(amap->template attribute<i>(it));
+        amap.template display_attribute<i>(amap.template attribute<i>(it));
         std::cout<<" for dart ";
-
-        if (i==0 && reverseextremity)
-          amap->display_dart(amap->template beta<2>(it));
-        else
-          amap->display_dart(it);
-
+        amap.display_dart(it);
         std::cout<<std::endl;
         valid=false;
       }
 
-      if ( a!=amap->null_handle )
-        if ( (i==0 && reverseextremity && amap->template beta<2>(it)==amap->template dart_of_attribute<i>(a) ) ||
-             ((i>0 || !reverseextremity) && it==amap->template dart_of_attribute<i>(a) ) )
+      if ( a!=amap.null_handle && it==amap.template dart_of_attribute<i>(a) )
         found_dart=true;
 
       amap.mark(it, amark);
@@ -487,12 +468,11 @@ template<typename CMap, unsigned int i, typename T=
          typename CMap::template Attribute_type<i>::type>
 struct Restricted_decrease_attribute_functor_run
 {
-  static void run(CMap* amap, typename CMap::Dart_handle adart)
+  static void run(CMap& amap, typename CMap::Dart_handle adart)
   {
-    if ( amap->template attribute<i>(adart)!=CMap::null_handle )
+    if ( amap.template attribute<i>(adart)!=CMap::null_handle )
     {
-      amap->template get_attribute<i>(amap->template attribute<i>(adart)).
-        dec_nb_refs();
+      amap.template dec_attribute_ref_counting<i>(amap.template attribute<i>(adart));
     }
   }
 };
@@ -500,7 +480,7 @@ struct Restricted_decrease_attribute_functor_run
 template<typename CMap, unsigned int i>
 struct Restricted_decrease_attribute_functor_run<CMap, i, CGAL::Void>
 {
-  static void run(CMap*, typename CMap::Dart_handle)
+  static void run(CMap&, typename CMap::Dart_handle)
   {}
 };
 // ****************************************************************************
@@ -510,7 +490,7 @@ template<typename CMap>
 struct Restricted_decrease_attribute_functor
 {
   template <unsigned int i>
-  static void run(CMap* amap, typename CMap::Dart_handle adart)
+  static void run(CMap& amap, typename CMap::Dart_handle adart)
   { CGAL::internal::Restricted_decrease_attribute_functor_run<CMap,i>::
         run(amap, adart); }
 };

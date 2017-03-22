@@ -19,7 +19,7 @@ struct Myitem
   };
 };
 
-typedef CGAL::Linear_cell_complex<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
 
 typedef boost::graph_traits< LCC > Traits;
 typedef Traits::edge_descriptor edge_descriptor;
