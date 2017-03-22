@@ -69,8 +69,7 @@ struct Id_setter{
 
   void set_id(p_vd vd, std::size_t id)
   {
-    Polyhedron::Vertex_handle vh(vd);
-    vh->id() = id;
+    vd->id() = id;
   }
   //update the visu map
   void set_id(sm_vd vd, std::size_t id)
@@ -93,12 +92,9 @@ struct Id_setter{
 
 
 
-typedef Polyhedron::Vertex_handle                             Vertex_handle;
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor    poly_vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator      poly_vertex_iterator;
+
 class Scene_spheres_item;
 namespace PMP = CGAL::Polygon_mesh_processing;
 template<typename Mesh>
@@ -383,7 +379,8 @@ public:
   bool insert_roi_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
 
   //for calls from the plugin
-  bool insert_roi_vertex(vertex_descriptor vh);
+  bool insert_roi_vertex(poly_vertex_descriptor vh);
+  bool insert_roi_vertex(sm_vertex_descriptor vh);
 
   template<typename Mesh>
   bool erase_control_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh);
@@ -418,7 +415,7 @@ public:
 
     M_Deform_mesh* dm;
     Is_selected(M_Deform_mesh* dm) : dm(dm) {}
-    bool count(vertex_descriptor vh) const {
+    bool count(poly_vertex_descriptor vh) const {
       return dm->is_roi_vertex(vh);
     }
 
@@ -435,7 +432,7 @@ public:
     Array_based_vertex_point_map<Mesh> > M_Deform_mesh;
 
     Select_roi_output(M_Deform_mesh* dm) : dm(dm) { }
-    void operator()(vertex_descriptor vh) {
+    void operator()(poly_vertex_descriptor vh) {
       dm->insert_roi_vertex(vh);
     }
     void operator()(sm_vertex_descriptor vd) {
