@@ -170,7 +170,6 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
         }
     }
   QApplication::restoreOverrideCursor();
-
 }
 
 void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
@@ -314,7 +313,6 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
         points[6] = b - u1;
         points[7] = b - u2;
 
-
         Scene_surface_mesh_item::SMesh* pFit = new Scene_surface_mesh_item::SMesh;
         CGAL::make_hexahedron(points[0],
                               points[1],
@@ -326,7 +324,6 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
                               points[7],
                               *pFit);
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pFit);
-
         new_item->setName(tr("%1 (line fit)").arg(item->name()));
         new_item->setColor(Qt::magenta);
         new_item->setRenderingMode(FlatPlusEdges);
