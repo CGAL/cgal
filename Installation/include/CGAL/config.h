@@ -620,7 +620,7 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 
 /// Macro `CGAL_pragma_warning`.
 #ifdef BOOST_MSVC
-#  define CGAL_pragma_warning(desc) _Pragma(CGAL_STRINGIZE(CGAL_WARNING(desc)))
+#  define CGAL_pragma_warning(desc) __pragma(CGAL_WARNING(desc))
 #else // not BOOST_MSVC
 #  define CGAL_pragma_warning(desc) _Pragma(CGAL_STRINGIZE(CGAL_WARNING(desc)))
 #endif // not BOOST_MSVC
