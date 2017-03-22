@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 #define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 
 #include <CGAL/boost/graph/helpers.h>

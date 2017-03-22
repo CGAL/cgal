@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_CLIP_H
 #define CGAL_POLYGON_MESH_PROCESSING_CLIP_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>

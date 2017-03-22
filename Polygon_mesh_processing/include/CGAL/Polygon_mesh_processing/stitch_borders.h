@@ -22,7 +22,7 @@
 #ifndef CGAL_STITCH_POLYGON_MESH_H
 #define CGAL_STITCH_POLYGON_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/repair.h>
 
 
 #include <CGAL/boost/graph/helpers.h>
