@@ -134,7 +134,6 @@ inline get(vertex_selection_t, Scene_surface_mesh_item::SMesh& smesh)
   return smesh.add_property_map<vertex_descriptor,int>("v:selection").first;
 }
 
-inline
 Scene_surface_mesh_item::Vertex_num_feature_edges_map
 inline get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh)
 {

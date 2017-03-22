@@ -1349,7 +1349,6 @@ void MainWindow::readSettings()
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
     scene->setPolyhedronMode(settings.value("polyhedron_mode", false).toBool());
-    qDebug()<<"reading "<<scene->isPolyhedronMode();
 }
 
 void MainWindow::writeSettings()
