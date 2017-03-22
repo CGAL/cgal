@@ -555,27 +555,6 @@ namespace CGAL {
       mdarts.erase(adart);
     }
 
-    /** Erase a dart from the list of darts. Restricted version
-     *  which do not delete attribute having no more dart associated.
-     * @param adart the dart to erase.
-     */
-    void restricted_erase_dart(Dart_handle adart)
-    {
-      // 1) We update the number of marked darts.
-      for ( size_type i = 0; i < mnb_used_marks; ++i)
-      {
-        if (is_marked(adart, mused_marks_stack[i]))
-          --mnb_marked_darts[mused_marks_stack[i]];
-      }
-
-      // 2) We update the attribute_ref_counting.
-      Helper::template Foreach_enabled_attributes
-        <internal::Restricted_decrease_attribute_functor<Self> >::run(this,adart);
-
-      // 3) We erase the dart.
-      mdarts.erase(adart);
-    }
-
     /// @return true if dh points to a used dart (i.e. valid).
     bool is_dart_used(Dart_const_handle dh) const
     { return mdarts.is_used(dh); }
