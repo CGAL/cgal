@@ -94,10 +94,11 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
     if(!kernel.solve(triangles.begin(),triangles.end()))
     {
       std::cout << "done (empty kernel)" << std::endl;
-      QMessageBox::information(mw, tr("Empty kernel"),
-                               tr("The kernel of the polyhedron \"%1\" is empty.").
-                               arg(item->name()));
       QApplication::restoreOverrideCursor();
+      QMessageBox::information(mw, tr("Empty Kernel"),
+                               tr("The kernel of the polyhedron \"%1\" is empty.").
+                               arg((item)?item->name():sm_item->name()));
+
       return;
     }
     std::cout << "done" << std::endl;
