@@ -1,15 +1,26 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+#else
 #include "Scene_polyhedron_item.h"
+#endif
+
 #include "Scene_edit_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
-
 #include <QAction>
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMessageBox>
 
 #include "ui_Deform_mesh.h"
+
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_facegraph_item;
+#else
+typedef Scene_polyhedron_item Scene_facegraph_item;
+#endif
+
 using namespace CGAL::Three;
 class Polyhedron_demo_edit_polyhedron_plugin : 
   public QObject,
@@ -66,11 +77,9 @@ private:
   typedef CGAL::Three::Scene_interface::Item_id Item_id;
   std::vector<QColor> saved_color;
   bool is_color_vector_read_only;
-  Scene_edit_polyhedron_item* convert_to_edit_polyhedron(Item_id, Scene_polyhedron_item*);
-  Scene_edit_polyhedron_item* convert_to_edit_sm(Item_id, Scene_surface_mesh_item*);
-  Scene_polyhedron_item* convert_to_plain_polyhedron(Item_id, Scene_edit_polyhedron_item*);
-  Scene_surface_mesh_item* convert_to_plain_sm(Item_id, Scene_edit_polyhedron_item*);
-  void updateSelectionItems(Scene_polyhedron_item* target);
+  Scene_edit_polyhedron_item* convert_to_edit_facegraph(Item_id, Scene_facegraph_item*);
+  Scene_facegraph_item* convert_to_plain_facegraph(Item_id, Scene_edit_polyhedron_item*);
+  void updateSelectionItems(Scene_facegraph_item* target);
 
   Ui::DeformMesh ui_widget;
   QDockWidget* dock_widget;
@@ -85,9 +94,8 @@ QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {
 bool Polyhedron_demo_edit_polyhedron_plugin::applicable(QAction*) const { 
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id i, scene->selectionIndices())
   {
-    if(qobject_cast<Scene_polyhedron_item*>(scene->item(i)) 
-       || qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i))
-       || qobject_cast<Scene_surface_mesh_item*>(scene->item(i)))
+    if(qobject_cast<Scene_facegraph_item*>(scene->item(i))
+       || qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i)))
       return true;
   }
   return false;
@@ -341,17 +349,9 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
 
       if(edit_item) {
         edit_item->ShowAsSphere(false);
-        if(edit_item->hasPolyhedronItem())
-        {
-          Scene_polyhedron_item* item = convert_to_plain_polyhedron(i, edit_item);
-          item->setRenderingMode(last_RM);
-          updateSelectionItems(item);
-        }
-        else
-        {
-          Scene_surface_mesh_item* item = convert_to_plain_sm(i, edit_item);
-          item->setRenderingMode(last_RM);
-        }
+        Scene_facegraph_item* item = convert_to_plain_facegraph(i, edit_item);
+        item->setRenderingMode(last_RM);
+        updateSelectionItems(item);
       }
     }
   }
@@ -369,37 +369,23 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
     }
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id i , scene->selectionIndices())
     {
-      Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
-      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
+      Scene_facegraph_item* poly_item = qobject_cast<Scene_facegraph_item*>(scene->item(i));
       if (poly_item &&
           CGAL::is_triangle_mesh(*poly_item->polyhedron()))
       {
         last_RM = poly_item->renderingMode();
         poly_item->update_halfedge_indices();
         if(!selection_item)
-          convert_to_edit_polyhedron(i, poly_item);
+          convert_to_edit_facegraph(i, poly_item);
         else
-          importSelection(selection_item, convert_to_edit_polyhedron(i, poly_item));
+          importSelection(selection_item, convert_to_edit_facegraph(i, poly_item));
       }
       else if(poly_item &&
               !CGAL::is_triangle_mesh(*poly_item->polyhedron()))
       {
         QMessageBox::warning(mw,
-                             tr("Cannot edit non-triangle polyhedron_items"),
+                             tr("Cannot edit non-triangle facegraph_items"),
                              tr(" %1 is not pure-triangle, therefore it is not editable.").arg(poly_item->name()));
-      }
-      else if(sm_item &&
-              CGAL::is_triangle_mesh(*sm_item->polyhedron()))
-      {
-        last_RM = sm_item->renderingMode();
-        convert_to_edit_sm(i, sm_item);
-      }
-      else if(sm_item &&
-              !CGAL::is_triangle_mesh(*sm_item->polyhedron()))
-      {
-        QMessageBox::warning(mw,
-                             tr("Cannot edit non-triangle surface_mesh_items"),
-                             tr(" %1 is not pure-triangle, therefore it is not editable.").arg(sm_item->name()));
       }
     }
   }
@@ -440,41 +426,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxRoi_changed(int valu
   }
 }
 
-Scene_edit_polyhedron_item* 
-Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
-                           Scene_polyhedron_item* poly_item)
+Scene_edit_polyhedron_item*
+Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_facegraph(Item_id i,
+                           Scene_facegraph_item* poly_item)
 {
   QString poly_item_name = poly_item->name();
   Scene_edit_polyhedron_item* edit_poly = new Scene_edit_polyhedron_item(poly_item, &ui_widget, mw);
-  if(poly_item->isItemMulticolor())
-    saved_color = poly_item->color_vector();
-  is_color_vector_read_only = poly_item->is_color_vector_read_only();
+
   edit_poly->setColor(poly_item->color());
   edit_poly->setName(QString("%1 (edit)").arg(poly_item->name()));
   edit_poly->setRenderingMode(Gouraud);
   poly_item->setName(poly_item_name); // Because it is changed when the
-                                      // name of edit_poly is changed.
-  int k_ring = ui_widget.ROIRadioButton->isChecked() ? ui_widget.BrushSpinBoxRoi->value() : 
-                                                       ui_widget.BrushSpinBoxCtrlVert->value();
-  edit_poly->set_k_ring(k_ring);
-  scene->setSelectedItem(-1);
-  scene->replaceItem(i, edit_poly);
-  scene->setSelectedItem(i);
-  return edit_poly;
-}
-
-
-Scene_edit_polyhedron_item*
-Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_sm(Item_id i,
-                           Scene_surface_mesh_item* sm_item)
-{
-  QString sm_item_name = sm_item->name();
-  Scene_edit_polyhedron_item* edit_poly = new Scene_edit_polyhedron_item(sm_item, &ui_widget, mw);
-
-  edit_poly->setColor(sm_item->color());
-  edit_poly->setName(QString("%1 (edit)").arg(sm_item->name()));
-  edit_poly->setRenderingMode(Gouraud);
-  sm_item->setName(sm_item_name); // Because it is changed when the
                                       // name of edit_poly is changed.
   int k_ring = ui_widget.ROIRadioButton->isChecked() ? ui_widget.BrushSpinBoxRoi->value() :
                                                        ui_widget.BrushSpinBoxCtrlVert->value();
@@ -485,32 +447,18 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_sm(Item_id i,
   return edit_poly;
 }
 
-Scene_polyhedron_item* 
-Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_polyhedron(Item_id i,
-                            Scene_edit_polyhedron_item* edit_item) 
-{
-  Scene_polyhedron_item* poly_item = edit_item->to_polyhedron_item();
-  scene->replaceItem(i, poly_item);
-  delete edit_item;
-  poly_item->set_color_vector_read_only(is_color_vector_read_only);
-  if(saved_color.size() >0)
-  {
-    poly_item->setItemIsMulticolor(true);
-    poly_item->invalidateOpenGLBuffers();
-    poly_item->color_vector() = saved_color;
-    saved_color.clear();
-  }
-  return poly_item;
-}
-
-Scene_surface_mesh_item*
-Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_sm(Item_id i,
+Scene_facegraph_item*
+Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_facegraph(Item_id i,
                             Scene_edit_polyhedron_item* edit_item)
 {
-  Scene_surface_mesh_item* sm_item = edit_item->to_sm_item();
-  scene->replaceItem(i, sm_item);
+#ifdef USE_SURFACE_MESH
+  Scene_facegraph_item* poly_item = edit_item->to_sm_item();
+#else
+  Scene_facegraph_item* poly_item = edit_item->to_polyhedron_item();
+#endif
+  scene->replaceItem(i, poly_item);
   delete edit_item;
-  return sm_item;
+  return poly_item;
 }
 
 
@@ -528,6 +476,7 @@ bool need_sel(true), need_edit(true);
     {
       Scene_polyhedron_selection_item* selection_test =
           qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
+
       if(selection_test)
       {
         selection_item = selection_test;
@@ -556,42 +505,43 @@ bool need_sel(true), need_edit(true);
 void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_selection_item *selection_item, Scene_edit_polyhedron_item *edit_item)
 {
 
-//converts the selection in selected points
-QVector<Scene_polyhedron_selection_item::vertex_descriptor> sel_to_import;
-Q_FOREACH(Scene_polyhedron_selection_item::vertex_descriptor vh, selection_item->selected_vertices)
-  sel_to_import.push_back(vh);
-Q_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
-{
-  Scene_polyhedron_selection_item::vertex_descriptor vh = source(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
-  if(!sel_to_import.contains(vh))
+  //converts the selection in selected points
+  QVector<Scene_polyhedron_selection_item::vertex_descriptor> sel_to_import;
+  Q_FOREACH(Scene_polyhedron_selection_item::vertex_descriptor vh, selection_item->selected_vertices)
     sel_to_import.push_back(vh);
-
-  vh = target(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
-  if(!sel_to_import.contains(vh))
-    sel_to_import.push_back(vh);
-}
-Q_FOREACH(Scene_polyhedron_selection_item::face_descriptor fh, selection_item->selected_facets)
-{
-  Polyhedron::Halfedge_around_facet_circulator hafc = fh->facet_begin();
-  Polyhedron::Halfedge_around_facet_circulator end = hafc;
-  CGAL_For_all(hafc, end)
+  Q_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
   {
-     if(!sel_to_import.contains(hafc->vertex()))
-       sel_to_import.push_back(hafc->vertex());
+    Scene_polyhedron_selection_item::vertex_descriptor vh = source(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
+    if(!sel_to_import.contains(vh))
+      sel_to_import.push_back(vh);
+
+    vh = target(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
+    if(!sel_to_import.contains(vh))
+      sel_to_import.push_back(vh);
   }
+
+  Q_FOREACH(Scene_polyhedron_selection_item::face_descriptor fh, selection_item->selected_facets)
+  {
+    CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::FaceGraph> hafc(halfedge(fh, *selection_item->polyhedron()), *selection_item->polyhedron());
+    CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::FaceGraph> end = hafc;
+    CGAL_For_all(hafc, end)
+    {
+      if(!sel_to_import.contains(target(*hafc, *selection_item->polyhedron())))
+        sel_to_import.push_back(target(*hafc, *selection_item->polyhedron()));
+    }
+  }
+
+  //makes the selected points ROI
+  Q_FOREACH(Scene_polyhedron_selection_item::vertex_descriptor vh, sel_to_import)
+  {
+    edit_item->insert_roi_vertex(vh);
+  }
+  edit_item->invalidateOpenGLBuffers();
+  selection_item->setVisible(false);
+  (*QGLViewer::QGLViewerPool().begin())->update();
 }
 
-//makes the selected points ROI
-Q_FOREACH(Scene_polyhedron_selection_item::vertex_descriptor vh, sel_to_import)
-{
-  edit_item->insert_roi_vertex(vh);
-}
-edit_item->invalidateOpenGLBuffers();
-selection_item->setVisible(false);
-(*QGLViewer::QGLViewerPool().begin())->update();
-}
-
-void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_polyhedron_item* target)
+void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegraph_item* target)
 {
   for(int i = 0; i<scene->numberOfEntries(); i++)
   {

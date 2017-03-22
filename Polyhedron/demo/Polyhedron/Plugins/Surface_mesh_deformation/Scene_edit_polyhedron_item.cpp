@@ -875,7 +875,7 @@ struct Is_constrained_map<Polyhedron>
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
-  std::map<vertex_descriptor,int> icmap; //not light but the might won't be copied so it is ok
+  std::map<poly_vertex_descriptor,int> icmap; //not light but the might won't be copied so it is ok
 
   Is_constrained_map()
   {}
@@ -888,7 +888,7 @@ struct Is_constrained_map<Polyhedron>
   }
   friend bool get(const Is_constrained_map<Polyhedron>& map, const key_type& k)
   {
-    std::map<vertex_descriptor, int>::const_iterator it = map.icmap.find(k);
+    std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap.find(k);
     if(it != map.icmap.end())
       return it->second != -1;
     return false;
@@ -925,9 +925,9 @@ struct Is_constrained_map<SMesh>
   {}
 };
 
-int get_control_number(vertex_descriptor v, const Is_constrained_map<Polyhedron>& map)
+int get_control_number(poly_vertex_descriptor v, const Is_constrained_map<Polyhedron>& map)
 {
-  std::map<vertex_descriptor, int>::const_iterator it = map.icmap.find(v);
+  std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap.find(v);
   if(it != map.icmap.end())
     return it->second;
   return -1;
@@ -1831,12 +1831,12 @@ void Scene_edit_polyhedron_item::reset_spheres()
   d->spheres = NULL;
 }
 
-void Scene_edit_polyhedron_item::selected(const std::set<vertex_descriptor>& m)
+void Scene_edit_polyhedron_item::selected(const std::set<poly_vertex_descriptor>& m)
 {
   bool any_changes = false;
-  for(std::set<vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
+  for(std::set<poly_vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
   {
-    vertex_descriptor vh = *it;
+    poly_vertex_descriptor vh = *it;
     bool changed = false;
     if(d->ui_widget->ROIRadioButton->isChecked()) {
       if(d->ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex<Polyhedron>(vh, polyhedron());}
@@ -2130,7 +2130,7 @@ void Scene_edit_polyhedron_item::save_roi(const char* file_name) const
   if(d->poly_item)
   {
     out << d->deform_mesh->roi_vertices().size() << std::endl;
-    BOOST_FOREACH(vertex_descriptor vd, d->deform_mesh->roi_vertices())
+    BOOST_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
     {
       out << vd->id() << " ";
     }
@@ -2152,7 +2152,7 @@ void Scene_edit_polyhedron_item::save_roi(const char* file_name) const
     for(Ctrl_vertices_poly_group_data_list::const_iterator hgb = d->poly_ctrl_vertex_frame_map.begin(); hgb != d->poly_ctrl_vertex_frame_map.end(); ++hgb) {
 
       out << hgb->ctrl_vertices_group.size() << std::endl;
-      for(std::vector<vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb)
+      for(std::vector<poly_vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb)
       {
         out << (*hb)->id() << " ";
       }
@@ -2239,12 +2239,11 @@ void Scene_edit_polyhedron_item::reset_deform_object()
   refresh_all_group_centers();
 }
 
-//! \todo
 boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_component() {
   if(d->poly_item)
   {
     Travel_isolated_components<Polyhedron>::Minimum_visitor visitor;
-    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<vertex_descriptor>
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<poly_vertex_descriptor>
         (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
          polyhedron()->size_of_vertices(), Is_selected<Polyhedron>(d->deform_mesh), visitor);
     return visitor.minimum;
@@ -2260,7 +2259,6 @@ boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_co
 }
 
 
-//! \todo
 boost::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_components(std::size_t threshold) {
   if(d->poly_item)
   {
@@ -2268,7 +2266,7 @@ boost::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_compone
     Output_iterator out(d->deform_mesh);
 
     Travel_isolated_components<Polyhedron>::Selection_visitor<Output_iterator> visitor(threshold, out);
-    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<vertex_descriptor>
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<poly_vertex_descriptor>
         (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
          polyhedron()->size_of_vertices(), Is_selected<Polyhedron>(d->deform_mesh), visitor);
 
@@ -2408,7 +2406,7 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
 void Scene_edit_polyhedron_item::update_normals() {
   if(d->poly_item)
   {
-    BOOST_FOREACH(vertex_descriptor vd, d->deform_mesh->roi_vertices())
+    BOOST_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
     {
       std::size_t id = vd->id();
       const Polyhedron::Traits::Vector_3& n =
@@ -2447,7 +2445,7 @@ void Scene_edit_polyhedron_item::set_all_vertices_as_roi()
 {
   if(d->poly_item)
   {
-    vertex_iterator vb, ve;
+    poly_vertex_iterator vb, ve;
     for(boost::tie(vb, ve) = vertices(*polyhedron()); vb != ve; ++vb)
     {
       insert_roi_vertex<Polyhedron>(*vb, polyhedron());
@@ -2472,8 +2470,14 @@ void Scene_edit_polyhedron_item::delete_ctrl_vertices_group(bool create_new)
 
 }
 
-bool Scene_edit_polyhedron_item::insert_roi_vertex(vertex_descriptor vh)
+bool Scene_edit_polyhedron_item::insert_roi_vertex(poly_vertex_descriptor vh)
 {
 
   return insert_roi_vertex<Polyhedron>(vh, polyhedron());
+}
+
+bool Scene_edit_polyhedron_item::insert_roi_vertex(sm_vertex_descriptor vh)
+{
+
+  return insert_roi_vertex<SMesh>(vh, surface_mesh());
 }
