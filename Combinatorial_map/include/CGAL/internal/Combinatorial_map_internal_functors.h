@@ -216,10 +216,6 @@ struct Test_is_valid_attribute_functor
    * ie all the darts belonging to a i-cell are linked to the same attribute.
    * @param adart a dart.
    * @param amark a mark used to mark darts of the i-cell.
-   * @param reverseextremity to inverse the convention between source and
-   *        target of a dart. With false (default), a dart is associated with
-   *        a 0-attribute for its source (origin);
-   *        with true this is for its target (as in hds or surface mesh).
    * @return true iff all the darts of the i-cell link to the same attribute.
    */
   typedef typename CMap::size_type size_type;
@@ -242,11 +238,6 @@ struct Test_is_valid_attribute_functor
 
     typename CMap::template Attribute_const_handle<i>::type
         a=amap.template attribute<i>(adart);
-
-    if (i==0 && reverseextremity)
-    {
-      a=amap->template attribute<i>(amap->template beta<2>(adart));
-    }
 
     unsigned int nb = 0;
     for ( typename
