@@ -586,6 +586,15 @@ void set_halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f
                   const CGAL_LCC_TYPE&)
 { f->set_dart(h); }
 
+CGAL_LCC_TEMPLATE_ARGS
+void reserve(CGAL_LCC_TYPE& g,
+             typename boost::graph_traits<CGAL_LCC_TYPE>::vertices_size_type /*nv*/,
+             typename boost::graph_traits<CGAL_LCC_TYPE>::edges_size_type /*ne*/,
+             typename boost::graph_traits<CGAL_LCC_TYPE>::faces_size_type /*nf*/)
+{
+  // TODO
+}
+
 } // namespace CGAL
 
 //#undef CGAL_CMAP_BASE_TEMPLATE_ARGS
