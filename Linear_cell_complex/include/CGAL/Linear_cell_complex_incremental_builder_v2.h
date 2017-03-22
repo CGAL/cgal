@@ -68,7 +68,7 @@ namespace CGAL {
 
     void add_vertex_to_facet(size_type i)
     {
-      std::cout<<"add vertex "<<i<<"  "<<std::flush;
+      // std::cout<<"add vertex "<<i<<"  "<<std::flush;
       CGAL_assertion( i<new_vertices );
 
       if ( !begin_face )
@@ -77,10 +77,18 @@ namespace CGAL {
 
         if (cur==lcc.null_handle)
         {
-          cur = lcc.create_dart(vertex_map[i]);
-          Dart_handle opposite=lcc.create_dart(vertex_map[prev_vertex]);
+          cur = lcc.create_dart(vertex_map[prev_vertex]);
+          Dart_handle opposite=lcc.create_dart(vertex_map[i]);
+
+          /* std::cout<<"Create dart "<<lcc.darts().index(cur)<<" (vertex "<<lcc.vertex_attributes().index(vertex_map[prev_vertex])<<")"<<std::endl;
+          std::cout<<"Create dart "<<lcc.darts().index(opposite)<<" (vertex "<<lcc.vertex_attributes().index(vertex_map[i])<<")"<<std::endl; */
+
           lcc.template basic_link_beta_for_involution<2>(cur, opposite);
-          add_dart_in_vertex_to_dart_map( opposite, i );
+          add_dart_in_vertex_to_dart_map(opposite, i);
+        }
+        else
+        {
+            // std::cout<<"found dart "<<lcc.darts().index(cur)<<std::endl;
         }
 
         lcc.template set_dart_attribute<2>(cur, face_attrib);
@@ -90,8 +98,8 @@ namespace CGAL {
         else
         {
           lcc.basic_link_beta_1(prev_dart, cur);
-          std::cout<<"1-link "<<lcc.darts().index(prev_dart)<<" -> "<<
-                     lcc.darts().index(cur)<<std::endl;
+          /* std::cout<<"1-link "<<lcc.darts().index(prev_dart)<<" -> "<<
+                     lcc.darts().index(cur)<<std::endl; */
         }
 
         prev_dart = cur;
@@ -115,10 +123,10 @@ namespace CGAL {
       lcc.basic_link_beta_1(prev_dart, first_dart);
       face_attrib=NULL;
 
-      std::cout<<"1-link "<<lcc.darts().index(prev_dart)<<" -> "<<
+      /* std::cout<<"1-link "<<lcc.darts().index(prev_dart)<<" -> "<<
                  lcc.darts().index(first_dart)<<std::endl;
 
-       std::cout<<"  end facet."<<std::endl;
+      std::cout<<"  end facet."<<std::endl; */
       return first_dart;
     }
 
@@ -137,7 +145,6 @@ namespace CGAL {
     // End of the surface. Return one dart of the created surface.
     Dart_handle end_surface()
     {
- /*  TODO NOT NEEDED ?
      unsigned int nb=0;
 
       for (typename LCC::Dart_range::iterator it=lcc.darts().begin(),
@@ -156,10 +163,10 @@ namespace CGAL {
           lcc.basic_link_beta_1(it, lcc.template beta<2>(other));
 
           // For BGL halfedge graph, darts of border vertices must be border darts.
-          lcc.template set_dart_of_attribute<0>(lcc.vertex_attribute(it), it);
+// NOT NEEDED ??          lcc.template set_dart_of_attribute<0>(lcc.vertex_attribute(it), it);
           ++nb;
         }
-      }*/
+      }
 
       return first_dart;
     }
@@ -178,7 +185,7 @@ namespace CGAL {
       Vertex_attribute_handle vh = vertex_map[j];
       for ( ; it!=itend; ++it )
       {
-        if ( lcc.temp_vertex_attribute(*it)==vh )
+        if ( lcc.temp_vertex_attribute(lcc.template beta<2>(*it))==vh )
           return (*it);
       }
       return lcc.null_handle;
@@ -197,7 +204,8 @@ namespace CGAL {
     std::vector<Vertex_attribute_handle> vertex_map;
 
     // A vector of vector of dart handle.
-    // vertex_to_dart_map[i] contains all the darts that belong to vertex i.
+    // vertex_to_dart_map[i] contains all the darts that belong to vertex i
+    // i.e. that have this vertex as origin
     std::vector<std::vector<Dart_handle> > vertex_to_dart_map;
 
     LCC&        lcc;
