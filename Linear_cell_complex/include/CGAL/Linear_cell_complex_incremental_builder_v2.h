@@ -68,7 +68,7 @@ namespace CGAL {
 
     void add_vertex_to_facet(size_type i)
     {
-      // std::cout<<i<<"  "<<std::flush;
+      std::cout<<"add vertex "<<i<<"  "<<std::flush;
       CGAL_assertion( i<new_vertices );
 
       if ( !begin_face )
@@ -88,7 +88,11 @@ namespace CGAL {
         if (first_dart==lcc.null_handle)
         { first_dart=cur; }
         else
-        { lcc.basic_link_beta_1(prev_dart, cur); }
+        {
+          lcc.basic_link_beta_1(prev_dart, cur);
+          std::cout<<"1-link "<<lcc.darts().index(prev_dart)<<" -> "<<
+                     lcc.darts().index(cur)<<std::endl;
+        }
 
         prev_dart = cur;
       }
@@ -104,13 +108,17 @@ namespace CGAL {
     // End of the facet. Return the first dart of this facet.
     Dart_handle end_facet()
     {
-      // std::cout<<"  end facet."<<std::endl;
       CGAL_assertion( first_dart!=lcc.null_handle &&
                       prev_dart!=lcc.null_handle );
 
       add_vertex_to_facet(first_vertex);
       lcc.basic_link_beta_1(prev_dart, first_dart);
       face_attrib=NULL;
+
+      std::cout<<"1-link "<<lcc.darts().index(prev_dart)<<" -> "<<
+                 lcc.darts().index(first_dart)<<std::endl;
+
+       std::cout<<"  end facet."<<std::endl;
       return first_dart;
     }
 
@@ -129,7 +137,8 @@ namespace CGAL {
     // End of the surface. Return one dart of the created surface.
     Dart_handle end_surface()
     {
-      unsigned int nb=0;
+ /*  TODO NOT NEEDED ?
+     unsigned int nb=0;
 
       for (typename LCC::Dart_range::iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend; ++it)
@@ -150,7 +159,7 @@ namespace CGAL {
           lcc.template set_dart_of_attribute<0>(lcc.vertex_attribute(it), it);
           ++nb;
         }
-      }
+      }*/
 
       return first_dart;
     }

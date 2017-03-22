@@ -443,7 +443,7 @@ halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor u,
          darts_of_cell<0>(const_cast<CGAL_LCC_TYPE&>(g).template beta<2>(u->dart())).end();*/
        it!=itend; ++it)
   {
-    if (it->template attribute<0>()==v)
+    if (g.template attribute<0>(g.template beta<2>(it))==v)
     {
       return std::make_pair(it, true);
       // return std::make_pair(const_cast<CGAL_LCC_TYPE&>(g).template beta<2>(it), true);
@@ -502,7 +502,7 @@ CGAL_LCC_TEMPLATE_ARGS
 bool is_valid(const CGAL_LCC_TYPE& cm, bool = false)
 {
   // cm.display_darts(std::cout,true);
-  return cm.is_valid(); // true to inverse the convention between darts and 0-attributes
+  return cm.is_valid();
 }
 
 CGAL_LCC_TEMPLATE_ARGS
@@ -534,6 +534,7 @@ void set_target(typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor
                 CGAL_LCC_TYPE& cm)
 {
   cm.template restricted_set_dart_attribute<0>(cm.template beta<2>(h1), v);
+  
   // cm.template restricted_set_dart_attribute<0>(h1, v);
   // cm.template set_dart_attribute<0>(h1, v);
 }
