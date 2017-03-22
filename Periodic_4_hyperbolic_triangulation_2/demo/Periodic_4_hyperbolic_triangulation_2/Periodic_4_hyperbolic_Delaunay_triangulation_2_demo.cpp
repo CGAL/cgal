@@ -1,3 +1,22 @@
+// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
+
 #include <fstream>
 
 // CGAL headers
@@ -152,8 +171,6 @@ MainWindow::MainWindow()
  
   // 
   // Manual handling of actions
-  //
-
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
@@ -283,9 +300,6 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-
-  // typedef CGAL::Creator_uniform_2<double, Point> Creator;
-  // CGAL::Random_points_in_disc_2<Point, Creator> g( 1.0 );
   typedef CGAL::Cartesian<double>::Point_2  Point_d;
   vector<Point_d> v;
   Hyperbolic_random_points_in_disc_2_double(v, 5*number_of_points, -1, 0.159);
@@ -309,9 +323,6 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Timer tt;
   tt.start();
   dt.insert(pts.begin(), pts.end());
-  // for (int i = 0; i < pts.size(); i++) {
-  //   dt.insert(pts[i]);
-  // }
   tt.stop();
 
   cout << "Time elapsed for the insertion of " << number_of_points << " points: " << tt.time() << " secs." << endl;

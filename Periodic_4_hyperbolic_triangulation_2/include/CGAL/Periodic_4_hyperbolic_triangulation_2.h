@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2016   INRIA Nancy - Grand Est (France).
+// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,10 +14,8 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
-//                 
+// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
 
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H

@@ -1,9 +1,9 @@
-// Copyright (c) 1999-2004,2006-2009,2014-2016   INRIA Nancy - Grand Est (France).
+// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
-// Interal Public License as published by the Free Software Foundation,
+// General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
@@ -14,7 +14,6 @@
 //
 // $URL$
 // $Id$
-//
 //
 // Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
 
