@@ -90,6 +90,10 @@ create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 create_single_source_cgal_program( "graph_concept_Linear_cell_complex.cpp" )
 
 if(OpenMesh_FOUND)
+  target_link_libraries( test_graph_geometry ${OPENMESH_LIBRARIES})
+endif()
+
+if(OpenMesh_FOUND)
   target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
 endif()
 
@@ -103,7 +107,6 @@ create_single_source_cgal_program( "test_graph_traits.cpp" )
 if(OpenMesh_FOUND)
   target_link_libraries( test_graph_traits ${OPENMESH_LIBRARIES} )
 endif()
-
 
 create_single_source_cgal_program( "test_Properties.cpp" )
 if(OpenMesh_FOUND)

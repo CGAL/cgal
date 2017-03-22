@@ -70,6 +70,8 @@ create_single_source_cgal_program( "edge_collapse_all_short_edges.cpp" )
 
 create_single_source_cgal_program( "edge_collapse_linear_cell_complex.cpp" )
 
+create_single_source_cgal_program( "edge_collapse_linear_cell_complex.cpp" )
+
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
 
