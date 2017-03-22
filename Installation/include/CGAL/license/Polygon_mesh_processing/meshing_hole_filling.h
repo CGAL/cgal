@@ -16,8 +16,8 @@
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
-#ifndef CGAL_LICENSE_POLYGON_MESH_PROCESSING_HOLE_FILLING_H
-#define CGAL_LICENSE_POLYGON_MESH_PROCESSING_HOLE_FILLING_H
+#ifndef CGAL_LICENSE_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_H
+#define CGAL_LICENSE_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
@@ -25,36 +25,36 @@
 
 
 
-#ifdef CGAL_POLYGON_MESH_PROCESSING_HOLE_FILLING_COMMERCIAL_LICENSE
+#ifdef CGAL_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_COMMERCIAL_LICENSE
 
-#  if CGAL_POLYGON_MESH_PROCESSING_HOLE_FILLING_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
+#  if CGAL_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
 
 #    if defined(CGAL_LICENSE_WARNING)
 
        CGAL_pragma_warning("Your commercial license for CGAL does not cover "
-                           "this release of the Polygon Mesh Processing - Hole Filling package.")
+                           "this release of the Polygon Mesh Processing - Meshing and Hole Filling packages.")
 #    endif
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-of the Polygon Mesh Processing - Hole Filling  package. \
+of the Polygon Mesh Processing - Meshing and Hole Filling  packages. \
 You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
-#  endif // CGAL_POLYGON_MESH_PROCESSING_HOLE_FILLING_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
+#  endif // CGAL_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
 
-#else // no CGAL_POLYGON_MESH_PROCESSING_HOLE_FILLING_COMMERCIAL_LICENSE
+#else // no CGAL_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("You use the CGAL Polygon Mesh Processing - Hole Filling package under "
+     CGAL_pragma_warning("You use the CGAL Polygon Mesh Processing - Meshing and Hole Filling packages under "
                          "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the CGAL Polygon Mesh Processing - Hole Filling package under the terms of \
+#    error "You use the CGAL Polygon Mesh Processing - Meshing and Hole Filling packages under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
-#endif // no CGAL_POLYGON_MESH_PROCESSING_HOLE_FILLING_COMMERCIAL_LICENSE
+#endif // no CGAL_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_CHECK_POLYGON_MESH_PROCESSING_HOLE_FILLING_H
+#endif // CGAL_LICENSE_CHECK_POLYGON_MESH_PROCESSING_MESHING_HOLE_FILLING_H

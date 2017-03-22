@@ -23,7 +23,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing.h>
 
-
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
