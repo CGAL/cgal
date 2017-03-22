@@ -58,7 +58,7 @@ void set_halfedgeds_items_id (Scene_face_graph_item::FaceGraph&)
 
 template <>
 void
-set_item_is_multicolor(typename Scene_face_graph_item*, bool)
+set_item_is_multicolor(Scene_face_graph_item*, bool)
 {}
 
 #else
