@@ -20,7 +20,7 @@
 #ifndef CGAL_LICENSE_CHECK_H
 #define CGAL_LICENSE_CHECK_H
 
-#define CGAL_LICENSE_WARNING  1   // in order to get a warning during compilation
+//#define CGAL_LICENSE_WARNING  1   // in order to get a warning during compilation
 //#define CGAL_LICENSE_ERROR    1   // in order to get an error during compilation
 
 // if no such define exists, the package is used under the GPL or LGPL
