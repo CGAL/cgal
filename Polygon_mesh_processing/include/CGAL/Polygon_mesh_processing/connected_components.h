@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_CONNECTED_COMPONENTS_H
 #define CGAL_POLYGON_MESH_PROCESSING_CONNECTED_COMPONENTS_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/connected_components.h>
 
 
 #include<set>
