@@ -12,6 +12,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QShortcut>
 
 #include "ui_Deform_mesh.h"
 
@@ -35,7 +36,9 @@ public:
     : Polyhedron_demo_plugin_helper(), dock_widget(NULL)
   { }
   ~Polyhedron_demo_edit_polyhedron_plugin()
-  { }
+  {
+    delete e_shortcut;
+  }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
   virtual void closure()
@@ -73,6 +76,7 @@ public Q_SLOTS:
   void on_ROIRadioButton_toggled(bool);
   void on_importSelectionPushButton_clicked();
   void importSelection(Scene_polyhedron_selection_item*, Scene_edit_polyhedron_item*);
+  void dispatchAction();
 private:
   typedef CGAL::Three::Scene_interface::Item_id Item_id;
   std::vector<QColor> saved_color;
@@ -86,6 +90,7 @@ private:
 
   QAction* actionDeformation;
   RenderingMode last_RM;
+  QShortcut* e_shortcut;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
 
 QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {
@@ -108,8 +113,13 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   actionDeformation = new QAction("Surface Mesh Deformation", mw);
   actionDeformation->setProperty("subMenuName", "Triangulated Surface Mesh Deformation");
   actionDeformation->setObjectName("actionDeformation");
+  actionDeformation->setShortcutContext(Qt::ApplicationShortcut);
   autoConnectActions();
-  actionDeformation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+  e_shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), mw);
+  connect(e_shortcut, &QShortcut::activated, this, &Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered);
+  connect(e_shortcut, &QShortcut::activatedAmbiguously, this, &Polyhedron_demo_edit_polyhedron_plugin::dispatchAction);
+  //actionDeformation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+
 
   // Connect Scene::newItem so that, if dock_widget is visible, convert
   // automatically polyhedron items to "edit polyhedron" items.
@@ -557,5 +567,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegrap
     }
 
   }
+}
+void Polyhedron_demo_edit_polyhedron_plugin::dispatchAction()
+{
+ if(applicable(actionDeformation))
+   on_actionDeformation_triggered();
 }
 #include "Edit_polyhedron_plugin.moc"
