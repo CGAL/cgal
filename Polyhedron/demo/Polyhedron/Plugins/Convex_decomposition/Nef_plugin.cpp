@@ -32,8 +32,8 @@ void init(QMainWindow* mw,
     actionConvexDecomposition->setProperty("subMenuName",
                                            "Convex Decomposition");
 
-    QAction *actionToNef = new QAction("Convert to Nef Polyhedron", mw);
-    QAction *actionToPoly = new QAction("Convert to Normal Polyhedron", mw);
+    actionToNef = new QAction("Convert to Nef Polyhedron", mw);
+    actionToPoly = new QAction("Convert to Normal FaceGraph", mw);
     QAction *actionUnion = new QAction("Union (A/B)", mw);
     QAction *actionIntersection = new QAction("Intersection (A/B)", mw);
     QAction *actionDifference = new QAction("&Difference (A/B)", mw);
@@ -61,30 +61,29 @@ void init(QMainWindow* mw,
 
 }
 
-  bool applicable(QAction* action) const {
-    const int indexA = scene->selectionAindex();
-    const int indexB = scene->selectionBindex();
-    switch(action)
-    {
-    case actionToNef:
-      return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
-          || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+bool applicable(QAction* action) const {
+  const int indexA = scene->selectionAindex();
+  const int indexB = scene->selectionBindex();
 
-    case actionToPoly:
-      return qobject_cast<Scene_nef_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+  if( action == actionToNef)
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+        || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
 
-    default:
-      return qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexA))
-          || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexB));
-    }
-  }
+  else if( action == actionToPoly)
+    return qobject_cast<Scene_nef_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
 
-  QList<QAction*> actions() const {
-    return _actions;
-  }
+  return qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexA))
+      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexB));
+}
+
+QList<QAction*> actions() const {
+  return _actions;
+}
 
 private:
   Scene_interface* scene;
+  QAction *actionToNef;
+  QAction *actionToPoly;
   QList<QAction*> _actions;
   QMainWindow* mw;
 
@@ -120,7 +119,7 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
-    std::cerr << "Convert polyhedron to nef polyhedron...";
+    std::cerr << "Convert facegraph to nef polyhedron...";
 
     Scene_nef_polyhedron_item* new_nef_item;
     if(item)
@@ -155,7 +154,7 @@ Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   Scene_nef_polyhedron_item* item =
-    (pitem)? Scene_nef_polyhedron_item::from_polyhedron(pitem)
+    (pitem)? Scene_nef_polyhedron_item::from_polygon_mesh(pitem)
            : qobject_cast<Scene_nef_polyhedron_item*>(scene->item(index));
   QApplication::restoreOverrideCursor();
   if(item) {
@@ -186,7 +185,7 @@ Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
     std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
     QApplication::restoreOverrideCursor();
   } else {
-    std::cerr << "Only a Polyhedron or a Nef Polyhedron can be decomposed in convex parts" << std::endl; 
+    std::cerr << "Only a Facegraph or a Nef Polyhedron can be decomposed in convex parts" << std::endl;
   }
 }
 
@@ -203,7 +202,7 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
-    std::cerr << "Convert nef polyhedron to polyhedron...";
+    std::cerr << "Convert nef polyhedron to facegraph...";
 
     if(!item->is_simple())
     {
@@ -215,13 +214,24 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
       QApplication::restoreOverrideCursor();
       return;
     }
-
-    Scene_polyhedron_item* new_item = item->convert_to_polyhedron();
-    new_item->setName(tr("%1 (from nef)").arg(item->name()));
-    new_item->setRenderingMode(item->renderingMode());
-    item->setVisible(false);
-    scene->itemChanged(index);
-    scene->addItem(new_item);
+    if(scene->isPolyhedronMode())
+    {
+      Scene_polyhedron_item* new_item = item->convert_to_polyhedron();
+      new_item->setName(tr("%1 (from nef)").arg(item->name()));
+      new_item->setRenderingMode(item->renderingMode());
+      item->setVisible(false);
+      scene->itemChanged(index);
+      scene->addItem(new_item);
+    }
+    else
+    {
+        Scene_surface_mesh_item* new_item = item->convert_to_surface_mesh();
+        new_item->setName(tr("%1 (from nef)").arg(item->name()));
+        new_item->setRenderingMode(item->renderingMode());
+        item->setVisible(false);
+        scene->itemChanged(index);
+        scene->addItem(new_item);
+    }
     std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
     QApplication::restoreOverrideCursor();
   }
@@ -269,7 +279,7 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
     QMenu* menu = mw->findChild<QMenu*>("menu_Boolean_operations");
     if(!menu) qWarning("Do not find object named \"menu_Boolean_operations\"!");
     QMessageBox::warning(mw,
-                         tr("Boolean operation cannot be applied on normal polyhedron"),
+                         tr("Boolean operation cannot be applied on normal facegraphs"),
                          tr("You need to call the operation \"%1\" in the menu \"%2\".")
                          .arg(QString("Convert to Nef Polyhedron"))
                          .arg(menu ? menu->title() : "Boolean Operations"));

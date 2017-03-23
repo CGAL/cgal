@@ -50,8 +50,10 @@ public:
   bool is_simple() const;
   bool is_Triangle;
   // conversion operations
-  template<typename Item>
-  static Scene_nef_polyhedron_item* from_polygon_mesh(Item *);
+  static Scene_nef_polyhedron_item* from_polygon_mesh(Scene_polyhedron_item *);
+  static Scene_nef_polyhedron_item* from_polygon_mesh(Scene_surface_mesh_item*);
+
+
   Scene_polyhedron_item* convert_to_polyhedron() const;
   Scene_surface_mesh_item* convert_to_surface_mesh() const;
 
