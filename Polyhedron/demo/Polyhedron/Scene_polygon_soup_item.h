@@ -151,7 +151,7 @@ public Q_SLOTS:
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;
-    void destroyData();
+    void itemAboutToBeDestroyed(Scene_item *item);
 
 protected:
     friend struct Scene_polygon_soup_item_priv;

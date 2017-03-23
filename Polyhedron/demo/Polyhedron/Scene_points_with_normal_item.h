@@ -89,7 +89,7 @@ public Q_SLOTS:
   void pointSliderPressed();
   //Set the status of the slider as `released`
   void pointSliderReleased();
-  void destroyData();
+  void itemAboutToBeDestroyed(Scene_item *);
 
 // Data
 protected:

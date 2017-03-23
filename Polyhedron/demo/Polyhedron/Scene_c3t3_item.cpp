@@ -2014,8 +2014,10 @@ void Scene_c3t3_item::resetCutPlane()
  d->reset_cut_plane();
 }
 
-void Scene_c3t3_item::destroyData()
+void Scene_c3t3_item::itemAboutToBeDestroyed(Scene_item *item)
 {
+  Scene_item::itemAboutToBeDestroyed(item);
+
   if(d)
   {
     d->destroy();

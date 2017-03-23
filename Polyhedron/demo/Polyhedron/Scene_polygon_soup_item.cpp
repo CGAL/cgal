@@ -851,8 +851,9 @@ bool Scene_polygon_soup_item::isDataColored() { return d->soup->fcolors.size()>0
 std::vector<CGAL::Color> Scene_polygon_soup_item::getVColors() const{return d->soup->vcolors;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getFColors() const{return d->soup->fcolors;}
 
-void Scene_polygon_soup_item::destroyData()
+void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
 {
+  Scene_item::itemAboutToBeDestroyed(item);
  if(d)
  {
    if(d->soup)

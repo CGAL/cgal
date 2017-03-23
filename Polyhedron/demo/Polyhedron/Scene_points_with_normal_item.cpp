@@ -874,8 +874,9 @@ int Scene_points_with_normal_item::getPointSliderValue()
   return d->point_Slider->value();
 }
 
-void Scene_points_with_normal_item::destroyData()
+void Scene_points_with_normal_item::itemAboutToBeDestroyed(Scene_item *item)
 {
+  Scene_item::itemAboutToBeDestroyed(item);
   if(d && d->m_points)
   {
     delete d->m_points;

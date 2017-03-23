@@ -1845,8 +1845,9 @@ void Scene_polyhedron_item::set_flat_disabled(bool b)
   itemChanged();
 }
 
-void Scene_polyhedron_item::itemAboutToBeDestroyed(Scene_item *)
+void Scene_polyhedron_item::itemAboutToBeDestroyed(Scene_item *item)
 {
+  Scene_item::itemAboutToBeDestroyed(item);
   if(d)
   {
     d->destroy();
