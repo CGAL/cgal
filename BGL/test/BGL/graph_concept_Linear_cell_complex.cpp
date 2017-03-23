@@ -119,7 +119,7 @@ void runtime_check_halfedgegraph()
 
   assert(num_edges(p) ==  8);
   assert(num_halfedges(p) == 16);
-  // WRONG ASSERT assert(num_faces(p) == 4);
+  assert(num_faces(p) == 4);
 }
 
 int

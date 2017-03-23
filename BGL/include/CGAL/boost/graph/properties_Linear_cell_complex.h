@@ -63,18 +63,17 @@ template <class CMap>
 class CMap_dart_index_map_external :
     public boost::put_get_helper<std::size_t&, CMap_dart_index_map_external<CMap> >
 {
-  
 public:
-
   typedef boost::read_write_property_map_tag                  category;
   typedef std::size_t                                         value_type;
   typedef std::size_t&                                        reference;
   typedef typename boost::graph_traits<CMap>::edge_descriptor key_type;
+  typedef CGAL::Unique_hash_map<key_type,std::size_t>         Map;
 
-  CMap_dart_index_map_external()
+  CMap_dart_index_map_external(): map(new Map)
   {}
 
-  CMap_dart_index_map_external(CMap const& cm) 
+  CMap_dart_index_map_external(CMap const& cm): map(new Map)
   {
     CMap &cmap = const_cast<CMap&>(cm);
     typedef typename CMap::Dart_range::iterator Iter;
@@ -82,22 +81,22 @@ public:
     Iter e=cmap.template darts().end();
     for(value_type i=0; b != e; ++b, ++i)
     {
-      map[b] = i;
+      (*map)[b] = i;
     }
     b=cmap.template darts().begin();
     for(; b != e; ++b)
     {
-      value_type v1 = map[b];
-      value_type v2 = map[cmap.template beta<2>(b)];
+      value_type v1 = (*map)[b];
+      value_type v2 = (*map)[cmap.template beta<2>(b)];
       CGAL_assertion(v1==v2+1 || v2==v1+1);
     }
   }
 
   reference operator[](key_type const& e) const
-  { return const_cast<CGAL::Unique_hash_map<key_type,std::size_t>&>(map)[e]; }
+  { return const_cast<Map&>(*map)[e]; }
   
 private:  
-  CGAL::Unique_hash_map<key_type,std::size_t> map ;
+  boost::shared_ptr<Map> map;
 };
 
 template <class CMap>
@@ -109,11 +108,13 @@ public:
   typedef std::size_t                                           value_type;
   typedef std::size_t&                                          reference;
   typedef typename boost::graph_traits<CMap>::vertex_descriptor key_type;
+  typedef CGAL::Unique_hash_map<key_type,std::size_t>           Map;
 
-  CMap_vertex_index()
+
+  CMap_vertex_index(): map(new Map)
   {}
 
-  CMap_vertex_index(CMap const& cm) 
+  CMap_vertex_index(CMap const& cm): map(new Map)
   {
     CMap &cmap = const_cast<CMap&>(cm);
     typedef typename CMap::template Attribute_range<0>::type::iterator Iter;
@@ -121,15 +122,15 @@ public:
     Iter e=cmap.template attributes<0>().end();
     for(value_type i=0; b != e; ++b, ++i)
     {
-      map[b] = i;
+      (*map)[b] = i;
     }
   }
 
   reference operator[](key_type const& e) const
-  { return const_cast<CGAL::Unique_hash_map<key_type,std::size_t>&>(map)[e]; }
+  { return const_cast<Map&>(*map)[e]; }
   
 private:  
-  CGAL::Unique_hash_map<key_type,std::size_t> map ;
+  boost::shared_ptr<Map> map;
 };
 
 template <class CMap>

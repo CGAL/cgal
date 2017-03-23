@@ -283,6 +283,8 @@ main()
 {
   test(poly_data());
 
+  test(lcc_data());
+
 #if defined(CGAL_USE_SURFACE_MESH)
   test(sm_data());
 #endif
