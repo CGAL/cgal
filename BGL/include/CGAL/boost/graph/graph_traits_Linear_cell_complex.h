@@ -83,7 +83,7 @@ struct EdgeHandle : Dart_handle
   { return this->beta(2); }
   
   bool operator==(const EdgeHandle& h)
-  { return (*this)==h  /* TODO || h->beta(2)==*this */ ; }
+  { return (*this)==h  || h->get_f(2)==*this; }
 };
 
 template <class CMap, typename Dart_Iterator>
@@ -167,7 +167,7 @@ public :
   typedef typename CMap::size_type edges_size_type;
   typedef typename CMap::size_type faces_size_type;
   
-  typedef CGAL::In_edge_iterator<CMap> in_edge_iterator;
+  typedef CGAL::In_edge_iterator<CMap>  in_edge_iterator;
   typedef CGAL::Out_edge_iterator<CMap> out_edge_iterator;
 
   // nulls
@@ -424,8 +424,8 @@ halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor e,
 CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
-         const CGAL_LCC_TYPE&)
-{ return v->dart(); }
+         const CGAL_LCC_TYPE& cmap)
+{ return const_cast<CGAL_LCC_TYPE&>(cmap).template beta<2>(v->dart()); }
 
 CGAL_LCC_TEMPLATE_ARGS
 std::pair<
@@ -553,7 +553,6 @@ void set_halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor
                   CGAL_LCC_TYPE& cm)
 {
   //cm.template set_dart_of_attribute<0>(v, h);
-
   cm.template set_dart_of_attribute<0>(v, cm.template beta<2>(h));
 }
 
