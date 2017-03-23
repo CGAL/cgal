@@ -1,6 +1,7 @@
 #include "Scene_nef_polyhedron_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Nef_type.h"
 #include "Polyhedron_type.h"
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -18,6 +19,7 @@
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h>
 
 typedef Nef_polyhedron::Traits Traits;
 typedef Nef_polyhedron::Halffacet Facet;
@@ -679,28 +681,33 @@ bool Scene_nef_polyhedron_item::is_simple() const
 }
 
 // [static]
-Scene_nef_polyhedron_item* 
-Scene_nef_polyhedron_item::from_polyhedron(Scene_polyhedron_item* item)
+template<typename Item>
+Scene_nef_polyhedron_item*
+Scene_nef_polyhedron_item::from_polygon_mesh(Item* item)
 {
-    Polyhedron* poly = item->polyhedron();
+    typename Item::FaceGraph* poly = item->polyhedron();
     if(!poly) return 0;
-
-    Exact_polyhedron exact_poly;
-    to_exact(*poly, exact_poly);
-    Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_poly);
-    exact_poly.clear();
+    Nef_polyhedron* nef_poly = new Nef_polyhedron(poly);
 
     return new Scene_nef_polyhedron_item(nef_poly);
 }
 
-Scene_polyhedron_item*
-Scene_nef_polyhedron_item::convert_to_polyhedron() const {
-    Exact_polyhedron exact_poly;
-    d->nef_poly->convert_to_Polyhedron(exact_poly);
-    Polyhedron* poly = new Polyhedron;
-    from_exact(exact_poly, *poly);
-    exact_poly.clear();
-    return new Scene_polyhedron_item(poly);
+Scene_polyhedron_item* Scene_nef_polyhedron_item::convert_to_polyhedron() const
+{
+  Exact_polyhedron exact_poly;
+  d->nef_poly->convert_to_Polyhedron(exact_poly);
+  Polyhedron* poly = new Polyhedron;
+  from_exact(exact_poly, *poly);
+  exact_poly.clear();
+  return new Scene_polyhedron_item(poly);
+}
+Scene_surface_mesh_item* Scene_nef_polyhedron_item::convert_to_surface_mesh() const
+{
+typedef Scene_surface_mesh_item::FaceGraph SMesh;
+  SMesh* poly = new SMesh();
+  poly->add_property_map<boost::graph_traits<SMesh>::vertex_descriptor,Nef_polyhedron::Point_3>("v:nef_point").first;
+  CGAL::convert_nef_polyhedron_to_polygon_mesh(*this->nef_polyhedron(), *poly);
+  return new Scene_surface_mesh_item(poly);
 }
 
 Scene_nef_polyhedron_item&

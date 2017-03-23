@@ -1,4 +1,5 @@
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_nef_polyhedron_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -60,17 +61,22 @@ void init(QMainWindow* mw,
 
 }
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction* action) const {
     const int indexA = scene->selectionAindex();
     const int indexB = scene->selectionBindex();
+    switch(action)
+    {
+    case actionToNef:
+      return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+          || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
-      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
-      || qobject_cast<Scene_polyhedron_item*>(scene->item(indexA))
-      || qobject_cast<Scene_polyhedron_item*>(scene->item(indexB))
-      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexA))
-      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexB))
-      ;
+    case actionToPoly:
+      return qobject_cast<Scene_nef_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+
+    default:
+      return qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexA))
+          || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexB));
+    }
   }
 
   QList<QAction*> actions() const {
@@ -106,26 +112,36 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item =
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  if(!item && !sm_item)
+    return;
 
-  if(item)
-  {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
     std::cerr << "Convert polyhedron to nef polyhedron...";
 
-    Scene_nef_polyhedron_item* new_nef_item =
-      Scene_nef_polyhedron_item::from_polyhedron(item);
-
-    new_nef_item->setName(tr("%1 (to nef)").arg(item->name()));
-    new_nef_item->setRenderingMode(item->renderingMode());
-    item->setVisible(false);
+    Scene_nef_polyhedron_item* new_nef_item;
+    if(item)
+    {
+      new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(item);
+      new_nef_item->setName(tr("%1 (to nef)").arg(item->name()));
+      new_nef_item->setRenderingMode(item->renderingMode());
+      item->setVisible(false);
+    }
+    else
+    {
+      new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(sm_item);
+      new_nef_item->setName(tr("%1 (to nef)").arg(sm_item->name()));
+      new_nef_item->setRenderingMode(sm_item->renderingMode());
+      sm_item->setVisible(false);
+    }
     scene->itemChanged(index);
     new_nef_item->invalidateOpenGLBuffers();
     scene->addItem(new_nef_item);
     std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
     QApplication::restoreOverrideCursor();
-  }
 }
 
 
