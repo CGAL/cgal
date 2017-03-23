@@ -38,8 +38,6 @@ bool get_material_metadata(std::istream& input,
       iss >> _material.first;
     else if (prop.compare("}") == 0)
       return true; //end of this material
-    else
-      CGAL_assertion(prop.compare("Color") == 0);
   }
   return false;
 }
