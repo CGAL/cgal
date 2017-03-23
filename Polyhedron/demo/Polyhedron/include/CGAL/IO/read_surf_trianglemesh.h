@@ -212,6 +212,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
 
     //connect triangles
     std::vector<std::vector<std::size_t> > polygons;
+    polygons.reserve(nb_triangles);
     while(std::getline(input, line))
     {
       std::size_t fnws=line.find_first_not_of(" \t");
