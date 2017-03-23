@@ -1,7 +1,7 @@
 include( polyhedron_demo_macros )
 
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin)
-target_link_libraries(gocad_plugin scene_polyhedron_item)
+target_link_libraries(gocad_plugin scene_polyhedron_item scene_surface_mesh_item)
 
 qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
 polyhedron_demo_plugin(io_implicit_function_plugin Implicit_function_io_plugin ${funcUI_FILES})
