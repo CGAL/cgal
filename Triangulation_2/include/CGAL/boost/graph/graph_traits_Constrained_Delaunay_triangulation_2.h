@@ -53,10 +53,14 @@ namespace boost {
     typedef CGAL::Constrained_Delaunay_triangulation_2<GT,TDS,ITAG> Constrained_Delaunay_triangulation;
 
     typedef typename CGAL::Constrained_Delaunay_triangulation_2<GT,TDS,ITAG>::Vertex_handle vertex_descriptor;
+    typedef typename CGAL::Constrained_Delaunay_triangulation_2<GT,TDS,ITAG>::Face_handle face_descriptor;
     typedef CGAL::detail::Edge<CGAL::Constrained_Delaunay_triangulation_2<GT,TDS,ITAG>, typename CGAL::Constrained_Delaunay_triangulation_2<GT,TDS,ITAG>::Edge>  edge_descriptor;
     typedef typename CGAL::Constrained_Delaunay_triangulation_2<GT,TDS,ITAG>::All_edges_iterator  edge_iterator;
 
+    typedef CGAL::detail::T2_halfedge_descriptor<typename Constrained_Delaunay_triangulation::Triangulation> halfedge_descriptor;
+    typedef typename Constrained_Delaunay_triangulation::All_halfedges_iterator  halfedge_iterator;
     typedef CGAL::Prevent_deref<typename Constrained_Delaunay_triangulation::All_vertices_iterator> vertex_iterator;
+    typedef CGAL::Prevent_deref<typename Constrained_Delaunay_triangulation::All_faces_iterator> face_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::Out_edge_circulator<typename Constrained_Delaunay_triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > out_edge_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::In_edge_circulator<typename Constrained_Delaunay_triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > in_edge_iterator;
     typedef CGAL::Counting_iterator<typename Constrained_Delaunay_triangulation::Vertex_circulator> Incident_vertices_iterator;
@@ -136,6 +140,12 @@ namespace CGAL {
     return m;
   }
 
+  template <class Gt, class Tds, class ITAG>
+  inline CT2_vertex_point_map<Gt,Tds,ITAG>
+  get(boost::vertex_point_t, const CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>& ) {
+    CT2_vertex_point_map<Gt,Tds,ITAG> m;
+    return m;
+  }
   template <class Gt, class Tds, class ITAG>
   inline CT2_edge_id_map<Gt,Tds,ITAG>
   get(boost::edge_index_t, const CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>& ) {

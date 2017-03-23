@@ -53,10 +53,15 @@ namespace boost {
     typedef CGAL::Constrained_triangulation_2<GT,TDS,ITAG> Constrained_triangulation;
 
     typedef typename CGAL::Constrained_triangulation_2<GT,TDS,ITAG>::Vertex_handle vertex_descriptor;
+    typedef typename CGAL::Constrained_triangulation_2<GT,TDS,ITAG>::Face_handle face_descriptor;
     typedef CGAL::detail::Edge<CGAL::Constrained_triangulation_2<GT,TDS,ITAG>, typename CGAL::Constrained_triangulation_2<GT,TDS,ITAG>::Edge>  edge_descriptor;
     typedef typename CGAL::Constrained_triangulation_2<GT,TDS,ITAG>::All_edges_iterator  edge_iterator;
 
+    typedef CGAL::detail::T2_halfedge_descriptor<typename Constrained_triangulation::Triangulation> halfedge_descriptor;
+
+    typedef typename Constrained_triangulation::All_halfedges_iterator  halfedge_iterator;
     typedef CGAL::Prevent_deref<typename Constrained_triangulation::All_vertices_iterator> vertex_iterator;
+    typedef CGAL::Prevent_deref<typename Constrained_triangulation::All_faces_iterator> face_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::Out_edge_circulator<typename Constrained_triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > out_edge_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::In_edge_circulator<typename Constrained_triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > in_edge_iterator;
     typedef CGAL::Counting_iterator<typename Constrained_triangulation::Vertex_circulator> Incident_vertices_iterator;
@@ -148,6 +153,28 @@ namespace CGAL {
     }
   };
 
+ template <class Gt, class Tds, class ITAG>
+  class CT2_vertex_point_map
+  {
+  public:
+    typedef boost::lvalue_property_map_tag category;
+    typedef typename CGAL::Constrained_triangulation_2<Gt,Tds,ITAG>::Point value_type;
+    typedef value_type& reference;
+    typedef typename CGAL::Constrained_triangulation_2<Gt,Tds,ITAG>::Vertex_handle key_type;
+
+    friend reference get(CT2_vertex_point_map<Gt,Tds,ITAG>, key_type vh)
+    { 
+      return vh->point(); 
+    }
+    friend void put(CT2_vertex_point_map<Gt,Tds,ITAG>, key_type vh, reference v)
+    {
+      vh->point()=v; 
+    }
+    reference operator[](key_type vh) const {
+      return vh->point();
+    }
+  };
+
   template <class Gt, class Tds, class ITAG>
   class CT2_edge_id_map
     : public boost::put_get_helper<int, CT2_edge_id_map<Gt,Tds,ITAG> >
@@ -196,6 +223,13 @@ namespace CGAL {
   }
 
   template <class Gt, class Tds, class ITAG>
+  inline CT2_vertex_point_map<Gt,Tds,ITAG>
+  get(boost::vertex_point_t, const CGAL::Constrained_triangulation_2<Gt,Tds,ITAG>& ) {
+    CT2_vertex_point_map<Gt,Tds,ITAG> m;
+    return m;
+  }
+  
+  template <class Gt, class Tds, class ITAG>
   inline CT2_edge_id_map<Gt,Tds,ITAG>
   get(boost::edge_index_t, const CGAL::Constrained_triangulation_2<Gt,Tds,ITAG>& ) {
     CT2_edge_id_map<Gt,Tds,ITAG> m;
@@ -220,6 +254,16 @@ namespace CGAL {
       typedef CT2_vertex_id_map<Gt,Tds,ITAG> const_type;
     };
   };
+
+  template <>
+  struct CT2_property_map<boost::vertex_point_t> {
+    template <class Gt, class Tds, class ITAG>
+    struct bind_ {
+      typedef CT2_vertex_point_map<Gt,Tds,ITAG> type;
+      typedef CT2_vertex_point_map<Gt,Tds,ITAG> const_type;
+    };
+  };
+
 
 
   template <>
