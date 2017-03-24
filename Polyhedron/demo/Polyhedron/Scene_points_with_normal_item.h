@@ -89,7 +89,7 @@ public Q_SLOTS:
   void pointSliderPressed();
   //Set the status of the slider as `released`
   void pointSliderReleased();
-  void itemAboutToBeDestroyed(Scene_item *);
+  void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 
 // Data
 protected:

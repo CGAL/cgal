@@ -142,7 +142,7 @@ public Q_SLOTS:
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
-    void itemAboutToBeDestroyed(Scene_item *);
+    void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void selection_done();

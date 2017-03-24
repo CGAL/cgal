@@ -149,7 +149,7 @@ public:
 
   QColor get_histogram_color(const double v) const;
 
-  void itemAboutToBeDestroyed(Scene_item *);
+  void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 
   protected:
     friend struct Scene_c3t3_item_priv;

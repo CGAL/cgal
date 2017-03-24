@@ -53,7 +53,7 @@ public:
   const SMesh* polyhedron() const;
   void compute_bbox()const;
 public Q_SLOTS:
-  void itemAboutToBeDestroyed(Scene_item *);
+  void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   virtual void selection_changed(bool);
 protected:
   friend struct Scene_surface_mesh_item_priv;

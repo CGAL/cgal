@@ -94,6 +94,11 @@ struct Scene_polyhedron_item_priv{
   {
     init_default_values();
   }
+  ~Scene_polyhedron_item_priv()
+  {
+    delete poly;
+    delete targeted_id;
+  }
 
   void init_default_values() {
     show_only_feature_edges_m = false;
@@ -123,11 +128,6 @@ struct Scene_polyhedron_item_priv{
                          const bool colors_only) const;
   void init();
   void invalidate_stats();
-  void destroy()
-  {
-    delete poly;
-    delete targeted_id;
-  }
   void* get_aabb_tree();
   QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
                                                   Traits::Vector_3 normal);
@@ -823,7 +823,6 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
     }
     if(d)
     {
-      d->destroy();
       delete d;
       d=NULL;
     }
@@ -1848,9 +1847,8 @@ void Scene_polyhedron_item::set_flat_disabled(bool b)
 void Scene_polyhedron_item::itemAboutToBeDestroyed(Scene_item *item)
 {
   Scene_item::itemAboutToBeDestroyed(item);
-  if(d)
+  if(d && item == this)
   {
-    d->destroy();
     delete d;
     d=NULL;
   }

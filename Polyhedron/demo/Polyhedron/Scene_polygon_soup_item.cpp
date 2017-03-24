@@ -854,13 +854,12 @@ std::vector<CGAL::Color> Scene_polygon_soup_item::getFColors() const{return d->s
 void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
 {
   Scene_item::itemAboutToBeDestroyed(item);
- if(d)
- {
-   if(d->soup)
-   {
-     delete d->soup;
-     d->soup=NULL;
-   }
- }
-
+  if(d && item == this)
+  {
+    if(d->soup)
+    {
+      delete d->soup;
+      d->soup=NULL;
+    }
+  }
 }

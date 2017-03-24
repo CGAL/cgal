@@ -281,9 +281,6 @@ struct Scene_c3t3_item_priv {
   }
   ~Scene_c3t3_item_priv()
   {
-  }
-  void destroy()
-  {
     c3t3.clear();
     tree.clear();
     if(frame)
@@ -294,6 +291,7 @@ struct Scene_c3t3_item_priv {
       delete tet_Slider;
     }
   }
+
   void init_default_values() {
     positions_lines.resize(0);
     positions_poly.resize(0);
@@ -531,7 +529,6 @@ Scene_c3t3_item::~Scene_c3t3_item()
 {
   if(d)
   {
-    d->destroy();
     delete d;
     d = NULL;
   }
@@ -2018,9 +2015,17 @@ void Scene_c3t3_item::itemAboutToBeDestroyed(Scene_item *item)
 {
   Scene_item::itemAboutToBeDestroyed(item);
 
-  if(d)
+  if(d && item == this)
   {
-    d->destroy();
+    d->c3t3.clear();
+    d->tree.clear();
+    if(d->frame)
+    {
+      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
+      delete d->frame;
+      d->frame = NULL;
+      delete d->tet_Slider;
+    }
     delete d;
     d=0;
   }

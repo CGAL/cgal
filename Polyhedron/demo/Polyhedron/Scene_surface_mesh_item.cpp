@@ -646,7 +646,7 @@ void Scene_surface_mesh_item::compute_bbox()const
 void Scene_surface_mesh_item::itemAboutToBeDestroyed(Scene_item *item)
 {
   Scene_item::itemAboutToBeDestroyed(item);
-  if(d && d->smesh_)
+  if(d && d->smesh_ && item == this)
   {
     delete d->smesh_;
     d->smesh_ = NULL;
