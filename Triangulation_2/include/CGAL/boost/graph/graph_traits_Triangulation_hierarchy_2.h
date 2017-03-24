@@ -30,7 +30,7 @@
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <CGAL/boost/graph/graph_traits_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
 
 // The functions and classes in this file allows the user to

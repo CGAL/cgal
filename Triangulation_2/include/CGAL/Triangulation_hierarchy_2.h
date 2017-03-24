@@ -189,7 +189,7 @@ public:
   Vertex_handle
   nearest_vertex(const Point& p, Face_handle start = Face_handle()) const
   {
-    return nearest_vertex_dispatch<Tr>(p, start, Weighted_tag());
+    return nearest_vertex_dispatch<Tr_Base>(p, start, Weighted_tag());
   }
 
 private:
