@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
@@ -19,6 +20,13 @@ struct MaterialData
   material outerRegion;
 };
 
+std::string to_lower_case(const std::string& str)
+{
+  std::string r = str;
+  std::transform(r.begin(), r.end(), r.begin(), ::tolower);
+  return r;
+}
+
 bool get_material_metadata(std::istream& input,
                            std::string& line,
                            material& _material)
@@ -36,7 +44,18 @@ bool get_material_metadata(std::istream& input,
     iss >> prop;
 
     if (prop.compare("Id") == 0)
+    {
       iss >> _material.first;
+
+      if ((0 == to_lower_case(_material.second).compare("exterior"))
+          && _material.first != 0)
+      {
+        std::cerr << "Exterior should have index 0. ";
+        std::cerr << "In this file it has index " << _material.first << "." << std::endl;
+        std::cerr << "Reader failed, because Meshing will fail to terminate." << std::endl;
+        return false;
+      }
+    }
     else if (prop.compare("}") == 0)
       return true; //end of this material
   }
