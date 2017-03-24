@@ -21,6 +21,7 @@
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/iterator.h>
 
 #include <CGAL/Polygon_2.h>
 

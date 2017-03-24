@@ -53,6 +53,7 @@ public:
   void update_vertex_indices(){}
   void update_halfedge_indices(){}
   void update_facet_indices(){}
+  bool isItemMulticolor();
   Vertex_selection_map vertex_selection_map();
   Face_selection_map face_selection_map();
 
