@@ -420,7 +420,8 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
 
-  CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron> detect_features;
+  typedef typename boost::property_map<Polyhedron,face_patch_id_t>::type Face_patch_id_pmap;
+  CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron,Face_patch_id_pmap> detect_features(get(face_patch_id,poly.front()));
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);

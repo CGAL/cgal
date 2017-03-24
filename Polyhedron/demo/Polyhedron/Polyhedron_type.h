@@ -206,8 +206,8 @@ typedef CGAL::Polyhedron_3<Kernel, Polyhedron_items> Polyhedron;
 
 struct Is_feature_pmap {
 
-  typedef Polyhedron::Halfedge_handle value_type;
-  typedef bool key_type;
+  typedef Polyhedron::Halfedge_handle key_type;
+  typedef bool value_type;
   friend bool get(const Is_feature_pmap&, Polyhedron::Halfedge_handle h)
   {
     return h->is_feature_edge();
