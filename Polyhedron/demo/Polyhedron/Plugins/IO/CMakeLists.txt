@@ -39,6 +39,7 @@ polyhedron_demo_plugin(surf_to_sm_io_plugin Surf_to_sm_io_plugin)
 target_link_libraries(surf_to_sm_io_plugin scene_surface_mesh_item)
 
 
+
 find_package(VTK QUIET COMPONENTS
   vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if (VTK_FOUND)
@@ -49,6 +50,13 @@ if (VTK_FOUND)
       target_link_libraries(vtk_plugin scene_polyhedron_item scene_polylines_item scene_c3t3_item
                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
                                        vtkFiltersCore vtkFiltersSources)
+
+      polyhedron_demo_plugin(vtk_sm_plugin VTK_io_plugin)
+      target_link_libraries(vtk_sm_plugin scene_surface_mesh_item scene_polylines_item scene_c3t3_item
+                                       vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
+                                       vtkFiltersCore vtkFiltersSources)
+      target_compile_definitions(vtk_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()
