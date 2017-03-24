@@ -9,6 +9,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Has_timestamp.h>
@@ -269,7 +270,7 @@ struct Patch_id_pmap {
 
 
 
-inline Patch_id_pmap get(face_patch_id_t, const Polyhedron&)
+inline Patch_id_pmap get(boost::face_patch_id_t, const Polyhedron&)
 {
   return Patch_id_pmap();
 }

@@ -15,6 +15,7 @@
 
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/properties.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -120,7 +121,7 @@ inline get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh)
 
 
 Scene_surface_mesh_item::Face_patch_id_map
-inline get(face_patch_id_t, Scene_surface_mesh_item::SMesh& smesh)
+inline get(boost::face_patch_id_t, Scene_surface_mesh_item::SMesh& smesh)
 {
   typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
   return smesh.add_property_map<face_descriptor,int>("f:patch_id").first;
@@ -161,7 +162,7 @@ namespace boost {
   };
   
   template <>
-  struct property_map<Scene_surface_mesh_item::SMesh, face_patch_id_t>
+  struct property_map<Scene_surface_mesh_item::SMesh, boost::face_patch_id_t>
   {
     typedef Scene_surface_mesh_item::SMesh SMesh;
     typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
