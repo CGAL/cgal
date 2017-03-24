@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `TriangulationDSFaceBase_2` describes the requirements for 
-the base face of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`. 
+the face base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`.
 
 Note that if the `CGAL::Triangulation_data_structure_2` 
 is plugged into a triangulation class, 
@@ -30,7 +30,7 @@ In order
 to break the cycle, the base classes for faces and vertices 
 which are plugged in to instantiate a 
 `CGAL::Triangulation_data_structure_2` 
-use a `void` as triangulation 
+use  `void` as triangulation
 data structure parameter. Then, 
 the `CGAL::Triangulation_data_structure_2` 
 uses a <I>rebind</I> mechanism (similar to the one specified in 
@@ -45,6 +45,8 @@ This <I>rebound</I> base class is the class
 that the `CGAL::Triangulation_data_structure_2` 
 actually uses as a base class for the class 
 `CGAL::Triangulation_data_structure_2::Face`. 
+
+\cgalRefines `TriangulationDataStructure_2::Face`
 
 \cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
 \cgalHasModel `CGAL::Triangulation_face_base_2<Traits,Fb>` 
