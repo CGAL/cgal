@@ -247,7 +247,10 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       iss.str(line);
       iss >> index[0] >> index[1] >> index[2];
 
-      std::vector<std::size_t> polygon = {index[0] - 1, index[1] - 1, index[2] - 1};
+      std::vector<std::size_t> polygon(3);
+      polygon[0] = index[0] - 1;
+      polygon[1] = index[1] - 1;
+      polygon[2] = index[2] - 1;
       polygons.push_back(polygon);
     }
     CGAL_assertion(nb_triangles == polygons.size());
