@@ -261,9 +261,13 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     {
       std::cout << "Orientation of patch #" << (i + 1) << "...";
       std::cout.flush();
+      bool no_duplicates =
       PMP::orient_polygon_soup(points, polygons);//returns false if some points
                                                  //were duplicated
-      std::cout << "\rOrientation of patch #" << (i + 1) << " done." << std::endl;
+      std::cout << "\rOrientation of patch #" << (i + 1) << " done";
+      if (!no_duplicates)
+        std::cout << " (non manifold -> duplicated vertices)";
+      std::cout << "." << std::endl;
     }
     Mesh& mesh = output[i];
 
