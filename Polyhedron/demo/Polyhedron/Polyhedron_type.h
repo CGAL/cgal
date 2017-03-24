@@ -249,8 +249,8 @@ inline vertex_num_feature_edges_pmap get(vertex_num_feature_edges_t, const Polyh
 
 struct Patch_id_pmap {
 
-  typedef Polyhedron::Face_handle value_type;
-  typedef Polyhedron::Facet::Patch_id key_type;
+  typedef Polyhedron::Face_handle key_type;
+  typedef Polyhedron::Facet::Patch_id value_type;
   typedef value_type reference;
   typedef boost::writable_property_map_tag                          category;
 

@@ -274,7 +274,7 @@ flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_de
 {
   // Initialize he_to_explore with halfedges of the starting facet
   He_handle_set he_to_explore;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f,polyhedron)))
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f,polyhedron), polyhedron))
   {
     he_to_explore.insert(opposite(hd,polyhedron));
   }
@@ -289,14 +289,14 @@ flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_de
     // If we don't go through a border of the patch
     if ( ! he->is_feature_edge() && ! is_border(he,polyhedron) )
     {
-      face_descriptor explored_facet = facet(he,polyhedron);
+      face_descriptor explored_facet = face(he,polyhedron);
       
       // Mark facet and delete it from unsorted
       put(pid_map, explored_facet, patch_id);
       unsorted_faces.erase(explored_facet);
       
       // Add/Remove facet's halfedge to/from explore list
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(explored_facet,polyhedron)))
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(explored_facet,polyhedron), polyhedron))
       {
         halfedge_descriptor current_he = hd;
         
