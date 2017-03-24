@@ -5,6 +5,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -243,9 +244,12 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       std::cout << "\rOrientation of patch #" << (i + 1) << " done." << std::endl;
     }
     Mesh& mesh = output[i];
+
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
       points, polygons, mesh);
+    CGAL::Polygon_mesh_processing::remove_isolated_vertices(mesh);
 
+    CGAL_assertion(is_valid(mesh));
   } // end loop on patches
 
   return true;
