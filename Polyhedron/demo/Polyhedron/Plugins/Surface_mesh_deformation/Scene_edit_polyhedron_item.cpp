@@ -757,7 +757,7 @@ struct ROI_faces_pmap;
 template<>
 struct ROI_faces_pmap<Polyhedron>
 {
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor   key_type;
+  typedef boost::graph_traits<Polyhedron>::face_descriptor   key_type;
   typedef std::size_t                                           value_type;
   typedef std::size_t&                                          reference;
   typedef boost::read_write_property_map_tag                    category;
@@ -1516,7 +1516,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
 
     if(d->poly_item)
     {
-      for(typename Ctrl_vertices_poly_group_data_list::const_iterator hgb_data = d->poly_ctrl_vertex_frame_map.begin();
+      for(Ctrl_vertices_poly_group_data_list::const_iterator hgb_data = d->poly_ctrl_vertex_frame_map.begin();
           hgb_data != d->poly_ctrl_vertex_frame_map.end(); ++hgb_data)
       {
         d->draw_ROI_and_control_vertices(viewer, hgb_data->frame, hgb_data->frame_initial_center);
@@ -1524,7 +1524,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
     }
     else
     {
-      for(typename Ctrl_vertices_sm_group_data_list::const_iterator hgb_data = d->sm_ctrl_vertex_frame_map.begin();
+      for(Ctrl_vertices_sm_group_data_list::const_iterator hgb_data = d->sm_ctrl_vertex_frame_map.begin();
           hgb_data != d->sm_ctrl_vertex_frame_map.end(); ++hgb_data)
       {
         d->draw_ROI_and_control_vertices(viewer, hgb_data->frame, hgb_data->frame_initial_center);

@@ -31,7 +31,7 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
+
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -521,6 +521,6 @@ bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
 
 
 
-
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
 
 #endif // CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H

@@ -78,7 +78,7 @@ struct Id_setter{
 
   void set_id(p_fd fd, std::size_t id)
   {
-    typename boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
+    boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
         = get(CGAL::face_index, *poly);
     put(fim, fd, id);
   }

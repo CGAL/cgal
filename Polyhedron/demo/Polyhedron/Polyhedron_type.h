@@ -221,7 +221,7 @@ struct Is_feature_pmap {
 
 };
 
-inline Is_feature_pmap get(halfedge_is_feature_t, const Polyhedron&)
+inline Is_feature_pmap get(CGAL::halfedge_is_feature_t, const Polyhedron&)
 {
   return Is_feature_pmap();
 }
@@ -242,7 +242,7 @@ struct vertex_num_feature_edges_pmap {
 
 };
 
-inline vertex_num_feature_edges_pmap get(vertex_num_feature_edges_t, const Polyhedron&)
+inline vertex_num_feature_edges_pmap get(CGAL::vertex_num_feature_edges_t, const Polyhedron&)
 {
   return vertex_num_feature_edges_pmap();
 }
@@ -270,34 +270,34 @@ struct Patch_id_pmap {
 
 
 
-inline Patch_id_pmap get(boost::face_patch_id_t, const Polyhedron&)
+inline Patch_id_pmap get(CGAL::face_patch_id_t, const Polyhedron&)
 {
   return Patch_id_pmap();
 }
 
 inline
 boost::property_map<Polyhedron, boost::vertex_index_t>::type
-get(vertex_selection_t, const Polyhedron& p)
+get(CGAL::vertex_selection_t, const Polyhedron& p)
 {
   return get(boost::vertex_index,p);
 }
 
 inline
 boost::property_map<Polyhedron, boost::face_index_t>::type
-get(face_selection_t, const Polyhedron& p)
+get(CGAL::face_selection_t, const Polyhedron& p)
 {
   return get(boost::face_index,p);
 }
 namespace boost {
   
   template <>
-  struct property_map<Polyhedron, halfedge_is_feature_t>
+  struct property_map<Polyhedron, CGAL::halfedge_is_feature_t>
   {
     typedef Is_feature_pmap type;
   };
   
   template <>
-  struct property_map<Polyhedron, face_patch_id_t>
+  struct property_map<Polyhedron, CGAL::face_patch_id_t>
   {
     typedef Patch_id_pmap type;
   };

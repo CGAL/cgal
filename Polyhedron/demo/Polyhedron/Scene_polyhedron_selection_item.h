@@ -72,7 +72,7 @@ struct Selection_traits<typename SelectionItem::vertex_descriptor, SelectionItem
   void update_indices() { item->polyhedron_item()->update_vertex_indices(); }
   std::size_t id(typename SelectionItem::vertex_descriptor  vh)
   {
-    return get(get(vertex_selection_t(), *item->polyhedron()), vh);
+    return get(get(CGAL::vertex_selection, *item->polyhedron()), vh);
   }
 
   template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
@@ -117,7 +117,7 @@ struct Selection_traits<typename SelectionItem::face_descriptor, SelectionItem>
   void update_indices() { item->polyhedron_item()->update_facet_indices(); }
   std::size_t id(typename SelectionItem::face_descriptor fh)
 {
-  return get(get(face_selection_t(), *item->polyhedron()), fh);
+  return get(get(CGAL::face_selection, *item->polyhedron()), fh);
 }
 
   template <class FaceRange, class HalfedgeGraph, class IsFaceSelectedPMap, class OutputIterator>
@@ -941,7 +941,7 @@ public:
     BOOST_FOREACH(edge_descriptor e, selected_edges)
       mark[tr.id(e)] = true;
 
-    return Is_selected_property_map<edge_descriptor, Face_graph_edge_index_pm>(mark, get(boost::edge_index_t(),*polyhedron()));
+    return Is_selected_property_map<edge_descriptor, Face_graph_edge_index_pm>(mark, get(boost::edge_index,*polyhedron()));
   }
 
   Is_constrained_map<Selection_set_edge> constrained_edges_pmap()

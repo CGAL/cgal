@@ -1901,8 +1901,8 @@ void Scene_polyhedron_selection_item::setPathSelection(bool b) {
   d->is_path_selecting = b;
   if(d->is_path_selecting){
     int ind = 0;
-    boost::property_map<Face_graph,vertex_selection_t>::type vsm =
-      get(vertex_selection_t(),*polyhedron());
+    boost::property_map<Face_graph,CGAL::vertex_selection_t>::type vsm =
+      get(CGAL::vertex_selection,*polyhedron());
     BOOST_FOREACH(vertex_descriptor vd, vertices(*polyhedron())){
       put(vsm,vd, ind++);
     }
