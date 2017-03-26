@@ -3,6 +3,7 @@
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
