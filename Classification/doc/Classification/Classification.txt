@@ -15,39 +15,31 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 - some analysis is performed on the input data set
 - features are computed based on this analysis
 - a set of labels (for example: ground, building, vegetation) is defined by the user
-- features are given weights and each pair of feature and label is assigned a relationship. This can either be done by hand or by automatic training if a set of inliers is given for each label (see \ref Classification_trainer)
-- classification is computed itemwise by minimizing an energy defined as the sum of the values taken by features on input items (which depend on the feature-label relationship)
+- a predicate is defined and trained: from th set of values taken by the features at an input item, it gives the probability of this item to belong to one label or another
+- classification is computed itemwise using the predicate
 - additional regularization can be used by smoothing either locally or globally through an Alpha Expansion approach.
 
 \cgalFigureBegin{Classification_organization_fig,organization.png}
 Organization of the package.
 \cgalFigureEnd
 
-This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify (although \cgal provides a predefined framework for common urban scenes).
+This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify (although \cgal provides predefined features for common urban scenes).
 
 Currently, \cgal provides data structures to handle classification of point sets.
 
 \section Classification_structures Data Structures
 
-\subsection Classification_analysis Analysis
+\subsection Classification_labels Label set
 
-%Classification is based on the computation of local features. These features can take advantage of shared data structures that are precomputed and stored separately.
+A label represents how an item should be classified, for example: vegetation, building, road, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle).
 
-\cgal provides the following structures:
+The following code snippet shows how to add labels to the classification object.
 
-- [Point_set_neighborhood](@ref CGAL::Classification::Point_set_neighborhood) stores spatial searching structures and provides adapted queries for points
-- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues
-- [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
+\snippet Classification/example_classification.cpp Labels
 
-The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual). The class `CGAL::Classifier` that handles classification is also instantiated (see \ref Classification_classifier).
+\subsection Classification_features Feature set
 
-\snippet Classification/example_classifier.cpp Analysis
-
-\subsection Classification_features Features
-
-Features are defined as scalar fields that associate each input item with a specific value. Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from `CGAL::Classification::Feature_base` and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associate a scalar value to each input item. Each feature has a weight that measure its strength with respect to the other features (see \ref Classification_labels).
-
-Features are accessed through `Handle` objects, `CGAL::Classification::Feature_handle`.
+Features are defined as scalar fields that associate each input item with a specific value. A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
 
 \cgal provides some predefined features that are relevant for classification of urban point sets:
 
@@ -72,31 +64,80 @@ Finally, if the input data set has additional properties, these can also be used
 - [Echo_scatter](@ref CGAL::Classification::Feature::Echo_scatter) uses the number of returns (echo) provided by most LIDAR scanners if available
 - [Hsv](@ref CGAL::Classification::Feature::Hsv) uses input color information if available.
 
-In the following code snippet, a subset of these features are instantiated and their respective weights are set. Note that these weights can also be automatically set up by training (see \ref Classification_trainer).
+In the following code snippet, a subset of these features are instantiated. Note that all the predefined features can also be automatically generated in multiple scales (see \ref Classification_feature_generator).
 
-\snippet Classification/example_classifier.cpp Features
+\snippet Classification/example_classification.cpp Features
 
-Users can define their own feature classes. Such classes must fulfill the following requirements:
-
-- they must inherit `CGAL::Classification::Feature_base`
-- their constructor(s) must take as first argument the item range used by the classifier object
-- they must provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associates each input point to a scalar value
+Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from [Feature_base](@ref CGAL::Classification::Feature_base) and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associate a scalar value to each input item. 
 
 The following example shows how to define a feature that discriminates
 points that lie inside a 2D box from the others:
 
-\cgalExample{Classification/example_feature.cpp}
+\snippet Classification/example_feature.cpp Feature
 
+This feature can then be instanciated from the feature set the same way as the others:
 
-\subsection Classification_labels Labels
+\snippet Classification/example_feature.cpp Addition
 
-A label represents how an item should be classified, for example: vegetation, building, road, etc. It is defined by the values the features are expected to take for a specific label. For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
+\subsection Classification_analysis Analysis
 
-\cgal provides a class `CGAL::Classification::Label` to define such a set of feature effects, along with the associated `Handle` object: `CGAL::Classification::Label_handle`. Each label may define how a specific feature affects it:
+%Classification is based on the computation of local features. These features can take advantage of shared data structures that are precomputed and stored separately.
 
-- [FAVORING](@ref CGAL::Classification::Feature::FAVORING): the label is favored by high values of the feature
-- [NEUTRAL](@ref CGAL::Classification::Feature::NEUTRAL): the label is not affected by the feature
-- [PENALIZING](@ref CGAL::Classification::Feature::PENALIZING): the label is favored by low values of the feature
+\cgal provides the following structures:
+
+- [Point_set_neighborhood](@ref CGAL::Classification::Point_set_neighborhood) stores spatial searching structures and provides adapted queries for points
+- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues
+- [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
+
+The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual).
+
+\snippet Classification/example_classification.cpp Analysis
+
+\subsection Classification_feature_generator Point Set Feature Generator
+
+In standard classification of point sets for urban scenes, users commonly want to use all predefined features to get the best result possible. \cgal provides a class [Point_set_feature_generator](@ref CGAL::Classification::Point_set_feature_generator) that performs the following operations:
+
+- it takes care of generating all needed analysis structures
+- it generates all possible features (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.)
+- multiple scales can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}
+- if \cgal is linked with TBB, features can be computed in parallel to increase the overall computation speed
+
+Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of urban point sets simpler to handle. Users can still add their own features within their feature set.
+
+The following snippet shows how to use the feature generator:
+
+\snippet Classification/example_generation_and_training.cpp Generator
+
+\section Classification_predicate Predicate
+
+%Classification relies on a predicate: this predicate is an object that, from the set of values taken by the features at an input item, computes the probability that this input item belongs to one label or another. The concept `CGAL::ClassificationPredicate` takes the index of an input item and stores the probability associated to each label in a vector.
+
+For convenience reasons, we hereafter handle energies instead of probabilities, which should be considered as a priority measure _à la STL_: small energy values correspond to large probabilities and large energy values to small probabilities. If a predicate returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty.
+
+\cgal provides 2 models for this concept, [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate) and [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate).
+
+\subsection Classification_sowf Sum of Weighted Features
+
+This first predicate defines the following attributes:
+
+- a weight applied to each feature
+- an effect applied to each pair of feature and label
+
+For each label, the predicate computes the energy as a sum of features normalized with both their weight and the effect they have on this specific label.
+
+This predicate can be set up by hand but also embeds a training algorithm.
+
+\subsubsection Classification_sowf_weights_effects Weights and Effects
+
+Each feature is assigned a weight that measure its strength with respect to the other features.
+
+Each pair of feature and label is assigned an effect that can either be:
+
+- [FAVORING](@ref CGAL::Classification::Sum_of_weighted_features_predicate::FAVORING): the label is favored by high values of the feature
+- [NEUTRAL](@ref CGAL::Classification::Sum_of_weighted_features_predicate::NEUTRAL): the label is not affected by the feature
+- [PENALIZING](@ref CGAL::Classification::Sum_of_weighted_features_predicate::PENALIZING): the label is favored by low values of the feature
+
+For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
 
 Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). Let \f$a_j(i)\f$ be the raw value of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this feature. We define the normalized value \f$A_j(x_i) \in [0:1]\f$ of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item as follows:
 
@@ -104,22 +145,67 @@ Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$
     A_j(x_i) = & (1 - \min(\max(0,\frac{a_j(i)}{w_j}), 1)) & \mbox{if } a_j \mbox{ favors } x_i \\
     & 0.5 & \mbox{if } a_j \mbox{ is neutral for } x_i \\
     & \min(\max(0,\frac{a_j(i)}{w_j}), 1) & \mbox{if } a_j \mbox{ penalizes } x_i
-\f}
+    \f}
+
+The following code snippet shows how to define the weights and effects of features and labels:
+
+\snippet Classification/example_classification.cpp Weights
+
+\subsubsection Classification_sowf_training Training
+
+Each feature has a specific weight and each pair of feature-label has a specific effect. This means that the number of parameters to set up can quickly explode: if 6 features are used to classify between 4 labels, 30 parameters have to be set up (6 weights + 6x4 feature-label relationships).
+
+Though it is possible to set them up one by one, \cgal also provides a method [train()](@ref CGAL::Classification::Sum_of_weighted_features_predicate::train)  that requires a small set of ground truth items provided by users. More specifically, users must provide, for each label they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
+
+- for each feature, a range of weights is tested: the effect each feature have on each label is estimated. For a given weight, if a feature has the same effect on each label, it is non-relevant for classification. The range of weights such that the feature is relevant is estimated
+
+- for each feature, uniformly picked weight values are tested and their effects estimated
+
+- each inlier provided by the user is classified using this set of weights and effects
+
+- the mean intersection over union (see @ref Classification_evaluation) is used to evaluate the quality of this set of weights and effects
+
+- the same mechanism is repeated until all features' ranges have been tested. Weights are only changed one by one, the other ones kept to the previous value that gave the best score.
+
+This usually converges to a satisfying solution (see Figure \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 attributes are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new inliers into account.
+
+\cgalFigureBegin{Classification_trainer_fig,classif_training.png}
+Example of evolution of training score. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
+\cgalFigureEnd
+
+\subsection Classification_random_forest Random Forest
+
+This second predicate is [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate).
+It uses the \ref thirdpartyOpenCV library, more specifically the
+[Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+package.
+
+This predicate uses a ground truth training set to construct several
+decision trees that are then used to assign a label to each input
+item.
+
+This predicate cannot be set up by hand and requires a ground truth
+training set. The training algorithm usually requires more inliers
+than the one of the previous predicate but is faster.
+
+Note that so far, \ref thirdpartyOpenCV does not provide input/output
+functions for random trees, which means the result of the training
+cannot be saved and recovered for further classification.
+
+For more details about this method, please refer to [the official
+  documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+of OpenCV.
 
 
-The following code snippet shows how to add labels to the classification object and how to set the effects of the features on these labels. Note that these effects can also be automatically set up by training (see \ref Classification_trainer).
-
-\snippet Classification/example_classifier.cpp Labels
-
-\section Classification_classifier Classifier
+\section Classification_classifiers Classifiers
 
 %Classification is performed by minizing an energy over the input data set that may include regularization. \cgal provides 3 different methods for classification, ranging from high speed / low quality to low speed / high quality:
 
-- `CGAL::Classifier::run()` 
-- `CGAL::Classifier::run_with_local_smoothing()`
-- `CGAL::Classifier::run_with_graphcut()`
+- `CGAL::Classification::classify()` 
+- `CGAL::Classification::classify_with_local_smoothing()`
+- `CGAL::Classification::classify_with_graphcut()`
 
-On a point set of 3 millions points, the first method takes about 4 seconds, the second about 40 seconds and the third about 2 minutes.
+On a point set of 3 millions of points, the first method takes about 4 seconds, the second about 40 seconds and the third about 2 minutes.
 
 \cgalFigureBegin{Classification_image,classif.png}
 Top-Left: input point set. Top-Right: raw output classification represented by a set of colors (ground is orange, facades are blue, roofs are pink and vegetation is green). Bottom-Left: output classification using local smoothing. Bottom-Right: output classification using graphcut.
@@ -128,30 +214,35 @@ Top-Left: input point set. Top-Right: raw output classification represented by a
 
 Mathematical details are provided hereafter.
 
-\subsection Classification_regularized_no No Regularization
+\subsection Classification_classify Raw classification
 
-- `CGAL::Classifier::run()`: this is the fastest method
+- `CGAL::Classification::classify()`: this is the fastest method
 that provides acceptable but usually noisy results (see Figure
 \cgalFigureRef{Classification_image}, top-right).
 
-Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). The classification is performed by minimizing the following energy:
+Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the label of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). The classification is performed by minimizing the following energy:
 
 \f[
   E(x) = \sum_{i = 1..N_c} E_{di}(x_i)
 \f]
 
 This energy is a sum of itemwise energies and involves no regularization. Let \f$A=(A_j)_{j=1..N_a}\f$ be the set of normalized features
-(see \ref Classification_labels). The itemwise energy measures the coherence of the class \f$x_i\f$ at the \f$i^{th}\f$ item and is defined as:
+(see \ref Classification_labels). The itemwise energy measures the coherence of the label \f$x_i\f$ at the \f$i^{th}\f$ item and is defined as:
 
 \f[
   E_{di}(x_i) = \sum_{j = 1..N_a} A_j(x_i)
-\f]
+  \f]
 
+The following snippets show how to classify points based on a label
+set and a predicate. The result is stored in `label_indices`,
+following the same order as the input set and providing for each point
+the index (in the label set) of its assigned label.
 
+\snippet Classification/example_classification.cpp Classify
 
-\subsection Classification_regularized_local Local Smoothing
+\subsection Classification_classify Local Regularization
 
-- `CGAL::Classifier::run_with_local_smoothing()`: this
+- `CGAL::Classification::classify_with_local_smoothing()`: this
 method is a tradeoff between quality and efficiency (see Figure
 \cgalFigureRef{Classification_image}, bottom-left). The minimized
 energy is defined as follows:
@@ -173,10 +264,14 @@ This allows to eliminate local noisy variations of assigned
 labels. Increasing the size of the neighborhood
 increases the noise reduction at the cost of higher computation times.
 
+The following snippets show how to classify points using local
+smoothing by providing a model of `CGAL::NeighborQuery`.
 
-\subsection Classification_regularized_graphcut Global Regularization (Graph Cut)
+\snippet Classification/example_classification.cpp Smoothing
 
-- `CGAL::Classifier::run_with_graphcut()`: this method
+\subsection Classification_classify Global Regularization (Graph Cut)
+
+- `CGAL::Classification::classify_with_graphcut()`: this method
 offers the best quality but requires longer computation time (see
 Figure \cgalFigureRef{Classification_image}, bottom-right). The
 total energy that is minimized is the sum of the partial data term
@@ -200,87 +295,73 @@ piecewise constant parts and to correct large wrongly classified
 clusters. Increasing \f$\gamma\f$ produces more regular result with a
 constant computation time.
 
+To speed up computation, the input domain can be subdivided into
+smaller subsets such that several smaller graph cuts are applied
+instead of a big one. The computation of these smaller graph cuts can
+be done in parallel. Increasing the number of subsets allows for
+faster computation times but can also reduce the quality of the
+results.
 
-\section Classification_point_set_classifier Point Set Classifier
+The following snippets show how to classify points using a graph cut
+regularization providing a model of `CGAL::NeighborQuery`, a strengh
+parameter \f$\gamma\f$ and a number of subdivisions.
 
-The classification algorithm is designed to be as flexible as possible: users may classify any type of item they need and define their own features and labels. Nevertheless, \cgal provides a predefined specialization of `CGAL::Classifier` to handle common urban point sets: the class `CGAL::Point_set_classifier`. In addition to all the methods inherited from `CGAL::Classifier`, it provides additional features:
+\snippet Classification/example_classification.cpp Graph_cut
 
-- it takes care of generating all needed analysis structures
-- it generates all possible features (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.)
-- multiple scales can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}
-- input/ouput methods are provided to save and recover a specific configuration (with all features, labels and relationships between them)
-- classification can be saved as a PLY format with colors and labels.
+\section Classification_evaluation Evaluation
 
-Note that using this class in order to classify point sets is not mandatory, as `CGAL::Classifier` can handle points as well. It is mainly provided to simplify the whole process of defining data structures and features in the specific case of urban point sets. Users can still add their own data structures and features within `CGAL::Point_set_classifier` similarly to what can be done with `CGAL::Classifier`.
+The class [Evaluation](@ref CGAL::Classification::Evaluation) allows uers to evaluate the reliability of the classification with respect to a provided ground truth. The following measurements are available:
 
-The example \ref Classification_example_training shows how to generate features and save the configuration and classification.
+- [precision()](@ref CGAL::Classification::Evaluation::precision) computes, for one label, the ratio of true positives over the total number of detected positives
+- [recall()](@ref CGAL::Classification::Evaluation::recall) computes, for one label, the ratio of true positives over the total number of provided inliers of this label
+- [f1_score()](@ref CGAL::Classification::Evaluation::f1_score) is the harmonic mean of precision and recall
+- [intersection_over_union()](@ref CGAL::Classification::Evaluation::intersection_over_union) computes the ratio of true positives over the union of the detected positives and of the provided inliers
+- [accuracy()](@ref CGAL::Classification::Evaluation::accuracy) computes the ratio of all true positives over the total number of provided inliers
+- [mean_f1_score()](@ref CGAL::Classification::Evaluation::mean_f1_score)
+- [mean_intersection_over_union()](@ref CGAL::Classification::Evaluation::mean_intersection_over_union)
 
-\section Classification_trainer Trainer
+All of these values range from 0 (poor quality) to 1 (perfect quality).
 
-%Classification is based on relationships between features and labels. Each feature has a specific weight and each pair of feature-label has a specific effect. This means that the number of parameters to set up can quickly explode: if 6 features are used to classify between 4 labels, 30 parameters have to be set up (6 weights + 6x4 feature-label relationships).
+\section Classification_examples Full Examples
 
-Though it is possible to set them up one by one, \cgal also provides a trainer class `CGAL::Classification::Trainer` that requires a small set of ground truth items provided by users. More specifically, users must provide, for each label they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
-
-- for each feature, a range of weights is tested: the effect each feature have on each label is estimated. For a given weight, if a feature has the same effect on each label, it is non-relevant for classification. The range of weights such that the feature is relevant is estimated
-
-- for each feature, uniformly picked weight values are tested and their effects estimated
-
-- each inlier provided by the user is classified using this set of weights and effects
-
-- for each label, the ratio of correctly classified inliers is computed. The minimum of these ratios is used as a score for this set of weights and effects: a ratio of 0.8 means that for each label, at least 80\% of the provided inliers were correctly classified
-
-- the same mechanism is repeated until all features' ranges have been tested. Weights are only changed one by one, the other ones kept to the previous value that gave the best score.
-
-This usually converges to a satisfying solution (see Figure \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 attributes are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new inliers into account.
-
-\cgalFigureBegin{Classification_trainer_fig,classif_training.png}
-Example of evolution of training score. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
-\cgalFigureEnd
-
-Tools to evaluate the reliability of the training are provided, namely:
-
-- [precision()](@ref CGAL::Classification::Trainer::precision) computes, for one label, the ratio of true positives over the total number of detected positives
-- [recall()](@ref CGAL::Classification::Trainer::recall) computes, for one label, the ratio of true positives over the total number of provided inliers of this label
-- [f1_score()](@ref CGAL::Classification::Trainer::f1_score) is the harmonic mean of precision and recall
-- [intersection_over_union()](@ref CGAL::Classification::Trainer::intersection_over_union) computes the ratio of true positives over the union of the detected positives and of the provided inliers
-- [accuracy()](@ref CGAL::Classification::Trainer::accuracy) computes the ratio of all true positives over the total number of provided inliers
-- [mean_f1_score()](@ref CGAL::Classification::Trainer::mean_f1_score)
-- [mean_intersection_over_union()](@ref CGAL::Classification::Trainer::mean_intersection_over_union)
-
-
-Note that the [Trainer](@ref CGAL::Classification::Trainer) class only uses documented public methods of the [Classifier](@ref CGAL::Classifier), [Label](@ref CGAL::Classification::Label) and [Feature](@ref CGAL::Classification::Feature_base) classes (for example, [set_weight()](@ref CGAL::Classification::Feature_base::set_weight), [set_feature_effect()](@ref CGAL::Classification::Label::set_feature_effect) or [energy_of()](@ref CGAL::Classifier::energy_of)). Users can therefore define their own classes for training using these methods to set up weights and effects and to estimate what are the best parameters.
-
-
-
-The example \ref Classification_example_training shows how to set inliers and run the training algorithm.
-
-\section Classification_examples Examples
-
-\subsection Classification_example_general General classification
+\subsection Classification_example_general Classification
 
 The following example:
 
 - reads an input file (LIDAR point set in PLY format)
 - computes useful structures from this input
-- computes segmentation features from the input and the precomputed structures
-- defines 3 labels (vegetation, ground and roof) along with the effects of features on them
-- classifies the point set using `CGAL::Classifier`
+- computes features from the input and the precomputed structures
+- defines 3 labels (vegetation, ground and roof)
+- sets up the classification predicate [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate)
+- classifies the point set with the 3 different methods (this is for the sake of the example: each method overwrite the previous result, users should onluy call one of the methods)
 - saves the result in a colored PLY format.
 
-\cgalExample{Classification/example_classifier.cpp}
+\cgalExample{Classification/example_classification.cpp}
 
-\subsection Classification_example_training Point set classification with training
+\subsection Classification_example_feeature Defining a Custom Feature
+
+The following example shows how to define a custom feature and how to integrate it in the \cgal classification framework.
+
+\cgalExample{Classification/example_feature.cpp}
+
+\subsection Classification_example_training Feature Generation and Training
 
 The following example:
 
 - reads a point set with a training set (embedded as a PLY feature _label_)
-- uses `CGAL::Point_set_classifier` to generate features on 5 scales
-- trains the algorithm using 800 trials
+- automatically generates features on 5 scales
+- trains the predicate [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate) using 800 trials
 - runs the algorithm using the graphcut regularization
-- saves the output to PLY.
+- prints some evaluation measurements
+- saves the configuration of the predicate for further use.
 
-\cgalExample{Classification/example_point_set_classifier.cpp}
+\cgalExample{Classification/example_generation_and_training.cpp}
 
+\subsection Classification_example_random_forest Random Forest
+
+The following example shows how to use the predicate [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate) using an input training set.
+
+\cgalExample{Classification/example_random_forest.cpp}
 
 \section Classification_history History
 

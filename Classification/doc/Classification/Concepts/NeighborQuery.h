@@ -1,6 +1,9 @@
 namespace CGAL
 {
 
+namespace Classification
+{
+
 /*!
 \ingroup PkgClassificationConcepts
 \cgalConcept
@@ -31,5 +34,7 @@ public:
   OutputIterator operator() (const value_type& query, OutputIterator output) const;
 
 };
+
+} // namespace Classification
 
 } // namespace CGAL

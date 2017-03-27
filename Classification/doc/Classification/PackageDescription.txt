@@ -4,10 +4,22 @@
 \defgroup PkgClassificationConcepts Concepts
 \ingroup PkgClassification
 
+\defgroup PkgClassificationMain Main Functions
+\ingroup PkgClassification
+
+\defgroup PkgClassificationPredicates Predicates
+\ingroup PkgClassification
+
 \defgroup PkgClassificationDataStructures Data Structures
 \ingroup PkgClassification
 
-\defgroup PkgClassificationAttributes Predefined Attributes
+\defgroup PkgClassificationLabel Label
+\ingroup PkgClassification
+
+\defgroup PkgClassificationFeature Feature
+\ingroup PkgClassification
+
+\defgroup PkgClassificationFeatures Predefined Features
 \ingroup PkgClassification
 
 
@@ -35,8 +47,8 @@
 
 ## Concepts ##
 
-- `CGAL::ClassificationPredicate`
-- `CGAL::NeighborQuery`
+- `CGAL::Classification::Predicate`
+- `CGAL::Classification::NeighborQuery`
 
 ## Main Functions ##
 
@@ -44,9 +56,10 @@
 - `CGAL::Classification::classify_with_local_smoothing()`
 - `CGAL::Classification::classify_with_graphcut()`
 
-## Classification Predicate ##
+## Classification Predicates ##
 
 - `CGAL::Classification::Sum_of_weighted_features_predicate`
+- `CGAL::Classification::Random_forest_predicate`
 
 ## Data Structures ##
 
@@ -54,6 +67,7 @@
 - `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Local_eigen_analysis<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
 - `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Evaluation`
 
 
 ## Label ##
@@ -64,7 +78,7 @@
 
 ## Feature ##
 
-- `CGAL::Classification::Feature`
+- `CGAL::Classification::Feature_base`
 - `CGAL::Classification::Feature_handle`
 - `CGAL::Classification::Feature_set`
 

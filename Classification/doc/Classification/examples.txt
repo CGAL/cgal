@@ -2,4 +2,5 @@
 \example Classification/example_classification.cpp
 \example Classification/example_feature.cpp
 \example Classification/example_generation_and_training.cpp
+\example Classification/example_random_forest.cpp
 */
