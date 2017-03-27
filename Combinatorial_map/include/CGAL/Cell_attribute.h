@@ -42,7 +42,7 @@ namespace CGAL {
 
   namespace internal {
 
-  template<class>
+  template<class, class>
   struct Init_id;
 
   } // end namespace internal
@@ -77,15 +77,41 @@ namespace CGAL {
     Info minfo;
   };
 
+  /// Id associated with a cell attribute
+  template <class WithId>
+  class Add_id
+  {
+  public:
+    // Required to have "internal" property maps.
+    std::size_t& id()
+    { return m_id; }
+    const std::size_t& id() const
+    { return m_id; }
+
+  protected:
+    void set_id(std::size_t id)
+    { m_id=id; }
+    
+  protected:    
+    /// id of the cell
+    std::size_t m_id;
+  };
+
+  /// If the tag WithId is false, we do not add id to cells.
+  template <>
+  class Add_id<Tag_false>
+  {};
+  
   /// Cell_attribute_without_info
   template <class Refs, class Tag=Tag_true, class OnMerge=Null_functor,
-            class OnSplit=Null_functor>
+            class OnSplit=Null_functor, class WithID=Tag_false>
   class Cell_attribute_without_info;
 
   // Cell_attribute_without_info without dart support.
-  template <class Refs, class OnMerge, class OnSplit>
+  template <class Refs, class OnMerge, class OnSplit, class WithID>
   class Cell_attribute_without_info<Refs, Tag_false,
-                                    OnMerge, OnSplit>
+                                    OnMerge, OnSplit, WithID>:
+      public Add_id<WithID>
   {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
@@ -105,7 +131,7 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
-    template<class>
+    template<class, class>
     friend struct internal::Init_id;
 
   public:
@@ -117,6 +143,7 @@ namespace CGAL {
 
     typedef OnMerge On_merge;
     typedef OnSplit On_split;
+    typedef WithID Has_id;
 
     /// operator =
     Cell_attribute_without_info&
@@ -146,14 +173,6 @@ namespace CGAL {
     bool operator!=(const Cell_attribute_without_info& other) const
     { return !operator==(other); }
 
-    // Required to have "internal" property maps.
-    // TODO better (use id only when we want to use bgl ?)
-    //             (or have an id directly in compact container ?)
-    std::size_t& id()
-    { return m_id; }
-    const std::size_t& id() const
-    { return m_id; }
-
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0)
@@ -176,9 +195,6 @@ namespace CGAL {
       mrefcounting-=4; // 4 because the two lowest bits are reserved for cc
     }
 
-    void set_id(std::size_t id)
-    { m_id=id; }
-
   public:
     /// Get the reference counting.
     std::size_t get_nb_refs() const
@@ -196,9 +212,6 @@ namespace CGAL {
       std::size_t mrefcounting;
       void        *vp;
     };
-
-    /// id of the dart // TODO better
-    std::size_t m_id;
   };
 
   /** Definition of cell attribute.
@@ -206,9 +219,9 @@ namespace CGAL {
    * link to a dart of the cell (when T is true).
    * The refs class must provide the type of Combinatorial_map used.
    */
-  template <class Refs, class OnMerge, class OnSplit>
+  template <class Refs, class OnMerge, class OnSplit, class WithID>
   class Cell_attribute_without_info<Refs, Tag_true,
-                                    OnMerge, OnSplit>
+                                    OnMerge, OnSplit, WithID>: public Add_id<WithID>
   {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
@@ -240,6 +253,7 @@ namespace CGAL {
 
     typedef OnMerge On_merge;
     typedef OnSplit On_split;
+    typedef WithID Has_id;
 
     /// operator =
     Cell_attribute_without_info&
@@ -270,14 +284,6 @@ namespace CGAL {
     bool operator!=(const Cell_attribute_without_info& other) const
     { return !operator==(other); }
 
-    // Required to have "internal" property maps.
-    // TODO better (use id only when we want to use bgl ?)
-    //             (or have an id directly in compact container ?)
-    std::size_t& id()
-    { return m_id; }
-    const std::size_t& id() const
-    { return m_id; }
-
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info() : mdart(Refs::null_handle),
@@ -302,9 +308,6 @@ namespace CGAL {
       --mrefcounting;
     }
 
-    void set_id(std::size_t id)
-    { m_id=id; }
-
   public:
     /// Get the reference counting.
     std::size_t get_nb_refs() const
@@ -321,23 +324,20 @@ namespace CGAL {
 
     /// Reference counting: the number of darts linked to this cell.
     std::size_t mrefcounting;
-
-    /// id of the dart // TODO better
-    std::size_t m_id;
   };
 
   /// Cell associated with an attribute, with or without info depending
   /// if Info==void.
   template <class Refs, class Info_=void, class Tag_=Tag_true,
             class OnMerge=Null_functor,
-            class OnSplit=Null_functor>
+            class OnSplit=Null_functor,
+            class WithID=Tag_false>
   class Cell_attribute;
 
   /// Specialization when Info==void.
-  template <class Refs, class Tag_,
-            class OnMerge, class OnSplit>
-  class Cell_attribute<Refs, void, Tag_, OnMerge, OnSplit> :
-    public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit>
+  template <class Refs, class Tag_, class OnMerge, class OnSplit, class WithID>
+  class Cell_attribute<Refs, void, Tag_, OnMerge, OnSplit, WithID> :
+    public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>
   {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
@@ -374,9 +374,9 @@ namespace CGAL {
 
   /// Specialization when Info!=void.
   template <class Refs, class Info_, class Tag_,
-            class OnMerge, class OnSplit>
+            class OnMerge, class OnSplit, class WithID>
   class Cell_attribute :
-    public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit>,
+    public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>,
     public Info_for_cell_attribute<Info_>
   {
     template<unsigned int, class, class>
@@ -398,7 +398,7 @@ namespace CGAL {
     friend class Concurrent_compact_container;
 
   public:
-    typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit> Self;
+    typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, WithID> Self;
 
     typedef Tag_                             Supports_cell_dart;
     typedef typename Refs::Dart_handle       Dart_handle;
@@ -422,6 +422,47 @@ namespace CGAL {
     /// Contructor with an info in parameter.
     Cell_attribute(const Info_& ainfo) :
       Info_for_cell_attribute<Info_>(ainfo)
+    {}
+  };
+
+  // A cell attribute with an id, when Info_!=void
+  template <class Refs, class Info_=void, class Tag_=Tag_true,
+            class OnMerge=Null_functor,
+            class OnSplit=Null_functor>
+  class Cell_attribute_with_id: public Cell_attribute
+      <Refs, Info_, Tag_, OnMerge, OnSplit, Tag_true>
+  {
+    template <class, class, class, class>
+    friend class Compact_container;
+
+    template <class, class>
+    friend class Concurrent_compact_container;
+
+  protected:
+    /// Default contructor.
+    Cell_attribute_with_id()
+    {}
+
+    /// Contructor with an info in parameter.
+    Cell_attribute_with_id(const Info_& ainfo) :
+      Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, Tag_true>(ainfo)
+    {}
+  };
+
+  /// Specialization when Info==void.
+  template <class Refs, class Tag_, class OnMerge, class OnSplit>
+  class Cell_attribute_with_id<Refs, void, Tag_, OnMerge, OnSplit>:
+      public Cell_attribute<Refs, void, Tag_, OnMerge, OnSplit, Tag_true>
+  {
+    template <class, class, class, class>
+    friend class Compact_container;
+
+    template <class, class>
+    friend class Concurrent_compact_container;
+
+  protected:
+    /// Default contructor.
+    Cell_attribute_with_id()
     {}
   };
 

@@ -19,9 +19,9 @@ struct Myitem
   template<class Refs>
   struct Dart_wrapper
   {
-    typedef CGAL::Dart<2, Refs > Dart;
-    typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attribute;
-    typedef CGAL::Cell_attribute< Refs > Face_attribute;
+    typedef CGAL::Tag_true Darts_with_id;
+    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
+    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
     typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
   };
 };

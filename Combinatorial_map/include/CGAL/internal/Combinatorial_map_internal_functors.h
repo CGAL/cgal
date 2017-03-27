@@ -1037,13 +1037,20 @@ struct Beta_functor_static<CMap, Dart_handle, B, Betas...>
 };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 // ****************************************************************************
-template<typename Container>
+template<typename Container, class WitdId=
+         typename Container::value_type::Has_id>
 struct Init_id
 {
   static void run(Container& c, typename Container::iterator e)
   {
     e->set_id(c.index(e));
   }
+};
+template<typename Container>
+struct Init_id<Container, Tag_false>
+{
+  static void run(Container&, typename Container::iterator)
+  {}
 };
 // ****************************************************************************
 } // namespace internal
