@@ -120,12 +120,9 @@ public:
     friend class std::vector<Index>;
     std::size_t value;
     
-    // Only Point_set_3 and other friend classes are allowed to
-    // instantiate an Index with a specific value
-    Index (const std::size_t& value) : value (value) { }
-    /// \endcond
   public:
     Index (const Index& index) : value (index) { }
+    Index (const std::size_t& value) : value (value) { }
     Index () : value ((std::size_t)(-1)) { }
     Index operator= (const Index& index) { value = index.value; return *this; }
     /// \cond SKIP_IN_MANUAL
