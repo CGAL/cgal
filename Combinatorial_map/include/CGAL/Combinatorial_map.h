@@ -713,6 +713,8 @@ namespace CGAL {
 
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
+
+      internal::Init_id<Dart_container>::run(mdarts, adart);
     }
 
   public:
