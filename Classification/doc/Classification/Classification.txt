@@ -240,7 +240,7 @@ the index (in the label set) of its assigned label.
 
 \snippet Classification/example_classification.cpp Classify
 
-\subsection Classification_classify Local Regularization
+\subsection Classification_smoothing Local Regularization
 
 - `CGAL::Classification::classify_with_local_smoothing()`: this
 method is a tradeoff between quality and efficiency (see Figure
@@ -269,7 +269,7 @@ smoothing by providing a model of `CGAL::NeighborQuery`.
 
 \snippet Classification/example_classification.cpp Smoothing
 
-\subsection Classification_classify Global Regularization (Graph Cut)
+\subsection Classification_graphcut Global Regularization (Graph Cut)
 
 - `CGAL::Classification::classify_with_graphcut()`: this method
 offers the best quality but requires longer computation time (see
