@@ -27,7 +27,7 @@ namespace CGAL {
 namespace Classification {
 
 /*!
-\ingroup PkgClassification
+\ingroup PkgClassificationLabel
 
 \brief %Classification label (for example: vegetation, ground, etc.)
 defined as a set of relationships with classification features.
@@ -51,7 +51,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
 /*!
-  \ingroup PkgClassification
+  \ingroup PkgClassificationLabel
 
   \brief %Handle to a classification `Label`.
 

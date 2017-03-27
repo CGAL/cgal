@@ -36,6 +36,8 @@ namespace CGAL {
 
 namespace Classification {
 
+
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
   template <typename ClassificationPredicate>
@@ -275,9 +277,33 @@ namespace internal {
   };
 
 } // namespace internal
-
+  
+/// \endcond
   
 
+  /*! 
+    \ingroup PkgClassificationMain
+
+    \brief Runs the classification algorithm without any regularization.
+
+    There is no relationship between items, the classification energy
+    is only minimized itemwise. This method is quick but produce
+    suboptimal results.
+
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    \tparam ItemRange model of `ConstRange`. Its iterator type is
+    `RandomAccessIterator`.  \tparam ClassificationPredicate model of
+    `Predicate`.
+
+    \param input input range.
+    \param labels set of input labels.
+    \param predicate input classification predicate.
+    \param output where to store the result. It is stored as a list,
+    ordered like the input range, containing for each point the index
+    (in the `Label_set`) of the assigned label.
+
+  */
   template <typename ConcurrencyTag,
             typename ItemRange,
             typename ClassificationPredicate>
@@ -307,6 +333,32 @@ namespace internal {
       }
   }
 
+  /*! 
+    \ingroup PkgClassificationMain
+
+    \brief Runs the classification algorithm with a local smoothing.
+
+    The computed classification energy is smoothed on a user defined
+    local neighborhood of items. This method is a compromise between
+    efficiency and reliability.
+
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    \tparam ItemRange model of `ConstRange`. Its iterator type is
+    `RandomAccessIterator`.
+    \tparam NeighborQuery model of `NeighborQuery`.
+    \tparam ClassificationPredicate model of `Predicate`.
+
+    \param input input range.
+    \param item_map property map to access the input items.
+    \param labels set of input labels.
+    \param predicate input classification predicate.
+    \param neighbor_query used to access neighborhoods of items.
+    \param output where to store the result. It is stored as a list,
+    ordered like the input range, containing for each point the index
+    (in the `Label_set`) of the assigned label.
+
+  */
   template <typename ConcurrencyTag,
             typename ItemRange,
             typename ItemMap,
@@ -347,15 +399,53 @@ namespace internal {
       }
   }
 
+  /*! 
+    \ingroup PkgClassificationMain
+
+    \brief Runs the classification algorithm with a global
+    regularization based on a graphcut.
+
+    The computed classification energy is globally regularized through
+    an alpha-expansion algorithm. This method is slow but provides
+    the user with good quality results.
+
+    To speed up computation, the input domain can be subdivided into
+    smaller subsets such that several smaller graph cuts are applied
+    instead of a big one. The computation of these smaller graph cuts can
+    be done in parallel. Increasing the number of subsets allows for
+    faster computation times but can also reduce the quality of the
+    results.
+
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    \tparam ItemRange model of `ConstRange`. Its iterator type is
+    `RandomAccessIterator`.
+    \tparam NeighborQuery model of `NeighborQuery`.
+    \tparam ClassificationPredicate model of `Predicate`.
+
+    \param input input range.
+    \param item_map property map to access the input items.
+    \param labels set of input labels.
+    \param predicate input classification predicate.
+    \param neighbor_query used to access neighborhoods of items.
+    \param weight weight of the regularization with respect to the
+    classification energy. Higher values produce more regularized
+    output but may result in a loss of details.
+    \param min_number_of_subdivisions minimum number of subdivisions
+    (for parallel processing to be efficient, this should be at least
+    the number of cores of the processor).
+    \param output where to store the result. It is stored as a list,
+    ordered like the input range, containing for each point the index
+    (in the `Label_set`) of the assigned label.
+
+  */
   template <typename ConcurrencyTag,
             typename ItemRange,
             typename ItemMap,
-            typename ItemWithBboxMap,
             typename NeighborQuery,
             typename ClassificationPredicate>
   void classify_with_graphcut (const ItemRange& input,
                                const ItemMap item_map,
-                               const ItemWithBboxMap bbox_map,
                                const Label_set& labels,
                                const ClassificationPredicate& predicate,
                                const NeighborQuery& neighbor_query,
@@ -364,8 +454,8 @@ namespace internal {
                                std::vector<std::size_t>& output)
   {
     CGAL::Bbox_3 bbox = CGAL::bbox_3
-      (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(bbox_map)),
-       boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(bbox_map)));
+      (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(item_map)),
+       boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(item_map)));
 
     float Dx = bbox.xmax() - bbox.xmin();
     float Dy = bbox.ymax() - bbox.ymin();
@@ -398,7 +488,7 @@ namespace internal {
     
     for (std::size_t s = 0; s < input.size(); ++ s)
       {
-        CGAL::Bbox_3 b = get(bbox_map, *(input.begin() + s)).bbox();
+        CGAL::Bbox_3 b = get(item_map, *(input.begin() + s)).bbox();
         
         for (std::size_t i = 0; i < bboxes.size(); ++ i)
           if (CGAL::do_overlap (b, bboxes[i]))

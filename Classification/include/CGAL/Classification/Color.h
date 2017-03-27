@@ -28,14 +28,14 @@ namespace Classification {
   /*!
     \ingroup PkgClassificationColor
 
-    Color described in red/green/blue space. Each component is stored
+    %Color described in red/green/blue space. Each component is stored
     as an unsigned char ranging from 0 (no color) to 255 (
    */  
 typedef CGAL::cpp11::array<unsigned char, 3> RGB_Color;
   /*!
     \ingroup PkgClassificationColor
 
-    Color described in hue/saturation/value space. Each component is stored
+    %Color described in hue/saturation/value space. Each component is stored
     as a double:
 
     - `hue` ranges from 0° to 360° (corresponding to the color tint)

@@ -29,7 +29,7 @@ namespace CGAL {
 namespace Classification {
   
 /*!
-  \ingroup PkgClassification
+  \ingroup PkgClassificationFeature
 
   \brief Abstract class describing a classification feature that
   associates a scalar value to each item of the classification input.
@@ -77,7 +77,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
 /*!
-  \ingroup PkgClassification
+  \ingroup PkgClassificationFeature
 
   \brief %Handle to an `Feature_base`.
 

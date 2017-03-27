@@ -56,15 +56,14 @@ namespace CGAL {
 namespace Classification {
 
 /*!
-  \ingroup PkgClassification
+  \ingroup PkgClassificationDataStructures
 
-  \brief Classifies a point set based on a set of features and a set
-  of labels.
+  \brief Generates a set of generic features for point set
+  classification.
 
-  This class specializes `Classifier` to point sets. It takes care of
-  generating necessary data structures and automatically generate a
-  set of generic features. Features can be generated at multiple
-  scales to increase the reliability of the classification.
+  This class takes care of computing all necessary data structures and
+  of generating a set of generic features at multiple scales to
+  increase the reliability of the classification.
 
   \tparam Geom_traits model of \cgal Kernel.
   \tparam PointRange model of `ConstRange`. Its iterator type is
@@ -243,18 +242,8 @@ private:
 public:
 
   
-  /// \name Constructor
-  /// @{
-  
-  /*! 
-    \brief Initializes a classification object.
-
-    \param input input range.
-
-    \param point_map property map to access the input points.
-  */
   /*!
-    \brief Generate all possible features from an input range.
+    \brief Generates all possible features from an input range.
 
     The size of the smallest scale is automatically estimated and the
     data structures needed (`Neighborhood`, `Planimetric_grid` and
@@ -311,6 +300,9 @@ public:
     \tparam EchoMap model of `ReadablePropertyMap` whose key type is
     the value type of the iterator of `PointRange` and value type is
     `std::size_t`.
+    \param features the feature set where the features are instantiated.
+    \param input input range.
+    \param point_map property map to access the input points.
     \param nb_scales number of scales to compute.
     \param normal_map property map to access the normal vectors of the input points (if any).
     \param color_map property map to access the colors of the input points (if any).
@@ -320,9 +312,9 @@ public:
             typename ColorMap = Default,
             typename EchoMap = Default>
   Point_set_feature_generator(Feature_set& features,
-                              std::size_t nb_scales,
                               const PointRange& input,
                               PointMap point_map,
+                              std::size_t nb_scales,
                               VectorMap normal_map = VectorMap(),
                               ColorMap color_map = ColorMap(),
                               EchoMap echo_map = EchoMap())
@@ -345,7 +337,6 @@ public:
                             get_parameter<Emap>(echo_map));
   }
 
-  /// @}
   
   /// \cond SKIP_IN_MANUAL
   virtual ~Point_set_feature_generator()
@@ -362,32 +353,21 @@ public:
   }
   /// \endcond
 
-  /// \name Data Structures and Parameters
-  /// @{
-  
+
   /*!
     \brief Returns the bounding box of the input point set.
   */
   const Iso_cuboid_3& bbox() const { return m_bbox; }
   /*!
     \brief Returns the neighborhood structure at scale `scale`.
-
-    \note `generate_features()` must have been called before calling
-    this method.
   */
   const Neighborhood& neighborhood(std::size_t scale = 0) const { return (*m_scales[scale]->neighborhood); }
   /*!
     \brief Returns the planimetric grid structure at scale `scale`.
-
-    \note `generate_features()` must have been called before calling
-    this method.
   */
   const Planimetric_grid& grid(std::size_t scale = 0) const { return *(m_scales[scale]->grid); }
   /*!
     \brief Returns the local eigen analysis structure at scale `scale`.
-
-    \note `generate_features()` must have been called before calling
-    this method.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
   /*!
@@ -399,9 +379,6 @@ public:
     \brief Returns the grid resolution at scale `scale`. This
     resolution is the length and width of a cell of the
     `Planimetric_grid` defined at this scale.
-
-    \note `generate_features()` must have been called before calling
-    this method.
   */
   float grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
   /*!
@@ -410,18 +387,12 @@ public:
     `scale`. This radius is the smallest radius that is relevant from
     a geometric point of view at this scale (that is to say that
     encloses a few cells of `Planimetric_grid`).
-
-    \note `generate_features()` must have been called before calling
-    this method.
   */
   float radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
   /*!
     \brief Returns the radius used for digital terrain modeling at
     scale `scale`. This radius represents the minimum size of a
     building at this scale.
-
-    \note `generate_features()` must have been called before calling
-    this method.
   */
   float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 

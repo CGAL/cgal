@@ -30,6 +30,7 @@ namespace Classification {
 
 namespace Feature {
 
+/// \cond SKIP_IN_MANUAL
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Eigen_feature : public Feature_base
@@ -78,6 +79,7 @@ public:
   }
 
 };
+/// \endcond
   
   /*!
     \ingroup PkgClassificationFeatures
@@ -100,7 +102,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Linearity : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Linearity
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -152,7 +159,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Planarity : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Planarity
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -205,7 +217,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Sphericity : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Sphericity
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -257,7 +274,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Omnivariance : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Omnivariance
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -306,7 +328,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Anisotropy : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Anisotropy
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -358,7 +385,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Eigentropy : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Eigentropy
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                     PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -415,7 +447,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Sum_eigenvalues : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Sum_eigenvalues
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -464,7 +501,12 @@ public:
   */
 template <typename Geom_traits, typename PointRange, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
-class Surface_variation : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+class Surface_variation
+#ifdef DOXYGEN_RUNNING
+  : public Feature_base
+#else
+  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+#endif
 {
   typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
                                                PointMap, DiagonalizeTraits> Local_eigen_analysis;

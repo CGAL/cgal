@@ -32,6 +32,13 @@ namespace CGAL {
 
 namespace Classification {
   
+/*!
+\ingroup PkgClassificationFeature
+
+\brief Set of features (see `Feature_based`) used as input by classification
+algorithms.
+
+*/
 class Feature_set
 {
   typedef std::vector<Feature_handle> Base;
@@ -49,23 +56,20 @@ class Feature_set
 public:
 
   Feature_set() { }
+  
+  /// \cond SKIP_IN_MANUAL
   virtual ~Feature_set() { }
+  /// \endcond
 
   /*!
     \brief Adds a feature.
 
     \tparam Feature type of the feature, inherited from
-    `Classification::Feature_base`.
+    `Feature_base`.
 
-    \tparam T types of the parameters of the feature's constructor
-    (with the exception of the first parameter that is always of type
-    `ItemRange&` and that is automatically passed by the classifier to
-    the feature's constructor).
+    \tparam T types of the parameters of the feature's constructor.
 
-    \param t parameters of the feature's constructor (with the
-    exception of the first parameter that is always the input item
-    range and that is automatically passed by the classifier to the
-    feature's constructor).
+    \param t parameters of the feature's constructor.
 
     \return a handle to the newly added feature.
    */

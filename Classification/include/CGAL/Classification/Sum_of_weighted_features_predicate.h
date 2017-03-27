@@ -56,6 +56,14 @@ namespace CGAL {
 
 namespace Classification {
 
+/*!
+  \ingroup PkgClassificationPredicates
+
+  \brief %Classification predicate based on the sum of weighted
+  features with user-defined effects on labels.
+
+  \cgalModels `CGAL::Classification::Predicate`
+*/
 class Sum_of_weighted_features_predicate
 {
 public:
@@ -202,6 +210,19 @@ private:
   mutable std::map<Feature_handle, std::size_t> m_map_features;
 
 public:
+
+  /// \name Constructor
+  /// @{
+  
+/*!
+
+  \brief Instantiate the predicate using the sets of `labels` and `features`.
+
+  \note If the label set of the feature set are modified after
+  instantiating this object (addition of removal of a label and/or of
+  a feature), another predicate object should be instantiated as the
+  internal data structures of this one are invalidated.
+*/
   Sum_of_weighted_features_predicate (Label_set& labels,
                                       Feature_set& features)
     : m_labels (labels), m_features (features),
@@ -216,8 +237,13 @@ public:
       m_map_features[features[i]] = i;
   }
 
+  /// @}
+
+  /// \name Weights and Effects
+  /// @{
+
   /*!
-    \brief Sets the weight of the feature (`weight` must be positive).
+    \brief Sets the weight of `feature` (`weight` must be positive).
   */
   void set_weight (Feature_handle feature, float weight)
   {
@@ -231,7 +257,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the weight of the feature.
+    \brief Returns the weight of `feature`.
   */
   float weight (Feature_handle feature) const
   {
@@ -273,7 +299,10 @@ public:
     return m_effect_table[label][feature];
   }
   /// \endcond
-  
+
+  /// @}
+
+  /// \cond SKIP_IN_MANUAL
   void probabilities (std::size_t item_index,
                       std::vector<float>& out) const
   {
@@ -286,183 +315,35 @@ public:
             out[l] += value (l, f, item_index);
       }
   }
+  /// \endcond
 
-
-  /*!
-    \brief Saves the current configuration in the stream `output`.
-
-    This allows to easily save and recover a specific classification
-    configuration, that is to say:
-
-    - The size of the smallest scale
-    - The features and their respective weights
-    - The labels and the effects of the features on them
-
-    The output file is written in an XML format that is readable by
-    the `load_configuration()` method.
-  */
-  void save_configuration (std::ostream& output)
-  {
-    boost::property_tree::ptree tree;
-
-    for (std::size_t i = 0; i < m_features.size(); ++ i)
-      {
-        if (weight(m_features[i]) == 0)
-          continue;
-        boost::property_tree::ptree ptr;
-        
-        ptr.put("name", m_features[i]->name());
-        ptr.put("weight", weight(m_features[i]));
-        tree.add_child("classification.features.feature", ptr);
-      }
-
-
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      {
-        boost::property_tree::ptree ptr;
-        ptr.put("name", m_labels[i]->name());
-        for (std::size_t j = 0; j < m_features.size(); ++ j)
-          {
-            if (weight(j) == 0)
-              continue;
-            boost::property_tree::ptree ptr2;
-            ptr2.put("name", m_features[j]->name());
-            Effect e = effect(i, j);
-            if (e == PENALIZING)
-              ptr2.put("effect", "penalized");
-            else if (e == NEUTRAL)
-              ptr2.put("effect", "neutral");
-            else if (e == FAVORING)
-              ptr2.put("effect", "favored");
-            ptr.add_child("feature", ptr2);
-          }
-        tree.add_child("classification.labels.label", ptr);
-      }
-
-    // Write property tree to XML file
-    boost::property_tree::xml_writer_settings<std::string> settings(' ', 3);
-    boost::property_tree::write_xml(output, tree, settings);
-  }
-  
-  /*!
-    \brief Loads a configuration from the stream `input`.
-
-    All data structures, features and labels specified in the input
-    stream `input` are instantiated if possible (in particular,
-    property maps needed should be provided), similarly to what is
-    done in `generate_features()`.
-
-    The input file should be in the XML format written by the
-    `save_configuration()` method.
-
-    \tparam VectorMap model of `ReadablePropertyMap` whose key type is
-    the value type of the iterator of `PointRange` and value type is
-    `Geom_traits::Vector_3`.
-    \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
-    the value type of the iterator of `PointRange` and value type is
-    `CGAL::Classification::RGB_Color`.
-    \tparam EchoMap model of `ReadablePropertyMap` whose key type is
-    the value type of the iterator of `PointRange` and value type is
-    `std::size_t`.
-    \param input input stream.
-    \param normal_map property map to access the normal vectors of the input points (if any).
-    \param color_map property map to access the colors of the input points (if any).
-    \param echo_map property map to access the echo values of the input points (if any).
-  */
-  bool load_configuration (std::istream& input, bool verbose = false)
-  {
-    bool out = true;
-    std::map<std::string, std::size_t> map_n2l;
-    std::map<std::string, std::size_t> map_n2f;
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      map_n2l.insert (std::make_pair (m_labels[i]->name(), i));
-    for (std::size_t i = 0; i < m_features.size(); ++ i)
-      map_n2f.insert (std::make_pair (m_features[i]->name(), i));
-
-    boost::property_tree::ptree tree;
-    boost::property_tree::read_xml(input, tree);
-
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
-      {
-        std::string name = v.second.get<std::string>("name");
-        typename std::map<std::string, std::size_t>::iterator
-          found = map_n2f.find (name);
-        if (found != map_n2f.end())
-          m_weights[found->second] = v.second.get<float>("weight");
-        else
-          {
-            if (verbose)
-              std::cerr << "Warning: feature \"" << name << "\" in configuration file not found" << std::endl;
-            out = false;
-          }
-      }
-
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
-      {
-        std::string label_name = v.second.get<std::string>("name");
-        typename std::map<std::string, std::size_t>::iterator
-          found = map_n2l.find (label_name);
-        std::size_t l = 0;
-        if (found != map_n2l.end())
-          l = found->second;
-        else
-          {
-            if (verbose)
-              std::cerr << "Warning: label \"" << label_name << "\" in configuration file not found" << std::endl;
-            out = false;
-            continue;
-          }
-        
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
-          {
-            if (v2.first == "name")
-              continue;
-            
-            std::string feature_name = v2.second.get<std::string>("name");
-            
-            typename std::map<std::string, std::size_t>::iterator
-              found2 = map_n2f.find (feature_name);
-            std::size_t f = 0;
-            if (found2 != map_n2f.end())
-              f = found2->second;
-            else if (verbose)
-              {
-                if (verbose)
-                  std::cerr << "Warning: feature \"" << feature_name << "\" in configuration file not found" << std::endl;
-                out = false;
-                continue;
-              }
-            std::string e = v2.second.get<std::string>("effect");
-            if (e == "penalized")
-              set_effect (l, f, PENALIZING);
-            else if (e == "neutral")
-              set_effect (l, f, NEUTRAL);
-            else
-              set_effect (l, f, FAVORING);
-          }
-      }
-    return out;
-  }
   /// \name Training
   /// @{
 
   /*!
     \brief Runs the training algorithm.
 
-    All the `Classification::Label` and `Classification::Feature`
-    necessary for classification should have been added before running
-    this function. After training, the user can call `run()`,
-    `run_with_local_smoothing()` or `run_with_graphcut()` to compute
-    the classification using the estimated parameters.
+    From the set of provided ground truth, this algorithm estimates
+    the sets of weights and effects that produce the most accurate
+    result with respect to this ground truth.
+
+    \note Each label should be assigned at least one ground truth
+    item.
+
+    \param ground_truth vector of label indices. It should contain for
+    each input item, in the same order as the input set, the index of
+    the corresponding label in the `Label_set` provided in the
+    constructor. Input items that do not have a ground truth
+    information should be given the value `std::size_t(-1)`.
 
     \param nb_tests number of tests to perform. Higher values may
     provide the user with better results at the cost of a higher
     computation time. Using a value of at least 10 times the number of
     features is advised.
 
-    \return minimum ratio (over all labels) of provided
-    ground truth items correctly classified using the best
-    configuration found.
+    \return mean intersection-over-union over each label between the
+    provided ground truth and the best classification found by the
+    training set.
   */
   template <typename ConcurrencyTag>  
   float train (const std::vector<std::size_t>& ground_truth,
@@ -678,6 +559,7 @@ public:
 
   /// @}
 
+  /// \cond SKIP_IN_MANUAL
   template <typename ConcurrencyTag>  
   float train_random (const std::vector<std::size_t>& ground_truth,
                       std::size_t nb_tests = 300)
@@ -865,7 +747,166 @@ public:
 
     return best_score;
   }
+  /// \endcond
 
+  /// \name Input/Output
+  /// @{
+  
+  /*!
+    \brief Saves the current configuration in the stream `output`.
+
+    This allows to easily save and recover a specific classification
+    configuration, that is to say:
+
+    - The weight of each feature
+    - The effects of each feature on each label
+
+    The output file is written in an XML format that is readable by
+    the `load_configuration()` method.
+  */
+  void save_configuration (std::ostream& output)
+  {
+    boost::property_tree::ptree tree;
+
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
+      {
+        if (weight(m_features[i]) == 0)
+          continue;
+        boost::property_tree::ptree ptr;
+        
+        ptr.put("name", m_features[i]->name());
+        ptr.put("weight", weight(m_features[i]));
+        tree.add_child("classification.features.feature", ptr);
+      }
+
+
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      {
+        boost::property_tree::ptree ptr;
+        ptr.put("name", m_labels[i]->name());
+        for (std::size_t j = 0; j < m_features.size(); ++ j)
+          {
+            if (weight(j) == 0)
+              continue;
+            boost::property_tree::ptree ptr2;
+            ptr2.put("name", m_features[j]->name());
+            Effect e = effect(i, j);
+            if (e == PENALIZING)
+              ptr2.put("effect", "penalized");
+            else if (e == NEUTRAL)
+              ptr2.put("effect", "neutral");
+            else if (e == FAVORING)
+              ptr2.put("effect", "favored");
+            ptr.add_child("feature", ptr2);
+          }
+        tree.add_child("classification.labels.label", ptr);
+      }
+
+    // Write property tree to XML file
+    boost::property_tree::xml_writer_settings<std::string> settings(' ', 3);
+    boost::property_tree::write_xml(output, tree, settings);
+  }
+  
+  /*!
+    \brief Loads a configuration from the stream `input`.
+
+    The input file should be in the XML format written by the
+    `save_configuration()` method. Labels and features are described
+    in the XML file by their name and the corresponding `Label` and
+    `Feature_base` object should therefore be given the same names as
+    the ones they had when saving the configuration.
+
+    \note If a feature (or label) found in the input file is not found
+    in the `Feature_set` (`Label_set`) provided by the user in the
+    constructor, and if `verbose` is set up to `true`, a warning is
+    displayed.
+
+    \note If a feature (or label) provided by the user in the
+    constructor is not described in the input file, the corresponding
+    weights and effects are kept to their default values (1 for the
+    weight and `NEUTRAL` for the effect).
+
+    \param input input stream.
+    \param verbose displays warning if set to `true`. The method is
+    silent otherwise.
+  */
+  bool load_configuration (std::istream& input, bool verbose = false)
+  {
+    bool out = true;
+    std::map<std::string, std::size_t> map_n2l;
+    std::map<std::string, std::size_t> map_n2f;
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      map_n2l.insert (std::make_pair (m_labels[i]->name(), i));
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
+      map_n2f.insert (std::make_pair (m_features[i]->name(), i));
+
+    boost::property_tree::ptree tree;
+    boost::property_tree::read_xml(input, tree);
+
+    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
+      {
+        std::string name = v.second.get<std::string>("name");
+        typename std::map<std::string, std::size_t>::iterator
+          found = map_n2f.find (name);
+        if (found != map_n2f.end())
+          m_weights[found->second] = v.second.get<float>("weight");
+        else
+          {
+            if (verbose)
+              std::cerr << "Warning: feature \"" << name << "\" in configuration file not found" << std::endl;
+            out = false;
+          }
+      }
+
+    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
+      {
+        std::string label_name = v.second.get<std::string>("name");
+        typename std::map<std::string, std::size_t>::iterator
+          found = map_n2l.find (label_name);
+        std::size_t l = 0;
+        if (found != map_n2l.end())
+          l = found->second;
+        else
+          {
+            if (verbose)
+              std::cerr << "Warning: label \"" << label_name << "\" in configuration file not found" << std::endl;
+            out = false;
+            continue;
+          }
+        
+        BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
+          {
+            if (v2.first == "name")
+              continue;
+            
+            std::string feature_name = v2.second.get<std::string>("name");
+            
+            typename std::map<std::string, std::size_t>::iterator
+              found2 = map_n2f.find (feature_name);
+            std::size_t f = 0;
+            if (found2 != map_n2f.end())
+              f = found2->second;
+            else if (verbose)
+              {
+                if (verbose)
+                  std::cerr << "Warning: feature \"" << feature_name << "\" in configuration file not found" << std::endl;
+                out = false;
+                continue;
+              }
+            std::string e = v2.second.get<std::string>("effect");
+            if (e == "penalized")
+              set_effect (l, f, PENALIZING);
+            else if (e == "neutral")
+              set_effect (l, f, NEUTRAL);
+            else
+              set_effect (l, f, FAVORING);
+          }
+      }
+    return out;
+  }
+
+  /// @}
+  
 private:
 
   float value (std::size_t label, std::size_t feature, std::size_t index) const

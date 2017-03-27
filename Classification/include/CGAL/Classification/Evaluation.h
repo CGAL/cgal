@@ -27,6 +27,12 @@ namespace CGAL {
 
 namespace Classification {
 
+/*!
+  \ingroup PkgClassificationDataStructures
+
+  \brief Class to compute several measurements to evaluate the quality
+  of a classification output.
+*/
 class Evaluation
 {
   mutable std::map<Label_handle, std::size_t> m_map_labels;
@@ -39,7 +45,27 @@ class Evaluation
   float m_mean_f1;
 
 public:
+
+  /// \name Constructor
+  /// @{
+
   
+/*!
+
+  \brief Instantiates an evaluation object and computes all
+  measurements.
+
+  \param labels labels used.
+
+  \param ground_truth vector of label indices: it should contain the
+  index of the corresponding label in the `Label_set` provided in the
+  constructor. Input items that do not have a ground truth information
+  should be given the value `std::size_t(-1)`.
+
+  \param result similar to `ground_truth` but contained the result of
+  a classification.
+
+*/
   Evaluation (const Label_set& labels,
               const std::vector<std::size_t>& ground_truth,
               const std::vector<std::size_t>& result)
@@ -92,6 +118,11 @@ public:
     m_mean_f1 /= labels.size();
     m_accuracy = sum_true_positives / float(total);
   }
+
+  /// @}
+
+  /// \name Label Evaluation
+  /// @{
 
 
   /*!
@@ -151,6 +182,12 @@ public:
     return m_iou[m_map_labels[label]];
   }
 
+  /// @}
+  
+  /// \name Global Evaluation
+  /// @{
+
+  
   /*!
     \brief Returns the accuracy of the training.
 
@@ -170,6 +207,8 @@ public:
     over all labels (see `intersection_over_union()`).
   */
   float mean_intersection_over_union() const { return m_mean_iou; }
+
+  /// @}
   
 };
   
