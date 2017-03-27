@@ -98,17 +98,18 @@ public:
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
 									
               if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))<=(float)0.5*radius_neighbors/grid_resolution){
-										
-                if(grid.indices(k,l).size()>0){
+                std::vector<std::size_t> indices;
+                grid.indices(k,l,std::back_inserter(indices));
+                if(indices.size()>0){
 									
-                  for(std::size_t t=0; t<grid.indices(k,l).size();t++){
+                  for(std::size_t t=0; t<indices.size();t++){
 												
-                    std::size_t ip = grid.indices(k,l)[t]; 
+                    std::size_t ip = indices[t]; 
                     if(get(echo_map, *(input.begin()+ip)) > 1)
                       NB_echo_sup++;
                   }
 									
-                  NB_echo_total=NB_echo_total+grid.indices(k,l).size();
+                  NB_echo_total=NB_echo_total+indices.size();
 									
                 }
 							

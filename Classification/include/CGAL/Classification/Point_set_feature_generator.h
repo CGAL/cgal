@@ -150,7 +150,8 @@ private:
     float voxel_size;
     
     Scale (const PointRange& input, PointMap point_map,
-           const Iso_cuboid_3& bbox, float voxel_size)
+           const Iso_cuboid_3& bbox, float voxel_size,
+           Planimetric_grid* lower_grid = NULL)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
@@ -178,8 +179,11 @@ private:
       CGAL_CLASSIFICATION_CERR << "Range = " << range << std::endl;
       t.reset();
       t.start();
-      
-      grid = new Planimetric_grid (input, point_map, bbox, this->voxel_size);
+
+      if (lower_grid == NULL)
+        grid = new Planimetric_grid (input, point_map, bbox, this->voxel_size);
+      else
+        grid = new Planimetric_grid(lower_grid);
       t.stop();
       CGAL_CLASSIFICATION_CERR << "Planimetric grid computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
@@ -609,15 +613,17 @@ private:
     CGAL::Real_timer t; t.start();
     
     m_scales.reserve (nb_scales);
-    //    float voxel_size = 0.05; // WARNING: do not keep (-1 is the right value)
+    
     float voxel_size = -1;
+    //    voxel_size = 0.05; // WARNING: do not keep (-1 is the right value)
+
     
     m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
     voxel_size = m_scales[0]->grid_resolution();
     for (std::size_t i = 1; i < nb_scales; ++ i)
       {
         voxel_size *= 2;
-        m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
+        m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
       }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;

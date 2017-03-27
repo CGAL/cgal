@@ -96,12 +96,14 @@ public:
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
         {
-          if (grid.indices(i,j).empty())
+          std::vector<std::size_t> indices;
+          grid.indices(i,j,std::back_inserter(indices));
+          if (indices.empty())
             continue;
           float mean = 0.;
-          for (std::size_t k = 0; k < grid.indices(i,j).size(); ++ k)
-            mean += get(point_map, *(input.begin()+grid.indices(i,j)[k])).z();
-          mean /= grid.indices(i,j).size();
+          for (std::size_t k = 0; k < indices.size(); ++ k)
+            mean += get(point_map, *(input.begin()+indices[k])).z();
+          mean /= indices.size();
           dem(i,j) = mean;
         }
 
@@ -153,7 +155,7 @@ public:
           }
       }
     dtm_x.free();
-    
+
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     elevation_feature.reserve(input.size());
     for (std::size_t i = 0; i < input.size(); i++){
