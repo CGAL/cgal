@@ -1,10 +1,12 @@
 # 
-# This file is the CGALConfig.cmake for a pure header-only CGAL installion
+# This file is the CGALConfig.cmake for a pure header-only CGAL installation
 #
 
 if(CGALConfig_included)
   return()
 endif()
+
+message(STATUS "Using pure header-only CGAL")
 
 set(CGALConfig_included TRUE)
 
