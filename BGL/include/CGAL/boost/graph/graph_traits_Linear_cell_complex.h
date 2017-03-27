@@ -67,6 +67,8 @@ template<typename CMap>
 typename CMap::Dart_handle next(typename CMap::Dart_handle dh, const CMap& cmap)
 { return const_cast<CMap&>(cmap).template beta<1>(dh); }
 
+namespace internal {
+
 template <typename Dart_handle>
 struct EdgeHandle : Dart_handle
 {
@@ -86,7 +88,8 @@ struct EdgeHandle : Dart_handle
   bool operator==(const EdgeHandle& h) const
   {
     return first_halfedge()==h.first_halfedge() ||
-        first_halfedge()==h.second_halfedge();
+        (h.first_halfedge()!=NULL &&
+        first_halfedge()==h.second_halfedge());
   }
 
   bool operator!=(const EdgeHandle& other) const
@@ -95,11 +98,50 @@ struct EdgeHandle : Dart_handle
   friend bool operator<(const EdgeHandle& a, const EdgeHandle& b)
   { return a.first_halfedge()<b.first_halfedge(); }
 
-  // this is hacky, we don't know the actual type of the id and if we
-  // start adding decltype special cases we have to do it consistently
-  // up to the property map and maybe back down to Polyhedron.
-  std::size_t id() const { return first_halfedge()->id() / 2; }
+  friend bool operator>(const EdgeHandle& a, const EdgeHandle& b)
+  { return b<a; }
+
+  friend bool operator<=(const EdgeHandle& a, const EdgeHandle& b)
+  { return !(a>b); }
+
+  friend bool operator>=(const EdgeHandle& a, const EdgeHandle& b)
+  { return !(a<b); }
+
+  const std::size_t id() const
+  { return first_halfedge()->id()/2; }
+
+  friend std::size_t hash_value(const EdgeHandle& i)
+  {
+    if (i.first_halfedge()==NULL) return 0;
+    return hash_value(i.first_halfedge()<i.second_halfedge()?
+                      i.first_halfedge():i.second_halfedge());
+  }
 };
+
+// make edge_descriptor hashable by default in Unique_hash_map
+namespace handle{
+  template<typename Dart_handle>
+  struct Hash_functor< EdgeHandle<Dart_handle> >
+  {
+    std::size_t
+    operator()(const EdgeHandle<Dart_handle>& edge)
+    { return hash_value(edge); }
+  };
+} //end of namespace handle
+
+/*template<typename Dart_handle>
+struct Construct_edge {
+  typedef EdgeHandle<Dart_handle> result_type;
+  result_type operator()(const EdgeHandle& he) const
+  { return HDS_edge<Halfedge_handle>(he); }
+};
+
+template<typename Dart_handle>
+struct Construct_edge_opposite {
+  typedef EdgeHandle<Dart_handle> result_type;
+  result_type operator()(const EdgeHandle& he) const
+  { return HDS_edge<Dart_handle>(he->opposite()); }
+};*/
 
 template <class CMap, typename Dart_Iterator>
 class CMap_dart_handle_edge_iterator 
@@ -150,6 +192,8 @@ private:
   Iterator nt;
 };
 
+} // internal
+
 template <class CMap>
 struct CMap_Base_graph_traits
 {
@@ -162,7 +206,7 @@ public :
 
   // Expose types required by the boost::Graph concept.
   typedef typename CMap::template Attribute_handle<0>::type vertex_descriptor;
-  typedef EdgeHandle<typename CMap::Dart_handle>            edge_descriptor;
+  typedef internal::EdgeHandle<typename CMap::Dart_handle>  edge_descriptor;
   typedef typename CMap::template Attribute_handle<2>::type face_descriptor;
   typedef typename CMap::Dart_handle                        halfedge_descriptor;
 
@@ -174,7 +218,7 @@ public :
   typedef Prevent_deref<typename CMap::template Attribute_range<2>::type::iterator> face_iterator;
   typedef Prevent_deref<typename CMap::Dart_range::iterator> halfedge_iterator;
   
-  typedef CMap_dart_handle_edge_iterator<CMap, typename CMap::Dart_range::iterator> edge_iterator;
+  typedef internal::CMap_dart_handle_edge_iterator<CMap, typename CMap::Dart_range::iterator> edge_iterator;
   
   typedef typename CMap::size_type degree_size_type;
   typedef typename CMap::size_type halfedges_size_type;
@@ -344,7 +388,7 @@ edge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor u,
 {
   std::pair<typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor,
             bool> res=halfedge(u,v,cm);
-  return std::make_pair(EdgeHandle<typename CGAL_LCC_TYPE::Dart_handle>(res.first),
+  return std::make_pair(internal::EdgeHandle<typename CGAL_LCC_TYPE::Dart_handle>(res.first),
                         res.second);
 }
 
@@ -484,7 +528,7 @@ CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor
 edge(typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor h,
      const CGAL_LCC_TYPE&/* cm*/)
-{ return EdgeHandle
+{ return internal::EdgeHandle
       <typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor>(h); }
 
 CGAL_LCC_TEMPLATE_ARGS

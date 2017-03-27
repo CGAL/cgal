@@ -40,6 +40,13 @@ namespace CGAL {
   template<unsigned int, unsigned int, class, class, class>
   class GMap_linear_cell_complex_storage_1;
 
+  namespace internal {
+
+  template<class>
+  struct Init_id;
+
+  } // end namespace internal
+
   /** @file Cell_attribute.h
    * Definition of cell attribute, with or without info.
    */
@@ -98,6 +105,9 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template<class>
+    friend struct internal::Init_id;
+
   public:
     typedef Tag_false                            Supports_cell_dart;
 
@@ -136,6 +146,14 @@ namespace CGAL {
     bool operator!=(const Cell_attribute_without_info& other) const
     { return !operator==(other); }
 
+    // Required to have "internal" property maps.
+    // TODO better (use id only when we want to use bgl ?)
+    //             (or have an id directly in compact container ?)
+    std::size_t& id()
+    { return m_id; }
+    const std::size_t& id() const
+    { return m_id; }
+
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0)
@@ -158,6 +176,9 @@ namespace CGAL {
       mrefcounting-=4; // 4 because the two lowest bits are reserved for cc
     }
 
+    void set_id(std::size_t id)
+    { m_id=id; }
+
   public:
     /// Get the reference counting.
     std::size_t get_nb_refs() const
@@ -175,6 +196,9 @@ namespace CGAL {
       std::size_t mrefcounting;
       void        *vp;
     };
+
+    /// id of the dart // TODO better
+    std::size_t m_id;
   };
 
   /** Definition of cell attribute.
@@ -203,6 +227,9 @@ namespace CGAL {
 
     template <class, class>
     friend class Concurrent_compact_container;
+
+    template<class>
+    friend class internal::Init_id;
 
   public:
     typedef Tag_true                             Supports_cell_dart;
@@ -243,6 +270,14 @@ namespace CGAL {
     bool operator!=(const Cell_attribute_without_info& other) const
     { return !operator==(other); }
 
+    // Required to have "internal" property maps.
+    // TODO better (use id only when we want to use bgl ?)
+    //             (or have an id directly in compact container ?)
+    std::size_t& id()
+    { return m_id; }
+    const std::size_t& id() const
+    { return m_id; }
+
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info() : mdart(Refs::null_handle),
@@ -267,6 +302,9 @@ namespace CGAL {
       --mrefcounting;
     }
 
+    void set_id(std::size_t id)
+    { m_id=id; }
+
   public:
     /// Get the reference counting.
     std::size_t get_nb_refs() const
@@ -283,6 +321,9 @@ namespace CGAL {
 
     /// Reference counting: the number of darts linked to this cell.
     std::size_t mrefcounting;
+
+    /// id of the dart // TODO better
+    std::size_t m_id;
   };
 
   /// Cell associated with an attribute, with or without info depending

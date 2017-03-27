@@ -698,6 +698,8 @@ namespace CGAL {
 
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
+
+      internal::Init_id<Dart_container>::run(mdarts, adart);
     }
     // Initialize a given dart: all beta to null_dart_handle and all
     // attributes to null, marks are given.
@@ -1494,6 +1496,8 @@ namespace CGAL {
      // Reinitialize the ref counting of the new attribute. This is normally
      // not required except if create_attribute is used as "copy contructor".
      this->template init_attribute_ref_counting<i>(res);
+     internal::Init_id<typename Attribute_range<i>::type>::run
+         (this->template attributes<i>(), res);
      return res;
     }
 #else
@@ -1503,8 +1507,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace();
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace();
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1>
     typename Attribute_handle<i>::type
@@ -1515,7 +1523,11 @@ namespace CGAL {
      typename Attribute_handle<i>::type res=
        CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1);
+      // Reinitialize the ref counting of the new attribute. This is normally
+      // not required except if create_attribute is used as "copy contructor".
      this->template init_attribute_ref_counting<i>(res);
+     internal::Init_id<typename Attribute_range<i>::type>::run
+          (this->template attributes<i>(), res);
      return res;
     }
     template<unsigned int i, typename T1, typename T2>
@@ -1524,8 +1536,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3>
     typename Attribute_handle<i>::type
@@ -1533,8 +1549,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4>
     typename Attribute_handle<i>::type
@@ -1542,8 +1562,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5>
@@ -1553,8 +1577,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6>
@@ -1564,8 +1592,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7>
@@ -1575,8 +1607,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7, typename T8>
@@ -1586,8 +1622,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7, typename T8, typename T9>
@@ -1598,8 +1638,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
 #endif
 

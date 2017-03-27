@@ -44,6 +44,13 @@ namespace CGAL {
   template<unsigned int, unsigned int, class, class, class>
   class GMap_linear_cell_complex_storage_1;
 
+  namespace internal {
+
+  template<class>
+  struct Init_id;
+
+  } // end namespace internal
+
   /** @file Dart.h
    * Definition of nD dart.
    */
@@ -77,6 +84,9 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template<class>
+    friend struct internal::Init_id;
+
     typedef Dart_without_info<d,Refs>        Self;
     typedef typename Refs::Dart_handle       Dart_handle;
     typedef typename Refs::size_type         size_type;
@@ -109,6 +119,14 @@ namespace CGAL {
       return mf[i];
     }
     
+    // Required to have "internal" property maps.
+    // TODO better (use id only when we want to use bgl ?)
+    //             (or have an id directly in compact container ?)
+    std::size_t& id()
+    { return m_id; }
+    const std::size_t& id() const
+    { return m_id; }
+
   protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial map class.
@@ -184,6 +202,9 @@ namespace CGAL {
         (mattribute_handles);
     }
 
+     void set_id(std::size_t id)
+     { m_id=id; }
+
   protected:
     /// Neighboors for each dimension +1 (from 0 to dimension).
     Dart_handle mf[dimension+1];
@@ -193,6 +214,9 @@ namespace CGAL {
 
     /// Attributes enabled
     typename Helper::Attribute_handles mattribute_handles;
+
+    /// id of the dart // TODO better
+    std::size_t m_id;
   };
 
 #if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)

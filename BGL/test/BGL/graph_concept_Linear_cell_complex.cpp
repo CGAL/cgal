@@ -33,40 +33,40 @@ void concept_check_polyhedron() {
   boost::function_requires< boost::GraphConcept<LCC> >();
   boost::function_requires< boost::VertexListGraphConcept<LCC> >();
   boost::function_requires< boost::EdgeListGraphConcept<LCC> >();
-  boost::function_requires< boost::AdjacencyMatrixConcept<LCC> >();
-  boost::function_requires< boost::MutableGraphConcept<LCC> >();
-  boost::function_requires< CGAL::FaceListGraphConcept<LCC> >();
-  boost::function_requires< CGAL::HalfedgeGraphConcept<LCC> >();
   boost::function_requires< boost::IncidenceGraphConcept<LCC> >();
-  boost::function_requires< CGAL::HalfedgeListGraphConcept<LCC> >();
+  boost::function_requires< boost::AdjacencyMatrixConcept<LCC> >();
   boost::function_requires< boost::BidirectionalGraphConcept<LCC> >();
-  boost::function_requires< CGAL::MutableHalfedgeGraphConcept<LCC> >();
-
-  // TODO Perhaps to remove ?
+  boost::function_requires< CGAL::HalfedgeGraphConcept<LCC> >();
+  boost::function_requires< CGAL::HalfedgeListGraphConcept<LCC> >();
   boost::function_requires< CGAL::FaceGraphConcept<LCC> >();
+  boost::function_requires< CGAL::FaceListGraphConcept<LCC> >();
+  boost::function_requires< CGAL::MutableHalfedgeGraphConcept<LCC> >();
   boost::function_requires< CGAL::MutableFaceGraphConcept<LCC> >();
+
+  boost::function_requires< boost::MutableGraphConcept<LCC> >();
 
   boost::function_requires< boost::concepts::PropertyGraph<
     LCC, halfedge_descriptor, boost::halfedge_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    LCC, halfedge_descriptor, boost::halfedge_external_index_t> >();
-  boost::function_requires< boost::PropertyGraphConcept<
-    LCC, vertex_descriptor, boost::vertex_point_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
     LCC, edge_descriptor, boost::edge_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    LCC, edge_descriptor, boost::edge_external_index_t> >();
-  boost::function_requires< boost::concepts::PropertyGraph<
-    LCC, face_descriptor, boost::face_index_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    LCC, face_descriptor, boost::face_external_index_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
      LCC, edge_descriptor, boost::edge_weight_t> >();
+  boost::function_requires< boost::PropertyGraphConcept<
+    LCC, vertex_descriptor, boost::vertex_point_t> >();
   boost::function_requires< boost::concepts::PropertyGraph<
     LCC, vertex_descriptor, boost::vertex_index_t> >();
+  boost::function_requires< boost::concepts::PropertyGraph<
+    LCC, face_descriptor, boost::face_index_t> >();
+
+  boost::function_requires< boost::concepts::ReadablePropertyGraph<
+    LCC, halfedge_descriptor, boost::halfedge_external_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<
     LCC, vertex_descriptor, boost::vertex_external_index_t> >();
-    
+  boost::function_requires< boost::concepts::ReadablePropertyGraph<
+    LCC, edge_descriptor, boost::edge_external_index_t> >();
+  boost::function_requires< boost::concepts::ReadablePropertyGraph<
+    LCC, face_descriptor, boost::face_external_index_t> >();
+
   // null
   boost::graph_traits<LCC>::null_vertex();
   boost::graph_traits<LCC>::null_face();
@@ -122,63 +122,8 @@ void runtime_check_halfedgegraph()
   assert(num_faces(p) == 4);
 }
 
-int
-main()
+int main()
 {
-  LCC lcc;
-  typedef typename boost::graph_traits<LCC>::halfedge_iterator iter;
-  iter it;
-    
-    
-    /*    CGAL::Halfedge_around_target_iterator<LCC> it;
-
-    vd myvd;
-    
-    typedef typename boost::graph_traits<LCC>::in_edge_iterator iter;
-    iter myiter;
-  */ 
-    // std::pair<iter, iter> p; // = in_edges(myvd, lcc);*/
-    
-  /*
-  const LCC& lcc2 = lcc;
-  
-  iter_type a1(lcc);
-  const iter_type a2(a1);
-  iter_type a3(a2);
-  //   a1=a2;
-
-
-  CGAL::CMap_one_dart_per_cell_iterator<LCC, 1> toto1(lcc);
-  const CGAL::CMap_one_dart_per_cell_iterator<LCC, 1> toto2(lcc);
-
-  toto1=toto2;
-  
-
-  
-  //iter_type it(lcc);
-  
-  std::pair<typename boost::graph_traits<LCC>::edge_iterator, typename boost::graph_traits<LCC>::edge_iterator> it=std::make_pair<iter_type, iter_type>
-    (iter_type(lcc),
-     iter_type(lcc)), it2=std::make_pair<iter_type, iter_type>
-    (iter_type(lcc),
-     iter_type(lcc));
-
-  it=it2;
-  
-  iter_type t1(lcc);
-  
-  std::pair<iter_type, iter_type> p=edges(lcc);
-  std::pair<iter_type, iter_type> p2=std::make_pair<iter_type, iter_type>(t1, t1);*/
-  //p=std::make_pair(t1, t1); //p2;
- 
- 
-  //iter_type(lcc), iter_type(lcc));
-    //toto(lcc);
-
-  //  std::pair<int, int> p;
-  //  p = std::make_pair<int, int>(0,0);
-  
-  
   concept_check_polyhedron<LCC>();
   runtime_check_halfedgegraph<LCC>();
   std::cerr << "done\n";

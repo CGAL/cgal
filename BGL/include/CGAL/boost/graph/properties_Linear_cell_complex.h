@@ -217,6 +217,30 @@ protected:
   const LCC & m_lcc;
   }; */
 
+template<typename LCC, typename FT>
+struct Wrap_squared_lcc
+  : boost::put_get_helper< double, Wrap_squared_lcc<LCC, FT> >
+{
+  typedef typename boost::graph_traits<LCC>::edge_descriptor Handle;
+  typedef FT value_type;
+  typedef FT reference;
+  typedef Handle key_type;
+  typedef boost::readable_property_map_tag category;
+
+  Wrap_squared_lcc(const LCC& alcc): m_lcc(alcc)
+  {}
+
+  template<typename E>
+  FT operator[](const E& e) const
+  {
+    return approximate_sqrt(CGAL::squared_distance
+                            (m_lcc.point(e.first_halfedge()),
+                             m_lcc.point(e.second_halfedge())));
+  }
+private:
+  const LCC& m_lcc;
+};
+
 
 // the tag we dispatch on from property_map<G, Property>
 template <class Tag>
@@ -268,7 +292,7 @@ void put(PropertyTag p, CGAL_LCC_TYPE& g, const Key& key, const Value& value)
     typedef internal::ACCESSOR##_accessor<                     \
     CGAL_LCC_TYPE,                                             \
     typename boost::graph_traits<CGAL_LCC_TYPE>                \
-                                 ::ENTITY##_descriptor> type; \
+                                 ::ENTITY##_descriptor > type; \
     typedef type const_type;                                   \
   };                                                           \
   };                                                           \
@@ -304,7 +328,7 @@ struct LCC_property_map<boost::edge_weight_t>
     typedef typename Traits_::FT FT;
     typedef typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor
                edge_descriptor;
-    typedef internal::Wrap_squared<edge_descriptor,FT> type;
+    typedef Wrap_squared_lcc<CGAL_LCC_TYPE, FT> type;
     typedef type const_type;
   };
 };
@@ -334,7 +358,9 @@ struct LCC_property_map<edge_external_index_t>
   template<CGAL_LCC_ARGS>
   struct bind_
   {
-    typedef internal::Polyhedron_edge_index_map_external<CGAL_LCC_TYPE> type;
+    // typedef internal::Polyhedron_edge_index_map_external<CGAL_LCC_TYPE> type;
+    typedef internal::Edge_index_accessor<
+      typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor> type;
     typedef type const_type;
   };
 };
@@ -345,7 +371,9 @@ struct LCC_property_map<halfedge_external_index_t>
   template<CGAL_LCC_ARGS>
   struct bind_
   {
-    typedef internal::Polyhedron_index_map_external<CGAL_LCC_TYPE> type;
+    //typedef internal::Polyhedron_index_map_external<
+    typedef internal::Index_accessor<CGAL_LCC_TYPE,
+        typename boost::graph_traits<CGAL_LCC_TYPE >::halfedge_descriptor> type;
     typedef type const_type;
   };
 };
@@ -357,7 +385,9 @@ struct LCC_property_map<vertex_external_index_t>
   template<CGAL_LCC_ARGS>
   struct bind_
   {
-    typedef internal::Polyhedron_index_map_external<CGAL_LCC_TYPE> type;
+    //typedef internal::Polyhedron_index_map_external<
+    typedef internal::Index_accessor<CGAL_LCC_TYPE,
+        typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor> type;
     typedef type const_type;
   };
 };
@@ -368,7 +398,9 @@ struct LCC_property_map<face_external_index_t>
   template<CGAL_LCC_ARGS>
   struct bind_
   {
-    typedef internal::Polyhedron_index_map_external<CGAL_LCC_TYPE> type;
+    //typedef internal::Polyhedron_index_map_external<
+    typedef internal::Index_accessor<CGAL_LCC_TYPE,
+        typename boost::graph_traits<CGAL_LCC_TYPE >::face_descriptor> type;
     typedef type const_type;
   };
 };
@@ -378,38 +410,42 @@ struct LCC_property_map<face_external_index_t>
 namespace CGAL{
   
 template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t >::const_type
-get(boost::edge_external_index_t, CGAL_LCC_TYPE const& cmap) 
-{
-  return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t>::
-    const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
-}
-
-template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t >::const_type
+typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_index_t/*boost::halfedge_external_index_t*/ >::const_type
 get(boost::halfedge_external_index_t, CGAL_LCC_TYPE const& cmap) 
 {
-  CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_index_t >::const_type();
+ /* CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
   return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t>::
-    const_type(halfedges(ncmap).begin(), halfedges(ncmap).end(), num_halfedges(ncmap));
+    const_type(halfedges(ncmap).begin(), halfedges(ncmap).end(), num_halfedges(ncmap)); */
 }
 
 template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t >::const_type
+typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_index_t /*boost::vertex_external_index_t*/ >::const_type
 get(boost::vertex_external_index_t, CGAL_LCC_TYPE const& cmap) 
 {
-  CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_index_t >::const_type();
+ /* CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
   return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t>::
-    const_type(vertices(ncmap).begin(), vertices(ncmap).end(), num_vertices(ncmap));
+    const_type(vertices(ncmap).begin(), vertices(ncmap).end(), num_vertices(ncmap)); */
 }
 
 template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::face_external_index_t >::const_type
+typename boost::property_map<CGAL_LCC_TYPE, boost::edge_index_t/*boost::edge_external_index_t*/ >::const_type
+get(boost::edge_external_index_t, CGAL_LCC_TYPE const& cmap)
+{
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_index_t >::const_type();
+  /*return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t>::
+    const_type(const_cast<CGAL_LCC_TYPE&>(cmap));*/
+}
+
+template<CGAL_LCC_ARGS>
+typename boost::property_map<CGAL_LCC_TYPE, boost::face_index_t /* boost::face_external_index_t*/ >::const_type
 get(boost::face_external_index_t, CGAL_LCC_TYPE const& cmap) 
 {
-  CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::face_index_t >::const_type();
+  /*CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
   return typename boost::property_map<CGAL_LCC_TYPE, boost::face_external_index_t>::
-    const_type(faces(ncmap).begin(), faces(ncmap).end(), num_faces(ncmap));
+    const_type(faces(ncmap).begin(), faces(ncmap).end(), num_faces(ncmap));*/
 }
 
 /*
@@ -454,47 +490,60 @@ get(boost::vertex_point_t, CGAL_LCC_TYPE const& cmap)
   return typename boost::property_map<CGAL_LCC_TYPE,boost::vertex_point_t>::
     const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
+*/
 
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::edge_weight_t >::const_type
 get(boost::edge_weight_t, CGAL_LCC_TYPE const& cmap) 
 {
-  return typename boost::property_map<CGAL_LCC_TYPE,boost::edge_weight_t>::
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_weight_t>::
     const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
-*/
   
 // the same blurb for non-const
 template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t >::type
+typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_index_t/*boost::halfedge_external_index_t*/ >::type
+get(boost::halfedge_external_index_t, CGAL_LCC_TYPE& cmap)
+{
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_index_t >::type();
+/*  return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t>::
+    type(halfedges(cmap).begin(), halfedges(cmap).end(), num_halfedges(cmap));*/
+}
+
+template<CGAL_LCC_ARGS>
+typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_index_t/*boost::vertex_external_index_t*/ >::type
+get(boost::vertex_external_index_t, CGAL_LCC_TYPE& cmap)
+{
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_index_t >::type();
+/*  return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t>::
+    type(vertices(cmap).begin(), vertices(cmap).end(), num_vertices(cmap));*/
+}
+
+template<CGAL_LCC_ARGS>
+typename boost::property_map<CGAL_LCC_TYPE, boost::edge_index_t/*boost::edge_external_index_t*/ >::type
 get(boost::edge_external_index_t, CGAL_LCC_TYPE& cmap) 
 {
-  return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t>::
-    type(const_cast<CGAL_LCC_TYPE&>(cmap));
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_index_t>::type(cmap);
+  /*return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t>::
+    type(const_cast<CGAL_LCC_TYPE&>(cmap));*/
 }
 
-template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t >::type
-get(boost::halfedge_external_index_t, CGAL_LCC_TYPE& cmap) 
-{
-  return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t>::
-    type(halfedges(cmap).begin(), halfedges(cmap).end(), num_halfedges(cmap));
-}
 
 template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t >::type
-get(boost::vertex_external_index_t, CGAL_LCC_TYPE& cmap) 
-{
-  return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t>::
-    type(vertices(cmap).begin(), vertices(cmap).end(), num_vertices(cmap));
-}
-
-template<CGAL_LCC_ARGS>
-typename boost::property_map<CGAL_LCC_TYPE, boost::face_external_index_t >::type
+typename boost::property_map<CGAL_LCC_TYPE, boost::face_index_t/*boost::face_external_index_t*/ >::type
 get(boost::face_external_index_t, CGAL_LCC_TYPE& cmap) 
 {
-  return typename boost::property_map<CGAL_LCC_TYPE, boost::face_external_index_t>::
-    type(faces(cmap).begin(), faces(cmap).end(), num_faces(cmap));
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::face_index_t >::type();
+  /*return typename boost::property_map<CGAL_LCC_TYPE, boost::face_external_index_t>::
+    type(faces(cmap).begin(), faces(cmap).end(), num_faces(cmap));*/
+}
+
+template<CGAL_LCC_ARGS>
+typename boost::property_map<CGAL_LCC_TYPE, boost::edge_weight_t >::type
+get(boost::edge_weight_t, CGAL_LCC_TYPE & cmap)
+{
+  return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_weight_t>::
+    type(cmap);
 }
 
 } // namespace CGAL

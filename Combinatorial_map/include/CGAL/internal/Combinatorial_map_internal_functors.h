@@ -90,6 +90,9 @@
  *
  * internal::Cleanup_useless_attributes to erase all attributes having
  *   no more associated dart
+ *
+ * internal::Init_id initialize the id of an new element created in a compact
+ *   container, when the underlying type defines id (TODO Move in Compact container ?)
  */
 
 namespace CGAL
@@ -1033,6 +1036,15 @@ struct Beta_functor_static<CMap, Dart_handle, B, Betas...>
         run(AMap, AMap.template get_beta<B>(ADart)); }
 };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+// ****************************************************************************
+template<typename Container>
+struct Init_id
+{
+  static void run(Container& c, typename Container::iterator e)
+  {
+    e->set_id(c.index(e));
+  }
+};
 // ****************************************************************************
 } // namespace internal
 } // namespace CGAL
