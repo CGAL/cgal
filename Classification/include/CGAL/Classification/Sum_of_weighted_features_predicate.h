@@ -120,6 +120,77 @@ private:
     }
 
   };
+
+  class Compute_iou
+  {
+    std::vector<std::size_t>& m_training_set;
+    const Sum_of_weighted_features_predicate& m_predicate;
+    std::size_t m_label;
+    std::vector<std::size_t>& m_true_positives;
+    std::vector<std::size_t>& m_false_positives;
+    std::vector<std::size_t>& m_false_negatives;
+    std::vector<tbb::mutex>& m_tp_mutex;
+    std::vector<tbb::mutex>& m_fp_mutex;
+    std::vector<tbb::mutex>& m_fn_mutex;
+
+    
+  public:
+
+    Compute_iou (std::vector<std::size_t>& training_set,
+                 const Sum_of_weighted_features_predicate& predicate,
+                 std::size_t label,
+                 std::vector<std::size_t>& true_positives,
+                 std::vector<std::size_t>& false_positives,
+                 std::vector<std::size_t>& false_negatives,
+                 std::vector<tbb::mutex>& tp_mutex,
+                 std::vector<tbb::mutex>& fp_mutex,
+                 std::vector<tbb::mutex>& fn_mutex)
+      : m_training_set (training_set)
+      , m_predicate (predicate)
+      , m_label (label)
+      , m_true_positives (true_positives)
+      , m_false_positives (false_positives)
+      , m_false_negatives (false_negatives)
+      , m_tp_mutex (tp_mutex)
+      , m_fp_mutex (fp_mutex)
+      , m_fn_mutex (fn_mutex)
+    { }
+    
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t k = r.begin(); k != r.end(); ++ k)
+        {
+          std::size_t res = 0;
+
+          std::vector<float> v;
+          m_predicate.probabilities (m_training_set[k], v);
+
+          float min = std::numeric_limits<float>::max();
+          for(std::size_t l = 0; l < v.size(); ++ l)
+            if (v[l] < min)
+              {
+                min = v[l];
+                res = l;
+              }
+
+          if (m_label == res)
+            {
+              m_tp_mutex[m_label].lock();
+              ++ m_true_positives[m_label];
+              m_tp_mutex[m_label].unlock();
+              continue;
+            }
+          m_fp_mutex[res].lock();
+          ++ m_false_positives[res];
+          m_fp_mutex[res].unlock();
+
+          m_fn_mutex[m_label].lock();
+          ++ m_false_negatives[m_label];
+          m_fn_mutex[m_label].unlock();
+        }
+    }
+
+  };
 #endif // CGAL_LINKED_WITH_TBB
 
 
@@ -492,8 +563,17 @@ public:
     
     float best_score = 0.;
     float best_confidence = 0.;
+
+#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
+    boost::tie (best_confidence, best_score)
+      = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
+#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
+    best_score = compute_worst_iou<ConcurrencyTag>(training_sets);
+    best_confidence = best_score;
+#else
     boost::tie (best_confidence, best_score)
       = compute_worst_confidence_and_score<ConcurrencyTag> (0., 0., training_sets);
+#endif
     
     CGAL_CLASSIFICATION_CERR << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
@@ -526,8 +606,17 @@ public:
             estimate_feature_effect(current_feature_changed, training_sets);
 
             float worst_confidence = 0., worst_score = 0.;
+
+#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
+            boost::tie (worst_confidence, worst_score)
+              = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
+#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
+            worst_score = compute_worst_iou<ConcurrencyTag>(training_sets);
+            worst_confidence = worst_score;
+#else
             boost::tie (worst_confidence, worst_score)
               = compute_worst_confidence_and_score<ConcurrencyTag> (best_confidence, best_score, training_sets);
+#endif
 
             if (worst_score > best_score
                 && worst_confidence > best_confidence)
@@ -589,6 +678,194 @@ public:
 
   /// @}
 
+  template <typename ConcurrencyTag>  
+  float train_random (const std::vector<std::size_t>& ground_truth,
+                      std::size_t nb_tests = 300)
+  {
+    std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
+    std::size_t nb_tot = 0;
+    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
+      if (ground_truth[i] != std::size_t(-1))
+        {
+          training_sets[ground_truth[i]].push_back (i);
+          ++ nb_tot;
+        }
+
+    CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;
+    
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      if (training_sets.size() <= i || training_sets[i].empty())
+        std::cerr << "WARNING: \"" << m_labels[i]->name() << "\" doesn't have a training set." << std::endl;
+
+    std::vector<float> best_weights (m_features.size(), 1.);
+
+    struct Feature_training
+    {
+      std::size_t i;
+      float wmin;
+      float wmax;
+      float factor;
+
+      bool operator<(const Feature_training& other) const
+      {
+        return (wmin / wmax) < (other.wmin / other.wmax);
+      }
+    };
+    std::vector<Feature_training> feature_train;
+    std::size_t nb_trials = 100;
+    float wmin = 1e-5, wmax = 1e5;
+    float factor = std::pow (wmax/wmin, 1. / (float)nb_trials);
+    
+    for (std::size_t j = 0; j < m_features.size(); ++ j)
+      {
+        Feature_handle feature = m_features[j];
+        best_weights[j] = weight(j);
+
+        std::size_t nb_useful = 0;
+        float min = (std::numeric_limits<float>::max)();
+        float max = -(std::numeric_limits<float>::max)();
+
+        set_weight(j, wmin);
+        for (std::size_t i = 0; i < 100; ++ i)
+          {
+            estimate_feature_effect(j, training_sets);
+            if (feature_useful(j))
+              {
+                CGAL_CLASSTRAINING_CERR << "#";
+                nb_useful ++;
+                min = (std::min) (min, weight(j));
+                max = (std::max) (max, weight(j));
+              }
+            else
+              CGAL_CLASSTRAINING_CERR << "-";
+            set_weight(j, factor * weight(j));
+          }
+        CGAL_CLASSTRAINING_CERR << std::endl;
+        CGAL_CLASSTRAINING_CERR << feature->name() << " useful in "
+                                << nb_useful << "% of the cases, in interval [ "
+                                << min << " ; " << max << " ]" << std::endl;
+        if (nb_useful < 2)
+          {
+            set_weight(j, 0.);
+            best_weights[j] = weight(j);
+            continue;
+          }
+
+        feature_train.push_back (Feature_training());
+        feature_train.back().i = j;
+        feature_train.back().wmin = min / factor;
+        feature_train.back().wmax = max * factor;
+
+        if (best_weights[j] == 1.)
+          {
+            set_weight(j, 0.5 * (feature_train.back().wmin + feature_train.back().wmax));
+            best_weights[j] = weight(j);
+          }
+        else
+          set_weight(j, best_weights[j]);
+        estimate_feature_effect(j, training_sets);
+      }
+
+    CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_train.size() << std::endl;
+
+    
+    float best_score = 0.;
+    float best_confidence = 0.;
+#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
+    boost::tie (best_confidence, best_score)
+      = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
+#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
+    best_score = compute_worst_iou<ConcurrencyTag>(training_sets);
+    best_confidence = best_score;
+#else
+    boost::tie (best_confidence, best_score)
+      = compute_worst_confidence_and_score<ConcurrencyTag> (0., 0., training_sets);
+#endif
+    
+    CGAL_CLASSIFICATION_CERR << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
+
+    CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
+
+    for (std::size_t i = 0; i < nb_tests; ++ i)
+      {
+        std::size_t nb_used = 0;
+        std::size_t j = rand() % feature_train.size();
+        set_weight (feature_train[j].i,
+                    feature_train[j].wmin + ((feature_train[j].wmax - feature_train[j].wmin)
+                                             * (rand() / float(RAND_MAX))));
+        estimate_feature_effect(feature_train[j].i, training_sets);
+
+        float worst_confidence = 0., worst_score = 0.;
+#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
+        boost::tie (worst_confidence, worst_score)
+          = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
+#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
+        worst_score = compute_worst_iou<ConcurrencyTag>(training_sets);
+        worst_confidence = worst_score;
+#else
+        boost::tie (worst_confidence, worst_score)
+          = compute_worst_confidence_and_score<ConcurrencyTag> (best_confidence, best_score, training_sets);
+#endif
+
+        if (worst_score > best_score
+            && worst_confidence > best_confidence)
+          {
+            best_score = worst_score;
+            best_confidence = worst_confidence;
+            CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
+                                     << i << "/" << nb_tests << ", "
+                                     << nb_used
+                                     << "/" << m_features.size() << " feature(s) used)" << std::endl;
+            for (std::size_t k = 0; k < m_features.size(); ++ k)
+              best_weights[k] = weight(k);
+          }
+        set_weight (feature_train[j].i,
+                    best_weights[feature_train[j].i]);
+        estimate_feature_effect(feature_train[j].i, training_sets);
+      }
+
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      set_weight(i, best_weights[i]);
+
+    estimate_features_effects(training_sets);
+    
+    CGAL_CLASSIFICATION_CERR << std::endl << "Best score found is at least " << 100. * best_score
+              << "% of correct classification" << std::endl;
+
+    std::size_t nb_removed = 0;
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      {
+        Feature_handle feature = m_features[i];
+        CGAL_CLASSTRAINING_CERR << "FEATURE " << feature->name() << ": " << best_weights[i] << std::endl;
+        set_weight(i, best_weights[i]);
+
+        Effect side = effect(0, i);
+        bool to_remove = true;
+        for (std::size_t j = 0; j < m_labels.size(); ++ j)
+          {
+            Label_handle clabel = m_labels[j];
+            if (effect(j,i) == FAVORING)
+              CGAL_CLASSTRAINING_CERR << " * Favored for ";
+            else if (effect(j,i) == PENALIZING)
+              CGAL_CLASSTRAINING_CERR << " * Penalized for ";
+            else
+              CGAL_CLASSTRAINING_CERR << " * Neutral for ";
+            if (effect(j,i) != side)
+              to_remove = false;
+            CGAL_CLASSTRAINING_CERR << clabel->name() << std::endl;
+          }
+        if (to_remove)
+          {
+            CGAL_CLASSTRAINING_CERR << "   -> Useless! Should be removed" << std::endl;
+            ++ nb_removed;
+          }
+      }
+    CGAL_CLASSIFICATION_CERR << nb_removed
+              << " feature(s) out of " << m_features.size() << " are useless" << std::endl;
+
+    return best_score;
+  }
+
 private:
 
   float value (std::size_t label, std::size_t feature, std::size_t index) const
@@ -624,6 +901,8 @@ private:
       estimate_feature_effect (i, training_sets);
   }
 
+
+  
   void estimate_feature_effect (std::size_t feature,
                                 std::vector<std::vector<std::size_t> >& training_sets)
   {
@@ -651,15 +930,79 @@ private:
             sd[j] += (val - mean[j]) * (val - mean[j]);
           }
         sd[j] = std::sqrt (sd[j] / training_sets[j].size());
-        if (mean[j] - sd[j] > 0.75)
+        if (mean[j] - sd[j] > (2./3.))
           set_effect (j, feature, FAVORING);
-        else if (mean[j] + sd[j] < 0.25)
+        else if (mean[j] + sd[j] < (1./3.))
           set_effect (j, feature, PENALIZING);
         else
           set_effect (j, feature, NEUTRAL);
       }
   }
 
+  template <typename ConcurrencyTag>
+  float compute_worst_iou (std::vector<std::vector<std::size_t> >& training_sets)
+  {
+    std::vector<std::size_t> true_positives (m_labels.size());
+    std::vector<std::size_t> false_positives (m_labels.size());
+    std::vector<std::size_t> false_negatives (m_labels.size());
+
+    for (std::size_t j = 0; j < training_sets.size(); ++ j)
+      {
+        std::size_t gt = j;
+
+#ifndef CGAL_LINKED_WITH_TBB
+        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                                   "Parallel_tag is enabled but TBB is unavailable.");
+#else
+        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+          {
+            std::vector<tbb::mutex> tp_mutex (m_labels.size());
+            std::vector<tbb::mutex> fp_mutex (m_labels.size());
+            std::vector<tbb::mutex> fn_mutex (m_labels.size());
+            Compute_iou f(training_sets[j], *this, j,
+                          true_positives, false_positives, false_negatives,
+                          tp_mutex, fp_mutex, fn_mutex);
+            tbb::parallel_for(tbb::blocked_range<size_t>(0, training_sets[j].size ()), f);
+          }
+        else
+#endif
+          for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
+            {
+              std::size_t res = 0;
+
+              std::vector<float> v;
+              probabilities (training_sets[j][k], v);
+
+              float min = std::numeric_limits<float>::max();
+              for(std::size_t l = 0; l < m_labels.size(); ++ l)
+                if (v[l] < min)
+                  {
+                    min = v[l];
+                    res = l;
+                  }
+
+              if (gt == res)
+                {
+                  ++ true_positives[gt];
+                  continue;
+                }
+              ++ false_positives[res];
+              ++ false_negatives[gt];
+            }
+      }
+    
+    float out = 0.;
+    
+    for (std::size_t j = 0; j < m_labels.size(); ++ j)
+      {
+        float iou = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
+        out += iou;
+      }
+
+    return out / m_labels.size();
+  }
+
+  
   template <typename ConcurrencyTag>
   std::pair<float, float> compute_worst_confidence_and_score (float lower_conf, float lower_score,
                                                                 std::vector<std::vector<std::size_t> >& training_sets)
@@ -716,7 +1059,66 @@ private:
         if (worst_confidence < lower_conf || worst_score < lower_score)
           return std::make_pair (worst_confidence, worst_score);
       }
+
     return std::make_pair (worst_confidence, worst_score);
+  }
+
+  template <typename ConcurrencyTag>
+  std::pair<float, float> compute_mean_confidence_and_score (std::vector<std::vector<std::size_t> >& training_sets)
+  {
+    // float mean_confidence = 0.f;
+    // float mean_score = 0.f;
+    std::vector<float> mconf;
+    std::vector<float> mscore;
+    for (std::size_t j = 0; j < m_labels.size(); ++ j)
+      {
+        float confidence = 0.;
+        std::size_t nb_okay = 0;
+
+#ifndef CGAL_LINKED_WITH_TBB
+        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                                   "Parallel_tag is enabled but TBB is unavailable.");
+#else
+        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+          {
+            tbb::mutex mutex;
+            Compute_worst_score_and_confidence f(training_sets[j], *this, j, confidence, nb_okay, mutex);
+            tbb::parallel_for(tbb::blocked_range<size_t>(0, training_sets[j].size ()), f);
+          }
+        else
+#endif
+          {
+            for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
+              {
+                std::vector<std::pair<float, std::size_t> > values;
+
+                std::vector<float> v;
+                probabilities (training_sets[j][k], v);
+                
+                for(std::size_t l = 0; l < m_labels.size(); ++ l)
+                  values.push_back (std::make_pair (v[l], l));
+                
+                std::sort (values.begin(), values.end());
+
+                if (values[0].second == j)
+                  {
+                    confidence += values[1].first - values[0].first;
+                    ++ nb_okay;
+                  }
+              }
+          }
+        
+        float score = nb_okay / (float)(training_sets[j].size());
+        confidence /= (float)(training_sets[j].size() * m_features.size());
+        mscore.push_back (score);
+        mconf.push_back (score);
+
+        // mean_score += score;
+        // mean_confidence += confidence;
+      }
+    std::sort (mscore.begin(), mscore.end());
+    std::sort (mconf.begin(), mconf.end());
+    return std::make_pair (mconf[mconf.size() / 2], mscore[mscore.size() / 2]);
   }
 
   bool feature_useful (std::size_t feature)
