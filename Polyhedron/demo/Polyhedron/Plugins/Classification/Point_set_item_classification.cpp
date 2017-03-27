@@ -11,12 +11,6 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
 Point_set_item_classification::Point_set_item_classification(Scene_points_with_normal_item* points)
   : m_points (points),
     m_generator (NULL)
@@ -43,14 +37,17 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   m_label_colors.push_back (QColor(255, 0, 170));
   m_label_colors.push_back (QColor(100, 0, 255));
 
-  m_predicate = new Predicate (m_labels, m_features);
+  m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+  m_random_forest = new Random_forest (m_labels, m_features);
 }
 
 
 Point_set_item_classification::~Point_set_item_classification()
 {
-  if (m_predicate != NULL)
-    delete m_predicate;
+  if (m_sowf != NULL)
+    delete m_sowf;
+  if (m_random_forest != NULL)
+    delete m_random_forest;
   if (m_generator != NULL)
     delete m_generator;
   if (m_points != NULL)
@@ -193,7 +190,7 @@ void Point_set_item_classification::change_color (int index)
           if (c != std::size_t(-1))
             color = m_label_colors[c];
           
-          double div = 1;
+          float div = 1;
           if (c != c2)
             div = 2;
           
@@ -206,7 +203,7 @@ void Point_set_item_classification::change_color (int index)
     {
       Feature_handle feature = m_features[index_color - 3];
 
-      double max = 0.;
+      float max = 0.;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
         if (feature->value(*it) > max)
@@ -215,7 +212,7 @@ void Point_set_item_classification::change_color (int index)
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
         {
-          double v = std::max (0., feature->value(*it) / max);
+          float v = std::max (0.f, feature->value(*it) / max);
           m_red[*it] = (unsigned char)(ramp.r(v) * 255);
           m_green[*it] = (unsigned char)(ramp.g(v) * 255);
           m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
@@ -295,14 +292,16 @@ void Point_set_item_classification::compute_features ()
     m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
                                  m_points->point_set()->normal_map(), m_color, echo_map);
 
-  delete m_predicate;
-  m_predicate = new Predicate (m_labels, m_features);
+  delete m_sowf;
+  m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+  delete m_random_forest;
+  m_random_forest = new Random_forest (m_labels, m_features);
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 
 
 
-void Point_set_item_classification::train()
+void Point_set_item_classification::train(int predicate)
 {
   if (m_features.size() == 0)
     {
@@ -317,10 +316,20 @@ void Point_set_item_classification::train()
        it != m_points->point_set()->first_selected(); ++ it)
     indices[*it] = m_training[*it];
 
-  m_predicate->train<Concurrency_tag>(indices, m_nb_trials);
-  CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
-                                                   m_labels, *m_predicate,
-                                                   indices);
+  if (predicate == 0)
+    {
+      m_random_forest->train (indices);
+      CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                       m_labels, *m_random_forest,
+                                                       indices);
+    }
+  else
+    {
+      m_sowf->train<Concurrency_tag>(indices, m_nb_trials);
+      CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                       m_labels, *m_sowf,
+                                                       indices);
+    }
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
     m_classif[*it] = indices[*it];
@@ -329,7 +338,7 @@ void Point_set_item_classification::train()
      change_color (m_index_color);
 }
 
-bool Point_set_item_classification::run (int method)
+bool Point_set_item_classification::run (int method, int predicate)
 {
   if (m_features.size() == 0)
     {
@@ -338,30 +347,12 @@ bool Point_set_item_classification::run (int method)
     }
   reset_indices();
 
-  std::vector<std::size_t> indices;
+  if (predicate == 0)
+    run (method, *m_random_forest);
+  else
+    run (method, *m_sowf);
 
-  if (method == 0)
-    CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
-                                                     m_labels, *m_predicate,
-                                                     indices);
-  else if (method == 1)
-    CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
-      (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, *m_predicate,
-       m_generator->neighborhood().range_neighbor_query(m_generator->radius_neighbors()),
-       indices);
-  else if (method == 2)
-    CGAL::Classification::classify_with_graphcut<Concurrency_tag>
-      (*(m_points->point_set()), m_points->point_set()->point_map(),
-       m_points->point_set()->point_map(), m_labels, *m_predicate,
-       m_generator->neighborhood().k_neighbor_query(12),
-       m_smoothing, m_subdivisions, indices);
-  
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->first_selected(); ++ it)
-    m_classif[*it] = indices[*it];
-  
-  if (m_index_color == 1 || m_index_color == 2)
-    change_color (m_index_color);
   
   return true;
 }
+

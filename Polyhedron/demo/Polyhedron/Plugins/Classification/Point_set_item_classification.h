@@ -16,6 +16,13 @@
 
 #include <iostream>
 
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 
 // This class represents a point set in the OpenGL scene
 class Point_set_item_classification : public Item_classification_base
@@ -71,8 +78,8 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train();
-  bool run (int method);
+  void train(int predicate);
+  bool run (int method, int predicate);
 
   void change_color (int index);
   void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
@@ -106,6 +113,59 @@ class Point_set_item_classification : public Item_classification_base
 
  private:
   
+  template <typename Predicate>
+  bool run (int method, const Predicate& predicate)
+  {
+    std::vector<std::size_t> indices;
+
+    if (method == 0)
+      CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                       m_labels, predicate,
+                                                       indices);
+    else if (method == 1)
+      CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
+        (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, predicate,
+         m_generator->neighborhood().range_neighbor_query(m_generator->radius_neighbors()),
+         indices);
+    else if (method == 2)
+      CGAL::Classification::classify_with_graphcut<Concurrency_tag>
+        (*(m_points->point_set()), m_points->point_set()->point_map(),
+         m_points->point_set()->point_map(), m_labels, predicate,
+         m_generator->neighborhood().k_neighbor_query(12),
+         m_smoothing, m_subdivisions, indices);
+
+    std::vector<std::size_t> ground_truth(m_points->point_set()->size(), std::size_t(-1));
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->first_selected(); ++ it)
+      {
+        m_classif[*it] = indices[*it];
+        ground_truth[*it] = m_training[*it];
+      }
+  
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
+
+    std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
+    
+    CGAL::Classification::Evaluation eval (m_labels, ground_truth, indices);
+  
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      {
+        std::cerr << " * " << m_labels[i]->name() << ": "
+                  << eval.precision(m_labels[i]) << " ; "
+                  << eval.recall(m_labels[i]) << " ; "
+                  << eval.f1_score(m_labels[i]) << " ; "
+                  << eval.intersection_over_union(m_labels[i]) << std::endl;
+      }
+
+    std::cerr << "Accuracy = " << eval.accuracy() << std::endl
+              << "Mean F1 score = " << eval.mean_f1_score() << std::endl
+              << "Mean IoU = " << eval.mean_intersection_over_union() << std::endl;
+
+
+    return true;
+  }
+
   Scene_points_with_normal_item* m_points;
 
   Point_set::Property_map<unsigned char> m_red;

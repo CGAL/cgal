@@ -130,8 +130,6 @@ public:
             SLOT(on_smoothing_value_changed(double)));
     connect(ui_widget.subdivisionsSpinBox,  SIGNAL(valueChanged(int)), this,
             SLOT(on_subdivisions_value_changed(int)));
-    connect(ui_widget.save,  SIGNAL(clicked()), this,
-            SLOT(on_save_button_clicked()));
     connect(ui_widget.generate_items,  SIGNAL(clicked()), this,
             SLOT(on_generate_items_button_clicked()));
 
@@ -217,30 +215,30 @@ public Q_SLOTS:
     ui_widget.compute_features->setEnabled(false);
     ui_widget.numberOfScalesSpinBox->setEnabled(false);
     ui_widget.display->setEnabled(false);
+    ui_widget.predicate->setEnabled(false);
     ui_widget.tabWidget->setEnabled(false);
     ui_widget.run->setEnabled(false);
     ui_widget.run_smoothed->setEnabled(false);
     ui_widget.frame->setEnabled(false);
-    ui_widget.save->setEnabled(false);
     ui_widget.generate_items->setEnabled(false);
   }
 
   void enable_computation()
   {
-    ui_widget.load_config->setEnabled(true);
     ui_widget.compute_features->setEnabled(true);
     ui_widget.numberOfScalesSpinBox->setEnabled(true);
     ui_widget.display->setEnabled(true);
+    ui_widget.predicate->setEnabled(true);
   }
 
   void enable_classif()
   {
+    ui_widget.load_config->setEnabled(true);
     ui_widget.save_config->setEnabled(true);
     ui_widget.tabWidget->setEnabled(true);
     ui_widget.run->setEnabled(true);
     ui_widget.run_smoothed->setEnabled(true);
     ui_widget.frame->setEnabled(true);
-    ui_widget.save->setEnabled(true);
     ui_widget.generate_items->setEnabled(true);
   }
 
@@ -360,7 +358,7 @@ public Q_SLOTS:
 
   void run (Item_classification_base* classif, int method)
   {
-    classif->run (method);
+    classif->run (method, ui_widget.predicate->currentIndex());
   }
 
   void on_compute_features_button_clicked()
@@ -518,36 +516,6 @@ public Q_SLOTS:
     classif->subdivisions() = v;
   }
 
- void on_save_button_clicked()
-  {
-    Scene_points_with_normal_item* points_item =
-      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
-
-    Item_classification_base* classif
-      = get_classification(points_item);
-    if(!classif)
-      {
-        print_message("Error: there is no point set classification item!");
-        return; 
-      }
-
-    QString filename = QFileDialog::getSaveFileName(mw,
-                                                    tr("Save PLY classified point set"),
-                                                    QString("%1.ply").arg(points_item->name()),
-                                                    "PLY point set (*.ply);;");
-
-    if (filename == QString())
-      return;
-
-    std::ofstream out(filename.toUtf8());
-    
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    classif->write_output (out);
-    QApplication::restoreOverrideCursor();
-
-    out.close();
-  }
-
   void on_generate_items_button_clicked()
   {
     Item_classification_base* classif
@@ -657,7 +625,7 @@ public Q_SLOTS:
         colors.push_back (class_rows[i].color);
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    classif->train();
+    classif->train(ui_widget.predicate->currentIndex());
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
   }

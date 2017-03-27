@@ -5,9 +5,13 @@
 
 #include <QComboBox>
 
+#define CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL
+#define CGAL_CLASSIFICATION_VERBOSE
+
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/Sum_of_weighted_features_predicate.h>
+#include <CGAL/Classification/Random_forest_predicate.h>
 
 class Item_classification_base
 {
@@ -16,7 +20,8 @@ public:
   typedef CGAL::Classification::Feature_handle Feature_handle;
   typedef CGAL::Classification::Label_set   Label_set;
   typedef CGAL::Classification::Feature_set Feature_set;
-  typedef CGAL::Classification::Sum_of_weighted_features_predicate Predicate;
+  typedef CGAL::Classification::Sum_of_weighted_features_predicate Sum_of_weighted_features;
+  typedef CGAL::Classification::Random_forest_predicate Random_forest;
   
 public:
   
@@ -32,8 +37,8 @@ public:
   virtual void reset_training_sets() = 0;
 
   virtual void validate_selection () = 0;
-  virtual void train() = 0;
-  virtual bool run (int method) = 0;
+  virtual void train(int predicate) = 0;
+  virtual bool run (int method, int predicate) = 0;
   
   virtual void change_color (int index) = 0;
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
@@ -44,18 +49,20 @@ public:
   bool features_computed() const { return (m_features.size() != 0); }
   std::size_t number_of_features() const { return m_features.size(); }  
   Feature_handle feature(std::size_t i) { return m_features[i]; }
-  double weight (Feature_handle f) const { return m_predicate->weight(f); }
-  void set_weight (Feature_handle f, double w) const { m_predicate->set_weight(f,w); }
-  Predicate::Effect effect (Label_handle l, Feature_handle f) const { return m_predicate->effect(l,f); }
-  void set_effect (Label_handle l, Feature_handle f, Predicate::Effect e)
-  { m_predicate->set_effect (l, f, e); }
+  float weight (Feature_handle f) const { return m_sowf->weight(f); }
+  void set_weight (Feature_handle f, float w) const { m_sowf->set_weight(f,w); }
+  Sum_of_weighted_features::Effect effect (Label_handle l, Feature_handle f) const { return m_sowf->effect(l,f); }
+  void set_effect (Label_handle l, Feature_handle f, Sum_of_weighted_features::Effect e)
+  { m_sowf->set_effect (l, f, e); }
   
   void add_new_label (const char* name, const QColor& color)
   {
     m_labels.add(name);
     m_label_colors.push_back (color);
-    delete m_predicate;
-    m_predicate = new Predicate (m_labels, m_features);
+    delete m_sowf;
+    m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+    delete m_random_forest;
+    m_random_forest = new Random_forest (m_labels, m_features);
   }
   void remove_label (const char* name)
   {
@@ -66,8 +73,10 @@ public:
           m_label_colors.erase (m_label_colors.begin() + i);
           break;
         }
-    delete m_predicate;
-    m_predicate = new Predicate (m_labels, m_features);
+    delete m_sowf;
+    m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+    delete m_random_forest;
+    m_random_forest = new Random_forest (m_labels, m_features);
   }
   std::size_t number_of_labels() const { return m_labels.size(); }
   Label_handle label(std::size_t i) { return m_labels[i]; }
@@ -92,7 +101,7 @@ public:
       }
 
     std::ofstream f (filename);
-    m_predicate->save_configuration (f);
+    m_sowf->save_configuration (f);
   }
   void load_config(const char* filename)
   {
@@ -103,12 +112,12 @@ public:
       }
 
     std::ifstream f (filename);
-    m_predicate->load_configuration (f, true);
+    m_sowf->load_configuration (f, true);
   }
 
   std::size_t& nb_scales() { return m_nb_scales; }
   std::size_t& number_of_trials() { return m_nb_trials; }
-  double& smoothing() { return m_smoothing; }
+  float& smoothing() { return m_smoothing; }
   std::size_t& subdivisions() { return m_subdivisions; }
   const QColor& label_color(std::size_t i) const { return m_label_colors[i]; }
   std::size_t get_label (const char* name)
@@ -128,11 +137,12 @@ protected:
   Label_set m_labels;
   Feature_set m_features;
   std::vector<QColor> m_label_colors;
-  Predicate* m_predicate;
+  Sum_of_weighted_features* m_sowf;
+  Random_forest* m_random_forest;
 
   std::size_t m_nb_scales;
   std::size_t m_nb_trials;
-  double m_smoothing;
+  float m_smoothing;
   std::size_t m_subdivisions;
   
 };
