@@ -559,6 +559,15 @@ In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
 
 The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
 
+\subsection thirdpartyOpenCV OpenCV
+
+\sc{OpenCV} (Open Computer Vision) is a library designed for computer
+vision, computer graphics and machine learning.
+
+In \cgal, \sc{OpenCV} is used by the \ref PkgClassification package.
+
+The \sc{OpenCV} web site is <A HREF="http://opencv.org/">`http://opencv.org/`</A>.
+
 \section secbuilding Building CGAL 
 
 The results of a successful configuration are build files that control the build step.
