@@ -171,6 +171,13 @@ public:
     m_features.clear();
   }
 
+  /// \cond SKIP_IN_MANUAL
+  void free_memory(std::size_t i)
+  {
+    m_features[i] = Feature_handle();
+  }
+  /// \endcond
+  
 };
 
 
