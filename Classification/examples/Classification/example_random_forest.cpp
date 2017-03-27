@@ -7,6 +7,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
+#include <CGAL/Classification/Random_forest_predicate.h>
 #include <CGAL/IO/read_ply_points.h>
 
 #include <CGAL/Real_timer.h>
@@ -24,7 +25,7 @@ typedef Classif::Feature_handle                                          Feature
 typedef Classif::Label_set                                               Label_set;
 typedef Classif::Feature_set                                             Feature_set;
 
-typedef Classif::Sum_of_weighted_features_predicate Classification_predicate;
+typedef Classif::Random_forest_predicate Classification_predicate;
 
 typedef Classif::Point_set_feature_generator<Kernel, Point_range, Pmap> Feature_generator;
 
@@ -81,13 +82,10 @@ int main (int argc, char** argv)
   My_ply_interpreter interpreter (pts, ground_truth);
   if (!in
       || !(CGAL::read_ply_custom_points (in, interpreter, Kernel())))
-    {
-      std::cerr << "Error: cannot read " << filename << std::endl;
-      return EXIT_FAILURE;
-    }
-
-  ///////////////////////////////////////////////////////////////////
-  //! [Generator]
+  {
+    std::cerr << "Error: cannot read " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Feature_set features;
   
@@ -97,11 +95,8 @@ int main (int argc, char** argv)
   Feature_generator generator (features, 5,  // using 5 scales
                                pts, Pmap());
   t.stop();
-  std::cerr << features.size() << " feature(s) generated in " << t.time() << " second(s)" << std::endl;
-  
-  //! [Generator]
-  ///////////////////////////////////////////////////////////////////
-  
+  std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
+
   // Add types
   Label_set labels;
   Label_handle ground = labels.add ("ground");
@@ -114,7 +109,7 @@ int main (int argc, char** argv)
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
-  predicate.train<CGAL::Sequential_tag> (ground_truth, 400);
+  predicate.train (ground_truth);
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
@@ -132,23 +127,50 @@ int main (int argc, char** argv)
   Classif::Evaluation eval (labels, ground_truth, label_indices);
   
   for (std::size_t i = 0; i < labels.size(); ++ i)
-    {
-      std::cerr << " * " << labels[i]->name() << ": "
-                << eval.precision(labels[i]) << " ; "
-                << eval.recall(labels[i]) << " ; "
-                << eval.f1_score(labels[i]) << " ; "
-                << eval.intersection_over_union(labels[i]) << std::endl;
-    }
+  {
+    std::cerr << " * " << labels[i]->name() << ": "
+              << eval.precision(labels[i]) << " ; "
+              << eval.recall(labels[i]) << " ; "
+              << eval.f1_score(labels[i]) << " ; "
+              << eval.intersection_over_union(labels[i]) << std::endl;
+  }
 
   std::cerr << "Accuracy = " << eval.accuracy() << std::endl
             << "Mean F1 score = " << eval.mean_f1_score() << std::endl
             << "Mean IoU = " << eval.mean_intersection_over_union() << std::endl;
   
-
-  /// Save the configuration to be able to reload it later
-  std::ofstream fconfig ("config.xml");
-  predicate.save_configuration (fconfig);
-  fconfig.close();
+  std::ofstream f ("classification.ply");
+  f.precision(18);
+  f << "ply" << std::endl
+    << "format ascii 1.0" << std::endl
+    << "element vertex " << pts.size() << std::endl
+    << "property float x" << std::endl
+    << "property float y" << std::endl
+    << "property float z" << std::endl
+    << "property uchar red" << std::endl
+    << "property uchar green" << std::endl
+    << "property uchar blue" << std::endl
+    << "end_header" << std::endl;
+  
+  for (std::size_t i = 0; i < pts.size(); ++ i)
+    {
+      f << pts[i] << " ";
+      
+      Label_handle label = labels[label_indices[i]];
+      if (label == ground)
+        f << "245 180 0" << std::endl;
+      else if (label == vege)
+        f << "0 255 27" << std::endl;
+      else if (label == roof)
+        f << "255 0 170" << std::endl;
+      else if (label == facade)
+        f << "128 128 128" << std::endl;
+      else
+        {
+          f << "0 0 0" << std::endl;
+          std::cerr << "Error: unknown classification label" << std::endl;
+        }
+    }
 
   std::cerr << "All done" << std::endl;
   

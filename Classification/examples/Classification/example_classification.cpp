@@ -99,6 +99,12 @@ int main (int argc, char** argv)
   Label_handle vege = labels.add ("vegetation");
   Label_handle roof = labels.add ("roof");
 
+  //! [Labels]
+  ///////////////////////////////////////////////////////////////////
+  
+  ///////////////////////////////////////////////////////////////////
+  //! [Weights]
+
   std::cerr << "Setting weights" << std::endl;
   Classification_predicate predicate (labels, features);
   predicate.set_weight (d2p, 6.75e-2);
@@ -134,11 +140,14 @@ int main (int argc, char** argv)
   predicate.set_effect (roof, disp, Classification_predicate::NEUTRAL);
   predicate.set_effect (roof, elev, Classification_predicate::FAVORING);
 
-  //! [Labels]
+  //! [Weights]
   ///////////////////////////////////////////////////////////////////
 
   // Run classification
   std::cerr << "Classifying" << std::endl;
+
+  ///////////////////////////////////////////////////////////////////
+  //! [Classify]
   std::vector<std::size_t> label_indices;
     
   CGAL::Real_timer t;
@@ -147,7 +156,11 @@ int main (int argc, char** argv)
   t.stop();
   std::cerr << "Raw classification performed in " << t.time() << " second(s)" << std::endl;
   t.reset();
-
+  //! [Classify]
+  ///////////////////////////////////////////////////////////////////
+  
+  ///////////////////////////////////////////////////////////////////
+  //! [Smoothing]
   t.start();
   Classif::classify_with_local_smoothing<CGAL::Parallel_tag>
     (pts, Pmap(), labels, predicate,
@@ -156,14 +169,20 @@ int main (int argc, char** argv)
   t.stop();
   std::cerr << "Classification with local smoothing performed in " << t.time() << " second(s)" << std::endl;
   t.reset();
+  //! [Smoothing]
+  ///////////////////////////////////////////////////////////////////
 
+  ///////////////////////////////////////////////////////////////////
+  //! [Graph_cut]
   t.start();
   Classif::classify_with_graphcut<CGAL::Sequential_tag>
     (pts, Pmap(), Pmap(), labels, predicate,
      neighborhood.k_neighbor_query(12),
-     0.2, 1, label_indices);
+     0.2, 4, label_indices);
   t.stop();
   std::cerr << "Classification with graphcut performed in " << t.time() << " second(s)" << std::endl;
+  //! [Graph_cut]
+  ///////////////////////////////////////////////////////////////////
   
   // Save the output in a colored PLY format
 

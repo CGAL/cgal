@@ -27,6 +27,8 @@ typedef Classif::Feature_set                                             Feature
 
 typedef Classif::Feature::Sphericity<Kernel, Point_range, Pmap>          Sphericity;
 
+///////////////////////////////////////////////////////////////////
+//! [Feature]
 
 // User-defined feature that identifies a specific area of the 3D
 // space. This feature takes value 1 for points that lie inside the
@@ -54,6 +56,9 @@ public:
     
 };
 
+//! [Feature]
+///////////////////////////////////////////////////////////////////
+
 int main (int argc, char** argv)
 {
   std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
@@ -74,15 +79,21 @@ int main (int argc, char** argv)
   Label_set labels;
   Label_handle a = labels.add ("label_A");
   Label_handle b = labels.add ("label_B");
-  
+
+  ///////////////////////////////////////////////////////////////////
+  //! [Addition]
+
   std::cerr << "Computing features" << std::endl;
   Feature_set features;
-  
-  Feature_handle sphericity = features.add<Sphericity> (pts, eigen);
 
   // Feature that identifies points whose x coordinate is between -20
   // and 20 and whose y coordinate is between -15 and 15
   Feature_handle my_feature = features.add<My_feature> (pts, -20., 20., -15., 15.);
+  
+  //! [Addition]
+  ///////////////////////////////////////////////////////////////////
+  
+  Feature_handle sphericity = features.add<Sphericity> (pts, eigen);
 
   Classification_predicate predicate (labels, features);
   
