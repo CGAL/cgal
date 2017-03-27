@@ -86,6 +86,7 @@ public:
   const Vertex_handle& vertex(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3 );
+    CGAL_assume( i >= 0 && i <= 3 );
     return V[i];
   }
 
