@@ -87,6 +87,13 @@ private:
   Cell_handle _c;
   Offset _off;
   bool offset_flag;
+
+// The typedef and the bool are used by Triangulation_data_structure::Vertex_extractor
+// The names are choosen complicated so that we do not have to document them
+// (privacy by obfuscation)
+public:
+  typedef bool Has_visited_for_vertex_extractor;
+  bool visited_for_vertex_extractor;
 };
 
 template < class TDS >
