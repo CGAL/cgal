@@ -480,14 +480,14 @@ void Scene_points_with_normal_item::selectDuplicates()
     *(d->m_points->begin() + (unselected.size() + i)) = selected[i];
 
   if (selected.empty ())
-    {
-      d->m_points->unselect_all();
-    }
+  {
+    d->m_points->unselect_all();
+  }
   else
-    {
-      d->m_points->set_first_selected
-        (d->m_points->begin() + unselected.size());
-    } 
+  {
+    d->m_points->set_first_selected
+      (d->m_points->begin() + unselected.size());
+  } 
 
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
