@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
@@ -26,12 +26,12 @@ struct Myitem
   };
 };
 
-typedef CGAL::Linear_cell_complex<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv )
 {
-  if (argc!=2)
+  if (argc<2 || argc>3)
   {
     std::cout<<"Usage: simplification_Linear_cell_complex inofffile [outofffile]"<<std::endl;
     return EXIT_FAILURE;
@@ -54,8 +54,8 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
     (lcc
      ,stop
-     ,CGAL::parameters::halfedge_index_map(get(CGAL::halfedge_external_index, lcc))
-          .vertex_index_map(get(CGAL::vertex_external_index,lcc))
+     ,CGAL::parameters::halfedge_index_map(get(CGAL::halfedge_index, lcc))
+          .vertex_index_map(get(boost::vertex_index, lcc))
           .get_cost(SMS::Edge_length_cost<LCC>())
           .get_placement(SMS::Midpoint_placement<LCC>())
      );
