@@ -86,7 +86,6 @@ public:
 private:
   Cell_handle _c;
   Offset _off;
-  int _index;
   bool offset_flag;
 };
 
