@@ -5,9 +5,12 @@
 #include "Plugins/PMP/Scene_facegraph_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
-#include "Scene_polyhedron_item_decorator.h"
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+#else
 #include "Polyhedron_type.h"
-
+#endif
+#include "Scene_polyhedron_item_decorator.h"
 #include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -759,8 +762,8 @@ public:
   {
     CGAL::detect_sharp_edges(polyhedron(), angle);
 
-    boost::halfedge_is_feature_t hif;
-    boost::property_map<Face_graph,boost::halfedge_is_feature_t>::type is_feature = get(hif,*polyhedron());
+    CGAL::halfedge_is_feature_t hif;
+    boost::property_map<Face_graph,CGAL::halfedge_is_feature_t>::type is_feature = get(hif,*polyhedron());
     BOOST_FOREACH(edge_descriptor e, edges(*polyhedron()))
     {
       halfedge_descriptor h = halfedge(e, *polyhedron());

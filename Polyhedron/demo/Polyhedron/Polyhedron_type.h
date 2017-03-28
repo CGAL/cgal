@@ -15,7 +15,7 @@
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 
-#include "properties.h"
+#include <CGAL/Polygon_mesh_processing/properties.h>
 
 #include <set>
 
@@ -303,20 +303,20 @@ namespace boost {
   };
   
   template <>
-  struct property_map<Polyhedron, face_selection_t>
+  struct property_map<Polyhedron, CGAL::face_selection_t>
   {
     typedef boost::property_map<Polyhedron,boost::face_index_t>::type type;
     typedef boost::property_map<Polyhedron,boost::face_index_t>::const_type const_type;
   };
 
   template <>
-  struct property_map<Polyhedron, vertex_selection_t>
+  struct property_map<Polyhedron, CGAL::vertex_selection_t>
   {
     typedef boost::property_map<Polyhedron,boost::vertex_index_t>::type type;
     typedef boost::property_map<Polyhedron,boost::vertex_index_t>::const_type const_type;
   };
   template <>
-  struct property_map<Polyhedron, vertex_num_feature_edges_t>
+  struct property_map<Polyhedron, CGAL::vertex_num_feature_edges_t>
   {
     typedef vertex_num_feature_edges_pmap type;
   };
