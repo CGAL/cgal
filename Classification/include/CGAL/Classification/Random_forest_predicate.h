@@ -62,7 +62,11 @@ public:
     the corresponding label in the `Label_set` provided in the
     constructor. Input items that do not have a ground truth
     information should be given the value `std::size_t(-1)`.
-
+    \param max_depth see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
+    \param min_sample_count see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
+    \param max_categories see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
+    \param max_number_of_trees_in_the_forest see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
+    \param forest_accuracy see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
   */
   void train (const std::vector<std::size_t>& ground_truth,
               int max_depth = 20,
@@ -115,7 +119,7 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  void probabilities (std::size_t item_index, std::vector<float>& out) const
+  void operator() (std::size_t item_index, std::vector<float>& out) const
   {
     out.resize (m_labels.size(), 1.);
     

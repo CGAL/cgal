@@ -66,7 +66,7 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES || DOXYGEN_RUNNING
+#if defined(CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES) || defined(DOXYGEN_RUNNING)
   Verticality (const PointRange& input,
                const Local_eigen_analysis& eigen)
     : vertical (0., 0., 1.), eigen(NULL)
