@@ -67,7 +67,7 @@ namespace internal {
     {
       std::size_t nb_class_best=0; 
       std::vector<float> values;
-      m_predicate.probabilities (s, values);
+      m_predicate (s, values);
         
       float val_class_best = (std::numeric_limits<float>::max)();      
       for(std::size_t k = 0; k < m_labels.size(); ++ k)
@@ -111,7 +111,7 @@ namespace internal {
     inline void apply (std::size_t s) const
     {
       std::vector<float> values;
-      m_predicate.probabilities(s, values);
+      m_predicate(s, values);
       for(std::size_t k = 0; k < m_labels.size(); ++ k)
         m_values[k][s] = values[k];
     }
@@ -186,7 +186,7 @@ namespace internal {
     const Label_set& m_labels;
     const ClassificationPredicate& m_predicate;
     const NeighborQuery& m_neighbor_query;
-    float m_weight;
+    float m_strength;
     const std::vector<std::vector<std::size_t> >& m_indices;
     const std::vector<std::pair<std::size_t, std::size_t> >& m_input_to_indices;
     std::vector<std::size_t>& m_out;
@@ -204,13 +204,13 @@ namespace internal {
                          const Label_set& labels,
                          const ClassificationPredicate& predicate,
                          const NeighborQuery& neighbor_query,
-                         float weight,
+                         float strength,
                          const std::vector<std::vector<std::size_t> >& indices,
                          const std::vector<std::pair<std::size_t, std::size_t> >& input_to_indices,
                          std::vector<std::size_t>& out)
       : m_input (input), m_item_map (item_map), m_labels (labels),
         m_predicate (predicate), m_neighbor_query (neighbor_query),
-        m_weight (weight), m_indices (indices), m_input_to_indices (input_to_indices), m_out (out)
+        m_strength (strength), m_indices (indices), m_input_to_indices (input_to_indices), m_out (out)
     { }
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -246,11 +246,11 @@ namespace internal {
                 && j != m_input_to_indices[neighbors[i]].second)
               {
                 edges.push_back (std::make_pair (j, m_input_to_indices[neighbors[i]].second));
-                edge_weights.push_back (m_weight);
+                edge_weights.push_back (m_strength);
               }
 
           std::vector<float> values;
-          m_predicate.probabilities(s, values);
+          m_predicate(s, values);
           std::size_t nb_class_best = 0;
           float val_class_best = (std::numeric_limits<float>::max)();
           for(std::size_t k = 0; k < m_labels.size(); ++ k)
@@ -428,7 +428,7 @@ namespace internal {
     \param labels set of input labels.
     \param predicate input classification predicate.
     \param neighbor_query used to access neighborhoods of items.
-    \param weight weight of the regularization with respect to the
+    \param strength strength of the regularization with respect to the
     classification energy. Higher values produce more regularized
     output but may result in a loss of details.
     \param min_number_of_subdivisions minimum number of subdivisions
@@ -449,13 +449,13 @@ namespace internal {
                                const Label_set& labels,
                                const ClassificationPredicate& predicate,
                                const NeighborQuery& neighbor_query,
-                               const float weight,
+                               const float strength,
                                const std::size_t min_number_of_subdivisions,
                                std::vector<std::size_t>& output)
   {
     CGAL::Bbox_3 bbox = CGAL::bbox_3
-      (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(item_map)),
-       boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemWithBboxMap>(item_map)));
+      (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)),
+       boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)));
 
     float Dx = bbox.xmax() - bbox.xmin();
     float Dy = bbox.ymax() - bbox.ymin();
@@ -502,7 +502,7 @@ namespace internal {
     output.resize (input.size());
 
     internal::Classifier_graphcut<ItemRange, ItemMap, ClassificationPredicate, NeighborQuery>
-      f (input, item_map, labels, predicate, neighbor_query, weight, indices, input_to_indices, output);
+      f (input, item_map, labels, predicate, neighbor_query, strength, indices, input_to_indices, output);
     
 #ifndef CGAL_LINKED_WITH_TBB
     CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
