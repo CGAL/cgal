@@ -130,7 +130,7 @@ class Point_set_item_classification : public Item_classification_base
     else if (method == 2)
       CGAL::Classification::classify_with_graphcut<Concurrency_tag>
         (*(m_points->point_set()), m_points->point_set()->point_map(),
-         m_points->point_set()->point_map(), m_labels, predicate,
+         m_labels, predicate,
          m_generator->neighborhood().k_neighbor_query(12),
          m_smoothing, m_subdivisions, indices);
 

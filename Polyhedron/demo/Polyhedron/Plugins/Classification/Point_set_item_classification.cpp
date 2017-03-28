@@ -269,27 +269,27 @@ void Point_set_item_classification::compute_features ()
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
 
   if (!normals && !colors && !echo)
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map());
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales);
   else if (!normals && !colors && echo)
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
                                  CGAL::Default(), CGAL::Default(), echo_map);
   else if (!normals && colors && !echo)
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
                                  CGAL::Default(), m_color);
   else if (!normals && colors && echo)
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
                                  CGAL::Default(), m_color, echo_map);
   else if (normals && !colors && !echo)
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
                                  m_points->point_set()->normal_map());
   else if (normals && !colors && echo)
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
                                  m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
   else if (normals && colors && !echo)
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
                                  m_points->point_set()->normal_map(), m_color);
   else
-    m_generator = new Generator (m_features, m_nb_scales, *(m_points->point_set()), m_points->point_set()->point_map(),
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
                                  m_points->point_set()->normal_map(), m_color, echo_map);
 
   delete m_sowf;
