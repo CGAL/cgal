@@ -78,57 +78,6 @@ public:
 private:
 
 #ifdef CGAL_LINKED_WITH_TBB
-  class Compute_worst_score_and_confidence
-  {
-    std::vector<std::size_t>& m_training_set;
-    const Sum_of_weighted_features_predicate& m_predicate;
-    std::size_t m_label;
-    float& m_confidence;
-    std::size_t& m_nb_okay;
-    tbb::mutex& m_mutex;
-    
-  public:
-
-    Compute_worst_score_and_confidence (std::vector<std::size_t>& training_set,
-                                        const Sum_of_weighted_features_predicate& predicate,
-                                        std::size_t label,
-                                        float& confidence,
-                                        std::size_t& nb_okay,
-                                        tbb::mutex& mutex)
-      : m_training_set (training_set)
-      , m_predicate (predicate)
-      , m_label (label)
-      , m_confidence (confidence)
-      , m_nb_okay (nb_okay)
-      , m_mutex (mutex)
-    { }
-    
-    void operator()(const tbb::blocked_range<std::size_t>& r) const
-    {
-      for (std::size_t k = r.begin(); k != r.end(); ++ k)
-        {
-          std::vector<std::pair<float, std::size_t> > values;
-          
-          std::vector<float> v;
-          m_predicate.probabilities (m_training_set[k], v);
-  
-          for(std::size_t l = 0; l < v.size(); ++ l)
-            values.push_back (std::make_pair (v[l], l));
-          
-          std::sort (values.begin(), values.end());
-
-          if (values[0].second == m_label)
-            {
-              m_mutex.lock();
-              m_confidence += values[1].first - values[0].first;
-              ++ m_nb_okay;
-              m_mutex.unlock();
-            }
-        }
-    }
-
-  };
-
   class Compute_iou
   {
     std::vector<std::size_t>& m_training_set;
@@ -171,7 +120,7 @@ private:
           std::size_t res = 0;
 
           std::vector<float> v;
-          m_predicate.probabilities (m_training_set[k], v);
+          m_predicate (m_training_set[k], v);
 
           float min = std::numeric_limits<float>::max();
           for(std::size_t l = 0; l < v.size(); ++ l)
@@ -303,9 +252,9 @@ public:
   /// @}
 
   /// \cond SKIP_IN_MANUAL
-  void probabilities (std::size_t item_index,
-                      std::vector<float>& out) const
-  {
+  void operator() (std::size_t item_index,
+                   std::vector<float>& out) const
+    {
     out.resize (m_labels.size());
     for (std::size_t l = 0; l < m_labels.size(); ++ l)
       {
@@ -347,7 +296,7 @@ public:
   */
   template <typename ConcurrencyTag>  
   float train (const std::vector<std::size_t>& ground_truth,
-                std::size_t nb_tests = 300)
+               std::size_t nb_tests = 300)
   {
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
@@ -443,18 +392,7 @@ public:
     
     
     float best_score = 0.;
-    float best_confidence = 0.;
-
-#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
-    boost::tie (best_confidence, best_score)
-      = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
-#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
-    best_score = compute_worst_iou<ConcurrencyTag>(training_sets);
-    best_confidence = best_score;
-#else
-    boost::tie (best_confidence, best_score)
-      = compute_worst_confidence_and_score<ConcurrencyTag> (0., 0., training_sets);
-#endif
+    best_score = compute_mean_iou<ConcurrencyTag>(training_sets);
     
     CGAL_CLASSIFICATION_CERR << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
@@ -486,24 +424,11 @@ public:
           {
             estimate_feature_effect(current_feature_changed, training_sets);
 
-            float worst_confidence = 0., worst_score = 0.;
-
-#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
-            boost::tie (worst_confidence, worst_score)
-              = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
-#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
-            worst_score = compute_worst_iou<ConcurrencyTag>(training_sets);
-            worst_confidence = worst_score;
-#else
-            boost::tie (worst_confidence, worst_score)
-              = compute_worst_confidence_and_score<ConcurrencyTag> (best_confidence, best_score, training_sets);
-#endif
-
-            if (worst_score > best_score
-                && worst_confidence > best_confidence)
+            float worst_score = 0.;
+            worst_score = compute_mean_iou<ConcurrencyTag>(training_sets);
+            if (worst_score > best_score)
               {
                 best_score = worst_score;
-                best_confidence = worst_confidence;
                 CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
                           << (i * nb_trials_per_feature) + j << "/" << nb_tests << ", "
                           << nb_used + (feature_useful(current_feature_changed) ? 1 : 0)
@@ -651,18 +576,7 @@ public:
     CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_train.size() << std::endl;
 
     
-    float best_score = 0.;
-    float best_confidence = 0.;
-#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
-    boost::tie (best_confidence, best_score)
-      = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
-#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
-    best_score = compute_worst_iou<ConcurrencyTag>(training_sets);
-    best_confidence = best_score;
-#else
-    boost::tie (best_confidence, best_score)
-      = compute_worst_confidence_and_score<ConcurrencyTag> (0., 0., training_sets);
-#endif
+    float best_score = compute_mean_iou<ConcurrencyTag>(training_sets);
     
     CGAL_CLASSIFICATION_CERR << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
@@ -677,23 +591,11 @@ public:
                                              * (rand() / float(RAND_MAX))));
         estimate_feature_effect(feature_train[j].i, training_sets);
 
-        float worst_confidence = 0., worst_score = 0.;
-#ifdef CGAL_CLASSTRAINING_USE_MEAN_SCORE_INSTEAD_OF_WORST
-        boost::tie (worst_confidence, worst_score)
-          = compute_mean_confidence_and_score<ConcurrencyTag> (training_sets);
-#elif defined(CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL)
-        worst_score = compute_worst_iou<ConcurrencyTag>(training_sets);
-        worst_confidence = worst_score;
-#else
-        boost::tie (worst_confidence, worst_score)
-          = compute_worst_confidence_and_score<ConcurrencyTag> (best_confidence, best_score, training_sets);
-#endif
+        float worst_score = compute_mean_iou<ConcurrencyTag>(training_sets);
 
-        if (worst_score > best_score
-            && worst_confidence > best_confidence)
+        if (worst_score > best_score)
           {
             best_score = worst_score;
-            best_confidence = worst_confidence;
             CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
                                      << i << "/" << nb_tests << ", "
                                      << nb_used
@@ -981,7 +883,7 @@ private:
   }
 
   template <typename ConcurrencyTag>
-  float compute_worst_iou (std::vector<std::vector<std::size_t> >& training_sets)
+  float compute_mean_iou (std::vector<std::vector<std::size_t> >& training_sets)
   {
     std::vector<std::size_t> true_positives (m_labels.size());
     std::vector<std::size_t> false_positives (m_labels.size());
@@ -1012,7 +914,7 @@ private:
               std::size_t res = 0;
 
               std::vector<float> v;
-              probabilities (training_sets[j][k], v);
+              (*this) (training_sets[j][k], v);
 
               float min = std::numeric_limits<float>::max();
               for(std::size_t l = 0; l < m_labels.size(); ++ l)
@@ -1044,124 +946,6 @@ private:
   }
 
   
-  template <typename ConcurrencyTag>
-  std::pair<float, float> compute_worst_confidence_and_score (float lower_conf, float lower_score,
-                                                                std::vector<std::vector<std::size_t> >& training_sets)
-  {
-    float worst_confidence = (std::numeric_limits<float>::max)();
-    float worst_score = (std::numeric_limits<float>::max)();
-    
-    for (std::size_t j = 0; j < m_labels.size(); ++ j)
-      {
-        float confidence = 0.;
-        std::size_t nb_okay = 0;
-
-#ifndef CGAL_LINKED_WITH_TBB
-        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                                   "Parallel_tag is enabled but TBB is unavailable.");
-#else
-        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-          {
-            tbb::mutex mutex;
-            Compute_worst_score_and_confidence f(training_sets[j], *this, j, confidence, nb_okay, mutex);
-            tbb::parallel_for(tbb::blocked_range<size_t>(0, training_sets[j].size ()), f);
-          }
-        else
-#endif
-          {
-            for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
-              {
-                std::vector<std::pair<float, std::size_t> > values;
-
-                std::vector<float> v;
-                probabilities (training_sets[j][k], v);
-                
-                for(std::size_t l = 0; l < m_labels.size(); ++ l)
-                  values.push_back (std::make_pair (v[l], l));
-                
-                std::sort (values.begin(), values.end());
-
-                if (values[0].second == j)
-                  {
-                    confidence += values[1].first - values[0].first;
-                    ++ nb_okay;
-                  }
-              }
-          }
-        
-        float score = nb_okay / (float)(training_sets[j].size());
-        confidence /= (float)(training_sets[j].size() * m_features.size());
-
-        if (confidence < worst_confidence)
-          worst_confidence = confidence;
-        if (score < worst_score)
-          worst_score = score;
-        
-        if (worst_confidence < lower_conf || worst_score < lower_score)
-          return std::make_pair (worst_confidence, worst_score);
-      }
-
-    return std::make_pair (worst_confidence, worst_score);
-  }
-
-  template <typename ConcurrencyTag>
-  std::pair<float, float> compute_mean_confidence_and_score (std::vector<std::vector<std::size_t> >& training_sets)
-  {
-    // float mean_confidence = 0.f;
-    // float mean_score = 0.f;
-    std::vector<float> mconf;
-    std::vector<float> mscore;
-    for (std::size_t j = 0; j < m_labels.size(); ++ j)
-      {
-        float confidence = 0.;
-        std::size_t nb_okay = 0;
-
-#ifndef CGAL_LINKED_WITH_TBB
-        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                                   "Parallel_tag is enabled but TBB is unavailable.");
-#else
-        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-          {
-            tbb::mutex mutex;
-            Compute_worst_score_and_confidence f(training_sets[j], *this, j, confidence, nb_okay, mutex);
-            tbb::parallel_for(tbb::blocked_range<size_t>(0, training_sets[j].size ()), f);
-          }
-        else
-#endif
-          {
-            for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
-              {
-                std::vector<std::pair<float, std::size_t> > values;
-
-                std::vector<float> v;
-                probabilities (training_sets[j][k], v);
-                
-                for(std::size_t l = 0; l < m_labels.size(); ++ l)
-                  values.push_back (std::make_pair (v[l], l));
-                
-                std::sort (values.begin(), values.end());
-
-                if (values[0].second == j)
-                  {
-                    confidence += values[1].first - values[0].first;
-                    ++ nb_okay;
-                  }
-              }
-          }
-        
-        float score = nb_okay / (float)(training_sets[j].size());
-        confidence /= (float)(training_sets[j].size() * m_features.size());
-        mscore.push_back (score);
-        mconf.push_back (score);
-
-        // mean_score += score;
-        // mean_confidence += confidence;
-      }
-    std::sort (mscore.begin(), mscore.end());
-    std::sort (mconf.begin(), mconf.end());
-    return std::make_pair (mconf[mconf.size() / 2], mscore[mscore.size() / 2]);
-  }
-
   bool feature_useful (std::size_t feature)
   {
     Effect side = effect(0, feature);
