@@ -112,14 +112,20 @@ public:
 
         for(std::size_t k = squareXmin; k <= squareXmax; k++)
           for(std::size_t l = squareYmin; l <= squareYmax; l++)
+          {
+            std::vector<std::size_t> indices;
+            grid.indices(k,l,std::back_inserter(indices));
             if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))
                <=(float)0.5*radius_neighbors/grid_resolution
-               && (grid.indices(k,l).size()>0))
-              for(std::size_t t=0; t<grid.indices(k,l).size();t++)
-                {
-                  std::size_t ip = grid.indices(k,l)[t];
-                  hori.push_back (get(point_map, *(input.begin()+ip)).z());
-                }
+               && (indices.size()>0))
+            {
+              for(std::size_t t=0; t<indices.size();t++)
+              {
+                std::size_t ip = indices[t];
+                hori.push_back (get(point_map, *(input.begin()+ip)).z());
+              }
+            }
+          }
         if (hori.empty())
           continue;
               
