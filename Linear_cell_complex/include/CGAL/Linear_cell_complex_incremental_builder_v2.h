@@ -298,6 +298,14 @@ namespace CGAL {
     B.end_surface();
   }
 
+  template<class LCC>
+  void load_off_v2(LCC& alcc, const char* filename)
+  {
+    std::ifstream input(filename);
+    if (input.is_open())
+      load_off_v2(alcc, input);
+  }
+
 } //namespace CGAL
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_V2_H //

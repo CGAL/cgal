@@ -1,0 +1,14 @@
+Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_linear_cell_complex.cpp
+   OK
+
+./Polygon_mesh_processing/test/Polygon_mesh_processing/surface_intersection_sm_poly.cpp
+   PB COMPIL
+
+./Polygon_mesh_processing/examples/Polygon_mesh_processing/hole_filling_example_SM.cpp
+   COMPIL - ASSERTION FAILED A LA FIN ??
+
+./Ridges_3/examples/Ridges_3/Ridges_Umbilics_SM.cpp
+./Convex_hull_3/examples/Convex_hull_3/dynamic_hull_SM_3.cpp
+./Surface_mesh_segmentation/examples/Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp
+./Surface_mesh_skeletonization/examples/Surface_mesh_skeletonization/MCF_Skeleton_sm_example.cpp
+./Surface_mesh_skeletonization/examples/Surface_mesh_skeletonization/simple_mcfskel_sm_example.cpp
