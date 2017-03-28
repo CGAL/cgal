@@ -387,12 +387,6 @@ public:
   }
 };
 
-/**
- * @class Robust_weighted_circumcenter_filtered_traits_3
- *
- * Overrides Construct_weighted_circumcenter_3(), Compute_squared_radius_3(),
- * and Compute_squared_radius_smallest_orthogonal_sphere_3 to get robust versions
- */
 template<class K_>
 class Robust_weighted_circumcenter_filtered_traits_3
     : public K_
