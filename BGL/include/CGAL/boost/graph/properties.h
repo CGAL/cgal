@@ -54,16 +54,6 @@ enum halfedge_external_index_t   { halfedge_external_index   } ;
 enum face_index_t            { face_index            };
 enum face_external_index_t   { face_external_index   } ;
 
-enum face_patch_id_t        { face_patch_id };
-
-enum vertex_num_feature_edges_t { vertex_num_feature_edges };
-
-enum halfedge_is_feature_t { halfedge_is_feature };
-
-enum vertex_selection_t { vertex_selection};
-enum edge_selection_t { edge_selection};
-enum face_selection_t { face_selection};
-
   template <typename T>
   struct vertex_property_t
   {
@@ -112,22 +102,8 @@ using boost::edge_external_index_t;
 using boost::edge_external_index;
 using boost::face_index_t;
 using boost::face_index;
-using boost::face_patch_id_t;
-using boost::face_patch_id;
 using boost::face_external_index_t;
 using boost::face_external_index;
-using boost::vertex_num_feature_edges_t;
-using boost::vertex_num_feature_edges;
-using boost::halfedge_is_feature_t;
-using boost::halfedge_is_feature;
-
-using boost::vertex_selection_t;
-using boost::vertex_selection;
-using boost::edge_selection_t;
-using boost::edge_selection;
-using boost::face_selection_t;
-using boost::face_selection;
-
 using boost::vertex_property_t;
 } // CGAL
 

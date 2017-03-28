@@ -345,14 +345,13 @@ remove(Pmap pm, CGAL::Surface_mesh<P>& sm)
   return sm.remove_property_map(pm);
 }
 } // namespace CGAL
-#endif
 
 
 // Additional properties used by the Polyhedron demo and the Mesh_3 Surface_mesh oracle
 
 namespace CGAL {
 
-/*template <typename P>
+template <typename P>
 typename Surface_mesh<P>::template Property_map<typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor,bool>
 get(halfedge_is_feature_t, Surface_mesh<P>& smesh)
 {
@@ -386,7 +385,6 @@ inline get(vertex_selection_t, Surface_mesh<P>& smesh)
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
   return smesh.template add_property_map<vertex_descriptor,int>("v:selection").first;
 }
-*/
 
 template <typename P>
 typename Surface_mesh<P>::template Property_map<typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor,int>
@@ -447,6 +445,6 @@ namespace boost {
 
 } // namespace boost
 
-
+#endif
 
 #endif /* CGAL_PROPERTIES_SURFACE_MESH_H */

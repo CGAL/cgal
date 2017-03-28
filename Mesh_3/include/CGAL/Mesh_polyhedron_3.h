@@ -35,6 +35,8 @@
 
 #include <set>
 
+#include <CGAL/Polygon_mesh_processing/properties.h>
+
 namespace CGAL {
 namespace Mesh_3 {
   
@@ -225,7 +227,7 @@ struct Patch_id_pmap {
   typedef value_type reference;
   typedef boost::writable_property_map_tag                          category;
 
-  friend typename Patch_id get(const Patch_id_pmap&, key_type h)
+  friend Patch_id get(const Patch_id_pmap&, key_type h)
   {
     return h->patch_id();
   }
@@ -241,7 +243,7 @@ struct Patch_id_pmap {
 
 template <typename Gt, typename Patch_id>
 inline Patch_id_pmap<Gt,Patch_id> 
-get(face_patch_id_t,
+get(CGAL::face_patch_id_t,
     const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
 {
   return Patch_id_pmap<Gt,Patch_id>();
@@ -309,19 +311,19 @@ get(halfedge_is_feature_t,
 namespace boost {
 
   template <typename Gt, typename Patch_id>
-  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, face_patch_id_t>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::face_patch_id_t>
   {
     typedef CGAL::Patch_id_pmap<Gt,Patch_id> type;
   };
 
   template <typename Gt, typename Patch_id>
-  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, vertex_num_feature_edges_t>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::vertex_num_feature_edges_t>
   {
     typedef CGAL::vertex_num_feature_edges_pmap<Gt,Patch_id> type;
   };
 
   template <typename Gt, typename Patch_id>
-  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, halfedge_is_feature_t>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::halfedge_is_feature_t>
   {
     typedef CGAL::Is_feature_pmap<Gt,Patch_id> type;
   };
