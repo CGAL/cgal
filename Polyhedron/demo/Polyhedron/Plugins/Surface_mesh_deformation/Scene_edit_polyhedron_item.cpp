@@ -2228,14 +2228,20 @@ void Scene_edit_polyhedron_item::read_roi(const char* file_name)
 
 void Scene_edit_polyhedron_item::overwrite_deform_object()
 {
-  d->deform_mesh->overwrite_initial_geometry();
+  if(d->poly_item)
+    d->deform_mesh->overwrite_initial_geometry();
+  else
+    d->deform_sm_mesh->overwrite_initial_geometry();
 
   refresh_all_group_centers();
 }
 
 void Scene_edit_polyhedron_item::reset_deform_object()
 {
-  d->deform_mesh->reset();
+  if(d->poly_item)
+    d->deform_mesh->reset();
+  else
+    d->deform_sm_mesh->reset();
   refresh_all_group_centers();
 }
 
