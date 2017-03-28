@@ -99,9 +99,25 @@ QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {
 bool Polyhedron_demo_edit_polyhedron_plugin::applicable(QAction*) const { 
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id i, scene->selectionIndices())
   {
-    if(qobject_cast<Scene_facegraph_item*>(scene->item(i))
-       || qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i)))
+    if(qobject_cast<Scene_facegraph_item*>(scene->item(i)))
       return true;
+    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    if(!edit_item)
+      return false;
+    if(edit_item->poly_item())
+    {
+      if (qobject_cast<Scene_facegraph_item*>(edit_item->poly_item()))
+      {
+        return true;
+      }
+    }
+    else
+    {
+      if (qobject_cast<Scene_facegraph_item*>(edit_item->sm_item()))
+      {
+        return true;
+      }
+    }
   }
   return false;
 }
@@ -116,10 +132,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   actionDeformation->setShortcutContext(Qt::ApplicationShortcut);
   autoConnectActions();
   e_shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), mw);
-  connect(e_shortcut, &QShortcut::activated, this, &Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered);
+  connect(e_shortcut, &QShortcut::activated, this, &Polyhedron_demo_edit_polyhedron_plugin::dispatchAction);
   connect(e_shortcut, &QShortcut::activatedAmbiguously, this, &Polyhedron_demo_edit_polyhedron_plugin::dispatchAction);
-  //actionDeformation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
-
 
   // Connect Scene::newItem so that, if dock_widget is visible, convert
   // automatically polyhedron items to "edit polyhedron" items.

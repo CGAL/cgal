@@ -303,6 +303,7 @@ public:
   void setName(QString n);
   void setVisible(bool b);
   void setRenderingMode(RenderingMode m);
+
   
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const { 
@@ -320,9 +321,11 @@ public:
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
   const Polyhedron* polyhedron() const;
+  Scene_polyhedron_item* poly_item() const;
   // Get wrapped Surface_mesh
   SMesh*       surface_mesh();
   const SMesh* surface_mesh() const;
+  Scene_surface_mesh_item* sm_item() const;
 
   /// Returns a Scene_polyhedron_item from the edit polyhedron item, and
   /// transfer the ownership of the polyhedron to it.

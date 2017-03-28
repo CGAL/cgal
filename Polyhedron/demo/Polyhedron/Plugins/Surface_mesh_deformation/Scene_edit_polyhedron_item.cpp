@@ -2487,3 +2487,13 @@ bool Scene_edit_polyhedron_item::insert_roi_vertex(sm_vertex_descriptor vh)
 
   return insert_roi_vertex<SMesh>(vh, surface_mesh());
 }
+
+Scene_polyhedron_item* Scene_edit_polyhedron_item::poly_item()const
+{
+  return d->poly_item;
+}
+
+Scene_surface_mesh_item* Scene_edit_polyhedron_item::sm_item()const
+{
+  return d->sm_item;
+}
