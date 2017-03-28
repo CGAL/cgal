@@ -6,7 +6,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Simon Giraudot, Florent Lafarge
 
-This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as ground, vegetation and buildings. A flexible API is provided so that the user can classify any type of data, compute its own local features on the input data set and define its own labels based on these features.
+This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as ground, vegetation and buildings. A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set and define their own labels.
 
 \section Classification_Organization Package Organization
 
@@ -15,7 +15,7 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 - some analysis is performed on the input data set
 - features are computed based on this analysis
 - a set of labels (for example: ground, building, vegetation) is defined by the user
-- a predicate is defined and trained: from th set of values taken by the features at an input item, it gives the probability of this item to belong to one label or another
+- a predicate is defined and trained: from the set of values taken by the features at an input item, it gives the probability of this item to belong to one label or another
 - classification is computed itemwise using the predicate
 - additional regularization can be used by smoothing either locally or globally through an Alpha Expansion approach.
 
@@ -29,6 +29,20 @@ Currently, \cgal provides data structures to handle classification of point sets
 
 \section Classification_structures Data Structures
 
+\subsection Classification_analysis Analysis
+
+%Classification is based on the computation of local features. These features can take advantage of shared data structures that are precomputed and stored separately.
+
+\cgal provides the following structures:
+
+- [Point_set_neighborhood](@ref CGAL::Classification::Point_set_neighborhood) stores spatial searching structures and provides adapted queries for points
+- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues
+- [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
+
+The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual).
+
+\snippet Classification/example_classification.cpp Analysis
+
 \subsection Classification_labels Label set
 
 A label represents how an item should be classified, for example: vegetation, building, road, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle).
@@ -39,7 +53,7 @@ The following code snippet shows how to add labels to the classification object.
 
 \subsection Classification_features Feature set
 
-Features are defined as scalar fields that associate each input item with a specific value. A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
+Features are defined as scalar fields that associates each input item with a specific value. A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
 
 \cgal provides some predefined features that are relevant for classification of urban point sets:
 
@@ -75,32 +89,19 @@ points that lie inside a 2D box from the others:
 
 \snippet Classification/example_feature.cpp Feature
 
-This feature can then be instanciated from the feature set the same way as the others:
+This feature can then be instantiated from the feature set the same way as the others:
 
 \snippet Classification/example_feature.cpp Addition
-
-\subsection Classification_analysis Analysis
-
-%Classification is based on the computation of local features. These features can take advantage of shared data structures that are precomputed and stored separately.
-
-\cgal provides the following structures:
-
-- [Point_set_neighborhood](@ref CGAL::Classification::Point_set_neighborhood) stores spatial searching structures and provides adapted queries for points
-- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues
-- [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
-
-The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual).
-
-\snippet Classification/example_classification.cpp Analysis
 
 \subsection Classification_feature_generator Point Set Feature Generator
 
 In standard classification of point sets for urban scenes, users commonly want to use all predefined features to get the best result possible. \cgal provides a class [Point_set_feature_generator](@ref CGAL::Classification::Point_set_feature_generator) that performs the following operations:
 
-- it takes care of generating all needed analysis structures
+- it estimates the smallest relevant scale
+- it takes care of generating all needed analysis structures and provides access to them
 - it generates all possible features (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.)
-- multiple scales can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}
-- if \cgal is linked with TBB, features can be computed in parallel to increase the overall computation speed
+- multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}
+- if \cgal is linked with \ref thirdpartyTBB, features can be computed in parallel to increase the overall computation speed
 
 Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of urban point sets simpler to handle. Users can still add their own features within their feature set.
 
@@ -108,9 +109,9 @@ The following snippet shows how to use the feature generator:
 
 \snippet Classification/example_generation_and_training.cpp Generator
 
-\section Classification_predicate Predicate
+\section Classification_predicates Predicates
 
-%Classification relies on a predicate: this predicate is an object that, from the set of values taken by the features at an input item, computes the probability that this input item belongs to one label or another. The concept `CGAL::ClassificationPredicate` takes the index of an input item and stores the probability associated to each label in a vector.
+%Classification relies on a predicate: this predicate is an object that, from the set of values taken by the features at an input item, computes the probability that this input item belongs to one label or another. The concept `CGAL::Classification::Predicate` takes the index of an input item and stores the probability associated to each label in a vector.
 
 For convenience reasons, we hereafter handle energies instead of probabilities, which should be considered as a priority measure _à la STL_: small energy values correspond to large probabilities and large energy values to small probabilities. If a predicate returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty.
 
@@ -129,7 +130,7 @@ This predicate can be set up by hand but also embeds a training algorithm.
 
 \subsubsection Classification_sowf_weights_effects Weights and Effects
 
-Each feature is assigned a weight that measure its strength with respect to the other features.
+Each feature is assigned a weight that measures its strength with respect to the other features.
 
 Each pair of feature and label is assigned an effect that can either be:
 
@@ -139,13 +140,21 @@ Each pair of feature and label is assigned an effect that can either be:
 
 For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
 
-Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). Let \f$a_j(i)\f$ be the raw value of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this feature. We define the normalized value \f$A_j(x_i) \in [0:1]\f$ of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item as follows:
+Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). Let \f$f_j(i)\f$ be the raw value of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this feature. We define the normalized value \f$F_j(x_i) \in [0:1]\f$ of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item as follows:
 
 \f{eqnarray*}{
-    A_j(x_i) = & (1 - \min(\max(0,\frac{a_j(i)}{w_j}), 1)) & \mbox{if } a_j \mbox{ favors } x_i \\
-    & 0.5 & \mbox{if } a_j \mbox{ is neutral for } x_i \\
-    & \min(\max(0,\frac{a_j(i)}{w_j}), 1) & \mbox{if } a_j \mbox{ penalizes } x_i
+    F_j(x_i) = & (1 - \min(\max(0,\frac{f_j(i)}{w_j}), 1)) & \mbox{if } f_j \mbox{ favors } x_i \\
+    & 0.5 & \mbox{if } f_j \mbox{ is neutral for } x_i \\
+    & \min(\max(0,\frac{f_j(i)}{w_j}), 1) & \mbox{if } f_j \mbox{ penalizes } x_i
     \f}
+
+The itemwise energy measures the coherence of the label \f$x_i\f$ at
+the \f$i^{th}\f$ item and is defined as:
+
+\f[
+  E_{di}(x_i) = \sum_{j = 1..N_f} F_j(x_i)
+\f]
+
 
 The following code snippet shows how to define the weights and effects of features and labels:
 
@@ -163,14 +172,14 @@ Though it is possible to set them up one by one, \cgal also provides a method [t
 
 - each inlier provided by the user is classified using this set of weights and effects
 
-- the mean intersection over union (see @ref Classification_evaluation) is used to evaluate the quality of this set of weights and effects
+- the mean intersection-over-union (see @ref Classification_evaluation) is used to evaluate the quality of this set of weights and effects
 
-- the same mechanism is repeated until all features' ranges have been tested. Weights are only changed one by one, the other ones kept to the previous value that gave the best score.
+- the same mechanism is repeated until all features' ranges have been tested. Weights are only changed one by one, the other ones kept to the values that gave the latest best score.
 
-This usually converges to a satisfying solution (see Figure \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 attributes are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new inliers into account.
+This usually converges to a satisfying solution (see Figure \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 features are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new inliers into account.
 
 \cgalFigureBegin{Classification_trainer_fig,classif_training.png}
-Example of evolution of training score. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
+Example of evolution of the mean intersection-over-union. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
 \cgalFigureEnd
 
 \subsection Classification_random_forest Random Forest
@@ -178,26 +187,24 @@ Example of evolution of training score. The purple curve is the score computed a
 This second predicate is [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate).
 It uses the \ref thirdpartyOpenCV library, more specifically the
 [Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
-package.
-
-This predicate uses a ground truth training set to construct several
+package. This predicate uses a ground truth training set to construct several
 decision trees that are then used to assign a label to each input
 item.
 
 This predicate cannot be set up by hand and requires a ground truth
-training set. The training algorithm usually requires more inliers
-than the one of the previous predicate but is faster.
+training set. The training algorithm usually requires a higher number
+of inliers than the previous predicate but is faster. Note that so
+far, \ref thirdpartyOpenCV does not provide fully functional
+input/output functions for random trees, which means the result of the
+training cannot be saved and recovered for further classification.
 
-Note that so far, \ref thirdpartyOpenCV does not provide input/output
-functions for random trees, which means the result of the training
-cannot be saved and recovered for further classification.
-
-For more details about this method, please refer to [the official
-  documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+An [example](\ref Classification_example_random_forest) shows how to
+use this predicate.  For more details about the method, please refer
+to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
 
 
-\section Classification_classifiers Classifiers
+\section Classification_classification_functions Classification Functions
 
 %Classification is performed by minizing an energy over the input data set that may include regularization. \cgal provides 3 different methods for classification, ranging from high speed / low quality to low speed / high quality:
 
@@ -220,18 +227,13 @@ Mathematical details are provided hereafter.
 that provides acceptable but usually noisy results (see Figure
 \cgalFigureRef{Classification_image}, top-right).
 
-Let \f$x=(x_i)_{i=1..N_c}\f$ be a potential classification result with \f$N_c\f$ the number of input items and \f$x_i\f$ the label of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). The classification is performed by minimizing the following energy:
+Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the label of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). The classification is performed by minimizing the following energy:
 
 \f[
-  E(x) = \sum_{i = 1..N_c} E_{di}(x_i)
+  E(x) = \sum_{i = 1..N} E_{di}(x_i)
 \f]
 
-This energy is a sum of itemwise energies and involves no regularization. Let \f$A=(A_j)_{j=1..N_a}\f$ be the set of normalized features
-(see \ref Classification_labels). The itemwise energy measures the coherence of the label \f$x_i\f$ at the \f$i^{th}\f$ item and is defined as:
-
-\f[
-  E_{di}(x_i) = \sum_{j = 1..N_a} A_j(x_i)
-  \f]
+This energy is a sum of itemwise energies provided by the predicate and involves no regularization.
 
 The following snippets show how to classify points based on a label
 set and a predicate. The result is stored in `label_indices`,
@@ -249,15 +251,14 @@ energy is defined as follows:
 
 
 \f[
-  E(x) = \sum_{i = 1..N_c} E_{si}(x_i)
+  E(x) = \sum_{i = 1..N} E_{si}(x_i)
 \f]
 
-The itemwise energy \f$E_{di}(x_i)\f$ is replaced by
-\f$E_{si}(x_i)\f$ defined on a small local neighborhood \f$N(i)\f$ of
-the \f$i^{th}\f$ item:
+The energy \f$E_{si}(x_i)\f$ is defined on a small local neighborhood
+\f$Nb(i)\f$ of the \f$i^{th}\f$ item:
 
 \f[
-  E_{si}(x_i) = \sum_{j = 1..N_a} \frac{\sum_{k \in N(i)} A_j(x_k)}{\left| N(i) \right|}
+  E_{si}(x_i) = \frac{\sum_{k \in Nb(i)} E_{di}(x_k)}{\left| Nb(i) \right|}
 \f]
 
 This allows to eliminate local noisy variations of assigned
@@ -265,7 +266,7 @@ labels. Increasing the size of the neighborhood
 increases the noise reduction at the cost of higher computation times.
 
 The following snippets show how to classify points using local
-smoothing by providing a model of `CGAL::NeighborQuery`.
+smoothing by providing a model of `CGAL::Classification::NeighborQuery`.
 
 \snippet Classification/example_classification.cpp Smoothing
 
@@ -279,7 +280,7 @@ total energy that is minimized is the sum of the partial data term
 standard Potts model \cgalCite{cgal:l-mrfmi-09} :
 
 \f[
-  E(x) = \sum_{i = 1..N_c} E_{di}(x_i) + \gamma \sum_{i \sim j} \mathbf{1}_{x_i \neq x_j}
+  E(x) = \sum_{i = 1..N} E_{di}(x_i) + \gamma \sum_{i \sim j} \mathbf{1}_{x_i \neq x_j}
 \f]
 
 where \f$\gamma>0\f$ is the parameter of the Potts model that
@@ -295,22 +296,25 @@ piecewise constant parts and to correct large wrongly classified
 clusters. Increasing \f$\gamma\f$ produces more regular result with a
 constant computation time.
 
-To speed up computation, the input domain can be subdivided into
+To speed up computations, the input domain can be subdivided into
 smaller subsets such that several smaller graph cuts are applied
 instead of a big one. The computation of these smaller graph cuts can
 be done in parallel. Increasing the number of subsets allows for
 faster computation times but can also reduce the quality of the
 results.
 
-The following snippets show how to classify points using a graph cut
-regularization providing a model of `CGAL::NeighborQuery`, a strengh
-parameter \f$\gamma\f$ and a number of subdivisions.
+The following snippet shows how to classify points using a graph cut
+regularization providing a model of
+`CGAL::Classification::NeighborQuery`, a strengh parameter
+\f$\gamma\f$ and a number of subdivisions.
 
 \snippet Classification/example_classification.cpp Graph_cut
 
 \section Classification_evaluation Evaluation
 
-The class [Evaluation](@ref CGAL::Classification::Evaluation) allows uers to evaluate the reliability of the classification with respect to a provided ground truth. The following measurements are available:
+The class [Evaluation](@ref CGAL::Classification::Evaluation) allows
+users to evaluate the reliability of the classification with respect
+to a provided ground truth. The following measurements are available:
 
 - [precision()](@ref CGAL::Classification::Evaluation::precision) computes, for one label, the ratio of true positives over the total number of detected positives
 - [recall()](@ref CGAL::Classification::Evaluation::recall) computes, for one label, the ratio of true positives over the total number of provided inliers of this label
@@ -333,7 +337,9 @@ The following example:
 - computes features from the input and the precomputed structures
 - defines 3 labels (vegetation, ground and roof)
 - sets up the classification predicate [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate)
-- classifies the point set with the 3 different methods (this is for the sake of the example: each method overwrite the previous result, users should onluy call one of the methods)
+- classifies the point set with the 3 different methods (this is for
+the sake of the example: each method overwrites the previous result,
+users should only call one of the methods)
 - saves the result in a colored PLY format.
 
 \cgalExample{Classification/example_classification.cpp}

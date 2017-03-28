@@ -176,7 +176,7 @@ int main (int argc, char** argv)
   //! [Graph_cut]
   t.start();
   Classif::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, Pmap(), Pmap(), labels, predicate,
+    (pts, Pmap(), labels, predicate,
      neighborhood.k_neighbor_query(12),
      0.2, 4, label_indices);
   t.stop();

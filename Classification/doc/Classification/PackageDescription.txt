@@ -30,7 +30,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Simon Giraudot, Florent Lafarge}
-\cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of labels (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can classify any type of data, compute its own local features on the data set and define its own labels based on these features.}
+\cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of labels (such as ground, vegetation, buildings, etc.). A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set and define their own labels.}
 \cgalPkgManuals{Chapter_Classification, PkgClassification}
 \cgalPkgSummaryEnd
 

@@ -22,9 +22,9 @@ public:
 
   /*!
     \brief Returns, for each label indexed from 0 to `out.size()`, the
-    probability of the point at `item_index` to belong to this label.
+    ernegy of this label applied to point at `item_index`.
    */
-  void probabilities (std::size_t item_index, std::vector<double>& out) const;
+  void operator() (std::size_t item_index, std::vector<double>& out) const;
 
 
 };

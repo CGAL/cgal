@@ -45,13 +45,13 @@ public:
     this->set_name ("my_feature");
   }
 
-  double value (std::size_t pt_index)
+  float value (std::size_t pt_index)
   {
     if (xmin < range[pt_index].x() && range[pt_index].x() < xmax &&
         ymin < range[pt_index].y() && range[pt_index].y() < ymax)
-      return 1.;
+      return 1.f;
     else
-      return 0.;
+      return 0.f;
   }
     
 };
@@ -109,7 +109,7 @@ int main (int argc, char** argv)
 
   std::vector<std::size_t> label_indices;
   Classif::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, Pmap(), Pmap(), labels, predicate,
+    (pts, Pmap(), labels, predicate,
      neighborhood.k_neighbor_query(12),
      0.5, 1, label_indices);
 

@@ -92,8 +92,8 @@ int main (int argc, char** argv)
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
-  Feature_generator generator (features, 5,  // using 5 scales
-                               pts, Pmap());
+  Feature_generator generator (features, pts, Pmap(),
+                               5);  // using 5 scales
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
@@ -117,7 +117,7 @@ int main (int argc, char** argv)
   t.start();
   std::vector<std::size_t> label_indices;
   Classif::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, Pmap(), Pmap(), labels, predicate,
+    (pts, Pmap(), labels, predicate,
      generator.neighborhood().k_neighbor_query(12),
      0.2, 10, label_indices);
   t.stop();
