@@ -19,20 +19,20 @@
 // Author(s)     : Laurent Rineau, Stephane Tayeb
 //
 
-#ifndef CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_H
-#define CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_H
+#define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Polygon_mesh_processing.h>
 
 
 #include <CGAL/Kernel/global_functions_3.h>
-#include <CGAL/Mesh_3/Detect_features_in_polyhedra_fwd.h>
+#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra_fwd.h>
 #include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <set>
 
 namespace CGAL {
-namespace Mesh_3 {
+namespace Polygon_mesh_processing {
 
   template <typename Polyhedron, typename FT, typename PatchId_pmap>
 void detect_features(Polyhedron& p,
@@ -314,7 +314,7 @@ flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_de
   }
 }
  
-} // end namespace Mesh_3
+} // end namespace PMP
 } // end namespace CGAL
 
-#endif // CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_H
