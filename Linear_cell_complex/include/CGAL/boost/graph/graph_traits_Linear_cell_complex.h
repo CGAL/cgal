@@ -98,7 +98,7 @@ struct EdgeHandle : Dart_handle
   friend bool operator>=(const EdgeHandle& a, const EdgeHandle& b)
   { return !(a<b); }
 
-  const std::size_t id() const
+  std::size_t id() const
   { return first_halfedge()->id()/2; }
 
   friend std::size_t hash_value(const EdgeHandle& i)
@@ -150,7 +150,12 @@ public:
 
   Self& operator++()
   {
-    ++nt; ++nt; // halfedges are always created by pair (two consecutive elements)
+    typedef typename Dart_handle::CC CC;
+    ++nt;
+    // We need to test if we are at the end of the compact container.
+    // (case where we were previously on the last element)
+    if (!CC::is_begin_or_end(&*value_type(nt)))
+      ++nt; // halfedges are always created by pair (two consecutive elements)
     return *this;
   }
 
@@ -534,7 +539,7 @@ num_faces(const CGAL_LCC_TYPE& lcc)
 { return lcc.template attributes<2>().size(); }
   
 CGAL_LCC_TEMPLATE_ARGS
-void reserve(CGAL_LCC_TYPE& g,
+void reserve(CGAL_LCC_TYPE& /*g*/,
              typename boost::graph_traits<CGAL_LCC_TYPE>::vertices_size_type /*nv*/,
              typename boost::graph_traits<CGAL_LCC_TYPE>::edges_size_type /*ne*/,
              typename boost::graph_traits<CGAL_LCC_TYPE>::faces_size_type /*nf*/)
