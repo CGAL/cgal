@@ -84,7 +84,7 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
-    template<class>
+    template<class, class>
     friend struct internal::Init_id;
 
     typedef Dart_without_info<d,Refs, WithId> Self;

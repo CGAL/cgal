@@ -241,8 +241,8 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
-    template<class>
-    friend class internal::Init_id;
+    template<class, class>
+    friend struct internal::Init_id;
 
   public:
     typedef Tag_true                             Supports_cell_dart;
