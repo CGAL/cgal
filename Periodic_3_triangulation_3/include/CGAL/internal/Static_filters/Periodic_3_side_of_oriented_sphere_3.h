@@ -120,6 +120,12 @@ public:
           double asty = CGAL::abs(sty);
           double astz = CGAL::abs(stz);
 
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+          maxx = mmax(maxx, aqtx, artx, astx);
+          maxy = mmax(maxy, aqty, arty, asty);
+          maxz = mmax(maxz, aqtz, artz, astz);
+#else
           if (maxx < aqtx) maxx = aqtx;
           if (maxx < artx) maxx = artx;
           if (maxx < astx) maxx = astx;
@@ -131,7 +137,21 @@ public:
           if (maxz < aqtz) maxz = aqtz;
           if (maxz < artz) maxz = artz;
           if (maxz < astz) maxz = astz;
+#endif
 
+          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+          /*
+          CGAL::Min<double> mmin;
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+          */
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+
+#else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
               std::swap(maxx, maxz);
@@ -139,10 +159,7 @@ public:
               std::swap(maxy, maxz);
           else if (maxy < maxx)
               std::swap(maxx, maxy);
-
-          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
-                     * (maxz * maxz);
-
+#endif
           double det = CGAL::determinant(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
                                          qtx,qty,qtz,qt2,
@@ -155,6 +172,7 @@ public:
           }
           // Protect against overflow in the computation of det.
           else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
+            eps *= (maxz * maxz);
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
@@ -166,10 +184,10 @@ public:
 
   Oriented_side
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,
-      const Point_3 &s, const Point_3 &t, const Offset &o_p,
-      const Offset &o_q, const Offset &o_r,
-      const Offset &o_s, const Offset &o_t) const {
-
+             const Point_3 &s, const Point_3 &t,
+             const Offset &o_p, const Offset &o_q, const Offset &o_r,
+             const Offset &o_s, const Offset &o_t) const
+  {
     CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 calls");
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
@@ -244,6 +262,12 @@ public:
       double asty = CGAL::abs(sty);
       double astz = CGAL::abs(stz);
 
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+          maxx = mmax(maxx, aqtx, artx, astx);
+          maxy = mmax(maxy, aqty, arty, asty);
+          maxz = mmax(maxz, aqtz, artz, astz);
+#else
       if (maxx < aqtx) maxx = aqtx;
       if (maxx < artx) maxx = artx;
       if (maxx < astx) maxx = astx;
@@ -255,7 +279,20 @@ public:
       if (maxz < aqtz) maxz = aqtz;
       if (maxz < artz) maxz = artz;
       if (maxz < astz) maxz = astz;
+#endif
 
+      double eps = 1.0466759304746772485e-13 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+      /*
+      CGAL::Min<double> mmin;
+      double tmp = mmin(maxx, maxy, maxz);
+      maxz = mmax(maxx, maxy, maxz);
+      maxx = tmp;
+      */
+      sse2minmax(maxx,maxy,maxz);
+      // maxy can contain ANY element
+#else
       // Sort maxx < maxy < maxz.
       if (maxx > maxz)
           std::swap(maxx, maxz);
@@ -263,14 +300,11 @@ public:
           std::swap(maxy, maxz);
       else if (maxy < maxx)
           std::swap(maxx, maxy);
-
-      double eps = 1.0466759304746772485e-13 * maxx * maxy * maxz
-                  * (maxz * maxz);
-
+#endif
       double det = CGAL::determinant(ptx,pty,ptz,pt2,
-                                      rtx,rty,rtz,rt2,
-                                      qtx,qty,qtz,qt2,
-                                      stx,sty,stz,st2);
+                                     rtx,rty,rtz,rt2,
+                                     qtx,qty,qtz,qt2,
+                                     stx,sty,stz,st2);
 
       // Protect against underflow in the computation of eps.
       if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
@@ -279,6 +313,7 @@ public:
       }
       // Protect against overflow in the computation of det.
       else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
+        eps *= (maxz * maxz);
         if (det > eps)  return ON_POSITIVE_SIDE;
         if (det < -eps) return ON_NEGATIVE_SIDE;
       }

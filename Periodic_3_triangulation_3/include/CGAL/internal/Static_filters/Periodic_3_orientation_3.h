@@ -54,8 +54,9 @@ public:
 
  template <class EX, class AP>
  Periodic_3_orientation_3(const Iso_cuboid_3 * const dom,
-     const EX * dom_e, const AP * dom_f) : Base(dom_e,dom_f), _dom(dom) {
- }
+                          const EX * dom_e, const AP * dom_f)
+   : Base(dom_e,dom_f), _dom(dom)
+ { }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
@@ -118,17 +119,37 @@ public:
           double aprz = CGAL::abs(prz);
           double apsz = CGAL::abs(psz);
 
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+
+          maxx = mmax(maxx, aprx, apsx);
+          maxy = mmax(maxy, apry, apsy);
+          maxz = mmax(maxz, aprz, apsz);
+#else
           if (maxx < aprx) maxx = aprx;
           if (maxx < apsx) maxx = apsx;
           if (maxy < apry) maxy = apry;
           if (maxy < apsy) maxy = apsy;
           if (maxz < aprz) maxz = aprz;
           if (maxz < apsz) maxz = apsz;
-          double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
+#endif
+
           double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
 
+          double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+          /*
+          CGAL::Min<double> mmin;
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+          */
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+#else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
               std::swap(maxx, maxz);
@@ -136,6 +157,7 @@ public:
               std::swap(maxy, maxz);
           else if (maxy < maxx)
               std::swap(maxx, maxy);
+#endif
 
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
@@ -156,10 +178,10 @@ public:
 
   result_type
   operator()(const Point_3 &p, const Point_3 &q,
-      const Point_3 &r, const Point_3 &s,
-      const Offset &o_p, const Offset &o_q,
-      const Offset &o_r, const Offset &o_s) const {
-
+             const Point_3 &r, const Point_3 &s,
+             const Offset &o_p, const Offset &o_q,
+             const Offset &o_r, const Offset &o_s) const
+  {
       CGAL_PROFILER("Periodic_3_orientation_3 calls");
       Get_approx<Point_3> get_approx; // Identity functor for all points
                                       // but lazy points.
@@ -215,6 +237,12 @@ public:
           double apsy = CGAL::abs(psy);
           double apsz = CGAL::abs(psz);
 
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+          maxx = mmax(maxx, aqtx, artx, astx);
+          maxy = mmax(maxy, aqty, arty, asty);
+          maxz = mmax(maxz, aqtz, artz, astz);
+#else
           if (maxx < aprx) maxx = aprx;
           if (maxx < apsx) maxx = apsx;
 
@@ -223,11 +251,23 @@ public:
 
           if (maxz < aprz) maxz = aprz;
           if (maxz < apsz) maxz = apsz;
-          double eps = 4.111024169857068197e-15 * maxx * maxy * maxz;
+#endif
           double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
 
+          double eps = 4.111024169857068197e-15 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+          /*
+          CGAL::Min<double> mmin;
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+          */
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+#else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
               std::swap(maxx, maxz);
@@ -235,6 +275,7 @@ public:
               std::swap(maxy, maxz);
           else if (maxy < maxx)
               std::swap(maxx, maxy);
+#endif
 
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-97) /* cbrt(min_double/eps) */ {

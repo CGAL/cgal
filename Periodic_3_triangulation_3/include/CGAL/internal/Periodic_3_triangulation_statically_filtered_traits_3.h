@@ -45,7 +45,7 @@
 
 namespace CGAL {
 
-// The K_base argument is supposed to provide exact primitives.
+// The `Traits` argument is supposed to provide exact primitives.
 template < typename Traits >
 class Periodic_3_triangulation_statically_filtered_traits_3
     : public Traits
