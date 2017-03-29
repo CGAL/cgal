@@ -318,10 +318,11 @@ split_graph_into_polylines(const Graph& graph,
       polyline_visitor.add_node(g_copy[v]);
       internal::bgl_sgip_maybe_call_visitor_add_edge(polyline_visitor,
                                                      g_copy[*b]);
+      if (degree(v, g_copy)==1)
+        terminal.erase(v);
       remove_edge(b, g_copy);
       u = v;
     }
-    terminal.erase(u);
     polyline_visitor.end_polyline();
   }
 
