@@ -51,7 +51,6 @@ include(GNUInstallDirs)
 if(CMAKE_MAJOR_VERSION GREATER 2)
   # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0.
   # Thus this option is only enabled for cmake >= 3.0.
-  option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" OFF )
 
   if (CGAL_HEADER_ONLY OR CGAL_HEADER_ONLY_STEP_2)
     set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
