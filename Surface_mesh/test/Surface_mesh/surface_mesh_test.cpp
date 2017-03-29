@@ -182,8 +182,8 @@ void isolated_vertex_check()
   Sm::Vertex_index isolated = f.m.add_vertex(Point_3(10, 10, 10));
   assert(f.m.is_isolated(isolated));
   assert(!f.m.halfedge(isolated).is_valid());
-  assert(! f.m.is_border(isolated));
-  assert(! f.m.is_border(isolated, false));
+  assert(f.m.is_border(isolated));
+  assert(f.m.is_border(isolated, false));
   assert(f.m.degree(isolated) == 0);
 }
 

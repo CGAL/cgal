@@ -1683,7 +1683,7 @@ public:
     ///
     ///  A halfedge, or edge is on the border of a surface mesh
     /// if it is incident to a `null_face()`.  A vertex is on a border
-    /// if it is incident to a border halfedge. While for a halfedge and
+    /// if it is isolated or incident to a border halfedge. While for a halfedge and
     /// edge this is a constant time operation, for a vertex it means
     /// to look at all incident halfedges.  If algorithms operating on a 
     /// surface mesh maintain that the halfedge associated to a border vertex is
@@ -1703,7 +1703,7 @@ public:
     {
         Halfedge_index h(halfedge(v));
         if (h == null_halfedge()){
-          return false;
+          return true;
         }
         if(check_all_incident_halfedges){
           Halfedge_around_target_circulator hatc(h,*this), done(hatc);
@@ -1714,7 +1714,7 @@ public:
           }while(++hatc != done);
           return false;
         }
-        return is_valid(h) && is_border(h);
+        return is_border(h);
     }
 
     /// returns whether `h` is a border halfege, that is if its incident face is `sm.null_face()`.
