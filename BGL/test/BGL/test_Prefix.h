@@ -288,7 +288,7 @@ struct Surface_fixture_3 {
     assert(z != boost::graph_traits<Graph>::null_vertex());
 
     f1 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
-    f2 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(z, m), m), m) : face(halfedge(z, m), m);
+    f2 = CGAL::is_border(halfedge(z, m),m) ? face(opposite(halfedge(z, m), m), m) : face(halfedge(z, m), m);
 
     assert(f1 != boost::graph_traits<Graph>::null_face());
     assert(f2 != boost::graph_traits<Graph>::null_face());
