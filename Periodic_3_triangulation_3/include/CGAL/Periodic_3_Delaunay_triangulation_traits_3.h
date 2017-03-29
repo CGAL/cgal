@@ -119,25 +119,15 @@ class Periodic_3_Delaunay_triangulation_traits_3;
 
 namespace CGAL {
 
-// This declaration is needed to break the cyclic dependency.
-template < typename K, typename Off, bool Has_static_filters >
-class Periodic_3_Delaunay_triangulation_filtered_traits_3;
-
 template < class K, class Off>
 class Periodic_3_Delaunay_triangulation_traits_3<K, Off, false>
   : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>
-{
-public:
-  typedef K Kernel;
-};
+{ };
 
 template < typename K, typename Off >
 class Periodic_3_Delaunay_triangulation_traits_3 <K, Off, true>
   : public Periodic_3_Delaunay_triangulation_filtered_traits_3 < K, Off, internal::Has_static_filters<K>::value >
-{
-public:
-  typedef K Kernel;
-};
+{ };
 
 } //namespace CGAL
 

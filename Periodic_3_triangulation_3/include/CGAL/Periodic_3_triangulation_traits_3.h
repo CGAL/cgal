@@ -123,22 +123,16 @@ class Periodic_3_triangulation_traits_3;
 #include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
-// This declaration is needed to break the cyclic dependency.
-template < typename K, typename Off, bool Has_static_filters >
-class Periodic_3_triangulation_filtered_traits_3;
 
-template < class K, class Off, bool Has_filtered_predicates >
-class Periodic_3_triangulation_traits_3
+template < class K, class Off >
+class Periodic_3_triangulation_traits_3<K, Off, false>
   : public Periodic_3_triangulation_traits_base_3<K, Off>
 { };
 
 template < typename K, typename Off >
-class Periodic_3_triangulation_traits_3 < K, Off, true>
+class Periodic_3_triangulation_traits_3<K, Off, true>
   : public Periodic_3_triangulation_filtered_traits_3<K, Off, internal::Has_static_filters<K>::value >
-{
-public:
-  typedef K Kernel;
-};
+{ };
 
 } //namespace CGAL
 
