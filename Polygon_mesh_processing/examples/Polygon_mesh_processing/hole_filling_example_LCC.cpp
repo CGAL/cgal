@@ -31,6 +31,7 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> 
 typedef boost::graph_traits<LCC>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<LCC>::face_descriptor     face_descriptor;
 typedef boost::graph_traits<LCC>::vertex_descriptor   vertex_descriptor;
+typedef boost::graph_traits<LCC>::halfedge_iterator   halfedge_iterator;
 
 int main(int argc, char* argv[])
 {
@@ -40,8 +41,10 @@ int main(int argc, char* argv[])
 
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh))
+  for ( halfedge_iterator it=halfedges(mesh).begin();
+        it!=halfedges(mesh).end(); ++it)
   {
+    halfedge_descriptor h=*it;
     if(is_border(h,mesh))
     {
       std::vector<face_descriptor>  patch_facets;
