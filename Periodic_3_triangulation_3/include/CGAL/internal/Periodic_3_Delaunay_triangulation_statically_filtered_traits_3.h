@@ -32,8 +32,6 @@
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
 
-#include <CGAL/internal/Periodic_3_triangulation_statically_filtered_traits_3.h>
-
 #include <CGAL/internal/Static_filters/Periodic_3_side_of_oriented_sphere_3.h>
 
 // TODO :
@@ -41,7 +39,7 @@
 
 namespace CGAL {
 
-// The K_base argument is supposed to provide exact primitives.
+// The `Traits` argument is supposed to provide exact primitives.
 template < typename Traits >
 class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3
     : public Traits
@@ -49,7 +47,6 @@ class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3
   typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<Traits> Self;
 
 public:
-
   typedef internal::Static_filters_predicates::Periodic_3_side_of_oriented_sphere_3<Traits>
     Side_of_oriented_sphere_3;
 

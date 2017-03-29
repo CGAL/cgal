@@ -20,20 +20,20 @@
 //                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-
 #ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_FILTERED_TRAITS_3_H
 #define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_FILTERED_TRAITS_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <string>
+#include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
+#include <CGAL/internal/Has_boolean_tags.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
-#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 namespace CGAL {
 
