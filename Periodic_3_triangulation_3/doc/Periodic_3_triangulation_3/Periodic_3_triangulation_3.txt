@@ -273,7 +273,7 @@ The second parameter `Periodic_3Offset_3` defaults to
 
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as template parameters of the concepts
+`Filtered_kernel` can all be used as \cgalModels of the concepts
 `TriangulationTraits_3`, `DelaunayTriangulationTraits_3`, and
 `RegularTriangulationTraits_3`.
 The periodic triangulation classes provide exact
