@@ -198,7 +198,7 @@ namespace CGAL {
     const CGAL::Triangulation_hierarchy_2<Tr>& tr;
   public:
     typedef boost::readable_property_map_tag category;
-    typedef typename typename Tr::Geom_traits::FT value_type;
+    typedef typename Tr::Geom_traits::FT value_type;
     typedef value_type reference;
     typedef typename CGAL::Triangulation_hierarchy_2<Tr>::Edge key_type;
 
@@ -206,7 +206,7 @@ namespace CGAL {
       : tr(tr_) 
     { }
 
-    typename typename Tr::Geom_traits::FT operator[](key_type e) const {
+    typename Tr::Geom_traits::FT operator[](key_type e) const {
       return approximate_sqrt(tr.segment(e).squared_length());
     }
   };
