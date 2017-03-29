@@ -283,10 +283,11 @@ split_graph_into_polylines(const Graph& graph,
       vertex_descriptor v = target(*b, g_copy);
       CGAL_assertion(u!=v);
       polyline_visitor.add_node(g_copy[v]);
+      if (degree(v, g_copy)==1)
+        terminal.erase(v);
       remove_edge(b, g_copy);
       u = v;
     }
-    terminal.erase(u);
     polyline_visitor.end_polyline();
   }
 
