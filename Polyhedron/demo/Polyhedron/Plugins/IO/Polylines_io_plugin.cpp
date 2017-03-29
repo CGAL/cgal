@@ -151,9 +151,10 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   std::size_t n;
   while(ifs >> n) {
     ++counter;
-    std::cerr << "Polyline #" << polylines.size() << ": " << n << " vertices";
-    polylines.resize(polylines.size()+1);
-    std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
+    std::vector<Scene_polylines_item::Point_3> new_polyline;
+    polylines.push_back(new_polyline);
+    std::vector<Scene_polylines_item::Point_3>&polyline = polylines.back();
+    polyline.reserve(n);
     while(n--){
       Scene_polylines_item::Point_3 p;
       ifs >> p;
@@ -170,7 +171,6 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
     if(!metadata.isEmpty()) {
       std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
     } else {
-      std::cerr << "\n";
     }
     if(ifs.bad() || ifs.fail()) return 0;
   }
