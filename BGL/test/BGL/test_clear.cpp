@@ -10,6 +10,8 @@ void test() {
     std::cout << "Error reading file: " << fname << std::endl;
   }
 
+  assert(CGAL::is_valid(m));
+
   CGAL::clear(m);
   assert(num_vertices(m) == 0);
   assert(num_faces(m) == 0);
