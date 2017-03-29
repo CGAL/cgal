@@ -65,8 +65,8 @@ public:
 
   typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
   
-  typedef std::set<face_descriptor, Compare_handles> face_descriptor_set;
-  typedef std::set<halfedge_descriptor, Compare_handles> He_handle_set;
+  typedef std::set<face_descriptor> face_descriptor_set;
+  typedef std::set<halfedge_descriptor> He_handle_set;
   
 public:
   Detect_features_in_polyhedra(PatchId_pmap pid_map)
@@ -165,11 +165,11 @@ detect_surface_patches(Polyhedron& polyhedron)
 {
   // Initialize unsorted_faces
   face_descriptor_set unsorted_faces;
-  for ( typename Polyhedron::Facet_iterator fit = polyhedron.facets_begin(),
-       end = polyhedron.facets_end() ; fit != end ; ++fit )
+  for ( typename boost::graph_traits<Polyhedron>::face_iterator fit = faces(polyhedron).begin(),
+       end = faces(polyhedron).end() ; fit != end ; ++fit )
   {
-    face_descriptor fh = fit;
-    unsorted_faces.insert(fh);
+
+    unsorted_faces.insert(*fit);
   }
   
   // Flood
@@ -192,23 +192,30 @@ void
 Detect_features_in_polyhedra<P_, I_>::
 detect_vertices_incident_patches(Polyhedron& polyhedron)
 {
+  typename boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
+      = get(halfedge_is_feature,polyhedron);
+  typedef typename boost::property_map<Polyhedron,vertex_incident_patches_t>::type VIP_map;
+   VIP_map vip = get(vertex_incident_patches,polyhedron);
+
   BOOST_FOREACH(vertex_descriptor vit,vertices(polyhedron))
   {
     // Look only at feature vertices
-    if( ! vit->is_feature_vertex() ) { continue; }
+    if( ! get(hif, halfedge(vit, polyhedron)) ){ continue; }
     
     // Loop on incident facets of vit
+    std::set<Patch_id> set;
     BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(vit,polyhedron))
     {
       if( ! is_border(he,polyhedron) )
       {
-        vit->add_incident_patch(get(pid_map,face(he,polyhedron)));
+        set.insert(get(pid_map,face(he,polyhedron)));
       }
       else if( ! is_border(opposite(he,polyhedron),polyhedron) )
       {
-        vit->add_incident_patch(get(pid_map, face(opposite(he,polyhedron),polyhedron)));
+        set.insert(get(pid_map, face(opposite(he,polyhedron),polyhedron)));
       }
     }
+    put(vip, vit, set);
   }
 }
   
@@ -272,6 +279,8 @@ void
 Detect_features_in_polyhedra<P_, I_>::
 flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_descriptor_set& unsorted_faces) const
 {
+  typename boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
+      = get(halfedge_is_feature,polyhedron);
   // Initialize he_to_explore with halfedges of the starting facet
   He_handle_set he_to_explore;
   BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f,polyhedron), polyhedron))
@@ -287,7 +296,7 @@ flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_de
     he_to_explore.erase(he_to_explore.begin());
     
     // If we don't go through a border of the patch
-    if ( ! he->is_feature_edge() && ! is_border(he,polyhedron) )
+    if ( ! get(hif, he) && ! is_border(he,polyhedron) )
     {
       face_descriptor explored_facet = face(he,polyhedron);
       

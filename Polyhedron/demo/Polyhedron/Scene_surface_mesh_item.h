@@ -9,6 +9,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <vector>
+#include <set>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/array.hpp>
@@ -22,6 +23,7 @@
 #include <QColor>
 
 #include <CGAL/Polygon_mesh_processing/properties.h>
+
 
 struct Scene_surface_mesh_item_priv;
 
@@ -52,7 +54,7 @@ public:
   ~Scene_surface_mesh_item();
 
   // Only needed for Scene_polyhedron_item
-  void setItemIsMulticolor(bool){} 
+  void setItemIsMulticolor(bool);
   void update_vertex_indices(){}
   void update_halfedge_indices(){}
   void update_facet_indices(){}
@@ -65,6 +67,7 @@ public:
   std::vector<QColor>& color_vector();
   void set_patch_id(SMesh::Face_index f,int i)const;
   int patch_id(SMesh::Face_index f)const;
+  void show_feature_edges(bool);
   void draw() const {}
   void draw(CGAL::Three::Viewer_interface *) const;
 
@@ -154,6 +157,13 @@ inline get(CGAL::vertex_selection_t, SMesh& smesh)
   typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
   return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
 }
+
+ SMesh::Property_map< boost::graph_traits<SMesh >::vertex_descriptor,std::set<int> >
+ inline get(CGAL::vertex_incident_patches_t, SMesh& smesh)
+{
+  typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
+  return smesh.add_property_map<vertex_descriptor,std::set<int> >("v:ip").first;
+}
 }
 namespace boost
 {
@@ -198,6 +208,15 @@ struct property_map<SMesh, CGAL::vertex_num_feature_edges_t>
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
 
   typedef SMesh::Property_map<vertex_descriptor, int> type;
+};
+
+template<>
+struct property_map<SMesh, CGAL::vertex_incident_patches_t>
+{
+
+  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+
+  typedef SMesh::Property_map<vertex_descriptor, std::set<int>> type;
 };
 } //boost
 #endif /* CGAL_SCENE_SURFACE_MESH_ITEM_H */
