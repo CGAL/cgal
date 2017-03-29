@@ -22,7 +22,7 @@
 #ifndef CGAL_ORIENT_POLYGON_MESH_H
 #define CGAL_ORIENT_POLYGON_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/orientation.h>
 
 
 #include <algorithm>
@@ -169,7 +169,7 @@ void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_des
 }
 
 /**
-* \ingroup PMP_reverse_face_orientations_grp
+* \ingroup PMP_orientation_grp
 * reverses for each face the order of the vertices along the face boundary.
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -227,7 +227,7 @@ void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
 }
 
 /**
-* \ingroup PMP_reverse_face_orientations_grp
+* \ingroup PMP_orientation_grp
 * reverses for each face in `face_range` the order of the vertices along the face boundary.
 * The function does not perform any control and if the orientation change of the faces
 * makes the polygon mesh invalid, the behavior is undefined.

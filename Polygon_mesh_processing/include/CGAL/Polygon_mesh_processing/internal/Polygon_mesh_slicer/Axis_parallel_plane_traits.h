@@ -29,7 +29,7 @@
 #ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
 #define CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
 
 namespace CGAL{

@@ -22,7 +22,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 #define CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/Compute_normal.h>
 
 
 #include <CGAL/boost/graph/helpers.h>

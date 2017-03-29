@@ -25,7 +25,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
 #define CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/predicate.h>
 
 
 #include <CGAL/box_intersection_d.h>

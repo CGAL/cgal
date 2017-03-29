@@ -21,7 +21,7 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 
 #include <CGAL/value_type_traits.h>

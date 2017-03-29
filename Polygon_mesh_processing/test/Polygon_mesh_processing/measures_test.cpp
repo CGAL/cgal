@@ -2,15 +2,10 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 #include <CGAL/Bbox_3.h>
 

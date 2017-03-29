@@ -3,7 +3,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/internal/corefinement/connected_components.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <fstream>

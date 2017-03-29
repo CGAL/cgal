@@ -21,7 +21,7 @@
 #ifndef CGAL_NAMED_PARAMETERS_HELPERS_H
 #define CGAL_NAMED_PARAMETERS_HELPERS_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/core.h>
 
 
 #include <CGAL/Kernel_traits.h>

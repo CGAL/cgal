@@ -21,7 +21,7 @@
 #ifndef CGAL_PMP_BGL_NAMED_FUNCTION_PARAMS_H
 #define CGAL_PMP_BGL_NAMED_FUNCTION_PARAMS_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/core.h>
 
 
 #include <CGAL/boost/graph/named_function_params.h>

@@ -17,7 +17,6 @@
 // includes for Operations on polyhedra
 #include <CGAL/intersection_of_Polyhedra_3.h>
 #include <CGAL/intersection_of_Polyhedra_3_refinement_visitor.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/internal/corefinement/Polyhedra_output_builder.h>
 
 #include <CGAL/iterator.h>

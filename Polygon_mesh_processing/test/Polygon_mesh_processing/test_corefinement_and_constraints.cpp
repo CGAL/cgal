@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 #include <iostream>
@@ -31,10 +30,10 @@ mark_sharp_edge(const TriangleMesh& tm,
       put(ecm, ed, true);
     }
     else{
-      double angle = CGAL::Mesh_3::dihedral_angle(get(vpm, source(hd, tm)),
-                                                  get(vpm, target(hd, tm)),
-                                                  get(vpm, target(next(hd, tm), tm)),
-                                                  get(vpm, target(next(opposite(hd, tm), tm), tm)));
+      double angle = CGAL::approximate_dihedral_angle(get(vpm, source(hd, tm)),
+                                                      get(vpm, target(hd, tm)),
+                                                      get(vpm, target(next(hd, tm), tm)),
+                                                      get(vpm, target(next(opposite(hd, tm), tm), tm)));
       if ( CGAL::abs(angle) < angle_threshold )
       {
         ++nb_sharp_edges;
