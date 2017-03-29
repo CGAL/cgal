@@ -118,27 +118,19 @@ class Periodic_3_regular_triangulation_traits_3;
 
 } // namespace CGAL
 
-// Partial specialization for Filtered_kernel<CK>.
 #include <CGAL/internal/Periodic_3_regular_triangulation_filtered_traits_3.h>
 
 namespace CGAL
 {
-// This declaration is needed to break the cyclic dependency.
-template<typename K, typename Off>
-class Periodic_3_regular_triangulation_filtered_traits_3;
-
-template<class K, class Off, bool Has_filtered_predicates>
-class Periodic_3_regular_triangulation_traits_3:
-  public Periodic_3_regular_triangulation_traits_base_3<K, Off>
+template<class K, class Off>
+class Periodic_3_regular_triangulation_traits_3<K, Off, false>
+    : public Periodic_3_regular_triangulation_traits_base_3<K, Off>
 { };
 
-template <typename K, typename Off >
+template <typename K, typename Off>
 class Periodic_3_regular_triangulation_traits_3<K, Off, true>
-: public Periodic_3_regular_triangulation_filtered_traits_3<K, Off>
-{
-public:
-  typedef K Kernel;
-};
+    : public Periodic_3_regular_triangulation_filtered_traits_3<K, Off>
+{ };
 
 } //namespace CGAL
 
