@@ -3,16 +3,15 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/link_to_face_graph.h>
-#include <CGAL/convexity_check_3.h>
+#include <CGAL/convex_hull_3_to_face_graph.h>
 
 #include <list>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef K::Point_3                                              Point_3;
 typedef CGAL::Delaunay_triangulation_3<K>                       Delaunay;
 typedef Delaunay::Vertex_handle                                 Vertex_handle;
-typedef CGAL::Surface_mesh<Point_3>                             Polyhedron_3;
+typedef CGAL::Surface_mesh<Point_3>                             Surface_mesh;
 
 int main()
 {
@@ -40,8 +39,8 @@ int main()
 
   //copy the convex hull of points into a polyhedron and use it
   //to get the number of points on the convex hull
-  Polyhedron_3 chull;
-  CGAL::link_to_face_graph(T, T.infinite_vertex(), chull);
+  Surface_mesh chull;
+  CGAL::convex_hull_3_to_face_graph(T, chull);
   
   std::cout << "After removal of 25 points, there are "
             << num_vertices(chull) << " points on the convex hull." << std::endl;

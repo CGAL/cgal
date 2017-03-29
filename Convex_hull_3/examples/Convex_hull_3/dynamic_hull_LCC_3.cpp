@@ -1,17 +1,30 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_3_to_face_graph.h>
-
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 #include <list>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef K::Point_3                                              Point_3;
 typedef CGAL::Delaunay_triangulation_3<K>                       Delaunay;
 typedef Delaunay::Vertex_handle                                 Vertex_handle;
-typedef CGAL::Surface_mesh<Point_3>                             Surface_mesh;
+
+typedef CGAL::Linear_cell_complex_traits<3, K> MyTraits;
+struct Myitem
+{
+  template<class Refs>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Tag_true Darts_with_id;
+    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
+    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
+    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
+  };
+};
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
 
 int main()
 {
@@ -39,7 +52,7 @@ int main()
 
   //copy the convex hull of points into a polyhedron and use it
   //to get the number of points on the convex hull
-  Surface_mesh chull;
+  LCC chull;
   CGAL::convex_hull_3_to_face_graph(T, chull);
   
   std::cout << "After removal of 25 points, there are "

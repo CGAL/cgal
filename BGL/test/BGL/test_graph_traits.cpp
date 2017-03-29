@@ -258,12 +258,11 @@ void test_read(const G& g)
   assert(CGAL::is_valid(g));
 }
 
-
 template <typename Graph>
 void
 test(const std::vector<Graph>& graphs)
 {
-  BOOST_FOREACH(Graph p, graphs){
+  BOOST_FOREACH(const Graph& p, graphs){
     test_edge_iterators(p);
     test_read(p);
     test_vertex_iterators(p);

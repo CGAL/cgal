@@ -1,8 +1,10 @@
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex.h>
 
 #include <boost/graph/graph_concepts.hpp>
 #include <CGAL/boost/graph/graph_concepts.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
@@ -43,8 +45,6 @@ void concept_check_polyhedron() {
   boost::function_requires< CGAL::MutableHalfedgeGraphConcept<LCC> >();
   boost::function_requires< CGAL::MutableFaceGraphConcept<LCC> >();
 
-  boost::function_requires< boost::MutableGraphConcept<LCC> >();
-
   boost::function_requires< boost::concepts::PropertyGraph<
     LCC, halfedge_descriptor, boost::halfedge_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<
@@ -57,15 +57,6 @@ void concept_check_polyhedron() {
     LCC, vertex_descriptor, boost::vertex_index_t> >();
   boost::function_requires< boost::concepts::PropertyGraph<
     LCC, face_descriptor, boost::face_index_t> >();
-
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    LCC, halfedge_descriptor, boost::halfedge_external_index_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    LCC, vertex_descriptor, boost::vertex_external_index_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    LCC, edge_descriptor, boost::edge_external_index_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    LCC, face_descriptor, boost::face_external_index_t> >();
 
   // null
   boost::graph_traits<LCC>::null_vertex();
@@ -95,27 +86,25 @@ void runtime_check_halfedgegraph()
     x = add_vertex(Point_3(2,0,0), p),
     y = add_vertex(Point_3(1,1,0), p);
   
-  add_edge(v, u, p);
-  add_edge(u, y, p);
-  add_edge(y, v, p);
-  add_face(p);
+  std::vector<vertex_descriptor> face;
+  face.push_back(v); face.push_back(u); face.push_back(y);
+  CGAL::Euler::add_face(face, p);
 
-  add_edge(u, w, p);
-  add_edge(w, y, p);
-  add_face(p);
+  face.clear();
+  face.push_back(v); face.push_back(y); face.push_back(x);
+  CGAL::Euler::add_face(face, p);
 
-  add_edge(w, x, p);
-  add_edge(x, y, p);
-  add_face(p);
-
-  add_edge(x, v, p);
-  add_face(p);
-
+  face.clear();
+  face.push_back(x); face.push_back(y); face.push_back(w);
+  CGAL::Euler::add_face(face, p);
+  
+  face.clear();
+  face.push_back(w); face.push_back(y); face.push_back(u);
+  CGAL::Euler::add_face(face, p);
 
   std::cout<<"num_edges(p)"<<num_edges(p)<<std::endl;
   std::cout<<"num_halfedges(p)"<<num_halfedges(p)<<std::endl;
   std::cout<<"num_faces(p)"<<num_faces(p)<<std::endl;
-  
 
   assert(num_edges(p) ==  8);
   assert(num_halfedges(p) == 16);

@@ -170,13 +170,15 @@ namespace CGAL {
   {
     typedef Cell_attribute_with_point
           <Refs, Info_, Tag_, OnMerge, OnSplit, Tag_true> Base;
-    typedef typename Refs::Point Point;
 
     template <class, class, class, class>
     friend class Compact_container;
 
     template <class, class>
     friend class Concurrent_compact_container;
+
+  public:
+    typedef typename Base::Point Point;
 
   protected:
     /// Default contructor.
@@ -200,13 +202,15 @@ namespace CGAL {
   {
     typedef Cell_attribute_with_point
          <Refs, void, Tag_, OnMerge, OnSplit, Tag_true> Base;
-    typedef typename Refs::Point Point;
 
     template <class, class, class, class>
     friend class Compact_container;
 
     template <class, class>
     friend class Concurrent_compact_container;
+
+  public:
+    typedef typename Base::Point Point;
 
   protected:
     /// Default contructor.

@@ -21,6 +21,7 @@ int main()
 {
   test<SM>();
   test<Polyhedron>();
+  test<LCC>();
 #if defined(CGAL_USE_OPENMESH)
   test<OMesh>();
 #endif

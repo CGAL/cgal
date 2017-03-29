@@ -146,7 +146,10 @@ bool read_a_mesh(LCC& lcc, const std::string& str) {
   std::ifstream in(str.c_str());
   bool success = in.good();
   if(success)
+  {
     CGAL::load_off_v2(lcc, in);
+    assert(lcc.is_valid());
+  }
   return success;
 }
 
@@ -159,6 +162,7 @@ std::vector<T> t_data()
     T& s = vs.back();
     if(!read_a_mesh(s, std::string(data[i])))
       throw std::runtime_error(std::string("Failed to read test data: ") + data[i]);
+    assert(s.is_valid());
   }
 
   return vs;
