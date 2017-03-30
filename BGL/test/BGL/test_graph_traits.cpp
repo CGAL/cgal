@@ -11,7 +11,6 @@ typedef boost::unordered_set<std::size_t> id_map;
 template <typename Graph>
 void test_isolated_vertex(const Graph& g)
 {
-  std::cerr << typeid(g).name() << std::endl;
   Graph G;
   typedef boost::graph_traits< Graph > Traits;
   typedef typename Traits::vertex_descriptor vertex_descriptor;
