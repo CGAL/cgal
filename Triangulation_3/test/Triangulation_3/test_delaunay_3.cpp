@@ -20,7 +20,7 @@
 
 #define CGAL_NO_DEPRECATION_WARNINGS
 
-#include "dependencies.h"
+#include "test_dependencies.h"
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
