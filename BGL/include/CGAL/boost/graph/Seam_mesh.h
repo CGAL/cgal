@@ -41,8 +41,9 @@ namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
 template <typename HD>
-struct Seam_mesh_halfedge_descriptor
+class Seam_mesh_halfedge_descriptor
 {
+public:
   typedef HD                                      TM_halfedge_descriptor;
 
   TM_halfedge_descriptor tmhd;
@@ -189,7 +190,7 @@ public:
 #endif
 
 #ifndef DOXYGEN_RUNNING
-  struct halfedge_iterator
+  class halfedge_iterator
     : public boost::iterator_facade<halfedge_iterator,
                                     halfedge_descriptor,
                                     std::forward_iterator_tag,
@@ -200,11 +201,11 @@ public:
                                    std::forward_iterator_tag,
                                    halfedge_descriptor>                  Facade;
 
+  public:
     TM_halfedge_iterator hd, end;
     bool seam;
     const Self* mesh_;
 
-  public:
     halfedge_iterator() : hd(), end(), seam(false), mesh_(NULL) { }
 
     halfedge_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
@@ -255,8 +256,9 @@ public:
   /// \cgalModels `LessThanComparable`
   /// \cgalModels `Hashable`
   ///
-  struct vertex_descriptor
+  class vertex_descriptor
   {
+  public:
     halfedge_descriptor hd;
 
     /// %Default constructor
@@ -402,8 +404,9 @@ public:
   ///
   /// \cgalModels `descriptor`
   ///
-  struct edge_descriptor
+  class edge_descriptor
   {
+  public:
     halfedge_descriptor hd;
 
     friend
@@ -420,12 +423,13 @@ public:
 
 #ifndef DOXYGEN_RUNNING
    // iterator
-  struct edge_iterator
+  class edge_iterator
     : public boost::iterator_facade<edge_iterator,
                                     edge_descriptor,
                                     std::forward_iterator_tag,
                                     edge_descriptor>
   {
+  public:
     typedef boost::iterator_facade<edge_iterator,
                                    edge_descriptor,
                                    std::forward_iterator_tag,
