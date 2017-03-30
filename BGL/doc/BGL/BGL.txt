@@ -451,52 +451,74 @@ using `boost::filtered_graph` as shown in the following example.
 
 \cgalExample{BGL_surface_mesh/surface_mesh_dual.cpp}
 
-\subsection BGLSeamMeshAdapter The Seam Mesh Adapter
+\subsection BGLSeamMesh The Seam Mesh
 
-The class `Seam_mesh` allows to mark edges as <em>seam edges</em>, so that they appear
-like border edges, when exploring a seam mesh with the BGL API. In the figure below
-when we circulate around the target of `h7`, we will traverse `h7`, `h1`, `h3`, `h5`, and we are back at `h7`.
-When we circulate in the seam graph we will traverse `h7`, `h1`, `h3*`, and we are back  at `h7`.
-When we start at `h3`, we will traverse `h3`, `h5`, `h7*`, and we are back at `h3`.
+The class `Seam_mesh` allows to mark edges of a mesh as <em>seam edges</em>
+so that they <em>virtually</em> become border edges when exploring a seam mesh with the BGL API.
+The input mesh is referred to as <em>underlying</em> mesh of the seam mesh.
+We denote `tm` and `sm` the underlying mesh and the seam mesh respectively.
 
+Figure \cgalFigureRef{fig_Seam_mesh_1} shows an example of mesh on which two
+edges, defined by the halfedge pairs `h2-h3` and `h6-h7`, are marked as seams.
+The introduction of virtual borders modifies the elementary BGL graph traversal
+operations: when we circulate around the target of `h7` in the underlying mesh,
+we traverse `h7`, `h1`, `h3`, `h5`, before arriving at `h7` again.
+However, when we circulate in the seam mesh, we traverse `h7`, `h1`, `h3*`,
+before arriving at `h7` again.
+Similarly, if we start at `h3`, we traverse `h3`, `h5`, `h7*`, and `h3` again.
 
 \cgalFigureBegin{fig_Seam_mesh_1, seam_mesh_1.svg}
 A seam mesh with two seam edges `(h2, h3)` and `(h6, h7)`.
 \cgalFigureEnd
 
-Because a vertex `v` in the adapted mesh which lies on the seam can have several circular
-sequences of halfedges, this vertex cannot be considered as a vertex in a seam mesh.
-Instead we consider the halfedge that has `v` as target, that lies on the seam,
-and that has an incident face as vertex. The function `target(hd, sm)` will return
-this canonical halfedge. For halfedges whose target vertex `v` in the underlying
-mesh is not on a seam we choose `halfedge(v, mesh)` as its canonical halfedge.
+A vertex of the underlying mesh may correspond to multiple vertices in the seam mesh.
+For example in Figure \cgalFigureRef{fig_Seam_mesh_1}, the target of `h7` corresponds to two
+vertices in the seam mesh, on either side of the virtual border created by the seam edges.
+For this reason, a vertex `v` of the seam mesh is internally represented as a halfedge `h`
+of the seam mesh. To obtain a canonical definition, the halfedge `h` is defined as the halfedge
+that has `v` as target, that lies on the seam, and that is not a border
+halfedge. The function `target(hd, sm)` will return this halfedge.
+For vertices `v` in the underlying mesh that are not on a seam edge, we choose
+`halfedge(v, tm)` as its canonical halfedge.
 
-With the function `next(halfedge_descriptor, FaceGraph)`, we can walk around a face but also around
-a border of a mesh. For the seam mesh `sm` from the figure above we have `opposite(h2, sm) == h3*`,
-and it holds that `face(h3*, sm) == null_face()`.
-We now can walk along this "border": When we call `next(..,sm)` starting at `h3*`, we will traverse `h6*`,
-`h7*`, `h2*`, and we are back at `h3*`.
+\subsubsection BGLSeamMeshTraversal Seam Mesh Traversal
 
-A seam is not necessarily a simple polyline, as we can see in the next figure:
+Using the function `next(halfedge_descriptor, FaceGraph)`, we can walk around a face but also around
+a border of a mesh. For the seam mesh `sm` from Figure \cgalFigureRef{fig_Seam_mesh_1},
+we have `opposite(h2, sm) == h3*`, and it holds that `face(h3*, sm) == null_face()`.
+We can walk along this virtual border: starting at `h3*` and repeatedly calling `next(..,sm)`,
+we will traverse `h6*`, `h7*`, `h2*`, before reaching `h3*` again.
+
+All other traversal functions, iterators, and circulators (see \ref PkgBGLIterators) can
+be used on a seam mesh, but their behavior is similarly modified by the (virtual and real)
+border edges of the seam mesh.
+
+\subsubsection BGLSeamMeshNature Seams
+
+A collection of seam edges, or simply a <em>seam</em>, is not necessarily a simple polyline
+as we can see in the next figure:
 <UL>
-<LI>In <em>(a)</em>, the seam forms a tree which makes that we pass at a vertex as often as
-it has incident seam edges.
-<LI>In <em>(b)</em>, the seam has a vertex on the border of the adapted mesh. Walking along the seam we switch
-to the real border, and switch back on the "other side" of the seam.
-<LI>In <em>(c)</em>, the seam forms a closed polyline. While the first two define a single border, a cycle defines two borders
-and splits the set of faces in two connected components. Something similar happens when the seam touches the same border
-more than once. A seam can also connect different borders, which changes the genus of the mesh.
+<LI>In <em>(a)</em>, the seam forms a tree. Consequently, we pass at a vertex as often as
+there are incident seam edges.
+<LI>In <em>(b)</em>, the seam has a vertex `v` on the border of the underlying mesh.
+While walking along the border of the seam mesh, we leave the border of the underlying mesh
+when we reach `v` and walk on a virtual border until we reach `v` again, from the other side
+of the seam.
+<LI>In <em>(c)</em>, the seam forms a closed polyline. While the first two define a single border,
+a cycle defines two borders and splits the set of faces in two connected components.
+Something similar happens when the seam touches the same border more than once.
+A seam can also connect different borders, potentially changing the genus of the mesh.
 Finally, a seam may have more than one connected component.
 </UL>
 
 \cgalFigureBegin{fig_Seam_mesh_2, seam_mesh_2.svg}
 Walking around a seam <em>(a)</em> with no seam vertex on the real border,
 <em>(b)</em> with a seam vertex on the real border, <em>(c)</em> with a closed polyline.
-Vertices linked by a green dashed segment correspond to the same vertex in the
-underlying mesh.
+Vertices of the seam mesh that are linked by a green dashed segment correspond
+to the same vertex in the underlying mesh.
 \cgalFigureEnd
 
-Seam meshes are used in the Chapter \ref PkgSurfaceParameterizationSummary.
+Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSummary.
 
 \subsection BGLExamples Examples
 
