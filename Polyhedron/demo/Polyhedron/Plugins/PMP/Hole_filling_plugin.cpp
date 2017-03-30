@@ -379,11 +379,11 @@ private:
   // to ease the management of the visualizers
   QMap<Scene_facegraph_item*, Scene_hole_visualizer*> visualizers;
   // hold created facet for accept reject functionality
-  std::vector<Polyhedron::Facet_handle> new_facets;
+  std::vector<face_descriptor> new_facets;
   Scene_facegraph_item* last_active_item; // always keep it NULL while not active-reject state
 
-  bool fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
-  bool self_intersecting(Polyhedron& polyhedron);
+  bool fill(FaceGraph& polyhedron, halfedge_descriptor halfedge);
+  bool self_intersecting(FaceGraph& polyhedron);
   void accept_reject_toggle(bool activate_accept_reject) {
     if(activate_accept_reject) {
       ui_widget.Accept_button->setVisible(true);
@@ -615,7 +615,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
 
   accept_reject_toggle(false);
   for(std::vector<face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
-    last_active_item->polyhedron()->erase_facet((*it)->halfedge());
+    CGAL::Euler::remove_face(halfedge(*it, *last_active_item->polyhedron()), *last_active_item->polyhedron());
   }
   change_poly_item_by_blocking(last_active_item, get_hole_visualizer(last_active_item));
 
@@ -710,7 +710,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     print_message(QString("Self intersecting test: iterate on patch in %1 sec.").arg(timer.time()));
     if(intersected) {
       for(std::vector<face_descriptor>::iterator it = patch.begin(); it != patch.end(); ++it) {
-        poly.erase_facet((*it)->halfedge());
+        CGAL::Euler::remove_face(halfedge(*it, poly), poly);
       }
       print_message("Self intersecting patch is generated, and it is removed.");
       return false;
@@ -732,11 +732,14 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     print_message("No edge selection found in the current item selection.");
     return;
   }
-  Polyhedron *poly = edge_selection->polyhedron();
+  FaceGraph *poly = edge_selection->polyhedron();
   QVector<vertex_descriptor> vertices;
   std::vector<Polyhedron::Point_3> points;
   bool use_DT = ui_widget.Use_delaunay_triangulation_check_box->isChecked();
+  //! \todo Is this needed for Surface-Mesh ? If yes how to do it ?
+#ifndef USE_SURFACE_MESH
   poly->normalize_border();
+#endif
 
   // fill hole
   boost::unordered_set<halfedge_descriptor, CGAL::Handle_hash_function> buffer;
@@ -745,10 +748,10 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   BOOST_FOREACH(boost::graph_traits<FaceGraph>::edge_descriptor ed, edge_selection->selected_edges)
   {
     halfedge_descriptor h(halfedge(ed, *poly));
-    if(!h->is_border())
+    if(!is_border(h, *poly))
     {
-      h = h->opposite();
-      if(!h->is_border())
+      h = opposite(h, *poly);
+      if(!is_border(h, *poly))
       {
         print_message("A selected_border is not a border edge. Cannot fill something that is not a hole.");
         return;
@@ -769,10 +772,10 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     BOOST_FOREACH(halfedge_descriptor h, buffer)
     {
       //if h and c_e share a point
-     if(h->vertex() == c_e->vertex() ||
-        h->vertex() == c_e->opposite()->vertex() ||
-        h->opposite()->vertex() == c_e->vertex() ||
-        h->opposite()->vertex() == c_e->opposite()->vertex())
+     if(target(h, *poly) == target(c_e, *poly) ||
+        target(h, *poly) == target(opposite(c_e, *poly), *poly) ||
+        target(opposite(h, *poly), *poly) == target(c_e, *poly) ||
+        target(opposite(h, *poly), *poly) == target(opposite(c_e, *poly), *poly))
      {
        c_e = h;
        b_edges.push_back(c_e);
@@ -794,17 +797,17 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   {
     vertex_descriptor shared_vertex;
     vertex_descriptor other_vertex;
-    if(b_edges[i]->vertex() == b_edges[i+1]->vertex() ||
-       b_edges[i]->vertex() == b_edges[i+1]->opposite()->vertex()
+    if(target(b_edges[i], *poly) == target(b_edges[i+1], *poly) ||
+       target(b_edges[i], *poly) == target(opposite(b_edges[i+1], *poly), *poly)
        )
     {
-      shared_vertex = b_edges[i]->vertex();
-      other_vertex = b_edges[i]->opposite()->vertex();
+      shared_vertex = target(b_edges[i], *poly);
+      other_vertex = target(opposite(b_edges[i], *poly), *poly);
     }
     else
     {
-      shared_vertex = b_edges[i]->opposite()->vertex();
-      other_vertex = b_edges[i]->vertex();
+      shared_vertex = target(opposite(b_edges[i], *poly), *poly);
+      other_vertex = target(b_edges[i], *poly);
     }
     if(!vertices.contains(shared_vertex))
       vertices.push_back(shared_vertex);
@@ -812,14 +815,15 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
       vertices.push_back(other_vertex);
   }
   //close the loop
-  if(!vertices.contains(b_edges.back()->vertex()))
-    vertices.push_back(b_edges.back()->vertex());
+  if(!vertices.contains(target(b_edges.back(), *poly)))
+    vertices.push_back(target(b_edges.back(), *poly));
   else
-    vertices.push_back(b_edges.back()->opposite()->vertex());
-
+    vertices.push_back(target(opposite(b_edges.back(), *poly), *poly));
+  boost::property_map<FaceGraph, boost::vertex_point_t>::type vpm
+      = get(boost::vertex_point, *poly);
   Q_FOREACH(vertex_descriptor vh, vertices)
   {
-    points.push_back(vh->point());
+    points.push_back(get(vpm, vh));
   }
 
   std::vector<CGAL::Triple<int, int, int> > patch;
