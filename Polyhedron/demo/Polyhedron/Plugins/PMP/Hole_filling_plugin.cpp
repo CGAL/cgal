@@ -3,14 +3,20 @@
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
+
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+#else
 #include "Scene_polyhedron_item.h"
+#include "Polyhedron_type.h"
+#endif
+
 #include "Scene_polylines_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Hole_filling_widget.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Timer.h>
@@ -40,6 +46,18 @@
 #include <QMap>
 #include <QVector>
 
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_facegraph_item;
+#else
+typedef Scene_facegraph_item Scene_facegraph_item;
+#endif
+typedef Scene_facegraph_item::FaceGraph FaceGraph;
+
+typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+typedef boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+typedef boost::property_traits<boost::property_map<FaceGraph, boost::vertex_point_t>::type>::value_type Point;
+
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
 class Q_DECL_EXPORT Scene_hole_visualizer : public CGAL::Three::Scene_item
@@ -49,7 +67,7 @@ public:
   // structs
   struct Polyline_data {
     Scene_polylines_item* polyline;
-    Polyhedron::Halfedge_handle halfedge;
+    halfedge_descriptor halfedge;
     qglviewer::Vec position;
   };
   struct Mouse_keyboard_state
@@ -66,7 +84,7 @@ private:
 public:
   typedef std::set<Polyline_data_list::const_iterator, List_iterator_comparator> Selected_holes_set;
 
-  Scene_hole_visualizer(Scene_polyhedron_item* poly_item, QMainWindow* mainWindow)
+  Scene_hole_visualizer(Scene_facegraph_item* poly_item, QMainWindow* mainWindow)
     : poly_item(poly_item), block_poly_item_changed(false)
   {
     get_holes();
@@ -175,8 +193,8 @@ public:
 private:
   // find holes in polyhedron and construct a internal polyline for each
   void get_holes() {
-    typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
-    typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
+    typedef boost::graph_traits<FaceGraph>::halfedge_iterator Halfedge_iterator;
+    typedef CGAL::Halfedge_around_face_circulator<FaceGraph> Halfedge_around_facet_circulator;
     // save selected hole positions to keep selected holes selected
     // we just use center position of holes for identification which might not work good for advanced cases...
     std::vector<qglviewer::Vec> selected_hole_positions;
@@ -185,31 +203,35 @@ private:
     }
 
     clear();
+    FaceGraph& poly = *poly_item->polyhedron();
+    boost::property_map<FaceGraph, CGAL::halfedge_is_feature_t>::type hif
+        = get(CGAL::halfedge_is_feature, poly);
+    boost::property_map<FaceGraph, boost::vertex_point_t>::type vpm
+        = get(boost::vertex_point, poly);
+    for(Halfedge_iterator it = halfedges(poly).begin(); it != halfedges(poly).end(); ++it)
+    { put(hif, *it, false); }
 
-    Polyhedron& poly = *poly_item->polyhedron();
-    for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
-    { it->id() = 0; }
-
-    for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
-      if(it->is_border() && it->id() == 0){
+    for(Halfedge_iterator it = halfedges(poly).begin(); it != halfedges(poly).end(); ++it){
+      if(is_border(*it, poly) && !get(hif, *it)){
         polyline_data_list.push_back(Polyline_data());
         Polyline_data& polyline_data = polyline_data_list.back();
         polyline_data.polyline = new Scene_polylines_item();
         polyline_data.polyline->polylines.push_back(Scene_polylines_item::Polyline());
-        polyline_data.halfedge = it;
+        polyline_data.halfedge = *it;
 
         qglviewer::Vec center;
         int counter = 0;
-        Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+        Halfedge_around_facet_circulator begin(*it, poly);
+        Halfedge_around_facet_circulator hf_around_facet(begin);
         do {
-          CGAL_assertion(hf_around_facet->id() == 0);
-          hf_around_facet->id() = 1;
-          const Polyhedron::Traits::Point_3& p = hf_around_facet->vertex()->point();
+          CGAL_assertion(!get(hif,*hf_around_facet));
+          put(hif, *hf_around_facet, true);
+          const Point& p = get(vpm, target(*hf_around_facet, poly));
           polyline_data.polyline->polylines.front().push_back(p);
           center += qglviewer::Vec(p.x(), p.y(), p.z());
           ++counter;
-        } while(++hf_around_facet != it->facet_begin());
-        polyline_data.polyline->polylines.front().push_back(hf_around_facet->vertex()->point());
+        } while(++hf_around_facet != begin);
+        polyline_data.polyline->polylines.front().push_back(get(vpm, target(*hf_around_facet, poly)));
         polyline_data.position = center / counter;
       }
     }
@@ -222,7 +244,7 @@ private:
   }
   // finds closest polyline from polyline_data_list and makes it active_hole
   bool activate_closest_hole(int x, int y) {
-    typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
+    typedef CGAL::Halfedge_around_face_circulator<FaceGraph> Halfedge_around_facet_circulator;
     if(polyline_data_list.empty()) { return false; }
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -231,24 +253,19 @@ private:
     Polyline_data_list::const_iterator min_it;
     double min_dist = (std::numeric_limits<double>::max)();
     Kernel::Point_2 xy(x,y);
+    FaceGraph& poly = *poly_item->polyhedron();
+    boost::property_map<FaceGraph, boost::vertex_point_t>::type vpm
+        = get(boost::vertex_point, poly);
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it)
     {
-#if 0
-      /* use center of polyline to measure distance - performance wise */
-      const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->position);
-      float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
-      if(dist < min_dist) {
-        min_dist = dist;
-        min_it = it;
-      }
-#else
       /* use polyline points to measure distance - might hurt performance for large holes */
-      Halfedge_around_facet_circulator hf_around_facet = it->halfedge->facet_begin();
+      Halfedge_around_facet_circulator begin( it->halfedge, poly);
+      Halfedge_around_facet_circulator hf_around_facet(begin);
       do {
         
-        const Polyhedron::Traits::Point_3& p_1 = hf_around_facet->vertex()->point();
+        const Point& p_1 = get(vpm, target(*hf_around_facet, poly));
         const qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
-        const Polyhedron::Traits::Point_3& p_2 = hf_around_facet->opposite()->vertex()->point();
+        const Point& p_2 = get(vpm, target(opposite(*hf_around_facet, poly), poly));
         const qglviewer::Vec& pos_it_2 = camera->projectedCoordinatesOf(qglviewer::Vec(p_2.x(), p_2.y(), p_2.z()));
         Kernel::Segment_2 s(Kernel::Point_2(pos_it_1.x, pos_it_1.y), Kernel::Point_2(pos_it_2.x, pos_it_2.y));
 
@@ -257,8 +274,8 @@ private:
           min_dist = dist;
           min_it = it;
         }
-      } while(++hf_around_facet != it->halfedge->facet_begin());
-#endif
+      } while(++hf_around_facet != begin);
+
     }
 
     if(min_it == active_hole) {
@@ -281,7 +298,7 @@ private:
   Mouse_keyboard_state state;
 public:
   Selected_holes_set selected_holes;
-  Scene_polyhedron_item* poly_item;
+  Scene_facegraph_item* poly_item;
   Polyline_data_list polyline_data_list;
   bool block_poly_item_changed;
 
@@ -303,7 +320,7 @@ class Polyhedron_demo_hole_filling_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-  bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+  bool applicable(QAction*) const { return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex())) ||
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
@@ -315,7 +332,7 @@ public:
   {
     dock_widget->hide();
   }
-  Scene_hole_visualizer* get_hole_visualizer(Scene_polyhedron_item* poly_item) {
+  Scene_hole_visualizer* get_hole_visualizer(Scene_facegraph_item* poly_item) {
       return visualizers[poly_item];
   }
 
@@ -345,7 +362,7 @@ protected:
     return false;
   }
 
-  void change_poly_item_by_blocking(Scene_polyhedron_item* poly_item, Scene_hole_visualizer* collection) {
+  void change_poly_item_by_blocking(Scene_facegraph_item* poly_item, Scene_hole_visualizer* collection) {
     if(collection) collection->block_poly_item_changed = true;
     poly_item->invalidateOpenGLBuffers();
     scene->itemChanged(poly_item);
@@ -360,10 +377,10 @@ private:
 
   //Maintains a reference between all the visualizers and their poly_item
   // to ease the management of the visualizers
-  QMap<Scene_polyhedron_item*, Scene_hole_visualizer*> visualizers;
+  QMap<Scene_facegraph_item*, Scene_hole_visualizer*> visualizers;
   // hold created facet for accept reject functionality
   std::vector<Polyhedron::Facet_handle> new_facets;
-  Scene_polyhedron_item* last_active_item; // always keep it NULL while not active-reject state
+  Scene_facegraph_item* last_active_item; // always keep it NULL while not active-reject state
 
   bool fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
   bool self_intersecting(Polyhedron& polyhedron);
@@ -433,7 +450,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 }
 
 void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
-  Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
+  Scene_facegraph_item* poly_item = qobject_cast<Scene_facegraph_item*>(scene_item);
   if(poly_item) {
     // erase assoc polylines item
     if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(poly_item))
@@ -464,16 +481,16 @@ void Polyhedron_demo_hole_filling_plugin::dock_widget_closed() {
   }
   on_Accept_button();
 }
-// creates a Scene_hole_visualizer and associate it with active Scene_polyhedron_item
+// creates a Scene_hole_visualizer and associate it with active Scene_facegraph_item
 void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
-  Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
+  Scene_facegraph_item* poly_item = getSelectedItem<Scene_facegraph_item>();
   if(!poly_item) {
-    print_message("Error: please select a polyhedron item from Geometric Objects list!");
+    print_message("Error: please select a polyhedron item or a surface_mesh item from Geometric Objects list!");
     return;
   }
 
   if(get_hole_visualizer(poly_item)) {
-    print_message("Error: selected polyhedron item already has an associated hole visualizer!");
+    print_message("Error: selected facegraph item already has an associated hole visualizer!");
     return;
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -483,7 +500,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
   QApplication::restoreOverrideCursor();
 
   if(hole_visualizer->polyline_data_list.empty()) {
-    print_message("There is no hole in selected polyhedron item!");
+    print_message("There is no hole in selected facegraph item!");
     visualizers.remove(poly_item);
     delete hole_visualizer;
     return;
@@ -597,7 +614,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
   if(last_active_item == NULL) { return; }
 
   accept_reject_toggle(false);
-  for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
+  for(std::vector<face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
     last_active_item->polyhedron()->erase_facet((*it)->halfedge());
   }
   change_poly_item_by_blocking(last_active_item, get_hole_visualizer(last_active_item));
@@ -615,7 +632,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_visualizer_changed() {
 }
 // helper function for filling holes
 bool Polyhedron_demo_hole_filling_plugin::fill
-  (Polyhedron& poly, Polyhedron::Halfedge_handle it) {
+  (FaceGraph& poly, halfedge_descriptor it) {
 
   int action_index = ui_widget.action_combo_box->currentIndex();
   double alpha = ui_widget.Density_control_factor_spin_box->value();
@@ -623,7 +640,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   unsigned int continuity = ui_widget.Continuity_spin_box->value();
 
   CGAL::Timer timer; timer.start();
-  std::vector<Polyhedron::Facet_handle> patch;
+  std::vector<face_descriptor> patch;
   if(action_index == 0) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly,
              it, std::back_inserter(patch),
@@ -643,7 +660,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
       success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::Polygon_mesh_processing::parameters::weight_calculator
-                (CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
+                (CGAL::internal::Uniform_weight_fairing<FaceGraph>(poly)).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));
@@ -651,7 +668,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     else {
       success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(poly)).
+              CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<FaceGraph>(poly)).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));
@@ -671,7 +688,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   if(ui_widget.Skip_self_intersection_check_box->checkState() == Qt::Checked) {
     timer.reset();
 
-    typedef std::vector<std::pair<Polyhedron::Facet_const_handle, Polyhedron::Facet_const_handle> > Intersected_facets;
+    typedef std::vector<std::pair<face_descriptor, face_descriptor> > Intersected_facets;
     Intersected_facets intersected_facets;
     CGAL::Polygon_mesh_processing::self_intersections(poly,
       std::back_inserter(intersected_facets),
@@ -683,7 +700,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     bool intersected = false;
     for(Intersected_facets::iterator it = intersected_facets.begin();
       it != intersected_facets.end() && !intersected; ++it) {
-      for(std::vector<Polyhedron::Facet_handle>::iterator it_patch = patch.begin();
+      for(std::vector<face_descriptor>::iterator it_patch = patch.begin();
         it_patch != patch.end() && !intersected; ++it_patch) {
         if(it->first == (*it_patch) || it->second == (*it_patch)) {
           intersected = true;
@@ -692,7 +709,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     }
     print_message(QString("Self intersecting test: iterate on patch in %1 sec.").arg(timer.time()));
     if(intersected) {
-      for(std::vector<Polyhedron::Facet_handle>::iterator it = patch.begin(); it != patch.end(); ++it) {
+      for(std::vector<face_descriptor>::iterator it = patch.begin(); it != patch.end(); ++it) {
         poly.erase_facet((*it)->halfedge());
       }
       print_message("Self intersecting patch is generated, and it is removed.");
@@ -716,18 +733,18 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     return;
   }
   Polyhedron *poly = edge_selection->polyhedron();
-  QVector<Polyhedron::Vertex_handle> vertices;
+  QVector<vertex_descriptor> vertices;
   std::vector<Polyhedron::Point_3> points;
   bool use_DT = ui_widget.Use_delaunay_triangulation_check_box->isChecked();
   poly->normalize_border();
 
   // fill hole
-  boost::unordered_set<Polyhedron::Halfedge_handle, CGAL::Handle_hash_function> buffer;
+  boost::unordered_set<halfedge_descriptor, CGAL::Handle_hash_function> buffer;
   //check if all selected edges are boder
   //to do check that the seection is closed
-  BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor ed, edge_selection->selected_edges)
+  BOOST_FOREACH(boost::graph_traits<FaceGraph>::edge_descriptor ed, edge_selection->selected_edges)
   {
-    Polyhedron::Halfedge_handle h(halfedge(ed, *poly));
+    halfedge_descriptor h(halfedge(ed, *poly));
     if(!h->is_border())
     {
       h = h->opposite();
@@ -741,15 +758,15 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   }
   //fill the points
     //order edges
-  QVector<Polyhedron::Halfedge_handle> b_edges;
-  Polyhedron::Halfedge_handle c_e = *buffer.begin();
+  QVector<halfedge_descriptor> b_edges;
+  halfedge_descriptor c_e = *buffer.begin();
   b_edges.reserve(static_cast<int>(buffer.size()));
   b_edges.push_back(c_e);
   buffer.erase(c_e);
   while(!buffer.empty())
   {
     bool found = false;
-    BOOST_FOREACH(Polyhedron::Halfedge_handle h, buffer)
+    BOOST_FOREACH(halfedge_descriptor h, buffer)
     {
       //if h and c_e share a point
      if(h->vertex() == c_e->vertex() ||
@@ -775,8 +792,8 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   //  else add the shared point.
   for(int i=0; i<b_edges.size()-1; ++i)
   {
-    Polyhedron::Vertex_handle shared_vertex;
-    Polyhedron::Vertex_handle other_vertex;
+    vertex_descriptor shared_vertex;
+    vertex_descriptor other_vertex;
     if(b_edges[i]->vertex() == b_edges[i+1]->vertex() ||
        b_edges[i]->vertex() == b_edges[i+1]->opposite()->vertex()
        )
@@ -800,7 +817,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   else
     vertices.push_back(b_edges.back()->opposite()->vertex());
 
-  Q_FOREACH(Polyhedron::Vertex_handle vh, vertices)
+  Q_FOREACH(vertex_descriptor vh, vertices)
   {
     points.push_back(vh->point());
   }
@@ -814,15 +831,15 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   for(std::size_t i=0; i<patch.size(); ++i)
   {
     CGAL::Triple<int, int, int> indices = patch[i];
-    std::vector<Polyhedron::Vertex_handle> face;
+    std::vector<vertex_descriptor> face;
     face.push_back(vertices[indices.first]);
     face.push_back(vertices[indices.second]);
     face.push_back(vertices[indices.third]);
-    Polyhedron::Facet_handle new_fh = CGAL::Euler::add_face(face, *poly);
-   if(new_fh  == boost::graph_traits<Polyhedron>::null_face())
+    face_descriptor new_fh = CGAL::Euler::add_face(face, *poly);
+   if(new_fh  == boost::graph_traits<FaceGraph>::null_face())
    {
-     new_fh = CGAL::Euler::add_face(std::vector<Polyhedron::Vertex_handle>(face.rbegin(), face.rend()), *poly);
-     if( new_fh == boost::graph_traits<Polyhedron>::null_face())
+     new_fh = CGAL::Euler::add_face(std::vector<vertex_descriptor>(face.rbegin(), face.rend()), *poly);
+     if( new_fh == boost::graph_traits<FaceGraph>::null_face())
        print_message("The facet could not be added. Please try again.");
    }
    new_facets.push_back(new_fh);
