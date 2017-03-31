@@ -72,7 +72,7 @@ public:
     \param t parameters of the feature's constructor.
 
     \return a handle to the newly added feature.
-   */
+  */
 #if (!defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)) || DOXYGEN_RUNNING
   template <typename Feature, typename ... T>
   Feature_handle add (T&& ... t)
@@ -138,15 +138,15 @@ public:
 
     \return `true` if the feature was correctly removed, `false` if
     its handle was not found.
-   */ 
+  */ 
   bool remove (Feature_handle feature)
   {
     for (std::size_t i = 0; i < m_features.size(); ++ i)
       if (m_features[i] == feature)
-        {
-          m_features.erase (m_features.begin() + i);
-          return true;
-        }
+      {
+        m_features.erase (m_features.begin() + i);
+        return true;
+      }
     return false;
   }
 
@@ -169,7 +169,7 @@ public:
 
   /*!
     \brief Removes all features.
-   */
+  */
   void clear ()
   {
     m_features.clear();

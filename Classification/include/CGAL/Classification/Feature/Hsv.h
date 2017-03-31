@@ -106,10 +106,10 @@ public:
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     for(std::size_t i = 0; i < input.size();i++)
-      {
-        HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
-        color_feature.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
-      }
+    {
+      HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
+      color_feature.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
+    }
 #endif
 
     std::ostringstream oss;

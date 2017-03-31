@@ -67,10 +67,10 @@ public:
 
   {
     if (m_width * m_height > 0)
-      {
-        m_raw = new Type[m_width * m_height];
-        std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-      }
+    {
+      m_raw = new Type[m_width * m_height];
+      std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
+    }
     else
       m_raw = NULL;
   }
@@ -83,10 +83,10 @@ public:
     m_width = other.width();
     m_height = other.height();
     if (m_width * m_height > 0)
-      {
-        m_raw = new Type[m_width * m_height];
-        std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-      }
+    {
+      m_raw = new Type[m_width * m_height];
+      std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
+    }
     
     return *this;
   }

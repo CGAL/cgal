@@ -68,10 +68,10 @@ int main (int argc, char** argv)
   std::cerr << "Reading input" << std::endl;
   if (!in
       || !(CGAL::read_ply_points (in, std::back_inserter (pts))))
-    {
-      std::cerr << "Error: cannot read " << filename << std::endl;
-      return EXIT_FAILURE;
-    }
+  {
+    std::cerr << "Error: cannot read " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Neighborhood neighborhood (pts, Pmap());
   Local_eigen_analysis eigen (pts, Pmap(), neighborhood.k_neighbor_query(6));

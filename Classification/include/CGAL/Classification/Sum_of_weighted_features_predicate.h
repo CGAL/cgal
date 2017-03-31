@@ -69,11 +69,11 @@ class Sum_of_weighted_features_predicate
 public:
 
   enum Effect /// Defines the effect of an feature on a type.
-    {
-      FAVORING = 0, ///< High values of the feature favor this type
-      NEUTRAL = 1, ///< The feature has no effect on this type
-      PENALIZING = 2 ///< Low values of the feature favor this type
-    };
+  {
+    FAVORING = 0, ///< High values of the feature favor this type
+    NEUTRAL = 1, ///< The feature has no effect on this type
+    PENALIZING = 2 ///< Low values of the feature favor this type
+  };
   
 private:
 
@@ -116,35 +116,35 @@ private:
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for (std::size_t k = r.begin(); k != r.end(); ++ k)
+      {
+        std::size_t res = 0;
+
+        std::vector<float> v;
+        m_predicate (m_training_set[k], v);
+
+        float min = std::numeric_limits<float>::max();
+        for(std::size_t l = 0; l < v.size(); ++ l)
+          if (v[l] < min)
+          {
+            min = v[l];
+            res = l;
+          }
+
+        if (m_label == res)
         {
-          std::size_t res = 0;
-
-          std::vector<float> v;
-          m_predicate (m_training_set[k], v);
-
-          float min = std::numeric_limits<float>::max();
-          for(std::size_t l = 0; l < v.size(); ++ l)
-            if (v[l] < min)
-              {
-                min = v[l];
-                res = l;
-              }
-
-          if (m_label == res)
-            {
-              m_tp_mutex[m_label].lock();
-              ++ m_true_positives[m_label];
-              m_tp_mutex[m_label].unlock();
-              continue;
-            }
-          m_fp_mutex[res].lock();
-          ++ m_false_positives[res];
-          m_fp_mutex[res].unlock();
-
-          m_fn_mutex[m_label].lock();
-          ++ m_false_negatives[m_label];
-          m_fn_mutex[m_label].unlock();
+          m_tp_mutex[m_label].lock();
+          ++ m_true_positives[m_label];
+          m_tp_mutex[m_label].unlock();
+          continue;
         }
+        m_fp_mutex[res].lock();
+        ++ m_false_positives[res];
+        m_fp_mutex[res].unlock();
+
+        m_fn_mutex[m_label].lock();
+        ++ m_false_negatives[m_label];
+        m_fn_mutex[m_label].unlock();
+      }
     }
 
   };
@@ -178,7 +178,7 @@ public:
       m_weights (features.size(), 1.),
       m_effect_table (labels.size(), std::vector<Effect>
                       (features.size(),
-                        NEUTRAL))
+                       NEUTRAL))
   {
     for (std::size_t i = 0; i < labels.size(); ++ i)
       m_map_labels[labels[i]] = i;
@@ -254,15 +254,15 @@ public:
   /// \cond SKIP_IN_MANUAL
   void operator() (std::size_t item_index,
                    std::vector<float>& out) const
-    {
+  {
     out.resize (m_labels.size());
     for (std::size_t l = 0; l < m_labels.size(); ++ l)
-      {
-        out[l] = 0.;
-        for (std::size_t f = 0; f < m_features.size(); ++ f)
-          if (weight(f) != 0.)
-            out[l] += value (l, f, item_index);
-      }
+    {
+      out[l] = 0.;
+      for (std::size_t f = 0; f < m_features.size(); ++ f)
+        if (weight(f) != 0.)
+          out[l] += value (l, f, item_index);
+    }
   }
   /// \endcond
 
@@ -302,10 +302,10 @@ public:
     std::size_t nb_tot = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
       if (ground_truth[i] != std::size_t(-1))
-        {
-          training_sets[ground_truth[i]].push_back (i);
-          ++ nb_tot;
-        }
+      {
+        training_sets[ground_truth[i]].push_back (i);
+        ++ nb_tot;
+      }
 
     CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;
     
@@ -333,58 +333,58 @@ public:
     float factor = std::pow (wmax/wmin, 1. / (float)nb_trials);
     
     for (std::size_t j = 0; j < m_features.size(); ++ j)
+    {
+      Feature_handle feature = m_features[j];
+      best_weights[j] = weight(j);
+
+      std::size_t nb_useful = 0;
+      float min = (std::numeric_limits<float>::max)();
+      float max = -(std::numeric_limits<float>::max)();
+
+      set_weight(j, wmin);
+      for (std::size_t i = 0; i < 100; ++ i)
       {
-        Feature_handle feature = m_features[j];
-        best_weights[j] = weight(j);
-
-        std::size_t nb_useful = 0;
-        float min = (std::numeric_limits<float>::max)();
-        float max = -(std::numeric_limits<float>::max)();
-
-        set_weight(j, wmin);
-        for (std::size_t i = 0; i < 100; ++ i)
-          {
-            estimate_feature_effect(j, training_sets);
-            if (feature_useful(j))
-              {
-                CGAL_CLASSTRAINING_CERR << "#";
-                nb_useful ++;
-                min = (std::min) (min, weight(j));
-                max = (std::max) (max, weight(j));
-              }
-            else
-              CGAL_CLASSTRAINING_CERR << "-";
-            set_weight(j, factor * weight(j));
-          }
-        CGAL_CLASSTRAINING_CERR << std::endl;
-        CGAL_CLASSTRAINING_CERR << feature->name() << " useful in "
-                                << nb_useful << "% of the cases, in interval [ "
-                                << min << " ; " << max << " ]" << std::endl;
-        if (nb_useful < 2)
-          {
-            set_weight(j, 0.);
-            best_weights[j] = weight(j);
-            continue;
-          }
-
-        feature_train.push_back (Feature_training());
-        feature_train.back().i = j;
-        feature_train.back().wmin = min / factor;
-        feature_train.back().wmax = max * factor;
-
-        if (best_weights[j] == 1.)
-          {
-            set_weight(j, 0.5 * (feature_train.back().wmin + feature_train.back().wmax));
-            best_weights[j] = weight(j);
-          }
-        else
-          set_weight(j, best_weights[j]);
         estimate_feature_effect(j, training_sets);
+        if (feature_useful(j))
+        {
+          CGAL_CLASSTRAINING_CERR << "#";
+          nb_useful ++;
+          min = (std::min) (min, weight(j));
+          max = (std::max) (max, weight(j));
+        }
+        else
+          CGAL_CLASSTRAINING_CERR << "-";
+        set_weight(j, factor * weight(j));
       }
+      CGAL_CLASSTRAINING_CERR << std::endl;
+      CGAL_CLASSTRAINING_CERR << feature->name() << " useful in "
+                              << nb_useful << "% of the cases, in interval [ "
+                              << min << " ; " << max << " ]" << std::endl;
+      if (nb_useful < 2)
+      {
+        set_weight(j, 0.);
+        best_weights[j] = weight(j);
+        continue;
+      }
+
+      feature_train.push_back (Feature_training());
+      feature_train.back().i = j;
+      feature_train.back().wmin = min / factor;
+      feature_train.back().wmax = max * factor;
+
+      if (best_weights[j] == 1.)
+      {
+        set_weight(j, 0.5 * (feature_train.back().wmin + feature_train.back().wmax));
+        best_weights[j] = weight(j);
+      }
+      else
+        set_weight(j, best_weights[j]);
+      estimate_feature_effect(j, training_sets);
+    }
 
     std::size_t nb_trials_per_feature = 1 + (std::size_t)(nb_tests / (float)(feature_train.size()));
     CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_train.size()
-              << ", trials per feature = " << nb_trials_per_feature << std::endl;
+                             << ", trials per feature = " << nb_trials_per_feature << std::endl;
     for (std::size_t i = 0; i < feature_train.size(); ++ i)
       feature_train[i].factor
         = std::pow (feature_train[i].wmax / feature_train[i].wmin,
@@ -400,45 +400,45 @@ public:
 
     std::sort (feature_train.begin(), feature_train.end());
     for (std::size_t i = 0; i < feature_train.size(); ++ i)
+    {
+      const Feature_training& tr = feature_train[i];
+      std::size_t current_feature_changed = tr.i;
+      Feature_handle current_feature = m_features[current_feature_changed];
+        
+      std::size_t nb_used = 0;
+      for (std::size_t j = 0; j < m_features.size(); ++ j)
       {
-        const Feature_training& tr = feature_train[i];
-        std::size_t current_feature_changed = tr.i;
-        Feature_handle current_feature = m_features[current_feature_changed];
-        
-        std::size_t nb_used = 0;
-        for (std::size_t j = 0; j < m_features.size(); ++ j)
-          {
-            if (j == current_feature_changed)
-              continue;
+        if (j == current_feature_changed)
+          continue;
             
-            set_weight(j, best_weights[j]);
-            estimate_feature_effect(j, training_sets);
-            if (feature_useful(j))
-              nb_used ++;
-            else
-              set_weight(j, 0.);
-          }
-        
-        set_weight(current_feature_changed, tr.wmin);
-        for (std::size_t j = 0; j < nb_trials_per_feature; ++ j)
-          {
-            estimate_feature_effect(current_feature_changed, training_sets);
-
-            float worst_score = 0.;
-            worst_score = compute_mean_iou<ConcurrencyTag>(training_sets);
-            if (worst_score > best_score)
-              {
-                best_score = worst_score;
-                CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
-                          << (i * nb_trials_per_feature) + j << "/" << nb_tests << ", "
-                          << nb_used + (feature_useful(current_feature_changed) ? 1 : 0)
-                          << "/" << m_features.size() << " feature(s) used)" << std::endl;
-                for (std::size_t k = 0; k < m_features.size(); ++ k)
-                  best_weights[k] = weight(k);
-              }
-            set_weight(current_feature_changed, weight(current_feature_changed) * tr.factor);
-          }
+        set_weight(j, best_weights[j]);
+        estimate_feature_effect(j, training_sets);
+        if (feature_useful(j))
+          nb_used ++;
+        else
+          set_weight(j, 0.);
       }
+        
+      set_weight(current_feature_changed, tr.wmin);
+      for (std::size_t j = 0; j < nb_trials_per_feature; ++ j)
+      {
+        estimate_feature_effect(current_feature_changed, training_sets);
+
+        float worst_score = 0.;
+        worst_score = compute_mean_iou<ConcurrencyTag>(training_sets);
+        if (worst_score > best_score)
+        {
+          best_score = worst_score;
+          CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
+                                   << (i * nb_trials_per_feature) + j << "/" << nb_tests << ", "
+                                   << nb_used + (feature_useful(current_feature_changed) ? 1 : 0)
+                                   << "/" << m_features.size() << " feature(s) used)" << std::endl;
+          for (std::size_t k = 0; k < m_features.size(); ++ k)
+            best_weights[k] = weight(k);
+        }
+        set_weight(current_feature_changed, weight(current_feature_changed) * tr.factor);
+      }
+    }
 
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       set_weight(i, best_weights[i]);
@@ -446,38 +446,38 @@ public:
     estimate_features_effects(training_sets);
     
     CGAL_CLASSIFICATION_CERR << std::endl << "Best score found is at least " << 100. * best_score
-              << "% of correct classification" << std::endl;
+                             << "% of correct classification" << std::endl;
 
     std::size_t nb_removed = 0;
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
-      {
-        Feature_handle feature = m_features[i];
-        CGAL_CLASSTRAINING_CERR << "FEATURE " << feature->name() << ": " << best_weights[i] << std::endl;
-        set_weight(i, best_weights[i]);
+    {
+      Feature_handle feature = m_features[i];
+      CGAL_CLASSTRAINING_CERR << "FEATURE " << feature->name() << ": " << best_weights[i] << std::endl;
+      set_weight(i, best_weights[i]);
 
-        Effect side = effect(0, i);
-        bool to_remove = true;
-        for (std::size_t j = 0; j < m_labels.size(); ++ j)
-          {
-            Label_handle clabel = m_labels[j];
-            if (effect(j,i) == FAVORING)
-              CGAL_CLASSTRAINING_CERR << " * Favored for ";
-            else if (effect(j,i) == PENALIZING)
-              CGAL_CLASSTRAINING_CERR << " * Penalized for ";
-            else
-              CGAL_CLASSTRAINING_CERR << " * Neutral for ";
-            if (effect(j,i) != side)
-              to_remove = false;
-            CGAL_CLASSTRAINING_CERR << clabel->name() << std::endl;
-          }
-        if (to_remove)
-          {
-            CGAL_CLASSTRAINING_CERR << "   -> Useless! Should be removed" << std::endl;
-            ++ nb_removed;
-          }
+      Effect side = effect(0, i);
+      bool to_remove = true;
+      for (std::size_t j = 0; j < m_labels.size(); ++ j)
+      {
+        Label_handle clabel = m_labels[j];
+        if (effect(j,i) == FAVORING)
+          CGAL_CLASSTRAINING_CERR << " * Favored for ";
+        else if (effect(j,i) == PENALIZING)
+          CGAL_CLASSTRAINING_CERR << " * Penalized for ";
+        else
+          CGAL_CLASSTRAINING_CERR << " * Neutral for ";
+        if (effect(j,i) != side)
+          to_remove = false;
+        CGAL_CLASSTRAINING_CERR << clabel->name() << std::endl;
       }
+      if (to_remove)
+      {
+        CGAL_CLASSTRAINING_CERR << "   -> Useless! Should be removed" << std::endl;
+        ++ nb_removed;
+      }
+    }
     CGAL_CLASSIFICATION_CERR << nb_removed
-              << " feature(s) out of " << m_features.size() << " are useless" << std::endl;
+                             << " feature(s) out of " << m_features.size() << " are useless" << std::endl;
 
     return best_score;
   }
@@ -493,10 +493,10 @@ public:
     std::size_t nb_tot = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
       if (ground_truth[i] != std::size_t(-1))
-        {
-          training_sets[ground_truth[i]].push_back (i);
-          ++ nb_tot;
-        }
+      {
+        training_sets[ground_truth[i]].push_back (i);
+        ++ nb_tot;
+      }
 
     CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;
     
@@ -524,54 +524,54 @@ public:
     float factor = std::pow (wmax/wmin, 1. / (float)nb_trials);
     
     for (std::size_t j = 0; j < m_features.size(); ++ j)
+    {
+      Feature_handle feature = m_features[j];
+      best_weights[j] = weight(j);
+
+      std::size_t nb_useful = 0;
+      float min = (std::numeric_limits<float>::max)();
+      float max = -(std::numeric_limits<float>::max)();
+
+      set_weight(j, wmin);
+      for (std::size_t i = 0; i < 100; ++ i)
       {
-        Feature_handle feature = m_features[j];
-        best_weights[j] = weight(j);
-
-        std::size_t nb_useful = 0;
-        float min = (std::numeric_limits<float>::max)();
-        float max = -(std::numeric_limits<float>::max)();
-
-        set_weight(j, wmin);
-        for (std::size_t i = 0; i < 100; ++ i)
-          {
-            estimate_feature_effect(j, training_sets);
-            if (feature_useful(j))
-              {
-                CGAL_CLASSTRAINING_CERR << "#";
-                nb_useful ++;
-                min = (std::min) (min, weight(j));
-                max = (std::max) (max, weight(j));
-              }
-            else
-              CGAL_CLASSTRAINING_CERR << "-";
-            set_weight(j, factor * weight(j));
-          }
-        CGAL_CLASSTRAINING_CERR << std::endl;
-        CGAL_CLASSTRAINING_CERR << feature->name() << " useful in "
-                                << nb_useful << "% of the cases, in interval [ "
-                                << min << " ; " << max << " ]" << std::endl;
-        if (nb_useful < 2)
-          {
-            set_weight(j, 0.);
-            best_weights[j] = weight(j);
-            continue;
-          }
-
-        feature_train.push_back (Feature_training());
-        feature_train.back().i = j;
-        feature_train.back().wmin = min / factor;
-        feature_train.back().wmax = max * factor;
-
-        if (best_weights[j] == 1.)
-          {
-            set_weight(j, 0.5 * (feature_train.back().wmin + feature_train.back().wmax));
-            best_weights[j] = weight(j);
-          }
-        else
-          set_weight(j, best_weights[j]);
         estimate_feature_effect(j, training_sets);
+        if (feature_useful(j))
+        {
+          CGAL_CLASSTRAINING_CERR << "#";
+          nb_useful ++;
+          min = (std::min) (min, weight(j));
+          max = (std::max) (max, weight(j));
+        }
+        else
+          CGAL_CLASSTRAINING_CERR << "-";
+        set_weight(j, factor * weight(j));
       }
+      CGAL_CLASSTRAINING_CERR << std::endl;
+      CGAL_CLASSTRAINING_CERR << feature->name() << " useful in "
+                              << nb_useful << "% of the cases, in interval [ "
+                              << min << " ; " << max << " ]" << std::endl;
+      if (nb_useful < 2)
+      {
+        set_weight(j, 0.);
+        best_weights[j] = weight(j);
+        continue;
+      }
+
+      feature_train.push_back (Feature_training());
+      feature_train.back().i = j;
+      feature_train.back().wmin = min / factor;
+      feature_train.back().wmax = max * factor;
+
+      if (best_weights[j] == 1.)
+      {
+        set_weight(j, 0.5 * (feature_train.back().wmin + feature_train.back().wmax));
+        best_weights[j] = weight(j);
+      }
+      else
+        set_weight(j, best_weights[j]);
+      estimate_feature_effect(j, training_sets);
+    }
 
     CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_train.size() << std::endl;
 
@@ -583,30 +583,30 @@ public:
     CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
 
     for (std::size_t i = 0; i < nb_tests; ++ i)
+    {
+      std::size_t nb_used = 0;
+      std::size_t j = rand() % feature_train.size();
+      set_weight (feature_train[j].i,
+                  feature_train[j].wmin + ((feature_train[j].wmax - feature_train[j].wmin)
+                                           * (rand() / float(RAND_MAX))));
+      estimate_feature_effect(feature_train[j].i, training_sets);
+
+      float worst_score = compute_mean_iou<ConcurrencyTag>(training_sets);
+
+      if (worst_score > best_score)
       {
-        std::size_t nb_used = 0;
-        std::size_t j = rand() % feature_train.size();
-        set_weight (feature_train[j].i,
-                    feature_train[j].wmin + ((feature_train[j].wmax - feature_train[j].wmin)
-                                             * (rand() / float(RAND_MAX))));
-        estimate_feature_effect(feature_train[j].i, training_sets);
-
-        float worst_score = compute_mean_iou<ConcurrencyTag>(training_sets);
-
-        if (worst_score > best_score)
-          {
-            best_score = worst_score;
-            CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
-                                     << i << "/" << nb_tests << ", "
-                                     << nb_used
-                                     << "/" << m_features.size() << " feature(s) used)" << std::endl;
-            for (std::size_t k = 0; k < m_features.size(); ++ k)
-              best_weights[k] = weight(k);
-          }
-        set_weight (feature_train[j].i,
-                    best_weights[feature_train[j].i]);
-        estimate_feature_effect(feature_train[j].i, training_sets);
+        best_score = worst_score;
+        CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at iteration "
+                                 << i << "/" << nb_tests << ", "
+                                 << nb_used
+                                 << "/" << m_features.size() << " feature(s) used)" << std::endl;
+        for (std::size_t k = 0; k < m_features.size(); ++ k)
+          best_weights[k] = weight(k);
       }
+      set_weight (feature_train[j].i,
+                  best_weights[feature_train[j].i]);
+      estimate_feature_effect(feature_train[j].i, training_sets);
+    }
 
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       set_weight(i, best_weights[i]);
@@ -614,38 +614,38 @@ public:
     estimate_features_effects(training_sets);
     
     CGAL_CLASSIFICATION_CERR << std::endl << "Best score found is at least " << 100. * best_score
-              << "% of correct classification" << std::endl;
+                             << "% of correct classification" << std::endl;
 
     std::size_t nb_removed = 0;
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
-      {
-        Feature_handle feature = m_features[i];
-        CGAL_CLASSTRAINING_CERR << "FEATURE " << feature->name() << ": " << best_weights[i] << std::endl;
-        set_weight(i, best_weights[i]);
+    {
+      Feature_handle feature = m_features[i];
+      CGAL_CLASSTRAINING_CERR << "FEATURE " << feature->name() << ": " << best_weights[i] << std::endl;
+      set_weight(i, best_weights[i]);
 
-        Effect side = effect(0, i);
-        bool to_remove = true;
-        for (std::size_t j = 0; j < m_labels.size(); ++ j)
-          {
-            Label_handle clabel = m_labels[j];
-            if (effect(j,i) == FAVORING)
-              CGAL_CLASSTRAINING_CERR << " * Favored for ";
-            else if (effect(j,i) == PENALIZING)
-              CGAL_CLASSTRAINING_CERR << " * Penalized for ";
-            else
-              CGAL_CLASSTRAINING_CERR << " * Neutral for ";
-            if (effect(j,i) != side)
-              to_remove = false;
-            CGAL_CLASSTRAINING_CERR << clabel->name() << std::endl;
-          }
-        if (to_remove)
-          {
-            CGAL_CLASSTRAINING_CERR << "   -> Useless! Should be removed" << std::endl;
-            ++ nb_removed;
-          }
+      Effect side = effect(0, i);
+      bool to_remove = true;
+      for (std::size_t j = 0; j < m_labels.size(); ++ j)
+      {
+        Label_handle clabel = m_labels[j];
+        if (effect(j,i) == FAVORING)
+          CGAL_CLASSTRAINING_CERR << " * Favored for ";
+        else if (effect(j,i) == PENALIZING)
+          CGAL_CLASSTRAINING_CERR << " * Penalized for ";
+        else
+          CGAL_CLASSTRAINING_CERR << " * Neutral for ";
+        if (effect(j,i) != side)
+          to_remove = false;
+        CGAL_CLASSTRAINING_CERR << clabel->name() << std::endl;
       }
+      if (to_remove)
+      {
+        CGAL_CLASSTRAINING_CERR << "   -> Useless! Should be removed" << std::endl;
+        ++ nb_removed;
+      }
+    }
     CGAL_CLASSIFICATION_CERR << nb_removed
-              << " feature(s) out of " << m_features.size() << " are useless" << std::endl;
+                             << " feature(s) out of " << m_features.size() << " are useless" << std::endl;
 
     return best_score;
   }
@@ -671,38 +671,38 @@ public:
     boost::property_tree::ptree tree;
 
     for (std::size_t i = 0; i < m_features.size(); ++ i)
-      {
-        if (weight(m_features[i]) == 0)
-          continue;
-        boost::property_tree::ptree ptr;
+    {
+      if (weight(m_features[i]) == 0)
+        continue;
+      boost::property_tree::ptree ptr;
         
-        ptr.put("name", m_features[i]->name());
-        ptr.put("weight", weight(m_features[i]));
-        tree.add_child("classification.features.feature", ptr);
-      }
+      ptr.put("name", m_features[i]->name());
+      ptr.put("weight", weight(m_features[i]));
+      tree.add_child("classification.features.feature", ptr);
+    }
 
 
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
+    {
+      boost::property_tree::ptree ptr;
+      ptr.put("name", m_labels[i]->name());
+      for (std::size_t j = 0; j < m_features.size(); ++ j)
       {
-        boost::property_tree::ptree ptr;
-        ptr.put("name", m_labels[i]->name());
-        for (std::size_t j = 0; j < m_features.size(); ++ j)
-          {
-            if (weight(j) == 0)
-              continue;
-            boost::property_tree::ptree ptr2;
-            ptr2.put("name", m_features[j]->name());
-            Effect e = effect(i, j);
-            if (e == PENALIZING)
-              ptr2.put("effect", "penalized");
-            else if (e == NEUTRAL)
-              ptr2.put("effect", "neutral");
-            else if (e == FAVORING)
-              ptr2.put("effect", "favored");
-            ptr.add_child("feature", ptr2);
-          }
-        tree.add_child("classification.labels.label", ptr);
+        if (weight(j) == 0)
+          continue;
+        boost::property_tree::ptree ptr2;
+        ptr2.put("name", m_features[j]->name());
+        Effect e = effect(i, j);
+        if (e == PENALIZING)
+          ptr2.put("effect", "penalized");
+        else if (e == NEUTRAL)
+          ptr2.put("effect", "neutral");
+        else if (e == FAVORING)
+          ptr2.put("effect", "favored");
+        ptr.add_child("feature", ptr2);
       }
+      tree.add_child("classification.labels.label", ptr);
+    }
 
     // Write property tree to XML file
     boost::property_tree::xml_writer_settings<std::string> settings(' ', 3);
@@ -746,64 +746,64 @@ public:
     boost::property_tree::read_xml(input, tree);
 
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
+    {
+      std::string name = v.second.get<std::string>("name");
+      typename std::map<std::string, std::size_t>::iterator
+        found = map_n2f.find (name);
+      if (found != map_n2f.end())
+        m_weights[found->second] = v.second.get<float>("weight");
+      else
       {
-        std::string name = v.second.get<std::string>("name");
-        typename std::map<std::string, std::size_t>::iterator
-          found = map_n2f.find (name);
-        if (found != map_n2f.end())
-          m_weights[found->second] = v.second.get<float>("weight");
-        else
-          {
-            if (verbose)
-              std::cerr << "Warning: feature \"" << name << "\" in configuration file not found" << std::endl;
-            out = false;
-          }
+        if (verbose)
+          std::cerr << "Warning: feature \"" << name << "\" in configuration file not found" << std::endl;
+        out = false;
       }
+    }
 
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
+    {
+      std::string label_name = v.second.get<std::string>("name");
+      typename std::map<std::string, std::size_t>::iterator
+        found = map_n2l.find (label_name);
+      std::size_t l = 0;
+      if (found != map_n2l.end())
+        l = found->second;
+      else
       {
-        std::string label_name = v.second.get<std::string>("name");
-        typename std::map<std::string, std::size_t>::iterator
-          found = map_n2l.find (label_name);
-        std::size_t l = 0;
-        if (found != map_n2l.end())
-          l = found->second;
-        else
-          {
-            if (verbose)
-              std::cerr << "Warning: label \"" << label_name << "\" in configuration file not found" << std::endl;
-            out = false;
-            continue;
-          }
-        
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
-          {
-            if (v2.first == "name")
-              continue;
-            
-            std::string feature_name = v2.second.get<std::string>("name");
-            
-            typename std::map<std::string, std::size_t>::iterator
-              found2 = map_n2f.find (feature_name);
-            std::size_t f = 0;
-            if (found2 != map_n2f.end())
-              f = found2->second;
-            else if (verbose)
-              {
-                if (verbose)
-                  std::cerr << "Warning: feature \"" << feature_name << "\" in configuration file not found" << std::endl;
-                out = false;
-                continue;
-              }
-            std::string e = v2.second.get<std::string>("effect");
-            if (e == "penalized")
-              set_effect (l, f, PENALIZING);
-            else if (e == "neutral")
-              set_effect (l, f, NEUTRAL);
-            else
-              set_effect (l, f, FAVORING);
-          }
+        if (verbose)
+          std::cerr << "Warning: label \"" << label_name << "\" in configuration file not found" << std::endl;
+        out = false;
+        continue;
       }
+        
+      BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
+      {
+        if (v2.first == "name")
+          continue;
+            
+        std::string feature_name = v2.second.get<std::string>("name");
+            
+        typename std::map<std::string, std::size_t>::iterator
+          found2 = map_n2f.find (feature_name);
+        std::size_t f = 0;
+        if (found2 != map_n2f.end())
+          f = found2->second;
+        else if (verbose)
+        {
+          if (verbose)
+            std::cerr << "Warning: feature \"" << feature_name << "\" in configuration file not found" << std::endl;
+          out = false;
+          continue;
+        }
+        std::string e = v2.second.get<std::string>("effect");
+        if (e == "penalized")
+          set_effect (l, f, PENALIZING);
+        else if (e == "neutral")
+          set_effect (l, f, NEUTRAL);
+        else
+          set_effect (l, f, FAVORING);
+      }
+    }
     return out;
   }
 
@@ -852,34 +852,34 @@ private:
     std::vector<float> mean (m_labels.size(), 0.);
                                   
     for (std::size_t j = 0; j < m_labels.size(); ++ j)
+    {
+      for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
       {
-        for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
-          {
-            float val = normalized(feature, training_sets[j][k]);
-            mean[j] += val;
-          }
-        mean[j] /= training_sets[j].size();
+        float val = normalized(feature, training_sets[j][k]);
+        mean[j] += val;
       }
+      mean[j] /= training_sets[j].size();
+    }
 
     std::vector<float> sd (m_labels.size(), 0.);
         
     for (std::size_t j = 0; j < m_labels.size(); ++ j)
-      {
-        Label_handle clabel = m_labels[j];
+    {
+      Label_handle clabel = m_labels[j];
             
-        for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
-          {
-            float val = normalized(feature, training_sets[j][k]);
-            sd[j] += (val - mean[j]) * (val - mean[j]);
-          }
-        sd[j] = std::sqrt (sd[j] / training_sets[j].size());
-        if (mean[j] - sd[j] > (2./3.))
-          set_effect (j, feature, FAVORING);
-        else if (mean[j] + sd[j] < (1./3.))
-          set_effect (j, feature, PENALIZING);
-        else
-          set_effect (j, feature, NEUTRAL);
+      for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
+      {
+        float val = normalized(feature, training_sets[j][k]);
+        sd[j] += (val - mean[j]) * (val - mean[j]);
       }
+      sd[j] = std::sqrt (sd[j] / training_sets[j].size());
+      if (mean[j] - sd[j] > (2./3.))
+        set_effect (j, feature, FAVORING);
+      else if (mean[j] + sd[j] < (1./3.))
+        set_effect (j, feature, PENALIZING);
+      else
+        set_effect (j, feature, NEUTRAL);
+    }
   }
 
   template <typename ConcurrencyTag>
@@ -890,57 +890,57 @@ private:
     std::vector<std::size_t> false_negatives (m_labels.size());
 
     for (std::size_t j = 0; j < training_sets.size(); ++ j)
-      {
-        std::size_t gt = j;
+    {
+      std::size_t gt = j;
 
 #ifndef CGAL_LINKED_WITH_TBB
-        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                                   "Parallel_tag is enabled but TBB is unavailable.");
+      CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                                 "Parallel_tag is enabled but TBB is unavailable.");
 #else
-        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-          {
-            std::vector<tbb::mutex> tp_mutex (m_labels.size());
-            std::vector<tbb::mutex> fp_mutex (m_labels.size());
-            std::vector<tbb::mutex> fn_mutex (m_labels.size());
-            Compute_iou f(training_sets[j], *this, j,
-                          true_positives, false_positives, false_negatives,
-                          tp_mutex, fp_mutex, fn_mutex);
-            tbb::parallel_for(tbb::blocked_range<size_t>(0, training_sets[j].size ()), f);
-          }
-        else
-#endif
-          for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
-            {
-              std::size_t res = 0;
-
-              std::vector<float> v;
-              (*this) (training_sets[j][k], v);
-
-              float min = std::numeric_limits<float>::max();
-              for(std::size_t l = 0; l < m_labels.size(); ++ l)
-                if (v[l] < min)
-                  {
-                    min = v[l];
-                    res = l;
-                  }
-
-              if (gt == res)
-                {
-                  ++ true_positives[gt];
-                  continue;
-                }
-              ++ false_positives[res];
-              ++ false_negatives[gt];
-            }
+      if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+      {
+        std::vector<tbb::mutex> tp_mutex (m_labels.size());
+        std::vector<tbb::mutex> fp_mutex (m_labels.size());
+        std::vector<tbb::mutex> fn_mutex (m_labels.size());
+        Compute_iou f(training_sets[j], *this, j,
+                      true_positives, false_positives, false_negatives,
+                      tp_mutex, fp_mutex, fn_mutex);
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, training_sets[j].size ()), f);
       }
+      else
+#endif
+        for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
+        {
+          std::size_t res = 0;
+
+          std::vector<float> v;
+          (*this) (training_sets[j][k], v);
+
+          float min = std::numeric_limits<float>::max();
+          for(std::size_t l = 0; l < m_labels.size(); ++ l)
+            if (v[l] < min)
+            {
+              min = v[l];
+              res = l;
+            }
+
+          if (gt == res)
+          {
+            ++ true_positives[gt];
+            continue;
+          }
+          ++ false_positives[res];
+          ++ false_negatives[gt];
+        }
+    }
     
     float out = 0.;
     
     for (std::size_t j = 0; j < m_labels.size(); ++ j)
-      {
-        float iou = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
-        out += iou;
-      }
+    {
+      float iou = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
+      out += iou;
+    }
 
     return out / m_labels.size();
   }

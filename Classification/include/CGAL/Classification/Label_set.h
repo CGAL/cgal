@@ -54,7 +54,7 @@ public:
     \param name name of the label.
 
     \return a handle to the newly added label.
-   */
+  */
   Label_handle add (const char* name)
   {
     Label_handle out (new Classification::Label (name));
@@ -69,17 +69,17 @@ public:
 
     \return `true` if the label was correctly removed,
     `false` if its handle was not found.
-   */ 
- bool remove (Label_handle label)
+  */ 
+  bool remove (Label_handle label)
   {
     std::size_t idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       if (m_labels[i] == label)
-        {
-          m_labels.erase (m_labels.begin() + i);
-          idx = i;
-          break;
-        }
+      {
+        m_labels.erase (m_labels.begin() + i);
+        idx = i;
+        break;
+      }
     if (idx == (std::size_t)(-1))
       return false;
 
@@ -105,7 +105,7 @@ public:
 
   /*!
     \brief Removes all labels.
-   */
+  */
   void clear ()
   {
     m_labels.clear();

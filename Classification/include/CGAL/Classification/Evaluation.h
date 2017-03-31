@@ -84,35 +84,35 @@ public:
     std::size_t total = 0;
     
     for (std::size_t j = 0; j < ground_truth.size(); ++ j)
+    {
+      std::size_t gt = ground_truth[j];
+      std::size_t res = result[j];
+      if (gt == std::size_t(-1) || res == std::size_t(-1))
+        continue;
+      ++ total;
+      if (gt == res)
       {
-        std::size_t gt = ground_truth[j];
-        std::size_t res = result[j];
-        if (gt == std::size_t(-1) || res == std::size_t(-1))
-          continue;
-        ++ total;
-        if (gt == res)
-          {
-            ++ true_positives[gt];
-            ++ sum_true_positives;
-            continue;
-          }
-        ++ false_positives[res];
-        ++ false_negatives[gt];
+        ++ true_positives[gt];
+        ++ sum_true_positives;
+        continue;
       }
+      ++ false_positives[res];
+      ++ false_negatives[gt];
+    }
 
     m_mean_iou = 0.;
     m_mean_f1 = 0.;
     
     for (std::size_t j = 0; j < labels.size(); ++ j)
-      {
-        m_precision[j] = true_positives[j] / float(true_positives[j] + false_positives[j]);
-        m_recall[j] = true_positives[j] / float(true_positives[j] + false_negatives[j]);
-        m_iou[j] = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
+    {
+      m_precision[j] = true_positives[j] / float(true_positives[j] + false_positives[j]);
+      m_recall[j] = true_positives[j] / float(true_positives[j] + false_negatives[j]);
+      m_iou[j] = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
 
-        m_mean_iou += m_iou[j];
-        m_mean_f1 += 2. * (m_precision[j] * m_recall[j])
-          / (m_precision[j] + m_recall[j]);
-      }
+      m_mean_iou += m_iou[j];
+      m_mean_f1 += 2. * (m_precision[j] * m_recall[j])
+        / (m_precision[j] + m_recall[j]);
+    }
 
     m_mean_iou /= labels.size();
     m_mean_f1 /= labels.size();

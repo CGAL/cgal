@@ -29,8 +29,8 @@ typedef Classif::Sum_of_weighted_features_predicate Classification_predicate;
 typedef Classif::Point_set_feature_generator<Kernel, Point_range, Pmap> Feature_generator;
 
 /*
- This interpreter is used to read a PLY input that contains training
- attributes (with the PLY "label" property).
+  This interpreter is used to read a PLY input that contains training
+  attributes (with the PLY "label" property).
 */
 class My_ply_interpreter
 {
@@ -81,10 +81,10 @@ int main (int argc, char** argv)
   My_ply_interpreter interpreter (pts, ground_truth);
   if (!in
       || !(CGAL::read_ply_custom_points (in, interpreter, Kernel())))
-    {
-      std::cerr << "Error: cannot read " << filename << std::endl;
-      return EXIT_FAILURE;
-    }
+  {
+    std::cerr << "Error: cannot read " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
   ///////////////////////////////////////////////////////////////////
   //! [Generator]
@@ -132,13 +132,13 @@ int main (int argc, char** argv)
   Classif::Evaluation eval (labels, ground_truth, label_indices);
   
   for (std::size_t i = 0; i < labels.size(); ++ i)
-    {
-      std::cerr << " * " << labels[i]->name() << ": "
-                << eval.precision(labels[i]) << " ; "
-                << eval.recall(labels[i]) << " ; "
-                << eval.f1_score(labels[i]) << " ; "
-                << eval.intersection_over_union(labels[i]) << std::endl;
-    }
+  {
+    std::cerr << " * " << labels[i]->name() << ": "
+              << eval.precision(labels[i]) << " ; "
+              << eval.recall(labels[i]) << " ; "
+              << eval.f1_score(labels[i]) << " ; "
+              << eval.intersection_over_union(labels[i]) << std::endl;
+  }
 
   std::cerr << "Accuracy = " << eval.accuracy() << std::endl
             << "Mean F1 score = " << eval.mean_f1_score() << std::endl

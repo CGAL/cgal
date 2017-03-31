@@ -90,12 +90,12 @@ public:
 
     for (std::size_t i = 0, index = 0; i < ground_truth.size(); ++ i)
       if (ground_truth[i] != std::size_t(-1))
-        {
-          for (std::size_t f = 0; f < m_features.size(); ++ f)
-            training_features.at<float>(index, f) = m_features[f]->value(i);
-          training_labels.at<float>(index, 0) = ground_truth[i];
-          ++ index;
-        }
+      {
+        for (std::size_t f = 0; f < m_features.size(); ++ f)
+          training_features.at<float>(index, f) = m_features[f]->value(i);
+        training_labels.at<float>(index, 0) = ground_truth[i];
+        ++ index;
+      }
 
     float* priors = new float[m_labels.size()];
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
@@ -106,7 +106,7 @@ public:
                        max_number_of_trees_in_the_forest,
                        forest_accuracy,
                        CV_TERMCRIT_ITER | CV_TERMCRIT_EPS
-                       );
+      );
 
     cv::Mat var_type (m_features.size() + 1, 1, CV_8U);
     var_type.setTo (cv::Scalar(CV_VAR_NUMERICAL));

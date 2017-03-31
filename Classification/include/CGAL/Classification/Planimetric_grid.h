@@ -88,12 +88,12 @@ public:
     m_grid = Image_indices (width, height);
 
     for (std::size_t i = 0; i < input.size(); ++ i)
-      {
-        const Point_3& p = get(point_map, *(input.begin()+i));
-        m_x.push_back ((std::size_t)((p.x() - bbox.xmin()) / grid_resolution));
-        m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
-        m_grid(m_x.back(), m_y.back()).push_back (i);
-      }
+    {
+      const Point_3& p = get(point_map, *(input.begin()+i));
+      m_x.push_back ((std::size_t)((p.x() - bbox.xmin()) / grid_resolution));
+      m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
+      m_grid(m_x.back(), m_y.back()).push_back (i);
+    }
     std::cerr << "Grid size = " << width << " " << height << std::endl;
   }
 
@@ -133,18 +133,18 @@ public:
   void indices(std::size_t x, std::size_t y, OutputIterator output) const
   {
     if (m_lower_scale == NULL)
-      {
-        if (x >= m_grid.width() || y >= m_grid.height())
-          return;
-        std::copy (m_grid(x,y).begin(), m_grid(x,y).end(), output);
-      }
+    {
+      if (x >= m_grid.width() || y >= m_grid.height())
+        return;
+      std::copy (m_grid(x,y).begin(), m_grid(x,y).end(), output);
+    }
     else
-      {
-        m_lower_scale->indices(x*2, y*2, output);
-        m_lower_scale->indices(x*2, y*2 + 1, output);
-        m_lower_scale->indices(x*2 + 1, y*2 + 1, output);
-        m_lower_scale->indices(x*2 + 1, y*2, output);
-      }
+    {
+      m_lower_scale->indices(x*2, y*2, output);
+      m_lower_scale->indices(x*2, y*2 + 1, output);
+      m_lower_scale->indices(x*2 + 1, y*2 + 1, output);
+      m_lower_scale->indices(x*2 + 1, y*2, output);
+    }
   }
   
   /*!
@@ -153,11 +153,11 @@ public:
   bool mask(std::size_t x, std::size_t y) const
   {
     if (m_lower_scale == NULL)
-      {
-        if (x >= m_grid.width() || y >= m_grid.height())
-          return false;
-        return (!(m_grid(x,y).empty()));
-      }
+    {
+      if (x >= m_grid.width() || y >= m_grid.height())
+        return false;
+      return (!(m_grid(x,y).empty()));
+    }
     else
       return (m_lower_scale->mask(x*2, y*2)
               || m_lower_scale->mask(x*2, y*2 + 1)

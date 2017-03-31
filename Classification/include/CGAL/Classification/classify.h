@@ -71,13 +71,13 @@ namespace internal {
         
       float val_class_best = (std::numeric_limits<float>::max)();      
       for(std::size_t k = 0; k < m_labels.size(); ++ k)
+      {
+        if(val_class_best > values[k])
         {
-          if(val_class_best > values[k])
-            {
-              val_class_best = values[k];
-              nb_class_best = k;
-            }
+          val_class_best = values[k];
+          nb_class_best = k;
         }
+      }
 
       m_out[s] = nb_class_best;
     }
@@ -162,14 +162,14 @@ namespace internal {
       std::size_t nb_class_best=0; 
       float val_class_best = (std::numeric_limits<float>::max)();
       for(std::size_t k = 0; k < mean.size(); ++ k)
+      {
+        mean[k] /= neighbors.size();
+        if(val_class_best > mean[k])
         {
-          mean[k] /= neighbors.size();
-          if(val_class_best > mean[k])
-            {
-              val_class_best = mean[k];
-              nb_class_best = k;
-            }
+          val_class_best = mean[k];
+          nb_class_best = k;
         }
+      }
 
       m_out[s] = nb_class_best;
     }
@@ -208,9 +208,9 @@ namespace internal {
                          const std::vector<std::vector<std::size_t> >& indices,
                          const std::vector<std::pair<std::size_t, std::size_t> >& input_to_indices,
                          std::vector<std::size_t>& out)
-      : m_input (input), m_item_map (item_map), m_labels (labels),
-        m_predicate (predicate), m_neighbor_query (neighbor_query),
-        m_strength (strength), m_indices (indices), m_input_to_indices (input_to_indices), m_out (out)
+    : m_input (input), m_item_map (item_map), m_labels (labels),
+      m_predicate (predicate), m_neighbor_query (neighbor_query),
+      m_strength (strength), m_indices (indices), m_input_to_indices (input_to_indices), m_out (out)
     { }
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -234,38 +234,38 @@ namespace internal {
       std::vector<std::size_t> assigned_label (m_indices[sub].size());
 
       for (std::size_t j = 0; j < m_indices[sub].size(); ++ j)
+      {
+        std::size_t s = m_indices[sub][j];
+            
+        std::vector<std::size_t> neighbors;
+
+        m_neighbor_query (get(m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
+
+        for (std::size_t i = 0; i < neighbors.size(); ++ i)
+          if (sub == m_input_to_indices[neighbors[i]].first
+              && j != m_input_to_indices[neighbors[i]].second)
+          {
+            edges.push_back (std::make_pair (j, m_input_to_indices[neighbors[i]].second));
+            edge_weights.push_back (m_strength);
+          }
+
+        std::vector<float> values;
+        m_predicate(s, values);
+        std::size_t nb_class_best = 0;
+        float val_class_best = (std::numeric_limits<float>::max)();
+        for(std::size_t k = 0; k < m_labels.size(); ++ k)
         {
-          std::size_t s = m_indices[sub][j];
+          float value = values[k];
+          probability_matrix[k][j] = value;
             
-          std::vector<std::size_t> neighbors;
-
-          m_neighbor_query (get(m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
-
-          for (std::size_t i = 0; i < neighbors.size(); ++ i)
-            if (sub == m_input_to_indices[neighbors[i]].first
-                && j != m_input_to_indices[neighbors[i]].second)
-              {
-                edges.push_back (std::make_pair (j, m_input_to_indices[neighbors[i]].second));
-                edge_weights.push_back (m_strength);
-              }
-
-          std::vector<float> values;
-          m_predicate(s, values);
-          std::size_t nb_class_best = 0;
-          float val_class_best = (std::numeric_limits<float>::max)();
-          for(std::size_t k = 0; k < m_labels.size(); ++ k)
-            {
-              float value = values[k];
-              probability_matrix[k][j] = value;
-            
-              if(val_class_best > value)
-                {
-                  val_class_best = value;
-                  nb_class_best = k;
-                }
-            }
-          assigned_label[j] = nb_class_best;
+          if(val_class_best > value)
+          {
+            val_class_best = value;
+            nb_class_best = k;
+          }
         }
+        assigned_label[j] = nb_class_best;
+      }
     
       Alpha_expansion graphcut;
       graphcut(edges, edge_weights, probability_matrix, assigned_label);
@@ -322,15 +322,15 @@ namespace internal {
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-      {
-        tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
-      }
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
+    }
     else
 #endif
-      {
-        for (std::size_t i = 0; i < input.size(); ++ i)
-          f.apply(i);
-      }
+    {
+      for (std::size_t i = 0; i < input.size(); ++ i)
+        f.apply(i);
+    }
   }
 
   /*! 
@@ -385,18 +385,18 @@ namespace internal {
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-      {
-        tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f1);
-        tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f2);
-      }
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f1);
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f2);
+    }
     else
 #endif
-      {
-        for (std::size_t i = 0; i < input.size(); ++ i)
-          f1.apply(i);
-        for (std::size_t i = 0; i < input.size(); ++ i)
-          f2.apply(i);
-      }
+    {
+      for (std::size_t i = 0; i < input.size(); ++ i)
+        f1.apply(i);
+      for (std::size_t i = 0; i < input.size(); ++ i)
+        f2.apply(i);
+    }
   }
 
   /*! 
@@ -470,15 +470,15 @@ namespace internal {
     bboxes.reserve(nb);
     for (std::size_t x = 0; x < nb_x; ++ x)
       for (std::size_t y = 0; y < nb_y; ++ y)
-        {
-          bboxes.push_back
-            (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / float(nb_x)),
-                           bbox.ymin() + Dy * (y / float(nb_y)),
-                           bbox.zmin(),
-                           bbox.xmin() + Dx * ((x+1) / float(nb_x)),
-                           bbox.ymin() + Dy * ((y+1) / float(nb_y)),
-                           bbox.zmax()));
-        }
+      {
+        bboxes.push_back
+          (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / float(nb_x)),
+                         bbox.ymin() + Dy * (y / float(nb_y)),
+                         bbox.zmin(),
+                         bbox.xmin() + Dx * ((x+1) / float(nb_x)),
+                         bbox.ymin() + Dy * ((y+1) / float(nb_y)),
+                         bbox.zmax()));
+      }
     
     std::cerr << "Number of divisions = " << nb_x * nb_y << std::endl;
     std::cerr << " -> Size of division: " << Dx / nb_x << " " << Dy / nb_y << std::endl;
@@ -487,17 +487,17 @@ namespace internal {
     std::vector<std::pair<std::size_t, std::size_t> > input_to_indices(input.size());
     
     for (std::size_t s = 0; s < input.size(); ++ s)
-      {
-        CGAL::Bbox_3 b = get(item_map, *(input.begin() + s)).bbox();
+    {
+      CGAL::Bbox_3 b = get(item_map, *(input.begin() + s)).bbox();
         
-        for (std::size_t i = 0; i < bboxes.size(); ++ i)
-          if (CGAL::do_overlap (b, bboxes[i]))
-            {
-              input_to_indices[s] = std::make_pair (i, indices[i].size());
-              indices[i].push_back (s);
-              break;
-            }
-      }
+      for (std::size_t i = 0; i < bboxes.size(); ++ i)
+        if (CGAL::do_overlap (b, bboxes[i]))
+        {
+          input_to_indices[s] = std::make_pair (i, indices[i].size());
+          indices[i].push_back (s);
+          break;
+        }
+    }
 
     output.resize (input.size());
 
@@ -509,15 +509,15 @@ namespace internal {
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-      {
-        tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size ()), f);
-      }
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size ()), f);
+    }
     else
 #endif
-      {
-        for (std::size_t sub = 0; sub < indices.size(); ++ sub)
-          f.apply (sub);
-      }
+    {
+      for (std::size_t sub = 0; sub < indices.size(); ++ sub)
+        f.apply (sub);
+    }
   }
 
 

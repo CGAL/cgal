@@ -51,10 +51,10 @@ int main (int argc, char** argv)
   std::cerr << "Reading input" << std::endl;
   if (!in
       || !(CGAL::read_ply_points (in, std::back_inserter (pts))))
-    {
-      std::cerr << "Error: cannot read " << filename << std::endl;
-      return EXIT_FAILURE;
-    }
+  {
+    std::cerr << "Error: cannot read " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
   double grid_resolution = 0.34;
   double radius_neighbors = 1.7;
@@ -199,22 +199,22 @@ int main (int argc, char** argv)
     << "end_header" << std::endl;
   
   for (std::size_t i = 0; i < pts.size(); ++ i)
-    {
-      f << pts[i] << " ";
+  {
+    f << pts[i] << " ";
       
-      Label_handle label = labels[label_indices[i]];
-      if (label == ground)
-        f << "245 180 0" << std::endl;
-      else if (label == vege)
-        f << "0 255 27" << std::endl;
-      else if (label == roof)
-        f << "255 0 170" << std::endl;
-      else
-        {
-          f << "0 0 0" << std::endl;
-          std::cerr << "Error: unknown classification label" << std::endl;
-        }
+    Label_handle label = labels[label_indices[i]];
+    if (label == ground)
+      f << "245 180 0" << std::endl;
+    else if (label == vege)
+      f << "0 255 27" << std::endl;
+    else if (label == roof)
+      f << "255 0 170" << std::endl;
+    else
+    {
+      f << "0 0 0" << std::endl;
+      std::cerr << "Error: unknown classification label" << std::endl;
     }
+  }
   
   std::cerr << "All done" << std::endl;
   return EXIT_SUCCESS;

@@ -74,11 +74,11 @@ public:
     this->set_name ("verticality");
 
     for (std::size_t i = 0; i < input.size(); i++)
-      {
-        typename Geom_traits::Vector_3 normal = eigen.normal_vector(i);
-        normal = normal / CGAL::sqrt (normal * normal);
-        verticality_feature.push_back (1. - CGAL::abs(normal * vertical));
-      }
+    {
+      typename Geom_traits::Vector_3 normal = eigen.normal_vector(i);
+      normal = normal / CGAL::sqrt (normal * normal);
+      verticality_feature.push_back (1. - CGAL::abs(normal * vertical));
+    }
   }
 #else
   Verticality (const PointRange&,
@@ -105,11 +105,11 @@ public:
   {
     this->set_name ("verticality");
     for (std::size_t i = 0; i < input.size(); i++)
-      {
-        typename Geom_traits::Vector_3 normal = get(normal_map, *(input.begin()+i));
-        normal = normal / CGAL::sqrt (normal * normal);
-        verticality_feature.push_back (1. - std::fabs(normal * vertical));
-      }
+    {
+      typename Geom_traits::Vector_3 normal = get(normal_map, *(input.begin()+i));
+      normal = normal / CGAL::sqrt (normal * normal);
+      verticality_feature.push_back (1. - std::fabs(normal * vertical));
+    }
   }
 
 
@@ -118,11 +118,11 @@ public:
   {
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     if (eigen != NULL)
-      {
-        typename Geom_traits::Vector_3 normal = eigen->normal_vector(pt_index);
-        normal = normal / CGAL::sqrt (normal * normal);
-        return (1. - CGAL::abs(normal * vertical));
-      }
+    {
+      typename Geom_traits::Vector_3 normal = eigen->normal_vector(pt_index);
+      normal = normal / CGAL::sqrt (normal * normal);
+      return (1. - CGAL::abs(normal * vertical));
+    }
     else
 #endif
       return verticality_feature[pt_index];

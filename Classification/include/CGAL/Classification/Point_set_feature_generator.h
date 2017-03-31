@@ -165,7 +165,7 @@ private:
         CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
       else
         CGAL_CLASSIFICATION_CERR << "Neighborhood with voxel size " << voxel_size
-                  << " computed in " << t.time() << " second(s)" << std::endl;
+                                 << " computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
       t.start();
       
@@ -201,10 +201,10 @@ private:
       delete grid;
       grid = NULL;
       if (delete_neighborhood)
-        {
-          delete neighborhood;
-          neighborhood = NULL;
-        }
+      {
+        delete neighborhood;
+        neighborhood = NULL;
+      }
     }
 
     float grid_resolution() const { return voxel_size; }
@@ -274,16 +274,16 @@ public:
     scale:
 
     - 9 features `CGAL::Classification::Feature::Hsv` on
-      channel 0 (hue) with mean ranging from 0° to 360° and standard
-      deviation of 22.5.
+    channel 0 (hue) with mean ranging from 0° to 360° and standard
+    deviation of 22.5.
 
     - 5 features `CGAL::Classification::Feature::Hsv` on
-      channel 1 (saturation) with mean ranging from 0 to 100 and standard
-      deviation of 12.5.
+    channel 1 (saturation) with mean ranging from 0 to 100 and standard
+    deviation of 12.5.
 
     - 5 features `CGAL::Classification::Feature::Hsv` on channel 2
-      (value) with mean ranging from 0 to 100 and standard deviation
-      of 12.5.
+    (value) with mean ranging from 0 to 100 and standard deviation
+    of 12.5.
 
     If echo numbers are provided (if `EchoMap` is different from
     `CGAL::Default`), the following feature is computed at each
@@ -347,9 +347,9 @@ public:
   void reduce_memory_footprint()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        m_scales[i]->reduce_memory_footprint(i > 0);
-      }
+    {
+      m_scales[i]->reduce_memory_footprint(i > 0);
+    }
   }
   /// \endcond
 
@@ -372,7 +372,7 @@ public:
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
   /*!
     \brief Returns the number of scales that were computed.
-   */
+  */
   std::size_t number_of_scales() const { return m_scales.size(); }
   
   /*!
@@ -434,14 +434,14 @@ private:
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-      {
-        m_tasks->run (*adder);
-      }
+    {
+      m_tasks->run (*adder);
+    }
     else
 #endif
-      {
-        (*adder)();
-      }
+    {
+      (*adder)();
+    }
   }
 
   template <typename VectorMap>
@@ -592,10 +592,10 @@ private:
     m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
     voxel_size = m_scales[0]->grid_resolution();
     for (std::size_t i = 1; i < nb_scales; ++ i)
-      {
-        voxel_size *= 2;
-        m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
-      }
+    {
+      voxel_size *= 2;
+      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
+    }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
     t.reset();

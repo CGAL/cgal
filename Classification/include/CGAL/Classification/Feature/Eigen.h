@@ -47,7 +47,7 @@ protected:
   
 public:
   Eigen_feature (const PointRange&,
-                   const Local_eigen_analysis& eigen)
+                 const Local_eigen_analysis& eigen)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : eigen (eigen)
 #endif

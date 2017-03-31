@@ -30,8 +30,8 @@ typedef Classif::Random_forest_predicate Classification_predicate;
 typedef Classif::Point_set_feature_generator<Kernel, Point_range, Pmap> Feature_generator;
 
 /*
- This interpreter is used to read a PLY input that contains training
- attributes (with the PLY "label" property).
+  This interpreter is used to read a PLY input that contains training
+  attributes (with the PLY "label" property).
 */
 class My_ply_interpreter
 {
@@ -153,24 +153,24 @@ int main (int argc, char** argv)
     << "end_header" << std::endl;
   
   for (std::size_t i = 0; i < pts.size(); ++ i)
-    {
-      f << pts[i] << " ";
+  {
+    f << pts[i] << " ";
       
-      Label_handle label = labels[label_indices[i]];
-      if (label == ground)
-        f << "245 180 0" << std::endl;
-      else if (label == vege)
-        f << "0 255 27" << std::endl;
-      else if (label == roof)
-        f << "255 0 170" << std::endl;
-      else if (label == facade)
-        f << "128 128 128" << std::endl;
-      else
-        {
-          f << "0 0 0" << std::endl;
-          std::cerr << "Error: unknown classification label" << std::endl;
-        }
+    Label_handle label = labels[label_indices[i]];
+    if (label == ground)
+      f << "245 180 0" << std::endl;
+    else if (label == vege)
+      f << "0 255 27" << std::endl;
+    else if (label == roof)
+      f << "255 0 170" << std::endl;
+    else if (label == facade)
+      f << "128 128 128" << std::endl;
+    else
+    {
+      f << "0 0 0" << std::endl;
+      std::cerr << "Error: unknown classification label" << std::endl;
     }
+  }
 
   std::cerr << "All done" << std::endl;
   

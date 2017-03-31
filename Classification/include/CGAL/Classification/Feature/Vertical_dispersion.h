@@ -137,13 +137,13 @@ public:
               
         std::size_t last_index = 0;
         for (std::size_t k = 0; k < hori.size(); ++ k)
-          {
-            std::size_t index = (std::size_t)((hori[k] - hori.front()) / grid_resolution);
-            occupy[index] = true;
-            if (index > last_index + 1)
-              ++ nb_layers;
-            last_index = index;
-          }
+        {
+          std::size_t index = (std::size_t)((hori[k] - hori.front()) / grid_resolution);
+          occupy[index] = true;
+          if (index > last_index + 1)
+            ++ nb_layers;
+          last_index = index;
+        }
 
         std::size_t nb_occ = 0;
         for (std::size_t k = 0; k < occupy.size(); ++ k)
@@ -157,11 +157,11 @@ public:
     }
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     for (std::size_t i = 0; i < input.size(); i++)
-      {
-        std::size_t I= grid.x(i);
-        std::size_t J= grid.y(i);
-        vertical_dispersion.push_back((float)Dispersion(I,J));
-      }
+    {
+      std::size_t I= grid.x(i);
+      std::size_t J= grid.y(i);
+      vertical_dispersion.push_back((float)Dispersion(I,J));
+    }
 #endif
   }
   /// \cond SKIP_IN_MANUAL
