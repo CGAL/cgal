@@ -152,6 +152,7 @@ public:
   // For strict-ansi compliance
   using Base::adjacent_vertices;
   using Base::combine_offsets;
+  using Base::draw_dual;
   using Base::get_offset;
   using Base::get_original_vertex;
   using Base::get_location_offset;

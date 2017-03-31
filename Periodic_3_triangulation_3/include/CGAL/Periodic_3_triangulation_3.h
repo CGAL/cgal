@@ -1661,7 +1661,7 @@ protected:
     return periodic_point(p);
   }
 
-private:
+public:
 bool is_canonical(const Facet& f) const
 {
   if (number_of_sheets() == CGAL::make_array(1,1,1))
@@ -1771,11 +1771,13 @@ protected:
          fit != end; ++fit) {
       if (!is_canonical(*fit))
         continue;
+
       Periodic_segment pso;
       canonical_dual_segment(fit->first, fit->second, pso, construct_circumcenter);
       Segment so = segment(pso);
       CGAL_triangulation_assertion_code ( ++i; )
-      os << so.source()<<' '<<so.target()<<' ';
+      os << so.source() << '\n';
+      os << so.target() << '\n';
     }
     CGAL_triangulation_assertion( i == number_of_facets() );
     return os;

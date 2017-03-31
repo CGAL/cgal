@@ -161,6 +161,7 @@ public:
   // For strict-ansi compliance
   using Tr_Base::adjacent_vertices;
   using Tr_Base::combine_offsets;
+  using Tr_Base::draw_dual;
   using Tr_Base::get_offset;
   using Tr_Base::get_original_vertex;
   using Tr_Base::get_location_offset;
@@ -872,13 +873,13 @@ public:
 
   template <class OutputIterator>
   OutputIterator dual(Vertex_handle v, OutputIterator points) const {
-    Base::dual(v, points, geom_traits().construct_weighted_circumcenter_3_object());
+    Tr_Base::dual(v, points, geom_traits().construct_weighted_circumcenter_3_object());
     return points;
   }
 
   template <class Stream>
   Stream& draw_dual(Stream& os) const {
-    return Base::draw_dual(os, geom_traits().construct_weighted_circumcenter_3_object());
+    return Tr_Base::draw_dual(os, geom_traits().construct_weighted_circumcenter_3_object());
   }
 
   /// Volume computations
