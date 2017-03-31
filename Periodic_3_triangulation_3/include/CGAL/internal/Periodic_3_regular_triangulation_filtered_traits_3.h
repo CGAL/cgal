@@ -30,6 +30,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
+#include <CGAL/internal/Has_boolean_tags.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
@@ -101,13 +102,20 @@ public:
 
 } // namespace CGAL
 
-// no static filters yet for periodic regular triangulations
-// #include <CGAL/Periodic_3_regular_triangulation_statically_filtered_traits_3.h>
+#include <CGAL/internal/Periodic_3_regular_triangulation_statically_filtered_traits_3.h>
 
 namespace CGAL {
 
-template < typename K, typename Off = typename CGAL::Periodic_3_offset_3 >
+template < typename K,
+           typename Off = typename CGAL::Periodic_3_offset_3,
+           bool Has_static_filters = internal::Has_static_filters<K>::value >
 class Periodic_3_regular_triangulation_filtered_traits_3
+  : public Periodic_3_regular_triangulation_statically_filtered_traits_3<
+      Periodic_3_regular_triangulation_filtered_traits_base_3<K, Off> >
+{ };
+
+template < typename K, typename Off>
+class Periodic_3_regular_triangulation_filtered_traits_3<K, Off, false>
   : public Periodic_3_regular_triangulation_filtered_traits_base_3<K, Off>
 { };
 
