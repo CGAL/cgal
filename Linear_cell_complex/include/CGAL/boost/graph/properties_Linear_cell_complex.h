@@ -21,7 +21,7 @@
 #define CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_H
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
@@ -29,7 +29,7 @@
              class Traits_, \
              class Items_, \
              class Alloc_, \
-             template<unsigned int, class, class, class, class> \
+             template<unsigned int,class,class,class,class> \
              class CMap, \
              class Storage_
 
@@ -40,7 +40,7 @@
              CMap, \
              Storage_
 
-#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_for_combinatorial_map\
+#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_for_bgl_combinatorial_map\
            <d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>
 
 namespace CGAL {

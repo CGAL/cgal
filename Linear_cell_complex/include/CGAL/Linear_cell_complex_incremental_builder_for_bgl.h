@@ -1,4 +1,4 @@
-// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -17,10 +17,10 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_V2_H
-#define CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_V2_H 1
+#ifndef CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_FOR_BGL_H
+#define CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_FOR_BGL_H 1
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_header_OFF.h>
 #include <CGAL/IO/File_scanner_OFF.h>
@@ -35,7 +35,7 @@ namespace CGAL {
  * associated with faces, non existing dart having no 2-attribute associated.
  */
   template < class LCC_ >
-  class Linear_cell_complex_incremental_builder_3_v2
+  class Linear_cell_complex_incremental_builder_for_bgl
   {
   public:
     typedef LCC_ LCC;
@@ -44,11 +44,11 @@ namespace CGAL {
     typedef typename LCC::Point                   Point_3;
     typedef typename LCC::size_type               size_type;
 
-    Linear_cell_complex_incremental_builder_3_v2(LCC & alcc) :
+    Linear_cell_complex_incremental_builder_for_bgl(LCC & alcc) :
       lcc(alcc)
     {}
 
-    Vertex_attribute_handle add_vertex (const Point_3& p)
+    Vertex_attribute_handle add_vertex(const Point_3& p)
     {
       Vertex_attribute_handle res = lcc.create_vertex_attribute(p);
       vertex_map.push_back(res);
@@ -162,8 +162,6 @@ namespace CGAL {
           assert(lcc.template is_free<0>(lcc.template beta<2>(other)));
           lcc.basic_link_beta_1(it, lcc.template beta<2>(other));
 
-          // For BGL halfedge graph, darts of border vertices must be border darts.
-// NOT NEEDED ??          lcc.template set_dart_of_attribute<0>(lcc.vertex_attribute(it), it);
           ++nb;
         }
       }
@@ -218,15 +216,15 @@ namespace CGAL {
     typename LCC::template Attribute_handle<2>::type face_attrib;
   };
 
-  template < class LCC >
-  void load_off_v2(LCC& alcc, std::istream& in)
+  template<class LCC>
+  void load_off_for_bgl(LCC& alcc, std::istream& in)
   {
     File_header_OFF  m_file_header;
     File_scanner_OFF scanner( in, m_file_header.verbose());
     if ( ! in) return;
     m_file_header = scanner;  // Remember file header after return.
 
-    Linear_cell_complex_incremental_builder_3_v2<LCC> B( alcc);
+    Linear_cell_complex_incremental_builder_for_bgl<LCC> B( alcc);
     B.begin_surface( scanner.size_of_vertices(),
                      scanner.size_of_facets(),
                      scanner.size_of_halfedges());
@@ -299,14 +297,29 @@ namespace CGAL {
   }
 
   template<class LCC>
-  void load_off_v2(LCC& alcc, const char* filename)
+  void load_off_for_bgl(LCC& alcc, const char* filename)
   {
     std::ifstream input(filename);
     if (input.is_open())
-      load_off_v2(alcc, input);
+      load_off_for_bgl(alcc, input);
   }
+  
+  template < class LCC >
+  void write_off_for_bgl(LCC& alcc, std::ostream& out)
+  {
+    // TODO (pehraps add a selector in the generic write_off function ?
+    write_off(alcc, out);
+  }
+  
+  template < class LCC >
+  void write_off_for_bgl(LCC& alcc, const char* filename)
+  {
+    // TODO (pehraps add a selector in the generic write_off function ?
+    write_off(alcc, filename);
+  }
+  
 
 } //namespace CGAL
 
-#endif // CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_V2_H //
+#endif // CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_FOR_BGL_H //
 // EOF //

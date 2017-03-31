@@ -1,7 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
@@ -13,20 +11,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
-
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-struct Myitem
-{
-  template<class Refs>
-  struct Dart_wrapper
-  {
-    typedef CGAL::Tag_true Darts_with_id;
-    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
-    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
-    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
-  };
-};
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
 
 typedef boost::graph_traits<LCC>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<LCC>::face_descriptor     face_descriptor;
@@ -37,7 +23,7 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   LCC mesh;
-  CGAL::load_off_v2(mesh, filename);
+  CGAL::load_off_for_bgl(mesh, filename);
 
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
@@ -70,7 +56,7 @@ int main(int argc, char* argv[])
   
   std::ofstream out("filled_LCC.off");
   out.precision(17);
-  CGAL::write_off(mesh, out);
+  CGAL::write_off_for_bgl(mesh, out);
 
   return 0;
 }

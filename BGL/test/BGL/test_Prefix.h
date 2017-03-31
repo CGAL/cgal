@@ -15,9 +15,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex.h>
 
@@ -40,20 +38,7 @@ typedef Kernel::Triangle_3 Triangle_3;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-
-struct Myitem
-{
-  template<class Refs>
-  struct Dart_wrapper
-  {
-    typedef CGAL::Tag_true Darts_with_id;
-    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
-    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
-    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
-  };
-};
-
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
 
 
 #ifdef CGAL_USE_SURFACE_MESH
@@ -147,7 +132,7 @@ bool read_a_mesh(LCC& lcc, const std::string& str) {
   bool success = in.good();
   if(success)
   {
-    CGAL::load_off_v2(lcc, in);
+    CGAL::load_off_for_bgl(lcc, in);
     assert(lcc.is_valid());
   }
   return success;

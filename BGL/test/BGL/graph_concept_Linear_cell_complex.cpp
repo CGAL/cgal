@@ -8,20 +8,7 @@
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-
-struct Myitem
-{
-  template<class Refs>
-  struct Dart_wrapper
-  {
-    typedef CGAL::Tag_true Darts_with_id;
-    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
-    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
-    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
-  };
-};
-
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
 
 typedef boost::graph_traits< LCC > Traits;
 typedef Traits::edge_descriptor edge_descriptor;

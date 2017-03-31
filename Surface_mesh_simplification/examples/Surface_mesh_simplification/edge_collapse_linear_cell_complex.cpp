@@ -1,8 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -13,20 +10,7 @@
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-
-struct Myitem
-{
-  template<class Refs>
-  struct Dart_wrapper
-  {
-    typedef CGAL::Tag_true Darts_with_id;
-    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
-    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
-    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
-  };
-};
-
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv )
@@ -39,7 +23,7 @@ int main( int argc, char** argv )
 
   LCC lcc;
   std::ifstream is(argv[1]);
-  CGAL::load_off_v2(lcc, is);
+  CGAL::load_off_for_bgl(lcc, is);
 
   lcc.display_characteristics(std::cout)<<", is_valid="<<CGAL::is_valid(lcc)<<std::endl;
 
@@ -65,8 +49,7 @@ int main( int argc, char** argv )
 
   lcc.display_characteristics(std::cout)<<", is_valid="<<CGAL::is_valid(lcc)<<std::endl;
 
-  std::ofstream os(argc > 2 ? argv[2] : "out.off");
-  CGAL::write_off(lcc, os);
+  CGAL::write_off_for_bgl(lcc, (argc > 2 ? argv[2] : "out.off"));
   return EXIT_SUCCESS;
 }
 // EOF //

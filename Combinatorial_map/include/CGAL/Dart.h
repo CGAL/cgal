@@ -23,6 +23,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/tuple.h>
 #include <bitset>
+#include <CGAL/Cell_attribute.h>
 
 namespace CGAL {
 
