@@ -18,8 +18,8 @@
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#ifndef CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H
-#define CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H
+#ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_REMOVE_TRAITS_3_H
+#define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_REMOVE_TRAITS_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
@@ -35,6 +35,7 @@ class Point_offset_adaptor
   typedef Traits_                        Traits;
   typedef Functor_                       Functor;
 
+  // `Traits::Point_3` is actually a `std::pair<Point_3, Offset>`
   typedef typename Traits::Point_3       Point;
 
 public:
@@ -67,76 +68,76 @@ private:
 };
 
 template < class P3DTTraits, class Off = typename CGAL::Periodic_3_offset_3 >
-class Periodic_3_triangulation_remove_traits_3
+class Periodic_3_Delaunay_triangulation_remove_traits_3
     : public P3DTTraits::K
 {
 public:
-  typedef P3DTTraits                                            PT;
+  typedef P3DTTraits                                            PTraits;
   typedef Off                                                   Offset;
 
 private:
-  typedef Periodic_3_triangulation_remove_traits_3<PT, Offset > Self;
-  typedef typename PT::K                                        Base;
+  typedef Periodic_3_Delaunay_triangulation_remove_traits_3<PTraits, Offset>  Self;
+  typedef typename PTraits::K                                                      Base;
 
 public:
-  typedef typename PT::RT                                       RT;
-  typedef typename PT::FT                                       FT;
-  typedef typename PT::Point_3                                  Bare_point;
-  typedef std::pair<Bare_point, Offset>                         Point_3;
-  typedef typename PT::Iso_cuboid_3                             Iso_cuboid_3;
+  typedef typename PTraits::RT                                       RT;
+  typedef typename PTraits::FT                                       FT;
+  typedef typename PTraits::Point_3                                  Bare_point;
+  typedef std::pair<Bare_point, Offset>                              Point_3;
+  typedef typename PTraits::Iso_cuboid_3                             Iso_cuboid_3;
 
-  Periodic_3_triangulation_remove_traits_3(const Iso_cuboid_3& domain)
-    : _pt() {
-    _pt.set_domain(domain);
+  Periodic_3_Delaunay_triangulation_remove_traits_3(const Iso_cuboid_3& domain)
+    : _traits() {
+    _traits.set_domain(domain);
   }
 
   // Triangulation predicates
-  typedef Point_offset_adaptor<Self, typename PT::Compare_xyz_3>
+  typedef Point_offset_adaptor<Self, typename PTraits::Compare_xyz_3>
       Compare_xyz_3;
-  typedef Point_offset_adaptor<Self, typename PT::Orientation_3>
+  typedef Point_offset_adaptor<Self, typename PTraits::Orientation_3>
       Orientation_3;
 
   // Delaunay Triangulation predicates
-  typedef Point_offset_adaptor<Self, typename PT::Compare_distance_3>
+  typedef Point_offset_adaptor<Self, typename PTraits::Compare_distance_3>
       Compare_distance_3;
-  typedef Point_offset_adaptor<Self, typename PT::Side_of_oriented_sphere_3>
+  typedef Point_offset_adaptor<Self, typename PTraits::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;
 
   // Degenerate dimension predicates
-  typedef Point_offset_adaptor<Self, typename PT::Coplanar_orientation_3>
+  typedef Point_offset_adaptor<Self, typename PTraits::Coplanar_orientation_3>
       Coplanar_orientation_3;
-  typedef Point_offset_adaptor<Self, typename PT::Coplanar_side_of_bounded_circle_3>
+  typedef Point_offset_adaptor<Self, typename PTraits::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
 
   // Operations
   Compare_xyz_3
   compare_xyz_3_object() const {
-    return Compare_xyz_3(_pt.compare_xyz_3_object());
+    return Compare_xyz_3(_traits.compare_xyz_3_object());
   }
   Coplanar_orientation_3
   coplanar_orientation_3_object() const {
-    return Coplanar_orientation_3(_pt.coplanar_orientation_3_object());
+    return Coplanar_orientation_3(_traits.coplanar_orientation_3_object());
   }
   Orientation_3
   orientation_3_object() const {
-    return Orientation_3(_pt.orientation_3_object());
+    return Orientation_3(_traits.orientation_3_object());
   }
   Coplanar_side_of_bounded_circle_3
   coplanar_side_of_bounded_circle_3_object() const {
-    return Coplanar_side_of_bounded_circle_3(_pt.coplanar_side_of_bounded_circle_3_object());
+    return Coplanar_side_of_bounded_circle_3(_traits.coplanar_side_of_bounded_circle_3_object());
   }
   Side_of_oriented_sphere_3
   side_of_oriented_sphere_3_object() const {
-    return Side_of_oriented_sphere_3(_pt.side_of_oriented_sphere_3_object());
+    return Side_of_oriented_sphere_3(_traits.side_of_oriented_sphere_3_object());
   }
   Compare_distance_3
   compare_distance_3_object() const {
-    return Compare_distance_3(_pt.compare_distance_3_object());
+    return Compare_distance_3(_traits.compare_distance_3_object());
   }
 public:
-  PT _pt;
+  PTraits _traits;
 };
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H
+#endif // CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_REMOVE_TRAITS_3_H
