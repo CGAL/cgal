@@ -54,9 +54,9 @@ public:
       MEAN_ANGLE
     };
 
-    bool has_stats()const {return true;}
-    QString computeStats(int type);
-    CGAL::Three::Scene_item::Header_data header() const;
+    bool has_stats()const Q_DECL_OVERRIDE{return true;}
+    QString computeStats(int type)Q_DECL_OVERRIDE;
+    CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
     TextListItem* textItems;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
@@ -64,7 +64,7 @@ public:
     Scene_polyhedron_item(Polyhedron* const p);
     ~Scene_polyhedron_item();
 
-    Scene_polyhedron_item* clone() const;
+    Scene_polyhedron_item* clone() const Q_DECL_OVERRIDE;
 
     // IO
     bool load(std::istream& in);
@@ -73,28 +73,28 @@ public:
     bool save_obj(std::ostream& out) const;
 
     // Function for displaying meta-data of the item
-    virtual QString toolTip() const;
+    virtual QString toolTip() const Q_DECL_OVERRIDE;
 
     // Function to override the context menu
-    QMenu* contextMenu();
+    QMenu* contextMenu() Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const;
+    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     void draw() const {}
-    virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void drawEdges() const {}
-    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawEdges() const Q_DECL_OVERRIDE{}
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
 
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
     const Polyhedron* polyhedron() const;
 
     // Get dimensions
-    bool isFinite() const { return true; }
-    bool isEmpty() const;
-    void compute_bbox() const;
+    bool isFinite() const Q_DECL_OVERRIDE { return true; }
+    bool isEmpty() const Q_DECL_OVERRIDE;
+    void compute_bbox() const Q_DECL_OVERRIDE;
     std::vector<QColor>& color_vector();
     void set_color_vector_read_only(bool on_off);
     bool is_color_vector_read_only();
@@ -109,9 +109,9 @@ public:
     //! @returns `true` if the item has multiple colors at the same time.
     bool isItemMulticolor();
 
-    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
-    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
-    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*);
+    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer) Q_DECL_OVERRIDE;
+    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const Q_DECL_OVERRIDE;
+    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
 
     //! @returns `true` if `f` is the first facet intersected by a raytracing
     bool intersect_face(double orig_x,
@@ -123,9 +123,9 @@ public:
                         Polyhedron::Facet_handle f);
 
 public Q_SLOTS:
-    virtual void invalidateOpenGLBuffers();
-    virtual void selection_changed(bool);
-    virtual void setColor(QColor c);
+    virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    virtual void selection_changed(bool) Q_DECL_OVERRIDE;
+    virtual void setColor(QColor c) Q_DECL_OVERRIDE;
     virtual void show_feature_edges(bool);
     void show_only_feature_edges(bool);
     void enable_facets_picking(bool);
@@ -137,7 +137,7 @@ public Q_SLOTS:
                 double orig_z,
                 double dir_x,
                 double dir_y,
-                double dir_z);
+                double dir_z) Q_DECL_OVERRIDE;
     void update_vertex_indices();
     void update_facet_indices();
     void update_halfedge_indices();
