@@ -282,7 +282,6 @@ public:
     for (Vertex_iterator vit2 = vertices_begin() ;
          vit2 != vertices_end() ; ++vit2) {
       if (vit2->offset() != Offset()) {
-        //TODO: use some binding, maybe boost instead of the Finder.
         typename std::list<Vertex_handle>::iterator vlist_it
             = std::find_if(vlist.begin(), vlist.end(),
                            typename Tr_Base::Finder(this,vit2->point()));
@@ -422,6 +421,8 @@ public:
     }
   }
 
+  // in the regular setting, there is nothing to do since we use `cells_with_too_big_orthoball`
+  // instead of an edge length threshold
   virtual void update_cover_data_after_setting_domain () {}
 
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Weighted_point>& hidden_points)

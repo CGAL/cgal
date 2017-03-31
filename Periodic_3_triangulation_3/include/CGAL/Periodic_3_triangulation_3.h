@@ -316,8 +316,9 @@ public:
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Point>& /* hidden_points*/) {}
 
   const Iso_cuboid& domain() const { return _domain; }
-  // TODO: Documentation and tests
+
   virtual void update_cover_data_after_setting_domain () {}
+
   void set_domain(const Iso_cuboid& domain)
   {
     clear();
@@ -620,8 +621,8 @@ public:
   /** @name Geometric access functions */
   ///@{
 
-  /// transform a point (living anywhere in space) into a point living inside
-  /// the canonical iso cuboid and an offset
+  /// Given a point `p`, compute its corresponding offset `o` with respect to
+  /// the canonical domain.
   Periodic_point periodic_point(const Point& p) const
   {
     // check that p lies within the domain. If not: translate
@@ -1602,7 +1603,9 @@ public:
       return point(periodic_point(c,idx));
 
     Offset vec_off[4];
-    for (int i=0 ; i<4 ; i++) vec_off[i] = periodic_point(c,i).second;
+    for (int i=0 ; i<4 ; i++)
+      vec_off[i] = periodic_point(c,i).second;
+
     int ox = vec_off[0].x();
     int oy = vec_off[0].y();
     int oz = vec_off[0].z();
@@ -1821,7 +1824,6 @@ protected:
   // square roots and thus cannot be done without changing the
   // Traits concept.
 
-  // TODO: reuse the centroid computation from the PCA package
   template <class ConstructCircumcenter>
   Point dual_centroid(Vertex_handle v, ConstructCircumcenter construct_circumcenter) const
   {

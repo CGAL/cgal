@@ -241,7 +241,7 @@ public:
   TDS_data& tds_data() { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
 
-  // TODO: Get rid of this flag! Used in convert_to_1_cover.
+  // TODO: Get rid of this flag! Used in convert_to_1_sheeted_covering.
   // Either use the conflict flag or a std::map.
   void set_additional_flag(unsigned char f) {
     CGAL_triangulation_assertion(f < 4);

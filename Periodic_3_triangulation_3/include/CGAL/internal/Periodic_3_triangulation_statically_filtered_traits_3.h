@@ -24,24 +24,7 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-// This class gathers optimized predicates written by hand, using
-// a few steps of filtering.  It should work if the initial traits has
-// cartesian coordinates which fit exactly in doubles.
-//
-// Purely static filters code has been removed, since it requires additional
-// logic and is not plug'n play (requires users providing bounds).
-// If it should be provided again, it should probably be separate.
-
-#include <CGAL/basic.h>
-
-#include <CGAL/Kernel/function_objects.h>
-#include <CGAL/Cartesian/function_objects.h>
-
-#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Periodic_3_orientation_3.h>
-
-// TODO :
-// - add more predicates :
 
 namespace CGAL {
 
