@@ -1,15 +1,16 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 #include <CGAL/mesh_segmentation.h>
 
 #include <CGAL/property_map.h>
+#include <CGAL/Unique_hash_map.h>
 
 #include <iostream>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
 
 struct Myitem
@@ -25,15 +26,16 @@ struct Myitem
 };
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
+typedef typename LCC::Attribute_const_handle<2>::type Facet_const_handle;
 
 int main()
 {
-    // create and read Polyhedron
+    // create and read LCC
     LCC mesh;
-    CGAL::load_off_v2("data/cactus.off");
+    CGAL::load_off_v2(mesh, "data/cactus.off");
 
     // create a property-map for SDF values
-    typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
+    typedef CGAL::Unique_hash_map<Facet_const_handle, double> Facet_double_map;
     Facet_double_map internal_sdf_map;
     boost::associative_property_map<Facet_double_map> sdf_property_map(internal_sdf_map);
 
@@ -41,20 +43,23 @@ int main()
     CGAL::sdf_values(mesh, sdf_property_map);
 
     // create a property-map for segment-ids
-    typedef std::map<Polyhedron::Facet_const_handle, std::size_t> Facet_int_map;
+    typedef CGAL::Unique_hash_map<Facet_const_handle, std::size_t> Facet_int_map;
     Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 
     // segment the mesh using default parameters for number of levels, and smoothing lambda
     // Any other scalar values can be used instead of using SDF values computed using the CGAL function
-    std::size_t number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
+    std::size_t number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map,
+                                                                        segment_property_map);
 
     std::cout << "Number of segments: " << number_of_segments << std::endl;
     // print segment-ids
-    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-        // ids are between [0, number_of_segments -1]
-        std::cout << segment_property_map[facet_it] << " ";
+    for(typename LCC::Attribute_range<2>::type::const_iterator
+          facet_it=mesh.template attributes<2>().begin();
+        facet_it!=mesh.template attributes<2>().end(); ++facet_it)
+    {
+      // ids are between [0, number_of_segments -1]
+      std::cout << segment_property_map[facet_it] << " ";
     }
     std::cout << std::endl;
 
