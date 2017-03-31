@@ -177,14 +177,14 @@ private:
                        arete.first->vertex(arete.third) );
   }
 
-  FT compute_distance_to_facet_center(const Facet& f,
-                                      const Vertex_handle v) const {
+  FT compute_sq_distance_to_facet_center(const Facet& f,
+                                         const Vertex_handle v) const {
     const Point& fcenter = f.first->get_facet_surface_center(f.second);
     const Point& vpoint = v->point();
 
     return
-      this->r_tr_.geom_traits().compute_squared_distance_3_object()(fcenter.point(),
-                                                              vpoint.point())
+      this->r_tr_.geom_traits().compute_squared_distance_3_object()
+      (fcenter.point(), vpoint.point())
       - vpoint.weight();
   }
 
@@ -206,26 +206,29 @@ private:
     CGAL_assertion(fit!=facets.end());
     CGAL_assertion_code(std::size_t facet_counter = 1);
 
+    Facet biggest_facet = *fit++;
+    FT biggest_sq_dist = compute_sq_distance_to_facet_center(biggest_facet, v);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "  " << v->cached_number_of_incident_facets()
-              << " incident faces, with sizes:\n";
-    std::cerr << "    " << compute_distance_to_facet_center(*fit, v) << "\n";
+              << " incident faces, with squared sizes:\n";
+    std::cerr << "    " << biggest_sq_dist << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    Facet biggest_facet = *fit++;
     while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
 
     for (; fit != facets.end(); )
     {
       CGAL_assertion_code(++facet_counter);
       Facet current_facet = *fit;
-#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-      std::cerr << "    " << compute_distance_to_facet_center(*fit, v) << "\n";
-#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       // is the current facet bigger than the current biggest one
-      if ( compute_distance_to_facet_center(current_facet, v) >
-           compute_distance_to_facet_center(biggest_facet, v) )
+      const FT current_sq_dist =
+        compute_sq_distance_to_facet_center(current_facet, v);
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      std::cerr << "    " << current_sq_dist << "\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      if ( current_sq_dist > biggest_sq_dist )
       {
         biggest_facet = current_facet;
+        biggest_sq_dist = current_sq_dist;
       }
       ++fit;
       while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
@@ -234,8 +237,8 @@ private:
                    facet_counter);
     CGAL_assertion(this->r_c3t3_.is_in_complex(biggest_facet));
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    std::cerr << "Biggest facet radius: "
-              << compute_distance_to_facet_center(biggest_facet, v)
+    std::cerr << "Biggest facet squared radius: "
+              << biggest_sq_dist
               << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 
@@ -250,37 +253,37 @@ private:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "Bad edge: (" << fev->point()
               << ", " << arete.first->vertex(arete.third)->point()
-              << ")\n  incident facets sizes:\n";
+              << ")\n  incident facets squared sizes:\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     Tr_facet_circulator fcirc = this->r_tr_.incident_facets(arete);
     while(!this->r_c3t3_.is_in_complex(*fcirc)) ++fcirc;
     Facet first_facet = *fcirc;
     Facet biggest_facet = *fcirc;
+    FT biggest_sq_dist = compute_sq_distance_to_facet_center(biggest_facet,
+                                                             fev);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "    "
-              << compute_distance_to_facet_center(*fcirc, fev) << std::endl;
+              << biggest_sq_dist << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 
     for (++fcirc; *fcirc != first_facet; ++fcirc) 
     {
       while(!this->r_c3t3_.is_in_complex(*fcirc)) ++fcirc;
       if(*fcirc == first_facet) break;
+      const FT current_sq_dist =
+        compute_sq_distance_to_facet_center(*fcirc, fev);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-      std::cerr << "    "
-                << compute_distance_to_facet_center(*fcirc, fev) << std::endl;
+      std::cerr << "    " << current_sq_dist << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-
       // is the current facet bigger than the current biggest one
-      if ( compute_distance_to_facet_center(*fcirc, fev) >
-           compute_distance_to_facet_center(biggest_facet,
-                                            fev) ) {
+      if ( current_sq_dist > biggest_sq_dist ) {
         biggest_facet = *fcirc;
+        biggest_sq_dist = current_sq_dist;
       }
     }
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "Biggest facet radius: "
-              << compute_distance_to_facet_center(biggest_facet, fev)
-              << std::endl;
+              << biggest_sq_dist << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 
     return biggest_facet;
