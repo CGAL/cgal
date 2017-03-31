@@ -31,7 +31,7 @@
 #include <CGAL/spatial_sort.h>
 
 // Needed by remove to fill the hole.
-#include <CGAL/internal/Periodic_3_triangulation_remove_traits_3.h>
+#include <CGAL/internal/Periodic_3_Delaunay_triangulation_remove_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
 #include <algorithm>
@@ -516,7 +516,7 @@ public:
       points.begin(), points.end(), hint, tester, hider, cover_manager);
 
     if (is_large_point_set) {
-      typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
+      typedef CGAL::Periodic_3_Delaunay_triangulation_remove_traits_3<Gt> P3removeT;
       typedef CGAL::Delaunay_triangulation_3< P3removeT > DT;
       typedef Vertex_remover< DT > Remover;
       P3removeT remove_traits(domain());
@@ -910,7 +910,7 @@ move_point(Vertex_handle v, const Point & p) {
 template < class Gt, class Tds >
 void Periodic_3_Delaunay_triangulation_3<Gt,Tds>::remove(Vertex_handle v)
 {
-  typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
+  typedef CGAL::Periodic_3_Delaunay_triangulation_remove_traits_3<Gt> P3removeT;
   typedef CGAL::Delaunay_triangulation_3< P3removeT >
     Euclidean_triangulation;
   typedef Vertex_remover< Euclidean_triangulation > Remover;

@@ -66,7 +66,7 @@ public:
   typedef Traits_with_offsets_adaptor<Self, typename K::Compare_distance_3>
       Compare_distance_3;
 
-  // Required for Periodic_3_remove_traits
+  // Required for Periodic_3_Delaunay_triangulation_remove_traits
   typedef Traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3>
       Coplanar_orientation_3;
   typedef Traits_with_offsets_adaptor<Self, typename K::Coplanar_side_of_bounded_circle_3>
