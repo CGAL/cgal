@@ -399,7 +399,7 @@ public:
       for (int b=0;b!=5;b++)
         for (int d=0;d!=5;d++)
         {
-          Weighted_point_3 p( Point_3(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b),  a*b-a*d ); // TODO check weight
+          Weighted_point_3 p( Point_3(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b),  a*b-a*d );
           std::cout << p << std::endl;
           p3rt3.insert(p);
         }

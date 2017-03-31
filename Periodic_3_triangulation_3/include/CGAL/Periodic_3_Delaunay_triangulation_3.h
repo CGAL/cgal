@@ -535,6 +535,9 @@ public:
   //@}
 
   /** @name Point moving */ //@{
+  // @todo should be deprecated and a function move() should be introduced
+  // see what is done in /Triangulation_3
+  // Also need to introduce move() for periodic regular triangulations
   Vertex_handle move_point(Vertex_handle v, const Point & p);
   //@}
 
@@ -1410,7 +1413,6 @@ copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3<GT,TDS> & tr) {
   for (Vertex_iterator vit2 = vertices_begin() ;
        vit2 != vertices_end() ; ++vit2) {
     if (vit2->offset() != Offset()) {
-      //TODO: use some binding, maybe boost instead of the Finder.
       typename std::list<Vertex_handle>::iterator vlist_it
   = std::find_if(vlist.begin(), vlist.end(),
            typename Base::Finder(this,vit2->point()));

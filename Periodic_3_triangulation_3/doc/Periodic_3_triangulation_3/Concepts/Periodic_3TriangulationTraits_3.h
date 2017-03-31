@@ -196,8 +196,7 @@ Periodic_3_triangulation_traits_3(const Periodic_triangulation_traits_3 & tr);
 /// @{
 
 /*!
-Set the size of the fundamental domain. This is necessary to evaluate predicates
-correctly.
+Set the fundamental domain. This is necessary to evaluate predicates correctly.
 \pre `domain` represents a cube.
 */
 void set_domain(const Iso_cuboid_3& domain);

@@ -168,6 +168,8 @@ public:
     return n-number_of_vertices();
   }
 
+  // @todo should be deprecated and a function move() should be introduced
+  // see what is done in /Triangulation_3
   Vertex_handle move_point(Vertex_handle v, const Point & p);
 
   //LOCATE
