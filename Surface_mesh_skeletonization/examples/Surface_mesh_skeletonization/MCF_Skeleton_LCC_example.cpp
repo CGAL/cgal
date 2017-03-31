@@ -1,6 +1,6 @@
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
 
@@ -8,11 +8,25 @@
 
 typedef CGAL::Simple_cartesian<double>                        Kernel;
 typedef Kernel::Point_3                                       Point;
-typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
+typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron> Skeletonization;
+struct Myitem
+{
+  template<class Refs>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Tag_true Darts_with_id;
+    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
+    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
+    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
+  };
+};
+
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
+typedef boost::graph_traits<LCC>::vertex_descriptor    vertex_descriptor;
+
+typedef CGAL::Mean_curvature_flow_skeletonization<LCC> Skeletonization;
 typedef Skeletonization::Skeleton                             Skeleton;
 
 typedef Skeleton::vertex_descriptor                           Skeleton_vertex;
@@ -21,12 +35,11 @@ typedef Skeleton::edge_descriptor                             Skeleton_edge;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
-  Polyhedron tmesh;
-  input >> tmesh;
+  LCC lcc;
+  CGAL::load_off_v2(lcc, "data/elephant.off");
 
   Skeleton skeleton;
-  Skeletonization mcs(tmesh);
+  Skeletonization mcs(lcc);
 
   // 1. Contract the mesh by mean curvature flow.
   mcs.contract_geometry();
@@ -52,7 +65,7 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
-  std::ofstream output("skel-poly.cgal");
+  std::ofstream output("skel-lcc.cgal");
   BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
@@ -62,10 +75,10 @@ int main(int argc, char* argv[])
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance-poly.cgal");
+  output.open("correspondance-lcc.cgal");
   BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
     BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
-      output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
+      output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, lcc, vd)  << "\n";
 
   return 0;
 }
