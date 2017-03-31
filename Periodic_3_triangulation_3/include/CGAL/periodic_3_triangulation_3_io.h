@@ -120,28 +120,18 @@ Stream &write_cells_to_off(Stream &out, Triangulation &t, int number_of_cells,
   return out;
 }
 
-#if 0
-//TODO: rewrite this to wrap the stream coming from draw_dual
-template <class Stream>
-Stream& draw_dual_to_off(Stream &os) {
+template <class Stream, class Triangulation>
+Stream& draw_dual_to_off(Stream &os, Triangulation &t) {
   os << "OFF " << "\n"
-     << 2*number_of_facets() << " "
-     << number_of_facets() << " 0" << std::endl;
-  for (Facet_iterator fit = facets_begin(), end = facets_end();
-       fit != end; ++fit) {
-    if (!is_canonical(*fit))
-      continue;
+     << 2*t.number_of_facets() << " "
+     << t.number_of_facets() << " 0" << std::endl;
 
-    std::pair<Segment,Offset> pso = dual(*fit);
-    os << pso.first.source() << std::endl
-       << pso.first.target() - pso.second<< std::endl;
-  }
-  CGAL_triangulation_assertion( i==number_of_facets());
-  for(unsigned int i=0 ; i < number_of_facets() ; i++) {
-    os << "2 " << i*2 << " " << i*2+1 << std::endl;
+  t.draw_dual(os);
+
+  for(unsigned int i=0; i < t.number_of_facets(); i++) {
+    os << "3 " << i*2 << " " << i*2+1 << " " << i*2 << std::endl;
   }
   return os;
 }
-#endif
 
 #endif //CGAL_PERIODIC_3_TRIANGULATION_3_IO_H
