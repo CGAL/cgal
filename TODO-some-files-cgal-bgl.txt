@@ -32,7 +32,7 @@ TODO
 
   Compile pas
   
-./Polygon_mesh_processing/test/Polygon_mesh_processing/surface_intersection_sm_poly.cpp
+./Polygon_mesh_processing/test/Polygon_mesh_processing/surface_intersection_LCC_poly.cpp
 
   Compile pas
 
