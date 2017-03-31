@@ -62,16 +62,19 @@ int main(int, char**)
   assert( nc->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
-  std::ofstream oFileT("output_regular.tri",std::ios::out);
   // writing file output;
+  std::ofstream oFileT("output_regular.tri",std::ios::out);
   oFileT << T;
 
   std::ofstream to_off("output_regular.off");
   write_triangulation_to_off(to_off, T);
 
+  std::ofstream d_to_off("output_regular_dual.off");
+  draw_dual_to_off(d_to_off, T);
+
+  // reading file output;
   P3RT3 T1;
   std::ifstream iFileT("output_regular.tri",std::ios::in);
-  // reading file output;
   iFileT >> T1;
   assert( T1.is_valid() );
   assert( T1.number_of_vertices() == T.number_of_vertices() );
