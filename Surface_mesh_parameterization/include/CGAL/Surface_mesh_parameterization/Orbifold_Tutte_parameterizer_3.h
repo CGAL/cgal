@@ -100,7 +100,7 @@ enum Weight_type
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceGraph`
+/// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceListGraph`
 /// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`

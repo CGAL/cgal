@@ -88,8 +88,7 @@ Defined in `<CGAL/boost/graph/graph_traits_Seam_mesh.h>`
 We provide partial specialization for the class `CGAL::Seam_mesh` so that it is a model
 of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>
-and of the concept `MutableFaceGraph`.
+<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>.
 
 The traits class `boost::graph_traits< CGAL::Seam_mesh<T> >` provides the following types:
 
