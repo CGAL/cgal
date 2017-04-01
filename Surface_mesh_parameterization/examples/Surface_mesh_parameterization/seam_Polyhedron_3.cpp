@@ -77,7 +77,8 @@ int main(int argc, char * argv[])
 
   SMP::parameterize(mesh, bhd, uv_pm);
 
-  SMP::IO::output_uvmap_to_off(mesh, bhd, uv_pm, std::cout);
+  std::ofstream out("result.off");
+  SMP::IO::output_uvmap_to_off(mesh, bhd, uv_pm, out);
 
   return 0;
 }
