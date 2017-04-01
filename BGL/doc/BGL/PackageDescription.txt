@@ -196,6 +196,9 @@ Valid Expression  |  returns                                   | Description
 /// \defgroup PkgBGLSelectionFct Selection Functions
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLAdaptors Graph adaptors
+/// \ingroup PkgBGL
+
 /// \defgroup PkgBGLEulerOperations Euler Operations
 /// \ingroup PkgBGL
 
@@ -242,6 +245,16 @@ Several functions to enlarge or reduce a k-ring selection of vertices, edges, or
 
 */
 
+/*!
+\addtogroup PkgBGLAdaptors
+
+Graph adaptors are classes that build an interface over an existing graph to provide
+new functionalities. For example, `CGAL::Dual` allows to traverse and query
+the dual graph of a graph without actually building the dual. By operating
+almost entirely on the input graph, adaptors can avoid potentially expensive operations,
+both in term of time and memory.
+
+*/
 
 /*!
 \addtogroup PkgBGL
@@ -302,11 +315,6 @@ user might encounter.
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
 - `CGAL::set_halfedgeds_items_id()`
-- `CGAL::Dual`
-- `CGAL::Graph_with_descriptor_with_graph`
-- `CGAL::Graph_with_descriptor_with_graph_property_map`
-- `CGAL::Face_filtered_graph`
-- `CGAL::Seam_mesh`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
@@ -393,6 +401,12 @@ user might encounter.
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
+## Graph Adaptors ##
+- `CGAL::Dual`
+- `CGAL::Face_filtered_graph`
+- `CGAL::Graph_with_descriptor_with_graph`
+- `CGAL::Graph_with_descriptor_with_graph_property_map`
+- `CGAL::Seam_mesh`
 */
 
 /*!

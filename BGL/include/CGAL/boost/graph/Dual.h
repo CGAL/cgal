@@ -27,7 +27,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup PkgBGLAdaptors
 
 The class template `Dual` is an adaptor that creates the dual view of
 a `FaceGraph`. Faces of the original graph correspond to vertices in

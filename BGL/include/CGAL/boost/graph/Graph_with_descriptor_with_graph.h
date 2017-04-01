@@ -109,7 +109,7 @@ std::ostream& operator<<(std::ostream& os, const Gwdwg_descriptor<Graph,Descript
 }
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup PkgBGLAdaptors
 
 The class `Graph_with_descriptor_with_graph` wraps a graph into another graph in such a way that its descriptors contain a reference to the graph they come from.
 
@@ -694,7 +694,7 @@ is_valid(const Graph_with_descriptor_with_graph<Graph> & w, bool verbose = false
 
 
 /*!
-  \ingroup PkgBGLHelper
+  \ingroup PkgBGLAdaptors
     `Graph_with_descriptor_with_graph_property_map` enables to forward properties from a
      `Graph` to a `Graph_with_descriptor_with_graph`.
     \cgalModels `Graph_with_descriptor_with_graph_property_map` the same property map concept as `PM`

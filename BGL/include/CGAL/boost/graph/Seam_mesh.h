@@ -98,7 +98,7 @@ public:
 };
 #endif
 
-/// \ingroup PkgBGLHelper
+/// \ingroup PkgBGLAdaptors
 ///
 /// This class is a data structure that takes a triangle mesh, further refered
 /// to as `underlying mesh` and turns some marked edges of that mesh into
