@@ -36,6 +36,7 @@
 #include <iostream>
 #include <iterator>
 #include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -915,22 +916,39 @@ public:
   }
 
   /// @}
+
+  void build_TM_vertices_vector(std::vector<TM_vertex_descriptor>& tm_vds) const
+  {
+    assert(tm_vds.empty());
+
+    // If the input is a list of integers, we need to build a correspondence
+    // between vertices and integers.
+    tm_vds.reserve(CGAL::num_vertices(tm));
+    typedef typename boost::graph_traits<TM>::vertex_iterator  TM_vertex_iterator;
+    TM_vertex_iterator tmvi = CGAL::vertices(tm).begin(),
+                       tmvi_end = CGAL::vertices(tm).end();
+    CGAL_For_all(tmvi, tmvi_end) {
+      tm_vds.push_back(*tmvi);
+    }
+  }
 #endif // ndef DOXYGEN_RUNNING
 
+public:
   /// \name Seam selection
   /// @{
 
-  /// Mark the edge between the vertices `tmvd_s` and `tmvd_s` of the underlying
-  /// mesh as a seam edge.
+  /// Mark the edge of the underlying mesh that has extremities the vertices
+  /// `tm_vd_s` and `tm_vd_s` as a seam edge.
   ///
-  /// \return whether the edge was successfully marked or not. Marking will fail if:
-  ///         - No edge of the underlying mesh exist with extremities `tmvd_s` and `tmvd_s`,
-  ///         - the edge of the underlying mesh with extremities `tmvd_s` and `tmvd_s` is a border edge, or
-  ///         - the edge of the underlying mesh with extremities `tmvd_s` and `tmvd_s` is already a seam edge.
+  /// \return whether the edge was successfully marked or not.
+  ///         Marking will fail if:
+  ///         - No edge of the underlying mesh exist with extremities `tm_vd_s` and `tm_vd_s`,
+  ///         - the edge of the underlying mesh with extremities `tm_vd_s` and `tm_vd_s` is a border edge, or
+  ///         - the edge of the underlying mesh with extremities `tm_vd_s` and `tm_vd_s` is already a seam edge.
   ///
-  bool add_seam(TM_vertex_descriptor tmvd_s, TM_vertex_descriptor tmvd_t)
+  bool add_seam(TM_vertex_descriptor tm_vd_s, TM_vertex_descriptor tm_vd_t)
   {
-    std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tmvd_s, tmvd_t, tm);
+    std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tm_vd_s, tm_vd_t, tm);
     if(!tmed.second) {
       std::cerr << "Warning: Ignored a constraint because it is not a valid edge of the mesh" << std::endl;
       return false;
@@ -943,8 +961,8 @@ public:
       }
 
       put(sem, tmed.first, true);
-      put(svm, tmvd_s, true);
-      put(svm, tmvd_t, true);
+      put(svm, tm_vd_s, true);
+      put(svm, tm_vd_t, true);
       ++number_of_seams;
     } else {
       std::cerr << "Warning: Ignored a constraint because it is on the border of the mesh" << std::endl;
@@ -954,19 +972,102 @@ public:
     return true;
   }
 
-  /// Adds seams to the property maps of the seam mesh.
+  /// Create new seams.
   ///
-  /// In input, a seam edge is described by the pair of integers that correspond
-  /// to the indices of the extremities (vertices) of the edge that should be
-  /// marked as seam edge.
+  /// The edges to be marked as seams are described by the range [first, last) of
+  /// vertices of the underlying mesh. Each edge to be marked is described
+  /// by two consecutive iterators.
   ///
-  /// @pre filename should be the name of a CGAL selection file: seam edges
-  /// are given as pairs of integers, on the third line of the file.
-  /// @pre A seam edge must be an edge of the graph that is not on the boundary
-  /// of the mesh.
-  TM_halfedge_descriptor add_seams(const char* filename)
+  /// \returns one of the halfedges of the seam mesh that is on a seam.
+  ///
+  /// \pre InputIterator must be a model of `InputIterator`.
+  /// \pre The value type of `InputIterator` must be `boost::graph<TM>::vertex_descriptor`.
+  /// \pre There is an even number of vertices.
+  template<class InputIterator>
+  TM_halfedge_descriptor add_seams(InputIterator first, InputIterator last)
   {
-    TM_halfedge_descriptor tmhd;
+    // must have an even number of input vertices
+    assert(std::distance(first, last) % 2 == 0);
+
+    TM_halfedge_descriptor tmhd = boost::graph_traits<TM>::null_halfedge();
+    InputIterator it = first;
+
+    while(it!=last) {
+      TM_vertex_descriptor v1 = *(it++);
+      TM_vertex_descriptor v2 = *(it++);
+
+      if(!add_seam(v1, v2))
+        continue;
+
+      if(tmhd == boost::graph_traits<TM>::null_halfedge()) {
+        tmhd = CGAL::halfedge(CGAL::edge(v1, v2, tm).first, tm);
+      }
+    }
+
+    return tmhd;
+  }
+
+  /// Create new seams.
+  ///
+  /// A seam edge is described by a pair of integers. The integer index
+  /// of a vertex of the underlying mesh is given by its position
+  /// in the container `tm_vds`.
+  ///
+  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  ///         the functions: `operator[]` and `at()`).
+  ///
+  /// \returns one of the halfedges of the seam mesh that is on a seam.
+  ///
+  /// \pre The stream must contain an even number of values.
+  template<typename VdContainer>
+  TM_halfedge_descriptor add_seams(std::ifstream& in,
+                                   const VdContainer& tm_vds)
+  {
+    std::vector<TM_vertex_descriptor> seam_vertices;
+    std::size_t s, t;
+    while(in >> s >> t) {
+      seam_vertices.push_back(tm_vds.at(s));
+      seam_vertices.push_back(tm_vds.at(t));
+    }
+
+    return add_seams(seam_vertices.begin(), seam_vertices.end());
+  }
+
+  /// Create new seams.
+  ///
+  /// A seam edge is described by a pair of integers. The integer
+  /// index of a vertex of the underlying mesh is defined as its position when
+  /// iterating over the vertices of the underlying mesh with
+  /// `boost::graph<TM>::vertices()`.
+  ///
+  /// \returns one of the halfedges of the seam mesh that is on a seam.
+  ///
+  /// \pre The stream must contain an even number of values.
+  TM_halfedge_descriptor add_seams(std::ifstream& in)
+  {
+    std::vector<TM_vertex_descriptor> tm_vds;
+    build_TM_vertices_vector(tm_vds);
+    return add_seams(in, tm_vds);
+  }
+
+  /// Create new seams.
+  ///
+  /// A seam edge is described by a pair of integers. The integer index
+  /// of a vertex of the underlying mesh is given by its position
+  /// in the container `tm_vds`.
+  ///
+  /// \returns one of the halfedges of the seam mesh that is on a seam.
+  ///
+  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  ///         the functions: `operator[]` and `at()`).
+  ///
+  /// \pre filename should be the name of a CGAL selection file: edges are
+  ///      described by pairs of integers, on the third line of the file.
+  template<typename VdContainer>
+  TM_halfedge_descriptor add_seams(const char* filename,
+                                   const VdContainer& tm_vds)
+  {
+    TM_halfedge_descriptor tmhd = boost::graph_traits<TM>::null_halfedge();
 
     // Check the file type
     std::string str = filename;
@@ -981,40 +1082,33 @@ public:
     // -- the third line for selected edges
     std::ifstream in(filename);
     std::string line;
-    if(!std::getline(in, line) || !std::getline(in, line) || !std::getline(in, line)) {
+
+    // skip two lines to get the istream to be at the beginning of the third line
+    if(!std::getline(in, line) || !std::getline(in, line)) {
       std::cout << "Error: could not read input file: " << filename << std::endl;
       return tmhd;
     }
 
-    // The selection file is a list of integers, so we need to build a correspondence
-    // between vertices and the integers. Below is ugly, especially when using a
-    // Surface_mesh that could very well fit a TM_vertex_descriptor tmvd(int i)...
-    std::vector<TM_vertex_descriptor> tmvds;
-    tmvds.reserve(CGAL::num_vertices(tm));
-    typedef typename boost::graph_traits<TM>::vertex_iterator  TM_vertex_iterator;
-    TM_vertex_iterator tmvi = CGAL::vertices(tm).begin(),
-                       tmvi_end = CGAL::vertices(tm).end();
-    CGAL_For_all(tmvi, tmvi_end) {
-      tmvds.push_back(*tmvi);
-    }
-
-    // Read the selection file
-    std::istringstream edge_line(line);
-    std::size_t s, t;
-    while(edge_line >> s >> t) {
-      assert(s < tmvds.size() && t < tmvds.size());
-      TM_vertex_descriptor tmvd_s = tmvds[s], tmvd_t = tmvds[t];
-
-      if(!add_seam(tmvd_s, tmvd_t))
-        continue;
-
-      if(tmhd == boost::graph_traits<TM>::null_halfedge()) {
-        tmhd = CGAL::halfedge(CGAL::edge(tmvd_s, tmvd_t, tm).first, tm);
-      }
-    }
-
-    return tmhd;
+    return add_seams(in, tm_vds);
   }
+
+  /// Create new seams.
+  ///
+  /// A seam edge is described by a pair of integers. The integer
+  /// index of a vertex of the underlying mesh is defined as its position when
+  /// iterating over the vertices of the underlying mesh with
+  /// `boost::graph<TM>::vertices()`.
+  ///
+  /// \returns one of the halfedges of the seam mesh that is on a seam.
+  ///
+  /// \pre filename should be the name of a CGAL selection file: edges are
+  ///      described by pairs of integers, on the third line of the file.
+  TM_halfedge_descriptor add_seams(const char* filename)
+  {
+    std::vector<TM_vertex_descriptor> tm_vds;
+    build_TM_vertices_vector(tm_vds);
+    return add_seams(filename, tm_vds);  }
+
   /// @}
 
   /// Constructs a seam mesh for a triangle mesh and an edge and vertex property map
