@@ -338,21 +338,17 @@ bool check_input_validity(const SeamMesh& mesh,
   return true;
 }
 
-/// Read the cones from the input file.
+/// Read the cones from an input stream.
 template<typename TriangleMesh>
-Error_code read_cones(const TriangleMesh& pm, const char* filename,
+Error_code read_cones(const TriangleMesh& pm, std::ifstream& in,
   std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>& cone_vds_in_tm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
 
-  std::ifstream in(filename);
-  std::string vertices_line;
-  std::getline(in, vertices_line); // read the first line of the file
-  std::istringstream iss(vertices_line);
   std::vector<int> cones;
   cones.reserve(4);
   int cone_index;
-  while(iss >> cone_index) {
+  while(in >> cone_index) {
     cones.push_back(cone_index);
   }
 
@@ -389,6 +385,16 @@ Error_code read_cones(const TriangleMesh& pm, const char* filename,
 
   return OK;
 }
+
+/// Read the cones from an input file.
+template<typename TriangleMesh>
+Error_code read_cones(const TriangleMesh& pm, const char* filename,
+  std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>& cone_vds_in_tm)
+{
+  std::ifstream in(filename);
+  return read_cones(pm, in, cone_vds_in_tm);
+}
+
 
 /// Locate the cones on the seam mesh (find the corresponding seam mesh
 /// vertex_descriptor) and mark them with a tag that indicates whether it is a
