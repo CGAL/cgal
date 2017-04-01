@@ -20,10 +20,6 @@ package, we focus on parameterizing triangulated surfaces which are
 homeomorphic to a disk or a sphere, and on piecewise linear mappings
 onto a planar domain.
 
-\remark The class `Seam_mesh` can be used to virtually cut a mesh,
-allowing to transform an input mesh in subdomain(s) that fit the
-disk-or-sphere topology requirement.
-
 Although the main motivation behind the first parameterization methods
 was the application to texture mapping, it is now frequently used for
 mapping more sophisticated modulation signals (such as normal,
@@ -43,6 +39,10 @@ of the mapping.
 The package proposes an interface for any model of the concept `FaceGraph`,
 such as the classes `Surface_mesh`, `Polyhedron_3`, `Seam_mesh`, or the mesh
 classes of OpenMesh.
+
+\remark The class `Seam_mesh` can be used to virtually cut a mesh,
+allowing to transform an input mesh in subdomain(s) that fit the
+disk-or-sphere topology requirement.
 
 Since parameterizing meshes requires an efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
