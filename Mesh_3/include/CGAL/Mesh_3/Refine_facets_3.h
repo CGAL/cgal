@@ -1731,11 +1731,28 @@ compute_facet_properties(const Facet& facet,
     }
     if (p1 == p2) { fp = Facet_properties(); return; }
 
+#if 1 // <PERIODIC>
+    // segment here must be canonical for periodic. Dual_segment only calls
+    // the (robust) weighted circumcenter which does not return this canonical
+    // segment. The static cast is because we need to grab the dual function
+    // that is in P3RT3 and not at the level of periodic_mesh_triangulation_3
+    // (due to inconsistencies with names).
+    assert(!force_exact); // code below is only meant to replace the call of dual_segment
+    Segment_3 segment = r_tr_.segment(
+        static_cast<typename Tr::Base*>(&r_tr_)->dual(facet));
+    if ( compare_xyz(segment.source(), segment.target()) == CGAL::LARGER )
+    {
+      typename Gt::Construct_opposite_segment_3 opposite =
+          Gt().construct_opposite_segment_3_object();
+      segment = opposite(segment);
+    }
+#else
     // Trick to have canonical vector : thus, we compute always the same
     // intersection
     Segment_3 segment = ( compare_xyz(p1,p2)== CGAL::SMALLER )
       ? Segment_3(p1, p2)
       : Segment_3(p2, p1);
+#endif
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1816,17 +1833,53 @@ is_facet_encroached(const Facet& facet,
     return false;
   }
 
-  typename Gt::Compare_power_distance_3 compare_distance =
-    r_tr_.geom_traits().compare_power_distance_3_object();
-
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
-  const Point& center = get_facet_surface_center(facet);
-  const Point& reference_point = cell->vertex((facet_index+1)&3)->point();
 
-  // facet is encroached if the new point is near from center than
-  // one vertex of the facet
-  return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
+  // <PERIODIC>
+  const Point& center = r_tr_.canonicalize_point(get_facet_surface_center(facet));
+  const Point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
+
+  typename Gt::Compute_squared_distance_3 distance =
+  Gt().compute_squared_distance_3_object();
+
+  Point surface_centers[27];
+  typedef typename Tr::Offset Offset;
+  for( int i = 0; i < 3; i++ ) {
+    for( int j = 0; j < 3; j++) {
+      for( int k = 0; k < 3; k++ ) {
+        surface_centers[9*i+3*j+k] =
+            r_tr_.point(std::make_pair(center, Offset(i-1,j-1,k-1)));
+      }
+    }
+  }
+
+  typedef typename Gt::FT FT;
+
+  FT min_distance_to_ref_point = distance(reference_point, center);
+  FT min_distance_to_point = distance(point, center);
+
+  for( int i = 0; i < 27; i++ ) {
+    FT current_distance_to_ref_point = distance(reference_point, surface_centers[i]);
+    if ( current_distance_to_ref_point < min_distance_to_ref_point )
+    {
+      min_distance_to_ref_point = current_distance_to_ref_point;
+    }
+    FT current_distance_to_point = distance(point, surface_centers[i]);
+    if ( current_distance_to_point < min_distance_to_point )
+    {
+      min_distance_to_point = current_distance_to_point;
+    }
+  }
+
+  assert(min_distance_to_point < 0.5 && min_distance_to_ref_point < 0.5);
+
+  // facet is encroached if the new point is closer to the center than
+  // any vertex of the facet
+
+  // mesh_3: /*compare_distance(center, reference_point, point) != CGAL::SMALLER*/
+  return (!(min_distance_to_ref_point < min_distance_to_point) );
+  // </PERIODIC>
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>

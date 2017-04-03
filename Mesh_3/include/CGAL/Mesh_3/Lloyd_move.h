@@ -85,8 +85,9 @@ public:
         return lloyd_move_inside_domain(v,incident_cells,c3t3,sizing_field);
         break;
       case 2:
-        return lloyd_move_on_boundary(v,c3t3,sizing_field);
-        break;
+//        <PERIODIC>  Needs P3RT3
+//        return lloyd_move_on_boundary(v,c3t3,sizing_field);
+//        break;
       case 1:
       case 0:
       case -1: 
@@ -518,25 +519,50 @@ private:
     
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
-    
+
+//    <PERIODIC>
+    typename Gt::Construct_tetrahedron_3 tetrahedron =
+      Gt().construct_tetrahedron_3_object();
+
+    typename Gt::Construct_translated_point_3 translate =
+    Gt().construct_translated_point_3_object();
+//    </PERIODIC>
+
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
     
     // a & b are fixed points
     const Point_3& a = v->point();
-    const Point_3 b = tr.dual(current_cell++);
+//    <PERIODIC>
+    const Point_3 b = tr.dual(current_cell);
+    Point_3 a_b = tr.point(current_cell, current_cell->index(v));
+    Vector_3 ba = Vector_3(a_b, b);
+    current_cell++;
+//    </PERIODIC>
     CGAL_assertion(current_cell != done);
     
     // c & d are moving points
-    Point_3 c = tr.dual(current_cell++);
+//    <PERIODIC>
+    Point_3 c = tr.dual(current_cell);
+    Point_3 a_c = tr.point(current_cell, current_cell->index(v));
+    Vector_3 ca = Vector_3(a_c, c);
+    current_cell++;
+//    </PERIODIC>
     CGAL_assertion(current_cell != done);
     
     while ( current_cell != done )
     {
-      const Point_3 d = tr.dual(current_cell++);
-      
-      Point_3 tet_centroid = centroid(a,b,c,d);
-      
+      //    <PERIODIC>
+        const Point_3 d = tr.dual(current_cell);
+        Point_3 a_d = tr.point(current_cell, current_cell->index(v));
+        Vector_3 da = Vector_3(a_d, d);
+        current_cell++;
+
+        Tetrahedron_3 tet = tetrahedron(a,translate(a, ba), translate(a, ca), translate(a, da));
+
+        Point_3 tet_centroid = centroid(tet);
+        //    </PERIODIC>
+
       // Compute mass
       FT density = density_3d(tet_centroid, current_cell, sizing_field);
       FT abs_volume = CGAL::abs(volume(a,b,c,d));
@@ -546,6 +572,10 @@ private:
       sum_masses += mass;
       
       c = d;
+      //    <PERIODIC>
+      a_c = a_d;
+      ca = da;
+      //    </PERIODIC>
     }
   }
 };

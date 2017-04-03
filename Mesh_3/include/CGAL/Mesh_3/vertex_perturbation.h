@@ -878,8 +878,8 @@ protected:
              bool *could_lock_zone = NULL) const
   {
     CGAL_precondition(!slivers.empty());
-    
-    Vector_3 grad_vector = compute_gradient_vector(v,slivers);
+
+    Vector_3 grad_vector = compute_gradient_vector(c3t3, v, slivers);
 
     // Exit if grad_vector is not relevant
     if ( CGAL::NULL_VECTOR == grad_vector )
@@ -903,18 +903,19 @@ private:
    * @brief compute the gradient vector
    */
   Vector_3
-  compute_gradient_vector(const Vertex_handle& v,
+  compute_gradient_vector(const C3T3& c3t3,
+                          const Vertex_handle& v,
                           const std::vector<Cell_handle>& slivers) const
   {
     switch (slivers.size())
     {
       case 1:
-        return -1*compute_gradient_vector(slivers.front(),v);
+        return -1*compute_gradient_vector(c3t3, slivers.front(), v);
         break;
       case 2:
       {
-        Vector_3 v1 = compute_gradient_vector(slivers.front(), v);
-        Vector_3 v2 = compute_gradient_vector(slivers.back(), v);
+        Vector_3 v1 = compute_gradient_vector(c3t3, slivers.front(), v);
+        Vector_3 v2 = compute_gradient_vector(c3t3, slivers.back(), v);
         if( v1 * v2 > 0 )
           // "-0.5" because angle has to go down
           return -0.5*(v1 + v2);
@@ -932,7 +933,8 @@ private:
    * @brief compute the gradient vector
    */
   Vector_3
-  compute_gradient_vector(const Cell_handle& cell,
+  compute_gradient_vector(const C3T3& c3t3,
+                          const Cell_handle& cell,
                           const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
@@ -968,10 +970,10 @@ private:
     
     FT a_02 = CGAL::abs(details::angle_in_radian(p1p0, p1p2));
     FT a_03 = CGAL::abs(details::angle_in_radian(p1p0, p1p3));
-    
-    Vector_3 n0 = normal_estimate(cell,k3);
-    Vector_3 n1 = normal_estimate(cell,k2);
-    
+
+    Vector_3 n0 = normal_estimate(c3t3, cell, k3);
+    Vector_3 n1 = normal_estimate(c3t3, cell, k2);
+
     typename Gt::Compute_squared_distance_3 sq_distance
       = Gt().compute_squared_distance_3_object();
     
@@ -1010,7 +1012,8 @@ private:
    * @brief returns the normal of facet (ch,i), oriented from inside to outside
    * of \c ch
    */
-  Vector_3 normal_estimate(const Cell_handle& ch, const int i) const
+  Vector_3 normal_estimate(const C3T3& c3t3,
+                           const Cell_handle& ch, const int i) const
   {
     int k1 = (i+1)&3;
     int k2 = (i+2)&3;
@@ -1025,7 +1028,8 @@ private:
     const Point_3& p3 = ch->vertex(k3)->point();
     
     // compute normal and return it
-    Construct_point_3 cp;
+    // <PERIODIC> (also all the passing of c3t3 by const ref& in the functions)
+    Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
     return normal(cp(p1),cp(p2),cp(p3));
   }
 };  

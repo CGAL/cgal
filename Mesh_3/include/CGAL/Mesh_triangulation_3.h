@@ -51,7 +51,7 @@ namespace CGAL {
       // Since it's just a typedef and the order does not matter, we just
       // wrap here instead.
       typedef Regular_triangulation_euclidean_traits_3<
-          Robust_weighted_circumcenter_filtered_traits_3<K> > Geom_traits;
+                Robust_weighted_circumcenter_filtered_traits_3<K> > Geom_traits;
 
     public:
       typedef Geom_traits type;

@@ -250,10 +250,12 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
   const FT& vc = cell->vertex(2)->meshing_info();
   const FT& vd = cell->vertex(3)->meshing_info();
 
-  const Point_3& a = cell->vertex(0)->point();
-  const Point_3& b = cell->vertex(1)->point();
-  const Point_3& c = cell->vertex(2)->point();
-  const Point_3& d = cell->vertex(3)->point();
+  // <PERIODIC>
+  const Point_3& a = tr_.point(cell, 0);
+  const Point_3& b = tr_.point(cell, 1);
+  const Point_3& c = tr_.point(cell, 2);
+  const Point_3& d = tr_.point(cell, 3);
+  // <PERIODIC>
 
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,d,b,p));
@@ -295,9 +297,11 @@ interpolate_on_facet_vertices(const Point_3& p, const Cell_handle& cell) const
   const FT& vb = cell->vertex(k2)->meshing_info();
   const FT& vc = cell->vertex(k3)->meshing_info();
 
-  const Point_3& a = cell->vertex(k1)->point();
-  const Point_3& b = cell->vertex(k2)->point();
-  const Point_3& c = cell->vertex(k3)->point();
+  // <PERIODIC>
+  const Point_3& a = tr_.point(cell, k1);
+  const Point_3& b = tr_.point(cell, k2);
+  const Point_3& c = tr_.point(cell, k3);
+  // </PERIODIC>
 
   const FT abp = area(a,b,p);
   const FT acp = area(a,c,p);
