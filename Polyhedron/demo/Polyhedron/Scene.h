@@ -106,8 +106,6 @@ public:
   //!@returns the index of the Item_B
   int selectionBindex() const Q_DECL_OVERRIDE;
 
-  bool isPolyhedronMode() const Q_DECL_OVERRIDE;
-
   /*! Is called by Viewer::initializeGL(). Allows all the initialization
    * of OpenGL code that needs a context.
    */
@@ -252,7 +250,6 @@ public Q_SLOTS:
   //!Sets the item_B as the item at index i .
   void setItemB(int i);
 
-  void setPolyhedronMode(bool b);
 Q_SIGNALS:
   //generated automatically by moc
   void itemPicked(const QModelIndex &);
@@ -292,7 +289,6 @@ private:
   //!Index of the item_B.
   int item_B;
   bool picked;
-  bool is_polyhedron_mode;
   QPoint picked_pixel;
   bool gl_init;
   static GlSplat::SplatRenderer* ms_splatting;
