@@ -1138,29 +1138,58 @@ public Q_SLOTS:
   void deleteTrees(CGAL::Three::Scene_item* sender)
   {
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sender);
-    if(!item)
-      return;
-    if(facet_trees.keys().contains(item))
+    if(item)
     {
-      delete facet_trees[item];
-      facet_trees.remove(item);
-    }
-    if(edge_trees.keys().contains(item))
-    {
-      delete edge_trees[item];
-      edge_trees.remove(item);
-    }
-    if(facet_trees.empty())
-    {
-      if(plane_item)
-        scene->erase(scene->item_id(plane_item));
-      if(edges_item)
-        scene->erase(scene->item_id(edges_item));
+      if(facet_trees.keys().contains(item))
+      {
+        delete facet_trees[item];
+        facet_trees.remove(item);
+      }
+      if(edge_trees.keys().contains(item))
+      {
+        delete edge_trees[item];
+        edge_trees.remove(item);
+      }
+      if(facet_trees.empty())
+      {
+        if(plane_item)
+          scene->erase(scene->item_id(plane_item));
+        if(edges_item)
+          scene->erase(scene->item_id(edges_item));
+      }
+      else
+      {
+        ready_to_cut = true;
+        cut();
+      }
     }
     else
     {
-      ready_to_cut = true;
-      cut();
+      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(sender);
+      if(!sm_item)
+        return;
+      if(facet_sm_trees.keys().contains(sm_item))
+      {
+        delete facet_sm_trees[sm_item];
+        facet_sm_trees.remove(sm_item);
+      }
+      if(edge_sm_trees.keys().contains(sm_item))
+      {
+        delete edge_sm_trees[sm_item];
+        edge_sm_trees.remove(sm_item);
+      }
+      if(facet_sm_trees.empty())
+      {
+        if(plane_item)
+          scene->erase(scene->item_id(plane_item));
+        if(edges_item)
+          scene->erase(scene->item_id(edges_item));
+      }
+      else
+      {
+        ready_to_cut = true;
+        cut();
+      }
     }
   }
   void updateTrees(int id);
