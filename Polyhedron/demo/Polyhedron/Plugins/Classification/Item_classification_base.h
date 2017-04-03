@@ -92,7 +92,7 @@ public:
       }
   }
 
-  void save_config(const char* filename)
+  void save_config(const char* filename, int predicate)
   {
     if (m_features.size() == 0)
       {
@@ -100,10 +100,17 @@ public:
         return;
       }
 
-    std::ofstream f (filename);
-    m_sowf->save_configuration (f);
+    if (predicate == 0)
+    {
+      m_random_forest->save_configuration (filename);
+    }
+    else
+    {
+      std::ofstream f (filename);
+      m_sowf->save_configuration (f);
+    }
   }
-  void load_config(const char* filename)
+  void load_config(const char* filename, int predicate)
   {
     if (m_features.size() == 0)
       {
@@ -111,8 +118,15 @@ public:
         return;
       }
 
-    std::ifstream f (filename);
-    m_sowf->load_configuration (f, true);
+    if (predicate == 0)
+    {
+      m_random_forest->load_configuration (filename);
+    }
+    else
+    {
+      std::ifstream f (filename);
+      m_sowf->load_configuration (f, true);
+    }
   }
 
   std::size_t& nb_scales() { return m_nb_scales; }

@@ -400,7 +400,8 @@ public Q_SLOTS:
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->save_config (filename.toStdString().c_str());
+    classif->save_config (filename.toStdString().c_str(),
+                          ui_widget.predicate->currentIndex());
     
     QApplication::restoreOverrideCursor();
 
@@ -425,7 +426,8 @@ public Q_SLOTS:
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->load_config (filename.toStdString().c_str());
+    classif->load_config (filename.toStdString().c_str(),
+                          ui_widget.predicate->currentIndex());
     update_plugin_from_item(classif);
     run (classif, 0);
     

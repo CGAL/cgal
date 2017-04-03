@@ -121,16 +121,35 @@ public:
   /// \cond SKIP_IN_MANUAL
   void operator() (std::size_t item_index, std::vector<float>& out) const
   {
-    out.resize (m_labels.size(), 1.);
+    out.resize (m_labels.size(), 0.);
     
     cv::Mat feature (1, m_features.size(), CV_32FC1);
     for (std::size_t f = 0; f < m_features.size(); ++ f)
       feature.at<float>(0, f) = m_features[f]->value(item_index);
 
-    float result = rtree->predict (feature, cv::Mat());
-    std::size_t label = std::size_t(result);
-    if (label < out.size())
-      out[label] = 0.;
+//compute the result of each tree
+    std::size_t nb_trees = std::size_t(rtree->get_tree_count());
+    for (std::size_t i = 0; i < nb_trees; i++)
+    {
+      std::size_t l = rtree->get_tree(int(i))->predict(feature, cv::Mat())->value;
+      out[l] += 1.;
+    }
+
+    for (std::size_t i = 0; i < out.size(); ++ i)
+      out[i] = - std::log (out[i] / nb_trees);
+  }
+
+  void save_configuration (const char* filename)
+  {
+    rtree->save(filename);
+  }
+
+  void load_configuration (const char* filename)
+  {
+    if (rtree != NULL)
+      delete rtree;
+    rtree = new CvRTrees;
+    rtree->load(filename);
   }
   /// \endcond
 
