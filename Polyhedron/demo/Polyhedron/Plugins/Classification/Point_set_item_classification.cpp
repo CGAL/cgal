@@ -318,16 +318,16 @@ void Point_set_item_classification::train(int predicate)
 
   if (predicate == 0)
     {
-      m_random_forest->train (indices);
+      m_sowf->train<Concurrency_tag>(indices, m_nb_trials);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
-                                                       m_labels, *m_random_forest,
+                                                       m_labels, *m_sowf,
                                                        indices);
     }
   else
     {
-      m_sowf->train<Concurrency_tag>(indices, m_nb_trials);
+      m_random_forest->train (indices);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
-                                                       m_labels, *m_sowf,
+                                                       m_labels, *m_random_forest,
                                                        indices);
     }
   for (Point_set::const_iterator it = m_points->point_set()->begin();
@@ -348,10 +348,9 @@ bool Point_set_item_classification::run (int method, int predicate)
   reset_indices();
 
   if (predicate == 0)
-    run (method, *m_random_forest);
-  else
     run (method, *m_sowf);
-
+  else
+    run (method, *m_random_forest);
   
   return true;
 }

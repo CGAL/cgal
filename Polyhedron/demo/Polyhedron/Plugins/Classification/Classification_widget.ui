@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
+    <width>432</width>
     <height>670</height>
    </rect>
   </property>
@@ -127,12 +127,12 @@
         </property>
         <item>
          <property name="text">
-          <string>Random Forest</string>
+          <string>Sum of Weighted Features</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Sum of Weighted Features</string>
+          <string>Random Forest</string>
          </property>
         </item>
        </widget>

@@ -102,12 +102,12 @@ public:
 
     if (predicate == 0)
     {
-      m_random_forest->save_configuration (filename);
+      std::ofstream f (filename);
+      m_sowf->save_configuration (f);
     }
     else
     {
-      std::ofstream f (filename);
-      m_sowf->save_configuration (f);
+      m_random_forest->save_configuration (filename);
     }
   }
   void load_config(const char* filename, int predicate)
@@ -120,12 +120,12 @@ public:
 
     if (predicate == 0)
     {
-      m_random_forest->load_configuration (filename);
+      std::ifstream f (filename);
+      m_sowf->load_configuration (f, true);
     }
     else
     {
-      std::ifstream f (filename);
-      m_sowf->load_configuration (f, true);
+      m_random_forest->load_configuration (filename);
     }
   }
 
