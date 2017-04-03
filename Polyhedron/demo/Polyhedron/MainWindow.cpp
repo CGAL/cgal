@@ -1348,7 +1348,7 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-    scene->setPolyhedronMode(settings.value("polyhedron_mode", false).toBool());
+    setPolyhedronMode(settings.value("polyhedron_mode", false).toBool());
 }
 
 void MainWindow::writeSettings()
@@ -1364,8 +1364,7 @@ void MainWindow::writeSettings()
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
   //setting polyhedorn mode
-  settings.setValue("polyhedron_mode", scene->isPolyhedronMode());
-
+  settings.setValue("polyhedron_mode", scene->property("is_polyhedron_mode").toBool());
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -1624,9 +1623,9 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  prefdiag.polyhedronMode_checkbox->setChecked(scene->isPolyhedronMode());
+  prefdiag.polyhedronMode_checkbox->setChecked(scene->property("is_polyhedron_mode").toBool());
   connect(prefdiag.polyhedronMode_checkbox, &QCheckBox::clicked,
-          scene, &Scene::setPolyhedronMode);
+          this, &MainWindow::setPolyhedronMode);
   
   QStandardItemModel* iStandardModel = new QStandardItemModel(this);
   //add blacklisted plugins
@@ -1950,4 +1949,7 @@ void MainWindow::resetHeader()
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
 }
 
-
+void MainWindow::setPolyhedronMode(bool b)
+{
+  scene->setProperty("is_polyhedron_mode", b);
+}
