@@ -30,16 +30,16 @@ test()
     t.insert(v.begin(), v.end());
   }
   
-  typedef boost::graph_traits<Triangulation>::vertex_descriptor vertex_t;
+  typedef typename boost::graph_traits<Triangulation>::vertex_descriptor vertex_t;
   std::vector<vertex_t> vv;
-  for( Triangulation::All_vertices_iterator it = t.all_vertices_begin(); 
+  for(typename Triangulation::All_vertices_iterator it = t.all_vertices_begin(); 
       it != t.all_vertices_end(); ++it) { 
     vv.push_back(it);
   }
 
 
   std::vector< std::pair<vertex_t, vertex_t> > e;
-  for(Triangulation::All_edges_iterator it = t.all_edges_begin(); 
+  for(typename Triangulation::All_edges_iterator it = t.all_edges_begin(); 
       it != t.all_edges_end(); ++it) { 
     e.push_back(
       std::make_pair(
