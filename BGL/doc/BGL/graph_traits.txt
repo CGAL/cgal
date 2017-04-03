@@ -162,9 +162,10 @@ Defined in `<CGAL/boost/graph/graph_traits_Triangulation_2.h>`,
 `<CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>`, and
 `<CGAL/boost/graph/graph_traits_Triangulation_hierarchy_2.h>`.
 
-We provide partial specialization for the classes `CGAL::Triangulation_2`, `CGAL::Delaunay_triangulation_2`,
-`CGAL::Regular_triangulation_2`
-CGAL::Constrained_triangulation_2, CGAL::Constrained_Delaunay_triangulation_2, `CGAL::Constrained_triangulation_plus_2`,
+We provide partial specialization for the classes 
+`CGAL::Triangulation_2`, `CGAL::Delaunay_triangulation_2`,
+`CGAL::Regular_triangulation_2` `CGAL::Constrained_triangulation_2`, 
+`CGAL::Constrained_Delaunay_triangulation_2`, `CGAL::Constrained_triangulation_plus_2`,
 and `CGAL::Triangulation_hierarchy_2`
 so that they are model of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
