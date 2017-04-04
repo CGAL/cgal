@@ -410,12 +410,22 @@ exact.
 
 \subsection Periodic_3_triangulation_3PeriodicRegularTriangulations Periodic Regular Triangulations
 
-The following four examples illustrate various features of 3D periodic
+The following five examples illustrate various features of 3D periodic
 regular triangulations.
+
+\subsubsection Periodic_3_triangulation_3P3TR3FirstExample Basic example
+
+This example shows the incremental construction of a 3D Delaunay
+triangulation, the location of a point and how to perform elementary
+operations on indices in a cell. It uses the default parameter of the
+class `Periodic_3_regular_triangulation_3` for the triangulation
+data structure.
+
+\cgalExample{Periodic_3_triangulation_3/simple_regular_example.cpp}
 
 \subsubsection Periodic_3_triangulation_3P3TR3FirstExample Point Insertion and Vertex Removal
 
-The first example shows the incremental construction of a 3D regular triangulation,
+This example shows the incremental construction of a 3D regular triangulation,
 and the removal of a vertex. It uses the default parameter of the
 `Periodic_3_regular_triangulation_3`  class for the triangulation data structure.
 
@@ -423,22 +433,21 @@ and the removal of a vertex. It uses the default parameter of the
 
 \subsubsection Periodic_3_triangulation_3P3TR3SecondExample Data Structure
 
-The second example shows the incremental construction of a 3D regular
-triangulation.
+This example shows the incremental construction of a 3D regular triangulation.
 It uses a more appropriate triangulation data structure, which saves some memory resources.
 
 \cgalExample{Periodic_3_triangulation_3/p3rt3_insert_only.cpp}
 
 \subsubsection Periodic_3_triangulation_3P3TR3ThirdExample Hidden Points
 
-The third example shows that points can be hidden during the incremental construction
+This example shows that points can be hidden during the incremental construction
 of a 3D regular triangulation.
 
 \cgalExample{Periodic_3_triangulation_3/p3rt3_hidden_points.cpp}
 
 \subsubsection Periodic_3_triangulation_3P3TR3FourthExample Bad Weights
 
-Finally, the following example shows how points whose weight does not
+Finally, this example shows how points whose weight does not
 satisfy the precondition are handled during the incremental construction
 of a 3D regular triangulation.
 
