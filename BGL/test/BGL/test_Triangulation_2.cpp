@@ -17,7 +17,7 @@ template <typename Triangulation>
 void
 test()
 {
-  typedef Triangulation::Point Point;
+  typedef typename Triangulation::Point Point;
   using namespace boost::assign;
 
   Triangulation t;
@@ -55,7 +55,7 @@ test()
   gt.test_bidirectional_graph(vv, e, t);
 }
 
-
+// The real main function  is in graph_test
 int test_main(int, char*[])
 {
   typedef CGAL::Simple_cartesian<double> K;
