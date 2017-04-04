@@ -105,33 +105,23 @@ public:
   int selectionAindex() const Q_DECL_OVERRIDE;
   //!@returns the index of the Item_B
   int selectionBindex() const Q_DECL_OVERRIDE;
-
-  /*! Is called by Viewer::initializeGL(). Allows all the initialization
-   * of OpenGL code that needs a context.
-   */
   void initializeGL() Q_DECL_OVERRIDE;
-  /*! Sets the screen coordinates of the currently picked point.*/
   void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
-  /*! Is called by Viewer::draw(Viewer_interface*). Calls draw_aux(false, viewer).
-   * @see draw_aux(bool with_names, Viewer_interface).*/
   void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  /*! Is called by Viewer::drawWithNames(Viewer_interface*). Calls draw_aux(true, viewer).
-   * @see draw_aux(bool with_names, Viewer_interface).*/
   void drawWithNames(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  /*! Manages the key events.
-   * @returns true if the keyEvent executed well.
-   */
   bool keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
 
+  //! Print the text item closest to `point`.
   void printPrimitiveId(QPoint point,
                         CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  //!Prints all text items.
   void printPrimitiveIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   //!Re-computes the primitiveIds for `item`
   void updatePrimitiveIds(Viewer_interface *, Scene_item *item) Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
   //!@returns the scene bounding box
   Bbox bbox() const Q_DECL_OVERRIDE;
-  float get_bbox_length() const Q_DECL_OVERRIDE;
+
   //!@returns the length of the bounding box's diagonal.
   double len_diagonal() const Q_DECL_OVERRIDE
   {
@@ -174,23 +164,15 @@ public Q_SLOTS:
   void setExpanded(QModelIndex);
   //!Specifies a group as Collapsed for the view
   void setCollapsed(QModelIndex);
-  /*!
-   *Calls itemChanged() on the sender if it's an item.
 
-*/
+  //!Calls itemChanged() on the sender if it's an item.
   void itemChanged();
-  /*! Notifies the scene that the item at index i was modified.
-   * Called by the items. Calls @ref Scene_item#changed().
-   * This function is called by the items.*/
   void itemChanged(int i) Q_DECL_OVERRIDE;
-  /*! Notifies the scene that the item was modified.
-   *  Calls @ref Scene_item#changed().
-   * This function is called by the items.*/
   void itemChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
   //!Removes item from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
 
-  void addGroup(Scene_group_item* group) Q_DECL_OVERRIDE;
+  void addGroup(Scene_group_item* group);
   //!Re-organizes the sceneView.
   void redraw_model();
   //! Sets the selected item to the target index. Emits a signal to notify
