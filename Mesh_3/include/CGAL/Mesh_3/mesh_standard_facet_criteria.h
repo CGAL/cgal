@@ -352,13 +352,10 @@ protected:
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     
     typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Bare_point Bare_point;
     
     typename Gt::Compute_squared_distance_3 distance =
       Gt().compute_squared_distance_3_object();
-    typename Gt::Construct_point_3 cp =
-      Gt().construct_point_3_object();
 
     typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
     
@@ -427,7 +424,6 @@ protected:
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Bare_point     Bare_point;
 
     typename Gt::Compute_squared_distance_3 distance =
