@@ -3,15 +3,16 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
+typedef CGAL::Graph_with_descriptor_with_graph<Surface_mesh> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -35,19 +36,17 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/elephant.off";
   // Create input polyhedron
-  Polyhedron polyhedron;
+  Surface_mesh sm;
+
   std::ifstream input(fname);
-  input >> polyhedron;
+  input >> sm;
   if(input.fail()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }
   input.close();
-  
-  if (!CGAL::is_triangle_mesh(polyhedron)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
-    return EXIT_FAILURE;
-  }
+
+  Polyhedron polyhedron(sm);   
 
   // Create domain
   Mesh_domain domain(polyhedron);
@@ -74,5 +73,5 @@ int main(int argc, char*argv[])
   medit_file.open("out_2.mesh");
   c3t3.output_to_medit(medit_file);
 
-  return EXIT_SUCCESS;
+  return 0;
 }
