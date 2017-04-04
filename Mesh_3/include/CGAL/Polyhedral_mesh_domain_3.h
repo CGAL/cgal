@@ -44,6 +44,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
+#include <CGAL/boost/graph/helpers.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
@@ -232,7 +233,7 @@ public:
     , p_rng_(p_rng)
   {
     this->add_primitives(p);
-    if(!p.is_pure_triangle()) {
+    if(! is_triangle_mesh(p)) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
       CGAL_error_msg("Your input polyhedron must be triangulated!");
     }

@@ -30,10 +30,13 @@ namespace CGAL
 {
 
 
-template<typename Graph,typename Descriptor>
+template<typename Graph_, typename Descriptor_>
 struct Gwdwg_descriptor
 {
 public:
+  typedef Graph_ Graph;
+  typedef Descriptor_ Descriptor;
+
   Graph* graph;
   Descriptor descriptor;
 
