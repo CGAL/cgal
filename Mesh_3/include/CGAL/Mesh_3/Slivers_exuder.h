@@ -377,33 +377,33 @@ class Slivers_exuder
 
 public: // Types
 
-  typedef typename C3T3::Concurrency_tag Concurrency_tag;
+  typedef typename C3T3::Concurrency_tag                    Concurrency_tag;
   typedef Slivers_exuder_base<
-    typename C3T3::Triangulation, Concurrency_tag> Base;
+    typename C3T3::Triangulation, Concurrency_tag>          Base;
 
 private: // Types
 
   typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_, FT> Self;
 
-  typedef typename C3T3::Triangulation Tr;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
-  typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Facet Facet;
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Weighted_point::Weight Weight;
-  typedef typename Base::Queue_value_type Queue_value_type;
-  typedef typename Base::Cell_vector Cell_vector;
+  typedef typename C3T3::Triangulation                       Tr;
+  typedef typename Tr::Weighted_point                        Weighted_point;
+  typedef typename Tr::Bare_point                            Bare_point;
+  typedef typename Tr::Cell_handle                           Cell_handle;
+  typedef typename Tr::Facet                                 Facet;
+  typedef typename Tr::Vertex_handle                         Vertex_handle;
+  typedef typename Weighted_point::Weight                    Weight;
+  typedef typename Base::Queue_value_type                    Queue_value_type;
+  typedef typename Base::Cell_vector                         Cell_vector;
 
-  typedef typename Tr::Geom_traits Geom_traits;
-  typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
+  typedef typename Tr::Geom_traits                           Gt;
+  typedef typename Gt::Tetrahedron_3                         Tetrahedron_3;
 
-  typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
-  typedef std::vector<Facet> Facet_vector;
+  typedef typename C3T3::Cells_in_complex_iterator           Cell_iterator;
+  typedef std::vector<Facet>                                 Facet_vector;
 
-  typedef typename C3T3::Surface_patch_index Surface_patch_index;
-  typedef typename C3T3::Subdomain_index Subdomain_index;
-  typedef typename C3T3::Index Index;
+  typedef typename C3T3::Surface_patch_index                 Surface_patch_index;
+  typedef typename C3T3::Subdomain_index                     Subdomain_index;
+  typedef typename C3T3::Index                               Index;
 
   // Umbrella will store the surface_index of internal facets of a new
   // weighted point conflict zone. Such facets are represented by their edge
@@ -622,7 +622,7 @@ private:
   double compute_critical_radius(const Vertex_handle& v,
                                  const Cell_handle& c) const
   {
-    typedef typename Geom_traits::Compute_power_distance_to_power_sphere_3
+    typedef typename Gt::Compute_power_distance_to_power_sphere_3
       Critical_radius;
 
     Critical_radius critical_radius =
@@ -642,8 +642,7 @@ private:
   {
 
     double dist = (std::numeric_limits<double>::max)();
-    details::Min_distance_from_v<Geom_traits, Vertex_handle>
-      min_distance_from_v(vh, dist);
+    details::Min_distance_from_v<Gt, Vertex_handle> min_distance_from_v(vh, dist);
 
     tr_.adjacent_vertices(vh, boost::make_function_output_iterator(min_distance_from_v));
 
