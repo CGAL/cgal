@@ -762,8 +762,7 @@ public:
   {
     CGAL::detect_sharp_edges(polyhedron(), angle);
 
-    CGAL::halfedge_is_feature_t hif;
-    boost::property_map<Face_graph,CGAL::halfedge_is_feature_t>::type is_feature = get(hif,*polyhedron());
+    boost::property_map<Face_graph,CGAL::halfedge_is_feature_t>::type is_feature = get(CGAL::halfedge_is_feature,*polyhedron());
     BOOST_FOREACH(edge_descriptor e, edges(*polyhedron()))
     {
       halfedge_descriptor h = halfedge(e, *polyhedron());
