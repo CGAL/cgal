@@ -88,6 +88,7 @@ public Q_SLOTS:
   void setExpanded(QModelIndex);
   void setCollapsed(QModelIndex);
   bool file_matches_filter(const QString& filters, const QString& filename);
+  void reset_default_loaders();
   //!Prints a dialog containing statistics on the selected polyhedrons.
   void statisticsOnItem();
   /*! Open a file with a given loader, and return true if it was successful.
@@ -372,11 +373,13 @@ private:
   QVector<PluginNamePair > plugins;
   //!Called when "Add new group" in the file menu is triggered.
   QAction* actionAddToGroup;
+  QAction* actionResetDefaultLoaders;
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;
+  void insertActionAfter(QMenu*, QString actionAfterName, QAction *actionToInsert);
 
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;

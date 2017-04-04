@@ -351,34 +351,11 @@ MainWindow::MainWindow(QWidget* parent)
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
-  if ( NULL != menuFile )
-  {
-    QList<QAction*> menuFileActions = menuFile->actions();
-
-    // Look for action just after "Load..." action
-    QAction* actionAfterLoad = NULL;
-    for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
-         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
-    {
-      if ( NULL != *it_action && (*it_action)->text().contains("Load") )
-      {
-        ++it_action;
-        if ( it_action != end && NULL != *it_action )
-        {
-          actionAfterLoad = *it_action;
-        }
-      }
-    }
-
-    // Insert "Load implicit function" action
-    if ( NULL != actionAfterLoad )
-    {
-      menuFile->insertAction(actionAfterLoad,actionAddToGroup);
-    }
-  }
-
+  insertActionAfter(menuFile, QString("Load"), actionAddToGroup);
   statistics_dlg = NULL;
   statistics_ui = new Ui::Statistics_on_item_dialog();
+
+  actionResetDefaultLoaders = new QAction("Reset Default Loaders",this);
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -655,6 +632,7 @@ void MainWindow::updateMenus()
   ui->menuOperations->clear();
   ui->menuOperations->addActions(as);
 }
+
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {
   Q_FOREACH(const PluginNamePair& p, plugins) {
@@ -1028,7 +1006,12 @@ void MainWindow::open(QString filename)
   if(!ok || load_pair.first.isEmpty()) { return; }
   
   if (load_pair.second)
-     default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
+  {
+    connect(actionResetDefaultLoaders, SIGNAL(triggered()),
+            this, SLOT(reset_default_loaders()));
+    default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
+    insertActionAfter(ui->menuFile, QString("Load"), actionResetDefaultLoaders);
+  }
   
   
   QSettings settings;
@@ -1945,3 +1928,53 @@ void MainWindow::resetHeader()
 }
 
 
+void MainWindow::reset_default_loaders()
+{
+  default_plugin_selection.clear();
+
+  const char* prop_name = "Menu modified by MainWindow.";
+  QMenu* menu = ui->menuFile;
+  if(!menu)
+    return;
+  bool menuChanged = menu->property(prop_name).toBool();
+  if(!menuChanged) {
+    menu->setProperty(prop_name, true);
+  }
+  QList<QAction*> menuActions = menu->actions();
+  menu->removeAction(actionResetDefaultLoaders);
+}
+
+void MainWindow::insertActionAfter(QMenu* menu, QString actionAfterName, QAction* actionToInsert)
+{
+  const char* prop_name = "Menu modified by MainWindow.";
+  if(menu)
+  {
+    bool menuChanged = menu->property(prop_name).toBool();
+    if(!menuChanged) {
+      menu->setProperty(prop_name, true);
+    }
+    QList<QAction*> menuActions = menu->actions();
+    if(menuActions.contains(actionToInsert))
+      return;
+    // Look for action just after "actionAfterName..." action
+    QAction* actionAfter = NULL;
+    for ( QList<QAction*>::iterator it_action = menuActions.begin(),
+          end = menuActions.end() ; it_action != end ; ++ it_action )
+    {
+      if ( NULL != *it_action && (*it_action)->text().contains(actionAfterName) )
+      {
+        ++it_action;
+        if ( it_action != end && NULL != *it_action )
+        {
+          actionAfter = *it_action;
+        }
+      }
+    }
+
+    // Insert "Load implicit function" action
+    if ( NULL != actionAfter )
+    {
+      menu->insertAction(actionAfter,actionToInsert);
+    }
+  }
+}
