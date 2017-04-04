@@ -297,7 +297,7 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(FaceGraph* polyhedr
     polyhedron->collect_garbage();
 #else
     std::size_t vertexId = 0;
-    for(vertex_iterator currentVertex = polyhedron->vertices_begin();
+    for(Polyhedron::Vertex_iterator currentVertex = polyhedron->vertices_begin();
         currentVertex != polyhedron->vertices_end(); ++currentVertex, ++vertexId)
     {
         currentVertex->id() = vertexId;
@@ -316,7 +316,7 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(FaceGraph* polyhedr
     polyhedron->collect_garbage();
 #else
     std::size_t halfedgeId = 0;
-    for(halfedge_iterator currentHalfedge = polyhedron->halfedges_begin();
+    for(Polyhedron::Halfedge_iterator currentHalfedge = polyhedron->halfedges_begin();
         currentHalfedge != polyhedron->halfedges_end(); ++currentHalfedge, ++halfedgeId)
     {
         currentHalfedge->id() = halfedgeId;
@@ -335,7 +335,7 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(FaceGraph* polyhedr
     polyhedron->collect_garbage();
 #else
     std::size_t facetId = 0;
-    for(face_iterator currentFacet = polyhedron->facets_begin();
+    for(Polyhedron::Facet_iterator currentFacet = polyhedron->facets_begin();
         currentFacet != polyhedron->facets_end(); ++currentFacet, ++facetId)
     {
         currentFacet->id() = facetId;
