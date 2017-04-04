@@ -44,6 +44,7 @@ public:
   void drawVisualHints();
   //! Deprecated. Does the same as draw().
   void fastDraw();
+  bool isExtensionFound();
   //! Initializes the OpenGL functions and sets the backGround color.
   void initializeGL();
   //! Draws the scene "with names" to allow picking.
@@ -79,6 +80,8 @@ public:
   qglviewer::Vec offset()const;
   void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
 
+  TextRenderer* textRenderer() Q_DECL_OVERRIDE;
+
 Q_SIGNALS:
   void sendMessage(QString);
 public Q_SLOTS:
@@ -103,6 +106,23 @@ public Q_SLOTS:
   void displayMessage(const QString &_message, int delay);
   void displayMessage(const QString &_message){displayMessage(_message, 2000);}
   void hideMessage();
+  void setBindingSelect() Q_DECL_OVERRIDE
+  {
+#if QGLVIEWER_VERSION >= 0x020501
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, SELECT);
+#else
+    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, SELECT);
+#endif
+  }
+
+  virtual void setNoBinding() Q_DECL_OVERRIDE
+  {
+#if QGLVIEWER_VERSION >= 0x020501
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, NO_CLICK_ACTION);
+#else
+    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, NO_CLICK_ACTION);
+#endif
+  }
 
 protected:
   void postDraw();

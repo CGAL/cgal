@@ -77,11 +77,7 @@ public:
  //!Returns the viewer's QPainter
  virtual QPainter *getPainter() =0;
 
-  /*!
-   * \brief textRenderer is used to display text on the screen.
-   * The textRenderer uses the painter tu display 2D text over the 3D Scene. It has a list containing the TextItems to display.
-   */
-  TextRenderer *textRenderer;
+
   /*!
   * \brief testDisplayId checks if the id at position (x,y,z) is visible or not.
   * \param x the X coordinate of the id's position.
@@ -125,6 +121,11 @@ public:
    * @returns a pointer to the corresponding program.*/
   virtual QOpenGLShaderProgram* getShaderProgram(int name) const = 0;
 
+  /*!
+   * \brief textRenderer is used to display text on the screen.
+   * The textRenderer uses the painter tu display 2D text over the 3D Scene. It has a list containing the TextItems to display.
+   */
+  virtual TextRenderer* textRenderer() = 0;
   //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
   //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
@@ -139,29 +140,16 @@ public:
   PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
   //!@returns true if glVertexAttribDivisor, and glDrawArraysInstanced are found.
   //! Used by the items to avoid SEGFAULT.
-  bool extension_is_found;
+  virtual bool isExtensionFound() = 0;
   //!The matrix used for the picking.
   mutable GLfloat pickMatrix_[16];
   //!Returns the scene's offset
   virtual qglviewer::Vec offset()const = 0;
   //!Sets the binding for SHIFT+LEFT CLICK to SELECT (initially used in Scene_polyhedron_selection_item.h)
-  void setBindingSelect()
-  {
-#if QGLVIEWER_VERSION >= 0x020501
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, SELECT);
-#else
-    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, SELECT);
-#endif
-  }
+  virtual void setBindingSelect() = 0;
+
   //!Sets the binding for SHIFT+LEFT CLICK to NO_CLICK_ACTION (initially used in Scene_polyhedron_selection_item.h)
-  void setNoBinding()
-  {
-#if QGLVIEWER_VERSION >= 0x020501
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, NO_CLICK_ACTION);
-#else
-    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, NO_CLICK_ACTION);
-#endif
-  }
+  virtual void setNoBinding() = 0 ;
 
 Q_SIGNALS:
   //!Is emitted after an item is picked.

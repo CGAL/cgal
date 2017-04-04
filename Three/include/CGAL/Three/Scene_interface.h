@@ -64,7 +64,11 @@ namespace Three{
  * */
 class Scene_interface {
 public:
+
+    //!Contains the coordinates for the two extremities of the diagonal of a bounding box.
+    //! Those points are respectively the left bottom front vertex and the right upper back vertex.
   typedef CGAL::Bbox_3 Bbox;
+
   //!Integer used as the index of a Scene_item.
   typedef int Item_id;
   //!Virtual destructor

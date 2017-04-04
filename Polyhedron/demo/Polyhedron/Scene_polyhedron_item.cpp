@@ -34,6 +34,7 @@
 #include "triangulate_primitive.h"
 #include "Color_map.h"
 
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Polyhedron::Traits Traits;
 typedef Polyhedron::Facet Facet;
@@ -860,11 +861,11 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
 
       //Clears the targeted Id
       if(d)
-        v->textRenderer->removeText(d->targeted_id);
+        v->textRenderer()->removeText(d->targeted_id);
       //Remove textitems
       if(textItems)
       {
-        v->textRenderer->removeTextList(textItems);
+        v->textRenderer()->removeTextList(textItems);
         delete textItems;
         textItems=NULL;
       }
@@ -1664,7 +1665,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
-  TextRenderer *renderer = viewer->textRenderer;
+  TextRenderer *renderer = viewer->textRenderer();
   renderer->getLocalTextItems().removeAll(d->targeted_id);
   renderer->removeTextList(textItems);
   textItems->clear();
@@ -1786,7 +1787,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
 void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *viewer) const 
 {
-  TextRenderer *renderer = viewer->textRenderer;
+  TextRenderer *renderer = viewer->textRenderer();
 
 
   if(!d->all_ids_displayed)
