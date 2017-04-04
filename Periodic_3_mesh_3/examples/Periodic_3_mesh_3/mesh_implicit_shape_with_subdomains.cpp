@@ -8,7 +8,7 @@
 #include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
 #include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
 #include <CGAL/Periodic_3_mesh_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_3/Implicit_to_labeled_subdomains_function_wrapper.h>
+#include <CGAL/Implicit_to_labeled_subdomains_function_wrapper.h>
 #include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/IO/Medit_IO.h>
 
