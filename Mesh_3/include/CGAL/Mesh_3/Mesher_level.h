@@ -149,7 +149,7 @@ public:
   /** Type of point that are inserted into the triangulation. */
   typedef typename Triangulation::Point Point;
   /** Type of point with no weight */
-  typedef typename Triangulation::Geom_traits::Bare_point Bare_point;
+  typedef typename Triangulation::Bare_point Bare_point;
   /** Type of vertex handles that are returns by insertions into the
       triangulation. */
   typedef typename Triangulation::Vertex_handle Vertex_handle;
