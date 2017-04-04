@@ -25,13 +25,6 @@
 
 namespace CGAL {
 
-/**
- * @class Implicit_to_labeled_function_wrapper
- *
- * This class is designed to wrap an implicit function which describes a domain
- * by [p is inside if f(p)<0] to a function which takes its values into {1, 2}.
- * f(p)=0 means that p is outside the domain.
- */
 template<class Function_, class BGT>
 class Implicit_to_labeled_subdomains_function_wrapper
 {

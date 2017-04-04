@@ -32,7 +32,7 @@ namespace CGAL {
 /**
  * @class Mesh_domain_holder_with_corners_3
  *
- * Implements the `MeshDomain_3` concept through the object owned by this class.
+ * Implements the `Periodic_3MeshDomain_3` concept through the object owned by this class.
  * Provides functionality of the concept `MeshDomainWithFeatures_3`
  * associated with the corners.
  *
@@ -64,7 +64,7 @@ public:
   ~Mesh_domain_holder_with_corners_3() { }
 
   // -----------------------------------
-  // Delegation. The holder delegates all the functionality of the MeshDomain_3
+  // Delegation. The holder delegates all the functionality of the Periodic_3MeshDomain_3
   // concept to the member which implements a model of the concept.
   // -----------------------------------
 
