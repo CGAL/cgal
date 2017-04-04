@@ -1,10 +1,14 @@
-#ifndef SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_H
-#define SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_H
-#include "Scene_polyhedron_item_k_ring_selection_config.h"
-#include "Polyhedron_type.h"
-#include "Scene_polyhedron_item.h"
+#ifndef SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_H
+#define SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_H
+#include "Scene_facegraph_item_k_ring_selection_config.h"
+#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-
+#include <CGAL/iterator.h>
+#else
+#include "Scene_polyhedron_item.h"
+#include "Polyhedron_type.h"
+#endif
+#include <set>
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -20,50 +24,59 @@
 
 #include <CGAL/Polygon_2.h>
 
-struct Is_selected_edge_property_map{
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor poly_edge_descriptor;
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_facegraph_item;
+typedef Scene_surface_mesh_item::Kernel FG_Traits;
+#else
+typedef Scene_polyhedron_item Scene_facegraph_item;
+typedef Kernel FG_Traits;
+#endif
+
+typedef Scene_facegraph_item::FaceGraph FaceGraph;
+typedef boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
+typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+struct FG_is_selected_edge_property_map{
+  typedef boost::property_map<FaceGraph,boost::edge_index_t>::type EImap;
+
   std::vector<bool>* is_selected_ptr;
-  Is_selected_edge_property_map()
-    : is_selected_ptr(NULL) {}
-  Is_selected_edge_property_map(std::vector<bool>& is_selected)
-    : is_selected_ptr( &is_selected) {}
+  EImap* edge_index_map;
+  FG_is_selected_edge_property_map()
+    : is_selected_ptr(NULL), edge_index_map(NULL) {}
+  FG_is_selected_edge_property_map(std::vector<bool>& is_selected, EImap* map)
+    : is_selected_ptr( &is_selected), edge_index_map(map)
+  {}
 
-  std::size_t id(poly_edge_descriptor ed) { return ed.halfedge()->id()/2; }
+  std::size_t id(edge_descriptor ed) {
+    return get(*edge_index_map, ed);
+  }
 
-  friend bool get(Is_selected_edge_property_map map, poly_edge_descriptor ed)
+  friend bool get(FG_is_selected_edge_property_map map, edge_descriptor ed)
   {
     CGAL_assertion(map.is_selected_ptr!=NULL);
     return (*map.is_selected_ptr)[map.id(ed)];
   }
 
-  friend void put(Is_selected_edge_property_map map, poly_edge_descriptor ed, bool b)
+  friend void put(FG_is_selected_edge_property_map map, edge_descriptor ed, bool b)
   {
     CGAL_assertion(map.is_selected_ptr!=NULL);
     (*map.is_selected_ptr)[map.id(ed)]=b;
   }
 };
 
-class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring_selection 
+class SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_EXPORT Scene_facegraph_item_k_ring_selection
   : public QObject
 {
   Q_OBJECT
 public:
-
-  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor poly_halfedge_descriptor;
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor poly_edge_descriptor;
-  typedef boost::graph_traits<Polyhedron>::face_descriptor poly_face_descriptor;
-  typedef boost::graph_traits<Polyhedron>::vertex_descriptor poly_vertex_descriptor;
-  typedef Scene_surface_mesh_item::SMesh SMesh;
-  typedef boost::graph_traits<SMesh>::vertex_descriptor sm_vertex_descriptor;
-  typedef boost::graph_traits<SMesh>::face_descriptor sm_face_descriptor;
-  typedef boost::graph_traits<SMesh>::edge_descriptor sm_edge_descriptor;
-  
   struct Active_handle {
     enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 , CONNECTED_COMPONENT = 3, PATH = 4};
   };
 
-  typedef CGAL::Polygon_2<Kernel> Polygon_2;
-  typedef std::vector<Kernel::Point_2> Polyline_2;
+  typedef CGAL::Polygon_2<FG_Traits> Polygon_2;
+  typedef std::vector<FG_Traits::Point_2> Polyline_2;
   typedef std::vector<Polyline_2> Polylines;
 
   // Hold mouse keyboard state together
@@ -77,26 +90,18 @@ public:
   QMainWindow* mainwindow;
   Active_handle::Type    active_handle_type;
   int                    k_ring;
-  Scene_polyhedron_item* poly_item;
-  Scene_surface_mesh_item* sm_item;
+  Scene_facegraph_item* poly_item;
   bool is_active;
   bool is_current_selection;
   bool is_highlighting;
 
-  Scene_polyhedron_item_k_ring_selection() {}
+  Scene_facegraph_item_k_ring_selection() {}
 
-  Scene_polyhedron_item_k_ring_selection
-    (Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring)
+  Scene_facegraph_item_k_ring_selection
+    (Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring)
       :is_active(false),is_current_selection(true), is_edit_mode(false)
   {
-    init(poly_item, NULL, mw, aht, k_ring);
-  }
-
-  Scene_polyhedron_item_k_ring_selection
-    (Scene_surface_mesh_item* sm_item, QMainWindow* mw, Active_handle::Type aht, int k_ring)
-      :is_active(false),is_current_selection(true), is_edit_mode(false)
-  {
-    init(NULL, sm_item, mw, aht, k_ring);
+    init(poly_item, mw, aht, k_ring);
   }
 
   void setEditMode(bool b)
@@ -107,9 +112,8 @@ public:
     viewer->setMouseTracking(b);
   }
 
-  void init(Scene_polyhedron_item* poly_item, Scene_surface_mesh_item* sm_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
+  void init(Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
     this->poly_item = poly_item;
-    this->sm_item = sm_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
     polyline = new Polylines(0);
@@ -119,11 +123,11 @@ public:
     is_ready_to_highlight = true;
     is_ready_to_paint_select = true;
     is_lasso_active = false;
-    if(poly_item)
-    {
-      poly_item->enable_facets_picking(true);
-      poly_item->set_color_vector_read_only(true);
-    }
+
+#ifndef USE_SURFACE_MESH
+    poly_item->enable_facets_picking(true);
+    poly_item->set_color_vector_read_only(true);
+#endif
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
     mw->installEventFilter(this);
@@ -132,32 +136,10 @@ public:
 #else
     viewer->setMouseBindingDescription(Qt::SHIFT + Qt::LeftButton,  "(When in selection plugin) When D is pressed too, removes the clicked primitive from the selection. ");
 #endif
-    if(poly_item)
-    {
-      connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
-      connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
-      connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
-    }
-    if(sm_item)
-    {
-      connect(sm_item, SIGNAL(selected_vertex(void*)), this, SLOT(sm_vertex_has_been_selected(void*)));
-      connect(sm_item, SIGNAL(selected_facet(void*)), this, SLOT(sm_facet_has_been_selected(void*)));
-      connect(sm_item, SIGNAL(selected_edge(void*)), this, SLOT(sm_edge_has_been_selected(void*)));
-    }
+    connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
+    connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
+    connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
   }
-
-
-  void init(Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring)
-  {
-    init(poly_item, NULL, mw, aht, k_ring);
-  }
-
-  void init(Scene_surface_mesh_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring)
-  {
-    init(NULL, poly_item, mw, aht, k_ring);
-  }
-
-
   void setCurrentlySelected(bool b)
   {
     is_current_selection = b;
@@ -170,7 +152,14 @@ public Q_SLOTS:
   {
     is_active=true;
     if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
+    {
+#ifdef USE_SURFACE_MESH
+      std::size_t h = reinterpret_cast<std::size_t>(void_ptr);
+      process_selection( static_cast<vertex_descriptor>(h) );
+#else
       process_selection( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
+#endif
+    }
     updateIsTreated();
   }
   void facet_has_been_selected(void* void_ptr)
@@ -178,41 +167,28 @@ public Q_SLOTS:
     is_active=true;
     if (active_handle_type == Active_handle::FACET
       || active_handle_type == Active_handle::CONNECTED_COMPONENT)
-      process_selection(static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet());
+    {
+#ifdef USE_SURFACE_MESH
+      std::size_t h = reinterpret_cast<std::size_t>(void_ptr);
+      process_selection( static_cast<face_descriptor>(h) );
+#else
+      process_selection( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
+#endif
+    }
     updateIsTreated();
   }
   void edge_has_been_selected(void* void_ptr) 
   {
     is_active=true;
     if(active_handle_type == Active_handle::EDGE)
+    {
+#ifdef USE_SURFACE_MESH
+      std::size_t h = reinterpret_cast<std::size_t>(void_ptr);
+      process_selection( static_cast<edge_descriptor>(h) );
+#else
       process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
-    updateIsTreated();
-  }
-
-  // slots are called by signals of surface_mesh_item
-  void sm_vertex_has_been_selected(void* v)
-  {
-    std::size_t h = reinterpret_cast<std::size_t>(v);
-    is_active=true;
-    if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
-      process_selection( static_cast<sm_vertex_descriptor>(h) );
-    updateIsTreated();
-  }
-  void sm_facet_has_been_selected(void* v)
-  {
-    std::size_t h = reinterpret_cast<std::size_t>(v);
-    is_active=true;
-    if (active_handle_type == Active_handle::FACET
-      || active_handle_type == Active_handle::CONNECTED_COMPONENT)
-      process_selection(static_cast<sm_face_descriptor>(h) );
-    updateIsTreated();
-  }
-  void sm_edge_has_been_selected(void* v)
-  {
-    std::size_t h = reinterpret_cast<std::size_t>(v);
-    is_active=true;
-    if(active_handle_type == Active_handle::EDGE)
-      process_selection(static_cast<sm_edge_descriptor>(h) );
+#endif
+    }
     updateIsTreated();
   }
 
@@ -231,10 +207,7 @@ public Q_SLOTS:
       {
         const qglviewer::Vec& orig = camera->position() - offset;
         const qglviewer::Vec& dir = point - orig;
-        if(poly_item)
-          poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
-        else
-          sm_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
       }
       is_ready_to_paint_select = false;
     }
@@ -242,21 +215,21 @@ public Q_SLOTS:
 
   void lasso_selection()
   {
-    if(!poly_item)
-      return;
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
 
     qglviewer::Camera* camera = viewer->camera();
-    const Polyhedron& poly = *poly_item->polyhedron();
+    const FaceGraph& poly = *poly_item->polyhedron();
 
-    std::set<poly_face_descriptor> face_sel;
+    std::set<face_descriptor> face_sel;
+    boost::property_map<FaceGraph,CGAL::vertex_point_t>::const_type vpmap = get(boost::vertex_point, poly);
     //select all faces if their screen projection is inside the lasso
-    BOOST_FOREACH(poly_face_descriptor f, faces(poly))
+    BOOST_FOREACH(face_descriptor f, faces(poly))
     {
-      BOOST_FOREACH(poly_vertex_descriptor v, CGAL::vertices_around_face(f->halfedge(), poly))
+      BOOST_FOREACH(vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, poly), poly))
       {
-        qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
+        FG_Traits::Point_3 p = get(vpmap, v);
+        qglviewer::Vec vp(p.x(), p.y(), p.z());
         qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
         if(is_vertex_selected(vsp))
         {
@@ -271,29 +244,28 @@ public Q_SLOTS:
       return;
     }
     //get border edges of the selected patches
-    std::vector<poly_halfedge_descriptor> boundary_edges;
+    std::vector<halfedge_descriptor> boundary_edges;
     CGAL::Polygon_mesh_processing::border_halfedges(face_sel, poly, std::back_inserter(boundary_edges));
     std::vector<bool> mark(edges(poly).size(), false);
-    Is_selected_edge_property_map spmap(mark);
-    BOOST_FOREACH(poly_halfedge_descriptor h, boundary_edges)
+    boost::property_map<FaceGraph, boost::edge_index_t>::type edge_index
+      = get(boost::edge_index, poly);
+    FG_is_selected_edge_property_map spmap(mark, &edge_index);
+    BOOST_FOREACH(halfedge_descriptor h, boundary_edges)
       put(spmap, edge(h, poly), true);
 
-    boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
-      = get(boost::face_external_index, poly);
     boost::vector_property_map<int,
-      boost::property_map<Polyhedron, boost::face_external_index_t>::type>
-      fccmap(fim);
+      boost::property_map<FaceGraph, boost::face_index_t>::type>
+      fccmap;
 
     //get connected componant from the picked face
-    std::set<poly_face_descriptor> final_sel;
-    //std::vector<poly_face_descriptor> cc;
+    std::set<face_descriptor> final_sel;
+    //std::vector<Polyhedron::Face_handle> cc;
     std::size_t nb_cc = CGAL::Polygon_mesh_processing::connected_components(poly
           , fccmap
-          , CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(spmap)
-          .face_index_map(fim));
+          , CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(spmap));
     std::vector<bool> is_cc_done(nb_cc, false);
 
-    BOOST_FOREACH(poly_face_descriptor f, face_sel)
+    BOOST_FOREACH(face_descriptor f, face_sel)
     {
 
       int cc_id = get(fccmap, f);
@@ -301,12 +273,14 @@ public Q_SLOTS:
       {
         continue;
       }
+      CGAL::Halfedge_around_face_circulator<FaceGraph> hafc(halfedge(f, poly), poly);
+      CGAL::Halfedge_around_face_circulator<FaceGraph> end = hafc;
       double x(0), y(0), z(0);
       int total(0);
-      BOOST_FOREACH(poly_halfedge_descriptor hafc, halfedges_around_face(halfedge(f,poly), poly))
+      CGAL_For_all(hafc, end)
       {
-        poly_vertex_descriptor vd = target(hafc,poly);
-        x+=vd->point().x(); y+=vd->point().y(); z+=vd->point().z();
+        FG_Traits::Point_3 p = get(vpmap, target(*hafc, poly));
+        x+=p.x(); y+=p.y(); z+=p.z();
         total++;
       }
       if(total == 0)
@@ -325,7 +299,7 @@ public Q_SLOTS:
         is_cc_done[cc_id] = true;
       }
     }
-    BOOST_FOREACH(poly_face_descriptor f, faces(poly))
+    BOOST_FOREACH(face_descriptor f, faces(poly))
     {
       if(is_cc_done[get(fccmap, f)])
         final_sel.insert(f);
@@ -337,16 +311,16 @@ public Q_SLOTS:
       break;
     case Active_handle::EDGE:
     {
-      std::set<poly_edge_descriptor> e_sel;
-      BOOST_FOREACH(poly_face_descriptor f, final_sel)
+      std::set<edge_descriptor> e_sel;
+      BOOST_FOREACH(face_descriptor f, final_sel)
       {
-        BOOST_FOREACH(poly_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f,poly), poly))
+        BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, poly), poly))
         {
-          poly_vertex_descriptor vd = target(h,poly);
-          qglviewer::Vec vp1(vd->point().x(), vd->point().y(), vd->point().z());
+          FG_Traits::Point_3 p = get(vpmap, target(h, poly));
+          qglviewer::Vec vp1(p.x(), p.y(), p.z());
           qglviewer::Vec vsp1 = camera->projectedCoordinatesOf(vp1+offset);
-          vd = source(h,poly);
-          qglviewer::Vec vp2(vd->point().x(), vd->point().y(), vd->point().z());
+          p = get(vpmap, target(opposite(h, poly), poly));
+          qglviewer::Vec vp2(p.x(), p.y(), p.z());
           qglviewer::Vec vsp2 = camera->projectedCoordinatesOf(vp2+offset);
           if(is_vertex_selected(vsp1) || is_vertex_selected(vsp2))
             e_sel.insert(edge(h, poly));
@@ -357,12 +331,13 @@ public Q_SLOTS:
     }
     case Active_handle::VERTEX:
     {
-      std::set<poly_vertex_descriptor> v_sel;
-      BOOST_FOREACH(poly_face_descriptor f, final_sel)
+      std::set<vertex_descriptor> v_sel;
+      BOOST_FOREACH(face_descriptor f, final_sel)
       {
-        BOOST_FOREACH(poly_vertex_descriptor v, CGAL::vertices_around_face(f->halfedge(), poly))
+        BOOST_FOREACH(vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, poly), poly))
         {
-          qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
+          FG_Traits::Point_3 p = get(vpmap, v);
+          qglviewer::Vec vp(p.x(), p.y(), p.z());
           qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
           if(is_vertex_selected(vsp))
             v_sel.insert(v);
@@ -379,8 +354,6 @@ public Q_SLOTS:
 
   void highlight()
   {
-    if(!poly_item && !sm_item)
-      return;
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     if(is_ready_to_highlight)
     {
@@ -394,10 +367,7 @@ public Q_SLOTS:
         const qglviewer::Vec& orig = camera->position() - offset;
         const qglviewer::Vec& dir = point - orig;
         is_highlighting = true;
-        if(poly_item)
-          poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
-        else
-          sm_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
         is_highlighting = false;
       }
       else
@@ -409,24 +379,16 @@ public Q_SLOTS:
   }
 
 Q_SIGNALS:
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&);
-
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&);
-
+  void selected(const std::set<vertex_descriptor>&);
+  void selected(const std::set<face_descriptor>&);
+  void selected(const std::set<edge_descriptor>&);
+  void selected_HL(const std::set<vertex_descriptor>&);
+  void selected_HL(const std::set<face_descriptor>&);
+  void selected_HL(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
   void resetIsTreated(); 
-  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
+  void isCurrentlySelected(Scene_facegraph_item_k_ring_selection*);
   void clearHL();
 
 protected:
@@ -474,98 +436,51 @@ protected:
     }
   };
 
-  //Polyhedron sets
-
-  std::set<poly_vertex_descriptor>
-  extract_k_ring(poly_vertex_descriptor clicked, unsigned int k)
+  std::set<vertex_descriptor>
+  extract_k_ring(vertex_descriptor clicked, unsigned int k)
   {
-    std::set<poly_vertex_descriptor> selection;
+    std::set<vertex_descriptor> selection;
     selection.insert(clicked);
     if (k>0)
       CGAL::expand_vertex_selection(CGAL::make_array(clicked),
                                     *poly_item->polyhedron(),
                                     k,
-                                    Is_selected_from_set<poly_vertex_descriptor>(selection),
+                                    Is_selected_from_set<vertex_descriptor>(selection),
                                     CGAL::Emptyset_iterator());
 
     return selection;
   }
 
-  std::set<poly_face_descriptor>
-  extract_k_ring(poly_face_descriptor clicked, unsigned int k)
+  std::set<face_descriptor>
+  extract_k_ring(face_descriptor clicked, unsigned int k)
   {
-    std::set<poly_face_descriptor> selection;
+    std::set<face_descriptor> selection;
     selection.insert(clicked);
     if (k>0)
       CGAL::expand_face_selection(CGAL::make_array(clicked),
                                   *poly_item->polyhedron(),
                                   k,
-                                  Is_selected_from_set<poly_face_descriptor>(selection),
+                                  Is_selected_from_set<face_descriptor>(selection),
                                   CGAL::Emptyset_iterator());
 
     return selection;
   }
 
-  std::set<poly_edge_descriptor>
-  extract_k_ring(poly_edge_descriptor clicked, unsigned int k)
+  std::set<edge_descriptor>
+  extract_k_ring(edge_descriptor clicked, unsigned int k)
   {
-    std::set<poly_edge_descriptor> selection;
+    std::set<edge_descriptor> selection;
     selection.insert(clicked);
 
     if (k>0)
       CGAL::expand_edge_selection(CGAL::make_array(clicked),
                                   *poly_item->polyhedron(),
                                   k,
-                                  Is_selected_from_set<poly_edge_descriptor>(selection),
+                                  Is_selected_from_set<edge_descriptor>(selection),
                                   CGAL::Emptyset_iterator());
     return selection;
   }
 
-  //Surface_mesh sets
-  std::set<sm_vertex_descriptor>
-  extract_k_ring(sm_vertex_descriptor clicked, unsigned int k)
-  {
-    std::set<sm_vertex_descriptor> selection;
-    selection.insert(clicked);
-    if (k>0)
-      CGAL::expand_vertex_selection(CGAL::make_array(clicked),
-                                    *(sm_item->polyhedron()),
-                                    k,
-                                    Is_selected_from_set<sm_vertex_descriptor>(selection),
-                                    CGAL::Emptyset_iterator());
-
-    return selection;
-  }
-
-  std::set<sm_face_descriptor>
-  extract_k_ring(sm_face_descriptor clicked, unsigned int k)
-  {
-    std::set<sm_face_descriptor> selection;
-    selection.insert(clicked);
-    if (k>0)
-      CGAL::expand_face_selection(CGAL::make_array(clicked),
-                                  *sm_item->polyhedron(),
-                                  k,
-                                  Is_selected_from_set<sm_face_descriptor>(selection),
-                                  CGAL::Emptyset_iterator());
-
-    return selection;
-  }
-
-  std::set<sm_edge_descriptor>
-  extract_k_ring(sm_edge_descriptor clicked, unsigned int k)
-  {
-    std::set<sm_edge_descriptor> selection;
-    selection.insert(clicked);
-
-    if (k>0)
-      CGAL::expand_edge_selection(CGAL::make_array(clicked),
-                                  *sm_item->polyhedron(),
-                                  k,
-                                  Is_selected_from_set<sm_edge_descriptor>(selection),
-                                  CGAL::Emptyset_iterator());
-    return selection;
-  }
 
   bool eventFilter(QObject* target, QEvent *event)
   {
@@ -693,7 +608,7 @@ protected:
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
-    contour_2d.push_back (Kernel::Point_2 (p.x(), p.y()));
+    contour_2d.push_back (FG_Traits::Point_2 (p.x(), p.y()));
 
     if (update_polyline ())
     {
@@ -741,7 +656,7 @@ protected:
 
         if (CGAL::bounded_side_2(lasso.container().begin(),
                                  lasso.container().end(),
-                                 Kernel::Point_2(p.x, p.y),
+                                 FG_Traits::Point_2(p.x, p.y),
                                  lasso.traits_member())  == CGAL::ON_BOUNDED_SIDE)
           return true;
       }

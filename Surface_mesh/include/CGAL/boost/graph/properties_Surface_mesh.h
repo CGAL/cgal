@@ -345,6 +345,106 @@ remove(Pmap pm, CGAL::Surface_mesh<P>& sm)
   return sm.remove_property_map(pm);
 }
 } // namespace CGAL
+
+
+// Additional properties used by the Polyhedron demo and the Mesh_3 Surface_mesh oracle
+
+namespace CGAL {
+
+template <typename P>
+typename Surface_mesh<P>::template Property_map<typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor,bool>
+get(halfedge_is_feature_t, Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
+  return smesh.template add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+}
+
+
+template <typename P>
+typename Surface_mesh<P>::template Property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,int>
+inline get(face_patch_id_t, Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
+  return smesh.template add_property_map<face_descriptor,int>("f:patch_id").first;
+}
+
+
+template <typename P>
+typename Surface_mesh<P>::template Property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,int>
+inline get(face_selection_t, Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
+  return smesh.template add_property_map<face_descriptor,int>("f:selection").first;
+}
+
+
+template <typename P>
+typename Surface_mesh<P>::template Property_map<typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor,int>
+inline get(vertex_selection_t, Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh.template add_property_map<vertex_descriptor,int>("v:selection").first;
+}
+
+template <typename P>
+typename Surface_mesh<P>::template Property_map<typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor,int>
+inline get(vertex_num_feature_edges_t, Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh.template add_property_map<vertex_descriptor,int>("v:nfe").first;
+}
+} // namespace CGAL
+ 
+
+namespace boost {
+  
+  template <typename P>
+  struct property_map<CGAL::Surface_mesh<P>, halfedge_is_feature_t>
+  {
+    typedef CGAL::Surface_mesh<P> SMesh;
+    typedef typename boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
+  
+    typedef typename SMesh::template Property_map<halfedge_descriptor, bool> type;
+  };
+  
+  template <typename P>
+  struct property_map<CGAL::Surface_mesh<P>, boost::face_patch_id_t>
+  {
+    typedef CGAL::Surface_mesh<P> SMesh;
+    typedef typename boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  
+    typedef typename SMesh::template Property_map<face_descriptor, int> type;
+  }; 
+
+  template <typename P>
+  struct property_map<CGAL::Surface_mesh<P>, vertex_selection_t>
+  {
+    typedef CGAL::Surface_mesh<P> SMesh;
+    typedef typename boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  
+    typedef typename SMesh::template Property_map<vertex_descriptor, int> type;
+  };
+
+  template <typename P>
+  struct property_map<CGAL::Surface_mesh<P>, face_selection_t>
+  {
+    typedef CGAL::Surface_mesh<P> SMesh;
+    typedef typename boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  
+    typedef typename SMesh::template Property_map<face_descriptor, int> type;
+  };
+
+  template <typename P>
+  struct property_map<CGAL::Surface_mesh<P>, vertex_num_feature_edges_t>
+  {
+    typedef CGAL::Surface_mesh<P> SMesh;
+    typedef typename boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  
+    typedef typename SMesh::template Property_map<vertex_descriptor, int> type;
+  };
+
+} // namespace boost
+
 #endif
 
 #endif /* CGAL_PROPERTIES_SURFACE_MESH_H */

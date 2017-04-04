@@ -1,7 +1,16 @@
 #ifndef SCENE_POLYHEDRON_ITEM_DECORATOR_H
 #define SCENE_POLYHEDRON_ITEM_DECORATOR_H
 #include "Scene_polyhedron_item_decorator_config.h"
+
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+typedef Scene_surface_mesh_item Scene_face_graph_item;
+#else
 #include "Scene_polyhedron_item.h"
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
+typedef Scene_face_graph_item::FaceGraph Face_graph;
 
 // This class is a decorator for Scene_polyhedron_item yet it does not inherit it but Scene_item
 class SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Scene_polyhedron_item_decorator 
@@ -10,7 +19,7 @@ class SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Scene_polyhedron_item_decorator
 public:  
   /// Create an Scene_polyhedron_item_decorator from a Scene_polyhedron_item.
 
-  Scene_polyhedron_item_decorator(Scene_polyhedron_item* poly_item, bool delete_item = true);
+  Scene_polyhedron_item_decorator(Scene_face_graph_item* poly_item, bool delete_item = true);
   ~Scene_polyhedron_item_decorator();
 
   /// Returns 0, so that one cannot clone decorator
@@ -34,11 +43,11 @@ public:
   void drawEdges() const;
 
   // Get wrapped polyhedron
-  Polyhedron*       polyhedron();
-  const Polyhedron* polyhedron() const;
+  Face_graph*       polyhedron();
+  const Face_graph* polyhedron() const;
 
-  Scene_polyhedron_item* polyhedron_item() const;
-  void                   set_polyhedron_item(Scene_polyhedron_item* poly_item);
+  Scene_face_graph_item* polyhedron_item() const;
+  void                   set_polyhedron_item(Scene_face_graph_item* poly_item);
 
   // Get dimensions
   bool isFinite() const { return true; }
@@ -58,7 +67,7 @@ public Q_SLOTS:
               double dir_z);
 
 protected:
-  Scene_polyhedron_item* poly_item;
+  Scene_face_graph_item* poly_item;
   bool delete_poly_item;
 }; // end class Scene_polyhedron_item_decorator
 
