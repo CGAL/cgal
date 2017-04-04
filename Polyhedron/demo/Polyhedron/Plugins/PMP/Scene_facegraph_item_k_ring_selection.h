@@ -3,11 +3,12 @@
 #include "Scene_facegraph_item_k_ring_selection_config.h"
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#include <set>
+#include <CGAL/iterator.h>
 #else
-#include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
+#include "Polyhedron_type.h"
 #endif
+#include <set>
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
