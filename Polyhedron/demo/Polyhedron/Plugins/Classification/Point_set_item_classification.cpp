@@ -22,20 +22,67 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   m_subdivisions = 16;
 
   reset_indices();
-  
+
   backup_existing_colors_and_add_new();
   m_training = m_points->point_set()->add_property_map<std::size_t>("training", std::size_t(-1)).first;
   m_classif = m_points->point_set()->add_property_map<std::size_t>("label", std::size_t(-1)).first;
-
-  m_labels.add("ground");
-  m_labels.add("vegetation");
-  m_labels.add("roof");
-  m_labels.add("facade");
   
-  m_label_colors.push_back (QColor(245, 180, 0));
-  m_label_colors.push_back (QColor(0, 255, 27));
-  m_label_colors.push_back (QColor(255, 0, 170));
-  m_label_colors.push_back (QColor(100, 0, 255));
+  Point_set::Property_map<int> ps_labels;
+  bool found;
+  boost::tie (ps_labels, found) = m_points->point_set()->property_map<int>("label");
+  Point_set::Property_map<signed char> ps_labels_c;
+  bool found_c;
+  boost::tie (ps_labels_c, found_c) = m_points->point_set()->property_map<signed char>("label");
+  if (found || found_c)
+  {
+    int max = 0;
+    
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->first_selected(); ++ it)
+    {
+      int l;
+      if (found) l = ps_labels[*it];
+      else l = int(ps_labels_c[*it] - 1);
+      
+      m_classif[*it] = (std::size_t)l;
+      m_training[*it] = (std::size_t)l;
+      if (l > max)
+      {
+        max = l;
+      }
+    }
+
+    for (int i = 0; i < max; ++ i)
+    {
+      std::ostringstream oss;
+      oss << "label_" << i;
+      m_labels.add(oss.str().c_str());
+      CGAL::Classification::HSV_Color hsv;
+      hsv[0] = 360. * (i / double(max));
+      hsv[1] = 76.;
+      hsv[2] = 85.;
+      Color rgb = CGAL::Classification::hsv_to_rgb(hsv);
+      m_label_colors.push_back (QColor(rgb[0], rgb[1], rgb[2]));
+    }
+
+    if (found)
+      m_points->point_set()->remove_property_map(ps_labels);
+    else
+      m_points->point_set()->remove_property_map(ps_labels_c);
+  }
+  else
+  {
+    m_labels.add("ground");
+    m_labels.add("vegetation");
+    m_labels.add("roof");
+    m_labels.add("facade");
+  
+    m_label_colors.push_back (QColor(245, 180, 0));
+    m_label_colors.push_back (QColor(0, 255, 27));
+    m_label_colors.push_back (QColor(255, 0, 170));
+    m_label_colors.push_back (QColor(100, 0, 255));
+  }
+  
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
   m_random_forest = new Random_forest (m_labels, m_features);
