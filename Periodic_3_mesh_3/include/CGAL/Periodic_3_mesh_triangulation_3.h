@@ -501,10 +501,19 @@ public:
 
 }  // end namespace details
 
-template<class MD, class K = typename Kernel_traits<MD>::Kernel>
-struct Periodic_3_mesh_triangulation_3
+template<class MD,
+         class K_ = Default,
+         class Vertex_base_ = Default,
+         class Cell_base_ = Default>
+class Periodic_3_mesh_triangulation_3;
+
+template<class MD, class K_,
+         class Vertex_base_, class Cell_base_>
+class Periodic_3_mesh_triangulation_3
 {
-private:
+  // default K
+  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
+
   // traits
   typedef typename details::Periodic_3_mesh_geom_traits_generator<K>::type Geom_traits;
 
@@ -516,9 +525,12 @@ private:
   typedef Triangulation_cell_base_3<Geom_traits, CbDS> PTCb;
   typedef Triangulation_cell_base_with_circumcenter_3<Geom_traits, PTCb> PCb;
 
-  // Mesh vertex and cell bases (inherits from periodic ones)
-  typedef Mesh_vertex_base_3<Geom_traits, MD, PVb> Vertex_base;
-  typedef Mesh_cell_base_3<Geom_traits, MD, PCb> Cell_base;
+  typedef Mesh_vertex_base_3<Geom_traits, MD, PVb> Default_Vb;
+  typedef Mesh_cell_base_3<Geom_traits, MD, PCb> Default_Cb;
+
+  // default Vb/Cb
+  typedef typename Default::Get<Vertex_base_, Default_Vb>::type Vertex_base;
+  typedef typename Default::Get<Cell_base_, Default_Cb>::type Cell_base;
 
   // Triangulation and tds
   typedef Triangulation_data_structure_3<Vertex_base, Cell_base> Tds;
