@@ -633,15 +633,15 @@ class C3T3_helpers
   typedef typename C3T3::Triangulation        Tr;
   typedef Tr                                  Triangulation;
   typedef typename Tr::Geom_traits            Gt;
+  typedef typename Tr::Bare_point             Bare_point;
+  typedef typename Tr::Weighted_point         Weighted_point;
 
-  typedef typename Gt::Vector_3         Vector_3;
-  typedef typename Gt::Bare_point          Bare_point;
-  typedef typename Gt::Weighted_point_3          Weighted_point;
-  typedef typename Gt::Plane_3          Plane_3;
-  typedef typename Gt::FT               FT;
-  typedef typename Gt::Tetrahedron_3    Tetrahedron;
+  typedef typename Gt::Vector_3               Vector_3;
+  typedef typename Gt::Plane_3                Plane_3;
+  typedef typename Gt::FT                     FT;
+  typedef typename Gt::Tetrahedron_3          Tetrahedron;
 
-  typedef typename Gt::Construct_point_3    Construct_point_3;
+  typedef typename Gt::Construct_point_3             Construct_point_3;
   typedef typename Gt::Construct_weighted_point_3    Construct_weighted_point_3;
 
   typedef typename Tr::Vertex_handle    Vertex_handle;
