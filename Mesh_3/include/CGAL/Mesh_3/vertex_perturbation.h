@@ -443,9 +443,8 @@ protected:
                      bool *could_lock_zone = NULL) const
   {
     typedef typename C3T3::Triangulation::Geom_traits Gt;
-    typedef typename Gt::FT       FT;
+    typedef typename Gt::FT                           FT;
     typedef typename C3T3::Triangulation::Bare_point  Bare_point;
-    typedef typename C3T3::Triangulation::Weighted_point  Weighted_point;
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
     
     typename Gt::Compute_squared_length_3 sq_length =
