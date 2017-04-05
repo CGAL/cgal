@@ -35,6 +35,8 @@
 
 #include <set>
 
+#include <CGAL/Polygon_mesh_processing/properties.h>
+
 namespace CGAL {
 namespace Mesh_3 {
   
@@ -215,6 +217,149 @@ struct Mesh_polyhedron_3
   typedef type Type;
 };
 
+
+template <typename Gt, typename Patch_id>
+struct Patch_id_pmap {
+  
+  typedef typename Mesh_polyhedron_3<Gt,Patch_id>::type Polyhedron;
+  typedef typename Polyhedron::Face_handle key_type;
+  typedef typename Polyhedron::Facet::Patch_id value_type;
+  typedef value_type reference;
+  typedef boost::writable_property_map_tag                          category;
+
+  friend Patch_id get(const Patch_id_pmap&, key_type h)
+  {
+    return h->patch_id();
+  }
+  
+  friend void put(const Patch_id_pmap&, key_type h,
+                  Patch_id pid)
+  {
+     h->set_patch_id(pid);
+  }
+
+};
+
+
+template <typename Gt, typename Patch_id>
+inline Patch_id_pmap<Gt,Patch_id> 
+get(CGAL::face_patch_id_t,
+    const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
+{
+  return Patch_id_pmap<Gt,Patch_id>();
+}
+
+
+template <typename Gt, typename Patch_id>
+struct vertex_num_feature_edges_pmap {
+
+  typedef typename Mesh_polyhedron_3<Gt,Patch_id>::type Polyhedron;
+  typedef typename Polyhedron::Vertex_handle key_type;
+  typedef int value_type;
+  friend int get(const vertex_num_feature_edges_pmap&, key_type h)
+  {
+    return h->nb_of_feature_edges;
+  }
+  
+  friend void put(const vertex_num_feature_edges_pmap&, key_type h, int n)
+  {
+     h->nb_of_feature_edges = n;
+  }
+
+};
+
+
+template <typename Gt, typename Patch_id>
+inline vertex_num_feature_edges_pmap<Gt,Patch_id> 
+get(vertex_num_feature_edges_t, 
+    const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
+{
+  return vertex_num_feature_edges_pmap<Gt,Patch_id>();
+}
+
+
+template <typename Gt, typename Patch_id>
+struct Is_feature_pmap {
+  typedef typename Mesh_polyhedron_3<Gt,Patch_id>::type Polyhedron;
+  typedef typename Polyhedron::Halfedge_handle key_type;
+  typedef bool value_type;
+
+  friend bool get(const Is_feature_pmap&, key_type h)
+  {
+    return h->is_feature_edge();
+  }
+  
+  friend void put(const Is_feature_pmap&, key_type h, bool b)
+  {
+     h->set_feature_edge(b);
+  }
+
+};
+
+
+template <typename Gt, typename Patch_id>
+inline Is_feature_pmap<Gt,Patch_id>  
+get(halfedge_is_feature_t,
+    const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
+{
+  return Is_feature_pmap<Gt,Patch_id> ();
+}
+
+
+template <typename Gt, typename Patch_id>
+struct vertex_incident_patches_pmap {
+  typedef typename Mesh_polyhedron_3<Gt,Patch_id>::type Polyhedron;
+  typedef typename Polyhedron::Vertex_handle key_type;
+  typedef typename std::set<Patch_id> value_type;
+  typedef typename boost::read_write_property_map_tag category;
+
+  friend value_type get(const vertex_incident_patches_pmap&, const key_type& h)
+  {
+    return h->incident_patches_ids_set();
+  }
+
+  friend void put(const vertex_incident_patches_pmap&, const key_type& k , value_type& v)
+  {
+    BOOST_FOREACH(Patch_id n, v)
+        k->add_incident_patch(n);
+  }
+
+};
+
+template <typename Gt, typename Patch_id>
+inline vertex_incident_patches_pmap<Gt,Patch_id>
+get(CGAL::vertex_incident_patches_t,
+    const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
+{
+  return vertex_incident_patches_pmap<Gt,Patch_id>();
+}
+
 } // end namespace CGAL
+
+namespace boost {
+
+  template <typename Gt, typename Patch_id>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::face_patch_id_t>
+  {
+    typedef CGAL::Patch_id_pmap<Gt,Patch_id> type;
+  };
+
+  template <typename Gt, typename Patch_id>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::vertex_num_feature_edges_t>
+  {
+    typedef CGAL::vertex_num_feature_edges_pmap<Gt,Patch_id> type;
+  };
+
+  template <typename Gt, typename Patch_id>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::halfedge_is_feature_t>
+  {
+    typedef CGAL::Is_feature_pmap<Gt,Patch_id> type;
+  };
+  template <typename Gt, typename Patch_id>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::vertex_incident_patches_t>
+  {
+    typedef CGAL::vertex_incident_patches_pmap<Gt,Patch_id> type;
+  };
+} // namespace boost
 
 #endif // CGAL_MESH_POLYHEDRON_3_H

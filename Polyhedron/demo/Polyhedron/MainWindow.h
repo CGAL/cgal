@@ -212,6 +212,15 @@ public Q_SLOTS:
 
   /// This slot is used to test exception handling in Qt Scripts.
   void throw_exception();
+
+  /*!
+   * \brief setPolyhedronMode sets the global state of the demo to Polyhedron mode or Surface_mesh mode.
+   * In the Polyhedron_demo, a plugin that outputs a Facegraph_item will match the input type for the output.
+   * But when the input is not a Facegraph_item, the plugin will use this state to know what type to use.
+   * If isPolyhedronMode is true, the default output type will be Polyhedron (obviously), and if not, it will
+   * be Surface_mesh.
+   */
+  void setPolyhedronMode(bool b);
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the sceneView and updates the scene

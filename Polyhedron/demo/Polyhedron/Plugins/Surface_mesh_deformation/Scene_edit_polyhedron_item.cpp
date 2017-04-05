@@ -18,6 +18,7 @@ struct Scene_edit_polyhedron_item_priv
   Scene_edit_polyhedron_item_priv(Scene_polyhedron_item* poly_item,  Ui::DeformMesh* ui_widget, QMainWindow* mw, Scene_edit_polyhedron_item* parent)
     : ui_widget(ui_widget),
       poly_item(poly_item),
+      sm_item(NULL),
       is_rot_free(true),
       own_poly_item(true),
       k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true)
@@ -30,20 +31,63 @@ struct Scene_edit_polyhedron_item_priv
     spheres = NULL;
     spheres_ctrl = NULL;
     need_change = false;
-
+  }
+  Scene_edit_polyhedron_item_priv(Scene_surface_mesh_item* sm_item,  Ui::DeformMesh* ui_widget, QMainWindow* mw, Scene_edit_polyhedron_item* parent)
+    : ui_widget(ui_widget),
+      poly_item(NULL),
+      sm_item(sm_item),
+      is_rot_free(true),
+      own_poly_item(true),
+      k_ring_selector(sm_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true)
+  {
+    item = parent;
+    nb_ROI = 0;
+    nb_control = 0;
+    nb_axis = 0;
+    nb_bbox = 0;
+    spheres = NULL;
+    spheres_ctrl = NULL;
+    need_change = false;
   }
   ~Scene_edit_polyhedron_item_priv()
   {
-    delete deform_mesh;
+    if(poly_item)
+      delete deform_mesh;
+    if(sm_item)
+      delete deform_sm_mesh;
     if (own_poly_item)
-      delete poly_item;
+    {
+      if(poly_item)
+        delete poly_item;
+      if(sm_item)
+        delete sm_item;
+    }
   }
-  void remesh();
-  void expand_or_reduce(int);
+
+  template<typename Mesh>
+  void remesh(Mesh* mesh);
+  template<typename Mesh>
+  void deform(Mesh* mesh);
+  template<typename Mesh>
+  void expand_or_reduce(int, Mesh*);
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-  void compute_normals_and_vertices(void);
+  template<typename Mesh>
+  void compute_normals_and_vertices(Mesh *mesh);
   void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);
   void reset_drawing_data();
+  void init_values();
+  template<typename Mesh>
+  void pivoting_begin(Mesh* mesh);
+  template<typename Mesh>
+  void pivoting_end(Mesh* mesh);
+  template<typename Mesh>
+  void read_roi(const char* file_name, Mesh* mesh);
+  void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer, qglviewer::ManipulatedFrame* frame, const qglviewer::Vec &center) const;
+  template<typename Mesh, typename M_Deform_mesh>
+  void apply_reset_drawing_data(Mesh* mesh, M_Deform_mesh* m_deform_mesh);
+  template<typename Mesh>
+  void delete_ctrl_vertices_group(Mesh *mesh, bool create_new = true);
+
   enum Buffer
   {
       Facet_vertices =0,
@@ -71,11 +115,12 @@ struct Scene_edit_polyhedron_item_priv
 
   Ui::DeformMesh* ui_widget;
   Scene_polyhedron_item* poly_item;
+  Scene_surface_mesh_item* sm_item;
   bool need_change;
   // For drawing
   mutable std::vector<GLdouble> positions;
   mutable std::vector<unsigned int> tris;
-  mutable std::vector<unsigned int> edges;
+  mutable std::vector<unsigned int> _edges;
   mutable std::vector<GLdouble> color_lines;
   mutable std::vector<GLdouble> color_bbox;
   mutable std::vector<GLdouble> ROI_points;
@@ -97,9 +142,13 @@ struct Scene_edit_polyhedron_item_priv
   mutable QOpenGLBuffer *in_bu;
 
   Deform_mesh* deform_mesh;
-  typedef std::list<Control_vertices_data> Ctrl_vertices_group_data_list;
-  Ctrl_vertices_group_data_list::iterator active_group;
-  Ctrl_vertices_group_data_list ctrl_vertex_frame_map; // keep list of group of control vertices with assoc data
+  Deform_sm_mesh* deform_sm_mesh;
+  typedef std::list<Control_vertices_data<Polyhedron> > Ctrl_vertices_poly_group_data_list;
+  typedef std::list<Control_vertices_data<SMesh> > Ctrl_vertices_sm_group_data_list;
+  Ctrl_vertices_poly_group_data_list::iterator poly_active_group;
+  Ctrl_vertices_poly_group_data_list poly_ctrl_vertex_frame_map; // keep list of group of control vertices with assoc data
+  Ctrl_vertices_sm_group_data_list::iterator sm_active_group;
+  Ctrl_vertices_sm_group_data_list sm_ctrl_vertex_frame_map;
 
   double length_of_axis; // for drawing axis at a group of control vertices
 
@@ -116,38 +165,138 @@ struct Scene_edit_polyhedron_item_priv
 
 }; //end Scene_edit_polyhedron_item_priv
 
-Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
-(Scene_polyhedron_item* poly_item,
- Ui::DeformMesh* ui_widget,
- QMainWindow* mw)
-  : Scene_group_item("unnamed",Scene_edit_polyhedron_item_priv::NumberOfBuffers,Scene_edit_polyhedron_item_priv::NumberOfVaos)
-
+struct Facegraph_selector
 {
-  mw->installEventFilter(this);
-  d = new Scene_edit_polyhedron_item_priv(poly_item, ui_widget, mw, this);
-  // bind vertex picking
-  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
-          SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
 
-  d->poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in invalidateOpenGLBuffers()
-  d->poly_item->update_vertex_indices();
+  Facegraph_selector()
+    :d(NULL){} //used for the const functions
 
-  d->deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
-                                Deform_mesh::Vertex_index_map(),
-                                Deform_mesh::Hedge_index_map(),
-                                Array_based_vertex_point_map(&d->positions));
+  Scene_edit_polyhedron_item_priv* d;
+  Facegraph_selector(Scene_edit_polyhedron_item_priv* d)
+    :d(d){}
 
-  d->length_of_axis = (CGAL::sqrt((bbox().xmax()-bbox().xmin())*(bbox().xmax()-bbox().xmin()) + (bbox().ymax()-bbox().ymin())*(bbox().ymax()-bbox().ymin()) + (bbox().zmax()-bbox().zmin())*(bbox().zmax()-bbox().zmin()))) / 15.0;
+  ////Deform_mesh/////
 
-  // interleave events of viewer (there is only one viewer) 
+  Deform_mesh* get_deform_mesh(Polyhedron*)
+  {
+    return d->deform_mesh;
+  }
+
+  Deform_sm_mesh* get_deform_mesh(SMesh*)
+  {
+    return d->deform_sm_mesh;
+  }
+
+  void set_deform_mesh(Polyhedron*, Deform_mesh *dm)
+  {
+    d->deform_mesh = dm;
+  }
+
+  void set_deform_mesh(SMesh*, Deform_sm_mesh *dm)
+  {
+    d->deform_sm_mesh = dm;
+  }
+
+  ////Items management/////
+  void invalidate_aabb_tree(Polyhedron*)
+  {
+    d->poly_item->invalidate_aabb_tree();
+  }
+
+  void invalidate_aabb_tree(SMesh*)
+  {
+    d->sm_item->invalidate_aabb_tree();
+  }
+  void update_ids(Polyhedron*, bool do_faces)
+  {
+    d->poly_item->update_vertex_indices();
+    if(do_faces)
+      d->poly_item->update_facet_indices();
+    d->poly_item->update_halfedge_indices();
+  }
+
+  void update_ids(SMesh*, bool )
+  {
+    d->sm_item->polyhedron()->collect_garbage();
+  }
+
+  ////ctrl_groups/////
+  Ctrl_vertices_poly_group_data_list::iterator& get_active_group(Polyhedron*)
+  {
+    return d->poly_active_group;
+  }
+
+  Ctrl_vertices_sm_group_data_list::iterator& get_active_group(SMesh*)
+  {
+    return d->sm_active_group;
+  }
+
+
+
+  Ctrl_vertices_poly_group_data_list& get_ctrl_vertex_frame_map(Polyhedron*)
+  {
+    return d->poly_ctrl_vertex_frame_map;
+  }
+
+  Ctrl_vertices_sm_group_data_list& get_ctrl_vertex_frame_map(SMesh*)
+  {
+    return d->sm_ctrl_vertex_frame_map;
+  }
+
+
+
+
+  //const functions
+  Ctrl_vertices_poly_group_data_list& get_ctrl_vertex_frame_map(Polyhedron*, Scene_edit_polyhedron_item_priv* d)const
+  {
+    return d->poly_ctrl_vertex_frame_map;
+  }
+
+  Ctrl_vertices_sm_group_data_list& get_ctrl_vertex_frame_map(SMesh*, Scene_edit_polyhedron_item_priv* d)const
+  {
+    return d->sm_ctrl_vertex_frame_map;
+  }
+
+  Ctrl_vertices_poly_group_data_list::iterator& get_active_group(Polyhedron*, Scene_edit_polyhedron_item_priv* d)const
+  {
+    return d->poly_active_group;
+  }
+
+  Ctrl_vertices_sm_group_data_list::iterator& get_active_group(SMesh*, Scene_edit_polyhedron_item_priv* d)const
+  {
+    return d->sm_active_group;
+  }
+
+  Deform_mesh* get_deform_mesh(Polyhedron*, Scene_edit_polyhedron_item_priv* d)const
+  {
+    return d->deform_mesh;
+  }
+
+  Deform_mesh* get_deform_mesh(SMesh*, Scene_edit_polyhedron_item_priv* d)const
+  {
+    return d->deform_mesh;
+  }
+
+};
+
+void Scene_edit_polyhedron_item_priv::init_values()
+{
+  length_of_axis = (CGAL::sqrt((item->bbox().xmax()-item->bbox().xmin())*
+                               (item->bbox().xmax()-item->bbox().xmin()) +
+                               (item->bbox().ymax()-item->bbox().ymin())*
+                               (item->bbox().ymax()-item->bbox().ymin()) +
+                               (item->bbox().zmax()-item->bbox().zmin())*
+                               (item->bbox().zmax()-item->bbox().zmin()))) / 15.0;
+
+  // interleave events of viewer (there is only one viewer)
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-  viewer->installEventFilter(this);
-    
+  viewer->installEventFilter(item);
+
   // create an empty group of control vertices for starting
-  create_ctrl_vertices_group();
+  item->create_ctrl_vertices_group();
 
   // Required for drawing functionality
-  d->reset_drawing_data();
+  reset_drawing_data();
 
     //Generates an integer which will be used as ID for each buffer
 
@@ -180,29 +329,81 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
         " gl_FragColor = vec4(fColors, 1.0); \n"
         "} \n"
     };
-    d->bbox_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_shader_source_bbox);
-    d->bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source);
-    d->bbox_program.link();
+    bbox_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_shader_source_bbox);
+    bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source);
+    bbox_program.link();
 
-    d->ui_widget->remeshing_iterations_spinbox->setValue(1);
+    ui_widget->remeshing_iterations_spinbox->setValue(1);
 
-    d->ui_widget->remeshing_edge_length_spinbox->setValue(d->length_of_axis);
-    d->ui_widget->remeshing_edge_length_spinbox->setDisabled(true);
-    d->ui_widget->remeshingEdgeLengthInput_checkBox->setChecked(false);
-    connect(ui_widget->remeshingEdgeLengthInput_checkBox, SIGNAL(toggled(bool)),
-            ui_widget->remeshing_edge_length_spinbox, SLOT(setEnabled(bool)));
+    ui_widget->remeshing_edge_length_spinbox->setValue(length_of_axis);
+    ui_widget->remeshing_edge_length_spinbox->setDisabled(true);
+    ui_widget->remeshingEdgeLengthInput_checkBox->setChecked(false);
 
-    invalidateOpenGLBuffers();
+}
+Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
+(Scene_polyhedron_item* poly_item,
+ Ui::DeformMesh* ui_widget,
+ QMainWindow* mw)
+  : Scene_group_item("unnamed",Scene_edit_polyhedron_item_priv::NumberOfBuffers,Scene_edit_polyhedron_item_priv::NumberOfVaos)
+
+{
+  mw->installEventFilter(this);
+  d = new Scene_edit_polyhedron_item_priv(poly_item, ui_widget, mw, this);
+  // bind vertex picking
+  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)), this,
+          SLOT(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)));
+
+  d->poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in invalidateOpenGLBuffers()
+  d->poly_item->update_vertex_indices();
+  id_setter = new Id_setter(d->poly_item->polyhedron());
+  d->deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
+                                Deform_mesh::Vertex_index_map(),
+                                Deform_mesh::Hedge_index_map(),
+                                Array_based_vertex_point_map<Polyhedron>(&d->positions, polyhedron(), id_setter));
+  d->init_values();
+  connect(ui_widget->remeshingEdgeLengthInput_checkBox, SIGNAL(toggled(bool)),
+          ui_widget->remeshing_edge_length_spinbox, SLOT(setEnabled(bool)));
+  invalidateOpenGLBuffers();
+}
+
+
+Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
+(Scene_surface_mesh_item* sm_item,
+ Ui::DeformMesh* ui_widget,
+ QMainWindow* mw)
+  : Scene_group_item("unnamed",Scene_edit_polyhedron_item_priv::NumberOfBuffers,Scene_edit_polyhedron_item_priv::NumberOfVaos)
+
+{
+  mw->installEventFilter(this);
+  d = new Scene_edit_polyhedron_item_priv(sm_item, ui_widget, mw, this);
+  // bind vertex picking
+  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)), this,
+          SLOT(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)));
+  id_setter = new Id_setter(d->sm_item->polyhedron());
+  d->deform_sm_mesh = new Deform_sm_mesh(*(sm_item->polyhedron()),
+                                Deform_sm_mesh::Vertex_index_map(),
+                                Deform_sm_mesh::Hedge_index_map(),
+                                Array_based_vertex_point_map<SMesh>(&d->positions, surface_mesh(), id_setter));
+
+  d->length_of_axis = (CGAL::sqrt((bbox().xmax()-bbox().xmin())*(bbox().xmax()-bbox().xmin()) + (bbox().ymax()-bbox().ymin())*(bbox().ymax()-bbox().ymin()) + (bbox().zmax()-bbox().zmin())*(bbox().zmax()-bbox().zmin()))) / 15.0;
+  d->init_values();
+  connect(ui_widget->remeshingEdgeLengthInput_checkBox, SIGNAL(toggled(bool)),
+          ui_widget->remeshing_edge_length_spinbox, SLOT(setEnabled(bool)));
+  invalidateOpenGLBuffers();
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 {
   while(is_there_any_ctrl_vertices_group())
   {
-    delete_ctrl_vertices_group(false);
+    if(d->poly_item)
+      d->delete_ctrl_vertices_group(polyhedron(), false);
+    else
+      d->delete_ctrl_vertices_group(surface_mesh(), false);
   }
 
   delete d;
+  delete id_setter;
 }
 /////////////////////////////
 /// For the Shader gestion///
@@ -362,73 +563,95 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
     item->are_buffers_filled = true;
 }
 
-void Scene_edit_polyhedron_item_priv::reset_drawing_data()
+template<typename Mesh, typename M_Deform_mesh>
+void Scene_edit_polyhedron_item_priv::apply_reset_drawing_data(Mesh* mesh, M_Deform_mesh* m_deform_mesh)
 {
-  positions.clear();
-  positions.resize(num_vertices(*item->polyhedron()) * 3);
 
-  normals.clear();
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor mesh_fd;
+  typedef typename boost::graph_traits<Mesh>::edge_iterator mesh_eit;
+  positions.resize(num_vertices(*mesh) * 3);
   normals.resize(positions.size());
-
+  tris.resize(num_faces(*mesh) * 3);
+  _edges.resize(num_halfedges(*mesh));
   std::size_t counter = 0;
-  BOOST_FOREACH(vertex_descriptor vb, vertices(*item->polyhedron()))
-  {
-    positions[counter * 3] = vb->point().x();
-    positions[counter * 3 + 1] = vb->point().y();
-    positions[counter * 3 + 2] = vb->point().z();
+  typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
+  VertexPointMap vpmap = get(boost::vertex_point, *mesh);
 
+  BOOST_FOREACH(mesh_vd vb, vertices(*mesh))
+  {
+    typename VertexPointMap::reference p = get(vpmap, vb);
+    positions[counter * 3] = p.x();
+    positions[counter * 3 + 1] = p.y();
+    positions[counter * 3 + 2] = p.z();
     const Polyhedron::Traits::Vector_3& n =
-      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh->halfedge_graph());
+      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, m_deform_mesh->halfedge_graph());
     normals[counter * 3] = n.x();
     normals[counter * 3 + 1] = n.y();
     normals[counter * 3 + 2] = n.z();
 
     ++counter;
   }
-
-  tris.clear();
-  tris.resize(item->polyhedron()->size_of_facets() * 3);
   counter = 0;
-  BOOST_FOREACH(face_descriptor fb, faces(*item->polyhedron()))
+  Id_setter id_getter(mesh);
+
+  BOOST_FOREACH(mesh_fd fb, faces(*mesh))
   {
-    tris[counter * 3] = static_cast<unsigned int>(fb->halfedge()->vertex()->id());
-    tris[counter * 3 + 1] = static_cast<unsigned int>(fb->halfedge()->next()->vertex()->id());
-    tris[counter * 3 + 2] = static_cast<unsigned int>(fb->halfedge()->prev()->vertex()->id());
+    tris[counter * 3] = static_cast<unsigned int>(id_getter.get_id(target(halfedge(fb, *mesh), *mesh)));
+    tris[counter * 3 + 1] = static_cast<unsigned int>(id_getter.get_id(target(next(halfedge(fb, *mesh), *mesh), *mesh)));
+    tris[counter * 3 + 2] = static_cast<unsigned int>(id_getter.get_id(target(prev(halfedge(fb, *mesh), *mesh), *mesh)));
     ++counter;
   }
 
-  edges.clear();
-  edges.resize(item->polyhedron()->size_of_halfedges());
   counter = 0;
-  for (Polyhedron::Edge_iterator eb = item->polyhedron()->edges_begin();
-       eb != item->polyhedron()->edges_end(); ++eb, ++counter)
+  for (mesh_eit it = edges(*mesh).first;
+       it != edges(*mesh).second; ++it, ++counter)
   {
-    edges[counter * 2] = static_cast<unsigned int>(eb->vertex()->id());
-    edges[counter * 2 + 1] = static_cast<unsigned int>(eb->opposite()->vertex()->id());
+    _edges[counter * 2] = static_cast<unsigned int>(id_getter.get_id(source(*it, *mesh)));
+    _edges[counter * 2 + 1] = static_cast<unsigned int>(id_getter.get_id(target(*it, *mesh)));
   }
 }
 
-void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
+void Scene_edit_polyhedron_item_priv::reset_drawing_data()
 {
+  positions.clear();
+  normals.clear();
+  tris.clear();
+  _edges.clear();
+  if(sm_item)
+    apply_reset_drawing_data(sm_item->polyhedron(), deform_sm_mesh);
+  else
+    apply_reset_drawing_data(poly_item->polyhedron(), deform_mesh);
+}
+
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
+{
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     ROI_points.resize(0);
     control_points.resize(0);
     control_color.resize(0);
     pos_frame_plane.resize(0);
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    Facegraph_selector fs(this);
+    typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
+    VertexPointMap pmap = get(boost::vertex_point, *mesh);
 
-    BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
+    BOOST_FOREACH(mesh_vd vd, fs.get_deform_mesh(mesh)->roi_vertices())
     {
-        if(!deform_mesh->is_control_vertex(vd))
+        if(!fs.get_deform_mesh(mesh)->is_control_vertex(vd))
         {
-            ROI_points.push_back(vd->point().x()+offset.x);
-            ROI_points.push_back(vd->point().y()+offset.y);
-            ROI_points.push_back(vd->point().z()+offset.z);
+            Kernel::Point_3 p = get(pmap, vd);
+            ROI_points.push_back(p.x()+offset.x);
+            ROI_points.push_back(p.y()+offset.y);
+            ROI_points.push_back(p.z()+offset.z);
 
             if(spheres)
             {
               CGAL::Color c(0,255,0);
-              Kernel::Point_3 point(vd->point().x()+offset.x, vd->point().y()+offset.y, vd->point().z()+offset.z);
+              Kernel::Point_3 point(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
               spheres->add_sphere(Kernel::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), c);
             }
         }
@@ -439,7 +662,8 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
       ROI_color[3*i+1]=1.0;
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
+
+    for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data = fs.get_ctrl_vertex_frame_map(mesh).begin(); hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
     {
         if(hgb_data->frame == viewer->manipulatedFrame())
         {
@@ -450,14 +674,15 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
             }
         }
 
-        const double r=hgb_data == active_group?1:0;
-        const double b=hgb_data == active_group?0:1;
+        const double r=hgb_data == fs.get_active_group(mesh)?1:0;
+        const double b=hgb_data == fs.get_active_group(mesh)?0:1;
 
-        for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->ctrl_vertices_group.begin(); hb != hgb_data->ctrl_vertices_group.end(); ++hb)
+        for(typename std::vector<mesh_vd>::const_iterator hb = hgb_data->ctrl_vertices_group.begin(); hb != hgb_data->ctrl_vertices_group.end(); ++hb)
         {
-            control_points.push_back((*hb)->point().x()+offset.x);
-            control_points.push_back((*hb)->point().y()+offset.y);
-            control_points.push_back((*hb)->point().z()+offset.z);
+            Kernel::Point_3 p = get(pmap, (*hb));
+            control_points.push_back(p.x()+offset.x);
+            control_points.push_back(p.y()+offset.y);
+            control_points.push_back(p.z()+offset.z);
             control_color.push_back(r);
             control_color.push_back(0);
             control_color.push_back(b);
@@ -466,9 +691,9 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
             {
               CGAL::Color c(255*r,0,255*b);
 
-              Kernel::Point_3 center((*hb)->point().x()+offset.x,
-                                     (*hb)->point().y()+offset.y,
-                                     (*hb)->point().z()+offset.z);
+              Kernel::Point_3 center(p.x()+offset.x,
+                                     p.y()+offset.y,
+                                     p.z()+offset.z);
               spheres_ctrl->add_sphere(Kernel::Sphere_3(center, length_of_axis/15.0*length_of_axis/15.0), c);
             }
         }
@@ -497,7 +722,12 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
     color_lines[13] = 1.0; color_lines[16] = 1.0;
 
     if(ui_widget->ActivateFixedPlaneCheckBox->isChecked())
-      item->draw_frame_plane(viewer);
+    {
+      if(poly_item)
+        item->draw_frame_plane(viewer, poly_item->polyhedron());
+      else
+        item->draw_frame_plane(viewer, sm_item->polyhedron());
+    }
     QApplication::restoreOverrideCursor();
 }
 
@@ -505,55 +735,101 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
 /////////// Most relevant functions lie here ///////////
 void Scene_edit_polyhedron_item::deform()
 {
+
   if(!is_there_any_ctrl_vertices()) { return; }
 
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
-  { it->set_target_positions(); }
-  d->deform_mesh->deform();
-
-  d->poly_item->invalidate_aabb_tree(); // invalidate the AABB-tree of the poly_item
+  if(d->poly_item)
+  {
+    d->deform(d->poly_item->polyhedron());
+    d->poly_item->invalidate_aabb_tree();
+  }
+  else
+  {
+    d->deform(d->sm_item->polyhedron());
+    d->sm_item->invalidate_aabb_tree();
+  }
   Q_EMIT itemChanged();
 }
 
-struct ROI_faces_pmap
-{
-  typedef face_descriptor                    key_type;
-  typedef std::size_t                        value_type;
-  typedef std::size_t&                       reference;
-  typedef boost::read_write_property_map_tag category;
+template<typename Mesh>
+struct ROI_faces_pmap;
 
-  friend value_type get(const ROI_faces_pmap&, const key_type& f)
-  { 
-    /*magic number 12345*/
-    if (f->patch_id() == 12345) return 1;
-    else                        return 0;
-  }
-  friend void put(ROI_faces_pmap&, const key_type& f, const value_type b)
+template<>
+struct ROI_faces_pmap<Polyhedron>
+{
+  typedef boost::graph_traits<Polyhedron>::face_descriptor   key_type;
+  typedef std::size_t                                           value_type;
+  typedef std::size_t&                                          reference;
+  typedef boost::read_write_property_map_tag                    category;
+  std::map<key_type, value_type>* patch_map;
+  ROI_faces_pmap(std::map<key_type, value_type>* patch_map, Polyhedron*)
+    :patch_map(patch_map){}
+
+  friend value_type get(const ROI_faces_pmap<Polyhedron>&pmap, const key_type& f)
   {
-    if(b != 0)  f->set_patch_id(12345);
-    else        f->set_patch_id(0);
+    /*magic number 12345*/
+    if((*pmap.patch_map)[f] == 12345) return 1;
+    else                            return 0;
+  }
+  friend void put(ROI_faces_pmap<Polyhedron>&pmap, const key_type& f, const value_type b)
+  {
+    if(b != 0)  (*pmap.patch_map)[f] = 12345;
+    else        (*pmap.patch_map)[f] = 0;
   }
 };
 
+template<>
+struct ROI_faces_pmap<SMesh>
+{
+  typedef sm_face_descriptor                        key_type;
+  typedef std::size_t                               value_type;
+  typedef std::size_t&                              reference;
+  typedef boost::read_write_property_map_tag        category;
+  SMesh* mesh;
+  SMesh::Property_map<sm_face_descriptor,bool> irmap;
+  ROI_faces_pmap(std::map<key_type, value_type>*, SMesh* mesh)
+    :mesh(mesh)
+  {
+    //add a is_ROI property_map to mesh
+    irmap = mesh->add_property_map<sm_face_descriptor,bool>("f:is_roi",false).first;
+  }
+
+  friend value_type get(const ROI_faces_pmap<SMesh>&pmap, const key_type& f)
+  {
+    if(get(pmap.irmap, f))     return 1;
+    else                       return 0;
+  }
+  friend void put(ROI_faces_pmap<SMesh>&pmap, const key_type& f, const value_type b)
+  {
+    if(b == 1)
+      put(pmap.irmap, f, true);
+    else
+      put(pmap.irmap, f, false);
+  }
+};
+
+
+template<typename Mesh>
 struct ROI_border_pmap
 {
-  std::set<edge_descriptor>* m_set_ptr;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor m_ed;
+  std::set<m_ed>* m_set_ptr;
 
-  typedef edge_descriptor                    key_type;
+  typedef m_ed                               key_type;
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
 
   ROI_border_pmap() : m_set_ptr(NULL) {}
-  ROI_border_pmap(std::set<edge_descriptor>* set_)
+  ROI_border_pmap(std::set<m_ed>* set_)
     : m_set_ptr(set_)
   {}
-  friend bool get(const ROI_border_pmap& map, const key_type& k)
+  friend bool get(const ROI_border_pmap<Mesh>& map, const key_type& k)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
     return map.m_set_ptr->count(k);
   }
-  friend void put(ROI_border_pmap& map, const key_type& k, const value_type b)
+  friend void put(ROI_border_pmap<Mesh>& map, const key_type& k, const value_type b)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
     if (b)              map.m_set_ptr->insert(k);
@@ -561,85 +837,160 @@ struct ROI_border_pmap
   }
 };
 
+template<typename Mesh>
 struct halfedge2edge
 {
-  halfedge2edge(const Polyhedron& m, std::set<edge_descriptor>& edges)
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor m_ed;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor m_hd;
+
+  halfedge2edge(const Mesh& m, std::set<m_ed>& edges)
     : m_mesh(m), m_edges(edges)
   {}
-  void operator()(const halfedge_descriptor& h) const
+  void operator()(const m_hd& h) const
   {
     m_edges.insert(edge(h, m_mesh));
   }
-  const Polyhedron& m_mesh;
-  std::set<edge_descriptor>& m_edges;
+  const Mesh& m_mesh;
+  std::set<m_ed>& m_edges;
 };
 
 void Scene_edit_polyhedron_item::remesh()
 {
-  d->remesh();
+  if(d->poly_item)
+    d->remesh(d->poly_item->polyhedron());
+  else
+  {
+    d->remesh(d->sm_item->polyhedron());
+  }
 }
 
-struct Is_constrained_map
-{
-  boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>* m_set_ptr;
+template<typename Mesh>
+struct Is_constrained_map;
 
-  typedef vertex_descriptor                  key_type;
+template<>
+struct Is_constrained_map<Polyhedron>
+{
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor mesh_vd;
+  typedef mesh_vd                  key_type;
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
+  std::map<poly_vertex_descriptor,int> icmap; //not light but the might won't be copied so it is ok
 
   Is_constrained_map()
-    : m_set_ptr(NULL)
   {}
-  Is_constrained_map( boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>* set_)
-    : m_set_ptr(set_)
+  Is_constrained_map( std::vector<int>* vec, Polyhedron* mesh)
+  {
+    BOOST_FOREACH(mesh_vd v, vertices(*mesh))
+    {
+      icmap[v] = (*vec)[v->id()];
+    }
+  }
+  friend bool get(const Is_constrained_map<Polyhedron>& map, const key_type& k)
+  {
+    std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap.find(k);
+    if(it != map.icmap.end())
+      return it->second != -1;
+    return false;
+  }
+  friend void put(Is_constrained_map<Polyhedron>&, const key_type&, const value_type)//no need
   {}
-  friend bool get(const Is_constrained_map& map, const key_type& k)
-  {
-    CGAL_assertion(map.m_set_ptr != NULL);
-    return map.m_set_ptr->count(k);
-  }
-  friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
-  {
-    CGAL_assertion(map.m_set_ptr != NULL);
-    if (b)  map.m_set_ptr->insert(k);
-    else    map.m_set_ptr->erase(k);
-  }
 };
 
-void Scene_edit_polyhedron_item_priv::remesh()
+template<>
+struct Is_constrained_map<SMesh>
 {
-  if(deform_mesh->roi_vertices().empty())
-    return;
-  boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function> constrained_set;
-  std::vector<std::vector<vertex_descriptor> > control_groups;
-  const Polyhedron& g = deform_mesh->halfedge_graph();
-  Array_based_vertex_point_map vpmap(&positions);
+  typedef boost::graph_traits<SMesh>::vertex_descriptor mesh_vd;
+  typedef mesh_vd                            key_type;
+  typedef bool                               value_type;
+  typedef bool                               reference;
+  typedef boost::read_write_property_map_tag category;
+  SMesh::Property_map<sm_vertex_descriptor,int> icmap;
 
-  std::set<face_descriptor> roi_facets;
-  std::set<vertex_descriptor> roi_vertices(
-    deform_mesh->roi_vertices().begin(),deform_mesh->roi_vertices().end());
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
+  Is_constrained_map()
+  {}
+  Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
   {
-    std::vector<vertex_descriptor> group;
-    BOOST_FOREACH(vertex_descriptor vd, hgb_data->ctrl_vertices_group)
-        group.push_back(vd);
+    icmap = mesh->add_property_map<sm_vertex_descriptor,int>("v:is_control", -1).first;
+    for(std::size_t i=0; i<vec->size(); ++i)
+    {
+      icmap[sm_vertex_descriptor(i)] = (*vec)[i];
+    }
+  }
+  friend bool get(const Is_constrained_map<SMesh>& map, const key_type& k)
+  {
+    return map.icmap[k] != -1;
+  }
+  friend void put(Is_constrained_map<SMesh>&, const key_type&, const value_type) //no need
+  {}
+};
+
+int get_control_number(poly_vertex_descriptor v, const Is_constrained_map<Polyhedron>& map)
+{
+  std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap.find(v);
+  if(it != map.icmap.end())
+    return it->second;
+  return -1;
+}
+
+int get_control_number(sm_vertex_descriptor v, const Is_constrained_map<SMesh>& map)
+{
+  return get(map.icmap, v);
+}
+
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
+{
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor mesh_hd;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor mesh_fd;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor mesh_ed;
+  typedef typename CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
+    ,CGAL::Default, CGAL::Default, CGAL::Default,
+    Array_based_vertex_point_map<Mesh> > M_Deform_mesh;
+
+
+  Facegraph_selector fs(this);
+  if(fs.get_deform_mesh(mesh)->roi_vertices().empty())
+    return;
+  std::vector<int> constrained_vec(num_vertices(*mesh), -1);
+  std::vector<std::vector<mesh_vd> > control_groups;
+  const Mesh& g = fs.get_deform_mesh(mesh)->halfedge_graph();
+
+  Array_based_vertex_point_map<Mesh> vpmap(&positions, mesh, item->id_setter);
+
+  std::set<mesh_fd> roi_facets;
+  std::set<mesh_vd> roi_vertices(
+    fs.get_deform_mesh(mesh)->roi_vertices().begin(),fs.get_deform_mesh(mesh)->roi_vertices().end());
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  //save the ROI list for after remeshing
+  //create control_groups and save their vertices in property_map
+  int id_group=0;
+  for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data =
+      fs.get_ctrl_vertex_frame_map(mesh).begin();
+      hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
+  {
+    std::vector<mesh_vd> group;
+    BOOST_FOREACH(mesh_vd vd, hgb_data->ctrl_vertices_group)
+    {
+        constrained_vec[item->id_setter->get_id(vd)] = id_group;
+    }
     control_groups.push_back(group);
+    ++id_group;
   }
 
-  ROI_faces_pmap roi_faces_pmap;
-  BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
+  std::map<mesh_fd, std::size_t> patch_map;
+  ROI_faces_pmap<Mesh> roi_faces_pmap(&patch_map, mesh);
+  //initialize face-patch_id map
+  BOOST_FOREACH(mesh_vd v, fs.get_deform_mesh(mesh)->roi_vertices())
   {
-    if(deform_mesh->is_control_vertex(v))
-      constrained_set.insert(v);
-
-    BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
+    BOOST_FOREACH(mesh_fd fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
-      if(fv == boost::graph_traits<Polyhedron>::null_face())
+      if(fv == boost::graph_traits<Mesh>::null_face())
         continue;
       bool add_face=true;
-      BOOST_FOREACH(vertex_descriptor vfd, CGAL::vertices_around_face(halfedge(fv,g),g))
+      BOOST_FOREACH(mesh_vd vfd, CGAL::vertices_around_face(halfedge(fv,g),g))
         if (roi_vertices.count(vfd)==0)
           add_face=false;
       if(add_face)
@@ -649,7 +1000,6 @@ void Scene_edit_polyhedron_item_priv::remesh()
       }
     }
   }
-
   if (roi_facets.empty())
   {
     std::cout << "Remeshing canceled (there is no facet with "
@@ -658,27 +1008,24 @@ void Scene_edit_polyhedron_item_priv::remesh()
     return;
   }
   // set face_index map needed for border_halfedges and isotropic_remeshing
-  boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
-    = get(CGAL::face_index, *item->polyhedron());
   unsigned int id = 0;
 
   // estimate the target_length using the perimeter of the region to remesh
   bool automatic_target_length = !ui_widget->remeshingEdgeLengthInput_checkBox->isChecked();
   double estimated_target_length = 0.;
-  
-    BOOST_FOREACH(face_descriptor f, faces(*item->polyhedron()))
-      put(fim, f, id++);
+  BOOST_FOREACH(mesh_fd f, faces(*mesh))
+      item->id_setter->set_id(f, id++);
 
-    std::set<edge_descriptor> roi_border;
-    CGAL::Polygon_mesh_processing::border_halfedges(roi_facets, g,
-      boost::make_function_output_iterator(halfedge2edge(g, roi_border)));
+  std::set<mesh_ed> roi_border;
+  CGAL::Polygon_mesh_processing::border_halfedges(roi_facets, g,
+                                                  boost::make_function_output_iterator(halfedge2edge<Mesh>(g, roi_border)));
 
   if (automatic_target_length)
   {
     double sum_len = 0.;
-    BOOST_FOREACH(edge_descriptor e, roi_border)
+    BOOST_FOREACH(mesh_ed e, roi_border)
     {
-      halfedge_descriptor h = halfedge(e, g);
+      mesh_hd h = halfedge(e, g);
       sum_len += CGAL::sqrt(CGAL::squared_distance(
                     get(vpmap, source(h, g)), get(vpmap, target(h, g))));
     }
@@ -694,64 +1041,84 @@ void Scene_edit_polyhedron_item_priv::remesh()
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
   std::cout << "Remeshing (target edge length = " << target_length <<")...";
-
-  ROI_border_pmap border_pmap(&roi_border);
+  Is_constrained_map<Mesh> icm(&constrained_vec, mesh);
+  ROI_border_pmap<Mesh> border_pmap(&roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
       roi_facets
     , target_length
-    , *item->polyhedron()
+    , *mesh
     , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
     .protect_constraints(false)
     .vertex_point_map(vpmap)
     .edge_is_constrained_map(border_pmap)
     .face_patch_map(roi_faces_pmap)
-    .vertex_is_constrained_map(Is_constrained_map(&constrained_set))
+    .vertex_is_constrained_map(icm)
     );
   std::cout << "done." << std::endl;
-  poly_item->update_vertex_indices();
-  poly_item->update_facet_indices();
-  poly_item->update_halfedge_indices();
+  fs.update_ids(mesh, true);
   //reset ROI from its outside border roi_border
   item->clear_roi();
   do{
-    item->delete_ctrl_vertices_group(false);
+    if(poly_item)
+      delete_ctrl_vertices_group(poly_item->polyhedron(), false);
+    else
+      delete_ctrl_vertices_group(sm_item->polyhedron(), false);
   }
-  while(!ctrl_vertex_frame_map.empty());
+  while(!fs.get_ctrl_vertex_frame_map(mesh).empty());
 
-  poly_item->update_vertex_indices();
-  poly_item->update_halfedge_indices();
-  delete deform_mesh;
-  deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
-                                Deform_mesh::Vertex_index_map(),
-                                Deform_mesh::Hedge_index_map(),
-                                vpmap);
+  fs.update_ids(mesh, false);
+  delete fs.get_deform_mesh(mesh);
+  fs.set_deform_mesh(mesh, new M_Deform_mesh(*(mesh),
+                                             typename M_Deform_mesh::Vertex_index_map(),
+                                             typename M_Deform_mesh::Hedge_index_map(),
+                                             vpmap));
 
+//fill control_groups
+  id_group = -1;
+  BOOST_FOREACH( mesh_vd v, vertices(*mesh) )
+  {
+    id_group = get_control_number(v, icm);
+    if(id_group == -1)
+      continue;
+    control_groups[id_group].push_back(v);
+  }
+//re-create ctrl_groups
   for(std::size_t i=0; i<control_groups.size() ; i++)
   {
     item->create_ctrl_vertices_group();
-    BOOST_FOREACH(vertex_descriptor vd, control_groups[i]){
-      item->insert_control_vertex(vd);
+    BOOST_FOREACH(mesh_vd vd, control_groups[i]){
+      item->insert_control_vertex<Mesh>(vd, mesh);
     }
   }
 
-  BOOST_FOREACH(face_descriptor f, faces(g))
+  BOOST_FOREACH(mesh_fd f, faces(g))
   {
     if (get(roi_faces_pmap, f) == 0/*false*/)
       continue;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, g), g))
+    BOOST_FOREACH(mesh_hd h, halfedges_around_face(halfedge(f, g), g))
     {
-      vertex_descriptor v = target(h, g);
-      item->insert_roi_vertex(v);
+      mesh_vd v = target(h, g);
+      item->insert_roi_vertex<Mesh>(v, mesh);
     }
     put(roi_faces_pmap, f, 0/*false*/); //reset ids
   }
 
   reset_drawing_data();
-  compute_normals_and_vertices();
+  compute_normals_and_vertices(mesh);
 
-  poly_item->invalidate_aabb_tree(); // invalidate the AABB tree
+  fs.invalidate_aabb_tree(mesh); // invalidate the AABB tree
   QApplication::restoreOverrideCursor();
   Q_EMIT item->itemChanged();
+}
+
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::deform(Mesh* mesh)
+{
+  Facegraph_selector fs(this);
+  for(typename std::list<Control_vertices_data<Mesh> >::iterator it = fs.get_ctrl_vertex_frame_map(mesh).begin();
+      it != fs.get_ctrl_vertex_frame_map(mesh).end(); ++it)
+  { it->set_target_positions(); }
+  fs.get_deform_mesh(mesh)->deform();
 }
 
 void Scene_edit_polyhedron_item::updateDeform()
@@ -776,98 +1143,112 @@ void Scene_edit_polyhedron_item::change()
   d->need_change = true;
   QTimer::singleShot(0, this, SLOT(updateDeform()));
 }
+
+template<typename Mesh>
 struct Is_selected_property_map{
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+
+  Mesh* mesh;
   std::vector<bool>* is_selected_ptr;
   Is_selected_property_map()
-    : is_selected_ptr(NULL) {}
-  Is_selected_property_map(std::vector<bool>& is_selected)
-    : is_selected_ptr( &is_selected) {}
+    : mesh(NULL), is_selected_ptr(NULL) {}
+  Is_selected_property_map(std::vector<bool>& is_selected, Mesh* mesh)
+    : mesh(mesh), is_selected_ptr( &is_selected) {}
 
-  std::size_t id(vertex_descriptor v){ return v->id(); }
+  std::size_t id(mesh_vd v)
+  {
+    Id_setter is(mesh);
+    return is.get_id(v);
+  }
 
-  friend bool get(Is_selected_property_map map, vertex_descriptor v)
+  friend bool get(Is_selected_property_map<Mesh> map, mesh_vd v)
   {
     CGAL_assertion(map.is_selected_ptr!=NULL);
     return (*map.is_selected_ptr)[map.id(v)];
   }
 
-  friend void put(Is_selected_property_map map, vertex_descriptor v, bool b)
+  friend void put(Is_selected_property_map<Mesh> map, mesh_vd v, bool b)
   {
     CGAL_assertion(map.is_selected_ptr!=NULL);
     (*map.is_selected_ptr)[map.id(v)]=b;
   }
 };
-
-void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps, Mesh* mesh)
 {
 
-  std::vector<bool> mark(poly_item->polyhedron()->size_of_vertices(),false);
-
-
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  Facegraph_selector fs(this);
+  Id_setter id_getter(mesh);
+  std::vector<bool> mark(num_vertices(*mesh),false);
 
   bool ctrl_active = ui_widget->CtrlVertRadioButton->isChecked();
-  if (ctrl_active && active_group == ctrl_vertex_frame_map.end() ) return;
+  if (ctrl_active && fs.get_active_group(mesh) == fs.get_ctrl_vertex_frame_map(mesh).end() ) return;
   std::size_t original_size;
   if(ctrl_active)
-    original_size = active_group->ctrl_vertices_group.size();
+    original_size = fs.get_active_group(mesh)->ctrl_vertices_group.size();
   else
-    original_size = deform_mesh->roi_vertices().size();
-  BOOST_FOREACH(vertex_descriptor v,deform_mesh->roi_vertices())
+    original_size = fs.get_deform_mesh(mesh)->roi_vertices().size();
+  BOOST_FOREACH(mesh_vd v,fs.get_deform_mesh(mesh)->roi_vertices())
   {
     if(ctrl_active)
     {
-      if(deform_mesh->is_control_vertex(v))
-        mark[v->id()]=true;
+      if(fs.get_deform_mesh(mesh)->is_control_vertex(v))
+        mark[id_getter.get_id(v)]=true;
     }
     else
     {
-      if(!deform_mesh->is_control_vertex(v))
-        mark[v->id()]=true;
+      if(!fs.get_deform_mesh(mesh)->is_control_vertex(v))
+        mark[id_getter.get_id(v)]=true;
     }
   }
   std::vector<bool> mask = mark;
   if(steps > 0)
   {
     if(ctrl_active)
-      expand_vertex_selection(active_group->ctrl_vertices_group, *poly_item->polyhedron(), steps, Is_selected_property_map(mark),
+      expand_vertex_selection(fs.get_active_group(mesh)->ctrl_vertices_group, *mesh, steps, Is_selected_property_map<Mesh>(mark, mesh),
                             CGAL::Emptyset_iterator());
     else
-      expand_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), steps, Is_selected_property_map(mark),
+      expand_vertex_selection(fs.get_deform_mesh(mesh)->roi_vertices(), *mesh, steps, Is_selected_property_map<Mesh>(mark, mesh),
                             CGAL::Emptyset_iterator());
   }
   else
   {
     if(ctrl_active)
-      reduce_vertex_selection(active_group->ctrl_vertices_group, *poly_item->polyhedron(), -steps, Is_selected_property_map(mark),
+      reduce_vertex_selection(fs.get_active_group(mesh)->ctrl_vertices_group, *mesh, -steps, Is_selected_property_map<Mesh>(mark, mesh),
                               CGAL::Emptyset_iterator());
     else
-      reduce_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), -steps, Is_selected_property_map(mark),
+      reduce_vertex_selection(fs.get_deform_mesh(mesh)->roi_vertices(), *mesh, -steps, Is_selected_property_map<Mesh>(mark, mesh),
                               CGAL::Emptyset_iterator());
   }
 
-  for(Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
+  for(typename boost::graph_traits<Mesh>::vertex_iterator it = vertices(*mesh).begin() ; it != vertices(*mesh).end(); ++it)
   {
     if(ctrl_active)
     {
-      if(mark[it->id()] && !mask[it->id()])
-        item->insert_control_vertex(it);
-      else if(!mark[it->id()] && mask[it->id()])
-        item->erase_control_vertex(it);
+      if(mark[id_getter.get_id(*it)] && !mask[id_getter.get_id(*it)])
+        item->insert_control_vertex<Mesh>(*it, mesh);
+      else if(!mark[id_getter.get_id(*it)] && mask[id_getter.get_id(*it)])
+        item->erase_control_vertex<Mesh>(*it, mesh);
     }
     else
     {
-      if(mark[it->id()] && !mask[it->id()])
-        item->insert_roi_vertex(it);
-      else if(!mark[it->id()] && mask[it->id()])
-        item->erase_roi_vertex(it);
+      if(mark[id_getter.get_id(*it)] && !mask[id_getter.get_id(*it)])
+        item->insert_roi_vertex<Mesh>(*it, mesh);
+      else if(!mark[id_getter.get_id(*it)] && mask[id_getter.get_id(*it)])
+        item->erase_roi_vertex<Mesh>(*it, mesh);
     }
   }
-  if(active_group->ctrl_vertices_group.empty() && ctrl_vertex_frame_map.size()>1)
-    item->delete_ctrl_vertices_group(false);
-
+  if(fs.get_active_group(mesh)->ctrl_vertices_group.empty() && fs.get_ctrl_vertex_frame_map(mesh).size()>1)
+  {
+    if(poly_item)
+      delete_ctrl_vertices_group(poly_item->polyhedron(), false);
+    else
+      delete_ctrl_vertices_group(sm_item->polyhedron(), false);
+  }
   if(
-     (!ctrl_active && deform_mesh->roi_vertices().size() != original_size)
-     || (ctrl_active && active_group->ctrl_vertices_group.size() != original_size)
+     (!ctrl_active && fs.get_deform_mesh(mesh)->roi_vertices().size() != original_size)
+     || (ctrl_active && fs.get_active_group(mesh)->ctrl_vertices_group.size() != original_size)
      )
   { item->invalidateOpenGLBuffers(); Q_EMIT item->itemChanged(); }
 }
@@ -878,7 +1259,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   Mouse_keyboard_state_deformation old_state = d->state;
   ////////////////// TAKE EVENTS /////////////////////
   // key events
-  if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) 
+  if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
   {
     QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
     Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
@@ -892,7 +1273,10 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   {
     QWheelEvent *w_event = static_cast<QWheelEvent*>(event);
     int steps = w_event->delta() / 120;
-    d->expand_or_reduce(steps);
+    if(d->poly_item)
+      d->expand_or_reduce(steps, d->poly_item->polyhedron());
+    else
+      d->expand_or_reduce(steps, d->sm_item->polyhedron());
   }
   if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)
   {
@@ -902,11 +1286,12 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     }
     if(mouse_event->button() == Qt::RightButton) {
       d->state.right_button_pressing = event->type() == QEvent::MouseButtonPress;
-    }    
+    }
   }
   ////////////////// //////////////// /////////////////////
 
-  if(!d->poly_item->visible()) { return false; } // if not visible just update event state but don't do any action
+  if((d->poly_item && !d->poly_item->visible())
+  || (d->sm_item && !d->sm_item->visible())){ return false; } // if not visible just update event state but don't do any action
 
   // check state changes between old and current state
   bool ctrl_pressed_now = d->state.ctrl_pressing && !old_state.ctrl_pressing;
@@ -915,7 +1300,12 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   {// activate a handle manipulated frame
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
-    bool need_repaint = activate_closest_manipulated_frame(p.x(), p.y());
+
+    bool need_repaint;
+    if(d->poly_item)
+      need_repaint = activate_closest_manipulated_frame<Polyhedron>(p.x(), p.y(), polyhedron());
+    else
+      need_repaint = activate_closest_manipulated_frame<SMesh>(p.x(), p.y(), surface_mesh());
 
     if (!d->ui_widget->ActivatePivotingCheckBox->isChecked() &&
         ctrl_released_now && d->ui_widget->RemeshingCheckBox->isChecked())
@@ -936,7 +1326,10 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-      d->compute_normals_and_vertices();
+     if(d->poly_item)
+       d->compute_normals_and_vertices(d->poly_item->polyhedron());
+     else
+       d->compute_normals_and_vertices(d->sm_item->polyhedron());
       d->initializeBuffers(viewer);
     }
     vaos[Scene_edit_polyhedron_item_priv::Edges]->bind();
@@ -944,7 +1337,7 @@ void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer
     attribBuffers(viewer,PROGRAM_NO_SELECTION);
     d->program->bind();
     d->program->setAttributeValue("colors", QColor(0,0,0));
-    viewer->glDrawElements(GL_LINES, (GLsizei) d->edges.size(), GL_UNSIGNED_INT, d->edges.data());
+    viewer->glDrawElements(GL_LINES, (GLsizei) d->_edges.size(), GL_UNSIGNED_INT, d->_edges.data());
     d->program->release();
     vaos[Scene_edit_polyhedron_item_priv::Edges]->release();
 
@@ -964,53 +1357,120 @@ void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer
   }
 }
 void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
-    {
-      d->compute_normals_and_vertices();
-      d->initializeBuffers(viewer);
-    }
-    vaos[Scene_edit_polyhedron_item_priv::Facets]->bind();
-    d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
-    d->program->bind();
-    QColor color = this->color();
-    d->program->setAttributeValue("colors", color);
-    viewer->glDrawElements(GL_TRIANGLES, (GLsizei) d->tris.size(), GL_UNSIGNED_INT, d->tris.data());
-    d->program->release();
-    vaos[Scene_edit_polyhedron_item_priv::Facets]->release();
-    drawEdges(viewer);
-    draw_ROI_and_control_vertices(viewer);
+  if(!are_buffers_filled)
+  {
+    if(d->poly_item)
+      d->compute_normals_and_vertices(d->poly_item->polyhedron());
+    else
+      d->compute_normals_and_vertices(d->sm_item->polyhedron());
+    d->initializeBuffers(viewer);
+  }
+  vaos[Scene_edit_polyhedron_item_priv::Facets]->bind();
+  d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
+  attribBuffers(viewer,PROGRAM_WITH_LIGHT);
+  d->program->bind();
+  QColor color = this->color();
+  d->program->setAttributeValue("colors", color);
+  viewer->glDrawElements(GL_TRIANGLES, (GLsizei) d->tris.size(), GL_UNSIGNED_INT, d->tris.data());
+  d->program->release();
+  vaos[Scene_edit_polyhedron_item_priv::Facets]->release();
+  drawEdges(viewer);
+  draw_ROI_and_control_vertices(viewer);
 
 }
 
-void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* ) const
+template<typename Mesh>
+void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* , Mesh* mesh) const
 {
-    d->pos_frame_plane.resize(15);
-    for(Scene_edit_polyhedron_item_priv::Ctrl_vertices_group_data_list::const_iterator hgb_data = d->ctrl_vertex_frame_map.begin(); hgb_data != d->ctrl_vertex_frame_map.end(); ++hgb_data)
-    {
-          const double diag = scene_diag();
-          qglviewer::Vec base1(1,0,0);
-          qglviewer::Vec base2(0,1,0);
+  d->pos_frame_plane.resize(15);
+  Facegraph_selector fs;
+  for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data = fs.get_ctrl_vertex_frame_map(mesh, d).begin();
+      hgb_data != fs.get_ctrl_vertex_frame_map(mesh, d).end(); ++hgb_data)
+  {
+    const double diag = scene_diag();
+    qglviewer::Vec base1(1,0,0);
+    qglviewer::Vec base2(0,1,0);
 
-          qglviewer::Quaternion orientation=hgb_data->frame->orientation();
-          base1=orientation.rotate(base1);
-          base2=orientation.rotate(base2);
+    qglviewer::Quaternion orientation=hgb_data->frame->orientation();
+    base1=orientation.rotate(base1);
+    base2=orientation.rotate(base2);
 
-          qglviewer::Vec center = hgb_data->calculate_initial_center();
-          qglviewer::Vec p1 = center - diag*base1 - diag*base2;
-          qglviewer::Vec p2 = center + diag*base1 - diag*base2;
-          qglviewer::Vec p3 = center + diag*base1 + diag*base2;
-          qglviewer::Vec p4 = center - diag*base1 + diag*base2;
+    qglviewer::Vec center = hgb_data->calculate_initial_center();
+    qglviewer::Vec p1 = center - diag*base1 - diag*base2;
+    qglviewer::Vec p2 = center + diag*base1 - diag*base2;
+    qglviewer::Vec p3 = center + diag*base1 + diag*base2;
+    qglviewer::Vec p4 = center - diag*base1 + diag*base2;
 
-          d->pos_frame_plane[0] = p1.x ; d->pos_frame_plane[1] = p1.y; d->pos_frame_plane[2] =p1.z ;
-          d->pos_frame_plane[3] = p2.x ; d->pos_frame_plane[4] = p2.y; d->pos_frame_plane[5] =p2.z ;
-          d->pos_frame_plane[6] = p3.x ; d->pos_frame_plane[7] = p3.y; d->pos_frame_plane[8] =p3.z ;
-          d->pos_frame_plane[9] = p4.x ; d->pos_frame_plane[10]= p4.y; d->pos_frame_plane[11] =p4.z ;
-          d->pos_frame_plane[12] = p1.x ; d->pos_frame_plane[13]= p1.y; d->pos_frame_plane[14] =p1.z ;
-    }
+    d->pos_frame_plane[0] = p1.x ; d->pos_frame_plane[1] = p1.y; d->pos_frame_plane[2] =p1.z ;
+    d->pos_frame_plane[3] = p2.x ; d->pos_frame_plane[4] = p2.y; d->pos_frame_plane[5] =p2.z ;
+    d->pos_frame_plane[6] = p3.x ; d->pos_frame_plane[7] = p3.y; d->pos_frame_plane[8] =p3.z ;
+    d->pos_frame_plane[9] = p4.x ; d->pos_frame_plane[10]= p4.y; d->pos_frame_plane[11] =p4.z ;
+    d->pos_frame_plane[12] = p1.x ; d->pos_frame_plane[13]= p1.y; d->pos_frame_plane[14] =p1.z ;
+  }
 }
+void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer, qglviewer::ManipulatedFrame* frame, const qglviewer::Vec &center) const
+{
+  // Draw the axis
+       QGLViewer* viewerB = *QGLViewer::QGLViewerPool().begin();
+       if(frame == viewerB->manipulatedFrame())
+       {
+            GLfloat f_matrix[16];
+            for(int i =0; i<16; i++)
+                f_matrix[i] = frame->matrix()[i];
+            QMatrix4x4 f_mat;
+                for(int i=0; i<16; i++)
+                    f_mat.data()[i] = (float)f_matrix[i];
+            item->vaos[Axis]->bind();
+            program = item->getShaderProgram(Scene_edit_polyhedron_item::PROGRAM_NO_SELECTION);
+            item->attribBuffers(viewer, Scene_edit_polyhedron_item::PROGRAM_NO_SELECTION);
+            program->bind();
+            program->setUniformValue("f_matrix", f_mat);
+            viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));
+            program->release();
+            item->vaos[Axis]->release();
 
+            //QGLViewer::drawAxis(length_of_axis);
+            // draw bbox
+            if(!ui_widget->ActivatePivotingCheckBox->isChecked())
+            {
+                 GLfloat f_matrix[16];
+                 GLfloat trans[3];
+                 GLfloat trans2[3];
 
+                 trans[0] = frame->position().x;
+                 trans[1] = frame->position().y;
+                 trans[2] = frame->position().z;
+
+                 trans2[0] = -center.x;
+                 trans2[1] = -center.y;
+                 trans2[2] = -center.z;
+
+                 for(int i =0; i<16; i++)
+                     f_matrix[i] = frame->orientation().matrix()[i];
+                 QMatrix4x4 f_mat;
+                 QMatrix4x4 mvp_mat;
+
+                 QVector3D vec(trans[0], trans[1], trans[2]);
+                 QVector3D vec2(trans2[0], trans2[1], trans2[2]);
+                 for(int i=0; i<16; i++)
+                     f_mat.data()[i] = (float)f_matrix[i];
+                 GLdouble temp_mat[16];
+                 viewer->camera()->getModelViewProjectionMatrix(temp_mat);
+                 for(int i=0; i<16; i++)
+                     mvp_mat.data()[i] = (float)temp_mat[i];
+                 item->vaos[BBox]->bind();
+                 bbox_program.bind();
+                 bbox_program.setUniformValue("rotations", f_mat);
+                 bbox_program.setUniformValue("translation", vec);
+                 bbox_program.setUniformValue("translation_2", vec2);
+                 bbox_program.setUniformValue("mvp_matrix", mvp_mat);
+                 program->setAttributeValue("colors", QColor(255,0,0));
+                 viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_bbox/3));
+                 bbox_program.release();
+                 item->vaos[BBox]->release();
+            }
+       }
+}
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer) const {
 
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
@@ -1053,69 +1513,24 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
         d->program->release();
         vaos[Scene_edit_polyhedron_item_priv::Control_points]->release();
     }
-    // Draw the axis
-    QGLViewer* viewerB = *QGLViewer::QGLViewerPool().begin();
-    for(Scene_edit_polyhedron_item_priv::Ctrl_vertices_group_data_list::const_iterator hgb_data = d->ctrl_vertex_frame_map.begin(); hgb_data != d->ctrl_vertex_frame_map.end(); ++hgb_data)
+
+    if(d->poly_item)
     {
-         if(hgb_data->frame == viewerB->manipulatedFrame())
-         {
-              GLfloat f_matrix[16];
-              for(int i =0; i<16; i++)
-                  f_matrix[i] = hgb_data->frame->matrix()[i];
-              QMatrix4x4 f_mat;
-                  for(int i=0; i<16; i++)
-                      f_mat.data()[i] = (float)f_matrix[i];
-              vaos[Scene_edit_polyhedron_item_priv::Axis]->bind();
-              d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-              attribBuffers(viewer, PROGRAM_NO_SELECTION);
-              d->program->bind();
-              d->program->setUniformValue("f_matrix", f_mat);
-              viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_axis/3));
-              d->program->release();
-              vaos[Scene_edit_polyhedron_item_priv::Axis]->release();
-
-              //QGLViewer::drawAxis(length_of_axis);
-              // draw bbox
-              if(!d->ui_widget->ActivatePivotingCheckBox->isChecked())
-              {
-                   GLfloat f_matrix[16];
-                   GLfloat trans[3];
-                   GLfloat trans2[3];
-
-                   trans[0] = hgb_data->frame->position().x;
-                   trans[1] = hgb_data->frame->position().y;
-                   trans[2] = hgb_data->frame->position().z;
-
-                   trans2[0] = -hgb_data->frame_initial_center.x;
-                   trans2[1] = -hgb_data->frame_initial_center.y;
-                   trans2[2] = -hgb_data->frame_initial_center.z;
-
-                   for(int i =0; i<16; i++)
-                       f_matrix[i] = hgb_data->frame->orientation().matrix()[i];
-                   QMatrix4x4 f_mat;
-                   QMatrix4x4 mvp_mat;
-
-                   QVector3D vec(trans[0], trans[1], trans[2]);
-                   QVector3D vec2(trans2[0], trans2[1], trans2[2]);
-                   for(int i=0; i<16; i++)
-                       f_mat.data()[i] = (float)f_matrix[i];
-                   GLdouble temp_mat[16];
-                   viewer->camera()->getModelViewProjectionMatrix(temp_mat);
-                   for(int i=0; i<16; i++)
-                       mvp_mat.data()[i] = (float)temp_mat[i];
-                   vaos[Scene_edit_polyhedron_item_priv::BBox]->bind();
-                   d->bbox_program.bind();
-                   d->bbox_program.setUniformValue("rotations", f_mat);
-                   d->bbox_program.setUniformValue("translation", vec);
-                   d->bbox_program.setUniformValue("translation_2", vec2);
-                   d->bbox_program.setUniformValue("mvp_matrix", mvp_mat);
-                   d->program->setAttributeValue("colors", QColor(255,0,0));
-                   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_bbox/3));
-                   d->bbox_program.release();
-                   vaos[Scene_edit_polyhedron_item_priv::BBox]->release();
-              }
-         }
+      for(Ctrl_vertices_poly_group_data_list::const_iterator hgb_data = d->poly_ctrl_vertex_frame_map.begin();
+          hgb_data != d->poly_ctrl_vertex_frame_map.end(); ++hgb_data)
+      {
+        d->draw_ROI_and_control_vertices(viewer, hgb_data->frame, hgb_data->frame_initial_center);
+      }
     }
+    else
+    {
+      for(Ctrl_vertices_sm_group_data_list::const_iterator hgb_data = d->sm_ctrl_vertex_frame_map.begin();
+          hgb_data != d->sm_ctrl_vertex_frame_map.end(); ++hgb_data)
+      {
+        d->draw_ROI_and_control_vertices(viewer, hgb_data->frame, hgb_data->frame_initial_center);
+      }
+    }
+
 
 }
 
@@ -1178,51 +1593,102 @@ Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
   return poly_item_tmp;
 }
 
+Scene_surface_mesh_item* Scene_edit_polyhedron_item::to_sm_item() {
+  Scene_surface_mesh_item* sm_item_tmp = d->sm_item;
+  d->own_poly_item=false;
+  sm_item_tmp->invalidateOpenGLBuffers();
+  return sm_item_tmp;
+}
+
 Polyhedron* Scene_edit_polyhedron_item::polyhedron()       
 { return d->poly_item->polyhedron(); }
 const Polyhedron* Scene_edit_polyhedron_item::polyhedron() const 
 { return d->poly_item->polyhedron(); }
+
+SMesh* Scene_edit_polyhedron_item::surface_mesh()
+{ return d->sm_item->polyhedron(); }
+const SMesh* Scene_edit_polyhedron_item::surface_mesh() const
+{ return d->sm_item->polyhedron(); }
+
+
 QString Scene_edit_polyhedron_item::toolTip() const
 {
-  if(!d->poly_item->polyhedron())
-    return QString();
+  if(d->poly_item)
+  {
+    if(!d->poly_item->polyhedron())
+        return QString();
 
-  return QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
-                     "<p>Number of vertices: %2<br />"
-                     "Number of edges: %3<br />"
-                     "Number of facets: %4</p>")
-    .arg(this->name())
-    .arg(d->poly_item->polyhedron()->size_of_vertices())
-    .arg(d->poly_item->polyhedron()->size_of_halfedges()/2)
-    .arg(d->poly_item->polyhedron()->size_of_facets())
-    .arg(this->renderingModeName())
-    .arg(this->color().name());
+      return QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
+                         "<p>Number of vertices: %2<br />"
+                         "Number of edges: %3<br />"
+                         "Number of facets: %4</p>")
+        .arg(this->name())
+        .arg(d->poly_item->polyhedron()->size_of_vertices())
+        .arg(d->poly_item->polyhedron()->size_of_halfedges()/2)
+        .arg(d->poly_item->polyhedron()->size_of_facets())
+        .arg(this->renderingModeName())
+        .arg(this->color().name());
+  }
+  else
+  {
+    if(!d->sm_item->polyhedron())
+        return QString();
+
+      return QObject::tr("<p>Surface Mesh <b>%1</b> (mode: %5, color: %6)</p>"
+                         "<p>Number of vertices: %2<br />"
+                         "Number of edges: %3<br />"
+                         "Number of facets: %4</p>")
+        .arg(this->name())
+        .arg(num_vertices(*d->sm_item->polyhedron()))
+        .arg(num_halfedges(*d->sm_item->polyhedron())/2)
+        .arg(num_faces(*d->sm_item->polyhedron()))
+        .arg(this->renderingModeName())
+        .arg(this->color().name());
+  }
 }
 bool Scene_edit_polyhedron_item::isEmpty() const {
-  return d->poly_item->isEmpty();
+  if(d->poly_item)
+    return d->poly_item->isEmpty();
+  else
+    return d->sm_item->isEmpty();
 }
 void Scene_edit_polyhedron_item::compute_bbox() const {
-  _bbox = d->poly_item->bbox();
+  if(d->poly_item)
+    _bbox = d->poly_item->bbox();
+  else
+    _bbox = d->sm_item->bbox();
 }
 
 void Scene_edit_polyhedron_item::setVisible(bool b) {
-  d->poly_item->setVisible(b);
+  if(d->poly_item)
+    d->poly_item->setVisible(b);
+  else
+    d->sm_item->setVisible(b);
   Scene_item::setVisible(b);
   if(!b) {
     (*QGLViewer::QGLViewerPool().begin())->setManipulatedFrame(NULL);
   }
 }
 void Scene_edit_polyhedron_item::setColor(QColor c) {
-  d->poly_item->setColor(c);
+  if(d->poly_item)
+    d->poly_item->setColor(c);
+  else
+    d->sm_item->setColor(c);
   Scene_item::setColor(c);
 }
 void Scene_edit_polyhedron_item::setName(QString n) {
   Scene_item::setName(n);
   n.replace(" (edit)", "");
-  d->poly_item->setName(n);
+  if(d->poly_item)
+    d->poly_item->setName(n);
+  else
+    d->sm_item->setName(n);
 }
 void Scene_edit_polyhedron_item::setRenderingMode(RenderingMode m) {
-  d->poly_item->setRenderingMode(m);
+  if(d->poly_item)
+    d->poly_item->setRenderingMode(m);
+  else
+    d->sm_item->setRenderingMode(m);
   Scene_item::setRenderingMode(m);
 }
 Scene_edit_polyhedron_item* Scene_edit_polyhedron_item::clone() const {
@@ -1242,12 +1708,21 @@ void Scene_edit_polyhedron_item::select(
                      dir_x,
                      dir_y,
                      dir_z);
-  d->poly_item->select(orig_x,
-                       orig_y,
-                       orig_z,
-                       dir_x,
-                       dir_y,
-                       dir_z);
+  if(d->poly_item)
+    d->poly_item->select(orig_x,
+                         orig_y,
+                         orig_z,
+                         dir_x,
+                         dir_y,
+                         dir_z);
+  else
+    d->sm_item->select(orig_x,
+                         orig_y,
+                         orig_z,
+                         dir_x,
+                         dir_y,
+                         dir_z);
+
 }
 
 bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
@@ -1266,13 +1741,20 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
 }
 
 
-//#include "Scene_edit_polyhedron_item.moc"
 void Scene_edit_polyhedron_item::update_frame_plane()
 {
-  for(Ctrl_vertices_group_data_list::iterator hgb_data = d->ctrl_vertex_frame_map.begin(); hgb_data != d->ctrl_vertex_frame_map.end(); ++hgb_data)
-  {
-      hgb_data->refresh();
-  }
+  if(d->poly_item)
+    for(Ctrl_vertices_poly_group_data_list::iterator hgb_data = d->poly_ctrl_vertex_frame_map.begin();
+        hgb_data != d->poly_ctrl_vertex_frame_map.end(); ++hgb_data)
+    {
+      hgb_data->refresh(polyhedron());
+    }
+  else
+    for(Ctrl_vertices_sm_group_data_list::iterator hgb_data = d->sm_ctrl_vertex_frame_map.begin();
+        hgb_data != d->sm_ctrl_vertex_frame_map.end(); ++hgb_data)
+    {
+      hgb_data->refresh(surface_mesh());
+    }
 }
 
 
@@ -1328,9 +1810,17 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
     }
   }
 }
-bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group(Ctrl_vertices_group_data_list::iterator& hgb, Ctrl_vertices_group_data_list::iterator& hge)
+
+bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group(Ctrl_vertices_poly_group_data_list::iterator& hgb,
+                                                                  Ctrl_vertices_poly_group_data_list::iterator& hge)
 {
-  hgb = d->ctrl_vertex_frame_map.begin(); hge = d->ctrl_vertex_frame_map.end();
+  hgb = d->poly_ctrl_vertex_frame_map.begin(); hge = d->poly_ctrl_vertex_frame_map.end();
+  return hgb != hge;
+}
+bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group(Ctrl_vertices_sm_group_data_list::iterator& hgb,
+                                                                  Ctrl_vertices_sm_group_data_list::iterator& hge)
+{
+  hgb = d->sm_ctrl_vertex_frame_map.begin(); hge = d->sm_ctrl_vertex_frame_map.end();
   return hgb != hge;
 }
 int Scene_edit_polyhedron_item::get_k_ring()       { return d->k_ring_selector.k_ring; }
@@ -1341,49 +1831,72 @@ void Scene_edit_polyhedron_item::reset_spheres()
   d->spheres = NULL;
 }
 
-void Scene_edit_polyhedron_item::selected(const std::set<Polyhedron::Vertex_handle>& m)
+void Scene_edit_polyhedron_item::selected(const std::set<poly_vertex_descriptor>& m)
 {
   bool any_changes = false;
-  for(std::set<vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
+  for(std::set<poly_vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
   {
-    vertex_descriptor vh = *it;
+    poly_vertex_descriptor vh = *it;
     bool changed = false;
     if(d->ui_widget->ROIRadioButton->isChecked()) {
-      if(d->ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh);}
-      else          { changed = erase_roi_vertex(vh);  }
+      if(d->ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex<Polyhedron>(vh, polyhedron());}
+      else          { changed = erase_roi_vertex<Polyhedron>(vh, polyhedron());  }
     }
     else {
-      if(d->ui_widget->InsertRadioButton->isChecked()) { changed = insert_control_vertex(vh); }
-      else          { changed = erase_control_vertex(vh);  }
+      if(d->ui_widget->InsertRadioButton->isChecked()) { changed = insert_control_vertex<Polyhedron>(vh, polyhedron()); }
+      else          { changed = erase_control_vertex<Polyhedron>(vh, polyhedron());  }
+    }
+    any_changes |= changed;
+  }
+  if(any_changes) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+}
+void Scene_edit_polyhedron_item::selected(const std::set<sm_vertex_descriptor>& m)
+{
+  bool any_changes = false;
+  for(std::set<sm_vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
+  {
+    sm_vertex_descriptor vh = *it;
+    bool changed = false;
+    if(d->ui_widget->ROIRadioButton->isChecked()) {
+      if(d->ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex<SMesh>(vh, surface_mesh());}
+      else          { changed = erase_roi_vertex<SMesh>(vh, surface_mesh());  }
+    }
+    else {
+      if(d->ui_widget->InsertRadioButton->isChecked()) { changed = insert_control_vertex<SMesh>(vh, surface_mesh()); }
+      else          { changed = erase_control_vertex<SMesh>(vh, surface_mesh());  }
     }
     any_changes |= changed;
   }
   if(any_changes) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
 }
 
-bool Scene_edit_polyhedron_item::insert_control_vertex(vertex_descriptor v)
+template<typename Mesh>
+bool Scene_edit_polyhedron_item::insert_control_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh)
 {
   if(!is_there_any_ctrl_vertices_group()) {
     std::cerr<<"There is no group of control vertices, create one!\n";
     return false;
   } // no group of control vertices to insert
 
-  bool inserted = d->deform_mesh->insert_control_vertex(v);
+  Facegraph_selector fs(d);
+  bool inserted = fs.get_deform_mesh(mesh)->insert_control_vertex(v);
   if(inserted) {
-    d->active_group->ctrl_vertices_group.push_back(v);
-    d->active_group->refresh();
+    fs.get_active_group(mesh)->ctrl_vertices_group.push_back(v);
+    fs.get_active_group(mesh)->refresh(mesh);
   }
   return inserted;
 }
-
-bool Scene_edit_polyhedron_item::insert_roi_vertex(vertex_descriptor v)
+template<typename Mesh>
+bool Scene_edit_polyhedron_item::insert_roi_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh)
 {
-  return d->deform_mesh->insert_roi_vertex(v);
+  Facegraph_selector fs(d);
+  return fs.get_deform_mesh(mesh)->insert_roi_vertex(v);
 }
-
-bool Scene_edit_polyhedron_item::erase_control_vertex(vertex_descriptor v)
+template<typename Mesh>
+bool Scene_edit_polyhedron_item::erase_control_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh)
 {
-  if(d->deform_mesh->erase_control_vertex(v)) // API should be safe enough to do that (without checking empty group of control vertices etc.)
+  Facegraph_selector fs(d);
+  if(fs.get_deform_mesh(mesh)->erase_control_vertex(v)) // API should be safe enough to do that (without checking empty group of control vertices etc.)
   {
     refresh_all_group_centers(); // since we don't know which group of control vertices v is erased from, refresh all
     return true;
@@ -1392,34 +1905,58 @@ bool Scene_edit_polyhedron_item::erase_control_vertex(vertex_descriptor v)
   print_message("Selected vertex is not a control vertex!");
   return false;
 }
-
-bool Scene_edit_polyhedron_item::erase_roi_vertex(vertex_descriptor v)
+template<typename Mesh>
+bool Scene_edit_polyhedron_item::erase_roi_vertex(typename boost::graph_traits<Mesh>::vertex_descriptor v, Mesh* mesh)
 {
-  erase_control_vertex(v); // erase control vertex
-  return d->deform_mesh->erase_roi_vertex(v);
+
+  erase_control_vertex(v, mesh); // erase control vertex
+  Facegraph_selector fs(d);
+  return fs.get_deform_mesh(mesh)->erase_roi_vertex(v);
 }
 
 void Scene_edit_polyhedron_item::clear_roi()
 {
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
+  if(d->poly_item)
   {
-    delete it->frame;
+    for(Ctrl_vertices_poly_group_data_list::iterator it = d->poly_ctrl_vertex_frame_map.begin(); it != d->poly_ctrl_vertex_frame_map.end(); ++it)
+    {
+      delete it->frame;
+    }
+    d->poly_ctrl_vertex_frame_map.clear();
+    d->deform_mesh->clear_roi_vertices();
   }
-  d->ctrl_vertex_frame_map.clear();
-  d->deform_mesh->clear_roi_vertices();
-
+  else
+  {
+    for(Ctrl_vertices_sm_group_data_list::iterator it = d->sm_ctrl_vertex_frame_map.begin(); it != d->sm_ctrl_vertex_frame_map.end(); ++it)
+    {
+      delete it->frame;
+    }
+    d->sm_ctrl_vertex_frame_map.clear();
+    d->deform_sm_mesh->clear_roi_vertices();
+  }
   create_ctrl_vertices_group(); // create one new group of control vertices
 }
 
 void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
 {
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it) {
-    if(it->ctrl_vertices_group.empty()) {
-      d->active_group = it;
-      return;
+  if(d->poly_item)
+  {
+    for(Ctrl_vertices_poly_group_data_list::iterator it = d->poly_ctrl_vertex_frame_map.begin(); it != d->poly_ctrl_vertex_frame_map.end(); ++it) {
+      if(it->ctrl_vertices_group.empty()) {
+        d->poly_active_group = it;
+        return;
+      }
     }
   }
-
+  else
+  {
+    for(Ctrl_vertices_sm_group_data_list::iterator it = d->sm_ctrl_vertex_frame_map.begin(); it != d->sm_ctrl_vertex_frame_map.end(); ++it) {
+      if(it->ctrl_vertices_group.empty()) {
+        d->sm_active_group = it;
+        return;
+      }
+    }
+  }
   // No empty group of control vertices
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
@@ -1427,11 +1964,22 @@ void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
   new_frame->setRotationSensitivity(2.0f);
   connect(new_frame, SIGNAL(manipulated()), this, SLOT(change()));
 
-  Control_vertices_data hgd(d->deform_mesh, new_frame);
-  d->ctrl_vertex_frame_map.push_back(hgd);
-  hgd.refresh();
+  if(d->poly_item)
+  {
+    Control_vertices_data<Polyhedron> hgd(d->deform_mesh, new_frame);
+    d->poly_ctrl_vertex_frame_map.push_back(hgd);
+    hgd.refresh(polyhedron());
 
-  d->active_group = --d->ctrl_vertex_frame_map.end();
+    d->poly_active_group = --d->poly_ctrl_vertex_frame_map.end();
+  }
+  else
+  {
+    Control_vertices_data<SMesh> hgd(d->deform_sm_mesh, new_frame);
+    d->sm_ctrl_vertex_frame_map.push_back(hgd);
+    hgd.refresh(surface_mesh());
+
+    d->sm_active_group = --d->sm_ctrl_vertex_frame_map.end();
+  }
 
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
@@ -1439,90 +1987,137 @@ void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
   print_message("A new empty group of control vertices is created.");
 }
 
-void Scene_edit_polyhedron_item::delete_ctrl_vertices_group(bool create_new)
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::delete_ctrl_vertices_group(Mesh* mesh, bool create_new)
 {
-  if(!is_there_any_ctrl_vertices_group()) {
-    print_message("There is no group of control vertices to be deleted!");
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  if(!item->is_there_any_ctrl_vertices_group()) {
+    item->print_message("There is no group of control vertices to be deleted!");
     return;
   } // no group of control vertices
-
+  Facegraph_selector fs(this);
   // delete group representative
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
+  for(typename std::list<Control_vertices_data<Mesh> >::iterator it = fs.get_ctrl_vertex_frame_map(mesh).begin(); it != fs.get_ctrl_vertex_frame_map(mesh).end(); ++it)
   {
-    if(it == d->active_group)
+    if(it == fs.get_active_group(mesh))
     {
       delete it->frame;
-      for(std::vector<vertex_descriptor>::iterator v_it = it->ctrl_vertices_group.begin(); v_it != it->ctrl_vertices_group.end(); ++v_it) {
-        d->deform_mesh->erase_control_vertex(*v_it);
+      for(typename std::vector<mesh_vd>::iterator v_it = it->ctrl_vertices_group.begin(); v_it != it->ctrl_vertices_group.end(); ++v_it) {
+        fs.get_deform_mesh(mesh)->erase_control_vertex(*v_it);
       }
-      d->ctrl_vertex_frame_map.erase(it);
+      fs.get_ctrl_vertex_frame_map(mesh).erase(it);
       break;
     }
   }
 
   // assign another ctrl_vertices_group to active_group
-  Ctrl_vertices_group_data_list::iterator hgb, hge;
-  if( is_there_any_ctrl_vertices_group(hgb, hge) )
+  typename std::list<Control_vertices_data<Mesh> >::iterator hgb, hge;
+  if( item->is_there_any_ctrl_vertices_group(hgb, hge) )
   {
-    d->active_group = hgb;
+    fs.get_active_group(mesh) = hgb;
   } // no group of control vertices
   else if(create_new)
   {
-    create_ctrl_vertices_group();
+    item->create_ctrl_vertices_group();
   }
 }
 
 void Scene_edit_polyhedron_item::prev_ctrl_vertices_group()
 {
-  Ctrl_vertices_group_data_list::iterator hgb, hge;
-  if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
-    print_message("There is no group of control vertices to iterate on!");
-    return;
+  if(d->poly_item)
+  {
+    Ctrl_vertices_poly_group_data_list::iterator hgb, hge;
+    if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
+      print_message("There is no group of control vertices to iterate on!");
+      return;
+    }
+    // shift
+    if(hgb == d->poly_active_group) { d->poly_active_group = --hge; }
+    else                    {--d->poly_active_group; }
   }
-  // shift
-  if(hgb == d->active_group) { d->active_group = --hge; }
-  else                    {--d->active_group; }
+  else
+  {
+    Ctrl_vertices_sm_group_data_list::iterator hgb, hge;
+    if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
+      print_message("There is no group of control vertices to iterate on!");
+      return;
+    }
+    // shift
+    if(hgb == d->sm_active_group) { d->sm_active_group = --hge; }
+    else                    {--d->sm_active_group; }
+  }
 }
 
 void Scene_edit_polyhedron_item::next_ctrl_vertices_group()
 {
-  Ctrl_vertices_group_data_list::iterator hgb, hge;
-  if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
-    print_message("There is no group of control vertices to iterate on!");
-    return;
+  if(d->poly_item)
+  {
+    Ctrl_vertices_poly_group_data_list::iterator hgb, hge;
+    if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
+      print_message("There is no group of control vertices to iterate on!");
+      return;
+    }
+    // shift
+    if(--hge == d->poly_active_group) { d->poly_active_group = hgb; }
+    else                      {++d->poly_active_group; }
   }
-  // shift
-  if(--hge == d->active_group) { d->active_group = hgb; }
-  else                      {++d->active_group; }
+  else
+  {
+    Ctrl_vertices_sm_group_data_list::iterator hgb, hge;
+    if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
+      print_message("There is no group of control vertices to iterate on!");
+      return;
+    }
+    // shift
+    if(--hge == d->sm_active_group) { d->sm_active_group = hgb; }
+    else                      {++d->sm_active_group; }
+  }
+}
+
+void Scene_edit_polyhedron_item::pivoting_begin()
+{
+  if(d->poly_item)
+    d->pivoting_begin(polyhedron());
+  else
+    d->pivoting_begin(surface_mesh());
 }
 
 void Scene_edit_polyhedron_item::pivoting_end()
 {
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
+  if(d->poly_item)
+    d->pivoting_end(polyhedron());
+  else
+    d->pivoting_end(surface_mesh());
+}
+
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::pivoting_end(Mesh* mesh)
+{
+  Facegraph_selector fs(this);
+  for(typename std::list<Control_vertices_data<Mesh> >::iterator it = fs.get_ctrl_vertex_frame_map(mesh).begin(); it != fs.get_ctrl_vertex_frame_map(mesh).end(); ++it)
   {
     //update constraint rotation vector, set only for the last group
     it->rot_direction = it->frame->rotation().rotate( qglviewer::Vec(0.,0.,1.) );
     //translate center of the frame
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     qglviewer::Vec vec= it->frame->position();
-    it->refresh();
+    it->refresh(mesh);
     it->frame_initial_center = vec-offset;
     it->frame->setPosition(vec);
-  }
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
-  {
     it->frame->blockSignals(false);
   }
 }
 
-void Scene_edit_polyhedron_item::pivoting_begin()
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::pivoting_begin(Mesh* mesh)
 {
-  d->is_rot_free=true;
-  d->rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-  d->rot_constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  is_rot_free=true;
+  rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  rot_constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
 
   // just block signals to prevent deformation
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
+  Facegraph_selector fs(this);
+  for(typename std::list<Control_vertices_data<Mesh> >::iterator it = fs.get_ctrl_vertex_frame_map(mesh).begin(); it != fs.get_ctrl_vertex_frame_map(mesh).end(); ++it)
   {
     it->frame->blockSignals(true);
   }
@@ -1532,36 +2127,67 @@ void Scene_edit_polyhedron_item::save_roi(const char* file_name) const
 {
   std::ofstream out(file_name);
   // save roi
-  out << d->deform_mesh->roi_vertices().size() << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, d->deform_mesh->roi_vertices())
+  if(d->poly_item)
   {
-    out << vd->id() << " ";
+    out << d->deform_mesh->roi_vertices().size() << std::endl;
+    BOOST_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
+    {
+      out << vd->id() << " ";
+    }
+  }
+  else
+  {
+    Id_setter id_getter(d->sm_item->polyhedron());
+    out << d->deform_sm_mesh->roi_vertices().size() << std::endl;
+    BOOST_FOREACH(sm_vertex_descriptor vd, d->deform_sm_mesh->roi_vertices())
+    {
+      out << id_getter.get_id(vd) << " ";
+    }
   }
   out << std::endl;
   // save control vertices
+  if(d->poly_item)
+  {
+    out << d->poly_ctrl_vertex_frame_map.size() << std::endl; // control vertices count
+    for(Ctrl_vertices_poly_group_data_list::const_iterator hgb = d->poly_ctrl_vertex_frame_map.begin(); hgb != d->poly_ctrl_vertex_frame_map.end(); ++hgb) {
 
-  out << d->ctrl_vertex_frame_map.size() << std::endl; // control vertices count
-  for(Ctrl_vertices_group_data_list::const_iterator hgb = d->ctrl_vertex_frame_map.begin(); hgb != d->ctrl_vertex_frame_map.end(); ++hgb) {
-
-    out << hgb->ctrl_vertices_group.size() << std::endl;
-    for(std::vector<vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb)
-    {
-      out << (*hb)->id() << " ";
+      out << hgb->ctrl_vertices_group.size() << std::endl;
+      for(std::vector<poly_vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb)
+      {
+        out << (*hb)->id() << " ";
+      }
+      out << std::endl;
     }
-    out << std::endl;
+  }
+  else
+  {
+    Id_setter id_getter(d->sm_item->polyhedron());
+    out << d->sm_ctrl_vertex_frame_map.size() << std::endl; // control vertices count
+    for(Ctrl_vertices_sm_group_data_list::const_iterator hgb = d->sm_ctrl_vertex_frame_map.begin(); hgb != d->sm_ctrl_vertex_frame_map.end(); ++hgb) {
+
+      out << hgb->ctrl_vertices_group.size() << std::endl;
+      for(std::vector<sm_vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb)
+      {
+        out << id_getter.get_id(*hb) << " ";
+      }
+      out << std::endl;
+    }
   }
 }
 
-void Scene_edit_polyhedron_item::read_roi(const char* file_name)
+template<typename Mesh>
+void Scene_edit_polyhedron_item_priv::read_roi(const char* file_name, Mesh* mesh)
 {
-  clear_roi();
-  delete_ctrl_vertices_group(false);
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  typedef typename boost::graph_traits<Mesh>::vertex_iterator mesh_vi;
 
+  Facegraph_selector fs(this);
+  delete_ctrl_vertices_group(mesh, false);
   // put vertices to vector
-  std::vector<vertex_descriptor> all_vertices;
-  all_vertices.reserve(num_vertices(d->deform_mesh->halfedge_graph()));
-  vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(d->deform_mesh->halfedge_graph()); vb != ve; ++vb) {
+  std::vector<mesh_vd> all_vertices;
+  all_vertices.reserve(num_vertices(fs.get_deform_mesh(mesh)->halfedge_graph()));
+  mesh_vi vb, ve;
+  for(boost::tie(vb, ve) = vertices(fs.get_deform_mesh(mesh)->halfedge_graph()); vb != ve; ++vb) {
     all_vertices.push_back(*vb);
   }
   // read roi
@@ -1572,93 +2198,161 @@ void Scene_edit_polyhedron_item::read_roi(const char* file_name)
   {
     std::size_t v_id;
     in >> v_id;
-    insert_roi_vertex(all_vertices[v_id]);
+    item->insert_roi_vertex<Mesh>(all_vertices[v_id], mesh);
+
   }
   // read control vertices
   int ctrl_vertices_group_size;
   in >> ctrl_vertices_group_size;
   while(ctrl_vertices_group_size-- > 0)
   {
-    create_ctrl_vertices_group();
+    item->create_ctrl_vertices_group();
     int ctrl_size;
     in >> ctrl_size;
     while(ctrl_size-- > 0)
     {
       std::size_t v_id;
       in >> v_id;
-      insert_control_vertex(all_vertices[v_id]);
+      item->insert_control_vertex<Mesh>(all_vertices[v_id], mesh);
     }
   }
 }
 
+void Scene_edit_polyhedron_item::read_roi(const char* file_name)
+{
+  if(d->poly_item)
+    d->read_roi(file_name, polyhedron());
+  else
+    d->read_roi(file_name, surface_mesh());
+}
+
 void Scene_edit_polyhedron_item::overwrite_deform_object()
 {
-  d->deform_mesh->overwrite_initial_geometry();
+  if(d->poly_item)
+    d->deform_mesh->overwrite_initial_geometry();
+  else
+    d->deform_sm_mesh->overwrite_initial_geometry();
 
   refresh_all_group_centers();
 }
 
 void Scene_edit_polyhedron_item::reset_deform_object()
 {
-  d->deform_mesh->reset();
+  if(d->poly_item)
+    d->deform_mesh->reset();
+  else
+    d->deform_sm_mesh->reset();
   refresh_all_group_centers();
 }
 
-
 boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_component() {
-  Travel_isolated_components::Minimum_visitor visitor;
-  Travel_isolated_components().travel<Vertex_handle>
-    (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
-     polyhedron()->size_of_vertices(), Is_selected(d->deform_mesh), visitor);
-  return visitor.minimum;
+  if(d->poly_item)
+  {
+    Travel_isolated_components<Polyhedron>::Minimum_visitor visitor;
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<poly_vertex_descriptor>
+        (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
+         polyhedron()->size_of_vertices(), Is_selected<Polyhedron>(d->deform_mesh), visitor);
+    return visitor.minimum;
+  }
+  else
+  {
+    Travel_isolated_components<SMesh>::Minimum_visitor visitor;
+    Travel_isolated_components<SMesh>(*surface_mesh()).travel<sm_vertex_descriptor>
+        (vertices(*surface_mesh()).first, vertices(*surface_mesh()).second,
+         num_vertices(*surface_mesh()), Is_selected<SMesh>(d->deform_sm_mesh), visitor);
+    return visitor.minimum;
+  }
 }
 
 
-
 boost::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_components(std::size_t threshold) {
-  typedef boost::function_output_iterator<Select_roi_output> Output_iterator;
-  Output_iterator out(d->deform_mesh);
+  if(d->poly_item)
+  {
+    typedef boost::function_output_iterator<Select_roi_output<Polyhedron> > Output_iterator;
+    Output_iterator out(d->deform_mesh);
 
-  Travel_isolated_components::Selection_visitor<Output_iterator> visitor(threshold, out);
-  Travel_isolated_components().travel<Vertex_handle>
-    (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
-    polyhedron()->size_of_vertices(), Is_selected(d->deform_mesh), visitor);
+    Travel_isolated_components<Polyhedron>::Selection_visitor<Output_iterator> visitor(threshold, out);
+    Travel_isolated_components<Polyhedron>(*polyhedron()).travel<poly_vertex_descriptor>
+        (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
+         polyhedron()->size_of_vertices(), Is_selected<Polyhedron>(d->deform_mesh), visitor);
 
-  if(visitor.any_inserted) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
-  return visitor.minimum_visitor.minimum;
+    if(visitor.any_inserted) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+    return visitor.minimum_visitor.minimum;
+  }
+  else
+  {
+    typedef boost::function_output_iterator<Select_roi_output<SMesh> > Output_iterator;
+    Output_iterator out(d->deform_sm_mesh);
+
+    Travel_isolated_components<SMesh>::Selection_visitor<Output_iterator> visitor(threshold, out);
+    Travel_isolated_components<SMesh>(*surface_mesh()).travel<sm_vertex_descriptor>
+        (vertices(*surface_mesh()).first, vertices(*surface_mesh()).second,
+         num_vertices(*surface_mesh()), Is_selected<SMesh>(d->deform_sm_mesh), visitor);
+
+    if(visitor.any_inserted) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+    return visitor.minimum_visitor.minimum;
+  }
 }
 
 bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group()
 {
-  Ctrl_vertices_group_data_list::iterator hgb, hge;
-  return is_there_any_ctrl_vertices_group(hgb, hge);
+  if(d->poly_item)
+  {
+    Ctrl_vertices_poly_group_data_list::iterator hgb, hge;
+    return is_there_any_ctrl_vertices_group(hgb, hge);
+  }
+  if(d->sm_item)
+  {
+    Ctrl_vertices_sm_group_data_list::iterator hgb, hge;
+    return is_there_any_ctrl_vertices_group(hgb, hge);
+  }
+  return false;
 }
 
 bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices()
 {
-  Ctrl_vertices_group_data_list::iterator hgb, hge;
-  if(!is_there_any_ctrl_vertices_group(hgb, hge)) { return false; } // there isn't any group of control vertices
-
-  for(; hgb != hge; ++hgb) // check inside groups of control vertices
+  if(d->poly_item)
   {
-    if(!hgb->ctrl_vertices_group.empty()) { return true; }
+    Ctrl_vertices_poly_group_data_list::iterator hgb, hge;
+    if(!is_there_any_ctrl_vertices_group(hgb, hge)) { return false; } // there isn't any group of control vertices
+
+    for(; hgb != hge; ++hgb) // check inside groups of control vertices
+    {
+      if(!hgb->ctrl_vertices_group.empty()) { return true; }
+    }
+  }
+  else
+  {
+    Ctrl_vertices_sm_group_data_list::iterator hgb, hge;
+    if(!is_there_any_ctrl_vertices_group(hgb, hge)) { return false; } // there isn't any group of control vertices
+
+    for(; hgb != hge; ++hgb) // check inside groups of control vertices
+    {
+      if(!hgb->ctrl_vertices_group.empty()) { return true; }
+    }
   }
   return false;
 }
 
 void Scene_edit_polyhedron_item::refresh_all_group_centers()
 {
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
-  { it->refresh(); }
+  if(d->poly_item)
+    for(Ctrl_vertices_poly_group_data_list::iterator it = d->poly_ctrl_vertex_frame_map.begin(); it != d->poly_ctrl_vertex_frame_map.end(); ++it)
+    { it->refresh(polyhedron()); }
+  else
+    for(Ctrl_vertices_sm_group_data_list::iterator it = d->sm_ctrl_vertex_frame_map.begin(); it != d->sm_ctrl_vertex_frame_map.end(); ++it)
+    { it->refresh(surface_mesh()); }
 }
 
-bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y)
+template<typename Mesh>
+bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y, Mesh* mesh)
 {
+  Facegraph_selector fs(d);
   if(d->state.ctrl_pressing && (d->state.left_button_pressing || d->state.right_button_pressing) )
   { // user is deforming currently don't change the state
     return false;
   }
-  if(d->ctrl_vertex_frame_map.empty()) { return false; }
+  if(fs.get_ctrl_vertex_frame_map(mesh).empty()) { return false; }
 
   d->rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
   d->rot_constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
@@ -1675,11 +2369,11 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
   }
 
   // now find closest frame and make it active manipulated frame
-  Ctrl_vertices_group_data_list::iterator min_it = d->ctrl_vertex_frame_map.begin();
+  typename std::list<Control_vertices_data<Mesh> >::iterator min_it = fs.get_ctrl_vertex_frame_map(mesh).begin();
   const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->frame->position());
   float min_dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
 
-  for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
+  for(typename std::list<Control_vertices_data<Mesh> >::iterator it = fs.get_ctrl_vertex_frame_map(mesh).begin(); it != fs.get_ctrl_vertex_frame_map(mesh).end(); ++it)
   {
     const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->frame->position());
     float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
@@ -1711,20 +2405,95 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
   if(viewer->manipulatedFrame() == min_it->frame)
   { return false; }
   viewer->setManipulatedFrame(min_it->frame);
-  d->active_group = min_it;
+  fs.get_active_group(mesh) = min_it;
   return true;
 }
 
 void Scene_edit_polyhedron_item::update_normals() {
-  BOOST_FOREACH(vertex_descriptor vd, d->deform_mesh->roi_vertices())
+  if(d->poly_item)
   {
-    std::size_t id = vd->id();
-    const Polyhedron::Traits::Vector_3& n =
-      CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, d->deform_mesh->halfedge_graph());
-    d->normals[id*3] = n.x();
-    d->normals[id*3+1] = n.y();
-    d->normals[id*3+2] = n.z();
+    BOOST_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
+    {
+      std::size_t id = vd->id();
+      const Polyhedron::Traits::Vector_3& n =
+          CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, d->deform_mesh->halfedge_graph());
+      d->normals[id*3] = n.x();
+      d->normals[id*3+1] = n.y();
+      d->normals[id*3+2] = n.z();
 
+    }
+  }
+  else
+  {
+    BOOST_FOREACH(sm_vertex_descriptor vd, d->deform_sm_mesh->roi_vertices())
+    {
+      std::size_t id = id_setter->get_id(vd);
+      const Polyhedron::Traits::Vector_3& n =
+          CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, d->deform_sm_mesh->halfedge_graph());
+      d->normals[id*3] = n.x();
+      d->normals[id*3+1] = n.y();
+      d->normals[id*3+2] = n.z();
+
+    }
   }
 }
 
+bool Scene_edit_polyhedron_item::hasPolyhedronItem()const
+{
+ if(d->poly_item)
+   return true;
+ return false;
+
+}
+
+
+void Scene_edit_polyhedron_item::set_all_vertices_as_roi()
+{
+  if(d->poly_item)
+  {
+    poly_vertex_iterator vb, ve;
+    for(boost::tie(vb, ve) = vertices(*polyhedron()); vb != ve; ++vb)
+    {
+      insert_roi_vertex<Polyhedron>(*vb, polyhedron());
+    }
+  }
+  else
+  {
+    boost::graph_traits<SMesh>::vertex_iterator vb, ve;
+    for(boost::tie(vb, ve) = vertices(*surface_mesh()); vb != ve; ++vb)
+    {
+      insert_roi_vertex<SMesh>(*vb, surface_mesh());
+    }
+  }
+}
+
+void Scene_edit_polyhedron_item::delete_ctrl_vertices_group(bool create_new)
+{
+ if(d->poly_item)
+   d->delete_ctrl_vertices_group(polyhedron(), create_new);
+ else
+   d->delete_ctrl_vertices_group(surface_mesh(), create_new);
+
+}
+
+bool Scene_edit_polyhedron_item::insert_roi_vertex(poly_vertex_descriptor vh)
+{
+
+  return insert_roi_vertex<Polyhedron>(vh, polyhedron());
+}
+
+bool Scene_edit_polyhedron_item::insert_roi_vertex(sm_vertex_descriptor vh)
+{
+
+  return insert_roi_vertex<SMesh>(vh, surface_mesh());
+}
+
+Scene_polyhedron_item* Scene_edit_polyhedron_item::poly_item()const
+{
+  return d->poly_item;
+}
+
+Scene_surface_mesh_item* Scene_edit_polyhedron_item::sm_item()const
+{
+  return d->sm_item;
+}

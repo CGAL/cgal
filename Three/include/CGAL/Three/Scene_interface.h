@@ -65,61 +65,6 @@ namespace Three{
 class Scene_interface {
 public:
   typedef CGAL::Bbox_3 Bbox;
-    //!Contains the coordinates for the two extremities of the diagonal of a bounding box.
-    //! Those points are respectively the left bottom front vertex and the right upper back vertex.
- /* struct Bbox {
-    double xmin, ymin, zmin;
-    double xmax, ymax, zmax;
-    Bbox(const double _xmin,const double _ymin,const double _zmin,
-         const double _xmax,const double _ymax,const double _zmax)
-      : xmin(_xmin), ymin(_ymin), zmin(_zmin),
-        xmax(_xmax), ymax(_ymax), zmax(_zmax)
-    {
-    }
-
-    //!The default constructor of a bounding box.
-    //! The two vertices are (0.0,0.0,0.0) and (1.0,1.0,1.0).
-    Bbox()
-      : xmin(0.0), ymin(0.0), zmin(0.0),
-        xmax(1.0), ymax(1.0), zmax(1.0)
-    {
-    }
-    //!Sums the coordinates of each vertex one by one.
-    Bbox operator+(const Bbox& b) const {
-      return Bbox((std::min)(xmin, b.xmin),
-                  (std::min)(ymin, b.ymin),
-                  (std::min)(zmin, b.zmin),
-                  (std::max)(xmax, b.xmax),
-                  (std::max)(ymax, b.ymax),
-                  (std::max)(zmax, b.zmax));
-    }
-
-    //!@returns true if all the coordinates of the two bounding boxes are the same.
-    bool operator==(const Bbox&b) const{
-      return
-        xmin==b.xmin && xmax==b.xmax &&
-        ymin==b.ymin && ymax==b.ymax &&
-        zmin==b.zmin && zmax==b.zmax;
-    }
-    //!@returns the opposite of ==.
-    //!@see #operator==
-    bool operator!=(const Bbox& b) const{
-      return !(*this == b);
-    }
-    //!@returns the difference between xmax and xmin.
-    double width() const { return xmax-xmin; }
-    //!@returns the difference between ymax and ymin.
-    double height() const { return ymax-ymin; }
-    //!@returns the difference between zmax and zmin.
-    double depth() const { return zmax-zmin; }
-    //!@returns the length of the diagonal of the bounding box.
-    double diagonal_length() const
-    {
-      return CGAL::sqrt((xmax()-xmin())*(xmax()-xmin()) + (ymax()-ymin())*(ymax()-ymin()) + (zmax()-zmin())*(zmax()-zmin()));
-    }
-
-  }; // struct BBox (ad hoc class, does not depend on CGAL kernels
-*/
   //!Integer used as the index of a Scene_item.
   typedef int Item_id;
   //!Virtual destructor
@@ -168,7 +113,6 @@ public:
   //!
   //!@returns the index of the Item_B
   virtual Item_id selectionBindex() const = 0;
-
   //!
   //!@returns the scene bounding box
   virtual Bbox bbox() const = 0;

@@ -5,8 +5,6 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <queue>
 
 #include <QColor>

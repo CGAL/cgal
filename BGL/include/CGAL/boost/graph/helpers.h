@@ -751,6 +751,20 @@ void clear(FaceGraph& g)
   CGAL_postcondition(num_faces(g) == 0);
 }
 
+
+template <typename FaceGraph>
+typename boost::graph_traits<FaceGraph>::degree_size_type
+face_degree(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
+{
+  typename boost::graph_traits<FaceGraph>::degree_size_type res = 0;
+  typename boost::graph_traits<FaceGraph>::halfedge_descriptor done = hd;
+  do {
+    ++res;
+    hd = next(hd,g);
+  }while(! (hd == done));
+  return res;
+}
+
 } // namespace CGAL
 
 // Include "Euler_operations.h" at the end, because its implementation
