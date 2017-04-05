@@ -221,18 +221,6 @@ QString CGAL::Three::Scene_item::computeStats(int )
   return QString();
 }
 
-/*void CGAL::Three::Scene_item::printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*)
-{
-}
-
-void CGAL::Three::Scene_item::printPrimitiveIds(CGAL::Three::Viewer_interface*)const
-{
-}*/
-bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)
-{
-    return false;
-}
-
 #include <CGAL/double.h>
 
 void CGAL::Three::Scene_item::compute_diag_bbox()const

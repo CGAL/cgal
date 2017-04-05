@@ -123,9 +123,10 @@ public:
     //! @returns `true` if the item has multiple colors at the same time.
     bool isItemMulticolor();
 
-    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer) Q_DECL_OVERRIDE;
-    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const Q_DECL_OVERRIDE;
-    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
+    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) constQ_DECL_OVERRIDE;
+    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+
 
     //! @returns `true` if `f` is the first facet intersected by a raytracing
     bool intersect_face(double orig_x,

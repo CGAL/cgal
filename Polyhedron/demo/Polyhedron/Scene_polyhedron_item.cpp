@@ -1853,7 +1853,7 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
   d->all_ids_displayed = !d->all_ids_displayed;
 }
 
-bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
+bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   Kernel::Point_3 src(x - offset.x,

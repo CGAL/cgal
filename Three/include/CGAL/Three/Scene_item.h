@@ -201,16 +201,6 @@ public:
    return _diag_bbox;
   }
 
-  //! Finds the spot the closest to `point` and prints the id of the corresponding Primitive (vertex, edge or face).
-  //virtual void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*);
-  //! Prints all the primitive ids if their number is not too high. The limit is
-  //! editable in the View menu of the application.
-  //virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const;
-  //! \brief Tests if an id should be displayed or not.
-  //!
-  //! Taken the coordinates of a 3D point, performs a ray shooting to verify
-  //! that the point is not hidden by a face.
-  virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*);
   // Function about manipulation
   //! Returns true if the item has a ManipulatedFrame.
   //! @see manipulatedFrame()

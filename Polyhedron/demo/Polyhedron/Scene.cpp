@@ -1176,9 +1176,12 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
 bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
     CGAL::Three::Scene_item *i = item(mainSelectionIndex());
-    if(i && i->visible())
+    if(!i)
+      return false;
+    Scene_print_item_interface* spit= qobject_cast<Scene_print_item_interface*>(i);
+    if(spit && i->visible())
     {
-        bool res = i->testDisplayId(x,y,z, viewer);
+        bool res = spit->testDisplayId(x,y,z, viewer);
         return res;
     }
     else
