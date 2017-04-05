@@ -31,7 +31,14 @@ enum halfedge_is_feature_t      { halfedge_is_feature };
 enum vertex_selection_t         { vertex_selection};
 enum edge_selection_t           { edge_selection};
 enum face_selection_t           { face_selection};
-enum vertex_incident_patches_t  { vertex_incident_patches};
+enum vertex_time_stamp_t        { vertex_time_stamp};
+enum halfedge_time_stamp_t      { halfedge_time_stamp};
+enum face_time_stamp_t          { face_time_stamp};
+
+template <typename ID>
+struct vertex_incident_patches_t {
+  typedef ID type;
+};
 
 template <typename ID>
 struct face_patch_id_t {

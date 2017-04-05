@@ -165,11 +165,9 @@ detect_surface_patches(Polyhedron& polyhedron)
 {
   // Initialize unsorted_faces
   face_descriptor_set unsorted_faces;
-  for ( typename boost::graph_traits<Polyhedron>::face_iterator fit = faces(polyhedron).begin(),
-       end = faces(polyhedron).end() ; fit != end ; ++fit )
+  BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(polyhedron))
   {
-
-    unsorted_faces.insert(*fit);
+    unsorted_faces.insert(fd);
   }
   
   // Flood
@@ -194,8 +192,8 @@ detect_vertices_incident_patches(Polyhedron& polyhedron)
 {
   typename boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
       = get(halfedge_is_feature,polyhedron);
-  typedef typename boost::property_map<Polyhedron,vertex_incident_patches_t>::type VIP_map;
-   VIP_map vip = get(vertex_incident_patches,polyhedron);
+  typedef typename boost::property_map<Polyhedron,vertex_incident_patches_t<Patch_id> >::type VIP_map;
+  VIP_map vip = get(vertex_incident_patches_t<Patch_id>(),polyhedron);
 
   BOOST_FOREACH(vertex_descriptor vit,vertices(polyhedron))
   {

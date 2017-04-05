@@ -97,12 +97,12 @@ struct Surface_patch_index_generator
 template < typename Subdomain_index, typename Polyhedron >
 struct Surface_patch_index_generator<Subdomain_index, Polyhedron, CGAL::Tag_true>
 {
-  typedef typename Polyhedron::Face::Patch_id Surface_patch_index;
+  typedef typename Polyhedron::Face::Patch_id Surface_patch_index; // AF: change for Surface_mesh
   typedef Surface_patch_index   type;
 
   template < typename Primitive_id >
   Surface_patch_index operator()(const Primitive_id& primitive_id)
-  { return primitive_id->patch_id(); }
+  { return primitive_id->patch_id(); } // AF partial specialization for GwDwG ??
 };
 
 

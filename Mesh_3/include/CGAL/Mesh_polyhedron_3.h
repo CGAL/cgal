@@ -217,6 +217,27 @@ struct Mesh_polyhedron_3
   typedef type Type;
 };
 
+template<typename Polyhedron, typename Handle>
+struct Time_stamp_pmap
+{
+  typedef std::size_t&                   reference;
+  typedef std::size_t                    value_type;
+  typedef Handle                         key_type;
+  typedef boost::writable_property_map_tag category;
+
+  friend std::size_t get(const Time_stamp_pmap&, key_type h)
+  {
+    return h->time_stamp();
+  }
+  
+  friend void put(const Time_stamp_pmap&, key_type h,
+                        std::size_t ts)
+  {
+     h->set_time_stamp(ts);
+  }
+
+};
+
 
 template <typename Gt, typename Patch_id>
 struct Patch_id_pmap {
@@ -243,7 +264,7 @@ struct Patch_id_pmap {
 
 template <typename Gt, typename Patch_id>
 inline Patch_id_pmap<Gt,Patch_id> 
-get(CGAL::face_patch_id_t,
+get(CGAL::face_patch_id_t<Patch_id>,
     const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
 {
   return Patch_id_pmap<Gt,Patch_id>();
@@ -328,7 +349,7 @@ struct vertex_incident_patches_pmap {
 
 template <typename Gt, typename Patch_id>
 inline vertex_incident_patches_pmap<Gt,Patch_id>
-get(CGAL::vertex_incident_patches_t,
+get(CGAL::vertex_incident_patches_t<Patch_id>,
     const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
 {
   return vertex_incident_patches_pmap<Gt,Patch_id>();
@@ -339,7 +360,7 @@ get(CGAL::vertex_incident_patches_t,
 namespace boost {
 
   template <typename Gt, typename Patch_id>
-  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::face_patch_id_t>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::face_patch_id_t<Patch_id> >
   {
     typedef CGAL::Patch_id_pmap<Gt,Patch_id> type;
   };
@@ -355,10 +376,34 @@ namespace boost {
   {
     typedef CGAL::Is_feature_pmap<Gt,Patch_id> type;
   };
+
   template <typename Gt, typename Patch_id>
-  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::vertex_incident_patches_t>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::vertex_incident_patches_t<Patch_id> >
   {
     typedef CGAL::vertex_incident_patches_pmap<Gt,Patch_id> type;
+  };
+
+  template <typename Gt, typename Patch_id>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::vertex_time_stamp_t>
+  {
+    typedef CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> > Graph;
+    typedef CGAL::Time_stamp_pmap<Graph, typename boost::graph_traits<Graph>::vertex_descriptor> type;
+  };
+
+
+  template <typename Gt, typename Patch_id>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::halfedge_time_stamp_t>
+  {
+    typedef CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> > Graph;
+    typedef CGAL::Time_stamp_pmap<Graph, typename boost::graph_traits<Graph>::halfedge_descriptor> type;
+  };
+
+
+  template <typename Gt, typename Patch_id>
+  struct property_map<CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> >, CGAL::face_time_stamp_t>
+  {
+    typedef CGAL::Polyhedron_3<Gt, CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id> > Graph;
+    typedef CGAL::Time_stamp_pmap<Graph, typename boost::graph_traits<Graph>::face_descriptor> type;
   };
 } // namespace boost
 
