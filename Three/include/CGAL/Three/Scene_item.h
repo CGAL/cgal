@@ -321,6 +321,9 @@ public Q_SLOTS:
   }
   
   //!Emits an aboutToBeDestroyed() signal.
+  //!Override this function to delete what needs to be deleted on destruction.
+  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
+  //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   //!Selects a point through raycasting.
@@ -330,6 +333,8 @@ public Q_SLOTS:
                       double dir_x,
                       double dir_y,
                       double dir_z);
+
+
 
 Q_SIGNALS:
   //! Is emitted to notify a change in the item's data.

@@ -281,8 +281,15 @@ struct Scene_c3t3_item_priv {
   }
   ~Scene_c3t3_item_priv()
   {
-     delete frame;
-    delete tet_Slider;
+    c3t3.clear();
+    tree.clear();
+    if(frame)
+    {
+      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
+      delete frame;
+      frame = NULL;
+      delete tet_Slider;
+    }
   }
 
   void init_default_values() {
@@ -520,7 +527,11 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
 
 Scene_c3t3_item::~Scene_c3t3_item()
 {
-  delete d;
+  if(d)
+  {
+    delete d;
+    d = NULL;
+  }
 }
 
 
@@ -562,12 +573,16 @@ Scene_c3t3_item::c3t3()
 void
 Scene_c3t3_item::changed()
 {
+  if(!d)
+    return;
   d->need_changed = true;
   QTimer::singleShot(0,this, SLOT(updateCutPlane()));
 }
 
 void Scene_c3t3_item::updateCutPlane()
 { // just handle deformation - paint like selection is handled in eventFilter()
+  if(!d)
+    return;
   if(d->need_changed) {
     d->are_intersection_buffers_filled = false;
     d->need_changed = false;
@@ -1704,7 +1719,10 @@ void Scene_c3t3_item::reset_spheres()
   d->spheres = NULL;
 }
 CGAL::Three::Scene_item::ManipulatedFrame* Scene_c3t3_item::manipulatedFrame() {
-  return d->frame;
+  if(d)
+    return d->frame;
+  else
+    return NULL;
 }
 
 void Scene_c3t3_item::setPosition(float x, float y, float z) {
@@ -1988,6 +2006,30 @@ void Scene_c3t3_item::invalidateOpenGLBuffers()
 }
 void Scene_c3t3_item::resetCutPlane()
 {
+  if(!d)
+    return;
  d->reset_cut_plane();
 }
+
+void Scene_c3t3_item::itemAboutToBeDestroyed(Scene_item *item)
+{
+  Scene_item::itemAboutToBeDestroyed(item);
+
+  if(d && item == this)
+  {
+    d->c3t3.clear();
+    d->tree.clear();
+    if(d->frame)
+    {
+      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
+      delete d->frame;
+      d->frame = NULL;
+      delete d->tet_Slider;
+    }
+    delete d;
+    d=0;
+  }
+
+}
+
 #include "Scene_c3t3_item.moc"
