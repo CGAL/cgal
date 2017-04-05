@@ -175,7 +175,7 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
 If CMake is not installed already you can obtain it from <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A>.
-CMake version 2.8.11 or higher is required.
+CMake version 3.1 or higher is required.
 This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
 CMake documentation at <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A> for further details.
