@@ -38,6 +38,9 @@ do
 	        exit 1
 	  fi
 	  echo "Matrix is up to date."
+    cd .travis
+    ./generate_travis.sh -c
+    cd ..
     exit 0
 	fi
 	EXAMPLES="$ARG/examples/$ARG"
@@ -132,3 +135,8 @@ do
     make -j2
   fi  
 done
+
+# Local Variables:
+# tab-width: 2
+# sh-basic-offset: 2
+# End:
