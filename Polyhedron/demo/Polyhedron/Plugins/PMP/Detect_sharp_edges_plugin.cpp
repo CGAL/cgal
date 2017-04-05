@@ -120,7 +120,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   // Detect edges
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
-  typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t>::type PatchID;
+  typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchID;
   Q_FOREACH(Poly_tuple tuple, polyhedrons)
   {
     Scene_facegraph_item* item =
@@ -128,7 +128,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     FaceGraph* pMesh = tuple.second;
     if (!pMesh) continue;
 
-    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<FaceGraph, PatchID> detect_features(get(CGAL::face_patch_id_t(),*pMesh));
+    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<FaceGraph, PatchID> detect_features(get(CGAL::face_patch_id_t<int>(),*pMesh));
     // Get sharp features
     detect_features.detect_sharp_edges(*pMesh, angle);
     detect_features.detect_surface_patches(*pMesh);

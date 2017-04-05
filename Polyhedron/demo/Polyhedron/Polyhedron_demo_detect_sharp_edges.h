@@ -2,7 +2,7 @@
 #ifndef POLYHEDRON_DEMO_DETECT_SHARP_EDGES_H
 #define POLYHEDRON_DEMO_DETECT_SHARP_EDGES_H
 
-#include <CGAL/Polygon_mesh_processing//Detect_features_in_polyhedra.h>
+#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
 #include <CGAL/Polygon_mesh_processing/properties.h>
 
 namespace CGAL
@@ -24,9 +24,9 @@ namespace CGAL
     reset_sharp_edges(pMesh);
 
     // Detect edges in current polyhedron
-    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t>::type PatchID;
+    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<int> >::type PatchID;
     CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,PatchID>
-      detect_features(get(CGAL::face_patch_id, *pMesh));
+      detect_features(get(CGAL::face_patch_id_t<int>(), *pMesh));
     detect_features.detect_sharp_edges(*pMesh, angle);
   }
 
