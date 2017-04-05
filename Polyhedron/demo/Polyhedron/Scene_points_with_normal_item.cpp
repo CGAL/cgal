@@ -470,9 +470,28 @@ void Scene_points_with_normal_item::resetSelection()
 void Scene_points_with_normal_item::selectDuplicates()
 {
   std::set<Kernel::Point_3> unique_points;
-  for (Point_set::iterator ptit = d->m_points->begin(); ptit!= d->m_points->end();++ptit )
+  std::vector<Point_set::Index> unselected, selected;
+  for (Point_set::iterator ptit = d->m_points->begin(); ptit!= d->m_points->end(); ++ ptit)
     if ( !unique_points.insert(d->m_points->point(*ptit)).second)
-      d->m_points->select(ptit);
+      selected.push_back (*ptit);
+    else
+      unselected.push_back (*ptit);
+  
+  for (std::size_t i = 0; i < unselected.size(); ++ i)
+    *(d->m_points->begin() + i) = unselected[i];
+  for (std::size_t i = 0; i < selected.size(); ++ i)
+    *(d->m_points->begin() + (unselected.size() + i)) = selected[i];
+
+  if (selected.empty ())
+  {
+    d->m_points->unselect_all();
+  }
+  else
+  {
+    d->m_points->set_first_selected
+      (d->m_points->begin() + unselected.size());
+  } 
+
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
