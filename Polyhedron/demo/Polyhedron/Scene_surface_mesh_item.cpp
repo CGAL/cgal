@@ -106,8 +106,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& 
   are_buffers_filled = false;
 }
 
-Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
-  : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
+void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
   d->floated = false;
@@ -174,6 +173,17 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 
   d->compute_elements();
   are_buffers_filled = false;
+}
+Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
+  : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
+{
+  standard_constructor(sm);
+}
+
+Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh sm)
+  : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
+{
+  standard_constructor(new SMesh(sm));
 }
 
 Scene_surface_mesh_item*

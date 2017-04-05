@@ -84,7 +84,6 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   typedef typename CGAL::GetGeomTraits<Mesh,
       NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   std::vector<Point_3> points;
   std::string line;
   std::istringstream iss;

@@ -33,7 +33,7 @@ public:
 
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);
-
+  Scene_surface_mesh_item(SMesh);
   Scene_surface_mesh_item(const Scene_surface_mesh_item& other);
 
   ~Scene_surface_mesh_item();
@@ -52,6 +52,7 @@ public:
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
   void compute_bbox()const;
+  void standard_constructor(SMesh *sm);
 public Q_SLOTS:
   virtual void selection_changed(bool);
 protected:
