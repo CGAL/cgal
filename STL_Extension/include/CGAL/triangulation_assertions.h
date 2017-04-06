@@ -1,10 +1,9 @@
-// Copyright (c) 2001  INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// Copyright (c) 2001  INRIA Sophia-Antipolis (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -40,7 +39,6 @@
   || defined(NDEBUG)
 #  define CGAL_triangulation_assertion(EX) (static_cast<void>(0))
 
-#include <CGAL/license/Triangulation_2.h>
 
 #  define CGAL_triangulation_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_triangulation_assertion_code(CODE)
