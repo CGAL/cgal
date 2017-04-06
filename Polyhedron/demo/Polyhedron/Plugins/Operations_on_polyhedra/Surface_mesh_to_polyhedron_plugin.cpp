@@ -12,7 +12,7 @@
 #include <QMessageBox>
 using namespace CGAL::Three;
 class Surface_mesh_to_polyhedron_plugin :
-  public QObject,
+    public QObject,
     public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
@@ -21,25 +21,25 @@ class Surface_mesh_to_polyhedron_plugin :
 
 public:
 
-void init(QMainWindow* mw,
-          Scene_interface* scene_interface,
-          Messages_interface* )
-{
+  void init(QMainWindow* mw,
+            Scene_interface* scene_interface,
+            Messages_interface* )
+  {
     scene = scene_interface;
     this->mw = mw;
     QAction *actionToPoly = new QAction("Convert to Polyhedron", mw);
     QAction *actionToSM = new QAction("Convert to Surface_mesh", mw);
     actionToPoly->setProperty("subMenuName",
-                              "FaceGraph Conversion");
+                              "BGL");
     actionToSM->setProperty("subMenuName",
-                             "FaceGraph Conversion");
+                            "BGL");
 
     connect(actionToPoly, SIGNAL(triggered()), this, SLOT(on_actionToPoly_triggered()));
     connect(actionToSM, SIGNAL(triggered()), this, SLOT(on_actionToSM_triggered()));
     _actions<< actionToPoly
             << actionToSM;
 
-}
+  }
 
   bool applicable(QAction* action) const {
     if(action == _actions.first())
@@ -57,25 +57,19 @@ private:
   QList<QAction*> _actions;
   QMainWindow* mw;
 
-  enum  Boolean_operation { BOOLEAN_UNION,
-                            BOOLEAN_INTERSECTION,
-                            BOOLEAN_DIFFERENCE,
-                            MINKOWSKI_SUM
-  };
-
 public Q_SLOTS:
   void on_actionToPoly_triggered()
   {
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     if(!sm_item)
       return;
-      Polyhedron* polyhedron = new Polyhedron();
-      CGAL::copy_face_graph(*sm_item->polyhedron(), *polyhedron);
-      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(polyhedron);
-      poly_item->setColor(sm_item->color());
-      poly_item->setName(sm_item->name());
-      sm_item->setVisible(false);
-      scene->addItem(poly_item);
+    Polyhedron* polyhedron = new Polyhedron();
+    CGAL::copy_face_graph(*sm_item->polyhedron(), *polyhedron);
+    Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(polyhedron);
+    poly_item->setColor(sm_item->color());
+    poly_item->setName(sm_item->name());
+    sm_item->setVisible(false);
+    scene->addItem(poly_item);
   }
 
   void on_actionToSM_triggered()
