@@ -38,24 +38,24 @@ public:
 
   ~Scene_surface_mesh_item();
 
-  Scene_surface_mesh_item* clone() const;
-  void draw(CGAL::Three::Viewer_interface *) const;
-  void drawEdges(CGAL::Three::Viewer_interface *) const;
-  void drawPoints(CGAL::Three::Viewer_interface *) const;
+  Scene_surface_mesh_item* clone() const Q_DECL_OVERRIDE;
+  void draw(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+  void drawEdges(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+  void drawPoints(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
 
-  bool supportsRenderingMode(RenderingMode m) const;
-  bool isFinite() const { return true; }
-  bool isEmpty() const;
-  Bbox bbox() const;
-  QString toolTip() const;
+  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
+  bool isFinite() const Q_DECL_OVERRIDE { return true; }
+  bool isEmpty() const Q_DECL_OVERRIDE;
+  Bbox bbox() const Q_DECL_OVERRIDE;
+  QString toolTip() const Q_DECL_OVERRIDE;
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
-  void compute_bbox()const;
+  void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
 public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
-  virtual void selection_changed(bool);
+  virtual void selection_changed(bool) Q_DECL_OVERRIDE;
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;

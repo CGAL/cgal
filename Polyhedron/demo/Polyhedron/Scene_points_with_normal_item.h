@@ -26,13 +26,13 @@ public:
   Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy);
   Scene_points_with_normal_item(const Polyhedron& p);
   ~Scene_points_with_normal_item();
-  Scene_points_with_normal_item* clone() const;
+  Scene_points_with_normal_item* clone() const Q_DECL_OVERRIDE;
 
   // Is selection empty?
   virtual bool isSelectionEmpty() const;
 
   // Function to override the context menu
-  QMenu* contextMenu();
+  QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   // IO
   bool read_ply_point_set(std::istream& in);
@@ -43,34 +43,34 @@ public:
   bool write_xyz_point_set(std::ostream& out) const;
 
   // Function for displaying meta-data of the item
-  virtual QString toolTip() const;
+  virtual QString toolTip() const Q_DECL_OVERRIDE;
 
-  virtual void invalidateOpenGLBuffers();
+  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const;
+  virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
 
-  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-  virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+  virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
 
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
+  virtual void drawSplats(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
   
   // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;
 
   // Gets dimensions
-  virtual bool isFinite() const { return true; }
-  virtual bool isEmpty() const;
-  virtual void compute_bbox() const;
+  virtual bool isFinite() const Q_DECL_OVERRIDE { return true; }
+  virtual bool isEmpty() const Q_DECL_OVERRIDE;
+  virtual void compute_bbox() const Q_DECL_OVERRIDE;
 
-  virtual void setRenderingMode(RenderingMode m);
+  virtual void setRenderingMode(RenderingMode m) Q_DECL_OVERRIDE;
 
   // computes the local point spacing (aka radius) of each point
   void computes_local_spacing(int k);
 
   bool has_normals() const;
-  void copyProperties(Scene_item *);
+  void copyProperties(Scene_item *) Q_DECL_OVERRIDE;
   int getNormalSliderValue();
   int getPointSliderValue();
 
