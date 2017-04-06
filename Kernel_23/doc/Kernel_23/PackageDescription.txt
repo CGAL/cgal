@@ -429,6 +429,8 @@
 - `Kernel::ConstructVertex_2`
 - `Kernel::ConstructVertex_3`
 - `Kernel::ConstructWeightedCircumcenter_3`
+- `Kernel::ConstructWeightedPoint_2`
+- `Kernel::ConstructWeightedPoint_3`
 - `Kernel::CartesianConstIterator_2`
 - `Kernel::CartesianConstIterator_3`
 - `Kernel::CoplanarOrientation_3`

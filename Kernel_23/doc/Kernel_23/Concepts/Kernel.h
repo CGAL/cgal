@@ -186,6 +186,11 @@ public:
   typedef unspecified_type Construct_point_2; 
 
   /*!
+    a model of `Kernel::ConstructWeightedPoint_2`
+  */
+  typedef unspecified_type Construct_weighted_point_2;
+
+  /*!
     a model of `Kernel::ConstructVector_2` 
   */ 
   typedef unspecified_type Construct_vector_2; 
@@ -798,9 +803,9 @@ public:
   typedef unspecified_type Point_3; 
 
   /*!
-    a model of `Kernel::WeightedPoint_3` 
+    a model of `Kernel::WeightedPoint_3`
   */ 
-  typedef unspecified_type Weighted_point_3; 
+  typedef unspecified_type Weighted_point_3;
 
   /*!
     a model of `Kernel::Vector_3` 
@@ -871,6 +876,11 @@ public:
     a model of `Kernel::ConstructPoint_3` 
   */ 
   typedef unspecified_type Construct_point_3; 
+
+  /*!
+    a model of `Kernel::ConstructWeightedPoint_3`
+  */
+  typedef unspecified_type Construct_weighted_point_3;
 
   /*!
     a model of `Kernel::ConstructVector_3` 

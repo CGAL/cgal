@@ -5772,7 +5772,7 @@ public:
  /*!
     extracts the bare point from the weighted point. 
   */ 
-  Kernel::Point_2 operator()(const CGAL::Weighted_point_2& wp); 
+  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& wp);
 
   ///@}
 
@@ -5802,7 +5802,7 @@ public:
  /*!
     extracts the bare point from the weighted point. 
   */ 
-  Kernel::Point_3 operator()(const CGAL::Weighted_point_3& wp); 
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& wp);
 
   ///@}
 
@@ -6995,7 +6995,81 @@ public:
 
 }; /* end Kernel::ConstructWeightedCircumcenter_3 */
 
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
 
+  \cgalRefines `AdaptableFunctor` (with one argument)
+
+  \sa `CGAL::Weighted_point_2<Kernel>`
+
+*/
+class ConstructWeightedPoint_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    introduces a weighted point with Cartesian coordinates
+    \f$ (0,0)\f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+ /*!
+    introduces a weighted point with Cartesian coordinates
+    those of \f$ p \f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p);
+
+  /*!
+     introduces a weighted point with Cartesian coordinates
+     those of \f$ p \f$ and weight \f$ w \f$.
+   */
+   Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p, const Kernel::FT w);
+
+  ///@}
+
+}; /* end Kernel::ConstructWeightedPoint_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one argument)
+
+  \sa `CGAL::Weighted_point_3<Kernel>`
+
+*/
+class ConstructWeightedPoint_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    introduces a weighted point with Cartesian coordinates
+    \f$ (0,0,0)\f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+ /*!
+    introduces a weighted point with Cartesian coordinates
+    those of \f$ p \f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p);
+
+  /*!
+     introduces a weighted point with Cartesian coordinates
+     those of \f$ p \f$ and weight \f$ w \f$.
+   */
+   Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p, const Kernel::FT w);
+
+  ///@}
+
+}; /* end Kernel::ConstructWeightedPoint_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
