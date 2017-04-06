@@ -270,6 +270,15 @@ get(CGAL::face_patch_id_t<Patch_id>,
   return Patch_id_pmap<Gt,Patch_id>();
 }
 
+template <typename Gt >
+CGAL::static_property_map<typename boost::graph_traits<Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<int> > >::face_descriptor,std::pair<int,int> >
+  inline get(CGAL::face_patch_id_t<void>, Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<int> >& polyhedron)
+{
+  typedef CGAL::static_property_map<typename boost::graph_traits<Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<int> > >::face_descriptor,std::pair<int,int> > Pmap;
+  
+  return Pmap(std::make_pair(0,1)); 
+}
+
 
 template <typename Gt, typename Patch_id>
 struct vertex_num_feature_edges_pmap {

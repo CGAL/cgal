@@ -26,12 +26,21 @@
 
 namespace CGAL {
 
-  template <typename P, typename I>
+template <typename P, typename I>
 typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,I>
   inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
 {
  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
   return smesh. template add_property_map<face_descriptor,I>("f:patch_id").first;
+}
+
+template <typename P>
+CGAL::static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> >
+  inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> & smesh)
+{
+  typedef CGAL::static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
+  
+  return Pmap(std::make_pair(0,1)); 
 }
 
 
@@ -121,6 +130,18 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::face_patch_id_t<I> >
   typedef typename CGAL::Surface_mesh<P>::Property_map<face_descriptor, I> type;
   typedef type const_type;
 };
+
+
+template <typename P>
+struct property_map<CGAL::Surface_mesh<P>, CGAL::face_patch_id_t<void> >
+{
+
+  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor face_descriptor;
+
+  typedef CGAL::static_property_map<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor,std::pair<int,int> > type;
+  typedef type const_type;
+};
+
 
 template<typename P>
 struct property_map<CGAL::Surface_mesh<P>, CGAL::halfedge_is_feature_t>
