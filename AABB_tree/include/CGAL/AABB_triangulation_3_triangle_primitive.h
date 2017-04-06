@@ -86,18 +86,23 @@ namespace CGAL {
         // Returns by constructing on the fly the geometric datum wrapped by the primitive
         Datum datum() const
         {
+          typename GeomTraits::Construct_point_3 wp2p =
+              GeomTraits().construct_point_3_object();
+
           int i = m_facet.second;
-          const Point& a = m_facet.first->vertex((i+1) &3)->point().point();
-          const Point& b = m_facet.first->vertex((i+2) &3)->point().point();
-          const Point& c = m_facet.first->vertex((i+3) &3)->point().point();
-          
+          const Point& a = wp2p(m_facet.first->vertex((i+1) &3)->point());
+          const Point& b = wp2p(m_facet.first->vertex((i+2) &3)->point());
+          const Point& c = wp2p(m_facet.first->vertex((i+3) &3)->point());
+
           return Datum(a,b,c);
         }
 
         // Returns a point on the primitive
         Point reference_point() const
         {
-          return  m_facet.first->vertex((m_facet.second +1) &3)->point().point();
+          typename GeomTraits::Construct_point_3 wp2p =
+              GeomTraits().construct_point_3_object();
+          return wp2p(m_facet.first->vertex((m_facet.second +1) &3)->point());
         }
 
         // Returns the identifier
