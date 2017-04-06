@@ -520,8 +520,8 @@ namespace CartesianKernelFunctors {
     typedef Comparison_result   result_type;
     
     Comparison_result operator()(const Point_2& r,
-                                 const Weighted_point_2& q,
-                                 const Weighted_point_2& p) const
+                                 const Weighted_point_2& p,
+                                 const Weighted_point_2& q) const
     {
       return CGAL::compare_power_distanceC2(p.x(), p.y(), p.weight(),
                                             q.x(), q.y(), q.weight(),

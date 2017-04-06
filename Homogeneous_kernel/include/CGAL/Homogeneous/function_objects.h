@@ -755,8 +755,8 @@ namespace HomogeneousKernelFunctors {
     typedef Comparison_result   result_type;
     
     Comparison_result operator()(const Point_2& r,
-                                 const Weighted_point_2& q,
-                                 const Weighted_point_2& p) const
+                                 const Weighted_point_2& p,
+                                 const Weighted_point_2& q) const
     {
       return CGAL::compare_power_distanceH2(p.hx(), p.hy(), p.hw(), p.weight(),
                                             q.hx(), q.hy(), q.hw(), q.weight(),
