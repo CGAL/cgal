@@ -808,7 +808,7 @@ private Q_SLOTS:
           deletion.append(scene->item_id(child));
         }
         deletion.append(scene->item_id(group));
-        static_cast<Scene*>(scene)->erase(deletion);
+        scene->erase(deletion);
       }
     //try to re-connect to another group
     if(!group_map.isEmpty())

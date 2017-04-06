@@ -93,6 +93,12 @@ public:
    * or just after.
    * @returns -1 if the list is empty.*/
   virtual Item_id erase(Item_id) = 0;
+  /*! Deletes the items with the target indices.
+   * @returns the index of the polyhedron just before the
+   * one that is erased, or just after. Returns -1 if
+   * the list is empty.
+   */
+  virtual int erase(QList<int>) = 0;
 
   /*! Creates a copy of the item whith the id `id`.
    * @returns the index of the new item (-1 on error).
@@ -139,7 +145,8 @@ public:
   //! Geometric Objects list and redraws the scene.
   virtual void itemChanged(CGAL::Three::Scene_item* itme) = 0;
 
-  //! Selects the item with the specified index.
+  //! Clears the current selection then sets the selected item to the target index.
+  //! Used to update the selection in the Geometric Objects view.
   virtual void setSelectedItem(Item_id) = 0;  
 }; // end interface Scene_interface
 }
