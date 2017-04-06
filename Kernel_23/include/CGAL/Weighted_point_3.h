@@ -52,7 +52,6 @@ public:
   typedef typename R_::Kernel_base::Weighted_point_3  Rep;
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
   typedef typename R_::Point_3              Point_3;
-  typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Point_3 Point;

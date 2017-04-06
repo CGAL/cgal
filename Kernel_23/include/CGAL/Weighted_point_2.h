@@ -38,25 +38,24 @@ namespace CGAL {
 template <class R_>
 class Weighted_point_2 : public R_::Kernel_base::Weighted_point_2
 {
-  typedef typename R_::FT                    FT;
-  typedef typename R_::FT                    RT;
+  typedef typename R_::FT                             FT;
+  typedef typename R_::FT                             RT;
 
-  typedef Weighted_point_2<R_>                            Self;
+  typedef Weighted_point_2<R_>                        Self;
   CGAL_static_assertion((boost::is_same<Self, typename R_::Weighted_point_2>::value));
 
 public:
-
-  typedef Dimension_tag<2>  Ambient_dimension;
-  typedef Dimension_tag<0>  Feature_dimension;
+  typedef Dimension_tag<2>                            Ambient_dimension;
+  typedef Dimension_tag<0>                            Feature_dimension;
 
   typedef typename R_::Kernel_base::Weighted_point_2  Rep;
-  typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
-  typedef typename R_::Point_2              Point_2;
-  typedef typename R_::Vector_2              Vector_2;
-  typedef typename R_::Aff_transformation_2  Aff_transformation_2;
+  typedef typename R_::Cartesian_const_iterator_2     Cartesian_const_iterator;
+  typedef typename R_::Point_2                        Point_2;
+  typedef typename R_::Aff_transformation_2           Aff_transformation_2;
 
-  typedef Point_2 Point;
-  typedef FT Weight;
+  typedef Point_2                                     Point;
+  typedef FT                                          Weight;
+  typedef          R_                                 R;
 
   const Rep& rep() const
   {
@@ -67,8 +66,6 @@ public:
   {
     return *this;
   }
-
-  typedef          R_                       R;
 
   Weighted_point_2() {}
 

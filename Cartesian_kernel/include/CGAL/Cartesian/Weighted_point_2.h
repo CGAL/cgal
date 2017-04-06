@@ -26,18 +26,23 @@
 #ifndef CGAL_CARTESIAN_WEIGHTED_POINT_2_H
 #define CGAL_CARTESIAN_WEIGHTED_POINT_2_H
 
-#include <iostream>
+#include <CGAL/Handle_for.h>
+#include <CGAL/Origin.h>
+
 #include <boost/tuple/tuple.hpp>
+
+#include <iostream>
 
 namespace CGAL {
 
 template < class R_ >
 class Weighted_pointC2
 {
-  typedef typename R_::Point_2 Point_2;
-  typedef typename R_::FT FT;
-  typedef typename R_::FT Weight;
-  typedef boost::tuple<Point_2, Weight>   Rep;
+  typedef typename R_::Point_2                     Point_2;
+  typedef typename R_::FT                          FT;
+  typedef FT                                       Weight;
+
+  typedef boost::tuple<Point_2, Weight>            Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

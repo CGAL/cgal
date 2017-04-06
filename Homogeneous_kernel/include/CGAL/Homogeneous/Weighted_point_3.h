@@ -25,25 +25,23 @@
 #ifndef CGAL_HOMOGENEOUS_WEIGHTED_POINT_3_H
 #define CGAL_HOMOGENEOUS_WEIGHTED_POINT_3_H
 
+#include <CGAL/Handle_for.h>
+#include <CGAL/Origin.h>
+
+#include <boost/tuple/tuple.hpp>
+
 #include <iostream>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Dimension.h>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/logical.hpp>
 
 namespace CGAL {
 
 template < class R_ >
 class Weighted_pointH3
 {
-  typedef typename R_::Point_3 Point_3;
+  typedef typename R_::Point_3                     Point_3;
+  typedef typename R_::FT                          FT;
+  typedef FT                                       Weight;
 
-  typedef typename R_::FT FT;
-  typedef FT Weight;
-  typedef boost::tuple<Point_3, Weight>   Rep;
+  typedef boost::tuple<Point_3, Weight>            Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
