@@ -55,6 +55,9 @@ public:
   Weighted_pointH3 ()
   {}
 
+  Weighted_pointH3(const Origin &o)
+    : base(o,0) {}
+
   //explicit
   Weighted_pointH3 (const Point_3 &p)
     : base(p,0)
@@ -111,7 +114,7 @@ std::istream &
 operator>>(std::istream &is, Weighted_pointH3<R_> &wp)
 {
   typename Weighted_pointH3<R_>::Weight w;
-  typename Weighted_pointH3<R_>::Point p;
+  typename Weighted_pointH3<R_>::Point_3 p;
   is >> p;
   if(!is) return is;
   if(is_ascii(is))

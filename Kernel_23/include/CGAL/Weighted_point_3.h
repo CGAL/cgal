@@ -73,7 +73,7 @@ public:
   Weighted_point_3() {}
 
   Weighted_point_3(const Origin& o)
-    : Rep(typename R::Construct_point_3()(Return_base_tag(), o))
+    : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), o))
   {}
 
   Weighted_point_3(const Rep& p)

@@ -3207,19 +3207,43 @@ namespace HomogeneousKernelFunctors {
     typedef Weighted_point_2               result_type;
 
     Rep
+    operator()(Return_base_tag, Origin o) const
+    { return Rep(o); }
+
+    Rep
     operator()(Return_base_tag, const Point_2& p, const FT& w) const
     { return Rep(p,w); }
 
     Rep
     operator()(Return_base_tag, const FT& x, const FT& y) const
     { return Rep(x,y); }
+
+    Weighted_point_2
+    operator()(Origin o) const
+    { return Weighted_point_2(o); }
+
+    Weighted_point_2
+    operator()(const Point_2& p, const FT& w) const
+    { return Weighted_point_2(p,w); }
+
+    Weighted_point_2
+    operator()(const FT& x, const FT& y) const
+    { return Weighted_point_2(x,y); }
+
+    Weighted_point_2
+    operator()(const Point_2& p) const
+    { return Weighted_point_2(p,0); }
+
+    Weighted_point_2
+    operator()(const Weighted_point_2& wp) const
+    { return wp; }
   };
 
 
   template <typename K>
   class Construct_weighted_point_3
   {
-    typedef typename K::RT                 RT;
+    typedef typename K::FT                 FT;
     typedef typename K::Point_3            Point_3;
     typedef typename K::Weighted_point_3   Weighted_point_3;
     typedef typename Weighted_point_3::Rep Rep;
@@ -3227,10 +3251,37 @@ namespace HomogeneousKernelFunctors {
     typedef Weighted_point_3               result_type;
 
     Rep
-    operator()(Return_base_tag, const Point_3& p, const RT& w) const
-    { return Rep(p,w); }
-  };
+    operator()(Return_base_tag, Origin o) const
+    { return Rep(o); }
 
+    Rep
+    operator()(Return_base_tag, const Point_3& p, const FT& w) const
+    { return Rep(p,w); }
+
+    Rep
+    operator()(Return_base_tag, const FT& x, const FT& y, const FT& z) const
+    { return Rep(x,y, z); }
+
+    Weighted_point_3
+    operator()(Origin o) const
+    { return Weighted_point_3(o); }
+
+    Weighted_point_3
+    operator()(const Point_3& p, const FT& w) const
+    { return Weighted_point_3(p,w); }
+
+    Weighted_point_3
+    operator()(const FT& x, const FT& y, const FT& z) const
+    { return Weighted_point_3(x,y,z); }
+
+    Weighted_point_3
+    operator()(const Point_3& p) const
+    { return Weighted_point_3(p,0); }
+
+    Weighted_point_3
+    operator()(const Weighted_point_3& wp) const
+    { return wp; }
+  };
 
   template <typename K>
   class Construct_projected_point_2
