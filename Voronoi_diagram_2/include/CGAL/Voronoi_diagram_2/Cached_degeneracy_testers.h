@@ -30,7 +30,7 @@
 #include <map>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Edge_hash_function.h>
+#include <CGAL/internal/TDS_2/Edge_hash_function.h>
 
 
 namespace CGAL {

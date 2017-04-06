@@ -21,12 +21,8 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
 
-#include <CGAL/license/Segment_Delaunay_graph_2.h>
-
-
-
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Edge_hash_function.h>
+#include <CGAL/internal/TDS_2/Edge_hash_function.h>
 #include <CGAL/circulator_bases.h>
 
 namespace CGAL {
