@@ -18,9 +18,10 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-#ifndef CGAL_EDGE_HASH_FUNCTION_H
-#define CGAL_EDGE_HASH_FUNCTION_H
+#ifndef CGAL_INTERNAL_TDS_2_EDGE_HASH_FUNCTION_H
+#define CGAL_INTERNAL_TDS_2_EDGE_HASH_FUNCTION_H
 
+#include <CGAL/license/TDS_2.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_hash_function.h>
@@ -48,4 +49,4 @@ public:
 } //namespace CGAL
 
 
-#endif // CGAL_EDGE_HASH_FUNCTION_H
+#endif // CGAL_INTERNAL_TDS_2_EDGE_HASH_FUNCTION_H

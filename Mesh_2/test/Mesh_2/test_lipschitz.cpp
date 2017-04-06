@@ -1,4 +1,9 @@
 #include "test_dependencies.h"
+
+// and additionally
+#define CGAL_SPATIAL_SEARCHING_COMMERCIAL_LICENSE 22222222
+#define CGAL_APOLLONIUS_GRAPH_2_COMMERCIAL_LICENSE 22222222
+
 #include <CGAL/config.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>

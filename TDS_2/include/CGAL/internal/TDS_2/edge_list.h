@@ -18,8 +18,10 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
-#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
-#define CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
+#ifndef CGAL_INTERNAL_TDS_2_EDGE_LIST_H
+#define CGAL_INTERNAL_TDS_2_EDGE_LIST_H
+
+#include <CGAL/license/TDS_2.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/internal/TDS_2/Edge_hash_function.h>
@@ -556,4 +558,4 @@ public:
 } //namespace CGAL
 
 
-#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H
+#endif // CGAL_INTERNAL_TDS_2_EDGE_LIST_H
