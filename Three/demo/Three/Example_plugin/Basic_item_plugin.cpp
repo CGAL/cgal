@@ -8,7 +8,8 @@
 #include "CGAL/Three/Scene_group_item.h"
 #include "Scene_plane_item.h"
 
-//This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
+//This plugin crates an action in Operations that displays the name of the selected item,
+//adds a scene_plane_item to the scene, and adds the selected item and the plane to a new group.
 class BasicItemPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_interface
@@ -36,10 +37,10 @@ public:
     this->messageInterface = mi;
     //get the references
     this->scene = sc;
-    this->mw = mainWindow;
+    this->mw = mw;
 
     //creates the action
-    QAction *actionHelloWorld= new QAction(QString("Hello World"), mw);
+    QAction *actionHelloWorld= new QAction(QString("Create a group"), mw);
     //specifies the subMenu
     actionHelloWorld->setProperty("submenuName", "Basic");
     //links the action

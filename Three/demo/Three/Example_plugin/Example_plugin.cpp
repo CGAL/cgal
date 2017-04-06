@@ -63,9 +63,6 @@ Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
                                          double cx,double cy, double cz)
   :  CGAL::Three::Scene_item(1,1)
 {
-
-  //Color is uniform, no need for a buffer. Changing the color will not re-compute the data
-  is_monochrome = true;
   nb_pos = 0;
   are_buffers_filled = false;
   computeElements(ax, ay, az,
@@ -200,6 +197,7 @@ public Q_SLOTS:
     triangle = new Scene_triangle_item(0, 0, 0,
                                        1, 0, 0,
                                        0.5, 0.5, 0);
+    triangle->setName(QString("Basic triangle"));
     scene->addItem(triangle);
   }
 private:

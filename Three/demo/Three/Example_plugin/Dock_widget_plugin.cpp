@@ -19,7 +19,7 @@ public:
   }
 };
 //! [dock]
-//This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
+//This plugin crates an action in Operations that creates a DOckWidget to display a number in the 'console' dockwidet.
 class BasicPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_helper
@@ -46,10 +46,10 @@ public:
     this->messageInterface = mi;
     //get the references
     this->scene = sc;
-    this->mw = mainWindow;
+    this->mw = mw;
 
     //creates the action
-    QAction *actionHelloWorld= new QAction(QString("Hello World"), mw);
+    QAction *actionHelloWorld= new QAction(QString("Open Dock Widget"), mw);
     //specifies the subMenu
     actionHelloWorld->setProperty("submenuName", "Basic");
     //links the action
