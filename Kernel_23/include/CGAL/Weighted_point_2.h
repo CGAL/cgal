@@ -1,9 +1,9 @@
-// Copyright (c) 2016  
+// Copyright (c) 2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -79,11 +79,11 @@ public:
   Weighted_point_2(const Point_2& p)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, 0))
   {}
-  
+
   Weighted_point_2(const Point_2& p, const Weight& w)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, w))
   {}
-  
+
 
   Weighted_point_2(const FT& x, const FT& y)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), x, y))
@@ -269,7 +269,7 @@ insert(std::ostream& os, const Weighted_point_2<R>& p,const Homogeneous_tag&)
       write(os, p.weight());
       return os;
     default:
-      return os << "Weighted_pointH2(" 
+      return os << "Weighted_pointH2("
                 << p.hx() << ", "
                 << p.hy() << ", "
                 << p.hw() << ", "

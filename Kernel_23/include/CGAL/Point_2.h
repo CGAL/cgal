@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -125,7 +125,6 @@ public:
   {
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
-
 
 
   typename cpp11::result_of<typename R::Compute_hx_2(Point_2)>::type
@@ -250,7 +249,7 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
         break;
     }
     if (is)
-	p = Point_2<R>(x, y);
+      p = Point_2<R>(x, y);
     return is;
 }
 

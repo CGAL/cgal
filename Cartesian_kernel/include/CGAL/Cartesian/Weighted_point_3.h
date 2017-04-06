@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2016  
+// Copyright (c) 1999,2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Mariette Yvinec
 //                 Sylvain Pion
@@ -48,9 +47,6 @@ class Weighted_pointC3
   Base base;
 
 public:
-
-
-
   Weighted_pointC3 ()
   {}
 
@@ -66,14 +62,11 @@ public:
     : base(p,w)
   {}
 
-
   // Constructors from coordinates are also provided for convenience, except
   // that they are only from Cartesian coordinates, and with no weight, so as
   // to avoid any potential ambiguity between the homogeneous weight and the
   // power weight (it should be easy enough to pass a Point_3 explicitly in those
   // cases).
-
-
 
   Weighted_pointC3 (const FT &x, const FT &y, const FT &z)
     : base(Point_3(x, y, z), 0)
@@ -88,9 +81,7 @@ public:
   {
     return get_pointee_or_identity(base).template get<1>();
   }
-
 };
-
 
 template < class R_ >
 std::ostream &
