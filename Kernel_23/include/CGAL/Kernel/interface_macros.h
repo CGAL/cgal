@@ -579,7 +579,7 @@ CGAL_Kernel_pred_RT(Power_side_of_oriented_power_circle_2,
 CGAL_Kernel_pred_RT(Orientation_3,
 		    orientation_3_object)
 CGAL_Kernel_pred_RT(Power_side_of_oriented_power_sphere_3,
-		    power_side_of_oriented_power_sphere_3_object)
+                    power_side_of_oriented_power_sphere_3_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_2,
 		    compare_power_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,

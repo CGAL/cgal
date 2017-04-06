@@ -4126,55 +4126,6 @@ namespace CartesianKernelFunctors {
   };
 
 template < typename K >
-class Power_side_of_oriented_power_sphere_3
-{
-public:
-  typedef typename K::Weighted_point_3                  Weighted_point_3;
-  typedef typename K::Oriented_side                     Oriented_side;
-  typedef Oriented_side    result_type;
-
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r,
-			     const Weighted_point_3 & s,
-			     const Weighted_point_3 & t) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
-                          q.x(), q.y(), q.z(), q.weight(),
-                          r.x(), r.y(), r.z(), r.weight(),
-                          s.x(), s.y(), s.z(), s.weight(),
-                          t.x(), t.y(), t.z(), t.weight());
-    }
-
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r,
-			     const Weighted_point_3 & s) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
-                          q.x(), q.y(), q.z(), q.weight(),
-                          r.x(), r.y(), r.z(), r.weight(),
-                          s.x(), s.y(), s.z(), s.weight());
-    }
-
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
-                          q.x(), q.y(), q.z(), q.weight(),
-                          r.x(), r.y(), r.z(), r.weight());
-    }
-
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.weight(),q.weight());
-    }
-};
-
-
-template < typename K >
 class Power_side_of_oriented_power_circle_2
 {
 public:

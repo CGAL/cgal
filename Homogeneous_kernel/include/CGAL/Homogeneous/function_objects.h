@@ -4427,7 +4427,12 @@ namespace HomogeneousKernelFunctors {
   };
 
 
-
+// the predicate below is currently defined in Kernel/function_objects.h
+// because the function power_side_of_oriented_power_sphereH3() is not defined
+// for 3 and 4 Weighted_point_3's.
+// Once those overloads are defined, the code below should be uncommented
+// and the code in Kernel/function_objects.h should be moved to Cartesian/function_objects.h
+#if 0
 template < typename K >
 class Power_side_of_oriented_power_sphere_3
 {
@@ -4439,10 +4444,10 @@ public:
   typedef Oriented_side    result_type;
 
   Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r,
-			     const Weighted_point_3 & s,
-			     const Weighted_point_3 & t) const
+                             const Weighted_point_3 & q,
+                             const Weighted_point_3 & r,
+                             const Weighted_point_3 & s,
+                             const Weighted_point_3 & t) const
     {
       return power_side_of_oriented_power_sphereH3(
                  p.hx(), p.hy(), p.hz(), p.hw(), p.weight(),
@@ -4453,10 +4458,10 @@ public:
     }
 
   Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r,
-			     const Weighted_point_3 & s) const
-    {
+                             const Weighted_point_3 & q,
+                             const Weighted_point_3 & r,
+                             const Weighted_point_3 & s) const
+  {
       return power_side_of_oriented_power_sphereH3(
                  p.hx(), p.hy(), p.hz(), p.weight(),
                  q.hx(), q.hy(), q.hz(), q.weight(),
@@ -4465,9 +4470,9 @@ public:
     }
 
   Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r) const
-    {
+                             const Weighted_point_3 & q,
+                             const Weighted_point_3 & r) const
+  {
       return power_side_of_oriented_power_sphereH3(
                  p.x(), p.y(), p.z(), p.weight(),
                  q.x(), q.y(), q.z(), q.weight(),
@@ -4475,12 +4480,12 @@ public:
     }
 
   Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q) const
+                             const Weighted_point_3 & q) const
     {
       return power_side_of_oriented_power_sphereH3(p.weight(),q.weight());
     }
 };
-
+#endif
 
 template < typename K >
 class Power_side_of_oriented_power_circle_2
