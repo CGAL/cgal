@@ -53,7 +53,6 @@ private:
     State(){
       level_= NONE;
       target_= COUT;
-      null_.open("/dev/null");
       //maple_.open("maple.log");
       maple_is_open_=false;
       output_maple_=true;
