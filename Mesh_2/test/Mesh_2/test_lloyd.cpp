@@ -1,4 +1,4 @@
-
+#include "test_dependencies.h"
 #include <CGAL/config.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -8,7 +8,6 @@
 #include <CGAL/Delaunay_mesher_2.h>
 
 #include <CGAL/lloyd_optimize_mesh_2.h>
-#include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 
 #include "test_utilities.h"
@@ -83,10 +82,5 @@ int main()
   CDT cdt;
   Lloyd_tester tester;
   tester(cdt);
-
-  //compilation test
-  CGAL::Lipschitz_sizing_field_2<CDT> lip_size(cdt);
-  lip_size.set_K(2.);
-  CGAL_assertion(lip_size.get_K() == 2.);
-
+  return 0;
 }
