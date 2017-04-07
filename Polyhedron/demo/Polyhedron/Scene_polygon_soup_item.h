@@ -110,7 +110,7 @@ public:
     Scene_polygon_soup_item();
     ~Scene_polygon_soup_item();
 
-    Scene_polygon_soup_item* clone() const;
+    Scene_polygon_soup_item* clone() const Q_DECL_OVERRIDE;
 
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
@@ -122,19 +122,19 @@ public:
     bool save(std::ostream& out) const;
     std::vector<CGAL::Color> getVColors() const;
     std::vector<CGAL::Color> getFColors() const;
-    QString toolTip() const;
+    QString toolTip() const Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
+    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
     // OpenGL drawing in a display list
-    virtual void draw() const {}
-    virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
-    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-    void invalidateOpenGLBuffers();
-    bool isFinite() const { return true; }
-    bool isEmpty() const;
-    void compute_bbox() const;
+    virtual void draw() const Q_DECL_OVERRIDE{}
+    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+    void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    bool isFinite() const Q_DECL_OVERRIDE{ return true; }
+    bool isEmpty() const Q_DECL_OVERRIDE;
+    void compute_bbox() const Q_DECL_OVERRIDE;
 
     void new_vertex(const double&, const double&, const double&);
     void new_triangle(const std::size_t, const std::size_t, const std::size_t);
