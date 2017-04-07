@@ -3234,7 +3234,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_2& p) const
     { return Weighted_point_2(p,0); }
 
-    Weighted_point_2
+    const Weighted_point_2&
     operator()(const Weighted_point_2& wp) const
     { return wp; }
   };
@@ -3260,7 +3260,7 @@ namespace HomogeneousKernelFunctors {
 
     Rep
     operator()(Return_base_tag, const FT& x, const FT& y, const FT& z) const
-    { return Rep(x,y, z); }
+    { return Rep(x,y,z); }
 
     Weighted_point_3
     operator()(Origin o) const
@@ -3278,7 +3278,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p) const
     { return Weighted_point_3(p,0); }
 
-    Weighted_point_3
+    const Weighted_point_3&
     operator()(const Weighted_point_3& wp) const
     { return wp; }
   };
