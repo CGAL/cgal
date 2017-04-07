@@ -6,6 +6,7 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Timer.h>
 
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -41,6 +42,8 @@ int main(int argc, char*argv[])
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }
+  CGAL::Timer t;
+  t.start();
   // Create domain
   Mesh_domain domain(polyhedron);
   
@@ -51,9 +54,9 @@ int main(int argc, char*argv[])
   Mesh_criteria criteria(edge_size = 0.025,
                          facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
                          cell_radius_edge_ratio = 3, cell_size = 0.05);
-  
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  std::cerr << t.time() << " sec." << std::endl;
 
   // Output
   std::ofstream medit_file("out.mesh");
