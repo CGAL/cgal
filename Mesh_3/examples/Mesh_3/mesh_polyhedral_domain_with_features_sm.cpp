@@ -41,9 +41,13 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   std::ifstream input(fname);
-  Surface_mesh sm;
+  const char* fname2 = (argc>2)?argv[2]:"data/fandisk.off";
+  std::ifstream input2(fname2);
+  Surface_mesh sm, sm2;
   input >> sm;
+  input2 >> sm2;
   Polyhedron polyhedron(sm);
+  Polyhedron polyhedron2(sm2);
   if(input.fail()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
@@ -51,8 +55,8 @@ int main(int argc, char*argv[])
   CGAL::Timer t;
   t.start();
   // Create domain
-  Mesh_domain domain(polyhedron);
-  
+  Mesh_domain domain(polyhedron, polyhedron2);
+    std::cerr << "detect" << std::endl;
   // Get sharp features
   domain.detect_features();
 
@@ -61,6 +65,7 @@ int main(int argc, char*argv[])
                          facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
                          cell_radius_edge_ratio = 3, cell_size = 0.05);
   
+  std::cerr << "meshing" << std::endl;
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
