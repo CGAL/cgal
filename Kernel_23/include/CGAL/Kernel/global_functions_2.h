@@ -290,6 +290,16 @@ compare_distance_to_point(const Point_2<K>& p,
 template <class K >
 inline
 typename K::Comparison_result
+compare_power_distance(const Point_2<K> &r,
+                       const Weighted_point_2<K> &p,
+                       const Weighted_point_2<K> &q)
+{
+  return internal::compare_power_distance(r, p, q, K());
+}
+
+template <class K >
+inline
+typename K::Comparison_result
 compare_squared_distance(const Point_2<K>& p,
                          const Point_2<K>& q,
                          const typename K::FT& d2)
@@ -939,11 +949,50 @@ orientation(const Vector_2<K> &u, const Vector_2<K> &v)
 
 // parallel() functions are in global_functions.h
 
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q,
+                                    const Weighted_point_2<K> &r)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, r, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q,
+                                    const Weighted_point_2<K> &r,
+                                    const Weighted_point_2<K> &s)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, r, s, K());
+}
+
+template <class K>
+inline
+typename K::Line_2
+radical_axis(const Weighted_point_2<K> &p,
+             const Weighted_point_2<K> &q)
+{
+  return internal::radical_axis(p, q, K());
+}
+
 template <class K>
 inline
 typename K::Line_2
 radical_line(const Circle_2<K> &s1,
-              const Circle_2<K> &s2)
+             const Circle_2<K> &s2)
 {
   return K().construct_radical_line_2_object()(s1,s2);
 }
@@ -1018,6 +1067,16 @@ typename K::FT
 squared_radius(const Point_2<K>& p, const Point_2<K>& q, const Point_2<K>& r)
 {
   return internal::squared_radius(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+weighted_circumcenter(const Weighted_point_2<K> &p,
+                      const Weighted_point_2<K> &q,
+                      const Weighted_point_2<K> &r)
+{
+  return internal::weighted_circumcenter(p, q, r, K());
 }
 
 template < class K >

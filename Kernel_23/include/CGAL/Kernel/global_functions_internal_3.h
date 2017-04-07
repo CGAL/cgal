@@ -405,6 +405,17 @@ compare_distance_to_point(const typename K::Point_3 &p,
 template < class K >
 inline
 typename K::Comparison_result
+compare_power_distance(const typename K::Point_3 &r,
+                       const typename K::Weighted_point_3 &p,
+                       const typename K::Weighted_point_3 &q,
+                       const K& k)
+{
+  return k.compare_power_distance_3_object()(r, p, q);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_squared_distance(const typename K::Point_3 &p,
                          const typename K::Point_3 &q,
                          const typename K::FT &d2,
@@ -497,6 +508,48 @@ compare_signed_distance_to_plane(const typename K::Point_3 &hp,
   if (k.less_signed_distance_to_plane_3_object()(hp, hq, hr, q, p))
     return LARGER;
   return EQUAL;
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_weighted_squared_radius(const typename K::Weighted_point_3 &p,
+                                const typename K::FT &w, const K &k)
+{
+  return k.compare_weighted_squared_radius_3_object()(p, w);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_weighted_squared_radius(const typename K::Weighted_point_3 &p,
+                                const typename K::Weighted_point_3 &q,
+                                const typename K::FT &w, const K &k)
+{
+  return k.compare_weighted_squared_radius_3_object()(p, q, w);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_weighted_squared_radius(const typename K::Weighted_point_3 &p,
+                                const typename K::Weighted_point_3 &q,
+                                const typename K::Weighted_point_3 &r,
+                                const typename K::FT &w, const K &k)
+{
+  return k.compare_weighted_squared_radius_3_object()(p, q, r, w);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_weighted_squared_radius(const typename K::Weighted_point_3 &p,
+                                const typename K::Weighted_point_3 &q,
+                                const typename K::Weighted_point_3 &r,
+                                const typename K::Weighted_point_3 &s,
+                                const typename K::FT &w, const K &k)
+{
+  return k.compare_weighted_squared_radius_3_object()(p, q, r, s, w);
 }
 
 template < class K >
@@ -847,6 +900,111 @@ parallel(const typename K::Segment_3 &s1,
   return k.are_parallel_3_object()(s1, s2);
 }
 
+template <typename K>
+inline
+typename K::FT
+power_distance_to_power_sphere(const typename K::Weighted_point_3 &p,
+                               const typename K::Weighted_point_3 &q,
+                               const typename K::Weighted_point_3 &r,
+                               const typename K::Weighted_point_3 &s,
+                               const typename K::Weighted_point_3 &t, const K &k)
+{
+  return k.compute_power_distance_to_power_sphere_3_object()(p, q, r, s, t);
+}
+
+template <class K >
+inline
+typename K::FT
+power_product(const typename K::Weighted_point_3 &p,
+              const typename K::Weighted_point_3 &q, const K &k)
+{
+  return k.compute_power_product_3_object()(p, q);
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_sphere(const typename K::Weighted_point_3 &p,
+                                   const typename K::Weighted_point_3 &q, const K &k)
+{
+  return k.power_side_of_bounded_power_sphere_3_object()(p, q);
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_sphere(const typename K::Weighted_point_3 &p,
+                                   const typename K::Weighted_point_3 &q,
+                                   const typename K::Weighted_point_3 &r, const K &k)
+{
+  return k.power_side_of_bounded_power_sphere_3_object()(p, q, r);
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_sphere(const typename K::Weighted_point_3 &p,
+                                   const typename K::Weighted_point_3 &q,
+                                   const typename K::Weighted_point_3 &r,
+                                   const typename K::Weighted_point_3 &s, const K &k)
+{
+  return k.power_side_of_bounded_power_sphere_3_object()(p, q, r, s);
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_sphere(const typename K::Weighted_point_3 &p,
+                                   const typename K::Weighted_point_3 &q,
+                                   const typename K::Weighted_point_3 &r,
+                                   const typename K::Weighted_point_3 &s,
+                                   const typename K::Weighted_point_3 &t, const K &k)
+{
+  return k.power_side_of_bounded_power_sphere_3_object()(p, q, r, s, t);
+}
+
+template <class K >
+inline
+typename K::Oriented_side
+power_side_of_oriented_power_sphere(const typename K::Weighted_point_3 &p,
+                                    const typename K::Weighted_point_3 &q, const K &k)
+{
+  return k.power_side_of_oriented_power_sphere_3_object()(p, q);
+}
+
+template <class K >
+inline
+typename K::Oriented_side
+power_side_of_oriented_power_sphere(const typename K::Weighted_point_3 &p,
+                                    const typename K::Weighted_point_3 &q,
+                                    const typename K::Weighted_point_3 &r, const K &k)
+{
+  return k.power_side_of_oriented_power_sphere_3_object()(p, q, r);
+}
+
+template <class K >
+inline
+typename K::Oriented_side
+power_side_of_oriented_power_sphere(const typename K::Weighted_point_3 &p,
+                                    const typename K::Weighted_point_3 &q,
+                                    const typename K::Weighted_point_3 &r,
+                                    const typename K::Weighted_point_3 &s, const K &k)
+{
+  return k.power_side_of_oriented_power_sphere_3_object()(p, q, r, s);
+}
+
+template <class K >
+inline
+typename K::Oriented_side
+power_side_of_oriented_power_sphere(const typename K::Weighted_point_3 &p,
+                                    const typename K::Weighted_point_3 &q,
+                                    const typename K::Weighted_point_3 &r,
+                                    const typename K::Weighted_point_3 &s,
+                                    const typename K::Weighted_point_3 &t, const K &k)
+{
+  return k.power_side_of_oriented_power_sphere_3_object()(p, q, r, s, t);
+}
+
 template <class K >
 inline
 typename K::Bounded_side
@@ -943,12 +1101,84 @@ squared_radius(const typename K::Point_3 &p, const K &k)
 template < class K >
 inline
 typename K::FT
+squared_radius_smallest_orthogonal_sphere(const typename K::Weighted_point_3 &p,
+                                          const K &k)
+{
+  return k.compute_squared_radius_smallest_orthogonal_sphere_3_object()(p);
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_sphere(const typename K::Weighted_point_3 &p,
+                                          const typename K::Weighted_point_3 &q,
+                                          const K &k)
+{
+  return k.compute_squared_radius_smallest_orthogonal_sphere_3_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_sphere(const typename K::Weighted_point_3 &p,
+                                          const typename K::Weighted_point_3 &q,
+                                          const typename K::Weighted_point_3 &r,
+                                          const K &k)
+{
+  return k.compute_squared_radius_smallest_orthogonal_sphere_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_sphere(const typename K::Weighted_point_3 &p,
+                                          const typename K::Weighted_point_3 &q,
+                                          const typename K::Weighted_point_3 &r,
+                                          const typename K::Weighted_point_3 &s,
+                                          const K &k)
+{
+  return k.compute_squared_radius_smallest_orthogonal_sphere_3_object()(p, q, r, s);
+}
+
+template < class K >
+inline
+typename K::FT
 volume(const typename K::Point_3 &p,
        const typename K::Point_3 &q,
        const typename K::Point_3 &r,
        const typename K::Point_3 &s, const K &k)
 {
   return k.compute_volume_3_object()(p, q, r, s);
+}
+
+template < class K >
+inline
+typename K::Point_3
+weighted_circumcenter(const typename K::Weighted_point_3 &p,
+                      const typename K::Weighted_point_3 &q, const K &k)
+{
+  return k.construct_weighted_circumcenter_3_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Point_3
+weighted_circumcenter(const typename K::Weighted_point_3 &p,
+                      const typename K::Weighted_point_3 &q,
+                      const typename K::Weighted_point_3 &r, const K &k)
+{
+  return k.construct_weighted_circumcenter_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+typename K::Point_3
+weighted_circumcenter(const typename K::Weighted_point_3 &p,
+                      const typename K::Weighted_point_3 &q,
+                      const typename K::Weighted_point_3 &r,
+                      const typename K::Weighted_point_3 &s, const K &k)
+{
+  return k.construct_weighted_circumcenter_3_object()(p, q, r, s);
 }
 
 template < class K >
