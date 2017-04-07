@@ -243,7 +243,7 @@ public:
 
     typedef std::map< Segment_3,
                       std::vector< std::pair<halfedge_descriptor, FaceGraph*> > > MapType;
-    typedef typename boost::property_map<FaceGraph,
+    typedef boost::property_map<FaceGraph,
       CGAL::vertex_point_t>::type PointPMap;
     MapType duplicated_edges;
 
