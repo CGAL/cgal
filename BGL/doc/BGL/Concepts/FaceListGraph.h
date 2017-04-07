@@ -39,3 +39,12 @@ This is for example the case for `CGAL::Surface_mesh` or `OpenMesh::PolyMesh_Arr
 
 */
 class FaceListGraph{};
+
+
+/*! \relates FaceListGraph
+ * An iterator range over all faces.
+ */
+
+std::pair<boost::graph_traits<FaceListGraph>::face_iterator,
+          boost::graph_traits<FaceListGraph>::face_iterator>
+faces(const FaceListGraph& g);
