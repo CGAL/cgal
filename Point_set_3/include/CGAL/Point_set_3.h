@@ -128,7 +128,7 @@ public:
     size_type value;
     
   public:
-    Index (const Index& index) : value (index) { }
+    Index (const Index& index) : value (static_cast<size_type>(index)) { }
     Index (const std::size_t& value) : value (static_cast<size_type>(value)) { }
     Index () : value (static_cast<size_type>(-1)) { }
     Index operator= (const Index& index) { value = index.value; return *this; }
