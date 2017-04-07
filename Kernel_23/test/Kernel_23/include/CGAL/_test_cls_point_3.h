@@ -24,7 +24,13 @@
 #define CGAL__TEST_CLS_POINT_3_H
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Point_3.h>
+#include <CGAL/Origin.h>
+#include <CGAL/Vector_3.h>
+#include <CGAL/Weighted_point_3.h>
+
 #include <cassert>
+#include <iostream>
 
 template <class R>
 bool
@@ -52,6 +58,9 @@ _test_cls_point_3(const R& )
  CGAL::Point_3<R>  p5(n1, n2, n3, n4);
  CGAL::Point_3<R>  p6( p5 );
                   p1 = p4;
+
+ CGAL::Weighted_point_3<R> wp(p1);
+ CGAL::Point_3<R> p7(wp);
 
  std::cout << '.';
 
