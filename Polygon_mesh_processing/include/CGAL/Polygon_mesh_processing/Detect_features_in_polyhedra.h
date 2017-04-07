@@ -51,7 +51,8 @@ class Detect_features_in_polyhedra
 {
   typedef Polyhedron_ Polyhedron;
 public:
-  typedef typename boost::property_traits<typename boost::property_map<Polyhedron,vertex_point_t>::type>::value_type Point_3;
+  typedef typename boost::property_traits<typename boost::property_map<Polyhedron,
+  vertex_point_t>::type>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Geom_traits;
 
   typedef typename Geom_traits::Vector_3    Vector_3;
@@ -86,7 +87,7 @@ private:
   Vector_3 facet_normal(const Polyhedron& polyhedron, const face_descriptor& f) const;
   bool is_sharp(Polyhedron& polyhedron, const halfedge_descriptor& he, FT cos_angle) const;
   void flood(Polyhedron& polyhedron,
-             face_descriptor f, const Patch_id id,
+             face_descriptor f, const Patch_id& id,
              face_descriptor_set& unsorted_faces) const;
 
   template <typename Int>
@@ -221,28 +222,6 @@ Detect_features_in_polyhedra<P_, I_>::
 facet_normal(const Polyhedron& polyhedron, const face_descriptor& f) const
 {
   return Polygon_mesh_processing::compute_face_normal(f,polyhedron);
-  /*
-  Vector_3 sum = CGAL::NULL_VECTOR;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f,polyhedron),polyhedron))
-  {
-    Vector_3 normal = CGAL::cross_product(
-                                          target(next(h,polyhedron),polyhedron)->point() - target(h,polyhedron)->point(), 
-                                          target(next(next(h,polyhedron),polyhedron)polyhedron)->point() - target(next(h,polyhedron)polyhedron)->point());
-    
-    FT sqnorm = normal * normal;
-    if ( ! CGAL_NTS is_zero(sqnorm) )
-    {
-      normal = normal / CGAL::sqrt(sqnorm);
-      sum = sum + normal;
-    }
-  }
-
-  
-  FT sqnorm = sum * sum;
-  
-  return (! CGAL_NTS is_zero(sqnorm)) ? sum / CGAL::sqrt(sqnorm)
-                                      : CGAL::NULL_VECTOR;
-  */
 }
 
 
@@ -270,11 +249,15 @@ is_sharp(Polyhedron& polyhedron, const halfedge_descriptor& he, FT cos_angle) co
 template <typename P_, typename I_>
 void
 Detect_features_in_polyhedra<P_, I_>::
-flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_descriptor_set& unsorted_faces) const
+flood(Polyhedron& polyhedron,
+      face_descriptor f,
+      const Patch_id &patch_id,
+      face_descriptor_set& unsorted_faces) const
 {
   // Initialize he_to_explore with halfedges of the starting facet
   He_handle_set he_to_explore;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f,polyhedron), polyhedron))
+  BOOST_FOREACH(halfedge_descriptor hd,
+                halfedges_around_face(halfedge(f,polyhedron), polyhedron))
   {
     he_to_explore.insert(opposite(hd,polyhedron));
   }
@@ -296,7 +279,9 @@ flood(Polyhedron& polyhedron,face_descriptor f, const Patch_id patch_id, face_de
       unsorted_faces.erase(explored_facet);
       
       // Add/Remove facet's halfedge to/from explore list
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(explored_facet,polyhedron), polyhedron))
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    halfedges_around_face(halfedge(explored_facet,polyhedron),
+                                          polyhedron))
       {
         halfedge_descriptor current_he = hd;
         

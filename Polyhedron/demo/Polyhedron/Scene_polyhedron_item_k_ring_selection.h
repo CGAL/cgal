@@ -195,7 +195,7 @@ public Q_SLOTS:
     std::size_t h = reinterpret_cast<std::size_t>(v);
     is_active=true;
     if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
-      process_selection( static_cast<sm_vertex_descriptor>(h) );
+      process_selection( sm_vertex_descriptor(h) );
     updateIsTreated();
   }
   void sm_facet_has_been_selected(void* v)
@@ -204,7 +204,7 @@ public Q_SLOTS:
     is_active=true;
     if (active_handle_type == Active_handle::FACET
       || active_handle_type == Active_handle::CONNECTED_COMPONENT)
-      process_selection(static_cast<sm_face_descriptor>(h) );
+      process_selection(sm_face_descriptor(h) );
     updateIsTreated();
   }
   void sm_edge_has_been_selected(void* v)
@@ -212,7 +212,7 @@ public Q_SLOTS:
     std::size_t h = reinterpret_cast<std::size_t>(v);
     is_active=true;
     if(active_handle_type == Active_handle::EDGE)
-      process_selection(static_cast<sm_edge_descriptor>(h) );
+      process_selection(sm_edge_descriptor(h) );
     updateIsTreated();
   }
 

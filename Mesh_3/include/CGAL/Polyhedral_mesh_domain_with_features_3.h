@@ -318,7 +318,10 @@ public:
   void initialize_ts(Polyhedron& p);
 
   void detect_features(FT angle_in_degree, std::vector<Polyhedron>& p);
-  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, stored_polyhedra); }
+  void detect_features(FT angle_in_degree = FT(60))
+  {
+    detect_features(angle_in_degree, stored_polyhedra);
+  }
 
   void detect_borders(std::vector<Polyhedron>& p);
   void detect_borders() { detect_borders(stored_polyhedra); };
@@ -420,8 +423,10 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
 
-  typedef typename boost::property_map<Polyhedron,face_patch_id_t>::type Face_patch_id_pmap;
-  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,Face_patch_id_pmap> detect_features(get(face_patch_id,poly.front()));
+  typedef typename boost::property_map<Polyhedron,face_patch_id_t>::type
+      Face_patch_id_pmap;
+  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,
+      Face_patch_id_pmap> detect_features(get(face_patch_id,poly.front()));
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);

@@ -113,7 +113,8 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     Polyhedron* pMesh = tuple.second;
     if (!pMesh) continue;
 
-    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron, PatchID> detect_features(get(CGAL::face_patch_id_t(),*pMesh));
+    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,
+        PatchID> detect_features(get(CGAL::face_patch_id_t(),*pMesh));
     // Get sharp features
     detect_features.detect_sharp_edges(*pMesh, angle);
     detect_features.detect_surface_patches(*pMesh);
