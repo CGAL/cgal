@@ -9195,25 +9195,31 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-    /*!
-      power test for points `p`, `q`, `r` and `s`. 
-      \pre the bare points corresponding to `p`, `q`, `r` are not collinear. 
-    */
+  /*!
+    returns the relative position of point `s` to the oriented power circle
+    defined by `p`, `q`, and `r`.
 
-    Oriented_side operator() ( const Kernel::Weighted_point_2& p,
-                               const Kernel::Weighted_point_2& q,
-                               const Kernel::Weighted_point_2& r,
-                               const Kernel::Weighted_point_2& s);
+    The order of the points `p`, `q` and `r` is important,
+    since it determines the orientation of the implicitly
+    constructed power circle.
+
+    \pre the bare points corresponding to `p`, `q`, `r` are not collinear.
+  */
+
+  Oriented_side operator() ( const Kernel::Weighted_point_2& p,
+                             const Kernel::Weighted_point_2& q,
+                             const Kernel::Weighted_point_2& r,
+                             const Kernel::Weighted_point_2& s);
 
 /*!
-  degenerated power test for collinear points  `p`, `q`, `r`. 
+  degenerate power test for collinear points  `p`, `q`, `r`.
   \pre  `p` and `q` have different bare points.
 */
     Oriented_side operator() (  const Kernel::Weighted_point_2& p,
                                 const Kernel::Weighted_point_2& q,
                                 const Kernel::Weighted_point_2& r);
 /*!
-degenerated power test for weighted points 
+degenerate power test for weighted points
 `p` and `q` whose corresponding bare points are identical. 
 \pre `p` and `q` have equal bare points. 
 */
