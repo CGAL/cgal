@@ -35,12 +35,9 @@ using namespace CGAL::parameters;
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
-  const char* fname2 = (argc>2)?argv[2]:"data/fandisk.off";
   std::ifstream input(fname);
-  std::ifstream input2(fname2);
   Polyhedron polyhedron, polyhedron2;
   input >> polyhedron;
-  input2 >> polyhedron2;
   if(input.fail()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
@@ -53,17 +50,17 @@ int main(int argc, char*argv[])
 
   CGAL::Timer t;
   t.start();
-  std::cout << "// Create domain"<< std::endl;
+  // Create domain
   Mesh_domain domain(polyhedron, polyhedron2);
   
-  std::cout << "// Get sharp features"<< std::endl;
+  // Get sharp features
   domain.detect_features();
 
-  std::cout << "// Mesh criteria"<< std::endl;
+  // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.2,
                          facet_angle = 25, facet_size = 0.5, facet_distance = 0.01,
                          cell_radius_edge_ratio = 3, cell_size = 0.1);
-  std::cout << "// Mesh generation"<< std::endl;
+  // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb(), no_lloyd());
   std::cerr << t.time() << " sec." << std::endl;
 

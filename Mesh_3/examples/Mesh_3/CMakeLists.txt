@@ -77,6 +77,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "remesh_polyhedral_surface.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features_sm.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain_with_two_polyhedra.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_lipschitz_sizing.cpp" )
     
     if( WITH_CGAL_ImageIO )

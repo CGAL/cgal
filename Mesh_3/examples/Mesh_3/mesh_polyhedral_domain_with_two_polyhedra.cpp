@@ -1,5 +1,3 @@
-#define CGAL_MESH_3_VERBOSE 1
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -43,9 +41,13 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   std::ifstream input(fname);
-  Surface_mesh sm;
+  const char* fname2 = (argc>2)?argv[2]:"data/fandisk-box.off";
+  std::ifstream input2(fname2);
+  Surface_mesh sm, smbounding;
   input >> sm;
+  input2 >> smbounding;
   Surface_mesh_gwdwg smesh(sm);
+  Surface_mesh_gwdwg smeshbounding(smbounding);
   if(input.fail()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
@@ -53,7 +55,7 @@ int main(int argc, char*argv[])
   CGAL::Timer t;
   t.start();
   // Create domain
-  Mesh_domain domain(smesh);
+  Mesh_domain domain(smesh, smeshbounding);
 
   // Get sharp features
   domain.detect_features();
