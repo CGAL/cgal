@@ -292,8 +292,8 @@ struct vertex_incident_patches_pmap {
   }
 
 };
-template<typename Pid>
-inline vertex_incident_patches_pmap get(CGAL::vertex_incident_patches_t<Pid>, const Polyhedron&)
+
+inline vertex_incident_patches_pmap get(CGAL::vertex_incident_patches_t<int>, const Polyhedron&)
 {
   return vertex_incident_patches_pmap();
 }
@@ -344,8 +344,9 @@ namespace boost {
   {
     typedef vertex_num_feature_edges_pmap type;
   };
-  template <typename Pid>
-  struct property_map<Polyhedron, CGAL::vertex_incident_patches_t<Pid> >
+
+  template <>
+  struct property_map<Polyhedron, CGAL::vertex_incident_patches_t<int>>
   {
     typedef vertex_incident_patches_pmap type;
   };
