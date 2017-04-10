@@ -24,101 +24,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/properties.h>
 
-namespace CGAL {
-
-template <typename P, typename I>
-typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,I>
-  inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
-{
- typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template add_property_map<face_descriptor,I>("f:patch_id").first;
-}
-
-template <typename P>
-CGAL::static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> >
-  inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> & smesh)
-{
-  typedef CGAL::static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
-  
-  return Pmap(std::make_pair(0,1)); 
-}
-
-
-template <typename P>
-typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor,bool>
-inline get(CGAL::halfedge_is_feature_t, Surface_mesh<P>& smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
-  return smesh. template add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
-}
-
- template <typename P>
-typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,int>
- inline get(CGAL::face_selection_t, Surface_mesh<P> & smesh)
-{
- typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template add_property_map<face_descriptor,int>("f:selection").first;
-}
-
-
-
- template <typename P>
-typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor,int>
-inline get(CGAL::vertex_selection_t, Surface_mesh<P> & smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template add_property_map<vertex_descriptor,int>("v:selection").first;
-}
-
-
- template <typename P>
-typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor,int>
- inline get(CGAL::vertex_num_feature_edges_t, Surface_mesh<P> & smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template add_property_map<vertex_descriptor,int>("v:nfe").first;
-}
-
-  template <typename P, typename I>
-typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor,std::set<I> >
-  inline get(CGAL::vertex_incident_patches_t<I>, Surface_mesh<P> & smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template add_property_map<vertex_descriptor,std::set<I> >("v:ip").first;
-}
-
-
- template <typename P>
- typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor,std::size_t>
-inline get(CGAL::vertex_time_stamp_t, Surface_mesh<P> & smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template add_property_map<vertex_descriptor,std::size_t>("v:time_stamp").first;
-}
-
-
- template <typename P>
- typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor,std::size_t>
-inline get(CGAL::halfedge_time_stamp_t, Surface_mesh<P> & smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
-  return smesh. template add_property_map<halfedge_descriptor,std::size_t>("h:time_stamp").first;
-}
-
-
- template <typename P>
- typename Surface_mesh<P>::Property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::size_t>
-inline get(CGAL::face_time_stamp_t, Surface_mesh<P> & smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template add_property_map<face_descriptor,std::size_t>("v:time_stamp").first;
-}
-
-} // namespace CGAL
-
-
-
-
 namespace boost {
 
 template <typename P, typename I>
@@ -127,7 +32,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::face_patch_id_t<I> >
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor face_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<face_descriptor, I> type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<face_descriptor, I> type;
   typedef type const_type;
 };
 
@@ -148,7 +53,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::halfedge_is_feature_t>
 {
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<halfedge_descriptor, bool> type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<halfedge_descriptor, bool> type;
   typedef type const_type;
 };
 
@@ -159,7 +64,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_selection_t>
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<vertex_descriptor, int> type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<vertex_descriptor, int> type;
   typedef type const_type;
 };
 
@@ -170,7 +75,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::face_selection_t>
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor face_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<face_descriptor, int> type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<face_descriptor, int> type;
   typedef type const_type;
 };
 
@@ -181,7 +86,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_num_feature_edges_t>
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<vertex_descriptor, int> type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<vertex_descriptor, int> type;
   typedef type const_type;
 };
 
@@ -192,7 +97,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_incident_patches_t<I> >
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<vertex_descriptor, std::set<I> > type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<vertex_descriptor, std::set<I> > type;
   typedef type const_type;
 };
 
@@ -203,7 +108,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_time_stamp_t>
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<vertex_descriptor, std::size_t> type; 
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<vertex_descriptor, std::size_t> type;
   typedef type const_type;
 };
 
@@ -214,7 +119,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::halfedge_time_stamp_t>
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<halfedge_descriptor, std::size_t> type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<halfedge_descriptor, std::size_t> type;
   typedef type const_type;
 };
 
@@ -225,10 +130,124 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::face_time_stamp_t>
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor face_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::Property_map<face_descriptor, std::size_t> type;  
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<face_descriptor, std::size_t> type;
   typedef type const_type;
 };
 
 } // namespace boost
 
-#endif CGAL_PMP_PROPERTIES_SURFACE_MESH_H
+namespace CGAL {
+
+template <typename P, typename Property_tag>
+struct Get_pmap_of_surface_mesh {
+  typedef typename boost::property_map<Surface_mesh<P>, Property_tag >::type type;
+};
+
+template <typename P, typename I>
+typename boost::lazy_disable_if<
+   boost::is_const<P>,
+   Get_pmap_of_surface_mesh<P, CGAL::face_patch_id_t<I> >
+ >::type
+inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
+{
+ typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
+  return smesh. template add_property_map<face_descriptor,I>("f:patch_id").first;
+}
+
+
+#define CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(Tag) \
+  typename boost::lazy_disable_if<                      \
+     boost::is_const<P>,                                \
+     Get_pmap_of_surface_mesh<P, Tag >                  \
+   >::type
+
+template <typename P>
+CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_patch_id_t<void>)
+inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> & smesh)
+{
+  typedef CGAL::static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
+  
+  return Pmap(std::make_pair(0,1)); 
+}
+
+
+template <typename P>
+CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_is_feature_t)
+inline get(CGAL::halfedge_is_feature_t, Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
+  return smesh. template add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+}
+
+ template <typename P>
+CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_selection_t)
+ inline get(CGAL::face_selection_t, Surface_mesh<P> & smesh)
+{
+ typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
+  return smesh. template add_property_map<face_descriptor,int>("f:selection").first;
+}
+
+
+
+ template <typename P>
+CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_selection_t)
+inline get(CGAL::vertex_selection_t, Surface_mesh<P> & smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh. template add_property_map<vertex_descriptor,int>("v:selection").first;
+}
+
+
+ template <typename P>
+CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_num_feature_edges_t)
+ inline get(CGAL::vertex_num_feature_edges_t, Surface_mesh<P> & smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh. template add_property_map<vertex_descriptor,int>("v:nfe").first;
+}
+
+  template <typename P, typename I>
+typename boost::lazy_disable_if<
+   boost::is_const<P>,
+   Get_pmap_of_surface_mesh<P, CGAL::vertex_incident_patches_t<I> >
+ >::type
+  inline get(CGAL::vertex_incident_patches_t<I>, Surface_mesh<P> & smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh. template add_property_map<vertex_descriptor,std::set<I> >("v:ip").first;
+}
+
+
+ template <typename P>
+ CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_time_stamp_t)
+inline get(CGAL::vertex_time_stamp_t, Surface_mesh<P> & smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh. template add_property_map<vertex_descriptor,std::size_t>("v:time_stamp").first;
+}
+
+
+ template <typename P>
+ CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_time_stamp_t)
+inline get(CGAL::halfedge_time_stamp_t, Surface_mesh<P> & smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
+  return smesh. template add_property_map<halfedge_descriptor,std::size_t>("h:time_stamp").first;
+}
+
+
+ template <typename P>
+ CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_time_stamp_t)
+inline get(CGAL::face_time_stamp_t, Surface_mesh<P> & smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
+  return smesh. template add_property_map<face_descriptor,std::size_t>("v:time_stamp").first;
+}
+
+} // namespace CGAL
+
+#undef CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE
+
+
+
+#endif //CGAL_PMP_PROPERTIES_SURFACE_MESH_H
