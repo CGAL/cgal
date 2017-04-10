@@ -52,7 +52,7 @@ class static_property_map
   value_type
   get(const static_property_map& pm, const key_type&)
   {
-    return v;
+    return pm.v;
   }
 
   inline friend
