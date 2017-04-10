@@ -4,14 +4,19 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
+#include <CGAL/boost/graph/PMP_properties_Surface_mesh.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Timer.h>
 
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
+typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
+typedef CGAL::Graph_with_descriptor_with_graph<Surface_mesh> Surface_mesh_gwdwg;
+
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<K, Surface_mesh_gwdwg> Mesh_domain;
 
 
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -36,8 +41,13 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   std::ifstream input(fname);
-  Polyhedron polyhedron, polyhedron2;
-  input >> polyhedron;
+  const char* fname2 = (argc>2)?argv[2]:"data/fandisk-box.off";
+  std::ifstream input2(fname2);
+  Surface_mesh sm, smbounding;
+  input >> sm;
+  input2 >> smbounding;
+  Surface_mesh_gwdwg smesh(sm);
+  Surface_mesh_gwdwg smeshbounding(smbounding);
   if(input.fail()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
@@ -45,19 +55,20 @@ int main(int argc, char*argv[])
   CGAL::Timer t;
   t.start();
   // Create domain
-  Mesh_domain domain(polyhedron, polyhedron2);
-  
+  Mesh_domain domain(smesh, smeshbounding);
+
   // Get sharp features
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.2,
-                         facet_angle = 25, facet_size = 0.5, facet_distance = 0.01,
-                         cell_radius_edge_ratio = 3, cell_size = 0.1);
+  Mesh_criteria criteria(edge_size = 0.025,
+                         facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
+                         cell_radius_edge_ratio = 3, cell_size = 0.05);
+  
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb(), no_lloyd());
-  std::cerr << t.time() << " sec." << std::endl;
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
+  std::cerr << t.time() << " sec." << std::endl;
   // Output
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
