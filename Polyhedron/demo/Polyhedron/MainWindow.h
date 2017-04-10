@@ -379,7 +379,7 @@ private:
 
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;
-  void insertActionAfter(QMenu*, QString actionAfterName, QAction *actionToInsert);
+  void insertActionBefore(QMenu*, QAction *actionToInsert);
 
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;

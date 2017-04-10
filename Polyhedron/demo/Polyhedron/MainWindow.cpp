@@ -351,7 +351,7 @@ MainWindow::MainWindow(QWidget* parent)
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
-  insertActionAfter(menuFile, QString("Load"), actionAddToGroup);
+  insertActionBefore(menuFile, actionAddToGroup);
   statistics_dlg = NULL;
   statistics_ui = new Ui::Statistics_on_item_dialog();
 
@@ -1010,7 +1010,7 @@ void MainWindow::open(QString filename)
     connect(actionResetDefaultLoaders, SIGNAL(triggered()),
             this, SLOT(reset_default_loaders()));
     default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
-    insertActionAfter(ui->menuFile, QString("Load"), actionResetDefaultLoaders);
+    insertActionBefore(ui->menuFile, actionResetDefaultLoaders);
   }
   
   
@@ -1944,7 +1944,7 @@ void MainWindow::reset_default_loaders()
   menu->removeAction(actionResetDefaultLoaders);
 }
 
-void MainWindow::insertActionAfter(QMenu* menu, QString actionAfterName, QAction* actionToInsert)
+void MainWindow::insertActionBefore(QMenu* menu, QAction* actionToInsert)
 {
   const char* prop_name = "Menu modified by MainWindow.";
   if(menu)
@@ -1953,28 +1953,9 @@ void MainWindow::insertActionAfter(QMenu* menu, QString actionAfterName, QAction
     if(!menuChanged) {
       menu->setProperty(prop_name, true);
     }
-    QList<QAction*> menuActions = menu->actions();
-    if(menuActions.contains(actionToInsert))
-      return;
-    // Look for action just after "actionAfterName..." action
-    QAction* actionAfter = NULL;
-    for ( QList<QAction*>::iterator it_action = menuActions.begin(),
-          end = menuActions.end() ; it_action != end ; ++ it_action )
-    {
-      if ( NULL != *it_action && (*it_action)->text().contains(actionAfterName) )
-      {
-        ++it_action;
-        if ( it_action != end && NULL != *it_action )
-        {
-          actionAfter = *it_action;
-        }
-      }
-    }
 
-    // Insert "Load implicit function" action
-    if ( NULL != actionAfter )
-    {
-      menu->insertAction(actionAfter,actionToInsert);
-    }
+    QList<QAction*> menuActions = menu->actions();
+    if(!menuActions.contains(actionToInsert))
+      menu->insertAction(ui->actionLoadPlugin, actionToInsert);
   }
 }
