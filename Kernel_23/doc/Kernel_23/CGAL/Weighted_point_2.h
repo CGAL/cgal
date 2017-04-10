@@ -7,10 +7,9 @@ An object of the class `Weighted_point_2` is a tuple of a two-dimensional point 
 
 Remember that `Kernel::RT` and `Kernel::FT` denote a
 `RingNumberType` and a `FieldNumberType`, respectively. For the kernel
-model `Cartesian<T>`, the two types are the same. For the
-kernel model `Homogeneous<T>`, `Kernel::RT` is equal
-to `T`, and `Kernel::FT` is equal to
-`Quotient<T>`.
+model `Cartesian<NT>`, the two types are the same. For the
+kernel model `Homogeneous<NT>`, `Kernel::RT` is equal
+to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 
 \sa `Point_2<Kernel>`
 

@@ -8,10 +8,9 @@ Euclidean plane \f$ \E^2\f$.
 
 Remember that `Kernel::RT` and `Kernel::FT` denote a 
 `RingNumberType` and a `FieldNumberType`, respectively. For the kernel 
-model `Cartesian<T>`, the two types are the same. For the 
-kernel model `Homogeneous<T>`, `Kernel::RT` is equal 
-to `T`, and `Kernel::FT` is equal to 
-`Quotient<T>`. 
+model `Cartesian<NT>`, the two types are the same. For the
+kernel model `Homogeneous<NT>`, `Kernel::RT` is equal
+to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 
 \cgalHeading{Operators}
 
@@ -166,14 +165,14 @@ Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `p`, starting with 0. 
-\pre \f$ 0\leq i \leq1\f$. 
+\pre \f$ 0\leq i \leq1\f$.
 */ 
 Kernel::FT cartesian(int i) const; 
 
 /*!
 returns `cartesian(i)`. 
-\pre \f$ 0\leq i \leq1\f$. 
-*/ 
+\pre \f$ 0\leq i \leq1\f$.
+*/
 Kernel::FT operator[](int i) const; 
 
 /*!
