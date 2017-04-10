@@ -776,10 +776,10 @@ void Scene_surface_mesh_item::itemAboutToBeDestroyed(Scene_item *item)
     delete d->smesh_;
     d->smesh_ = NULL;
   }
+}
 
 void Scene_surface_mesh_item::invalidateOpenGLBuffers()
 {
   are_buffers_filled = false;
   d->smesh_->collect_garbage();
-
 }

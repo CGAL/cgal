@@ -56,9 +56,7 @@ public:
   void draw(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
-  std::vector<QColor>& color_vector();
-  void set_patch_id(SMesh::Face_index f,int i)const;
-  int patch_id(SMesh::Face_index f)const;
+
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
   bool isEmpty() const Q_DECL_OVERRIDE;
@@ -77,14 +75,13 @@ public:
   std::vector<QColor>& color_vector();
   void set_patch_id(SMesh::Face_index f,int i)const;
   int patch_id(SMesh::Face_index f)const;
-  bool supportsRenderingMode(RenderingMode m) const;
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
 
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
-  void invalidateOpenGLBuffers();
+  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
 public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   virtual void selection_changed(bool) Q_DECL_OVERRIDE;
@@ -92,22 +89,7 @@ protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
-#if 0
-Scene_surface_mesh_item::Halfedge_is_feature_map
-get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh);
 
-Scene_surface_mesh_item::Face_patch_id_map
-get(face_patch_id_t, Scene_surface_mesh_item::SMesh& smesh);
-
-Scene_surface_mesh_item::Vertex_selection_map
-get(vertex_selection_t, Scene_surface_mesh_item::SMesh& smesh);
-
-Scene_surface_mesh_item::Face_selection_map
-get(face_selection_t, Scene_surface_mesh_item::SMesh& smesh);
-
-Scene_surface_mesh_item::Vertex_num_feature_edges_map
-get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh);
-#else
 Scene_surface_mesh_item::Halfedge_is_feature_map
 inline get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh)
 {
@@ -145,7 +127,6 @@ inline get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh)
   typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
   return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
 }
-#endif
 
 namespace boost {
   
