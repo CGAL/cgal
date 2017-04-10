@@ -23,18 +23,18 @@ typedef Classif::Sum_of_weighted_features_predicate Classification_predicate;
 
 typedef Classif::Planimetric_grid<Kernel, Point_range, Pmap>             Planimetric_grid;
 typedef Classif::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
-typedef Classif::Local_eigen_analysis<Kernel, Point_range, Pmap>         Local_eigen_analysis;
+typedef Classif::Local_eigen_analysis                                    Local_eigen_analysis;
 
 typedef Classif::Label_handle                                            Label_handle;
 typedef Classif::Feature_handle                                          Feature_handle;
 typedef Classif::Label_set                                               Label_set;
 typedef Classif::Feature_set                                             Feature_set;
 
-typedef Classif::Feature::Distance_to_plane<Kernel, Point_range, Pmap>   Distance_to_plane;
-typedef Classif::Feature::Linearity<Kernel, Point_range, Pmap>           Linearity;
-typedef Classif::Feature::Omnivariance<Kernel, Point_range, Pmap>        Omnivariance;
-typedef Classif::Feature::Planarity<Kernel, Point_range, Pmap>           Planarity;
-typedef Classif::Feature::Surface_variation<Kernel, Point_range, Pmap>   Surface_variation;
+typedef Classif::Feature::Distance_to_plane<Point_range, Pmap>           Distance_to_plane;
+typedef Classif::Feature::Linearity                                      Linearity;
+typedef Classif::Feature::Omnivariance                                   Omnivariance;
+typedef Classif::Feature::Planarity                                      Planarity;
+typedef Classif::Feature::Surface_variation                              Surface_variation;
 typedef Classif::Feature::Elevation<Kernel, Point_range, Pmap>           Elevation;
 typedef Classif::Feature::Vertical_dispersion<Kernel, Point_range, Pmap> Dispersion;
 

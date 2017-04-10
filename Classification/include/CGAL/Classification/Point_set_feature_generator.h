@@ -104,38 +104,30 @@ public:
   <Geom_traits, PointRange, PointMap>                    Planimetric_grid;
   typedef Classification::Point_set_neighborhood
   <Geom_traits, PointRange, PointMap>                    Neighborhood;
-  typedef Classification::Local_eigen_analysis
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Local_eigen_analysis;
+  typedef Classification::Local_eigen_analysis           Local_eigen_analysis;
 
   /// \cond SKIP_IN_MANUAL
   typedef Classification::Feature_handle                 Feature_handle;
   typedef Classification::Label                          Label;
   typedef Classification::Label_handle                   Label_handle;
   
-  typedef Classification::Feature::Anisotropy
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Anisotropy;
+  typedef Classification::Feature::Anisotropy            Anisotropy;
   typedef Classification::Feature::Distance_to_plane
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Distance_to_plane;
-  typedef Classification::Feature::Eigentropy
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Eigentropy;
+  <PointRange, PointMap>                                 Distance_to_plane;
+  typedef Classification::Feature::Eigentropy            Eigentropy;
   typedef Classification::Feature::Elevation
   <Geom_traits, PointRange, PointMap>                    Elevation;
-  typedef Classification::Feature::Linearity
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Linearity;
-  typedef Classification::Feature::Omnivariance
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Omnivariance;
-  typedef Classification::Feature::Planarity
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Planarity;
-  typedef Classification::Feature::Sphericity
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Sphericity;
-  typedef Classification::Feature::Sum_eigenvalues
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Sum_eigen;
-  typedef Classification::Feature::Surface_variation
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Surface_variation;
+  typedef Classification::Feature::Linearity             Linearity;
+  typedef Classification::Feature::Omnivariance          Omnivariance;
+  typedef Classification::Feature::Planarity             Planarity;
+  typedef Classification::Feature::Sphericity            Sphericity;
+  typedef Classification::Feature::Sum_eigenvalues       Sum_eigen;
+  typedef Classification::Feature::Surface_variation     Surface_variation;
   typedef Classification::Feature::Vertical_dispersion
   <Geom_traits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
-  <Geom_traits, PointRange, PointMap, DiagonalizeTraits> Verticality;
+  <Geom_traits>                                          Verticality;
+  
   typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
     
@@ -169,7 +161,9 @@ private:
       t.reset();
       t.start();
       
-      eigen = new Local_eigen_analysis (input, point_map, neighborhood->k_neighbor_query(6));
+      eigen = new Local_eigen_analysis
+        (input, point_map, neighborhood->k_neighbor_query(6), ConcurrencyTag(), DiagonalizeTraits());
+      
       float range = eigen->mean_range();
       if (this->voxel_size < 0)
         this->voxel_size = range;

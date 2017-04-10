@@ -31,23 +31,19 @@ namespace Classification {
 namespace Feature {
 
 /// \cond SKIP_IN_MANUAL
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Eigen_feature : public Feature_base
 {
 protected:
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<float> attrib;
 #else
-  const Local_eigen_analysis& eigen;
+  const Classification::Local_eigen_analysis& eigen;
 #endif
   
 public:
-  Eigen_feature (const PointRange&,
-                 const Local_eigen_analysis& eigen)
+  template <typename InputRange>
+  Eigen_feature (const InputRange&,
+                 const Classification::Local_eigen_analysis& eigen)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : eigen (eigen)
 #endif
@@ -55,20 +51,19 @@ public:
   }
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-  virtual void init (const PointRange& input, const Local_eigen_analysis& eigen)
+  virtual void init (std::size_t size, const Classification::Local_eigen_analysis& eigen)
   {
-
-    attrib.reserve (input.size());
-    for (std::size_t i = 0; i < input.size(); ++ i)
+    attrib.reserve (size);
+    for (std::size_t i = 0; i < size; ++ i)
       attrib.push_back (get_value (eigen, i));
   }
 #else
-  virtual void init (const PointRange&, const Local_eigen_analysis&)
+  virtual void init (std::size_t, const Classification::Local_eigen_analysis&)
   {
   }
 #endif
   
-  virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i) = 0;
+  virtual float get_value (const Classification::Local_eigen_analysis& eigen, std::size_t i) = 0;
   virtual float value (std::size_t pt_index)
   {
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
@@ -91,39 +86,29 @@ public:
     \f[
     \frac{\lambda_1 - \lambda_2}{\lambda_1}
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Linearity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
 
+    \tparam Input model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator`.
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Linearity (const PointRange& input,
-             const Local_eigen_analysis& eigen) : Base (input, eigen)
+  template <typename InputRange>
+  Linearity (const InputRange& input,
+             const Local_eigen_analysis& eigen) : Eigen_feature (input, eigen)
   {
     this->set_name("linearity");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -148,27 +133,14 @@ public:
     \f[
     \frac{\lambda_2 - \lambda_3}{\lambda_1}
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Planarity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
@@ -176,12 +148,13 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Planarity (const PointRange& input,
+  template <typename InputRange>
+  Planarity (const InputRange& input,
              const Local_eigen_analysis& eigen)
-    : Base(input, eigen)
+    : Eigen_feature(input, eigen)
   {
     this->set_name("planarity");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
@@ -206,27 +179,14 @@ public:
     \f[
     \frac{\lambda_3}{\lambda_1}
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Sphericity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
@@ -234,12 +194,13 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Sphericity (const PointRange& input,
+  template <typename InputRange>
+  Sphericity (const InputRange& input,
               const Local_eigen_analysis& eigen)
-    : Base(input, eigen)
+    : Eigen_feature(input, eigen)
   {
     this->set_name("sphericity");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
@@ -263,27 +224,14 @@ public:
     \f[
     (\lambda_1 \times \lambda_2 \times \lambda_3)^{\frac{1}{3}}
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Omnivariance
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
@@ -291,12 +239,13 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Omnivariance (const PointRange& input,
+  template <typename InputRange>
+  Omnivariance (const InputRange& input,
                 const Local_eigen_analysis& eigen)
-    : Base(input, eigen)
+    : Eigen_feature(input, eigen)
   {
     this->set_name("omnivariance");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
@@ -317,27 +266,14 @@ public:
     \f[
     \frac{\lambda_1 - \lambda_3}{\lambda_1}
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Anisotropy
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
@@ -345,12 +281,13 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Anisotropy (const PointRange& input,
+  template <typename InputRange>
+  Anisotropy (const InputRange& input,
               const Local_eigen_analysis& eigen)
-    : Base(input, eigen)
+    : Eigen_feature(input, eigen)
   {
     this->set_name("anisotropy");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
@@ -374,27 +311,14 @@ public:
     \f[
     - \sum_{i=1}^3 \lambda_i \times \log{\lambda_i}
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Eigentropy
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
@@ -402,12 +326,13 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Eigentropy (const PointRange& input,
+  template <typename InputRange>
+  Eigentropy (const InputRange& input,
               const Local_eigen_analysis& eigen)
-    : Base(input, eigen)
+    : Eigen_feature(input, eigen)
   {
     this->set_name("eigentropy");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
@@ -436,27 +361,14 @@ public:
     \f[
     \lambda_1 + \lambda_2 + \lambda_3
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Sum_eigenvalues
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
@@ -464,12 +376,13 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Sum_eigenvalues (const PointRange& input,
+  template <typename InputRange>
+  Sum_eigenvalues (const InputRange& input,
                    const Local_eigen_analysis& eigen)
-    : Base(input, eigen)
+    : Eigen_feature(input, eigen)
   {
     this->set_name("sum_eigen");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
@@ -490,27 +403,14 @@ public:
     \f[
     \frac{\lambda_3}{\lambda_1 + \lambda_2 + \lambda_3}
     \f]
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Surface_variation
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
 #else
-  : public Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits>
+  : public Eigen_feature
 #endif
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
-  typedef Eigen_feature<Geom_traits, PointRange, PointMap, DiagonalizeTraits> Base;
 public:
   /*!
     Constructs the feature.
@@ -518,12 +418,13 @@ public:
     \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
-  Surface_variation (const PointRange& input,
+  template <typename InputRange>
+  Surface_variation (const InputRange& input,
                      const Local_eigen_analysis& eigen)
-    : Base(input, eigen)
+    : Eigen_feature(input, eigen)
   {
     this->set_name("surface_variation");
-    this->init(input, eigen);
+    this->init(input.size(), eigen);
   }
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)

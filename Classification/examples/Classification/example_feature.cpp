@@ -18,14 +18,14 @@ namespace Classif = CGAL::Classification;
 typedef Classif::Sum_of_weighted_features_predicate                      Classification_predicate;
 
 typedef Classif::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
-typedef Classif::Local_eigen_analysis<Kernel, Point_range, Pmap>         Local_eigen_analysis;
+typedef Classif::Local_eigen_analysis                                    Local_eigen_analysis;
 
 typedef Classif::Label_handle                                            Label_handle;
 typedef Classif::Feature_handle                                          Feature_handle;
 typedef Classif::Label_set                                               Label_set;
 typedef Classif::Feature_set                                             Feature_set;
 
-typedef Classif::Feature::Sphericity<Kernel, Point_range, Pmap>          Sphericity;
+typedef Classif::Feature::Sphericity                                     Sphericity;
 
 ///////////////////////////////////////////////////////////////////
 //! [Feature]

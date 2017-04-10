@@ -38,21 +38,18 @@ namespace Feature {
     feature computes the distance of a point to a locally fitted
     plane.
     
-    \tparam Geom_traits model of \cgal Kernel.
     \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
+    is `CGAL::Point_3`.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
+template <typename PointRange, typename PointMap>
 class Distance_to_plane : public Feature_base
 {
-  typedef Classification::Local_eigen_analysis<Geom_traits, PointRange,
-                                               PointMap, DiagonalizeTraits> Local_eigen_analysis;
+
+  typedef typename Kernel_traits<typename PointMap::value_type>::Kernel Kernel;
+  
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<float> distance_to_plane_feature;
 #else
@@ -80,7 +77,7 @@ public:
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES    
     for(std::size_t i = 0; i < input.size(); i++)
       distance_to_plane_feature.push_back
-        (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane(i))));
+        (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane<Kernel>(i))));
 #endif
   }
 
@@ -91,7 +88,7 @@ public:
     return distance_to_plane_feature[pt_index];
 #else
     return CGAL::sqrt (CGAL::squared_distance
-                       (get(point_map, *(input.begin()+pt_index)), eigen.plane(pt_index)));
+                       (get(point_map, *(input.begin()+pt_index)), eigen.plane<Kernel>(pt_index)));
 #endif
   }
   /// \endcond

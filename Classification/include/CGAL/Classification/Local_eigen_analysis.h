@@ -46,29 +46,16 @@ namespace Classification {
     eigenvalues of the covariance matrices of all points of a point
     set using a local neighborhood.
 
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type is
-    `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Local_eigen_analysis
 {
 public:
-  typedef typename Geom_traits::Point_3 Point;
-  typedef typename Geom_traits::Vector_3 Vector;
-  typedef typename Geom_traits::Plane_3 Plane;
   typedef CGAL::cpp11::array<float, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
   
 private:
 
 #ifdef CGAL_LINKED_WITH_TBB
-  template <typename NeighborQuery>
+  template <typename PointRange, typename PointMap, typename NeighborQuery, typename DiagonalizeTraits>
   class Compute_eigen_values
   {
     Local_eigen_analysis& m_eigen;
@@ -97,7 +84,7 @@ private:
         std::vector<std::size_t> neighbors;
         m_neighbor_query (get(m_point_map, *(m_input.begin()+i)), std::back_inserter (neighbors));
 
-        std::vector<Point> neighbor_points;
+        std::vector<typename PointMap::value_type> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(m_point_map, *(m_input.begin()+neighbors[j])));
 
@@ -106,7 +93,8 @@ private:
                                                             get(m_point_map, *(m_input.begin() + neighbors.back()))));
         m_mutex.unlock();
           
-        m_eigen.compute (i, get(m_point_map, *(m_input.begin()+i)), neighbor_points);
+        m_eigen.compute<typename PointMap::value_type,
+                        DiagonalizeTraits> (i, get(m_point_map, *(m_input.begin()+i)), neighbor_points);
       }
     }
 
@@ -132,29 +120,41 @@ public:
   /// \endcond
 
   /*! 
-
     \brief Computes the local eigen analysis of an input range based
     on a local neighborhood.
 
+    \tparam PointRange model of `ConstRange`. Its iterator type is
+    `RandomAccessIterator`.
+    \tparam PointMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `PointRange` and value type
+    is `Geom_traits::Point_3`.
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` (default value is %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
+    for matrix diagonalization.
+
     \param input input range.
     \param point_map property map to access the input points
     \param neighbor_query object used to access neighborhoods of points.
   */
-  template <typename NeighborQuery,
+  template <typename PointRange,
+            typename PointMap,
+            typename NeighborQuery,
 #if defined(DOXYGEN_RUNNING)
-            typename ConcurrencyTag>
+            typename ConcurrencyTag,
 #elif defined(CGAL_LINKED_WITH_TBB)
-            typename ConcurrencyTag = CGAL::Parallel_tag>
+            typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-            typename ConcurrencyTag = CGAL::Sequential_tag>
+            typename ConcurrencyTag = CGAL::Sequential_tag,
 #endif
+            typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float, 3> >
     Local_eigen_analysis (const PointRange& input,
                           PointMap point_map,
-                          const NeighborQuery& neighbor_query)
+                          const NeighborQuery& neighbor_query,
+                          const ConcurrencyTag& = ConcurrencyTag(),
+                          const DiagonalizeTraits& = DiagonalizeTraits())
   {
     m_eigenvalues.resize (input.size());
     m_sum_eigenvalues.resize (input.size());
@@ -174,7 +174,8 @@ public:
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       tbb::mutex mutex;
-      Compute_eigen_values<NeighborQuery> f(*this, input, point_map, neighbor_query, m_mean_range, mutex);
+      Compute_eigen_values<PointRange, PointMap, NeighborQuery, DiagonalizeTraits>
+        f(*this, input, point_map, neighbor_query, m_mean_range, mutex);
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
     }
     else
@@ -185,14 +186,15 @@ public:
         std::vector<std::size_t> neighbors;
         neighbor_query (get(point_map, *(input.begin()+i)), std::back_inserter (neighbors));
 
-        std::vector<Point> neighbor_points;
+        std::vector<typename PointMap::value_type> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(point_map, *(input.begin()+neighbors[j])));
 
         m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin() + i)),
                                                             get(point_map, *(input.begin() + neighbors.back()))));
         
-        compute (i, get(point_map, *(input.begin()+i)), neighbor_points);
+        compute<typename PointMap::value_type, DiagonalizeTraits>
+          (i, get(point_map, *(input.begin()+i)), neighbor_points);
       }
     }
     m_mean_range /= input.size();
@@ -200,25 +202,30 @@ public:
 
   /*!
     \brief Returns the estimated unoriented normal vector of the point at position `index`.
+    \tparam Geom_traits model of \cgal Kernel.
   */
-  Vector normal_vector (std::size_t index) const
+  template <typename Geom_traits>
+  typename Geom_traits::Vector_3 normal_vector (std::size_t index) const
   {
-    return Vector(double(m_smallest_eigenvectors[index][0]),
-                  double(m_smallest_eigenvectors[index][1]),
-                  double(m_smallest_eigenvectors[index][2]));
+    return typename Geom_traits::Vector_3(double(m_smallest_eigenvectors[index][0]),
+                                          double(m_smallest_eigenvectors[index][1]),
+                                          double(m_smallest_eigenvectors[index][2]));
   }
 
   /*!
     \brief Returns the estimated local tangent plane of the point at position `index`.
+    \tparam Geom_traits model of \cgal Kernel.
   */
-  Plane plane (std::size_t index) const
+  template <typename Geom_traits>
+  typename Geom_traits::Plane_3 plane (std::size_t index) const
   {
-    return Plane (Point (double(m_centroids[index][0]),
-                         double(m_centroids[index][1]),
-                         double(m_centroids[index][2])),
-                  Vector(double(m_smallest_eigenvectors[index][0]),
-                         double(m_smallest_eigenvectors[index][1]),
-                         double(m_smallest_eigenvectors[index][2])));
+    return typename Geom_traits::Plane_3
+      (typename Geom_traits::Point_3 (double(m_centroids[index][0]),
+                                      double(m_centroids[index][1]),
+                                      double(m_centroids[index][2])),
+       typename Geom_traits::Vector_3 (double(m_smallest_eigenvectors[index][0]),
+                                       double(m_smallest_eigenvectors[index][1]),
+                                       double(m_smallest_eigenvectors[index][2])));
   }
 
   /*!
@@ -237,8 +244,11 @@ public:
 
 private:
 
+  template <typename Point, typename DiagonalizeTraits>
   void compute (std::size_t index, const Point& query, std::vector<Point>& neighbor_points)
   {
+    typedef typename Kernel_traits<Point>::Kernel::Vector_3 Vector;
+      
     if (neighbor_points.size() == 0)
     {
       Eigenvalues v = {{ 0.f, 0.f, 0.f }};
