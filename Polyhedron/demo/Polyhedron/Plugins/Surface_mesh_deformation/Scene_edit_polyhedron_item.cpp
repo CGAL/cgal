@@ -1018,7 +1018,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
   //Draw the points
   if(d->ui_widget->ShowROICheckBox->isChecked()) {
 
-        if(!d->ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
+        if(!d->ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->isExtensionFound()) {
 
             vaos[Scene_edit_polyhedron_item_priv::Roi_points]->bind();
             d->program = getShaderProgram(PROGRAM_NO_SELECTION);
@@ -1037,13 +1037,13 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
   }
   else
   {
-    if(d->ui_widget->ShowAsSphereCheckBox->isChecked() && viewer->extension_is_found) {
+    if(d->ui_widget->ShowAsSphereCheckBox->isChecked() && viewer->isExtensionFound()) {
       d->spheres->setVisible(false);
       Scene_group_item::draw(viewer);
     }
   }
 
-    if(!d->ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
+    if(!d->ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->isExtensionFound()) {
         vaos[Scene_edit_polyhedron_item_priv::Control_points]->bind();
         d->program = getShaderProgram(PROGRAM_NO_SELECTION);
         attribBuffers(viewer,PROGRAM_NO_SELECTION);
