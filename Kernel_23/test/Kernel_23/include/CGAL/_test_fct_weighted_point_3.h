@@ -1,4 +1,4 @@
-// Copyright (c) 1999
+// Copyright (c) 2017
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
