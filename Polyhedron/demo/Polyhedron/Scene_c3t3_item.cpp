@@ -638,7 +638,7 @@ template<typename C3t3>
 std::vector<int>
 create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
 {
-  typedef typename C3t3::Triangulation::Point Point_3;
+  typedef typename C3t3::Triangulation::Bare_point Point_3;
   typename Kernel::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
     = Kernel().compute_approximate_dihedral_angle_3_object();
 
@@ -662,10 +662,10 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
       continue;
 #endif //CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
 
-    const Point_3& p0 = cit->vertex(0)->point();
-    const Point_3& p1 = cit->vertex(1)->point();
-    const Point_3& p2 = cit->vertex(2)->point();
-    const Point_3& p3 = cit->vertex(3)->point();
+    const Point_3& p0 = cit->vertex(0)->point().point();
+    const Point_3& p1 = cit->vertex(1)->point().point();
+    const Point_3& p2 = cit->vertex(2)->point().point();
+    const Point_3& p3 = cit->vertex(3)->point().point();
 
     double a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p1, p2, p3)));
     histo[static_cast<int>(std::floor(a))] += 1;
@@ -1181,7 +1181,7 @@ void Scene_c3t3_item::export_facets_in_complex()
   std::size_t index = 0;
   BOOST_FOREACH(C3t3::Vertex_handle v, vertex_set)
   {
-    points[index] = v->point();
+    points[index] = v->point().point();
     indices.insert(std::make_pair(v, index));
     index++;
   }
@@ -1402,12 +1402,12 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
   Tr::Cell_handle ch = facet.id().first;
   if(intersected_cells.find(ch) == intersected_cells.end())
   {
-    const Kernel::Point_3& pa = ch->vertex(0)->point();
-    const Kernel::Point_3& pb = ch->vertex(1)->point();
-    const Kernel::Point_3& pc = ch->vertex(2)->point();
-    const Kernel::Point_3& pd = ch->vertex(3)->point();
-
     QColor c = this->colors_subdomains[ch->subdomain_index()].darker(150);
+
+    const Kernel::Point_3& pa = ch->vertex(0)->point().point();
+    const Kernel::Point_3& pb = ch->vertex(1)->point().point();
+    const Kernel::Point_3& pc = ch->vertex(2)->point().point();
+    const Kernel::Point_3& pd = ch->vertex(3)->point().point();
 
     CGAL::Color color(c.red(), c.green(), c.blue());
 
@@ -1422,10 +1422,10 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
     if(c3t3.is_in_complex(nh)){
       if(intersected_cells.find(nh) == intersected_cells.end())
       {
-        const Kernel::Point_3& pa = nh->vertex(0)->point();
-        const Kernel::Point_3& pb = nh->vertex(1)->point();
-        const Kernel::Point_3& pc = nh->vertex(2)->point();
-        const Kernel::Point_3& pd = nh->vertex(3)->point();
+        const Kernel::Point_3& pa = nh->vertex(0)->point().point();
+        const Kernel::Point_3& pb = nh->vertex(1)->point().point();
+        const Kernel::Point_3& pc = nh->vertex(2)->point().point();
+        const Kernel::Point_3& pd = nh->vertex(3)->point().point();
 
         QColor c = this->colors_subdomains[nh->subdomain_index()].darker(150);
 
@@ -1558,9 +1558,9 @@ void Scene_c3t3_item_priv::computeElements()
     {
       const Tr::Cell_handle& cell = fit->first;
       const int& index = fit->second;
-      const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point();
-      const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
-      const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
+      const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point().point();
+      const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point().point();
+      const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point().point();
 
       QColor color = colors[cell->surface_patch_index(index)];
       f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
@@ -1589,10 +1589,10 @@ void Scene_c3t3_item_priv::computeElements()
           }
         if(!has_far_point)
         {
-          const Kernel::Point_3& p1 = cit->vertex(0)->point();
-          const Kernel::Point_3& p2 = cit->vertex(1)->point();
-          const Kernel::Point_3& p3 = cit->vertex(2)->point();
-          const Kernel::Point_3& p4 = cit->vertex(3)->point();
+          const Kernel::Point_3& p1 = cit->vertex(0)->point().point();
+          const Kernel::Point_3& p2 = cit->vertex(1)->point().point();
+          const Kernel::Point_3& p3 = cit->vertex(2)->point().point();
+          const Kernel::Point_3& p4 = cit->vertex(3)->point().point();
           draw_triangle_edges_cnc(p1, p2, p4);
           draw_triangle_edges_cnc(p1, p3, p4);
           draw_triangle_edges_cnc(p2, p3, p4);

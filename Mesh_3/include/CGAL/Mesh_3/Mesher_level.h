@@ -148,6 +148,8 @@ public:
   typedef Tr Triangulation;
   /** Type of point that are inserted into the triangulation. */
   typedef typename Triangulation::Point Point;
+  /** Type of point with no weight */
+  typedef typename Triangulation::Bare_point Bare_point;
   /** Type of vertex handles that are returns by insertions into the
       triangulation. */
   typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -288,7 +290,7 @@ public:
     derived().pop_next_element_impl();
   }
 
-  Point circumcenter_of_element(const Element& e)
+  Bare_point circumcenter_of_element(const Element& e)
   {
     return derived().circumcenter_impl(e);
   }
@@ -308,7 +310,7 @@ public:
   }
 
   /** Gives the point that should be inserted to refine the element \c e */
-  Point refinement_point(const Element& e)
+  Bare_point refinement_point(const Element& e)
   {
     return derived().refinement_point_impl(e);
   }
@@ -562,7 +564,9 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = this->refinement_point(e);
+    const Tr& tr = derived().triangulation_ref_impl();
+    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
+                       this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -946,7 +950,9 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = this->refinement_point(e);
+    const Tr& tr = derived().triangulation_ref_impl();
+    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
+      this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<

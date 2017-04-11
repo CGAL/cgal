@@ -78,7 +78,7 @@ public:
   Weighted_point_3(const Rep& p)
       : Rep(p) {}
 
-  Weighted_point_3(const Point_3& p)
+  explicit Weighted_point_3(const Point_3& p)
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), p, 0))
   {}
 
@@ -88,6 +88,10 @@ public:
 
   Weighted_point_3(const FT& x, const FT& y, const FT& z)
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), x, y, z))
+  {}
+
+  Weighted_point_3(const FT& x, const FT& y, const FT& z, const FT& w)
+    : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), Point_3(x, y, z), w))
   {}
 
   typename cpp11::result_of<typename R::Construct_point_3( Weighted_point_3)>::type
