@@ -9,18 +9,17 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 
-#include <CGAL/Polygon_mesh_processing/properties.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #include <set>
 
 template <typename Refs, typename Tag, typename Point, typename Patch_id>
-class Polyhedron_demo_vertex : 
+class Polyhedron_demo_vertex :
   public CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point>
 {
 public:
@@ -67,13 +66,13 @@ public:
 
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
-  
+
   Polyhedron_demo_vertex() : Pdv_base(), mID(-1), nb_of_feature_edges(0) {}
   Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
-class Polyhedron_demo_halfedge : 
+class Polyhedron_demo_halfedge :
   public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
@@ -83,7 +82,7 @@ private:
 
 public:
 
-  Polyhedron_demo_halfedge() 
+  Polyhedron_demo_halfedge()
     : feature_edge(false), mID(-1) {};
 
   bool is_feature_edge() const {
@@ -94,7 +93,7 @@ public:
     feature_edge = b;
     this->opposite()->feature_edge = b;
   }
-  
+
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
@@ -111,8 +110,6 @@ public:
   ///@}
 };
 
-
-
 template <typename Integral>
 inline std::pair<Integral, Integral>
 patch_id_default_value(std::pair<Integral, Integral>)
@@ -127,7 +124,7 @@ inline Integral patch_id_default_value(Integral)
 }
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
-class Polyhedron_demo_face : 
+class Polyhedron_demo_face :
   public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
 {
 private:
@@ -137,18 +134,18 @@ private:
 
 public:
   typedef Patch_id_ Patch_id;
-  
+
   Polyhedron_demo_face()
     : patch_id_(patch_id_default_value(Patch_id())), mID(-1) {}
-  
+
   const Patch_id& patch_id() const {
     return patch_id_;
   }
-  
+
   void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
-  
+
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
@@ -203,152 +200,4 @@ public:
 typedef Polyhedron_demo_items<Patch_id>              Polyhedron_items;
 typedef CGAL::Polyhedron_3<Kernel, Polyhedron_items> Polyhedron;
 
-
-
-struct Is_feature_pmap {
-
-  typedef Polyhedron::Halfedge_handle key_type;
-  typedef bool value_type;
-  friend bool get(const Is_feature_pmap&, Polyhedron::Halfedge_handle h)
-  {
-    return h->is_feature_edge();
-  }
-  
-  friend void put(const Is_feature_pmap&, Polyhedron::Halfedge_handle h, bool b)
-  {
-     h->set_feature_edge(b);
-  }
-
-};
-
-inline Is_feature_pmap get(CGAL::halfedge_is_feature_t, const Polyhedron&)
-{
-  return Is_feature_pmap();
-}
-
-struct vertex_num_feature_edges_pmap {
-
-  typedef Polyhedron::Vertex_handle key_type;
-  typedef int value_type;
-  friend int get(const vertex_num_feature_edges_pmap&, Polyhedron::Vertex_handle h)
-  {
-    return h->nb_of_feature_edges;
-  }
-  
-  friend void put(const vertex_num_feature_edges_pmap&, Polyhedron::Vertex_handle h, int n)
-  {
-     h->nb_of_feature_edges = n;
-  }
-
-};
-
-
-inline vertex_num_feature_edges_pmap get(CGAL::vertex_num_feature_edges_t, const Polyhedron&)
-{
-  return vertex_num_feature_edges_pmap();
-}
-
-
-struct Patch_id_pmap {
-
-  typedef Polyhedron::Face_handle key_type;
-  typedef Polyhedron::Facet::Patch_id value_type;
-  typedef value_type reference;
-  typedef boost::writable_property_map_tag                          category;
-
-  friend Polyhedron::Facet::Patch_id get(const Patch_id_pmap&, Polyhedron::Face_handle h)
-  {
-    return h->patch_id();
-  }
-  
-  friend void put(const Patch_id_pmap&, Polyhedron::Face_handle h,
-                  Polyhedron::Facet::Patch_id pid)
-  {
-     h->set_patch_id(pid);
-  }
-
-};
-
-inline Patch_id_pmap get(CGAL::face_patch_id_t<int>, const Polyhedron&)
-{
-  return Patch_id_pmap();
-}
-
-struct vertex_incident_patches_pmap {
-
-  typedef Polyhedron::Vertex_handle key_type;
-  typedef std::set<Patch_id> value_type;
-  typedef boost::read_write_property_map_tag category;
-
-  friend value_type get(const vertex_incident_patches_pmap&, const key_type& h)
-  {
-    return h->incident_patches_ids_set();
-  }
-//dummy put as the vertices already have a set
-  friend void put(const vertex_incident_patches_pmap&, const key_type& k , value_type& v)
-  {
-    BOOST_FOREACH(Patch_id n, v)
-        k->add_incident_patch(n);
-  }
-
-};
-
-inline vertex_incident_patches_pmap get(CGAL::vertex_incident_patches_t<int>, const Polyhedron&)
-{
-  return vertex_incident_patches_pmap();
-}
-
-inline
-boost::property_map<Polyhedron, boost::vertex_index_t>::type
-get(CGAL::vertex_selection_t, const Polyhedron& p)
-{
-  return get(boost::vertex_index,p);
-}
-
-inline
-boost::property_map<Polyhedron, boost::face_index_t>::type
-get(CGAL::face_selection_t, const Polyhedron& p)
-{
-  return get(boost::face_index,p);
-}
-
-namespace boost {
-  
-  template <>
-  struct property_map<Polyhedron, CGAL::halfedge_is_feature_t>
-  {
-    typedef Is_feature_pmap type;
-  };
-  
-  template <>
-  struct property_map<Polyhedron, CGAL::face_patch_id_t<int> >
-  {
-    typedef Patch_id_pmap type;
-  };
-  
-  template <>
-  struct property_map<Polyhedron, CGAL::face_selection_t>
-  {
-    typedef boost::property_map<Polyhedron,boost::face_index_t>::type type;
-    typedef boost::property_map<Polyhedron,boost::face_index_t>::const_type const_type;
-  };
-
-  template <>
-  struct property_map<Polyhedron, CGAL::vertex_selection_t>
-  {
-    typedef boost::property_map<Polyhedron,boost::vertex_index_t>::type type;
-    typedef boost::property_map<Polyhedron,boost::vertex_index_t>::const_type const_type;
-  };
-  template <>
-  struct property_map<Polyhedron, CGAL::vertex_num_feature_edges_t>
-  {
-    typedef vertex_num_feature_edges_pmap type;
-  };
-
-  template <>
-  struct property_map<Polyhedron, CGAL::vertex_incident_patches_t<int>>
-  {
-    typedef vertex_incident_patches_pmap type;
-  };
-}
 #endif // POLYHEDRON_TYPE_H
