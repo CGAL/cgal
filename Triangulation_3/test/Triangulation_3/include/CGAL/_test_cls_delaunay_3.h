@@ -54,7 +54,9 @@ template < typename T, typename P >
 typename T::Vertex_handle
 nearest_vertex(const T&t, const P&p, CGAL::Tag_true)
 {
-  return t.nearest_power_vertex(p);
+  typename T::Geom_traits::Construct_point_3 cp
+    = t.geom_traits().construct_point_3_object();
+  return t.nearest_power_vertex(cp(p));
 }
 
 template < typename T, typename P >
@@ -75,7 +77,9 @@ template < typename T, typename P >
 typename T::Vertex_handle
 nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c, CGAL::Tag_true)
 {
-  return t.nearest_power_vertex_in_cell(p, c);
+  typename T::Geom_traits::Construct_point_3 cp
+    = t.geom_traits().construct_point_3_object();
+  return t.nearest_power_vertex_in_cell(cp(p), c);
 }
 
 template < typename T, typename P >
@@ -178,8 +182,10 @@ _test_cls_delaunay_3(const Triangulation &)
 
   // typedef typename Cls::Point          Point; // Delaunay
   // typedef typename Cls::Point::Point   Point; // Regular
-  typedef typename If<typename Cls::Weighted_tag,
-                      typename Cls::Point, Cls>::type::Point   Point; 
+  //typedef typename If<typename Cls::Weighted_tag,
+  //                    typename Cls::Point, Cls>::type::Point   Point; 
+  typedef typename Cls::Point                Point;
+  typedef typename Cls::Geom_traits::Point_3 Bare_point;
 
   typedef typename Cls::Segment              Segment;
   typedef typename Cls::Triangle             Triangle;
@@ -909,7 +915,7 @@ _test_cls_delaunay_3(const Triangulation &)
   // We only test return types and instantiation, basically.
   {
     Cell_handle c = T4.finite_cells_begin();
-    Point p = T4.dual(c);
+    Bare_point p = T4.dual(c);
     (void)p;
     Facet f = Facet(c, 2);
     CGAL::Object o = T4.dual(f);

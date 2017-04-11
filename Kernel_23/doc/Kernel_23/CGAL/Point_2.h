@@ -79,14 +79,17 @@ introduces a point `p` initialized to `(hx/hw,hy/hw)`.
 Point_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1)); 
 
 /*!
-introduces a point `p` initialized to `(x,y)`. 
-*/ 
-Point_2(const Kernel::FT &x, const Kernel::FT &y); 
+introduces a point `p` initialized to `(x,y)`.
+*/
+Point_2(const Kernel::FT &x, const Kernel::FT &y);
 
 /*!
 introduces a point from a weighted point.
+
+\warning The `explicit` keyword is used to not have accidental implicit conversions
+         between Point_2 and Weighted_point_2.
 */
-Point_2(const Kernel::Weighted_point_2 &wp);
+explicit Point_2(const Kernel::Weighted_point_2 &wp);
 
 /// @} 
 

@@ -153,7 +153,7 @@ private:
   Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
                    Weighted_point const& wp3) {
     return enum_cast<Sign>(
-        -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
+                           - reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
   }
   Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
                    Weighted_point const& wp3, Weighted_point const& wp4) {

@@ -56,7 +56,7 @@ public:
   typedef typename Base::Handle Handle;
   typedef Handle Facet;
 
-  typedef typename Tr::Point Point_3;
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Geom_traits Gt;
   typedef typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 
   Squared_radius_orthogonal_sphere;
@@ -78,9 +78,9 @@ public:
     Squared_radius_orthogonal_sphere sq_radius_ortho_sphere = 
       Gt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
       
-    Point_3 p1 = fh.first->vertex ((fh.second+1)&3)->point();
-    Point_3 p2 = fh.first->vertex ((fh.second+2)&3)->point();
-    Point_3 p3 = fh.first->vertex ((fh.second+3)&3)->point();
+    Weighted_point p1 = fh.first->vertex ((fh.second+1)&3)->point();
+    Weighted_point p2 = fh.first->vertex ((fh.second+2)&3)->point();
+    Weighted_point p3 = fh.first->vertex ((fh.second+3)&3)->point();
 
     if(p1.weight() > 0) { ++wp_nb_; }
     if(p2.weight() > 0) { ++wp_nb_; }

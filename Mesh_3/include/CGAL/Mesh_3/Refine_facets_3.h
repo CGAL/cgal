@@ -276,6 +276,8 @@ class Refine_facets_3_base
   typedef typename Gt::Segment_3 Segment_3;
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
+protected:
+  typedef typename Tr::Bare_point Bare_point;
 
 public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
@@ -290,7 +292,7 @@ public:
   void scan_triangulation_impl_amendement() const {}
 
   /// Gets the point to insert from the element to refine
-  Point refinement_point_impl(const Facet& facet) const
+  Bare_point refinement_point_impl(const Facet& facet) const
   {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     const Cell_handle c = facet.first;
@@ -394,10 +396,9 @@ protected:
   typedef typename Get_Is_facet_bad<Criteria>::Type Is_facet_bad;
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
-  typedef typename Gt::Bare_point Bare_point;
 
   typedef typename boost::optional<
-    CGAL::cpp11::tuple<Surface_patch_index, Index, Point> >
+    CGAL::cpp11::tuple<Surface_patch_index, Index, Bare_point> >
                                                       Facet_properties;
 
 
@@ -422,7 +423,7 @@ protected:
 
   /// Sets facet f and it's mirror one surface center to point p
   void set_facet_surface_center(const Facet& f,
-                                const Point& p,
+                                const Bare_point& p,
                                 const Index& index) const
   {
     const Facet mirror = mirror_facet(f);
@@ -435,7 +436,7 @@ protected:
   }
 
   /// Returns facet surface center of \c f
-  Point get_facet_surface_center(const Facet& f) const
+  Bare_point get_facet_surface_center(const Facet& f) const
   {
     return f.first->get_facet_surface_center(f.second);
   }
@@ -761,7 +762,8 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Point Point;//Weighted_point
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
@@ -795,7 +797,7 @@ public:
 
   int number_of_bad_elements_impl();
 
-  Point circumcenter_impl(const Facet& facet) const
+  Bare_point circumcenter_impl(const Facet& facet) const
   {
     return get_facet_surface_center(facet);
   }
@@ -874,7 +876,6 @@ private:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
   typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::Bare_point Bare_point;
   typedef typename Gt::Ray_3 Ray_3;
 
 private:
@@ -1118,7 +1119,7 @@ number_of_bad_elements_impl()
 
       const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
       const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
-      const Point& surface_center = CGAL::cpp11::get<2>(*properties);
+      const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
 
       // Facet is on surface: set facet properties
       //set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1303,7 +1304,7 @@ conflicts_zone_impl(const Point& point
       {
         const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
         const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
-        const Point& surface_center = CGAL::cpp11::get<2>(*properties);
+        const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1365,7 +1366,7 @@ conflicts_zone_impl(const Point& point
       {
         const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
         const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
-        const Point& surface_center = CGAL::cpp11::get<2>(*properties);
+        const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1539,7 +1540,7 @@ treat_new_facet(Facet& facet)
   {
     const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
     const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
-    const Point& surface_center = CGAL::cpp11::get<2>(*properties);
+    const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
 
     // Facet is on surface: set facet properties
     set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1715,9 +1716,6 @@ compute_facet_properties(const Facet& facet,
       r_oracle_.do_intersect_surface_object();
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
-
- typedef typename Gt::Bare_point Bare_point;
-
   Cell_handle c = facet.first;
   int i = facet.second;
   Cell_handle n = c->neighbor(i);
@@ -1759,7 +1757,7 @@ compute_facet_properties(const Facet& facet,
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       fp =  Facet_properties(CGAL::cpp11::make_tuple(*surface,
                                     CGAL::cpp11::get<1>(intersect),
-                                    Point(CGAL::cpp11::get<0>(intersect))));
+                                    CGAL::cpp11::get<0>(intersect)));
     }
   }
   // If the dual is a ray
@@ -1798,7 +1796,7 @@ compute_facet_properties(const Facet& facet,
       {
         fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
                                       CGAL::cpp11::get<1>(intersect),
-                                      Point(CGAL::cpp11::get<0>(intersect))));
+                                      CGAL::cpp11::get<0>(intersect)));
       }
     }
   }
@@ -1821,7 +1819,7 @@ is_facet_encroached(const Facet& facet,
 
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
-  const Point& center = get_facet_surface_center(facet);
+  const Bare_point& center = get_facet_surface_center(facet);
   const Point& reference_point = cell->vertex((facet_index+1)&3)->point();
 
   // facet is encroached if the new point is near from center than
@@ -1834,7 +1832,7 @@ bool
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_encroached_facet_refinable(Facet& facet) const
 {
-  typedef typename Gt::Point_3 Point_3;
+  typedef typename Gt::Weighted_point_3 Weighted_point_3;
   typedef typename Gt::FT      FT;
 
   typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
@@ -1871,9 +1869,9 @@ is_encroached_facet_refinable(Facet& facet) const
     ++wp_nb;
   }
 
-  const Point_3& p1 = c->vertex(k1)->point();
-  const Point_3& p2 = c->vertex(k2)->point();
-  const Point_3& p3 = c->vertex(k3)->point();
+  const Weighted_point_3& p1 = c->vertex(k1)->point();
+  const Weighted_point_3& p2 = c->vertex(k2)->point();
+  const Weighted_point_3& p3 = c->vertex(k3)->point();
 
   const FT min_ratio (0.16); // (0.2*2)^2
 

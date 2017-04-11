@@ -350,11 +350,17 @@ typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
 
 typedef Fake_mesh_domain::Surface_patch_index Fake_patch_id;
 
-struct Update_vertex {
+template <typename Tr1, typename Tr2>
+struct Update_vertex
+{
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-  template <typename V1, typename V2>
-  bool operator()(const V1& v1, V2& v2) {
-    v2.set_point(v1.point());
+  typedef typename Tr1::Vertex                  V1;
+  typedef typename Tr2::Vertex                  V2;
+  typedef typename Tr2::Point                   Point;
+
+  bool operator()(const V1& v1, V2& v2)
+  {
+    v2.set_point(Point(v1.point()));
     v2.set_dimension(v1.in_dimension());
     v2.set_special(v1.is_special());
     switch(v1.in_dimension()) {
@@ -390,10 +396,17 @@ struct Update_cell {
 
 #include <CGAL/Triangulation_file_input.h>
 
+template <typename Tr1, typename Tr2>
 struct Update_vertex_from_CDT_3 {
-  template <typename V1, typename V2>
-  bool operator()(const V1& v1, V2& v2) {
-    v2.set_point(v1.point());
+  // Tr1 and Tr2's point types might be different
+
+  typedef typename Tr1::Vertex          V1;
+  typedef typename Tr2::Vertex          V2;
+  typedef typename Tr2::Point           Point;
+
+  bool operator()(const V1& v1, V2& v2)
+  {
+    v2.set_point(Point(v1.point()));
     v2.set_dimension(2);
     v2.set_special(false);
     return true;
@@ -419,10 +432,10 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
   std::cerr << "Try load a CDT_3...";
   CGAL::set_binary_mode(is);
   if(CGAL::file_input<
-     Fake_CDT_3,
-     C3t3::Triangulation,
-     Update_vertex_from_CDT_3,
-     Update_cell_from_CDT_3>(is, c3t3.triangulation()))
+       Fake_CDT_3,
+       C3t3::Triangulation,
+       Update_vertex_from_CDT_3<Fake_CDT_3, C3t3::Triangulation>,
+       Update_cell_from_CDT_3>(is, c3t3.triangulation()))
   {
     c3t3.rescan_after_load_of_triangulation();
     std::cerr << "Try load a CDT_3... DONE";
@@ -463,10 +476,10 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   if(binary) CGAL::set_binary_mode(is);
   else CGAL::set_ascii_mode(is);
   std::istream& f_is = CGAL::file_input<
-    Fake_c3t3::Triangulation,
-    C3t3::Triangulation,
-    Update_vertex,
-    Update_cell>(is, c3t3.triangulation());
+                         Fake_c3t3::Triangulation,
+                         C3t3::Triangulation,
+                         Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
+                         Update_cell>(is, c3t3.triangulation());
 
   c3t3.rescan_after_load_of_triangulation();
   return f_is.good();

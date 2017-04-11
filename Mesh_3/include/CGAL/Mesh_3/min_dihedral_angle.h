@@ -96,6 +96,9 @@ minimum_dihedral_angle(
 {
   typedef typename K::FT FT;
 
+  typename K::Construct_point_3 wp2p = 
+    k.construct_point_3_object();
+
   typename K::Compute_determinant_3 determinant = 
     k.compute_determinant_3_object();
   typename K::Construct_cross_product_vector_3 cp =

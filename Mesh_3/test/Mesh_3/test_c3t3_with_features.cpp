@@ -50,7 +50,7 @@ struct Tester
 
   typedef typename Tr::Geom_traits  Gt;
   typedef typename Gt::FT           FT;
-  typedef typename Gt::Point_3      Point;
+  typedef typename Tr::Weighted_point      Point;
   typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Point> Point_creator;
 
   typedef typename C3t3::Cell_handle    Cell_handle;
