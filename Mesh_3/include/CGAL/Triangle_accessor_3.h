@@ -106,7 +106,7 @@ public:
     typename boost::graph_traits<Polyhedron>::face_descriptor handle = *thandle;
     const Graph& g = *(handle.graph);
     halfedge_descriptor hd = halfedge(handle.descriptor, g);
-    typedef  boost::property_map<Graph,vertex_point_t>::type Vpm;
+    typedef typename boost::property_map<Graph,vertex_point_t>::type Vpm;
     Vpm vpm = get(vertex_point, g);
     typedef typename K::Point_3 Point;
     const Point& a = get(vpm, target(hd,g));
