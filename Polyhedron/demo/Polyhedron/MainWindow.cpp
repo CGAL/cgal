@@ -57,6 +57,7 @@
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
+#include "Color_map.h"
 using namespace CGAL::Three;
 QScriptValue 
 myScene_itemToScriptValue(QScriptEngine *engine, 
@@ -270,6 +271,9 @@ MainWindow::MainWindow(QWidget* parent)
   // Connect "Select all items"
   connect(ui->actionSelectAllItems, SIGNAL(triggered()),
           this, SLOT(selectAll()));
+
+  connect(ui->actionColorItems, SIGNAL(triggered()),
+          this, SLOT(colorItems()));
 
   // Recent files menu
   this->addRecentFiles(ui->menuFile, ui->actionQuit);
@@ -1021,6 +1025,7 @@ void MainWindow::open(QString filename)
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
+
   selectSceneItem(scene->addItem(scene_item));
 
   CGAL::Three::Scene_group_item* group =
@@ -1460,11 +1465,19 @@ void MainWindow::on_actionLoad_triggered()
     selectedPlugin = it.value();
   }
 
+  std::size_t nb_files = dialog.selectedFiles().size();
+  std::vector<QColor> colors_;
+  colors_.reserve(nb_files);
+  compute_color_map(QColor(100, 100, 255),//Scene_item's default color
+                    nb_files,
+                    std::back_inserter(colors_));
+  std::size_t nb_item = -1;
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
       item = loadItem(info, selectedPlugin);
+      item->setColor(colors_[++nb_item]);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);
       CGAL::Three::Scene_group_item* group =
@@ -1474,6 +1487,7 @@ void MainWindow::on_actionLoad_triggered()
       this->addToRecentFiles(filename);
     } else {
       open(filename);
+      scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
     }
   }
 }
@@ -1927,7 +1941,6 @@ void MainWindow::resetHeader()
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
 }
 
-
 void MainWindow::reset_default_loaders()
 {
   default_plugin_selection.clear();
@@ -1952,4 +1965,19 @@ void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInse
     if(!menuActions.contains(actionToInsert))
       menu->insertAction(ui->actionLoadPlugin, actionToInsert);
   }
+
+void MainWindow::colorItems()
+{
+  std::size_t nb_files = scene->selectionIndices().size();
+  std::vector<QColor> colors_;
+  colors_.reserve(nb_files);
+  compute_color_map(scene->item(scene->selectionIndices().last())->color(),
+                    nb_files,
+                    std::back_inserter(colors_));
+  std::size_t nb_item = -1;
+  Q_FOREACH(int id, scene->selectionIndices())
+  {
+    scene->item(id)->setColor(colors_[++nb_item]);
+  }
+  viewer->update();
 }
