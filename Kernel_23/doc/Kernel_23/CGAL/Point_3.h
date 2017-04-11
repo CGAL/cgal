@@ -65,9 +65,9 @@ introduces a point `p` initialized to `(x,y,z)`.
 Point_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z); 
 
 /*!
-introduces a point from a weighted point. 
-*/ 
-Point_3(const Kernel::Weighted_point_3 &wp); 
+introduces a point from a weighted point.
+*/
+Point_3(const Kernel::Weighted_point_3 &wp);
 
 /// @} 
 
