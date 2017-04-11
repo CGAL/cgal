@@ -215,8 +215,6 @@ class Polyhedral_mesh_domain_with_features_3
     boost::undirectedS,
     typename IGT_::Point_3,
     std::set<typename Base::Surface_patch_index> > Featured_edges_copy_graph;
-  typedef Patch_id P_id;
-
 public:
   typedef Polyhedron_ Polyhedron;
 
@@ -226,7 +224,11 @@ public:
   typedef typename Base::Curve_segment_index  Curve_segment_index;
   typedef typename Base::Surface_patch_index  Surface_patch_index;
   typedef typename Base::Subdomain_index      Subdomain_index;
-  
+
+  typedef typename CGAL::Mesh_3::details::Surface_patch_index_generator
+  <Subdomain_index,
+   Polyhedron,
+   Patch_id>::Patch_id P_id;
   // Backward compatibility
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index                 Surface_index;
@@ -435,7 +437,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
 
-  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,P_id> detect_features;
+  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,Surface_patch_index> detect_features;
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);

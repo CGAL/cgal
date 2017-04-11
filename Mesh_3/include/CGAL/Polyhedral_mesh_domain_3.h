@@ -86,9 +86,10 @@ max_length(const Bbox_3& b)
 // -----------------------------------
 
 // here we had Tag_true instead of Patch_id
-template < class Subdomain_index, class Polyhedron, class Patch_id>
+template < class Subdomain_index, class Polyhedron, class Patch_id_>
 struct Surface_patch_index_generator
 {
+  typedef Patch_id_ Patch_id;
   typedef Patch_id Surface_patch_index;
   typedef Surface_patch_index   type;
 
@@ -99,10 +100,32 @@ struct Surface_patch_index_generator
   }
 };
 
+// Compatibility: when `Patch_id` is `Tag_true`, use the `Patch_id`
+// from the `Facet`
+template < class Subdomain_index, class Polyhedron>
+struct Surface_patch_index_generator<Subdomain_index,
+                                     Polyhedron,
+                                     Tag_true>
+ : public Surface_patch_index_generator<Subdomain_index,
+                                        Polyhedron,
+                                        typename Polyhedron::Facet::Patch_id>
+{};
 
-template < class Subdomain_index, class P, class Patch_id>
-struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with_graph<Surface_mesh<P> >, Patch_id>
+// Compatibility: when `Patch_id` is `Tag_false`, treat it as `void`
+template < class Subdomain_index, class Polyhedron>
+struct Surface_patch_index_generator<Subdomain_index,
+                                     Polyhedron,
+                                     Tag_false>
+ : public Surface_patch_index_generator<Subdomain_index,
+                                        Polyhedron,
+                                        void>
+{};
+
+
+template < class Subdomain_index, class P, class Patch_id_>
+struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with_graph<Surface_mesh<P> >, Patch_id_>
 {
+  typedef Patch_id_ Patch_id;
   typedef Patch_id Surface_patch_index;
   typedef Surface_patch_index   type;
 
@@ -121,6 +144,7 @@ struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with
 template < class Subdomain_index, class Polyhedron>
 struct Surface_patch_index_generator<Subdomain_index, Polyhedron,void>
 {
+  typedef void Patch_id;
   typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
   typedef Surface_patch_index                         type;
 
@@ -132,6 +156,7 @@ struct Surface_patch_index_generator<Subdomain_index, Polyhedron,void>
 template < class Subdomain_index, class P>
 struct Surface_patch_index_generator<Subdomain_index,  Graph_with_descriptor_with_graph<Surface_mesh<P> >,void>
 {
+  typedef void Patch_id;
   typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
   typedef Surface_patch_index                         type;
 
