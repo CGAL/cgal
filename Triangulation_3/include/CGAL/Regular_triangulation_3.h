@@ -1460,7 +1460,7 @@ namespace CGAL {
           return v;
       }
       void hide_point(Cell_handle c, const Weighted_point &p) {
-        // AF c->hide_point(p);  // What do we want to hide, a point or a weighted point?
+        c->hide_point(p);
       }
     };
 
