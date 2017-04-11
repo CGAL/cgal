@@ -45,6 +45,7 @@
 #include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Polygon_mesh_processing/properties.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
@@ -85,7 +86,7 @@ max_length(const Bbox_3& b)
 // -----------------------------------
 
 // here we had Tag_true instead of Patch_id
-template < typename Subdomain_index, typename Polyhedron, typename Patch_id>
+template < class Subdomain_index, class Polyhedron, class Patch_id>
 struct Surface_patch_index_generator
 {
   typedef Patch_id Surface_patch_index;
@@ -99,7 +100,7 @@ struct Surface_patch_index_generator
 };
 
 
-template < typename Subdomain_index, typename P, typename Patch_id>
+template < class Subdomain_index, class P, class Patch_id>
 struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with_graph<Surface_mesh<P> >, Patch_id>
 {
   typedef Patch_id Surface_patch_index;
@@ -108,8 +109,8 @@ struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with
   template < typename Primitive_id >
   Surface_patch_index operator()(const Primitive_id& primitive_id)
   {
-    typedef boost::property_map<Surface_mesh<P>, face_patch_id_t<Patch_id> >::type Fpim;
-    typename Fpim fpim = get(face_patch_id_t<Patch_id>(),*((*primitive_id).graph));
+    typedef typename boost::property_map<Surface_mesh<P>, face_patch_id_t<Patch_id> >::type Fpim;
+    Fpim fpim = get(face_patch_id_t<Patch_id>(),*((*primitive_id).graph));
     Surface_patch_index spi =  get(fpim, (*primitive_id).descriptor);
     return spi;
   }
@@ -117,7 +118,7 @@ struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with
 
 
 
-template < typename Subdomain_index, typename Polyhedron>
+template < class Subdomain_index, class Polyhedron>
 struct Surface_patch_index_generator<Subdomain_index, Polyhedron,void>
 {
   typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
@@ -128,6 +129,16 @@ struct Surface_patch_index_generator<Subdomain_index, Polyhedron,void>
   { return Surface_patch_index(0,1); }
 };
 
+template < class Subdomain_index, class P>
+struct Surface_patch_index_generator<Subdomain_index,  Graph_with_descriptor_with_graph<Surface_mesh<P> >,void>
+{
+  typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
+  typedef Surface_patch_index                         type;
+
+  template < typename Primitive_id >
+  Surface_patch_index operator()(const Primitive_id&)
+  { return Surface_patch_index(0,1); }
+};
 
 // -----------------------------------
 // Index_generator

@@ -43,7 +43,7 @@ namespace CGAL {
 class static_property_map
 {
   typedef K key_type;
-  typedef const V& value_type;
+  typedef V value_type;
   typedef const V& reference;
   typedef boost::read_write_property_map_tag category;
   V v;

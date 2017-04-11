@@ -5,6 +5,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
+#include <CGAL/boost/graph/PMP_properties_Surface_mesh.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>

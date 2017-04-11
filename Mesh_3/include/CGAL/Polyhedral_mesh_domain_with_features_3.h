@@ -213,7 +213,8 @@ class Polyhedral_mesh_domain_with_features_3
     boost::vecS,
     boost::undirectedS,
     typename IGT_::Point_3,
-    std::set<Surface_patch_index> > Featured_edges_copy_graph;
+    std::set<typename Base::Surface_patch_index> > Featured_edges_copy_graph;
+  typedef Patch_id P_id;
 
 public:
   typedef Polyhedron_ Polyhedron;
@@ -368,9 +369,9 @@ void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 initialize_ts(Polyhedron& p)
 {
-  typedef boost::property_map<Polyhedron,vertex_time_stamp_t>::type Vtmap;
-  typedef boost::property_map<Polyhedron,halfedge_time_stamp_t>::type Htmap;
-  typedef boost::property_map<Polyhedron,face_time_stamp_t>::type Ftmap;
+  typedef typename boost::property_map<Polyhedron,vertex_time_stamp_t>::type Vtmap;
+  typedef typename boost::property_map<Polyhedron,halfedge_time_stamp_t>::type Htmap;
+  typedef typename boost::property_map<Polyhedron,face_time_stamp_t>::type Ftmap;
   Vtmap vtm = get(vertex_time_stamp,p);
   Htmap htm = get(halfedge_time_stamp,p);
   Ftmap ftm = get(face_time_stamp,p);
@@ -436,7 +437,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
 
-  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,Patch_id> detect_features;
+  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,P_id> detect_features;
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);
@@ -539,8 +540,8 @@ add_featured_edges_to_graph(const Polyhedron& p,
     }
   }
 
-  typedef typename boost::property_map<Polyhedron,face_patch_id_t<Patch_id> >::type Face_patch_id_pmap;
-  Face_patch_id_pmap fpm = get(face_patch_id_t<Patch_id>(),p);
+  typedef typename boost::property_map<Polyhedron,face_patch_id_t<P_id> >::type Face_patch_id_pmap;
+  Face_patch_id_pmap fpm = get(face_patch_id_t<P_id>(),p);
 
   BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
     vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];
