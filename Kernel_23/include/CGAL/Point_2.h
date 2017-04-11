@@ -78,11 +78,10 @@ public:
     : RPoint_2(p)
   {}
 
-#if 0
+  explicit
   Point_2(const Weighted_point_2& wp)
     : Rep(wp.point())
   {}
-#endif
 
   template < typename T1, typename T2 >
   Point_2(const T1 &x, const T2 &y)
