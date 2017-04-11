@@ -345,8 +345,6 @@ namespace CGAL {
       Regular_triangulation_vertex_base_3<Gt>,
       Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
-    Geom_traits regular_geom_traits;
-
   public:
 
     typedef Triangulation_3<Tr_Base_Gt,Tds,Lock_data_structure_> Tr_Base;
@@ -1766,6 +1764,7 @@ namespace CGAL {
     class Vertex_inserter;
 
     Hidden_point_visitor<Concurrency_tag> hidden_point_visitor;
+    Geom_traits regular_geom_traits;
   };
 
 
