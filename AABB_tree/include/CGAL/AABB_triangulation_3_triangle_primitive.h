@@ -70,9 +70,9 @@ namespace CGAL {
             m_facet = primitive.id();
         }
         AABB_triangulation_3_triangle_primitive(const Id& handle)
-            : m_facet(handle)  { };
+            : m_facet(handle)  { }
         AABB_triangulation_3_triangle_primitive(const Id* ptr)
-            : m_facet(*ptr)  { };
+            : m_facet(*ptr)  { }
         template <class Iterator>
         AABB_triangulation_3_triangle_primitive( Iterator it,
                                             typename boost::enable_if<
