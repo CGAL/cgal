@@ -1831,7 +1831,7 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by
     // `analyze_and_repopulate()` walking in the other direction.
-    if(domain_.is_cycle(v->point(), curve_index) &&
+    if(domain_.is_cycle(v->point().point(), curve_index) &&
        !c3t3_.is_in_complex(v, next)) continue;
 
     // Walk along each incident edge of the corner
