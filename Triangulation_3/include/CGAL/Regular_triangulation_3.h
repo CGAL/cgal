@@ -55,15 +55,6 @@ template < typename K_ >
 struct RegTraits 
   :   public K_ 
 {
-#if 0
-  typedef typename boost::mpl::eval_if_c<
-    internal::Has_nested_type_Bare_point<K_>::value,
-    typename internal::Bare_point_type<K_>,
-    boost::mpl::identity<typename K_::Point_3>
-    >::type                                                Point_3;
-
-#endif
-
   typedef typename K_::Construct_point_3 Construct_point_3_base;
   typedef typename K_::Construct_projected_point_3 Construct_projected_point_3_base;
   typedef typename K_::Construct_vector_3 Construct_vector_3_base;
