@@ -63,11 +63,12 @@ public:
   {
     CGAL_PROFILER(std::string("Constructor : ") + 
 		  std::string(CGAL_PRETTY_FUNCTION));
-    Regular_triangulation_euclidean_traits_3<K> reg_traits;
-    p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1);
-    c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
-    Vector t = reg_traits.construct_vector_3_object()(reg_traits.construct_point_3_object()(wp1),
-                                                      reg_traits.construct_point_3_object()(wp0));
+
+    K k;
+    p = k.construct_weighted_circumcenter_3_object()(wp0,wp1);
+    c = s*(1-s)*k.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
+    Vector t = k.construct_vector_3_object()(k.construct_point_3_object()(wp1),
+                                             k.construct_point_3_object()(wp0));
 
     FT den = t*t;
     Q[0] = (-  t.x()*t.x()/den + (1-s));
@@ -87,13 +88,14 @@ public:
   {
     CGAL_PROFILER(std::string("Constructor : ") + 
 		  std::string(CGAL_PRETTY_FUNCTION));
-    Regular_triangulation_euclidean_traits_3<K> reg_traits;
-    p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2);
-    c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2);
+
+    K k;
+    p = k.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2);
+    c = s*(1-s)*k.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2);
     
-    Vector t = K().construct_orthogonal_vector_3_object()(reg_traits.construct_point_3_object()(wp0),
-                                                          reg_traits.construct_point_3_object()(wp1),
-                                                          reg_traits.construct_point_3_object()(wp2));
+    Vector t = K().construct_orthogonal_vector_3_object()(k.construct_point_3_object()(wp0),
+                                                          k.construct_point_3_object()(wp1),
+                                                          k.construct_point_3_object()(wp2));
 
     FT den = t*t;
     Q[0] = -(-  t.x()*t.x()/den + s);
@@ -114,9 +116,10 @@ public:
   {
     CGAL_PROFILER(std::string("Constructor : ") + 
 		  std::string(CGAL_PRETTY_FUNCTION));
-    Regular_triangulation_euclidean_traits_3<K> reg_traits;
-    p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2,wp3);
-    c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2,wp3);
+
+    K k;
+    p = k.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2,wp3);
+    c = s*(1-s)*k.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2,wp3);
     Q[1] = Q[3] = Q[4] = 0;
     Q[0] = Q[2] = Q[5] = -s;
   }
