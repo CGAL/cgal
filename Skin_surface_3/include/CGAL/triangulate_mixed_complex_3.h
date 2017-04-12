@@ -260,11 +260,7 @@ private:
 
   Cartesian_converter<typename Rt_Bare_point::R, Tmc_traits > r2t_converter_object;
 
-  Construct_anchor_point_3<
-    //  Regular_triangulation_euclidean_traits_3<
-    Triangulated_mixed_complex_traits>
-  // >
-                construct_anchor_point_3_obj;
+  Construct_anchor_point_3<Tmc_traits> construct_anchor_point_3_obj;
 
   typename Tmc_traits::Compute_squared_radius_smallest_orthogonal_sphere_3  orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;

@@ -23,8 +23,6 @@
 
 #include <CGAL/license/Skin_surface_3.h>
 
-
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/predicates/predicates_for_mixed_complex_3.h>
 
 namespace CGAL { 
@@ -109,18 +107,14 @@ private:
 template <class K_>
 class Skin_surface_traits_base_3 
   : public K_
-//  : public Regular_triangulation_euclidean_traits_3<K_>
 {
-  // typedef Regular_triangulation_euclidean_traits_3<K_> Base;
 public:
   typedef K_                                  Kernel;
   typedef Skin_surface_traits_base_3<Kernel>  Self;
 
   typedef typename Kernel::FT                 FT;
 
-  typedef CGAL::Side_of_mixed_cell_3<Self>          Side_of_mixed_cell_3;
-  typedef typename Kernel::Construct_weighted_circumcenter_3
-                                              Construct_weighted_circumcenter_3;
+  typedef CGAL::Side_of_mixed_cell_3<Self>     Side_of_mixed_cell_3;
   typedef CGAL::Construct_anchor_point_3<Self> Construct_anchor_point_3;
   
  
