@@ -532,7 +532,7 @@ protected:
   }
 
   /// Get mirror facet
-  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); };
+  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); }
 
   /// for debugging
   std::string display_dual(Facet f) const
