@@ -15,14 +15,18 @@
 #include <vector>
 
 #include <QColor>
+#include <CGAL/Three/Scene_zoomable_item_interface.h>
 
 class QMenu;
 struct Scene_polyhedron_item_priv;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
-        : public CGAL::Three::Scene_item{
+        : public CGAL::Three::Scene_item,
+          public CGAL::Three::Scene_zoomable_item_interface{
     Q_OBJECT
+  Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
     enum STATS {
       NB_VERTICES = 0,
@@ -157,6 +161,9 @@ public:
 protected:
     friend struct Scene_polyhedron_item_priv;
     Scene_polyhedron_item_priv* d;
+
+   public:
+    void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
 
 }; // end class Scene_polyhedron_item
 

@@ -59,6 +59,13 @@ public:
    * \brief printPrimitiveIds displays all the Ids if there are less than max_textItems.
    */
   virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*) = 0;
+
+  //!\brief moves the camera orthogonally to the picked sface.
+  //!
+  //! \param point the picked point
+  //! \param viewer the active viewer
+  virtual void zoomToPosition(QPoint point,
+                        CGAL::Three::Viewer_interface* viewer) = 0;
 };
 }
 }

@@ -1853,3 +1853,108 @@ void Scene_polyhedron_item::itemAboutToBeDestroyed(Scene_item *item)
     d=NULL;
   }
 }
+
+void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *viewer) const
+{
+  typedef Input_facets_AABB_tree Tree;
+  typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Intersection_and_primitive_id;
+
+  Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
+  if(aabb_tree) {
+    //find clicked facet
+    bool found = false;
+    const Kernel::Point_3 ray_origin(viewer->camera()->position().x,
+                                     viewer->camera()->position().y,
+                                     viewer->camera()->position().z);
+    qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
+    qglviewer::Vec dir = point_under - viewer->camera()->position();
+    const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
+    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    typedef std::list<Intersection_and_primitive_id> Intersections;
+    Intersections intersections;
+    aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+
+    if(!intersections.empty()) {
+      Intersections::iterator closest = intersections.begin();
+      const Kernel::Point_3* closest_point =
+          boost::get<Kernel::Point_3>(&closest->first);
+      for(Intersections::iterator
+          it = boost::next(intersections.begin()),
+          end = intersections.end();
+          it != end; ++it)
+      {
+        if(! closest_point) {
+          closest = it;
+        }
+        else {
+          const Kernel::Point_3* it_point =
+              boost::get<Kernel::Point_3>(&it->first);
+          if(it_point &&
+             (ray_dir * (*it_point - *closest_point)) < 0)
+          {
+            closest = it;
+            closest_point = it_point;
+          }
+        }
+      }
+      if(closest_point) {
+        Polyhedron::Facet_handle selected_fh = closest->second;
+        //compute new position and orientation
+        Kernel::Vector_3 face_normal = CGAL::Polygon_mesh_processing::
+            compute_face_normal(selected_fh,
+                                *d->poly,
+                                CGAL::Polygon_mesh_processing::parameters::all_default());
+
+
+        double x(0), y(0), z(0),
+            xmin(std::numeric_limits<double>::infinity()), ymin(std::numeric_limits<double>::infinity()), zmin(std::numeric_limits<double>::infinity()),
+            xmax(-std::numeric_limits<double>::infinity()), ymax(-std::numeric_limits<double>::infinity()), zmax(-std::numeric_limits<double>::infinity());
+        int total(0);
+        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
+        {
+          x+=vh->point().x();
+          y+=vh->point().y();
+          z+=vh->point().z();
+
+          if(vh->point().x() < xmin)
+            xmin = vh->point().x();
+          if(vh->point().y() < ymin)
+            ymin = vh->point().y();
+          if(vh->point().z() < zmin)
+            zmin = vh->point().z();
+
+          if(vh->point().x() > xmax)
+            xmax = vh->point().x();
+          if(vh->point().y() > ymax)
+            ymax = vh->point().y();
+          if(vh->point().z() > zmax)
+            zmax = vh->point().z();
+
+          ++total;
+        }
+        Kernel::Point_3 centroid(x/total, y/total, z/total);
+
+        qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
+                                              qglviewer::Vec(-face_normal.x(), -face_normal.y(), -face_normal.z()));
+        double max_side = (std::max)((std::max)(xmax-xmin, ymax-ymin),
+                                     zmax-zmin);
+        //put the camera in way we are sure the longest side is entirely visible on the screen
+        //See openGL's frustum definition
+        double factor = max_side/(tan(viewer->camera()->aspectRatio()/
+                                        (viewer->camera()->fieldOfView()/2)));
+
+        Kernel::Point_3 new_pos = centroid + factor*face_normal;
+        viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(), centroid.y(), centroid.z()));
+        viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
+                                                                       .arg(new_pos.y())
+                                                                       .arg(new_pos.z())
+                                                                       .arg(new_orientation[0])
+                                                                       .arg(new_orientation[1])
+                                                                       .arg(new_orientation[2])
+                                                                       .arg(new_orientation[3]));
+
+      }
+    }
+  }
+
+}

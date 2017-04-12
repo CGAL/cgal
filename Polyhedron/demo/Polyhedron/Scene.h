@@ -166,6 +166,9 @@ public:
   //!Selects all the rows in the sceneView.
   QItemSelection createSelectionAll();
 
+  void zoomToPosition(QPoint point,
+                        CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+
 public Q_SLOTS:
   //!Specifies a group as Expanded for the view
   void setExpanded(QModelIndex);

@@ -71,6 +71,7 @@ public:
   //! Decides if the distance between APoint and BPoint must be drawn;
   bool distance_is_displayed;
   bool i_is_pressed;
+  bool z_is_pressed;
   //!Draws the distance between two selected points.
   void showDistance(QPoint);
   qglviewer::Vec APoint;
@@ -155,6 +156,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->axis_are_displayed = true;
   d->has_text = false;
   d->i_is_pressed = false;
+  d->z_is_pressed = false;
   d->fpsTime.start();
   d->fpsCounter=0;
   d->f_p_s=0.0;
@@ -403,6 +405,12 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   }
   else if(!event->modifiers()
           && event->button() == Qt::LeftButton
+          && d->z_is_pressed)
+  {
+      d->scene->zoomToPosition(event->pos(), this);
+  }
+  else if(!event->modifiers()
+          && event->button() == Qt::LeftButton
           && d->is_d_pressed)
   {
       d->showDistance(event->pos());
@@ -454,6 +462,9 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     else if(e->key() == Qt::Key_I) {
           d->i_is_pressed = true;
         }
+    else if(e->key() == Qt::Key_Z) {
+          d->z_is_pressed = true;
+        }
     else if(e->key() == Qt::Key_D) {
         if(e->isAutoRepeat())
         {
@@ -493,6 +504,9 @@ void Viewer::keyReleaseEvent(QKeyEvent *e)
 {
   if(e->key() == Qt::Key_I) {
     d->i_is_pressed = false;
+  }
+  else if(e->key() == Qt::Key_Z) {
+    d->z_is_pressed = false;
   }
   else if(!e->modifiers() && e->key() == Qt::Key_D)
   {
