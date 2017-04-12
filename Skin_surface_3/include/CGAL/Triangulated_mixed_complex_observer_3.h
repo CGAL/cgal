@@ -71,13 +71,11 @@ public:
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
 
-
   typedef typename Quadratic_surface::K               Surface_traits;
   typedef typename Surface_traits::RT                 Surface_RT;
-  typedef Regular_triangulation_euclidean_traits_3<Surface_traits> Surface_regular_traits;
-  typedef typename Quadratic_surface::Point               Surface_point;
-  typedef typename Quadratic_surface::Vector              Surface_vector;
-  typedef typename Surface_traits::Weighted_point_3  Surface_weighted_point;
+  typedef typename Quadratic_surface::Point           Surface_point;
+  typedef typename Quadratic_surface::Vector          Surface_vector;
+  typedef typename Surface_traits::Weighted_point_3   Surface_weighted_point;
 
   typedef 
   Cartesian_converter < typename Rt_Bare_point::R,
@@ -99,7 +97,7 @@ public:
       Rt_Facet         f;
       Rt_Cell_handle   ch;
 
-      typename Surface_regular_traits::Construct_point_3 wp2p;
+      typename Surface_traits::Construct_point_3 wp2p;
 
       switch (s.dimension()) {
         case 0: {
@@ -117,11 +115,11 @@ public:
           Surface_weighted_point p1 =
             r2s_converter(e.first->vertex(e.third)->point());
 
-          create_hyperboloid(typename Surface_regular_traits::
+          create_hyperboloid(typename Surface_traits::
                              Construct_weighted_circumcenter_3()(p0,p1),
-                             typename Surface_regular_traits::
+                             typename Surface_traits::
                              Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
-                             typename Surface_regular_traits::
+                             typename Surface_traits::
                              Construct_vector_3()(wp2p(p1),
                                                   wp2p(p0)),
                              r2s_converter(shrink),
@@ -137,11 +135,11 @@ public:
           Surface_weighted_point p2 =
             r2s_converter(f.first->vertex((f.second+3)&3)->point());
 
-          create_hyperboloid(typename Surface_regular_traits::
+          create_hyperboloid(typename Surface_traits::
                              Construct_weighted_circumcenter_3()(p0,p1,p2),
-                             typename Surface_regular_traits::
+                             typename Surface_traits::
                              Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1,p2),
-                             typename Surface_regular_traits::
+                             typename Surface_traits::
                              Construct_orthogonal_vector_3()(wp2p(p0),wp2p(p1),wp2p(p2)),
                              r2s_converter(1-shrink),
                              -1);
@@ -157,10 +155,10 @@ public:
               r2s_converter(ch->vertex(3)->point())
             };
 
-          create_sphere(typename Surface_regular_traits::
+          create_sphere(typename Surface_traits::
                         Construct_weighted_circumcenter_3()
                         (pts[0],pts[1],pts[2],pts[3]),
-                        typename Surface_regular_traits::
+                        typename Surface_traits::
                         Compute_squared_radius_smallest_orthogonal_sphere_3()
                         (pts[0],pts[1],pts[2],pts[3]),
                         r2s_converter(1-shrink),

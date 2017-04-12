@@ -35,9 +35,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/shared_ptr.hpp>
 
-// For the Weighted_converter
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 // Used for the triangulated mixed complex / Voronoi diagram
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
