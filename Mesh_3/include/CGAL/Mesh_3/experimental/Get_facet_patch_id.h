@@ -74,6 +74,53 @@ get(const Get_facet_patch_id<Primitive>, const typename Primitive::Id& primitive
   return primitive_id->patch_id();
 }
 
+
+
+/// A property map that, from a primitive of a AABB tree of Gwdwg<Surface_mesh>
+/// facets, retrieve the patch_id() of the facet.
+template < typename MeshDomain>
+struct Get_facet_patch_id_sm{};
+
+
+// generic version, that test if Primitive::Id exists
+template <typename MeshDomain,
+          bool = internal::Primitive_has_Id<typename MeshDomain::AABB_primitive>::value>
+struct Get_facet_patch_id_sm_property_traits {
+};
+
+// specialization when Primitive::Id exists
+template <typename MeshDomain>
+struct Get_facet_patch_id_sm_property_traits<MeshDomain, true>
+{
+  typedef typename MeshDomain::AABB_primitive::Id Id;
+  typedef typename std::iterator_traits<Id>::value_type Face;
+
+  typedef typename MeshDomain::Patch_id value_type;
+
+  typedef value_type& reference;
+  typedef typename MeshDomain::AABB_primitive key_type;
+  typedef boost::readable_property_map_tag category;
+};
+
+}} // end namespace CGAL::Mesh_3
+
+namespace boost {
+  // specialization for using pointers as property maps
+  template <typename MeshDomain>
+  struct property_traits<CGAL::Mesh_3::Get_facet_patch_id_sm<MeshDomain> >
+    : public CGAL::Mesh_3::Get_facet_patch_id_sm_property_traits<MeshDomain> {};
+}
+
+namespace CGAL { namespace Mesh_3 {
+
+template <typename MeshDomain>
+typename boost::property_traits< Get_facet_patch_id_sm<MeshDomain> >::value_type
+get(const Get_facet_patch_id_sm<MeshDomain>, const typename MeshDomain::AABB_primitive::Id& primitive_id) {
+  typedef typename boost::property_map<typename MeshDomain::Polyhedron::Graph, face_patch_id_t<typename MeshDomain::Patch_id> >::type Fpim;
+  Fpim fpim = get(face_patch_id_t<typename MeshDomain::Patch_id>(),*((*primitive_id).graph));
+  typename MeshDomain::Patch_id patch_index =  get(fpim, (*primitive_id).descriptor);
+  return patch_index;
+}
 }} // end namespace CGAL::Mesh_3
 
 #endif // CGAL_MESH_3_GET_FACET_PATCH_ID_H
