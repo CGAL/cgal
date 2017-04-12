@@ -409,19 +409,19 @@ protected:
     return ( (facet < mirror)?facet:mirror );
   }
 
-  /// Returns true if f has already been visited
+  /// Returns true if \c f has already been visited
   bool is_facet_visited(const Facet& f) const
   {
     return f.first->is_facet_visited(f.second);
   }
 
-  /// Sets facet f to visited
+  /// Sets facet \c f to visited
   void set_facet_visited(Facet& f) const
   {
     f.first->set_facet_visited(f.second);
   }
 
-  /// Sets facet f and it's mirror one surface center to point p
+  /// Sets the facet \c f and its mirrored facet's surface centers to \c p
   void set_facet_surface_center(const Facet& f,
                                 const Bare_point& p,
                                 const Index& index) const
@@ -460,7 +460,7 @@ protected:
     return r_c3t3_.surface_patch_index(f.first, f.second);
   }
 
-  /// Sets index and dimension of vertex \v
+  /// Sets index and dimension of vertex \c v
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
     r_c3t3_.set_index(v, index);
@@ -557,7 +557,7 @@ protected:
     return stream.str();
   }
 
-  /// Returns to if f is on surface
+  /// Returns to if \c f is on surface
   bool is_facet_on_surface(const Facet& f) const
   {
     return r_c3t3_.is_in_complex(f) ;
@@ -820,12 +820,12 @@ public:
       Container_::get_next_local_element_impl());
   }
 
-  /// Tests if p encroaches facet from zone
+  /// Tests if \c p encroaches facet from zone
   // For sequential
   Mesher_level_conflict_status
   test_point_conflict_from_superior_impl(const Point& p, Zone& zone);
 
-  /// Tests if p encroaches facet from zone
+  /// Tests if \c p encroaches facet from zone
   // For parallel
   template <typename Mesh_visitor>
   Mesher_level_conflict_status
@@ -857,7 +857,7 @@ public:
                            , bool &facet_is_in_its_cz
                            , bool &could_lock_zone);
 
-  /// Insert p into triangulation
+  /// Insert \c p into the triangulation
   Vertex_handle insert_impl(const Point& p, const Zone& zone);
 
   bool try_lock_element(const Facet &f, int lock_radius = 0) const
@@ -1686,10 +1686,6 @@ dual_ray_exact(const Facet & facet, Ray_3& ray) const
         n->vertex(3)->point(),
         true), l);
 }
-
-
-
-
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 void
