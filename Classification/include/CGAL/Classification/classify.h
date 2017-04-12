@@ -346,6 +346,9 @@ namespace internal {
     algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`.
+    \tparam ItemMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `ItemRange` and value type
+    is the type of item to classify (for example, `CGAL::Point_3`).
     \tparam NeighborQuery model of `NeighborQuery`.
     \tparam ClassificationPredicate model of `Predicate`.
 
@@ -420,6 +423,9 @@ namespace internal {
     algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`.
+    \tparam ItemMap model of `ReadablePropertyMap` whose key
+    type is the value type of the iterator of `ItemRange` and value type
+    is the type of item to classify (for example, `CGAL::Point_3`).
     \tparam NeighborQuery model of `NeighborQuery`.
     \tparam ClassificationPredicate model of `Predicate`.
 

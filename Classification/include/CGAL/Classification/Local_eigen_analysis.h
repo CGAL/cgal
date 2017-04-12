@@ -127,7 +127,7 @@ public:
     `RandomAccessIterator`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
+    is `CGAL::Point_3`.
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` (default value is %CGAL
