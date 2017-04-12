@@ -74,7 +74,7 @@ private:
   typedef typename Regular::Cell_circulator          Rt_Cell_circulator;
 
   typedef Triangulation_simplex_3<Regular>           Rt_Simplex;
-  typedef typename Regular::Bare_point               Rt_Point;
+  typedef typename Regular::Bare_point               Rt_Bare_point;
   typedef typename Regular_traits::FT                Rt_FT;
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
 
@@ -258,9 +258,7 @@ private:
 
   typename Tmc_traits::Construct_weighted_circumcenter_3 weighted_circumcenter_obj;
 
-  Cartesian_converter<typename Regular_traits::Bare_point::R,
-			Triangulated_mixed_complex_traits >
-  r2t_converter_object;
+  Cartesian_converter<typename Rt_Bare_point::R, Tmc_traits > r2t_converter_object;
 
   Construct_anchor_point_3<
     //  Regular_triangulation_euclidean_traits_3<
@@ -1265,15 +1263,17 @@ orientation(Tmc_Cell_handle ch) {
     typedef Exact_predicates_exact_constructions_kernel EK;
     typedef Cartesian_converter<EK, Tmc_traits>         Exact_converter;
     typedef Skin_surface_traits_3<EK>                   Exact_traits;
+    typedef Skin_surface_base_3<EK>                     Exact_skin_surface;
 
     Exact_converter converter;
     Exact_traits    exact_traits(shrink);
-    typename EK::Point_3 e_pts[4];
+    typename Exact_skin_surface::Bare_point e_pts[4];
 
     for (int k=0; k<4; k++) {
        e_pts[k] = 
-         Skin_surface_base_3<Regular_traits>::
-         get_anchor_point(ch->vertex(k)->info(), exact_traits);
+         Triangulated_mixed_complex_observer::Skin_surface::
+           get_anchor_point(ch->vertex(k)->info(), exact_traits);
+
       // Store the more precise point
       ch->vertex(k)->point() = converter(e_pts[k]);
     }
