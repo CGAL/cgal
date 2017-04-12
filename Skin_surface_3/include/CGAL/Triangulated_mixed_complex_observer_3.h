@@ -44,9 +44,11 @@ template <class TriangulatedMixedComplex_3,
 class SkinSurface_3>
 class Triangulated_mixed_complex_observer_3 {
 public:
+  typedef SkinSurface_3                              Skin_surface;
+  typedef TriangulatedMixedComplex_3                 Triangulated_mixed_complex;
+
   typedef typename SkinSurface_3::Regular            Regular;
   typedef typename Regular::Geom_traits              Regular_traits;
-  typedef TriangulatedMixedComplex_3                 Triangulated_mixed_complex;
   typedef typename Triangulated_mixed_complex::Geom_traits
   Triangulated_mixed_complex_traits;
   typedef typename Triangulated_mixed_complex::Triangulation_data_structure
@@ -61,7 +63,7 @@ public:
   typedef typename Regular::Cell_handle              Rt_Cell_handle;
   typedef Triangulation_simplex_3<Regular>           Rt_Simplex;
 
-  typedef typename Regular::Bare_point               Rt_Point;
+  typedef typename Regular::Bare_point               Rt_Bare_point;
   typedef typename Regular::Geom_traits              Rt_Geom_traits;
   typedef typename Rt_Geom_traits::RT                Rt_RT;
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
@@ -78,8 +80,8 @@ public:
   typedef typename Surface_traits::Weighted_point_3  Surface_weighted_point;
 
   typedef 
-  Cartesian_converter < typename Regular_traits::Bare_point::R,
-  typename Quadratic_surface::K >            R2S_converter;
+  Cartesian_converter < typename Rt_Bare_point::R,
+                        typename Quadratic_surface::K >  R2S_converter;
   Triangulated_mixed_complex_observer_3(FT shrink) :
   shrink(shrink) {}
 

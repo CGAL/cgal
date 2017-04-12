@@ -117,9 +117,6 @@ public:
   typedef Skin_surface_traits_base_3<Kernel>  Self;
 
   typedef typename Kernel::FT                 FT;
-  typedef typename Kernel::Point_3            Bare_point;
-  typedef typename Kernel::Weighted_point_3   Weighted_point;
-  typedef Weighted_point                      Weighted_point_3;
 
   typedef CGAL::Side_of_mixed_cell_3<Self>          Side_of_mixed_cell_3;
   typedef typename Kernel::Construct_weighted_circumcenter_3
