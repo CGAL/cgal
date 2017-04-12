@@ -69,7 +69,7 @@ private:
   typedef typename Regular::Cell_circulator          Rt_Cell_circulator;
 
   typedef Triangulation_simplex_3<Regular>           Rt_Simplex;
-  typedef typename Regular::Bare_point               Rt_Point;
+  typedef typename Regular::Bare_point               Rt_Bare_point;
   typedef typename Regular_traits::FT                Rt_FT;
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
 
@@ -209,10 +209,8 @@ private:
   Compute_anchor_3<Regular> compute_anchor_obj;
   bool verbose;
 
-    Cartesian_converter<typename Regular_traits::Bare_point::R, 
-			Triangulated_mixed_complex_traits > 
-  r2t_converter_object;
-    
+    Cartesian_converter<typename Rt_Bare_point::R,
+                        Triangulated_mixed_complex_traits > r2t_converter_object;
 
   static const int edge_index[4][4];
   struct Index_c4 { Tmc_Vertex_handle V[4]; };

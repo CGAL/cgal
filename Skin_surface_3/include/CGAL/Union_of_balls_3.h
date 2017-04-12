@@ -35,14 +35,12 @@ class Union_of_balls_3 : public Skin_surface_base_3<MixedComplexTraits_3> {
   typedef Union_of_balls_3<Gt>            Self;
   typedef Skin_surface_base_3<Gt>         Base; 
 public:
-  typedef MixedComplexTraits_3            Geometric_traits;
+  typedef MixedComplexTraits_3                 Geometric_traits;
 
-  typedef typename Gt::Weighted_point     Weighted_point;
-  typedef typename Gt::Bare_point         Bare_point;
-  typedef typename Gt::FT                 FT;
-  // For normal():
-  typedef typename Gt::Vector_3           Vector;
-
+  typedef typename Base::FT                    FT;
+  typedef typename Base::Bare_point            Bare_point;
+  typedef typename Base::Weighted_point        Weighted_point;
+  typedef typename Base::Vector                Vector;
 
   typedef typename Base::Regular               Regular;
   typedef typename Base::Vertex_handle         Vertex_handle;
