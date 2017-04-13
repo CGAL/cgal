@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -25,7 +25,7 @@
 
 #include <CGAL/predicates/predicates_for_mixed_complex_3.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 /** Input: a list of n weighted points p_1...p_n and a query point x.
     There is a plane separating the mixed cell defined by p_1...p_n-1
@@ -35,47 +35,53 @@ namespace CGAL {
     opposite side (POSITIVE).
  **/
 template <class K>
-class Side_of_mixed_cell_3 {
+class Side_of_mixed_cell_3
+{
 public:
   typedef typename K::FT             FT;
   typedef typename K::Bare_point     Bare_point;
   typedef typename K::Weighted_point Weighted_point;
 
-  Side_of_mixed_cell_3(const FT &shrink) : s(shrink) {}
-  
-  typedef CGAL::Sign           result_type;
-  
+  typedef CGAL::Sign                 result_type;
+
+  Side_of_mixed_cell_3(const FT &shrink) : s(shrink) { }
+
   result_type operator()(const Weighted_point &p1,
-			 const Weighted_point &p2,
-			 const Bare_point &x) const {
+                         const Weighted_point &p2,
+                         const Bare_point &x) const
+  {
     return side_of_mixed_cellC3(p1.x(),p1.y(),p1.z(),p1.weight(),
-				p2.x(),p2.y(),p2.z(),p2.weight(),
-				x.x(),x.y(),x.z(),
-				s);
+                                p2.x(),p2.y(),p2.z(),p2.weight(),
+                                x.x(),x.y(),x.z(),
+                                s);
   }
+
   result_type operator()(const Weighted_point &p1,
-			 const Weighted_point &p2,
-			 const Weighted_point &p3,
-			 const Bare_point &x) const {
+                         const Weighted_point &p2,
+                         const Weighted_point &p3,
+                         const Bare_point &x) const
+  {
     return side_of_mixed_cellC3(p1.x(),p1.y(),p1.z(),p1.weight(),
-				p2.x(),p2.y(),p2.z(),p2.weight(),
-				p3.x(),p3.y(),p3.z(),p3.weight(),
-				x.x(),x.y(),x.z(),
-				s);
+                                p2.x(),p2.y(),p2.z(),p2.weight(),
+                                p3.x(),p3.y(),p3.z(),p3.weight(),
+                                x.x(),x.y(),x.z(),
+                                s);
   }
+
   result_type operator()(const Weighted_point &p1,
-			 const Weighted_point &p2,
-			 const Weighted_point &p3,
-			 const Weighted_point &p4,
-			 const Bare_point &x) const {
+                         const Weighted_point &p2,
+                         const Weighted_point &p3,
+                         const Weighted_point &p4,
+                         const Bare_point &x) const
+  {
     return side_of_mixed_cellC3(p1.x(),p1.y(),p1.z(),p1.weight(),
-				p2.x(),p2.y(),p2.z(),p2.weight(),
-				p3.x(),p3.y(),p3.z(),p3.weight(),
-				p4.x(),p4.y(),p4.z(),p4.weight(),
-				x.x(),x.y(),x.z(),
-				s);
+                                p2.x(),p2.y(),p2.z(),p2.weight(),
+                                p3.x(),p3.y(),p3.z(),p3.weight(),
+                                p4.x(),p4.y(),p4.z(),p4.weight(),
+                                x.x(),x.y(),x.z(),
+                                s);
   }
-  
+
 private:
   FT s;
 };
@@ -84,61 +90,61 @@ private:
     Computes the anchor point of a Delaunay center and a Voronoi center
  **/
 template <class K>
-class Construct_anchor_point_3 {
+class Construct_anchor_point_3
+{
 public:
   typedef typename K::FT             FT;
-  typedef typename K::Point_3     Bare_point;
+  typedef typename K::Point_3        Bare_point;
+
+  typedef Bare_point                 result_type;
 
   Construct_anchor_point_3(const FT &shrink) : s(shrink) {}
-  
-  typedef Bare_point           result_type;
-  
+
   result_type operator()(const Bare_point &p_del,
-			 const Bare_point &p_vor) const {
+                         const Bare_point &p_vor) const
+  {
     return Bare_point((1-s)*p_del.x() + s*p_vor.x(),
-		      (1-s)*p_del.y() + s*p_vor.y(),
-		      (1-s)*p_del.z() + s*p_vor.z());
+                      (1-s)*p_del.y() + s*p_vor.y(),
+                      (1-s)*p_del.z() + s*p_vor.z());
   }
-  
+
 private:
   FT s;
 };
 
 template <class K_>
-class Skin_surface_traits_base_3 
+class Skin_surface_traits_base_3
   : public K_
 {
 public:
-  typedef K_                                  Kernel;
-  typedef Skin_surface_traits_base_3<Kernel>  Self;
+  typedef K_                                    Kernel;
+  typedef Skin_surface_traits_base_3<Kernel>    Self;
 
-  typedef typename Kernel::FT                 FT;
+  typedef typename Kernel::FT                   FT;
 
-  typedef CGAL::Side_of_mixed_cell_3<Self>     Side_of_mixed_cell_3;
-  typedef CGAL::Construct_anchor_point_3<Self> Construct_anchor_point_3;
-  
- 
-  
-  Skin_surface_traits_base_3() : s(-1) {
+  typedef CGAL::Side_of_mixed_cell_3<Self>      Side_of_mixed_cell_3;
+  typedef CGAL::Construct_anchor_point_3<Self>  Construct_anchor_point_3;
+
+  Skin_surface_traits_base_3() : s(-1) { }
+  Skin_surface_traits_base_3(FT s) : s(s) { }
+
+  void set_shrink(FT s_) {
+    s = s_;
   }
-  Skin_surface_traits_base_3(FT s) : s(s) {
-  }
-  void set_shrink(FT s_) { 
-    s = s_; 
-  }
+
   FT get_shrink() const {
     return s;
   }
 
-  
-  Side_of_mixed_cell_3 
-  side_of_mixed_cell_3_object() const { 
+  Side_of_mixed_cell_3 side_of_mixed_cell_3_object() const
+  {
     CGAL_assertion((s>0) && (s<1));
-    return Side_of_mixed_cell_3(get_shrink()); }
+    return Side_of_mixed_cell_3(get_shrink());
+  }
 
-  Construct_anchor_point_3
-  construct_anchor_point_3_object() const
-  { return Construct_anchor_point_3(get_shrink()); }
+  Construct_anchor_point_3 construct_anchor_point_3_object() const {
+    return Construct_anchor_point_3(get_shrink());
+  }
 
 private:
   FT s;
@@ -166,24 +172,21 @@ public:
 #include <CGAL/Skin_surface_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
 
-
 namespace CGAL {
 
 // Just FK would be nicer, but VC 2005 messes it up with an "FK" in a base class when compiling degenerate_test.cpp
 template < typename Sst3FK >
-class Skin_surface_traits_3 < Sst3FK,true >
+class Skin_surface_traits_3 < Sst3FK, true >
   : public Skin_surface_filtered_traits_3 < Sst3FK >
 {
   typedef Skin_surface_filtered_traits_3 < Sst3FK > Base;
+
 public:
   typedef Sst3FK                                    Kernel;
-  
+
   Skin_surface_traits_3() {}
-  Skin_surface_traits_3(typename Base::FT s) :  Base(s) {}
-
+  Skin_surface_traits_3(typename Base::FT s) :  Base(s) { }
 };
-
-
 
 } //namespace CGAL
 #endif // CGAL_SKIN_SURFACE_TRAITS_3_H
