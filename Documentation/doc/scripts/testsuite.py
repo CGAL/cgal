@@ -115,6 +115,7 @@ def main():
 
     parser.add_argument('--publish', metavar='/path/to/publish', help='Specify this argument if the results should be published.')
     parser.add_argument('--doc-log-dir', default='.', metavar='/path/to/cgal/build/dir/doc_log', help='The path of the documentation logs.')
+    parser.add_argument('--master-dir', default='.', metavar='/path/to/cgal/build/master_dir/doc_output', help='The path to the master build documentation.')
     parser.add_argument('--output-dir', default='.', metavar='/path/to/cgal/build/dir/doc_output', help='The path to the build documentation')
     parser.add_argument('--diff', metavar='/path/to/diff', help='The path to the diff file.')
     parser.add_argument('--cgal-version', help='Path to a version.h file from the current release. If not specified use git hash instead.')
@@ -175,7 +176,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th></tr></table></body></html>''')
+<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th><th>Documentation from doxygen master</th></tr></table></body></html>''')
 
         with open(diff_file, 'r') as myfile:
           diff=myfile.read()
@@ -212,6 +213,16 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
           except:
             sys.stderr.write("Error while copying documentation\n")
             raise
+          try:
+            #copy documentation from master
+            if args.do_copy_results:
+              tgt=os.path.join(log_target, 'master')
+              shutil.copytree(args.master_dir, tgt, symlinks=True)
+              os.symlink("../MathJax", os.path.join(log_target, 'MathJax'))
+          except:
+            sys.stderr.write("Error while copying master documentation\n")
+            raise
+
         except:
           sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
           raise
