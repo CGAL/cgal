@@ -107,8 +107,13 @@ public:
     dock_widget = new QDockWidget("Classification", mw);
     dock_widget->setVisible(false);
 
+    
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
+
+#ifndef CGAL_LINKED_WITH_OPENCV
+    ui_widget.predicate->removeItem(1);
+#endif
 
     color_att = QColor (75, 75, 77);
     

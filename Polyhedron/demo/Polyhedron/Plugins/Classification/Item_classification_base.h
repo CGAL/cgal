@@ -5,13 +5,13 @@
 
 #include <QComboBox>
 
-#define CGAL_CLASSTRAINING_USE_IOU_INSTEAD_OF_RECALL
-#define CGAL_CLASSIFICATION_VERBOSE
-
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/Sum_of_weighted_features_predicate.h>
+
+#ifdef CGAL_LINKED_WITH_OPENCV
 #include <CGAL/Classification/Random_forest_predicate.h>
+#endif
 
 class Item_classification_base
 {
@@ -21,7 +21,10 @@ public:
   typedef CGAL::Classification::Label_set   Label_set;
   typedef CGAL::Classification::Feature_set Feature_set;
   typedef CGAL::Classification::Sum_of_weighted_features_predicate Sum_of_weighted_features;
+
+#ifdef CGAL_LINKED_WITH_OPENCV
   typedef CGAL::Classification::Random_forest_predicate Random_forest;
+#endif
   
 public:
   
@@ -61,8 +64,11 @@ public:
     m_label_colors.push_back (color);
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+    
+#ifdef CGAL_LINKED_WITH_OPENCV
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
+#endif
   }
   void remove_label (const char* name)
   {
@@ -75,8 +81,11 @@ public:
         }
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+
+#ifdef CGAL_LINKED_WITH_OPENCV
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
+#endif
   }
   std::size_t number_of_labels() const { return m_labels.size(); }
   Label_handle label(std::size_t i) { return m_labels[i]; }
@@ -107,7 +116,9 @@ public:
     }
     else
     {
+#ifdef CGAL_LINKED_WITH_OPENCV
       m_random_forest->save_configuration (filename);
+#endif
     }
   }
   void load_config(const char* filename, int predicate)
@@ -125,7 +136,9 @@ public:
     }
     else
     {
+#ifdef CGAL_LINKED_WITH_OPENCV
       m_random_forest->load_configuration (filename);
+#endif
     }
   }
 
@@ -152,7 +165,9 @@ protected:
   Feature_set m_features;
   std::vector<QColor> m_label_colors;
   Sum_of_weighted_features* m_sowf;
+#ifdef CGAL_LINKED_WITH_OPENCV
   Random_forest* m_random_forest;
+#endif
 
   std::size_t m_nb_scales;
   std::size_t m_nb_trials;

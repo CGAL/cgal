@@ -85,7 +85,9 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+#ifdef CGAL_LINKED_WITH_OPENCV
   m_random_forest = new Random_forest (m_labels, m_features);
+#endif
 }
 
 
@@ -93,8 +95,10 @@ Point_set_item_classification::~Point_set_item_classification()
 {
   if (m_sowf != NULL)
     delete m_sowf;
+#ifdef CGAL_LINKED_WITH_OPENCV
   if (m_random_forest != NULL)
     delete m_random_forest;
+#endif
   if (m_generator != NULL)
     delete m_generator;
   if (m_points != NULL)
@@ -341,8 +345,10 @@ void Point_set_item_classification::compute_features ()
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+#ifdef CGAL_LINKED_WITH_OPENCV
   delete m_random_forest;
   m_random_forest = new Random_forest (m_labels, m_features);
+#endif
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 
@@ -372,10 +378,12 @@ void Point_set_item_classification::train(int predicate)
     }
   else
     {
+#ifdef CGAL_LINKED_WITH_OPENCV
       m_random_forest->train (indices);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_random_forest,
                                                        indices);
+#endif
     }
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
@@ -396,8 +404,10 @@ bool Point_set_item_classification::run (int method, int predicate)
 
   if (predicate == 0)
     run (method, *m_sowf);
+#ifdef CGAL_LINKED_WITH_OPENCV
   else
     run (method, *m_random_forest);
+#endif
   
   return true;
 }
