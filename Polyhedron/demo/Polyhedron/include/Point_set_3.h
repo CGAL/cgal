@@ -211,15 +211,15 @@ public:
   {
     if (m_blue != Byte_map())
       {
-        this->template remove_property_map (m_red);
-        this->template remove_property_map (m_green);
-        this->template remove_property_map (m_blue);
+        this->template remove_property_map<unsigned char>(m_red);
+        this->template remove_property_map<unsigned char>(m_green);
+        this->template remove_property_map<unsigned char>(m_blue);
       }
     if (m_fblue != Double_map())
       {
-        this->template remove_property_map (m_fred);
-        this->template remove_property_map (m_fgreen);
-        this->template remove_property_map (m_fblue);
+        this->template remove_property_map<double>(m_fred);
+        this->template remove_property_map<double>(m_fgreen);
+        this->template remove_property_map<double>(m_fblue);
       }
   }
   
