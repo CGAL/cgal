@@ -22,7 +22,7 @@ if [ -z $PATH_TO_1 ] || [ $(basename $PATH_TO_1) != "doxygen" ] || [ ! -e $PATH_
   exit 0
 fi
 
-ROOT=$PWD
+ROOT=$PWD/../../..
 mkdir ./build_doc
 cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
@@ -66,10 +66,10 @@ cd ..
 cd $ROOT
 mkdir ./build && cd ./build
 cmake ..
-PATH_TO_VERSION=$PWD/VESRION
+PATH_TO_VERSION=$PWD/VERSION
 #update overview
-cd $ROOT
-python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ --publish $PUBLISH_DIR --diff $PWD/diff.txt --output2-dir $PWD/doc_dir_2/doc_output/ --cgal-version $PATH_TO_VERSION
+cd $ROOT/Documentation/doc/scripts
+python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_dir_2/doc_output/ --cgal-version $PATH_TO_VERSION
 
 #clean-up
 rm -rf ./build_doc
