@@ -23,6 +23,10 @@
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_predicate.h>
 
+#ifdef CGAL_LINKED_WITH_OPENCV
+#include <CGAL/Classification/Random_forest_predicate.h>
+#endif
+
 #include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Evaluation.h>
 #include <CGAL/Classification/Feature_base.h>
