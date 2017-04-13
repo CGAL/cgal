@@ -54,7 +54,11 @@ do
   if [ "$ARG" = "CHECK" ]
 	then
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
-
+    mkdir -p build-travis
+    pushd build-travis
+    cmake -DCGAL_ENABLE_CHECK_HEADERS=ON ..
+    make -j2 check_headers
+    popd
   	#parse current matrix and check that no package has been forgotten
 	  old_IFS=$IFS
 	  IFS=$'\n'
