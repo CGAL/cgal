@@ -13,9 +13,10 @@ typedef CGAL::Union_of_balls_3<Traits>                      Union_of_balls_3;
 typedef Union_of_balls_3::Weighted_point                    Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K,
-  CGAL::Skin_surface_polyhedral_items_3<Union_of_balls_3> >   Polyhedron;
+  CGAL::Skin_surface_polyhedral_items_3<Union_of_balls_3> > Polyhedron;
 
-int main() {
+int main()
+{
   std::list<Weighted_point> l;
 
   l.push_front(Weighted_point(Bare_point( 1,-1,-1), 1.25));
