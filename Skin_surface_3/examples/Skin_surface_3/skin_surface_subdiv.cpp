@@ -16,7 +16,8 @@ typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K,
   CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> >   Polyhedron;
 
-int main() {
+int main()
+{
   std::list<Weighted_point> l;
   FT                        shrinkfactor = 0.5;
 
