@@ -55,26 +55,27 @@ DOXYGEN_1=$($PATH_TO_1 --version)
 DOXYGEN_2=$($PATH_TO_2 --version)
 bash ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref $DOXYGEN_1 $DOXYGEN_2
 #rebuild doc with Doxygen_1 to get the right doc_tags
-mv ./doc_dir ./doc_dir_2
+mv ./build_doc ./doc_master
+rm -rf ./doc_dir
 mkdir ./doc_dir
 cd ./doc_dir
 cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
 make -j7 doc  &> /dev/null
 make -j7 doc  &> /dev/null
 cd ..
-#get VERSION.h
+#get VERSION's content
 cd $ROOT
 mkdir ./build && cd ./build
 cmake ..
-PATH_TO_VERSION=$PWD/VERSION
+CGAL_NAME="$(cat $PWD/VERSION)"
 #update overview
 cd $ROOT/Documentation/doc/scripts
-python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_dir_2/doc_output/ --cgal-version $PATH_TO_VERSION
+python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_master/doc_output/ --cgal-version $CGAL_NAME --do-copy-results 
 
 #clean-up
 rm -rf ./build_doc
 rm -rf ./doc_dir
-rm -rf ./doc_dir_2
+#rm -rf ./doc_master
 rm -rf ./doc_ref
 rm -rf ./doc_data
 if [ $IS_ARG2 == 0 ]; then

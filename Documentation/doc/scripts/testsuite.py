@@ -85,7 +85,8 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
     
     if args.publish and args.do_copy_results:
       link="\nLink to this <a href=output/Manual/index.html>documentation</a>\n"
-      d = pq(page_header+link+page_footer)
+      link_master="\nLink to <a href=master/Manual/index.html>master documentation</a>\n"
+      d = pq(page_header+link+"   "+link_master+page_footer)
     else:
       d = pq(page_header+page_footer)
     logs=sorted(glob.glob('./*.log'))
@@ -176,7 +177,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th><th>Documentation from doxygen master</th></tr></table></body></html>''')
+<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th></tr></table></body></html>''')
 
         with open(diff_file, 'r') as myfile:
           diff=myfile.read()
@@ -218,7 +219,6 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
             if args.do_copy_results:
               tgt=os.path.join(log_target, 'master')
               shutil.copytree(args.master_dir, tgt, symlinks=True)
-              os.symlink("../MathJax", os.path.join(log_target, 'MathJax'))
           except:
             sys.stderr.write("Error while copying master documentation\n")
             raise
