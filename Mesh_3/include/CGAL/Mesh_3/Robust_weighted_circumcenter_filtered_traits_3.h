@@ -47,8 +47,8 @@ public:
   typedef Cartesian_converter<K, EK>  To_exact;
   typedef Cartesian_converter<EK,K>   Back_from_exact;
   
-  typedef typename K::Point_3                         Bare_point;
-  typedef typename K::Weighted_point_3                Weighted_point;
+  typedef typename K::Point_3                         Point_3;
+  typedef typename K::Weighted_point_3                Weighted_point_3;
   typedef typename K::FT                              FT;
   typedef FT                                          result_type;
 
@@ -66,38 +66,38 @@ public:
   operator()( const Circle_3& c) const
   { return K::Compute_squared_radius_3::operator()(c); }
 
-  FT operator() ( const Bare_point & p,
-                  const Bare_point & q,
-                  const Bare_point & r) const
+  FT operator() ( const Point_3 & p,
+                  const Point_3 & q,
+                  const Point_3 & r) const
   {
     return K::Compute_squared_radius_3::operator()(p,q,r);
   }
 
-  FT operator() ( const Bare_point & p,
-                  const Bare_point & q) const
+  FT operator() ( const Point_3 & p,
+                  const Point_3 & q) const
   {
     return K::Compute_squared_radius_3::operator()(p,q);
   }
 
-  FT operator() ( const Bare_point & p) const
+  FT operator() ( const Point_3 & p) const
   {
     return K::Compute_squared_radius_3::operator()(p);
   }
 #endif // CGAL_CFG_MATCHING_BUG_6
   
-  FT operator()( const Weighted_point & p,
-                  const Weighted_point & q,
-                  const Weighted_point & r,
-                  const Weighted_point & s ) const
+  FT operator()( const Weighted_point_3 & p,
+                 const Weighted_point_3 & q,
+                 const Weighted_point_3 & r,
+                 const Weighted_point_3 & s ) const
   {
     typename K::Construct_point_3 cp = K().construct_point_3_object();
     return this->operator()(cp(p), cp(q), cp(r), cp(s));
   }
  
-  FT operator() ( const Bare_point & p,
-                  const Bare_point & q,
-                  const Bare_point & r,
-                  const Bare_point & s ) const
+  FT operator() ( const Point_3 & p,
+                  const Point_3 & q,
+                  const Point_3 & r,
+                  const Point_3 & s ) const
   {
     typename K::Compute_squared_radius_3 sq_radius =
       K().compute_squared_radius_3_object();
@@ -122,10 +122,10 @@ public:
   }
 
 private:
-  FT compute_denom(const Bare_point & p,
-                   const Bare_point & q,
-                   const Bare_point & r,
-                   const Bare_point & s) const
+  FT compute_denom(const Point_3 & p,
+                   const Point_3 & q,
+                   const Point_3 & r,
+                   const Point_3 & s) const
   {
     return compute_denom(p.x(),p.y(),p.z(),
                          q.x(),q.y(),q.z(),
@@ -167,21 +167,21 @@ public:
   typedef K_ Rt;
   typedef EK Exact_Rt;
   
-  typedef typename Rt::Weighted_point_3               Weighted_point;
-  typedef typename Rt::Point_3                        Bare_point;
+  typedef typename Rt::Weighted_point_3               Weighted_point_3;
+  typedef typename Rt::Point_3                        Point_3;
   typedef typename Rt::FT                             FT;
   typedef typename Rt::Sphere_3                       Sphere_3;
   
-  typedef Bare_point                                  result_type;
+  typedef Point_3                                     result_type;
  
  typename Rt::Construct_point_3 wp2p = Rt().construct_point_3_object();
  typename Rt::Construct_weighted_point_3 p2wp = Rt().construct_weighted_point_3_object();
-  
-  Bare_point operator() ( const Weighted_point & p,
-                          const Weighted_point & q,
-                          const Weighted_point & r,
-                          const Weighted_point & s,
-                          bool force_exact = false) const
+
+  Point_3  operator() ( const Weighted_point_3 & p,
+                        const Weighted_point_3 & q,
+                        const Weighted_point_3 & r,
+                        const Weighted_point_3 & s,
+                        bool force_exact = false) const
   {
     CGAL_precondition(Rt().orientation_3_object()(
       wp2p(p), wp2p(q), wp2p(r), wp2p(s)) == CGAL::POSITIVE);
@@ -210,7 +210,7 @@ public:
     if ( ! force_exact && ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
-      Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
+      Point_3 res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
        
       if(unweighted){
         if (side_of_oriented_sphere(wp2p(p), wp2p(q), wp2p(r), wp2p(s), res)
@@ -234,9 +234,9 @@ public:
                                                        to_exact(s)));
   }
   
-  Bare_point operator() ( const Weighted_point & p,
-                          const Weighted_point & q,
-                          const Weighted_point & r ) const
+  Point_3 operator() ( const Weighted_point_3 & p,
+                       const Weighted_point_3 & q,
+                       const Weighted_point_3 & r ) const
   {
     CGAL_precondition(! Rt().collinear_3_object()(wp2p(p),
                                                   wp2p(q),
@@ -255,7 +255,7 @@ public:
     if ( ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
-      Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
+      Point_3 res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
       
       // Fast output
       if ( side_of_bounded_sphere(wp2p(p),wp2p(q),wp2p(r),res) == CGAL::ON_BOUNDED_SIDE )
@@ -273,8 +273,8 @@ public:
                                                        to_exact(r)));
   }
   
-  Bare_point operator() ( const Weighted_point & p,
-                          const Weighted_point & q ) const
+  Point_3 operator() ( const Weighted_point_3 & p,
+                       const Weighted_point_3 & q ) const
   {
     typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
       Rt().construct_weighted_circumcenter_3_object();
@@ -315,13 +315,13 @@ public:
   typedef K_ Rt;
   typedef EK Exact_Rt;
   
-  typedef typename Rt::Weighted_point_3               Weighted_point;
+  typedef typename Rt::Weighted_point_3               Weighted_point_3;
   typedef typename Rt::FT                             FT;
   
-  FT operator() ( const Weighted_point& p,
-                  const Weighted_point& q,
-                  const Weighted_point& r,
-                  const Weighted_point& s ) const
+  FT operator() ( const Weighted_point_3& p,
+                  const Weighted_point_3& q,
+                  const Weighted_point_3& r,
+                  const Weighted_point_3& s ) const
   {
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
@@ -350,9 +350,9 @@ public:
   }
   
   
-  FT operator() (const Weighted_point& p,
-                 const Weighted_point& q,
-                 const Weighted_point& r) const
+  FT operator() (const Weighted_point_3& p,
+                 const Weighted_point_3& q,
+                 const Weighted_point_3& r) const
   {
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
@@ -380,8 +380,8 @@ public:
   }
   
   
-  FT operator() (const Weighted_point& p,
-                 const Weighted_point& q) const
+  FT operator() (const Weighted_point_3& p,
+                 const Weighted_point_3& q) const
   {
     // Compute denominator to swith to exact if it is 0
     FT qpx = q.x() - p.x();
@@ -407,7 +407,7 @@ public:
   }
   
   
-  FT operator() (const Weighted_point& p) const
+  FT operator() (const Weighted_point_3& p) const
   {
     return -p.weight();
   }  
@@ -421,7 +421,6 @@ template<class K_>
 struct Robust_weighted_circumcenter_filtered_traits_3
 : public K_
 {
-  typedef typename K_::Point_3 Bare_point;
   typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K_>
     Construct_weighted_circumcenter_3;
   
