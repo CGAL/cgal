@@ -455,7 +455,7 @@ intersect_with_transversal_segment(
 
   Cartesian_converter<FK, typename Bare_point::R> converter;
   Object obj;
-  typename FK::Point_3 tmc_point;
+
   Bare_point tet_pts[4];
   for (int i=0; i<4; i++) {
     tet_pts[i] = converter(tet->vertex(i)->point());
