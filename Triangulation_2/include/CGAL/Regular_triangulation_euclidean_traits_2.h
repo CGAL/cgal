@@ -25,7 +25,7 @@
 #include <CGAL/license/Triangulation_2.h>
 
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 
 namespace CGAL { 

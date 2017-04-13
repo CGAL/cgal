@@ -21,11 +21,12 @@
 #define CGAL_SPLIT_GRAPH_INTO_POLYLINES
 
 #include <map> 
-#include <set> 
+#include <vector>
+#include <utility>
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <iostream>
 #include <CGAL/assertions.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
