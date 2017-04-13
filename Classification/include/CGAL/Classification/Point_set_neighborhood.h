@@ -106,7 +106,7 @@ public:
   class K_neighbor_query
   {
   public:
-    typedef Point_set_neighborhood::Point value_type; ///<
+    typedef typename Point_set_neighborhood::Point value_type; ///<
   private:
     const Point_set_neighborhood& neighborhood;
     std::size_t k;
@@ -139,7 +139,7 @@ public:
   class Range_neighbor_query
   {
   public:
-    typedef Point_set_neighborhood::Point value_type; ///<
+    typedef typename Point_set_neighborhood::Point value_type; ///<
   private:
     const Point_set_neighborhood& neighborhood;
     float radius;

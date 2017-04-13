@@ -329,7 +329,7 @@ public:
     };
     std::vector<Feature_training> feature_train;
     std::size_t nb_trials = 100;
-    float wmin = 1e-5, wmax = 1e5;
+    float wmin = 1e-5f, wmax = 1e5f;
     float factor = std::pow (wmax/wmin, 1. / (float)nb_trials);
     
     for (std::size_t j = 0; j < m_features.size(); ++ j)
@@ -748,7 +748,7 @@ public:
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
     {
       std::string name = v.second.get<std::string>("name");
-      typename std::map<std::string, std::size_t>::iterator
+      std::map<std::string, std::size_t>::iterator
         found = map_n2f.find (name);
       if (found != map_n2f.end())
         m_weights[found->second] = v.second.get<float>("weight");
@@ -763,7 +763,7 @@ public:
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
     {
       std::string label_name = v.second.get<std::string>("name");
-      typename std::map<std::string, std::size_t>::iterator
+      std::map<std::string, std::size_t>::iterator
         found = map_n2l.find (label_name);
       std::size_t l = 0;
       if (found != map_n2l.end())
@@ -783,7 +783,7 @@ public:
             
         std::string feature_name = v2.second.get<std::string>("name");
             
-        typename std::map<std::string, std::size_t>::iterator
+        std::map<std::string, std::size_t>::iterator
           found2 = map_n2f.find (feature_name);
         std::size_t f = 0;
         if (found2 != map_n2f.end())

@@ -114,7 +114,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
-    const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
+    const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
       return 0.;
     else
@@ -159,7 +159,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
-    const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
+    const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
       return 0.;
     else
@@ -205,7 +205,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
-    const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
+    const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
       return 0.;
     else
@@ -250,7 +250,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
-    const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
+    const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     return (std::pow (std::fabs(ev[0] * ev[1] * ev[2]), 0.333333333));
   }
   /// \endcond
@@ -292,7 +292,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
-    const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
+    const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[2] < 1e-15)
       return 0.;
     else
@@ -337,7 +337,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
-    const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
+    const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[0] < 1e-15
         || ev[1] < 1e-15
         || ev[2] < 1e-15)
@@ -429,7 +429,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
-    const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
+    const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     if (ev[0] + ev[1] + ev[2] < 1e-15)
       return 0.;
     else
