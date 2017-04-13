@@ -46,13 +46,17 @@ TD.requirements A:visited {color: rgb(100%,100%,65%)}
 
 SELECT { font-family: monospace; }
 
-#permalink {
+#permalink,#jump_to_results {
     font-size: 0.5em;
     font-weight: normal;
 }
-#permalink::before {
+#permalink::before,#jump_to_results::before{
     content: "("
 }
-#permalink::after {
+#permalink::after,#jump_to_results::after{
     content: ")"
+}
+
+.package_name {
+    color: black;
 }
