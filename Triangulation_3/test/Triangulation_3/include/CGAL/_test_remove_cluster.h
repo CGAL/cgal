@@ -7,16 +7,15 @@
 template <typename T>
 void _test_rc_random_1()
 {
-	typedef T                                      D3;
-	typedef typename D3::Point                     Point;
-	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-        typedef typename D3::Geom_traits::Point_3      Sphere_center;
-	typedef Point                                  Point_3;
+  typedef T                                      D3;
+  typedef typename D3::Point                     Point;
+  typedef typename D3::Vertex_handle             Vertex_handle;
+  typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;
+  typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
+  typedef typename D3::Geom_traits::Point_3      Sphere_center;
 
-        typename D3::Geom_traits::Construct_point_3 cp
-          = (typename D3::Geom_traits()).construct_point_3_object();
+  typename D3::Geom_traits::Construct_point_3 cp
+    = (typename D3::Geom_traits()).construct_point_3_object();
 
 	std::cout << "_test_rc_random_1" << std::endl;
 		
@@ -50,16 +49,15 @@ void _test_rc_random_1()
 template <typename T>
 void _test_rc_random_2()
 {
-	typedef T                                      D3;
-	typedef typename D3::Point                     Point;
-	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-        typedef typename D3::Geom_traits::Point_3      Sphere_center;
-        typedef Point                                  Point_3;
+  typedef T                                      D3;
+  typedef typename D3::Point                     Point;
+  typedef typename D3::Vertex_handle             Vertex_handle;
+  typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;
+  typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
+  typedef typename D3::Geom_traits::Point_3      Sphere_center;
 
-        typename D3::Geom_traits::Construct_point_3 cp
-          = (typename D3::Geom_traits()).construct_point_3_object();
+  typename D3::Geom_traits::Construct_point_3 cp
+    = (typename D3::Geom_traits()).construct_point_3_object();
 
 	std::cout << "_test_rc_random_2" << std::endl;		
 		
