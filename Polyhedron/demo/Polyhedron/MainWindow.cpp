@@ -351,7 +351,7 @@ MainWindow::MainWindow(QWidget* parent)
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
-  insertActionBefore(menuFile, actionAddToGroup);
+  insertActionBeforeLoadPlugin(menuFile, actionAddToGroup);
   statistics_dlg = NULL;
   statistics_ui = new Ui::Statistics_on_item_dialog();
 
@@ -1010,7 +1010,7 @@ void MainWindow::open(QString filename)
     connect(actionResetDefaultLoaders, SIGNAL(triggered()),
             this, SLOT(reset_default_loaders()));
     default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
-    insertActionBefore(ui->menuFile, actionResetDefaultLoaders);
+    insertActionBeforeLoadPlugin(ui->menuFile, actionResetDefaultLoaders);
   }
   
   
@@ -1944,16 +1944,10 @@ void MainWindow::reset_default_loaders()
   menu->removeAction(actionResetDefaultLoaders);
 }
 
-void MainWindow::insertActionBefore(QMenu* menu, QAction* actionToInsert)
+void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInsert)
 {
-  const char* prop_name = "Menu modified by MainWindow.";
   if(menu)
   {
-    bool menuChanged = menu->property(prop_name).toBool();
-    if(!menuChanged) {
-      menu->setProperty(prop_name, true);
-    }
-
     QList<QAction*> menuActions = menu->actions();
     if(!menuActions.contains(actionToInsert))
       menu->insertAction(ui->actionLoadPlugin, actionToInsert);
