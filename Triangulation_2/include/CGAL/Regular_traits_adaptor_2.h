@@ -27,9 +27,7 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
-#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
 #include <boost/mpl/if.hpp>
-#include <boost/mpl/identity.hpp>
 
 namespace CGAL {
 
@@ -43,19 +41,12 @@ class Regular_traits_adaptor_2
   typedef Functor_                                         Functor;
 
   typedef typename RTraits::FT                             FT;
-#if 0
-  typedef typename boost::mpl::eval_if_c<
-    internal::Has_nested_type_Bare_point<RTraits>::value,
-    typename internal::Bare_point_type<RTraits>,
-    boost::mpl::identity<typename RTraits::Point_2>
-    >::type                                                Point_2;
-#else
-  typedef typename RTT::Point_2                                     Point_2;
-#endif
-  typedef typename RTraits::Triangle_2                       Triangle_2;
-  typedef typename RTraits::Segment_2                       Segment_2;
+  typedef typename RTraits::Triangle_2                     Triangle_2;
+  typedef typename RTraits::Segment_2                      Segment_2;
   typedef typename RTraits::Circle_2                       Circle_2;
-  typedef typename RTraits::Weighted_point_2               Weighted_point_2;
+
+  typedef typename RTT::Point_2                            Point_2;
+  typedef typename RTT::Weighted_point_2                   Weighted_point_2;
 
   template <class T>
   struct Conv_wp_to_p
