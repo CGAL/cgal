@@ -14,8 +14,10 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel   K;
 typedef CGAL::Skin_surface_traits_3<K>                     Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
+
+typedef Skin_surface_3::Bare_point                          Bare_point;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
-typedef Weighted_point::Point                               Bare_point;
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel IK;
 typedef CGAL::Polyhedron_3<IK>                              Polyhedron;
 
