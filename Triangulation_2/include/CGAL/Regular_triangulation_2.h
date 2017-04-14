@@ -66,10 +66,11 @@ class Regular_triangulation_2
       Weighted_point_mapper_2<Gt>,
       Tds>
 {
-  typedef Regular_triangulation_2<Gt, Tds>                         Self;
-  typedef Weighted_point_mapper_2<Gt>                              RT_traits;
-  typedef Triangulation_2<RT_traits, Tds>                          Base;
+  typedef Regular_triangulation_2<Gt, Tds>     Self;
+  typedef Weighted_point_mapper_2<Gt>          RT_traits;
+  typedef Triangulation_2<RT_traits, Tds>      Base;
 public:
+  typedef Self                                 Triangulation;
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
   typedef typename boost::mpl::eval_if_c<

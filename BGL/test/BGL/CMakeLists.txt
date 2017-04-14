@@ -89,6 +89,7 @@ create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
 
 
+
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
 endif()
