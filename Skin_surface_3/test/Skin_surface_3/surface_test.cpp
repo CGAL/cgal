@@ -12,13 +12,14 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Inexact_K;
 typedef CGAL::Exact_predicates_exact_constructions_kernel   Exact_K;
-typedef CGAL::Skin_surface_traits_3<Inexact_K>                Traits;
-//typedef CGAL::Skin_surface_traits_3<Inexact_K>              Traits;
+typedef CGAL::Skin_surface_traits_3<Inexact_K>              Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface;
 typedef Skin_surface::Simplex                               Simplex;
 typedef Skin_surface::FT                                    FT;
+
+typedef Skin_surface::Bare_point                            Bare_point;
 typedef Skin_surface::Weighted_point                        Weighted_point;
-typedef Weighted_point::Point                               Bare_point;
+
 typedef CGAL::Polyhedron_3<Traits>                          Polyhedron;
 
 CGAL::Cartesian_converter<Exact_K,Inexact_K> e2i_converter;
