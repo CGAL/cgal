@@ -367,48 +367,6 @@ public:
     return _hidden_vertices;
   }
 
-  // Overloads for Bare_point
-
-  Face_handle
-  inexact_locate(const Bare_point& bp,
-                 Face_handle start = Face_handle()) const
-  {
-    return Base::inexact_locate(geom_traits().construct_weighted_point_2_object()(bp), start);
-  }
-
-  Face_handle
-  locate(const Bare_point& bp,
-	 Locate_type& lt,
-	 int& li,
-	 Face_handle start = Face_handle()) const
-  {
-    return Base::locate(geom_traits().construct_weighted_point_2_object()(bp), lt, li, start);
-  }
-
-  Face_handle
-  locate(const Bare_point& bp,
-         Face_handle start = Face_handle())
-  {
-    return Base::locate(geom_traits().construct_weighted_point_2_object()(bp), start);
-  }
-
-  typename Base::Line_face_circulator
-  line_walk(const Bare_point& p,
-            const Bare_point& q,
-            Face_handle f = Face_handle()) const
-  {
-    return Base::line_walk(this->geom_traits().construct_weighted_point_2_object()(p),
-                           this->geom_traits().construct_weighted_point_2_object()(q),
-                           f);
-  }
-
-  Oriented_side
-  oriented_side(Face_handle f, const Bare_point &p) const
-  {
-    return Base::oriented_side(f, geom_traits().construct_weighted_point_2_object()(p));
-  }
-  
-
   // CHECK - QUERY
 
   Oriented_side power_test(const Weighted_point &p,
