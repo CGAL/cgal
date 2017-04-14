@@ -33,7 +33,7 @@ public:
 	
 /// \name Types 
 /// @{
-typedef RegularTriangulationTraits_3::Bare_point Bare_point;
+typedef RegularTriangulationTraits_3::Point_3 Bare_point;
 /// @}
 
 /*! \name Access function 

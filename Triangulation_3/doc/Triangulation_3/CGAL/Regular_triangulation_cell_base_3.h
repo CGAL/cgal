@@ -29,7 +29,7 @@ public:
 
 /// \name Types 
 /// @{
-typedef RegularTriangulationTraits_3::Bare_point Bare_point;
+typedef RegularTriangulationTraits_3::Point_3 Bare_point;
 /// @}
 
 /*! \name Access function 
@@ -48,7 +48,7 @@ Note that this point has no weight.
 /// @{
 /*! 
 Returns the weighted circumcenter of the cell.
-Be careful that the return type is `RegularTriangulationTraits_3::Bare_point`,
+Be careful that the return type is `Bare_point`,
 and the radius of the weighted 
 circumcenter is not supposed to be computed
 by the constructor `Construct_weighted_circumcenter_3` of the traits
