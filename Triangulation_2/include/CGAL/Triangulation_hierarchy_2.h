@@ -189,26 +189,13 @@ public:
 	
   //LOCATE
   Face_handle
-  locate(const Bare_point& p,
-	 Locate_type& lt,
-	 int& li,
-	 Face_handle start = Face_handle()) const;
+  locate(const Point& p,
+         Locate_type& lt,
+         int& li,
+         Face_handle start = Face_handle()) const;
 
   Face_handle
-  locate(const Weighted_point& p,
-	 Locate_type& lt,
-	 int& li,
-	 Face_handle start = Face_handle()) const;
-
-
-  Face_handle
-  locate(const Bare_point &p,
-	 Face_handle start = Face_handle()) const;
-
-  Face_handle
-  locate(const Weighted_point &p,
-	 Face_handle start = Face_handle()) const;
-
+  locate(const Point&p, Face_handle start = Face_handle()) const;
 
   Vertex_handle
   nearest_vertex(const Point& p, Face_handle start = Face_handle()) const
@@ -234,22 +221,12 @@ private:
     return Vertex_handle();
   }
 
-  void  locate_in_all(const Bare_point& p,
-		      Locate_type& lt,
-		      int& li,
-		      Face_handle loc,
-		      Face_handle
-		      pos[Triangulation_hierarchy_2__maxlevel]) const;
-
-  void  locate_in_all(const Weighted_point& p,
-		      Locate_type& lt,
-		      int& li,
-		      Face_handle loc,
-		      Face_handle
-		      pos[Triangulation_hierarchy_2__maxlevel]) const
-  {
-    locate_in_all(this->geom_traits().construct_point_2_object()(p), lt, li, loc,pos);
-  }
+  void  locate_in_all(const Point& p,
+                      Locate_type& lt,
+                      int& li,
+                      Face_handle loc,
+                      Face_handle
+                      pos[Triangulation_hierarchy_2__maxlevel]) const;
 
   int random_level();
 
@@ -690,7 +667,7 @@ insert_and_give_new_faces(const Point  &p,
 template <class Tr>
 typename Triangulation_hierarchy_2<Tr>::Face_handle 
 Triangulation_hierarchy_2<Tr>::
-locate(const Bare_point& p, Locate_type& lt, int& li, Face_handle loc) const
+locate(const Point& p, Locate_type& lt, int& li, Face_handle loc) const
 {
   Face_handle positions[Triangulation_hierarchy_2__maxlevel];
   locate_in_all(p,lt,li,loc,positions);
@@ -700,15 +677,7 @@ locate(const Bare_point& p, Locate_type& lt, int& li, Face_handle loc) const
 template <class Tr>
 typename Triangulation_hierarchy_2<Tr>::Face_handle 
 Triangulation_hierarchy_2<Tr>::
-locate(const Weighted_point& p, Locate_type& lt, int& li, Face_handle loc) const
-{
-  return locate(geom_traits().construct_point_2_object()(p), lt, li, loc);
-}
-
-template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Face_handle 
-Triangulation_hierarchy_2<Tr>::
-locate(const Bare_point& p, Face_handle loc ) const
+locate(const Point& p, Face_handle loc ) const
 {
   Locate_type lt;
   int li;
@@ -716,21 +685,13 @@ locate(const Bare_point& p, Face_handle loc ) const
 }
 
 template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Face_handle 
-Triangulation_hierarchy_2<Tr>::
-locate(const Weighted_point& p, Face_handle loc ) const
-{
-  return locate(geom_traits().construct_point_2_object()(p), loc);
-}
-
-template <class Tr>
 void
 Triangulation_hierarchy_2<Tr>::
-locate_in_all(const Bare_point& p,
-    Locate_type& lt,
-    int& li,
-    Face_handle loc,
-    Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
+locate_in_all(const Point& p,
+              Locate_type& lt,
+              int& li,
+              Face_handle loc,
+              Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
 {
   Face_handle position;
   Vertex_handle nearest;
@@ -753,7 +714,7 @@ locate_in_all(const Bare_point& p,
 
   for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=0;
   while(level > 0) {
-    pos[level]=position=hierarchy[level]->locate(p,position);  
+    pos[level]=position=hierarchy[level]->locate(p, position);
     // locate at that level from "position"
     // result is stored in "position" for the next level
     // find the nearest between vertices 0 and 1
