@@ -17,7 +17,7 @@ function build_tests {
 function build_demo {
   mkdir -p build-travis
   cd build-travis
-  if [ $NEED_3D = 1 ]; then
+  if [ $NEED_3D = 1 ] &&  [ "$TRAVIS_OS_NAME" = "linux" ]; then
     #install libqglviewer
     git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
     pushd ./qglviewer/QGLViewer
@@ -130,7 +130,7 @@ do
       echo "No demo found for $ARG"
 	  fi
   done
-  if [ "$ARG" = Polyhedron_demo ]; then
+  if [ "$ARG" = Polyhedron_demo ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then
     DEMO=Polyhedron/demo/Polyhedron
     NEED_3D=1
     cd "$ROOT/$DEMO"
