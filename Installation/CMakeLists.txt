@@ -1151,12 +1151,12 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
         endif()
         foreach(header ${${package}_HEADERS})
           set(skip_hdr FALSE)
-          if(POLICY CMP0057
-              AND has_list_of_documented_headers
-              AND NOT header IN_LIST list_of_documented_headers
-              )
-            message(STATUS "Skip non-documented header \"${header}\".")
-            set(skip_hdr TRUE)
+          if(POLICY CMP0057)
+            if(has_list_of_documented_headers
+                AND NOT header IN_LIST list_of_documented_headers)
+              message(STATUS "Skip non-documented header \"${header}\".")
+              set(skip_hdr TRUE)
+            endif()
           endif()
           string(REGEX MATCH "CGAL/leda_.*" is_a_leda_header ${header})
           if(NOT LEDA_FOUND AND is_a_leda_header)
@@ -1164,11 +1164,12 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
 LEDA_FOUND is false.")
             set(skip_hdr TRUE)
           endif()
-          if(POLICY CMP0057
-              AND has_list_of_whitelisted_headers
-              AND header IN_LIST list_of_whitelisted_headers)
-            message(STATUS "Skip whitelisted header \"${header}\".")
-            set(skip_hdr TRUE)
+          if(POLICY CMP0057)
+            if(has_list_of_whitelisted_headers
+                AND header IN_LIST list_of_whitelisted_headers)
+              message(STATUS "Skip whitelisted header \"${header}\".")
+              set(skip_hdr TRUE)
+            endif()
           endif()
           if(NOT skip_hdr)
             string(REPLACE "/" "__" header2 "${header}")
