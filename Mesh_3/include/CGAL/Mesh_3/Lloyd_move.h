@@ -52,7 +52,7 @@ class Lloyd_move
   typedef typename Tr::Vertex_handle  Vertex_handle;
   typedef typename Tr::Edge           Edge;
   typedef typename Tr::Facet          Facet;
-  typedef typename Tr::Weighted_point Weighted_point;  
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Bare_point     Bare_point;
   
   typedef typename std::vector<Cell_handle>   Cell_vector;
@@ -140,7 +140,7 @@ private:
   };
   
   /**
-   * To_3d defines operator() to transform Point_2 into Weighted_point
+   * To_3d defines operator() to transform Point_2 into Bare_point
    */
   struct To_3d
   {
@@ -400,7 +400,7 @@ private:
     // Treat first point (optimize density_2d call)
     const Bare_point& c = *first++;
     
-    Bare_point triangle_centroid = centroid(a,*b,c);
+    const Bare_point& triangle_centroid = centroid(a,*b,c);
     FT density = density_2d<true>(triangle_centroid, v, sizing_field);
     
     FT sum_masses = density * area(a,*b,c);
@@ -413,7 +413,7 @@ private:
     {
       const Bare_point& c = *first++;
 
-      Bare_point triangle_centroid = centroid(a,*b,c);
+      const Bare_point& triangle_centroid = centroid(a,*b,c);
       FT density = density_2d<false>(triangle_centroid, v, sizing_field);
       FT mass = density * area(a,*b,c);
       
@@ -532,7 +532,7 @@ private:
     
     // a & b are fixed points
     const Bare_point& a = wp2p(v->point());
-    const Bare_point b = tr.dual(current_cell++);
+    const Bare_point& b = c3t3.triangulation().dual(current_cell++);
     CGAL_assertion(current_cell != done);
     
     // c & d are moving points
