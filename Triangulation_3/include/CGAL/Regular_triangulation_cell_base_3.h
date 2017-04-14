@@ -44,7 +44,8 @@ public:
 
 
   typedef GT                                           Geom_traits;
-  typedef typename Geom_traits::Weighted_point_3       Point;
+  typedef typename Geom_traits::Point_3                Bare_point;
+  typedef typename Geom_traits::Weighted_point_3       Weighted_point;
 
   typedef C                                            Point_container;
   typedef typename Point_container::iterator           Point_iterator;
@@ -81,13 +82,13 @@ public:
   Point_const_iterator hidden_points_begin() const { return _hidden.begin(); }
   Point_const_iterator hidden_points_end() const { return _hidden.end(); }
 
-  void hide_point (const Point &p) { _hidden.push_back(p); }
+  void hide_point (const Weighted_point &p) { _hidden.push_back(p); }
   //  void unhide_point (Point_iterator i) { _hidden.delete(i); }
 
   //note this function is not requested by the RegularTriangulationCellBase_3
   //it should be replaced everywhere by weighted_circumcenter()
   // but remains here for backward compatibility
-  typename Geom_traits::Point_3
+  Bare_point
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()
@@ -97,7 +98,7 @@ public:
          this->vertex(3)->point());
   }
 
-  typename Geom_traits::Point_3
+  Bare_point
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()

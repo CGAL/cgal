@@ -366,12 +366,14 @@ namespace CGAL {
     typedef typename Tr_Base::Finite_edges_iterator    Finite_edges_iterator;
     typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
-    typedef typename Gt::Weighted_point_3            Weighted_point;
+    // Traits are not supposed to define Bare_point, but leaving below
+    // for backward compatibility
     typedef typename boost::mpl::eval_if_c<
       internal::Has_nested_type_Bare_point<Gt>::value,
       typename internal::Bare_point_type<Gt>,
       boost::mpl::identity<typename Gt::Point_3>
     >::type                                          Bare_point;
+    typedef typename Gt::Weighted_point_3            Weighted_point;
 
     typedef typename Gt::Segment_3                   Segment;
     typedef typename Gt::Triangle_3                  Triangle;
@@ -2240,7 +2242,8 @@ dual(Cell_handle c) const
     Regular_triangulation_3<Gt,Tds,Lds>::
     is_Gabriel(Vertex_handle v) const
   {
-    return nearest_power_vertex( v->point().point(), v->cell()) == v;
+    return nearest_power_vertex(
+             geom_traits().construct_point_3_object()(v->point()), v->cell()) == v;
   }
 
   // Returns
