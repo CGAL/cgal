@@ -226,7 +226,7 @@ private:
 //    typename Gt::Construct_centroid_3 centroid =
 //      Gt().construct_centroid_3_object();
 //    
-//    Weighted_point c = centroid(tr.triangle(facet));
+//    Bare_point c = centroid(tr.triangle(facet));
 //    FT s = sizing_field(c, facet.first->vertex(0));
 //    
 //    return ( area(tr.triangle(facet)) / (s*s) );
@@ -243,8 +243,8 @@ private:
 //    typename Gt::Construct_midpoint_3 midpoint =
 //      Gt().construct_midpoint_3_object();
 //    
-//    Weighted_point c = midpoint(v1->point(), v2->point());
-//    FT s = sizing_field(c,v1);
+//    Bare_point c = midpoint(v1->point(), v2->point());
+//    FT s = sizing_field(c, v1);
 //    
 //    return ( sq_distance(v1->point(), v2->point()) / s );
 //  }

@@ -266,7 +266,9 @@ class Refine_facets_3_base
                                              Concurrency_tag>
   , public Container_
 {
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
+
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -276,8 +278,6 @@ class Refine_facets_3_base
   typedef typename Gt::Segment_3 Segment_3;
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
-protected:
-  typedef typename Tr::Bare_point Bare_point;
 
 public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
@@ -316,7 +316,7 @@ public:
 
   /// Job to do before insertion
   void before_insertion_impl(const Facet& facet,
-                             const Point& point,
+                             const Weighted_point& point,
                              Zone& zone);
 
   /// Job to do after insertion
@@ -478,7 +478,7 @@ protected:
   void dual_ray_exact(const Facet & f, Ray_3& ray) const;
 
   /// Returns true if point encroaches facet
-  bool is_facet_encroached(const Facet& facet, const Point& point) const;
+  bool is_facet_encroached(const Facet& facet, const Weighted_point& point) const;
 
   /// Returns whethere an encroached facet is refinable or not
   bool is_encroached_facet_refinable(Facet& facet) const;
@@ -762,7 +762,7 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Point Point;//Weighted_point
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -823,19 +823,18 @@ public:
   /// Tests if \c p encroaches facet from zone
   // For sequential
   Mesher_level_conflict_status
-  test_point_conflict_from_superior_impl(const Point& p, Zone& zone);
+  test_point_conflict_from_superior_impl(const Weighted_point& p, Zone& zone);
 
   /// Tests if \c p encroaches facet from zone
   // For parallel
   template <typename Mesh_visitor>
   Mesher_level_conflict_status
-  test_point_conflict_from_superior_impl(const Point& p, Zone& zone,
+  test_point_conflict_from_superior_impl(const Weighted_point& p, Zone& zone,
                                          Mesh_visitor &visitor);
 
   /// Useless here
-  Mesher_level_conflict_status private_test_point_conflict_impl(
-      const Point& p,
-      Zone& zone)
+  Mesher_level_conflict_status private_test_point_conflict_impl(const Weighted_point& p,
+                                                                Zone& zone)
   {
     if( zone.locate_type == Tr::VERTEX )
     {
@@ -849,16 +848,16 @@ public:
   }
 
   /// Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Facet& facet
                            , bool &facet_is_in_its_cz);
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Facet& facet
                            , bool &facet_is_in_its_cz
                            , bool &could_lock_zone);
 
   /// Insert \c p into the triangulation
-  Vertex_handle insert_impl(const Point& p, const Zone& zone);
+  Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
 
   bool try_lock_element(const Facet &f, int lock_radius = 0) const
   {
@@ -1169,7 +1168,7 @@ number_of_bad_elements_impl()
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 Mesher_level_conflict_status
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
-test_point_conflict_from_superior_impl(const Point& point, Zone& zone)
+test_point_conflict_from_superior_impl(const Weighted_point& point, Zone& zone)
 {
   typedef typename Zone::Facets_iterator Facet_iterator;
 
@@ -1216,7 +1215,7 @@ template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template
 template <typename Mesh_visitor>
 Mesher_level_conflict_status
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
-test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
+test_point_conflict_from_superior_impl(const Weighted_point& point, Zone& zone,
                                        Mesh_visitor &visitor)
 {
   typedef typename Zone::Facets_iterator Facet_iterator;
@@ -1265,7 +1264,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Facet& facet
                     , bool &facet_is_in_its_cz)
 {
@@ -1325,7 +1324,7 @@ conflicts_zone_impl(const Point& point
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Facet& facet
                     , bool &facet_is_in_its_cz
                     , bool &could_lock_zone)
@@ -1389,7 +1388,7 @@ template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 void
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 before_insertion_impl(const Facet& facet,
-                      const Point& point,
+                      const Weighted_point& point,
                       Zone& zone)
 {
   typedef typename Zone::Facets_iterator Facets_iterator;
@@ -1468,8 +1467,7 @@ before_insertion_impl(const Facet& facet,
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::Vertex_handle
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
-insert_impl(const Point& point,
-            const Zone& zone)
+insert_impl(const Weighted_point& point, const Zone& zone)
 {
   if( zone.locate_type == Tr::VERTEX )
   {
@@ -1636,9 +1634,9 @@ dual_ray(const Facet & facet, Ray_3& ray) const
   int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
   if ( (in&1) == 1 )
     std::swap(ind[0], ind[1]);
-  const Point& p = n->vertex(ind[0])->point();
-  const Point& q = n->vertex(ind[1])->point();
-  const Point& r = n->vertex(ind[2])->point();
+  const Weighted_point& p = n->vertex(ind[0])->point();
+  const Weighted_point& q = n->vertex(ind[1])->point();
+  const Weighted_point& r = n->vertex(ind[2])->point();
 
   typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
     ( Gt().construct_plane_3_object()(p,q,r),
@@ -1671,9 +1669,9 @@ dual_ray_exact(const Facet & facet, Ray_3& ray) const
   int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
   if ( (in&1) == 1 )
     std::swap(ind[0], ind[1]);
-  const Point& p = n->vertex(ind[0])->point();
-  const Point& q = n->vertex(ind[1])->point();
-  const Point& r = n->vertex(ind[2])->point();
+  const Weighted_point& p = n->vertex(ind[0])->point();
+  const Weighted_point& q = n->vertex(ind[1])->point();
+  const Weighted_point& r = n->vertex(ind[2])->point();
 
   typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
     ( Gt().construct_plane_3_object()(p,q,r),
@@ -1803,7 +1801,7 @@ template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 bool
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_facet_encroached(const Facet& facet,
-                    const Point& point) const
+                    const Weighted_point& point) const
 {
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
   {
@@ -1816,7 +1814,7 @@ is_facet_encroached(const Facet& facet,
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
   const Bare_point& center = get_facet_surface_center(facet);
-  const Point& reference_point = cell->vertex((facet_index+1)&3)->point();
+  const Weighted_point& reference_point = cell->vertex((facet_index+1)&3)->point();
 
   // facet is encroached if the new point is near from center than
   // one vertex of the facet
@@ -1828,7 +1826,7 @@ bool
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_encroached_facet_refinable(Facet& facet) const
 {
-  typedef typename Gt::Weighted_point_3 Weighted_point_3;
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Gt::FT      FT;
 
   typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
@@ -1865,9 +1863,9 @@ is_encroached_facet_refinable(Facet& facet) const
     ++wp_nb;
   }
 
-  const Weighted_point_3& p1 = c->vertex(k1)->point();
-  const Weighted_point_3& p2 = c->vertex(k2)->point();
-  const Weighted_point_3& p3 = c->vertex(k3)->point();
+  const Weighted_point& p1 = c->vertex(k1)->point();
+  const Weighted_point& p2 = c->vertex(k2)->point();
+  const Weighted_point& p3 = c->vertex(k3)->point();
 
   const FT min_ratio (0.16); // (0.2*2)^2
 

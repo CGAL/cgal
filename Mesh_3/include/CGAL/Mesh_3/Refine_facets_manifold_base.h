@@ -116,7 +116,7 @@ class Refine_facets_manifold_base
 public:
   typedef Complex3InTriangulation3 C3t3;
   typedef MeshDomain Mesh_domain;
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -535,7 +535,7 @@ public:
     } //end Sequential
   }
 
-  void before_insertion_impl(const Facet& f, const Point& s,
+  void before_insertion_impl(const Facet& f, const Weighted_point& s,
                              Zone& zone) {
     if( m_manifold_info_initialized )
     {
