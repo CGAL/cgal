@@ -28,6 +28,7 @@
 #include <QString>
 #include <QDialog>
 #include <QtPlugin>
+#include <QMessageBox>
 
 #include <vector>
 #include <algorithm>
@@ -369,6 +370,23 @@ public Q_SLOTS:
         {
           if (selection_item->selected_facets.empty() &&
             (!selection_item->selected_edges.empty() || !selection_item->selected_vertices.empty()))
+          {
+            if(protect &&
+               !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
+                 *selection_item->polyhedron(),
+                 selection_item->constrained_edges_pmap(),
+                 get(CGAL::vertex_point, *selection_item->polyhedron()),
+                 4. / 3. * target_length))
+            {
+              QApplication::restoreOverrideCursor();
+              QMessageBox::warning(mw, tr("Error"),
+                                   tr("Isotropic remeshing : protect_constraints cannot be set to"
+                                      " true with constraints larger than 4/3 * target_edge_length."
+                                      " Remeshing aborted."),
+                                   QMessageBox::Ok);
+              return;
+            }
+
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
               faces(*selection_item->polyhedron())
               , target_length
@@ -380,6 +398,7 @@ public Q_SLOTS:
               .number_of_relaxation_steps(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
               .face_patch_map(Patch_id_pmap<face_descriptor>()));
+          }
           else
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
               selection_item->selected_facets
