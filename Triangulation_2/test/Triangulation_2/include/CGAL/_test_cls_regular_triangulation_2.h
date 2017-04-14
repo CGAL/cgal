@@ -41,13 +41,16 @@ _test_regular_duality( const Del &T );
 template < class Triangulation, class Point, class Face_handle >
 bool
 _test_is_to_the_left( const Triangulation &T,
-		      const Point &p,
-		      const Face_handle &f,
-		      const int li)
+                      const Point &p,
+                      const Face_handle &f,
+                      const int li)
 {
+  typename Triangulation::Geom_traits::Construct_weighted_point_2 p2wp =
+      T.geom_traits().construct_weighted_point_2_object();
+
   return( T.orientation(f->vertex(f->ccw(li))->point(),
-			f->vertex(f->cw(li))->point(),
-			typename Triangulation::Weighted_point(p))  == CGAL::LEFT_TURN );
+                        f->vertex(f->cw(li))->point(),
+                        p2wp(p)) == CGAL::LEFT_TURN );
 }
 
 template <class Triangulation>
