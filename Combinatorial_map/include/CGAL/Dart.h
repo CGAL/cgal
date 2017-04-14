@@ -21,6 +21,7 @@
 #define CGAL_DART_H 1
 
 #include <CGAL/assertions.h>
+#include <CGAL/tags.h>
 #include <CGAL/tuple.h>
 #include <bitset>
 
