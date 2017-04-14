@@ -38,17 +38,17 @@ template <class K>
 class Side_of_mixed_cell_3
 {
 public:
-  typedef typename K::FT             FT;
-  typedef typename K::Bare_point     Bare_point;
-  typedef typename K::Weighted_point Weighted_point;
+  typedef typename K::FT               FT;
+  typedef typename K::Point_3          Point_3;
+  typedef typename K::Weighted_point_3 Weighted_point_3;
 
   typedef CGAL::Sign                 result_type;
 
   Side_of_mixed_cell_3(const FT &shrink) : s(shrink) { }
 
-  result_type operator()(const Weighted_point &p1,
-                         const Weighted_point &p2,
-                         const Bare_point &x) const
+  result_type operator()(const Weighted_point_3 &p1,
+                         const Weighted_point_3 &p2,
+                         const Point_3 &x) const
   {
     return side_of_mixed_cellC3(p1.x(),p1.y(),p1.z(),p1.weight(),
                                 p2.x(),p2.y(),p2.z(),p2.weight(),
@@ -56,10 +56,10 @@ public:
                                 s);
   }
 
-  result_type operator()(const Weighted_point &p1,
-                         const Weighted_point &p2,
-                         const Weighted_point &p3,
-                         const Bare_point &x) const
+  result_type operator()(const Weighted_point_3 &p1,
+                         const Weighted_point_3 &p2,
+                         const Weighted_point_3 &p3,
+                         const Point_3 &x) const
   {
     return side_of_mixed_cellC3(p1.x(),p1.y(),p1.z(),p1.weight(),
                                 p2.x(),p2.y(),p2.z(),p2.weight(),
@@ -68,11 +68,11 @@ public:
                                 s);
   }
 
-  result_type operator()(const Weighted_point &p1,
-                         const Weighted_point &p2,
-                         const Weighted_point &p3,
-                         const Weighted_point &p4,
-                         const Bare_point &x) const
+  result_type operator()(const Weighted_point_3 &p1,
+                         const Weighted_point_3 &p2,
+                         const Weighted_point_3 &p3,
+                         const Weighted_point_3 &p4,
+                         const Point_3 &x) const
   {
     return side_of_mixed_cellC3(p1.x(),p1.y(),p1.z(),p1.weight(),
                                 p2.x(),p2.y(),p2.z(),p2.weight(),
@@ -94,18 +94,18 @@ class Construct_anchor_point_3
 {
 public:
   typedef typename K::FT             FT;
-  typedef typename K::Point_3        Bare_point;
+  typedef typename K::Point_3        Point_3;
 
-  typedef Bare_point                 result_type;
+  typedef Point_3                    result_type;
 
   Construct_anchor_point_3(const FT &shrink) : s(shrink) {}
 
-  result_type operator()(const Bare_point &p_del,
-                         const Bare_point &p_vor) const
+  result_type operator()(const Point_3 &p_del,
+                         const Point_3 &p_vor) const
   {
-    return Bare_point((1-s)*p_del.x() + s*p_vor.x(),
-                      (1-s)*p_del.y() + s*p_vor.y(),
-                      (1-s)*p_del.z() + s*p_vor.z());
+    return Point_3((1-s)*p_del.x() + s*p_vor.x(),
+                   (1-s)*p_del.y() + s*p_vor.y(),
+                   (1-s)*p_del.z() + s*p_vor.z());
   }
 
 private:
