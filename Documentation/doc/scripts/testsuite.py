@@ -84,8 +84,14 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </table></body></html>'''
     
     if args.publish and args.do_copy_results:
-      link="\nLink to this <a href=output/Manual/index.html>documentation</a>\n"
-      link_master="\nLink to <a href=master/Manual/index.html>master documentation</a>\n"
+      suffix=''
+      if args.doxygen_version:
+        suffix = "built with Doxygen "+args.doxygen_version
+      link="\nLink to this <a href=output/Manual/index.html>documentation {_suffix}</a>\n".format(_suffix=suffix)
+      suffix = ''
+      if args.master_describe:
+        suffix=args.master_describe
+      link_master="\nLink to <a href=master/Manual/index.html> documentation compiled with Doxygen Master {_suffix}</a>\n".format(_suffix=suffix)
       d = pq(page_header+link+"   "+link_master+page_footer)
     else:
       d = pq(page_header+page_footer)
@@ -122,6 +128,8 @@ def main():
     parser.add_argument('--cgal-version', help='Path to a version.h file from the current release. If not specified use git hash instead.')
     parser.add_argument('--version-to-keep', help='indicates the number of release testsuites that should be kept at the publishing location.')
     parser.add_argument('--do-copy-results', action="store_true", help='Specify this argument if you want to copy the generated documentation into the publishing location.')
+    parser.add_argument('--doxygen-version', default ='', help='Specify this argument if you want to add a version number to the name of the link to the documentation.')
+    parser.add_argument('--master-describe', default ='', help='Specify this argument if you want to add a suffix to the name of the link to the doxygen master documentation.')
     
     args = parser.parse_args()
     

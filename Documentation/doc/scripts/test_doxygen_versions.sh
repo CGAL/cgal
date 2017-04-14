@@ -36,6 +36,7 @@ if [ $IS_ARG2 == 0 ] || [ $(basename $PATH_TO_2) != "doxygen" ] || [ ! -e $PATH_
   echo "No second path detected. Cloning Doxygen master branch..."
   git clone https://github.com/doxygen/doxygen.git doxygen_master  &> /dev/null
   cd doxygen_master
+  MASTER_DESCRIBE=$(git describe --tags)
   mkdir build
   cd build
   cmake ..  &> /dev/null
@@ -59,23 +60,26 @@ mv ./build_doc ./doc_master
 rm -rf ./doc_dir
 mkdir ./doc_dir
 cd ./doc_dir
-cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
+cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" -DCGAL_DOC_RESOURCE_DIR=$ROOT/Documentation/doc/resources/1.8.13 ../..  &> /dev/null
 make -j7 doc  &> /dev/null
 make -j7 doc  &> /dev/null
 cd ..
 #get VERSION's content
 cd $ROOT
-mkdir ./build && cd ./build
+mkdir -p ./build && cd ./build
 cmake ..
-CGAL_NAME="$(cat $PWD/VERSION)"
+CGAL_NAME="$(cat $PWD/VERSION) with Doxygen $DOXYGEN_1"
+
 #update overview
 cd $ROOT/Documentation/doc/scripts
-python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_master/doc_output/ --cgal-version $CGAL_NAME --do-copy-results 
+python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ \
+  --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_master/doc_output/ \
+  --cgal-version "$CGAL_NAME" --do-copy-results --doxygen-version "$DOXYGEN_1" --master-describe "$MASTER_DESCRIBE"
 
 #clean-up
 rm -rf ./build_doc
 rm -rf ./doc_dir
-#rm -rf ./doc_master
+rm -rf ./doc_master
 rm -rf ./doc_ref
 rm -rf ./doc_data
 if [ $IS_ARG2 == 0 ]; then
