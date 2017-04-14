@@ -191,12 +191,16 @@ class Regular_triangulation_2
 public:
   typedef Tds                                  Triangulation_data_structure;
   typedef internal::RegTraits_2<Gt>            Geom_traits;
+
+  // Traits are not supposed to define Bare_point, but leaving below
+  // for backward compatibility
   typedef typename boost::mpl::eval_if_c<
       internal::Has_nested_type_Bare_point<Gt>::value,
       typename internal::Bare_point_type<Gt>,
       boost::mpl::identity<typename Gt::Point_2>
     >::type                                    Bare_point;
   typedef typename Gt::Weighted_point_2        Weighted_point;
+
   typedef typename Gt::FT                      Weight;
   typedef typename Gt::Construct_weighted_point_2 Construct_weighted_point_2;
   typedef typename Base::size_type             size_type;
