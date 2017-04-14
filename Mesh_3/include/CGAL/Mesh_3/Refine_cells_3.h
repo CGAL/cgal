@@ -335,14 +335,13 @@ public:
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
   typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Cell Cell;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Criteria::Cell_quality Cell_quality;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
   typedef Complex3InTriangulation3 C3T3;
-protected:
-  typedef typename Tr::Geom_traits::Bare_point Bare_point;
 
 public:
   // Constructor
