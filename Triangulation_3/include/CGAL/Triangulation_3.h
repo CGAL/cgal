@@ -1226,10 +1226,8 @@ protected:
       *the_facet_is_in_its_cz = false;
 
     if (could_lock_zone)
-      *could_lock_zone = true;
-
-    if (could_lock_zone)
     {
+      *could_lock_zone = true;
       if (!this->try_lock_cell(d))
       {
         *could_lock_zone = false;

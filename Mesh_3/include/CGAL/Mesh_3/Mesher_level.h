@@ -831,7 +831,7 @@ public:
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
       {
-        process_a_batch_of_elements(visitor);
+        refine_mesh_in_parallel(visitor);
       }
     }
   }
@@ -891,7 +891,7 @@ public:
     * it in parallel.
     */
   template <class Mesh_visitor>
-  void process_a_batch_of_elements(Mesh_visitor visitor)
+  void refine_mesh_in_parallel(Mesh_visitor visitor)
   {
     typedef typename Derived::Container::value_type Container_quality_and_element;
 
@@ -1113,6 +1113,8 @@ public:
    * Applies one step of the algorithm: tries to refine one element of
    * previous level or one element of this level. Return \c false iff
    * <tt> is_algorithm_done()==true </tt>.
+   * Note that when parallelism is activated, this is not "one step"
+   * but the full refinement.
    */
   template <class Mesh_visitor>
   bool one_step(Mesh_visitor visitor)
@@ -1121,7 +1123,7 @@ public:
       previous_level.one_step(visitor.previous_level());
     else if( ! no_longer_element_to_refine() )
     {
-      process_a_batch_of_elements(visitor);
+      refine_mesh_in_parallel(visitor);
     }
     return ! is_algorithm_done();
   }
