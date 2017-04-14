@@ -1,22 +1,18 @@
 language: cpp 
-dist: trusty 
-sudo: required 
-env: 
- matrix: 
-  PACKAGES_MATRIX
-install: 
-before_script: 
-- mkdir -p build 
-- cd build 
-- cmake -DCGAL_HEADER_ONLY=ON -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
-- make 
-- cd .. 
-script: 
-- cd ./.travis
-- bash -x -e ./build_package.sh $PACKAGE
+
+os: 
+  - osx
+  - linux
+
 compiler: 
   - clang 
   - gcc 
+
+sudo: required
+dist: trusty
+osx_image: xcode8.2
+
+
 addons: 
   apt: 
     packages: 
@@ -45,7 +41,26 @@ addons:
       # - libglew1.5-dev 
       # - libipe-dev 
       # - libmpfi-dev 
+env: 
+ matrix: 
+  PACKAGES_MATRIX
+before_install:
+ - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
+ - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install zsh boost@1.55 zlib eigen@3.2  qt5; fi
+ - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PATH=/usr/local/opt/qt5/bin:$PATH; fi
+install: 
+before_script: 
+- mkdir -p build 
+- cd build 
+- cmake -DCGAL_HEADER_ONLY=ON -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- make 
+- cd .. 
+script: 
+- cd ./.travis
+- bash -x -e ./build_package.sh $PACKAGE
+
 notifications:
   email:
     on_success: change # default: always
     on_failure: always # default: always
+
