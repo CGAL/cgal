@@ -541,27 +541,6 @@ namespace CGAL {
 
   public:
 
-
-    Cell_handle locate(const Bare_point& bp) const
-    {
-      return this->locate(geom_traits().construct_weighted_point_3_object()(bp));
-    }
-
-
-    Cell_handle locate(const Bare_point& bp, Locate_type & lt, int & li, int & lj,
-                         Cell_handle start = Cell_handle()) const
-    {
-      return this->locate(geom_traits().construct_weighted_point_3_object()(bp),
-                          lt, li, lj, start);
-    }
-
-
-    Cell_handle locate(const Bare_point& bp, Locate_type & lt, int & li, int & lj,
-                         Vertex_handle start) const
-    {
-      return this->locate(geom_traits().construct_weighted_point_3_object()(bp),
-                          lt, li, lj, start);
-    }
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
     template < class InputIterator >
     std::ptrdiff_t
@@ -802,11 +781,6 @@ namespace CGAL {
 
     Vertex_handle insert(const Weighted_point & p, Locate_type lt,
       Cell_handle c, int li, int, bool *could_lock_zone = NULL);
-
-    Vertex_handle insert(const Bare_point & p)
-    {
-      return insert(geom_traits().construct_weighted_point_3_object()(p, typename Geom_traits::FT(0)));
-    }
 
     template <class CellIt>
     Vertex_handle
