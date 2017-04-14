@@ -1161,8 +1161,16 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
           if(NOT QGLVIEWER_FOUND)
             string(REGEX MATCH "CGAL/Three/.*" is_a_three_header ${header})
             if(is_a_three_header)
-              message(STATUS "Skip LEDA header \"${header}\" because \
-QGLVIEWER_FOUND_FOUND is false.")
+              message(STATUS "Skip Three header \"${header}\" because \
+QGLVIEWER_FOUND is false.")
+              set(skip_hdr TRUE)
+            endif()
+          endif()
+          if(NOT VTK_FOUND)
+            string(REGEX MATCH ".*vtk.*" is_a_vtk_header ${header})
+            if(is_a_vtk_header)
+              message(STATUS "Skip VTK header \"${header}\" because \
+VTK_FOUND is false.")
               set(skip_hdr TRUE)
             endif()
           endif()
