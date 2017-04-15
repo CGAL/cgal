@@ -184,7 +184,7 @@ Triangulation_sizing_field<Tr>::
 interpolate_on_cell_vertices(const Weighted_point& p, const CCell_handle& cell) const
 {
   typename Gt::Compute_volume_3 volume =
-    Gt().compute_volume_3_object();
+    ctr_.geom_traits().compute_volume_3_object();
   
   // Interpolate value using tet vertices values
   const FT& va = cell->vertex(0)->info();
@@ -216,7 +216,7 @@ Triangulation_sizing_field<Tr>::
 interpolate_on_facet_vertices(const Weighted_point& p, const CCell_handle& cell) const
 {
   typename Gt::Compute_area_3 area =
-    Gt().compute_area_3_object();
+    ctr_.geom_traits().compute_area_3_object();
   
   // Find infinite vertex and put it in k0
   int k0 = 0;

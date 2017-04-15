@@ -116,13 +116,17 @@ private:
    */
   struct Project_on_plane
   {
-    Project_on_plane(const Plane_3& plane) : plane_(plane) {}
-    
+    Project_on_plane(const Plane_3& plane, const C3T3& c3t3)
+      : plane_(plane), c3t3_(c3t3)
+    { }
+
     Bare_point operator()(const Bare_point& p) const
-    { return Gt().construct_projected_point_3_object()(plane_,p); }
+    { return c3t3_.triangulation().geom_traits().
+          construct_projected_point_3_object()(plane_, p); }
     
   private:
     const Plane_3& plane_;
+    const C3T3& c3t3_;
   };
   
   /**
@@ -169,12 +173,10 @@ private:
     // -----------------------------------
     // Tessellate Voronoi cell
     // -----------------------------------
-    // get cells incident to v
-    const Tr& tr = c3t3.triangulation();
-    
+
     // Stores vertex that have already been used
     std::set<Vertex_handle> treated_vertex;
-    
+
     for (typename Cell_vector::const_iterator cit = incident_cells.begin();
          cit != incident_cells.end();
          ++cit)
@@ -190,7 +192,7 @@ private:
         
         // Vertex has not been treated: turn around edge(v,v1)
         treated_vertex.insert(v1);
-        turn_around_edge(v, Edge(*cit,k,(k+i)&3), tr,
+        turn_around_edge(v, Edge(*cit,k,(k+i)&3), c3t3,
                          move, sum_masses, sizing_field);
       }
     }
@@ -223,7 +225,7 @@ private:
       {
         const Bare_point& a = points.front();
         const Bare_point& b = points.back();
-        return centroid_segment_move(v,a,b,sizing_field);
+        return centroid_segment_move(v,a,b,c3t3,sizing_field);
         break;
       }
       case 3: // triangle centroid 
@@ -231,11 +233,11 @@ private:
         const Bare_point& a = points.at(0);
         const Bare_point& b = points.at(1);
         const Bare_point& c = points.at(2);
-        return centroid_triangle_move(v,a,b,c,sizing_field);
+        return centroid_triangle_move(v,a,b,c,c3t3,sizing_field);
         break;
       }
       default: // >= 4 points, centroid + projection
-        return centroid_general_move(v,points.begin(),points.end(),sizing_field);
+        return centroid_general_move(v,points.begin(),points.end(),c3t3,sizing_field);
         break;
     }
     
@@ -247,7 +249,7 @@ private:
    * facets incident to vertex \c v
    */
   std::vector<Bare_point> extract_lloyd_boundary_points(const Vertex_handle& v,
-                                                          const C3T3& c3t3) const
+                                                        const C3T3& c3t3) const
   {
     Facet_vector incident_facets;
     incident_facets.reserve(64);
@@ -277,14 +279,16 @@ private:
   Vector_3 centroid_segment_move(const Vertex_handle& v,
                                  const Bare_point& a,
                                  const Bare_point& b,
+                                 const C3T3& c3t3,
                                  const Sizing_field& sizing_field) const
   {
     typename Gt::Construct_vector_3 vector =
-      Gt().construct_vector_3_object();
-    
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+      c3t3.triangulation().geom_traits().construct_vector_3_object();
+    typename Gt::Construct_point_3 wp2p =
+      c3t3.triangulation().geom_traits().construct_point_3_object();
+
     const Bare_point& p = wp2p(v->point());
-    
+
     FT da = density_1d(a,v,sizing_field);
     FT db = density_1d(b,v,sizing_field);
 
@@ -299,12 +303,14 @@ private:
                                   const Bare_point& a,
                                   const Bare_point& b,
                                   const Bare_point& c,
+                                  const C3T3& c3t3,
                                   const Sizing_field& sizing_field) const
   {
     typename Gt::Construct_vector_3 vector =
-      Gt().construct_vector_3_object();
-    
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+      c3t3.triangulation().geom_traits().construct_vector_3_object();
+    typename Gt::Construct_point_3 wp2p =
+      c3t3.triangulation().geom_traits().construct_point_3_object();
+
     const Bare_point& p = wp2p(v->point());
     
     FT da = density_2d<true>(a,v,sizing_field);
@@ -324,6 +330,7 @@ private:
   Vector_3 centroid_general_move(const Vertex_handle& v,
                                  ForwardIterator first,
                                  ForwardIterator last,
+                                 const C3T3& c3t3,
                                  const Sizing_field& sizing_field) const
   {
     CGAL_assertion(std::distance(first,last) > 3);
@@ -331,14 +338,16 @@ private:
     // Fit plane using point-based PCA: compute least square fitting plane
     Plane_3 plane;
     Bare_point point;
-    CGAL::linear_least_squares_fitting_3(first,last,plane, point, Dimension_tag<0>(), Gt(),Default_diagonalize_traits<FT, 3>());
+    CGAL::linear_least_squares_fitting_3(first,last,plane, point, Dimension_tag<0>(),
+                                         c3t3.triangulation().geom_traits(),
+                                         Default_diagonalize_traits<FT, 3>());
     
     // Project all points to the plane
-    std::transform(first, last, first, Project_on_plane(plane));
+    std::transform(first, last, first, Project_on_plane(plane, c3t3));
     CGAL_assertion(std::distance(first,last) > 3);
     
     // Get 2D-3D transformations
-    Aff_transformation_3 to_3d = compute_to_3d_transform(plane, *first);
+    Aff_transformation_3 to_3d = compute_to_3d_transform(plane, *first, c3t3);
     Aff_transformation_3 to_2d = to_3d.inverse();
     
     // Transform to 2D
@@ -361,9 +370,8 @@ private:
                    std::back_inserter(polygon_3d), To_3d(to_3d));
     
     // Compute centroid using quadrature sizing
-    return centroid_3d_polygon_move(v,
-                                    polygon_3d.begin(), polygon_3d.end(),
-                                    sizing_field);
+    return centroid_3d_polygon_move(v, polygon_3d.begin(), polygon_3d.end(),
+                                    c3t3, sizing_field);
   }
   
   /**
@@ -374,24 +382,22 @@ private:
   Vector_3 centroid_3d_polygon_move(const Vertex_handle& v,
                                     ForwardIterator first,
                                     ForwardIterator last,
+                                    const C3T3& c3t3,
                                     const Sizing_field& sizing_field) const
   {
     CGAL_precondition(std::distance(first,last) >= 3);
     
     typename Gt::Construct_vector_3 vector =
-      Gt().construct_vector_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_vector_3_object();
     typename Gt::Construct_centroid_3 centroid =
-      Gt().construct_centroid_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_centroid_3_object();
     typename Gt::Compute_area_3 area = 
-      Gt().compute_area_3_object();
-
+      c3t3.triangulation().geom_traits().compute_area_3_object();
     typename Gt::Construct_point_3 cp =
-      Gt().construct_point_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_point_3_object();
+
     // Vertex current position
-    const Bare_point vertex_position = cp(v->point());
+    const Bare_point& vertex_position = cp(v->point());
     
     // Use as reference point to triangulate
     const Bare_point& a = *first++;
@@ -432,14 +438,14 @@ private:
    * Returns the transformation from reference_point to plane
    */
   Aff_transformation_3 compute_to_3d_transform(const Plane_3& plane,
-                                               const Bare_point& reference_point) const
+                                               const Bare_point& reference_point,
+                                               const C3T3& c3t3) const
   {
     typename Gt::Construct_base_vector_3 base =
-      Gt().construct_base_vector_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_base_vector_3_object();
     typename Gt::Construct_orthogonal_vector_3 orthogonal_vector =
-      Gt().construct_orthogonal_vector_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_orthogonal_vector_3_object();
+
     Vector_3 u = base(plane, 1);
     u = u / CGAL::sqrt(u*u);
     
@@ -508,7 +514,7 @@ private:
    */
   void turn_around_edge(const Vertex_handle& v,
                         const Edge& edge,
-                        const Tr& tr,
+                        const C3T3& c3t3,
                         Vector_3& move,
                         FT& sum_masses,
                         const Sizing_field& sizing_field) const
@@ -516,18 +522,15 @@ private:
     typedef typename Tr::Cell_circulator Cell_circulator;
     
     typename Gt::Compute_volume_3 volume = 
-      Gt().compute_volume_3_object();
-    
+      c3t3.triangulation().geom_traits().compute_volume_3_object();
     typename Gt::Construct_centroid_3 centroid =
-      Gt().construct_centroid_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_centroid_3_object();
     typename Gt::Construct_vector_3 vector =
-      Gt().construct_vector_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_vector_3_object();
     typename Gt::Construct_point_3 wp2p =
-      Gt().construct_point_3_object();
+      c3t3.triangulation().geom_traits().construct_point_3_object();
     
-    Cell_circulator current_cell = tr.incident_cells(edge);
+    Cell_circulator current_cell = c3t3.triangulation().incident_cells(edge);
     Cell_circulator done = current_cell;
     
     // a & b are fixed points
@@ -536,14 +539,13 @@ private:
     CGAL_assertion(current_cell != done);
     
     // c & d are moving points
-    Bare_point c = tr.dual(current_cell++);
+    Bare_point c = c3t3.triangulation().dual(current_cell++);
     CGAL_assertion(current_cell != done);
     
     while ( current_cell != done )
     {
-      const Bare_point d = tr.dual(current_cell++);
-      
-      Bare_point tet_centroid = centroid(a,b,c,d);
+      const Bare_point& d = c3t3.triangulation().dual(current_cell++);
+      const Bare_point& tet_centroid = centroid(a,b,c,d);
       
       // Compute mass
       FT density = density_3d(tet_centroid, current_cell, sizing_field);
