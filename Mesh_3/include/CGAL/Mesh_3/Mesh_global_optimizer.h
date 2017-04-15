@@ -299,12 +299,8 @@ private:
    */
   Moves_vector compute_moves(Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Construct_translated_point_3 translate =
-    Gt().construct_translated_point_3_object();
-
   // Store new position of points which have to move
   Moves_vector moves;
-
 
   moves.reserve(moving_vertices.size());
 
@@ -326,10 +322,9 @@ private:
     // Get move for each moving vertex
     tbb::parallel_do(
       moving_vertices.begin(), moving_vertices.end(),
-      Compute_move<Self, Sizing_field, Moves_vector,
-                   typename Gt::Construct_translated_point_3>(
+      Compute_move<Self, Sizing_field, Moves_vector>(
         *this, sizing_field_, moves, do_freeze_, vertices_not_moving_any_more,
-        translate)
+        tr_.geom_traits())
     );
 
     typename tbb::concurrent_vector<Vertex_handle>::const_iterator it
@@ -345,8 +340,13 @@ private:
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
-    typename Gt::Construct_weighted_point_3 p2wp = Gt().construct_weighted_point_3_object();
+    typename Gt::Construct_point_3 wp2p =
+        tr_.geom_traits().construct_point_3_object();
+    typename Gt::Construct_weighted_point_3 p2wp =
+        tr_.geom_traits().construct_weighted_point_3_object();
+    typename Gt::Construct_translated_point_3 translate =
+        tr_.geom_traits().construct_translated_point_3_object();
+
     // Get move for each moving vertex
     typename Moving_vertices_set::iterator vit = moving_vertices.begin();
     for ( ; vit != moving_vertices.end() ; )
@@ -437,8 +437,7 @@ private:
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Functor for compute_moves function
-  template <typename MGO, typename Sizing_field_, typename Moves_vector_,
-            typename CTOP3>
+  template <typename MGO, typename Sizing_field_, typename Moves_vector_>
   class Compute_move
   {
     typedef tbb::concurrent_vector<Vertex_handle> Vertex_conc_vector;
@@ -448,7 +447,7 @@ private:
     Moves_vector_        & m_moves;
     bool                   m_do_freeze;
     Vertex_conc_vector   & m_vertices_not_moving_any_more;
-    const CTOP3          & m_translate;
+    const Gt             & m_gt;
 
   public:
     // Constructor
@@ -456,14 +455,14 @@ private:
                  const Sizing_field_ &sizing_field,
                  Moves_vector_ &moves,
                  bool do_freeze,
-                 Vertex_conc_vector & vertices_not_moving_any_more,
-                 const CTOP3 & translate)
+                 Vertex_conc_vector &vertices_not_moving_any_more,
+                 const Gt &gt)
     : m_mgo(mgo),
       m_sizing_field(sizing_field),
       m_moves(moves),
       m_do_freeze(do_freeze),
       m_vertices_not_moving_any_more(vertices_not_moving_any_more),
-      m_translate(translate)
+      m_gt(gt)
     {}
 
     // Constructor
@@ -473,18 +472,23 @@ private:
       m_moves(cm.m_moves),
       m_do_freeze(cm.m_do_freeze),
       m_vertices_not_moving_any_more(cm.m_vertices_not_moving_any_more),
-      m_translate(cm.m_translate)
+      m_gt(cm.m_gt)
     {}
 
     // operator()
     void operator()(const Vertex_handle& oldv) const
     {
+      typename Gt::Construct_point_3 wp2p =
+          m_gt.construct_point_3_object();
+      typename Gt::Construct_weighted_point_3 p2wp =
+          m_gt.construct_weighted_point_3_object();
+      typename Gt::Construct_translated_point_3 translate =
+          m_gt.construct_translated_point_3_object();
+
       Vector_3 move = m_mgo.compute_move(oldv);
-      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
-      typename Gt::Construct_weighted_point_3 p2wp = Gt().construct_weighted_point_3_object();
       if ( CGAL::NULL_VECTOR != move )
       {
-        Bare_point new_position = m_translate(wp2p(oldv->point()), move);
+        Bare_point new_position = translate(wp2p(oldv->point()), move);
         FT size = (MGO::Sizing_field::is_vertex_update_needed ?
           m_sizing_field(new_position, oldv) : 0);
         // typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
@@ -507,34 +511,40 @@ private:
   };
 
   // Functor for fill_sizing_field function
-  template <typename MGO, typename Tr_, typename Local_list_>
+  template <typename MGO, typename Local_list_>
   class Compute_sizing_field_value
   {
     MGO                  & m_mgo;
+    const Gt             & m_gt;
     Local_list_          & m_local_lists;
-    typename Tr_::Geom_traits::Construct_point_3 wp2p;
 
   public:
     // Constructor
     Compute_sizing_field_value(MGO &mgo, 
-                               Local_list_ & local_lists)
+                               const Gt &gt,
+                               Local_list_ &local_lists)
     : m_mgo(mgo),
+      m_gt(gt),
       m_local_lists(local_lists)
     {}
 
     // Constructor
     Compute_sizing_field_value(const Compute_sizing_field_value &csfv)
     : m_mgo(csfv.m_mgo), 
+      m_gt(csfv.m_gt),
       m_local_lists(csfv.m_local_lists)
     {}
 
     // operator()
     void operator()(Vertex& v) const
     {
+      typename Gt::Construct_point_3 wp2p =
+          m_gt.construct_point_3_object();
+
       Vertex_handle vh 
-        = Tr_::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
+        = Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
       m_local_lists.local().push_back(
-                                      std::make_pair(wp2p(v.point()), m_mgo.average_circumradius_length(vh)));
+          std::make_pair(wp2p(v.point()), m_mgo.average_circumradius_length(vh)));
     }
   };
 
@@ -571,8 +581,6 @@ private:
     // operator()
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
-      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
-
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
         const Vertex_handle& v = cpp11::get<0>(m_moves[i]);
@@ -838,23 +846,19 @@ collect_all_vertices(Moving_vertices_set& moving_vertices)
     moving_vertices.insert(vit);
 }
 
-
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_move(const Vertex_handle& v)
 {
   typename Gt::Compute_squared_length_3 sq_length =
-    Gt().compute_squared_length_3_object();
-
+      tr_.geom_traits().compute_squared_length_3_object();
   typename Gt::Construct_vector_3 vector =
-    Gt().construct_vector_3_object();
-
+      tr_.geom_traits().construct_vector_3_object();
   typename Gt::Construct_translated_point_3 translate =
-    Gt().construct_translated_point_3_object();
-
+      tr_.geom_traits().construct_translated_point_3_object();
   typename Gt::Construct_point_3 wp2p =
-    Gt().construct_point_3_object();
+      tr_.geom_traits().construct_point_3_object();
 
   Cell_vector incident_cells;
   incident_cells.reserve(64);
@@ -1014,7 +1018,7 @@ fill_sizing_field()
 
     tbb::parallel_do(
       tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
-      Compute_sizing_field_value<Self, Tr, Local_list>(*this, local_lists)
+      Compute_sizing_field_value<Self, Local_list>(*this, tr_.geom_traits(), local_lists)
     );
 
     for(typename Local_list::iterator it_list = local_lists.begin() ;
@@ -1032,7 +1036,9 @@ fill_sizing_field()
         vit != tr_.finite_vertices_end();
         ++vit)
     {
-      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+      typename Gt::Construct_point_3 wp2p =
+          tr_.geom_traits().construct_point_3_object();
+
       value_map.insert(std::make_pair(wp2p(vit->point()),
                                       average_circumradius_length(vit)));
     }
@@ -1159,9 +1165,9 @@ Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 {
   typename Gt::Compute_squared_distance_3 sq_distance =
-    Gt().compute_squared_distance_3_object();
+    tr_.geom_traits().compute_squared_distance_3_object();
   typename Gt::Construct_point_3 wp2p =
-    Gt().construct_point_3_object();
+    tr_.geom_traits().construct_point_3_object();
 
   const Bare_point circumcenter = tr_.dual(cell);
   return ( sq_distance(wp2p(v->point()), circumcenter) );

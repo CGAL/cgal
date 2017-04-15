@@ -448,19 +448,18 @@ protected:
     typedef typename Tr::Bare_point                   Bare_point;
 
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
-    
+
+    const Tr& tr = c3t3.triangulation();
+
     typename Gt::Compute_squared_length_3 sq_length =
-      Gt().compute_squared_length_3_object();
-    
+      tr.geom_traits().compute_squared_length_3_object();
     typename Gt::Construct_translated_point_3 translate =
-      Gt().construct_translated_point_3_object();
-    
+      tr.geom_traits().construct_translated_point_3_object();
     typename Gt::Construct_point_3 wp2p =
-      Gt().construct_point_3_object();
-    
+      tr.geom_traits().construct_point_3_object();
     typename Gt::Construct_weighted_point_3 p2wp =
-      Gt().construct_weighted_point_3_object();
-    
+      tr.geom_traits().construct_weighted_point_3_object();
+
     // create a helper
     typedef C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
     C3T3_helpers helper(c3t3, domain);
@@ -584,7 +583,7 @@ protected:
   {
     CGAL_precondition(!slivers.empty());
     
-    Vector_3 grad_vector = compute_gradient_vector(v,slivers);
+    Vector_3 grad_vector = compute_gradient_vector(c3t3, v, slivers);
     
     // Exit if grad_vector is not relevant
     if ( CGAL::NULL_VECTOR == grad_vector )
@@ -608,18 +607,19 @@ private:
    * @brief compute the gradient vector
    */
   Vector_3
-  compute_gradient_vector(const Vertex_handle& v,
+  compute_gradient_vector(const C3T3& c3t3,
+                          const Vertex_handle& v,
                           const std::vector<Cell_handle>& slivers) const
   {
     switch (slivers.size())
     {
       case 1:
-        return compute_gradient_vector(slivers.front(),v);
+        return compute_gradient_vector(c3t3, slivers.front(),v);
         break;
       case 2:
       {
-        Vector_3 v1 = compute_gradient_vector(slivers.front(), v);
-        Vector_3 v2 = compute_gradient_vector(slivers.back(), v);
+        Vector_3 v1 = compute_gradient_vector(c3t3, slivers.front(), v);
+        Vector_3 v2 = compute_gradient_vector(c3t3, slivers.back(), v);
         if( v1 * v2 > 0 )
           // "+0.5" because sq_radius has to go up
           return 0.5*(v1 + v2);
@@ -636,22 +636,24 @@ private:
   /**
    * @brief compute the gradient vector
    */
-  Vector_3 compute_gradient_vector(const Cell_handle& cell,
+  Vector_3 compute_gradient_vector(const C3T3& c3t3,
+                                   const Cell_handle& cell,
                                    const Vertex_handle& v) const
   {
     typedef typename C3T3::Triangulation::Geom_traits Gt;
+
     typename Gt::Construct_translated_point_3 translate =
-      Gt().construct_translated_point_3_object();
+      c3t3.triangulation().geom_traits().construct_translated_point_3_object();
     typename Gt::Construct_point_3 wp2p =
-      Gt().construct_point_3_object();
+      c3t3.triangulation().geom_traits().construct_point_3_object();
     
     // translate the tet so that cell->vertex((i+3)&3) is 0_{R^3}
     unsigned int index = cell->index(v);
     Vector_3 translate_to_origin(CGAL::ORIGIN, wp2p(cell->vertex((index+3)&3)->point())); //p4
     const Bare_point& p1 = translate(wp2p(v->point()), - translate_to_origin);
     const Bare_point& p2 = translate(wp2p(cell->vertex((index+1)&3)->point()), - translate_to_origin);
-  const Bare_point& p3 = translate(wp2p(cell->vertex((index+2)&3)->point()), - translate_to_origin);
-    
+    const Bare_point& p3 = translate(wp2p(cell->vertex((index+2)&3)->point()), - translate_to_origin);
+
     // pre-compute everything
     FT sq_p1 = p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
     FT sq_p2 = p2.x()*p2.x() + p2.y()*p2.y() + p2.z()*p2.z();
@@ -748,7 +750,7 @@ protected:
   {
     CGAL_precondition(!slivers.empty());
     
-    Vector_3 grad_vector = compute_gradient_vector(v,slivers);
+    Vector_3 grad_vector = compute_gradient_vector(c3t3, v, slivers);
     
     // Exit if grad_vector is not relevant
     if ( CGAL::NULL_VECTOR == grad_vector )
@@ -772,18 +774,19 @@ private:
    * @brief compute the gradient vector
    */
   Vector_3
-  compute_gradient_vector(const Vertex_handle& v,
+  compute_gradient_vector(const C3T3& c3t3,
+                          const Vertex_handle& v,
                           const std::vector<Cell_handle>& slivers) const
   {
     switch (slivers.size())
     {
       case 1:
-        return -1*compute_gradient_vector(slivers.front(),v);
+        return -1*compute_gradient_vector(c3t3, slivers.front(), v);
         break;
       case 2:
       {
-        Vector_3 v1 = compute_gradient_vector(slivers.front(), v);
-        Vector_3 v2 = compute_gradient_vector(slivers.back(), v);
+        Vector_3 v1 = compute_gradient_vector(c3t3, slivers.front(), v);
+        Vector_3 v2 = compute_gradient_vector(c3t3, slivers.back(), v);
         if( v1 * v2 > 0 )
           // "-0.5" because volume has to go down
           return -0.5*(v1 + v2);
@@ -801,11 +804,13 @@ private:
   /**
    * @brief compute the gradient vector
    */
-  Vector_3 compute_gradient_vector(const Cell_handle& cell,
+  Vector_3 compute_gradient_vector(const C3T3& c3t3,
+                                   const Cell_handle& cell,
                                    const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    typename Gt::Construct_point_3 wp2p =
+        c3t3.triangulation().geom_traits().construct_point_3_object();
     const int i = cell->index(v);
     
     // fixed vertices: (the ones with index != i)
@@ -890,7 +895,7 @@ protected:
   {
     CGAL_precondition(!slivers.empty());
     
-    Vector_3 grad_vector = compute_gradient_vector(v,slivers);
+    Vector_3 grad_vector = compute_gradient_vector(c3t3, v, slivers);
 
     // Exit if grad_vector is not relevant
     if ( CGAL::NULL_VECTOR == grad_vector )
@@ -914,18 +919,19 @@ private:
    * @brief compute the gradient vector
    */
   Vector_3
-  compute_gradient_vector(const Vertex_handle& v,
+  compute_gradient_vector(const C3T3& c3t3,
+                          const Vertex_handle& v,
                           const std::vector<Cell_handle>& slivers) const
   {
     switch (slivers.size())
     {
       case 1:
-        return -1*compute_gradient_vector(slivers.front(),v);
+        return -1*compute_gradient_vector(c3t3, slivers.front(),v);
         break;
       case 2:
       {
-        Vector_3 v1 = compute_gradient_vector(slivers.front(), v);
-        Vector_3 v2 = compute_gradient_vector(slivers.back(), v);
+        Vector_3 v1 = compute_gradient_vector(c3t3, slivers.front(), v);
+        Vector_3 v2 = compute_gradient_vector(c3t3, slivers.back(), v);
         if( v1 * v2 > 0 )
           // "-0.5" because angle has to go down
           return -0.5*(v1 + v2);
@@ -943,12 +949,16 @@ private:
    * @brief compute the gradient vector
    */
   Vector_3
-  compute_gradient_vector(const Cell_handle& cell,
+  compute_gradient_vector(const C3T3& c3t3,
+                          const Cell_handle& cell,
                           const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
     
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    typename Gt::Construct_point_3 wp2p =
+        c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename Gt::Compute_squared_distance_3 sq_distance =
+        c3t3.triangulation().geom_traits().compute_squared_distance_3_object();
 
     const int i = cell->index(v);
     const Bare_point& p0 = wp2p(v->point());
@@ -958,9 +968,9 @@ private:
     int k2 = (i+2)&3;
     int k3 = (i+3)&3;
     
-    FT angle_k1k2 = abs_dihedral_angle(p0,k1,k2,k3,cell);
-    FT angle_k2k3 = abs_dihedral_angle(p0,k2,k3,k1,cell);
-    FT angle_k3k1 = abs_dihedral_angle(p0,k3,k1,k2,cell);
+    FT angle_k1k2 = abs_dihedral_angle(c3t3, p0, k1, k2, k3, cell);
+    FT angle_k2k3 = abs_dihedral_angle(c3t3, p0, k2, k3, k1, cell);
+    FT angle_k3k1 = abs_dihedral_angle(c3t3, p0, k3, k1, k2, cell);
     
     if ( angle_k1k2 > angle_k2k3 )
       std::swap(k1,k3);
@@ -982,12 +992,9 @@ private:
     FT a_02 = CGAL::abs(details::angle_in_radian(p1p0, p1p2));
     FT a_03 = CGAL::abs(details::angle_in_radian(p1p0, p1p3));
     
-    Vector_3 n0 = normal_estimate(cell,k3);
-    Vector_3 n1 = normal_estimate(cell,k2);
-    
-    typename Gt::Compute_squared_distance_3 sq_distance
-      = Gt().compute_squared_distance_3_object();
-    
+    Vector_3 n0 = normal_estimate(c3t3, cell,k3);
+    Vector_3 n1 = normal_estimate(c3t3, cell,k2);
+
     const FT d_p0p1 = CGAL::sqrt(sq_distance(p0,p1));
     CGAL_assertion(!is_zero(d_p0p1));
     
@@ -997,15 +1004,17 @@ private:
   /**
    * @brief returns the absolute value of dihedral angle of p,p(k1),p(k2),p(k3)
    */
-  FT abs_dihedral_angle(const Bare_point& p,
+  FT abs_dihedral_angle(const C3T3& c3t3,
+                        const Bare_point& p,
                         const int k1,
                         const int k2,
                         const int k3,
                         const Cell_handle& cell) const
   { 
-    typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
-      = Gt().compute_approximate_dihedral_angle_3_object();
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle =
+        c3t3.triangulation().geom_traits().compute_approximate_dihedral_angle_3_object();
+    typename Gt::Construct_point_3 wp2p =
+        c3t3.triangulation().geom_traits().construct_point_3_object();
 
     return CGAL::abs(approx_dihedral_angle(wp2p(p),
                                            wp2p(cell->vertex(k1)->point()),
@@ -1025,9 +1034,11 @@ private:
    * @brief returns the normal of facet (ch,i), oriented from inside to outside
    * of \c ch
    */
-  Vector_3 normal_estimate(const Cell_handle& ch, const int i) const
+  Vector_3 normal_estimate(const C3T3& c3t3, const Cell_handle& ch, const int i) const
   {
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+    typename Gt::Construct_point_3 wp2p =
+        c3t3.triangulation().geom_traits().construct_point_3_object();
+
     int k1 = (i+1)&3;
     int k2 = (i+2)&3;
     int k3 = (i+3)&3;
@@ -1119,12 +1130,13 @@ protected:
   /**
    * @brief returns a random vector with size \c vector_size
    */
-  Vector_3 random_vector_fixed_size(const FT& vector_sq_size) const
+  Vector_3 random_vector_fixed_size(const C3T3& c3t3,
+                                    const FT& vector_sq_size) const
   {
     typedef typename C3T3::Triangulation::Geom_traits Gt;
     
     typename Gt::Compute_squared_length_3 sq_length =
-      Gt().compute_squared_length_3_object();
+      c3t3.triangulation().geom_traits().compute_squared_length_3_object();
     
     Vector_3 rnd_vector(random_ft(),random_ft(),random_ft());
     FT rnd_sq_size = sq_length(rnd_vector);
@@ -1138,20 +1150,23 @@ protected:
   /**
    * @brief returns a random vector with size between 0 and \c vector_size
    */
-  Vector_3 random_vector_max_size(const FT& vector_max_sq_size) const
+  Vector_3 random_vector_max_size(const C3T3& c3t3,
+                                  const FT& vector_max_sq_size) const
   {
-    return random_ft() * random_vector_fixed_size(vector_max_sq_size);
+    return random_ft() * random_vector_fixed_size(c3t3, vector_max_sq_size);
   }
   
   /**
    * @brief returns a random vector.
    */
-  Vector_3 random_vector(const FT& vector_sq_size, bool fixed_size) const
+  Vector_3 random_vector(const C3T3& c3t3,
+                         const FT& vector_sq_size,
+                         bool fixed_size) const
   {
     if ( fixed_size )
-      return random_vector_fixed_size(vector_sq_size);
+      return random_vector_fixed_size(c3t3, vector_sq_size);
     else
-      return random_vector_max_size(vector_sq_size);
+      return random_vector_max_size(c3t3, vector_sq_size);
   }
   
 private:
@@ -1255,14 +1270,15 @@ private:
                      bool *could_lock_zone = NULL) const
   {
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
-    typedef typename C3T3::Triangulation::Geom_traits Gt;
+
+    typedef typename C3T3::Triangulation              Tr;
+    typedef typename Tr::Geom_traits                  Gt;
 
     typename Gt::Construct_translated_point_3 translate =
-      Gt().construct_translated_point_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_translated_point_3_object();
     typename Gt::Construct_weighted_point_3 p2wp =
-      Gt().construct_weighted_point_3_object();
-    
+      c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+
     modified_vertices.clear();
 
     // Create a helper
@@ -1283,7 +1299,7 @@ private:
     unsigned int try_nb = 0;
     while ( ++try_nb <= Base::max_try_nb() )
     {
-      Vector_3 delta = this->random_vector(sq_norm,on_sphere_);
+      Vector_3 delta = this->random_vector(c3t3, sq_norm,on_sphere_);
       
       // always from initial_location!
       Bare_point new_location = translate(initial_location,delta);
