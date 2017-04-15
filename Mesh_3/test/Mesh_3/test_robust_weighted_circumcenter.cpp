@@ -24,7 +24,6 @@
 //******************************************************************************
 
 #include "test_utilities.h"
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Timer.h>
@@ -36,32 +35,29 @@ struct Tester
   typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_traits;
 
   typedef typename CGAL::Mesh_triangulation_3<Mesh_traits>::type Tr;
-  
-  typedef typename Tr::Geom_traits Gt;
+
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Gt::FT FT;
 
-  typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Bare_point> Point_creator;
+  typedef typename Tr::Geom_traits Gt;
+  typedef typename Gt::FT FT;
 
   typedef CGAL::Regular_triangulation_3<Gt> Triangulation;
 
   void operator()() const
   {
-    typename Gt::Construct_weighted_point_3 p2wp;
     //-------------------------------------------------------
     // Data generation : get 4 nearly coplanar points
     //-------------------------------------------------------
-    Point_creator creator;
     FT little(1e-10);
     FT tiny(1e-25);
-    
-    Weighted_point p1 = p2wp(creator(little,1,tiny));
-    Weighted_point p2 = p2wp(creator(1,little,0));
-    Weighted_point p3 = p2wp(creator(-1*little,1,0));
-    Weighted_point p4 = p2wp(creator(1,-1*little,0));
-    Weighted_point p5 = p2wp(creator(0,0,1));
-    Weighted_point p6 = p2wp(creator(0,1,0));
+
+    Weighted_point p1(little,1,tiny);
+    Weighted_point p2(1,little,0);
+    Weighted_point p3(-1*little,1,0);
+    Weighted_point p4(1,-1*little,0);
+    Weighted_point p5(0,0,1);
+    Weighted_point p6(0,1,0);
 
     std::cerr << "Using points: p1[" << p1 << "]\tp2[" << p2
               << "]\tp3[" << p3 << "]\tp4[" << p4 << "]\tp5[" << p5
