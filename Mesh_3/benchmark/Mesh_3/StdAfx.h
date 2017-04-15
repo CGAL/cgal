@@ -214,7 +214,6 @@
 //#include <CGAL/Mesher_level_visitors.h>
 //#include <CGAL/Meshes/Filtered_multimap_container.h>
 //#include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
-//#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 //#include <CGAL/Mesh_3/global_parameters.h>
 //#include <CGAL/Mesh_3/Mesher_3.h>
 //#include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
