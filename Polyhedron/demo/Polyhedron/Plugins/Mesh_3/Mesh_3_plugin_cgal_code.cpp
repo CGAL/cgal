@@ -19,8 +19,7 @@
 
 using namespace CGAL::Three;
 
-typedef Tr::Point Tr_Point_3;
-typedef Kernel::Point_3 Bare_point_3;
+typedef Tr::Bare_point Bare_point;
 
 template<typename Mesh>
 struct Polyhedral_mesh_domain_selector
@@ -277,11 +276,11 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
 
   if(protect_features && polylines.empty())
   {
-    std::vector<std::vector<Bare_point_3> > polylines_on_bbox;
+    std::vector<std::vector<Bare_point> > polylines_on_bbox;
     if(pImage->image()->wordKind == WK_FLOAT)
-      CGAL::polylines_to_protect<Bare_point_3, float>(*pImage, polylines_on_bbox);
+      CGAL::polylines_to_protect<Bare_point, float>(*pImage, polylines_on_bbox);
     else //WK_FIXED
-      CGAL::polylines_to_protect<Bare_point_3, unsigned char>(*pImage, polylines_on_bbox);
+      CGAL::polylines_to_protect<Bare_point, unsigned char>(*pImage, polylines_on_bbox);
 
     p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
   }
@@ -308,9 +307,9 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
 
     if(protect_features && polylines.empty()){
-      std::vector<std::vector<Bare_point_3> > polylines_on_bbox;
+      std::vector<std::vector<Bare_point> > polylines_on_bbox;
       CGAL::polylines_to_protect<
-        Bare_point_3,
+        Bare_point,
         Image_mesh_domain::Image_word_type>(*pImage, polylines_on_bbox);
       p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
@@ -337,8 +336,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     {
       std::cerr << "Warning : Automatic detection of features"
                 << " in Gray images is not implemented yet" << std::endl;
-      //std::vector<std::vector<Tr_Point_3> > polylines_on_bbox;
-      //CGAL::polylines_to_protect<Tr_Point_3>(*pImage, polylines_on_bbox);
+      //std::vector<std::vector<Bare_point> > polylines_on_bbox;
+      //CGAL::polylines_to_protect<Bare_point>(*pImage, polylines_on_bbox);
       //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
     if(! polylines.empty()){
