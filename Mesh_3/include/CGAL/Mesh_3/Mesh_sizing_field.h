@@ -200,14 +200,17 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 operator()(const Bare_point& p, const Cell_handle& c) const
 {
+  typename Gt::Construct_weighted_point_3 p2wp =
+      tr_.geom_traits().construct_weighted_point_3_object();
+
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
   //use the inexact locate (much faster than locate) to get a hint
   //and then use locate to check whether p is really inside hint
   // if not, an exact locate will be performed
-  Cell_handle hint = tr_.inexact_locate(tr_.geom_traits().construct_weighted_point_3_object()(p),c);
-  const Cell_handle cell = tr_.locate(tr_.geom_traits().construct_weighted_point_3_object()(p), hint);
+  Cell_handle hint = tr_.inexact_locate(p2wp(p),c);
+  const Cell_handle cell = tr_.locate(p2wp(p), hint);
 #else
-  const Cell_handle cell = tr_.locate(tr_.geom_traits().construct_weighted_point_3_object()(p),c);
+  const Cell_handle cell = tr_.locate(p2wp(p),c);
 #endif
   this->set_last_cell(cell);
 

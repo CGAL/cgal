@@ -343,8 +343,8 @@ inside_protecting_balls(const Tr& tr,
 {
   Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
   if(nv->point().weight() > 0)
-    return Gt().compare_squared_distance_3_object()(p, nv->point(),
-                         nv->point().weight()) != CGAL::LARGER;
+    return tr.geom_traits().compare_squared_distance_3_object()(
+          p, nv->point(), nv->point().weight()) != CGAL::LARGER;
   return false;
 }
 
