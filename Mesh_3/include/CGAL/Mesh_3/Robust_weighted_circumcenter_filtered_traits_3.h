@@ -423,9 +423,8 @@ struct Robust_weighted_circumcenter_filtered_traits_3
 {
   typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K_>
     Construct_weighted_circumcenter_3;
-  
-  typedef CGAL::Robust_filtered_compute_squared_radius_3<K_> Compute_squared_radius_3;
-  
+  typedef CGAL::Robust_filtered_compute_squared_radius_3<K_>
+    Compute_squared_radius_3;
   typedef CGAL::Robust_filtered_compute_squared_radius_smallest_orthogonal_sphere_3<K_>
     Compute_squared_radius_smallest_orthogonal_sphere_3;
 

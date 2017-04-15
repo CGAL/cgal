@@ -1135,7 +1135,7 @@ private:
 
       // Functors
       typename Gt::Is_degenerate_3 is_degenerate =
-        Gt().is_degenerate_3_object();
+        c3t3_.triangulation().geom_traits().is_degenerate_3_object();
 
       // Get dual of facet
       Object dual = c3t3_.triangulation().dual(facet);
@@ -2663,7 +2663,7 @@ C3T3_helpers<C3T3,MD>::
 rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Equal_3 equal = Gt().equal_3_object();
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
   Update_c3t3 updater(domain_,c3t3_);
@@ -2791,7 +2791,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
                             ForwardIterator last_cell,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Equal_3 equal = Gt().equal_3_object();
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   Update_c3t3 updater(domain_,c3t3_);
 
   // Get facets (returns each canonical facet only once)
@@ -3275,19 +3275,15 @@ project_on_surface_aux(const Bare_point& p,
 
   // Build a segment directed as projection_direction,
   typename Gt::Compute_squared_distance_3 sq_distance =
-    Gt().compute_squared_distance_3_object();
-
+    tr_.geom_traits().compute_squared_distance_3_object();
   typename Gt::Compute_squared_length_3 sq_length =
-    Gt().compute_squared_length_3_object();
-
+    tr_.geom_traits().compute_squared_length_3_object();
   typename Gt::Construct_scaled_vector_3 scale =
-    Gt().construct_scaled_vector_3_object();
-
+    tr_.geom_traits().construct_scaled_vector_3_object();
   typename Gt::Is_degenerate_3 is_degenerate =
-    Gt().is_degenerate_3_object();
-
+    tr_.geom_traits().is_degenerate_3_object();
   typename Gt::Construct_translated_point_3 translate =
-    Gt().construct_translated_point_3_object();
+    tr_.geom_traits().construct_translated_point_3_object();
 
   typename MD::Construct_intersection construct_intersection =
     domain_.construct_intersection_object();
@@ -3400,7 +3396,7 @@ project_on_surface(const Bare_point& p,
                    const Vertex_handle& v,
                    Surface_patch_index index) const
 {
-  typename Gt::Equal_3 equal = Gt().equal_3_object();
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   // return domain_.project_on_surface(p);
   // Get plane
   Bare_point reference_point(CGAL::ORIGIN);
