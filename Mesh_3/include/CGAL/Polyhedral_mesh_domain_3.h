@@ -42,7 +42,6 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
 
 #include <boost/optional.hpp>
