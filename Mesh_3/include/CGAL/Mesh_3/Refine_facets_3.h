@@ -1579,16 +1579,16 @@ dual_segment(const Facet & facet, Bare_point& p, Bare_point& q) const
   int i = facet.second;
   Cell_handle n = c->neighbor(i);
   CGAL_assertion( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) );
-  p = Gt().construct_weighted_circumcenter_3_object()(
-      c->vertex(0)->point(),
-      c->vertex(1)->point(),
-      c->vertex(2)->point(),
-      c->vertex(3)->point());
-  q = Gt().construct_weighted_circumcenter_3_object()(
-      n->vertex(0)->point(),
-      n->vertex(1)->point(),
-      n->vertex(2)->point(),
-      n->vertex(3)->point());
+  p = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
+        c->vertex(0)->point(),
+        c->vertex(1)->point(),
+        c->vertex(2)->point(),
+        c->vertex(3)->point());
+  q = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
+        n->vertex(0)->point(),
+        n->vertex(1)->point(),
+        n->vertex(2)->point(),
+        n->vertex(3)->point());
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1600,18 +1600,18 @@ dual_segment_exact(const Facet & facet, Bare_point& p, Bare_point& q) const
   int i = facet.second;
   Cell_handle n = c->neighbor(i);
   CGAL_assertion( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) );
-  p = Gt().construct_weighted_circumcenter_3_object()(
-      c->vertex(0)->point(),
-      c->vertex(1)->point(),
-      c->vertex(2)->point(),
-      c->vertex(3)->point(),
-      true);
-  q = Gt().construct_weighted_circumcenter_3_object()(
-      n->vertex(0)->point(),
-      n->vertex(1)->point(),
-      n->vertex(2)->point(),
-      n->vertex(3)->point(),
-      true);
+  p = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
+        c->vertex(0)->point(),
+        c->vertex(1)->point(),
+        c->vertex(2)->point(),
+        c->vertex(3)->point(),
+        true);
+  q = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
+        n->vertex(0)->point(),
+        n->vertex(1)->point(),
+        n->vertex(2)->point(),
+        n->vertex(3)->point(),
+        true);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1638,15 +1638,17 @@ dual_ray(const Facet & facet, Ray_3& ray) const
   const Weighted_point& q = n->vertex(ind[1])->point();
   const Weighted_point& r = n->vertex(ind[2])->point();
 
-  typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
-    ( Gt().construct_plane_3_object()(p,q,r),
-      Gt().construct_weighted_circumcenter_3_object()(p,q,r) );
+  typename Gt::Line_3 l =
+      r_tr_.geom_traits().construct_perpendicular_line_3_object()
+      ( r_tr_.geom_traits().construct_plane_3_object()(p,q,r),
+        r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(p,q,r) );
 
- ray = Gt().construct_ray_3_object()(Gt().construct_weighted_circumcenter_3_object()(
-        n->vertex(0)->point(),
-        n->vertex(1)->point(),
-        n->vertex(2)->point(),
-        n->vertex(3)->point()), l);
+  ray = r_tr_.geom_traits().construct_ray_3_object()(
+          r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
+            n->vertex(0)->point(),
+            n->vertex(1)->point(),
+            n->vertex(2)->point(),
+            n->vertex(3)->point()), l);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1673,16 +1675,18 @@ dual_ray_exact(const Facet & facet, Ray_3& ray) const
   const Weighted_point& q = n->vertex(ind[1])->point();
   const Weighted_point& r = n->vertex(ind[2])->point();
 
-  typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
-    ( Gt().construct_plane_3_object()(p,q,r),
-      Gt().construct_weighted_circumcenter_3_object()(p,q,r) );
+  typename Gt::Line_3 l =
+      r_tr_.geom_traits().construct_perpendicular_line_3_object()
+      ( r_tr_.geom_traits().construct_plane_3_object()(p,q,r),
+        r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(p,q,r) );
 
- ray = Gt().construct_ray_3_object()(Gt().construct_weighted_circumcenter_3_object()(
-        n->vertex(0)->point(),
-        n->vertex(1)->point(),
-        n->vertex(2)->point(),
-        n->vertex(3)->point(),
-        true), l);
+ ray = r_tr_.geom_traits().construct_ray_3_object()(
+         r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
+           n->vertex(0)->point(),
+           n->vertex(1)->point(),
+           n->vertex(2)->point(),
+           n->vertex(3)->point(),
+           true), l);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1703,8 +1707,10 @@ compute_facet_properties(const Facet& facet,
   typedef typename MD::Intersection Intersection;
 
   // Functor
-  typename Gt::Is_degenerate_3 is_degenerate = Gt().is_degenerate_3_object();
-  typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
+  typename Gt::Is_degenerate_3 is_degenerate =
+      r_tr_.geom_traits().is_degenerate_3_object();
+  typename Gt::Compare_xyz_3 compare_xyz =
+      r_tr_.geom_traits().compare_xyz_3_object();
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
@@ -1830,10 +1836,10 @@ is_encroached_facet_refinable(Facet& facet) const
   typedef typename Gt::FT      FT;
 
   typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
-    Gt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+    r_tr_.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
 
   typename Gt::Compare_weighted_squared_radius_3 compare =
-    Gt().compare_weighted_squared_radius_3_object();
+    r_tr_.geom_traits().compare_weighted_squared_radius_3_object();
 
   const Cell_handle& c = facet.first;
   const int& k = facet.second;
