@@ -1,4 +1,232 @@
 
+-------------------------------- Release 4.10 --------------------------------
+
+Release date: May 2017
+
+
+* Installation
+
+  - The minimum required version of CMake is now 3.1. All CMake versions up to
+    3.7 are supported.
+
+  - The compilation of some demo may require a C++11 compiler. The CGAL library
+    itself still support C++03 compilers.
+
+  - The shell script cgal_create_cmake_script now enables C++14 by default.
+
+  - A new mechanism to check which packages of CGAL are used have been added.
+    It is particularly interesting for commercial users to ensure they have a
+    valid commercial license for the packages they used. This can also be used
+    to make sure only LGPL header files are used.
+
+  - Because of a bug in the g++ compiler about the C++11 keyword thread_local,
+    the CGAL_Core library now always requires Boost.Thread if the g++ compiler
+    is used.
+
+
+* Generalized Maps (new package)
+
+  - This package implements Generalized Maps in d dimensions. A generalized map
+    is a data structure enabling to represent an orientable or non orientable
+    subdivided object by describing all the cells of the subdivision (for
+    example in 3D vertices, edges, faces, volumes) and all the incidence and
+    adjacency relationships between these cells. This data structure is the
+    generalization of the combinatorial maps in order to be able to represent
+    non orientable objects.
+
+
+* 3D Point Set (new package)
+
+  - This package provides a flexible data structure CGAL::Point_set_3 that
+    allows the user to easily handle point sets with an arbitrary number of
+    attributes (such as normal vectors, colors, labeling, etc.).
+
+
+* Combinatorial Maps and Linear cell complex
+
+  - Breaking change: the requirements of the item class used to customize a
+    combinatorial map and a linear cell complex changed. Instead of defining
+    the type of darts used, you have to define the information you want to add
+    in each dart. You can define the CGAL_CMAP_DART_DEPRECATED macro to keep
+    the old behavior.
+
+
+* Triangulated Surface Mesh Shortest Paths
+
+  - Breaking change: Rename all functions, types, and enums using barycentric
+    coordinate to barycentric coordinates.
+
+
+* CGAL and the Boost Graph Library (BGL)
+
+  - Breaking change: Addition of a free function reserve() in the concept
+    MutableFaceGraph. Models provided by CGAL have been updated.
+
+
+* 2D and 3D Linear Geometry Kernel
+
+  - Added a 2D and 3D weighted point class and predicates and constructions.
+
+  - Add functions l_infinity_distance() for 2D and 3D.
+
+
+* 3D Convex Hull
+
+  - The convex hull function can also produce a Surface_mesh, and generally
+    speaking any model of the concept MutableFaceGraph
+
+  - The function convex_hull_3_to_polyhedron_3() is deprecated and
+    convex_hull_3_to_face_graph.h should be used instead.
+
+  - The class Convex_hull_traits_3 now documents a nested type Polygon_mesh
+    instead of Polyhedron_3. The other nested type is kept for backward
+    compatibility.
+
+  - Remove the function CGAL::convex_hull_incremental_3() deprecated since CGAL
+    4.6.
+
+
+* 3D Boolean Operations on Nef Polyhedra
+
+  - Add a new constructor from a face graph model
+
+
+* Linear cell complex
+
+  - Deprecate class Linear_cell_complex which is now renamed
+    Linear_cell_complex_for_combinatorial_map_dart.
+
+
+* 2D Triangulation data structure
+
+  - Add function insert_in_hole.
+
+
+* 2D Triangulations
+
+  - Breaking change: Removed the arbitrary dimensional weighted point class.
+    Users must use a version prior to 4.9 if they need this class.
+
+  - Breaking change:The number type of weighted points in regular
+    triangulations is no longer a template parameter but the field type of the
+    geometric traits class. Users who need this feature must use a version
+    prior to 4.9
+
+  - The class Regular_triangulation_filtered_traits_2 deprecated since CGAL 3.6
+    has been removed.
+
+  - Deprecate the class Regular_triangulation_euclidean_traits_2, as the
+    weighted point and the function objects for weighted points are part of the
+    concept Kernel/
+
+  - The class Regular_triangulation_2 can take a kernel as template argument,
+    that is one no longer has to use Regular_triangulation_euclidea_traits_2,
+    although this still works.
+
+
+* 3D Triangulations
+
+  - Breaking change: The number type of weighted points in regular
+    triangulations is no longer a template parameter but the field type of the
+    geometric traits class. Users who need this feature must use a version
+    prior to 4.9.
+
+  - The class Regular_triangulation_filtered_traits_3 deprecated since CGAL 3.6
+    has been removed.
+
+  - Deprecate the class Regular_triangulation_euclidean_traits_3, as the
+    weighted point and the function objects for weighted points are part of the
+    concept Kernel/
+
+  - The class Regular_triangulation_3 can take a kernel as template argument,
+    that is one no longer has to use Regular_triangulation_euclidean_traits_3,
+    although this still works.
+
+  - Add function link_to_face_graph() to copy the set of faces incident to a
+    vertex into a model of FaceGraph.
+
+
+* 3D Mesh Generation
+
+  - The constructor CGAL::Polyhedral_mesh_domain_with_features_3(std::string)
+    is deprecated.
+
+
+* Polygon Mesh Processing
+
+  - Add fast and robust corefinement and Boolean operation functions for
+    triangulated surface meshes:
+
+      - CGAL::Polygon_mesh_processing::corefine_and_compute_union()
+
+      - CGAL::Polygon_mesh_processing::corefine_and_compute_difference()
+
+      - CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()
+
+      - CGAL::Polygon_mesh_processing::corefine()
+
+      - CGAL::Polygon_mesh_processing::does_bound_a_volume()
+
+      - CGAL::Polygon_mesh_processing::surface_intersection()
+
+
+  - Add functions to compute approximated Hausdorff distances between two
+    meshes, a mesh and a point set, or a point set and a mesh:
+    sample_triangle_mesh(), approximated_Hausdorff_distance(),
+    approximated_symmetric_Hausdorff_distance(), max_distance_to_triangle_mesh
+    (), max_distance_to_point_set().
+
+  - The function CGAL::Polygon_mesh_processing::bbox_3() has been renamed
+    CGAL::Polygon_mesh_processing::bbox().
+
+
+* Point Set Processing
+
+  - Function CGAL::remove_outliers() has an additional parameter based on a
+    distance threshold to make it easier and more intuitive to use.
+
+  - New functions for automatic scale estimations: either a global scale or
+    multiple local scales can be estimated for both 2D and 3D point sets based
+    on the assumption that they sample a curve in 2D or a surface in 3D.
+
+
+* CGAL and the Boost Graph Library (BGL)
+
+  - Add function CGAL::convert_nef_polyhedron_to_polygon_mesh() to convert a
+    Nef_polyhedron_3 to any model of the MutableFaceGraph concept.
+
+  - Add class CGAL::Graph_with_descriptor_with_graph that wraps an existing
+    graph and provides a reference to the said graph to all of its descriptors.
+
+
+* Cone Based Spanners
+
+  - Add a parameter to compute half Tao graph and half Theta graph.
+
+  - Add an ipelet for this package.
+
+
+* Geometric Object Generators
+
+  - Add point random generators
+
+      - in a 3D triangle mesh model of the concept FaceListGraph (CGAL::
+        Random_points_in_triangle_mesh_3),
+
+      - on the boundary of a tetrahedral mesh (CGAL::
+        Random_points_in_tetrahedral_mesh_boundary_3),
+
+      - in a tetrahedral mesh (CGAL::Random_points_in_tetrahedral_mesh_3),
+
+      - in a 2D triangle mesh (CGAL::Random_points_in_triangle_mesh_2),
+
+      - in a range of 2D or 3D triangles (CGAL::Random_points_in_triangles_3
+        and CGAL::Random_points_in_triangles_2).
+
+      - on a 3D segment (CGAL::Random_points_on_segment_3).
+
+
+
 -------------------------------- Release 4.9 --------------------------------
 
 Release date: Sept 2016
@@ -51,6 +279,10 @@ Release date: Sept 2016
 
   - New function CGAL::read_ply_custom_points() that allows the user to read
     any additional point attribute from a PLY input point set.
+
+  - CGAL::structure_point_set(): new algorithm that takes advantage of detected
+    planes to produce a structured point set (with flat regions, sharp edges
+    and vertices).
 
 
 * Point Set Shape Detection
