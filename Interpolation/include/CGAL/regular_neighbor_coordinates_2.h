@@ -262,7 +262,7 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
 // the following functions return an Output_iterator over
 // std::pair<Point, FT>
 //=> OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Point_2, Rt::Geom_traits::FT>
+//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 /////////////////////////////////////////////////////////////
 //init Face_handle start:
 template <class Rt, class OutputIterator>
@@ -275,7 +275,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 }
 
 //OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Point_2, Rt::Geom_traits::FT>
+//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 //Face_handle start is known:
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
@@ -288,7 +288,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 }
 
 //OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Point_2, Rt::Geom_traits::FT>
+//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 //the Voronoi vertices of the power cell are known:
 template <class Rt, class OutputIterator, class OutputIteratorVorVertices>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
@@ -313,7 +313,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 }
 
 //OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Point_2, Rt::Geom_traits::FT>
+//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 template <class Rt, class OutputIterator, class EdgeIterator,
           class VertexIterator >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
@@ -331,7 +331,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 }
 
 //OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Point_2, Rt::Geom_traits::FT>
+//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 template <class Rt, class OutputIterator, class EdgeIterator,
   class VertexIterator , class OutputIteratorVorVertices >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
@@ -363,7 +363,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 //compute the coordinates for a vertex of the triangulation
 // with respect to the other points in the triangulation
 //OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Point_2, Rt::Geom_traits::FT>
+//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
@@ -390,7 +390,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 
 //class providing a function object:
 //OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Point_2, Rt::Geom_traits::FT>
+//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 template <class Rt, class OutputIterator>
 class regular_neighbor_coordinates_2_object
 {
