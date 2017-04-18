@@ -7028,7 +7028,7 @@ public:
      introduces a weighted point with Cartesian coordinates
      those of \f$ p \f$ and weight \f$ w \f$.
    */
-   Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p, const Kernel::FT w);
+   Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p, const Kernel::FT& w);
 
   ///@}
 
@@ -7066,7 +7066,7 @@ public:
      introduces a weighted point with Cartesian coordinates
      those of \f$ p \f$ and weight \f$ w \f$.
    */
-   Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p, const Kernel::FT w);
+   Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p, const Kernel::FT& w);
 
   ///@}
 
