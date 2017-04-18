@@ -43,6 +43,11 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
+  if (!CGAL::is_triangle_mesh(mesh))
+  {
+    std::cout << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
  
   CGAL::Side_of_triangle_mesh<Mesh, K> inside(mesh);
 

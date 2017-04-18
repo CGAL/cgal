@@ -25,8 +25,9 @@ int main(int argc, char* argv[])
   std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if (!input || !(input >> mesh) || mesh.is_empty()
+             || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 

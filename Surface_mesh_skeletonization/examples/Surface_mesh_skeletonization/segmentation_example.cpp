@@ -49,6 +49,11 @@ int main(int argc, char* argv[])
   std::ifstream input((argc>1)?argv[1]:"data/161.off");
   Polyhedron tmesh;
   input >> tmesh;
+  if (!CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cout << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // extract the skeleton
   Skeleton skeleton;
