@@ -249,8 +249,6 @@ class Voronoi_intersection_2_traits_3
 public:
   typedef K_                                        Rep;
 
-  typedef typename Rep::RT                          Weight;
-
   //the regular triangulation traits model:
   //Traits::Point_2 is a 3D point!!
   typedef typename Rep::Point_3                     Point_2;
