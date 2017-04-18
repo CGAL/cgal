@@ -149,13 +149,13 @@ Kernel::FT z() const;
 /// @{
 
 /*!
-returns the i'th homogeneous coordinate of `p`, starting with 0.
+returns the i'th homogeneous coordinate of `p`.
 \pre \f$ 0\leq i \leq3\f$.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
-returns the i'th %Cartesian coordinate of `p`, starting with 0.
+returns the i'th %Cartesian coordinate of `p`.
 \pre \f$ 0\leq i \leq2\f$.
 */
 Kernel::FT cartesian(int i) const;
