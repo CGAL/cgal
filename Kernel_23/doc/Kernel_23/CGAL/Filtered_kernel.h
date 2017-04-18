@@ -54,7 +54,7 @@ namespace CGAL {
 \ingroup kernel_classes
 
 `Filtered_kernel` is a kernel that uses a filtering technique based
-on interval arithmetic from to achieve exact and efficient predicates.
+on interval arithmetic form to achieve exact and efficient predicates.
 It is based on \cgalCite{cgal:bbp-iayed-01}. In addition, a few selected important
 predicates are implemented using the formally proved, semi-static, filtering
 techniques from \cgalCite{cgal:mp-fcafg-05}.
