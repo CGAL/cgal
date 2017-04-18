@@ -91,7 +91,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
-      link_master="\nLink to <a href=master/Manual/index.html> documentation compiled with Doxygen Master {_suffix}</a>\n".format(_suffix=suffix)
+      link_master="\n<br>Link to <a href=master/Manual/index.html> documentation built with Doxygen Master {_suffix}</a>\n".format(_suffix=suffix)
       d = pq(page_header+link+"   "+link_master+page_footer)
     else:
       d = pq(page_header+page_footer)

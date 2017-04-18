@@ -25,7 +25,7 @@ fi
 ROOT=$PWD/../../..
 mkdir ./build_doc
 cd ./build_doc
-cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
+cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
 make -j7 doc  &> /dev/null
 cd ../ #scripts
 bash compare_testsuites.sh $PWD/build_doc/doc_output
@@ -55,12 +55,13 @@ cd ../ #scripts
 DOXYGEN_1=$($PATH_TO_1 --version)
 DOXYGEN_2=$($PATH_TO_2 --version)
 bash ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref $DOXYGEN_1 $DOXYGEN_2
-#rebuild doc with Doxygen_1 to get the right doc_tags
+#rebuild doc with Doxygen_1 to get the right doc_tags without GENERATE_XML because it ignores the EXCLUDE_SYMBOLS, 
+#which disrupts the logs
 mv ./build_doc ./doc_master
 rm -rf ./doc_dir
 mkdir ./doc_dir
 cd ./doc_dir
-cmake -DCGAL_GENERATE_XML=ON -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" -DCGAL_DOC_RESOURCE_DIR=$ROOT/Documentation/doc/resources/1.8.13 ../..  &> /dev/null
+cmake -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" -DCGAL_DOC_RESOURCE_DIR=$ROOT/Documentation/doc/resources/1.8.13 ../..  &> /dev/null
 make -j7 doc  &> /dev/null
 make -j7 doc  &> /dev/null
 cd ..
