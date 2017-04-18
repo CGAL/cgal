@@ -34,8 +34,8 @@ namespace CGAL {
   template < class RTT, class ConstructPoint, class Functor_>
 class Regular_traits_adaptor_2
 {
-  const ConstructPoint& cp;
-  const Functor_& f;
+  const ConstructPoint cp;
+  const Functor_ f;
 
   typedef RTT                                              RTraits;
   typedef Functor_                                         Functor;
