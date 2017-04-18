@@ -23,16 +23,18 @@
 
 #include <CGAL/license/Interpolation.h>
 
-
-#include <set>
-#include <vector>
 #include <CGAL/tags.h>
 #include <CGAL/iterator.h>
 #include <CGAL/utility.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/number_utils.h>
 
+#include <algorithm>
 #include <iostream> //TO DO : to remove
+#include <map>
+#include <set>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -57,24 +59,25 @@ construct_circumcenter(const typename DT::Facet& f,
 // ====================== Natural Neighbors Querries ==========================
 // === Definitions
 
-// Given a 3D point Q and a 3D Delaunay triangulation dt, 
+// Given a 3D point Q and a 3D Delaunay triangulation dt,
 // the next two functions calculate the natural neighbors and coordinates of Q with regard of dt
-// 
+//
 // OutputIterator has value type
 //        std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>
-// Result : 
+// Result :
 // - An OutputIterator providing natural neighbors P_i of Q with unnormalized coordinates a_i associated to them
 // - The normalizing coefficient (sum over i of the a_i)
 // - A boolean specifying whether the calculation has succeeded or not
 
 template <class Dt, class OutputIterator>
 Triple< OutputIterator,  // iterator with value type std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>
-	typename Dt::Geom_traits::FT,  // Should provide 0 and 1
-	bool >
+  typename Dt::Geom_traits::FT,  // Should provide 0 and 1
+  bool >
 laplace_natural_neighbor_coordinates_3(const Dt& dt,
-				       const typename Dt::Geom_traits::Point_3& Q,
-				       OutputIterator nn_out, typename Dt::Geom_traits::FT & norm_coeff,
-				       const typename Dt::Cell_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Cell_handle())
+                                       const typename Dt::Geom_traits::Point_3& Q,
+                                       OutputIterator nn_out,
+                                       typename Dt::Geom_traits::FT&  norm_coeff,
+                                       const typename Dt::Cell_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Cell_handle())
 {
   typedef typename Dt::Geom_traits Gt;
   typedef typename Gt::Point_3 Point;
@@ -84,29 +87,32 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
   typedef typename Dt::Locate_type Locate_type;
   typedef typename Gt::FT Coord_type;
 
-  CGAL_triangulation_precondition (dt.dimension()== 3);
+  CGAL_triangulation_precondition (dt.dimension() == 3);
 
-  Locate_type lt; int li, lj;
-
+  Locate_type lt;
+  int li, lj;
   Cell_handle c = dt.locate( Q, lt, li, lj, start);
 
   if ( lt == Dt::VERTEX )
-    { 
-      *nn_out++= std::make_pair(c->vertex(li),Coord_type(1));
-      return make_triple(nn_out,norm_coeff=Coord_type(1),true);
-    }
+  {
+    *nn_out++= std::make_pair(c->vertex(li), Coord_type(1));
+    return make_triple(nn_out, norm_coeff = Coord_type(1),true);
+  }
   else if (dt.is_infinite(c))
-    return make_triple(nn_out, Coord_type(1), false);//point outside the convex-hull 
+  {
+    //point outside the convex-hull
+    return make_triple(nn_out, Coord_type(1), false);
+  }
 
   std::set<Cell_handle> cells;
-  // To replace the forbidden access to the "in conflict" flag : 
+  // To replace the forbidden access to the "in conflict" flag :
   // std::find operations on this set
   std::vector<Facet> bound_facets; bound_facets.reserve(32);
   typename std::vector<Facet>::iterator bound_it;
   // Find the cells in conflict with Q
-  dt.find_conflicts(Q, c, 
-		    std::back_inserter(bound_facets),
-		    std::inserter(cells,cells.begin()));
+  dt.find_conflicts(Q, c,
+                    std::back_inserter(bound_facets),
+                    std::inserter(cells,cells.begin()));
 
   std::map<Vertex_handle,Coord_type> coordinate;
   typename std::map<Vertex_handle,Coord_type>::iterator coor_it;
@@ -165,12 +171,13 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
 
 template <class Dt, class OutputIterator>
 Triple< OutputIterator,  // iterator with value type std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>
-	typename Dt::Geom_traits::FT,  // Should provide 0 and 1
-	bool >
+  typename Dt::Geom_traits::FT,  // Should provide 0 and 1
+  bool >
 sibson_natural_neighbor_coordinates_3(const Dt& dt,
-				      const typename Dt::Geom_traits::Point_3& Q,
-				      OutputIterator nn_out, typename Dt::Geom_traits::FT & norm_coeff,
-				      const typename Dt::Cell_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Cell_handle())
+                                      const typename Dt::Geom_traits::Point_3& Q,
+                                      OutputIterator nn_out,
+                                      typename Dt::Geom_traits::FT&  norm_coeff,
+                                      const typename Dt::Cell_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Cell_handle())
 {
   typedef typename Dt::Geom_traits Gt;
   typedef typename Gt::Point_3 Point;
@@ -182,27 +189,30 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 
   CGAL_triangulation_precondition (dt.dimension()== 3);
 
-  Locate_type lt; int li, lj;
-
+  Locate_type lt;
+  int li, lj;
   Cell_handle c = dt.locate( Q, lt, li, lj, start);
 
   if ( lt == Dt::VERTEX )
-    { 
-      *nn_out++= std::make_pair(c->vertex(li),Coord_type(1));
-      return make_triple(nn_out,norm_coeff=Coord_type(1),true);
-    }
+  {
+    *nn_out++ = std::make_pair(c->vertex(li),Coord_type(1));
+    return make_triple(nn_out,norm_coeff=Coord_type(1),true);
+  }
   else if (dt.is_infinite(c))
-    return make_triple(nn_out, Coord_type(1), false);//point outside the convex-hull 
+  {
+    //point outside the convex-hull
+    return make_triple(nn_out, Coord_type(1), false);
+  }
 
-  std::set<Cell_handle> cells;  
+  std::set<Cell_handle> cells;
   typename std::set<Cell_handle>::iterator cit;
-  // To replace the forbidden access to the "in conflict" flag : 
+  // To replace the forbidden access to the "in conflict" flag :
   // std::find operations on this set
 
   // Find the cells in conflict with Q
-  dt.find_conflicts(Q, c, 
-		    Emptyset_iterator(),
-		    std::inserter(cells,cells.begin()));
+  dt.find_conflicts(Q, c,
+                    Emptyset_iterator(),
+                    std::inserter(cells,cells.begin()));
 
   std::map<Vertex_handle,Coord_type> coordinate;
   typename std::map<Vertex_handle,Coord_type>::iterator coor_it;
@@ -296,34 +306,34 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
   }
   return make_triple(nn_out,norm_coeff,true);
 }
-  
-template <typename Dt, typename InputIterator> 
+
+template <typename Dt, typename InputIterator>
 bool is_correct_natural_neighborhood(const Dt& /*dt*/,
-				     const typename Dt::Geom_traits::Point_3 & Q, 
-				     InputIterator it_begin, InputIterator it_end,
-				     const typename Dt::Geom_traits::FT & norm_coeff)
-{ 
+                                     const typename Dt::Geom_traits::Point_3&  Q,
+                                     InputIterator it_begin, InputIterator it_end,
+                                     const typename Dt::Geom_traits::FT&  norm_coeff)
+{
   typedef typename Dt::Geom_traits Gt;
   typedef typename Gt::FT Coord_type;
   Coord_type sum_x(0);
   Coord_type sum_y(0);
   Coord_type sum_z(0);
-  InputIterator it; 
-  for(it = it_begin ; it != it_end ; ++it) 
-    {
-      sum_x += it->second*(it->first->point().x());
-      sum_y += it->second*(it->first->point().y());
-      sum_z += it->second*(it->first->point().z());
-    }
+  InputIterator it;
+  for(it = it_begin ; it != it_end ; ++it)
+  {
+    sum_x += it->second*(it->first->point().x());
+    sum_y += it->second*(it->first->point().y());
+    sum_z += it->second*(it->first->point().z());
+  }
   //!!!! to be replaced by a linear combination of points as soon
   // as it is available in the kernel.
-  std::cout << sum_x/norm_coeff << " " 
-	    << sum_y/norm_coeff << " "  
-	    << sum_z/norm_coeff << std::endl;
-  return ((sum_x==norm_coeff*Q.x())&&(sum_y==norm_coeff*Q.y())
-	  &&(sum_z==norm_coeff*Q.z()));     
+  std::cout << sum_x/norm_coeff << " "
+            << sum_y/norm_coeff << " "
+            << sum_z/norm_coeff << std::endl;
+  return ((sum_x == norm_coeff*Q.x()) && (sum_y == norm_coeff*Q.y())
+          && (sum_z == norm_coeff*Q.z()));
 }
- 
+
 // ====================== Geometric Traits utilities =========================================
 // === Definitions
 
