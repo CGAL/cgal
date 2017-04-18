@@ -9099,6 +9099,8 @@ public:
 
 \sa `CGAL::Weighted_point_3<Kernel>`
 \sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
+\sa `PowerSideOfOrientedPowerSphere_3`
+
 */
 class PowerSideOfBoundedPowerSphere_3 {
 public:
@@ -9108,11 +9110,8 @@ public:
   /// @{
 
   /*!
-    returns the sign of the power test of the last weighted point
-    with respect to the smallest sphere orthogonal to the others.
-
     Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
-    \f$ (p,q,r,s)\f$. Returns:
+    \f$ (p,q,r,s)\f$. This method returns:
 
     - `ON_BOUNDARY` if `t` is orthogonal to
     \f$ {z(p,q,r,s)}^{(w)}\f$,
@@ -9122,6 +9121,8 @@ public:
     (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)),
 
     - `ON_BOUNDED_SIDE` if `t` lies inside this oriented sphere.
+
+    The order of the points `p`, `q`, `r`, and `s` does not matter.
 
     \pre `p, q, r, s` are not coplanar.
 
@@ -9137,13 +9138,10 @@ public:
              const Kernel::Weighted_point_3 & t);
 
   /*!
-    Analogous to the previous method for coplanar points,
-    with the power circle \f$ {z(p,q,r)}^{(w)}\f$ of the points \f$ (p,q,r)\f$.
+    returns the sign of the power test of `t` with respect
+    to the smallest sphere orthogonal to `p`, `q`, and `r`.
 
-    If all the points have a weight equal to 0, then
-    `power_side_of_bounded_power_sphere_3(p,q,r,t)` == `side_of_bounded_sphere(p,q,r,t)`.
-
-    \pre `p, q, r, s` are coplanar and `p, q, r` are not collinear.
+    \pre `p, q, r` are not collinear.
   */
   CGAL::Bounded_side
   operator()(const Kernel::Weighted_point_3 & p,
@@ -9152,15 +9150,10 @@ public:
              const Kernel::Weighted_point_3 & t);
 
   /*!
-    Analogous to the previous method for collinear points,
-    where \f$ {z(p,q)}^{(w)}\f$ is the power segment of `p` and `q`.
+    returns the sign of the power test of `t` with respect
+    to the smallest sphere orthogonal to `p`, and `q`.
 
-    \pre `p, q, r` are collinear and `p` and `q` have different bare points.
-
-    If all points have a weight equal to 0, then
-    `power_side_of_bounded_power_sphere_3(p,q,t)` yields an answer consistent with
-    what the kernel predicate `s(p,q).has_on(t)` would give, where `s(p,q)`
-    denotes the segment with endpoints `p` and `q`.
+    \pre `p` and `q` have different bare points.
   */
   CGAL::Bounded_side
   operator()(const Kernel::Weighted_point_3 & p,
@@ -9168,17 +9161,12 @@ public:
              const Kernel::Weighted_point_3 & t);
 
   /*!
-    Analogous to the previous method, where \f$ {z(p)}^{(w)}\f$ is the power sphere of `p`,
-    that is the sphere with the bare point of `p` as center, and \f$ -w_p\f$ as weight.
-
-    \pre `p` and `q` have equal bare points.
-
-    When `p` and `q` have equal bare points, then it returns the comparison of the weights
-    (`ON_BOUNDED_SIDE` when `q` is heavier than `p`).
+    returns the sign of the power test of `t` with respect
+    to the smallest sphere orthogonal to `p`.
   */
   CGAL::Bounded_side
   operator()(const Kernel::Weighted_point_3 & p,
-             const Kernel::Weighted_point_3 & q);
+             const Kernel::Weighted_point_3 & t);
   /// @}
 
 }; /* end Kernel::PowerSideOfBoundedPowerSphere_3 */
@@ -9235,15 +9223,17 @@ Oriented_side operator() ( const Kernel::Weighted_point_2& p,
   };
 
 /*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
 
-  \sa `CGAL::Weighted_point_3<Kernel>`
-  \sa `ComputePowerProduct_3` for the definition of power distance.
+\sa `CGAL::Weighted_point_3<Kernel>`
+\sa `ComputePowerProduct_3` for the definition of power distance.
+\sa `PowerSideOfBoundedPowerSphere_3`
 
 */
-  class PowerSideOfOrientedPowerSphere_3 {
-  public:
+class PowerSideOfOrientedPowerSphere_3
+{
+public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -9260,6 +9250,10 @@ Oriented_side operator() ( const Kernel::Weighted_point_2& p,
       (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)),
 
     - `ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere.
+
+    The order of the points `p`, `q`, `r` and `s` is important,
+    since it determines the orientation of the implicitly
+    constructed power sphere.
 
     \pre `p, q, r, s` are not coplanar.
 
@@ -9295,7 +9289,6 @@ Oriented_side operator() ( const Kernel::Weighted_point_2& p,
     what the kernel predicate `s(p,q).has_on(t)` would give, where `s(p,q)`
     denotes the segment with endpoints `p` and `q`.
   */
-
   Oriented_side operator()( const Kernel::Weighted_point_3& p,
                             const Kernel::Weighted_point_3& q,
                             const Kernel::Weighted_point_3& t) const;
@@ -9307,11 +9300,10 @@ Oriented_side operator() ( const Kernel::Weighted_point_2& p,
 
     \pre `p` and `q` have equal bare points.
   */
-
   Oriented_side operator()( const Kernel::Weighted_point_3& p,
                             const Kernel::Weighted_point_3& q) const;
   /// @}
-  };
+};
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
