@@ -216,6 +216,8 @@ struct Arr_polyhedral_sgm_polyhedron_3 :
   Arr_polyhedral_sgm_polyhedron_3() {}
 };
 
+} //namespace CGAL
+
 //! Make the polyhedron a model of FaceGraph
 namespace boost {
 
@@ -233,7 +235,5 @@ struct property_map<CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits>, Tag> :
 {};
 
 }
-
-} //namespace CGAL
 
 #endif
