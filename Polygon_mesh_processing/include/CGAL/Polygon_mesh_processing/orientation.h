@@ -48,9 +48,8 @@ namespace internal{
 
     Compare_vertex_points_z_3(VPmap const& vpmap, const GT& gt)
       : vpmap(vpmap)
-    {
-      compare_z = gt.compare_z_3_object();
-    }
+      , compare_z(gt.compare_z_3_object())
+    {}
 
     typedef bool result_type;
     template <class vertex_descriptor>
