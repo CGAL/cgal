@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Julia Floetotto
 
 // ATTENTION : the surface is supposed to be a closed surface
@@ -25,40 +21,43 @@
 
 #include <CGAL/license/Interpolation.h>
 
-
-#include <utility>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Voronoi_intersection_2_traits_3.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
+
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <list>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
 template <class OutputIterator, class InputIterator, class Kernel>
 inline
 Triple< OutputIterator, typename Kernel::FT, bool >
-surface_neighbor_coordinates_3(InputIterator
-			       first, InputIterator beyond,
-			       const typename Kernel::Point_3& p,
-			       const typename Kernel::Vector_3& normal,
-			       OutputIterator out,
-			       const Kernel&)
+surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
+                               const typename Kernel::Point_3& p,
+                               const typename Kernel::Vector_3& normal,
+                               OutputIterator out,
+                               const Kernel&)
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
-  return surface_neighbor_coordinates_3(first, beyond, p, out, I_gt(p,normal));
+  return surface_neighbor_coordinates_3(first, beyond, p, out, I_gt(p, normal));
 }
 
 
 template <class OutputIterator, class InputIterator, class ITraits>
 Triple< OutputIterator, typename ITraits::FT, bool >
-surface_neighbor_coordinates_3(InputIterator
-			       first, InputIterator beyond,
-			       const typename ITraits::Point_2& p,
-			       OutputIterator out,
-			       const ITraits& traits)
+surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
+                               const typename ITraits::Point_2& p,
+                               OutputIterator out,
+                               const ITraits& traits)
 {
   //definition of the Voronoi intersection triangulation:
-  typedef Regular_triangulation_2< ITraits>      I_triangulation;
+  typedef Regular_triangulation_2<ITraits>      I_triangulation;
 
   //build Voronoi intersection triangulation:
   I_triangulation it(traits);
@@ -99,15 +98,15 @@ surface_neighbor_coordinates_3(InputIterator
 template <class OutputIterator, class InputIterator, class Kernel>
 Quadruple< OutputIterator, typename Kernel::FT, bool, bool >
 surface_neighbor_coordinates_certified_3(InputIterator
-			       first, InputIterator beyond,
-			       const typename Kernel::Point_3& p,
-			       const typename Kernel::Vector_3& normal,
-			       OutputIterator out,
-			       const Kernel& )
+                                         first, InputIterator beyond,
+                                         const typename Kernel::Point_3& p,
+                                         const typename Kernel::Vector_3& normal,
+                                         OutputIterator out,
+                                         const Kernel& )
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
-  return surface_neighbor_coordinates_certified_3
-         (first, beyond, p, out, I_gt(p,normal));
+  return surface_neighbor_coordinates_certified_3(first, beyond, p, out,
+                                                  I_gt(p,normal));
 }
 
 //this function takes the radius of the sphere centered on p
@@ -116,34 +115,33 @@ surface_neighbor_coordinates_certified_3(InputIterator
 template <class OutputIterator, class InputIterator, class Kernel>
 inline
 Quadruple< OutputIterator, typename Kernel::FT, bool, bool >
-surface_neighbor_coordinates_certified_3(
-                             InputIterator first, InputIterator beyond,
-			     const typename Kernel::Point_3& p,
-			     const typename Kernel::Vector_3& normal,
-			     const typename Kernel::FT& radius,
-			     OutputIterator out, const Kernel& )
+surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyond,
+                                         const typename Kernel::Point_3& p,
+                                         const typename Kernel::Vector_3& normal,
+                                         const typename Kernel::FT& radius,
+                                         OutputIterator out, const Kernel& )
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
-  return surface_neighbor_coordinates_certified_3
-         (first, beyond, p, radius, out, I_gt(p,normal));
+  return surface_neighbor_coordinates_certified_3(first, beyond, p, radius, out,
+                                                  I_gt(p,normal));
 }
 
 // FIXME : this should probably be replaced by some kernel functor.
 //struct necessary to sort the points by distance to p:
 //also used in surface_neighbors_3.h
-template <class Traits >
+template <class Traits>
 struct closer_to_point
   : public std::less<typename Traits::Point_2>
 {
   typedef typename Traits::Point_2   Point_2;
 
   closer_to_point(const Point_2& _p, const Traits& t)
-    : p(_p), traits(t) {}
+    : p(_p), traits(t) { }
 
   bool operator()(const Point_2& q, const Point_2& r) const
-    {
-      return traits.less_distance_to_point_2_object()(p,q,r);
-    }
+  {
+    return traits.less_distance_to_point_2_object()(p,q,r);
+  }
 
 private:
   Point_2 p;
@@ -153,34 +151,31 @@ private:
 // Versions with instantiated traits class:
 template <class OutputIterator, class InputIterator, class ITraits>
 Quadruple< OutputIterator, typename ITraits::FT, bool, bool >
-surface_neighbor_coordinates_certified_3(InputIterator
-					 first, InputIterator beyond,
-					 const typename ITraits::Point_2& p,
-					 OutputIterator out,
-					 const ITraits& traits)
+surface_neighbor_coordinates_certified_3(InputIterator first,
+                                         InputIterator beyond,
+                                         const typename ITraits::Point_2& p,
+                                         OutputIterator out,
+                                         const ITraits& traits)
 {
   //find the point in [first,beyond) furthest from p:
   InputIterator furthest = std::max_element(first, beyond,
-		                closer_to_point<ITraits>(p, traits));
+                                            closer_to_point<ITraits>(p, traits));
 
-  return surface_neighbor_coordinates_certified_3
-         (first, beyond, p,
-          traits.compute_squared_distance_2_object()(p,*furthest),
-          out, traits);
+  return surface_neighbor_coordinates_certified_3(first, beyond, p,
+           traits.compute_squared_distance_2_object()(p,*furthest),
+           out, traits);
 }
 
 //with radius(maximal distance from p to [first,beyond)) as
 // add. parameter:
 template <class OutputIterator, class InputIterator, class ITraits>
 Quadruple< OutputIterator, typename ITraits::FT, bool, bool >
-surface_neighbor_coordinates_certified_3(InputIterator
-					 first, InputIterator beyond,
-					 const typename
-					 ITraits::Point_2& p,
-					 const typename ITraits::FT&
-					 radius,
-					 OutputIterator out,
-					 const ITraits& traits)
+surface_neighbor_coordinates_certified_3(InputIterator first,
+                                         InputIterator beyond,
+                                         const typename ITraits::Point_2& p,
+                                         const typename ITraits::FT& radius,
+                                         OutputIterator out,
+                                         const ITraits& traits)
 {
   //definition of the Voronoi intersection triangulation:
   typedef Regular_triangulation_2< ITraits>      I_triangulation;
@@ -199,7 +194,7 @@ surface_neighbor_coordinates_certified_3(InputIterator
 
   //collect the Voronoi vertices of the cell of p in order to
   //determine the furthest distance from p to the boundary of its cell
-  std::vector<  typename ITraits::Point_2  > vor_vertices;
+  std::vector< typename ITraits::Point_2 > vor_vertices;
 
   //unfortunately, there is no function call without Face_handle
   // "start" because this would cause type conflicts because
@@ -262,11 +257,10 @@ template <class Dt, class OutputIterator>
 inline
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 surface_neighbor_coordinates_3(const Dt& dt,
-			    const typename Dt::Geom_traits::Point_3& p,
-			    const typename Dt::Geom_traits::Vector_3& normal,
-			    OutputIterator out,
-			    typename Dt::Cell_handle start
-			       = typename Dt::Cell_handle())
+                               const typename Dt::Geom_traits::Point_3& p,
+                               const typename Dt::Geom_traits::Vector_3& normal,
+                               OutputIterator out,
+                               typename Dt::Cell_handle start = typename Dt::Cell_handle())
 {
   typedef Voronoi_intersection_2_traits_3<typename Dt::Geom_traits> I_gt;
   return surface_neighbor_coordinates_3(dt, p, out, I_gt(p,normal), start);
@@ -275,27 +269,25 @@ surface_neighbor_coordinates_3(const Dt& dt,
 template <class Dt, class OutputIterator, class ITraits>
 Triple< OutputIterator, typename ITraits::FT, bool >
 surface_neighbor_coordinates_3(const Dt& dt,
-			       const typename ITraits::Point_2& p,
-			       OutputIterator out, const ITraits& traits,
-			       typename Dt::Cell_handle start
-   			       = typename Dt::Cell_handle())
+                               const typename ITraits::Point_2& p,
+                               OutputIterator out, const ITraits& traits,
+                               typename Dt::Cell_handle start = typename Dt::Cell_handle())
 {
   typedef typename ITraits::FT            Coord_type;
   typedef typename ITraits::Point_2       Point_3;
 
-  typedef typename Dt::Cell_handle       Cell_handle;
+  typedef typename Dt::Cell_handle        Cell_handle;
   typedef typename Dt::Vertex_handle      Vertex_handle;
-  typedef typename Dt::Locate_type       Locate_type;
+  typedef typename Dt::Locate_type        Locate_type;
 
   //the Vertex_handle is, in fact, an iterator over vertex:
   typedef Project_vertex_iterator_to_point< Vertex_handle>   Proj_point;
-  typedef Iterator_project<
-    typename std::list< Vertex_handle >::iterator,
-    Proj_point,
-    const Point_3&,
-    const Point_3*,
-    std::ptrdiff_t,
-    std::forward_iterator_tag>  Point_iterator;
+  typedef Iterator_project<typename std::list< Vertex_handle >::iterator,
+                           Proj_point,
+                           const Point_3&,
+                           const Point_3*,
+                           std::ptrdiff_t,
+                           std::forward_iterator_tag>  Point_iterator;
 
   Locate_type lt;
   int li, lj ;
@@ -303,15 +295,13 @@ surface_neighbor_coordinates_3(const Dt& dt,
 
   //if p is located on a vertex: the only neighbor is found
   if(lt == Dt::VERTEX){
-    *out++= std::make_pair(c->vertex(li)->point(),
-			   Coord_type(1));
+    *out++= std::make_pair(c->vertex(li)->point(), Coord_type(1));
     return make_triple(out, Coord_type(1), true);
   }
 
   //the candidate points are the points of dt in conflict with p:
   typename std::list< Vertex_handle >  conflict_vertices;
-  dt.vertices_on_conflict_zone_boundary(p,c,
-			 std::back_inserter(conflict_vertices));
+  dt.vertices_on_conflict_zone_boundary(p, c, std::back_inserter(conflict_vertices));
 
   for (typename std::list< Vertex_handle >::iterator it = conflict_vertices.begin();
        it != conflict_vertices.end();){
@@ -323,10 +313,9 @@ surface_neighbor_coordinates_3(const Dt& dt,
       it++;
     }
   }
-  return surface_neighbor_coordinates_3
-          (Point_iterator(conflict_vertices.begin()),
-           Point_iterator(conflict_vertices.end()),
-           p, out, traits);
+  return surface_neighbor_coordinates_3(Point_iterator(conflict_vertices.begin()),
+                                        Point_iterator(conflict_vertices.end()),
+                                        p, out, traits);
 }
 
 } //namespace CGAL

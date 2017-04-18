@@ -42,39 +42,39 @@ int main()
   pp[2]=Point3(0,0,0); //outside data/points3 convex hull
   std::cout << "P2 is outside the convex hull" << std::endl;
 
-  for(int ii=0;ii<3;ii++)
-    {
-      std::vector< std::pair< Vertex_handle,NT> > coor_laplace;
-      std::vector< std::pair< Vertex_handle,NT> > coor_sibson;
-      NT norm_coeff_laplace, norm_coeff_sibson;
+  for(int ii=0; ii<3; ++ii)
+  {
+    std::vector< std::pair< Vertex_handle,NT> > coor_laplace;
+    std::vector< std::pair< Vertex_handle,NT> > coor_sibson;
+    NT norm_coeff_laplace, norm_coeff_sibson;
 
-      std::cout << "Point P"<< ii+1 << " : "<<pp[ii].x() << " "
-		<< pp[ii].y() << " "
-		<< pp[ii].z() << std::endl;
+    std::cout << "Point P"<< ii+1 << " : "<<pp[ii].x() << " "
+              << pp[ii].y() << " "
+              << pp[ii].z() << std::endl;
 
-      laplace_natural_neighbor_coordinates_3(triangulation,pp[ii],
-					     std::back_inserter(coor_laplace),
-					     norm_coeff_laplace);
+    laplace_natural_neighbor_coordinates_3(triangulation,pp[ii],
+                                           std::back_inserter(coor_laplace),
+                                           norm_coeff_laplace);
 
-      std::cout << "Linear combination of natural neighbors with Laplace natural coordinates";
-      std::cout << " + correctness (ensured only with an exact number type supporting sqrt)" << std::endl;
-      std::cout << is_correct_natural_neighborhood(triangulation,pp[ii],
-						   coor_laplace.begin(),
-						   coor_laplace.end(),
-						   norm_coeff_laplace)
-		<< std::endl;
+    std::cout << "Linear combination of natural neighbors with Laplace natural coordinates";
+    std::cout << " + correctness (ensured only with an exact number type supporting sqrt)" << std::endl;
+    std::cout << is_correct_natural_neighborhood(triangulation,pp[ii],
+                                                 coor_laplace.begin(),
+                                                 coor_laplace.end(),
+                                                 norm_coeff_laplace)
+              << std::endl;
 
-      sibson_natural_neighbor_coordinates_3(triangulation,pp[ii],
-					    std::back_inserter(coor_sibson),
-					    norm_coeff_sibson);
-      std::cout << "Linear combination of natural neighbors with Sibson natural coordinates" << std::endl;
-      std::cout << " + correctness (ensured only with an exact number type)" << std::endl;
-      std::cout << is_correct_natural_neighborhood(triangulation,pp[ii],
-						   coor_sibson.begin(),
-						   coor_sibson.end(),
-						   norm_coeff_sibson)
-		<< std::endl;
-    }
+    sibson_natural_neighbor_coordinates_3(triangulation,pp[ii],
+                                          std::back_inserter(coor_sibson),
+                                          norm_coeff_sibson);
+    std::cout << "Linear combination of natural neighbors with Sibson natural coordinates" << std::endl;
+    std::cout << " + correctness (ensured only with an exact number type)" << std::endl;
+    std::cout << is_correct_natural_neighborhood(triangulation,pp[ii],
+                                                 coor_sibson.begin(),
+                                                 coor_sibson.end(),
+                                                 norm_coeff_sibson)
+              << std::endl;
+  }
 
   std::cout << "done" << std::endl;
   return 0;
