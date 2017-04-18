@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003, 2017  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -18,7 +18,6 @@
 #define CGAL_VORONOI_INTERSECTION_2_TRAITS_3_H
 
 #include <CGAL/license/Interpolation.h>
-
 
 #include <CGAL/Origin.h>
 #include <CGAL/tags.h>
@@ -116,7 +115,6 @@ private:
   const Vector& normal;
 };
 
-
 template < typename K >
 class Construct_plane_intersected_bisector_3
 {
@@ -141,7 +139,6 @@ private:
   const Point&  a;
   const Vector& normal;
 };
-
 
 template < typename K >
 class Compare_first_projection_3
