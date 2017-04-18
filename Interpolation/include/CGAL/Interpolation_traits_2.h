@@ -12,17 +12,12 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Julia Floetotto
 
 #ifndef CGAL_INTERPOLATION_TRAITS_2_H
 #define CGAL_INTERPOLATION_TRAITS_2_H
 
 #include <CGAL/license/Interpolation.h>
-
 
 namespace CGAL {
 
