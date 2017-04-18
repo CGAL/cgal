@@ -112,6 +112,11 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid(pmesh));
 
+  //check for empty pmesh
+  CGAL_warning(faces(pmesh).first != faces(pmesh).second);
+  if (faces(pmesh).first == faces(pmesh).second)
+    return true;
+
   using boost::choose_param;
   using boost::get_param;
 
