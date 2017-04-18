@@ -7,7 +7,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Regular_triangulation_euclidean_traits_2<K> Gt;
 typedef CGAL::Regular_triangulation_2<Gt>              Regular_triangulation;
-typedef Regular_triangulation::Weighted_point Weighted_point;
+typedef Regular_triangulation::Bare_point              Bare_point;
+typedef Regular_triangulation::Weighted_point          Weighted_point;
 typedef std::vector< std::pair< Weighted_point, K::FT  > >
                                                        Point_coordinate_vector;
 
@@ -17,10 +18,10 @@ int main()
 
   for (int y=0 ; y<3 ; y++)
     for (int x=0 ; x<3 ; x++)
-      rt.insert(Weighted_point(K::Point_2(x,y), 0));
+      rt.insert(Weighted_point(Bare_point(x,y), 0));
 
   //coordinate computation
-  Weighted_point wp(K::Point_2(1.2, 0.7),2);
+  Weighted_point wp(Bare_point(1.2, 0.7),2);
   Point_coordinate_vector  coords;
   CGAL::Triple<
     std::back_insert_iterator<Point_coordinate_vector>,
