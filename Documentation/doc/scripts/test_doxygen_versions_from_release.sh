@@ -22,7 +22,7 @@ if [ -z $PATH_TO_1 ] || [ $(basename $PATH_TO_1) != "doxygen" ] || [ ! -e $PATH_
   exit 0
 fi
 
-ROOT=$PWD/../../..
+ROOT=/home/cgal-testsuite
 mkdir ./build_doc
 cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
@@ -67,15 +67,13 @@ make -j7 doc  &> /dev/null
 cd ..
 #get VERSION's content
 cd $ROOT
-mkdir -p ./build && cd ./build
-cmake ..
 CGAL_NAME="$(cat $PWD/VERSION) with Doxygen $DOXYGEN_1"
 
 #update overview
-cd $ROOT/Documentation/doc/scripts
+cd $ROOT/doc/scripts
 python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ \
   --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_master/doc_output/ \
-  --cgal-version "$CGAL_NAME" --do-copy-results --doxygen-version "$DOXYGEN_1" --master-describe "$MASTER_DESCRIBE"
+  --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version "$DOXYGEN_1" --master-describe "$MASTER_DESCRIBE"
 
 #clean-up
 rm -rf ./build_doc
