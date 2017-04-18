@@ -62,24 +62,34 @@ surface_neighbors_3(InputIterator first, InputIterator beyond,
 
   //build Voronoi intersection triangulation:
   I_triangulation it(traits);
-  it.insert(first,beyond);
+
+  typename ITraits::Construct_weighted_point_2 p2wp =
+      it.geom_traits().construct_weighted_point_2_object();
+  typename ITraits::Construct_point_2 wp2p =
+      it.geom_traits().construct_point_2_object();
+
+  while(first != beyond){
+    it.insert(p2wp(*first++));
+  }
+
+  const typename ITraits::Weighted_point_2 wp = p2wp(p);
 
   Locate_type lt;
   int li;
-  Face_handle fh = it.locate(p, lt, li);
+  Face_handle fh = it.locate(wp, lt, li);
 
   if(lt == I_triangulation::VERTEX){
     *out++ =p;
     return out;
   }
 
-  Vertex_handle vh = it.insert(p, fh);
+  Vertex_handle vh = it.insert(wp, fh);
 
   typename I_triangulation::Vertex_circulator
     vc(it.incident_vertices(vh)),
     done(vc);
   do{
-    *out++= vc->point();
+    *out++= wp2p(vc->point());
     CGAL_assertion(! it.is_infinite(vc));
   }
   while(vc++!=done);
@@ -161,17 +171,27 @@ surface_neighbors_certified_3(InputIterator first,
 
   //build Voronoi intersection triangulation:
   I_triangulation it(traits);
-  it.insert(first,beyond);
+
+  typename ITraits::Construct_weighted_point_2 p2wp =
+      it.geom_traits().construct_weighted_point_2_object();
+  typename ITraits::Construct_point_2 wp2p =
+      it.geom_traits().construct_point_2_object();
+
+  while(first != beyond){
+    it.insert(p2wp(*first++));
+  }
+
+  const typename ITraits::Weighted_point_2 wp = p2wp(p);
 
   Locate_type lt;
   int li;
-  Face_handle fh = it.locate(p, lt, li);
+  Face_handle fh = it.locate(wp, lt, li);
 
   if(lt == I_triangulation::VERTEX){
     *out++ =p;
     return std::make_pair(out,true);
   }
-  Vertex_handle vh = it.insert(p, fh);
+  Vertex_handle vh = it.insert(wp, fh);
   CGAL_assertion(vh->is_valid());
 
   //determine the furthest distance from p to a vertex of its cell
@@ -184,12 +204,10 @@ surface_neighbors_certified_3(InputIterator first,
   while(!valid && ++fc!=fdone);
 
   //get the neighbor points:
-  Vertex_circulator
-    vc(it.incident_vertices(vh)),
-    vdone(vc);
-  do
-    *out++= vc->point();
-  while(++vc!=vdone);
+  Vertex_circulator vc(it.incident_vertices(vh)), vdone(vc);
+  do{
+    *out++ = wp2p(vc->point());
+  }while(++vc!=vdone);
 
   return std::make_pair(out, valid);
 }
