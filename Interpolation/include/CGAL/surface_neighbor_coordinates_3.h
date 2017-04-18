@@ -62,13 +62,36 @@ surface_neighbor_coordinates_3(InputIterator
 
   //build Voronoi intersection triangulation:
   I_triangulation it(traits);
-  it.insert(first,beyond);
 
-  return regular_neighbor_coordinates_2(it, p, out);
+  typename ITraits::Construct_weighted_point_2 p2wp =
+      it.geom_traits().construct_weighted_point_2_object();
+  typename ITraits::Construct_point_2 wp2p =
+      it.geom_traits().construct_point_2_object();
+
+  while(first != beyond){
+    it.insert(p2wp(*first++));
+  }
+
+  typedef std::vector<std::pair<typename ITraits::Weighted_point_2,
+                                typename ITraits::FT> > WPoint_coordinate_vector;
+  WPoint_coordinate_vector wpoint_coords;
+
+  CGAL::Triple<std::back_insert_iterator<WPoint_coordinate_vector>,
+               typename ITraits::FT, bool> res =
+    regular_neighbor_coordinates_2(it, p2wp(p), std::back_inserter(wpoint_coords));
+
+  // regular_neighbor_coordinates_2 returns weighted_point_2 (in fact, _3)
+  // but surface_neighbor_coordinates_3 returns point_3 so the weight must be
+  // dropped
+  typename WPoint_coordinate_vector::const_iterator wpit = wpoint_coords.begin(),
+                                                    wpend = wpoint_coords.end();
+  for(; wpit!=wpend; ++wpit)
+    *out++ = std::make_pair(wp2p(wpit->first), wpit->second);
+
+  return CGAL::make_triple(out, res.second, res.third);
 }
 
-
-//without Delaunay filtering but with certification:
+// Without Delaunay filtering but with certification:
 // a boolean is returned that indicates if a sufficiently large
 // neighborhood has been considered so that the
 // Voronoi cell of p is not affected by any point outside the smallest
@@ -164,7 +187,15 @@ surface_neighbor_coordinates_certified_3(InputIterator
 
   //build Voronoi intersection triangulation:
   I_triangulation it(traits);
-  it.insert(first,beyond);
+
+  typename ITraits::Construct_weighted_point_2 p2wp =
+      it.geom_traits().construct_weighted_point_2_object();
+  typename ITraits::Construct_point_2 wp2p =
+      it.geom_traits().construct_point_2_object();
+
+  while(first != beyond){
+    it.insert(p2wp(*first++));
+  }
 
   //collect the Voronoi vertices of the cell of p in order to
   //determine the furthest distance from p to the boundary of its cell
@@ -173,22 +204,38 @@ surface_neighbor_coordinates_certified_3(InputIterator
   //unfortunately, there is no function call without Face_handle
   // "start" because this would cause type conflicts because
   // of resembling function signatures (-> default constructor)
-  Triple< OutputIterator, typename ITraits::FT, bool >
-    res = regular_neighbor_coordinates_2
-    (it, p, out, std::back_inserter(vor_vertices),
-     typename I_triangulation::Face_handle());
+  typename ITraits::Weighted_point_2 wp =
+    traits.construct_weighted_point_2_object()(p);
 
-  typename ITraits::Point_2 furthest =
-    *std::max_element(vor_vertices.begin(),  vor_vertices.end(),
-		     closer_to_point<ITraits>(p,traits));
+  typedef std::vector<std::pair<typename ITraits::Weighted_point_2,
+                                typename ITraits::FT> > WPoint_coordinate_vector;
+  WPoint_coordinate_vector wpoint_coords;
+
+  Triple< std::back_insert_iterator<WPoint_coordinate_vector>,
+          typename ITraits::FT, bool > res =
+      regular_neighbor_coordinates_2(it, wp, std::back_inserter(wpoint_coords),
+                                     std::back_inserter(vor_vertices),
+                                     typename I_triangulation::Face_handle());
+
+  // regular_neighbor_coordinates_2 returns weighted_point_2 (in fact, _3)
+  // but surface_neighbor_coordinates_3 returns point_3 so the weight must be
+  // dropped
+  typename WPoint_coordinate_vector::const_iterator wpit = wpoint_coords.begin(),
+                                                    wpend = wpoint_coords.end();
+  for(; wpit!=wpend; ++wpit)
+    *out++ = std::make_pair(wp2p(wpit->first), wpit->second);
+
   // if the distance to the furthest sample point is smaller
   // than twice the distance to the furthest vertex, not all neighbors
   // might be found: return false
-  if(radius < 4* traits.compute_squared_distance_2_object()
-     (p, furthest))
-    return make_quadruple(res.first, res.second, res.third, false);
+  typename ITraits::Point_2 furthest =
+    *std::max_element(vor_vertices.begin(), vor_vertices.end(),
+                      closer_to_point<ITraits>(p,traits));
 
-  return make_quadruple(res.first, res.second,res.third, true);
+  if(radius < 4* traits.compute_squared_distance_2_object()(p, furthest))
+    return make_quadruple(out, res.second, res.third, false);
+
+  return make_quadruple(out, res.second,res.third, true);
 }
 
 // FIXME :
