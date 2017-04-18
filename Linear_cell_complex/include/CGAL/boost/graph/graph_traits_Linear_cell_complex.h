@@ -237,7 +237,7 @@ namespace boost
   {
     typedef typename CGAL_LCC_TYPE::Point vertex_property_type;
   };
-  
+
 }// namespace boost
 
 namespace CGAL 

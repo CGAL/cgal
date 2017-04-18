@@ -24,14 +24,10 @@ Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_l
 
    Les 3 versions donnent un résultat différent !!
 
-=============================================
-
-TODO
-
 ./Polygon_mesh_processing/examples/Polygon_mesh_processing/corefinement_LCC.cpp
 
-  Compile pas
-  
+=============================================
+
 ./Polygon_mesh_processing/test/Polygon_mesh_processing/surface_intersection_LCC_poly.cpp
 
   Compile pas
