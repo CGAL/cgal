@@ -35,6 +35,7 @@ if ( CGAL_FOUND )
     # Executables that require Eigen 3
     create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
     create_single_source_cgal_program( "poisson_reconstruction.cpp" )
+    create_single_source_cgal_program( "tutorial_example.cpp" )
   else()
     message(STATUS "NOTICE: The examples need Eigen 3.1 (or greater) will not be compiled.")
   endif()

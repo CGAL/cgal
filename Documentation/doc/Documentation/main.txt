@@ -55,6 +55,7 @@ For releases X.Y, with 3.1 <= X.Y <= 4.1 visit
 \subpage tutorials
 \subpage packages
 \subpage dev_manual
+\subpage tutorials
 
 \htmlonly
 </div>

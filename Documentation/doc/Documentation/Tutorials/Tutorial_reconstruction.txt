@@ -1,0 +1,304 @@
+/*!
+
+\page tuto_reconstruction Surface Reconstruction
+\cgalAutoToc
+
+\author Simon Giraudot
+
+Surface reconstruction from point clouds is a core topic of
+geometry. It is an ill-posed problem: there is an infinite number of
+surfaces that can match a single point cloud and a point cloud does
+not define a surface in itself. Thus additional assumptions and
+constraints must be defined by the user and reconstruction can be
+achieved in many different ways. This tutorials explains how to use
+the different algorithms of \cgal to perform reconstruction in the
+most relevant way.
+
+\section TutorialsReconstruction_algorithms Which algorithm should I use?
+
+\cgal offers three different algorithms for surface reconstruction:
+
+- \ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
+- \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front Surface Reconstruction"
+- \ref Chapter_Scale_space_reconstruction "Scale Space Surface Reconstruction"
+
+
+Because reconstruction is an ill-posed problem, it must be regularized
+via priori knowledge. Differences in prior leads to different
+algorithms, and choosing one or the other of these methods is
+dependent on these priors. For example, Poisson always generates
+closed shapes (bounding a volume) and requires normals but does not
+interpolate input points (the output surface does not pass exactly
+through the input points). The following table lists different
+properties of the input and output to help the user choose the method
+best suited to each problem:
+
+<center>
+|                                          | Poisson | Advancing front  | Scale space      |
+|------------------------------------------|:-------:|:----------------:|:----------------:|
+| Are normals required?                    | Yes     | No               | No               |
+| Is noise handled?                        | Yes     | By preprocessing | Yes              |
+| Is variable sampling handled?            | Yes     | Yes              | By preprocessing |
+| Are input points exactly on the surface? | No      | Yes              | Yes              |
+| Is the output always closed?             | Yes     | No               | No               |
+| Is the output always smooth?             | Yes     | No               | No               |
+| Is the output always manifold?           | Yes     | Yes              | Optional         |
+| Is the output always orientable?         | Yes     | Yes              | No               |
+</center>
+
+\cgalFigureBegin{TutorialsReconstructionFigComparisons, compare_reconstructions.png}
+
+__Comparison of reconstruction methods applied to the same input (full shape and close-up).__
+
+From left to right: original point cloud; Poisson; advancing front; scale space.
+
+\cgalFigureEnd
+
+More information on these different methods can be found on their
+respective manual pages and in section \ref TutorialsReconstruction_reconstruction.
+
+\section TutorialsReconstruction_overview Pipeline Overview
+
+This tutorial aims at providing a more comprehensive view of the
+possibilities offered by \cgal for treating point clouds for surface
+reconstruction purposes. The following diagram shows an overview of
+typical reconstruction steps using \cgal tools.
+
+
+\image html reconstruction.png "Pipeline Overview" 
+
+We now review some of these steps in more details.
+
+
+\section TutorialsReconstruction_input Reading Input
+
+The reconstruction algorithms in \cgal take a range of iterators on a
+container as input and use property maps to access the points (and the
+normals if they are needed). Points are typically stored in plain text
+format (denoted as 'xyz' format), each point separated by a newline
+character and each coordinate separated by a white space. \cgal
+provides functions to read such a format:
+
+- `read_xyz_points()`
+- `read_xyz_points_and_normals()`
+
+Points may also be stored in an 'off' container, for which we also
+provide functions:
+
+- `read_off_points()`
+- `read_off_points_and_normals()`
+
+Using these functions is pretty straightforward, as can be seen on the
+following example:
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Reading input
+
+\section TutorialsReconstruction_preprocessing Preprocessing
+
+Because reconstruction algorithms have some specific requirements that
+point clouds do not always meet, some preprocessing might be necessary
+to get the best results.
+
+Note that this _preprocessing_ step is optional: when the input point
+cloud has no imperfections, reconstruction can be applied to it
+without any preprocessing.
+
+
+\cgalFigureBegin{TutorialsReconstructionFigPreprocessing, reconstruction_preproc.png}
+
+__Comparison of advancing front reconstruction output using different
+preprocessing on the same input (point set, mesh and mesh without
+edges).__
+
+From top to bottom: unaltered point cloud; smoothed point cloud (jet
+smoothing); simplified point cloud (grid simplification).
+
+\cgalFigureEnd
+
+
+\subsection TutorialsReconstruction_preprocessing_outliers Outlier removal
+
+Some acquisition techniques generate points which are far away from the
+surface have no relevance for reconstruction. They are usually
+referred to as 'outliers'. Using the \cgal reconstruction algorithms
+on outlier-ridden point clouds produce overly distorted output, it is
+therefore strongly advised to filter these outliers _before_
+performing reconstruction.
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Outlier removal
+
+\subsection TutorialsReconstruction_preprocessing_simplification Simplification
+
+Some laser scanners generate points with widely variable
+sampling. Typically, lines of scan are very densely sampled but the
+gap between two lines of scan is much larger, leading to an overly
+massive point cloud with large variations of sampling density. This
+type of input point cloud might generate imperfect output using
+algorithms which, in general, only handle small variations of sampling
+density.
+
+\cgal provides several simplification algorithms. In addition to
+reducing the size of the input and therefore decreasing computation
+time, some of them can help making the input more uniform. This is the
+case of the function `grid_simplify_point_set()` which defines a grid
+of a user-specified size and only keeps one point per cell.
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Simplification
+
+
+\subsection TutorialsReconstruction_preprocessing_smoothing Smoothing
+
+Although reconstructions via 'Poisson' or 'Scale space' handle noise
+internally, one may want to get tighter control over the smoothing
+step. For example, a slightly noisy point cloud can benefit from some
+reliable smoothing algorithms and be reconstructed via 'Advancing
+front' which provides interesting output properties (oriented mesh
+with boundaries).
+
+Two functions are provided to smooth a noisy point cloud with a good
+approximation (i.e. without degrading curvature, for example):
+
+- `jet_smooth_point_set()`
+- `bilateral_smooth_point_set()`
+
+These functions directly modify the container:
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Smoothing
+
+
+\subsection TutorialsReconstruction_preprocessing_normal Normal Estimation
+
+\ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
+requires points with oriented normal vectors. To apply the algorithm
+to a raw point cloud, normals must be estimated first, for example
+with one of these two functions:
+
+- `pca_estimate_normals()`
+- `jet_estimate_normals()`
+
+PCA is faster but jet is more accurate in the presence of high
+curvatures. These function only estimates the _direction_ of the
+normals, not their orientation (the orientation of the vectors might
+not be locally consistent). To properly orient the normals, the
+function `mst_orient_normals()` can be used. Notice that it can also
+be used directly on input normals if their orientation is not
+consistent.
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Normal estimation
+
+\section TutorialsReconstruction_reconstruction Reconstruction
+
+\subsection TutorialsReconstruction_reconstruction_poisson Poisson
+
+Poisson reconstruction consists in computing an indicator function
+whose gradient matches the input normal vector field: this indicator
+function has opposite signs inside and outside of the inferred shape
+(hence the need for closed shapes). This method thus requires normals
+and produces smooth closed surfaces. It is not appropriate if the
+surface is expected to interpolate the input points. On the contrary,
+it performs well if the aim is to approximate a noisy point cloud with
+a smooth surface.
+
+Notice that it does not generate directly a mesh but computes an
+_implicit function_ (which can later be used to generate a mesh):
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Poisson reconstruction
+
+To produce a mesh out of this implicit function, the
+\ref Chapter_3D_Surface_Mesh_Generation "CGAL Surface Mesh Generator"
+\cgalCite{cgal:ry-gsddrm-06} can be used:
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Surface mesh generation
+
+
+\subsection TutorialsReconstruction_reconstruction_advancing Advancing Front
+
+Advancing front is a Delaunay-based approach which interpolates a
+subset of the input points. It generates triples of point indices
+which describe the triangular facets of the reconstruction: it uses a
+priority queue to sequentially pick the Delaunay facet the most likely
+to be part of the surface, based on a size criterion (to favor the
+small facets) and an angle criterion (to favor smoothness). Its main
+asset is to generate oriented manifold surfaces with boundaries:
+contrary to Poisson, it does not require normals and is not bound to
+reconstruct closed shapes. However, it requires preprocessing if the
+point cloud is noisy.
+
+The \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front"
+package provides several ways of constructing the function. Here is
+a simple example:
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Advancing front reconstruction
+
+\subsection TutorialsReconstruction_reconstruction_scale_space Scale Space
+
+Scale space reconstruction aims at producing a surface which
+interpolates the input points (interpolant) while offering some
+robustness to noise. More specifically, it first applies several times
+a smoothing filter to the input point set to produce a scale space;
+then, the smoothest scale is meshed using an alpha shape; finally, the
+resulting connectivity between smoothed points is propagated to the
+original raw input point set. This method is the right choice if the
+input point cloud is noisy but the user still wants the surface to
+pass exactly through the points.
+
+Note that although there is an option to force the output to be
+manifold, it is not guaranteed to be orientable (contrary to _Poisson_
+and _Advancing front_).
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Scale space reconstruction
+
+
+
+\section TutorialsReconstruction_postprocessing Output and Postprocessing
+
+Each of these methods produce a triangle mesh stored in different
+ways. If this output mesh is hampered by defects such as holes or
+self-intersections, \cgal provide several algorithms to post-process
+it (hole filling, remeshing, etc.) in the package \ref
+Chapter_PolygonMeshProcessing "Polygon Mesh Processing".
+
+We do not discuss these functions here as there are many
+postprocessing possibilities whose relevance strongly depends on the
+user's expectations on the output mesh.
+
+The mesh (postprocessed or not) can easily be saved in the OFF format:
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output poisson
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output advancing front
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output scale space
+
+\section TutorialsReconstruction_recap Full Code Example
+
+All the code snippets used in this tutorial can be assembled to create
+a full algorithm pipeline (provided the correct _includes_ are
+used). We give a full code example which achieves all the steps
+described in this tutorial. The reconstruction method can be selected
+by the user at runtime with the second argument.
+
+\include Poisson_surface_reconstruction_3/tutorial_example.cpp
+
+\section TutorialsReconstruction_pipeline Full Pipeline Images
+
+The following figure an example of a full reconstruction pipeline
+applied to a bear statue (courtesy _EPFL Computer Graphics and
+Geometry Laboratory_ \cgalCite{cgal:e-esmr}). Two mesh processing
+algorithms (hole filling and isotropic remeshing) are also applied
+(refer to the chapter \ref Chapter_PolygonMeshProcessing "Polygon Mesh Processing"
+for more information).
+
+\cgalFigureBegin{TutorialsReconstructionFigPipeline, reconstruction_pipeline.png}
+
+__Full reconstruction pipeline (with close-ups).__
+
+From top-left to bottom-right: unaltered noisy point cloud; grid
+simplification; jet smoothing; advancing front surface
+reconstruction; hole filling; isotropic remeshing.
+
+\cgalFigureEnd
+
+
+
+*/
