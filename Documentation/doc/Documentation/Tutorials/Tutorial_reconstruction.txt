@@ -103,6 +103,19 @@ Note that this _preprocessing_ step is optional: when the input point
 cloud has no imperfections, reconstruction can be applied to it
 without any preprocessing.
 
+
+\cgalFigureBegin{TutorialsReconstructionFigPreprocessing, reconstruction_preproc.png}
+
+__Comparison of advancing front reconstruction output using different
+preprocessing on the same input (point set, mesh and mesh without
+edges).__
+
+From top to bottom: unaltered point cloud; smoothed point cloud (jet
+smoothing); simplified point cloud (grid simplification).
+
+\cgalFigureEnd
+
+
 \subsection TutorialsReconstruction_preprocessing_outliers Outlier removal
 
 Some acquisition techniques generate points which are far away from the
@@ -173,7 +186,6 @@ consistent.
 
 \snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Normal estimation
 
-
 \section TutorialsReconstruction_reconstruction Reconstruction
 
 \subsection TutorialsReconstruction_reconstruction_poisson Poisson
@@ -230,7 +242,7 @@ original raw input point set. This method is the right choice if the
 input point cloud is noisy but the user still wants the surface to
 pass exactly through the points.
 
-Notice that although there is an option to force the output to be
+Note that although there is an option to force the output to be
 manifold, it is not guaranteed to be orientable (contrary to _Poisson_
 and _Advancing front_).
 
