@@ -66,7 +66,6 @@ class Alpha_shape_2 : public Dt
 public:
   typedef Dt Triangulation;
   typedef typename Dt::Geom_traits Gt;
-  typedef typename Gt::Compute_squared_radius_2 Compute_squared_radius_2;
   typedef typename Dt::Triangulation_data_structure Tds;
 
   typedef typename internal::Alpha_nt_selector_2<Gt,ExactAlphaComparisonTag>::Type_of_alpha Type_of_alpha;
@@ -715,11 +714,11 @@ private:
   
   bool is_attached(const Face_handle& f, int i) const 
     {
-      Bounded_side b = 
-	Gt().side_of_bounded_circle_2_object()(f->vertex(cw(i))->point(),
-					       f->vertex(ccw(i))->point(),
-					       f->vertex(i)->point());
- 
+      Bounded_side b =
+        this->geom_traits().side_of_bounded_circle_2_object()(f->vertex(cw(i))->point(),
+                                                              f->vertex(ccw(i))->point(),
+                                                              f->vertex(i)->point());
+
       return (b == ON_BOUNDED_SIDE) ? true : false;
     }
   
@@ -728,16 +727,16 @@ private:
   Type_of_alpha squared_radius(const Face_handle& f) const 
     {
       return 
-        Compute_squared_radius_2()(f->vertex(0)->point(),
-					       f->vertex(1)->point(),
-					       f->vertex(2)->point());
+        this->geom_traits().compute_squared_radius_2_object()(f->vertex(0)->point(),
+                                                              f->vertex(1)->point(),
+                                                              f->vertex(2)->point());
     }
 
   Type_of_alpha squared_radius(const Face_handle& f, int i) const 
     {
       return 
-        Compute_squared_radius_2()(f->vertex(ccw(i))->point(),
-					       f->vertex(cw(i))->point());
+        this->geom_traits().compute_squared_radius_2_object()(f->vertex(ccw(i))->point(),
+                                                              f->vertex(cw(i))->point());
     }
 
   //---------------------------------------------------------------------
