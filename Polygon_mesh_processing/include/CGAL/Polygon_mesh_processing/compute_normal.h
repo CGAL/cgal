@@ -229,25 +229,23 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
                       )
 {
   using boost::choose_param;
+  using boost::get_param;
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GT::Vector_3 Vector;
+  typedef typename GT::FT       FT;
   GT traits = choose_param(get_param(np, CGAL::geom_traits), GT());
 
-  typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap DefaultMap;
-  typedef typename boost::lookup_named_param_def <
-    CGAL::face_normal_t,
-    NamedParameters,
-    DefaultMap> ::type FaceNormalMap;
-  FaceNormalMap fnmap = choose_param(get_param(np, face_normal), DefaultMap());
-  bool fnmap_valid
-    = !boost::is_same<FaceNormalMap,
-                      DefaultMap
-                     >::value;
+  //VertexPointMap
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
+  VPMap vpmap = choose_param(get_param(np, vertex_point),
+                             get_const_property_map(vertex_point, pmesh));
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typename GT::Construct_vector_3 vector_3 = traits.construct_vector_3_object();
+  typename GT::Compute_squared_length_3 sqlen = traits.compute_squared_length_3_object();
 
-  Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
+  Vector normal = vector_3(CGAL::NULL_VECTOR);
 
   halfedge_descriptor he = halfedge(v, pmesh);
   // handle isolated vertices
@@ -257,9 +255,15 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   {
     if (!is_border(he, pmesh))
     {
-      Vector n = fnmap_valid ? get(fnmap, face(he, pmesh))
-                             : compute_face_normal(face(he, pmesh), pmesh, np);
-      normal = traits.construct_sum_of_vectors_3_object()(normal, n);
+      Vector v1 = vector_3(get(vpmap, v /*target(he, pmesh)*/),
+                           get(vpmap, source(he, pmesh)));
+      Vector v2 = vector_3(get(vpmap, v /*target(he, pmesh)*/),
+                           get(vpmap, target(next(he, pmesh), pmesh)));
+      //v(i) and v(i+1) must me seen in ccw order, from v, so we reverse v1 and v2
+      Vector ni = traits.construct_cross_product_vector_3_object()(v2, v1);
+      ni = traits.construct_scaled_vector_3_object()(ni, CGAL::sqrt(1./(sqlen(v1)*sqlen(v2))));
+
+      normal = traits.construct_sum_of_vectors_3_object()(normal, ni);
     }
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
