@@ -13,6 +13,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <QObject>
 #include <QApplication>
@@ -901,4 +902,56 @@ void Scene_points_with_normal_item::itemAboutToBeDestroyed(Scene_item *item)
     delete d->m_points;
     d->m_points = NULL;
   }
+}
+
+void Scene_points_with_normal_item::
+zoomToPosition(const QPoint &, CGAL::Three::Viewer_interface *viewer) const
+{
+  if (point_set()->nb_selected_points() == 0)
+    return;
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  // fit plane to triangles
+  Point_set points;
+  Bbox selected_points_bbox;
+  for(Point_set::const_iterator it = point_set()->first_selected();
+      it != point_set()->end();
+      ++it)
+  {
+    points.insert(point_set()->point(*it));
+    selected_points_bbox += point_set()->point(*it).bbox();
+  }
+  Kernel::Plane_3 plane;
+  Kernel::Point_3 center_of_mass;
+  CGAL::linear_least_squares_fitting_3
+      (points.points().begin(),points.points().end(),plane, center_of_mass,
+       CGAL::Dimension_tag<0>());
+
+  Kernel::Vector_3 plane_normal= plane.orthogonal_vector();
+  plane_normal = plane_normal/(CGAL::sqrt(plane_normal.squared_length()));
+  Kernel::Point_3 centroid(center_of_mass.x() + offset.x,
+                           center_of_mass.y() + offset.y,
+                           center_of_mass.z() + offset.z);
+
+  qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
+                                        qglviewer::Vec(-plane_normal.x(), -plane_normal.y(), -plane_normal.z()));
+  double max_side = (std::max)((std::max)(selected_points_bbox.xmax() - selected_points_bbox.xmin(),
+                                          selected_points_bbox.ymax() - selected_points_bbox.ymin()),
+                               selected_points_bbox.zmax() - selected_points_bbox.zmin());
+  //put the camera in way we are sure the longest side is entirely visible on the screen
+  //See openGL's frustum definition
+  double factor = max_side/(tan(viewer->camera()->aspectRatio()/
+                                  (viewer->camera()->fieldOfView()/2)));
+
+  Kernel::Point_3 new_pos = centroid + factor*plane_normal ;
+  viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(),
+                                                  centroid.y(),
+                                                  centroid.z()));
+  viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
+                                                                 .arg(new_pos.y())
+                                                                 .arg(new_pos.z())
+                                                                 .arg(new_orientation[0])
+                                                                 .arg(new_orientation[1])
+                                                                 .arg(new_orientation[2])
+                                                                 .arg(new_orientation[3]));
+
 }

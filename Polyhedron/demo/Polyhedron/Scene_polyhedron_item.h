@@ -25,8 +25,8 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
         : public CGAL::Three::Scene_item,
           public CGAL::Three::Scene_zoomable_item_interface{
     Q_OBJECT
-  Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
+    Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
     enum STATS {
       NB_VERTICES = 0,
