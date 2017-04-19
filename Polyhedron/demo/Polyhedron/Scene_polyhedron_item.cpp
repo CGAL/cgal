@@ -1597,6 +1597,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
   if(aabb_tree) {
     //find clicked facet
     bool found = false;
+
     const Kernel::Point_3 ray_origin(viewer->camera()->position().x, viewer->camera()->position().y, viewer->camera()->position().z);
     qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
     qglviewer::Vec dir = point_under - viewer->camera()->position();
@@ -1861,11 +1862,13 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
 
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(aabb_tree) {
+
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     //find clicked facet
     bool found = false;
-    const Kernel::Point_3 ray_origin(viewer->camera()->position().x,
-                                     viewer->camera()->position().y,
-                                     viewer->camera()->position().z);
+    const Kernel::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
+                                     viewer->camera()->position().y - offset.y,
+                                     viewer->camera()->position().z - offset.z);
     qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
     qglviewer::Vec dir = point_under - viewer->camera()->position();
     const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
@@ -1932,7 +1935,9 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
 
           ++total;
         }
-        Kernel::Point_3 centroid(x/total, y/total, z/total);
+        Kernel::Point_3 centroid(x/total + offset.x,
+                                 y/total + offset.y,
+                                 z/total + offset.z);
 
         qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
                                               qglviewer::Vec(-face_normal.x(), -face_normal.y(), -face_normal.z()));
@@ -1943,8 +1948,10 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
         double factor = max_side/(tan(viewer->camera()->aspectRatio()/
                                         (viewer->camera()->fieldOfView()/2)));
 
-        Kernel::Point_3 new_pos = centroid + factor*face_normal;
-        viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(), centroid.y(), centroid.z()));
+        Kernel::Point_3 new_pos = centroid + factor*face_normal ;
+        viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(),
+                                                        centroid.y(),
+                                                        centroid.z()));
         viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
                                                                        .arg(new_pos.y())
                                                                        .arg(new_pos.z())
