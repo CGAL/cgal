@@ -475,7 +475,39 @@ radical_axisC2(const RT &px, const RT &py, const We &pw,
        +RT(pw) - RT(qw);
 }
 
+template< class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+squared_radius_orthogonal_circleC2(const FT &px, const FT &py, const FT &pw,
+                                   const FT &qx, const FT &qy, const FT &qw,
+                                   const FT &rx, const FT &ry, const FT &rw)
+{
+  FT FT4(4);
+  FT dpx = px - rx;
+  FT dpy = py - ry;
+  FT dqx = qx - rx;
+  FT dqy = qy - ry;
+  FT dpp = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pw + rw;
+  FT dqq = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qw + rw;
 
+  FT det0 = determinant(dpx, dpy, dqx, dqy);
+  FT det1 = determinant(dpp, dpy, dqq, dqy);
+  FT det2 = determinant(dpx, dpp, dqx, dqq);
+
+  return (CGAL_NTS square(det1) + CGAL_NTS square(det2)) /
+                                  (FT4 * CGAL_NTS square(det0)) - rw;
+}
+
+template< class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+squared_radius_smallest_orthogonal_circleC2(const FT &px, const FT &py, const FT &pw,
+                                            const FT &qx, const FT &qy, const FT &qw)
+{
+  FT FT4(4);
+  FT dpz = CGAL_NTS square(px - qx) + CGAL_NTS square(py - qy);
+  return (CGAL_NTS square(dpz - pw + qw) / (FT4 * dpz) - qw);
+}
 
 } //namespace CGAL
 

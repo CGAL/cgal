@@ -69,6 +69,13 @@ _test_fct_weighted_point_2(const R& )
   CGAL::Weighted_point_2<R> wp8_b( p8, 6);
   CGAL::Weighted_point_2<R> wp10_b( p10, -8);
 
+  CGAL::Point_2<R> p_00(RT(0), RT(0) ); // 0, 0
+  CGAL::Point_2<R> p_10(RT(4), RT(0), RT(1) ); // 4,0
+  CGAL::Point_2<R> p_01(RT(0), RT(5), RT(1) ); // 0,5
+  CGAL::Weighted_point_2<R> wp_00( p_00, RT(0) );
+  CGAL::Weighted_point_2<R> wp_10( p_10, RT(16) );
+  CGAL::Weighted_point_2<R> wp_01( p_01, RT(25) );
+
   assert( CGAL::compare_power_distance(p1, wp1, wp1) == CGAL::compare_distance(p1, p1, p1));
   assert( CGAL::compare_power_distance(p1, wp2, wp4) == CGAL::compare_distance(p1, p2, p4));
 
@@ -108,6 +115,22 @@ _test_fct_weighted_point_2(const R& )
   assert(power_side_of_oriented_power_circle(wp1_b, wp4_b, wp5_b, wp10_b) == CGAL::ON_POSITIVE_SIDE );
   assert(power_side_of_oriented_power_circle(wp1_b, wp4_b, wp5_b, wp5_b) == CGAL::ON_ORIENTED_BOUNDARY );
   assert(power_side_of_oriented_power_circle(wp1_b, wp4_b, wp5_b, wp6_b) == CGAL::ON_NEGATIVE_SIDE );
+
+  std::cout << ".";
+
+  assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1) == RT(0) );
+  assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1_b) == -wp1_b.weight() );
+
+  std::cout << CGAL::squared_radius_smallest_orthogonal_circle(wp1_b, wp3_b) << std::endl;
+
+  assert( CGAL::squared_radius_smallest_orthogonal_circle(wp3, wp8) == RT(1) );
+  assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1_b, wp3_b) == RT(-3));
+
+  std::cout << CGAL::weighted_circumcenter(wp_00, wp_10, wp_01) << std::endl;
+
+  assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1, wp3, wp5)
+            == CGAL::squared_radius(p1, p3, p5));
+  assert( CGAL::squared_radius_smallest_orthogonal_circle(wp_00, wp_10, wp_01) == RT(0));
 
   std::cout << "done" << std::endl;
   return true;

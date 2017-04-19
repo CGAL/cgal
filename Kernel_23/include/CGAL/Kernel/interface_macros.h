@@ -300,6 +300,8 @@ CGAL_Kernel_cons(Construct_weighted_circumcenter_3,
 		 construct_weighted_circumcenter_3_object)
 CGAL_Kernel_cons(Compute_power_product_3,
                  compute_power_product_3_object)
+CGAL_Kernel_cons(Compute_squared_radius_smallest_orthogonal_circle_2,
+                 compute_squared_radius_smallest_orthogonal_circle_2_object)
 CGAL_Kernel_cons(Compute_squared_radius_smallest_orthogonal_sphere_3,
                  compute_squared_radius_smallest_orthogonal_sphere_3_object)
 CGAL_Kernel_cons(Compute_power_distance_to_power_sphere_3,

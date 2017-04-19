@@ -387,6 +387,14 @@ test_new_2(const R& rep)
      tmp23b = Compute_squared_radius(p3, p4);
      tmp23b = Compute_squared_radius(p3, p4, p5);
 
+  typename R::Compute_squared_radius_smallest_orthogonal_circle_2
+         compute_squared_radius_smallest_orthogonal_circle
+      = rep.compute_squared_radius_smallest_orthogonal_circle_2_object();
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4);
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4, wp5);
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4, wp5, wp6);
+  (void) tmp23b;
+
   typename R::Equal_2 equal
         = rep.equal_2_object();
   bool tmp24 = equal(p2,p3);

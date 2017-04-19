@@ -321,6 +321,7 @@
 - `Kernel::ComputeSquaredLengthDividedByPiSquare_3`
 - `Kernel::ComputeSquaredRadius_2`
 - `Kernel::ComputeSquaredRadius_3`
+- `Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2`
 - `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
 - `Kernel::ComputeVolume_3`
 - `Kernel::ComputeWeight_2`

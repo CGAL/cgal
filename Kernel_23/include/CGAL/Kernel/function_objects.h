@@ -539,6 +539,37 @@ public:
 
 
 template < typename K >
+class Compute_squared_radius_smallest_orthogonal_circle_2
+{
+public:
+  typedef typename K::Weighted_point_2               Weighted_point_2;
+  typedef typename K::FT                             FT;
+
+  typedef FT                                         result_type;
+
+  FT operator()(const Weighted_point_2& p,
+                const Weighted_point_2& q,
+                const Weighted_point_2& r) const
+  {
+    return squared_radius_orthogonal_circleC2(p.x(), p.y(), p.weight(),
+                                              q.x(), q.y(), q.weight(),
+                                              r.x(), r.y(), r.weight());
+  }
+
+  FT operator()(const Weighted_point_2& p,
+                const Weighted_point_2& q) const
+  {
+    return squared_radius_smallest_orthogonal_circleC2(p.x(), p.y(), p.weight(),
+                                                       q.x(), q.y(), q.weight());
+  }
+
+  FT operator()(const Weighted_point_2& p) const
+  {
+    return - p.weight();
+  }
+};
+
+template < typename K >
 class Compute_squared_radius_smallest_orthogonal_sphere_3
 {
 public:

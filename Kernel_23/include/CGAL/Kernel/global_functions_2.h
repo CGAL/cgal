@@ -1071,6 +1071,33 @@ squared_radius(const Point_2<K>& p, const Point_2<K>& q, const Point_2<K>& r)
 
 template < class K >
 inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p,
+                                          const Weighted_point_2<K> &q)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, q, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p,
+                                          const Weighted_point_2<K> &q,
+                                          const Weighted_point_2<K> &r)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, q, r, K());
+}
+
+template < class K >
+inline
 typename K::Point_2
 weighted_circumcenter(const Weighted_point_2<K> &p,
                       const Weighted_point_2<K> &q,

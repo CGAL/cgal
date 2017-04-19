@@ -528,6 +528,11 @@ public:
   typedef unspecified_type Compute_squared_radius_2; 
 
   /*!
+    a model of `Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2`
+  */
+  typedef unspecified_type Compute_squared_radius_smallest_orthogonal_circle_2;
+
+  /*!
     a model of `Kernel::ComputeArea_2` 
   */ 
   typedef unspecified_type Compute_area_2; 
