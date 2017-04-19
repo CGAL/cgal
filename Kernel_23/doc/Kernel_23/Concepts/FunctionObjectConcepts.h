@@ -9151,7 +9151,7 @@ public:
 
   /*!
     returns the sign of the power test of `t` with respect
-    to the smallest sphere orthogonal to `p`, and `q`.
+    to the smallest sphere orthogonal to `p` and `q`.
 
     \pre `p` and `q` have different bare points.
   */
