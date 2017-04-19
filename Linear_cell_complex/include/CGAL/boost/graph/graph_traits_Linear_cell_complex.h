@@ -540,12 +540,14 @@ num_faces(const CGAL_LCC_TYPE& lcc)
 { return lcc.template attributes<2>().size(); }
   
 CGAL_LCC_TEMPLATE_ARGS
-void reserve(CGAL_LCC_TYPE& /*g*/,
-             typename boost::graph_traits<CGAL_LCC_TYPE>::vertices_size_type /*nv*/,
-             typename boost::graph_traits<CGAL_LCC_TYPE>::edges_size_type /*ne*/,
-             typename boost::graph_traits<CGAL_LCC_TYPE>::faces_size_type /*nf*/)
+void reserve(CGAL_LCC_TYPE& g,
+             typename boost::graph_traits<CGAL_LCC_TYPE>::vertices_size_type nv,
+             typename boost::graph_traits<CGAL_LCC_TYPE>::edges_size_type ne,
+             typename boost::graph_traits<CGAL_LCC_TYPE>::faces_size_type nf)
 {
-  // TODO
+  g.template attributes<0>().reserve(nv);
+  g.darts().reserve(2*ne);
+  g.template attributes<2>().reserve(nf);
 }
 
 CGAL_LCC_TEMPLATE_ARGS
