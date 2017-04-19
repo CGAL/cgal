@@ -1245,10 +1245,6 @@ namespace CGAL {
     }
 
     /** Test if the map is valid.
-     * @param reverseextremity to inverse the convention between source and
-     *        target of a dart. With false (default), a dart is associated with
-     *        a 0-attribute for its source (origin);
-     *        with true this is for its target (as in hds or surface mesh).
      * @return true iff the map is valid.
      */
     bool is_valid() const
