@@ -280,5 +280,25 @@ by the user at runtime with the second argument.
 
 \include Poisson_surface_reconstruction_3/tutorial_example.cpp
 
+\section TutorialsReconstruction_pipeline Full Pipeline Images
+
+The following figure an example of a full reconstruction pipeline
+applied to a bear statue (courtesy _EPFL Computer Graphics and
+Geometry Laboratory_ \cgalCite{cgal:e-esmr}). Two mesh processing
+algorithms (hole filling and isotropic remeshing) are also applied
+(refer to the chapter \ref Chapter_PolygonMeshProcessing "Polygon Mesh Processing"
+for more information).
+
+\cgalFigureBegin{TutorialsReconstructionFigPipeline, reconstruction_pipeline.png}
+
+__Full reconstruction pipeline (with close-ups).__
+
+From top-left to bottom-right: unaltered noisy point cloud; grid
+simplification; jet smoothing; advancing front surface
+reconstruction; hole filling; isotropic remeshing.
+
+\cgalFigureEnd
+
+
 
 */
