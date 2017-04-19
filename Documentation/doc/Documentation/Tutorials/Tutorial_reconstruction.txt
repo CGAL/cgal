@@ -1,3 +1,8 @@
+namespace CGAL {
+/*!
+\example Poisson_surface_reconstruction_3/tutorial_example.cpp
+*/
+
 /*!
 
 \page tuto_reconstruction Surface Reconstruction
@@ -304,5 +309,5 @@ reconstruction; hole filling; isotropic remeshing.
 \cgalFigureEnd
 
 
-
 */
+}
