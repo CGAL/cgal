@@ -1,4 +1,5 @@
-// Copyright (c) 2016  GeometryFactory (France).  All rights reserved.
+// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,9 +15,8 @@
 // $URL$
 // $Id$
 //
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-// Author(s)     : Guillaume Damiand
-
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_H
 

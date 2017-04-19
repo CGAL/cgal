@@ -17,7 +17,6 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-
 #ifndef CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_H
 #define CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_H
 
