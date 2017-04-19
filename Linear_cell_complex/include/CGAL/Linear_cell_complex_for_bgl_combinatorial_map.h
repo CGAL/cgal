@@ -56,106 +56,10 @@ namespace CGAL {
              class Storage_ = CMap_linear_cell_complex_storage_1<d_, ambient_dim,
                                                                  Traits_, Items_,
                                                                  Alloc_> >
-    class Linear_cell_complex_for_bgl_combinatorial_map:
-        public Linear_cell_complex_for_combinatorial_map
+  using Linear_cell_complex_for_bgl_combinatorial_map=
+    Linear_cell_complex_for_combinatorial_map
                                        <d_, ambient_dim, Traits_,
-                                        Items_, Alloc_, CMap, Storage_>
-    {
-    public:
-      typedef Linear_cell_complex_for_bgl_combinatorial_map<d_, ambient_dim,
-                          Traits_, Items_, Alloc_, CMap, Storage_>  Self;
-
-      typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
-                          Traits_, Items_, Alloc_, CMap, Storage_> Base;
-
-      typedef Traits_ Traits;
-      typedef Items_  Items;
-      typedef Alloc_  Alloc;
-
-      static const unsigned int ambient_dimension = Base::ambient_dimension;
-      static const unsigned int dimension = Base::dimension;
-
-      typedef typename Base::Dart_handle       Dart_handle;
-      typedef typename Base::Dart_const_handle Dart_const_handle;
-      typedef typename Base::Helper            Helper;
-
-      typedef typename Base::Point  Point;
-      typedef typename Base::Vector Vector;
-      typedef typename Base::FT     FT;
-
-      typedef typename Base::Dart_range Dart_range;
-
-      typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
-      typedef typename Base::template Attribute_handle<0>::type
-      Vertex_attribute_handle;
-      typedef typename Base::template Attribute_const_handle<0>::type
-      Vertex_attribute_const_handle;
-
-      typedef typename Base::template Attribute_range<0>::type
-      Vertex_attribute_range;
-      typedef typename Base::template Attribute_const_range<0>::type
-      Vertex_attribute_const_range;
-
-      typedef typename Base::template Attribute_type<2>::type Face_attribute;
-      typedef typename Base::template Attribute_handle<2>::type
-      Face_attribute_handle;
-      typedef typename Base::template Attribute_const_handle<2>::type
-      Face_attribute_const_handle;
-
-      typedef typename Base::template Attribute_range<2>::type
-      Face_attribute_range;
-      typedef typename Base::template Attribute_const_range<2>::type
-      Face_attribute_const_range;
-
-      typedef typename Base::size_type size_type;
-
-      typedef typename Base::Use_index Use_index;
-      typedef typename Base::Storage Storage;
-      typedef typename Base::Exception_no_more_available_mark
-      Exception_no_more_available_mark;
-
-      Linear_cell_complex_for_bgl_combinatorial_map() : Base()
-      {}
-
-      /** Copy the given linear cell complex into *this.
-       *  Note that both LCC can have different dimensions and/or non void attributes.
-       *  @param alcc the linear cell complex to copy.
-       *  @post *this is valid.
-       */
-      Linear_cell_complex_for_bgl_combinatorial_map(const Self& alcc) : Base(alcc)
-      {}
-
-      template < class LCC2 >
-      Linear_cell_complex_for_bgl_combinatorial_map(const LCC2& alcc) : Base(alcc)
-      {}      
-
-      template < class LCC2, typename Converters >
-      Linear_cell_complex_for_bgl_combinatorial_map(const LCC2& alcc,
-                                                    Converters& converters) :
-        Base(alcc, converters)
-      {}
-
-      template < class LCC2, typename Converters, typename DartInfoConverter >
-      Linear_cell_complex_for_bgl_combinatorial_map(const LCC2& alcc,
-                                                    Converters& converters,
-                                                    const DartInfoConverter&
-                                                    dartinfoconverter) :
-        Base(alcc, converters, dartinfoconverter)
-      {}
-
-      template < class LCC2, typename Converters, typename DartInfoConverter,
-                 typename PointConverter >
-      Linear_cell_complex_for_bgl_combinatorial_map(const LCC2& alcc,
-                                                    Converters& converters,
-                                                    const DartInfoConverter&
-                                                    dartinfoconverter,
-                                                    const PointConverter&
-                                                    pointconverter) :
-        Base(alcc, converters, dartinfoconverter, pointconverter)
-      {}
-
-    };
-
+                                        Items_, Alloc_, CMap, Storage_>;
 } // namespace CGAL
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_H //
