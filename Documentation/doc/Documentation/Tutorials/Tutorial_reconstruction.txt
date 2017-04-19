@@ -61,8 +61,8 @@ respective manual pages and in section \ref TutorialsReconstruction_reconstructi
 
 This tutorial aims at providing a more comprehensive view of the
 possibilities offered by \cgal for treating point clouds for surface
-reconstruction purposes. The following diagram shows an overview of
-typical reconstruction steps using \cgal tools.
+reconstruction purposes. The following diagram shows an overview (not
+exhaustive) of typical reconstruction steps using \cgal tools.
 
 
 \image html reconstruction.png "Pipeline Overview" 
@@ -75,21 +75,25 @@ We now review some of these steps in more details.
 The reconstruction algorithms in \cgal take a range of iterators on a
 container as input and use property maps to access the points (and the
 normals if they are needed). Points are typically stored in plain text
-format (denoted as 'xyz' format), each point separated by a newline
-character and each coordinate separated by a white space. \cgal
-provides functions to read such a format:
+format (denoted as 'XYZ' format), each point separated by a newline
+character and each coordinate separated by a white space. Other
+formats available are 'OFF' and 'PLY'. \cgal provides functions to
+read such formats:
 
 - `read_xyz_points()`
 - `read_xyz_points_and_normals()`
-
-Points may also be stored in an 'off' container, for which we also
-provide functions:
-
 - `read_off_points()`
 - `read_off_points_and_normals()`
+- `read_ply_points()`
+- `read_ply_points_and_normals()`
 
-Using these functions is pretty straightforward, as can be seen on the
-following example:
+\cgal also provides a dedicated container `CGAL::Point_set_3` to
+handle point sets with additional properties such as normal
+vectors. In that case, property maps are easily handled as shown in
+the following sections. This structure also handles the stream
+operator to read point sets in any of the formats previously
+described. Using this method is pretty straightforward, as can be seen
+on the following example:
 
 \snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Reading input
 
