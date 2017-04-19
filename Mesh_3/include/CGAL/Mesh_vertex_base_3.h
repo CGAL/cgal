@@ -32,7 +32,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 
-#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/internal/Mesh_3/get_index.h>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
@@ -102,7 +102,7 @@ protected:
 // to the 3D input complex.
 template<class GT,
          class MD,
-         class Vb = Triangulation_vertex_base_3<GT> >
+         class Vb = Regular_triangulation_vertex_base_3<GT> >
 class Mesh_vertex_base_3
 : public Vb,
   public Mesh_vertex_base_3_base<

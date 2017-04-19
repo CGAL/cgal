@@ -12,17 +12,12 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Julia Floetotto
 
 #ifndef CGAL_INTERPOLATION_GRADIENT_FITTING_TRAITS_2_H
 #define CGAL_INTERPOLATION_GRADIENT_FITTING_TRAITS_2_H
 
 #include <CGAL/license/Interpolation.h>
-
 
 #include <CGAL/aff_transformation_tags.h>
 
@@ -44,14 +39,14 @@ public:
 
   Aff_transformation_2
   operator()(const Aff_transformation_2& tr1,
-	     const Aff_transformation_2& tr2) const
+             const Aff_transformation_2& tr2) const
   {
     return Aff_transformation_2(tr1.m(0,0) + tr2.m(0,0),
-				 tr1.m(0,1) + tr2.m(0,1),
-				 tr1.m(0,2) + tr2.m(0,2),
-				 tr1.m(1,0) + tr2.m(1,0),
-				 tr1.m(1,1) + tr2.m(1,1),
-				 tr1.m(1,2) + tr2.m(1,2));
+                                tr1.m(0,1) + tr2.m(0,1),
+                                tr1.m(0,2) + tr2.m(0,2),
+                                tr1.m(1,0) + tr2.m(1,0),
+                                tr1.m(1,1) + tr2.m(1,1),
+                                tr1.m(1,2) + tr2.m(1,2));
   }
 };
 
@@ -91,8 +86,9 @@ public:
   Aff_transformation_2
   operator()(const Vector_2& v) const
   {
-    return Aff_transformation_2(v.x()*v.x(),v.x()*v.y(),v.x()*v.y(),
-				v.y()*v.y());
+    return Aff_transformation_2(v.x()*v.x(),
+                                v.x()*v.y(), v.x()*v.y(),
+                                v.y()*v.y());
   }
 };
 
@@ -116,41 +112,41 @@ public:
   typedef typename Rep::Aff_transformation_2         Aff_transformation_d;
 
   typedef Construct_null_matrix_2<Aff_transformation_d>
-                                                     Construct_null_matrix_d;
+      Construct_null_matrix_d;
   typedef Construct_scaling_matrix_2<Aff_transformation_d>
-                                                     Construct_scaling_matrix_d;
+      Construct_scaling_matrix_d;
   typedef Construct_sum_matrix_2<Aff_transformation_d> Construct_sum_matrix_d;
   typedef Construct_outer_product_2<Rep>             Construct_outer_product_d;
 
 
   Construct_outer_product_d
   construct_outer_product_d_object() const
-    {return Construct_outer_product_d();}
+  {return Construct_outer_product_d();}
 
   Construct_sum_matrix_d
   construct_sum_matrix_d_object() const
-    {return Construct_sum_matrix_d();}
+  {return Construct_sum_matrix_d();}
 
   Construct_scaling_matrix_d
   construct_scaling_matrix_d_object() const
-    {return Construct_scaling_matrix_d();}
+  {return Construct_scaling_matrix_d();}
 
   Construct_null_matrix_d
   construct_null_matrix_d_object() const
-    {return Construct_null_matrix_d();}
+  {return Construct_null_matrix_d();}
 
   //also in the traits without gradient computation:
   Construct_scaled_vector_d
   construct_scaled_vector_d_object()const
-    {return Construct_scaled_vector_d();}
+  {return Construct_scaled_vector_d();}
 
   Construct_vector_d
   construct_vector_d_object()const
-    {return Construct_vector_d();}
+  {return Construct_vector_d();}
 
   Compute_squared_distance_d
   compute_squared_distance_d_object()const
-    {return Compute_squared_distance_d();}
+  {return Compute_squared_distance_d();}
 };
 
 } //namespace CGAL

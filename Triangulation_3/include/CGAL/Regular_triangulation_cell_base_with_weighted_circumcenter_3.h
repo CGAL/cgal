@@ -26,10 +26,13 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
 
 namespace CGAL {
 
@@ -37,8 +40,14 @@ template < typename GT, typename Cb = Regular_triangulation_cell_base_3<GT> >
 class Regular_triangulation_cell_base_with_weighted_circumcenter_3
   : public Cb
 {
-  typedef typename GT::Point_3                         Point_3;
-  typedef typename GT::Bare_point                      Bare_point;
+  // Traits are not supposed to define Bare_point, but leaving this
+  // for backward compatibility since GT::Point_3 could be a K::Weighted_point_3
+  // in older traits
+  typedef typename boost::mpl::eval_if_c<
+    internal::Has_nested_type_Bare_point<GT>::value,
+    typename internal::Bare_point_type<GT>,
+    boost::mpl::identity<typename GT::Point_3>
+    >::type                                            Bare_point;
 
   mutable Bare_point * weighted_circumcenter_;
 

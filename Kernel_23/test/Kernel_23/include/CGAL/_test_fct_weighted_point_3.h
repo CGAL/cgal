@@ -103,11 +103,11 @@ _test_fct_weighted_point_3(const R& )
   assert( CGAL::power_side_of_oriented_power_sphere(wp6_b, wp6b_b) == CGAL::ON_POSITIVE_SIDE );
 
   assert( CGAL::power_side_of_oriented_power_sphere(wp3, wp1, wp6) == CGAL::ON_NEGATIVE_SIDE
-          && ! CGAL::Segment_3<R>(wp3, wp1).has_on(wp6) );
+          && ! CGAL::Segment_3<R>(p3, p1).has_on(p6) );
   assert( CGAL::power_side_of_oriented_power_sphere(wp5, wp6, wp5) == CGAL::ON_ORIENTED_BOUNDARY
-          && CGAL::Segment_3<R>(wp5, wp6).has_on(wp5) );
+          && CGAL::Segment_3<R>(p5, p6).has_on(p5) );
   assert( CGAL::power_side_of_oriented_power_sphere(wp3, wp6, wp1) == CGAL::ON_POSITIVE_SIDE
-          && CGAL::Segment_3<R>(wp3, wp6).has_on(wp1) );
+          && CGAL::Segment_3<R>(p3, p6).has_on(p1) );
 
   assert( CGAL::power_side_of_oriented_power_sphere(wp3_b, wp6b_b, wp1_b) == CGAL::ON_NEGATIVE_SIDE );
   assert( CGAL::power_side_of_oriented_power_sphere(wp1_b, wp3_b, wp3_b) == CGAL::ON_ORIENTED_BOUNDARY );
