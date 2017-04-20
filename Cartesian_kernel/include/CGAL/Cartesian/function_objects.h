@@ -4143,6 +4143,16 @@ namespace CartesianKernelFunctors {
                                                    t.x(), t.y(), t.weight());
     }
 
+    // The methods below are currently undocumented because the definition of
+    // orientation is unclear for 2 and 1 point configurations in a 2D space.
+
+    // One should be (very) careful with the order of vertices when using them,
+    // as swapping points will change the result and one must therefore have a
+    // precise idea of what is the positive orientation in the full space.
+    // For example, these functions are (currently) used safely in the regular
+    // triangulations classes because we always call them on vertices of
+    // triangulation cells, which are always positively oriented.
+
     Oriented_side operator()(const Weighted_point_2& p,
                              const Weighted_point_2& q,
                              const Weighted_point_2& t) const

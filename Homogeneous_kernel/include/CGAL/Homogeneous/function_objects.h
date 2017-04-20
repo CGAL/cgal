@@ -4450,33 +4450,48 @@ namespace HomogeneousKernelFunctors {
                    t.hx(), t.hy(), t.hz(), t.hw(), t.weight());
       }
 
+    // The methods below are currently undocumented because the definition of
+    // orientation is unclear for 3, 2, and 1 point configurations in a 3D space.
+
+    // One should be (very) careful with the order of vertices when using them,
+    // as swapping points will change the result and one must therefore have a
+    // precise idea of what is the positive orientation in the full space.
+    // For example, these functions are (currently) used safely in the regular
+    // triangulations classes because we always call them on vertices of
+    // triangulation cells, which are always positively oriented.
+
     Oriented_side operator() ( const Weighted_point_3 & p,
                                const Weighted_point_3 & q,
                                const Weighted_point_3 & r,
                                const Weighted_point_3 & s) const
     {
-        return power_side_of_oriented_power_sphereH3(
+      //CGAL_kernel_precondition( coplanar(p, q, r, s) );
+      //CGAL_kernel_precondition( !collinear(p, q, r) );
+      return power_side_of_oriented_power_sphereH3(
                    p.hx(), p.hy(), p.hz(), p.weight(),
                    q.hx(), q.hy(), q.hz(), q.weight(),
                    r.hx(), r.hy(), r.hz(), r.weight(),
                    s.hx(), s.hy(), s.hz(), s.weight());
-      }
+    }
 
     Oriented_side operator() ( const Weighted_point_3 & p,
                                const Weighted_point_3 & q,
                                const Weighted_point_3 & r) const
     {
-        return power_side_of_oriented_power_sphereH3(
+      //CGAL_kernel_precondition( collinear(p, q, r) );
+      //CGAL_kernel_precondition( p.point() != q.point() );
+      return power_side_of_oriented_power_sphereH3(
                    p.x(), p.y(), p.z(), p.weight(),
                    q.x(), q.y(), q.z(), q.weight(),
                    r.x(), r.y(), r.z(), r.weight());
-      }
+    }
 
     Oriented_side operator() ( const Weighted_point_3 & p,
                                const Weighted_point_3 & q) const
-      {
-        return power_side_of_oriented_power_sphereH3(p.weight(),q.weight());
-      }
+    {
+      //CGAL_kernel_precondition( p.point() == r.point() );
+      return power_side_of_oriented_power_sphereH3(p.weight(),q.weight());
+    }
   };
 #endif
 
@@ -4500,6 +4515,16 @@ namespace HomogeneousKernelFunctors {
                           r.hx(), r.hy(), r.hw(), r.weight(),
                           t.hx(), t.hy(), t.hw(), t.weight());
     }
+
+    // The methods below are currently undocumented because the definition of
+    // orientation is unclear for 2 and 1 point configurations in a 2D space.
+
+    // One should be (very) careful with the order of vertices when using them,
+    // as swapping points will change the result and one must therefore have a
+    // precise idea of what is the positive orientation in the full space.
+    // For example, these functions are (currently) used safely in the regular
+    // triangulations classes because we always call them on vertices of
+    // triangulation cells, which are always positively oriented.
 
     Oriented_side operator()(const Weighted_point_2& p,
                              const Weighted_point_2& q,

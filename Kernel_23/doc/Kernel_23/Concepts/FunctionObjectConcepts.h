@@ -9212,7 +9212,8 @@ public:
   \sa `ComputePowerProduct_2` for the definition of power distance.
   
 */
-  class PowerSideOfOrientedPowerCircle_2 {
+class PowerSideOfOrientedPowerCircle_2
+{
   public:
 
   /// \name Operations
@@ -9230,29 +9231,13 @@ public:
     \pre the bare points corresponding to `p`, `q`, `r` are not collinear.
   */
 
-  Oriented_side operator() ( const Kernel::Weighted_point_2& p,
-                             const Kernel::Weighted_point_2& q,
-                             const Kernel::Weighted_point_2& r,
-                             const Kernel::Weighted_point_2& s);
-
-/*!
-  degenerate power test for collinear points  `p`, `q`, `r`.
-  \pre  `p` and `q` have different bare points.
-*/
-    Oriented_side operator() (  const Kernel::Weighted_point_2& p,
-                                const Kernel::Weighted_point_2& q,
-                                const Kernel::Weighted_point_2& r);
-/*!
-degenerate power test for weighted points
-`p` and `q` whose corresponding bare points are identical. 
-\pre `p` and `q` have equal bare points. 
-*/
-Oriented_side operator() ( const Kernel::Weighted_point_2& p,
-                           const Kernel::Weighted_point_2& q); 
-
+  Oriented_side operator()(const Kernel::Weighted_point_2& p,
+                           const Kernel::Weighted_point_2& q,
+                           const Kernel::Weighted_point_2& r,
+                           const Kernel::Weighted_point_2& s);
   /// @}
 
-  };
+};
 
 /*!
 \ingroup PkgKernel23ConceptsFunctionObjects
@@ -9298,42 +9283,6 @@ public:
                             const Kernel::Weighted_point_3& r,
                             const Kernel::Weighted_point_3& s,
                             const Kernel::Weighted_point_3& t) const;
-
-  /*!
-    Analogous to the previous method, for coplanar points,
-    with the power circle \f$ {z(p,q,r)}^{(w)}\f$.
-
-    \pre `p, q, r, s` are coplanar and `p, q, r` are not collinear.
-  */
-  Oriented_side operator()( const Kernel::Weighted_point_3& p,
-                            const Kernel::Weighted_point_3& q,
-                            const Kernel::Weighted_point_3& r,
-                            const Kernel::Weighted_point_3& t) const;
-
-  /*!
-    which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the
-    power segment of `p` and `q`.
-
-    \pre `p, q, r` are collinear, and `p` and `q` have different bare points.
-
-    If all points have a weight equal to 0, then
-    `power_side_of_oriented_power_sphere_3(p,q,t)` yields an answer consistent with
-    what the kernel predicate `s(p,q).has_on(t)` would give, where `s(p,q)`
-    denotes the segment with endpoints `p` and `q`.
-  */
-  Oriented_side operator()( const Kernel::Weighted_point_3& p,
-                            const Kernel::Weighted_point_3& q,
-                            const Kernel::Weighted_point_3& t) const;
-
-  /*!
-    which is the same for equal points, that is when `p` and `q`
-    have equal coordinates, and returns the comparison of the weights
-    (`ON_POSITIVE_SIDE` when `q` is heavier than `p`).
-
-    \pre `p` and `q` have equal bare points.
-  */
-  Oriented_side operator()( const Kernel::Weighted_point_3& p,
-                            const Kernel::Weighted_point_3& q) const;
   /// @}
 };
 
