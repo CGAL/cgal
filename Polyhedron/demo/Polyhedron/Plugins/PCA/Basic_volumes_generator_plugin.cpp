@@ -58,6 +58,8 @@ public :
              << actionCylinder
              << actionSphere
              << actionTetrahedron;
+    Q_FOREACH(QAction* action, _actions)
+      action->setProperty("subMenuName", "Basic Volume Generation");
   }
 
   bool applicable(QAction*) const
