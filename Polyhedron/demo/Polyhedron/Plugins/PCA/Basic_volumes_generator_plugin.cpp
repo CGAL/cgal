@@ -7,7 +7,6 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Scene_polyhedron_item.h"
-#include "create_sphere.h"
 
 #include "ui_Basic_volumes_generator_dialog.h"
 
@@ -158,6 +157,7 @@ void Basic_volumes_generator_plugin::on_actionCylinder_triggered()
   //gets the precision parameter
   VolumeDialog *dialog = new VolumeDialog();
   dialog->sphereGroupBox->setVisible(false);
+  dialog->cylinderGroupBox->setVisible(true);
   //opens the dialog
   if(!dialog->exec())
     return;
@@ -224,7 +224,73 @@ void Basic_volumes_generator_plugin::on_actionCylinder_triggered()
 
 void Basic_volumes_generator_plugin::on_actionSphere_triggered()
 {
+  //gets the precision parameter
+  VolumeDialog *dialog = new VolumeDialog();
+  dialog->cylinderGroupBox->setVisible(false);
+  dialog->sphereGroupBox->setVisible(true);
+  //opens the dialog
+  if(!dialog->exec())
+    return;
+  int precision = dialog->SphereSpinBox->value();
+  const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
+  Polyhedron sphere;
+  VPMap vpmap = get(CGAL::vertex_point, sphere);
+
+  const int nb_vertices = 179/precision * 360/precision;
+  vertex_descriptor vertices[nb_vertices];
+  for(std::size_t i=0; i<nb_vertices; ++i)
+    vertices[i] = add_vertex(sphere);
+
+  //fill vertices
+  int id=0;
+  const int per_meridian = 180/precision;
+  const int per_parallel = 360/precision;
+  for(int t=1; t<per_meridian; ++t)
+  {
+    for(int p=0; p<per_parallel; ++p)
+    {
+      put(vpmap, vertices[id++], Point(sin(t*to_rad*precision)*sin(p*to_rad*precision), cos(t*to_rad*precision), sin(t*to_rad*precision)*cos(p*to_rad*precision)));
+    }
+  };
+  vertex_descriptor top = add_vertex(sphere);
+  vertex_descriptor bot = add_vertex(sphere);
+  put(vpmap, top, Point(0,1,0));
+  put(vpmap, bot, Point(0,-1,0));
+  std::vector<vertex_descriptor> face;
+  face.resize(3);
+  //fill faces
+  for(int i=0; i<per_meridian-2; ++i)
+  {
+    for(int j=0; j < per_parallel; ++j)
+    {
+      face[0] = vertices[i*per_parallel+(j+1)%per_parallel];
+      face[1] = vertices[i*per_parallel+j];
+      face[2] = vertices[(i+1)*per_parallel+(j+1)%per_parallel];
+      euler::add_face(face, sphere);
+      face[0] = vertices[(i+1)*per_parallel+(j+1)%per_parallel];
+      face[1] = vertices[i*per_parallel+j];
+      face[2] = vertices[(i+1)*per_parallel+j%per_parallel];
+      euler::add_face(face, sphere);
+    }
+  }
+
+  //fill poles
+  for(int i=0; i < per_parallel; ++i)
+  {
+    face[0] = top;
+    face[1] = vertices[i];
+    face[2] = vertices[(i+1)%(per_parallel)];
+    euler::add_face(face, sphere);
+
+    face[0] = bot;
+    face[1] = vertices[(i+1)%(per_parallel) + (per_meridian-2)*per_parallel];
+    face[2] = vertices[i + (per_meridian-2)*per_parallel];
+    euler::add_face(face, sphere);
+  }
+  Scene_polyhedron_item* sphere_item = new Scene_polyhedron_item(sphere);
+  sphere_item->setName(QString("Sphere"));
+  scene->addItem(sphere_item);
 }
 void Basic_volumes_generator_plugin::on_actionTetrahedron_triggered()
 {
