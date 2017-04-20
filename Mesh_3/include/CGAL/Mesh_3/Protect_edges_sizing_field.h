@@ -1070,6 +1070,13 @@ insert_balls(const Vertex_handle& vp,
     step_size = sp + (d-sp-sq) / FT(2);
     pt_dist = d_signF * step_size;
     norm_step_size = step_size;
+  } else if(vp == vq && n == 1) {
+    // In case we sample a full cycle, we want to add at least 2
+    // balls, equally distributed.
+    n = 2;
+    step_size = d / FT(n+1);
+    pt_dist = d_signF * step_size;
+    norm_step_size = step_size;
   } else {
     CGAL_assertion_code(using boost::math::float_prior);
     CGAL_assertion(n==0 ||
@@ -1228,6 +1235,12 @@ refine_balls()
     // Check edges
     check_and_repopulate_edges();
   }
+
+  if(this->refine_balls_iteration_nb == refine_balls_max_nb_of_loops)
+    std::cerr << "Warning : features protection has reached maximal "
+              << " number of loops." << std::endl
+              << "          It might result in a crash." << std::endl;
+
 } // end refine_balls()
 
 
