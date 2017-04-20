@@ -483,7 +483,7 @@ protected:
   bool is_encroached_facet_refinable(Facet& facet) const;
 
   /// Insert facet into refinement queue
-  void insert_bad_facet(Facet facet, const Quality& quality)
+  void insert_bad_facet(Facet& facet, const Quality& quality)
   {
     // Insert the facet and its mirror
     this->add_bad_element(
