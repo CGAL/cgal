@@ -28,6 +28,7 @@
 #include <QWidget>
 #include <QPoint>
 #include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions_4_3_Compatibility>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
@@ -232,7 +233,16 @@ public Q_SLOTS:
 //! \param animation_duration is the duration of the animation of the movement.
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
-
+public:
+  //! Is used to know if the openGL context is 4.3 or 2.1.
+  //! @returns `true` if the context is 4.3.
+  //! @returns `false` if the context is 2.1.
+  virtual bool isRecent() const = 0;
+  //! Gives acces to recent openGL(4.3) features, allowing use of things like
+  //! Geometry Shaders or Depth Textures.
+  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isRecent()` is `true`
+  //! @returns NULL if `isRecent()` is `false`
+  virtual QOpenGLFunctions_4_3_Compatibility* recentFunctions() = 0;
 }; // end class Viewer_interface
 }
 }

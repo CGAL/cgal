@@ -150,6 +150,10 @@ protected:
   Viewer_impl* d;
   double prev_radius;
 
+public:
+  bool isRecent() const;
+  QOpenGLFunctions_4_3_Compatibility* recentFunctions();
+
 }; // end class Viewer
 
 

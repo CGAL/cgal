@@ -42,6 +42,8 @@ public:
   QString message;
   bool _displayMessage;
   QTimer messageTimer;
+  QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
+  bool is_recent;
 
   //! Holds useful data to draw the axis system
   struct AxisData
@@ -233,8 +235,34 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
+  QGLFormat format;
+  format.setVersion(4,3);
+  format.setProfile(QGLFormat::CompatibilityProfile);
+  QGLContext *new_context = new QGLContext(format, this);
+  new_context->setFormat(format);
+  bool created = new_context->create();
+  if(!created || new_context->format().profile() != QGLFormat::CompatibilityProfile) {
+    // impossible to get a 4.3 compatibility profile, retry with 2.0
+    format.setVersion(2,1);
+    new_context->setFormat(format);
+    created = new_context->create();
+    d->is_recent = false;
+  }
+  else
+  {
+    d->is_recent = true;
+    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+  }
+  CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
+                   "and the default context (2.0) will be used" );
+  this->setContext(new_context);
+  context()->makeCurrent();
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
+  if(isRecent())
+  {
+   d->_recentFunctions->initializeOpenGLFunctions();
+  }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
   {
@@ -1610,6 +1638,7 @@ void Viewer::updateIds(CGAL::Three::Scene_item * item)
   d->scene->updatePrimitiveIds(this, item);
 }
 
+
 TextRenderer* Viewer::textRenderer()
 {
   return d->textRenderer;
@@ -1632,5 +1661,9 @@ void Viewer::enableClippingBox(QVector4D box[6])
   for(int i=0; i<6; ++i)
     d->clipbox[i] = box[i];
 }
+
+bool Viewer::isRecent() const { return d->is_recent; }
+
+QOpenGLFunctions_4_3_Compatibility* Viewer::recentFunctions() { return d->_recentFunctions; }
 
  #include "Viewer.moc"
