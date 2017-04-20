@@ -175,8 +175,8 @@ void Basic_volumes_generator_plugin::on_actionCylinder_triggered()
   //fill vertices
   for(int i=0; i < nb_vertices/2; ++i)
   {
-    put(vpmap, vertices[i], Point(cos(i*precision*to_rad),0.5,-sin(i*precision*to_rad) ));
-    put(vpmap, vertices[i+nb_vertices/2], Point(cos(i*precision*to_rad),-0.5,-sin(i*precision*to_rad)));
+    put(vpmap, vertices[i], Point(0.5*cos(i*precision*to_rad),0.5,-0.5*sin(i*precision*to_rad) ));
+    put(vpmap, vertices[i+nb_vertices/2], Point(0.5*cos(i*precision*to_rad),-0.5,-0.5*sin(i*precision*to_rad)));
   }
   std::vector<vertex_descriptor> face;
   face.resize(3);
@@ -221,7 +221,7 @@ void Basic_volumes_generator_plugin::on_actionCylinder_triggered()
   cylinder_item->setName(QString("Cylinder"));
   scene->addItem(cylinder_item);
 }
-
+//make a sphere
 void Basic_volumes_generator_plugin::on_actionSphere_triggered()
 {
   //gets the precision parameter
@@ -250,13 +250,13 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
   {
     for(int p=0; p<per_parallel; ++p)
     {
-      put(vpmap, vertices[id++], Point(sin(t*to_rad*precision)*sin(p*to_rad*precision), cos(t*to_rad*precision), sin(t*to_rad*precision)*cos(p*to_rad*precision)));
+      put(vpmap, vertices[id++], Point(0.5*sin(t*to_rad*precision)*sin(p*to_rad*precision), 0.5*cos(t*to_rad*precision), 0.5*sin(t*to_rad*precision)*cos(p*to_rad*precision)));
     }
   };
   vertex_descriptor top = add_vertex(sphere);
   vertex_descriptor bot = add_vertex(sphere);
-  put(vpmap, top, Point(0,1,0));
-  put(vpmap, bot, Point(0,-1,0));
+  put(vpmap, top, Point(0,0.5,0));
+  put(vpmap, bot, Point(0,-0.5,0));
   std::vector<vertex_descriptor> face;
   face.resize(3);
   //fill faces
@@ -292,8 +292,44 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
   sphere_item->setName(QString("Sphere"));
   scene->addItem(sphere_item);
 }
+//make a tetrahedron
 void Basic_volumes_generator_plugin::on_actionTetrahedron_triggered()
 {
+  Polyhedron tetrahedron;
+  VPMap vpmap = get(CGAL::vertex_point, tetrahedron);
+  vertex_descriptor vertices[4];
+  for(int i=0; i<4; ++i)
+    vertices[i] = add_vertex(tetrahedron);
 
+  //vertices
+  put(vpmap, vertices[0],Point(-0.5,-0.5,-0.5));
+  put(vpmap, vertices[1],Point(0.5,-0.5,-0.5));
+  put(vpmap, vertices[2],Point(0,0.5,-0.5));
+  put(vpmap, vertices[3],Point(0,0,0.5));
+  //faces
+  std::vector<vertex_descriptor> face;
+  face.resize(3);
+
+  face[0] = vertices[1];
+  face[1] = vertices[0];
+  face[2] = vertices[2];
+  euler::add_face(face, tetrahedron);
+  face[0] = vertices[0];
+  face[1] = vertices[1];
+  face[2] = vertices[3];
+  euler::add_face(face, tetrahedron);
+  face[0] = vertices[0];
+  face[1] = vertices[3];
+  face[2] = vertices[2];
+  euler::add_face(face, tetrahedron);
+  face[0] = vertices[1];
+  face[1] = vertices[2];
+  face[2] = vertices[3];
+  euler::add_face(face, tetrahedron);
+
+
+  Scene_polyhedron_item* tet_item = new Scene_polyhedron_item(tetrahedron);
+  tet_item->setName(QString("Tetrahedron"));
+  scene->addItem(tet_item);
 }
 #include "Basic_volumes_generator_plugin.moc"
