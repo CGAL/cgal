@@ -261,7 +261,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
                            get(vpmap, target(next(he, pmesh), pmesh)));
       //v(i) and v(i+1) must me seen in ccw order, from v, so we reverse v1 and v2
       Vector ni = traits.construct_cross_product_vector_3_object()(v2, v1);
-      ni = traits.construct_scaled_vector_3_object()(ni, CGAL::sqrt(1./(sqlen(v1)*sqlen(v2))));
+      ni = traits.construct_scaled_vector_3_object()(ni,
+        CGAL::approximate_sqrt(FT(1)/(sqlen(v1)*sqlen(v2))));
 
       normal = traits.construct_sum_of_vectors_3_object()(normal, ni);
     }
