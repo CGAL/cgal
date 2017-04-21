@@ -777,7 +777,17 @@ void clear(FaceGraph& g)
   CGAL_postcondition(num_faces(g) == 0);
 }
 
-
+/**
+ * \ingroup PkgBGLHelperFct
+ *
+ * returns the degree of the face with halfedge `hd`
+ *
+ * @tparam FaceGraph model of `FaceGraph`
+ *
+ * @param hd a halfedge of the face of interest
+ * @param g the graph containing `hd`
+ *
+ **/
 template <typename FaceGraph>
 typename boost::graph_traits<FaceGraph>::degree_size_type
 face_degree(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
