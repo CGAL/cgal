@@ -135,6 +135,7 @@ _test_fct_weighted_point_3(const R& )
   assert( CGAL::power_side_of_bounded_power_sphere(wp3_b, wp6b_b, wp1_b) == CGAL::ON_UNBOUNDED_SIDE );
   assert( CGAL::power_side_of_bounded_power_sphere(wp1_b, wp3_b, wp3_b) == CGAL::ON_BOUNDARY );
   assert( CGAL::power_side_of_bounded_power_sphere(wp3_b, wp1_b, wp6b_b) == CGAL::ON_BOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_sphere(wp1_b, wp3_b, wp6b_b) == CGAL::ON_BOUNDED_SIDE );
 
   assert( CGAL::coplanar(p4, p5, p6, p7) );
   assert( CGAL::power_side_of_bounded_power_sphere(wp4, wp5, wp6, wp7)
@@ -147,6 +148,8 @@ _test_fct_weighted_point_3(const R& )
   assert( CGAL::power_side_of_bounded_power_sphere(wp000, wp100, wp011, wp010) == CGAL::ON_UNBOUNDED_SIDE );
   assert( CGAL::power_side_of_bounded_power_sphere(wp000, wp100, wp010, wp100) == CGAL::ON_BOUNDARY );
   assert( CGAL::power_side_of_bounded_power_sphere(wp000, wp100, wp010, wp011) == CGAL::ON_BOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_sphere(wp100, wp000, wp010, wp011) == CGAL::ON_BOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_sphere(wp010, wp000, wp100, wp011) == CGAL::ON_BOUNDED_SIDE );
 
   assert( CGAL::power_side_of_bounded_power_sphere(wp2, wp3, wp4, wp5, wp6)
             == CGAL::side_of_bounded_sphere(p2, p3, p4, p5, p6));
@@ -156,6 +159,7 @@ _test_fct_weighted_point_3(const R& )
   assert( CGAL::power_side_of_bounded_power_sphere(wp000, wp100, wp010, wp001, wp000m) == CGAL::ON_BOUNDED_SIDE );
   assert( CGAL::power_side_of_bounded_power_sphere(wp000, wp100, wp010, wp001, wp010) == CGAL::ON_BOUNDARY );
   assert( CGAL::power_side_of_bounded_power_sphere(wp000, wp100, wp010, wp001, wp1_b) == CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_sphere(wp100, wp000, wp001, wp010, wp1_b) == CGAL::ON_UNBOUNDED_SIDE );
 
   std::cout << ".";
 
