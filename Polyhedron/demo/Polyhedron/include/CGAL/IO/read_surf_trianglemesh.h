@@ -233,7 +233,8 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     }
 
     //connect triangles
-    std::vector<std::vector<std::size_t> > polygons;
+    typedef CGAL::cpp11::array<std::size_t, 3> Triangle_ind;
+    std::vector<Triangle_ind> polygons;
     polygons.reserve(nb_triangles);
     while(std::getline(input, line))
     {
@@ -249,7 +250,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       iss.str(line);
       iss >> index[0] >> index[1] >> index[2];
 
-      std::vector<std::size_t> polygon(3);
+      Triangle_ind polygon;
       polygon[0] = index[0] - 1;
       polygon[1] = index[1] - 1;
       polygon[2] = index[2] - 1;
