@@ -1874,7 +1874,6 @@ bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Th
 std::vector<QColor>& Scene_polyhedron_item::color_vector() {return d->colors_;}
 void Scene_polyhedron_item::set_color_vector_read_only(bool on_off) {d->plugin_has_set_color_vector_m=on_off;}
 bool Scene_polyhedron_item::is_color_vector_read_only() { return d->plugin_has_set_color_vector_m;}
-void Scene_polyhedron_item::set_patch_id(Polyhedron::Face_handle f,int i)const {f->set_patch_id(i);}
 int Scene_polyhedron_item::getNumberOfNullLengthEdges(){return d->number_of_null_length_edges;}
 int Scene_polyhedron_item::getNumberOfDegeneratedFaces(){return d->number_of_degenerated_faces;}
 bool Scene_polyhedron_item::triangulated(){return d->poly->is_pure_triangle();}
