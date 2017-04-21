@@ -36,12 +36,6 @@ public:
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
-  typedef SMesh::Property_map<face_descriptor,int> Face_selection_map;
-  typedef SMesh::Property_map<halfedge_descriptor, bool> Halfedge_is_feature_map;
-  typedef SMesh::Property_map<face_descriptor, int> Face_patch_id_map;
-  typedef SMesh::Property_map<vertex_descriptor,int> Vertex_num_feature_edges_map;
-
 
   Scene_surface_mesh_item();
   // Takes ownership of the argument.
@@ -64,13 +58,10 @@ public:
   QString toolTip() const Q_DECL_OVERRIDE;
 
   // Only needed for Scene_polyhedron_item
-  void setItemIsMulticolor(bool){} 
+  void setItemIsMulticolor(bool){}
   void update_vertex_indices(){}
   void update_halfedge_indices(){}
   void update_facet_indices(){}
-
-  Vertex_selection_map vertex_selection_map();
-  Face_selection_map face_selection_map();
 
   std::vector<QColor>& color_vector();
   void set_patch_id(SMesh::Face_index f,int i)const;
@@ -78,10 +69,10 @@ public:
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
-
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
+
 public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   virtual void selection_changed(bool) Q_DECL_OVERRIDE;
@@ -89,93 +80,6 @@ protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
-
-Scene_surface_mesh_item::Halfedge_is_feature_map
-inline get(halfedge_is_feature_t, Scene_surface_mesh_item::SMesh& smesh)
-{
-  typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
-  return smesh.add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
-}
-
-
-Scene_surface_mesh_item::Face_patch_id_map
-inline get(face_patch_id_t, Scene_surface_mesh_item::SMesh& smesh)
-{
-  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
-  return smesh.add_property_map<face_descriptor,int>("f:patch_id").first;
-}
-
-
-Scene_surface_mesh_item::Face_selection_map
-inline get(face_selection_t, Scene_surface_mesh_item::SMesh& smesh)
-{
-  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
-  return smesh.add_property_map<face_descriptor,int>("f:selection").first;
-}
-
-
-Scene_surface_mesh_item::Vertex_selection_map
-inline get(vertex_selection_t, Scene_surface_mesh_item::SMesh& smesh)
-{
-  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
-  return smesh.add_property_map<vertex_descriptor,int>("v:selection").first;
-}
-
-Scene_surface_mesh_item::Vertex_num_feature_edges_map
-inline get(vertex_num_feature_edges_t, Scene_surface_mesh_item::SMesh& smesh)
-{
-  typedef  boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
-  return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
-}
-
-namespace boost {
-  
-  template <>
-  struct property_map<Scene_surface_mesh_item::SMesh, halfedge_is_feature_t>
-  {
-    typedef Scene_surface_mesh_item::SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
-  
-    typedef SMesh::Property_map<halfedge_descriptor, bool> type;
-  };
-  
-  template <>
-  struct property_map<Scene_surface_mesh_item::SMesh, face_patch_id_t>
-  {
-    typedef Scene_surface_mesh_item::SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  
-    typedef SMesh::Property_map<face_descriptor, int> type;
-  }; 
-
-  template <>
-  struct property_map<Scene_surface_mesh_item::SMesh, vertex_selection_t>
-  {
-    typedef Scene_surface_mesh_item::SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-  
-    typedef SMesh::Property_map<vertex_descriptor, int> type;
-  };
-
-  template <>
-  struct property_map<Scene_surface_mesh_item::SMesh, face_selection_t>
-  {
-    typedef Scene_surface_mesh_item::SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  
-    typedef SMesh::Property_map<face_descriptor, int> type;
-  };
-
-  template <>
-  struct property_map<Scene_surface_mesh_item::SMesh, vertex_num_feature_edges_t>
-  {
-    typedef Scene_surface_mesh_item::SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-  
-    typedef SMesh::Property_map<vertex_descriptor, int> type;
-  };
-
-}
 
 
 

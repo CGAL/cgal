@@ -15,16 +15,29 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QCheckBox" name="polyhedronMode_checkbox">
-     <property name="toolTip">
-      <string>Check this option if you want Polyhedron as the default type of the Facegraph items. Uncheck it for Surface_mesh.</string>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>FaceGraph Mode</string>
      </property>
-     <property name="text">
-      <string>Polyhedron Mode</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="polyRadioButton">
+        <property name="text">
+         <string>Polyhedron</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="smRadioButton">
+        <property name="text">
+         <string>Surface_mesh</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>

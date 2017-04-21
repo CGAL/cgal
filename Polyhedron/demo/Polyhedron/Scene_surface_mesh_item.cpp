@@ -108,8 +108,6 @@ struct Scene_surface_mesh_item_priv{
   Scene_surface_mesh_item *item;
 
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
-  mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
-  mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
 
   Color_vector colors_;
   void computeElements() const;
@@ -163,40 +161,12 @@ Scene_surface_mesh_item::clone() const
 { return new Scene_surface_mesh_item(*this); }
 
 
-Scene_surface_mesh_item::Vertex_selection_map
-Scene_surface_mesh_item::vertex_selection_map()
-{
-   if(! d->v_selection_map){
-    d->v_selection_map = d->smesh_->add_property_map<vertex_descriptor,int>("v:selection").first;
-   }
-   return d->v_selection_map;
-}
-
-Scene_surface_mesh_item::Face_selection_map
-Scene_surface_mesh_item::face_selection_map()
-{
-   if(! d->f_selection_map){
-    d->f_selection_map = d->smesh_->add_property_map<face_descriptor,int>("f:selection").first;
-   }
-   return d->f_selection_map;
-}
-
 std::vector<QColor>&
 Scene_surface_mesh_item::color_vector()
 {
   return d->colors_;
 }
 
-
-void
-Scene_surface_mesh_item::set_patch_id(SMesh::Face_index f,int i)const
-{
-  if(! d->has_fpatch_id){
-    d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id").first;
-    d->has_fpatch_id = true;
-  }
-  d->fpatch_id_map[f] = i;
-}
 
 int
 Scene_surface_mesh_item::patch_id(SMesh::Face_index f)const

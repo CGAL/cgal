@@ -1620,8 +1620,11 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  prefdiag.polyhedronMode_checkbox->setChecked(scene->property("is_polyhedron_mode").toBool());
-  connect(prefdiag.polyhedronMode_checkbox, &QCheckBox::clicked,
+  if(scene->property("is_polyhedron_mode").toBool())
+    prefdiag.polyRadioButton->setChecked(true);
+  else
+    prefdiag.smRadioButton->setChecked(true);
+  connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
           this, &MainWindow::set_face_graph_default_type);
   
   QStandardItemModel* iStandardModel = new QStandardItemModel(this);
