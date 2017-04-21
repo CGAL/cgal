@@ -923,7 +923,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `CGAL::Weighted_point_2<Kernel>`
-  \sa `ComputePowerProduct_3` for the definition of power distance.
+  \sa `ComputePowerProduct_2` for the definition of power distance.
 
 */
 class ComparePowerDistance_2 {
@@ -2414,12 +2414,54 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \sa `CGAL::Weighted_point_3<Kernel>` 
+  \cgalRefines `AdaptableFunctor` (with two arguments)
+
+  \sa `CGAL::Weighted_point_2<Kernel>`
+  \sa `ComputePowerProduct_3`
+*/
+class ComputePowerProduct_2
+{
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the power product of `pw` and `qw`.
+    Let\f$ {p}^{(w)} = (p,w_p), p\in\mathbb{R}^2, w_p\in\mathbb{R}\f$ and
+    \f$ {q}^{(w)}=(q,w_q), q\in\mathbb{R}^2, w_q\in\mathbb{R}\f$ be two weighted points.
+
+    The <I>power product</I>, also called <i>power distance</i>
+    between \f$ {p}^{(w)}\f$ and \f$ {q}^{(w)}\f$ is defined as
+    \f[ \Pi({p}^{(w)},{q}^{(w)}) = {\|{p-q}\|^2-w_p-w_q} \f]
+    where \f$ \|{p-q}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ q\f$.
+
+    The weighted points \f$ {p}^{(w)}\f$ and \f$ {q}^{(w)}\f$
+    are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{q}^{(w)})}
+    = 0\f$.
+
+    Three weighted points have, in 2D, a unique common orthogonal weighted point
+    called the <I>power circle</I>. The <I>power segment</I> will denote the
+    weighted point orthogonal to two weighted points on the line defined by
+    these two points.
+  */
+  Kernel::FT operator()(const Kernel::Weighted_point_2& pw,
+                        const Kernel::Weighted_point_2& qw) const;
+
+  /// @}
+}; /* end Kernel::ComputePowerProduct_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
 
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
+  \sa `CGAL::Weighted_point_3<Kernel>`
+  \sa `ComputePowerProduct_2`
 */
-class ComputePowerProduct_3 {
+class ComputePowerProduct_3
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -2862,7 +2904,7 @@ public:
 \cgalConcept
 
 \sa `CGAL::Weighted_point_2<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
+\sa `ComputePowerProduct_2` for the definition of orthogonality for power distances.
 
 \cgalRefines `AdaptableFunctor`
 
@@ -9128,7 +9170,7 @@ public:
 \cgalRefines `AdaptableFunctor` (with four arguments)
 
 \sa `CGAL::Weighted_point_2<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
+\sa `ComputePowerProduct_2` for the definition of orthogonality for power distances.
 \sa `PowerSideOfOrientedPowerCircle_2`
 
 */

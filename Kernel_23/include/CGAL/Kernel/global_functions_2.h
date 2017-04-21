@@ -951,6 +951,15 @@ orientation(const Vector_2<K> &u, const Vector_2<K> &v)
 
 template <class K >
 inline
+typename K::FT
+power_product(const Weighted_point_2<K> &p,
+              const Weighted_point_2<K> &q)
+{
+  return internal::power_product(p, q, K());
+}
+
+template <class K >
+inline
 typename K::Bounded_side
 power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
                                    const Weighted_point_2<K> &q)

@@ -864,6 +864,15 @@ parallel(const typename K::Segment_2 &s1,
 
 template <class K >
 inline
+typename K::FT
+power_product(const typename K::Weighted_point_2 &p,
+              const typename K::Weighted_point_2 &q, const K &k)
+{
+  return k.compute_power_product_2_object()(p, q);
+}
+
+template <class K >
+inline
 typename K::Bounded_side
 power_side_of_bounded_power_circle(const typename K::Weighted_point_2 &p,
                                    const typename K::Weighted_point_2 &q, const K &k)

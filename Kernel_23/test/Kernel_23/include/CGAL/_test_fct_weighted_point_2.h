@@ -95,6 +95,12 @@ _test_fct_weighted_point_2(const R& )
 
   std::cout << ".";
 
+  assert( CGAL::power_product(wp1, wp1) == RT(0) );
+  assert( CGAL::power_product(wp1, wp2) == CGAL::squared_distance(p1, p2) );
+  assert( CGAL::power_product(wp3_b, wp5_b) == RT(-6) );
+
+  std::cout << ".";
+
   CGAL::Line_2<R> l = CGAL::radical_axis(wp4_b, wp7_b);
   for(int i=-5; i<5; ++i)
   {

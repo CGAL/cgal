@@ -790,6 +790,7 @@ A type representing weighted points in two dimensions.
 
 \sa `ConstructWeightedPoint_2`
 \sa `ComparePowerDistance_2`
+\sa `ComputePowerProduct_2`
 \sa `ComputeSquaredRadiusSmallestOrthogonalCircle_2`
 \sa `ConstructRadicalAxis_2`
 \sa `ConstructWeightedCircumcenter_2`

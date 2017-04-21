@@ -311,6 +311,8 @@
 - `Kernel::ComputeLInfinityDistance_2`
 - `Kernel::ComputeLInfinityDistance_3`
 - `Kernel::ComputePowerDistanceToPowerSphere_3`
+- `Kernel::ComputePowerProduct_2`
+- `Kernel::ComputePowerProduct_3`
 - `Kernel::ComputeScalarProduct_2`
 - `Kernel::ComputeScalarProduct_3`
 - `Kernel::ComputeSquaredArea_3`

@@ -460,6 +460,18 @@ weighted_circumcenterC2( const RT &px, const RT &py, const We &pw,
   y += py;
 }
 
+template< class FT >
+FT
+power_productC2(const FT &px, const FT &py, const FT &pw,
+                const FT &qx, const FT &qy, const FT &qw)
+{
+  // computes the power product of two weighted points
+  FT qpx = qx - px;
+  FT qpy = qy - py;
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy);
+  return qp2 - pw - qw;
+}
+
 template < class RT , class We>
 void
 radical_axisC2(const RT &px, const RT &py, const We &pw,

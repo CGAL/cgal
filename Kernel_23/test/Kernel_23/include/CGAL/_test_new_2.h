@@ -375,6 +375,10 @@ test_new_2(const R& rep)
      tmp22d = Compute_squared_distance(p1, r2);
      tmp22d = Compute_squared_distance(p1, t2);
 
+  typename R::Compute_power_product_2 compute_power_product
+        = rep.compute_power_product_2_object();
+     tmp22d = compute_power_product(wp6, wp7);
+
   typename R::Compute_squared_length_2 Compute_squared_length
         = rep.compute_squared_length_2_object();
   FT tmp23 = Compute_squared_length(v2);

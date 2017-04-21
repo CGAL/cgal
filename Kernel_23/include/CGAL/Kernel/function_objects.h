@@ -568,6 +568,23 @@ namespace CommonKernelFunctors {
   };
 
   template < typename K >
+  class Compute_power_product_2
+  {
+  public:
+    typedef typename K::Weighted_point_2               Weighted_point_2;
+    typedef typename K::FT                             FT;
+
+    typedef FT                                         result_type;
+
+    FT operator()(const Weighted_point_2 & p,
+                  const Weighted_point_2 & q) const
+    {
+      return power_productC2(p.x(), p.y(), p.weight(),
+                             q.x(), q.y(), q.weight());
+    }
+  };
+
+  template < typename K >
   class Compute_power_product_3
   {
   public:
