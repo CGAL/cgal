@@ -914,8 +914,6 @@ public:
 
 }; /* end Kernel::CompareDistance_3 */
 
-
-
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -926,24 +924,20 @@ public:
   \sa `ComputePowerProduct_2` for the definition of power distance.
 
 */
-class ComparePowerDistance_2 {
+class ComparePowerDistance_2
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
   /*!
-    compares the power distance between `p` and `q` to the power distance between `p` and `r`.
-
-  */ 
-
-
-  Comparison_result operator()(const Kernel::Point_2& p, 
-                               const Kernel::Weighted_point_2& q, 
-                               const Kernel::Weighted_point_2& r); 
-
-
-
+    compares the power distance between `p` and `q` to the power distance
+    between `p` and `r`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Weighted_point_2& q,
+                               const Kernel::Weighted_point_2& r);
   /// @}
 };
 
@@ -956,29 +950,22 @@ public:
   \sa `CGAL::Weighted_point_3<Kernel>` 
   \sa `ComputePowerProduct_3` for the definition of power distance.
 */
-class ComparePowerDistance_3 {
+class ComparePowerDistance_3
+{
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
   /*!
-    compares the power distance between `p` and `q` to the power distance between `p` and `r`.
-
-  */ 
-  Comparison_result operator()(const Kernel::Point_3& p, 
-                               const Kernel::Weighted_point_3& q, 
-                               const Kernel::Weighted_point_3& r); 
-
-
-
+    compares the power distance between `p` and `q` to the power distance
+    between `p` and `r`.
+  */
+  Comparison_result operator()(const Kernel::Point_3& p,
+                               const Kernel::Weighted_point_3& q,
+                               const Kernel::Weighted_point_3& r);
   /// @}
-
 }; /* end Kernel::ComparePowerDistance_3 */
-
-
-
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -1145,14 +1132,14 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\sa `ComputePowerProduct_3` for the definition of orthogonal
-    weighted points
-
 \cgalRefines `AdaptableFunctor`
 \cgalHasModel `Compare_weighted_squared_radius_3`
 
+\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+
 */
-class CompareWeightedSquaredRadius_3 {
+class CompareWeightedSquaredRadius_3
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -2384,13 +2371,13 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \sa `CGAL::Weighted_point_3<Kernel>` 
-  \sa `ComputePowerProduct_3` for the definitions of power distance and orthogonal.
-
   \cgalRefines `AdaptableFunctor` (with five arguments)
 
+  \sa `CGAL::Weighted_point_3<Kernel>`
+  \sa `ComputePowerProduct_3` for the definitions of power distance and orthogonality.
 */
-class ComputePowerDistanceToPowerSphere_3 {
+class ComputePowerDistanceToPowerSphere_3
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -2400,13 +2387,12 @@ public:
     returns the squared radius of the sphere centered in `t`
     and orthogonal to the sphere orthogonal to `p`, `q`, `r` ,and `s`. 
   */ 
-  Kernel::FT operator()(const Kernel::Weighted_point_3& p, 
-                        const Kernel::Weighted_point_3& q, 
-                        const Kernel::Weighted_point_3& r, 
-                        const Kernel::Weighted_point_3& s, 
-                        const Kernel::Weighted_point_3& t 
-                        ) const; 
-
+  Kernel::FT operator()(const Kernel::Weighted_point_3& p,
+                        const Kernel::Weighted_point_3& q,
+                        const Kernel::Weighted_point_3& r,
+                        const Kernel::Weighted_point_3& s,
+                        const Kernel::Weighted_point_3& t
+                        ) const;
   /// @}
 };
 
@@ -2482,7 +2468,7 @@ public:
     are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{q}^{(w)})}
     = 0\f$.
     
-    Four weighted points have a unique common orthogonal weighted point
+    Four weighted points have, in 3D, a unique common orthogonal weighted point
     called the <I>power sphere</I>. The weighted point orthogonal to
     three weighted points in the plane defined by these three points is
     called the <I>power circle</I>. The
@@ -2493,7 +2479,7 @@ public:
                         const Kernel::Weighted_point_3& qw) const; 
 
   /// @}
-};
+}; /* end Kernel::ComputePowerProduct_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -2909,7 +2895,8 @@ public:
 \cgalRefines `AdaptableFunctor`
 
 */
-class ComputeSquaredRadiusSmallestOrthogonalCircle_2 {
+class ComputeSquaredRadiusSmallestOrthogonalCircle_2
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -2936,12 +2923,13 @@ public:
 \cgalConcept
 
 \sa `CGAL::Weighted_point_3<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of orthogonal sphere
+\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
 
 \cgalRefines `AdaptableFunctor`
 
 */
-class ComputeSquaredRadiusSmallestOrthogonalSphere_3 {
+class ComputeSquaredRadiusSmallestOrthogonalSphere_3
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -5992,7 +5980,8 @@ public:
   \sa `CGAL::Weighted_point_2<Kernel>` 
 
 */
-class ConstructRadicalAxis_2 {
+class ConstructRadicalAxis_2
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -6001,9 +5990,8 @@ public:
   /*!
     returns the radical line of the weighted points. 
   */ 
-  Kernel::Line_2 operator() 
-  (const Kernel::Weighted_point_2& wp1, 
-   const Kernel::Weighted_point_2& wp2); 
+  Kernel::Line_2 operator()(const Kernel::Weighted_point_2& wp1,
+                            const Kernel::Weighted_point_2& wp2);
   /// @}
 };
 
@@ -7032,7 +7020,8 @@ public:
 \sa `CGAL::Weighted_point_2<Kernel>` 
 
 */
-class ConstructWeightedCircumcenter_2 {
+class ConstructWeightedCircumcenter_2
+{
 public:
 
   /// \name Operations
@@ -7042,10 +7031,11 @@ public:
   /*!
     constructs the point which is the center of the smallest orthogonal circle to the input weighted points. 
   */ 
-  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& p, const Kernel::Weighted_point_2& q, const Kernel::Weighted_point_2& s);
+  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& p,
+                             const Kernel::Weighted_point_2& q,
+                             const Kernel::Weighted_point_2& s);
 
 }; /* end Kernel::ConstructWeightedCircumcenter_2 */
-
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -7056,9 +7046,9 @@ public:
 \sa `CGAL::Weighted_point_3<Kernel>` 
 
 */
-class ConstructWeightedCircumcenter_3 {
+class ConstructWeightedCircumcenter_3
+{
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -7066,7 +7056,10 @@ public:
   /*!
     constructs the point which is the center of the smallest orthogonal sphere to the input weighted points. 
   */ 
-  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p, const Kernel::Weighted_point_3& q, const Kernel::Weighted_point_3& r, const Kernel::Weighted_point_3& s);
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q,
+                             const Kernel::Weighted_point_3& r,
+                             const Kernel::Weighted_point_3& s);
 
 }; /* end Kernel::ConstructWeightedCircumcenter_3 */
 
@@ -7077,11 +7070,10 @@ public:
   \cgalRefines `AdaptableFunctor` (with one argument)
 
   \sa `CGAL::Weighted_point_2<Kernel>`
-
 */
-class ConstructWeightedPoint_2 {
+class ConstructWeightedPoint_2
+{
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -7103,7 +7095,6 @@ public:
      those of \f$ p \f$ and weight \f$ w \f$.
    */
    Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p, const Kernel::FT& w);
-
   ///@}
 
 }; /* end Kernel::ConstructWeightedPoint_2 */
@@ -7117,7 +7108,8 @@ public:
   \sa `CGAL::Weighted_point_3<Kernel>`
 
 */
-class ConstructWeightedPoint_3 {
+class ConstructWeightedPoint_3
+{
 public:
 
   /// \name Operations
