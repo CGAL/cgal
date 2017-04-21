@@ -26,7 +26,6 @@
 
 
 #include <algorithm>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -59,23 +58,6 @@ namespace internal{
       return CGAL::SMALLER == compare_z(get(vpmap, v1), get(vpmap, v2));
     }
   };
-
-
-  template<typename Kernel, typename PM, typename NamedParameters>
-  bool is_outward_oriented(typename boost::graph_traits<PM>::vertex_descriptor vd,
-                           const PM& pmesh,
-                           const NamedParameters& np)
-  {
-    const typename Kernel::Vector_3& normal_v_min
-      = CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, pmesh, np);
-
-    return normal_v_min[0] < 0 || (
-              normal_v_min[0] == 0 && (
-                normal_v_min[1] < 0  ||
-                ( normal_v_min[1]==0  && normal_v_min[2] < 0 )
-              )
-           );
-  }
 } // end of namespace internal
 
 /**
