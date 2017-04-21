@@ -9134,7 +9134,8 @@ public:
 \sa `PowerSideOfOrientedPowerSphere_3`
 
 */
-class PowerSideOfBoundedPowerSphere_3 {
+class PowerSideOfBoundedPowerSphere_3
+{
 public:
 
   /// \name Operations
@@ -9150,9 +9151,9 @@ public:
 
     - `ON_UNBOUNDED_SIDE` if `t` lies outside the bounded sphere of
     center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$
-    (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)),
+    (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)}) >0\f$),
 
-    - `ON_BOUNDED_SIDE` if `t` lies inside this oriented sphere.
+    - `ON_BOUNDED_SIDE` if `t` lies inside this bounded sphere.
 
     The order of the points `p`, `q`, `r`, and `s` does not matter.
 
@@ -9203,10 +9204,11 @@ public:
 
 }; /* end Kernel::PowerSideOfBoundedPowerSphere_3 */
 
-
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with four arguments)
 
   \sa `CGAL::Weighted_point_2<Kernel>`
   \sa `ComputePowerProduct_2` for the definition of power distance.
@@ -9243,6 +9245,8 @@ class PowerSideOfOrientedPowerCircle_2
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
+\cgalRefines `AdaptableFunctor` (with five arguments)
+
 \sa `CGAL::Weighted_point_3<Kernel>`
 \sa `ComputePowerProduct_3` for the definition of power distance.
 \sa `PowerSideOfBoundedPowerSphere_3`
@@ -9264,7 +9268,7 @@ public:
 
     - `ON_NEGATIVE_SIDE` if `t` lies outside the oriented sphere of
       center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$
-      (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)),
+      (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)}) > 0 \f$),
 
     - `ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere.
 

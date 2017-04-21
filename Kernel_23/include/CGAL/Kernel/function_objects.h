@@ -388,11 +388,12 @@ namespace CommonKernelFunctors {
     {
       K traits;
       typename K::Orientation_3  orientation = traits.orientation_3_object();
-      typename K::Power_side_of_oriented_power_sphere_3 power_test = traits.power_side_of_oriented_power_sphere_3_object();
+      typename K::Power_side_of_oriented_power_sphere_3 power_test =
+          traits.power_side_of_oriented_power_sphere_3_object();
       typename K::Orientation o = orientation(p,q,r,s);
       typename K::Oriented_side os = power_test(p,q,r,s,t);
-      // power_test_3
-      // returns in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
+      // Power_side_of_oriented_power_sphere_3
+      // returns in fact minus the 5x5 determinant of lifted (p,q,r,s,t)
       CGAL_assertion(o != COPLANAR);
       return enum_cast<Bounded_side>(o * os);
     }

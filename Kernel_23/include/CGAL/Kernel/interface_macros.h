@@ -119,7 +119,11 @@ CGAL_Kernel_pred(Compare_dihedral_angle_3,
 CGAL_Kernel_pred(Compare_distance_2,
 		 compare_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_distance_3,
-		    compare_distance_3_object)
+                    compare_distance_3_object)
+CGAL_Kernel_pred_RT(Compare_power_distance_2,
+                    compare_power_distance_2_object)
+CGAL_Kernel_pred_RT(Compare_power_distance_3,
+                    compare_power_distance_3_object)
 CGAL_Kernel_pred(Compare_slope_2,
 		 compare_slope_2_object)
 CGAL_Kernel_pred(Compare_squared_distance_2,
@@ -128,6 +132,8 @@ CGAL_Kernel_pred(Compare_squared_distance_3,
 		 compare_squared_distance_3_object)
 CGAL_Kernel_pred(Compare_squared_radius_3,
 		 compare_squared_radius_3_object)
+CGAL_Kernel_pred(Compare_weighted_squared_radius_3,
+                 compare_weighted_squared_radius_3_object)
 CGAL_Kernel_pred(Compare_x_at_y_2,
 		 compare_x_at_y_2_object)
 CGAL_Kernel_pred(Compare_xyz_3,
@@ -576,24 +582,18 @@ CGAL_Kernel_pred(Less_z_3,
 		 less_z_3_object)
 CGAL_Kernel_pred_RT(Orientation_2,
 		    orientation_2_object)
-CGAL_Kernel_pred_RT(Power_side_of_oriented_power_circle_2,
-		    power_side_of_oriented_power_circle_2_object)
 CGAL_Kernel_pred_RT(Orientation_3,
 		    orientation_3_object)
-CGAL_Kernel_pred_RT(Power_side_of_oriented_power_sphere_3,
-                    power_side_of_oriented_power_sphere_3_object)
-CGAL_Kernel_pred_RT(Compare_power_distance_2,
-		    compare_power_distance_2_object)
-CGAL_Kernel_pred_RT(Compare_power_distance_3,
-		    compare_power_distance_3_object)
-CGAL_Kernel_pred(Compare_weighted_squared_radius_3,
-                 compare_weighted_squared_radius_3_object)
-CGAL_Kernel_pred(Power_side_of_bounded_power_sphere_3,
-                 power_side_of_bounded_power_sphere_3_object)
 CGAL_Kernel_pred(Oriented_side_2,
 		 oriented_side_2_object)
 CGAL_Kernel_pred(Oriented_side_3,
 		 oriented_side_3_object)
+CGAL_Kernel_pred(Power_side_of_bounded_power_sphere_3,
+                 power_side_of_bounded_power_sphere_3_object)
+CGAL_Kernel_pred_RT(Power_side_of_oriented_power_circle_2,
+                    power_side_of_oriented_power_circle_2_object)
+CGAL_Kernel_pred_RT(Power_side_of_oriented_power_sphere_3,
+                    power_side_of_oriented_power_sphere_3_object)
 CGAL_Kernel_pred_RT(Side_of_bounded_circle_2,
 		    side_of_bounded_circle_2_object)
 CGAL_Kernel_pred_RT(Side_of_bounded_sphere_3,
