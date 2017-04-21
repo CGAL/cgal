@@ -77,16 +77,18 @@ bool line_starts_with(const std::string& line, const char* cstr)
  * read_surf reads a file which extension is .surf and fills `output` with one `Mesh` per patch.
  * Mesh is a model of FaceListGraph.
  */
-template<class Mesh, class NamedParameters>
+template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
     std::vector<MaterialData>& metadata,
     CGAL::Bbox_3& grid_box,
     CGAL::cpp11::array<unsigned int, 3>& grid_size,
+    DuplicatedPointsOutIterator out,
     const NamedParameters&)
 {
   typedef typename CGAL::GetGeomTraits<Mesh,
       NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   std::vector<Point_3> points;
   std::string line;
   std::istringstream iss;
@@ -264,33 +266,45 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     {
       std::cout << "Orientation of patch #" << (i + 1) << "...";
       std::cout.flush();
+
+      const std::size_t nbp_init = points.size();
       bool no_duplicates =
       PMP::orient_polygon_soup(points, polygons);//returns false if some points
                                                  //were duplicated
+
       std::cout << "\rOrientation of patch #" << (i + 1) << " done";
-      if (!no_duplicates)
-        std::cout << " (non manifold -> duplicated vertices)";
+
+      if(!no_duplicates) //collect duplicates
+      { 
+        for (std::size_t i = nbp_init; i < points.size(); ++i)
+          *out++ = points[i];
+        std::cout << " (non manifold -> "
+                  << (points.size() - nbp_init) << " duplicated vertices)";
+      }
       std::cout << "." << std::endl;
     }
+
     Mesh& mesh = output[i];
 
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
-      points, polygons, mesh);
-    CGAL::Polygon_mesh_processing::remove_isolated_vertices(mesh);
+    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, Point_3, Triangle_ind>
+      converter(points, polygons);
+    converter(mesh, false/*insert_isolated_vertices*/);
 
+    CGAL_assertion(PMP::remove_isolated_vertices(mesh) == 0);
     CGAL_assertion(is_valid(mesh));
   } // end loop on patches
 
   return true;
 }
 
-template<class Mesh>
+template<class Mesh, typename DuplicatedPointsOutIterator>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::vector<MaterialData>& metadata,
   CGAL::Bbox_3& grid_box,
-  CGAL::cpp11::array<unsigned int, 3>& grid_size)
+  CGAL::cpp11::array<unsigned int, 3>& grid_size,
+  DuplicatedPointsOutIterator out)
 {
-  return read_surf(input, output, metadata, grid_box, grid_size,
+  return read_surf(input, output, metadata, grid_box, grid_size, out,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
