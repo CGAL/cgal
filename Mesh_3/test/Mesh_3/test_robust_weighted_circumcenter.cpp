@@ -24,7 +24,6 @@
 //******************************************************************************
 
 #include "test_utilities.h"
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Timer.h>
@@ -36,11 +35,12 @@ struct Tester
   typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_traits;
 
   typedef typename CGAL::Mesh_triangulation_3<Mesh_traits>::type Tr;
-  
+
+  typedef typename Tr::Bare_point Bare_point;
+  typedef typename Tr::Weighted_point Weighted_point;
+
   typedef typename Tr::Geom_traits Gt;
   typedef typename Gt::FT FT;
-  typedef typename Gt::Point_3 Point;
-  typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Point> Point_creator;
 
   typedef CGAL::Regular_triangulation_3<Gt> Triangulation;
 
@@ -49,16 +49,15 @@ struct Tester
     //-------------------------------------------------------
     // Data generation : get 4 nearly coplanar points
     //-------------------------------------------------------
-    Point_creator creator;
     FT little(1e-10);
     FT tiny(1e-25);
-    
-    Point p1 = creator(little,1,tiny);
-    Point p2 = creator(1,little,0);
-    Point p3 = creator(-1*little,1,0);
-    Point p4 = creator(1,-1*little,0);
-    Point p5 = creator(0,0,1);
-    Point p6 = creator(0,1,0);
+
+    Weighted_point p1(little,1,tiny);
+    Weighted_point p2(1,little,0);
+    Weighted_point p3(-1*little,1,0);
+    Weighted_point p4(1,-1*little,0);
+    Weighted_point p5(0,0,1);
+    Weighted_point p6(0,1,0);
 
     std::cerr << "Using points: p1[" << p1 << "]\tp2[" << p2
               << "]\tp3[" << p3 << "]\tp4[" << p4 << "]\tp5[" << p5
@@ -70,7 +69,7 @@ struct Tester
     typename Gt::Construct_weighted_circumcenter_3 circumcenter =
         Gt().construct_weighted_circumcenter_3_object();
 
-    Point center = circumcenter(p1,p2);
+    Bare_point center = circumcenter(p1,p2);
     std::cerr << "\tcircumcenter(p1,p2)=[" << center << "]\n";
 
     center = circumcenter(p1,p3,p6);

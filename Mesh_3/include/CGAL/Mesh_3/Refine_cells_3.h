@@ -334,7 +334,8 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Cell Cell;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -342,7 +343,7 @@ public:
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
   typedef Complex3InTriangulation3 C3T3;
 
-
+public:
   // Constructor
   // For sequential
   Refine_cells_3(Tr& triangulation,
@@ -371,7 +372,7 @@ public:
 
   int number_of_bad_elements_impl();
 
-  Point circumcenter_impl(const Cell_handle& cell) const
+  Bare_point circumcenter_impl(const Cell_handle& cell) const
   {
     return r_tr_.dual(cell);
   }
@@ -391,7 +392,7 @@ public:
   }
 
   // Gets the point to insert from the element to refine
-  Point refinement_point_impl(const Cell_handle& cell) const
+  Bare_point refinement_point_impl(const Cell_handle& cell) const
   {
     this->set_last_vertex_index(
       r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
@@ -402,16 +403,16 @@ public:
   }
 
   // Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Cell_handle& cell
                            , bool &facet_is_in_its_cz) const;
-  Zone conflicts_zone_impl(const Point& point
+  Zone conflicts_zone_impl(const Weighted_point& point
                            , const Cell_handle& cell
                            , bool &facet_is_in_its_cz
                            , bool &could_lock_zone) const;
 
   // Job to do before insertion
-  void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
+  void before_insertion_impl(const Cell_handle&, const Weighted_point&, Zone& zone)
   {
     before_insertion_handle_cells_in_conflict_zone(zone);
   }
@@ -425,7 +426,7 @@ public:
 #endif
 
   // Insertion implementation ; returns the inserted vertex
-  Vertex_handle insert_impl(const Point& p, const Zone& zone);
+  Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
 
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star(const Vertex_handle& vertex);
@@ -757,7 +758,7 @@ number_of_bad_elements_impl()
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Cell_handle& cell
                     , bool &facet_is_in_its_cz) const
 {
@@ -781,7 +782,7 @@ conflicts_zone_impl(const Point& point
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-conflicts_zone_impl(const Point& point
+conflicts_zone_impl(const Weighted_point& point
                     , const Cell_handle& cell
                     , bool &facet_is_in_its_cz
                     , bool &could_lock_zone
@@ -934,7 +935,7 @@ compute_badness(const Cell_handle& cell)
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Vertex_handle
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-insert_impl(const Point& point,
+insert_impl(const Weighted_point& point,
             const Zone& zone)
 {
   // TODO: look at this
