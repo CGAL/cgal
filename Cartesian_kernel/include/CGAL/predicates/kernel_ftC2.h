@@ -648,6 +648,24 @@ compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
 }
 
 template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+Bounded_side
+power_side_of_bounded_power_circleC2(const FT &px, const FT &py, const FT &pw,
+                                     const FT &qx, const FT &qy, const FT &qw,
+                                     const FT &tx, const FT &ty, const FT &tw)
+{
+  FT dpx = px - qx;
+  FT dpy = py - qy;
+  FT dtx = tx - qx;
+  FT dty = ty - qy;
+  FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy);
+
+  return enum_cast<Bounded_side>
+    (CGAL_NTS sign(-(CGAL_NTS square(dtx) + CGAL_NTS square(dty)-tw+qw)*dpz
+                   +(dpz-pw+qw)*(dpx*dtx+dpy*dty)));
+}
+
+template <class FT>
 Oriented_side
 power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
                                       const FT &qx, const FT &qy, const FT &qwt,

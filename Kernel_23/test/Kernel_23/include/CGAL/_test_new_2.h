@@ -554,6 +554,11 @@ test_new_2(const R& rep)
   Bounded_side tmp42 = side_of_bounded_circle(p2,p3,p4,p5);
                tmp42 = side_of_bounded_circle(p2,p3,p5);
 
+  typename R::Power_side_of_bounded_power_circle_2 power_side_of_bounded_power_circle
+        = rep.power_side_of_bounded_power_circle_2_object();
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5);
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5,wp6);
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5,wp6,wp7);
 
   typename R::Is_horizontal_2 is_horizontal
         = rep.is_horizontal_2_object();

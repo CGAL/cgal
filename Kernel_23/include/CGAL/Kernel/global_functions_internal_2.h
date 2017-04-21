@@ -862,6 +862,36 @@ parallel(const typename K::Segment_2 &s1,
   return k.are_parallel_2_object()(s1, s2);
 }
 
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const typename K::Weighted_point_2 &p,
+                                   const typename K::Weighted_point_2 &q, const K &k)
+{
+  return k.power_side_of_bounded_power_circle_2_object()(p, q);
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const typename K::Weighted_point_2 &p,
+                                   const typename K::Weighted_point_2 &q,
+                                   const typename K::Weighted_point_2 &r, const K &k)
+{
+  return k.power_side_of_bounded_power_circle_2_object()(p, q, r);
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const typename K::Weighted_point_2 &p,
+                                   const typename K::Weighted_point_2 &q,
+                                   const typename K::Weighted_point_2 &r,
+                                   const typename K::Weighted_point_2 &s, const K &k)
+{
+  return k.power_side_of_bounded_power_circle_2_object()(p, q, r, s);
+}
+
 template <class K>
 inline
 typename K::Oriented_side

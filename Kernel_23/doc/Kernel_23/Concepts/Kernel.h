@@ -693,6 +693,11 @@ public:
   typedef unspecified_type Power_side_of_oriented_power_circle_2; 
 
   /*!
+    a model of `Kernel::PowerSideOfBoundedPowerCircle_2`
+  */
+  typedef unspecified_type Power_side_of_bounded_power_circle_2;
+
+  /*!
     a model of `Kernel::IsHorizontal_2` 
   */ 
   typedef unspecified_type Is_horizontal_2; 

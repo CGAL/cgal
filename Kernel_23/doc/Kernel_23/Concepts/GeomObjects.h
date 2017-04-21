@@ -793,7 +793,9 @@ A type representing weighted points in two dimensions.
 \sa `ComputeSquaredRadiusSmallestOrthogonalCircle_2`
 \sa `ConstructRadicalAxis_2`
 \sa `ConstructWeightedCircumcenter_2`
+\sa `PowerSideOfBoundedPowerCircle_2`
 \sa `PowerSideOfOrientedPowerCircle_2`
+
 */
 class WeightedPoint_2 {
 public:

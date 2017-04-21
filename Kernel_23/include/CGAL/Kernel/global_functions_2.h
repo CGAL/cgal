@@ -949,6 +949,36 @@ orientation(const Vector_2<K> &u, const Vector_2<K> &v)
 
 // parallel() functions are in global_functions.h
 
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q,
+                                   const Weighted_point_2<K> &r)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, r, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q,
+                                   const Weighted_point_2<K> &r,
+                                   const Weighted_point_2<K> &s)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, r, s, K());
+}
+
 template <typename K>
 inline
 typename K::Orientation

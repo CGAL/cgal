@@ -118,6 +118,29 @@ _test_fct_weighted_point_2(const R& )
 
   std::cout << ".";
 
+  assert( CGAL::power_side_of_bounded_power_circle(wp5_b, wp7_b) == CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_circle(wp1_b, wp1_b) == CGAL::ON_BOUNDARY );
+  assert( CGAL::power_side_of_bounded_power_circle(wp6_b, wp6) == CGAL::ON_BOUNDED_SIDE );
+
+  assert( CGAL::power_side_of_bounded_power_circle(wp1_b, wp3_b, wp6_b) == CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_circle(wp3_b, wp1_b, wp6_b) == CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_circle(wp3_b, wp6_b, wp1_b) == CGAL::ON_BOUNDARY );
+  assert( CGAL::power_side_of_bounded_power_circle(wp6_b, wp3_b, wp8_b) == CGAL::ON_BOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_circle(wp3_b, wp6_b, wp8_b) == CGAL::ON_BOUNDED_SIDE );
+
+  assert( CGAL::power_side_of_bounded_power_circle(wp2, wp3, wp4, wp5)
+            == CGAL::side_of_bounded_circle(p2, p3, p4, p5) );
+  assert( CGAL::power_side_of_bounded_power_circle(wp2, wp3, wp4, wp4)
+            == CGAL::side_of_bounded_circle(p2, p3, p4, p4) );
+
+  assert( CGAL::power_side_of_bounded_power_circle(wp6_b, wp3_b, wp1_b, wp10_b) == CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_circle(wp1_b, wp6_b, wp3_b, wp10_b) == CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_circle(wp6_b, wp3_b, wp1_b, wp6_b) == CGAL::ON_BOUNDARY );
+  assert( CGAL::power_side_of_bounded_power_circle(wp6_b, wp3_b, wp1_b, wp8_b) == CGAL::ON_BOUNDED_SIDE );
+  assert( CGAL::power_side_of_bounded_power_circle(wp3_b, wp1_b, wp6_b, wp8_b) == CGAL::ON_BOUNDED_SIDE );
+
+  std::cout << ".";
+
   assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1) == RT(0) );
   assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1_b) == -wp1_b.weight() );
 

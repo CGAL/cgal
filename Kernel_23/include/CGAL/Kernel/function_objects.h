@@ -368,6 +368,48 @@ namespace CommonKernelFunctors {
     }
   };
 
+  template < class K >
+  class Power_side_of_bounded_power_circle_2
+  {
+  public:
+    typedef typename K::Weighted_point_2               Weighted_point_2;
+    typedef Bounded_side                               result_type;
+
+    Bounded_side operator()(const Weighted_point_2& p,
+                            const Weighted_point_2& q,
+                            const Weighted_point_2& r,
+                            const Weighted_point_2& t) const
+    {
+      K traits;
+      typename K::Orientation_2 orientation = traits.orientation_2_object();
+      typename K::Power_side_of_oriented_power_circle_2 power_test =
+        traits.power_side_of_oriented_power_circle_2_object();
+      typename K::Orientation o = orientation(p,q,r);
+      typename K::Oriented_side os = power_test(p,q,r,t);
+
+      CGAL_assertion(o != COPLANAR);
+      return enum_cast<Bounded_side>(o * os);
+    }
+
+    Bounded_side operator()(const Weighted_point_2& p,
+                            const Weighted_point_2& q,
+                            const Weighted_point_2& t) const
+    {
+      return power_side_of_bounded_power_circleC2(p.x(), p.y(), p.weight(),
+                                                  q.x(), q.y(), q.weight(),
+                                                  t.x(), t.y(), t.weight());
+    }
+
+    Bounded_side operator()(const Weighted_point_2& p,
+                            const Weighted_point_2& t) const
+    {
+      return enum_cast<Bounded_side>(
+            - CGAL_NTS sign( CGAL_NTS square(p.x() - t.x()) +
+                             CGAL_NTS square(p.y() - t.y()) +
+                             p.weight() - t.weight()) );
+    }
+  };
+
   // operator ()
   // return the sign of the power test of  last weighted point
   // with respect to the smallest sphere orthogonal to the others

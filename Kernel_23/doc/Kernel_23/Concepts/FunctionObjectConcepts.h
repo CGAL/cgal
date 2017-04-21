@@ -9121,7 +9121,71 @@ public:
 }; /* end Kernel::OrientedSide_3 */
 
 
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
 
+\cgalRefines `AdaptableFunctor` (with four arguments)
+
+\sa `CGAL::Weighted_point_2<Kernel>`
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
+\sa `PowerSideOfOrientedPowerCircle_2`
+
+*/
+class PowerSideOfBoundedPowerCircle_2
+{
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    Let \f$ {z(p,q,r)}^{(w)}\f$ be the power circle of the weighted points
+    \f$ (p,q,r)\f$. This method returns:
+
+    - `ON_BOUNDARY` if `t` is orthogonal to \f$ {z(p,q,r)}^{(w)}\f$,
+
+    - `ON_UNBOUNDED_SIDE` if `t` lies outside the bounded circle of
+    center \f$ z(p,q,r)\f$ and radius \f$ \sqrt{ w_{z(p,q,r)}^2 + w_t^2 }\f$
+    (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r)}^{(w)}) > 0\f$),
+
+    - `ON_BOUNDED_SIDE` if `t` lies inside this bounded circle.
+
+    The order of the points `p`, `q`, and `r` does not matter.
+
+    \pre `p`, `q`, and `r` are not collinear.
+
+    If all the points have a weight equal to 0, then
+    `power_side_of_bounded_power_circle_2(p,q,r,t)` ==
+      `side_of_bounded_circle(p,q,r,t)`.
+  */
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & q,
+             const Kernel::Weighted_point_2 & r,
+             const Kernel::Weighted_point_2 & t);
+
+  /*!
+    returns the sign of the power test of `t` with respect
+    to the smallest circle orthogonal to `p` and `q`.
+
+    \pre `p` and `q` have different bare points.
+  */
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & q,
+             const Kernel::Weighted_point_2 & t);
+
+  /*!
+    returns the sign of the power test of `t` with respect
+    to the smallest circle orthogonal to `p`.
+  */
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & t);
+  /// @}
+}; /* end Kernel::PowerSideOfBoundedPowerCircle_2 */
 
 /*!
 \ingroup PkgKernel23ConceptsFunctionObjects
@@ -9212,7 +9276,7 @@ public:
 
   \sa `CGAL::Weighted_point_2<Kernel>`
   \sa `ComputePowerProduct_2` for the definition of power distance.
-  
+  \sa `PowerSideOfBoundedPowerCircle_2`
 */
 class PowerSideOfOrientedPowerCircle_2
 {
