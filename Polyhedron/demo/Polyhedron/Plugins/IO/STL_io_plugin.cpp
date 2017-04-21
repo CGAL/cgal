@@ -2,6 +2,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Kernel_type.h"
+#include "Scene.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -74,7 +75,7 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   }
 
   try{
-    if(scene->isPolyhedronMode())
+    if(static_cast<Scene*>(scene)->property("is_polyhedron_mode").toBool())
     {
       // Try building a polyhedron
       Polyhedron P;

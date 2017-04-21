@@ -2,6 +2,7 @@
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Kernel_type.h"
+#include "Scene.h"
 #include "Polyhedron_type.h"
 #include <CGAL/gocad_io.h>
 #include <CGAL/Timer.h>
@@ -68,7 +69,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
 
   CGAL::Timer t;
   t.start();
-  if(scene->isPolyhedronMode())
+  if(static_cast<Scene*>(scene)->property("is_polyhedron_mode").toBool())
   {
     // Try to read GOCAD file in a polyhedron
 
