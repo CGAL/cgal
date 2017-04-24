@@ -1336,7 +1336,7 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-    set_face_graph_default_type(settings.value("polyhedron_mode", false).toBool());
+      set_facegraph_mode_adapter(settings.value("polyhedron_mode", false).toBool());
 }
 
 void MainWindow::writeSettings()
@@ -1625,7 +1625,7 @@ void MainWindow::on_actionPreferences_triggered()
   else
     prefdiag.smRadioButton->setChecked(true);
   connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
-          this, &MainWindow::set_face_graph_default_type);
+          this, &MainWindow::set_facegraph_mode_adapter);
   
   QStandardItemModel* iStandardModel = new QStandardItemModel(this);
   //add blacklisted plugins
@@ -1990,7 +1990,14 @@ void MainWindow::colorItems()
   }
   viewer->update();
 }
-void MainWindow::set_face_graph_default_type(bool b)
+// Only used to make the doc clearer. Only the adapter is actueally used in the code,
+// for signal/slots reasons.
+void MainWindow::set_face_graph_default_type(Facegraph_mode m)
+{
+  scene->setProperty("is_polyhedron_mode", m);
+}
+
+void MainWindow::set_facegraph_mode_adapter(bool b)
 {
   scene->setProperty("is_polyhedron_mode", b);
 }

@@ -52,6 +52,14 @@ class MAINWINDOW_EXPORT MainWindow :
   Q_OBJECT
   Q_INTERFACES(Messages_interface)
 public:
+  //! \brief Global state of the application.
+  //!
+  //! A plugin that outputs a `Facegraph_item` will match the input type for the output.
+  //! But when the input is not a `Facegraph_item`, the plugin will use this state to know what type to use.
+  enum Facegraph_mode{
+    POLYHEDRON=0,
+    SURFACE_MESH
+  };
   /*! \brief The constructor
    * It links the class with its UI file and sets it up.
    * It also saves pointers to viewer and the sceneView.
@@ -219,13 +227,9 @@ public Q_SLOTS:
   void throw_exception();
 
   /*!
-   * \brief set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
-   * In the application, a plugin that outputs a `Facegraph_item` will match the input type for the output.
-   * But when the input is not a `Facegraph_item`, the plugin will use this state to know what type to use.
-   * If `isPolyhedronMode()` is `true`, the default output type will be `Polyhedron` (obviously), and if not, it will
-   * be `Surface_mesh`.
+   * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
    */
-  void set_face_graph_default_type(bool b);
+  void set_face_graph_default_type(Facegraph_mode m);
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the sceneView and updates the scene
@@ -336,6 +340,7 @@ protected Q_SLOTS:
 
   //!Resizes the header of the scene view
   void resetHeader();
+
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
   /*! For each objects in the sceneView, loads the associated plugins.
@@ -407,6 +412,9 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
+
+private Q_SLOTS:
+  void set_facegraph_mode_adapter(bool);
 };
 
 #endif // ifndef MAINWINDOW_H
