@@ -92,6 +92,10 @@ private:
   Kd_tree_rectangle<FT,D>* bbox;
   std::vector<Point_d> pts;
 
+  // Store a contiguous copy of the point coordinates
+  // for faster queries (reduce the number of cache misses)
+  std::vector<FT> points_cache;
+
   // Instead of storing the points in arrays in the Kd_tree_node
   // we put all the data in a vector in the Kd_tree.
   // and we only store an iterator range in the Kd_tree_node.
@@ -278,8 +282,12 @@ public:
     //Reorder vector for spatial locality
     std::vector<Point_d> ptstmp;
     ptstmp.resize(pts.size());
+    points_cache.reserve(dim * pts.size());
     for (std::size_t i = 0; i < pts.size(); ++i){
       ptstmp[i] = *data[i];
+
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits_.construct_cartesian_const_iterator_d_object();
+      points_cache.insert(points_cache.end(), construct_it(ptstmp[i]), construct_it(ptstmp[i], 0));
     }
     for(std::size_t i = 0; i < leaf_nodes.size(); ++i){
       std::ptrdiff_t tmp = leaf_nodes[i].begin() - pts.begin();
@@ -536,6 +544,13 @@ public:
       const_build();
     }
     return *bbox;
+  }
+
+
+  typename std::vector<FT>::const_iterator
+    cache_begin() const
+  {
+    return points_cache.begin();
   }
 
   const_iterator

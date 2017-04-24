@@ -35,23 +35,26 @@ class Orthogonal_k_neighbor_search: public internal::K_neighbor_search<SearchTra
   typename SearchTraits::Cartesian_const_iterator_d query_object_it;
   
   std::vector<typename Base::FT> dists;
+  int m_dim;
+  Tree const& m_tree;
+
 public:
   typedef typename Base::FT FT;
 
 
   Orthogonal_k_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
-    : Base(q,k,Eps,Search_nearest,d) 
+    : Base(q,k,Eps,Search_nearest,d), m_tree(tree)
   {
     if (tree.empty()) return;
 
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=tree.traits().construct_cartesian_const_iterator_d_object();
     query_object_it = construct_it(this->query_object);
 
-    int dim = static_cast<int>(std::distance(query_object_it, construct_it(this->query_object,0)));
+    m_dim = static_cast<int>(std::distance(query_object_it, construct_it(this->query_object,0)));
 
-    dists.resize(dim);
-    for(int i=0;i<dim;i++)
+    dists.resize(m_dim);
+    for(int i=0;i<m_dim;i++)
         dists[i]=0;
 
     FT distance_to_root;
@@ -113,18 +116,30 @@ private:
       typename Tree::Leaf_node_const_handle node =
         static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
-      bool full = this->queue.full();
-      FT worst_dist = this->queue.top().second;
+      //bool full = this->queue.full();
       if (node->size() > 0)
       {
-        for (typename Tree::iterator it=node->begin(); it != node->end(); it++) 
+        std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(node->begin() - m_tree.begin());
+        for (typename Tree::iterator it = node->begin(); it != node->end(); it++)
         {
           this->number_of_items_visited++;
-          FT distance_to_query_object=
-            this->distance_instance.transformed_distance(this->query_object,*it);
-          
-          if(!full || distance_to_query_object < worst_dist)
-            this->queue.insert(std::make_pair(&(*it),distance_to_query_object));
+          if (!this->queue.full())
+          {
+            FT distance_to_query_object =
+              this->distance_instance.transformed_distance(this->query_object, cache_point_begin, cache_point_begin + m_dim);
+            this->queue.insert(std::make_pair(&(*it), distance_to_query_object));
+          }
+          else
+          {
+            FT worst_dist = this->queue.top().second;
+
+            FT distance_to_query_object =
+              this->distance_instance.transformed_distance(this->query_object, cache_point_begin, cache_point_begin + m_dim, worst_dist);
+
+            if (distance_to_query_object < worst_dist)
+              this->queue.insert(std::make_pair(&(*it), distance_to_query_object));
+          }
+          cache_point_begin += m_dim;
         }
       }
     }
