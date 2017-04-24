@@ -218,7 +218,7 @@ Q_SIGNALS:
   void selectionRay(double, double, double, double, double, double);
   //! Used to update the selected item in the Geometric Objects view.
   void selectionChanged(int i);
-  //! Used when you don't want to update the sleectedItem in the Geometric Objects view.
+  //! Used when you don't want to update the selectedItem in the Geometric Objects view.
   void itemIndexSelected(int i);
   //! Emit this to reset the collapsed state of all groups after the Geometric Objects view has been redrawn.
   void restoreCollapsedState();
