@@ -37,7 +37,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
   polyhedron_demo_plugin(example_plugin Example_plugin)
   
-  qt5_wrap_ui( basicUI_FILES Basic_dialog_plugin.ui  )
+  qt5_wrap_ui( basicUI_FILES Basic_dialog.ui  )
   polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 
   qt5_wrap_ui( dockUI_FILES Basic_dock_widget.ui )

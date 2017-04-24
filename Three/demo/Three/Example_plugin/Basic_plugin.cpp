@@ -5,7 +5,7 @@ Change the value of EXAMPLE_COMPLEXITY in the first line to change the behavior 
   - 2 : pops-up a little more elaborated dialog asking to enter an integer , then prints it in the Info and console widgets if it was indeed an integer, else pops-up an error message box.
   */
 #define EXAMPLE_COMPLEXITY 0
-#include "ui_Basic_dialog_plugin.h"
+#include "ui_Basic_dialog.h"
 //! [headers_plugin]
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <QApplication>
