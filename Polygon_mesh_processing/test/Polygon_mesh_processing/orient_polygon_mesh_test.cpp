@@ -61,6 +61,7 @@ int main()
 {
 
   test_orient<Epic>("data/elephant.off");
+  test_orient<Epic>("data-coref/cube.off");
   test_orient<Epec>("data/elephant.off");
 
   std::cerr << "All done." << std::endl;
