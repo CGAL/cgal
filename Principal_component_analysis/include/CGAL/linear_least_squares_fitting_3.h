@@ -32,7 +32,12 @@
 #include <CGAL/linear_least_squares_fitting_tetrahedra_3.h>
 #include <CGAL/linear_least_squares_fitting_spheres_3.h>
 
-#include <CGAL/Default_diagonalize_traits.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_diagonalize_traits.h>
+#else
+#include <CGAL/Diagonalize_traits.h>
+#endif
+
 
 #include <CGAL/Dimension.h>
 
@@ -80,7 +85,11 @@ linear_least_squares_fitting_3(InputIterator first,
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,tag,Kernel(),
-					      Default_diagonalize_traits<typename Kernel::FT, 3>());
+#ifdef CGAL_EIGEN3_ENABLED
+					      Eigen_diagonalize_traits<typename Kernel::FT, 3>());
+#else
+  					      Diagonalize_traits<typename Kernel::FT, 3>());
+#endif
 
 }
 
@@ -100,7 +109,11 @@ linear_least_squares_fitting_3(InputIterator first,
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   typename Kernel::Point_3 centroid; // not used by caller
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,tag,Kernel(),
-					      Default_diagonalize_traits<typename Kernel::FT, 3>());
+#ifdef CGAL_EIGEN3_ENABLED
+					      Eigen_diagonalize_traits<typename Kernel::FT, 3>());
+#else
+  					      Diagonalize_traits<typename Kernel::FT, 3>());
+#endif
 
 }
 
