@@ -43,8 +43,8 @@ namespace internal{
   template <class GT, class VPmap>
   struct Compare_vertex_points_z_3
   {
-    typename GT::Compare_z_3 compare_z;
     VPmap vpmap;
+    typename GT::Compare_z_3 compare_z;
 
     Compare_vertex_points_z_3(VPmap const& vpmap, const GT& gt)
       : vpmap(vpmap)
