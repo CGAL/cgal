@@ -237,7 +237,7 @@ The only requirements for this type is that the triangles of the surfaces
 must be accessible through an object of the class
 `TriangleAccessor`. @todo Document the requirements.
 
-\tparam IGT stands for a geometric traits class
+\tparam IGT_ stands for a geometric traits class
 providing the types and functors required to implement
 the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
@@ -247,7 +247,7 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 of the input polyhedral
 surface. It must be a model of the concept
 `TriangleAccessor_3`. It defaults to
-`Triangle_accessor_3<Polyhedron,IGT>`. The type `IGT::Triangle_3` must
+`Triangle_accessor_3<Polyhedron,IGT_>`. The type `IGT_::Triangle_3` must
 be identical to the type `TriangleAccessor::Triangle_3`.
 
 \cgalModels `MeshDomainWithFeatures_3`
@@ -257,17 +257,17 @@ be identical to the type `TriangleAccessor::Triangle_3`.
 \sa `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>`
 \sa `CGAL::make_mesh_3()`.
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
-\sa `CGAL::Mesh_polyhedron_3<IGT>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT_,TriangleAccessor>`
+\sa `CGAL::Mesh_polyhedron_3<IGT_>`
 */
-template < class IGT,
-           class Polyhedron = typename Mesh_polyhedron_3<IGT>::type,
-           class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT>
+template < class IGT_,
+           class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
+           class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT_>
            >
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron,
-                                IGT,
+                                IGT_,
                                 TriangleAccessor,
                                 Tag_true,
                                 Tag_true > >
@@ -278,6 +278,7 @@ class Polyhedral_complex_mesh_domain_3
     boost::undirectedS,
     typename Polyhedron::Point,
     typename Polyhedron::Vertex::Set_of_indices> Featured_edges_copy_graph;
+  typedef IGT_ IGT;
 
 public:
   /// The base class
