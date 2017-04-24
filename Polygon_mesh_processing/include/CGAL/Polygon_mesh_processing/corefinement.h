@@ -50,8 +50,8 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
   typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
 // first check that the orientation of the current cc is consistant with its
 // parent cc containing it
-  bool new_is_parent_outward_oriented =
-      is_outward_oriented(tm, parameters::vertex_point_map(vpm));
+  bool new_is_parent_outward_oriented = internal::is_outward_oriented<Kernel>(
+         xtrm_vertices[xtrm_cc_id], tm, parameters::vertex_point_map(vpm));
   if (new_is_parent_outward_oriented==is_parent_outward_oriented)
     return false;
   cc_handled.set(xtrm_cc_id);
@@ -200,7 +200,8 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
     if (get(vpm, xtrm_vertices[id])<get(vpm,xtrm_vertices[xtrm_cc_id]))
       xtrm_cc_id=id;
 
-  bool is_parent_outward_oriented = is_outward_oriented(tm, np);
+  bool is_parent_outward_oriented =
+    !internal::is_outward_oriented<Kernel>(xtrm_vertices[xtrm_cc_id], tm, np);
 
   return internal::recursive_does_bound_a_volume<Kernel>(tm, vpm, fid_map,
                                                          xtrm_vertices,
