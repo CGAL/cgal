@@ -1,6 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include "PolyhedralSurf_rings.h"
 #include "compute_normals.h"
 #include <CGAL/Ridges.h>

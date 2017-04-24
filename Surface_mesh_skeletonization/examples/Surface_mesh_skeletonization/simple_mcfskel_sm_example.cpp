@@ -1,7 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 
 #include <fstream>
