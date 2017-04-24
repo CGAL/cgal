@@ -61,20 +61,59 @@ namespace internal{
   };
 
 
-  template<typename Kernel, typename PM, typename NamedParameters>
-  bool is_outward_oriented(typename boost::graph_traits<PM>::vertex_descriptor vd,
-                           const PM& pmesh,
+  template<typename PolygonMesh, typename NamedParameters>
+  bool is_outward_oriented(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max,
+                           const PolygonMesh& pmesh,
                            const NamedParameters& np)
   {
-    const typename Kernel::Vector_3& normal_v_min
-      = CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, pmesh, np);
+    using boost::choose_param;
+    using boost::get_param;
 
-    return normal_v_min[0] < 0 || (
-              normal_v_min[0] == 0 && (
-                normal_v_min[1] < 0  ||
-                ( normal_v_min[1]==0  && normal_v_min[2] < 0 )
-              )
-           );
+    //VertexPointMap
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
+    VPMap vpmap = choose_param(get_param(np, vertex_point),
+                               get_const_property_map(vertex_point, pmesh));
+    //Kernel
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+    GT gt = choose_param(get_param(np, geom_traits), GT());
+
+    //among the incident edges to v_max,
+    // find one of the edges e with the minimal slope
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+    halfedge_descriptor min_slope_he = halfedge(v_max, pmesh);
+    CGAL_assertion(v_max == target(min_slope_he, pmesh));
+
+    typename GT::Compare_slope_3 compare_slope = gt.compare_slope_3_object();
+    BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
+    {
+      CGAL_assertion(v_max == target(min_slope_he, pmesh));
+      CGAL_assertion(v_max == target(he, pmesh));
+      if(CGAL::SMALLER == compare_slope(get(vpmap, v_max),
+                            get(vpmap, source(min_slope_he, pmesh)),
+                            get(vpmap, v_max),
+                            get(vpmap, source(he, pmesh))))
+      {
+        min_slope_he = he;
+      }
+    }
+
+    //around that edge, there are two faces(because the mesh is without borders),
+    //take the face f for which the other edge incident to f and v has the minimal slope
+    //Note we only keep the corresponding halfedge
+    if(CGAL::SMALLER != compare_slope(get(vpmap, v_max),
+                            get(vpmap, source(min_slope_he, pmesh)),
+                            get(vpmap, v_max),
+                            get(vpmap, source(prev(opposite(min_slope_he, pmesh), pmesh), pmesh))))
+      min_slope_he = opposite(min_slope_he, pmesh);
+
+    //check that the normal to f has z > 0
+    typename GT::Angle_3 angle_3 = gt.angle_3_object();
+    typename GT::Vector_3 vertical(0, 0, 1);
+
+    return CGAL::ACUTE == angle_3(get(vpmap, source(min_slope_he, pmesh)),
+                                  get(vpmap, target(min_slope_he, pmesh)),
+                                  get(vpmap, target(next(min_slope_he, pmesh), pmesh)),
+                                  vertical);
   }
 } // end of namespace internal
 
@@ -138,43 +177,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
     = std::max_element(vbegin, vend, less_z);
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *v_max_it;
 
-  //among the incident edges to v_max,
-  // find one of the edges e with the minimal slope
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor min_slope_he = halfedge(v_max, pmesh);
-  CGAL_assertion(v_max == target(min_slope_he, pmesh));
-
-  typename GT::Compare_slope_3 compare_slope = gt.compare_slope_3_object();
-  BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
-  {
-    CGAL_assertion(v_max == target(min_slope_he, pmesh));
-    CGAL_assertion(v_max == target(he, pmesh));
-    if(CGAL::SMALLER == compare_slope(get(vpmap, v_max),
-                          get(vpmap, source(min_slope_he, pmesh)),
-                          get(vpmap, v_max),
-                          get(vpmap, source(he, pmesh))))
-    {
-      min_slope_he = he;
-    }
-  }
-
-  //around that edge, there are two faces(because the mesh is without borders),
-  //take the face f for which the other edge incident to f and v has the minimal slope
-  //Note we only keep the corresponding halfedge
-  if(CGAL::SMALLER != compare_slope(get(vpmap, v_max),
-                          get(vpmap, source(min_slope_he, pmesh)),
-                          get(vpmap, v_max),
-                          get(vpmap, source(prev(opposite(min_slope_he, pmesh), pmesh), pmesh))))
-    min_slope_he = opposite(min_slope_he, pmesh);
-
-  //check that the normal to f has z > 0
-  typename GT::Angle_3 angle_3 = gt.angle_3_object();
-  typename GT::Vector_3 vertical(0, 0, 1);
-
-  return CGAL::ACUTE == angle_3(get(vpmap, source(min_slope_he, pmesh)),
-                                get(vpmap, target(min_slope_he, pmesh)),
-                                get(vpmap, target(next(min_slope_he, pmesh), pmesh)),
-                                vertical);
+  return internal::is_outward_oriented(v_max, pmesh, np);
 }
 
 ///\cond SKIP_IN_MANUAL
