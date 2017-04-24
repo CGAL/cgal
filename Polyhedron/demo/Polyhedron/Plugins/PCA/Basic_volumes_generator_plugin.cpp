@@ -83,7 +83,8 @@ void Basic_volumes_generator_plugin::on_actionCube_triggered()
 {
   Polyhedron cube;
   VPMap vpmap = get(CGAL::vertex_point, cube);
-  vertex_descriptor vertices[8];
+  std::vector<vertex_descriptor> vertices;
+  vertices.resize(8);
   for(int i=0; i<8; ++i)
     vertices[i] = add_vertex(cube);
 
@@ -170,7 +171,8 @@ void Basic_volumes_generator_plugin::on_actionCylinder_triggered()
   Polyhedron cylinder;
   VPMap vpmap = get(CGAL::vertex_point, cylinder);
   const int nb_vertices = 360/precision * 2;
-  vertex_descriptor vertices[nb_vertices];
+  std::vector<vertex_descriptor> vertices;
+  vertices.resize(nb_vertices);
   for(int i=0; i<nb_vertices; ++i)
     vertices[i] = add_vertex(cylinder);
 
@@ -240,7 +242,8 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
   VPMap vpmap = get(CGAL::vertex_point, sphere);
 
   const int nb_vertices = 179/precision * 360/precision;
-  vertex_descriptor vertices[nb_vertices];
+  std::vector<vertex_descriptor> vertices;
+  vertices.resize(nb_vertices);
   for(std::size_t i=0; i<nb_vertices; ++i)
     vertices[i] = add_vertex(sphere);
 
@@ -299,7 +302,8 @@ void Basic_volumes_generator_plugin::on_actionTetrahedron_triggered()
 {
   Polyhedron tetrahedron;
   VPMap vpmap = get(CGAL::vertex_point, tetrahedron);
-  vertex_descriptor vertices[4];
+  std::vector<vertex_descriptor> vertices;
+  vertices.resize(4);
   for(int i=0; i<4; ++i)
     vertices[i] = add_vertex(tetrahedron);
 
