@@ -4,7 +4,6 @@
 #include  <CGAL/Three/Scene_item.h>
 #include "Polyhedron_type.h"
 
-//#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include "CGAL/Surface_mesh/Surface_mesh.h"
 
 #include <boost/foreach.hpp>
