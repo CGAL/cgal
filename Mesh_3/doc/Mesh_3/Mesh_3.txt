@@ -931,6 +931,18 @@ Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
 \cgalFigureCaptionEnd
 
+\subsubsection Mesh_3PolyhedralComplex Polyhedral complex
+
+The following example shows how to generate a mesh from a polyhedral complex.
+The domain is defined by a group of polyhedral surfaces that are conformal.
+For each facet of the input polyhedral surfaces,
+the ids of incident subdomains are known.
+The input surfaces intersect along polylines that are considered as sharp features,
+and protected as for other examples. 
+
+\cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
+
+
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
 \anchor Mesh_3_subsection_examples_optimization
