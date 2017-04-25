@@ -52,7 +52,7 @@ namespace CGAL {
 // double     double-precision float    8
 
   /**
-     \ingroup PkgPointSetProcessing
+     \ingroup PkgPointSetProcessingIOPly
      
      Class used to identify a %PLY property as a type and a name.
 
@@ -67,7 +67,7 @@ namespace CGAL {
   };
 
   /**
-     \ingroup PkgPointSetProcessing
+     \ingroup PkgPointSetProcessingIOPly
      
      Generates a %PLY property handler to read 3D points. Points are
      constructed from the input using 3 %PLY properties of type
@@ -88,7 +88,7 @@ namespace CGAL {
   }
 
   /**
-     \ingroup PkgPointSetProcessing
+     \ingroup PkgPointSetProcessingIOPly
      
      Generates a %PLY property handler to read 3D normal
      vectors. Vectors are constructed from the input using 3 PLY
@@ -532,7 +532,7 @@ namespace internal {
   
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIOPly
 
 /// Reads user-selected points properties from a .ply stream (ASCII or
 /// binary).
@@ -620,7 +620,7 @@ bool read_ply_points_with_properties (std::istream& stream,
 /// \endcond
   
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIOPly
 /// Reads points (positions + normals, if available) from a .ply
 /// stream (ASCII or binary).
 /// Potential additional point properties and faces are ignored.
@@ -704,7 +704,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIOPly
 /// Reads points (position only) from a .ply stream (ASCII or binary).
 /// Potential additional point properties (including normals) and faces are ignored.
 ///

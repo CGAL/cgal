@@ -102,7 +102,7 @@ compute_avg_knn_sq_distance_3(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Removes outliers:
 /// - computes average squared distance to the K nearest neighbors,
 /// - and sorts the points in increasing order of average distance.

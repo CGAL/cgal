@@ -43,7 +43,7 @@ namespace CGAL {
 
 
   /**
-     \ingroup PkgPointSetProcessing
+     \ingroup PkgPointSetProcessingIOLas
      
      Generates a %LAS property handler to write 3D points. 
 
@@ -141,7 +141,7 @@ namespace internal {
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIOLas
 /// Saves the [first, beyond) range of points with properties to a
 /// .las stream.
 ///
@@ -223,7 +223,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 }
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIOLas
 /// Saves the [first, beyond) range of points (positions only) to a
 /// .las stream. 
 ///

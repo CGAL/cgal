@@ -414,7 +414,7 @@ public:
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 
 /// Estimates the local scale in a K nearest neighbors sense on a set
 /// of user-defined query points. The computed scales correspond to
@@ -474,7 +474,7 @@ estimate_local_k_neighbor_scales(
 }
 
   
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 
 /// Estimates the global scale in a K nearest neighbors sense. The
 /// computed scale corresponds to the smallest scale such that the K
@@ -515,7 +515,7 @@ estimate_global_k_neighbor_scale(
 }
 
   
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 
 /// Estimates the local scale in a range sense on a set of
 /// user-defined query points. The computed scales correspond to the
@@ -575,7 +575,7 @@ estimate_local_range_scales(
 }
 
   
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 
 /// Estimates the global scale in a range sense. The computed scale
 /// corresponds to the smallest scale such that the subsets of points

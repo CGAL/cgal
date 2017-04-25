@@ -392,7 +392,7 @@ public:
 // ----------------------------------------------------------------------------
 
 //=============================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
 /// The WLOP simplification algorithm can produce a set of 
 /// denoised, outlier-free and evenly distributed particles over the original 

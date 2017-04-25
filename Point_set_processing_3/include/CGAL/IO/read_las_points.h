@@ -72,7 +72,7 @@ namespace CGAL {
 
 
   /**
-     \ingroup PkgPointSetProcessing
+     \ingroup PkgPointSetProcessingIOLas
      
      Generates a %LAS property handler to read 3D points. Points are
      constructed from the input the using 3 %LAS properties
@@ -262,7 +262,7 @@ namespace internal {
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIOLas
 
 /// Reads user-selected points properties from a .las or .laz stream.
 /// Potential additional properties are ignored.
@@ -363,7 +363,7 @@ bool read_las_points_with_properties (std::istream& stream,
 /// \endcond
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIOLas
 /// Reads points (position only) from a .las or .laz stream.
 /// Potential additional properties are ignored.
 ///
