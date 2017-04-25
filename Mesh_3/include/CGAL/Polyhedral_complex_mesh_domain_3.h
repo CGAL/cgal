@@ -200,7 +200,10 @@ struct Extract_polyline_with_context_visitor
 
 /// @endcond
 
-/*! The class `Polyhedral_complex_mesh_domain_3` implements a domain
+/*!
+\ingroup PkgMesh_3Domains
+
+The class `Polyhedral_complex_mesh_domain_3` implements a domain
 defined by a collection of polyhedral surfaces, forming a complex.
 
 The constraints on the complex are:
@@ -369,7 +372,6 @@ public:
     return stored_polyhedra;
   }
 
-  /// @cond DEVELOPERS
   /// Detect features
   void detect_features(FT angle_in_degree, std::vector<Polyhedron_type>& p);
   void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, stored_polyhedra); }
@@ -380,7 +382,6 @@ public:
   template <typename Surf_p_index>
   void reindex_patches(const std::vector<Surf_p_index>& map);
 
-  /// @cond DEVELOPERS
   template<typename PointSet>
   void merge_duplicated_points(const PointSet& duplicated_points);
 
@@ -962,7 +963,6 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
   }
 #endif
 }
-/// @endcond
 
 template < typename GT_, typename P_, typename TA_>
 template < typename Surf_p_index>
@@ -985,6 +985,7 @@ reindex_patches(const std::vector<Surf_p_index>& map)
   }
   Base::reindex_patches(map);
 }
+/// @endcond
 
 } //namespace CGAL
 
