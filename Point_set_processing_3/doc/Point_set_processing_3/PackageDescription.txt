@@ -20,7 +20,7 @@ formats.
 Read and write points (with or without additional properties) in PLY
 format.
 
-\defgroup PkgPointSetProcessingIOLas IO (Las Format)
+\defgroup PkgPointSetProcessingIOLas IO (LAS Format)
 \ingroup PkgPointSetProcessing
 
 Read and write points (with or without additional properties) in LAS
