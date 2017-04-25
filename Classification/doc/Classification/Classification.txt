@@ -6,7 +6,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Simon Giraudot, Florent Lafarge
 
-This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as ground, vegetation and buildings. A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set and define their own labels.
+This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set and define their own labels.
 
 \section Classification_Organization Package Organization
 
@@ -14,16 +14,16 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 
 - some analysis is performed on the input data set
 - features are computed based on this analysis
-- a set of labels (for example: ground, building, vegetation) is defined by the user
-- a predicate is defined and trained: from the set of values taken by the features at an input item, it gives the probability of this item to belong to one label or another
+- a set of labels (for example: _ground_, _building_, _vegetation_) is defined by the user
+- a predicate is defined and trained: from the set of values taken by the features at an input item, it measures the likelihood of this item belonging to one label or another
 - classification is computed itemwise using the predicate
-- additional regularization can be used by smoothing either locally or globally through an Alpha Expansion approach.
+- additional regularization can be used by smoothing either locally or globally through a _Graph Cut_ approach.
 
 \cgalFigureBegin{Classification_organization_fig,organization.svg}
 Organization of the package.
 \cgalFigureEnd
 
-This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify (although \cgal provides predefined features for common urban scenes).
+This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify (although \cgal provides predefined features for common point sets).
 
 Currently, \cgal provides data structures to handle classification of point sets.
 
@@ -43,19 +43,19 @@ The following code snippet shows how to instantiate such data structures from an
 
 \snippet Classification/example_classification.cpp Analysis
 
-\subsection Classification_labels Label set
+\subsection Classification_labels Label Set
 
-A label represents how an item should be classified, for example: vegetation, building, road, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle).
+A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle).
 
 The following code snippet shows how to add labels to the classification object.
 
 \snippet Classification/example_classification.cpp Labels
 
-\subsection Classification_features Feature set
+\subsection Classification_features Feature Set
 
 Features are defined as scalar fields that associates each input item with a specific value. A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
 
-\cgal provides some predefined features that are relevant for classification of urban point sets:
+\cgal provides some predefined features that are relevant for classification of point sets:
 
 - [Distance_to_plane](@ref CGAL::Classification::Feature::Distance_to_plane) measures how far away a point is from a locally estimated plane
 - [Elevation](@ref CGAL::Classification::Feature::Elevation) computes the local distance to an estimation of the ground
@@ -82,7 +82,7 @@ In the following code snippet, a subset of these features are instantiated. Note
 
 \snippet Classification/example_classification.cpp Features
 
-Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from [Feature_base](@ref CGAL::Classification::Feature_base) and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associate a scalar value to each input item. 
+Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from [Feature_base](@ref CGAL::Classification::Feature_base) and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associates a scalar value to each input item. 
 
 The following example shows how to define a feature that discriminates
 points that lie inside a 2D box from the others:
@@ -95,15 +95,15 @@ This feature can then be instantiated from the feature set the same way as the o
 
 \subsection Classification_feature_generator Point Set Feature Generator
 
-In standard classification of point sets for urban scenes, users commonly want to use all predefined features to get the best result possible. \cgal provides a class [Point_set_feature_generator](@ref CGAL::Classification::Point_set_feature_generator) that performs the following operations:
+In standard classification of point sets, users commonly want to use all predefined features to get the best result possible. \cgal provides a class [Point_set_feature_generator](@ref CGAL::Classification::Point_set_feature_generator) that performs the following operations:
 
 - it estimates the smallest relevant scale
-- it takes care of generating all needed analysis structures and provides access to them
+- it generates all needed analysis structures and provides access to them
 - it generates all possible features (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.)
-- multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}
-- if \cgal is linked with \ref thirdpartyTBB, features can be computed in parallel to increase the overall computation speed
 
-Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of urban point sets simpler to handle. Users can still add their own features within their feature set.
+Multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}. If \cgal is linked with \ref thirdpartyTBB, features can be computed in parallel to increase the overall computation speed.
+
+Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of point sets simpler to handle. Users can still add their own features within their feature set.
 
 The following snippet shows how to use the feature generator:
 
@@ -111,11 +111,9 @@ The following snippet shows how to use the feature generator:
 
 \section Classification_predicates Predicates
 
-%Classification relies on a predicate: this predicate is an object that, from the set of values taken by the features at an input item, computes the probability that this input item belongs to one label or another. The concept `CGAL::Classification::Predicate` takes the index of an input item and stores the probability associated to each label in a vector.
+%Classification relies on a predicate: this predicate is an object that, from the set of values taken by the features at an input item, computes the energy that measures the likelihood of an input item to belong to one label or another. The concept `CGAL::Classification::Predicate` takes the index of an input item and stores the energies associated to each label in a vector. If a predicate returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty; large values mean that this item is not likely to belong to this label.
 
-For convenience reasons, we hereafter handle energies instead of probabilities, which should be considered as a priority measure _à la STL_: small energy values correspond to large probabilities and large energy values to small probabilities. If a predicate returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty.
-
-\cgal provides 2 models for this concept, [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate) and [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate).
+\cgal provides two models for this concept, [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate) and [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate).
 
 \subsection Classification_sowf Sum of Weighted Features
 
@@ -138,9 +136,9 @@ Each pair of feature and label is assigned an effect that can either be:
 - [NEUTRAL](@ref CGAL::Classification::Sum_of_weighted_features_predicate::NEUTRAL): the label is not affected by the feature
 - [PENALIZING](@ref CGAL::Classification::Sum_of_weighted_features_predicate::PENALIZING): the label is favored by low values of the feature
 
-For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
+For example, _vegetation_ is expected to have a high distance to plane and have a color close to green (if colors are available); _facades_ have a low distance to plane and a low verticality; etc.
 
-Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). Let \f$f_j(i)\f$ be the raw value of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this feature. We define the normalized value \f$F_j(x_i) \in [0:1]\f$ of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item as follows:
+Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: _vegetation_, _ground_, etc.). Let \f$f_j(i)\f$ be the raw value of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this feature. We define the normalized value \f$F_j(x_i) \in [0:1]\f$ of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item as follows:
 
 \f{eqnarray*}{
     F_j(x_i) = & (1 - \min(\max(0,\frac{f_j(i)}{w_j}), 1)) & \mbox{if } f_j \mbox{ favors } x_i \\
@@ -206,7 +204,7 @@ of OpenCV.
 
 \section Classification_classification_functions Classification Functions
 
-%Classification is performed by minizing an energy over the input data set that may include regularization. \cgal provides 3 different methods for classification, ranging from high speed / low quality to low speed / high quality:
+%Classification is performed by minizing an energy over the input data set that may include regularization. \cgal provides three different methods for classification, ranging from high speed / low quality to low speed / high quality:
 
 - `CGAL::Classification::classify()` 
 - `CGAL::Classification::classify_with_local_smoothing()`
@@ -215,7 +213,7 @@ of OpenCV.
 On a point set of 3 millions of points, the first method takes about 4 seconds, the second about 40 seconds and the third about 2 minutes.
 
 \cgalFigureBegin{Classification_image,classif.png}
-Top-Left: input point set. Top-Right: raw output classification represented by a set of colors (ground is orange, facades are blue, roofs are pink and vegetation is green). Bottom-Left: output classification using local smoothing. Bottom-Right: output classification using graphcut.
+Top-Left: input point set. Top-Right: raw output classification represented by a set of colors (_ground_ is orange, _facades_ are blue, _roofs_ are pink and _vegetation_ is green). Bottom-Left: output classification using local smoothing. Bottom-Right: output classification using graphcut.
 \cgalFigureEnd
 
 
@@ -227,7 +225,7 @@ Mathematical details are provided hereafter.
 that provides acceptable but usually noisy results (see Figure
 \cgalFigureRef{Classification_image}, top-right).
 
-Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the label of the \f$i^{th}\f$ item (for example: vegetation, ground, etc.). The classification is performed by minimizing the following energy:
+Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the label of the \f$i^{th}\f$ item (for example: _vegetation_, _ground_, etc.). The classification is performed by minimizing the following energy:
 
 \f[
   E(x) = \sum_{i = 1..N} E_{di}(x_i)
@@ -270,7 +268,7 @@ smoothing by providing a model of `CGAL::Classification::NeighborQuery`.
 
 \snippet Classification/example_classification.cpp Smoothing
 
-\subsection Classification_graphcut Global Regularization (Graph Cut)
+\subsection Classification_graphcut Global Regularization (_Graph Cut_)
 
 - `CGAL::Classification::classify_with_graphcut()`: this method
 offers the best quality but requires longer computation time (see
@@ -288,7 +286,7 @@ quantifies the strengh of the regularization, \f$i \sim j\f$
 represents the pairs of neighboring items and
 \f$\mathbf{1}_{\{.\}}\f$ the characteristic function.
 
-A Graph Cut based algorithm (Alpha Expansion) is used to quickly reach
+A _Graph Cut_ based algorithm (Alpha Expansion) is used to quickly reach
 an approximate solution close to the global optimum of this energy.
 
 This method allows to consistently segment the input data set in
@@ -335,7 +333,7 @@ The following example:
 - reads an input file (LIDAR point set in PLY format)
 - computes useful structures from this input
 - computes features from the input and the precomputed structures
-- defines 3 labels (vegetation, ground and roof)
+- defines 3 labels (_vegetation_, _ground_ and _roof_)
 - sets up the classification predicate [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate)
 - classifies the point set with the 3 different methods (this is for
 the sake of the example: each method overwrites the previous result,

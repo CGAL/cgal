@@ -287,7 +287,7 @@ namespace internal {
     \brief Runs the classification algorithm without any regularization.
 
     There is no relationship between items, the classification energy
-    is only minimized itemwise. This method is quick but produce
+    is only minimized itemwise. This method is quick but produces
     suboptimal results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
@@ -340,7 +340,7 @@ namespace internal {
 
     The computed classification energy is smoothed on a user defined
     local neighborhood of items. This method is a compromise between
-    efficiency and reliability.
+    efficiency and better quality results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
@@ -406,7 +406,7 @@ namespace internal {
     \ingroup PkgClassificationMain
 
     \brief Runs the classification algorithm with a global
-    regularization based on a graphcut.
+    regularization based on a graph cut.
 
     The computed classification energy is globally regularized through
     an alpha-expansion algorithm. This method is slow but provides

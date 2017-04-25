@@ -79,7 +79,7 @@ public:
 /*!
   \ingroup PkgClassificationFeature
 
-  \brief %Handle to an `Feature_base`.
+  \brief %Handle to a `Feature_base`.
 
   \cgalModels Handle
 */

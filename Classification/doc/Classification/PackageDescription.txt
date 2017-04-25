@@ -7,21 +7,32 @@
 \defgroup PkgClassificationMain Main Functions
 \ingroup PkgClassification
 
+Functions that perform classification based on a set of labels and a predicate, with or without regularization.
+
 \defgroup PkgClassificationPredicates Predicates
 \ingroup PkgClassification
+
+Predicates are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
 
 \defgroup PkgClassificationDataStructures Data Structures
 \ingroup PkgClassification
 
+Useful data structures that are used to compute features (computation of eigenvalues, for example) and to regularize classification (neighborhood).
+
 \defgroup PkgClassificationLabel Label
 \ingroup PkgClassification
+
+A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc.
 
 \defgroup PkgClassificationFeature Feature
 \ingroup PkgClassification
 
+Features are defined as scalar fields that associates each input item with a specific value.
+
 \defgroup PkgClassificationFeatures Predefined Features
 \ingroup PkgClassification
 
+\cgal provides some predefined features that are relevant for classification of point sets.
 
 \addtogroup PkgClassification
 
@@ -68,7 +79,6 @@
 - `CGAL::Classification::Local_eigen_analysis<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
 - `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Evaluation`
-
 
 ## Label ##
 

@@ -35,7 +35,7 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationFeature
 
-\brief Set of features (see `Feature_based`) used as input by classification
+\brief Set of features (see `Feature_base`) used as input by classification
 algorithms.
 
 */
