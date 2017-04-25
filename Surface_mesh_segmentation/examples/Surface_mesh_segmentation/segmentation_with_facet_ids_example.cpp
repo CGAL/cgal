@@ -39,7 +39,7 @@ int main()
     // create and read Polyhedron
     Polyhedron mesh;
     std::ifstream input("data/cactus.off");
-    if ( !input || !(input >> mesh) || mesh.empty() ) {
+    if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) ) {
       std::cerr << "Not a valid off file." << std::endl;
       return EXIT_FAILURE;
     }
@@ -76,4 +76,5 @@ int main()
         std::cout << segment_property_map[facet_it] << " ";
     }
     std::cout << std::endl;
+    return EXIT_SUCCESS;
 }

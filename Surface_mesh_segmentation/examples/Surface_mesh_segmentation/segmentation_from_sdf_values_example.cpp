@@ -16,8 +16,8 @@ int main()
     // create and read Polyhedron
     Polyhedron mesh;
     std::ifstream input("data/cactus.off");
-    if ( !input || !(input >> mesh) || mesh.empty() ) {
-      std::cerr << "Not a valid off file." << std::endl;
+    if ( !input || !(input >> mesh) || mesh.empty()  || ( !CGAL::is_triangle_mesh(mesh))) {
+      std::cerr << "Input is not a triangle mesh." << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -54,4 +54,6 @@ int main()
     // This feature is relevant for segmenting the mesh several times with different parameters.
     CGAL::segmentation_from_sdf_values(
       mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
+
+    return EXIT_SUCCESS;
 }
