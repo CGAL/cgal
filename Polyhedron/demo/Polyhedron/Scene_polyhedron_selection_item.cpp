@@ -1200,6 +1200,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       //Split edge
     case 2:
     {
+
       Point_3 a(get(vpm,target(halfedge(ed, *polyhedron()),*polyhedron()))),
         b(get(vpm,target(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())));
       halfedge_descriptor hhandle = CGAL::Euler::split_edge(halfedge(ed, *polyhedron()),*polyhedron());
@@ -2169,7 +2170,6 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
   connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
   connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
   connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
-  // AF does not  work for Surface_mesh
    k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
   connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -2186,4 +2186,21 @@ void Scene_polyhedron_selection_item::select_all_NT()
   }
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
+}
+
+void Scene_polyhedron_selection_item::selection_changed(bool b)
+{
+  QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+  CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+  if(!viewer)
+      return;
+
+  if(!b)
+  {
+    viewer->setBindingSelect();
+  }
+  else
+  {
+    viewer->setNoBinding();
+  }
 }

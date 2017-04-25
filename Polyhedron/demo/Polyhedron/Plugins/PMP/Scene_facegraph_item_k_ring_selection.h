@@ -550,7 +550,9 @@ protected:
         QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
         paint_pos = mouse_event->pos();
         if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
+        {
           QTimer::singleShot(0,this,SLOT(paint_selection()));
+        }
       }
       else
       {

@@ -783,6 +783,8 @@ public:
     poly_item->setItemIsMulticolor(b);
   }
 
+  void selection_changed(bool b) Q_DECL_OVERRIDE;
+
 Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);

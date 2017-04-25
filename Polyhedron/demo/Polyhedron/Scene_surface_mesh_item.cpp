@@ -17,7 +17,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
-#include "properties.h"
+
 
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
@@ -63,6 +63,7 @@ struct Scene_surface_mesh_item_priv{
   typedef Kernel::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+
   typedef std::vector<QColor> Color_vector;
 
   Scene_surface_mesh_item_priv(const Scene_surface_mesh_item& other, Scene_surface_mesh_item* parent):
@@ -147,6 +148,8 @@ struct Scene_surface_mesh_item_priv{
   Scene_surface_mesh_item *item;
 
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
+  mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
+  mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
 
   Color_vector colors_;
   void computeElements() const;
@@ -200,6 +203,23 @@ Scene_surface_mesh_item*
 Scene_surface_mesh_item::clone() const
 { return new Scene_surface_mesh_item(*this); }
 
+Scene_surface_mesh_item::Vertex_selection_map
+Scene_surface_mesh_item::vertex_selection_map()
+{
+  if(! d->v_selection_map){
+    d->v_selection_map = d->smesh_->add_property_map<vertex_descriptor,int>("v:selection").first;
+  }
+  return d->v_selection_map;
+}
+
+Scene_surface_mesh_item::Face_selection_map
+Scene_surface_mesh_item::face_selection_map()
+{
+  if(! d->f_selection_map){
+    d->f_selection_map = d->smesh_->add_property_map<face_descriptor,int>("f:selection").first;
+  }
+  return d->f_selection_map;
+}
 
 std::vector<QColor>&
 Scene_surface_mesh_item::color_vector()
@@ -793,11 +813,6 @@ void Scene_surface_mesh_item::itemAboutToBeDestroyed(Scene_item *item)
   }
 }
 
-void Scene_surface_mesh_item::invalidateOpenGLBuffers()
-{
-  are_buffers_filled = false;
-  d->smesh_->collect_garbage();
-}
 void* Scene_surface_mesh_item_priv::get_aabb_tree()
 {
   QVariant aabb_tree_property = item->property(aabb_property_name);
@@ -809,7 +824,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     SMesh* sm = item->polyhedron();
     if(sm) {
-
+      sm->collect_garbage();
       Input_facets_AABB_tree* tree =
           new Input_facets_AABB_tree();
       int index =0;
@@ -818,10 +833,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         //if face not triangle, triangulate corresponding primitive before adding it to the tree
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
         {
-          Kernel::Plane_3 face_plane = Kernel::Plane_3(sm->point(target(halfedge(f, *sm), *sm)),
-                                                       sm->point(target(next(halfedge(f, *sm), *sm), *sm)),
-                                                       sm->point(target(next(next(halfedge(f, *sm), *sm), *sm), *sm)));
-          Kernel::Vector_3 normal = face_plane.orthogonal_vector(); //initialized in compute_normals_and_vertices
+          Kernel::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
           index +=3;
           Q_FOREACH(Kernel::Triangle_3 triangle, triangulate_primitive(f,normal))
           {

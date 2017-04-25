@@ -34,14 +34,6 @@ Scene_polyhedron_item_decorator::toolTip() const
     .arg(this->color().name());
 }
 
-void Scene_polyhedron_item_decorator::draw() const {
-  poly_item->draw();
-}
-
-void Scene_polyhedron_item_decorator::drawEdges() const {
-  poly_item->drawEdges();
-}
-
 Face_graph* 
 Scene_polyhedron_item_decorator::polyhedron()       
 { return poly_item->polyhedron(); }

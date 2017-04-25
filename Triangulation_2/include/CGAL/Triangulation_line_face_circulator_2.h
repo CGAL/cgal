@@ -161,6 +161,10 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
   // dir 
   // or null iterator
 {
+  if(!((!_tr->is_infinite(v)) &&
+       (_tr->dimension() == 2)  &&
+       (! _tr->xy_equal(v->point(),dir))))
+    std::cout<<"";
   CGAL_triangulation_precondition((!_tr->is_infinite(v)) &&
 			       (_tr->dimension() == 2)  &&
 			       (! _tr->xy_equal(v->point(),dir)));

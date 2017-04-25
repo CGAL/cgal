@@ -37,6 +37,8 @@ public:
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
+  typedef SMesh::Property_map<face_descriptor,int> Face_selection_map;
 
   Scene_surface_mesh_item();
   // Takes ownership of the argument.
@@ -63,6 +65,8 @@ public:
   void update_vertex_indices(){}
   void update_halfedge_indices(){}
   void update_facet_indices(){}
+  Vertex_selection_map vertex_selection_map();
+  Face_selection_map face_selection_map();
 
   std::vector<QColor>& color_vector();
 

@@ -97,9 +97,6 @@ public:
 
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
-    Scene* true_scene = static_cast<Scene*>(scene);
-    if(true_scene)
-      connect(true_scene, SIGNAL(selectionChanged(int)), this, SLOT(selectionChanged(int)));
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
@@ -138,19 +135,7 @@ Q_SIGNALS:
   void save_handleType();
   void set_operation_mode(int);
 public Q_SLOTS:
-  //If the mainSelectedItem is a selection_item, disable the picking item selection. Else, enable it.
-  void selectionChanged(int i)
-  {
-    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
-    CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
-    if(!viewer)
-        return;
-    Scene_polyhedron_selection_item* current_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
-    if(!current_item)
-      viewer->setBindingSelect();
-    else
-      viewer->setNoBinding();
-  }
+
 
   void connectItem(Scene_polyhedron_selection_item* new_item)
   {
