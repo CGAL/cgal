@@ -53,7 +53,6 @@ public:
   typedef boost::graph_traits<Polyhedron>::edge_descriptor poly_edge_descriptor;
   typedef boost::graph_traits<Polyhedron>::face_descriptor poly_face_descriptor;
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor poly_vertex_descriptor;
-  typedef Scene_surface_mesh_item::SMesh SMesh;
   typedef boost::graph_traits<SMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef boost::graph_traits<SMesh>::face_descriptor sm_face_descriptor;
   typedef boost::graph_traits<SMesh>::edge_descriptor sm_edge_descriptor;

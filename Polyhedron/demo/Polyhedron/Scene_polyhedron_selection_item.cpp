@@ -32,20 +32,20 @@ typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::const_type constVP
 
 typedef Scene_face_graph_item::Vertex_selection_map Vertex_selection_map;
 
-typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Face_graph>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Face_graph>::edge_descriptor edge_descriptor;
-typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Face_graph>::vertex_descriptor fg_vertex_descriptor;
+typedef boost::graph_traits<Face_graph>::face_descriptor fg_face_descriptor;
+typedef boost::graph_traits<Face_graph>::edge_descriptor fg_edge_descriptor;
+typedef boost::graph_traits<Face_graph>::halfedge_descriptor fg_halfedge_descriptor;
 
 struct Scene_polyhedron_selection_item_priv{
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
-  typedef boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
-  typedef boost::unordered_set<face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
-  typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
+  typedef boost::unordered_set<fg_vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
+  typedef boost::unordered_set<fg_face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
+  typedef boost::unordered_set<fg_edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
   struct vertex_on_path
   {
-    vertex_descriptor vertex;
+    fg_vertex_descriptor vertex;
     bool is_constrained;
   };
 
@@ -62,12 +62,12 @@ struct Scene_polyhedron_selection_item_priv{
                             const Selection_set_vertex& p_sel_vertex, const Selection_set_facet &p_sel_facet, const Selection_set_edge &p_sel_edges) const;
   void compute_temp_elements() const;
   void compute_HL_elements() const;
-  void triangulate_facet(face_descriptor, Kernel::Vector_3 normal,
+  void triangulate_facet(fg_face_descriptor, Kernel::Vector_3 normal,
                          std::vector<float> &p_facets,std::vector<float> &p_normals) const;
   void tempInstructions(QString s1, QString s2);
 
   void computeAndDisplayPath();
-  void addVertexToPath(vertex_descriptor, vertex_on_path &);
+  void addVertexToPath(fg_vertex_descriptor, vertex_on_path &);
 
   enum VAOs{
     Facets = 0,
@@ -101,7 +101,7 @@ struct Scene_polyhedron_selection_item_priv{
   };
 
   QList<vertex_on_path> path;
-  QList<vertex_descriptor> constrained_vertices;
+  QList<fg_vertex_descriptor> constrained_vertices;
   bool is_path_selecting;
   bool poly_need_update;
   mutable bool are_temp_buffers_filled;
@@ -110,17 +110,17 @@ struct Scene_polyhedron_selection_item_priv{
   int operation_mode;
   QString m_temp_instructs;
   bool is_treated;
-  vertex_descriptor to_split_vh;
-  face_descriptor to_split_fh;
-  edge_descriptor to_join_ed;
+  fg_vertex_descriptor to_split_vh;
+  fg_face_descriptor to_split_fh;
+  fg_edge_descriptor to_join_ed;
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Face_graph* poly;
-  CGAL::Unique_hash_map<face_descriptor, Kernel::Vector_3>  face_normals_map;
-  CGAL::Unique_hash_map<vertex_descriptor, Kernel::Vector_3>  vertex_normals_map;
-  boost::associative_property_map< CGAL::Unique_hash_map<face_descriptor, Kernel::Vector_3> >
+  CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3>  face_normals_map;
+  CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3>  vertex_normals_map;
+  boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3> >
     nf_pmap;
-  boost::associative_property_map< CGAL::Unique_hash_map<vertex_descriptor, Kernel::Vector_3> >
+  boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3> >
     nv_pmap;
   Scene_face_graph_item::ManipulatedFrame *manipulated_frame;
   bool ready_to_move;
@@ -133,8 +133,8 @@ struct Scene_polyhedron_selection_item_priv{
   Face_graph* polyhedron() { return poly; }
   const Face_graph* polyhedron()const { return poly; }
 
-  bool canAddFace(halfedge_descriptor hc, Scene_polyhedron_selection_item::halfedge_descriptor t);
-  bool canAddFaceAndVertex(Scene_polyhedron_selection_item::halfedge_descriptor hc, Scene_polyhedron_selection_item::halfedge_descriptor t);
+  bool canAddFace(fg_halfedge_descriptor hc, Scene_polyhedron_selection_item::fg_halfedge_descriptor t);
+  bool canAddFaceAndVertex(Scene_polyhedron_selection_item::fg_halfedge_descriptor hc, Scene_polyhedron_selection_item::fg_halfedge_descriptor t);
 
   mutable std::vector<float> positions_facets;
   mutable std::vector<float> normals;
@@ -424,10 +424,10 @@ typedef Traits::Point_3	            Point;
 typedef Traits::Vector_3	    Vector;
 
 void
-Scene_polyhedron_selection_item_priv::triangulate_facet(face_descriptor fit,const Vector normal,
+Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,const Vector normal,
                                                    std::vector<float> &p_facets,std::vector<float> &p_normals ) const
 {
-  typedef FacetTriangulator<Face_graph, Kernel, vertex_descriptor> FT;
+  typedef FacetTriangulator<Face_graph, Kernel, fg_vertex_descriptor> FT;
   double diagonal;
   if(item->poly_item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->poly_item->diagonalBbox();
@@ -474,7 +474,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         end = p_sel_facets.end();
         it != end; it++)
     {
-      face_descriptor f = (*it);
+      fg_face_descriptor f = (*it);
       if (f == boost::graph_traits<Face_graph>::null_face())
         continue;
       Vector nf = get(nf_pmap, f);
@@ -493,7 +493,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         p_normals.push_back(nf.z());
 
 
-        BOOST_FOREACH(halfedge_descriptor he, halfedges_around_face(halfedge(f,*polyhedron()), *polyhedron()))
+        BOOST_FOREACH(fg_halfedge_descriptor he, halfedges_around_face(halfedge(f,*polyhedron()), *polyhedron()))
         {
           const Point& p = get(vpm,target(he,*poly));
           p_facets.push_back(p.x()+offset.x);
@@ -826,7 +826,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_vertex temp_select = selected_vertices;
     select_all();
-    Q_FOREACH(vertex_descriptor vh, temp_select)
+    Q_FOREACH(fg_vertex_descriptor vh, temp_select)
     {
       selected_vertices.erase(vh);
     }
@@ -836,7 +836,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_edge temp_select = selected_edges;
     select_all();
-    Q_FOREACH(edge_descriptor ed , temp_select)
+    Q_FOREACH(fg_edge_descriptor ed , temp_select)
       selected_edges.erase(ed);
     break;
   }
@@ -844,7 +844,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_facet temp_select = selected_facets;
     select_all();
-    Q_FOREACH(face_descriptor fh, temp_select)
+    Q_FOREACH(fg_face_descriptor fh, temp_select)
       selected_facets.erase(fh);
     break;
   }
@@ -964,13 +964,13 @@ bool Scene_polyhedron_selection_item::treat_classic_selection(const HandleRange&
   return any_change;
 }
 
-bool Scene_polyhedron_selection_item::treat_selection(const std::set<vertex_descriptor>& selection)
+bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_descriptor>& selection)
 {
   VPmap vpm = get(CGAL::vertex_point, *polyhedron());
   if(!d->is_treated)
   {
-    vertex_descriptor vh = *selection.begin();
-    Selection_traits<vertex_descriptor, Scene_polyhedron_selection_item> tr(this);
+    fg_vertex_descriptor vh = *selection.begin();
+    Selection_traits<fg_vertex_descriptor, Scene_polyhedron_selection_item> tr(this);
     switch(d->operation_mode)
     {
     //classic selection
@@ -1008,13 +1008,13 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<vertex_desc
       //Split face
     case 4:
     {
-      static vertex_descriptor s;
-      static halfedge_descriptor h1,h2;
+      static fg_vertex_descriptor s;
+      static fg_halfedge_descriptor h1,h2;
       static bool found_h1(false), found_h2(false);
       if(!d->first_selected)
       {
           //Is the vertex on the face ?
-        BOOST_FOREACH(halfedge_descriptor hafc, halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
+        BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
           {
             if(target(hafc,*polyhedron())==vh)
             {
@@ -1043,7 +1043,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<vertex_desc
         for(int i=0; i<1; i++) //seems useless but allow the use of break.
         {
           //Is the vertex on the face ?
-          BOOST_FOREACH(halfedge_descriptor hafc, halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
+          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
             if(target(hafc,*polyhedron())==vh)
           {
             h2 = hafc;
@@ -1100,7 +1100,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<vertex_desc
     case 8:
     {
       bool has_hole = false;
-      BOOST_FOREACH(halfedge_descriptor hc, halfedges_around_target(vh,*polyhedron()))
+      BOOST_FOREACH(fg_halfedge_descriptor hc, halfedges_around_target(vh,*polyhedron()))
       {
         if(is_border(hc,*polyhedron()))
         {
@@ -1154,18 +1154,18 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<vertex_desc
 
 //returns true if halfedge's facet's degree >= degree
 /*
-std::size_t facet_degree(halfedge_descriptor h, const Face_graph& polyhedron)
+std::size_t facet_degree(fg_halfedge_descriptor h, const Face_graph& polyhedron)
 {
   return degree(h,polyhedron);
 }
 */
-bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descriptor>& selection)
+bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_descriptor>& selection)
 {
   VPmap vpm = get(CGAL::vertex_point, *polyhedron());
-  edge_descriptor ed =  *selection.begin();
+  fg_edge_descriptor ed =  *selection.begin();
   if(!d->is_treated)
   {
-    Selection_traits<edge_descriptor, Scene_polyhedron_selection_item> tr(this);
+    Selection_traits<fg_edge_descriptor, Scene_polyhedron_selection_item> tr(this);
     switch(d->operation_mode)
     {
     //classic selection
@@ -1185,7 +1185,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         }
         else
         {
-          halfedge_descriptor targt = halfedge(ed, *polyhedron());
+          fg_halfedge_descriptor targt = halfedge(ed, *polyhedron());
           Point S,T;
           S = get(vpm, source(targt, *polyhedron()));
           T = get(vpm, target(targt, *polyhedron()));
@@ -1203,7 +1203,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
 
       Point_3 a(get(vpm,target(halfedge(ed, *polyhedron()),*polyhedron()))),
         b(get(vpm,target(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())));
-      halfedge_descriptor hhandle = CGAL::Euler::split_edge(halfedge(ed, *polyhedron()),*polyhedron());
+      fg_halfedge_descriptor hhandle = CGAL::Euler::split_edge(halfedge(ed, *polyhedron()),*polyhedron());
         Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
 
         put(vpm, target(hhandle,*polyhedron()), p);
@@ -1241,7 +1241,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         }
         else
         {
-          halfedge_descriptor targt = halfedge(ed, *polyhedron());
+          fg_halfedge_descriptor targt = halfedge(ed, *polyhedron());
           Point S,T;
           S = get(vpm, source(targt, *polyhedron()));
           T = get(vpm, target(targt, *polyhedron()));
@@ -1274,11 +1274,11 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       //Add vertex and face to border
     case 9:
     {
-      static halfedge_descriptor t;
+      static fg_halfedge_descriptor t;
       if(!d->first_selected)
       {
           bool found = false;
-          halfedge_descriptor hc = halfedge(ed, *polyhedron());
+          fg_halfedge_descriptor hc = halfedge(ed, *polyhedron());
           if(is_border(hc,*polyhedron()))
           {
             t = hc;
@@ -1305,7 +1305,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       }
       else
       {
-        halfedge_descriptor hc = halfedge(ed, *polyhedron());
+        fg_halfedge_descriptor hc = halfedge(ed, *polyhedron());
         if(d->canAddFaceAndVertex(hc, t))
         {
           d->first_selected = false;
@@ -1325,11 +1325,11 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       //Add face to border
     case 10:
     {
-      static halfedge_descriptor t;
+      static fg_halfedge_descriptor t;
       if(!d->first_selected)
       {
           bool found = false;
-          halfedge_descriptor hc = halfedge(ed, *polyhedron());
+          fg_halfedge_descriptor hc = halfedge(ed, *polyhedron());
           if(is_border(hc,*polyhedron()))
           {
             t = hc;
@@ -1357,7 +1357,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       }
       else
       {
-        halfedge_descriptor hc = halfedge(ed, *polyhedron());
+        fg_halfedge_descriptor hc = halfedge(ed, *polyhedron());
         if(d->canAddFace(hc, t))
         {
           d->first_selected = false;
@@ -1380,18 +1380,18 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
   return false;
 }
 
-bool Scene_polyhedron_selection_item::treat_selection(const std::vector<face_descriptor>& selection)
+bool Scene_polyhedron_selection_item::treat_selection(const std::vector<fg_face_descriptor>& selection)
 {
   return treat_classic_selection(selection);
 }
 
-bool Scene_polyhedron_selection_item::treat_selection(const std::set<face_descriptor>& selection)
+bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_descriptor>& selection)
 {
   VPmap vpm = get(CGAL::vertex_point,*polyhedron());
   if(!d->is_treated)
   {
-    face_descriptor fh = *selection.begin();
-    Selection_traits<face_descriptor, Scene_polyhedron_selection_item> tr(this);
+    fg_face_descriptor fh = *selection.begin();
+    Selection_traits<fg_face_descriptor, Scene_polyhedron_selection_item> tr(this);
     switch(d->operation_mode)
     {
     //classic selection
@@ -1403,13 +1403,13 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<face_descri
     //Split vertex
     case 1:
     {
-      static halfedge_descriptor h1;
+      static fg_halfedge_descriptor h1;
       //stores first fh and emit change label
       if(!d->first_selected)
       {
           bool found = false;
           //test preco
-          BOOST_FOREACH(halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
+          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
           {
             if(target(hafc,*polyhedron())==d->to_split_vh)
             {
@@ -1433,9 +1433,9 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<face_descri
       else
       {
           //get the right halfedges
-          halfedge_descriptor h2;
+          fg_halfedge_descriptor h2;
           bool found = false;
-          BOOST_FOREACH(halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
+          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
           {
             if(target(hafc,*polyhedron())==d->to_split_vh)
             {
@@ -1447,7 +1447,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<face_descri
 
           if(found &&(h1 != h2))
           {
-            halfedge_descriptor hhandle = CGAL::Euler::split_vertex(h1,h2,*polyhedron());
+            fg_halfedge_descriptor hhandle = CGAL::Euler::split_vertex(h1,h2,*polyhedron());
 
             temp_selected_facets.clear();
             Point_3 p1t = get(vpm, target(h1,*polyhedron()));
@@ -1506,14 +1506,14 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<face_descri
           double x(0), y(0), z(0);
           int total(0);
 
-          BOOST_FOREACH(halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
+          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
           {
-            vertex_descriptor vd = target(hafc,*polyhedron());
+            fg_vertex_descriptor vd = target(hafc,*polyhedron());
             Point_3& p = get(vpm,vd);
             x+= p.x(); y+=p.y(); z+=p.z();
             total++;
           }
-          halfedge_descriptor hhandle = CGAL::Euler::add_center_vertex(halfedge(fh,*polyhedron()), *polyhedron());
+          fg_halfedge_descriptor hhandle = CGAL::Euler::add_center_vertex(halfedge(fh,*polyhedron()), *polyhedron());
           if(total !=0)
             put(vpm, target(hhandle,*polyhedron()), Point_3(x/(double)total, y/(double)total, z/(double)total));
           compute_normal_maps();
@@ -1556,20 +1556,20 @@ class Dijkstra_end_exception : public std::exception
 /// the shortest path is thus known.
 class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
 {
-  vertex_descriptor destination_vd;
+  fg_vertex_descriptor destination_vd;
 
 public:
-  Stop_at_target_Dijkstra_visitor(vertex_descriptor destination_vd)
+  Stop_at_target_Dijkstra_visitor(fg_vertex_descriptor destination_vd)
     : destination_vd(destination_vd)
   { }
 
-  void initialize_vertex(const vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void examine_vertex(const vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void examine_edge(const edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void edge_relaxed(const edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void discover_vertex(const vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void edge_not_relaxed(const edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void finish_vertex(const vertex_descriptor &vd, const Face_graph& /* mesh*/) const
+  void initialize_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
+  void examine_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
+  void examine_edge(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
+  void edge_relaxed(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
+  void discover_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
+  void edge_not_relaxed(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
+  void finish_vertex(const fg_vertex_descriptor &vd, const Face_graph& /* mesh*/) const
   {
     if(vd == destination_vd)
       throw Dijkstra_end_exception();
@@ -1581,17 +1581,17 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
   item->temp_selected_edges.clear();
   path.clear();
 
-  typedef boost::unordered_map<vertex_descriptor, vertex_descriptor>     Pred_umap;
+  typedef boost::unordered_map<fg_vertex_descriptor, fg_vertex_descriptor>     Pred_umap;
   typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
 
   Pred_umap predecessor;
   Pred_pmap pred_pmap(predecessor);
 
   vertex_on_path vop;
-  QList<vertex_descriptor>::iterator it;
+  QList<fg_vertex_descriptor>::iterator it;
   for(it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
   {
-    vertex_descriptor t(*it), s(*(it+1));
+    fg_vertex_descriptor t(*it), s(*(it+1));
     Stop_at_target_Dijkstra_visitor vis(t);
 
     try
@@ -1629,13 +1629,13 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
   QList<vertex_on_path>::iterator path_it;
   for(path_it = path.begin(); path_it!=path.end()-1; ++path_it)
   {
-    std::pair<halfedge_descriptor, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*item->polyhedron());
+    std::pair<fg_halfedge_descriptor, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*item->polyhedron());
     if(h.second)
       item->temp_selected_edges.insert(edge(h.first, *item->polyhedron()));
   }
 }
 
-void Scene_polyhedron_selection_item_priv::addVertexToPath(vertex_descriptor vh, vertex_on_path &first)
+void Scene_polyhedron_selection_item_priv::addVertexToPath(fg_vertex_descriptor vh, vertex_on_path &first)
 {
   vertex_on_path source;
   source.vertex = vh;
@@ -1643,7 +1643,7 @@ void Scene_polyhedron_selection_item_priv::addVertexToPath(vertex_descriptor vh,
   path.append(source);
   first = source;
 }
-void Scene_polyhedron_selection_item::selectPath(vertex_descriptor vh)
+void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
 {
 
   bool replace = !temp_selected_edges.empty();
@@ -1904,7 +1904,7 @@ void Scene_polyhedron_selection_item::setPathSelection(bool b) {
     int ind = 0;
     boost::property_map<Face_graph,CGAL::vertex_selection_t>::type vsm =
       get(CGAL::vertex_selection,*polyhedron());
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*polyhedron())){
+    BOOST_FOREACH(fg_vertex_descriptor vd, vertices(*polyhedron())){
       put(vsm,vd, ind++);
     }
   }
@@ -1930,7 +1930,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
 
 void Scene_polyhedron_selection_item::add_to_selection()
 {
-  Q_FOREACH(edge_descriptor ed, temp_selected_edges)
+  Q_FOREACH(fg_edge_descriptor ed, temp_selected_edges)
   {
     selected_edges.insert(ed);
     temp_selected_edges.erase(ed);
@@ -1952,8 +1952,8 @@ void Scene_polyhedron_selection_item::compute_normal_maps()
 
   d->face_normals_map.clear();
   d->vertex_normals_map.clear();
-  d->nf_pmap = boost::associative_property_map< CGAL::Unique_hash_map<face_descriptor, Kernel::Vector_3> >(d->face_normals_map);
-  d->nv_pmap = boost::associative_property_map< CGAL::Unique_hash_map<vertex_descriptor, Kernel::Vector_3> >(d->vertex_normals_map);
+  d->nf_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3> >(d->face_normals_map);
+  d->nv_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3> >(d->vertex_normals_map);
   PMP::compute_normals(*d->poly, d->nv_pmap, d->nf_pmap);
 }
 
@@ -1969,7 +1969,7 @@ void Scene_polyhedron_selection_item::moveVertex()
   if(d->ready_to_move)
   {
      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    vertex_descriptor vh = *temp_selected_vertices.begin();
+    fg_vertex_descriptor vh = *temp_selected_vertices.begin();
 
     VPmap vpm = get(CGAL::vertex_point,*polyhedron());
     put(vpm, vh, Point_3(d->manipulated_frame->position().x-offset.x,
@@ -1992,7 +1992,7 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
 }
 
 
-bool Scene_polyhedron_selection_item_priv::canAddFace(halfedge_descriptor hc, halfedge_descriptor t)
+bool Scene_polyhedron_selection_item_priv::canAddFace(fg_halfedge_descriptor hc, fg_halfedge_descriptor t)
 {
   bool found(false),  is_border_h(false);
 
@@ -2026,13 +2026,13 @@ bool Scene_polyhedron_selection_item_priv::canAddFace(halfedge_descriptor hc, ha
   }
 
   //if the halfedges are not on the same border, stop and signal it.
-  halfedge_descriptor iterator = next(t, *item->polyhedron());
+  fg_halfedge_descriptor iterator = next(t, *item->polyhedron());
   while(iterator != t)
   {
     if(iterator == hc)
     {
       found = true;
-      halfedge_descriptor res =
+      fg_halfedge_descriptor res =
           CGAL::Euler::add_face_to_border(t,hc, *item->polyhedron());
 
       if(CGAL::is_degenerate_triangle_face(res, *item->polyhedron(), get(CGAL::vertex_point, *item->polyhedron()), Kernel()))
@@ -2055,7 +2055,7 @@ bool Scene_polyhedron_selection_item_priv::canAddFace(halfedge_descriptor hc, ha
   return true;
 }
 
-bool Scene_polyhedron_selection_item_priv::canAddFaceAndVertex(halfedge_descriptor hc, halfedge_descriptor t)
+bool Scene_polyhedron_selection_item_priv::canAddFaceAndVertex(fg_halfedge_descriptor hc, fg_halfedge_descriptor t)
 {
   bool found(false),  is_border_h(false);
 
@@ -2082,7 +2082,7 @@ bool Scene_polyhedron_selection_item_priv::canAddFaceAndVertex(halfedge_descript
   }
 
   //if the halfedges are not on the same border, stop and signal it.
-  halfedge_descriptor iterator = next(t, *item->polyhedron());
+  fg_halfedge_descriptor iterator = next(t, *item->polyhedron());
   while(iterator != t)
   {
     if(iterator == hc)
@@ -2110,7 +2110,7 @@ void Scene_polyhedron_selection_item::clearHL()
   d->are_HL_buffers_filled = false;
   Q_EMIT itemChanged();
 }
-void Scene_polyhedron_selection_item::selected_HL(const std::set<vertex_descriptor>& m)
+void Scene_polyhedron_selection_item::selected_HL(const std::set<fg_vertex_descriptor>& m)
 {
   HL_selected_edges.clear();
   HL_selected_facets.clear();
@@ -2121,7 +2121,7 @@ void Scene_polyhedron_selection_item::selected_HL(const std::set<vertex_descript
   Q_EMIT itemChanged();
 }
 
-void Scene_polyhedron_selection_item::selected_HL(const std::set<face_descriptor>& m)
+void Scene_polyhedron_selection_item::selected_HL(const std::set<fg_face_descriptor>& m)
 {
   HL_selected_edges.clear();
   HL_selected_facets.clear();
@@ -2131,7 +2131,7 @@ void Scene_polyhedron_selection_item::selected_HL(const std::set<face_descriptor
   Q_EMIT itemChanged();
 }
 
-void Scene_polyhedron_selection_item::selected_HL(const std::set<edge_descriptor>& m)
+void Scene_polyhedron_selection_item::selected_HL(const std::set<fg_edge_descriptor>& m)
 {
   HL_selected_edges.clear();
   HL_selected_facets.clear();
@@ -2147,23 +2147,23 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
   d->poly =poly_item->polyhedron();
   connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed()));
   //parameters type must be of the same name here and there, so they must be hardcoded.
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<vertex_descriptor>&)), this,
-    SLOT(selected(const std::set<vertex_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<fg_vertex_descriptor>&)), this,
+    SLOT(selected(const std::set<fg_vertex_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<face_descriptor>&)), this,
-    SLOT(selected(const std::set<face_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<fg_face_descriptor>&)), this,
+    SLOT(selected(const std::set<fg_face_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
-    SLOT(selected(const std::set<edge_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<fg_edge_descriptor>&)), this,
+    SLOT(selected(const std::set<fg_edge_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<vertex_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<vertex_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<fg_vertex_descriptor>&)), this,
+          SLOT(selected_HL(const std::set<fg_vertex_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<face_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<face_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<fg_face_descriptor>&)), this,
+          SLOT(selected_HL(const std::set<fg_face_descriptor>&)));
 
-  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<edge_descriptor>&)), this,
-          SLOT(selected_HL(const std::set<edge_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<fg_edge_descriptor>&)), this,
+          SLOT(selected_HL(const std::set<fg_edge_descriptor>&)));
   connect(&k_ring_selector, SIGNAL(clearHL()), this,
           SLOT(clearHL()));
   connect(poly_item, SIGNAL(selection_done()), this, SLOT(update_poly()));
@@ -2180,7 +2180,7 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
 
 void Scene_polyhedron_selection_item::select_all_NT()
 {
-  BOOST_FOREACH(face_descriptor fd, faces(*polyhedron())){
+  BOOST_FOREACH(fg_face_descriptor fd, faces(*polyhedron())){
     if(! is_triangle(halfedge(fd,*polyhedron()), *polyhedron()))
     selected_facets.insert(fd);
   }

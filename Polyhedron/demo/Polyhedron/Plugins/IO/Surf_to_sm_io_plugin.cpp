@@ -51,8 +51,6 @@ public:
 
 CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
 {
-  typedef Scene_surface_mesh_item::SMesh SMesh;
-  typedef Scene_surface_mesh_item::Point Point;
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {

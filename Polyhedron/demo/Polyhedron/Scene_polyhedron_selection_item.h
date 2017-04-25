@@ -47,10 +47,10 @@ typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::const_type constVP
 typedef Scene_face_graph_item::Vertex_selection_map Vertex_selection_map;
 typedef Scene_face_graph_item::Face_selection_map Face_selection_map;
 
-typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Face_graph>::edge_descriptor edge_descriptor;
-typedef boost::graph_traits<Face_graph>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Face_graph>::vertex_descriptor fg_vertex_descriptor;
+typedef boost::graph_traits<Face_graph>::halfedge_descriptor fg_halfedge_descriptor;
+typedef boost::graph_traits<Face_graph>::edge_descriptor fg_edge_descriptor;
+typedef boost::graph_traits<Face_graph>::face_descriptor fg_face_descriptor;
 
 typedef boost::graph_traits<Face_graph>::vertex_iterator vertex_iterator;
 typedef boost::graph_traits<Face_graph>::halfedge_iterator halfedge_iterator;
@@ -61,7 +61,7 @@ template<class HandleType, class SelectionItem>
 struct Selection_traits {};
 
 template<class SelectionItem>
-struct Selection_traits<typename SelectionItem::vertex_descriptor, SelectionItem> 
+struct Selection_traits<typename SelectionItem::fg_vertex_descriptor, SelectionItem>
 {
   typedef typename SelectionItem::Selection_set_vertex Container;
   typedef vertex_iterator Iterator;
@@ -73,7 +73,7 @@ struct Selection_traits<typename SelectionItem::vertex_descriptor, SelectionItem
   Iterator iterator_end() { return vertices(*item->polyhedron()).second; }
   std::size_t size() { return num_vertices(*item->polyhedron()); }
   void update_indices() { item->polyhedron_item()->update_vertex_indices(); }
-  std::size_t id(typename SelectionItem::vertex_descriptor  vh)
+  std::size_t id(typename SelectionItem::fg_vertex_descriptor  vh)
   {
     return get(get(CGAL::vertex_selection, *item->polyhedron()), vh);
   }
@@ -107,7 +107,7 @@ struct Selection_traits<typename SelectionItem::vertex_descriptor, SelectionItem
 };
 
 template<class SelectionItem>
-struct Selection_traits<typename SelectionItem::face_descriptor, SelectionItem>
+struct Selection_traits<typename SelectionItem::fg_face_descriptor, SelectionItem>
 {
   typedef typename SelectionItem::Selection_set_facet Container;
   typedef face_iterator Iterator;
@@ -118,7 +118,7 @@ struct Selection_traits<typename SelectionItem::face_descriptor, SelectionItem>
   Iterator iterator_end() { return faces(*item->polyhedron()).second; }
   std::size_t size() { return num_faces(*item->polyhedron()); }
   void update_indices() { item->polyhedron_item()->update_facet_indices(); }
-  std::size_t id(typename SelectionItem::face_descriptor fh)
+  std::size_t id(typename SelectionItem::fg_face_descriptor fh)
 {
   return get(get(CGAL::face_selection, *item->polyhedron()), fh);
 }
@@ -152,7 +152,7 @@ struct Selection_traits<typename SelectionItem::face_descriptor, SelectionItem>
 };
 
 template<class SelectionItem>
-struct Selection_traits<typename SelectionItem::edge_descriptor, SelectionItem> 
+struct Selection_traits<typename SelectionItem::fg_edge_descriptor, SelectionItem>
 {
   typedef typename SelectionItem::Selection_set_edge Container;
   typedef edge_iterator Iterator;
@@ -206,10 +206,10 @@ class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item
 friend class Polyhedron_demo_selection_plugin;
 
 public:
-  typedef boost::graph_traits<Face_graph>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<Face_graph>::edge_descriptor edge_descriptor;
-  typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<Face_graph>::face_descriptor fg_face_descriptor;
+  typedef boost::graph_traits<Face_graph>::edge_descriptor fg_edge_descriptor;
+  typedef boost::graph_traits<Face_graph>::halfedge_descriptor fg_halfedge_descriptor;
+  typedef boost::graph_traits<Face_graph>::vertex_descriptor fg_vertex_descriptor;
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
 
@@ -235,9 +235,9 @@ protected:
   void set_is_insert(bool i) { is_insert = i; }
   
 public:
-  typedef boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
-  typedef boost::unordered_set<face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
-  typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
+  typedef boost::unordered_set<fg_vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
+  typedef boost::unordered_set<fg_face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
+  typedef boost::unordered_set<fg_edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
 
   Vertex_selection_map vertex_selection_map()
   {
@@ -296,8 +296,8 @@ public:
   
     for(Selection_set_facet::const_iterator f_it = selected_facets.begin(); 
         f_it != selected_facets.end(); ++f_it) {
-      face_descriptor fd = *f_it;
-      BOOST_FOREACH(halfedge_descriptor he, halfedges_around_face(halfedge(fd,*polyhedron()),*polyhedron())){
+      fg_face_descriptor fd = *f_it;
+      BOOST_FOREACH(fg_halfedge_descriptor he, halfedges_around_face(halfedge(fd,*polyhedron()),*polyhedron())){
         if(item_bbox) { *item_bbox = *item_bbox + get(vpm,target(he,*polyhedron())).bbox(); }
         else          {  item_bbox = get(vpm,target(he,*polyhedron())).bbox(); }
     
@@ -329,7 +329,7 @@ public:
 
     for(Selection_set_edge::const_iterator it = selected_edges.begin(); it != selected_edges.end(); ++it) 
     {
-      edge_descriptor ed = *it;
+      fg_edge_descriptor ed = *it;
       out << get(boost::vertex_index, *polyhedron(), source(ed,*polyhedron())) << " " 
           << get(boost::vertex_index, *polyhedron(),target(ed,*polyhedron())) << " ";
     }
@@ -352,18 +352,18 @@ public:
 
     init(poly_item, mw);
 
-    std::vector<vertex_descriptor> all_vertices;
+    std::vector<fg_vertex_descriptor> all_vertices;
     all_vertices.reserve(num_vertices(*polyhedron()));
 
-    BOOST_FOREACH(vertex_descriptor vb, vertices(*polyhedron()))
+    BOOST_FOREACH(fg_vertex_descriptor vb, vertices(*polyhedron()))
       { all_vertices.push_back(vb); }
     
-    std::vector<face_descriptor> all_facets;
+    std::vector<fg_face_descriptor> all_facets;
     all_facets.reserve(num_faces(*polyhedron()));
-    BOOST_FOREACH(face_descriptor fb, faces(*polyhedron()))
+    BOOST_FOREACH(fg_face_descriptor fb, faces(*polyhedron()))
       { all_facets.push_back(fb); }
 
-    std::vector<edge_descriptor> all_edges(edges(*polyhedron()).first, edges(*polyhedron()).second);
+    std::vector<fg_edge_descriptor> all_edges(edges(*polyhedron()).first, edges(*polyhedron()).second);
 
     std::ifstream in(file_name_holder.c_str());
     if(!in) { return false; }
@@ -389,9 +389,9 @@ public:
     std::istringstream edge_line(line);
     while(edge_line >> id >> id2) {
       if(id >= all_edges.size() || id2 >= all_edges.size()) { return false; }
-      vertex_descriptor s = all_vertices[id];
-      vertex_descriptor t = all_vertices[id2];
-      halfedge_descriptor hd;
+      fg_vertex_descriptor s = all_vertices[id];
+      fg_vertex_descriptor t = all_vertices[id2];
+      fg_halfedge_descriptor hd;
       bool exists;
       boost::tie(hd,exists) = halfedge(s,t,*polyhedron());
       if(! exists) { return false; }
@@ -407,10 +407,10 @@ public:
   void select_all() {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
-      select_all<vertex_descriptor>(); break;
+      select_all<fg_vertex_descriptor>(); break;
     case Active_handle::FACET:
     case Active_handle::CONNECTED_COMPONENT:
-      select_all<face_descriptor>(); break;
+      select_all<fg_face_descriptor>(); break;
     case Active_handle::EDGE:
     case Active_handle::PATH:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
@@ -421,7 +421,7 @@ public:
     }
   }
   void select_all_NT();
-  // select all of vertex, facet or edge (use vertex_descriptor, face_descriptor, edge_descriptor as template argument)
+  // select all of vertex, facet or edge (use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor as template argument)
   template<class HandleType>
   void select_all() {
     typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
@@ -437,16 +437,16 @@ public:
   void clear() {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
-      clear<vertex_descriptor>(); break;
+      clear<fg_vertex_descriptor>(); break;
     case Active_handle::FACET:
     case Active_handle::CONNECTED_COMPONENT:
-      clear<face_descriptor>(); break;
+      clear<fg_face_descriptor>(); break;
     case Active_handle::EDGE:
     case Active_handle::PATH:
-      clear<edge_descriptor>(); break;
+      clear<fg_edge_descriptor>(); break;
     }
   }
-  // select all of vertex, facet or edge (use vertex_descriptor, face_descriptor, edge_descriptor as template argument)
+  // select all of vertex, facet or edge (use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor as template argument)
   template<class HandleType>
   void clear() {
 
@@ -457,22 +457,22 @@ public:
   }
 
   void clear_all(){
-    clear<vertex_descriptor>();
-    clear<face_descriptor>();
-    clear<edge_descriptor>();
+    clear<fg_vertex_descriptor>();
+    clear<fg_face_descriptor>();
+    clear<fg_edge_descriptor>();
   }
 
   boost::optional<std::size_t> get_minimum_isolated_component() {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
-      return get_minimum_isolated_component<vertex_descriptor>();
+      return get_minimum_isolated_component<fg_vertex_descriptor>();
     case Active_handle::FACET:
-      return get_minimum_isolated_component<face_descriptor>();
+      return get_minimum_isolated_component<fg_face_descriptor>();
     default:
-      return get_minimum_isolated_component<edge_descriptor>();
+      return get_minimum_isolated_component<fg_edge_descriptor>();
     }
   }
-  template<class HandleType> // use vertex_descriptor, face_descriptor, edge_descriptor
+  template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
   boost::optional<std::size_t> get_minimum_isolated_component() {
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     tr.update_indices();
@@ -485,14 +485,14 @@ public:
   boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
-      return select_isolated_components<vertex_descriptor>(threshold);
+      return select_isolated_components<fg_vertex_descriptor>(threshold);
     case Active_handle::FACET:
-      return select_isolated_components<face_descriptor>(threshold);
+      return select_isolated_components<fg_face_descriptor>(threshold);
     default:
-      return select_isolated_components<edge_descriptor>(threshold);
+      return select_isolated_components<fg_edge_descriptor>(threshold);
     }
   }
-  template<class HandleType> // use vertex_descriptor, face_descriptor, edge_descriptor
+  template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
   boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
@@ -513,14 +513,14 @@ public:
     {
       switch(get_active_handle_type()) {
         case Active_handle::VERTEX:
-          expand_selection<vertex_descriptor, boost::vertex_index_t>(steps);
+          expand_selection<fg_vertex_descriptor, boost::vertex_index_t>(steps);
         break;
         case Active_handle::FACET:
         case Active_handle::CONNECTED_COMPONENT:
-          expand_selection<face_descriptor, boost::face_index_t>(steps);
+          expand_selection<fg_face_descriptor, boost::face_index_t>(steps);
         break;
         case Active_handle::EDGE:
-          expand_selection<edge_descriptor, boost::edge_index_t>(steps);
+          expand_selection<fg_edge_descriptor, boost::edge_index_t>(steps);
         break;
         case Active_handle::PATH:
         break;
@@ -530,14 +530,14 @@ public:
     {
       switch(get_active_handle_type()) {
         case Active_handle::VERTEX:
-          reduce_selection<vertex_descriptor, boost::vertex_index_t>(-steps);
+          reduce_selection<fg_vertex_descriptor, boost::vertex_index_t>(-steps);
         break;
         case Active_handle::FACET:
         case Active_handle::CONNECTED_COMPONENT:
-          reduce_selection<face_descriptor, boost::face_index_t>(-steps);
+          reduce_selection<fg_face_descriptor, boost::face_index_t>(-steps);
         break;
         case Active_handle::EDGE:
-          reduce_selection<edge_descriptor, boost::edge_index_t>(-steps);
+          reduce_selection<fg_edge_descriptor, boost::edge_index_t>(-steps);
         break;
         case Active_handle::PATH:
         break;
@@ -691,7 +691,7 @@ public:
              && (selected_facets.find(face(halfedge(*eit,*polyhedron()),*polyhedron())) != selected_facets.end()
                  || selected_facets.find(face(opposite(halfedge(*eit,*polyhedron()),*polyhedron()),*polyhedron())) != selected_facets.end())))
       {
-        edge_descriptor tmp = *eit;
+        fg_edge_descriptor tmp = *eit;
         ++eit;
         selected_edges.erase(tmp);
       }
@@ -713,9 +713,9 @@ public:
   void keep_connected_components() {
     if (selected_facets.empty()) { return; }
 
-    Selection_traits<face_descriptor, Scene_polyhedron_selection_item> trf(this);
+    Selection_traits<fg_face_descriptor, Scene_polyhedron_selection_item> trf(this);
     trf.update_indices();
-    Selection_traits<vertex_descriptor, Scene_polyhedron_selection_item> trv(this);
+    Selection_traits<fg_vertex_descriptor, Scene_polyhedron_selection_item> trv(this);
     trv.update_indices();
 
     PMP::keep_connected_components(*polyhedron(), trf.container());
@@ -726,7 +726,7 @@ public:
     // Note: might be a more performance wise solution
     // assign sequential id to vertices neighbor to selected facets
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
-      BOOST_FOREACH(halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
+      BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
         put(vertex_selection_map(),target(hb,*polyhedron()), 0);
       }
     }
@@ -736,7 +736,7 @@ public:
     VPmap vpm = get(CGAL::vertex_point, *polyhedron());
     std::size_t counter = 1;
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
-      BOOST_FOREACH(halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
+      BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
         if(get(vertex_selection_map(), target(hb,*polyhedron())) == 0) {
           put(vertex_selection_map(),target(hb,*polyhedron()), counter++); 
           points.push_back(get(vpm,target(hb,*polyhedron())));
@@ -747,7 +747,7 @@ public:
     std::vector<std::vector<std::size_t> > polygons(selected_facets.size());
     counter = 0;
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb, ++counter) {
-      BOOST_FOREACH(halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron()))
+      BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron()))
       {
         polygons[counter].push_back(get(vertex_selection_map(),target(hb,*polyhedron())) -1);
       }
@@ -763,9 +763,9 @@ public:
     CGAL::detect_sharp_edges(polyhedron(), angle);
 
     boost::property_map<Face_graph,CGAL::halfedge_is_feature_t>::type is_feature = get(CGAL::halfedge_is_feature,*polyhedron());
-    BOOST_FOREACH(edge_descriptor e, edges(*polyhedron()))
+    BOOST_FOREACH(fg_edge_descriptor e, edges(*polyhedron()))
     {
-      halfedge_descriptor h = halfedge(e, *polyhedron());
+      fg_halfedge_descriptor h = halfedge(e, *polyhedron());
       if (get(is_feature,h))
         selected_edges.insert(e);
     }
@@ -804,20 +804,20 @@ public Q_SLOTS:
   void clearHL();
 
   // slots are called by signals of polyhedron_k_ring_selector
-  void selected(const std::set<vertex_descriptor>& m)
+  void selected(const std::set<fg_vertex_descriptor>& m)
   { has_been_selected(m); }
-  void selected(const std::set<face_descriptor>& m)
+  void selected(const std::set<fg_face_descriptor>& m)
   { has_been_selected(m); }
-  void selected(const std::set<edge_descriptor>& m)
+  void selected(const std::set<fg_edge_descriptor>& m)
   { has_been_selected(m); }
 
-  void selected_HL(const std::set<vertex_descriptor>& m);
-  void selected_HL(const std::set<face_descriptor>& m);
-  void selected_HL(const std::set<edge_descriptor>& m);
+  void selected_HL(const std::set<fg_vertex_descriptor>& m);
+  void selected_HL(const std::set<fg_face_descriptor>& m);
+  void selected_HL(const std::set<fg_edge_descriptor>& m);
   void poly_item_changed() {
-    remove_erased_handles<vertex_descriptor>();
-    remove_erased_handles<edge_descriptor>();
-    remove_erased_handles<face_descriptor>();
+    remove_erased_handles<fg_vertex_descriptor>();
+    remove_erased_handles<fg_edge_descriptor>();
+    remove_erased_handles<fg_face_descriptor>();
   }
   void endSelection(){
     Q_EMIT simplicesSelected(this);
@@ -868,13 +868,13 @@ protected:
       tr.container().insert(*it);
     }
   }
-  void join_vertex(Scene_polyhedron_selection_item::edge_descriptor ed)
+  void join_vertex(Scene_polyhedron_selection_item::fg_edge_descriptor ed)
   {
     CGAL::Euler::join_vertex(halfedge(ed, *polyhedron()),*polyhedron());
   }
 
 
-  void selectPath(vertex_descriptor vh);
+  void selectPath(fg_vertex_descriptor vh);
 
 //Generic class
   template<typename HandleRange>
@@ -886,17 +886,17 @@ protected:
 
 template<typename HandleRange>
   bool treat_classic_selection(const HandleRange& selection);
-//Specialization for set<vertex_descriptor>
-  bool treat_selection(const std::set<vertex_descriptor>& selection);
-  bool treat_selection(const std::set<edge_descriptor>& selection);
-  bool treat_selection(const std::set<face_descriptor>& selection);
-  bool treat_selection(const std::vector<face_descriptor>& selection);
+//Specialization for set<fg_vertex_descriptor>
+  bool treat_selection(const std::set<fg_vertex_descriptor>& selection);
+  bool treat_selection(const std::set<fg_edge_descriptor>& selection);
+  bool treat_selection(const std::set<fg_face_descriptor>& selection);
+  bool treat_selection(const std::vector<fg_face_descriptor>& selection);
 
-  face_descriptor get_face(face_descriptor fh)
+  fg_face_descriptor get_face(fg_face_descriptor fh)
   { return fh; }
-  face_descriptor get_face(vertex_descriptor)
+  fg_face_descriptor get_face(fg_vertex_descriptor)
   { return boost::graph_traits<Face_graph>::null_face(); }
-  face_descriptor get_face(edge_descriptor)
+  fg_face_descriptor get_face(fg_edge_descriptor)
   { return boost::graph_traits<Face_graph>::null_face(); }
 
   template<class HandleType>
@@ -907,20 +907,20 @@ template<typename HandleRange>
 
     if (get_active_handle_type() == Active_handle::CONNECTED_COMPONENT)
     {
-      Selection_traits<edge_descriptor,
+      Selection_traits<fg_edge_descriptor,
                        Scene_polyhedron_selection_item> tr(this);
       tr.update_indices();
       std::vector<bool> mark(tr.size(), false);
-      BOOST_FOREACH(edge_descriptor e, selected_edges)
+      BOOST_FOREACH(fg_edge_descriptor e, selected_edges)
         mark[tr.id(e)] = true;
-      std::vector<face_descriptor> selected_cc;
+      std::vector<fg_face_descriptor> selected_cc;
       typedef typename boost::property_map<Face_graph,boost::edge_index_t>::type PM;
       CGAL::Polygon_mesh_processing::connected_component(
         get_face(*selection.begin()),
         *polyhedron(),
         std::back_inserter(selected_cc),
         CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-                                                                           Is_selected_property_map<edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
+                                                                           Is_selected_property_map<fg_edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
        treat_selection(selected_cc);
     }
     else
@@ -932,20 +932,20 @@ template<typename HandleRange>
   typedef boost::property_map<Face_graph,boost::edge_index_t>::type Face_graph_edge_index_pm;
 
 public:
-  Is_selected_property_map<edge_descriptor, Face_graph_edge_index_pm>
+  Is_selected_property_map<fg_edge_descriptor, Face_graph_edge_index_pm>
     selected_edges_pmap(std::vector<bool>& mark)
   {
-    Selection_traits<edge_descriptor,
+    Selection_traits<fg_edge_descriptor,
       Scene_polyhedron_selection_item> tr(this);
     tr.update_indices();
 
     for (unsigned int i = 0; i < mark.size(); ++i)
       mark[i] = false;
 
-    BOOST_FOREACH(edge_descriptor e, selected_edges)
+    BOOST_FOREACH(fg_edge_descriptor e, selected_edges)
       mark[tr.id(e)] = true;
 
-    return Is_selected_property_map<edge_descriptor, Face_graph_edge_index_pm>(mark, get(boost::edge_index,*polyhedron()));
+    return Is_selected_property_map<fg_edge_descriptor, Face_graph_edge_index_pm>(mark, get(boost::edge_index,*polyhedron()));
   }
 
   Is_constrained_map<Selection_set_edge> constrained_edges_pmap()

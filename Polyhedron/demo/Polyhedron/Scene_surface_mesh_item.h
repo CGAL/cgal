@@ -6,22 +6,14 @@
 #define CGAL_IS_FLOAT 1
 
 #include "Scene_surface_mesh_item_config.h"
+#include "SMesh_type.h"
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <vector>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/array.hpp>
-
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties.h>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <QColor>
-
-#include <CGAL/Polygon_mesh_processing/properties.h>
 
 struct Scene_surface_mesh_item_priv;
 
@@ -39,7 +31,7 @@ public:
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
   typedef SMesh::Property_map<face_descriptor,int> Face_selection_map;
-
+  typedef SMesh FaceGraph;
   Scene_surface_mesh_item();
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);
@@ -112,94 +104,5 @@ protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
-
-typedef Scene_surface_mesh_item::SMesh SMesh;
-namespace CGAL{
-SMesh::Property_map<boost::graph_traits<SMesh>::halfedge_descriptor,bool>
-inline get(CGAL::halfedge_is_feature_t, SMesh& smesh)
-{
-  typedef boost::graph_traits<SMesh >::halfedge_descriptor halfedge_descriptor;
-  return smesh.add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
-}
-
-
- SMesh::Property_map< boost::graph_traits<SMesh >::face_descriptor,int>
-inline get(CGAL::face_patch_id_t, SMesh& smesh)
-{
-  typedef boost::graph_traits<SMesh >::face_descriptor face_descriptor;
-  return smesh.add_property_map<face_descriptor,int>("f:patch_id").first;
-}
-
-
-
- SMesh::Property_map< boost::graph_traits<SMesh >::face_descriptor,int>
- inline get(CGAL::face_selection_t, SMesh& smesh)
-{
-  typedef  boost::graph_traits<SMesh >::face_descriptor face_descriptor;
-  return smesh.add_property_map<face_descriptor,int>("f:selection").first;
-}
-
-
-
- SMesh::Property_map< boost::graph_traits<SMesh >::vertex_descriptor,int>
-inline get(CGAL::vertex_selection_t, SMesh& smesh)
-{
-  typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
-  return smesh.add_property_map<vertex_descriptor,int>("v:selection").first;
-}
-
-
- SMesh::Property_map< boost::graph_traits<SMesh >::vertex_descriptor,int>
- inline get(CGAL::vertex_num_feature_edges_t, SMesh& smesh)
-{
-  typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
-  return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
-}
-}
-namespace boost
-{
-template<>
-struct property_map<SMesh, CGAL::halfedge_is_feature_t>
-{
-  typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
-
-  typedef SMesh::Property_map<halfedge_descriptor, bool> type;
-};
-
-template<>
-struct property_map<SMesh, CGAL::face_patch_id_t>
-{
-  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
-  typedef SMesh::Property_map<face_descriptor, int> type;
-};
-
-template<>
-struct property_map<SMesh, CGAL::vertex_selection_t>
-{
-
-  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-
-  typedef SMesh::Property_map<vertex_descriptor, int> type;
-};
-
-template<>
-struct property_map<SMesh, CGAL::face_selection_t>
-{
-
-  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
-  typedef SMesh::Property_map<face_descriptor, int> type;
-};
-
-template<>
-struct property_map<SMesh, CGAL::vertex_num_feature_edges_t>
-{
-
-  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-
-  typedef SMesh::Property_map<vertex_descriptor, int> type;
-};
-} //boost
 
 #endif /* CGAL_SCENE_SURFACE_MESH_ITEM_H */

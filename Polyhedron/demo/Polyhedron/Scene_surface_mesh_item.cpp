@@ -19,17 +19,14 @@
 #include "triangulate_primitive.h"
 
 
-typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
 //Used to triangulate the AABB_Tree
 class Primitive
 {
 public:
   // types
   typedef face_descriptor Id; // Id type
-  typedef Scene_surface_mesh_item::Point Point; // point type
-  typedef Scene_surface_mesh_item::Kernel::Triangle_3 Datum; // datum type
+  typedef Point_3 Point; // point type
+  typedef EPICK::Triangle_3 Datum; // datum type
 
 private:
   // member data
@@ -54,13 +51,13 @@ public:
 };
 
 
-typedef CGAL::AABB_traits<Scene_surface_mesh_item::Kernel, Primitive> AABB_traits;
+typedef CGAL::AABB_traits<EPICK, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 
 struct Scene_surface_mesh_item_priv{
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef Kernel::Point_3 Point;
+  typedef EPICK::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
 
@@ -91,10 +88,10 @@ struct Scene_surface_mesh_item_priv{
 
   void initialize_colors();
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
-  void addFlatData(Point, Kernel::Vector_3, CGAL::Color *) const;
+  void addFlatData(Point, EPICK::Vector_3, CGAL::Color *) const;
   void* get_aabb_tree();
-  QList<Kernel::Triangle_3> triangulate_primitive(face_descriptor fit,
-                                                  Kernel::Vector_3 normal);
+  QList<EPICK::Triangle_3> triangulate_primitive(face_descriptor fit,
+                                                  EPICK::Vector_3 normal);
 
   //! \brief triangulate_facet Triangulates a facet.
   //! \param fd a face_descriptor of the facet that needs to be triangulated.
@@ -105,7 +102,7 @@ struct Scene_surface_mesh_item_priv{
   //! fill the flat data vectors.
   void
   triangulate_facet(face_descriptor fd,
-                    SMesh::Property_map<face_descriptor, Kernel::Vector_3 > *fnormals,
+                    SMesh::Property_map<face_descriptor, EPICK::Vector_3 > *fnormals,
                     SMesh::Property_map<face_descriptor, CGAL::Color> *fcolors,
                     boost::property_map< SMesh, boost::vertex_index_t >::type* im,
                     bool index) const;
@@ -228,7 +225,16 @@ Scene_surface_mesh_item::color_vector()
 }
 
 
-void Scene_surface_mesh_item_priv::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Color *c) const
+int
+Scene_surface_mesh_item::patch_id(SMesh::Face_index f)const
+{
+  if(! d->has_fpatch_id){
+    return -1;
+  }
+  return d->fpatch_id_map[f];
+}
+
+void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL::Color *c) const
 {
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
@@ -261,11 +267,11 @@ void Scene_surface_mesh_item_priv::compute_elements()
   idx_data_.clear();
   idx_data_.shrink_to_fit();
 
-  SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
-    smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
+  SMesh::Property_map<vertex_descriptor, EPICK::Vector_3 > vnormals =
+    smesh_->add_property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
 
-  SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
-      smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("f:normal").first;
+  SMesh::Property_map<face_descriptor, EPICK::Vector_3 > fnormals =
+      smesh_->add_property_map<face_descriptor, EPICK::Vector_3 >("f:normal").first;
   CGAL::Polygon_mesh_processing::compute_face_normals(*smesh_,fnormals);
 
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
@@ -357,7 +363,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
         flat_vertices.push_back((cgal_gl_data)p.y()+offset.y);
         flat_vertices.push_back((cgal_gl_data)p.z()+offset.z);
 
-        Kernel::Vector_3 n = fnormals[fd];
+        EPICK::Vector_3 n = fnormals[fd];
         flat_normals.push_back((cgal_gl_data)n.x());
         flat_normals.push_back((cgal_gl_data)n.y());
         flat_normals.push_back((cgal_gl_data)n.z());
@@ -383,7 +389,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
       //1st half
       halfedge_descriptor hd = halfedge(fd, *smesh_);
       Point p = positions[source(hd, *smesh_)];
-      Kernel::Vector_3 n = fnormals[fd];
+      EPICK::Vector_3 n = fnormals[fd];
       CGAL::Color *c;
       if(has_fcolors)
        c= &fcolors[fd];
@@ -442,7 +448,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
       smooth_vertices.push_back((cgal_gl_data)p.y()+offset.y);
       smooth_vertices.push_back((cgal_gl_data)p.z()+offset.z);
 
-      Kernel::Vector_3 n = vnormals[vd];
+      EPICK::Vector_3 n = vnormals[vd];
       smooth_normals.push_back((cgal_gl_data)n.x());
       smooth_normals.push_back((cgal_gl_data)n.y());
       smooth_normals.push_back((cgal_gl_data)n.z());
@@ -472,8 +478,8 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 {
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
-  SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
-    smesh_->property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
+  SMesh::Property_map<vertex_descriptor, EPICK::Vector_3 > vnormals =
+    smesh_->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
   //vao containing the data for the flat facets
 
   program = item->getShaderProgram(Scene_surface_mesh_item::PROGRAM_WITH_LIGHT, viewer);
@@ -706,13 +712,13 @@ void Scene_surface_mesh_item_priv::checkFloat()const
 
 void
 Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
-                                           SMesh::Property_map<face_descriptor, Kernel::Vector_3> *fnormals,
+                                           SMesh::Property_map<face_descriptor, EPICK::Vector_3> *fnormals,
                                            SMesh::Property_map<face_descriptor, CGAL::Color> *fcolors,
                                            boost::property_map< SMesh, boost::vertex_index_t >::type *im,
                                            bool index) const
 {
   //Computes the normal of the facet
-  Kernel::Vector_3 normal = get(*fnormals, fd);
+  EPICK::Vector_3 normal = get(*fnormals, fd);
 
   //check if normal contains NaN values
   if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
@@ -786,12 +792,12 @@ Scene_surface_mesh_item::~Scene_surface_mesh_item()
   delete_aabb_tree(this);
   delete d;
 }
-Scene_surface_mesh_item::SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
-const Scene_surface_mesh_item::SMesh* Scene_surface_mesh_item::polyhedron() const { return d->smesh_; }
+SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
+const SMesh* Scene_surface_mesh_item::polyhedron() const { return d->smesh_; }
 
 void Scene_surface_mesh_item::compute_bbox()const
 {
-  SMesh::Property_map<vertex_descriptor, Point> pprop = d->smesh_->points();
+  SMesh::Property_map<vertex_descriptor, Point_3> pprop = d->smesh_->points();
   CGAL::Bbox_3 bbox;
 
   BOOST_FOREACH(vertex_descriptor vd,vertices(*d->smesh_))
@@ -833,9 +839,9 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         //if face not triangle, triangulate corresponding primitive before adding it to the tree
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
         {
-          Kernel::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
+          EPICK::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
           index +=3;
-          Q_FOREACH(Kernel::Triangle_3 triangle, triangulate_primitive(f,normal))
+          Q_FOREACH(EPICK::Triangle_3 triangle, triangulate_primitive(f,normal))
           {
             Primitive primitive(triangle, f);
             tree->insert(primitive);
@@ -843,7 +849,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         }
         else
         {
-          Kernel::Triangle_3 triangle(
+          EPICK::Triangle_3 triangle(
                 sm->point(target(halfedge(f, *sm), *sm)),
                 sm->point(target(next(halfedge(f, *sm), *sm), *sm)),
                 sm->point(target(next(next(halfedge(f, *sm), *sm), *sm), *sm))
@@ -873,14 +879,14 @@ Scene_surface_mesh_item::select(double orig_x,
   SMesh *sm = d->smesh_;
   std::size_t vertex_to_emit = 0;
   typedef Input_facets_AABB_tree Tree;
-  typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Object_and_primitive_id;
+  typedef Tree::Intersection_and_primitive_id<EPICK::Ray_3>::Type Object_and_primitive_id;
 
   Tree* aabb_tree = static_cast<Tree*>(d->get_aabb_tree());
   if(aabb_tree)
   {
-    const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
-    const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
-    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    const EPICK::Point_3 ray_origin(orig_x, orig_y, orig_z);
+    const EPICK::Vector_3 ray_dir(dir_x, dir_y, dir_z);
+    const EPICK::Ray_3 ray(ray_origin, ray_dir);
     typedef std::list<Object_and_primitive_id> Intersections;
     Intersections intersections;
     aabb_tree->all_intersections(ray, std::back_inserter(intersections));
@@ -888,8 +894,8 @@ Scene_surface_mesh_item::select(double orig_x,
     if(closest != intersections.end())
     {
 
-      const Kernel::Point_3* closest_point =
-          boost::get<Kernel::Point_3>(&(closest->first));
+      const EPICK::Point_3* closest_point =
+          boost::get<EPICK::Point_3>(&(closest->first));
       for(Intersections::iterator
           it = boost::next(intersections.begin()),
           end = intersections.end();
@@ -899,8 +905,8 @@ Scene_surface_mesh_item::select(double orig_x,
           closest = it;
         }
         else {
-          const Kernel::Point_3* it_point =
-              boost::get<Kernel::Point_3>(&it->first);
+          const EPICK::Point_3* it_point =
+              boost::get<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {
@@ -922,11 +928,11 @@ Scene_surface_mesh_item::select(double orig_x,
 
           vertex_descriptor v = sm->target(*he_it), nearest_v = v;
 
-          Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+          EPICK::FT sq_dist = CGAL::squared_distance(*closest_point,
                                                       sm->point(v));
           while(++he_it != around_end) {
             v = sm->target(*he_it);
-            Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+            EPICK::FT new_sq_dist = CGAL::squared_distance(*closest_point,
                                                             sm->point(v));
             if(new_sq_dist < sq_dist) {
               sq_dist = new_sq_dist;
@@ -943,18 +949,18 @@ Scene_surface_mesh_item::select(double orig_x,
           SMesh::Halfedge_around_face_circulator he_it(sm->halfedge(selected_face),*sm), around_end(he_it);
 
           halfedge_descriptor nearest_h = *he_it;
-          Kernel::FT sq_dist =
+          EPICK::FT sq_dist =
               CGAL::squared_distance(*closest_point,
-                                     Kernel::Segment_3(sm->point(sm->target(*he_it)),
+                                     EPICK::Segment_3(sm->point(sm->target(*he_it)),
                                                        sm->point(
                                                          sm->target(
                                                            sm->opposite(*he_it)))));
 
           while(++he_it != around_end)
           {
-            Kernel::FT new_sq_dist =
+            EPICK::FT new_sq_dist =
                 CGAL::squared_distance(*closest_point,
-                                       Kernel::Segment_3(sm->point(sm->target(*he_it)),
+                                       EPICK::Segment_3(sm->point(sm->target(*he_it)),
                                                          sm->point(
                                                            sm->target(
                                                              sm->opposite(*he_it)))));
@@ -987,17 +993,17 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
 }
 
 
-QList<Scene_surface_mesh_item::Kernel::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(face_descriptor fit,
-                                                Scene_surface_mesh_item::Kernel::Vector_3 normal)
+QList<EPICK::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(face_descriptor fit,
+                                                EPICK::Vector_3 normal)
 {
   typedef FacetTriangulator<SMesh, Kernel, boost::graph_traits<SMesh>::vertex_descriptor> FT;
   //The output list
-  QList<Kernel::Triangle_3> res;
+  QList<EPICK::Triangle_3> res;
   //check if normal contains NaN values
   if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
   {
     qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
-    return QList<Kernel::Triangle_3>();
+    return QList<EPICK::Triangle_3>();
   }
   double diagonal;
   if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
@@ -1016,7 +1022,7 @@ QList<Scene_surface_mesh_item::Kernel::Triangle_3> Scene_surface_mesh_item_priv:
       continue;
 
 
-    res << Kernel::Triangle_3(ffit->vertex(0)->point(),
+    res << EPICK::Triangle_3(ffit->vertex(0)->point(),
                               ffit->vertex(1)->point(),
                               ffit->vertex(2)->point());
 
@@ -1044,17 +1050,17 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
   Tree* aabb_tree = static_cast<Tree*>(d->get_aabb_tree());
   if(aabb_tree)
   {
-    const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
-    const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
-    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    const EPICK::Point_3 ray_origin(orig_x, orig_y, orig_z);
+    const EPICK::Vector_3 ray_dir(dir_x, dir_y, dir_z);
+    const EPICK::Ray_3 ray(ray_origin, ray_dir);
     typedef std::list<Object_and_primitive_id> Intersections;
     Intersections intersections;
     aabb_tree->all_intersections(ray, std::back_inserter(intersections));
     Intersections::iterator closest = intersections.begin();
     if(closest != intersections.end())
     {
-      const Kernel::Point_3* closest_point =
-          CGAL::object_cast<Kernel::Point_3>(&closest->first);
+      const EPICK::Point_3* closest_point =
+          CGAL::object_cast<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
           it = boost::next(intersections.begin()),
           end = intersections.end();
@@ -1064,8 +1070,8 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
           closest = it;
         }
         else {
-          const Kernel::Point_3* it_point =
-              CGAL::object_cast<Kernel::Point_3>(&it->first);
+          const EPICK::Point_3* it_point =
+              CGAL::object_cast<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {

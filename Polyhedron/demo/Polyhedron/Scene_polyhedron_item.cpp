@@ -918,12 +918,13 @@ invalidate_stats()
   genus = -1;
 }
 
+//vertex_index is the storage for selection
 Scene_polyhedron_item::Vertex_selection_map 
 Scene_polyhedron_item::vertex_selection_map()
 {
   return get(boost::vertex_index,*d->poly);
 }
-
+//face_index is the storage for selection
 Scene_polyhedron_item::Face_selection_map 
 Scene_polyhedron_item::face_selection_map()
 {
