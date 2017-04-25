@@ -568,7 +568,10 @@ In \cgal, \sc{LASlib} is used to provide input and output functions in
 the \ref PkgPointSetProcessing package.
 
 The \sc{LASlib} web site is <a
-href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>.
+href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
+is usually distributed along with LAStools: for simplicity, <a
+href="https://github.com/CGAL/LAStools">\cgal provides a fork
+with a CMake based install procedure</a>.
 
 \section secbuilding Building CGAL 
 
