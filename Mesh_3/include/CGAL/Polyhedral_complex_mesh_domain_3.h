@@ -787,9 +787,9 @@ void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 merge_duplicated_points(const PointSet& duplicated_points)
 {
-  typedef typename Polyhedron::Point Point;
-  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator HVcirc;
-  typedef std::pair<Point, const Polyhedron*> Point_and_mesh;
+  typedef typename Polyhedron_type::Point Point;
+  typedef typename Polyhedron_type::Halfedge_around_vertex_const_circulator HVcirc;
+  typedef std::pair<Point, const Polyhedron_type*> Point_and_mesh;
   typedef std::multimap<Point_and_mesh, Patch_id> Patch_multimap;
   typedef typename Patch_multimap::iterator                   Patch_iterator;
   typedef typename Patch_multimap::value_type                 Pt_patch_pair;
@@ -798,9 +798,9 @@ merge_duplicated_points(const PointSet& duplicated_points)
     return;
 
   Patch_multimap patches;
-  BOOST_FOREACH(const Polyhedron& p, stored_polyhedra)
+  BOOST_FOREACH(const Polyhedron_type& p, stored_polyhedra)
   {
-    for (typename Polyhedron::Vertex_const_iterator
+    for (typename Polyhedron_type::Vertex_const_iterator
       vit = p.vertices_begin(), end = p.vertices_end();
       vit != end; ++vit)
     {
@@ -956,8 +956,8 @@ Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 reindex_patches(const std::vector<Surf_p_index>& map)
 {
   for(std::size_t i = 0, end = stored_polyhedra.size(); i < end; ++i) {
-    Polyhedron& poly = stored_polyhedra[i];
-    for(typename Polyhedron::Facet_iterator fit = poly.facets_begin(),
+    Polyhedron_type& poly = stored_polyhedra[i];
+    for(typename Polyhedron_type::Facet_iterator fit = poly.facets_begin(),
           end = poly.facets_end(); fit != end; ++fit)
     {
       fit->set_patch_id(map[fit->patch_id()]);
