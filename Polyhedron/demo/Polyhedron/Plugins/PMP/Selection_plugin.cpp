@@ -284,7 +284,6 @@ public Q_SLOTS:
   }
   // Create selection item for selected polyhedron item
   void on_Create_selection_item_button_clicked() {
-    std::cerr << "A"<< std::endl;
     Scene_face_graph_item* poly_item = getSelectedItem<Scene_face_graph_item>();
     if(!poly_item) {
       print_message("Error: there is no selected polyhedron item!");
@@ -292,7 +291,6 @@ public Q_SLOTS:
     }
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
-    std::cerr << "B"<< std::endl;
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
     ui_widget.selectionOrEuler->setCurrentIndex(last_mode);
     connectItem(new_item);
