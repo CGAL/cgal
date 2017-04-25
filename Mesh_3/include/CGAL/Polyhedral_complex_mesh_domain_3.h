@@ -332,8 +332,7 @@ public:
   ( InputPolyhedraIterator begin,
     InputPolyhedraIterator end,
     InputPairOfSubdomainIndicesIterator indices_begin,
-    InputPairOfSubdomainIndicesIterator indices_end,
-    bool detect_sharp_features_on_boundary_of_domain = false
+    InputPairOfSubdomainIndicesIterator indices_end
 #ifndef DOXYGEN_RUNNING
     , CGAL::Random* p_rng = NULL
 #endif
@@ -350,7 +349,6 @@ public:
       this->add_primitives(stored_polyhedra.back());
     }
     this->build();
-    detect_features(detect_sharp_features_on_boundary_of_domain);
   }
   /// @cond DEVELOPERS
   void detect_features(bool sharp, std::vector<Polyhedron>& p);
