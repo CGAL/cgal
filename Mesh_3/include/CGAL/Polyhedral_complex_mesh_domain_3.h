@@ -364,6 +364,9 @@ public:
   void detect_borders(std::vector<Polyhedron_type>& p);
   void detect_borders() { detect_borders(stored_polyhedra); };
 
+  template <typename Surf_p_index>
+  void reindex_patches(const std::vector<Surf_p_index>& map);
+
   /// @cond DEVELOPERS
   template<typename PointSet>
   void merge_duplicated_points(const PointSet& duplicated_points);
@@ -779,6 +782,82 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron_type>& poly)
 }
 
 template < typename GT_, typename P_, typename TA_>
+template < typename PointSet >
+void
+Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
+merge_duplicated_points(const PointSet& duplicated_points)
+{
+  typedef typename Polyhedron::Point Point;
+  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator HVcirc;
+  typedef std::pair<Point, const Polyhedron*> Point_and_mesh;
+  typedef std::multimap<Point_and_mesh, Patch_id> Patch_multimap;
+  typedef typename Patch_multimap::iterator                   Patch_iterator;
+  typedef typename Patch_multimap::value_type                 Pt_patch_pair;
+
+  if (duplicated_points.empty())
+    return;
+
+  Patch_multimap patches;
+  BOOST_FOREACH(const Polyhedron& p, stored_polyhedra)
+  {
+    for (typename Polyhedron::Vertex_const_iterator
+      vit = p.vertices_begin(), end = p.vertices_end();
+      vit != end; ++vit)
+    {
+      if (duplicated_points.find(vit->point()) == duplicated_points.end())
+        continue;
+
+      HVcirc it = vit->vertex_begin();
+      HVcirc itend = it;
+      do {
+        if(!it->is_border()) {
+          CGAL_assertion(it->face()->patch_id() < this->nb_of_patch_plus_one());
+          patches.insert(Pt_patch_pair(Point_and_mesh(vit->point(), &p),
+                                       it->face()->patch_id()));
+        }
+        ++it;
+      } while (it != itend);
+    }
+  }
+
+  //collect ids to be modified 
+  std::vector<Patch_id> new_ids(this->nb_of_patch_plus_one());
+  for (std::size_t i = 0; i < this->nb_of_patch_plus_one(); ++i)
+    new_ids[i] = Patch_id(i);
+
+  for (Patch_iterator pit = patches.begin();
+       pit != patches.end();
+       /*pit = range_end inside loop*/)
+  {
+    const Patch_iterator range_begin = pit;
+
+    // First loop: find the minimal patch index around `p` in a given
+    // polyhedron, and the past-the-end iterator of the equal-range (the
+    // loop will end with the first iterator when the point differs from
+    // the point of the range).
+    Patch_iterator it = range_begin;
+    CGAL_assertion(it->second < new_ids.size());
+    Patch_id min_id_around_p = new_ids[it->second];
+    ++it;
+    for (; it != patches.end() && it->first == range_begin->first; ++it)
+    {
+      CGAL_assertion(it->second < new_ids.size());
+      min_id_around_p = (std::min)(min_id_around_p, new_ids[it->second]);
+    }
+    const Patch_iterator range_end = it;
+
+    // In a second loop on the equal-range, update new_ids around p
+    for (it = range_begin; it != range_end; ++it)
+    {
+      CGAL_assertion(it->second < new_ids.size());
+      new_ids[it->second] = min_id_around_p;
+    }
+    pit = range_end;
+  }
+  reindex_patches(new_ids);
+}
+
+template < typename GT_, typename P_, typename TA_>
 void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
@@ -869,6 +948,28 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
 #endif
 }
 /// @endcond
+
+template < typename GT_, typename P_, typename TA_>
+template < typename Surf_p_index>
+void
+Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
+reindex_patches(const std::vector<Surf_p_index>& map)
+{
+  for(std::size_t i = 0, end = stored_polyhedra.size(); i < end; ++i) {
+    Polyhedron& poly = stored_polyhedra[i];
+    for(typename Polyhedron::Facet_iterator fit = poly.facets_begin(),
+          end = poly.facets_end(); fit != end; ++fit)
+    {
+      fit->set_patch_id(map[fit->patch_id()]);
+    }
+  }
+  BOOST_FOREACH(Surface_patch_index& id,
+                boundary_patches_ids)
+  {
+    id = map[id];
+  }
+  Base::reindex_patches(map);
+}
 
 } //namespace CGAL
 
