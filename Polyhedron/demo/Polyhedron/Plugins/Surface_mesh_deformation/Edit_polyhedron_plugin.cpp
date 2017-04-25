@@ -225,7 +225,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-    edit_item->delete_ctrl_vertices_group();
+  edit_item->delete_ctrl_vertices_group();
 
   edit_item->invalidateOpenGLBuffers();
   scene->itemChanged(edit_item); // for repaint
@@ -284,10 +284,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateCh
     if(!edit_item) { continue; }
     
     if(state == Qt::Checked) {
-        edit_item->pivoting_begin();
+      edit_item->pivoting_begin();
     }
     else {
-        edit_item->pivoting_end();
+      edit_item->pivoting_end();
     }
     scene->itemChanged(edit_item);     
   }
