@@ -55,7 +55,7 @@ struct Types_for_alpha_nt_3
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>    To_approx;
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_exact>     To_exact;
 //Traits types
-  
+
 //Point types
   typedef typename Kernel_approx::Point_3                          Approx_point;
   typedef typename Kernel_exact::Point_3                           Exact_point;
@@ -82,7 +82,7 @@ struct Types_for_alpha_nt_3< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_a
   typedef typename Input_traits::Weighted_point_3  Input_point;
 //Constructions 
   typedef typename Approx_traits::Compute_squared_radius_smallest_orthogonal_sphere_3           Approx_squared_radius;
-  typedef typename Exact_traits::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius; 
+  typedef typename Exact_traits::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius;
 };
 
 

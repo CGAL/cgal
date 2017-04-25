@@ -7,11 +7,13 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_vertex_base_3<K> Vbb;
-
+typedef CGAL::Regular_triangulation_vertex_base_3<K>      Vbb;
 typedef CGAL::Fixed_alpha_shape_vertex_base_3<K,Vbb>      Vb;
-typedef CGAL::Fixed_alpha_shape_cell_base_3<K>            Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb>       Tds;
+
+typedef CGAL::Regular_triangulation_cell_base_3<K>        Rcb;
+typedef CGAL::Fixed_alpha_shape_cell_base_3<K,Rcb>        Cb;
+
+typedef CGAL::Triangulation_data_structure_3<Vb,Cb>       Tds;
 typedef CGAL::Regular_triangulation_3<K,Tds>              Triangulation_3;
 typedef CGAL::Fixed_alpha_shape_3<Triangulation_3>        Fixed_alpha_shape_3;
 
