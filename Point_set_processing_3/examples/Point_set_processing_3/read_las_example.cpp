@@ -25,14 +25,14 @@ int main(int argc, char*argv[])
       !CGAL::read_las_points_with_properties
       (in,
        std::back_inserter (points),
-       CGAL::LAS::make_point_reader (CGAL::First_of_pair_property_map<PointWithColor>()),
+       CGAL::make_las_point_reader (CGAL::First_of_pair_property_map<PointWithColor>()),
        CGAL::cpp11::make_tuple
        (CGAL::Second_of_pair_property_map<PointWithColor>(),
         CGAL::Construct_array(),
-        CGAL::LAS::Property::R(),
-        CGAL::LAS::Property::G(),
-        CGAL::LAS::Property::B(),
-        CGAL::LAS::Property::I())))
+        CGAL::LAS_property::R(),
+        CGAL::LAS_property::G(),
+        CGAL::LAS_property::B(),
+        CGAL::LAS_property::I())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;
