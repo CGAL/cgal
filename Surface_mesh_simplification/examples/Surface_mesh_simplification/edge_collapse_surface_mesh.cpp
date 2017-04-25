@@ -119,6 +119,10 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh; 
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
@@ -141,7 +145,7 @@ int main( int argc, char** argv )
                               .visitor      (vis)
            );
   
-  std::cout << "\nEdges collected: "  << stats.collected
+  std::cerr << "\nEdges collected: "  << stats.collected
             << "\nEdges proccessed: " << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
@@ -150,12 +154,10 @@ int main( int argc, char** argv )
             << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable 
             << std::endl ; 
             
-  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+  std::cerr << "\nFinished...\n" << r << " edges removed.\n" 
             << num_edges(surface_mesh) << " final edges.\n" ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
   
-  return 0 ;      
+  return EXIT_SUCCESS ;      
 }
-
-// EOF //

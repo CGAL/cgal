@@ -98,6 +98,6 @@ int main(int argc, char* argv[])
   std::cout << "Number of segments: "
             << CGAL::segmentation_from_sdf_values(tmesh, sdf_property_map, segment_property_map) <<"\n";
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 

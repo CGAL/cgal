@@ -123,6 +123,10 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh; 
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // The items in this polyhedron have an "id()" field 
   // which the default index maps used in the algorithm
@@ -167,7 +171,7 @@ int main( int argc, char** argv )
                               .visitor      (vis)
            );
   
-  std::cout << "\nEdges collected: "  << stats.collected
+  std::cerr << "\nEdges collected: "  << stats.collected
             << "\nEdges proccessed: " << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
@@ -176,12 +180,11 @@ int main( int argc, char** argv )
             << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable 
             << std::endl ; 
             
-  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+  std::cerr << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
   
-  return 0 ;      
+  return EXIT_SUCCESS ;      
 }
 
-// EOF //

@@ -25,6 +25,10 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
@@ -44,12 +48,10 @@ int main( int argc, char** argv )
                                .get_placement(SMS::Midpoint_placement<Surface_mesh>())
             );
   
-  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+  std::cerr << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
   
-  return 0 ;      
+  return EXIT_SUCCESS ;      
 }
-
-// EOF //

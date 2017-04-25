@@ -59,18 +59,22 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc!=2){
-    std::cerr<< "Usage: " << argv[0] << " input.off\n";
-    return 1;
+    std::cerr << "Usage: " << argv[0] << " input.off\n";
+    return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cerr<< "Filename provided is invalid\n";
-    return 1;
+    std::cerr << "Filename provided is invalid\n";
+    return EXIT_FAILURE;
   }
 
   is >> surface_mesh  ;
-  
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Surface_mesh::Property_map<halfedge_descriptor,std::pair<Point_3, Point_3> > constrained_halfedges;
 
   constrained_halfedges = surface_mesh.add_property_map<halfedge_descriptor,std::pair<Point_3, Point_3> >("h:vertices").first;
@@ -98,7 +102,7 @@ int main( int argc, char** argv )
                                .get_placement(Placement(bem))
             );
 
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"
+  std::cerr << "\nFinished...\n" << r << " edges removed.\n"
             << surface_mesh.number_of_edges() << " final edges.\n" ;
 
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
@@ -116,5 +120,5 @@ int main( int argc, char** argv )
   }
   assert( nb_border_edges==0 );
 
-  return 0 ;
+  return EXIT_SUCCESS ;
 }

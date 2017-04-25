@@ -65,17 +65,22 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc < 2){
-    std::cerr<< "Usage: " << argv[0] << " input.off [out.off]\n";
-    return 1;
+    std::cerr << "Usage: " << argv[0] << " input.off [out.off]\n";
+    return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cerr<< "Filename provided is invalid\n";
-    return 1;
+    std::cerr << "Filename provided is invalid\n";
+    return EXIT_FAILURE;
   }
 
   is >> surface_mesh  ;
+
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Constrained_edge_map constraints_map(constraint_hmap);
   SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
@@ -133,11 +138,11 @@ int main( int argc, char** argv )
                                          .get_placement(placement)
    );
 
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"
+  std::cerr << "\nFinished...\n" << r << " edges removed.\n"
             << num_edges(surface_mesh) << " final edges.\n" ;
   std::ofstream os(argc > 2 ? argv[2] : "out.off") ; os << surface_mesh ;
 
-  std::cout  << "Checking sharped edges were preserved...\n";
+  std::cerr  << "Checking sharped edges were preserved...\n";
   // check sharp edges were preserved
   for(boost::tie(eb,ee) = edges(surface_mesh); eb != ee ; ++eb )
   {
@@ -161,10 +166,10 @@ int main( int argc, char** argv )
       }
     }
   }
-  std::cout  << "OK\n";
+  std::cerr  << "OK\n";
   std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
-  std::cout << "Check that no removable edge has been forgotten..." << std::endl;
+  std::cerr << "Check that no removable edge has been forgotten..." << std::endl;
   r = SMS::edge_collapse(surface_mesh
                          ,stop
                          ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
@@ -176,11 +181,11 @@ int main( int argc, char** argv )
   assert(r==0);
 
   if ( r==0 )
-    std::cout  << "OK\n";
+    std::cerr  << "OK\n";
   else{
-    std::cout  << "ERROR! " << r << " edges removed!\n";
-    return 1;
+    std::cerr  << "ERROR! " << r << " edges removed!\n";
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

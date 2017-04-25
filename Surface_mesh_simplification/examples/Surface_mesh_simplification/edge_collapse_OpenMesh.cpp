@@ -63,6 +63,12 @@ int main( int argc, char** argv )
     OpenMesh::IO::read_mesh(surface_mesh, argv[1]);
   else
     OpenMesh::IO::read_mesh(surface_mesh, "cube.off");
+
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // For the pupose of the example we mark 10 edges as constrained edges
   edge_iterator b,e;
   int count=0;
@@ -86,12 +92,10 @@ int main( int argc, char** argv )
              );
   
   surface_mesh.garbage_collection();
-  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+  std::cerr << "\nFinished...\n" << r << " edges removed.\n" 
             << num_edges(surface_mesh) << " final edges.\n" ;
         
    OpenMesh::IO::write_mesh(surface_mesh, "out.off");
   
-  return 0 ;      
+  return EXIT_SUCCESS;
 }
-
-// EOF //

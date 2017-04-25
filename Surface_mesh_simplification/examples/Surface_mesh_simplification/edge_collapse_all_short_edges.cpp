@@ -24,13 +24,18 @@ int main( int argc, char** argv )
   if (argc<3)
   {
     std::cerr << "Usage: " << argv[0] << " input.off minimal_edge_length [out.off]\n";
-    return 1;
+    return EXIT_FAILURE;
   }
 
   Surface_mesh surface_mesh;
 
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
   double threshold = atof(argv[2]);
+
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   int r = SMS::edge_collapse
             (surface_mesh
@@ -41,10 +46,10 @@ int main( int argc, char** argv )
                                .get_placement(SMS::Midpoint_placement<Surface_mesh>())
             );
 
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"
+  std::cerr << "\nFinished...\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
 
   std::ofstream os( argc > 3 ? argv[3] : "out.off" ) ; os << surface_mesh ;
 
-  return 0 ;
+  return EXIT_SUCCESS ;
 }

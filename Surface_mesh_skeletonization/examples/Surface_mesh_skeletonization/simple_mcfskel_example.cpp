@@ -79,6 +79,6 @@ int main(int argc, char* argv[])
       output << "2 " << skeleton[v].point << " "
                      << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 

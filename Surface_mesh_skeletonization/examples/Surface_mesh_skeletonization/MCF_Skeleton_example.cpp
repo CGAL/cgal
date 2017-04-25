@@ -72,6 +72,6 @@ int main(int argc, char* argv[])
     BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
