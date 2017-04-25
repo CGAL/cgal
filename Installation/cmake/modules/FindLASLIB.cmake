@@ -9,21 +9,21 @@
 # first look in user defined locations
 find_path(LASLIB_INCLUDE_DIR
           NAMES lasreader.hpp
-          PATHS /usr/local/include/LASlib/inc
+          PATHS /usr/local/include/LASlib/
          )
 
 find_path(LASZIP_INCLUDE_DIR
           NAMES mydefs.hpp
-          PATHS /usr/local/include/LASzip/src
-                ${LASLIB_INCLUDE_DIR}/../../LASzip/src
+          PATHS /usr/local/include/LASzip/
+                ${LASLIB_INCLUDE_DIR}/../LASzip/
          )
 
 find_library(LASLIB_LIBRARIES
-             NAMES LASlib
+             NAMES las
              PATHS ENV LD_LIBRARY_PATH
                    ENV LIBRARY_PATH
                    /usr/local/lib
-                   ${LASLIB_INCLUDE_DIR}/../lib
+                   ${LASLIB_INCLUDE_DIR}/../../lib
             )
 
 if(LASLIB_LIBRARIES)
