@@ -29,7 +29,7 @@ int main(int argc, char** argv )
     OpenMesh::IO::read_mesh(mesh, "data/cactus.off");
  
   if (!CGAL::is_triangle_mesh(mesh)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
+    std::cout << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
   std::cout << "#F : " << num_faces(mesh) << std::endl;

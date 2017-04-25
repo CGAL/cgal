@@ -23,7 +23,7 @@ int main( int argc, char** argv )
 {
   if (argc<3)
   {
-    std::cerr << "Usage: " << argv[0] << " input.off minimal_edge_length [out.off]\n";
+    std::cout << "Usage: " << argv[0] << " input.off minimal_edge_length [out.off]\n";
     return EXIT_FAILURE;
   }
 
@@ -33,7 +33,7 @@ int main( int argc, char** argv )
   double threshold = atof(argv[2]);
 
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
+    std::cout << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -46,7 +46,7 @@ int main( int argc, char** argv )
                                .get_placement(SMS::Midpoint_placement<Surface_mesh>())
             );
 
-  std::cerr << "\nFinished...\n" << r << " edges removed.\n"
+  std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
 
   std::ofstream os( argc > 3 ? argv[3] : "out.off" ) ; os << surface_mesh ;

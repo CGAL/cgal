@@ -55,19 +55,19 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc!=2){
-    std::cerr << "Usage: " << argv[0] << " input.off\n";
+    std::cout << "Usage: " << argv[0] << " input.off\n";
     return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cerr << "Filename provided is invalid\n";
+    std::cout << "Filename provided is invalid\n";
     return EXIT_FAILURE;
   }
 
   is >> surface_mesh  ;
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
+    std::cout << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -106,7 +106,7 @@ int main( int argc, char** argv )
                                .get_placement(Placement(bem))
             );
 
-  std::cerr << "\nFinished...\n" << r << " edges removed.\n"
+  std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
 
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;

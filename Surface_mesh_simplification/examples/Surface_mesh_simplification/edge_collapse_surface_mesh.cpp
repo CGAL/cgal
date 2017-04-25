@@ -66,7 +66,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
   void OnCollected( Profile const&, boost::optional<double> const& )
   {
     ++ stats->collected ;
-    std::cerr << "\rEdges collected: " << stats->collected << std::flush ;
+    std::cout << "\rEdges collected: " << stats->collected << std::flush ;
   }                
   
   // Called during the processing phase for each edge selected.
@@ -82,8 +82,8 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
       ++ stats->cost_uncomputable ;
       
     if ( current == initial )
-      std::cerr << "\n" << std::flush ;
-    std::cerr << "\r" << current << std::flush ;
+      std::cout << "\n" << std::flush ;
+    std::cout << "\r" << current << std::flush ;
   }                
   
   // Called during the processing phase for each edge being collapsed.
@@ -120,7 +120,7 @@ int main( int argc, char** argv )
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
+    std::cout << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -145,7 +145,7 @@ int main( int argc, char** argv )
                               .visitor      (vis)
            );
   
-  std::cerr << "\nEdges collected: "  << stats.collected
+  std::cout << "\nEdges collected: "  << stats.collected
             << "\nEdges proccessed: " << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
@@ -154,7 +154,7 @@ int main( int argc, char** argv )
             << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable 
             << std::endl ; 
             
-  std::cerr << "\nFinished...\n" << r << " edges removed.\n" 
+  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << num_edges(surface_mesh) << " final edges.\n" ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;

@@ -26,7 +26,7 @@ int main( int argc, char** argv )
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
+    std::cout << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -48,7 +48,7 @@ int main( int argc, char** argv )
                                .get_placement(SMS::Midpoint_placement<Surface_mesh>())
             );
   
-  std::cerr << "\nFinished...\n" << r << " edges removed.\n" 
+  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;

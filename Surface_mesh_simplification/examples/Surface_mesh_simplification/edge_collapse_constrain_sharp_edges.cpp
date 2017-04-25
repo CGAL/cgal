@@ -65,20 +65,20 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc < 2){
-    std::cerr << "Usage: " << argv[0] << " input.off [out.off]\n";
+    std::cout << "Usage: " << argv[0] << " input.off [out.off]\n";
     return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cerr << "Filename provided is invalid\n";
+    std::cout << "Filename provided is invalid\n";
     return EXIT_FAILURE;
   }
 
   is >> surface_mesh  ;
 
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cerr << "Input geometry is not triangulated." << std::endl;
+    std::cout << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -101,7 +101,7 @@ int main( int argc, char** argv )
   {
     halfedge_descriptor hd = halfedge(*eb,surface_mesh);
     if ( is_border(*eb,surface_mesh) ){
-      std::cerr << "border" << std::endl;
+      std::cout << "border" << std::endl;
       ++nb_sharp_edges;
       constraint_hmap[*eb]=true;
       constrained_edges[*eb]=std::make_pair(point(source(hd,surface_mesh),surface_mesh),
@@ -124,7 +124,7 @@ int main( int argc, char** argv )
   }
   cst_output.close();
 
-  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
+  std::cout << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
@@ -138,11 +138,11 @@ int main( int argc, char** argv )
                                          .get_placement(placement)
    );
 
-  std::cerr << "\nFinished...\n" << r << " edges removed.\n"
+  std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << num_edges(surface_mesh) << " final edges.\n" ;
   std::ofstream os(argc > 2 ? argv[2] : "out.off") ; os << surface_mesh ;
 
-  std::cerr  << "Checking sharped edges were preserved...\n";
+  std::cout  << "Checking sharped edges were preserved...\n";
   // check sharp edges were preserved
   for(boost::tie(eb,ee) = edges(surface_mesh); eb != ee ; ++eb )
   {
@@ -166,10 +166,10 @@ int main( int argc, char** argv )
       }
     }
   }
-  std::cerr  << "OK\n";
-  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
+  std::cout  << "OK\n";
+  std::cout << "# sharp edges = " << nb_sharp_edges << std::endl;
 
-  std::cerr << "Check that no removable edge has been forgotten..." << std::endl;
+  std::cout << "Check that no removable edge has been forgotten..." << std::endl;
   r = SMS::edge_collapse(surface_mesh
                          ,stop
                          ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
@@ -181,9 +181,9 @@ int main( int argc, char** argv )
   assert(r==0);
 
   if ( r==0 )
-    std::cerr  << "OK\n";
+    std::cout << "OK\n";
   else{
-    std::cerr  << "ERROR! " << r << " edges removed!\n";
+    std::cout << "ERROR! " << r << " edges removed!\n";
     return EXIT_FAILURE;
   }
 
