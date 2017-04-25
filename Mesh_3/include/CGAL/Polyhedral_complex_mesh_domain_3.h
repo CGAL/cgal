@@ -272,12 +272,15 @@ class Polyhedral_complex_mesh_domain_3
                                 Tag_true,   //Use_patch_id_tag
                                 Tag_true > >//Use_exact_intersection_tag
 {
+protected:
   typedef boost::adjacency_list<
     boost::setS, // this avoids parallel edges
     boost::vecS,
     boost::undirectedS,
     typename Polyhedron::Point,
     typename Polyhedron::Vertex::Set_of_indices> Featured_edges_copy_graph;
+
+private:
   typedef IGT_ IGT;
 
 public:
@@ -350,6 +353,16 @@ public:
     }
     this->build();
   }
+
+  Polyhedral_complex_mesh_domain_3
+    (
+#ifndef DOXYGEN_RUNNING
+    CGAL::Random* p_rng = NULL
+#endif
+    )
+    : Base(p_rng)
+    , borders_detected_(false)
+  {}
 
   /// @cond DEVELOPERS
   const std::vector<Polyhedron>& polyhedra() const {
@@ -618,7 +631,8 @@ public:
   };
   Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); }
   /// @endcond
-private:
+
+protected:
   void initialize_ts(Polyhedron& p);
 
   void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph);
@@ -634,6 +648,7 @@ private:
     return patch_id_to_polyhedron_id.size();
   }
 
+protected:
   std::vector<Polyhedron> stored_polyhedra;
   std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
   std::vector<std::size_t> patch_id_to_polyhedron_id;
