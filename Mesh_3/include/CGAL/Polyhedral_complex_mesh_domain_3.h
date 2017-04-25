@@ -350,14 +350,23 @@ public:
     }
     this->build();
   }
-  /// @cond DEVELOPERS
-  void detect_features(bool sharp, std::vector<Polyhedron>& p);
-  void detect_features(bool sharp) { detect_features(sharp, stored_polyhedra); }
 
   /// @cond DEVELOPERS
   const std::vector<Polyhedron>& polyhedra() const {
     return stored_polyhedra;
   }
+
+  /// @cond DEVELOPERS
+  /// Detect features
+  void detect_features(FT angle_in_degree, std::vector<Polyhedron_type>& p);
+  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, stored_polyhedra); }
+
+  void detect_borders(std::vector<Polyhedron_type>& p);
+  void detect_borders() { detect_borders(stored_polyhedra); };
+
+  /// @cond DEVELOPERS
+  template<typename PointSet>
+  void merge_duplicated_points(const PointSet& duplicated_points);
 
   const std::pair<Subdomain_index, Subdomain_index>&
   incident_subdomains_indices(Surface_patch_index patch_id) const
@@ -667,8 +676,21 @@ initialize_ts(Polyhedron_type& p)
 ///@cond DEVELOPERS
 template < typename GT_, typename P_, typename TA_>
 void
+Polyhedral_complex_mesh_domain_3<GT_, P_, TA_>::
+detect_borders(std::vector<Polyhedron_type>& poly)
+{
+  if (borders_detected_)
+    return;//border detection has already been done
+
+  detect_features(180, poly);
+
+  borders_detected_ = true;
+}
+
+template < typename GT_, typename P_, typename TA_>
+void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
-detect_features(bool sharp, std::vector<Polyhedron_type>& poly)
+detect_features(FT angle_in_degree, std::vector<Polyhedron_type>& poly)
 {
   CGAL_assertion(!borders_detected_);
   if (borders_detected_)
@@ -687,26 +709,15 @@ detect_features(bool sharp, std::vector<Polyhedron_type>& poly)
   {
     initialize_ts(p);
 
-    double angle = 180;
     std::size_t poly_id = &p-&poly[0];
 #if CGAL_MESH_3_VERBOSE
     std::cerr << "Polyhedron #" << poly_id << " :\n";
     std::cerr << "  material #" << patch_indices[poly_id].first << "\n";
     std::cerr << "  material #" << patch_indices[poly_id].second << "\n";
 #endif // CGAL_MESH_3_VERBOSE
-    if(sharp && (patch_indices[poly_id].first == 0 ||
-                 patch_indices[poly_id].second == 0))
-    {
-      angle = 60;
-    }
-#if CGAL_MESH_3_VERBOSE
-    std::cerr << "  angle: " << angle << "\n";
-#endif
+
     // Get sharp features
-    if(angle == 180)
-      this->detect_border_edges(p);
-    else
-      this->detect_sharp_edges(p, angle);
+    detect_features.detect_sharp_edges(p, angle_in_degree);
     detect_features.detect_surface_patches(p);
     detect_features.detect_vertices_incident_patches(p);
 
