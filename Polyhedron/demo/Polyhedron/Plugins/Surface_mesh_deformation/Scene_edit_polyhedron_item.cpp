@@ -875,21 +875,24 @@ struct Is_constrained_map<Polyhedron>
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
-  std::map<poly_vertex_descriptor,int> icmap; //not light but the might won't be copied so it is ok
+  std::map<poly_vertex_descriptor,int> *icmap; //not light but the might won't be copied so it is ok
 
   Is_constrained_map()
   {}
   Is_constrained_map( std::vector<int>* vec, Polyhedron* mesh)
   {
+    icmap = new std::map<poly_vertex_descriptor,int>();
     BOOST_FOREACH(mesh_vd v, vertices(*mesh))
     {
-      icmap[v] = (*vec)[v->id()];
+      (*icmap)[v] = (*vec)[v->id()];
     }
   }
+  void clean(){ delete icmap;}
+
   friend bool get(const Is_constrained_map<Polyhedron>& map, const key_type& k)
   {
-    std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap.find(k);
-    if(it != map.icmap.end())
+    std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap->find(k);
+    if(it != map.icmap->end())
       return it->second != -1;
     return false;
   }
@@ -906,10 +909,11 @@ struct Is_constrained_map<SMesh>
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
   SMesh::Property_map<sm_vertex_descriptor,int> icmap;
-
+  SMesh* mesh;
   Is_constrained_map()
   {}
   Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
+    :mesh(mesh)
   {
     icmap = mesh->add_property_map<sm_vertex_descriptor,int>("v:is_control", -1).first;
     for(std::size_t i=0; i<vec->size(); ++i)
@@ -917,6 +921,9 @@ struct Is_constrained_map<SMesh>
       icmap[sm_vertex_descriptor(i)] = (*vec)[i];
     }
   }
+
+  void clean(){ mesh->remove_property_map(icmap); }
+
   friend bool get(const Is_constrained_map<SMesh>& map, const key_type& k)
   {
     return map.icmap[k] != -1;
@@ -927,8 +934,8 @@ struct Is_constrained_map<SMesh>
 
 int get_control_number(poly_vertex_descriptor v, const Is_constrained_map<Polyhedron>& map)
 {
-  std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap.find(v);
-  if(it != map.icmap.end())
+  std::map<poly_vertex_descriptor, int>::const_iterator it = map.icmap->find(v);
+  if(it != map.icmap->end())
     return it->second;
   return -1;
 }
@@ -1082,6 +1089,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
       continue;
     control_groups[id_group].push_back(v);
   }
+  icm.clean();
 //re-create ctrl_groups
   for(std::size_t i=0; i<control_groups.size() ; i++)
   {
@@ -1935,6 +1943,7 @@ void Scene_edit_polyhedron_item::clear_roi()
     d->deform_sm_mesh->clear_roi_vertices();
   }
   create_ctrl_vertices_group(); // create one new group of control vertices
+
 }
 
 void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
