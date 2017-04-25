@@ -52,15 +52,15 @@ struct Id_setter{
   Id_setter(Polyhedron* poly)
     :poly(poly), sm(NULL){}
 
-    Id_setter(SMesh* sm)
+  Id_setter(SMesh* sm)
     :poly(NULL), sm(sm)
   {
     im = get(boost::vertex_index, *sm);
   }
 
-    std::size_t get_id(p_vd vd)
+  std::size_t get_id(p_vd vd)
   {
-      return vd->id();
+    return vd->id();
   }
   std::size_t get_id(sm_vd vd)
   {
