@@ -19,7 +19,7 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 - classification is computed itemwise using the predicate
 - additional regularization can be used by smoothing either locally or globally through an Alpha Expansion approach.
 
-\cgalFigureBegin{Classification_organization_fig,organization.png}
+\cgalFigureBegin{Classification_organization_fig,organization.svg}
 Organization of the package.
 \cgalFigureEnd
 
