@@ -13,19 +13,19 @@ typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 typedef std::vector<Point> Point_range;
 typedef CGAL::Identity_property_map<Point> Pmap;
 
-namespace Classif = CGAL::Classification;
+namespace Classification = CGAL::Classification;
 
-typedef Classif::Sum_of_weighted_features_predicate                      Classification_predicate;
+typedef Classification::Sum_of_weighted_features_predicate                      Classification_predicate;
 
-typedef Classif::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
-typedef Classif::Local_eigen_analysis                                    Local_eigen_analysis;
+typedef Classification::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
+typedef Classification::Local_eigen_analysis                                    Local_eigen_analysis;
 
-typedef Classif::Label_handle                                            Label_handle;
-typedef Classif::Feature_handle                                          Feature_handle;
-typedef Classif::Label_set                                               Label_set;
-typedef Classif::Feature_set                                             Feature_set;
+typedef Classification::Label_handle                                            Label_handle;
+typedef Classification::Feature_handle                                          Feature_handle;
+typedef Classification::Label_set                                               Label_set;
+typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classif::Feature::Sphericity                                     Sphericity;
+typedef Classification::Feature::Sphericity                                     Sphericity;
 
 ///////////////////////////////////////////////////////////////////
 //! [Feature]
@@ -108,7 +108,7 @@ int main (int argc, char** argv)
   predicate.set_effect (b, my_feature, Classification_predicate::PENALIZING);
 
   std::vector<std::size_t> label_indices;
-  Classif::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Sequential_tag>
     (pts, Pmap(), labels, predicate,
      neighborhood.k_neighbor_query(12),
      0.5, 1, label_indices);
