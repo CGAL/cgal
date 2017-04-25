@@ -269,8 +269,8 @@ class Polyhedral_complex_mesh_domain_3
       Polyhedral_mesh_domain_3< Polyhedron,
                                 IGT_,
                                 TriangleAccessor,
-                                Tag_true,
-                                Tag_true > >
+                                Tag_true,   //Use_patch_id_tag
+                                Tag_true > >//Use_exact_intersection_tag
 {
   typedef boost::adjacency_list<
     boost::setS, // this avoids parallel edges
