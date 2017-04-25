@@ -553,7 +553,7 @@ public:
 
     Subdomain operator()(const Point_3& p) const {
       if(r_domain_.bounding_aabb_tree_ptr() == 0) return Subdomain();
-      const Bounding_box bbox = r_domain_.bounding_aabb_tree_ptr()->bbox();
+      const Bounding_box& bbox = r_domain_.bounding_aabb_tree_ptr()->bbox();
 
       if(   p.x() < bbox.xmin() || p.x() > bbox.xmax()
             || p.y() < bbox.ymin() || p.y() > bbox.ymax()
