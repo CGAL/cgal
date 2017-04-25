@@ -422,21 +422,90 @@ public:
 
   template <typename C3t3>
   void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const {
+#if CGAL_MESH_3_VERBOSE
+    std::cout << "add_vertices_to_c3t3_on_patch_without_feature_edges...";
+    std::cout.flush();
+#endif
+    CGAL::Random random(0);
     typedef typename C3t3::Triangulation Tr;
     Tr& tr = c3t3.triangulation();
-    const std::size_t nb_of_patch_plus_one =
-      this->several_vertices_on_patch.size();
-    for(Patch_id patch_id = 1; std::size_t(patch_id) < nb_of_patch_plus_one;
-        ++patch_id)
+    typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
+
+    const std::size_t nb_of_patch_plus_one = this->nb_of_patch_plus_one();
+    const std::size_t nb_of_extra_vertices_per_patch = 20;
+    std::vector<std::vector<Vertex_const_handle> >
+      several_vertices_on_patch(nb_of_patch_plus_one);
+    BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
     {
-      if(this->patch_has_featured_edges.test(patch_id)) continue;
-      BOOST_FOREACH(Vertex_handle v, this->several_vertices_on_patch[patch_id])
+      for (typename Polyhedron::Vertex_const_iterator
+        vit = p.vertices_begin(), end = p.vertices_end();
+        vit != end; ++vit)
       {
-        typename Tr::Vertex_handle tv = tr.insert(v->point());
-        c3t3.set_dimension(tv, 2);
-        c3t3.set_index(tv, patch_id);
+        if (vit->is_feature_vertex()) { continue; }
+        const Patch_id patch_id = vit->halfedge()->face()->patch_id();
+        CGAL_assertion(patch_id <= nb_of_patch_plus_one);
+        typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
+        if (tr_v != typename Tr::Vertex_handle()) {
+          typedef typename IGT::Sphere_3 Sphere_3;
+          const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
+          if (!sphere.has_on_negative_side(vit->point())) continue;
+        }
+        if (several_vertices_on_patch[patch_id].size() <
+          nb_of_extra_vertices_per_patch)
+        {
+          several_vertices_on_patch[patch_id].push_back(vit);
+        }
+        else {
+          int i = random.uniform_smallint(0,
+            static_cast<int>(nb_of_extra_vertices_per_patch - 1));
+          several_vertices_on_patch[patch_id][i] = vit;
+        }
       }
     }
+    for (Patch_id patch_id = 1; std::size_t(patch_id) < nb_of_patch_plus_one;
+      ++patch_id)
+    {
+      if (this->patch_has_featured_edges.test(patch_id)) {
+        if (!several_vertices_on_patch[patch_id].empty()) {
+          Vertex_const_handle v =
+            several_vertices_on_patch[patch_id].front();
+          typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(v->point());
+          FT sq_dist_v = CGAL::squared_distance(v->point(),
+            tr_v->point().point());
+          for (std::size_t i = 1,
+            size = several_vertices_on_patch[patch_id].size();
+            i < size; ++i)
+          {
+            Vertex_const_handle other_v =
+              several_vertices_on_patch[patch_id][i];
+            tr_v = tr.nearest_power_vertex(other_v->point());
+            const FT sq_dist_other_v =
+              CGAL::squared_distance(other_v->point(),
+              tr_v->point().point());
+            if (sq_dist_other_v > sq_dist_v) {
+              v = other_v;
+              sq_dist_v = sq_dist_other_v;
+            }
+          }
+          tr_v = tr.insert(v->point());
+          c3t3.set_dimension(tr_v, 2);
+          c3t3.set_index(tr_v, patch_id);
+        } // end if several_vertices_on_patch is empty for patch_id
+      } // end if patch has featured edges
+      else { // the patch is closed
+        BOOST_FOREACH(Vertex_const_handle v,
+          several_vertices_on_patch[patch_id])
+        {
+          typename Tr::Vertex_handle tv = tr.insert(v->point());
+          c3t3.set_dimension(tv, 2);
+          c3t3.set_index(tv, patch_id);
+        }
+      }
+    }
+#if CGAL_MESH_3_VERBOSE
+    std::cout << "\badd_vertices_to_c3t3_on_patch_without_feature_edges done.";
+    std::cout << std::endl;
+#endif
   }
 
   struct Is_in_domain
@@ -556,6 +625,11 @@ private:
                                    const Edge_predicate& pred,
                                    Featured_edges_copy_graph& graph,
                                    P2Vmap& p2vmap);
+
+  std::size_t nb_of_patch_plus_one() const
+  {
+    return patch_id_to_polyhedron_id.size();
+  }
 
   std::vector<Polyhedron> stored_polyhedra;
   std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
