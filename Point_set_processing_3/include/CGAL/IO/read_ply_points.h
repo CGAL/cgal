@@ -51,8 +51,6 @@ namespace CGAL {
 // float      single-precision float    4
 // double     double-precision float    8
 
-namespace PLY
-{
   /**
      \ingroup PkgPointSetProcessing
      
@@ -61,11 +59,11 @@ namespace PLY
      \sa `read_ply_points_with_properties()`
   */
   template <typename T>
-  struct Property
+  struct PLY_property
   {
     typedef T type;
     const char* name;
-    Property (const char* name) : name (name) { }
+    PLY_property (const char* name) : name (name) { }
   };
 
   /**
@@ -82,11 +80,11 @@ namespace PLY
   template <typename PointMap>
   cpp11::tuple<PointMap,
                typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-               Property<double>, Property<double>, Property<double> >
-  make_point_reader(PointMap point_map)
+               PLY_property<double>, PLY_property<double>, PLY_property<double> >
+  make_ply_point_reader(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
-                              Property<double>("x"), Property<double>("y"), Property<double>("z"));
+                              PLY_property<double>("x"), PLY_property<double>("y"), PLY_property<double>("z"));
   }
 
   /**
@@ -103,17 +101,19 @@ namespace PLY
   template <typename VectorMap>
   cpp11::tuple<VectorMap,
                typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
-               Property<double>, Property<double>, Property<double> >
-  make_normal_reader(VectorMap normal_map)
+               PLY_property<double>, PLY_property<double>, PLY_property<double> >
+  make_ply_normal_reader(VectorMap normal_map)
   {
     return cpp11::make_tuple (normal_map, typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3(),
-                              Property<double>("nx"), Property<double>("ny"), Property<double>("nz"));
+                              PLY_property<double>("nx"), PLY_property<double>("ny"), PLY_property<double>("nz"));
   }
 
   /// \cond SKIP_IN_MANUAL
 
 namespace internal {
 
+  namespace PLY {
+  
   class PLY_read_number
   {
   protected:
@@ -417,7 +417,7 @@ namespace internal {
   };
 
   template <class Reader, class T>
-  void get_value(Reader& r, T& v, PLY::Property<T>& wrapper)
+  void get_value(Reader& r, T& v, PLY_property<T>& wrapper)
   {
     return r.assign(v, wrapper.name);
   }
@@ -471,7 +471,7 @@ namespace internal {
             typename Constructor,
             typename ... T>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, PLY::Property<T>...>& current)
+                           cpp11::tuple<PropertyMap, Constructor, PLY_property<T>...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
     cpp11::tuple<T...> values;
@@ -487,7 +487,7 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, PLY::Property<T>...>& current,
+                           cpp11::tuple<PropertyMap, Constructor, PLY_property<T>...>& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
@@ -503,7 +503,7 @@ namespace internal {
 
   template <typename OutputValueType, typename PropertyMap, typename T>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, PLY::Property<T> >& current)
+                           std::pair<PropertyMap, PLY_property<T> >& current)
   {
     T new_value = T();
     reader.assign (new_value, current.second.name);
@@ -513,7 +513,7 @@ namespace internal {
   template <typename OutputValueType, typename PropertyMap, typename T,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, PLY::Property<T> >& current,
+                           std::pair<PropertyMap, PLY_property<T> >& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
@@ -522,13 +522,13 @@ namespace internal {
     put (current.first, new_element, new_value);
     process_properties (reader, new_element, next, properties...);
   }
+
+  } // namespace PLY
   
 } // namespace internal
 
   
   /// \endcond
-
-};
   
 
 //===================================================================================
@@ -541,20 +541,20 @@ namespace internal {
 /// Properties are handled through a variadic list of property
 /// handlers. A `PropertyHandler` can either be:
 ///
-///  - A `std::pair<PropertyMap, PLY::Property<T> >` if the user wants
+///  - A `std::pair<PropertyMap, PLY_property<T> >` if the user wants
 ///  to read a %PLY property as a scalar value T (for example, storing
 ///  an `int` %PLY property into an `int` variable).
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, Constructor,
-///  PLY::Property<T>...>` if the user wants to use one or several PLY
+///  PLY_property<T>...>` if the user wants to use one or several PLY
 ///  properties to construct a complex object (for example, storing 3
 ///  `uchar` %PLY properties into a %Color object that can for example
 ///  be a `CGAL::cpp11::array<unsigned char, 3>`). In that case, the
 ///  second element of the tuple should be a functor that constructs
 ///  the value type of `PropertyMap` from N objects of types `T`.
 ///
-/// @sa `PLY::make_point_reader()`
-/// @sa `PLY::make_normal_reader()`
+/// @sa `make_ply_point_reader()`
+/// @sa `make_ply_normal_reader()`
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
@@ -580,7 +580,7 @@ bool read_ply_points_with_properties (std::istream& stream,
       return false;
     }
 
-  PLY::internal::PLY_reader reader;
+  internal::PLY::PLY_reader reader;
   
   if (!(reader.init (stream)))
     return false;
@@ -594,7 +594,7 @@ bool read_ply_points_with_properties (std::istream& stream,
 
       OutputValueType new_element;
 
-      PLY::internal::process_properties (reader, new_element, properties...);
+      internal::PLY::process_properties (reader, new_element, properties...);
 
       *(output ++) = new_element;
       
@@ -646,8 +646,8 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 {
 
   return read_ply_points_with_properties (stream, output,
-                              PLY::make_point_reader (point_pmap),
-                              PLY::make_normal_reader (normal_pmap));
+                              make_ply_point_reader (point_pmap),
+                              make_ply_normal_reader (normal_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -726,7 +726,7 @@ bool read_ply_points(std::istream& stream, ///< input stream.
                      PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   return read_ply_points_with_properties (stream, output,
-                              PLY::make_point_reader (point_pmap));
+                              make_ply_point_reader (point_pmap));
 }
 
 /// @cond SKIP_IN_MANUAL

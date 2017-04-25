@@ -34,8 +34,6 @@
 
 namespace CGAL {
 
-namespace PLY {
-
   /**
      \ingroup PkgPointSetProcessing
      
@@ -48,10 +46,10 @@ namespace PLY {
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-  cpp11::tuple<PointMap, Property<double>, Property<double>, Property<double> >
-  make_point_writer(PointMap point_map)
+  cpp11::tuple<PointMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
+  make_ply_point_writer(PointMap point_map)
   {
-    return cpp11::make_tuple (point_map, Property<double>("x"), Property<double>("y"), Property<double>("z"));
+    return cpp11::make_tuple (point_map, PLY_property<double>("x"), PLY_property<double>("y"), PLY_property<double>("z"));
   }
 
   /**
@@ -66,15 +64,17 @@ namespace PLY {
      \tparam VectorMap the property map used to store vectors.
   */
   template <typename VectorMap>
-  cpp11::tuple<VectorMap, Property<double>, Property<double>, Property<double> >
-  make_normal_writer(VectorMap normal_map)
+  cpp11::tuple<VectorMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
+  make_ply_normal_writer(VectorMap normal_map)
   {
-    return cpp11::make_tuple (normal_map, Property<double>("nx"), Property<double>("ny"), Property<double>("nz"));
+    return cpp11::make_tuple (normal_map, PLY_property<double>("nx"), PLY_property<double>("ny"), PLY_property<double>("nz"));
   }
 
   /// \cond SKIP_IN_MANUAL
 
 namespace internal {
+
+  namespace PLY {
 
   template <typename T> void property_header_type (std::ostream& stream) { stream << "undefined_type"; }
 
@@ -90,7 +90,7 @@ namespace internal {
 
   
   template <typename T>
-  void property_header (std::ostream& stream, const PLY::Property<T>& prop)
+  void property_header (std::ostream& stream, const PLY_property<T>& prop)
   {
     stream << "property ";
     property_header_type<T>(stream);
@@ -121,7 +121,7 @@ namespace internal {
   template <typename PropertyMap,
             typename ... T>
   void output_property_header (std::ostream& stream,
-                               cpp11::tuple<PropertyMap, PLY::Property<T>... >& current)
+                               cpp11::tuple<PropertyMap, PLY_property<T>... >& current)
   {
     Properties_header<sizeof...(T)-1>::write(stream, current); 
   }
@@ -130,7 +130,7 @@ namespace internal {
   template <typename PropertyMap,
             typename T>
   void output_property_header (std::ostream& stream,
-                               std::pair<PropertyMap, PLY::Property<T> >& current)
+                               std::pair<PropertyMap, PLY_property<T> >& current)
   {
     property_header (stream, current.second);
   }
@@ -140,7 +140,7 @@ namespace internal {
             typename NextPropertyHandler,
             typename ... PropertyHandler>
   void output_property_header (std::ostream& stream,
-                               std::pair<PropertyMap, PLY::Property<T> >& current,
+                               std::pair<PropertyMap, PLY_property<T> >& current,
                                NextPropertyHandler& next,
                                PropertyHandler&& ... properties)
   {
@@ -152,7 +152,7 @@ namespace internal {
             typename NextPropertyHandler,
             typename ... PropertyHandler>
   void output_property_header (std::ostream& stream,
-                               cpp11::tuple<PropertyMap, PLY::Property<T>... >& current,
+                               cpp11::tuple<PropertyMap, PLY_property<T>... >& current,
                                NextPropertyHandler& next,
                                PropertyHandler&& ... properties)
   {
@@ -186,7 +186,7 @@ namespace internal {
             typename ... T>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          cpp11::tuple<PropertyMap, PLY::Property<T>... >& current)
+                          cpp11::tuple<PropertyMap, PLY_property<T>... >& current)
   {
     property_write (stream, it, std::get<0>(current));
     if (get_mode(stream) == IO::ASCII)
@@ -199,7 +199,7 @@ namespace internal {
             typename T>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          std::pair<PropertyMap, PLY::Property<T> >& current)
+                          std::pair<PropertyMap, PLY_property<T> >& current)
   {
     simple_property_write (stream, it, current.first);
     if (get_mode(stream) == IO::ASCII)
@@ -213,7 +213,7 @@ namespace internal {
             typename ... PropertyHandler>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          std::pair<PropertyMap, PLY::Property<T> >& current,
+                          std::pair<PropertyMap, PLY_property<T> >& current,
                           NextPropertyHandler& next,
                           PropertyHandler&& ... properties)
   {
@@ -230,7 +230,7 @@ namespace internal {
             typename ... PropertyHandler>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          cpp11::tuple<PropertyMap, PLY::Property<T>... >& current,
+                          cpp11::tuple<PropertyMap, PLY_property<T>... >& current,
                           NextPropertyHandler& next,
                           PropertyHandler&& ... properties)
   {
@@ -239,11 +239,12 @@ namespace internal {
       stream << " ";
     output_properties (stream, it, next, properties...);
   }
-}
+
+  } // namespace PLY
+    
+} // namespace internal
 
   /// \endcond
-}
-
 
 
 //===================================================================================
@@ -255,19 +256,19 @@ namespace internal {
 /// Properties are handled through a variadic list of property
 /// handlers. A `PropertyHandler` can either be:
 ///
-///  - A `std::pair<PropertyMap, PLY::Property<T> >` if the user wants
+///  - A `std::pair<PropertyMap, PLY_property<T> >` if the user wants
 ///  to write a scalar value T as a %PLY property (for example, writing
 ///  an `int` variable as an `int` %PLY property).
 ///
-///  - A `CGAL::cpp11::tuple<PropertyMap, PLY::Property<T>...>` if the
+///  - A `CGAL::cpp11::tuple<PropertyMap, PLY_property<T>...>` if the
 ///  user wants to write a complex object as several %PLY
 ///  properties. In that case, and overload of the stream operator
 ///  `std::operator<<()` must be provided for
 ///  `PropertyMap::value_type` that handles both ASCII and binary
 ///  output (see `CGAL::get_mode()`).
 ///
-/// @sa `PLY::make_point_writer()`
-/// @sa `PLY::make_normal_writer()`
+/// @sa `make_ply_point_writer()`
+/// @sa `make_ply_normal_writer()`
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PropertyHandler handlers to recover properties.
@@ -296,7 +297,7 @@ write_ply_points_with_properties(
          << "comment Generated by the CGAL library" << std::endl
          << "element vertex " << std::distance (first, beyond) << std::endl;
   
-  PLY::internal::output_property_header (stream, properties...);
+  internal::PLY::output_property_header (stream, properties...);
   
   stream << "end_header" << std::endl;
   
@@ -304,7 +305,7 @@ write_ply_points_with_properties(
   // Write positions + normals
   for(ForwardIterator it = first; it != beyond; it++)
   {
-    PLY::internal::output_properties (stream, it, properties...);
+    internal::PLY::output_properties (stream, it, properties...);
   }
 
   return ! stream.fail();
@@ -341,8 +342,8 @@ write_ply_points_and_normals(
   return write_ply_points_with_properties(
     stream,
     first, beyond,
-    PLY::make_point_writer(point_map),
-    PLY::make_normal_writer(normal_map));
+    make_ply_point_writer(point_map),
+    make_ply_normal_writer(normal_map));
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -389,7 +390,7 @@ write_ply_points(
   ForwardIterator beyond, ///< past-the-end input point.
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return write_ply_points_with_properties (stream, first, beyond, PLY::make_point_writer(point_map));
+  return write_ply_points_with_properties (stream, first, beyond, make_ply_point_writer(point_map));
 }
 
 /// @cond SKIP_IN_MANUAL

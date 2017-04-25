@@ -42,9 +42,6 @@
 namespace CGAL {
 
 
-namespace LAS
-{
-
   /**
      \ingroup PkgPointSetProcessing
      
@@ -56,7 +53,7 @@ namespace LAS
   */
   template <typename PointMap>
   cpp11::tuple<PointMap, Property::X, Property::Y, Property::Z >
-  make_point_writer(PointMap point_map)
+  make_las_point_writer(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, Property::X(), Property::Y(), Property::Z());
   }
@@ -65,41 +62,43 @@ namespace LAS
   
 namespace internal {
 
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::Intensity&)
+  namespace LAS {
+
+  void output_value(LASpoint& r, unsigned short& v, LAS_property::Intensity&)
   { r.set_intensity(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Return_number&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Return_number&)
   { r.set_return_number(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Number_of_returns&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Number_of_returns&)
   { r.set_number_of_returns(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Scan_direction_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Scan_direction_flag&)
   { r.set_scan_direction_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Edge_of_flight_line&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Edge_of_flight_line&)
   { r.set_edge_of_flight_line(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Classification&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Classification&)
   { r.set_classification(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Synthetic_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Synthetic_flag&)
   { r.set_synthetic_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Keypoint_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Keypoint_flag&)
   { r.set_keypoint_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::Withheld_flag&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::Withheld_flag&)
   { r.set_withheld_flag(v); }
-  void output_value(LASpoint& r, float& v, LAS::Property::Scan_angle&)
+  void output_value(LASpoint& r, float& v, LAS_property::Scan_angle&)
   { r.set_scan_angle_rank(char(v)); }
-  void output_value(LASpoint& r, unsigned char& v, LAS::Property::User_data&)
+  void output_value(LASpoint& r, unsigned char& v, LAS_property::User_data&)
   { r.set_user_data(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::Point_source_ID&)
+  void output_value(LASpoint& r, unsigned short& v, LAS_property::Point_source_ID&)
   { r.set_point_source_ID(v); }
-  void output_value(LASpoint& r, unsigned int& v, LAS::Property::Deleted_flag&)
+  void output_value(LASpoint& r, unsigned int& v, LAS_property::Deleted_flag&)
   { r.set_deleted_flag(v); }
-  void output_value(LASpoint& r, double& v, LAS::Property::GPS_time&)
+  void output_value(LASpoint& r, double& v, LAS_property::GPS_time&)
   { r.set_gps_time(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::R&)
+  void output_value(LASpoint& r, unsigned short& v, LAS_property::R&)
   { r.set_R(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::G&)
+  void output_value(LASpoint& r, unsigned short& v, LAS_property::G&)
   { r.set_G(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::B&)
+  void output_value(LASpoint& r, unsigned short& v, LAS_property::B&)
   { r.set_B(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS::Property::I&)
+  void output_value(LASpoint& r, unsigned short& v, LAS_property::I&)
   { r.set_I(v); }
   
   template <typename ForwardIterator>
@@ -133,13 +132,13 @@ namespace internal {
     output_properties (point, it, next, properties...);
   }
 
+  } // namespace LAS
   
 } // namespace internal
   
 
 /// \endcond
 
-}
 
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
@@ -148,15 +147,15 @@ namespace internal {
 ///
 /// Properties are handled through a variadic list of property
 /// handlers. A `PropertyHandle` is a `std::pair<PropertyMap,
-/// LAS::Property::Tag >` used to write a scalar value
-/// `LAS::Property::Tag::type` as a %LAS property (for example,
+/// LAS_property::Tag >` used to write a scalar value
+/// `LAS_property::Tag::type` as a %LAS property (for example,
 /// writing an `int` vairable as an `int` %LAS property). An exception
 /// is used for points that are written using a `cpp11::tuple` object.
 ///
 /// See documentation of `read_las_points_with_properties()` for the
-/// list of available `LAS::Property::Tag` classes.
+/// list of available `LAS_property::Tag` classes.
 ///
-/// @sa `LAS::make_point_writer()`
+/// @sa `make_las_point_writer()`
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
@@ -170,9 +169,9 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
                                        ForwardIterator first, ///< iterator over the first input point.
                                        ForwardIterator beyond, ///< past-the-end iterator over the input points.
                                        cpp11::tuple<PointMap,
-                                                    LAS::Property::X,
-                                                    LAS::Property::Y,
-                                                    LAS::Property::Z> point_property,  ///< property handler for points
+                                                    LAS_property::X,
+                                                    LAS_property::Y,
+                                                    LAS_property::Z> point_property,  ///< property handler for points
                                        PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
   CGAL_point_set_processing_precondition(first != beyond);
@@ -210,7 +209,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
     laspoint.set_X ((unsigned int)((p.x() - header.x_offset) / header.x_scale_factor));
     laspoint.set_Y ((unsigned int)((p.y() - header.y_offset) / header.y_scale_factor));
     laspoint.set_Z ((unsigned int)((p.z() - header.z_offset) / header.z_scale_factor));
-    LAS::internal::output_properties (laspoint, it, properties...);
+    internal::LAS::output_properties (laspoint, it, properties...);
 
     laswriter.write_point (&laspoint);
     laswriter.update_inventory(&laspoint);
@@ -244,7 +243,7 @@ write_las_points(
   ForwardIterator beyond, ///< past-the-end input point.
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return write_las_points_with_properties (stream, first, beyond, LAS::make_point_writer(point_map));
+  return write_las_points_with_properties (stream, first, beyond, make_las_point_writer(point_map));
 }
 
 /// @cond SKIP_IN_MANUAL
