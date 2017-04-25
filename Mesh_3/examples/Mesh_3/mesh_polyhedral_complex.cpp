@@ -68,6 +68,8 @@ int main()
   Mesh_domain domain(patches.begin(), patches.end(),
                      incident_subdomains, incident_subdomains+nb_patches);
 
+  domain.detect_features(); //includes detection of borders
+
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 8,
                          facet_angle = 25, facet_size = 8, facet_distance = 0.2,
@@ -77,7 +79,8 @@ int main()
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
   // Output
-  dump_c3t3(c3t3, "out");
-  // std::ofstream medit_file("out.mesh");
-  // c3t3.output_to_medit(medit_file);
+  std::ofstream medit_file("out.mesh");
+  c3t3.output_to_medit(medit_file);
+
+  return EXIT_SUCCESS;
 }
