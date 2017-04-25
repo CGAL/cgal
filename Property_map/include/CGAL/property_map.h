@@ -242,7 +242,7 @@ template <typename Pair>
 struct Second_of_pair_property_map
 {
   typedef Pair key_type; ///< typedef to `Pair`
-  typedef typename Pair::second_type value_type; ///< typedef to `Pair::first_type`
+  typedef typename Pair::second_type value_type; ///< typedef to `Pair::second_type`
   typedef const value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
