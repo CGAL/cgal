@@ -29,6 +29,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 
@@ -87,6 +88,7 @@ namespace internal{
     {
       CGAL_assertion(v_max == target(min_slope_he, pmesh));
       CGAL_assertion(v_max == target(he, pmesh));
+
       if(CGAL::SMALLER == compare_slope(get(vpmap, source(he, pmesh)),
                                         get(vpmap, v_max),
                                         get(vpmap, source(min_slope_he, pmesh)),
@@ -95,24 +97,39 @@ namespace internal{
         min_slope_he = he;
       }
     }
-    // There are two faces around `e` (because the mesh is without borders).
-    // Select the halfedge of `e` contributing to the face `f`, such the another incoming edge of `v_max`
-    // that is incident to `f` has the minimal slope
-    if(CGAL::SMALLER != compare_slope(get(vpmap, target(next(min_slope_he, pmesh), pmesh)),
-                                      get(vpmap, v_max),
-                                      get(vpmap, source(prev(opposite(min_slope_he, pmesh), pmesh), pmesh)),
-                                      get(vpmap, v_max)))
-      min_slope_he = opposite(min_slope_he, pmesh);
 
-    //check that the normal to f has z > 0
-    typename GT::Angle_3 angle_3 = gt.angle_3_object();
-    typename GT::Construct_vector_3 vector_3= gt.construct_vector_3_object();
-    typename GT::Vector_3 vertical = vector_3(0, 0, 1);
+    // We compute the orientations of the two triangles incident to the edge
+    // of `min_slope_he` projected in the xy-plane. We can conclude using
+    // the 2D orientation of the 3D triangle that is the top one along the z-axis
+    // the neighborhood of `min_slope_he`.
+    Projection_traits_xy_3<GT> p_gt;
+    typename Projection_traits_xy_3<GT>::Orientation_2 orientation_2 = p_gt.orientation_2_object();
 
-    return CGAL::ACUTE == angle_3(get(vpmap, source(min_slope_he, pmesh)),
-                                  get(vpmap, target(min_slope_he, pmesh)),
-                                  get(vpmap, target(next(min_slope_he, pmesh), pmesh)),
-                                  vertical);
+    typename boost::property_traits<VPMap>::reference p1 = get(vpmap, source(min_slope_he, pmesh));
+    typename boost::property_traits<VPMap>::reference p2 = get(vpmap, target(min_slope_he, pmesh));
+    typename boost::property_traits<VPMap>::reference p3 = get(vpmap, target(next(min_slope_he, pmesh), pmesh));
+    typename boost::property_traits<VPMap>::reference p4 = get(vpmap, target(next(opposite(min_slope_he, pmesh), pmesh), pmesh));
+
+    Orientation p1p2p3_2d = orientation_2(p1, p2, p3);
+    Orientation p2p1p4_2d = orientation_2(p2, p1, p4);
+
+    CGAL_assertion( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ); // no self-intersection
+
+    if ( p1p2p3_2d == COLLINEAR)
+      return p2p1p4_2d == LEFT_TURN;
+    if (p2p1p4_2d ==COLLINEAR)
+      return p1p2p3_2d == LEFT_TURN;
+
+    // if the local dihedral angle is strictly larger that PI/2, we can conclude with any of two triangles
+    if (p1p2p3_2d==p2p1p4_2d)
+      return p1p2p3_2d == LEFT_TURN;
+
+    typename GT::Orientation_3 orientation_3 = gt.orientation_3_object();
+    Orientation p1p2p3p4 = orientation_3(p1, p2, p3, p4);
+
+    CGAL_assertion( p1p2p3p4 != COPLANAR ); // same side of min_slope_he and no self-intersection
+
+    return (p1p2p3_2d == LEFT_TURN) == (p1p2p3p4 == POSITIVE);
   }
 } // end of namespace internal
 
