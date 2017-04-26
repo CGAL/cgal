@@ -40,7 +40,6 @@
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 #include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
-#include <CGAL/boost/graph/PMP_properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -219,7 +218,7 @@ public:
   typedef typename Base::Curve_segment_index  Curve_segment_index;
   typedef typename Base::Surface_patch_index  Surface_patch_index;
   typedef typename Base::Subdomain_index      Subdomain_index;
-  
+
   // Backward compatibility
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index                 Surface_index;
@@ -228,7 +227,7 @@ public:
   typedef typename Base::R         R;
   typedef typename Base::Point_3   Point_3;
   typedef typename Base::FT        FT;
-  
+
   typedef CGAL::Tag_true           Has_features;
 
   typedef std::vector<Point_3> Bare_polyline;

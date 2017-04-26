@@ -89,3 +89,6 @@ target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_po
 
 polyhedron_demo_plugin(distance_plugin Distance_plugin)
 target_link_libraries(distance_plugin scene_polyhedron_item scene_color_ramp)
+
+polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin)
+target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)

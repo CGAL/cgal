@@ -401,8 +401,8 @@ public Q_SLOTS:
           Kernel::Point_3 > Edge_graph;
 
       Edge_graph edge_graph;
-      std::map<vertex_descriptor, Edge_graph::vertex_descriptor> p2vd;
-      std::map<vertex_descriptor, Edge_graph::vertex_descriptor>::iterator it_find;
+      std::map<fg_vertex_descriptor, Edge_graph::vertex_descriptor> p2vd;
+      std::map<fg_vertex_descriptor, Edge_graph::vertex_descriptor>::iterator it_find;
       bool insert_OK;
       
       Face_graph * poly = selection_item->polyhedron();
@@ -410,7 +410,7 @@ public Q_SLOTS:
       for(Scene_polyhedron_selection_item::Selection_set_edge::iterator begin = selection_item->selected_edges.begin();
           begin != selection_item->selected_edges.end(); ++begin)
       {
-        vertex_descriptor source = target(opposite(halfedge(*begin,*poly),*poly),*poly);
+        fg_vertex_descriptor source = target(opposite(halfedge(*begin,*poly),*poly),*poly);
         boost::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(source, Edge_graph::vertex_descriptor()));
         if (insert_OK)
@@ -420,7 +420,7 @@ public Q_SLOTS:
         }
         Edge_graph::vertex_descriptor src=it_find->second;
 
-        vertex_descriptor targ = target(halfedge(*begin,*poly),*poly);
+        fg_vertex_descriptor targ = target(halfedge(*begin,*poly),*poly);
         boost::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(targ, Edge_graph::vertex_descriptor()));
         if (insert_OK)
@@ -499,7 +499,7 @@ public Q_SLOTS:
         return;
       }
       const Face_graph& poly = *selection_item->polyhedron();
-      BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
+      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
       {
         selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
         selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
@@ -522,7 +522,7 @@ public Q_SLOTS:
       }
       const Face_graph& poly = *selection_item->polyhedron();
 
-      BOOST_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
+      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
       {
         selection_item->selected_vertices.insert(target(halfedge(ed, poly), poly));
         selection_item->selected_vertices.insert(source(halfedge(ed, poly), poly));
@@ -544,9 +544,9 @@ public Q_SLOTS:
         return;
       }
       const Face_graph& poly = *selection_item->polyhedron();
-      std::vector<Scene_polyhedron_selection_item::halfedge_descriptor> boundary_edges;
+      std::vector<Scene_polyhedron_selection_item::fg_halfedge_descriptor> boundary_edges;
       CGAL::Polygon_mesh_processing::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
-      BOOST_FOREACH(Scene_polyhedron_selection_item::halfedge_descriptor h, boundary_edges)
+      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_halfedge_descriptor h, boundary_edges)
       {
         selection_item->selected_edges.insert(edge(h, poly));
       }
@@ -567,9 +567,9 @@ public Q_SLOTS:
         return;
       }
       const Face_graph& poly = *selection_item->polyhedron();
-      BOOST_FOREACH(Scene_polyhedron_selection_item::face_descriptor fh, selection_item->selected_facets)
+      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_face_descriptor fh, selection_item->selected_facets)
       {
-        BOOST_FOREACH(Scene_polyhedron_selection_item::halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fh,poly), poly) )
+        BOOST_FOREACH(Scene_polyhedron_selection_item::fg_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fh,poly), poly) )
         {
           selection_item->selected_vertices.insert(target(h, poly));
         }
