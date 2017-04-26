@@ -38,7 +38,8 @@ if( TBB_FOUND )
 endif()
 
 
-find_package(OpenCV REQUIRED )
+find_package(OpenCV REQUIRED)
+include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # include for local directory
 include_directories( BEFORE include )
