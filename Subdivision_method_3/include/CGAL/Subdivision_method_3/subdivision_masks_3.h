@@ -586,7 +586,7 @@ public:
   }
 
   /// computes the \f$ \sqrt{3}\f$ edge-points `ept` and `vpt` of the halfedge `hd`.
-  /// \attention Border subdivision only happens every second step of a <em>singe</em>
+  /// \attention Border subdivision only happens every second step of a <em>single</em>
   ///            successive \f$ \sqrt{3}\f$ subdivision (thus requiring a depth larger than 1).
   void border_node(halfedge_descriptor bhd, Point& ept, Point& vpt) {
     // this function takes a BORDER halfedge
