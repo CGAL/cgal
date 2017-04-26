@@ -392,15 +392,17 @@ public:
   typedef Tds                                  Triangulation_data_structure;
   typedef GT                                   Geom_traits;
 
-  typedef typename GT::Point_3                 Point;
   typedef typename GT::Segment_3               Segment;
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
 
+  // point types
+  typedef typename GT::Point_3                 Point_3;
+  typedef typename Tds::Vertex::Point          Point;
+
   typedef typename Tds::Concurrency_tag        Concurrency_tag;
 
   typedef typename Tds::Vertex                 Vertex;
-  CGAL_static_assertion((boost::is_same<Point, typename Vertex::Point>::value));
   typedef typename Tds::Cell                   Cell;
   typedef typename Tds::Facet                  Facet;
   typedef typename Tds::Edge                   Edge;
