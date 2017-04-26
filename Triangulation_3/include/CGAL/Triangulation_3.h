@@ -545,61 +545,78 @@ protected:
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
 
+  Point_3 construct_point(const Point &p) const
+  {
+    return geom_traits().construct_point_3_object()(p);
+  }
+
   Comparison_result
   compare_xyz(const Point &p, const Point &q) const
   {
-      return geom_traits().compare_xyz_3_object()(p, q);
+    return geom_traits().compare_xyz_3_object()(construct_point(p),
+                                                construct_point(q));
   }
 
   bool
   equal(const Point &p, const Point &q) const
   {
-      return compare_xyz(p, q) == EQUAL;
+    return compare_xyz(p, q) == EQUAL;
   }
 
   Orientation
   orientation(const Point &p, const Point &q,
               const Point &r, const Point &s) const
   {
-      return geom_traits().orientation_3_object()(p, q, r, s);
+    return geom_traits().orientation_3_object()(construct_point(p),
+                                                construct_point(q),
+                                                construct_point(r),
+                                                construct_point(s));
   }
 
   bool
   coplanar(const Point &p, const Point &q,
            const Point &r, const Point &s) const
   {
-      return orientation(p, q, r, s) == COPLANAR;
+    return orientation(p, q, r, s) == COPLANAR;
   }
 
   Orientation
   coplanar_orientation(const Point &p, const Point &q, const Point &r) const
   {
-      return geom_traits().coplanar_orientation_3_object()(p, q, r);
+    return geom_traits().coplanar_orientation_3_object()(construct_point(p),
+                                                         construct_point(q),
+                                                         construct_point(r));
   }
 
   bool
   collinear(const Point &p, const Point &q, const Point &r) const
   {
-      return coplanar_orientation(p, q, r) == COLLINEAR;
+    return coplanar_orientation(p, q, r) == COLLINEAR;
   }
 
   Segment
   construct_segment(const Point &p, const Point &q) const
   {
-      return geom_traits().construct_segment_3_object()(p, q);
+    return geom_traits().construct_segment_3_object()(construct_point(p),
+                                                      construct_point(q));
   }
 
   Triangle
   construct_triangle(const Point &p, const Point &q, const Point &r) const
   {
-      return geom_traits().construct_triangle_3_object()(p, q, r);
+    return geom_traits().construct_triangle_3_object()(construct_point(p),
+                                                       construct_point(q),
+                                                       construct_point(r));
   }
 
   Tetrahedron
   construct_tetrahedron(const Point &p, const Point &q,
                         const Point &r, const Point &s) const
   {
-      return geom_traits().construct_tetrahedron_3_object()(p, q, r, s);
+    return geom_traits().construct_tetrahedron_3_object()(construct_point(p),
+                                                          construct_point(q),
+                                                          construct_point(r),
+                                                          construct_point(s));
   }
 
   enum COLLINEAR_POSITION {BEFORE, SOURCE, MIDDLE, TARGET, AFTER};
@@ -6528,6 +6545,12 @@ test_next(const Triangulation_3<GT, Tds1, Lds> &t1,
     typedef typename std::map<Vertex_handle1,
                               Vertex_handle2>::const_iterator Vit;
 
+    typedef typename Tr1::Geom_traits::Construct_point_3 Construct_point_3;
+    typedef typename Tr1::Geom_traits::Compare_xyz_3  Compare_xyz_3;
+
+    Compare_xyz_3 cmp1 = t1.geom_traits().compare_xyz_3_object();
+    Construct_point_3 cp = t1.geom_traits().construct_point_3_object();
+
     std::vector<std::pair<Cell_handle1, Cell_handle2> > cell_stack;
     cell_stack.push_back(std::make_pair(c1, c2));
 
@@ -6564,8 +6587,7 @@ test_next(const Triangulation_3<GT, Tds1, Lds> &t1,
           if (t2.is_infinite(vn2))
             return false; // vn1 can't be infinite,
           // since it would have been registered.
-          if (t1.geom_traits().compare_xyz_3_object()(vn1->point(),
-                                                      vn2->point()) != 0)
+          if (cmp1(cp(vn1->point()), cp(vn2->point())) != 0)
             return false;
           // We register vn1/vn2.
           Vmap.insert(std::make_pair(vn1, vn2));
@@ -6594,12 +6616,16 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
     typedef typename Triangulation_3<GT, Tds2>::Cell_handle   Cell_handle2;
 
     typedef typename Triangulation_3<GT, Tds1>::Point                       Point;
+    typedef typename Triangulation_3<GT, Tds1>::Point_3                     Point_3;
+
     typedef typename Triangulation_3<GT, Tds1>::Geom_traits::Equal_3        Equal_3;
     typedef typename Triangulation_3<GT, Tds1>::Geom_traits::Compare_xyz_3  Compare_xyz_3;
+    typedef typename Triangulation_3<GT, Tds1>::Geom_traits::Construct_point_3 Construct_point_3;
 
     Equal_3 equal = t1.geom_traits().equal_3_object();
     Compare_xyz_3 cmp1 = t1.geom_traits().compare_xyz_3_object();
     Compare_xyz_3 cmp2 = t2.geom_traits().compare_xyz_3_object();
+    Construct_point_3 cp = t1.geom_traits().construct_point_3_object();
 
     // Some quick checks.
     if (t1.dimension() != t2.dimension()
@@ -6620,8 +6646,14 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
         using namespace boost;
         std::vector<Point> V1 (t1.points_begin(), t1.points_end());
         std::vector<Point> V2 (t2.points_begin(), t2.points_end());
-        std::sort(V1.begin(), V1.end(), boost::bind<Comparison_result>(cmp1, _1, _2) == NEGATIVE);
-        std::sort(V2.begin(), V2.end(), boost::bind<Comparison_result>(cmp2, _1, _2) == NEGATIVE);
+        std::sort(V1.begin(), V1.end(),
+                  boost::bind<Comparison_result>(
+                    cmp1, boost::bind<const Point_3&>(cp, _1),
+                          boost::bind<const Point_3&>(cp, _2)) == NEGATIVE);
+        std::sort(V2.begin(), V2.end(),
+                  boost::bind<Comparison_result>(
+                    cmp2, boost::bind<const Point_3&>(cp, _1),
+                          boost::bind<const Point_3&>(cp, _2)) == NEGATIVE);
         return V1 == V2;
     }
 
@@ -6651,34 +6683,34 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
             cit != ics.end(); ++cit) {
         int inf = (*cit)->index(iv2);
 
-        if (equal(p2, (*cit)->vertex((inf+1)%(dim+1))->point()))
+        if (equal(cp(p2), cp((*cit)->vertex((inf+1)%(dim+1))->point())))
             Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+1)%(dim+1))));
-        else if (equal(p2, (*cit)->vertex((inf+2)%(dim+1))->point()))
+        else if (equal(cp(p2), cp((*cit)->vertex((inf+2)%(dim+1))->point())))
             Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+2)%(dim+1))));
         else if (dim == 3 &&
-                 equal(p2, (*cit)->vertex((inf+3)%(dim+1))->point()))
+                 equal(cp(p2), cp((*cit)->vertex((inf+3)%(dim+1))->point())))
             Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+3)%(dim+1))));
         else
             continue; // None matched v2.
 
-        if (equal(p3, (*cit)->vertex((inf+1)%(dim+1))->point()))
+        if (equal(cp(p3), cp((*cit)->vertex((inf+1)%(dim+1))->point())))
             Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+1)%(dim+1))));
-        else if (equal(p3, (*cit)->vertex((inf+2)%(dim+1))->point()))
+        else if (equal(cp(p3), cp((*cit)->vertex((inf+2)%(dim+1))->point())))
             Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+2)%(dim+1))));
         else if (dim == 3 &&
-                 equal(p3, (*cit)->vertex((inf+3)%(dim+1))->point()))
+                 equal(cp(p3), cp((*cit)->vertex((inf+3)%(dim+1))->point())))
             Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+3)%(dim+1))));
         else
             continue; // None matched v3.
 
         if (dim == 3) {
-            if (equal(p4, (*cit)->vertex((inf+1)%(dim+1))->point()))
+            if (equal(cp(p4), cp((*cit)->vertex((inf+1)%(dim+1))->point())))
                 Vmap.insert(std::make_pair(v4,
                                            (*cit)->vertex((inf+1)%(dim+1))));
-            else if (equal(p4, (*cit)->vertex((inf+2)%(dim+1))->point()))
+            else if (equal(cp(p4), cp((*cit)->vertex((inf+2)%(dim+1))->point())))
                 Vmap.insert(std::make_pair(v4,
                                            (*cit)->vertex((inf+2)%(dim+1))));
-            else if (equal(p4, (*cit)->vertex((inf+3)%(dim+1))->point()))
+            else if (equal(cp(p4), cp((*cit)->vertex((inf+3)%(dim+1))->point())))
                 Vmap.insert(std::make_pair(v4,
                                            (*cit)->vertex((inf+3)%(dim+1))));
             else
