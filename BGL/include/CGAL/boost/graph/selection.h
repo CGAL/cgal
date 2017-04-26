@@ -213,7 +213,7 @@ reduce_face_selection(
 
 /*!
 \ingroup PkgBGLSelectionFct
-discovers and puts in `out` all faces incident to the target vertex
+Discovers and puts in `out` all faces incident to the target vertex
 of a halfedge in `hedges`. Faces are put exactly once in `out`.
 \tparam HalfedgeRange a range of halfedge descriptors, model of `Range`.
           Its iterator type is `InputIterator`.
@@ -252,7 +252,6 @@ select_incident_faces(
   return out;
 }
 
-// Operations on edges
 /*!
 \ingroup PkgBGLSelectionFct
 Augments a selection with edges of `fg` that are adjacent
@@ -406,7 +405,6 @@ reduce_edge_selection(
   return out;
 }
 
-// Operations on vertices
 /*!
 \ingroup PkgBGLSelectionFct
 Augments a selection with vertices of `fg` that are adjacent

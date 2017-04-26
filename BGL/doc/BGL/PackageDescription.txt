@@ -46,10 +46,27 @@
 /// \defgroup PkgBGLSelectionFct Selection Functions
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLEulerOperations Euler Operations
+/// \ingroup PkgBGL
+
+/*!
+\addtogroup PkgBGLHelper
+Several classes that enable to store ids in vertices/halfedges/faces of a `Polyhedron_3`, as well as adapters such as `Dual`.
+*/
+
+/*!
+\addtogroup PkgBGLHelperFct
+Generic convenience functions for testing if an edge is a border edge, if a mesh is triangular,
+for conversion between models of different `FaceGraph` concepts, etc.
+
+Most functions are in the header file `<CGAL/boost/graph/helpers.h>
+*/
+
 /*!
 \addtogroup PkgBGLIterators
 
-Several iterators and circulators are provided that enable to iterate through the  halfedges incident to a given face or vertex.
+Several iterators and circulators are provided that enable, for example,
+to iterate through the  halfedges incident to a given face or vertex.
 
 Starting at a halfedge `h`, applying several times `next(h,g)` brings us back 
 to the halfedge where we started. All halfedges traversed on the way are 
@@ -59,10 +76,14 @@ in another cycle, namely the cycle of halfedges which are incident to
 the same vertex.
 For convenience, two iterator and circulator types enable iterating through all the halfedges
 incident to a given face, and all the halfedges having a given vertex as target.
+
+All functions are in the header file `<CGAL/boost/graph/iterator.h>
 */
 
-/// \defgroup PkgBGLEulerOperations Euler Operations
-/// \ingroup PkgBGL
+/*!
+\addtogroup PkgBGLSelectionFct
+Several functions to enlarge or reduce a k-ring selection of vertices, edges, or faces.
+*/
 
 /*!
 \addtogroup PkgBGLTraits
