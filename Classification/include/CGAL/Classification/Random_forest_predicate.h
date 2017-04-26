@@ -4,8 +4,7 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 
-#include <cv.h>       // opencv general include file
-#include <ml.h>		  // opencv machine learning include file
+#include <opencv2/opencv.hpp>
 
 namespace CGAL {
 
@@ -24,7 +23,12 @@ class Random_forest_predicate
 {
   Label_set& m_labels;
   Feature_set& m_features;
+
+#if (CV_MAJOR_VERSION < 3)
   CvRTrees* rtree;
+#else
+  cv::Ptr<cv::ml::RTrees> rtree;
+#endif
 
 public:
   
@@ -33,14 +37,19 @@ public:
 */
   Random_forest_predicate (Label_set& labels,
                            Feature_set& features)
-    : m_labels (labels), m_features (features), rtree (NULL)
+    : m_labels (labels), m_features (features)
+#if (CV_MAJOR_VERSION < 3)
+    , rtree (NULL)
+#endif
   {  }
 
   /// \cond SKIP_IN_MANUAL
   ~Random_forest_predicate ()
   {
+#if (CV_MAJOR_VERSION < 3)
     if (rtree != NULL)
       delete rtree;
+#endif
   }
   /// \endcond
   
@@ -76,8 +85,10 @@ public:
               float forest_accuracy = 0.01f)
               
   {
+#if (CV_MAJOR_VERSION < 3)
     if (rtree != NULL)
       delete rtree;
+#endif
     
     std::size_t nb_samples = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
@@ -97,6 +108,7 @@ public:
         ++ index;
       }
 
+#if (CV_MAJOR_VERSION < 3)
     float* priors = new float[m_labels.size()];
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       priors[i] = 1.;
@@ -116,6 +128,27 @@ public:
                   cv::Mat(), cv::Mat(), var_type, cv::Mat(), params);
 
     delete[] priors;
+#else
+    rtree = cv::ml::RTrees::create();
+    rtree->setMaxDepth (max_depth);
+    rtree->setMinSampleCount (min_sample_count);
+    rtree->setMaxCategories (max_categories);
+    rtree->setCalculateVarImportance (false);
+    rtree->setRegressionAccuracy (forest_accuracy);
+    rtree->setUseSurrogates(false);
+    rtree->setPriors(cv::Mat());
+    rtree->setCalculateVarImportance(false);
+    
+    cv::TermCriteria criteria (cv::TermCriteria::EPS + cv::TermCriteria::COUNT, max_number_of_trees_in_the_forest, 0.01f);
+    rtree->setTermCriteria (criteria);
+
+    cv::Ptr<cv::ml::TrainData> tdata = cv::ml::TrainData::create
+      (training_features, cv::ml::ROW_SAMPLE, training_labels);
+
+    rtree->train (tdata);
+
+#endif
+
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -128,6 +161,7 @@ public:
       feature.at<float>(0, f) = m_features[f]->value(item_index);
 
 //compute the result of each tree
+#if (CV_MAJOR_VERSION < 3)
     std::size_t nb_trees = std::size_t(rtree->get_tree_count());
     for (std::size_t i = 0; i < nb_trees; i++)
     {
@@ -137,6 +171,19 @@ public:
 
     for (std::size_t i = 0; i < out.size(); ++ i)
       out[i] = - std::log (out[i] / nb_trees);
+#else
+
+    std::vector<float> result (1, 0);
+    
+    rtree->predict (feature, result);
+    
+    for (std::size_t i = 0; i < out.size(); ++ i)
+      if (i == std::size_t(result[0]))
+        out[i] = 0.;
+      else
+        out[i] = 1.;
+
+#endif
   }
 
   void save_configuration (const char* filename)
@@ -146,10 +193,13 @@ public:
 
   void load_configuration (const char* filename)
   {
+#if (CV_MAJOR_VERSION < 3)
     if (rtree != NULL)
       delete rtree;
     rtree = new CvRTrees;
-    rtree->load(filename);
+#else
+    rtree = cv::ml::StatModel::load<cv::ml::RTrees> (filename);
+#endif
   }
   /// \endcond
 
