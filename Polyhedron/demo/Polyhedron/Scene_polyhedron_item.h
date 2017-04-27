@@ -97,6 +97,9 @@ public:
     Polyhedron*       polyhedron();
     const Polyhedron* polyhedron() const;
 
+    Face_graph*       face_graph() { return polyhedron(); }
+    const Face_graph* face_graph() const { return polyhedron(); }
+
     // Get dimensions
     bool isFinite() const Q_DECL_OVERRIDE { return true; }
     bool isEmpty() const Q_DECL_OVERRIDE;

@@ -67,6 +67,10 @@ public:
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
+
+  Face_graph*       face_graph() { return polyhedron(); }
+  const Face_graph* face_graph() const { return polyhedron(); }
+
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
