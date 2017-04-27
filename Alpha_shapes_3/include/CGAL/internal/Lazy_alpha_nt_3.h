@@ -27,7 +27,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/internal/Exact_type_selector.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
@@ -54,8 +53,6 @@ struct Types_for_alpha_nt_3
 //Converter types
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>    To_approx;
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_exact>     To_exact;
-//Traits types
-
 //Point types
   typedef typename Kernel_approx::Point_3                          Approx_point;
   typedef typename Kernel_exact::Point_3                           Exact_point;
@@ -73,16 +70,13 @@ struct Types_for_alpha_nt_3< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_a
 //Converter types
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>   To_approx;
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_exact>    To_exact;
-//Traits types
-  typedef ::CGAL::Regular_triangulation_euclidean_traits_3<Kernel_approx>                       Approx_traits;
-  typedef ::CGAL::Regular_triangulation_euclidean_traits_3<Kernel_exact>                        Exact_traits;
 //Point types
-  typedef typename Approx_traits::Weighted_point Approx_point;
-  typedef typename Exact_traits::Weighted_point  Exact_point;
+  typedef typename Kernel_approx::Weighted_point_3 Approx_point;
+  typedef typename Kernel_exact::Weighted_point_3  Exact_point;
   typedef typename Input_traits::Weighted_point_3  Input_point;
 //Constructions 
-  typedef typename Approx_traits::Compute_squared_radius_smallest_orthogonal_sphere_3           Approx_squared_radius;
-  typedef typename Exact_traits::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius;
+  typedef typename Kernel_approx::Compute_squared_radius_smallest_orthogonal_sphere_3           Approx_squared_radius;
+  typedef typename Kernel_exact::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius;
 };
 
 
