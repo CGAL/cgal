@@ -57,8 +57,8 @@ public:
   //! A plugin that outputs a `Facegraph_item` will match the input type for the output.
   //! But when the input is not a `Facegraph_item`, the plugin will use this state to know what type to use.
   enum Face_graph_mode{
-    POLYHEDRON=0,
-    SURFACE_MESH
+    SURFACE_MESH=0,
+    POLYHEDRON
   };
   /*! \brief The constructor
    * It links the class with its UI file and sets it up.
@@ -414,7 +414,7 @@ public:
 #endif
 
 private Q_SLOTS:
-  void set_facegraph_mode_adapter(bool);
+  void set_facegraph_mode_adapter(bool is_polyhedron);
 };
 
 #endif // ifndef MAINWINDOW_H

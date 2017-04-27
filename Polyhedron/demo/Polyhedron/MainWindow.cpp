@@ -1336,7 +1336,7 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-    set_facegraph_mode_adapter(settings.value("polyhedron_mode", false).toBool());
+    set_facegraph_mode_adapter(settings.value("polyhedron_mode", true).toBool());
 }
 
 void MainWindow::writeSettings()
@@ -1997,10 +1997,10 @@ void MainWindow::set_face_graph_default_type(Face_graph_mode m)
   this->setProperty("is_polyhedron_mode", m);
 }
 
-void MainWindow::set_facegraph_mode_adapter(bool b)
+void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
 {
-  if(b)
-   set_face_graph_default_type(SURFACE_MESH);
+  if(is_polyhedron)
+   set_face_graph_default_type(POLYHEDRON);
   else
-    set_face_graph_default_type(POLYHEDRON);
+    set_face_graph_default_type(SURFACE_MESH);
 }
