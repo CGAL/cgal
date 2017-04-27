@@ -1622,7 +1622,7 @@ dual(Cell_handle c) const
   CGAL_triangulation_precondition(dimension()==3);
   CGAL_triangulation_precondition( ! is_infinite(c) );
 
-  return geom_traits().construct_point_3_object()(c->weighted_circumcenter(geom_traits()));
+  return c->weighted_circumcenter(geom_traits());
 }
 
   template < class Gt, class Tds, class Lds >
