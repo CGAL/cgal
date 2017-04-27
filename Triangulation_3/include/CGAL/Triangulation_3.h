@@ -6685,11 +6685,11 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
         std::sort(V1.begin(), V1.end(),
                   boost::bind<Comparison_result>(
                     cmp1, boost::bind<const Point_3&>(cp, _1),
-                          boost::bind<const Point_3&>(cp, _2)) == NEGATIVE);
+                          boost::bind<const Point_3&>(cp, _2)) == SMALLER);
         std::sort(V2.begin(), V2.end(),
                   boost::bind<Comparison_result>(
                     cmp2, boost::bind<const Point_3&>(cp, _1),
-                          boost::bind<const Point_3&>(cp, _2)) == NEGATIVE);
+                          boost::bind<const Point_3&>(cp, _2)) == SMALLER);
         return V1 == V2;
     }
 
