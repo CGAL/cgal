@@ -1999,5 +1999,8 @@ void MainWindow::set_face_graph_default_type(Face_graph_mode m)
 
 void MainWindow::set_facegraph_mode_adapter(bool b)
 {
-  this->setProperty("is_polyhedron_mode", b);
+  if(b)
+   set_face_graph_default_type(SURFACE_MESH);
+  else
+    set_face_graph_default_type(POLYHEDRON);
 }
