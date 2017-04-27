@@ -29,32 +29,30 @@
 
 #include <CGAL/_test_types.h>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_vertex_base_3<K> Vb;
-typedef CGAL::Triangulation_cell_base_3<K> Cb;
+typedef CGAL::Regular_triangulation_vertex_base_3<K>      Vb;
+typedef CGAL::Triangulation_cell_base_3<K>                Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb>      Tds;
 
-typedef CGAL::Regular_triangulation_3<K, Tds> Regular_triangulation_3;
+typedef CGAL::Regular_triangulation_3<K, Tds>             Regular_triangulation_3;
 
 typedef CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<K>::Rebind_TDS<Tds>::Other Cell_type;
 
-typedef Cell_type::Vertex_handle Vertex_handle;
-typedef Cell_type::Cell_handle Cell_handle;
-typedef Regular_triangulation_3::Weighted_point Weighted_point;
-typedef Regular_triangulation_3::Point Point;
-typedef Regular_triangulation_3::Bare_point Bare_point;
+typedef Cell_type::Vertex_handle                Vertex_handle;
+typedef Cell_type::Cell_handle                  Cell_handle;
 
+typedef Regular_triangulation_3::Bare_point     Bare_point;
+typedef Regular_triangulation_3::Point          Point;
+typedef Regular_triangulation_3::Weighted_point Weighted_point;
 
 // Explicit instantiation of the whole class.
 template class
-CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<K,
-    CGAL::Regular_triangulation_cell_base_3<K,
-    CGAL::Triangulation_cell_base_3<K,
-    CGAL::Triangulation_ds_cell_base_3<Tds>
-    > > >;
-
+CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<
+  K, CGAL::Regular_triangulation_cell_base_3<
+      K, CGAL::Triangulation_cell_base_3<
+           K, CGAL::Triangulation_ds_cell_base_3<Tds> >,
+      CGAL::Keep_hidden_points, std::vector<Weighted_point> > >;
 
 void test_default_constructor ()
 {
@@ -119,10 +117,10 @@ void test_constructor_2 ()
 
 void test_weighted_circumcenter ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds tds;
   Vertex_handle vh0 = tds.create_vertex(v0);
@@ -140,10 +138,10 @@ void test_weighted_circumcenter ()
 
 void test_copy_constructor ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds::Cell c0, c1, c2, c3;
   Tds tds;
@@ -176,10 +174,10 @@ void test_copy_constructor ()
 
 void test_copy_constructor_2 ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds::Cell c0, c1, c2, c3;
   Tds tds;
@@ -212,10 +210,10 @@ void test_copy_constructor_2 ()
 
 void test_assignment_operator ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds::Cell c0, c1, c2, c3;
   Tds tds;
@@ -249,10 +247,10 @@ void test_assignment_operator ()
 
 void test_assignment_operator_2 ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds::Cell c0, c1, c2, c3;
   Tds tds;
@@ -286,10 +284,10 @@ void test_assignment_operator_2 ()
 
 void test_set_vertex ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds tds;
   Vertex_handle vh0 = tds.create_vertex(v0);
@@ -312,10 +310,10 @@ void test_set_vertex ()
 
 void test_set_vertices ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds tds;
   Vertex_handle vh0 = tds.create_vertex(v0);
@@ -334,10 +332,10 @@ void test_set_vertices ()
 
 void test_set_vertices_with_parameters ()
 {
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
+  Weighted_point p0(Bare_point(0,0,0),1);
+  Weighted_point p1(Bare_point(2,0,0),1);
+  Weighted_point p2(Bare_point(0,2,0),1);
+  Weighted_point p3(Bare_point(0,0,2),1);
   Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
   Tds tds;
   Vertex_handle vh0 = tds.create_vertex(v0);
