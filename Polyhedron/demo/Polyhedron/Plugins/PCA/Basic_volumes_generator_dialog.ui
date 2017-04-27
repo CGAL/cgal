@@ -30,23 +30,23 @@
           <item>
            <widget class="QLabel" name="cylinderLabel">
             <property name="toolTip">
-             <string>There will be 360/precision points taken on the circle basis to make the cylinder</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the base of the cylinder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Precision:</string>
+             <string>#Points</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QSpinBox" name="cylinderSpinBox">
             <property name="minimum">
-             <number>1</number>
+             <number>3</number>
             </property>
             <property name="maximum">
-             <number>60</number>
+             <number>360000</number>
             </property>
             <property name="value">
-             <number>15</number>
+             <number>36</number>
             </property>
            </widget>
           </item>
@@ -90,7 +90,7 @@
           <item>
            <widget class="QLabel" name="sphereLabel">
             <property name="toolTip">
-             <string>This parameter must divide 360 and 180. The smaller it is, the more precise will be the sphere.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the sphere will be 3^precision*10+2.&lt;/p&gt;&lt;p&gt;This is the number of times the sqrt3-subdivision will be applied to the original icosahedron.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Precision:</string>
@@ -100,13 +100,13 @@
           <item>
            <widget class="QSpinBox" name="SphereSpinBox">
             <property name="minimum">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="maximum">
              <number>60</number>
             </property>
             <property name="value">
-             <number>15</number>
+             <number>0</number>
             </property>
            </widget>
           </item>

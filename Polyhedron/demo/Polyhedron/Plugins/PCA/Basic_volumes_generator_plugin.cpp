@@ -2,12 +2,13 @@
 #include <QMainWindow>
 #include <QAction>
 #include <QVector>
+#include <QMessageBox>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Scene_polyhedron_item.h"
-
+#include <CGAL/Subdivision_method_3.h>
 #include "ui_Basic_volumes_generator_dialog.h"
 
 class VolumeDialog :
@@ -78,77 +79,21 @@ private:
   QList<QAction*> _actions;
 }; //end of class Basic_volumes_generator_plugin
 
-//make a triangulated cube
+//make a non triangle cube
 void Basic_volumes_generator_plugin::on_actionCube_triggered()
 {
   Polyhedron cube;
-  VPMap vpmap = get(CGAL::vertex_point, cube);
-  std::vector<vertex_descriptor> vertices;
-  vertices.resize(8);
-  for(int i=0; i<8; ++i)
-    vertices[i] = add_vertex(cube);
+  CGAL::make_hexahedron(Point(-0.5,-0.5,-0.5),
+                        Point(0.5,-0.5,-0.5),
+                        Point(0.5,0.5,-0.5),
+                        Point(-0.5,0.5,-0.5),
 
-  //vertices
-  put(vpmap, vertices[0],Point(-0.5,-0.5,-0.5));
-  put(vpmap, vertices[1],Point(0.5,-0.5,-0.5));
-  put(vpmap, vertices[2],Point(0.5,0.5,-0.5));
-  put(vpmap, vertices[3],Point(-0.5,0.5,-0.5));
-  put(vpmap, vertices[4],Point(-0.5,-0.5,0.5));
-  put(vpmap, vertices[5],Point(0.5,-0.5,0.5));
-  put(vpmap, vertices[6],Point(0.5,0.5,0.5));
-  put(vpmap, vertices[7],Point(-0.5,0.5,0.5));
-  //faces
-  std::vector<vertex_descriptor> face;
-  face.resize(3);
+                        Point(-0.5,0.5,0.5),
+                        Point(-0.5,-0.5,0.5),
+                        Point(0.5,-0.5,0.5),
+                        Point(0.5,0.5,0.5),
+                        cube);
 
-  face[0] = vertices[0];
-  face[1] = vertices[1];
-  face[2] = vertices[2];
-  euler::add_face(face, cube);
-  face[0] = vertices[0];
-  face[1] = vertices[2];
-  face[2] = vertices[3];
-  euler::add_face(face, cube);
-  face[0] = vertices[1];
-  face[1] = vertices[5];
-  face[2] = vertices[6];
-  euler::add_face(face, cube);
-  face[0] = vertices[1];
-  face[1] = vertices[6];
-  face[2] = vertices[2];
-  euler::add_face(face, cube);
-  face[0] = vertices[5];
-  face[1] = vertices[4];
-  face[2] = vertices[7];
-  euler::add_face(face, cube);
-  face[0] = vertices[5];
-  face[1] = vertices[7];
-  face[2] = vertices[6];
-  euler::add_face(face, cube);
-  face[0] = vertices[4];
-  face[1] = vertices[0];
-  face[2] = vertices[3];
-  euler::add_face(face, cube);
-  face[0] = vertices[4];
-  face[1] = vertices[3];
-  face[2] = vertices[7];
-  euler::add_face(face, cube);
-  face[0] = vertices[2];
-  face[1] = vertices[6];
-  face[2] = vertices[7];
-  euler::add_face(face, cube);
-  face[0] = vertices[2];
-  face[1] = vertices[7];
-  face[2] = vertices[3];
-  euler::add_face(face, cube);
-  face[0] = vertices[4];
-  face[1] = vertices[5];
-  face[2] = vertices[1];
-  euler::add_face(face, cube);
-  face[0] = vertices[4];
-  face[1] = vertices[1];
-  face[2] = vertices[0];
-  euler::add_face(face, cube);
 
   Scene_polyhedron_item* cube_item = new Scene_polyhedron_item(cube);
   cube_item->setName(QString("Cube"));
@@ -164,13 +109,18 @@ void Basic_volumes_generator_plugin::on_actionCylinder_triggered()
   //opens the dialog
   if(!dialog->exec())
     return;
-  int precision = dialog->cylinderSpinBox->value();
+  int nb_vertices = dialog->cylinderSpinBox->value();
+  float precision = 360*2.0/nb_vertices;
+  //if(360%precision != 0)
+  //  QMessageBox::warning(mw, tr("WARNING"),
+  //                       tr("Precision should divide 360 for a better result"),
+  //                       QMessageBox::Ok);
   bool is_closed = dialog->cylinderCheckBox->isChecked();
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   Polyhedron cylinder;
   VPMap vpmap = get(CGAL::vertex_point, cylinder);
-  const int nb_vertices = 360/precision * 2;
+  //const int nb_vertices = 360/precision * 2;
   std::vector<vertex_descriptor> vertices;
   vertices.resize(nb_vertices);
   for(int i=0; i<nb_vertices; ++i)
@@ -236,62 +186,82 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
   if(!dialog->exec())
     return;
   int precision = dialog->SphereSpinBox->value();
-  const float to_rad = static_cast<float>(CGAL_PI / 180.0);
-
   Polyhedron sphere;
   VPMap vpmap = get(CGAL::vertex_point, sphere);
+  // create the initial icosahedron
+  std::vector<vertex_descriptor> v_vertices;
+  v_vertices.resize(12);
+  for(int i=0; i<12; ++i)
+    v_vertices[i] = add_vertex(sphere);
+  float t = (1.0 + CGAL::sqrt(5.0)) / 2.0;
 
-  const int nb_vertices = 179/precision * 360/precision;
-  std::vector<vertex_descriptor> vertices;
-  vertices.resize(nb_vertices);
-  for(std::size_t i=0; i<nb_vertices; ++i)
-    vertices[i] = add_vertex(sphere);
+  put(vpmap, v_vertices[0],Kernel::Point_3(-1,  t,  0));
+  put(vpmap, v_vertices[1],Kernel::Point_3( 1,  t,  0));
+  put(vpmap, v_vertices[2],Kernel::Point_3(-1, -t,  0));
+  put(vpmap, v_vertices[3],Kernel::Point_3( 1, -t,  0));
 
-  //fill vertices
-  int id=0;
-  const int per_meridian = 180/precision;
-  const int per_parallel = 360/precision;
-  for(int t=1; t<per_meridian; ++t)
-  {
-    for(int p=0; p<per_parallel; ++p)
-    {
-      put(vpmap, vertices[id++], Point(0.5*sin(t*to_rad*precision)*sin(p*to_rad*precision), 0.5*cos(t*to_rad*precision), 0.5*sin(t*to_rad*precision)*cos(p*to_rad*precision)));
-    }
-  };
-  vertex_descriptor top = add_vertex(sphere);
-  vertex_descriptor bot = add_vertex(sphere);
-  put(vpmap, top, Point(0,0.5,0));
-  put(vpmap, bot, Point(0,-0.5,0));
+  put(vpmap, v_vertices[4],Kernel::Point_3( 0, -1,  t));
+  put(vpmap, v_vertices[5],Kernel::Point_3( 0,  1,  t));
+  put(vpmap, v_vertices[6],Kernel::Point_3( 0, -1, -t));
+  put(vpmap, v_vertices[7],Kernel::Point_3( 0,  1, -t));
+
+  put(vpmap, v_vertices[8],Kernel::Point_3( t,  0, -1));
+  put(vpmap, v_vertices[9],Kernel::Point_3( t,  0,  1));
+  put(vpmap, v_vertices[10],Kernel::Point_3(-t, 0, -1));
+  put(vpmap, v_vertices[11],Kernel::Point_3(-t, 0,  1));
+
   std::vector<vertex_descriptor> face;
   face.resize(3);
-  //fill faces
-  for(int i=0; i<per_meridian-2; ++i)
-  {
-    for(int j=0; j < per_parallel; ++j)
-    {
-      face[0] = vertices[i*per_parallel+(j+1)%per_parallel];
-      face[1] = vertices[i*per_parallel+j];
-      face[2] = vertices[(i+1)*per_parallel+(j+1)%per_parallel];
-      euler::add_face(face, sphere);
-      face[0] = vertices[(i+1)*per_parallel+(j+1)%per_parallel];
-      face[1] = vertices[i*per_parallel+j];
-      face[2] = vertices[(i+1)*per_parallel+j%per_parallel];
-      euler::add_face(face, sphere);
-    }
-  }
+  face[1] = v_vertices[0]; face[0] = v_vertices[11]; face[2] = v_vertices[5];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[0]; face[0] = v_vertices[5]; face[2] = v_vertices[1];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[0]; face[0] = v_vertices[1]; face[2] = v_vertices[7];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[0]; face[0] = v_vertices[7]; face[2] = v_vertices[10];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[0]; face[0] = v_vertices[10]; face[2] = v_vertices[11];
+  euler::add_face(face, sphere);
 
-  //fill poles
-  for(int i=0; i < per_parallel; ++i)
-  {
-    face[0] = top;
-    face[1] = vertices[i];
-    face[2] = vertices[(i+1)%(per_parallel)];
-    euler::add_face(face, sphere);
+  face[1] = v_vertices[1] ; face[0] = v_vertices[5] ; face[2] = v_vertices[9];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[5] ; face[0] = v_vertices[11]; face[2] = v_vertices[4];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[11]; face[0] = v_vertices[10]; face[2] = v_vertices[2];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[10]; face[0] = v_vertices[7] ; face[2] = v_vertices[6];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[7] ; face[0] = v_vertices[1] ; face[2] = v_vertices[8];
+  euler::add_face(face, sphere);
 
-    face[0] = bot;
-    face[1] = vertices[(i+1)%(per_parallel) + (per_meridian-2)*per_parallel];
-    face[2] = vertices[i + (per_meridian-2)*per_parallel];
-    euler::add_face(face, sphere);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[9] ; face[2] = v_vertices[4];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[4] ; face[2] = v_vertices[2];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[2] ; face[2] = v_vertices[6];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[6] ; face[2] = v_vertices[8];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[8] ; face[2] = v_vertices[9];
+  euler::add_face(face, sphere);
+
+  face[1] = v_vertices[4] ; face[0] = v_vertices[9] ; face[2] = v_vertices[5] ;
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[2] ; face[0] = v_vertices[4] ; face[2] = v_vertices[11];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[6] ; face[0] = v_vertices[2] ; face[2] = v_vertices[10];
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[8] ; face[0] = v_vertices[6] ; face[2] = v_vertices[7] ;
+  euler::add_face(face, sphere);
+  face[1] = v_vertices[9] ; face[0] = v_vertices[8] ; face[2] = v_vertices[1] ;
+  euler::add_face(face, sphere);
+  if(precision !=0)
+    CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere, precision);
+  BOOST_FOREACH(vertex_descriptor vd, vertices(sphere))
+  {
+   Kernel::Vector_3 vec(get(vpmap, vd), Kernel::Point_3(0,0,0));
+   vec = vec/CGAL::sqrt(vec.squared_length());
+   put(vpmap, vd, Kernel::Point_3(vec.x(), vec.y(), vec.z()));
   }
   Scene_polyhedron_item* sphere_item = new Scene_polyhedron_item(sphere);
   sphere_item->setName(QString("Sphere"));
@@ -301,38 +271,11 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
 void Basic_volumes_generator_plugin::on_actionTetrahedron_triggered()
 {
   Polyhedron tetrahedron;
-  VPMap vpmap = get(CGAL::vertex_point, tetrahedron);
-  std::vector<vertex_descriptor> vertices;
-  vertices.resize(4);
-  for(int i=0; i<4; ++i)
-    vertices[i] = add_vertex(tetrahedron);
-
-  //vertices
-  put(vpmap, vertices[0],Point(-0.5,-0.5,-0.5));
-  put(vpmap, vertices[1],Point(0.5,-0.5,-0.5));
-  put(vpmap, vertices[2],Point(0,0.5,-0.5));
-  put(vpmap, vertices[3],Point(0,0,0.5));
-  //faces
-  std::vector<vertex_descriptor> face;
-  face.resize(3);
-
-  face[0] = vertices[1];
-  face[1] = vertices[0];
-  face[2] = vertices[2];
-  euler::add_face(face, tetrahedron);
-  face[0] = vertices[0];
-  face[1] = vertices[1];
-  face[2] = vertices[3];
-  euler::add_face(face, tetrahedron);
-  face[0] = vertices[0];
-  face[1] = vertices[3];
-  face[2] = vertices[2];
-  euler::add_face(face, tetrahedron);
-  face[0] = vertices[1];
-  face[1] = vertices[2];
-  face[2] = vertices[3];
-  euler::add_face(face, tetrahedron);
-
+  CGAL::make_tetrahedron(Point(-0.5,-0.5,-0.5),
+                         Point(0.5,-0.5,-0.5),
+                         Point(0,0.5,-0.5),
+                         Point(0,0,0.5),
+                         tetrahedron);
 
   Scene_polyhedron_item* tet_item = new Scene_polyhedron_item(tetrahedron);
   tet_item->setName(QString("Tetrahedron"));
