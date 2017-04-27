@@ -243,7 +243,7 @@ namespace CGAL {
           bbox.xmin() + 0.5*xdelta,
           bbox.ymin() + 0.5*ydelta,
           bbox.zmin() + 0.5*zdelta);
-        Random_points_on_sphere_3<Point> random_point(radius);
+        Random_points_on_sphere_3<Bare_point> random_point(radius);
         const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
           tbb::task_scheduler_init::default_num_threads() * 3.5);
         typename Gt::Construct_weighted_point_3 cwp =
@@ -277,7 +277,7 @@ namespace CGAL {
         for (; it_p != it_p_end ; ++it_p)
         {
           Locate_type lt;
-          Cell_handle c;
+          Cell_handle c, hint;
           int li, lj;
 
           c = locate(*it_p, lt, li, lj, hint);
