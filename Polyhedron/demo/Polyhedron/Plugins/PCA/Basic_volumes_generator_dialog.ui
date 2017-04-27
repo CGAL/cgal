@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>220</width>
-    <height>232</height>
+    <width>672</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,28 +17,28 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QGroupBox" name="cylinderGroupBox">
+      <widget class="QGroupBox" name="prismGroupBox">
        <property name="title">
         <string/>
        </property>
        <property name="flat">
         <bool>false</bool>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
+       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0">
         <item>
-         <layout class="QHBoxLayout" name="cylinderLayout" stretch="1,0">
+         <layout class="QHBoxLayout" name="prismLayout" stretch="1,0">
           <item>
-           <widget class="QLabel" name="cylinderLabel">
+           <widget class="QLabel" name="prismLabel">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the base of the cylinder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>#Points</string>
+             <string>#Points:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="cylinderSpinBox">
+           <widget class="QSpinBox" name="prismSpinBox">
             <property name="minimum">
              <number>3</number>
             </property>
@@ -53,16 +53,136 @@
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,1,0,0,0">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The prism center's coordinates.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Center:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="prismXSpinBox">
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="minimum">
+             <double>-1000000000000000000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="prismYSpinBox">
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="minimum">
+             <double>-1000000000000000000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="prismZSpinBox">
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="minimum">
+             <double>-1000000000000000000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The prisms height.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Height:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="heightSpinBox">
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the circle in which the base is inscribed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Base Radius:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="prismBaseSpinBox">
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QLabel" name="label">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mark this if you want the basis of the prism to be constructed as well.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Closed: </string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="cylinderCheckBox">
+           <widget class="QCheckBox" name="prismCheckBox">
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
             </property>
@@ -84,7 +204,7 @@
        <property name="title">
         <string/>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0">
+       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0">
         <item>
          <layout class="QHBoxLayout" name="sphereLayout" stretch="1,0">
           <item>
@@ -107,6 +227,84 @@
             </property>
             <property name="value">
              <number>0</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="4,1,0,0,0">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Center:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="sphereXSpinBox">
+            <property name="minimum">
+             <double>-1000000000000000000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="sphereYSpinBox">
+            <property name="minimum">
+             <double>-1000000000000000000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="sphereZSpinBox">
+            <property name="minimum">
+             <double>-1000000000000000000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the sphere.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Radius:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="sphereRadiusSpinBox">
+            <property name="maximum">
+             <double>1000000000000000000.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
             </property>
            </widget>
           </item>
