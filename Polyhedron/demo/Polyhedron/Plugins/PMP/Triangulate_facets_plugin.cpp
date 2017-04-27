@@ -48,7 +48,7 @@ public:
 
 public Q_SLOTS:
    void triangulate() {
-      QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())  {
 
     Scene_polyhedron_item* item = 
