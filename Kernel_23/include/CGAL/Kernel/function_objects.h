@@ -775,8 +775,8 @@ namespace CommonKernelFunctors {
 
       CGAL_assertion( (sign_pq == sign_rs) && (sign_pq != EQUAL)  );
       
-      Comparison_result res = CGAL::compare(square(p.z() - q.z()) * squared_distance(r,s),
-                                            square(r.z() - s.z()) * squared_distance(p,q));
+      Comparison_result res = CGAL::compare(square(p.z() - q.z()) * (square(r.x()-s.x())+square(r.y()-s.y())),
+                                            square(r.z() - s.z()) *  (square(p.x()-q.x())+square(p.y()-q.y())));
       return (sign_pq == SMALLER) ? opposite(res) : res;
     } 
   
