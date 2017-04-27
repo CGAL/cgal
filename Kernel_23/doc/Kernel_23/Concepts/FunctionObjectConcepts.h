@@ -62,20 +62,20 @@ public:
   /// @{
 
   /*!
-    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
-  on the angle formed by the two vectors `u` and `v`. 
-  */ 
-  Angle operator()(const Kernel::Vector_3&u, 
-                   const Kernel::Vector_3&v); 
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+  on the angle formed by the two vectors `u` and `v`.
+  */
+  Angle operator()(const Kernel::Vector_3&u,
+                   const Kernel::Vector_3&v);
 
   /*!
-    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
-    on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+    on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
     the angle). The returned value is the same as `operator()(p - q, r - q)`.
-  */ 
-  Angle operator()(const Kernel::Point_3&p, 
-                   const Kernel::Point_3&q, 
-                   const Kernel::Point_3&r); 
+  */
+  Angle operator()(const Kernel::Point_3&p,
+                   const Kernel::Point_3&q,
+                   const Kernel::Point_3&r);
 
   /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
@@ -89,12 +89,12 @@ public:
 
   /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
-    on the angle formed by the twonormal vector of the plane `pqr` and `v`. 
+    on the angle formed by the normal of the triangle `pqr` and the vector `v`. 
   */ 
   Angle operator()(const Kernel::Point_3&p, 
                    const Kernel::Point_3&q, 
                    const Kernel::Point_3&r, 
-                   const Kernel::Vector_3&s); 
+                   const Kernel::Vector_3&v); 
   /// @}
 
 }; /* end Kernel::Angle_3 */

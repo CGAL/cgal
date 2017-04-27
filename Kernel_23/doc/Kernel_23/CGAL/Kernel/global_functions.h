@@ -37,9 +37,16 @@ const CGAL::Point_2<Kernel>& q,
 const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
 
+/*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the two vectors `u` and `v`.
+*/
+template <typename Kernel>
+Angle angle(const CGAL::Vector_3<Kernel>& u,
+            const CGAL::Vector_3<Kernel>& v);
+
 
 /*!
-
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
 the angle).
@@ -48,6 +55,29 @@ template <typename Kernel>
 Angle angle(const CGAL::Point_3<Kernel>& p,
 const CGAL::Point_3<Kernel>& q,
 const CGAL::Point_3<Kernel>& r);
+
+/*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the two vectors `pq`, `rs`. The returned value is
+the same as `angle(q - p, s - r)`.
+*/
+template<typename Kernel >
+Angle angle(const CGAL::Point_3<Kernel>&p,
+            const CGAL::Point_3<Kernel>&q,
+            const CGAL::Point_3<Kernel>&r,
+            const CGAL::Point_3<Kernel>&s);
+
+/*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the normal of the triangle `pqr` and the vector `v`.
+*/
+
+template<typename Kernel >
+Angle angle(const CGAL::Point_3<Kernel>&p,
+            const CGAL::Point_3<Kernel>&q,
+            const CGAL::Point_3<Kernel>&r,
+            const CGAL::Vector_3<Kernel>&v);
+
 
 
 /*!
@@ -62,16 +92,6 @@ Kernel::FT approximate_dihedral_angle(const CGAL::Point_3<Kernel>& p,
                                       const CGAL::Point_3<Kernel>& r,
                                       const CGAL::Point_3<Kernel>& s);
 
-/*!
-
-returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
-on the angle formed by the normal vector of the plane `pqr` and `v`. 
-*/
-template <typename Kernel>
-Angle angle(const CGAL::Point_3<Kernel>& p,
-const CGAL::Point_3<Kernel>& q,
-const CGAL::Point_3<Kernel>& r,
-const CGAL::Vector_3<Kernel>& v);
 
 /// @}
 
