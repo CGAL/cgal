@@ -1045,7 +1045,8 @@ public:
   /*!
     compares the slopes of the segments `(p,q)` and `(r,s)`,
     where the slope is the variation of the `z`-coordinate 
-    from the first to the second point of the segment.
+    from the first to the second point of the segment divided
+    by the length of the segment.
   */ 
   Comparison_result operator()(const Kernel::Point_3& p, 
                                const Kernel::Point_3& q,

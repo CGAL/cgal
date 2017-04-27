@@ -820,7 +820,7 @@ const CGAL::Segment_2<Kernel> &s2);
 /*!
 compares the slopes of the segments `(p,q)` and `(r,s)`,
 where the slope is the variation of the `z`-coordinate from the first
-to the second point of the segment.
+to the second point  of the segment divided by the length of the segment.
 */
 template <typename Kernel>
 Comparison_result compare_slope(const CGAL::Point_3<Kernel> &p,
