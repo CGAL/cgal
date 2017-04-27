@@ -56,7 +56,7 @@ public:
   //!
   //! A plugin that outputs a `Facegraph_item` will match the input type for the output.
   //! But when the input is not a `Facegraph_item`, the plugin will use this state to know what type to use.
-  enum Facegraph_mode{
+  enum Face_graph_mode{
     POLYHEDRON=0,
     SURFACE_MESH
   };
@@ -229,7 +229,7 @@ public Q_SLOTS:
   /*!
    * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
    */
-  void set_face_graph_default_type(Facegraph_mode m);
+  void set_face_graph_default_type(MainWindow::Face_graph_mode m);
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the sceneView and updates the scene

@@ -32,7 +32,7 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
-  typedef SMesh FaceGraph;
+  typedef SMesh Face_graph;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
@@ -64,8 +64,6 @@ public:
   void update_facet_indices(){}
 
   std::vector<QColor>& color_vector();
-  void set_patch_id(SMesh::Face_index f,int i)const;
-  int patch_id(SMesh::Face_index f)const;
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;

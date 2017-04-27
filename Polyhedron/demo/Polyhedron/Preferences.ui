@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>FaceGraph Mode</string>
+      <string>Face_graph Mode</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>

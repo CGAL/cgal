@@ -1336,7 +1336,7 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-      set_facegraph_mode_adapter(settings.value("polyhedron_mode", false).toBool());
+    set_facegraph_mode_adapter(settings.value("polyhedron_mode", false).toBool());
 }
 
 void MainWindow::writeSettings()
@@ -1352,7 +1352,7 @@ void MainWindow::writeSettings()
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
     //setting polyhedron mode
-    settings.setValue("polyhedron_mode", scene->property("is_polyhedron_mode").toBool());
+    settings.setValue("polyhedron_mode", this->property("is_polyhedron_mode").toBool());
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -1620,7 +1620,7 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  if(scene->property("is_polyhedron_mode").toBool())
+  if(this->property("is_polyhedron_mode").toBool())
     prefdiag.polyRadioButton->setChecked(true);
   else
     prefdiag.smRadioButton->setChecked(true);
@@ -1992,12 +1992,12 @@ void MainWindow::colorItems()
 }
 // Only used to make the doc clearer. Only the adapter is actueally used in the code,
 // for signal/slots reasons.
-void MainWindow::set_face_graph_default_type(Facegraph_mode m)
+void MainWindow::set_face_graph_default_type(Face_graph_mode m)
 {
-  scene->setProperty("is_polyhedron_mode", m);
+  this->setProperty("is_polyhedron_mode", m);
 }
 
 void MainWindow::set_facegraph_mode_adapter(bool b)
 {
-  scene->setProperty("is_polyhedron_mode", b);
+  this->setProperty("is_polyhedron_mode", b);
 }
