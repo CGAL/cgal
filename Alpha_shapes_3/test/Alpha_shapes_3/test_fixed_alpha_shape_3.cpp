@@ -13,39 +13,37 @@
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
+typedef K::Point_3                                                  Point_3;
+typedef K::Weighted_point_3                                         Weighted_point_3;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     K;
-typedef CGAL::Regular_triangulation_vertex_base_3<K>                                 Vbb;
-typedef CGAL::Regular_triangulation_cell_base_3<K>                                 Cbb;
+typedef CGAL::Regular_triangulation_vertex_base_3<K>                Vbb;
+typedef CGAL::Regular_triangulation_cell_base_3<K>                  Cbb;
 
-typedef K::Point_3                                                                   Point_3;
-typedef K::Weighted_point_3                                                          Weighted_point_3;
+typedef CGAL::Fixed_alpha_shape_vertex_base_3<K,Vbb>                WFixed_Vb;
+typedef CGAL::Fixed_alpha_shape_cell_base_3<K,Cbb>                  WFixed_Cb;
+typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>   WFixed_TDS;
+typedef CGAL::Regular_triangulation_3<K,WFixed_TDS>                 WFixed_DT;
+typedef CGAL::Fixed_alpha_shape_3< WFixed_DT >                      WFixed_AS;
 
-typedef CGAL::Fixed_alpha_shape_vertex_base_3<K,Vbb>                                        WFixed_Vb;
-typedef CGAL::Fixed_alpha_shape_cell_base_3<K,Cbb>                                          WFixed_Cb;
-typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>                               WFixed_TDS;
-typedef CGAL::Regular_triangulation_3<K,WFixed_TDS>                                     WFixed_DT;
-typedef CGAL::Fixed_alpha_shape_3< WFixed_DT >                                                  WFixed_AS;
-
-
-typedef CGAL::Alpha_shape_vertex_base_3<K,Vbb>                                                     WVb;
-typedef CGAL::Alpha_shape_cell_base_3<K,Cbb>                                                       WCb;
-typedef CGAL::Triangulation_data_structure_3<WVb,WCb>                                           WTDS;
-typedef CGAL::Regular_triangulation_3<K,WTDS>                                                  WDT;
-typedef CGAL::Alpha_shape_3< WDT >                                                              WAS;
+typedef CGAL::Alpha_shape_vertex_base_3<K,Vbb>                      WVb;
+typedef CGAL::Alpha_shape_cell_base_3<K,Cbb>                        WCb;
+typedef CGAL::Triangulation_data_structure_3<WVb,WCb>               WTDS;
+typedef CGAL::Regular_triangulation_3<K,WTDS>                       WDT;
+typedef CGAL::Alpha_shape_3< WDT >                                  WAS;
 
 //Unweighted stuff
-typedef CGAL::Fixed_alpha_shape_vertex_base_3<K>                                           Fixed_Vb;
-typedef CGAL::Fixed_alpha_shape_cell_base_3<K>                                             Fixed_Cb;
-typedef CGAL::Triangulation_data_structure_3<Fixed_Vb,Fixed_Cb>                                 Fixed_TDS;
-typedef CGAL::Delaunay_triangulation_3<K,Fixed_TDS>                                        Fixed_DT;
-typedef CGAL::Fixed_alpha_shape_3<Fixed_DT>                                                     Fixed_AS;
+typedef CGAL::Fixed_alpha_shape_vertex_base_3<K>                    Fixed_Vb;
+typedef CGAL::Fixed_alpha_shape_cell_base_3<K>                      Fixed_Cb;
+typedef CGAL::Triangulation_data_structure_3<Fixed_Vb,Fixed_Cb>     Fixed_TDS;
+typedef CGAL::Delaunay_triangulation_3<K,Fixed_TDS>                 Fixed_DT;
+typedef CGAL::Fixed_alpha_shape_3<Fixed_DT>                         Fixed_AS;
 
-typedef CGAL::Alpha_shape_vertex_base_3<K>                                                 Vb;
-typedef CGAL::Alpha_shape_cell_base_3<K>                                                   Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb>                                             TDS;
-typedef CGAL::Delaunay_triangulation_3<K,TDS>                                              DT;
-typedef CGAL::Alpha_shape_3<DT>                                                                 AS;
+typedef CGAL::Alpha_shape_vertex_base_3<K>                          Vb;
+typedef CGAL::Alpha_shape_cell_base_3<K>                            Fb;
+typedef CGAL::Triangulation_data_structure_3<Vb,Fb>                 TDS;
+typedef CGAL::Delaunay_triangulation_3<K,TDS>                       DT;
+typedef CGAL::Alpha_shape_3<DT>                                     AS;
 
 void fill_lists(const char* file_path,
                 std::list<Point_3>& lst, std::list<Weighted_point_3>& wlst,
