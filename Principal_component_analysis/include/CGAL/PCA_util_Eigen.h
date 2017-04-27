@@ -23,6 +23,7 @@
 #include <CGAL/license/Principal_component_analysis.h>
 
 #include <CGAL/Eigen_diagonalize_traits.h>
+#include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {
@@ -613,6 +614,121 @@ assemble_covariance_matrix_3(InputIterator first,
 
 }
 
+// Variants using default
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond,
+			     typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,                    // kernel
+                             const typename K::Triangle_3* t,// used for indirection
+                             const CGAL::Dimension_tag<2>& tag,
+			     const Default_diagonalize_traits<typename K::FT, 3>&)
+{
+  assemble_covariance_matrix_3 (first, beyond, covariance, c, k, t, tag,
+                                Eigen_diagonalize_traits<typename K::FT, 3>());
+}
+
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond,
+			     typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,                    // kernel
+                             const typename K::Iso_cuboid_3* ic,// used for indirection
+                             const CGAL::Dimension_tag<3>& tag,
+			     const Default_diagonalize_traits<typename K::FT, 3>&)
+{
+  assemble_covariance_matrix_3 (first, beyond, covariance, c, k, ic, tag,
+                                Eigen_diagonalize_traits<typename K::FT, 3>());
+}
+
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+			     typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,                    // kernel
+                             const typename K::Iso_cuboid_3* ic,// used for indirection
+                             const CGAL::Dimension_tag<2>& tag,
+			     const Default_diagonalize_traits<typename K::FT, 3>&)
+{
+  assemble_covariance_matrix_3 (first, beyond, covariance, c, k, ic, tag,
+                                Eigen_diagonalize_traits<typename K::FT, 3>());
+}
+
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+			     typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,                     // kernel
+                             const typename K::Sphere_3* s,  // used for indirection
+                             const CGAL::Dimension_tag<3>& tag,
+			     const Default_diagonalize_traits<typename K::FT, 3>&)
+{
+  assemble_covariance_matrix_3 (first, beyond, covariance, c, k, s, tag,
+                                Eigen_diagonalize_traits<typename K::FT, 3>());
+}
+
+  
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+			     typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,                     // kernel
+                             const typename K::Sphere_3* s,  // used for indirection
+                             const CGAL::Dimension_tag<2>& tag,
+			     const Default_diagonalize_traits<typename K::FT, 3>&)
+{
+  assemble_covariance_matrix_3 (first, beyond, covariance, c, k, s, tag,
+                                Eigen_diagonalize_traits<typename K::FT, 3>());
+}
+
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+			     typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,                    // kernel
+                             const typename K::Tetrahedron_3* t,// used for indirection
+                             const CGAL::Dimension_tag<3>& tag,
+			     const Default_diagonalize_traits<typename K::FT, 3>&)
+{
+  assemble_covariance_matrix_3 (first, beyond, covariance, c, k, t, tag,
+                                Eigen_diagonalize_traits<typename K::FT, 3>());
+}
+
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+			     typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,                    // kernel
+                             const typename K::Segment_3* s,// used for indirection
+                             const CGAL::Dimension_tag<1>& tag,
+			     const Default_diagonalize_traits<typename K::FT, 3>&)
+{
+  assemble_covariance_matrix_3 (first, beyond, covariance, c, k, s, tag,
+                                Eigen_diagonalize_traits<typename K::FT, 3>());
+}
+
+  
 
 
 } // end namespace internal
