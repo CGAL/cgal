@@ -59,7 +59,7 @@ Several classes that enable to store ids in vertices/halfedges/faces of a `Polyh
 Generic convenience functions for testing if an edge is a border edge, if a mesh is triangular,
 for conversion between models of different `FaceGraph` concepts, etc.
 
-Most functions are in the header file `<CGAL/boost/graph/helpers.h>
+Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
 */
 
 /*!
