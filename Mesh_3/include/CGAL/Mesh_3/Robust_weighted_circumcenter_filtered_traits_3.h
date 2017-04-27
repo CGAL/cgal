@@ -186,42 +186,48 @@ public:
     CGAL_precondition(Rt().orientation_3_object()(
       wp2p(p), wp2p(q), wp2p(r), wp2p(s)) == CGAL::POSITIVE);
    
-    // We use power_side_of_power_sphere_3: it is static filtered and
-    // we know that p,q,r,s are positive oriented
-    typename Rt::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere = Rt().power_side_of_oriented_power_sphere_3_object();
-
-    // Compute denominator to swith to exact if it is 0
-    FT num_x, num_y, num_z, den;
-    bool unweighted = (p.weight() == 0) && (q.weight() == 0) && (r.weight() == 0) && (s.weight() == 0);
-
-    if(unweighted){
-      determinants_for_circumcenterC3(p.x(), p.y(), p.z(),
-                                      q.x(), q.y(), q.z(),
-                                      r.x(), r.y(), r.z(),
-                                      s.x(), s.y(), s.z(),
-                                      num_x,  num_y, num_z, den);
-    } else {
-    determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
-                                             q.x(), q.y(), q.z(), q.weight(),
-                                             r.x(), r.y(), r.z(), r.weight(),
-                                             s.x(), s.y(), s.z(), s.weight(),
-                                             num_x,  num_y, num_z, den);
-    }
-    if ( ! force_exact && ! CGAL_NTS is_zero(den) )
+    if(! force_exact)
     {
-      FT inv = FT(1)/(FT(2) * den);
-      Point_3 res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
-       
+      // We use power_side_of_power_sphere_3: it is static filtered and
+      // we know that p,q,r,s are positive oriented
+      typename Rt::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere =
+        Rt().power_side_of_oriented_power_sphere_3_object();
+
+      // Compute denominator to swith to exact if it is 0
+      FT num_x, num_y, num_z, den;
+      bool unweighted = (p.weight() == 0) && (q.weight() == 0) && (r.weight() == 0) && (s.weight() == 0);
+
       if(unweighted){
-        if (side_of_oriented_sphere(wp2p(p), wp2p(q), wp2p(r), wp2p(s), res)
-           == CGAL::ON_POSITIVE_SIDE )
-          return res;
+        determinants_for_circumcenterC3(p.x(), p.y(), p.z(),
+                                        q.x(), q.y(), q.z(),
+                                        r.x(), r.y(), r.z(),
+                                        s.x(), s.y(), s.z(),
+                                        num_x,  num_y, num_z, den);
       } else {
-      // Fast output
-        if ( power_side_of_oriented_power_sphere(p,q,r,s,p2wp(res)) == CGAL::ON_POSITIVE_SIDE )
-        return res;
+        determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
+                                                 q.x(), q.y(), q.z(), q.weight(),
+                                                 r.x(), r.y(), r.z(), r.weight(),
+                                                 s.x(), s.y(), s.z(), s.weight(),
+                                                 num_x,  num_y, num_z, den);
+      }
+
+      if ( ! CGAL_NTS is_zero(den) )
+      {
+        FT inv = FT(1)/(FT(2) * den);
+        Point_3 res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
+
+        if(unweighted){
+          if (side_of_oriented_sphere(wp2p(p), wp2p(q), wp2p(r), wp2p(s), res)
+              == CGAL::ON_POSITIVE_SIDE )
+            return res;
+        } else {
+          // Fast output
+          if ( power_side_of_oriented_power_sphere(p,q,r,s,p2wp(res)) == CGAL::ON_POSITIVE_SIDE )
+            return res;
+        }
+      }
     }
-    }
+
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
