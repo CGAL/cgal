@@ -62,20 +62,20 @@ public:
   /// @{
 
   /*!
-    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
-  on the angle formed by the two vectors `u` and `v`. 
-  */ 
-  Angle operator()(const Kernel::Vector_3&u, 
-                   const Kernel::Vector_3&v); 
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+  on the angle formed by the two vectors `u` and `v`.
+  */
+  Angle operator()(const Kernel::Vector_3&u,
+                   const Kernel::Vector_3&v);
 
   /*!
-    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
-    on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+    on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
     the angle). The returned value is the same as `operator()(p - q, r - q)`.
-  */ 
-  Angle operator()(const Kernel::Point_3&p, 
-                   const Kernel::Point_3&q, 
-                   const Kernel::Point_3&r); 
+  */
+  Angle operator()(const Kernel::Point_3&p,
+                   const Kernel::Point_3&q,
+                   const Kernel::Point_3&r);
 
   /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
@@ -85,7 +85,16 @@ public:
   Angle operator()(const Kernel::Point_3&p, 
                    const Kernel::Point_3&q, 
                    const Kernel::Point_3&r, 
-                   const Kernel::Point_3&s); 
+                   const Kernel::Point_3&s);   
+
+  /*!
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
+    on the angle formed by the normal of the triangle `pqr` and the vector `v`. 
+  */ 
+  Angle operator()(const Kernel::Point_3&p, 
+                   const Kernel::Point_3&q, 
+                   const Kernel::Point_3&r, 
+                   const Kernel::Vector_3&v); 
   /// @}
 
 }; /* end Kernel::Angle_3 */
@@ -1004,7 +1013,9 @@ public:
                                const Kernel::Line_2& l2); 
 
   /*!
-    compares the slopes of the segments `s1` and `s2` 
+    compares the slopes of the segments `s1` and `s2`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments. 
   */ 
   Comparison_result operator()(const Kernel::Segment_2& s1, 
                                const Kernel::Segment_2& s2); 
@@ -1012,6 +1023,42 @@ public:
   /// @}
 
 }; /* end Kernel::CompareSlope_2 */
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with two arguments) 
+
+  \sa `compare_slopes_grp`
+
+*/
+class CompareSlope_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+
+  /*!
+    compares the slopes of the segments `(p,q)` and `(r,s)`,
+    where the slope is the variation of the `z`-coordinate 
+    from the first to the second point of the segment divided
+    by the length of the segment.
+  */ 
+  Comparison_result operator()(const Kernel::Point_3& p, 
+                               const Kernel::Point_3& q,
+                               const Kernel::Point_3& r, 
+                               const Kernel::Point_3& s); 
+
+
+  /// @}
+
+}; /* end Kernel::CompareSlope_3 */
+
+
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects

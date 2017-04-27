@@ -332,17 +332,35 @@ compare_lexicographically_xy(const Point_2<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
-compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
+compare_slope(const Line_2<K> &l1, const Line_2<K> &l2)
 {
-  return internal::compare_slopes(l1, l2, K());
+  return internal::compare_slope(l1, l2, K());
 }
 
 template < class K >
 inline
 typename K::Comparison_result
+compare_slope(const Segment_2<K> &s1, const Segment_2<K> &s2)
+{
+  return internal::compare_slope(s1, s2, K());
+}
+
+// kept for backward compatibility
+template < class K >
+inline
+typename K::Comparison_result
+compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
+{
+  return internal::compare_slope(l1, l2, K());
+}
+
+// kept for backward compatibility
+template < class K >
+inline
+typename K::Comparison_result
 compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
 {
-  return internal::compare_slopes(s1, s2, K());
+  return internal::compare_slope(s1, s2, K());
 }
 
 template < class K >

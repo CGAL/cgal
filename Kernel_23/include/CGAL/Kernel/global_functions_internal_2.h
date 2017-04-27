@@ -360,8 +360,8 @@ compare_signed_distance_to_line(const typename K::Line_2& l,
 template < class K >
 inline
 typename K::Comparison_result
-compare_slopes(const typename K::Line_2 &l1,
-               const typename K::Line_2 &l2, const K& k)
+compare_slope(const typename K::Line_2 &l1,
+              const typename K::Line_2 &l2, const K& k)
 {
   return k.compare_slope_2_object()(l1, l2);
 }
@@ -369,8 +369,8 @@ compare_slopes(const typename K::Line_2 &l1,
 template < class K >
 inline
 typename K::Comparison_result
-compare_slopes(const typename K::Segment_2 &s1,
-               const typename K::Segment_2 &s2, const K& k)
+compare_slope(const typename K::Segment_2 &s1,
+              const typename K::Segment_2 &s2, const K& k)
 {
   return k.compare_slope_2_object()(s1, s2);
 }
