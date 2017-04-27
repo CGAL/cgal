@@ -32,6 +32,7 @@
 #include <set>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
+#include <boost/bind.hpp>
 
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1627,13 +1628,22 @@ dual(Cell_handle c) const
       return os;
 
     // We are now in a degenerate case => we do a symbolic perturbation.
+    typename Geom_traits::Construct_point_3 cp =
+      geom_traits().construct_point_3_object();
 
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
+
+    // It is important to tell boost::bind that we want references in return
+    // by writing `boost::bind<const ... &>(...)` otherwise we get temporaries
+    // and we call Compare_xyz_3 on objects that might have been cleaned
     std::sort(points, points + 5,
       boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-      boost::bind(Dereference<Weighted_point>(), _1),
-      boost::bind(Dereference<Weighted_point>(), _2)) == SMALLER);
+        boost::bind<const Bare_point&>(
+          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
+        boost::bind<const Bare_point&>(
+          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
+              == SMALLER);
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
@@ -1737,13 +1747,22 @@ dual(Cell_handle c) const
       return os;
 
     // We are now in a degenerate case => we do a symbolic perturbation.
+    typename Geom_traits::Construct_point_3 cp =
+      geom_traits().construct_point_3_object();
 
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
+
+    // It is important to tell boost::bind that we want references in return
+    // by writing `boost::bind<const ... &>(...)` otherwise we get temporaries
+    // and we call Compare_xyz_3 on objects that might have been cleaned
     std::sort(points, points + 4,
       boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-      boost::bind(Dereference<Weighted_point>(), _1),
-      boost::bind(Dereference<Weighted_point>(), _2)) == SMALLER);
+        boost::bind<const Bare_point&>(
+          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
+        boost::bind<const Bare_point&>(
+          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
+              == SMALLER);
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
