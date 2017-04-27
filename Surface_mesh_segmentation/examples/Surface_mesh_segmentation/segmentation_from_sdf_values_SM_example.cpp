@@ -30,7 +30,7 @@ int main(int argc, char** argv )
     cactus >> mesh;
   }
   if (!CGAL::is_triangle_mesh(mesh)){
-    std::cout << "Input is not a triangle mesh" << std::endl;
+    std::cerr << "Input is not a triangle mesh" << std::endl;
     return EXIT_FAILURE;
   }
   typedef Mesh::Property_map<face_descriptor,double> Facet_double_map;

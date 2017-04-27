@@ -65,7 +65,7 @@ int main( int argc, char** argv )
     OpenMesh::IO::read_mesh(surface_mesh, "cube.off");
 
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cout << "Input geometry is not triangulated." << std::endl;
+    std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 

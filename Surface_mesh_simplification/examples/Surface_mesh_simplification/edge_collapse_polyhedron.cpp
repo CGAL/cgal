@@ -26,7 +26,7 @@ int main( int argc, char** argv )
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cout << "Input geometry is not triangulated." << std::endl;
+    std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 

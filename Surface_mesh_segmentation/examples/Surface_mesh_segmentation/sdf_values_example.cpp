@@ -17,7 +17,7 @@ int main()
   Polyhedron mesh;
   std::ifstream input("data/cactus.off");
   if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) ) {
-    std::cout << "Input is not a triangle mesh" << std::endl;
+    std::cerr << "Input is not a triangle mesh" << std::endl;
     return EXIT_FAILURE;
   }
 

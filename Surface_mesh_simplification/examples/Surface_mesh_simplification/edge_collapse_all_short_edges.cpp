@@ -23,7 +23,7 @@ int main( int argc, char** argv )
 {
   if (argc<3)
   {
-    std::cout << "Usage: " << argv[0] << " input.off minimal_edge_length [out.off]\n";
+    std::cerr << "Usage: " << argv[0] << " input.off minimal_edge_length [out.off]\n";
     return EXIT_FAILURE;
   }
 
@@ -33,7 +33,7 @@ int main( int argc, char** argv )
   double threshold = atof(argv[2]);
 
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cout << "Input geometry is not triangulated." << std::endl;
+    std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 

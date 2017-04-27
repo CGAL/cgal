@@ -65,20 +65,20 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc < 2){
-    std::cout << "Usage: " << argv[0] << " input.off [out.off]\n";
+    std::cerr << "Usage: " << argv[0] << " input.off [out.off]\n";
     return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cout << "Filename provided is invalid\n";
+    std::cerr << "Filename provided is invalid\n";
     return EXIT_FAILURE;
   }
 
   is >> surface_mesh  ;
 
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cout << "Input geometry is not triangulated." << std::endl;
+    std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -101,7 +101,7 @@ int main( int argc, char** argv )
   {
     halfedge_descriptor hd = halfedge(*eb,surface_mesh);
     if ( is_border(*eb,surface_mesh) ){
-      std::cout << "border" << std::endl;
+      std::cerr << "border" << std::endl;
       ++nb_sharp_edges;
       constraint_hmap[*eb]=true;
       constrained_edges[*eb]=std::make_pair(point(source(hd,surface_mesh),surface_mesh),
@@ -124,7 +124,7 @@ int main( int argc, char** argv )
   }
   cst_output.close();
 
-  std::cout << "# sharp edges = " << nb_sharp_edges << std::endl;
+  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
@@ -167,7 +167,7 @@ int main( int argc, char** argv )
     }
   }
   std::cout  << "OK\n";
-  std::cout << "# sharp edges = " << nb_sharp_edges << std::endl;
+  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   std::cout << "Check that no removable edge has been forgotten..." << std::endl;
   r = SMS::edge_collapse(surface_mesh

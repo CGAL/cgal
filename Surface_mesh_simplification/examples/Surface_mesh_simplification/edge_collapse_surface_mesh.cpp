@@ -66,7 +66,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
   void OnCollected( Profile const&, boost::optional<double> const& )
   {
     ++ stats->collected ;
-    std::cout << "\rEdges collected: " << stats->collected << std::flush ;
+    std::cerr << "\rEdges collected: " << stats->collected << std::flush ;
   }                
   
   // Called during the processing phase for each edge selected.
@@ -82,8 +82,8 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
       ++ stats->cost_uncomputable ;
       
     if ( current == initial )
-      std::cout << "\n" << std::flush ;
-    std::cout << "\r" << current << std::flush ;
+      std::cerr << "\n" << std::flush ;
+    std::cerr << "\r" << current << std::flush ;
   }                
   
   // Called during the processing phase for each edge being collapsed.
@@ -120,7 +120,7 @@ int main( int argc, char** argv )
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cout << "Input geometry is not triangulated." << std::endl;
+    std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 

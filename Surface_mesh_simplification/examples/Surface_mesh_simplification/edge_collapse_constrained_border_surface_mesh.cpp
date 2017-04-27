@@ -59,19 +59,19 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc!=2){
-    std::cout << "Usage: " << argv[0] << " input.off\n";
+    std::cerr << "Usage: " << argv[0] << " input.off\n";
     return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cout << "Filename provided is invalid\n";
+    std::cerr << "Filename provided is invalid\n";
     return EXIT_FAILURE;
   }
 
   is >> surface_mesh  ;
   if (!CGAL::is_triangle_mesh(surface_mesh)){
-    std::cout << "Input geometry is not triangulated." << std::endl;
+    std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -113,7 +113,7 @@ int main( int argc, char** argv )
       --nb_border_edges;
       if(constrained_halfedges[hd] != std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
                                                      surface_mesh.point(target(hd,surface_mesh)))){
-        std::cout << "oops. send us a bug report\n";
+        std::cerr << "oops. send us a bug report\n";
       }
 
     }
