@@ -94,35 +94,36 @@ namespace CGAL {
       Regular_triangulation_cell_base_3<Gt> > >::type               Tds;
 
     typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
-    typedef Triangulation_3<Gt, Tds, Lock_data_structure_>          Base;
 
   public:
+    typedef Triangulation_3<Gt, Tds, Lock_data_structure_>          Tr_Base;
+
     typedef Gt                                    Geom_traits;
     typedef Tds                                   Triangulation_data_structure;
 
     typedef Geom_traits                           Traits;
-    typedef typename Base::Concurrency_tag        Concurrency_tag;
-    typedef typename Base::Lock_data_structure    Lock_data_structure;
+    typedef typename Tr_Base::Concurrency_tag     Concurrency_tag;
+    typedef typename Tr_Base::Lock_data_structure Lock_data_structure;
 
-    typedef typename Base::Vertex_handle          Vertex_handle;
-    typedef typename Base::Cell_handle            Cell_handle;
-    typedef typename Base::Vertex                 Vertex;
-    typedef typename Base::Cell                   Cell;
-    typedef typename Base::Facet                  Facet;
-    typedef typename Base::Edge                   Edge;
+    typedef typename Tr_Base::Vertex_handle       Vertex_handle;
+    typedef typename Tr_Base::Cell_handle         Cell_handle;
+    typedef typename Tr_Base::Vertex              Vertex;
+    typedef typename Tr_Base::Cell                Cell;
+    typedef typename Tr_Base::Facet               Facet;
+    typedef typename Tr_Base::Edge                Edge;
 
-    typedef typename Base::size_type              size_type;
-    typedef typename Base::Locate_type            Locate_type;
-    typedef typename Base::Cell_iterator          Cell_iterator;
-    typedef typename Base::Facet_iterator         Facet_iterator;
-    typedef typename Base::Edge_iterator          Edge_iterator;
-    typedef typename Base::Facet_circulator       Facet_circulator;
+    typedef typename Tr_Base::size_type           size_type;
+    typedef typename Tr_Base::Locate_type         Locate_type;
+    typedef typename Tr_Base::Cell_iterator       Cell_iterator;
+    typedef typename Tr_Base::Facet_iterator      Facet_iterator;
+    typedef typename Tr_Base::Edge_iterator       Edge_iterator;
+    typedef typename Tr_Base::Facet_circulator    Facet_circulator;
 
-    typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
-    typedef typename Base::Finite_cells_iterator    Finite_cells_iterator;
-    typedef typename Base::Finite_facets_iterator   Finite_facets_iterator;
-    typedef typename Base::Finite_edges_iterator    Finite_edges_iterator;
-    typedef typename Base::All_cells_iterator       All_cells_iterator;
+    typedef typename Tr_Base::Finite_vertices_iterator Finite_vertices_iterator;
+    typedef typename Tr_Base::Finite_cells_iterator    Finite_cells_iterator;
+    typedef typename Tr_Base::Finite_facets_iterator   Finite_facets_iterator;
+    typedef typename Tr_Base::Finite_edges_iterator    Finite_edges_iterator;
+    typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
     // Traits are not supposed to define Bare_point, but leaving below
     // for backward compatibility
@@ -147,51 +148,51 @@ namespace CGAL {
     typedef Tag_true   Weighted_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-    using Base::geom_traits;
+    using Tr_Base::geom_traits;
 #endif
-    using Base::adjacent_vertices;
-    using Base::cw;
-    using Base::ccw;
-    using Base::construct_point;
-    using Base::coplanar_orientation;
-    using Base::dimension;
-    using Base::find_conflicts;
-    using Base::finite_facets_begin;
-    using Base::finite_facets_end;
-    using Base::finite_vertices_begin;
-    using Base::finite_vertices_end;
-    using Base::finite_cells_begin;
-    using Base::finite_cells_end;
-    using Base::finite_edges_begin;
-    using Base::finite_edges_end;
-    using Base::incident_facets;
-    using Base::insert_in_conflict;
-    using Base::infinite_vertex;
-    using Base::is_infinite;
-    using Base::is_valid;
-    using Base::is_valid_finite;
-    using Base::locate;
-    using Base::mirror_vertex;
-    using Base::mirror_index;
-    using Base::next_around_edge;
-    using Base::number_of_vertices;
-    using Base::orientation;
-    using Base::point;
-    using Base::side_of_segment;
-    using Base::side_of_edge;
-    using Base::tds;
-    using Base::vertex_triple_index;
+    using Tr_Base::adjacent_vertices;
+    using Tr_Base::cw;
+    using Tr_Base::ccw;
+    using Tr_Base::construct_point;
+    using Tr_Base::coplanar_orientation;
+    using Tr_Base::dimension;
+    using Tr_Base::find_conflicts;
+    using Tr_Base::finite_facets_begin;
+    using Tr_Base::finite_facets_end;
+    using Tr_Base::finite_vertices_begin;
+    using Tr_Base::finite_vertices_end;
+    using Tr_Base::finite_cells_begin;
+    using Tr_Base::finite_cells_end;
+    using Tr_Base::finite_edges_begin;
+    using Tr_Base::finite_edges_end;
+    using Tr_Base::incident_facets;
+    using Tr_Base::insert_in_conflict;
+    using Tr_Base::infinite_vertex;
+    using Tr_Base::is_infinite;
+    using Tr_Base::is_valid;
+    using Tr_Base::is_valid_finite;
+    using Tr_Base::locate;
+    using Tr_Base::mirror_vertex;
+    using Tr_Base::mirror_index;
+    using Tr_Base::next_around_edge;
+    using Tr_Base::number_of_vertices;
+    using Tr_Base::orientation;
+    using Tr_Base::point;
+    using Tr_Base::side_of_segment;
+    using Tr_Base::side_of_edge;
+    using Tr_Base::tds;
+    using Tr_Base::vertex_triple_index;
 
     Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Base(gt, lock_ds), hidden_point_visitor(this)
+      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     { }
 
     Regular_triangulation_3(Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Base(lock_ds, gt), hidden_point_visitor(this)
+      : Tr_Base(lock_ds, gt), hidden_point_visitor(this)
     { }
 
     Regular_triangulation_3(const Regular_triangulation_3 & rt)
-      : Base(rt), hidden_point_visitor(this)
+      : Tr_Base(rt), hidden_point_visitor(this)
     {
       CGAL_triangulation_postcondition( is_valid() );
     }
@@ -200,7 +201,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Base(gt, lock_ds), hidden_point_visitor(this)
+      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);
     }
@@ -208,7 +209,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Base(gt, lock_ds), hidden_point_visitor(this)
+      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);
     }
@@ -626,7 +627,7 @@ namespace CGAL {
       if (dimension() == 2) {
         Conflict_tester_2 tester(p, this);
         if (! tester (c)) return make_triple (bfit, cit, ifit);
-        ifit = Base::find_conflicts
+        ifit = Tr_Base::find_conflicts
           (c, tester,
           make_triple(std::back_inserter(facets),
           std::back_inserter(cells),
@@ -639,7 +640,7 @@ namespace CGAL {
       else {
         Conflict_tester_3 tester(p, this);
         if (! tester (c)) return make_triple (bfit, cit, ifit);
-        ifit = Base::find_conflicts
+        ifit = Tr_Base::find_conflicts
           (c, tester,
           make_triple(std::back_inserter(facets),
           std::back_inserter(cells),
@@ -830,7 +831,7 @@ namespace CGAL {
     {
       Self tmp;
       Vertex_remover<Self> remover (tmp);
-      Base::remove_and_give_new_cells(v, remover, cit);
+      Tr_Base::remove_and_give_new_cells(v, remover, cit);
 
       CGAL_triangulation_expensive_postcondition(is_valid());
     }
@@ -851,7 +852,7 @@ namespace CGAL {
     {
       Self tmp;
       Vertex_remover<Self> remover (tmp);
-      return Base::remove(first, beyond, remover);
+      return Tr_Base::remove(first, beyond, remover);
     }
 
   protected:
@@ -1935,9 +1936,10 @@ dual(Cell_handle c) const
     // We are now in a degenerate case => we do a symbolic perturbation.
 
     switch (this->collinear_position(p0, p, p1)) {
-    case Base::BEFORE: case Base::AFTER:
+    case Tr_Base::BEFORE:
+    case Tr_Base::AFTER:
       return ON_UNBOUNDED_SIDE;
-    case Base::MIDDLE:
+    case Tr_Base::MIDDLE:
       return ON_BOUNDED_SIDE;
     default:
       ;
@@ -2129,7 +2131,7 @@ dual(Cell_handle c) const
     get_hidden_point_visitor().process_cells_in_conflict(cell_begin,cell_end);
 
     Vertex_handle v =
-      Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
+      Tr_Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
 
     // Store the hidden points in their new cells and hide vertices that
     // have to be hidden
@@ -2150,7 +2152,7 @@ dual(Cell_handle c) const
     get_hidden_point_visitor().process_cells_in_conflict(cell_begin,cell_end);
 
     Vertex_handle v =
-      Base::insert_in_hole(p, cell_begin, cell_end, begin, i, newv);
+      Tr_Base::insert_in_hole(p, cell_begin, cell_end, begin, i, newv);
 
     // Store the hidden points in their new cells and hide vertices that
     // have to be hidden
@@ -2238,7 +2240,7 @@ dual(Cell_handle c) const
 
     Self tmp;
     Vertex_remover<Self> remover(tmp);
-    Base::remove(v,remover);
+    Tr_Base::remove(v,remover);
 
     // Re-insert the points that v was hiding.
     for (typename Vertex_remover<Self>::Hidden_points_iterator
@@ -2269,7 +2271,7 @@ dual(Cell_handle c) const
 
       Self tmp;
       Vertex_remover<Self> remover(tmp);
-      removed = Base::remove(v, remover, could_lock_zone);
+      removed = Tr_Base::remove(v, remover, could_lock_zone);
 
       if (*could_lock_zone && removed)
       {
@@ -2328,7 +2330,7 @@ dual(Cell_handle c) const
     Self tmp;
     Vertex_remover<Self> remover (tmp);
     Vertex_inserter<Self> inserter (*this);
-    Vertex_handle res = Base::move_if_no_collision(v,p,remover,inserter);
+    Vertex_handle res = Tr_Base::move_if_no_collision(v,p,remover,inserter);
 
     CGAL_triangulation_expensive_postcondition(is_valid());
     return res;
@@ -2343,7 +2345,7 @@ dual(Cell_handle c) const
       Self tmp;
       Vertex_remover<Self> remover (tmp);
       Vertex_inserter<Self> inserter (*this);
-      return Base::move(v,p,remover,inserter);
+      return Tr_Base::move(v,p,remover,inserter);
   }
 
   template < class Gt, class Tds, class Lds >
@@ -2351,7 +2353,7 @@ dual(Cell_handle c) const
     Regular_triangulation_3<Gt,Tds,Lds>::
     is_valid(bool verbose, int level) const
   {
-    if ( ! Base::is_valid(verbose,level) ) {
+    if ( ! Tr_Base::is_valid(verbose,level) ) {
       if (verbose)
         std::cerr << "invalid base triangulation" << std::endl;
       CGAL_triangulation_assertion(false);
