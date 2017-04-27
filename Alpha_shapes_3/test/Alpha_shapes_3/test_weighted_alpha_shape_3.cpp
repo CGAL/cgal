@@ -38,7 +38,6 @@ typedef CGAL::Triangulation_data_structure_3<Vb,Cb>         Tds;
 
 typedef CGAL::Regular_triangulation_3<K,Tds>                Triangulation_3;
 typedef CGAL::Alpha_shape_3<Triangulation_3>                Alpha_shape_3;
-typedef K::Weighted_point_3                                 Weighted_point;
 
 //using exact filtered traits
 typedef CGAL::Alpha_shape_vertex_base_3<K,Rvb,CGAL::Tag_true,CGAL::Tag_true>   EF_Vb;

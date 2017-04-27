@@ -21,8 +21,8 @@ typedef Fixed_alpha_shape_3::Cell_handle                  Cell_handle;
 typedef Fixed_alpha_shape_3::Vertex_handle                Vertex_handle;
 typedef Fixed_alpha_shape_3::Facet                        Facet;
 typedef Fixed_alpha_shape_3::Edge                         Edge;
-typedef K::Weighted_point_3                               Weighted_point;
-typedef K::Point_3                                         Bare_point;
+typedef Triangulation_3::Weighted_point                   Weighted_point;
+typedef Triangulation_3::Bare_point                       Bare_point;
 
 int main()
 {
