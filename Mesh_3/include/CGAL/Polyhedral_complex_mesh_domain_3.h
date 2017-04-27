@@ -220,10 +220,10 @@ The union of the polyhedral surfaces is a non-manifold surface, called the
 but at the intersections of polyhedral surfaces.
 
 The complement of the 2D surface is decomposed into:
- - zero, one, of many sub-domains of the mesh domain,
+ - zero, one, or many sub-domains of the mesh domain,
  - plus the exterior of the mesh domain.
 
-If the domain has sub-domains, each one of must be the union of one or many
+If the domain has sub-domains, each one must be the union of one or many
 connected components of the complement of the 2D surface. The sub-domains
 have indices, of integral type `Subdomain_index`, and the exterior of the
 mesh domain is associated with the subdomain index `0`, like for any mesh
@@ -275,6 +275,7 @@ class Polyhedral_complex_mesh_domain_3
                                 Tag_true,   //Use_patch_id_tag
                                 Tag_true > >//Use_exact_intersection_tag
 {
+  /// @cond DEVELOPERS
 protected:
   typedef boost::adjacency_list<
     boost::setS, // this avoids parallel edges
@@ -285,17 +286,22 @@ protected:
 
 private:
   typedef IGT_ IGT;
+  /// @endcond
 
 public:
   /// The base class
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
-      Polyhedron, IGT, TriangleAccessor,
+      Polyhedron, IGT_, TriangleAccessor,
       Tag_true, Tag_true > > Base;
+  /*!
+  Numerical type.
+  */
+  typedef typename Base::FT        FT;
 
   /// The polyhedron type
   typedef Polyhedron Polyhedron_type;
-
+  
   /// \name Index types
   /// @{
   /// The types are `int` or types compatible with `int`.
@@ -322,8 +328,7 @@ public:
 
   typedef typename Base::R         R;
   typedef typename Base::Point_3   Point_3;
-  typedef typename Base::FT        FT;
-  
+
   typedef CGAL::Tag_true           Has_features;
 
   typedef std::vector<Point_3> Bare_polyline;
@@ -332,6 +337,21 @@ public:
   /// @endcond
 
   /// Constructor
+  /*! Constructs a domain defined by a set of polyhedral surfaces,
+  describing a polyhedral complex.
+  @param begin first iterator on the input polyhedral surfaces
+  @param end past the end iterator on the input polyhedral surfaces
+  @param indices_begin first iterator on the pairs of subdomain indices
+             (two subdomain indices per input polyhedral surface),
+             corresponding to the first input polyhedral surface
+  @param indices_end past the end iterator on the pairs of subdomain indices
+
+  @tparam InputPolyhedraIterator model of `InputIterator`, holding `Polyhedron`'s
+  @tparam InputPairOfSubdomainIndicesIterator model of `InputIterator`, holding
+              `std::pair<Subdomain_index, Subdomain_index>`
+
+  @pre `std::distance(begin, end) == std::distance(indices_begin, indices_end)`
+  */
   template <typename InputPolyhedraIterator,
             typename InputPairOfSubdomainIndicesIterator>
   Polyhedral_complex_mesh_domain_3
@@ -357,28 +377,45 @@ public:
     this->build();
   }
 
+  /// @cond DEVELOPERS
   Polyhedral_complex_mesh_domain_3
     (
-#ifndef DOXYGEN_RUNNING
     CGAL::Random* p_rng = NULL
-#endif
     )
     : Base(p_rng)
     , borders_detected_(false)
   {}
 
-  /// @cond DEVELOPERS
   const std::vector<Polyhedron>& polyhedra() const {
     return stored_polyhedra;
   }
+  /// @endcond
 
-  /// Detect features
+  /// @cond DEVELOPERS
   void detect_features(FT angle_in_degree, std::vector<Polyhedron_type>& p);
-  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, stored_polyhedra); }
+  /// @endcond
+  /*!
+  Detects sharp features and boundaries of the polyhedral components of the complex
+  (including potential internal polyhedron),
+  and inserts them as features of the domain. `angle_bound` gives the maximum
+  angle (in degrees) between the two normal vectors of adjacent triangles.
+  For an edge of the polyhedron, if the angle between the two normal vectors of its
+  incident facets is bigger than the given bound, then the edge is considered as
+  a feature edge.
+  */ 
+  void detect_features(FT angle_bound = FT(60)) { detect_features(angle_bound, stored_polyhedra); }
 
+  /// @cond DEVELOPERS
   void detect_borders(std::vector<Polyhedron_type>& p);
+  /// @endcond
+  /*!
+  Detects border edges of the polyhedral components of the complex,
+  and inserts them as features of the domain.
+  This function should be called alone only, and not before or after `detect_features()`.
+  */
   void detect_borders() { detect_borders(stored_polyhedra); };
 
+  /// @cond DEVELOPERS
   template <typename Surf_p_index>
   void reindex_patches(const std::vector<Surf_p_index>& map);
 
@@ -436,7 +473,9 @@ public:
         this->boundary_polyhedra_ids.push_back(poly_id);
     }
   }
+  /// @endcond
 
+  /// @cond DEVELOPERS
   template <typename C3t3>
   void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const {
 #if CGAL_MESH_3_VERBOSE
@@ -634,7 +673,8 @@ public:
   /// @endcond
 
 protected:
-  void initialize_ts(Polyhedron& p);
+  /// @cond DEVELOPERS
+  void initialize_ts(Polyhedron_type& p);
 
   void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph);
 
@@ -648,8 +688,10 @@ protected:
   {
     return patch_id_to_polyhedron_id.size();
   }
+  /// @endcond
 
 protected:
+  /// @cond DEVELOPERS
   std::vector<Polyhedron> stored_polyhedra;
   std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
   std::vector<std::size_t> patch_id_to_polyhedron_id;
@@ -660,6 +702,7 @@ protected:
   std::vector<std::size_t> inside_polyhedra_ids;
   std::vector<std::size_t> boundary_polyhedra_ids;
   bool borders_detected_;
+  /// @endcond
 
 private:
   // Disabled copy constructor & assignment operator
@@ -670,6 +713,7 @@ private:
 };  // end class Polyhedral_complex_mesh_domain_3
 
 
+///@cond DEVELOPERS
 template < typename GT_, typename P_, typename TA_>
 void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
@@ -693,7 +737,6 @@ initialize_ts(Polyhedron_type& p)
   }
 }
 
-///@cond DEVELOPERS
 template < typename GT_, typename P_, typename TA_>
 void
 Polyhedral_complex_mesh_domain_3<GT_, P_, TA_>::
