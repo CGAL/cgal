@@ -920,7 +920,7 @@ namespace CGAL {
     }
 
     Plane
-      construct_plane(const Weighted_point &p, const Weighted_point &q, const Weighted_point &r) const
+      construct_plane(const Bare_point &p, const Bare_point &q, const Bare_point &r) const
     {
       return geom_traits().construct_plane_3_object()(p, q, r);
     }
@@ -1595,16 +1595,18 @@ dual(Cell_handle c) const
     int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
     if ( (in&1) == 1 )
       std::swap(ind[0], ind[1]);
-    const Weighted_point& p = n->vertex(ind[0])->point();
-    const Weighted_point& q = n->vertex(ind[1])->point();
-    const Weighted_point& r = n->vertex(ind[2])->point();
 
-    Line l =
-      construct_perpendicular_line( construct_plane(p,q,r),
-      construct_weighted_circumcenter(p,q,r) );
-    return construct_object(construct_ray( dual(n), l));
+    const Weighted_point& p = point(n->vertex(ind[0]));
+    const Weighted_point& q = point(n->vertex(ind[1]));
+    const Weighted_point& r = point(n->vertex(ind[2]));
+    const Bare_point& bp = construct_point(p);
+    const Bare_point& bq = construct_point(q);
+    const Bare_point& br = construct_point(r);
+
+    Line l = construct_perpendicular_line(construct_plane(bp, bq, br),
+                                          construct_weighted_circumcenter(p,q,r));
+    return construct_object(construct_ray(dual(n), l));
   }
-
 
   template < class Gt, class Tds, class Lds >
   Oriented_side
