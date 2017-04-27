@@ -48,6 +48,8 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_3.h>
+#include <CGAL/property_map.h>
 
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
@@ -1129,7 +1131,27 @@ public:
       size_type n = number_of_vertices();
 
       std::vector<Point> points (first, last);
-      spatial_sort (points.begin(), points.end(), geom_traits());
+
+      // The function insert(first, last) is overwritten in Regular_triangulation_3.h,
+      // so we know that, here, `Point` is not a type of Weighted point.
+      // Nevertheless, to make it more generic (that is, allowing the user to pass
+      // a `Point` type that is not GT::Point_3, we still use the spatial sort
+      // adapter traits and Construct_point_3 here.
+
+      // @todo Unary_function_to_property_map makes a copy (get() returns a value_type) but
+      // we could hope to get a const & to the bare point. Unfortunately, the lazy
+      // kernel creates temporaries and prevent it.
+      typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+      typedef CGAL::Unary_function_to_property_map<
+                Point, Construct_point_3, Point_3> Pmap;
+      typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, Pmap> Search_traits_3;
+
+      spatial_sort(points.begin(), points.end(),
+                   Search_traits_3(
+                     CGAL::make_unary_function_to_property_map<
+                       Point, Construct_point_3, Point_3>(
+                         geom_traits().construct_point_3_object()),
+                     geom_traits()));
 
       Vertex_handle hint;
       for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
@@ -6170,7 +6192,23 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
           mp_vps[vv->point()] = vv;
         } else inf = true;
       }
-      spatial_sort(vps.begin(), vps.end(),geom_traits());
+
+      // Spatial sorting can only be applied to bare points, so we need an adaptor
+
+      // @todo Unary_function_to_property_map makes a copy (get() returns a value_type) but
+      // we could hope to get a const & to the bare point. Unfortunately, the lazy
+      // kernel creates temporaries and prevent it.
+      typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+      typedef CGAL::Unary_function_to_property_map<
+                Point, Construct_point_3, Point_3> Pmap;
+      typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, Pmap> Search_traits_3;
+
+      spatial_sort(vps.begin(), vps.end(),
+                   Search_traits_3(
+                     CGAL::make_unary_function_to_property_map<
+                       Point, Construct_point_3, Point_3>(
+                         geom_traits().construct_point_3_object()),
+                     geom_traits()));
 
       std::size_t svps = vps.size();
 
