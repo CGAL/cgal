@@ -32,6 +32,7 @@
 #endif
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/tuple.h>
+#include <CGAL/result_of.h>
 
 #include <utility> // defines std::pair
 
@@ -406,6 +407,60 @@ typename Pointer_property_map<T>::const_type
 make_property_map(const std::vector<T>& v)
 {
   return make_property_map(&v[0]);
+}
+
+/// \ingroup PkgProperty_map
+///
+/// Property map that maps an input `k` and a functor `f` to `f(k)` via
+/// the `get(k)` function. It is the opposite of `Property_map_to_unary_function`.
+///
+/// \tparam Input The type of the input argument `k`
+/// \tparam Functor The type of the function `f`. `f` must be a model of the `Assignable`
+///         concept and provide the operator: `operator()(const Input&)`.
+/// \tparam Output The type of `f(k)`. If it is not provided, it defaults to
+///         `result_of<Functor(const Input&)>::type`
+///
+/// \warning `get(const Input&)` returns an object of type `value_type`,
+///          with `value_type` defined as `typedef Output value_type`. Therefore,
+///          copies may be created depending on the `Output` type.
+///
+/// \cgalModels `ReadablePropertyMap`
+///
+template <typename Input,
+          typename Functor,
+          typename Output = typename cpp11::result_of<Functor(const Input&)>::type >
+struct Unary_function_to_property_map
+{
+  typedef Input key_type; ///< typedef to `Input`
+  typedef Output value_type; ///< typedef to `Ouput`
+  typedef const value_type& reference; ///< typedef to `const value_type&`
+  typedef boost::readable_property_map_tag category; ///< boost::readable_property_map_tag
+
+  typedef Unary_function_to_property_map<Input, Functor, Output> Self;
+
+  /// \name get free function
+  /// @{
+  friend value_type get(const Self& pmap, const key_type& k) {return pmap.f(k);}
+  /// @}
+
+  /// \name Constructor
+  Unary_function_to_property_map(const Functor& f) : f(f) { }
+
+  // can't take a reference since `f` might have been initialized from a
+  // temporary passed to the constructor
+  const Functor f;
+};
+
+/// Free function to create a `Unary_function_to_property_map` property map.
+///
+/// \relates Unary_function_to_property_map
+template <typename Input,
+          typename Functor,
+          typename Output = typename cpp11::result_of<Functor(const Input&)>::type>
+Unary_function_to_property_map<Input, Functor, Output>
+  make_unary_function_to_property_map(const Functor& f)
+{
+  return Unary_function_to_property_map<Input, Functor, Output>(f);
 }
 
 } // namespace CGAL
