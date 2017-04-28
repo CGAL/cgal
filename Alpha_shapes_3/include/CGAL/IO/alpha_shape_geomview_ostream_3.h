@@ -104,7 +104,7 @@ Alpha_shape_3<Dt,EACT>::show_alpha_shape_faces(Geomview_stream &gv) const
      << number_of_vertex << number_of_facets << 0;
 
   for( Vlist_it = Vlist_begin; Vlist_it != Vlist_end; Vlist_it++) {
-    gv << Gt().construct_point_3_object()((*Vlist_it)->point());
+    gv << this->geom_traits().construct_point_3_object()((*Vlist_it)->point());
   }
   
   // Finite facets indices.
