@@ -51,7 +51,7 @@
 
 /*!
 \addtogroup PkgBGLHelper
-Several classes that enable to store ids in vertices/halfedges/faces of a `Polyhedron_3`, as well as adapters such as `Dual`.
+Several classes that enable to store ids in vertices/halfedges/faces of a `CGAL::Polyhedron_3`, as well as adapters such as `CGAL::Dual`.
 */
 
 /*!
