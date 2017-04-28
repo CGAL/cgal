@@ -6,20 +6,18 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Random.h>
-
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_shortest_path.h>
-#include <CGAL/boost/graph/iterator.h>
+
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
-typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
+typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Mesh> Traits;
 typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
 typedef Surface_mesh_shortest_path::Face_location Face_location;
-typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+typedef boost::graph_traits<Mesh> Graph_traits;
 typedef Graph_traits::vertex_iterator vertex_iterator;
 typedef Graph_traits::face_iterator face_iterator;
 typedef Graph_traits::face_descriptor face_descriptor;
@@ -27,13 +25,10 @@ typedef Graph_traits::face_descriptor face_descriptor;
 int main(int argc, char** argv)
 {
   // read input polyhedron
-  Polyhedron_3 polyhedron;
+  Mesh polyhedron;
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   input >> polyhedron;
   input.close();
-
-  // initialize indices of vertices, halfedges and faces
-  CGAL::set_halfedgeds_items_id(polyhedron);
 
   // pick up some source points inside faces,
   const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;
