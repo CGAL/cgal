@@ -287,7 +287,9 @@ protected:
 private:
   typedef IGT_ IGT;
   typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, TriangleAccessor,
-                                   Tag_true, Tag_true > BaseBase;
+                                   Tag_true, Tag_true >       BaseBase;
+  typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron,
+                                           TriangleAccessor>  Self;
   /// @endcond
 
 public:
@@ -405,14 +407,15 @@ public:
   */
   typename BaseBase::Construct_initial_points construct_initial_points_object() const
   {
+    Self* self = const_cast<Self*>(this);
     if (!borders_detected_)
-      detect_borders(stored_polyhedra, true);
+      self->detect_borders(self->stored_polyhedra, true);
     return this->BaseBase::construct_initial_points_object();
   }
 
   void detect_features(FT angle_in_degree,
                        std::vector<Polyhedron_type>& p,
-                       const bool dont_protect) const;//if true, features will not be protected
+                       const bool dont_protect);//if true, features will not be protected
   /// @endcond
   /*!
   Detects sharp features and boundaries of the polyhedral components of the complex
@@ -428,7 +431,7 @@ public:
   }
 
   /// @cond DEVELOPERS
-  void detect_borders(std::vector<Polyhedron_type>& p, const bool dont_protect) const;
+  void detect_borders(std::vector<Polyhedron_type>& p, const bool dont_protect);
   /// @endcond
   /*!
   Detects border edges of the polyhedral components of the complex,
@@ -471,7 +474,7 @@ public:
     return this->boundary_polyhedra_ids;
   }
 
-  void compute_boundary_patches() const
+  void compute_boundary_patches()
   {
     if (!this->boundary_patches_ids.empty())
       return;
@@ -700,13 +703,13 @@ protected:
   /// @cond DEVELOPERS
   void initialize_ts(Polyhedron_type& p) const;
 
-  void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph) const;
+  void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph);
 
   template <typename Edge_predicate, typename P2Vmap>
   void add_featured_edges_to_graph(const Polyhedron& poly,
                                    const Edge_predicate& pred,
                                    Featured_edges_copy_graph& graph,
-                                   P2Vmap& p2vmap) const;
+                                   P2Vmap& p2vmap);
 
   std::size_t nb_of_patch_plus_one() const
   {
@@ -716,16 +719,15 @@ protected:
 
 protected:
   /// @cond DEVELOPERS
+  std::vector<Polyhedron> stored_polyhedra;
+  std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
+  std::vector<std::size_t> patch_id_to_polyhedron_id;
+  boost::dynamic_bitset<> patch_has_featured_edges;
   typedef typename Polyhedron::Vertex_handle Vertex_handle;
-  
-  mutable std::vector<Polyhedron> stored_polyhedra;
-  mutable std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
-  mutable std::vector<std::size_t> patch_id_to_polyhedron_id;
-  mutable boost::dynamic_bitset<> patch_has_featured_edges;
-  mutable std::vector<std::vector<Vertex_handle> > several_vertices_on_patch;
-  mutable std::vector<Surface_patch_index> boundary_patches_ids;
-  mutable std::vector<std::size_t> inside_polyhedra_ids;
-  mutable std::vector<std::size_t> boundary_polyhedra_ids;
+  std::vector<std::vector<Vertex_handle> > several_vertices_on_patch;
+  std::vector<Surface_patch_index> boundary_patches_ids;
+  std::vector<std::size_t> inside_polyhedra_ids;
+  std::vector<std::size_t> boundary_polyhedra_ids;
   mutable bool borders_detected_;
   /// @endcond
 
@@ -765,7 +767,7 @@ initialize_ts(Polyhedron_type& p) const
 template < typename GT_, typename P_, typename TA_>
 void
 Polyhedral_complex_mesh_domain_3<GT_, P_, TA_>::
-detect_borders(std::vector<Polyhedron_type>& poly, const bool dont_protect) const
+detect_borders(std::vector<Polyhedron_type>& poly, const bool dont_protect)
 {
   if (borders_detected_)
     return;//border detection has already been done
@@ -780,7 +782,7 @@ void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 detect_features(FT angle_in_degree,
                 std::vector<Polyhedron_type>& poly,
-                const bool dont_protect) const
+                const bool dont_protect)
 {
   CGAL_assertion(!borders_detected_);
   if (borders_detected_)
@@ -948,7 +950,7 @@ merge_duplicated_points(const PointSet& duplicated_points)
 template < typename GT_, typename P_, typename TA_>
 void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
-add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy) const
+add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
 {
   std::vector<Polyline_with_context> polylines;
 
@@ -987,7 +989,7 @@ Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 add_featured_edges_to_graph(const Polyhedron_type& p,
                             const Edge_predicate& pred,
                             Featured_edges_copy_graph& g_copy,
-                            P2vmap& p2vmap) const
+                            P2vmap& p2vmap)
 {
   typedef boost::filtered_graph<Polyhedron_type,
                                 Edge_predicate > Featured_edges_graph;
