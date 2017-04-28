@@ -48,7 +48,7 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 
-#include <boost/bind.hpp>
+#include <CGAL/result_of.h>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -1704,20 +1704,20 @@ namespace CGAL {
       return os;
 
     // We are now in a degenerate case => we do a symbolic perturbation.
-    typename Geom_traits::Construct_point_3 cp =
-      geom_traits().construct_point_3_object();
+    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+    Construct_point_3 cp = geom_traits().construct_point_3_object();
 
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
 
-
-    // Lazy_Kernel::Construct_point_3 can return temporaries and so we have to
-    // copy the Bare_point...
+    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*
+    // `result_of` is used to go around the way the Lazy kernel works
+    // (simply grabbing it as a `const Bare_point&` would not work)
     std::sort(points, points + 5,
       boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-        boost::bind<const Bare_point>(
+        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
-        boost::bind<const Bare_point>(
+        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
               == SMALLER);
 
@@ -1823,19 +1823,20 @@ namespace CGAL {
       return os;
 
     // We are now in a degenerate case => we do a symbolic perturbation.
-    typename Geom_traits::Construct_point_3 cp =
-      geom_traits().construct_point_3_object();
+    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+    Construct_point_3 cp = geom_traits().construct_point_3_object();
 
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
 
-    // Lazy_Kernel::Construct_point_3 can return temporaries and so we have to
-    // copy the Bare_point...
+    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*
+    // `result_of` is used to go around the way the Lazy kernel works
+    // (simply grabbing it as a `const Bare_point&` would not work)
     std::sort(points, points + 4,
       boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-        boost::bind<const Bare_point>(
+        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
-        boost::bind<const Bare_point>(
+        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
               == SMALLER);
 
