@@ -48,6 +48,8 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/result_of.h>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -925,7 +927,14 @@ namespace CGAL {
     // Dual functions
     Bare_point dual(Cell_handle c) const;
     Object dual(Cell_handle c, int i) const;
-    Object dual(const Facet& f) const;
+    Object dual(const Facet& facet) const;
+
+    void dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const;
+    void dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const;
+    void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
+    void dual_ray(Cell_handle c, int i, Ray& ray) const;
+    void dual_ray(const Facet& facet, Ray& ray) const;
+    void dual_ray_exact(const Facet& facet, Ray& ray) const;
 
     template < class Stream>
     Stream& draw_dual(Stream & os) const;
@@ -1612,29 +1621,32 @@ namespace CGAL {
   }
 
   template < class Gt, class Tds, class Lds >
-  typename Regular_triangulation_3<Gt,Tds,Lds>::Object
+  void
   Regular_triangulation_3<Gt,Tds,Lds>::
-  dual(Cell_handle c, int i) const
+  dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const
   {
-    CGAL_triangulation_precondition(dimension()>=2);
-    CGAL_triangulation_precondition( ! is_infinite(c,i) );
-
-    if ( dimension() == 2 ) {
-      CGAL_triangulation_precondition( i == 3 );
-      return construct_object(
-        construct_weighted_circumcenter(c->vertex(0)->point(),
-        c->vertex(1)->point(),
-        c->vertex(2)->point()) );
-    }
-
-    // dimension() == 3
     Cell_handle n = c->neighbor(i);
-    if ( ! is_infinite(c) && ! is_infinite(n) ){
-      Bare_point bp = dual(c);
-      Bare_point np = dual(n);
-      return construct_object(construct_segment(bp, np));
-    }
+    CGAL_assertion( ! is_infinite(c) && ! is_infinite(n) );
 
+    p = dual(c);
+    q = dual(n);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const
+  {
+    return dual_segment(facet.first, facet.second, p, q);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_ray(Cell_handle c, int i, Ray& ray) const
+  {
+    Cell_handle n = c->neighbor(i);
+    CGAL_triangulation_precondition( (!is_infinite(c) != !is_infinite(n)) ); // xor
     // either n or c is infinite
     int in;
     if ( is_infinite(c) )
@@ -1648,24 +1660,162 @@ namespace CGAL {
     if ( (in&1) == 1 )
       std::swap(ind[0], ind[1]);
 
-    const Weighted_point& p = point(n->vertex(ind[0]));
-    const Weighted_point& q = point(n->vertex(ind[1]));
-    const Weighted_point& r = point(n->vertex(ind[2]));
+    const Weighted_point& p = n->vertex(ind[0])->point();
+    const Weighted_point& q = n->vertex(ind[1])->point();
+    const Weighted_point& r = n->vertex(ind[2])->point();
     const Bare_point& bp = construct_point(p);
     const Bare_point& bq = construct_point(q);
     const Bare_point& br = construct_point(r);
 
     Line l = construct_perpendicular_line(construct_plane(bp, bq, br),
                                           construct_weighted_circumcenter(p,q,r));
-    return construct_object(construct_ray(dual(n), l));
+
+    ray = construct_ray(dual(n), l);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_ray(const Facet& facet, Ray& ray) const
+  {
+    return dual_ray(facet.first, facet.second, ray);
+  }
+
+  // Exact versions of dual_segment() and dual_ray() for Mesh_3.
+  // These functions are really dirty: they assume that the point type is nice enough
+  // such that EPECK can manipulate it (e.g. convert it to EPECK::Point_3) AND
+  // that the result of these manipulations will make sense.
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
+  {
+    typedef typename Gt::Kernel                                  K;
+    typedef Exact_predicates_exact_constructions_kernel          EK;
+    typedef Cartesian_converter<K, EK>                           To_exact;
+    typedef Cartesian_converter<EK,K>                            Back_from_exact;
+
+    typedef EK                                                   Exact_Rt;
+
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+
+    Cell_handle c = facet.first;
+    int i = facet.second;
+    Cell_handle n = c->neighbor(i);
+
+    const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex(0)->point());
+    const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex(1)->point());
+    const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex(2)->point());
+    const typename Exact_Rt::Weighted_point_3& cs = to_exact(c->vertex(3)->point());
+
+    const typename Exact_Rt::Weighted_point_3& np = to_exact(n->vertex(0)->point());
+    const typename Exact_Rt::Weighted_point_3& nq = to_exact(n->vertex(1)->point());
+    const typename Exact_Rt::Weighted_point_3& nr = to_exact(n->vertex(2)->point());
+    const typename Exact_Rt::Weighted_point_3& ns = to_exact(n->vertex(3)->point());
+
+    p = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs));
+    q = back_from_exact(exact_weighted_circumcenter(np, nq, nr, ns));
+  }
+
+  template < class Gt, class Tds, class Lds >
+  void
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual_ray_exact(const Facet& facet, Ray& ray) const
+  {
+    Cell_handle c = facet.first;
+    int i = facet.second;
+    Cell_handle n = c->neighbor(i);
+    CGAL_triangulation_precondition( !is_infinite(c) != !is_infinite(n) ); // xor
+    // either n or c is infinite
+    int in;
+    if ( is_infinite(c) )
+      in = n->index(c);
+    else {
+      n = c;
+      in = i;
+    }
+    // n now denotes a finite cell, either c or c->neighbor(i)
+    int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+    if ( (in&1) == 1 )
+      std::swap(ind[0], ind[1]);
+
+    // exact part
+    typedef typename Gt::Kernel                                  K;
+    typedef Exact_predicates_exact_constructions_kernel          EK;
+    typedef Cartesian_converter<K, EK>                           To_exact;
+    typedef Cartesian_converter<EK,K>                            Back_from_exact;
+
+    typedef EK                                                   Exact_Rt;
+
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+    Exact_Rt::Construct_perpendicular_line_3 exact_perpendicular_line =
+      Exact_Rt().construct_perpendicular_line_3_object();
+    Exact_Rt::Construct_plane_3 exact_plane_3 = Exact_Rt().construct_plane_3_object();
+    Exact_Rt::Construct_ray_3 exact_ray_3 = Exact_Rt().construct_ray_3_object();
+    Exact_Rt::Construct_point_3 exact_point_3 = Exact_Rt().construct_point_3_object();
+
+    const typename Exact_Rt::Weighted_point_3& p = to_exact(n->vertex(ind[0])->point());
+    const typename Exact_Rt::Weighted_point_3& q = to_exact(n->vertex(ind[1])->point());
+    const typename Exact_Rt::Weighted_point_3& r = to_exact(n->vertex(ind[2])->point());
+    const typename Exact_Rt::Weighted_point_3& s = to_exact(n->vertex(in)->point());
+
+    const typename Exact_Rt::Point_3& bp = exact_point_3(p);
+    const typename Exact_Rt::Point_3& bq = exact_point_3(q);
+    const typename Exact_Rt::Point_3& br = exact_point_3(r);
+
+    typename Exact_Rt::Line_3 l = exact_perpendicular_line(
+                                    exact_plane_3(bp, bq, br),
+                                    exact_weighted_circumcenter(p, q, r));
+
+   ray = back_from_exact(
+           exact_ray_3(
+             exact_weighted_circumcenter(p, q, r, s), l));
   }
 
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Object
   Regular_triangulation_3<Gt,Tds,Lds>::
-  dual(const Facet& f) const
+  dual(Cell_handle c, int i) const
   {
-    return dual(f.first, f.second);
+    CGAL_triangulation_precondition(dimension()>=2);
+    CGAL_triangulation_precondition( ! is_infinite(c,i) );
+
+    if ( dimension() == 2 ) {
+      CGAL_triangulation_precondition( i == 3 );
+      return construct_object(
+        construct_weighted_circumcenter(c->vertex(0)->point(),
+                                        c->vertex(1)->point(),
+                                        c->vertex(2)->point()) );
+    }
+
+    // dimension() == 3
+    Cell_handle n = c->neighbor(i);
+    if ( ! is_infinite(c) && ! is_infinite(n) ){
+      // dual is a segment
+      Bare_point bp = dual(c);
+      Bare_point np = dual(n);
+      return construct_object(construct_segment(bp, np));
+    }
+
+    // either n or c is infinite, dual is a ray
+    Ray r;
+    dual_ray(c, i, r);
+    return construct_object(r);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  typename Regular_triangulation_3<Gt,Tds,Lds>::Object
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual(const Facet& facet) const
+  {
+    return dual(facet.first, facet.second);
   }
 
   template < class Gt, class Tds, class Lds >
