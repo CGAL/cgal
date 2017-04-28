@@ -91,7 +91,7 @@ void PQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
                          get_property_map(CGAL::vertex_point, pmesh));
 
   unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
-  for (int i = 0; i < step; i++)
+  for (unsigned int i = 0; i < step; i++)
     internal::PQQ_1step(pmesh, vpm, mask);
 }
 
