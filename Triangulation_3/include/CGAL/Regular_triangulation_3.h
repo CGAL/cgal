@@ -27,7 +27,6 @@
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/Regular_traits_adaptor.h>
 
 #include <set>
 #include <boost/mpl/if.hpp>
