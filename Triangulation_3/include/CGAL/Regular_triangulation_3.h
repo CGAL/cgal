@@ -1700,14 +1700,14 @@ dual(Cell_handle c) const
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
 
-    // It is important to tell boost::bind that we want references in return
-    // by writing `boost::bind<const ... &>(...)` otherwise we get temporaries
-    // and we call Compare_xyz_3 on objects that might have been cleaned
+
+    // Lazy_Kernel::Construct_point_3 can return temporaries and so we have to
+    // copy the Bare_point...
     std::sort(points, points + 5,
       boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-        boost::bind<const Bare_point&>(
+        boost::bind<const Bare_point>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
-        boost::bind<const Bare_point&>(
+        boost::bind<const Bare_point>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
               == SMALLER);
 
@@ -1819,14 +1819,13 @@ dual(Cell_handle c) const
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
 
-    // It is important to tell boost::bind that we want references in return
-    // by writing `boost::bind<const ... &>(...)` otherwise we get temporaries
-    // and we call Compare_xyz_3 on objects that might have been cleaned
+    // Lazy_Kernel::Construct_point_3 can return temporaries and so we have to
+    // copy the Bare_point...
     std::sort(points, points + 4,
       boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-        boost::bind<const Bare_point&>(
+        boost::bind<const Bare_point>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
-        boost::bind<const Bare_point&>(
+        boost::bind<const Bare_point>(
           cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
               == SMALLER);
 
