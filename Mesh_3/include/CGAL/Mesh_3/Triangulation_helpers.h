@@ -359,6 +359,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits Gt;
   typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
+  typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -369,16 +370,16 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(orientation(cj->vertex(mj)->point(),
-                     c->vertex((iv+1)&3)->point(),
-                     c->vertex((iv+2)&3)->point(),
-                     c->vertex((iv+3)&3)->point()) != CGAL::NEGATIVE)
+      if(orientation(wp2p(cj->vertex(mj)->point()),
+                     wp2p(c->vertex((iv+1)&3)->point()),
+                     wp2p(c->vertex((iv+2)&3)->point()),
+                     wp2p(c->vertex((iv+3)&3)->point())) != CGAL::NEGATIVE)
         return false;
     }
-    else if(orientation(c->vertex(0)->point(),
-                        c->vertex(1)->point(),
-                        c->vertex(2)->point(),
-                        c->vertex(3)->point()) != CGAL::POSITIVE)
+    else if(orientation(wp2p(c->vertex(0)->point()),
+                        wp2p(c->vertex(1)->point()),
+                        wp2p(c->vertex(2)->point()),
+                        wp2p(c->vertex(3)->point())) != CGAL::POSITIVE)
       return false;
   }
   return true;
@@ -396,6 +397,8 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits Gt;
   typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
+  typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
   {
@@ -405,16 +408,16 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(orientation(pg(cj->vertex(mj)),
-                     pg(c->vertex((iv+1)&3)),
-                     pg(c->vertex((iv+2)&3)),
-                     pg(c->vertex((iv+3)&3))) != CGAL::NEGATIVE)
+      if(orientation(wp2p(pg(cj->vertex(mj))),
+                     wp2p(pg(c->vertex((iv+1)&3))),
+                     wp2p(pg(c->vertex((iv+2)&3))),
+                     wp2p(pg(c->vertex((iv+3)&3)))) != CGAL::NEGATIVE)
         return false;
     }
-    else if(orientation(pg(c->vertex(0)),
-                        pg(c->vertex(1)),
-                        pg(c->vertex(2)),
-                        pg(c->vertex(3))) != CGAL::POSITIVE)
+    else if(orientation(wp2p(pg(c->vertex(0))),
+                        wp2p(pg(c->vertex(1))),
+                        wp2p(pg(c->vertex(2))),
+                        wp2p(pg(c->vertex(3)))) != CGAL::POSITIVE)
       return false;
   }
   return true;

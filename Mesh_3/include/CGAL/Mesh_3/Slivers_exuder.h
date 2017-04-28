@@ -118,12 +118,14 @@ namespace Mesh_3 {
       void
       operator()(const Vertex_handle& vh) const
       {
-        typedef typename Gt::Compute_squared_distance_3
-        Compute_squared_distance_3;
-        Compute_squared_distance_3 distance =
-        gt.compute_squared_distance_3_object();
+        typedef typename Gt::Compute_squared_distance_3 Compute_squared_distance_3;
+        Compute_squared_distance_3 distance = gt.compute_squared_distance_3_object();
 
-        const double d = CGAL::to_double(distance((*v)->point(), vh->point()));
+        typedef typename Gt::Construct_point_3 Construct_point_3;
+        Construct_point_3 wp2p = gt.construct_point_3_object();
+
+        const double d = CGAL::to_double(distance(wp2p((*v)->point()),
+                                                  wp2p(vh->point())));
         if(d < dist){
           dist = d;
         }
