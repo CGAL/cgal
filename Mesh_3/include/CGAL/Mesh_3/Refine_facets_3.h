@@ -468,15 +468,6 @@ protected:
     v->set_dimension(2);
   }
 
-  /// Compute the (exact) dual of a facet
-  void dual_segment(const Facet & f, Bare_point& p1, Bare_point& p2) const;
-
-  void dual_segment_exact(const Facet & f, Bare_point& p1, Bare_point& p2) const;
-
-  void dual_ray(const Facet & f, Ray_3& ray) const;
-
-  void dual_ray_exact(const Facet & f, Ray_3& ray) const;
-
   /// Returns true if point encroaches facet
   bool is_facet_encroached(const Facet& facet, const Weighted_point& point) const;
 
@@ -1573,125 +1564,6 @@ treat_new_facet(Facet& facet)
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 void
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
-dual_segment(const Facet & facet, Bare_point& p, Bare_point& q) const
-{
-  Cell_handle c = facet.first;
-  int i = facet.second;
-  Cell_handle n = c->neighbor(i);
-  CGAL_assertion( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) );
-  p = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
-        c->vertex(0)->point(),
-        c->vertex(1)->point(),
-        c->vertex(2)->point(),
-        c->vertex(3)->point());
-  q = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
-        n->vertex(0)->point(),
-        n->vertex(1)->point(),
-        n->vertex(2)->point(),
-        n->vertex(3)->point());
-}
-
-template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
-void
-Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
-dual_segment_exact(const Facet & facet, Bare_point& p, Bare_point& q) const
-{
-  Cell_handle c = facet.first;
-  int i = facet.second;
-  Cell_handle n = c->neighbor(i);
-  CGAL_assertion( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) );
-  p = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
-        c->vertex(0)->point(),
-        c->vertex(1)->point(),
-        c->vertex(2)->point(),
-        c->vertex(3)->point(),
-        true);
-  q = r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
-        n->vertex(0)->point(),
-        n->vertex(1)->point(),
-        n->vertex(2)->point(),
-        n->vertex(3)->point(),
-        true);
-}
-
-template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
-void
-Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
-dual_ray(const Facet & facet, Ray_3& ray) const
-{
-  Cell_handle c = facet.first;
-  int i = facet.second;
-  Cell_handle n = c->neighbor(i);
-  // either n or c is infinite
-  int in;
-  if ( r_tr_.is_infinite(c) )
-    in = n->index(c);
-  else {
-    n = c;
-    in = i;
-  }
-  // n now denotes a finite cell, either c or c->neighbor(i)
-  int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
-  if ( (in&1) == 1 )
-    std::swap(ind[0], ind[1]);
-  const Weighted_point& p = n->vertex(ind[0])->point();
-  const Weighted_point& q = n->vertex(ind[1])->point();
-  const Weighted_point& r = n->vertex(ind[2])->point();
-
-  typename Gt::Line_3 l =
-      r_tr_.geom_traits().construct_perpendicular_line_3_object()
-      ( r_tr_.geom_traits().construct_plane_3_object()(p,q,r),
-        r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(p,q,r) );
-
-  ray = r_tr_.geom_traits().construct_ray_3_object()(
-          r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
-            n->vertex(0)->point(),
-            n->vertex(1)->point(),
-            n->vertex(2)->point(),
-            n->vertex(3)->point()), l);
-}
-
-template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
-void
-Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
-dual_ray_exact(const Facet & facet, Ray_3& ray) const
-{
-  Cell_handle c = facet.first;
-  int i = facet.second;
-  Cell_handle n = c->neighbor(i);
-  // either n or c is infinite
-  int in;
-  if ( r_tr_.is_infinite(c) )
-    in = n->index(c);
-  else {
-    n = c;
-    in = i;
-  }
-  // n now denotes a finite cell, either c or c->neighbor(i)
-  int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
-  if ( (in&1) == 1 )
-    std::swap(ind[0], ind[1]);
-  const Weighted_point& p = n->vertex(ind[0])->point();
-  const Weighted_point& q = n->vertex(ind[1])->point();
-  const Weighted_point& r = n->vertex(ind[2])->point();
-
-  typename Gt::Line_3 l =
-      r_tr_.geom_traits().construct_perpendicular_line_3_object()
-      ( r_tr_.geom_traits().construct_plane_3_object()(p,q,r),
-        r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(p,q,r) );
-
- ray = r_tr_.geom_traits().construct_ray_3_object()(
-         r_tr_.geom_traits().construct_weighted_circumcenter_3_object()(
-           n->vertex(0)->point(),
-           n->vertex(1)->point(),
-           n->vertex(2)->point(),
-           n->vertex(3)->point(),
-           true), l);
-}
-
-template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
-void
-Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 compute_facet_properties(const Facet& facet,
                          Facet_properties& fp,
                          bool force_exact) const
@@ -1723,9 +1595,9 @@ compute_facet_properties(const Facet& facet,
     // the dual is a segment
     Bare_point p1, p2;
     if(force_exact){
-      dual_segment_exact(facet, p1, p2);
+      r_tr_.dual_segment_exact(facet, p1, p2);
     } else {
-      dual_segment(facet, p1, p2);
+      r_tr_.dual_segment(facet, p1, p2);
     }
     if (p1 == p2) { fp = Facet_properties(); return; }
 
@@ -1771,9 +1643,9 @@ compute_facet_properties(const Facet& facet,
     // point(0) plus a vector whose coordinates are epsilon).
     Ray_3 ray;
     if(force_exact){
-      dual_ray_exact(facet,ray);
+      r_tr_.dual_ray_exact(facet,ray);
     } else {
-      dual_ray(facet,ray);
+      r_tr_.dual_ray(facet,ray);
     }
     if (is_degenerate(ray)) { fp = Facet_properties(); return; }
 
