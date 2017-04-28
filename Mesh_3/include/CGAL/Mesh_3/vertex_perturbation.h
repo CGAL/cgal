@@ -122,14 +122,15 @@ namespace Mesh_3 {
     typename Tr::Geom_traits::FT
     edge_sq_length(const typename Tr::Edge& e)
     {
-      typedef typename Tr::Geom_traits Gt;
-      typedef typename Tr::Weighted_point Weighted_point;
+      typedef typename Tr::Geom_traits    Gt;
+      typedef typename Tr::Bare_point     Bare_point;
       
       typename Gt::Compute_squared_distance_3 sq_distance 
         = Gt().compute_squared_distance_3_object();
-      
-      const Weighted_point& p = e.first->vertex(e.second)->point();
-      const Weighted_point& q = e.first->vertex(e.third)->point();
+      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+
+      const Bare_point& p = wp2p(e.first->vertex(e.second)->point());
+      const Bare_point& q = wp2p(e.first->vertex(e.third)->point());
       
       return sq_distance(p,q);
     }
@@ -1278,6 +1279,8 @@ private:
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
     typename Gt::Construct_weighted_point_3 p2wp =
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+    typename Gt::Construct_point_3 wp2p =
+      c3t3.triangulation().geom_traits().construct_point_3_object();
 
     modified_vertices.clear();
 
@@ -1287,7 +1290,7 @@ private:
     
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, this->sphere_sq_radius());
-    const Bare_point initial_location = v->point().point();
+    const Bare_point initial_location = wp2p(v->point());
     
     // Initialize loop variables
     bool criterion_improved = false;
@@ -1330,7 +1333,7 @@ private:
       if ( update.first )
       {
         criterion_improved = true;
-        best_location = moving_vertex->point().point();
+        best_location = wp2p(moving_vertex->point());
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
 
