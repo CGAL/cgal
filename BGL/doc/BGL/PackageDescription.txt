@@ -232,7 +232,6 @@ incident to a given face, and all the halfedges having a given vertex as target.
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `Graph`
 - `VertexListGraph`
 - `HalfedgeGraph`
 - `HalfedgeListGraph`
