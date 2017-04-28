@@ -53,9 +53,10 @@ namespace CGAL {
       typedef typename C3T3::Index                  Index;
       
       typedef typename C3T3::Triangulation          Tr;
+      typedef typename Tr::Geom_traits              Geom_traits;
       typedef typename Tr::Vertex                   Vertex;
-      typedef typename Tr::Point                    Weighted_point;
-      typedef typename Tr::Point::Weight            Weight;
+      typedef typename Tr::Weighted_point           Weighted_point;
+      typedef typename Weighted_point::Weight       Weight;
       
     public:
       Insert_vertex_in_c3t3(C3T3& c3t3)
@@ -63,10 +64,15 @@ namespace CGAL {
       
       void operator()(const Vertex& vertex) const
       {
+        typename Geom_traits::Construct_point_3 wp2p =
+            r_c3t3_.triangulation().geom_traits().construct_point_3_object();
+        typename Geom_traits::Compute_weight_3 cw =
+            r_c3t3_.triangulation().geom_traits().compute_weight_3_object();
+
         // Get vh properties
         int dimension = vertex.in_dimension();
-        Weight w = (dimension < 2) ? vertex.point().weight() : 0;
-        Weighted_point point(vertex.point().point(),w);
+        Weight w = (dimension < 2) ? cw(vertex.point()) : 0;
+        Weighted_point point(wp2p(vertex.point()), w);
         Index index = vertex.index();
 
         // Insert point and restore handle properties
