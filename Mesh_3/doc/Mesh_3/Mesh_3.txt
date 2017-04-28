@@ -933,15 +933,36 @@ of the image.
 
 \subsubsection Mesh_3PolyhedralComplex Polyhedral complex
 
-The following example shows how to generate a mesh from a polyhedral complex.
+The following example shows how to generate a mesh from a polyhedral complex
+that forms a bounded domain.
 The domain is defined by a group of polyhedral surfaces that are conformal.
 For each facet of the input polyhedral surfaces,
 the ids of incident subdomains are known.
 The input surfaces intersect along polylines that are considered as sharp features,
-and protected as for other examples. 
+and protected as for all domain types in this Section. 
 
 \cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
+-------------------
+\cgalFigureRef{mesh3protectionComplex} shows the results with or with the
+protection of the 1D-features.
 
+\cgalFigureAnchor{mesh3protectionComplex}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="./no-protection-complex.png"></td>
+  <td><img border="0" src="./protection-complex.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3protectionComplex}
+Left: the mesh without any call to `%detect_features()`.
+
+Right: the mesh with added 1D-features along sharp edges and edges shared
+by at least two of the input polyhedral surfaces forming the complex.
+\cgalFigureCaptionEnd
+
+------------------
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
