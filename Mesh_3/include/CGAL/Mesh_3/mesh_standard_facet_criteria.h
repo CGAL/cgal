@@ -111,7 +111,7 @@ protected:
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Weighted_point Weighted_point;
+    typedef typename Tr::Bare_point     Bare_point;
 
     const typename Gt::Construct_triangle_3 triangle =
         Gt().construct_triangle_3_object();
@@ -119,10 +119,12 @@ protected:
         Gt().compute_squared_distance_3_object();
     const typename Gt::Compute_squared_area_3 area =
         Gt().compute_squared_area_3_object();
+    const typename Gt::Construct_point_3 wp2p =
+        Gt().construct_point_3_object();
 
-    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
-    const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
+    const Bare_point& p1 = wp2p(f.first->vertex((f.second+1)&3)->point());
+    const Bare_point& p2 = wp2p(f.first->vertex((f.second+2)&3)->point());
+    const Bare_point& p3 = wp2p(f.first->vertex((f.second+3)&3)->point());
 
     const FT triangle_area = area(triangle(p1,p2,p3));
     const FT d12 = distance(p1,p2);
