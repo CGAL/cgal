@@ -925,25 +925,11 @@ namespace CGAL {
 
     // Dual functions
     Bare_point dual(Cell_handle c) const;
-
-    Object dual(const Facet & f) const
-    { return dual( f.first, f.second ); }
-
     Object dual(Cell_handle c, int i) const;
+    Object dual(const Facet& f) const;
 
     template < class Stream>
-    Stream& draw_dual(Stream & os)
-    {
-      for (Finite_facets_iterator fit = finite_facets_begin(),
-        end = finite_facets_end();
-        fit != end; ++fit) {
-          Object o = dual(*fit);
-          if      (const Segment    *s = object_cast<Segment>(&o))    os << *s;
-          else if (const Ray        *r = object_cast<Ray>(&o))        os << *r;
-          else if (const Bare_point *p = object_cast<Bare_point>(&o)) os << *p;
-      }
-      return os;
-    }
+    Stream& draw_dual(Stream & os) const;
 
     bool is_valid(bool verbose = false, int level = 0) const;
 
@@ -1615,21 +1601,21 @@ namespace CGAL {
     return nearest;
   }
 
-template < class Gt, class Tds, class Lds >
-typename Regular_triangulation_3<Gt,Tds,Lds>::Bare_point
-Regular_triangulation_3<Gt,Tds,Lds>::
-dual(Cell_handle c) const
-{
-  CGAL_triangulation_precondition(dimension()==3);
-  CGAL_triangulation_precondition( ! is_infinite(c) );
+  template < class Gt, class Tds, class Lds >
+  typename Regular_triangulation_3<Gt,Tds,Lds>::Bare_point
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual(Cell_handle c) const
+  {
+    CGAL_triangulation_precondition(dimension()==3);
+    CGAL_triangulation_precondition( ! is_infinite(c) );
 
-  return c->weighted_circumcenter(geom_traits());
-}
+    return c->weighted_circumcenter(geom_traits());
+  }
 
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Object
-    Regular_triangulation_3<Gt,Tds,Lds>::
-    dual(Cell_handle c, int i) const
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual(Cell_handle c, int i) const
   {
     CGAL_triangulation_precondition(dimension()>=2);
     CGAL_triangulation_precondition( ! is_infinite(c,i) );
@@ -1673,6 +1659,31 @@ dual(Cell_handle c) const
     Line l = construct_perpendicular_line(construct_plane(bp, bq, br),
                                           construct_weighted_circumcenter(p,q,r));
     return construct_object(construct_ray(dual(n), l));
+  }
+
+  template < class Gt, class Tds, class Lds >
+  typename Regular_triangulation_3<Gt,Tds,Lds>::Object
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  dual(const Facet& f) const
+  {
+    return dual(f.first, f.second);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  template < class Stream>
+  Stream&
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  draw_dual(Stream & os) const
+  {
+    for (Finite_facets_iterator fit = finite_facets_begin(),
+      end = finite_facets_end();
+      fit != end; ++fit) {
+        Object o = dual(*fit);
+        if      (const Segment    *s = object_cast<Segment>(&o))    os << *s;
+        else if (const Ray        *r = object_cast<Ray>(&o))        os << *r;
+        else if (const Bare_point *p = object_cast<Bare_point>(&o)) os << *p;
+    }
+    return os;
   }
 
   template < class Gt, class Tds, class Lds >
