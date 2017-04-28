@@ -84,6 +84,8 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function`
 that is the default hash functor of `CGAL::Unique_hash_map`.
 
+\cgalModifBegin
+
 \section BGLLCCGT Specialization for the Linear Cell Complex Class
 
 Defined in `<CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>`
@@ -94,14 +96,6 @@ We provide partial specialization for the class `CGAL::Linear_cell_complex_for_c
 and of the concept `MutableFaceGraph`.
 
 The const specialization is also defined, using the constant handles in the linear cell complex.
-
-The item class used by`CGAL::Linear_cell_complex_for_combinatorial_map` must have both 0-attributes and  0-attributes enabled; moreover the corresponding type of attributes must store an id and must define the two fonctions:
-\code
-int id() const; // Returns the index. 
-int& id();      // Returns a reference to the index stored in the attribute. 
-\endcode
-
-Note that it is possible to use `CGAL::Cell_attribute_with_id` and `CGAL::Cell_attribute_with_point_and_id` classes to define your item class using attributes with id. Note also that there is a template alias, `CGAL::Linear_cell_complex_for_bgl_combinatorial_map` that defines the default template parameter for the item class that satisfies all the constraints given above.
 
 Let us denote by LCC an instantiation of CGAL::Linear_cell_complex_for_combinatorial_map<...> class.
 The traits class `boost::graph_traits<LCC>` provides the following types:
@@ -128,6 +122,24 @@ The traits class `boost::graph_traits<LCC>` provides the following types:
 
 For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function` that is the default hash functor of `CGAL::Unique_hash_map`.
 
+\subsection Requirements
+
+<ul>
+<li> The item class used by`CGAL::Linear_cell_complex_for_combinatorial_map` must have both 0-attributes and 2-attributes enabled; moreover the corresponding type of attributes must store an id and must define the two fonctions:
+\code
+int id() const; // Returns the index. 
+int& id();      // Returns a reference to the index stored in the attribute. 
+\endcode
+</li>
+
+<li> No dart is 1-free, nor 2-free. Holes in a mesh are represented by using the same convention than for `CGAL::Polyhedron_3` and `CGAL::Surface_mesh`: a dart <code>d</code> belongs to a border if the 2-attribute of <code>beta<2>(d)</code> is NULL.</li>
+
+<li> All darts of the linear cell complexes must be associated with a 2-attribute, except darts that represent holes.</li>
+</ul>
+
+Note that it is possible to use `CGAL::Cell_attribute_with_id` and `CGAL::Cell_attribute_with_point_and_id` classes to define your item class using attributes with id. Note also that there is a template alias, `CGAL::Linear_cell_complex_for_bgl_combinatorial_map` that defines the default template parameter for the item class that satisfies all the constraints given above.
+
+\cgalModifEnd
 
 \section BGLOMPAK Specialization for the OpenMesh::PolyMesh_ArrayKernelT Class
 
