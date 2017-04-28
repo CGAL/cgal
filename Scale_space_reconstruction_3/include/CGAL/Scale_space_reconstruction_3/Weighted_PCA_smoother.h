@@ -99,6 +99,11 @@ public:
     
   }
 
+  FT squared_radius()
+  {
+    return _squared_radius;
+  }
+
 private:
 
   void estimate_neighborhood_squared_radius ()

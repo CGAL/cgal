@@ -100,13 +100,15 @@ private:
   
 public:
 
-  Alpha_shape_mesher (bool separate_shells = false, bool force_manifold = false,
+  Alpha_shape_mesher (FT squared_radius,
+                      bool separate_shells = false,
+                      bool force_manifold = false,
                       FT border_angle = 45.)
     : _separate_shells (separate_shells),
       _force_manifold (force_manifold),
       _border_angle (border_angle),
       _shape (NULL),
-      _squared_radius (0.)
+      _squared_radius (squared_radius)
   {
 
   }

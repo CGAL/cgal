@@ -47,12 +47,15 @@ private:
   Point_vector m_points;
   Facet_vector m_facets;
 
+  FT m_internal_squared_radius; // For backward compatibility
+
 public:
 
-  Scale_space_surface_reconstruction_3 () { }
+  Scale_space_surface_reconstruction_3 () : m_internal_squared_radius(0.) { }
 
   template <typename InputIterator>
   Scale_space_surface_reconstruction_3 (InputIterator begin, InputIterator end)
+    : m_internal_squared_radius (0.)
   {
     insert (begin, end);
   }
@@ -118,7 +121,9 @@ public:
 
   void increase_scale (std::size_t iterations = 1)
   {
-    increase_scale (iterations, Weighted_PCA_smoother());
+    Weighted_PCA_smoother smoother;
+    increase_scale (iterations, smoother);
+    m_internal_squared_radius = smoother.squared_radius();
   }
 
   /// constructs a triangle mesh from the point set at a fixed scale.
@@ -144,7 +149,8 @@ public:
 
   void reconstruct_surface ()
   {
-    reconstruct_surface (Alpha_shape_mesher());
+    CGAL_assertion (m_internal_squared_radius != 0.);
+    reconstruct_surface (Alpha_shape_mesher(m_internal_squared_radius));
   }
 
   /// gives the number of points of the surface.
