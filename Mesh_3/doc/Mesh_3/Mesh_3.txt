@@ -915,9 +915,9 @@ protection of the 1D-features.
 <center>
 <table border=0>
 <tr>
-  <td><img border="0" src="./no-protection.png"></td>
-  <td><img border="0" src="./protection-box.png"></td>
-  <td><img border="0" src="./protection-all.png"></td>
+<td><img border="0" src="./no-protection.png"></td>
+<td><img border="0" src="./protection-box.png"></td>
+<td><img border="0" src="./protection-all.png"></td>
 </tr>
 </table>
 </center>
@@ -942,7 +942,7 @@ The input surfaces intersect along polylines that are considered as sharp featur
 and protected as for all domain types in this Section. 
 
 \cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
--------------------
+
 \cgalFigureRef{mesh3protectionComplex} shows the results with or with the
 protection of the 1D-features.
 
@@ -962,7 +962,7 @@ Right: the mesh with added 1D-features along sharp edges and edges shared
 by at least two of the input polyhedral surfaces forming the complex.
 \cgalFigureCaptionEnd
 
-------------------
+
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
