@@ -14,7 +14,7 @@ class FaceListGraph{};
 
 
 /*! \relates FaceListGraph
- * An iterator range over all faces.
+ * returns an iterator range over all faces.
  */
 
 std::pair<boost::graph_traits<FaceListGraph>::face_iterator,

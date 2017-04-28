@@ -273,6 +273,8 @@ namespace CGAL {
   ///         besides being default constructible and assignable. 
   ///         In typical use cases it will be a 2D or 3D point type.
   /// \cgalModels `MutableFaceGraph` and `FaceListGraph`
+  ///
+  /// \sa \ref PkgBGLConcepts "Graph Concepts"
 
 template <typename P>
 class Surface_mesh

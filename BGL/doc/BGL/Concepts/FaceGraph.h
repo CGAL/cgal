@@ -34,7 +34,7 @@ boost::graph_traits<FaceGraph>::degree_size_type
 degree(boost::graph_traits<FaceGraph>::face_descriptor f, FaceGraph& g);
 
 /*! \relates FaceGraph
-returns a special face that is not equal to any other face
+returns a special face that is not equal to any other face.
  */
 boost::graph_traits<FaceGraph>::face_descriptor
 null_face(FaceGraph& g);

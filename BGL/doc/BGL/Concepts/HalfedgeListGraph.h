@@ -14,7 +14,7 @@ and adds the requirements for traversal of all halfedges in the graph.
 class HalfedgeListGraph {};
 
 /*! \relates HalfedgeListGraph
- * An iterator range over all halfedges.
+ * returns an iterator range over all halfedges.
  */
 
 std::pair<boost::graph_traits<HalfedgeListGraph>::halfedge_iterator,

@@ -34,11 +34,12 @@ digraph example {
  \cgalHeading{Notations}
 
  <dl>
- <dt>`G`</dt> 	<dd>A type that is a model of `FaceGraph`.</dd>
+ <dt>`G`</dt> 	<dd>A type that is a model of a graph concept.</dd>
  <dt>`g`</dt> 	<dd>An object of type `G`.</dd>
- <dt>`e`</dt> 	<dd>An edge descriptor.</dd>
- <dt>`f`</dt> 	<dd>A face descriptor.</dd>
- <dt>`h`</dt> 	<dd>A halfedge descriptor.</dd>
+ <dt>`u`, `v`</dt> 	<dd>An object of type `boost::graph_traits<G>::vertex descriptor`.</dd>
+ <dt>`h`</dt> 	<dd>An object of type `boost::graph_traits<G>::halfedge descriptor`.</dd>
+ <dt>`e`</dt> 	<dd>An object of type `boost::graph_traits<G>::edge descriptor`.</dd>
+ <dt>`f`</dt> 	<dd>An object of type `boost::graph_traits<G>::face descriptor`.</dd>
  </dl>
 
 \cgalHeading{%VertexListGraph}
@@ -135,6 +136,18 @@ Valid Expression                       | Returns                                
 `boost::graph_traits<G>::%null_face()` | `face_descriptor`                                                        | A special face that is not equal to any other face.
 
 
+\cgalHeading{%MutableFaceGraph}
+
+The concept `MutableFaceGraph` refines the concepts `FaceGraph` and `MutableHalfedgeGraph` and adds
+the requirement for operations to add faces and to modify face-halfedge relations.
+
+Valid Expression              | returns           | Description                           
+----------------------- | ------------      | -----------
+`add_face(g)`           | `face_descriptor` | Adds a new face to the graph without initializing the connectivity.
+`remove_face(f, g)`     | `void`            | Removes `f` from the graph.
+`set_face(h, f, g)`     | `void`            | Sets the corresponding face of `h` to `f`.
+`set_halfedge(f, h, g)` | `void`            | Sets the corresponding halfedge of `f` to `h`.
+`reserve(g, nv, ne, nf)`| `void`            | Called to indicate the expected size of vertices (`nv`), edges (`ed`) and faces (`nf`)
 
 \cgalHeading{%FaceListGraph}
 
@@ -219,6 +232,8 @@ incident to a given face, and all the halfedges having a given vertex as target.
 \cgalClassifedRefPages
 
 ## Concepts ##
+- `Graph`
+- `VertexListGraph`
 - `HalfedgeGraph`
 - `HalfedgeListGraph`
 - `MutableHalfedgeGraph`

@@ -84,7 +84,7 @@ boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
 prev(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, HalfedgeGraph& g);
 
 /*! \relates HalfedgeGraph
-returns a special halfedge that is not equal to any other halfedge
+returns a special halfedge that is not equal to any other halfedge.
  */
 boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
 null_halfedge(HalfedgeGraph& g);
