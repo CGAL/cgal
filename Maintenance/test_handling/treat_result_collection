@@ -93,23 +93,23 @@ sub install_results()
 
 }
 
+# Save the content of $check_file in the hash %check_file_content, to avoid
+# opening, reading, and closing that file at every call of the function
+# `exist_in_file` (called thousands of times)
+my %check_file_content;
+open my $fh, $check_file || die ("Could not open $check_file");
+while (my $contents = <$fh>){
+    chop $contents;
+    $check_file_content{$contents} = 1;
+}
+close $fh;
+
 #return 0 if it exists and 1 otherwise 
 sub exist_in_file{
-  chdir($currentdir);
-  my $contents;
-  if( -e $check_file){
-      open FILE, $check_file || die ("Could not open $check_file");
-      while ($contents = <FILE>){
-	  chop $contents;
-	  if ( "$contents" eq "$_[0]" ){
-	      close FILE;
-	      return 0;
-	  } 
-      }
-      close FILE;
-      return 1;
+  if ( $check_file_content{$_[0]} == 1) {
+    return 0;
   } else {
-      return 1;
+    return 1;
   }
 }
 
@@ -160,9 +160,9 @@ while( $i=readdir($dir_h)){
     }
   }
   if ( $is_good == 1 ){
-    if ( -s "$ftp_results_dir/$i" && 
-         system("fuser", "$ftp_results_dir/$i") != 0 &&
-         exist_in_file($i) == 1 ){
+    if ( -s "$ftp_results_dir/$i" &&
+         exist_in_file($i) == 1 &&
+         system("fuser", "$ftp_results_dir/$i") != 0 ){
       system "cp $ftp_results_dir/$i $i";
       system "chmod 644 $i";
       $res = system "gunzip -t $i";
