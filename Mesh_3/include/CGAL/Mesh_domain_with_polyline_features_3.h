@@ -570,7 +570,7 @@ public:
   IndicesOutputIterator
   add_features_with_context(InputIterator first, InputIterator last,
                             IndicesOutputIterator out /*=
-                                                        CGAL::Emptyset_iterator()*/);
+                                                        CGAL::Emptyset_iterator()*/) const;
 
   template <typename InputIterator>
   void
@@ -579,7 +579,7 @@ public:
 
   template <typename InputIterator>
   void
-  add_features_with_context(InputIterator first, InputIterator last)
+  add_features_with_context(InputIterator first, InputIterator last) const
   { add_features_with_context(first, last, CGAL::Emptyset_iterator()); }
 
   template <typename Surf_p_index, typename IncidenceMap>
@@ -610,11 +610,11 @@ public:
   /// Insert one edge into domain
   /// InputIterator value type is Point_3
   template <typename InputIterator>
-  Curve_segment_index insert_edge(InputIterator first, InputIterator last);
+  Curve_segment_index insert_edge(InputIterator first, InputIterator last) const;
 
 private:
-  void register_corner(const Point_3& p, const Curve_segment_index& index);
-  void compute_corners_incidences();
+  void register_corner(const Point_3& p, const Curve_segment_index& index) const;
+  void compute_corners_incidences() const;
 
   /// Returns the sign of the geodesic distance between \c p and \c q
   /// Precondition: index is not a cycle
@@ -641,14 +641,14 @@ private:
   typedef CGAL::AABB_traits<Gt,
                             Curves_primitives> AABB_curves_traits;
 
-  Corners corners_;
-  Corners_tmp_incidences corners_tmp_incidences_;
-  Corner_index current_corner_index_;
-  Corners_incidences corners_incidences_;
+  mutable Corners corners_;
+  mutable Corners_tmp_incidences corners_tmp_incidences_;
+  mutable Corner_index current_corner_index_;
+  mutable Corners_incidences corners_incidences_;
 
-  Edges edges_;
-  Curve_segment_index current_curve_index_;
-  Edges_incidences edges_incidences_;
+  mutable Edges edges_;
+  mutable Curve_segment_index current_curve_index_;
+  mutable Edges_incidences edges_incidences_;
 
 public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
@@ -656,7 +656,7 @@ public:
   typedef std::map<Point_3, Set_of_patch_ids> Corners_incidence_map;
 
 private:
-  Corners_incidence_map corners_incidence_map_;
+  mutable Corners_incidence_map corners_incidence_map_;
   mutable Curves_AABB_tree curves_aabb_tree_;
   mutable bool curves_aabb_tree_is_built;
 
@@ -832,7 +832,7 @@ template <typename InputIterator, typename IndicesOutputIterator>
 IndicesOutputIterator
 Mesh_domain_with_polyline_features_3<MD_>::
 add_features_with_context(InputIterator first, InputIterator last,
-                          IndicesOutputIterator indices_out)
+                          IndicesOutputIterator indices_out) const
 {
   // Insert one edge for each element
   for( ; first != last ; ++first )
@@ -1016,9 +1016,9 @@ display_corner_incidences(std::ostream& os, Point_3 p, Corner_index id)
 template <class MD_>
 void
 Mesh_domain_with_polyline_features_3<MD_>::
-compute_corners_incidences()
+compute_corners_incidences() const
 {
-  for(typename Corners::iterator
+  for(typename Corners::const_iterator
         cit = corners_.begin(), end = corners_.end();
       cit != end; /* the loop variable is incremented in the  body */)
   {
@@ -1037,7 +1037,7 @@ compute_corners_incidences()
       const Curve_segment_index curve_id = *corner_tmp_incidences.begin();
       const Polyline& polyline = edges_[curve_id];
       if(polyline.angle_at_first_point() == OBTUSE) {
-        typename Corners::iterator to_erase = cit;
+        typename Corners::const_iterator to_erase = cit;
         ++cit;
         corners_.erase(to_erase);
         continue;
@@ -1074,10 +1074,10 @@ get_incidences(Curve_segment_index id) const
 template <class MD_>
 void
 Mesh_domain_with_polyline_features_3<MD_>::
-register_corner(const Point_3& p, const Curve_segment_index& curve_index)
+register_corner(const Point_3& p, const Curve_segment_index& curve_index) const
 {
 
-  typename Corners::iterator cit = corners_.lower_bound(p);
+  typename Corners::const_iterator cit = corners_.lower_bound(p);
 
   // If the corner already exists, returns...
   if(cit != corners_.end() && !(corners_.key_comp()(p, cit->first))) {
@@ -1098,7 +1098,7 @@ template <class MD_>
 template <typename InputIterator>
 typename Mesh_domain_with_polyline_features_3<MD_>::Curve_segment_index
 Mesh_domain_with_polyline_features_3<MD_>::
-insert_edge(InputIterator first, InputIterator last)
+insert_edge(InputIterator first, InputIterator last) const
 {
   CGAL_assertion(std::distance(first,last) > 1);
 
