@@ -206,9 +206,8 @@ namespace CGAL {
           static_cast<Internal_node_const_handle>(this);
 	// after splitting b denotes the lower part of b
 	Kd_tree_rectangle<FT,D> b_upper(b);
-	b.split(b_upper, node->cutting_dimension(),
-		node->cutting_value());
-                             
+	node->split_bbox(b, b_upper);
+
 	if (q.outer_range_contains(b)) 	
 	  it=node->lower()->tree_items(it);
 	else
@@ -236,15 +235,14 @@ namespace CGAL {
 	if (node->size()>0) 
 	  for (iterator i=node->begin(); i != node->end(); i++) 
 	    if (q.contains(*i)) 
-	      { result = boost::make_optional(*i);}
+	      { result = *i; break; }
       }
       else {
          Internal_node_const_handle node = 
           static_cast<Internal_node_const_handle>(this);
 	// after splitting b denotes the lower part of b
 	Kd_tree_rectangle<FT,D> b_upper(b);
-	b.split(b_upper, node->cutting_dimension(),
-		node->cutting_value());
+	node->split_bbox(b, b_upper);
                              
 	if (q.outer_range_contains(b)){ 	
           result = node->lower()->any_tree_item();
@@ -323,6 +321,13 @@ namespace CGAL {
       return data + n;
     }
  
+    inline
+    void
+    drop_last_point()
+    {
+      --n;
+    }
+
   }; //leaf node
 
 
@@ -338,6 +343,7 @@ namespace CGAL {
 
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
+    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::D D;
 
   private:
     
@@ -395,6 +401,20 @@ namespace CGAL {
       return upper_ch; 
     }
   	
+    inline
+    void
+    set_lower(Node_handle nh)
+    {
+      lower_ch = nh;
+    }
+
+    inline
+    void
+    set_upper(Node_handle nh)
+    {
+      upper_ch = nh;
+    }
+
     // inline Separator& separator() {return sep; }
     // use instead
     inline
@@ -451,8 +471,13 @@ namespace CGAL {
     {
       return Separator(cutting_dimension,cutting_value);
     }*/
-	
 
+    void split_bbox(Kd_tree_rectangle<FT,D>& l, Kd_tree_rectangle<FT,D>& u) const {
+      l.lower()[cut_dim]=lower_low_val;
+      l.upper()[cut_dim]=lower_high_val;
+      u.lower()[cut_dim]=upper_low_val;
+      u.upper()[cut_dim]=upper_high_val;
+    }
   };//internal node
 
  template < class TreeTraits, class Splitter> 
@@ -466,6 +491,7 @@ namespace CGAL {
 
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::Separator Separator;
+    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::D D;
 
   private:
     
@@ -516,6 +542,20 @@ namespace CGAL {
       return upper_ch; 
     }
   	
+    inline
+    void
+    set_lower(Node_handle nh)
+    {
+      lower_ch = nh;
+    }
+
+    inline
+    void
+    set_upper(Node_handle nh)
+    {
+      upper_ch = nh;
+    }
+
     // inline Separator& separator() {return sep; }
     // use instead
 
@@ -539,29 +579,16 @@ namespace CGAL {
       return cut_dim;
     }
 
-    // members for extended internal node only
-    inline 
-    FT
-    low_value() const 
-    { 
-      return this->low_val;
-    }
-    
-    inline 
-    FT
-    high_value() const 
-    {
-      return this->high_val;
-    }
-       
-
    /* Separator& 
     separator() 
     {
       return Separator(cutting_dimension,cutting_value);
     }*/
-	
 
+    void split_bbox(Kd_tree_rectangle<FT,D>& l, Kd_tree_rectangle<FT,D>& u) const {
+      l.upper()[cut_dim]=cut_val;
+      u.lower()[cut_dim]=cut_val;
+    }
   };//internal node
 
 
