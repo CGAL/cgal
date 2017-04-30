@@ -78,6 +78,7 @@ public:
     : RPoint_2(p)
   {}
 
+  explicit
   Point_2(const Weighted_point_2& wp)
     : Rep(wp.point())
   {}

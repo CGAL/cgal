@@ -25,26 +25,30 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/Hidden_point_memory_policy.h>
+#include <CGAL/Triangulation_cell_base_3.h>
+
+#include <boost/core/enable_if.hpp>
 
 #include <list>
-#include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {
 
 template < typename GT,
            typename Cb = Triangulation_cell_base_3<GT >,
+           typename Memory_policy = Keep_hidden_points,
            typename C = std::list<typename GT::Weighted_point_3> >
 class Regular_triangulation_cell_base_3
   : public Cb
 {
 public:
-  static const bool DO_HIDE_POINT = true;
   typedef typename Cb::Vertex_handle                   Vertex_handle;
   typedef typename Cb::Cell_handle                     Cell_handle;
 
 
   typedef GT                                           Geom_traits;
-  typedef typename Geom_traits::Weighted_point_3       Point;
+  typedef typename Geom_traits::Point_3                Bare_point;
+  typedef typename Geom_traits::Weighted_point_3       Weighted_point;
 
   typedef C                                            Point_container;
   typedef typename Point_container::iterator           Point_iterator;
@@ -52,8 +56,8 @@ public:
 
   template < typename TDS2 >
   struct Rebind_TDS {
-    typedef typename Cb::template Rebind_TDS<TDS2>::Other     Cb2;
-    typedef Regular_triangulation_cell_base_3<GT, Cb2, C>     Other;
+    typedef typename Cb::template Rebind_TDS<TDS2>::Other                 Cb2;
+    typedef Regular_triangulation_cell_base_3<GT, Cb2, Memory_policy, C>  Other;
   };
 
   Regular_triangulation_cell_base_3()
@@ -75,19 +79,50 @@ public:
                                     Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
-  Point_iterator hidden_points_begin() { return _hidden.begin(); }
-  Point_iterator hidden_points_end() { return _hidden.end(); }
+  // Memory_policy is Tag_true -------------------------------------------------
+  template<typename Tag = Memory_policy>
+  Point_iterator hidden_points_begin(typename boost::enable_if_c<Tag::value>::type* = NULL)
+  {  return _hidden.begin(); }
+  template<typename Tag = Memory_policy>
+  Point_iterator hidden_points_end(typename boost::enable_if_c<Tag::value>::type* = NULL)
+  { return _hidden.end(); }
 
-  Point_const_iterator hidden_points_begin() const { return _hidden.begin(); }
-  Point_const_iterator hidden_points_end() const { return _hidden.end(); }
+    // const versions
+  template<typename Tag = Memory_policy>
+  Point_const_iterator hidden_points_begin(typename boost::enable_if_c<Tag::value>::type* = NULL) const
+  { return _hidden.begin(); }
+  template<typename Tag = Memory_policy>
+  Point_const_iterator hidden_points_end(typename boost::enable_if_c<Tag::value>::type* = NULL) const
+  { return _hidden.end(); }
 
-  void hide_point (const Point &p) { _hidden.push_back(p); }
-  //  void unhide_point (Point_iterator i) { _hidden.delete(i); }
+  template<typename Tag = Memory_policy>
+  void hide_point(const Weighted_point& p, typename boost::enable_if_c<Tag::value>::type* = NULL)
+  { _hidden.push_back(p); }
+
+  // Memory_policy is Tag_false ------------------------------------------------
+  template<typename Tag = Memory_policy>
+  Point_iterator hidden_points_begin(typename boost::disable_if_c<Tag::value>::type* = NULL)
+  { return hidden_points_end(); }
+  template<typename Tag = Memory_policy>
+  Point_iterator hidden_points_end(typename boost::disable_if_c<Tag::value>::type* = NULL)
+  { return _hidden.end(); }
+
+    // const versions
+  template<typename Tag = Memory_policy>
+  Point_const_iterator hidden_points_begin(typename boost::disable_if_c<Tag::value>::type* = NULL) const
+  { return hidden_points_end(); }
+  template<typename Tag = Memory_policy>
+  Point_const_iterator hidden_points_end(typename boost::disable_if_c<Tag::value>::type* = NULL) const
+  { return _hidden.end(); }
+
+  template<typename Tag = Memory_policy>
+  void hide_point(const Weighted_point&, typename boost::disable_if_c<Tag::value>::type* = NULL)
+  { }
 
   //note this function is not requested by the RegularTriangulationCellBase_3
   //it should be replaced everywhere by weighted_circumcenter()
   // but remains here for backward compatibility
-  typename Geom_traits::Point_3
+  Bare_point
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()
@@ -97,7 +132,7 @@ public:
          this->vertex(3)->point());
   }
 
-  typename Geom_traits::Point_3
+  Bare_point
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()

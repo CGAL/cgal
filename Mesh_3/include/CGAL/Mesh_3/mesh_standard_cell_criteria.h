@@ -79,18 +79,20 @@ protected:
 
   virtual Badness do_is_bad(const Cell_handle& ch) const
   {
-    typedef typename Tr::Point Point_3;
-    typedef typename Tr::Geom_traits Geom_traits;
+    typedef typename Tr::Geom_traits    Geom_traits;
+    typedef typename Tr::Bare_point     Bare_point;
+
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     typedef typename Geom_traits::Compute_squared_distance_3 Distance;
-
-    const Point_3& p = ch->vertex(0)->point();
-    const Point_3& q = ch->vertex(1)->point();
-    const Point_3& r = ch->vertex(2)->point();
-    const Point_3& s = ch->vertex(3)->point();
-
+    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
     Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
     Distance distance = Geom_traits().compute_squared_distance_3_object();
+    Construct_point_3 wp2p = Geom_traits().construct_point_3_object();
+
+    const Bare_point& p = wp2p(ch->vertex(0)->point());
+    const Bare_point& q = wp2p(ch->vertex(1)->point());
+    const Bare_point& r = wp2p(ch->vertex(2)->point());
+    const Bare_point& s = wp2p(ch->vertex(3)->point());
 
     const FT size = sq_radius(p, q, r, s);
 
@@ -162,14 +164,14 @@ protected:
 
   virtual Badness do_is_bad(const Cell_handle& ch) const
   {
-    typedef typename Tr::Point Point_3;
+    typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Geom_traits Geom_traits;
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
 
-    const Point_3& p = ch->vertex(0)->point();
-    const Point_3& q = ch->vertex(1)->point();
-    const Point_3& r = ch->vertex(2)->point();
-    const Point_3& s = ch->vertex(3)->point();
+    const Weighted_point& p = ch->vertex(0)->point();
+    const Weighted_point& q = ch->vertex(1)->point();
+    const Weighted_point& r = ch->vertex(2)->point();
+    const Weighted_point& s = ch->vertex(3)->point();
 
     Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
 
@@ -230,14 +232,14 @@ protected:
   
   virtual Badness do_is_bad(const Cell_handle& ch) const
   {
-    typedef typename Tr::Point Point_3;
+    typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Geom_traits Geom_traits;
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     
-    const Point_3& p = ch->vertex(0)->point();
-    const Point_3& q = ch->vertex(1)->point();
-    const Point_3& r = ch->vertex(2)->point();
-    const Point_3& s = ch->vertex(3)->point();
+    const Weighted_point& p = ch->vertex(0)->point();
+    const Weighted_point& q = ch->vertex(1)->point();
+    const Weighted_point& r = ch->vertex(2)->point();
+    const Weighted_point& s = ch->vertex(3)->point();
     
     Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
     
@@ -368,9 +370,9 @@ class Cell_criteria_visitor_with_features
   typedef Mesh_3::Cell_size_criterion<Tr, Self>         Cell_size_criterion;
   typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self>  Cell_radius_edge_criterion;
 
-  typedef typename Tr::Geom_traits  Gt;
-  typedef typename Gt::FT           FT;
-  typedef typename Tr::Point        Point_3;
+  typedef typename Tr::Geom_traits    Gt;
+  typedef typename Gt::FT             FT;
+  typedef typename Tr::Weighted_point Weighted_point;
   
   
 public:  
@@ -426,10 +428,10 @@ public:
       ++wp_nb_;
     }
     
-    const Point_3& p1 = ch->vertex(k1)->point();
-    const Point_3& p2 = ch->vertex(k2)->point();
-    const Point_3& p3 = ch->vertex(k3)->point();
-    const Point_3& p4 = ch->vertex(k4)->point();
+    const Weighted_point& p1 = ch->vertex(k1)->point();
+    const Weighted_point& p2 = ch->vertex(k2)->point();
+    const Weighted_point& p3 = ch->vertex(k3)->point();
+    const Weighted_point& p4 = ch->vertex(k4)->point();
     
     switch ( wp_nb_ )
     {

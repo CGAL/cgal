@@ -25,7 +25,6 @@
 #include <CGAL/Bbox_3.h>
 
 #include "test_utilities.h"
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 
 #include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
@@ -48,10 +47,11 @@ struct Tester
   typedef CGAL::Mesh_complex_3_in_triangulation_3<
     Tr, typename Md::Corner_index, typename Md::Curve_segment_index>  C3t3;
 
-  typedef typename Tr::Geom_traits  Gt;
-  typedef typename Gt::FT           FT;
-  typedef typename Gt::Point_3      Point;
-  typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Point> Point_creator;
+  typedef typename Tr::Bare_point       Bare_point;
+  typedef typename Tr::Weighted_point   Weighted_point;
+
+  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Gt::FT               FT;
 
   typedef typename C3t3::Cell_handle    Cell_handle;
   typedef typename C3t3::Facet          Facet;
@@ -83,15 +83,14 @@ struct Tester
     assert(c3t3.number_of_facets_in_complex() == 0);
     assert(c3t3.number_of_edges_in_complex() == 0);
     assert(c3t3.number_of_vertices_in_complex() == 0);
-    
+
     //-------------------------------------------------------
     // Data generation : fill a triangulation with 4 vertices
     //-------------------------------------------------------
-    Point_creator creator;
-    Point p1 = creator(0,0,0);
-    Point p2 = creator(1,0,0);
-    Point p3 = creator(0,1,0);
-    Point p4 = creator(0,0,1);
+    Weighted_point p1(0,0,0);
+    Weighted_point p2(1,0,0);
+    Weighted_point p3(0,1,0);
+    Weighted_point p4(0,0,1);
 
     Vertex_handle vp1 = tr.insert(p1);
     Vertex_handle vp2 = tr.insert(p2);
@@ -248,14 +247,14 @@ struct Tester
     //-------------------------------------------------------
     std::cout << "Insert 6 points in c3t3_bis, add 1 corner and 1 edge to c3t3_bis\n";
 
-    std::vector<Point> points;
-    points.push_back(creator(10,11,12));
-    points.push_back(creator(11,13,10));
-    points.push_back(creator(7,4,6));
-    points.push_back(creator(5,2,14));
-    points.push_back(creator(1,2,3));
-    points.push_back(creator(3,9,13));
-    
+    std::vector<Weighted_point> points;
+    points.push_back(Weighted_point(10,11,12));
+    points.push_back(Weighted_point(11,13,10));
+    points.push_back(Weighted_point(7,4,6));
+    points.push_back(Weighted_point(5,2,14));
+    points.push_back(Weighted_point(1,2,3));
+    points.push_back(Weighted_point(3,9,13));
+
     C3t3 c3t3_bis;
     c3t3_bis.triangulation().insert(points.begin(),points.end());
     

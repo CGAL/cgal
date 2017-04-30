@@ -23,7 +23,8 @@ typedef Regular::Facet                         Facet;
 typedef Regular::Cell_handle                   Cell_handle;
 typedef CGAL::Triangulation_simplex_3<Regular> Simplex;
 
-void test_anchor_del() {
+void test_anchor_del()
+{
   Regular reg;
   CGAL::Compute_anchor_3<Regular> compute_anchor_obj(reg);
   Vertex_handle vh[4];
@@ -43,14 +44,14 @@ void test_anchor_del() {
     assert(Simplex(vh[i]) == compute_anchor_obj.anchor_vor(vh[i]));
     for (int j=i+1; j<4; j++) {
       assert(Simplex(Edge(ch,i,j)) ==
-	compute_anchor_obj.anchor_del(Edge(ch,i,j)));
+             compute_anchor_obj.anchor_del(Edge(ch,i,j)));
       assert(Simplex(Edge(ch,i,j)) ==
-	compute_anchor_obj.anchor_vor(Edge(ch,i,j)));
+             compute_anchor_obj.anchor_vor(Edge(ch,i,j)));
     }
     assert(Simplex(Facet(ch,i)) ==
-      compute_anchor_obj.anchor_del(Facet(ch,i)));
+           compute_anchor_obj.anchor_del(Facet(ch,i)));
     assert(Simplex(Facet(ch,i)) ==
-      compute_anchor_obj.anchor_vor(Facet(ch,i)));
+           compute_anchor_obj.anchor_vor(Facet(ch,i)));
     assert(Simplex(ch) == compute_anchor_obj.anchor_del(ch));
     assert(Simplex(ch) == compute_anchor_obj.anchor_vor(ch));
   }
@@ -67,14 +68,14 @@ void test_anchor_del() {
     assert(Simplex(vh[i]) == compute_anchor_obj.anchor_del(vh[i]));
     assert(Simplex(vh[i]) == compute_anchor_obj.anchor_vor(vh[i]));
     assert(Simplex(Facet(ch,i)) ==
-      compute_anchor_obj.anchor_del(Facet(ch,i)));
+           compute_anchor_obj.anchor_del(Facet(ch,i)));
     assert(Simplex(Facet(ch,i)) ==
-      compute_anchor_obj.anchor_vor(Facet(ch,i)));
+           compute_anchor_obj.anchor_vor(Facet(ch,i)));
     for (int j=i+1; j<4; j++) {
       assert(Simplex(Edge(ch,i,j)) ==
-	compute_anchor_obj.anchor_del(Edge(ch,i,j)));
+             compute_anchor_obj.anchor_del(Edge(ch,i,j)));
       assert(Simplex(Edge(ch,i,j)) ==
-	compute_anchor_obj.anchor_vor(Edge(ch,i,j)));
+             compute_anchor_obj.anchor_vor(Edge(ch,i,j)));
     }
     assert(Simplex(ch) == compute_anchor_obj.anchor_del(ch));
     assert(Simplex(ch) == compute_anchor_obj.anchor_vor(ch));
@@ -90,17 +91,17 @@ void test_anchor_del() {
 
   // Anchor of a Delaunay edge/facet/cell on a vertex
   assert(Simplex(vh[0]) ==
-    compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+1)&3)));
+      compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+1)&3)));
   assert(Simplex(vh[0]) ==
-    compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+2)&3)));
+      compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+2)&3)));
   assert(Simplex(vh[0]) ==
-    compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+3)&3)));
+      compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+3)&3)));
   assert(Simplex(vh[0]) ==
-    compute_anchor_obj.anchor_del(Facet(ch,(index1+1)&3)));
+      compute_anchor_obj.anchor_del(Facet(ch,(index1+1)&3)));
   assert(Simplex(vh[0]) ==
-    compute_anchor_obj.anchor_del(Facet(ch,(index1+2)&3)));
+      compute_anchor_obj.anchor_del(Facet(ch,(index1+2)&3)));
   assert(Simplex(vh[0]) ==
-    compute_anchor_obj.anchor_del(Facet(ch,(index1+3)&3)));
+      compute_anchor_obj.anchor_del(Facet(ch,(index1+3)&3)));
   assert(Simplex(vh[0]) == compute_anchor_obj.anchor_del(ch));
   reg.clear();
 
@@ -114,11 +115,11 @@ void test_anchor_del() {
 
   // Anchor of a Delaunay facet/cell on an edge
   assert(Simplex(Edge(ch,index1,index2)) ==
-    compute_anchor_obj.anchor_del(Facet(ch,ch->index(vh[2]))));
+         compute_anchor_obj.anchor_del(Facet(ch,ch->index(vh[2]))));
   assert(Simplex(Edge(ch,index1,index2)) ==
-    compute_anchor_obj.anchor_del(Facet(ch,ch->index(vh[3]))));
+         compute_anchor_obj.anchor_del(Facet(ch,ch->index(vh[3]))));
   assert(Simplex(Edge(ch,index1,index2)) ==
-    compute_anchor_obj.anchor_del(ch));
+         compute_anchor_obj.anchor_del(ch));
   reg.clear();
 
   vh[0] = reg.insert(Weighted_point(Point(0,0,0), 1));
@@ -129,14 +130,12 @@ void test_anchor_del() {
   index1 = ch->index(vh[0]);
 
   // Anchor of a Delaunay cell on an facet
-  assert(Simplex(Facet(ch,index1)) ==
-    compute_anchor_obj.anchor_del(ch));
+  assert(Simplex(Facet(ch,index1)) == compute_anchor_obj.anchor_del(ch));
   reg.clear();
-
 }
 
-int main(int, char **) {
-
+int main(int, char **)
+{
   test_anchor_del();
 
 //   Regular regular;
@@ -159,11 +158,11 @@ int main(int, char **) {
 //       yExtr[i] = y + (-1+2*i)*std::sqrt(w);
 //       zExtr[i] = z + (-1+2*i)*std::sqrt(w);
 //     }
-		
+
 //     while (in >> x >> y >> z >> w) {
 //       //std::cerr << x << " " << y << " " << z << " " << w << std::endl;
 //       regular.insert(Weighted_point(Point(x,y,z),w));
-			
+
 //       if (w<0) w=0.01;
 //       xExtr[0] = std::min(xExtr[0], x - std::sqrt(w));
 //       yExtr[0] = std::min(yExtr[0], y - std::sqrt(w));
@@ -177,14 +176,14 @@ int main(int, char **) {
 //     double boxSize = 1 + 2.05/(shrink * (1-shrink))*
 //       std::max((xExtr[1]-xExtr[0]),
 // 	std::max((yExtr[1]-yExtr[0]),(zExtr[1]-zExtr[0])));
-		
+
 //     regular.insert(Weighted_point(Point(xExtr[0]-boxSize,0,0),-1));
 //     regular.insert(Weighted_point(Point(xExtr[1]+boxSize,0,0),-1));
 //     regular.insert(Weighted_point(Point(0,yExtr[0]-boxSize,0),-1));
 //     regular.insert(Weighted_point(Point(0,yExtr[1]+boxSize,0),-1));
 //     regular.insert(Weighted_point(Point(0,0,zExtr[0]-boxSize),-1));
 //     regular.insert(Weighted_point(Point(0,0,zExtr[1]+boxSize),-1));
-		
+
 //     assert( regular.is_valid() );
 //     assert( regular.dimension() == 3 );
 //   }
@@ -209,7 +208,7 @@ int main(int, char **) {
   // 	// subdivision engine
   // 	Sqrt3Method subdivider(simplicial, mesh);
   // 	subdivider.subdivide(2);
-	
+
   // 	{
   // 		std::ofstream out("out/sqrt.off");
   // 		out << mesh;
