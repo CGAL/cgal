@@ -958,6 +958,12 @@ public:
     return Intersect_2();
   }
 
+  Construct_point_2 construct_point_2_object() const
+  { return Construct_point_2();}
+
+  Construct_weighted_point_2 construct_weighted_point_2_object() const
+  { return Construct_weighted_point_2();}
+
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}
 

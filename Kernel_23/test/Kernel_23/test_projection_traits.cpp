@@ -34,6 +34,11 @@ int main()
 
   assert( k.compute_squared_length_2_object()(v3) == v2.squared_length() );
 
+  assert( p3 == k.construct_point_2_object()(p3) );
+  assert( p3 == k.construct_point_2_object()(wp3) );
+  assert( wp3 == k.construct_weighted_point_2_object()(p3, 1) );
+  assert( wp3 == k.construct_weighted_point_2_object()(wp3) );
+
   assert( k.compare_power_distance_2_object()(p3, wq3, wr3) ==
            CGAL::compare_power_distance(p2, wq2, wr2) );
 
