@@ -581,8 +581,8 @@ function(test_segment_traits_adaptor)
 
   compile_test_with_flags(test_traits_adaptor segments "${flags}")
 #  if [ -n "${SUCCESS}" ] ; then
-  execute_commands_traits_adaptor( segments segments_traits_adaptor 
-    COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT 
+  execute_commands_traits_adaptor( segments segments_traits_adaptor
+    COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT
     ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW)
 endfunction()
 
@@ -597,8 +597,8 @@ function(test_linear_traits_adaptor)
 
   compile_test_with_flags( test_traits_adaptor linear "${flags}")
 
-  execute_commands_traits_adaptor( linear linear_traits_adaptor 
-    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE 
+  execute_commands_traits_adaptor( linear linear_traits_adaptor
+    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
 
@@ -614,8 +614,8 @@ function(test_spherical_arcs_traits_adaptor)
 
   compile_test_with_flags( test_traits_adaptor geodesic_arcs_on_sphere "${flags}")
 
-  execute_commands_traits_adaptor( spherical_arcs spherical_arcs_traits_adaptor 
-    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE 
+  execute_commands_traits_adaptor( spherical_arcs spherical_arcs_traits_adaptor
+    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
 
@@ -1365,3 +1365,5 @@ compile_and_run(test_unbounded_removal)
 compile_and_run(test_spherical_removal)
 
 compile_and_run(test_io)
+
+compile_and_run(test_sgm)
