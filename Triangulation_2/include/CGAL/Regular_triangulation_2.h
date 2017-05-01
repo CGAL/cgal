@@ -30,6 +30,8 @@
 #include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
+#include <boost/property_map/function_property_map.hpp>
+#include <boost/utility/result_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -393,7 +395,17 @@ public:
     size_type n = number_of_vertices();
 
     std::vector<Weighted_point> points(first, last);
-    spatial_sort(points.begin(), points.end(), geom_traits());
+
+    // spatial sorting must use bare points, so we need an adapter
+    typedef typename Geom_traits::Construct_point_2 Construct_point_2;
+    typedef typename boost::result_of<const Construct_point_2(const Weighted_point&)>::type Ret;
+    typedef boost::function_property_map<Construct_point_2, Weighted_point, Ret> fpmap;
+    typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
+
+    spatial_sort(points.begin(), points.end(),
+                 Search_traits_2(
+                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_2>(
+                     geom_traits().construct_point_2_object()), geom_traits()));
 
     Face_handle hint;
     for(typename std::vector<Weighted_point>::const_iterator p = points.begin(),
@@ -416,6 +428,23 @@ private:
   template <class Info>
   const Info& top_get_second(const boost::tuple<Weighted_point,Info>& tuple) const { return boost::get<1>(tuple); }
 
+  // Functor to go from an index of a container of Weighted_point to
+  // the corresponding Bare_point
+  template<class Construct_bare_point, class Container>
+  struct Index_to_Bare_point
+  {
+    const Bare_point& operator()(const std::size_t& i) const
+    {
+      return cp(c[i]);
+    }
+
+    Index_to_Bare_point(const Container& c, const Construct_bare_point& cp)
+      : c(c), cp(cp) { }
+
+    const Container& c;
+    const Construct_bare_point cp;
+  };
+
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
@@ -431,12 +460,21 @@ private:
       indices.push_back(index++);
     }
 
-    typedef typename Pointer_property_map<Weighted_point>::type Pmap;
-    typedef Spatial_sort_traits_adapter_2<Geom_traits,Pmap> Search_traits;
+    // We need to sort the points and their info at the same time through
+    // the `indices` vector AND spatial sort can only handle Gt::Point_2.
+    typedef typename Geom_traits::Construct_point_2 Construct_point_2;
+    typedef Index_to_Bare_point<Construct_point_2,
+                                const std::vector<Weighted_point>&> Access_bare_point;
+    typedef typename boost::result_of<const Construct_point_2(const Weighted_point&)>::type Ret;
+    typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+    typedef CGAL::Spatial_sort_traits_adapter_2<Gt, fpmap> Search_traits_2;
 
-    spatial_sort(indices.begin(),
-                 indices.end(),
-                 Search_traits(make_property_map(points),geom_traits()));
+    Access_bare_point accessor(points, geom_traits().construct_point_2_object());
+    spatial_sort(indices.begin(), indices.end(),
+                 Search_traits_2(
+                   boost::make_function_property_map<
+                     std::size_t, Ret, Access_bare_point>(accessor),
+                   geom_traits()));
 
     Face_handle hint;
     Vertex_handle v_hint;
