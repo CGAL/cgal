@@ -295,6 +295,17 @@ public:
     }
 };
 
+class Triangulation_test_Construct_point_2
+{
+public:
+  typedef Triangulation_test_point     Point;
+
+  const Point& operator()(const Point &p) const
+    {
+      return p;
+    }
+};
+
 class Triangulation_test_Construct_segment_2
 {
 public:
@@ -390,6 +401,7 @@ public:
                                              Construct_midpoint;
   typedef Triangulation_test_Compare_distance_2 
                                              Compare_distance_2;
+  typedef Triangulation_test_Construct_point_2     Construct_point_2;
   typedef Triangulation_test_Construct_segment_2   Construct_segment_2;
   typedef Triangulation_test_Construct_triangle_2  Construct_triangle_2;
   typedef Triangulation_test_Construct_direction_2 Construct_direction_2;
@@ -440,6 +452,10 @@ public:
   Compare_distance_2
   compare_distance_2_object() const
     {return Compare_distance_2();}
+
+  Construct_point_2
+  construct_point_2_object() const
+    { return Construct_point_2();}
 
   Construct_segment_2
   construct_segment_2_object() const
