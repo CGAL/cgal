@@ -29,11 +29,12 @@
 #include <CGAL/basic.h>
 
 #include <set>
+
+#include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/bind.hpp>
-
-#include <CGAL/property_map.h>
+#include <boost/property_map/function_property_map.hpp>
+#include <boost/utility/result_of.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
@@ -256,20 +257,15 @@ namespace CGAL {
           points_on_far_sphere.push_back(cwp(*random_point + center));
 
         // Spatial sorting can only be applied to bare points, so we need an adaptor
-        // @todo Unary_function_to_property_map makes a copy (get() returns a value_type) but
-        // we could hope to get a const & to the bare point. Unfortunately, the lazy
-        // kernel creates temporaries and prevent it.
-        typedef typename Gt::Construct_point_3 Construct_point_3;
-        typedef CGAL::Unary_function_to_property_map<
-                  Weighted_point, Construct_point_3, Bare_point> Pmap;
-        typedef CGAL::Spatial_sort_traits_adapter_3<Gt, Pmap> Search_traits_3;
+        typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+        typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+        typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+        typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
         spatial_sort(points_on_far_sphere.begin(), points_on_far_sphere.end(),
                      Search_traits_3(
-                       CGAL::make_unary_function_to_property_map<
-                         Weighted_point, Construct_point_3, Bare_point>(
-                           geom_traits().construct_point_3_object()),
-                       geom_traits()));
+                       boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                           geom_traits().construct_point_3_object()), geom_traits()));
 
         typename std::vector<Weighted_point>::const_iterator it_p =
           points_on_far_sphere.begin();
@@ -339,17 +335,15 @@ namespace CGAL {
       // @todo Unary_function_to_property_map makes a copy (get() returns a value_type) but
       // we could hope to get a const & to the bare point. Unfortunately, the lazy
       // kernel creates temporaries and prevent it.
-      typedef typename Gt::Construct_point_3 Construct_point_3;
-      typedef CGAL::Unary_function_to_property_map<
-                Weighted_point, Construct_point_3, Bare_point> Pmap;
-      typedef CGAL::Spatial_sort_traits_adapter_3<Gt, Pmap> Search_traits_3;
+      typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+      typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+      typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+      typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
       spatial_sort(points.begin(), points.end(),
                    Search_traits_3(
-                     CGAL::make_unary_function_to_property_map<
-                       Weighted_point, Construct_point_3, Bare_point>(
-                         geom_traits().construct_point_3_object()),
-                     geom_traits()));
+                     boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                         geom_traits().construct_point_3_object()), geom_traits()));
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
@@ -461,22 +455,18 @@ namespace CGAL {
 
       // We need to sort the points and their info at the same time through
       // the `indices` vector AND spatial sort can only handle Gt::Point_3.
-
-      // @todo Unary_function_to_property_map makes a copy (get() returns a value_type) but
-      // we could hope to get a const & to the bare point. Unfortunately, the lazy
-      // kernel creates temporaries and prevent it.
-      typedef Index_to_Bare_point<typename Gt::Construct_point_3,
+      typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+      typedef Index_to_Bare_point<Construct_point_3,
                                   const std::vector<Weighted_point>&> Access_bare_point;
-      typedef CGAL::Unary_function_to_property_map<
-                std::size_t, Access_bare_point, Bare_point> Pmap;
-      typedef CGAL::Spatial_sort_traits_adapter_3<Gt, Pmap> Search_traits_3;
+      typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+      typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+      typedef CGAL::Spatial_sort_traits_adapter_3<Gt, fpmap> Search_traits_3;
 
       Access_bare_point accessor(points, geom_traits().construct_point_3_object());
-
       spatial_sort(indices.begin(), indices.end(),
                    Search_traits_3(
-                     CGAL::make_unary_function_to_property_map<
-                       std::size_t, Access_bare_point, Bare_point>(accessor),
+                     boost::make_function_property_map<
+                       std::size_t, Ret, Access_bare_point>(accessor),
                      geom_traits()));
 
 #ifdef CGAL_LINKED_WITH_TBB
