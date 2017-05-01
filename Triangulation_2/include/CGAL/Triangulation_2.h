@@ -37,11 +37,14 @@
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
 #include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_2.h>
 
+#include <boost/utility/result_of.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/property_map/function_property_map.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
@@ -578,7 +581,17 @@ std::ptrdiff_t insert(InputIterator first, InputIterator last)
   size_type n = number_of_vertices();
 
   std::vector<Point> points (first, last);
-  spatial_sort (points.begin(), points.end(), geom_traits());
+
+  typedef typename Geom_traits::Construct_point_2 Construct_point_2;
+  typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
+  typedef boost::function_property_map<Construct_point_2, Point, Ret> fpmap;
+  typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
+
+  spatial_sort(points.begin(), points.end(),
+               Search_traits_2(
+                 boost::make_function_property_map<Point, Ret, Construct_point_2>(
+                   geom_traits().construct_point_2_object()), geom_traits()));
+
   Face_handle f;
   for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
           p != end; ++p)
