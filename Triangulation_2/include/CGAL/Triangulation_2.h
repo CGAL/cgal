@@ -3479,7 +3479,7 @@ void
 Triangulation_2<Gt, Tds>::
 show_all() const
 {
-  std::cerr<< "AFFICHE TOUTE LA TRIANGULATION :"<<std::endl;
+  std::cerr<< "PRINT THE COMPLETE TRIANGULATION :"<<std::endl;
   std::cerr << std::endl<<"====> "<< this;
   std::cerr <<  " dimension " << dimension() << std::endl;
   std::cerr << "nb of vertices " << number_of_vertices() << std::endl;
@@ -3494,25 +3494,25 @@ show_all() const
     return;
   }
 
-  std::cerr<<" faces finies "<<std::endl;
+  std::cerr<<" finite faces "<<std::endl;
   Finite_faces_iterator fi;
   for(fi = finite_faces_begin(); fi != finite_faces_end(); fi++) {
     show_face(fi);
   }
 
-  std::cerr <<" faces infinies "<<std::endl;
+  std::cerr <<" infinite faces "<<std::endl;
   All_faces_iterator afi;
   for(afi = all_faces_begin(); afi != all_faces_end(); afi++) {
     if(is_infinite(afi)) show_face(afi);
   }
 
   if (number_of_vertices()>1) {
-    std::cerr << "affichage des sommets de la triangulation reguliere"
+    std::cerr << "print vertices of the regular triangulation"
         <<std::endl;
     All_vertices_iterator vi;
     for( vi = all_vertices_begin(); vi != all_vertices_end(); vi++){
       show_vertex(vi);
-      std::cerr << "  / face associee : "
+      std::cerr << "  / associated face: "
        << (void*)(&(*(vi->face())))<< std::endl;;
       }
       std::cerr<<std::endl;
@@ -3540,40 +3540,40 @@ show_face(Face_handle fh) const
   switch(i){
   case 0:
     std::cerr <<"point :" ; show_vertex(fh->vertex(0));
-    std::cerr <<" / voisin " << &(*(fh->neighbor(0)));
+    std::cerr <<" / neighbor " << &(*(fh->neighbor(0)));
     std::cerr <<"[" ; show_vertex(fh->neighbor(0)->vertex(0));
     std::cerr <<"]"  << std::endl;
     break;
   case 1:
      std::cerr <<"point :" ; show_vertex(fh->vertex(0));
-     std::cerr <<" / voisin " << &(*(fh->neighbor(0)));
+     std::cerr <<" / neighbor " << &(*(fh->neighbor(0)));
      std::cerr <<"[" ; show_vertex(fh->neighbor(0)->vertex(0));
      std::cerr <<"/" ; show_vertex(fh->neighbor(0)->vertex(1));
      std::cerr <<"]" <<std::endl;
 
      std::cerr <<"point :" ; show_vertex(fh->vertex(1));
-     std::cerr <<" / voisin " << &(*(fh->neighbor(1)));
+     std::cerr <<" / neighbor " << &(*(fh->neighbor(1)));
      std::cerr <<"[" ; show_vertex(fh->neighbor(1)->vertex(0));
      std::cerr <<"/" ; show_vertex(fh->neighbor(1)->vertex(1));
      std::cerr <<"]" <<std::endl;
      break;
   case 2:
     std::cerr <<"point :" ; show_vertex(fh->vertex(0));
-    std::cerr <<" / voisin " << &(*(fh->neighbor(0)));
+    std::cerr <<" / neighbor " << &(*(fh->neighbor(0)));
     std::cerr <<"[" ; show_vertex(fh->neighbor(0)->vertex(0));
     std::cerr <<"/" ; show_vertex(fh->neighbor(0)->vertex(1));
     std::cerr <<"/" ; show_vertex(fh->neighbor(0)->vertex(2));
     std::cerr <<"]" <<std::endl;
 
     std::cerr <<"point :" ; show_vertex(fh->vertex(1));
-    std::cerr <<" / voisin " << &(*(fh->neighbor(1)));
+    std::cerr <<" / neighbor " << &(*(fh->neighbor(1)));
     std::cerr <<"[" ; show_vertex(fh->neighbor(1)->vertex(0));
     std::cerr <<"/" ; show_vertex(fh->neighbor(1)->vertex(1));
     std::cerr <<"/" ; show_vertex(fh->neighbor(1)->vertex(2));
     std::cerr <<"]" <<std::endl;
 
     std::cerr <<"point :" ; show_vertex(fh->vertex(2));
-    std::cerr <<" / voisin " << &(*(fh->neighbor(2)));
+    std::cerr <<" / neighbor " << &(*(fh->neighbor(2)));
     std::cerr <<"[" ; show_vertex(fh->neighbor(2)->vertex(0));
     std::cerr <<"/" ; show_vertex(fh->neighbor(2)->vertex(1));
     std::cerr <<"/" ; show_vertex(fh->neighbor(2)->vertex(2));
