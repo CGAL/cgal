@@ -43,7 +43,6 @@
 # include <tbb/concurrent_vector.h>
 #endif
 
-
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
@@ -1850,7 +1849,7 @@ namespace CGAL {
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
 
-    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*
+    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*.
     // `result_of` is used to go around the way the Lazy kernel works
     // (simply grabbing it as a `const Bare_point&` would not work)
     std::sort(points, points + 5,
@@ -1969,7 +1968,7 @@ namespace CGAL {
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
 
-    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*
+    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*.
     // `result_of` is used to go around the way the Lazy kernel works
     // (simply grabbing it as a `const Bare_point&` would not work)
     std::sort(points, points + 4,

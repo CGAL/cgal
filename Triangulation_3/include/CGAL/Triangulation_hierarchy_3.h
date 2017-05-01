@@ -44,6 +44,9 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/if.hpp>
+
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
@@ -70,7 +73,6 @@ public:
   typedef Tr                                   Tr_Base;
   typedef Fast_location                        Location_policy;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
-  typedef typename Tr_Base::Point              Point;
   typedef typename Tr_Base::size_type          size_type;
   typedef typename Tr_Base::Vertex_handle      Vertex_handle;
   typedef typename Tr_Base::Cell_handle        Cell_handle;
@@ -81,6 +83,9 @@ public:
   typedef typename Tr_Base::Finite_cells_iterator     Finite_cells_iterator;
   typedef typename Tr_Base::Finite_facets_iterator    Finite_facets_iterator;
   typedef typename Tr_Base::Finite_edges_iterator     Finite_edges_iterator;
+
+  // this may be weighted or not
+  typedef typename Tr_Base::Point              Point;
 
   using Tr_Base::number_of_vertices;
   using Tr_Base::geom_traits;
