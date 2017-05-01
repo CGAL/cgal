@@ -1574,9 +1574,10 @@ namespace CGAL {
 
     Locate_type lt;
     int li, lj;
-    // I put the cast here temporarily
-    // until we solve the traits class pb of regular triangulation
-    Cell_handle c = locate(static_cast<Weighted_point>(p), lt, li, lj, start);
+
+    typename Gt::Construct_weighted_point_3 p2wp =
+      geom_traits().construct_weighted_point_3_object();
+    Cell_handle c = locate(p2wp(p), lt, li, lj, start);
 
     // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
