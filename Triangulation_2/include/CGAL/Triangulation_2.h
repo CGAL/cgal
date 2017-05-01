@@ -88,7 +88,11 @@ class Triangulation_2
 public:
   typedef Tds                                 Triangulation_data_structure;
   typedef Gt                                  Geom_traits;
-  typedef typename Geom_traits::Point_2       Point;
+
+  // point types
+  typedef typename Gt::Point_2                Point_2;
+  typedef typename Tds::Vertex::Point         Point;
+
   typedef typename Geom_traits::Segment_2     Segment;
   typedef typename Geom_traits::Triangle_2    Triangle;
   typedef typename Geom_traits::Orientation_2 Orientation_2;
@@ -259,6 +263,7 @@ public:
                Face_handle &fr) const;
 
   // GEOMETRIC FEATURES AND CONSTRUCTION
+  Point_2 construct_point(const Point& p) const;
   Triangle triangle(Face_handle f) const;
   Segment segment(Face_handle f, int i) const;
   Segment segment(const Edge& e) const;
@@ -937,6 +942,14 @@ is_face(Vertex_handle v1,
 }
 
 template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Point_2
+Triangulation_2<Gt, Tds>::
+construct_point(const Point& p) const
+{
+  return geom_traits().construct_point_2_object()(p);
+}
+
+template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Triangle
 Triangulation_2<Gt, Tds>::
 triangle(Face_handle f) const
@@ -944,9 +957,9 @@ triangle(Face_handle f) const
   CGAL_triangulation_precondition( ! is_infinite(f) );
   typename Gt::Construct_triangle_2
       construct_triangle = geom_traits().construct_triangle_2_object();
-  return construct_triangle(f->vertex(0)->point(),
-                            f->vertex(1)->point(),
-                            f->vertex(2)->point());
+  return construct_triangle(construct_point(f->vertex(0)->point()),
+                            construct_point(f->vertex(1)->point()),
+                            construct_point(f->vertex(2)->point()));
 }
 
 template <class Gt, class Tds >
@@ -957,8 +970,8 @@ segment(Face_handle f, int i) const
   CGAL_triangulation_precondition( ! is_infinite(f,i));
   typename Gt::Construct_segment_2
       construct_segment = geom_traits().construct_segment_2_object();
-  return construct_segment(f->vertex(ccw(i))->point(),
-                           f->vertex(cw(i))->point());
+  return construct_segment(construct_point(f->vertex(ccw(i))->point()),
+                           construct_point(f->vertex(cw(i))->point()));
 }
 
 template <class Gt, class Tds >
@@ -969,8 +982,8 @@ segment(const Edge& e) const
   CGAL_triangulation_precondition(! is_infinite(e));
   typename Gt::Construct_segment_2
       construct_segment = geom_traits().construct_segment_2_object();
-  return construct_segment(e.first->vertex(ccw(e.second))->point(),
-                           e.first->vertex( cw(e.second))->point());
+  return construct_segment(construct_point(e.first->vertex(ccw(e.second))->point()),
+                           construct_point(e.first->vertex( cw(e.second))->point()));
 }
 
 template <class Gt, class Tds >
@@ -1892,12 +1905,10 @@ void
 Triangulation_2<Gt,Tds>::
 fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
 {
-  typedef typename Gt::Orientation_2             Orientation_2;
   typedef typename Gt::Side_of_oriented_circle_2 In_circle;
   typedef std::list<Edge>                        Hole;
   typedef std::list<Hole>                        Hole_list;
 
-  Orientation_2 orientation_2 = geom_traits().orientation_2_object();
   In_circle in_circle = geom_traits().side_of_oriented_circle_2_object();
 
   Face_handle f, ff, fn;
@@ -1954,7 +1965,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
         if(is_infinite(v2)) cut_after = hit;
       } else {     // vv is a finite vertex
         const Point & p = vv->point();
-        if (orientation_2(p0,p1,p) == CGAL::COUNTERCLOCKWISE) {
+        if (orientation(p0,p1,p) == CGAL::COUNTERCLOCKWISE) {
           if (is_infinite(v2)) { v2 = vv; cut_after = hit;}
           else{
             if (in_circle(p0,p1,v2->point(),p) == CGAL::ON_POSITIVE_SIDE){
@@ -3297,8 +3308,9 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
   // no reason for such precondition and it invalidates fast removal in Delaunay
 
   typename Gt::Side_of_oriented_circle_2 pred = geom_traits().side_of_oriented_circle_2_object();
-  Oriented_side os =
-      pred(p0, p1, p2, p);
+  Oriented_side os = pred(construct_point(p0), construct_point(p1),
+                          construct_point(p2), construct_point(p));
+
   if ((os != ON_ORIENTED_BOUNDARY) || (! perturb))
     return os;
 
@@ -3334,13 +3346,6 @@ Triangulation_2<Gt,Tds>::
 side_of_oriented_circle(Face_handle f, const Point & p, bool perturb) const
 {
   if ( ! is_infinite(f) ) {
-    /*
-    typename Gt::Side_of_oriented_circle_2
-      in_circle = geom_traits().side_of_oriented_circle_2_object();
-    return in_circle(f->vertex(0)->point(),
-         f->vertex(1)->point(),
-         f->vertex(2)->point(),p);
-    */
     return this->side_of_oriented_circle(f->vertex(0)->point(),
                                          f->vertex(1)->point(),
                                          f->vertex(2)->point(),p, perturb);
@@ -3384,7 +3389,8 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_x(const Point& p, const Point& q) const
 {
-  return geom_traits().compare_x_2_object()(p,q);
+  return geom_traits().compare_x_2_object()(construct_point(p),
+                                            construct_point(q));
 }
 
 template <class Gt, class Tds >
@@ -3393,9 +3399,11 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_xy(const Point& p, const Point& q) const
 {
-  Comparison_result res = geom_traits().compare_x_2_object()(p,q);
+  Comparison_result res = geom_traits().compare_x_2_object()(construct_point(p),
+                                                             construct_point(q));
   if(res == EQUAL){
-    return geom_traits().compare_y_2_object()(p,q);
+    return geom_traits().compare_y_2_object()(construct_point(p),
+                                              construct_point(q));
   }
   return res;
 }
@@ -3406,7 +3414,8 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_y(const Point& p, const Point& q) const
 {
-  return geom_traits().compare_y_2_object()(p,q);
+  return geom_traits().compare_y_2_object()(construct_point(p),
+                                            construct_point(q));
 }
 
 template <class Gt, class Tds >
@@ -3424,7 +3433,9 @@ Orientation
 Triangulation_2<Gt, Tds>::
 orientation(const Point& p, const Point& q,const Point& r ) const
 {
-  return geom_traits().orientation_2_object()(p,q,r);
+  return geom_traits().orientation_2_object()(construct_point(p),
+                                              construct_point(q),
+                                              construct_point(r));
 }
 
 template<class Gt, class Tds>
@@ -3434,7 +3445,9 @@ Triangulation_2<Gt,Tds>::
 circumcenter(const Point& p0, const Point& p1, const Point& p2) const
 {
   return
-    geom_traits().construct_circumcenter_2_object()(p0,p1,p2);
+    geom_traits().construct_circumcenter_2_object()(construct_point(p0),
+                                                    construct_point(p1),
+                                                    construct_point(p2));
 }
 
 template <class Gt, class Tds >
@@ -3443,11 +3456,9 @@ Triangulation_2<Gt, Tds>::
 circumcenter(Face_handle f) const
 {
   CGAL_triangulation_precondition (dimension()==2);
-  // typename Gt::Construct_circumcenter_2
-//     circumcenter = geom_traits().construct_circumcenter_2_object();
   return circumcenter((f->vertex(0))->point(),
-          (f->vertex(1))->point(),
-          (f->vertex(2))->point());
+                      (f->vertex(1))->point(),
+                      (f->vertex(2))->point());
 }
 
 template <class Gt, class Tds >
