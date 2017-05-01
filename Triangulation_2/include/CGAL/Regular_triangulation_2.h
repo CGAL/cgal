@@ -42,149 +42,20 @@
 
 namespace CGAL {
 
-template < typename K_ >
-struct Weighted_point_mapper_2
-  :   public K_
-{
-  typedef typename K_::Weighted_point_2 Point_2;
-
-  Weighted_point_mapper_2() {}
-  Weighted_point_mapper_2(const K_& k) : K_(k) {}
-};
-
-  namespace internal {
-template < typename K_ >
-struct RegTraits_2
-  :   public K_
-{
-  typedef typename K_::Construct_point_2 Construct_point_2_base;
-  typedef typename K_::Construct_segment_2 Construct_segment_2_base;
-  typedef typename K_::Construct_triangle_2 Construct_triangle_2_base;
-  typedef typename K_::Construct_vector_2 Construct_vector_2_base;
-  typedef typename K_::Equal_2 Equal_2_base;
-  typedef typename K_::Compare_x_2 Compare_x_2_base;
-  typedef typename K_::Compare_y_2 Compare_y_2_base;
-  typedef typename K_::Orientation_2 Orientation_2_base;
-  typedef typename K_::Construct_circumcenter_2 Construct_circumcenter_2_base;
-  typedef typename K_::Less_x_2 Less_x_2_base;
-  typedef typename K_::Less_y_2 Less_y_2_base;
-
-
-  Construct_point_2_base cp;
-
-  RegTraits_2() {}
-  RegTraits_2(const K_& k)
-    : K_(k), cp(k.construct_point_2_object())
-  {}
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Equal_2_base > Equal_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Construct_vector_2_base > Construct_vector_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Compare_x_2_base > Compare_x_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Compare_y_2_base > Compare_y_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Orientation_2_base > Orientation_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Construct_circumcenter_2_base > Construct_circumcenter_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Construct_triangle_2_base > Construct_triangle_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Construct_segment_2_base > Construct_segment_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Less_x_2_base > Less_x_2;
-
-  typedef Regular_traits_adaptor_2<K_,
-                                 Construct_point_2_base,
-                                 Less_y_2_base > Less_y_2;
-
-  Construct_vector_2 construct_vector_2_object() const
-  {
-    return  Construct_vector_2(cp, static_cast<const K_&>(*this).construct_vector_2_object());
-  }
-
-  Construct_triangle_2 construct_triangle_2_object() const
-  {
-    return  Construct_triangle_2(cp, static_cast<const K_&>(*this).construct_triangle_2_object());
-  }
-
-  Construct_segment_2 construct_segment_2_object() const
-  {
-    return  Construct_segment_2(cp, static_cast<const K_&>(*this).construct_segment_2_object());
-  }
-
-  Equal_2 equal_2_object() const
-  {
-    return  Equal_2(cp, static_cast<const K_&>(*this).equal_2_object());
-  }
-
-  Compare_x_2 compare_x_2_object() const
-  {
-    return  Compare_x_2(cp, static_cast<const K_&>(*this).compare_x_2_object());
-  }
-
-  Compare_y_2 compare_y_2_object() const
-  {
-    return  Compare_y_2(cp, static_cast<const K_&>(*this).compare_y_2_object());
-  }
-
-  Orientation_2 orientation_2_object() const
-  {
-    return  Orientation_2(cp, static_cast<const K_&>(*this).orientation_2_object());
-  }
-
-  Construct_circumcenter_2 construct_circumcenter_2_object() const
-  {
-    return  Construct_circumcenter_2(cp, static_cast<const K_&>(*this).construct_circumcenter_2_object());
-  }
-
-  Less_x_2 less_x_2_object() const
-  {
-    return  Less_x_2(cp, static_cast<const K_&>(*this).less_x_2_object());
-  }
-
-  Less_y_2 less_y_2_object() const
-  {
-    return  Less_y_2(cp, static_cast<const K_&>(*this).less_y_2_object());
-  }
-};
-
-  } // namespace internal
-
 template < class Gt,
            class Tds  = Triangulation_data_structure_2 <
                           Regular_triangulation_vertex_base_2<Gt>,
                           Regular_triangulation_face_base_2<Gt> > >
 class Regular_triangulation_2
-  : public Triangulation_2<Weighted_point_mapper_2<internal::RegTraits_2<Gt> >,
-                           Tds>
+  : public Triangulation_2<Gt, Tds>
 {
   typedef Regular_triangulation_2<Gt, Tds>                         Self;
-  typedef Weighted_point_mapper_2<internal::RegTraits_2<Gt> >      RT_traits;
-  typedef Triangulation_2<RT_traits, Tds>                          Base;
+  typedef Triangulation_2<Gt, Tds>                                 Base;
+
 public:
   typedef Self                                 Triangulation;
   typedef Tds                                  Triangulation_data_structure;
-  typedef internal::RegTraits_2<Gt>            Geom_traits;
+  typedef Gt                                   Geom_traits;
 
   // Traits are not supposed to define Bare_point, but leaving below
   // for backward compatibility
@@ -337,14 +208,14 @@ public:
     : Base(), _hidden_vertices(0) {}
 
   Regular_triangulation_2(const Gt& gt)
-    : Base(RT_traits(gt)), _hidden_vertices(0) {}
+    : Base(gt), _hidden_vertices(0) {}
 
   Regular_triangulation_2(const Regular_triangulation_2 &rt);
 
   template < class InputIterator >
   Regular_triangulation_2(InputIterator first, InputIterator last,
                           const Gt& gt)
-    : Base(RT_traits(gt)), _hidden_vertices(0)
+    : Base(gt), _hidden_vertices(0)
   {
     insert(first, last);
   }
