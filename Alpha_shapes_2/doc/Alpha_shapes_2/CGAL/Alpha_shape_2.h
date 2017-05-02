@@ -27,6 +27,16 @@ kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_
 overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
 the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
 
+\warning The tag `ExactAlphaComparisonTag` is currently ignored (that is, the code will
+ behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
+if the traits defines a point type that is not implicitely convertible to the two-dimensional point type
+of a CGAL kernel. This is because we internally use the class Cartesian_converter to switch
+ between the traits and exact CGAL kernels. <br>
+This means for example that it is useless to use the tag `ExactAlphaComparisonTag`
+in conjonction with the traits class `CGAL::Projection_traits_xy_3`: the latter
+camouflages a `CGAL::Point_3` as a `%Point_2` but the exact kernel `EK`
+will not know how to convert from the camouflaged `CGAL::Point_3` to `EK::Point_2`.
+
 The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite
 the one inherited from the underlying triangulation class `Dt`.
 At the moment, only the static version is implemented.
