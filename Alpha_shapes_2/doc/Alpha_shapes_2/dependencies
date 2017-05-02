@@ -4,5 +4,6 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
+Periodic_2_triangulation_2
 Triangulation_2
 Number_types
