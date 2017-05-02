@@ -150,6 +150,7 @@ public Q_SLOTS:
             {
               delete new_poly;
               messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+              QApplication::restoreOverrideCursor();
               return;
             }
             str_op = "Union";
@@ -160,6 +161,7 @@ public Q_SLOTS:
             {
               delete new_poly;
               messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+              QApplication::restoreOverrideCursor();
               return;
             }
             str_op = "Intersection";
@@ -172,6 +174,7 @@ public Q_SLOTS:
             {
               delete new_poly;
               messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+              QApplication::restoreOverrideCursor();
               return;
             }
             str_op = "Difference";
