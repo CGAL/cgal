@@ -125,17 +125,18 @@ triangulation. A model that works for a weighted alpha-shape is
 the class `Regular_triangulation_2`.
 
 The triangulation needs a geometric traits class as argument.
-The requirements of this class are described in the 
-concept `AlphaShapeTraits_2` for which
-the \cgal kernels
-and `Weighted_alpha_shape_euclidean_traits_2` are models.
+The requirements of this class are described in the concepts `AlphaShapeTraits_2`
+in the non-weighted case and `WeightedAlphaShapeTraits_2` in the weighted case.
+All \cgal kernels are models of both concepts.
 
 There are no requirements on the triangulation data structure.
 However it must be parameterized with 
-vertex and face classes, which are model of the concepts
-`AlphaShapeVertex_2` and `AlphaShapeFace_2`,
-by default the classes `Alpha_shape_vertex_base_2<Gt>` 
-and `Alpha_shape_face_base_2<Gt>`.
+vertex and face classes which are models of the concepts
+`AlphaShapeVertex_2` and `AlphaShapeFace_2`.
+The classes `Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt, Fb>`
+are models of these concepts and can be used for either type of alpha shapes,
+provided that the template parameters `Vb` and `Fb` are appropriately chosen,
+as we shall see in the following section.
 
 \section Alpha_shapes_2Examples Examples
 
@@ -150,19 +151,31 @@ For the geometric traits class we can use a \cgal kernel.
 For the triangulation data structure traits, we have to
 choose the vertex and face classes needed for alpha shapes,
 namely `Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt,Fb>`.
-As default vertex and face type they use `Triangulation_vertex_base_2<Gt>`
-and `Triangulation_face_base_2<Gt>` respectively.
+The parameter `Vb` and `Fb` must be filled by classes that are models of the
+`TriangulationVertexBase_2` and `TriangulationFaceBase_2` concepts. The classes
+`Triangulation_vertex_base_2<Gt>` and `Triangulation_face_base_2<Gt>` fit these
+requirements.
 
+The example below illustrates how to construct a basic alpha shape.
+Note that `Triangulation_vertex_base_2<Gt>` and `Triangulation_face_base_2<Gt>`
+are the default parameters for `Vb` and `Fb` in the classes
+`Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt,Fb>`. They
+are thus omitted in the code below.
 \cgalExample{Alpha_shapes_2/ex_alpha_shapes_2.cpp}
 
+\subsection I1_SectWeightedAS2D Example for Weighted Alpha Shapes
 
-\subsection I1_SectWeightedAS2D Example for Weighted Alpha-Shapes 
+A weighted alpha shape requires a regular triangulation as
+underlying triangulation `Dt`.
+Here again, we can use the vertex and face `Alpha_shape_vertex_base_2<Gt, Vb>`
+and `Alpha_shape_face_base_2<Gt,Fb>`, but for weighted alpha shapes, `Vb` and `Fb`
+must be models of the concepts `RegularTriangulationVertexBase_2` and
+`RegularTriangulationFaceBase_2`. The classes `Regular_triangulation_vertex_base_2<Gt>`
+`Regular_triangulation_face_base_2<Gt>` fit these requirements.
 
-A weighted alpha shape, needs a regular triangulation as
-underlying triangulation `Dt`, and it needs a particular
-face class, namely `Regular_triangulation_face_base_2<Gt>`.
 Note that there is no special weighted alpha shape class.
 
+The example below illustrates how to construct a weighted alpha shape.
 \cgalExample{Alpha_shapes_2/ex_weighted_alpha_shapes_2.cpp}
 
 */ 
