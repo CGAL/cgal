@@ -16,6 +16,10 @@ and the \f$ k\f$-dimensional faces of the triangulation.
 Note that this class is at the same time used for <I>basic</I> and 
 for <I>weighted</I> Alpha Shapes. 
 
+The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite
+the one inherited from the underlying triangulation class `Dt`.
+At the moment, only the static version is implemented.
+
 \tparam Dt must be either `Delaunay_triangulation_2` or `Regular_triangulation_2`. 
 Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face` must be model the concepts `AlphaShapeTraits_2`,
 `AlphaShapeVertex_2` and `AlphaShapeFace_2`, respectively. 
@@ -36,10 +40,6 @@ This means for example that it is useless to use the tag `ExactAlphaComparisonTa
 in conjonction with the traits class `CGAL::Projection_traits_xy_3`: the latter
 camouflages a `CGAL::Point_3` as a `%Point_2` but the exact kernel `EK`
 will not know how to convert from the camouflaged `CGAL::Point_3` to `EK::Point_2`.
-
-The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite
-the one inherited from the underlying triangulation class `Dt`.
-At the moment, only the static version is implemented.
 
 \cgalHeading{I/O}
 
