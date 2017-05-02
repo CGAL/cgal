@@ -98,7 +98,7 @@ const FT& alpha = 0);
 
 /*!
 
-Inserts point p in the underlying triangulation and returns the corresponding vertex. 
+Inserts the point p in the underlying triangulation and returns the corresponding vertex.
 The optional argument `start` is used as a starting place for the search. 
 The classification types of the new simplices are computed and that of the simplices incident 
 to the new ones are updated. 
