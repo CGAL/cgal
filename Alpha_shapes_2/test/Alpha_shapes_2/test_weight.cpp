@@ -40,8 +40,12 @@ typedef CGAL::Regular_triangulation_2<Gt,Tds> Triangulation_2;
 typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
 
 //ExactComparisonTag is Tag_true
-typedef CGAL::Alpha_shape_vertex_base_2<Gt,Rvb,CGAL::Tag_true> Vb_TT;
-typedef CGAL::Alpha_shape_face_base_2<Gt, Rf,CGAL::Tag_true>  Fb_TT;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt,Rvb,
+                                        CGAL::Tag_true /* exact */,
+                                        CGAL::Tag_true /* weighted */> Vb_TT;
+typedef CGAL::Alpha_shape_face_base_2<Gt, Rf,
+                                      CGAL::Tag_true /* exact */,
+                                      CGAL::Tag_true /* weighted */>  Fb_TT;
 typedef CGAL::Triangulation_data_structure_2<Vb_TT,Fb_TT> Tds_TT;
 typedef CGAL::Regular_triangulation_2<Gt,Tds_TT> Triangulation_2_TT;
 typedef CGAL::Alpha_shape_2<Triangulation_2_TT,CGAL::Tag_true>  Alpha_shape_2_TT;
