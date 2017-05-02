@@ -41,6 +41,21 @@ The triangle type.
 typedef unspecified_type Triangle_2; 
 
 /*!
+A function object to construct a `Point_2`.
+
+Provides:
+
+`Point_2 operator()(Point_2 p)`,
+
+which simply returns p.
+
+\note This constructor is necessary because `Regular_triangulation_2`
+inherits `Triangulation_2` and will provide an overload of `Construct_point_2`
+that strips the weight from a weighted point.
+*/
+typedef unspecified_type Construct_point_2;
+
+/*!
 A function object to construct a `Segment_2`. 
 
 Provides: 
@@ -186,6 +201,11 @@ TriangulationTraits_2 operator=(TriangulationTraits_2 gtr);
 /// The following functions give access to the predicate and
 /// constructor objects.
 /// @{
+
+/*!
+
+*/
+Construct_point_2 construct_point_2_object();
 
 /*!
 

@@ -141,7 +141,16 @@ typedef unspecified_type Compare_power_distance_3;
 
 /*!
 A constructor type,
-model of `ConstructWeightedCircumcenter_3`.
+model of `Kernel::ConstructPoint_3`.
+The `operator()` extracts the bare point from a weighted point.
+
+`Point_3 operator() ( Weighted_point_3 p);`
+*/
+typedef unspecified_type Construct_point_3;
+
+/*!
+A constructor type,
+model of `Kernel::ConstructWeightedCircumcenter_3`.
 The `operator()` constructs the bare point 
 which is the center of the smallest orthogonal sphere to the input 
 weighted points. 
@@ -217,6 +226,10 @@ Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_obje
 */
 Compare_power_distance_3 compare_power_distance_3_object();
 
+/*!
+
+*/
+Construct_point_3 construct_point_3_object();
 
 /// @}
 
