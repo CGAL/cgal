@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
@@ -14,7 +13,7 @@ typedef K::FT FT;
 typedef K::Point_2 Point_base;
 typedef K::Weighted_point_2  Point;
 
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
+typedef K                                             Gt;
 typedef CGAL::Regular_triangulation_vertex_base_2<Gt> Rvb;
 typedef CGAL::Alpha_shape_vertex_base_2<Gt,Rvb> Vb;
 typedef CGAL::Regular_triangulation_face_base_2<Gt> Rf;
