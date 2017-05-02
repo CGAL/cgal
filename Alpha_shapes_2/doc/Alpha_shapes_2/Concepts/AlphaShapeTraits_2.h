@@ -14,7 +14,7 @@ Delaunay triangulation plugged in a basic alpha shapes provides the
 following.
 
 \cgalHasModel All models of `Kernel`.
-\cgalHasModel Projection traits such as `CGAL::Projection_traits_3<K>`.
+\cgalHasModel Projection traits such as `CGAL::Projection_traits_xy_3<K>`.
 
 \sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */
