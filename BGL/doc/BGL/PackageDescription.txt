@@ -59,6 +59,23 @@ Valid Expression     |  returns                                       | Descript
 `vertices(g)`        |  `std::pair<vertex_iterator, vertex_iterator>` | An iterator range over all vertices. 
 `num_vertices(g)`    |  `vertices_size_type`                          | An upper bound of the number of vertices of the graph.
 
+\cgalHeading{%EdgeListGraph}
+
+The concept `EdgeListGraph` refines the concept `Graph` and adds
+the requirement for traversal of all edges in a graph.
+
+Associated Type                               | Description
+-----------------                             | -----------
+`boost::graph_traits<G>::%edge_iterator`      | %Iterator over all edges.
+`boost::graph_traits<G>::%edges_size_type`    | Unsigned integer type for number of edges.
+
+
+Valid Expression  |  returns                                    | Description
+----------------- | ---------------                             | -----------------------
+`edges(g)`        |  `std::pair<edge_iterator, edge_iterator>`  | An iterator range over all edges. 
+`num_edges(g)`    |  `edges_size_type`                          | An upper bound of the number of edges of the graph.
+`source(e,g)`     | `vertex_descriptor`                         | The source vertex of `e`.
+`target(e,g)`     | `vertex_descriptor`                         | The target vertex of `e`.
 
 \cgalHeading{%HalfedgeGraph}
 
@@ -233,6 +250,7 @@ incident to a given face, and all the halfedges having a given vertex as target.
 
 ## Concepts ##
 - `VertexListGraph`
+- `EdgeListGraph`
 - `HalfedgeGraph`
 - `HalfedgeListGraph`
 - `MutableHalfedgeGraph`
