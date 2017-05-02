@@ -47,6 +47,19 @@ The triangle type.
 typedef unspecified_type Triangle_3; 
 
 /*!
+A constructor object that must provide the function operator
+
+`Point_3 operator()(Point_3 p)`,
+
+which simply returns p.
+
+\note This constructor is necessary because `Regular_triangulation_3`
+inherits `Triangulation_3` and will provide an overload of `Construct_point_3`
+that strips the weight from a weighted point.
+*/
+typedef unspecified_type Construct_point_3;
+
+/*!
 A constructor object that must provide the function operator 
 
 `Segment_3 operator()(Point_3 p, Point_3 q)`, 
@@ -129,18 +142,23 @@ Triangulation_traits_3(const Triangulation_traits_3 & tr);
 
 /*!
 
+*/
+Construct_point_3 construct_point_3_object();
+
+/*!
+
+*/
+Construct_segment_3 construct_segment_3_object();
+
+/*!
+
+*/
+Construct_triangle_3 construct_triangle_3_object();
+
+/*!
+
 */ 
 Construct_tetrahedron_3 construct_tetrahedron_3_object(); 
-
-/*!
-
-*/ 
-Construct_triangle_3 construct_triangle_3_object(); 
-
-/*!
-
-*/ 
-Construct_segment_3 construct_segment_3_object(); 
 
 /*!
 
