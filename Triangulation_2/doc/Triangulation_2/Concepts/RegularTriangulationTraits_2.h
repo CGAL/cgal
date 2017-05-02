@@ -18,13 +18,11 @@ of Delaunay triangulations.
 
 \cgalRefines `TriangulationTraits_2` 
 
-\cgalHasModel All CGAL Kernels
-\cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_2`
+\cgalHasModel All models of `Kernel`.
 
-\sa `TriangulationTraits_2`
+\sa `CGAL::Regular_triangulation_2`
 
 */
-
 class RegularTriangulationTraits_2 {
 public:
 
@@ -93,6 +91,12 @@ power distance between `p` and `r`.
 */ 
 typedef unspecified_type Compare_power_distance_2; 
 
+/// @}
+
+/// \name
+/// The following types/predicates are required to compute duals:
+/// @{
+
 /*!
 A function object,
 model of `Kernel::ConstructWeightedCircumcenter_2`,
@@ -117,7 +121,7 @@ Must provide the operator:
 */ 
 typedef unspecified_type Construct_radical_axis_2; 
 
-/// @} 
+/// @}
 
 /// \name Creation 
 /// @{

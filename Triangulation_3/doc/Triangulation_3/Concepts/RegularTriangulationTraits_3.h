@@ -15,14 +15,15 @@ or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 
 \cgalRefines `TriangulationTraits_3`
 
+\cgalHasModel All models of `Kernel`.
+
+\sa `CGAL::Regular_triangulation_3`
+
 In addition to the requirements described for the traits class of
   `CGAL::Triangulation_3`, the geometric traits class of
   `CGAL::Regular_triangulation_3` must fulfill the following requirements.
 
-  \cgalHasModel All CGAL Kernels
-
 */
-
 class RegularTriangulationTraits_3 {
 public:
 
@@ -124,7 +125,7 @@ typedef unspecified_type Power_side_of_oriented_power_sphere_3;
 
 /*!
 A predicate object,
-model of `ComparePowerDistance_3`,
+model of `Kernel::ComparePowerDistance_3`,
 that must provide the function operator 
 
 `Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r)`, 
