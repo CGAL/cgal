@@ -64,6 +64,7 @@ if ( CGAL_FOUND )
     include( CGAL_CreateSingleSourceCGALProgram )
 
     # Compilable examples
+    create_single_source_cgal_program( "two.cpp" )
     create_single_source_cgal_program( "mesh_hybrid_mesh_domain.cpp" )
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
     create_single_source_cgal_program( "mesh_implicit_sphere_variable_size.cpp" )
