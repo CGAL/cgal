@@ -1166,7 +1166,7 @@ private:
 
       
     Status_line_CPA_1 
-        create_event_slice_from_current_intersection_info (size_type i);
+        create_event_slice_from_current_intersection_info (size_type i) const;
 
     Bound x_sheared(Bound x, Bound y,Integer sh) const {
         return x-sh*y;
@@ -2407,7 +2407,7 @@ template<typename AlgebraicKernelWithAnalysis_2>
 typename Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>
     ::Status_line_CPA_1 
 Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::
-create_event_slice_from_current_intersection_info (size_type i){
+create_event_slice_from_current_intersection_info (size_type i) const{
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "Reduce the candidates.." << std::flush;
 #endif
