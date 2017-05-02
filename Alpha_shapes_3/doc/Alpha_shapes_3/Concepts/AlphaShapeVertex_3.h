@@ -3,17 +3,17 @@
 \ingroup PkgAlphaShapes3Concepts
 \cgalConcept
 
-This concept describe the requirements for the base vertex of an alpha shape. 
+The concept `AlphaShapeVertex_3` describes the requirements for the base vertex of an alpha shape.
 
-\cgalRefines `TriangulationVertexBase_3` 
+\cgalRefines `TriangulationVertexBase_3`, if the underlying triangulation of the alpha shape is a Delaunay triangulation.
+\cgalRefines `RegularTriangulationVertexBase_3`, if the underlying triangulation of the alpha shape is a regular triangulation.
+\cgalRefines `Periodic_3TriangulationDSVertexBase_3`, if the underlying triangulation of the alpha shape is a periodic triangulation.
 
+\cgalHasModel `CGAL::Alpha_shape_vertex_base_3` (templated with the appropriate triangulation vertex base class).
 
-\cgalHasModel `CGAL::Alpha_shape_vertex_base_3`
-
-\sa `CGAL::Alpha_status` 
+\sa `CGAL::Alpha_status`
 
 */
-
 class AlphaShapeVertex_3 {
 public:
 
