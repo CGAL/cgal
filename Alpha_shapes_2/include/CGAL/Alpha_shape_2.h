@@ -68,13 +68,20 @@ public:
   typedef typename Dt::Geom_traits Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
-  typedef typename internal::Alpha_nt_selector_2<Gt,ExactAlphaComparisonTag>::Type_of_alpha Type_of_alpha;
-  //check simplices are correctly instantiated
-  CGAL_static_assertion( (boost::is_same<Type_of_alpha,typename Dt::Face::FT>::value) );
-  CGAL_static_assertion( (boost::is_same<Type_of_alpha,typename Dt::Vertex::FT>::value) );
+  typedef typename internal::Alpha_nt_selector_2<
+    Gt, ExactAlphaComparisonTag, typename Dt::Weighted_tag>::Type_of_alpha  Type_of_alpha;
+  typedef typename internal::Alpha_nt_selector_2<
+    Gt, ExactAlphaComparisonTag, typename Dt::Weighted_tag>::Compute_squared_radius_2 Compute_squared_radius_2;
+  typedef typename internal::Alpha_nt_selector_2<
+    Gt, ExactAlphaComparisonTag, typename Dt::Weighted_tag>::Side_of_bounded_circle_2 Side_of_bounded_circle_2;
 
-  typedef Type_of_alpha NT;
-  typedef Type_of_alpha FT;
+  typedef Type_of_alpha               NT;
+  typedef Type_of_alpha               FT;
+
+  //check simplices are correctly instantiated
+  CGAL_static_assertion( (boost::is_same<NT, typename Dt::Face::NT>::value) );
+  CGAL_static_assertion( (boost::is_same<NT, typename Dt::Vertex::NT>::value) );
+
   typedef typename Gt::Point_2 Point;
   typedef typename Gt::Segment_2 Segment;
   typedef typename Gt::Line_2 Line;
@@ -711,33 +718,30 @@ private:
   //---------------------- PREDICATES ------------------------------------
 
 private:
-  
-  bool is_attached(const Face_handle& f, int i) const 
-    {
-      Bounded_side b =
-        this->geom_traits().side_of_bounded_circle_2_object()(f->vertex(cw(i))->point(),
-                                                              f->vertex(ccw(i))->point(),
-                                                              f->vertex(i)->point());
 
-      return (b == ON_BOUNDED_SIDE) ? true : false;
-    }
-  
+  bool is_attached(const Face_handle& f, int i) const
+  {
+    Bounded_side b = Side_of_bounded_circle_2()(*this)(f->vertex(cw(i))->point(),
+                                                       f->vertex(ccw(i))->point(),
+                                                       f->vertex(i)->point());
+
+    return (b == ON_BOUNDED_SIDE) ? true : false;
+  }
+
   //-------------------- GEOMETRIC PRIMITIVES ----------------------------
 
-  Type_of_alpha squared_radius(const Face_handle& f) const 
-    {
-      return 
-        this->geom_traits().compute_squared_radius_2_object()(f->vertex(0)->point(),
-                                                              f->vertex(1)->point(),
-                                                              f->vertex(2)->point());
-    }
+  Type_of_alpha squared_radius(const Face_handle& f) const
+  {
+    return Compute_squared_radius_2()(*this)(f->vertex(0)->point(),
+                                             f->vertex(1)->point(),
+                                             f->vertex(2)->point());
+  }
 
-  Type_of_alpha squared_radius(const Face_handle& f, int i) const 
-    {
-      return 
-        this->geom_traits().compute_squared_radius_2_object()(f->vertex(ccw(i))->point(),
-                                                              f->vertex(cw(i))->point());
-    }
+  Type_of_alpha squared_radius(const Face_handle& f, int i) const
+  {
+    return Compute_squared_radius_2()(*this)(f->vertex(ccw(i))->point(),
+                                             f->vertex(cw(i))->point());
+  }
 
   //---------------------------------------------------------------------
 
