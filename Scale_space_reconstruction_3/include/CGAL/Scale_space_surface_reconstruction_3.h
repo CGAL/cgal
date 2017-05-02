@@ -213,4 +213,16 @@ std::ostream& operator<< (std::ostream& os, const CGAL::Scale_space_surface_reco
 
 } // namespace CGAL
 
+template< typename T >
+std::ostream&
+operator<<( std::ostream& os, const CGAL::cpp11::array< T, 3 >& t ) {
+    return os << t[0] << " " << t[1] << " " << t[2];
+}
+
+template< typename T >
+std::istream&
+operator>>( std::istream& is, CGAL::cpp11::array< T, 3 >& t ) {
+    return is >> get<0>(t) >> get<1>(t) >> get<2>(t);
+}
+
 #endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
