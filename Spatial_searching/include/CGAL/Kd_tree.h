@@ -383,7 +383,7 @@ public:
 #if 0
     // This code could have quadratic runtime.
     if (!is_built()) {
-      std::vector<Point_d>::iterator pi = std::find(pts.begin(), pts.end(), p);
+      std::vector<Point_d>::iterator pi = std::find_if(pts.begin(), pts.end(), equal_to_p);
       // Precondition: the point must be there.
       CGAL_assertion (pi != pts.end());
       pts.erase(pi);
