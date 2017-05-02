@@ -9,14 +9,9 @@ triangles and tetrahedra) forming the triangulation together with a few
 geometric predicates and constructions on these objects : lexicographical 
 comparison, orientation in case of coplanar points and orientation in space. 
 
-\cgalHasModel CGAL::Exact_predicates_inexact_constructions_kernel (recommended) 
-\cgalHasModel CGAL::Exact_predicates_exact_constructions_kernel
-\cgalHasModel CGAL::Filtered_kernel 
-\cgalHasModel CGAL::Cartesian 
-\cgalHasModel CGAL::Simple_cartesian 
-\cgalHasModel CGAL::Homogeneous 
-\cgalHasModel CGAL::Simple_homogeneous 
+\cgalHasModel All models of `Kernel`.
 
+\sa `CGAL::Triangulation_3`
 */
 
 class TriangulationTraits_3 {
