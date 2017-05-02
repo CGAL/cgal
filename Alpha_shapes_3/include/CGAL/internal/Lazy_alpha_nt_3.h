@@ -356,12 +356,24 @@ struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Tag_true>
 };
 
 template <class GeomTraits,class ExactAlphaComparisonTag,class Weighted_tag>
-struct Alpha_nt_selector_3:
-  public Alpha_nt_selector_impl_3<GeomTraits,
-              Boolean_tag< boost::is_floating_point<typename GeomTraits::FT>::value && ExactAlphaComparisonTag::value >,
-              Weighted_tag>
-{};
-
+struct Alpha_nt_selector_3
+  : public Alpha_nt_selector_impl_3<
+             GeomTraits,
+             // We check for two things in addition to the value of ExactAlphaComparisonTag:
+             // - if the base traits is already exact (then we don't need to do anything,
+             //   and we can simply directly use the traits class)
+             // - if the traits class' Point_3 can be converted to the underlying
+             //   kernel of the traits class, which is a necessary precondition to
+             //   be able to use the Cartesian converter and the exact kernels
+             Boolean_tag<boost::is_floating_point<typename GeomTraits::FT>::value &&
+                         boost::is_convertible<
+                           typename GeomTraits::Point_3,
+                           typename Kernel_traits<
+                             typename GeomTraits::Point_3>::Kernel::Point_3
+                         >::value &&
+                         ExactAlphaComparisonTag::value >,
+             Weighted_tag>
+{ };
 
 } //namespace internal
 
