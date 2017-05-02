@@ -72,7 +72,7 @@ file_input(std::list<Point>& L)
       Point_base p(0., 0.);
       is >> p;
       if(is) {
-        L.push_back(Point (p, FT(10)));
+        L.push_back(Point (p, FT(n*n)));
       } else {
         return false;
       }
