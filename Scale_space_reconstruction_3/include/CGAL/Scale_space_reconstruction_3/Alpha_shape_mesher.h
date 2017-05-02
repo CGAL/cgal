@@ -11,6 +11,40 @@ namespace CGAL
 namespace Scale_space_reconstruction_3
 {
   
+/** \ingroup PkgScaleSpaceReconstruction3Classes
+ *
+ *  Surface mesher for scale space reconstruction based on
+ *  `CGAL::Alpha_shape_3`.
+ * 
+ *  The surface can be constructed either for a fixed neighborhood
+ *  radius, or for a dynamic radius. When constructing the surface for
+ *  exactly one neighborhood radius, it is faster to set
+ *  `FixedSurface` to `Tag_true`. If the correct neighborhood radius
+ *  should be changed or estimated multiple times, it is faster to set
+ *  `FixedSurface` to `Tag_false`.
+ *
+ *  It is undefined whether a surface with fixed radius may have its radius
+ *  changed, but if so, this will likely require more computation time than
+ *  changing the radius of a dynamic surface. In either case, it is possible to
+ *  change the point set while maintaining the same radius.
+ *
+ *  The surface can be stored either as an unordered collection of triangles, 
+ *  or as a collection ordered by shells. A shell is a maximally connected
+ *  component of the surface where connected facets are locally oriented
+ *  towards the same side of the surface.
+ *
+ *  \cgalModels CGAL::Scale_space_reconstruction_3::Mesher
+ *
+ *  \tparam Geom_traits is the geometric traits class. It must be a
+ *  model of `DelaunayTriangulationTraits_3`. It must have a
+ *  `RealEmbeddable` field number type. Generally,
+ *  `Exact_predicates_inexact_constructions_kernel` is preferred.
+ *  \tparam FixedSurface determines whether the surface is expected to
+ *  be constructed for a fixed neighborhood radius. It must be a
+ *  `Boolean_tag` type. The default value is `Tag_true`. Note that the
+ *  value of this parameter does not change the result but only has an
+ *  impact on the run-time.
+ */
 template <typename Geom_traits, typename FixedSurface = Tag_true>
 class Alpha_shape_mesher
 {
@@ -100,6 +134,26 @@ private:
   
 public:
 
+  /**
+   *  Constructs an alpha shape mesher.
+   *
+   *  \param squared_radius \f$\alpha\f$ parameter of the alpha shape algorithm.
+   *  \param separate_shells determines whether to collect the surface per shell. 
+   *  \param force_manifold determines if the surface is forced to be 2-manifold.
+   *  \param border_angle sets the maximal angle between two facets
+   *  such that the edge is seen as a border.
+   *
+   *  If the output is forced to be 2-manifold, some almost flat
+   *  volume bubbles are detected. To do so, border edges must be
+   *  estimated.
+   *
+   *  An edge adjacent to 2 regular facets is considered as a border
+   *  if it is also adjacent to a singular facet or if the angle
+   *  between the two regular facets is lower than this parameter
+   *  (set to 45° by default).
+   *
+   *  \note `border_angle` is not used if `force_manifold` is set to false.
+   */
   Alpha_shape_mesher (FT squared_radius,
                       bool separate_shells = false,
                       bool force_manifold = false,
@@ -113,6 +167,7 @@ public:
 
   }
 
+  /// \cond SKIP_IN_MANUAL
   template <typename InputIterator, typename OutputIterator>
   void operator() (InputIterator begin, InputIterator end, OutputIterator output)
   {
@@ -161,6 +216,7 @@ public:
     }
 //    std::copy (_surface.begin(), _surface.end(), output);
   }
+  /// \endcond
 
   /// gives an iterator to the first triple in the surface.
   Facet_const_iterator surface_begin() const { return _surface.begin(); }

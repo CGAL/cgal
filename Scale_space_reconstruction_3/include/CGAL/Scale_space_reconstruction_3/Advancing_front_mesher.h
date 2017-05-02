@@ -11,10 +11,25 @@ namespace CGAL
 namespace Scale_space_reconstruction_3
 {
   
+/** \ingroup PkgScaleSpaceReconstruction3Classes
+ *
+ *  Surface mesher for scale space reconstruction based on
+ *  `CGAL::Advancing_front_surface_reconstruction`.
+ *
+ *  This class applies the advancing front reconstruction algorithm
+ *  with the possibility of using an upper bound on the length of the
+ *  produced facets.
+ * 
+ *  \cgalModels CGAL::Scale_space_reconstruction_3::Mesher
+ *
+ *  \tparam Geom_traits geometric traits class. It must be a
+ *  model of `DelaunayTriangulationTraits_3`. It must have a
+ *  `RealEmbeddable` field number type. Generally,
+ *  `Exact_predicates_inexact_constructions_kernel` is preferred.
+ */
 template <typename Geom_traits>
 class Advancing_front_mesher
 {
-public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3                        Point;          ///< defines the point type.
   
@@ -58,6 +73,19 @@ private:
   
 public:
 
+  /**
+   * Constructs and advancing front mesher.
+   *
+   * \param maximum_facet_length upper bound on the length of the facets.
+   * \param radius_ratio_bound candidates incident to surface
+         triangles which are not in the beta-wedge are discarded, if
+         the ratio of their radius and the radius of the surface
+         triangle is larger than `radius_ratio_bound`.  Described in
+         Section \ref AFSR_Boundaries
+   * \param beta half the angle of the wedge in which only the radius
+         of triangles counts for the plausibility of candidates.
+         Described in Section \ref AFSR_Selection
+   */
   Advancing_front_mesher (FT maximum_facet_length = 0.,
                           FT radius_ratio_bound = 5,
                           FT beta = 0.52)
@@ -66,6 +94,7 @@ public:
 
   }
 
+  /// \cond SKIP_IN_MANUAL
   template <typename InputIterator, typename OutputIterator>
   void operator() (InputIterator begin, InputIterator end, OutputIterator output)
   {
@@ -74,6 +103,7 @@ public:
                                                   m_radius_ratio_bound,
                                                   m_beta);
   }
+  /// \endcond
 
 };
 

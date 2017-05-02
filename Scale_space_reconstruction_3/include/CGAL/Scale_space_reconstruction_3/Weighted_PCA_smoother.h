@@ -22,13 +22,42 @@ namespace CGAL
 namespace Scale_space_reconstruction_3
 {
   
+/** \ingroup PkgScaleSpaceReconstruction3Classes
+ *
+ *  %Smoother for scale space reconstruction based on a principal
+ *  component analysis weighted by the local density of points.
+ * 
+ *  \cgalModels CGAL::Scale_space_reconstruction_3::Smoother
+ *
+ *  \tparam Geom_traits geometric traits class. It must be a
+ *  model of `DelaunayTriangulationTraits_3`. It must have a
+ *  `RealEmbeddable` field number type. Generally,
+ *  `Exact_predicates_inexact_constructions_kernel` is preferred.
+
+ *  \tparam DiagonalizeTraits model of `DiagonalizeTraits` that
+ *  determines how to diagonalize a weighted covariance matrix to
+ *  approximate a weighted point set. It can be omitted: if Eigen 3
+ *  (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
+ *  then an overload using `Eigen_diagonalize_traits` is
+ *  provided. Otherwise, the internal implementation
+ *  `Diagonalize_traits` is used.
+ *  \tparam ConcurrencyTag indicates whether to use concurrent
+ *  processing. It can be omitted: if TBB (or greater) is available
+ *  and `CGAL_LINKED_WITH_TBB` is defined then `Parallel_tag` is
+ *  used. Otherwise, `Sequential_tag` is used.
+ */
 template <typename Geom_traits,
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<typename Geom_traits::FT, 3>,
+#ifdef DOXYGEN_RUNNING
+          typename DiagonalizeTraits, typename ConcurrencyTag>
+#else // DOXYGEN_RUNNING
+          typename DiagonalizeTraits
+          = CGAL::Default_diagonalize_traits<typename Geom_traits::FT, 3>,
 #ifdef CGAL_LINKED_WITH_TBB
           typename ConcurrencyTag = CGAL::Parallel_tag>
 #else
           typename ConcurrencyTag = CGAL::Sequential_tag>
-#endif
+#endif // CGAL_LINKED_WITH_TBB
+#endif // DOXYGEN_RUNNING
 class Weighted_PCA_smoother
 {
 public:
@@ -61,12 +90,27 @@ private:
 
 public:
 
+  /**
+   * Constructs a weighted PCA smoother that will automatically
+   * estimate the neighborhood radius.
+   *
+   * \param neighbors is the number of neighbors a point's neighborhood should
+   * contain on average.
+   * \param samples is the number of points sampled to estimate the
+   * neighborhood radius.
+   */
   Weighted_PCA_smoother (unsigned int neighbors = 12, unsigned int samples = 300)
     : _generator(0), _mean_neighbors (neighbors), _samples (samples),_squared_radius (-1.) { }
 
+  /**
+   * Constructs a weighted PCA smoother.
+   *
+   * \param squared_radius neighborhood squared radius used for principal component analysis.
+   */
   Weighted_PCA_smoother (FT squared_radius)
     : _generator(0), _mean_neighbors (0), _samples (0),_squared_radius (squared_radius) { }
 
+  /// \cond SKIP_IN_MANUAL
   template <typename InputIterator>
   void operator() (InputIterator begin, InputIterator end)
   {
@@ -98,7 +142,11 @@ public:
     try_parallel (AdvanceSS (_tree, neighbors, _points), 0, _tree.size());
     
   }
+  /// \endcond
 
+  /**
+   * Returns the computed (or user-specified) squared radius.
+   */
   FT squared_radius()
   {
     return _squared_radius;

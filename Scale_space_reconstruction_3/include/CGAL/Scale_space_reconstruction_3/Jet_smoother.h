@@ -14,8 +14,26 @@ namespace CGAL
 namespace Scale_space_reconstruction_3
 {
   
+/** \ingroup PkgScaleSpaceReconstruction3Classes
+ *
+ *  %Smoother for scale space reconstruction based on
+ *  `CGAL::jet_smooth_point_set()`.
+ * 
+ *  \cgalModels CGAL::Scale_space_reconstruction_3::Smoother
+ *
+ *  \tparam Geom_traits geometric traits class. It must be a
+ *  model of `DelaunayTriangulationTraits_3`. It must have a
+ *  `RealEmbeddable` field number type. Generally,
+ *  `Exact_predicates_inexact_constructions_kernel` is preferred.
+ *  \tparam ConcurrencyTag indicates whether to use concurrent
+ *  processing. It can be omitted: if TBB (or greater) is available
+ *  and `CGAL_LINKED_WITH_TBB` is defined then `Parallel_tag` is
+ *  used. Otherwise, `Sequential_tag` is used.
+ */
 template <typename Geom_traits,
-#ifdef CGAL_LINKED_WITH_TBB
+#ifdef DOXYGEN_RUNNING
+          typename ConcurrencyTag>
+#elif CGAL_LINKED_WITH_TBB
           typename ConcurrencyTag = CGAL::Parallel_tag>
 #else
           typename ConcurrencyTag = CGAL::Sequential_tag>
@@ -33,6 +51,13 @@ private:
 
 public:
 
+  /**
+   * Constructs a jet smoother.
+   *
+   * \param k number of neighbors used.
+   * \param degree_fitting fitting degree
+   * \param degree_monge monge degree
+   */
   Jet_smoother (unsigned int k = 12,
                 unsigned int degree_fitting = 2,
                 unsigned int degree_monge = 2)
