@@ -259,7 +259,7 @@ public:
   build()
   {
     // This function is not ready to be called when a tree already exists, one
-    // must call invalidate_built() first.
+    // must call invalidate_build() first.
     CGAL_assertion(!is_built());
     CGAL_assertion(!removed_);
     const Point_d& p = *pts.begin();
@@ -312,7 +312,7 @@ public:
     return built_;
   }
 
-  void invalidate_built()
+  void invalidate_build()
   {
     if(removed_){
       // Walk the tree to collect the remaining points.
@@ -335,7 +335,7 @@ public:
 
   void clear()
   {
-    invalidate_built();
+    invalidate_build();
     pts.clear();
     removed_ = false;
   }
@@ -343,7 +343,7 @@ public:
   void
   insert(const Point_d& p)
   {
-    invalidate_built();
+    invalidate_build();
     pts.push_back(p);
   }
 
@@ -351,7 +351,7 @@ public:
   void
   insert(InputIterator first, InputIterator beyond)
   {
-    invalidate_built();
+    invalidate_build();
     pts.insert(pts.end(),first, beyond);
   }
 

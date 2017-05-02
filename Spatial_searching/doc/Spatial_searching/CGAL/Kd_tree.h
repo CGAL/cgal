@@ -109,7 +109,7 @@ explicit call to `build()` or implicitly by the next query or removal. The only
 reason to call this function explicitly is to rebalance the tree after some
 number of removals.
 */
-void invalidate_built();
+void invalidate_build();
 /// @}
 
 /// \name Operations
