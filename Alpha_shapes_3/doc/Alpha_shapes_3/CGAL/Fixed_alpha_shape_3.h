@@ -12,8 +12,13 @@ represents connectivity and order among its faces. Each
 \f$ k\f$-dimensional face of the `Dt` is associated with 
 a classification that specifies its status in the alpha complex, alpha being fixed. 
 
-Note that this class can be used at the same time to build a <I>basic</I> or 
-a <I>weighted</I> Alpha Shape. 
+\tparam Dt must be either `Delaunay_triangulation_3`, `Regular_triangulation_3`
+or `Periodic_3_triangulation_3`. Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face`
+must be model the concepts `AlphaShapeTraits_3`,
+`AlphaShapeVertex_3` and `AlphaShapeFace_3`, respectively.
+
+Note that this class is used for <I>basic</I>, <I>weighted</I>,
+and <I>periodic</I>Alpha Shapes.
 
 The modifying functions `insert` and `remove` will overwrite
 the one inherited from the underlying triangulation class `Dt`.
