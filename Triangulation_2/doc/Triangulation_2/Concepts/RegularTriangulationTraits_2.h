@@ -66,6 +66,15 @@ which is the degenerate power test for weighted points
 */ 
 typedef unspecified_type Power_side_of_oriented_power_circle_2; 
 
+/*!
+A constructor type,
+model of `Kernel::ConstructPoint_2`.
+The `operator()` extracts the bare point from a weighted point.
+
+`Point_2 operator() ( Weighted_point_2 p);`
+*/
+typedef unspecified_type Construct_point_2;
+
 /// @}
 
 /// \name Optional Types
@@ -144,6 +153,11 @@ Power_side_of_oriented_power_circle_2 power_side_of_oriented_power_circle_2_obje
 
 */ 
 Compare_power_distance_2 compare_power_distance_2_object(); 
+
+/*!
+
+*/
+Construct_point_2 construct_point_2_object();
 
 /*!
 
