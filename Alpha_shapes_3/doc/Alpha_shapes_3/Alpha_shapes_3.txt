@@ -205,38 +205,50 @@ A model that works for a weighted alpha-shape is
 the class `Regular_triangulation_3`. The triangulation needs a geometric traits class 
 and a triangulation data structure as template parameters.
 
+\subsection AlphaShape3D_ConceptAndModelsAlphaShapes Alpha Shapes
+
 For the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>`, the requirements of
 the traits class are described in the concepts `AlphaShapeTraits_3`
 in the non-weighted case and `WeightedAlphaShapeTraits_3` in the weighted case.
-The \cgal kernels are models in the non-weighted case, and 
-the class `Regular_triangulation_euclidean_traits_3` is a model
-in the weighted case.
+All \cgal kernels are models of both concepts.
+
 The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
 `AlphaShapeVertex_3` and `AlphaShapeCell_3`.
 The package provides by default the classes
 `Alpha_shape_vertex_base_3<Gt>` and
-`Alpha_shape_cell_base_3<Gt>`. When using
-`Periodic_3_Delaunay_triangulation_3` as underlying
-triangulation the vertex and cell classes need to be models to both
-`AlphaShapeVertex_3` and
-`Periodic_3TriangulationDSVertexBase_3` as well as
-`AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
-(see example \ref  AlphaShape_3DExampleForPeriodicAlphaShapes).
+`Alpha_shape_cell_base_3<Gt>`.
+
+\subsection AlphaShape3D_ConceptAndModelsFixedAlphaShapes Fixed Alpha Shapes
 
 For the class `Fixed_alpha_shape_3<Dt>`, the requirements of
 the traits class are described in the concepts `FixedAlphaShapeTraits_3`
 in the non-weighted case and `FixedWeightedAlphaShapeTraits_3` in the weighted case.
-The \cgal kernels are models in the non-weighted case, and 
-the class `Regular_triangulation_euclidean_traits_3` is a model
-in the weighted case.
+All \cgal kernels are models of both concepts.
 The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
 `FixedAlphaShapeVertex_3` and `FixedAlphaShapeCell_3`.
 The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
+
+\subsection AlphaShape3D_ConceptAndModelsTDS Triangulation data structure
+
+Additionally requirements are put when using `Regular_triangulation_3` or
+`Periodic_3_Delaunay_triangulation_3` as underlying triangulations:
+<ul>
+<li> When using `Regular_triangulation_3` as underlying triangulation, the vertex
+and cell classes must be models to both `AlphaShapeVertex_3` and
+`RegularTriangulationVertexBase_3`, as well as
+`AlphaShapeCell_3` and `RegularTriangulationCellBase_3` respectively
+(see example \ref  AlphaShape_3DExampleforWeightedAlphaShapes).
+<li> When using `Periodic_3_Delaunay_triangulation_3` as underlying
+triangulation the vertex and cell classes need to be models to both
+`AlphaShapeVertex_3` and `Periodic_3TriangulationDSVertexBase_3`, as well as
+`AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
+(see example \ref  AlphaShape_3DExampleForPeriodicAlphaShapes).
+</ul>
 
 \section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 vs. Fixed_alpha_shape_3
 
