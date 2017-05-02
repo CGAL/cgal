@@ -22,6 +22,12 @@ kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_
 overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
 the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
 
+\warning The tag `ExactAlphaComparisonTag` is currently ignored (that is, the code will
+ behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
+if the traits defines a point type that is not implicitely convertible to the three-dimensional point type
+of a CGAL kernel. This is because we internally use the class Cartesian_converter to switch
+ between the traits and exact CGAL kernels.
+
 Note that this class is used for <I>basic</I>, <I>weighted</I>,
 and <I>periodic</I>Alpha Shapes.
 
