@@ -419,12 +419,12 @@ public:
   /// @endcond
   /*!
   Detects sharp features and boundaries of the polyhedral components of the complex
-  (including potential internal polyhedron),
+  (including potential internal polyhedra),
   and inserts them as features of the domain. `angle_bound` gives the maximum
   angle (in degrees) between the two normal vectors of adjacent triangles.
   For an edge of the polyhedron, if the angle between the two normal vectors of its
   incident facets is bigger than the given bound, then the edge is considered as
-  a feature edge.
+  a feature edge, and inserted as a feature of the domain.
   */ 
   void detect_features(FT angle_bound = FT(60)) {
     detect_features(angle_bound, stored_polyhedra, false/*do protect*/);

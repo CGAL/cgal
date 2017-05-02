@@ -908,7 +908,7 @@ the edges of the 1D-mesh corresponding to the 1D-features.
 
 The rest of the example is similar to \ref Mesh_3/mesh_3D_image.cpp.
 
-\cgalFigureRef{mesh3protectionimage3D} shows the results with or with the
+\cgalFigureRef{mesh3protectionimage3D} shows the results without or with the
 protection of the 1D-features.
 
 \cgalFigureAnchor{mesh3protectionimage3D}
@@ -943,7 +943,7 @@ and protected as for all domain types in this Section.
 
 \cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
 
-\cgalFigureRef{mesh3protectionComplex} shows the results with or with the
+\cgalFigureRef{mesh3protectionComplex} shows the results without or with the
 protection of the 1D-features.
 
 \cgalFigureAnchor{mesh3protectionComplex}
@@ -957,6 +957,9 @@ protection of the 1D-features.
 </center>
 \cgalFigureCaptionBegin{mesh3protectionComplex}
 Left: the mesh without any call to `%detect_features()`.
+The mesh is overrefined next to sharp features, because the mesher tries to
+reach the target `facet_distance`, by inserting centers of surface Delaunay
+balls, that are not likely to be on sharp edges.
 
 Right: the mesh with added 1D-features along sharp edges and edges shared
 by at least two of the input polyhedral surfaces forming the complex.
