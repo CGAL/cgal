@@ -10,6 +10,10 @@ alpha shapes of points in the 3D space for <I>all</I> real
 of the class `Dt`. Each k-dimensional face of Dt is associated with an
 interval that specifies for which values of alpha the face belongs to the alpha shape. 
 
+The modifying functions `insert` and `remove` will overwrite
+the one inherited from the underlying triangulation class `Dt`.
+At the moment, only the static version is implemented.
+
 \tparam Dt must be either `Delaunay_triangulation_3`, `Regular_triangulation_3`
 or `Periodic_3_triangulation_3`. Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face`
 must be model the concepts `AlphaShapeTraits_3`,
@@ -30,10 +34,6 @@ of a CGAL kernel. This is because we internally use the class Cartesian_converte
 
 Note that this class is used for <I>basic</I>, <I>weighted</I>,
 and <I>periodic</I>Alpha Shapes.
-
-The modifying functions `insert` and `remove` will overwrite
-the one inherited from the underlying triangulation class `Dt`.
-At the moment, only the static version is implemented.
 
 \cgalHeading{I/O}
 
