@@ -16,8 +16,8 @@
 //
 //
 // Author(s)     : Maxime Gimeno
-#ifndef CGAL_BOOST_GRAPH_Connected_components_graph_H
-#define CGAL_BOOST_GRAPH_Connected_components_graph_H
+#ifndef CGAL_BOOST_GRAPH_CONNECTED_COMPONENTS_GRAPH_H
+#define CGAL_BOOST_GRAPH_CONNECTED_COMPONENTS_GRAPH_H
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/properties.h>
@@ -42,6 +42,9 @@ namespace CGAL
    * For example, calling `vertices(graph)` will return an iterator range of all but only the vertices that belong to the selected connected components.
    *
    * \tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
+   * \tparam FImap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor` as key and `size_type` as value.
+   * \tparam VImap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor` as key and `size_type` as value.
+   * \tparam HImap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor` as key and `size_type` as value.
    *
    * \cgalModels `FaceListGraph`
    * \cgalModels `HalfedgeListGraph`
@@ -820,4 +823,4 @@ struct graph_has_property<CGAL::Connected_components_graph<Graph, FImap, VImap, 
     : graph_has_property<Graph, PropertyTag> {};
 
 }// namespace boost
-#endif // CGAL_BOOST_GRAPH_Connected_components_graph_H
+#endif // CGAL_BOOST_GRAPH_CONNECTED_COMPONENTS_GRAPH_H
