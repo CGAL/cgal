@@ -112,7 +112,7 @@ file_input(std::list<Point>& L)
   for( ; n>0 ; n--)
     {
       is >> p;
-      L.push_back(Point (p,coord_type(10)));
+      L.push_back(Point (p,coord_type(n*n)));
     }
   std::cout << "Points inserted" << std::endl;
   return true;
