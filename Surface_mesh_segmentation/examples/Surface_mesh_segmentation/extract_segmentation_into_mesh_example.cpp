@@ -40,9 +40,11 @@ int main(int argc, char** argv )
 
   typedef CGAL::Connected_components_graph<SM> Cc_graph;
   //print area of each segment and then put it in a Mesh and print it in an OFF file
+  Cc_graph segment_mesh(mesh, segment_property_map, 0);
   for(std::size_t id = 0; id < number_of_segments; ++id)
   {
-    Cc_graph segment_mesh(mesh, segment_property_map, id);
+    if(id > 0)
+      segment_mesh.set_selected_component(segment_property_map, id);
     std::cout << "Segment "<<id<<"'s area is : "<<CGAL::Polygon_mesh_processing::area(segment_mesh)<<std::endl;
     SM out;
     CGAL::copy_face_graph(segment_mesh, out);

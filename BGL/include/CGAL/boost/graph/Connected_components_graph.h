@@ -225,6 +225,27 @@ struct Connected_components_graph
   ///returns a reference to the graph of the Connected_components_graph.
   Graph& graph(){ return _graph; }
 
+  ///change the selected component's id
+  template<class FaceComponentMap>
+  void set_selected_component(FaceComponentMap fcmap,
+                              typename boost::property_traits<FaceComponentMap>::value_type pid)
+  {
+    face_indices.clear();
+    vertex_indices.clear();
+    halfedge_indices.clear();
+    base_constructor(fcmap, pid);
+  }
+  /// change the selected components ids
+  template<class FaceComponentMap, class IndexRangeIterator>
+  void set_selected_components(FaceComponentMap fcmap,
+                              IndexRangeIterator begin,
+                              IndexRangeIterator end)
+  {
+    face_indices.clear();
+    vertex_indices.clear();
+    halfedge_indices.clear();
+    base_iterator_constructor(begin, end, fcmap);
+  }
   struct Is_simplex_valid
   {
     Is_simplex_valid(const Self* graph)
