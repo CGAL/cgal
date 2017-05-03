@@ -84,7 +84,7 @@ public:
     for (std::size_t j = 0; j < grid.height(); j++){	
       for (std::size_t i = 0; i < grid.width(); i++){
 						
-        if(grid.mask(i,j)){
+        if(grid.has_points(i,j)){
 
           std::size_t squareXmin = (i < square ? 0 : i - square);
           std::size_t squareXmax = (std::min) (grid.width()-1, i + square);

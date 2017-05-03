@@ -101,7 +101,7 @@ public:
     for (std::size_t j = 0; j < grid.height(); j++){	
       for (std::size_t i = 0; i < grid.width(); i++){
 						
-        if(!(grid.mask(i,j)))
+        if(!(grid.has_points(i,j)))
           continue;
         std::vector<float> hori;
             

@@ -150,7 +150,7 @@ public:
   /*!
     \brief Returns `false` if the cell at position `(x,y)` is empty, `true` otherwise.
   */
-  bool mask(std::size_t x, std::size_t y) const
+  bool has_points(std::size_t x, std::size_t y) const
   {
     if (m_lower_scale == NULL)
     {
@@ -159,10 +159,10 @@ public:
       return (!(m_grid(x,y).empty()));
     }
     else
-      return (m_lower_scale->mask(x*2, y*2)
-              || m_lower_scale->mask(x*2, y*2 + 1)
-              || m_lower_scale->mask(x*2 + 1, y*2 + 1)
-              || m_lower_scale->mask(x*2 + 1, y*2));
+      return (m_lower_scale->has_points(x*2, y*2)
+              || m_lower_scale->has_points(x*2, y*2 + 1)
+              || m_lower_scale->has_points(x*2 + 1, y*2 + 1)
+              || m_lower_scale->has_points(x*2 + 1, y*2));
   }
 
   /*!
