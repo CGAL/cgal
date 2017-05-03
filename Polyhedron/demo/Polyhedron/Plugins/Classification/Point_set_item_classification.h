@@ -125,7 +125,7 @@ class Point_set_item_classification : public Item_classification_base
     else if (method == 1)
       CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
         (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, classifier,
-         m_generator->neighborhood().range_neighbor_query(m_generator->radius_neighbors()),
+         m_generator->neighborhood().sphere_neighbor_query(m_generator->radius_neighbors()),
          indices);
     else if (method == 2)
       CGAL::Classification::classify_with_graphcut<Concurrency_tag>

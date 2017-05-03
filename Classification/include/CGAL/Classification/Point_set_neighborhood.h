@@ -136,7 +136,7 @@ public:
 
     \cgalModels CGAL::Classification::NeighborQuery
   */
-  class Range_neighbor_query
+  class Sphere_neighbor_query
   {
   public:
     typedef typename Point_set_neighborhood::Point value_type; ///<
@@ -149,21 +149,21 @@ public:
       \param neighborhood point set neighborhood object.
       \param radius radius of the neighbor query sphere.
     */
-    Range_neighbor_query (const Point_set_neighborhood& neighborhood, float radius)
+    Sphere_neighbor_query (const Point_set_neighborhood& neighborhood, float radius)
       : neighborhood (neighborhood), radius(radius) { }
 
     /// \cond SKIP_IN_MANUAL
     template <typename OutputIterator>
     OutputIterator operator() (const value_type& query, OutputIterator output) const
     {
-      neighborhood.range_neighbors (query, radius, output);
+      neighborhood.sphere_neighbors (query, radius, output);
       return output;
     }
     /// \endcond
   };
 
   friend class K_neighbor_query;
-  friend class Range_neighbor_query;
+  friend class Sphere_neighbor_query;
 
   /// \cond SKIP_IN_MANUAL
   Point_set_neighborhood () : m_tree (NULL) { }
@@ -239,15 +239,15 @@ public:
   /*!
     \brief Returns a neighbor query object with fixed radius `radius`.
   */
-  Range_neighbor_query range_neighbor_query (const float radius) const
+  Sphere_neighbor_query sphere_neighbor_query (const float radius) const
   {
-    return Range_neighbor_query (*this, radius);
+    return Sphere_neighbor_query (*this, radius);
   }
 
 private:
 
   template <typename OutputIterator>
-  void range_neighbors (const Point& query, const FT radius_neighbors, OutputIterator output) const
+  void sphere_neighbors (const Point& query, const FT radius_neighbors, OutputIterator output) const
   {
     CGAL_assertion (m_tree != NULL);
     Sphere fs (query, radius_neighbors, 0, m_tree->traits());

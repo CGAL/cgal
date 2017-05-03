@@ -164,7 +164,7 @@ int main (int argc, char** argv)
   t.start();
   Classification::classify_with_local_smoothing<CGAL::Parallel_tag>
     (pts, Pmap(), labels, classifier,
-     neighborhood.range_neighbor_query(radius_neighbors),
+     neighborhood.sphere_neighbor_query(radius_neighbors),
      label_indices);
   t.stop();
   std::cerr << "Classification with local smoothing performed in " << t.time() << " second(s)" << std::endl;
