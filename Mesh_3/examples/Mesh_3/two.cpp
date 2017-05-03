@@ -66,6 +66,5 @@ int main(int argc, char*argv[])
 
   std::cerr << t.time() << " sec." << std::endl;
   // Output
-  std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  dump_c3t3(c3t3, "out");
 }
