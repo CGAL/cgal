@@ -69,13 +69,11 @@ public:
     \param input input range.
     \param point_map property map to access the input points.
     \param grid precomputed `Planimetric_grid`.
-    \param grid_resolution resolution of the planimetric grid.
     \param radius_neighbors radius of local neighborhoods.
   */
   Vertical_dispersion (const PointRange& input,
                        PointMap point_map,
                        const Grid& grid,
-                       const float grid_resolution,
                        float radius_neighbors = -1.)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : grid (grid)
@@ -83,7 +81,7 @@ public:
   {
     this->set_name ("vertical_dispersion");
     if (radius_neighbors < 0.)
-      radius_neighbors = 5. * grid_resolution;
+      radius_neighbors = 5. * grid.resolution();
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     Image_float Dispersion(grid.width(), grid.height());
@@ -95,7 +93,7 @@ public:
       for (std::size_t i = 0; i < grid.width(); i++)
         Dispersion(i,j)=0;
     
-    std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid_resolution) + 1;
+    std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
     typename Geom_traits::Vector_3 verti (0., 0., 1.);
     
     for (std::size_t j = 0; j < grid.height(); j++){	
@@ -116,7 +114,7 @@ public:
             std::vector<std::size_t> indices;
             grid.indices(k,l,std::back_inserter(indices));
             if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))
-               <=(float)0.5*radius_neighbors/grid_resolution
+               <=(float)0.5*radius_neighbors/grid.resolution()
                && (indices.size()>0))
             {
               for(std::size_t t=0; t<indices.size();t++)
@@ -133,12 +131,12 @@ public:
 
         std::size_t nb_layers = 1;
 
-        std::vector<bool> occupy (1 + (std::size_t)((hori.back() - hori.front()) / grid_resolution), false);
+        std::vector<bool> occupy (1 + (std::size_t)((hori.back() - hori.front()) / grid.resolution()), false);
               
         std::size_t last_index = 0;
         for (std::size_t k = 0; k < hori.size(); ++ k)
         {
-          std::size_t index = (std::size_t)((hori[k] - hori.front()) / grid_resolution);
+          std::size_t index = (std::size_t)((hori[k] - hori.front()) / grid.resolution());
           occupy[index] = true;
           if (index > last_index + 1)
             ++ nb_layers;

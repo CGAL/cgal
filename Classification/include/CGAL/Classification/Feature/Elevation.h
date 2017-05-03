@@ -73,14 +73,12 @@ public:
     \param input input range.
     \param point_map property map to access the input points.
     \param grid precomputed `Planimetric_grid`.
-    \param grid_resolution resolution of the planimetric grid.
     \param radius_dtm radius for digital terrain modeling (should be
     larger than the width and length of the largest building).
   */
   Elevation (const PointRange& input,
              PointMap point_map,
              const Grid& grid,
-             const float grid_resolution,
              float radius_dtm = -1.)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : input(input), point_map(point_map), grid(grid)
@@ -88,7 +86,7 @@ public:
   {
     this->set_name ("elevation");
     if (radius_dtm < 0.)
-      radius_dtm = 100. * grid_resolution;
+      radius_dtm = 100. * grid.resolution();
 
     //DEM
     Image_float dem(grid.width(),grid.height());
@@ -107,7 +105,7 @@ public:
         dem(i,j) = mean;
       }
 
-    std::size_t square = (std::size_t)(0.5 * radius_dtm / grid_resolution) + 1;
+    std::size_t square = (std::size_t)(0.5 * radius_dtm / grid.resolution()) + 1;
     
     Image_float dtm_x(grid.width(),grid.height());
     

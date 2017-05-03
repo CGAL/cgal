@@ -82,10 +82,8 @@ int main (int argc, char** argv)
   Feature_handle planarity = features.add<Planarity> (pts, eigen);
   Feature_handle surface_variation = features.add<Surface_variation> (pts, eigen);
   Feature_handle dispersion = features.add<Dispersion> (pts, Pmap(), grid,
-                                                        grid_resolution,
                                                         radius_neighbors);
   Feature_handle elevation = features.add<Elevation> (pts, Pmap(), grid,
-                                                      grid_resolution,
                                                       radius_dtm);
 
   //! [Features]

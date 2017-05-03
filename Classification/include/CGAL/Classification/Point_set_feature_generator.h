@@ -536,7 +536,6 @@ private:
       Feature_handle fh = generator->m_features->template add<Echo_scatter> (generator->m_input,
                                                                              echo_map,
                                                                              generator->grid(scale),
-                                                                             generator->grid_resolution(scale),
                                                                              generator->radius_neighbors(scale));
       std::ostringstream oss;
       oss << fh->name() << "_" << scale;
@@ -686,7 +685,6 @@ private:
       Feature_handle fh = generator->m_features->template add<Feature_type>
         (generator->m_input, point_map,
          generator->grid(scale),
-         generator->grid_resolution(scale),
          generator->radius_neighbors(scale));
       std::ostringstream oss;
       oss << fh->name() << "_" << scale;
@@ -717,7 +715,6 @@ private:
       Feature_handle fh = generator->m_features->template add<Feature_type> (generator->m_input,
                                                                              point_map,
                                                                              generator->grid(scale),
-                                                                             generator->grid_resolution(scale),
                                                                              generator->radius_dtm(scale));
       std::ostringstream oss;
       oss << fh->name() << "_" << scale;

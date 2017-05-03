@@ -64,13 +64,11 @@ public:
     \param input input range.
     \param echo_map property map to access the echo values of the input points.
     \param grid precomputed `Planimetric_grid`.
-    \param grid_resolution resolution of the planimetric grid.
     \param radius_neighbors radius of local neighborhoods.
   */
   Echo_scatter (const PointRange& input,
                 EchoMap echo_map,
                 const Grid& grid,
-                const float grid_resolution,
                 float radius_neighbors = 1.)
   {
     this->set_name ("echo_scatter");
@@ -79,7 +77,7 @@ public:
       for (std::size_t i = 0; i < grid.width(); i++)
         Scatter(i,j)=0;
 
-    std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid_resolution) + 1;
+    std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
 
     for (std::size_t j = 0; j < grid.height(); j++){	
       for (std::size_t i = 0; i < grid.width(); i++){
@@ -97,7 +95,7 @@ public:
           for(std::size_t k = squareXmin; k <= squareXmax; k++){
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
 									
-              if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))<=(float)0.5*radius_neighbors/grid_resolution){
+              if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))<=(float)0.5*radius_neighbors/grid.resolution()){
                 std::vector<std::size_t> indices;
                 grid.indices(k,l,std::back_inserter(indices));
                 if(indices.size()>0){
