@@ -15,7 +15,7 @@ typedef CGAL::Identity_property_map<Point> Pmap;
 
 namespace Classification = CGAL::Classification;
 
-typedef Classification::Sum_of_weighted_features_predicate                      Classification_predicate;
+typedef Classification::Sum_of_weighted_features_classifier                      Classification_classifier;
 
 typedef Classification::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
 typedef Classification::Local_eigen_analysis                                    Local_eigen_analysis;
@@ -95,21 +95,21 @@ int main (int argc, char** argv)
   
   Feature_handle sphericity = features.add<Sphericity> (pts, eigen);
 
-  Classification_predicate predicate (labels, features);
+  Classification_classifier classifier (labels, features);
   
   std::cerr << "Setting weights" << std::endl;
-  predicate.set_weight(sphericity, 0.5);
-  predicate.set_weight(my_feature, 0.25);
+  classifier.set_weight(sphericity, 0.5);
+  classifier.set_weight(my_feature, 0.25);
 
   std::cerr << "Setting up labels" << std::endl;
-  predicate.set_effect (a, sphericity, Classification_predicate::FAVORING);
-  predicate.set_effect (a, my_feature, Classification_predicate::FAVORING);
-  predicate.set_effect (b, sphericity, Classification_predicate::PENALIZING);
-  predicate.set_effect (b, my_feature, Classification_predicate::PENALIZING);
+  classifier.set_effect (a, sphericity, Classification_classifier::FAVORING);
+  classifier.set_effect (a, my_feature, Classification_classifier::FAVORING);
+  classifier.set_effect (b, sphericity, Classification_classifier::PENALIZING);
+  classifier.set_effect (b, my_feature, Classification_classifier::PENALIZING);
 
   std::vector<std::size_t> label_indices;
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, Pmap(), labels, predicate,
+    (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
      0.5, 1, label_indices);
 

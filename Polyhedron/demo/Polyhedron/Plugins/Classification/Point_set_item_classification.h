@@ -78,8 +78,8 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int predicate);
-  bool run (int method, int predicate);
+  void train(int classifier);
+  bool run (int method, int classifier);
 
   void change_color (int index);
   void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
@@ -113,24 +113,24 @@ class Point_set_item_classification : public Item_classification_base
 
  private:
   
-  template <typename Predicate>
-  bool run (int method, const Predicate& predicate)
+  template <typename Classifier>
+  bool run (int method, const Classifier& classifier)
   {
     std::vector<std::size_t> indices;
 
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
-                                                       m_labels, predicate,
+                                                       m_labels, classifier,
                                                        indices);
     else if (method == 1)
       CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
-        (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, predicate,
+        (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, classifier,
          m_generator->neighborhood().range_neighbor_query(m_generator->radius_neighbors()),
          indices);
     else if (method == 2)
       CGAL::Classification::classify_with_graphcut<Concurrency_tag>
         (*(m_points->point_set()), m_points->point_set()->point_map(),
-         m_labels, predicate,
+         m_labels, classifier,
          m_generator->neighborhood().k_neighbor_query(12),
          m_smoothing, m_subdivisions, indices);
 

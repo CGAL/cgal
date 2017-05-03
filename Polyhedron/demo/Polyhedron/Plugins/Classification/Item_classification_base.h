@@ -7,10 +7,10 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
-#include <CGAL/Classification/Sum_of_weighted_features_predicate.h>
+#include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/Random_forest_predicate.h>
+#include <CGAL/Classification/Random_forest_classifier.h>
 #endif
 
 class Item_classification_base
@@ -20,10 +20,10 @@ public:
   typedef CGAL::Classification::Feature_handle Feature_handle;
   typedef CGAL::Classification::Label_set   Label_set;
   typedef CGAL::Classification::Feature_set Feature_set;
-  typedef CGAL::Classification::Sum_of_weighted_features_predicate Sum_of_weighted_features;
+  typedef CGAL::Classification::Sum_of_weighted_features_classifier Sum_of_weighted_features;
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-  typedef CGAL::Classification::Random_forest_predicate Random_forest;
+  typedef CGAL::Classification::Random_forest_classifier Random_forest;
 #endif
   
 public:
@@ -40,8 +40,8 @@ public:
   virtual void reset_training_sets() = 0;
 
   virtual void validate_selection () = 0;
-  virtual void train(int predicate) = 0;
-  virtual bool run (int method, int predicate) = 0;
+  virtual void train(int classifier) = 0;
+  virtual bool run (int method, int classifier) = 0;
   
   virtual void change_color (int index) = 0;
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
@@ -101,7 +101,7 @@ public:
       }
   }
 
-  void save_config(const char* filename, int predicate)
+  void save_config(const char* filename, int classifier)
   {
     if (m_features.size() == 0)
       {
@@ -109,7 +109,7 @@ public:
         return;
       }
 
-    if (predicate == 0)
+    if (classifier == 0)
     {
       std::ofstream f (filename);
       m_sowf->save_configuration (f);
@@ -121,7 +121,7 @@ public:
 #endif
     }
   }
-  void load_config(const char* filename, int predicate)
+  void load_config(const char* filename, int classifier)
   {
     if (m_features.size() == 0)
       {
@@ -129,7 +129,7 @@ public:
         return;
       }
 
-    if (predicate == 0)
+    if (classifier == 0)
     {
       std::ifstream f (filename);
       m_sowf->load_configuration (f, true);

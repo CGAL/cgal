@@ -6,7 +6,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Simon Giraudot, Florent Lafarge
 
-This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set and define their own labels.
+This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
 
 \section Classification_Organization Package Organization
 
@@ -15,8 +15,8 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 - some analysis is performed on the input data set
 - features are computed based on this analysis
 - a set of labels (for example: _ground_, _building_, _vegetation_) is defined by the user
-- a predicate is defined and trained: from the set of values taken by the features at an input item, it measures the likelihood of this item belonging to one label or another
-- classification is computed itemwise using the predicate
+- a classifier is defined and trained: from the set of values taken by the features at an input item, it measures the likelihood of this item belonging to one label or another
+- classification is computed itemwise using the classifier
 - additional regularization can be used by smoothing either locally or globally through a _Graph Cut_ approach.
 
 \cgalFigureBegin{Classification_organization_fig,organization.svg}
@@ -45,7 +45,7 @@ The following code snippet shows how to instantiate such data structures from an
 
 \subsection Classification_labels Label Set
 
-A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle).
+A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle). Note that names are not used for identification: two labels in the same set can have the same name (but not the same handle).
 
 The following code snippet shows how to add labels to the classification object.
 
@@ -109,22 +109,22 @@ The following snippet shows how to use the feature generator:
 
 \snippet Classification/example_generation_and_training.cpp Generator
 
-\section Classification_predicates Predicates
+\section Classification_classifiers Classifiers
 
-%Classification relies on a predicate: this predicate is an object that, from the set of values taken by the features at an input item, computes the energy that measures the likelihood of an input item to belong to one label or another. The concept `CGAL::Classification::Predicate` takes the index of an input item and stores the energies associated to each label in a vector. If a predicate returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty; large values mean that this item is not likely to belong to this label.
+%Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the energy that measures the likelihood of an input item to belong to one label or another. The concept `CGAL::Classification::Classifier` takes the index of an input item and stores the energies associated to each label in a vector. If a classifier returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty; large values mean that this item is not likely to belong to this label.
 
-\cgal provides two models for this concept, [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate) and [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate).
+\cgal provides two models for this concept, [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier) and [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier).
 
 \subsection Classification_sowf Sum of Weighted Features
 
-This first predicate defines the following attributes:
+This first classifier defines the following attributes:
 
 - a weight applied to each feature
 - an effect applied to each pair of feature and label
 
-For each label, the predicate computes the energy as a sum of features normalized with both their weight and the effect they have on this specific label.
+For each label, the classifier computes the energy as a sum of features normalized with both their weight and the effect they have on this specific label.
 
-This predicate can be set up by hand but also embeds a training algorithm.
+This classifier can be set up by hand but also embeds a training algorithm.
 
 \subsubsection Classification_sowf_weights_effects Weights and Effects
 
@@ -132,9 +132,9 @@ Each feature is assigned a weight that measures its strength with respect to the
 
 Each pair of feature and label is assigned an effect that can either be:
 
-- [FAVORING](@ref CGAL::Classification::Sum_of_weighted_features_predicate::FAVORING): the label is favored by high values of the feature
-- [NEUTRAL](@ref CGAL::Classification::Sum_of_weighted_features_predicate::NEUTRAL): the label is not affected by the feature
-- [PENALIZING](@ref CGAL::Classification::Sum_of_weighted_features_predicate::PENALIZING): the label is favored by low values of the feature
+- [FAVORING](@ref CGAL::Classification::Sum_of_weighted_features_classifier::FAVORING): the label is favored by high values of the feature
+- [NEUTRAL](@ref CGAL::Classification::Sum_of_weighted_features_classifier::NEUTRAL): the label is not affected by the feature
+- [PENALIZING](@ref CGAL::Classification::Sum_of_weighted_features_classifier::PENALIZING): the label is favored by low values of the feature
 
 For example, _vegetation_ is expected to have a high distance to plane and have a color close to green (if colors are available); _facades_ have a low distance to plane and a low verticality; etc.
 
@@ -162,7 +162,7 @@ The following code snippet shows how to define the weights and effects of featur
 
 Each feature has a specific weight and each pair of feature-label has a specific effect. This means that the number of parameters to set up can quickly explode: if 6 features are used to classify between 4 labels, 30 parameters have to be set up (6 weights + 6x4 feature-label relationships).
 
-Though it is possible to set them up one by one, \cgal also provides a method [train()](@ref CGAL::Classification::Sum_of_weighted_features_predicate::train)  that requires a small set of ground truth items provided by users. More specifically, users must provide, for each label they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
+Though it is possible to set them up one by one, \cgal also provides a method [train()](@ref CGAL::Classification::Sum_of_weighted_features_classifier::train)  that requires a small set of ground truth items provided by users. More specifically, users must provide, for each label they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
 
 - for each feature, a range of weights is tested: the effect each feature have on each label is estimated. For a given weight, if a feature has the same effect on each label, it is non-relevant for classification. The range of weights such that the feature is relevant is estimated
 
@@ -182,22 +182,22 @@ Example of evolution of the mean intersection-over-union. The purple curve is th
 
 \subsection Classification_random_forest Random Forest
 
-This second predicate is [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate).
+This second classifier is [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier).
 It uses the \ref thirdpartyOpenCV library, more specifically the
 [Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
-package. This predicate uses a ground truth training set to construct several
+package. This classifier uses a ground truth training set to construct several
 decision trees that are then used to assign a label to each input
 item.
 
-This predicate cannot be set up by hand and requires a ground truth
+This classifier cannot be set up by hand and requires a ground truth
 training set. The training algorithm usually requires a higher number
-of inliers than the previous predicate but is faster. Note that so
+of inliers than the previous classifier but is faster. Note that so
 far, \ref thirdpartyOpenCV does not provide fully functional
 input/output functions for random trees, which means the result of the
 training cannot be saved and recovered for further classification.
 
 An [example](\ref Classification_example_random_forest) shows how to
-use this predicate.  For more details about the method, please refer
+use this classifier.  For more details about the method, please refer
 to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
 
@@ -231,10 +231,10 @@ Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the
   E(x) = \sum_{i = 1..N} E_{di}(x_i)
 \f]
 
-This energy is a sum of itemwise energies provided by the predicate and involves no regularization.
+This energy is a sum of itemwise energies provided by the classifier and involves no regularization.
 
 The following snippets show how to classify points based on a label
-set and a predicate. The result is stored in `label_indices`,
+set and a classifier. The result is stored in `label_indices`,
 following the same order as the input set and providing for each point
 the index (in the label set) of its assigned label.
 
@@ -334,7 +334,7 @@ The following example:
 - computes useful structures from this input
 - computes features from the input and the precomputed structures
 - defines 3 labels (_vegetation_, _ground_ and _roof_)
-- sets up the classification predicate [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate)
+- sets up the classification classifier [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier)
 - classifies the point set with the 3 different methods (this is for
 the sake of the example: each method overwrites the previous result,
 users should only call one of the methods)
@@ -354,16 +354,16 @@ The following example:
 
 - reads a point set with a training set (embedded as a PLY feature _label_)
 - automatically generates features on 5 scales
-- trains the predicate [Sum_of_weighted_features_predicate](@ref CGAL::Classification::Sum_of_weighted_features_predicate) using 800 trials
+- trains the classifier [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier) using 800 trials
 - runs the algorithm using the graphcut regularization
 - prints some evaluation measurements
-- saves the configuration of the predicate for further use.
+- saves the configuration of the classifier for further use.
 
 \cgalExample{Classification/example_generation_and_training.cpp}
 
 \subsection Classification_example_random_forest Random Forest
 
-The following example shows how to use the predicate [Random_forest_predicate](@ref CGAL::Classification::Random_forest_predicate) using an input training set.
+The following example shows how to use the classifier [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_random_forest.cpp}
 

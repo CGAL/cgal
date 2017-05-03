@@ -1,5 +1,5 @@
-#ifndef CGAL_CLASSIFICATION_RANDOM_FOREST_PREDICATE_H
-#define CGAL_CLASSIFICATION_RANDOM_FOREST_PREDICATE_H
+#ifndef CGAL_CLASSIFICATION_RANDOM_FOREST_CLASSIFIER_H
+#define CGAL_CLASSIFICATION_RANDOM_FOREST_CLASSIFIER_H
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
@@ -11,15 +11,15 @@ namespace CGAL {
 namespace Classification {
 
 /*!
-  \ingroup PkgClassificationPredicates
+  \ingroup PkgClassificationClassifiers
 
-  \brief %Classification predicate based on a random forest algorithm.
+  \brief %Classification classifier based on a random forest algorithm.
 
   \note This class requires the \ref thirdpartyOpenCV library.
 
-  \cgalModels `CGAL::Classification::Predicate`
+  \cgalModels `CGAL::Classification::Classifier`
 */
-class Random_forest_predicate
+class Random_forest_classifier
 {
   Label_set& m_labels;
   Feature_set& m_features;
@@ -33,9 +33,9 @@ class Random_forest_predicate
 public:
   
 /*!
-  \brief Instantiate the predicate using the sets of `labels` and `features`.
+  \brief Instantiate the classifier using the sets of `labels` and `features`.
 */
-  Random_forest_predicate (Label_set& labels,
+  Random_forest_classifier (Label_set& labels,
                            Feature_set& features)
     : m_labels (labels), m_features (features)
 #if (CV_MAJOR_VERSION < 3)
@@ -44,7 +44,7 @@ public:
   {  }
 
   /// \cond SKIP_IN_MANUAL
-  ~Random_forest_predicate ()
+  ~Random_forest_classifier ()
   {
 #if (CV_MAJOR_VERSION < 3)
     if (rtree != NULL)
@@ -209,4 +209,4 @@ public:
 
 }
 
-#endif // CGAL_CLASSIFICATION_RANDOM_FOREST_PREDICATE_H
+#endif // CGAL_CLASSIFICATION_RANDOM_FOREST_CLASSIFIER_H

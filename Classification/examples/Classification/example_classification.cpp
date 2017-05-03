@@ -19,7 +19,7 @@ typedef CGAL::Identity_property_map<Point> Pmap;
 
 namespace Classification = CGAL::Classification;
 
-typedef Classification::Sum_of_weighted_features_predicate Classification_predicate;
+typedef Classification::Sum_of_weighted_features_classifier Classification_classifier;
 
 typedef Classification::Planimetric_grid<Kernel, Point_range, Pmap>             Planimetric_grid;
 typedef Classification::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
@@ -106,39 +106,39 @@ int main (int argc, char** argv)
   //! [Weights]
 
   std::cerr << "Setting weights" << std::endl;
-  Classification_predicate predicate (labels, features);
-  predicate.set_weight (distance_to_plane, 6.75e-2);
-  predicate.set_weight (linearity, 1.19);
-  predicate.set_weight (omnivariance, 1.34e-1);
-  predicate.set_weight (planarity, 7.32e-1);
-  predicate.set_weight (surface_variation, 1.36e-1);
-  predicate.set_weight (dispersion, 5.45e-1);
-  predicate.set_weight (elevation, 1.47e1);
+  Classification_classifier classifier (labels, features);
+  classifier.set_weight (distance_to_plane, 6.75e-2);
+  classifier.set_weight (linearity, 1.19);
+  classifier.set_weight (omnivariance, 1.34e-1);
+  classifier.set_weight (planarity, 7.32e-1);
+  classifier.set_weight (surface_variation, 1.36e-1);
+  classifier.set_weight (dispersion, 5.45e-1);
+  classifier.set_weight (elevation, 1.47e1);
   
   std::cerr << "Setting effects" << std::endl;
-  predicate.set_effect (ground, distance_to_plane, Classification_predicate::NEUTRAL);
-  predicate.set_effect (ground, linearity,  Classification_predicate::PENALIZING);
-  predicate.set_effect (ground, omnivariance, Classification_predicate::NEUTRAL);
-  predicate.set_effect (ground, planarity, Classification_predicate::FAVORING);
-  predicate.set_effect (ground, surface_variation, Classification_predicate::PENALIZING);
-  predicate.set_effect (ground, dispersion, Classification_predicate::NEUTRAL);
-  predicate.set_effect (ground, elevation, Classification_predicate::PENALIZING);
+  classifier.set_effect (ground, distance_to_plane, Classification_classifier::NEUTRAL);
+  classifier.set_effect (ground, linearity,  Classification_classifier::PENALIZING);
+  classifier.set_effect (ground, omnivariance, Classification_classifier::NEUTRAL);
+  classifier.set_effect (ground, planarity, Classification_classifier::FAVORING);
+  classifier.set_effect (ground, surface_variation, Classification_classifier::PENALIZING);
+  classifier.set_effect (ground, dispersion, Classification_classifier::NEUTRAL);
+  classifier.set_effect (ground, elevation, Classification_classifier::PENALIZING);
   
-  predicate.set_effect (vegetation, distance_to_plane,  Classification_predicate::FAVORING);
-  predicate.set_effect (vegetation, linearity,  Classification_predicate::NEUTRAL);
-  predicate.set_effect (vegetation, omnivariance, Classification_predicate::FAVORING);
-  predicate.set_effect (vegetation, planarity, Classification_predicate::NEUTRAL);
-  predicate.set_effect (vegetation, surface_variation, Classification_predicate::NEUTRAL);
-  predicate.set_effect (vegetation, dispersion, Classification_predicate::FAVORING);
-  predicate.set_effect (vegetation, elevation, Classification_predicate::NEUTRAL);
+  classifier.set_effect (vegetation, distance_to_plane,  Classification_classifier::FAVORING);
+  classifier.set_effect (vegetation, linearity,  Classification_classifier::NEUTRAL);
+  classifier.set_effect (vegetation, omnivariance, Classification_classifier::FAVORING);
+  classifier.set_effect (vegetation, planarity, Classification_classifier::NEUTRAL);
+  classifier.set_effect (vegetation, surface_variation, Classification_classifier::NEUTRAL);
+  classifier.set_effect (vegetation, dispersion, Classification_classifier::FAVORING);
+  classifier.set_effect (vegetation, elevation, Classification_classifier::NEUTRAL);
 
-  predicate.set_effect (roof, distance_to_plane,  Classification_predicate::NEUTRAL);
-  predicate.set_effect (roof, linearity,  Classification_predicate::PENALIZING);
-  predicate.set_effect (roof, omnivariance, Classification_predicate::FAVORING);
-  predicate.set_effect (roof, planarity, Classification_predicate::FAVORING);
-  predicate.set_effect (roof, surface_variation, Classification_predicate::PENALIZING);
-  predicate.set_effect (roof, dispersion, Classification_predicate::NEUTRAL);
-  predicate.set_effect (roof, elevation, Classification_predicate::FAVORING);
+  classifier.set_effect (roof, distance_to_plane,  Classification_classifier::NEUTRAL);
+  classifier.set_effect (roof, linearity,  Classification_classifier::PENALIZING);
+  classifier.set_effect (roof, omnivariance, Classification_classifier::FAVORING);
+  classifier.set_effect (roof, planarity, Classification_classifier::FAVORING);
+  classifier.set_effect (roof, surface_variation, Classification_classifier::PENALIZING);
+  classifier.set_effect (roof, dispersion, Classification_classifier::NEUTRAL);
+  classifier.set_effect (roof, elevation, Classification_classifier::FAVORING);
 
   //! [Weights]
   ///////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ int main (int argc, char** argv)
     
   CGAL::Real_timer t;
   t.start();
-  Classification::classify<CGAL::Parallel_tag> (pts, labels, predicate, label_indices);
+  Classification::classify<CGAL::Parallel_tag> (pts, labels, classifier, label_indices);
   t.stop();
   std::cerr << "Raw classification performed in " << t.time() << " second(s)" << std::endl;
   t.reset();
@@ -163,7 +163,7 @@ int main (int argc, char** argv)
   //! [Smoothing]
   t.start();
   Classification::classify_with_local_smoothing<CGAL::Parallel_tag>
-    (pts, Pmap(), labels, predicate,
+    (pts, Pmap(), labels, classifier,
      neighborhood.range_neighbor_query(radius_neighbors),
      label_indices);
   t.stop();
@@ -176,7 +176,7 @@ int main (int argc, char** argv)
   //! [Graph_cut]
   t.start();
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, Pmap(), labels, predicate,
+    (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
      0.2, 4, label_indices);
   t.stop();

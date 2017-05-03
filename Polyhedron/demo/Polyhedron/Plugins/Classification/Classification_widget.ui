@@ -86,12 +86,12 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Predicate:</string>
+         <string>Classifier:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="predicate">
+       <widget class="QComboBox" name="classifier">
         <property name="currentIndex">
          <number>0</number>
         </property>

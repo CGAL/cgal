@@ -354,7 +354,7 @@ void Point_set_item_classification::compute_features ()
 
 
 
-void Point_set_item_classification::train(int predicate)
+void Point_set_item_classification::train(int classifier)
 {
   if (m_features.size() == 0)
     {
@@ -369,7 +369,7 @@ void Point_set_item_classification::train(int predicate)
        it != m_points->point_set()->first_selected(); ++ it)
     indices[*it] = m_training[*it];
 
-  if (predicate == 0)
+  if (classifier == 0)
     {
       m_sowf->train<Concurrency_tag>(indices, m_nb_trials);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
@@ -393,7 +393,7 @@ void Point_set_item_classification::train(int predicate)
      change_color (m_index_color);
 }
 
-bool Point_set_item_classification::run (int method, int predicate)
+bool Point_set_item_classification::run (int method, int classifier)
 {
   if (m_features.size() == 0)
     {
@@ -402,7 +402,7 @@ bool Point_set_item_classification::run (int method, int predicate)
     }
   reset_indices();
 
-  if (predicate == 0)
+  if (classifier == 0)
     run (method, *m_sowf);
 #ifdef CGAL_LINKED_WITH_OPENCV
   else

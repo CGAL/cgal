@@ -112,7 +112,7 @@ public:
     addDockWidget(dock_widget);
 
 #ifndef CGAL_LINKED_WITH_OPENCV
-    ui_widget.predicate->removeItem(1);
+    ui_widget.classifier->removeItem(1);
 #endif
 
     color_att = QColor (75, 75, 77);
@@ -220,7 +220,7 @@ public Q_SLOTS:
     ui_widget.compute_features->setEnabled(false);
     ui_widget.numberOfScalesSpinBox->setEnabled(false);
     ui_widget.display->setEnabled(false);
-    ui_widget.predicate->setEnabled(false);
+    ui_widget.classifier->setEnabled(false);
     ui_widget.tabWidget->setEnabled(false);
     ui_widget.run->setEnabled(false);
     ui_widget.run_smoothed->setEnabled(false);
@@ -233,7 +233,7 @@ public Q_SLOTS:
     ui_widget.compute_features->setEnabled(true);
     ui_widget.numberOfScalesSpinBox->setEnabled(true);
     ui_widget.display->setEnabled(true);
-    ui_widget.predicate->setEnabled(true);
+    ui_widget.classifier->setEnabled(true);
   }
 
   void enable_classif()
@@ -363,7 +363,7 @@ public Q_SLOTS:
 
   void run (Item_classification_base* classif, int method)
   {
-    classif->run (method, ui_widget.predicate->currentIndex());
+    classif->run (method, ui_widget.classifier->currentIndex());
   }
 
   void on_compute_features_button_clicked()
@@ -406,7 +406,7 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     classif->save_config (filename.toStdString().c_str(),
-                          ui_widget.predicate->currentIndex());
+                          ui_widget.classifier->currentIndex());
     
     QApplication::restoreOverrideCursor();
 
@@ -432,7 +432,7 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     classif->load_config (filename.toStdString().c_str(),
-                          ui_widget.predicate->currentIndex());
+                          ui_widget.classifier->currentIndex());
     update_plugin_from_item(classif);
     run (classif, 0);
     
@@ -632,7 +632,7 @@ public Q_SLOTS:
         colors.push_back (class_rows[i].color);
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    classif->train(ui_widget.predicate->currentIndex());
+    classif->train(ui_widget.classifier->currentIndex());
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
   }
@@ -779,11 +779,11 @@ public Q_SLOTS:
 
     for (std::size_t i = 0; i < classif->number_of_labels(); ++ i)
       {
-        CGAL::Classification::Sum_of_weighted_features_predicate::Effect
+        CGAL::Classification::Sum_of_weighted_features_classifier::Effect
           eff = classif->effect (classif->label(i), att);
-        if (eff == CGAL::Classification::Sum_of_weighted_features_predicate::PENALIZING)
+        if (eff == CGAL::Classification::Sum_of_weighted_features_classifier::PENALIZING)
           class_rows[i].effect->setCurrentIndex(0);
-        else if (eff == CGAL::Classification::Sum_of_weighted_features_predicate::NEUTRAL)
+        else if (eff == CGAL::Classification::Sum_of_weighted_features_classifier::NEUTRAL)
           class_rows[i].effect->setCurrentIndex(1);
         else
           class_rows[i].effect->setCurrentIndex(2);
@@ -835,17 +835,17 @@ public Q_SLOTS:
           if (v == 0)
             {
               classif->set_effect(classif->label(i),
-                                  att, CGAL::Classification::Sum_of_weighted_features_predicate::PENALIZING);
+                                  att, CGAL::Classification::Sum_of_weighted_features_classifier::PENALIZING);
             }
           else if (v == 1)
             {
               classif->set_effect(classif->label(i),
-                                  att, CGAL::Classification::Sum_of_weighted_features_predicate::NEUTRAL);
+                                  att, CGAL::Classification::Sum_of_weighted_features_classifier::NEUTRAL);
             }
           else
             {
               classif->set_effect(classif->label(i),
-                                  att, CGAL::Classification::Sum_of_weighted_features_predicate::FAVORING);
+                                  att, CGAL::Classification::Sum_of_weighted_features_classifier::FAVORING);
             }
           break;
         }
