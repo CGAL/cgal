@@ -32,8 +32,9 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>               C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr>                                 Mesh_criteria;
-typedef C3t3::Point                                               Point;
 
+// (Unweighted) point type
+typedef Tr::Bare_point                                            Point;
 
 int main()
 {
