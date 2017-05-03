@@ -42,14 +42,13 @@ namespace CGAL
    * For example, calling `vertices(graph)` will return an iterator range of all but only the vertices that belong to the selected connected components.
    *
    * \tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
-   * \tparam FIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor` as key and `graph_traits<Graph>::faces_size_type`
-   * \tparam VIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor` as key and `graph_traits<Graph>::vertices_size_type`
-   * \tparam HIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor` as key and `graph_traits<Graph>::halfedges_size_type`
+   * \tparam FIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
+   * \tparam VIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor` as key and `graph_traits<Graph>::%vertices_size_type` as value
+   * \tparam HIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor` as key and `graph_traits<Graph>::%halfedges_size_type` as value
    *
    * \cgalModels `FaceListGraph`
    * \cgalModels `HalfedgeListGraph`
    */
-
 template<typename Graph,
          typename FIMap = typename boost::property_map<Graph, CGAL::face_index_t>::type,
          typename VIMap = typename boost::property_map<Graph, boost::vertex_index_t>::type,
@@ -125,14 +124,20 @@ struct Connected_components_graph
 
    * \tparam FaceComponentMap a model of `ReadablePropertyMap` with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
-      `graph_traits<Graph>::faces_size_type` as value type.
+      `graph_traits<Graph>::%faces_size_type` as value type.
 
    * \param graph the graph containing the wanted patches.
    * \param fcmap the property_map that assigns a connected component to each face, with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
-      `graph_traits<Graph>::faces_size_type` as value type.
+      `graph_traits<Graph>::%faces_size_type` as value type.
    * \param begin an interator to the beginning of a range of connected components indices of interest.
    * \param end an interator to the element past the end of a range of connected components indices of interest.
+   * \param fimap the property map that assigns an index to each face,
+   * with boost::graph_traits<Graph>::%face_descriptor as key type and boost::graph_traits<Graph>::%faces_size_type as value type
+   * \param vimap the property map that assigns an index to each vertex,
+   *  with boost::graph_traits<Graph>::%vertex_descriptor as key type and boost::graph_traits<Graph>::%vertices_size_type as value type
+   * \param himap the property map that assigns an index to each halfedge,
+   *  with boost::graph_traits<Graph>::%halfedge_descriptor as key type and boost::graph_traits<Graph>::%halfedges_size_type as value type
    */
 
   template <typename FaceComponentMap, class IndexRangeIterator>
@@ -140,9 +145,16 @@ struct Connected_components_graph
                              FaceComponentMap fcmap,
                              IndexRangeIterator begin,
                              IndexRangeIterator end,
+                           #ifdef DOXYGEN_RUNNING
+                             FIMap fimap = get(CGAL::face_index, graph),
+                             VIMap vimap = get(boost::vertex_index, graph),
+                             HIMap himap = get(CGAL::halfedge_index, graph)
+                           #else
                              FIMap fimap,
                              VIMap vimap,
-                             HIMap himap)
+                             HIMap himap
+                           #endif
+                             )
     : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
   {
     base_iterator_constructor(begin, end, fcmap);
@@ -165,20 +177,33 @@ struct Connected_components_graph
    *
    * \tparam FaceComponentMap a model of `ReadablePropertyMap` with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
-      `graph_traits<Graph>::faces_size_type` as value type.
+      `graph_traits<Graph>::%faces_size_type` as value type.
    * \param graph the graph containing the wanted patch.
    * \param fcmap the property_map that assigns a connected component's index to each face, with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
-      `graph_traits<Graph>::faces_size_type` as value type.
+      `graph_traits<Graph>::%faces_size_type` as value type.
    * \param pid the index of the connected component of interest.
+   * \param fimap the property map that assigns an index to each face,
+   * with boost::graph_traits<Graph>::%face_descriptor as key type and boost::graph_traits<Graph>::%faces_size_type as value type
+   * \param vimap the property map that assigns an index to each vertex,
+   *  with boost::graph_traits<Graph>::%vertex_descriptor as key type and boost::graph_traits<Graph>::%vertices_size_type as value type
+   * \param himap the property map that assigns an index to each halfedge,
+   *  with boost::graph_traits<Graph>::%halfedge_descriptor as key type and boost::graph_traits<Graph>::%halfedges_size_type as value type
    */
   template <typename FaceComponentMap>
   Connected_components_graph(const Graph& graph,
                              FaceComponentMap fcmap,
                              typename boost::property_traits<FaceComponentMap>::value_type pid,
+                           #ifdef DOXYGEN_RUNNING
+                             FIMap fimap = get(CGAL::face_index, graph),
+                             VIMap vimap = get(boost::vertex_index, graph),
+                             HIMap himap = get(CGAL::halfedge_index, graph)
+                           #else
                              FIMap fimap,
                              VIMap vimap,
-                             HIMap himap)
+                             HIMap himap
+                           #endif
+                             )
     : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
   {
     base_constructor(fcmap, pid);
@@ -195,9 +220,9 @@ struct Connected_components_graph
     himap = get(CGAL::halfedge_index, graph);
     base_constructor(fcmap, pid);
   }
-  ///returns the graph of the Connected_components_graph.
+  ///returns a const reference to the graph of the Connected_components_graph.
   const Graph& graph()const{ return _graph; }
-
+  ///returns a reference to the graph of the Connected_components_graph.
   Graph& graph(){ return _graph; }
 
   struct Is_simplex_valid
