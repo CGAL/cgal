@@ -296,10 +296,10 @@ test(const std::vector<Graph>& graphs)
 
 typedef SM::Point Point_3;
 
-template<typename VertexPointPMap>
-struct Constraint : public boost::put_get_helper<bool,Constraint<VertexPointPMap> >
+template<class Mesh, typename VertexPointPMap>
+struct Constraint : public boost::put_get_helper<bool,Constraint<Mesh, VertexPointPMap> >
 {
-  typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
   typedef boost::readable_property_map_tag      category;
   typedef bool                                  value_type;
   typedef bool                                  reference;
@@ -310,73 +310,51 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<VertexPointPMap
     :g_(NULL)
   {}
 
-  Constraint(SM& g, VertexPointPMap vpp)
+  Constraint(Mesh& g, VertexPointPMap vpp)
     : g_(&g), vppmap(vpp)
   {}
 
   bool operator[](edge_descriptor e) const
   {
-    const SM& g = *g_;
+    const Mesh& g = *g_;
     if(
        ((boost::get(vppmap, target(e, g)) == Point_3(1,1,1) ||
-        boost::get(vppmap, source(e, g)) == Point_3(1,1,1)) &&
-       (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
-        boost::get(vppmap, source(e, g)) == Point_3(0,0,0)))
+         boost::get(vppmap, source(e, g)) == Point_3(1,1,1)) &&
+        (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
+         boost::get(vppmap, source(e, g)) == Point_3(0,0,0)))
        ||
        ((boost::get(vppmap, target(e, g)) == Point_3(1,1,1) ||
-        boost::get(vppmap, source(e, g)) == Point_3(1,1,1)) &&
-       (boost::get(vppmap, target(e, g)) == Point_3(0,0,1) ||
-        boost::get(vppmap, source(e, g)) == Point_3(0,0,1)))
+         boost::get(vppmap, source(e, g)) == Point_3(1,1,1)) &&
+        (boost::get(vppmap, target(e, g)) == Point_3(0,0,1) ||
+         boost::get(vppmap, source(e, g)) == Point_3(0,0,1)))
        ||
        ((boost::get(vppmap, target(e, g)) == Point_3(0,0,1) ||
-        boost::get(vppmap, source(e, g)) == Point_3(0,0,1)) &&
-       (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
-        boost::get(vppmap, source(e, g)) == Point_3(0,0,0)))
-      ||
-      ((boost::get(vppmap, target(e, g)) == Point_3(1,0,1) ||
-       boost::get(vppmap, source(e, g)) == Point_3(1,0,1)) &&
-      (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
-       boost::get(vppmap, source(e, g)) == Point_3(0,0,0)))
-      ||
-      ((boost::get(vppmap, target(e, g)) == Point_3(1,1,1) ||
-       boost::get(vppmap, source(e, g)) == Point_3(1,1,1)) &&
-      (boost::get(vppmap, target(e, g)) == Point_3(1,0,1) ||
-       boost::get(vppmap, source(e, g)) == Point_3(1,0,1)))
+         boost::get(vppmap, source(e, g)) == Point_3(0,0,1)) &&
+        (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
+         boost::get(vppmap, source(e, g)) == Point_3(0,0,0)))
+       ||
+       ((boost::get(vppmap, target(e, g)) == Point_3(1,0,1) ||
+         boost::get(vppmap, source(e, g)) == Point_3(1,0,1)) &&
+        (boost::get(vppmap, target(e, g)) == Point_3(0,0,0) ||
+         boost::get(vppmap, source(e, g)) == Point_3(0,0,0)))
+       ||
+       ((boost::get(vppmap, target(e, g)) == Point_3(1,1,1) ||
+         boost::get(vppmap, source(e, g)) == Point_3(1,1,1)) &&
+        (boost::get(vppmap, target(e, g)) == Point_3(1,0,1) ||
+         boost::get(vppmap, source(e, g)) == Point_3(1,0,1)))
        )
       return true;
     else
       return false;
   }
 
-  const SM* g_;
+  const Mesh* g_;
   VertexPointPMap vppmap;
 };
-
-int
-main()
+template<class Mesh, class FCCMAP, class Adapter>
+void test_mesh(Adapter fga)
 {
 
-  typedef CGAL::Connected_components_graph<SM> Adapter;
-  //test(sm_data());
-  //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
-  SM* sm = new SM();
-  CGAL::make_tetrahedron(
-        Point_3(1,1,1),
-        Point_3(0,0,0),
-        Point_3(0,0,1),
-        Point_3(1,0,1),
-        *sm);
-  SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> fccmap =
-      sm->add_property_map<boost::graph_traits<SM>::face_descriptor, std::size_t>("f:CC").first;
-  SM::Property_map<boost::graph_traits<SM>::vertex_descriptor, SM::Point> positions =
-      sm->points();
-  CGAL::Polygon_mesh_processing::connected_components(*sm, fccmap, CGAL::Polygon_mesh_processing::parameters::
-                                                      edge_is_constrained_map(Constraint<SM::Property_map<boost::graph_traits<SM>::vertex_descriptor,
-                                                                              SM::Point> >(*sm, positions)));
-  boost::unordered_set<long unsigned int> pids;
-  pids.insert(0);
-  pids.insert(2);
-  Adapter fga(*sm, fccmap, pids.begin(), pids.end());
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   //check that there is the right number of simplices in fga
   CGAL_assertion(CGAL::is_valid(fga));
@@ -396,7 +374,7 @@ main()
         next(next(next(next(h, fga), fga), fga), fga) == h
         );
   //check that prev() works inside the patch
-   h = halfedge(*faces(fga).first, fga);
+  h = halfedge(*faces(fga).first, fga);
   CGAL_assertion(
         prev(prev(prev(h, fga), fga), fga) == h
         );
@@ -411,8 +389,103 @@ main()
   CGAL_assertion(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 3 );
   CGAL_assertion(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 3 );
 
-  SM copy;
+  Mesh copy;
   CGAL::copy_face_graph(fga, copy);
+}
 
-  return 0;
+
+int
+main()
+{
+
+  test(sm_data());
+  //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
+  typedef typename CGAL::Connected_components_graph<SM> SM_Adapter;
+  typedef SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> SM_FCCMap;
+  SM* sm = new SM();
+  CGAL::make_tetrahedron(
+        Point_3(1,1,1),
+        Point_3(0,0,0),
+        Point_3(0,0,1),
+        Point_3(1,0,1),
+        *sm);
+  SM_FCCMap fccmap =
+      sm->add_property_map<boost::graph_traits<SM>::face_descriptor, std::size_t>("f:CC").first;
+  SM::Property_map<boost::graph_traits<SM>::vertex_descriptor, SM::Point> positions =
+      sm->points();
+  CGAL::Polygon_mesh_processing::connected_components(*sm, fccmap, CGAL::Polygon_mesh_processing::parameters::
+                                                      edge_is_constrained_map(Constraint<SM, SM::Property_map<boost::graph_traits<SM>::vertex_descriptor,
+                                                                              SM::Point> >(*sm, positions)));
+  boost::unordered_set<long unsigned int> pids;
+  pids.insert(0);
+  pids.insert(2);
+  SM_Adapter sm_adapter(*sm, fccmap, pids.begin(), pids.end());
+  test_mesh<SM,SM_FCCMap, SM_Adapter>(sm_adapter);
+
+
+
+
+  typedef boost::graph_traits<Polyhedron> PolyTraits;
+  typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VPMap;
+  typedef PolyTraits::face_descriptor poly_face_descriptor;
+  typedef PolyTraits::vertex_descriptor poly_vertex_descriptor;
+  typedef PolyTraits::halfedge_descriptor poly_halfedge_descriptor;
+  typedef boost::associative_property_map< std::map<poly_face_descriptor,
+      PolyTraits::faces_size_type> > FIMap;
+  typedef boost::associative_property_map< std::map<poly_vertex_descriptor,
+      PolyTraits::vertices_size_type> > VIMap;
+  typedef boost::associative_property_map< std::map<poly_halfedge_descriptor,
+      PolyTraits::halfedges_size_type> > HIMap;
+  typedef typename CGAL::Connected_components_graph<Polyhedron, FIMap, VIMap, HIMap> Poly_Adapter;
+  Polyhedron *poly = new Polyhedron();
+  CGAL::make_tetrahedron(
+        Point_3(1,1,1),
+        Point_3(0,0,0),
+        Point_3(0,0,1),
+        Point_3(1,0,1),
+        *poly);
+
+  std::map<poly_face_descriptor,
+      PolyTraits::faces_size_type> fimap;
+
+  std::map<poly_vertex_descriptor,
+      PolyTraits::vertices_size_type> vimap;
+
+  std::map<poly_halfedge_descriptor,
+      PolyTraits::halfedges_size_type> himap;
+  int i = 0;
+  BOOST_FOREACH(poly_face_descriptor f, faces(*poly))
+  {
+    fimap[f]=i++;
+  }
+  i = 0;
+  BOOST_FOREACH(poly_vertex_descriptor v, vertices(*poly))
+  {
+    vimap[v]=i++;
+  }
+  i = 0;
+  BOOST_FOREACH(poly_halfedge_descriptor h, halfedges(*poly))
+  {
+    himap[h]=i++;
+  }
+
+  FIMap poly_fimap(fimap);
+  VIMap poly_vimap(vimap);
+  HIMap poly_himap(himap);
+  std::map<poly_face_descriptor,
+      PolyTraits::faces_size_type> fc_map;
+  FIMap poly_fccmap(fc_map);
+
+  VPMap vpmap = get(boost::vertex_point, *poly);
+  CGAL::Polygon_mesh_processing::connected_components(*poly, poly_fccmap, CGAL::Polygon_mesh_processing::parameters::
+                                                      edge_is_constrained_map(Constraint<Polyhedron, VPMap >(*poly, vpmap)).
+                                                      face_index_map(poly_fimap));
+  Poly_Adapter poly_adapter(*poly,
+                            poly_fccmap,
+                            pids.begin(),
+                            pids.end(),
+                            poly_fimap,
+                            poly_vimap,
+                            poly_himap);
+  test_mesh<Polyhedron, FIMap, Poly_Adapter>(poly_adapter);
 }

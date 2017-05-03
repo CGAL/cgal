@@ -66,6 +66,58 @@ struct Connected_components_graph
   typedef typename boost::property_traits< HIMap >::value_type halfedge_index_type;
   typedef Connected_components_graph<Graph, FIMap, VIMap, HIMap>   Self;
 
+  template <typename FaceComponentMap, class IndexRangeIterator>
+  void base_iterator_constructor(IndexRangeIterator begin,
+                                 IndexRangeIterator end,
+                                 FaceComponentMap fcmap)
+  {
+    face_patch.resize(num_faces(_graph));
+    vertex_patch.resize(num_vertices(_graph));
+    halfedge_patch.resize(num_halfedges(_graph));
+    boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> pids;
+    for(IndexRangeIterator it = begin;
+        it != end;
+        ++it)
+    {
+      pids.insert(*it);
+    }
+
+    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    {
+      if(pids.find(boost::get(fcmap, fd))!= pids.end() )
+      {
+        face_patch.set(get(fimap, fd));
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        {
+          halfedge_patch.set(get(himap, hd));
+          halfedge_patch.set(get(himap, opposite(hd, _graph)));
+          vertex_patch.set(get(vimap, target(hd, _graph)));
+        }
+      }
+    }
+  }
+
+  template <typename FaceComponentMap>
+  void base_constructor(FaceComponentMap fcmap,
+      typename boost::property_traits<FaceComponentMap>::value_type pid)
+  {
+    face_patch.resize(num_faces(_graph));
+    vertex_patch.resize(num_vertices(_graph));
+    halfedge_patch.resize(num_halfedges(_graph));
+    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    {
+      if(boost::get(fcmap, fd) == pid)
+      {
+        face_patch.set(get(fimap, fd));
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        {
+          halfedge_patch.set(get(himap, hd));
+          halfedge_patch.set(get(himap, opposite(hd, _graph)));
+          vertex_patch.set(get(vimap, target(hd, _graph)));
+        }
+      }
+    }
+  }
   /*!
    * \brief Creates a Connected_components_graph of the connected components of `graph` specified in the range
    * defined by `begin` and `end`.
@@ -87,38 +139,27 @@ struct Connected_components_graph
   Connected_components_graph(const Graph& graph,
                              FaceComponentMap fcmap,
                              IndexRangeIterator begin,
+                             IndexRangeIterator end,
+                             FIMap fimap,
+                             VIMap vimap,
+                             HIMap himap)
+    : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
+  {
+    base_iterator_constructor(begin, end, fcmap);
+  }
+
+  template <typename FaceComponentMap, class IndexRangeIterator>
+  Connected_components_graph(const Graph& graph,
+                             FaceComponentMap fcmap,
+                             IndexRangeIterator begin,
                              IndexRangeIterator end)
-    : _graph(graph)
+    : _graph(const_cast<Graph&>(graph))
   {
     fimap = get(CGAL::face_index, graph);
     vimap = get(boost::vertex_index, graph);
     himap = get(CGAL::halfedge_index, graph);
-    face_patch.resize(num_faces(graph));
-    vertex_patch.resize(num_vertices(graph));
-    halfedge_patch.resize(num_halfedges(graph));
-    boost::unordered_set<typename boost::property_traits<FaceComponentMap>::value_type> pids;
-    for(IndexRangeIterator it = begin;
-        it != end;
-        ++it)
-    {
-      pids.insert(*it);
-    }
-
-    BOOST_FOREACH(face_descriptor fd, faces(graph) )
-    {
-      if(pids.find(boost::get(fcmap, fd))!= pids.end() )
-      {
-        face_patch.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, graph), graph))
-        {
-          halfedge_patch.set(get(himap, hd));
-          halfedge_patch.set(get(himap, opposite(hd, graph)));
-          vertex_patch.set(get(vimap, target(hd, graph)));
-        }
-      }
-    }
+    base_iterator_constructor(begin, end, fcmap);
   }
-
   /*!
    * \brief Creates a Connected_components_graph of the connected component `pid` of `graph`.
    *
@@ -134,33 +175,30 @@ struct Connected_components_graph
   template <typename FaceComponentMap>
   Connected_components_graph(const Graph& graph,
                              FaceComponentMap fcmap,
+                             typename boost::property_traits<FaceComponentMap>::value_type pid,
+                             FIMap fimap,
+                             VIMap vimap,
+                             HIMap himap)
+    : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
+  {
+    base_constructor(fcmap, pid);
+  }
+
+  template <typename FaceComponentMap>
+  Connected_components_graph(const Graph& graph,
+                             FaceComponentMap fcmap,
                              typename boost::property_traits<FaceComponentMap>::value_type pid)
-    : _graph(graph)
+    : _graph(const_cast<Graph&>(graph))
   {
     fimap = get(CGAL::face_index, graph);
     vimap = get(boost::vertex_index, graph);
     himap = get(CGAL::halfedge_index, graph);
-    face_patch.resize(num_faces(graph));
-    vertex_patch.resize(num_vertices(graph));
-    halfedge_patch.resize(num_halfedges(graph));
-    BOOST_FOREACH(face_descriptor fd, faces(graph) )
-    {
-      if(boost::get(fcmap, fd) == pid)
-      {
-        face_patch.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, graph), graph))
-        {
-          halfedge_patch.set(get(himap, hd));
-          halfedge_patch.set(get(himap, opposite(hd, graph)));
-          vertex_patch.set(get(vimap, target(hd, graph)));
-        }
-      }
-    }
+    base_constructor(fcmap, pid);
   }
   ///returns the graph of the Connected_components_graph.
   const Graph& graph()const{ return _graph; }
 
-
+  Graph& graph(){ return _graph; }
 
   struct Is_simplex_valid
   {
@@ -259,10 +297,10 @@ struct Connected_components_graph
   }
 
 private:
+  Graph& _graph;
   FIMap fimap;
   VIMap vimap;
   HIMap himap;
-  const Graph& _graph;
   boost::dynamic_bitset<> face_patch;
   boost::dynamic_bitset<> vertex_patch;
   boost::dynamic_bitset<> halfedge_patch;
@@ -818,8 +856,19 @@ template <class Graph,
           typename VIMap,
           typename HIMap,
           class PropertyTag>
-typename boost::property_map<Graph, PropertyTag >::type
+typename boost::property_map<Graph, PropertyTag >::const_type
 get(PropertyTag ptag, const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+{
+  return get(ptag, w.graph());
+}
+
+template <class Graph,
+          typename FIMap,
+          typename VIMap,
+          typename HIMap,
+          class PropertyTag>
+typename boost::property_map<Graph, PropertyTag >::type
+get(PropertyTag ptag, Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return get(ptag, w.graph());
 }
