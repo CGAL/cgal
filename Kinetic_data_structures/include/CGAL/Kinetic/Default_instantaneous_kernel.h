@@ -349,9 +349,7 @@ public:
   CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle, Point_2, 2);
   CGAL_MSA(Orientation,orientation, Point_2, 2);
   CGAL_MSA(Compare_x, compare_x, Point_2, 2);
-  CGAL_MSA(Compare_y,compare_y, Point_2, 2);
-  /*CGAL_MSA(Compare_x, compare_x, Point_2, 2);
-    CGAL_MSA(Compare_y, compare_y, Point_2, 2);*/
+  CGAL_MSA(Compare_y, compare_y, Point_2, 2);
   CGAL_MSA(Compare_distance, compare_distance, Point_2, 2);
   CGAL_MSA(Compare_distance, compare_distance, Point_3, 3);
   CGAL_TSO(Segment_2);
