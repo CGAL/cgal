@@ -3,6 +3,8 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
+\cgalRefines SpatialSortingTraits_3
+
 The concept `TriangulationTraits_3` is the first template parameter of the class 
 `Triangulation_3`. It defines the geometric objects (points, segments, 
 triangles and tetrahedra) forming the triangulation together with a few 
