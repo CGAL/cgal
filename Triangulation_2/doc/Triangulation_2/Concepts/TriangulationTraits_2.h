@@ -3,6 +3,8 @@
 \ingroup PkgTriangulation2Concepts
 \cgalConcept
 
+\cgalRefines SpatialSortingTraits_2
+
 The concept `TriangulationTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
 parameter of the class `CGAL::Triangulation_2<Traits,Tds>`.  This concept
