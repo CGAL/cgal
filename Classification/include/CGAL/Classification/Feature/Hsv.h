@@ -69,6 +69,18 @@ namespace Feature {
 template <typename Geom_traits, typename PointRange, typename ColorMap>
 class Hsv : public Feature_base
 {
+public:
+
+  /// Selected channel.
+  enum Channel
+  {
+    HUE = 0, ///< 0
+    SATURATION = 1, ///< 1
+    VALUE = 2 ///< 2
+  };
+
+private:
+  
   typedef typename Classification::RGB_Color RGB_Color;
   typedef typename Classification::HSV_Color HSV_Color;
 
@@ -77,7 +89,7 @@ class Hsv : public Feature_base
 #else
   const PointRange& input;
   ColorMap color_map;
-  std::size_t m_channel;
+  Channel m_channel;
   float m_mean;
   float m_sd;
 #endif  
@@ -86,18 +98,18 @@ public:
   
   /*!
 
-    \brief Constructs an feature based on the given color channel,
+    \brief Constructs a feature based on the given color channel,
     mean and standard deviation.
 
     \param input input range.
     \param color_map property map to access the colors of the input points.
-    \param channel chosen HSV channel (0 for hue, 1 for saturation, 2 for value).
+    \param channel chosen HSV channel.
     \param mean mean value of the specified channel.
     \param sd standard deviation of the specified channel.
   */
   Hsv (const PointRange& input,
        ColorMap color_map,
-       std::size_t channel,
+       Channel channel,
        float mean, float sd)
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : input(input), color_map(color_map), m_channel(channel), m_mean(mean), m_sd(sd)
@@ -108,14 +120,15 @@ public:
     for(std::size_t i = 0; i < input.size();i++)
     {
       HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+i)));
-      color_feature.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
+      color_feature.push_back (std::exp (-(c[std::size_t(channel)] - mean)
+                                         * (c[std::size_t(channel)] - mean) / (2. * sd * sd)));
     }
 #endif
 
     std::ostringstream oss;
-    if (channel == 0) oss << "hue";
-    else if (channel == 1) oss << "saturation";
-    else if (channel == 2) oss << "value";
+    if (channel == HUE) oss << "hue";
+    else if (channel == SATURATION) oss << "saturation";
+    else if (channel == VALUE) oss << "value";
     oss << "_" << mean;
     this->set_name (oss.str());
   }
@@ -127,7 +140,8 @@ public:
     return color_feature[pt_index];
 #else
     HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+pt_index)));
-    return std::exp (-(c[m_channel] - m_mean) * (c[m_channel] - m_mean) / (2. * m_sd * m_sd));
+    return std::exp (-(c[std::size_t(m_channel)] - m_mean)
+                     * (c[std::size_t(m_channel)] - m_mean) / (2. * m_sd * m_sd));
 #endif
   }
 

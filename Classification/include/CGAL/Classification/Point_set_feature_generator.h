@@ -490,7 +490,8 @@ private:
     
     void operator() () const
     {
-      Feature_handle fh = generator->m_features->template add<Hsv> (generator->m_input, color_map, channel, mean, sd);
+      Feature_handle fh = generator->m_features->template add<Hsv> (generator->m_input, color_map,
+                                                                    (typename Hsv::Channel)(channel), mean, sd);
       std::ostringstream oss;
       oss << fh->name() << "_" << scale;
       fh->set_name (oss.str());
