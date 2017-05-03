@@ -239,11 +239,12 @@ public:
   /*!
     \brief Generates all possible features from an input range.
 
-    The size of the smallest scale is automatically estimated and the
-    data structures needed (`Neighborhood`, `Planimetric_grid` and
-    `Local_eigen_analysis`) are computed at `nb_scales` recursively
-    larger scales. At each scale, the following features are
-    generated:
+    The size of the smallest scale is automatically estimated using a
+    method equivalent to `CGAL::compute_average_spacing()` using 6
+    neighbors. The data structures needed (`Neighborhood`,
+    `Planimetric_grid` and `Local_eigen_analysis`) are computed at
+    `nb_scales` recursively larger scales. At each scale, the
+    following features are generated:
 
     - `CGAL::Classification::Feature::Anisotropy`
     - `CGAL::Classification::Feature::Distance_to_plane`
