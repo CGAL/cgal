@@ -1,11 +1,13 @@
 #include <CGAL/boost/graph/Connected_components_graph.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include "test_Prefix.h"
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <CGAL/use.h>
+#include <fstream>
 
 typedef boost::unordered_set<std::size_t> id_map;
 
@@ -355,7 +357,7 @@ main()
 {
 
   typedef CGAL::Connected_components_graph<SM> Adapter;
-  test(sm_data());
+  //test(sm_data());
   //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
   SM* sm = new SM();
   CGAL::make_tetrahedron(
@@ -366,10 +368,10 @@ main()
         *sm);
   SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> fccmap =
       sm->add_property_map<boost::graph_traits<SM>::face_descriptor, std::size_t>("f:CC").first;
-  CGAL::Properties::Property_map<boost::graph_traits<SM>::vertex_descriptor, SM::Point> positions =
+  SM::Property_map<boost::graph_traits<SM>::vertex_descriptor, SM::Point> positions =
       sm->points();
   CGAL::Polygon_mesh_processing::connected_components(*sm, fccmap, CGAL::Polygon_mesh_processing::parameters::
-                                                      edge_is_constrained_map(Constraint<CGAL::Properties::Property_map<boost::graph_traits<SM>::vertex_descriptor,
+                                                      edge_is_constrained_map(Constraint<SM::Property_map<boost::graph_traits<SM>::vertex_descriptor,
                                                                               SM::Point> >(*sm, positions)));
   boost::unordered_set<long unsigned int> pids;
   pids.insert(0);
@@ -408,6 +410,9 @@ main()
   //check in_edges and out_edges
   CGAL_assertion(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 3 );
   CGAL_assertion(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 3 );
+
+  SM copy;
+  CGAL::copy_face_graph(fga, copy);
 
   return 0;
 }
