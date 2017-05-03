@@ -17,14 +17,8 @@ typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 
-#ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
+typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,CGAL::Sequential_tag>::type Tr;
 
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
@@ -37,6 +31,8 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
+  std::cout.precision(17);
+  std::cerr.precision(17);
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   std::ifstream input(fname);
   const char* fname2 = (argc>2)?argv[2]:"data/fandisk-box.off";
