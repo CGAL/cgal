@@ -556,7 +556,8 @@ The class `Random_points_in_tetrahedral_mesh_boundary_3` is an input iterator cr
 distributed on the boundary of a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
 The tetrahedral mesh must be valid and unchanged while the iterator is used.
 
-C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
+\tparam C3T3 must be a model of `Mesh_complex_3_in_triangulation_3`
+
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
@@ -633,7 +634,8 @@ The class `Random_points_in_tetrahedral_mesh_3` is an input iterator creating po
 distributed inside a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
 The tetrahedral mesh must be valid and unchanged while the iterator is used.
 
-C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
+\tparam C3T3 must be a model of `Mesh_complex_3_in_triangulation_3`
+
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
