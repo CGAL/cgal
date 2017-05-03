@@ -42,9 +42,13 @@ namespace Classification {
   /*!
     \ingroup PkgClassificationDataStructures
 
-    \brief Class that precomputes and stored the eigenvectors and
+    \brief Class that precomputes and stores the eigenvectors and
     eigenvalues of the covariance matrices of all points of a point
     set using a local neighborhood.
+
+    This class can be used to compute eigen features (see
+    \ref PkgClassificationFeatures) and to estimate local normal vectors
+    and tangent planes.
 
   */
 class Local_eigen_analysis
