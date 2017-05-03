@@ -114,6 +114,9 @@ namespace internal{
 template< class Functor >
 struct Apply_approx_sqrt: public Functor
 {
+  Apply_approx_sqrt() : Functor() { }
+  Apply_approx_sqrt(const Functor& f) : Functor(f) { }
+
   template <class T>
   typename cpp11::result_of<Functor(T)>::type operator()(const T& t) const
   {
