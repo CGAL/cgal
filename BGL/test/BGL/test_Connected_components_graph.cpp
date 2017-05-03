@@ -428,14 +428,11 @@ main()
   typedef boost::graph_traits<Polyhedron> PolyTraits;
   typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VPMap;
   typedef PolyTraits::face_descriptor poly_face_descriptor;
-  typedef PolyTraits::vertex_descriptor poly_vertex_descriptor;
-  typedef PolyTraits::halfedge_descriptor poly_halfedge_descriptor;
   typedef boost::associative_property_map< std::map<poly_face_descriptor,
-      PolyTraits::faces_size_type> > FIMap;
-  typedef boost::associative_property_map< std::map<poly_vertex_descriptor,
-      PolyTraits::vertices_size_type> > VIMap;
-  typedef boost::associative_property_map< std::map<poly_halfedge_descriptor,
-      PolyTraits::halfedges_size_type> > HIMap;
+      PolyTraits::faces_size_type> > FCMap;
+  typedef boost::property_map<Polyhedron, CGAL::face_external_index_t>::type FIMap;
+  typedef boost::property_map<Polyhedron, CGAL::vertex_external_index_t>::type VIMap;
+  typedef boost::property_map<Polyhedron, CGAL::halfedge_external_index_t>::type HIMap;
   typedef typename CGAL::Connected_components_graph<Polyhedron, FIMap, VIMap, HIMap> Poly_Adapter;
   Polyhedron *poly = new Polyhedron();
   CGAL::make_tetrahedron(
@@ -445,36 +442,13 @@ main()
         Point_3(1,0,1),
         *poly);
 
-  std::map<poly_face_descriptor,
-      PolyTraits::faces_size_type> fimap;
 
-  std::map<poly_vertex_descriptor,
-      PolyTraits::vertices_size_type> vimap;
-
-  std::map<poly_halfedge_descriptor,
-      PolyTraits::halfedges_size_type> himap;
-  int i = 0;
-  BOOST_FOREACH(poly_face_descriptor f, faces(*poly))
-  {
-    fimap[f]=i++;
-  }
-  i = 0;
-  BOOST_FOREACH(poly_vertex_descriptor v, vertices(*poly))
-  {
-    vimap[v]=i++;
-  }
-  i = 0;
-  BOOST_FOREACH(poly_halfedge_descriptor h, halfedges(*poly))
-  {
-    himap[h]=i++;
-  }
-
-  FIMap poly_fimap(fimap);
-  VIMap poly_vimap(vimap);
-  HIMap poly_himap(himap);
+  FIMap poly_fimap = get(CGAL::face_external_index, *poly);
+  VIMap poly_vimap = get(CGAL::vertex_external_index, *poly);
+  HIMap poly_himap = get(CGAL::halfedge_external_index, *poly);
   std::map<poly_face_descriptor,
       PolyTraits::faces_size_type> fc_map;
-  FIMap poly_fccmap(fc_map);
+  FCMap poly_fccmap(fc_map);
 
   VPMap vpmap = get(boost::vertex_point, *poly);
   CGAL::Polygon_mesh_processing::connected_components(*poly, poly_fccmap, CGAL::Polygon_mesh_processing::parameters::
@@ -487,5 +461,5 @@ main()
                             poly_fimap,
                             poly_vimap,
                             poly_himap);
-  test_mesh<Polyhedron, FIMap, Poly_Adapter>(poly_adapter);
+  test_mesh<Polyhedron, FCMap, Poly_Adapter>(poly_adapter);
 }
