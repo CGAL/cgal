@@ -44,20 +44,29 @@ Generally, a reconstruction interpolating the original point set is desired. Thi
 The surfaces constructed from the point set at the original scale (left) and at a higher scale (right). The surface points in the right figure are reverted back to the original scale. The dashed paths shows the inward-facing shell where it does not overlap the outward-facing shell. Note how the scale-space reconstruction assumes the points on the right side of the object sample small features.
 \cgalFigureEnd
 
-
-Both the smoothing operator and the mesh reconstruction assume that points near each other belong to the same part of the object. This is expressed in the notion of balls with a fixed size, the neighborhood radius. If such a ball contains multiple points, these points are \em near each other and will influence each other while increasing the scale. If such a ball is empty, it lies outside the object. Note that \em outside is based on regions empty of points, not on whether a volume is enclosed by the surface.
-
-The point set at the initial scale is equivalent to the input point set. In theory the scale can be varied continuously, but in practice the scale is increased in discrete iterations for efficiency reasons. The scale is increased one iteration by projecting each point to the <em>density</em>-weighted principal component analysis (PCA) of the local, \em \f$\delta\f$-distance, neighborhood. If the point set was sampled from a surface for which any unwanted deformation and sampling noise is smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of increasing the scale.
-
-The reconstruction method requires a fixed neighborhood size parameter, related to the resolution of the data. This parameter indicates a region for which we can assume it contains at least one point if it is centered on the surface.
+Both the smoothing operator and the mesh reconstruction assume that points near each other belong to the same part of the object. This is usually expressed in the notion of balls with a fixed size, the neighborhood radius. If such a ball contains multiple points, these points are \em near each other and will influence each other while increasing the scale. If such a ball is empty, it lies outside the object. Note that \em outside is based on regions empty of points, not on whether a volume is enclosed by the surface.
 
 The neighborhood size can be estimated through statistical analysis. We use a kD-tree to estimate the mean distance to the n-th nearest neighbor and we use this distance as an approximator for the resolution.
 
+The point set at the initial scale is equivalent to the input point set. In theory the scale can be varied continuously, but in practice the scale is increased in discrete iterations for efficiency reasons. The scale is increased one iteration by transforming each point using a smoothing operator. \cgal provides two smoothing operators for scale space reconstruction:
+
+- `CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother` (default) uses the <em>density</em>-weighted principal component analysis (PCA) of the local, \em \f$\delta\f$-distance, neighborhood. If the point set was sampled from a surface for which any unwanted deformation and sampling noise is smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of increasing the scale.
+
+- `CGAL::Scale_space_reconstruction_3::Jet_smoother` uses the function `CGAL::jet_smooth_point_set()` that projects the point to an estimated jet surface. This smoothing is less agressive and should be used if the point set is not very noisy and if a higher precision is wanted.
+
+Users can define their own smoothing operators by following the concept `CGAL::Scale_space_reconstruction_3::Smoother`.
+
+Meshing is achieved by interpolating the smoothed point cloud and propagating back the connectivity to the original point cloud. \cgal provides two meshing operators for scale space reconstruction:
+
+- `CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher` (default) uses a filtered `CGAL::Alpha_shape_3` algorithm to generate one or several "shells". This method is designed for closed shapes. It requires a fixed neighborhood size parameter, related to the resolution of the data. This parameter indicates a region for which we can assume it contains at least one point if it is centered on the surface.
+
+- `CGAL::Scale_space_reconstruction_3::Advancing_front_mesher` uses the algorithm `CGAL::Advancing_front_surface_reconstruction` to generate an oriented 2-manifold surface. This method handles shapes with boundaries and gives the user control over the largest facets used.
+
 The method provides access to intermediate results and the user can adjust these to better suit its needs. The (intermediate) results are the estimate of the resolution, the scale, and the final collection of surface triangles.
 
+Note that [Jet_smoother](@ref CGAL::Scale_space_reconstruction_3::Jet_smoother) and [Advancing_front_mesher](@ref CGAL::Scale_space_reconstruction_3::Advancing_front_mesher) are methods that rely on other \cgal packages and that do not correspond to the original scale space algorithm. They can be used as alternative operators for the cases of point clouds with low noise that sample surfaces with boundaries. For more information on their parameters and effect, please refer to their respective manual pages (\ref Point_set_processing_3Smoothing and \ref Chapter_Advancing_Front_Surface_Reconstruction). The rest of this documentation focuses on the default behavior using [Weighted_PCA_smoother](@ref CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother) and [Alpha_shape_mesher](@ref CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher).
 
 \subsection ScaleSpaceReconstruction3secParam Parameter Settings
-
 
 The scale-space surface reconstruction method has two main global parameters: the radius of the neighborhood ball and the number iterations of increasing the scale. If no appropriate neighborhood radius is known, this can be estimated using another two parameters: the mean number of neighbors and the number of samples. We have empirically determined values for each of these parameters that work well on a broad spectrum of data sets. However, we advise to carefully fine-tune these parameters for each type of data set.
 
@@ -88,7 +97,7 @@ When reverted to the original scale, we cannot guarantee the surface is a valid 
 
 \section ScaleSpaceReconstruction3secDesign Software Design
 
-The main class `Scale_space_surface_reconstruction_3` contains all the functionality to estimate the neighborhood size, compute the scale-space and increase the scale, and reconstruct the surface from the point set at the current scale.
+The main classes `Scale_space_surface_reconstruction_3`, [Weighted_PCA_smoother](@ref CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother) and [Alpha_shape_mesher](@ref CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher) contain all the functionality to estimate the neighborhood size, compute the scale-space and increase the scale, and reconstruct the surface from the point set at the current scale.
 
 The neighborhood size is estimated using `Orthogonal_k_neighbor_search`. The point set is generally stored in a `Orthogonal_k_neighbor_search::Tree`. When the neighborhood size is estimated, this tree is searched for nearest neighbors.
 
@@ -119,6 +128,8 @@ Surfaces with boundaries are handled naturally. However, it is important to note
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figBound, mushroom_pts.png, mushroom_surf.png}
 <b>Left:</b> A point sample of a surface with boundary. <b>Right:</b> reconstructed surface mesh.
 \cgalFigureEnd
+
+Note that the mesher [Advancing_front_mesher](@ref CGAL::Scale_space_reconstruction_3::Advancing_front_mesher) is a good alternative for producing well oriented surfaces with boundaries.
 
 \subsection Triangulation3ssecRegularity Sampling Regularity
 
@@ -245,9 +256,14 @@ After examining the reconstructed surfaces, we may decide that performing more i
 
 \cgalExample{Scale_space_reconstruction_3/scale_space_incremental.cpp}
 
-The last example shows how to force the output surface to be 2-manifold. In this case, some facets may be discarded in order to remove non-manifold simplices. They are stored in a \em garbage container in an unordered fashion. They are accessed by iterating on this container.
+This example shows how to force the output surface to be 2-manifold. In this case, some facets may be discarded in order to remove non-manifold simplices. They are stored in a \em garbage container in an unordered fashion. They are accessed by iterating on this container.
 
 \cgalExample{Scale_space_reconstruction_3/scale_space_manifold.cpp}
+
+This last example shows how to use the alternative operators [Jet_smoother](@ref CGAL::Scale_space_reconstruction_3::Jet_smoother) and [Advancing_front_mesher](@ref CGAL::Scale_space_reconstruction_3::Advancing_front_mesher).
+
+\cgalExample{Scale_space_reconstruction_3/scale_space_advancing_front.cpp}
+
 
 
 \section ScaleSpaceReconstruction3secDesImpl Design and Implementation History
