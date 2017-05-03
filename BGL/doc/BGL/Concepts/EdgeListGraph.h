@@ -30,15 +30,15 @@ boost::graph_traits<EdgeListGraph>::ver_size_type
 num_edges(const EdgeListGraph& g);
 
 
-/*! \relates EdgeGraph
+/*! \relates EdgeListGraph
 returns the source vertex of `h`.
  */
-boost::graph_traits<EdgeGraph>::vertex_descriptor
-source(boost::graph_traits<EdgeGraph>::halfedge_descriptor h, EdgeGraph& g);
+boost::graph_traits<EdgeListGraph>::vertex_descriptor
+source(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, EdgeListGraph& g);
 
 
-/*! \relates EdgeGraph
+/*! \relates EdgeListGraph
 returns the target vertex of `h`.
  */
-boost::graph_traits<EdgeGraph>::vertex_descriptor
-target(boost::graph_traits<EdgeGraph>::halfedge_descriptor h, EdgeGraph& g);
+boost::graph_traits<EdgeListGraph>::vertex_descriptor
+target(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, EdgeListGraph& g);
