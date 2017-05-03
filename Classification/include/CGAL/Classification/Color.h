@@ -36,13 +36,13 @@ typedef CGAL::cpp11::array<unsigned char, 3> RGB_Color;
     \ingroup PkgClassificationColor
 
     %Color described in hue/saturation/value space. Each component is stored
-    as a double:
+    as a float:
 
     - `hue` ranges from 0° to 360° (corresponding to the color tint)
     - `saturation` ranges from 0.0 (gray) to 100.0 (full saturation)
     - `value` ranges from 0.0 (black) to 100.0 (white)
    */  
-typedef CGAL::cpp11::array<double, 3> HSV_Color;
+typedef CGAL::cpp11::array<float, 3> HSV_Color;
 
 
   /// \cond SKIP_IN_MANUAL
@@ -68,7 +68,7 @@ inline HSV_Color rgb_to_hsv (const RGB_Color& c)
   if (H < 0.) H += 360.;
   double S = (Cmax == 0. ? 0. : 100. * (delta / Cmax));
   double V = 100. * Cmax;
-  HSV_Color out = {{ H, S, V }};
+  HSV_Color out = {{ float(H), float(S), float(V) }};
   return out;
 }
 

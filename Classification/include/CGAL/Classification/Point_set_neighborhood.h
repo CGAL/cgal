@@ -109,14 +109,14 @@ public:
     typedef typename Point_set_neighborhood::Point value_type; ///<
   private:
     const Point_set_neighborhood& neighborhood;
-    std::size_t k;
+    unsigned int k;
   public:
     /*!
       \brief Constructs a K neighbor query object.
       \param neighborhood point set neighborhood object.
       \param k number of neighbors per query.
     */
-    K_neighbor_query (const Point_set_neighborhood& neighborhood, std::size_t k)
+    K_neighbor_query (const Point_set_neighborhood& neighborhood, unsigned int k)
       : neighborhood (neighborhood), k(k) { }
 
     /// \cond SKIP_IN_MANUAL
@@ -231,7 +231,7 @@ public:
   /*!
     \brief Returns a neighbor query object with fixed number of neighbors `k`.
   */
-  K_neighbor_query k_neighbor_query (const std::size_t k) const
+  K_neighbor_query k_neighbor_query (const unsigned int k) const
   {
     return K_neighbor_query (*this, k);
   }
@@ -255,10 +255,10 @@ private:
   }
 
   template <typename OutputIterator>
-  void k_neighbors (const Point& query, const std::size_t k, OutputIterator output) const
+  void k_neighbors (const Point& query, const unsigned int k, OutputIterator output) const
   {
     CGAL_assertion (m_tree != NULL);
-    Knn search (*m_tree, query, (unsigned int)k, 0, true, m_distance);
+    Knn search (*m_tree, query, k, 0, true, m_distance);
     for (typename Knn::iterator it = search.begin(); it != search.end(); ++ it)
       *(output ++) = it->first;
   }

@@ -53,7 +53,7 @@ The following code snippet shows how to add labels to the classification object.
 
 \subsection Classification_features Feature Set
 
-Features are defined as scalar fields that associates each input item with a specific value. A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
+Features are defined as scalar fields that associates each input item with a specific value. Note that for limiting memory consumption, we use the type `float` for these scalar values (as well as for every floating point value in this package). A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
 
 \cgal provides some predefined features that are relevant for classification of point sets:
 

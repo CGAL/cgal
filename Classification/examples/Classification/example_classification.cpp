@@ -56,9 +56,9 @@ int main (int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  double grid_resolution = 0.34;
-  double radius_neighbors = 1.7;
-  double radius_dtm = 15.0;
+  float grid_resolution = 0.34;
+  float radius_neighbors = 1.7;
+  float radius_dtm = 15.0;
 
   std::cerr << "Computing useful structures" << std::endl;
 

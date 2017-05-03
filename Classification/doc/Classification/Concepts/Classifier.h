@@ -24,7 +24,7 @@ public:
     \brief Returns, for each label indexed from 0 to `out.size()`, the
     ernegy of this label applied to point at `item_index`.
    */
-  void operator() (std::size_t item_index, std::vector<double>& out) const;
+  void operator() (std::size_t item_index, std::vector<float>& out) const;
 
 
 };
