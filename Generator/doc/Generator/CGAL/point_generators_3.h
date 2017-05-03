@@ -493,7 +493,7 @@ The triangle mesh must be valid and unchanged while the iterator is used.
 */
 template < class TriangleMesh,
            class VertexPointMap = typename boost::property_map<TriangleMesh,
-                                                               CGAL::vertex_point_t>::type>,
+                                                               CGAL::vertex_point_t>::type,
            class Creator = Creator_uniform_3<
                             typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type >::Kernel::RT,
                             typename boost::property_traits<VertexPointMap>::value_type > >
