@@ -115,6 +115,8 @@ The following snippet shows how to use the feature generator:
 
 \cgal provides two models for this concept, [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier) and [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier).
 
+To perform classification based on these classifiers, please refer to \ref Classification_classification_functions.
+
 \subsection Classification_sowf Sum of Weighted Features
 
 This first classifier defines the following attributes:
@@ -204,7 +206,7 @@ of OpenCV.
 
 \section Classification_classification_functions Classification Functions
 
-%Classification is performed by minizing an energy over the input data set that may include regularization. \cgal provides three different methods for classification, ranging from high speed / low quality to low speed / high quality:
+%Classification is performed by minimizing an energy over the input data set that may include regularization. \cgal provides three different methods for classification, ranging from high speed / low quality to low speed / high quality:
 
 - `CGAL::Classification::classify()` 
 - `CGAL::Classification::classify_with_local_smoothing()`
@@ -253,7 +255,7 @@ energy is defined as follows:
 \f]
 
 The energy \f$E_{si}(x_i)\f$ is defined on a small local neighborhood
-\f$Nb(i)\f$ of the \f$i^{th}\f$ item:
+\f$Nb(i)\f$ of the \f$i^{th}\f$ item (including itself):
 
 \f[
   E_{si}(x_i) = \frac{\sum_{k \in Nb(i)} E_{di}(x_k)}{\left| Nb(i) \right|}
