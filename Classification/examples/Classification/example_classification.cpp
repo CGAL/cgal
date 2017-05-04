@@ -19,7 +19,7 @@ typedef CGAL::Identity_property_map<Point> Pmap;
 
 namespace Classification = CGAL::Classification;
 
-typedef Classification::Sum_of_weighted_features_classifier Classification_classifier;
+typedef Classification::Sum_of_weighted_features_classifier Classifier;
 
 typedef Classification::Planimetric_grid<Kernel, Point_range, Pmap>             Planimetric_grid;
 typedef Classification::Point_set_neighborhood<Kernel, Point_range, Pmap>       Neighborhood;
@@ -104,7 +104,7 @@ int main (int argc, char** argv)
   //! [Weights]
 
   std::cerr << "Setting weights" << std::endl;
-  Classification_classifier classifier (labels, features);
+  Classifier classifier (labels, features);
   classifier.set_weight (distance_to_plane, 6.75e-2);
   classifier.set_weight (linearity, 1.19);
   classifier.set_weight (omnivariance, 1.34e-1);
@@ -114,29 +114,29 @@ int main (int argc, char** argv)
   classifier.set_weight (elevation, 1.47e1);
   
   std::cerr << "Setting effects" << std::endl;
-  classifier.set_effect (ground, distance_to_plane, Classification_classifier::NEUTRAL);
-  classifier.set_effect (ground, linearity,  Classification_classifier::PENALIZING);
-  classifier.set_effect (ground, omnivariance, Classification_classifier::NEUTRAL);
-  classifier.set_effect (ground, planarity, Classification_classifier::FAVORING);
-  classifier.set_effect (ground, surface_variation, Classification_classifier::PENALIZING);
-  classifier.set_effect (ground, dispersion, Classification_classifier::NEUTRAL);
-  classifier.set_effect (ground, elevation, Classification_classifier::PENALIZING);
+  classifier.set_effect (ground, distance_to_plane, Classifier::NEUTRAL);
+  classifier.set_effect (ground, linearity,  Classifier::PENALIZING);
+  classifier.set_effect (ground, omnivariance, Classifier::NEUTRAL);
+  classifier.set_effect (ground, planarity, Classifier::FAVORING);
+  classifier.set_effect (ground, surface_variation, Classifier::PENALIZING);
+  classifier.set_effect (ground, dispersion, Classifier::NEUTRAL);
+  classifier.set_effect (ground, elevation, Classifier::PENALIZING);
   
-  classifier.set_effect (vegetation, distance_to_plane,  Classification_classifier::FAVORING);
-  classifier.set_effect (vegetation, linearity,  Classification_classifier::NEUTRAL);
-  classifier.set_effect (vegetation, omnivariance, Classification_classifier::FAVORING);
-  classifier.set_effect (vegetation, planarity, Classification_classifier::NEUTRAL);
-  classifier.set_effect (vegetation, surface_variation, Classification_classifier::NEUTRAL);
-  classifier.set_effect (vegetation, dispersion, Classification_classifier::FAVORING);
-  classifier.set_effect (vegetation, elevation, Classification_classifier::NEUTRAL);
+  classifier.set_effect (vegetation, distance_to_plane,  Classifier::FAVORING);
+  classifier.set_effect (vegetation, linearity,  Classifier::NEUTRAL);
+  classifier.set_effect (vegetation, omnivariance, Classifier::FAVORING);
+  classifier.set_effect (vegetation, planarity, Classifier::NEUTRAL);
+  classifier.set_effect (vegetation, surface_variation, Classifier::NEUTRAL);
+  classifier.set_effect (vegetation, dispersion, Classifier::FAVORING);
+  classifier.set_effect (vegetation, elevation, Classifier::NEUTRAL);
 
-  classifier.set_effect (roof, distance_to_plane,  Classification_classifier::NEUTRAL);
-  classifier.set_effect (roof, linearity,  Classification_classifier::PENALIZING);
-  classifier.set_effect (roof, omnivariance, Classification_classifier::FAVORING);
-  classifier.set_effect (roof, planarity, Classification_classifier::FAVORING);
-  classifier.set_effect (roof, surface_variation, Classification_classifier::PENALIZING);
-  classifier.set_effect (roof, dispersion, Classification_classifier::NEUTRAL);
-  classifier.set_effect (roof, elevation, Classification_classifier::FAVORING);
+  classifier.set_effect (roof, distance_to_plane,  Classifier::NEUTRAL);
+  classifier.set_effect (roof, linearity,  Classifier::PENALIZING);
+  classifier.set_effect (roof, omnivariance, Classifier::FAVORING);
+  classifier.set_effect (roof, planarity, Classifier::FAVORING);
+  classifier.set_effect (roof, surface_variation, Classifier::PENALIZING);
+  classifier.set_effect (roof, dispersion, Classifier::NEUTRAL);
+  classifier.set_effect (roof, elevation, Classifier::FAVORING);
 
   //! [Weights]
   ///////////////////////////////////////////////////////////////////

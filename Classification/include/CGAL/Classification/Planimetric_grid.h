@@ -70,7 +70,7 @@ public:
   Planimetric_grid () { }
   /// \endcond
 
-  /*
+  /*!
     \brief Constructs a planimetric grid based on the input range.
 
     \param input input range.

@@ -296,7 +296,7 @@ public:
   */
   template <typename ConcurrencyTag>  
   float train (const std::vector<std::size_t>& ground_truth,
-               std::size_t nb_tests = 300)
+               unsigned int nb_tests = 300)
   {
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
@@ -487,7 +487,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   template <typename ConcurrencyTag>  
   float train_random (const std::vector<std::size_t>& ground_truth,
-                      std::size_t nb_tests = 300)
+                      unsigned int nb_tests = 300)
   {
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
@@ -582,7 +582,7 @@ public:
 
     CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
 
-    for (std::size_t i = 0; i < nb_tests; ++ i)
+    for (std::size_t i = 0; i < std::size_t(nb_tests); ++ i)
     {
       std::size_t nb_used = 0;
       std::size_t j = rand() % feature_train.size();

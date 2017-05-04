@@ -29,7 +29,7 @@ namespace Classification {
     \ingroup PkgClassificationColor
 
     %Color described in red/green/blue space. Each component is stored
-    as an unsigned char ranging from 0 (no color) to 255 (
+    as an unsigned char ranging from 0 (no color) to 255 (full color).
    */  
 typedef CGAL::cpp11::array<unsigned char, 3> RGB_Color;
   /*!

@@ -7,12 +7,12 @@
 \defgroup PkgClassificationMain Main Functions
 \ingroup PkgClassification
 
-Functions that perform classification based on a set of labels and a predicate, with or without regularization.
+Functions that perform classification based on a set of labels and a classifier, with or without regularization.
 
-\defgroup PkgClassificationPredicates Predicates
+\defgroup PkgClassificationClassifiers Classifiers
 \ingroup PkgClassification
 
-Predicates are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
+Classifiers are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
 
 \defgroup PkgClassificationDataStructures Data Structures
 \ingroup PkgClassification
@@ -58,7 +58,7 @@ Features are defined as scalar fields that associates each input item with a spe
 
 ## Concepts ##
 
-- `CGAL::Classification::Predicate`
+- `CGAL::Classification::Classifier`
 - `CGAL::Classification::NeighborQuery`
 
 ## Main Functions ##
@@ -67,10 +67,10 @@ Features are defined as scalar fields that associates each input item with a spe
 - `CGAL::Classification::classify_with_local_smoothing()`
 - `CGAL::Classification::classify_with_graphcut()`
 
-## Classification Predicates ##
+## Classifiers ##
 
-- `CGAL::Classification::Sum_of_weighted_features_predicate`
-- `CGAL::Classification::Random_forest_predicate`
+- `CGAL::Classification::Sum_of_weighted_features_classifier`
+- `CGAL::Classification::Random_forest_classifier`
 
 ## Data Structures ##
 

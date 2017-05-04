@@ -23,9 +23,9 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 Organization of the package.
 \cgalFigureEnd
 
-This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify (although \cgal provides predefined features for common point sets).
+This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify.
 
-Currently, \cgal provides data structures to handle classification of point sets.
+Currently, \cgal only provides data structures to handle classification of point sets.
 
 \section Classification_structures Data Structures
 
@@ -53,7 +53,7 @@ The following code snippet shows how to add labels to the classification object.
 
 \subsection Classification_features Feature Set
 
-Features are defined as scalar fields that associates each input item with a specific value. Note that for limiting memory consumption, we use the type `float` for these scalar values (as well as for every floating point value in this package). A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
+Features are defined as scalar fields that associates each input item with a specific value. Note that in order to limit memory consumption, we use the type `float` for these scalar values (as well as for every floating point value in this package). A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
 
 \cgal provides some predefined features that are relevant for classification of point sets:
 
@@ -192,11 +192,8 @@ decision trees that are then used to assign a label to each input
 item.
 
 This classifier cannot be set up by hand and requires a ground truth
-training set. The training algorithm usually requires a higher number
-of inliers than the previous classifier but is faster. Note that so
-far, \ref thirdpartyOpenCV does not provide fully functional
-input/output functions for random trees, which means the result of the
-training cannot be saved and recovered for further classification.
+training set. The training algorithm is faster but usually requires a
+higher number of inliers than the previous classifier.
 
 An [example](\ref Classification_example_random_forest) shows how to
 use this classifier.  For more details about the method, please refer
@@ -270,7 +267,7 @@ smoothing by providing a model of `CGAL::Classification::NeighborQuery`.
 
 \snippet Classification/example_classification.cpp Smoothing
 
-\subsection Classification_graphcut Global Regularization (_Graph Cut_)
+\subsection Classification_graphcut Global Regularization (Graph Cut)
 
 - `CGAL::Classification::classify_with_graphcut()`: this method
 offers the best quality but requires longer computation time (see

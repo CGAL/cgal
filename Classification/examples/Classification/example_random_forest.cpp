@@ -25,7 +25,7 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::Random_forest_classifier Classification_classifier;
+typedef Classification::Random_forest_classifier Classifier;
 
 typedef Classification::Point_set_feature_generator<Kernel, Point_range, Pmap> Feature_generator;
 
@@ -104,7 +104,7 @@ int main (int argc, char** argv)
   Label_handle roof = labels.add ("roof");
   Label_handle facade = labels.add ("facade");
 
-  Classification_classifier classifier (labels, features);
+  Classifier classifier (labels, features);
   
   std::cerr << "Training" << std::endl;
   t.reset();
