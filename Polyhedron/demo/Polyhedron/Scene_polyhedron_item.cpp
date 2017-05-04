@@ -942,7 +942,7 @@ Scene_polyhedron_item::toolTip() const
             .arg(d->poly->size_of_facets())
             .arg(this->renderingModeName())
             .arg(this->color().name());
-  str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
+  str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
   return str;
 }
 

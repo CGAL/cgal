@@ -120,7 +120,7 @@ public :
            .arg(item->bbox().xmax)
            .arg(item->bbox().ymax)
            .arg(item->bbox().zmax);
-      m_text += QString("<br />Number of isolated vertices : 0<br />");
+      m_text += QString("<br />Number of isolated vertices: 0<br />");
 
       return str;
     }
