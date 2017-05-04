@@ -74,10 +74,10 @@ Features are defined as scalar fields that associates each input item with a spe
 
 ## Data Structures ##
 
+- `CGAL::Classification::Local_eigen_analysis`
+- `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Point_set_feature_generator<Geom_traits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
 - `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Local_eigen_analysis<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Evaluation`
 
 ## Label ##
@@ -94,20 +94,20 @@ Features are defined as scalar fields that associates each input item with a spe
 
 ## Predefined Features ##
 
-- `CGAL::Classification::Feature::Anisotropy<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Feature::Distance_to_plane<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Anisotropy`
+- `CGAL::Classification::Feature::Distance_to_plane<PointRange, PointMap>`
 - `CGAL::Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap>`
-- `CGAL::Classification::Feature::Eigentropy<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Eigentropy`
 - `CGAL::Classification::Feature::Elevation<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap>`
-- `CGAL::Classification::Feature::Linearity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Feature::Omnivariance<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Feature::Planarity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Feature::Sphericity<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Feature::Sum_eigenvalues<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Feature::Surface_variation<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Linearity`
+- `CGAL::Classification::Feature::Omnivariance`
+- `CGAL::Classification::Feature::Planarity`
+- `CGAL::Classification::Feature::Sphericity`
+- `CGAL::Classification::Feature::Sum_eigenvalues`
+- `CGAL::Classification::Feature::Surface_variation`
 - `CGAL::Classification::Feature::Vertical_dispersion<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Feature::Verticality<Geom_traits, PointRange, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Feature::Verticality<Geom_traits>`
 
 
 */
