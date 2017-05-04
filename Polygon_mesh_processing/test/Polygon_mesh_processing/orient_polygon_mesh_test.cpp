@@ -65,6 +65,7 @@ int main()
   test_orient<Epic>("data/tetra1.off");
   test_orient<Epic>("data/tetra2.off");
   test_orient<Epic>("data/tetra3.off");
+  test_orient<Epic>("data/tetra4.off");
   test_orient<Epic>("data-coref/cube.off");
   test_orient<Epec>("data/elephant.off");
 

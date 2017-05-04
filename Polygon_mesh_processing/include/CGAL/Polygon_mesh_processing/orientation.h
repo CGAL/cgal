@@ -101,7 +101,7 @@ namespace internal{
     // We compute the orientations of the two triangles incident to the edge
     // of `min_slope_he` projected in the xy-plane. We can conclude using
     // the 2D orientation of the 3D triangle that is the top one along the z-axis
-    // the neighborhood of `min_slope_he`.
+    // in the neighborhood of `min_slope_he`.
     Projection_traits_xy_3<GT> p_gt;
     typename Projection_traits_xy_3<GT>::Orientation_2 orientation_2 = p_gt.orientation_2_object();
 
@@ -125,11 +125,16 @@ namespace internal{
       return p1p2p3_2d == LEFT_TURN;
 
     typename GT::Orientation_3 orientation_3 = gt.orientation_3_object();
-    Orientation p1p2p3p4 = orientation_3(p1, p2, p3, p4);
 
-    CGAL_assertion( p1p2p3p4 != COPLANAR ); // same side of min_slope_he and no self-intersection
+    CGAL_assertion( orientation_3(p1, p2, p3, p4) != COPLANAR ); // same side of min_slope_he and no self-intersection
 
-    return (p1p2p3_2d == LEFT_TURN) == (p1p2p3p4 == POSITIVE);
+    // if p1p2p3_2d is left turn, then it must be the top face so that the orientation is outward oriented
+    if (p1p2p3_2d == LEFT_TURN)
+      return orientation_3(p1, p2, p3, p4) == NEGATIVE;
+
+    // same test with the other face
+    CGAL_assertion(p2p1p4_2d == LEFT_TURN);
+    return orientation_3(p2, p1, p4, p3) == NEGATIVE;
   }
 } // end of namespace internal
 
