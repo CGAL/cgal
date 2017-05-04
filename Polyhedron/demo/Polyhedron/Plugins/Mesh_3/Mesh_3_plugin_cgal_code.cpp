@@ -30,6 +30,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
+                                 bool protect_borders,
                                  const double sharp_edges_angle,
                                  const int manifold,
                                  const bool surface_only,
@@ -63,6 +64,10 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   if(polylines.empty() && protect_features) {
       //includes detection of borders in the surface case
       p_domain->detect_features(sharp_edges_angle);
+  }
+  else if (polylines.empty() && protect_borders)
+  {
+    p_domain->detect_borders();
   }
   if(! polylines.empty()){
     p_domain->add_features(polylines.begin(), polylines.end());
@@ -99,7 +104,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   param.tet_shape = tet_shape;
   param.edge_sizing =  edge_size;
   param.manifold = manifold;
-  param.protect_features = protect_features;
+  param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
 
   typedef ::Mesh_function<Polyhedral_mesh_domain,
