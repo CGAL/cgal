@@ -25,5 +25,6 @@ int main()
     t.insert(Point(i,-i));
   for(int i=0;i<1000;++i)
     t.remove(Point(i,-i));
+  assert(t.empty());
   t.print();
 }
