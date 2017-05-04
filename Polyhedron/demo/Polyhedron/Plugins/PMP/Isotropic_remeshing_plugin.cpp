@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <queue>
 #include <sstream>
+#include <cmath>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/parallel_for.h"
@@ -735,11 +736,16 @@ private:
       .arg(bbox.ymax()-bbox.ymin(), 0, 'g', 3)
       .arg(bbox.zmax()-bbox.zmin(), 0, 'g', 3));
 
-    double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-    ui.edgeLength_dspinbox->setDecimals(3);
-    ui.edgeLength_dspinbox->setSingleStep(0.001);
+    double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
+                                   + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
+                                   + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
+    double log = std::log10(diago_length);
+    unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log)+3);
+
+    ui.edgeLength_dspinbox->setDecimals(nb_decimals);
+    ui.edgeLength_dspinbox->setSingleStep(1e-3);
     ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
-      2.   * diago_length);//max
+                                     2.   * diago_length);//max
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
 
     std::ostringstream oss;
