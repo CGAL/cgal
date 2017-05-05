@@ -14,7 +14,10 @@ int main()
     Traits::Simulator::Handle sp= tr.simulator_handle();
 
     std::ifstream in("data/points_1");
+    CGAL_assertion(in.good());
+
     in  >> *tr.active_points_1_table_handle();
+    CGAL_assertion(!in.fail());
 
     while (sp->next_event_time() != sp->end_time()) {
         sp->set_current_event_number(sp->current_event_number()+1);
