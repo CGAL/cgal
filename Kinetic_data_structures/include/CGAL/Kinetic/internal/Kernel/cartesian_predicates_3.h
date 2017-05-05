@@ -88,7 +88,7 @@ struct Cartesian_side_of_oriented_sphere_3
 };
 
 template <class KK>
-struct Cartesian_power_test_3
+struct Cartesian_power_side_of_oriented_power_sphere_3
 {
   typedef typename KK::Certificate_function result_type;
   typedef typename KK::Weighted_point_3 first_argument_type;
@@ -96,7 +96,9 @@ struct Cartesian_power_test_3
   typedef typename KK::Weighted_point_3 third_argument_type;
   typedef typename KK::Weighted_point_3 fourth_argument_type;
   typedef typename KK::Weighted_point_3 fifth_argument_type;
-  Cartesian_power_test_3(){}
+
+  Cartesian_power_side_of_oriented_power_sphere_3(){}
+
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &b,
 			 const third_argument_type &c,
