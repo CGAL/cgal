@@ -1,12 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K> Gt;
-typedef CGAL::Regular_triangulation_2<Gt>              Regular_triangulation;
+typedef CGAL::Regular_triangulation_2<K>               Regular_triangulation;
 typedef Regular_triangulation::Bare_point              Bare_point;
 typedef Regular_triangulation::Weighted_point          Weighted_point;
 typedef std::vector< std::pair< Weighted_point, K::FT  > > Point_coordinate_vector;

@@ -153,7 +153,6 @@ private:
 // We need to introduce a "traits_base_3" class in order to get the
 // specialization for Exact_predicates_inexact_constructions_kernel to work,
 // otherwise there is a cycle in the derivation.
-// Similar to Regular_triangulation_euclidean_traits_3
 template < class K, bool UseFilteredPredicates=K::Has_filtered_predicates >
 class Skin_surface_traits_3
   : public Skin_surface_traits_base_3<K>
