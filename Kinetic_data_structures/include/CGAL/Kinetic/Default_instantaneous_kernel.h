@@ -343,6 +343,45 @@ public:
     return Compare_x_1(rep_, sp, rep_->kinetic_kernel().compare_x_1_object());
   }
 
+  struct Construct_point_2
+  {
+    template<typename>
+    struct result {
+      typedef Point_2 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_2)> {
+      typedef const Point_2& type;
+    };
+
+    const Point_2& operator()(const Point_2& p) const { return p; }
+  };
+
+  struct Construct_point_3
+  {
+    template<typename>
+    struct result {
+      typedef Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Weighted_point_3)> {
+      typedef const Point_3& type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3)> {
+      typedef const Point_3& type;
+    };
+
+    const Point_3& operator()(const Point_3& p) const { return p; }
+    Point_3 operator()(const Weighted_point_3& wp) const { return Point_3(wp.index()); }
+  };
+
+  Construct_point_2 construct_point_2_object() const { return Construct_point_2(); }
+  Construct_point_3 construct_point_3_object() const { return Construct_point_3(); }
+
   CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle, Point_2, 2);
   CGAL_MSA(Orientation,orientation, Point_2, 2);
   CGAL_MSA(Compare_x, compare_x, Point_2, 2);
@@ -363,10 +402,9 @@ public:
   CGAL_MSA(Less_z, less_z, Point_3, 3);*/
   CGAL_MSA(Coplanar_orientation, coplanar_orientation, Point_3, 3);
   CGAL_MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, Point_3, 3);
-  //CGAL_MSA(Power_test,power_test, Weighted_point_3, 3);
+  CGAL_MSA(Equal, equal, Point_3, 3);
+  CGAL_MSA(Power_side_of_oriented_power_sphere,power_side_of_oriented_power_sphere, Weighted_point_3, 3);
 
-
-  
   CGAL_TSO(Segment_3);
   CGAL_TSO(Triangle_3);
   CGAL_TSO(Tetrahedron_3);
