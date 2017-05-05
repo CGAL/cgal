@@ -15,7 +15,10 @@ int main()
     Traits::Simulator::Handle sp= tr.simulator_handle();
 
     std::ifstream in("data/points_3");
+    CGAL_assertion(in.good());
+
     in >> *tr.active_points_3_table_handle();
+    CGAL_assertion(!in.fail());
 
     kdel.set_has_certificates(true);
 
