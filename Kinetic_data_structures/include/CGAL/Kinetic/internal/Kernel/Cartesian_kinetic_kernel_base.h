@@ -44,8 +44,8 @@ class Cartesian_kinetic_kernel_base
 {
 public:
   typedef Cartesian_kinetic_kernel_base<Function_kernel_k, This> Base;
-  Cartesian_kinetic_kernel_base(Function_kernel_k pk): k_(pk){};
-  Cartesian_kinetic_kernel_base(){};
+  Cartesian_kinetic_kernel_base(Function_kernel_k pk): k_(pk){}
+  Cartesian_kinetic_kernel_base(){}
 
   //! The type of function used to represent coordinates.
   typedef typename Function_kernel_k::Function Motion_function;
