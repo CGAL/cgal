@@ -921,6 +921,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
   for (size_type i = block_size; i >= 1; --i)
   {
     EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
+    time_stamper->initialize_time_stamp(new_block + i);
     put_on_free_list(new_block + i);
   }
   // We insert this new block at the end.

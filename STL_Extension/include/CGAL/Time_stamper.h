@@ -32,8 +32,14 @@ struct Time_stamper
   Time_stamper(const Time_stamper& ts)
    : time_stamp_(ts.time_stamp_) {}
 
+  static void initialize_time_stamp(T* pt) {
+    pt->set_time_stamp(std::size_t(-1));
+  }
+
   void set_time_stamp(T* pt) {
-    pt->set_time_stamp(time_stamp_++);
+    if(pt->time_stamp() == std::size_t(-1))
+      pt->set_time_stamp(time_stamp_++);
+    // else: the time stamp is re-used
   }
 
 
@@ -64,6 +70,9 @@ public:
   void set_time_stamp(T*)  {}
   static bool less(const T* p_t1,const T* p_t2) {
     return p_t1 < p_t2;
+  }
+
+  static void initialize_time_stamp(T*) {
   }
 
   static std::size_t hash_value(const T* p) {
