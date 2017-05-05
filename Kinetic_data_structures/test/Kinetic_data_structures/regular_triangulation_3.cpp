@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
       Simulation_traits::Kinetic_kernel::Weighted_point_3 p;
       il >> p;
       std::cout << p << std::endl;
-      simtr.active_points_3_table_handle()->insert(p); // here 
+      simtr.active_weighted_points_3_table_handle()->insert(p);
       ++nread;
       kdel.audit();
     }
