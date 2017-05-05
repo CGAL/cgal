@@ -580,7 +580,7 @@ public:
 
   void write(const Queue &q, std::ostream& out) const {
     for (typename Queue::const_iterator it = q.begin(); it != q.end(); ++it) {
-      out << "(" << *it << ")";
+      out << "(" << &*it << ": " << *it << ")";
       out << std::endl;
     }
   }
