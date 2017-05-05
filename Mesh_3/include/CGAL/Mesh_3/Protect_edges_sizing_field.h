@@ -274,8 +274,9 @@ private:
   /// interpolation of sizes of \c v1 and \c v3 
   bool is_sizing_field_correct(const Vertex_handle& v1,
                                const Vertex_handle& v2,
-                               const Vertex_handle& v3) const;
-  
+                               const Vertex_handle& v3,
+                               const Curve_segment_index& index) const;
+
   /// Repopulate all incident curve around corner \c v
   /// \pre \c v is a corner of c3t3 
   template <typename ErasedVeOutIt>
@@ -1762,7 +1763,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
     // If (prevprev, prev, current) is ok, then go one step forward, i.e. check
     // (prevprevprev, prevprev, current)
     while (   !ch_stack.empty() 
-           && is_sizing_field_correct(*ch_stack.top(),*previous,*current) )
+           && is_sizing_field_correct(*ch_stack.top(),*previous,*current, index) )
     {
       previous = ch_stack.top();
       ch_stack.pop();
@@ -1796,13 +1797,14 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 is_sizing_field_correct(const Vertex_handle& v1,
                         const Vertex_handle& v2,
-                        const Vertex_handle& v3) const
+                        const Vertex_handle& v3,
+                        const Curve_segment_index& curve_index) const
 {
   FT s1 = get_size(v1);
   FT s2 = get_size(v2);
   FT s3 = get_size(v3);
-  FT D = compute_distance(v1,v3);
-  FT d = compute_distance(v1,v2);
+  FT D = CGAL::abs(domain_.geodesic_distance(v1->point(), v3->point(), curve_index));
+  FT d = CGAL::abs(domain_.geodesic_distance(v1->point(), v2->point(), curve_index));
   
   return ( s2 >= (s1 + d/D*(s3-s1)) );
 }
