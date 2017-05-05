@@ -883,31 +883,38 @@ protected:
     int hinf=-1;
     for (int i=0; i< 4; ++i) {
       if (h->vertex(i)->point() == Point_key()) {
-	hinf=i;
+        hinf=i;
       }
     }
+
     CGAL::Sign ret=CGAL::POSITIVE;
     for (int i=0; i< 4; ++i) {
       if (hinf == -1 ||  hinf == i) {
-	typename Triangulation::Facet f(h, i);
-	typename Traits::Instantaneous_kernel::Orientation_3 o3= triangulation().geom_traits().orientation_3_object();
-	
-	CGAL::Sign sn= o3((internal::vertex_of_facet(f,0)->point()),
-			  (internal::vertex_of_facet(f,1)->point()),
-			  (internal::vertex_of_facet(f,2)->point()),
-			  (k));
-	if (sn ==CGAL::ZERO) {
-	  CGAL_LOG(Log::SOME, "Point " << k << " lies on face ") ;
-	  CGAL_LOG_WRITE(Log::SOME, internal::write_facet( f, LOG_STREAM));
-	  CGAL_LOG(Log::SOME, "\nPoint trajectory is  " << point(k)  << std::endl) ;
-	  CGAL_LOG(Log::SOME, "Triangle 0  " << point(internal::vertex_of_facet(f,0)->point())  << std::endl) ;
-	  CGAL_LOG(Log::SOME, "Triangle 1  " << point(internal::vertex_of_facet(f,1)->point())  << std::endl) ;
-	  CGAL_LOG(Log::SOME, "Triangle 2  " << point(internal::vertex_of_facet(f,2)->point())  << std::endl) ;
-	  ret=CGAL::ZERO;
-	} else if (sn==CGAL::NEGATIVE) {
-	  ret=CGAL::NEGATIVE;
-	  return ret;
-	}
+        typename Triangulation::Facet f(h, i);
+
+       typename Traits::Instantaneous_kernel::Orientation_3 o3 =
+            triangulation().geom_traits().orientation_3_object();
+
+        Bare_point_key bf0(internal::vertex_of_facet(f,0)->point().index());
+        Bare_point_key bf1(internal::vertex_of_facet(f,1)->point().index());
+        Bare_point_key bf2(internal::vertex_of_facet(f,2)->point().index());
+        Bare_point_key bk(k.index());
+
+        CGAL::Sign sn = o3(bf0, bf1, bf2, bk);
+        std::cout << "Sign: " << sn << std::endl;
+
+        if (sn == CGAL::ZERO) {
+          CGAL_LOG(Log::SOME, "Point " << k << " lies on face ") ;
+          CGAL_LOG_WRITE(Log::SOME, internal::write_facet( f, LOG_STREAM));
+          CGAL_LOG(Log::SOME, "\nPoint trajectory is  " << point(k)  << std::endl) ;
+          CGAL_LOG(Log::SOME, "Triangle 0  " << point(internal::vertex_of_facet(f,0)->point())  << std::endl) ;
+          CGAL_LOG(Log::SOME, "Triangle 1  " << point(internal::vertex_of_facet(f,1)->point())  << std::endl) ;
+          CGAL_LOG(Log::SOME, "Triangle 2  " << point(internal::vertex_of_facet(f,2)->point())  << std::endl) ;
+          ret=CGAL::ZERO;
+        } else if (sn==CGAL::NEGATIVE) {
+          ret=CGAL::NEGATIVE;
+          return ret;
+        }
       }
     }
     return ret;
