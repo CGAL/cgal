@@ -225,7 +225,7 @@ public:
 template <class Traits>
 struct Regular_triangulation_3_types
 {
-  typedef typename Traits::Active_points_3_table MPT; // here
+  typedef typename Traits::Active_weighted_points_3_table MPT;
   typedef typename Traits::Kinetic_kernel KK;
   // typedef CGAL::Triangulation_cell_base_3<typename Traits::Instantaneous_kernel> CFB;
 
@@ -271,14 +271,15 @@ private:
   typedef typename TraitsT::Instantaneous_kernel Instantaneous_kernel;
 public:
   typedef Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> This_RT3;
-  typedef TraitsT Traits;
-  typedef typename Traits::Active_points_3_table::Key Point_key; //here
-  typedef typename Traits::Kinetic_kernel::Certificate Root_stack;
+  typedef TraitsT                                                    Traits;
+  typedef typename Traits::Active_points_3_table::Key                Bare_point_key;
+  typedef typename Traits::Active_weighted_points_3_table::Key       Point_key;
+  typedef typename Traits::Kinetic_kernel::Certificate               Root_stack;
 protected:
-  typedef typename Traits::Active_points_3_table MPT; // here
-  typedef typename Traits::Simulator Simulator;
-  typedef typename Traits::Simulator::Event_key Event_key;
-  typedef typename Traits::Simulator::Time Time;
+  typedef typename Traits::Active_weighted_points_3_table            MPT;
+  typedef typename Traits::Simulator                                 Simulator;
+  typedef typename Traits::Simulator::Event_key                      Event_key;
+  typedef typename Traits::Simulator::Time                           Time;
 
   
   typedef TriangulationT Delaunay;
@@ -398,13 +399,21 @@ protected:
 
   struct Base_traits: public TraitsT
   {
-    
-    typedef TriangulationT Triangulation;
-    typedef typename This_RT3::Edge_flip Edge_flip;
-    typedef typename This_RT3::Facet_flip Facet_flip;
+    typedef TriangulationT                      Triangulation;
+    typedef typename This_RT3::Edge_flip        Edge_flip;
+    typedef typename This_RT3::Facet_flip       Facet_flip;
+
+    // Kdel uses Traits::Active_point_3_table for its point table,
+    // so `weighted_point_table` is hidden as a point table
+    typedef typename TraitsT::Active_weighted_points_3_table Active_points_3_table;
+    Active_points_3_table* active_points_3_table_handle() const
+    {
+      return TraitsT::active_weighted_points_3_table_handle();
+    }
+
+    // and we overwrite the functors to use weighted points
     typedef typename TraitsT::Kinetic_kernel::Power_side_of_oriented_power_sphere_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Weighted_orientation_3 Orientation_3;
-    typedef typename TraitsT::Active_points_3_table Active_points_3_table; // here
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
@@ -437,20 +446,14 @@ protected:
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Delaunay_visitor> KDel;
 
   CGAL_KINETIC_DECLARE_LISTENERS(typename TraitsT::Simulator,
-				 typename Traits::Active_points_3_table)
+                                 typename Traits::Active_weighted_points_3_table)
 
 public:
-  
-
-  Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), Delaunay_visitor(this, v)) {
-    CGAL_KINETIC_INITIALIZE_LISTENERS(tr.simulator_handle(),
-				      tr.active_points_3_table_handle());
-  }
-
-
-  const Visitor &visitor() const
+  Regular_triangulation_3(Traits tr, Visitor v = Visitor())
+    : kdel_(Base_traits(this, tr), Delaunay_visitor(this, v))
   {
-    return kdel_.visitor().v_;
+    CGAL_KINETIC_INITIALIZE_LISTENERS(tr.simulator_handle(),
+                                      tr.active_weighted_points_3_table_handle());
   }
 
   typedef TriangulationT Triangulation;
