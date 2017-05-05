@@ -1773,10 +1773,10 @@ Alpha_shape_2<Dt,EACT>::Output ()
 		  // if we used Edelsbrunner and Muecke's definition
 		  // regular means incident to a higher-dimensional face
 		  // thus we would write to many vertices
-		  L.push_back((segment((*edge_alpha_it).second.first,
+      L.push_back((this->segment((*edge_alpha_it).second.first,
 				       (*edge_alpha_it).second.second))
 			      .source());
-		  L.push_back((segment((*edge_alpha_it).second.first,
+      L.push_back((this->segment((*edge_alpha_it).second.first,
 				       (*edge_alpha_it).second.second))
 			      .target());
 		}
@@ -1813,10 +1813,10 @@ Alpha_shape_2<Dt,EACT>::Output ()
  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second) ==
 			       REGULAR));
-		  L.push_back((segment((*edge_alpha_it).second.first,
+      L.push_back((this->segment((*edge_alpha_it).second.first,
 				       (*edge_alpha_it).second.second))
 			      .source());
-		  L.push_back((segment((*edge_alpha_it).second.first,
+      L.push_back((this->segment((*edge_alpha_it).second.first,
 				       (*edge_alpha_it).second.second))
 			      .target());
 		}
@@ -1837,10 +1837,10 @@ Alpha_shape_2<Dt,EACT>::Output ()
 			       (classify((*edge_alpha_it).second.first,
 					 (*edge_alpha_it).second.second) ==
 				SINGULAR)));
-		  L.push_back((segment((*edge_alpha_it).second.first,
+      L.push_back((this->segment((*edge_alpha_it).second.first,
 				       (*edge_alpha_it).second.second))
 			      .source());
-		  L.push_back((segment((*edge_alpha_it).second.first,
+      L.push_back((this->segment((*edge_alpha_it).second.first,
 				       (*edge_alpha_it).second.second))
 			      .target());
 		}
