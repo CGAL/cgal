@@ -30,7 +30,6 @@
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/internal/To_static.h>
 
-
 #define CGAL_MSA(Pred, pred, Arg, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, typename Kinetic_kernel::Pred##_##d, Rep, Arg> Pred##_##d; \
   Pred##_##d pred##_##d##_object() const				\
   {									\
@@ -133,9 +132,9 @@ public:
     }
 #endif
     if (!time_is_nt()) {
-        std::cerr << "You can only compute static objects when the IK current\n";
-        std::cerr << "time is an FT, rather than a root.\n";
-	CGAL_error();
+      std::cerr << "You can only compute static objects when the IK current\n";
+      std::cerr << "time is an FT, rather than a root.\n";
+      CGAL_error();
     }
   }
 
@@ -187,7 +186,6 @@ public:
   const typename CIK::Traits::Active_points_1_table::Data&
   kinetic_object(typename CIK::Point_1 k) const {
     return tr_.active_points_1_table_handle()->at(k);
-    
   }
 
   const typename CIK::Traits::Active_points_2_table::Data&
@@ -274,7 +272,8 @@ public:
     rep_->set_time(cur_time, true);
   }
  
-  bool time_is_nt() const {
+  bool time_is_nt() const
+  {
     return rep_->time_is_nt();
   }
 
@@ -285,12 +284,11 @@ public:
   
   const Time & time() const
   {
-   
     return rep_->time();
-   
   }
 
-  bool has_time() const {
+  bool has_time() const
+  {
     return rep_->initialized();
   }
 
@@ -302,7 +300,8 @@ public:
   typedef typename Traits::Active_points_3_table::Key Point_3;
   typedef typename Traits::Active_weighted_points_3_table::Key Weighted_point_3;
 
-  struct Current_coordinates {
+  struct Current_coordinates
+  {
     Current_coordinates(typename Rep::Handle rep): rep_(rep){}
    
     const FT  & operator()(Point_1 k) const {
@@ -323,7 +322,6 @@ public:
   Current_coordinates current_coordinates_object() const {
     return Current_coordinates(rep_);
   }
-
 
   template <class T>
   class Compare_static {
@@ -412,6 +410,7 @@ public:
   CGAL_TSO(Ray_3);
   CGAL_TSO(Object_3);
   CGAL_TSO(Plane_3);
+
 protected:
   typename Rep::Handle rep_;
 };
