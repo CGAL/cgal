@@ -82,7 +82,9 @@ public:
   CGAL_static_assertion( (boost::is_same<NT, typename Dt::Face::NT>::value) );
   CGAL_static_assertion( (boost::is_same<NT, typename Dt::Vertex::NT>::value) );
 
-  typedef typename Gt::Point_2 Point;
+  typedef typename Dt::Point Point;
+
+  typedef typename Gt::Point_2 Point_2;
   typedef typename Gt::Segment_2 Segment;
   typedef typename Gt::Line_2 Line;
 
@@ -270,7 +272,7 @@ public:
 
   //----------- OUTPUT POINTS CONNECTED BY PAIRS ----------------------
 
-  std::list<Point> Output();
+  std::list<Point_2> Output();
  
   std::ostream& op_ostream(std::ostream& os) const;
 
@@ -1705,13 +1707,13 @@ operator<<(std::ostream& os, const Alpha_shape_2<Dt>& A)
 //-------------------------------------------------------------------
 
 template < class Dt, class EACT >
-std::list<typename Alpha_shape_2<Dt,EACT>::Point> 
+std::list<typename Alpha_shape_2<Dt,EACT>::Point_2>
 Alpha_shape_2<Dt,EACT>::Output () 
 {
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
   const Interval3* pInterval;
-  std::list<Point> L;
+  std::list<Point_2> L;
 
   if (get_mode() == REGULARIZED)
   {
