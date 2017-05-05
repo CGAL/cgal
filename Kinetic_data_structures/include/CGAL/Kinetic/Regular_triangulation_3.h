@@ -221,26 +221,29 @@ struct Regular_triangulation_3_types
   typedef typename Traits::Kinetic_kernel KK;
   // typedef CGAL::Triangulation_cell_base_3<typename Traits::Instantaneous_kernel> CFB;
 
-  /*typedef CGAL::Triangulation_cell_base_with_info_3<Delaunay_cache_3<MPT, KK>,
-    typename Traits::Instantaneous_kernel, CFB> CFBI;*/
+  /*
+    typedef CGAL::Triangulation_cell_base_with_info_3<Delaunay_cache_3<MPT, KK>,
+    typename Traits::Instantaneous_kernel, CFB> CFBI;
+  */
 
-  //typedef Triangulation_labeled_edge_cell_base_3<CFBI, typename Traits::Simulator::Event_key> TFB;
-  //typedef Triangulation_labeled_facet_cell_base_3<TFB, typename Traits::Simulator::Event_key> FB;
-  /*typedef CGAL::Triangulation_vertex_base_3<typename Traits::Instantaneous_kernel> CVB;
+  /*
+    typedef Triangulation_labeled_edge_cell_base_3<CFBI, typename Traits::Simulator::Event_key> TFB;
+    typedef Triangulation_labeled_facet_cell_base_3<TFB, typename Traits::Simulator::Event_key> FB;
+
+    typedef CGAL::Triangulation_vertex_base_3<typename Traits::Instantaneous_kernel> CVB;
     typedef CGAL::Triangulation_vertex_base_with_info_3<typename Traits::Simulator::Event_key,
-    typename Traits::Instantaneous_kernel,
-    CVB> LVB;*/
-  typedef CGAL::Kinetic::Regular_triangulation_cell_base_3<Traits> FB;
+
+    typename Traits::Instantaneous_kernel, CVB> LVB;
+  */
+
+  typedef CGAL::Kinetic::Regular_triangulation_cell_base_3<Traits>   FB;
   typedef CGAL::Kinetic::Regular_triangulation_vertex_base_3<Traits> LVB;
+  typedef CGAL::Triangulation_data_structure_3<LVB, FB>              TDS;
 
-  typedef CGAL::Triangulation_data_structure_3<LVB, FB> TDS;
-
-  typedef CGAL::Regular_triangulation_3<typename Traits::Instantaneous_kernel, TDS> Default_triangulation;
-
- 
+  typedef CGAL::Regular_triangulation_3<typename Traits::Instantaneous_kernel,
+                                        TDS>                         Default_triangulation;
 
   //friend class CGAL::Delaunay_triangulation_3<typename P::Instantaneous_kernel, TDS>;
-
 };
 
 } } } //namespace CGAL::Kinetic::internal
