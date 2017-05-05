@@ -29,17 +29,15 @@
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Kinetic/Derivitive_filter_function_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 namespace CGAL { namespace Kinetic {
 
 struct Regular_triangulation_inexact_simulation_traits {
   typedef Regular_triangulation_inexact_simulation_traits This;
 
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> Static_kernel;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Static_kernel;
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Root_stack_default_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Numeric_root_stack<Root_stack_traits> Root_stack;
