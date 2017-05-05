@@ -58,7 +58,7 @@ set. Each output point is assigned to one, two or more primitives
 (depending wether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
-\tparam Traits a model of `EfficientRANSACTraits` that must provide in
+\tparam Traits a model of `ShapeDetectionTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
 - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
@@ -1457,7 +1457,7 @@ private:
 ///
 /// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
 ///
-/// @tparam Traits a model of `EfficientRANSACTraits` that must provide in
+/// @tparam Traits a model of `ShapeDetectionTraits` that must provide in
 /// addition a function `Intersect_3 intersection_3_object() const` and a
 /// functor `Intersect_3` with:
 /// - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`

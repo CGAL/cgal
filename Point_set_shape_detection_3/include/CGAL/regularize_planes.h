@@ -548,7 +548,7 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
 
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
-    \tparam Traits a model of `EfficientRANSACTraits`
+    \tparam Traits a model of `ShapeDetectionTraits`
 
     \param shape_detection Shape detection object used to detect
     shapes from the input data. While the shape detection algorithm
@@ -583,34 +583,34 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
     regularization. Default value is the Z axis.
 */ 
 
-template <typename EfficientRANSACTraits>
-void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>& shape_detection,
+template <typename ShapeDetectionTraits>
+void regularize_planes (const Shape_detection_3::Efficient_RANSAC<ShapeDetectionTraits>& shape_detection,
                         bool regularize_parallelism,
                         bool regularize_orthogonality,
                         bool regularize_coplanarity,
                         bool regularize_axis_symmetry,
-                        typename EfficientRANSACTraits::FT tolerance_angle
-                        = (typename EfficientRANSACTraits::FT)25.0,
-                        typename EfficientRANSACTraits::FT tolerance_coplanarity
-                        = (typename EfficientRANSACTraits::FT)0.01,
-                        typename EfficientRANSACTraits::Vector_3 symmetry_direction
-                        = typename EfficientRANSACTraits::Vector_3
-                        ((typename EfficientRANSACTraits::FT)0.,
-                         (typename EfficientRANSACTraits::FT)0.,
-                         (typename EfficientRANSACTraits::FT)1.))
+                        typename ShapeDetectionTraits::FT tolerance_angle
+                        = (typename ShapeDetectionTraits::FT)25.0,
+                        typename ShapeDetectionTraits::FT tolerance_coplanarity
+                        = (typename ShapeDetectionTraits::FT)0.01,
+                        typename ShapeDetectionTraits::Vector_3 symmetry_direction
+                        = typename ShapeDetectionTraits::Vector_3
+                        ((typename ShapeDetectionTraits::FT)0.,
+                         (typename ShapeDetectionTraits::FT)0.,
+                         (typename ShapeDetectionTraits::FT)1.))
 {
-  typedef typename EfficientRANSACTraits::FT FT;
-  typedef typename EfficientRANSACTraits::Point_3 Point;
-  typedef typename EfficientRANSACTraits::Vector_3 Vector;
-  typedef typename EfficientRANSACTraits::Plane_3 Plane;
+  typedef typename ShapeDetectionTraits::FT FT;
+  typedef typename ShapeDetectionTraits::Point_3 Point;
+  typedef typename ShapeDetectionTraits::Vector_3 Vector;
+  typedef typename ShapeDetectionTraits::Plane_3 Plane;
 
-  typedef Shape_detection_3::Shape_base<EfficientRANSACTraits> Shape;
-  typedef Shape_detection_3::Plane<EfficientRANSACTraits> Plane_shape;
+  typedef Shape_detection_3::Shape_base<ShapeDetectionTraits> Shape;
+  typedef Shape_detection_3::Plane<ShapeDetectionTraits> Plane_shape;
 
-  typedef typename internal::PlaneRegularization::Plane_cluster<EfficientRANSACTraits>
+  typedef typename internal::PlaneRegularization::Plane_cluster<ShapeDetectionTraits>
     Plane_cluster;
 
-  typename EfficientRANSACTraits::Input_range::iterator input_begin = shape_detection.input_iterator_first();
+  typename ShapeDetectionTraits::Input_range::iterator input_begin = shape_detection.input_iterator_first();
 
   std::vector<boost::shared_ptr<Plane_shape> > planes;
     
@@ -631,7 +631,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
    */
   std::vector<Point> centroids;
   std::vector<FT> areas;
-  internal::PlaneRegularization::compute_centroids_and_areas<EfficientRANSACTraits>
+  internal::PlaneRegularization::compute_centroids_and_areas<ShapeDetectionTraits>
     (input_begin, planes, shape_detection.point_map(), centroids, areas);
 
   tolerance_angle = tolerance_angle * (FT)CGAL_PI / (FT)(180);
@@ -642,7 +642,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
   // & compute the normal, size and cos angle to the symmetry
   // direction of each cluster
   std::vector<Plane_cluster> clusters;
-  internal::PlaneRegularization::compute_parallel_clusters<EfficientRANSACTraits>
+  internal::PlaneRegularization::compute_parallel_clusters<ShapeDetectionTraits>
     (planes, clusters, areas,
      (regularize_parallelism ? tolerance_cosangle : (FT)0.0),
      (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
@@ -668,7 +668,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
       //clustering the symmetry cosangle and store their centroids in
       //cosangle_centroids and the centroid index of each cluster in
       //list_cluster_index
-      internal::PlaneRegularization::cluster_symmetric_cosangles<EfficientRANSACTraits>
+      internal::PlaneRegularization::cluster_symmetric_cosangles<ShapeDetectionTraits>
         (clusters, tolerance_cosangle, tolerance_cosangle_ortho);
     }
   
@@ -676,7 +676,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
   //clusters in subgraph_clusters), and select the cluster of
   //largest area
   if (regularize_orthogonality || regularize_axis_symmetry)
-    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<EfficientRANSACTraits>
+    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<ShapeDetectionTraits>
       (clusters, (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
       
   //recompute optimal plane for each primitive after normal regularization

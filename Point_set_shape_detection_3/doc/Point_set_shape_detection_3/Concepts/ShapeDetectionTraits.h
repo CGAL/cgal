@@ -11,10 +11,10 @@ input data has to be provided in form of a random access iterator.
 Point and normal property maps have to
 be provided to extract the points and the normals from the input.
 
-\cgalHasModel `CGAL::Shape_detection_3::Efficient_RANSAC_traits`
+\cgalHasModel `CGAL::Shape_detection_3::Shape_detection_traits`
 
 */
-class EfficientRANSACTraits{
+class ShapeDetectionTraits{
 public:
   
 /// \name Types

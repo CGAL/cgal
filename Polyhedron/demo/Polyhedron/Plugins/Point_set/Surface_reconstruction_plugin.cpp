@@ -1322,7 +1322,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       typedef Point_set::Point_map PointMap;
       typedef Point_set::Vector_map NormalMap;
 
-      typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Kernel, Point_set, PointMap, NormalMap> Traits;
+      typedef CGAL::Shape_detection_3::Shape_detection_traits<Kernel, Point_set, PointMap, NormalMap> Traits;
       typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
       local_timer.start();

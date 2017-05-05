@@ -19,7 +19,7 @@ typedef std::vector<Point_with_normal>                       Pwn_vector;
 typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
-typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
+typedef CGAL::Shape_detection_3::Shape_detection_traits
   <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 

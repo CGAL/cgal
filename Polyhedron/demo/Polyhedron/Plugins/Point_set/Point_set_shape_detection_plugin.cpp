@@ -74,7 +74,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
   typedef Point_set_3<Kernel>::Point_map PointPMap;
   typedef Point_set_3<Kernel>::Vector_map NormalPMap;
 
-  typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
+  typedef CGAL::Shape_detection_3::Shape_detection_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
   
 public:
@@ -438,7 +438,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           typedef Point_set::Point_map PointPMap;
           typedef Point_set::Vector_map NormalPMap;
 
-          typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
+          typedef CGAL::Shape_detection_3::Shape_detection_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
           typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
           Shape_detection shape_detection;

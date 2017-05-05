@@ -32,11 +32,11 @@
 \cgalClassifedRefPages
 
 ## Concept ##
-- `EfficientRANSACTraits`
+- `ShapeDetectionTraits`
 
 ## Main Classes ##
+- `CGAL::Shape_detection_3::Shape_dection_traits`
 - `CGAL::Shape_detection_3::Efficient_RANSAC<Traits>`
-- `CGAL::Shape_detection_3::Efficient_RANSAC_traits`
 
 ## Shape Interface ##
 - `CGAL::Shape_detection_3::Shape_base<Traits>`
