@@ -103,6 +103,11 @@ public:
      std::cerr<<"Facet not displayed"<<std::endl;
 
   }
+  ~FacetTriangulator()
+  {
+   if (cdt )
+     delete cdt;
+  }
 
 private:
   bool triangulate( std::vector<PointAndId > &idPoints,
@@ -128,11 +133,11 @@ private:
      typename CDT::Vertex_handle vh;
      //Always insert the first point, then only insert
      // if the distance with the previous is reasonable.
-     if(first == 0 || CGAL::squared_distance(idPoint.point, previous->point()) > min_sq_dist)
+     if(first == typename CDT::Vertex_handle() || CGAL::squared_distance(idPoint.point, previous->point()) > min_sq_dist)
      {
        vh = cdt->insert(idPoint.point);
        v2v[vh] = idPoint.id;
-       if(first == 0) {
+       if(first == typename CDT::Vertex_handle()) {
          first = vh;
        }
        if(previous != 0 && previous != vh) {
@@ -150,7 +155,7 @@ private:
      previous = vh;
      }
     }
-    if(last_inserted == 0)
+    if(last_inserted == typename CDT::Vertex_handle())
       return false;
     double sq_dist = CGAL::squared_distance(previous->point(), first->point());
 
@@ -207,11 +212,11 @@ private:
       typename CDT::Vertex_handle vh;
       //Always insert the first point, then only insert
       // if the distance with the previous is reasonable.
-      if(first == 0 || CGAL::squared_distance(idPoint.point, previous->point()) > min_sq_dist)
+      if(first == typename CDT::Vertex_handle() || CGAL::squared_distance(idPoint.point, previous->point()) > min_sq_dist)
       {
         vh = cdt->insert(idPoint.point);
         v2v[vh] = idPoint.id;
-        if(first == 0) {
+        if(first == typename CDT::Vertex_handle()) {
           first = vh;
         }
         if(previous != 0 && previous != vh) {
@@ -229,7 +234,7 @@ private:
       previous = vh;
       }
      }
-     if(last_inserted == 0)
+     if(last_inserted == typename CDT::Vertex_handle())
        return false;
      double sq_dist = CGAL::squared_distance(previous->point(), first->point());
 
