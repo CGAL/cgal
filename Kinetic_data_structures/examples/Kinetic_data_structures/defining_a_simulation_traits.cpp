@@ -109,19 +109,19 @@ int main()
   typedef CGAL::Kinetic::Delaunay_triangulation_2<My_simulation_traits> KDel;
   
   My_simulation_traits tr(0, 10000);
-  My_simulation_traits::Simulator::Handle sp= tr.simulator_handle();
+  My_simulation_traits::Simulator::Handle sp = tr.simulator_handle();
   
   KDel kdel(tr);
   
   kdel.set_has_certificates(false);
   std::ifstream in("data/points_with_color_2");
+  CGAL_assertion(in.good());
+
   in >> *tr.active_points_2_table_handle();
-  
-  
+  CGAL_assertion(!in.fail());
 
   kdel.set_has_certificates(true);
-  
-  
+
   std::cout << "Starting to run" << std::endl;
   while (sp->next_event_time()
 	 < sp->end_time()) {
