@@ -248,7 +248,6 @@
 //#include <CGAL/predicates/Regular_triangulation_rtH3.h>
 //#include <CGAL/Profile_counter.h>
 //#include <CGAL/Regular_triangulation_cell_base_3.h>
-//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Simple_cartesian.h>

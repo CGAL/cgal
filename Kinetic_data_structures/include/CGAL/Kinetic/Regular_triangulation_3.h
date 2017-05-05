@@ -23,7 +23,6 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Kinetic/internal/Delaunay_triangulation_base_3.h>
 #include <CGAL/Kinetic/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Kinetic/Regular_triangulation_cell_base_3.h>

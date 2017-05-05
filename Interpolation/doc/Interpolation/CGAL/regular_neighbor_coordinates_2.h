@@ -19,8 +19,7 @@ coordinates regular neighbor coordinates.
 concept `RegularTriangulationTraits_2`. It provides the number 
 type `FT` which is a model for `FieldNumberType` and it must 
 meet the requirements for the traits class of the 
-`polygon_area_2()` function. A model of this traits class is 
-`Regular_triangulation_euclidean_traits_2<K, Weight>`. 
+`polygon_area_2()` function. All CGAL kernels are models of this concept.
 <LI>The value type of `OutputIterator` is equivalent to 
 `std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`, i.e.\ a pair
 associating a point and its regular neighbor coordinate. 

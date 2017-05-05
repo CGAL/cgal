@@ -29,10 +29,8 @@
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 namespace CGAL { namespace Kinetic {
 
@@ -40,7 +38,7 @@ struct Regular_triangulation_CORE_exact_simulation_traits {
   typedef Regular_triangulation_CORE_exact_simulation_traits This;
 
   typedef CGAL::Cartesian<CORE::Expr> Static_kernel_base;
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+  typedef Static_kernel_base           Static_kernel;
   typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
 
   typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, false>  Simulator_function_kernel_base;
