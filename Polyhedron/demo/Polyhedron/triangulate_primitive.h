@@ -65,7 +65,8 @@ public:
       idPoints.push_back(idPoint);
 
     }
-    triangulate(idPoints, normal, item_diag);
+    if(!triangulate(idPoints, normal, item_diag))
+      std::cerr<<"Facet not displayed"<<std::endl;
   }
   FacetTriangulator(typename boost::graph_traits<Mesh>::face_descriptor fd,
                     const std::vector<typename Kernel::Point_3>& more_points,
@@ -82,25 +83,29 @@ public:
     idPoints.push_back(idPoint);
 
    }
-   triangulate_with_points(idPoints,more_points, normal, item_diag);
+   if(!triangulate_with_points(idPoints,more_points, normal, item_diag))
+     std::cerr<<"Facet not displayed"<<std::endl;
   }
 
   FacetTriangulator(std::vector<PointAndId > &idPoints,
                   const Vector& normal,
                   const double item_diag)
   {
-    triangulate(idPoints, normal, item_diag);
+    if(!triangulate(idPoints, normal, item_diag))
+      std::cerr<<"Facet not displayed"<<std::endl;
   }
   FacetTriangulator(std::vector<PointAndId > &idPoints,
                     const std::vector<typename Kernel::Point_3>& more_points,
                     const Vector& normal,
                     const double item_diag)
   {
-   triangulate_with_points(idPoints, more_points, normal, item_diag);
+   if(!triangulate_with_points(idPoints, more_points, normal, item_diag))
+     std::cerr<<"Facet not displayed"<<std::endl;
+
   }
 
 private:
-  void triangulate( std::vector<PointAndId > &idPoints,
+  bool triangulate( std::vector<PointAndId > &idPoints,
               const Vector& normal,
               const double item_diag )
   {
@@ -145,6 +150,8 @@ private:
      previous = vh;
      }
     }
+    if(last_inserted == 0)
+      return false;
     double sq_dist = CGAL::squared_distance(previous->point(), first->point());
 
     if(sq_dist > min_sq_dist)
@@ -178,9 +185,10 @@ private:
         }
       }
     }
+    return true;
   }
 
-  void triangulate_with_points( std::vector<PointAndId > &idPoints,
+  bool triangulate_with_points( std::vector<PointAndId > &idPoints,
                const std::vector<typename Kernel::Point_3>& more_points,
                const Vector& normal,
                const double item_diag )
@@ -221,6 +229,8 @@ private:
       previous = vh;
       }
      }
+     if(last_inserted == 0)
+       return false;
      double sq_dist = CGAL::squared_distance(previous->point(), first->point());
 
      if(sq_dist > min_sq_dist)
@@ -258,6 +268,7 @@ private:
          }
        }
      }
+     return true;
   }
 };
 
