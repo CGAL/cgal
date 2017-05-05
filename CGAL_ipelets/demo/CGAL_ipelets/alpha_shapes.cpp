@@ -110,9 +110,9 @@ void ASphapeIpelet::protected_run(int fn)
   for (Alpha_shape_2::Finite_faces_iterator it=A.finite_faces_begin();it!=A.finite_faces_end();++it){
     if (A.classify(it)==Alpha_shape_2::INTERIOR){
       std::list<Point_2> LP;
-      LP.push_back(it->vertex(0)->point());
-      LP.push_back(it->vertex(1)->point());
-      LP.push_back(it->vertex(2)->point());
+      LP.push_back(Point_2(it->vertex(0)->point()));
+      LP.push_back(Point_2(it->vertex(1)->point()));
+      LP.push_back(Point_2(it->vertex(2)->point()));
       draw_polyline_in_ipe(LP.begin(),LP.end(),true,false,true);
     }
   }
