@@ -87,91 +87,94 @@ int main(int argc, char *argv[])
       }
     } else {
       CGAL_SET_LOG_LEVEL(CGAL::Log::LOTS);
-       std::ifstream in(argv[1]);
-       if (!in) {
-	 std::cerr << "Error opening input file: " <<argv[1] << std::endl;
-	 return EXIT_FAILURE;
-       }
-       char buf[1000];
-       int nread=0;
-       std::map<SWP, int> pm;
-       pm[st.vertices_begin()->point()]= 0;
-       while (true ) {
-	 in.getline(buf, 1000);
-	 if (!in) break;
-	 std::istringstream il(buf);
-	 Simulation_traits::Kinetic_kernel::Weighted_point_3 p;
-	 il >> p;
-	 if (0) {
-	   Simulation_traits::Instantaneous_kernel::Point_3 ip
-	     =isimtr.active_points_3_table_handle()->insert(p);
-	   IT::Cell_handle h= it.locate(ip);
-	   if (h!= IT::Cell_handle() 
-	       && h->vertex(0) != IT::Vertex_handle()
-	       && h->vertex(1) != IT::Vertex_handle()
-	       && h->vertex(2) != IT::Vertex_handle()
-	       && h->vertex(3) != IT::Vertex_handle()) {
-	     std::cout << "Instant located in " << h->vertex(0)->point() << " "
-		       << h->vertex(1)->point() << " "
-		       << h->vertex(2)->point() << " "
-		       << h->vertex(3)->point() << std::endl;
-	   } else {
-	     std::cout << "Instant located outside hull" <<std::endl; 
-	   }
-	   std::vector<IT::Facet> bfacets;
-	   std::vector<IT::Cell_handle> cells;
-	   std::vector<IT::Facet> ifacets;
-	   if (it.dimension() == 3) {
-	     it.find_conflicts(ip, h, back_inserter(bfacets), 
-			       back_inserter(cells),back_inserter(ifacets));
-	   }
-	   
-	   it.insert(ip, h);
-	 }
-	 if (0) {
-	   Simulation_traits::Static_kernel::FT ct(0);
-	   SWP sp(BP(p.point().x()(ct), p.point().y()(ct),
-		     p.point().z()(ct)), p.weight()(ct));
-	   ST::Cell_handle h= st.locate(sp);
-	   if (h!= ST::Cell_handle()
-	       && h->vertex(0) != ST::Vertex_handle()
-	       && h->vertex(1) != ST::Vertex_handle()
-	       && h->vertex(2) != ST::Vertex_handle()
-	       && h->vertex(3) != ST::Vertex_handle()) {
-	     std::cout << "Static located in " << pm[h->vertex(0)->point()]-1 << " "
-		       << pm[h->vertex(1)->point()]-1 << " "
-		       << pm[h->vertex(2)->point()]-1 << " "
-		       << pm[h->vertex(3)->point()]-1 << std::endl;
-	   } else {
-	     std::cout << "Instant located outside hull" <<std::endl; 
-	   }
-	   st.insert(sp, h);
-	   pm[sp]= static_cast<int>(pm.size()-1);
-	 }
-	 simtr.active_points_3_table_handle()->set_is_editing(true);
-	 Simulation_traits::Active_points_3_table::Key vp=simtr.active_points_3_table_handle()->insert(p);
-	 {
-	   
-	   KDel::Cell_handle h=  kdel.triangulation().locate(vp);
-	   if (h!= KDel::Cell_handle() 
-	       && h->vertex(0) != KDel::Vertex_handle()
-	       && h->vertex(1) != KDel::Vertex_handle()
-	       && h->vertex(2) != KDel::Vertex_handle()
-	       && h->vertex(3) != KDel::Vertex_handle()) {
-	     std::cout << "Kinetic XT located in " << h->vertex(0)->point() << " "
-		       << h->vertex(1)->point() << " "
-		       << h->vertex(2)->point() << " "
-		       << h->vertex(3)->point() << std::endl;
-	   } else {
-	     std::cout << "Instant located outside hull" <<std::endl; 
-	   }
-	 }
-	 simtr.active_points_3_table_handle()->set_is_editing(false);
-	 //std::cout << p << std::endl;
-	  // here 
-	 ++nread;
-	 kdel.audit();
-       }
+      std::ifstream in(argv[1]);
+      if (!in) {
+        std::cerr << "Error opening input file: " <<argv[1] << std::endl;
+        return EXIT_FAILURE;
+      }
+      char buf[1000];
+      int nread=0;
+      std::map<SWP, int> pm;
+      pm[st.vertices_begin()->point()]= 0;
+      while (true ) {
+        in.getline(buf, 1000);
+        if (!in) break;
+        std::istringstream il(buf);
+        Simulation_traits::Kinetic_kernel::Weighted_point_3 p;
+        il >> p;
+
+        if (0) {
+          Simulation_traits::Instantaneous_kernel::Weighted_point_3 ip =
+              isimtr.active_weighted_points_3_table_handle()->insert(p);
+          IT::Cell_handle h= it.locate(ip);
+          if (h!= IT::Cell_handle()
+              && h->vertex(0) != IT::Vertex_handle()
+              && h->vertex(1) != IT::Vertex_handle()
+              && h->vertex(2) != IT::Vertex_handle()
+              && h->vertex(3) != IT::Vertex_handle()) {
+            std::cout << "Instant located in " << h->vertex(0)->point() << " "
+                      << h->vertex(1)->point() << " "
+                      << h->vertex(2)->point() << " "
+                      << h->vertex(3)->point() << std::endl;
+          } else {
+            std::cout << "Instant located outside hull" <<std::endl;
+          }
+          std::vector<IT::Facet> bfacets;
+          std::vector<IT::Cell_handle> cells;
+          std::vector<IT::Facet> ifacets;
+          if (it.dimension() == 3) {
+            it.find_conflicts(ip, h, back_inserter(bfacets),
+                              back_inserter(cells),back_inserter(ifacets));
+          }
+          it.insert(ip, h);
+        }
+
+        if (0) {
+          Simulation_traits::Static_kernel::FT ct(0);
+          SWP sp(SBP(p.point().x()(ct), p.point().y()(ct),
+                     p.point().z()(ct)), p.weight()(ct));
+          ST::Cell_handle h= st.locate(sp);
+          if (h!= ST::Cell_handle()
+              && h->vertex(0) != ST::Vertex_handle()
+              && h->vertex(1) != ST::Vertex_handle()
+              && h->vertex(2) != ST::Vertex_handle()
+              && h->vertex(3) != ST::Vertex_handle()) {
+            std::cout << "Static located in " << pm[h->vertex(0)->point()]-1 << " "
+                      << pm[h->vertex(1)->point()]-1 << " "
+                      << pm[h->vertex(2)->point()]-1 << " "
+                      << pm[h->vertex(3)->point()]-1 << std::endl;
+          } else {
+            std::cout << "Instant located outside hull" <<std::endl;
+          }
+          st.insert(sp, h);
+          pm[sp]= static_cast<int>(pm.size()-1);
+        }
+
+        simtr.active_weighted_points_3_table_handle()->set_is_editing(true);
+        Simulation_traits::Active_weighted_points_3_table::Key vp =
+            simtr.active_weighted_points_3_table_handle()->insert(p);
+
+        {
+          KDel::Cell_handle h = kdel.triangulation().locate(vp);
+          if (h!= KDel::Cell_handle()
+              && h->vertex(0) != KDel::Vertex_handle()
+              && h->vertex(1) != KDel::Vertex_handle()
+              && h->vertex(2) != KDel::Vertex_handle()
+              && h->vertex(3) != KDel::Vertex_handle()) {
+            std::cout << "Kinetic XT located in " << h->vertex(0)->point() << " "
+                      << h->vertex(1)->point() << " "
+                      << h->vertex(2)->point() << " "
+                      << h->vertex(3)->point() << std::endl;
+          } else {
+            std::cout << "Instant located outside hull" <<std::endl;
+          }
+        }
+
+        simtr.active_weighted_points_3_table_handle()->set_is_editing(false);
+        //std::cout << p << std::endl;
+        ++nread;
+        kdel.audit();
+      }
     }
     kdel.set_has_certificates(true);
     if (simtr.simulator_handle()->has_audit_time()) kdel.audit();
