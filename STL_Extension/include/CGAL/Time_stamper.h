@@ -48,6 +48,13 @@ struct Time_stamper
     }
   }
 
+  static std::size_t time_stamp(const T* pt)
+  {
+    if(pt == NULL){
+      return 0;
+    }
+    return pt->time_stamp();
+  }
 
   static std::size_t hash_value(const T* p) {
     if(NULL == p)
@@ -83,6 +90,11 @@ public:
   }
 
   static void initialize_time_stamp(T*) {
+  }
+
+  static std::size_t time_stamp(const T*)
+  {
+    return 0;
   }
 
   static std::size_t hash_value(const T* p) {
