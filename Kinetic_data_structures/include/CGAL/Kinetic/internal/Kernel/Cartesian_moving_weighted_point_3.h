@@ -85,13 +85,12 @@ public:
   template <class SK>
   struct Static_traits
   {
-    typedef typename SK::Weighted_point Static_type;
+    typedef typename SK::Weighted_point_3 Static_type;
     static Static_type to_static(const This &o, const typename SK::FT &t, const SK&) {
-      //typedef Bare_point::Static_traits<SK> BPST;
-      return Static_type(typename SK::Bare_point(o.point().x()(t),
-						 o.point().y()(t),
-						 o.point().z()(t)),
-			 o.weight()(t));
+      return Static_type(typename SK::Point_3(o.point().x()(t),
+                                              o.point().y()(t),
+                                              o.point().z()(t)),
+                         o.weight()(t));
     }
   };
 
