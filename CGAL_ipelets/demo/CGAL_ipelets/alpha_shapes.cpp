@@ -21,7 +21,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/CGAL_Ipelet_base.h> 
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
