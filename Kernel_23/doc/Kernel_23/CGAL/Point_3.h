@@ -67,7 +67,7 @@ Point_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 /*!
 introduces a point from a weighted point.
 
-\warning The `explicit` keyword is used to not have accidental implicit conversions
+\warning The `explicit` keyword is used to avoid accidental implicit conversions
          between Point_3 and Weighted_point_3.
 */
 explicit Point_3(const Kernel::Weighted_point_3 &wp);
