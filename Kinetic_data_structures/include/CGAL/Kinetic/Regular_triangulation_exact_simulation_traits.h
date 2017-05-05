@@ -30,10 +30,8 @@
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 namespace CGAL { namespace Kinetic {
 
@@ -44,7 +42,7 @@ struct Regular_triangulation_exact_simulation_traits {
 #else
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel_base;
 #endif
-   typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+  typedef Static_kernel_base                              Static_kernel;
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;

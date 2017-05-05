@@ -19,7 +19,6 @@
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -33,8 +32,7 @@ namespace CGAL_triangulation{
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                 Kernel;
 typedef CGAL::Delaunay_triangulation_2<Kernel>                              Delaunay;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Kernel,Kernel::FT>   Gt;
-typedef CGAL::Regular_triangulation_2<Gt>                                   Regular;
+typedef CGAL::Regular_triangulation_2<Kernel>                               Regular;
 
 typedef CGAL::Triangulation_vertex_base_2<Kernel>                           Vbplus;
 typedef CGAL::Constrained_triangulation_face_base_2<Kernel>                 Fbplus;

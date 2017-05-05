@@ -2,7 +2,6 @@
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
 #include <CGAL/point_generators_2.h>
@@ -28,13 +27,12 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2 Point_2;
-typedef K::Point_2 Circle_2;
-typedef K::Iso_rectangle_2 Iso_rectangle_2;
+typedef K::Point_2                                          Point_2;
+typedef K::Weighted_point_2                                 Weighted_point_2;
+typedef K::Point_2                                          Circle_2;
+typedef K::Iso_rectangle_2                                  Iso_rectangle_2;
 
-typedef double Weight;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>  Gt;
-typedef CGAL::Regular_triangulation_2<Gt> Regular;
+typedef CGAL::Regular_triangulation_2<K>                    Regular;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -245,8 +243,8 @@ MainWindow::on_actionLoadPoints_triggered()
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
 
-    Gt::Weighted_point_2 p;
-    std::vector<Gt::Weighted_point_2> points;
+    Weighted_point_2 p;
+    std::vector<Weighted_point_2> points;
     while(ifs >> p) {
       points.push_back(p);
     }

@@ -2,7 +2,6 @@
 
 // regular
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 
