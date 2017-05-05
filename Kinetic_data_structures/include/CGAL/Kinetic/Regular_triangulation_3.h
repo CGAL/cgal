@@ -39,7 +39,8 @@
 namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class KD>
-class Regular_3_pop_event: public Delaunay_event_base_3<KD, typename KD::Root_stack>
+class Regular_3_pop_event
+  : public Delaunay_event_base_3<KD, typename KD::Root_stack>
 {
   typedef Delaunay_event_base_3<KD, typename KD::Root_stack>  P;
 public:
@@ -126,7 +127,8 @@ protected:
 };
 
 template <class KD>
-class Regular_3_move_event: public Regular_3_non_vertex_event<KD>
+class Regular_3_move_event
+  : public Regular_3_non_vertex_event<KD>
 {
   typedef Regular_3_non_vertex_event<KD>  P;
 public:
@@ -172,7 +174,8 @@ protected:
   }*/
 
 template <class KD>
-class Regular_3_push_event: public Regular_3_non_vertex_event<KD>
+class Regular_3_push_event
+  : public Regular_3_non_vertex_event<KD>
 {
   typedef Regular_3_non_vertex_event<KD>  P;
 public:
@@ -495,16 +498,16 @@ public:
     // RPMap redundant_points_;
     // RCMap redundant_cells_;
 
-    Triangulation tri= triangulation();
+    Triangulation tri = triangulation();
     for (typename RPMap::const_iterator it= redundant_points_.begin(); it != redundant_points_.end(); ++it) {
       //Vertex_handle vh= tri.insert(it->first);
       //if (vh != Vertex_handle())
-      CGAL_assertion_code(Vertex_handle rvh= tri.insert(it->first));
+      CGAL_assertion_code(Vertex_handle rvh = tri.insert(it->first));
       CGAL_assertion(rvh == Vertex_handle() || rvh->point() != it->first);
       //if (has_certificates()) {
-        CGAL_assertion_code(Cell_handle ch= get_cell_handle(it->first));
+        CGAL_assertion_code(Cell_handle ch = get_cell_handle(it->first));
         CGAL_assertion_code( typename Instantaneous_kernel::Current_coordinates cco= triangulation().geom_traits().current_coordinates_object());
-        CGAL_assertion_code(Cell_handle lh= triangulation().locate(it->first));
+        CGAL_assertion_code(Cell_handle lh = triangulation().locate(it->first));
         CGAL_assertion(lh == ch
                        || cco(it->first).point() == cco(lh->vertex(0)->point()).point()
                        || cco(it->first).point() == cco(lh->vertex(1)->point()).point()
@@ -566,7 +569,7 @@ public:
     triangulation().incident_cells(vh, std::back_insert_iterator<std::vector<Cell_handle> >(ics));
     CGAL_postcondition(ics.size() == 4);
     for (unsigned int j=0; j< ics.size(); ++j) {
-      Cell_handle cc= ics[j];
+      Cell_handle cc = ics[j];
       kdel_.handle_new_cell(cc);
     }
     kdel_.visitor().post_insert_vertex(vh);
@@ -603,7 +606,7 @@ public:
     bool hinf=false;
     for (unsigned int i=0; i<4; ++i) {
       if (neighbor->vertex(i)== triangulation().infinite_vertex()) {
-        hinf=true;
+        hinf = true;
         break;
       }
     }
@@ -728,7 +731,8 @@ public:
     triangulation().incident_cells(vh, std::back_inserter(ics));
     kdel_.set_instantaneous_time(true);
     for (unsigned int i=0; i< ics.size(); ++i) {
-      if (try_handle_redundant(k, ics[i])) return;
+      if (try_handle_redundant(k, ics[i]))
+        return;
     }
     CGAL_error();
   }
@@ -774,7 +778,6 @@ public:
         CGAL_LOG(Log::LOTS, "Triangulation does not have dimension 3.\n");
       }
     }
-
   }
 
   bool has_certificates() const
@@ -867,6 +870,7 @@ protected:
       }
     }
   }
+
 protected:
   //! also much check for vertex_events
   void flip(const typename Triangulation::Edge &edge) {
@@ -904,7 +908,6 @@ protected:
         Bare_point_key bk(k.index());
 
         CGAL::Sign sn = o3(bf0, bf1, bf2, bk);
-        std::cout << "Sign: " << sn << std::endl;
 
         if (sn == CGAL::ZERO) {
           CGAL_LOG(Log::SOME, "Point " << k << " lies on face ") ;
@@ -1000,14 +1003,14 @@ protected:
   */
 
   void handle_redundant(Point_key k, typename Triangulation::Cell_handle h) {
-    int hinf=-1;
+    int hinf = -1;
     for (int i=0; i< 4; ++i) {
       if (h->vertex(i)->point() == Point_key()) {
-        hinf=i;
+        hinf = i;
       }
     }
     Root_stack ps;
-    if (hinf ==-1 ) {
+    if (hinf == -1) {
       ps = kdel_.power_test_object()(point(h->vertex(0)->point()),
                                      point(h->vertex(1)->point()),
                                      point(h->vertex(2)->point()),
@@ -1024,7 +1027,7 @@ protected:
     CGAL_LOG_WRITE(Log::LOTS, internal::write_cell( h, LOG_STREAM));
     CGAL_LOG(Log::LOTS, std::endl);
     if (orientation(k,h) != CGAL::NEGATIVE) {
-      CGAL_precondition(redundant_points_[k]==Event_key());
+      CGAL_precondition(redundant_points_[k] == Event_key());
       redundant_cells_.insert(typename RCMap::value_type(h, k));
       handle_redundant(k,h);
       return true;
@@ -1037,20 +1040,20 @@ protected:
     CGAL_LOG(Log::LOTS, "Updating vertex " << vh->point() << std::endl);
     CGAL_precondition(vh->info() == Event_key());
     if (s.will_fail()) {
-      Time t= s.failure_time();
+      Time t = s.failure_time();
       s.pop_failure_time();
-      vh->info()= kdel_.simulator()->new_event(t, Pop_event(s, vh, this));
+      vh->info() = kdel_.simulator()->new_event(t, Pop_event(s, vh, this));
       CGAL_assertion_code(kdel_.simulator()->audit_event(vh->info()));
       CGAL_assertion_code(kdel_.simulator()->audit_events());
       CGAL_assertion_code(kdel_.simulator()->template event<Pop_event>(vh->info()).audit(vh->info()));
     } else {
-      vh->info()= kdel_.simulator()->null_event();
+      vh->info() = kdel_.simulator()->null_event();
     }
   }
 
   void handle_vertex(typename Triangulation::Vertex_handle vh) {
     CGAL_LOG(Log::LOTS, "Handling vertex " << vh->point() << std::endl);
-    if (vh== triangulation().infinite_vertex()) return;
+    if (vh == triangulation().infinite_vertex()) return;
     CGAL_precondition( internal::has_degree_4(triangulation(), vh));
     CGAL_precondition( vh->info() == Event_key());
 
@@ -1059,16 +1062,16 @@ protected:
     std::vector<typename Triangulation::Vertex_handle> n(4);
 
     for (int i=0; i<3; ++i) {
-      n[i]= internal::vertex_of_facet(f,i);
-      if (n[i]== triangulation().infinite_vertex()) {
+      n[i] = internal::vertex_of_facet(f,i);
+      if (n[i] == triangulation().infinite_vertex()) {
         vh->info() = kdel_.simulator()->null_event();
         return;
       }
     }
-    int ind= (f.second+1)%4;
+    int ind = (f.second+1)%4;
     // some vertex on facet
     n[3] = triangulation().mirror_vertex(ch, ind);
-    if (n[3]== triangulation().infinite_vertex()) {
+    if (n[3] == triangulation().infinite_vertex()) {
       vh->info() = kdel_.simulator()->null_event();
       return;
     }
@@ -1113,8 +1116,8 @@ protected:
         h->vertex(i)->info() = Event_key();
       }
     }
-    typename RCMap::iterator beg= redundant_cells_.lower_bound(h);
-    typename RCMap::iterator end= redundant_cells_.upper_bound(h);
+    typename RCMap::iterator beg = redundant_cells_.lower_bound(h);
+    typename RCMap::iterator end = redundant_cells_.upper_bound(h);
     for (; beg != end; ++beg) {
       unhandled_keys_.push_back(beg->second);
       kdel_.simulator()->delete_event(redundant_points_[beg->second]);
@@ -1153,12 +1156,12 @@ protected:
       }
     }
     
-    for (typename RCMap::iterator cur= redundant_cells_.begin();
+    for (typename RCMap::iterator cur = redundant_cells_.begin();
          cur != redundant_cells_.end(); ++cur){
       CGAL_ERROR_WRITE( internal::write_cell( cur->first, LOG_STREAM));
       CGAL_ERROR(": " << cur->second);
       if (cur->second == k) {
-        CGAL_assertion_code(Cell_handle ch= cur->first);
+        CGAL_assertion_code(Cell_handle ch = cur->first);
         CGAL_assertion(ch==h);
         CGAL_error();
       }
