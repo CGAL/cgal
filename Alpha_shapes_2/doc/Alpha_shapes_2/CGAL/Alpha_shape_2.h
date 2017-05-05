@@ -98,6 +98,14 @@ For convenience, classical comparison operators are provided for the type `FT`.
 typedef Gt::FT FT; 
 
 /*!
+The point type.
+
+For basic alpha shapes, `Point` will be equal to `Gt::Point_2`. For weighted alpha
+shapes, `Point` will be equal to `Gt::Weighted_point_2`.
+*/
+typedef Dt::Point Point;
+
+/*!
 The size type. 
 */ 
 typedef unspecified_type size_type; 
