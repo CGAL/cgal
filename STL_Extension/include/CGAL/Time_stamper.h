@@ -59,7 +59,11 @@ struct Time_stamper
   static bool less(const T* p_t1, const T* p_t2) {
     if(p_t1 == NULL)      return (p_t2 != NULL);
     else if(p_t2 == NULL) return false;
-    else                  return p_t1->time_stamp() < p_t2->time_stamp();
+    else {
+      CGAL_assertion((p_t1 == p_t2) ==
+                     (p_t1->time_stamp() == p_t2->time_stamp()));
+      return p_t1->time_stamp() < p_t2->time_stamp();
+    }
   }
 
   void reset() {
