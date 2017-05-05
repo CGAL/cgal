@@ -213,7 +213,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
-  CGAL::Random_points_in_iso_rectangle_2<Weighted_point_2> pg((isor.min)(), (isor.max)());
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
+  CGAL::Random rnd(CGAL::get_default_random());
 
   const int number_of_points = 
     QInputDialog::getInt(this, 
@@ -225,7 +226,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   std::vector<Weighted_point_2> points;
   points.reserve(number_of_points);
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(*pg++);
+    Weighted_point_2 wp(*pg++, rnd.get_double(0, 500));
+    points.push_back(wp);
   }
   dt.insert(points.begin(), points.end());
   // default cursor
