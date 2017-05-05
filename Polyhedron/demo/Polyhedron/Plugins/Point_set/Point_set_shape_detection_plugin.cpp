@@ -1,6 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polygon_soup_item.h"
+#include "Scene_spheres_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_group_item.h>
