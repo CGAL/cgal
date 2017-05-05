@@ -23,32 +23,20 @@
 
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Default_instantaneous_kernel.h>
+#include <CGAL/Kinetic/Default_instantaneous_mapped_kernel.h>
 
 namespace CGAL { namespace Kinetic {
 
 template <class Traitst >
-class Regular_triangulation_instantaneous_kernel: public Default_instantaneous_kernel<Traitst>
+class Regular_triangulation_instantaneous_kernel
+  : public Default_instantaneous_mapped_kernel<Traitst>
 {
   typedef Regular_triangulation_instantaneous_kernel<Traitst> This;
 public:
   typedef Traitst Traits;
-  typedef Default_instantaneous_kernel<Traitst> P;
+  typedef Default_instantaneous_mapped_kernel<Traitst> P;
 
-  //using P::Time;
-  //using P::NT;
-
-  Regular_triangulation_instantaneous_kernel(const Traits &tr): P(tr) {
-  }
-
-  /*using typename P::Point_1;
-  using typename P::Point_2;
-  using typename P::Point_3;*/
-  typedef typename P::Point_3 Bare_point;
-  typedef typename P::Point_3 Weighted_point_3;
-  //typedef P::Static_kernel Static_kernel;
-
-  CGAL_MSA(Power_side_of_oriented_power_sphere,power_side_of_oriented_power_sphere, Weighted_point_3, 3);
-  CGAL_MSA(Equal, equal, Weighted_point_3, 3);
+  Regular_triangulation_instantaneous_kernel(const Traits &tr): P(tr) { }
 };
 
 } } // namespace CGAL::Kinetic
