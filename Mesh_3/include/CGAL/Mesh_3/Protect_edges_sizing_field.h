@@ -43,6 +43,7 @@
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
 #endif
+#include <CGAL/Has_timestamp.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -85,6 +86,7 @@ namespace internal {
 #include <CGAL/squared_distance_3.h>
 
 #include <fstream>
+#include <sstream>
 
 namespace CGAL {
 
@@ -352,6 +354,27 @@ private:
       CGAL_error_msg(msg.str().c_str());
     }
     return s;
+  }
+
+  template <typename Vertex_handle>
+  std::string disp_vert(Vertex_handle v, Tag_true) {
+    std::stringstream ss;
+    ss << (void*)(&*v) << "(ts=" << v->time_stamp() << ")";
+    return ss.str();
+  }
+
+  template <typename Vertex_handle>
+  std::string disp_vert(Vertex_handle v, Tag_false) {
+    std::stringstream ss;
+    ss << (void*)(&*v);
+    return ss.str();
+  }
+
+  template <typename Vertex_handle>
+  std::string disp_vert(Vertex_handle v)
+  {
+    typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
+    return disp_vert(v, CGAL::internal::Has_timestamp<Vertex>());
   }
 
 private:
@@ -927,8 +950,8 @@ insert_balls(const Vertex_handle& vp,
 	     ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "insert_balls(vp=" << (void*)(&*vp) << " (" << vp->point() << "),\n"
-            << "             vq=" << (void*)(&*vq) << " (" << vq->point() << "),\n"
+  std::cerr << "insert_balls(vp=" << disp_vert(vp) << " (" << vp->point() << "),\n"
+            << "             vq=" << disp_vert(vq) << " (" << vq->point() << "),\n"
             << "             sp=" << sp << ",\n"
             << "             sq=" << sq << ",\n"
             << "              d=" << d << ",\n"
@@ -1289,7 +1312,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   // { return v; }
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "change_ball_size(v=" << (void*)(&*v) 
+  std::cerr << "change_ball_size(v=" << disp_vert(v)
             << " (" << v->point()
             << ") dim=" << c3t3_.in_dimension(v) 
             << " index=" << CGAL::oformat(c3t3_.index(v))
@@ -1424,7 +1447,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "check_and_fix_vertex_along_edge(" 
-            << (void*)(&*v) << "= (" << v->point() 
+            << disp_vert(v) << "= (" << v->point()
             << ") dim=" << get_dimension(v)
             << " index=" << CGAL::oformat(c3t3_.index(v))
             << " special=" << std::boolalpha << is_special(v)
@@ -1626,9 +1649,9 @@ repopulate(InputIterator begin, InputIterator last,
 	   const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "repopulate(begin=" << (void*)(&**begin) 
+  std::cerr << "repopulate(begin=" << disp_vert(*begin)
             << " (" << (*begin)->point() << "),\n"
-            << "            last=" << (void*)(&**last)
+            << "            last=" << disp_vert(*last)
             << " (" << (*last)->point() << ")\n"
             << "                  distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
@@ -1702,9 +1725,9 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
 		       const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "analyze_and_repopulate(begin=" << (void*)(&**begin)
+  std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin)
             << " (" << (*begin)->point() << "),\n"
-            << "                       last=" << (void*)(&**last)
+            << "                       last=" << disp_vert(*last)
             << " (" << (*last)->point() << ")\n"
             << "                              distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
