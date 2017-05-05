@@ -81,12 +81,13 @@ struct Regular_triangulation_exact_simulation_traits {
     ap2_(new Active_points_2_table()),
     ap3_(new Active_points_3_table()),
     awp3_(new Active_weighted_points_3_table())
-{ }
+  { }
  
   
   bool is_exact() const {
     return true;
   }
+
 protected:
   Simulator::Handle sim_;
   Active_points_1_table::Handle ap1_;
