@@ -22,6 +22,7 @@
 #define CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
 
 #include <CGAL/internal/K_neighbor_search.h>
+#include <CGAL/Has_member.h>
 
 namespace CGAL {
 
@@ -29,18 +30,74 @@ template <class SearchTraits,
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
           class Tree= Kd_tree<SearchTraits, Splitter, Tag_true> >
-class Orthogonal_k_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> {
-  typedef  internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> Base;
-
-  typename SearchTraits::Cartesian_const_iterator_d query_object_it;
-  
-  std::vector<typename Base::FT> dists;
-  int m_dim;
-  Tree const& m_tree;
+class Orthogonal_k_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree>
+{
+  typedef internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> Base;
+  typedef typename Tree::Point_d Point;
 
 public:
   typedef typename Base::FT FT;
 
+private:
+  typename SearchTraits::Cartesian_const_iterator_d query_object_it;
+  
+  std::vector<FT> dists;
+  int m_dim;
+  Tree const& m_tree;
+
+  CGAL_GENERATE_MEMBER_DETECTOR(transformed_distance_from_coordinates);
+  CGAL_GENERATE_MEMBER_DETECTOR(interruptable_transformed_distance);
+
+  // If transformed_distance_from_coordinates does not exist in `Distance`
+  template <bool has_transformed_distance_from_coordinates = has_transformed_distance_from_coordinates<Distance>::value>
+  FT
+  transformed_distance_from_coordinates(
+    const typename Base::Query_item& q,
+    Point const& p,
+    typename std::vector<FT>::const_iterator it_coord_begin,
+    typename std::vector<FT>::const_iterator it_coord_end)
+  {
+    return this->distance_instance.transformed_distance(q, p);
+  }
+  // ... or if it exists
+  template <>
+  FT
+    transformed_distance_from_coordinates<true>(
+    const typename Base::Query_item& q,
+    Point const& p,
+    typename std::vector<FT>::const_iterator it_coord_begin,
+    typename std::vector<FT>::const_iterator it_coord_end)
+  {
+    return this->distance_instance.transformed_distance_from_coordinates(q, it_coord_begin, it_coord_end);
+  }
+
+  // If interruptable_transformed_distance does not exist in `Distance`
+  template <bool has_interruptable_distance_computation = has_interruptable_transformed_distance<Distance>::value>
+  FT
+  interruptable_transformed_distance(
+    const typename Base::Query_item& q,
+    Point const& p,
+    typename std::vector<FT>::const_iterator it_coord_begin, 
+    typename std::vector<FT>::const_iterator it_coord_end,
+    FT)
+  {
+    return transformed_distance_from_coordinates(q, p, it_coord_begin, it_coord_end);
+  }
+  // ... or if it exists
+  template <>
+  FT
+  interruptable_transformed_distance<true>(
+    const typename Base::Query_item& q,
+    Point const& p,
+    typename std::vector<FT>::const_iterator it_coord_begin,
+    typename std::vector<FT>::const_iterator it_coord_end,
+    FT stop_if_geq_to_this)
+  {
+    return this->distance_instance.interruptable_transformed_distance(
+      q, it_coord_begin, it_coord_end, stop_if_geq_to_this);
+  }
+
+public:
 
   Orthogonal_k_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
@@ -77,77 +134,99 @@ private:
 
   void compute_nearest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd)
   {
-    if (!(N->is_leaf())) 
-    {
-      typename Tree::Internal_node_const_handle node =
-        static_cast<typename Tree::Internal_node_const_handle>(N);
-      this->number_of_internal_nodes_visited++;
-      int new_cut_dim=node->cutting_dimension();
-      typename Base::Node_const_handle bestChild, otherChild;
-      FT new_off;
-      FT val = *(query_object_it + new_cut_dim);
-      FT diff1 = val - node->upper_low_value();
-      FT diff2 = val - node->lower_high_value();
-      if ( (diff1 + diff2 <  FT(0.0)) ) 
-      {
-          new_off = diff1;
-          bestChild = node->lower();
-          otherChild = node->upper();                      
-      }
-      else // compute new distance
-      {
-          new_off= diff2;
-          bestChild = node->upper();
-          otherChild = node->lower();
-      }
-      compute_nearest_neighbors_orthogonally(bestChild, rd);
-      FT dst=dists[new_cut_dim];
-      FT new_rd = this->distance_instance.new_distance(rd,dst,new_off,new_cut_dim);
-      dists[new_cut_dim]=new_off;
-        if (this->branch_nearest(new_rd)) 
-        {
-          compute_nearest_neighbors_orthogonally(otherChild, new_rd);
-        }
-      dists[new_cut_dim]=dst;
-    }
-    else
+    if (N->is_leaf())
     {
       // n is a leaf
       typename Tree::Leaf_node_const_handle node =
         static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
-      //bool full = this->queue.full();
       if (node->size() > 0)
       {
-        std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(node->begin() - m_tree.begin());
-        for (typename Tree::iterator it = node->begin(); it != node->end(); it++)
+        typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
+        typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
+        for (; !this->queue.full() && it_node_point != it_node_point_end; ++it_node_point)
         {
           this->number_of_items_visited++;
-          if (!this->queue.full())
-          {
-            FT distance_to_query_object =
-              this->distance_instance.transformed_distance(this->query_object, cache_point_begin, cache_point_begin + m_dim);
-            this->queue.insert(std::make_pair(&(*it), distance_to_query_object));
-          }
-          else
-          {
-            FT worst_dist = this->queue.top().second;
+          
+          FT distance_to_query_object =
+            transformed_distance_from_coordinates(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim);
+          this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
 
-            FT distance_to_query_object =
-              this->distance_instance.transformed_distance(this->query_object, cache_point_begin, cache_point_begin + m_dim, worst_dist);
+          cache_point_begin += m_dim;
+        }
+        FT worst_dist = this->queue.top().second;
+        for (; it_node_point != it_node_point_end; ++it_node_point)
+        {
+          this->number_of_items_visited++;
 
-            if (distance_to_query_object < worst_dist)
-              this->queue.insert(std::make_pair(&(*it), distance_to_query_object));
+          FT distance_to_query_object =
+            interruptable_transformed_distance(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim, worst_dist);
+
+          if (distance_to_query_object < worst_dist)
+          {
+            this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
+            worst_dist = this->queue.top().second;
           }
+
           cache_point_begin += m_dim;
         }
       }
     }
+    else
+    {
+      typename Tree::Internal_node_const_handle node =
+        static_cast<typename Tree::Internal_node_const_handle>(N);
+      this->number_of_internal_nodes_visited++;
+      int new_cut_dim = node->cutting_dimension();
+      typename Base::Node_const_handle bestChild, otherChild;
+      FT new_off;
+      FT val = *(query_object_it + new_cut_dim);
+      FT diff1 = val - node->upper_low_value();
+      FT diff2 = val - node->lower_high_value();
+      if ((diff1 + diff2 <  FT(0.0)))
+      {
+        new_off = diff1;
+        bestChild = node->lower();
+        otherChild = node->upper();
+      }
+      else // compute new distance
+      {
+        new_off = diff2;
+        bestChild = node->upper();
+        otherChild = node->lower();
+      }
+      compute_nearest_neighbors_orthogonally(bestChild, rd);
+      FT dst = dists[new_cut_dim];
+      FT new_rd = this->distance_instance.new_distance(rd, dst, new_off, new_cut_dim);
+      dists[new_cut_dim] = new_off;
+      if (this->branch_nearest(new_rd))
+      {
+        compute_nearest_neighbors_orthogonally(otherChild, new_rd);
+      }
+      dists[new_cut_dim] = dst;
+    }
   }    
 
-   void compute_furthest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd)
+  void compute_furthest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd)
   {
-    if (!(N->is_leaf())) 
+    if (N->is_leaf())
+    {
+      // n is a leaf
+      typename Tree::Leaf_node_const_handle node = 
+        static_cast<typename Tree::Leaf_node_const_handle>(N);
+      this->number_of_leaf_nodes_visited++;
+      if (node->size() > 0)
+      {
+        for (typename Tree::iterator it_node_point=node->begin(); it_node_point != node->end(); it_node_point++) 
+        {
+          this->number_of_items_visited++;
+          FT distance_to_query_object=
+            this->distance_instance.transformed_distance(this->query_object,*it_node_point);
+          this->queue.insert(std::make_pair(&(*it_node_point),distance_to_query_object));
+        }
+      }
+    }
+    else
     {
       typename Tree::Internal_node_const_handle node = 
         static_cast<typename Tree::Internal_node_const_handle>(N);
@@ -182,24 +261,7 @@ private:
           compute_furthest_neighbors_orthogonally(otherChild, new_rd);
       dists[new_cut_dim]=dst;
     }
-    else
-    {
-      // n is a leaf
-      typename Tree::Leaf_node_const_handle node = 
-        static_cast<typename Tree::Leaf_node_const_handle>(N);
-      this->number_of_leaf_nodes_visited++;
-      if (node->size() > 0)
-      {
-        for (typename Tree::iterator it=node->begin(); it != node->end(); it++) 
-        {
-          this->number_of_items_visited++;
-          FT distance_to_query_object=
-            this->distance_instance.transformed_distance(this->query_object,*it);
-          this->queue.insert(std::make_pair(&(*it),distance_to_query_object));
-        }
-      }
-    }
-  }    
+  }
   
 }; // class 
 

@@ -148,15 +148,9 @@ public:
 
   const PointPropertyMap& point_property_map() const {return ppmap;}    
 
-  FT transformed_distance(const Query_item& p1, const Point_with_info& p2, FT worst_dist = std::numeric_limits<FT>::max()) const
+  FT transformed_distance(const Query_item& p1, const Point_with_info& p2) const
   {
-    return Base_distance::transformed_distance(p1,get(ppmap,p2), worst_dist);
-  }
-
-  template < typename Coord_iterator >
-  FT transformed_distance(const Query_item& p1, Coord_iterator it_coord_begin, Coord_iterator it_coord_end, FT worst_dist = std::numeric_limits<FT>::max()) const
-  {
-    return Base_distance::transformed_distance(p1, it_coord_begin, it_coord_end, worst_dist);
+    return Base_distance::transformed_distance(p1,get(ppmap,p2));
   }
 
   template <class FT,class Dimension>
