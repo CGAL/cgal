@@ -23,11 +23,13 @@ else(EIGEN3_FOUND)
 endif(EIGEN3_FOUND)
 
 qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
-polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin ${segmentationUI_FILES})
+
+polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin CATEGORY-PLUGINS_mesh_processing ${segmentationUI_FILES})
 target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item scene_surface_mesh_item)
 
+
 qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
-polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
+polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin CATEGORY-PLUGINS_mesh_processing ${mesh_simplificationUI_FILES})
 target_link_libraries(mesh_simplification_plugin scene_polyhedron_item scene_polyhedron_selection_item)
 
 polyhedron_demo_plugin(mesh_simplification_sm_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
@@ -35,7 +37,7 @@ target_link_libraries(mesh_simplification_sm_plugin scene_surface_mesh_item scen
 target_compile_definitions(mesh_simplification_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
-polyhedron_demo_plugin(remeshing_plugin Remeshing_plugin Remeshing_plugin_cgal_code.cpp Mesher_base.cpp ${remeshingUI_FILES})
+polyhedron_demo_plugin(remeshing_plugin Remeshing_plugin CATEGORY-PLUGINS_meshing  Remeshing_plugin_cgal_code.cpp Mesher_base.cpp ${remeshingUI_FILES})
 target_link_libraries(remeshing_plugin scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
 
 qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
