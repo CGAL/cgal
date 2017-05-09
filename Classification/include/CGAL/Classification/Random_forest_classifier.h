@@ -13,7 +13,7 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationClassifiers
 
-  \brief %Classification classifier based on a random forest algorithm.
+  \brief Classifier based on a random forest algorithm.
 
   \note This class requires the \ref thirdpartyOpenCV library.
 
@@ -36,7 +36,7 @@ public:
   \brief Instantiate the classifier using the sets of `labels` and `features`.
 */
   Random_forest_classifier (Label_set& labels,
-                           Feature_set& features)
+                            Feature_set& features)
     : m_labels (labels), m_features (features)
 #if (CV_MAJOR_VERSION < 3)
     , rtree (NULL)

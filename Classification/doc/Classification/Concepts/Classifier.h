@@ -21,8 +21,8 @@ class Classifier
 public:
 
   /*!
-    \brief Returns, for each label indexed from 0 to `out.size()`, the
-    ernegy of this label applied to point at `item_index`.
+    \brief Computes for each label indexed from 0 to `out.size()`, the
+    energy of this label applied to point at `item_index`.
    */
   void operator() (std::size_t item_index, std::vector<float>& out) const;
 
