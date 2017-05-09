@@ -24,10 +24,11 @@
 
 #include <CGAL/license/Bounding_volumes.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/minimum_enclosing_quadrilateral_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/min_quadrilateral_2.h>"
+#include <CGAL/internal/deprecation_warning.h>
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/min_quadrilateral_2.h>
-#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // ! (CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_2_H)
 

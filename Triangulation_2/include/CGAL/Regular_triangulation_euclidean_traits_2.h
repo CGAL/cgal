@@ -24,11 +24,11 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
-#ifdef CGAL_NO_DEPRECATED_CODE
-#error The class Regular_triangulation_euclidean_traits_2<K> is deprecated;
-       the kernel K can be used directly as traits since the weighted point and
-       the function objects for weighted points are part of the concept Kernel.
-#endif
+#define CGAL_DEPRECATED_HEADER "<CGAL/Regular_triangulation_euclidean_traits_2.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The kernel K can be used directly as traits since weighted points and "\
+  "the associated function objects are now part of the concept Kernel."
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/config.h>
 

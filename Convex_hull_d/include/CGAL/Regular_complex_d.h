@@ -32,7 +32,8 @@
 #include <CGAL/license/Convex_hull_d.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Regular_complex_d.h>"
-#define CGAL_REPLACEMENT_HEADER "the Triangulation package (see http://doc.cgal.org/latest/Triangulation)"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The Triangulation package (see http://doc.cgal.org/latest/Triangulation) should be used instead."
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/basic.h>

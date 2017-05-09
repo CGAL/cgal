@@ -24,16 +24,16 @@
 
 #include <CGAL/license/Alpha_shapes_2.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Weighted_alpha_shape_euclidean_traits_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Regular_triangulation_euclidean_traits_2.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The class Weighted_alpha_shape_euclidean_traits_2<K> is deprecated in favor of "\
+  "Regular_triangulation_euclidean_traits_2<K>."
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 
 namespace CGAL {
-
-//------------------ Traits class -------------------------------------
-
-#ifdef CGAL_NO_DEPRECATED_CODE
-#error The class Weighted_alpha_shape_euclidean_traits_2<K> is deprecated in favor of Regular_triangulation_euclidean_traits_2<K>.
-#endif
 
 template< class R >
 class Weighted_alpha_shape_euclidean_traits_2 : public
