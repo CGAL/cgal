@@ -7013,15 +7013,15 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-
   /*!
-    Let `p` be the plane defined by the points `p`, `q`, 
+    If `p`, `q`, and `s` are collinear, then \ref CGAL::COLLINEAR is returned.
+
+    If not, let `P` be the plane defined by the points `p`, `q`,
     and `r`. Note that the order defines the orientation of 
-    `p`. The function computes the orientation of points `p`, 
-    `q`, and `s` in `p`: Iff `p`, `q`, `s` are 
-    collinear, \ref CGAL::COLLINEAR is returned. Iff `p` and the plane 
-    defined by `p`, `q`, and `s` have the same orientation, 
-    \ref CGAL::POSITIVE is returned; otherwise \ref CGAL::NEGATIVE is returned. 
+    `P`. If `P` and the plane defined by `p`, `q`, and `s`
+    have the same orientation, then \ref CGAL::POSITIVE is returned;
+    otherwise \ref CGAL::NEGATIVE is returned.
+
     \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear. 
   */ 
   Orientation operator()(const Kernel::Point_3&p, 
@@ -7030,12 +7030,14 @@ public:
                          const Kernel::Point_3&s); 
 
   /*!
-    If `p,q,r` are collinear, then \ref CGAL::COLLINEAR is returned. 
-    If not, then `p,q,r` define a plane `p`. The return value in this case is 
-    either \ref CGAL::POSITIVE or \ref CGAL::NEGATIVE, but we don't specify it explicitly. 
-    However, we guarantee that all calls to this predicate over 3 points in `p` 
-    will return a coherent orientation if considered a 2D orientation in `p`. 
-  */ 
+    If `p`, `q`, and `r` are collinear, then \ref CGAL::COLLINEAR is returned.
+
+    If not, let `P` be the plane defined by the points `p`, `q`, and `r`.
+    The return value in this case is either \ref CGAL::POSITIVE or \ref CGAL::NEGATIVE,
+    but we don't specify it explicitly.
+    However, we guarantee that all calls to this predicate over 3 points in `P`
+    will return a coherent orientation if considered as a 2D orientation in `P`.
+  */
   Orientation operator()(const Kernel::Point_3&p, 
                          const Kernel::Point_3&q, 
                          const Kernel::Point_3&r); 
