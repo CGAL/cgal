@@ -1958,13 +1958,14 @@ private: //------------------------------------------------------- private data
     return sm;
   }
 
+
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
   /// Only the \em point property is inserted in the stream.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
+ 
   template <typename P>
-  std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
-  {
+  void write_off(std::ostream& os, const Surface_mesh<P>& sm) {
     typedef Surface_mesh<P> Mesh;
     typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::Face_index Face_index;
@@ -1985,8 +1986,21 @@ private: //------------------------------------------------------- private data
       }
       os << '\n';
     }
+  }
+
+
+  /// \relates Surface_mesh
+  /// Inserts the surface mesh in an output stream in Ascii OFF format. 
+  /// Only the \em point property is inserted in the stream.
+  /// \pre `operator<<(std::ostream&,const P&)` must be defined.
+
+   template <typename P>
+  std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
+  {
+    write_off(os, sm);
     return os;
   }
+
 
 /// @cond CGAL_DOCUMENT_INTERNALS
 
@@ -2004,7 +2018,6 @@ private: //------------------------------------------------------- private data
 /// @endcond
 
 
-  /// \relates Surface_mesh
 
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
@@ -2012,7 +2025,7 @@ private: //------------------------------------------------------- private data
   /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
-  std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
+  bool read_off(std::istream& is, Surface_mesh<P>& sm)
   {
    typedef Surface_mesh<P> Mesh;
    typedef typename Kernel_traits<P>::Kernel K;
@@ -2089,7 +2102,7 @@ private: //------------------------------------------------------- private data
       {
        std::cout<< "Warning: Facets don't seem to be oriented. Loading a Soup of polygons instead."<<std::endl;
        sm.clear();
-       return is;
+       return is.good();
       }
 
       // the first face will tell us if faces have a color map
@@ -2111,10 +2124,22 @@ private: //------------------------------------------------------- private data
           }
         }
     }
-    return is;
+    return is.good();
   }
 
  
+  /// \relates Surface_mesh
+  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
+  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
+  /// Vertex texture coordinates are ignored.
+  /// \pre `operator>>(std::istream&,const P&)` must be defined.
+  template <typename P>
+  std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
+  {
+    read_off(is, sm);
+    return is;
+  }
+
  /*! @} */
 
 template <typename P>

@@ -39,7 +39,7 @@ std::istream& operator>>( std::istream& in, CGAL::Polyhedron_3<PolyhedronTraits_
 \ingroup PkgPolyhedronIOFunc
 
 This operator writes the polyhedral surface \f$P\f$ to the output
-stream out using the Object File Format, OFF, with file extension
+stream `out` using the Object File Format, OFF, with file extension
 <TT>.off</TT>, which is also understood by GeomView \cgalCite{cgal:p-gmgv16-96}. The
 output is in ASCII format. From the polyhedral surface, only the point
 coordinates and facets are written. Neither normal vectors nor color

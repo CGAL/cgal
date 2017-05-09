@@ -1594,7 +1594,27 @@ public:
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 
 
+  
   /// @}
 
 }; /* end Polyhedron_3 */
+
+
+/*!
+\relates Polyhedron_3
+\ingroup PkgPolyhedronIOFunc
+
+*/
+template <class PolyhedronTraits_3>
+bool read_off( std::istream& in, CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
+
+/*!
+\relates Polyhedron_3
+\ingroup PkgPolyhedronIOFunc
+
+*/
+template <class PolyhedronTraits_3>
+bool write_off( std::ostream& out, CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
+
+
 } /* end namespace CGAL */
