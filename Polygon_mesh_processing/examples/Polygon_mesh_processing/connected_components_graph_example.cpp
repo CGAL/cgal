@@ -18,7 +18,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
 typedef boost::graph_traits<Mesh>::faces_size_type          faces_size_type;
 
 typedef Mesh::Property_map<face_descriptor, faces_size_type> FCCmap;
-  typedef CGAL::Connected_components_graph<Mesh,FCCmap> CCG;
+  typedef CGAL::Connected_components_graph<Mesh> CCG;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
  
-  CCG ccg(mesh, fccmap, faces_size_type(0));
+  CCG ccg(mesh, fccmap, 0);
 
   std::cout << "The faces in component 0 are:" << std::endl;
   BOOST_FOREACH(boost::graph_traits<CCG>::face_descriptor f, faces(ccg)){
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     components.push_back(0);
     components.push_back(1);
 
-    ccg.set_connected_components(components);
+    ccg.set_selected_components(fccmap,components.begin(), components.end());
     
     std::cout << "The faces in components 0 and 1 are:" << std::endl;
     BOOST_FOREACH(CCG::face_descriptor f, faces(ccg)){
