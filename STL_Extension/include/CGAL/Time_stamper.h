@@ -39,7 +39,13 @@ struct Time_stamper
   void set_time_stamp(T* pt) {
     if(pt->time_stamp() == std::size_t(-1))
       pt->set_time_stamp(time_stamp_++);
-    // else: the time stamp is re-used
+    else {
+      // else: the time stamp is re-used
+
+      // Enforces that the time stamp is greater than the current value.
+      // That is used when a TDS_3 is copied.
+      time_stamp_ = (std::max)(time_stamp_, pt->time_stamp() + 1);
+    }
   }
 
 
