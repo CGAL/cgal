@@ -31,7 +31,7 @@
 
 namespace CGAL {
 /*!
-   \ingroup PkgBGLHelperFct
+   \ingroup PkgBGLIOFct
     writes the graph `g` in the OFF format.
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
@@ -66,6 +66,25 @@ void write_off(std::ostream& os,
   }
 }
 
+
+/*!
+   \ingroup PkgBGLIOFct
+    writes the graph `g` in the OFF format.
+    \sa Overloads of this function for specific models of the concept `FaceGraph`.
+
+  */ 
+template <typename FaceGraph>
+void write_off(std::string& fname,
+               const FaceGraph& g)
+{
+  std::ofstream out(fname);
+  if(out.good()){
+    return wroite_off(out,g);
+  }
+  return false;
+}
+
+
   namespace internal { namespace read_off {
   
   bool is_whitespace(const std::string& s)
@@ -96,6 +115,7 @@ std::string next_non_comment(std::istream& is)
     reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash, and lines with whitespace.
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
     \pre The data must represent a 2-manifold
+    \attention The graph `g` is not cleared, and the data from the stream are added.
 
   */ 
 template <typename FaceGraph>
@@ -153,6 +173,27 @@ bool read_off(std::istream& is,
   }
   return true;
 }
+
+
+/*!
+   \ingroup PkgBGLIOFct
+    reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash, and lines with whitespace.
+    \sa Overloads of this function for specific models of the concept `FaceGraph`.
+    \pre The data must represent a 2-manifold
+    \attention The graph `g` is not cleared, and the data from the stream are added.
+
+  */ 
+template <typename FaceGraph>
+bool read_off(std::string& fname,
+              FaceGraph& g)
+{
+  std::ifstream in(fname);
+  if(in.good()){
+    return read_off(in, g);
+  }
+  return false;
+}
+
 
 } // namespace CGAL
 
