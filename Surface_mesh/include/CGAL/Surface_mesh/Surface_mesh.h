@@ -45,6 +45,7 @@
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Properties.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/IO/File_scanner_OFF.h>
@@ -2015,17 +2016,11 @@ private: //------------------------------------------------------- private data
       in.putback(c);
       return in;
   }
-/// @endcond
 
 
 
-  /// \relates Surface_mesh
-  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
-  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
-  /// Vertex texture coordinates are ignored.
-  /// \pre `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
-  bool read_off(std::istream& is, Surface_mesh<P>& sm)
+  bool read_off_clear(std::istream& is, Surface_mesh<P>& sm)
   {
    typedef Surface_mesh<P> Mesh;
    typedef typename Kernel_traits<P>::Kernel K;
@@ -2125,6 +2120,27 @@ private: //------------------------------------------------------- private data
         }
     }
     return is.good();
+  }
+/// @endcond
+
+  /// \relates Surface_mesh
+  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
+  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
+  /// Vertex texture coordinates are ignored.
+  /// \pre `operator>>(std::istream&,const P&)` must be defined.
+
+  template <typename P>
+  bool read_off(std::istream& is, Surface_mesh<P>& sm)
+  {
+    if( (sm.num_vertices() == 0) && (sm.num_halfedges() == 0)&& (sm.num_faces() == 0) ){
+      return read_off_clear(is,sm);
+    }
+    Surface_mesh<P> other;
+    if(read_off_clear(is,other)){
+      copy_face_graph(other,sm);
+      return true;
+    }
+    return false;
   }
 
  
