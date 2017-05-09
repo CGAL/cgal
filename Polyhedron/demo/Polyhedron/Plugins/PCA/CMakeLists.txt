@@ -13,5 +13,6 @@ polyhedron_demo_plugin(create_bbox_mesh_plugin Create_bbox_mesh_plugin)
 target_link_libraries(create_bbox_mesh_plugin scene_polyhedron_item)
 
 qt5_wrap_ui( volumesUI_FILES Basic_volumes_generator_dialog.ui )
+
 polyhedron_demo_plugin(basic_volumes_generator_plugin Basic_volumes_generator_plugin ${volumesUI_FILES})
 target_link_libraries(basic_volumes_generator_plugin scene_polyhedron_item)

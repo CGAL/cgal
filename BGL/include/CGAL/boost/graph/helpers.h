@@ -33,6 +33,10 @@ namespace CGAL {
     template< typename Graph>
     void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
                    Graph& g);
+
+    template<typename Graph , typename VertexRange >
+    typename boost::graph_traits<Graph>::face_descriptor add_face(const VertexRange& vr,
+                                                         Graph& g);
   }
 
 /*!
@@ -723,6 +727,265 @@ bool is_degenerate_triangle_face(
   return is_degenerate_triangle_face(halfedge(fd,tmesh), tmesh, vpmap, traits);
 }
 /// \endcond
+
+/**
+ * \ingroup PkgBGLHelperFct
+ * \brief Creates a regular prism.
+ *
+ * Creates a regular prism in `g`, having `nb_vertices` vertices in each of its bases.
+ * \param nb_vertices the number of vertices per base. It must be greater than or equals 3.
+ * \param g the graph in which the regular prism will be created
+ * \param center the point around which the regular prism will be created. It is the middle point of the prism's axis.
+ * \param height the distance between the two bases.
+ * \param radius the radius of the circle in which the bases are inscribed.
+ * \param is_closed determines if the bases must be created or not.
+ */
+template<class Graph, class P>
+void make_regular_prism(
+    typename boost::graph_traits<Graph>::vertices_size_type nb_vertices,
+    Graph& g,
+    const P& center = P(0,0,0),
+    typename CGAL::Kernel_traits<P>::Kernel::FT height = 1.0,
+    typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1.0,
+    bool is_closed = true)
+{
+  CGAL_assertion(nb_vertices >= 3);
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename CGAL::Kernel_traits<P>::Kernel::FT FT;
+
+  const FT to_rad = CGAL_PI / 180.0;
+  const FT precision = 360/nb_vertices;
+  const FT diameter = 2*radius;
+  Point_property_map vpmap = get(CGAL::vertex_point, g);
+  std::vector<vertex_descriptor> vertices;
+  vertices.resize(nb_vertices*2);
+  for(int i=0; i<nb_vertices*2; ++i)
+    vertices[i] = add_vertex(g);
+
+  //fill vertices
+  for(int i=0; i < nb_vertices; ++i)
+  {
+    put(vpmap,
+        vertices[i],
+        P(0.5*diameter*cos(i*precision*to_rad)+center.x(),
+          0.5*height+center.y(),
+          -0.5*diameter*sin(i*precision*to_rad) + center.z()));
+
+    put(vpmap,
+        vertices[i+nb_vertices],
+        P(0.5*diameter*cos(i*precision*to_rad)+center.x(),
+          -0.5*height+center.y(),
+          -0.5*diameter*sin(i*precision*to_rad)+center.z()));
+  }
+  std::vector<vertex_descriptor> face;
+  face.resize(3);
+  //fill faces
+  for(int i=0; i<nb_vertices; ++i)
+  {
+    face[0] = vertices[(i+1)%(nb_vertices)];
+    face[1] = vertices[i];
+    face[2] = vertices[(i+1)%(nb_vertices) + nb_vertices];
+    Euler::add_face(face, g);
+
+    face[0] = vertices[(i+1)%(nb_vertices) + nb_vertices];
+    face[1] = vertices[i];
+    face[2] = vertices[i + nb_vertices];
+    Euler::add_face(face, g);
+  }
+
+  //close
+  if(is_closed)
+  {
+    //add the center of the fans
+    vertex_descriptor top = add_vertex(g);
+    vertex_descriptor bot = add_vertex(g);
+    put(vpmap, top, P(center.x(),0.5*height+center.y(),center.z()));
+    put(vpmap, bot, P(center.x(),-0.5*height+center.y(),center.z()));
+
+    //add the faces
+    for(int i=0; i<nb_vertices; ++i)
+    {
+      face[0] = vertices[i];
+      face[1] = vertices[(i+1)%(nb_vertices)];
+      face[2] = top;
+      Euler::add_face(face, g);
+
+      face[0] = bot;
+      face[1] = vertices[(i+1)%(nb_vertices) + nb_vertices];
+      face[2] = vertices[i + nb_vertices];
+      Euler::add_face(face, g);
+    }
+  }
+}
+
+/**
+ * \ingroup PkgBGLHelperFct
+ * \brief Creates a pyramid.
+ *
+ * Creates a pyramid in `g`, having `nb_vertices` vertices in its base.
+ * \param nb_vertices the number of vertices in the base. It must be greater than or equals 3.
+ * \param g the graph in which the pyramid will be created
+ * \param base_center the center of the circle in which the base is inscribed.
+ * \param height the distance between the base and the apex.
+ * \param radius the radius of the circle in which the base is inscribed.
+ * \param is_closed determines if the base must be created or not.
+ */
+template<class Graph, class P>
+void make_pyramid(
+    typename boost::graph_traits<Graph>::vertices_size_type nb_vertices,
+    Graph& g,
+    const P& base_center = P(0,0,0),
+    typename CGAL::Kernel_traits<P>::Kernel::FT height = 1.0,
+    typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1.0,
+    bool is_closed = true)
+{
+  CGAL_assertion(nb_vertices >= 3);
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename CGAL::Kernel_traits<P>::Kernel::FT FT;
+  const FT to_rad = CGAL_PI / 180.0;
+  const FT precision = 360/nb_vertices;
+  const FT diameter = 2*radius;
+  Point_property_map vpmap = get(CGAL::vertex_point, g);
+  std::vector<vertex_descriptor> vertices;
+  vertices.resize(nb_vertices);
+  for(int i=0; i<nb_vertices; ++i)
+    vertices[i] = add_vertex(g);
+  vertex_descriptor apex = add_vertex(g);
+
+  //fill vertices
+  put(vpmap,
+      apex,
+      P(base_center.x(),
+        base_center.y() + height,
+        base_center.z()));
+  for(int i=0; i < nb_vertices; ++i)
+  {
+
+    put(vpmap,
+        vertices[i],
+        P(0.5*diameter*cos(i*precision*to_rad)+base_center.x(),
+          base_center.y(),
+          -0.5*diameter*sin(i*precision*to_rad)+base_center.z()));
+  }
+  std::vector<vertex_descriptor> face;
+  face.resize(3);
+  //fill faces
+  for(int i=0; i<nb_vertices; ++i)
+  {
+    face[0] = apex;
+    face[1] = vertices[i];
+    face[2] = vertices[(i+1)%(nb_vertices)];
+    Euler::add_face(face, g);
+  }
+
+  //close
+  if(is_closed)
+  {
+    //add the center of the fan
+    vertex_descriptor bot = add_vertex(g);
+    put(vpmap, bot, P(base_center.x(),base_center.y(),base_center.z()));
+
+    //add the faces
+    for(int i=0; i<nb_vertices; ++i)
+    {
+      face[0] = bot;
+      face[1] = vertices[(i+1)%(nb_vertices)];
+      face[2] = vertices[i];
+      Euler::add_face(face, g);
+    }
+  }
+}
+
+/**
+ * \ingroup PkgBGLHelperFct
+ * \brief Creates an icosahedron.
+ *
+ * Creates an icosahedron in `g` centered in `center`.
+ * \param g the graph in which the icosahedron will be created.
+ * \param center the center of the sphere in which the icosahedron is inscribed.
+ * \param radius the radius of the sphere in which the icosahedron is inscribed.
+ */
+template<class Graph, class P>
+void make_icosahedron(
+    Graph& g,
+    const P& center = P(0,0,0),
+    typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1.0)
+{
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  Point_property_map vpmap = get(CGAL::vertex_point, g);
+  // create the initial icosahedron
+  std::vector<vertex_descriptor> v_vertices;
+  v_vertices.resize(12);
+  for(int i=0; i<12; ++i)
+    v_vertices[i] = add_vertex(g);
+  typename CGAL::Kernel_traits<P>::Kernel::FT t =
+      (radius + radius*CGAL::approximate_sqrt(5.0)) / 2.0;
+
+  put(vpmap, v_vertices[0],P(-radius + center.x(),  t + center.y(), 0.0 + center.z()));
+  put(vpmap, v_vertices[1],P( radius + center.x(),  t + center.y(), 0.0 + center.z()));
+  put(vpmap, v_vertices[2],P(-radius + center.x(), -t + center.y(), 0.0 + center.z()));
+  put(vpmap, v_vertices[3],P( radius + center.x(), -t + center.y(), 0.0 + center.z()));
+
+  put(vpmap, v_vertices[4],P( 0.0 + center.x(), -radius + center.y(),  t + center.z()));
+  put(vpmap, v_vertices[5],P( 0.0 + center.x(),  radius + center.y(),  t + center.z()));
+  put(vpmap, v_vertices[6],P( 0.0 + center.x(), -radius + center.y(), -t + center.z()));
+  put(vpmap, v_vertices[7],P( 0.0 + center.x(),  radius + center.y(), -t + center.z()));
+
+  put(vpmap, v_vertices[8],P(  t + center.x(), 0.0 + center.y(), -radius + center.z()));
+  put(vpmap, v_vertices[9],P(  t + center.x(), 0.0 + center.y(),  radius + center.z()));
+  put(vpmap, v_vertices[10],P(-t + center.x(), 0.0 + center.y(), -radius + center.z()));
+  put(vpmap, v_vertices[11],P(-t + center.x(), 0.0 + center.y(),  radius + center.z()));
+
+  std::vector<vertex_descriptor> face;
+  face.resize(3);
+  face[1] = v_vertices[0]; face[0] = v_vertices[11]; face[2] = v_vertices[5];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[0]; face[0] = v_vertices[5]; face[2] = v_vertices[1];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[0]; face[0] = v_vertices[1]; face[2] = v_vertices[7];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[0]; face[0] = v_vertices[7]; face[2] = v_vertices[10];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[0]; face[0] = v_vertices[10]; face[2] = v_vertices[11];
+  Euler::add_face(face, g);
+
+  face[1] = v_vertices[1] ; face[0] = v_vertices[5] ; face[2] = v_vertices[9];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[5] ; face[0] = v_vertices[11]; face[2] = v_vertices[4];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[11]; face[0] = v_vertices[10]; face[2] = v_vertices[2];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[10]; face[0] = v_vertices[7] ; face[2] = v_vertices[6];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[7] ; face[0] = v_vertices[1] ; face[2] = v_vertices[8];
+  Euler::add_face(face, g);
+
+  face[1] = v_vertices[3] ; face[0] = v_vertices[9] ; face[2] = v_vertices[4];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[4] ; face[2] = v_vertices[2];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[2] ; face[2] = v_vertices[6];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[6] ; face[2] = v_vertices[8];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[3] ; face[0] = v_vertices[8] ; face[2] = v_vertices[9];
+  Euler::add_face(face, g);
+
+  face[1] = v_vertices[4] ; face[0] = v_vertices[9] ; face[2] = v_vertices[5] ;
+  Euler::add_face(face, g);
+  face[1] = v_vertices[2] ; face[0] = v_vertices[4] ; face[2] = v_vertices[11];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[6] ; face[0] = v_vertices[2] ; face[2] = v_vertices[10];
+  Euler::add_face(face, g);
+  face[1] = v_vertices[8] ; face[0] = v_vertices[6] ; face[2] = v_vertices[7] ;
+  Euler::add_face(face, g);
+  face[1] = v_vertices[9] ; face[0] = v_vertices[8] ; face[2] = v_vertices[1] ;
+  Euler::add_face(face, g);
+}
+
 
 namespace internal {
 

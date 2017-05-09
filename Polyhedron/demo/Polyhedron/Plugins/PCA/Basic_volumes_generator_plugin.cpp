@@ -9,6 +9,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Scene_polyhedron_item.h"
 #include <CGAL/Subdivision_method_3.h>
+#include <CGAL/Kernel_traits.h>
 #include "ui_Basic_volumes_generator_dialog.h"
 
 class VolumeDialog :
@@ -39,24 +40,30 @@ class Q_DECL_EXPORT Basic_volumes_generator_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public :
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
+  void init(QMainWindow* mainWindow,
+            CGAL::Three::Scene_interface* scene_interface,
+            Messages_interface*)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
     QAction* actionCube = new QAction("Generate Cube", mw);
     QAction* actionPrism = new QAction("Generate Regular Prism", mw);
+    QAction* actionPyramid = new QAction("Generate Pyramid", mw);
     QAction* actionSphere = new QAction("Generate Sphere", mw);
     QAction* actionTetrahedron = new QAction("Generate Tetrahedron", mw);
     connect(actionCube, SIGNAL(triggered()),
             this, SLOT(on_actionCube_triggered()));
     connect(actionPrism, SIGNAL(triggered()),
             this, SLOT(on_actionPrism_triggered()));
+    connect(actionPyramid, SIGNAL(triggered()),
+            this, SLOT(on_actionPyramid_triggered()));
     connect(actionSphere, SIGNAL(triggered()),
             this, SLOT(on_actionSphere_triggered()));
     connect(actionTetrahedron, SIGNAL(triggered()),
             this, SLOT(on_actionTetrahedron_triggered()));
     _actions << actionCube
              << actionPrism
+             << actionPyramid
              << actionSphere
              << actionTetrahedron;
     Q_FOREACH(QAction* action, _actions)
@@ -65,6 +72,7 @@ public :
 
   bool applicable(QAction*) const
   {
+    //always applicable
     return true;
   }
   QList<QAction*> actions() const {
@@ -73,6 +81,7 @@ public :
 public Q_SLOTS:
   void on_actionCube_triggered();
   void on_actionPrism_triggered();
+  void on_actionPyramid_triggered();
   void on_actionSphere_triggered();
   void on_actionTetrahedron_triggered();
 private:
@@ -100,156 +109,18 @@ void Basic_volumes_generator_plugin::on_actionCube_triggered()
   scene->addItem(cube_item);
 }
 //make a prism
-template<class Mesh, class Traits>
-void make_regular_prism(int nb_vertices,
-                        Mesh& prism,
-                        typename CGAL::Point_3<Traits> center = CGAL::Point_3<Traits>(0,0,0),
-                        double height = 1.0,
-                        double radius = 1.0,
-                        bool is_closed = true)
-{
-  const double to_rad = static_cast<float>(CGAL_PI / 180.0);
-  const double precision = 360/nb_vertices;
-  double diameter = 2*radius;
-  VPMap vpmap = get(CGAL::vertex_point, prism);
-  //const int nb_vertices = 360/precision * 2;
-  std::vector<vertex_descriptor> vertices;
-  vertices.resize(nb_vertices*2);
-  for(int i=0; i<nb_vertices*2; ++i)
-    vertices[i] = add_vertex(prism);
-
-  //fill vertices
-  for(int i=0; i < nb_vertices; ++i)
-  {
-    put(vpmap, vertices[i], Point(0.5*diameter*cos(i*precision*to_rad)+center.x(),0.5*height+center.y(),-0.5*diameter*sin(i*precision*to_rad) + center.z()));
-    put(vpmap, vertices[i+nb_vertices], Point(0.5*diameter*cos(i*precision*to_rad)+center.x(),-0.5*height+center.y(),-0.5*diameter*sin(i*precision*to_rad)+center.z()));
-  }
-  std::vector<vertex_descriptor> face;
-  face.resize(3);
-  //fill faces
-  for(int i=0; i<nb_vertices; ++i)
-  {
-    face[0] = vertices[(i+1)%(nb_vertices)];
-    face[1] = vertices[i];
-    face[2] = vertices[(i+1)%(nb_vertices) + nb_vertices];
-    euler::add_face(face, prism);
-
-    face[0] = vertices[(i+1)%(nb_vertices) + nb_vertices];
-    face[1] = vertices[i];
-    face[2] = vertices[i + nb_vertices];
-    euler::add_face(face, prism);
-  }
-
-  //close
-  if(is_closed)
-  {
-    //add the center of the fans
-    vertex_descriptor top = add_vertex(prism);
-    vertex_descriptor bot = add_vertex(prism);
-    put(vpmap, top, Point(center.x(),0.5*height+center.y(),center.z()));
-    put(vpmap, bot, Point(center.x(),-0.5*height+center.y(),center.z()));
-
-    //add the faces
-    for(int i=0; i<nb_vertices; ++i)
-    {
-      face[0] = vertices[i];
-      face[1] = vertices[(i+1)%(nb_vertices)];
-      face[2] = top;
-      euler::add_face(face, prism);
-
-      face[0] = bot;
-      face[1] = vertices[(i+1)%(nb_vertices) + nb_vertices];
-      face[2] = vertices[i + nb_vertices];
-      euler::add_face(face, prism);
-    }
-  }
-}
-
-template<class Mesh, class Traits>
-void make_icosahedron(Mesh& mesh,
-                      typename CGAL::Point_3<Traits> center = CGAL::Point_3<Traits>(0,0,0),
-                      double radius = 1.0)
-{
-  VPMap vpmap = get(CGAL::vertex_point, mesh);
-  // create the initial icosahedron
-  std::vector<vertex_descriptor> v_vertices;
-  v_vertices.resize(12);
-  for(int i=0; i<12; ++i)
-    v_vertices[i] = add_vertex(mesh);
-  double t = (radius + radius*CGAL::sqrt(5.0)) / 2.0;
-
-  put(vpmap, v_vertices[0],typename Traits::Point_3(-radius + center.x(),  t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[1],typename Traits::Point_3( radius + center.x(),  t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[2],typename Traits::Point_3(-radius + center.x(), -t + center.y(), 0.0 + center.z()));
-  put(vpmap, v_vertices[3],typename Traits::Point_3( radius + center.x(), -t + center.y(), 0.0 + center.z()));
-
-  put(vpmap, v_vertices[4],typename Traits::Point_3( 0.0 + center.x(), -radius + center.y(),  t + center.z()));
-  put(vpmap, v_vertices[5],typename Traits::Point_3( 0.0 + center.x(),  radius + center.y(),  t + center.z()));
-  put(vpmap, v_vertices[6],typename Traits::Point_3( 0.0 + center.x(), -radius + center.y(), -t + center.z()));
-  put(vpmap, v_vertices[7],typename Traits::Point_3( 0.0 + center.x(),  radius + center.y(), -t + center.z()));
-
-  put(vpmap, v_vertices[8],typename Traits::Point_3(  t + center.x(), 0.0 + center.y(), -radius + center.z()));
-  put(vpmap, v_vertices[9],typename Traits::Point_3(  t + center.x(), 0.0 + center.y(),  radius + center.z()));
-  put(vpmap, v_vertices[10],typename Traits::Point_3(-t + center.x(), 0.0 + center.y(), -radius + center.z()));
-  put(vpmap, v_vertices[11],typename Traits::Point_3(-t + center.x(), 0.0 + center.y(),  radius + center.z()));
-
-  std::vector<vertex_descriptor> face;
-  face.resize(3);
-  face[1] = v_vertices[0]; face[0] = v_vertices[11]; face[2] = v_vertices[5];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[0]; face[0] = v_vertices[5]; face[2] = v_vertices[1];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[0]; face[0] = v_vertices[1]; face[2] = v_vertices[7];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[0]; face[0] = v_vertices[7]; face[2] = v_vertices[10];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[0]; face[0] = v_vertices[10]; face[2] = v_vertices[11];
-  euler::add_face(face, mesh);
-
-  face[1] = v_vertices[1] ; face[0] = v_vertices[5] ; face[2] = v_vertices[9];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[5] ; face[0] = v_vertices[11]; face[2] = v_vertices[4];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[11]; face[0] = v_vertices[10]; face[2] = v_vertices[2];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[10]; face[0] = v_vertices[7] ; face[2] = v_vertices[6];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[7] ; face[0] = v_vertices[1] ; face[2] = v_vertices[8];
-  euler::add_face(face, mesh);
-
-  face[1] = v_vertices[3] ; face[0] = v_vertices[9] ; face[2] = v_vertices[4];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[4] ; face[2] = v_vertices[2];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[2] ; face[2] = v_vertices[6];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[6] ; face[2] = v_vertices[8];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[8] ; face[2] = v_vertices[9];
-  euler::add_face(face, mesh);
-
-  face[1] = v_vertices[4] ; face[0] = v_vertices[9] ; face[2] = v_vertices[5] ;
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[2] ; face[0] = v_vertices[4] ; face[2] = v_vertices[11];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[6] ; face[0] = v_vertices[2] ; face[2] = v_vertices[10];
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[8] ; face[0] = v_vertices[6] ; face[2] = v_vertices[7] ;
-  euler::add_face(face, mesh);
-  face[1] = v_vertices[9] ; face[0] = v_vertices[8] ; face[2] = v_vertices[1] ;
-  euler::add_face(face, mesh);
-}
 void Basic_volumes_generator_plugin::on_actionPrism_triggered()
 {
   //gets the precision parameter
   VolumeDialog *dialog = new VolumeDialog();
   dialog->sphereGroupBox->setVisible(false);
+  dialog->pyramidGroupBox->setVisible(false);
   dialog->prismGroupBox->setVisible(true);
   //opens the dialog
   if(!dialog->exec())
     return;
   int nb_vertices = dialog->prismSpinBox->value();
-  double height(dialog->heightSpinBox->value()),
+  double height(dialog->prismHeightSpinBox->value()),
       radius(dialog->prismBaseSpinBox->value()),
       center_x(dialog->prismXSpinBox->value()),
       center_y(dialog->prismYSpinBox->value()),
@@ -257,17 +128,61 @@ void Basic_volumes_generator_plugin::on_actionPrism_triggered()
   bool is_closed = dialog->prismCheckBox->isChecked();
 
   Polyhedron prism;
-  make_regular_prism(nb_vertices, prism, Point(center_x,center_y,center_z), height, radius, is_closed);
+  make_regular_prism(nb_vertices,
+                     prism,
+                     Point(center_x,
+                           center_y,
+                           center_z),
+                     height,
+                     radius,
+                     is_closed);
+
   Scene_polyhedron_item* prism_item = new Scene_polyhedron_item(prism);
   prism_item->setName(QString("Prism"));
   scene->addItem(prism_item);
 }
+
+//make a pyramid
+void Basic_volumes_generator_plugin::on_actionPyramid_triggered()
+{
+  //gets the precision parameter
+  VolumeDialog *dialog = new VolumeDialog();
+  dialog->sphereGroupBox->setVisible(false);
+  dialog->prismGroupBox->setVisible(false);
+  dialog->pyramidGroupBox->setVisible(true);
+  //opens the dialog
+  if(!dialog->exec())
+    return;
+  int nb_vertices = dialog->pyramidSpinBox->value();
+  double height(dialog->pyramidHeightSpinBox->value()),
+      radius(dialog->pyramidBaseSpinBox->value()),
+      center_x(dialog->pyramidXSpinBox->value()),
+      center_y(dialog->pyramidYSpinBox->value()),
+      center_z(dialog->pyramidZSpinBox->value());
+  bool is_closed = dialog->pyramidCheckBox->isChecked();
+
+  Polyhedron pyramid;
+  make_pyramid(nb_vertices,
+                     pyramid,
+                     Point(center_x,
+                           center_y,
+                           center_z),
+                     height,
+                     radius,
+                     is_closed);
+
+  Scene_polyhedron_item* pyramid_item = new Scene_polyhedron_item(pyramid);
+  pyramid_item->setName(QString("Pyramid"));
+  scene->addItem(pyramid_item);
+}
+
 //make a sphere
 void Basic_volumes_generator_plugin::on_actionSphere_triggered()
 {
   //gets the precision parameter
   VolumeDialog *dialog = new VolumeDialog();
   dialog->prismGroupBox->setVisible(false);
+  dialog->pyramidGroupBox->setVisible(false);
   dialog->sphereGroupBox->setVisible(true);
   //opens the dialog
   if(!dialog->exec())
@@ -280,7 +195,8 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
   Polyhedron sphere;
   make_icosahedron(sphere, center, radius);
   if(precision !=0)
-    CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere, precision);
+    CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere,
+                                                  precision);
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
   BOOST_FOREACH(vertex_descriptor vd, vertices(sphere))
@@ -300,10 +216,10 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
 void Basic_volumes_generator_plugin::on_actionTetrahedron_triggered()
 {
   Polyhedron tetrahedron;
-  CGAL::make_tetrahedron(Point(-0.5,-0.5,-0.5),
-                         Point(0.5,-0.5,-0.5),
-                         Point(0,0.5,-0.5),
-                         Point(0,0,0.5),
+  CGAL::make_tetrahedron(Point(0.0, 0.0, 0.0),
+                         Point(1.0, 0.0, 0.0),
+                         Point(0.0, 1.0, 0.0),
+                         Point(0.0, 0.0, 1.0),
                          tetrahedron);
 
   Scene_polyhedron_item* tet_item = new Scene_polyhedron_item(tetrahedron);
