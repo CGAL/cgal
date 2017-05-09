@@ -48,6 +48,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/container/flat_set.hpp>
 
 #include <map>
 #include <list>
@@ -1377,7 +1378,7 @@ private:
     template <typename FaceRange>
     void constrain_patch_corners(const FaceRange& face_range)
     {
-      std::set<vertex_descriptor> visited;
+      boost::container::flat_set<vertex_descriptor> visited;
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
