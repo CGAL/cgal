@@ -635,12 +635,11 @@ side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c,
   return CGAL_NTS sign(a*x+b*y+c);
 }
 
-
 template <class FT>
 Comparison_result
 compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
-			 const FT& qx, const FT& qy, const FT& qwt,
-			 const FT& rx, const FT& ry)
+                         const FT& qx, const FT& qy, const FT& qwt,
+                         const FT& rx, const FT& ry)
 {
   // returns SMALLER if r is closer to p w.r.t. the power metric
   FT d1 = CGAL_NTS square(rx - px) + CGAL_NTS square(ry - py) - pwt;
@@ -648,57 +647,72 @@ compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
   return CGAL_NTS compare(d1, d2);
 }
 
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+Bounded_side
+power_side_of_bounded_power_circleC2(const FT &px, const FT &py, const FT &pw,
+                                     const FT &qx, const FT &qy, const FT &qw,
+                                     const FT &tx, const FT &ty, const FT &tw)
+{
+  FT dpx = px - qx;
+  FT dpy = py - qy;
+  FT dtx = tx - qx;
+  FT dty = ty - qy;
+  FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy);
+
+  return enum_cast<Bounded_side>
+    (CGAL_NTS sign(-(CGAL_NTS square(dtx) + CGAL_NTS square(dty)-tw+qw)*dpz
+                   +(dpz-pw+qw)*(dpx*dtx+dpy*dty)));
+}
 
 template <class FT>
 Oriented_side
-power_side_of_oriented_power_circleC2( const FT &px, const FT &py, const FT &pwt,
-                                       const FT &qx, const FT &qy, const FT &qwt,
-                                       const FT &rx, const FT &ry, const FT &rwt,
-                                       const FT &tx, const FT &ty, const FT &twt)
+power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
+                                      const FT &qx, const FT &qy, const FT &qwt,
+                                      const FT &rx, const FT &ry, const FT &rwt,
+                                      const FT &tx, const FT &ty, const FT &twt)
 {
-    // Note: maybe this can be further optimized like the usual in_circle() ?
+  // Note: maybe this can be further optimized like the usual in_circle() ?
 
-    // We translate the 4 points so that T becomes the origin.
-    FT dpx = px - tx;
-    FT dpy = py - ty;
-    FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
-    FT dqx = qx - tx;
-    FT dqy = qy - ty;
-    FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
-    FT drx = rx - tx;
-    FT dry = ry - ty;
-    FT drz = CGAL_NTS square(drx) + CGAL_NTS square(dry) - rwt + twt;
+  // We translate the 4 points so that T becomes the origin.
+  FT dpx = px - tx;
+  FT dpy = py - ty;
+  FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
+  FT dqx = qx - tx;
+  FT dqy = qy - ty;
+  FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
+  FT drx = rx - tx;
+  FT dry = ry - ty;
+  FT drz = CGAL_NTS square(drx) + CGAL_NTS square(dry) - rwt + twt;
 
-    return sign_of_determinant(dpx, dpy, dpz,
-                                  dqx, dqy, dqz,
-                                  drx, dry, drz);
+  return sign_of_determinant(dpx, dpy, dpz,
+                             dqx, dqy, dqz,
+                             drx, dry, drz);
 }
-
 
 template <class FT>
 Oriented_side
-power_side_of_oriented_power_circleC2( const FT &px, const FT &py, const FT &pwt,
-                                       const FT &qx, const FT &qy, const FT &qwt,
-                                       const FT &tx, const FT &ty, const FT &twt)
+power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
+                                      const FT &qx, const FT &qy, const FT &qwt,
+                                      const FT &tx, const FT &ty, const FT &twt)
 {
-    // Same translation as above.
-    FT dpx = px - tx;
-    FT dpy = py - ty;
-    FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
-    FT dqx = qx - tx;
-    FT dqy = qy - ty;
-    FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
+  // Same translation as above.
+  FT dpx = px - tx;
+  FT dpy = py - ty;
+  FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
+  FT dqx = qx - tx;
+  FT dqy = qy - ty;
+  FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
 
-    // We do an orthogonal projection on the (x) axis, if possible.
-    Comparison_result cmpx = CGAL_NTS compare(px, qx);
-    if (cmpx != EQUAL)
-	return cmpx * sign_of_determinant(dpx, dpz, dqx, dqz);
+  // We do an orthogonal projection on the (x) axis, if possible.
+  Comparison_result cmpx = CGAL_NTS compare(px, qx);
+  if (cmpx != EQUAL)
+    return cmpx * sign_of_determinant(dpx, dpz, dqx, dqz);
 
-    // If not possible, then on the (y) axis.
-    Comparison_result cmpy = CGAL_NTS compare(py, qy);
-    return cmpy * sign_of_determinant(dpy, dpz, dqy, dqz);
+  // If not possible, then on the (y) axis.
+  Comparison_result cmpy = CGAL_NTS compare(py, qy);
+  return cmpy * sign_of_determinant(dpy, dpz, dqy, dqz);
 }
-
 
 } //namespace CGAL
 

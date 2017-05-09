@@ -54,12 +54,12 @@ which is the power test for points `p`, `q`, `r` and
 `s`. \pre the bare points corresponding to `p`, `q`, `r` are not collinear. 
 
 - `Oriented_side operator() ( Weighted_point_2 p, Weighted_point_2 q, Weighted_point_2 r) ` 
-which is the degenerated power test for collinear points 
+which is the degenerate power test for collinear points
 `p`, `q`, `r`. 
 \pre the bare points corresponding to `p`, `q`, `r` are collinear and `p != q`. 
 
 - `Oriented_side operator() ( Weighted_point_2 p, Weighted_point_2 q) ` 
-which is the degenerated power test for weighted points 
+which is the degenerate power test for weighted points
 `p` and `q` whose corresponding bare-points are identical. 
 \pre the bare points corresponding to `p` and `q` are identical. 
 

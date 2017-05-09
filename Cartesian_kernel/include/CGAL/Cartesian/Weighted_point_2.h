@@ -1,9 +1,9 @@
-// Copyright (c) 1999, 2016 
+// Copyright (c) 1999, 2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Mariette Yvinec
 //                 Sylvain Pion
@@ -26,28 +25,34 @@
 #ifndef CGAL_CARTESIAN_WEIGHTED_POINT_2_H
 #define CGAL_CARTESIAN_WEIGHTED_POINT_2_H
 
-#include <iostream>
+#include <CGAL/Handle_for.h>
+#include <CGAL/Origin.h>
+
 #include <boost/tuple/tuple.hpp>
+
+#include <iostream>
 
 namespace CGAL {
 
 template < class R_ >
 class Weighted_pointC2
 {
-  typedef typename R_::Point_2 Point_2;
-  typedef typename R_::FT FT;
-  typedef typename R_::FT Weight;
-  typedef boost::tuple<Point_2, Weight>   Rep;
+  typedef typename R_::Point_2                     Point_2;
+  typedef typename R_::FT                          FT;
+  typedef FT                                       Weight;
+
+  typedef boost::tuple<Point_2, Weight>            Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
-
   Weighted_pointC2 ()
   {}
 
-  //explicit
+  Weighted_pointC2(const Origin &o)
+    : base(o, 0) {}
+
   Weighted_pointC2 (const Point_2 &p)
     : base(p,0)
   {}
@@ -56,30 +61,26 @@ public:
     : base(p,w)
   {}
 
-
   // Constructors from coordinates are also provided for convenience, except
   // that they are only from Cartesian coordinates, and with no weight, so as
   // to avoid any potential ambiguity between the homogeneous weight and the
-  // power weight (it should be easy enough to pass a Point explicitly in those
+  // power weight (it should be easy enough to pass a Point_2 explicitly in those
   // cases).
 
-  Weighted_pointC2(const FT& x, const FT& y)
-    : base(Point_2(x,y),0)
+  Weighted_pointC2 (const FT& x, const FT& y)
+    : base(Point_2(x,y), 0)
   {}
 
   const Point_2 & point() const
   {
-      return get_pointee_or_identity(base).template get<0>();
+    return get_pointee_or_identity(base).template get<0>();
   }
 
   const Weight & weight() const
   {
-      return get_pointee_or_identity(base).template get<1>();
+    return get_pointee_or_identity(base).template get<1>();
   }
-
-  
 };
-
 
 template < class R_ >
 std::ostream &
@@ -94,7 +95,7 @@ operator<<(std::ostream &os, const Weighted_pointC2<R_> &p)
     write(os, p.weight());
     return os;
   default:
-    return os << "Weighted_point(" << p.point() << ", " << p.weight() << ")";
+    return os << "Weighted_point_2(" << p.point() << ", " << p.weight() << ")";
   }
 }
 
@@ -103,7 +104,7 @@ std::istream &
 operator>>(std::istream &is, Weighted_pointC2<R_> &wp)
 {
   typename Weighted_pointC2<R_>::Weight w;
-  typename Weighted_pointC2<R_>::Point p;
+  typename Weighted_pointC2<R_>::Point_2 p;
   is >> p;
   if(!is) return is;
   if(is_ascii(is))
