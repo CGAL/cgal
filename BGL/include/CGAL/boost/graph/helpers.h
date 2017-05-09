@@ -733,15 +733,18 @@ bool is_degenerate_triangle_face(
  * \brief Creates a regular prism.
  *
  * Creates a regular prism in `g`, having `nb_vertices` vertices in each of its bases.
+ * If `center` is (0, 0, 0), then the point of the prism is (`radius`, 0.5*`height`, 0)
  * \param nb_vertices the number of vertices per base. It must be greater than or equals 3.
  * \param g the graph in which the regular prism will be created
  * \param center the point around which the regular prism will be created. It is the middle point of the prism's axis.
  * \param height the distance between the two bases.
  * \param radius the radius of the circle in which the bases are inscribed.
  * \param is_closed determines if the bases must be created or not.
+ * \returns the halfedge which has the target vertex associated with the first point in the first face.
  */
 template<class Graph, class P>
-void make_regular_prism(
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_regular_prism(
     typename boost::graph_traits<Graph>::vertices_size_type nb_vertices,
     Graph& g,
     const P& center = P(0,0,0),
@@ -817,6 +820,7 @@ void make_regular_prism(
       Euler::add_face(face, g);
     }
   }
+  return halfedge(vertices[0], vertices[1], g).first;
 }
 
 /**
@@ -824,15 +828,18 @@ void make_regular_prism(
  * \brief Creates a pyramid.
  *
  * Creates a pyramid in `g`, having `nb_vertices` vertices in its base.
+ * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0.5*`height`, 0)
  * \param nb_vertices the number of vertices in the base. It must be greater than or equals 3.
  * \param g the graph in which the pyramid will be created
  * \param base_center the center of the circle in which the base is inscribed.
  * \param height the distance between the base and the apex.
  * \param radius the radius of the circle in which the base is inscribed.
  * \param is_closed determines if the base must be created or not.
+ * \returns the halfedge which has the target vertex associated with the apex point in the first face.
  */
 template<class Graph, class P>
-void make_pyramid(
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_pyramid(
     typename boost::graph_traits<Graph>::vertices_size_type nb_vertices,
     Graph& g,
     const P& base_center = P(0,0,0),
@@ -896,6 +903,7 @@ void make_pyramid(
       Euler::add_face(face, g);
     }
   }
+  return halfedge(vertices[0], apex, g).first;
 }
 
 /**
@@ -906,9 +914,11 @@ void make_pyramid(
  * \param g the graph in which the icosahedron will be created.
  * \param center the center of the sphere in which the icosahedron is inscribed.
  * \param radius the radius of the sphere in which the icosahedron is inscribed.
+ * \returns the halfedge which has the target vertex associated with the first point in the first face.
  */
 template<class Graph, class P>
-void make_icosahedron(
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_icosahedron(
     Graph& g,
     const P& center = P(0,0,0),
     typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1.0)
@@ -984,6 +994,8 @@ void make_icosahedron(
   Euler::add_face(face, g);
   face[1] = v_vertices[9] ; face[0] = v_vertices[8] ; face[2] = v_vertices[1] ;
   Euler::add_face(face, g);
+
+  return halfedge(v_vertices[1], v_vertices[0], g).first;
 }
 
 
