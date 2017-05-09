@@ -3,9 +3,6 @@
 #include <cassert>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Weighted_point.h>
-
-
 #include <CGAL/grabbers.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
