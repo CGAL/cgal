@@ -59,24 +59,32 @@ namespace CGAL {
 
     // During the computation, if the partially-computed distance `pcd` gets greater or equal
     // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
-    inline FT transformed_distance(const Query_item& q, const Point_d& p, 
-                                   FT stop_if_geq_to_this = std::numeric_limits<FT>::max()) const
+    inline FT transformed_distance(const Query_item& q, const Point_d& p) const
     {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
       typename SearchTraits::Cartesian_const_iterator_d p_begin = construct_it(p), p_end = construct_it(p, 0);
-      return transformed_distance(q, p_begin, p_end, stop_if_geq_to_this);
+      return transformed_distance_from_coordinates(q, p_begin, p_end);
     }
 
     // During the computation, if the partially-computed distance `pcd` gets greater or equal
     // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
     template <typename Coord_iterator>
-    inline FT transformed_distance(const Query_item& q, 
+    inline FT transformed_distance_from_coordinates(const Query_item& q,
+      Coord_iterator it_coord_begin, Coord_iterator it_coord_end) const
+    {
+      return transformed_distance(q, it_coord_begin, it_coord_end, std::numeric_limits<FT>::max(), D());
+    }
+
+    // During the computation, if the partially-computed distance `pcd` gets greater or equal
+    // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
+    template <typename Coord_iterator>
+    inline FT interruptable_transformed_distance(const Query_item& q,
                                    Coord_iterator it_coord_begin, Coord_iterator it_coord_end, 
-                                   FT stop_if_geq_to_this = std::numeric_limits<FT>::max()) const 
+                                   FT stop_if_geq_to_this) const 
     {
       return transformed_distance(q, it_coord_begin, it_coord_end, stop_if_geq_to_this, D());
     }
-
+    
     // Dynamic version for runtime dimension, taking iterators on coordinates as parameters
     // During the computation, if the partially-computed distance `pcd` gets greater or equal
     // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
