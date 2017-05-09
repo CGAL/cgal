@@ -136,6 +136,15 @@ degree(typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::vertex_
   return sm.valence(v);
 }
 
+
+template <typename K>
+typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::degree_size_type
+degree(typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::face_descriptor f,
+       const OpenMesh::TriMesh_ArrayKernelT<K>& sm)
+{
+  return 3;
+}
+
          
 template <typename K>
 typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::degree_size_type

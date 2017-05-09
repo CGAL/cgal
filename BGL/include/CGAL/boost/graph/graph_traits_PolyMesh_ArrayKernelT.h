@@ -208,6 +208,15 @@ degree(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex
   return sm.valence(v);
 }
 
+
+template <typename K>
+typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::degree_size_type
+degree(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor f,
+       const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return sm.valence(f);
+}
+
          
 template <typename K>
 typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::degree_size_type
