@@ -418,12 +418,11 @@ scaled_distance_to_lineC2( const FT &px, const FT &py,
   return determinant<FT>(px-rx, py-ry, qx-rx, qy-ry);
 }
 
-
 template < class RT >
 void
 weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
-				  const RT &drx, const RT &dry, const RT &drw,
-				  RT &dcx,       RT &dcy)
+                                  const RT &drx, const RT &dry, const RT &drw,
+                                  RT &dcx, RT &dcy)
 {
   // Given 3 points P, Q, R, this function takes as input:
   // qx-px, qy-py,qw-pw,  rx-px, ry-py, rw-pw.  And returns cx-px, cy-py,
@@ -449,33 +448,76 @@ weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
 template < class RT, class We>
 void
 weighted_circumcenterC2( const RT &px, const RT &py, const We &pw,
-			 const RT &qx, const RT &qy, const We &qw,
-			 const RT &rx, const RT &ry, const We &rw,
-			 RT &x, RT &y )
+                         const RT &qx, const RT &qy, const We &qw,
+                         const RT &rx, const RT &ry, const We &rw,
+                         RT &x, RT &y )
 {
   RT dqw = RT(qw-pw);
   RT drw = RT(rw-pw);
- 
+
   weighted_circumcenter_translateC2(qx-px, qy-py, dqw,rx-px, ry-py,drw,x, y);
   x += px;
   y += py;
 }
 
+template< class FT >
+FT
+power_productC2(const FT &px, const FT &py, const FT &pw,
+                const FT &qx, const FT &qy, const FT &qw)
+{
+  // computes the power product of two weighted points
+  FT qpx = qx - px;
+  FT qpy = qy - py;
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy);
+  return qp2 - pw - qw;
+}
 
 template < class RT , class We>
 void
 radical_axisC2(const RT &px, const RT &py, const We &pw,
-	       const RT &qx, const RT &qy, const We &qw,
-	       RT &a, RT &b, RT& c )
+               const RT &qx, const RT &qy, const We &qw,
+               RT &a, RT &b, RT& c )
 {
   a =  RT(2)*(px - qx);
   b =  RT(2)*(py - qy);
-  c = - CGAL_NTS square(px) - CGAL_NTS square(py) 
-      + CGAL_NTS square(qx) + CGAL_NTS square(qy) 
-       +RT(pw) - RT(qw);
+  c = - CGAL_NTS square(px) - CGAL_NTS square(py)
+      + CGAL_NTS square(qx) + CGAL_NTS square(qy)
+      + RT(pw) - RT(qw);
 }
 
+template< class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+squared_radius_orthogonal_circleC2(const FT &px, const FT &py, const FT &pw,
+                                   const FT &qx, const FT &qy, const FT &qw,
+                                   const FT &rx, const FT &ry, const FT &rw)
+{
+  FT FT4(4);
+  FT dpx = px - rx;
+  FT dpy = py - ry;
+  FT dqx = qx - rx;
+  FT dqy = qy - ry;
+  FT dpp = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pw + rw;
+  FT dqq = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qw + rw;
 
+  FT det0 = determinant(dpx, dpy, dqx, dqy);
+  FT det1 = determinant(dpp, dpy, dqq, dqy);
+  FT det2 = determinant(dpx, dpp, dqx, dqq);
+
+  return (CGAL_NTS square(det1) + CGAL_NTS square(det2)) /
+                                  (FT4 * CGAL_NTS square(det0)) - rw;
+}
+
+template< class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+squared_radius_smallest_orthogonal_circleC2(const FT &px, const FT &py, const FT &pw,
+                                            const FT &qx, const FT &qy, const FT &qw)
+{
+  FT FT4(4);
+  FT dpz = CGAL_NTS square(px - qx) + CGAL_NTS square(py - qy);
+  return (CGAL_NTS square(dpz - pw + qw) / (FT4 * dpz) - qw);
+}
 
 } //namespace CGAL
 

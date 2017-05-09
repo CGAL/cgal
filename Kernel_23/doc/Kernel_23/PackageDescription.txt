@@ -311,6 +311,8 @@
 - `Kernel::ComputeLInfinityDistance_2`
 - `Kernel::ComputeLInfinityDistance_3`
 - `Kernel::ComputePowerDistanceToPowerSphere_3`
+- `Kernel::ComputePowerProduct_2`
+- `Kernel::ComputePowerProduct_3`
 - `Kernel::ComputeScalarProduct_2`
 - `Kernel::ComputeScalarProduct_3`
 - `Kernel::ComputeSquaredArea_3`
@@ -321,6 +323,7 @@
 - `Kernel::ComputeSquaredLengthDividedByPiSquare_3`
 - `Kernel::ComputeSquaredRadius_2`
 - `Kernel::ComputeSquaredRadius_3`
+- `Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2`
 - `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
 - `Kernel::ComputeVolume_3`
 - `Kernel::ComputeWeight_2`
@@ -429,6 +432,8 @@
 - `Kernel::ConstructVertex_2`
 - `Kernel::ConstructVertex_3`
 - `Kernel::ConstructWeightedCircumcenter_3`
+- `Kernel::ConstructWeightedPoint_2`
+- `Kernel::ConstructWeightedPoint_3`
 - `Kernel::CartesianConstIterator_2`
 - `Kernel::CartesianConstIterator_3`
 - `Kernel::CoplanarOrientation_3`
@@ -482,9 +487,10 @@
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`
 - `Kernel::OrientedSide_3`
+- `Kernel::PowerSideOfBoundedPowerCircle_2`
 - `Kernel::PowerSideOfBoundedPowerSphere_3`
-- `Kernel::PowerSideOfOrientedPowerSphere_3`
 - `Kernel::PowerSideOfOrientedPowerCircle_2`
+- `Kernel::PowerSideOfOrientedPowerSphere_3`
 - `Kernel::SideOfBoundedCircle_2`
 - `Kernel::SideOfBoundedSphere_3`
 - `Kernel::SideOfOrientedCircle_2`

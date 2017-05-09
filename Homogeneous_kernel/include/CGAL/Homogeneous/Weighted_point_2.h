@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2016  
+// Copyright (c) 1999,2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -25,69 +25,62 @@
 #ifndef CGAL_HOMOGENEOUS_WEIGHTED_POINT_2_H
 #define CGAL_HOMOGENEOUS_WEIGHTED_POINT_2_H
 
+#include <CGAL/Handle_for.h>
+#include <CGAL/Origin.h>
+
+#include <boost/tuple/tuple.hpp>
+
 #include <iostream>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Dimension.h>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/logical.hpp>
 
 namespace CGAL {
 
 template < class R_ >
-class Weighted_pointH2 : public R_::Point_2
+class Weighted_pointH2
 {
-  typedef typename R_::FT FT;
+  typedef typename R_::Point_2                     Point_2;
+  typedef typename R_::FT                          FT;
+  typedef FT                                       Weight;
+
+  typedef boost::tuple<Point_2, Weight>            Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
+
+  Base base;
+
 public:
-  typedef typename R_::FT Weight;
-  typedef typename R_::Point_2 Point;
-
   Weighted_pointH2 ()
-      : Point(), _weight(0) {}
+  {}
 
-  //explicit
-  Weighted_pointH2 (const Point &p)
-      : Point(p), _weight(0)
-  {
-    // CGAL_error_msg( "Warning : truncated weight !!!");
-  }
+  Weighted_pointH2(const Origin &o)
+    : base(o, 0) {}
 
-  Weighted_pointH2 (const Point &p, const Weight &w)
-      : Point(p), _weight(w) {}
+  Weighted_pointH2 (const Point_2 &p)
+    : base(p,0)
+  {}
 
+  Weighted_pointH2 (const Point_2 &p, const Weight &w)
+    : base(p,w)
+  {}
 
   // Constructors from coordinates are also provided for convenience, except
   // that they are only from Cartesian coordinates, and with no weight, so as
   // to avoid any potential ambiguity between the homogeneous weight and the
-  // power weight (it should be easy enough to pass a Point explicitly in those
+  // power weight (it should be easy enough to pass a Point_2 explicitly in those
   // cases).
-  // The enable_if complexity comes from the fact that we separate dimension 2 and 3.
 
+  Weighted_pointH2 (const FT &x, const FT &y)
+    : base(Point_2(x, y), 0)
+  {}
 
-  template < typename Tx, typename Ty >
-  Weighted_pointH2 (const Tx &x, const Ty &y,
-	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
-					                      boost::is_convertible<Ty, FT>,
-							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 2> > >::type* = 0)
-      : Point(x, y), _weight(0) {}
-
-  const Point & point() const
+  const Point_2 & point() const
   {
-      return *this;
+    return get_pointee_or_identity(base).template get<0>();
   }
 
   const Weight & weight() const
   {
-      return _weight;
+    return get_pointee_or_identity(base).template get<1>();
   }
-
-
-private:
-  Weight _weight;
 };
-
 
 template < class R_ >
 std::ostream &
@@ -102,7 +95,7 @@ operator<<(std::ostream &os, const Weighted_pointH2<R_> &p)
     write(os, p.weight());
     return os;
   default:
-    return os << "Weighted_point(" << p.point() << ", " << p.weight() << ")";
+    return os << "Weighted_point_2(" << p.point() << ", " << p.weight() << ")";
   }
 }
 
@@ -111,7 +104,7 @@ std::istream &
 operator>>(std::istream &is, Weighted_pointH2<R_> &wp)
 {
   typename Weighted_pointH2<R_>::Weight w;
-  typename Weighted_pointH2<R_>::Point p;
+  typename Weighted_pointH2<R_>::Point_2 p;
   is >> p;
   if(!is) return is;
   if(is_ascii(is))
