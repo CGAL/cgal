@@ -22,6 +22,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QRadioButton" name="polyRadioButton">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The default FaceGraph item is the Scene_polyhedron_item.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Plugins generating FaceGraph items from another type of item will create a Scene_polyhedron_item. This mode might be more stable and a few plugins only exist for it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Polyhedron</string>
         </property>
@@ -32,6 +35,9 @@
       </item>
       <item>
        <widget class="QRadioButton" name="smRadioButton">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The default FaceGraph item is the Scene_surface_mesh_item.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Plugins generating FaceGraph items from another type of item will create a Scene_surface_mesh_item. This mode is globally more efficient in terms of memory and performance, but a few plugins have not been implemented for it yet.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Surface_mesh</string>
         </property>
