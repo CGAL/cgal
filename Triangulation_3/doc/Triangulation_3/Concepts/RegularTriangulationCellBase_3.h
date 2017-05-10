@@ -49,10 +49,10 @@ public:
 /// @{
 
 /*!
-Must be the same as the point type `RegularTriangulationTraits_3::Weighted_point_3` 
+Must be the same as the point type `Weighted_point_3`
 defined by the geometric traits class of the triangulation. 
 */ 
-typedef unspecified_type Weighted_point; 
+typedef unspecified_type Point;
 
 /*!
 Iterator of value type Point 
@@ -94,7 +94,7 @@ Returns the weighted circumcenter of the cell, with no weight.
 `RegularTriangulationTraits_3` is the geometric traits class of the triangulation.
 This operator is required only when the dual functions are called.
 */ 
-const RegularTriangulationTraits_3::Bare_point& weighted_circumcenter( 
+const RegularTriangulationTraits_3::Point_3& weighted_circumcenter(
 const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
 /// @} 
 
