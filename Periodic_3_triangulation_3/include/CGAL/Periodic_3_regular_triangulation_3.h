@@ -75,7 +75,7 @@ public:
   typedef Geometric_traits                      Geom_traits;
   typedef Tds                                   Triangulation_data_structure;
 
-  typedef typename Gt::FT                          FT;
+  typedef typename Gt::FT                       FT;
 
   typedef typename Tr_Base::Periodic_segment               Periodic_segment;
   typedef typename Tr_Base::Periodic_triangle              Periodic_triangle;
@@ -110,12 +110,13 @@ public:
   typedef typename Tr_Base::Iso_cuboid             Iso_cuboid;
   typedef typename Tr_Base::Covering_sheets        Covering_sheets;
 
-  typedef typename Gt::Weighted_point_3            Weighted_point;
+  // Traits are not supposed to define "Bare_point", but checking for backward compatibility
   typedef typename boost::mpl::eval_if_c<
     internal::Has_nested_type_Bare_point<Gt>::value,
     typename internal::Bare_point_type<Gt>,
     boost::mpl::identity<typename Gt::Point_3>
   >::type                                          Bare_point;
+  typedef typename Gt::Weighted_point_3            Weighted_point;
 
   typedef std::pair<Bare_point, Offset>            Periodic_bare_point;
   typedef std::pair<Weighted_point, Offset>        Periodic_weighted_point;
@@ -444,10 +445,10 @@ public:
     Cover_manager cover_manager(*this);
     CGAL_triangulation_precondition(point.weight() >= 0);
     CGAL_triangulation_precondition_msg
-        (
-          point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
-          "point.weight() < 1/64 * domain_size * domain_size"
-          );
+    (
+      point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
+     "point.weight() < 1/64 * domain_size * domain_size"
+    );
     return Tr_Base::insert_in_conflict(point, start, tester, hider, cover_manager);
   }
 

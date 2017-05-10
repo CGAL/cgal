@@ -63,6 +63,7 @@
 #include <cmath>
 #include <functional>
 #include <list>
+#include <utility>
 
 namespace CGAL {
 

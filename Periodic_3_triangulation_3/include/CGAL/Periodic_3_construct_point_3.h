@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
@@ -30,9 +26,10 @@
 namespace CGAL
 {
 template < typename K, typename Construct_point_3_base>
-class Periodic_3_construct_point_3 : public Construct_point_3_base
+class Periodic_3_construct_point_3
+  : public Construct_point_3_base
 {
-  typedef K Kernel;
+  typedef K                                  Kernel;
 
 public:
   typedef typename Kernel::Point_3           Point;
