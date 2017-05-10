@@ -1966,7 +1966,7 @@ private: //------------------------------------------------------- private data
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
  
   template <typename P>
-  void write_off(std::ostream& os, const Surface_mesh<P>& sm) {
+  bool write_off(std::ostream& os, const Surface_mesh<P>& sm) {
     typedef Surface_mesh<P> Mesh;
     typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::Face_index Face_index;
@@ -1987,6 +1987,7 @@ private: //------------------------------------------------------- private data
       }
       os << '\n';
     }
+    return os.good();
   }
 
 

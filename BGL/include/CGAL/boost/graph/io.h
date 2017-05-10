@@ -37,7 +37,7 @@ namespace CGAL {
 
   */ 
 template <typename FaceGraph>
-void write_off(std::ostream& os,
+bool write_off(std::ostream& os,
                const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
@@ -64,6 +64,7 @@ void write_off(std::ostream& os,
     }
     os << '\n';
   }
+  return os.good();
 }
 
 
@@ -79,7 +80,7 @@ void write_off(std::string& fname,
 {
   std::ofstream out(fname);
   if(out.good()){
-    return wroite_off(out,g);
+    return write_off(out,g);
   }
   return false;
 }
