@@ -54,6 +54,8 @@ which simply returns p.
 
 \note This peculiar requirement is necessary because `CGAL::Triangulation_3`
 internally manipulates points with a `Point` type that is not always `Point_3`.
+*/
+/*
 For example, `CGAL::Regular_triangulation_3` inherits `CGAL::Triangulation_3`
 with `Point` being a three-dimensional weighted point. Since some predicates and
 constructors (such as `Orientation_3`) can only use `Point_3` objects in arguments,
