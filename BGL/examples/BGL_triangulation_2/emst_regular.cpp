@@ -7,7 +7,7 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2 Point;
+typedef K::Weighted_point_2                                 Weighted_point;
 
 typedef CGAL::Regular_triangulation_2<K> Triangulation;
 
@@ -51,16 +51,19 @@ VertexIdPropertyMap vertex_index_pmap(vertex_id_map);
 int
 main(int argc,char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/points.xy";
+  const char* filename = (argc > 1) ? argv[1] : "data/weighted_points.xyw";
   std::ifstream input(filename);
   Triangulation t;
   Filter is_finite(t);
   Finite_triangulation ft(t, is_finite, is_finite);
 
-  Point p ;
-  while(input >> p){
-    t.insert(p);
+  Weighted_point wp ;
+  while(input >> wp){
+    t.insert(wp);
   }
+
+  // Note that with the input "data/weighted_points.xyw", there is one hidden vertex
+  std::cout << "number of hidden vertices: " << t.number_of_hidden_vertices() << std::endl;
 
   vertex_iterator vit, ve;
   // Associate indices to the vertices
