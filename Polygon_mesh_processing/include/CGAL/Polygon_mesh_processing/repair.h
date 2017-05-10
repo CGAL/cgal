@@ -781,11 +781,12 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
                !degenerate_face_set.count(adjacent_face) )
             boundary_hedges.push_back(hd);
           else
+          {
             if (cc_faces.insert(adjacent_face).second)
-            {
-              inside_hedges.push_back(hd);
               queue.push_back(adjacent_face);
-            }
+            if ( hd < opposite(hd, tmesh) )
+              inside_hedges.push_back(hd);
+          }
         }
       }
 
