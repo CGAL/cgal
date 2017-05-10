@@ -27,7 +27,7 @@
 // #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>
