@@ -16,7 +16,7 @@
       padding-top: 0.2em;
     }
     code::before, code::after {
-      content: " ";
+      content: " ";
       letter-spacing: -0.2em;
     }
   </style>
@@ -136,6 +136,14 @@ and <code>src/</code> directories).
 <!-- Installation (and general changes) -->
 <!-- New packages -->
 <!-- Major and breaking changes -->
+  <h3>2D and 3D Linear Geometry Kernel</h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      The dangerous implicit conversions between weighted points and points
+      have been disabled. The constructors used to build a weighted point from a point
+      (and reversely) are still available but must be called explicitely.
+    </li>
+  </ul>
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
 <!-- Geometry Kernels -->
@@ -144,13 +152,22 @@ and <code>src/</code> directories).
 <!-- Cell Complexes and Polyhedra -->
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
-<h3>dD Triangulations</h3>
-<ul>
-    <li>
-        Add a class to compute regular triangulations.
-        Note that the removal of points is not yet supported.
-    </li>
-</ul>
+  <h3> 2D and 3D Triangulations </h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      Added a new functor requirement, Construct_point_2, to the concepts
+      TriangulationTraits_2 and RegularTriangulationTraits_2 and a new functor
+      requirement, Construct_point_3, to the concepts TriangulationTraits_3 and
+      RegularTriangulationTraits_3. Note that all models of the concept Kernel
+      already provide these functors.
+  </ul>
+  <h3>dD Triangulations</h3>
+  <ul>
+      <li>
+          Add a class to compute regular triangulations.
+          Note that the removal of points is not yet supported.
+      </li>
+  </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
 <!-- Surface Reconstruction -->
@@ -1277,15 +1294,15 @@ and <code>src/</code> directories).
           longer supported since CGAL-4.5.</li>
       </ul>
     </li>
-    <li>Since CGAL version 4.0, Eigen was the recommended third-party
+    <li>Since CGAL version 4.0, Eigen was the recommended third-party
       library to use with <i>Planar Parameterization of Triangulated
       Surface Meshes</i>, <i>Surface Reconstruction from Point
       Sets</i>, <i>Approximation of Ridges and Umbilics on Triangulated
       Surface Meshes</i>, and <i>Estimation of Local Differential
       Properties of Point-Sampled Surfaces</i> packages. From CGAL
-      version 4.5, Taucs, Blas and Lapack are no longer supported.
+      version 4.5, Taucs, Blas and Lapack are no longer supported.
     </li>
-    <li>CGAL is now compatible with the new CMake version 3.0.</li>
+    <li>CGAL is now compatible with the new CMake version 3.0.</li>
   </ul>
 
 <!-- New packages -->
@@ -1478,7 +1495,7 @@ and <code>src/</code> directories).
     <li>Additional supported platforms:
       <ul>
         <li>The Apple Clang compiler version 5.0 is now supported on
-          OS X Mavericks.</li>
+          OS X Mavericks.</li>
         <li>The Microsoft Windows Visual C++ compiler 2013 (VC12) is now
           supported.</li>
       </ul>
@@ -1652,7 +1669,7 @@ and <code>src/</code> directories).
           constructor added to <code>CGAL::Object</code>. However, it is
           recommended to upgrade your code.  The previous behavior can be
           restored by defining the
-          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
+          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
         </li>
       </ul>
       <h4>2D Arrangements</h4>
@@ -1976,7 +1993,7 @@ and <code>src/</code> directories).
     <li>Additional supported platforms:
       <ul>
         <li>The Apple Clang compiler versions 3.1 and 3.2 are now supported on
-          Mac OS X.</li>
+          Mac OS X.</li>
       </ul>
     </li>
     <li>Improved configuration for essential and optional external third party software</li>
