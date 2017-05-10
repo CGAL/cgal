@@ -29,7 +29,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
@@ -40,16 +39,10 @@ template < typename GT, typename Cb = Regular_triangulation_cell_base_3<GT> >
 class Regular_triangulation_cell_base_with_weighted_circumcenter_3
   : public Cb
 {
-  // Traits are not supposed to define Bare_point, but leaving this
-  // for backward compatibility since GT::Point_3 could be a K::Weighted_point_3
-  // in older traits
-  typedef typename boost::mpl::eval_if_c<
-    internal::Has_nested_type_Bare_point<GT>::value,
-    typename internal::Bare_point_type<GT>,
-    boost::mpl::identity<typename GT::Point_3>
-    >::type                                            Bare_point;
+  typedef typename GT::Point_3                Point_3;
+  typedef typename GT::Weighted_point_3       Point;
 
-  mutable Bare_point * weighted_circumcenter_;
+  mutable Point_3* weighted_circumcenter_;
 
 public:
   void invalidate_circumcenter()
@@ -81,7 +74,7 @@ public:
         (const Regular_triangulation_cell_base_with_weighted_circumcenter_3 &c)
     : Cb(c), 
       weighted_circumcenter_(c.weighted_circumcenter_ != NULL ? 
-                             new Bare_point(*(c.weighted_circumcenter_)) : 
+                             new Point_3(*(c.weighted_circumcenter_)) :
                              NULL)
   {}
 
@@ -133,12 +126,12 @@ public:
       Cb::set_vertices(v0, v1, v2, v3);
   }
 
-  const Bare_point &
+  const Point_3 &
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (weighted_circumcenter_ == NULL) {
     	  weighted_circumcenter_ 
-            = new Bare_point(this->Cb::weighted_circumcenter(gt));
+            = new Point_3(this->Cb::weighted_circumcenter(gt));
       } else {
         CGAL_expensive_assertion(
           this->Cb::weighted_circumcenter(gt) == *weighted_circumcenter_);
