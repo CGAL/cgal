@@ -11,7 +11,9 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Face_filtered_graph.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Dual.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h \
-         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Seam_mesh.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Seam_mesh.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/io.h
+
 EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
                               ${CGAL_Surface_mesh_segmentation_EXAMPLE_DIR} \
                               ${CGAL_Polygon_mesh_processing_EXAMPLE_DIR} \

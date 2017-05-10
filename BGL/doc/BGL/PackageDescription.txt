@@ -413,8 +413,8 @@ user might encounter.
 - `CGAL::Seam_mesh`
 
 ## I/O Functions ##
-- \link template <typename FaceGraph> CGAL::read_off(std::istream& is,FaceGraph& g) `CGAL::read_off(std::istream& is,FaceGraph& g)`\endlink
-- `CGAL::write_off()`
+- \link CGAL::read_off(std::istream& is,FaceGraph& g) `CGAL::read_off()`\endlink
+- \link CGAL::write_off(std::ostream& os,const FaceGraph& g) `CGAL::write_off()`\endlink
 
 */
 
