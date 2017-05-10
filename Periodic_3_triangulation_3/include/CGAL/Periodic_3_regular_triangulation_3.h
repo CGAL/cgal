@@ -38,6 +38,7 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
 
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/unordered_set.hpp>
@@ -523,7 +524,16 @@ public:
       }
     }
 
-    spatial_sort(pbegin, points.end(), geom_traits());
+    // Spatial sorting can only be applied to bare points, so we need an adaptor
+    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+    typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+    typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+    typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
+
+    spatial_sort(pbegin, points.end(),
+                 Search_traits_3(
+                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                       geom_traits().construct_point_3_object()), geom_traits()));
 
     Conflict_tester tester(*pbegin, this);
     Point_hider hider(this);
