@@ -136,6 +136,14 @@ and <code>src/</code> directories).
 <!-- Installation (and general changes) -->
 <!-- New packages -->
 <!-- Major and breaking changes -->
+  <h3>2D and 3D Linear Geometry Kernel</h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      The dangerous implicit conversions between weighted points and points
+      have been disabled. The constructors used to build a weighted point from a point
+      (and reversely) are still available but must be called explicitely.
+    </li>
+  </ul>
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
 <!-- Geometry Kernels -->
@@ -144,6 +152,15 @@ and <code>src/</code> directories).
 <!-- Cell Complexes and Polyhedra -->
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
+  <h3> 2D and 3D Triangulations </h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      Added a new functor requirement, Construct_point_2, to the concepts
+      TriangulationTraits_2 and RegularTriangulationTraits_2 and a new functor
+      requirement, Construct_point_3, to the concepts TriangulationTraits_3 and
+      RegularTriangulationTraits_3. Note that all models of the concept Kernel
+      already provide these functors.
+  </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
 <!-- Surface Reconstruction -->
