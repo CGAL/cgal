@@ -116,7 +116,8 @@ class Refine_facets_manifold_base
 public:
   typedef Complex3InTriangulation3 C3t3;
   typedef MeshDomain Mesh_domain;
-  typedef typename Tr::Point Point;
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
 
@@ -125,6 +126,7 @@ public:
 protected:
   typedef typename Tr::Geom_traits GT;
   typedef typename GT::FT FT;
+  typedef typename GT::Construct_point_3 Construct_point_3;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Cell_handle Cell_handle;
 
@@ -179,13 +181,14 @@ private:
 
   FT compute_sq_distance_to_facet_center(const Facet& f,
                                          const Vertex_handle v) const {
-    const Point& fcenter = f.first->get_facet_surface_center(f.second);
-    const Point& vpoint = v->point();
+    Construct_point_3 wp2p = this->r_tr_.geom_traits().construct_point_3_object();
+    const Bare_point& fcenter = f.first->get_facet_surface_center(f.second);
+    const Bare_point& vpoint = wp2p(v->point());
 
     return
-      this->r_tr_.geom_traits().compute_squared_distance_3_object()
-      (fcenter.point(), vpoint.point())
-      - vpoint.weight();
+      this->r_tr_.geom_traits().compute_squared_distance_3_object()(fcenter,
+                                                                    vpoint)
+      - v->point().weight();
   }
 
   Facet
@@ -532,7 +535,7 @@ public:
     } //end Sequential
   }
 
-  void before_insertion_impl(const Facet& f, const Point& s,
+  void before_insertion_impl(const Facet& f, const Weighted_point& s,
                              Zone& zone) {
     if( m_manifold_info_initialized )
     {

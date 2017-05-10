@@ -112,6 +112,13 @@ private:
 };
 
 template <class Circulator>
+class Construct_circulator_2
+{
+public:
+   Circulator operator()(Circulator p1) const { return p1; }
+};
+
+template <class Circulator>
 class Construct_indirect_segment_2
 {
 public:
@@ -131,10 +138,12 @@ public:
   typedef Circulator                      Point_2;
   typedef Indirect_segment<Circulator>    Segment_2;
   typedef Indirect_triangle<Circulator>   Triangle_2;
+
   typedef Indirect_orientation_2<typename Traits::Orientation_2> Orientation_2;
   typedef Indirect_compare_x_2<typename Traits::Compare_x_2>     Compare_x_2;
   typedef Indirect_compare_y_2<typename Traits::Compare_y_2>     Compare_y_2;
   typedef Construct_indirect_segment_2<Circulator>      Construct_segment_2;
+  typedef Construct_circulator_2<Circulator>            Construct_point_2;
 
   // constructor
   Triangulation_indirect_traits_2 (const Traits& traits)
@@ -159,6 +168,11 @@ public:
    Construct_segment_2
    construct_segment_2_object() const
    { return Construct_segment_2(); }
+
+   Construct_point_2 construct_point_2_object() const
+   {
+     return Construct_point_2();
+   }
 
 private:
    const Traits& _traits;

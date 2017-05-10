@@ -23,12 +23,6 @@
 #include <CGAL/Kinetic/basic.h>
 #include <functional>
 
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4800) // conversion to bool performance warning
-#endif
-
 namespace CGAL { namespace Kinetic {
 
 //! An object to help convert between moving objects and their static representations to wrap a predicate.
@@ -45,8 +39,8 @@ class Instantaneous_adaptor
   CGAL_static_assertion((boost::is_convertible<Time, typename Kinetic_predicate::Time>::value));
 public:
   Instantaneous_adaptor(typename Rep::Handle rep,
-			Static_predicate pred,
-			Kinetic_predicate kpred): rep_(rep), pred_(pred), kpred_(kpred) {
+                        Static_predicate pred,
+                        Kinetic_predicate kpred): rep_(rep), pred_(pred), kpred_(kpred) {
   }
 
   typedef typename Static_predicate::result_type result_type;
@@ -60,29 +54,22 @@ public:
   result_type operator()(const first_argument_type &arg0) const
   {
     result_type ret;
-    //bool check;
 
     if (rep_->time_is_nt() && !rep_->time_after()) {
-      ret= pred_(rep_->static_object(arg0));
-      //check= kpred_(rep_->kinetic_object(arg0), rep_->time());
+      ret = pred_(rep_->static_object(arg0));
     } else if (rep_->time_after()) {
-      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
+      ret = static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
     } else {
-      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
+      ret = static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
     }
     return ret;
   }
 
   result_type operator()(const first_argument_type &arg0,
-			 const second_argument_type &arg1) const
+                         const second_argument_type &arg1) const
   {
     if (rep_->time_is_nt() && !rep_->time_after()) {
-      //std::cout << "Comparing " << arg0 << " and " << arg1 << " at time " << rep_->time() << std::endl;
-      result_type ret= pred_(rep_->static_object(arg0), rep_->static_object(arg1));
-      //std::cout << "Got " << ret << std::endl;
-      //result_type check= kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time());
-      //CGAL_assertion(ret==check || ret== CGAL::ZERO);
-      return ret;
+      return pred_(rep_->static_object(arg0), rep_->static_object(arg1));
     } else if (rep_->time_after()) {
       return static_cast<result_type>(kpred_.sign_after(rep_->kinetic_object(arg0),
                                                         rep_->kinetic_object(arg1),
@@ -95,8 +82,8 @@ public:
   }
 
   result_type operator()(const first_argument_type &arg0,
-			 const second_argument_type &arg1,
-			 const third_argument_type &arg2) const
+                         const second_argument_type &arg1,
+                         const third_argument_type &arg2) const
   {
     if (rep_->time_is_nt() && !rep_->time_after()) {
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
@@ -115,13 +102,13 @@ public:
   }
 
   result_type operator()(const first_argument_type &arg0,
-			 const second_argument_type &arg1,
-			 const third_argument_type &arg2,
-			 const fourth_argument_type &arg3) const
+                         const second_argument_type &arg1,
+                         const third_argument_type &arg2,
+                         const fourth_argument_type &arg3) const
   {
     if (rep_->time_is_nt() && !rep_->time_after()) {
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
-		   rep_->static_object(arg2), rep_->static_object(arg3));
+                   rep_->static_object(arg2), rep_->static_object(arg3));
     } else if (rep_->time_after()){
       return static_cast<result_type>(kpred_.sign_after(rep_->kinetic_object(arg0),
                                                         rep_->kinetic_object(arg1),
@@ -138,15 +125,15 @@ public:
   }
 
   result_type operator()(const first_argument_type &arg0,
-			 const second_argument_type &arg1,
-			 const third_argument_type &arg2,
-			 const fourth_argument_type &arg3,
-			 const fifth_argument_type &arg4) const
+                         const second_argument_type &arg1,
+                         const third_argument_type &arg2,
+                         const fourth_argument_type &arg3,
+                         const fifth_argument_type &arg4) const
   {
     if (rep_->time_is_nt() && !rep_->time_after()) {
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
-		   rep_->static_object(arg2), rep_->static_object(arg3),
-		   rep_->static_object(arg4));
+                   rep_->static_object(arg2), rep_->static_object(arg3),
+                   rep_->static_object(arg4));
     } else if (rep_->time_after()) {
       return static_cast<result_type>(kpred_.sign_at(rep_->kinetic_object(arg0),
                                                      rep_->kinetic_object(arg1),
@@ -172,11 +159,5 @@ protected:
 };
 
 } } //namespace CGAL::Kinetic
-
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
 
 #endif

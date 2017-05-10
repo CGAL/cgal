@@ -3,20 +3,17 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
+\cgalRefines SpatialSortingTraits_3
+
 The concept `TriangulationTraits_3` is the first template parameter of the class 
 `Triangulation_3`. It defines the geometric objects (points, segments, 
 triangles and tetrahedra) forming the triangulation together with a few 
 geometric predicates and constructions on these objects : lexicographical 
 comparison, orientation in case of coplanar points and orientation in space. 
 
-\cgalHasModel CGAL::Exact_predicates_inexact_constructions_kernel (recommended) 
-\cgalHasModel CGAL::Exact_predicates_exact_constructions_kernel
-\cgalHasModel CGAL::Filtered_kernel 
-\cgalHasModel CGAL::Cartesian 
-\cgalHasModel CGAL::Simple_cartesian 
-\cgalHasModel CGAL::Homogeneous 
-\cgalHasModel CGAL::Simple_homogeneous 
+\cgalHasModel All models of `Kernel`.
 
+\sa `CGAL::Triangulation_3`
 */
 
 class TriangulationTraits_3 {
@@ -45,6 +42,19 @@ typedef unspecified_type Tetrahedron_3;
 The triangle type. 
 */ 
 typedef unspecified_type Triangle_3; 
+
+/*!
+A constructor object that must provide the function operator
+
+`Point_3 operator()(Point_3 p)`,
+
+which simply returns p.
+
+\note This constructor is necessary because `Regular_triangulation_3`
+inherits `Triangulation_3` and will provide an overload of `Construct_point_3`
+that strips the weight from a weighted point.
+*/
+typedef unspecified_type Construct_point_3;
 
 /*!
 A constructor object that must provide the function operator 
@@ -129,18 +139,23 @@ Triangulation_traits_3(const Triangulation_traits_3 & tr);
 
 /*!
 
+*/
+Construct_point_3 construct_point_3_object();
+
+/*!
+
+*/
+Construct_segment_3 construct_segment_3_object();
+
+/*!
+
+*/
+Construct_triangle_3 construct_triangle_3_object();
+
+/*!
+
 */ 
 Construct_tetrahedron_3 construct_tetrahedron_3_object(); 
-
-/*!
-
-*/ 
-Construct_triangle_3 construct_triangle_3_object(); 
-
-/*!
-
-*/ 
-Construct_segment_3 construct_segment_3_object(); 
 
 /*!
 

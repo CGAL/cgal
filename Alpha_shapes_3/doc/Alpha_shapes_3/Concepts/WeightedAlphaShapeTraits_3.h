@@ -14,8 +14,9 @@ In addition to the requirements described in the concept
 Regular triangulation plugged in a basic alpha shapes provides the
 following.
 
-\cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_3<K>` 
+\cgalHasModel All models of `Kernel`.
 
+\sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */
 
 class WeightedAlphaShapeTraits_3 {

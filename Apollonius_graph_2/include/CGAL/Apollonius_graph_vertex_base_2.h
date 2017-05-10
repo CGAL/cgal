@@ -65,6 +65,7 @@ public:
   //------
   typedef Gt                             Geom_traits;
   typedef Vb                             Base;
+  typedef typename Gt::Point_2           Point;
   typedef typename Gt::Site_2            Site_2;
   typedef AGDS	                         Apollonius_graph_data_structure_2;
   typedef typename AGDS::Face_handle     Face_handle;

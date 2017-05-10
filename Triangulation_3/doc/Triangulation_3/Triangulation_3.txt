@@ -557,9 +557,7 @@ the following ones and give practical numbers on their efficiency :
 </UL>
 
 We will use the following types of triangulations, using
-`Exact_predicates_inexact_constructions_kernel` as geometric traits
-(combined with `Regular_triangulation_euclidean_traits_3` in the weighted
-case) :
+`Exact_predicates_inexact_constructions_kernel` as geometric traits:
 <UL>
 <LI><B>Delaunay</B> : `Delaunay_triangulation_3`
 <LI><B>Delaunay - %Fast location</B> : `Delaunay_triangulation_3` with `Fast_location`

@@ -27,7 +27,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/internal/Exact_type_selector.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
@@ -54,8 +53,6 @@ struct Types_for_alpha_nt_3
 //Converter types
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>    To_approx;
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_exact>     To_exact;
-//Traits types
-  
 //Point types
   typedef typename Kernel_approx::Point_3                          Approx_point;
   typedef typename Kernel_exact::Point_3                           Exact_point;
@@ -73,20 +70,17 @@ struct Types_for_alpha_nt_3< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_a
 //Converter types
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>   To_approx;
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_exact>    To_exact;
-//Traits types
-  typedef ::CGAL::Regular_triangulation_euclidean_traits_3<Kernel_approx>                       Approx_traits;
-  typedef ::CGAL::Regular_triangulation_euclidean_traits_3<Kernel_exact>                        Exact_traits;
 //Point types
-  typedef typename Approx_traits::Weighted_point Approx_point;
-  typedef typename Exact_traits::Weighted_point  Exact_point;
+  typedef typename Kernel_approx::Weighted_point_3 Approx_point;
+  typedef typename Kernel_exact::Weighted_point_3  Exact_point;
   typedef typename Input_traits::Weighted_point_3  Input_point;
 //Constructions 
-  typedef typename Approx_traits::Compute_squared_radius_smallest_orthogonal_sphere_3           Approx_squared_radius;
-  typedef typename Exact_traits::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius; 
+  typedef typename Kernel_approx::Compute_squared_radius_smallest_orthogonal_sphere_3           Approx_squared_radius;
+  typedef typename Kernel_exact::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius;
 };
 
 
-template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
+template<class Input_traits, bool mode, class Weighted_tag>
 class Lazy_alpha_nt_3{
 //NT & kernels
   typedef CGAL::Interval_nt<mode>                                                               NT_approx;
@@ -94,6 +88,8 @@ class Lazy_alpha_nt_3{
   typedef Exact_field_selector<double>::Type                                                    NT_exact;
   typedef CGAL::Simple_cartesian<NT_approx>                                                     Kernel_approx;
   typedef CGAL::Simple_cartesian<NT_exact>                                                      Kernel_exact;
+  typedef typename Kernel_traits<typename Input_traits::Point_2>::Kernel   Kernel_input;
+
 //Helper class for weighted and non-weighted case  
   typedef Types_for_alpha_nt_3<Weighted_tag,Input_traits,Kernel_input,Kernel_approx,Kernel_exact> Types;  
   
@@ -256,7 +252,7 @@ public:
     
   #define CGAL_LANT_COMPARE_FUNCTIONS(CMP) \
   bool \
-  operator CMP (const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Weighted_tag> &other) const \
+  operator CMP (const Lazy_alpha_nt_3<Input_traits,mode,Weighted_tag> &other) const \
   { \
     Uncertain<bool> res = this->approx() CMP other.approx(); \
     if (res.is_certain()) \
@@ -275,9 +271,9 @@ public:
   #undef CGAL_LANT_COMPARE_FUNCTIONS  
 };
 
-template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
+template<class Input_traits, bool mode, class Weighted_tag>
 std::ostream&
-operator<< (std::ostream& os,const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Weighted_tag>& a){
+operator<< (std::ostream& os,const Lazy_alpha_nt_3<Input_traits,mode,Weighted_tag>& a){
   return os << ::CGAL::to_double(a.approx());
 }
   
@@ -340,7 +336,7 @@ struct Alpha_nt_selector_impl_3<GeomTraits,Tag_false,Weighted_tag>
 template <class GeomTraits,class Weighted_tag>
 struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Weighted_tag>
 {
-  typedef Lazy_alpha_nt_3<GeomTraits,GeomTraits,true,Tag_false> Type_of_alpha;
+  typedef Lazy_alpha_nt_3<GeomTraits,true,Tag_false> Type_of_alpha;
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Point_3> Functor;
   struct Compute_squared_radius_3{
     template<class As>
@@ -351,7 +347,7 @@ struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Weighted_tag>
 template <class GeomTraits>
 struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Tag_true>
 {
-  typedef Lazy_alpha_nt_3<GeomTraits,typename GeomTraits::Kernel,true,Tag_true> Type_of_alpha;
+  typedef Lazy_alpha_nt_3<GeomTraits,true,Tag_true> Type_of_alpha;
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Weighted_point_3> Functor;
   struct Compute_squared_radius_3{
     template<class As>
@@ -360,17 +356,29 @@ struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Tag_true>
 };
 
 template <class GeomTraits,class ExactAlphaComparisonTag,class Weighted_tag>
-struct Alpha_nt_selector_3:
-  public Alpha_nt_selector_impl_3<GeomTraits,
-              Boolean_tag< boost::is_floating_point<typename GeomTraits::FT>::value && ExactAlphaComparisonTag::value >,
-              Weighted_tag>
-{};
-
+struct Alpha_nt_selector_3
+  : public Alpha_nt_selector_impl_3<
+             GeomTraits,
+             // We check for two things in addition to the value of ExactAlphaComparisonTag:
+             // - if the base traits is already exact (then we don't need to do anything,
+             //   and we can simply directly use the traits class)
+             // - if the traits class' Point_3 can be converted to the underlying
+             //   kernel of the traits class, which is a necessary precondition to
+             //   be able to use the Cartesian converter and the exact kernels
+             Boolean_tag<boost::is_floating_point<typename GeomTraits::FT>::value &&
+                         boost::is_convertible<
+                           typename GeomTraits::Point_3,
+                           typename Kernel_traits<
+                             typename GeomTraits::Point_3>::Kernel::Point_3
+                         >::value &&
+                         ExactAlphaComparisonTag::value >,
+             Weighted_tag>
+{ };
 
 } //namespace internal
 
-template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
-double to_double(const internal::Lazy_alpha_nt_3<Input_traits, Kernel_input, mode, Weighted_tag>& a)
+template<class Input_traits, bool mode, class Weighted_tag>
+double to_double(const internal::Lazy_alpha_nt_3<Input_traits, mode, Weighted_tag>& a)
 {
   return to_double(a.approx());
 }

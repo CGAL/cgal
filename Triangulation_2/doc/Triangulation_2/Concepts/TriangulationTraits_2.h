@@ -3,6 +3,8 @@
 \ingroup PkgTriangulation2Concepts
 \cgalConcept
 
+\cgalRefines SpatialSortingTraits_2
+
 The concept `TriangulationTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
 parameter of the class `CGAL::Triangulation_2<Traits,Tds>`.  This concept
@@ -10,12 +12,12 @@ provides the types of the geometric primitives used in the
 triangulation and some function object types for the required
 predicates on those primitives.
 
-\cgalHasModel All the \cgal Kernels 
+\cgalHasModel All models of `Kernel`.
 \cgalHasModel `CGAL::Projection_traits_xy_3<K>`
 \cgalHasModel `CGAL::Projection_traits_yz_3<K>`
 \cgalHasModel `CGAL::Projection_traits_xz_3<K>`
 
-\sa `CGAL::Triangulation_2<Traits,Tds>` 
+\sa `CGAL::Triangulation_2`
 
 */
 
@@ -39,6 +41,21 @@ typedef unspecified_type Segment_2;
 The triangle type. 
 */ 
 typedef unspecified_type Triangle_2; 
+
+/*!
+A function object to construct a `Point_2`.
+
+Provides:
+
+`Point_2 operator()(Point_2 p)`,
+
+which simply returns p.
+
+\note This constructor is necessary because `Regular_triangulation_2`
+inherits `Triangulation_2` and will provide an overload of `Construct_point_2`
+that strips the weight from a weighted point.
+*/
+typedef unspecified_type Construct_point_2;
 
 /*!
 A function object to construct a `Segment_2`. 
@@ -186,6 +203,11 @@ TriangulationTraits_2 operator=(TriangulationTraits_2 gtr);
 /// The following functions give access to the predicate and
 /// constructor objects.
 /// @{
+
+/*!
+
+*/
+Construct_point_2 construct_point_2_object();
 
 /*!
 

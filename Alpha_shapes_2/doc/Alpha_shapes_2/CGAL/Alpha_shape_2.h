@@ -16,8 +16,12 @@ and the \f$ k\f$-dimensional faces of the triangulation.
 Note that this class is at the same time used for <I>basic</I> and 
 for <I>weighted</I> Alpha Shapes. 
 
+The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite
+the one inherited from the underlying triangulation class `Dt`.
+At the moment, only the static version is implemented.
+
 \tparam Dt must be either `Delaunay_triangulation_2` or `Regular_triangulation_2`. 
-Note that `Dt::Geom_traits`, `Dt::Vertex` and `Dt::Face` must be model the concepts `AlphaShapeTraits_2`, 
+Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face` must be model the concepts `AlphaShapeTraits_2`,
 `AlphaShapeVertex_2` and `AlphaShapeFace_2`, respectively. 
 
 \tparam ExactAlphaComparisonTag is a tag that, when set to 
@@ -27,9 +31,15 @@ kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_
 overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
 the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
 
-The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite
-the one inherited from the underlying triangulation class `Dt`.
-At the moment, only the static version is implemented.
+\warning The tag `ExactAlphaComparisonTag` is currently ignored (that is, the code will
+ behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
+if the traits defines a point type that is not implicitely convertible to the two-dimensional point type
+of a CGAL kernel. This is because we internally use the class Cartesian_converter to switch
+ between the traits and exact CGAL kernels. <br>
+This means for example that it is useless to use the tag `ExactAlphaComparisonTag`
+in conjonction with the traits class `CGAL::Projection_traits_xy_3`: the latter
+camouflages a `CGAL::Point_3` as a `%Point_2` but the exact kernel `EK`
+will not know how to convert from the camouflaged `CGAL::Point_3` to `EK::Point_2`.
 
 \cgalHeading{I/O}
 
@@ -86,6 +96,14 @@ For convenience, classical comparison operators are provided for the type `FT`.
 
 */ 
 typedef Gt::FT FT; 
+
+/*!
+The point type.
+
+For basic alpha shapes, `Point` will be equal to `Gt::Point_2`. For weighted alpha
+shapes, `Point` will be equal to `Gt::Weighted_point_2`.
+*/
+typedef Dt::Point Point;
 
 /*!
 The size type. 

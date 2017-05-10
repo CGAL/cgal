@@ -21,7 +21,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/CGAL_Ipelet_base.h> 
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -111,9 +110,9 @@ void ASphapeIpelet::protected_run(int fn)
   for (Alpha_shape_2::Finite_faces_iterator it=A.finite_faces_begin();it!=A.finite_faces_end();++it){
     if (A.classify(it)==Alpha_shape_2::INTERIOR){
       std::list<Point_2> LP;
-      LP.push_back(it->vertex(0)->point());
-      LP.push_back(it->vertex(1)->point());
-      LP.push_back(it->vertex(2)->point());
+      LP.push_back(Point_2(it->vertex(0)->point()));
+      LP.push_back(Point_2(it->vertex(1)->point()));
+      LP.push_back(Point_2(it->vertex(2)->point()));
       draw_polyline_in_ipe(LP.begin(),LP.end(),true,false,true);
     }
   }

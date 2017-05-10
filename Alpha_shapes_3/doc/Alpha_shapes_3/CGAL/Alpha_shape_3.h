@@ -7,21 +7,33 @@ namespace CGAL {
 The class `Alpha_shape_3` represents the family of 
 alpha shapes of points in the 3D space for <I>all</I> real 
 \f$ \alpha\f$. It maintains an underlying triangulation 
-of the class `Dt`. Each k-dimensional face of Dt is associated with an 
+of the class `Dt`. Each k-dimensional face of Dt is associated with an
 interval that specifies for which values of alpha the face belongs to the alpha shape. 
-The second template parameter `ExactAlphaComparisonTag` is a tag that, when set to 
-`CGAL::Tag_true`, triggers exact comparisons between alpha values. This is useful 
-when the Delaunay triangulation is instantiated with an exact predicates inexact constructions 
-kernel. By default the `ExactAlphaComparisonTag` is set to `CGAL::Tag_false` as it induces a small 
-overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
-the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
-
-Note that this class is at the same time used for <I>basic</I> and 
-for <I>weighted</I> Alpha Shapes. 
 
 The modifying functions `insert` and `remove` will overwrite
 the one inherited from the underlying triangulation class `Dt`.
 At the moment, only the static version is implemented.
+
+\tparam Dt must be either `Delaunay_triangulation_3`, `Regular_triangulation_3`
+or `Periodic_3_triangulation_3`. Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face`
+must be model the concepts `AlphaShapeTraits_3`,
+`AlphaShapeVertex_3` and `AlphaShapeCell_3`, respectively.
+
+\tparam The second template parameter `ExactAlphaComparisonTag` is a tag that, when set to
+\link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. This is useful
+when the Delaunay triangulation is instantiated with an exact predicates inexact constructions 
+kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_false`\endlink as it induces a small
+overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
+the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
+
+\warning The tag `ExactAlphaComparisonTag` is currently ignored (that is, the code will
+ behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
+if the traits defines a point type that is not implicitely convertible to the three-dimensional point type
+of a CGAL kernel. This is because we internally use the class Cartesian_converter to switch
+ between the traits and exact CGAL kernels.
+
+Note that this class is used for <I>basic</I>, <I>weighted</I>,
+and <I>periodic</I>Alpha Shapes.
 
 \cgalHeading{I/O}
 
@@ -80,6 +92,14 @@ For convenience, classical comparison operators are provided for the type `FT`.
 
 */ 
 typedef unspecified_type FT; 
+
+/*!
+The point type.
+
+For basic alpha shapes, `Point` will be equal to `Gt::Point_2`. For weighted alpha
+shapes, `Point` will be equal to `Gt::Weighted_point_2`.
+*/
+typedef Dt::Point Point;
 
 /*!
 The size type. 
