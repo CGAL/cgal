@@ -40,8 +40,6 @@ public:
   typedef typename Kernel::Offset            Offset;
   typedef typename Kernel::Iso_cuboid_3      Iso_cuboid_3;
 
-  typedef Point       result_type;
-
   Periodic_3_construct_point_3(const Iso_cuboid_3 & dom) : _dom(dom) { }
 
   using Construct_point_3_base::operator();
