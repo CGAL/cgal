@@ -50,9 +50,18 @@ A constructor object that must provide the function operator
 
 which simply returns p.
 
-\note This constructor is necessary because `Regular_triangulation_3`
-inherits `Triangulation_3` and will provide an overload of `Construct_point_3`
-that strips the weight from a weighted point.
+\note It is advised to return a const reference to `p` to avoid useless copies.
+
+\note This peculiar requirement is necessary because `CGAL::Triangulation_3`
+internally manipulates points with a `Point` type that is not always `Point_3`.
+For example, `CGAL::Regular_triangulation_3` inherits `CGAL::Triangulation_3`
+with `Point` being a three-dimensional weighted point. Since some predicates and
+constructors (such as `Orientation_3`) can only use `Point_3` objects in arguments,
+it is necessary to convert objects of type `Point` to objects of type `Point_3`
+before calling these functions, using the kernel functor `Construct_point_3`.
+In the setting of a basic triangulation, `Point` and `Point_3` are identical and
+so `Construct_point_3` is simply the identity. Refinements of this concept will
+require more significant overloads to the `Construct_point_3` functor.
 */
 typedef unspecified_type Construct_point_3;
 

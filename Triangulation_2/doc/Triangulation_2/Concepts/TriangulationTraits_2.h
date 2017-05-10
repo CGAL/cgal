@@ -51,9 +51,18 @@ Provides:
 
 which simply returns p.
 
-\note This constructor is necessary because `Regular_triangulation_2`
-inherits `Triangulation_2` and will provide an overload of `Construct_point_2`
-that strips the weight from a weighted point.
+\note It is advised to return a const reference to `p` to avoid useless copies.
+
+\note This peculiar requirement is necessary because `CGAL::Triangulation_2`
+internally manipulates points with a `Point` type that is not always `Point_2`.
+For example, `CGAL::Regular_triangulation_2` inherits `CGAL::Triangulation_2`
+with `Point` being a two-dimensional weighted point. Since some predicates and
+constructors (such as `Orientation_2`) can only use `Point_2` objects in arguments,
+it is necessary to convert objects of type `Point` to objects of type `Point_2`
+before calling these functions, using the kernel functor `Construct_point_2`.
+In the setting of a basic triangulation, `Point` and `Point_2` are identical and
+so `Construct_point_2` is simply the identity. Refinements of this concept will
+require more significant overloads to the `Construct_point_2` functor.
 */
 typedef unspecified_type Construct_point_2;
 
