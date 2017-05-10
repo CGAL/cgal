@@ -37,7 +37,7 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
-#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
