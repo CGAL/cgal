@@ -109,6 +109,22 @@ detect_duplicated_boundary_edges
           set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
           halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
           manifold_halfedge_pairs.push_back(true);
+
+          // here we test whether the snapping of the two halfedges
+          // will produce a non-manifold edge: we check that if two vertices
+          // that are being merged are not already incident to the same vertex
+          if ( source(he,pmesh) != target(set_it->first, pmesh) &&
+               target(next(opposite(he, pmesh), pmesh), pmesh) ==
+                 source(prev(opposite(set_it->first, pmesh), pmesh), pmesh) )
+          {
+            manifold_halfedge_pairs[ set_it->second.second ] = false;
+          }
+          if ( target(he,pmesh) != source(set_it->first, pmesh) &&
+               source(prev(opposite(he, pmesh), pmesh), pmesh) ==
+                 target(next(opposite(set_it->first, pmesh), pmesh), pmesh) )
+          {
+            manifold_halfedge_pairs[ set_it->second.second ] = false;
+          }
         }
       }
       else
