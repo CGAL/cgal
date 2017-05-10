@@ -16,7 +16,6 @@ The class `Cell_attribute_with_point_and_id` represents an attribute containing 
 \tparam OnMerge a functor called when two attributes are merged. Equal to `Null_functor` by default.
 \tparam OnSplit a functor called when one attribute is split in two. Equal to `Null_functor` by default.
 
-\sa `CGAL::Linear_cell_complex_min_items<d>`
 \sa `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`
 \sa `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`
 
@@ -27,10 +26,10 @@ template< typename LCC, typename Info_, typename Tag, typename OnMerge, typename
 class Cell_attribute_with_point_and_id : public CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit> {
 public:
 
-/// @return the index. 
+/// Returns the index. 
 int id() const;
 
-/// @return the index by reference.
+/// Returns the index by reference.
 int& id();
 
 }; /* end Cell_attribute_with_point_and_id */
