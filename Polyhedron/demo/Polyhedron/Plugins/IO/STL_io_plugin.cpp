@@ -15,6 +15,7 @@
 
 
 #include <QColor>
+#include <QMainWindow>
 using namespace CGAL::Three;
 class Polyhedron_demo_stl_plugin :
   public QObject,
@@ -75,7 +76,7 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   }
 
   try{
-    if(static_cast<Scene*>(scene)->property("is_polyhedron_mode").toBool())
+    if(this->mw->property("is_polyhedron_mode").toBool())
     {
       // Try building a polyhedron
       Polyhedron P;

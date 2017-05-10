@@ -80,7 +80,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #else
 typedef Scene_polyhedron_item Scene_facegraph_item;
 #endif
-typedef Scene_facegraph_item::FaceGraph FaceGraph;
+typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef typename boost::property_traits<typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point;
 namespace CGAL{
 

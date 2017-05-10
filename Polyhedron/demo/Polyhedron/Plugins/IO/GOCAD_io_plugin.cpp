@@ -12,7 +12,7 @@
 #include <fstream>
 
 #include <QColor>
-
+#include <QMainWindow>
 using namespace CGAL::Three;
 
 class Polyhedron_demo_gocad_plugin :
@@ -69,7 +69,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
 
   CGAL::Timer t;
   t.start();
-  if(static_cast<Scene*>(scene)->property("is_polyhedron_mode").toBool())
+  if(this->mw->property("is_polyhedron_mode").toBool())
   {
     // Try to read GOCAD file in a polyhedron
 
