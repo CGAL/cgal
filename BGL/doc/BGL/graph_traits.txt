@@ -86,7 +86,7 @@ that is the default hash functor of `CGAL::Unique_hash_map`.
 
 \cgalModifBegin
 
-\section BGLLCCGT Specialization for the Linear Cell Complex Class
+\section BGLLCCGT Specialization for the Linear_cell_complex_for_combinatorial_map Class
 
 Defined in `<CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>`
 
@@ -125,19 +125,23 @@ For convenience, the type `edge_descriptor` is hashable using the functor `CGAL:
 \subsection Requirements
 
 <ul>
-<li> The item class used by`CGAL::Linear_cell_complex_for_combinatorial_map` must have both 0-attributes and 2-attributes enabled; moreover the corresponding type of attributes must store an id and must define the two fonctions:
-\code
-int id() const; // Returns the index. 
-int& id();      // Returns a reference to the index stored in the attribute. 
-\endcode
-</li>
+<li> The item class used by `CGAL::Linear_cell_complex_for_combinatorial_map` must have both 0-attributes and 2-attributes enabled.</li>
 
 <li> No dart is 1-free, nor 2-free. Holes in a mesh are represented by using the same convention than for `CGAL::Polyhedron_3` and `CGAL::Surface_mesh`: a dart <code>d</code> belongs to a border if the 2-attribute of <code>beta<2>(d)</code> is NULL.</li>
 
 <li> All darts of the linear cell complexes must be associated with a 2-attribute, except darts that represent holes.</li>
+
+<li> In order to use property maps, darts and types associated with of 0- and 2-attributes must define the two fonctions:
+\code
+int id() const; // Returns the index. 
+int& id();      // Returns a reference to the index stored in the attribute. 
+\endcode
 </ul>
 
-Note that it is possible to use `CGAL::Cell_attribute_with_id` and `CGAL::Cell_attribute_with_point_and_id` classes to define your item class using attributes with id. Note also that there is a template alias, `CGAL::Linear_cell_complex_for_bgl_combinatorial_map` that defines the default template parameter for the item class that satisfies all the constraints given above.
+For darts, this can is done by defining `Darts_with_id` as `CGAL::Tag_true` in the `Dart_wrapper` struct of the item class. <br>
+For attributes, it is possible to use `CGAL::Cell_attribute_with_id` and `CGAL::Cell_attribute_with_point_and_id` classes to define your item class using attributes with id.
+
+You can also use the `CGAL::Linear_cell_complex_bgl_min_items` item class, or you can use directly the `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper` class.
 
 \cgalModifEnd
 

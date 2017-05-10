@@ -6,7 +6,7 @@ namespace CGAL {
 
 \cgalModifBegin
 
-The class `Linear_cell_complex_bgl_min_items` defines `void` as the information associated with darts, and the attributes used. In this class, 0- and 2-attributes are enabled and have ids.
+The class `Linear_cell_complex_bgl_min_items` defines `void` as the information associated with darts, darts have ids and 0- and 2-attributes are enabled and have ids.
 
 \cgalModels `LinearCellComplexItems`
 
@@ -21,6 +21,7 @@ struct Linear_cell_complex_bgl_min_items
   template <class LCC>
   struct Dart_wrapper
   {
+    typedef CGAL::Tag_true Darts_with_id;
     typedef CGAL::Cell_attribute_with_point_and_id<LCC> Vertex_attrib;
     typedef CGAL::Cell_attribute_with_id<LCC> Face_attrib;
     typedef CGAL::cpp11::tuple<Vertex_attrib, void, Face_attrib> Attributes;
@@ -29,7 +30,7 @@ struct Linear_cell_complex_bgl_min_items
 
 \endcode
 
-\sa `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`
+\sa `CGAL::Linear_cell_complex_min_item`
 
 \cgalModifEnd
 
