@@ -31,6 +31,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/assertions.h>
 
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
@@ -610,7 +611,40 @@ bool is_valid(OpenMesh::TriMesh_ArrayKernelT<K>& sm, bool /* verbose */ = false)
 
 } // namespace OpenMesh
 
+namespace CGAL {
 
+// Overload CGAL::clear function. TriMesh_ArrayKernel behaves
+// differently from other meshes. Calling clear does not affect the
+// number of vertices, edges, or faces in the mesh. To get actual
+// numbers it is necessary to first collect garbage. We add an
+// overlaod to get consistent behavior.
+template<typename K>
+void clear(OpenMesh::TriMesh_ArrayKernelT<K>& sm)
+{
+  sm.clear();
+  sm.garbage_collection(true, true, true);
+  CGAL_postcondition(num_edges(sm) == 0);
+  CGAL_postcondition(num_vertices(sm) == 0);
+  CGAL_postcondition(num_faces(sm) == 0);
+}
+
+
+template<typename K>
+bool read_off(std::istream& is, OpenMesh::TriMesh_ArrayKernelT<K>& sm)
+{
+  OpenMesh::IO::Options ropt;
+  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
+}
+
+
+template<typename K>
+bool write_off(std::ostream& os, OpenMesh::TriMesh_ArrayKernelT<K>& sm)
+{
+  OpenMesh::IO::Options ropt;
+  return OpenMesh::IO::write_mesh(sm, os, ".OFF", ropt);
+}
+
+}
 #ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/boost/graph/backward_compatibility_functions.h>
 
