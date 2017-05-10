@@ -408,19 +408,19 @@ public Q_SLOTS:
   }
 
 Q_SIGNALS:
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::face_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::edge_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::vertex_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::face_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::edge_descriptor>&);
+  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::vertex_descriptor>&);
+  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::face_descriptor>&);
+  void selected_HL(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::edge_descriptor>&);
 
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::face_descriptor>&);
-  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::edge_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::vertex_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::face_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::edge_descriptor>&);
+  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::vertex_descriptor>&);
+  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::face_descriptor>&);
+  void selected_HL(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::edge_descriptor>&);
 
   void toogle_insert(const bool);
   void endSelection();

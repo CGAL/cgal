@@ -350,8 +350,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   mw->installEventFilter(this);
   d = new Scene_edit_polyhedron_item_priv(poly_item, ui_widget, mw, this);
   // bind vertex picking
-  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)), this,
-          SLOT(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&)));
+  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::vertex_descriptor>&)), this,
+          SLOT(selected(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::vertex_descriptor>&)));
 
   d->poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in invalidateOpenGLBuffers()
   d->poly_item->update_vertex_indices();
@@ -377,8 +377,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   mw->installEventFilter(this);
   d = new Scene_edit_polyhedron_item_priv(sm_item, ui_widget, mw, this);
   // bind vertex picking
-  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)), this,
-          SLOT(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>&)));
+  connect(&d->k_ring_selector, SIGNAL(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::vertex_descriptor>&)), this,
+          SLOT(selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::vertex_descriptor>&)));
   id_setter = new Id_setter(d->sm_item->polyhedron());
   d->deform_sm_mesh = new Deform_sm_mesh(*(sm_item->polyhedron()),
                                 Deform_sm_mesh::Vertex_index_map(),

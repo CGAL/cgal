@@ -31,7 +31,6 @@ public:
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
   typedef SMesh::Property_map<face_descriptor,int> Face_selection_map;
-  typedef SMesh FaceGraph;
   Scene_surface_mesh_item();
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);

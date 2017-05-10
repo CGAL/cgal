@@ -32,7 +32,7 @@ typedef Scene_polyhedron_item Scene_facegraph_item;
 typedef Kernel FG_Traits;
 #endif
 
-typedef Scene_facegraph_item::FaceGraph FaceGraph;
+typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::graph_traits<FaceGraph>::vertex_descriptor fg_vertex_descriptor;
 typedef boost::graph_traits<FaceGraph>::edge_descriptor fg_edge_descriptor;
 typedef boost::graph_traits<FaceGraph>::face_descriptor fg_face_descriptor;

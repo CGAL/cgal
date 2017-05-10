@@ -355,8 +355,8 @@ public Q_SLOTS:
   void change();
 
   void invalidateOpenGLBuffers();
-  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::FaceGraph>::vertex_descriptor>&);
-  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::FaceGraph>::vertex_descriptor>& );
+  void selected(const std::set<boost::graph_traits<Scene_polyhedron_item::Face_graph>::vertex_descriptor>&);
+  void selected(const std::set<boost::graph_traits<Scene_surface_mesh_item::Face_graph>::vertex_descriptor>& );
 
   void select(double orig_x,
               double orig_y,

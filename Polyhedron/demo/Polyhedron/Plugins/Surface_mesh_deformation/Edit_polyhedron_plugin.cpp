@@ -546,8 +546,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
 
   Q_FOREACH(Scene_polyhedron_selection_item::fg_face_descriptor fh, selection_item->selected_facets)
   {
-    CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::FaceGraph> hafc(halfedge(fh, *selection_item->polyhedron()), *selection_item->polyhedron());
-    CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::FaceGraph> end = hafc;
+    CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::Face_graph> hafc(halfedge(fh, *selection_item->polyhedron()), *selection_item->polyhedron());
+    CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::Face_graph> end = hafc;
     CGAL_For_all(hafc, end)
     {
       if(!sel_to_import.contains(target(*hafc, *selection_item->polyhedron())))

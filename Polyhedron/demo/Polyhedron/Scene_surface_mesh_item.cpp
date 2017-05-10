@@ -225,15 +225,6 @@ Scene_surface_mesh_item::color_vector()
 }
 
 
-int
-Scene_surface_mesh_item::patch_id(SMesh::Face_index f)const
-{
-  if(! d->has_fpatch_id){
-    return -1;
-  }
-  return d->fpatch_id_map[f];
-}
-
 void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL::Color *c) const
 {
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();

@@ -41,7 +41,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_polyhedron_item Scene_face_graph_item;
 #endif
 
-typedef Scene_face_graph_item::FaceGraph Face_graph;
+typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap;
 typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::const_type constVPmap;
 typedef Scene_face_graph_item::Vertex_selection_map Vertex_selection_map;

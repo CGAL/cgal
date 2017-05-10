@@ -29,8 +29,8 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
     typedef Polyhedron Face_graph;
-    typedef boost::property_map<Face_Graph, boost::vertex_index_t>::type Vertex_selection_map;
-    typedef boost::property_map<Face_Graph, boost::face_index_t>::type Face_selection_map;
+    typedef boost::property_map<Face_graph, boost::vertex_index_t>::type Vertex_selection_map;
+    typedef boost::property_map<Face_graph, boost::face_index_t>::type Face_selection_map;
 
     enum STATS {
       NB_VERTICES = 0,
