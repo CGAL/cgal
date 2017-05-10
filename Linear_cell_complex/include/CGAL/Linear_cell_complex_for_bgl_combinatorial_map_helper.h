@@ -21,9 +21,9 @@
 #define CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_H 1
 
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_bgl_min_items.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/CMap_linear_cell_complex_storages.h>
-#include <CGAL/Cell_attribute_with_point.h>
 
 namespace CGAL {
 
@@ -33,33 +33,24 @@ namespace CGAL {
    * these cells have id.
    */
 
-  struct Linear_cell_complex_bgl_min_items
-  {
-    /// Dart_wrapper defines the type of darts used.
-    template <class LCC>
-    struct Dart_wrapper
-    {
-      typedef CGAL::Tag_true Darts_with_id;
-      typedef CGAL::Cell_attribute_with_point_and_id<LCC> Vertex_attribute;
-      typedef CGAL::Cell_attribute_with_id<LCC> Face_attribute;
-      typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
-    };
-  };
-  
   // Linear_cell_complex_for_bgl_combinatorial_map class.
   template < unsigned int d_, unsigned int ambient_dim = d_,
              class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-             class Items_ = Linear_cell_complex_bgl_min_items,
              class Alloc_ = CGAL_ALLOCATOR(int),
              template<unsigned int,class,class,class,class>
              class CMap = Combinatorial_map_base,
              class Storage_ = CMap_linear_cell_complex_storage_1<d_, ambient_dim,
                                                                  Traits_, Items_,
-                                                                 Alloc_> >
-  using Linear_cell_complex_for_bgl_combinatorial_map=
-    Linear_cell_complex_for_combinatorial_map
-                                       <d_, ambient_dim, Traits_,
-                                        Items_, Alloc_, CMap, Storage_>;
+                                                                 Alloc_> >  
+  struct Linear_cell_complex_for_bgl_combinatorial_map_helper
+  {
+  public:
+    /// Type of the Linear_cell_complex_for_combinatorial_map.
+    typedef Linear_cell_complex_for_combinatorial_map
+            <d_, ambient_dim, Traits_, CGAL::Linear_cell_complex_bgl_min_items,
+             Alloc_, CMap, Storage_> type;
+  }; 
+
 } // namespace CGAL
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_H //
