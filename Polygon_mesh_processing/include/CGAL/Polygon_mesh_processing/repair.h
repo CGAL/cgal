@@ -778,7 +778,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         {
           face_descriptor adjacent_face = face( opposite(hd, tmesh), tmesh );
           if ( adjacent_face==GT::null_face() ||
-               !degenerate_face_set.count(adjacent_face) )
+               degenerate_face_set.count(adjacent_face)==0 )
             boundary_hedges.push_back(hd);
           else
           {
@@ -854,9 +854,10 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       }
       // remove degenerate faces
       BOOST_FOREACH(face_descriptor f, cc_faces)
+      {
         degenerate_face_set.erase(f);
-      BOOST_FOREACH(face_descriptor f, cc_faces)
         remove_face(f, tmesh);
+      }
       // remove interior edges
       BOOST_FOREACH(halfedge_descriptor h, inside_hedges)
         remove_edge(edge(h, tmesh), tmesh);
@@ -942,7 +943,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           // since we reuse later the halfedge of the first refernce vertex
           // we must set it as we need.
           if ( source(h2,tmesh) == *ref_vertices.first)
-            set_halfedge(*ref_vertices.first, opposite( prev(side_two[hi], tmesh), tmesh), tmesh );
+            set_halfedge(*ref_vertices.first, opposite( h2, tmesh), tmesh );
           // retriangulate the face
           if ( face(h2, tmesh) != GT::null_face())
             Euler::split_face(h2, next(side_two[hi], tmesh), tmesh);
