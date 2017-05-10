@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "efficient_RANSAC_custom_shape.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_parameters.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_point_access.cpp" )
+  create_single_source_cgal_program( "region_growing.cpp" )
   create_single_source_cgal_program( "plane_regularization.cpp" )
 
 else()
