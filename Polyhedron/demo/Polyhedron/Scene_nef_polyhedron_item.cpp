@@ -731,7 +731,7 @@ Scene_polyhedron_item* Scene_nef_polyhedron_item::convert_to_polyhedron() const
 }
 Scene_surface_mesh_item* Scene_nef_polyhedron_item::convert_to_surface_mesh() const
 {
-typedef Scene_surface_mesh_item::FaceGraph SMesh;
+typedef Scene_surface_mesh_item::Face_graph SMesh;
   SMesh* poly = new SMesh();
   CGAL::convert_nef_polyhedron_to_polygon_mesh(*this->nef_polyhedron(), *poly);
   CGAL::Polygon_mesh_processing::triangulate_faces(*poly);

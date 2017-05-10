@@ -11,7 +11,6 @@
 #include <QApplication>
 #include <QTime>
 #include <QMessageBox>
-#include "Scene.h"
 using namespace CGAL::Three;
 class Polyhedron_demo_nef_plugin :
   public QObject,
@@ -215,7 +214,7 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
       QApplication::restoreOverrideCursor();
       return;
     }
-    if(static_cast<Scene*>(scene)->property("is_polyhedron_mode").toBool())
+    if(this->mw->property("is_polyhedron_mode").toBool())
     {
       Scene_polyhedron_item* new_item = item->convert_to_polyhedron();
       new_item->setName(tr("%1 (from nef)").arg(item->name()));
