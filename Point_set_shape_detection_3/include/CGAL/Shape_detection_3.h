@@ -33,6 +33,7 @@
 
 
 #include <CGAL/Shape_detection_3/Efficient_RANSAC.h>
+#include <CGAL/Shape_detection_3/Region_growing.h>
 #include <CGAL/Shape_detection_3/Shape_detection_traits.h>
 #include <CGAL/Shape_detection_3/Plane.h>
 #include <CGAL/Shape_detection_3/Cylinder.h>
