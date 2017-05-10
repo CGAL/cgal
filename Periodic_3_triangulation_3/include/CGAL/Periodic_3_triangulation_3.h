@@ -133,15 +133,19 @@ public:
   typedef typename GT::Iso_cuboid_3            Iso_cuboid;
   typedef CGAL::cpp11::array<int, 3>           Covering_sheets;
 
-  typedef typename GT::Point_3                 Point;
+  // point types
+  typedef typename TDS::Vertex::Point          Point;
+  typedef typename GT::Point_3                 Point_3;
+  typedef std::pair<Point, Offset>             Periodic_point;
+  typedef std::pair<Point_3, Offset>           Periodic_point_3;
+
   typedef typename GT::Segment_3               Segment;
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
 
-  typedef std::pair<Point,Offset>                           Periodic_point;
-  typedef CGAL::cpp11::array<std::pair<Point,Offset>, 2>   Periodic_segment;
-  typedef CGAL::cpp11::array<std::pair<Point,Offset>, 3>   Periodic_triangle;
-  typedef CGAL::cpp11::array<std::pair<Point,Offset>, 4>   Periodic_tetrahedron;
+  typedef CGAL::cpp11::array<Periodic_point_3, 2> Periodic_segment;
+  typedef CGAL::cpp11::array<Periodic_point_3, 3> Periodic_triangle;
+  typedef CGAL::cpp11::array<Periodic_point_3, 4> Periodic_tetrahedron;
 
   typedef typename TDS::Vertex                 Vertex;
   typedef typename TDS::Cell                   Cell;
@@ -490,107 +494,110 @@ public:
 public:
   /** @name Wrapping the traits */ //@{
   Comparison_result compare_xyz(const Point& p1, const Point& p2) const {
-    return geom_traits().compare_xyz_3_object()(p1,p2);
+    return geom_traits().compare_xyz_3_object()(construct_point(p1),
+                                                construct_point(p2));
   }
   Comparison_result compare_xyz(const Point& p1, const Point& p2,
                                 const Offset& o1, const Offset& o2) const {
-    return geom_traits().compare_xyz_3_object()(p1,p2,o1,o2);
+    return geom_traits().compare_xyz_3_object()(construct_point(p1, o1),
+                                                construct_point(p2, o2));
   }
 
-  Orientation orientation(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4) const {
-    return geom_traits().orientation_3_object()(p1,p2,p3,p4);
+  Orientation orientation(const Point& p1, const Point& p2,
+                          const Point& p3, const Point& p4) const {
+    return geom_traits().orientation_3_object()(construct_point(p1), construct_point(p2),
+                                                construct_point(p3), construct_point(p4));
   }
-  Orientation orientation(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4,
-      const Offset& o1, const Offset& o2, const Offset& o3, const Offset& o4)
-      const {
-    return geom_traits().orientation_3_object()(p1,p2,p3,p4,o1,o2,o3,o4);
+  Orientation orientation(const Point& p1, const Point& p2,
+                          const Point& p3, const Point& p4,
+                          const Offset& o1, const Offset& o2,
+                          const Offset& o3, const Offset& o4) const {
+    return geom_traits().orientation_3_object()(
+             construct_point(p1, o1), construct_point(p2, o2),
+             construct_point(p3, o3), construct_point(p4, o4));
   }
 
   bool equal(const Point& p1, const Point& p2) const {
     return compare_xyz(p1,p2) == EQUAL;
   }
   bool equal(const Point& p1, const Point& p2,
-      const Offset& o1, const Offset& o2) const {
+             const Offset& o1, const Offset& o2) const {
     return compare_xyz(p1,p2,o1,o2) == EQUAL;
   }
 
-  bool coplanar(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4)
-      const {
+  bool coplanar(const Point& p1, const Point& p2,
+                const Point& p3, const Point& p4) const {
     return orientation(p1,p2,p3,p4) == COPLANAR;
   }
-  bool coplanar(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4,
-      const Offset& o1, const Offset& o2, const Offset& o3, const Offset& o4)
-      const {
+  bool coplanar(const Point& p1, const Point& p2,
+                const Point& p3, const Point& p4,
+                const Offset& o1, const Offset& o2,
+                const Offset& o3, const Offset& o4) const {
     return orientation(p1,p2,p3,p4,o1,o2,o3,o4) == COPLANAR;
   }
 
-  Periodic_tetrahedron construct_periodic_3_tetrahedron(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4)
-      const {
+  Periodic_tetrahedron construct_periodic_3_tetrahedron(const Point& p1, const Point& p2,
+                                                        const Point& p3, const Point& p4) const {
     return CGAL::make_array(std::make_pair(p1,Offset()), std::make_pair(p2,Offset()),
                             std::make_pair(p3,Offset()), std::make_pair(p4,Offset()));
   }
-  Periodic_tetrahedron construct_periodic_3_tetrahedron(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4,
-      const Offset& o1, const Offset& o2, const Offset& o3, const Offset& o4)
-      const {
+  Periodic_tetrahedron construct_periodic_3_tetrahedron(const Point& p1, const Point& p2,
+                                                        const Point& p3, const Point& p4,
+                                                        const Offset& o1, const Offset& o2,
+                                                        const Offset& o3, const Offset& o4) const {
     return CGAL::make_array(std::make_pair(p1,o1), std::make_pair(p2,o2),
                             std::make_pair(p3,o3), std::make_pair(p4,o4));
   }
 
-  Periodic_triangle construct_periodic_3_triangle(
-      const Point& p1, const Point& p2, const Point& p3) const {
+  Periodic_triangle construct_periodic_3_triangle(const Point& p1, const Point& p2,
+                                                  const Point& p3) const {
     return CGAL::make_array(std::make_pair(p1,Offset()),
                             std::make_pair(p2,Offset()), std::make_pair(p3,Offset()));
   }
-  Periodic_triangle construct_periodic_3_triangle(
-      const Point& p1, const Point& p2, const Point& p3,
-      const Offset& o1, const Offset& o2, const Offset& o3) const {
+  Periodic_triangle construct_periodic_3_triangle(const Point& p1, const Point& p2,
+                                                  const Point& p3,
+                                                  const Offset& o1, const Offset& o2,
+                                                  const Offset& o3) const {
     return CGAL::make_array(std::make_pair(p1,o1), std::make_pair(p2,o2),
                             std::make_pair(p3,o3));
   }
 
-  Periodic_segment construct_periodic_3_segment(
-      const Point& p1, const Point& p2) const {
+  Periodic_segment construct_periodic_3_segment(const Point& p1, const Point& p2) const {
     return CGAL::make_array(std::make_pair(p1,Offset()),
                             std::make_pair(p2,Offset()));
   }
-  Periodic_segment construct_periodic_3_segment(
-      const Point& p1, const Point& p2,
-      const Offset& o1, const Offset& o2) const {
+  Periodic_segment construct_periodic_3_segment(const Point& p1, const Point& p2,
+                                                const Offset& o1, const Offset& o2) const {
     return CGAL::make_array(std::make_pair(p1,o1), std::make_pair(p2,o2));
   }
 
-  Tetrahedron construct_tetrahedron(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4)
-      const {
-    return geom_traits().construct_tetrahedron_3_object()(p1,p2,p3,p4);
+  Tetrahedron construct_tetrahedron(const Point& p1, const Point& p2,
+                                    const Point& p3, const Point& p4) const {
+    return geom_traits().construct_tetrahedron_3_object()(construct_point(p1),
+                                                          construct_point(p2),
+                                                          construct_point(p3),
+                                                          construct_point(p4));
   }
-  Tetrahedron construct_tetrahedron(
-      const Point& p1, const Point& p2, const Point& p3, const Point& p4,
-      const Offset& o1, const Offset& o2, const Offset& o3, const Offset& o4)
-      const {
-    return geom_traits().construct_tetrahedron_3_object()(p1,p2,p3,p4,
-                                                          o1,o2,o3,o4);
+  Tetrahedron construct_tetrahedron(const Point& p1, const Point& p2,
+                                    const Point& p3, const Point& p4,
+                                    const Offset& o1, const Offset& o2,
+                                    const Offset& o3, const Offset& o4) const {
+    return geom_traits().construct_tetrahedron_3_object()(
+             construct_point(p1, o1), construct_point(p2, o2),
+             construct_point(p3, o3), construct_point(p4, o4));
   }
   Tetrahedron construct_tetrahedron(const Periodic_tetrahedron& tet) {
-    return construct_tetrahedron(
-                    tet[0].first, tet[1].first, tet[2].first, tet[3].first,
-                    tet[0].second, tet[1].second, tet[2].second, tet[3].second);
+    return construct_tetrahedron(tet[0].first, tet[1].first, tet[2].first, tet[3].first,
+                                 tet[0].second, tet[1].second, tet[2].second, tet[3].second);
   }
-
-  Triangle construct_triangle(
-      const Point& p1, const Point& p2, const Point& p3) const {
-    return geom_traits().construct_triangle_3_object()(p1,p2,p3);
+  Triangle construct_triangle(const Point& p1, const Point& p2, const Point& p3) const {
+    return geom_traits().construct_triangle_3_object()(
+             construct_point(p1), construct_point(p2), construct_point(p3));
   }
-  Triangle construct_triangle(
-      const Point& p1, const Point& p2, const Point& p3,
-      const Offset& o1, const Offset& o2, const Offset& o3) const {
-    return geom_traits().construct_triangle_3_object()(p1,p2,p3,o1,o2,o3);
+  Triangle construct_triangle(const Point& p1, const Point& p2, const Point& p3,
+                              const Offset& o1, const Offset& o2, const Offset& o3) const {
+    return geom_traits().construct_triangle_3_object()(
+             construct_point(p1, o1), construct_point(p2, o2), construct_point(p3, o3));
   }
   Triangle construct_triangle(const Periodic_triangle& tri) {
     return construct_triangle(tri[0].first, tri[1].first, tri[2].first,
@@ -598,32 +605,34 @@ public:
   }
 
   Segment construct_segment(const Point& p1, const Point& p2) const {
-    return geom_traits().construct_segment_3_object()(p1, p2);
+    return geom_traits().construct_segment_3_object()(construct_point(p1),
+                                                      construct_point(p2));
   }
   Segment construct_segment(const Point& p1, const Point& p2,
-    const Offset& o1, const Offset& o2) const {
-    return geom_traits().construct_segment_3_object()(p1,p2,o1,o2);
+                            const Offset& o1, const Offset& o2) const {
+    return geom_traits().construct_segment_3_object()(
+             construct_point(p1, o1), construct_point(p2,o2));
   }
   Segment construct_segment(const Periodic_segment& seg) const {
     return construct_segment(seg[0].first, seg[1].first,
                              seg[0].second, seg[1].second);
   }
 
-  Point construct_point(const Point& p, const Offset& o) const {
+  // Note that construct_point() has return type Point_3,
+  // but       point()           has return type Point
+  Point_3 construct_point(const Point& p) const {
+    return geom_traits().construct_point_3_object()(p);
+  }
+  Point_3 construct_point(const Point& p, const Offset& o) const {
     return geom_traits().construct_point_3_object()(p,o);
   }
-  Point construct_point(const Periodic_point& pp) const {
+  Point_3 construct_point(const Periodic_point& pp) const {
     return construct_point(pp.first, pp.second);
   }
-  //@}
-
-public:
-  /** @name Geometric access functions */
-  ///@{
 
   /// Given a point `p`, compute its corresponding offset `o` with respect to
   /// the canonical domain.
-  Periodic_point periodic_point(const Point& p) const
+  Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
     // check that p lies within the domain. If not: translate
     const Iso_cuboid& dom = domain();
@@ -680,8 +689,13 @@ public:
     CGAL_triangulation_assertion(!(rp.z() < dom.zmin()) && rp.z() < dom.zmax());
     return pp;
   }
+  //@}
 
-  Periodic_point periodic_point( const Vertex_handle v ) const
+public:
+  /** @name Geometric access functions */
+  ///@{
+
+  Periodic_point periodic_point(const Vertex_handle v) const
   {
     if (is_1_cover())
       return std::make_pair(v->point(), Offset(0,0,0));
@@ -697,7 +711,7 @@ public:
     }
   }
 
-  Periodic_point periodic_point( const Cell_handle c, int i) const
+  Periodic_point periodic_point(const Cell_handle c, int i) const
   {
     if (is_1_cover())
       return std::make_pair(c->vertex(i)->point(), int_to_off(c->offset(i)));
@@ -720,17 +734,31 @@ public:
     CGAL_triangulation_precondition( i != j );
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 3 && j >= 0 && j <= 3 );
-    return CGAL::make_array( std::make_pair(c->vertex(i)->point(),
-                                            get_offset(c,i)),
-                             std::make_pair(c->vertex(j)->point(),
-                                            get_offset(c,j)) );
+    return CGAL::make_array(
+      std::make_pair(construct_point(c->vertex(i)->point()), get_offset(c,i)),
+      std::make_pair(construct_point(c->vertex(j)->point()), get_offset(c,j)));
   }
   Periodic_segment periodic_segment(const Edge& e) const
   {
     return periodic_segment(e.first,e.second,e.third);
   }
 
-  Periodic_triangle periodic_triangle(const Cell_handle c, int i) const;
+  Periodic_triangle periodic_triangle(const Cell_handle c, int i) const
+  {
+    CGAL_triangulation_precondition( number_of_vertices() != 0 );
+    CGAL_triangulation_precondition( i >= 0 && i <= 3 );
+    if ( (i&1)==0 )
+      return CGAL::make_array(
+        std::make_pair(construct_point(c->vertex((i+2)&3)->point()), get_offset(c,(i+2)&3)),
+        std::make_pair(construct_point(c->vertex((i+1)&3)->point()), get_offset(c,(i+1)&3)),
+        std::make_pair(construct_point(c->vertex((i+3)&3)->point()), get_offset(c,(i+3)&3)) );
+
+    return CGAL::make_array(
+      std::make_pair(construct_point(c->vertex((i+1)&3)->point()), get_offset(c,(i+1)&3)),
+      std::make_pair(construct_point(c->vertex((i+2)&3)->point()), get_offset(c,(i+2)&3)),
+      std::make_pair(construct_point(c->vertex((i+3)&3)->point()), get_offset(c,(i+3)&3)) );
+  }
+
   Periodic_triangle periodic_triangle(const Facet& f) const
   {
     return periodic_triangle(f.first, f.second);
@@ -740,10 +768,10 @@ public:
   {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     return CGAL::make_array(
-          std::make_pair(c->vertex(0)->point(), get_offset(c,0)),
-          std::make_pair(c->vertex(1)->point(), get_offset(c,1)),
-          std::make_pair(c->vertex(2)->point(), get_offset(c,2)),
-          std::make_pair(c->vertex(3)->point(), get_offset(c,3)) );
+      std::make_pair(construct_point(c->vertex(0)->point()), get_offset(c,0)),
+      std::make_pair(construct_point(c->vertex(1)->point()), get_offset(c,1)),
+      std::make_pair(construct_point(c->vertex(2)->point()), get_offset(c,2)),
+      std::make_pair(construct_point(c->vertex(3)->point()), get_offset(c,3)) );
   }
 
   Periodic_segment periodic_segment(const Cell_handle c, Offset offset, int i, int j) const
@@ -782,10 +810,6 @@ public:
     return result;
   }
 
-  Point point(const Periodic_point& pp) const
-  {
-    return construct_point(pp.first, pp.second);
-  }
   Segment segment(const Periodic_segment& ps) const
   {
     return construct_segment(ps[0].first,ps[1].first,ps[0].second,ps[1].second);
@@ -1594,9 +1618,14 @@ protected:
       (std::ostream& os, const Periodic_3_triangulation_3<GT,TDS>& tr);
   //@}
 
+public:
+  Point point(const Periodic_point& pp) const
+  {
+    return construct_point(pp.first, pp.second);
+  }
+
   // unused and undocumented function required to be compatible to
   // Alpha_shape_3
-public:
   Point point(Cell_handle c, int idx) const
   {
     //    if (is_1_cover())
@@ -1643,22 +1672,23 @@ public:
         return point(periodic_point(cells[i],cells[i]->index(canonic_vh[idx])));
     }
     CGAL_assertion(false);
-  return Point();
+    return Point();
   }
 
 protected:
   template <class ConstructCircumcenter>
-  Periodic_point periodic_circumcenter(Cell_handle c,
-                                       ConstructCircumcenter construct_circumcenter) const
+  Periodic_point_3 periodic_circumcenter(Cell_handle c,
+                                         ConstructCircumcenter construct_circumcenter) const
   {
     CGAL_triangulation_precondition(c != Cell_handle());
 
-    Point p = construct_circumcenter(c->vertex(0)->point(), c->vertex(1)->point(),
-                                     c->vertex(2)->point(), c->vertex(3)->point(),
-                                     get_offset(c, 0), get_offset(c, 1),
-                                     get_offset(c, 2), get_offset(c, 3));
+    Point_3 p = construct_circumcenter(
+                  construct_point(c->vertex(0)->point(), get_offset(c, 0)),
+                  construct_point(c->vertex(1)->point(), get_offset(c, 1)),
+                  construct_point(c->vertex(2)->point(), get_offset(c, 2)),
+                  construct_point(c->vertex(3)->point(), get_offset(c, 3)));
 
-    return periodic_point(p);
+    return construct_periodic_point(p);
   }
 
 public:
@@ -1708,7 +1738,8 @@ bool is_canonical(const Facet& f) const
 
 protected:
   template <class ConstructCircumcenter>
-  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps, ConstructCircumcenter construct_circumcenter) const
+  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps,
+                              ConstructCircumcenter construct_circumcenter) const
   {
     CGAL_triangulation_precondition(c != Cell_handle());
     Offset off = neighbor_offset(c,i,c->neighbor(i));
@@ -1718,9 +1749,9 @@ protected:
     Offset o2 = combine_offsets(-p2.second,-off);
     Offset cumm_off((std::min)(o1.x(),o2.x()),
                     (std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
-    const std::pair<Point,Offset> pp1 = std::make_pair(point(p1), o1-cumm_off);
-    const std::pair<Point,Offset> pp2 = std::make_pair(point(p2), o2-cumm_off);
-    ps = CGAL::make_array(pp1,pp2);
+    const Periodic_point_3 pp1 = std::make_pair(construct_point(p1), o1-cumm_off);
+    const Periodic_point_3 pp2 = std::make_pair(construct_point(p2), o2-cumm_off);
+    ps = CGAL::make_array(pp1, pp2);
     return (cumm_off == Offset(0,0,0));
   }
 
@@ -1949,28 +1980,6 @@ make_canonical(Vertex_triple& t) const
     t.third = t.second;
     t.second = tmp;
   }
-}
-
-template < class GT, class TDS >
-inline typename Periodic_3_triangulation_3<GT,TDS>::Periodic_triangle
-Periodic_3_triangulation_3<GT,TDS>::
-periodic_triangle(const Cell_handle c, int i) const
-{
-  CGAL_triangulation_precondition( number_of_vertices() != 0 );
-  CGAL_triangulation_precondition( i >= 0 && i <= 3 );
-  if ( (i&1)==0 )
-    return CGAL::make_array(std::make_pair(c->vertex( (i+2)&3 )->point(),
-                                           get_offset(c,(i+2)&3)),
-                            std::make_pair(c->vertex( (i+1)&3 )->point(),
-                                           get_offset(c,(i+1)&3)),
-                            std::make_pair(c->vertex( (i+3)&3 )->point(),
-                                           get_offset(c,(i+3)&3)) );
-  return CGAL::make_array(std::make_pair(c->vertex( (i+1)&3 )->point(),
-                                         get_offset(c,(i+1)&3)),
-                          std::make_pair(c->vertex( (i+2)&3 )->point(),
-                                         get_offset(c,(i+2)&3)),
-                          std::make_pair(c->vertex( (i+3)&3 )->point(),
-                                         get_offset(c,(i+3)&3)) );
 }
 
 /** Assumes a point, an offset, and a cell to start from.

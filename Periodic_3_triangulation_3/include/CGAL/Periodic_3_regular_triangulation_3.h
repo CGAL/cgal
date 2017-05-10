@@ -63,14 +63,12 @@ template < class Gt,
              >
          >
 class Periodic_3_regular_triangulation_3
-  : public Periodic_3_triangulation_3<Weighted_point_mapper_3<Gt>, Tds>
+  : public Periodic_3_triangulation_3<Gt, Tds>
 {
   typedef Periodic_3_regular_triangulation_3<Gt, Tds>             Self;
-  typedef Weighted_point_mapper_3<Gt>                             Tr_Base_Gt;
 
 public:
-  typedef Periodic_3_triangulation_3<Gt, Tds>                     Base;
-  typedef Periodic_3_triangulation_3<Tr_Base_Gt, Tds>             Tr_Base;
+  typedef Periodic_3_triangulation_3<Gt, Tds>   Tr_Base;
 
   typedef Gt                                    Geometric_traits;
   typedef Geometric_traits                      Geom_traits;
@@ -118,14 +116,14 @@ public:
     boost::mpl::identity<typename Gt::Point_3>
   >::type                                          Bare_point;
 
+  typedef std::pair<Bare_point, Offset>            Periodic_bare_point;
+  typedef std::pair<Weighted_point, Offset>        Periodic_weighted_point;
+
   typedef typename Gt::Segment_3                   Segment;
   typedef typename Gt::Triangle_3                  Triangle;
   typedef typename Gt::Tetrahedron_3               Tetrahedron;
 
   typedef typename Gt::Object_3                    Object;
-
-  typedef typename Base::Periodic_point            Periodic_point;
-  typedef typename Tr_Base::Periodic_point         Periodic_weighted_point;
 
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_true                                 Weighted_tag;
@@ -172,6 +170,7 @@ public:
   using Tr_Base::is_valid_conflict;
   using Tr_Base::locate;
   using Tr_Base::find_conflicts;
+  using Tr_Base::periodic_point;
   using Tr_Base::segment;
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Tr_Base::inexact_locate;
@@ -225,7 +224,7 @@ public:
   /** @name Creation */ //@{
   Periodic_3_regular_triangulation_3 (const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
                                       const Geometric_traits& gt = Geometric_traits())
-    : Tr_Base(domain, Tr_Base_Gt(gt))
+    : Tr_Base(domain, gt)
   { }
 
   // copy constructor duplicates vertices and cells
@@ -246,7 +245,7 @@ public:
                                      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
                                      const Geometric_traits& gt = Geometric_traits(),
                                      bool is_large_point_set = false)
-    : Tr_Base(domain, Tr_Base_Gt(gt))
+    : Tr_Base(domain, gt)
   {
     insert(first, last, is_large_point_set);
   }
@@ -352,10 +351,10 @@ public:
   CGAL::Comparison_result compare_orthsphere_radius_to_threshold (Cell_handle cell,
                                                                   const FT threshold) const
   {
-    Periodic_weighted_point p0 = Tr_Base::periodic_point(cell, 0);
-    Periodic_weighted_point p1 = Tr_Base::periodic_point(cell, 1);
-    Periodic_weighted_point p2 = Tr_Base::periodic_point(cell, 2);
-    Periodic_weighted_point p3 = Tr_Base::periodic_point(cell, 3);
+    Periodic_weighted_point p0 = periodic_point(cell, 0);
+    Periodic_weighted_point p1 = periodic_point(cell, 1);
+    Periodic_weighted_point p2 = periodic_point(cell, 2);
+    Periodic_weighted_point p3 = periodic_point(cell, 3);
 
     return compare_orthsphere_radius_to_threshold(p0, p1, p2, p3, threshold);
   }
@@ -640,7 +639,10 @@ protected:
                            const Offset &o_r, const Offset &o_s,
                            const Offset &o_t) const
   {
-    return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s, t, o_p, o_q, o_r, o_s, o_t);
+    return geom_traits().power_side_of_oriented_power_sphere_3_object()(
+             construct_weighted_point(p, o_p), construct_weighted_point(q, o_q),
+             construct_weighted_point(r, o_r), construct_weighted_point(s, o_s),
+             construct_weighted_point(t, o_t));
   }
 
   Weighted_point construct_weighted_point(const Weighted_point& p, const Offset &o) const
@@ -833,7 +835,7 @@ private:
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 
 public:
-  Periodic_weighted_point periodic_weighted_circumcenter(Cell_handle c) const {
+  Periodic_bare_point periodic_weighted_circumcenter(Cell_handle c) const {
     return Tr_Base::periodic_circumcenter(c,
       geom_traits().construct_weighted_circumcenter_3_object());
   }
@@ -1048,12 +1050,12 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
 
   // We are now in a degenerate case => we do a symbolic perturbation.
   // We sort the points lexicographically.
-  Periodic_point pts[5] = {std::make_pair(p0,o0), std::make_pair(p1,o1),
-                           std::make_pair(p2,o2), std::make_pair(p3,o3),
-                           std::make_pair(q,oq)};
-  const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
+  Periodic_weighted_point pts[5] = {std::make_pair(p0,o0), std::make_pair(p1,o1),
+                                    std::make_pair(p2,o2), std::make_pair(p3,o3),
+                                    std::make_pair(q,oq)};
+  const Periodic_weighted_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
 
-  std::sort(points, points+5, typename Base::template
+  std::sort(points, points+5, typename Tr_Base::template
     Perturbation_order< typename Gt::Compare_xyz_3 >(
       geom_traits().compare_xyz_3_object()));
 
@@ -1129,16 +1131,16 @@ is_valid(Cell_handle ch, bool verbose, int level) const
   }
 
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++ vit) {
-    const Periodic_weighted_point& pwp = Tr_Base::periodic_point(vit);
+    const Periodic_weighted_point& pwp = periodic_point(vit);
     for (int i=-1; i<=1; i++) {
       for (int j=-1; j<=1; j++) {
         for (int k=-1; k<=1; k++) {
           const Periodic_weighted_point& ofpwp = std::make_pair(pwp.first,
                                                                 pwp.second + Offset(i,j,k));
-          if (Tr_Base::periodic_point(ch,0) == ofpwp
-              || Tr_Base::periodic_point(ch,1) == ofpwp
-              || Tr_Base::periodic_point(ch,2) == ofpwp
-              || Tr_Base::periodic_point(ch,3) == ofpwp)
+          if (periodic_point(ch,0) == ofpwp
+              || periodic_point(ch,1) == ofpwp
+              || periodic_point(ch,2) == ofpwp
+              || periodic_point(ch,3) == ofpwp)
             continue;
           if (_side_of_power_sphere(ch, ofpwp.first, ofpwp.second, true)
               != ON_UNBOUNDED_SIDE) {
@@ -1146,7 +1148,7 @@ is_valid(Cell_handle ch, bool verbose, int level) const
             if (verbose) {
               std::cerr << "Regular invalid cell" << std::endl;
               for (int i=0; i<4; i++) {
-                Periodic_weighted_point pp = Tr_Base::periodic_point(ch, i);
+                Periodic_weighted_point pp = periodic_point(ch, i);
                 std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
               }
               std::cerr << std::endl;
