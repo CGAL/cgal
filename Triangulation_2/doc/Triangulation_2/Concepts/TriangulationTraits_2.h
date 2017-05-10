@@ -55,6 +55,8 @@ which simply returns p.
 
 \note This peculiar requirement is necessary because `CGAL::Triangulation_2`
 internally manipulates points with a `Point` type that is not always `Point_2`.
+*/
+/*
 For example, `CGAL::Regular_triangulation_2` inherits `CGAL::Triangulation_2`
 with `Point` being a two-dimensional weighted point. Since some predicates and
 constructors (such as `Orientation_2`) can only use `Point_2` objects in arguments,
