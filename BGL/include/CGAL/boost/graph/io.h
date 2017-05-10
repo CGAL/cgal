@@ -75,7 +75,7 @@ bool write_off(std::ostream& os,
 
   */ 
 template <typename FaceGraph>
-void write_off(std::string& fname,
+void write_off(const char* fname,
                const FaceGraph& g)
 {
   std::ofstream out(fname);
@@ -185,7 +185,7 @@ bool read_off(std::istream& is,
 
   */ 
 template <typename FaceGraph>
-bool read_off(std::string& fname,
+bool read_off(const char* fname,
               FaceGraph& g)
 {
   std::ifstream in(fname);
