@@ -59,7 +59,7 @@ public:
   }
 
 private:
-  Iso_cuboid_3 _dom;
+  const Iso_cuboid_3& _dom;
 };
 
 } // namespace CGAL
