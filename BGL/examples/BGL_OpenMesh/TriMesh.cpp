@@ -31,13 +31,7 @@ int main(int argc, char** argv )
   Mesh mesh;
 
   std::vector<vertex_descriptor> V;
-  V.push_back(add_vertex(mesh));
-  V.push_back(add_vertex(mesh));
-  V.push_back(add_vertex(mesh));
-  add_face(V.begin(), V.end(), mesh);
-
   CGAL::read_off(std::ifstream((argc>1)?argv[1]:"in.off"), mesh);
-  
   BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
     BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_target(vd,mesh)){
       if(! CGAL::is_border(edge(hd,mesh),mesh)){
