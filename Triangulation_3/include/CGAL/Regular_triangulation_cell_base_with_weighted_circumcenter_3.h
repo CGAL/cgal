@@ -29,7 +29,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
