@@ -358,6 +358,10 @@ std::size_t remove_null_edges(
       null_edges_to_remove.insert(ed);
   }
 
+  #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+  std::cout << "Found " << null_edges_to_remove.size() << " null edges.\n";
+  #endif
+
   while (!null_edges_to_remove.empty())
   {
     edge_descriptor ed = *null_edges_to_remove.begin();
@@ -433,7 +437,7 @@ std::size_t remove_null_edges(
             border.push_back( hd );
           }
         }
-
+      CGAL_assertion( !border.empty() ); // a whole connected component got selected and will disappear (not handled for now)
       // define cc of border halfedges: two halfedges are in the same cc
       // if they are on the border of the cc of non-marked faces.
       typedef CGAL::Union_find<halfedge_descriptor> UF_ds;
@@ -630,7 +634,7 @@ std::size_t remove_null_edges(
 /// @param np optional \ref namedparameters described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`. 
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
 /// If this parameter is omitted, an internal property map for
 /// `CGAL::vertex_point_t` should be available in `TriangleMesh`
 /// \cgalParamEnd
@@ -672,6 +676,17 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 // First remove edges of length 0
   std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
 
+  #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+  {
+  std::cout <<"Done with null edges.\n";
+  std::ofstream output("/tmp/no_null_edges.off");
+  output << std::setprecision(17) << tmesh << "\n";
+  output.close();
+  }
+  #endif
+
+  CGAL_assertion(is_valid_polygon_mesh(tmesh));
+
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   BOOST_FOREACH(face_descriptor fd, faces(tmesh))
@@ -681,6 +696,12 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
   while (!degenerate_face_set.empty())
   {
+    #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+    std::cout << "Loop on removing deg faces\n";
+    #endif
+
+    CGAL_assertion(is_valid_polygon_mesh(tmesh));
+
     face_descriptor fd = *degenerate_face_set.begin();
 
     // look whether an incident triangle is also degenerated
@@ -699,6 +720,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
     if (!detect_cc_of_degenerate_triangles)
     {
+      #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+      std::cout << "  no degenerate neighbors, using a flip.\n";
+      #endif
       degenerate_face_set.erase(degenerate_face_set.begin());
     // flip the longest edge of the triangle
       const typename Traits::Point_3& p1 = get(vpmap, target( halfedge(fd, tmesh), tmesh) );
@@ -739,6 +763,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
     // Process a connected component of degenerate faces
       // get all the faces from the connected component
       // and the boundary edges
+      /// \todo the code below is only working if the set of degenerate faces is a topological disk!
+
       std::set<face_descriptor> cc_faces;
       std::vector<face_descriptor> queue;
       std::vector<halfedge_descriptor> boundary_hedges;
@@ -767,7 +793,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         }
       }
 
-      #if 0
+      #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+      std::cout << "  Deal with a cc of " << cc_faces.size() << " degenerate faces.\n";
       /// dump cc_faces
       {
       int id=0;
@@ -873,6 +900,12 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       // reverse the order of the second side so as to follow
       // the same order than side one
       std::reverse(side_two.begin(), side_two.end());
+
+      #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+      std::cout << "  side_one.size() " << side_one.size() << "\n";
+      std::cout << "  side_two.size() " << side_two.size() << "\n";
+      #endif
+
       BOOST_FOREACH(halfedge_descriptor& h, side_two)
         h=opposite(h, tmesh);
 
