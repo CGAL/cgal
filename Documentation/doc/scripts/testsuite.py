@@ -192,7 +192,8 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         if not diff:
           diff='none'
         else:
-          diff='<a href="{log_path}/diff.txt">Diff</a>'.format(log_path=version_string)
+          diff='<a href="{log_path}/diff.txt">Diff between {test_version} and {master version}.</a>'.format(
+          log_path=version_string, test_version=args.doxygen_version, master_version=args.master_describe)
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
         new_row='<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td><td>{diffs}</td></tr>'.format(

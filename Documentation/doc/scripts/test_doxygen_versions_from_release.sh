@@ -67,7 +67,7 @@ make -j7 doc  &> /dev/null
 cd ..
 #get VERSION's content
 cd $ROOT
-CGAL_NAME="$(cat $PWD/VERSION) with Doxygen $DOXYGEN_1"
+CGAL_NAME="$(cat $PWD/VERSION)"
 
 #update overview
 cd $ROOT/doc/scripts

@@ -69,7 +69,7 @@ cd ..
 cd $ROOT
 mkdir -p ./build && cd ./build
 cmake ..
-CGAL_NAME="$(cat $PWD/VERSION) with Doxygen $DOXYGEN_1"
+CGAL_NAME="$(cat $PWD/VERSION)"
 
 #update overview
 cd $ROOT/Documentation/doc/scripts
