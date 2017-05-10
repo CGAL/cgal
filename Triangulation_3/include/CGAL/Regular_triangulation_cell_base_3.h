@@ -45,10 +45,9 @@ public:
   typedef typename Cb::Vertex_handle                   Vertex_handle;
   typedef typename Cb::Cell_handle                     Cell_handle;
 
-
   typedef GT                                           Geom_traits;
-  typedef typename Geom_traits::Point_3                Bare_point;
-  typedef typename Geom_traits::Weighted_point_3       Weighted_point;
+  typedef typename Geom_traits::Point_3                Point_3;
+  typedef typename Geom_traits::Weighted_point_3       Point;
 
   typedef C                                            Point_container;
   typedef typename Point_container::iterator           Point_iterator;
@@ -96,7 +95,7 @@ public:
   { return _hidden.end(); }
 
   template<typename Tag = Memory_policy>
-  void hide_point(const Weighted_point& p, typename boost::enable_if_c<Tag::value>::type* = NULL)
+  void hide_point(const Point& p, typename boost::enable_if_c<Tag::value>::type* = NULL)
   { _hidden.push_back(p); }
 
   // Memory_policy is Tag_false ------------------------------------------------
@@ -116,14 +115,13 @@ public:
   { return _hidden.end(); }
 
   template<typename Tag = Memory_policy>
-  void hide_point(const Weighted_point&, typename boost::disable_if_c<Tag::value>::type* = NULL)
+  void hide_point(const Point&, typename boost::disable_if_c<Tag::value>::type* = NULL)
   { }
 
   //note this function is not requested by the RegularTriangulationCellBase_3
   //it should be replaced everywhere by weighted_circumcenter()
   // but remains here for backward compatibility
-  Bare_point
-  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  Point_3 circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()
         (this->vertex(0)->point(),
@@ -132,8 +130,7 @@ public:
          this->vertex(3)->point());
   }
 
-  Bare_point
-  weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
+  Point_3 weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()
         (this->vertex(0)->point(),
