@@ -160,6 +160,14 @@ and <code>src/</code> directories).
       requirement, Construct_point_3, to the concepts TriangulationTraits_3 and
       RegularTriangulationTraits_3. Note that all models of the concept Kernel
       already provide these functors.
+    </li>
+    <li><b>Breaking change</b>:
+       The concept RegularTriangulationCellBase_3 must now define a 'Point' type
+       instead of a 'Weighted_point' type. This is only a name change to
+       align RegularTriangulationCellBase_3 with other similar concepts and this
+       type must still be the same as the point type `Weighted_point_3` defined
+       by the geometric traits class of the triangulation.
+    </li>
   </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
