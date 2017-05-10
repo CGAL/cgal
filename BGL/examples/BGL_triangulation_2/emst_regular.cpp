@@ -1,12 +1,17 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Kernel/global_functions_2.h>
+
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/boost/graph/graph_traits_Regular_triangulation_2.h>
 
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/property_map/function_property_map.hpp>
+
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef K::FT                                               FT;
 typedef K::Weighted_point_2                                 Weighted_point;
 
 typedef CGAL::Regular_triangulation_2<K> Triangulation;
@@ -19,17 +24,31 @@ struct Is_finite {
 
   const T* t_;
 
-  Is_finite()
-    : t_(NULL)
-  {}
-
-  Is_finite(const T& t)
-    : t_(&t)
-  { }
+  Is_finite() : t_(NULL) { }
+  Is_finite(const T& t) : t_(&t) { }
 
   template <typename VertexOrEdge>
   bool operator()(const VertexOrEdge& voe) const {
     return ! t_->is_infinite(voe);
+  }
+};
+
+template <typename T>
+struct Compute_edge_weight
+{
+  const T& t_;
+
+  Compute_edge_weight(const T& t) : t_(t) { }
+
+  typedef typename boost::graph_traits<T>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<T>::edge_descriptor edge_descriptor;
+
+  FT operator()(const edge_descriptor ed) const {
+    vertex_descriptor svd = source(ed, t_);
+    vertex_descriptor tvd = target(ed, t_);
+    typename T::Vertex_handle sv = svd;
+    typename T::Vertex_handle tv = tvd;
+    return CGAL::power_product(sv->point(), tv->point());
   }
 };
 
@@ -73,21 +92,21 @@ main(int argc,char* argv[])
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor  vd = *vit;
     vertex_id_map[vd]= index++;
-    }
+  }
 
-
-  // We use the default edge weight which is the squared length of the edge
-  // This property map is defined in graph_traits_Triangulation_2.h
+  // We use a custom edge length property map that computes the power distance
+  // between the extremities of an edge of the regular triangulation
+  typedef Compute_edge_weight<Triangulation> Edge_weight_functor;
 
   // In the function call you can see a named parameter: vertex_index_map
    std::list<edge_descriptor> mst;
-   boost::kruskal_minimum_spanning_tree(ft,
-					std::back_inserter(mst),
-					vertex_index_map(vertex_index_pmap));
-
+   boost::kruskal_minimum_spanning_tree(
+            ft, std::back_inserter(mst),
+            vertex_index_map(vertex_index_pmap).
+            weight_map(boost::make_function_property_map<
+              edge_descriptor, FT, Edge_weight_functor>(Edge_weight_functor(t))));
 
    std::cout << "The edges of the Euclidean mimimum spanning tree:" << std::endl;
-
    for(std::list<edge_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it){
      edge_descriptor ed = *it;
      vertex_descriptor svd = source(ed,t);
