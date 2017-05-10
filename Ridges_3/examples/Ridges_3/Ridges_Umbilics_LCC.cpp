@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include "PolyhedralSurf_rings.h"
 #include "compute_normals.h"
@@ -21,7 +21,8 @@ typedef Kernel::FT                      FT;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, MyTraits>::type LCC;
 
 typedef LCC PolyhedralSurf;
 

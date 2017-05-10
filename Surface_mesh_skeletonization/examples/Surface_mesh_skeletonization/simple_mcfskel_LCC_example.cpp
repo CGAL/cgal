@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
-#include <CGAL/boost/graph/properties_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <fstream>
@@ -10,7 +10,8 @@
 typedef CGAL::Simple_cartesian<double>                        Kernel;
 typedef Kernel::Point_3                                       Point;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel>           MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, MyTraits>::type LCC;
 
 typedef boost::graph_traits<LCC>::vertex_descriptor    vertex_descriptor;
 
@@ -47,7 +48,7 @@ struct Display_polylines{
 };
 
 // This example extracts a medially centered skeleton from a given mesh.
-int main(int argc, char* argv[])
+int main()
 {
   LCC lcc;
   CGAL::load_off_for_bgl(lcc, "data/elephant.off");

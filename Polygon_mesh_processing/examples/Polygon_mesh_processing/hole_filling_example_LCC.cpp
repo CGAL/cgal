@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
@@ -12,7 +12,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, MyTraits>::type LCC;
 
 typedef boost::graph_traits<LCC>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<LCC>::face_descriptor     face_descriptor;

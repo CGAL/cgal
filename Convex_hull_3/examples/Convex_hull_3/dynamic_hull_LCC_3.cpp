@@ -3,8 +3,8 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_3_to_face_graph.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
-#include <CGAL/boost/graph/properties_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
@@ -12,7 +12,8 @@ typedef K::Point_3                                              Point_3;
 typedef CGAL::Delaunay_triangulation_3<K>                       Delaunay;
 typedef Delaunay::Vertex_handle                                 Vertex_handle;
 typedef CGAL::Linear_cell_complex_traits<3, K>                  MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+          <2, 3, MyTraits>::type LCC;
 
 int main()
 {

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 // Stop-condition policy
@@ -10,7 +10,8 @@
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, MyTraits>::type LCC;
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv )

@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/mesh_segmentation.h>
 
 #include <CGAL/property_map.h>
@@ -11,8 +11,9 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
-typedef typename LCC::Attribute_const_handle<2>::type Facet_const_handle;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, MyTraits>::type LCC;
+typedef LCC::Attribute_const_handle<2>::type Facet_const_handle;
 
 int main()
 {
@@ -40,9 +41,8 @@ int main()
 
     std::cout << "Number of segments: " << number_of_segments << std::endl;
     // print segment-ids
-    for(typename LCC::Attribute_range<2>::type::const_iterator
-          facet_it=mesh.template attributes<2>().begin();
-        facet_it!=mesh.template attributes<2>().end(); ++facet_it)
+    for(LCC::Attribute_range<2>::type::const_iterator facet_it=mesh.attributes<2>().begin();
+        facet_it!=mesh.attributes<2>().end(); ++facet_it)
     {
       // ids are between [0, number_of_segments -1]
       std::cout << segment_property_map[facet_it] << " ";
