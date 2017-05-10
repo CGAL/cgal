@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Iterator_range.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <boost/foreach.hpp>
 
 #include <iostream>
@@ -11,7 +11,8 @@
 
 typedef CGAL::Simple_cartesian<double>              Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> LCC_traits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, LCC_traits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, LCC_traits>::type LCC;
 
 typedef boost::graph_traits<LCC>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<LCC>::vertex_iterator   vertex_iterator;

@@ -214,8 +214,8 @@ namespace CGAL {
   /** Definition of nD dart for combinatorial map. Add functions beta and attributes which
    * are now deprecated.
    */
-  template <unsigned int d, typename Refs>
-  struct CGAL_DEPRECATED Dart : public Dart_without_info<d, Refs>
+  template <unsigned int d, typename Refs, class WithID=Tag_false>
+  struct CGAL_DEPRECATED Dart : public Dart_without_info<d, Refs, WithID>
   {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
@@ -229,7 +229,7 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
-    typedef Dart_without_info<d, Refs> Base;
+    typedef Dart_without_info<d, Refs, WithID> Base;
 
     using Base::dimension;
     using Base::mf;

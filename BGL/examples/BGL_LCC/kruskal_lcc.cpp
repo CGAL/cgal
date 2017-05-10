@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include <iostream>
 #include <list>
@@ -10,7 +10,8 @@ typedef CGAL::Simple_cartesian<double>              Kernel;
 typedef Kernel::Point_3                             Point;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> LCC_traits;
 
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, LCC_traits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, LCC_traits>::type LCC;
 
 typedef boost::graph_traits<LCC>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<LCC>::vertex_iterator   vertex_iterator;
@@ -21,7 +22,7 @@ typedef boost::graph_traits<LCC>::edge_descriptor   edge_descriptor;
 void kruskal(const LCC& lcc)
 {
   // We use the default edge weight which is the length of the edge
-  // This property map is defined in graph_traits_Linear_cell_complex.h
+  // This property map is defined in graph_traits_Linear_cell_complex_for_combinatorial_map.h
   
   // This function call requires a vertex_index_map named parameter which
   // when  ommitted defaults to "get(vertex_index,graph)".

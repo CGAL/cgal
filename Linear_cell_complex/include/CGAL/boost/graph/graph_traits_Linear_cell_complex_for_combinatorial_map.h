@@ -27,10 +27,11 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/properties_Linear_cell_complex.h>
+#include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
 
-#include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_incremental_builder_for_bgl.h>
 #include <CGAL/Dart_iterators.h>
 
@@ -52,7 +53,7 @@
                                         class CMap,                   \
                                         class Storage_,
 
-#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_for_bgl_combinatorial_map \
+#define CGAL_LCC_TYPE CGAL::Linear_cell_complex_for_combinatorial_map \
                 <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
 
 namespace CGAL {

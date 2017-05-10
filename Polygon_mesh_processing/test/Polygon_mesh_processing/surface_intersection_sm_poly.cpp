@@ -4,7 +4,8 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/iterator.h>
 
 #include <CGAL/Polygon_mesh_processing/intersection.h>
@@ -21,18 +22,8 @@ typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-struct Myitem
-{
-  template<class Refs>
-  struct Dart_wrapper
-  {
-    typedef CGAL::Tag_true Darts_with_id;
-    typedef CGAL::Cell_attribute_with_point_and_id< Refs > Vertex_attribute;
-    typedef CGAL::Cell_attribute_with_id< Refs > Face_attribute;
-    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
-  };
-};
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3, MyTraits, Myitem> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+         <2, 3, MyTraits>::type LCC;
 
 template <class TriangleMesh>
 void run(const char* filename1, const char* filename2, const char* msg)

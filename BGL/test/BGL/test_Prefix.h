@@ -15,9 +15,9 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-#include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
-#include <CGAL/boost/graph/properties_Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 
 #ifdef CGAL_USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
@@ -38,7 +38,8 @@ typedef Kernel::Triangle_3 Triangle_3;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+          <2, 3, MyTraits>::type LCC;
 
 
 #ifdef CGAL_USE_SURFACE_MESH

@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
-#include <CGAL/boost/graph/properties_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 
 #include <boost/graph/graph_concepts.hpp>
 #include <CGAL/boost/graph/graph_concepts.h>
@@ -8,7 +8,8 @@
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, MyTraits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+            <2, 3, MyTraits>::type LCC;
 
 typedef boost::graph_traits< LCC > Traits;
 typedef Traits::edge_descriptor edge_descriptor;

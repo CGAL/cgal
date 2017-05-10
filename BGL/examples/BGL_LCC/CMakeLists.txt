@@ -40,17 +40,8 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "distance_lcc.cpp" )
-
-create_single_source_cgal_program( "incident_vertices_lcc.cpp" )
-
-create_single_source_cgal_program( "kruskal_lcc.cpp" )
-
-create_single_source_cgal_program( "normals_lcc.cpp" )
-
-create_single_source_cgal_program( "range_lcc.cpp" )
-
-create_single_source_cgal_program( "transform_iterator_lcc.cpp" )
-
-create_single_source_cgal_program( "copy_lcc.cpp" )
-
+# create a target per cppfile
+file(GLOB_RECURSE cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+foreach(cppfile ${cppfiles})
+  create_single_source_cgal_program("${cppfile}")
+endforeach()

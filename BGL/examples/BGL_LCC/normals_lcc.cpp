@@ -6,14 +6,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 typedef CGAL::Cartesian<double> Kernel;
 typedef Kernel::Point_3         Point;
 typedef Kernel::Vector_3        Vector;
 
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> LCC_traits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map<2, 3, LCC_traits> LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
+          <2, 3, LCC_traits>::type LCC;
 
 template<typename HalfedgeGraph, 
          typename PointMap, 

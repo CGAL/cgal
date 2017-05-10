@@ -21,6 +21,7 @@
 #define CGAL_LINEAR_CELL_COMPLEX_BGL_MIN_ITEMS_H 1
 
 #include <CGAL/Cell_attribute_with_point_and_id.h>
+#include <CGAL/Cell_attribute_with_id.h>
 
 namespace CGAL {
 
