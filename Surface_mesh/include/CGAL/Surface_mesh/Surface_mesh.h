@@ -42,7 +42,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Properties.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
@@ -2098,7 +2097,7 @@ private: //------------------------------------------------------- private data
       {
        std::cout<< "Warning: Facets don't seem to be oriented. Loading a Soup of polygons instead."<<std::endl;
        sm.clear();
-       return is.good();
+       return false;
       }
 
       // the first face will tell us if faces have a color map
