@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
@@ -27,20 +23,19 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 namespace CGAL
 {
 template < typename K, typename Construct_point_3_base>
-class Periodic_3_construct_point_3 : public Construct_point_3_base
+class Periodic_3_construct_point_3
+  : public Construct_point_3_base
 {
-  typedef K Kernel;
+  typedef K                                  Kernel;
 
 public:
-  typedef typename Kernel::Point_3       Point;
-  typedef typename Kernel::Offset        Offset;
-  typedef typename Kernel::Iso_cuboid_3  Iso_cuboid_3;
-
-  typedef Point       result_type;
+  typedef typename Kernel::Point_3           Point;
+  typedef typename Kernel::Weighted_point_3  Weighted_point;
+  typedef typename Kernel::Offset            Offset;
+  typedef typename Kernel::Iso_cuboid_3      Iso_cuboid_3;
 
   Periodic_3_construct_point_3(const Iso_cuboid_3 & dom) : _dom(dom) { }
 
@@ -48,17 +43,20 @@ public:
 
   Point operator() ( const Point& p, const Offset& o ) const {
     return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-  p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
-  p.z()+(_dom.zmax()-_dom.zmin())*o.z());
+                 p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
+                 p.z()+(_dom.zmax()-_dom.zmin())*o.z());
   }
 
-  const typename K::Point_3&
-  operator()(const typename K::Weighted_point_3 & p) const
-  { return p.rep().point(); }
+  Point operator() ( const Weighted_point& p, const Offset& o ) const {
+    return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
+                 p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
+                 p.z()+(_dom.zmax()-_dom.zmin())*o.z());
+  }
 
 private:
-  Iso_cuboid_3 _dom;
+  const Iso_cuboid_3& _dom;
 };
-}
 
-#endif
+} // namespace CGAL
+
+#endif // CGAL_PERIODIC_3_CONSTRUCT_POINT_3_H
