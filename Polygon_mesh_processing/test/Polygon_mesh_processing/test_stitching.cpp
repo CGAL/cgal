@@ -78,8 +78,8 @@ int main()
   test_surface_mesh("data_stitching/mid_border.off");
   test_surface_mesh("data_stitching/multiple_incidence.off");
   test_surface_mesh("data_stitching/incidence_3.off");
-  test_polyhedron<Epic>("data_stitching/incoherent_patch_orientation.off");
-  test_polyhedron<Epic>("data_stitching/non_stitchable.off");
+  test_surface_mesh("data_stitching/incoherent_patch_orientation.off");
+  test_surface_mesh("data_stitching/non_stitchable.off");
 
   return 0;
 }
