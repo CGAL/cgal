@@ -1801,6 +1801,10 @@ is_sizing_field_correct(const Vertex_handle& v1,
   FT s3 = get_radius(v3);
   FT D = CGAL::abs(domain_.geodesic_distance(v1->point(), v3->point(), curve_index));
   FT d = CGAL::abs(domain_.geodesic_distance(v1->point(), v2->point(), curve_index));
+  if(domain_.is_cycle(v1->point().point(), curve_index)) {
+    D = (std::min)(D, CGAL::abs(domain_.geodesic_distance(v3->point(), v1->point(), curve_index)));
+    d = (std::min)(d, CGAL::abs(domain_.geodesic_distance(v2->point(), v1->point(), curve_index)));
+  }
   
   return ( s2 >= (s1 + d/D*(s3-s1)) );
 }
