@@ -97,12 +97,12 @@ class GetVertexPointMap
     DefaultVPMap;
 public:
   typedef typename boost::lookup_named_param_def<
-    boost::vertex_point_t,
+    internal_np::vertex_point_t,
     NamedParameters,
     DefaultVPMap
   > ::type  type;
   typedef typename boost::lookup_named_param_def<
-    boost::vertex_point_t,
+    internal_np::vertex_point_t,
     NamedParameters,
     DefaultVPMap_const
   > ::type  const_type;
@@ -118,7 +118,7 @@ public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 };
 
-template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, all_default_t> >
+template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, internal_np::all_default_t> >
 class GetGeomTraits
 {
   typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
@@ -132,7 +132,7 @@ class GetGeomTraits
 
 public:
   typedef typename boost::lookup_named_param_def <
-    CGAL::geom_traits_t,
+    internal_np::geom_traits_t,
     NamedParameters,
     DefaultKernel
   > ::type  type;
@@ -161,12 +161,12 @@ class GetFaceIndexMap
   typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::const_type DefaultMap_const;
 public:
   typedef typename boost::lookup_named_param_def <
-    boost::face_index_t,
+    internal_np::face_index_t,
     NamedParameters,
     DefaultMap
   > ::type  type;
   typedef typename boost::lookup_named_param_def <
-    boost::face_index_t,
+    internal_np::face_index_t,
     NamedParameters,
     DefaultMap_const
   > ::type  const_type;
@@ -180,7 +180,7 @@ class GetVertexIndexMap
   typedef typename property_map_selector<PolygonMesh, boost::vertex_index_t>::type DefaultMap;
 public:
   typedef typename boost::lookup_named_param_def <
-    boost::vertex_index_t,
+    internal_np::vertex_index_t,
     NamedParameters,
     DefaultMap
   > ::type  type;
@@ -203,7 +203,7 @@ class GetFaceNormalMap
 public:
   typedef DummyNormalPmap NoMap;
   typedef typename boost::lookup_named_param_def <
-    CGAL::face_normal_t,
+    internal_np::face_normal_t,
     NamedParameters,
     DummyNormalPmap//default
   > ::type  type;
@@ -214,7 +214,7 @@ class GetSolver
 {
 public:
   typedef typename boost::lookup_named_param_def <
-    CGAL::sparse_linear_solver_t,
+    internal_np::sparse_linear_solver_t,
     NamedParameters,
     DefaultSolver
   > ::type type;

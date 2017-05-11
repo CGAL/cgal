@@ -61,13 +61,13 @@ clip_open_impl(      TriangleMesh& tm,
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  Fid_map fid_map = boost::choose_param(get_param(np_tm, face_index),
-                                        get_property_map(face_index, tm));
-  Vid_map vid_map = boost::choose_param(get_param(np_tm, boost::vertex_index),
+  Fid_map fid_map = boost::choose_param(get_param(np_tm, internal_np::face_index),
+                                        get_property_map(boost::face_index, tm));
+  Vid_map vid_map = boost::choose_param(get_param(np_tm, internal_np::vertex_index),
                                         get_property_map(boost::vertex_index, tm));
-  Vpm vpm1 = boost::choose_param(get_param(np_tm, vertex_point),
+  Vpm vpm1 = boost::choose_param(get_param(np_tm, internal_np::vertex_point),
                                  get_property_map(vertex_point, tm));
-  Vpm vpm_c = boost::choose_param(get_param(np_c, vertex_point),
+  Vpm vpm_c = boost::choose_param(get_param(np_c, internal_np::vertex_point),
                                   get_property_map(vertex_point, clipper));
 
   // init indices if needed
@@ -205,7 +205,7 @@ clip(      TriangleMesh& tm,
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);
 
   return internal::clip_open_impl(tm, clipper,
-      get_param(np_tm, edge_is_constrained), np_tm, np_c);
+      get_param(np_tm, internal_np::edge_is_constrained), np_tm, np_c);
 }
 
 /// \todo document me
@@ -224,8 +224,8 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
 
-  Vpm vpm_out = boost::choose_param(get_param(np, vertex_point),
-                                    get_property_map(vertex_point, tm_out));
+  Vpm vpm_out = boost::choose_param(get_param(np, internal_np::vertex_point),
+                                    get_property_map(boost::vertex_point, tm_out));
 
 
   cpp11::array<Point_3,8> corners= {{

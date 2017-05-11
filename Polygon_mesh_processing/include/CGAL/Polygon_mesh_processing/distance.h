@@ -340,28 +340,28 @@ sample_triangle_mesh(const TriangleMesh& tm,
   using boost::get_param;
   using boost::is_default_param;
 
-  Vpm pmap = choose_param(get_param(np, vertex_point),
+  Vpm pmap = choose_param(get_param(np, internal_np::vertex_point),
                           get_const_property_map(vertex_point, tm));
   typedef Creator_uniform_3<typename Geom_traits::FT,
                             typename Geom_traits::Point_3> Creator;
 
-  Geom_traits geomtraits = choose_param(get_param(np, geom_traits), Geom_traits());
+  Geom_traits geomtraits = choose_param(get_param(np, internal_np::geom_traits), Geom_traits());
 
 
-  bool use_rs = choose_param(get_param(np, random_uniform_sampling), true);
-  bool use_gs = choose_param(get_param(np, grid_sampling), false);
-  bool use_ms = choose_param(get_param(np, monte_carlo_sampling), false);
+  bool use_rs = choose_param(get_param(np, internal_np::random_uniform_sampling), true);
+  bool use_gs = choose_param(get_param(np, internal_np::grid_sampling), false);
+  bool use_ms = choose_param(get_param(np, internal_np::monte_carlo_sampling), false);
 
   if (use_gs || use_ms)
-    if (is_default_param(get_param(np, random_uniform_sampling)))
+    if (is_default_param(get_param(np, internal_np::random_uniform_sampling)))
       use_rs=false;
 
-  bool smpl_vrtcs = choose_param(get_param(np, do_sample_vertices), true);
-  bool smpl_dgs = choose_param(get_param(np, do_sample_edges), true);
-  bool smpl_fcs = choose_param(get_param(np, do_sample_faces), true);
+  bool smpl_vrtcs = choose_param(get_param(np, internal_np::do_sample_vertices), true);
+  bool smpl_dgs = choose_param(get_param(np, internal_np::do_sample_edges), true);
+  bool smpl_fcs = choose_param(get_param(np, internal_np::do_sample_faces), true);
 
-  double nb_pts_a_u = choose_param(get_param(np, nb_points_per_area_unit), 0.);
-  double nb_pts_l_u = choose_param(get_param(np, nb_points_per_distance_unit), 0.);
+  double nb_pts_a_u = choose_param(get_param(np, internal_np::nb_points_per_area_unit), 0.);
+  double nb_pts_l_u = choose_param(get_param(np, internal_np::nb_points_per_distance_unit), 0.);
 
   // sample vertices
   if (smpl_vrtcs)
@@ -376,7 +376,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
   // grid sampling
   if (use_gs)
   {
-    double grid_spacing_ = choose_param(get_param(np, grid_spacing), 0.);
+    double grid_spacing_ = choose_param(get_param(np, internal_np::grid_spacing), 0.);
     if (grid_spacing_==0.)
     {
       // set grid spacing to the shortest edge length
@@ -403,9 +403,9 @@ sample_triangle_mesh(const TriangleMesh& tm,
     double min_edge_length = (std::numeric_limits<double>::max)();
 
     std::size_t nb_points_per_face =
-      choose_param(get_param(np, number_of_points_per_face), 0);
+      choose_param(get_param(np, internal_np::number_of_points_per_face), 0);
     std::size_t nb_points_per_edge =
-      choose_param(get_param(np, number_of_points_per_edge), 0);
+      choose_param(get_param(np, internal_np::number_of_points_per_edge), 0);
 
     if ((nb_points_per_face == 0 && nb_pts_a_u ==0.) ||
         (nb_points_per_edge == 0 && nb_pts_l_u ==0.) )
@@ -484,7 +484,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     // sample faces
     if(smpl_fcs)
     {
-      std::size_t nb_points = choose_param(get_param(np, number_of_points_on_faces), 0);
+      std::size_t nb_points = choose_param(get_param(np, internal_np::number_of_points_on_faces), 0);
       Random_points_in_triangle_mesh_3<TriangleMesh, Vpm, Creator> g(tm, pmap);
       if (nb_points == 0)
       {
@@ -500,7 +500,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     if (smpl_dgs)
     {
       std::size_t nb_points =
-        choose_param(get_param(np, number_of_points_on_edges), 0);
+        choose_param(get_param(np, internal_np::number_of_points_on_edges), 0);
       Random_points_on_edge_list_graph_3<TriangleMesh, Vpm, Creator> g(tm, pmap);
       if (nb_points == 0)
       {
@@ -626,7 +626,7 @@ double approximate_Hausdorff_distance( const TriangleMesh& tm1,
                                  NamedParameters1>::type Geom_traits;
 
   return approximate_Hausdorff_distance<Concurrency_tag, Geom_traits>(
-    tm1, tm2, np1, choose_param(get_param(np2, vertex_point),
+    tm1, tm2, np1, choose_param(get_param(np2, internal_np::vertex_point),
                                 get_const_property_map(vertex_point, tm2)));
 }
 
@@ -683,7 +683,7 @@ double max_distance_to_triangle_mesh(const PointRange& points,
                                  NamedParameters>::type Geom_traits;
 
   return approximate_Hausdorff_distance<Concurrency_tag, Geom_traits>
-     (points,tm,choose_param(get_param(np, vertex_point),
+     (points,tm,choose_param(get_param(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, tm)));
 }
 
@@ -730,7 +730,7 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
     typename GT::halfedge_descriptor hd(halfedge(f,tm));
     for(int i=0; i<3; ++i)
     {
-      points[i] = get(choose_param(get_param(np, vertex_point),
+      points[i] = get(choose_param(get_param(np, internal_np::vertex_point),
                                    get_const_property_map(vertex_point, tm)),
                       target(hd, tm));
       hd = next(hd, tm);
