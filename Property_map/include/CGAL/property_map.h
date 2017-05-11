@@ -39,6 +39,31 @@ namespace CGAL {
 
 /// \cond SKIP_DOXYGEN
 
+  template <typename K, typename V>
+class static_property_map
+{
+  typedef K key_type;
+  typedef const V& value_type;
+  typedef const V& reference;
+  typedef boost::read_write_property_map_tag category;
+  V v;
+
+public:
+  static_property_map(V pv)
+    :v(pv){}
+  inline friend
+  value_type
+  get(const static_property_map& pm, const key_type&)
+  {
+    return pm.v;
+  }
+
+  inline friend
+  void
+  put(static_property_map& pm, const key_type&, const value_type&)
+  {}
+};
+
 
 template <typename PM1, typename PM2>
 class OR_property_map {

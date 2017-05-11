@@ -40,6 +40,14 @@ inline get(CGAL::face_patch_id_t<I>, SMesh& smesh)
 }
 
 
+ CGAL::static_property_map<boost::graph_traits<SMesh> ::face_descriptor,std::pair<int,int> >
+   inline get(CGAL::face_patch_id_t<void>, SMesh & smesh)
+ {
+   typedef CGAL::static_property_map<boost::graph_traits<SMesh>::face_descriptor,
+       std::pair<int,int> > Pmap;
+
+   return Pmap(std::make_pair(0,1));
+ }
 
  SMesh::Property_map< boost::graph_traits<SMesh >::face_descriptor,int>
  inline get(CGAL::face_selection_t, SMesh& smesh)
@@ -91,6 +99,15 @@ struct property_map<SMesh, CGAL::face_patch_id_t<I> >
   typedef SMesh::Property_map<face_descriptor, I> type;
 };
 
+template <>
+ struct property_map<SMesh, CGAL::face_patch_id_t<void> >
+ {
+
+   typedef typename boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+
+   typedef CGAL::static_property_map< boost::graph_traits<SMesh>::face_descriptor,std::pair<int,int> > type;
+   typedef type const_type;
+ };
 
 
 template<>

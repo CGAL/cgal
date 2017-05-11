@@ -127,9 +127,10 @@ Property maps can be wrapped with `Graph_with_descriptor_with_graph_property_map
 \cgalModels `MutableFaceGraph` if `Graph` is a model of `MutableFaceGraph`
 */
 
-template<typename Graph>
+template<typename Graph_>
 struct Graph_with_descriptor_with_graph
 {
+  typedef Graph_ Graph;
   Graph* graph;
 
   typedef boost::graph_traits<Graph> gt;
