@@ -28,7 +28,7 @@
 #include <CGAL/Hidden_point_memory_policy.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
-#include <boost/core/enable_if.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <list>
 
