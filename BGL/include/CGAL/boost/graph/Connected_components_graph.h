@@ -39,7 +39,7 @@ namespace CGAL
    *
    * The class `Connected_components_graph` wraps a graph into another graph in such a way that only the specified connected components are seen from the outside.
    *
-   * For example, calling `vertices(graph)` will return an iterator range of all but only the vertices that belong to the selected connected components.
+   * For example, calling `vertices(graph)` will provide the range of vertices belonging to the selected components.
    *
    * \tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
    * \tparam FIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
@@ -120,11 +120,10 @@ struct Connected_components_graph
   /*!
    * \brief Creates a Connected_components_graph of the connected components of `graph` specified in the range
    * defined by `begin` and `end`.
-  * typedef unspecified_type IndexRangeIterator;
-
    * \tparam FaceComponentMap a model of `ReadablePropertyMap` with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
+   * \tparam IndexRangeIterator an iterator of a range of `boost::property_traits<FaceComponentMap>::%value_type`.
 
    * \param graph the graph containing the wanted patches.
    * \param fcmap the property_map that assigns a connected component to each face, with
@@ -225,7 +224,7 @@ struct Connected_components_graph
   ///returns a reference to the graph of the Connected_components_graph.
   Graph& graph(){ return _graph; }
 
-  ///change the selected component's id
+  ///change the selected component
   template<class FaceComponentMap>
   void set_selected_component(FaceComponentMap fcmap,
                               typename boost::property_traits<FaceComponentMap>::value_type pid)
@@ -235,7 +234,7 @@ struct Connected_components_graph
     halfedge_indices.clear();
     base_constructor(fcmap, pid);
   }
-  /// change the selected components ids
+  /// change the selected components
   template<class FaceComponentMap, class IndexRangeIterator>
   void set_selected_components(FaceComponentMap fcmap,
                               IndexRangeIterator begin,
