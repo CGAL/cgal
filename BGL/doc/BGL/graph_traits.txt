@@ -138,7 +138,7 @@ int& id();      // Returns a reference to the index stored in the attribute.
 \endcode
 </ul>
 
-For darts, this can is done by defining `Darts_with_id` as `CGAL::Tag_true` in the `Dart_wrapper` struct of the item class. <br>
+For darts, this can be done by defining `Darts_with_id` as `CGAL::Tag_true` in the `Dart_wrapper` struct of the item class. <br>
 For attributes, it is possible to use `CGAL::Cell_attribute_with_id` and `CGAL::Cell_attribute_with_point_and_id` classes to define your item class using attributes with id.
 
 You can also use the `CGAL::Linear_cell_complex_bgl_min_items` item class, or you can use directly the `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper` class.
