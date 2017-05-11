@@ -138,11 +138,18 @@ struct Graph_with_descriptor_with_graph
   typedef Gwdwg_descriptor<Graph, typename gt::edge_descriptor> edge_descriptor;
   typedef Gwdwg_descriptor<Graph, typename gt::face_descriptor> face_descriptor;
 
+  Graph_with_descriptor_with_graph()
+    : graph(NULL)
+  {}
+
   Graph_with_descriptor_with_graph(Graph& graph)
     : graph(&graph)
   {}
-private:
-  Graph_with_descriptor_with_graph(const Graph_with_descriptor_with_graph&){} // disable copy-constructor to avoid non-wanted copies
+  
+  // private:   
+  // disable copy-constructor to avoid non-wanted copies
+  // AF: Why was this private??
+  Graph_with_descriptor_with_graph(const Graph_with_descriptor_with_graph&){}
 };
 
 
@@ -750,6 +757,7 @@ template <class Graph, class PropertyTag>
 Graph_with_descriptor_with_graph_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type>
 get(PropertyTag ptag, const Graph_with_descriptor_with_graph<Graph>& w)
 {
+  get(ptag,*w.graph);
   typedef typename boost::property_map<Graph,PropertyTag>::type PM;
   typedef Graph_with_descriptor_with_graph_property_map<Graph, PM> GPM;
   return GPM(*w.graph, get(ptag,*w.graph));

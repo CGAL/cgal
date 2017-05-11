@@ -57,7 +57,6 @@ inline get(CGAL::vertex_selection_t, SMesh& smesh)
   return smesh.add_property_map<vertex_descriptor,int>("v:selection").first;
 }
 
-
  SMesh::Property_map< boost::graph_traits<SMesh >::vertex_descriptor,int>
  inline get(CGAL::vertex_num_feature_edges_t, SMesh& smesh)
 {
@@ -65,8 +64,10 @@ inline get(CGAL::vertex_selection_t, SMesh& smesh)
   return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
 }
 
+
+ template < typename Patch_ID>
  SMesh::Property_map< boost::graph_traits<SMesh >::vertex_descriptor,std::set<int> >
- inline get(CGAL::vertex_incident_patches_t, SMesh& smesh)
+ inline get(CGAL::vertex_incident_patches_t<Patch_ID>, SMesh& smesh)
 {
   typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
   return smesh.add_property_map<vertex_descriptor,std::set<int> >("v:ip").first;
@@ -117,10 +118,11 @@ struct property_map<SMesh, CGAL::vertex_num_feature_edges_t>
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
 
   typedef SMesh::Property_map<vertex_descriptor, int> type;
+  typedef type const_type;
 };
 
-template<>
-struct property_map<SMesh, CGAL::vertex_incident_patches_t>
+template<typename Patch_ID>
+struct property_map<SMesh, CGAL::vertex_incident_patches_t<Patch_ID>>
 {
 
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
