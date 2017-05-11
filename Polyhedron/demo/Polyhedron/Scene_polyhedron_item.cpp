@@ -1497,9 +1497,10 @@ QString Scene_polyhedron_item::computeStats(int type)
     }
     else if(d->genus == -1)
     {
-      int s(d->poly->size_of_vertices()), a(d->poly->size_of_halfedges()/2), f(d->poly->size_of_facets());
-      //cast in int to avoid intermediary state containing a negative size_t.
-      d->genus = 1.0 - (s-a+f)/2.0;
+      std::ptrdiff_t s(d->poly->size_of_vertices()),
+          a(d->poly->size_of_halfedges()/2),
+          f(d->poly->size_of_facets());
+      d->genus = 1.0 - double(s-a+f)/2.0;
     }
     if(d->genus < 0)
     {
