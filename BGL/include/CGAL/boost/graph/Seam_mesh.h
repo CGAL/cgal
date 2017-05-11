@@ -85,12 +85,14 @@ public:
     return tmhd;
   }
 
+#ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
   friend
   std::ostream& operator<<(std::ostream& os, const Seam_mesh_halfedge_descriptor& hd)
   {
     os << hd.tmhd << ((hd.seam)?" on seam":"");
     return os;
   }
+#endif
 
   friend std::size_t hash_value(const Seam_mesh_halfedge_descriptor& hd)
   {
@@ -208,12 +210,14 @@ public:
       : tmhd(tmhd), seam(seam)
     { }
 
+#ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
     /// Print the halfedge and if it is on a seam.
     friend std::ostream& operator<<(std::ostream& os, const halfedge_descriptor& hd)
     {
       os << hd.tmhd << ((hd.seam)?" on seam":"");
       return os;
     }
+#endif
   };
 #else
   typedef Seam_mesh_halfedge_descriptor<TM_halfedge_descriptor>   halfedge_descriptor;
@@ -322,11 +326,13 @@ public:
       return hd;
     }
 
+#ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
     friend std::ostream& operator<<(std::ostream& os, const vertex_descriptor vd)
     {
       os << "seam mesh vertex: " << vd.hd;
       return os;
     }
+#endif
 
     friend std::size_t hash_value(const vertex_descriptor& vd)
     {
@@ -439,13 +445,14 @@ public:
   public:
     halfedge_descriptor hd;
 
+#ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
     friend
     std::ostream& operator<<(std::ostream& os, const edge_descriptor& ed)
     {
       os << ed.hd;
       return os;
     }
-
+#endif
     edge_descriptor(const halfedge_descriptor& hd)
       : hd(hd)
     { }
