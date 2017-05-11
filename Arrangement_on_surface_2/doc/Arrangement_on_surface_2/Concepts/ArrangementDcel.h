@@ -164,6 +164,11 @@ returns a past-the-end iterator of the vertices in `dcel`.
 Vertex_iterator vertices_end(); 
 
 /*!
+returns a range over handles of the vertices in `dcel`.
+*/
+unspecified_type vertex_handles();
+
+/*!
 returns a begin-iterator of the vertices in `dcel`. 
 */ 
 Vertex_const_iterator vertices_begin() const; 
@@ -172,6 +177,11 @@ Vertex_const_iterator vertices_begin() const;
 returns a past-the-end iterator of the vertices in `dcel`. 
 */ 
 Vertex_const_iterator vertices_end() const; 
+
+/*!
+returns a const range (model of `ConstRange`) over handles of the vertices in `dcel`.
+*/
+unspecified_type vertex_handles() const;
 
 /*!
 returns a begin-iterator of the halfedges in `dcel`. 
@@ -184,6 +194,11 @@ returns a past-the-end iterator of the halfedges in `dcel`.
 Halfedge_iterator halfedges_end(); 
 
 /*!
+returns a range over handles of the halfedges in `dcel`.
+*/
+unspecified_type halfedge_handles();
+
+/*!
 returns a begin-iterator of the halfedges in `dcel`. 
 */ 
 Halfedge_const_iterator halfedges_begin() const; 
@@ -192,6 +207,11 @@ Halfedge_const_iterator halfedges_begin() const;
 returns a past-the-end iterator of the halfedges in `dcel`. 
 */ 
 Halfedge_const_iterator halfedges_end() const; 
+
+/*!
+returns a const range (model of `ConstRange`) over handles of the halfedges in `dcel`.
+*/
+unspecified_type halfedge_handles() const;
 
 /*!
 returns a begin-iterator of the faces in `dcel`. 
@@ -204,6 +224,11 @@ returns a past-the-end iterator of the faces in `dcel`.
 Face_iterator faces_end(); 
 
 /*!
+returns a range over handles of the faces in `dcel`.
+*/
+unspecified_type face_handles();
+
+/*!
 returns a begin-iterator of the faces in `dcel`. 
 */ 
 Face_const_iterator faces_begin() const; 
@@ -213,6 +238,10 @@ returns a past-the-end iterator of the faces in `dcel`.
 */ 
 Face_const_iterator faces_end() const; 
 
+/*!
+returns a const range (model of `ConstRange`) over handles of the faces in `dcel`.
+*/
+unspecified_type face_handles() const;
 
 /// @} 
 
