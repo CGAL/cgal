@@ -444,6 +444,7 @@ public:
   {
   public:
     halfedge_descriptor hd;
+    const Self* mesh_;
 
 #ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
     friend
@@ -453,9 +454,24 @@ public:
       return os;
     }
 #endif
-    edge_descriptor(const halfedge_descriptor& hd)
-      : hd(hd)
-    { }
+
+    edge_descriptor()
+      : mesh_(NULL)
+    {}
+
+    edge_descriptor(const halfedge_descriptor& hd, const Self* m)
+      : hd(hd), mesh_(m)
+    {}
+
+    friend bool operator==(edge_descriptor e1, edge_descriptor e2)
+    {
+      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd)); 
+    }
+
+    friend bool operator!=(edge_descriptor e1, edge_descriptor e2)
+    {
+      return ! (e1 == e2);
+    }
   };
 
 #ifndef DOXYGEN_RUNNING
@@ -534,9 +550,9 @@ public:
       // on the opposite virtual border
 
       if(seam)
-        return edge_descriptor(mesh_->opposite(halfedge_descriptor(*hd, true)));
+        return edge_descriptor(mesh_->opposite(halfedge_descriptor(*hd, true)), mesh_);
       else
-        return edge_descriptor(halfedge_descriptor(*hd, false));
+        return edge_descriptor(halfedge_descriptor(*hd, false), mesh_);
     }
   };
 #endif
@@ -758,7 +774,7 @@ public:
   /// Returns the edge that contains halfedge `h` as one of its two halfedges.
   edge_descriptor edge(halfedge_descriptor h) const
   {
-    return h;
+    return edge_descriptor(h,this);
   }
 
   /// Returns the halfedge corresponding to the edge `e`.
@@ -827,7 +843,7 @@ public:
   std::pair<edge_descriptor, bool> edge(vertex_descriptor u, vertex_descriptor v) const
   {
     std::pair<halfedge_descriptor, bool> he = halfedge(u, v);
-    return std::make_pair(he.first, he.second);
+    return std::make_pair(edge_descriptor(he.first, this), he.second);
   }
 
   /// Returns a halfedge of face `f`.

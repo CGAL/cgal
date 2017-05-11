@@ -107,8 +107,8 @@ public:
   typedef typename SM::face_iterator                  face_iterator;
   typedef typename SM::faces_size_type                faces_size_type;
 
-  //typedef CGAL::In_edge_iterator<SM>                  in_edge_iterator;
-  //typedef CGAL::Out_edge_iterator<SM>                 out_edge_iterator;
+  typedef CGAL::In_edge_iterator<SM>                  in_edge_iterator;
+  typedef CGAL::Out_edge_iterator<SM>                 out_edge_iterator;
 
   // nulls
   static vertex_descriptor null_vertex() { return vertex_descriptor(); }
@@ -209,7 +209,7 @@ edges(const CGAL::Seam_mesh<TM, SEM, SVM>& sm)
   return sm.edges();
 }
 
-#if 0
+#if 1
 template <class TM, class SEM, class SVM>
 Iterator_range<typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::in_edge_iterator>
 in_edges(typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::vertex_descriptor v,
@@ -279,7 +279,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::halfedge_descripto
 halfedge(typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::edge_descriptor e,
          const CGAL::Seam_mesh<TM, SEM, SVM>& sm)
 {
-  return sm.edge(e);
+  return sm.halfedge(e);
 }
 
 template <class TM, class SEM, class SVM>
