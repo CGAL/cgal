@@ -20,10 +20,10 @@ typedef CGAL::Shape_detection_3::Shape_detection_traits
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
-int main() 
+int main(int argc, char** argv) 
 {
   Pwn_vector points;
-  std::ifstream stream("data/cube.pwn");
+  std::ifstream stream(argc > 1 ? argv[1] : "data/cube.pwn");
 
   if (!stream || 
     !CGAL::read_xyz_points_and_normals(stream,
@@ -41,13 +41,18 @@ int main()
   ransac.add_shape_factory<Plane>();
   ransac.detect();
 
+  typename Efficient_ransac::Plane_range planes = ransac.planes();
   // Regularize detected planes
-  CGAL::regularize_planes (ransac,
-                           true, // Regularize parallelism
-                           true, // Regularize orthogonality
-                           false, // Do not regularize coplanarity
-                           true, // Regularize Z-symmetry (default)
-                           10); // 10 degrees of tolerance for parallelism/orthogonality
+  CGAL::regularize_planes<Traits> (planes,
+                                   CGAL::Shape_detection_3::Plane_map<Traits>(),
+                                   points,
+                                   Point_map(),
+                                   CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
+                                   true, // Regularize parallelism
+                                   true, // Regularize orthogonality
+                                   false, // Do not regularize coplanarity
+                                   true, // Regularize Z-symmetry (default)
+                                   10); // 10 degrees of tolerance for parallelism/orthogonality
   
   return EXIT_SUCCESS;
 }
