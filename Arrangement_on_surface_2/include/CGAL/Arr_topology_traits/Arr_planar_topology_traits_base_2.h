@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
@@ -122,6 +118,7 @@ public:
       m_geom_traits = NULL;
     }
   }
+
   //@}
 
   ///! \name Common topology-traits methods.
@@ -132,6 +129,22 @@ public:
 
   /*! Get the DCEL (non-const version). */
   Dcel& dcel() { return (m_dcel); }
+
+  /*! Receive a notification on the creation of a new boundary vertex that
+   * corresponds to a given point.
+   * \param v The new boundary vertex.
+   * \param p The point.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
+   */
+  void notify_on_boundary_vertex_creation(Vertex*,
+                                          const Point_2& ,
+                                          Arr_parameter_space /* ps_x */,
+                                          Arr_parameter_space /* ps_y */)
+  {
+    // In the planar-topology traits this function should never be invoked:
+    return;
+  }
 
   /*!
    * Receive a notification on the creation of a new boundary vertex that
@@ -171,7 +184,6 @@ public:
     return false;
   }
 
-
   /*!
    * Given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determine what happens to the face(s).
@@ -201,6 +213,7 @@ public:
    * \return Whether p is contained in f's interior.
    */
   bool is_in_face(const Face* f, const Point_2& p, const Vertex* v) const;
+
   //@}
 
   /// \name Additional accessors, specialized for this topology-traits class.

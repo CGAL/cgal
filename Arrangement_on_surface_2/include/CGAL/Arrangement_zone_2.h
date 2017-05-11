@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
@@ -58,17 +54,14 @@ namespace CGAL {
  * by the visitor (if valid), and the Boolean value indicates whether we
  * should halt the zone-computation process.
  */
-template <class Arrangement_, class ZoneVisitor_>
-class Arrangement_zone_2
-{
+template <typename Arrangement_, typename ZoneVisitor_>
+class Arrangement_zone_2 {
 public:
-
   typedef Arrangement_                                   Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2      Geometry_traits_2;
   typedef typename Arrangement_2::Topology_traits        Topology_traits;
 
 protected:
-  
   typedef Arr_traits_adaptor_2<Geometry_traits_2>        Traits_adaptor_2;
 
   typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
@@ -77,13 +70,12 @@ protected:
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
   BOOST_MPL_ASSERT(
-      (typename 
-       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category, 
+      (typename
+       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category,
        Top_side_category, Right_side_category >::result)
   );
 
 public:
-  
   typedef ZoneVisitor_                                   Visitor;
 
   typedef typename Arrangement_2::Vertex_handle          Vertex_handle;
@@ -97,191 +89,174 @@ public:
   typedef typename Geometry_traits_2::Multiplicity       Multiplicity;
 
 protected:
-
-  typedef typename Arr_are_all_sides_oblivious_tag< 
-                     Left_side_category, Bottom_side_category, 
-                     Top_side_category, Right_side_category >::result
+  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
+                                                   Bottom_side_category,
+                                                   Top_side_category,
+                                                   Right_side_category>::result
     Are_all_sides_oblivious_category;
-  
-  typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
+
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
   // Types used for caching intersection points:
-  typedef std::pair<Point_2,Multiplicity>        Intersect_point_2;
-  typedef std::list<CGAL::Object>                 Intersect_list;
-  typedef std::map<const X_monotone_curve_2*,
-                   Intersect_list>                Intersect_map;
-  typedef typename Intersect_map::iterator        Intersect_map_iterator;
+  typedef std::pair<Point_2, Multiplicity>              Intersect_point_2;
+  typedef std::list<CGAL::Object>                       Intersect_list;
+  typedef std::map<const X_monotone_curve_2*, Intersect_list>
+                                                        Intersect_map;
+  typedef typename Intersect_map::iterator              Intersect_map_iterator;
 
-  typedef std::set<const X_monotone_curve_2*>     Curves_set;
-  typedef typename Curves_set::iterator           Curves_set_iterator;
+  typedef std::set<const X_monotone_curve_2*>           Curves_set;
+  typedef typename Curves_set::iterator                 Curves_set_iterator;
 
   // Data members:
-  Arrangement_2&          arr;          // The associated arrangement.
-  const Traits_adaptor_2 * m_geom_traits; // Its associated geometry traits.
-  Arr_accessor<Arrangement_2> arr_access; // An accessor for the arrangement.
-           
-  Visitor                *visitor;      // The zone visitor.
+  Arrangement_2& m_arr;               // the associated arrangement.
+  const Traits_adaptor_2* m_geom_traits; // its associated geometry traits.
+  Arr_accessor<Arrangement_2> m_arr_access; // an accessor for the arrangement.
+  Visitor* m_visitor;                 // the zone visitor.
+  Intersect_map m_inter_map;          // stores all computed intersections.
 
-  Intersect_map           inter_map;    // Stores all computed intersections.
+  //! remove this!
+  const Vertex_handle invalid_v;      // an invalid vertex handle.
+  const Halfedge_handle invalid_he;   // an invalid halfedge handle.
 
-  const Vertex_handle     invalid_v;    // An invalid vertex handle.
-  const Halfedge_handle   invalid_he;   // An invalid halfedge handle.
+  X_monotone_curve_2 m_cv;            // the current portion of the inserted
+                                      // curve.
+  CGAL::Object m_obj;                 // the location of the left endpoint.
+  bool m_has_left_pt;                 // is the left end of the curve bounded.
+  bool m_left_on_boundary;            // is the left point on the boundary.
+  Point_2 m_left_pt;                  // its current left endpoint.
+  bool m_has_right_pt;                // is the right end of the curve bounded.
+  bool m_right_on_boundary;           // is the right point on the boundary.
+  Point_2 m_right_pt;                 // its right endpoint (if bounded).
 
-  X_monotone_curve_2  cv;               // The current portion of the
-                                        // inserted curve.
-  CGAL::Object        obj;              // The location of the left endpoint.
-  bool                has_left_pt;      // Is the left end of the curve
-                                        // bounded.
-  bool                left_on_boundary; // Is the left point on the boundary.
-  Point_2             left_pt;          // Its current left endpoint.
-  bool                has_right_pt;     // Is the right end of the curve
-                                        // bounded.
-  bool                right_on_boundary;// Is the right point on the boundary.
-  Point_2             right_pt;         // Its right endpoint (if bounded).
+  Vertex_handle m_left_v;             // the arrangement vertex associated
+                                      // with the current left_pt (if any).
+  Halfedge_handle m_left_he;          // if left_v is valid, left_he is the
+                                      // predecessor for cv around this
+                                      // vertex. Otherwise, if it is valid,
+                                      // it is the halfedge that contains
+                                      // the left endpoint it its interior.
 
-  Vertex_handle       left_v;           // The arrangement vertex associated
-                                        // with the current left_pt (if any).
-  Halfedge_handle     left_he;          // If left_v is valid, left_he is the
-                                        // predecessor for cv around this
-                                        // vertex. Otherwise, if it is valid,
-                                        // it is the halfedge that contains
-                                        // the left endpoint it its interior.
+  Vertex_handle m_right_v;            // the arrangement vertex associated
+                                      // with the current m_right_pt (if any).
+  Halfedge_handle m_right_he;         // If m_right_v is valid, left_he is the
+                                      // predecessor for cv around this
+                                      // vertex. Otherwise, if it is valid,
+                                      // it is the halfedge that contains
+                                      // the right endpoint it its interior.
 
-  Vertex_handle       right_v;          // The arrangement vertex associated
-                                        // with the current right_pt (if any).
-  Halfedge_handle     right_he;         // If right_v is valid, left_he is the
-                                        // predecessor for cv around this
-                                        // vertex. Otherwise, if it is valid,
-                                        // it is the halfedge that contains
-                                        // the right endpoint it its interior.
+  Point_2 m_intersect_p;              // the next intersection point.
+  Multiplicity m_ip_mult;               // its multiplicity
+                                      // (0 in case of an overlap).
+  bool m_found_intersect;             // Have we found an intersection
+                                      // (or an overlap).
+  X_monotone_curve_2 m_overlap_cv;    // the currently discovered overlap.
+  bool m_found_overlap;               // Have we found an overlap.
+  bool m_found_iso_vert;              // Check if an isolated vertex induces
+                                      // the next intersection.
+  Vertex_handle m_intersect_v;        // The vertex that intersects cv.
+  Halfedge_handle m_intersect_he;     // The halfedge that intersects cv
+                                      // (or overlaps it).
 
-  Point_2             intersect_p;      // The next intersection point.
-  unsigned int        ip_mult;          // Its multiplicity
-                                        // (0 in case of an overlap).
-  bool                found_intersect;  // Have we found an intersection
-                                        // (or an overlap).
-  X_monotone_curve_2  overlap_cv;       // The currently discovered overlap.
-  bool                found_overlap;    // Have we found an overlap.
-  bool                found_iso_vert;   // Check if an isolated vertex induces
-                                        // the next intersection.
-  Vertex_handle       intersect_v;      // The vertex that intersects cv.
-  Halfedge_handle     intersect_he;     // The halfedge that intersects cv
-                                        // (or overlaps it).
-
-  X_monotone_curve_2  sub_cv1;          // Auxiliary variable (for curve split).
-  X_monotone_curve_2  sub_cv2;          // Auxiliary variable (for curve split).
+  X_monotone_curve_2 m_sub_cv1;       // Auxiliary variable (for curve split).
+  X_monotone_curve_2 m_sub_cv2;       // Auxiliary variable (for curve split).
 
 public:
-
-  /*!
-   * Constructor.
+  /*! Constructor.
    * \param _arr The arrangement for which we compute the zone.
    * \param _visitor A pointer to a zone-visitor object.
    */
-  Arrangement_zone_2 (Arrangement_2& _arr, Visitor *_visitor) :
-    arr (_arr),
-    arr_access (_arr),
-    visitor (_visitor),
-    invalid_v (),
-    invalid_he ()
+  Arrangement_zone_2(Arrangement_2& arr, Visitor* visitor) :
+    m_arr(arr),
+    m_arr_access(arr),
+    m_visitor(visitor),
+    invalid_v(),
+    invalid_he()
   {
-    m_geom_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-
-    CGAL_assertion (visitor != NULL);
-
-    // Initialize the visitor.
-    visitor->init (&arr);
+    m_geom_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
+    CGAL_assertion(visitor != NULL);
+    visitor->init(&arr);        // initialize the visitor.
   }
 
-  /*!
-   * Initialize the zone-computation process with a given curve.
+  /*! Initialize the zone-computation process with a given curve.
    * \param _cv The query curve.
    * \param pl A point-location object associated with the arrangement.
    */
-  template <class PointLocation>
-  void init (const X_monotone_curve_2& _cv, const PointLocation& pl)
+  template <typename PointLocation>
+  void init(const X_monotone_curve_2& cv, const PointLocation& pl)
   {
     // Set the curve and check whether its left end has boundary conditions.
-    cv = _cv;
+    m_cv = cv;
 
-    const Arr_parameter_space  bx1 =
-      m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-    const Arr_parameter_space  by1 =
-      m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
+    const Arr_parameter_space bx1 =
+      m_geom_traits->parameter_space_in_x_2_object()(m_cv, ARR_MIN_END);
+    const Arr_parameter_space by1 =
+      m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MIN_END);
 
-    if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR) {
+    if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR)) {
       // The curve has a finite left endpoint with no boundary conditions:
       // locate it in the arrangement.
-      has_left_pt = true;
-      left_on_boundary = (bx1 != ARR_INTERIOR || by1 != ARR_INTERIOR);
-      left_pt = m_geom_traits->construct_min_vertex_2_object() (cv);
-
-      obj = pl.locate (left_pt);
+      m_has_left_pt = true;
+      m_left_on_boundary = (bx1 != ARR_INTERIOR || by1 != ARR_INTERIOR);
+      m_left_pt = m_geom_traits->construct_min_vertex_2_object()(m_cv);
+      m_obj = pl.locate(m_left_pt);
     }
     else {
       // The left end of the curve has boundary conditions: use the topology
       // traits use the arrangement accessor to locate it.
-      // Note that if the curve-end is unbounded, left_pt does not exist.
-      // Note that if the curve-end is unbounded, left_pt does not exist.
-      has_left_pt = m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
-      left_on_boundary = true;
-      if (has_left_pt)
-        left_pt = m_geom_traits->construct_min_vertex_2_object() (cv);
-      obj = arr_access.locate_curve_end (cv, ARR_MIN_END, bx1, by1);
+      // Note that if the curve-end is unbounded, m_left_pt does not exist.
+      m_has_left_pt = m_geom_traits->is_closed_2_object()(m_cv, ARR_MIN_END);
+      m_left_on_boundary = true;
+      if (m_has_left_pt)
+        m_left_pt = m_geom_traits->construct_min_vertex_2_object()(m_cv);
+      m_obj = m_arr_access.locate_curve_end(m_cv, ARR_MIN_END, bx1, by1);
     }
 
     // Check the boundary conditions of th right curve end.
-    if (m_geom_traits->is_closed_2_object()(cv, ARR_MAX_END)) {
-      const Arr_parameter_space  bx2 =
-        m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
-      const Arr_parameter_space  by2 =
-        m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
+    if (m_geom_traits->is_closed_2_object()(m_cv, ARR_MAX_END)) {
+      const Arr_parameter_space bx2 =
+        m_geom_traits->parameter_space_in_x_2_object()(m_cv, ARR_MAX_END);
+      const Arr_parameter_space by2 =
+        m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MAX_END);
 
       // The right endpoint is valid.
-      has_right_pt = true;
-      right_pt = m_geom_traits->construct_max_vertex_2_object() (cv);
-      right_on_boundary = (bx2 != ARR_INTERIOR) || (by2 != ARR_INTERIOR);
+      m_has_right_pt = true;
+      m_right_pt = m_geom_traits->construct_max_vertex_2_object()(m_cv);
+      m_right_on_boundary = (bx2 != ARR_INTERIOR) || (by2 != ARR_INTERIOR);
     }
     else {
       // The right end of the curve lies at infinity.
-      has_right_pt = false;
-      right_on_boundary = true;
+      m_has_right_pt = false;
+      m_right_on_boundary = true;
     }
-
-    return;
   }
 
-  /*!
-   * Initialize the zone-computation process with a given curve and an object
+  /*! Initialize the zone-computation process with a given curve and an object
    * that wraps the location of the curve's left end.
    * \param _cv The query curve.
    * \param _obj An object that represents the location of the left end
    *             of the curve.
    */
-  void init_with_hint (const X_monotone_curve_2& _cv, const Object& _obj);
+  void init_with_hint(const X_monotone_curve_2& cv, const Object& obj);
 
   /*!
    * Compute the zone of the given curve and issue the apporpriate
    * notifications for the visitor.
    */
-  void compute_zone ();
+  void compute_zone();
 
 private:
-
-  /*!
-   * Find a face containing the query curve cv around the given vertex.
+  /*! Find a face containing the query curve cv around the given vertex.
    * In case an overlap occurs, sets intersect_he to be the overlapping edge.
    * \param v The query vertex.
    * \param he Output: The predecessor of cv around the vertex.
    * \return (true) if cv overlaps with the curve associated with he;
    *         (false) if there is no overlap.
    */
-  bool _find_prev_around_vertex (Vertex_handle v, Halfedge_handle& he);
+  bool _find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he);
 
-  /*!
-   * Direct the halfedge for the location of the given subcurve around a split
+  /*! Direct the halfedge for the location of the given subcurve around a split
    * point that occurs in the interior of a given edge, when the subcurve lies
    * to the right of the split point.
    * In case of overlaps, it sets also found_overlap and intersect_he.
@@ -299,8 +274,7 @@ private:
                                      const Point_2& cv_left_pt,
                                      Halfedge_handle query_he);
 
-  /*!
-   * Direct the halfedge for the location of the given subcurve around a split
+  /*! Direct the halfedge for the location of the given subcurve around a split
    * point that occurs in the interior of a given edge, when the subcurve lies
    * to the left of the split point.
    * \param cv_ins The curve to be inserted, whose right endpoint coincides
@@ -315,8 +289,7 @@ private:
   _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
                                     Halfedge_handle query_he);
 
-  /*!
-   * Get the next intersection of cv with the given halfedge.
+  /*! Get the next intersection of cv with the given halfedge.
    * \param he A handle to the halfedge.
    * \param skip_first_point Should we skip the first intersection point.
    * \param intersect_on_right_boundary Output: If an intersetion point is
@@ -329,17 +302,16 @@ private:
    *         case of an overlap, and an empty object if there is no
    *         intersection.
    */
-  CGAL::Object _compute_next_intersection (Halfedge_handle he,
-                                           bool skip_first_point,
-                                           bool& intersect_on_right_boundary);
+  CGAL::Object _compute_next_intersection(Halfedge_handle he,
+                                          bool skip_first_point,
+                                          bool& intersect_on_right_boundary);
 
-  /*!
-   * Remove the next intersection of cv with the given halfedge from the map.
+  /*! Remove the next intersection of cv with the given halfedge from the map.
    * \param he A handle to the halfedge.
    * \pre The list of intersections with the curve of he has already been
    *      computed, and it is not empty.
    */
-  void _remove_next_intersection (Halfedge_handle he);
+  void _remove_next_intersection(Halfedge_handle he);
 
   /*!
    * Check if the given point lies completely to the left of the given egde.
@@ -349,92 +321,76 @@ private:
    * \return Whether p lies entirely to the left of the edge.
    */
   bool _is_to_left(const Point_2& p, Halfedge_handle he) const
-  {
-    return (_is_to_left_impl(p, he, Are_all_sides_oblivious_category()));
-  }
+  { return (_is_to_left_impl(p, he, Are_all_sides_oblivious_category())); }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
                         Arr_all_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
-             m_geom_traits->compare_xy_2_object() 
+             m_geom_traits->compare_xy_2_object()
              (p, he->source()->point()) == SMALLER) ||
             (he->direction() == ARR_RIGHT_TO_LEFT &&
-             m_geom_traits->compare_xy_2_object() 
+             m_geom_traits->compare_xy_2_object()
              (p, he->target()->point()) == SMALLER));
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
                         Arr_not_all_sides_oblivious_tag) const;
-  
-  /*!
-   * Check if the given point lies completely to the right of the given egde.
+
+  /*! Determine whether a given point lies completely to the right of a given
+   * egde.
    * \param p The point.
    * \param he The halfedge.
    * \pre he is not a fictitious edge.
-   * \return Whether p lies entirely to the right of the edge.
+   * \return if p entirely lies to the right of the edge true; otherwise false.
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
-  {
-    return (_is_to_right_impl(p, he, Are_all_sides_oblivious_category()));
-  }
+  { return (_is_to_right_impl(p, he, Are_all_sides_oblivious_category())); }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         Arr_all_sides_oblivious_tag) const
-  {
-    return ((he->direction() == ARR_LEFT_TO_RIGHT &&
-             m_geom_traits->compare_xy_2_object() 
-             (p, he->target()->point()) == LARGER) ||
-            (he->direction() == ARR_RIGHT_TO_LEFT &&
-             m_geom_traits->compare_xy_2_object() 
-             (p, he->source()->point()) == LARGER));
-  }
+                         Arr_all_sides_oblivious_tag) const;
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                          Arr_not_all_sides_oblivious_tag) const;
 
-  /*!
-   * Compute the (lexicographically) leftmost intersection of the query
+  /*! Compute the (lexicographically) leftmost intersection of the query
    * curve with the boundary of a given face in the arrangement.
-   * The function computes sets intersect_p, intersect_he (or alternatively
+   * The function computes sets m_intersect_p, intersect_he (or alternatively
    * overlap_cv and intersect_he) and set the flags found_intersect and
    * found_overlap accordingly.
    * \param face A handle to the face.
    * \param on_boundary Specifies whether the left endpoint of the curve lies
    *                    on the face boundary.
    */
-  void _leftmost_intersection_with_face_boundary (Face_handle face,
-                                                  bool on_boundary);
+  void _leftmost_intersection_with_face_boundary(Face_handle face,
+                                                 bool on_boundary);
 
-  /*!
-   * Compute the zone of an x-monotone curve in a given arrangement face.
+  /*! Compute the zone of an x-monotone curve in a given arrangement face.
    * The left endpoint of the curve either lies in the face interior or on
    * the boundary of the face.
-   * This function updates cv and its left endpoint and also sets left_v
+   * This function updates cv and its left endpoint and also sets m_left_v
    * and left_he for the remaining portion of the curve.
    * In case of overlaps, it sets also overlap_cv and intersect_he.
    * \param face The given face.
    * \param on_boundary Specifies whether the left endpoint of the curve lies
    *                    on the face boundary.
    * \pre If on_boundary is (true) then left_he must be valid; if it is (false)
-   *      then both left_v anf left_he must be invalid.
+   *      then both m_left_v anf left_he must be invalid.
    * \return (true) if we are done with the zone-computation process;
    *         (false) if we still have a remaining portion of cv to continue
    *         with.
    */
-  bool _zone_in_face (Face_handle face,
-		      bool on_boundary);
+  bool _zone_in_face(Face_handle face, bool on_boundary);
 
-  /*!
-   * Compute the zone of an overlapping subcurve overlap_cv of cv and the
+  /*! Compute the zone of an overlapping subcurve overlap_cv of cv and the
    * curve currently associated with intersect_he.
-   * This function updates cv and its left endpoint and also sets left_v
+   * This function updates cv and its left endpoint and also sets m_left_v
    * and left_he for the remaining portion of the curve.
    * \return (true) if we are done with the zone-computation process;
    *         (false) if we still have a remaining portion of cv to continue
    *         with.
    */
-  bool _zone_in_overlap ();
+  bool _zone_in_overlap();
 };
 
 } //namespace CGAL

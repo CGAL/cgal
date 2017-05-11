@@ -1,0 +1,652 @@
+% ======== Font ===============================================================
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{slantsc}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{pifont}
+
+% ======== Math ===============================================================
+\usepackage{amsmath,amscd,amsthm}
+\usepackage{empheq}
+
+% ======== pdf, url and hyperlink =============================================
+% \usepackage{url}
+\usepackage{hyperref}
+\usepackage[hyphenbreaks]{breakurl}
+
+% ======== Tables =============================================================
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{tabularx}
+
+% ======== Listings ===========================================================
+\usepackage{alltt}
+\usepackage{listings}
+\usepackage{mdwlist}
+
+% ======== Graphics ===========================================================
+\usepackage{graphicx}
+\usepackage{etex}
+% \usepackage{pst-all}
+\usepackage{pstricks,pst-node,pst-tree,pst-text,pst-3d,pst-plot,pst-eucl}
+\usepackage{pst-xkey,pst-jtree}
+\usepackage{pst-lens}
+\usepackage{colordvi}
+% The tikz package loads the graphicx package, so no need to load it again.
+% Trying to load it with different options will cause the "Option
+% clash" error. Use \PassOptionsToPackage{<options>}{graphicx} before
+% loading tikz to pass any additional options to the internally loaded
+% graphicx.
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{mathptmx}
+\usetikzlibrary{calc,patterns,decorations.pathmorphing,decorations.markings,matrix,fit,decorations.pathreplacing,arrows,automata,positioning,shapes,chains,spy}
+%\usetikzlibrary{quotes,angles,graph}
+\usetikzlibrary{intersections,through,backgrounds}
+\usepackage{tikz-3dplot}
+\tikzset{%
+  invisible/.style={opacity=0},
+  only/.code args={<#1>#2}{\only<#1>{\pgfkeysalso{#2}}},
+  alt/.code args={<#1>#2#3}{\alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}},
+  temporal/.code args={<#1>#2#3#4}{%
+    \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}}},
+  point/.style={circle,inner sep=1.5pt,minimum size=1.5pt,draw,fill=#1},
+  point/.default=red
+}
+\makeatletter
+\def\nodesDef{\@ifnextchar[{\@nodesDefWith}{\@nodesDefWithout}}
+\def\@nodesDefWith[#1]#2{\foreach \c in #2 { \node[point=#1] (n\c) at (\c) {}; }}
+\def\@nodesDefWithout#1{\foreach \c in #1 { \node[point] (n\c) at (\c) {}; }}
+\makeatother
+% #1 --- list of points
+% #2 --- list of segments
+% #3 --- first point
+% #4 --- draw color
+% #5 --- fill color
+\newcommand{\directedPolygon}[5]{
+  \fill[#4] (#3) \foreach \pa/\pb in #2 {-- (\pb)};
+  \nodesDef{#1}
+  \foreach \pa/\pb in #2 {
+    \draw[thick,#5,->,>=stealth] (n\pa) -- (n\pb);
+  };
+}
+%
+% ======== Miscellaneous ======================================================
+\usepackage{fancybox}
+\usepackage{calc}
+\usepackage{xspace}
+% \usepackage{picins}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{ifthen}
+\usepackage{etoolbox}
+%
+
+%\usepackage{pgfpages}
+%\pgfpagesuselayout{4 on 1}[letterpaper,border shrink=5mm,landscape]
+%\pgfpagesuselayout{4 on 1}[a4paper,landscape]
+
+% ======== DO NOT MOVE - Reset awkward values changed by pst-jtree ============
+\psset{treevshift=0,unit=1cm,xunit=1cm,yunit=1cm,everytree={},
+       etcratio=.75,triratio=.5}
+%
+% ======== Figures ============================================================
+\DeclareGraphicsExtensions{.png}
+\DeclareGraphicsExtensions{.jpg}
+% \DeclareGraphicsRule{.png}{eps}{.bb}{`convert -compress JPEG #1 eps2:-}
+\DeclareGraphicsRule{.png}{eps}{.bb}{`convert #1 eps2:-}
+\DeclareGraphicsRule{.jpg}{eps}{.bb}{`convert #1 eps2:-}
+%
+% ======== Bibliography =======================================================
+\newcommand{\etalchar}[1]{$^{#1}$}
+%
+% ======== colors =============================================================
+\definecolor{lightred}{rgb}{1,0.8,0.8}
+\definecolor{lightblue}{rgb}{0.8,0.8,1}
+\definecolor{mediumred}{rgb}{1,0.5,0.5}
+\definecolor{mediumblue}{rgb}{0.5,0.5,1}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.5}
+\definecolor{darkcyan}{rgb}{0,0.5,0.5}
+\definecolor{lightcyan}{rgb}{0.5,1,1}
+\definecolor{lightyellow}{rgb}{0.9,0.9,0.7}
+\definecolor{olivegreen}{rgb}{.42,.55,.14}
+\definecolor{seagreen}{rgb}{.18,.54,.34}
+
+\newrgbcolor{lessthan}{1 0.2 0.2}
+\newrgbcolor{equal}{1 1 0.2}
+\newrgbcolor{greaterthan}{0.2 0.2 1}
+
+\newrgbcolor{pcolor}{0.7 0.3 0.1}
+\newrgbcolor{qcolor}{0 0 1}
+\newrgbcolor{mscolor}{0.5 0.5 0}
+%
+\definecolor{polyALightColor}{rgb}{0.75,0.75,1}
+\definecolor{polyBLightColor}{rgb}{1,0.8,0.3}
+\definecolor{polyCLightColor}{rgb}{1,1,0.25}
+\definecolor{polyDLightColor}{rgb}{1,1,0.75}
+
+\definecolor{polyAColor}{rgb}{0.5,0.7,1}
+\definecolor{polyBColor}{rgb}{1,0.72,0.225}
+\definecolor{polyCColor}{rgb}{0.8,0.9,0.2}
+\definecolor{polyDColor}{rgb}{0.8,0.8,0.6}
+
+\definecolor{polyADarkColor}{rgb}{0.2,0.4,0.67}
+\definecolor{polyBDarkColor}{rgb}{0.67,0.4,0.12}
+\definecolor{polyCDarkColor}{rgb}{0.53,0.6,0.13}
+\definecolor{polyDDarkColor}{rgb}{0.53,0.53,0.4}
+
+\definecolor{polyABDarkColor}{rgb}{0.5,0.35,0.4}
+
+\definecolor{crossColor}{rgb}{1,0,0.5}
+
+\newrgbcolor{hot_color}{1 0 0}
+\newrgbcolor{nonactive_color}{0.7 0.7 0.7}
+\newrgbcolor{discovered}{0 0 0}
+\newrgbcolor{active_color}{0 0 1}
+
+\definecolor{obstacle}{rgb}{0.9,0.2,0.1}
+\definecolor{robot1}{rgb}{0.1,0.4,0.9}
+\definecolor{robot2}{rgb}{0.4,0.1,0.9}
+\definecolor{minksum0}{rgb}{0.8,0.9,0.2}
+
+\newrgbcolor{annulus-color}{0.000 0.690 0.000}
+\newrgbcolor{in-color}{0.9 0 0}  %% {0.000 0.490 0.000}
+\newrgbcolor{out-color}{0 0 0.9} % {0.690 0.000 0.690}
+\newrgbcolor{inout-color}{0.000 0.490 0.000}
+\newrgbcolor{circles-color}{0.690 0.000 0.69}
+%
+% ======== Theorems ===========================================================
+%% \newtheorem{observation}[theorem]{Observation}
+%% \newtheorem{proposition}[theorem]{Proposition}
+%% \newtheorem{application}[theorem]{Application}
+%
+% ======== general macros =====================================================
+\def\gf{\textsc{Geometry Factory}}
+\def\inria{\textsc{INRIA}}
+\def\mpi{\textsc{MPII}}
+\newcommand{\bez}{B{\'e}zier}
+\newcommand{\unitsphere}{\ensuremath{{\mathbb S}^2}}
+\newcommand{\Rtwo}{\ensuremath{\reals \rule{0.3mm}{0mm}^2}\xspace}    % R^2
+\newcommand{\Rthree}{\ensuremath{\reals \rule{0.3mm}{0mm}^3}\xspace}  % R^3
+\newcommand{\Rd}{\ensuremath{\reals \rule{0.3mm}{0mm}^d}\xspace}      % R^d
+\newcommand{\Rx}[1]{\ensuremath{\reals \rule{0.3mm}{0mm} ^ {#1}}\xspace} % R^x
+\newcommand{\SOd}[1]{\ensuremath{{\mathbb S} \rule{0.3mm}{0mm} ^ {#1}}}
+\newcommand{\SOtwo}{\SOd{2}\xspace}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}                             %
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}                             %
+\newcommand{\Expect}{{\rm I\kern-.3em E}}
+
+\def\eps{{\epsilon}}
+\newcommand{\mindia}[1]{\ensuremath{{\mathcal M}(#1)}}
+\newcommand{\distance}[2]{\ensuremath{\rho(#1, #2)}}
+\newcommand{\distancesqr}[2]{\ensuremath{\rho^2(#1, #2)}}
+\newcommand{\bisector}[2]{\ensuremath{B(#1, #2)}}
+\newcommand{\cpp}{{C}{\tt ++}}
+\newcommand{\windows}{\textsc{Windows}}
+\newcommand{\unix}{\textsc{Unix}}
+\newcommand{\linux}{\textsc{Linux}}
+\newcommand{\cygwin}{\textsc{Cygwin}}
+\newcommand{\stl}{\textsc{Stl}}
+\newcommand{\cgal}{\textsc{Cgal}}
+\newcommand{\cmake}{\textsc{CMake}}
+\newcommand{\gmp}{\textsc{Gmp}}
+\newcommand{\gnu}{\textsc{Gnu}}
+\newcommand{\mpfr}{\textsc{Mpfr}}
+\newcommand{\core}{\textsc{Core}}
+\newcommand{\boost}{\textsc{Boost}}
+\newcommand{\qt}{\textsc{Qt}}
+\newcommand{\leda}{\textsc{Leda}}
+\newcommand{\vlsi}{\textsc{Vlsi}}
+\newcommand{\dcel}{\textsc{Dcel}}
+\newcommand{\ccb}{\textsc{Ccb}}
+\newcommand{\parms}{{\rm I\!\hspace{-0.025em} P}}
+\newcommand{\reals}{{\rm I\!\hspace{-0.025em} R}}
+\newcommand{\redpart}{{\sc \textcolor{red}{$R$}}}
+\newcommand{\greenpart}{{\sc \textcolor{green}{$G$}}}
+\newcommand{\bluepart}{{\sc \textcolor{blue}{$B$}}}
+\newcommand{\purplepart}{{\sc \textcolor{magenta}{$P$}}}
+\newcommand{\yellowpart}{{\sc \textcolor{orange}{$Y$}}}
+\newcommand{\turquoisepart}{{\sc \textcolor{cyan}{$T$}}}
+\newcommand{\kdtree}{\textsc{Kd}-tree}
+\newcommand{\kdtrees}{\textsc{Kd}-trees}
+\newcommand{\bgl}{\textsc{Bgl}}
+
+\newcommand{\sgmo}{{\bf SGM}}
+\newcommand{\cgmo}{{\bf CGM}}
+\newcommand{\ngmo}{{\bf NGM}}
+\newcommand{\ch}{{\bf CH}}
+\newcommand{\Fuku}{{\bf Fuk}}
+
+\def\concept#1{\textsf{\it #1}}
+
+\def\calA{{\cal A}}
+\def\calC{{\cal C}}
+\def\calG{{\cal G}}
+\def\calI{{\cal I}}
+\def\calJ{{\cal J}}
+\def\calK{{\cal K}}
+\def\calL{{\cal L}}
+\def\calM{{\cal M}}
+\def\calP{{\cal P}}
+\def\calS{{\cal S}}
+\def\calT{{\cal T}}
+\def\calU{{\cal U}}
+
+% ======== Macros for Voronoi =================================================
+\newcommand{\distsym}{\ensuremath{\rho}\xspace}
+\newcommand{\mobius}{M\"o\-bi\-us\xspace}
+\newcommand{\region}{\ensuremath{{Reg}}}
+\newcommand{\vor}[1]{\ensuremath{Vor_\distsym(#1)}}
+\newcommand{\FPFS}{Far\-thest-Point Far\-thest-Site}
+%
+% ======== Macros for English =================================================
+\newcommand{\ie}{i.\,e.,\xspace}
+\newcommand{\eg}{e.\,g.,\xspace}
+\newcommand{\etal}{{et~al}.\xspace}
+\newcommand{\Wlog}{w.\,l.\,o.\,g.\xspace}
+\newcommand{\apriori}{{\it a~priori}}
+%
+% ======== Listings ===========================================================
+\newlength{\ccBaseWidth}\setlength{\ccBaseWidth}{\textwidth/72}
+\lstset{%
+  language=C++,%
+%  basewidth=\ccBaseWidth,
+  keywordstyle=\color{blue},commentstyle=\color{red}%
+}
+\def\myLstinline#1{\lstinline[columns=fixed]{#1}}
+%
+% ======== html ===============================================================
+\newrgbcolor{hrefcolor}{0.2 0.2 0.6}
+\def\hrefc#1#2{\href{#1}{\textcolor{hrefcolor}{#2}}}
+%
+% ======== PS Tricks ==========================================================
+\SpecialCoor
+%
+\def\myxunit{1}
+\def\myyunit{1}
+\def\arrset#1{\psset{unit=#1cm}\def\myxunit{#1}\def\myyunit{#1}}
+\def\vertexradius{2pt}
+\def\crossradius{0.15}
+%
+\def\arrCross(#1,#2){
+  \psline[linewidth=0.75pt,linecolor=crossColor]
+  (!#1 \crossradius\space \myxunit\space div sub #2)
+  (!#1 \crossradius\space \myxunit\space div add #2)
+  \psline[linewidth=0.75pt,linecolor=crossColor]
+  (!#1 #2 \crossradius\space \myyunit\space div sub)
+  (!#1 #2 \crossradius\space \myyunit\space div add)
+}
+\def\arrCrossVertex(#1)#2{
+  \arrCross(#1)
+  \pnode(#1){#2}
+}
+\def\arrEmptyVertex(#1)#2{
+  \pscircle*[linecolor=white](#1){\vertexradius}
+  \cnode[linewidth=0.5pt](#1){\vertexradius}{#2}
+}
+\def\arrColorVertex(#1)#2#3{
+  \pscircle*[linecolor=#3](#1){\vertexradius}
+  \cnode[linewidth=0.5pt](#1){\vertexradius}{#2}
+}
+\def\arrRedVertex(#1)#2{\arrColorVertex(#1){#2}{red}}
+\def\arrCyanVertex(#1)#2{\arrColorVertex(#1){#2}{cyan}}
+\def\arrGreenVertex(#1)#2{\arrColorVertex(#1){#2}{green}}
+\def\arrOliveGreenVertex(#1)#2{\arrColorVertex(#1){#2}{olivegreen}}
+\def\arrBlueVertex(#1)#2{\arrColorVertex(#1){#2}{blue}}
+\def\arrGrayVertex(#1)#2{\arrColorVertex(#1){#2}{gray}}
+\def\arrPurpleVertex(#1)#2{\arrColorVertex(#1){#2}{purple}}
+
+\def\arrMainVertex(#1)#2{\arrRedVertex(#1){#2}}
+\def\arrMinorVertex(#1)#2{\arrCyanVertex(#1){#2}}
+
+\def\arrlvertex[#1](#2)#3#4{
+  \arrMainVertex(#2){#3}
+  \uput[#1]{0}(#2){#4}
+}
+\def\arrLabeledColorVertex[#1](#2)#3#4#5{
+  \arrColorVertex(#2){#3}{#4}
+  \uput[#1]{0}(#2){#5}
+}
+\def\arrp[#1](#2)#3{\arrlvertex[#1](#2){#3}{$p_{#3}$}}
+\def\arrv[#1](#2)#3{\arrlvertex[#1](#2){#3}{$v_{#3}$}}
+\def\arru[#1](#2)#3{\arrlvertex[#1](#2){#3}{$u_{#3}$}}
+\def\nsarraxes(#1)(#2)(#3){\psaxes*[linecolor=black,linewidth=0.25pt,labels=none]{->}(#1)(#2)(#3)}
+\def\arraxes(#1)(#2)(#3){\hspace{-3pt}\nsarraxes(#1)(#2)(#3)}
+\def\arrIntersect{
+  /arrDict 10 dict def
+  arrDict begin
+  /arrIntersect {
+    /arrIntersectDict 14 dict def
+    arrIntersectDict begin
+    /x1 exch def
+    /y1 exch def
+    /x2 exch def
+    /y2 exch def
+    /x3 exch def
+    /y3 exch def
+    /x4 exch def
+    /y4 exch def
+    /dx43 x4 x3 sub def
+    /dy43 y4 y3 sub def
+    /dx13 x1 x3 sub def
+    /dy13 y1 y3 sub def
+    /dx21 x2 x1 sub def
+    /dy21 y2 y1 sub def
+    dx43 dy13 mul dy43 dx13 mul sub
+    dy43 dx21 mul dx43 dy21 mul sub
+    div dup dx21 mul x1 add exch dy21 mul y1 add
+    end
+  } bind def
+  end
+}
+\def\arrColorIntersectionVertex(#1,#2)(#3,#4)(#5,#6)(#7,#8){
+  \def\ArgI{{#1}}%
+  \def\ArgII{{#2}}%
+  \def\ArgIII{{#3}}%
+  \def\ArgIV{{#4}}%
+  \def\ArgV{{#5}}%
+  \def\ArgVI{{#6}}%
+  \def\ArgVII{{#7}}%
+  \def\ArgVIII{{#8}}%
+  \arrColorIntersectionVertexRelay
+}
+\def\arrColorIntersectionVertexRelay#1#2{
+  \arrColorVertex(!\arrIntersect\space
+    arrDict begin \ArgVIII \ArgVII \ArgVI \ArgV \ArgIV \ArgIII \ArgII \ArgI arrIntersect end
+  ){#1}{#2}
+}
+\def\arrEmptyIntersectionVertex(#1,#2)(#3,#4)(#5,#6)(#7,#8)#9{
+  \arrEmptyVertex(!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+  ){#9}
+}
+\def\arrMainIntersectionVertex(#1,#2)(#3,#4)(#5,#6)(#7,#8)#9{
+  \arrMainVertex(!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+  ){#9}
+}
+\def\arrCrossIntersectionVertex(#1,#2)(#3,#4)(#5,#6)(#7,#8)#9{
+  \psline[linewidth=0.75pt,linecolor=crossColor](!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+    \crossradius\space \myyunit\space div sub
+  )(!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+    \crossradius\space \myyunit\space div add
+  )
+  \psline[linewidth=0.75pt,linecolor=crossColor](!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+    exch \crossradius\space \myxunit\space div sub exch
+  )(!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+    exch \crossradius\space \myxunit\space div add exch
+  )
+  \pnode(!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+  ){#2}
+}
+\def\arrTriangle(#1,#2)(#3,#4)(#5,#6)(#7,#8){
+  \def\ArgI{{#1}}%
+  \def\ArgII{{#2}}%
+  \def\ArgIII{{#3}}%
+  \def\ArgIV{{#4}}%
+  \def\ArgV{{#5}}%
+  \def\ArgVI{{#6}}%
+  \def\ArgVII{{#7}}%
+  \def\ArgVIII{{#8}}%
+  \arrTriangleRelayA
+}
+\def\arrTriangleRelayA(#1,#2)(#3,#4)#5{
+  \def\ArgIX{{#1}}%
+  \def\ArgX{{#2}}%
+  \def\ArgXI{{#3}}%
+  \def\ArgXII{{#4}}%
+  \pspolygon*[linecolor=#5]
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgVIII \ArgVII \ArgVI \ArgV \ArgIV \ArgIII \ArgII \ArgI arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgXII \ArgXI \ArgX \ArgIX \ArgVIII \ArgVII \ArgVI \ArgV arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgIV \ArgIII \ArgII \ArgI \ArgXII \ArgXI \ArgX \ArgIX arrIntersect
+      end
+    )
+}
+\def\arrPolygon(#1,#2)(#3,#4)(#5,#6)(#7,#8){
+  \def\ArgI{{#1}}%
+  \def\ArgII{{#2}}%
+  \def\ArgIII{{#3}}%
+  \def\ArgIV{{#4}}%
+  \def\ArgV{{#5}}%
+  \def\ArgVI{{#6}}%
+  \def\ArgVII{{#7}}%
+  \def\ArgVIII{{#8}}%
+  \arrpolygonRelayA
+}
+\def\arrpolygonRelayA(#1,#2)(#3,#4)(#5,#6)(#7,#8){
+  \def\ArgIX{{#1}}%
+  \def\ArgX{{#2}}%
+  \def\ArgXI{{#3}}%
+  \def\ArgXII{{#4}}%
+  \def\ArgXIII{{#5}}%
+  \def\ArgXIV{{#6}}%
+  \def\ArgXV{{#7}}%
+  \def\ArgXVI{{#8}}%
+  \arrpolygonRelayB
+}
+\def\arrpolygonRelayB#1{
+  \pspolygon*[linecolor=#1]
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgVIII \ArgVII \ArgVI \ArgV \ArgIV \ArgIII \ArgII \ArgI arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgXII \ArgXI \ArgX \ArgIX \ArgVIII \ArgVII \ArgVI \ArgV arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgXVI \ArgXV \ArgXIV \ArgXIII \ArgXII \ArgXI \ArgX \ArgIX arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgIV \ArgIII \ArgII \ArgI \ArgXVI \ArgXV \ArgXIV \ArgXIII arrIntersect
+      end
+    )
+}
+\def\arrPentagon(#1,#2)(#3,#4)(#5,#6)(#7,#8){
+  \def\ArgI{{#1}}%
+  \def\ArgII{{#2}}%
+  \def\ArgIII{{#3}}%
+  \def\ArgIV{{#4}}%
+  \def\ArgV{{#5}}%
+  \def\ArgVI{{#6}}%
+  \def\ArgVII{{#7}}%
+  \def\ArgVIII{{#8}}%
+  \arrPentagonRelayA
+}
+\def\arrPentagonRelayA(#1,#2)(#3,#4)(#5,#6)(#7,#8){
+  \def\ArgIX{{#1}}%
+  \def\ArgX{{#2}}%
+  \def\ArgXI{{#3}}%
+  \def\ArgXII{{#4}}%
+  \def\ArgXIII{{#5}}%
+  \def\ArgXIV{{#6}}%
+  \def\ArgXV{{#7}}%
+  \def\ArgXVI{{#8}}%
+  \arrPentagonRelayB
+}
+\def\arrPentagonRelayB(#1,#2)(#3,#4)#5{
+  \def\ArgXVII{{#1}}%
+  \def\ArgXVIII{{#2}}%
+  \def\ArgXIX{{#3}}%
+  \def\ArgXX{{#4}}%
+  \pspolygon*[linecolor=#5]
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgVIII \ArgVII \ArgVI \ArgV \ArgIV \ArgIII \ArgII \ArgI arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgXII \ArgXI \ArgX \ArgIX \ArgVIII \ArgVII \ArgVI \ArgV arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgXVI \ArgXV \ArgXIV \ArgXIII \ArgXII \ArgXI \ArgX \ArgIX arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgXX \ArgXIX \ArgXVIII \ArgXVII \ArgXVI \ArgXV \ArgXIV \ArgXIII arrIntersect
+      end
+    )
+    (!\arrIntersect\space
+      arrDict begin
+      \ArgIV \ArgIII \ArgII \ArgI \ArgXX \ArgXIX \ArgXVIII \ArgXVII arrIntersect
+      end
+    )
+}
+\def\arredge#1#2{
+    \ncline[linewidth=0.5pt,linecolor=blue]{#1}{#2}
+    \ncline[linewidth=0.25pt,offset=3pt]{->}{#1}{#2}
+    \ncline[linewidth=0.25pt,offset=3pt]{->}{#2}{#1}
+}
+%
+\def\smallfilledsquare{\pspolygon*[linecolor=white](0,0)(0.1,0)(0.1,0.1)(0,0.1)}
+\def\smallsquare{\pspolygon(0,0)(0.1,0)(0.1,0.1)(0,0.1)}
+%
+% ======== macros for package names ===========================================
+\newcommand{\cgalPackage}[1]{{\emph{#1}}}
+\newcommand{\iiDArrangementsPackage}{\cgalPackage{2D Arrangements}}
+\newcommand{\iiDIntersectionofCurvesPackage}{\cgalPackage{2D Intersection of Curves}}
+\newcommand{\iiDSnapRoundingPackage}{\cgalPackage{2D Snap Rounding}}
+\newcommand{\EnvelopesofCurvesiniiDPackage}{\cgalPackage{Envelopes of Curves in 2D}}
+\newcommand{\EnvelopesofSurfacesiniiiDPackage}{\cgalPackage{Envelopes of Surfaces in 3D}}
+\newcommand{\iiDMinkowskiSumsPackage}{\cgalPackage{2D Minkowski Sums}}
+\newcommand{\iiDRegularizedBooleanSetOperationsPackage}{\cgalPackage{2D Regularized Boolean Set-Operations}}
+\newcommand{\iiDPolygonsPackage}{\cgalPackage{2D Polygons}}
+\newcommand{\iiDBooleanOperationsonNefPolygonsPackage}{\cgalPackage{2D Boolean Operations on Nef Polygons}}
+\newcommand{\iiDBooleanOperationsonNefPolygonsEmbeddedontheSpherePackage}{\cgalPackage{2D Boolean Operations on Nef Polygons Embedded on the Sphere}}
+\newcommand{\iiiDBooleanOperationsonNefPolyhedraPackage}{\cgalPackage{3D Boolean Operations on Nef Polyhedra}}
+%
+% =============================================================================
+%
+\newenvironment{FramedVerb}%
+	       {\VerbatimEnvironment
+		 \begin{Sbox}\begin{minipage}{\textwidth}\begin{Verbatim}}%
+	       {\end{Verbatim}\end{minipage}\end{Sbox}
+		 \setlength{\fboxsep}{8pt}\fbox{\TheSbox}}
+
+\newenvironment{fminipage}%
+	       {\begin{Sbox}\begin{minipage}}%
+	       {\end{minipage}\end{Sbox}\fbox{\TheSbox}}
+
+\newrgbcolor{c1}{0.1 0.1 0.5}
+\newrgbcolor{c2}{0.2 0.0 0.5}
+\newrgbcolor{c3}{0.0 0.2 0.5}
+\newrgbcolor{xpcolor}{1 0.5 0} % intersection point color
+\newrgbcolor{epcolor}{0 0 0.8} % endpoint color
+\newrgbcolor{fpcolor}{0 0.8 0} % ficticious point color
+\newrgbcolor{fccolor}{0 0.5 0} % ficticious curve color
+
+\newenvironment{packed-enum}{
+\begin{enumerate}
+  %\setlength{\topsep}{0pt}
+  %\setlength{\partopsep}{0pt}
+  \setlength{\itemsep}{0pt}
+  %\setlength{\parsep}{0pt}
+  \setlength{\rightmargin}{0pt}
+  %\setlength{\listparindent}{0pt}
+  %\setlength{\itemindent}{0pt}
+  %\setlength{\labelsep}{0pt}
+  %\setlength{\labelwidth}{0pt}
+  %%\makelabel{label}
+  \setlength{\leftmargin}{\labelwidth+\labelsep}
+}{\end{enumerate}}
+%
+% ======= acolumns ============================================================
+\usepackage{environ}% Required for \NewEnviron, i.e. to read the whole body of the environment
+\makeatletter
+\newcounter{acolumn}%  Number of current column
+\newlength{\acolumnmaxheight}%   Maximum column height
+
+% `column` replacement to measure height
+\newenvironment{@acolumn}[1]{%
+  \stepcounter{acolumn}%
+  \begin{lrbox}{\@tempboxa}%
+    \begin{minipage}{#1}%
+}{%
+    \end{minipage}
+  \end{lrbox}
+  \@tempdimc=\dimexpr\ht\@tempboxa+\dp\@tempboxa\relax
+  % Save height of this column:
+  \expandafter\xdef\csname acolumn@height@\roman{acolumn}\endcsname{\the\@tempdimc}%
+  % Save maximum height
+  \ifdim\@tempdimc>\acolumnmaxheight
+  \global\acolumnmaxheight=\@tempdimc
+  \fi
+}
+
+% `column` wrapper which sets the height beforehand
+\newenvironment{@@acolumn}[1]{%
+  \stepcounter{acolumn}%
+  % The \autoheight macro contains a \vspace macro with the maximum height minus the natural column height
+  \edef\autoheight{\noexpand\vspace*{\dimexpr\acolumnmaxheight-\csname acolumn@height@\roman{acolumn}\endcsname\relax}}%
+  % Call original `column`:
+  \orig@column{#1}%
+}{%
+  \endorig@column
+}
+
+% Save orignal `column` environment away
+\let\orig@column\column
+\let\endorig@column\endcolumn
+
+% `columns` variant with automatic height adjustment
+\NewEnviron{acolumns}[1][]{%
+  % Init vars:
+  \setcounter{acolumn}{0}%
+  \setlength{\acolumnmaxheight}{0pt}%
+  \def\autoheight{\vspace*{0pt}}%
+  % Set `column` environment to special measuring environment
+  \let\column\@acolumn
+  \let\endcolumn\end@acolumn
+  \BODY% measure heights
+  % Reset counter for second processing round
+  \setcounter{acolumn}{0}%
+  % Set `column` environment to wrapper
+  \let\column\@@acolumn
+  \let\endcolumn\end@@acolumn
+  % Finally process columns now for real
+  \begin{columns}[#1]%
+    \BODY
+  \end{columns}%
+}
+\makeatother
+%
+% ======== Tikz museful macros==================================================
+% Usage \arcThroughThoPoints[options]{center}{p}{q};
+\newcommand{\arcThroughThoPoints}[4][]{
+\coordinate (center) at (#2);
+\draw[#1]
+ let \p1=($(#3)-(center)$),
+     \p2=($(#4)-(center)$),
+     \n0={veclen(\p1)},       % Radius
+     \n1={atan2(\x1,\y1)}, % angles
+     \n2={atan2(\x2,\y2)},
+     \n3={\n2>\n1?\n2:\n2+360}
+   in (#3) arc(\n1:\n3:\n0);
+}

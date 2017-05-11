@@ -336,7 +336,8 @@ public:
      */
     reference operator* () const
     {
-      CGAL_multiset_precondition (nodeP != NULL && nodeP->is_valid());
+      CGAL_multiset_precondition (nodeP != NULL);
+      CGAL_multiset_precondition (nodeP->is_valid());
 
       return (nodeP->object);
     }
@@ -346,7 +347,8 @@ public:
      */
     pointer operator-> () const
     {
-      CGAL_multiset_precondition (nodeP != NULL && nodeP->is_valid());
+      CGAL_multiset_precondition (nodeP != NULL);
+      CGAL_multiset_precondition (nodeP->is_valid());
 
       return (&(nodeP->object));
     }
@@ -451,7 +453,8 @@ public:
      */
     reference operator* () const
     {
-      CGAL_multiset_precondition (nodeP != NULL && nodeP->is_valid());
+      CGAL_multiset_precondition (nodeP != NULL);
+      CGAL_multiset_precondition (nodeP->is_valid());
 
       return (nodeP->object);
     }
@@ -461,7 +464,8 @@ public:
      */
     pointer operator-> () const
     {
-      CGAL_multiset_precondition (nodeP != NULL && nodeP->is_valid());
+      CGAL_multiset_precondition (nodeP != NULL);
+      CGAL_multiset_precondition (nodeP->is_valid());
 
       return (&(nodeP->object));
     }

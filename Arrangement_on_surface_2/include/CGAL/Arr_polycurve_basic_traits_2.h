@@ -65,6 +65,10 @@ public:
                                                    Right_side_category>::result
     Are_all_sides_oblivious_tag;
 
+  typedef typename Arr_two_sides_category<Bottom_side_category,
+                                          Top_side_category>::result
+    Bottom_or_top_sides_category;
+
   typedef typename Subcurve_traits_2::Point_2              Point_2;
   typedef typename Subcurve_traits_2::X_monotone_curve_2   X_monotone_subcurve_2;
 
@@ -1491,7 +1495,7 @@ public:
       m_poly_traits(traits)
     {}
 
-    /*! Compare the x-limit of a point with the x-coordinate of an
+    /*! Compare the x-coordinates of a point with the x-coordinate of an
      * x-curve-end on the boundary.
      * \param point the point.
      * \param xcv the x-curve, the endpoint of which is compared.
@@ -1509,19 +1513,9 @@ public:
     Comparison_result operator()(const Point_2& point,
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
-    {
-      const Subcurve_traits_2* geom_traits =
-        m_poly_traits.subcurve_traits_2();
-      Comparison_result direction =
-        geom_traits->compare_endpoints_xy_2_object()(xcv[0]);
-      const X_monotone_subcurve_2& xs =
-        (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
-         ((direction == LARGER) && (ce == ARR_MIN_END))) ?
-        xcv[0] : xcv[xcv.number_of_subcurves()-1];
-      return geom_traits->compare_x_on_boundary_2_object()(point, xs, ce);
-    }
+    { return operator()(point, xcv, ce, Bottom_or_top_sides_category()); }
 
-    /*! Compare the x-coordinates of 2 curve-ends near the boundary of the
+    /*! Compare the x-coordinates of 2 curve-ends on the boundary of the
      * parameter space.
      * \param xcv1 the first curve.
      * \param ce1 the first curve-end indicator:
@@ -1546,6 +1540,35 @@ public:
                                  Arr_curve_end ce1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2) const
+    { return operator()(xcv1, ce1, xcv2, ce2, Bottom_or_top_sides_category()); }
+
+  private:
+    /*! \brief compares the x-coordinates of a point with the x-coordinate of
+     * an x-curve-end on the boundary.
+     */
+    Comparison_result operator()(const Point_2& point,
+                                 const X_monotone_curve_2& xcv,
+                                 Arr_curve_end ce,
+                                 Arr_boundary_cond_tag) const
+    {
+      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
+      Comparison_result direction =
+        geom_traits->compare_endpoints_xy_2_object()(xcv[0]);
+      const X_monotone_subcurve_2& xs =
+        (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
+         ((direction == LARGER) && (ce == ARR_MIN_END))) ?
+        xcv[0] : xcv[xcv.number_of_subcurves()-1];
+      return geom_traits->compare_x_on_boundary_2_object()(point, xs, ce);
+    }
+
+    /*! \brief compares the x-coordinates of 2 curve-ends on the boundary of
+     * the parameter space.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                 Arr_curve_end ce1,
+                                 const X_monotone_curve_2& xcv2,
+                                 Arr_curve_end ce2,
+                                 Arr_boundary_cond_tag) const
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       Comparison_result direction1 =
@@ -1562,27 +1585,9 @@ public:
         xcv2[0] : xcv2[xcv2.number_of_subcurves()-1];
       return geom_traits->compare_x_on_boundary_2_object()(xs1, ce1, xs2, ce2);
     }
-  };
 
-  /*! Obtain a Compare_x_on_boundary_2 function object. */
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  { return Compare_x_on_boundary_2(*this); }
-
-  class Compare_x_at_limit_2{
-  protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
-      Polycurve_basic_traits_2;
-
-    /*! The polycurve traits (in case it has state). */
-    const Polycurve_basic_traits_2& m_poly_traits;
-
-  public:
-    Compare_x_at_limit_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
-
-    unsigned int get_curve_index (const X_monotone_curve_2& xcv,
-                                  const Arr_curve_end ce) const
+    size_type get_curve_index(const X_monotone_curve_2& xcv,
+                              const Arr_curve_end ce) const
     {
       //waqar:: dont know why it is opposite in Parameter_space_in_x...
       // I think this is because of the way the subcurves are stored in the
@@ -1595,31 +1600,48 @@ public:
       return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
     }
 
+    /*! Given a point p, an x-monotone curve C(t) = (X(t),Y(t)),
+     * and an enumerator that specifies either the minimum end or the
+     * maximum end of the curve, and thus maps to a parameter value
+     * d in {0,1}, compare x_p and limit{t => d} X(t).
+     * If the parameter space is unbounded, a precondition ensures that C has
+     * a vertical asymptote at its d-end; that is limit{t => d} X(t) is finite.
+     */
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const
+                                 Arr_curve_end ce,
+                                 Arr_has_open_side_tag) const
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      typename Subcurve_traits_2::Compare_x_at_limit_2 compare_x_at_limit =
-        geom_traits->compare_x_at_limit_2_object();
+      typename Subcurve_traits_2::Compare_x_on_boundary_2
+        compare_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
 
-      unsigned int index = this->get_curve_index(xcv, ce);
-      return compare_x_at_limit(p, xcv[index], ce );
+      size_type index = this->get_curve_index(xcv, ce);
+      return compare_x_on_boundary(p, xcv[index], ce );
     }
 
+    /*! Given two x-monotone curves C1(t) = (X1(t),Y1(t)) and
+     * C2(t) = (X2(t),Y2(t)) and two enumerators that specify either the
+     * minimum ends or the maximum ends of the curves, and thus map to
+     * parameter values d1 in {0,1} and d2 in {0,1} for C1 and for C2,
+     * respectively, compare limit{t => d1} X1(t) and limit{t => d2} X2(t).
+     * If the parameter space is unbounded, a precondition ensures that
+     * C1 and C2 have vertical asymptotes at their respective ends;
+     * that is, limit{t => d1} X1(t) and limit{t =? d2} X2(t) are finite.
+    */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  Arr_curve_end ce1/* for xcv1 */,
                                  const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end ce2/*! for xcv2 */) const
+                                 Arr_curve_end ce2/*! for xcv2 */,
+                                 Arr_has_open_side_tag) const
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      typename Subcurve_traits_2::Compare_x_at_limit_2 compare_x_at_limit =
-        geom_traits->compare_x_at_limit_2_object();
+      typename Subcurve_traits_2::Compare_x_at_on_boundary
+        compare_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
 
-      unsigned int index_1 = this->get_curve_index(xcv1, ce1);
-      unsigned int index_2 = this->get_curve_index(xcv2, ce2);
-
-      return compare_x_at_limit(xcv1[index_1], ce1, xcv2[index_2], ce2);
+      size_type index_1 = this->get_curve_index(xcv1, ce1);
+      size_type index_2 = this->get_curve_index(xcv2, ce2);
+      return compare_x_on_boundary(xcv1[index_1], ce1, xcv2[index_2], ce2);
     }
 
     Comparison_result operator()(const X_monotone_curve_2& xcv,
@@ -1628,19 +1650,19 @@ public:
                                  Arr_curve_end ce2/*! for xseg */) const
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      typename Subcurve_traits_2::Compare_x_at_limit_2
-        compare_x_at_limit = geom_traits->compare_x_at_limit_2_object();
+      typename Subcurve_traits_2::Compare_x_on_boundary_2
+        compare_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
 
-      unsigned int index = this->get_curve_index(xcv, ce1 );
-
-      return compare_x_at_limit(xcv[index], ce1, xseg, ce2 );
+      size_type index = this->get_curve_index(xcv, ce1 );
+      return compare_x_on_boundary(xcv[index], ce1, xseg, ce2);
     }
   };
 
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(*this); }
+  /*! Obtain a Compare_x_on_boundary_2 function object. */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(*this); }
 
-  class Compare_x_near_limit_2{
+  class Compare_x_near_boundary_2{
   protected:
     typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
       Polycurve_basic_traits_2;
@@ -1649,7 +1671,7 @@ public:
     const Polycurve_basic_traits_2& m_poly_traits;
 
   public:
-    Compare_x_near_limit_2(const Polycurve_basic_traits_2& traits) :
+    Compare_x_near_boundary_2(const Polycurve_basic_traits_2& traits) :
       m_poly_traits(traits)
     {}
 
@@ -1674,18 +1696,18 @@ public:
                                  Arr_curve_end ce) const
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      typename Subcurve_traits_2::Compare_x_near_limit_2
-        cmp_x_near_limit = geom_traits->compare_x_near_limit_2_object();
+      typename Subcurve_traits_2::Compare_x_near_boundary_2
+        cmp_x_near_boundary = geom_traits->compare_x_near_boundary_2_object();
 
       unsigned int index_1 = this->get_curve_index(xcv1, ce);
       unsigned int index_2 = this->get_curve_index(xcv2, ce);
 
-      return cmp_x_near_limit(xcv1[index_1], xcv2[index_2], ce);
+      return cmp_x_near_boundary(xcv1[index_1], xcv2[index_2], ce);
     }
   };
 
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(*this); }
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(*this); }
 
   /*! A functor that compares the y-coordinate of two given points
    * that lie on the vertical identification curve.

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
@@ -49,7 +49,7 @@ class Arr_unb_planar_overlay_helper
 {
 public:
 
-  typedef Traits_                                        Traits_2; 
+  typedef Traits_                                        Traits_2;
   typedef Arrangement_                                   Arrangement_2;
   typedef Event_                                         Event;
   typedef Subcurve_                                      Subcurve;
@@ -86,7 +86,7 @@ protected:
   Halfedge_handle_red        m_red_th;    // Red top fictitious halfedge.
   Halfedge_handle_blue       m_blue_th;   // Blue top fictitious halfedge.
 
-  Vertex_handle_red          v_red_tl;    // Red top-left fictitious vertex. 
+  Vertex_handle_red          v_red_tl;    // Red top-left fictitious vertex.
   Vertex_handle_blue         v_blue_tl;   // Blue top-left fictitious vertex.
 
 public:
@@ -107,7 +107,7 @@ public:
   /*!
    * A notification invoked before the sweep-line starts handling the given
    * event.
-   */  
+   */
   void before_handle_event (Event* e);
   //@}
 
@@ -142,24 +142,24 @@ void Arr_unb_planar_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::before_sweep ()
   // vertices in both red and blue arrangements. If there are no vertices
   // at x = -oo, we take the halfedge incident to the top-left vertex that
   // lies on the top edge of the fictitious face.
-  Vertex_handle_red   v_red_bl = 
+  Vertex_handle_red   v_red_bl =
     Vertex_handle_red (m_red_top_traits->bottom_left_vertex());
 
   m_red_th = v_red_bl->incident_halfedges();
 
   if (m_red_th->source()->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
     m_red_th = m_red_th->next()->twin();
-  
+
   if (m_red_th->source() == v_red_tl)
     m_red_th = m_red_th->prev();
 
-  Vertex_handle_blue  v_blue_bl = 
+  Vertex_handle_blue  v_blue_bl =
     Vertex_handle_blue (m_blue_top_traits->bottom_left_vertex());
-  
+
   m_blue_th = v_blue_bl->incident_halfedges();
   if (m_blue_th->source()->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
     m_blue_th = m_blue_th->next()->twin();
-  
+
   if (m_blue_th->source() == v_blue_tl)
     m_blue_th = m_blue_th->prev();
 
@@ -177,7 +177,7 @@ before_handle_event (Event* e)
   // Nothing to do in case the event represents a valid point.
   if (e->is_closed())
     return;
-  
+
   // In case the event occurs on the left edge of the fictitious face (x = -oo)
   // or on its top edge (finite x and y = +oo), update the fictitious top
   // halfedges.
@@ -185,7 +185,8 @@ before_handle_event (Event* e)
       (e->parameter_space_in_x() == ARR_INTERIOR && 
        e->parameter_space_in_y() == ARR_TOP_BOUNDARY))
   {
-    switch (e->curve().color())
+    Arr_curve_end ce;
+    switch (e->boundary_touching_curve(ce).color())
     {
     case (Traits_2::RED) :
       // Update the red top fictitious halfedge.
@@ -193,18 +194,18 @@ before_handle_event (Event* e)
       if (m_red_th->source() == v_red_tl)
         m_red_th = m_red_th->prev();
       break;
-      
+
     case (Traits_2::BLUE) :
       // Update the blue top fictitious halfedge.
       m_blue_th = m_blue_th->twin()->next()->twin();
       if (m_blue_th->source() == v_blue_tl)
         m_blue_th = m_blue_th->prev();
       break;
-        
+
     case Traits_2::RB_OVERLAP :
       // Update both red and blue top fictitious halfedges.
       m_red_th = m_red_th->twin()->next()->twin();
-      if (m_red_th->source() == v_red_tl) 
+      if (m_red_th->source() == v_red_tl)
         m_red_th = m_red_th->prev();
 
       m_blue_th = m_blue_th->twin()->next()->twin();

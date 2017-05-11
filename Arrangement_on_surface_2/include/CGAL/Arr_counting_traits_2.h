@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s): Efi Fogel      <efif@post.tau.ac.il>
 //            Eric Berberich <ericb@post.tau.ac.il>
 
@@ -41,10 +38,10 @@
 
 namespace CGAL {
 
-/*! \class 
+/*! \class
  * A model of the ArrangementTraits_2 concept that counts the methods invoked.
  */
-template <class Base_traits>
+template <typename Base_traits>
 class Arr_counting_traits_2 : public Base_traits {
 public:
   enum Operation_id {
@@ -79,14 +76,11 @@ public:
     PARAMETER_SPACE_IN_Y_CURVE_OP,
     IS_ON_Y_IDENTIFICATION_POINT_OP,
     IS_ON_Y_IDENTIFICATION_CURVE_OP,
-    COMPARE_X_AT_LIMIT_POINT_CURVE_END_OP,
-    COMPARE_X_AT_LIMIT_CURVE_ENDS_OP,
-    COMPARE_X_NEAR_LIMIT_OP,
     COMPARE_X_ON_BOUNDARY_POINTS_OP,
     COMPARE_X_ON_BOUNDARY_POINT_CURVE_END_OP,
     COMPARE_X_ON_BOUNDARY_CURVE_ENDS_OP,
     COMPARE_X_NEAR_BOUNDARY_OP,
-    
+
     NUMBER_OF_OPERATIONS
   };
 
@@ -106,64 +100,64 @@ public:
     clear_counters();
     increment();
   }
-  
+
   /*! Obtain the counter of the given operation */
   unsigned int count(Operation_id id) const
   { return m_counters[id]; }
 
   unsigned int count_compare_x() const
   { return m_counters[COMPARE_X_OP]; }
-  
+
   unsigned int count_compare_xy() const
   { return m_counters[COMPARE_XY_OP]; }
 
   unsigned int count_construct_min_vertex() const
   { return m_counters[CONSTRUCT_MIN_VERTEX_OP]; }
-  
+
   unsigned int count_construct_max_vertex() const
   { return m_counters[CONSTRUCT_MAX_VERTEX_OP]; }
 
   unsigned int count_is_vertical() const
   { return m_counters[IS_VERTICAL_OP]; }
-  
+
   unsigned int count_compare_y_at_x() const
   { return m_counters[COMPARE_Y_AT_X_OP]; }
-  
+
   unsigned int count_equal_points() const
   { return m_counters[EQUAL_POINTS_OP]; }
-  
+
   unsigned int count_equal_curves() const
   { return m_counters[EQUAL_CURVES_OP]; }
-  
+
   unsigned int count_compare_y_at_x_left() const
   { return m_counters[COMPARE_Y_AT_X_LEFT_OP]; }
-  
+
   unsigned int count_compare_y_at_x_right() const
   { return m_counters[COMPARE_Y_AT_X_RIGHT_OP]; }
-  
+
   unsigned int count_make_x_monotone() const
   { return m_counters[MAKE_X_MONOTONE_OP]; }
-  
+
   unsigned int count_split() const
   { return m_counters[SPLIT_OP]; }
-  
+
   unsigned int count_intersect() const
   { return m_counters[INTERSECT_OP]; }
-  
+
   unsigned int count_are_mergeable() const
   { return m_counters[ARE_MERGEABLE_OP]; }
-  
+
   unsigned int count_merge() const
   { return m_counters[MERGE_OP]; }
-  
+
   unsigned int count_construct_opposite() const
   { return m_counters[CONSTRUCT_OPPOSITE_OP]; }
-  
+
   unsigned int count_compare_endpoints_xy() const
   { return m_counters[COMPARE_ENDPOINTS_XY_OP]; }
 
   // left-right
-  
+
   unsigned int count_parameter_space_in_x_curve_end() const
   { return m_counters[PARAMETER_SPACE_IN_X_CURVE_END_OP]; }
 
@@ -172,7 +166,7 @@ public:
 
   unsigned int count_parameter_space_in_x_point() const
   { return m_counters[PARAMETER_SPACE_IN_X_POINT_OP]; }
-  
+
   unsigned int count_is_on_x_identification_point() const
   { return m_counters[IS_ON_X_IDENTIFICATION_POINT_OP]; }
 
@@ -203,15 +197,6 @@ public:
   unsigned int count_is_on_y_identification_curve() const
   { return m_counters[IS_ON_Y_IDENTIFICATION_CURVE_OP]; }
 
-  unsigned int count_compare_x_at_limit_point_curve_end() const
-  { return m_counters[COMPARE_X_AT_LIMIT_POINT_CURVE_END_OP]; }
-
-  unsigned int count_compare_x_at_limit_curve_ends() const
-  { return m_counters[COMPARE_X_AT_LIMIT_CURVE_ENDS_OP]; }
-
-  unsigned int count_compare_x_near_limit() const
-  { return m_counters[COMPARE_X_NEAR_LIMIT_OP]; }
-
   unsigned int count_compare_x_on_boundary_points() const
   { return m_counters[COMPARE_X_ON_BOUNDARY_POINTS_OP]; }
 
@@ -240,7 +225,7 @@ public:
                                                     Top_side_category;
   typedef typename internal::Arr_complete_right_side_category< Base >::Category
                                                     Right_side_category;
-  
+
   typedef typename Base::Point_2                    Point_2;
   typedef typename Base::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Base::Curve_2                    Curve_2;
@@ -308,7 +293,7 @@ public:
     const Point_2 operator()(const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(xc); }
   };
-  
+
   /*! A functor that checks whether a given x-monotone curve is vertical. */
   class Is_vertical_2 {
   private:
@@ -324,7 +309,7 @@ public:
     bool operator()(const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(xc); }
   };
-  
+
   /*! A functor that compares the y-coordinates of a point and an
    * x-monotone curve at the point x-coordinate.
    */
@@ -343,7 +328,7 @@ public:
                                  const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(p, xc); }
   };
-  
+
   /*! A functor that checks whether two points and two x-monotone curves are
    * identical.
    */
@@ -367,7 +352,7 @@ public:
 
     /*! Operate */
     bool operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter2; return m_object(p1, p2); }    
+    { ++m_counter2; return m_object(p1, p2); }
   };
 
   /*! A functor that compares compares the y-coordinates of two x-monotone
@@ -409,7 +394,7 @@ public:
                                  const Point_2& p) const
     { ++m_counter; return m_object(xc1, xc2, p); }
   };
-  
+
   /*! A functor that divides a curve into x-monotone curves. */
   class Make_x_monotone_2 {
   private:
@@ -422,7 +407,7 @@ public:
       m_object(base->make_x_monotone_2_object()), m_counter(counter) {}
 
     /*! Operate */
-    template<class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     { ++m_counter; return m_object(cv, oi); }
   };
@@ -456,7 +441,7 @@ public:
       m_object(base->intersect_2_object()), m_counter(counter) {}
 
     /*! Operate */
-    template<class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xc1,
                               const X_monotone_curve_2& xc2,
                               OutputIterator oi) const
@@ -548,10 +533,11 @@ public:
     /*! Construct */
     Parameter_space_in_x_2(const Base* base, unsigned int& counter1,
                            unsigned int& counter2, unsigned int& counter3) :
-      m_object(base->parameter_space_in_x_2_object()), 
+      m_object(base->parameter_space_in_x_2_object()),
       m_counter1(counter1),
       m_counter2(counter2),
-      m_counter3(counter3) {}
+      m_counter3(counter3)
+    {}
 
     /*! Operate */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc,
@@ -563,11 +549,9 @@ public:
     Arr_parameter_space operator()(const Point_2& p) const
     { ++m_counter2; return m_object(p); }
 
-
     /*! Operate */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc) const
     { ++m_counter3; return m_object(xc); }
-
   };
 
   /*! A functor that determines whether a point or a curve lies on an
@@ -581,21 +565,20 @@ public:
 
   public:
     /*! Construct */
-    Is_on_x_identification_2(const Base* base, 
+    Is_on_x_identification_2(const Base* base,
                              unsigned int& counter1, unsigned int& counter2) :
-      m_object(base->is_on_x_identificiation_2_object()), 
+      m_object(base->is_on_x_identificiation_2_object()),
       m_counter1(counter1),
-      m_counter2(counter2) {}
+      m_counter2(counter2)
+    {}
 
     /*! Operate */
     Arr_parameter_space operator()(const Point_2& p) const
     { ++m_counter1; return m_object(p); }
 
-
     /*! Operate */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc) const
     { ++m_counter2; return m_object(xc); }
-
   };
 
   /*! A functor that compares the y-coordinate of two given points
@@ -617,7 +600,7 @@ public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { ++m_counter; return m_object(p1, p2); }
   };
-  
+
   /*! A functor that compares the y-coordinates of curve ends near the
    * boundary of the parameter space.
    */
@@ -633,7 +616,7 @@ public:
 
     /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
-                                 const X_monotone_curve_2& xc2, 
+                                 const X_monotone_curve_2& xc2,
                                  Arr_curve_end ce) const
     { ++m_counter; return m_object(xc1, xc2, ce); }
   };
@@ -654,10 +637,11 @@ public:
     /*! Construct */
     Parameter_space_in_y_2(const Base* base, unsigned int& counter1,
                            unsigned int& counter2, unsigned int& counter3) :
-      m_object(base->parameter_space_in_y_2_object()), 
+      m_object(base->parameter_space_in_y_2_object()),
       m_counter1(counter1),
       m_counter2(counter2),
-      m_counter3(counter3) {}
+      m_counter3(counter3)
+    {}
 
     /*! Operate */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc,
@@ -671,7 +655,6 @@ public:
     /*! Operate */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc) const
     { ++m_counter3; return m_object(xc); }
-    
   };
 
   /*! A functor that determines whether a point or a curve lies on an
@@ -685,11 +668,12 @@ public:
 
   public:
     /*! Construct */
-    Is_on_y_identification_2(const Base* base, 
+    Is_on_y_identification_2(const Base* base,
                              unsigned int& counter1, unsigned int& counter2) :
-      m_object(base->is_on_y_identificiation_2_object()), 
+      m_object(base->is_on_y_identificiation_2_object()),
       m_counter1(counter1),
-      m_counter2(counter2) {}
+      m_counter2(counter2)
+    {}
 
     /*! Operate */
     Arr_parameter_space operator()(const Point_2& p) const
@@ -699,61 +683,6 @@ public:
     /*! Operate */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc) const
     { ++m_counter2; return m_object(xc); }
-
-  };
-
-  /*! A functor that compares the x-limits of curve ends on the
-   * boundary of the parameter space.
-   */
-  class Compare_x_at_limit_2 {
-  private:
-    typename Base::Compare_x_at_limit_2 m_object;
-    unsigned int& m_counter1;
-    unsigned int& m_counter2;
-
-  public:
-    /*! Construct */
-    Compare_x_at_limit_2(const Base* base, 
-                         unsigned int& counter1, unsigned int& counter2) :
-      m_object(base->compare_x_at_limit_2_object()), 
-      m_counter1(counter1),
-      m_counter2(counter2) {}
-
-    /*! Operate */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xc,
-                                 Arr_curve_end ce) const
-    { ++m_counter1; return m_object(p, xc, ce); }
-
-    /*! Operate */
-    Comparison_result operator()(const X_monotone_curve_2& xc1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xc2,
-                                 Arr_curve_end ce2) const
-    { ++m_counter2; return m_object(xc1, ce1, xc2, ce2); }
-  };
-
-
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_limit_2 {
-  private:
-    typename Base::Compare_x_near_limit_2 m_object;
-    unsigned int& m_counter;
-  
-  public:
-    /*! Construct */
-    Compare_x_near_limit_2(const Base* base, unsigned int& counter) :
-      m_object(base->compare_x_near_limit_2_object()), 
-      m_counter(counter) {}
-
-
-    /*! Operate */
-    Comparison_result operator()(const X_monotone_curve_2& xc1,
-                                 const X_monotone_curve_2& xc2,
-                                 Arr_curve_end ce) const
-    { ++m_counter; return m_object(xc1, xc2, ce); }
   };
 
   /*! A functor that compares the x-coordinate of two given points
@@ -792,7 +721,6 @@ public:
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2) const
     { ++m_counter3; return m_object(xcv1, ce1, xcv2, ce2); }
-
   };
 
   /*! A functor that compares the x-coordinates of curve ends near the
@@ -802,14 +730,13 @@ public:
   private:
     typename Base::Compare_x_near_boundary_2 m_object;
     unsigned int& m_counter;
-  
+
   public:
     /*! Construct */
-    Compare_x_near_boundary_2(const Base* base, 
-                              unsigned int& counter) :
-      m_object(base->compare_x_near_boundary_2_object()), 
-      m_counter(counter) {}
-
+    Compare_x_near_boundary_2(const Base* base, unsigned int& counter) :
+      m_object(base->compare_x_near_boundary_2_object()),
+      m_counter(counter)
+    {}
 
     /*! Operate */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
@@ -827,7 +754,7 @@ public:
 
   Compare_x_2 compare_x_2_object() const
   { return Compare_x_2(this, m_counters[COMPARE_X_OP]); }
-  
+
   Compare_xy_2 compare_xy_2_object() const
   { return Compare_xy_2(this, m_counters[COMPARE_XY_OP]); }
 
@@ -836,13 +763,13 @@ public:
 
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(this, m_counters[CONSTRUCT_MAX_VERTEX_OP]); }
-  
+
   Is_vertical_2 is_vertical_2_object() const
   { return Is_vertical_2(this, m_counters[IS_VERTICAL_OP]); }
-  
+
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(this, m_counters[COMPARE_Y_AT_X_OP]); }
-  
+
   Equal_2 equal_2_object() const
   {
     return Equal_2(this, m_counters[EQUAL_POINTS_OP],
@@ -854,7 +781,7 @@ public:
 
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(this, m_counters[COMPARE_Y_AT_X_RIGHT_OP]); }
-  
+
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(this, m_counters[MAKE_X_MONOTONE_OP]); }
 
@@ -879,16 +806,16 @@ public:
   // left-right
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(
-        this, 
+        this,
         m_counters[PARAMETER_SPACE_IN_X_CURVE_END_OP],
         m_counters[PARAMETER_SPACE_IN_X_POINT_OP],
         m_counters[PARAMETER_SPACE_IN_X_CURVE_OP]
-    ); 
+    );
   }
-  
+
   Is_on_x_identification_2 is_on_x_identification_2_object() const
   {
-    return Is_on_x_identification_2(this, 
+    return Is_on_x_identification_2(this,
                                     m_counters[IS_ON_X_IDENTIFICATION_POINT_OP],
                                     m_counters[IS_ON_X_IDENTIFICATION_CURVE_OP]);
   }
@@ -905,41 +832,30 @@ public:
   // bottom-top
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(
-        this, 
+        this,
         m_counters[PARAMETER_SPACE_IN_Y_CURVE_END_OP],
         m_counters[PARAMETER_SPACE_IN_Y_POINT_OP],
         m_counters[PARAMETER_SPACE_IN_Y_CURVE_OP]
-    ); 
+    );
   }
 
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(
-        this, 
+        this,
         m_counters[IS_ON_Y_IDENTIFICATION_POINT_OP],
         m_counters[IS_ON_Y_IDENTIFICATION_CURVE_OP]
-    ); 
+    );
   }
-
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  {
-    return
-      Compare_x_at_limit_2(this, 
-                           m_counters[COMPARE_X_AT_LIMIT_POINT_CURVE_END_OP],
-                           m_counters[COMPARE_X_AT_LIMIT_CURVE_ENDS_OP]);
-  }
-
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(this, m_counters[COMPARE_X_NEAR_LIMIT_OP]); }
 
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   {
     return
-      Compare_x_on_boundary_2(this, 
+      Compare_x_on_boundary_2(this,
                               m_counters[COMPARE_X_ON_BOUNDARY_POINTS_OP],
                               m_counters[COMPARE_X_ON_BOUNDARY_POINT_CURVE_END_OP],
                               m_counters[COMPARE_X_ON_BOUNDARY_CURVE_ENDS_OP]);
   }
- 
+
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   {
     return Compare_x_near_boundary_2(this,
@@ -972,7 +888,7 @@ private:
   mutable unsigned int m_counters[NUMBER_OF_OPERATIONS];
 };
 
-template <class Out_stream, class Base_traits>
+template <typename Out_stream, class Base_traits>
 inline
 Out_stream& operator<<(Out_stream& os,
                        const Arr_counting_traits_2<Base_traits>& traits)
@@ -1042,12 +958,6 @@ Out_stream& operator<<(Out_stream& os,
      << traits.count_is_on_y_identification_point() << std::endl
      << "# of IS_ON_Y_IDENTIFICATION curve operation = "
      << traits.count_is_on_y_identification_curve() << std::endl
-     << "# of COMPARE_X_AT_LIMIT point/curve-end operation = "
-     << traits.count_compare_x_at_limit_point_curve_end() << std::endl
-     << "# of COMPARE_X_AT_LIMIT curve-ends operation = "
-     << traits.count_compare_x_at_limit_curve_ends() << std::endl
-     << "# of COMPARE_X_NEAR_LIMIT operation = "
-     << traits.count_compare_x_near_limit() << std::endl
      << "# of COMPARE_X_ON_BOUNDARY points operation = "
      << traits.count_compare_x_on_boundary_points() << std::endl
      << "# of COMPARE_X_ON_BOUNDARY point/curve-end operation = "

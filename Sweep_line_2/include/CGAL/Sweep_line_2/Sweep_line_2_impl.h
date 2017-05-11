@@ -170,7 +170,6 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 
   // Check if the curve should be removed for good.
   bool remove_for_good = false;
-
   Event_subcurve_iterator left_iter =
     this->m_currentEvent->left_curves_begin();
   while (left_iter != this->m_currentEvent->left_curves_end()) {
@@ -432,7 +431,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
 
   float load_factor = static_cast<float>(m_curves_pair_set.size()) /
     m_curves_pair_set.bucket_count();
-  // after lot of benchemarks, keeping load_factor<=6 is optimal
+  // after lot of benchmarks, keeping load_factor<=6 is optimal
   if (load_factor > 6.0f)
     m_curves_pair_set.resize(m_curves_pair_set.size() * 6);
 
@@ -447,7 +446,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   }
 
   // The two subCurves may start at the same point, in that case we ignore the
-  // first intersection point (if we got to that stage, they cannot  overlap).
+  // first intersection point (if we got to that stage, they cannot overlap).
 
   const Arr_parameter_space ps_x1 =
     this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
@@ -538,8 +537,12 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   if (vi != vi_end) {
     xp_point = object_cast<std::pair<Point_2, Multiplicity> >(&(*vi));
     if (xp_point != NULL) {
-      // Skip the intersection point if it is not larger than the current
-      // event.
+      // Skip the intersection point if it is not larger than the current event.
+      // To correctly do so, we have to set the ps_x and ps_y for xp_point->first
+      // in the comparison functor to ARR_INTERIOR (a non-boundary intersection
+      // must be be interior!)
+      this->m_queueEventLess.set_parameter_space_in_x(ARR_INTERIOR);
+      this->m_queueEventLess.set_parameter_space_in_y(ARR_INTERIOR);
       if (this->m_queueEventLess(xp_point->first, this->m_currentEvent) !=
           LARGER)
       {

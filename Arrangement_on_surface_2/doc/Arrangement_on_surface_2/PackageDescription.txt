@@ -111,13 +111,36 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementLandmarkTraits_2`
 - `ArrangementXMonotoneTraits_2`
 - `ArrangementTraits_2`
+- `ArrangementHorizontalSideTraits_2`
+- `ArrangementVerticalSideTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
+- `ArrangementSphericalBoundaryTraits_2`
 - `ArrangementInputFormatter`
 - `ArrangementOutputFormatter`
 - `ArrangementWithHistoryInputFormatter`
 - `ArrangementWithHistoryOutputFormatter`
 - `ArrangementPointLocation_2`
 - `ArrangementVerticalRayShoot_2`
+- `ArrangementOpenLeftTraits_2`
+- `ArrangementOpenRightTraits_2`
+- `ArrangementOpenBottomTraits_2`
+- `ArrangementOpenTopTraits_2`
+- `ArrangementClosedLeftTraits_2`
+- `ArrangementClosedRightTraits_2`
+- `ArrangementClosedBottomTraits_2`
+- `ArrangementClosedTopTraits_2`
+- `ArrangementContractedLeftTraits_2`
+- `ArrangementContractedRightTraits_2`
+- `ArrangementContractedBottomTraits_2`
+- `ArrangementContractedTopTraits_2`
+- `ArrangementIdentifiedLeftTraits_2`
+- `ArrangementIdentifiedRightTraits_2`
+- `ArrangementIdentifiedBottomTraits_2`
+- `ArrangementIdentifiedTopTraits_2`
+- `ArrangementLeftSideTraits_2`
+- `ArrangementRightSideTraits_2`
+- `ArrangementBottomSideTraits_2`
+- `ArrangementTopSideTraits_2`
 
 ## Geometric Object Concepts ##
 
@@ -138,8 +161,8 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::Equal_2`
 - `ArrTraits::ParameterSpaceInX_2`
 - `ArrTraits::ParameterSpaceInY_2`
-- `ArrTraits::CompareXAtLimit_2`
-- `ArrTraits::CompareXNearLimit_2`
+- `ArrTraits::CompareXOnBoundary_2`
+- `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
 - `ArrTraits::Intersect_2`
 - `ArrTraits::Split_2`
@@ -174,6 +197,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
 - `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
 - `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
+- `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>`
 - `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
 - `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>`
 - `CGAL::Arr_text_formatter<Arrangement>`

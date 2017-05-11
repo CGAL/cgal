@@ -265,8 +265,8 @@ public:
    * \param curves_begin  An iterator for the first x-monotone curve in the
    *                      range.
    * \param curves_end A past-the-end iterator for this range.
-   * \param points_begin An iterator for the first point in the range.
-   * \param points_end A past-the-end iterator for this range.
+   * \param action_points_begin An iterator for the first point in the range.
+   * \param action_points_end A past-the-end iterator for this range.
    * \pre The value-type of XCurveInputIterator is the traits-class
    *      X_monotone_curve_2, and the value-type of PointInputIterator is the
    *      traits-class Point_2.
@@ -293,20 +293,22 @@ public:
    * \param curves_begin An iterator for the first x-monotone curve in the
    *                     range.
    * \param curves_end A past-the-end iterator for this range.
-   * \param points_begin An iterator for the first point in the range.
-   * \param points_end A past-the-end iterator for this range.
+   * \param action_points_begin An iterator for the first point in the range.
+   * \param action_points_end A past-the-end iterator for this range.
+   * \param query_points_begin An iterator for the first point in the range.
+   * \param query_points_end A past-the-end iterator for this range.
    * \pre The value-type of XCurveInputIterator is the traits-class
-   *      X_monotone_curve_2, and the value-type of PointInputIterator is the
-   *      traits-class Point_2.
+   *      X_monotone_curve_2, and the value-type of ActionPointIterator
+   *      and QueryPointIterator is the traits-class Point_2.
    */
-  template <typename CurveInputIterator, typename ActionPointItr,
-            typename QueryPointItr>
+  template <typename CurveInputIterator, typename ActionPointIterator,
+            typename QueryPointIterator>
   void sweep(CurveInputIterator curves_begin,
              CurveInputIterator curves_end,
-             ActionPointItr action_points_begin,
-             ActionPointItr action_points_end,
-             QueryPointItr query_points_begin,
-             QueryPointItr query_points_end)
+             ActionPointIterator action_points_begin,
+             ActionPointIterator action_points_end,
+             QueryPointIterator query_points_begin,
+             QueryPointIterator query_points_end)
   {
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);

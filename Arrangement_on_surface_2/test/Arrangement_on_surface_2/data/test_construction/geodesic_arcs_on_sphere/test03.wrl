@@ -99,12 +99,12 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 0
 		coord DEF COORD ExactCoordinate {
-		  ratPoint [-1  0 -1,
-			    -1 -1  0,
-			    0  0  1,
-			    -1  2  0,
-			    -1  1  0
-			   ]
+		  exactPoint [-1  0 -1,
+			      -1 -1  0,
+			      0  0  1,
+			      -1  2  0,
+			      -1  1  0
+			     ]
 		}
 		# Pointindex [6 7]
 		curveIndex [0 1 1 2 2 3 3 0 4 2]
@@ -198,7 +198,7 @@ Transform {
 	}
        ]
     }
-    
+
     # The axes:
     DEF AXES Transform {
       scale 0.1 0.1 0.1

@@ -30,6 +30,7 @@
 #include <list>
 
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 namespace CGAL {
 
@@ -137,50 +138,53 @@ public:
   }
 
   /*! Add a subcurve to the container of left curves. */
-  void add_curve_to_left(Subcurve* curve)
+  void add_curve_to_left(Subcurve* sc)
   {
     // Look for the subcurve.
     Subcurve_iterator iter;
 
     //std::cout << "add_curve_to_left, curve: ";
-    //curve->Print();
+    //sc->Print();
 
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter) {
       //std::cout << "add_curve_to_left, iter: ";
       //(*iter)->Print();
 
       // Do nothing if the curve exists.
-      if ((curve == *iter) || (*iter)->is_inner_node(curve)) {
+      if ((sc == *iter) || (*iter)->is_inner_node(sc)) {
         //std::cout << "add_curve_to_left, curve exists" << std::endl;
         return;
       }
 
       // Replace the existing curve in case of overlap.
       // EBEB 2011-10-27: Fixed to detect overlaps correctly
-      if ((curve != *iter) && (curve->has_common_leaf(*iter))) {
+      if ((sc != *iter) && sc->has_common_leaf(*iter)) {
         //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
-        *iter = curve;
+        *iter = sc;
         return;
       }
     }
 
     // The curve does not exist - insert it to the container.
-    m_leftCurves.push_back(curve);
+    m_leftCurves.push_back(sc);
     // std::cout << "add_curve_to_left, pushed back" << std::endl;
 
     //this->Print();
   }
 
   /*! Add a subcurve to the container of left curves (without checks). */
-  void push_back_curve_to_left(Subcurve* curve)
-  { m_leftCurves.push_back(curve); }
+  void push_back_curve_to_left(Subcurve* sc)
+  {
+    m_leftCurves.push_back(sc);
+  }
+
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
-  add_curve_to_right(Subcurve* curve, const Traits_2* tr)
+  add_curve_to_right(Subcurve* sc, const Traits_2* tr)
   {
     if (m_rightCurves.empty()) {
-      m_rightCurves.push_back(curve);
+      m_rightCurves.push_back(sc);
       return (std::make_pair(false, m_rightCurves.begin()));
     }
 
@@ -195,11 +199,11 @@ public:
     Comparison_result res;
 
     while ((res = tr->compare_y_at_x_right_2_object()
-            (curve->last_curve(), (*iter)->last_curve(), m_point)) == LARGER)
+            (sc->last_curve(), (*iter)->last_curve(), m_point)) == LARGER)
     {
       ++iter;
       if (iter == m_rightCurves.end()) {
-        m_rightCurves.insert(iter, curve);
+        m_rightCurves.insert(iter, sc);
         return std::make_pair(false, --iter);
       }
     }
@@ -209,7 +213,7 @@ public:
       return std::make_pair(true, iter);
     }
 
-    m_rightCurves.insert(iter, curve);
+    m_rightCurves.insert(iter, sc);
     return std::make_pair(false, --iter);
   }
 
@@ -293,16 +297,19 @@ public:
   { return m_leftCurves.rend(); }
 
   /*! Returns the number of curves defined to the left of the event. */
-  size_t number_of_left_curves() { return m_leftCurves.size(); }
+  size_t number_of_left_curves() const { return m_leftCurves.size(); }
 
   /*! Returns the number of curves defined to the right of the event. */
-  size_t number_of_right_curves() { return (m_rightCurves.size()); }
+  size_t number_of_right_curves() const { return (m_rightCurves.size()); }
 
   /*! Checks if at least one curve is defined to the left of the event. */
   bool has_left_curves() const { return (! m_leftCurves.empty()); }
 
   /*! Checks if at least one curve is defined to the right of the event. */
   bool has_right_curves() const { return (! m_rightCurves.empty()); }
+
+  /*! Returns whether an event has no incident curves */
+  bool is_isolated() const { return m_leftCurves.empty() && m_rightCurves.empty(); }
 
   /*!
    * Get the actual event point (const version).
@@ -326,15 +333,40 @@ public:
 
   /*!
    * Get a curve associated with the event (const version).
-   * \pre The event has incident curves.
+   *
+   * \pre The event does not lie on the boundary.
+   * \pre The event is not isolated.
+   *
    */
   const X_monotone_curve_2& curve() const
   {
+    CGAL_precondition(!this->is_on_boundary());
+    CGAL_precondition(!this->is_isolated());
     if (has_left_curves())
       return (m_leftCurves.front()->last_curve());
 
     CGAL_assertion (has_right_curves());
     return (m_rightCurves.front()->last_curve());
+  }
+
+  /*!
+   * Get a curve associated with the event and writes as side-effect the respective end to \param ce
+   * (const version).
+   * \param ce reference to a curve-end that is written as side-effect.
+   * \pre The event lies on the boundary.
+   * \pre The event is not isolated.
+   */
+  const X_monotone_curve_2& boundary_touching_curve(Arr_curve_end& ce) const {
+    CGAL_precondition(this->is_on_boundary());
+    CGAL_precondition(!this->is_isolated());
+    if (has_left_curves()) {
+      ce = ARR_MAX_END;
+      return m_leftCurves.front()->last_curve();
+    }
+
+    CGAL_assertion (has_right_curves());
+    ce = ARR_MIN_END;
+    return m_rightCurves.front()->last_curve();
   }
 
   /*! Set the event point. */
@@ -446,40 +478,25 @@ public:
   }
 
 #ifdef CGAL_SL_VERBOSE
-  void Print();
+  void Print() const;
 #endif
 };
 
 #ifdef CGAL_SL_VERBOSE
   template<typename Traits, typename Subcurve>
-  void Sweep_line_event<Traits, Subcurve>::Print()
+  void Sweep_line_event<Traits, Subcurve>::Print() const
   {
     std::cout << "\tEvent info: "  << "\n" ;
-    if (this->is_closed())
+    Arr_parameter_space ps_x = this->parameter_space_in_x();
+    Arr_parameter_space ps_y = this->parameter_space_in_y();
+    std::cout << "\t[" << ps_x << "," << ps_y << "]";
+    if (this->is_closed()) {
       std::cout << "\t" << m_point << "\n" ;
-    else {
-      std::cout << "\t";
-      Arr_parameter_space ps_x = this->parameter_space_in_x();
-      Arr_parameter_space ps_y = this->parameter_space_in_y();
-
-      switch (ps_x) {
-       case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; break;
-       case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; break;
-       case ARR_INTERIOR:
-       default:
-        switch (ps_y) {
-         case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; break;
-         case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; break;
-         case ARR_INTERIOR:
-         default:
-          CGAL_error();
-        }
-      }
     }
     std::cout << "\n";
 
     std::cout << "\tLeft curves: \n" ;
-    Subcurve_iterator iter;
+    Subcurve_const_iterator iter;
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter) {
       std::cout << "\t";
       (*iter)->Print();

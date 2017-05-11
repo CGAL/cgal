@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 //                 (based on old version by Michal Meyerovitch and Ester Ezra)
@@ -58,20 +58,20 @@ public:
   typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
- 
+
 protected:
 
   typedef typename Dcel::Vertex                           DVertex;
   typedef typename Dcel::Halfedge                         DHalfedge;
   typedef typename Dcel::Face                             DFace;
-  
+
   // Data members:
   std::ostream*  m_out;
   IO::Mode       m_old_out_mode;
   std::istream*  m_in;
   IO::Mode       m_old_in_mode;
 
-public:  
+public:
 
   /*! Default constructor.*/
   Arr_text_formatter():
@@ -142,7 +142,7 @@ public:
 
   /*! Write a labeled size value. */
   void write_size(const char *label, Size size)
-  { 
+  {
     _write_comment(label);
     out() << size << '\n';
   }
@@ -193,7 +193,7 @@ public:
   {
     out() << std::endl;
   }
-  
+
   virtual void write_point(const Point_2& p)
   {
     out() << p;
@@ -258,7 +258,7 @@ public:
 
   void write_ccb_halfedges_begin()
   {}
-  
+
   void write_ccb_halfedges_end()
   {
     out() << std::endl;
@@ -282,7 +282,7 @@ public:
   //@{
 
   /*! Start reading an arrangement. */
-  void read_arrangement_begin() 
+  void read_arrangement_begin()
   {
     CGAL_assertion(m_in != NULL);
     m_old_in_mode = get_mode(*m_in);
@@ -291,7 +291,7 @@ public:
   }
 
   /*! Read the arrangement edge. */
-  void read_arrangement_end() 
+  void read_arrangement_end()
   {
     _skip_comments();
     set_mode(*m_in, m_old_in_mode);
@@ -347,11 +347,11 @@ public:
   //@{
   void read_vertex_begin()
   {}
-  
+
   void read_vertex_end()
   {}
 
-  virtual void read_point(Point_2& p) 
+  virtual void read_point(Point_2& p)
   {
     in() >> p;
     _skip_until_EOL();
@@ -365,18 +365,18 @@ public:
   //@{
   void read_edge_begin()
   {}
-  
+
   void read_edge_end()
   {}
-  
-  int read_vertex_index() 
+
+  int read_vertex_index()
   {
     int  val = 0;
     in() >> val;
     return (val);
   }
 
-  virtual void read_x_monotone_curve(X_monotone_curve_2& cv) 
+  virtual void read_x_monotone_curve(X_monotone_curve_2& cv)
   {
     in() >> cv;
     _skip_until_EOL();
@@ -384,14 +384,14 @@ public:
 
   virtual void read_halfedge_data(Halfedge_handle)
   {}
- 
+
   /// \name Reading a face.
   //@{
   void read_face_begin()
   {
     _skip_comments();
   }
-  
+
   void read_face_end()
   {
     _skip_comments();
@@ -399,12 +399,12 @@ public:
 
   void read_outer_ccbs_begin()
   {}
-  
+
   void read_outer_ccbs_end()
   {}
 
   int read_halfedge_index()
-  { 
+  {
     int  val = 0;
     in() >> val;
     return (val);
@@ -412,22 +412,22 @@ public:
 
   void read_inner_ccbs_begin()
   {}
-  
+
   void read_inner_ccbs_end()
   {}
 
   void read_ccb_halfedges_begin()
   {}
-  
-  void read_ccb_halfedges_end() 
+
+  void read_ccb_halfedges_end()
   {
     _skip_until_EOL();
   }
 
   void read_isolated_vertices_begin()
   {}
-  
-  void read_isolated_vertices_end() 
+
+  void read_isolated_vertices_end()
   {
     _skip_until_EOL();
   }
@@ -445,38 +445,25 @@ protected:
   }
 
   /*! Skip until end of line. */
-  void _skip_until_EOL() 
+  void _skip_until_EOL()
   {
     CGAL_assertion(m_in != NULL);
 
-    int     c;
+    int c;
     while ((c = m_in->get()) != EOF && c != '\n') {};
   }
-  
+
   /*! Skip comment lines. */
-  void _skip_comments() 
+  void _skip_comments()
   {
     CGAL_assertion(m_in != NULL);
 
-    int     c = m_in->get();
-    if (c == ' ')
-    {
-      // Skip blanks until EOL.
-      while ((c = m_in->get()) != EOF && c == ' ') {};
-      if (c != '\n')
-      {
-        m_in->putback(c);
-        return;
-      }
-      else
-      {
-        c = m_in->get();
-      }
-    }
+    // Skip blanks until EOL.
+    int c;
+    while (((c = m_in->get()) != EOF) && ((c == ' ') || (c == '\n'))) {};
 
     // Skip comment lines that begin with a '#' character.
-    while (c != EOF && c == '#')
-    {
+    while (c != EOF && c == '#') {
       _skip_until_EOL();
       c = m_in->get();
     }
@@ -532,7 +519,7 @@ public:
   {
     this->out() << f->data() << '\n';
   }
-  
+
   /*! Read a face-data object and attach it to the given face. */
   virtual void read_face_data(Face_handle f)
   {
@@ -588,7 +575,7 @@ public:
   {
     this->out() << '\n' << v->data();
   }
-  
+
   /*! Read a vertex-data object and attach it to the given vertex. */
   virtual void read_vertex_data(Vertex_handle v)
   {
@@ -601,7 +588,7 @@ public:
   {
     this->out() << '\n' << he->data();
   }
-  
+
   /*! Read a halfedge-data object and attach it to the given halfedge. */
   virtual void read_halfedge_data(Halfedge_handle he)
   {
@@ -614,7 +601,7 @@ public:
   {
     this->out() << f->data() << '\n';
   }
-  
+
   /*! Read a face-data object and attach it to the given face. */
   virtual void read_face_data(Face_handle f)
   {

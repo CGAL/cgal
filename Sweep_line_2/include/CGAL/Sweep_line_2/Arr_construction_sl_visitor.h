@@ -314,10 +314,13 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
   }
 
   // TODO EBEB 2012-10-16 compile only when non-oblivious
-  if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
+  if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY &&
+      event->parameter_space_in_y() != CGAL::ARR_TOP_BOUNDARY) {
+    // for an event on the left non-top-corner boundary
+    // move entries for halfedge incidences list to the top
     if (!this->is_status_line_empty()) {
       Status_line_iterator prev = iter;
-      for (size_t i = 0; i < event->number_of_right_curves(); ++i) --prev;
+            for (size_t i = 0; i < event->number_of_right_curves(); ++i) --prev;
       // move items from top face to last inserted curve
       Indices_list& list_ref = (*prev)->halfedge_indices_list();
       list_ref.clear();

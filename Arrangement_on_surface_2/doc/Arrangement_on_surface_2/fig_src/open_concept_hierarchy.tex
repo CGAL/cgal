@@ -1,0 +1,21 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+  \psset{treevshift=0,unit=1em,xunit=2em,yunit=1em,everytree={},etcratio=.75,triratio=.5}
+     \jtree[everylabel=\sl,xunit=70pt,arrows=->]
+     \! = {}
+        <4wideleft>[scaleby=2.35 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangementOpenLeftTraits\_2}}}@ult !ult
+        ^<left>[scaleby=1.21 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangemenOpenRightTraits\_2}}}@urt !urt
+        ^<right>[scaleby=1.18 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangemenOpenBottomTraits\_2}}}@ubt !ubt
+        ^<4wideright>[scaleby=2.35 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangemenOpenTopTraits\_2}}}@utt !utt
+           .
+     \!ult = <4wideright>[scaleby=2.10 1]{\psframebox{\concept{ArrangementOpenBoundaryTraits\_2}}}@ut !ut
+       .
+     \ncline{urt:b}{ut:t}
+     \ncline{ubt:b}{ut:t}
+     \ncline{utt:b}{ut:t}
+      \endjtree
+  \psset{treevshift=0,unit=1cm,xunit=1cm,yunit=1cm,everytree={},
+         etcratio=.75,triratio=.5}
+\end{document}

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
@@ -40,7 +40,7 @@ namespace CGAL {
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
  */
-template <class Traits_, class Arrangement_, class Event_, class Subcurve_> 
+template <class Traits_, class Arrangement_, class Event_, class Subcurve_>
 class Arr_unb_planar_insertion_helper :
   public Arr_unb_planar_construction_helper<Traits_, Arrangement_,
                                             Event_, Subcurve_>
@@ -77,9 +77,9 @@ protected:
   typedef typename Base::Topology_traits               Topology_traits;
   typedef typename Base::Vertex_handle                 Vertex_handle;
   typedef typename Base::Halfedge_handle               Halfedge_handle;
-  
+
 public:
- 
+
   /*! Constructor. */
   Arr_unb_planar_insertion_helper (Arrangement_2 *arr) :
     Base (arr)
@@ -109,16 +109,16 @@ public:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <class Tr, class Arr, class Evnt, class Sbcv> 
+template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 {
   // Obtain the four fictitious vertices that form the "corners" of the
   // fictitious face in the DCEL.
   Vertex_handle   v_bl =
     Vertex_handle (this->m_top_traits->bottom_left_vertex());
-  Vertex_handle   v_tl = 
+  Vertex_handle   v_tl =
     Vertex_handle (this->m_top_traits->top_left_vertex());
-  Vertex_handle   v_br = 
+  Vertex_handle   v_br =
     Vertex_handle (this->m_top_traits->bottom_right_vertex());
 
   // Get the fictitous halfedges incident to these vertices, and lying on
@@ -129,7 +129,7 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
   //                      ^
   //        x             | m_rh
   //   m_lh |             x
-  //        v              
+  //        v
   //  v_bl (.)----->x    (.) v_br
   //              m_bh
   //
@@ -137,9 +137,9 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 
   if (this->m_lh->source()->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
     this->m_lh = this->m_lh->next()->twin();
-   
+
   this->m_bh = this->m_lh->next();
-  
+
   this->m_th = v_tl->incident_halfedges();
   if (this->m_th->source()->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
     this->m_th = this->m_th->next()->twin();
@@ -174,16 +174,17 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 // A notification invoked before the sweep-line starts handling the given
 // event.
 //
-template <class Tr, class Arr, class Evnt, class Sbcv> 
+template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::
 before_handle_event (Event* event)
 {
   if (event->is_closed())
     return;
 
-  // In case the event lies at inifinity, check whether its incident curve
+  // In case the event lies at infinity, check whether its incident curve
   // is already in the arrangement.
-  if (event->curve().halfedge_handle() == Halfedge_handle())
+  Arr_curve_end ce;
+  if (event->boundary_touching_curve(ce).halfedge_handle() == Halfedge_handle())
   {
     // The curve is not in the arrangement, use the base construction helper
     // to handle the event:
@@ -194,7 +195,7 @@ before_handle_event (Event* event)
   // The curve is already in the arrangement, but has an infinite end,
   // so we have to update the fictitious halfedges.
   const Arr_parameter_space ps_x = event->parameter_space_in_x();
-      
+
   if (ps_x == ARR_LEFT_BOUNDARY)
   {
     // The event lies on the left fictitious halfedge.
@@ -209,7 +210,7 @@ before_handle_event (Event* event)
   else
   {
     const Arr_parameter_space ps_y = event->parameter_space_in_y();
-    
+
     if (ps_y == ARR_BOTTOM_BOUNDARY)
     {
       // The event lies on the bottom fictitious halfedge.
@@ -223,7 +224,7 @@ before_handle_event (Event* event)
       this->m_prev_plus_inf_y_event = NULL;
     }
   }
- 
+
   return;
 }
 

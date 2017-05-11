@@ -65,8 +65,8 @@ int main()
   typedef Traits_2::Equal_2 Equal_2;
   typedef Traits_2::Parameter_space_in_x_2 Parameter_space_in_x_2;
   typedef Traits_2::Parameter_space_in_y_2 Parameter_space_in_y_2;
-  typedef Traits_2::Compare_x_at_limit_2 Compare_x_at_limit_2;
-  typedef Traits_2::Compare_x_near_limit_2 Compare_x_near_limit_2;
+  typedef Traits_2::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+  typedef Traits_2::Compare_x_near_boundary_2 Compare_x_near_boundary_2;
   typedef Traits_2::Compare_y_near_boundary_2 Compare_y_near_boundary_2;
   typedef Traits_2::Intersect_2 Intersect_2;
   typedef Traits_2::Split_2 Split_2;
@@ -89,8 +89,8 @@ int main()
   CGAL_USE_TYPE(Equal_2);
   CGAL_USE_TYPE(Parameter_space_in_x_2);
   CGAL_USE_TYPE(Parameter_space_in_y_2);
-  CGAL_USE_TYPE(Compare_x_at_limit_2);
-  CGAL_USE_TYPE(Compare_x_near_limit_2);
+  CGAL_USE_TYPE(Compare_x_on_boundary_2);
+  CGAL_USE_TYPE(Compare_x_near_boundary_2);
   CGAL_USE_TYPE(Compare_y_near_boundary_2);
   CGAL_USE_TYPE(Intersect_2);
   CGAL_USE_TYPE(Split_2);

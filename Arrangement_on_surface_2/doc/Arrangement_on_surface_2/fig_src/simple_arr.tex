@@ -1,0 +1,33 @@
+\documentclass[11pt]{article}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\arrset{1}%
+\pspicture[](-3.1,-0.725)(3.1,1.709)
+%
+\pscustom[linecolor=blue,linewidth=0pt,fillstyle=hlines,hatchcolor=orange,hatchsep=2pt,hatchwidth=1pt]{%
+  \psplot{-2}{0}{0 x x mul x mul add x x mul add x 4 mul sub 1 add 8 div}
+  \psplot{0}{-2}{0 x x mul x mul sub x x mul add x 4 mul add 1 add 8 div}
+}
+%
+\pscustom[linecolor=blue,linewidth=0pt,fillstyle=vlines,hatchcolor=orange,hatchsep=2pt,hatchwidth=1pt]{
+  \psplot{0}{2}{0 x x mul x mul add x x mul add x 4 mul sub 1 add 8 div}
+  \psplot{2}{0}{0 x x mul x mul sub x x mul add x 4 mul add 1 add 8 div}
+}
+%
+\psplot[linecolor=blue]{-2.5}{3}{0 x x mul x mul sub x x mul add x 4 mul add 1 add 8 div}
+\psplot[linecolor=blue]{-3}{2.5}{0 x x mul x mul add x x mul add x 4 mul sub 1 add 8 div}
+%
+\arrMainVertex(-3,-0.625){1}
+\arrMainVertex( 3,-0.625){2}
+\arrMainVertex(-2.5,1.609){3}
+\arrMainVertex( 2.5,1.609){4}
+\arrEmptyVertex(-2,0.625){x1}
+\arrEmptyVertex( 2,0.625){x2}
+\arrEmptyVertex(0,0.125){x3}
+\rput(-2.5,1){\textcolor{blue}{$C_1$}}
+\rput(-2.9,0.15){\textcolor{blue}{$C_2$}}
+\rput(-1,0.3){\boldmath{$f_1$}}
+\rput(1,0.3){\boldmath{$f_2$}}
+\endpspicture
+\end{document}

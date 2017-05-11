@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //               : Waqar Khan        <wkhan@mpi-inf.mpg.de>
 
@@ -80,14 +76,12 @@ public:
   class _Linear_object_cached_2
   {
   public:
-
     typedef typename Kernel::Line_2                Line_2;
     typedef typename Kernel::Ray_2                 Ray_2;
     typedef typename Kernel::Segment_2             Segment_2;
     typedef typename Kernel::Point_2               Point_2;
 
   protected:
-
     Line_2    l;                // The supporting line.
     Point_2   ps;               // The source point (if exists).
     Point_2   pt;               // The target point (if exists).
@@ -107,38 +101,35 @@ public:
 
   public:
 
-    /*!
-     * Default constructor.
-     */
-    _Linear_object_cached_2 () :
-      has_source (true),
-      has_target (true),
-      is_vert (false),
-      is_horiz (false),
-      has_pos_slope (false),
-      is_degen (true)
+    /*! Default constructor. */
+    _Linear_object_cached_2() :
+      has_source(true),
+      has_target(true),
+      is_vert(false),
+      is_horiz(false),
+      has_pos_slope(false),
+      is_degen(true)
     {}
 
-    /*!
-     * Constructor for segment from two points.
+    /*! Constructor for segment from two points.
      * \param p1 source point.
      * \param p2 target point.
      * \pre The two points must not be equal.
      */
     _Linear_object_cached_2(const Point_2& source, const Point_2& target) :
-      ps (source),
-      pt (target),
-      has_source (true),
-      has_target (true)
+      ps(source),
+      pt(target),
+      has_source(true),
+      has_target(true)
     {
-      Kernel   kernel;
+      Kernel kernel;
 
       Comparison_result  res = kernel.compare_xy_2_object()(source, target);
       is_degen = (res == EQUAL);
       is_right = (res == SMALLER);
 
-      CGAL_precondition_msg (! is_degen,
-                             "Cannot construct a degenerate segment.");
+      CGAL_precondition_msg(! is_degen,
+                            "Cannot construct a degenerate segment.");
 
       l = kernel.construct_line_2_object()(source, target);
       is_vert = kernel.is_vertical_2_object()(l);
@@ -146,17 +137,16 @@ public:
       has_pos_slope = _has_positive_slope();
     }
 
-    /*!
-     * Constructor from a segment.
+    /*! Constructor from a segment.
      * \param seg The segment.
      * \pre The segment is not degenerate.
      */
-    _Linear_object_cached_2 (const Segment_2& seg)
+    _Linear_object_cached_2(const Segment_2& seg)
     {
-      Kernel   kernel;
+      Kernel kernel;
 
-      CGAL_assertion_msg (! kernel.is_degenerate_2_object() (seg),
-                          "Cannot construct a degenerate segment.");
+      CGAL_assertion_msg(! kernel.is_degenerate_2_object() (seg),
+                         "Cannot construct a degenerate segment.");
 
       typename Kernel_::Construct_vertex_2
         construct_vertex = kernel.construct_vertex_2_object();
@@ -168,7 +158,7 @@ public:
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
 
-      CGAL_assertion (res != EQUAL);
+      CGAL_assertion(res != EQUAL);
       is_degen = false;
       is_right = (res == SMALLER);
 
@@ -183,12 +173,12 @@ public:
      * \param ray The ray.
      * \pre The ray is not degenerate.
      */
-    _Linear_object_cached_2 (const Ray_2& ray)
+    _Linear_object_cached_2(const Ray_2& ray)
     {
-      Kernel   kernel;
+      Kernel kernel;
 
-      CGAL_assertion_msg (! kernel.is_degenerate_2_object() (ray),
-                          "Cannot construct a degenerate ray.");
+      CGAL_assertion_msg(! kernel.is_degenerate_2_object()(ray),
+                         "Cannot construct a degenerate ray.");
 
       typename Kernel_::Construct_point_on_2
         construct_vertex = kernel.construct_point_on_2_object();
@@ -199,7 +189,7 @@ public:
       has_target = false;
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      CGAL_assertion (res != EQUAL);
+      CGAL_assertion(res != EQUAL);
       is_degen = false;
       is_right = (res == SMALLER);
 
@@ -209,20 +199,19 @@ public:
       has_pos_slope = _has_positive_slope();
     }
 
-    /*!
-     * Constructor from a line.
+    /*! Constructor from a line.
      * \param ln The line.
      * \pre The line is not degenerate.
      */
-    _Linear_object_cached_2 (const Line_2& ln) :
-      l (ln),
-      has_source (false),
-      has_target (false)
+    _Linear_object_cached_2(const Line_2& ln) :
+      l(ln),
+      has_source(false),
+      has_target(false)
     {
-      Kernel   kernel;
+      Kernel kernel;
 
-      CGAL_assertion_msg (! kernel.is_degenerate_2_object() (ln),
-                          "Cannot construct a degenerate line.");
+      CGAL_assertion_msg(! kernel.is_degenerate_2_object()(ln),
+                         "Cannot construct a degenerate line.");
 
       typename Kernel_::Construct_point_on_2
         construct_vertex = kernel.construct_point_on_2_object();
@@ -233,7 +222,7 @@ public:
       has_target = false;
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      CGAL_assertion (res != EQUAL);
+      CGAL_assertion(res != EQUAL);
       is_degen = false;
       is_right = (res == SMALLER);
 
@@ -242,31 +231,27 @@ public:
       has_pos_slope = _has_positive_slope();
     }
 
-    /*!
-     * Check whether the x-coordinate of the left point is infinite.
+    /*! Check whether the x-coordinate of the left point is infinite.
      * \return ARR_LEFT_BOUNDARY if the left point is near the boundary;
      *         ARR_INTERIOR if the x-coordinate is finite.
      */
-    Arr_parameter_space left_infinite_in_x () const
+    Arr_parameter_space left_infinite_in_x() const
     {
-      if (is_vert || is_degen)
-        return (ARR_INTERIOR);
+      if (is_vert || is_degen) return (ARR_INTERIOR);
 
       return (is_right) ?
         (has_source ? ARR_INTERIOR : ARR_LEFT_BOUNDARY) :
         (has_target ? ARR_INTERIOR : ARR_LEFT_BOUNDARY);
     }
 
-    /*!
-     * Check whether the y-coordinate of the left point is infinite.
+    /*! Check whether the y-coordinate of the left point is infinite.
      * \return ARR_BOTTOM_BOUNDARY if the left point is at y = -oo;
      *         ARR_INTERIOR if the y-coordinate is finite.
      *         ARR_TOP_BOUNDARY if the left point is at y = +oo;
      */
-    Arr_parameter_space left_infinite_in_y () const
+    Arr_parameter_space left_infinite_in_y() const
     {
-      if (is_horiz || is_degen)
-        return ARR_INTERIOR;
+      if (is_horiz || is_degen) return ARR_INTERIOR;
 
       if (is_vert) {
         return (is_right) ?
@@ -280,95 +265,81 @@ public:
       return (has_pos_slope ? ARR_BOTTOM_BOUNDARY : ARR_TOP_BOUNDARY);
     }
 
-    /*!
-     * Check whether the left point is finite.
+    /*! Check whether the left point is finite.
      */
-    bool has_left () const
+    bool has_left() const
     {
-      if (is_right)
-        return (has_source);
-      else
-        return (has_target);
+      if (is_right) return (has_source);
+      else return (has_target);
     }
 
-    /*!
-     * Obtain the (lexicographically) left endpoint.
+    /*! Obtain the (lexicographically) left endpoint.
      * \pre The left point is finite.
      */
-    const Point_2& left () const
+    const Point_2& left() const
     {
-      CGAL_precondition (has_left());
+      CGAL_precondition(has_left());
       return (is_right ? ps : pt);
     }
 
-    /*!
-     * Set the (lexicographically) left endpoint.
+    /*! Set the (lexicographically) left endpoint.
      * \param p The point to set.
      * \pre p lies on the supporting line to the left of the right endpoint.
      */
-    void set_left (const Point_2& p, bool CGAL_assertion_code(check_validity) = true)
+    void set_left(const Point_2& p,
+                  bool CGAL_assertion_code(check_validity) = true)
     {
-      CGAL_precondition (! is_degen);
+      CGAL_precondition(! is_degen);
 
-      CGAL_precondition_code (
+      CGAL_precondition_code(
         Kernel    kernel;
       );
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, l,
-                                                  Has_exact_division()) &&
+        (Segment_assertions::_assert_is_point_on(p, l, Has_exact_division()) &&
          (! check_validity || ! has_right() ||
-          kernel.compare_xy_2_object() (p, right()) == SMALLER));
+          kernel.compare_xy_2_object()(p, right()) == SMALLER));
 
-      if (is_right)
-      {
+      if (is_right) {
         ps = p;
         has_source = true;
       }
-      else
-      {
+      else {
         pt = p;
         has_target = true;
       }
     }
 
-    /*!
-     * Set the (lexicographically) left endpoint as infinite.
+    /*! Set the (lexicographically) left endpoint as infinite.
      */
-    void set_left ()
+    void set_left()
     {
-      CGAL_precondition (! is_degen);
+      CGAL_precondition(! is_degen);
 
-      if (is_right)
-        has_source = false;
-      else
-        has_target = false;
+      if (is_right) has_source = false;
+      else has_target = false;
     }
 
-    /*!
-     * Check whether the x-coordinate of the right point is infinite.
+    /*! Check whether the x-coordinate of the right point is infinite.
      * \return ARR_RIGHT_BOUNDARY if the right point is near the boundary;
      *         ARR_INTERIOR if the x-coordinate is finite.
      */
-    Arr_parameter_space right_infinite_in_x () const
+    Arr_parameter_space right_infinite_in_x() const
     {
-      if (is_vert || is_degen)
-        return ARR_INTERIOR;
+      if (is_vert || is_degen) return ARR_INTERIOR;
 
       return (is_right) ?
         (has_target ? ARR_INTERIOR : ARR_RIGHT_BOUNDARY) :
         (has_source ? ARR_INTERIOR : ARR_RIGHT_BOUNDARY);
     }
 
-    /*!
-     * Check whether the y-coordinate of the right point is infinite.
+    /*! Check whether the y-coordinate of the right point is infinite.
      * \return ARR_BOTTOM_BOUNDARY if the right point is at y = -oo;
      *         ARR_INTERIOR if the y-coordinate is finite.
      *         ARR_TOP_BOUNDARY if the right point is at y = +oo;
      */
-    Arr_parameter_space right_infinite_in_y () const
+    Arr_parameter_space right_infinite_in_y() const
     {
-      if (is_horiz || is_degen)
-        return ARR_INTERIOR;
+      if (is_horiz || is_degen) return ARR_INTERIOR;
 
       if (is_vert) {
         return (is_right) ?
@@ -382,145 +353,112 @@ public:
       return (has_pos_slope ? ARR_TOP_BOUNDARY : ARR_BOTTOM_BOUNDARY);
     }
 
-    /*!
-     * Check whether the right point is finite.
+    /*! Check whether the right point is finite.
      */
-    bool has_right () const
+    bool has_right() const
     {
-      if (is_right)
-        return (has_target);
-      else
-        return (has_source);
+      if (is_right) return (has_target);
+      else return (has_source);
     }
 
-    /*!
-     * Obtain the (lexicographically) right endpoint.
+    /*! Obtain the (lexicographically) right endpoint.
      * \pre The right endpoint is finite.
      */
-    const Point_2& right () const
+    const Point_2& right() const
     {
-      CGAL_precondition (has_right());
+      CGAL_precondition(has_right());
       return (is_right ? pt : ps);
     }
 
-    /*!
-     * Set the (lexicographically) right endpoint.
+    /*! Set the (lexicographically) right endpoint.
      * \param p The point to set.
      * \pre p lies on the supporting line to the right of the left endpoint.
      */
-    void set_right (const Point_2& p, bool CGAL_assertion_code(check_validity) = true)
+    void set_right(const Point_2& p,
+                   bool CGAL_assertion_code(check_validity) = true)
     {
-      CGAL_precondition (! is_degen);
-      CGAL_precondition_code (
-        Kernel    kernel;
-      );
+      CGAL_precondition(! is_degen);
+      CGAL_precondition_code(Kernel kernel;);
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, l,
-                                                  Has_exact_division()) &&
+        (Segment_assertions::_assert_is_point_on(p, l, Has_exact_division()) &&
          (! check_validity || ! has_left() ||
           kernel.compare_xy_2_object() (p, left()) == LARGER));
 
-      if (is_right)
-      {
+      if (is_right) {
         pt = p;
         has_target = true;
       }
-      else
-      {
+      else {
         ps = p;
         has_source = true;
       }
     }
 
-    /*!
-     * Set the (lexicographically) right endpoint as infinite.
+    /*! Set the (lexicographically) right endpoint as infinite.
      */
-    void set_right ()
+    void set_right()
     {
-      CGAL_precondition (! is_degen);
+      CGAL_precondition(! is_degen);
 
-      if (is_right)
-        has_target = false;
-      else
-        has_source = false;
+      if (is_right) has_target = false;
+      else has_source = false;
     }
 
-    /*!
-     * Obtain the supporting line.
+    /*! Obtain the supporting line.
      */
-    const Line_2& supp_line () const
+    const Line_2& supp_line() const
     {
-      CGAL_precondition (! is_degen);
+      CGAL_precondition(! is_degen);
       return (l);
     }
 
-    /*!
-     * Check whether the curve is vertical.
+    /*! Check whether the curve is vertical.
      */
-    bool is_vertical () const
+    bool is_vertical() const
     {
-      CGAL_precondition (! is_degen);
+      CGAL_precondition(! is_degen);
       return (is_vert);
     }
 
-    /*!
-     * Check whether the curve is degenerate.
+    /*! Check whether the curve is degenerate.
      */
-    bool is_degenerate () const
-    {
-      return (is_degen);
-    }
+    bool is_degenerate() const { return (is_degen); }
 
-    /*!
-     * Check whether the curve is directed lexicographic from left to right
+    /*! Check whether the curve is directed lexicographic from left to right
      */
-    bool is_directed_right () const
-    {
-      return (is_right);
-    }
+    bool is_directed_right() const { return (is_right); }
 
-    /*!
-     * Check whether the given point is in the x-range of the object.
+    /*! Check whether the given point is in the x-range of the object.
      * \param p The query point.
      * \return (true) is in the x-range of the segment; (false) if it is not.
      */
-    bool is_in_x_range (const Point_2& p) const
+    bool is_in_x_range(const Point_2& p) const
     {
       Kernel                          kernel;
       typename Kernel_::Compare_x_2   compare_x = kernel.compare_x_2_object();
       Comparison_result               res1;
 
-      if (left_infinite_in_x() == ARR_INTERIOR)
-      {
-        if (left_infinite_in_y() != ARR_INTERIOR)
-          // Compare with some point on the curve.
-          res1 = compare_x (p, ps);
-        else
-          res1 = compare_x (p, left());
+      if (left_infinite_in_x() == ARR_INTERIOR) {
+        // Compare with some point on the curve.
+        if (left_infinite_in_y() != ARR_INTERIOR) res1 = compare_x(p, ps);
+        else res1 = compare_x(p, left());
       }
-      else
-      {
+      else {
         // p is obviously to the right.
         res1 = LARGER;
       }
 
-      if (res1 == SMALLER)
-        return (false);
-      else if (res1 == EQUAL)
-        return (true);
+      if (res1 == SMALLER) return (false);
+      else if (res1 == EQUAL) return (true);
 
       Comparison_result               res2;
 
-      if (right_infinite_in_x() == ARR_INTERIOR)
-      {
-        if (right_infinite_in_y() != ARR_INTERIOR)
-          // Compare with some point on the curve.
-          res2 = compare_x (p, ps);
-        else
-          res2 = compare_x (p, right());
+      if (right_infinite_in_x() == ARR_INTERIOR) {
+        // Compare with some point on the curve.
+        if (right_infinite_in_y() != ARR_INTERIOR) res2 = compare_x(p, ps);
+        else res2 = compare_x(p, right());
       }
-      else
-      {
+      else {
         // p is obviously to the right.
         res2 = SMALLER;
       }
@@ -534,62 +472,50 @@ public:
      * \pre The object is vertical.
      * \return (true) is in the y-range of the segment; (false) if it is not.
      */
-    bool is_in_y_range (const Point_2& p) const
+    bool is_in_y_range(const Point_2& p) const
     {
-      CGAL_precondition (is_vertical());
+      CGAL_precondition(is_vertical());
 
       Kernel                          kernel;
       typename Kernel_::Compare_y_2   compare_y = kernel.compare_y_2_object();
       Arr_parameter_space             inf = left_infinite_in_y();
       Comparison_result               res1;
 
-      CGAL_assertion (inf != ARR_TOP_BOUNDARY);
-      if (inf == ARR_INTERIOR)
-        res1 = compare_y (p, left());
-      else
-        res1 = LARGER;           // p is obviously above.
+      CGAL_assertion(inf != ARR_TOP_BOUNDARY);
+      if (inf == ARR_INTERIOR) res1 = compare_y(p, left());
+      else res1 = LARGER;           // p is obviously above.
 
-      if (res1 == SMALLER)
-        return (false);
-      else if (res1 == EQUAL)
-        return (true);
+      if (res1 == SMALLER) return (false);
+      else if (res1 == EQUAL) return (true);
 
       Comparison_result               res2;
 
       inf = right_infinite_in_y();
       CGAL_assertion (inf != ARR_BOTTOM_BOUNDARY);
-      if (inf == ARR_INTERIOR)
-        res2 = compare_y (p, right());
-      else
-        res2 = SMALLER;          // p is obviously below.
+      if (inf == ARR_INTERIOR) res2 = compare_y(p, right());
+      else res2 = SMALLER;          // p is obviously below.
 
       return (res2 != LARGER);
     }
 
   private:
-
-    /*!
-     * Determine if the supporting line has a positive slope.
+    /*! Determine if the supporting line has a positive slope.
      */
-    bool _has_positive_slope () const
+    bool _has_positive_slope() const
     {
-      if (is_vert)
-        return (true);
-
-      if (is_horiz)
-        return (false);
+      if (is_vert) return (true);
+      if (is_horiz) return (false);
 
       // Construct a horizontal line and compare its slope the that of l.
-      Kernel     kernel;
-      Line_2     l_horiz = kernel.construct_line_2_object() (Point_2 (0, 0),
-                                                             Point_2 (1, 0));
+      Kernel kernel;
+      Line_2 l_horiz = kernel.construct_line_2_object()(Point_2(0, 0),
+                                                        Point_2(1, 0));
 
-      return (kernel.compare_slope_2_object() (l, l_horiz) == LARGER);
+      return (kernel.compare_slope_2_object()(l, l_horiz) == LARGER);
     }
   };
 
 public:
-
   // Traits objects
   typedef typename Kernel::Point_2              Point_2;
   typedef Arr_linear_object_2<Kernel>           X_monotone_curve_2;
@@ -597,12 +523,8 @@ public:
   typedef unsigned int                          Multiplicity;
 
 public:
-
-  /*!
-   * Default constructor.
-   */
-  Arr_linear_traits_2 ()
-  {}
+  /*! Default constructor. */
+  Arr_linear_traits_2() {}
 
   /// \name Basic functor definitions.
   //@{
@@ -613,7 +535,7 @@ public:
     typedef Arr_linear_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
-    const Traits * m_traits;
+    const Traits* m_traits;
 
     /*! Constructor
      * \param traits the traits (in case it has state)
@@ -627,15 +549,14 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*!
-     * Compare the x-coordinates of two points.
+    /*! Compare the x-coordinates of two points.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2);
      *         SMALLER if x(p1) < x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
       const Kernel * kernel = m_traits;
       return (kernel->compare_x_2_object()(p1, p2));
@@ -643,10 +564,7 @@ public:
   };
 
   /*! Obtain a Compare_x_2 functor. */
-  Compare_x_2 compare_x_2_object () const
-  {
-    return Compare_x_2(this);
-  }
+  Compare_x_2 compare_x_2_object() const { return Compare_x_2(this); }
 
   /*! A functor that compares the he endpoints of an $x$-monotone curve. */
   class Compare_endpoints_xy_2{
@@ -783,15 +701,14 @@ public:
   /*! A functor that compares the x-coordinates of two points */
   class Compare_xy_2 {
   public:
-    /*!
-     * Compare two points lexigoraphically: by x, then by y.
+    /*! Compare two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
      *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
      *         EQUAL if the two points are equal.
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
       Kernel    kernel;
       return (kernel.compare_xy_2_object()(p1, p2));
@@ -799,82 +716,65 @@ public:
   };
 
   /*! Obtain a Compare_xy_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () const
-  {
-    return Compare_xy_2();
-  }
+  Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(); }
 
   /*! A functor that obtains the left endpoint of a segment or a ray. */
-  class Construct_min_vertex_2
-  {
+  class Construct_min_vertex_2 {
   public:
-    /*!
-     * Get the left endpoint of the x-monotone curve (segment).
+    /*! Get the left endpoint of the x-monotone curve (segment).
      * \param cv The curve.
      * \pre The left end of cv is a valid (bounded) point.
      * \return The left endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2& cv) const
+    const Point_2& operator()(const X_monotone_curve_2& cv) const
     {
-      CGAL_precondition (! cv.is_degenerate());
-      CGAL_precondition (cv.has_left());
+      CGAL_precondition(! cv.is_degenerate());
+      CGAL_precondition(cv.has_left());
 
       return (cv.left());
     }
   };
 
   /*! Obtain a Construct_min_vertex_2 functor object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object () const
-  {
-    return Construct_min_vertex_2();
-  }
+  Construct_min_vertex_2 construct_min_vertex_2_object() const
+  { return Construct_min_vertex_2(); }
 
   /*! A functor that obtains the right endpoint of a segment or a ray. */
-  class Construct_max_vertex_2
-  {
+  class Construct_max_vertex_2 {
   public:
-    /*!
-     * Get the right endpoint of the x-monotone curve (segment).
+    /*! Get the right endpoint of the x-monotone curve (segment).
      * \param cv The curve.
      * \pre The right end of cv is a valid (bounded) point.
      * \return The right endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2& cv) const
+    const Point_2& operator()(const X_monotone_curve_2& cv) const
     {
-      CGAL_precondition (! cv.is_degenerate());
-      CGAL_precondition (cv.has_right());
-
+      CGAL_precondition(! cv.is_degenerate());
+      CGAL_precondition(cv.has_right());
       return (cv.right());
     }
   };
 
   /*! Obtain a Construct_max_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object () const
-  {
-    return Construct_max_vertex_2();
-  }
+  Construct_max_vertex_2 construct_max_vertex_2_object() const
+  { return Construct_max_vertex_2(); }
 
   /*! A functor that checks whether a given linear curve is vertical. */
-  class Is_vertical_2
-  {
+  class Is_vertical_2 {
   public:
-    /*!
-     * Check whether the given x-monotone curve is a vertical segment.
+    /*! Check whether the given x-monotone curve is a vertical segment.
      * \param cv The curve.
      * \return (true) if the curve is a vertical segment; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv) const
+    bool operator()(const X_monotone_curve_2& cv) const
     {
-      CGAL_precondition (! cv.is_degenerate());
+      CGAL_precondition(! cv.is_degenerate());
       return (cv.is_vertical());
     }
   };
 
   /*! Obtain an Is_vertical_2 functor object. */
-  Is_vertical_2 is_vertical_2_object () const
-  {
-    return Is_vertical_2();
-  }
+  Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
 
   /*! A functor that compares the y-coordinates of a point and a line at
    * the point x-coordinate
@@ -898,8 +798,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*!
-     * Return the location of the given point with respect to the input curve.
+    /*! Return the location of the given point with respect to the input curve.
      * \param cv The curve.
      * \param p The point.
      * \pre p is in the x-range of cv.
@@ -910,36 +809,33 @@ public:
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv) const
     {
-      CGAL_precondition (! cv.is_degenerate());
-      CGAL_precondition (cv.is_in_x_range (p));
+      CGAL_precondition(! cv.is_degenerate());
+      CGAL_precondition(cv.is_in_x_range (p));
 
-      const Kernel * kernel = m_traits;
+      const Kernel* kernel = m_traits;
       if (! cv.is_vertical())
         // Compare p with the segment's supporting line.
         return (kernel->compare_y_at_x_2_object()(p, cv.supp_line()));
 
       // Compare with the vertical segment's end-points.
-      typename Kernel::Compare_y_2  compare_y = kernel->compare_y_2_object();
+      typename Kernel::Compare_y_2 compare_y = kernel->compare_y_2_object();
       const Comparison_result res1 =
-        cv.has_left() ? compare_y (p, cv.left()) : LARGER;
+        cv.has_left() ? compare_y(p, cv.left()) : LARGER;
       const Comparison_result res2 =
-        cv.has_right() ? compare_y (p, cv.right()) : SMALLER;
+        cv.has_right() ? compare_y(p, cv.right()) : SMALLER;
 
       return (res1 == res2) ? res1 : EQUAL;
     }
   };
 
   /*! Obtain a Compare_y_at_x_2 functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object () const
-  {
-    return Compare_y_at_x_2(this);
-  }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const
+  { return Compare_y_at_x_2(this); }
 
   /*! A functor that compares compares the y-coordinates of two linear
    * curves immediately to the left of their intersection point.
    */
-  class Compare_y_at_x_left_2
-  {
+  class Compare_y_at_x_left_2 {
   public:
     /*!
      * Compare the y value of two x-monotone curves immediately to the left
@@ -952,12 +848,12 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2,
-                                  const Point_2& CGAL_precondition_code(p)) const
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& CGAL_precondition_code(p)) const
     {
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
+      CGAL_precondition(! cv1.is_degenerate());
+      CGAL_precondition(! cv2.is_degenerate());
 
       Kernel                        kernel;
 
@@ -968,36 +864,33 @@ public:
       );
 
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, cv1,
-                                                  Has_exact_division()) &&
-         Segment_assertions::_assert_is_point_on (p, cv2,
-                                                  Has_exact_division()));
+        (Segment_assertions::_assert_is_point_on(p, cv1,
+                                                 Has_exact_division()) &&
+         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
-      CGAL_precondition ((! cv1.has_left() ||
-                          compare_xy(cv1.left(), p) == SMALLER) &&
-                         (! cv2.has_left() ||
-                          compare_xy(cv2.left(), p) == SMALLER));
+      CGAL_precondition((! cv1.has_left() ||
+                         compare_xy(cv1.left(), p) == SMALLER) &&
+                        (! cv2.has_left() ||
+                         compare_xy(cv2.left(), p) == SMALLER));
 
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
       // Notice we use the supporting lines in order to compare the slopes,
       // and that we swap the order of the curves in order to obtain the
       // correct result to the left of p.
-      return (kernel.compare_slope_2_object()(cv2.supp_line(), cv1.supp_line()));
+      return (kernel.compare_slope_2_object()(cv2.supp_line(),
+                                              cv1.supp_line()));
     }
   };
 
   /*! Obtain a Compare_y_at_x_left_2 functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
-  {
-    return Compare_y_at_x_left_2();
-  }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
+  { return Compare_y_at_x_left_2(); }
 
   /*! A functor that compares compares the y-coordinates of two linear
    * curves immediately to the right of their intersection point.
    */
-  class Compare_y_at_x_right_2
-  {
+  class Compare_y_at_x_right_2 {
   public:
     /*!
      * Compare the y value of two x-monotone curves immediately to the right
@@ -1010,12 +903,12 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the right of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2,
-                                  const Point_2& CGAL_precondition_code(p)) const
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& CGAL_precondition_code(p)) const
     {
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
+      CGAL_precondition(! cv1.is_degenerate());
+      CGAL_precondition(! cv2.is_degenerate());
 
       Kernel                        kernel;
 
@@ -1031,7 +924,7 @@ public:
          Segment_assertions::_assert_is_point_on (p, cv2,
                                                   Has_exact_division()));
 
-      CGAL_precondition ((! cv1.has_right() ||
+      CGAL_precondition((! cv1.has_right() ||
                           compare_xy(cv1.right(), p) == LARGER) &&
                          (! cv2.has_right() ||
                           compare_xy(cv2.right(), p) == LARGER));
@@ -1045,16 +938,13 @@ public:
   };
 
   /*! Obtain a Compare_y_at_x_right_2 functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
-  {
-    return Compare_y_at_x_right_2();
-  }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
+  { return Compare_y_at_x_right_2(); }
 
   /*! A functor that checks whether two points and two linear curves are
    * identical.
    */
-  class Equal_2
-  {
+  class Equal_2 {
   public:
     /*!
      * Check whether the two x-monotone curves are the same (have the same
@@ -1063,30 +953,26 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2) const
+    bool operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2) const
     {
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
+      CGAL_precondition(! cv1.is_degenerate());
+      CGAL_precondition(! cv2.is_degenerate());
 
       Kernel                    kernel;
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
       // Check that the two supporting lines are the same.
-      if (! equal (cv1.supp_line(), cv2.supp_line()) &&
-          ! equal (cv1.supp_line(),
-                   kernel.construct_opposite_line_2_object()(cv2.supp_line())))
-      {
-        return (false);
-      }
+      if (! equal(cv1.supp_line(), cv2.supp_line()) &&
+          ! equal(cv1.supp_line(),
+                  kernel.construct_opposite_line_2_object()(cv2.supp_line())))
+      { return (false); }
 
       // Check that either the two left endpoints are at infinity, or they
       // are bounded and equal.
       if ((cv1.has_left() != cv2.has_left()) ||
           (cv1.has_left() && ! equal (cv1.left(), cv2.left())))
-      {
-        return (false);
-      }
+      { return (false); }
 
       // Check that either the two right endpoints are at infinity, or they
       // are bounded and equal.
@@ -1100,7 +986,7 @@ public:
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
      */
-    bool operator() (const Point_2& p1, const Point_2& p2) const
+    bool operator()(const Point_2& p1, const Point_2& p2) const
     {
       Kernel    kernel;
       return (kernel.equal_2_object()(p1, p2));
@@ -1108,10 +994,7 @@ public:
   };
 
   /*! Obtain an Equal_2 functor object. */
-  Equal_2 equal_2_object () const
-  {
-    return Equal_2();
-  }
+  Equal_2 equal_2_object() const { return Equal_2(); }
   //@}
 
   /// \name Functor definitions to handle boundaries
@@ -1137,7 +1020,7 @@ public:
     Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
                                    Arr_curve_end ce) const
     {
-      CGAL_precondition (! xcv.is_degenerate());
+      CGAL_precondition(! xcv.is_degenerate());
       return (ce == ARR_MIN_END) ?
         xcv.left_infinite_in_x() : xcv.right_infinite_in_x();
     }
@@ -1147,9 +1030,7 @@ public:
      * \return the parameter space at p.
      */
     Arr_parameter_space operator()(const Point_2 ) const
-    {
-      return ARR_INTERIOR;
-    }
+    { return ARR_INTERIOR; }
   };
 
   /*! Obtain a Parameter_space_in_x_2 function object */
@@ -1181,7 +1062,7 @@ public:
     Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
                                    Arr_curve_end ce) const
     {
-      CGAL_precondition (! xcv.is_degenerate());
+      CGAL_precondition(! xcv.is_degenerate());
 
       return (ce == ARR_MIN_END) ?
         xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
@@ -1191,10 +1072,8 @@ public:
      * \param p the point.
      * \return the parameter space at p.
      */
-    Arr_parameter_space operator()(const Point_2 ) const
-    {
-      return ARR_INTERIOR;
-    }
+    Arr_parameter_space operator()(const Point_2 /* p */) const
+    { return ARR_INTERIOR; }
   };
 
   /*! Obtain a Parameter_space_in_y_2 function object */
@@ -1204,7 +1083,7 @@ public:
   /*! A function object that compares the x-limits of arc ends on the
    * boundary of the parameter space
    */
-  class Compare_x_at_limit_2 {
+  class Compare_x_on_boundary_2 {
   protected:
     typedef Arr_linear_traits_2<Kernel> Traits;
 
@@ -1217,7 +1096,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_at_limit_2(const Traits* traits) : m_traits(traits) {}
+    Compare_x_on_boundary_2(const Traits* traits) : m_traits(traits) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_linear_traits_2<Kernel>;
@@ -1285,14 +1164,14 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(this); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(this); }
 
   /*! A function object that compares the x-coordinates of arc ends near the
    * boundary of the parameter space
    */
-  class Compare_x_near_limit_2 {
+  class Compare_x_near_boundary_2 {
   public:
 
     /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
@@ -1329,10 +1208,9 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_limit_2 function object */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(); }
-
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(); }
 
   /*! A function object that compares the y-limits of arc ends on the
    * boundary of the parameter space.
@@ -1408,8 +1286,7 @@ public:
   /// \name Functor definitions for supporting intersections.
   //@{
 
-  class Make_x_monotone_2
-  {
+  class Make_x_monotone_2 {
   public:
     /*!
      * Cut the given curve into x-monotone subcurves and insert them into the
@@ -1421,25 +1298,20 @@ public:
      *           essentially the same as the input curve.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
+    template <typename OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the curve with an object.
-      *oi = make_object (cv);
-      ++oi;
-
+      *oi++ = make_object(cv);
       return (oi);
     }
   };
 
   /*! Obtain a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
-  {
-    return Make_x_monotone_2();
-  }
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return Make_x_monotone_2(); }
 
-  class Split_2
-  {
+  class Split_2 {
   public:
     /*!
      * Split a given x-monotone curve at a given point into two sub-curves.
@@ -1452,7 +1324,7 @@ public:
     void operator() (const X_monotone_curve_2& cv, const Point_2& p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
-      CGAL_precondition (! cv.is_degenerate());
+      CGAL_precondition(! cv.is_degenerate());
 
       // Make sure that p lies on the interior of the curve.
       CGAL_precondition_code (
@@ -1478,13 +1350,9 @@ public:
   };
 
   /*! Obtain a Split_2 functor object. */
-  Split_2 split_2_object () const
-  {
-    return Split_2();
-  }
+  Split_2 split_2_object() const { return Split_2(); }
 
-  class Intersect_2
-  {
+  class Intersect_2 {
   public:
     /*!
      * Find the intersections of the two given curves and insert them into the
@@ -1500,41 +1368,36 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi) const
     {
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
+      CGAL_precondition(! cv1.is_degenerate());
+      CGAL_precondition(! cv2.is_degenerate());
 
       // Intersect the two supporting lines.
       Kernel       kernel;
       CGAL::Object obj = kernel.intersect_2_object()(cv1.supp_line(),
                                                      cv2.supp_line());
 
-      if (obj.is_empty())
-      {
+      if (obj.is_empty()) {
         // The supporting line are parallel lines and do not intersect:
         return (oi);
       }
 
       // Check whether we have a single intersection point.
-      const Point_2  *ip = object_cast<Point_2> (&obj);
+      const Point_2* ip = object_cast<Point_2> (&obj);
 
-      if (ip != NULL)
-      {
+      if (ip != NULL) {
         // Check whether the intersection point ip lies on both segments.
         const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(*ip) :
                                                       cv1.is_in_x_range(*ip);
 
-        if (ip_on_cv1)
-        {
+        if (ip_on_cv1) {
           const bool  ip_on_cv2 = cv2.is_vertical() ? cv2.is_in_y_range(*ip) :
                                                       cv2.is_in_x_range(*ip);
 
-          if (ip_on_cv2)
-          {
+          if (ip_on_cv2) {
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
-            std::pair<Point_2,Multiplicity>   ip_mult (*ip, 1);
-            *oi = make_object (ip_mult);
-            oi++;
+            std::pair<Point_2,Multiplicity> ip_mult(*ip, 1);
+            *oi++ = make_object(ip_mult);
           }
         }
         return (oi);
@@ -1546,33 +1409,27 @@ public:
       typename Kernel::Compare_xy_2  compare_xy = kernel.compare_xy_2_object();
       X_monotone_curve_2             ovlp = cv1;
 
-      if (cv2.has_left())
-      {
+      if (cv2.has_left()) {
         // If the left endpoint of cv2 is to the right of cv1's left endpoint,
         // clip the overlapping subcurve.
-        if (! cv1.has_left())
-        {
+        if (! cv1.has_left()) {
           ovlp.set_left (cv2.left(), false);
         }
-        else
-        {
+        else {
           if (compare_xy (cv1.left(), cv2.left()) == SMALLER)
             ovlp.set_left (cv2.left(), false);
         }
       }
 
-      if (cv2.has_right())
-      {
+      if (cv2.has_right()) {
         // If the right endpoint of cv2 is to the left of cv1's right endpoint,
         // clip the overlapping subcurve.
-        if (! cv1.has_right())
-        {
-          ovlp.set_right (cv2.right(), false);
+        if (! cv1.has_right()) {
+          ovlp.set_right(cv2.right(), false);
         }
-        else
-        {
+        else {
           if (compare_xy (cv1.right(), cv2.right()) == LARGER)
-            ovlp.set_right (cv2.right(), false);
+            ovlp.set_right(cv2.right(), false);
         }
       }
 
@@ -1582,20 +1439,16 @@ public:
       if (ovlp.has_left() && ovlp.has_right())
         res = compare_xy (ovlp.left(), ovlp.right());
 
-      if (res == SMALLER)
-      {
+      if (res == SMALLER) {
         // We have discovered a true overlapping subcurve:
-        *oi = make_object (ovlp);
-        oi++;
+        *oi++ = make_object(ovlp);
       }
-      else if (res == EQUAL)
-      {
+      else if (res == EQUAL) {
         // The two objects have the same supporting line, but they just share
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
         std::pair<Point_2,Multiplicity>   ip_mult (ovlp.left(), 0);
-        *oi = make_object (ip_mult);
-        oi++;
+        *oi++ = make_object(ip_mult);
       }
 
       return (oi);
@@ -1603,13 +1456,9 @@ public:
   };
 
   /*! Obtain an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
-  {
-    return Intersect_2();
-  }
+  Intersect_2 intersect_2_object() const { return Intersect_2(); }
 
-  class Are_mergeable_2
-  {
+  class Are_mergeable_2 {
   public:
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
@@ -1621,8 +1470,8 @@ public:
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
+      CGAL_precondition(! cv1.is_degenerate());
+      CGAL_precondition(! cv2.is_degenerate());
 
       Kernel                    kernel;
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
@@ -1643,16 +1492,12 @@ public:
   };
 
   /*! Obtain an Are_mergeable_2 functor object. */
-  Are_mergeable_2 are_mergeable_2_object () const
-  {
-    return Are_mergeable_2();
-  }
+  Are_mergeable_2 are_mergeable_2_object() const { return Are_mergeable_2(); }
 
   /*! \class Merge_2
    * A functor that merges two x-monotone arcs into one.
    */
-  class Merge_2
-  {
+  class Merge_2 {
   protected:
     typedef Arr_linear_traits_2<Kernel> Traits;
 
@@ -1713,15 +1558,14 @@ public:
   };
 
   /*! Obtain a Merge_2 functor object. */
-  Merge_2 merge_2_object () const { return Merge_2(this); }
+  Merge_2 merge_2_object() const { return Merge_2(this); }
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
   typedef double                          Approximate_number_type;
 
-  class Approximate_2
-  {
+  class Approximate_2 {
   public:
 
     /*!
@@ -1735,7 +1579,7 @@ public:
     Approximate_number_type operator() (const Point_2& p,
                                         int i) const
     {
-      CGAL_precondition (i == 0 || i == 1);
+      CGAL_precondition(i == 0 || i == 1);
 
       if (i == 0)
         return (CGAL::to_double(p.x()));
@@ -1745,15 +1589,10 @@ public:
   };
 
   /*! Obtain an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object () const
-  {
-    return Approximate_2();
-  }
+  Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
-  class Construct_x_monotone_curve_2
-  {
+  class Construct_x_monotone_curve_2 {
   public:
-
     /*!
      * Return an x-monotone curve connecting the two given endpoints.
      * \param p The first point.
@@ -1761,38 +1600,32 @@ public:
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
      */
-    X_monotone_curve_2 operator() (const Point_2& p,
-                                   const Point_2& q) const
+    X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      Kernel     kernel;
-      Segment_2  seg = kernel.construct_segment_2_object() (p, q);
-
-      return (X_monotone_curve_2 (seg));
+      Kernel kernel;
+      Segment_2 seg = kernel.construct_segment_2_object() (p, q);
+      return (X_monotone_curve_2(seg));
     }
   };
 
   /*! Obtain a Construct_x_monotone_curve_2 functor object. */
-  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
-  {
-    return Construct_x_monotone_curve_2();
-  }
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
+  { return Construct_x_monotone_curve_2(); }
   //@}
-
 };
 
 /*!
  * \class A representation of a segment, as used by the Arr_segment_traits_2
  * traits-class.
  */
-template <class Kernel_>
+template <typename Kernel_>
 class Arr_linear_object_2 :
     public Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2
 {
   typedef typename Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2
-                                                                   Base;
+                                                            Base;
 
 public:
-
   typedef Kernel_                                           Kernel;
 
   typedef typename Kernel::Point_2                          Point_2;
@@ -1801,87 +1634,62 @@ public:
   typedef typename Kernel::Line_2                           Line_2;
 
 public:
+  /*! Default constructor. */
+  Arr_linear_object_2() : Base() {}
 
-  /*!
-   * Default constructor.
-   */
-  Arr_linear_object_2 () :
-    Base()
-  {}
-
-  /*!
-   * Constructor from two points.
+  /*! Constructor from two points.
    * \param s The source point.
    * \param t The target point.
    * \pre The two points must not be the same.
    */
-  Arr_linear_object_2(const Point_2& s, const Point_2& t):
-    Base(s, t)
-  {}
+  Arr_linear_object_2(const Point_2& s, const Point_2& t) : Base(s, t) {}
 
-  /*!
-   * Constructor from a segment.
+  /*! Constructor from a segment.
    * \param seg The segment.
    * \pre The segment is not degenerate.
    */
-  Arr_linear_object_2 (const Segment_2& seg) :
-    Base (seg)
-  {}
+  Arr_linear_object_2(const Segment_2& seg) : Base(seg) {}
 
-  /*!
-   * Constructor from a ray.
+  /*! Constructor from a ray.
    * \param ray The segment.
    * \pre The ray is not degenerate.
    */
-  Arr_linear_object_2 (const Ray_2& ray) :
-    Base (ray)
-  {}
+  Arr_linear_object_2(const Ray_2& ray) : Base(ray) {}
 
-  /*!
-   * Constructor from a line.
+  /*! Constructor from a line.
    * \param line The line.
    * \pre The line is not degenerate.
    */
-  Arr_linear_object_2 (const Line_2& line) :
-    Base (line)
-  {}
+  Arr_linear_object_2(const Line_2& line) : Base(line) {}
 
-  /*!
-   * Check whether the object is actually a segment.
+  /*! Check whether the object is actually a segment.
    */
-  bool is_segment () const
-  {
-    return (! this->is_degen && this->has_source && this->has_target);
-  }
+  bool is_segment() const
+  { return (! this->is_degen && this->has_source && this->has_target); }
 
-  /*!
-   * Cast to a segment.
+  /*! Cast to a segment.
    * \pre The linear object is really a segment.
    */
-  Segment_2 segment () const
+  Segment_2 segment() const
   {
-    CGAL_precondition (is_segment());
+    CGAL_precondition(is_segment());
 
     Kernel     kernel;
     Segment_2  seg = kernel.construct_segment_2_object() (this->ps, this->pt);
     return seg;
   }
 
-  /*!
-   * Check whether the object is actually a ray.
+  /*! Check whether the object is actually a ray.
    */
-  bool is_ray () const
-  {
-    return (! this->is_degen && (this->has_source != this->has_target));
-  }
+  bool is_ray() const
+  { return (! this->is_degen && (this->has_source != this->has_target)); }
 
-  /*!
-   * Cast to a ray.
+  /*! Cast to a ray.
    * \pre The linear object is really a ray.
    */
-  Ray_2 ray () const
+  Ray_2 ray() const
   {
-    CGAL_precondition (is_ray());
+    CGAL_precondition(is_ray());
 
     Kernel     kernel;
     Ray_2      ray = (this->has_source) ?
@@ -1891,70 +1699,59 @@ public:
     return ray;
   }
 
-  /*!
-   * Check whether the object is actually a line.
+  /*! Check whether the object is actually a line.
    */
-  bool is_line () const
-  {
-    return (! this->is_degen && ! this->has_source && ! this->has_target);
-  }
+  bool is_line() const
+  { return (! this->is_degen && ! this->has_source && ! this->has_target); }
 
-  /*!
-   * Cast to a line.
+  /*! Cast to a line.
    * \pre The linear object is really a line.
    */
-  Line_2 line () const
+  Line_2 line() const
   {
-    CGAL_precondition (is_line());
+    CGAL_precondition(is_line());
     return (this->l);
   }
 
-  /*!
-   * Get the supporting line.
+  /*! Get the supporting line.
    * \pre The object is not a point.
    */
-  const Line_2& supporting_line () const
+  const Line_2& supporting_line() const
   {
-    CGAL_precondition (! this->is_degen);
+    CGAL_precondition(! this->is_degen);
     return (this->l);
   }
 
-  /*!
-   * Get the source point.
+  /*! Get the source point.
    * \pre The object is a point, a segment or a ray.
    */
   const Point_2& source() const
   {
-    CGAL_precondition (! is_line());
+    CGAL_precondition(! is_line());
 
     if (this->is_degen)
       return (this->ps);      // For a point.
 
-    if (this->has_source)
-      return (this->ps);      // For a segment or a ray.
-    else
-      return (this->pt);      // For a "flipped" ray.
+    if (this->has_source) return (this->ps);    // For a segment or a ray.
+    else return (this->pt);                     // For a "flipped" ray.
   }
 
-  /*!
-   * Get the target point.
+  /*! Get the target point.
    * \pre The object is a point or a segment.
    */
   const Point_2& target() const
   {
-    CGAL_precondition (! is_line() && ! is_ray());
-
+    CGAL_precondition(! is_line() && ! is_ray());
     return (this->pt);
   }
 
-  /*!
-   * Create a bounding box for the linear object.
+  /*! Create a bounding box for the linear object.
    */
   Bbox_2 bbox() const
   {
     CGAL_precondition(this->is_segment());
-    Kernel     kernel;
-    Segment_2  seg = kernel.construct_segment_2_object() (this->ps, this->pt);
+    Kernel kernel;
+    Segment_2 seg = kernel.construct_segment_2_object() (this->ps, this->pt);
     return (kernel.construct_bbox_2_object() (seg));
   }
 
@@ -1966,12 +1763,11 @@ public:
   // compiler will have 3 equivalent options to choose from.
 };
 
-/*!
- * Exporter for the segment class used by the traits-class.
+/*! Exporter for the segment class used by the traits-class.
  */
-template <class Kernel, class OutputStream>
-OutputStream& operator<< (OutputStream& os,
-                          const Arr_linear_object_2<Kernel>& lobj)
+template <typename Kernel, typename OutputStream>
+OutputStream& operator<<(OutputStream& os,
+                         const Arr_linear_object_2<Kernel>& lobj)
 {
   // Print a letter identifying the object type, then the object itself.
   if (lobj.is_segment())
@@ -1984,38 +1780,32 @@ OutputStream& operator<< (OutputStream& os,
   return (os);
 }
 
-/*!
- * Importer for the segment class used by the traits-class.
+/*! Importer for the segment class used by the traits-class.
  */
-template <class Kernel, class InputStream>
-InputStream& operator>> (InputStream& is, Arr_linear_object_2<Kernel>& lobj)
+template <typename Kernel, typename InputStream>
+InputStream& operator>>(InputStream& is, Arr_linear_object_2<Kernel>& lobj)
 {
   // Read the object type.
-  char        c;
-
-  do
-  {
+  char c;
+  do {
     is >> c;
   } while ((c != 'S' && c != 's') &&
            (c != 'R' && c != 'r') &&
            (c != 'L' && c != 'l'));
 
   // Read the object accordingly.
-  if (c == 'S' || c == 's')
-  {
-    typename Kernel::Segment_2  seg;
+  if (c == 'S' || c == 's') {
+    typename Kernel::Segment_2 seg;
     is >> seg;
     lobj = seg;
   }
-  else if (c == 'R' || c == 'r')
-  {
-    typename Kernel::Ray_2      ray;
+  else if (c == 'R' || c == 'r') {
+    typename Kernel::Ray_2 ray;
     is >> ray;
     lobj = ray;
   }
-  else
-  {
-    typename Kernel::Line_2     line;
+  else {
+    typename Kernel::Line_2 line;
     is >> line;
     lobj = line;
   }
