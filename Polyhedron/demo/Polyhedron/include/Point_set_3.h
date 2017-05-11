@@ -119,6 +119,7 @@ public:
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
     m_radii_are_uptodate = p.m_radii_are_uptodate;
+
   }
 
   iterator begin() { return this->m_indices.begin(); }
