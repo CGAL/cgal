@@ -154,7 +154,8 @@ public Q_SLOTS:
     if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
     {
 #ifdef USE_SURFACE_MESH
-      std::size_t h = reinterpret_cast<std::size_t>(void_ptr);
+      typedef boost::graph_traits<FaceGraph>::vertices_size_type size_type;
+      size_type h = reinterpret_cast<size_type>(void_ptr);
       process_selection( static_cast<fg_vertex_descriptor>(h) );
 #else
       process_selection( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
@@ -169,7 +170,8 @@ public Q_SLOTS:
       || active_handle_type == Active_handle::CONNECTED_COMPONENT)
     {
 #ifdef USE_SURFACE_MESH
-      std::size_t h = reinterpret_cast<std::size_t>(void_ptr);
+      typedef boost::graph_traits<FaceGraph>::faces_size_type size_type;
+      size_type h = reinterpret_cast<size_type>(void_ptr);
       process_selection( static_cast<fg_face_descriptor>(h) );
 #else
       process_selection( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
@@ -183,7 +185,8 @@ public Q_SLOTS:
     if(active_handle_type == Active_handle::EDGE)
     {
 #ifdef USE_SURFACE_MESH
-      std::size_t h = reinterpret_cast<std::size_t>(void_ptr);
+      typedef boost::graph_traits<FaceGraph>::edges_size_type size_type;
+      size_type h = reinterpret_cast<size_type>(void_ptr);
       process_selection( static_cast<fg_edge_descriptor>(h) );
 #else
       process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );

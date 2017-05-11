@@ -191,7 +191,8 @@ public Q_SLOTS:
   // slots are called by signals of surface_mesh_item
   void sm_vertex_has_been_selected(void* v)
   {
-    std::size_t h = reinterpret_cast<std::size_t>(v);
+    typedef boost::graph_traits<SMesh>::vertices_size_type size_type;
+    size_type h = reinterpret_cast<size_type>(v);
     is_active=true;
     if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
       process_selection( sm_vertex_descriptor(h) );
@@ -199,7 +200,8 @@ public Q_SLOTS:
   }
   void sm_facet_has_been_selected(void* v)
   {
-    std::size_t h = reinterpret_cast<std::size_t>(v);
+    typedef boost::graph_traits<SMesh>::vertices_size_type size_type;
+    size_type h = reinterpret_cast<size_type>(v);
     is_active=true;
     if (active_handle_type == Active_handle::FACET
       || active_handle_type == Active_handle::CONNECTED_COMPONENT)
@@ -208,7 +210,8 @@ public Q_SLOTS:
   }
   void sm_edge_has_been_selected(void* v)
   {
-    std::size_t h = reinterpret_cast<std::size_t>(v);
+    typedef boost::graph_traits<SMesh>::edges_size_type size_type;
+    size_type h = reinterpret_cast<size_type>(v);
     is_active=true;
     if(active_handle_type == Active_handle::EDGE)
       process_selection(sm_edge_descriptor(h) );
