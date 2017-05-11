@@ -1,3 +1,7 @@
+
+// Enable the operator<< for a seam vertex/halfedge/edge/face
+#define CGAL_SEAM_MESH_INSERT_OPERATOR
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
