@@ -62,19 +62,25 @@ typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>        Function_do
 typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Function_domain> Function_mesh_domain;
 #endif
 
+//Robust_cc_geom_traits
+typedef CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel
+    Robust_intersections_traits;
+typedef CGAL::details::Mesh_geom_traits_generator<Robust_intersections_traits>::type
+    Robust_K;
+
 // Triangulation
-typedef CGAL::Compact_mesh_cell_base_3<Kernel, Polyhedral_mesh_domain>     Cell_base;
-typedef CGAL::Triangulation_cell_base_with_info_3< int, Kernel, Cell_base> Cell_base_with_info;
+typedef CGAL::Compact_mesh_cell_base_3<Robust_K, Polyhedral_mesh_domain>    Cell_base;
+typedef CGAL::Triangulation_cell_base_with_info_3<int, Robust_K, Cell_base> Cell_base_with_info;
 
 #ifdef CGAL_CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, 
-                                     CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel,
+                                     Robust_intersections_traits,
                                      CGAL::Parallel_tag,
                                      CGAL::Default,
                                      Cell_base_with_info>::type Tr;
 #else
   typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain,
-                                     CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel,
+                                     Robust_intersections_traits,
                                      CGAL::Sequential_tag,
                                      CGAL::Default,
                                      Cell_base_with_info>::type Tr;
