@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006-2009, 2017  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,37 +14,35 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_TRAITS_3_H
 #define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_TRAITS_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Traits_with_offsets_adaptor.h>
 #include <CGAL/Periodic_3_construct_point_3.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Has_boolean_tags.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
-
-namespace CGAL { 
+namespace CGAL {
 
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_Delaunay_triangulation_traits_base_3
-  : public Periodic_3_triangulation_traits_base_3<Kernel, Off>
+  : public Periodic_3_triangulation_traits_3<Kernel, Off>
 {
 public:
-  typedef Kernel                                                 K;
-  typedef Off                                                    Offset;
-  typedef Periodic_3_triangulation_traits_base_3<K, Offset>               Base;
-  typedef Periodic_3_Delaunay_triangulation_traits_base_3< K, Offset >    Self;
+  typedef Kernel                                                     K;
+  typedef Off                                                        Offset;
+  typedef Periodic_3_triangulation_traits_3<K, Offset>               Base;
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, Offset> Self;
 
   typedef typename Base::RT                   RT;
   typedef typename Base::FT                   FT;
@@ -56,32 +54,30 @@ public:
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
-  typedef Point_3 Point;
+  typedef Point_3                          Point;
 
   typedef typename Base::Segment_3         Segment_3;
   typedef typename Base::Triangle_3        Triangle_3;
   typedef typename Base::Tetrahedron_3     Tetrahedron_3;
 
   // Delaunay specific predicates
-  typedef Traits_with_offsets_adaptor<Self,
-				      typename K::Side_of_oriented_sphere_3>
+  typedef Traits_with_offsets_adaptor<Self, typename K::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;
   typedef Traits_with_offsets_adaptor<Self, typename K::Compare_distance_3>
       Compare_distance_3;
-   typedef Traits_with_offsets_adaptor<Self,
- 				      typename K::Side_of_bounded_sphere_3>
-       Side_of_bounded_sphere_3;
 
-  // Degenerate dimension predicates
+  // Required for Periodic_3_Delaunay_triangulation_remove_traits
   typedef Traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3>
       Coplanar_orientation_3;
-  typedef Traits_with_offsets_adaptor<Self,
-              typename K::Coplanar_side_of_bounded_circle_3>
+  typedef Traits_with_offsets_adaptor<Self, typename K::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
 
+  // When is_Gabriel is used
+   typedef Traits_with_offsets_adaptor<Self, typename K::Side_of_bounded_sphere_3>
+       Side_of_bounded_sphere_3;
+
   // Delaunay specific constructions
-  typedef Traits_with_offsets_adaptor<Self,
-				      typename K::Construct_circumcenter_3>
+  typedef Traits_with_offsets_adaptor<Self, typename K::Construct_circumcenter_3>
       Construct_circumcenter_3;
 
   // Operations
@@ -123,25 +119,15 @@ class Periodic_3_Delaunay_triangulation_traits_3;
 
 namespace CGAL {
 
-// This declaration is needed to break the cyclic dependency.
-template < typename K, typename Off, bool Has_static_filters >
-class Periodic_3_Delaunay_triangulation_filtered_traits_3;
-
 template < class K, class Off>
 class Periodic_3_Delaunay_triangulation_traits_3<K, Off, false>
   : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>
-{
-public:
-  typedef K Kernel;
-};
+{ };
 
 template < typename K, typename Off >
 class Periodic_3_Delaunay_triangulation_traits_3 <K, Off, true>
   : public Periodic_3_Delaunay_triangulation_filtered_traits_3 < K, Off, internal::Has_static_filters<K>::value >
-{
-public:
-  typedef K Kernel;
-};
+{ };
 
 } //namespace CGAL
 

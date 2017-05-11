@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006-2009,2017  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -24,7 +24,6 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Periodic_3_construct_point_3.h>
@@ -32,7 +31,7 @@
 #include <CGAL/Traits_with_offsets_adaptor.h>
 #include <CGAL/internal/Has_boolean_tags.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_triangulation_traits_base_3
@@ -41,7 +40,7 @@ class Periodic_3_triangulation_traits_base_3
 public:
   typedef Kernel                                                 K;
   typedef Off                                                    Offset;
-  typedef Periodic_3_triangulation_traits_base_3< K, Offset >    Self;  
+  typedef Periodic_3_triangulation_traits_base_3< K, Offset >    Self;
 
   typedef typename K::RT                RT;
   typedef typename K::FT                FT;
@@ -53,7 +52,7 @@ public:
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
-  typedef Point_3 Point;
+  typedef Point_3                       Point;
 
   typedef typename K::Segment_3         Segment_3;
   typedef typename K::Triangle_3        Triangle_3;
@@ -64,7 +63,7 @@ public:
       Compare_xyz_3;
   typedef Traits_with_offsets_adaptor<Self, typename K::Orientation_3>
       Orientation_3;
-  
+
   // Triangulation constructions
   typedef Periodic_3_construct_point_3<Self, typename K::Construct_point_3>
       Construct_point_3;
@@ -79,8 +78,8 @@ public:
   void set_domain(const Iso_cuboid_3& domain) {
     _domain = domain;
   }
-  
-  Iso_cuboid_3 get_domain() const {
+
+  const Iso_cuboid_3& get_domain() const {
     return _domain;
   }
 
@@ -114,8 +113,9 @@ protected:
   Iso_cuboid_3 _domain;
 };
 
-
-template < typename K, typename Off = CGAL::Periodic_3_offset_3, bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
+template < typename K,
+           typename Off = CGAL::Periodic_3_offset_3,
+           bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
 class Periodic_3_triangulation_traits_3;
 
 } //namespace CGAL
@@ -123,33 +123,17 @@ class Periodic_3_triangulation_traits_3;
 #include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
-// This declaration is needed to break the cyclic dependency.
-template < typename K, typename Off, bool Has_static_filters >
-class Periodic_3_triangulation_filtered_traits_3;
 
-template < class K, class Off, bool Has_filtered_predicates >
-class Periodic_3_triangulation_traits_3
+template < class K, class Off >
+class Periodic_3_triangulation_traits_3<K, Off, false>
   : public Periodic_3_triangulation_traits_base_3<K, Off>
-{
-};
+{ };
 
 template < typename K, typename Off >
-class Periodic_3_triangulation_traits_3 < K, Off, true>
-  : public Periodic_3_triangulation_filtered_traits_3 < K, Off, internal::Has_static_filters<K>::value >
-{
-public:
-  typedef K Kernel;
-};
+class Periodic_3_triangulation_traits_3<K, Off, true>
+  : public Periodic_3_triangulation_filtered_traits_3<K, Off, internal::Has_static_filters<K>::value >
+{ };
 
 } //namespace CGAL
-
-#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
-
-
-namespace CGAL
-{
-template < typename K, typename Off, bool Has_filtered_predicates >
-class Periodic_3_Delaunay_triangulation_traits_3;
-}
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H

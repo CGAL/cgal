@@ -14,46 +14,28 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
- 
+
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
-// This class gathers optimized predicates written by hand, using
-// a few steps of filtering.  It should work if the initial traits has
-// cartesian coordinates which fit exactly in doubles.
-//
-// Purely static filters code has been removed, since it requires additional
-// logic and is not plug'n play (requires users providing bounds).
-// If it should be provided again, it should probably be separate.
-
-#include <CGAL/basic.h>
-
-#include <CGAL/Kernel/function_objects.h>
-#include <CGAL/Cartesian/function_objects.h>
-
-#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Periodic_3_orientation_3.h>
-
-// TODO :
-// - add more predicates :
 
 namespace CGAL {
 
-// The K_base argument is supposed to provide exact primitives.
+// The `Traits` argument is supposed to provide exact primitives.
 template < typename Traits >
-class Periodic_3_triangulation_statically_filtered_traits_3 : public Traits
+class Periodic_3_triangulation_statically_filtered_traits_3
+    : public Traits
 {
   typedef Periodic_3_triangulation_statically_filtered_traits_3<Traits> Self;
 
 public:
-
   typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
     Orientation_3;
 
