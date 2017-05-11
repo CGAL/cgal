@@ -33,7 +33,7 @@ if ( Boost_VERSION GREATER 103400 )
   endif()
   if(Boost_FILESYSTEM_FOUND)
     qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
-    polyhedron_demo_plugin(io_image_plugin Io_image_plugin CATEGORY-PLUGINS_visualizer CATEGORY-PLUGINS_meshing Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES})
+    polyhedron_demo_plugin(io_image_plugin Io_image_plugin CATEGORY-PLUGINS_IO CATEGORY-PLUGINS_meshing Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES})
     target_link_libraries(io_image_plugin scene_image_item ${VTK_LIBS} )
   else()
       message( STATUS "NOTICE : the Io_image_plugin needs boost-filesystem to work and will not be compiled")
@@ -45,12 +45,12 @@ if ( Boost_VERSION GREATER 103400 )
 
 
 
-  polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin CATEGORY-PLUGINS_visualizer CATEGORY-PLUGINS_meshing)
+  polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin CATEGORY-PLUGINS_IO CATEGORY-PLUGINS_meshing)
   target_link_libraries(c3t3_io_plugin  scene_c3t3_item)
   else( Boost_VERSION GREATER 103400 )
     message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
   endif( Boost_VERSION GREATER 103400 )
 
   qt5_wrap_ui( ribUI_FILES  Rib_dialog.ui)
-  polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin CATEGORY-PLUGINS_meshing ${ribUI_FILES})
+  polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin CATEGORY-PLUGINS_IO CATEGORY-PLUGINS_meshing ${ribUI_FILES})
   target_link_libraries(c3t3_rib_exporter_plugin scene_c3t3_item)

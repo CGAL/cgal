@@ -367,7 +367,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   ###########
 
   set(CATEGORY-PLUGINS_all TRUE CACHE BOOL "Build all the plugins")
-  set(CATEGORY-PLUGINS_visualizer FALSE CACHE BOOL "Build only the IO plugins. This will make a light viewer.")
+  set(CATEGORY-PLUGINS_IO FALSE CACHE BOOL "Build only the IO plugins. This will make a light viewer.")
   set(CATEGORY-PLUGINS_mesh_processing FALSE CACHE BOOL "Build only the plugins that deal with polygon meshes.")
   set(CATEGORY-PLUGINS_point_set_processing FALSE CACHE BOOL "Build only the plugins that deal with points sets.")
   set(CATEGORY-PLUGINS_meshing FALSE CACHE BOOL "Build only the plugins that deal with volumic or surfaceic meshing.")
@@ -412,8 +412,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
 #add targets that emulate the cache values
-add_custom_target(category_visualizer
-  DEPENDS ${CATEGORY-PLUGINS_visualizer_plugins})
+add_custom_target(category_IO
+  DEPENDS ${CATEGORY-PLUGINS_IO_plugins})
 add_custom_target(category_mesh_processing
   DEPENDS ${CATEGORY-PLUGINS_mesh_processing_plugins})
 add_custom_target(category_point_set_processing
@@ -422,7 +422,7 @@ add_custom_target(category_meshing
   DEPENDS ${CATEGORY-PLUGINS_meshing_plugins})
 
   set(CATEGORY-PLUGINS_all_prec ${CATEGORY-PLUGINS_all} CACHE INTERNAL "")
-  set(CATEGORY-PLUGINS_visualizer_prec ${CATEGORY-PLUGINS_visualizer} CACHE INTERNAL "")
+  set(CATEGORY-PLUGINS_IO_prec ${CATEGORY-PLUGINS_IO} CACHE INTERNAL "")
   set(CATEGORY-PLUGINS_mesh_processing_prec ${CATEGORY-PLUGINS_mesh_processing} CACHE INTERNAL "")
   set(CATEGORY-PLUGINS_point_set_processing_prec ${CATEGORY-PLUGINS_point_set_processing} CACHE INTERNAL "")
   set(CATEGORY-PLUGINS_meshing_prec ${CATEGORY-PLUGINS_meshing} CACHE INTERNAL "")
