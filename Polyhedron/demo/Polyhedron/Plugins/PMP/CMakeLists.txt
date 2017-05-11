@@ -92,3 +92,8 @@ target_link_libraries(distance_plugin scene_polyhedron_item scene_color_ramp)
 
 polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin)
 target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
+
+polyhedron_demo_plugin(detect_sharp_edges_sm_plugin Detect_sharp_edges_plugin)
+target_link_libraries(detect_sharp_edges_sm_plugin scene_surface_mesh_item)
+target_compile_definitions(detect_sharp_edges_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+

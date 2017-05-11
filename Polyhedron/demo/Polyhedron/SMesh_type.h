@@ -3,6 +3,7 @@
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/array.hpp>
+#include <set>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/properties.h>
@@ -60,6 +61,13 @@ inline get(CGAL::vertex_selection_t, SMesh& smesh)
   typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
   return smesh.add_property_map<vertex_descriptor,int>("v:nfe").first;
 }
+
+ SMesh::Property_map< boost::graph_traits<SMesh >::vertex_descriptor,std::set<int> >
+ inline get(CGAL::vertex_incident_patches_t, SMesh& smesh)
+{
+  typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
+  return smesh.add_property_map<vertex_descriptor,std::set<int> >("v:ip").first;
+}
 }
 namespace boost
 {
@@ -104,6 +112,15 @@ struct property_map<SMesh, CGAL::vertex_num_feature_edges_t>
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
 
   typedef SMesh::Property_map<vertex_descriptor, int> type;
+};
+
+template<>
+struct property_map<SMesh, CGAL::vertex_incident_patches_t>
+{
+
+  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+
+  typedef SMesh::Property_map<vertex_descriptor, std::set<int>> type;
 };
 } //boost
 

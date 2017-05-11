@@ -15,6 +15,8 @@
 #include <boost/array.hpp>
 #include <QColor>
 
+#include <CGAL/Polygon_mesh_processing/properties.h>
+
 struct Scene_surface_mesh_item_priv;
 
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
@@ -52,7 +54,7 @@ public:
   QString toolTip() const Q_DECL_OVERRIDE;
 
   // Only needed for Scene_polyhedron_item
-  void setItemIsMulticolor(bool){}
+  void setItemIsMulticolor(bool);
   void update_vertex_indices(){}
   void update_halfedge_indices(){}
   void update_facet_indices(){}
@@ -61,6 +63,10 @@ public:
 
   std::vector<QColor>& color_vector();
 
+  void set_patch_id(SMesh::Face_index f,int i)const;
+  int patch_id(SMesh::Face_index f)const;
+  void show_feature_edges(bool);
+  virtual void drawEdges() const {}
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
 
@@ -103,5 +109,6 @@ protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
+
 
 #endif /* CGAL_SCENE_SURFACE_MESH_ITEM_H */

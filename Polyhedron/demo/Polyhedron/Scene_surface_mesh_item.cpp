@@ -69,12 +69,14 @@ struct Scene_surface_mesh_item_priv{
     idx_edge_data_(other.d->idx_edge_data_)
   {
     item = parent;
+    has_feature_edges = false;
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
     smesh_(sm)
   {
     item = parent;
+    has_feature_edges = false;
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -126,6 +128,7 @@ struct Scene_surface_mesh_item_priv{
   };
 
   mutable bool has_fpatch_id;
+  mutable bool has_feature_edges;
   mutable bool floated;
   mutable bool has_vcolors;
   mutable bool has_fcolors;
@@ -134,6 +137,7 @@ struct Scene_surface_mesh_item_priv{
   mutable bool isinit;
   mutable std::vector<unsigned int> idx_data_;
   std::vector<unsigned int> idx_edge_data_;
+  std::vector<unsigned int> idx_feature_edge_data_;
   mutable std::vector<cgal_gl_data> smooth_vertices;
   mutable std::vector<cgal_gl_data> smooth_normals;
   mutable std::vector<cgal_gl_data> flat_vertices;
@@ -147,9 +151,9 @@ struct Scene_surface_mesh_item_priv{
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
+  mutable SMesh::Property_map<halfedge_descriptor, bool> h_is_feature_map;
 
   Color_vector colors_;
-  void computeElements() const;
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
@@ -306,6 +310,14 @@ void Scene_surface_mesh_item_priv::compute_elements()
       triangulate_facet(fd, &fnormals, 0, &im, true);
     }
   }
+  if(smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
+    has_fcolors = true;
+  if(has_feature_edges)
+  {
+    idx_feature_edge_data_.clear();
+    idx_feature_edge_data_.shrink_to_fit();
+    idx_feature_edge_data_.reserve(num_edges(*smesh_) * 2);
+  }
   idx_edge_data_.clear();
   idx_edge_data_.shrink_to_fit();
   idx_edge_data_.reserve(num_edges(*smesh_) * 2);
@@ -313,7 +325,14 @@ void Scene_surface_mesh_item_priv::compute_elements()
   {
     idx_edge_data_.push_back(source(ed, *smesh_));
     idx_edge_data_.push_back(target(ed, *smesh_));
+    if(has_feature_edges &&
+       get(h_is_feature_map, halfedge(ed, *smesh_)) )
+    {
+      idx_feature_edge_data_.push_back(source(ed, *smesh_));
+      idx_feature_edge_data_.push_back(target(ed, *smesh_));
+    }
   }
+  idx_edge_data_.shrink_to_fit();
 
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
@@ -331,14 +350,14 @@ void Scene_surface_mesh_item_priv::compute_elements()
 
   if(smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
     has_vcolors = true;
-  if(smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
-    has_fcolors = true;
 
   has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").second;
 
   if(has_fpatch_id && colors_.empty()){
     initialize_colors();
   }
+
+
 //compute the Flat data
   flat_vertices.clear();
   flat_normals.clear();
@@ -534,7 +553,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
     item->buffers[VColors].bind();
     item->buffers[VColors].allocate(v_colors.data(),
                              static_cast<int>(v_colors.size()*sizeof(cgal_gl_data)));
-    program->enableAttributeArray("colors");
+    //program->enableAttributeArray("colors");
     program->setAttributeBuffer("colors",CGAL_GL_DATA,0,3);
     item->buffers[VColors].release();
   }
@@ -622,11 +641,19 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
  vaos[Scene_surface_mesh_item_priv::Edges]->bind();
  d->program->setAttributeValue("colors", QColor(0,0,0));
  if(is_selected)
-   d->program->setAttributeValue("is_selected", true);
+   d->program->setUniformValue("is_selected", true);
  else
-   d->program->setAttributeValue("is_selected", false);
+   d->program->setUniformValue("is_selected", false);
  glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_edge_data_.size()),
                 GL_UNSIGNED_INT, d->idx_edge_data_.data());
+
+ if(d->has_feature_edges)
+ {
+   d->program->setAttributeValue("colors", Qt::red);
+   d->program->setUniformValue("is_selected", false);
+   glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_edge_data_.size()),
+                  GL_UNSIGNED_INT, d->idx_feature_edge_data_.data());
+ }
  vaos[Scene_surface_mesh_item_priv::Edges]->release();
  d->program->release();
 }
@@ -1080,4 +1107,20 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
   }
   return false;
 
+}
+void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
+{
+  if(b)
+    d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id").first;
+}
+
+void Scene_surface_mesh_item::show_feature_edges(bool b)
+{
+  if(b)
+  {
+    d->h_is_feature_map = d->smesh_->add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+    invalidateOpenGLBuffers();
+    itemChanged();
+  }
+  d->has_feature_edges = b;
 }

@@ -228,8 +228,8 @@ inline Is_feature_pmap get(CGAL::halfedge_is_feature_t, const Polyhedron&)
 
 struct vertex_num_feature_edges_pmap {
 
-  typedef Polyhedron::Vertex_handle value_type;
-  typedef int key_type;
+  typedef Polyhedron::Vertex_handle key_type;
+  typedef int value_type;
   friend int get(const vertex_num_feature_edges_pmap&, Polyhedron::Vertex_handle h)
   {
     return h->nb_of_feature_edges;
@@ -241,6 +241,7 @@ struct vertex_num_feature_edges_pmap {
   }
 
 };
+
 
 inline vertex_num_feature_edges_pmap get(CGAL::vertex_num_feature_edges_t, const Polyhedron&)
 {
@@ -268,11 +269,32 @@ struct Patch_id_pmap {
 
 };
 
-
-
 inline Patch_id_pmap get(CGAL::face_patch_id_t, const Polyhedron&)
 {
   return Patch_id_pmap();
+}
+
+struct vertex_incident_patches_pmap {
+
+  typedef Polyhedron::Vertex_handle key_type;
+  typedef std::set<Patch_id> value_type;
+  typedef boost::read_write_property_map_tag category;
+
+  friend value_type get(const vertex_incident_patches_pmap&, const key_type& h)
+  {
+    return h->incident_patches_ids_set();
+  }
+//dummy put as the vertices already have a set
+  friend void put(const vertex_incident_patches_pmap&, const key_type& k , value_type& v)
+  {
+    BOOST_FOREACH(Patch_id n, v)
+        k->add_incident_patch(n);
+  }
+
+};
+inline vertex_incident_patches_pmap get(CGAL::vertex_incident_patches_t, const Polyhedron&)
+{
+  return vertex_incident_patches_pmap();
 }
 
 inline
@@ -288,6 +310,7 @@ get(CGAL::face_selection_t, const Polyhedron& p)
 {
   return get(boost::face_index,p);
 }
+
 namespace boost {
   
   template <>
@@ -319,6 +342,11 @@ namespace boost {
   struct property_map<Polyhedron, CGAL::vertex_num_feature_edges_t>
   {
     typedef vertex_num_feature_edges_pmap type;
+  };
+  template <>
+  struct property_map<Polyhedron, CGAL::vertex_incident_patches_t>
+  {
+    typedef vertex_incident_patches_pmap type;
   };
 }
 #endif // POLYHEDRON_TYPE_H

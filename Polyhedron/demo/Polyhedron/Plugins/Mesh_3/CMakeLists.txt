@@ -50,7 +50,6 @@ if ( Boost_VERSION GREATER 103400 )
   else( Boost_VERSION GREATER 103400 )
     message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
   endif( Boost_VERSION GREATER 103400 )
-
   qt5_wrap_ui( ribUI_FILES  Rib_dialog.ui)
   polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI_FILES})
   target_link_libraries(c3t3_rib_exporter_plugin scene_c3t3_item)
