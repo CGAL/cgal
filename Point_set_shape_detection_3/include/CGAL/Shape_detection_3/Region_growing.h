@@ -66,6 +66,9 @@ namespace Shape_detection_3 {
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Shape_range;
+    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
+    typedef unspecified_type Plane_range;
+    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Plane_shape>`.
 #else
     struct Shape_range : public Iterator_range<
       typename std::vector<boost::shared_ptr<Shape> >::const_iterator> {
@@ -79,8 +82,21 @@ namespace Shape_detection_3 {
       boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
       m_extracted_shapes; // keeps a reference to the shape vector
     };
+
+    struct Plane_range : public Iterator_range<
+      typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> {
+      typedef Iterator_range<
+        typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> Base;
+
+      Plane_range(boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
+        extracted_shapes) : Base(make_range(extracted_shapes->begin(),
+        extracted_shapes->end())), m_extracted_shapes(extracted_shapes) {}
+    private:
+      boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
+        m_extracted_shapes; // keeps a reference to the shape vector
+    };
 #endif
-    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
+
 
     /// \cond SKIP_IN_MANUAL
     struct Filter_unassigned_points {
@@ -174,6 +190,58 @@ namespace Shape_detection_3 {
     typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
     typedef typename Neighbor_search::Distance Distance;
     
+
+    class Sort_by_planarity
+    {
+      Input_iterator m_first;
+      Point_map m_point_map;
+      My_point_map m_index_map;
+      Tree& m_tree;
+      FT m_cluster_epsilon;
+      mutable std::vector<FT> score;
+      
+    public:
+      Sort_by_planarity (Input_iterator first,
+                         Point_map point_map,
+                         My_point_map index_map,
+                         std::size_t size, Tree& tree, FT cluster_epsilon)
+        : m_first (first)
+        , m_point_map (point_map)
+        , m_index_map (index_map)
+        , m_tree (tree)
+        , m_cluster_epsilon (cluster_epsilon)
+        , score (size, -1.) { }
+
+      FT compute_score (const std::size_t& idx) const
+      {
+        static std::vector<std::size_t> neighbors;
+        
+        neighbors.clear();
+        Sphere fs (get(m_point_map, *(m_first + idx)), m_cluster_epsilon, 0, m_tree.traits());
+        m_tree.search (std::back_inserter (neighbors), fs);
+
+        Plane dummy;
+        return CGAL::linear_least_squares_fitting_3
+          (boost::make_transform_iterator (neighbors.begin(),
+                                           CGAL::Property_map_to_unary_function<My_point_map>(m_index_map)),
+           boost::make_transform_iterator (neighbors.end(),
+                                           CGAL::Property_map_to_unary_function<My_point_map>(m_index_map)),
+           dummy,
+           CGAL::Dimension_tag<0>());
+      }
+      
+      bool operator() (const std::size_t& a, const std::size_t& b) const
+      {
+        if (score[a] == -1.)
+          score[a] = compute_score(a);
+        if (score[b] == -1.)
+          score[b] = compute_score(b);
+
+        return score[a] > score[b];
+      }
+    };
+
+
     // Creates a function pointer for instancing shape instances.
     template <class ShapeT>
     static Shape *factory() {
@@ -418,8 +486,26 @@ namespace Shape_detection_3 {
       //Initialization structures
       int class_index = -1;
 
-      for (std::size_t i = 0; i < m_num_total_points; ++ i)
+#define QUERY_SPHERE
+#ifdef QUERY_SPHERE
+      std::vector<std::size_t> neighbors;
+#endif
+
+      std::vector<std::size_t> sorted_indices (m_num_total_points);
+      std::copy (boost::counting_iterator<std::size_t>(0),
+                 boost::counting_iterator<std::size_t>(m_num_total_points),
+                 sorted_indices.begin());
+#define SORT_INDICES
+#ifdef SORT_INDICES
+
+      std::sort (sorted_indices.begin(), sorted_indices.end(),
+                 Sort_by_planarity(m_input_iterator_first, m_point_map, m_index_map,
+                                   m_num_total_points, *m_tree, m_options.cluster_epsilon));
+#endif
+
+      for (std::size_t I = 0; I < m_num_total_points; ++ I)
       {
+        std::size_t i = sorted_indices[I];
         Input_iterator it = m_input_iterator_first + i;
         
         if (m_shape_index[i] != -1)
@@ -450,10 +536,9 @@ namespace Shape_detection_3 {
           {
             std::size_t point_index = *icfrit;
             Input_iterator pit = m_input_iterator_first + point_index;
-#define QUERY_SPHERE
-#ifdef QUERY_SPHERE
 
-            std::vector<std::size_t> neighbors;
+#ifdef QUERY_SPHERE
+            neighbors.clear();
             Sphere fs (get(m_point_map, *pit), m_options.cluster_epsilon, 0, m_tree->traits());
             m_tree->search (std::back_inserter (neighbors), fs);
                 
@@ -477,20 +562,23 @@ namespace Shape_detection_3 {
                 continue;
 
               const Point& neighbor = get(m_point_map, *nbit);
-              Point neighbor_projection = optimal_plane.projection(neighbor);
-              double distance = CGAL::squared_distance(neighbor, neighbor_projection);
+              double distance = CGAL::squared_distance(neighbor, optimal_plane);
 
               if (distance > m_options.epsilon * m_options.epsilon
                   || std::fabs(get (m_normal_map, *nbit)
                                * optimal_plane.orthogonal_vector()) < m_options.normal_threshold)
+              {
                 continue;
+              }
 
               m_shape_index[neighbor_index] = class_index;
               propagation = true;
               index_container_current_ring.insert(neighbor_index);
               conti++;
-
-              if ((conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
+              if (conti < 5)
+                continue;
+              
+              if ((conti < 10) || (conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
               {
                 std::list<Point> listp;
                 for (typename std::set<std::size_t>::iterator icit = index_container.begin();
@@ -556,6 +644,29 @@ namespace Shape_detection_3 {
     */
     Shape_range shapes() const {
       return Shape_range(m_extracted_shapes);
+    }
+
+    /*!
+      Returns an `Iterator_range` with a bidirectional iterator with
+      value type `boost::shared_ptr<Plane_shape>` over only the
+      detected planes in the order of detection.  Depending on the
+      chosen probability for the detection, the planes are ordered
+      with decreasing size.
+    */
+    Plane_range planes() const {
+      boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > > planes
+        = boost::make_shared<std::vector<boost::shared_ptr<Plane_shape> > >();
+      
+      for (std::size_t i = 0; i < m_extracted_shapes->size(); ++ i)
+      {
+        boost::shared_ptr<Plane_shape> pshape
+          = boost::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
+        
+        // Ignore all shapes other than plane
+        if (pshape != boost::shared_ptr<Plane_shape>())
+          planes->push_back (pshape);
+      }
+      return Plane_range(planes);
     }
       
     /*! 
