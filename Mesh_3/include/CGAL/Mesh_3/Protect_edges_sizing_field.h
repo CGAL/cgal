@@ -308,7 +308,7 @@ private:
   }
   
   /// Returns the radius of the ball of vertex \c v
-  FT get_size(const Vertex_handle& v) const
+  FT get_radius(const Vertex_handle& v) const
   {
     return CGAL::sqrt(v->point().weight());
   }
@@ -921,8 +921,8 @@ insert_balls(const Vertex_handle& vp,
   const Bare_point& p = vp->point().point();
   const Bare_point& q = vq->point().point();
   
-  const FT sp = get_size(vp);
-  const FT sq = get_size(vq);
+  const FT sp = get_radius(vp);
+  const FT sq = get_radius(vq);
   
   // Compute geodesic distance
   const FT pq_geo_signed = domain_.geodesic_distance(p, q, curve_index);
@@ -1047,7 +1047,7 @@ insert_balls(const Vertex_handle& vp,
                            out);
       const Vertex_handle new_vertex = pair.first;
       out = pair.second;
-      const FT sn = get_size(new_vertex);
+      const FT sn = get_radius(new_vertex);
       if(sp <= sn) {
         out=insert_balls(vp, new_vertex, sp, sn, d/2, d_sign, curve_index, out);
       } else {
@@ -1202,9 +1202,9 @@ refine_balls()
 
         // Compute correct size of balls
         const FT ab = compute_distance(va,vb);
-	/// @TOTO pb: get_size(va) is called several times
-        FT sa_new = (std::min)(ab/distance_divisor, get_size(va));
-        FT sb_new = (std::min)(ab/distance_divisor, get_size(vb));
+	/// @TOTO pb: get_radius(va) is called several times
+        FT sa_new = (std::min)(ab/distance_divisor, get_radius(va));
+        FT sb_new = (std::min)(ab/distance_divisor, get_radius(vb));
         
         // In case of va or vb have already been in conflict, keep minimal size
         if ( new_sizes.find(va) != new_sizes.end() )
@@ -1214,10 +1214,10 @@ refine_balls()
         { sb_new = (std::min)(sb_new, new_sizes[vb]); }
         
         // Store new_sizes for va and vb
-        if ( sa_new != get_size(va) )
+        if ( sa_new != get_radius(va) )
         { new_sizes[va] = sa_new; }
         
-        if ( sb_new != get_size(vb) )
+        if ( sb_new != get_radius(vb) )
         { new_sizes[vb] = sb_new; }
       }
     }
@@ -1530,8 +1530,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
   CGAL_precondition(c3t3_.is_in_complex(v1,v2));
 
   // Get sizes
-  FT size_v1 = get_size(v1);
-  FT size_v2 = get_size(v2);
+  FT size_v1 = get_radius(v1);
+  FT size_v2 = get_radius(v2);
 
   Curve_segment_index curve_index = Curve_segment_index();
   if(get_dimension(v1) == 1) {
@@ -1796,9 +1796,9 @@ is_sizing_field_correct(const Vertex_handle& v1,
                         const Vertex_handle& v3,
                         const Curve_segment_index& curve_index) const
 {
-  FT s1 = get_size(v1);
-  FT s2 = get_size(v2);
-  FT s3 = get_size(v3);
+  FT s1 = get_radius(v1);
+  FT s2 = get_radius(v2);
+  FT s3 = get_radius(v3);
   FT D = CGAL::abs(domain_.geodesic_distance(v1->point(), v3->point(), curve_index));
   FT d = CGAL::abs(domain_.geodesic_distance(v1->point(), v2->point(), curve_index));
   
