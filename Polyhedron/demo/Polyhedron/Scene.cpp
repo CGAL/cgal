@@ -91,10 +91,6 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     if(index < 0 || index >= m_entries.size())
         return 0;
 
-    if(emit_item_about_to_be_destroyed) {
-    Q_EMIT itemAboutToBeDestroyed(m_entries[index]);
-    }
-
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     CGAL::Three::Scene_group_item* group =
@@ -116,7 +112,12 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     {
     Q_EMIT updated_bbox();
     }
-  Q_EMIT updated();
+
+    if(emit_item_about_to_be_destroyed) {
+      Q_EMIT itemAboutToBeDestroyed(item);
+    }
+
+    Q_EMIT updated();
     group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)

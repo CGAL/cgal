@@ -245,7 +245,7 @@ private:
         if(triangulation.cdt->dimension() != 2 )
         {
           qDebug()<<"Error : cdt not right (dimension != 2). Facet not displayed";
-          return;
+          continue;
         }
 
         //iterates on the internal faces to add the vertices to the positions
