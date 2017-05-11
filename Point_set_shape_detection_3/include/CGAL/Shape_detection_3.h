@@ -40,5 +40,6 @@
 #include <CGAL/Shape_detection_3/Cone.h>
 #include <CGAL/Shape_detection_3/Torus.h>
 #include <CGAL/Shape_detection_3/Sphere.h>
+#include <CGAL/Shape_detection_3/property_maps.h>
 
 #endif //CGAL_SHAPE_DETECTION_3_H
