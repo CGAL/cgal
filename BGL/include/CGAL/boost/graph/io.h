@@ -25,6 +25,7 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <boost/foreach.hpp>
 #include <boost/container/flat_map.hpp>
