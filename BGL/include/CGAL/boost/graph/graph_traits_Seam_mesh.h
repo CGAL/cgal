@@ -39,7 +39,7 @@ template <class TM, class SEM, class SVM>
 class Seam_mesh;
 
 template <class HD>
-struct Seam_mesh_halfedge_descriptor;
+class Seam_mesh_halfedge_descriptor;
 
 } // namespace CGAL
 
