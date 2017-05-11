@@ -17,6 +17,7 @@
 
 #include <CGAL/Polygon_mesh_processing/properties.h>
 
+
 struct Scene_surface_mesh_item_priv;
 
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
@@ -109,6 +110,5 @@ protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
-
 
 #endif /* CGAL_SCENE_SURFACE_MESH_ITEM_H */

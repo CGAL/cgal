@@ -29,11 +29,14 @@ inline get(CGAL::halfedge_is_feature_t, SMesh& smesh)
 }
 
 
- SMesh::Property_map< boost::graph_traits<SMesh >::face_descriptor,int>
-inline get(CGAL::face_patch_id_t, SMesh& smesh)
+
+
+template < typename I>
+SMesh::Property_map< boost::graph_traits<SMesh >::face_descriptor,I>
+inline get(CGAL::face_patch_id_t<I>, SMesh& smesh)
 {
   typedef boost::graph_traits<SMesh >::face_descriptor face_descriptor;
-  return smesh.add_property_map<face_descriptor,int>("f:patch_id").first;
+  return smesh.add_property_map<face_descriptor,I>("f:patch_id").first;
 }
 
 
@@ -79,13 +82,15 @@ struct property_map<SMesh, CGAL::halfedge_is_feature_t>
   typedef SMesh::Property_map<halfedge_descriptor, bool> type;
 };
 
-template<>
-struct property_map<SMesh, CGAL::face_patch_id_t>
+template<typename I>
+struct property_map<SMesh, CGAL::face_patch_id_t<I> >
 {
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
 
-  typedef SMesh::Property_map<face_descriptor, int> type;
+  typedef SMesh::Property_map<face_descriptor, I> type;
 };
+
+
 
 template<>
 struct property_map<SMesh, CGAL::vertex_selection_t>

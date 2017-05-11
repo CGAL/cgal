@@ -269,7 +269,7 @@ struct Patch_id_pmap {
 
 };
 
-inline Patch_id_pmap get(CGAL::face_patch_id_t, const Polyhedron&)
+inline Patch_id_pmap get(CGAL::face_patch_id_t<int>, const Polyhedron&)
 {
   return Patch_id_pmap();
 }
@@ -320,7 +320,7 @@ namespace boost {
   };
   
   template <>
-  struct property_map<Polyhedron, CGAL::face_patch_id_t>
+  struct property_map<Polyhedron, CGAL::face_patch_id_t<int> >
   {
     typedef Patch_id_pmap type;
   };
