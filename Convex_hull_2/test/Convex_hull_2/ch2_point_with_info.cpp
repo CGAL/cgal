@@ -10,13 +10,13 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 
 
-template <class F, class Point_2>
+template <class F, class Point>
 struct Forward_bool_functor
   : public F
 {
-  const std::vector<Point_2>& points;
+  const std::vector<Point>& points;
 
-  Forward_bool_functor(const std::vector<Point_2>& points)
+  Forward_bool_functor(const std::vector<Point>& points)
     : points(points)
   {}
 
