@@ -984,7 +984,7 @@ public:
   }
 
   void copy_neighbors(
-    Face_handle f, Vertex_handle v, Vertex_handle_map& vmap,
+    Face_handle f, Vertex_handle v, Vertex_handle_map&,
     Face_handle_map& fmap) const
   {
     int i = f->index(v);
