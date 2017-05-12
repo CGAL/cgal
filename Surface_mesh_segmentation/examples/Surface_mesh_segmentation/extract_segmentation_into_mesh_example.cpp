@@ -44,7 +44,7 @@ int main(int argc, char** argv )
   for(std::size_t id = 0; id < number_of_segments; ++id)
   {
     if(id > 0)
-      segment_mesh.set_selected_component(segment_property_map, id);
+      segment_mesh.set_selected_patch(segment_property_map, id);
     std::cout << "Segment "<<id<<"'s area is : "<<CGAL::Polygon_mesh_processing::area(segment_mesh)<<std::endl;
     SM out;
     CGAL::copy_face_graph(segment_mesh, out);

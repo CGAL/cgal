@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     components.push_back(0);
     components.push_back(1);
 
-    ccg.set_selected_components(fccmap,components.begin(), components.end());
+    ccg.set_selected_patches(fccmap,components.begin(), components.end());
     
     std::cout << "The faces in components 0 and 1 are:" << std::endl;
     BOOST_FOREACH(CCG::face_descriptor f, faces(ccg)){
