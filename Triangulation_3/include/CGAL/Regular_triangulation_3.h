@@ -456,7 +456,7 @@ namespace CGAL {
       // the `indices` vector AND spatial sort can only handle Gt::Point_3.
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
       typedef Index_to_Bare_point<Construct_point_3,
-                                  const std::vector<Weighted_point>&> Access_bare_point;
+                                  std::vector<Weighted_point> > Access_bare_point;
       typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
       typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Gt, fpmap> Search_traits_3;
