@@ -48,7 +48,7 @@ struct CH_traits_for_point_ids
     : points(points)
   {}
 
-  typedef unsigned Point_2;
+  typedef std::size_t Point_2;
   typedef CGAL::Convex_hull_traits_2<K> Base;
   typedef Forward_bool_functor<typename Base::Less_xy_2, typename K::Point_2> Less_xy_2;
   typedef Forward_bool_functor<typename Base::Less_yx_2, typename K::Point_2> Less_yx_2;
@@ -111,18 +111,18 @@ struct CH_traits_for_point_ids
 int main()
 {
   std::vector<Point_2> input_points;
-  std::vector<unsigned> result;
+  std::vector<std::size_t> result;
 
   input_points.push_back( Point_2(0,0) );
   input_points.push_back( Point_2(0,1) );
   input_points.push_back( Point_2(1,0) );
   input_points.push_back( Point_2(0.25,0.25) );
 
-  CGAL::convex_hull_2( boost::counting_iterator<unsigned>(0),
-                       boost::counting_iterator<unsigned>(input_points.size()),
+  CGAL::convex_hull_2( boost::counting_iterator<std::size_t>(0),
+                       boost::counting_iterator<std::size_t>(input_points.size()),
                        std::back_inserter(result), CH_traits_for_point_ids<K>(input_points) );
 
-  BOOST_FOREACH(unsigned i, result)
+  BOOST_FOREACH(std::size_t i, result)
   {
     std::cout << input_points[i] << " - " << i << "\n";
   }
