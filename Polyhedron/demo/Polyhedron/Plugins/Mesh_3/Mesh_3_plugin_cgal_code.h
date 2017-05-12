@@ -8,6 +8,7 @@
 #include "Kernel_type.h"
 #include "Meshing_thread.h"
 #include "Scene_surface_mesh_item.h"
+
 namespace CGAL
 {
 template<typename Graph_>

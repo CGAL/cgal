@@ -7,6 +7,7 @@
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
+#include <CGAL/boost/graph/PMP_properties_Surface_mesh.h>
 #else
 #include "Polyhedron_type.h"
 #include <CGAL/boost/graph/PMP_properties_Polyhedron_3.h>

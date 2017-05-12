@@ -7,6 +7,7 @@
 #include <CGAL/Bbox_3.h>
 #include "CGAL/boost/graph/Graph_with_descriptor_with_graph.h"
 #include <Polyhedron_type.h>
+#include <CGAL/boost/graph/PMP_properties_Surface_mesh.h>
 
 #include <Scene_c3t3_item.h>
 

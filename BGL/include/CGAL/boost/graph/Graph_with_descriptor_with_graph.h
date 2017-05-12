@@ -146,11 +146,6 @@ struct Graph_with_descriptor_with_graph
   Graph_with_descriptor_with_graph(Graph& graph)
     : graph(&graph)
   {}
-  
-  // private:   
-  // disable copy-constructor to avoid non-wanted copies
-  // AF: Why was this private??
-  Graph_with_descriptor_with_graph(const Graph_with_descriptor_with_graph&){}
 };
 
 
