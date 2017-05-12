@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_H
-#define CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_H
+#ifndef CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
+#define CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
@@ -44,178 +44,6 @@
            <d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>
 
 namespace CGAL {
-
-  /*template<class LCC>
-class LCC_edge_weight_map :
-    public boost::put_get_helper<double, LCC_edge_weight_map<LCC> >
-{
-public:
-
-  typedef boost::readable_property_map_tag                   category;
-  typedef double                                             value_type;
-  typedef double                                             reference;
-  typedef typename boost::graph_traits<LCC>::edge_descriptor key_type;
-
-  LCC_edge_weight_map(LCC const& lcc) : m_lcc(lcc) {}
-
-  //  reference operator[](key_type const& e)
-  //{ return CGAL::squared_distance(m_lcc.point(e), m_lcc.point(m_lcc.other_extremity(e))); }
-  reference operator[](key_type const& e) const
-  { return CGAL::squared_distance(m_lcc.point(e), m_lcc.point(m_lcc.other_extremity(e))); }
-
-protected:
-  LCC const& m_lcc;
-};
-
-template <class CMap>
-class CMap_dart_index_map_external :
-    public boost::put_get_helper<std::size_t&, CMap_dart_index_map_external<CMap> >
-{
-public:
-  typedef boost::read_write_property_map_tag                  category;
-  typedef std::size_t                                         value_type;
-  typedef std::size_t&                                        reference;
-  typedef typename boost::graph_traits<CMap>::edge_descriptor key_type;
-  typedef CGAL::Unique_hash_map<key_type,std::size_t>         Map;
-
-  CMap_dart_index_map_external(): map(new Map)
-  {}
-
-  CMap_dart_index_map_external(CMap const& cm): map(new Map)
-  {
-    CMap &cmap = const_cast<CMap&>(cm);
-    typedef typename CMap::Dart_range::iterator Iter;
-    Iter b=cmap.template darts().begin();
-    Iter e=cmap.template darts().end();
-    for(value_type i=0; b != e; ++b, ++i)
-    {
-      (*map)[b] = i;
-    }
-    b=cmap.template darts().begin();
-    for(; b != e; ++b)
-    {
-      value_type v1 = (*map)[b];
-      value_type v2 = (*map)[cmap.template beta<2>(b)];
-      CGAL_assertion(v1==v2+1 || v2==v1+1);
-    }
-  }
-
-  reference operator[](key_type const& e) const
-  { return const_cast<Map&>(*map)[e]; }
-
-private:
-  boost::shared_ptr<Map> map;
-};
-
-template <class CMap>
-class CMap_vertex_index :
-    public boost::put_get_helper<std::size_t&, CMap_vertex_index<CMap> >
-{
-public:
-  typedef boost::read_write_property_map_tag                    category;
-  typedef std::size_t                                           value_type;
-  typedef std::size_t&                                          reference;
-  typedef typename boost::graph_traits<CMap>::vertex_descriptor key_type;
-  typedef CGAL::Unique_hash_map<key_type,std::size_t>           Map;
-
-
-  CMap_vertex_index(): map(new Map)
-  {}
-
-  CMap_vertex_index(CMap const& cm): map(new Map)
-  {
-    CMap &cmap = const_cast<CMap&>(cm);
-    typedef typename CMap::template Attribute_range<0>::type::iterator Iter;
-    Iter b=cmap.template attributes<0>().begin();
-    Iter e=cmap.template attributes<0>().end();
-    for(value_type i=0; b != e; ++b, ++i)
-    {
-      (*map)[b] = i;
-    }
-  }
-
-  reference operator[](key_type const& e) const
-  { return const_cast<Map&>(*map)[e]; }
-
-private:
-  boost::shared_ptr<Map> map;
-};
-
-template <class CMap>
-class CMap_face_index :
-    public boost::put_get_helper<std::size_t&, CMap_face_index<CMap> >
-{
-public:
-  typedef boost::read_write_property_map_tag                    category;
-  typedef std::size_t                                           value_type;
-  typedef std::size_t&                                          reference;
-  typedef typename boost::graph_traits<CMap>::face_descriptor key_type;
-
-  CMap_face_index()
-  {}
-
-  CMap_face_index(CMap const& cm)
-  {
-    CMap &cmap = const_cast<CMap&>(cm);
-    typedef typename CMap::template Attribute_range<2>::type::iterator Iter;
-    Iter b=cmap.template attributes<2>().begin();
-    Iter e=cmap.template attributes<2>().end();
-    for(value_type i=0; b != e; ++b, ++i)
-    {
-      map[b] = i;
-    }
-  }
-
-  reference operator[](key_type const& e) const
-  { return const_cast<CGAL::Unique_hash_map<key_type,std::size_t>&>(map)[e]; }
-
-private:
-  CGAL::Unique_hash_map<key_type,std::size_t> map ;
-};
-
-
-template<class LCC>
-class LCC_vertex_point_map :
-    public boost::put_get_helper< typename LCC::Point&, LCC_vertex_point_map<LCC> >
-{
-public:
-
-  typedef typename LCC::Point Point;
-
-  typedef boost::lvalue_property_map_tag category;
-  typedef Point value_type;
-  typedef Point& reference;
-  typedef typename boost::graph_traits<LCC>::vertex_descriptor key_type;
-
-  LCC_vertex_point_map(LCC& lcc) : m_lcc(lcc) {}
-
-  reference operator[](key_type const& v) const
-  { return m_lcc.point_of_vertex_attribute(v); }
-
-protected:
-  LCC & m_lcc;
-};
-
-template<class LCC>
-class LCC_vertex_point_const_map :
-    public boost::put_get_helper< typename LCC::Point const&, LCC_vertex_point_const_map<LCC> >
-{
-public:
-  typedef typename LCC::Point Point;
-
-  typedef boost::readable_property_map_tag category;
-  typedef Point value_type;
-  typedef Point const& reference;
-  typedef typename boost::graph_traits<LCC const>::vertex_descriptor key_type;
-
-  LCC_vertex_point_const_map(LCC const& lcc) : m_lcc(lcc) {}
-
-  reference operator[](key_type const& v) const
-  { return m_lcc.point_of_vertex_attribute(v); }
-
-protected:
-  const LCC & m_lcc;
-  }; */
 
 template<typename LCC, typename FT>
 struct Wrap_squared_lcc
@@ -350,7 +178,7 @@ struct LCC_property_map<vertex_point_t>
 };
 
 //
-// external indices
+// external indices: TODO ?
 //
 /*
   template <>
@@ -585,5 +413,4 @@ struct property_map<const CGAL_LCC_TYPE, Tag>
 #undef CGAL_LCC_ARGS
 #undef CGAL_LCC_TYPE
 
-#endif // CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_H
-
+#endif // CGAL_BOOST_GRAPH_PROPERTIES_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_H
-#define CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_H 1
+#ifndef CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_HELPER_H
+#define CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_HELPER_H 1
 
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_bgl_min_items.h>
@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-  /** @file Linear_cell_complex_for_bgl_combinatorial_map.h
+  /** @file Linear_cell_complex_for_bgl_combinatorial_map_helper.h
    * Definition of a linear cell complex based on combinatorial map, to use with BGL.
    * This cmap has points associated to all vertices and faces enables. Moreover
    * these cells have id.
@@ -53,5 +53,5 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif // CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_H //
+#endif // CGAL_LINEAR_CELL_COMPLEX_FOR_BGL_COMBINATORIAL_MAP_HELPER_H //
 // EOF //

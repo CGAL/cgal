@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_H
-#define CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_H
+#ifndef CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
+#define CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
 
 #include <utility>
 #include <iterator>
@@ -214,9 +214,9 @@ public :
   typedef CGAL::Out_edge_iterator<CMap> out_edge_iterator;
 
   // nulls
-  static vertex_descriptor   null_vertex()   { return NULL; } // vertex_descriptor(); }
-  static face_descriptor     null_face()     { return NULL; } // face_descriptor(); }
-  static halfedge_descriptor null_halfedge() { return NULL; } // halfedge_descriptor(); }
+  static vertex_descriptor   null_vertex()   { return NULL; }
+  static face_descriptor     null_face()     { return NULL; }
+  static halfedge_descriptor null_halfedge() { return NULL; }
 };
 
 } //namespace CGAL
@@ -601,4 +601,4 @@ void set_halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f
 #undef CGAL_LCC_TEMPLATE_ARGS
 #undef CGAL_LCC_TYPE
 
-#endif // CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_H
+#endif // CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
