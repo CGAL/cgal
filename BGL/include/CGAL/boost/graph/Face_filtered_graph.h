@@ -16,8 +16,8 @@
 //
 //
 // Author(s)     : Maxime Gimeno
-#ifndef CGAL_BOOST_GRAPH_CONNECTED_COMPONENTS_GRAPH_H
-#define CGAL_BOOST_GRAPH_CONNECTED_COMPONENTS_GRAPH_H
+#ifndef CGAL_BOOST_GRAPH_FACE_FILTERED_GRAPH_H
+#define CGAL_BOOST_GRAPH_FACE_FILTERED_GRAPH_H
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/properties.h>
@@ -37,9 +37,13 @@ namespace CGAL
   /*!
    * \ingroup PkgBGLHelper
    *
-   * The class `Connected_components_graph` wraps a graph into another graph in such a way that only the specified connected components are seen from the outside.
+   * The class `Face_filtered_graph` wraps a graph into another graph and act like a mask. It assigns a patch id to each face
+   * and acts in such a way that only the specified patches are seen from the outside.
    *
    * For example, calling `vertices(graph)` will provide the range of vertices belonging to the selected components.
+   *
+   * The `Face_filtered_graph` enables to either consider each patch independently or a union of some of these patches.
+   * Such a union of patches must define a manifold mesh.
    *
    * \tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
    * \tparam FIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
@@ -53,7 +57,7 @@ template<typename Graph,
          typename FIMap = typename boost::property_map<Graph, CGAL::face_index_t>::type,
          typename VIMap = typename boost::property_map<Graph, boost::vertex_index_t>::type,
          typename HIMap = typename boost::property_map<Graph, CGAL::halfedge_index_t>::type>
-struct Connected_components_graph
+struct Face_filtered_graph
 {
   typedef boost::graph_traits<Graph>                  gt;
   typedef typename gt::vertex_descriptor              vertex_descriptor;
@@ -63,7 +67,7 @@ struct Connected_components_graph
   typedef typename boost::property_traits< FIMap >::value_type face_index_type;
   typedef typename boost::property_traits< VIMap >::value_type vertex_index_type;
   typedef typename boost::property_traits< HIMap >::value_type halfedge_index_type;
-  typedef Connected_components_graph<Graph, FIMap, VIMap, HIMap>   Self;
+  typedef Face_filtered_graph<Graph, FIMap, VIMap, HIMap>   Self;
 
   template <typename FaceComponentMap, class IndexRangeIterator>
   void base_iterator_constructor(IndexRangeIterator begin,
@@ -94,6 +98,7 @@ struct Connected_components_graph
         }
       }
     }
+    CGAL_assertion(is_selection_valid());
   }
 
   template <typename FaceComponentMap>
@@ -116,9 +121,10 @@ struct Connected_components_graph
         }
       }
     }
+    CGAL_assertion(is_selection_valid());
   }
   /*!
-   * \brief Creates a Connected_components_graph of the connected components of `graph` specified in the range
+   * \brief Creates a Face_filtered_graph of the patches of `graph` specified in the range
    * defined by `begin` and `end`.
    * \tparam FaceComponentMap a model of `ReadablePropertyMap` with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
@@ -126,11 +132,11 @@ struct Connected_components_graph
    * \tparam IndexRangeIterator an iterator of a range of `boost::property_traits<FaceComponentMap>::%value_type`.
 
    * \param graph the graph containing the wanted patches.
-   * \param fcmap the property_map that assigns a connected component to each face, with
+   * \param fcmap the property_map that assigns a patch to each face, with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
-   * \param begin an interator to the beginning of a range of connected components indices of interest.
-   * \param end an interator to the element past the end of a range of connected components indices of interest.
+   * \param begin an interator to the beginning of a range of patches indices of interest.
+   * \param end an interator to the element past the end of a range of patches indices of interest.
    * \param fimap the property map that assigns an index to each face,
    * with boost::graph_traits<Graph>::%face_descriptor as key type and boost::graph_traits<Graph>::%faces_size_type as value type
    * \param vimap the property map that assigns an index to each vertex,
@@ -140,7 +146,7 @@ struct Connected_components_graph
    */
 
   template <typename FaceComponentMap, class IndexRangeIterator>
-  Connected_components_graph(const Graph& graph,
+  Face_filtered_graph(const Graph& graph,
                              FaceComponentMap fcmap,
                              IndexRangeIterator begin,
                              IndexRangeIterator end,
@@ -160,7 +166,7 @@ struct Connected_components_graph
   }
 
   template <typename FaceComponentMap, class IndexRangeIterator>
-  Connected_components_graph(const Graph& graph,
+  Face_filtered_graph(const Graph& graph,
                              FaceComponentMap fcmap,
                              IndexRangeIterator begin,
                              IndexRangeIterator end)
@@ -172,16 +178,16 @@ struct Connected_components_graph
     base_iterator_constructor(begin, end, fcmap);
   }
   /*!
-   * \brief Creates a Connected_components_graph of the connected component `pid` of `graph`.
+   * \brief Creates a Face_filtered_graph of the patch `pid` of `graph`.
    *
    * \tparam FaceComponentMap a model of `ReadablePropertyMap` with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \param graph the graph containing the wanted patch.
-   * \param fcmap the property_map that assigns a connected component's index to each face, with
+   * \param fcmap the property_map that assigns a patch's index to each face, with
       `boost::graph_traits<Graph>::%face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
-   * \param pid the index of the connected component of interest.
+   * \param pid the index of the patch of interest.
    * \param fimap the property map that assigns an index to each face,
    * with boost::graph_traits<Graph>::%face_descriptor as key type and boost::graph_traits<Graph>::%faces_size_type as value type
    * \param vimap the property map that assigns an index to each vertex,
@@ -190,7 +196,7 @@ struct Connected_components_graph
    *  with boost::graph_traits<Graph>::%halfedge_descriptor as key type and boost::graph_traits<Graph>::%halfedges_size_type as value type
    */
   template <typename FaceComponentMap>
-  Connected_components_graph(const Graph& graph,
+  Face_filtered_graph(const Graph& graph,
                              FaceComponentMap fcmap,
                              typename boost::property_traits<FaceComponentMap>::value_type pid,
                            #ifdef DOXYGEN_RUNNING
@@ -209,7 +215,7 @@ struct Connected_components_graph
   }
 
   template <typename FaceComponentMap>
-  Connected_components_graph(const Graph& graph,
+  Face_filtered_graph(const Graph& graph,
                              FaceComponentMap fcmap,
                              typename boost::property_traits<FaceComponentMap>::value_type pid)
     : _graph(const_cast<Graph&>(graph))
@@ -219,9 +225,9 @@ struct Connected_components_graph
     himap = get(CGAL::halfedge_index, graph);
     base_constructor(fcmap, pid);
   }
-  ///returns a const reference to the graph of the Connected_components_graph.
+  ///returns a const reference to the graph of the Face_filtered_graph.
   const Graph& graph()const{ return _graph; }
-  ///returns a reference to the graph of the Connected_components_graph.
+  ///returns a reference to the graph of the Face_filtered_graph.
   Graph& graph(){ return _graph; }
 
   ///change the selected component
@@ -233,6 +239,7 @@ struct Connected_components_graph
     vertex_indices.clear();
     halfedge_indices.clear();
     base_constructor(fcmap, pid);
+    CGAL_assertion(is_selection_valid());
   }
   /// change the selected components
   template<class FaceComponentMap, class IndexRangeIterator>
@@ -244,6 +251,7 @@ struct Connected_components_graph
     vertex_indices.clear();
     halfedge_indices.clear();
     base_iterator_constructor(begin, end, fcmap);
+    CGAL_assertion(is_selection_valid());
   }
   struct Is_simplex_valid
   {
@@ -277,19 +285,19 @@ struct Connected_components_graph
   {
     return halfedge_patch[get(himap, h)];
   }
-  ///returns the number of faces contained in the specified connected components
+  ///returns the number of faces contained in the specified patches
   typename boost::graph_traits<Graph>::
   faces_size_type number_of_faces()const
   {
     return face_patch.count();
   }
-///returns the number of vertices contained in the specified connected components
+///returns the number of vertices contained in the specified patches
   typename boost::graph_traits<Graph>::
   vertices_size_type number_of_vertices()const
   {
     return vertex_patch.count();
   }
-///returns the number of halfedges contained in the specified connected components
+///returns the number of halfedges contained in the specified patches
   typename boost::graph_traits<Graph>::
   halfedges_size_type number_of_halfedges()const
   {
@@ -341,6 +349,70 @@ struct Connected_components_graph
     return bind_property_maps(himap, make_property_map(halfedge_indices) );
   }
 
+  ///returns true if around each vertex of the `Face_filtered_graph`,
+  /// there is only one set of selected faces. In other words, returns true
+  /// if all the selected faces around a vertex are consecutive.
+  bool is_selection_valid()
+  {
+    BOOST_FOREACH(vertex_descriptor vd, vertices(*this) )
+    {
+      face_descriptor first_selected = boost::graph_traits<Graph>::null_face();
+      bool first_unselected_found(false),
+           second_unselected_found(false);
+
+      //find an unselected face, then find the first selected face.
+      //Find another unselected face, the next selected face must be the first;
+      //else this is not valid.
+      halfedge_descriptor hd = halfedge(vd, _graph);
+      face_descriptor first_tested = boost::graph_traits<Graph>::null_face();
+      while(1) //will break if valid, return false if not valid
+      {
+        face_descriptor fd = face(hd, _graph);
+
+        if(first_tested == boost::graph_traits<Graph>::null_face())
+          first_tested = fd;
+        else if(fd == first_tested )
+        {
+          //if there is no unselected face, break
+          if(face_patch[get(fimap, fd)] && !first_unselected_found)
+          break;
+          //if there is no selected face, break
+          else if(!face_patch[get(fimap, fd)] &&
+             first_selected == boost::graph_traits<Graph>::null_face())
+          break;
+        }
+
+        if(fd != boost::graph_traits<Graph>::null_face())
+        {
+          if(face_patch[get(fimap, fd)])
+          {
+            if(first_unselected_found &&
+               first_selected == boost::graph_traits<Graph>::null_face())
+            {
+              first_selected = fd;
+            }
+            else if(second_unselected_found)
+            {
+              if(fd == first_selected)
+                break;
+              else
+                return false;
+            }
+          }
+          else
+          {
+            if(first_selected == boost::graph_traits<Graph>::null_face())
+              first_unselected_found = true;
+            else
+              second_unselected_found = true;
+          }
+        }
+        hd = next(opposite(hd, _graph), _graph);
+      }
+    }
+    return true;
+  }
+
 private:
   Graph& _graph;
   FIMap fimap;
@@ -363,9 +435,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-struct graph_traits< CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> >
+struct graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >
 {
-  typedef CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> G;
+  typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> G;
   typedef boost::graph_traits<Graph> BGTG;
   typedef typename BGTG::vertex_descriptor vertex_descriptor;
   typedef typename BGTG::halfedge_descriptor halfedge_descriptor;
@@ -414,8 +486,8 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-struct graph_traits< const CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> >
-    : public graph_traits< CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> >
+struct graph_traits< const CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >
+    : public graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >
 {};
 
 
@@ -428,8 +500,8 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 bool
-in_CC(const typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
-      const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
+      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return w.is_in_cc(f);
 }
@@ -439,8 +511,8 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 bool
-in_CC(const typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-      const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return  w.is_in_cc(h);
 }
@@ -450,8 +522,8 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 bool
-in_CC(const typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
-      const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
+      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return  w.is_in_cc(halfedge(e, w.graph()));
 }
@@ -461,8 +533,8 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 bool
-in_CC(const typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-      const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return w.is_in_cc(v);
 }
@@ -473,7 +545,7 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::vertices_size_type
-num_vertices(const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+num_vertices(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.number_of_vertices();
 }
@@ -483,7 +555,7 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::edges_size_type
-num_edges(const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+num_edges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.number_of_halfedges()/2;
 }
@@ -493,13 +565,13 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::degree_size_type
-degree(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-       const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+       const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   CGAL_assertion(in_CC(v, w));
   typename boost::graph_traits<Graph>::degree_size_type v_deg = 0;
-  typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(v, w);
-  typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor hcirc = h;
+  typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(v, w);
+  typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor hcirc = h;
   do
   {
     if(in_CC(hcirc, w))
@@ -514,8 +586,8 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::degree_size_type
-out_degree(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-           const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+out_degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+           const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   CGAL_assertion(in_CC(v, w));
   return std::distance(out_edges(v, w).first ,out_edges(v, w).second);
@@ -526,8 +598,8 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::degree_size_type
-in_degree(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-          const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+in_degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   CGAL_assertion(in_CC(v, w));
   return std::distance(in_edges(v, w).first ,in_edges(v, w).second);
@@ -537,9 +609,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
-source(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
-       const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
+source(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
+       const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(e, w));
   return source(e, w.graph());
@@ -549,9 +621,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
-target(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
-       const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
+target(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
+       const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(e, w));
   return target(e, w.graph());
@@ -561,13 +633,13 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-std::pair<typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor, bool>
-edge(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor u,
-     typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-     const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+std::pair<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor, bool>
+edge(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor u,
+     typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+     const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(u, w) && in_CC(v, w));
-  typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e = edge(u, v, w.graph()).first;
+  typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e = edge(u, v, w.graph()).first;
   bool res = in_CC(e, w);
   return std::make_pair(e, res);
 }
@@ -577,13 +649,13 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-CGAL::Iterator_range<typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_iterator>
-vertices(const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+CGAL::Iterator_range<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_iterator>
+vertices(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  typedef typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_iterator vertex_iterator;
   typedef typename boost::graph_traits<Graph >::vertex_iterator g_vertex_iterator;
 
-  typename Connected_components_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
+  typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
   g_vertex_iterator b,e;
   boost::tie(b,e) = vertices(w.graph());
   return make_range(vertex_iterator(predicate, b, e),
@@ -594,13 +666,13 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-CGAL::Iterator_range<typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_iterator>
-edges(const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+CGAL::Iterator_range<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_iterator>
+edges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  typedef typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_iterator edge_iterator;
+  typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_iterator edge_iterator;
   typedef typename boost::graph_traits<Graph >::edge_iterator g_edge_iterator;
 
-  typename Connected_components_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
+  typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
   g_edge_iterator b,e;
   boost::tie(b,e) = edges(w.graph());
   return make_range(edge_iterator(predicate, b, e),
@@ -611,15 +683,15 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-CGAL::Iterator_range<typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::out_edge_iterator>
-out_edges(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-          const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+CGAL::Iterator_range<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::out_edge_iterator>
+out_edges(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
 
-  typedef typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::out_edge_iterator out_edge_iterator;
+  typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::out_edge_iterator out_edge_iterator;
   typedef typename boost::graph_traits<Graph >::out_edge_iterator g_out_edge_iterator;
 
-  typename Connected_components_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
+  typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
   g_out_edge_iterator b,e;
   boost::tie(b,e) = out_edges(v, w.graph());
   return make_range(out_edge_iterator(predicate, b, e),
@@ -630,15 +702,15 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-CGAL::Iterator_range<typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::in_edge_iterator>
-in_edges(typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-         const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+CGAL::Iterator_range<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::in_edge_iterator>
+in_edges(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+         const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
 
-  typedef typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::in_edge_iterator in_edge_iterator;
+  typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::in_edge_iterator in_edge_iterator;
   typedef typename boost::graph_traits<Graph >::in_edge_iterator g_in_edge_iterator;
 
-  typename Connected_components_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
+  typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
   g_in_edge_iterator b,e;
   boost::tie(b,e) = in_edges(v, w.graph());
   return make_range(in_edge_iterator(predicate, b, e),
@@ -652,9 +724,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor
-edge(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-     const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor
+edge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+     const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(CGAL::in_CC(h, w));
   return edge(h, w.graph());
@@ -664,9 +736,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
-halfedge(typename boost::graph_traits<  Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
-         const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
+halfedge(typename boost::graph_traits<  Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
+         const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(CGAL::in_CC(e, w));
   return halfedge(e, w.graph());
@@ -676,20 +748,20 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
-halfedge(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-         const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
+halfedge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+         const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(v, w));
-  typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(v, w.graph());
-  typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor hcirc = h;
+  typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(v, w.graph());
+  typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor hcirc = h;
   do
   {
     if(in_CC(hcirc, w))
       return hcirc;
     hcirc = opposite(next(hcirc, w.graph()), w.graph());
   }while(hcirc != h);
-  return boost::graph_traits< CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
+  return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
 }
 
 
@@ -697,13 +769,13 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-std::pair<typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor, bool>
-halfedge(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor u,
-         typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-         const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+std::pair<typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor, bool>
+halfedge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor u,
+         typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
+         const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(u, w) && in_CC(v, w));
-  typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(u, v, w.graph()).first;
+  typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(u, v, w.graph()).first;
   return std::make_pair(h, in_CC(h, w));
 }
 
@@ -712,9 +784,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
-opposite(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-         const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
+opposite(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+         const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(h, w) );
      return opposite(h, w.graph());
@@ -724,9 +796,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
-source(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-       const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
+source(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+       const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(h, w) );
   return source(h, w.graph());
@@ -736,9 +808,9 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
-target(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-       const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor
+target(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+       const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(h, w) );
   return target(h, w.graph());
@@ -748,15 +820,15 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
-next(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-     const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
+next(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+     const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(in_CC(h, w));
   if(in_CC(next(h, w.graph()), w))
     return next(h, w.graph());
   //act as a border
-  typedef typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
+  typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
   BOOST_FOREACH( h_d hcirc,
                 CGAL::halfedges_around_target(target(h, w.graph()), w.graph()))
   {
@@ -765,16 +837,16 @@ next(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMa
       return opposite(hcirc, w.graph());
     }
   }
-  return boost::graph_traits< CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
+  return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
 }
 
 template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
-prev(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-     const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
+prev(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+     const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
 
   CGAL_assertion(in_CC(h, w));
@@ -782,7 +854,7 @@ prev(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMa
     return prev(h, w.graph());
 
   //act as a border
-  typedef typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
+  typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
   BOOST_FOREACH(h_d hcirc,
                 CGAL::halfedges_around_source(source(h, w.graph()), w.graph()))
   {
@@ -791,7 +863,7 @@ prev(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMa
       return opposite(hcirc, w.graph());
     }
   }
-  return boost::graph_traits< CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
+  return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
 }
 
 //
@@ -802,14 +874,14 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-std::pair<typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator,
-typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator>
-halfedges(const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+std::pair<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator,
+typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator>
+halfedges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  typedef typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator halfedge_iterator;
+  typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator halfedge_iterator;
   typedef typename boost::graph_traits<Graph >::halfedge_iterator g_halfedge_iterator;
 
-  typename Connected_components_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
+  typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
   std::pair<g_halfedge_iterator, g_halfedge_iterator> original_halfedges = halfedges(w.graph());
 
   return make_range(halfedge_iterator(predicate, original_halfedges.first, original_halfedges.second),
@@ -822,7 +894,7 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::halfedges_size_type
-num_halfedges(const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+num_halfedges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return w.number_of_halfedges();
 }
@@ -832,24 +904,24 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor
-face(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-     const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor
+face(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
+     const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(CGAL::in_CC(h, w));
   if(in_CC(face(h,w.graph()), w))
     return face(h,w.graph());
   else
-    return boost::graph_traits< CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::null_face();
+    return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_face();
 }
 
 template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
-halfedge(typename boost::graph_traits< Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
-         const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor
+halfedge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
+         const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(CGAL::in_CC(f, w));
   return halfedge(f,w.graph());
@@ -860,13 +932,13 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-Iterator_range<typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::face_iterator>
-faces(const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+Iterator_range<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_iterator>
+faces(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  typedef typename boost::graph_traits<Connected_components_graph<Graph, FIMap, VIMap, HIMap> >::face_iterator face_iterator;
+  typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_iterator face_iterator;
   typedef typename boost::graph_traits<Graph >::face_iterator g_face_iterator;
 
-  typename Connected_components_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
+  typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap> ::Is_simplex_valid predicate(&w);
   std::pair<g_face_iterator, g_face_iterator> original_faces = faces(w.graph());
 
   return make_range(face_iterator(predicate, original_faces.first, original_faces.second),
@@ -880,7 +952,7 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::vertices_size_type
-num_faces(const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w)
+num_faces(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return w.number_of_faces();
 }
@@ -891,7 +963,7 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 bool
-in_CC(const Connected_components_graph<Graph, FIMap, VIMap, HIMap> & w, bool verbose = false)
+in_CC(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w, bool verbose = false)
 {
   return in_CC(w.graph(),verbose);
 }
@@ -902,7 +974,7 @@ template <class Graph,
           typename HIMap,
           class PropertyTag>
 typename boost::property_map<Graph, PropertyTag >::const_type
-get(PropertyTag ptag, const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+get(PropertyTag ptag, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return get(ptag, w.graph());
 }
@@ -913,7 +985,7 @@ template <class Graph,
           typename HIMap,
           class PropertyTag>
 typename boost::property_map<Graph, PropertyTag >::type
-get(PropertyTag ptag, Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+get(PropertyTag ptag, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return get(ptag, w.graph());
 }
@@ -923,8 +995,8 @@ template <class Graph,
           typename FIMap,
           typename VIMap,
           typename HIMap>
-typename boost::property_map<Connected_components_graph<Graph, FIMap, VIMap, HIMap>, CGAL::face_index_t >::type
-get(CGAL::face_index_t, const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::face_index_t >::type
+get(CGAL::face_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_face_index_map();
 }
@@ -934,8 +1006,8 @@ template <class Graph,
           typename FIMap,
           typename VIMap,
           typename HIMap>
-typename boost::property_map<Connected_components_graph<Graph, FIMap, VIMap, HIMap>, boost::vertex_index_t >::type
-get(boost::vertex_index_t, const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::vertex_index_t >::type
+get(boost::vertex_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_vertex_index_map();
 }
@@ -945,8 +1017,8 @@ template <class Graph,
           typename FIMap,
           typename VIMap,
           typename HIMap>
-typename boost::property_map<Connected_components_graph<Graph, FIMap, VIMap, HIMap>, CGAL::halfedge_index_t >::type
-get(CGAL::halfedge_index_t, const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w)
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::halfedge_index_t >::type
+get(CGAL::halfedge_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_halfedge_index_map();
 }
@@ -959,7 +1031,7 @@ template <class Graph,
           class PropertyTag>
 typename boost::property_traits<typename boost::property_map<Graph,PropertyTag>::type>::value_type
 get(PropertyTag ptag,
-    const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w,
+    const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w,
     const typename boost::property_traits<typename boost::property_map<Graph,PropertyTag>::type>::key_type& k)
 {
   return get(ptag, w.graph(), k);
@@ -972,7 +1044,7 @@ template <class Graph,
           typename HIMap,
           class PropertyTag>
 void
-put(PropertyTag ptag, const Connected_components_graph<Graph, FIMap, VIMap, HIMap>& w,
+put(PropertyTag ptag, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w,
     const typename boost::property_traits<typename boost::property_map<Graph,PropertyTag>::type>::key_type& k,
     typename boost::property_traits<typename boost::property_map<Graph,PropertyTag>::type>::value_type& v)
 {
@@ -987,7 +1059,7 @@ template<typename Graph,
          typename VIMap,
          typename HIMap,
          typename PropertyTag>
-struct property_map<CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap>,PropertyTag> {
+struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>,PropertyTag> {
   typedef typename boost::property_map<Graph, PropertyTag >::type type;
   typedef typename boost::property_map<Graph, PropertyTag >::const_type const_type;
 };
@@ -997,7 +1069,7 @@ template<typename Graph,
          typename VIMap,
          typename HIMap,
          typename PropertyTag>
-struct graph_has_property<CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap>, PropertyTag>
+struct graph_has_property<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, PropertyTag>
     : graph_has_property<Graph, PropertyTag> {};
 
 
@@ -1006,7 +1078,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-struct property_map<CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap>, CGAL::face_index_t>{
+struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::face_index_t>{
   typedef typename CGAL::Property_map_binder< FIMap,
   typename CGAL::Pointer_property_map< typename boost::property_traits< FIMap >::value_type >::type > type;
   typedef type const_type;
@@ -1016,7 +1088,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-struct property_map<CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap>, boost::vertex_index_t>{
+struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::vertex_index_t>{
   typedef typename CGAL::Property_map_binder< VIMap,
   typename CGAL::Pointer_property_map< typename boost::property_traits< VIMap >::value_type >::type > type;
   typedef type const_type;
@@ -1027,10 +1099,10 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 
-struct property_map<CGAL::Connected_components_graph<Graph, FIMap, VIMap, HIMap>, CGAL::halfedge_index_t>{
+struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::halfedge_index_t>{
   typedef typename CGAL::Property_map_binder< HIMap,
   typename CGAL::Pointer_property_map< typename boost::property_traits< HIMap >::value_type >::type > type;
   typedef type const_type;
 };
 }// namespace boost
-#endif // CGAL_BOOST_GRAPH_CONNECTED_COMPONENTS_GRAPH_H
+#endif // CGAL_BOOST_GRAPH_FACE_FILTERED_GRAPH_H

@@ -607,10 +607,10 @@ the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
-The second example shows how to use the class template `Connected_components_graph`
+The second example shows how to use the class template `Face_filtered_graph`
 which enables to treat one or several connected components as a face graph.
 
-\cgalExample{Polygon_mesh_processing/connected_components_graph_example.cpp}
+\cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
 
 
 \section PMPDistance Approximate Hausdorff Distance

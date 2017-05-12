@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/Connected_components_graph.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/mesh_segmentation.h>
@@ -38,7 +38,7 @@ int main(int argc, char** argv )
   // Any other scalar values can be used instead of using SDF values computed using the CGAL function
   std::size_t number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
-  typedef CGAL::Connected_components_graph<SM> Cc_graph;
+  typedef CGAL::Face_filtered_graph<SM> Cc_graph;
   //print area of each segment and then put it in a Mesh and print it in an OFF file
   Cc_graph segment_mesh(mesh, segment_property_map, 0);
   for(std::size_t id = 0; id < number_of_segments; ++id)

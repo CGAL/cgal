@@ -1,6 +1,6 @@
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/Connected_components_graph.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <boost/graph/graph_concepts.hpp>
@@ -8,7 +8,7 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> SM;
-typedef CGAL::Connected_components_graph<SM, SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> > Adapter;
+typedef CGAL::Face_filtered_graph<SM, SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> > Adapter;
 typedef boost::graph_traits< Adapter > Traits;
 typedef Traits::edge_descriptor edge_descriptor;
 typedef Traits::halfedge_descriptor halfedge_descriptor;

@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/boost/graph/Connected_components_graph.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/foreach.hpp>
@@ -18,7 +18,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
 typedef boost::graph_traits<Mesh>::faces_size_type          faces_size_type;
 
 typedef Mesh::Property_map<face_descriptor, faces_size_type> FCCmap;
-  typedef CGAL::Connected_components_graph<Mesh> CCG;
+  typedef CGAL::Face_filtered_graph<Mesh> CCG;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
