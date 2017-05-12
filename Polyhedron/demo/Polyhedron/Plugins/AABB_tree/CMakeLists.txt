@@ -1,6 +1,4 @@
 include( polyhedron_demo_macros )
 
-
-polyhedron_demo_plugin(cut_plugin Cut_plugin )
+polyhedron_demo_plugin(cut_plugin Cut_plugin CATEGORY-PLUGINS_mesh_processing)
 target_link_libraries(cut_plugin scene_polyhedron_item scene_surface_mesh_item scene_basic_objects scene_color_ramp)
-
