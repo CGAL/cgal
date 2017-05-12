@@ -78,44 +78,58 @@ public:
                                     Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
+  // because we can't use default templates in ansi...
+  Point_iterator hidden_points_begin()
+  { return hidden_points_begin_internal<Memory_policy>(); }
+  Point_iterator hidden_points_end()
+  { return hidden_points_end_internal<Memory_policy>(); }
+
+  // const versions
+  Point_const_iterator hidden_points_begin() const
+  { return hidden_points_begin_internal<Memory_policy>(); }
+  Point_const_iterator hidden_points_end() const
+  { return hidden_points_end_internal<Memory_policy>(); }
+
+  void hide_point(const Point& p)
+  { hide_point_internal<Memory_policy>(p); }
+
   // Memory_policy is Tag_true -------------------------------------------------
-  template<typename Tag = Memory_policy>
-  Point_iterator hidden_points_begin(typename boost::enable_if_c<Tag::value>::type* = NULL)
+  template<typename Tag>
+  Point_iterator hidden_points_begin_internal(typename boost::enable_if_c<Tag::value>::type* = NULL)
   {  return _hidden.begin(); }
-  template<typename Tag = Memory_policy>
-  Point_iterator hidden_points_end(typename boost::enable_if_c<Tag::value>::type* = NULL)
+  template<typename Tag>
+  Point_iterator hidden_points_end_internal(typename boost::enable_if_c<Tag::value>::type* = NULL)
   { return _hidden.end(); }
 
-    // const versions
-  template<typename Tag = Memory_policy>
-  Point_const_iterator hidden_points_begin(typename boost::enable_if_c<Tag::value>::type* = NULL) const
+  template<typename Tag>
+  Point_const_iterator hidden_points_begin_internal(typename boost::enable_if_c<Tag::value>::type* = NULL) const
   { return _hidden.begin(); }
-  template<typename Tag = Memory_policy>
-  Point_const_iterator hidden_points_end(typename boost::enable_if_c<Tag::value>::type* = NULL) const
+  template<typename Tag>
+  Point_const_iterator hidden_points_end_internal(typename boost::enable_if_c<Tag::value>::type* = NULL) const
   { return _hidden.end(); }
 
-  template<typename Tag = Memory_policy>
-  void hide_point(const Point& p, typename boost::enable_if_c<Tag::value>::type* = NULL)
+  template<typename Tag>
+  void hide_point_internal(const Point& p, typename boost::enable_if_c<Tag::value>::type* = NULL)
   { _hidden.push_back(p); }
 
   // Memory_policy is Tag_false ------------------------------------------------
-  template<typename Tag = Memory_policy>
-  Point_iterator hidden_points_begin(typename boost::disable_if_c<Tag::value>::type* = NULL)
+  template<typename Tag>
+  Point_iterator hidden_points_begin_internal(typename boost::disable_if_c<Tag::value>::type* = NULL)
   { return hidden_points_end(); }
-  template<typename Tag = Memory_policy>
-  Point_iterator hidden_points_end(typename boost::disable_if_c<Tag::value>::type* = NULL)
+  template<typename Tag>
+  Point_iterator hidden_points_end_internal(typename boost::disable_if_c<Tag::value>::type* = NULL)
   { return _hidden.end(); }
 
     // const versions
-  template<typename Tag = Memory_policy>
-  Point_const_iterator hidden_points_begin(typename boost::disable_if_c<Tag::value>::type* = NULL) const
+  template<typename Tag>
+  Point_const_iterator hidden_points_begin_internal(typename boost::disable_if_c<Tag::value>::type* = NULL) const
   { return hidden_points_end(); }
-  template<typename Tag = Memory_policy>
-  Point_const_iterator hidden_points_end(typename boost::disable_if_c<Tag::value>::type* = NULL) const
+  template<typename Tag>
+  Point_const_iterator hidden_points_end_internal(typename boost::disable_if_c<Tag::value>::type* = NULL) const
   { return _hidden.end(); }
 
-  template<typename Tag = Memory_policy>
-  void hide_point(const Point&, typename boost::disable_if_c<Tag::value>::type* = NULL)
+  template<typename Tag>
+  void hide_point_internal(const Point&, typename boost::disable_if_c<Tag::value>::type* = NULL)
   { }
 
   //note this function is not requested by the RegularTriangulationCellBase_3
