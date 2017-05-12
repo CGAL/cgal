@@ -26,6 +26,7 @@
 #include <CGAL/predicates/predicates_for_voronoi_intersection_cartesian_2_3.h>
 #include <CGAL/constructions/constructions_for_voronoi_intersection_cartesian_2_3.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/representation_tags.h>
 
 namespace CGAL {
 
