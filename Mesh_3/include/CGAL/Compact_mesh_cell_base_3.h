@@ -38,6 +38,9 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
+#include <boost/static_assert.hpp>
+#include <boost/core/is_same.hpp>
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/atomic.h>
 #endif
@@ -477,9 +480,11 @@ public:
     V[3] = v3;
   }
 
-  const Bare_point &
-  weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
+  template<typename GT_>
+  const Bare_point& weighted_circumcenter(const GT_& gt) const
   {
+    BOOST_STATIC_ASSERT(boost::is_same<Bare_point, 
+      typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
     if (circumcenter_ == NULL) {
       this->try_to_set_circumcenter(
         new Bare_point(gt.construct_weighted_circumcenter_3_object()
@@ -497,6 +502,10 @@ public:
     return *circumcenter_;
   }
 
+  const Bare_point & weighted_circumcenter() const
+  {
+    return weighted_circumcenter(Geom_traits());
+  }
 
   // Returns the index of the cell of the input complex that contains the cell
   Subdomain_index subdomain_index() const { return subdomain_index_; }

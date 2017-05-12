@@ -32,6 +32,9 @@
 
 #include <list>
 
+#include <boost/core/is_same.hpp>
+#include <boost/static_assert.hpp>
+
 namespace CGAL {
 
 template < typename GT,
@@ -121,8 +124,12 @@ public:
   //note this function is not requested by the RegularTriangulationCellBase_3
   //it should be replaced everywhere by weighted_circumcenter()
   // but remains here for backward compatibility
-  Point_3 circumcenter(const Geom_traits& gt = Geom_traits()) const
+  template<typename GT_>
+  typename Geom_traits::Point_3
+  circumcenter(const GT_& gt) const
   {
+    BOOST_STATIC_ASSERT(boost::is_same<typename Geom_traits::Point_3,
+      typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
       return gt.construct_weighted_circumcenter_3_object()
         (this->vertex(0)->point(),
          this->vertex(1)->point(),
@@ -130,13 +137,28 @@ public:
          this->vertex(3)->point());
   }
 
-  Point_3 weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
+  typename Geom_traits::Point_3 circumcenter() const
   {
+    return circumcenter(Geom_traits());
+  }
+
+  template<typename GT_>
+  typename Geom_traits::Point_3
+  weighted_circumcenter(const GT_& gt) const
+  {
+    BOOST_STATIC_ASSERT(boost::is_same<typename Geom_traits::Point_3,
+      typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
       return gt.construct_weighted_circumcenter_3_object()
         (this->vertex(0)->point(),
          this->vertex(1)->point(),
          this->vertex(2)->point(),
          this->vertex(3)->point());
+  }
+
+  typename Geom_traits::Point_3
+  weighted_circumcenter() const
+  {
+    return weighted_circumcenter(Geom_traits());
   }
 
 private:
