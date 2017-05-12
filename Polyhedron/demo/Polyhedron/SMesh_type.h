@@ -80,6 +80,33 @@ inline get(CGAL::vertex_selection_t, SMesh& smesh)
   typedef  boost::graph_traits<SMesh >::vertex_descriptor vertex_descriptor;
   return smesh.add_property_map<vertex_descriptor,std::set<int> >("v:ip").first;
 }
+
+
+ SMesh::Property_map< boost::graph_traits<SMesh >::vertex_descriptor,std::size_t>
+ inline get(CGAL::vertex_time_stamp_t, SMesh & smesh)
+ {
+   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+   return smesh.add_property_map<vertex_descriptor,std::size_t>("v:time_stamp").first;
+ }
+
+
+
+ SMesh::Property_map< boost::graph_traits<SMesh>::halfedge_descriptor,std::size_t>
+ inline get(CGAL::halfedge_time_stamp_t, SMesh& smesh)
+ {
+   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
+   return smesh.add_property_map<halfedge_descriptor,std::size_t>("h:time_stamp").first;
+ }
+
+
+
+ SMesh::Property_map< boost::graph_traits<SMesh>::face_descriptor,std::size_t>
+ inline get(CGAL::face_time_stamp_t, SMesh& smesh)
+ {
+   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+   return smesh.add_property_map<face_descriptor,std::size_t>("v:time_stamp").first;
+ }
+
 }
 namespace boost
 {
@@ -89,6 +116,7 @@ struct property_map<SMesh, CGAL::halfedge_is_feature_t>
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef SMesh::Property_map<halfedge_descriptor, bool> type;
+  typedef type const_type;
 };
 
 template<typename I>
@@ -97,6 +125,7 @@ struct property_map<SMesh, CGAL::face_patch_id_t<I> >
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
 
   typedef SMesh::Property_map<face_descriptor, I> type;
+  typedef type const_type;
 };
 
 template <>
@@ -117,6 +146,7 @@ struct property_map<SMesh, CGAL::vertex_selection_t>
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
 
   typedef SMesh::Property_map<vertex_descriptor, int> type;
+  typedef type const_type;
 };
 
 template<>
@@ -126,6 +156,7 @@ struct property_map<SMesh, CGAL::face_selection_t>
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
 
   typedef SMesh::Property_map<face_descriptor, int> type;
+  typedef type const_type;
 };
 
 template<>
@@ -145,6 +176,40 @@ struct property_map<SMesh, CGAL::vertex_incident_patches_t<Patch_ID>>
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
 
   typedef SMesh::Property_map<vertex_descriptor, std::set<int>> type;
+  typedef type const_type;
+};
+
+
+
+template<>
+struct property_map<SMesh, CGAL::vertex_time_stamp_t>
+{
+
+  typedef  boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+
+  typedef  SMesh::Property_map<vertex_descriptor, std::size_t> type;
+  typedef type const_type;
+};
+
+template<>
+struct property_map<SMesh, CGAL::halfedge_time_stamp_t>
+{
+
+  typedef  boost::graph_traits<SMesh >::halfedge_descriptor halfedge_descriptor;
+
+  typedef  SMesh::Property_map<halfedge_descriptor, std::size_t> type;
+  typedef type const_type;
+};
+
+
+template<>
+struct property_map<SMesh, CGAL::face_time_stamp_t>
+{
+
+  typedef boost::graph_traits<SMesh >::face_descriptor face_descriptor;
+
+  typedef SMesh::Property_map<face_descriptor, std::size_t> type;
+  typedef type const_type;
 };
 } //boost
 

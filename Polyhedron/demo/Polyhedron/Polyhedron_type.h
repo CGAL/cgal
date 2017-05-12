@@ -195,6 +195,35 @@ public:
 };
 
 #include "Polyhedron_type_fwd.h"
+#include <CGAL/Polygon_mesh_processing/properties.h>
+inline
+boost::property_map<Polyhedron, boost::vertex_index_t>::type
+get(CGAL::vertex_selection_t, const Polyhedron& p)
+{
+  return get(boost::vertex_index,p);
+}
+inline
+boost::property_map<Polyhedron, boost::face_index_t>::type
+get(CGAL::face_selection_t, const Polyhedron& p)
+{
+  return get(boost::face_index,p);
+}
+
+namespace boost
+{
+template <>
+struct property_map<Polyhedron, CGAL::vertex_selection_t>
+{
+  typedef boost::property_map<Polyhedron,boost::vertex_index_t>::type type;
+  typedef boost::property_map<Polyhedron,boost::vertex_index_t>::const_type const_type;
+};
+template <>
+struct property_map<Polyhedron, CGAL::face_selection_t>
+{
+  typedef boost::property_map<Polyhedron,boost::face_index_t>::type type;
+  typedef boost::property_map<Polyhedron,boost::face_index_t>::const_type const_type;
+};
+}//boost
 
 // surface mesh
 typedef Polyhedron_demo_items<Patch_id>              Polyhedron_items;

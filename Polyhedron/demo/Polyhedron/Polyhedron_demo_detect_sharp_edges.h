@@ -25,9 +25,9 @@ namespace CGAL
 
     // Detect edges in current polyhedron
     typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<int> >::type PatchID;
-    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,PatchID>
-      detect_features(get(CGAL::face_patch_id_t<int>(), *pMesh));
-    detect_features.detect_sharp_edges(*pMesh, angle);
+
+    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,PatchID> features_detector;
+    features_detector.detect_sharp_edges(*pMesh, angle);
   }
 
 }//end namespace CGAL

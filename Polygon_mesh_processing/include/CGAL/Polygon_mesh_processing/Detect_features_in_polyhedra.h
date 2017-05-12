@@ -29,6 +29,7 @@
 #include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra_fwd.h>
 #include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/properties.h>
 #include <set>
 
 namespace CGAL {
@@ -37,7 +38,7 @@ namespace Polygon_mesh_processing {
   template <typename Polyhedron, typename FT, typename Patch_id>
 void detect_features(Polyhedron& p,
                      FT angle_in_deg,
-                     typename boost::property_map<Polyhedron, face_patch_id_t<Patch_id> >::type pid_map)
+                     typename boost::property_map<Polyhedron, CGAL::face_patch_id_t<Patch_id> >::type pid_map)
 {
   Detect_features_in_polyhedra<Polyhedron, Patch_id> go;
   // AF todo: Add overload for the next three functions so that we use the pid_map

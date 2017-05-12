@@ -203,13 +203,6 @@ struct Polyhedron_property_map<CGAL::halfedge_is_feature_t>
   };
 };
 
-// template <typename Gt, typename Patch_id>
-// inline Is_feature_pmap<Gt,Patch_id>
-// get(halfedge_is_feature_t,
-//     const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
-// {
-//   return Is_feature_pmap<Gt,Patch_id> ();
-// }
 
 
 template <typename Patch_id>
@@ -246,68 +239,8 @@ struct Polyhedron_property_map<CGAL::vertex_incident_patches_t<Patch_id> >
   };
 };
 
-// template <typename Gt, typename Patch_id>
-// inline vertex_incident_patches_pmap<Gt,Patch_id>
-// get(CGAL::vertex_incident_patches_t<Patch_id>,
-//     const Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> >&)
-// {
-//   return vertex_incident_patches_pmap<Gt,Patch_id>();
-// }
 
 } // end namespace CGAL
-
-namespace boost {
-
-  // template <class Gt, class I, CGAL_HDS_PARAM_, class A>
-  // struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,
-  //                     CGAL::vertex_time_stamp_t>
-  // {
-  //   typedef CGAL::Polyhedron_face_time_stamp_pmap type;
-  // };
-
-  // template <class Gt, class I, CGAL_HDS_PARAM_, class A>
-  // struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,
-  //                     CGAL::halfedge_time_stamp_t>
-  // {
-  //   typedef CGAL::Polyhedron_face_time_stamp_pmap type;
-  // };
-
-  // template <class Gt, class I, CGAL_HDS_PARAM_, class A>
-  // struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,
-  //                     CGAL::face_time_stamp_t>
-  // {
-  //   typedef CGAL::Polyhedron_face_time_stamp_pmap type;
-  // };
-
-  // template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename Patch_id>
-  // struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,
-  //                     CGAL::face_patch_id_t<Patch_id> >
-  // {
-  //   typedef CGAL::Polyhedron_face_patch_id_pmap<Patch_id> type;
-  // };
-
-  // template <class Gt, class I, CGAL_HDS_PARAM_, class A>
-  // struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,
-  //                     CGAL::vertex_num_feature_edges_t>
-  // {
-  //   typedef CGAL::Polyhedron_num_feature_edges_pmap type;
-  // };
-
-  // template <class Gt, class I, CGAL_HDS_PARAM_, class A>
-  // struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,
-  //                     CGAL::halfedge_is_feature_t>
-  // {
-  //   typedef CGAL::Polyhedron_is_feature_edge_pmap type;
-  // };
-
-  // template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename Patch_id>
-  // struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,
-  //                     CGAL::vertex_incident_patches_t<Patch_id> >
-  // {
-  //   typedef CGAL::Polyhedron_incident_patches_pmap<Patch_id> type;
-  // };
-
-} // namespace boost
 
 #undef CGAL_HDS_PARAM_
 

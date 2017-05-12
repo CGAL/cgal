@@ -9,6 +9,7 @@
 #include "Scene_surface_mesh_item.h"
 #else
 #include "Polyhedron_type.h"
+#include <CGAL/boost/graph/PMP_properties_Polyhedron_3.h>
 #endif
 #include "Scene_polyhedron_item_decorator.h"
 #include <CGAL/property_map.h>

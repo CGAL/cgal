@@ -39,7 +39,7 @@ struct Polyhedral_mesh_domain_selector<SMwgd>
   {}
 };
 template<class Mesh>
-Meshing_thread* cgal_code_mesh_3(const Mesh* pMesh,
+Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
                                  const Polylines_container& polylines,
                                  QString filename,
                                  const double facet_angle,
@@ -150,7 +150,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const bool surface_only,
                                  CGAL::Three::Scene_interface* scene)
 {
-  return cgal_code_mesh_3(pMesh,
+  return cgal_code_mesh_3_templated(pMesh,
                           polylines,
                           filename,
                           facet_angle,
@@ -181,7 +181,7 @@ Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
                                  const bool surface_only,
                                  CGAL::Three::Scene_interface* scene)
 {
-  return cgal_code_mesh_3(pMesh,
+  return cgal_code_mesh_3_templated(pMesh,
                           polylines,
                           filename,
                           facet_angle,

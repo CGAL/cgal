@@ -155,7 +155,7 @@ public Q_SLOTS:
     {
 #ifdef USE_SURFACE_MESH
       typedef boost::graph_traits<FaceGraph>::vertices_size_type size_type;
-      size_type h = reinterpret_cast<size_type>(void_ptr);
+      size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
       process_selection( static_cast<fg_vertex_descriptor>(h) );
 #else
       process_selection( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
@@ -171,7 +171,7 @@ public Q_SLOTS:
     {
 #ifdef USE_SURFACE_MESH
       typedef boost::graph_traits<FaceGraph>::faces_size_type size_type;
-      size_type h = reinterpret_cast<size_type>(void_ptr);
+      size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
       process_selection( static_cast<fg_face_descriptor>(h) );
 #else
       process_selection( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
@@ -186,7 +186,7 @@ public Q_SLOTS:
     {
 #ifdef USE_SURFACE_MESH
       typedef boost::graph_traits<FaceGraph>::edges_size_type size_type;
-      size_type h = reinterpret_cast<size_type>(void_ptr);
+      size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
       process_selection( static_cast<fg_edge_descriptor>(h) );
 #else
       process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
