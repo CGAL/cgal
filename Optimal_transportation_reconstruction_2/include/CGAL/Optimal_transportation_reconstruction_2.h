@@ -989,7 +989,6 @@ public:
   {
     int i = f->index(v);
     Face_handle cf = fmap[f];
-    Vertex_handle cv = vmap[v];
 
     if (fmap.find(f->neighbor(i)) != fmap.end()) {
       Face_handle fi = f->neighbor(i);
