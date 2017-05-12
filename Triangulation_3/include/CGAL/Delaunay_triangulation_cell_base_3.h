@@ -32,6 +32,9 @@
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
+#include <boost/core/is_same.hpp>
+#include <boost/static_assert.hpp>
+
 namespace CGAL {
 
 template < typename GT, typename Cb = Triangulation_ds_cell_base_3<> >
@@ -42,15 +45,23 @@ public:
   typedef GT Geom_traits;
   typedef typename Geom_traits::Point_3 Point_3;
 
+  template <typename GT_>
   Point_3
-  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  circumcenter(const GT_& gt) const
   {
+      BOOST_STATIC_ASSERT(boost::is_same<Point_3,
+        typename GT_::Construct_circumcenter_3::result_type>::value);
       return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
                                                   this->vertex(1)->point(),
                                                   this->vertex(2)->point(),
                                                   this->vertex(3)->point());
   }
 
+  Point_3
+  circumcenter() const
+  {
+    return circumcenter(Geom_traits());
+  }
 };
 
 } //namespace CGAL
