@@ -44,13 +44,7 @@ namespace CGAL {
     struct Mesh_geom_traits_generator
     {
     private:
-      // Mesh_3 requires the Bare_point / Weighted_point typedef
-      // but `Robust_weighted_circumcenter_filtered_traits_3` no longer
-      // derives from `Regular_triangulation_euclidean_traits_3`.
-      // Since it's just a typedef and the order does not matter, we just
-      // wrap here instead.
-      typedef Regular_triangulation_euclidean_traits_3<
-          Robust_weighted_circumcenter_filtered_traits_3<K> > Geom_traits;
+      typedef Robust_weighted_circumcenter_filtered_traits_3<K> Geom_traits;
 
     public:
       typedef Geom_traits type;
