@@ -3,14 +3,14 @@
 
 #include <iostream>
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
-typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Segment_3 Segment;
@@ -19,6 +19,8 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
+typedef Tree::Point_location_and_primitive_id Point_location_and_primitive_id;
+typedef Tree::Point_location Point_location;
 
 int main()
 {
@@ -55,5 +57,18 @@ int main()
               << f->halfedge()->next()->vertex()->point() << " , "
               << f->halfedge()->next()->next()->vertex()->point()
               << " )" << std::endl;
+
+    // computes closest point location and primitive id
+    Point_location_and_primitive_id plp = tree.closest_point_location_and_primitive(p);
+    Point_location point_location = plp.first;
+    Polyhedron::Face_handle f2 = plp.second; // closest primitive id
+
+    std::cout << "closest point: " << point_location.projected_point << std::endl;
+    std::cout << "closest simplex dimension " << point_location.dimension << std::endl;
+    std::cout << "simplex index " << point_location.index << std::endl;
+
+    assert( point_location.dimension==0 );
+    assert ( f2->halfedge()->vertex()->point()==p );
+
     return EXIT_SUCCESS;
 }

@@ -5931,15 +5931,58 @@ public:
   Kernel::Point_3 operator()(const Kernel::Segment_3& s,
                              const Kernel::Point_3& p);
 
-  /*!
-    returns the point of `t` that is the closest to `p`.
+  /// @}
+
+}; /* end Kernel::ConstructProjectedPoint_3 */
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with two arguments) 
+
+*/
+class ConstructProjectedPointAndLocation_3 {
+public:
+
+  typedef unspecified_type result_type;
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+/*!
+    returns the point of `s` that is the closest to `p`, and information on where this point is located.
+
+    @param s the input segment
+    @param p the input point
+    @returns an object `res` where `res.projected point` is the point of `s` that is the closest to `p`, 
+    where `res.dimension` is `0`, or `1` if the closest point is on a vertex or on the interior of the segment, respectively,
+    and where `res.index` is `0`, or `1`, if `res.dimension==0` and the closest point is on the source or target of the segment, 
+    respectively, and the value of `res.index` is undefined if `res.dimension==1`.
   */
-  Kernel::Point_3 operator()(const Kernel::Triangle_3& h,
+  result_type operator()(const Kernel::Segment_3& s,
+                         const Kernel::Point_3& p);
+
+  /*!
+    returns the point of `t` that is the closest to `p`, and information on where the point of `t` closest to `pt` is located.
+
+    @param t the input triangle
+    @param p the input point
+
+    @returns an object `res` where `res.projected point` is the point of `t` that is the closest to `p`, 
+    where `res.dimension` is `0`, `1`, or `2` if the closest point is on a vertex, on an edge or on the interior of the triangle, respectively,
+    and where `res.index` is `0`, `1`, or `2`, if `res.dimension==0`and the closest point is on the ith vertex  of the triangle, respectively,
+    and it is 0, 1 or 2, if `dim==1` and the closest point is on the edge opposite to the ith vertex of the triangle.
+
+  */
+  result_type operator()(const Kernel::Triangle_3& t,
                              const Kernel::Point_3& p);
 
   /// @}
 
-}; /* end Kernel::ConstructProjectedPoint_3 */
+}; /* end Kernel::ConstructProjectedPointAndLocation_3 */
+
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects

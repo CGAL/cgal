@@ -307,7 +307,7 @@ public:
                     const typename Primitive::Id& hint_primitive,
                     const AABBTraits& traits)
     : m_closest_point(hint),
-      m_closest_primitive(hint_primitive), 
+      m_closest_primitive(hint_primitive),
       m_traits(traits)
   {}
 
@@ -320,7 +320,7 @@ public:
     if( !m_traits.equal_3_object()(new_closest_point, m_closest_point) )
     {
       m_closest_primitive = primitive.id();
-      m_closest_point = new_closest_point; // this effectively shrinks the sphere 
+      m_closest_point = new_closest_point; // this effectively shrinks the sphere
     }
   }
 
@@ -339,6 +339,73 @@ public:
 private:
   Point m_closest_point;
   typename Primitive::Id m_closest_primitive;
+  const AABBTraits& m_traits;
+};
+
+/**
+ * @class Projection_traits_point_and_location
+ */
+template <typename AABBTraits>
+class Projection_traits_point_and_location
+{
+  typedef typename AABBTraits::FT FT;
+  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef typename AABBTraits::Primitive::Id Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Point_location_and_primitive_id Point_location_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+public:
+  Projection_traits_point_and_location(const Point& hint,
+                                       const typename Primitive::Id& hint_primitive,
+                                       const AABBTraits& traits)
+    : m_closest_primitive(hint_primitive),
+      m_traits(traits)
+  {
+    m_closest_point.projected_point = hint;
+  }
+
+  bool go_further() const { return true; }
+
+  void intersection(const Point& query, const Primitive& primitive)
+  {
+    typename AABBTraits::Closest_point::Point_location pddi
+      = m_traits.closest_point_object()(query, primitive, m_closest_point);
+    Point new_closest_point = pddi;
+
+    if( !m_traits.equal_3_object()(new_closest_point, Point(m_closest_point))
+        || m_closest_point.index!=pddi.index  || pddi.dimension != m_closest_point.dimension )
+    {
+      m_closest_primitive = primitive.id();
+      m_closest_point = pddi; // this effectively shrinks the sphere 
+    }
+  }
+
+  bool do_intersect(const Point& query, const Node& node) const
+  {
+    return m_traits.compare_distance_object()
+      (query, node.bbox(), m_closest_point) == CGAL::SMALLER;
+  }
+
+  Point closest_point() const { return m_closest_point.projected_point; }
+
+  Point_and_primitive_id closest_point_and_primitive() const
+  {
+    return Point_and_primitive_id(m_closest_point, m_closest_primitive);
+  }
+
+  Point_location_and_primitive_id closest_point_location_and_primitive() const
+  {
+    return Point_location_and_primitive_id(m_closest_point, m_closest_primitive);
+  }
+
+private:
+  Projected_point_and_location<Point> m_closest_point;
+  typename Primitive::Id m_closest_primitive;
+
   const AABBTraits& m_traits;
 };
 

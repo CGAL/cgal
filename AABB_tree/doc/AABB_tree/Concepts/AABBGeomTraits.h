@@ -71,6 +71,14 @@ A functor object to compute the point on a geometric primitive which is closest 
 typedef unspecified_type Construct_projected_point_3;
 
 /*!
+A functor object to compute the point and location on a geometric primitive which is closest from a query.
+It must support the `result_of` protocol and provides the operator:
+`operator()(const Type_2& type_2, const Point_3& p);` where `Type_2` is any type among `Segment_3` and `Triangle_3`.
+The operator returns an object which is explicitly convertible to `Point_3` and that represents the point on `type_2` which is closest to `p`.
+*/
+typedef unspecified_type Construct_projected_point_and_location_3;
+
+/*!
 A functor object to compare the distance of two points wrt a third one.
 Provides the operator:
 `CGAL::Comparision_result operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3)`. The operator compare the distance between `p1 and `p2`, and between `p2` and `p3`.
@@ -149,6 +157,12 @@ Construct_sphere_3 construct_sphere_3_object();
 Returns the closest point constructor. 
 */ 
 Construct_projected_point_3 construct_projected_point_3_object();
+
+/*!
+Returns the closest point and location constructor.
+*/
+Construct_projected_point_and_location_3
+construct_projected_point_and_location_3_object();
 
 /*!
 Returns the compare distance constructor.
