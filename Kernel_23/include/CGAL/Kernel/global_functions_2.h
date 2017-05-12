@@ -355,6 +355,8 @@ compare_slope(const Segment_2<K> &s1, const Segment_2<K> &s2)
   return internal::compare_slope(s1, s2, K());
 }
 
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // kept for backward compatibility
 template < class K >
 inline
@@ -372,6 +374,7 @@ compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
 {
   return internal::compare_slope(s1, s2, K());
 }
+#endif
 
 template < class K >
 inline
