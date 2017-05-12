@@ -87,10 +87,10 @@ void PQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::get_param;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, vertex_point),
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::PQQ_1step(pmesh, vpm, mask);
 }
@@ -134,10 +134,10 @@ void PTQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::get_param;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, vertex_point),
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::PTQ_1step(pmesh, vpm, mask);
 }
@@ -184,10 +184,10 @@ void DQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::get_param;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, vertex_point),
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::DQQ_1step(pmesh, vpm, mask);
 }
@@ -236,10 +236,10 @@ void Sqrt3(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::get_param;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, vertex_point),
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, number_of_iterations), 1);
+  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::Sqrt3_1step(pmesh, vpm, mask, (i%2==1));
 }
