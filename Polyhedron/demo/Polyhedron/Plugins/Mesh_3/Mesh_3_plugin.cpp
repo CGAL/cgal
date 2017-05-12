@@ -491,7 +491,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
       return;
     }
     typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
-    //!\todo Where should pMesh and psMesh be deleted to avoid a memory leak?
     SMwgd *pMesh = new SMwgd(*psMesh);
     Scene_polylines_item::Polylines_container plc;
 
@@ -509,6 +508,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  manifold,
                                  surface_only,
                                  scene);
+    delete pMesh;
   }
   // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
