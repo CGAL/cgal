@@ -174,8 +174,14 @@ public:
   
   typedef Point_3                                     result_type;
  
- typename Rt::Construct_point_3 wp2p = Rt().construct_point_3_object();
- typename Rt::Construct_weighted_point_3 p2wp = Rt().construct_weighted_point_3_object();
+ typename Rt::Construct_point_3 wp2p;
+ typename Rt::Construct_weighted_point_3 p2wp;
+
+  Robust_filtered_construct_weighted_circumcenter_3()
+    :
+      wp2p(Rt().construct_point_3_object()),
+      p2wp(Rt().construct_weighted_point_3_object())
+  { }
 
   Point_3  operator() ( const Weighted_point_3 & p,
                         const Weighted_point_3 & q,
