@@ -54,8 +54,8 @@ namespace CGAL {
 template <typename GT, typename Concurrency_tag>
 class Compact_mesh_cell_base_3_base
 {
-  typedef typename GT::Point_3                Bare_point;
-  typedef typename GT::Weighted_point_3       Weighted_point;
+  typedef typename GT::Point_3                Point_3;
+  typedef typename GT::Weighted_point_3       Point;
 
 protected:
   Compact_mesh_cell_base_3_base()
@@ -104,7 +104,7 @@ public:
   }
 
   /// Precondition circumcenter_ == NULL
-  void try_to_set_circumcenter(Bare_point *cc) const
+  void try_to_set_circumcenter(Point_3 *cc) const
   {
     CGAL_precondition(circumcenter_ == NULL);
     circumcenter_ = cc;
@@ -121,7 +121,7 @@ private:
 #endif
 
 protected:
-  mutable Bare_point* circumcenter_;
+  mutable Point_3* circumcenter_;
 };
 
 
@@ -131,7 +131,7 @@ protected:
 template <typename GT>
 class Compact_mesh_cell_base_3_base<GT, Parallel_tag>
 {
-  typedef typename GT::Point_3  Bare_point;
+  typedef typename GT::Point_3  Point_3;
 
 protected:
   Compact_mesh_cell_base_3_base()
@@ -188,7 +188,7 @@ public:
 
   /// If the circumcenter is already set (circumcenter_ != NULL),
   /// this function "deletes" cc
-  void try_to_set_circumcenter(Bare_point *cc) const
+  void try_to_set_circumcenter(Point_3 *cc) const
   {
     if (circumcenter_.compare_and_swap(cc, NULL) != NULL)
       delete cc;
@@ -201,7 +201,7 @@ private:
   tbb::atomic<char> bits_;
 
 protected:
-  mutable tbb::atomic<Bare_point*> circumcenter_;
+  mutable tbb::atomic<Point_3*> circumcenter_;
 };
 
 #endif // CGAL_LINKED_WITH_TBB
@@ -241,13 +241,13 @@ public:
   typedef typename MD::Index                Index;
 
   typedef GT                                Geom_traits;
-  typedef typename GT::Point_3              Bare_point;
-  typedef typename GT::Weighted_point_3     Weighted_point;
+  typedef typename GT::Point_3              Point_3;
+  typedef typename GT::Weighted_point_3     Point;
 
 
-  typedef Weighted_point*                   Point_container;
-  typedef Weighted_point*                   Point_iterator;
-  typedef const Weighted_point*             Point_const_iterator;
+  typedef Point*                            Point_container;
+  typedef Point*                            Point_iterator;
+  typedef const Point*                      Point_const_iterator;
 
 public:
   void invalidate_circumcenter() const
@@ -452,7 +452,7 @@ public:
 
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }
   Point_iterator hidden_points_end() const { return NULL; }
-  void hide_point (const Weighted_point &) const { }
+  void hide_point (const Point&) const { }
 
   // We must override the functions that modify the vertices.
   // And if the point inside a vertex is modified, we fail,
@@ -481,17 +481,17 @@ public:
   }
 
   template<typename GT_>
-  const Bare_point& weighted_circumcenter(const GT_& gt) const
+  const Point_3& weighted_circumcenter(const GT_& gt) const
   {
-    BOOST_STATIC_ASSERT(boost::is_same<Bare_point, 
+    BOOST_STATIC_ASSERT(boost::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
     if (circumcenter_ == NULL) {
       this->try_to_set_circumcenter(
-        new Bare_point(gt.construct_weighted_circumcenter_3_object()
-                       (this->vertex(0)->point(),
-                        this->vertex(1)->point(),
-                        this->vertex(2)->point(),
-                        this->vertex(3)->point())));
+        new Point_3(gt.construct_weighted_circumcenter_3_object()
+                        (this->vertex(0)->point(),
+                         this->vertex(1)->point(),
+                         this->vertex(2)->point(),
+                         this->vertex(3)->point())));
     } else {
       CGAL_expensive_assertion(gt.construct_weighted_circumcenter_3_object()
                                 (this->vertex(0)->point(),
@@ -502,7 +502,7 @@ public:
     return *circumcenter_;
   }
 
-  const Bare_point & weighted_circumcenter() const
+  const Point_3& weighted_circumcenter() const
   {
     return weighted_circumcenter(Geom_traits());
   }
@@ -544,14 +544,14 @@ public:
   }
 
   /// Sets surface center of \c facet to \c point
-  void set_facet_surface_center(const int facet, const Bare_point& point)
+  void set_facet_surface_center(const int facet, const Point_3& point)
   {
     CGAL_precondition(facet>=0 && facet<4);
     surface_center_table_[facet] = point;
   }
 
   /// Returns surface center of \c facet
-  Bare_point get_facet_surface_center(const int facet) const
+  Point_3 get_facet_surface_center(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_center_table_[facet];
@@ -637,7 +637,7 @@ private:
   /// Stores surface_index for each facet of the cell
   CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
   /// Stores surface center of each facet of the cell
-  CGAL::cpp11::array<Bare_point, 4> surface_center_table_;
+  CGAL::cpp11::array<Point_3, 4> surface_center_table_;
   /// Stores surface center index of each facet of the cell
 
   CGAL::cpp11::array<Cell_handle, 4> N;
