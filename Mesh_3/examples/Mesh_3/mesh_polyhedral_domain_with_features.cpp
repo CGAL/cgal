@@ -36,7 +36,7 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   std::ifstream input(fname);
-  Polyhedron polyhedron, polyhedron2;
+  Polyhedron polyhedron;
   input >> polyhedron;
   if(input.fail()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
@@ -51,7 +51,7 @@ int main(int argc, char*argv[])
   CGAL::Timer t;
   t.start();
   // Create domain
-  Mesh_domain domain(polyhedron, polyhedron2);
+  Mesh_domain domain(polyhedron);
   
   // Get sharp features
   domain.detect_features();
