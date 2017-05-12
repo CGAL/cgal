@@ -582,7 +582,7 @@ odd, not smooth, or that does not even exist.
 
 \section Subdivision_method_3History Implementation History
 
-This package was initially developed by  Le-Jeng Andy Shiue.  For \cgal 4.10 it was generalized
+This package was initially developed by  Le-Jeng Andy Shiue.  For \cgal 4.11 it was generalized
 to work on any model of a `MutableFaceGraph` by Andreas Fabri and Mael Rouxel-Labbé.
 
 */
