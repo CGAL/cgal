@@ -1965,6 +1965,7 @@ void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInse
     if(!menuActions.contains(actionToInsert))
       menu->insertAction(ui->actionLoadPlugin, actionToInsert);
   }
+}
 
 void MainWindow::colorItems()
 {
