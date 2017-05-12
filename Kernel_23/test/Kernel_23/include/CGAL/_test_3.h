@@ -42,6 +42,7 @@
 #include "_test_cls_tetrahedron_3.h"
 #include "_test_cls_aff_transformation_3.h"
 #include "_test_cls_iso_cuboid_3.h"
+#include "_test_fct_point_segment_3.h"
 
 template <class R>
 bool
@@ -67,6 +68,7 @@ _test_3(const R& r)
  && _test_cls_tetrahedron_3( r )
  && _test_cls_aff_transformation_3( r )
  && _test_cls_iso_cuboid_3( r )
+ && _test_fct_point_segment_3( r )
  ;
 }
 

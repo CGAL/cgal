@@ -117,7 +117,8 @@ struct Test {
 
   void P_T()
   {
-    std::cout << "Point - Segment\n";
+    std::cout << "Point - Triange\n";
+
     check_squared_distance (p(0, 1, 2), T(p(0, 0, 0), p( 2, 0, 0), p( 0, 2, 0)), 4);
   }
 

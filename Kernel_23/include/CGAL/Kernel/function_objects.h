@@ -860,7 +860,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -875,7 +875,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -2580,7 +2580,7 @@ namespace CommonKernelFunctors {
                              const typename K::Point_3& q,
                              typename K::Point_3& result,
                              bool& outside,
-                             const K& k)
+                             const K& k) const
     {
       typedef typename K::Vector_3 Vector_3;
       typedef typename K::FT FT;
@@ -2599,8 +2599,8 @@ namespace CommonKernelFunctors {
       const Vector_3 v = cross_product(vector(p1,p2), vector(p1,q));
       if ( scalar_product(v,w) < FT(0))
       {
-        if (   scalar_product(vector(p1,q), vector(p1,p2)) >= FT(0)
-            && scalar_product(vector(p2,q), vector(p2,p1)) >= FT(0) )
+        if (   scalar_product(vector(p1,q), vector(p1,p2)) > FT(0)
+            && scalar_product(vector(p2,q), vector(p2,p1)) > FT(0) )
         {
           result = projection(line(p1, p2), q);
           return true;
@@ -2618,15 +2618,17 @@ namespace CommonKernelFunctors {
      * @param p1 the first point
      * @param p2 the second point
      * @param p3 the third point
+     * @param i the index of the nearest point (0, 1, or 2)
      * @param k the kernel
      * @return the nearest point from origin
      */
-    typename K::Point_3
+    const typename K::Point_3&
     nearest_point_3(const typename K::Point_3& origin,
                     const typename K::Point_3& p1,
                     const typename K::Point_3& p2,
                     const typename K::Point_3& p3,
-                    const K& k)
+                    unsigned int& i,
+                    const K& k) const
     {
       typedef typename K::FT FT;
 
@@ -2636,17 +2638,18 @@ namespace CommonKernelFunctors {
       const FT dist_origin_p1 = sq_distance(origin,p1);
       const FT dist_origin_p2 = sq_distance(origin,p2);
       const FT dist_origin_p3 = sq_distance(origin,p3);
-
       if (   dist_origin_p2 >= dist_origin_p1
           && dist_origin_p3 >= dist_origin_p1 )
       {
+        i = 0;
         return p1;
       }
       if ( dist_origin_p3 >= dist_origin_p2 )
       {
+        i = 1;
         return p2;
       }
-
+      i = 2;
       return p3;
     }
 
@@ -2657,6 +2660,20 @@ namespace CommonKernelFunctors {
      * @param p the reference point
      * @param t the triangle
      * @param result if p is not inside t, the nearest point of t from p
+     * @param dim the dimension of the facet where the reference point lies
+     * @param i the index of the reference point on the facet
+     * @param k the kernel
+     * @return true if p is inside t
+     */
+    /**
+     * @brief returns true if p is inside triangle t. If p is not inside t,
+     * result is the nearest point of t from p. WARNING: it is assumed that
+     * t and p are on the same plane.
+     * @param p the reference point
+     * @param t the triangle
+     * @param result if p is not inside t, the nearest point of t from p
+     * @param dim the dimension of the facet where the reference point lies
+     * @param i the index of the reference point on the facet
      * @param k the kernel
      * @return true if p is inside t
      */
@@ -2664,7 +2681,9 @@ namespace CommonKernelFunctors {
     is_inside_triangle_3(const typename K::Point_3& p,
                          const typename K::Triangle_3& t,
                          typename K::Point_3& result,
-                         const K& k)
+                         unsigned int& dim,
+                         unsigned int& i,
+                         const K& k) const
     {
       typedef typename K::Point_3 Point_3;
       typedef typename K::Vector_3 Vector_3;
@@ -2683,23 +2702,37 @@ namespace CommonKernelFunctors {
       Vector_3 w = cross_product(vector(t0,t1), vector(t1,t2));
 
       bool outside = false;
-      if (   is_inside_triangle_3_aux(w, t0, t1, p, result, outside, k)
-          || is_inside_triangle_3_aux(w, t1, t2, p, result, outside, k)
-          || is_inside_triangle_3_aux(w, t2, t0, p, result, outside, k) )
+      if ( is_inside_triangle_3_aux(w, t0, t1, p, result, outside, k) )
       {
+        dim = 1;
+        i = 2;
         return false;
       }
-
+      if (is_inside_triangle_3_aux(w, t1, t2, p, result, outside, k) )
+      {
+        dim = 1;
+        i = 0;
+        return false;
+      }
+      if ( is_inside_triangle_3_aux(w, t2, t0, p, result, outside, k) )
+      {
+        dim = 1;
+        i = 1;
+        return false;
+      }
       if ( outside )
       {
-        result = nearest_point_3(p,t0,t1,t2,k);
+        dim = 0;
+        result = nearest_point_3(p,t0,t1,t2,i, k);
         return false;
       }
       else
       {
+        dim = 2;
         return true;
       }
     }
+  
 
     /**
     * @brief returns true if p is inside segment s. If p is not inside s,
@@ -2715,7 +2748,9 @@ namespace CommonKernelFunctors {
     is_inside_segment_3(const typename K::Point_3& query,
                         const typename K::Segment_3 & s,
                         typename K::Point_3& closest_point_on_segment,
-                        const K& k)
+                        unsigned int& dim,
+                        unsigned int& i,
+                        const K& k) const
     {
       typename K::Construct_vector_3 vector =
         k.construct_vector_3_object();
@@ -2731,25 +2766,31 @@ namespace CommonKernelFunctors {
       const Point& b = vertex_on(s, 1);
       if( scalar_product(vector(a,b), vector(a, query)) < FT(0) )
       {
+        dim = 0;
+        i = 0;
         closest_point_on_segment = a;
         return false;
       }
       if( scalar_product(vector(b,a), vector(b, query)) < FT(0) )
       {
+        dim = 0;
+        i = 1;
         closest_point_on_segment = b;
         return false;
       }
-
+      
       // query is on segment
+      dim = 1;
       return true;
     }
-
-  public:
-    typename K::Point_3
-    operator()(const typename K::Point_3& origin,
+  protected:
+    Projected_point_and_location<typename K::Point_3>
+    projection_on_triangle_impl(const typename K::Point_3& query,
                const typename K::Triangle_3& triangle,
-               const K& k)
+               const K& k) const
     {
+      Projected_point_and_location<typename K::Point_3> res;
+
       typedef typename K::Point_3 Point_3;
 
       typename K::Construct_supporting_plane_3 supporting_plane =
@@ -2758,10 +2799,8 @@ namespace CommonKernelFunctors {
         k.construct_projected_point_3_object();
       typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
 
-      const typename K::Plane_3 plane = supporting_plane(triangle);
-      if(is_degenerate(plane)) {
-        // If the plane is degenerate, then the triangle is degenerate, and
-        // one tries to find to which segment it is equivalent.
+      if(is_degenerate(triangle)) {
+        // If the triangle is degenerate, try to find to which segment it is equivalent.
         typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
         typename K::Construct_vector_3 vector = k.construct_vector_3_object();
         typename K::Compute_x_3 x = k.compute_x_3_object();
@@ -2784,44 +2823,53 @@ namespace CommonKernelFunctors {
         if(linf_ab > linf_ac) {
           if(linf_ab > linf_bc) {
             // ab is the maximal segment
-            return this->operator()(origin, seg(a, b), k);
+            res = projection_on_segment_impl(query, seg(a, b),  k);
+            return res;
           } else {
             // ab > ac, bc >= ab, use bc
-            return this->operator()(origin, seg(b, c), k);
+            res = projection_on_segment_impl(query, seg(b, c), k);
+            return res;
           }
         } else { // ab <= ac
           if(linf_ac > linf_bc) {
             // ac is the maximal segment
-            return this->operator()(origin, seg(a, c), k);
+            res = projection_on_segment_impl(query, seg(a, c), k);
+            return res;
           } else {
             // ab <= ac, ac <= bc, use bc
-            return this->operator()(origin, seg(b, c), k);
+            res = projection_on_segment_impl(query, seg(b, c), k);
+            return res;
           }
         }
-      } // degenerate plane
+      } // degenerate triangle
 
-      // Project origin on triangle supporting plane
-      const Point_3 proj = projection(plane, origin);
+      const typename K::Plane_3 plane = supporting_plane(triangle);
+
+      // Project query on triangle supporting plane
+      const Point_3 proj = projection(plane, query);
 
 
       Point_3 moved_point;
-      bool inside = is_inside_triangle_3(proj,triangle,moved_point,k);
-
+      bool inside = is_inside_triangle_3(proj,triangle,moved_point,res.dimension, res.index, k);
       // If proj is inside triangle, return it
       if ( inside )
       {
-        return proj;
+        res.projected_point = proj;
+        return res;
       }
 
       // Else return the constructed point
-      return moved_point;
+      res.projected_point = moved_point;
+      return res;
     }
 
-    typename K::Point_3
-    operator()(const typename K::Point_3& query,
+
+    Projected_point_and_location<typename K::Point_3>
+    projection_on_segment_impl(const typename K::Point_3& query,
                const typename K::Segment_3& segment,
-               const K& k)
+               const K& k) const
     {
+      Projected_point_and_location<typename K::Point_3> res;
       typedef typename K::Point_3 Point_3;
 
       typename K::Construct_projected_point_3 projection =
@@ -2831,26 +2879,102 @@ namespace CommonKernelFunctors {
       typename K::Construct_vertex_3 vertex =
           k.construct_vertex_3_object();
 
-      if(is_degenerate(segment))
-        return vertex(segment, 0);
-
+      if(is_degenerate(segment)){
+        res.dimension = 0;
+        res.index = 0;
+        res.projected_point = vertex(segment, 0);
+        return res;
+      }
       // Project query on segment supporting line
       const Point_3 proj = projection(segment.supporting_line(), query);
 
       Point_3 closest_point_on_segment;
-      bool inside = is_inside_segment_3(proj,segment,closest_point_on_segment,k);
+
+      bool inside = is_inside_segment_3(proj,segment, closest_point_on_segment, res.dimension, res.index, k);
 
       // If proj is inside segment, returns it
-      if ( inside )
-        return proj;
+      if ( inside ){
+        res.projected_point =  proj;
+        return res;
+      }
 
       // Else returns the constructed point
-      return closest_point_on_segment;
+      res.projected_point = closest_point_on_segment;
+      return res;
     }
+
+  public:
+    typename K::Point_3
+    operator()(const typename K::Point_3& query,
+               const typename K::Triangle_3& triangle,
+               const K& k) const
+    {
+      return projection_on_triangle_impl(query, triangle, k).projected_point;
+    }
+
+    typename K::Point_3
+    operator()(const typename K::Point_3& query,
+               const typename K::Segment_3& segment,
+               const K& k) const
+    {
+      return projection_on_segment_impl(query, segment, k).projected_point;
+    }
+
 
     // code for operator for plane and point is defined in
     // CGAL/Cartesian/function_objects.h and CGAL/Homogeneous/function_objects.h
   };
+
+
+  template <typename K>
+  class Construct_projected_point_and_location_3 :
+   Construct_projected_point_3<K>
+  {
+    typedef Construct_projected_point_3<K> Base;
+    using Base::projection_on_triangle_impl;
+    using Base::projection_on_segment_impl;
+
+  public:
+
+    typedef Projected_point_and_location<typename K::Point_3> result_type;
+
+    Projected_point_and_location<typename K::Point_3>
+    operator()(const typename K::Point_3& query,
+               const typename K::Triangle_3& triangle,
+               const K& k) const
+    {
+      return projection_on_triangle_impl(query, triangle, k);
+    }
+
+
+    Projected_point_and_location<typename K::Point_3>
+    operator()(const typename K::Point_3& query,
+               const typename K::Segment_3& segment,
+               const K& k) const
+    {
+      return projection_on_segment_impl(query, segment, k);
+    }
+
+    Projected_point_and_location<typename K::Point_3>
+    operator()(const typename K::Triangle_3& triangle,
+               const typename K::Point_3& origin) const
+    {
+      K k;
+      return this->operator()(origin, triangle, k);
+    }
+
+    Projected_point_and_location<typename K::Point_3>
+    operator()(const typename K::Segment_3& segment,
+               const typename K::Point_3& origin) const
+    {
+      K k;
+      return this->operator()(origin, segment, k);
+    }
+  };
+
+
+
+
 
   template <typename K>
   class Coplanar_3
