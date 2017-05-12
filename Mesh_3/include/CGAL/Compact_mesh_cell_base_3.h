@@ -480,15 +480,8 @@ public:
   template<typename GT_>
   const Bare_point& weighted_circumcenter(const GT_& gt) const
   {
-    std::cout << "Point : " << typeid(Bare_point).name() << std::endl;
-    std::cout << "GT_ : " << typeid(GT_).name() << std::endl;
-    std::cout << "GT_::Construct_weighted_circumcenter_3 : "
-      << typeid(GT_::Construct_weighted_circumcenter_3).name() << std::endl;
-    std::cout << "result_type : " << typeid(GT_::Construct_weighted_circumcenter_3::result_type).name() << std::endl;
-
-    //BOOST_STATIC_ASSERT(boost::is_same<Bare_point,
-    //  typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
-
+    BOOST_STATIC_ASSERT(boost::is_same<Bare_point, 
+      typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
     if (circumcenter_ == NULL) {
       this->try_to_set_circumcenter(
         new Bare_point(gt.construct_weighted_circumcenter_3_object()
