@@ -32,8 +32,8 @@
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
-#include <boost/core/is_same.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
