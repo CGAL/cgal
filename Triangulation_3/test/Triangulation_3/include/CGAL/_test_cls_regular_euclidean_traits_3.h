@@ -181,14 +181,6 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
          traits.coplanar_side_of_bounded_circle_3_object()(q0,q1,q2,q5) ==
                                                        CGAL::ON_UNBOUNDED_SIDE);
 
-  assert(power_test(wq5,wq1,wq0) == CGAL::ON_POSITIVE_SIDE &&
-         (Segment_3(wq5,wq1)).has_on(wq0));
-  assert(power_test(wq5,wq1,wq5) == CGAL::ON_ORIENTED_BOUNDARY &&
-         (Segment_3(wq5,wq1)).has_on(wq5));
-  assert(power_test(wq5,wq1,wq6) == CGAL::ON_NEGATIVE_SIDE &&
-         !(Segment_3(wq5,wq1)).has_on(wq6));
-  assert(power_test(wq3,wq2) == CGAL::ON_ORIENTED_BOUNDARY);
-
   // wc = (1,1,1) -3
   assert(power_test(wp01,wp1,wp2,wp3,wc) == CGAL::ON_NEGATIVE_SIDE);
   Weighted_point_3 wt2(wc.point(), wc.weight()+6);
