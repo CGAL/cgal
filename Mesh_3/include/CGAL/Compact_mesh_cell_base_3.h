@@ -39,7 +39,7 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 #include <boost/static_assert.hpp>
-#include <boost/core/is_same.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/atomic.h>
