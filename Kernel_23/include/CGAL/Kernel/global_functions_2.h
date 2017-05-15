@@ -359,6 +359,7 @@ compare_slope(const Segment_2<K> &s1, const Segment_2<K> &s2)
 #ifndef CGAL_NO_DEPRECATED_CODE
 // kept for backward compatibility
 template < class K >
+CGAL_DEPRECATED_MSG("This function is deprecated. CGAL::compare_slope() should be used instead")
 inline
 typename K::Comparison_result
 compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
@@ -368,6 +369,7 @@ compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
 
 // kept for backward compatibility
 template < class K >
+CGAL_DEPRECATED_MSG("This function is deprecated. CGAL::compare_slope() should be used instead")
 inline
 typename K::Comparison_result
 compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
