@@ -31,7 +31,7 @@
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/Regular_triangulation_3.h>
