@@ -44,7 +44,7 @@
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
-#include <CGAL/Periodic_3_triangulation_iterators_3.h>
+#include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
 
 #include <CGAL/Unique_hash_map.h>
 
@@ -2750,7 +2750,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(
   return vir_vertices[0][0][0];
 }
 #define CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
-#include <CGAL/Periodic_3_triangulation_dummy_36.h>
+#include <CGAL/internal/Periodic_3_triangulation_dummy_36.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 /** finds all cells that are in conflict with the currently added point

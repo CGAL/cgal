@@ -25,11 +25,9 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/basic.h>
+#include <CGAL/internal/Periodic_3_construct_point_3.h>
+#include <CGAL/internal/Functor_with_offset_points_adaptor.h>
 #include <CGAL/Periodic_3_offset_3.h>
-#include <CGAL/Traits_with_offsets_adaptor.h>
-#include <CGAL/Periodic_3_construct_point_3.h>
-#include <CGAL/internal/Has_boolean_tags.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
 namespace CGAL {
