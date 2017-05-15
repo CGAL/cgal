@@ -1024,9 +1024,8 @@ _side_of_sphere(const Cell_handle &c, const Point &q,
                            std::make_pair(q,oq)};
   const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
 
-  std::sort(points, points+5,
-            typename Base::template Perturbation_order<
-              typename Gt::Compare_xyz_3 >(geom_traits().compare_xyz_3_object()));
+  std::sort(points, points+5, typename Base::Perturbation_order(this));
+
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
   // 2 iterations are enough (cf paper)
