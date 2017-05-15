@@ -50,8 +50,8 @@ public:
 
   typedef typename Base::RT                          RT;
   typedef typename Base::FT                          FT;
-  typedef typename Base::Weighted_point_3            Weighted_point_3;
   typedef typename Base::Point_3                     Point_3;
+  typedef typename Base::Weighted_point_3            Weighted_point_3;
 
   typedef typename Base::Periodic_3_offset_3         Periodic_3_offset_3;
   typedef typename Base::Iso_cuboid_3                Iso_cuboid_3;

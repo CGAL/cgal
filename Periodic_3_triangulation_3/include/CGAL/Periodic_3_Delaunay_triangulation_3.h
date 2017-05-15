@@ -163,7 +163,6 @@ public:
   using Base::is_valid_conflict;
   using Base::locate;
   using Base::periodic_point;
-  using Base::segment;
   using Base::construct_point;
   using Base::convert_to_27_sheeted_covering;
 
@@ -656,6 +655,18 @@ private:
   }
   //@}
 public:
+  Point point(const Periodic_point& pp) const
+  {
+    // calls the base function with the correct (basic) point functor
+    return point(pp, geom_traits().construct_point_3_object());
+  }
+
+  Point point(Cell_handle c, int idx) const
+  {
+    // calls the base function with the correct (basic) point functor
+    return point(c, idx, geom_traits().construct_point_3_object());
+  }
+
   Periodic_point periodic_circumcenter(Cell_handle c) const {
     return Base::periodic_circumcenter(c, geom_traits().construct_circumcenter_3_object());
   }
