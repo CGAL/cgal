@@ -24,6 +24,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/internal/Static_filters/Periodic_3_power_side_of_oriented_power_sphere_3.h>
+#include <CGAL/internal/Periodic_3_regular_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 

@@ -706,7 +706,7 @@ public:
   }
 
 #define CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
-#include <CGAL/Periodic_3_regular_triangulation_dummy_288.h>
+#include <CGAL/internal/Periodic_3_regular_triangulation_dummy_288.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const

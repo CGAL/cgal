@@ -27,6 +27,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
+#include <CGAL/internal/Periodic_3_Delaunay_triangulation_remove_traits_3.h>
+
+#include <utility>
+
 namespace CGAL
 {
 
