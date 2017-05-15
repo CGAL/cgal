@@ -421,7 +421,7 @@ bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor
 /** 
  * \ingroup PkgBGLHelperFct
  * Creates an isolated triangle with border edges in `g` having `p0`, `p1`, and `p2` as points and adds it to the graph `g`.
- * \returns the non-border halfedge which has the target vertex associated with `p0`.
+ * \returns the non-border halfedge that has the target vertex associated with `p0`.
  **/ 
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
@@ -530,7 +530,7 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
 /** 
  * \ingroup PkgBGLHelperFct
  * Creates an isolated quad with border edges in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
- * \returns the non-border halfedge which has the target vertex associated with `p0`.
+ * \returns the non-border halfedge that has the target vertex associated with `p0`.
  **/ 
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
@@ -556,7 +556,7 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 /** 
  * \ingroup PkgBGLHelperFct
  * Creates an isolated hexahedron in `g` having `p0`, `p1`, ...\ , and `p7` as points and adds it to the graph `g`.
- * \returns the halfedge which has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
+ * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
  **/ 
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
@@ -610,7 +610,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 /** 
  * \ingroup PkgBGLHelperFct
  * Creates an isolated tetrahedron in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
- * \returns the halfedge which has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, and `p2`.
+ * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, and `p2`.
  **/ 
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
@@ -733,14 +733,14 @@ bool is_degenerate_triangle_face(
  * \brief Creates a regular prism.
  *
  * Creates a regular prism in `g`, having `nb_vertices` vertices in each of its bases.
- * If `center` is (0, 0, 0), then the point of the prism is (`radius`, 0.5*`height`, 0)
- * \param nb_vertices the number of vertices per base. It must be greater than or equals 3.
- * \param g the graph in which the regular prism will be created
- * \param center the point around which the regular prism will be created. It is the middle point of the prism's axis.
+ * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, 0.5*`height`, 0)
+ * \param nb_vertices the number of vertices per base. It must be greater than or equal to 3.
+ * \param g the graph in which the regular prism will be created.
+ * \param center the point around which the regular prism will be created. It is the middle point of the axis of the prism.
  * \param height the distance between the two bases.
  * \param radius the radius of the circle in which the bases are inscribed.
  * \param is_closed determines if the bases must be created or not.
- * \returns the halfedge which has the target vertex associated with the first point in the first face.
+ * \returns the halfedge that has the target vertex associated with the first point in the first face.
  */
 template<class Graph, class P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
@@ -829,13 +829,13 @@ make_regular_prism(
  *
  * Creates a pyramid in `g`, having `nb_vertices` vertices in its base.
  * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0.5*`height`, 0)
- * \param nb_vertices the number of vertices in the base. It must be greater than or equals 3.
+ * \param nb_vertices the number of vertices in the base. It must be greater than or equal to 3.
  * \param g the graph in which the pyramid will be created
  * \param base_center the center of the circle in which the base is inscribed.
  * \param height the distance between the base and the apex.
  * \param radius the radius of the circle in which the base is inscribed.
  * \param is_closed determines if the base must be created or not.
- * \returns the halfedge which has the target vertex associated with the apex point in the first face.
+ * \returns the halfedge that has the target vertex associated with the apex point in the first face.
  */
 template<class Graph, class P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
@@ -914,7 +914,7 @@ make_pyramid(
  * \param g the graph in which the icosahedron will be created.
  * \param center the center of the sphere in which the icosahedron is inscribed.
  * \param radius the radius of the sphere in which the icosahedron is inscribed.
- * \returns the halfedge which has the target vertex associated with the first point in the first face.
+ * \returns the halfedge that has the target vertex associated with the first point in the first face.
  */
 template<class Graph, class P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
