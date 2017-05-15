@@ -226,7 +226,6 @@ public:
 private:
   Geometric_traits  _gt;
   Triangulation_data_structure _tds;
-  Iso_cuboid _domain;
 
 protected:
   /// map of offsets for periodic copies of vertices
@@ -238,28 +237,27 @@ protected:
   /// conflict region.
   mutable std::vector<Vertex_handle> v_offsets;
 
-private:
+public:
   /// Determines if we currently compute in 3-cover or 1-cover.
   Covering_sheets _cover;
 
 public:
   /** @name Creation */ //@{
-  Periodic_3_triangulation_3(
-      const Iso_cuboid& domain,
-      const Geometric_traits& gt)
-    : _gt(gt), _tds(), _domain(domain)
+  Periodic_3_triangulation_3(const Iso_cuboid& domain,
+                             const Geometric_traits& gt)
+    : _gt(gt), _tds()
   {
-    _gt.set_domain(_domain);
+    set_domain(domain);
     typedef typename internal::Exact_field_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
     CGAL_USE_TYPE(NTC);
     CGAL_triangulation_precondition_code( NTC ntc; )
-    CGAL_triangulation_precondition(ntc(_domain.xmax())-ntc(_domain.xmin())
-                                    == ntc(_domain.ymax())-ntc(_domain.ymin()));
-    CGAL_triangulation_precondition(ntc(_domain.ymax())-ntc(_domain.ymin())
-                                    == ntc(_domain.zmax())-ntc(_domain.zmin()));
-    CGAL_triangulation_precondition(ntc(_domain.zmax())-ntc(_domain.zmin())
-                                    == ntc(_domain.xmax())-ntc(_domain.xmin()));
+    CGAL_triangulation_precondition(ntc(domain.xmax())-ntc(domain.xmin())
+                                    == ntc(domain.ymax())-ntc(domain.ymin()));
+    CGAL_triangulation_precondition(ntc(domain.ymax())-ntc(domain.ymin())
+                                    == ntc(domain.zmax())-ntc(domain.zmin()));
+    CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin())
+                                    == ntc(domain.xmax())-ntc(domain.xmin()));
     _cover = CGAL::make_array(3,3,3);
     init_tds();
   }
@@ -271,7 +269,6 @@ public:
   // Copy constructor duplicates vertices and cells
   Periodic_3_triangulation_3(const Periodic_3_triangulation_3& tr)
     : _gt(tr.geom_traits()),
-      _domain(tr._domain),
       _cover(tr._cover)
   { }
 
@@ -288,7 +285,6 @@ public:
   {
     std::swap(tr._gt, _gt);
     _tds.swap(tr._tds);
-    std::swap(_domain,tr._domain);
     std::swap(virtual_vertices,tr.virtual_vertices);
     std::swap(virtual_vertices_reverse,tr.virtual_vertices_reverse);
     std::swap(_cover, tr._cover);
@@ -324,14 +320,13 @@ public:
 
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Point>& /* hidden_points*/) {}
 
-  const Iso_cuboid& domain() const { return _domain; }
+  const Iso_cuboid& domain() const { return _gt.get_domain(); }
 
   virtual void update_cover_data_after_setting_domain () {}
 
   void set_domain(const Iso_cuboid& domain)
   {
     clear();
-    _domain = domain;
     _gt.set_domain(domain);
     update_cover_data_after_setting_domain();
   }
@@ -2099,11 +2094,11 @@ exact_periodic_locate
   cumm_off = start->offset(0) | start->offset(1)
            | start->offset(2) | start->offset(3);
   if (is_1_cover() && cumm_off != 0) {
-    if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(_domain.xmax()+_domain.xmin())))
+    if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(domain().xmax()+domain().xmin())))
       off_query += Offset(1,0,0);
-    if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(_domain.ymax()+_domain.ymin())))
+    if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(domain().ymax()+domain().ymin())))
       off_query += Offset(0,1,0);
-    if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(_domain.zmax()+_domain.zmin())))
+    if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(domain().zmax()+domain().zmin())))
       off_query += Offset(0,0,1);
   }
 
@@ -2274,11 +2269,11 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
   cumm_off = start->offset(0) | start->offset(1)
           | start->offset(2) | start->offset(3);
   if (is_1_cover() && cumm_off != 0) {
-    if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(_domain.xmax()+_domain.xmin())))
+    if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(domain().xmax()+domain().xmin())))
       off_query += Offset(1,0,0);
-    if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(_domain.ymax()+_domain.ymin())))
+    if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(domain().ymax()+domain().ymin())))
       off_query += Offset(0,1,0);
-    if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(_domain.zmax()+_domain.zmin())))
+    if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(domain().zmax()+domain().zmin())))
       off_query += Offset(0,0,1);
   }
 
@@ -2852,13 +2847,12 @@ inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
     Locate_type lt, Cell_handle c, int li, int lj,
     const Conflict_tester& tester, Point_hider& hider, CoverManager& cover_manager) {
-
-  CGAL_triangulation_assertion((_domain.xmin() <= p.x())
-                               && (p.x() < _domain.xmax()));
-  CGAL_triangulation_assertion((_domain.ymin() <= p.y())
-                               && (p.y() < _domain.ymax()));
-  CGAL_triangulation_assertion((_domain.zmin() <= p.z())
-                               && (p.z() < _domain.zmax()));
+  CGAL_triangulation_assertion((domain().xmin() <= p.x())
+                               && (p.x() < domain().xmax()));
+  CGAL_triangulation_assertion((domain().ymin() <= p.y())
+                               && (p.y() < domain().ymax()));
+  CGAL_triangulation_assertion((domain().zmin() <= p.z())
+                               && (p.z() < domain().zmax()));
 
   if (number_of_vertices() == 0) {
     Vertex_handle vh = create_initial_triangulation(p);
@@ -3508,12 +3502,12 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering()
         off[i] = Offset();
         get_vertex( it, i, vert[i], off[i]);
         it->set_vertex( i, vert[i]);
-        CGAL_triangulation_assertion(vert[i]->point()[0] < _domain.xmax());
-        CGAL_triangulation_assertion(vert[i]->point()[1] < _domain.ymax());
-        CGAL_triangulation_assertion(vert[i]->point()[2] < _domain.zmax());
-        CGAL_triangulation_assertion(vert[i]->point()[0] >= _domain.xmin());
-        CGAL_triangulation_assertion(vert[i]->point()[1] >= _domain.ymin());
-        CGAL_triangulation_assertion(vert[i]->point()[2] >= _domain.zmin());
+        CGAL_triangulation_assertion(vert[i]->point()[0] < domain().xmax());
+        CGAL_triangulation_assertion(vert[i]->point()[1] < domain().ymax());
+        CGAL_triangulation_assertion(vert[i]->point()[2] < domain().zmax());
+        CGAL_triangulation_assertion(vert[i]->point()[0] >= domain().xmin());
+        CGAL_triangulation_assertion(vert[i]->point()[1] >= domain().ymin());
+        CGAL_triangulation_assertion(vert[i]->point()[2] >= domain().zmin());
 
         // redirect also the cell pointer of the vertex.
         it->vertex(i)->set_cell(it);
@@ -3994,12 +3988,12 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
     // otherwise it has to be looked up as well as its offset.
     vh = it->second.first;
     off += it->second.second;
-    CGAL_triangulation_assertion(vh->point().x() < _domain.xmax());
-    CGAL_triangulation_assertion(vh->point().y() < _domain.ymax());
-    CGAL_triangulation_assertion(vh->point().z() < _domain.zmax());
-    CGAL_triangulation_assertion(vh->point().x() >= _domain.xmin());
-    CGAL_triangulation_assertion(vh->point().y() >= _domain.ymin());
-    CGAL_triangulation_assertion(vh->point().z() >= _domain.zmin());
+    CGAL_triangulation_assertion(vh->point().x() < domain().xmax());
+    CGAL_triangulation_assertion(vh->point().y() < domain().ymax());
+    CGAL_triangulation_assertion(vh->point().z() < domain().zmax());
+    CGAL_triangulation_assertion(vh->point().x() >= domain().xmin());
+    CGAL_triangulation_assertion(vh->point().y() >= domain().ymin());
+    CGAL_triangulation_assertion(vh->point().z() >= domain().zmin());
   }
 }
 
@@ -4049,7 +4043,6 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr)
   CGAL_triangulation_assertion((n/(cx*cy*cz))*cx*cy*cz == n);
 
   tr.tds().set_dimension((n==0?-2:3));
-  tr._domain = domain;
   tr._gt.set_domain(domain);
   tr._cover = CGAL::make_array(cx,cy,cz);
 
