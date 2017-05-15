@@ -1536,10 +1536,20 @@ protected:
   //@}
 
 public:
-  /** @name Functors */ //@{
-  template < class Cmp >
-  class Perturbation_order;
-  //@}
+  /** @name Functors */
+  class Perturbation_order
+  {
+    const Self *t;
+
+  public:
+    Perturbation_order(const Self *tr)
+      : t(tr) {}
+
+    template<typename P>
+    bool operator()(const P* p, const P* q) const {
+      return t->compare_xyz(*p, *q) == SMALLER;
+    }
+  };
 
 public:
   // undocumented access functions
@@ -1612,7 +1622,6 @@ public:
 
 protected:
   /** @name Friends */ //@{
-  friend class Perturbation_order<typename GT::Compare_xyz_3>;
   friend std::istream& operator>> <>
       (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr);
   friend std::ostream& operator<< <>
@@ -3259,30 +3268,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
   _tds.delete_cells(hole.begin(), hole.end());
   CGAL_triangulation_expensive_assertion(is_valid());
 }
-
-// ############################################################################
-// ############################################################################
-// ############################################################################
-template < class GT, class TDS >
-template < class Cmp >
-class Periodic_3_triangulation_3<GT, TDS>::Perturbation_order
-{
-  typedef GT                                            Geometric_traits;
-  typedef typename Geometric_traits::Point_3            Point;
-  typedef typename Geometric_traits::Compare_xyz_3      Compare_xyz_3;
-  typedef typename Periodic_3_triangulation_3<GT, TDS>::Periodic_point
-      Periodic_point;
-
-  Cmp _cmp;
-
-public:
-  Perturbation_order(const Cmp& cmp) : _cmp(cmp) {}
-
-  bool operator()(const Periodic_point *p, const Periodic_point *q) const
-  {
-    return (_cmp(p->first, q->first, p->second, q->second) == SMALLER);
-  }
-};
 
 // ############################################################################
 // ############################################################################
