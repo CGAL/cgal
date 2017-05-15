@@ -76,7 +76,7 @@ namespace internal{
                                get_const_property_map(vertex_point, pmesh));
     //Kernel
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-    GT gt = choose_param(get_param(np, geom_traits), GT());
+    GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
     //among the incoming edges of `v_max`, find one edge `e` with the minimal slope
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -187,7 +187,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                              get_const_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  GT gt = choose_param(get_param(np, geom_traits), GT());
+  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
   //find the vertex with maximal z coordinate
   typename boost::graph_traits<PolygonMesh>::vertex_iterator vbegin, vend;
