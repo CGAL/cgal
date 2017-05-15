@@ -77,6 +77,9 @@ public:
 
   typedef typename Gt::FT                       FT;
 
+  typedef typename Tr_Base::Periodic_segment_3             Periodic_segment_3;
+  typedef typename Tr_Base::Periodic_triangle_3            Periodic_triangle_3;
+  typedef typename Tr_Base::Periodic_tetrahedron_3         Periodic_tetrahedron_3;
   typedef typename Tr_Base::Periodic_segment               Periodic_segment;
   typedef typename Tr_Base::Periodic_triangle              Periodic_triangle;
   typedef typename Tr_Base::Periodic_tetrahedron           Periodic_tetrahedron;
@@ -156,6 +159,7 @@ public:
   using Tr_Base::is_1_cover;
   using Tr_Base::is_virtual;
   using Tr_Base::set_offsets;
+  using Tr_Base::point;
 #endif
 
   // For strict-ansi compliance
@@ -173,7 +177,6 @@ public:
   using Tr_Base::locate;
   using Tr_Base::find_conflicts;
   using Tr_Base::periodic_point;
-  using Tr_Base::segment;
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Tr_Base::inexact_locate;
 #endif
@@ -627,11 +630,11 @@ protected:
     return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s, o1,o2,o3,o4);
   }
 
-  Comparison_result compare_distance(const Weighted_point &p, const Weighted_point &q,
+  Comparison_result compare_distance(const Bare_point &p, const Weighted_point &q,
                                      const Weighted_point &r) const {
     return geom_traits().compare_power_distance_3_object()(p, q, r);
   }
-  Comparison_result compare_distance(const Weighted_point& p, const Weighted_point& q,
+  Comparison_result compare_distance(const Bare_point& p, const Weighted_point& q,
                                      const Weighted_point& r,
                                      const Offset &o_p, const Offset &o_q,
                                      const Offset &o_r) const {
@@ -651,9 +654,7 @@ protected:
                            const Offset &o_t) const
   {
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(
-             construct_weighted_point(p, o_p), construct_weighted_point(q, o_q),
-             construct_weighted_point(r, o_r), construct_weighted_point(s, o_s),
-             construct_weighted_point(t, o_t));
+             p, q, r, s, t, o_p, o_q, o_r, o_s, o_t);
   }
 
   Weighted_point construct_weighted_point(const Weighted_point& p, const Offset &o) const
@@ -663,6 +664,19 @@ protected:
   Weighted_point construct_weighted_point(const Periodic_weighted_point& pp) const
   {
     return construct_weighted_point(pp.first, pp.second);
+  }
+
+public:
+  Weighted_point point(const Periodic_weighted_point& pp) const
+  {
+    // calls the base function with the correct (weighted) point functor
+    return point(pp, geom_traits().construct_weighted_point_3_object());
+  }
+
+  Weighted_point point(Cell_handle c, int idx) const
+  {
+    // calls the base function with the correct (weighted) point functor
+    return point(c, idx, geom_traits().construct_weighted_point_3_object());
   }
 
 public:
@@ -695,17 +709,20 @@ public:
 #include <CGAL/Periodic_3_regular_triangulation_dummy_288.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
-  Vertex_handle nearest_power_vertex(const Weighted_point& p, Cell_handle start) const
+  Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
     if (number_of_vertices() == 0)
       return Vertex_handle();
 
     Locate_type lt;
     int li, lj;
-    Cell_handle c = locate(p, lt, li, lj, start);
+
+    typename Gt::Construct_weighted_point_3 p2wp =
+      geom_traits().construct_weighted_point_3_object();
+    Cell_handle c = locate(p2wp(p), lt, li, lj, start);
     if (lt == Tr_Base::VERTEX)
       return c->vertex(li);
-    const Conflict_tester tester(p, this);
+    const Conflict_tester tester(p2wp(p), this);
     Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
 
     // - start with the closest vertex from the located cell.
@@ -732,7 +749,7 @@ public:
     return get_original_vertex(nearest);
   }
 
-  Offset get_min_dist_offset(const Weighted_point & p, const Offset & o,
+  Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
                              const Vertex_handle vh) const {
     Offset mdo = get_offset(vh);
     Offset min_off = Offset(0,0,0);
@@ -760,7 +777,7 @@ public:
     return combine_offsets(mdo,min_off);
   }
 
-  Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Weighted_point & p,
+  Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Bare_point& p,
                                        const Offset & o) const
   {
     CGAL_triangulation_precondition(number_of_vertices() != 0);
@@ -853,21 +870,20 @@ public:
 
   /** @name Voronoi diagram */ //@{
   Bare_point dual(Cell_handle c) const {
-    return Gt().construct_point_3_object()(
-      construct_weighted_point(periodic_weighted_circumcenter(c)));
+    return Tr_Base::construct_point(periodic_weighted_circumcenter(c));
   }
 
-  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
+  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment_3& ps) const {
     return Tr_Base::canonical_dual_segment(c, i, ps,
       geom_traits().construct_weighted_circumcenter_3_object());
   }
 
-  Periodic_segment dual(const Facet & f) const {
+  Periodic_segment_3 dual(const Facet & f) const {
     return dual( f.first, f.second );
   }
 
-  Periodic_segment dual(Cell_handle c, int i) const{
-    Periodic_segment ps;
+  Periodic_segment_3 dual(Cell_handle c, int i) const{
+    Periodic_segment_3 ps;
     canonical_dual_segment(c,i,ps);
     return ps;
   }
@@ -896,17 +912,14 @@ public:
   }
 
   /// Volume computations
-
   FT dual_volume(Vertex_handle v) const {
     return Tr_Base::dual_volume(v, geom_traits().construct_weighted_circumcenter_3_object());
   }
 
   /// Centroid computations
-
   Bare_point dual_centroid(Vertex_handle v) const {
-    return Gt().construct_point_3_object()(
-      Tr_Base::dual_centroid(
-        v, geom_traits().construct_weighted_circumcenter_3_object()));
+    return Tr_Base::dual_centroid(
+             v, geom_traits().construct_weighted_circumcenter_3_object());
   }
 //@}
 
