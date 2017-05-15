@@ -20,6 +20,7 @@
         <file>resources/right.png</file>
         <file>resources/up.png</file>
         <file>resources/down.png</file>
+        <file>resources/hexahedron.png</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>

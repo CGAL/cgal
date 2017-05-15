@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>607</height>
+    <width>692</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,485 +15,1025 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QGroupBox" name="prismGroupBox">
-       <property name="title">
-        <string/>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0">
-        <item>
-         <layout class="QHBoxLayout" name="prismLayout" stretch="1,0">
-          <item>
-           <widget class="QLabel" name="prismLabel">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the base of the cylinder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>#Points:</string>
-            </property>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>3</number>
+     </property>
+     <widget class="QWidget" name="prismPage">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="prismLayout" stretch="1,0">
+         <item>
+          <widget class="QLabel" name="prismLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the base of the cylinder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>#Points:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="prismSpinBox">
+           <property name="minimum">
+            <number>3</number>
+           </property>
+           <property name="maximum">
+            <number>360000</number>
+           </property>
+           <property name="value">
+            <number>36</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,1,0,0,0">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The coordinates of the prism's center.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Center:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="prismXSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>-1000000000000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="prismYSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>-1000000000000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="prismZSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>-1000000000000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The prisms height.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Height:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="prismHeightSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the circle in which the base is inscribed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Base Radius:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="prismBaseSpinBox">
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is unmarked, the bases will not be created.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Closed: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="prismCheckBox">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="spherePage">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QHBoxLayout" name="sphereLayout" stretch="1,0">
+         <item>
+          <widget class="QLabel" name="sphereLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the sphere will be 3^precision*10+2.&lt;/p&gt;&lt;p&gt;This is the number of times the sqrt3-subdivision will be applied to the original icosahedron.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Precision:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="SphereSpinBox">
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>60</number>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
+           <string>Classic</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="4,1,0,0,0">
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The center of the sphere.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Center:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="sphereXSpinBox">
+               <property name="minimum">
+                <double>-1000000000000000000.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>1000000000000000000.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="sphereYSpinBox">
+               <property name="minimum">
+                <double>-1000000000000000000.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>1000000000000000000.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="sphereZSpinBox">
+               <property name="minimum">
+                <double>-1000000000000000000.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>1000000000000000000.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the sphere.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Radius:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="sphereRadiusSpinBox">
+               <property name="maximum">
+                <double>1000000000000000000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_2">
+          <attribute name="title">
+           <string>Single Line</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The coordinates of the center of the sphere, followed by the radius of the sphere.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Center and Radius:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="center_radius_lineEdit">
+               <property name="text">
+                <string>0.0 0.0 0.0 1.0</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pyramidPage">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="pyramidLayout" stretch="1,0">
+         <item>
+          <widget class="QLabel" name="pyramidLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the base of the pyramid. Must be at least 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>#Points:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="pyramidSpinBox">
+           <property name="minimum">
+            <number>3</number>
+           </property>
+           <property name="maximum">
+            <number>360000</number>
+           </property>
+           <property name="value">
+            <number>36</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="4,1,0,0,0">
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The coordinates of the pyramid's apex.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Center:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="pyramidXSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>-1000000000000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="pyramidYSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>-1000000000000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="pyramidZSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>-1000000000000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,0">
+         <item>
+          <widget class="QLabel" name="label_12">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pyramid's height.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Height:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="pyramidHeightSpinBox">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="0,0">
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the circle in which the base is inscribed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Base Radius:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="pyramidBaseSpinBox">
+           <property name="maximum">
+            <double>1000000000000000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is unmarked, the base will not be created.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Closed: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="pyramidCheckBox">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="hexahedronPage">
+      <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../../Polyhedron_3.qrc">:/cgal/icons/resources/hexahedron.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QTabWidget" name="tabWidget_2">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="tab_3">
+            <attribute name="title">
+             <string>Hexahedron</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,1,0,1">
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="p0xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="1">
+                <widget class="QDoubleSpinBox" name="p2zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QDoubleSpinBox" name="p1zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="10" column="1">
+                <widget class="QDoubleSpinBox" name="p3yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QDoubleSpinBox" name="p4xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="1">
+                <widget class="QDoubleSpinBox" name="p3xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="3">
+                <widget class="QDoubleSpinBox" name="p5xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>P0:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="3">
+                <widget class="QDoubleSpinBox" name="p6xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_10">
+                 <property name="text">
+                  <string>P1:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="3">
+                <widget class="QDoubleSpinBox" name="p7xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLabel" name="label_17">
+                 <property name="text">
+                  <string>P4:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="0">
+                <widget class="QLabel" name="label_16">
+                 <property name="text">
+                  <string>P3:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="label_15">
+                 <property name="text">
+                  <string>P2:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="p0yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="2">
+                <widget class="QLabel" name="label_19">
+                 <property name="text">
+                  <string>P6:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QLabel" name="label_18">
+                 <property name="text">
+                  <string>P5:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="2">
+                <widget class="QLabel" name="label_20">
+                 <property name="text">
+                  <string>P7:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QDoubleSpinBox" name="p1yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QDoubleSpinBox" name="p2xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QDoubleSpinBox" name="p1xBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="1">
+                <widget class="QDoubleSpinBox" name="p2yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="p0zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="11" column="1">
+                <widget class="QDoubleSpinBox" name="p3zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="11" column="3">
+                <widget class="QDoubleSpinBox" name="p7zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="10" column="3">
+                <widget class="QDoubleSpinBox" name="p7yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="3">
+                <widget class="QDoubleSpinBox" name="p6zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="3">
+                <widget class="QDoubleSpinBox" name="p6yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="3">
+                <widget class="QDoubleSpinBox" name="p5zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>-0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="3">
+                <widget class="QDoubleSpinBox" name="p5yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="3">
+                <widget class="QDoubleSpinBox" name="p4zBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <widget class="QDoubleSpinBox" name="p4yBox">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000000000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="prismSpinBox">
-            <property name="minimum">
-             <number>3</number>
-            </property>
-            <property name="maximum">
-             <number>360000</number>
-            </property>
-            <property name="value">
-             <number>36</number>
-            </property>
+           <widget class="QWidget" name="tab_4">
+            <attribute name="title">
+             <string>Bbox</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_21">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Coordinates of the minimum and the maximum of the Bbox.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Extrema:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="extremaEdit">
+               <property name="text">
+                <string>-0.5 -0.5 -0.5 0.5 0.5 0.5</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,1,0,0,0">
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The coordinates of the prism's center.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Center:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="prismXSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="prismYSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="prismZSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
-          <item>
-           <widget class="QLabel" name="label_3">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The prisms height.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Height:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="prismHeightSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the circle in which the base is inscribed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Base Radius:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="prismBaseSpinBox">
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is unmarked, the bases will not be created.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Closed: </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="prismCheckBox">
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="pyramidGroupBox">
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
-        <item>
-         <layout class="QHBoxLayout" name="prismLayout_3" stretch="1,0">
-          <item>
-           <widget class="QLabel" name="pyramidLabel">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the base of the pyramid. Must be at least 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>#Points:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="pyramidSpinBox">
-            <property name="minimum">
-             <number>3</number>
-            </property>
-            <property name="maximum">
-             <number>360000</number>
-            </property>
-            <property name="value">
-             <number>36</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="4,1,0,0,0">
-          <item>
-           <widget class="QLabel" name="label_11">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The coordinates of the pyramid's apex.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Center:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="pyramidXSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="pyramidYSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="pyramidZSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,0">
-          <item>
-           <widget class="QLabel" name="label_12">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pyramid's height.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Height:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="pyramidHeightSpinBox">
-            <property name="decimals">
-             <number>2</number>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="0,0">
-          <item>
-           <widget class="QLabel" name="label_13">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the circle in which the base is inscribed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Base Radius:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="pyramidBaseSpinBox">
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_14">
-          <item>
-           <widget class="QLabel" name="label_14">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is unmarked, the base will not be created.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Closed: </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="pyramidCheckBox">
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="sphereGroupBox">
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0">
-        <item>
-         <layout class="QHBoxLayout" name="sphereLayout" stretch="1,0">
-          <item>
-           <widget class="QLabel" name="sphereLabel">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of points in the sphere will be 3^precision*10+2.&lt;/p&gt;&lt;p&gt;This is the number of times the sqrt3-subdivision will be applied to the original icosahedron.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Precision:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="SphereSpinBox">
-            <property name="minimum">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <number>60</number>
-            </property>
-            <property name="value">
-             <number>0</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="4,1,0,0,0">
-          <item>
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Center:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="sphereXSpinBox">
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="sphereYSpinBox">
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="sphereZSpinBox">
-            <property name="minimum">
-             <double>-1000000000000000000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
-          <item>
-           <widget class="QLabel" name="label_6">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The radius of the sphere.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Radius:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="sphereRadiusSpinBox">
-            <property name="maximum">
-             <double>1000000000000000000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -520,7 +1060,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../Polyhedron_3.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

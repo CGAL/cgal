@@ -46,7 +46,7 @@ public :
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    QAction* actionCube = new QAction("Generate Cube", mw);
+    QAction* actionCube = new QAction("Generate Hexahedron", mw);
     QAction* actionPrism = new QAction("Generate Regular Prism", mw);
     QAction* actionPyramid = new QAction("Generate Pyramid", mw);
     QAction* actionSphere = new QAction("Generate Sphere", mw);
@@ -88,24 +88,55 @@ private:
   QList<QAction*> _actions;
 }; //end of class Basic_volumes_generator_plugin
 
-//make a non triangle cube
+//make a non triangle hexahedron
 void Basic_volumes_generator_plugin::on_actionCube_triggered()
 {
+  VolumeDialog *dialog = new VolumeDialog();
+  dialog->stackedWidget->setCurrentIndex(3);
+  //opens the dialog
+  if(!dialog->exec())
+    return;
+
   Polyhedron cube;
-  CGAL::make_hexahedron(Point(-0.5,-0.5,-0.5),
-                        Point(0.5,-0.5,-0.5),
-                        Point(0.5,0.5,-0.5),
-                        Point(-0.5,0.5,-0.5),
+  if(dialog->tabWidget_2->currentIndex() == 0)
+  {
+    CGAL::make_hexahedron(Point(dialog->p0xBox->value(), dialog->p0yBox->value(), dialog->p0zBox->value()),
+                          Point(dialog->p1xBox->value(), dialog->p1yBox->value(), dialog->p1zBox->value()),
+                          Point(dialog->p2xBox->value(), dialog->p2yBox->value(), dialog->p2zBox->value()),
+                          Point(dialog->p3xBox->value(), dialog->p3yBox->value(), dialog->p3zBox->value()),
 
-                        Point(-0.5,0.5,0.5),
-                        Point(-0.5,-0.5,0.5),
-                        Point(0.5,-0.5,0.5),
-                        Point(0.5,0.5,0.5),
-                        cube);
+                          Point(dialog->p4xBox->value(), dialog->p4yBox->value(), dialog->p4zBox->value()),
+                          Point(dialog->p5xBox->value(), dialog->p5yBox->value(), dialog->p5zBox->value()),
+                          Point(dialog->p6xBox->value(), dialog->p6yBox->value(), dialog->p6zBox->value()),
+                          Point(dialog->p7xBox->value(), dialog->p7yBox->value(), dialog->p7zBox->value()),
+                          cube);
+  }
+  else
+  {
+    QString text = dialog->extremaEdit->text();
+    QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    if (list.isEmpty()) return;
+    if (list.size()!=6){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consists of 6 doubles.");
+      msgBox->exec();
+      return;
+    }
 
+    CGAL::make_hexahedron(Point(list.at(0).toDouble(),list.at(1).toDouble(),list.at(2).toDouble()),
+                          Point(list.at(3).toDouble(),list.at(1).toDouble(),list.at(2).toDouble()),
+                          Point(list.at(3).toDouble(),list.at(1).toDouble(),list.at(5).toDouble()),
+                          Point(list.at(0).toDouble(),list.at(1).toDouble(),list.at(5).toDouble()),
 
+                          Point(list.at(0).toDouble(),list.at(4).toDouble(),list.at(5).toDouble()),
+                          Point(list.at(0).toDouble(),list.at(4).toDouble(),list.at(2).toDouble()),
+                          Point(list.at(3).toDouble(),list.at(4).toDouble(),list.at(2).toDouble()),
+                          Point(list.at(3).toDouble(),list.at(4).toDouble(),list.at(5).toDouble()),
+                          cube);
+  }
   Scene_polyhedron_item* cube_item = new Scene_polyhedron_item(cube);
-  cube_item->setName(QString("Cube"));
+  cube_item->setName(QString("Hexahedron"));
   scene->addItem(cube_item);
 }
 //make a prism
@@ -113,9 +144,7 @@ void Basic_volumes_generator_plugin::on_actionPrism_triggered()
 {
   //gets the precision parameter
   VolumeDialog *dialog = new VolumeDialog();
-  dialog->sphereGroupBox->setVisible(false);
-  dialog->pyramidGroupBox->setVisible(false);
-  dialog->prismGroupBox->setVisible(true);
+  dialog->stackedWidget->setCurrentIndex(0);
   //opens the dialog
   if(!dialog->exec())
     return;
@@ -147,9 +176,8 @@ void Basic_volumes_generator_plugin::on_actionPyramid_triggered()
 {
   //gets the precision parameter
   VolumeDialog *dialog = new VolumeDialog();
-  dialog->sphereGroupBox->setVisible(false);
-  dialog->prismGroupBox->setVisible(false);
-  dialog->pyramidGroupBox->setVisible(true);
+  dialog->stackedWidget->setCurrentIndex(2);
+
   //opens the dialog
   if(!dialog->exec())
     return;
@@ -181,17 +209,35 @@ void Basic_volumes_generator_plugin::on_actionSphere_triggered()
 {
   //gets the precision parameter
   VolumeDialog *dialog = new VolumeDialog();
-  dialog->prismGroupBox->setVisible(false);
-  dialog->pyramidGroupBox->setVisible(false);
-  dialog->sphereGroupBox->setVisible(true);
+  dialog->stackedWidget->setCurrentIndex(1);
   //opens the dialog
   if(!dialog->exec())
     return;
   int precision = dialog->SphereSpinBox->value();
-  double radius = dialog->sphereRadiusSpinBox->value();
-  Point center(dialog->sphereXSpinBox->value(),
+  double radius;
+  Point center;
+  if(dialog->tabWidget->currentIndex() == 0)
+  {
+    radius = dialog->sphereRadiusSpinBox->value();
+    center = Point(dialog->sphereXSpinBox->value(),
                dialog->sphereYSpinBox->value(),
                dialog->sphereZSpinBox->value());
+  }
+  else
+  {
+    QString text = dialog->center_radius_lineEdit->text();
+    QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    if (list.isEmpty()) return;
+    if (list.size()!=4){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consists of four doubles.");
+      msgBox->exec();
+      return;
+    }
+    radius = list.at(3).toDouble();
+    center = Point(list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
+  }
   Polyhedron sphere;
   make_icosahedron(sphere, center, radius);
   if(precision !=0)
