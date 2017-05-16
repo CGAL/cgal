@@ -2019,8 +2019,16 @@ private: //------------------------------------------------------- private data
 
 
 
+/// @endcond
+
+  /// \relates Surface_mesh
+  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
+  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
+  /// Vertex texture coordinates are ignored.
+  /// \pre `operator>>(std::istream&,const P&)` must be defined.
+
   template <typename P>
-  bool read_off_clear(std::istream& is, Surface_mesh<P>& sm)
+  bool read_off(std::istream& is, Surface_mesh<P>& sm)
   {
    typedef Surface_mesh<P> Mesh;
    typedef typename Kernel_traits<P>::Kernel K;
@@ -2028,7 +2036,6 @@ private: //------------------------------------------------------- private data
    typedef typename Mesh::Face_index Face_index;
    typedef typename Mesh::Vertex_index Vertex_index;
    typedef typename Mesh::size_type size_type;
-    sm.clear();
     int n, f, e;
     std::string off;
     is >> sm_skip_comments;
@@ -2037,7 +2044,8 @@ private: //------------------------------------------------------- private data
 
     is >> n >> f >> e;
 
-    sm.reserve(n,2*f,e);
+    sm.reserve(sm.num_vertices()+n, sm.num_faces()+2*f, sm.num_edges()+e);
+    std::vector<Vertex_index> vertexmap(n);
     P p;
     Vector_3 v;
     typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
@@ -2055,6 +2063,7 @@ private: //------------------------------------------------------- private data
       is >> sm_skip_comments;
       is >> p;
       Vertex_index vi= sm.add_vertex(p);
+      vertexmap[i] = vi;
       if(v_has_normals){
         is >> v;
         vnormal[vi] = v;
@@ -2079,9 +2088,8 @@ private: //------------------------------------------------------- private data
          }
        }
     }
-    std::vector<size_type> vr;
-    std::size_t d;
-
+    std::vector<Vertex_index> vr;
+    size_type d, vi;
     bool fcolored = false;
     typename Mesh::template Property_map<Face_index,CGAL::Color> fcolor;
 
@@ -2090,7 +2098,8 @@ private: //------------------------------------------------------- private data
       is >> d;
       vr.resize(d);
       for(std::size_t j=0; j<d; j++){
-        is >> vr[j];
+        is >> vi;
+        vr[j] = vertexmap[vi];
       }
       Face_index fi = sm.add_face(vr);
       if(fi == sm.null_face())
@@ -2121,27 +2130,7 @@ private: //------------------------------------------------------- private data
     }
     return is.good();
   }
-/// @endcond
 
-  /// \relates Surface_mesh
-  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
-  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
-  /// Vertex texture coordinates are ignored.
-  /// \pre `operator>>(std::istream&,const P&)` must be defined.
-
-  template <typename P>
-  bool read_off(std::istream& is, Surface_mesh<P>& sm)
-  {
-    if( (sm.num_vertices() == 0) && (sm.num_halfedges() == 0)&& (sm.num_faces() == 0) ){
-      return read_off_clear(is,sm);
-    }
-    Surface_mesh<P> other;
-    if(read_off_clear(is,other)){
-      copy_face_graph(other,sm);
-      return true;
-    }
-    return false;
-  }
 
  
   /// \relates Surface_mesh
