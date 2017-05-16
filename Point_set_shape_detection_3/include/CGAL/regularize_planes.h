@@ -628,7 +628,7 @@ void regularize_planes (PlaneRange& planes,
     (points, point_map, planes.size(), index_map, centroids, areas);
 
   tolerance_angle = tolerance_angle * (FT)CGAL_PI / (FT)(180);
-  FT tolerance_cosangle = (FT)1. - std::cos (tolerance_angle);
+  FT tolerance_cosangle = (FT)1. - std::cos (tolerance_angle / 2);
   FT tolerance_cosangle_ortho = std::cos ((FT)0.5 * (FT)CGAL_PI - tolerance_angle);
       
   // clustering the parallel primitives and store them in clusters
