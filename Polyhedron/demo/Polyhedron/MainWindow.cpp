@@ -1469,7 +1469,7 @@ void MainWindow::on_actionLoad_triggered()
   std::vector<QColor> colors_;
   colors_.reserve(nb_files);
   compute_color_map(QColor(100, 100, 255),//Scene_item's default color
-                    nb_files,
+                    static_cast<unsigned>(nb_files),
                     std::back_inserter(colors_));
   std::size_t nb_item = -1;
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
@@ -1973,7 +1973,7 @@ void MainWindow::colorItems()
   std::vector<QColor> colors_;
   colors_.reserve(nb_files);
   compute_color_map(scene->item(scene->selectionIndices().last())->color(),
-                    nb_files,
+                    static_cast<unsigned>(nb_files),
                     std::back_inserter(colors_));
   std::size_t nb_item = -1;
   Q_FOREACH(int id, scene->selectionIndices())
