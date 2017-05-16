@@ -35,6 +35,8 @@
 #include <CGAL/internal/deprecation_warning.h>
 */
 
+#include <CGAL/config.h>
+
 namespace CGAL { 
 
 template < class R, class W = typename R::RT>
