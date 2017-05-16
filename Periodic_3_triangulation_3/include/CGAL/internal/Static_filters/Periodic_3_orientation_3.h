@@ -34,17 +34,21 @@
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
-template < typename K_base >
+template < class K, class Orientation_3_base >
 class Periodic_3_orientation_3
-  : public K_base::Orientation_3
+  : public Orientation_3_base
 {
-  typedef typename K_base::Orientation_3    Base;
-  typedef typename K_base::FT               FT;
-  typedef typename K_base::Point_3          Point_3;
-  typedef typename K_base::Vector_3         Vector_3;
-  typedef typename K_base::Iso_cuboid_3     Iso_cuboid_3;
-  typedef typename K_base::Sphere_3         Sphere_3;
-  typedef CGAL::Periodic_3_offset_3         Offset;
+  typedef Orientation_3_base           Base;
+
+public:
+  typedef K                            Kernel;
+
+  typedef typename K::FT               FT;
+  typedef typename K::Point_3          Point_3;
+  typedef typename K::Vector_3         Vector_3;
+  typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
+  typedef typename K::Sphere_3         Sphere_3;
+  typedef CGAL::Periodic_3_offset_3    Offset;
 
 public:
   const Iso_cuboid_3 * const _dom;
@@ -52,10 +56,9 @@ public:
 public:
  typedef typename Base::result_type  result_type;
 
- template <class EX, class AP>
  Periodic_3_orientation_3(const Iso_cuboid_3 * const dom,
-                          const EX * dom_e, const AP * dom_f)
-   : Base(dom_e,dom_f), _dom(dom)
+                          const Orientation_3_base& o3b)
+   : Base(o3b), _dom(dom)
  { }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6

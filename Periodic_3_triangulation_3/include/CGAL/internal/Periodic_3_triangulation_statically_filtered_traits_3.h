@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
@@ -29,19 +25,28 @@
 
 namespace CGAL {
 
-// The `Traits` argument is supposed to provide exact primitives.
-template < typename Traits >
+template< typename K,
+          typename Off = typename CGAL::Periodic_3_offset_3>
 class Periodic_3_triangulation_statically_filtered_traits_3
-    : public Traits
+    : public Periodic_3_triangulation_filtered_traits_base_3<K, Off>
 {
-  typedef Periodic_3_triangulation_statically_filtered_traits_3<Traits> Self;
+  typedef Periodic_3_triangulation_statically_filtered_traits_3<K, Off> Self;
+  typedef Periodic_3_triangulation_filtered_traits_base_3<K, Off>       Base;
 
 public:
-  typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
-    Orientation_3;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_triangulation_statically_filtered_traits_3(const Iso_cuboid_3& domain,
+                                                        const K& k)
+    : Base(domain, k)
+  { }
+
+  typedef internal::Static_filters_predicates::Periodic_3_orientation_3<
+            K, typename Base::Orientation_3> Orientation_3;
 
   Orientation_3 orientation_3_object() const {
-    return Orientation_3(&this->_domain,&this->_domain_e,&this->_domain_f);
+    return Orientation_3(&this->_domain,
+                         this->Base::orientation_3_object());
   }
 };
 

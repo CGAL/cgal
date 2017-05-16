@@ -36,14 +36,18 @@ namespace internal {
 
 namespace Static_filters_predicates {
 
-template < typename K_base >
+template < class K, class Side_of_oriented_sphere_3_base >
 class Periodic_3_side_of_oriented_sphere_3
-  : public K_base::Side_of_oriented_sphere_3
+  : public Side_of_oriented_sphere_3_base
 {
-  typedef typename K_base::Side_of_oriented_sphere_3    Base;
-  typedef typename K_base::FT                           FT;
-  typedef typename K_base::Point_3                      Point_3;
-  typedef typename K_base::Iso_cuboid_3                 Iso_cuboid_3;
+  typedef Side_of_oriented_sphere_3_base                Base;
+
+public:
+  typedef K                                             Kernel;
+
+  typedef typename K::FT                                FT;
+  typedef typename K::Point_3                           Point_3;
+  typedef typename K::Iso_cuboid_3                      Iso_cuboid_3;
   typedef CGAL::Periodic_3_offset_3                     Offset;
 
 public:
@@ -52,11 +56,9 @@ public:
 public:
   typedef typename Base::result_type  result_type;
 
-  template <class EX, class AP>
   Periodic_3_side_of_oriented_sphere_3(const Iso_cuboid_3 * dom,
-                                       const EX * dom_e,
-                                       const AP * dom_f)
-      : Base(dom_e,dom_f), _dom(dom) { }
+                                       const Side_of_oriented_sphere_3_base& sop3)
+      : Base(sop3), _dom(dom) { }
 
   Oriented_side
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,
