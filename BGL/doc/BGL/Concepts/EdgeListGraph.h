@@ -16,6 +16,7 @@ class EdgeListGraph{};
 /*! \relates EdgeListGraph
  * returns an iterator range over all edges.
  */
+template <typename EdgeListGraph>
 std::pair<boost::graph_traits<EdgeListGraph>::edge_iterator,
           boost::graph_traits<EdgeListGraph>::edge_iterator>
 edges(const EdgeListGraph& g);
@@ -26,6 +27,7 @@ edges(const EdgeListGraph& g);
   \attention `num_edges()` may return a number larger than `std::distance(edges(g).first, edges(g).second)`.
   This is the case for implementations only marking edges deleted in the edge container.
  */
+template <typename EdgeListGraph>
 boost::graph_traits<EdgeListGraph>::ver_size_type
 num_edges(const EdgeListGraph& g);
 
@@ -33,12 +35,14 @@ num_edges(const EdgeListGraph& g);
 /*! \relates EdgeListGraph
 returns the source vertex of `h`.
  */
+template <typename EdgeListGraph>
 boost::graph_traits<EdgeListGraph>::vertex_descriptor
-source(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, EdgeListGraph& g);
+source(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, const EdgeListGraph& g);
 
 
 /*! \relates EdgeListGraph
 returns the target vertex of `h`.
  */
+template <typename EdgeListGraph>
 boost::graph_traits<EdgeListGraph>::vertex_descriptor
-target(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, EdgeListGraph& g);
+target(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, const EdgeListGraph& g);

@@ -16,7 +16,7 @@ class FaceListGraph{};
 /*! \relates FaceListGraph
  * returns an iterator range over all faces.
  */
-
+template <typename FaceListGraph>
 std::pair<boost::graph_traits<FaceListGraph>::face_iterator,
           boost::graph_traits<FaceListGraph>::face_iterator>
 faces(const FaceListGraph& g);
@@ -27,7 +27,7 @@ faces(const FaceListGraph& g);
   \attention `num_faces()` may return a number larger than `std::distance(faces(g).first, faces(g).second)`.
   This is the case for implementations only marking faces deleted in the face container.
  */
-
+template <typename FaceListGraph>
 boost::graph_traits<FaceListGraph>::face_size_type
 num_faces(const FaceListGraph& g);
 

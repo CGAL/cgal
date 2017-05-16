@@ -16,7 +16,7 @@ class VertexListGraph{};
 /*! \relates VertexListGraph
  * returns an iterator range over all vertices.
  */
-
+template <typename VertexListGraph>
 std::pair<boost::graph_traits<VertexListGraph>::vertex_iterator,
           boost::graph_traits<VertexListGraph>::vertex_iterator>
 vertices(const VertexListGraph& g);
@@ -27,7 +27,7 @@ vertices(const VertexListGraph& g);
   \attention `num_vertices()` may return a number larger than `std::distance(vertices(g).first, vertices(g).second)`.
   This is the case for implementations only marking vertices deleted in the vertex container.
  */
-
+template <typename VertexListGraph>
 boost::graph_traits<VertexListGraph>::ver_size_type
 num_vertices(const VertexListGraph& g);
 
