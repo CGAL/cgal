@@ -198,7 +198,8 @@ namespace Shape_detection_3 {
       My_point_map m_index_map;
       Tree& m_tree;
       FT m_cluster_epsilon;
-      mutable std::vector<FT> score;
+      mutable boost::shared_ptr<std::vector<std::size_t> > nb_points;
+      mutable boost::shared_ptr<std::vector<FT> > score;
       
     public:
       Sort_by_planarity (Input_iterator first,
@@ -210,18 +211,22 @@ namespace Shape_detection_3 {
         , m_index_map (index_map)
         , m_tree (tree)
         , m_cluster_epsilon (cluster_epsilon)
-        , score (size, -1.) { }
+        , nb_points (new std::vector<std::size_t>(size, 0))
+        , score (new std::vector<FT>(size, -1.)) { }
 
       FT compute_score (const std::size_t& idx) const
       {
         static std::vector<std::size_t> neighbors;
         
         neighbors.clear();
-        Sphere fs (get(m_point_map, *(m_first + idx)), m_cluster_epsilon, 0, m_tree.traits());
+        Sphere fs (get(m_point_map, *(m_first + idx)), m_cluster_epsilon * 2, 0, m_tree.traits());
         m_tree.search (std::back_inserter (neighbors), fs);
 
+        (*nb_points)[idx] = neighbors.size();
+        
         Plane dummy;
-        return CGAL::linear_least_squares_fitting_3
+        (*score)[idx]
+          = CGAL::linear_least_squares_fitting_3
           (boost::make_transform_iterator (neighbors.begin(),
                                            CGAL::Property_map_to_unary_function<My_point_map>(m_index_map)),
            boost::make_transform_iterator (neighbors.end(),
@@ -232,12 +237,14 @@ namespace Shape_detection_3 {
       
       bool operator() (const std::size_t& a, const std::size_t& b) const
       {
-        if (score[a] == -1.)
-          score[a] = compute_score(a);
-        if (score[b] == -1.)
-          score[b] = compute_score(b);
+        if ((*score)[a] == -1.)
+          (*score)[a] = compute_score(a);
+        if ((*score)[b] == -1.)
+          (*score)[b] = compute_score(b);
 
-        return score[a] > score[b];
+        if ((*nb_points)[a] != (*nb_points)[b])
+          return (*nb_points)[a] > (*nb_points)[b];
+        return (*score)[a] > (*score)[b];
       }
     };
 
@@ -497,22 +504,32 @@ namespace Shape_detection_3 {
                  sorted_indices.begin());
 #define SORT_INDICES
 #ifdef SORT_INDICES
+//      std::random_shuffle (sorted_indices.begin(), sorted_indices.end());
 
-      std::sort (sorted_indices.begin(), sorted_indices.end(),
+//      std::size_t nb_sorted = m_num_total_points / m_options.min_points;
+      std::sort (sorted_indices.begin(),
+                 sorted_indices.end(), //(sorted_indices.begin() + nb_sorted * 2),
                  Sort_by_planarity(m_input_iterator_first, m_point_map, m_index_map,
                                    m_num_total_points, *m_tree, m_options.cluster_epsilon));
+
+//      std::random_shuffle (sorted_indices.begin() + nb_sorted, sorted_indices.end());
 #endif
 
+      std::ofstream log ("log.plot");
+      std::vector<double> fits(m_num_total_points, -1.);
+      std::size_t m_num_available_points = m_num_total_points;
       for (std::size_t I = 0; I < m_num_total_points; ++ I)
       {
+        log << m_num_available_points << std::endl;
         std::size_t i = sorted_indices[I];
+        
         Input_iterator it = m_input_iterator_first + i;
         
         if (m_shape_index[i] != -1)
           continue;
 
         m_shape_index[i] = class_index++;
-
+        
         int conti = 0; 	//for accelerate least_square fitting 
 
         Plane optimal_plane(get(m_point_map, *it),
@@ -610,7 +627,8 @@ namespace Shape_detection_3 {
         if (index_container.size() >= m_options.min_points)
         {
           Shape *p = (Shape *) (*(m_shape_factories.begin()))();
-
+          m_num_available_points -= index_container.size();
+          
           p->compute (index_container,  m_input_iterator_first, m_traits,
                       m_point_map, m_normal_map, m_options.epsilon, m_options.normal_threshold);
           p->m_indices.clear();
@@ -628,6 +646,7 @@ namespace Shape_detection_3 {
             m_shape_index[*icit] = -1;
         }
       }
+
       return true;
       
     }
