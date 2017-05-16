@@ -1004,7 +1004,7 @@ public:
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
   /// \pre InputIterator must be a model of `InputIterator`.
-  /// \pre The value type of `InputIterator` must be `boost::graph<TM>::vertex_descriptor`.
+  /// \pre The value type of `InputIterator` must be `boost::graph_traits<TM>::%vertex_descriptor`.
   /// \pre There is an even number of vertices.
   template<class InputIterator>
   TM_halfedge_descriptor add_seams(InputIterator first, InputIterator last)
@@ -1061,7 +1061,7 @@ public:
   /// A seam edge is described by a pair of integers. The integer
   /// index of a vertex of the underlying mesh is defined as its position when
   /// iterating over the vertices of the underlying mesh with
-  /// `boost::graph<TM>::vertices()`.
+  /// `boost::graph_traits<TM>::%vertices()`.
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
@@ -1120,7 +1120,7 @@ public:
   /// A seam edge is described by a pair of integers. The integer
   /// index of a vertex of the underlying mesh is defined as its position when
   /// iterating over the vertices of the underlying mesh with
-  /// `boost::graph<TM>::vertices()`.
+  /// `boost::graph_traits<TM>::%vertices()`.
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
