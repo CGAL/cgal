@@ -34,8 +34,36 @@
 namespace CGAL
 {
 
+// Triangulation_3 has calls to Construct_point_3 to handle weighted and bare points.
+// The default inherited Construct_point_3 inherited by Periodic_3_triangulation_remove_traits_3
+// must be overwritten by a construction Construct_point_3 that offers:
+// - pair<K::Point_3, offset> --> pair<K::Point_3, offset> (identity)
+// - pair<K::Weighted_point_3, offset> --> pair<K::Point_3, offset>
+template<class Gt,
+         typename Construct_point_3_base>
+class Construct_point_from_weighted_pair_3
+  : public Construct_point_from_pair_3<Gt, Construct_point_3_base>
+{
+  typedef Construct_point_from_pair_3<Gt, Construct_point_3_base>  Base;
+
+  // `Traits::Point_3` is actually a `std::pair<Point_3, Offset>`
+  // `Traits::Weighted_point_3` is actually a `std::pair<Weighted_point_3, Offset>`
+  typedef typename Gt::Point_3                                 Point_3;
+  typedef typename Gt::Weighted_point_3                        Weighted_point_3;
+
+public:
+  Construct_point_from_weighted_pair_3(const Construct_point_3_base& cp) : Base(cp) { }
+
+  using Base::operator(); // for K::Weighted_point_3 to Point_3
+
+  Point_3 operator()(const Weighted_point_3& wp) {
+    return std::make_pair(operator()(wp.first), wp.second /* offset */);
+  }
+};
+
 template<class Traits_, class Functor_>
-class Ppoint_to_point_adaptor
+class Functor_with_weighted_point_offset_pair_adaptor
+  : public Functor_
 {
   typedef Traits_                                 Traits;
   typedef Functor_                                Functor;
@@ -48,150 +76,173 @@ class Ppoint_to_point_adaptor
 public:
   typedef typename Functor::result_type result_type;
 
-  Ppoint_to_point_adaptor (const Functor & functor)
-    : _functor(functor)
+  Functor_with_weighted_point_offset_pair_adaptor (const Functor & functor)
+    : Functor_(functor)
   { }
 
-  // disabled until implicit conversions are removed
-//  result_type operator() (const Point_3& p0, const Weighted_point_3& p1,
-//                          const Weighted_point_3& p2) const
-//  {
-//    return _functor(p0.first, p1.first, p2.first,
-//                    p0.second, p1.second, p2.second);
-//  }
+public:
+  using Functor::operator();
 
+  result_type operator() (const Point_3& p0, const Weighted_point_3& p1,
+                          const Weighted_point_3& p2) const
+  {
+    return operator()(p0.first, p1.first, p2.first,
+                      p0.second, p1.second, p2.second);
+  }
+
+  // bare points
+  result_type operator()(const Point_3& p0, const Point_3& p1) const {
+    return operator()(p0.first, p1.first,
+                      p0.second, p1.second);
+  }
+  result_type operator()(const Point_3& p0, const Point_3& p1,
+                         const Point_3& p2) const {
+    return operator()(p0.first, p1.first, p2.first,
+                      p0.second, p1.second, p2.second);
+  }
+  result_type operator()(const Point_3& p0, const Point_3& p1,
+                         const Point_3& p2, const Point_3& p3) const {
+    return operator()(p0.first, p1.first, p2.first, p3.first,
+                      p0.second, p1.second, p2.second, p3.second);
+  }
+  result_type operator()(const Point_3& p0, const Point_3& p1,
+                         const Point_3& p2, const Point_3& p3, const Point_3& p4) const {
+    return operator()(p0.first, p1.first, p2.first, p3.first, p4.first,
+                      p0.second, p1.second, p2.second, p3.second, p4.second);
+  }
+
+  // weighted points
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1) const
   {
-    return _functor(p0.first, p1.first, p0.second, p1.second);
+    return operator()(p0.first, p1.first, p0.second, p1.second);
   }
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2) const
   {
-    return _functor(p0.first, p1.first, p2.first,
-                    p0.second, p1.second, p2.second);
+    return operator()(p0.first, p1.first, p2.first,
+                      p0.second, p1.second, p2.second);
   }
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2, const Weighted_point_3& p3) const
   {
-    return _functor(p0.first, p1.first, p2.first, p3.first,
-                    p0.second, p1.second, p2.second, p3.second);
+    return operator()(p0.first, p1.first, p2.first, p3.first,
+                      p0.second, p1.second, p2.second, p3.second);
   }
   result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
                           const Weighted_point_3& p2, const Weighted_point_3& p3,
                           const Weighted_point_3& p4) const
   {
-    return _functor(p0.first, p1.first, p2.first, p3.first, p4.first,
-                    p0.second, p1.second, p2.second, p3.second, p4.second);
+    return operator()(p0.first, p1.first, p2.first, p3.first, p4.first,
+                      p0.second, p1.second, p2.second, p3.second, p4.second);
   }
-
-private:
-  Functor _functor;
 };
 
-template<class PTTraits, class Off = typename CGAL::Periodic_3_offset_3>
+template<class Gt, class Off = typename CGAL::Periodic_3_offset_3>
 class Periodic_3_regular_triangulation_remove_traits_3
-  : public PTTraits::K
+  : public Gt
 {
-public:
-  typedef PTTraits                      PTraits;
-  typedef Off                           Offset;
-
-private:
-  typedef Periodic_3_regular_triangulation_remove_traits_3<PTraits, Offset> Self;
-  typedef typename PTTraits::K                                              Base;
+  typedef Periodic_3_regular_triangulation_remove_traits_3<Gt, Off> Self;
+  typedef Gt                                                        Base;
 
 public:
-  typedef typename PTraits::RT                                  RT;
-  typedef typename PTraits::FT                                  FT;
-  typedef std::pair<typename PTraits::Weighted_point_3, Offset> Weighted_point_3;
-  typedef std::pair<typename PTraits::Point_3, Offset>          Point_3;
-  typedef typename PTraits::Iso_cuboid_3                        Iso_cuboid_3;
+  typedef Gt                                                    Geom_traits;
+  typedef Off                                                   Offset;
 
-  Periodic_3_regular_triangulation_remove_traits_3 (const Iso_cuboid_3& domain)
-      : _traits() {
-    _traits.set_domain(domain);
-  }
+  typedef typename Gt::RT                                       RT;
+  typedef typename Gt::FT                                       FT;
+  typedef std::pair<typename Gt::Point_3, Offset>               Point_3;
+  typedef std::pair<typename Gt::Weighted_point_3, Offset>      Weighted_point_3;
+
+  // not allowing a default value for `gt` because we need to have
+  // an initialized domain in `gt`
+  Periodic_3_regular_triangulation_remove_traits_3(const Gt& gt) : Base(gt) { }
+
+  // Construct point
+  typedef Construct_point_from_weighted_pair_3<Self, typename Gt::Construct_point_3>
+      Construct_point_3;
 
   // Triangulation traits
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_xyz_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Compare_xyz_3>
       Compare_xyz_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Coplanar_orientation_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Coplanar_orientation_3>
       Coplanar_orientation_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Orientation_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Orientation_3>
       Orientation_3;
 
   // Regular Triangulation traits
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Power_side_of_oriented_power_sphere_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Power_side_of_oriented_power_sphere_3>
       Power_side_of_oriented_power_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_power_distance_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Compare_power_distance_3>
       Compare_power_distance_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Power_side_of_bounded_power_sphere_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Power_side_of_bounded_power_sphere_3>
       Power_side_of_bounded_power_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Construct_weighted_circumcenter_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Construct_weighted_circumcenter_3>
       Construct_weighted_circumcenter_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Construct_circumcenter_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Construct_circumcenter_3>
       Construct_circumcenter_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_squared_radius_smallest_orthogonal_sphere_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3>
       Compute_squared_radius_smallest_orthogonal_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_power_product_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Compute_power_product_3>
       Compute_power_product_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compute_power_distance_to_power_sphere_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Compute_power_distance_to_power_sphere_3>
       Compute_power_distance_to_power_sphere_3;
-  typedef Ppoint_to_point_adaptor<Self, typename PTraits::Compare_weighted_squared_radius_3>
+  typedef Functor_with_weighted_point_offset_pair_adaptor<Self, typename Gt::Compare_weighted_squared_radius_3>
       Compare_weighted_squared_radius_3;
 
   // Operations
+  Construct_point_3
+  construct_point_3_object() const {
+    return Construct_point_3(this->Base::construct_point_3_object());
+  }
+
   Compare_xyz_3
   compare_xyz_3_object() const {
-    return Compare_xyz_3(_traits.compare_xyz_3_object());
+    return Compare_xyz_3(this->Base::compare_xyz_3_object());
   }
   Coplanar_orientation_3
   coplanar_orientation_3_object() const {
-    return Coplanar_orientation_3(_traits.coplanar_orientation_3_object());
+    return Coplanar_orientation_3(this->Base::coplanar_orientation_3_object());
   }
   Orientation_3
   orientation_3_object() const {
-    return Orientation_3(_traits.orientation_3_object());
+    return Orientation_3(this->Base::orientation_3_object());
   }
   Power_side_of_oriented_power_sphere_3
   power_side_of_oriented_power_sphere_3_object() const {
-    return Power_side_of_oriented_power_sphere_3(_traits.power_side_of_oriented_power_sphere_3_object());
+    return Power_side_of_oriented_power_sphere_3(this->Base::power_side_of_oriented_power_sphere_3_object());
   }
   Compare_power_distance_3
   compare_power_distance_3_object() const {
-    return Compare_power_distance_3(_traits.compare_power_distance_3_object());
+    return Compare_power_distance_3(this->Base::compare_power_distance_3_object());
   }
   Power_side_of_bounded_power_sphere_3
   power_side_of_bounded_power_sphere_3_object() const {
-    return Power_side_of_bounded_power_sphere_3(_traits.power_side_of_bounded_power_sphere_3_object());
+    return Power_side_of_bounded_power_sphere_3(this->Base::power_side_of_bounded_power_sphere_3_object());
   }
   Construct_weighted_circumcenter_3
   construct_weighted_circumcenter_3_object() const {
-    return Construct_weighted_circumcenter_3(_traits.construct_weighted_circumcenter_3_object());
+    return Construct_weighted_circumcenter_3(this->Base::construct_weighted_circumcenter_3_object());
   }
   Construct_circumcenter_3
   construct_circumcenter_3_object() const {
-    return Construct_circumcenter_3(_traits.construct_circumcenter_3_object());
+    return Construct_circumcenter_3(this->Base::construct_circumcenter_3_object());
   }
   Compute_squared_radius_smallest_orthogonal_sphere_3
   compute_squared_radius_smallest_orthogonal_sphere_3_object() const {
-    return Compute_squared_radius_smallest_orthogonal_sphere_3(_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object());
+    return Compute_squared_radius_smallest_orthogonal_sphere_3(this->Base::compute_squared_radius_smallest_orthogonal_sphere_3_object());
   }
   Compute_power_product_3
   compute_power_product_3_object() const {
-    return Compute_power_product_3(_traits.compute_power_product_3_object());
+    return Compute_power_product_3(this->Base::compute_power_product_3_object());
   }
   Compute_power_distance_to_power_sphere_3
   compute_power_distance_to_power_sphere_3_object() const {
-    return Compute_power_distance_to_power_sphere_3(_traits.compute_power_distance_to_power_sphere_3_object());
+    return Compute_power_distance_to_power_sphere_3(this->Base::compute_power_distance_to_power_sphere_3_object());
   }
   Compare_weighted_squared_radius_3
   compare_weighted_squared_radius_3_object() const {
-    return Compare_weighted_squared_radius_3(_traits.compare_weighted_squared_radius_3_object());
+    return Compare_weighted_squared_radius_3(this->Base::compare_weighted_squared_radius_3_object());
   }
-
-public:
-  PTraits _traits;
 };
 
 } //namespace CGAL

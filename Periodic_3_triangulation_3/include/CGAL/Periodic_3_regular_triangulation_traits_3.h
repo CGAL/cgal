@@ -33,19 +33,17 @@
 #include <CGAL/basic.h>
 #include <CGAL/internal/Has_boolean_tags.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
-template <class Kernel_, class Off = typename CGAL::Periodic_3_offset_3>
+template <class K, class Off = typename CGAL::Periodic_3_offset_3>
 class Periodic_3_regular_triangulation_traits_base_3
-  : public Periodic_3_triangulation_traits_3<Kernel_, Off>
+  : public Periodic_3_triangulation_traits_3<K, Off>
 {
-private:
-  typedef Periodic_3_regular_triangulation_traits_base_3<Kernel_, Off>     Self;
-  typedef Periodic_3_triangulation_traits_3<Kernel_, Off>                  Base;
+  typedef Periodic_3_regular_triangulation_traits_base_3<K, Off> Self;
+  typedef Periodic_3_triangulation_traits_3<K, Off>              Base;
 
 public:
-  typedef Kernel_                                    K;
+  typedef K                                          Kernel;
   typedef Off                                        Offset;
 
   typedef typename Base::RT                          RT;
@@ -60,54 +58,66 @@ public:
   typedef typename Base::Triangle_3                  Triangle_3;
   typedef typename Base::Tetrahedron_3               Tetrahedron_3;
 
+public:
+  Periodic_3_regular_triangulation_traits_base_3(const Iso_cuboid_3& domain,
+                                                 const K& k)
+    : Base(domain, k)
+  { }
+
+  // Construct_weighted_point_3 with offset
   typedef Periodic_3_construct_weighted_point_3<Self, typename K::Construct_weighted_point_3>
       Construct_weighted_point_3;
 
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Power_side_of_oriented_power_sphere_3>
+  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Power_side_of_oriented_power_sphere_3>
       Power_side_of_oriented_power_sphere_3;
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_weighted_squared_radius_3>
+  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Compare_weighted_squared_radius_3>
       Compare_weighted_squared_radius_3;
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_power_distance_3>
+  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Compare_power_distance_3>
       Compare_power_distance_3;
 
   // Required for Periodic_3_regular_remove_traits
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3>
+  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Coplanar_orientation_3>
        Coplanar_orientation_3;
 
   // When dual operations are used
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_weighted_circumcenter_3>
+  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Construct_weighted_circumcenter_3>
       Construct_weighted_circumcenter_3;
 
-  // construction
-  Construct_weighted_point_3
-  construct_weighted_point_3_object () const {
-    return Construct_weighted_point_3(this->_domain);
+  // Operations
+  using Base::construct_point_3_object;
+
+  Construct_weighted_point_3 construct_weighted_point_3_object() const {
+    return Construct_weighted_point_3(&this->_domain,
+                                      this->Base::construct_weighted_point_3_object());
   }
 
-  Construct_weighted_circumcenter_3
-  construct_weighted_circumcenter_3_object () const {
-    return Construct_weighted_circumcenter_3(&this->_domain);
+  // construction
+  Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object() const {
+    return Construct_weighted_circumcenter_3(
+      this->Base::construct_weighted_circumcenter_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
   }
 
   // predicates
-  Power_side_of_oriented_power_sphere_3
-  power_side_of_oriented_power_sphere_3_object () const {
-    return Power_side_of_oriented_power_sphere_3(&this->_domain);
+  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const {
+    return Power_side_of_oriented_power_sphere_3(
+      this->Base::power_side_of_oriented_power_sphere_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
   }
-
-  Compare_power_distance_3
-  compare_power_distance_3_object () const {
-    return Compare_power_distance_3(&this->_domain);
+  Compare_power_distance_3 compare_power_distance_3_object() const {
+    return Compare_power_distance_3(
+      this->Base::compare_power_distance_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
   }
-
-  Compare_weighted_squared_radius_3
-  compare_weighted_squared_radius_3_object() const {
-    return Compare_weighted_squared_radius_3(&this->_domain);
+  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object() const {
+    return Compare_weighted_squared_radius_3(
+      this->Base::compare_weighted_squared_radius_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
   }
-
-  Coplanar_orientation_3
-  coplanar_orientation_3_object() const {
-    return Coplanar_orientation_3(&this->_domain);
+  Coplanar_orientation_3 coplanar_orientation_3_object() const {
+    return Coplanar_orientation_3(
+      this->Base::coplanar_orientation_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
   }
 };
 
@@ -123,14 +133,34 @@ class Periodic_3_regular_triangulation_traits_3;
 namespace CGAL
 {
 template<class K, class Off>
-class Periodic_3_regular_triangulation_traits_3<K, Off, false>
-    : public Periodic_3_regular_triangulation_traits_base_3<K, Off>
-{ };
+class Periodic_3_regular_triangulation_traits_3<K, Off, false /* Has_filtered_predicates */>
+  : public Periodic_3_regular_triangulation_traits_base_3<K, Off>
+{
+  typedef Periodic_3_regular_triangulation_traits_base_3<K, Off> Base;
+
+public:
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_regular_triangulation_traits_3(const Iso_cuboid_3& domain = Iso_cuboid_3(0,0,0,1,1,1),
+                                            const K& k = K())
+    : Base(domain, k)
+  { }
+};
 
 template <typename K, typename Off>
-class Periodic_3_regular_triangulation_traits_3<K, Off, true>
+class Periodic_3_regular_triangulation_traits_3<K, Off, true /* Has_filtered_predicates */ >
     : public Periodic_3_regular_triangulation_filtered_traits_3<K, Off>
-{ };
+{
+  typedef Periodic_3_regular_triangulation_filtered_traits_3<K, Off> Base;
+
+public:
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_regular_triangulation_traits_3(const Iso_cuboid_3& domain = Iso_cuboid_3(0,0,0,1,1,1),
+                                            const K& k = K())
+    : Base(domain, k)
+  { }
+};
 
 } //namespace CGAL
 

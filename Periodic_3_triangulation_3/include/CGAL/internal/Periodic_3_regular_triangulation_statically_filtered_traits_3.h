@@ -28,18 +28,27 @@
 
 namespace CGAL {
 
-// The `Traits` argument is supposed to provide exact primitives.
-template < typename Traits >
+template< typename K,
+          typename Off = typename CGAL::Periodic_3_offset_3>
 class Periodic_3_regular_triangulation_statically_filtered_traits_3
-  : public Traits
+  : public Periodic_3_regular_triangulation_filtered_traits_base_3<K, Off>
 {
-  typedef Periodic_3_regular_triangulation_statically_filtered_traits_3<Traits> Self;
+  typedef Periodic_3_regular_triangulation_statically_filtered_traits_3<K, Off> Self;
+  typedef Periodic_3_regular_triangulation_filtered_traits_base_3<K, Off>       Base;
 
 public:
-#if 0
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_regular_triangulation_statically_filtered_traits_3(const Iso_cuboid_3& domain,
+                                                                const K& k)
+    : Base(domain, k)
+  { }
+
+#if 0 // todo
   typedef internal::Static_filters_predicates::
-            Periodic_3_power_side_of_oriented_power_sphere_3<Traits>
-              Power_side_of_oriented_power_sphere_3;
+            Periodic_3_power_side_of_oriented_power_sphere_3<
+              Self, typename Base::Periodic_3_power_side_of_oriented_power_sphere_3>
+            Power_side_of_oriented_power_sphere_3;
 
   Power_side_of_oriented_power_sphere_3
   power_side_of_oriented_power_sphere_3_object() const

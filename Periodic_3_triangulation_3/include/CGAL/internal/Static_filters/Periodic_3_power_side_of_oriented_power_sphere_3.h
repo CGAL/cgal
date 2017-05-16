@@ -33,10 +33,15 @@ namespace internal {
 
 namespace Static_filters_predicates {
 
-template <typename K_base>
+template <class K, class Power_side_of_oriented_power_sphere_3_base>
 class Periodic_3_power_side_of_oriented_power_sphere_3:
-    public K_base::Power_side_of_oriented_power_sphere_3
+    public Power_side_of_oriented_power_sphere_3_base
 {
+  typedef Power_side_of_oriented_power_sphere_3_base           Base;
+
+public:
+  typedef K                                                    Kernel;
+
   // @todo
 };
 

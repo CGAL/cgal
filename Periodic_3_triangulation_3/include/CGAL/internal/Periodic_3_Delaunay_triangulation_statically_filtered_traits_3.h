@@ -29,19 +29,28 @@
 
 namespace CGAL {
 
-// The `Traits` argument is supposed to provide exact primitives.
-template < typename Traits >
+template< typename K,
+          typename Off = typename CGAL::Periodic_3_offset_3>
 class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3
-    : public Traits
+  : public Periodic_3_Delaunay_triangulation_filtered_traits_base_3<K, Off>
 {
-  typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<Traits> Self;
+  typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<K, Off> Self;
+  typedef Periodic_3_Delaunay_triangulation_filtered_traits_base_3<K, Off>       Base;
 
 public:
-  typedef internal::Static_filters_predicates::Periodic_3_side_of_oriented_sphere_3<Traits>
-    Side_of_oriented_sphere_3;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_Delaunay_triangulation_statically_filtered_traits_3(const Iso_cuboid_3& domain,
+                                                                 const K& k)
+    : Base(domain, k)
+  { }
+
+  typedef internal::Static_filters_predicates::Periodic_3_side_of_oriented_sphere_3<
+            Self, typename Base::Side_of_oriented_sphere_3> Side_of_oriented_sphere_3;
 
   Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object() const {
-    return Side_of_oriented_sphere_3(&this->_domain, &this->_domain_e, &this->_domain_f);
+    return Side_of_oriented_sphere_3(&this->_domain,
+                                     this->Base::side_of_oriented_sphere_3_object());
   }
 };
 

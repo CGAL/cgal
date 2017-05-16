@@ -42,62 +42,109 @@ template < typename K, typename Off >
 class Periodic_3_regular_triangulation_filtered_traits_base_3
   : public Periodic_3_regular_triangulation_traits_base_3<K, Off>
 {
-  typedef Periodic_3_regular_triangulation_traits_base_3<K, Off> Base;
+  typedef Periodic_3_regular_triangulation_traits_base_3<K, Off>  Base;
+
+  typedef typename K::Exact_kernel                                EKernel;
+  typedef typename K::Approximate_kernel                          AKernel;
+  typedef typename K::C2E                                         C2E;
+  typedef typename K::C2F                                         C2F;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_3_regular_triangulation_traits_3<typename K::Exact_kernel,
-                                                    Off>    Exact_traits;
+  typedef Periodic_3_regular_triangulation_traits_3<EKernel, Off> Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_3_regular_triangulation_traits_3<typename K::Approximate_kernel,
-                                                    Off>    Filtering_traits;
+  typedef Periodic_3_regular_triangulation_traits_3<AKernel, Off> Filtering_traits;
 private:
-  typedef typename K::C2E C2E;
-  typedef typename K::C2F C2F;
+  typedef typename K::Iso_cuboid_3                                Iso_cuboid_3;
 
 public:
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Power_side_of_oriented_power_sphere_3,
-            typename Filtering_traits::Power_side_of_oriented_power_sphere_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Power_side_of_oriented_power_sphere_3;
+  Periodic_3_regular_triangulation_filtered_traits_base_3(const Iso_cuboid_3& domain,
+                                                          const K& k)
+    :
+      Base(domain, k),
+      regular_traits_e(C2E()(domain)),
+      regular_traits_f(C2F()(domain))
+  {
+    // Problem 1: above is a default initialization of the kernel in the traits.
+    // Hence, if the kernel has members and we use filtered traits, then
+    // the members will be default constructed here...
 
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Compare_weighted_squared_radius_3,
-            typename Filtering_traits::Compare_weighted_squared_radius_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Compare_weighted_squared_radius_3;
+    // Problem 2: we have built filtered traits in P3Tfiltered_traits_3 and now
+    // we also need those two...
+  }
 
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Compare_power_distance_3,
-            typename Filtering_traits::Compare_power_distance_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Compare_power_distance_3;
+  virtual void set_domain(const Iso_cuboid_3& domain)
+  {
+    this->_domain = domain;
+    this->set_filtrating_traits(domain);
+    set_filtrating_regular_traits(domain);
+  }
 
-  typedef Filtered_periodic_predicate<
+  void set_filtrating_regular_traits(const Iso_cuboid_3& domain)
+  {
+    regular_traits_e.set_domain(C2E()(domain));
+    regular_traits_f.set_domain(C2F()(domain));
+  }
+
+public:
+  typedef Filtered_predicate<
             typename Exact_traits::Coplanar_orientation_3,
             typename Filtering_traits::Coplanar_orientation_3,
             Offset_converter_3<C2E>,
             Offset_converter_3<C2F> >  Coplanar_orientation_3;
 
-  Coplanar_orientation_3
-  coplanar_orientation_3_object() const {
-    return Coplanar_orientation_3(&this->_domain_e,&this->_domain_f);
+  typedef Filtered_predicate<
+            typename Exact_traits::Power_side_of_oriented_power_sphere_3,
+            typename Filtering_traits::Power_side_of_oriented_power_sphere_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Power_side_of_oriented_power_sphere_3;
+
+  typedef Filtered_predicate<
+            typename Exact_traits::Compare_power_distance_3,
+            typename Filtering_traits::Compare_power_distance_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Compare_power_distance_3;
+
+  typedef Filtered_predicate<
+            typename Exact_traits::Compare_weighted_squared_radius_3,
+            typename Filtering_traits::Compare_weighted_squared_radius_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Compare_weighted_squared_radius_3;
+
+  Coplanar_orientation_3 coplanar_orientation_3_object() const
+  {
+    typename Exact_traits::Coplanar_orientation_3 pe = regular_traits_e.coplanar_orientation_3_object();
+    typename Filtering_traits::Coplanar_orientation_3 pf = regular_traits_f.coplanar_orientation_3_object();
+
+    return Coplanar_orientation_3(pe, pf);
   }
 
-  Power_side_of_oriented_power_sphere_3
-  power_side_of_oriented_power_sphere_3_object() const {
-    return Power_side_of_oriented_power_sphere_3(&this->_domain_e,&this->_domain_f);
+  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
+  {
+    typename Exact_traits::Power_side_of_oriented_power_sphere_3 pe = regular_traits_e.power_side_of_oriented_power_sphere_3_object();
+    typename Filtering_traits::Power_side_of_oriented_power_sphere_3 pf = regular_traits_f.power_side_of_oriented_power_sphere_3_object();
+
+    return Power_side_of_oriented_power_sphere_3(pe, pf);
   }
 
-  Compare_power_distance_3
-  compare_power_distance_3_object() const {
-    return Compare_power_distance_3(&this->_domain_e,&this->_domain_f);
+  Compare_power_distance_3 compare_power_distance_3_object() const
+  {
+    typename Exact_traits::Compare_power_distance_3 pe = regular_traits_e.compare_power_distance_3_object();
+    typename Filtering_traits::Compare_power_distance_3 pf = regular_traits_f.compare_power_distance_3_object();
+
+    return Compare_power_distance_3(pe, pf);
   }
 
-  Compare_weighted_squared_radius_3
-  compare_weighted_squared_radius_3_object() const {
-    return Compare_weighted_squared_radius_3(&this->_domain_e,&this->_domain_f);
+  Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object() const
+  {
+    typename Exact_traits::Compare_weighted_squared_radius_3 pe = regular_traits_e.compare_weighted_squared_radius_3_object();
+    typename Filtering_traits::Compare_weighted_squared_radius_3 pf = regular_traits_f.compare_weighted_squared_radius_3_object();
+
+    return Compare_weighted_squared_radius_3(pe, pf);
   }
+
+protected:
+  Exact_traits regular_traits_e;
+  Filtering_traits regular_traits_f;
 };
 
 } // namespace CGAL
@@ -110,14 +157,33 @@ template < typename K,
            typename Off = typename CGAL::Periodic_3_offset_3,
            bool Has_static_filters = internal::Has_static_filters<K>::value >
 class Periodic_3_regular_triangulation_filtered_traits_3
-  : public Periodic_3_regular_triangulation_statically_filtered_traits_3<
-      Periodic_3_regular_triangulation_filtered_traits_base_3<K, Off> >
-{ };
+  : public Periodic_3_regular_triangulation_statically_filtered_traits_3<K, Off>
+{
+  typedef Periodic_3_regular_triangulation_statically_filtered_traits_3<K, Off> Base;
+
+public:
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_regular_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
+                                                     const K& k)
+    : Base(domain, k)
+  { }
+};
 
 template < typename K, typename Off>
 class Periodic_3_regular_triangulation_filtered_traits_3<K, Off, false>
   : public Periodic_3_regular_triangulation_filtered_traits_base_3<K, Off>
-{ };
+{
+  typedef Periodic_3_regular_triangulation_filtered_traits_base_3<K, Off> Base;
+
+public:
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_regular_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
+                                                     const K& k)
+    : Base(domain, k)
+  { }
+};
 
 } //namespace CGAL
 
