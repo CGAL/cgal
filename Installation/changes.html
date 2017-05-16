@@ -170,15 +170,18 @@ and <code>src/</code> directories).
 <h3>Triangulated Surface Mesh Parameterization</h3>
 <ul>
   <li>
-    <b>Breaking change</b>: The package was rewritten and can operate on any model of the
-    <code>MutableFaceGraph</code> concept. The adapter to add virtual seams is now the class
-    <code>CGAL::Seam_mesh</code> in the package <em>CGAL and the BGL</em>. As the new version
-    is in the namespace <code>CGAL::Surface_mesh_parameterization</code>, the deprecated
-    code still works.
+    <b>Breaking change</b>: The package has been restructured and rewritten and
+    can operate on any model of the <code>MutableFaceGraph</code> concept. All
+    previous parameterization methods are still offered, although with a slightly
+    different API. Include headers have also be moved.
+    The adapter to add virtual seams is now the class <code>CGAL::Seam_mesh</code>
+    in the package <em>CGAL and the BGL</em>.
   </li>
   <li>
      Add the <em>As Rigid As Possible Parameterization</em> method. This parameterization
      allows the user to prioritize angle preservation, shape preservation, or a balance of both.
+  </li>
+  <li>
      Add the <em>Orbifold Tutte Embedding</em> method. This parameterization method allows
      to parameterize meshes that are topological spheres.
   </li>
