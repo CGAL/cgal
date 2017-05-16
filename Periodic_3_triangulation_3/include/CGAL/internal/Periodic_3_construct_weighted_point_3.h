@@ -18,37 +18,39 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
-template < typename PRT, typename Construct_point_3_base>
+template < typename K, typename Construct_weighted_point_3_base>
 class Periodic_3_construct_weighted_point_3
-  : public Construct_point_3_base
+  : public Construct_weighted_point_3_base
 {
-  typedef PRT                                     PRTraits;
+  typedef Construct_weighted_point_3_base       Base;
+
+  typedef K                                     Kernel;
+
+  typedef typename Kernel::Point_3              Point_3;
+  typedef typename Kernel::Weighted_point_3     Weighted_point_3;
+  typedef typename Kernel::Offset               Offset;
+  typedef typename Kernel::Iso_cuboid_3         Iso_cuboid_3;
 
 public:
-  typedef typename PRTraits::Point_3              Point_3;
-  typedef typename PRTraits::Weighted_point_3     Weighted_point_3;
-  typedef typename PRTraits::Offset               Offset;
-  typedef typename PRTraits::Iso_cuboid_3         Iso_cuboid_3;
-
-  Periodic_3_construct_weighted_point_3 (const Iso_cuboid_3& dom)
-    : _dom(dom)
+  Periodic_3_construct_weighted_point_3(const Iso_cuboid_3* dom,
+                                        const Construct_weighted_point_3_base& wp)
+    : Base(wp), _dom(dom)
   { }
 
-  using Construct_point_3_base::operator();
+  using Base::operator();
 
   Weighted_point_3 operator() (const Weighted_point_3& p, const Offset& o) const
   {
-    return Weighted_point_3(Point_3(p.x() + (_dom.xmax() - _dom.xmin()) * o.x(),
-                                    p.y() + (_dom.ymax() - _dom.ymin()) * o.y(),
-                                    p.z() + (_dom.zmax() - _dom.zmin()) * o.z()),
+    return Weighted_point_3(Point_3(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
+                                    p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
+                                    p.z() + (_dom->zmax() - _dom->zmin()) * o.z()),
                             p.weight());
   }
 
 private:
-  const Iso_cuboid_3& _dom;
+  const Iso_cuboid_3* _dom;
 };
 
 } // namespace CGAL
