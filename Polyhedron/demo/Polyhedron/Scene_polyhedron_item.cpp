@@ -117,7 +117,7 @@ struct Scene_polyhedron_item_priv{
   }
 
 
-  void compute_normals_and_vertices(const bool colors_only = false, const bool is_two_side = false) const;
+  void compute_normals_and_vertices(const bool colors_only = false, const bool draw_two_sides = false) const;
   bool isFacetConvex(Facet_iterator, const Polyhedron::Traits::Vector_3&)const;
 
   void triangulate_convex_facet(Facet_iterator,
@@ -125,7 +125,7 @@ struct Scene_polyhedron_item_priv{
 
   void triangulate_facet(Scene_polyhedron_item::Facet_iterator,
                          const Traits::Vector_3& normal,
-                         const bool colors_only, const bool is_two_side) const;
+                         const bool colors_only, const bool draw_two_sides) const;
   void init();
   void invalidate_stats();
   void* get_aabb_tree();
@@ -431,7 +431,7 @@ void
 Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_iterator fit,
                                          const Traits::Vector_3& normal,
                                          const bool colors_only,
-                                         const bool is_two_side = false) const
+                                         const bool draw_two_sides = false) const
 {
   typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
   const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
@@ -479,7 +479,7 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
       push_back_xyz(ffit->vertex(0)->point()+offset, positions_facets);
       push_back_xyz(ffit->vertex(1)->point()+offset, positions_facets);
       push_back_xyz(ffit->vertex(2)->point()+offset, positions_facets);
-      if(!is_two_side)
+      if(!draw_two_sides)
       {
         push_back_xyz(normal, normals_flat);
         push_back_xyz(normal, normals_flat);
@@ -500,7 +500,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
 {
     //vao containing the data for the facets
     {
-    if(viewer->property("is_two_sides").toBool())
+    if(viewer->property("draw_two_sides").toBool())
     {
       program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_FLAT, viewer);
     }
@@ -519,7 +519,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
           program->enableAttributeArray("vertex");
           program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
           item->buffers[Facets_vertices].release();
-          if(viewer->property("is_two_sides").toBool())
+          if(viewer->property("draw_two_sides").toBool())
           {
             //computed in the fragment shader
             program->disableAttributeArray("normals");
@@ -637,7 +637,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
 }
 
 void
-Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only, const bool is_two_side) const
+Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only, const bool draw_two_sides) const
 {
   const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
@@ -702,7 +702,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only,
             if(!no_flat)
             {
               push_back_xyz(p+offset, positions_facets);
-              if(!is_two_side)
+              if(!draw_two_sides)
                 push_back_xyz(nf, normals_flat);
             }
 
@@ -737,7 +737,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only,
           push_back_xyz(p0+offset, positions_facets);
           push_back_xyz(p1+offset, positions_facets);
           push_back_xyz(p2+offset, positions_facets);
-          if(!is_two_side)
+          if(!draw_two_sides)
           {
             push_back_xyz(nf, normals_flat);
             push_back_xyz(nf, normals_flat);
@@ -758,7 +758,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only,
           push_back_xyz(p0+offset, positions_facets);
           push_back_xyz(p1+offset, positions_facets);
           push_back_xyz(p2+offset, positions_facets);
-          if(!is_two_side)
+          if(!draw_two_sides)
           {
             push_back_xyz(nf, normals_flat);
             push_back_xyz(nf, normals_flat);
@@ -774,7 +774,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only,
         }
         else
         {
-          this->triangulate_facet(f, nf, colors_only, is_two_side);
+          this->triangulate_facet(f, nf, colors_only, draw_two_sides);
         }
       }
 
@@ -1082,7 +1082,7 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        d->compute_normals_and_vertices(false, viewer->property("is_two_sides").toBool());
+        d->compute_normals_and_vertices(false, viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }
@@ -1090,7 +1090,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(renderingMode() == Flat || (!d->no_flat && renderingMode() == FlatPlusEdges))
     {
         vaos[Scene_polyhedron_item_priv::Facets]->bind();
-        if(viewer->property("is_two_sides").toBool())
+        if(viewer->property("draw_two_sides").toBool())
         {
           attribBuffers(viewer, PROGRAM_FLAT);
           d->program = getShaderProgram(PROGRAM_FLAT);
@@ -1143,7 +1143,7 @@ void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
 {
     if (!are_buffers_filled)
     {
-        d->compute_normals_and_vertices(false, viewer->property("is_two_sides").toBool());
+        d->compute_normals_and_vertices(false, viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }
@@ -1191,7 +1191,7 @@ void
 Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        d->compute_normals_and_vertices(false, viewer->property("is_two_sides").toBool());
+        d->compute_normals_and_vertices(false, viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }
