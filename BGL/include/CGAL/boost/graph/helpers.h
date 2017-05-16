@@ -420,7 +420,7 @@ bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor
 
 /** 
  * \ingroup PkgBGLHelperFct
- * Creates an isolated triangle with border edges in `g` having `p0`, `p1`, and `p2` as points and adds it to the graph `g`.
+ * "Creates an isolated triangle with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`."
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
  **/ 
 template<typename Graph, typename P>
@@ -529,7 +529,7 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
 
 /** 
  * \ingroup PkgBGLHelperFct
- * Creates an isolated quad with border edges in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
+ * "Creates an isolated quad with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`."
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
  **/ 
 template<typename Graph, typename P>
@@ -555,7 +555,7 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 
 /** 
  * \ingroup PkgBGLHelperFct
- * Creates an isolated hexahedron in `g` having `p0`, `p1`, ...\ , and `p7` as points and adds it to the graph `g`.
+ * "Creates an isolated hexahedron with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`."
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
  **/ 
 template<typename Graph, typename P>
@@ -609,7 +609,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 }
 /** 
  * \ingroup PkgBGLHelperFct
- * Creates an isolated tetrahedron in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
+ * "Creates an isolated hexahedron with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`."
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, and `p2`.
  **/ 
 template<typename Graph, typename P>
