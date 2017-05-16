@@ -318,7 +318,8 @@ public:
   const TDS& tds() const { return _tds; }
   TDS& tds() { return _tds; }
 
-  virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Point>& /* hidden_points*/) {}
+  virtual void gather_cell_hidden_points(const Cell_handle /*cit*/, std::vector<Point>& /* hidden_points*/) { }
+  virtual void reinsert_hidden_points_after_converting_to_1_sheeted(const std::vector<Point>& /* hidden_points*/) { }
 
   const Iso_cuboid& domain() const { return _gt.get_domain(); }
 
@@ -3532,7 +3533,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering()
                         cit != all_cells_end() ; ++cit ) {
       if ( cit->get_additional_flag() == 1 )
       {
-        std::copy(cit->hidden_points_begin(), cit->hidden_points_end(), std::back_inserter(hidden_points));
+        gather_cell_hidden_points(cit, hidden_points);
         cells_to_delete.push_back( cit );
       }
     }
