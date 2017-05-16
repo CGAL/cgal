@@ -17,8 +17,7 @@ target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item s
 polyhedron_demo_plugin(off_to_nef_plugin OFF_to_nef_io_plugin)
 target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)
 
-qt5_wrap_ui( polylines_ioUI_FILES Add_polylines_dialog.ui )
-polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin ${polylines_ioUI_FILES})
+polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin)
 target_link_libraries(polylines_io_plugin scene_polylines_item)
 
 polyhedron_demo_plugin(selection_io_plugin Selection_io_plugin)
@@ -66,8 +65,7 @@ if (VTK_FOUND)
 else()
   message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")
 endif()
-qt5_wrap_ui( xyzUI_FILES Add_point_set_dialog.ui)
-polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin ${xyzUI_FILES})
+polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin)
 target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
 polyhedron_demo_plugin(ply_to_xyz_plugin PLY_to_xyz_io_plugin)
