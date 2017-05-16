@@ -430,13 +430,22 @@ public:
   // instead of an edge length threshold
   virtual void update_cover_data_after_setting_domain () {}
 
-  virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Weighted_point>& hidden_points)
+  // the function below is used in `convert_to_1_sheeted_covering()` of P3T3
+  // but only makes sense for regular triangulations.
+  virtual void gather_cell_hidden_points(const Cell_handle cit,
+                                         std::vector<Weighted_point>& hidden_points)
   {
-    while (hidden_points.size())
-    {
-      insert(hidden_points.back());
-      hidden_points.pop_back();
-    }
+    std::copy(cit->hidden_points_begin(), cit->hidden_points_end(),
+              std::back_inserter(hidden_points));
+  }
+
+  virtual void reinsert_hidden_points_after_converting_to_1_sheeted(const std::vector<Weighted_point>& hidden_points)
+  {
+    typename std::vector<Weighted_point>::const_iterator wpv_it = hidden_points.begin();
+    typename std::vector<Weighted_point>::const_iterator wpv_end = hidden_points.end();
+
+    while(wpv_it != wpv_end)
+      insert(*wpv_it++);
   }
 
   /** @name Insertion */ //@{
