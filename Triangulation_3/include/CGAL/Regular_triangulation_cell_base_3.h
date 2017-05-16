@@ -114,6 +114,9 @@ public:
   template<typename Tag>
   void hide_point_internal(const Point& p, typename boost::enable_if_c<Tag::value>::type* = NULL)
   { _hidden.push_back(p); }
+  template<typename Tag = Memory_policy>
+  void unhide_point(const Point_iterator pit, typename boost::enable_if_c<Tag::value>::type* = NULL)
+  { _hidden.erase(pit); }
 
   // Memory_policy is Tag_false ------------------------------------------------
   template<typename Tag>
@@ -133,6 +136,9 @@ public:
 
   template<typename Tag>
   void hide_point_internal(const Point&, typename boost::disable_if_c<Tag::value>::type* = NULL)
+  { }
+  template<typename Tag = Memory_policy>
+  void unhide_point(const Point_iterator, typename boost::disable_if_c<Tag::value>::type* = NULL)
   { }
 
   //note this function is not requested by the RegularTriangulationCellBase_3
