@@ -215,20 +215,17 @@ private:
 
 public:
   /** @name Creation */ //@{
-  Periodic_3_Delaunay_triangulation_3(
-      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geometric_traits& gt = Geometric_traits())
-    : Base(domain, gt),
-      too_long_edge_counter(0)
+  Periodic_3_Delaunay_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+                                      const Geometric_traits& gt = Geometric_traits())
+    : Base(domain, gt), too_long_edge_counter(0)
   {
     edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
                                       * (domain.xmax()-domain.xmin());
   }
 
   // copy constructor duplicates vertices and cells
-  Periodic_3_Delaunay_triangulation_3(
-      const Periodic_3_Delaunay_triangulation_3& tr) : Base(tr),
-          edge_length_threshold(tr.edge_length_threshold)
+  Periodic_3_Delaunay_triangulation_3(const Periodic_3_Delaunay_triangulation_3& tr)
+    : Base(tr), edge_length_threshold(tr.edge_length_threshold)
   {
     if (is_1_cover()) {
       tds() = tr.tds();
@@ -239,15 +236,27 @@ public:
     CGAL_triangulation_expensive_postcondition( is_valid() );
   }
 
-  void copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3 & tr);
+  template < typename InputIterator >
+  Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
+                                      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+                                      const Geometric_traits& gt = Geometric_traits())
+    : Base(domain, gt), too_long_edge_counter(0)
+  {
+    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
+                                      * (domain.xmax()-domain.xmin());
+    insert(first, last);
+  }
 
-  Periodic_3_Delaunay_triangulation_3 operator= (Periodic_3_Delaunay_triangulation_3 tr)
+  Periodic_3_Delaunay_triangulation_3 operator=(Periodic_3_Delaunay_triangulation_3 tr)
   {
     tr.swap(*this);
     return *this;
   }
 
-  void swap(Periodic_3_Delaunay_triangulation_3&tr) {
+  void copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3 & tr);
+
+  void swap(Periodic_3_Delaunay_triangulation_3&tr)
+  {
     std::swap(edge_length_threshold,tr.edge_length_threshold);
     std::swap(too_long_edges,tr.too_long_edges);
     std::swap(too_long_edge_counter,tr.too_long_edge_counter);
@@ -308,18 +317,6 @@ public:
       }
     }
     return counter;
-  }
-
-  template < typename InputIterator >
-  Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
-      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geometric_traits& gt = Geometric_traits() )
-    : Base(domain, gt),
-      too_long_edge_counter(0)
-  {
-    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
-                                      * (domain.xmax()-domain.xmin());
-    insert(first, last);
   }
   //@}
 
