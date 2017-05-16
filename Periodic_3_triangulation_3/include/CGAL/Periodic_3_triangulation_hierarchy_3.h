@@ -24,7 +24,6 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/array.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
@@ -32,6 +31,11 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+
+#include <algorithm>
+#include <cstddef>
+#include <map>
+#include <vector>
 
 namespace CGAL {
 
@@ -82,16 +86,16 @@ public:
 
   template < typename InputIterator >
   Periodic_3_triangulation_hierarchy_3(InputIterator first, InputIterator last,
-      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geom_traits& traits = Geom_traits())
+                                       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+                                       const Geom_traits& traits = Geom_traits())
     : PTr_Base(domain,traits), level_mult_cover(0)
   {
-      hierarchy[0] = this; 
-      for(int i=1; i<maxlevel; ++i)
-	hierarchy[i] = new PTr_Base(domain,traits);
-      insert(first, last);
+    hierarchy[0] = this;
+    for(int i=1; i<maxlevel; ++i)
+      hierarchy[i] = new PTr_Base(domain,traits);
+    insert(first, last);
   }
- 
+
   Periodic_3_triangulation_hierarchy_3 & operator=(
       const Periodic_3_triangulation_hierarchy_3& tr)
   {
@@ -111,7 +115,7 @@ public:
   // INSERT REMOVE
   Vertex_handle insert(const Point &p, Cell_handle start = Cell_handle ());
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle loc,
-      int li, int lj);
+                       int li, int lj);
 
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last, bool = false)
@@ -127,27 +131,26 @@ public:
     // would give us.
     Cell_handle hints[maxlevel];
     for (typename std::vector<Point>::const_iterator p = points.begin(),
-	   end = points.end(); p != end; ++p) {
+         end = points.end(); p != end; ++p) {
       int vertex_level = random_level();
-	
+
       Vertex_handle v = hierarchy[0]->insert (*p, hints[0]);
       hints[0] = v->cell();
-	
-      Vertex_handle prev = v;
-	
-      for (int level = 1; level <= vertex_level; ++level) {
-	v = hierarchy[level]->insert (*p, hints[level]);
-	hints[level] = v->cell();
-	  
-	v->set_down (prev);
-	if (hierarchy[level]->number_of_sheets()[0] != 1) {
-	  std::vector<Vertex_handle> vtc 
-	    = hierarchy[level]->periodic_copies(v);
-	  for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
-	}
 
-	prev->set_up (v);
-	prev = v;
+      Vertex_handle prev = v;
+
+      for (int level = 1; level <= vertex_level; ++level) {
+        v = hierarchy[level]->insert (*p, hints[level]);
+        hints[level] = v->cell();
+
+        v->set_down (prev);
+        if (hierarchy[level]->number_of_sheets()[0] != 1) {
+          std::vector<Vertex_handle> vtc = hierarchy[level]->periodic_copies(v);
+          for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
+        }
+
+        prev->set_up (v);
+        prev = v;
       }
     }
     return number_of_vertices() - n;
@@ -165,11 +168,13 @@ public:
     return n-number_of_vertices();
   }
 
+  // @todo should be deprecated and a function move() should be introduced
+  // see what is done in /Triangulation_3
   Vertex_handle move_point(Vertex_handle v, const Point & p);
 
   //LOCATE
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj,
-          Cell_handle start = Cell_handle ()) const;
+                     Cell_handle start = Cell_handle ()) const;
   Cell_handle locate(const Point& p, Cell_handle start = Cell_handle ()) const;
 
   Vertex_handle
@@ -178,13 +183,13 @@ public:
 private:
 
   struct locs {
-      Cell_handle pos;
-      int li, lj;
-      Locate_type lt;
+    Cell_handle pos;
+    int li, lj;
+    Locate_type lt;
   };
 
   void locate(const Point& p, Locate_type& lt, int& li, int& lj,
-	      locs pos[maxlevel], Cell_handle start = Cell_handle ()) const;
+              locs pos[maxlevel], Cell_handle start = Cell_handle ()) const;
   int random_level();
 
   // added to make the test program of usual triangulations work
@@ -199,8 +204,8 @@ Periodic_3_triangulation_hierarchy_3<PTr>::
 Periodic_3_triangulation_hierarchy_3(
     const Iso_cuboid& domain, const Geom_traits& traits)
   : PTr_Base(domain, traits), level_mult_cover(0)
-{ 
-  hierarchy[0] = this; 
+{
+  hierarchy[0] = this;
   for(int i=1;i<maxlevel;++i)
     hierarchy[i] = new PTr_Base(domain,traits);
 }
@@ -211,7 +216,7 @@ Periodic_3_triangulation_hierarchy_3<PTr>::
 Periodic_3_triangulation_hierarchy_3(
     const Periodic_3_triangulation_hierarchy_3<PTr> &tr)
   : PTr_Base(tr), level_mult_cover(tr.level_mult_cover)
-{ 
+{
   hierarchy[0] = this;
   for(int i=1; i<maxlevel; ++i)
     hierarchy[i] = new PTr_Base(*tr.hierarchy[i]);
@@ -221,7 +226,7 @@ Periodic_3_triangulation_hierarchy_3(
 
   std::map< Vertex_handle, Vertex_handle > V;
 
-  for( Vertex_iterator it=hierarchy[0]->vertices_begin(); 
+  for( Vertex_iterator it=hierarchy[0]->vertices_begin();
        it != hierarchy[0]->vertices_end(); ++it) {
     if (hierarchy[0]->is_virtual(it)) continue;
     if (it->up() != Vertex_handle())
@@ -230,15 +235,15 @@ Periodic_3_triangulation_hierarchy_3(
 
   for(int j=1; j<maxlevel; ++j) {
     for( Vertex_iterator it=hierarchy[j]->vertices_begin();
-	 it != hierarchy[j]->vertices_end(); ++it) {
+         it != hierarchy[j]->vertices_end(); ++it) {
       if (hierarchy[j]->is_virtual(it)) {
-	// down pointer goes in original instead in copied triangulation
-	it->set_down(V[it->down()]);
-	// make reverse link
-	it->down()->set_up( it );
-	// make map for next level
-	if (it->up() != Vertex_handle())
-	    V[ it->up()->down() ] = it;
+        // down pointer goes in original instead in copied triangulation
+        it->set_down(V[it->down()]);
+        // make reverse link
+        it->down()->set_up( it );
+        // make map for next level
+        if (it->up() != Vertex_handle())
+          V[ it->up()->down() ] = it;
       }
     }
   }
@@ -246,16 +251,16 @@ Periodic_3_triangulation_hierarchy_3(
 
 template <class PTr>
 void
-Periodic_3_triangulation_hierarchy_3<PTr>:: 
+Periodic_3_triangulation_hierarchy_3<PTr>::
 swap(Periodic_3_triangulation_hierarchy_3<PTr> &tr)
 {
   PTr_Base::swap(tr);
   for(int i=1; i<maxlevel; ++i)
-      std::swap(hierarchy[i], tr.hierarchy[i]);
+    std::swap(hierarchy[i], tr.hierarchy[i]);
 }
 
 template <class PTr>
-Periodic_3_triangulation_hierarchy_3<PTr>:: 
+Periodic_3_triangulation_hierarchy_3<PTr>::
 ~Periodic_3_triangulation_hierarchy_3()
 {
   clear();
@@ -265,48 +270,48 @@ Periodic_3_triangulation_hierarchy_3<PTr>::
 
 template <class PTr>
 void
-Periodic_3_triangulation_hierarchy_3<PTr>:: 
+Periodic_3_triangulation_hierarchy_3<PTr>::
 clear()
 {
-        for(int i=0;i<maxlevel;++i)
-	hierarchy[i]->clear();
+  for(int i=0;i<maxlevel;++i)
+    hierarchy[i]->clear();
 }
 
 template <class PTr>
 bool
-Periodic_3_triangulation_hierarchy_3<PTr>:: 
+Periodic_3_triangulation_hierarchy_3<PTr>::
 is_valid(bool verbose, int level) const
 {
   bool result = true;
-  
+
   // verify correctness of triangulation at all levels
   for(int i=0; i<maxlevel; ++i)
-	result = result && hierarchy[i]->is_valid(verbose, level);
+    result = result && hierarchy[i]->is_valid(verbose, level);
 
   // verify that lower level has no down pointers
-  for( Vertex_iterator it = hierarchy[0]->vertices_begin(); 
-       it != hierarchy[0]->vertices_end(); ++it) 
+  for( Vertex_iterator it = hierarchy[0]->vertices_begin();
+       it != hierarchy[0]->vertices_end(); ++it)
     if (!hierarchy[0]->is_virtual(it))
       result = result && (it->down() == Vertex_handle());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
-    for( Vertex_iterator it = hierarchy[j]->vertices_begin(); 
-	 it != hierarchy[j]->vertices_end(); ++it) 
+    for( Vertex_iterator it = hierarchy[j]->vertices_begin();
+         it != hierarchy[j]->vertices_end(); ++it)
       if (!hierarchy[j]->is_virtual(it))
-	result = result && &*(it) == &*(it->down()->up());
+        result = result && &*(it) == &*(it->down()->up());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
-    for( Vertex_iterator it = hierarchy[k]->vertices_begin(); 
-	 it != hierarchy[k]->vertices_end(); ++it) 
+    for( Vertex_iterator it = hierarchy[k]->vertices_begin();
+         it != hierarchy[k]->vertices_end(); ++it)
       if (!hierarchy[k]->is_virtual(it))
-	result = result && ( it->up() == Vertex_handle() ||
-	    &*it == &*(it->up())->down() );
+        result = result && ( it->up() == Vertex_handle() ||
+                             &*it == &*(it->up())->down() );
 
   return result;
 }
-  
+
 template <class PTr>
 typename Periodic_3_triangulation_hierarchy_3<PTr>::Vertex_handle
 Periodic_3_triangulation_hierarchy_3<PTr>::
@@ -320,27 +325,26 @@ insert(const Point &p, Cell_handle start)
   locate(p, lt, i, j, positions, start);
   // insert at level 0
   Vertex_handle vertex = hierarchy[0]->insert(p,
-	                                      positions[0].lt,
-	                                      positions[0].pos,
-	                                      positions[0].li,
-	                                      positions[0].lj);
+                                              positions[0].lt,
+                                              positions[0].pos,
+                                              positions[0].li,
+                                              positions[0].lj);
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
 
   int level = 1;
   while (level <= vertex_level ){
-      if (positions[level].pos == Cell_handle())
-          vertex = hierarchy[level]->insert(p);
-      else
-          vertex = hierarchy[level]->insert(p,
-	                                    positions[level].lt,
-	                                    positions[level].pos,
-	                                    positions[level].li,
-	                                    positions[level].lj);
+    if (positions[level].pos == Cell_handle())
+      vertex = hierarchy[level]->insert(p);
+    else
+      vertex = hierarchy[level]->insert(p,
+                                        positions[level].lt,
+                                        positions[level].pos,
+                                        positions[level].li,
+                                        positions[level].lj);
     vertex->set_down(previous);// link with level above
     if (hierarchy[level]->number_of_sheets()[0] != 1) {
-      std::vector<Vertex_handle> vtc 
-	= hierarchy[level]->periodic_copies(vertex);
+      std::vector<Vertex_handle> vtc = hierarchy[level]->periodic_copies(vertex);
       for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
     }
     previous->set_up(vertex);
@@ -367,22 +371,22 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
     // locate using hierarchy
     locs positions[maxlevel];
     locate(p, lt, i, j, positions, loc);
-    
+
     int level = 1;
     while (level <= vertex_level ){
       if (positions[level].pos == Cell_handle())
-	vertex = hierarchy[level]->insert(p);
+        vertex = hierarchy[level]->insert(p);
       else
-	vertex = hierarchy[level]->insert(p,
-	    positions[level].lt,
-	    positions[level].pos,
-	    positions[level].li,
-	    positions[level].lj);
+        vertex = hierarchy[level]->insert(p,
+                                          positions[level].lt,
+                                          positions[level].pos,
+                                          positions[level].li,
+                                          positions[level].lj);
       vertex->set_down(previous);// link with level above
       if (hierarchy[level]->number_of_sheets()[0] != 1) {
-	std::vector<Vertex_handle> vtc 
-	  = hierarchy[level]->periodic_copies(vertex);
-	for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
+        std::vector<Vertex_handle> vtc
+            = hierarchy[level]->periodic_copies(vertex);
+        for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
       }
       previous->set_up(vertex);
       previous=vertex;
@@ -403,7 +407,7 @@ remove(Vertex_handle v)
     Vertex_handle u = v->up();
     hierarchy[l]->remove(v);
     if (u == Vertex_handle())
-	break;
+      break;
     v = u;
   }
 }
@@ -421,25 +425,25 @@ move_point(Vertex_handle v, const Point & p)
     CGAL_triangulation_assertion(hierarchy[l]->is_valid());
     Vertex_handle w = hierarchy[l]->move_point(v, p);
     if (l == 0) {
-	ret = w;
+      ret = w;
     }
     else {
-	old->set_up(w);
-	w->set_down(old);
-	if (hierarchy[l]->number_of_sheets()[0] != 1) {
-	  std::vector<Vertex_handle> vtc = hierarchy[l]->periodic_copies(w);
-	  for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(old);
-	}
+      old->set_up(w);
+      w->set_down(old);
+      if (hierarchy[l]->number_of_sheets()[0] != 1) {
+        std::vector<Vertex_handle> vtc = hierarchy[l]->periodic_copies(w);
+        for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(old);
+      }
     }
     if (u == Vertex_handle())
-	break;
+      break;
     old = w;
     v = u;
   }
 
   return ret;
 }
- 
+
 template <class PTr>
 inline
 typename Periodic_3_triangulation_hierarchy_3<PTr>::Cell_handle
@@ -454,7 +458,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj, Cell_handle start) con
 
 template <class PTr>
 inline
-typename Periodic_3_triangulation_hierarchy_3<PTr>::Cell_handle 
+typename Periodic_3_triangulation_hierarchy_3<PTr>::Cell_handle
 Periodic_3_triangulation_hierarchy_3<PTr>::
 locate(const Point& p, Cell_handle start) const
 {
@@ -475,24 +479,24 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() < (size_type) minsize) {
     if ( ! level)
-	break;  // do not go below 0
+      break;  // do not go below 0
   }
 
   for (int i=level+1; i<maxlevel; ++i)
-      pos[i].pos = Cell_handle();
+    pos[i].pos = Cell_handle();
 
   Cell_handle position = Cell_handle();
   while(level > 0) {
     // locate at that level from "position"
     // result is stored in "position" for the next level
     pos[level].pos = position = hierarchy[level]->locate(p,
-	                                                 pos[level].lt,
-	                                                 pos[level].li,
-	                                                 pos[level].lj,
-	                                                 position);
+                                                         pos[level].lt,
+                                                         pos[level].li,
+                                                         pos[level].lj,
+                                                         position);
     // find the nearest vertex.
     Vertex_handle nearest =
-      hierarchy[level]->nearest_vertex_in_cell(position,p);
+        hierarchy[level]->nearest_vertex_in_cell(position,p);
 
     // go at the same vertex on level below
     nearest = nearest->down();
@@ -507,12 +511,12 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
 }
 
 template <class PTr>
-typename Periodic_3_triangulation_hierarchy_3<PTr>::Vertex_handle 
+typename Periodic_3_triangulation_hierarchy_3<PTr>::Vertex_handle
 Periodic_3_triangulation_hierarchy_3<PTr>::
 nearest_vertex(const Point& p, Cell_handle start) const
 {
-    return PTr_Base::nearest_vertex(p, start != Cell_handle() ? start
-	                                                     : locate(p));
+  return PTr_Base::nearest_vertex(p, start != Cell_handle() ? start
+                                                            : locate(p));
 }
 
 template <class PTr>
@@ -521,13 +525,13 @@ Periodic_3_triangulation_hierarchy_3<PTr>::
 random_level()
 {
   if ( level_mult_cover < maxlevel
-      && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1,1) )
+       && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1,1) )
     ++level_mult_cover;
 
-   boost::geometric_distribution<> proba(1.0/ratio);
-   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
-     die(random, proba);
-   return (std::min)(die()-1, level_mult_cover);
+  boost::geometric_distribution<> proba(1.0/ratio);
+  boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
+      die(random, proba);
+  return (std::min)(die()-1, level_mult_cover);
 }
 
 } //namespace CGAL

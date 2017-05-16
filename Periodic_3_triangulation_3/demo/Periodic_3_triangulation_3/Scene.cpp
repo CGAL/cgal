@@ -1283,7 +1283,7 @@ inline void Scene::primitives_from_geom_it(Segment_set& sset) {
     case SEGMENT:
         for ( Segment_iterator sit = p3dt.periodic_segments_begin(it_type) ;
               sit != p3dt.periodic_segments_end(it_type) ; ++sit ) {
-            sset.insert(p3dt.segment(*sit));
+            sset.insert(p3dt.construct_segment(*sit));
         }
         break;
     case TRIANGLE:
