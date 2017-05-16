@@ -71,6 +71,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   typedef typename P3T3::Covering_sheets         Covering_sheets;
   CGAL_USE_TYPE(Covering_sheets);
 
+  typedef typename P3T3::Point_3                 Point_3;
   typedef typename P3T3::Point                   Point;
   typedef typename P3T3::Segment                 Segment;
   typedef typename P3T3::Triangle                Triangle;
@@ -194,8 +195,8 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   std::cout<<"Constructor"<<std::endl;
 
   // RT used to make it work with homogeneous kernels
-  typename Geometric_traits::K::RT ft1(1);
-  typename Geometric_traits::K::RT ft2(2);
+  typename Geometric_traits::RT ft1(1);
+  typename Geometric_traits::RT ft2(2);
   Iso_cuboid domain(ft1, ft1, ft1, ft2, ft2, ft2, 10);
   std::cout << "x-length: "<<domain.xmax()-domain.xmin()<<'\t'
             << "y-length: "<<domain.ymax()-domain.ymin()<<'\t'
@@ -334,14 +335,14 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   assert(PT3.periodic_segment(Edge(ch,2,3)).at(0).second != Offset());
   assert(PT3.periodic_segment(ch,2,1).at(1).second != Offset());
-  PT3.segment(PT3.periodic_segment(ch,0,3));
+  PT3.construct_segment(PT3.periodic_segment(ch,0,3));
 
   assert(PT3.periodic_triangle(Facet(ch,0)).at(2).second != Offset());
   assert(PT3.periodic_triangle(ch,2).at(1).second != Offset());
-  PT3.triangle(PT3.periodic_triangle(ch,0));
+  PT3.construct_triangle(PT3.periodic_triangle(ch,0));
 
   assert(PT3.periodic_tetrahedron(ch).at(3).second != Offset());
-  PT3.tetrahedron(PT3.periodic_tetrahedron(ch));
+  PT3.construct_tetrahedron(PT3.periodic_tetrahedron(ch));
 
   std::cout<<"Queries"<<std::endl;
 
@@ -437,14 +438,14 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   std::cout<<"Point location"<<std::endl;
   ch = PT3_deg.inexact_locate(Point(0.5,0.5,0.5));
-  assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
+  assert( PT3_deg.construct_tetrahedron(PT3_deg.periodic_tetrahedron(ch))
           == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
-            Point(0,0,0), Point(0,2,0), Point(0,0,2), Point(2,0,0)) );
+            Point_3(0,0,0), Point_3(0,2,0), Point_3(0,0,2), Point_3(2,0,0)) );
 
   ch = PT3_deg.locate(Point(0.5,0.5,0.5));
-  assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
+  assert( PT3_deg.construct_tetrahedron(PT3_deg.periodic_tetrahedron(ch))
           == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
-            Point(0,0,0), Point(0,2,0), Point(0,0,2), Point(2,0,0)) );
+            Point_3(0,0,0), Point_3(0,2,0), Point_3(0,0,2), Point_3(2,0,0)) );
 
   Locate_type lt;
   int li,lj;
@@ -459,26 +460,26 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   c = PT3_deg.locate(Point(2,0.5,0.5),lt,li,lj);
   assert(lt == P3T3::FACET);
-  assert( PT3_deg.triangle(PT3_deg.periodic_triangle(c,li))
+  assert( PT3_deg.construct_triangle(PT3_deg.periodic_triangle(c,li))
           == PT3_deg.geom_traits().construct_triangle_3_object()(
-            Point(2,0,2), Point(2,0,0), Point(2,2,0)) );
+            Point_3(2,0,2), Point_3(2,0,0), Point_3(2,2,0)) );
   assert(PT3_deg.side_of_cell(Point(2,0.5,0.5),c,lt,li,lj)
          == CGAL::ON_BOUNDARY);
   assert(lt == P3T3::FACET);
-  assert( PT3_deg.triangle(PT3_deg.periodic_triangle(c,li))
+  assert( PT3_deg.construct_triangle(PT3_deg.periodic_triangle(c,li))
           == PT3_deg.geom_traits().construct_triangle_3_object()(
-            Point(2,0,2), Point(2,0,0), Point(2,2,0)) );
+            Point_3(2,0,2), Point_3(2,0,0), Point_3(2,2,0)) );
 
   c = PT3_deg.locate(Point(2,2,1),lt,li,lj);
   assert(lt == P3T3::EDGE);
-  assert( PT3_deg.segment(PT3_deg.periodic_segment(c,li,lj))
+  assert( PT3_deg.construct_segment(PT3_deg.periodic_segment(c,li,lj))
           == PT3_deg.geom_traits().construct_segment_3_object()(
-            Point(2,2,0), Point(2,2,2)) );
+            Point_3(2,2,0), Point_3(2,2,2)) );
   assert(PT3_deg.side_of_cell(Point(2,2,1),c,lt,li,lj) == CGAL::ON_BOUNDARY);
   assert(lt == P3T3::EDGE);
-  assert( PT3_deg.segment(PT3_deg.periodic_segment(c,li,lj))
+  assert( PT3_deg.construct_segment(PT3_deg.periodic_segment(c,li,lj))
           == PT3_deg.geom_traits().construct_segment_3_object()(
-            Point(2,2,0), Point(2,2,2)) );
+            Point_3(2,2,0), Point_3(2,2,2)) );
 
   c = PT3_deg.locate(Point(2,2,2),lt,li,lj);
   assert(lt == P3T3::VERTEX);

@@ -59,6 +59,7 @@ void _test_for_given_domain (const Traits& traits,
   CGAL_USE_TYPE(typename Traits::Construct_triangle_3);
   CGAL_USE_TYPE(typename Traits::Construct_tetrahedron_3);
 
+  typedef typename Traits::Construct_point_3 Construct_point_3;
   typedef typename Traits::Power_side_of_oriented_power_sphere_3 Power_side_of_oriented_power_sphere_3;
   typedef typename Traits::Compare_power_distance_3 Compare_power_distance_3;
   typedef typename Traits::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
@@ -192,21 +193,24 @@ void _test_for_given_domain (const Traits& traits,
   }
 
   std::cout << "test of Coplanar_orientation_3" << std::endl;
+  Construct_point_3 cp = traits.construct_point_3_object();
   Coplanar_orientation_3 coplanar_orientation = traits.coplanar_orientation_3_object();
   {
-    assert(coplanar_orientation(wp[0], wp[1], wp[2], wp[3],
+    assert(coplanar_orientation(cp(wp[0]), cp(wp[1]), cp(wp[2]), cp(wp[3]),
                                 o[3], o[3], o[3], o[3])
-             == coplanar_orientation(wp[0], wp[1], wp[2], wp[3]));
-    assert(coplanar_orientation(wp[4], wp[3], wp[2], o[4], o[4], o[4])
-             == coplanar_orientation(wp[4], wp[3], wp[2]));
+             == coplanar_orientation(cp(wp[0]), cp(wp[1]), cp(wp[2]), cp(wp[3])));
+    assert(coplanar_orientation(cp(wp[0], o[3]), cp(wp[1], o[3]), cp(wp[2], o[3]), cp(wp[3], o[3]))
+             == coplanar_orientation(cp(wp[0]), cp(wp[1]), cp(wp[2]), cp(wp[3])));
+    assert(coplanar_orientation(cp(wp[4]), cp(wp[3]), cp(wp[2]), o[4], o[4], o[4])
+             == coplanar_orientation(cp(wp[4]), cp(wp[3]), cp(wp[2])));
 
-    assert(coplanar_orientation(wp[1], wp[1], wp[1], wp[1],
+    assert(coplanar_orientation(cp(wp[1]), cp(wp[1]), cp(wp[1]), cp(wp[1]),
                                 o[0], o[7], o[1], o[8]) == CGAL::COLLINEAR);
-    assert(coplanar_orientation(wp[3], wp[3], wp[3],
+    assert(coplanar_orientation(cp(wp[3]), cp(wp[3]), cp(wp[3]),
                                 o[0], o[7], o[8]) == CGAL::COLLINEAR);
 
-    assert(coplanar_orientation(wp[1], wp[2], wp[3], wp[4],
-                                  o[6], o[7], o[4], o[1]) == CGAL::POSITIVE);
+    assert(coplanar_orientation(cp(wp[1]), cp(wp[2]), cp(wp[3]), cp(wp[4]),
+                                o[6], o[7], o[4], o[1]) == CGAL::POSITIVE);
   }
 }
 
