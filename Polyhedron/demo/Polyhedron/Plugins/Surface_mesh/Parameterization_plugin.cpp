@@ -246,22 +246,25 @@ public :
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
   {
     QPen pen;
+    QBrush brush;
+    brush.setColor(Qt::red);
+    brush.setStyle(Qt::SolidPattern);
     pen.setColor(Qt::black);
     pen.setWidth(0);
     painter->setPen(pen);
+    painter->setBrush(brush);
     for( Component::iterator
          fi = components->at(m_current_component).begin();
          fi != components->at(m_current_component).end();
          ++fi)
     {
       Textured_polyhedron::Facet_handle f(*fi);
-      QPointF pt_A(f->halfedge()->u(), f->halfedge()->v());
-      QPointF pt_B(f->halfedge()->next()->u(), f->halfedge()->next()->v());
-      QPointF pt_C(f->halfedge()->next()->next()->u(), f->halfedge()->next()->next()->v());
+      QPointF points[3];
+      points[0] = QPointF(f->halfedge()->u(), f->halfedge()->v());
+      points[1] = QPointF(f->halfedge()->next()->u(), f->halfedge()->next()->v());
+      points[2] = QPointF(f->halfedge()->next()->next()->u(), f->halfedge()->next()->next()->v());
 
-      painter->drawLine(pt_A, pt_B);
-      painter->drawLine(pt_B, pt_C);
-      painter->drawLine(pt_C, pt_A);
+      painter->drawPolygon(points,3);
     }
   }
 
