@@ -1122,22 +1122,29 @@ protected:
 
   Orientation
   inexact_orientation(const Point& p, const Point& q,
-                      const Point& r, const Point& s) const
+                      const Point& r, const Point& s,
+                      const Offset& o_p = Offset(), const Offset& o_q = Offset(),
+                      const Offset& o_r = Offset(), const Offset& o_s = Offset()) const
   {
+    const Point_3 bp = construct_point(p, o_p);
+    const Point_3 bq = construct_point(q, o_q);
+    const Point_3 br = construct_point(r, o_r);
+    const Point_3 bs = construct_point(s, o_s);
+
     // So that this code works well with Lazy_kernel
-    internal::Static_filters_predicates::Get_approx<Point> get_approx;
-    const double px = to_double(get_approx(p).x());
-    const double py = to_double(get_approx(p).y());
-    const double pz = to_double(get_approx(p).z());
-    const double qx = to_double(get_approx(q).x());
-    const double qy = to_double(get_approx(q).y());
-    const double qz = to_double(get_approx(q).z());
-    const double rx = to_double(get_approx(r).x());
-    const double ry = to_double(get_approx(r).y());
-    const double rz = to_double(get_approx(r).z());
-    const double sx = to_double(get_approx(s).x());
-    const double sy = to_double(get_approx(s).y());
-    const double sz = to_double(get_approx(s).z());
+    internal::Static_filters_predicates::Get_approx<Point_3> get_approx;
+    const double px = to_double(get_approx(bp).x());
+    const double py = to_double(get_approx(bp).y());
+    const double pz = to_double(get_approx(bp).z());
+    const double qx = to_double(get_approx(bq).x());
+    const double qy = to_double(get_approx(bq).y());
+    const double qz = to_double(get_approx(bq).z());
+    const double rx = to_double(get_approx(br).x());
+    const double ry = to_double(get_approx(br).y());
+    const double rz = to_double(get_approx(br).z());
+    const double sx = to_double(get_approx(bs).x());
+    const double sy = to_double(get_approx(bs).y());
+    const double sz = to_double(get_approx(bs).z());
 
     const double pqx = qx - px;
     const double pqy = qy - py;
@@ -1157,20 +1164,7 @@ protected:
     return ZERO;
   }
 
-  Orientation
-  inexact_orientation(const Point& p, const Point& q,
-                      const Point& r, const Point& s,
-                      const Offset& o_p, const Offset& o_q,
-                      const Offset& o_r, const Offset& o_s) const
-  {
-    return inexact_orientation(construct_point(p, o_p),
-                               construct_point(q, o_q),
-                               construct_point(r, o_r),
-                               construct_point(s, o_s));
-  }
-
 public:
-
   Cell_handle
   periodic_locate(const Point& p, const Offset& o_p, Offset& lo,
                   Locate_type& lt, int& li, int& lj,
