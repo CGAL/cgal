@@ -348,11 +348,11 @@ public:
 
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
     {
-      Weighted_point_3 p(*in_cube++, weight);
-      //    std::cout << cnt << " : " << p << std::endl;
+      Point_3 p(*in_cube++);
+      Weighted_point_3 wp(p, weight);
       assert(iso_cuboid.has_on_bounded_side(p));
-      assert(p.weight() < 0.015625);
-      p3rt3.insert(p);
+      assert(weight < 0.015625);
+      p3rt3.insert(wp);
     }
 
     assert(p3rt3.is_valid());
@@ -399,7 +399,7 @@ public:
       for (int b=0;b!=5;b++)
         for (int d=0;d!=5;d++)
         {
-          Weighted_point_3 p( Point_3(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b),  a*b-a*d );
+          Weighted_point_3 p( Point_3(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b), a*b-a*d );
           std::cout << p << std::endl;
           p3rt3.insert(p);
         }
@@ -603,10 +603,11 @@ public:
     p3rt3.insert(points.begin(), points.end(), true);
 
     Point_3 point(-0.49, -0.49, -0.49);
+    Weighted_point_3 wpoint(point);
     Offset lo;
-    Cell_handle ch = p3rt3.locate(point, lo);
+    Cell_handle ch = p3rt3.locate(wpoint, lo);
     Periodic_tetrahedron p_tetra = p3rt3.periodic_tetrahedron(ch, lo);
-    Tetrahedron tetra = p3rt3.tetrahedron(p_tetra);
+    Tetrahedron tetra = p3rt3.construct_tetrahedron(p_tetra);
 
     assert(p3rt3.orientation(point, tetra[1], tetra[2], tetra[3]) == CGAL::POSITIVE);
     assert(p3rt3.orientation(tetra[0], point, tetra[2], tetra[3]) == CGAL::POSITIVE);
@@ -616,19 +617,21 @@ public:
     CGAL::Vector_3<K> v(tetra[0], tetra[1]);
     v = v * 0.5;
     point = tetra[0] + v;
+    wpoint = Weighted_point_3(point);
     Locate_type lt;
     int li, lj;
-    ch = p3rt3.locate(point, lo, lt, li, lj);
+    ch = p3rt3.locate(wpoint, lo, lt, li, lj);
     assert(lt == P3RT3::EDGE);
-    Segment segment = p3rt3.segment(p3rt3.periodic_segment(ch, lo, li, lj));
+    Segment segment = p3rt3.construct_segment(p3rt3.periodic_segment(ch, lo, li, lj));
     assert(CGAL::collinear(segment[0], segment[1], point));
 
     v = CGAL::Vector_3<K>(point, tetra[2]);
     v = v * 0.5;
     point = point + v;
-    ch = p3rt3.locate(point, lo, lt, li, lj);
+    wpoint = Weighted_point_3(point);
+    ch = p3rt3.locate(wpoint, lo, lt, li, lj);
     assert(lt == P3RT3::FACET);
-    Triangle triangle = p3rt3.triangle(p3rt3.periodic_triangle(ch, lo, li));
+    Triangle triangle = p3rt3.construct_triangle(p3rt3.periodic_triangle(ch, lo, li));
     assert(p3rt3.coplanar(triangle[0], triangle[1], triangle[2], point));
   }
 
@@ -708,27 +711,28 @@ public:
     std::vector<Cell_handle> conflict_cells;
     std::vector<Facet> int_facets;
     Point_3 bp(-0.5,-0.5,0.5);
-    Cell_handle ch = p3rt3.locate(bp);
-    p3rt3.find_conflicts(bp, ch,
+    Weighted_point_3 p(bp);
+    Cell_handle ch = p3rt3.locate(p);
+    p3rt3.find_conflicts(p, ch,
                          std::back_inserter(bd_facets),
                          std::back_inserter(conflict_cells),
                          std::back_inserter(int_facets));
     for (unsigned int i = 0; i < bd_facets.size(); i++)
     {
       assert(
-          (p3rt3.side_of_power_sphere(bd_facets[i].first, bp) == CGAL::ON_BOUNDED_SIDE)
-          ^ (p3rt3.side_of_power_sphere(bd_facets[i].first->neighbor(bd_facets[i].second), bp)
+          (p3rt3.side_of_power_sphere(bd_facets[i].first, p) == CGAL::ON_BOUNDED_SIDE)
+          ^ (p3rt3.side_of_power_sphere(bd_facets[i].first->neighbor(bd_facets[i].second), p)
               == CGAL::ON_BOUNDED_SIDE));
     }
     for (unsigned int i = 0; i < conflict_cells.size(); i++)
     {
-      assert(p3rt3.side_of_power_sphere(conflict_cells[i], bp) == CGAL::ON_BOUNDED_SIDE);
+      assert(p3rt3.side_of_power_sphere(conflict_cells[i], p) == CGAL::ON_BOUNDED_SIDE);
     }
     for (unsigned int i = 0; i < int_facets.size(); i++)
     {
-      assert((p3rt3.side_of_power_sphere(int_facets[i].first, bp) == CGAL::ON_BOUNDED_SIDE));
+      assert((p3rt3.side_of_power_sphere(int_facets[i].first, p) == CGAL::ON_BOUNDED_SIDE));
       assert(
-          (p3rt3.side_of_power_sphere(int_facets[i].first->neighbor(int_facets[i].second), bp)
+          (p3rt3.side_of_power_sphere(int_facets[i].first->neighbor(int_facets[i].second), p)
               == CGAL::ON_BOUNDED_SIDE));
     }
   }

@@ -43,7 +43,7 @@ int main(int, char**)
   typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>    P3RT3_Exact;
   _test_periodic_3_triangulation_3_constructors( P3RT3_Exact() );
   _test_cls_periodic_3_triangulation_3(P3RT3_Exact(),
-                                       PRTT_Exact::Point_3(0.816982, 0.161518, -0.0942375),
+                                       PRTT_Exact::Weighted_point_3(0.816982, 0.161518, -0.0942375),
                                        "data/P3RT3_covering_test_HOM.tri",
                                        "data/P3RT3_covering_test.tri",
                                        true);
@@ -51,7 +51,7 @@ int main(int, char**)
   typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Inexact>  P3RT3_Inexact;
   _test_periodic_3_triangulation_3_constructors( P3RT3_Inexact() );
   _test_cls_periodic_3_triangulation_3(P3RT3_Inexact(),
-                                       PRTT_Inexact::Point_3(0.816982, 0.161518, -0.0942375),
+                                       PRTT_Inexact::Weighted_point_3(0.816982, 0.161518, -0.0942375),
                                        "data/P3RT3_covering_test_HOM.tri",
                                        "data/P3RT3_covering_test.tri");
 
