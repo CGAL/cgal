@@ -2566,7 +2566,7 @@ namespace internal{
   }
 }
 
-
+} // CGAL
 
 namespace std {
 
