@@ -97,7 +97,7 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
   assert(mesh_area_np > 0);
 
-  std::pair<halfedge_descriptor,double> res = PMP::longest_border(pmesh);
+  std::pair<halfedge_descriptor, FT> res = PMP::longest_border(pmesh);
   if(res.first == boost::graph_traits<Mesh>::null_halfedge()){
     std::cout << "mesh has no border" << std::endl;
   } else {
