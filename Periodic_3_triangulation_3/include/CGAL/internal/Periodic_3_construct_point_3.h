@@ -23,38 +23,43 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-namespace CGAL
-{
+namespace CGAL {
+
 template < typename K, typename Construct_point_3_base>
 class Periodic_3_construct_point_3
   : public Construct_point_3_base
 {
+  typedef Construct_point_3_base             Base;
+
   typedef K                                  Kernel;
 
-public:
   typedef typename Kernel::Point_3           Point;
   typedef typename Kernel::Weighted_point_3  Weighted_point;
   typedef typename Kernel::Offset            Offset;
   typedef typename Kernel::Iso_cuboid_3      Iso_cuboid_3;
 
-  Periodic_3_construct_point_3(const Iso_cuboid_3 & dom) : _dom(dom) { }
+public:
+  Periodic_3_construct_point_3(const Iso_cuboid_3* dom,
+                               const Construct_point_3_base& cp)
+    : Base(cp), _dom(dom)
+  { }
 
-  using Construct_point_3_base::operator();
+  using Base::operator();
 
   Point operator() ( const Point& p, const Offset& o ) const {
-    return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-                 p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
-                 p.z()+(_dom.zmax()-_dom.zmin())*o.z());
+    return Point(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
+                 p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
+                 p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
   }
 
   Point operator() ( const Weighted_point& p, const Offset& o ) const {
-    return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-                 p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
-                 p.z()+(_dom.zmax()-_dom.zmin())*o.z());
+    return Point(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
+                 p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
+                 p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
   }
 
 private:
-  const Iso_cuboid_3& _dom;
+  const Iso_cuboid_3* _dom;
 };
 
 } // namespace CGAL
