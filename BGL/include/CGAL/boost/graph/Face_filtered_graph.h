@@ -241,19 +241,19 @@ struct Face_filtered_graph
     vertex_indices.clear();
     halfedge_indices.clear();
 
-    face_patch.resize(num_faces(_graph));
-    vertex_patch.resize(num_vertices(_graph));
-    halfedge_patch.resize(num_halfedges(_graph));
+    selected_faces.resize(num_faces(_graph));
+    selected_vertices.resize(num_vertices(_graph));
+    selected_halfedges.resize(num_halfedges(_graph));
     BOOST_FOREACH(face_descriptor fd, faces(_graph) )
     {
       if(get(fcmap, fd) == pid)
       {
-        face_patch.set(get(fimap, fd));
+        selected_faces.set(get(fimap, fd));
         BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
         {
-          halfedge_patch.set(get(himap, hd));
-          halfedge_patch.set(get(himap, opposite(hd, _graph)));
-          vertex_patch.set(get(vimap, target(hd, _graph)));
+          selected_halfedges.set(get(himap, hd));
+          selected_halfedges.set(get(himap, opposite(hd, _graph)));
+          selected_vertices.set(get(vimap, target(hd, _graph)));
         }
       }
     }
@@ -268,9 +268,9 @@ struct Face_filtered_graph
     vertex_indices.clear();
     halfedge_indices.clear();
 
-    face_patch.resize(num_faces(_graph));
-    vertex_patch.resize(num_vertices(_graph));
-    halfedge_patch.resize(num_halfedges(_graph));
+    selected_faces.resize(num_faces(_graph));
+    selected_vertices.resize(num_vertices(_graph));
+    selected_halfedges.resize(num_halfedges(_graph));
 
     boost::unordered_set<typename boost::property_traits<FacePatchMap>::value_type> pids;
     for(IndexRangeIterator it = begin;
@@ -284,12 +284,12 @@ struct Face_filtered_graph
     {
       if(pids.count(get(fcmap, fd)) != 0)
       {
-        face_patch.set(get(fimap, fd));
+        selected_faces.set(get(fimap, fd));
         BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
         {
-          halfedge_patch.set(get(himap, hd));
-          halfedge_patch.set(get(himap, opposite(hd, _graph)));
-          vertex_patch.set(get(vimap, target(hd, _graph)));
+          selected_halfedges.set(get(himap, hd));
+          selected_halfedges.set(get(himap, opposite(hd, _graph)));
+          selected_vertices.set(get(vimap, target(hd, _graph)));
         }
       }
     }
@@ -302,17 +302,17 @@ struct Face_filtered_graph
     vertex_indices.clear();
     halfedge_indices.clear();
 
-    face_patch.resize(num_faces(_graph));
-    vertex_patch.resize(num_vertices(_graph));
-    halfedge_patch.resize(num_halfedges(_graph));
+    selected_faces.resize(num_faces(_graph));
+    selected_vertices.resize(num_vertices(_graph));
+    selected_halfedges.resize(num_halfedges(_graph));
     BOOST_FOREACH(face_descriptor fd, selected_face_range)
     {
-      face_patch.set(get(fimap, fd));
+      selected_faces.set(get(fimap, fd));
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
       {
-        halfedge_patch.set(get(himap, hd));
-        halfedge_patch.set(get(himap, opposite(hd, _graph)));
-        vertex_patch.set(get(vimap, target(hd, _graph)));
+        selected_halfedges.set(get(himap, hd));
+        selected_halfedges.set(get(himap, opposite(hd, _graph)));
+        selected_vertices.set(get(vimap, target(hd, _graph)));
       }
     }
   }
@@ -337,35 +337,35 @@ struct Face_filtered_graph
 
   bool is_in_cc(face_descriptor f) const
   {
-    return face_patch[get(fimap, f)];
+    return selected_faces[get(fimap, f)];
   }
 
   bool is_in_cc(vertex_descriptor v) const
   {
-    return vertex_patch[get(vimap, v)];
+    return selected_vertices[get(vimap, v)];
   }
 
   bool is_in_cc(halfedge_descriptor h) const
   {
-    return halfedge_patch[get(himap, h)];
+    return selected_halfedges[get(himap, h)];
   }
   ///returns the number of selected faces
   typename boost::graph_traits<Graph>::
   faces_size_type number_of_faces()const
   {
-    return face_patch.count();
+    return selected_faces.count();
   }
 ///returns the number of selected vertices.
   typename boost::graph_traits<Graph>::
   vertices_size_type number_of_vertices()const
   {
-    return vertex_patch.count();
+    return selected_vertices.count();
   }
 ///returns the number of selected halfedges.
   typename boost::graph_traits<Graph>::
   halfedges_size_type number_of_halfedges()const
   {
-    return halfedge_patch.count();
+    return selected_halfedges.count();
   }
 
   Property_map_binder< FIMap, typename Pointer_property_map< typename boost::property_traits< FIMap >::value_type >::type >
@@ -375,7 +375,7 @@ struct Face_filtered_graph
     {
       face_index_type index = 0;
       face_indices.resize(num_faces(_graph));
-      for (std::size_t i=face_patch.find_first(); i < face_patch.npos; i = face_patch.find_next(i))
+      for (std::size_t i=selected_faces.find_first(); i < selected_faces.npos; i = selected_faces.find_next(i))
      {
         face_indices[i] = index++;
      }
@@ -390,7 +390,7 @@ struct Face_filtered_graph
     {
       vertex_index_type index = 0;
       vertex_indices.resize(num_vertices(_graph));
-      for (std::size_t i=vertex_patch.find_first(); i < vertex_patch.npos; i = vertex_patch.find_next(i))
+      for (std::size_t i=selected_vertices.find_first(); i < selected_vertices.npos; i = selected_vertices.find_next(i))
      {
         vertex_indices[i] = index++;
      }
@@ -405,7 +405,7 @@ struct Face_filtered_graph
     {
       halfedge_index_type index = 0;
       halfedge_indices.resize(num_halfedges(_graph));
-      for (std::size_t i=halfedge_patch.find_first(); i < halfedge_patch.npos; i = halfedge_patch.find_next(i))
+      for (std::size_t i=selected_halfedges.find_first(); i < selected_halfedges.npos; i = selected_halfedges.find_next(i))
      {
         halfedge_indices[i] = index++;
      }
@@ -437,17 +437,17 @@ struct Face_filtered_graph
         else if(fd == first_tested )
         {
           //if there is no unselected face, break
-          if(face_patch[get(fimap, fd)] && !first_unselected_found)
+          if(selected_faces[get(fimap, fd)] && !first_unselected_found)
           break;
           //if there is no selected face, break
-          else if(!face_patch[get(fimap, fd)] &&
+          else if(!selected_faces[get(fimap, fd)] &&
              first_selected == boost::graph_traits<Graph>::null_face())
           break;
         }
 
         if(fd != boost::graph_traits<Graph>::null_face())
         {
-          if(face_patch[get(fimap, fd)])
+          if(selected_faces[get(fimap, fd)])
           {
             if(first_unselected_found &&
                first_selected == boost::graph_traits<Graph>::null_face())
@@ -481,9 +481,9 @@ private:
   FIMap fimap;
   VIMap vimap;
   HIMap himap;
-  boost::dynamic_bitset<> face_patch;
-  boost::dynamic_bitset<> vertex_patch;
-  boost::dynamic_bitset<> halfedge_patch;
+  boost::dynamic_bitset<> selected_faces;
+  boost::dynamic_bitset<> selected_vertices;
+  boost::dynamic_bitset<> selected_halfedges;
   mutable std::vector<face_index_type> face_indices;
   mutable std::vector<vertex_index_type> vertex_indices;
   mutable std::vector<halfedge_index_type> halfedge_indices;
