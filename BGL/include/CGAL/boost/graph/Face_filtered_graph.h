@@ -91,14 +91,14 @@ struct Face_filtered_graph
   /*!
    * \brief Constructor where the set of selected faces is specified as a range of patch ids.
    *
-   * \tparam FacePatchMap a model of `ReadablePropertyMap` with
+   * \tparam FacePatchIndexMap a model of `ReadablePropertyMap` with
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
-   * \tparam IndexRangeIterator an iterator of a range of `boost::property_traits<FacePatchMap>::%value_type`.
+   * \tparam IndexRangeIterator an iterator of a range of `boost::property_traits<FacePatchIndexMap>::%value_type`.
    * \note the index maps must be initialized from `0` to the number of simplices.
    *
    * \param graph the underlying graph.
-   * \param fcmap the property_map that assigns a patch index to each face, with
+   * \param face_patch_index_map the property_map that assigns a patch index to each face, with
       `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type.
    * \param begin an interator to the beginning of a range of patches indices of interest.
    * \param end an interator to the element past the end of a range of patches indices of interest.
@@ -109,9 +109,9 @@ struct Face_filtered_graph
    * \param himap the property map that assigns an index to each halfedge,
    *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
    */
-  template <typename FacePatchMap, class IndexRangeIterator>
+  template <typename FacePatchIndexMap, class IndexRangeIterator>
   Face_filtered_graph(const Graph& graph,
-                             FacePatchMap fcmap,
+                             FacePatchIndexMap face_patch_index_map,
                              IndexRangeIterator begin,
                              IndexRangeIterator end,
                            #ifdef DOXYGEN_RUNNING
@@ -126,12 +126,12 @@ struct Face_filtered_graph
                              )
     : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
   {
-    set_selected_faces(begin, end, fcmap);
+    set_selected_faces(begin, end, face_patch_index_map);
   }
 
-  template <typename FacePatchMap, class IndexRangeIterator>
+  template <typename FacePatchIndexMap, class IndexRangeIterator>
   Face_filtered_graph(const Graph& graph,
-                             FacePatchMap fcmap,
+                             FacePatchIndexMap face_patch_index_map,
                              IndexRangeIterator begin,
                              IndexRangeIterator end)
     : _graph(const_cast<Graph&>(graph))
@@ -139,17 +139,17 @@ struct Face_filtered_graph
     fimap = get(CGAL::face_index, graph);
     vimap = get(boost::vertex_index, graph);
     himap = get(CGAL::halfedge_index, graph);
-    set_selected_faces(begin, end, fcmap);
+    set_selected_faces(begin, end, face_patch_index_map);
   }
   /*!
    * \brief Constructor where the set of selected faces is specified as a patch id.
    *
-   * \tparam FacePatchMap a model of `ReadablePropertyMap` with
+   * \tparam FacePatchIndexMap a model of `ReadablePropertyMap` with
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \note the index maps must be initialized from `0` to the number of simplices.
    * \param graph the underlying graph.
-   * \param fcmap the property_map that assigns a patch index to each face, with
+   * \param face_patch_index_map the property_map that assigns a patch index to each face, with
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \param pid the index of the patch of interest.
@@ -160,10 +160,10 @@ struct Face_filtered_graph
    * \param himap the property map that assigns an index to each halfedge,
    *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
    */
-  template <typename FacePatchMap>
+  template <typename FacePatchIndexMap>
   Face_filtered_graph(const Graph& graph,
-                             FacePatchMap fcmap,
-                             typename boost::property_traits<FacePatchMap>::value_type pid,
+                             FacePatchIndexMap face_patch_index_map,
+                             typename boost::property_traits<FacePatchIndexMap>::value_type pid,
                            #ifdef DOXYGEN_RUNNING
                              FIMap fimap = get(CGAL::face_index, graph),
                              VIMap vimap = get(boost::vertex_index, graph),
@@ -176,19 +176,19 @@ struct Face_filtered_graph
                              )
     : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
   {
-    set_selected_faces(fcmap, pid);
+    set_selected_faces(face_patch_index_map, pid);
   }
 
-  template <typename FacePatchMap>
+  template <typename FacePatchIndexMap>
   Face_filtered_graph(const Graph& graph,
-                             FacePatchMap fcmap,
-                             typename boost::property_traits<FacePatchMap>::value_type pid)
+                             FacePatchIndexMap face_patch_index_map,
+                             typename boost::property_traits<FacePatchIndexMap>::value_type pid)
     : _graph(const_cast<Graph&>(graph))
   {
     fimap = get(CGAL::face_index, graph);
     vimap = get(boost::vertex_index, graph);
     himap = get(CGAL::halfedge_index, graph);
-    set_selected_faces(fcmap, pid);
+    set_selected_faces(face_patch_index_map, pid);
   }
 
   /*!
@@ -233,9 +233,9 @@ struct Face_filtered_graph
   Graph& graph(){ return _graph; }
 
   ///change the set of selected faces using a patch id
-  template<class FacePatchMap>
-  void set_selected_faces(FacePatchMap fcmap,
-                          typename boost::property_traits<FacePatchMap>::value_type pid)
+  template<class FacePatchIndexMap>
+  void set_selected_faces(FacePatchIndexMap face_patch_index_map,
+                          typename boost::property_traits<FacePatchIndexMap>::value_type pid)
   {
     face_indices.clear();
     vertex_indices.clear();
@@ -246,7 +246,7 @@ struct Face_filtered_graph
     selected_halfedges.resize(num_halfedges(_graph));
     BOOST_FOREACH(face_descriptor fd, faces(_graph) )
     {
-      if(get(fcmap, fd) == pid)
+      if(get(face_patch_index_map, fd) == pid)
       {
         selected_faces.set(get(fimap, fd));
         BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
@@ -259,8 +259,8 @@ struct Face_filtered_graph
     }
   }
   /// change the set of selected faces using a range of patch ids
-  template<class FacePatchMap, class IndexRangeIterator>
-  void set_selected_faces(FacePatchMap fcmap,
+  template<class FacePatchIndexMap, class IndexRangeIterator>
+  void set_selected_faces(FacePatchIndexMap face_patch_index_map,
                           IndexRangeIterator begin,
                           IndexRangeIterator end)
   {
@@ -272,7 +272,7 @@ struct Face_filtered_graph
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
 
-    boost::unordered_set<typename boost::property_traits<FacePatchMap>::value_type> pids;
+    boost::unordered_set<typename boost::property_traits<FacePatchIndexMap>::value_type> pids;
     for(IndexRangeIterator it = begin;
         it != end;
         ++it)
@@ -282,7 +282,7 @@ struct Face_filtered_graph
 
     BOOST_FOREACH(face_descriptor fd, faces(_graph) )
     {
-      if(pids.count(get(fcmap, fd)) != 0)
+      if(pids.count(get(face_patch_index_map, fd)) != 0)
       {
         selected_faces.set(get(fimap, fd));
         BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
