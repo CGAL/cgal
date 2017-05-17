@@ -7,7 +7,7 @@ namespace CGAL {
 
 \cgalAutoToc
 
-\authors Manuel Caroli, Aymeric Pell&eacute; and Monique Teillaud
+\authors Manuel Caroli, Aymeric Pell&eacute;, Mael Rouxel-Labb&eacute; and Monique Teillaud
 
 \image html p3Delaunay3.jpg
 \image latex p3Delaunay3.jpg
