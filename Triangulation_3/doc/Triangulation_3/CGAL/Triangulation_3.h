@@ -68,7 +68,7 @@ typedef TriangulationTraits_3 Geom_traits;
 /*!
 
 */ 
-typedef TriangulationTraits_3::Point_3 Point; 
+typedef TriangulationDataStructure_3::Vertex::Point_3 Point;
 
 /*!
 
