@@ -16,6 +16,7 @@
 //
 //
 // Author(s)     : Maxime Gimeno
+
 #ifndef CGAL_BOOST_GRAPH_FACE_FILTERED_GRAPH_H
 #define CGAL_BOOST_GRAPH_FACE_FILTERED_GRAPH_H
 
@@ -37,21 +38,33 @@ namespace CGAL
   /*!
    * \ingroup PkgBGLHelper
    *
-   * The class `Face_filtered_graph` wraps a graph into another graph and act like a mask. It assigns a patch id to each face
-   * and acts in such a way that only the specified patches are seen from the outside.
+   * The class `Face_filtered_graph` is an adaptor that creates a filtered view of a graph
+   * by restricting it to a subset of faces. Contrary to
+   * <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/filtered_graph.html"><code>boost::filtered_graph</code></a>,
+   * this class only requires a way to access the selected faces and will automatically select the
+   * edges/halfedges and vertices present in the adapted graph. A vertex is selected if it is incident to at least one
+   * selected face. A edge is selected if it is incident to at least a selected face. A halfedge is selected if its edge
+   * is selected.
    *
-   * For example, calling `vertices(graph)` will provide the range of vertices belonging to the selected patches.
+   * Since this class is a model of the `FaceGraph` concept, there is a restriction on the set of selected faces:
+   * the adapted graph must define a manifold mesh. In order to check that this condition is verified, you can
+   * use the function `is_selection_valid()`.
    *
-   * The `Face_filtered_graph` enables to either consider each patch independently or a union of some of these patches.
-   * Such a union of patches must define a manifold mesh.
+   * There are two different ways to initialize this class. You can directly provide the set of faces selected, or
+   * if you have a face patch map, select the patches of faces. The latter option is convenient if you want to access
+   * some connected components of a graph after having called `CGAL::Polygon_mesh_processing::connected_components()`.
    *
-   * \tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
-   * \tparam FIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
-   * \tparam VIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor` as key and `graph_traits<Graph>::%vertices_size_type` as value
-   * \tparam HIMap a model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor` as key and `graph_traits<Graph>::%halfedges_size_type` as value
+   * The documented interface of this class is limited on purpose and free functions of the concept
+   * this class is a model of must be used to manipulate it.
+   *
+   * \tparam Graph must be a model of a `FaceListGraph`, `HalfedgeListGraph`, and <a href=http://www.boost.org/doc/libs/release/libs/graph/doc/VertexListGraph.html><code>VertexListGraph</code></a>.
+   * \tparam FIMap a model of `ReadablePropertyMap` with `face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
+   * \tparam VIMap a model of `ReadablePropertyMap` with `vertex_descriptor` as key and `graph_traits<Graph>::%vertices_size_type` as value
+   * \tparam HIMap a model of `ReadablePropertyMap` with `halfedge_descriptor` as key and `graph_traits<Graph>::%halfedges_size_type` as value
    *
    * \cgalModels `FaceListGraph`
    * \cgalModels `HalfedgeListGraph`
+   * \cgalModels <a href=http://www.boost.org/doc/libs/release/libs/graph/doc/VertexListGraph.html><code>VertexListGraph</code></a>
    */
 template<typename Graph,
          typename FIMap = typename boost::property_map<Graph, CGAL::face_index_t>::type,
@@ -60,15 +73,22 @@ template<typename Graph,
 struct Face_filtered_graph
 {
   typedef boost::graph_traits<Graph>                  gt;
-  typedef typename gt::vertex_descriptor              vertex_descriptor;
-  typedef typename gt::halfedge_descriptor            halfedge_descriptor;
-  typedef typename gt::edge_descriptor                edge_descriptor;
-  typedef typename gt::face_descriptor                face_descriptor;
+  /// Vertex descriptor type
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor              vertex_descriptor;
+  /// Halfedge descriptor type
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor            halfedge_descriptor;
+  /// Edge descriptor type
+  typedef typename boost::graph_traits<Graph>::edge_descriptor                edge_descriptor;
+  /// Face descriptor type
+  typedef typename boost::graph_traits<Graph>::face_descriptor                face_descriptor;
+
+  // non documented types
   typedef typename boost::property_traits< FIMap >::value_type face_index_type;
   typedef typename boost::property_traits< VIMap >::value_type vertex_index_type;
   typedef typename boost::property_traits< HIMap >::value_type halfedge_index_type;
   typedef Face_filtered_graph<Graph, FIMap, VIMap, HIMap>   Self;
 
+private:
   template <typename FacePatchMap, class IndexRangeIterator>
   void base_iterator_constructor(IndexRangeIterator begin,
                                  IndexRangeIterator end,
@@ -123,28 +143,29 @@ struct Face_filtered_graph
     }
     CGAL_assertion(is_selection_valid());
   }
+
+public:
   /*!
-   * \brief Creates a Face_filtered_graph of the patches of `graph` specified in the range
-   * defined by `begin` and `end`.
+   * \brief Constructor where the set of selected faces is specified as a range of patch ids.
+   *
    * \tparam FacePatchMap a model of `ReadablePropertyMap` with
-      `boost::graph_traits<Graph>::%face_descriptor` as key type and
+      `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \tparam IndexRangeIterator an iterator of a range of `boost::property_traits<FacePatchMap>::%value_type`.
-
-   * \param graph the graph containing the wanted patches.
-   * \param fcmap the property_map that assigns a patch to each face, with
-      `boost::graph_traits<Graph>::%face_descriptor` as key type and
-      `graph_traits<Graph>::%faces_size_type` as value type.
+   * \note the index maps must be initialized from `0` to the number of simplices.
+   *
+   * \param graph the underlying graph.
+   * \param fcmap the property_map that assigns a patch index to each face, with
+      `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type.
    * \param begin an interator to the beginning of a range of patches indices of interest.
    * \param end an interator to the element past the end of a range of patches indices of interest.
    * \param fimap the property map that assigns an index to each face,
-   * with boost::graph_traits<Graph>::%face_descriptor as key type and boost::graph_traits<Graph>::%faces_size_type as value type
+   * with `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type
    * \param vimap the property map that assigns an index to each vertex,
-   *  with boost::graph_traits<Graph>::%vertex_descriptor as key type and boost::graph_traits<Graph>::%vertices_size_type as value type
+   *  with `vertex_descriptor` as key type and `boost::graph_traits<Graph>::%vertices_size_type` as value type
    * \param himap the property map that assigns an index to each halfedge,
-   *  with boost::graph_traits<Graph>::%halfedge_descriptor as key type and boost::graph_traits<Graph>::%halfedges_size_type as value type
+   *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
    */
-
   template <typename FacePatchMap, class IndexRangeIterator>
   Face_filtered_graph(const Graph& graph,
                              FacePatchMap fcmap,
@@ -178,22 +199,23 @@ struct Face_filtered_graph
     base_iterator_constructor(begin, end, fcmap);
   }
   /*!
-   * \brief Creates a Face_filtered_graph of the patch `pid` of `graph`.
+   * \brief Constructor where the set of selected faces is specified as a patch id.
    *
    * \tparam FacePatchMap a model of `ReadablePropertyMap` with
-      `boost::graph_traits<Graph>::%face_descriptor` as key type and
+      `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
-   * \param graph the graph containing the wanted patch.
-   * \param fcmap the property_map that assigns a patch's index to each face, with
-      `boost::graph_traits<Graph>::%face_descriptor` as key type and
+   * \note the index maps must be initialized from `0` to the number of simplices.
+   * \param graph the underlying graph.
+   * \param fcmap the property_map that assigns a patch index to each face, with
+      `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \param pid the index of the patch of interest.
    * \param fimap the property map that assigns an index to each face,
-   * with boost::graph_traits<Graph>::%face_descriptor as key type and boost::graph_traits<Graph>::%faces_size_type as value type
+   * with `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type
    * \param vimap the property map that assigns an index to each vertex,
-   *  with boost::graph_traits<Graph>::%vertex_descriptor as key type and boost::graph_traits<Graph>::%vertices_size_type as value type
+   *  with `vertex_descriptor` as key type and `boost::graph_traits<Graph>::%vertices_size_type` as value type
    * \param himap the property map that assigns an index to each halfedge,
-   *  with boost::graph_traits<Graph>::%halfedge_descriptor as key type and boost::graph_traits<Graph>::%halfedges_size_type as value type
+   *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
    */
   template <typename FacePatchMap>
   Face_filtered_graph(const Graph& graph,
@@ -225,15 +247,52 @@ struct Face_filtered_graph
     himap = get(CGAL::halfedge_index, graph);
     base_constructor(fcmap, pid);
   }
-  ///returns a const reference to the graph of the Face_filtered_graph.
+
+  /*!
+   * \brief Constructor where the set of selected faces is specified as a range of face descriptors.
+   *
+   * \tparam FaceRange a model of `ConstRange` with `face_descriptor` as value type.
+   * \note the index maps must be initialized from `0` to the number of simplices.
+   * \param graph the graph containing the wanted patch.
+   * \param selected_face_range the set of selected faces.
+   * \param fimap the property map that assigns an index to each face,
+   * with `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type
+   * \param vimap the property map that assigns an index to each vertex,
+   *  with `vertex_descriptor` as key type and `boost::graph_traits<Graph>::%vertices_size_type` as value type
+   * \param himap the property map that assigns an index to each halfedge,
+   *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
+   */
+  template <typename FaceRange>
+  Face_filtered_graph(const Graph& graph,
+                      const FaceRange& selected_face_range,
+                      #ifdef DOXYGEN_RUNNING
+                      FIMap fimap = get(CGAL::face_index, graph),
+                      VIMap vimap = get(boost::vertex_index, graph),
+                      HIMap himap = get(CGAL::halfedge_index, graph)
+                      #else
+                      FIMap fimap,
+                      VIMap vimap,
+                      HIMap himap
+                       #endif
+  ) : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
+  {
+    set_selected_faces(selected_face_range);
+  }
+
+  template <typename FaceRange>
+  Face_filtered_graph(const Graph& graph,
+                      const FaceRange& face_range);
+
+
+  ///returns a const reference to the underlying graph.
   const Graph& graph()const{ return _graph; }
-  ///returns a reference to the graph of the Face_filtered_graph.
+  ///returns a reference to the underlying graph.
   Graph& graph(){ return _graph; }
 
-  ///change the selected patch
+  ///change the set of selected faces using a patch id
   template<class FacePatchMap>
-  void set_selected_patch(FacePatchMap fcmap,
-                              typename boost::property_traits<FacePatchMap>::value_type pid)
+  void set_selected_faces(FacePatchMap fcmap,
+                          typename boost::property_traits<FacePatchMap>::value_type pid)
   {
     face_indices.clear();
     vertex_indices.clear();
@@ -241,11 +300,11 @@ struct Face_filtered_graph
     base_constructor(fcmap, pid);
     CGAL_assertion(is_selection_valid());
   }
-  /// change the selected patches
+  /// change the set of selected faces using a range of patch ids
   template<class FacePatchMap, class IndexRangeIterator>
-  void set_selected_patches(FacePatchMap fcmap,
-                              IndexRangeIterator begin,
-                              IndexRangeIterator end)
+  void set_selected_faces(FacePatchMap fcmap,
+                          IndexRangeIterator begin,
+                          IndexRangeIterator end)
   {
     face_indices.clear();
     vertex_indices.clear();
@@ -253,6 +312,11 @@ struct Face_filtered_graph
     base_iterator_constructor(begin, end, fcmap);
     CGAL_assertion(is_selection_valid());
   }
+  /// change the set of selected faces using a range of face descriptors
+  /// \todo implement me
+  template<class FaceRange>
+  void set_selected_faces(FaceRange selected_face_range);
+
   struct Is_simplex_valid
   {
     Is_simplex_valid(const Self* graph)
@@ -285,19 +349,19 @@ struct Face_filtered_graph
   {
     return halfedge_patch[get(himap, h)];
   }
-  ///returns the number of faces contained in the specified patches
+  ///returns the number of selected faces
   typename boost::graph_traits<Graph>::
   faces_size_type number_of_faces()const
   {
     return face_patch.count();
   }
-///returns the number of vertices contained in the specified patches
+///returns the number of selected vertices.
   typename boost::graph_traits<Graph>::
   vertices_size_type number_of_vertices()const
   {
     return vertex_patch.count();
   }
-///returns the number of halfedges contained in the specified patches
+///returns the number of selected halfedges.
   typename boost::graph_traits<Graph>::
   halfedges_size_type number_of_halfedges()const
   {
@@ -349,9 +413,8 @@ struct Face_filtered_graph
     return bind_property_maps(himap, make_property_map(halfedge_indices) );
   }
 
-  ///returns true if around each vertex of the `Face_filtered_graph`,
-  /// there is only one set of selected faces. In other words, returns true
-  /// if all the selected faces around a vertex are consecutive.
+  /// returns `true` if around any vertex of a selected face,
+  /// there is at most one connected set of selected faces.
   bool is_selection_valid()
   {
     BOOST_FOREACH(vertex_descriptor vd, vertices(*this) )
