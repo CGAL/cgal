@@ -1,5 +1,6 @@
 /*!
 \example Periodic_3_triangulation_3/simple_example.cpp
+\example Periodic_3_triangulation_3/simple_regular_example.cpp
 \example Periodic_3_triangulation_3/colored_vertices.cpp
 \example Periodic_3_triangulation_3/periodic_adding_handles.cpp
 \example Periodic_3_triangulation_3/covering.cpp
