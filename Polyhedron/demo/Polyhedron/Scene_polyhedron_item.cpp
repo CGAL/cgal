@@ -252,6 +252,8 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       int index =0;
       BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
+        if (CGAL::Polygon_mesh_processing::is_degenerated(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
+          continue;
         if(!f->is_triangle())
         {
           Traits::Vector_3 normal = f->plane().orthogonal_vector(); //initialized in compute_normals_and_vertices
