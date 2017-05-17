@@ -21,7 +21,7 @@ format automatically and can read both.
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
 \sa \link PkgPolyhedronIOFunc `operator<<(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)`\endlink
 
-This function overloads \link PkgBGLIOFct `read_off(std::istream&,FaceGraph)`\endlink.
+This function overloads the generic function \link PkgBGLIOFct `read_off(std::istream&,FaceGraph)`\endlink.
 
 \cgalHeading{Implementation}
 
@@ -38,7 +38,7 @@ bool read_off( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
 /*!
 \relates Polyhedron_3
 \ingroup PkgPolyhedronIOFunc
-This operator calls `read_off(std::istream& , Polyhedron_3)`.
+calls \link read_off() `read_off(in, P)` \endlink.
 */
 template <class PolyhedronTraits_3>
 std::istream& operator>>( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
@@ -61,20 +61,20 @@ to allow for (a few) structuring comments in the output. Otherwise,
 the output would be free of comments. The default for writing is ASCII
 without comments.
 
-This function overloads `write_off(std::istream&,FaceGraph)`.
+This function overloads the generic function \link PkgBGLIOFct `write_off(std::istream&,FaceGraph)` \endlink.
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
-\sa `operator>>(std::istream&, Polyhedron_3<PolyhedronTraits_3>&)`
-
-*/template <class PolyhedronTraits_3>
+\sa \link PkgPolyhedronIOFunc `operator>>(std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P)` \endlink
+*/
+template <class PolyhedronTraits_3>
 bool write_off( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
 
 
 /*!
 \relates Polyhedron_3
 \ingroup PkgPolyhedronIOFunc
-This operator calls `write_off(std::istream& , Polyhedron_3)`.
+calls \link write_off() `write_off(out, P)` \endlink.
 */
 template <class PolyhedronTraits_3>
 std::ostream& operator<<( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
