@@ -22,15 +22,15 @@ typedef P3RT3::Locate_type       Locate_type;
 
 int main(int, char**)
 {
-  Iso_cuboid domain(-1,-1,-1, 2,2,2);  // The cube for the periodic domain
+  Iso_cuboid domain(-1,-1,-1, 2,2,2);  // the cube for the periodic domain
 
-  // construction from a list of points :
+  // construction from a list of weighted points :
   std::list<Weighted_point> L;
   L.push_front(Weighted_point(Point(0,0,0), 0.01));
   L.push_front(Weighted_point(Point(1,0,0), 0.02));
   L.push_front(Weighted_point(Point(0,1,0), 0.03));
 
-  P3RT3 T(L.begin(), L.end(), domain); // Put the domain with the constructor
+  P3RT3 T(L.begin(), L.end(), domain); // put the domain with the constructor
 
   P3RT3::size_type n = T.number_of_vertices();
 
@@ -62,17 +62,17 @@ int main(int, char**)
   assert( nc->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
-  // writing file output;
-  std::ofstream oFileT("output_regular.tri",std::ios::out);
+  // writing file output
+  std::ofstream oFileT("output_regular.tri", std::ios::out); // as a .tri file
   oFileT << T;
 
   std::ofstream to_off("output_regular.off");
   write_triangulation_to_off(to_off, T);
 
-  std::ofstream d_to_off("output_regular_dual.off");
+  std::ofstream d_to_off("output_regular_dual.off"); // as a .off file
   draw_dual_to_off(d_to_off, T);
 
-  // reading file output;
+  // reading file output
   P3RT3 T1;
   std::ifstream iFileT("output_regular.tri",std::ios::in);
   iFileT >> T1;
