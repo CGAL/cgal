@@ -753,6 +753,36 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Compare_slope_3
+  {
+    typedef typename K::FT                 FT;
+    typedef typename K::Point_3 Point_3;
+  public:
+    typedef typename K::Comparison_result  result_type;
+
+    result_type operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
+    { 
+      Comparison_result sign_pq = compare(q.z(),p.z());
+      Comparison_result sign_rs = compare(s.z(),r.z());
+      
+      if(sign_pq != sign_rs){
+        return compare(static_cast<int>(sign_pq), static_cast<int>(sign_rs));
+      }
+
+      if((sign_pq == EQUAL) && (sign_rs == EQUAL)){
+        return EQUAL;
+      }
+
+      CGAL_assertion( (sign_pq == sign_rs) && (sign_pq != EQUAL)  );
+      
+      Comparison_result res = CGAL::compare(square(p.z() - q.z()) * (square(r.x()-s.x())+square(r.y()-s.y())),
+                                            square(r.z() - s.z()) *  (square(p.x()-q.x())+square(p.y()-q.y())));
+      return (sign_pq == SMALLER) ? opposite(res) : res;
+    } 
+  
+  };
+
+  template <typename K>
   class Compare_squared_distance_2
   {
     typedef typename K::FT                 FT;

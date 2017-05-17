@@ -50,7 +50,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
   typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
 // first check that the orientation of the current cc is consistant with its
 // parent cc containing it
-  bool new_is_parent_outward_oriented = internal::is_outward_oriented<Kernel>(
+  bool new_is_parent_outward_oriented = internal::is_outward_oriented(
          xtrm_vertices[xtrm_cc_id], tm, parameters::vertex_point_map(vpm));
   if (new_is_parent_outward_oriented==is_parent_outward_oriented)
     return false;
@@ -91,8 +91,8 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
     for (std::size_t i=1;i<nb_candidates;++i)
     {
       std::size_t candidate = cc_inside[i];
-      if(get(vpm,xtrm_vertices[candidate]) <
-         get(vpm,xtrm_vertices[new_xtrm_cc_id])) new_xtrm_cc_id=candidate;
+      if(get(vpm,xtrm_vertices[candidate]).z() >
+         get(vpm,xtrm_vertices[new_xtrm_cc_id]).z()) new_xtrm_cc_id=candidate;
       new_cc_handled.reset(candidate);
       cc_handled.set(candidate);
     }
@@ -111,7 +111,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
                    candidate < cc_not_handled.npos;
                    candidate = cc_not_handled.find_next(candidate))
   {
-     if(get(vpm,xtrm_vertices[candidate]) < get(vpm,xtrm_vertices[new_xtrm_cc_id]))
+     if(get(vpm,xtrm_vertices[candidate]).z() > get(vpm,xtrm_vertices[new_xtrm_cc_id]).z())
         new_xtrm_cc_id = candidate;
   }
 
@@ -129,7 +129,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
- *                      as a named parameter, then it must initialized.
+ *                      as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm a triangulated surface mesh
@@ -182,7 +182,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
 
   boost::dynamic_bitset<> cc_handled(nb_cc, 0);
 
-  // extract the less-xyz vertex of each connected component
+  // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
   BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
   {
@@ -190,18 +190,18 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
     if (xtrm_vertices[cc_id]==GT::null_vertex())
       xtrm_vertices[cc_id]=vd;
     else
-      if (get(vpm, vd)<get(vpm,xtrm_vertices[cc_id]))
+      if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
         xtrm_vertices[cc_id]=vd;
   }
 
-  //extract the less-xyz of all components
+  //extract a vertex with max z amongst all components
   std::size_t xtrm_cc_id=0;
   for(std::size_t id=1; id<nb_cc; ++id)
-    if (get(vpm, xtrm_vertices[id])<get(vpm,xtrm_vertices[xtrm_cc_id]))
+    if (get(vpm, xtrm_vertices[id]).z()>get(vpm,xtrm_vertices[xtrm_cc_id]).z())
       xtrm_cc_id=id;
 
   bool is_parent_outward_oriented =
-    !internal::is_outward_oriented<Kernel>(xtrm_vertices[xtrm_cc_id], tm, np);
+    !internal::is_outward_oriented(xtrm_vertices[xtrm_cc_id], tm, np);
 
   return internal::recursive_does_bound_a_volume<Kernel>(tm, vpm, fid_map,
                                                          xtrm_vertices,
@@ -433,7 +433,7 @@ boolean_operation(      TriangleMesh& tm1,
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
-  *                      as a named parameter, then it must initialized.
+  *                      as a named parameter, then it must be initialized.
   *
   * @tparam NamedParameters1 a sequence of \ref namedparameters
   * @tparam NamedParameters2 a sequence of \ref namedparameters

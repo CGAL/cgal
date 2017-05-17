@@ -235,10 +235,19 @@ and <code>src/</code> directories).
 
   <h3>2D and 3D Linear Geometry Kernel</h3>
   <ul>
+    <li><b>Breaking change</b>: The function <code>compare_slopes()</code> was renamed <code>compare_slope</code>.
+    </li>
     <li>Added a 2D and 3D weighted point class and predicates and constructions.
     </li>
     <li>
       Add functions <code>l_infinity_distance()</code> for 2D and 3D.
+    </li>
+    <li>Add a new functor in CGAL Kernel concept to compare the slope of two 3D segments.
+        All models of the Kernel concept now provide the functor <code>Compare_slope_3</code>,
+        and the free function <code>compare_slope()</code> is available.
+    </li>
+    <li>Add an operator in CGAL Kernel concept <code>Angle_3</code> to qualify the angle 
+        between the normal of the triangle given by three points, and a vector.
     </li>
   </ul>
 
