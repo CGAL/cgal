@@ -214,7 +214,6 @@ struct Face_filtered_graph
    *
    * \tparam FaceRange a model of `ConstRange` with `face_descriptor` as value type.
    * \tparam NamedParameters a sequence of named parameters
-   * \note the index maps must be initialized from `0` to the number of simplices.
    * \param graph the graph containing the wanted patch.
    * \param selected_faces the set of selected faces.
    * \param np optional sequence of named parameters among the ones listed below
