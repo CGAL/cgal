@@ -343,8 +343,6 @@ user might encounter.
 
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
-- `CGAL::reserve()`
-- `CGAL::copy_face_graph_patch()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`
