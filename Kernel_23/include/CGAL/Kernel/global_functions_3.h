@@ -59,6 +59,15 @@ angle(const Point_3<K> &p, const Point_3<K> &q,
   return internal::angle(p, q, r, s, K());
 }
 
+template <typename K>
+inline
+Angle
+angle(const Point_3<K> &p, const Point_3<K> &q,
+      const Point_3<K> &r, const Vector_3<K> &v)
+{
+  return internal::angle(p, q, r, v, K());
+}
+
 template < class K >
 inline
 typename K::FT
@@ -352,6 +361,17 @@ compare_power_distance(const Point_3<K> &r,
                        const Weighted_point_3<K> &q)
 {
   return internal::compare_power_distance(r, p, q, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_slope(const Point_3<K> &p,
+               const Point_3<K> &q,
+               const Point_3<K> &r,
+               const Point_3<K> &s)
+{
+  return internal::compare_slope(p, q, r, s, K());
 }
 
 template < class K >

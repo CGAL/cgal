@@ -38,7 +38,15 @@ const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
 
 /*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the two vectors `u` and `v`.
+*/
+template <typename Kernel>
+Angle angle(const CGAL::Vector_3<Kernel>& u,
+            const CGAL::Vector_3<Kernel>& v);
 
+
+/*!
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
 the angle).
@@ -47,6 +55,29 @@ template <typename Kernel>
 Angle angle(const CGAL::Point_3<Kernel>& p,
 const CGAL::Point_3<Kernel>& q,
 const CGAL::Point_3<Kernel>& r);
+
+/*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the two vectors `pq`, `rs`. The returned value is
+the same as `angle(q - p, s - r)`.
+*/
+template<typename Kernel >
+Angle angle(const CGAL::Point_3<Kernel>&p,
+            const CGAL::Point_3<Kernel>&q,
+            const CGAL::Point_3<Kernel>&r,
+            const CGAL::Point_3<Kernel>&s);
+
+/*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the normal of the triangle `pqr` and the vector `v`.
+*/
+
+template<typename Kernel >
+Angle angle(const CGAL::Point_3<Kernel>&p,
+            const CGAL::Point_3<Kernel>&q,
+            const CGAL::Point_3<Kernel>&r,
+            const CGAL::Vector_3<Kernel>&v);
+
 
 
 /*!
@@ -60,6 +91,7 @@ Kernel::FT approximate_dihedral_angle(const CGAL::Point_3<Kernel>& p,
                                       const CGAL::Point_3<Kernel>& q,
                                       const CGAL::Point_3<Kernel>& r,
                                       const CGAL::Point_3<Kernel>& s);
+
 
 /// @}
 
@@ -793,16 +825,28 @@ const CGAL::Point_3<Kernel>& t);
 compares the slopes of the lines `l1` and `l2`
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const CGAL::Line_2<Kernel> &l1,
+Comparison_result compare_slope(const CGAL::Line_2<Kernel> &l1,
 const CGAL::Line_2<Kernel> &l2);
 
 /*!
-compares the slopes of the segments `s1` and `s2`
+compares the slopes of the segments `s1` and `s2`,
+where the slope is the variation of the `y`-coordinate
+from the left to the right endpoint of the segments.
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const CGAL::Segment_2<Kernel> &s1,
+Comparison_result compare_slope(const CGAL::Segment_2<Kernel> &s1,
 const CGAL::Segment_2<Kernel> &s2);
 
+/*!
+compares the slopes of the segments `(p,q)` and `(r,s)`,
+where the slope is the variation of the `z`-coordinate from the first
+to the second point  of the segment divided by the length of the segment.
+*/
+template <typename Kernel>
+Comparison_result compare_slope(const CGAL::Point_3<Kernel> &p,
+                                const CGAL::Point_3<Kernel> &q,
+                                const CGAL::Point_3<Kernel> &r,
+                                const CGAL::Point_3<Kernel> &s);
 /// @}
 
 /// \defgroup compare_squared_distance_grp CGAL::compare_squared_distance()
