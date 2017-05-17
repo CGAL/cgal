@@ -33,7 +33,7 @@ public:
 	
 /// \name Types 
 /// @{
-typedef RegularTriangulationTraits_3::Point_3 Bare_point;
+typedef RegularTriangulationTraits_3::Point_3 Point_3;
 /// @}
 
 /*! \name Access function 
@@ -44,11 +44,11 @@ provides a `weighted_circumcenter()` member fonction.
 
 In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
 of the cell.
-This `Bare_point` is computed by the `Construct_weighted_circumcenter_3` constructor of the traits class
+This `Point_3` is computed by the `Construct_weighted_circumcenter_3` constructor of the traits class
 when this function is first called.
 In the next calls, the cached value is returned.
 
-Note that this point has no weight.
+Note that the returned point has no weight.
 */
 
 /// @{
@@ -59,7 +59,7 @@ computed.
 
 The returned point has no weight.
 */ 
-const Bare_point& weighted_circumcenter( 
+const Point_3& weighted_circumcenter(
 	const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
 
 /*!
