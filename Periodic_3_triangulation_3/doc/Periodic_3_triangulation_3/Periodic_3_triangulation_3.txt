@@ -273,7 +273,7 @@ The second parameter `Periodic_3Offset_3` defaults to
 
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as \cgalModels of the concepts
+`Filtered_kernel` can all be used as models of the concepts
 `TriangulationTraits_3`, `DelaunayTriangulationTraits_3`, and
 `RegularTriangulationTraits_3`.
 The periodic triangulation classes provide exact
@@ -423,7 +423,7 @@ data structure.
 
 \cgalExample{Periodic_3_triangulation_3/simple_regular_example.cpp}
 
-\subsubsection Periodic_3_triangulation_3P3TR3FirstExample Point Insertion and Vertex Removal
+\subsubsection Periodic_3_triangulation_3P3TR3PointInsertionAndVertexRemoval Point Insertion and Vertex Removal
 
 This example shows the incremental construction of a 3D regular triangulation,
 and the removal of a vertex. It uses the default parameter of the

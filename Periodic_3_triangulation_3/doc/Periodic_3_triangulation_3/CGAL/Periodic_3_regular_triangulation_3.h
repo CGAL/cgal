@@ -7,19 +7,18 @@ namespace CGAL {
 The class `Periodic_3_regular_triangulation_3` represents a
 weighted Delaunay triangulation in three-dimensional periodic space.
 
-\tparam Periodic_3RegularTriangulationTraits_3 is the geometric traits class.
+\tparam PT must be a model of the concept `Periodic_3RegularTriangulationTraits_3`.
 
-\tparam TriangulationDataStructure_3 is the triangulation data structure.
+\tparam TDS must be a model of the concept `TriangulationDataStructure_3`.
 Its default value is
 `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<> >,
                                 Regular_triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`.
 
 */
-template< typename Periodic_3TriangulationTraits_3, typename TriangulationDataStructure_3 >
+template< typename PT, typename TDS >
 class Periodic_3_regular_triangulation_3 :
-    public Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,
-                                      TriangulationDataStructure_3>
- {
+  public Periodic_3_triangulation_3<PT, TDS>
+{
 public:
 
 /// \name Types
@@ -230,7 +229,7 @@ specifying where to start the search.
 \pre `c` is a cell of `rt` and `p` lies in the original domain `domain`.
 
 */
-Vertex_handle nearest_power_vertex(const Weighted_point & p,
+Vertex_handle nearest_power_vertex(const Bare_point & p,
 Cell_handle c = Cell_handle()) const;
 
 /// @}
@@ -343,13 +342,13 @@ Bare_point dual(Cell_handle c) const;
 /*!
 Returns the dual of facet `f`, which is a periodic segment.
 */
-Periodic_segment dual(Facet f) const;
+Periodic_segment_3 dual(Facet f) const;
 
 /*!
 same as the previous method for facet `(c,i)`.
 \pre \f$ i\in\{0,1,2,3\}\f$
 */
-Periodic_segment dual(Cell_handle c, int i) const;
+Periodic_segment_3 dual(Cell_handle c, int i) const;
 
 /*!
 Returns in the output iterator the points of the dual polygon of

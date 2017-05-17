@@ -6,8 +6,8 @@ namespace CGAL
  *
  * @class Robust_weighted_circumcenter_filtered_traits_3
  *
- * Overrides Construct_weighted_circumcenter_3(), Compute_squared_radius_3(),
- * and Compute_squared_radius_smallest_orthogonal_sphere_3() with robust versions.
+ * Overrides the kernel functors Construct_weighted_circumcenter_3, Compute_squared_radius_3,
+ * and Compute_squared_radius_smallest_orthogonal_sphere_3 with robust versions.
  *
  * Robustness is achieved by using exact computations if the geometric configuration
  * is close to degenerate.

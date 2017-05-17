@@ -4,18 +4,18 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3MainClasses
 
-The class `Periodic_triangulation_3` represents a 3-dimensional
+The class `Periodic_3_triangulation_3` represents a 3-dimensional
 triangulation of a point set in \f$ \mathbb T_c^3\f$.
 
-\tparam PT must be a model of the `Periodic_3TriangulationTraits_3` concept.
+\tparam PT must be a model of the concept `Periodic_3TriangulationTraits_3`.
 
-\tparam TDS must be a model of  `TriangulationDataStructure_3` concept
-with some additional  functionality in cells and vertices.
+\tparam TDS must be a model of the concept `TriangulationDataStructure_3`
+with some additional functionality in cells and vertices.
 Its default value is
 `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`.
 
-
 \sa `Periodic_3_Delaunay_triangulation_3`
+\sa `Periodic_3_regular_triangulation_3`
 */
 template< typename PT, typename TDS >
 class Periodic_3_triangulation_3 {
@@ -53,9 +53,18 @@ store the number of sheets in each direction of space.
 typedef array<int,3> Covering_sheets;
 
 /*!
+The point type of the triangulation.
 
+\note This type is equal to `Geometric_traits::Point_3` when considering periodic
+Delaunay triangulations and to `Geometric_traits::Weighted_point_3` when
+considering periodic weighted Delaunay triangulations.
 */
-typedef Geometric_traits::Point_3 Point;
+typedef TDS::Vertex::Point Point;
+
+/*!
+The geometric basic 3D point type.
+*/
+typedef Geometric_traits::Point_3 Point_3;
 
 /*!
 
@@ -73,35 +82,53 @@ typedef Geometric_traits::Triangle_3 Triangle;
 typedef Geometric_traits::Tetrahedron_3 Tetrahedron;
 
 /*!
-Represents a point-offset pair. The point in the
-pair lies in the original domain.
+Represents a point-offset pair. The point in the pair lies in the original domain.
+Note that the inner type is `Point`.
 */
-typedef std::pair< Point, Offset >
-Periodic_point;
+typedef std::pair< Point, Offset > Periodic_point;
 
 /*!
-
+Represents a point-offset pair. The point in the pair lies in the original domain.
+Note that the inner type is `Point_3`.
 */
-typedef array< Periodic_point, 2>
-Periodic_segment;
+typedef std::pair< Point_3, Offset > Periodic_point_3;
 
 /*!
-
+A periodic segment. Note that the inner type is `Periodic_point`.
 */
-typedef array< Periodic_point, 3>
-Periodic_triangle;
+typedef array< Periodic_point, 2> Periodic_segment;
 
 /*!
-
+A periodic segment. Note that the inner type is `Periodic_point_3`.
 */
-typedef array< Periodic_point, 4>
-Periodic_tetrahedron;
+typedef array< Periodic_point_3, 2> Periodic_segment_3;
 
+/*!
+A periodic triangle. Note that the inner type is `Periodic_point`.
+*/
+typedef array< Periodic_point, 3> Periodic_triangle;
+
+/*!
+A periodic triangle. Note that the inner type is `Periodic_point_3`.
+*/
+typedef array< Periodic_point_3, 3> Periodic_triangle_3;
+
+/*!
+A periodic tetrahedron. Note that the inner type is `Periodic_point`.
+*/
+typedef array< Periodic_point, 4> Periodic_tetrahedron;
+
+/*!
+A periodic tetrahedron. Note that the inner type is `Periodic_point_3`.
+*/
+typedef array< Periodic_point_3, 4> Periodic_tetrahedron_3;
 
 /// @}
 
 /*! \name
-Only vertices (\f$ 0\f$-faces) and cells (\f$ 3\f$-faces) are stored. Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly represented and thus there are no corresponding classes (see Section \ref P3Triangulation3secintro).
+Only vertices (\f$ 0\f$-faces) and cells (\f$ 3\f$-faces) are stored.
+Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly represented
+and thus there are no corresponding classes (see Section \ref P3Triangulation3secintro).
 */
 /// @{
 
@@ -208,6 +235,8 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 /// @}
 
 /// \name Geometric Iterators:
+/// The following iterators have value type `Periodic_segment`, `Periodic_triangle`,
+/// and `Periodic_tetrahedron`, which have inner type `Point`.
 /// @{
 
 /*!
@@ -511,6 +540,8 @@ size_type number_of_stored_facets() const;
 /// @}
 
 /// \name Geometric Access Functions
+/// The following functions return object of types `Periodic_segment`,
+/// `Periodic_triangle`, and `Periodic_tetrahedron`, which have inner type `Point`.
 /// @{
 
 /*!
@@ -599,33 +630,92 @@ A translation in accordance with `offset` is applied on the point-offet pairs.
 Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) const;
 
 /// \name
+/// \warning The following functions were renamed with %CGAL 4.11 to clarify
+/// that they return geometric objects with inner type `Point_3`.
+///
 /// Note that a traits class providing exact constructions should be
 /// used in order to guarantee the following operations to be exact
 /// (as opposed to computing the triangulation only, which requires
 /// only exact predicates).
+///
 /// @{
 
 /*!
-Converts the `Periodic_point` `s` (point-offset pair) to the
-corresponding `Point` in \f$ \mathbb R^3\f$.
+Converts the periodic point of type `PP` to a `Point_3`. The type `PP` can be either
+`Periodic_point` or `Periodic_point_3`.
 */
-Point point(const Periodic_point & p ) const;
+template<typename PP>
+Point_3 construct_point(const PP & pp) const;
 
 /*!
-Converts the `Periodic_segment` `s` to a `Segment`.
+Converts the `Point` `p` to a `Point_3`.
 */
-Segment segment(const Periodic_segment & s) const;
+Point_3 construct_point(const Point & p) const;
 
 /*!
-Converts the `Periodic_triangle` `t` to a `Triangle`.
+Same as above, with offsets.
 */
-Triangle triangle(const Periodic_triangle & t) const;
+template<typename P>
+Point_3 construct_point(const P& p1, const Offset& o1) const;
 
 /*!
-Converts the `Periodic_tetrahedron` `t` to a `Tetrahedron`.
+Converts the periodic segment of type `PS` to a `Segment`. The type `PS` can be
+either `Periodic_segment` or `Periodic_segment_3`.
 */
-Tetrahedron tetrahedron(const Periodic_tetrahedron & t)
-const;
+template<typename PS>
+Segment construct_segment(const PS & s) const;
+
+/*!
+Creates a segment from two points. The type `P` can be either `Point` or `Point_3`.
+*/
+template<typename P>
+Segment construct_segment(const P& p1, const P& p2) const;
+
+/*!
+Same as above, with offsets.
+*/
+template<typename P>
+Segment construct_segment(const P& p1, const P& p2, const Offset& o1, const Offset& o2) const;
+
+/*!
+Converts the periodic triangle of type `PT` to a `Triangle`. The type `PT` can
+be either `Periodic_triangle` or `Periodic_triangle_3`.
+*/
+template<typename PT>
+Triangle construct_triangle(const PT & t) const;
+
+/*!
+Creates a triangle from three points. The type `P` can be either `Point` or `Point_3`.
+*/
+template<typename P>
+Triangle construct_triangle(const P& p1, const P& p2, const P& p3) const;
+
+/*!
+Same as above, with offsets.
+*/
+template<typename P>
+Triangle construct_triangle(const P& p1, const P& p2, const P& p3,
+                            const Offset& o1, const Offset& o2, const Offset& o3) const;
+
+/*!
+Converts the periodic tetrahedron of type `PT` to a `Tetrahedron`. The type `PT`
+can be either `Periodic_tetrahedron` or `Periodic_tetrahedron_3`.
+*/
+template<typename PT>
+Tetrahedron construct_tetrahedron(const PT & t) const;
+
+/*!
+Creates a tetrahedron from four points. The type `P` can be either `Point` or `Point_3`.
+*/
+template<typename P>
+Tetrahedron construct_tetrahedron(const P& p1, const P& p2, const P& p3, const P& p4) const;
+
+/*!
+Same as above, with offsets.
+*/
+template<typename P>
+Tetrahedron construct_tetrahedron(const P& p1, const P& p2, const P& p3, const P& p4,
+                                  const Offset& o1, const Offset& o2, const Offset& o3, const Offset& o4) const;
 
 /// @}
 
