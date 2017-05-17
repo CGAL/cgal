@@ -21,7 +21,7 @@ void test_halfedge_around_vertex_iterator(const  Graph& g)
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
 
 
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
   typename boost::graph_traits<Adapter >::vertex_iterator vit, vend;
   for(boost::tie(vit, vend) = vertices(fg); vit != vend; ++vit) {
     halfedge_around_target_iterator havit, havend;
@@ -47,7 +47,7 @@ void test_halfedge_around_face_iterator(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
   face_iterator fit, fend;
   for(boost::tie(fit, fend) = faces(fg); fit != fend; ++fit) {
     halfedge_around_face_iterator hafit, hafend;
@@ -67,7 +67,7 @@ void test_edge_iterators(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   // do we iterate as many as that?
   edge_iterator eb, ee;
@@ -93,7 +93,7 @@ void test_vertex_iterators(Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
   vertex_iterator vb, ve;
   std::size_t count = 0;
   for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb){
@@ -123,7 +123,7 @@ void test_out_edges(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   vertex_iterator vb, ve;
   for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
@@ -152,7 +152,7 @@ void test_in_edges(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   vertex_iterator vb, ve;
   for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
@@ -179,7 +179,7 @@ void test_in_out_edges(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   // check that the sets of in out edges are the same
   vertex_iterator vb, ve;
@@ -221,7 +221,7 @@ void test_edge_find(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
   typedef std::pair<edge_descriptor, bool>   ret;
 
   edge_iterator eb, ee;
@@ -245,7 +245,7 @@ void test_faces(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   unsigned int count = 0;
   face_iterator fb, fe;
@@ -271,7 +271,7 @@ void test_read(const Graph& g)
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
-  Adapter fg(g, boost::make_assoc_property_map(map), 0);
+  Adapter fg(g, 0, boost::make_assoc_property_map(map));
   assert(CGAL::is_valid(fg));
 }
 
@@ -418,7 +418,7 @@ main()
   boost::unordered_set<long unsigned int> pids;
   pids.insert(0);
   pids.insert(2);
-  SM_Adapter sm_adapter(*sm, fccmap, pids.begin(), pids.end());
+  SM_Adapter sm_adapter(*sm, pids, fccmap);
   test_mesh<SM,SM_FCCMap, SM_Adapter>(sm_adapter);
 
 
@@ -454,9 +454,8 @@ main()
                                                       edge_is_constrained_map(Constraint<Polyhedron, VPMap >(*poly, vpmap)).
                                                       face_index_map(poly_fimap));
   Poly_Adapter poly_adapter(*poly,
+                            pids,
                             poly_fccmap,
-                            pids.begin(),
-                            pids.end(),
                             poly_fimap,
                             poly_vimap,
                             poly_himap);

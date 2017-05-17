@@ -18,7 +18,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
 typedef boost::graph_traits<Mesh>::faces_size_type          faces_size_type;
 
 typedef Mesh::Property_map<face_descriptor, faces_size_type> FCCmap;
-  typedef CGAL::Face_filtered_graph<Mesh> CCG;
+  typedef CGAL::Face_filtered_graph<Mesh> Filtered_graph;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -39,10 +39,10 @@ int main(int argc, char* argv[])
 
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
  
-  CCG ccg(mesh, fccmap, 0);
+  Filtered_graph ffg(mesh, 0, fccmap);
 
   std::cout << "The faces in component 0 are:" << std::endl;
-  BOOST_FOREACH(boost::graph_traits<CCG>::face_descriptor f, faces(ccg)){
+  BOOST_FOREACH(boost::graph_traits<Filtered_graph>::face_descriptor f, faces(ffg)){
     std::cout  << f << std::endl;
   }
 
@@ -51,10 +51,10 @@ int main(int argc, char* argv[])
     components.push_back(0);
     components.push_back(1);
 
-    ccg.set_selected_faces(fccmap,components.begin(), components.end());
+    ffg.set_selected_faces(components, fccmap);
     
     std::cout << "The faces in components 0 and 1 are:" << std::endl;
-    BOOST_FOREACH(CCG::face_descriptor f, faces(ccg)){
+    BOOST_FOREACH(Filtered_graph::face_descriptor f, faces(ffg)){
     std::cout  << f << std::endl;
     }
   }

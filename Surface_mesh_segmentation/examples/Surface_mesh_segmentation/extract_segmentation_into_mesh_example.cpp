@@ -38,13 +38,13 @@ int main(int argc, char** argv )
   // Any other scalar values can be used instead of using SDF values computed using the CGAL function
   std::size_t number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
-  typedef CGAL::Face_filtered_graph<SM> Cc_graph;
+  typedef CGAL::Face_filtered_graph<SM> Filtered_graph;
   //print area of each segment and then put it in a Mesh and print it in an OFF file
-  Cc_graph segment_mesh(mesh, segment_property_map, 0);
+  Filtered_graph segment_mesh(mesh, 0, segment_property_map);
   for(std::size_t id = 0; id < number_of_segments; ++id)
   {
     if(id > 0)
-      segment_mesh.set_selected_faces(segment_property_map, id);
+      segment_mesh.set_selected_faces(id, segment_property_map);
     std::cout << "Segment "<<id<<"'s area is : "<<CGAL::Polygon_mesh_processing::area(segment_mesh)<<std::endl;
     SM out;
     CGAL::copy_face_graph(segment_mesh, out);
