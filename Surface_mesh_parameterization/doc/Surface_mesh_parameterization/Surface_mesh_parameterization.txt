@@ -104,7 +104,7 @@ of this program.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigsimple}
 <center>
-<img src="nefertiti.png" style="max-width:70%;"/>
+<img src="nefertiti.jpg" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Surface_mesh_parameterizationfigsimple}
 Input (left), parameter space (middle), and textured mesh (right) corresponding to the
