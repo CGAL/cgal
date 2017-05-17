@@ -21,7 +21,7 @@ typedef P3DT3::Locate_type       Locate_type;
 
 int main(int, char**)
 {
-  Iso_cuboid domain(-1,-1,-1,2,2,2);  // The cube for the periodic domain
+  Iso_cuboid domain(-1,-1,-1,2,2,2);  // the cube for the periodic domain
 
   // construction from a list of points :
   std::list<Point> L;
@@ -29,7 +29,7 @@ int main(int, char**)
   L.push_front(Point(1,0,0));
   L.push_front(Point(0,1,0));
 
-  P3DT3 T(L.begin(), L.end(), domain); // Put the domain with the constructor
+  P3DT3 T(L.begin(), L.end(), domain); // put the domain with the constructor
 
   P3DT3::size_type n = T.number_of_vertices();
 
@@ -61,17 +61,17 @@ int main(int, char**)
   assert( nc->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
-  // writing file output;
-  std::ofstream oFileT("output.tri",std::ios::out);
+  // writing file output
+  std::ofstream oFileT("output.tri", std::ios::out); // as a .tri file
   oFileT << T;
 
-  std::ofstream to_off("output_regular.off");
+  std::ofstream to_off("output_regular.off"); // as a .off file
   write_triangulation_to_off(to_off, T);
 
   std::ofstream d_to_off("output_dual.off");
   draw_dual_to_off(d_to_off, T);
 
-  // reading file output;
+  // reading file output
   P3DT3 T1;
   std::ifstream iFileT("output.tri",std::ios::in);
   iFileT >> T1;
