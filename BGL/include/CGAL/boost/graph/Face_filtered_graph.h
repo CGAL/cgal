@@ -88,63 +88,6 @@ struct Face_filtered_graph
   typedef typename boost::property_traits< HIMap >::value_type halfedge_index_type;
   typedef Face_filtered_graph<Graph, FIMap, VIMap, HIMap>   Self;
 
-private:
-  template <typename FacePatchMap, class IndexRangeIterator>
-  void base_iterator_constructor(IndexRangeIterator begin,
-                                 IndexRangeIterator end,
-                                 FacePatchMap fcmap)
-  {
-    face_patch.resize(num_faces(_graph));
-    vertex_patch.resize(num_vertices(_graph));
-    halfedge_patch.resize(num_halfedges(_graph));
-    boost::unordered_set<typename boost::property_traits<FacePatchMap>::value_type> pids;
-    for(IndexRangeIterator it = begin;
-        it != end;
-        ++it)
-    {
-      pids.insert(*it);
-    }
-
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
-    {
-      if(pids.find(boost::get(fcmap, fd))!= pids.end() )
-      {
-        face_patch.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
-        {
-          halfedge_patch.set(get(himap, hd));
-          halfedge_patch.set(get(himap, opposite(hd, _graph)));
-          vertex_patch.set(get(vimap, target(hd, _graph)));
-        }
-      }
-    }
-    CGAL_assertion(is_selection_valid());
-  }
-
-  template <typename FacePatchMap>
-  void base_constructor(FacePatchMap fcmap,
-      typename boost::property_traits<FacePatchMap>::value_type pid)
-  {
-    face_patch.resize(num_faces(_graph));
-    vertex_patch.resize(num_vertices(_graph));
-    halfedge_patch.resize(num_halfedges(_graph));
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
-    {
-      if(boost::get(fcmap, fd) == pid)
-      {
-        face_patch.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
-        {
-          halfedge_patch.set(get(himap, hd));
-          halfedge_patch.set(get(himap, opposite(hd, _graph)));
-          vertex_patch.set(get(vimap, target(hd, _graph)));
-        }
-      }
-    }
-    CGAL_assertion(is_selection_valid());
-  }
-
-public:
   /*!
    * \brief Constructor where the set of selected faces is specified as a range of patch ids.
    *
@@ -183,7 +126,7 @@ public:
                              )
     : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
   {
-    base_iterator_constructor(begin, end, fcmap);
+    set_selected_faces(begin, end, fcmap);
   }
 
   template <typename FacePatchMap, class IndexRangeIterator>
@@ -196,7 +139,7 @@ public:
     fimap = get(CGAL::face_index, graph);
     vimap = get(boost::vertex_index, graph);
     himap = get(CGAL::halfedge_index, graph);
-    base_iterator_constructor(begin, end, fcmap);
+    set_selected_faces(begin, end, fcmap);
   }
   /*!
    * \brief Constructor where the set of selected faces is specified as a patch id.
@@ -233,7 +176,7 @@ public:
                              )
     : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
   {
-    base_constructor(fcmap, pid);
+    set_selected_faces(fcmap, pid);
   }
 
   template <typename FacePatchMap>
@@ -245,7 +188,7 @@ public:
     fimap = get(CGAL::face_index, graph);
     vimap = get(boost::vertex_index, graph);
     himap = get(CGAL::halfedge_index, graph);
-    base_constructor(fcmap, pid);
+    set_selected_faces(fcmap, pid);
   }
 
   /*!
@@ -297,8 +240,23 @@ public:
     face_indices.clear();
     vertex_indices.clear();
     halfedge_indices.clear();
-    base_constructor(fcmap, pid);
-    CGAL_assertion(is_selection_valid());
+
+    face_patch.resize(num_faces(_graph));
+    vertex_patch.resize(num_vertices(_graph));
+    halfedge_patch.resize(num_halfedges(_graph));
+    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    {
+      if(get(fcmap, fd) == pid)
+      {
+        face_patch.set(get(fimap, fd));
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        {
+          halfedge_patch.set(get(himap, hd));
+          halfedge_patch.set(get(himap, opposite(hd, _graph)));
+          vertex_patch.set(get(vimap, target(hd, _graph)));
+        }
+      }
+    }
   }
   /// change the set of selected faces using a range of patch ids
   template<class FacePatchMap, class IndexRangeIterator>
@@ -309,13 +267,55 @@ public:
     face_indices.clear();
     vertex_indices.clear();
     halfedge_indices.clear();
-    base_iterator_constructor(begin, end, fcmap);
-    CGAL_assertion(is_selection_valid());
+
+    face_patch.resize(num_faces(_graph));
+    vertex_patch.resize(num_vertices(_graph));
+    halfedge_patch.resize(num_halfedges(_graph));
+
+    boost::unordered_set<typename boost::property_traits<FacePatchMap>::value_type> pids;
+    for(IndexRangeIterator it = begin;
+        it != end;
+        ++it)
+    {
+      pids.insert(*it);
+    }
+
+    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    {
+      if(pids.count(get(fcmap, fd)) != 0)
+      {
+        face_patch.set(get(fimap, fd));
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        {
+          halfedge_patch.set(get(himap, hd));
+          halfedge_patch.set(get(himap, opposite(hd, _graph)));
+          vertex_patch.set(get(vimap, target(hd, _graph)));
+        }
+      }
+    }
   }
   /// change the set of selected faces using a range of face descriptors
-  /// \todo implement me
   template<class FaceRange>
-  void set_selected_faces(FaceRange selected_face_range);
+  void set_selected_faces(FaceRange selected_face_range)
+  {
+    face_indices.clear();
+    vertex_indices.clear();
+    halfedge_indices.clear();
+
+    face_patch.resize(num_faces(_graph));
+    vertex_patch.resize(num_vertices(_graph));
+    halfedge_patch.resize(num_halfedges(_graph));
+    BOOST_FOREACH(face_descriptor fd, selected_face_range)
+    {
+      face_patch.set(get(fimap, fd));
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+      {
+        halfedge_patch.set(get(himap, hd));
+        halfedge_patch.set(get(himap, opposite(hd, _graph)));
+        vertex_patch.set(get(vimap, target(hd, _graph)));
+      }
+    }
+  }
 
   struct Is_simplex_valid
   {
