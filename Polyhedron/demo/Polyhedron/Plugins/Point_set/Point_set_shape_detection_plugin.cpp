@@ -25,7 +25,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
-//#include <CGAL/structure_point_set.h>
+#include <CGAL/structure_point_set.h>
 
 #include <QObject>
 #include <QAction>
@@ -409,23 +409,28 @@ private:
     {
       std::cerr << "Structuring point set... ";
         
-      // Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
-      // pts_full->point_set()->add_normal_map();
-      // CGAL::structure_point_set (points->begin (), points->end (),
-      //                            points->point_map(), points->normal_map(),
-      //                            boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
-      //                            shape_detection,
-      //                            op.cluster_epsilon);
-      // if (pts_full->point_set ()->empty ())
-      //   delete pts_full;
-      // else
-      // {
-      //   pts_full->point_set ()->unselect_all();
-      //   pts_full->setName(tr("%1 (structured)").arg(item->name()));
-      //   pts_full->setRenderingMode(PointsPlusNormals);
-      //   pts_full->setColor(Qt::blue);
-      //   scene->addItem (pts_full);
-      // }
+      Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
+      pts_full->point_set()->add_normal_map();
+
+      typename Shape_detection::Plane_range planes = shape_detection.planes();
+      
+      CGAL::structure_point_set<Traits> (*points,
+                                         points->point_map(), points->normal_map(),
+                                         planes,
+                                         CGAL::Shape_detection_3::Plane_map<Traits>(),
+                                         CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
+                                         boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
+                                         op.cluster_epsilon);
+      if (pts_full->point_set ()->empty ())
+        delete pts_full;
+      else
+      {
+        pts_full->point_set ()->unselect_all();
+        pts_full->setName(tr("%1 (structured)").arg(item->name()));
+        pts_full->setRenderingMode(PointsPlusNormals);
+        pts_full->setColor(Qt::blue);
+        scene->addItem (pts_full);
+      }
       std::cerr << "done" << std::endl;
     }
         

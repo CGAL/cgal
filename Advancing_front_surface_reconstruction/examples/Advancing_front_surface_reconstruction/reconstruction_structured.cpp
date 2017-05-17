@@ -140,10 +140,15 @@ int main (int argc, char* argv[])
 
   ransac.detect(op); // Plane detection
 
+  typename Efficient_ransac::Plane_range planes = ransac.planes();
+
   std::cerr << "done\nPoint set structuring... ";
 
   Pwn_vector structured_pts;
-  Structure pss (points.begin (), points.end (), ransac,
+  Structure pss (points, Point_map(), Normal_map(),
+                 planes,
+                 CGAL::Shape_detection_3::Plane_map<Traits>(),
+                 CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
                  op.cluster_epsilon);  // Same parameter as RANSAC
 
   for (std::size_t i = 0; i < pss.size(); ++ i)

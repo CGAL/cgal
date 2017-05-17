@@ -50,13 +50,17 @@ int main (int argc, char** argv)
   ransac.set_input(points);
   ransac.add_shape_factory<Plane>();
   ransac.detect();
-
+  
+  typename Efficient_ransac::Plane_range planes = ransac.planes();
+  
   Pwn_vector structured_pts;
 
-  CGAL::structure_point_set (points.begin (), points.end (), // input points
-                             std::back_inserter (structured_pts),
-                             ransac, // shape detection engine
-                             0.015); // epsilon for structuring points
+  CGAL::structure_point_set<Traits> (points, Point_map(), Normal_map(),
+                                     planes,
+                                     CGAL::Shape_detection_3::Plane_map<Traits>(),
+                                     CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
+                                     std::back_inserter (structured_pts),
+                                     0.015); // epsilon for structuring points
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;
