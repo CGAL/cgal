@@ -484,7 +484,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   // Surface_mesh
   if ( NULL != sm_item )
   {
-    Scene_surface_mesh_item::SMesh* psMesh = sm_item->polyhedron();
+    SMesh* psMesh = sm_item->polyhedron();
     if (NULL == psMesh)
     {
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));

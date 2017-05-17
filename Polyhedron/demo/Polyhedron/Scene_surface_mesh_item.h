@@ -25,13 +25,7 @@ class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
 {
   Q_OBJECT
 public:
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef Kernel::Point_3 Point;
-  typedef CGAL::Surface_mesh<Point> SMesh;
   typedef SMesh Face_graph;
-  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-  typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
   typedef SMesh::Property_map<face_descriptor,int> Face_selection_map;
   Scene_surface_mesh_item();
@@ -63,9 +57,6 @@ public:
   Face_selection_map face_selection_map();
 
   std::vector<QColor>& color_vector();
-
-  void set_patch_id(SMesh::Face_index f,int i)const;
-  int patch_id(SMesh::Face_index f)const;
   void show_feature_edges(bool);
   virtual void drawEdges() const {}
   SMesh* polyhedron();

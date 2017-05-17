@@ -16,7 +16,7 @@ struct Graph_with_descriptor_with_graph;
 }
 class Scene_surface_mesh_item;
 
-typedef CGAL::Graph_with_descriptor_with_graph<Scene_surface_mesh_item::SMesh> SMwgd;
+typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
 
 struct Mesh_parameters;
 namespace CGAL { namespace Three {

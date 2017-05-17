@@ -6,6 +6,7 @@
 #include <CGAL/Mesh_3/global_parameters.h>
 
 #include "Polyhedron_type.h"
+#include "SMesh_type.h"
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Image_type.h"
 #include <CGAL/Labeled_image_mesh_domain_3.h>
@@ -28,7 +29,6 @@
 
 #include <CGAL/tags.h>
 
-typedef Scene_surface_mesh_item::SMesh SMesh;
 typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 template <typename K>

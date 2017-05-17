@@ -70,15 +70,15 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
   CGAL::Real_timer timer;
   timer.start();
 
-  typedef typename Polyhedral_mesh_domain_selector<Mesh>::type Pwd;
+  typedef typename Polyhedral_mesh_domain_selector<Mesh>::type Polyhedral_mesh_domain;
   // Create domain
-  Pwd* p_domain = NULL;
+  Polyhedral_mesh_domain* p_domain = NULL;
   if (!surface_only && is_closed(*pMesh))
-    p_domain = new Pwd(*pMesh);
+    p_domain = new Polyhedral_mesh_domain(*pMesh);
   else
   {
     std::vector<const Mesh*> poly_ptrs_vector(1, pMesh);
-    p_domain = new Pwd(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
+    p_domain = new Polyhedral_mesh_domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
   }
 
   // Features
@@ -128,7 +128,7 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
 
-  typedef ::Mesh_function<Pwd,
+  typedef ::Mesh_function<Polyhedral_mesh_domain,
                           Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                      p_domain, param);

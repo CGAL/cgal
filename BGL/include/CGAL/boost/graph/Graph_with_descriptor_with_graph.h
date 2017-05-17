@@ -753,7 +753,6 @@ template <class Graph, class PropertyTag>
 Graph_with_descriptor_with_graph_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type>
 get(PropertyTag ptag, const Graph_with_descriptor_with_graph<Graph>& w)
 {
-  get(ptag,*w.graph);
   typedef typename boost::property_map<Graph,PropertyTag>::type PM;
   typedef Graph_with_descriptor_with_graph_property_map<Graph, PM> GPM;
   return GPM(*w.graph, get(ptag,*w.graph));

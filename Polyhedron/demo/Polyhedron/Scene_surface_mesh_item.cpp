@@ -57,7 +57,6 @@ typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 
 struct Scene_surface_mesh_item_priv{
 
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef EPICK::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
@@ -746,7 +745,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     return;
   }
 
-  typedef FacetTriangulator<SMesh, Kernel, boost::graph_traits<SMesh>::vertex_descriptor> FT;
+  typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
   double diagonal;
   if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->diagonalBbox();
@@ -1018,7 +1017,7 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
 QList<EPICK::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(face_descriptor fit,
                                                 EPICK::Vector_3 normal)
 {
-  typedef FacetTriangulator<SMesh, Kernel, boost::graph_traits<SMesh>::vertex_descriptor> FT;
+  typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
   //The output list
   QList<EPICK::Triangle_3> res;
   //check if normal contains NaN values
