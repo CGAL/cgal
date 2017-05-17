@@ -247,7 +247,7 @@ public :
   {
     QPen pen;
     QBrush brush;
-    brush.setColor(Qt::red);
+    brush.setColor(QColor(100, 100, 255));
     brush.setStyle(Qt::SolidPattern);
     pen.setColor(Qt::black);
     pen.setWidth(0);
