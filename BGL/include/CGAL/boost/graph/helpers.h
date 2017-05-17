@@ -736,7 +736,7 @@ bool is_degenerate_triangle_face(
  * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, 0.5*`height`, 0)
  * \param nb_vertices the number of vertices per base. It must be greater than or equal to 3.
  * \param g the graph in which the regular prism will be created.
- * \param center the point around which the regular prism will be created. It is the middle point of the axis of the prism.
+ * \param base_center the center of the circle in which the lower base is inscribed.
  * \param height the distance between the two bases.
  * \param radius the radius of the circle in which the bases are inscribed.
  * \param is_closed determines if the bases must be created or not.
@@ -747,7 +747,7 @@ typename boost::graph_traits<Graph>::halfedge_descriptor
 make_regular_prism(
     typename boost::graph_traits<Graph>::vertices_size_type nb_vertices,
     Graph& g,
-    const P& center = P(0,0,0),
+    const P& base_center = P(0,0,0),
     typename CGAL::Kernel_traits<P>::Kernel::FT height = 1.0,
     typename CGAL::Kernel_traits<P>::Kernel::FT radius = 1.0,
     bool is_closed = true)
@@ -758,7 +758,7 @@ make_regular_prism(
   typedef typename CGAL::Kernel_traits<P>::Kernel::FT FT;
 
   const FT to_rad = CGAL_PI / 180.0;
-  const FT precision = 360/nb_vertices;
+  const FT precision = 360.0/nb_vertices;
   const FT diameter = 2*radius;
   Point_property_map vpmap = get(CGAL::vertex_point, g);
   std::vector<vertex_descriptor> vertices;
@@ -771,15 +771,15 @@ make_regular_prism(
   {
     put(vpmap,
         vertices[i],
-        P(0.5*diameter*cos(i*precision*to_rad)+center.x(),
-          0.5*height+center.y(),
-          -0.5*diameter*sin(i*precision*to_rad) + center.z()));
+        P(0.5*diameter*cos(i*precision*to_rad)+base_center.x(),
+          height+base_center.y(),
+          -0.5*diameter*sin(i*precision*to_rad) + base_center.z()));
 
     put(vpmap,
         vertices[i+nb_vertices],
-        P(0.5*diameter*cos(i*precision*to_rad)+center.x(),
-          -0.5*height+center.y(),
-          -0.5*diameter*sin(i*precision*to_rad)+center.z()));
+        P(0.5*diameter*cos(i*precision*to_rad)+base_center.x(),
+          base_center.y(),
+          -0.5*diameter*sin(i*precision*to_rad)+base_center.z()));
   }
   std::vector<vertex_descriptor> face;
   face.resize(3);
@@ -800,11 +800,11 @@ make_regular_prism(
   //close
   if(is_closed)
   {
-    //add the center of the fans
+    //add the base_center of the fans
     vertex_descriptor top = add_vertex(g);
     vertex_descriptor bot = add_vertex(g);
-    put(vpmap, top, P(center.x(),0.5*height+center.y(),center.z()));
-    put(vpmap, bot, P(center.x(),-0.5*height+center.y(),center.z()));
+    put(vpmap, top, P(base_center.x(),height+base_center.y(),base_center.z()));
+    put(vpmap, bot, P(base_center.x(),base_center.y(),base_center.z()));
 
     //add the faces
     for(int i=0; i<nb_vertices; ++i)
@@ -852,7 +852,7 @@ make_pyramid(
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename CGAL::Kernel_traits<P>::Kernel::FT FT;
   const FT to_rad = CGAL_PI / 180.0;
-  const FT precision = 360/nb_vertices;
+  const FT precision = 360.0/nb_vertices;
   const FT diameter = 2*radius;
   Point_property_map vpmap = get(CGAL::vertex_point, g);
   std::vector<vertex_descriptor> vertices;

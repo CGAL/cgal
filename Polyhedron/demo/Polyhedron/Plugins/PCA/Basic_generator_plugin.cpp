@@ -3,6 +3,7 @@
 #include <QAction>
 #include <QVector>
 #include <QMessageBox>
+#include <QBitmap>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
@@ -60,11 +61,15 @@ public :
     dock_widget = new GeneratorWidget("Basic Generator", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
-    connect(dock_widget->buttonBox->buttons().first(), &QAbstractButton::clicked,
-            this, &Basic_generator_plugin::on_apply_clicked);
+    connect(dock_widget->generateButton, &QAbstractButton::clicked,
+            this, &Basic_generator_plugin::on_generate_clicked);
     connect(dock_widget->selector_tabWidget, &QTabWidget::currentChanged,
             this, &Basic_generator_plugin::on_tab_changed);
     connect(dock_widget, &GeneratorWidget::visibilityChanged,
+            this, &Basic_generator_plugin::on_tab_changed);
+    connect(dock_widget->prismCheckBox, &QCheckBox::stateChanged,
+            this, &Basic_generator_plugin::on_tab_changed);
+    connect(dock_widget->pyramidCheckBox, &QCheckBox::stateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
   }
 
@@ -79,7 +84,7 @@ public :
 public Q_SLOTS:
 
   void on_actionGenerator_triggered();
-  void on_apply_clicked();
+  void on_generate_clicked();
   void on_tab_changed();
   void closure(){ dock_widget->hide(); }
 private:
@@ -118,40 +123,56 @@ void Basic_generator_plugin::on_tab_changed()
   int nb = 0;
   switch(dock_widget->selector_tabWidget->currentIndex())
   {
-
   case PRISM:
+  {
     name = QString("Prism");
-   nb = nbs[PRISM];
+    nb = nbs[PRISM];
+    QPixmap pic;
+    if(dock_widget->prismCheckBox->isChecked())
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/base.png");
+    else
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/base_open.png");
+    dock_widget->prism_picLabel->setPixmap(pic);
+    dock_widget->prism_picLabel->show();
+  }
     break;
-
   case SPHERE:
     name = QString("Sphere");
-   nb = nbs[SPHERE];
+    nb = nbs[SPHERE];
     break;
 
   case PYRAMID:
+  {
     name = QString("Pyramid");
-   nb = nbs[PYRAMID];
+    nb = nbs[PYRAMID];
+    QPixmap pic;
+    if(dock_widget->pyramidCheckBox->isChecked())
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/base.png");
+    else
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/base_open.png");
+    dock_widget->pyramid_picLabel->setPixmap(pic);
+    dock_widget->pyramid_picLabel->show();
+  }
     break;
 
   case HEXAHEDRON:
     name = QString("Hexahedron");
-   nb = nbs[HEXAHEDRON];
+    nb = nbs[HEXAHEDRON];
     break;
 
   case TETRAHEDRON:
     name = QString("Tetrahedron");
-   nb = nbs[TETRAHEDRON];
+    nb = nbs[TETRAHEDRON];
     break;
 
   case POINT_SET:
     name = QString("Point_set");
-   nb = nbs[POINT_SET];
+    nb = nbs[POINT_SET];
     break;
 
   case POLYLINE:
     name = QString("Polyline");
-   nb = nbs[POLYLINE];
+    nb = nbs[POLYLINE];
     break;
   default:
     break;
@@ -159,7 +180,7 @@ void Basic_generator_plugin::on_tab_changed()
   dock_widget->name_lineEdit->setText((nb==0)?name:QString(name).append(QString("%1").arg(nb)));
 }
 //generate
-void Basic_generator_plugin::on_apply_clicked()
+void Basic_generator_plugin::on_generate_clicked()
 {
   switch(dock_widget->selector_tabWidget->currentIndex())
   {

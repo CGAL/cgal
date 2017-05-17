@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="selector_tabWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="prismTab">
        <attribute name="title">
@@ -26,12 +26,12 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QLabel" name="label_25">
+         <widget class="QLabel" name="prism_picLabel">
           <property name="text">
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../Polyhedron_3.qrc">:/cgal/icons/resources/base.png</pixmap>
+           <pixmap>:/cgal/icons/resources/base.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
@@ -235,7 +235,7 @@ QGroupBox::title {
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../Polyhedron_3.qrc">:/cgal/icons/resources/icosphere.png</pixmap>
+           <pixmap resource="../../Polyhedron_3.qrc">:/cgal/Polyhedron_3/resources/icosphere.png</pixmap>
           </property>
          </widget>
         </item>
@@ -347,12 +347,12 @@ QGroupBox::title {
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>
-         <widget class="QLabel" name="label_26">
+         <widget class="QLabel" name="pyramid_picLabel">
           <property name="text">
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../Polyhedron_3.qrc">:/cgal/icons/resources/base.png</pixmap>
+           <pixmap>:/cgal/icons/resources/base.png</pixmap>
           </property>
          </widget>
         </item>
@@ -558,7 +558,7 @@ QGroupBox::title {
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../../Polyhedron_3.qrc">:/cgal/icons/resources/hexahedron.png</pixmap>
+             <pixmap resource="../../Polyhedron_3.qrc">:/cgal/Polyhedron_3/resources/hexahedron.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>false</bool>
@@ -768,7 +768,7 @@ QGroupBox::title {
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../Polyhedron_3.qrc">:/cgal/icons/resources/tetrahedron.png</pixmap>
+           <pixmap resource="../../Polyhedron_3.qrc">:/cgal/Polyhedron_3/resources/tetrahedron.png</pixmap>
           </property>
          </widget>
         </item>
@@ -910,7 +910,7 @@ p, li { white-space: pre-wrap; }
            <bool>false</bool>
           </property>
           <property name="placeholderText">
-           <string notr="true">Point set format:  Ax Ay A3 Bx By Bz ... Zx Zy Zz </string>
+           <string notr="true">Point set format:  Ax Ay Az Bx By Bz ... Zx Zy Zz </string>
           </property>
          </widget>
         </item>
@@ -969,7 +969,7 @@ p, li { white-space: pre-wrap; }
          <string>This will be the name of the created item.</string>
         </property>
         <property name="text">
-         <string>Item's name:</string>
+         <string>Item name:</string>
         </property>
        </widget>
       </item>
@@ -986,11 +986,28 @@ p, li { white-space: pre-wrap; }
      </layout>
     </item>
     <item>
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Apply</set>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_17">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="generateButton">
+        <property name="text">
+         <string>Generate</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
