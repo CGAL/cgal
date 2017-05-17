@@ -23,6 +23,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/assertions.h>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
@@ -32,6 +33,12 @@
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/range/has_range_iterator.hpp>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL
 {
 
@@ -56,6 +63,11 @@ namespace CGAL
    *
    * The documented interface of this class is limited on purpose and free functions of the concept
    * this class is a model of must be used to manipulate it.
+   *
+   * A BGL-like named parameter mechanism is used in the constructors of this class. %Default values are available but if you need
+   * to set them, you can pass for `np` `CGAL::parameters::face_index_map(fim).halfedge_index_map(him).vertex_index_map(vim)`
+   * where `fim`, `him`, and `vim` are the respective index maps. The order of the arguments is not important and any of them can be
+   * missing if the default is fine.
    *
    * \tparam Graph must be a model of a `FaceListGraph`, `HalfedgeListGraph`, and <a href=http://www.boost.org/doc/libs/release/libs/graph/doc/VertexListGraph.html><code>VertexListGraph</code></a>.
    * \tparam FIMap a model of `ReadablePropertyMap` with `face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
@@ -95,37 +107,41 @@ struct Face_filtered_graph
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \tparam FacePatchIndexRange a model of `ConstRange` with `boost::property_traits<FacePatchIndexMap>::%value_type` as value type.
-   * \note the index maps must be initialized from `0` to the number of simplices.
+   * \tparam NamedParameters a sequence of named parameters
    *
    * \param graph the underlying graph.
    * \param face_patch_index_map the property_map that assigns a patch index to each face, with
       `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type.
    * \param selected_face_patch_indices a range of the face patch indices to select.
-   * \param fimap the property map that assigns an index to each face,
-   * with `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type
-   * \param vimap the property map that assigns an index to each vertex,
-   *  with `vertex_descriptor` as key type and `boost::graph_traits<Graph>::%vertices_size_type` as value type
-   * \param himap the property map that assigns an index to each halfedge,
-   *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
+   * \param np optional sequence of named parameters among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamBegin{face_index_map}
+   *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
+   *   \cgalParamEnd
+   *   \cgalParamBegin{vertex_index_map}
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *   \cgalParamEnd
+   *   \cgalParamBegin{halfedge_index_map}
+   *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
+   *   \cgalParamEnd
+   * \cgalNamedParamsEnd
    */
-  template <typename FacePatchIndexMap, class FacePatchIndexRange>
+  template <typename FacePatchIndexMap, class FacePatchIndexRange, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
                       const FacePatchIndexRange& selected_face_patch_indices,
                             FacePatchIndexMap face_patch_index_map,
-                           #ifdef DOXYGEN_RUNNING
-                            FIMap fimap = get(CGAL::face_index, graph),
-                            VIMap vimap = get(boost::vertex_index, graph),
-                            HIMap himap = get(CGAL::halfedge_index, graph)
-                           #else
-                            FIMap fimap,
-                            VIMap vimap,
-                            HIMap himap,
-                              typename boost::enable_if<
-                                typename boost::has_range_const_iterator<FacePatchIndexRange>::type
-                              >::type* = 0
+                            const CGAL_BGL_NP_CLASS& np
+                           #ifndef DOXYGEN_RUNNING
+                              , typename boost::enable_if<
+                                  typename boost::has_range_const_iterator<FacePatchIndexRange>::type
+                                >::type* = 0
                            #endif
                              )
-    : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
+    : _graph(const_cast<Graph&>(graph))
+    , fimap(boost::choose_param(get_param(np, internal_np::face_index), get_const_property_map(face_index, graph)))
+    , vimap(boost::choose_param(get_param(np, boost::vertex_index), get_const_property_map(boost::vertex_index, graph)))
+    , himap(boost::choose_param(get_param(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
   {
     set_selected_faces(selected_face_patch_indices, face_patch_index_map);
   }
@@ -135,10 +151,10 @@ struct Face_filtered_graph
                       const FacePatchIndexRange& selected_face_patch_indices,
                             FacePatchIndexMap face_patch_index_map)
     : _graph(const_cast<Graph&>(graph))
+    , fimap(get(CGAL::face_index, graph))
+    , vimap(get(boost::vertex_index, graph))
+    , himap(get(CGAL::halfedge_index, graph))
   {
-    fimap = get(CGAL::face_index, graph);
-    vimap = get(boost::vertex_index, graph);
-    himap = get(CGAL::halfedge_index, graph);
     set_selected_faces(selected_face_patch_indices, face_patch_index_map);
   }
   /*!
@@ -147,34 +163,36 @@ struct Face_filtered_graph
    * \tparam FacePatchIndexMap a model of `ReadablePropertyMap` with
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
-   * \note the index maps must be initialized from `0` to the number of simplices.
+   * \tparam NamedParameters a sequence of named parameters
    * \param graph the underlying graph.
    * \param face_patch_index_map the property_map that assigns a patch index to each face, with
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \param selected_face_patch_index the index of the face patch selected.
-   * \param fimap the property map that assigns an index to each face,
-   * with `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type
-   * \param vimap the property map that assigns an index to each vertex,
-   *  with `vertex_descriptor` as key type and `boost::graph_traits<Graph>::%vertices_size_type` as value type
-   * \param himap the property map that assigns an index to each halfedge,
-   *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
+   * \param np optional sequence of named parameters among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamBegin{face_index_map}
+   *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
+   *   \cgalParamEnd
+   *   \cgalParamBegin{vertex_index_map}
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *   \cgalParamEnd
+   *   \cgalParamBegin{halfedge_index_map}
+   *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
+   *   \cgalParamEnd
+   * \cgalNamedParamsEnd
    */
-  template <typename FacePatchIndexMap>
+  template <typename FacePatchIndexMap, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
                             typename boost::property_traits<FacePatchIndexMap>::value_type selected_face_patch_index,
                             FacePatchIndexMap face_patch_index_map,
-                           #ifdef DOXYGEN_RUNNING
-                            FIMap fimap = get(CGAL::face_index, graph),
-                            VIMap vimap = get(boost::vertex_index, graph),
-                            HIMap himap = get(CGAL::halfedge_index, graph)
-                           #else
-                            FIMap fimap,
-                            VIMap vimap,
-                            HIMap himap
-                           #endif
+                            const CGAL_BGL_NP_CLASS& np
                              )
-    : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
+    : _graph(const_cast<Graph&>(graph))
+    , fimap(boost::choose_param(get_param(np, internal_np::face_index), get_const_property_map(face_index, graph)))
+    , vimap(boost::choose_param(get_param(np, boost::vertex_index), get_const_property_map(boost::vertex_index, graph)))
+    , himap(boost::choose_param(get_param(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
   {
     set_selected_faces(selected_face_patch_index, face_patch_index_map);
   }
@@ -184,10 +202,10 @@ struct Face_filtered_graph
                             typename boost::property_traits<FacePatchIndexMap>::value_type pid,
                             FacePatchIndexMap face_patch_index_map)
     : _graph(const_cast<Graph&>(graph))
+    , fimap(get(CGAL::face_index, graph))
+    , vimap(get(boost::vertex_index, graph))
+    , himap(get(CGAL::halfedge_index, graph))
   {
-    fimap = get(CGAL::face_index, graph);
-    vimap = get(boost::vertex_index, graph);
-    himap = get(CGAL::halfedge_index, graph);
     set_selected_faces(face_patch_index_map, pid);
   }
 
@@ -195,37 +213,46 @@ struct Face_filtered_graph
    * \brief Constructor where the set of selected faces is specified as a range of face descriptors.
    *
    * \tparam FaceRange a model of `ConstRange` with `face_descriptor` as value type.
+   * \tparam NamedParameters a sequence of named parameters
    * \note the index maps must be initialized from `0` to the number of simplices.
    * \param graph the graph containing the wanted patch.
    * \param selected_faces the set of selected faces.
-   * \param fimap the property map that assigns an index to each face,
-   * with `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type
-   * \param vimap the property map that assigns an index to each vertex,
-   *  with `vertex_descriptor` as key type and `boost::graph_traits<Graph>::%vertices_size_type` as value type
-   * \param himap the property map that assigns an index to each halfedge,
-   *  with `halfedge_descriptor` as key type and `boost::graph_traits<Graph>::%halfedges_size_type` as value type
+   * \param np optional sequence of named parameters among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamBegin{face_index_map}
+   *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
+   *   \cgalParamEnd
+   *   \cgalParamBegin{vertex_index_map}
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *   \cgalParamEnd
+   *   \cgalParamBegin{halfedge_index_map}
+   *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
+   *   \cgalParamEnd
+   * \cgalNamedParamsEnd
    */
-  template <typename FaceRange>
+  template <typename FaceRange, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
                       const FaceRange& selected_faces,
-                      #ifdef DOXYGEN_RUNNING
-                            FIMap fimap = get(CGAL::face_index, graph),
-                            VIMap vimap = get(boost::vertex_index, graph),
-                            HIMap himap = get(CGAL::halfedge_index, graph)
-                      #else
-                            FIMap fimap,
-                            VIMap vimap,
-                            HIMap himap
-                       #endif
-  ) : _graph(const_cast<Graph&>(graph)), fimap(fimap), vimap(vimap), himap(himap)
+                      const CGAL_BGL_NP_CLASS& np)
+    : _graph(const_cast<Graph&>(graph))
+    , fimap(boost::choose_param(get_param(np, internal_np::face_index), get_const_property_map(face_index, graph)))
+    , vimap(boost::choose_param(get_param(np, boost::vertex_index), get_const_property_map(boost::vertex_index, graph)))
+    , himap(boost::choose_param(get_param(np, internal_np::halfedge_index), get_const_property_map(halfedge_index, graph)))
   {
     set_selected_faces(selected_faces);
   }
 
   template <typename FaceRange>
   Face_filtered_graph(const Graph& graph,
-                      const FaceRange& face_range);
-
+                      const FaceRange& selected_faces)
+    : _graph(const_cast<Graph&>(graph))
+    , fimap(get(CGAL::face_index, graph))
+    , vimap(get(boost::vertex_index, graph))
+    , himap(get(CGAL::halfedge_index, graph))
+  {
+    set_selected_faces(selected_faces);
+  }
 
   ///returns a const reference to the underlying graph.
   const Graph& graph()const{ return _graph; }

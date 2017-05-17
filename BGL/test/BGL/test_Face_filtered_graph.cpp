@@ -456,8 +456,8 @@ main()
   Poly_Adapter poly_adapter(*poly,
                             pids,
                             poly_fccmap,
-                            poly_fimap,
-                            poly_vimap,
-                            poly_himap);
+                            CGAL::parameters::face_index_map(poly_fimap).
+                            vertex_index_map(poly_vimap).
+                            halfedge_index_map(poly_himap));
   test_mesh<Polyhedron, FCMap, Poly_Adapter>(poly_adapter);
 }
