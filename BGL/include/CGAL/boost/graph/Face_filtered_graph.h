@@ -69,14 +69,14 @@ namespace CGAL
    * where `fim`, `him`, and `vim` are the respective index maps. The order of the arguments is not important and any of them can be
    * missing if the default is fine.
    *
-   * \tparam Graph must be a model of a `FaceListGraph`, `HalfedgeListGraph`, and <a href=http://www.boost.org/doc/libs/release/libs/graph/doc/VertexListGraph.html><code>VertexListGraph</code></a>.
+   * \tparam Graph must be a model of a `FaceListGraph`, `HalfedgeListGraph`, and \bgllink{VertexListGraph}.
    * \tparam FIMap a model of `ReadablePropertyMap` with `face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
    * \tparam VIMap a model of `ReadablePropertyMap` with `vertex_descriptor` as key and `graph_traits<Graph>::%vertices_size_type` as value
    * \tparam HIMap a model of `ReadablePropertyMap` with `halfedge_descriptor` as key and `graph_traits<Graph>::%halfedges_size_type` as value
    *
    * \cgalModels `FaceListGraph`
    * \cgalModels `HalfedgeListGraph`
-   * \cgalModels <a href=http://www.boost.org/doc/libs/release/libs/graph/doc/VertexListGraph.html><code>VertexListGraph</code></a>
+   * \cgalModels \bgllink{VertexListGraph}
    */
 template<typename Graph,
          typename FIMap = typename boost::property_map<Graph, CGAL::face_index_t>::type,
