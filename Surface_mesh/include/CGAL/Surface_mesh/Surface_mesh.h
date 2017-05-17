@@ -1989,16 +1989,17 @@ private: //------------------------------------------------------- private data
     return os.good();
   }
 
-
   /// \relates Surface_mesh
-  /// Inserts the surface mesh in an output stream in Ascii OFF format. 
-  /// Only the \em point property is inserted in the stream.
-  /// \pre `operator<<(std::ostream&,const P&)` must be defined.
-
+  /// 
+  /// This operator calls `write_off(std::istream& , CGAL::Surface_mesh)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
-    write_off(os, sm);
+    if(file_format(os) == IO::OFF){
+      write_off(os, sm);
+    } else {
+      std::cerr << "For Surface_mesh we only support the OFF file format" << std::endl;
+    }
     return os;
   }
 
@@ -2022,7 +2023,8 @@ private: //------------------------------------------------------- private data
 /// @endcond
 
   /// \relates Surface_mesh
-  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
+  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF 
+  /// format and appends it to the surface mesh `sm`.
   /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
   /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
@@ -2134,10 +2136,7 @@ private: //------------------------------------------------------- private data
 
  
   /// \relates Surface_mesh
-  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
-  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
-  /// Vertex texture coordinates are ignored.
-  /// \pre `operator>>(std::istream&,const P&)` must be defined.
+  /// This operator calls `read_off(std::istream& , CGAL::Surface_mesh)`.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {

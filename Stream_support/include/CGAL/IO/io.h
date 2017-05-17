@@ -41,17 +41,64 @@
 
 namespace CGAL {
 
-class IO {
+
+
+namespace IO {
+
+class Static {
 public:
 
-  static int get_static_mode()
+  static int get_mode()
   {
     static const int mode = std::ios::xalloc();
     return mode;
   }
 
-  enum Mode {ASCII = 0, PRETTY, BINARY};
+
+  static int get_file_format()
+  {
+    static const int file_format = std::ios::xalloc();
+    return file_format;
+  }
+
 };
+
+  enum Mode {ASCII = 0, PRETTY, BINARY};
+
+  enum File_format {OFF = 0, COFF, PLY, OBJ, STL};
+
+}
+
+std::ios& off(std::ios& os)
+{
+  os.iword(IO::Static::get_file_format()) = IO::OFF;
+  return os;
+}
+
+
+std::ios& ply(std::ios& os)
+{
+  os.iword(IO::Static::get_file_format()) = IO::PLY;
+  return os;
+}
+
+std::ios& obj(std::ios& os)
+{
+  os.iword(IO::Static::get_file_format()) = IO::OBJ;
+  return os;
+}
+
+std::ios& stl(std::ios& os)
+{
+  os.iword(IO::Static::get_file_format()) = IO::STL;
+  return os;
+}
+
+  IO::File_format file_format(std::ios& os)
+  {
+    return static_cast<IO::File_format>(os.iword(IO::Static::get_file_format()));
+  }
+
 
 template <typename Dummy>
 struct IO_rep_is_specialized_aux
