@@ -125,7 +125,7 @@
            <double>1000000.000000000000000</double>
           </property>
           <property name="singleStep">
-           <double>1.000000000000000</double>
+           <double>0.001000000000000</double>
           </property>
           <property name="value">
            <double>0.002000000000000</double>
@@ -148,8 +148,14 @@
           <property name="toolTip">
            <string>Normal angle deviation tolerance as cosine of the angle</string>
           </property>
+          <property name="minimum">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
           <property name="singleStep">
-           <double>0.001000000000000</double>
+           <double>0.010000000000000</double>
           </property>
           <property name="value">
            <double>0.900000000000000</double>
@@ -206,7 +212,7 @@
            <double>1000000.000000000000000</double>
           </property>
           <property name="singleStep">
-           <double>1.000000000000000</double>
+           <double>0.010000000000000</double>
           </property>
           <property name="value">
            <double>0.020000000000000</double>
