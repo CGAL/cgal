@@ -151,8 +151,16 @@ and <code>src/</code> directories).
 <h3> 3D Surface Subdivision Methods </h3>
   <ul>
     <li>
-      The subdivision algorithms work on any model of a `MutableFaceGraph`, and the functions have
-      an optional named parameter that allows to pass a vertex property map.
+      The subdivision algorithms now work on any model of a <code>MutableFaceGraph</code>.
+      A new API to the subdivision methods is offered, which uses optional named
+      parameters to pass the number of iterations and a vertex property map.
+    </li>
+    <li><b>Breaking change</b>:
+      Removed the headers <code>&lt;CGAL/Subdivision_method_3.h&gt;</code> and
+      <code>&lt;CGAL/Subdivision_mask_3.h&gt;</code>. The headers
+      <code>&lt;CGAL/Subdivision_method_3/subdivision_methods_3.h&gt;</code> and
+      <code>&lt;CGAL/Subdivision_method_3/subdivision_masks_3.h&gt;</code> should
+      respectively be used instead.
     </li>
     <li>
       Sqrt3 subdivision can now handle input surfaces with a border.
