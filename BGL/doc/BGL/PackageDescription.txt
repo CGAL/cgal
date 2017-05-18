@@ -99,7 +99,7 @@ Valid Expression                        | Returns                               
 `prev(h, g)`                            | `halfedge_descriptor`                       | The previous halfedge around its face.
 `boost::graph_traits<G>::%null_halfedge()` | `halfedge_descriptor`                    | Returns a special halfedge that is not equal to any other halfedge.
 
-The `HalfedgeGraph`has the invariant  `halfedge(edge(h,g))==h`.
+The `HalfedgeGraph` has the invariant  `halfedge(edge(h,g))==h`.
 
 \cgalHeading{%MutableHalfedgeGraph}
 
