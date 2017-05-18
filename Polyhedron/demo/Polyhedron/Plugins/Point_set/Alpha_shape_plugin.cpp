@@ -85,6 +85,7 @@ public :
   Alpha_shape_3 alpha_shape;
   void createPolygonSoup(std::vector<Kernel::Point_3>& points,
                          std::vector<std::vector<std::size_t> >& polys) const;
+  std::size_t getNbofAlphas()const { return alpha_shape.number_of_alphas(); }
 public Q_SLOTS:
   void alpha_changed(int);
 private:
@@ -177,7 +178,13 @@ public Q_SLOTS:
   void on_actionAlphaShapes_triggered()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
-    else                         { dock_widget->show(); }
+    else {
+      dock_widget->show();
+      Scene_points_with_normal_item* sel_item =
+          qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+      if(sel_item)
+        on_as_itemPushButton_clicked();
+    }
   }
 
   void on_as_itemPushButton_clicked()
@@ -239,7 +246,11 @@ public Q_SLOTS:
         !as_item)
       dock_widget->as_itemPushButton->setEnabled(true);
     else if( qobject_cast<Scene_alpha_shape_item*>( scene->item(i) ) )
+    {
+      dock_widget->horizontalSlider->setMaximum(qobject_cast<Scene_alpha_shape_item*>( scene->item(i) )->getNbofAlphas());
+      dock_widget->spinBox->setMaximum(qobject_cast<Scene_alpha_shape_item*>( scene->item(i) )->getNbofAlphas());
       dock_widget->poly_itemPushButton->setEnabled(true);
+    }
   }
   void closure() Q_DECL_OVERRIDE
   {
@@ -433,10 +444,10 @@ void Scene_alpha_shape_item::initializeBuffers(CGAL::Three::Viewer_interface *vi
 
 void Scene_alpha_shape_item::alpha_changed(int i)
 {
-  if (alpha_shape.number_of_alphas() > 0){
-    if(i < 100){
-      int n = static_cast<int>((i * alpha_shape.number_of_alphas())/ 100);
-      if(n == 0) n++;
+  std::size_t n = i;
+  if (alpha_shape.number_of_alphas() > 0
+      && n > 0){
+    if(n < alpha_shape.number_of_alphas()){
       alpha_shape.set_alpha(alpha_shape.get_nth_alpha(n));
     } else {
       Alpha_iterator alpha_end_it = alpha_shape.alpha_end();

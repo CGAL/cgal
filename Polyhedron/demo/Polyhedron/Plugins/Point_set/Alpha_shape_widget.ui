@@ -29,7 +29,7 @@
         <item>
          <widget class="QSpinBox" name="spinBox">
           <property name="suffix">
-           <string> %</string>
+           <string/>
           </property>
           <property name="maximum">
            <number>100</number>
@@ -38,6 +38,9 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider">
+          <property name="maximum">
+           <number>100</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
