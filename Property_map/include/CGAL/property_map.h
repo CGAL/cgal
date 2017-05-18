@@ -39,8 +39,10 @@ namespace CGAL {
 
 /// \cond SKIP_DOXYGEN
 
-  template <typename K, typename V>
-class static_property_map
+/// This class is almost the same as boost::static_property_map
+/// The difference is that it is writable, although put() does nothing
+template <typename K, typename V>
+class Static_property_map
 {
   typedef K key_type;
   typedef V value_type;
@@ -49,18 +51,18 @@ class static_property_map
   V v;
 
 public:
-  static_property_map(V pv)
+  Static_property_map(V pv)
     :v(pv){}
   inline friend
   value_type
-  get(const static_property_map& pm, const key_type&)
+  get(const Static_property_map& pm, const key_type&)
   {
     return pm.v;
   }
 
   inline friend
   void
-  put(static_property_map& pm, const key_type&, const value_type&)
+  put(Static_property_map& pm, const key_type&, const value_type&)
   {}
 };
 

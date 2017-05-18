@@ -112,7 +112,7 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(Plane_3)
 template <class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct Get_static_property_map {
   typedef boost::graph_traits<CGAL::Polyhedron_3<Gt,I,HDS,A> > Graph_traits;
-  typedef CGAL::static_property_map<typename Graph_traits::face_descriptor,
+  typedef CGAL::Static_property_map<typename Graph_traits::face_descriptor,
                                     std::pair<int,int> > type;
 };
 
