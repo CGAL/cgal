@@ -29,7 +29,8 @@
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
-#include <CGAL/internal/corefinement/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+//#include <CGAL/internal/corefinement/connected_components.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
@@ -65,7 +66,7 @@ set_item_is_multicolor(Scene_face_graph_item*, bool)
 typedef Scene_polyhedron_item Scene_face_graph_item;
 #endif
 
-typedef Scene_face_graph_item::FaceGraph Face_graph;
+typedef Scene_face_graph_item::Face_graph Face_graph;
 
 typedef boost::graph_traits<Face_graph>::vertex_descriptor          vertex_descriptor;
 typedef boost::graph_traits<Face_graph>::vertex_iterator            vertex_iterator;
@@ -494,7 +495,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   int i=0;
   BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*segmented_polyhedron))
   {
-    item_segmentation->set_patch_id(fd, static_cast<int>(segment_ids[i++] ));
+    fd->set_patch_id(static_cast<int>(segment_ids[i++] ));
   }
   scene->item(InputMeshItemIndex)->setVisible(false);
   set_item_is_multicolor(item_segmentation,true);

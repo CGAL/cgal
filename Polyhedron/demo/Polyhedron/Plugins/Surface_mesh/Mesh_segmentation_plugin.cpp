@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QObject>
 #include <QDockWidget>
-//#include <QtConcurrentRun>
+
 #include <map>
 #include <algorithm>
 #include <vector>
@@ -33,7 +33,7 @@
 template <typename FaceGraph>
 void check_and_set_ids(FaceGraph* polyhedron)
 {
-  boost::graph_traits<FaceGraph>::face_iterator b_facet, e_facet, another_facet; 
+  typename boost::graph_traits<FaceGraph>::face_iterator b_facet, e_facet, another_facet;
   boost::tie(b_facet, e_facet) = faces(*polyhedron);
   another_facet = b_facet;
   ++another_facet;
@@ -77,7 +77,7 @@ set_item_is_multicolor(typename Scene_face_graph_item*, bool)
 typedef Scene_polyhedron_item Scene_face_graph_item;
 #endif
 
-typedef Scene_face_graph_item::FaceGraph Face_graph;
+typedef Scene_face_graph_item::Face_graph Face_graph;
 
 using namespace CGAL::Three;
 
@@ -344,7 +344,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
         else {
           color_vector.push_back(color_map_sdf[gray_color]);
         }
-        item->set_patch_id(fd, static_cast<int>(patch_id++));
+        fd->set_patch_id(static_cast<int>(patch_id++));
     }
 }
 
@@ -360,7 +360,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
     std::size_t max_segment = 0;
     BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*polyhedron)){
         std::size_t segment_id = segment_ids[fd];
-        item->set_patch_id(fd,static_cast<int>(segment_id));
+        fd->set_patch_id(static_cast<int>(segment_id));
         max_segment = (std::max)(max_segment, segment_id);      
     }
     for(std::size_t i = 0; i <= max_segment; ++i)   

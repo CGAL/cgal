@@ -56,14 +56,16 @@ target_link_libraries(mean_curvature_flow_skeleton_plugin
     scene_polylines_item
     demo_framework)
     
-qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
-polyhedron_demo_plugin(mean_curvature_flow_skeleton_sm_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
-target_link_libraries(mean_curvature_flow_skeleton_sm_plugin 
-    scene_surface_mesh_item 
-    scene_points_with_normal_item
-    scene_polylines_item
-    demo_framework)
-target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
+#Must wait for #1983 to get access to certain properties of sm_item to set the patch_ids
+#qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
+#polyhedron_demo_plugin(mean_curvature_flow_skeleton_sm_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
+#target_link_libraries(mean_curvature_flow_skeleton_sm_plugin
+#    scene_surface_mesh_item
+#    scene_points_with_normal_item
+#    scene_polylines_item
+#    demo_framework)
+#target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 
 qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
