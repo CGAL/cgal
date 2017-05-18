@@ -8,6 +8,7 @@
 
 #include "Scene_edit_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
+#include <CGAL/Polygon_mesh_processing/repair.h>
 #include <QAction>
 #include <QMainWindow>
 #include <QFileDialog>
@@ -395,8 +396,27 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
     {
       Scene_facegraph_item* poly_item = qobject_cast<Scene_facegraph_item*>(scene->item(i));
       if (poly_item &&
-          CGAL::is_triangle_mesh(*poly_item->polyhedron()))
+          CGAL::is_triangle_mesh(*poly_item->face_graph()))
       {
+        bool is_valid = true;
+        BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*poly_item->face_graph()))
+        {
+          if(PMP::is_degenerated(fd,
+                                 *poly_item->face_graph(),
+                                 get(boost::vertex_point,
+                                     *poly_item->face_graph()), Kernel()))
+          {
+            is_valid = false;
+            break;
+          }
+        }
+        if(!is_valid)
+        {
+          QMessageBox::warning(mw,
+                               tr("Cannot edit degenerated facegraph_items"),
+                               tr(" %1 has degenerated faces, therefore it is not editable.").arg(poly_item->name()));
+          break;
+        }
         last_RM = poly_item->renderingMode();
         poly_item->update_halfedge_indices();
         if(!selection_item)

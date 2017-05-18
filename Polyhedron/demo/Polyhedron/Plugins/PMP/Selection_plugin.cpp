@@ -1,4 +1,5 @@
 #include <QtCore/qglobal.h>
+#include <QMessageBox>
 #include "opengl_tools.h"
 
 #include "Messages_interface.h"
@@ -25,6 +26,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 #include <Scene.h>
 
 #ifdef USE_SURFACE_MESH
@@ -599,9 +601,33 @@ public Q_SLOTS:
       break;
       //Edition mode
     case 1:
+    {
+      VPmap vpmap = get(CGAL::vertex_point, *selection_item->polyhedron());
+      bool is_valid = true;
+      BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*selection_item->polyhedron()))
+      {
+        if(CGAL::Polygon_mesh_processing::is_degenerated(fd,
+                                                         *selection_item->polyhedron(),
+                                                         vpmap,
+                                                         CGAL::Kernel_traits< boost::property_traits<VPmap>::value_type >::Kernel()))
+        {
+          is_valid = false;
+          break;
+        }
+      }
+      if(!is_valid)
+      {
+        QMessageBox::warning(mw,
+                             tr("Degenerated Face_graph"),
+                             tr("Degenerated faces have been detected. Problems may occur "
+                                "for operations other tha \"Move point\". "));
+      }
+      ui_widget.selection_groupBox->setVisible(false);
+      ui_widget.edition_groupBox->setVisible(true);
       Q_EMIT save_handleType();
       on_editionBox_changed(ui_widget.editionBox->currentIndex());
       break;
+    }
     }
   }
 
