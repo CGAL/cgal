@@ -358,21 +358,22 @@ private:
   }
 
   template <typename Vertex_handle>
-  std::string disp_vert(Vertex_handle v, Tag_true) {
+  static std::string disp_vert(Vertex_handle v, Tag_true) {
     std::stringstream ss;
-    ss << (void*)(&*v) << "(ts=" << v->time_stamp() << ")";
+    ss << (void*)(&*v) << "[ts=" << v->time_stamp() << "]"
+       << "(" << v->point() <<")";
     return ss.str();
   }
 
   template <typename Vertex_handle>
-  std::string disp_vert(Vertex_handle v, Tag_false) {
+  static std::string disp_vert(Vertex_handle v, Tag_false) {
     std::stringstream ss;
-    ss << (void*)(&*v);
+    ss << (void*)(&*v) << "(" << v->point() <<")";
     return ss.str();
   }
 
   template <typename Vertex_handle>
-  std::string disp_vert(Vertex_handle v)
+  static std::string disp_vert(Vertex_handle v)
   {
     typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
     return disp_vert(v, CGAL::internal::Has_timestamp<Vertex>());
@@ -951,8 +952,8 @@ insert_balls(const Vertex_handle& vp,
 	     ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "insert_balls(vp=" << disp_vert(vp) << " (" << vp->point() << "),\n"
-            << "             vq=" << disp_vert(vq) << " (" << vq->point() << "),\n"
+  std::cerr << "insert_balls(vp=" << disp_vert(vp) << ",\n"
+            << "             vq=" << disp_vert(vq) << ",\n"
             << "             sp=" << sp << ",\n"
             << "             sq=" << sq << ",\n"
             << "              d=" << d << ",\n"
@@ -1314,8 +1315,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "change_ball_size(v=" << disp_vert(v)
-            << " (" << v->point()
-            << ") dim=" << c3t3_.in_dimension(v) 
+            << " dim=" << c3t3_.in_dimension(v)
             << " index=" << CGAL::oformat(c3t3_.index(v))
             << " ,\n"
             << "                 size=" << size 
@@ -1448,8 +1448,8 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "check_and_fix_vertex_along_edge(" 
-            << disp_vert(v) << "= (" << v->point()
-            << ") dim=" << get_dimension(v)
+            << disp_vert(v)
+            << " dim=" << get_dimension(v)
             << " index=" << CGAL::oformat(c3t3_.index(v))
             << " special=" << std::boolalpha << is_special(v)
             << ")\n";
@@ -1556,8 +1556,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
     // inside the union of the two balls.
     if(geodesic_distance > (size_v1 + size_v2)) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      std::cerr << "Note: on curve #" << curve_index << ", between ("
-                << v1->point() << ") and (" << v2->point() << "), the "
+      std::cerr << "Note: on curve #" << curve_index << ", between "
+                << disp_vert(v1) << " and " << disp_vert(v2) << ", the "
                 << "geodesic distance is " << geodesic_distance << " and the"
                 << " sum of radii is " << size_v1 + size_v2 << std::endl;
 #endif
@@ -1650,10 +1650,8 @@ repopulate(InputIterator begin, InputIterator last,
 	   const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "repopulate(begin=" << disp_vert(*begin)
-            << " (" << (*begin)->point() << "),\n"
-            << "            last=" << disp_vert(*last)
-            << " (" << (*last)->point() << ")\n"
+  std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
+            << "            last=" << disp_vert(*last)  << "\n"
             << "                  distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
             << "           index=" << CGAL::oformat(index) << ")\n";
@@ -1726,10 +1724,8 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
 		       const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin)
-            << " (" << (*begin)->point() << "),\n"
-            << "                       last=" << disp_vert(*last)
-            << " (" << (*last)->point() << ")\n"
+  std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin) << "\n"
+            << "                       last=" << disp_vert(*last) << "\n"
             << "                              distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
             << "                       index=" << CGAL::oformat(index) << ")\n";
