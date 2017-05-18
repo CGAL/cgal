@@ -36,10 +36,11 @@ Scene_group_item::Bbox Scene_group_item::bbox() const
 
 
 bool Scene_group_item::supportsRenderingMode(RenderingMode m) const {
+
     Q_FOREACH(Scene_item* item, children)
         if(!item->supportsRenderingMode(m))
             return false;
-    return !children.isEmpty();
+    return true;
 
 }
 
