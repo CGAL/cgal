@@ -57,31 +57,31 @@ set. Each output point is assigned to one, two or more primitives
 (depending wether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
-\tparam Traits a model of `ShapeDetectionTraits` that must provide in
+\tparam Kernel a model of `ShapeDetectionTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
 - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
 - `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 
 */
-template <typename Traits>
+template <typename Kernel>
 class Point_set_with_structure
 {
-  typedef Point_set_with_structure<Traits> Self;
+  typedef Point_set_with_structure<Kernel> Self;
 
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Segment_3 Segment;
-  typedef typename Traits::Line_3 Line;
-  typedef typename Traits::Point_2 Point_2;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Segment_3 Segment;
+  typedef typename Kernel::Line_3 Line;
+  typedef typename Kernel::Point_2 Point_2;
 
   enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
 
 public:
 
 
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::Vector_3 Vector;
-  typedef typename Traits::Plane_3 Plane;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Plane_3 Plane;
 
   /// Tag classifying the coherence of a triplet of points with
   /// respect to an inferred surface
@@ -670,7 +670,7 @@ private:
 
   void find_pairs_of_adjacent_primitives (double radius)
   {
-    typedef typename Traits::Search_traits Search_traits_base;
+    typedef typename CGAL::Search_traits_3<Kernel> Search_traits_base;
     typedef Search_traits_adapter <std::size_t, typename Pointer_property_map<Point>::type, Search_traits_base> Search_traits;
     typedef CGAL::Kd_tree<Search_traits> Tree;
     typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
@@ -728,7 +728,7 @@ private:
         double angle_A = std::acos (CGAL::abs (plane1.orthogonal_vector() * plane2.orthogonal_vector()));
         double angle_B = CGAL_PI - angle_A;
 
-        typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
+        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
           result = CGAL::intersection(plane1, plane2);
 
         if (!result)
@@ -957,7 +957,7 @@ private:
                   pts2.push_back (m_points[inde]);
               }
 
-            typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
+            typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
               result = CGAL::intersection (plane1, ortho);
             if (result)
               {
@@ -1122,14 +1122,14 @@ private:
         const Plane& plane2 = m_planes[m_corners[i].planes[1]];
         const Plane& plane3 = m_planes[m_corners[i].planes[2]];
 
-        typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
+        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
           result = CGAL::intersection(plane1, plane2);
         
         if (result)
           {
             if (const Line* l = boost::get<Line>(&*result))
               {
-                typename cpp11::result_of<typename Traits::Intersect_3(Line, Plane)>::type
+                typename cpp11::result_of<typename Kernel::Intersect_3(Line, Plane)>::type
                   result2 = CGAL::intersection(*l, plane3);
 
                 if (result2)
@@ -1424,31 +1424,63 @@ private:
 ///
 /// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
 ///
-/// @tparam Traits a model of `ShapeDetectionTraits` that must provide in
-/// addition a function `Intersect_3 intersection_3_object() const` and a
-/// functor `Intersect_3` with:
-/// - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
-/// - `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
-///
+/// @tparam PointRange range of points, model of `ConstRange`
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+///        It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
+/// @tparam PlaneRange range of planes, model of `ConstRange`
+/// @tparam PlaneMap is a model of `ReadablePropertyMap` with value type `Kernel::Plane_3`.
+///        It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
+/// @tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
 /// @tparam OutputIterator Type of the output iterator. The type of the objects
-/// put in it is `std::pair<Traits::Point_3, Traits::Vector_3>`.  Note that the
+/// put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.  Note that the
 /// user may use a <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
 /// to match specific needs.
-///
-/// @note If no plane is found in the shape detection object, the
-/// algorithm does nothing and the output points are the unaltered
-/// input points.
-///
-/// @note Both property maps can be omitted if the default constructors of these property maps can be safely used.
-template <typename Traits,
-          typename PointRange,
+/// @tparam Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from the value type of `PointMap`.
+
+// This variant requires all parameters
+template <typename PointRange,
+          typename PointMap,
+          typename NormalMap,
+          typename PlaneRange,
+          typename PlaneMap,
+          typename IndexMap,
+          typename OutputIterator,
+          typename Kernel
+          >
+OutputIterator
+structure_point_set (const PointRange& points,
+                     PointMap point_map,
+                     NormalMap normal_map,
+                     const PlaneRange& planes,
+                     PlaneMap plane_map,
+                     IndexMap index_map,
+                     OutputIterator output, ///< output iterator where output points are written.
+                     const Kernel&, ///< geometric traits.
+                     double epsilon, ///< size parameter.
+                     double attraction_factor = 3.) ///< attraction factor.
+{
+  Point_set_with_structure<Kernel> pss (points, point_map, normal_map, planes, plane_map, index_map,
+                                        epsilon, attraction_factor);
+
+  for (std::size_t i = 0; i < pss.size(); ++ i)
+    *(output ++) = pss[i];
+
+  return output;
+}
+
+/// \cond SKIP_IN_MANUAL
+  
+// This variant deduces the kernel from the point property map.
+template <typename PointRange,
           typename PointMap,
           typename NormalMap,
           typename PlaneRange,
           typename PlaneMap,
           typename IndexMap,
           typename OutputIterator
->
+          >
 OutputIterator
 structure_point_set (const PointRange& points,
                      PointMap point_map,
@@ -1460,19 +1492,44 @@ structure_point_set (const PointRange& points,
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  Point_set_with_structure<Traits> pss (points, point_map, normal_map, planes, plane_map, index_map,
-                                        epsilon, attraction_factor);
+  typedef typename boost::property_traits<PointMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
 
-  for (std::size_t i = 0; i < pss.size(); ++ i)
-    *(output ++) = pss[i];
+  return structure_point_set(points, point_map, normal_map, planes, plane_map, index_map, output,
+                             Kernel(), epsilon, attraction_factor);
+}
 
-  return output;
+// This variant creates a default point property map = Identity_property_map.
+template <typename PointRange,
+          typename NormalMap,
+          typename PlaneRange,
+          typename IndexMap,
+          typename OutputIterator
+          >
+OutputIterator
+structure_point_set (const PointRange& points,
+                     NormalMap normal_map,
+                     const PlaneRange& planes,
+                     IndexMap index_map,
+                     OutputIterator output, ///< output iterator where output points are written
+                     double epsilon, ///< size parameter
+                     double attraction_factor = 3.) ///< attraction factor
+{
+  return structure_point_set(points,
+                             make_identity_property_map(
+                               typename std::iterator_traits<typename PointRange::const_iterator>::value_type()),
+                             normal_map,
+                             planes,
+                             make_identity_property_map(
+                               typename std::iterator_traits<typename PlaneRange::const_iterator>::value_type()),
+                             index_map,
+                             output,
+                             epsilon,
+                             attraction_factor);
 }
 
 
-
-
-
+/// \endcond
 
 } //namespace CGAL
 

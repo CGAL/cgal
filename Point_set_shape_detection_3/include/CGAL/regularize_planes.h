@@ -551,7 +551,15 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
-    \tparam Traits a model of `ShapeDetectionTraits`
+    \tparam PointRange range of points, model of `ConstRange`
+    \tparam PointPMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+    It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
+    \tparam PlaneRange range of planes, model of `Range`
+    \tparam PlaneMap is a model of `WritablePropertyMap` with value type `Kernel::Plane_3`.
+    It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
+    \tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
+    \tparam Kernel Geometric traits class.
+    It can be omitted and deduced automatically from the value type of `PointMap`.
 
     \param shape_detection Shape detection object used to detect
     shapes from the input data. While the shape detection algorithm
@@ -586,37 +594,34 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
     regularization. Default value is the Z axis.
 */ 
 
-template <typename GeomTraits,
+// This variant requires all parameters
+template <typename PointRange,
+          typename PointMap,
           typename PlaneRange,
           typename PlaneMap,
-          typename PointRange,
-          typename PointMap,
-          typename IndexMap>
-void regularize_planes (PlaneRange& planes,
-                        PlaneMap plane_map,
-                        const PointRange& points,
+          typename IndexMap,
+          typename Kernel>
+void regularize_planes (const PointRange& points,
                         PointMap point_map,
+                        PlaneRange& planes,
+                        PlaneMap plane_map,
                         IndexMap index_map,
+                        const Kernel&,
                         bool regularize_parallelism,
                         bool regularize_orthogonality,
                         bool regularize_coplanarity,
                         bool regularize_axis_symmetry,
-                        typename GeomTraits::FT tolerance_angle
-                        = (typename GeomTraits::FT)25.0,
-                        typename GeomTraits::FT tolerance_coplanarity
-                        = (typename GeomTraits::FT)0.01,
-                        typename GeomTraits::Vector_3 symmetry_direction
-                        = typename GeomTraits::Vector_3
-                        ((typename GeomTraits::FT)0.,
-                         (typename GeomTraits::FT)0.,
-                         (typename GeomTraits::FT)1.))
+                        double tolerance_angle = 25.0,
+                        double tolerance_coplanarity = 0.01,
+                        typename Kernel::Vector_3 symmetry_direction
+                        = typename Kernel::Vector_3 (0., 0., 1.))
 {
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Plane_3 Plane;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Plane_3 Plane;
 
-  typedef typename internal::PlaneRegularization::Plane_cluster<GeomTraits>
+  typedef typename internal::PlaneRegularization::Plane_cluster<Kernel>
     Plane_cluster;
 
   /*
@@ -624,7 +629,7 @@ void regularize_planes (PlaneRange& planes,
    */
   std::vector<Point> centroids;
   std::vector<FT> areas;
-  internal::PlaneRegularization::compute_centroids_and_areas<GeomTraits>
+  internal::PlaneRegularization::compute_centroids_and_areas<Kernel>
     (points, point_map, planes.size(), index_map, centroids, areas);
 
   tolerance_angle = tolerance_angle * (FT)CGAL_PI / (FT)(180);
@@ -635,7 +640,7 @@ void regularize_planes (PlaneRange& planes,
   // & compute the normal, size and cos angle to the symmetry
   // direction of each cluster
   std::vector<Plane_cluster> clusters;
-  internal::PlaneRegularization::compute_parallel_clusters<GeomTraits>
+  internal::PlaneRegularization::compute_parallel_clusters<Kernel>
     (planes, plane_map, clusters, areas,
      (regularize_parallelism ? tolerance_cosangle : (FT)0.0),
      (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
@@ -661,7 +666,7 @@ void regularize_planes (PlaneRange& planes,
       //clustering the symmetry cosangle and store their centroids in
       //cosangle_centroids and the centroid index of each cluster in
       //list_cluster_index
-      internal::PlaneRegularization::cluster_symmetric_cosangles<GeomTraits>
+      internal::PlaneRegularization::cluster_symmetric_cosangles<Kernel>
         (clusters, tolerance_cosangle, tolerance_cosangle_ortho);
     }
   
@@ -669,7 +674,7 @@ void regularize_planes (PlaneRange& planes,
   //clusters in subgraph_clusters), and select the cluster of
   //largest area
   if (regularize_orthogonality || regularize_axis_symmetry)
-    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<GeomTraits>
+    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<Kernel>
       (clusters, (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
       
   //recompute optimal plane for each primitive after normal regularization
@@ -765,6 +770,45 @@ void regularize_planes (PlaneRange& planes,
     } 
 }
 
+
+/// \cond SKIP_IN_MANUAL
+
+
+// This variant deduces the kernel from the point property map.
+template <typename PointRange,
+          typename PointMap,
+          typename PlaneRange,
+          typename PlaneMap,
+          typename IndexMap>
+void regularize_planes (const PointRange& points,
+                        PointMap point_map,
+                        PlaneRange& planes,
+                        PlaneMap plane_map,
+                        IndexMap index_map,
+                        bool regularize_parallelism,
+                        bool regularize_orthogonality,
+                        bool regularize_coplanarity,
+                        bool regularize_axis_symmetry,
+                        double tolerance_angle = 25.0,
+                        double tolerance_coplanarity = 0.01,
+                        typename Kernel_traits
+                        <typename boost::property_traits
+                        <PointMap>::value_type>::Kernel::Vector_3 symmetry_direction
+                        = typename Kernel_traits
+                          <typename boost::property_traits
+                          <PointMap>::value_type>::Kernel::Vector_3 (0., 0., 1.))
+{
+  typedef typename boost::property_traits<PointMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+
+  regularize_planes (points, point_map, planes, plane_map, index_map, Kernel(),
+                     regularize_parallelism, regularize_orthogonality,
+                     regularize_coplanarity, regularize_axis_symmetry,
+                     tolerance_angle, tolerance_coplanarity, symmetry_direction);
+}
+
+
+/// \endcond
 
 } // namespace CGAL
 

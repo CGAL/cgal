@@ -213,13 +213,13 @@ private:
     {
       std::cerr << "Regularization of planes... " << std::endl;
       typename Shape_detection::Plane_range planes = shape_detection.planes();
-      CGAL::regularize_planes<Traits> (planes,
-                                       CGAL::Shape_detection_3::Plane_map<Traits>(),
-                                       *points,
-                                       points->point_map(),
-                                       CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
-                                       true, true, true, true,
-                                       180 * std::acos (op.normal_threshold) / CGAL_PI, op.epsilon);
+      CGAL::regularize_planes (*points,
+                               points->point_map(),
+                               planes,
+                               CGAL::Shape_detection_3::Plane_map<Traits>(),
+                               CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
+                               true, true, true, true,
+                               180 * std::acos (op.normal_threshold) / CGAL_PI, op.epsilon);
     
       std::cerr << "done" << std::endl;
     }
@@ -414,13 +414,13 @@ private:
 
       typename Shape_detection::Plane_range planes = shape_detection.planes();
       
-      CGAL::structure_point_set<Traits> (*points,
-                                         points->point_map(), points->normal_map(),
-                                         planes,
-                                         CGAL::Shape_detection_3::Plane_map<Traits>(),
-                                         CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
-                                         boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
-                                         op.cluster_epsilon);
+      CGAL::structure_point_set (*points,
+                                 points->point_map(), points->normal_map(),
+                                 planes,
+                                 CGAL::Shape_detection_3::Plane_map<Traits>(),
+                                 CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
+                                 boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
+                                 op.cluster_epsilon);
       if (pts_full->point_set ()->empty ())
         delete pts_full;
       else

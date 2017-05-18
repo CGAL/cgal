@@ -27,7 +27,7 @@ typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
 // Point set structuring type
-typedef CGAL::Point_set_with_structure<Traits>               Structure;
+typedef CGAL::Point_set_with_structure<Kernel>               Structure;
 
 // Advancing front types
 typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;

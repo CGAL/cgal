@@ -867,7 +867,7 @@ private:
       
       std::cout << "Structuring point set... " << std::endl;
       typename Shape_detection::Plane_range planes = shape_detection.planes();
-      typedef CGAL::Point_set_with_structure<Traits> Structuring;
+      typedef CGAL::Point_set_with_structure<Kernel> Structuring;
 
       local_timer.start();
       Structuring structuring (*points, points->point_map(), points->normal_map(),
