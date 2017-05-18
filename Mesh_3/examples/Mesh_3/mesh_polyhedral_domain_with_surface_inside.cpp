@@ -33,9 +33,9 @@ int main(int argc, char*argv[])
 {
   std::cout.precision(17);
   std::cerr.precision(17);
-  const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
+  const char* fname = (argc>1)?argv[1]:"data/horizons.off";
   std::ifstream input(fname);
-  const char* fname2 = (argc>2)?argv[2]:"data/fandisk-box.off";
+  const char* fname2 = (argc>2)?argv[2]:"data/horizons-domain.off";
   std::ifstream input2(fname2);
   Polyhedron sm, smbounding;
   input >> sm;
