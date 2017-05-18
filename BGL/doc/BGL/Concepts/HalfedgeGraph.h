@@ -27,7 +27,7 @@ A model of `HalfedgeGraph` must have the interior property `vertex_point` attach
 class HalfedgeGraph {};
 
 /*! \relates HalfedgeGraph
-returns the edge corresponding to halfedges `h` and `opposite(h)`.
+returns the edge corresponding to halfedges `h` and `opposite(h,g)`.
  */
 template <typename HalfedgeGraph>
 boost::graph_traits<HalfedgeGraph>::edge_descriptor

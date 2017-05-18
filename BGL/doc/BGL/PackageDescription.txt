@@ -3,7 +3,9 @@
 /*! \defgroup PkgBGLConcepts Concepts
  \ingroup PkgBGL
 
- We extend the Boost Graph Library (\sc{Bgl} for short) with a set of new concepts. 
+ We extend the Boost Graph Library (\sc{Bgl} for short) with a set of new concepts.
+ In order to make this documentation self-contained we here also document
+ concepts that are defined in the original version of the \sc{Bgl}.
  The documentation of the concepts lists at the same time the functions
  related to it. Models of the concept and their related functions
  must be in the same namespace (they will be found by Koenig lookup).
