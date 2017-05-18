@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Manuel Caroli
 
@@ -27,7 +27,8 @@
 typedef CGAL::Periodic_3_offset_3 Offset;
 
 #include <CGAL/_test_cls_periodic_3_offset_3.h>
-int main()
+
+int main(int, char**)
 {
   CGAL::Timer timer;
   timer.start();

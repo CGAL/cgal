@@ -1,13 +1,13 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Periodic_Triangulations
 \anchor chapterP3Triangulation3
 
 \cgalAutoToc
 
-\authors Manuel Caroli and Monique Teillaud
+\authors Manuel Caroli, Aymeric Pell&eacute;, Mael Rouxel-Labb&eacute; and Monique Teillaud
 
 \image html p3Delaunay3.jpg
 \image latex p3Delaunay3.jpg
@@ -21,7 +21,7 @@ contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex an
 \f$ j<k\f$. The occurring simplices of dimension up to three are called
 <I>vertex</I>, <I>edge</I>, <I>facet</I>, and <I>cell</I>, respectively.
 
-\section P3Triangulation3secspace The Flat Torus 
+\section P3Triangulation3secspace The Flat Torus
 
 The 3D Periodic Triangulation package computes triangulations in the
 space \f$ \mathbb T_c^3\f$, which is defined as follows: Let \f$ c\in\mathbb
@@ -32,12 +32,12 @@ R^3/G\f$. The parameter \f$ c\f$ defines the period.
 
 The elements of \f$ \mathbb T_c^3\f$ are the equivalence classes of sets of
 points in \f$ \mathbb R^3\f$. We call these points <I>representatives</I>
-of an element of \f$ \mathbb 
+of an element of \f$ \mathbb
 T_c^3\f$. The implementation works not directly on elements of \f$ \mathbb
 T_c^3\f$ but on some representatives in \f$ \mathbb R^3\f$. So there need to
 be distinguished representatives to work on. Given \f$ \alpha\f$, \f$ \beta\f$,
 and \f$ \gamma\f$, the cube
-\f$ [\alpha,\alpha+c)\times[\beta,\beta+c)\times[\gamma,\gamma+c)\f$ 
+\f$ [\alpha,\alpha+c)\times[\beta,\beta+c)\times[\gamma,\gamma+c)\f$
 contains exactly one representative of each element in \f$ \mathbb
 T_c^3\f$. We call it <I>original domain</I>. From now on, when we talk
 about <I>points</I>, we generally mean representatives of elements
@@ -49,7 +49,7 @@ There are simplices containing points inside the original domain but
 also points outside it. The points outside the original domain are
 periodic copies of points inside the original domain. So, to
 specify a simplex we need points together with some additional
-information that determines the respective periodic copy of each point. 
+information that determines the respective periodic copy of each point.
 The set of representatives of an element of \f$ \mathbb T_c^3\f$ is a cubic
 point grid. We address each representative by a three-dimensional
 integer vector \f$ (o_x,o_y,o_z)\f$, called <I>offset</I>. It
@@ -63,7 +63,7 @@ domain. To specify a \f$ k\f$-simplex we need \f$ k+1\f$ point-offset pairs
 Offsets in a cell.
 \cgalFigureEnd
 
-\section P3Triangulation3secintro Representation 
+\section P3Triangulation3secintro Representation
 
 A triangulation is a collection of vertices and cells that are linked
 together through incidence and adjacency relations. Each cell gives
@@ -120,7 +120,7 @@ the 27-sheeted covering space to the 1-sheeted covering space, the `Vertex_handl
 `Cell_handle`s referencing deleted items become invalid.
 
 In the data structure each vertex stores the input point it
-corresponds to. If we are computing in the 27-sheeted covering 
+corresponds to. If we are computing in the 27-sheeted covering
 space, each vertex stores the representative <I>inside</I> the
 original domain it corresponds to. So, the 27 vertices corresponding
 to the same element of \f$ \mathbb T_c^3\f$ all store the same
@@ -131,7 +131,7 @@ representative in \f$ \mathbb R^3\f$, and not different periodic copies.
 A periodic triangulation is said to be `locally valid` iff
 
 <B>(a)-(b)</B> Its underlying combinatorial graph, the triangulation
-data structure, is `locally valid` 
+data structure, is `locally valid`
 (see Section \ref TDS3secintro of Chapter \ref chapterTDS3 "3D Triangulation Data Structure")
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
@@ -146,11 +146,28 @@ Delaunay triangulations have the <I>empty sphere property</I>,
 that is, the circumscribing sphere of each cell does not contain any
 other vertex of the triangulation in its interior. These
 triangulations are uniquely defined except in degenerate cases where
-five points are co-spherical. Note however that the \cgal implementation computes a unique triangulation even in these cases
+five points are co-spherical. Note however that the \cgal
+implementation computes a uniquely defined triangulation even in these cases
 \cgalCite{cgal:dt-pvr3d-03}.
 
-This implementation is fully dynamic: it supports both insertions of
-points and vertex removal.
+This implementation is fully dynamic: it supports both point insertion
+and vertex removal.
+
+\section Periodic_3_triangulation_3regular Regular Triangulation
+
+The class `Periodic_3_regular_triangulation_3` implements regular
+triangulations, also known as weighted Delaunay triangulations, of
+point sets in \f$ \mathbb T_c^3\f$.
+
+A regular triangulation is a triangulation in which the power sphere
+of each simplex is regular. See Section
+\ref Triangulation3secclassRegulartriangulation for a complete
+definition.
+As for Delaunay triangulations, \cgal computes a uniquely defined
+regular triangulation even in degenerate cases \cgalCite{cgal:dt-pvrdr-06}.
+
+The implementation is fully dynamic: it supports both point insertion
+and vertex removal.
 
 \section Periodic_3_triangulation_3Triangulation Triangulation Hierarchy
 
@@ -158,107 +175,121 @@ The class `Periodic_3_triangulation_hierarchy_3` is the adaptation
 of the hierarchical structure described in
 chapter \ref chapterTriangulation3 "3D Triangulations" to the periodic case.
 
-\section P3Triangulation3secdesign Software Design 
+\section P3Triangulation3secdesign Software Design
 
 We have chosen the prefix "Periodic_3" to emphasize that the
 triangulation is periodic in all three directions of space.
 
-The two main classes `Periodic_3_Delaunay_triangulation_3` and
-`Periodic_3_triangulation_3` provide high-level geometric
-functionality and are responsible for the geometric validity.
-`Periodic_3_Delaunay_triangulation_3` contains all the
-functionality that is special to Delaunay triangulations, such as
-point insertion and vertex removal, the side-of-sphere test, finding
-the conflicting region of a given point, dual functions etc.
-`Periodic_3_triangulation_3` contains all the functionality
-that is common to triangulations in general, such as location of a
-point in the triangulation \cgalCite{cgal:dpt-wt-02}, access functions,
-geometric queries like the orientation test etc.
-
+The main classes `Periodic_3_triangulation_3`,
+`Periodic_3_Delaunay_triangulation_3`, and `Periodic_3_regular_triangulation_3`
+provide high-level geometric functionality and are responsible
+for the geometric validity.
 They are built as layers on top of a triangulation data structure,
 which stores their combinatorial structure. This separation between
 the geometry and the combinatorics is reflected in the software design
 by the fact that the triangulation classes take two template
-parameters: 
+parameters:
 <UL>
 <LI> the <B>geometric traits</B> class, which provides the type of points
 to use as well as the elementary operations on them (predicates and
 constructions). Furthermore it contains the offset type.
-The concept for this parameter is described in more
-detail in the section \ref P3Triangulation3secTraits
-and models of one of the two concepts `Periodic_3DelaunayTriangulationTraits_3` 
-and `Periodic_3TriangulationTraits_3` can be used for this parameter.
+The concept and models for this parameter are described in more
+detail in Section \ref P3Triangulation3secTraits.
 <LI> the <B>triangulation data structure</B> class, which stores the
 combinatorial structure, described in
-Section \ref P3Triangulation3sectds and in more detail in
-Chapter \ref chapterTDS3 "3D Triangulation Data Structure". The triangulation data structure needs
-models of the concepts `Periodic_3TriangulationDSCellBase_3` and
-`Periodic_3TriangulationDSVertexBase_3` as template parameters. 
+Section \ref P3Triangulation3sectds.
 </UL>
 
-\subsection P3Triangulation3secTraits The Geometric Traits Parameter 
+The class `Periodic_3_triangulation_3` contains all the functionality
+that is common to triangulations in general, such as location of a
+point in the triangulation \cgalCite{cgal:dpt-wt-02}, access functions,
+geometric queries like the orientation test etc.
+The class `Periodic_3_Delaunay_triangulation_3` contains all the
+functionality that is specific to Delaunay triangulations, such as
+point insertion and vertex removal, the side-of-sphere test, finding
+the conflicting region of a given point, computation of dual functions, etc.
+The class `Periodic_3_regular_triangulation_3` does the same for regular
+triangulations.
 
-\subsubsection P3Triangulation3secTraitsP3T3 Traits for Periodic Triangulations 
+\subsection P3Triangulation3secTraits The Geometric Traits Parameter
+
+\subsubsection P3Triangulation3secTraitsP3T3 Traits for Periodic Triangulations
 
 The first template parameter of the triangulation class
 `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
 `Periodic_3TriangulationTraits_3`. It is different to the
 TriangulationTraits_3 (see
-chapter \ref Triangulation3secTraits "3D Triangulations") in that it 
-implements all objects, predicates and constructions with
-using offsets.
+chapter \ref Triangulation3secTraits "3D Triangulations") in that it
+implements all objects, predicates and constructions using offsets.
 
 The class `Periodic_3_triangulation_traits_3<TriangulationTraits_3,Periodic_3Offset_3>`
 provides the required functionality. It expects two template
-parameters: A model of the concept `TriangulationTraits_3`
+parameters: a model of the concept `TriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
 The second parameter `Periodic_3Offset_3` defaults to
 `Periodic_3_offset_3`.
 
-\subsubsection P3Triangulation3secTraitsP3DT3 Traits for Periodic Delaunay Triangulations 
+\subsubsection P3Triangulation3secTraitsP3DT3 Traits for Periodic Delaunay Triangulations
 
 The first template parameter of the Delaunay triangulation class
 `Periodic_3_Delaunay_triangulation_3<Periodic_3DelaunayTriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
 `Periodic_3DelaunayTriangulationTraits_3`. It is different to the
 DelaunayTriangulationTraits_3 (see
-chapter \ref Triangulation3secTraits "3D Triangulations") in that it 
-implements all objects, predicates and constructions with
-using offsets.
+chapter \ref Triangulation3secTraits "3D Triangulations") in that it
+implements all objects, predicates and constructions using offsets.
 
 The class `Periodic_3_Delaunay_triangulation_traits_3<DelaunayTriangulationTraits_3,Periodic_3Offset_3>`
 provides the required functionality. It expects two template
-parameters: A model of the concept `DelaunayTriangulationTraits_3`
+parameters: a model of the concept `DelaunayTriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
 The second parameter `Periodic_3Offset_3` defaults to
 `Periodic_3_offset_3`.
 
+
+\subsubsection P3Triangulation3secTraitsP3regularT3 Traits for Periodic Regular Triangulations
+
+The first template parameter of the regular triangulation class
+`Periodic_3_regular_triangulation_3<Periodic_3RegularTriangulationTraits_3, TriangulationDataStructure_3>`
+is the geometric traits class, described by the concept
+`Periodic_3RegularTriangulationTraits_3`. It is different to the
+RegularTriangulationTraits_3 (see
+chapter \ref Triangulation3secTraits "3D Triangulations") in that it
+implements all objects, predicates and constructions using offsets.
+
+The class `Periodic_3_regular_triangulation_traits_3<RegularTriangulationTraits_3,Periodic_3Offset_3>`
+provides the required functionality. It expects two template
+parameters: a model of the concept `RegularTriangulationTraits_3`
+and a model of the concept `Periodic_3Offset_3`.
+
+The second parameter `Periodic_3Offset_3` defaults to
+`Periodic_3_offset_3`.
+
+
 \subsubsection P3Triangulation3secTraitsK Compatible Kernels
 
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as models for
-`TriangulationTraits_3` and `DelaunayTriangulationTraits_3`. 
-`Periodic_3_triangulation_traits_3` and `Periodic_3_Delaunay_triangulation_traits_3` provide exact
-predicates and exact constructions if `TriangulationTraits_3` and `DelaunayTriangulationTraits_3` do. They provide
-exact predicates but not exact constructions if
+`Filtered_kernel` can all be used as models of the concepts
+`TriangulationTraits_3`, `DelaunayTriangulationTraits_3`, and
+`RegularTriangulationTraits_3`.
+The periodic triangulation classes provide exact
+predicates and exact constructions if these respective template parameters
+do. They provide exact predicates but not exact constructions if
 `Filtered_kernel<CK>` with `CK` an inexact kernel is used as
-their first template parameter. Using
-`Exact_predicates_inexact_constructions_kernel` as
-`Traits` provides fast and exact predicates and not exact constructions,
+template parameter. Using `Exact_predicates_inexact_constructions_kernel`
+provides fast and exact predicates and not exact constructions,
 using `Exact_predicates_exact_constructions_kernel` provides
 fast and exact predicates and exact constructions. The latter is recommended if
 the dual constructions and constructions of points, segments,
 triangles, and tetrahedra are used.
 
-\subsection P3Triangulation3sectds The Triangulation Data Structure Parameter 
+\subsection P3Triangulation3sectds The Triangulation Data Structure Parameter
 
-The second template parameter of the main classes
-`Periodic_3_triangulation_3` and
-`Periodic_3_Delaunay_triangulation_3` is a
+The second template parameter of the periodic triangulation classes is a
 triangulation data structure class. This class can be seen as a container for
 the cells and vertices maintaining incidence and adjacency relations (see
 Chapter \ref chapterTDS3 "3D Triangulation Data Structure"). A model of this triangulation data structure is
@@ -279,22 +310,22 @@ structure or a different vertex or cell base class.
 
 \subsection Periodic_3_triangulation_3Flexibilityofthe Flexibility of the Design
 
-`Periodic_3_triangulation_3` uses the
-`TriangulationDataStructure_3` in essentially the same way as
-`Triangulation_3`. That is why the flexibility described in
-\ref Triangulation3secdesign is applicable in exactly the same
-way. Also the classes `Triangulation_vertex_base_with_info_3` and
+The class `Periodic_3_triangulation_3` uses the
+`TriangulationDataStructure_3` in essentially the same way as the class
+`Triangulation_3` and the flexibility described in
+\ref Triangulation3secdesign is therefore applicable in exactly the same
+way. Furthermore, the classes `Triangulation_vertex_base_with_info_3` and
 `Triangulation_cell_base_with_info_3` can be reused directly, see
-also Example \ref P3Triangulation3secexamplescolor.
+Example \ref P3Triangulation3secexamplescolor.
 
-\section P3Triangulation3secexamples Examples 
+\section P3Triangulation3secexamples Examples
 
 \subsection Periodic_3_triangulation_3BasicExample Basic Example
 
 This example shows the incremental construction of a 3D Delaunay
 triangulation, the location of a point and how to perform elementary
 operations on indices in a cell. It uses the default parameter of the
-`Periodic_3_Delaunay_triangulation_3` class for the triangulation
+class `Periodic_3_Delaunay_triangulation_3` for the triangulation
 data structure.
 
 \cgalExample{Periodic_3_triangulation_3/simple_example.cpp}
@@ -304,7 +335,7 @@ data structure.
 The following two examples show how the user can plug his own vertex base in a
 triangulation. Changing the cell base is similar.
 
-\subsection P3Triangulation3secexamplescolor Adding a Color 
+\subsubsection P3Triangulation3secexamplescolor Adding a Color
 
 If the user does not need to add a type in a vertex that depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -315,7 +346,7 @@ this way.
 
 \cgalExample{Periodic_3_triangulation_3/colored_vertices.cpp}
 
-\subsection Periodic_3_triangulation_3AddingHandles Adding Handles
+\subsubsection Periodic_3_triangulation_3AddingHandles Adding Handles
 
 If the user needs to add a type in a vertex that depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -328,48 +359,46 @@ as the following example shows.
 
 The user can check at any time whether a triangulation would be a
 simplicial complex in \f$ \mathbb T_c^3\f$ and force a conversion if
-so. However this should be done very carefully in order to be sure
+so. However, this should be done very carefully in order to ensure
 that the internal structure always remains a simplicial complex and
 thus a triangulation.
 
-In this example we construct a triangulation that can be converted to
+In this example, we construct a triangulation that can be converted to
 the 1-sheeted covering space. However, we can insert new points such that the
 point set does not have a Delaunay triangulation in the 1-sheeted
-covering space anymore, so the triangulation is not <I>extensible</I>.
+covering space anymore, rendering the triangulation not <I>extensible</I>.
 
 \cgalExample{Periodic_3_triangulation_3/covering.cpp}
 
 \subsection Periodic_3_triangulation_3LargePointSet Large Point Set
 
-For large point sets there are two optimizations available. Firstly,
-there is spatial sorting that sorts the input points according to a
+Two optimizations are available for large point sets. Firstly,
+spatial sorting can be used to sort the input points according to a
 Hilbert curve, see chapter \ref secspatial_sorting "Spatial Sorting".
-The second one inserts 36 appropriately chosen dummy points to avoid
-the use of a 27-sheeted covering space in the beginning. The 36 dummy
+Secondly, 36 appropriately chosen dummy points can be inserted to avoid
+the use of a 27-sheeted covering space in the beginning. These 36 dummy
 points are deleted in the end. If the point set turns out to not have
 a Delaunay triangulation in the 1-sheeted covering space, the triangulation is
 converted to the 27-sheeted covering space during the removal of the 36 dummy
-points. This might take even longer than computing the triangulation
+points. Note that this might take even longer than computing the triangulation
 without using this optimization. In general, uniformly distributed
 random point sets of more than 1000 points have a Delaunay
 triangulation in the 1-sheeted covering space.
 
-It is recommended to run this example only when compiled in release
-mode because of the relatively large number of points.
+The following example illustrates the use of these optimization techniques.
 
 \cgalExample{Periodic_3_triangulation_3/large_point_set.cpp}
 
 \subsection Periodic_3_triangulation_3GeometricAccess Geometric Access
 
-There might be applications that need the geometric primitives of a
-triangulation as an input but do not require a simplicial complex. For
-these cases we provide the geometric iterators that return only the
+Some application might use the geometric primitives of a
+triangulation as an input but not require a simplicial complex. We provide
+for these cases the geometric iterators that return only the
 geometric primitives fulfilling some properties. In the following
-example we use the `Periodic_3_triangulation_3::Periodic_triangle_iterator` with the option
-`UNIQUE_COVER_DOMAIN`. This means that only those triangles are
-returned that have a non-empty intersection with the original domain
-of the 1-sheeted covering space, see
-Figure \ref P3Triangulation3figgeom_iterators.
+example, we use the `Periodic_3_triangulation_3::Periodic_triangle_iterator`
+with the option `UNIQUE_COVER_DOMAIN`. This means that only the triangles that
+have a non-empty intersection with the original domain of the 1-sheeted covering
+space are returned, see Figure \ref P3Triangulation3figgeom_iterators.
 The `Periodic_3_triangulation_3::Periodic_triangle` is actually a three-dimensional array of
 point-offset pairs. We check for all three entries of the periodic
 triangle whether the offset is (0,0,0) using the
@@ -378,6 +407,51 @@ method `is_null`. If so, we convert the periodic triangle to a
 exact.
 
 \cgalExample{Periodic_3_triangulation_3/geometric_access.cpp}
+
+\subsection Periodic_3_triangulation_3PeriodicRegularTriangulations Periodic Regular Triangulations
+
+The following five examples illustrate various features of 3D periodic
+regular triangulations.
+
+\subsubsection Periodic_3_triangulation_3P3TR3FirstExample Basic example
+
+This example shows the incremental construction of a 3D Delaunay
+triangulation, the location of a point and how to perform elementary
+operations on indices in a cell. It uses the default parameter of the
+class `Periodic_3_regular_triangulation_3` for the triangulation
+data structure.
+
+\cgalExample{Periodic_3_triangulation_3/simple_regular_example.cpp}
+
+\subsubsection Periodic_3_triangulation_3P3TR3PointInsertionAndVertexRemoval Point Insertion and Vertex Removal
+
+This example shows the incremental construction of a 3D regular triangulation,
+and the removal of a vertex. It uses the default parameter of the
+`Periodic_3_regular_triangulation_3`  class for the triangulation data structure.
+
+\cgalExample{Periodic_3_triangulation_3/p3rt3_insert_remove.cpp}
+
+\subsubsection Periodic_3_triangulation_3P3TR3SecondExample Data Structure
+
+This example shows the incremental construction of a 3D regular triangulation.
+It uses a more appropriate triangulation data structure, which saves some memory resources.
+
+\cgalExample{Periodic_3_triangulation_3/p3rt3_insert_only.cpp}
+
+\subsubsection Periodic_3_triangulation_3P3TR3ThirdExample Hidden Points
+
+This example shows that points can be hidden during the incremental construction
+of a 3D regular triangulation.
+
+\cgalExample{Periodic_3_triangulation_3/p3rt3_hidden_points.cpp}
+
+\subsubsection Periodic_3_triangulation_3P3TR3FourthExample Bad Weights
+
+Finally, this example shows how points whose weight does not
+satisfy the precondition are handled during the incremental construction
+of a 3D regular triangulation.
+
+\cgalExample{Periodic_3_triangulation_3/p3rt3_insert_point_with_bad_weight.cpp}
 
 \subsection Periodic_3_triangulation_3PeriodicAlphaShapes Periodic Alpha Shapes
 
@@ -395,9 +469,12 @@ In 2007, Manuel Caroli continued work on the
 algorithms \cgalCite{cgal:ct-c3pt-09} and on the package with Monique
 Teillaud.
 
+In 2015, Aymeric Pell&eacute; contributed to adding regular triangulations in
+the package.
+
 The package follows the design of the 3D Triangulations package
 (see Chapter \ref Chapter_3D_Triangulations "3D Triangulations").
 
-*/ 
+*/
 } /* namespace CGAL */
 

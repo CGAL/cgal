@@ -1,11 +1,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
-template < class GT, class VbDS,
-	   class Vb = CGAL::Triangulation_vertex_base_3<GT,VbDS> >
+template < class Gt, class VbDS,
+           class Vb = CGAL::Triangulation_vertex_base_3<Gt,VbDS> >
 class My_vertex_base
   : public Vb
 {
@@ -17,7 +18,7 @@ public:
   template < class TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
-    typedef My_vertex_base<GT, Vb2>                        Other;
+    typedef My_vertex_base<Gt, Vb2>                        Other;
   };
 
   My_vertex_base() {}
@@ -32,23 +33,22 @@ public:
   Cell_handle     ch;
 };
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> GT;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> Gt;
 
-typedef CGAL::Periodic_3_triangulation_ds_vertex_base_3<> VbDS;
-typedef CGAL::Periodic_3_triangulation_ds_cell_base_3<> CbDS;
-typedef CGAL::Triangulation_cell_base_3<GT,CbDS> Cb;
+typedef CGAL::Periodic_3_triangulation_ds_vertex_base_3<>  VbDS;
+typedef CGAL::Periodic_3_triangulation_ds_cell_base_3<>    CbDS;
+typedef CGAL::Triangulation_cell_base_3<Gt,CbDS>           Cb;
 
-typedef CGAL::Triangulation_data_structure_3<My_vertex_base<GT,VbDS>, Cb> TDS;
-typedef CGAL::Periodic_3_Delaunay_triangulation_3<GT,TDS> PDT;
+typedef CGAL::Triangulation_data_structure_3<My_vertex_base<Gt, VbDS>, Cb> TDS;
+typedef CGAL::Periodic_3_Delaunay_triangulation_3<Gt, TDS>                 P3DT3;
 
-typedef PDT::Vertex_handle    Vertex_handle;
-typedef PDT::Point            Point;
+typedef P3DT3::Vertex_handle    Vertex_handle;
+typedef P3DT3::Point            Point;
 
-int main()
+int main(int, char**)
 {
-  PDT T;
+  P3DT3 T;
 
   Vertex_handle v0 = T.insert(Point(0,0,0));
   Vertex_handle v1 = T.insert(Point(.1,0,0));
