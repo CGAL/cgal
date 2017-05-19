@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     
     CGAL::copy_face_graph(T1, S, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     std::ofstream out("reverse.off");
-    out << T1;
+    out << S;
   }
   return 0;
 }
