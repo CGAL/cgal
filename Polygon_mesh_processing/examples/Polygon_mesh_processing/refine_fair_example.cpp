@@ -48,8 +48,9 @@ int main(int argc, char* argv[])
   std::ifstream input(filename);
 
   Polyhedron poly;
-  if ( !input || !(input >> poly) || poly.empty() ) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if ( !input || !(input >> poly) || poly.empty()
+              || !CGAL::is_triangle_mesh(poly)) {
+    std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 

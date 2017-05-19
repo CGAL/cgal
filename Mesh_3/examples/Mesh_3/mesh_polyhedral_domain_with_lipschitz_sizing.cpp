@@ -47,6 +47,12 @@ int main(int argc, char*argv[])
     std::cerr << "Error: Cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
   }
+
+  if (!CGAL::is_triangle_mesh(polyhedron)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // Create domain
   Mesh_domain domain(polyhedron);
 

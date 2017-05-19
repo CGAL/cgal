@@ -25,6 +25,10 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
   
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
@@ -49,7 +53,5 @@ int main( int argc, char** argv )
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
   
-  return 0 ;      
+  return EXIT_SUCCESS ;      
 }
-
-// EOF //

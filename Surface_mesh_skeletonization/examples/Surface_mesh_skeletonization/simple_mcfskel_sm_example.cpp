@@ -27,6 +27,11 @@ int main(int argc, char* argv[])
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   Triangle_mesh tmesh;
   input >> tmesh;
+  if (!CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cout << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Skeleton skeleton;
 
@@ -52,6 +57,6 @@ int main(int argc, char* argv[])
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
