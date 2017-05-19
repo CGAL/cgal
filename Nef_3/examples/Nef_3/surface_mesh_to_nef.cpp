@@ -1,10 +1,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>

@@ -5,9 +5,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-
-
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
