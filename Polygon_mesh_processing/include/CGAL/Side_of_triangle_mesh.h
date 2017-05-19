@@ -61,11 +61,15 @@ namespace CGAL {
          `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
          `GeomTraits::Point_3` as value type.
  *   The default is `typename boost::property_map<TriangleMesh,vertex_point_t>::%type`.
- 
- * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
-       Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
-       a model of `FaceListGraph` will make it useless
-
+ *
+ * \cgalHeading{Implementation Details}
+ * The current implementation is based on the number of triangles intersected by a ray
+ * having the query point as source. The do-intersect predicate used to detect if a triangle
+ * is intersected is able to detect if a triangle is intersected in its
+ * interior or on its boundary. In case it is intersected on its boundary, another ray is picked.
+ * In order to speed queries, the first ray used is an axis aligned one that depends on the extents of the
+ * bbox of the input mesh. In case other rays are needed to conclude, the rays are generated
+ * from a random uniform sampling of a sphere.
  */
 template <class TriangleMesh,
           class GeomTraits,
