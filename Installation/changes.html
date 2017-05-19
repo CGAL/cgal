@@ -139,9 +139,10 @@ and <code>src/</code> directories).
   <h3>2D and 3D Linear Geometry Kernel</h3>
   <ul>
     <li><b>Breaking change</b>:
-      The dangerous implicit conversions between weighted points and points
-      have been disabled. The constructors used to build a weighted point from a point
-      (and reversely) are still available but must be called explicitely.
+      The dangerous implicit conversions between weighted points and points in
+      the concept <code>Kernel</code> have been disabled. The constructors used
+      to build a weighted point from a point (and reversely) are still available
+      but must be called explicitely.
     </li>
   </ul>
 <!-- Arithmetic and Algebra -->
@@ -155,18 +156,37 @@ and <code>src/</code> directories).
   <h3> 2D and 3D Triangulations </h3>
   <ul>
     <li><b>Breaking change</b>:
-      Added a new functor requirement, Construct_point_2, to the concepts
-      TriangulationTraits_2 and RegularTriangulationTraits_2 and a new functor
-      requirement, Construct_point_3, to the concepts TriangulationTraits_3 and
-      RegularTriangulationTraits_3. Note that all models of the concept Kernel
-      already provide these functors.
+      Added a new functor requirement, <code>Construct_point_2</code>, to the concepts
+      <code>TriangulationTraits_2</code> and <code>RegularTriangulationTraits_2</code>
+      and a new functor requirement, <code>Construct_point_3</code>, to the concepts
+      <code>TriangulationTraits_3</code> and <code>RegularTriangulationTraits_3</code>.
+      All models of the concept <code>Kernel</code> already provide these functors.
     </li>
     <li><b>Breaking change</b>:
-       The concept RegularTriangulationCellBase_3 must now define a 'Point' type
-       instead of a 'Weighted_point' type. This is only a name change to
-       align RegularTriangulationCellBase_3 with other similar concepts and this
-       type must still be the same as the point type `Weighted_point_3` defined
-       by the geometric traits class of the triangulation.
+      Introduced the concept <code>RegularTriangulationVertexBase_3</code>. This
+      concept describes the requirements for vertices meant to be used in regular triangulations.
+      Concepts that previously refined <code>TriangulationVertexBase_3</code>
+      but modeled a vertex class used in regular triangulations, such as the concept <code>MeshVertexBase_3</code> in the 3D mesh
+      generation package, now refine <code>RegularTriangulationVertexBase_3</code>.
+    <li><b>Breaking change</b>:
+      Uniformized the point type defined in the vertex and cell concepts. The triangulation
+      point is now always <code>Point</code> (note that this is either a <code>Traits::Point_[23]</code>
+      for basic and Delaunay triangulations or a <code>Traits::Weighted_point_[23]</code> when considering
+      regular triangulations). Consequently:
+      <ul>
+        <li>
+          The concept <code>RegularTriangulationVertexBase_2</code> now requests
+          a <code>Point</code> type (equal to <code>Traits::Weighted_point_2</code>)
+        </li>
+        <li>
+          The concept <code>RegularTriangulationCellBase_3</code> now requests
+          a <code>Point</code> type instead of a <code>Weighted_point</code> type.
+        </li>
+        <li>
+          The concept <code>DelaunayTriangulationCellBase_3</code> now requests
+          a <code>Point</code> type instead of a <code>Point_3</code> type.
+        </li>
+      </ul>
     </li>
   </ul>
 <!-- Voronoi Diagrams -->
@@ -175,11 +195,8 @@ and <code>src/</code> directories).
   <ul>
     <li><b>Breaking change</b>:
       The type of the surface center in the concept <code>MeshCellBase_3</code>
-      has been changed to properly reflect that it is a weightless point.
-    </li>
-    <li><b>Breaking change</b>:
-      The concept <code>MeshVertexBase_3</code> must now refine the new concept
-      <code>RegularTriangulationVertexBase_3</code>.
+      has been changed from <code>Triangulation::Point</code> to
+      <code>TriangulationTraits::Point_3</code> to reflect that it is a weightless point.
     </li>
   <ul>
 <!-- Surface Reconstruction -->
