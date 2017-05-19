@@ -303,6 +303,15 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   connect(ui.noEdgeSizing, SIGNAL(toggled(bool)),
           ui.edgeSizing,   SLOT(setEnabled(bool)));
 
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.sharpEdgesAngle, SLOT(setEnabled(bool)));
+
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.sharpEdgesAngleLabel, SLOT(setEnabled(bool)));
+
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.protectEdges, SLOT(setEnabled(bool)));
+
   // Set default parameters
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
@@ -336,6 +345,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
+  ui.protectEdges->setEnabled(features_protection_available);
 
   ui.initializationGroup->setVisible(image_item != NULL && !image_item->isGray());
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
@@ -357,6 +367,29 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
 
+  if (features_protection_available)
+  {
+    if (NULL != poly_item)
+    {
+      if (surface_only)
+      {
+        ui.protectEdges->addItem(QString("Sharp and Boundary edges"));
+        ui.protectEdges->addItem(QString("Boundary edges only"));
+      }
+      else
+        ui.protectEdges->addItem(QString("Sharp edges"));
+    }
+    else if(NULL != image_item)
+    {
+      if(polylines_item != NULL)
+        ui.protectEdges->addItem(QString("Input polylines"));
+      else
+      {
+        CGAL_assertion(!image_item->isGray());
+        ui.protectEdges->addItem(QString("Polylines on cube"));
+      }
+    }
+  }
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -375,7 +408,8 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const double edge_size = !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
-  const bool protect_features = ui.protect->isChecked();
+  const bool protect_features = ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 0);
+  const bool protect_borders = ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 1);
   const double sharp_edges_angle = ui.sharpEdgesAngle->value();
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold =
@@ -412,6 +446,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  protect_features,
+                                 protect_borders,//available only for poly_item
                                  sharp_edges_angle,
                                  manifold,
                                  surface_only,
