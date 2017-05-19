@@ -4,8 +4,9 @@
 
 #include "config.h"
 #include "Scene.h"
-#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_interface_item.h>
+#include <CGAL/Three/Scene_zoomable_item_interface.h>
 
 #include <QObject>
 #include <QMetaObject>
@@ -1287,3 +1288,17 @@ findItems(const CGAL::Three::Scene_interface* scene_interface,
 
 } // end namespace details
                 } // end namespace scene
+
+void Scene::zoomToPosition(QPoint point, Viewer_interface *viewer)
+{
+  for(int i=0; i<numberOfEntries(); ++i)
+  {
+    if(!item(i)->visible())
+      continue;
+    Scene_zoomable_item_interface* zoom_item = qobject_cast<Scene_zoomable_item_interface*>(item(i));
+    if(zoom_item)
+    {
+      zoom_item->zoomToPosition(point, viewer);
+    }
+  }
+}

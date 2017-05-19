@@ -1595,9 +1595,14 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(aabb_tree) {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     //find clicked facet
     bool found = false;
-    const Kernel::Point_3 ray_origin(viewer->camera()->position().x, viewer->camera()->position().y, viewer->camera()->position().z);
+
+    const Kernel::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
+                                     viewer->camera()->position().y - offset.y,
+                                     viewer->camera()->position().z - offset.z);
+
     qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
     qglviewer::Vec dir = point_under - viewer->camera()->position();
     const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
@@ -1640,7 +1645,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         // test the vertices of the closest face
         BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
         {
-          Kernel::Point_3 test=vh->point();
+          Kernel::Point_3 test=Kernel::Point_3(vh->point().x()+offset.x,
+                                               vh->point().y()+offset.y,
+                                               vh->point().z()+offset.z);
           double dist = CGAL::squared_distance(test, pt_under);
           if( dist < min_dist){
             min_dist = dist;
@@ -1651,6 +1658,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         BOOST_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *d->poly))
         {
           Kernel::Point_3 test=CGAL::midpoint(source(e, *d->poly)->point(),target(e, *d->poly)->point());
+          test = Kernel::Point_3(test.x()+offset.x,
+                                 test.y()+offset.y,
+                                 test.z()+offset.z);
           double dist = CGAL::squared_distance(test, pt_under);
           if(dist < min_dist){
             min_dist = dist;
@@ -1669,7 +1679,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
           ++total;
         }
 
-        Kernel::Point_3 test(x/total, y/total, z/total);
+        Kernel::Point_3 test(x/total+offset.x,
+                             y/total+offset.y,
+                             z/total+offset.z);
         double dist = CGAL::squared_distance(test, pt_under);
         if(dist < min_dist){
           min_dist = dist;
@@ -1698,14 +1710,18 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
 
   if(!d->all_ids_displayed)
   {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     QFont font;
     font.setBold(true);
 
     //fills textItems
     BOOST_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*d->poly))
     {
-      const Point& p = vh->point();
-      textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), true, font, Qt::red));
+      const Point& p = Point(vh->point().x(), vh->point().y(), vh->point().z());
+      textItems->append(new TextItem((float)p.x() + offset.x,
+                                     (float)p.y() + offset.y,
+                                     (float)p.z() + offset.z,
+                                     QString("%1").arg(vh->id()), true, font, Qt::red));
 
     }
 
@@ -1713,7 +1729,10 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
     {
       const Point& p1 = source(e, *d->poly)->point();
       const Point& p2 = target(e, *d->poly)->point();
-      textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2, (float)(p1.y() + p2.y()) / 2, (float)(p1.z() + p2.z()) / 2, QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
+      textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2 + offset.x,
+                                     (float)(p1.y() + p2.y()) / 2 + offset.y,
+                                     (float)(p1.z() + p2.z()) / 2 + offset.z,
+                                     QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
     }
 
     BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
@@ -1728,7 +1747,10 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
         ++total;
       }
 
-      textItems->append(new TextItem((float)x / total, (float)y / total, (float)z / total, QString("%1").arg(fh->id()), true, font, Qt::blue));
+      textItems->append(new TextItem((float)x / total + offset.x,
+                                     (float)y / total + offset.y,
+                                     (float)z / total + offset.z,
+                                     QString("%1").arg(fh->id()), true, font, Qt::blue));
     }
     //add the QList to the render's pool
     renderer->addTextList(textItems);
@@ -1751,8 +1773,13 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
 
 bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
-  Kernel::Point_3 src(x,y,z);
-  Kernel::Point_3 dest(viewer->camera()->position().x, viewer->camera()->position().y,viewer->camera()->position().z);
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  Kernel::Point_3 src(x - offset.x,
+                      y - offset.y,
+                      z - offset.z);
+  Kernel::Point_3 dest(viewer->camera()->position().x - offset.x,
+                       viewer->camera()->position().y - offset.y,
+                       viewer->camera()->position().z - offset.z);
   Kernel::Vector_3 v(src,dest);
   v = 0.01*v;
   Kernel::Point_3 point = src;
@@ -1852,4 +1879,115 @@ void Scene_polyhedron_item::itemAboutToBeDestroyed(Scene_item *item)
     delete d;
     d=NULL;
   }
+}
+
+void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *viewer) const
+{
+  typedef Input_facets_AABB_tree Tree;
+  typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Intersection_and_primitive_id;
+
+  Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
+  if(aabb_tree) {
+
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    //find clicked facet
+    bool found = false;
+    const Kernel::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
+                                     viewer->camera()->position().y - offset.y,
+                                     viewer->camera()->position().z - offset.z);
+    qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
+    qglviewer::Vec dir = point_under - viewer->camera()->position();
+    const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
+    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    typedef std::list<Intersection_and_primitive_id> Intersections;
+    Intersections intersections;
+    aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+
+    if(!intersections.empty()) {
+      Intersections::iterator closest = intersections.begin();
+      const Kernel::Point_3* closest_point =
+          boost::get<Kernel::Point_3>(&closest->first);
+      for(Intersections::iterator
+          it = boost::next(intersections.begin()),
+          end = intersections.end();
+          it != end; ++it)
+      {
+        if(! closest_point) {
+          closest = it;
+        }
+        else {
+          const Kernel::Point_3* it_point =
+              boost::get<Kernel::Point_3>(&it->first);
+          if(it_point &&
+             (ray_dir * (*it_point - *closest_point)) < 0)
+          {
+            closest = it;
+            closest_point = it_point;
+          }
+        }
+      }
+      if(closest_point) {
+        Polyhedron::Facet_handle selected_fh = closest->second;
+        //compute new position and orientation
+        Kernel::Vector_3 face_normal = CGAL::Polygon_mesh_processing::
+            compute_face_normal(selected_fh,
+                                *d->poly,
+                                CGAL::Polygon_mesh_processing::parameters::all_default());
+
+
+        double x(0), y(0), z(0),
+            xmin(std::numeric_limits<double>::infinity()), ymin(std::numeric_limits<double>::infinity()), zmin(std::numeric_limits<double>::infinity()),
+            xmax(-std::numeric_limits<double>::infinity()), ymax(-std::numeric_limits<double>::infinity()), zmax(-std::numeric_limits<double>::infinity());
+        int total(0);
+        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
+        {
+          x+=vh->point().x();
+          y+=vh->point().y();
+          z+=vh->point().z();
+
+          if(vh->point().x() < xmin)
+            xmin = vh->point().x();
+          if(vh->point().y() < ymin)
+            ymin = vh->point().y();
+          if(vh->point().z() < zmin)
+            zmin = vh->point().z();
+
+          if(vh->point().x() > xmax)
+            xmax = vh->point().x();
+          if(vh->point().y() > ymax)
+            ymax = vh->point().y();
+          if(vh->point().z() > zmax)
+            zmax = vh->point().z();
+
+          ++total;
+        }
+        Kernel::Point_3 centroid(x/total + offset.x,
+                                 y/total + offset.y,
+                                 z/total + offset.z);
+
+        qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
+                                              qglviewer::Vec(-face_normal.x(), -face_normal.y(), -face_normal.z()));
+        double max_side = (std::max)((std::max)(xmax-xmin, ymax-ymin),
+                                     zmax-zmin);
+        //put the camera in way we are sure the longest side is entirely visible on the screen
+        //See openGL's frustum definition
+        double factor = max_side/(tan(viewer->camera()->aspectRatio()/
+                                        (viewer->camera()->fieldOfView()/2)));
+
+        Kernel::Point_3 new_pos = centroid + factor*face_normal ;
+        viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(),
+                                                        centroid.y(),
+                                                        centroid.z()));
+        viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
+                                                                       .arg(new_pos.y())
+                                                                       .arg(new_pos.z())
+                                                                       .arg(new_orientation[0])
+                                                                       .arg(new_orientation[1])
+                                                                       .arg(new_orientation[2])
+                                                                       .arg(new_orientation[3]));
+
+      }
+    }
+  }
+
 }

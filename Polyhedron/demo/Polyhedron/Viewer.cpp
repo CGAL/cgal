@@ -71,6 +71,7 @@ public:
   //! Decides if the distance between APoint and BPoint must be drawn;
   bool distance_is_displayed;
   bool i_is_pressed;
+  bool z_is_pressed;
   //!Draws the distance between two selected points.
   void showDistance(QPoint);
   qglviewer::Vec APoint;
@@ -127,6 +128,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                       tr("Toggle the primitive IDs visibility of the selected Item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));
+
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
@@ -144,6 +146,9 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
                              tr("Selects a point. When the second point is selected,  "
                                 "displays the two points and the distance between them."));
+  setMouseBindingDescription(Qt::Key_O, Qt::NoModifier, Qt::LeftButton,
+                             tr("Move the camera orthogonally to the picked facet of a Scene_polyhedron_item or "
+                                "to the current selection of a Scene_points_with_normal_item."));
 #else
   setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
   setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
@@ -155,6 +160,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->axis_are_displayed = true;
   d->has_text = false;
   d->i_is_pressed = false;
+  d->z_is_pressed = false;
   d->fpsTime.start();
   d->fpsCounter=0;
   d->f_p_s=0.0;
@@ -403,6 +409,12 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   }
   else if(!event->modifiers()
           && event->button() == Qt::LeftButton
+          && d->z_is_pressed)
+  {
+      d->scene->zoomToPosition(event->pos(), this);
+  }
+  else if(!event->modifiers()
+          && event->button() == Qt::LeftButton
           && d->is_d_pressed)
   {
       d->showDistance(event->pos());
@@ -454,6 +466,9 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     else if(e->key() == Qt::Key_I) {
           d->i_is_pressed = true;
         }
+    else if(e->key() == Qt::Key_O) {
+          d->z_is_pressed = true;
+        }
     else if(e->key() == Qt::Key_D) {
         if(e->isAutoRepeat())
         {
@@ -493,6 +508,9 @@ void Viewer::keyReleaseEvent(QKeyEvent *e)
 {
   if(e->key() == Qt::Key_I) {
     d->i_is_pressed = false;
+  }
+  else if(e->key() == Qt::Key_O) {
+    d->z_is_pressed = false;
   }
   else if(!e->modifiers() && e->key() == Qt::Key_D)
   {

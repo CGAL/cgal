@@ -137,6 +137,10 @@ public Q_SLOTS:
    */
   void selectAll();
   /*!
+   * Assigns a different color to each selected item.
+   */
+  void colorItems();
+  /*!
    * Adds the scene_item with the index i in the sceneView to the
    * current selection. Calls itemChanged(i) from the scene.
    */
