@@ -636,9 +636,9 @@ Scene_c3t3_item::graphicalToolTip() const
 std::vector<int>
 create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
 {
-  typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
+  Geom_traits::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
     = c3t3.triangulation().geom_traits().compute_approximate_dihedral_angle_3_object();
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   std::vector<int> histo(181, 0);
@@ -646,7 +646,7 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
   min_value = 180.;
   max_value = 0.;
 
-  for (typename C3t3::Cells_in_complex_iterator cit = c3t3.cells_in_complex_begin();
+  for (C3t3::Cells_in_complex_iterator cit = c3t3.cells_in_complex_begin();
     cit != c3t3.cells_in_complex_end();
     ++cit)
   {
@@ -1178,7 +1178,7 @@ void Scene_c3t3_item::export_facets_in_complex()
   std::vector<std::vector<std::size_t> > polygons(c3t3().number_of_facets_in_complex());
 
   std::size_t index = 0;
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3().triangulation().geom_traits().construct_point_3_object();
 
   BOOST_FOREACH(C3t3::Vertex_handle v, vertex_set)
@@ -1402,7 +1402,7 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
 
 void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
 {
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   Tr::Cell_handle ch = facet.id().first;
@@ -1477,7 +1477,7 @@ void Scene_c3t3_item_priv::computeIntersections()
 
 void Scene_c3t3_item_priv::computeSpheres()
 {
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   if(!spheres)
@@ -1558,7 +1558,7 @@ void Scene_c3t3_item_priv::computeElements()
 
   //The facets
   {
-    typename Geom_traits::Construct_point_3 wp2p
+    Geom_traits::Construct_point_3 wp2p
       = c3t3.triangulation().geom_traits().construct_point_3_object();
 
     for (C3t3::Facet_iterator
@@ -1799,7 +1799,7 @@ bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
 
 QString Scene_c3t3_item::computeStats(int type)
 {
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = d->c3t3.triangulation().geom_traits().construct_point_3_object();
 
   if(!d->computed_stats)
