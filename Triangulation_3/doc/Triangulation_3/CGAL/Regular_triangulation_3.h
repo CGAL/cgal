@@ -28,8 +28,13 @@ of all simplices are regular.
 
 \tparam Traits is the geometric traits class, and must be a model of `RegularTriangulationTraits_3`
 
-\tparam TDS is the triangulation data structure`TriangulationDataStructure_3`.
-It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<Traits>, Regular_triangulation_cell_base_3<Traits> >`.
+\tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
+TDS has default value `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Traits>,
+                                                      Regular_triangulation_cell_base_3<Traits> >`.
+Any custom type can be used instead of `Regular_triangulation_vertex_base_3`
+and `Regular_triangulation_cell_base_3`, provided that they are models of the
+concepts `RegularTriangulationVertexBase_3` and `RegularTriangulationCellBase_3`,
+respectively.
 `Default` may be used.
 
 \tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
@@ -47,7 +52,9 @@ If `TDS::Concurrency_tag` is `Parallel_tag`, some operations,
 such as insertion/removal of a range of points, are performed in parallel. See 
 the documentation of the operations for more details.
 
-\sa `CGAL::Delaunay_triangulation_3` 
+\sa `CGAL::Triangulation_3`
+\sa `CGAL::Delaunay_triangulation_3`
+
 */
 template< typename Traits, typename TDS, typename SLDS >
 class Regular_triangulation_3
@@ -84,17 +91,15 @@ Creates an empty regular triangulation, possibly specifying a traits class
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
-Regular_triangulation_3 
-(const Traits & traits = Traits(),
-Lock_data_structure *lock_ds = NULL); 
+Regular_triangulation_3(const Traits & traits = Traits(),
+                        Lock_data_structure *lock_ds = NULL);
 
 /*!
 Copy constructor. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
 concurrency-safe as long as the user has not called `Triangulation_3::set_lock_data_structure`.
 */ 
-Regular_triangulation_3 
-(const Regular_triangulation_3 & rt1); 
+Regular_triangulation_3(const Regular_triangulation_3 & rt1);
 
 /*!
 Equivalent to constructing an empty triangulation with the optional 
@@ -104,16 +109,16 @@ If parallelism is enabled, the points will be inserted in parallel.
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last,
-const Traits& traits = Traits(),
-Lock_data_structure *lock_ds = NULL); 
+                         const Traits& traits = Traits(),
+                         Lock_data_structure *lock_ds = NULL);
 
 /*! 
 Same as before, with last two parameters in reverse order.
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
-Lock_data_structure *lock_ds, 
-const Traits& traits = Traits());
+                         Lock_data_structure *lock_ds,
+                         const Traits& traits = Traits());
 /// @} 
 
 /*!\name Insertion 
