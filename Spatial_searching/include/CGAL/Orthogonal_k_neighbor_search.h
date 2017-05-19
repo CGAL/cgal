@@ -24,6 +24,8 @@
 #include <CGAL/internal/K_neighbor_search.h>
 #include <CGAL/Has_member.h>
 
+#include <boost/mpl/has_xxx.hpp>
+
 namespace CGAL {
 
 template <class SearchTraits, 
@@ -47,6 +49,7 @@ private:
 
   CGAL_GENERATE_MEMBER_DETECTOR(transformed_distance_from_coordinates);
   CGAL_GENERATE_MEMBER_DETECTOR(interruptable_transformed_distance);
+  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_Enable_points_cache, Enable_points_cache, false)
 
   // If transformed_distance_from_coordinates does not exist in `Distance`
   template <bool has_transformed_distance_from_coordinates = has_transformed_distance_from_coordinates<Distance>::value>
@@ -71,6 +74,7 @@ private:
     return this->distance_instance.transformed_distance_from_coordinates(q, it_coord_begin, it_coord_end);
   }
 
+  // *** Version with cache ***
   // If interruptable_transformed_distance does not exist in `Distance`
   template <bool has_interruptable_distance_computation = has_interruptable_transformed_distance<Distance>::value>
   FT
@@ -95,6 +99,30 @@ private:
   {
     return this->distance_instance.interruptable_transformed_distance(
       q, it_coord_begin, it_coord_end, stop_if_geq_to_this);
+  }
+
+  // *** Version without cache ***
+  // If interruptable_transformed_distance does not exist in `Distance`
+  template <bool has_interruptable_distance_computation = has_interruptable_transformed_distance<Distance>::value>
+  FT
+  interruptable_transformed_distance(
+    const typename Base::Query_item& q,
+    Point const& p,
+    FT)
+  {
+    return this->distance_instance.transformed_distance(q, p);
+  }
+  // ... or if it exists
+  template <>
+  FT
+  interruptable_transformed_distance<true>(
+    const typename Base::Query_item& q,
+    Point const& p,
+    FT stop_if_geq_to_this)
+  {
+    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = m_tree.traits().construct_cartesian_const_iterator_d_object();
+    return this->distance_instance.interruptable_transformed_distance(
+      q, construct_it(p), construct_it(p, 0), stop_if_geq_to_this);
   }
 
 public:
@@ -124,13 +152,75 @@ public:
       compute_furthest_neighbors_orthogonally(tree.root(), distance_to_root);
     }
 
-    
-      
-          
-      
     if (sorted) this->queue.sort();
   }
 private:
+
+  template<bool use_cache = (has_Enable_points_cache<Tree>::value && Tree::Enable_points_cache::value)>
+  void search_in_leaf(typename Tree::Leaf_node_const_handle node);
+
+  // With cache
+  template<>
+  void search_in_leaf<true>(typename Tree::Leaf_node_const_handle node)
+  {
+    typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
+    typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
+    for (; !this->queue.full() && it_node_point != it_node_point_end; ++it_node_point)
+    {
+      this->number_of_items_visited++;
+          
+      FT distance_to_query_object =
+        transformed_distance_from_coordinates(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim);
+      this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
+
+      cache_point_begin += m_dim;
+    }
+    FT worst_dist = this->queue.top().second;
+    for (; it_node_point != it_node_point_end; ++it_node_point)
+    {
+      this->number_of_items_visited++;
+
+      FT distance_to_query_object =
+        interruptable_transformed_distance(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim, worst_dist);
+
+      if (distance_to_query_object < worst_dist)
+      {
+        this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
+        worst_dist = this->queue.top().second;
+      }
+
+      cache_point_begin += m_dim;
+    }
+  }
+
+  // Without cache
+  template<>
+  void search_in_leaf<false>(typename Tree::Leaf_node_const_handle node)
+  {
+    typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
+    for (; !this->queue.full() && it_node_point != it_node_point_end; ++it_node_point)
+    {
+      this->number_of_items_visited++;
+
+      FT distance_to_query_object =
+        this->distance_instance.transformed_distance(this->query_object, *it_node_point);
+      this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
+    }
+    FT worst_dist = this->queue.top().second;
+    for (; it_node_point != it_node_point_end; ++it_node_point)
+    {
+      this->number_of_items_visited++;
+
+      FT distance_to_query_object =
+        interruptable_transformed_distance(this->query_object, *it_node_point, worst_dist);
+
+      if (distance_to_query_object < worst_dist)
+      {
+        this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
+        worst_dist = this->queue.top().second;
+      }
+    }
+  }
 
   void compute_nearest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd)
   {
@@ -141,36 +231,7 @@ private:
         static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
       if (node->size() > 0)
-      {
-        typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
-        typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
-        for (; !this->queue.full() && it_node_point != it_node_point_end; ++it_node_point)
-        {
-          this->number_of_items_visited++;
-          
-          FT distance_to_query_object =
-            transformed_distance_from_coordinates(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim);
-          this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
-
-          cache_point_begin += m_dim;
-        }
-        FT worst_dist = this->queue.top().second;
-        for (; it_node_point != it_node_point_end; ++it_node_point)
-        {
-          this->number_of_items_visited++;
-
-          FT distance_to_query_object =
-            interruptable_transformed_distance(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim, worst_dist);
-
-          if (distance_to_query_object < worst_dist)
-          {
-            this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
-            worst_dist = this->queue.top().second;
-          }
-
-          cache_point_begin += m_dim;
-        }
-      }
+        search_in_leaf(node);
     }
     else
     {
