@@ -78,6 +78,33 @@ struct Less_for_halfedge
   const VertexPointMap& vpmap;
 };
 
+// this function checks whether two vertices are stitchable. They are not
+// if the two vertices are incident to a common vertex (that is not on the
+// edge to be merged). In this case we would introduce twice that edge in
+// the mesh.
+template <class PM>
+bool are_vertices_stitchable(
+  typename boost::graph_traits<PM>::vertex_descriptor v1,
+  typename boost::graph_traits<PM>::vertex_descriptor v2,
+  const PM& pmesh)
+{
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+
+  //by convention if they are identical they are stitchable
+  if (v1==v2) return true;
+
+  BOOST_FOREACH(halfedge_descriptor h1, halfedges_around_target(halfedge(v1, pmesh), pmesh))
+  {
+    if (is_border(edge(h1, pmesh), pmesh)) continue;
+    BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_source(h1, pmesh))
+    {
+      if (is_border(edge(h2, pmesh), pmesh)) continue;
+      if (target(h2, pmesh) == v2) return false;
+    }
+  }
+  return true;
+}
+
 template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap>
 OutputIterator
 detect_duplicated_boundary_edges
@@ -109,6 +136,15 @@ detect_duplicated_boundary_edges
           set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
           halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
           manifold_halfedge_pairs.push_back(true);
+
+          // here we test whether the snapping of the two halfedges
+          // will produce a non-manifold edge: we check that if two vertices
+          // that are being merged are not already incident to the same vertex
+          if ( !are_vertices_stitchable(source(he,pmesh), target(set_it->first,pmesh), pmesh) ||
+               !are_vertices_stitchable(target(he,pmesh), source(set_it->first,pmesh), pmesh) )
+          {
+            manifold_halfedge_pairs[ set_it->second.second ] = false;
+          }
         }
       }
       else
