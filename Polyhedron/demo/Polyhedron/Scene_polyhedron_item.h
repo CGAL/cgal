@@ -47,6 +47,7 @@ public:
       MIN_ASPECT_RATIO,
       MAX_ASPECT_RATIO,
       MEAN_ASPECT_RATIO,
+      GENUS,
       NB_EDGES,
       MIN_LENGTH,
       MAX_LENGTH,
