@@ -30,14 +30,11 @@ public:
 /// @{
 
 /*!
-The (unweighted) point type.
-It has to be a model of the concept `Kernel::Point_2`.
-*/ 
-  typedef unspecified_type Point_2; 
-
-/*!
 The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_2`.
-*/ 
+
+\note The unweighted point type `Point_2` is requested by the concept
+`TriangulationTraits_2`, which this concept refines.
+*/
   typedef unspecified_type Weighted_point_2; 
 
 /*!
