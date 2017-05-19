@@ -175,7 +175,7 @@ public:
                             NormalMap normal_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Normal_3`
                             const PlaneRange& planes, ///< range of planes.
                             PlaneMap plane_map, ///< property map: value_type of `typename PlaneRange::const_iterator` -> `Plane_3`
-                            IndexMap index_map, ///< property map: index of point `std::size_t` -> index of plane `int` (-1 if point does is not assigned to a plane)
+                            IndexMap index_map, ///< property map: index of point `std::size_t` -> index of plane `int` (-1 if the point is not assigned to a plane)
                             double epsilon, ///< size parameter
                             double attraction_factor = 3.) ///< attraction factor
   {

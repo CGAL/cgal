@@ -39,7 +39,7 @@ The \a support of a shape refers to the footprint of the points covered by the p
 
 \subsection Point_set_shape_detection_3Method_region_growing Region Growing
 
-Planes are detected are detected by growing planar regions from estimated planar seeds. First, points are sorted by a local planarity measure (the fitting quality returned of `CGAL::linear_least_squares_fitting_3()`), such that points whose local neighborhood is the more planar are treated first.
+Planes are detected by growing planar regions from estimated planar seeds. First, points are sorted by a local planarity measure (the fitting quality returned by `CGAL::linear_least_squares_fitting_3()`), such that points whose local neighborhood is the most planar are treated first.
 
 The following steps are repeated: (1) Pick the next available point in the sorted list. (2) Initialize a plane tangent to this point and perpendicular to the normal vector of this point. (3) Compute the local neighborhood of the point. (4) Find inliers among this points, i.e. points that are within a user-specified error tolerance to the plane. Steps 3-4 are repeated until no other inlier can be added. The plane is periodically reestimated by principal component analysis using all the inliers. If, after the growing, the plane has less inliers than a user-specified minimum number of points, it is discarded and the points are made available for other shapes to take once again.
 

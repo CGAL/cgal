@@ -565,7 +565,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
     \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
     \param planes range of planes.
     \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
-    \param index_map property map: index of point `std::size_t` -> index of plane `int` (-1 if point does is not assigned to a plane)
+    \param index_map property map: index of point `std::size_t` -> index of plane `int` (-1 if the point is not assigned to a plane)
 
     \param regularize_parallelism Select whether parallelism is
     regularized or not.
