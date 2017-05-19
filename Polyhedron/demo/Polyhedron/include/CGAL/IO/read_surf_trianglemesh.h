@@ -36,6 +36,7 @@ bool get_material_metadata(std::istream& input,
 
   iss >> _material.second;//name
 
+  static int material_id = 0;
   while (std::getline(input, line))
   {
     std::string prop; //property
@@ -45,7 +46,9 @@ bool get_material_metadata(std::istream& input,
 
     if (prop.compare("Id") == 0)
     {
-      iss >> _material.first;
+      int tmp_id;
+      iss >> tmp_id;
+      _material.first = material_id++;
 
       if ((0 == to_lower_case(_material.second).compare("exterior"))
           && _material.first != 0)
@@ -74,11 +77,12 @@ bool line_starts_with(const std::string& line, const char* cstr)
  * read_surf reads a file which extension is .surf and fills `output` with one `Mesh` per patch.
  * Mesh is a model of FaceListGraph.
  */
-template<class Mesh, class NamedParameters>
+template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
     std::vector<MaterialData>& metadata,
     CGAL::Bbox_3& grid_box,
     CGAL::cpp11::array<unsigned int, 3>& grid_size,
+    DuplicatedPointsOutIterator out,
     const NamedParameters&)
 {
   typedef typename CGAL::GetGeomTraits<Mesh,
@@ -230,7 +234,8 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     }
 
     //connect triangles
-    std::vector<std::vector<std::size_t> > polygons;
+    typedef CGAL::cpp11::array<std::size_t, 3> Triangle_ind;
+    std::vector<Triangle_ind> polygons;
     polygons.reserve(nb_triangles);
     while(std::getline(input, line))
     {
@@ -246,7 +251,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       iss.str(line);
       iss >> index[0] >> index[1] >> index[2];
 
-      std::vector<std::size_t> polygon(3);
+      Triangle_ind polygon;
       polygon[0] = index[0] - 1;
       polygon[1] = index[1] - 1;
       polygon[2] = index[2] - 1;
@@ -260,33 +265,45 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     {
       std::cout << "Orientation of patch #" << (i + 1) << "...";
       std::cout.flush();
+
+      const std::size_t nbp_init = points.size();
       bool no_duplicates =
       PMP::orient_polygon_soup(points, polygons);//returns false if some points
                                                  //were duplicated
+
       std::cout << "\rOrientation of patch #" << (i + 1) << " done";
-      if (!no_duplicates)
-        std::cout << " (non manifold -> duplicated vertices)";
+
+      if(!no_duplicates) //collect duplicates
+      { 
+        for (std::size_t i = nbp_init; i < points.size(); ++i)
+          *out++ = points[i];
+        std::cout << " (non manifold -> "
+                  << (points.size() - nbp_init) << " duplicated vertices)";
+      }
       std::cout << "." << std::endl;
     }
+
     Mesh& mesh = output[i];
 
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
-      points, polygons, mesh);
-    CGAL::Polygon_mesh_processing::remove_isolated_vertices(mesh);
+    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, Point_3, Triangle_ind>
+      converter(points, polygons);
+    converter(mesh, false/*insert_isolated_vertices*/);
 
+    CGAL_assertion(PMP::remove_isolated_vertices(mesh) == 0);
     CGAL_assertion(is_valid(mesh));
   } // end loop on patches
 
   return true;
 }
 
-template<class Mesh>
+template<class Mesh, typename DuplicatedPointsOutIterator>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::vector<MaterialData>& metadata,
   CGAL::Bbox_3& grid_box,
-  CGAL::cpp11::array<unsigned int, 3>& grid_size)
+  CGAL::cpp11::array<unsigned int, 3>& grid_size,
+  DuplicatedPointsOutIterator out)
 {
-  return read_surf(input, output, metadata, grid_box, grid_size,
+  return read_surf(input, output, metadata, grid_box, grid_size, out,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 

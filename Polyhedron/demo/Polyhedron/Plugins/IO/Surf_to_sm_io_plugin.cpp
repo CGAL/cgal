@@ -14,6 +14,7 @@
 
 #include "Color_map.h"
 #include <fstream>
+#include <boost/container/flat_set.hpp>
 
 using namespace CGAL::Three;
 class Surf_io_plugin:
@@ -51,6 +52,7 @@ public:
 CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
 {
   typedef Scene_surface_mesh_item::SMesh SMesh;
+  typedef Scene_surface_mesh_item::Point Point;
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -62,13 +64,19 @@ CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
   std::vector<MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
   CGAL::cpp11::array<unsigned int, 3> grid_size = {{1, 1, 1}};
-  read_surf(in, patches, material_data, grid_box, grid_size);
-  for(std::size_t i=0; i<material_data.size(); ++i)
+  boost::container::flat_set<Point> duplicated_points;
+  read_surf(in, patches, material_data, grid_box, grid_size
+    , std::inserter(duplicated_points, duplicated_points.end()));
+
+  for (std::size_t i = 0; i<material_data.size(); ++i)
   {
    std::cout<<"The patch #"<<i<<":\n  -inner region : material's id = "<<material_data[i].innerRegion.first<<" material's name = "
            <<material_data[i].innerRegion.second<<"\n  -outer region: material's id = "<<material_data[i].outerRegion.first<<" material's name = "
              <<material_data[i].outerRegion.second<<std::endl;
   }
+  if (!duplicated_points.empty())
+    std::cout << duplicated_points.size() << " points have been duplicated." << std::endl;
+
   std::vector<QColor> colors_;
   compute_color_map(QColor(100, 100, 255), static_cast<unsigned>(patches.size()),
                     std::back_inserter(colors_));
