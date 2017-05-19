@@ -31,11 +31,9 @@
 #ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #define CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
-#  pragma message ("Warning: This header is deprecated. Please use boost/cstdint.hpp instead")
-#elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
-#  warning "This header is deprecated. Please use boost/cstdint.hpp instead"
-#endif
+#define CGAL_DEPRECATED_HEADER "<CGAL/known_bit_size_integers.h>"
+#define CGAL_REPLACEMENT_HEADER "<boost/cstdint.hpp>"
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/number_type_basic.h>
 #include <boost/cstdint.hpp>

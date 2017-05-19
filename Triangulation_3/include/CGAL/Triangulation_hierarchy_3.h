@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+// #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_hierarchy_3.h>"
+// #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>

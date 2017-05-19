@@ -24,9 +24,18 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+// Below will be decommented in a short bit, when implicit conversions are removed
+// and `Regular_triangulation_euclidean_traits_2` becomes empty
+
+/*
+#define CGAL_DEPRECATED_HEADER "<CGAL/Regular_triangulation_euclidean_traits_2.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The kernel K can be used directly as traits since weighted points and "\
+  "the associated function objects are now part of the concept Kernel."
+#include <CGAL/internal/deprecation_warning.h>
+*/
 
 #include <CGAL/config.h>
-
 
 namespace CGAL { 
 

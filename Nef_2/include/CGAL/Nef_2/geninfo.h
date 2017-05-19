@@ -23,10 +23,9 @@
 
 #include <CGAL/license/Nef_2.h>
 
-
-
-//This file is deprecated and something like boost::any or boost::variant should 
-//be used instead
+#define CGAL_DEPRECATED_HEADER "<CGAL/Nef_2/geninfo.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "Something like boost::any or boost::variant should be used instead."
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/config.h>
