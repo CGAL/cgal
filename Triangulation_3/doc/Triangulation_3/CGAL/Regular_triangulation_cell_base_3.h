@@ -8,12 +8,12 @@ The class `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives
 `Cb`, a cell base class of a 3D triangulation.
 It is the default cell base class of regular triangulations.
 
-\tparam RT is the geometric traits class. It must be a model of `RegularTriangulationTraits_3`.
+\tparam Traits is the geometric traits class. It must be a model of `RegularTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which `Regular_triangulation_cell_base_3`
 derives. It must be a model of `TriangulationCellBase_3`. 
 By default, this parameter is instantiated by 
-`Triangulation_cell_base_3<RT>`.
+`Triangulation_cell_base_3<Traits>`.
 
 \cgalModels `RegularTriangulationCellBase_3`
 
@@ -23,15 +23,15 @@ By default, this parameter is instantiated by
 
 */
 
-template< typename RT, typename Cb >
+template< typename Traits, typename Cb >
 class Regular_triangulation_cell_base_3 : public Cb {
 public:
 
 /// \name Types 
 /// @{
-typedef RT::Weighted_point_3 Point;
+typedef Traits::Point_3 Point_3;
 
-typedef RT::Point_3 Point_3;
+typedef Traits::Weighted_point_3 Point;
 
 typedef std::list<Point> Point_container;
 
@@ -73,8 +73,7 @@ circumcenter is not supposed to be computed
 by the constructor `Construct_weighted_circumcenter_3` of the traits
 class, hence the returned point has no weight.
 */ 
-const Point_3& weighted_circumcenter(
-  const RegularTriangulationTraits_3& gt = RegularTriangulationTraits_3()) const; 
+const Point_3& weighted_circumcenter(const Traits& gt = Traits()) const;
 
 /// @}
 

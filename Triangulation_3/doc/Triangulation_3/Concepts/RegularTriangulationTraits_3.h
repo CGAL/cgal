@@ -51,14 +51,10 @@ The ray type.
 typedef unspecified_type Ray_3; 
 
 /*!
-The (unweighted) point type.
-It has to be a model of the concept `Kernel::Point_3`.
-*/
-typedef unspecified_type Point_3;
+The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_3`.
 
-/*!
-The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_3`,
-and it must be implicitely convertible from and to `Point_3`.
+\note The unweighted point type `Point_3` is requested by the concept
+`TriangulationTraits_3`, which this concept refines.
 */ 
 typedef unspecified_type Weighted_point_3; 
 
