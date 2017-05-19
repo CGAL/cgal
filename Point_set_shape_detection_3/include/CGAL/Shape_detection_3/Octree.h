@@ -662,8 +662,6 @@ namespace CGAL {
 
         while(first < last) {
           // find first above threshold
-          Point_3 p1 = get(m_point_pmap, *this->at(first));
-          FT v1 = get_coord(p1, static_cast<unsigned int>(dimension));
           while (get_coord(
                    get(m_point_pmap, *this->at(first)),
                    static_cast<unsigned int>(dimension)) < threshold
@@ -680,8 +678,6 @@ namespace CGAL {
           }
 
           // find last below threshold
-          p1 = get(m_point_pmap, *this->at(last));
-          v1 = get_coord(p1, static_cast<unsigned int>(dimension));
           while (get_coord(
                    get(m_point_pmap, *this->at(last)),
                    static_cast<unsigned int>(dimension)) >= threshold
@@ -698,10 +694,6 @@ namespace CGAL {
           }
 
           this->swap(first, last);
-          p1 = get(m_point_pmap, *this->at(first));
-          v1 = get_coord(p1, static_cast<unsigned int>(dimension));
-          p1 = get(m_point_pmap, *this->at(last));
-          v1 = get_coord(p1, static_cast<unsigned int>(dimension));
           first++;
           last--;
         }
