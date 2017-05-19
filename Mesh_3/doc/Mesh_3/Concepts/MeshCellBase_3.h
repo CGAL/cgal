@@ -72,12 +72,12 @@ typedef unspecified_type Point;
 /*!
 Type of indices for cells of the input complex. Must match the type `MeshDomain_3::Subdomain_index`. 
 */ 
-typedef unspecified_type Subdomain_index;; 
+typedef unspecified_type Subdomain_index;
 
 /*!
 Type of indices for surface patches of the input complex. Must match the type `MeshDomain_3::Surface_patch_index`. 
 */ 
-typedef unspecified_type Surface_patch_index;; 
+typedef unspecified_type Surface_patch_index;
 
 /*!
  Type of indices to be stored at mesh vertices to characterize the lowest dimensional face 
@@ -92,15 +92,13 @@ typedef unspecified_type Index;
 /// @{
 
 /*!
-Returns the 
-index of the input subdomain that contains the cell `cell` 
+Returns the index of the input subdomain that contains the cell `cell` 
 of the triangulation. 
 */ 
 Subdomain_index subdomain_index(); 
 
 /*!
-Sets 
-the subdomain index of the cell. 
+Sets the subdomain index of the cell. 
 */ 
 void set_subdomain_index(Subdomain_index index); 
 
@@ -145,12 +143,12 @@ Sets the point `p` as the surface center of `facet(i)`.
 void set_facet_surface_center (int i, Point_3 p);
 
 /*!
-Sets surface center index of `facet(i)` to `index`.
+Sets the surface center index of `facet(i)` to `index`.
 */
 void set_facet_surface_center_index(int i, Index index);
 
 /*!
-Returns surface center of `facet(i)`.
+Returns the surface center index of `facet(i)`.
 */
 Index get_facet_surface_center_index(int i);
 
