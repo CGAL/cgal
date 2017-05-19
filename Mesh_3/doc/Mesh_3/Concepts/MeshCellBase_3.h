@@ -58,7 +58,13 @@ public:
 /// @{
 
 /*!
-Point type, required to match the point type 
+The bare point type, required to match the `Point_3` type
+of the 3D triangulation traits in which the mesh is embedded.
+*/
+typedef unspecified_type Point_3;
+
+/*!
+The point type, required to match the `Point` type
 of the 3D triangulation in which the mesh is embedded. 
 */ 
 typedef unspecified_type Point; 
@@ -131,12 +137,12 @@ void reset_visited (int i);
 /*!
 Returns a const reference to the surface center of `facet(i)`. 
 */ 
-const Point& get_facet_surface_center(int i); 
+const Point_3& get_facet_surface_center(int i);
 
 /*!
-Sets point `p` as the surface center of `facet(i)`.
+Sets the point `p` as the surface center of `facet(i)`.
 */ 
-void set_facet_surface_center (int i, Point p); 
+void set_facet_surface_center (int i, Point_3 p);
 
 /*!
 Sets surface center index of `facet(i)` to `index`.
