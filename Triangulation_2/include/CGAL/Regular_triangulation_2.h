@@ -50,8 +50,8 @@ template < class Gt,
 class Regular_triangulation_2
   : public Triangulation_2<Gt, Tds>
 {
-  typedef Regular_triangulation_2<Gt, Tds>                         Self;
-  typedef Triangulation_2<Gt, Tds>                                 Base;
+  typedef Regular_triangulation_2<Gt, Tds>     Self;
+  typedef Triangulation_2<Gt, Tds>             Base;
 
 public:
   typedef Self                                 Triangulation;
