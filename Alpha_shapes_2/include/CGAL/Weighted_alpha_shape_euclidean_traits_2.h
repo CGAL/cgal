@@ -32,6 +32,7 @@ template< class K_ >
 class Weighted_alpha_shape_euclidean_traits_2
   : public K_
 {
+public:
   Weighted_alpha_shape_euclidean_traits_2() { }
   Weighted_alpha_shape_euclidean_traits_2(const K_& k) : K_(k) { }
 };
