@@ -37,7 +37,7 @@ namespace CGAL {
     template<typename Graph , typename VertexRange >
     typename boost::graph_traits<Graph>::face_descriptor add_face(const VertexRange& vr,
                                                          Graph& g);
-  }
+  }//Euler
 
 /*!
    \ingroup PkgBGLHelperFct
@@ -998,6 +998,123 @@ make_icosahedron(
   return halfedge(v_vertices[1], v_vertices[0], g).first;
 }
 
+
+int get_grid_vertex(int i, int j, int w)
+{
+  return w*j+i;
+}
+
+/*!
+ *\brief creates a point from 2D integer coordinates.
+ */
+template<class Graph>
+struct Identity_calculator
+{
+  typedef typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type Point;
+  //!Default constructor
+  Identity_calculator(){}
+  //!
+  //! \brief creates a point
+  //! \param i the width coordinate
+  //! \param j the y coordinate
+  //! \return a point with coordinates (i, j, 0)
+  //!
+  Point operator()(const typename boost::graph_traits<Graph>::vertices_size_type& i,
+               const typename boost::graph_traits<Graph>::vertices_size_type& j)const
+  {
+    return Point(i,j,0);
+  }
+
+};
+
+/**
+ * \ingroup PkgBGLHelperFct
+ * \brief Creates a grid.
+ *
+ * Creates a grid with `w` vertices accross the width and `h` vertices
+ * accross the height.
+ * \param g the graph in which the grid will be created.
+ * \param the functor that will assign coordinates to the grid vertices.
+ * \param triangulated decides if a cell is composed of one quad or two triangles.
+ *
+ * \tparam CoordinateCalulator a functor that takes two `boost::graph_traits<Graph>::%vertices_size_type`
+ * and outputs a boost::property_traits<boost::property_map<Graph,vertex_point_t>::%type>::%value_type.
+ * Default a point with coordinates (i, j, 0).
+ * \returns the non-border halfedge that has the target vertex associated with the first point of the grid.
+ */
+#ifndef DOXYGEN_RUNNING
+template<class Graph, class CoordinateCalculator>
+#else
+template<class Graph, class CoordinateCalculator = Identity_calculator<Graph> >
+#endif
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
+          typename boost::graph_traits<Graph>::vertices_size_type h,
+          Graph& g,
+          const CoordinateCalculator& calculator,
+          bool triangulated = false)
+{
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  Point_property_map vpmap = get(CGAL::vertex_point, g);
+  // create the initial icosahedron
+  //create the vertices
+  std::vector<vertex_descriptor> v_vertices;
+  v_vertices.resize(static_cast<std::size_t>(w*h));
+  for(std::size_t k = 0; k < v_vertices.size(); ++k)
+    v_vertices[k] = add_vertex(g);
+  //assign the coordinates
+  for(int i = 0; i<w; ++i)
+  {
+    for(int j=0; j<h; ++j)
+    {
+      put(vpmap, v_vertices[get_grid_vertex(i, j, w)], calculator(i,j));
+    }
+  }
+
+  //create the faces
+  std::vector<vertex_descriptor> face;
+  if(triangulated)
+    face.resize(3);
+  else
+    face.resize(4);
+  for(int i = 0; i<w-1; ++i)
+  {
+    for(int j = 0; j<h-1; ++j)
+    {
+      if(triangulated)
+      {
+        face[0] = v_vertices[get_grid_vertex(i, j, w)];
+        face[1] = v_vertices[get_grid_vertex(i, j+1, w)];
+        face[2] = v_vertices[get_grid_vertex(i+1, j, w)];
+        Euler::add_face(face, g);
+        face[0] = v_vertices[get_grid_vertex(i+1, j, w)];
+        face[1] = v_vertices[get_grid_vertex(i, j+1, w)];
+        face[2] = v_vertices[get_grid_vertex(i+1, j+1, w)];
+        Euler::add_face(face, g);
+      }
+      else
+      {
+        face[0] = v_vertices[get_grid_vertex(i, j, w)];
+        face[1] = v_vertices[get_grid_vertex(i, j+1, w)];
+        face[2] = v_vertices[get_grid_vertex(i+1, j+1, w)];
+        face[3] = v_vertices[get_grid_vertex(i+1, j, w)];
+        Euler::add_face(face, g);
+      }
+    }
+  }
+  return halfedge(v_vertices[1], v_vertices[0], g).first;
+}
+//default Functor
+template<class Graph>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
+          typename boost::graph_traits<Graph>::vertices_size_type h,
+          Graph& g,
+          bool triangulated = false)
+{
+  return make_grid(w, h, g, Identity_calculator<Graph>(), triangulated);
+}
 
 namespace internal {
 
