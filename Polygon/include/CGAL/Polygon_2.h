@@ -423,7 +423,10 @@ class Polygon_2 {
 
     /// Returns a (const) reference to the `i`-th vertex.
     const Point_2& vertex(std::size_t i) const
-      { return *(d_container.begin() + i); }
+      {
+        CGAL_precondition( i < d_container.size() );
+        return *(d_container.begin() + i);
+      }
 
 
     /// Returns a (const) reference to the `i`-th vertex.
