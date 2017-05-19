@@ -58,6 +58,11 @@ typedef R::Left_turn_2 Left_turn_2;
 */ 
 typedef R::Equal_2 Equal_2; 
 
+/*!
+
+*/
+typedef R::Orientation_2 Orientation_2;
+
 /// @} 
 
 /// \name Creation 
@@ -103,6 +108,11 @@ Left_turn_2 left_turn_2_object();
 
 */ 
 Equal_2 equal_2_object(); 
+
+/*!
+
+*/
+Orientation_2 orientation_2_object();
 
 /// @}
 
