@@ -105,6 +105,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->scene = 0;
   d->antialiasing = antialiasing;
   d->twosides = false;
+  this->setProperty("draw_two_sides", false);
   d->macro_mode = false;
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
@@ -187,6 +188,7 @@ void Viewer::setAntiAliasing(bool b)
 
 void Viewer::setTwoSides(bool b)
 {
+  this->setProperty("draw_two_sides", b);
   d->twosides = b;
   update();
 }
