@@ -41,6 +41,8 @@
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Union_find.h>
 
+#include <boost/functional/hash.hpp>
+
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
   #include <tbb/concurrent_hash_map.h>
@@ -51,11 +53,36 @@ namespace CGAL {
   {
     return CGAL::internal::hash_value(it);
   }
+
+
   template < class DSC, bool Const >
   std::size_t tbb_hasher(const CGAL::CCC_internal::CCC_iterator<DSC, Const>& it)
   {
     return CGAL::CCC_internal::hash_value(it);
   }
+
+  // As Marc Glisse pointed out the TBB hash of a std::pair is
+  // simplistic and leads to the
+  // TBB Warning: Performance is not optimal because the hash function
+  //              produces bad randomness in lower bits in class
+  //              tbb::interface5::concurrent_hash_map
+  template < class DSC, bool Const >
+  std::size_t tbb_hasher(const std::pair<CGAL::internal::CC_iterator<DSC, Const>,
+                                         CGAL::internal::CC_iterator<DSC, Const> >& p)
+  {
+    return boost::hash<std::pair<CGAL::internal::CC_iterator<DSC, Const>,
+                                 CGAL::internal::CC_iterator<DSC, Const> > >()(p);
+  }
+
+
+  template < class DSC, bool Const >
+  std::size_t tbb_hasher(const std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
+                                         CGAL::CCC_internal::CCC_iterator<DSC, Const> >& p)
+  {
+    return boost::hash<std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
+                                 CGAL::CCC_internal::CCC_iterator<DSC, Const> > >()(p);
+  }
+
 }
 #endif
 
