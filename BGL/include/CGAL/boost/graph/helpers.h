@@ -420,7 +420,8 @@ bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor
 
 /** 
  * \ingroup PkgBGLHelperFct
- * "Creates an isolated triangle with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`."
+ * \brief Creates an isolated triangle
+ * with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`.
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
  **/ 
 template<typename Graph, typename P>
@@ -529,7 +530,8 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
 
 /** 
  * \ingroup PkgBGLHelperFct
- * "Creates an isolated quad with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`."
+ * \brief Creates an isolated quad with
+ * its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
  **/ 
 template<typename Graph, typename P>
@@ -555,7 +557,8 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 
 /** 
  * \ingroup PkgBGLHelperFct
- * "Creates an isolated hexahedron with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`."
+ * \brief Creates an isolated hexahedron
+ * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
  **/ 
 template<typename Graph, typename P>
@@ -609,7 +612,8 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 }
 /** 
  * \ingroup PkgBGLHelperFct
- * "Creates an isolated hexahedron with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`."
+ * \brief Creates an isolated tetrahedron
+ * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, and `p2`.
  **/ 
 template<typename Graph, typename P>
@@ -730,9 +734,8 @@ bool is_degenerate_triangle_face(
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a regular prism.
- *
- * Creates a regular prism in `g`, having `nb_vertices` vertices in each of its bases.
+ * \brief Creates a regular prism in `g`
+ * having `nb_vertices` vertices in each of its bases.
  * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, 0.5*`height`, 0)
  * \param nb_vertices the number of vertices per base. It must be greater than or equal to 3.
  * \param g the graph in which the regular prism will be created.
@@ -825,9 +828,8 @@ make_regular_prism(
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a pyramid.
+ * \brief Creates a pyramid in `g`, having `nb_vertices` vertices in its base.
  *
- * Creates a pyramid in `g`, having `nb_vertices` vertices in its base.
  * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0.5*`height`, 0)
  * \param nb_vertices the number of vertices in the base. It must be greater than or equal to 3.
  * \param g the graph in which the pyramid will be created
@@ -908,9 +910,7 @@ make_pyramid(
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates an icosahedron.
- *
- * Creates an icosahedron in `g` centered in `center`.
+ * \brief Creates an icosahedron in `g` centered in `center`.
  * \param g the graph in which the icosahedron will be created.
  * \param center the center of the sphere in which the icosahedron is inscribed.
  * \param radius the radius of the sphere in which the icosahedron is inscribed.
@@ -999,19 +999,14 @@ make_icosahedron(
 }
 
 
-int get_grid_vertex(int i, int j, int w)
-{
-  return w*j+i;
-}
-
 /*!
- *\brief creates a point from 2D integer coordinates.
+ * \ingroup PkgBGLHelperFct
+ * \brief creates a point from 2D integer coordinates.
  */
 template<class Graph>
 struct Identity_calculator
 {
   typedef typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type Point;
-  //!Default constructor
   Identity_calculator(){}
   //!
   //! \brief creates a point
@@ -1029,29 +1024,28 @@ struct Identity_calculator
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a grid.
- *
- * Creates a grid with `w` vertices accross the width and `h` vertices
- * accross the height.
+ * \brief Creates a grid with `w` vertices along the width and `h` vertices
+ * along the height.
  * \param g the graph in which the grid will be created.
- * \param the functor that will assign coordinates to the grid vertices.
+ * \param calculator the functor that will assign coordinates to the grid vertices.
  * \param triangulated decides if a cell is composed of one quad or two triangles.
+ * If `triangulated` is true, the diagonal of the cells is oriented from (0,0) to (1,1)
  *
- * \tparam CoordinateCalulator a functor that takes two `boost::graph_traits<Graph>::%vertices_size_type`
- * and outputs a boost::property_traits<boost::property_map<Graph,vertex_point_t>::%type>::%value_type.
- * Default a point with coordinates (i, j, 0).
- * \returns the non-border halfedge that has the target vertex associated with the first point of the grid.
+ * \tparam CoordinateFunctor that takes two `boost::graph_traits<Graph>::%vertices_size_type`
+ * and outputs a boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type.
+ * %Default: a point with coordinates (i, j, 0).
+ * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid.
  */
 #ifndef DOXYGEN_RUNNING
-template<class Graph, class CoordinateCalculator>
+template<class Graph, class CoordinateFunctor>
 #else
-template<class Graph, class CoordinateCalculator = Identity_calculator<Graph> >
+template<class Graph, class CoordinateFunctor = Identity_calculator<Graph> >
 #endif
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
           typename boost::graph_traits<Graph>::vertices_size_type h,
           Graph& g,
-          const CoordinateCalculator& calculator,
+          const CoordinateFunctor& calculator,
           bool triangulated = false)
 {
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
@@ -1068,7 +1062,7 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
   {
     for(int j=0; j<h; ++j)
     {
-      put(vpmap, v_vertices[get_grid_vertex(i, j, w)], calculator(i,j));
+      put(vpmap, v_vertices[w*i + j], calculator(i,j));
     }
   }
 
@@ -1084,21 +1078,21 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
     {
       if(triangulated)
       {
-        face[0] = v_vertices[get_grid_vertex(i, j, w)];
-        face[1] = v_vertices[get_grid_vertex(i, j+1, w)];
-        face[2] = v_vertices[get_grid_vertex(i+1, j, w)];
+        face[0] = v_vertices[w*i+j];
+        face[1] = v_vertices[w*i+j+1];
+        face[2] = v_vertices[w*(i+1)+ j+1];
         Euler::add_face(face, g);
-        face[0] = v_vertices[get_grid_vertex(i+1, j, w)];
-        face[1] = v_vertices[get_grid_vertex(i, j+1, w)];
-        face[2] = v_vertices[get_grid_vertex(i+1, j+1, w)];
+        face[0] = v_vertices[w*(i+1)+ j];
+        face[1] = v_vertices[w*i+j];
+        face[2] = v_vertices[w*(i+1)+j+1];
         Euler::add_face(face, g);
       }
       else
       {
-        face[0] = v_vertices[get_grid_vertex(i, j, w)];
-        face[1] = v_vertices[get_grid_vertex(i, j+1, w)];
-        face[2] = v_vertices[get_grid_vertex(i+1, j+1, w)];
-        face[3] = v_vertices[get_grid_vertex(i+1, j, w)];
+        face[0] = v_vertices[w*i+ j];
+        face[1] = v_vertices[w*i+ j+1];
+        face[2] = v_vertices[w*(i+1)+ j+1];
+        face[3] = v_vertices[w*(i+1)+ j];
         Euler::add_face(face, g);
       }
     }

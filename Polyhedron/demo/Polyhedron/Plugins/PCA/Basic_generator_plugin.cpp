@@ -50,7 +50,7 @@ public :
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    for(int i=0; i<7; ++i)
+    for(int i=0; i<POLYLINE; ++i)
       nbs[i]=0;
     QAction* actionGenerator = new QAction("Basic Generator", mw);
     connect(actionGenerator, SIGNAL(triggered()),
@@ -90,18 +90,19 @@ public Q_SLOTS:
 private:
   QList<QAction*> _actions;
   GeneratorWidget* dock_widget;
-  int nbs[7];
-  enum volumeTab
+  enum VolumeTab
   {
     PRISM=0,
     SPHERE,
     PYRAMID,
     HEXAHEDRON,
     TETRAHEDRON,
+    GRID,
     POINT_SET,
     POLYLINE
   };
 
+  int nbs[POLYLINE+1];
   void generateCube();
   void generatePrism();
   void generatePyramid();
@@ -109,6 +110,7 @@ private:
   void generateTetrahedron();
   void generatePoints();
   void generateLines();
+  void generateGrid();
 }; //end of class Basic_generator_plugin
 
 //show the widget
@@ -164,7 +166,10 @@ void Basic_generator_plugin::on_tab_changed()
     name = QString("Tetrahedron");
     nb = nbs[TETRAHEDRON];
     break;
-
+  case GRID:
+    name = QString("Grid");
+    nb = nbs[GRID];
+    break;
   case POINT_SET:
     name = QString("Point_set");
     nb = nbs[POINT_SET];
@@ -208,7 +213,10 @@ void Basic_generator_plugin::on_generate_clicked()
     generateTetrahedron();
     ++nbs[TETRAHEDRON];
     break;
-
+  case GRID:
+    generateGrid();
+    ++nbs[GRID];
+    break;
   case POINT_SET:
     generatePoints();
     ++nbs[POINT_SET];
@@ -606,5 +614,69 @@ void Basic_generator_plugin::generateLines()
         item->invalidateOpenGLBuffers();
         scene->addItem(item);
     }
+}
+
+struct Point_generator
+{
+  std::size_t w,h;
+  Point bl, ur;
+  Point_generator(const std::size_t& w,
+                  const std::size_t& h,
+                  const Point& bl,
+                  const Point& ur)
+    :w(w), h(h), bl(bl), ur(ur)
+  {}
+  Point operator()(std::size_t i, std::size_t j) const
+  {
+    return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
+                 bl.y() + j*(ur.y()-bl.y())/(h-1),
+                 0);
+  }
+};
+void Basic_generator_plugin::generateGrid()
+{
+  Polyhedron grid;
+
+  QString points_text;
+  Point extrema[2];
+  std::size_t nb_cells[2];
+  bool triangulated = dock_widget->grid_checkBox->isChecked();
+  points_text= dock_widget->grid_lineEdit->text();
+
+  QStringList list = points_text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  if (list.isEmpty()) return;
+  if (list.size()!=6){
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setWindowTitle("Error");
+    msgBox->setText("ERROR : Input should consists of 6 doubles.");
+    msgBox->exec();
+    return;
+  }
+  double coords[6];
+  for(int j=0; j<6; ++j)
+  {
+    bool ok;
+    coords[j] = list.at(j).toDouble(&ok);
+    if(!ok)
+    {
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Coordinates are invalid.");
+      msgBox->exec();
+      return;
+    }
+  }
+  extrema[0] = Point(coords[0], coords[1], coords[2]);
+  extrema[1] = Point(coords[3], coords[4], coords[5]);
+  nb_cells[0] = static_cast<std::size_t>(dock_widget->gridX_spinBox->value());
+  nb_cells[1] = static_cast<std::size_t>(dock_widget->gridY_spinBox->value());
+
+  //nb_points = nb_cells+1
+  Point_generator point_gen(nb_cells[0]+1, nb_cells[1]+1, extrema[0], extrema[1]);
+
+  CGAL::make_grid(nb_cells[0]+1, nb_cells[1]+1, grid, point_gen, triangulated);
+  Scene_polyhedron_item* grid_item = new Scene_polyhedron_item(grid);
+  grid_item->setName(dock_widget->name_lineEdit->text());
+  scene->addItem(grid_item);
 }
 #include "Basic_generator_plugin.moc"

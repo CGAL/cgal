@@ -886,6 +886,170 @@ QGroupBox::title {
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="gridTab">
+       <attribute name="title">
+        <string>Grid</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_18">
+          <item>
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="../../Polyhedron_3.qrc">:/cgal/Polyhedron_3/resources/grid.png</pixmap>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <item>
+             <spacer name="verticalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_5">
+              <property name="styleSheet">
+               <string notr="true">QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}</string>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_15">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,0">
+                 <item>
+                  <widget class="QLabel" name="label_26">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lower left and upper right points.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string>Extremas:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="grid_lineEdit">
+                   <property name="text">
+                    <string>0 0 0 1 1 1</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0">
+                 <item>
+                  <widget class="QLabel" name="label_29">
+                   <property name="text">
+                    <string>Number of cells:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,0">
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_32">
+                     <property name="text">
+                      <string>Along Y:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_31">
+                     <property name="text">
+                      <string>Along X:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QSpinBox" name="gridX_spinBox">
+                     <property name="maximum">
+                      <number>999999999</number>
+                     </property>
+                     <property name="value">
+                      <number>10</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QSpinBox" name="gridY_spinBox">
+                     <property name="maximum">
+                      <number>999999999</number>
+                     </property>
+                     <property name="value">
+                      <number>10</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_22" stretch="1,0">
+                 <item>
+                  <widget class="QLabel" name="label_30">
+                   <property name="text">
+                    <string>Triangulated:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="grid_checkBox">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="pointTab">
        <attribute name="title">
         <string>Point set</string>

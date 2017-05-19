@@ -54,6 +54,7 @@
         <file>resources/hexahedron.png</file>
         <file>resources/icosphere.png</file>
         <file>resources/tetrahedron.png</file>
+        <file>resources/grid.png</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>
