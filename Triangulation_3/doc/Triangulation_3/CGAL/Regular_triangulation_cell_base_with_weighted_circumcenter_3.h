@@ -13,12 +13,12 @@ Note that input/output operators discard this additional information.
 All functions modifying the vertices of the cell invalidate the cached 
 circumcenter. 
 
-\tparam RegularTriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class and must be a model of `RegularTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which 
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
 be a model of `RegularTriangulationCellBase_3`.
-It has the default value `Regular_triangulation_cell_base_3<RegularTriangulationTraits_3>`.
+It has the default value `Regular_triangulation_cell_base_3<RT>`.
 
 \cgalModels `RegularTriangulationCellBase_3`
 
@@ -27,13 +27,15 @@ It has the default value `Regular_triangulation_cell_base_3<RegularTriangulation
 \sa `CGAL::Regular_triangulation_cell_base_3`
 
 */
-template< typename RegularTriangulationTraits_3, typename Cb >
+template< typename Traits, typename Cb >
 class Regular_triangulation_cell_base_with_weighted_circumcenter_3 : public Cb {
 public:
 	
 /// \name Types 
 /// @{
-typedef RegularTriangulationTraits_3::Point_3 Point_3;
+typedef Traits::Point_3 Point_3;
+
+typedef Traits::Weighted_point_3 Point;
 /// @}
 
 /*! \name Access function 
@@ -59,8 +61,7 @@ computed.
 
 The returned point has no weight.
 */ 
-const Point_3& weighted_circumcenter(
-	const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
+const Point_3& weighted_circumcenter(const Traits&gt = Traits()) const;
 
 /*!
 Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and other.
