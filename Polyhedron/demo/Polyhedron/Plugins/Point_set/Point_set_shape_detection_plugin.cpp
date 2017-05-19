@@ -405,6 +405,17 @@ private:
       if(group && group->getChildren().empty())
         delete group;
 
+    {
+      Scene_points_with_normal_item *up_item = new Scene_points_with_normal_item;
+      up_item->point_set()->add_normal_map();
+      up_item->setName("Unassigned points");
+      
+      BOOST_FOREACH(std::size_t i, shape_detection.indices_of_unassigned_points())
+        up_item->point_set()->insert(points->point(*(points->begin()+i)));
+      up_item->setRbgColor(0, 0, 0);
+      scene->addItem(up_item);
+    }
+
     if (dialog.generate_structured ())
     {
       std::cerr << "Structuring point set... ";

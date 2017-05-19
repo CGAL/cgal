@@ -557,18 +557,15 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
     \tparam PlaneRange range of planes, model of `Range`
     \tparam PlaneMap is a model of `WritablePropertyMap` with value type `Kernel::Plane_3`.
     It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
-    \tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
+    \tparam IndexMap is a model of `ReadablePropertyMap` with value type `int`.
     \tparam Kernel Geometric traits class.
     It can be omitted and deduced automatically from the value type of `PointMap`.
 
-    \param shape_detection Shape detection object used to detect
-    shapes from the input data. While the shape detection algorithm
-    deals with several types of primitive shapes only planes can be
-    regularized.
-
-    \warning The `shape_detection` parameter must have already
-    detected shapes. If no plane exists in it, the regularization
-    function doesn't do anything.
+    \param points range of points.
+    \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
+    \param planes range of planes.
+    \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
+    \param index_map property map: index of point `std::size_t` -> index of plane `int` (-1 if point does is not assigned to a plane)
 
     \param regularize_parallelism Select whether parallelism is
     regularized or not.

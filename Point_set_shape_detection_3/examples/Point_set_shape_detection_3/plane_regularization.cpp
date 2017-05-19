@@ -17,7 +17,7 @@ typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 typedef CGAL::Shape_detection_3::Shape_detection_traits
   <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
+typedef CGAL::Shape_detection_3::Region_growing<Traits>      Region_growing;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
 int main(int argc, char** argv) 
@@ -36,12 +36,12 @@ int main(int argc, char** argv)
   }
 
   // Call RANSAC shape detection with planes
-  Efficient_ransac ransac;
-  ransac.set_input(points);
-  ransac.add_shape_factory<Plane>();
-  ransac.detect();
+  Region_growing region_growing;
+  region_growing.set_input(points);
+  region_growing.add_shape_factory<Plane>();
+  region_growing.detect();
 
-  typename Efficient_ransac::Plane_range planes = ransac.planes();
+  typename Region_growing::Plane_range planes = region_growing.planes();
   // Regularize detected planes
   CGAL::regularize_planes (points,
                            Point_map(),

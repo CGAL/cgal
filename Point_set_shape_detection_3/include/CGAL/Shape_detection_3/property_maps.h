@@ -19,10 +19,6 @@
 // Author(s)     : Simon Giraudot
 //
 
-/**
- * \ingroup PkgPointSetShapeDetection3
- *
- */
 
 
 #ifndef CGAL_SHAPE_DETECTION_3_PROPERTY_MAPS_H
@@ -32,20 +28,37 @@ namespace CGAL {
 
 namespace Shape_detection_3 {
 
-  template <typename ShapeDetectionTraits>
+/*!
+   \ingroup PkgPointSetShapeDetection3
+
+   Property map that associate a point index to its assigned shape
+   found by a shape detection algorithm (such as
+   `CGAL::Shape_detection_3::Efficient_RANSAC` or
+   `CGAL::Shape_detection_3::Region_growing`).
+ */
+  template <typename Traits>
   class Point_to_shape_index_map
   {
-    typedef CGAL::Shape_detection_3::Shape_base<ShapeDetectionTraits> Shape;
+    typedef CGAL::Shape_detection_3::Shape_base<Traits> Shape;
     boost::shared_ptr<std::vector<int> > m_indices;
     
   public:
-    typedef std::size_t key_type;
-    typedef int value_type;
+    typedef std::size_t key_type; ///< Index of the point in the random access point range.
+    typedef int value_type; ///< Index of the shape (-1 if the point is not assigned to any shape).
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
 
+    /*!
+      Constructs a property map to map points to their associated shape.
+
+      \note `shapes` must be a range of shapes detected using `points`.
+
+      \tparam ShapeRange an `Iterator_range` with a bidirectional
+      constant iterator type with value type
+      `boost::shared_ptr<CGAL::Shape_detection_3::Shape_base<Traits> >`.
+     */
     template <typename ShapeRange>
-    Point_to_shape_index_map (const typename ShapeDetectionTraits::Input_range& points,
+    Point_to_shape_index_map (const typename Traits::Input_range& points,
                               const ShapeRange& shapes)
       : m_indices (new std::vector<int>(points.size(), -1))
     {
@@ -66,13 +79,19 @@ namespace Shape_detection_3 {
 
   };
 
-  template <typename ShapeDetectionTraits>
+/*!
+   \ingroup PkgPointSetShapeDetection3
+
+   Property map that associates a detected plane object
+   (`CGAL::Shape_detection_3::Plane`) to a `CGAL::Plane_3` object.
+ */
+  template <typename Traits>
   class Plane_map
   {
   public:
-    typedef CGAL::Shape_detection_3::Plane<ShapeDetectionTraits> Plane_shape;
+    typedef CGAL::Shape_detection_3::Plane<Traits> Plane_shape;
     typedef boost::shared_ptr<Plane_shape> key_type;
-    typedef typename ShapeDetectionTraits::Plane_3 value_type;
+    typedef typename Traits::Plane_3 value_type;
     typedef value_type reference;
     typedef boost::read_write_property_map_tag category;
 

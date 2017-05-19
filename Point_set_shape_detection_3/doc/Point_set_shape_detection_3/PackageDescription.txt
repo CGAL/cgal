@@ -35,8 +35,9 @@
 - `ShapeDetectionTraits`
 
 ## Main Classes ##
-- `CGAL::Shape_detection_3::Shape_dection_traits`
+- `CGAL::Shape_detection_3::Shape_detection_traits`
 - `CGAL::Shape_detection_3::Efficient_RANSAC<Traits>`
+- `CGAL::Shape_detection_3::Region_growing<Traits>`
 
 ## Shape Interface ##
 - `CGAL::Shape_detection_3::Shape_base<Traits>`
@@ -50,5 +51,10 @@
 
 ## Functions ##
 - `CGAL::regularize_planes()`
+
+## Property Maps ##
+- `CGAL::Shape_detection_3::Plane_map<Traits>`
+- `CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>`
+
 */
 

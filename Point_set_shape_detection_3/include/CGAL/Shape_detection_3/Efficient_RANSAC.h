@@ -65,7 +65,7 @@ this class enables to detect subsets of connected points lying on the surface of
 Each input point is assigned to either none or at most one detected primitive
 shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
-\tparam Traits a model of `EfficientRANSACTraits`
+\tparam Traits a model of `ShapeDetectionTraits`
 
 */
   template <class Traits>
@@ -202,7 +202,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   /// @{
 
     /*! 
-      Constructs an empty shape detection engine.
+      Constructs an empty shape detection object.
     */ 
     Efficient_RANSAC(Traits t = Traits())
       : m_traits(t)
@@ -402,7 +402,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /*!
       Calls `clear_octrees()` and removes all detected shapes.
       All internal structures are cleaned, including formerly detected shapes.
-      Thus iterators and ranges retrieved through `shapes()` and `indices_of_unassigned_points()` 
+      Thus iterators and ranges retrieved through `shapes()`, `planes()` and `indices_of_unassigned_points()` 
       are invalidated.
     */ 
     void clear() {

@@ -154,6 +154,13 @@ public:
     Constructs a structured point set based on the input points and the
     associated shape detection object.
 
+    \tparam PointRange range of points, model of `ConstRange`
+    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+    \tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
+    \tparam PlaneRange range of planes, model of `ConstRange`
+    \tparam PlaneMap is a model of `ReadablePropertyMap` with value type `Kernel::Plane_3`.
+    \tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
+
     \note Both property maps can be omitted if the default constructors of these property maps can be safely used.
 
   */
@@ -163,12 +170,12 @@ public:
             typename PlaneRange,
             typename PlaneMap,
             typename IndexMap>
-  Point_set_with_structure (const PointRange& points,
-                            PointMap point_map,
-                            NormalMap normal_map,
-                            const PlaneRange& planes,
-                            PlaneMap plane_map,
-                            IndexMap index_map,
+  Point_set_with_structure (const PointRange& points, ///< range of points.
+                            PointMap point_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
+                            NormalMap normal_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Normal_3`
+                            const PlaneRange& planes, ///< range of planes.
+                            PlaneMap plane_map, ///< property map: value_type of `typename PlaneRange::const_iterator` -> `Plane_3`
+                            IndexMap index_map, ///< property map: index of point `std::size_t` -> index of plane `int` (-1 if point does is not assigned to a plane)
                             double epsilon, ///< size parameter
                             double attraction_factor = 3.) ///< attraction factor
   {
@@ -1425,7 +1432,7 @@ private:
 /// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
 ///
 /// @tparam PointRange range of points, model of `ConstRange`
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
 ///        It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
 /// @tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
 /// @tparam PlaneRange range of planes, model of `ConstRange`
@@ -1450,12 +1457,12 @@ template <typename PointRange,
           typename Kernel
           >
 OutputIterator
-structure_point_set (const PointRange& points,
-                     PointMap point_map,
-                     NormalMap normal_map,
-                     const PlaneRange& planes,
-                     PlaneMap plane_map,
-                     IndexMap index_map,
+structure_point_set (const PointRange& points, ///< range of points.
+                     PointMap point_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
+                     NormalMap normal_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Normal_3`
+                     const PlaneRange& planes, ///< range of planes.
+                     PlaneMap plane_map, ///< property map: value_type of `typename PlaneRange::const_iterator` -> `Plane_3`
+                     IndexMap index_map, ///< property map: index of point `std::size_t` -> index of plane `int` (-1 if point does is not assigned to a plane)
                      OutputIterator output, ///< output iterator where output points are written.
                      const Kernel&, ///< geometric traits.
                      double epsilon, ///< size parameter.

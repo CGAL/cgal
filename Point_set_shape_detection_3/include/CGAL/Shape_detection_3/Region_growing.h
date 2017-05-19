@@ -37,6 +37,18 @@ namespace CGAL {
 namespace Shape_detection_3 {
 
 
+/*!
+\ingroup PkgPointSetShapeDetection3
+\brief A shape detection algorithm using a region growing method.
+
+Given a point set in 3D space with unoriented normals, sampled on surfaces,
+this class enables to detect subsets of connected points lying on the surface of primitive shapes.
+Each input point is assigned to either none or at most one detected primitive
+shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
+
+\tparam Traits a model of `ShapeDetectionTraits`
+
+*/
   template <class Traits>
   class Region_growing
   {
@@ -214,7 +226,7 @@ namespace Shape_detection_3 {
         , nb_points (new std::vector<std::size_t>(size, 0))
         , score (new std::vector<FT>(size, -1.)) { }
 
-      FT compute_score (const std::size_t& idx) const
+      void compute_score (const std::size_t& idx) const
       {
         static std::vector<std::size_t> neighbors;
         
@@ -238,9 +250,9 @@ namespace Shape_detection_3 {
       bool operator() (const std::size_t& a, const std::size_t& b) const
       {
         if ((*score)[a] == -1.)
-          (*score)[a] = compute_score(a);
+          compute_score(a);
         if ((*score)[b] == -1.)
-          (*score)[b] = compute_score(b);
+          compute_score(b);
 
         if ((*nb_points)[a] != (*nb_points)[b])
           return (*nb_points)[a] > (*nb_points)[b];
@@ -286,7 +298,7 @@ namespace Shape_detection_3 {
   /// @{
 
     /*! 
-      Constructs an empty shape detection engine.
+      Constructs an empty shape detection object.
     */ 
     Region_growing (Traits t = Traits())
       : m_traits(t)
@@ -335,8 +347,7 @@ namespace Shape_detection_3 {
     /*!
       Sets the input data. The range must stay valid
       until the detection has been performed and the access to the
-      results is no longer required. The data in the input is reordered by the methods
-      `detect()` and `preprocess()`. This function first calls `clear()`.
+      results is no longer required. This function first calls `clear()`.
     */
     void set_input(
       Input_range& input_range,
@@ -367,13 +378,20 @@ namespace Shape_detection_3 {
     /*!
       Registers in the detection engine the shape type `ShapeType` that must inherit from `Shape_base`.
       For example, for registering a plane as detectable shape you should call
-      `ransac.add_shape_factory< Shape_detection_3::Plane<Traits> >();`. Note
-      that if your call is within a template, you should add the `template`
-      keyword just before `add_shape_factory`: 
-      `ransac.template add_shape_factory< Shape_detection_3::Plane<Traits> >();`.
+      `region_growing.add_shape_factory< Shape_detection_3::Plane<Traits> >();`.
+
+      Note that if your call is within a template, you should add the
+      `template` keyword just before `add_shape_factory`:
+      `region_growing.template add_shape_factory<
+      Shape_detection_3::Plane<Traits> >();`.
+
+      \note So far, region growing algorithm only supports plane detection.
     */ 
     template <class Shape_type>
     void add_shape_factory() {
+      CGAL_static_assertion_msg ((boost::is_convertible<Shape_type, Plane_shape>::value),
+                                 "Region growing only supports Plane shapes.");
+      
       m_shape_factories.push_back(factory<Shape_type>);
     }
 
@@ -408,7 +426,7 @@ namespace Shape_detection_3 {
     /*!
       Removes all detected shapes.
       All internal structures are cleaned, including formerly detected shapes.
-      Thus iterators and ranges retrieved through `shapes()` and `indices_of_unassigned_points()` 
+      Thus iterators and ranges retrieved through `shapes()`, `planes()` and `indices_of_unassigned_points()` 
       are invalidated.
     */ 
     void clear()
@@ -436,8 +454,7 @@ namespace Shape_detection_3 {
     /// \name Detection 
     /// @{
     /*! 
-      Performs the shape detection. Shape types considered during the detection
-      are those registered using `add_shape_factory()`.
+      Performs the shape detection.
 
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
@@ -658,8 +675,10 @@ namespace Shape_detection_3 {
     /*!
       Returns an `Iterator_range` with a bidirectional iterator with value type
       `boost::shared_ptr<Shape>` over the detected shapes in the order of detection.
-      Depending on the chosen probability
-      for the detection, the shapes are ordered with decreasing size.
+
+      \note So far, region growing algorithm only supports plane
+      detection, so this method is equivalent to `planes()` except
+      that it returns planes with the abstract type `Shape`.
     */
     Shape_range shapes() const {
       return Shape_range(m_extracted_shapes);
@@ -668,9 +687,7 @@ namespace Shape_detection_3 {
     /*!
       Returns an `Iterator_range` with a bidirectional iterator with
       value type `boost::shared_ptr<Plane_shape>` over only the
-      detected planes in the order of detection.  Depending on the
-      chosen probability for the detection, the planes are ordered
-      with decreasing size.
+      detected planes in the order of detection.
     */
     Plane_range planes() const {
       boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > > planes
