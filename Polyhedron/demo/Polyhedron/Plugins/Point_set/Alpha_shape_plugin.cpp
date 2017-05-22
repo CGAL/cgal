@@ -71,7 +71,7 @@ class Scene_alpha_shape_item : public CGAL::Three::Scene_item
   Q_OBJECT
 public :
   Scene_alpha_shape_item(Scene_points_with_normal_item* , int alpha);
-  bool supportsRenderingMode(RenderingMode m) const {
+  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE {
     return (m == Flat);
   }
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
@@ -129,7 +129,7 @@ class Q_DECL_EXPORT Alpha_shape_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public :
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)Q_DECL_OVERRIDE {
     this->scene = scene_interface;
     this->mw = mainWindow;
     QAction* actionAlphaShapes= new QAction("Alpha Shapes", mw);
@@ -162,11 +162,11 @@ public :
 
 
   }
-  bool applicable(QAction*) const
+  bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
     return qobject_cast<Scene_points_with_normal_item*>( scene->item( scene->mainSelectionIndex() ) );
   }
-  QList<QAction*> actions() const {
+  QList<QAction*> actions() const Q_DECL_OVERRIDE {
     return _actions;
   }
 public Q_SLOTS:
@@ -232,7 +232,9 @@ public Q_SLOTS:
     {
       new_item->new_triangle(poly[0], poly[1], poly[2]);
     }
-    new_item->setName(as_item->name());
+    QString name = as_item->name().left(as_item->name().size() - QString("(alpha shape)").size());
+    name.append("(polygon soup)");
+    new_item->setName(name);
     as_item->setVisible(false);
     scene->addItem(new_item);
   }
@@ -247,8 +249,8 @@ public Q_SLOTS:
       dock_widget->as_itemPushButton->setEnabled(true);
     else if( qobject_cast<Scene_alpha_shape_item*>( scene->item(i) ) )
     {
-      dock_widget->horizontalSlider->setMaximum(qobject_cast<Scene_alpha_shape_item*>( scene->item(i) )->getNbofAlphas());
-      dock_widget->spinBox->setMaximum(qobject_cast<Scene_alpha_shape_item*>( scene->item(i) )->getNbofAlphas());
+      dock_widget->horizontalSlider->setMaximum(static_cast<int>(qobject_cast<Scene_alpha_shape_item*>( scene->item(i) )->getNbofAlphas()));
+      dock_widget->spinBox->setMaximum(static_cast<int>(qobject_cast<Scene_alpha_shape_item*>( scene->item(i) )->getNbofAlphas()));
       dock_widget->poly_itemPushButton->setEnabled(true);
     }
   }
@@ -257,7 +259,6 @@ public Q_SLOTS:
     dock_widget->hide();
   }
 private:
-  CGAL::Three::Scene_item* triangle;
   QList<QAction*> _actions;
   DockWidget* dock_widget;
   Scene_alpha_shape_item* as_item;
@@ -448,7 +449,7 @@ void Scene_alpha_shape_item::alpha_changed(int i)
   if (alpha_shape.number_of_alphas() > 0
       && n > 0){
     if(n < alpha_shape.number_of_alphas()){
-      alpha_shape.set_alpha(alpha_shape.get_nth_alpha(n));
+      alpha_shape.set_alpha(alpha_shape.get_nth_alpha(static_cast<int>(n)));
     } else {
       Alpha_iterator alpha_end_it = alpha_shape.alpha_end();
       alpha_shape.set_alpha((*(--alpha_end_it))+1);
