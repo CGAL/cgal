@@ -159,7 +159,7 @@ of the succeeding material is oblivious to the type of the embedding
 surface. In Section \ref arr_secqueries we show how queries on an
 arrangement can be issued. In Section \ref arr_secgl_funcs we review
 some important free (global) functions that operate on arrangements,
-the most important ones being the free insertion-functions.  Section
+the most important ones being the free insertion-functions.  In Section
 \ref aos_sec-unbounded we explain how to construct and manipulate
 arrangements of unbounded curves.  Section \ref aos_sec-geom_traits
 contains detailed descriptions of the geometric traits concept
@@ -971,249 +971,6 @@ in the public interface of the arrangement class. Instead, the
 arrangement operations - see more details in the Reference Manual.
 \cgalAdvancedEnd
 
-\section aos_sec-curved_surfaces Arrangements on Curved Surfaces
-
-We are given a surface \f$S\f$ in \f$\mathbb{R}^3\f$ and a set \f$\cal
-C \f$ of curves embedded on this surface. The curves subdivide \f$S\f$
-into cells of dimension 0 (<em>vertices</em>), 1 (<em>edges</em>), and
-2 (<em>faces</em>). This subdivision is the <em>arrangement</em>
-\f$\cal A(\cal C) \f$ induced by \f$\cal C\f$ on \f$S\f$. Arrangements
-embedded on curved surfaces in \f$\mathbb{R}^3\f$ are generalizations
-of arrangements embedded in the plane. In this section we explain how
-to construct, maintain, and manipulate two-dimensional arrangements
-embedded on orientable parametric surfaces in three dimensions, such
-as planes, cylinders, spheres, and tori, and surfaces homeomorphic to
-them; see Figure \cgalFigureRef{aos_fig-surfaces}. Such arrangements
-have many theoretical and practical applications; see, e.g.,
-\cgalCite{as-aa-00}, \cgalCite{cgal:bfhks-apsca-10},
-\cgalCite{cgal:bfhmw-apsgf-10}, \cgalCite{cgal:fhktww-a-07}, and
-\cgalCite{cgal:h-a-04}.
-
-\cgalFigureAnchor{aos_fig-surfaces}
-<center>
-<table border=0>
-<tr>
-<td>\image html sphere.png</td>
-<td>\image html cylinder.png</td>
-<td>\image html cone.png</td>
-<td>\image html ellipsoid.png</td>
-<td>\image html torus.png</td>
-<td>\image html paraboloid.png</td>
-<tr align="center">
-<td>(a) Sphere</td>
-<td>(b) Cylinder</td>
-<td>(c) Cone</td>
-<td>(d) Ellipsoid</td>
-<td>(e) Torus</td>
-<td>(f) Paraboloid</td>
-</tr>
-</table>
-</center>
-\cgalFigureCaptionBegin{aos_fig-surfaces}
-Various two-dimensional parametric surfaces, arrangements on which
-are supported by the framework.
-\cgalFigureCaptionEnd
-
-\subsection aos_ssec-curved_surfaces-parameteric Parametric Surfaces
-
-We use \f$\overline{\mathbb{R}}\f$ to denote the compactified real line
-\f$\mathbb{R} \cup \{-\infty,+\infty\}\f$. The mapping
-\f$x \mapsto x/(1 - x^2)\f$ is a homeomorphism between
-\f$(-1,+1)\f$ and \f$\mathbb{R}\f$ and between \f$[-1,+1]\f$ and
-\f$\overline{\mathbb{R}}\f$. So you may also think of finite intervals
-instead of the (compactified) real line in what follows.
-
-A parametric surface \f$S\f$ is given by a continuous function
-\f$\phi_S: \Phi \rightarrow \mathbb{R}^3\f$, where the domain \f$\Phi
-= X \times Y\f$ is a rectangular two-dimensional parameter space; \f$S
-= \phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open, half-open, or closed
-intervals with endpoints in \f$\overline{\mathbb{R}}\f$. We use
-\f$x_{\rm min}\f$, \f$x_{\rm max}\f$, \f$y_{\rm min}\f$, and \f$y_{\rm
-max}\f$ to denote the endpoints of \f$X\f$ and \f$Y\f$, respectively.
-
-<ul>
-
-<li>The left side of the boundary of \f$\Phi\f$ consists of the points
-\f$(x_{\rm min},y)\f$ with \f$y \in {\rm closure}(Y)\f$. It is
-<em>open</em>, if \f$x_{\rm min} \not\in X\f$ or \f$y\not\in Y\f$, and
-<em>closed</em>, otherwise. The right side is defined analogously.
-The bottom side consists of the points \f$(x, y_{\rm min})\f$ with
-\f$x \in (x_{\rm min},x_{\rm max})\f$; the top side is defined
-analogously. Bottom and top side can also be open. Note that the
-"corners" of the parameter space belong to the vertical sides; this
-asymmetry corresponds to the fact, that we sweep \f$x\f$-monotone
-curves, and not \f$y\f$-monotone curves. The four sides together form
-the boundary \f$\partial \Phi\f$.</li>
-
-<li>A point \f$p \in S\f$ is <em>regular</em> if it has only one
-pre-image. All pre-images of a non-regular point lie in the boundary
-of \f$\Phi\f$. In particular, \f$\phi_S\f$ is bijective on
-\f$(x_{\rm min},x_{\rm max})\times(y_{\rm min},y_{\rm max})\f$.
-More precisely, a non-regular point has either exactly two pre-images
-that lie on opposite sides of the domain, or all points of exactly one
-side of the domain.</li>
-
-</ul>
-
-A side of the domain is contracted, if \f$\phi_S\f$ is constant on it.
-The image of the side is called a <em>contraction point</em>.
-
-The bottom and top sides of the domain (similarly for the left and
-right sides) are <em>identified</em>, if
-\f$\phi_S(x,y_{\rm min}) = \phi_S(x,y_{\rm max})\f$ for all
-\f$x \in X \f$. The curve \f$x \mapsto \phi_S(x,y_{\rm min})\f$ is
-called an <em>identification curve</em>.
-
-Rectangles, strips, quadrants, half-planes, and planes can be modeled
-with \f$\phi_S \f$ being the identity mapping. For example,
-\f$\Phi_S(x, y) = (x, y, 0)\f$ with \f$X = Y =(-\infty, +\infty)\f$
-parameterizes the plane. Surfaces such as paraboloids can be
-modeled through continuous and bijective parameterizations, for
-example, \f$\phi_S(x,y) = (x,y,x^2 + y^2)\f$, where
-\f$U = V =(-\infty, +\infty)\f$, defines a paraboloid of revolution.
-Cylinders, tori, spheres, and surfaces homeomorphic to them, require
-more general parameterizations. For example, the unit sphere is
-commonly parameterized as
-\f$\phi_S(x, y) = (\cos x \cos y, \sin x \cos y, \sin y)\f$, where
-\f$\Phi = [-\pi, \pi] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$. With
-respect to this parameterization, the north and the south pole and
-all points on the opposite Prime (Greenwich) Meridian are
-non-regular. The north pole \f$(0,0,1)\f$ has infinitely many
-pre-images \f$(x, \pi/2)\f$ with \f$-\pi < x < \pi\f$ and so does the
-south pole \f$(0,0,-1)\f$. The points on the opposite Prime Meridian
-have two pre-images each, namely \f$(-\pi,y)\f$ and \f$(\pi,y)\f$
-with \f$-\pi/2 \leq y \leq \pi/2\f$. We say that the upper and lower
-side of the domain are <em>contracted</em> and the left and right sides
-are <em>identified</em>. These are exactly the kinds of non-injectivity
-that we allow.
-
-We give more examples. A <em>triangle</em> with corners
-\f$(a_1, b_1), (a_2, b_2)\f$, and \f$(a_3, b_3)\f$ can be
-parameterized via \f$\Phi = [0,1] \times [0,1]\f$ with
-\f$\phi_S(x,y) = (a_1 + x(a_2 - a_1) + xy(a_3-a_2), b_1 +
-x(b_2 - b_1) + xy(b_3-b_2), 0)\f$. The left side of the rectangular
-domain contracts to a point. An open or closed <em>cylinder</em> is
-modelled by identifying the vertical sides and having \f$Y\f$ open or
-closed, respectively. A <em>torus</em> is modelled by identifying the
-vertical sides and the horizontal sides. A <em>paraboloid</em> or
-<em>half-cone</em> may be modelled by identifying the vertical sides
-and contracting one of the horizontal sides to a point. More elegantly,
-they are modelled by a bijective parameterization as given above. A
-<em>sphere</em> is modelled by identifying the vertical sides and
-contracting both horizontal sides. A <em>croissant</em>, a torus with
-one pinch point, is modelled by identifying the vertical and
-identifying the horizontal sides and, in addition, contracting one of
-the pairs. However, the croissant is excluded by our definitions. All
-surfaces supported by our framework are locally homeomorphic to a
-disk, and hence an \sc{EDcel} data-structure suffices for representing
-arrangements on these surfaces. The croissant is, at the pinch point,
-not locally homeomorphic to a disk, and hence a more general
-cell-tuple data structure than an \sc{EDcel} would be needed.
-
-A curve \f$\gamma\f$ is a continuous function \f$\gamma: I \rightarrow
-\Phi\f$, where \f$I\f$ is an open, half-open, or closed interval with
-endpoints 0 and 1, and \f$\gamma\f$ is injective except for at a
-finite number of points. If \f$0 \not\in I\f$, \f$\lim_{t \rightarrow
-0+} \gamma(t)\f$ exists (in the closure of \f$\Phi\f$) and lies in an
-open side of the boundary. Similarly, if \f$1 \not\in I\f$, \f$\lim_{t
-\rightarrow 1-} \gamma(t)\f$ exists and lies in an open side of the
-boundary. A curve \f$C\f$ in \f$S\f$ is the image of a curve
-\f$\gamma\f$ in the domain.
-
-A curve is <em>closed in the domain</em> if \f$\gamma(0) =
-\gamma(1)\f$; in particular, \f$0 \in I\f$ and \f$1 \in I\f$. A curve
-is <em>closed in the surface \f$S\f$ (or simply closed)</em> if
-\f$\phi_S(\gamma(0)) = \phi_S(\gamma(1))\f$. A curve \f$\gamma\f$ has
-two <em>ends</em>, the 0-end \f$\langle \gamma,0 \rangle\f$ and the
-1-end \f$\langle \gamma,1 \rangle\f$. If \f$d \in I\f$, the
-\f$d\f$-end has a geometric interpretation. It is a point in
-\f$\Phi\f$. If \f$d \not\in I\f$, the \f$d\f$-end has no geometric
-interpretation. You may think of it as a point on an open side of the
-domain or an initial or terminal segment of \f$\gamma\f$. If \f$d
-\not\in I\f$, we say that the \f$d\f$-end of the curve is open. The
-equator curve on the sphere in standard parameterization is given by
-\f$\gamma(t) = (\pi(2t - 1),0)\f$ for \f$t \in [0,1]\f$. The
-\f$0\f$-end of \f$\gamma\f$ is the point \f$(-\pi,0)\f$ in \f$\Phi\f$
-and a point on the equator of the sphere. It is closed on the sphere,
-but non-closed in \f$\Phi\f$. The diagonal \f$(u,u)\f$ in the plane
-is, for example, given by \f$\gamma(t) = (x(t),y(t))\f$ and \f$x(t) =
-y(t) = (t - 1/2)/(t(1-t))\f$.  Both ends of this curve are open. The
-\f$d\f$-end of a curve \f$\gamma\f$ is incident to the left side if
-either \f$d \in I\f$ and \f$\gamma(d)\f$ lies on the left side or \f$d
-\not\in I\f$ and \f$\lim_{t \rightarrow d} \gamma(t)\f$ lies on the
-left side, which is then an open side. Similarly for the other sides.
-
-A <em>strongly \f$x\f$-monotone curve</em> is the image of a curve
-\f$\gamma\f$, such that if \f$t_1 < t_2\f$, then \f$x(t_1) <
-x(t_2)\f$. A <em>vertical curve</em> is the image of a curve
-\f$\gamma\f$, such that \f$x(t) = C\f$ for all \f$t \in I\f$ and some
-\f$C \in X\f$ and \f$y(t_1) < y(t_2)\f$ for \f$t_1 < t_2\f$. For
-instance, every Meridian curve of a sphere parameterized as above is
-vertical. A <em>\f$x\f$-monotone curve</em> is either vertical or
-strongly \f$x\f$-monotone.
-
-\subsection aos_ssec-curved_surfaces-aos_class The Arrangement on Surface Class Template
-
-The class template `Arrangement_on_surface_2<GeomTraits, TopolTraits>`
-can be used to represent a 2D arrangement embedded in a 3D
-surface. The template is parameterized by template parameters
-<em>geometry traits</em> and <em>topology traits</em>. The
-topology-traits type deals with the topology of the parametric
-surface. As explained in the previous section, a parametric surface
-\f$S \f$ is given by a continuous function \f$\phi_S: \Phi \rightarrow
-\mathbb{R}^3\f$, where the domain \f$\Phi = X \times Y\f$ is a
-rectangular two-dimensional parameter space; \f$S =
-\phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open, half-open, or closed
-intervals with endpoints in \f$\overline{\R} \f$.
-
-The geometry-traits type introduces the type names of the basic
-geometric objects (i.e., point, curve, and \f$u \f$-monotone curve)
-and the set of operations on objects of these types required to
-construct and maintain the arrangement and to operate on it. The
-traits-concept hierarchy described in Section \ref aos_sec-geom_traits
-accurately define the requirements imposed on an instantiated geometry
-traits class. Recall that requirements apply to the parameter space
-\f$\Phi = X \times Y\f$; thus, they are defined in terms of \f$x\f$
-and \f$y\f$ coordinates.  Most requirements apply to all type of
-arrangements regadless of the embedding surface. However, several
-refined concepts apply only to arrangements on surfaces that are not
-the plane, that is, modeled with \f$\phi_S\f$ not being the identity
-mapping. They differ according to the type of the side boundaries of
-the parameter space being open, closed, constracted, or identified.
-
-At this point only one type of arrangements on non planar surfaces is
-supported, namely, arrangements embedded on the sphere and induced by
-arcs of great circles, aka geodesic arcs. Figure
-\cgalFigureRef{aos_fig-voronoi} shows various Voronoi diagrams the
-bisectors of which are geodesic arcs.  They are represented as
-arrangements induced by geodesic arcs embedded on the sphere.
-
-\cgalFigureAnchor{aos_fig-voronoi}
-<center>
-<table border=0>
-<tr>
-<td>\image html voronoi.jpg</td>
-<td>\image html degenerate_voronoi.jpg</td>
-<td>\image html power_diagram.jpg</td>
-<td>\image html degenerate_power_diagram.jpg</td>
-<tr align="center">
-<td>(a)</td>
-<td>(b)</td>
-<td>(c)</td>
-<td>(d)</td>
-</tr>
-</table>
-</center>
-\cgalFigureCaptionBegin{aos_fig-voronoi}
-Voronoi diagrams on the sphere.
-All diagram edges are geodesic arcs.
-Sites are drawn in red and Voronoi edges are drawn in blue.
-(a) The Voronoi diagram of 32 random points.
-(b) A highly degenerate case of Voronoi diagram of 30 point sites on the sphere.
-(c) The power diagram of 10 random circles.
-(d) A degenerate power diagram of 14 sites on the sphere.
-\cgalFigureCaptionEnd
-
 \section arr_secqueries Issuing Queries on an Arrangement
 
 One of the most important query types defined on arrangements is
@@ -1936,7 +1693,7 @@ target is at infinity, while the other has its source at infinity and
 If `e` is an object of the nested type
 `Arrangement_2::Halfedge`, then the predicates
 `e.source_at_infinity()` and `e.target_at_infinity()` indicate
-whether the halfedge represents a curve with an infinite end.
+whether the halfedge represents a curve with an end at infinity.
 In general there is no need to access the source (or the target) of a
 halfedge if it lies at infinity, since this vertex is not associated
 with any valid point. Similarly, calling `arr.number_of_vertices()`
@@ -2108,7 +1865,7 @@ vertex on the left edge of the bounding rectangle, and if it is
 defined at \f$x = \infty\f$, its right end will be represented by a
 vertex of the right edge).
 
-<LI>A \anchor typeunboundedvertical vertex that represent the
+<LI> \anchor typeunboundedvertical A vertex that represent the
 unbounded end of a vertical line or of a curve with a vertical
 asymptote (finite \f$x\f$-coordinate and an unbounded
 \f$y\f$-coordinate). Such a vertex always lies on one of the
@@ -2117,7 +1874,7 @@ horizontal edges of the bounding rectangle (either the bottom one if
 \f$v_4\f$ and \f$v_5\f$ in \cgalFigureRef{arr_figunb_dcel} are of this
 type.
 
-<LI>The \anchor typefictitious fictitious vertices that
+<LI> \anchor typefictitious The fictitious vertices that
 represent the four corners of the bounding bounding rectangle.  </OL>
 
 A vertex (at infinity) of Type \ref typeunbounded or Type \ref
@@ -2205,6 +1962,249 @@ using the following procedure:
 }
 \endcode
 \cgalAdvancedEnd
+
+\section aos_sec-curved_surfaces Arrangements on Curved Surfaces
+
+We are given a surface \f$S\f$ in \f$\mathbb{R}^3\f$ and a set \f$\cal
+C \f$ of curves embedded on this surface. The curves subdivide \f$S\f$
+into cells of dimension 0 (<em>vertices</em>), 1 (<em>edges</em>), and
+2 (<em>faces</em>). This subdivision is the <em>arrangement</em>
+\f$\cal A(\cal C) \f$ induced by \f$\cal C\f$ on \f$S\f$. Arrangements
+embedded on curved surfaces in \f$\mathbb{R}^3\f$ are generalizations
+of arrangements embedded in the plane. In this section we explain how
+to construct, maintain, and manipulate two-dimensional arrangements
+embedded on orientable parametric surfaces in three dimensions, such
+as planes, cylinders, spheres, and tori, and surfaces homeomorphic to
+them; see Figure \cgalFigureRef{aos_fig-surfaces}. Such arrangements
+have many theoretical and practical applications; see, e.g.,
+\cgalCite{as-aa-00}, \cgalCite{cgal:bfhks-apsca-10},
+\cgalCite{cgal:bfhmw-apsgf-10}, \cgalCite{cgal:fhktww-a-07}, and
+\cgalCite{cgal:h-a-04}.
+
+\cgalFigureAnchor{aos_fig-surfaces}
+<center>
+<table border=0>
+<tr>
+<td>\image html sphere.png</td>
+<td>\image html cylinder.png</td>
+<td>\image html cone.png</td>
+<td>\image html ellipsoid.png</td>
+<td>\image html torus.png</td>
+<td>\image html paraboloid.png</td>
+<tr align="center">
+<td>(a) Sphere</td>
+<td>(b) Cylinder</td>
+<td>(c) Cone</td>
+<td>(d) Ellipsoid</td>
+<td>(e) Torus</td>
+<td>(f) Paraboloid</td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{aos_fig-surfaces}
+Various two-dimensional parametric surfaces, arrangements on which
+are supported by the framework.
+\cgalFigureCaptionEnd
+
+\subsection aos_ssec-curved_surfaces-parameteric Parametric Surfaces
+
+We use \f$\overline{\mathbb{R}}\f$ to denote the compactified real line
+\f$\mathbb{R} \cup \{-\infty,+\infty\}\f$. The mapping
+\f$x \mapsto x/(1 - x^2)\f$ is a homeomorphism between
+\f$(-1,+1)\f$ and \f$\mathbb{R}\f$ and between \f$[-1,+1]\f$ and
+\f$\overline{\mathbb{R}}\f$. So you may also think of finite intervals
+instead of the (compactified) real line in what follows.
+
+A parametric surface \f$S\f$ is given by a continuous function
+\f$\phi_S: \Phi \rightarrow \mathbb{R}^3\f$, where the domain \f$\Phi
+= X \times Y\f$ is a rectangular two-dimensional parameter space; \f$S
+= \phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open, half-open, or closed
+intervals with endpoints in \f$\overline{\mathbb{R}}\f$. We use
+\f$x_{\rm min}\f$, \f$x_{\rm max}\f$, \f$y_{\rm min}\f$, and \f$y_{\rm
+max}\f$ to denote the endpoints of \f$X\f$ and \f$Y\f$, respectively.
+
+<ul>
+
+<li>The left side of the boundary of \f$\Phi\f$ consists of the points
+\f$(x_{\rm min},y)\f$ with \f$y \in {\rm closure}(Y)\f$. It is
+<em>open</em>, if \f$x_{\rm min} \not\in X\f$ or \f$y\not\in Y\f$, and
+<em>closed</em>, otherwise. The right side is defined analogously.
+The bottom side consists of the points \f$(x, y_{\rm min})\f$ with
+\f$x \in (x_{\rm min},x_{\rm max})\f$; the top side is defined
+analogously. Bottom and top side can also be open. Note that the
+"corners" of the parameter space belong to the vertical sides; this
+asymmetry corresponds to the fact, that we sweep \f$x\f$-monotone
+curves, and not \f$y\f$-monotone curves. The four sides together form
+the boundary \f$\partial \Phi\f$.</li>
+
+<li>A point \f$p \in S\f$ is <em>regular</em> if it has only one
+pre-image. All pre-images of a non-regular point lie in the boundary
+of \f$\Phi\f$. In particular, \f$\phi_S\f$ is bijective on
+\f$(x_{\rm min},x_{\rm max})\times(y_{\rm min},y_{\rm max})\f$.
+More precisely, a non-regular point has either exactly two pre-images
+that lie on opposite sides of the domain, or all points of exactly one
+side of the domain.</li>
+
+</ul>
+
+A side of the domain is contracted, if \f$\phi_S\f$ is constant on it.
+The image of the side is called a <em>contraction point</em>.
+
+The bottom and top sides of the domain (similarly for the left and
+right sides) are <em>identified</em>, if
+\f$\phi_S(x,y_{\rm min}) = \phi_S(x,y_{\rm max})\f$ for all
+\f$x \in X \f$. The curve \f$x \mapsto \phi_S(x,y_{\rm min})\f$ is
+called an <em>identification curve</em>.
+
+Rectangles, strips, quadrants, half-planes, and planes can be modeled
+with \f$\phi_S \f$ being the identity mapping. For example,
+\f$\Phi_S(x, y) = (x, y, 0)\f$ with \f$X = Y =(-\infty, +\infty)\f$
+parameterizes the plane. Surfaces such as paraboloids can be
+modeled through continuous and bijective parameterizations, for
+example, \f$\phi_S(x,y) = (x,y,x^2 + y^2)\f$, where
+\f$U = V =(-\infty, +\infty)\f$, defines a paraboloid of revolution.
+Cylinders, tori, spheres, and surfaces homeomorphic to them, require
+more general parameterizations. For example, the unit sphere is
+commonly parameterized as
+\f$\phi_S(x, y) = (\cos x \cos y, \sin x \cos y, \sin y)\f$, where
+\f$\Phi = [-\pi, \pi] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$. With
+respect to this parameterization, the north and the south pole and
+all points on the opposite Prime (Greenwich) Meridian are
+non-regular. The north pole \f$(0,0,1)\f$ has infinitely many
+pre-images \f$(x, \pi/2)\f$ with \f$-\pi < x < \pi\f$ and so does the
+south pole \f$(0,0,-1)\f$. The points on the opposite Prime Meridian
+have two pre-images each, namely \f$(-\pi,y)\f$ and \f$(\pi,y)\f$
+with \f$-\pi/2 \leq y \leq \pi/2\f$. We say that the upper and lower
+side of the domain are <em>contracted</em> and the left and right sides
+are <em>identified</em>. These are exactly the kinds of non-injectivity
+that we allow.
+
+We give more examples. A <em>triangle</em> with corners
+\f$(a_1, b_1), (a_2, b_2)\f$, and \f$(a_3, b_3)\f$ can be
+parameterized via \f$\Phi = [0,1] \times [0,1]\f$ with
+\f$\phi_S(x,y) = (a_1 + x(a_2 - a_1) + xy(a_3-a_2), b_1 +
+x(b_2 - b_1) + xy(b_3-b_2), 0)\f$. The left side of the rectangular
+domain contracts to a point. An open or closed <em>cylinder</em> is
+modelled by identifying the vertical sides and having \f$Y\f$ open or
+closed, respectively. A <em>torus</em> is modelled by identifying the
+vertical sides and the horizontal sides. A <em>paraboloid</em> or
+<em>half-cone</em> may be modelled by identifying the vertical sides
+and contracting one of the horizontal sides to a point. More elegantly,
+they are modelled by a bijective parameterization as given above. A
+<em>sphere</em> is modelled by identifying the vertical sides and
+contracting both horizontal sides. A <em>croissant</em>, a torus with
+one pinch point, is modelled by identifying the vertical and
+identifying the horizontal sides and, in addition, contracting one of
+the pairs. However, the croissant is excluded by our definitions. All
+surfaces supported by our framework are locally homeomorphic to a
+disk, and hence an \sc{EDcel} data-structure suffices for representing
+arrangements on these surfaces. The croissant is, at the pinch point,
+not locally homeomorphic to a disk, and hence a more general
+cell-tuple data structure than an \sc{EDcel} would be needed.
+
+A curve \f$\gamma\f$ is a continuous function \f$\gamma: I \rightarrow
+\Phi\f$, where \f$I\f$ is an open, half-open, or closed interval with
+endpoints 0 and 1, and \f$\gamma\f$ is injective except for at a
+finite number of points. If \f$0 \not\in I\f$, \f$\lim_{t \rightarrow
+0+} \gamma(t)\f$ exists (in the closure of \f$\Phi\f$) and lies in an
+open side of the boundary. Similarly, if \f$1 \not\in I\f$, \f$\lim_{t
+\rightarrow 1-} \gamma(t)\f$ exists and lies in an open side of the
+boundary. A curve \f$C\f$ in \f$S\f$ is the image of a curve
+\f$\gamma\f$ in the domain.
+
+A curve is <em>closed in the domain</em> if \f$\gamma(0) =
+\gamma(1)\f$; in particular, \f$0 \in I\f$ and \f$1 \in I\f$. A curve
+is <em>closed in the surface \f$S\f$ (or simply closed)</em> if
+\f$\phi_S(\gamma(0)) = \phi_S(\gamma(1))\f$. A curve \f$\gamma\f$ has
+two <em>ends</em>, the 0-end \f$\langle \gamma,0 \rangle\f$ and the
+1-end \f$\langle \gamma,1 \rangle\f$. If \f$d \in I\f$, the
+\f$d\f$-end has a geometric interpretation. It is a point in
+\f$\Phi\f$. If \f$d \not\in I\f$, the \f$d\f$-end has no geometric
+interpretation. You may think of it as a point on an open side of the
+domain or an initial or terminal segment of \f$\gamma\f$. If \f$d
+\not\in I\f$, we say that the \f$d\f$-end of the curve is open. The
+equator curve on the sphere in standard parameterization is given by
+\f$\gamma(t) = (\pi(2t - 1),0)\f$ for \f$t \in [0,1]\f$. The
+\f$0\f$-end of \f$\gamma\f$ is the point \f$(-\pi,0)\f$ in \f$\Phi\f$
+and a point on the equator of the sphere. It is closed on the sphere,
+but non-closed in \f$\Phi\f$. The diagonal \f$(u,u)\f$ in the plane
+is, for example, given by \f$\gamma(t) = (x(t),y(t))\f$ and \f$x(t) =
+y(t) = (t - 1/2)/(t(1-t))\f$.  Both ends of this curve are open. The
+\f$d\f$-end of a curve \f$\gamma\f$ is incident to the left side if
+either \f$d \in I\f$ and \f$\gamma(d)\f$ lies on the left side or \f$d
+\not\in I\f$ and \f$\lim_{t \rightarrow d} \gamma(t)\f$ lies on the
+left side, which is then an open side. Similarly for the other sides.
+
+A <em>strongly \f$x\f$-monotone curve</em> is the image of a curve
+\f$\gamma\f$, such that if \f$t_1 < t_2\f$, then \f$x(t_1) <
+x(t_2)\f$. A <em>vertical curve</em> is the image of a curve
+\f$\gamma\f$, such that \f$x(t) = C\f$ for all \f$t \in I\f$ and some
+\f$C \in X\f$ and \f$y(t_1) < y(t_2)\f$ for \f$t_1 < t_2\f$. For
+instance, every Meridian curve of a sphere parameterized as above is
+vertical. A <em>\f$x\f$-monotone curve</em> is either vertical or
+strongly \f$x\f$-monotone.
+
+\subsection aos_ssec-curved_surfaces-aos_class The Arrangement on Surface Class Template
+
+The class template `Arrangement_on_surface_2<GeomTraits, TopolTraits>`
+can be used to represent a 2D arrangement embedded in a 3D
+surface. The template is parameterized by template parameters
+<em>geometry traits</em> and <em>topology traits</em>. The
+topology-traits type deals with the topology of the parametric
+surface. As explained in the previous section, a parametric surface
+\f$S \f$ is given by a continuous function \f$\phi_S: \Phi \rightarrow
+\mathbb{R}^3\f$, where the domain \f$\Phi = X \times Y\f$ is a
+rectangular two-dimensional parameter space; \f$S =
+\phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open, half-open, or closed
+intervals with endpoints in \f$\overline{\R} \f$.
+
+The geometry-traits type introduces the type names of the basic
+geometric objects (i.e., point, curve, and \f$u \f$-monotone curve)
+and the set of operations on objects of these types required to
+construct and maintain the arrangement and to operate on it. The
+traits-concept hierarchy described in Section \ref aos_sec-geom_traits
+accurately define the requirements imposed on an instantiated geometry
+traits class. Recall that requirements apply to the parameter space
+\f$\Phi = X \times Y\f$; thus, they are defined in terms of \f$x\f$
+and \f$y\f$ coordinates.  Most requirements apply to all type of
+arrangements regadless of the embedding surface. However, several
+refined concepts apply only to arrangements on surfaces that are not
+the plane, that is, modeled with \f$\phi_S\f$ not being the identity
+mapping. They differ according to the type of the side boundaries of
+the parameter space being open, closed, constracted, or identified.
+
+At this point only one type of arrangements on non planar surfaces is
+supported, namely, arrangements embedded on the sphere and induced by
+arcs of great circles, aka geodesic arcs. Figure
+\cgalFigureRef{aos_fig-voronoi} shows various Voronoi diagrams the
+bisectors of which are geodesic arcs.  They are represented as
+arrangements induced by geodesic arcs embedded on the sphere.
+
+\cgalFigureAnchor{aos_fig-voronoi}
+<center>
+<table border=0>
+<tr>
+<td>\image html voronoi.jpg</td>
+<td>\image html degenerate_voronoi.jpg</td>
+<td>\image html power_diagram.jpg</td>
+<td>\image html degenerate_power_diagram.jpg</td>
+<tr align="center">
+<td>(a)</td>
+<td>(b)</td>
+<td>(c)</td>
+<td>(d)</td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{aos_fig-voronoi}
+Voronoi diagrams on the sphere.
+All diagram edges are geodesic arcs.
+Sites are drawn in red and Voronoi edges are drawn in blue.
+(a) The Voronoi diagram of 32 random points.
+(b) A highly degenerate case of Voronoi diagram of 30 point sites on the sphere.
+(c) The power diagram of 10 random circles.
+(d) A degenerate power diagram of 14 sites on the sphere.
+\cgalFigureCaptionEnd
 
 \section aos_sec-geom_traits The Geometry Traits
 
@@ -4414,7 +4414,7 @@ an arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 \cgalAdvancedEnd
 
-\section arr_secbgl Adapting to Boost Graphs
+\section aos_sec-bgl Adapting to Boost Graphs
 
 <span class="textsc">Boost</span>\cgalFootnote{See also <span class="textsc">Boost</span>'s homepage at: <TT>www.boost.org</TT>.}
 is a collection of portable \cpp libraries that extend the Standard Template Library (<span class="textsc">Stl</span>). The <span class="textsc">Boost</span> Graph Library (<span class="textsc">bgl</span>), which one of the libraries in the collection, offers an
