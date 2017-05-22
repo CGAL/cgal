@@ -105,7 +105,7 @@ public:
     connect(ui_widget.validateButton, SIGNAL(clicked()), this, SLOT(on_validateButton_clicked()));
     connect(ui_widget.Expand_reduce_button, SIGNAL(clicked()), this, SLOT(on_Expand_reduce_button_clicked()));
     connect(ui_widget.Select_sharp_edges_button, SIGNAL(clicked()), this, SLOT(on_Select_sharp_edges_button_clicked()));
-    connect(ui_widget.modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ModeBox_changed(int)));
+    connect(ui_widget.selectionOrEuler, SIGNAL(currentChanged(int)), this, SLOT(on_SelectionOrEuler_changed(int)));
     connect(ui_widget.editionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_editionBox_changed(int)));
 
     ui_widget.Add_to_selection_button->hide();
@@ -149,7 +149,7 @@ public Q_SLOTS:
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     scene->setSelectedItem(item_id);
-    on_ModeBox_changed(ui_widget.modeBox->currentIndex());
+    on_SelectionOrEuler_changed(ui_widget.selectionOrEuler->currentIndex());
     if(last_mode == 0)
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
@@ -293,7 +293,7 @@ public Q_SLOTS:
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
-    ui_widget.modeBox->setCurrentIndex(last_mode);
+    ui_widget.selectionOrEuler->setCurrentIndex(last_mode);
     connectItem(new_item);
   }
   void on_LassoCheckBox_changed(bool b)
@@ -580,7 +580,7 @@ public Q_SLOTS:
     return;
   }
 
-  void on_ModeBox_changed(int index)
+  void on_SelectionOrEuler_changed(int index)
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(selection_item)
@@ -590,15 +590,11 @@ public Q_SLOTS:
     {
     //Selection mode
     case 0:
-      ui_widget.selection_groupBox->setVisible(true);
-      ui_widget.edition_groupBox->setVisible(false);
       Q_EMIT set_operation_mode(-1);
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
       break;
       //Edition mode
     case 1:
-      ui_widget.selection_groupBox->setVisible(false);
-      ui_widget.edition_groupBox->setVisible(true);
       Q_EMIT save_handleType();
       on_editionBox_changed(ui_widget.editionBox->currentIndex());
       break;
@@ -610,7 +606,7 @@ public Q_SLOTS:
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(selection_item)
       selection_item->on_Ctrlz_pressed();
-    if(ui_widget.modeBox->currentIndex() == 0)
+    if(ui_widget.selectionOrEuler->currentIndex() == 0)
     {
       Q_EMIT set_operation_mode(-1);
     }
@@ -744,7 +740,7 @@ public Q_SLOTS:
       connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(selection_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
-    on_ModeBox_changed(ui_widget.modeBox->currentIndex());
+    on_SelectionOrEuler_changed(ui_widget.selectionOrEuler->currentIndex());
     if(last_mode == 0)
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
