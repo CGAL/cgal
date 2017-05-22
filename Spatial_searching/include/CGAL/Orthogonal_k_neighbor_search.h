@@ -28,6 +28,21 @@
 
 namespace CGAL {
 
+template <typename Tree, bool has_enable_points_cache>
+struct Has_points_cache;
+
+template <typename Tree>
+struct Has_points_cache<Tree, true>
+{
+  static const bool value = Tree::Enable_points_cache::value;
+};
+
+template <typename Tree>
+struct Has_points_cache<Tree, false>
+{
+  static const bool value = false;
+};
+
 template <class SearchTraits, 
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
@@ -156,7 +171,7 @@ public:
   }
 private:
 
-  template<bool use_cache = (has_Enable_points_cache<Tree>::value && Tree::Enable_points_cache::value)>
+  template<bool use_cache>
   void search_in_leaf(typename Tree::Leaf_node_const_handle node);
 
   // With cache
@@ -231,7 +246,7 @@ private:
         static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
       if (node->size() > 0)
-        search_in_leaf(node);
+        search_in_leaf<Has_points_cache<Tree, has_Enable_points_cache<Tree>::type::value>::value>(node);
     }
     else
     {
