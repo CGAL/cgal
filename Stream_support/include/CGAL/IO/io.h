@@ -69,35 +69,35 @@ public:
 
 }
 
-std::ios& off(std::ios& os)
+inline std::ios& off(std::ios& os)
 {
   os.iword(IO::Static::get_file_format()) = IO::OFF;
   return os;
 }
 
 
-std::ios& ply(std::ios& os)
+inline std::ios& ply(std::ios& os)
 {
   os.iword(IO::Static::get_file_format()) = IO::PLY;
   return os;
 }
 
-std::ios& obj(std::ios& os)
+inline std::ios& obj(std::ios& os)
 {
   os.iword(IO::Static::get_file_format()) = IO::OBJ;
   return os;
 }
 
-std::ios& stl(std::ios& os)
+inline std::ios& stl(std::ios& os)
 {
   os.iword(IO::Static::get_file_format()) = IO::STL;
   return os;
 }
 
-  IO::File_format file_format(std::ios& os)
-  {
-    return static_cast<IO::File_format>(os.iword(IO::Static::get_file_format()));
-  }
+inline   IO::File_format file_format(std::ios& os)
+{
+  return static_cast<IO::File_format>(os.iword(IO::Static::get_file_format()));
+}
 
 
 template <typename Dummy>
