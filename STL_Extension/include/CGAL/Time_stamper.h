@@ -32,10 +32,29 @@ struct Time_stamper
   Time_stamper(const Time_stamper& ts)
    : time_stamp_(ts.time_stamp_) {}
 
-  void set_time_stamp(T* pt) {
-    pt->set_time_stamp(time_stamp_++);
+  static void initialize_time_stamp(T* pt) {
+    pt->set_time_stamp(std::size_t(-1));
   }
 
+  void set_time_stamp(T* pt) {
+    if(pt->time_stamp() == std::size_t(-1))
+      pt->set_time_stamp(time_stamp_++);
+    else {
+      // else: the time stamp is re-used
+
+      // Enforces that the time stamp is greater than the current value.
+      // That is used when a TDS_3 is copied.
+      time_stamp_ = (std::max)(time_stamp_, pt->time_stamp() + 1);
+    }
+  }
+
+  static std::size_t time_stamp(const T* pt)
+  {
+    if(pt == NULL){
+      return 0;
+    }
+    return pt->time_stamp();
+  }
 
   static std::size_t hash_value(const T* p) {
     if(NULL == p)
@@ -47,7 +66,11 @@ struct Time_stamper
   static bool less(const T* p_t1, const T* p_t2) {
     if(p_t1 == NULL)      return (p_t2 != NULL);
     else if(p_t2 == NULL) return false;
-    else                  return p_t1->time_stamp() < p_t2->time_stamp();
+    else {
+      CGAL_assertion((p_t1 == p_t2) ==
+                     (p_t1->time_stamp() == p_t2->time_stamp()));
+      return p_t1->time_stamp() < p_t2->time_stamp();
+    }
   }
 
   void reset() {
@@ -64,6 +87,14 @@ public:
   void set_time_stamp(T*)  {}
   static bool less(const T* p_t1,const T* p_t2) {
     return p_t1 < p_t2;
+  }
+
+  static void initialize_time_stamp(T*) {
+  }
+
+  static std::size_t time_stamp(const T*)
+  {
+    return 0;
   }
 
   static std::size_t hash_value(const T* p) {

@@ -43,6 +43,7 @@
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
 #endif
+#include <CGAL/Has_timestamp.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -85,6 +86,7 @@ namespace internal {
 #include <CGAL/squared_distance_3.h>
 
 #include <fstream>
+#include <sstream>
 
 namespace CGAL {
 
@@ -272,8 +274,9 @@ private:
   /// interpolation of sizes of \c v1 and \c v3 
   bool is_sizing_field_correct(const Vertex_handle& v1,
                                const Vertex_handle& v2,
-                               const Vertex_handle& v3) const;
-  
+                               const Vertex_handle& v3,
+                               const Curve_segment_index& index) const;
+
   /// Repopulate all incident curve around corner \c v
   /// \pre \c v is a corner of c3t3 
   template <typename ErasedVeOutIt>
@@ -305,7 +308,7 @@ private:
   }
   
   /// Returns the radius of the ball of vertex \c v
-  FT get_size(const Vertex_handle& v) const
+  FT get_radius(const Vertex_handle& v) const
   {
     return CGAL::sqrt(v->point().weight());
   }
@@ -352,6 +355,28 @@ private:
       CGAL_error_msg(msg.str().c_str());
     }
     return s;
+  }
+
+  template <typename Vertex_handle>
+  static std::string disp_vert(Vertex_handle v, Tag_true) {
+    std::stringstream ss;
+    ss << (void*)(&*v) << "[ts=" << v->time_stamp() << "]"
+       << "(" << v->point() <<")";
+    return ss.str();
+  }
+
+  template <typename Vertex_handle>
+  static std::string disp_vert(Vertex_handle v, Tag_false) {
+    std::stringstream ss;
+    ss << (void*)(&*v) << "(" << v->point() <<")";
+    return ss.str();
+  }
+
+  template <typename Vertex_handle>
+  static std::string disp_vert(Vertex_handle v)
+  {
+    typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
+    return disp_vert(v, CGAL::internal::Has_timestamp<Vertex>());
   }
 
 private:
@@ -896,8 +921,8 @@ insert_balls(const Vertex_handle& vp,
   const Bare_point& p = vp->point().point();
   const Bare_point& q = vq->point().point();
   
-  const FT sp = get_size(vp);
-  const FT sq = get_size(vq);
+  const FT sp = get_radius(vp);
+  const FT sq = get_radius(vq);
   
   // Compute geodesic distance
   const FT pq_geo_signed = domain_.geodesic_distance(p, q, curve_index);
@@ -927,8 +952,8 @@ insert_balls(const Vertex_handle& vp,
 	     ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "insert_balls(vp=" << (void*)(&*vp) << " (" << vp->point() << "),\n"
-            << "             vq=" << (void*)(&*vq) << " (" << vq->point() << "),\n"
+  std::cerr << "insert_balls(vp=" << disp_vert(vp) << ",\n"
+            << "             vq=" << disp_vert(vq) << ",\n"
             << "             sp=" << sp << ",\n"
             << "             sq=" << sq << ",\n"
             << "              d=" << d << ",\n"
@@ -1022,7 +1047,7 @@ insert_balls(const Vertex_handle& vp,
                            out);
       const Vertex_handle new_vertex = pair.first;
       out = pair.second;
-      const FT sn = get_size(new_vertex);
+      const FT sn = get_radius(new_vertex);
       if(sp <= sn) {
         out=insert_balls(vp, new_vertex, sp, sn, d/2, d_sign, curve_index, out);
       } else {
@@ -1068,6 +1093,13 @@ insert_balls(const Vertex_handle& vp,
   {
     n = 1;
     step_size = sp + (d-sp-sq) / FT(2);
+    pt_dist = d_signF * step_size;
+    norm_step_size = step_size;
+  } else if(vp == vq && n == 1) {
+    // In case we sample a full cycle, we want to add at least 2
+    // balls, equally distributed.
+    n = 2;
+    step_size = d / FT(n+1);
     pt_dist = d_signF * step_size;
     norm_step_size = step_size;
   } else {
@@ -1170,9 +1202,9 @@ refine_balls()
 
         // Compute correct size of balls
         const FT ab = compute_distance(va,vb);
-	/// @TOTO pb: get_size(va) is called several times
-        FT sa_new = (std::min)(ab/distance_divisor, get_size(va));
-        FT sb_new = (std::min)(ab/distance_divisor, get_size(vb));
+	/// @TOTO pb: get_radius(va) is called several times
+        FT sa_new = (std::min)(ab/distance_divisor, get_radius(va));
+        FT sb_new = (std::min)(ab/distance_divisor, get_radius(vb));
         
         // In case of va or vb have already been in conflict, keep minimal size
         if ( new_sizes.find(va) != new_sizes.end() )
@@ -1182,10 +1214,10 @@ refine_balls()
         { sb_new = (std::min)(sb_new, new_sizes[vb]); }
         
         // Store new_sizes for va and vb
-        if ( sa_new != get_size(va) )
+        if ( sa_new != get_radius(va) )
         { new_sizes[va] = sa_new; }
         
-        if ( sb_new != get_size(vb) )
+        if ( sb_new != get_radius(vb) )
         { new_sizes[vb] = sb_new; }
       }
     }
@@ -1228,6 +1260,12 @@ refine_balls()
     // Check edges
     check_and_repopulate_edges();
   }
+
+  if(this->refine_balls_iteration_nb == refine_balls_max_nb_of_loops)
+    std::cerr << "Warning : features protection has reached maximal "
+              << " number of loops." << std::endl
+              << "          It might result in a crash." << std::endl;
+
 } // end refine_balls()
 
 
@@ -1276,9 +1314,8 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   // { return v; }
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "change_ball_size(v=" << (void*)(&*v) 
-            << " (" << v->point()
-            << ") dim=" << c3t3_.in_dimension(v) 
+  std::cerr << "change_ball_size(v=" << disp_vert(v)
+            << " dim=" << c3t3_.in_dimension(v)
             << " index=" << CGAL::oformat(c3t3_.index(v))
             << " ,\n"
             << "                 size=" << size 
@@ -1411,8 +1448,8 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "check_and_fix_vertex_along_edge(" 
-            << (void*)(&*v) << "= (" << v->point() 
-            << ") dim=" << get_dimension(v)
+            << disp_vert(v)
+            << " dim=" << get_dimension(v)
             << " index=" << CGAL::oformat(c3t3_.index(v))
             << " special=" << std::boolalpha << is_special(v)
             << ")\n";
@@ -1493,8 +1530,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
   CGAL_precondition(c3t3_.is_in_complex(v1,v2));
 
   // Get sizes
-  FT size_v1 = get_size(v1);
-  FT size_v2 = get_size(v2);
+  FT size_v1 = get_radius(v1);
+  FT size_v2 = get_radius(v2);
 
   Curve_segment_index curve_index = Curve_segment_index();
   if(get_dimension(v1) == 1) {
@@ -1519,8 +1556,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
     // inside the union of the two balls.
     if(geodesic_distance > (size_v1 + size_v2)) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      std::cerr << "Note: on curve #" << curve_index << ", between ("
-                << v1->point() << ") and (" << v2->point() << "), the "
+      std::cerr << "Note: on curve #" << curve_index << ", between "
+                << disp_vert(v1) << " and " << disp_vert(v2) << ", the "
                 << "geodesic distance is " << geodesic_distance << " and the"
                 << " sum of radii is " << size_v1 + size_v2 << std::endl;
 #endif
@@ -1613,10 +1650,8 @@ repopulate(InputIterator begin, InputIterator last,
 	   const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "repopulate(begin=" << (void*)(&**begin) 
-            << " (" << (*begin)->point() << "),\n"
-            << "            last=" << (void*)(&**last)
-            << " (" << (*last)->point() << ")\n"
+  std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
+            << "            last=" << disp_vert(*last)  << "\n"
             << "                  distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
             << "           index=" << CGAL::oformat(index) << ")\n";
@@ -1689,10 +1724,8 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
 		       const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-  std::cerr << "analyze_and_repopulate(begin=" << (void*)(&**begin)
-            << " (" << (*begin)->point() << "),\n"
-            << "                       last=" << (void*)(&**last)
-            << " (" << (*last)->point() << ")\n"
+  std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin) << "\n"
+            << "                       last=" << disp_vert(*last) << "\n"
             << "                              distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
             << "                       index=" << CGAL::oformat(index) << ")\n";
@@ -1726,7 +1759,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
     // If (prevprev, prev, current) is ok, then go one step forward, i.e. check
     // (prevprevprev, prevprev, current)
     while (   !ch_stack.empty() 
-           && is_sizing_field_correct(*ch_stack.top(),*previous,*current) )
+           && is_sizing_field_correct(*ch_stack.top(),*previous,*current, index) )
     {
       previous = ch_stack.top();
       ch_stack.pop();
@@ -1760,13 +1793,18 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 is_sizing_field_correct(const Vertex_handle& v1,
                         const Vertex_handle& v2,
-                        const Vertex_handle& v3) const
+                        const Vertex_handle& v3,
+                        const Curve_segment_index& curve_index) const
 {
-  FT s1 = get_size(v1);
-  FT s2 = get_size(v2);
-  FT s3 = get_size(v3);
-  FT D = compute_distance(v1,v3);
-  FT d = compute_distance(v1,v2);
+  FT s1 = get_radius(v1);
+  FT s2 = get_radius(v2);
+  FT s3 = get_radius(v3);
+  FT D = CGAL::abs(domain_.geodesic_distance(v1->point(), v3->point(), curve_index));
+  FT d = CGAL::abs(domain_.geodesic_distance(v1->point(), v2->point(), curve_index));
+  if(domain_.is_cycle(v1->point().point(), curve_index)) {
+    D = (std::min)(D, CGAL::abs(domain_.geodesic_distance(v3->point(), v1->point(), curve_index)));
+    d = (std::min)(d, CGAL::abs(domain_.geodesic_distance(v2->point(), v1->point(), curve_index)));
+  }
   
   return ( s2 >= (s1 + d/D*(s3-s1)) );
 }
