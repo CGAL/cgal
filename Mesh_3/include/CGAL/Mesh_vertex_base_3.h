@@ -136,7 +136,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif //CGAL_INTRUSIVE_LIST
-    , time_stamp_(-1)
   {}
 
   // Default copy constructor and assignment operator are ok
