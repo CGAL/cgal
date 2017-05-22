@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+// Helper struct to know at compile-time if there is a cache of the points
+// stored in the tree
 template <typename Tree, bool has_enable_points_cache>
 struct Has_points_cache;
 
