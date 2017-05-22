@@ -59,5 +59,3 @@ public:
 };
 
 }  // end namespace CGAL
-
-#endif // CGAL_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
