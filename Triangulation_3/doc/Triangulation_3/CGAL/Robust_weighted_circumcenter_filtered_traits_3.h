@@ -6,11 +6,13 @@ namespace CGAL
  *
  * @class Robust_weighted_circumcenter_filtered_traits_3
  *
- * Overrides the kernel functors Construct_weighted_circumcenter_3, Compute_squared_radius_3,
- * and Compute_squared_radius_smallest_orthogonal_sphere_3 with robust versions.
- *
- * Robustness is achieved by using exact computations if the geometric configuration
- * is close to degenerate.
+ * Upgrades the functors models of `Kernel::ConstructWeightedCircumcenter_3`,
+ * `Kernel::ComputeSquaredRadius_3`, and `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
+ * that are provided by `K` with robust versions. This improved robustness
+ * is achieved by using exact computations if the geometric configuration
+ * is close to degenerate (e.g. almost coplanar points). The upgrade is completely
+ * invisible from an interface point of view as the class `Robust_weighted_circumcenter_filtered_traits_3`
+ * overrides the types and function objects associated with the basic versions.
  *
  * \tparam K must be a model of the `Kernel` concept.
  *
@@ -18,7 +20,7 @@ namespace CGAL
  */
 template<class K>
 class Robust_weighted_circumcenter_filtered_traits_3
-    : public K
+  : public K
 {
 public:
   /// \name Types
