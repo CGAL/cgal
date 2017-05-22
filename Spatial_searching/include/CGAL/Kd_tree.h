@@ -261,6 +261,7 @@ public:
     // This function is not ready to be called when a tree already exists, one
     // must call invalidate_build() first.
     CGAL_assertion(!is_built());
+    CGAL_assertion(!pts.empty());
     CGAL_assertion(!removed_);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
@@ -526,10 +527,14 @@ public:
   void
   print() const
   {
-    if(! is_built()){
-      const_build();
+    if(! pts.empty()){
+      if(! is_built()){
+	const_build();
+      }
+      root()->print();
+    }else{
+      std::cout << "empty tree\n";
     }
-    root()->print();
   }
 
   const Kd_tree_rectangle<FT,D>&
