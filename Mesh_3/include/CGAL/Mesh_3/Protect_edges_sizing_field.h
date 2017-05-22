@@ -1051,7 +1051,7 @@ insert_balls(const Vertex_handle& vp,
                 << n << "\n  between points ("
                 << vp->point() << ") and (" << vq->point()
                 << ") (geodesic distance: "
-                << domain_.geodesic_distance(vp->point(), vq->point(),
+                << domain_.geodesic_distance(wp2p(vp->point()), wp2p(vq->point()),
                                              curve_index)
                 << ")\n";
 #endif
@@ -1838,14 +1838,17 @@ is_sizing_field_correct(const Vertex_handle& v1,
                         const Vertex_handle& v3,
                         const Curve_segment_index& curve_index) const
 {
+  typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
+    c3t3_.triangulation().geom_traits().construct_point_3_object();
+
   FT s1 = get_radius(v1);
   FT s2 = get_radius(v2);
   FT s3 = get_radius(v3);
-  FT D = CGAL::abs(domain_.geodesic_distance(v1->point(), v3->point(), curve_index));
-  FT d = CGAL::abs(domain_.geodesic_distance(v1->point(), v2->point(), curve_index));
+  FT D = CGAL::abs(domain_.geodesic_distance(wp2p(v1->point()), wp2p(v3->point()), curve_index));
+  FT d = CGAL::abs(domain_.geodesic_distance(wp2p(v1->point()), wp2p(v2->point()), curve_index));
   if(domain_.is_cycle(v1->point().point(), curve_index)) {
-    D = (std::min)(D, CGAL::abs(domain_.geodesic_distance(v3->point(), v1->point(), curve_index)));
-    d = (std::min)(d, CGAL::abs(domain_.geodesic_distance(v2->point(), v1->point(), curve_index)));
+    D = (std::min)(D, CGAL::abs(domain_.geodesic_distance(wp2p(v3->point()), wp2p(v1->point()), curve_index)));
+    d = (std::min)(d, CGAL::abs(domain_.geodesic_distance(wp2p(v2->point()), wp2p(v1->point()), curve_index)));
   }
   
   return ( s2 >= (s1 + d/D*(s3-s1)) );
