@@ -762,11 +762,11 @@ namespace CommonKernelFunctors {
 
     result_type operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
     { 
-      Comparison_result sign_pq = compare(q.z(),p.z());
-      Comparison_result sign_rs = compare(s.z(),r.z());
+      Comparison_result sign_pq = CGAL::compare(q.z(),p.z());
+      Comparison_result sign_rs = CGAL::compare(s.z(),r.z());
       
       if(sign_pq != sign_rs){
-        return compare(static_cast<int>(sign_pq), static_cast<int>(sign_rs));
+        return CGAL::compare(static_cast<int>(sign_pq), static_cast<int>(sign_rs));
       }
 
       if((sign_pq == EQUAL) && (sign_rs == EQUAL)){
