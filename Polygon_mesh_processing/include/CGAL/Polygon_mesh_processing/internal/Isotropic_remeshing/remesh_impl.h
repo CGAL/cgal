@@ -263,6 +263,7 @@ namespace internal {
     typedef typename boost::property_traits<FacePatchMap>::value_type Patch_id;
     typedef std::vector<Triangle_3>                      Triangle_list;
     typedef std::vector<Patch_id>                        Patch_id_list;
+    typedef std::map<Patch_id,std::size_t>               Patch_id_to_index_map;
 
     typedef CGAL::AABB_triangle_primitive<GeomTraits,
                      typename Triangle_list::iterator>    AABB_primitive;
@@ -295,8 +296,11 @@ namespace internal {
 
     ~Incremental_remesher()
     {
-      if (own_tree_)
-        delete tree_ptr_;
+      if (own_tree_){
+        for(int i=0; i < trees.size();++i){
+          delete trees[i];
+        }
+      }
     }
     
     template<typename FaceRange>
@@ -310,15 +314,34 @@ namespace internal {
       {
         Triangle_3 t = triangle(f);
         if (t.is_degenerate()) continue;
-        input_triangles_.push_back(t);
-        input_patch_ids_.push_back(get_patch_id(f));
+        Patch_id pid = get_patch_id(f);
+        input_triangles_.push_back(triangle(f));
+        input_patch_ids_.push_back(pid);
+        std::pair<typename Patch_id_to_index_map::iterator, bool> 
+          res = patch_id_to_index_map.insert(std::make_pair(pid,0));
+        if(res.second){
+          res.first->second =  patch_id_to_index_map.size()-1;
+        }
       }
       CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
 
-      tree_ptr_ = new AABB_tree(input_triangles_.begin(),
-                                input_triangles_.end());
-      tree_ptr_->accelerate_distance_queries();
+      trees.resize(patch_id_to_index_map.size());
+      for(int i=0; i < trees.size(); ++i){
+        trees[i] = new AABB_tree();
+      }
+      typename Triangle_list::iterator it;
+      typename Patch_id_list::iterator pit;
+      for(it = input_triangles_.begin(), pit = input_patch_ids_.begin();
+          it != input_triangles_.end();
+          ++it, ++pit){
+        trees[patch_id_to_index_map[*pit]]->insert(it);
+      }
+      for(int i=0; i < trees.size(); ++i){
+        trees[i]->build();
+        trees[i]->accelerate_distance_queries();
+      }
     }
+
 
     // split edges of edge_range that have their length > high
     template<typename EdgeRange>
@@ -987,7 +1010,7 @@ namespace internal {
         if (is_constrained(v) || !is_on_patch(v))
           continue;
         //note if v is constrained, it has not moved
-
+#if 0
         Patch_id_property_map pid_pmap(*this);
         internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
                                              Patch_id_property_map,
@@ -1001,9 +1024,12 @@ namespace internal {
         CGAL_assertion(projection_traits.found());
         Point proj = projection_traits.closest_point();
         put(vpmap_, v, proj);
-      }
+      
+#endif
+      Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
+      }
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
 #endif
@@ -1841,17 +1867,19 @@ private:
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    const AABB_tree* tree_ptr_;
     bool own_tree_;
+    std::vector<AABB_tree*> trees;
+    Patch_id_to_index_map patch_id_to_index_map;
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
+    Patch_id_to_index_map patch_id_to_index_map_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
-
+    
   };//end class Incremental_remesher
 }//end namespace internal
 }//end namespace Polygon_mesh_processing
