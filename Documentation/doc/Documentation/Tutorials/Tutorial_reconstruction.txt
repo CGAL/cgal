@@ -70,7 +70,7 @@ reconstruction purposes. The following diagram shows an overview (not
 exhaustive) of typical reconstruction steps using \cgal tools.
 
 
-\image html reconstruction.png "Pipeline Overview" 
+\image html reconstruction.svg "Pipeline Overview" 
 
 We now review some of these steps in more details.
 
