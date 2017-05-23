@@ -60,12 +60,12 @@ int main(int argc, char*argv[])
                          24, // Number of neighbors considered for evaluation
                          5.0); // Percentage of points to remove
 
+  std::cout << points.number_of_removed_points()
+	    << " point(s) are outliers." << std::endl;
+
   // Applying point set processing algorithm to a CGAL::Point_set_3
   // object does not erase the points from memory but place them in
   // the garbage of the object: memory can be freeed by the user.
-  std::cout << points.number_of_removed_points()
-	    << " point(s) are inliers." << std::endl;
-
   points.collect_garbage();
 
   //! [Outlier removal]
@@ -81,7 +81,7 @@ int main(int argc, char*argv[])
   CGAL::grid_simplify_point_set (points, 2. * spacing);
 
   std::cout << points.number_of_removed_points()
-	    << " point(s) remaining after simplification." << std::endl;
+	    << " point(s) removed after simplification." << std::endl;
 
   points.collect_garbage();
 
