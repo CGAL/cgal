@@ -766,11 +766,11 @@ make_regular_prism(
   Point_property_map vpmap = get(CGAL::vertex_point, g);
   std::vector<vertex_descriptor> vertices;
   vertices.resize(nb_vertices*2);
-  for(int i=0; i<nb_vertices*2; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i<nb_vertices*2; ++i)
     vertices[i] = add_vertex(g);
 
   //fill vertices
-  for(int i=0; i < nb_vertices; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i < nb_vertices; ++i)
   {
     put(vpmap,
         vertices[i],
@@ -787,7 +787,7 @@ make_regular_prism(
   std::vector<vertex_descriptor> face;
   face.resize(3);
   //fill faces
-  for(int i=0; i<nb_vertices; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i<nb_vertices; ++i)
   {
     face[0] = vertices[(i+1)%(nb_vertices)];
     face[1] = vertices[i];
@@ -810,7 +810,7 @@ make_regular_prism(
     put(vpmap, bot, P(base_center.x(),base_center.y(),base_center.z()));
 
     //add the faces
-    for(int i=0; i<nb_vertices; ++i)
+    for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i<nb_vertices; ++i)
     {
       face[0] = vertices[i];
       face[1] = vertices[(i+1)%(nb_vertices)];
@@ -859,7 +859,8 @@ make_pyramid(
   Point_property_map vpmap = get(CGAL::vertex_point, g);
   std::vector<vertex_descriptor> vertices;
   vertices.resize(nb_vertices);
-  for(int i=0; i<nb_vertices; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i=0;
+      i<nb_vertices; ++i)
     vertices[i] = add_vertex(g);
   vertex_descriptor apex = add_vertex(g);
 
@@ -869,7 +870,8 @@ make_pyramid(
       P(base_center.x(),
         base_center.y() + height,
         base_center.z()));
-  for(int i=0; i < nb_vertices; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i=0;
+      i < nb_vertices; ++i)
   {
 
     put(vpmap,
@@ -881,7 +883,8 @@ make_pyramid(
   std::vector<vertex_descriptor> face;
   face.resize(3);
   //fill faces
-  for(int i=0; i<nb_vertices; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i=0;
+      i<nb_vertices; ++i)
   {
     face[0] = apex;
     face[1] = vertices[i];
@@ -897,7 +900,8 @@ make_pyramid(
     put(vpmap, bot, P(base_center.x(),base_center.y(),base_center.z()));
 
     //add the faces
-    for(int i=0; i<nb_vertices; ++i)
+    for(typename boost::graph_traits<Graph>::vertices_size_type i=0;
+        i<nb_vertices; ++i)
     {
       face[0] = bot;
       face[1] = vertices[(i+1)%(nb_vertices)];
@@ -1058,9 +1062,9 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
   for(std::size_t k = 0; k < v_vertices.size(); ++k)
     v_vertices[k] = add_vertex(g);
   //assign the coordinates
-  for(int i = 0; i<w; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i = 0; i<w; ++i)
   {
-    for(int j=0; j<h; ++j)
+    for(typename boost::graph_traits<Graph>::vertices_size_type j=0; j<h; ++j)
     {
       put(vpmap, v_vertices[w*i + j], calculator(i,j));
     }
@@ -1072,9 +1076,9 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
     face.resize(3);
   else
     face.resize(4);
-  for(int i = 0; i<w-1; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type i = 0; i<w-1; ++i)
   {
-    for(int j = 0; j<h-1; ++j)
+    for(typename boost::graph_traits<Graph>::vertices_size_type j = 0; j<h-1; ++j)
     {
       if(triangulated)
       {
