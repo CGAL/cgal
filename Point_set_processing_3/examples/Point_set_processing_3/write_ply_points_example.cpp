@@ -19,25 +19,23 @@ typedef CGAL::Nth_of_tuple_property_map<0, PCI> Point_map;
 typedef CGAL::Nth_of_tuple_property_map<1, PCI> Color_map;
 typedef CGAL::Nth_of_tuple_property_map<2, PCI> Intensity_map;
 
-
-namespace std
+// Define how a color should be stored
+namespace CGAL
 {
-  // Define how a color should be stored
-  std::ostream& operator<< (std::ostream& stream, const Color& c)
+  std::ostream& operator<< (std::ostream& stream, const CGAL::cpp11::array<unsigned char, 4>& c)
   {
     if (CGAL::get_mode(stream) == CGAL::IO::ASCII)
       stream << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
     else if (CGAL::get_mode(stream) == CGAL::IO::BINARY)
       stream.write(reinterpret_cast<const char*>(&c), sizeof(c));
     else
-      {
-        std::cerr << "Error: mode pretty not handled." << std::endl;
-        abort();
-      }
+    {
+      std::cerr << "Error: mode pretty not handled." << std::endl;
+      abort();
+    }
     return stream;
   }
 }
-
 
 int main(int, char**)
 {
