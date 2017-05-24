@@ -33,8 +33,6 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
-
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -1010,22 +1008,7 @@ namespace internal {
         if (is_constrained(v) || !is_on_patch(v))
           continue;
         //note if v is constrained, it has not moved
-#if 0
-        Patch_id_property_map pid_pmap(*this);
-        internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
-                                             Patch_id_property_map,
-                                             true> /* keep primitives with matching IDs */
-        projection_traits(
-          get_patch_id(face(halfedge(v, mesh_), mesh_)),
-          tree_ptr_->traits(),
-          pid_pmap
-          );
-        tree_ptr_->traversal(get(vpmap_, v), projection_traits);
-        CGAL_assertion(projection_traits.found());
-        Point proj = projection_traits.closest_point();
-        put(vpmap_, v, proj);
-      
-#endif
+
       Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
