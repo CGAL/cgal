@@ -697,6 +697,32 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   return opposite(h2,g);
 }
 
+/// \cond SKIP_IN_DOC
+template <class Traits, class TriangleMesh, class VertexPointMap>
+bool is_degenerate_triangle_face(
+  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
+  TriangleMesh& tmesh,
+  const VertexPointMap& vpmap,
+  const Traits& traits)
+{
+  CGAL_assertion(!is_border(hd, tmesh));
+
+  const typename Traits::Point_3& p1 = get(vpmap, target( hd, tmesh) );
+  const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
+  const typename Traits::Point_3& p3 = get(vpmap, source( hd, tmesh) );
+  return traits.collinear_3_object()(p1, p2, p3);
+}
+
+template <class Traits, class TriangleMesh, class VertexPointMap>
+bool is_degenerate_triangle_face(
+  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
+  TriangleMesh& tmesh,
+  const VertexPointMap& vpmap,
+  const Traits& traits)
+{
+  return is_degenerate_triangle_face(halfedge(fd,tmesh), tmesh, vpmap, traits);
+}
+/// \endcond
 
 namespace internal {
 
@@ -725,7 +751,7 @@ clear_impl(FaceGraph& g)
   }
 }
 
-}
+} //end of internal namespace
 
 /**
  * \ingroup PkgBGLHelperFct

@@ -126,30 +126,7 @@ struct Less_along_ray{
   }
 };
 
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerated(
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  CGAL_assertion(!is_border(hd, tmesh));
 
-  const typename Traits::Point_3& p1 = get(vpmap, target( hd, tmesh) );
-  const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
-  const typename Traits::Point_3& p3 = get(vpmap, source( hd, tmesh) );
-  return traits.collinear_3_object()(p1, p2, p3);
-}
-
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerated(
-  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  return is_degenerated(halfedge(fd,tmesh), tmesh, vpmap, traits);
-}
 
 ///\cond SKIP_IN_MANUAL
 
@@ -163,7 +140,7 @@ degenerate_faces(const TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(tm))
   {
-    if ( is_degenerated(fd, tm, vpmap, traits) )
+    if ( is_degenerate_triangle_face(fd, tm, vpmap, traits) )
       *out++=fd;
   }
   return out;
@@ -698,7 +675,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   BOOST_FOREACH(face_descriptor fd, faces(tmesh))
-    if ( is_degenerated(fd, tmesh, vpmap, traits) )
+    if ( is_degenerate_triangle_face(fd, tmesh, vpmap, traits) )
       degenerate_face_set.insert(fd);
   nb_deg_faces+=degenerate_face_set.size();
 
