@@ -46,8 +46,6 @@ public:
 
   using Base::operator();
 
-  using Construct_point_3_base::operator();
-
   Point operator() ( const Point& p, const Offset& o ) const {
     return Point(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
                  p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
