@@ -1,24 +1,26 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
+
 #include <CGAL/point_generators_3.h>
 
 #include <vector>
 #include <cassert>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> GT;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K>   Gt;
+typedef CGAL::Periodic_3_Delaunay_triangulation_3<Gt>         P3DT3;
 
-typedef CGAL::Periodic_3_Delaunay_triangulation_3<GT> Delaunay;
-typedef Delaunay::Point                               Point;
-typedef Delaunay::Cell_handle                         Cell_handle;
-typedef Delaunay::Facet                               Facet;
+typedef P3DT3::Point                               Point;
+typedef P3DT3::Cell_handle                         Cell_handle;
+typedef P3DT3::Facet                               Facet;
 
 int main()
 {
-  Delaunay T;
+  P3DT3 T;
   CGAL::Random_points_in_cube_3<Point> rnd(0.5);
-  GT::Vector_3 v(0.5,0.5,0.5);
+  Gt::Vector_3 v(0.5,0.5,0.5);
 
   // First, make sure the triangulation is 3D.
   T.insert(Point(0,0,0));
@@ -32,10 +34,10 @@ int main()
     Point p = (*rnd++)+v;
 
     // Locate the point
-    Delaunay::Locate_type lt;
+    P3DT3::Locate_type lt;
     int li, lj;
     Cell_handle c = T.locate(p, lt, li, lj);
-    if (lt == Delaunay::VERTEX)
+    if (lt == P3DT3::VERTEX)
       continue; // Point already exists
 
     // Get the cells that conflict with p in a vector V,
@@ -44,8 +46,8 @@ int main()
     Facet f;
 
     T.find_conflicts(p, c,
-		     CGAL::Oneset_iterator<Facet>(f), // Get one boundary facet
-		     std::back_inserter(V));          // Conflict cells in V
+                     CGAL::Oneset_iterator<Facet>(f), // Get one boundary facet
+                     std::back_inserter(V));          // Conflict cells in V
     }
 
   std::cout << "Final triangulation has " << T.number_of_vertices()

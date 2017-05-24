@@ -447,7 +447,7 @@ detect_borders(std::vector<Polyhedron>& poly)
   if (borders_detected_)
     return;//border detection has already been done
 
-  detect_features(180, poly);
+  detect_features(poly, 180);
 
   borders_detected_ = true;
 }

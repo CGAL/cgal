@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -24,23 +24,30 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
 
 #include <CGAL/Periodic_3_offset_3.h>
 
-namespace CGAL { namespace internal { namespace Static_filters_predicates {
+namespace CGAL {
 
-template < typename K_base >
+namespace internal {
+
+namespace Static_filters_predicates {
+
+template < class K, class Side_of_oriented_sphere_3_base >
 class Periodic_3_side_of_oriented_sphere_3
-  : public K_base::Side_of_oriented_sphere_3
+  : public Side_of_oriented_sphere_3_base
 {
-  typedef typename K_base::Side_of_oriented_sphere_3    Base;
-  typedef typename K_base::FT                           FT;
-  typedef typename K_base::Point_3                      Point_3;
-  typedef typename K_base::Iso_cuboid_3                 Iso_cuboid_3;
+  typedef Side_of_oriented_sphere_3_base                Base;
+
+public:
+  typedef K                                             Kernel;
+
+  typedef typename K::FT                                FT;
+  typedef typename K::Point_3                           Point_3;
+  typedef typename K::Iso_cuboid_3                      Iso_cuboid_3;
   typedef CGAL::Periodic_3_offset_3                     Offset;
 
 public:
@@ -49,11 +56,9 @@ public:
 public:
   typedef typename Base::result_type  result_type;
 
-  template <class EX, class AP>
   Periodic_3_side_of_oriented_sphere_3(const Iso_cuboid_3 * dom,
-					    const EX * dom_e,
-					    const AP * dom_f)
-      : Base(dom_e,dom_f), _dom(dom) { }
+                                       const Side_of_oriented_sphere_3_base& sop3)
+      : Base(sop3), _dom(dom) { }
 
   Oriented_side
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,
@@ -83,22 +88,22 @@ public:
           double pty = py - ty;
           double ptz = pz - tz;
           double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
-	             + CGAL_NTS square(ptz);
+                       + CGAL_NTS square(ptz);
           double qtx = qx - tx;
           double qty = qy - ty;
           double qtz = qz - tz;
           double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
-	             + CGAL_NTS square(qtz);
+                       + CGAL_NTS square(qtz);
           double rtx = rx - tx;
           double rty = ry - ty;
           double rtz = rz - tz;
           double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
-	             + CGAL_NTS square(rtz);
+                       + CGAL_NTS square(rtz);
           double stx = sx - tx;
           double sty = sy - ty;
           double stz = sz - tz;
           double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
-	             + CGAL_NTS square(stz);
+                       + CGAL_NTS square(stz);
 
           // Compute the semi-static bound.
           double maxx = CGAL::abs(ptx);
@@ -116,7 +121,13 @@ public:
           double astx = CGAL::abs(stx);
           double asty = CGAL::abs(sty);
           double astz = CGAL::abs(stz);
-          
+
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+          maxx = mmax(maxx, aqtx, artx, astx);
+          maxy = mmax(maxy, aqty, arty, asty);
+          maxz = mmax(maxz, aqtz, artz, astz);
+#else
           if (maxx < aqtx) maxx = aqtx;
           if (maxx < artx) maxx = artx;
           if (maxx < astx) maxx = astx;
@@ -128,7 +139,21 @@ public:
           if (maxz < aqtz) maxz = aqtz;
           if (maxz < artz) maxz = artz;
           if (maxz < astz) maxz = astz;
+#endif
 
+          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+          /*
+          CGAL::Min<double> mmin;
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+          */
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+
+#else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
               std::swap(maxx, maxz);
@@ -136,10 +161,7 @@ public:
               std::swap(maxy, maxz);
           else if (maxy < maxx)
               std::swap(maxx, maxy);
-
-          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
-                     * (maxz * maxz);
-
+#endif
           double det = CGAL::determinant(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
                                          qtx,qty,qtz,qt2,
@@ -152,6 +174,7 @@ public:
           }
           // Protect against overflow in the computation of det.
           else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
+            eps *= (maxz * maxz);
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
@@ -163,10 +186,10 @@ public:
 
   Oriented_side
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,
-      const Point_3 &s, const Point_3 &t, const Offset &o_p,
-      const Offset &o_q, const Offset &o_r,
-      const Offset &o_s, const Offset &o_t) const {
-
+             const Point_3 &s, const Point_3 &t,
+             const Offset &o_p, const Offset &o_q, const Offset &o_r,
+             const Offset &o_s, const Offset &o_t) const
+  {
     CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 calls");
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
@@ -190,12 +213,12 @@ public:
         fit_in_double(get_approx(s).z(), sz) &&
         fit_in_double(get_approx(t).x(), tx) && fit_in_double(get_approx(t).y(), ty) &&
         fit_in_double(get_approx(t).z(), tz) &&
-	fit_in_double(_dom->xmax(), domxmax) &&
-	fit_in_double(_dom->xmin(), domxmin) &&
-	fit_in_double(_dom->ymax(), domymax) &&
-	fit_in_double(_dom->ymin(), domymin) &&
-	fit_in_double(_dom->zmax(), domzmax) &&
-	fit_in_double(_dom->zmin(), domzmin))
+        fit_in_double(_dom->xmax(), domxmax) &&
+        fit_in_double(_dom->xmin(), domxmin) &&
+        fit_in_double(_dom->ymax(), domymax) &&
+        fit_in_double(_dom->ymin(), domymin) &&
+        fit_in_double(_dom->zmax(), domzmax) &&
+        fit_in_double(_dom->zmin(), domzmin))
     {
       CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 semi-static attempts");
 
@@ -228,7 +251,7 @@ public:
       double maxx = CGAL::abs(ptx);
       double maxy = CGAL::abs(pty);
       double maxz = CGAL::abs(ptz);
-      
+
       double aqtx = CGAL::abs(qtx);
       double aqty = CGAL::abs(qty);
       double aqtz = CGAL::abs(qtz);
@@ -240,7 +263,13 @@ public:
       double astx = CGAL::abs(stx);
       double asty = CGAL::abs(sty);
       double astz = CGAL::abs(stz);
-      
+
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+          maxx = mmax(maxx, aqtx, artx, astx);
+          maxy = mmax(maxy, aqty, arty, asty);
+          maxz = mmax(maxz, aqtz, artz, astz);
+#else
       if (maxx < aqtx) maxx = aqtx;
       if (maxx < artx) maxx = artx;
       if (maxx < astx) maxx = astx;
@@ -252,7 +281,20 @@ public:
       if (maxz < aqtz) maxz = aqtz;
       if (maxz < artz) maxz = artz;
       if (maxz < astz) maxz = astz;
+#endif
 
+      double eps = 1.0466759304746772485e-13 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+      /*
+      CGAL::Min<double> mmin;
+      double tmp = mmin(maxx, maxy, maxz);
+      maxz = mmax(maxx, maxy, maxz);
+      maxx = tmp;
+      */
+      sse2minmax(maxx,maxy,maxz);
+      // maxy can contain ANY element
+#else
       // Sort maxx < maxy < maxz.
       if (maxx > maxz)
           std::swap(maxx, maxz);
@@ -260,14 +302,11 @@ public:
           std::swap(maxy, maxz);
       else if (maxy < maxx)
           std::swap(maxx, maxy);
-
-      double eps = 1.0466759304746772485e-13 * maxx * maxy * maxz
-                  * (maxz * maxz);
-
+#endif
       double det = CGAL::determinant(ptx,pty,ptz,pt2,
-                                      rtx,rty,rtz,rt2,
-                                      qtx,qty,qtz,qt2,
-                                      stx,sty,stz,st2);
+                                     rtx,rty,rtz,rt2,
+                                     qtx,qty,qtz,qt2,
+                                     stx,sty,stz,st2);
 
       // Protect against underflow in the computation of eps.
       if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
@@ -276,6 +315,7 @@ public:
       }
       // Protect against overflow in the computation of det.
       else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
+        eps *= (maxz * maxz);
         if (det > eps)  return ON_POSITIVE_SIDE;
         if (det < -eps) return ON_NEGATIVE_SIDE;
       }
@@ -299,11 +339,15 @@ public:
     err += err * 3 * F::ulp(); // Correction due to "eps * maxx * ...".
 
     std::cerr << "*** epsilon for Periodic_3_side_of_oriented_sphere_3 = "
-	      << err << std::endl;
+              << err << std::endl;
     return err;
   }
 };
 
-} } } // namespace CGAL::internal::Static_filters_predicates
+} // namespace Static_filters_predicates
+
+} // namespace internal
+
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H

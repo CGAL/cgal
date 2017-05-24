@@ -23,40 +23,38 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
-#define CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
+#ifndef CGAL_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
+#define CGAL_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
 
-#include <CGAL/license/Mesh_3.h>
-
-
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Robust_construction.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
-namespace CGAL {
+namespace CGAL
+{
 
 template < typename K >
 class Robust_filtered_compute_squared_radius_3
-  : public K::Compute_squared_radius_3
+    : public K::Compute_squared_radius_3
 {
 public:
-  typedef Exact_predicates_exact_constructions_kernel         EK;
-  typedef Cartesian_converter<K, EK>  To_exact;
-  typedef Cartesian_converter<EK,K>   Back_from_exact;
-  
-  typedef typename K::Point_3                         Point_3;
-  typedef typename K::Weighted_point_3                Weighted_point_3;
-  typedef typename K::FT                              FT;
-  typedef FT                                          result_type;
+  typedef Exact_predicates_exact_constructions_kernel  EK;
+  typedef Cartesian_converter<K, EK>                   To_exact;
+  typedef Cartesian_converter<EK,K>                    Back_from_exact;
 
-#ifndef  CGAL_CFG_MATCHING_BUG_6 
+  typedef typename K::Point_3                          Point_3;
+  typedef typename K::Weighted_point_3                Weighted_point_3;
+  typedef typename K::FT                               FT;
+  typedef FT                                           result_type;
+
+#ifndef  CGAL_CFG_MATCHING_BUG_6
   using K::Compute_squared_radius_3::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
-  typedef typename K::Sphere_3                        Sphere_3;
-  typedef typename K::Circle_3                        Circle_3;
+  typedef typename K::Sphere_3                         Sphere_3;
+  typedef typename K::Circle_3                         Circle_3;
 
   result_type
   operator()( const Sphere_3& s) const
@@ -84,7 +82,7 @@ public:
     return K::Compute_squared_radius_3::operator()(p);
   }
 #endif // CGAL_CFG_MATCHING_BUG_6
-  
+
   FT operator()( const Weighted_point_3 & p,
                  const Weighted_point_3 & q,
                  const Weighted_point_3 & r,
@@ -100,21 +98,21 @@ public:
                   const Point_3 & s ) const
   {
     typename K::Compute_squared_radius_3 sq_radius =
-      K().compute_squared_radius_3_object();
-    
+        K().compute_squared_radius_3_object();
+
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r,s);
     if ( ! CGAL_NTS is_zero(denom) )
     {
       return sq_radius(p,q,r,s);
     }
-    
+
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
     EK::Compute_squared_radius_3 exact_sq_radius =
-      EK().compute_squared_radius_3_object();
-    
+        EK().compute_squared_radius_3_object();
+
     return back_from_exact(exact_sq_radius(to_exact(p),
                                            to_exact(q),
                                            to_exact(r),
@@ -160,27 +158,25 @@ template < typename K_ >
 class Robust_filtered_construct_weighted_circumcenter_3
 {
 public:
-  typedef Exact_predicates_exact_constructions_kernel          EK;
-  typedef Cartesian_converter<K_, EK>   To_exact;
-  typedef Cartesian_converter<EK,K_>     Back_from_exact;
-  
-  typedef K_ Rt;
-  typedef EK Exact_Rt;
-  
-  typedef typename Rt::Weighted_point_3               Weighted_point_3;
-  typedef typename Rt::Point_3                        Point_3;
-  typedef typename Rt::FT                             FT;
-  typedef typename Rt::Sphere_3                       Sphere_3;
-  
-  typedef Point_3                                     result_type;
- 
- typename Rt::Construct_point_3 wp2p;
- typename Rt::Construct_weighted_point_3 p2wp;
+  typedef K_                                                 K;
+  typedef Exact_predicates_exact_constructions_kernel        EK;
+  typedef Cartesian_converter<K, EK>                         To_exact;
+  typedef Cartesian_converter<EK, K>                         Back_from_exact;
+
+  typedef typename K::Weighted_point_3               Weighted_point_3;
+  typedef typename K::Point_3                        Point_3;
+  typedef typename K::FT                             FT;
+  typedef typename K::Sphere_3                       Sphere_3;
+
+  typedef Point_3                                    result_type;
+
+ typename K::Construct_point_3 wp2p;
+ typename K::Construct_weighted_point_3 p2wp;
 
   Robust_filtered_construct_weighted_circumcenter_3()
     :
-      wp2p(Rt().construct_point_3_object()),
-      p2wp(Rt().construct_weighted_point_3_object())
+      wp2p(K().construct_point_3_object()),
+      p2wp(K().construct_weighted_point_3_object())
   { }
 
   Point_3  operator() ( const Weighted_point_3 & p,
@@ -189,19 +185,20 @@ public:
                         const Weighted_point_3 & s,
                         bool force_exact = false) const
   {
-    CGAL_precondition(Rt().orientation_3_object()(
+    CGAL_precondition(K().orientation_3_object()(
       wp2p(p), wp2p(q), wp2p(r), wp2p(s)) == CGAL::POSITIVE);
-   
+
     if(! force_exact)
     {
       // We use power_side_of_power_sphere_3: it is static filtered and
       // we know that p,q,r,s are positive oriented
-      typename Rt::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere =
-        Rt().power_side_of_oriented_power_sphere_3_object();
+      typename K::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere =
+        K().power_side_of_oriented_power_sphere_3_object();
 
       // Compute denominator to swith to exact if it is 0
       FT num_x, num_y, num_z, den;
-      bool unweighted = (p.weight() == 0) && (q.weight() == 0) && (r.weight() == 0) && (s.weight() == 0);
+      bool unweighted = (p.weight() == 0) && (q.weight() == 0) &&
+                        (r.weight() == 0) && (s.weight() == 0);
 
       if(unweighted){
         determinants_for_circumcenterC3(p.x(), p.y(), p.z(),
@@ -237,99 +234,93 @@ public:
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-      Exact_Rt().construct_weighted_circumcenter_3_object();
-    
+    EK::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+        EK().construct_weighted_circumcenter_3_object();
+
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
                                                        to_exact(q),
                                                        to_exact(r),
                                                        to_exact(s)));
   }
-  
+
   Point_3 operator() ( const Weighted_point_3 & p,
                        const Weighted_point_3 & q,
                        const Weighted_point_3 & r ) const
   {
-    CGAL_precondition(! Rt().collinear_3_object()(wp2p(p),
-                                                  wp2p(q),
-                                                  wp2p(r)) );
-        
-    typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
-      Rt().side_of_bounded_sphere_3_object();
-    
+    CGAL_precondition(! K().collinear_3_object()(wp2p(p), wp2p(q), wp2p(r)));
+
+    typename K::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+        K().side_of_bounded_sphere_3_object();
+
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
     determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
                                              q.x(), q.y(), q.z(), q.weight(),
                                              r.x(), r.y(), r.z(), r.weight(),
                                              num_x,  num_y, num_z, den);
-    
+
     if ( ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
       Point_3 res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
-      
+
       // Fast output
       if ( side_of_bounded_sphere(wp2p(p),wp2p(q),wp2p(r),res) == CGAL::ON_BOUNDED_SIDE )
         return res;
     }
-    
+
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-      Exact_Rt().construct_weighted_circumcenter_3_object();
-    
+    EK::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+        EK().construct_weighted_circumcenter_3_object();
+
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
                                                        to_exact(q),
                                                        to_exact(r)));
   }
-  
+
   Point_3 operator() ( const Weighted_point_3 & p,
                        const Weighted_point_3 & q ) const
   {
-    typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
-      Rt().construct_weighted_circumcenter_3_object();
-    
-    typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
-      Rt().side_of_bounded_sphere_3_object();
-    typename Rt::Construct_point_3 cp =
-      Rt().construct_point_3_object();
+    typename K::Construct_weighted_circumcenter_3 weighted_circumcenter =
+        K().construct_weighted_circumcenter_3_object();
+
+    typename K::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+        K().side_of_bounded_sphere_3_object();
+    typename K::Construct_point_3 cp =
+        K().construct_point_3_object();
 
     // No division here
     result_type point = weighted_circumcenter(p,q);
-    
+
     // Fast output
     if ( side_of_bounded_sphere(cp(p), cp(q), point) == CGAL::ON_BOUNDED_SIDE )
       return point;
-    
+
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-      Exact_Rt().construct_weighted_circumcenter_3_object();
-    
+    EK::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+        EK().construct_weighted_circumcenter_3_object();
+
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
                                                        to_exact(q)));
   }
 };
-  
-  
-  
+
 template < typename K_ >
 class Robust_filtered_compute_squared_radius_smallest_orthogonal_sphere_3
 {
 public:
-  typedef Exact_predicates_exact_constructions_kernel          EK;
-  typedef Cartesian_converter<K_, EK>   To_exact;
-  typedef Cartesian_converter<EK,K_>     Back_from_exact;
-  
-  typedef K_ Rt;
-  typedef EK Exact_Rt;
-  
-  typedef typename Rt::Weighted_point_3               Weighted_point_3;
-  typedef typename Rt::FT                             FT;
-  
+  typedef K_                                                 K;
+  typedef Exact_predicates_exact_constructions_kernel        EK;
+  typedef Cartesian_converter<K_, EK>                        To_exact;
+  typedef Cartesian_converter<EK,K_>                         Back_from_exact;
+
+  typedef typename K::Weighted_point_3                       Weighted_point_3;
+  typedef typename K::FT                                     FT;
+
   FT operator() ( const Weighted_point_3& p,
                   const Weighted_point_3& q,
                   const Weighted_point_3& r,
@@ -345,23 +336,22 @@ public:
     if ( ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
-      
-      return (  CGAL_NTS square(num_x) 
-              + CGAL_NTS square(num_y)
-              + CGAL_NTS square(num_z) ) * CGAL_NTS square(inv) - p.weight();
+
+      return (  CGAL_NTS square(num_x)
+                + CGAL_NTS square(num_y)
+                + CGAL_NTS square(num_z) ) * CGAL_NTS square(inv) - p.weight();
     }
-    
+
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    Exact_Rt::Compute_squared_radius_smallest_orthogonal_sphere_3 exact_compute_radius =
-      Exact_Rt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-    
+    EK::Compute_squared_radius_smallest_orthogonal_sphere_3 exact_compute_radius =
+        EK().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+
     return back_from_exact(exact_compute_radius(to_exact(p),to_exact(q),
                                                 to_exact(r),to_exact(s)));
   }
-  
-  
+
   FT operator() (const Weighted_point_3& p,
                  const Weighted_point_3& q,
                  const Weighted_point_3& r) const
@@ -372,26 +362,25 @@ public:
                                              q.x(), q.y(), q.z(), q.weight(),
                                              r.x(), r.y(), r.z(), r.weight(),
                                              num_x,  num_y, num_z, den);
-    
+
     if ( ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
-      
-      return (  CGAL_NTS square(num_x) 
-              + CGAL_NTS square(num_y)
-              + CGAL_NTS square(num_z) ) * CGAL_NTS square(inv) - p.weight();
+
+      return (  CGAL_NTS square(num_x)
+                + CGAL_NTS square(num_y)
+                + CGAL_NTS square(num_z) ) * CGAL_NTS square(inv) - p.weight();
     }
 
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    Exact_Rt::Compute_squared_radius_smallest_orthogonal_sphere_3 exact_compute_radius =
-      Exact_Rt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-    
+    EK::Compute_squared_radius_smallest_orthogonal_sphere_3 exact_compute_radius =
+        EK().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+
     return back_from_exact(exact_compute_radius(to_exact(p),to_exact(q),to_exact(r)));
   }
-  
-  
+
   FT operator() (const Weighted_point_3& p,
                  const Weighted_point_3& q) const
   {
@@ -400,45 +389,41 @@ public:
     FT qpy = q.y() - p.y();
     FT qpz = q.z() - p.z();
     FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
-    
+
     if ( ! CGAL_NTS is_zero(qp2) )
     {
       FT inv = FT(1)/(FT(2)*qp2);
       FT alpha = 1/FT(2) + (p.weight()-q.weight())*inv;
-      
-      return  CGAL_NTS square(alpha)*qp2 - p.weight();      
+
+      return  CGAL_NTS square(alpha)*qp2 - p.weight();
     }
-    
+
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    Exact_Rt::Compute_squared_radius_smallest_orthogonal_sphere_3 exact_compute_radius =
-      Exact_Rt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-    
+    EK::Compute_squared_radius_smallest_orthogonal_sphere_3 exact_compute_radius =
+        EK().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+
     return back_from_exact(exact_compute_radius(to_exact(p),to_exact(q)));
   }
-  
-  
+
   FT operator() (const Weighted_point_3& p) const
   {
     return -p.weight();
-  }  
+  }
 };
-  
 
-/**
- * @class Robust_weighted_circumcenter_filtered_traits_3
- */
 template<class K_>
-struct Robust_weighted_circumcenter_filtered_traits_3
-: public K_
+class Robust_weighted_circumcenter_filtered_traits_3
+  : public K_
 {
+public:
   typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K_>
     Construct_weighted_circumcenter_3;
   typedef CGAL::Robust_filtered_compute_squared_radius_3<K_>
     Compute_squared_radius_3;
   typedef CGAL::Robust_filtered_compute_squared_radius_smallest_orthogonal_sphere_3<K_>
-    Compute_squared_radius_smallest_orthogonal_sphere_3;
+      Compute_squared_radius_smallest_orthogonal_sphere_3;
 
   Construct_weighted_circumcenter_3
   construct_weighted_circumcenter_3_object() const
@@ -447,14 +432,15 @@ struct Robust_weighted_circumcenter_filtered_traits_3
   Compute_squared_radius_3
   compute_squared_radius_3_object() const
   { return Compute_squared_radius_3(); }
-  
+
   Compute_squared_radius_smallest_orthogonal_sphere_3
   compute_squared_radius_smallest_orthogonal_sphere_3_object() const
   { return Compute_squared_radius_smallest_orthogonal_sphere_3(); }
-  
-};  // end class Robust_weighted_circumcenter_filtered_traits_3
 
+  Robust_weighted_circumcenter_filtered_traits_3() { }
+  Robust_weighted_circumcenter_filtered_traits_3(const K_& k) : K_(k) { }
+};
 
 }  // end namespace CGAL
 
-#endif // CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
+#endif // CGAL_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
