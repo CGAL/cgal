@@ -787,6 +787,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
     case PROGRAM_C3T3_TETS:
+    case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
         program->setUniformValue("light_pos", position);
         program->setUniformValue("light_diff",diffuse);
@@ -805,6 +806,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
     case PROGRAM_C3T3_TETS:
+    case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
       program->setUniformValue("mv_matrix", mv_mat);
       break;
@@ -1168,6 +1170,13 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
+    if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/shader_flat.f" ) == 0)
+    {
+      if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/shader_flat.g" ))
+      {
+        std::cerr<<"adding geometry shader FAILED"<<std::endl;
+      }
+    }
     program->bindAttributeLocation("colors", 1);
     program->link();
     d->shader_programs[name] = program;
@@ -1218,7 +1227,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
       break;
     case PROGRAM_FLAT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+    case PROGRAM_OLD_FLAT:
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
       break;
 
     default:

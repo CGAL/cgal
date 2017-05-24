@@ -57,5 +57,5 @@ void main(void)
   else
       diffuse = max(abs(dot(N,L)),0) * light_diff*color;
   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec;
-  out_color = color*light_amb + diffuse + specular;
+  out_color = vec4((color*light_amb).xyz + diffuse.xyz + specular.xyz,1.0);
 }
