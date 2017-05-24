@@ -196,7 +196,7 @@ void Viewer::compute_elements()
          P3DT3::UNIQUE);
         ++ptit) {
       for (int i=0 ; i<4 ; i++) {
-        Segment_3 dual = scene->periodic_triangulation.segment(
+        Segment_3 dual = scene->periodic_triangulation.construct_segment(
         scene->periodic_triangulation.dual(*(ptit.get_facet())));
 
         FT sz = dual.source().z();
