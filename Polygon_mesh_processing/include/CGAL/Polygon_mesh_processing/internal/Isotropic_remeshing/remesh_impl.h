@@ -308,7 +308,9 @@ namespace internal {
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
-        input_triangles_.push_back(triangle(f));
+        Triangle_3 t = triangle(f);
+        if (t.is_degenerate()) continue;
+        input_triangles_.push_back(t);
         input_patch_ids_.push_back(get_patch_id(f));
       }
       CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
