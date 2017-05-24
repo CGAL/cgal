@@ -16,7 +16,7 @@ typedef std::pair<Point, Color> PointWithColor;
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/pig_points.las";
-  // Reads a .ply point set file with normal vectors and colors
+  // Reads a .las point set file with normal vectors and colors
 
   std::vector<PointWithColor> points; // store points
   std::ifstream in(fname);
