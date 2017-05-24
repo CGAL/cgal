@@ -126,7 +126,7 @@ public:
   }
 
 private:
-  Iso_rectangle_2 _dom;
+  const Iso_rectangle_2& _dom;
 };
 
 
