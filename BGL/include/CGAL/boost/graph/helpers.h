@@ -734,15 +734,15 @@ bool is_degenerate_triangle_face(
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a regular prism in `g`
- * having `nb_vertices` vertices in each of its bases.
+ * \brief Creates a triangulated regular prism
+ * having `nb_vertices` vertices in each of its bases and adds it to the graph `g`.
  * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, 0.5*`height`, 0)
  * \param nb_vertices the number of vertices per base. It must be greater than or equal to 3.
  * \param g the graph in which the regular prism will be created.
  * \param base_center the center of the circle in which the lower base is inscribed.
  * \param height the distance between the two bases.
- * \param radius the radius of the circle in which the bases are inscribed.
- * \param is_closed determines if the bases must be created or not.
+ * \param radius the radius of the circles in which the bases are inscribed.
+ * \param is_closed determines if the bases must be created or not. If `is_closed` is `true`, `center` is a vertex.
  * \returns the halfedge that has the target vertex associated with the first point in the first face.
  */
 template<class Graph, class P>
@@ -828,7 +828,7 @@ make_regular_prism(
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a pyramid in `g`, having `nb_vertices` vertices in its base.
+ * \brief Creates a pyramid having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
  * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0.5*`height`, 0)
  * \param nb_vertices the number of vertices in the base. It must be greater than or equal to 3.
@@ -836,7 +836,7 @@ make_regular_prism(
  * \param base_center the center of the circle in which the base is inscribed.
  * \param height the distance between the base and the apex.
  * \param radius the radius of the circle in which the base is inscribed.
- * \param is_closed determines if the base must be created or not.
+ * \param is_closed determines if the base must be created or not. If `is_closed` is `true`, `center` is a vertex.
  * \returns the halfedge that has the target vertex associated with the apex point in the first face.
  */
 template<class Graph, class P>
@@ -914,7 +914,7 @@ make_pyramid(
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates an icosahedron in `g` centered in `center`.
+ * \brief Creates an icosahedron centered in `center` and adds it to the graph `g`.
  * \param g the graph in which the icosahedron will be created.
  * \param center the center of the sphere in which the icosahedron is inscribed.
  * \param radius the radius of the sphere in which the icosahedron is inscribed.
@@ -1003,7 +1003,7 @@ make_icosahedron(
 }
 
 
-/*!
+/*
  * \ingroup PkgBGLHelperFct
  * \brief creates a point from 2D integer coordinates.
  */
@@ -1012,12 +1012,12 @@ struct Identity_calculator
 {
   typedef typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type Point;
   Identity_calculator(){}
-  //!
-  //! \brief creates a point
-  //! \param i the width coordinate
-  //! \param j the y coordinate
-  //! \return a point with coordinates (i, j, 0)
-  //!
+  //
+  // \brief creates a point
+  // \param i the width coordinate
+  // \param j the height coordinate
+  // \return a point with coordinates (i, j, 0)
+  //
   Point operator()(const typename boost::graph_traits<Graph>::vertices_size_type& i,
                const typename boost::graph_traits<Graph>::vertices_size_type& j)const
   {
@@ -1026,19 +1026,21 @@ struct Identity_calculator
 
 };
 
-/**
+/*!
  * \ingroup PkgBGLHelperFct
+ *
  * \brief Creates a row major ordered grid with `i` cells along the width and `j` cells
- * along the height.
+ * along the height and adds it to the graph `g`.
  * \param g the graph in which the grid will be created.
  * \param calculator the functor that will assign coordinates to the grid vertices.
  * \param triangulated decides if a cell is composed of one quad or two triangles.
- * If `triangulated` is true, the diagonal of the cells is oriented from (0,0) to (1,1)
+ * If `triangulated` is `true`, the diagonal of the cells is oriented from (0,0) to (1,1)
+ * in the cell coordinates.
  *
  * \tparam CoordinateFunctor that takes two `boost::graph_traits<Graph>::%vertices_size_type`
- * and outputs a boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type.
- * %Default: a point with coordinates (i, j, 0).
- * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid.
+ * and outputs a `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
+ * <p>%Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
+ * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid (default is (0,0,0) ).
  */
 #ifndef DOXYGEN_RUNNING
 template<class Graph, class CoordinateFunctor>
@@ -1104,6 +1106,7 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   }
   return halfedge(v_vertices[1], v_vertices[0], g).first;
 }
+
 //default Functor
 template<class Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
