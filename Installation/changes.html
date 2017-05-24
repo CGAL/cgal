@@ -140,9 +140,9 @@ and <code>src/</code> directories).
   <ul>
     <li><b>Breaking change</b>:
       The dangerous implicit conversions between weighted points and points in
-      the concept <code>Kernel</code> have been disabled. The constructors used
-      to build a weighted point from a point (and reversely) are still available
-      but must be called explicitely.
+      the concept <code>Kernel</code> have been disabled. Constructors offering
+      to build a weighted point from a point (and reversely) are still requested
+      by the concept <code>Kernel</code> but must now be marked with the <code>explicit</code> specifier.
     </li>
   </ul>
 <!-- Arithmetic and Algebra -->
@@ -163,16 +163,19 @@ and <code>src/</code> directories).
       All models of the concept <code>Kernel</code> already provide these functors.
     </li>
     <li><b>Breaking change</b>:
-      Introduced the concept <code>RegularTriangulationVertexBase_3</code>. This
-      concept describes the requirements for vertices meant to be used in regular triangulations.
-      Concepts that previously refined <code>TriangulationVertexBase_3</code>
-      but modeled a vertex class used in regular triangulations, such as the concept <code>MeshVertexBase_3</code> in the 3D mesh
-      generation package, now refine <code>RegularTriangulationVertexBase_3</code>.
+      Introduced the concepts <code>RegularTriangulationVertexBase_2</code> and
+      <code>RegularTriangulationVertexBase_3</code>. These concepts describe
+      the requirements on classes meant to represent a vertex of a regular triangulation.
+      Concepts that previously refined <code>TriangulationVertexBase_2</code> or
+      <code>TriangulationVertexBase_3</code> but described in fact a vertex class
+      used in a regular triangulation, such as the concept <code>MeshVertexBase_3</code> in the 3D mesh
+      generation package, now refine the corresponding new regular vertex concept.
     <li><b>Breaking change</b>:
-      Uniformized the point type defined in the vertex and cell concepts. The triangulation
-      point is now always <code>Point</code> (note that this is either a <code>Traits::Point_[23]</code>
-      for basic and Delaunay triangulations or a <code>Traits::Weighted_point_[23]</code> when considering
-      regular triangulations). Consequently:
+      Uniformized the point type across all vertex and cell concepts. The triangulation
+      point type name is now always <code>Point</code>. Note that this does not change
+      the requirements but only the name: <code>Point</code> is stil expected to be equal to
+      <code>Traits::Point_[23]</code> for basic and Delaunay triangulations or to
+      <code>Traits::Weighted_point_[23]</code> for regular triangulations. Consequently:
       <ul>
         <li>
           The concept <code>RegularTriangulationVertexBase_2</code> now requests
@@ -180,11 +183,13 @@ and <code>src/</code> directories).
         </li>
         <li>
           The concept <code>RegularTriangulationCellBase_3</code> now requests
-          a <code>Point</code> type instead of a <code>Weighted_point</code> type.
+          a <code>Point</code> type instead of a <code>Weighted_point</code> type
+          (but still equal to <code>Traits::Weighted_point_3</code>)
         </li>
         <li>
           The concept <code>DelaunayTriangulationCellBase_3</code> now requests
-          a <code>Point</code> type instead of a <code>Point_3</code> type.
+          a <code>Point</code> type instead of a <code>Point_3</code> type
+          (but still equal to <code>Traits::Point_3</code>).
         </li>
       </ul>
     </li>
