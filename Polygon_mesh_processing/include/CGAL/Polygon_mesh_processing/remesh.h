@@ -50,14 +50,14 @@ namespace Polygon_mesh_processing {
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         as a named parameter, then the internal one must be initialized
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param target_edge_length the edge length that is targetted in the remeshed patch.
+* @param target_edge_length the edge length that is targeted in the remeshed patch.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
