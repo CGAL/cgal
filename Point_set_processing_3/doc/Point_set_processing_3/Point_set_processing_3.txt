@@ -119,7 +119,7 @@ vectors, RGB colors, intensity, etc. As it is not possible to provide
 dedicated functions to every possible combination of %PLY properties,
 \cgal provides a simple way to read %PLY properties and store them in
 any structure the user needs. Handling of %LAS files works similarly
-with the difference that the properties names and types are fixed and
+with the difference that the property names and types are fixed and
 defined by the %LAS standard.
 
 Functions `read_ply_points_with_properties()` and
