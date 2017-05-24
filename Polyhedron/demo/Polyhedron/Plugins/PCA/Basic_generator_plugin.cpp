@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QMessageBox>
 #include <QBitmap>
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
@@ -674,7 +675,7 @@ void Basic_generator_plugin::generateGrid()
   //nb_points = nb_cells+1
   Point_generator point_gen(nb_cells[0]+1, nb_cells[1]+1, extrema[0], extrema[1]);
 
-  CGAL::make_grid(nb_cells[0]+1, nb_cells[1]+1, grid, point_gen, triangulated);
+  CGAL::make_grid(nb_cells[0], nb_cells[1], grid, point_gen, triangulated);
   Scene_polyhedron_item* grid_item = new Scene_polyhedron_item(grid);
   grid_item->setName(dock_widget->name_lineEdit->text());
   scene->addItem(grid_item);

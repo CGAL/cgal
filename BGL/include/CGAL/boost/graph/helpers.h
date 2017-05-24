@@ -1028,7 +1028,7 @@ struct Identity_calculator
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a grid with `w` vertices along the width and `h` vertices
+ * \brief Creates a row major ordered grid with `i` cells along the width and `j` cells
  * along the height.
  * \param g the graph in which the grid will be created.
  * \param calculator the functor that will assign coordinates to the grid vertices.
@@ -1046,14 +1046,15 @@ template<class Graph, class CoordinateFunctor>
 template<class Graph, class CoordinateFunctor = Identity_calculator<Graph> >
 #endif
 typename boost::graph_traits<Graph>::halfedge_descriptor
-make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
-          typename boost::graph_traits<Graph>::vertices_size_type h,
+make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
+          typename boost::graph_traits<Graph>::vertices_size_type j,
           Graph& g,
           const CoordinateFunctor& calculator,
           bool triangulated = false)
 {
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typename boost::graph_traits<Graph>::vertices_size_type w(i+1), h(j+1);
   Point_property_map vpmap = get(CGAL::vertex_point, g);
   // create the initial icosahedron
   //create the vertices
