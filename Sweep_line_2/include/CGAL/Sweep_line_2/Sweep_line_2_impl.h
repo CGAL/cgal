@@ -820,7 +820,7 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
   }
   else {
     // compute the overlap.
-    std::cout << "Computing the overlap!!!!!!!!!!!!!!!!!!" << std::endl;
+    CGAL_SL_PRINT_TEXT("Computing the overlap!!!!!!!!!!!!!!!!!!");
     CGAL_assertion(iter != event->right_curves_end());
     std::vector<Object>  obj_vec;
     vector_inserter vit(obj_vec);
