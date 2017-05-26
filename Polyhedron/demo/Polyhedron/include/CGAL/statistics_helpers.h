@@ -90,7 +90,7 @@ unsigned int nb_degenerate_faces(Polyhedron* poly, VPmap vpmap)
   unsigned int nb = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly))
   {
-    if (CGAL::Polygon_mesh_processing::is_degenerated(f, *poly, vpmap, Kernel()))
+    if (CGAL::is_degenerate_triangle_face(f, *poly, vpmap, Kernel()))
       ++nb;
   }
   return nb;
