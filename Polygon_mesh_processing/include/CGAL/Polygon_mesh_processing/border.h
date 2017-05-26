@@ -198,8 +198,8 @@ namespace Polygon_mesh_processing {
     }
 
     //face index map given as a named parameter, or as an internal property map
-    FIMap fim = choose_param(get_param(np, CGAL::face_index),
-                             get_const_property_map(CGAL::face_index, pmesh));
+    FIMap fim = boost::choose_param(get_param(np, CGAL::face_index),
+                                    get_const_property_map(CGAL::face_index, pmesh));
 
     return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
   }

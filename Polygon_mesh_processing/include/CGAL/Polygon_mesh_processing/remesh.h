@@ -57,7 +57,8 @@ namespace Polygon_mesh_processing {
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param target_edge_length the edge length that is targetted in the remeshed patch
+* @param target_edge_length the edge length that is targetted in the remeshed patch.
+*        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * @pre if constraints protection is activated, the constrained edges should
@@ -230,9 +231,11 @@ void isotropic_remeshing(const FaceRange& faces
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
-
-    remesher.split_long_edges(high);
-    remesher.collapse_short_edges(low, high);
+    if (target_edge_length>0)
+    {
+      remesher.split_long_edges(high);
+      remesher.collapse_short_edges(low, high);
+    }
     remesher.equalize_valences();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     remesher.project_to_surface();
