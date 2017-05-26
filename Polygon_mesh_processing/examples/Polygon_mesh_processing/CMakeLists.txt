@@ -34,7 +34,6 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-set(BOOST_ROOT "/home/kon/Libs/build-boost")
 find_package( Boost REQUIRED )
 
 if ( NOT Boost_FOUND )
