@@ -34,6 +34,7 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
+set(BOOST_ROOT "/home/kon/Libs/build-boost")
 find_package( Boost REQUIRED )
 
 if ( NOT Boost_FOUND )
@@ -101,6 +102,7 @@ create_single_source_cgal_program( "corefinement_consecutive_bool_op.cpp" )
 create_single_source_cgal_program( "corefinement_difference_remeshed.cpp" )
 create_single_source_cgal_program( "corefinement_mesh_union.cpp" )
 create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
+create_single_source_cgal_program( "angle_smoothing_example.cpp")
 
 
 if(OpenMesh_FOUND)
