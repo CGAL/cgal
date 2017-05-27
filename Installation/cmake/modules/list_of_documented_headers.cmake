@@ -823,7 +823,7 @@ CGAL/Surface_mesh/Surface_mesh.h
 CGAL/Surface_mesh_traits_generator_3.h
 CGAL/Surface_mesh_vertex_base_3.h
 CGAL/surface_neighbor_coordinates_3.h
-CGAL/Sweep_line_2_algorithms.h
+CGAL/Surface_Sweep_2_algorithms.h
 CGAL/tags.h
 CGAL/Taucs_solver_traits.h
 CGAL/Tetrahedron_3.h

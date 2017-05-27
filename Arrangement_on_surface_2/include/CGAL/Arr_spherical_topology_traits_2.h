@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Eric Berberich    <ericb@post.tau.ac.il>
 
@@ -34,18 +31,18 @@
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Sweep_line_2/Arr_construction_event.h>
-#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_event.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_subcurve.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_basic_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_batched_pl_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_vert_decomp_sl_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
@@ -387,19 +384,19 @@ public:
   //@{
 
   typedef Arr_construction_sl_visitor<CHelper>
-    Sweep_line_construction_visitor;
+    Surface_sweep_construction_visitor;
 
   typedef Arr_insertion_sl_visitor<IHelper>
-    Sweep_line_insertion_visitor;
+    Surface_sweep_insertion_visitor;
 
-  typedef Sweep_line_construction_visitor
-    Sweep_line_non_intersecting_construction_visitor;
+  typedef Surface_sweep_construction_visitor
+    Surface_sweep_non_intersecting_construction_visitor;
 
   typedef Arr_basic_insertion_sl_visitor<BIHelper>
-    Sweep_line_non_intersecting_insertion_visitor;
+    Surface_sweep_non_intersecting_insertion_visitor;
 
   template <typename OutputIterator_>
-  struct Sweep_line_batched_point_location_visitor :
+  struct Surface_sweep_batched_point_location_visitor :
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
     typedef OutputIterator_                                     Output_iterator;
@@ -409,14 +406,14 @@ public:
     typedef typename Base::Event                                Event;
     typedef typename Base::Subcurve                             Subcurve;
 
-    Sweep_line_batched_point_location_visitor(const Arr* arr,
+    Surface_sweep_batched_point_location_visitor(const Arr* arr,
                                               Output_iterator& oi) :
       Base(arr, oi)
     {}
   };
 
   template <typename OutputIterator_>
-  struct Sweep_line_vertical_decomposition_visitor :
+  struct Surface_sweep_vertical_decomposition_visitor :
     public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
   {
     typedef OutputIterator_                                     Output_iterator;
@@ -426,7 +423,7 @@ public:
     typedef typename Base::Event                                Event;
     typedef typename Base::Subcurve                             Subcurve;
 
-    Sweep_line_vertical_decomposition_visitor(const Arr* arr,
+    Surface_sweep_vertical_decomposition_visitor(const Arr* arr,
                                               Output_iterator* oi) :
       Base(arr, oi)
     {}
@@ -434,7 +431,7 @@ public:
 
   template <typename ArrangementA_, typename ArrangementB_,
             typename OverlayTraits_>
-  struct Sweep_line_overlay_visitor :
+  struct Surface_sweep_overlay_visitor :
     public Arr_overlay_sl_visitor
     <_Overlay_helper<Arr_overlay_traits_2<Geometry_traits_2,ArrangementA_,
                                           ArrangementB_>,
@@ -458,10 +455,10 @@ public:
     typedef typename Base::Event                                Event;
     typedef typename Base::Subcurve                             Subcurve;
 
-    Sweep_line_overlay_visitor(const Arrangement_a* arr_a,
-                               const Arrangement_b* arr_b,
-                               Arrangement_result_2* arr_res,
-                               Overlay_traits* overlay_tr) :
+    Surface_sweep_overlay_visitor(const Arrangement_a* arr_a,
+                                  const Arrangement_b* arr_b,
+                                  Arrangement_result_2* arr_res,
+                                  Overlay_traits* overlay_tr) :
       Base(arr_a, arr_b, arr_res, overlay_tr)
     {}
   };

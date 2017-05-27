@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_GPS_POLYGON_SIMPILFIER_H
@@ -25,9 +21,9 @@
 
 
 #include <CGAL/Boolean_set_operations_2/Gps_simplifier_traits.h>
-#include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_event.h>
+#include <CGAL/Surface_sweep_2.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_subcurve.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_event.h>
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_visitor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_scanner.h>
@@ -39,9 +35,8 @@
 
 namespace CGAL {
 
-template <class Arrangement_>
-class Gps_polygon_simplifier
-{
+template <typename Arrangement_>
+class Gps_polygon_simplifier {
   typedef Arrangement_                                Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2   Traits_2;
   typedef typename Traits_2::Curve_const_iterator     Curve_const_iterator;
@@ -72,10 +67,10 @@ class Gps_polygon_simplifier
                                   Event,
                                   Subcurve>           Visitor;
 
-  typedef CGAL::Sweep_line_2<Meta_traits,
+  typedef CGAL::Surface_sweep_2<Meta_traits,
                              Visitor,
                              Subcurve,
-                             Event>                   Sweep_line_2;
+                             Event>                   Surface_sweep_2;
 
   typedef Unique_hash_map<Halfedge_handle,
                           unsigned int>               Edges_hash;
@@ -88,11 +83,11 @@ class Gps_polygon_simplifier
 protected:
   Arrangement_2* m_arr;
   const Meta_traits* m_traits;
-  bool                 m_own_traits;
-  Visitor              m_visitor;
-  Sweep_line_2         m_sweep_line;
-  Edges_hash           m_edges_hash; // maps halfedge to its BC (boundary counter)
-  Faces_hash           m_faces_hash;  // maps face to its IC (inside count)
+  bool m_own_traits;
+  Visitor m_visitor;
+  Surface_sweep_2 m_sweep_line;
+  Edges_hash m_edges_hash;      // maps halfedge to its BC (boundary counter)
+  Faces_hash m_faces_hash;      // maps face to its IC (inside count)
 
 public:
    /*! Constructor. */

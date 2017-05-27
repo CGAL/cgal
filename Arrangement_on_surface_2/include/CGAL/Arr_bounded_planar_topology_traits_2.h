@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s) : Ron Wein        <wein@post.tau.ac.il>
 //             Efi Fogel       <efif@post.tau.ac.il>
 //             Eric Berberich  <ericb@post.tau.ac.il>
@@ -24,7 +20,6 @@
 #define CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 /*! \file
  * Definition of the Arr_bounded_planar_topology_traits_2<GeomTraits> class.
@@ -39,6 +34,7 @@
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_vert_decomp_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 #include <CGAL/use.h>
+
 namespace CGAL {
 
 // Forward declaration:
@@ -264,19 +260,19 @@ public:
   //@{
 
   typedef Arr_construction_sl_visitor<CHelper>
-                             Sweep_line_construction_visitor;
+                             Surface_sweep_construction_visitor;
 
   typedef Arr_insertion_sl_visitor<IHelper>
-                             Sweep_line_insertion_visitor;
+                             Surface_sweep_insertion_visitor;
 
-  typedef Sweep_line_construction_visitor
-                             Sweep_line_non_intersecting_construction_visitor;
+  typedef Surface_sweep_construction_visitor
+                             Surface_sweep_non_intersecting_construction_visitor;
 
   typedef Arr_basic_insertion_sl_visitor<BIHelper>
-                             Sweep_line_non_intersecting_insertion_visitor;
+                             Surface_sweep_non_intersecting_insertion_visitor;
 
   template <class OutputIterator_>
-  struct Sweep_line_batched_point_location_visitor :
+  struct Surface_sweep_batched_point_location_visitor :
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
@@ -286,14 +282,14 @@ public:
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
-    Sweep_line_batched_point_location_visitor(const Arr* arr,
+    Surface_sweep_batched_point_location_visitor(const Arr* arr,
                                               Output_iterator& oi) :
       Base(arr, oi)
     {}
   };
 
   template <class OutputIterator_>
-  struct Sweep_line_vertical_decomposition_visitor :
+  struct Surface_sweep_vertical_decomposition_visitor :
     public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
@@ -303,14 +299,14 @@ public:
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
-    Sweep_line_vertical_decomposition_visitor(const Arr* arr,
+    Surface_sweep_vertical_decomposition_visitor(const Arr* arr,
                                               Output_iterator* oi) :
       Base(arr, oi)
     {}
   };
 
   template <class ArrangementA_, class ArrangementB_, class OverlayTraits_>
-  struct Sweep_line_overlay_visitor :
+  struct Surface_sweep_overlay_visitor :
     public Arr_overlay_sl_visitor <
       _Overlay_helper<
         Arr_overlay_traits_2< Arr_traits_basic_adaptor_2<Geometry_traits_2>,
@@ -340,10 +336,10 @@ public:
     typedef typename Base::Event                     Event;
     typedef typename Base::Subcurve                  Subcurve;
 
-    Sweep_line_overlay_visitor (const ArrangementA_2* arrA,
-                                const ArrangementB_2* arrB,
-                                Arrangement_result_2* arr_res,
-                                Overlay_traits* overlay_tr) :
+    Surface_sweep_overlay_visitor(const ArrangementA_2* arrA,
+                                  const ArrangementB_2* arrB,
+                                  Arrangement_result_2* arr_res,
+                                  Overlay_traits* overlay_tr) :
       Base (arrA, arrB, arr_res, overlay_tr)
     {}
   };

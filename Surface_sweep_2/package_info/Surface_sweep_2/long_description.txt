@@ -1,0 +1,8 @@
+This package consists of an a robust implementation of an efficient variant
+of the well-known plane-sweep algorithm. The implementation follows the Exact
+Geometric Computation paradigm and thus guarantees exact results. It handles
+all cases including degeneracies, such as isolated points, vertical segments,
+and overlapping curves. It is not limited to segments---it can handle sets of
+general x-monotone curves provided as input. The implementation provides a
+framework that can be used to implement other concrete algorithms, such as the
+overlay of two arrangements on surfaces.

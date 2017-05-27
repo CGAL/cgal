@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
@@ -33,18 +29,18 @@
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Sweep_line_2/Arr_construction_event.h>
-#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_event.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_subcurve.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_basic_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_batched_pl_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_vert_decomp_sl_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
 namespace CGAL {

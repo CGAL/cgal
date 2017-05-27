@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 Efi Fogel  <efif@post.tau.ac.il>
 
@@ -23,7 +19,6 @@
 #define CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 /*! \file
  * Definition of the Arr_unb_planar_topology_traits_2<GeomTraits> class.
@@ -292,19 +287,19 @@ public:
   //@{
 
   typedef Arr_construction_sl_visitor<CHelper>
-    Sweep_line_construction_visitor;
+    Surface_sweep_construction_visitor;
 
   typedef Arr_insertion_sl_visitor<IHelper>
-    Sweep_line_insertion_visitor;
+    Surface_sweep_insertion_visitor;
 
-  typedef Sweep_line_construction_visitor
-    Sweep_line_non_intersecting_construction_visitor;
+  typedef Surface_sweep_construction_visitor
+    Surface_sweep_non_intersecting_construction_visitor;
 
   typedef Arr_basic_insertion_sl_visitor<BIHelper>
-    Sweep_line_non_intersecting_insertion_visitor;
+    Surface_sweep_non_intersecting_insertion_visitor;
 
   template <class OutputIterator_>
-  struct Sweep_line_batched_point_location_visitor :
+  struct Surface_sweep_batched_point_location_visitor :
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
@@ -314,14 +309,14 @@ public:
     typedef typename Base::Event                                    Event;
     typedef typename Base::Subcurve                                 Subcurve;
 
-    Sweep_line_batched_point_location_visitor(const Arr* arr,
+    Surface_sweep_batched_point_location_visitor(const Arr* arr,
                                               Output_iterator& oi) :
       Base(arr, oi)
     {}
   };
 
   template <class OutputIterator_>
-  struct Sweep_line_vertical_decomposition_visitor :
+  struct Surface_sweep_vertical_decomposition_visitor :
     public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
@@ -332,13 +327,13 @@ public:
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
-    Sweep_line_vertical_decomposition_visitor(const Arr* arr,
+    Surface_sweep_vertical_decomposition_visitor(const Arr* arr,
                                               Output_iterator* oi) :
       Base(arr, oi) {}
   };
 
   template <class ArrangementA_, class ArrangementB_, class OverlayTraits_>
-  struct Sweep_line_overlay_visitor :
+  struct Surface_sweep_overlay_visitor :
     public Arr_overlay_sl_visitor
         <_Overlay_helper<Arr_overlay_traits_2<Geometry_traits_2,
                                               ArrangementA_,
@@ -367,10 +362,10 @@ public:
     typedef typename Base::Event                     Event;
     typedef typename Base::Subcurve                  Subcurve;
 
-    Sweep_line_overlay_visitor(const ArrangementA_2* arrA,
-                               const ArrangementB_2* arrB,
-                               Arrangement_result_2* arr_res,
-                               Overlay_traits* overlay_tr) :
+    Surface_sweep_overlay_visitor(const ArrangementA_2* arrA,
+                                  const ArrangementB_2* arrB,
+                                  Arrangement_result_2* arr_res,
+                                  Overlay_traits* overlay_tr) :
       Base(arrA, arrB, arr_res, overlay_tr)
     {}
   };
@@ -388,18 +383,15 @@ public:
   ///! \name Topology-traits methods.
   //@{
 
-  /*!
-   * Initialize an empty DCEL structure.
+  /*! Initialize an empty DCEL structure.
    */
   void init_dcel();
 
-  /*!
-   * Make the necessary updates after the DCEL structure have been updated.
+  /*! Make the necessary updates after the DCEL structure have been updated.
    */
   void dcel_updated();
 
-  /*!
-   * Check if the given vertex is associated with the given curve end.
+  /*! Check if the given vertex is associated with the given curve end.
    * \param v The vertex.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
@@ -412,8 +404,7 @@ public:
                  const X_monotone_curve_2& cv, Arr_curve_end ind,
                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const;
 
-  /*!
-   * Given a curve end with boundary conditions and a face that contains the
+  /*! Given a curve end with boundary conditions and a face that contains the
    * interior of the curve, find a place for a boundary vertex that will
    * represent the curve end along the face boundary.
    * \param f The face.
@@ -431,8 +422,7 @@ public:
                                      Arr_parameter_space ps_x,
                                      Arr_parameter_space ps_y);
 
-  /*!
-   * Locate the predecessor halfedge for the given curve around a given
+  /*! Locate the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
    * \param v The vertex.
    * \param cv The x-monotone curve.
@@ -454,8 +444,7 @@ public:
     return (NULL);
   }
 
-  /*!
-   * Locate a DCEL feature that contains the given unbounded curve end.
+  /*! Locate a DCEL feature that contains the given unbounded curve end.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
    * \param ps_x The boundary condition of the curve end in x.
@@ -470,8 +459,7 @@ public:
                                 Arr_parameter_space ps_x,
                                 Arr_parameter_space ps_y);
 
-  /*!
-   * Split a fictitious edge using the given vertex.
+  /*! Split a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
    * \param v The split vertex.
    * \pre e is a fictitious halfedge.
@@ -480,22 +468,19 @@ public:
    */
   Halfedge* split_fictitious_edge(Halfedge* e, Vertex* v);
 
-  /*!
-   * Determine whether the given face is unbounded.
+  /*! Determine whether the given face is unbounded.
    * \param f The face.
    * \return Whether f is unbounded.
    */
   bool is_unbounded(const Face* f) const;
 
-  /*!
-   * Determine whether the given boundary vertex is redundant.
+  /*! Determine whether the given boundary vertex is redundant.
    * \param v The vertex.
    * \return Whether v is redundant, and should be erased.
    */
   bool is_redundant(const Vertex* v) const;
 
-  /*!
-   * Erase the given redundant vertex by merging a fictitious edge.
+  /*! Erase the given redundant vertex by merging a fictitious edge.
    * The function does not free the vertex v itself.
    * \param v The vertex.
    * \pre v is a redundant vertex.
@@ -569,8 +554,7 @@ public:
   /// \name Additional predicates, specialized for this topology-traits class.
   //@{
 
-  /*!
-   * Compare the given vertex (which may lie at infinity) and the given point.
+  /*! Compare the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
@@ -578,8 +562,7 @@ public:
   virtual Comparison_result compare_x(const Point_2& p,
                                       const Vertex* v) const;
 
-  /*!
-   * Compare the given vertex (which may lie at infinity) and the given point.
+  /*! Compare the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
@@ -587,8 +570,7 @@ public:
   virtual Comparison_result compare_xy(const Point_2& p,
                                        const Vertex* v) const;
 
-  /*!
-   * Compare the relative y-position of the given point and the given edge
+  /*! Compare the relative y-position of the given point and the given edge
    * (which may be fictitious).
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).
@@ -604,8 +586,7 @@ protected:
   /// \name Auxiliary functions.
   //@{
 
-  /*!
-   * Get the curve associated with a boundary vertex.
+  /*! Get the curve associated with a boundary vertex.
    * \param v The vertex as infinity.
    * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
    *                    ARR_MAX_END if it is induced by the curve's maximal end.
@@ -614,8 +595,7 @@ protected:
    */
   const X_monotone_curve_2* _curve(const Vertex* v, Arr_curve_end& ind) const;
 
-  /*!
-   * Check whether the given infinite curve end lies on the given fictitious
+  /*! Check whether the given infinite curve end lies on the given fictitious
    * halfedge.
    * \param cv The curve.
    * \param ind Whether we refer to the minimal or maximal end of cv.

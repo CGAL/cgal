@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$ $Date$
-// 
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 
@@ -25,42 +21,35 @@
 #include <CGAL/license/Boolean_set_operations_2.h>
 
 
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
 
-template <class Arrangement_,
-          class MetaTraits_,
-          class SweepVisitor,
-          class CurveWrap,
-          class SweepEvent,
+template <typename Arrangement_,
+          typename MetaTraits_,
+          typename SweepVisitor,
+          typename CurveWrap,
+          typename SweepEvent,
           typename Allocator = CGAL_ALLOCATOR(int) >
 class Gps_agg_op_sweep_line_2 :
-  public Sweep_line_2<MetaTraits_,
-                      SweepVisitor,
-                      CurveWrap,
-                      SweepEvent,
-                      Allocator>
+  public Surface_sweep_2<MetaTraits_, SweepVisitor, CurveWrap, SweepEvent,
+                         Allocator>
 {
 public:
-
   typedef Arrangement_                            Arrangement_2;
   typedef MetaTraits_                             Traits_2;
   typedef typename Traits_2::Point_2              Point_2;
   typedef typename Traits_2::X_monotone_curve_2   X_monotone_curve_2;
 
-  typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
+  typedef typename Arrangement_2::Vertex_handle   Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;
 
   typedef std::pair<Arrangement_2 *,
-                    std::vector<Vertex_handle> *>     Arr_entry;
+                    std::vector<Vertex_handle> *> Arr_entry;
 
-  typedef Sweep_line_2<Traits_2,
-                       SweepVisitor,
-                       CurveWrap,
-                       SweepEvent,
-                       Allocator>                 Base;
+  typedef Surface_sweep_2<Traits_2, SweepVisitor, CurveWrap, SweepEvent,
+                          Allocator>              Base;
 
   typedef SweepEvent                              Event;
 
@@ -72,22 +61,21 @@ public:
   typedef typename Base_event::Attribute          Attribute;
 
   typedef typename Base::Base_subcurve            Base_subcurve;
-  
+
   typedef CurveWrap                               Subcurve;
 
   typedef std::list<Subcurve*>                    SubCurveList;
-  typedef typename SubCurveList::iterator         SubCurveListIter; 
+  typedef typename SubCurveList::iterator         SubCurveListIter;
 
 
   typedef typename Base::Status_line_iterator     StatusLineIter;
 
 public:
-
   /*!
    * Constructor.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Gps_agg_op_sweep_line_2 (SweepVisitor* visitor) : 
+  Gps_agg_op_sweep_line_2(SweepVisitor* visitor) :
     Base (visitor)
   {}
 
@@ -96,20 +84,20 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Gps_agg_op_sweep_line_2 (Traits_2 *traits, SweepVisitor* visitor) :
+  Gps_agg_op_sweep_line_2(Traits_2 *traits, SweepVisitor* visitor) :
     Base(traits, visitor)
   {}
 
   /*! Perform the sweep. */
   template<class CurveInputIterator>
-  void sweep (CurveInputIterator curves_begin,
-              CurveInputIterator curves_end,
-              unsigned int lower,
-              unsigned int upper,
-              unsigned int jump,
-              std::vector<Arr_entry>& arr_vec)
+  void sweep(CurveInputIterator curves_begin,
+             CurveInputIterator curves_end,
+             unsigned int lower,
+             unsigned int upper,
+             unsigned int jump,
+             std::vector<Arr_entry>& arr_vec)
   {
-    CGAL_assertion (this->m_queue->empty() && 
+    CGAL_assertion (this->m_queue->empty() &&
                     this->m_statusLine.size() == 0);
 
     typedef Unique_hash_map<Vertex_handle, Event *>    Vertices_map;
@@ -117,7 +105,8 @@ public:
 
     this->m_visitor->before_sweep();
     // Allocate all of the Subcurve objects as one block.
-    this->m_num_of_subCurves = static_cast<unsigned int>(std::distance (curves_begin, curves_end));
+    this->m_num_of_subCurves =
+      static_cast<unsigned int>(std::distance (curves_begin, curves_end));
     if (this->m_num_of_subCurves > 0)
       this->m_subCurves =
         this->m_subCurveAlloc.allocate (this->m_num_of_subCurves);
@@ -154,7 +143,7 @@ public:
       #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
         event->set_finite();
       #endif
-      
+
       if (! first)
       {
         q_iter = this->m_queue->insert_after (q_iter, event);
@@ -198,7 +187,7 @@ public:
                                          ARR_INTERIOR, ARR_INTERIOR);
           // \todo When the boolean set operations are exteneded to support
           //       unbounded curves, we will need here a special treatment.
-          
+
           #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
              event->set_finite();
           #endif
@@ -250,8 +239,8 @@ public:
       (this->m_subCurves + index)->init (*iter);
       (this->m_subCurves + index)->set_left_event(e_left);
       (this->m_subCurves + index)->set_right_event(e_right);
-    
-      e_right->add_curve_to_left (this->m_subCurves + index);  
+
+      e_right->add_curve_to_left (this->m_subCurves + index);
       this->_add_curve_to_right (e_left, this->m_subCurves + index);
     }
 
@@ -262,9 +251,8 @@ public:
 
     return;
   }
-    
+
 private:
-   
   /*!
    * Check if the given vertex is an endpoint of an edge we are going
    * to use in the sweep.

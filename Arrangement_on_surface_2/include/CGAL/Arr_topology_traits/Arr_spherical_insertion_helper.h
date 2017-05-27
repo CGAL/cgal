@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
@@ -29,7 +25,7 @@
  * Definition of the Arr_spherical_insertion_helper class-template.
  */
 
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 
 namespace CGAL {
@@ -57,7 +53,7 @@ public:
   typedef Arr_spherical_construction_helper<Traits_2, Arrangement_2, Event,
                                             Subcurve>   Base;
 
-  typedef Sweep_line_empty_visitor<Traits_2, Subcurve, Event>
+  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
                                                         Base_visitor;
 
   typedef Arr_spherical_insertion_helper<Traits_2, Arrangement_2, Event,

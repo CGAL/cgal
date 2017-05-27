@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 
@@ -24,9 +20,8 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
-
-#include <CGAL/Unique_hash_map.h> 
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Arr_tags.h>
@@ -40,21 +35,21 @@ class Gps_agg_op_base_visitor :
   public
   Arr_construction_sl_visitor<
     // TODO derive (helper) from topology traits class
-    typename boost::mpl::if_< 
-    boost::is_same< typename Arr_are_all_sides_oblivious_tag< 
-                                     typename Traits::Left_side_category, 
-                                     typename Traits::Bottom_side_category, 
-                                     typename Traits::Top_side_category, 
-                                     typename Traits::Right_side_category 
+    typename boost::mpl::if_<
+    boost::is_same< typename Arr_are_all_sides_oblivious_tag<
+                                     typename Traits::Left_side_category,
+                                     typename Traits::Bottom_side_category,
+                                     typename Traits::Top_side_category,
+                                     typename Traits::Right_side_category
     >::result, Arr_all_sides_oblivious_tag >,
-    Arr_bounded_planar_construction_helper<Traits, 
+    Arr_bounded_planar_construction_helper<Traits,
                                        Arrangement_,
                                        Event,
                                        Subcurve>,
     Arr_unb_planar_construction_helper<Traits,
                                        Arrangement_,
                                        Event,
-                                       Subcurve> 
+                                       Subcurve>
     >::type
   >
 {
@@ -62,22 +57,22 @@ class Gps_agg_op_base_visitor :
   typedef Arrangement_                                     Arrangement;
 
 
-  
-  typedef typename boost::mpl::if_< 
-    boost::is_same< typename Arr_are_all_sides_oblivious_tag< 
-                                     typename Traits::Left_side_category, 
-                                     typename Traits::Bottom_side_category, 
-                                     typename Traits::Top_side_category, 
-                                     typename Traits::Right_side_category 
+
+  typedef typename boost::mpl::if_<
+    boost::is_same< typename Arr_are_all_sides_oblivious_tag<
+                                     typename Traits::Left_side_category,
+                                     typename Traits::Bottom_side_category,
+                                     typename Traits::Top_side_category,
+                                     typename Traits::Right_side_category
     >::result, Arr_all_sides_oblivious_tag >,
-    Arr_bounded_planar_construction_helper<Traits, 
+    Arr_bounded_planar_construction_helper<Traits,
                                        Arrangement,
                                        Event,
                                        Subcurve>,
     Arr_unb_planar_construction_helper<Traits,
                                        Arrangement,
                                        Event,
-                                       Subcurve> 
+                                       Subcurve>
     >::type Construction_helper;
   typedef Arr_construction_sl_visitor<Construction_helper> Base;
 
@@ -88,7 +83,7 @@ class Gps_agg_op_base_visitor :
   typedef typename Base::Event_subcurve_reverse_iterator   SubCurveRevIter;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
-  
+
   typedef Unique_hash_map<Halfedge_handle, unsigned int>   Edges_hash;
 
 protected:
@@ -109,7 +104,7 @@ public:
   virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
                                           Subcurve* sc)
   {
-    Halfedge_handle he = 
+    Halfedge_handle he =
       Base::insert_in_face_interior(cv, sc);
     insert_edge_to_hash(he, cv);
     return (he);
@@ -132,7 +127,7 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    Halfedge_handle res_he = 
+    Halfedge_handle res_he =
       Base::insert_from_right_vertex(cv, he, sc);
     insert_edge_to_hash(res_he, cv);
     return (res_he);
@@ -143,7 +138,7 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    Halfedge_handle res_he = 
+    Halfedge_handle res_he =
       Base::insert_from_left_vertex(cv, he, sc);
     insert_edge_to_hash(res_he, cv);
     return (res_he);
@@ -155,7 +150,7 @@ private:
 
   void insert_edge_to_hash(Halfedge_handle he, const X_monotone_curve_2& cv)
   {
-    const Comparison_result he_dir = 
+    const Comparison_result he_dir =
       ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) ? SMALLER : LARGER;
 
     const Comparison_result cv_dir =
@@ -173,7 +168,7 @@ private:
       (*m_edges_hash)[he->twin()] = cv.data().bc();
     }
   }
- 
+
 
 };
 
@@ -204,7 +199,7 @@ public:
 };
 
 template<class Traits, class Arrangement_, class Event, class Subcurve>
-class Gps_agg_op_visitor : 
+class Gps_agg_op_visitor :
   public Gps_agg_op_base_visitor<Traits, Arrangement_, Event, Subcurve>
 {
 protected:
@@ -223,7 +218,7 @@ protected:
   typedef typename Base::SubCurveRevIter                   SubCurveRevIter;
   typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Traits::Point_2                         Point_2;
-  
+
 protected:
 
   unsigned int m_event_count; // The number of events so far.
@@ -248,7 +243,7 @@ public:
     return;
   }
 
-  virtual Halfedge_handle 
+  virtual Halfedge_handle
   insert_in_face_interior (const X_monotone_curve_2& cv,
                            Subcurve* sc)
   {
@@ -305,7 +300,7 @@ private:
                        Vertex_handle v)
   {
     const unsigned int    index = event->index();
-    
+
     if (index >= m_vertices_vec->size())
       m_vertices_vec->resize (2 * (index + 1));
 

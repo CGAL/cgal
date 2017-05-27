@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -24,9 +21,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 #include <CGAL/Arrangement_on_surface_2.h>
-#include <CGAL/Basic_sweep_line_2.h>
+#include <CGAL/No_intersection_surface_sweep_2.h>
 
 #include <vector>
 #include <boost/mpl/if.hpp>
@@ -34,15 +30,14 @@
 
 namespace CGAL {
 
-/*!
- * Issue a batched point-location query on an arrangement given an input
+/*! Issue a batched point-location query on an arrangement given an input
  * range of points.
  * \param arr The arrangement.
  * \param points_begin An iterator for the range of query points.
  * \param points_end A past-the-end iterator for the range of query points.
  * \param oi Output: An output iterator for the query results.
  * \pre The value-type of PointsIterator is Arrangement::Point_2,
- *      and the value-type of OutputIterator is is pair<Point_2, Result>, 
+ *      and the value-type of OutputIterator is is pair<Point_2, Result>,
  *      where Result is either
  *       (i) Object or
  *      (ii) boost::optional<boost::variant<Vertex_const_handle,
@@ -51,7 +46,7 @@ namespace CGAL {
  *      It represents the arrangement feature containing the point.
  */
 template<typename GeomTraits, typename TopTraits,
-         typename PointsIterator, typename OutputIterator> 
+         typename PointsIterator, typename OutputIterator>
 OutputIterator
 locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
        PointsIterator points_begin, PointsIterator points_end,
@@ -60,25 +55,25 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   // Arrangement types:
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
   typedef typename TopTraits::template
-          Sweep_line_batched_point_location_visitor<OutputIterator>
-                                                           Bpl_visitor;
+          Surface_sweep_batched_point_location_visitor<OutputIterator>
+                                                        Bpl_visitor;
 
-  typedef typename Arr::Halfedge_const_handle          Halfedge_const_handle;
-  typedef typename Arr::Vertex_const_iterator          Vertex_const_iterator;
-  typedef typename Arr::Edge_const_iterator            Edge_const_iterator;
-  typedef typename Arr::Vertex_const_handle            Vertex_const_handle;
-  typedef typename Arr::Halfedge_const_handle          Halfedge_const_handle;
+  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr::Vertex_const_iterator           Vertex_const_iterator;
+  typedef typename Arr::Edge_const_iterator             Edge_const_iterator;
+  typedef typename Arr::Vertex_const_handle             Vertex_const_handle;
+  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
 
-  typedef typename Bpl_visitor::Traits_2               Bpl_traits_2;
-  typedef typename Bpl_traits_2::X_monotone_curve_2    Bpl_x_monotone_curve_2;
-  typedef typename Bpl_traits_2::Point_2               Bpl_point_2;
+  typedef typename Bpl_visitor::Traits_2                Bpl_traits_2;
+  typedef typename Bpl_traits_2::X_monotone_curve_2     Bpl_x_monotone_curve_2;
+  typedef typename Bpl_traits_2::Point_2                Bpl_point_2;
 
   // Go over all arrangement edges and collect their associated x-monotone
   // curves. To each curve we attach a halfedge handle going from right to
   // left.
-  std::vector<Bpl_x_monotone_curve_2>  xcurves_vec(arr.number_of_edges());
-  Edge_const_iterator                  eit;
-  unsigned int                         i = 0;
+  std::vector<Bpl_x_monotone_curve_2> xcurves_vec(arr.number_of_edges());
+  Edge_const_iterator eit;
+  unsigned int i = 0;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
@@ -89,8 +84,8 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 
   // Go over all isolated vertices and collect their points. To each point
   // we attach its vertex handle.
-  std::vector<Bpl_point_2>    iso_pts_vec(arr.number_of_isolated_vertices());
-  Vertex_const_iterator       vit;
+  std::vector<Bpl_point_2> iso_pts_vec(arr.number_of_isolated_vertices());
+  Vertex_const_iterator vit;
   i = 0;
   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
     if (vit->is_isolated()) {
@@ -98,7 +93,7 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
       iso_pts_vec[i++] = Bpl_point_2(vit->point(), iso_v);
     }
   }
-    
+
   // Obtain a extended traits-class object.
   GeomTraits* geom_traits = const_cast<GeomTraits*>(arr.geometry_traits());
 
@@ -110,7 +105,7 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
    * the later as a single parameter to the constructor.
-   * 
+   *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
@@ -119,14 +114,14 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.
-  Bpl_visitor   visitor(&arr, oi);
-  Basic_sweep_line_2<typename Bpl_visitor::Traits_2, Bpl_visitor,
-                     typename Bpl_visitor::Subcurve,
-                     typename Bpl_visitor::Event>
-    sweep_line(&ex_traits, &visitor);
-  sweep_line.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
-                   iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
-                   points_begin, points_end);              // Query points.
+  Bpl_visitor visitor(&arr, oi);
+  No_intersection_surface_sweep_2<typename Bpl_visitor::Traits_2, Bpl_visitor,
+                                  typename Bpl_visitor::Subcurve,
+                                  typename Bpl_visitor::Event>
+    surface_sweep(&ex_traits, &visitor);
+  surface_sweep.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
+                      iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
+                      points_begin, points_end);              // Query points.
 
   return oi;
 }

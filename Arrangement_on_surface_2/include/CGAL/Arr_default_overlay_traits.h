@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -31,7 +27,7 @@
 
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_extended_dcel.h>
-#include <CGAL/Sweep_line_2/Arr_default_overlay_traits_base.h>
+#include <CGAL/Surface_sweep_2/Arr_default_overlay_traits_base.h>
 
 namespace CGAL {
 
@@ -65,7 +61,7 @@ template <class ArrangementA, class ArrangementB, class ArrangementR,
 class Arr_face_overlay_traits :
   public _Arr_default_overlay_traits_base<ArrangementA,
                                           ArrangementB,
-                                          ArrangementR> 
+                                          ArrangementR>
 {
 public:
 

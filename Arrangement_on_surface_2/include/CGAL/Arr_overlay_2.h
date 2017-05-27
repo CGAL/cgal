@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
@@ -32,8 +28,8 @@
 #include <boost/optional/optional.hpp>
 
 #include <CGAL/Arrangement_on_surface_2.h>
-#include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Arr_default_overlay_traits_base.h>
+#include <CGAL/Surface_sweep_2.h>
+#include <CGAL/Surface_sweep_2/Arr_default_overlay_traits_base.h>
 
 #include <vector>
 #include <boost/mpl/if.hpp>
@@ -92,7 +88,7 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
                             typename GeomTraitsRes::X_monotone_curve_2>::value));
 
   typedef typename TopTraitsRes::template
-    Sweep_line_overlay_visitor<ArrA, ArrB, OverlayTraits>
+    Surface_sweep_overlay_visitor<ArrA, ArrB, OverlayTraits>
                                                       Ovl_visitor;
 
   typedef typename Ovl_visitor::Traits_2              Ovl_traits_2;
@@ -156,7 +152,7 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
     ex_traits(*traits_adaptor);
 
   Ovl_visitor visitor(&arr1, &arr2, &arr_res, &ovl_tr);
-  Sweep_line_2<Ovl_traits_2, Ovl_visitor,
+  Surface_sweep_2<Ovl_traits_2, Ovl_visitor,
                typename Ovl_visitor::Subcurve, typename Ovl_visitor::Event>
     sweep_line(&ex_traits, &visitor);
 

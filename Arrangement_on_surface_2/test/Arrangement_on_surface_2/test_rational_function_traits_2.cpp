@@ -18,7 +18,7 @@ int main()
 #include <CGAL/Algebraic_kernel_d_1.h>             //Algebraic Kernel
 #include <CGAL/Arr_rational_function_traits_2.h>   //Traits
 #include <CGAL/Arrangement_2.h>                    //Arrangement
-#include <CGAL/Sweep_line_2_algorithms.h>
+#include <CGAL/Surface_sweep_2_algorithms.h>
 #include <boost/foreach.hpp>
 
 typedef CGAL::CORE_arithmetic_kernel::Integer      Number_type;

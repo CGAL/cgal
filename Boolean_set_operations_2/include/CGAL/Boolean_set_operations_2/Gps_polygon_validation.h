@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 //                 Boris Kozorovitzky <boriskoz@post.tau.ac.il>
@@ -32,10 +28,10 @@
 #include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2.h>
 
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
-#include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_empty_visitor.h>
+#include <CGAL/Surface_sweep_2.h>
+#include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
+#include <CGAL/Surface_sweep_empty_visitor.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 #include <CGAL/Arr_naive_point_location.h>
 
@@ -43,7 +39,6 @@
 #include <iostream>
 #include <list>
 #include <iterator>
-
 
 namespace CGAL {
 
@@ -87,6 +82,7 @@ public:
     hole_overlap = b;
     return;
   }
+
 private:
   mutable bool hole_overlap;
 };
@@ -97,7 +93,7 @@ private:
  */
 template <class ArrTraits_>
 class Gps_polygon_validation_visitor :
-  public Sweep_line_empty_visitor<ArrTraits_>
+  public Surface_sweep_empty_visitor<ArrTraits_>
 {
 private:
   typedef ArrTraits_                                   Traits_2;
@@ -105,12 +101,12 @@ private:
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename Traits_2::Point_2                   Point_2;
 
-  typedef Sweep_line_empty_visitor<Traits_2>           Base;
+  typedef Surface_sweep_empty_visitor<Traits_2>           Base;
   typedef typename Base::Event                         Event;
   typedef typename Base::Subcurve                      Subcurve;
   typedef typename Base::Status_line_iterator          SL_iterator;
 
-  typedef Basic_sweep_line_2<Traits_2, Self>           Sweep_line;
+  typedef Basic_sweep_line_2<Traits_2, Self>           Surface_sweep;
 
 public:
   enum Error_code {
@@ -131,7 +127,7 @@ public:
   void sweep(XCurveIterator begin, XCurveIterator end)
   {
     //Perform the sweep
-    reinterpret_cast<Sweep_line*>(this->m_sweep_line)->sweep(begin, end);
+    reinterpret_cast<Surface_sweep*>(this->m_sweep_line)->sweep(begin, end);
   }
 
   bool after_handle_event(Event* event, SL_iterator, bool)
@@ -139,17 +135,17 @@ public:
     if (event->is_intersection()) {
       m_error_code = ERROR_EDGE_INTERSECTION;
       m_is_valid = false;
-      reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
+      reinterpret_cast<Surface_sweep*>(this->m_sweep_line)->stop_sweep();
     }
     else if (event->is_weak_intersection()) {
       m_error_code = ERROR_EDGE_VERTEX_INTERSECTION;
       m_is_valid = false;
-      reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
+      reinterpret_cast<Surface_sweep*>(this->m_sweep_line)->stop_sweep();
     }
     else if (event->is_overlap()) {
       m_error_code = ERROR_EDGE_OVERLAP;
       m_is_valid = false;
-      reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
+      reinterpret_cast<Surface_sweep*>(this->m_sweep_line)->stop_sweep();
     } else {
       if (m_is_s_simple &&
           (event->number_of_right_curves() + event->number_of_left_curves()) !=
@@ -157,7 +153,7 @@ public:
       {
         m_error_code = ERROR_VERTEX_INTERSECTION;
         m_is_valid = false;
-        reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
+        reinterpret_cast<Surface_sweep*>(this->m_sweep_line)->stop_sweep();
       }
     }
     return true;
@@ -240,11 +236,11 @@ bool is_simple_polygon(const typename Traits_2::Polygon_2& pgn,
 
   // Sweep the boundary curves and look for intersections.
   typedef Gps_polygon_validation_visitor<Traits_2>  Visitor;
-  typedef Sweep_line_2<Traits_2, Visitor>           Sweep_line;
+  typedef Surface_sweep_2<Traits_2, Visitor>           Surface_sweep;
 
   Cci_pair              itr_pair = traits.construct_curves_2_object()(pgn);
   Visitor               visitor;
-  Sweep_line            sweep_line (&traits, &visitor);
+  Surface_sweep            sweep_line (&traits, &visitor);
 
   visitor.sweep(itr_pair.first, itr_pair.second);
   if (!visitor.is_valid()) {
@@ -495,7 +491,7 @@ bool is_relatively_simple_polygon_with_holes
 
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
   typedef Gps_polygon_validation_visitor<Traits_2>  Visitor;
-  typedef Sweep_line_2<Traits_2, Visitor>           Sweep_line;
+  typedef Surface_sweep_2<Traits_2, Visitor>           Surface_sweep;
   typedef typename Traits_2::Polygon_with_holes_2   Polygon_with_holes_2;
 
   Construct_curves_2 construct_curves_func = traits.construct_curves_2_object();
@@ -506,7 +502,7 @@ bool is_relatively_simple_polygon_with_holes
              std::back_inserter(outer_curves));
   // Create visitor and sweep to verify outer boundary is relatively simple
   Visitor      relative_visitor(false);
-  Sweep_line   sweep_line (&traits, &relative_visitor);
+  Surface_sweep   sweep_line (&traits, &relative_visitor);
   relative_visitor.sweep (outer_curves.begin(), outer_curves.end());
   if (!relative_visitor.is_valid()) {
     switch (relative_visitor.error_code()) {
@@ -627,7 +623,7 @@ bool are_holes_and_boundary_pairwise_disjoint
     Construct_polygon_with_holes_2;
 
   typedef Gps_polygon_validation_visitor<Traits_2>         Visitor;
-  typedef Sweep_line_2<Traits_2, Visitor>                  Sweep_line ;
+  typedef Surface_sweep_2<Traits_2, Visitor>                  Surface_sweep ;
   typedef typename Polygon_set_2::Arrangement_on_surface_2 Arrangement_2;
 
   /* Should be perfored more efficeintly  than using sweep and than
@@ -661,7 +657,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   // Perform the sweep and check for curve  intersections on the interior.
   // Traits_2     traits; moved to top, needed also for boundary.
   Visitor visitor(false);
-  Sweep_line sweep_line(&traits, &visitor);
+  Surface_sweep sweep_line(&traits, &visitor);
   visitor.sweep(curves.begin(), curves.end());
   if (!visitor.is_valid()) return false;
 
