@@ -163,7 +163,7 @@ public:
       const Point p1 = get(vertex_point_map, target(halfedge(*fitr, mesh), mesh));
       const Point p2 = get(vertex_point_map, target(next(halfedge(*fitr, mesh), mesh), mesh));
       const Point p3 = get(vertex_point_map, target(prev(halfedge(*fitr, mesh), mesh), mesh));
-      FT area = area_functor(p2, p1, p3);
+      FT area(std::sqrt(to_double(area_functor(p2, p1, p3))));
       facet_areas.insert(std::pair<face_descriptor, FT>(*fitr, area));
     }
   }
@@ -270,8 +270,10 @@ private:
     //std::vector<FT> distance_min(proxies.size(), FT::max());
     for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
       std::size_t px_idx = seg_pmap[*fitr];
-      if (fit_error(*fitr, proxies[px_idx]) < distance_min[px_idx]) {
+      FT err = fit_error(*fitr, proxies[px_idx]);
+      if (err < distance_min[px_idx]) {
         proxies[px_idx].seed = *fitr;
+        distance_min[px_idx] = err;
       }
     }
   }
