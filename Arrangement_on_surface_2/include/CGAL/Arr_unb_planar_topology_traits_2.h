@@ -32,6 +32,8 @@
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_vert_decomp_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
+#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_subcurve.h>
+#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_event.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {
@@ -218,40 +220,39 @@ public:
 private:
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>    Arr;
+  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>     Arr;
 
   // Type definition for the constuction sweep-line visitor.
-  typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve;
+  typedef Arr_construction_subcurve<Geometry_traits_2>          CSubcurve;
   typedef Arr_construction_event<Geometry_traits_2, CSubcurve, Arr>
-                                                               CEvent;
-  typedef Arr_unb_planar_construction_helper<Geometry_traits_2,
-                                             Arr,
-                                             CEvent,
-                                             CSubcurve>        CHelper;
+                                                                CEvent;
+  typedef Arr_unb_planar_construction_helper<Geometry_traits_2, Arr, CEvent,
+                                             CSubcurve>         CHelper;
 
   // Type definition for the basic insertion sweep-line visitor.
-  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr> BInsTraits;
-  typedef Arr_construction_subcurve<BInsTraits>                BISubcurve;
-  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>
-                                                               BIEvent;
+  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  BInsTraits;
+  typedef Arr_construction_subcurve<BInsTraits>                 BISubcurve;
+  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>   BIEvent;
   typedef Arr_unb_planar_insertion_helper<BInsTraits, Arr, BIEvent, BISubcurve>
-                                                               BIHelper;
+                                                                BIHelper;
 
   // Type definition for the insertion sweep-line visitor.
-  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>       InsTraits;
-  typedef Arr_construction_subcurve<InsTraits>                 ISubcurve;
-  typedef Arr_construction_event<InsTraits, ISubcurve, Arr>
-                                                               IEvent;
+  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        InsTraits;
+  typedef Arr_construction_subcurve<InsTraits>                  ISubcurve;
+  typedef Arr_construction_event<InsTraits, ISubcurve, Arr>     IEvent;
   typedef Arr_unb_planar_insertion_helper<InsTraits, Arr, IEvent, ISubcurve>
-                                                               IHelper;
+                                                                IHelper;
 
   // Type definition for the batched point-location sweep-line visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>             BplTraits;
-  typedef Arr_unb_planar_batched_pl_helper<BplTraits, Arr>     BplHelper;
+  typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
+  typedef No_overlap_surface_sweep_subcurve<BplTraits>          BplSubcurve;
+  typedef No_overlap_surface_sweep_event<BplTraits, BplSubcurve> PblEvent;
+  typedef Arr_unb_planar_batched_pl_helper<BplTraits, Arr, PblEvent,
+                                           BplSubcurve>         BplHelper;
 
   // Type definition for the vertical decomposition sweep-line visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>             VdTraits;
-  typedef Arr_unb_planar_vert_decomp_helper<VdTraits, Arr>     VdHelper;
+  typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
+  typedef Arr_unb_planar_vert_decomp_helper<VdTraits, Arr>      VdHelper;
 
   // Type definition for the overlay sweep-line visitor.
   template <class ExGeomTraits_, class ArrangementA_, class ArrangementB_>
@@ -298,19 +299,19 @@ public:
   typedef Arr_basic_insertion_sl_visitor<BIHelper>
     Surface_sweep_non_intersecting_insertion_visitor;
 
-  template <class OutputIterator_>
+  template <typename OutputIterator_>
   struct Surface_sweep_batched_point_location_visitor :
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
-    typedef OutputIterator_                                   Output_iterator;
+    typedef OutputIterator_                                     Output_iterator;
 
     typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator>   Base;
-    typedef typename Base::Traits_2                                 Traits_2;
-    typedef typename Base::Event                                    Event;
-    typedef typename Base::Subcurve                                 Subcurve;
+    typedef typename BplHelper::Traits_2                        Traits_2;
+    typedef typename BplHelper::Event                           Event;
+    typedef typename BplHelper::Subcurve                        Subcurve;
 
     Surface_sweep_batched_point_location_visitor(const Arr* arr,
-                                              Output_iterator& oi) :
+                                                 Output_iterator& oi) :
       Base(arr, oi)
     {}
   };

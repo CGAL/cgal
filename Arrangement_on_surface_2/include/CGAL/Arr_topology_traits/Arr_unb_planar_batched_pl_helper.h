@@ -34,17 +34,19 @@ namespace CGAL {
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_>
+template <typename Traits_, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_unb_planar_batched_pl_helper {
 public:
-  typedef Traits_                                      Traits_2;
-  typedef Arrangement_                                 Arrangement_2;
+  typedef Traits_                                       Traits_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typedef Surface_sweep_empty_visitor<Traits_2>        Base_visitor;
-  typedef typename Base_visitor::Event                 Event;
-  typedef typename Base_visitor::Subcurve              Subcurve;
+  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
+                                                        Base_visitor;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
@@ -87,8 +89,10 @@ public:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <typename Tr, typename Arr>
-void Arr_unb_planar_batched_pl_helper<Tr, Arr>::before_sweep()
+template <typename Tr, typename Arr, typename Event_,
+          typename Subcurve_>
+void Arr_unb_planar_batched_pl_helper<Tr, Arr, Event_, Subcurve_>::
+before_sweep()
 {
   // Initialize the fictitious halfedge lying on the top edge of the
   // fictitious face. We start from the leftmost halfedge, which is
@@ -114,8 +118,9 @@ void Arr_unb_planar_batched_pl_helper<Tr, Arr>::before_sweep()
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 //
-template <typename Tr, typename Arr>
-void Arr_unb_planar_batched_pl_helper<Tr, Arr>::
+template <typename Tr, typename Arr, typename Event_,
+          typename Subcurve_>
+void Arr_unb_planar_batched_pl_helper<Tr, Arr, Event_, Subcurve_>::
 after_handle_event(Event* event)
 {
   // If the event is at infinity and occurs on the top edge of the fictitious

@@ -21,7 +21,6 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
  * Definition of the Arr_construction_event class-template.
  */
@@ -47,11 +46,9 @@ namespace CGAL {
  * Inherits from `Surface_sweep_event`.
  * \sa `Surface_sweep_event`
  */
-
-template<class Traits_, class Subcurve_, class Arrangement_>
+template <typename Traits_, typename Subcurve_, typename Arrangement_>
 class Arr_construction_event :
-  public Surface_sweep_event<Traits_, Subcurve_>
-{
+  public Surface_sweep_event<Traits_, Subcurve_> {
 public:
   typedef Traits_                                         Traits_2;
   typedef Subcurve_                                       Subcurve;
@@ -102,10 +99,9 @@ public:
   std::pair<bool, Subcurve_iterator>
   add_curve_to_right(Subcurve* curve, const Traits_2* tr)
   {
-    std::pair<bool,Subcurve_iterator> res =
-      Base::add_curve_to_right(curve, tr);
+    std::pair<bool,Subcurve_iterator> res = Base::add_curve_to_right(curve, tr);
 
-    if(res.second != this->m_rightCurves.end() && res.first == false)
+    if (res.second != this->m_rightCurves.end() && res.first == false)
       ++m_right_curves_counter;
 
     return res;
@@ -125,7 +121,7 @@ public:
    *  that is stored in the event, to the halefge that is previous to 'curve'
    *  that is about to be inserted into the arrangement.
    */
-  int compute_halfedge_jump_count(Subcurve *curve)
+  int compute_halfedge_jump_count(Subcurve* curve)
   {
     int i = 0;
     int skip = 0;
@@ -161,7 +157,7 @@ public:
     return (i);
   }
 
-  /*! return true iff 'curve' is the toppest curve among the halfedges
+  /*! Return true iff 'curve' is the toppest curve among the halfedges
    *  to the right fo the event that were already were inserted to the
    * arrangement.
    */
@@ -179,8 +175,7 @@ public:
     return true;
   }
 
-  /*!
-   * Resize the bit-vector indicating whether the incident curves are already
+  /*! Resize the bit-vector indicating whether the incident curves are already
    * in the arrangement, and set all flags to false.
    */
   void init_subcurve_in_arrangement_flags (size_t n)
@@ -190,38 +185,31 @@ public:
   bool is_subcurve_in_arrangement (unsigned int i) const
   { return (m_isCurveInArr[i]); }
 
-  /*!
-   * Set the flag indicating whether the i'th subcurve is in the arrangement.
+  /*! Set the flag indicating whether the i'th subcurve is in the arrangement.
    */
   void set_subcurve_in_arrangement (unsigned int i, bool flag)
   { m_isCurveInArr[i] = flag; }
 
   /*! Set the halfedge handle. */
-  void set_halfedge_handle (Halfedge_handle h)
-  { m_halfedge = h; }
+  void set_halfedge_handle (Halfedge_handle h) { m_halfedge = h; }
 
   /*! Get the halfedge handle. */
-  Halfedge_handle halfedge_handle() const
-  { return m_halfedge; }
+  Halfedge_handle halfedge_handle() const { return m_halfedge; }
 
   /*! Set the vertex handle. */
-  void set_vertex_handle (Vertex_handle v)
-  { m_vertex = v; }
+  void set_vertex_handle (Vertex_handle v) { m_vertex = v; }
 
   /*! Get the vertex handle. */
-  Vertex_handle vertex_handle() const
-  { return m_vertex; }
+  Vertex_handle vertex_handle() const { return m_vertex; }
 
   /*! Decrement the count of curves to the right that we have't done yet with
    *  (haven't been inserted to the arrangement). */
-  unsigned int dec_right_curves_counter()
-  { return (--m_right_curves_counter); }
+  unsigned int dec_right_curves_counter() { return (--m_right_curves_counter); }
 
   /*! Get the number of subcurves to the right of the event that we have't
    * done yet with (haven't been inserted to the arrangement).
    */
-  unsigned int right_curves_counter() const
-  { return (m_right_curves_counter); }
+  unsigned int right_curves_counter() const { return (m_right_curves_counter); }
 };
 
 } //namespace CGAL

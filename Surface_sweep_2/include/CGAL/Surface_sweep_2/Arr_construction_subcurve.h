@@ -20,47 +20,74 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
- * Definition of the Arr_construction_subcurve class-template.
+ *
+ * Definition of the Arr_construction_subcurve class-template, which is an
+ * extended curve type, referred to as Subcurve, used by the surface-sweep
+ * framework.
+ *
+ * The surface-sweep framework is implemented as a template that is
+ * parameterized, among the other, by the Subcurve and Event types. That is,
+ * instance types of Subcurve and Event must be available when the
+ * surface-sweep template is instantiated.
+ *
+ * Arr_construction_subcurve derives from an instance of the
+ * Surface_sweep_subcurve class template. The user is allowed to introduce new
+ * types that derive from an instance of the Arr_construction_subcurve class
+ * template. However, some of the fields of this template depends on the
+ * Subcurve type.  We use the curiously recurring template pattern (CRTP) idiom
+ * to force the correct matching of these types.
  */
 
 #include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
-/*! \class Arr_construction_subcurve
+/*! \class Arr_construction_subcurve_base
  *
- * a class that holds information about a curve that is added to
- * the arrangement.
- * In addition to the information that is contained in Surface_sweep_subcurve,
- * when an arrangement is constructed, a pointer to the last handled event
- * on the curve is stored. This information is used to retrieve
- * hints when a subcurve of this curve is inserted into the planar map.
+ * This is the base class of the Arr_construction_subcurve class template used
+ * by the (CRTP) idiom.
+ * \tparam GeometryTraits_2 the geometry traits.
+ * \tparam
+ * Subcurve_ the subcurve actual type.
  *
- * Inherits from `Surface_sweep_subcurve`
- * \sa `Surface_sweep_subcurve`
+ * The information contained in this class last:
+ * - ishe  event that was handled on the curve.
+ * - The index for a subcurve that may represent a hole
+ * - Indices of all halfedge below the curve that may represent a hole.
  */
-
-template <typename Traits_>
-class Arr_construction_subcurve : public Surface_sweep_subcurve<Traits_>
+template <typename GeometryTraits_2, typename Subcurve_>
+class Arr_construction_subcurve_base :
+    public Surface_sweep_subcurve<GeometryTraits_2, Subcurve_>
 {
 public:
-  typedef Traits_                                    Traits_2;
-  typedef typename Traits_2::Point_2                 Point_2;
-  typedef typename Traits_2::X_monotone_curve_2      X_monotone_curve_2;
+  typedef GeometryTraits_2                              Traits_2;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef Surface_sweep_subcurve<Traits_2>           Base;
-  typedef Arr_construction_subcurve<Traits_2>        Self;
+  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+  typedef void*                                         Event_ptr;
+  typedef std::list<unsigned int>                       Halfedge_indices_list;
 
-  typedef typename Base::Status_line_iterator        Status_line_iterator;
-  typedef void*                                      Event_ptr;
-  typedef std::list<unsigned int>                    Halfedge_indices_list;
+  typedef Surface_sweep_subcurve<Traits_2, Subcurve>    Base;
+
+  /*! Construct deafult. */
+  Arr_construction_subcurve_base() :
+    Base(),
+    m_last_event(0),
+    m_index(0)
+  {}
+
+  /*! Constructor from an x-monotone curve. */
+  Arr_construction_subcurve_base(X_monotone_curve_2& curve) :
+    Base(curve),
+    m_last_event(0),
+    m_index(0)
+  {}
 
 protected:
-
   // Data members:
-  Event_ptr m_lastEvent;     // The last event that was handled on the curve.
+  Event_ptr m_last_event;    // The last event that was handled on the curve.
 
   /*! index for a subcurve that may represent a hole (emarge from the left
    * most vertex of a hole, and its the upper most curve). other subcurves
@@ -75,19 +102,48 @@ protected:
                              // Indices of all halfedge below the curve that
                              // may represent a hole.
 
+};
+
+/*! \class Arr_construction_subcurve
+ *
+ * This class that holds information about a curve that is added to the
+ * arrangement.  In addition to the information that is contained in
+ * Surface_sweep_subcurve, when an arrangement is constructed, a pointer to the
+ * last handled event on the curve is stored (in the base class). This
+ * information is used to retrieve hints when a subcurve of this curve is
+ * inserted into the planar map.
+ *
+ * Inherits from `Surface_sweep_subcurve`
+ * \sa `Surface_sweep_subcurve`
+ */
+template <typename GeometryTraits_2, typename Subcurve_ = Default>
+class Arr_construction_subcurve :
+    public Arr_construction_subcurve_base
+           <GeometryTraits_2,
+            typename Default::Get<Subcurve_,
+                                  Arr_construction_subcurve
+                                  <GeometryTraits_2, Subcurve_> >::type>
+{
 public:
-  /*! Deafult constructor. */
-  Arr_construction_subcurve() :
-    Base(),
-    m_lastEvent(0),
-    m_index(0)
-  {}
+  typedef GeometryTraits_2                              Traits_2;
+
+  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+
+  typedef Arr_construction_subcurve<Traits_2, Subcurve_>
+                                                        Self;
+  typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
+  typedef Arr_construction_subcurve_base<Traits_2, Subcurve>
+                                                        Base;
+
+  typedef typename Base::Event_ptr                      Event_ptr;
+  typedef typename Base::Halfedge_indices_list          Halfedge_indices_list;
+
+  /*! Construct deafult. */
+  Arr_construction_subcurve() {}
 
   /*! Constructor from an x-monotone curve. */
   Arr_construction_subcurve(X_monotone_curve_2& curve) :
-    Base( curve),
-    m_lastEvent(0),
-    m_index(0)
+    Base(curve)
   {}
 
   /*! Initialize the curve. */
@@ -98,35 +154,38 @@ public:
   void set_left_event(SweepEvent* left)
   {
     Base::set_left_event(left);
-    m_lastEvent = left;
+    set_last_event(left);
   }
 
   /*! Set the last event on the subcurve. */
-  void set_last_event(Event_ptr e) { m_lastEvent = e; }
+  void set_last_event(Event_ptr e) { Base::m_last_event = e; }
 
   /*! Get the last event. */
-  Event_ptr last_event() const { return m_lastEvent; }
+  Event_ptr last_event() const { return Base::m_last_event; }
 
   /*! Get the subcurve index. */
-  unsigned int index() const { return m_index; }
+  unsigned int index() const { return Base::m_index; }
 
   /*! Set the subcurve index. */
-  void set_index(unsigned int i) { m_index = i; }
+  void set_index(unsigned int i) { Base::m_index = i; }
 
   /*! Check if the index is valid. */
-  bool has_valid_index() const { return (m_index != 0); }
+  bool has_valid_index() const { return (Base::m_index != 0); }
 
   /*! Add an index of a halfedge below the subcurve. */
-  void add_halfedge_index(unsigned int i) { m_halfedge_indices.push_back(i); }
+  void add_halfedge_index(unsigned int i)
+  { Base::m_halfedge_indices.push_back(i); }
 
   /*! Clear the indices of the halfedges below the subcurve. */
-  void clear_halfedge_indices() { m_halfedge_indices.clear(); }
+  void clear_halfedge_indices() { Base::m_halfedge_indices.clear(); }
 
   /*! Check if there are any halfedges below the subcurve. */
-  bool has_halfedge_indices() const { return (!m_halfedge_indices.empty()); }
+  bool has_halfedge_indices() const
+  { return (!Base::m_halfedge_indices.empty()); }
 
   /*! Get the indices of the halfedges below the subcurve. */
-  Halfedge_indices_list& halfedge_indices_list() { return m_halfedge_indices; }
+  Halfedge_indices_list& halfedge_indices_list()
+  { return Base::m_halfedge_indices; }
 };
 
 

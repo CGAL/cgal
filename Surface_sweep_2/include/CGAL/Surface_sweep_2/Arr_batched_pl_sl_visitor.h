@@ -64,7 +64,9 @@ protected:
 
   template<typename T>
   Pl_result_type pl_make_result(T t) { return Pl_result::make_result(t); }
-  inline Pl_result_type pl_default_result() { return Pl_result::default_result(); }
+
+  inline Pl_result_type pl_default_result()
+  { return Pl_result::default_result(); }
 
 public:
   /*! Constructor.

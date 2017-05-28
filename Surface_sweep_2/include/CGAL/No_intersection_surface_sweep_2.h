@@ -29,8 +29,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_subcurve.h>
+#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_event.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_tags.h>
@@ -111,8 +111,8 @@ namespace CGAL {
  */
 template <typename Traits_,
           typename Visitor_,
-          typename Subcurve_ = Surface_sweep_subcurve<Traits_>,
-          typename Event_ = Surface_sweep_event<Traits_, Subcurve_>,
+          typename Subcurve_ = No_overlap_surface_sweep_subcurve<Traits_>,
+          typename Event_ = No_overlap_surface_sweep_event<Traits_, Subcurve_>,
           typename Allocator_ = CGAL_ALLOCATOR(int)>
 class No_intersection_surface_sweep_2 {
 public:
@@ -153,14 +153,11 @@ public:
   typedef typename Event::Subcurve_const_iterator
     Event_subcurve_const_iterator;
 
-  typedef Surface_sweep_event<Traits_2, Subcurve>          Base_event;
-  typedef typename Base_event::Attribute                Attribute;
+  typedef typename Event::Attribute                     Attribute;
 
-  typedef Surface_sweep_subcurve<Traits_2>                 Base_subcurve;
-  typedef class Curve_comparer<Traits_2, Base_subcurve> Compare_curves;
-  typedef Multiset<Base_subcurve*,
-                   Compare_curves,
-                   Allocator>                           Status_line;
+  typedef class Curve_comparer<Traits_2, Subcurve> Compare_curves;
+  typedef Multiset<Subcurve*, Compare_curves, Allocator>
+                                                        Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
 
   typedef typename Allocator::template rebind<Event>    Event_alloc_rebind;
@@ -277,7 +274,7 @@ public:
   {
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
-    _init_points(action_points_begin, action_points_end, Base_event::ACTION);
+    _init_points(action_points_begin, action_points_end, Event::ACTION);
     //m_visitor->after_init();
     _sweep();
     _complete_sweep();
@@ -308,8 +305,8 @@ public:
   {
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
-    _init_points(action_points_begin, action_points_end, Base_event::ACTION);
-    _init_points(query_points_begin, query_points_end, Base_event::QUERY);
+    _init_points(action_points_begin, action_points_end, Event::ACTION);
+    _init_points(query_points_begin, query_points_end, Event::QUERY);
     //m_visitor->after_init();
     _sweep();
     _complete_sweep();
@@ -540,7 +537,7 @@ protected:
   void decrease_indent();
   void print_start(const char* name, bool do_eol = true);
   void print_end(const char* name, bool do_eol = true);
-  void print_curve(const Base_subcurve* sc);
+  void print_curve(const Subcurve* sc);
   void print_event_info(const Event* e);
 
   void PrintEventQueue();

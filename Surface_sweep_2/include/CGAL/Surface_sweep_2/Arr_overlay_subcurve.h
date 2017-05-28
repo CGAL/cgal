@@ -20,7 +20,6 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
  * Definition of the Arr_overlay_subcurve class-template.
  */
@@ -36,17 +35,19 @@ namespace CGAL {
  * from the opposite color it "sees" from below, so it can be easily located
  * in the proper place in the resulting arrangement.
  */
-template<class Traits_>
-class Arr_overlay_subcurve : public Arr_construction_subcurve<Traits_>
+template <typename GeometryTraits_2>
+class Arr_overlay_subcurve :
+    public Arr_construction_subcurve<GeometryTraits_2,
+                                     Arr_overlay_subcurve<GeometryTraits_2> >
 {
 public:
 
-  typedef Traits_                                        Traits_2;
+  typedef  GeometryTraits_2                              Traits_2;
   typedef typename Traits_2::Point_2                     Point_2;
   typedef typename Traits_2::X_monotone_curve_2          X_monotone_curve_2;
 
-  typedef Arr_construction_subcurve<Traits_2>            Base;
   typedef Arr_overlay_subcurve<Traits_2>                 Self;
+  typedef Arr_construction_subcurve<Traits_2, Self>      Base;
 
   typedef typename Base::Status_line_iterator            Status_line_iterator;
 
@@ -63,7 +64,6 @@ public:
   typedef Surface_sweep_event<Traits_2, Self>            Event;
 
 protected:
-
   // Data members:
   Self* m_above;        // A subcurve of an opposite color that lies above.
 
@@ -79,46 +79,42 @@ public:
   Arr_overlay_subcurve() :
     Base(),
     m_above(NULL)
-  {
-    m_top_face.red = NULL;
-  }
+  { m_top_face.red = NULL; }
 
   /*! constructor given a curve. */
   Arr_overlay_subcurve(const X_monotone_curve_2& curve) :
     Base(curve),
     m_above(NULL)
-  {
-    m_top_face.red = NULL;
-  }
+  { m_top_face.red = NULL; }
 
   /*! Get the subcurve lying above above this subcurve in the status line. */
-  Self* subcurve_above() const { return (m_above); }
+  Self* subcurve_above() const { return m_above; }
 
   /*! Set the subcurve above. */
   void set_subcurve_above(Self* sc) { m_above = sc; }
 
   /*! Get the color of the associated curve. */
-  Color color() const { return (this->m_lastCurve.color()); }
+  Color color() const { return (this->last_curve().color()); }
 
   /*! Check if two subcurves have the same color. */
   bool has_same_color(const Self* sc) const
-  { return (this->m_lastCurve.color() == sc->color()); }
+  { return (this->last_curve().color() == sc->color()); }
 
   /*! Get the red halfedge that represents the subcurve. */
   Halfedge_handle_red red_halfedge_handle() const
-  { return (this->m_lastCurve.red_halfedge_handle()); }
+  { return (this->last_curve().red_halfedge_handle()); }
 
   /*! Get the blue halfedge that represents the subcurve. */
   Halfedge_handle_blue blue_halfedge_handle() const
-  { return (this->m_lastCurve.blue_halfedge_handle()); }
+  { return (this->last_curve().blue_halfedge_handle()); }
 
   /*! Get the red top face that contains the subcurve. */
   const Face_handle_red red_top_face() const
-  { return (Face_handle_red(m_top_face.red)); }
+  { return Face_handle_red(m_top_face.red); }
 
   /*! Get the blue top face that contains the subcurve. */
   const Face_handle_blue blue_top_face() const
-  { return (Face_handle_blue(m_top_face.blue)); }
+  { return Face_handle_blue(m_top_face.blue); }
 
   /*! Set the red top face. */
   void set_red_top_face(Face_handle_red fh) { m_top_face.red = &(*fh); }

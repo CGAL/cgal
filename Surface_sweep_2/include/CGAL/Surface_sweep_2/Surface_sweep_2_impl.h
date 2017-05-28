@@ -333,10 +333,10 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
        * 'curve', which is an inner node of iter, and it is discarded; see 2
        * conditions above.
        */
-      std::list<Base_subcurve*> list_of_sc;
+      std::list<Subcurve*> list_of_sc;
       curve->distinct_nodes(*iter, std::back_inserter(list_of_sc));
 
-      typename std::list<Base_subcurve*>::iterator  sc_iter;
+      typename std::list<Subcurve*>::iterator  sc_iter;
       for (sc_iter = list_of_sc.begin(); sc_iter != list_of_sc.end(); ++sc_iter)
         _add_curve_to_right(event, static_cast<Subcurve*>(*sc_iter));
 
@@ -427,8 +427,8 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
 
   // look up for (c1,c2) in the table and insert if doesnt exist
   Curve_pair cv_pair(c1,c2);
-  if (! (m_curves_pair_set.insert(cv_pair)).second)
-    return;  //the curves have already been checked for intersection
+  // Check whether the curves have already been checked for intersection
+  if (! (m_curves_pair_set.insert(cv_pair)).second) return;
 
   float load_factor = static_cast<float>(m_curves_pair_set.size()) /
     m_curves_pair_set.bucket_count();
@@ -497,18 +497,18 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
     // In case both right curve-ends have boundary conditions and are not
     // open, check whether the right endpoints are the same. If they are,
     // skip the last intersection point.
-    const Arr_parameter_space   ps_x1 =
-        this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
-                                                        ARR_MAX_END);
-    const Arr_parameter_space   ps_y1 =
-        this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
-                                                        ARR_MAX_END);
-    const Arr_parameter_space   ps_x2 =
-        this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
-                                                        ARR_MAX_END);
-    const Arr_parameter_space   ps_y2 =
-        this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
-                                                        ARR_MAX_END);
+    const Arr_parameter_space ps_x1 =
+      this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
+                                                      ARR_MAX_END);
+    const Arr_parameter_space ps_y1 =
+      this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
+                                                      ARR_MAX_END);
+    const Arr_parameter_space ps_x2 =
+      this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
+                                                      ARR_MAX_END);
+    const Arr_parameter_space ps_y2 =
+      this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
+                                                      ARR_MAX_END);
 
     if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
         ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
@@ -532,7 +532,7 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
     }
   }
 
-  const std::pair<Point_2,Multiplicity>* xp_point;
+  const std::pair<Point_2, Multiplicity>* xp_point;
 
   // Efi: why not skipping in a loop?check only one (that is, why not in a loop)?
   if (vi != vi_end) {
@@ -599,7 +599,7 @@ _create_intersection_point(const Point_2& xp,
 
   // insert the event and check if an event at this point already exists.
   const std::pair<Event*, bool>& pair_res =
-    this->_push_event(xp, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR);
+    this->_push_event(xp, Event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR);
 
   Event* e = pair_res.first;
   if (pair_res.second) {
@@ -705,8 +705,8 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
     // right end point.
     if ((Event*)leftCurve->right_event() == this->m_currentEvent) {
       if (leftCurve->originating_subcurve1() != NULL) {
-        Subcurve* orig_sc_1 = (Subcurve*)leftCurve->originating_subcurve1();
-        Subcurve* orig_sc_2 = (Subcurve*)leftCurve->originating_subcurve2();
+        Subcurve* orig_sc_1 = leftCurve->originating_subcurve1();
+        Subcurve* orig_sc_2 = leftCurve->originating_subcurve2();
 
         _fix_finished_overlap_subcurve(orig_sc_1);
         _fix_finished_overlap_subcurve(orig_sc_2);
@@ -778,7 +778,7 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
       this->m_traits->construct_max_vertex_2_object()(overlap_cv);
 
     const std::pair<Event*, bool>& pair_res =
-      this->_push_event(end_overlap, Base_event::OVERLAP, ps_x_r, ps_y_r);
+      this->_push_event(end_overlap, Event::OVERLAP, ps_x_r, ps_y_r);
 
     right_end = pair_res.first;
   }
@@ -898,7 +898,7 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
     sc->set_last_curve(sub_cv2);
 
     this->m_currentEvent->set_weak_intersection();
-    this->m_visitor->update_event(this->m_currentEvent,(Subcurve*)sc);
+    this->m_visitor->update_event(this->m_currentEvent, sc);
 
     CGAL_SL_PRINT_END_EOL("Fixing finished overlap subcurve");
     return;
@@ -912,8 +912,8 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
 
   // sc is a subcurve that stores overlap, we have to continue with the
   // recursion and deal with his two originating subcurves recursively.
-  Subcurve* orig_sc_1 = (Subcurve*)sc->originating_subcurve1();
-  Subcurve* orig_sc_2 = (Subcurve*)sc->originating_subcurve2();
+  Subcurve* orig_sc_1 = sc->originating_subcurve1();
+  Subcurve* orig_sc_2 = sc->originating_subcurve2();
 
   _fix_finished_overlap_subcurve(orig_sc_1);
   _fix_finished_overlap_subcurve(orig_sc_2);

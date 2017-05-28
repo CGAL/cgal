@@ -27,7 +27,6 @@
  */
 
 #include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
 #include <CGAL/Surface_sweep_empty_visitor.h>
 #include <vector>

@@ -77,7 +77,8 @@ No_intersection_surface_sweep_2(const Traits_2* traits, Visitor* visitor) :
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::~No_intersection_surface_sweep_2()
+No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+~No_intersection_surface_sweep_2()
 {
   // Free the traits-class object, if we own it.
   if (m_traitsOwner) delete m_traits;
@@ -207,7 +208,8 @@ void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep()
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
+void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_init_structures()
 {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
@@ -223,7 +225,8 @@ void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structu
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
+void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_complete_sweep()
 {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
@@ -281,7 +284,7 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 {
   // Get the boundary conditions of the curve end.
   const Attribute  end_attr =
-    (ind == ARR_MIN_END) ? Base_event::LEFT_END : Base_event::RIGHT_END;
+    (ind == ARR_MIN_END) ? Event::LEFT_END : Event::RIGHT_END;
 
   Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(cv, ind);
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
@@ -320,7 +323,8 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
+void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_handle_left_curves()
 {
   CGAL_SL_PRINT_START_EOL("handling left curves at (");
   CGAL_SL_DEBUG(PrintEvent(m_currentEvent));
@@ -450,7 +454,8 @@ _handle_event_without_left_curves()
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
+void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_sort_left_curves()
 {
   CGAL_SL_PRINT_START_EOL("sorting left curves");
   CGAL_assertion(m_currentEvent->has_left_curves());
@@ -515,7 +520,8 @@ void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_cu
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
+void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_handle_right_curves()
 {
   CGAL_SL_PRINT_START("Handling right curves at (");
   CGAL_SL_DEBUG(PrintEvent(m_currentEvent));
@@ -639,8 +645,8 @@ _allocate_event_at_open_boundary(Attribute type,
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-std::pair<typename No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
-          bool>
+std::pair<typename No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt,
+                                                   Alloc>::Event*, bool>
 No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _push_event(const Point_2& pt, Attribute type,
             Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc)
@@ -672,12 +678,12 @@ _push_event(const Point_2& pt, Attribute type,
   // Note that this must be done before we actually insert the new event
   // into the event queue.
   if (sc != NULL) {
-    if (type == Base_event::LEFT_END) {
+    if (type == Event::LEFT_END) {
       sc->set_left_event(e);
       _add_curve_to_right(e, sc);
     }
     else {
-      CGAL_assertion(type == Base_event::RIGHT_END);
+      CGAL_assertion(type == Event::RIGHT_END);
       sc->set_right_event(e);
       e->add_curve_to_left(sc);
     }
@@ -703,7 +709,8 @@ _push_event(const Point_2& pt, Attribute type,
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
-std::pair<typename No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
+std::pair<typename No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt,
+                                                   Alloc>::Event*,
           bool>
 No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
@@ -755,12 +762,12 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
   // Note that this must be done before we actually insert the new event
   // into the event queue.
   if (sc != NULL) {
-    if (type == Base_event::LEFT_END) {
+    if (type == Event::LEFT_END) {
       sc->set_left_event(e);
       _add_curve_to_right(e, sc);
     }
     else {
-      CGAL_assertion(type == Base_event::RIGHT_END);
+      CGAL_assertion(type == Event::RIGHT_END);
       sc->set_right_event(e);
       e->add_curve_to_left(sc);
     }

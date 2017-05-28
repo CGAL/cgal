@@ -21,7 +21,6 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
  * Definition of the Surface_sweep_2 class.
  */
@@ -31,6 +30,8 @@
 #include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_curve_pair.h>
+#include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
+#include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
 #include <CGAL/Arrangement_2/Open_hash.h>
 
 namespace CGAL {
@@ -96,27 +97,24 @@ public:
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
 
-  typedef typename Base::Event_queue_iterator         Event_queue_iterator;
-  typedef typename Event::Subcurve_iterator           Event_subcurve_iterator;
+  typedef typename Base::Event_queue_iterator           Event_queue_iterator;
+  typedef typename Event::Subcurve_iterator             Event_subcurve_iterator;
 
-  typedef typename Base::Base_event                   Base_event;
-  typedef typename Base_event::Attribute              Attribute;
+  typedef typename Event::Attribute                     Attribute;
 
-  typedef typename Base::Base_subcurve                Base_subcurve;
+  typedef std::list<Subcurve*>                          Subcurve_container;
+  typedef typename Subcurve_container::iterator         Subcurve_iterator;
 
-  typedef std::list<Subcurve*>                        Subcurve_container;
-  typedef typename Subcurve_container::iterator       Subcurve_iterator;
+  typedef typename Base::Status_line_iterator           Status_line_iterator;
 
-  typedef typename Base::Status_line_iterator         Status_line_iterator;
-
-  typedef CGAL::Curve_pair<Subcurve>                  Curve_pair;
-  typedef CGAL::Curve_pair_hasher<Subcurve>           Curve_pair_hasher;
-  typedef CGAL::Equal_curve_pair<Subcurve>            Equal_curve_pair;
+  typedef CGAL::Curve_pair<Subcurve>                    Curve_pair;
+  typedef CGAL::Curve_pair_hasher<Subcurve>             Curve_pair_hasher;
+  typedef CGAL::Equal_curve_pair<Subcurve>              Equal_curve_pair;
   typedef Open_hash<Curve_pair, Curve_pair_hasher, Equal_curve_pair>
-                                                      Curve_pair_set;
+                                                        Curve_pair_set;
 
-  typedef random_access_input_iterator<std::vector<Object> >
-                                                      vector_inserter;
+  typedef std::vector<Object>                           Object_vector;
+  typedef random_access_input_iterator<Object_vector>   vector_inserter;
 
 protected:
   // Data members:
