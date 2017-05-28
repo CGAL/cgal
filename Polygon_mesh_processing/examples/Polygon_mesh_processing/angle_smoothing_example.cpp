@@ -11,6 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
 
+
 int main(int argc, char* argv[]){
 
 
@@ -24,6 +25,8 @@ int main(int argc, char* argv[]){
         std::cerr << "Not a valid .off file." << std::endl;
         return 1;
     }
+
+
 
 
     CGAL::Polygon_mesh_processing::Angle_remesher<Mesh> remesher(mesh);
