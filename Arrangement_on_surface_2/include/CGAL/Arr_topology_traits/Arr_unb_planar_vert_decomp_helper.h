@@ -33,17 +33,19 @@ namespace CGAL {
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_>
+template <typename Traits_, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_unb_planar_vert_decomp_helper {
 public:
-  typedef Traits_                                      Traits_2;
-  typedef Arrangement_                                 Arrangement_2;
+  typedef Traits_                                       Traits_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typedef Surface_sweep_empty_visitor<Traits_2>        Base_visitor;
-  typedef typename Base_visitor::Event                 Event;
-  typedef typename Base_visitor::Subcurve              Subcurve;
+  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
+                                                        Base_visitor;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
@@ -57,8 +59,7 @@ protected:
                                         // halfedge.
 
 public:
-  /*!
-   * Constructor.
+  /*! Constructor.
    * \param arr The arrangement.
    */
   Arr_unb_planar_vert_decomp_helper(const Arrangement_2* arr) :
@@ -71,26 +72,17 @@ public:
   /* A notification issued before the sweep process starts. */
   void before_sweep();
 
-  /*!
-   * A notification invoked after the sweep-line finishes handling the given
+  /*! A notification invoked after the sweep-line finishes handling the given
    * event.
    */
   void after_handle_event(Event* event);
   //@}
 
   /*! Get the current top object. */
-  CGAL::Object top_object() const
-  {
-    // Wrap the top fictitious halfedge by a CGAL object.
-    return (CGAL::make_object(m_top_fict));
-  }
+  CGAL::Object top_object() const { return CGAL::make_object(m_top_fict); }
 
   /*! Get the current bottom object. */
-  CGAL::Object bottom_object() const
-  {
-    // Wrap the bottom fictitious halfedge by a CGAL object.
-    return (CGAL::make_object(m_bottom_fict));
-  }
+  CGAL::Object bottom_object() const { return CGAL::make_object(m_bottom_fict); }
 };
 
 //-----------------------------------------------------------------------------
@@ -100,13 +92,14 @@ public:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <typename Tr, typename Arr>
-void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep()
+template <typename Tr, typename Arr, typename Event_, typename Subcurve_>
+void Arr_unb_planar_vert_decomp_helper<Tr, Arr, Event_, Subcurve_>::
+before_sweep()
 {
   // Initialize the fictitious halfedge lying on the top edge of the
   // bounding rectangle. We start from the leftmost halfedge, which is
   // incident to the top-left vertex and directed from right to left.
-  Vertex_const_handle  v_tl =
+  Vertex_const_handle v_tl =
     Vertex_const_handle (m_top_traits->top_left_vertex());
 
   m_top_fict = v_tl->incident_halfedges();
@@ -114,7 +107,7 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep()
     m_top_fict = m_top_fict->next()->twin();
 
   CGAL_assertion_code (
-    Vertex_const_handle  v_tr =
+    Vertex_const_handle v_tr =
       Vertex_const_handle (m_top_traits->top_right_vertex());
   );
   CGAL_assertion
@@ -126,13 +119,13 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep()
   // bounding rectangle. We start from the leftmost halfedge, which is
   // incident to the bottom-left vertex and whose source is not at -oo.
   Vertex_const_handle  v_bl =
-    Vertex_const_handle (m_top_traits->bottom_left_vertex());
+    Vertex_const_handle(m_top_traits->bottom_left_vertex());
 
   m_bottom_fict = v_bl->incident_halfedges();
   if (m_bottom_fict->source()->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
       m_bottom_fict = m_bottom_fict->next()->twin();
 
-  CGAL_assertion_code (
+  CGAL_assertion_code(
     Vertex_const_handle  v_br =
       Vertex_const_handle (m_top_traits->bottom_right_vertex());
   );
@@ -146,19 +139,18 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep()
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 //
-template <typename Tr, typename Arr>
-void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::
+template <typename Tr, typename Arr, typename Event_, typename Subcurve_>
+void Arr_unb_planar_vert_decomp_helper<Tr, Arr, Event_, Subcurve_>::
 after_handle_event(Event* event)
 {
   // If the event is at infinity and occurs on the top edge of the fictitious
   // face (namely x is finite and y = +oo), we have to update the fictitious
   // halfedges we keep.
-  if (event->is_closed())
-    return;
+  if (event->is_closed()) return;
 
   if (event->parameter_space_in_x() != ARR_INTERIOR) return;
 
-  Arr_parameter_space     ps_y = event->parameter_space_in_y();
+  Arr_parameter_space ps_y = event->parameter_space_in_y();
 
   if (ps_y == ARR_TOP_BOUNDARY) {
     // Update the fictitious top halfedge.

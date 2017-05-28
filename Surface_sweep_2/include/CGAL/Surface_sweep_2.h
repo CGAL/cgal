@@ -151,7 +151,6 @@ public:
   virtual ~Surface_sweep_2() {}
 
 protected:
-
   /*! Initialize the data structures for the sweep-line algorithm. */
   virtual void _init_structures();
 
@@ -171,6 +170,11 @@ protected:
    */
   virtual bool _add_curve_to_right(Event* event, Subcurve* curve,
                                    bool overlap_exist = false);
+
+  /*! Add a curve as a right curve or left curve when the event is created
+   * or updated.
+   */
+  void _add_curve(Event* e, Subcurve* sc, Attribute type);
 
   /*! Fix overlapping subcurves before handling the current event. */
   void _fix_overlap_subcurves();

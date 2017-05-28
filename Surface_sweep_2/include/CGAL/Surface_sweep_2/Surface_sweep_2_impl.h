@@ -921,6 +921,28 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
   CGAL_SL_PRINT_END_EOL("fixing finished overlap subcurve");
 }
 
+//-----------------------------------------------------------------------------
+// add a curve as a right curve or left curve when the event is created
+// or updated.
+//
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
+void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_add_curve(Event* e, Subcurve* sc, Attribute type)
+{
+  if (sc == NULL) return;
+
+  if (type == Event::LEFT_END) {
+    sc->set_left_event(e);
+    _add_curve_to_right(e, sc);
+    return;
+  }
+
+  CGAL_assertion(type == Event::RIGHT_END);
+  sc->set_right_event(e);
+  e->add_curve_to_left(sc);
+}
+
 } //namespace CGAL
 
 #endif

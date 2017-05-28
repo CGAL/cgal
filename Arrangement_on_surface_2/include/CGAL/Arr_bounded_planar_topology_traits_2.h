@@ -223,7 +223,10 @@ private:
 
   // Type definition for the vertical decomposition sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
-  typedef Arr_bounded_planar_vert_decomp_helper<VdTraits, Arr>  VdHelper;
+  typedef No_overlap_surface_sweep_subcurve<VdTraits>           VdSubcurve;
+  typedef No_overlap_surface_sweep_event<VdTraits, VdSubcurve>  VdEvent;
+  typedef Arr_bounded_planar_vert_decomp_helper<VdTraits, Arr, VdEvent,
+                                                VdSubcurve>     VdHelper;
 
   // Type definition for the overlay sweep-line visitor.
   template <typename ExGeomTraits_, typename ArrangementA_,
@@ -280,9 +283,9 @@ public:
     typedef OutputIterator_                                     Output_iterator;
 
     typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator> Base;
-    typedef typename Base::Traits_2                               Traits_2;
-    typedef typename Base::Event                                  Event;
-    typedef typename Base::Subcurve                               Subcurve;
+    typedef typename Base::Traits_2                             Traits_2;
+    typedef typename Base::Event                                Event;
+    typedef typename Base::Subcurve                             Subcurve;
 
     Surface_sweep_batched_point_location_visitor(const Arr* arr,
                                                  Output_iterator& oi) :
@@ -294,12 +297,12 @@ public:
   struct Surface_sweep_vertical_decomposition_visitor :
     public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
   {
-    typedef OutputIterator_                                   Output_iterator;
+    typedef OutputIterator_                                     Output_iterator;
 
     typedef Arr_vert_decomp_sl_visitor<VdHelper, Output_iterator> Base;
-    typedef typename Base::Traits_2                           Traits_2;
-    typedef typename Base::Event                              Event;
-    typedef typename Base::Subcurve                           Subcurve;
+    typedef typename Base::Traits_2                             Traits_2;
+    typedef typename Base::Event                                Event;
+    typedef typename Base::Subcurve                             Subcurve;
 
     Surface_sweep_vertical_decomposition_visitor(const Arr* arr,
                                                  Output_iterator* oi) :

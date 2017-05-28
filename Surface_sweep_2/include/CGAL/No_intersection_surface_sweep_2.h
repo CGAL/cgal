@@ -444,6 +444,11 @@ protected:
   virtual bool _add_curve_to_right(Event* event, Subcurve* curve,
                                    bool overlap_exist = false);
 
+  /*! Add a curve as a right curve or left curve when the event is created
+   * or updated.
+   */
+  virtual void _add_curve(Event* e, Subcurve* sc, Attribute type);
+
   /*! Remove a curve from the status line. */
   void _remove_curve_from_status_line(Subcurve *leftCurve);
 

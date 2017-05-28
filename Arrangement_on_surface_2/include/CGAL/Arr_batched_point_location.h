@@ -45,24 +45,28 @@ namespace CGAL {
  *                                          Face_const_handle> >.
  *      It represents the arrangement feature containing the point.
  */
-template<typename GeomTraits, typename TopTraits,
+template<typename GeometryTraits_2, typename TopologyTraits,
          typename PointsIterator, typename OutputIterator>
 OutputIterator
-locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
        PointsIterator points_begin, PointsIterator points_end,
        OutputIterator oi)
 {
+  typedef GeometryTraits_2                              Geom_traits_2;
+  typedef TopologyTraits                                Top_traits;
+
+
   // Arrangement types:
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
-  typedef typename TopTraits::template
+  typedef Arrangement_on_surface_2<Geom_traits_2, Top_traits>  Arr_2;
+  typedef typename Top_traits::template
           Surface_sweep_batched_point_location_visitor<OutputIterator>
                                                         Bpl_visitor;
 
-  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
-  typedef typename Arr::Vertex_const_iterator           Vertex_const_iterator;
-  typedef typename Arr::Edge_const_iterator             Edge_const_iterator;
-  typedef typename Arr::Vertex_const_handle             Vertex_const_handle;
-  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
+  typedef typename Arr_2::Vertex_const_iterator         Vertex_const_iterator;
+  typedef typename Arr_2::Edge_const_iterator           Edge_const_iterator;
+  typedef typename Arr_2::Vertex_const_handle           Vertex_const_handle;
+  typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
 
   typedef typename Bpl_visitor::Traits_2                Bpl_traits_2;
   typedef typename Bpl_traits_2::X_monotone_curve_2     Bpl_x_monotone_curve_2;
@@ -73,7 +77,7 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   // left.
   std::vector<Bpl_x_monotone_curve_2> xcurves_vec(arr.number_of_edges());
   Edge_const_iterator eit;
-  unsigned int i = 0;
+  size_t i(0);
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
@@ -95,21 +99,21 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   }
 
   // Obtain a extended traits-class object.
-  GeomTraits* geom_traits = const_cast<GeomTraits*>(arr.geometry_traits());
+  const Geom_traits_2* geom_traits = arr.geometry_traits();
 
   /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Bpl_traits_2 is the same as the type
-   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
-   * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor.
+   * If the type Bpl_traits_2 is the same as the type Geom_traits_2, use a
+   * reference to Geom_traits_2 to avoid constructing a new one.  Otherwise,
+   * instantiate a local variable of the former and provide the later as a
+   * single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<GeomTraits, Bpl_traits_2>,
+  typename boost::mpl::if_<boost::is_same<Geom_traits_2, Bpl_traits_2>,
                            const Bpl_traits_2&, Bpl_traits_2>::type
     ex_traits(*geom_traits);
 

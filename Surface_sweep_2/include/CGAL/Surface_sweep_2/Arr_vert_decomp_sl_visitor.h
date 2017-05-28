@@ -19,7 +19,6 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*!
  * Definition of the Arr_vert_decomp_sl_visitor class-template.
  */
@@ -40,7 +39,6 @@ public:
 
   typedef typename Helper::Traits_2                     Traits_2;
   typedef typename Helper::Arrangement_2                Arrangement_2;
-  typedef typename Helper::Base_visitor                 Base;
   typedef typename Helper::Event                        Event;
   typedef typename Helper::Subcurve                     Subcurve;
 
@@ -50,6 +48,7 @@ public:
   typedef std::pair<Vertex_const_handle, Vert_pair>     Vert_entry;
 
 protected:
+  typedef typename Helper::Base_visitor                 Base;
   typedef typename Base::Status_line_iterator           Status_line_iterator;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   //typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
@@ -57,19 +56,19 @@ protected:
                                       Halfedge_around_vertex_const_circulator;
 
   // Data members:
-  Helper m_helper;                  // The helper class.
+  Helper m_helper;                      // The helper class.
 
   const typename Arrangement_2::Geometry_traits_2* m_traits;
-                                    // The traits class.
+                                        // The traits class.
 
   const Vertex_const_handle invalid_vh;
-                                    // An invalid vertex handle.
+                                        // An invalid vertex handle.
 
-  Vertex_const_handle   m_prev_vh;  // The previous vertex.
-  CGAL::Object m_prev_obj_below;    // The object this vertex sees below it.
-  CGAL::Object m_prev_obj_above;    // The object this vertex sees above it.
+  Vertex_const_handle m_prev_vh;        // The previous vertex.
+  CGAL::Object m_prev_obj_below;        // The object this vertex sees below it.
+  CGAL::Object m_prev_obj_above;        // The object this vertex sees above it.
 
-  OutputIterator* m_out;            // An output iterator for the result.
+  OutputIterator* m_out;                // An output iterator for the result.
 
 public:
   /*!

@@ -40,27 +40,30 @@ namespace CGAL {
  *      pair<Vertex_const_handle, pair<Object, Object> >, where
  *      the Object represents a handle to an arrangement feature.
  */
-template <typename GeomTraits, typename TopTraits,
+template <typename GeometryTraits_2, typename TopologyTraits,
           typename OutputIterator>
 OutputIterator
-decompose(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
           OutputIterator oi)
 {
-  // Arrangement types:
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraits> Arrangement_2;
-  typedef typename TopTraits::template
-    Surface_sweep_vertical_decomposition_visitor<OutputIterator>
-                                                          Vd_visitor;
+  typedef GeometryTraits_2                              Geom_traits_2;
+  typedef TopologyTraits                                Top_traits;
 
-  typedef typename Arrangement_2::Vertex_const_iterator   Vertex_const_iterator;
-  typedef typename Arrangement_2::Edge_const_iterator     Edge_const_iterator;
-  typedef typename Arrangement_2::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arrangement_2::X_monotone_curve_2      X_monotone_curve_2;
-  typedef typename Arrangement_2::Point_2                 Point_2;
-  typedef typename Vd_visitor::Traits_2                   Vd_traits_2;
-  typedef typename Vd_traits_2::X_monotone_curve_2        Vd_x_monotone_curve_2;
-  typedef typename Vd_traits_2::Point_2                   Vd_point_2;
+  // Arrangement types:
+  typedef Arrangement_on_surface_2<Geom_traits_2, Top_traits> Arr_2;
+  typedef typename Top_traits::template
+    Surface_sweep_vertical_decomposition_visitor<OutputIterator>
+                                                        Vd_visitor;
+
+  typedef typename Arr_2::Vertex_const_iterator         Vertex_const_iterator;
+  typedef typename Arr_2::Edge_const_iterator           Edge_const_iterator;
+  typedef typename Arr_2::Vertex_const_handle           Vertex_const_handle;
+  typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
+  typedef typename Arr_2::X_monotone_curve_2            X_monotone_curve_2;
+  typedef typename Arr_2::Point_2                       Point_2;
+  typedef typename Vd_visitor::Traits_2                 Vd_traits_2;
+  typedef typename Vd_traits_2::X_monotone_curve_2      Vd_x_monotone_curve_2;
+  typedef typename Vd_traits_2::Point_2                 Vd_point_2;
 
   // Go over all arrangement edges and collect their associated x-monotone
   // curves. To each curve we attach a halfedge handle going from right to
@@ -98,21 +101,21 @@ decompose(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   }
 
   // Obtain a extended traits-class object.
-  const GeomTraits* geom_traits = arr.geometry_traits();
+  const Geom_traits_2* geom_traits = arr.geometry_traits();
 
   /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Vd_traits_2 is the same as the type
-   * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
-   * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor.
+   * If the type Vd_traits_2 is the same as the type Geom_traits_2, use a
+   * reference to Geom_traits_2 to avoid constructing a new one.  Otherwise,
+   * instantiate a local variable of the former and provide the later as a
+   * single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<GeomTraits, Vd_traits_2>,
+  typename boost::mpl::if_<boost::is_same<Geom_traits_2, Vd_traits_2>,
                            const Vd_traits_2&, Vd_traits_2>::type
     ex_traits(*geom_traits);
 
@@ -123,7 +126,6 @@ decompose(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                                   typename Vd_visitor::Subcurve,
                                   typename Vd_visitor::Event>
     surface_sweep(&ex_traits, &visitor);
-
   surface_sweep.sweep(xcurves_vec.begin(), xcurves_vec.end(),  // Curves.
                       iso_pts_vec.begin(), iso_pts_vec.end()); // Action points.
 

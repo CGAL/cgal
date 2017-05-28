@@ -343,18 +343,15 @@ _handle_left_curves()
       if (m_is_event_on_above) {
         // The current event is on the interior of existing curve on the
         // status line. Since the basic sweep does not allow intersections,
-        // this is possible  only if the event is an isolated query point.
+        // this is possible only if the event is an isolated query point.
         CGAL_assertion(! m_currentEvent->has_right_curves() &&
                         m_currentEvent->is_query());
 
-        //m_is_event_on_above = true;
         m_visitor->before_handle_event(m_currentEvent);
       }
-      else
-        m_visitor->before_handle_event(m_currentEvent);
+      else m_visitor->before_handle_event(m_currentEvent);
     }
-    else
-      m_visitor->before_handle_event(m_currentEvent);
+    else m_visitor->before_handle_event(m_currentEvent);
 
     // Nothing else to do (no left curves).
     CGAL_SL_PRINT_END_EOL("handling left curves");
@@ -538,12 +535,17 @@ _handle_right_curves()
   // status line.
   Event_subcurve_iterator curr = m_currentEvent->right_curves_begin();
   Event_subcurve_iterator right_end = m_currentEvent->right_curves_end();
-  Status_line_iterator sl_iter;
 
   while (curr != right_end) {
-    CGAL_SL_PRINT_INSERT(*curr);
-    sl_iter = m_statusLine.insert_before(m_status_line_insert_hint, *curr);
     Subcurve* sc = *curr;
+    CGAL_SL_PRINT_INSERT(sc);
+
+    // Insert the curve to the left-curves of the right event.
+    sc->right_event()->add_curve_to_left(sc);
+
+    // Insert the curve into the status line.
+    Status_line_iterator sl_iter =
+      m_statusLine.insert_before(m_status_line_insert_hint, sc);
     sc->set_hint(sl_iter);
 
     CGAL_SL_DEBUG(PrintStatusLine(););
@@ -677,27 +679,14 @@ _push_event(const Point_2& pt, Attribute type,
   // endpoints, update the event and the subcurve records accordingly.
   // Note that this must be done before we actually insert the new event
   // into the event queue.
-  if (sc != NULL) {
-    if (type == Event::LEFT_END) {
-      sc->set_left_event(e);
-      _add_curve_to_right(e, sc);
-    }
-    else {
-      CGAL_assertion(type == Event::RIGHT_END);
-      sc->set_right_event(e);
-      e->add_curve_to_left(sc);
-    }
-  }
+  _add_curve(e, sc, type);
 
-  if (! exist) {
-    // Insert the new event into the queue using the hint we got when we
-    // looked for it.
-    m_queue->insert_before(pair_res.first, e);
-    CGAL_SL_PRINT_NEW_EVENT(pt, e);
-  }
-  else {
-    CGAL_SL_PRINT_UPDATE_EVENT(pt, e);
-  }
+  // Insert the new event into the queue using the hint we got when we
+  // looked for it.
+  if (! exist) m_queue->insert_before(pair_res.first, e);
+
+  if (! exist) CGAL_SL_PRINT_NEW_EVENT(pt, e);
+  else CGAL_SL_PRINT_UPDATE_EVENT(pt, e);
 
   // Return the resulting event and a flag indicating whether we have created
   // a new event.
@@ -716,9 +705,6 @@ No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
             Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc)
 {
-  //cv has no member named 'base'
-  //std::cout << "cv: " << cv.base() << std::endl;
-
   // Look for the curve end in the event queue.
   Event* e;
 
@@ -761,24 +747,35 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
   // endpoints, update the event and the subcurve records accordingly.
   // Note that this must be done before we actually insert the new event
   // into the event queue.
-  if (sc != NULL) {
-    if (type == Event::LEFT_END) {
-      sc->set_left_event(e);
-      _add_curve_to_right(e, sc);
-    }
-    else {
-      CGAL_assertion(type == Event::RIGHT_END);
-      sc->set_right_event(e);
-      e->add_curve_to_left(sc);
-    }
+  _add_curve(e, sc, type);
+
+  // Insert the new event into the queue using the hint we got when we
+  // looked for it.
+  if (! exist) m_queue->insert_before(pair_res.first, e);
+
+  return (std::make_pair(e, !exist));
+}
+
+//-----------------------------------------------------------------------------
+// add a curve as a right curve or left curve when the event is created
+// or updated.
+//
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
+void No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_add_curve(Event* e, Subcurve* sc, Attribute type)
+{
+  if (sc == NULL) return;
+
+  if (type == Event::LEFT_END) {
+    sc->set_left_event(e);
+    _add_curve_to_right(e, sc);
+    return;
   }
 
-  if (! exist) {
-    // Insert the new event into the queue using the hint we got when we
-    // looked for it.
-    m_queue->insert_before(pair_res.first, e);
-  }
-  return (std::make_pair(e, !exist));
+  CGAL_assertion(type == Event::RIGHT_END);
+  sc->set_right_event(e);
+  // Defer the insertion of the curve to the left-curves of the right event.
 }
 
 } //namespace CGAL

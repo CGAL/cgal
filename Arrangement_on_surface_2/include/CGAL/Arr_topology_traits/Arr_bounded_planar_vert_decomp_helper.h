@@ -32,20 +32,22 @@ namespace CGAL {
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_>
+template <typename Traits_, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_bounded_planar_vert_decomp_helper {
 public:
-  typedef Traits_                                      Traits_2;
-  typedef Arrangement_                                 Arrangement_2;
+  typedef Traits_                                       Traits_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typedef Surface_sweep_empty_visitor<Traits_2>        Base_visitor;
-  typedef typename Base_visitor::Event                 Event;
-  typedef typename Base_visitor::Subcurve              Subcurve;
+  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
+                                                        Base_visitor;
 
 protected:
-  typedef typename Arrangement_2::Topology_traits      Topology_traits;
+  typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
   // Data members:
   const Topology_traits* m_top_traits;  // The topology-traits class.
@@ -76,18 +78,10 @@ public:
   //@}
 
   /*! Get the current top object. */
-  CGAL::Object top_object() const
-  {
-    // Wrap the unbounded face by a CGAL object.
-    return (CGAL::make_object(m_unb_face));
-  }
+  CGAL::Object top_object() const { return CGAL::make_object(m_unb_face); }
 
   /*! Get the current bottom object. */
-  CGAL::Object bottom_object() const
-  {
-    // Wrap the unbounded face by a CGAL object.
-    return (CGAL::make_object(m_unb_face));
-  }
+  CGAL::Object bottom_object() const { return CGAL::make_object(m_unb_face); }
 };
 
 } //namespace CGAL
