@@ -682,9 +682,12 @@ public:
     return point(pp, geom_traits().construct_weighted_point_3_object());
   }
 
+  // unused and undocumented function required to be compatible with Alpha_shape_3
+  //
+  // Note that this returns a canonical version of the point (that is, the copy
+  // of the point that is inthe base domain) and is NOT equal to point(c->vertex(idx))
   Weighted_point point(Cell_handle c, int idx) const
   {
-    // calls the base function with the correct (weighted) point functor
     return point(c, idx, geom_traits().construct_weighted_point_3_object());
   }
 
