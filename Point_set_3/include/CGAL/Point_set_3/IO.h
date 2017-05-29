@@ -201,10 +201,11 @@ std::istream& operator>>(std::istream& is,
   std::string line;
   if (!getline(is, line))
     return is;
+
   is.seekg(0);
-  if (line == "OFF" || line == "NOFF")
+  if (line.find("OFF") == 0 || line.find("NOFF") == 0)
     CGAL::read_off_point_set (is, ps);
-  else if (line == "ply")
+  else if (line.find("ply") == 0)
     CGAL::read_ply_point_set (is, ps);
   else
     CGAL::read_xyz_point_set (is, ps);
