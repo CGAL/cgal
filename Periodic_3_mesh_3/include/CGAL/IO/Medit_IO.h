@@ -81,8 +81,6 @@ Stream& write_complex_to_medit(Stream &out, C3t3 &c3t3,
   typedef typename C3t3::Triangulation           Triangulation;
   typedef Triangulation                          Tr;
 
-  typedef typename Triangulation::Iso_cuboid     Iso_cuboid;
-
   typedef typename Triangulation::Triangle       Triangle;
   typedef typename Triangulation::Tetrahedron    Tetrahedron;
 
@@ -97,8 +95,6 @@ Stream& write_complex_to_medit(Stream &out, C3t3 &c3t3,
   out << "MeshVersionFormatted 1\nDimension 3\nVertices"
       << "\n" << number_of_vertices * occurence_count
       << std::endl;
-
-  Iso_cuboid cb = t.domain();
 
   for(unsigned j = 0; j < occurence_count; j++ ) {
     for (Facet_iterator it =c3t3.facets_begin(); it!=c3t3.facets_end(); it++) {

@@ -79,7 +79,6 @@ public:
   typedef typename Base::Facet            Facet;
   typedef typename Base::Edge             Edge;
 
-  typedef typename Base::Point            Point;
   typedef typename Base::Bare_point       Bare_point;
   typedef typename Base::Weighted_point   Weighted_point;
   typedef typename Base::Periodic_point   Periodic_point;
