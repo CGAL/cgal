@@ -190,6 +190,9 @@ void init_default_triangulation_vertices(C3T3& c3t3, const MD& oracle)
   typedef typename MD::Subdomain Subdomain;
   typedef typename MD::Is_in_domain Is_in_domain;
 
+  typename Tr::Geom_traits::Construct_point_3 wp2p =
+      c3t3.triangulation().geom_traits().construct_point_3_object();
+
   // test whether a point is in domain
   Is_in_domain is_in_domain = oracle.is_in_domain_object();
   Tr& tr = c3t3.triangulation();
@@ -200,7 +203,7 @@ void init_default_triangulation_vertices(C3T3& c3t3, const MD& oracle)
       ++vertex_it) {
 
     // test
-    const Subdomain subdomain = is_in_domain(vertex_it->point());
+    const Subdomain subdomain = is_in_domain(wp2p(vertex_it->point()));
 
     // if the point is inside
     if(subdomain) {
@@ -221,11 +224,14 @@ void init_domain(C3T3& c3t3, MD& oracle)
 
   Tr& tr = c3t3.triangulation();
 
+  typename Tr::Geom_traits::Construct_point_3 wp2p =
+    tr.geom_traits().construct_point_3_object();
+
   // go over the vertices
   for(Finite_vertices_iterator vertex_it = tr.finite_vertices_begin();
       vertex_it != tr.finite_vertices_end();
       ++vertex_it) {
-    oracle.add_corner(vertex_it->point());
+    oracle.add_corner(wp2p(vertex_it->point()));
   }
 }
 
