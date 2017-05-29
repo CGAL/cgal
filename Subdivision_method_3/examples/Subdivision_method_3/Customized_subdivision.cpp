@@ -1,60 +1,62 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Subdivision_method_3.h>
 
-#include <cstdio>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+
+#include <CGAL/subdivision_method_3.h>
+#include <CGAL/Timer.h>
+
+#include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
+
 #include <iostream>
+#include <fstream>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-
-typedef CGAL::Simple_cartesian<double>     Kernel;
-typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-
+typedef CGAL::Simple_cartesian<double>      Kernel;
+typedef CGAL::Surface_mesh<Kernel::Point_3> PolygonMesh;
 using namespace std;
 using namespace CGAL;
 
 // ======================================================================
 template <class Poly>
 class WLoop_mask_3 {
-  typedef Poly                                         Polyhedron;
+  typedef Poly                                         PolygonMesh;
 
-  typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Polyhedron::Facet_iterator          Facet_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename Polyhedron::Halfedge_around_facet_circulator
-                                            Halfedge_around_facet_circulator;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator
-                                            Halfedge_around_vertex_circulator;
+  typedef typename boost::property_map<PolygonMesh, vertex_point_t>::type Vertex_pmap;
+  typedef typename boost::property_traits<Vertex_pmap>::value_type Point;
 
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
-
-  typedef typename Kernel::FT                          FT;
-  typedef typename Kernel::Point_3                     Point;
-  typedef typename Kernel::Vector_3                    Vector;
+  PolygonMesh& pmesh;
+  Vertex_pmap vpm;
 
 public:
-  void edge_node(Halfedge_iterator eitr, Point& pt) {
-    Point& p1 = eitr->vertex()->point();
-    Point& p2 = eitr->opposite()->vertex()->point();
-    Point& f1 = eitr->next()->vertex()->point();
-    Point& f2 = eitr->opposite()->next()->vertex()->point();
+  WLoop_mask_3(PolygonMesh& pmesh)
+    : pmesh(pmesh), vpm(get(CGAL::vertex_point, pmesh))
+  {}
+
+  void edge_node(halfedge_descriptor hd, Point& pt) {
+    Point& p1 = get(vpm, target(hd,pmesh));
+    Point& p2 = get(vpm, target(opposite(hd,pmesh),pmesh));
+    Point& f1 = get(vpm, target(next(hd,pmesh),pmesh));
+    Point& f2 = get(vpm, target(next(opposite(hd,pmesh),pmesh),pmesh));
 
     pt = Point((3*(p1[0]+p2[0])+f1[0]+f2[0])/8,
-	       (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
-	       (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
+               (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
+               (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
   }
-  void vertex_node(Vertex_iterator vitr, Point& pt) {
+  void vertex_node(vertex_descriptor vd, Point& pt) {
     double R[] = {0.0, 0.0, 0.0};
-    Point& S = vitr->point();
+    Point& S = get(vpm,vd);
 
-    Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
-    std::size_t n = circulator_size(vcir);
-    for (std::size_t i = 0; i < n; i++, ++vcir) {
-      Point& p = vcir->opposite()->vertex()->point();
+    std::size_t n = 0;
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vd, pmesh)){
+      ++n;
+      Point& p = get(vpm, target(opposite(hd,pmesh),pmesh));
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
     }
+
     if (n == 6) {
       pt = Point((10*S[0]+R[0])/16, (10*S[1]+R[1])/16, (10*S[2]+R[2])/16);
     } else if (n == 3) {
@@ -67,15 +69,17 @@ public:
       pt = Point((A*S[0]+B*R[0]), (A*S[1]+B*R[1]), (A*S[2]+B*R[2]));
     }
   }
-  void border_node(Halfedge_iterator eitr, Point& ept, Point& vpt) {
-    Point& ep1 = eitr->vertex()->point();
-    Point& ep2 = eitr->opposite()->vertex()->point();
+
+  void border_node(halfedge_descriptor hd, Point& ept, Point& vpt) {
+    Point& ep1 = get(vpm, target(hd,pmesh));
+    Point& ep2 = get(vpm, target(opposite(hd,pmesh),pmesh));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-    Halfedge_around_vertex_circulator vcir = eitr->vertex_begin();
-    Point& vp1  = vcir->opposite()->vertex()->point();
-    Point& vp0  = vcir->vertex()->point();
-    Point& vp_1 = (--vcir)->opposite()->vertex()->point();
+    Halfedge_around_target_circulator<Poly> vcir(hd,pmesh);
+    Point& vp1  = get(vpm, target(opposite(*vcir,pmesh),pmesh));
+    Point& vp0  = get(vpm, target(*vcir,pmesh));
+    --vcir;
+    Point& vp_1 = get(vpm,target(opposite(*vcir,pmesh),pmesh));
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
@@ -83,21 +87,33 @@ public:
 };
 
 int main(int argc, char **argv) {
-  if (argc != 2) {
-    cout << "Usage: Customized_subdivision d < filename" << endl;
-    cout << "       d: the depth of the subdivision (0 < d < 10)" << endl;
-    cout << "       filename: the input mesh (.off)" << endl;
-    return 0;
+  if (argc > 4) {
+    cerr << "Usage: Customized_subdivision [d] [filename_in] [filename_out] \n";
+    cerr << "         d -- the depth of the subdivision (default: 1) \n";
+    cerr << "         filename_in -- the input mesh (.off) (default: data/quint_tris.off) \n";
+    cerr << "         filename_out -- the output mesh (.off) (default: result.off)" << endl;
+    return 1;
   }
 
-  int d = argv[1][0] - '0';
+  int d = (argc > 1) ? boost::lexical_cast<int>(argv[1]) : 1;
+  const char* in_file = (argc > 2) ? argv[2] : "data/quint_tris.off";
+  const char* out_file = (argc > 3) ? argv[3] : "result.off";
 
-  Polyhedron P;
-  cin >> P; // read the .off
+  PolygonMesh pmesh;
+  std::ifstream in(in_file);
+  if(in.fail()) {
+    std::cerr << "Could not open input file " << in_file << std::endl;
+    return 1;
+  }
+  in >> pmesh;
 
-  Subdivision_method_3::PTQ(P, WLoop_mask_3<Polyhedron>(), d);
+  Timer t;
+  t.start();
+  Subdivision_method_3::PTQ(pmesh, WLoop_mask_3<PolygonMesh>(pmesh), d);
+  std::cerr << "Done (" << t.time() << " s)" << std::endl;
 
-  cout << P; // write the .off
+  std::ofstream out(out_file);
+  out << pmesh;
 
   return 0;
 }
