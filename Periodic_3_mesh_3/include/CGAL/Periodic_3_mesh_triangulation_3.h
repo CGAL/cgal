@@ -96,25 +96,26 @@ public:
   typedef typename Base::Conflict_tester  Conflict_tester;
   typedef typename Base::Covering_sheets  Covering_sheets;
 
+  using Base::construct_periodic_point;
+  using Base::construct_point;
+  using Base::construct_segment;
+  using Base::construct_tetrahedron;
   using Base::dual;
-  using Base::tds;
   using Base::get_offset;
   using Base::incident_cells;
   using Base::incident_edges;
   using Base::incident_facets;
-  using Base::segment;
-  using Base::set_offsets;
-  using Base::point;
-  using Base::tetrahedron;
   using Base::periodic_tetrahedron;
+  using Base::point;
+  using Base::tds;
+  using Base::set_offsets;
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Base::inexact_locate;
 #endif
 
   /// Constructor
-  Periodic_3_regular_triangulation_3_mesher_3(
-      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geometric_traits& gt = Geometric_traits())
+  Periodic_3_regular_triangulation_3_mesher_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+                                              const Geometric_traits& gt = Geometric_traits())
     : Base(domain, gt)
   {
     this->insert_dummy_points();
