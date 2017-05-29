@@ -18,6 +18,9 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#include <QColor>
+
+#include "properties.h"
 
 struct Scene_surface_mesh_item_priv;
 
@@ -29,14 +32,19 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
+  typedef SMesh Face_graph;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
 
+  Scene_surface_mesh_item();
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);
   Scene_surface_mesh_item(SMesh);
   Scene_surface_mesh_item(const Scene_surface_mesh_item& other);
 
   ~Scene_surface_mesh_item();
+
 
   Scene_surface_mesh_item* clone() const Q_DECL_OVERRIDE;
   void draw(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
@@ -49,10 +57,24 @@ public:
   Bbox bbox() const Q_DECL_OVERRIDE;
   QString toolTip() const Q_DECL_OVERRIDE;
 
+  // Only needed for Scene_polyhedron_item
+  void setItemIsMulticolor(bool){}
+  void update_vertex_indices(){}
+  void update_halfedge_indices(){}
+  void update_facet_indices(){}
+
+  std::vector<QColor>& color_vector();
+
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
+
+  Face_graph*       face_graph() { return polyhedron(); }
+  const Face_graph* face_graph() const { return polyhedron(); }
+
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
+  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
+
 public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   virtual void selection_changed(bool) Q_DECL_OVERRIDE;
@@ -60,6 +82,7 @@ protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
 };
+
 
 
 #endif /* CGAL_SCENE_SURFACE_MESH_ITEM_H */

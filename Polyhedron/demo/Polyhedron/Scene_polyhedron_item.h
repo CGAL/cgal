@@ -28,6 +28,7 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
     Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
+    typedef Polyhedron Face_graph;
     enum STATS {
       NB_VERTICES = 0,
       NB_CONNECTED_COMPOS,
@@ -96,6 +97,9 @@ public:
     Polyhedron*       polyhedron();
     const Polyhedron* polyhedron() const;
 
+    Face_graph*       face_graph() { return polyhedron(); }
+    const Face_graph* face_graph() const { return polyhedron(); }
+
     // Get dimensions
     bool isFinite() const Q_DECL_OVERRIDE { return true; }
     bool isEmpty() const Q_DECL_OVERRIDE;
@@ -103,6 +107,7 @@ public:
     std::vector<QColor>& color_vector();
     void set_color_vector_read_only(bool on_off);
     bool is_color_vector_read_only();
+
     int getNumberOfNullLengthEdges();
     int getNumberOfDegeneratedFaces();
     bool triangulated();

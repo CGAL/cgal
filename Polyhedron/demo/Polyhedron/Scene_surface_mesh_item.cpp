@@ -1,5 +1,6 @@
 #include "Scene_surface_mesh_item.h"
 
+#include "Color_map.h"
 #include <queue>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -12,6 +13,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
+#include "properties.h"
 
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
@@ -24,7 +26,7 @@ struct Scene_surface_mesh_item_priv{
   typedef Kernel::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
+  typedef std::vector<QColor> Color_vector;
 
   Scene_surface_mesh_item_priv(const Scene_surface_mesh_item& other, Scene_surface_mesh_item* parent):
     smesh_(new SMesh(*other.d->smesh_)),
@@ -48,6 +50,8 @@ struct Scene_surface_mesh_item_priv{
       smesh_ = NULL;
     }
   }
+
+  void initialize_colors();
 
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void addFlatData(Point, Kernel::Vector_3, CGAL::Color *) const;
@@ -84,6 +88,7 @@ struct Scene_surface_mesh_item_priv{
     NbOfVbos
   };
 
+  mutable bool has_fpatch_id;
   mutable bool floated;
   mutable bool has_vcolors;
   mutable bool has_fcolors;
@@ -102,7 +107,25 @@ struct Scene_surface_mesh_item_priv{
   mutable QOpenGLShaderProgram *program;
   Scene_surface_mesh_item *item;
 
+  mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
+
+  Color_vector colors_;
+  void computeElements() const;
 };
+
+Scene_surface_mesh_item::Scene_surface_mesh_item()
+  : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
+{
+  d = new Scene_surface_mesh_item_priv(new SMesh(), this);
+  d->floated = false;
+
+  d->has_vcolors = false;
+  d->has_fcolors = false;
+  d->checkFloat();
+
+  are_buffers_filled = false;
+}
+
 Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
   : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
 {
@@ -118,64 +141,7 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->has_vcolors = false;
   d->has_fcolors = false;
   d->checkFloat();
-  SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
-    d->smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
 
-  SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
-      d->smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
-  CGAL::Polygon_mesh_processing::compute_face_normals(*d->smesh_,fnormals);
-
-  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  CGAL::Polygon_mesh_processing::compute_vertex_normals(*d->smesh_,vnormals);
-
-
-  boost::property_map< SMesh, boost::vertex_index_t >::type
-    im = get(boost::vertex_index, *d->smesh_);
-
-  d->idx_data_.reserve(num_faces(*d->smesh_) * 3);
-
-  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
-
-
-
-  BOOST_FOREACH(face_descriptor fd, faces(*d->smesh_))
-  {
-    if(is_triangle(halfedge(fd,*d->smesh_),*d->smesh_))
-    {
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *d->smesh_),*d->smesh_))
-      {
-        d->idx_data_.push_back(im[source(hd, *d->smesh_)]);
-      }
-    }
-    else if(is_quad(halfedge(fd,*d->smesh_),*d->smesh_))
-    {
-      halfedge_descriptor hd = halfedge(fd,*d->smesh_);
-      //1st half
-        d->idx_data_.push_back(im[source(hd, *d->smesh_)]);
-        d->idx_data_.push_back(im[source(next(hd, *d->smesh_), *d->smesh_)]);
-        d->idx_data_.push_back(im[source(next(next(hd, *d->smesh_), *d->smesh_), *d->smesh_)]);
-
-        //2nd half
-        d->idx_data_.push_back(im[source(hd, *d->smesh_)]);
-        d->idx_data_.push_back(im[source(next(next(hd, *d->smesh_), *d->smesh_), *d->smesh_)]);
-        d->idx_data_.push_back(im[source(prev(hd, *d->smesh_), *d->smesh_)]);
-    }
-    else
-    {
-      d->triangulate_facet(fd, &fnormals, 0, &im, true);
-    }
-  }
-
-  d->idx_edge_data_.reserve(num_edges(*d->smesh_) * 2);
-  BOOST_FOREACH(edge_descriptor ed, edges(*d->smesh_))
-  {
-    d->idx_edge_data_.push_back(im[source(ed, *d->smesh_)]);
-    d->idx_edge_data_.push_back(im[target(ed, *d->smesh_)]);
-  }
-
-  d->compute_elements();
   are_buffers_filled = false;
 }
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
@@ -193,6 +159,14 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh sm)
 Scene_surface_mesh_item*
 Scene_surface_mesh_item::clone() const
 { return new Scene_surface_mesh_item(*this); }
+
+
+std::vector<QColor>&
+Scene_surface_mesh_item::color_vector()
+{
+  return d->colors_;
+}
+
 
 void Scene_surface_mesh_item_priv::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Color *c) const
 {
@@ -224,14 +198,70 @@ void Scene_surface_mesh_item_priv::compute_elements()
   flat_normals.clear();
   f_colors.clear();
   v_colors.clear();
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
-    smesh_->points();
+  idx_data_.clear();
+  idx_data_.shrink_to_fit();
+
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
-    smesh_->property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
+    smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
 
   SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
-      smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
+      smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("f:normal").first;
+  CGAL::Polygon_mesh_processing::compute_face_normals(*smesh_,fnormals);
+
+  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  CGAL::Polygon_mesh_processing::compute_vertex_normals(*smesh_,vnormals);
+
+
+  boost::property_map< SMesh, boost::vertex_index_t >::type
+    im = get(boost::vertex_index, *smesh_);
+
+  idx_data_.reserve(num_faces(*smesh_) * 3);
+
+  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
+
+
+  BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
+  {
+    if(is_triangle(halfedge(fd,*smesh_),*smesh_))
+    {
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+      {
+        idx_data_.push_back(source(hd, *smesh_));
+      }
+    }
+    else if(is_quad(halfedge(fd,*smesh_),*smesh_))
+    {
+      halfedge_descriptor hd = halfedge(fd,*smesh_);
+      //1st half
+        idx_data_.push_back(source(hd, *smesh_));
+        idx_data_.push_back(source(next(hd, *smesh_), *smesh_));
+        idx_data_.push_back(source(next(next(hd, *smesh_), *smesh_), *smesh_));
+
+        //2nd half
+        idx_data_.push_back(source(hd, *smesh_));
+        idx_data_.push_back(source(next(next(hd, *smesh_), *smesh_), *smesh_));
+        idx_data_.push_back(source(prev(hd, *smesh_), *smesh_));
+    }
+    else
+    {
+      triangulate_facet(fd, &fnormals, 0, &im, true);
+    }
+  }
+  idx_edge_data_.clear();
+  idx_edge_data_.shrink_to_fit();
+  idx_edge_data_.reserve(num_edges(*smesh_) * 2);
+  BOOST_FOREACH(edge_descriptor ed, edges(*smesh_))
+  {
+    idx_edge_data_.push_back(source(ed, *smesh_));
+    idx_edge_data_.push_back(target(ed, *smesh_));
+  }
+
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
+  SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
+    smesh_->points();
 
   SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
@@ -247,6 +277,11 @@ void Scene_surface_mesh_item_priv::compute_elements()
   if(smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
     has_fcolors = true;
 
+  has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").second;
+
+  if(has_fpatch_id && colors_.empty()){
+    initialize_colors();
+  }
 //compute the Flat data
   flat_vertices.clear();
   flat_normals.clear();
@@ -267,7 +302,14 @@ void Scene_surface_mesh_item_priv::compute_elements()
         flat_normals.push_back((cgal_gl_data)n.y());
         flat_normals.push_back((cgal_gl_data)n.z());
 
-        if(has_fcolors)
+        if(has_fpatch_id)
+        {
+          QColor c = item->color_vector()[fpatch_id_map[fd]];
+          f_colors.push_back(c.redF());
+          f_colors.push_back(c.greenF());
+          f_colors.push_back(c.blueF());
+        }
+        else if(has_fcolors)
         {
           CGAL::Color c = fcolors[fd];
           f_colors.push_back((float)c.red()/255);
@@ -349,6 +391,23 @@ void Scene_surface_mesh_item_priv::compute_elements()
   }
   QApplication::restoreOverrideCursor();
 }
+
+
+void Scene_surface_mesh_item_priv::initialize_colors()
+{
+  // Fill indices map and get max subdomain value
+  int max = 0;
+  int min = (std::numeric_limits<int>::max)();
+  BOOST_FOREACH(face_descriptor fd, faces(*smesh_)){
+    max = (std::max)(max, fpatch_id_map[fd]);
+    min = (std::min)(min, fpatch_id_map[fd]);
+  }
+
+  colors_.clear();
+  compute_color_map(item->color(), (std::max)(0, max + 1 - min),
+                    std::back_inserter(colors_));
+}
+
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
@@ -374,7 +433,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   program->enableAttributeArray("normals");
   program->setAttributeBuffer("normals",CGAL_GL_DATA,0,3);
   item->buffers[Scene_surface_mesh_item_priv::Flat_normals].release();
-  if(has_fcolors)
+  if(has_fcolors || has_fpatch_id)
   {
     item->buffers[Scene_surface_mesh_item_priv::FColors].bind();
     item->buffers[Scene_surface_mesh_item_priv::FColors].allocate(f_colors.data(),
@@ -515,9 +574,26 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
  d->program->release();
 }
 
-void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *) const
+void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer) const
 {
-
+  if(!are_buffers_filled)
+  {
+    d->compute_elements();
+    d->initializeBuffers(viewer);
+  }
+ attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+ d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+ d->program->bind();
+ vaos[Scene_surface_mesh_item_priv::Edges]->bind();
+ d->program->setAttributeValue("colors", QColor(0,0,0));
+ if(is_selected)
+   d->program->setAttributeValue("is_selected", true);
+ else
+   d->program->setAttributeValue("is_selected", false);
+ glDrawElements(GL_POINTS, static_cast<GLuint>(d->idx_edge_data_.size()),
+                GL_UNSIGNED_INT, d->idx_edge_data_.data());
+ vaos[Scene_surface_mesh_item_priv::Edges]->release();
+ d->program->release();
 }
 
 void
@@ -531,7 +607,7 @@ Scene_surface_mesh_item::selection_changed(bool p_is_selected)
 
 bool
 Scene_surface_mesh_item::supportsRenderingMode(RenderingMode m) const
-{ return (m == FlatPlusEdges || m == Wireframe || m == Flat || m == Gouraud); }
+{ return (m == FlatPlusEdges || m == Wireframe || m == Flat || m == Gouraud || m == Points); }
 
 CGAL::Three::Scene_item::Bbox Scene_surface_mesh_item::bbox() const
 {
@@ -661,4 +737,10 @@ void Scene_surface_mesh_item::itemAboutToBeDestroyed(Scene_item *item)
     delete d->smesh_;
     d->smesh_ = NULL;
   }
+}
+
+void Scene_surface_mesh_item::invalidateOpenGLBuffers()
+{
+  are_buffers_filled = false;
+  d->smesh_->collect_garbage();
 }
