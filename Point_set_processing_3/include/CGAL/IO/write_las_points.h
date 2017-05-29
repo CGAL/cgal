@@ -52,10 +52,10 @@ namespace CGAL {
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-  cpp11::tuple<PointMap, Property::X, Property::Y, Property::Z >
+  cpp11::tuple<PointMap, LAS_property::X, LAS_property::Y, LAS_property::Z >
   make_las_point_writer(PointMap point_map)
   {
-    return cpp11::make_tuple (point_map, Property::X(), Property::Y(), Property::Z());
+    return cpp11::make_tuple (point_map, LAS_property::X(), LAS_property::Y(), LAS_property::Z());
   }
 
   /// \cond SKIP_IN_MANUAL
