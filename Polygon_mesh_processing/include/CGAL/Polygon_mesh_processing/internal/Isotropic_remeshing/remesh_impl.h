@@ -351,8 +351,9 @@ namespace internal {
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
-        Triangle_3 t = triangle(f);
-        if (t.is_degenerate()) continue;
+        if (is_degenerate_triangle_face(halfedge(f,mesh_),mesh_,vpmap_,GeomTraits())){
+          continue;
+        }
         Patch_id pid = get_patch_id(f);
         input_triangles_.push_back(triangle(f));
         input_patch_ids_.push_back(pid);
