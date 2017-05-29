@@ -202,6 +202,47 @@ namespace internal {
     }
   };
 
+
+  template <typename PM>
+  struct Halfedge_status_pmap {
+
+    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+    typedef boost::unordered_map<halfedge_descriptor, Halfedge_status > Halfedge_status_map;
+    typedef boost::shared_ptr<Halfedge_status_map> Halfedge_status_map_ptr;
+    Halfedge_status_map_ptr halfedge_status_map_ptr;
+
+
+    Halfedge_status_pmap(int)
+      : halfedge_status_map_ptr(new Halfedge_status_map())
+    {}
+      
+    typedef halfedge_descriptor                key_type;
+    typedef Halfedge_status                    value_type;
+    typedef value_type&                        reference;
+    typedef boost::read_write_property_map_tag category;
+
+
+    friend value_type get(const Halfedge_status_pmap& pm, const key_type& h)
+    {
+      typename Halfedge_status_map::const_iterator
+        it = pm.halfedge_status_map_ptr->find(h);
+      if (it == pm.halfedge_status_map_ptr->end())
+        return MESH;
+      return it->second;
+    }
+
+
+    friend void put(Halfedge_status_pmap& pm, const key_type& h, value_type s)
+    {
+      if (s == MESH)
+        pm.halfedge_status_map_ptr->erase(h);
+      else
+        (*(pm.halfedge_status_map_ptr))[h] = s;
+    }
+
+  };
+
+
   template<typename PM,
            typename EdgeConstraintMap,
            typename VertexPointMap>
@@ -282,7 +323,7 @@ namespace internal {
       , own_tree_(own_tree)
       , input_triangles_()
       , input_patch_ids_()
-      , halfedge_status_map_()
+      , halfedge_status_pmap_(0)
       , protect_constraints_(protect_constraints)
       , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
@@ -516,14 +557,16 @@ namespace internal {
             ? PATCH
             : MESH;
           // AF: I do not understand why we would call halfedge_added with snew = MESH
-          //     as set_status(,MESH) erases from the set, and status(h) returns MESH in case h is not found
+          //     as set_status(,MESH) erases from the set, and status(h) returns MESH 
+          //     in case h is not found
+          // JT: We have to pay attention when recycling faces with potentially a wrong status
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
           set_patch_id(face(hnew2, mesh_), patch_id);
           set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
 
           if (snew == PATCH)
-          {
+          {  
             double sql = sqlength(hnew2);
             if (sql > sq_high)
               long_edges.insert(long_edge(hnew2, sql));
@@ -1470,16 +1513,12 @@ private:
       }
     }
 
+
     // AF: This could become the get of a PM
     // AF: for a Surface_mesh::Property_map we make MESH the default value
     Halfedge_status status(const halfedge_descriptor& h) const
     {
-      typename boost::unordered_map <
-        halfedge_descriptor, Halfedge_status >::const_iterator
-          it = halfedge_status_map_.find(h);
-      if (it == halfedge_status_map_.end())
-        return MESH;
-      return it->second;
+      return get(halfedge_status_pmap_,h);
     }
 
     // AF: This could become the put of a PM
@@ -1487,10 +1526,7 @@ private:
     void set_status(const halfedge_descriptor& h,
                     const Halfedge_status& s)
     {
-      if (s == MESH)
-        halfedge_status_map_.erase(h);
-      else
-        halfedge_status_map_[h] = s;
+      put(halfedge_status_pmap_,h,s);
     }
 
     void merge_status(const halfedge_descriptor& en,
@@ -1865,7 +1901,7 @@ private:
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
     Patch_id_to_index_map patch_id_to_index_map_;
-    boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
+    mutable Halfedge_status_pmap<PolygonMesh> halfedge_status_pmap_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
