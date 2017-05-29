@@ -98,7 +98,8 @@ Stream& write_complex_to_medit(Stream &out, C3t3 &c3t3,
 
   for(unsigned j = 0; j < occurence_count; j++ ) {
     for (Facet_iterator it =c3t3.facets_begin(); it!=c3t3.facets_end(); it++) {
-      Triangle tri = t.triangle(canonicalize_triangle<Tr>(t.periodic_triangle(*it)));
+      Triangle tri = t.construct_triangle(canonicalize_triangle<Tr>(
+                                            t.periodic_triangle(*it)));
       for(int i = 0; i < 3; i++) {
         out << tri[i].x() + (j&1) << " "
             << tri[i].y() + ((j&2) >> 1) << " "
@@ -110,7 +111,8 @@ Stream& write_complex_to_medit(Stream &out, C3t3 &c3t3,
 
   for(unsigned j = 0; j < occurence_count; j++ ) {
     for (Cell_iterator it = c3t3.cells_begin(); it !=c3t3.cells_end(); it++) {
-      Tetrahedron tet = t.tetrahedron(canonicalize_tetrahedron<Tr>(t.periodic_tetrahedron( it )));
+      Tetrahedron tet = t.construct_tetrahedron(canonicalize_tetrahedron<Tr>(
+                                                  t.periodic_tetrahedron(it)));
       for(int i = 0; i < 4; i++) {
         out << tet[i].x() + (j&1) << " "
             << tet[i].y() + ((j&2) >> 1) << " "

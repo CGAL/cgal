@@ -175,7 +175,7 @@ public:
   Tetrahedron tetrahedron(const Cell_handle c) const
   {
     Periodic_tetrahedron ptet = periodic_tetrahedron(c);
-    return tetrahedron(ptet);
+    return construct_tetrahedron(ptet);
   }
 
   /*!
@@ -238,10 +238,10 @@ public:
   }
 
   /// Call `CGAL::side_of_power_sphere` with a canonicalized point
-  Bounded_side side_of_power_sphere(const Cell_handle& c, const Point& p,
+  Bounded_side side_of_power_sphere(const Cell_handle& c, const Bare_point& p,
                                     bool perturb = false) const
   {
-    Point point = this->canonicalize_point(p);
+    Bare_point point = canonicalize_point(p);
     return Base::side_of_power_sphere(c, point, Offset(), perturb);
   }
 
@@ -254,7 +254,7 @@ public:
   ///
   /// \sa `CGAL::Regular_triangulation_3::locate`
   /// @{
-  Cell_handle locate(const Point & p,
+  Cell_handle locate(const Weighted_point& p,
                      Cell_handle start = Cell_handle(),
                      bool* could_lock_zone = NULL) const
   {
@@ -262,7 +262,7 @@ public:
     return Base::locate(p, start);
   }
 
-  Cell_handle locate(const Point & p,
+  Cell_handle locate(const Weighted_point& p,
                      Vertex_handle hint,
                      bool* could_lock_zone = NULL) const
   {
@@ -272,7 +272,7 @@ public:
     return Base::locate(p, hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
 
-  Cell_handle locate(const Point& p,
+  Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Cell_handle start = Cell_handle(),
                      bool* could_lock_zone = NULL) const
@@ -281,7 +281,7 @@ public:
     return Base::locate(p, l, i, j, start);
   }
 
-  Cell_handle locate(const Point& p,
+  Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Vertex_handle hint,
                      bool* could_lock_zone = NULL) const
@@ -301,7 +301,7 @@ public:
   /// @{
   template <class OutputIterator>
   OutputIterator
-  vertices_inside_conflict_zone(const /*Weighted_point*/Point& /* p */,
+  vertices_inside_conflict_zone(const Weighted_point& /* p */,
                                 Cell_handle /* c */,
                                 OutputIterator res) const
   {
@@ -313,7 +313,7 @@ public:
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
             class OutputIteratorInternalFacets>
   Triple<OutputIteratorBoundaryFacets, OutputIteratorCells, OutputIteratorInternalFacets>
-  find_conflicts(const Point &p,
+  find_conflicts(const Weighted_point& p,
                  Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
@@ -328,7 +328,7 @@ public:
 
     CGAL_triangulation_precondition( this->number_of_vertices() != 0);
 
-    const Point canonic_p = canonicalize_point(p);
+    const Weighted_point canonic_p = canonicalize_point(p);
 
     // #warning rewrite these lines
     Locate_type lt;
@@ -371,7 +371,7 @@ public:
 
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
-  find_conflicts(const Point &p, Cell_handle c,
+  find_conflicts(const Weighted_point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  bool* could_lock_zone = NULL) const
@@ -396,7 +396,8 @@ public:
   ///
   /// @{
   template <class CellIt>
-  Vertex_handle insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+  Vertex_handle insert_in_hole(const Weighted_point& p,
+                               CellIt cell_begin, CellIt cell_end,
                                Cell_handle begin, int i)
   {
     Vertex_handle v = tds().insert_in_hole(cell_begin, cell_end, begin, i);
@@ -421,7 +422,7 @@ public:
     return v;
   }
 
-  Vertex_handle insert(const Point& p,
+  Vertex_handle insert(const Weighted_point& p,
                        Cell_handle start = Cell_handle(),
                        bool* could_lock_zone = NULL)
   {
@@ -429,7 +430,7 @@ public:
     return Base::insert(canonicalize_point(p), start);
   }
 
-  Vertex_handle insert(const Point& p,
+  Vertex_handle insert(const Weighted_point& p,
                        Vertex_handle hint,
                        bool* could_lock_zone = NULL)
   {
@@ -440,7 +441,7 @@ public:
                         hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
 
-  Vertex_handle insert(const Point& p,
+  Vertex_handle insert(const Weighted_point& p,
                        Locate_type lt, Cell_handle loc, int li, int lj,
                        bool* could_lock_zone = NULL)
   {
@@ -458,22 +459,22 @@ public:
   }
 
   /// Dual computations
-  Point dual(Cell_handle c) const
+  Bare_point dual(Cell_handle c) const
   {
     // return the canonical point
     //return canonicalize_point(periodic_circumcenter(c));
 
     // return the point with respect to the canonical cell c
-    return this->geom_traits().construct_weighted_circumcenter_3_object()(
-          c->vertex(0)->point(), c->vertex(1)->point(),
-          c->vertex(2)->point(), c->vertex(3)->point(),
-          get_offset(c,0), get_offset(c,1),
-          get_offset(c,2), get_offset(c,3));
+    return this->construct_weighted_circumcenter(
+             c->vertex(0)->point(), c->vertex(1)->point(),
+             c->vertex(2)->point(), c->vertex(3)->point(),
+             get_offset(c,0), get_offset(c,1),
+             get_offset(c,2), get_offset(c,3));
   }
 
   Object dual(const Facet & f) const
   {
-    Segment s = segment(Base::dual(f));
+    Segment s = construct_segment(Base::dual(f));
     return make_object(s);
   }
 };
