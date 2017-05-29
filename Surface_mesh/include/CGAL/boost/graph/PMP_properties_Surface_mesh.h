@@ -43,7 +43,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::face_patch_id_t<void> >
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor face_descriptor;
 
-  typedef CGAL::static_property_map<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor,std::pair<int,int> > type;
+  typedef CGAL::Static_property_map<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor,std::pair<int,int> > type;
   typedef type const_type;
 };
 
@@ -165,7 +165,7 @@ template <typename P>
 CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_patch_id_t<void>)
 inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> & smesh)
 {
-  typedef CGAL::static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
+  typedef CGAL::Static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
 
   return Pmap(std::make_pair(0,1));
 }

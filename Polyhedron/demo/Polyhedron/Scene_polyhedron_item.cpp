@@ -252,7 +252,7 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       int index =0;
       BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
-        if (CGAL::Polygon_mesh_processing::is_degenerated(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
+        if (CGAL::is_degenerate_triangle_face(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
           continue;
         if(!f->is_triangle())
         {

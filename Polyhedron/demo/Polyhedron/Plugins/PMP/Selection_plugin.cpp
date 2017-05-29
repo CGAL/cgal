@@ -606,10 +606,10 @@ public Q_SLOTS:
       bool is_valid = true;
       BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*selection_item->polyhedron()))
       {
-        if(CGAL::Polygon_mesh_processing::is_degenerated(fd,
-                                                         *selection_item->polyhedron(),
-                                                         vpmap,
-                                                         CGAL::Kernel_traits< boost::property_traits<VPmap>::value_type >::Kernel()))
+        if (CGAL::is_degenerate_triangle_face(fd,
+                                              *selection_item->polyhedron(),
+                                              vpmap,
+                                              CGAL::Kernel_traits< boost::property_traits<VPmap>::value_type >::Kernel()))
         {
           is_valid = false;
           break;
@@ -622,7 +622,7 @@ public Q_SLOTS:
                              tr("Degenerated faces have been detected. Problems may occur "
                                 "for operations other tha \"Move point\". "));
       }
-      ui_widget.selection_groupBox->setVisible(false);
+      ui_widget.selectionOrEuler->setVisible(false);
       ui_widget.edition_groupBox->setVisible(true);
       Q_EMIT save_handleType();
       on_editionBox_changed(ui_widget.editionBox->currentIndex());

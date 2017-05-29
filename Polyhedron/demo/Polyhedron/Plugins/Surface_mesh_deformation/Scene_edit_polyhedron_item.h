@@ -72,7 +72,7 @@ struct Id_setter{
     vd->id() = id;
   }
   //update the visu map
-  void set_id(sm_vd vd, std::size_t id)
+  void set_id(sm_vd, std::size_t)
   {
   }
 
