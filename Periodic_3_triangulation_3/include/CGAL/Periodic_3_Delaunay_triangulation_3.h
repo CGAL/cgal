@@ -658,9 +658,12 @@ public:
     return point(pp, geom_traits().construct_point_3_object());
   }
 
+  // unused and undocumented function required to be compatible with Alpha_shape_3
+  //
+  // Note that this returns a canonical point in the base domain and
+  // is NOT equal to point(c->vertex(idx))
   Point point(Cell_handle c, int idx) const
   {
-    // calls the base function with the correct (basic) point functor
     return point(c, idx, geom_traits().construct_point_3_object());
   }
 

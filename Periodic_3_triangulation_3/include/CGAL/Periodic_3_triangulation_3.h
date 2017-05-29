@@ -664,11 +664,11 @@ public:
   // _not_ Point_3 and Periodic_point_3.
   // ---------------------------------------------------------------------------
 
-  const Point & point(Vertex_handle v) const {
+  const Point& point(Vertex_handle v) const {
     return v->point();
   }
 
-  const Point & point(Cell_handle c, int i) const {
+  const Point& point(Cell_handle c, int i) const {
     CGAL_triangulation_precondition( i >= 0 && i <= 3 );
     return c->vertex(i)->point();
   }
@@ -680,7 +680,6 @@ public:
     return cp(pp.first, pp.second);
   }
 
-  // unused and undocumented function required to be compatible with Alpha_shape_3
   // templated by `construct_point` to distingush between Delaunay and regular triangulations
   template <class ConstructPoint>
   Point point(Cell_handle c, int idx, ConstructPoint cp) const
