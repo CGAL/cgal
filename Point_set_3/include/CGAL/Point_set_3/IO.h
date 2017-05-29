@@ -27,7 +27,6 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/read_ply_point_set_3.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/IO/write_off_points.h>
 #include <CGAL/IO/write_ply_points.h>
@@ -39,6 +38,188 @@
 #endif
 
 namespace CGAL {
+
+namespace internal
+{
+  
+namespace PLY
+{
+
+template <typename Point,
+          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
+class Point_set_3_filler
+{
+public:
+  typedef Point_set_3<Point, Vector> Point_set;
+
+private:
+
+  struct Abstract_ply_property_to_point_set_property
+  {
+    virtual ~Abstract_ply_property_to_point_set_property() { }
+    virtual void assign (PLY_reader& reader, typename Point_set::Index index) = 0;
+  };
+
+  template <typename Type>
+  class PLY_property_to_point_set_property : public Abstract_ply_property_to_point_set_property
+  {
+    typedef typename Point_set::template Property_map<Type> Map;
+    typedef typename Point_set::template Push_property_map<Map> Pmap;
+    Map m_map;
+    Pmap m_pmap;
+    std::string m_name;
+  public:
+    PLY_property_to_point_set_property (Point_set& ps, const std::string& name)
+      : m_name (name)
+    {
+      boost::tie (m_map, boost::tuples::ignore) = ps.add_property_map(name, Type());
+      m_pmap = ps.push_property_map (m_map);
+    }
+    
+    virtual void assign (PLY_reader& reader, typename Point_set::Index index)
+    {
+      Type t;
+      reader.assign (t, m_name.c_str());
+      put(m_pmap, index, t);
+    }
+  };
+  
+  Point_set& m_point_set;
+  bool m_use_floats;
+  std::vector<Abstract_ply_property_to_point_set_property*> m_properties;
+
+public:
+  
+  Point_set_3_filler (Point_set& point_set)
+    : m_point_set (point_set), m_use_floats (false)
+  { }
+
+  void instantiate_properties  (PLY_reader& reader)
+  {
+    const std::vector<PLY_read_number*>& readers
+      = reader.readers();
+
+    bool has_normal[3] = { false, false, false };
+    
+    for (std::size_t i = 0; i < readers.size(); ++ i)
+      {
+        const std::string& name = readers[i]->name();
+        if (name == "x" ||
+            name == "y" ||
+            name == "z")
+          {
+            if (dynamic_cast<PLY_read_typed_number<float>*>(readers[i]))
+              m_use_floats = true;
+            continue;
+          }
+        if (name == "nx")
+          {
+            has_normal[0] = true;
+            continue;
+          }
+        if (name == "ny")
+          {
+            has_normal[1] = true;
+            continue;
+          }
+        if (name == "nz")
+          {
+            has_normal[2] = true;
+            continue;
+          }
+
+        if (dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<boost::int8_t>(m_point_set,
+                                                                     name));
+          }
+        else if (dynamic_cast<PLY_read_typed_number<boost::uint8_t>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<boost::uint8_t>(m_point_set,
+                                                                      name));
+          }
+        else if (dynamic_cast<PLY_read_typed_number<boost::int16_t>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<boost::int16_t>(m_point_set,
+                                                                      name));
+          }
+        else if (dynamic_cast<PLY_read_typed_number<boost::uint16_t>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<boost::uint16_t>(m_point_set,
+                                                                       name));
+          }
+        else if (dynamic_cast<PLY_read_typed_number<boost::int32_t>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<boost::int32_t>(m_point_set,
+                                                                      name));
+          }
+        else if (dynamic_cast<PLY_read_typed_number<boost::uint32_t>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<boost::uint32_t>(m_point_set,
+                                                                       name));
+          }
+        else if (dynamic_cast<PLY_read_typed_number<float>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<float>(m_point_set,
+                                                             name));
+          }
+        else if (dynamic_cast<PLY_read_typed_number<double>*>(readers[i]))
+          {
+            m_properties.push_back
+              (new PLY_property_to_point_set_property<double>(m_point_set,
+                                                             name));
+          }
+      }
+
+    if (has_normal[0] && has_normal[1] && has_normal[2])
+      m_point_set.add_normal_map();
+  }
+  
+  void process_line (PLY_reader& reader)
+  {
+    m_point_set.insert();
+    
+    if (m_use_floats)
+      process_line<float>(reader);
+    else
+      process_line<double>(reader);
+
+    for (std::size_t i = 0; i < m_properties.size(); ++ i)
+      m_properties[i]->assign (reader, *(m_point_set.end() - 1));
+  }
+
+  template <typename FT>
+  void process_line (PLY_reader& reader)
+  {
+    FT x = (FT)0.,y = (FT)0., z = (FT)0.,
+      nx = (FT)0., ny = (FT)0., nz = (FT)0.;
+    reader.assign (x, "x");
+    reader.assign (y, "y");
+    reader.assign (z, "z");
+    Point point (x, y, z);
+    m_point_set.point(*(m_point_set.end() - 1)) = point;
+
+    if (m_point_set.has_normal_map())
+      {
+        reader.assign (nx, "nx");
+        reader.assign (ny, "ny");
+        reader.assign (nz, "nz");
+        Vector normal (nx, ny, nz);
+        m_point_set.normal(*(m_point_set.end() - 1)) = normal;
+      }
+  }
+};
+
+}
+
+}
 
 /*!
   \ingroup PkgPointSet3IO
@@ -121,13 +302,13 @@ read_ply_point_set(
       return false;
     }
 
-  PLY::internal::PLY_reader reader;
+  internal::PLY::PLY_reader reader;
+  internal::PLY::Point_set_3_filler<Point, Vector> filler(point_set);
   
   if (!(reader.init (stream)))
     return false;
-  
-  PLY::internal::PLY_interpreter_point_set_3<Point, Vector> interpreter (point_set);
-  interpreter.instantiate_properties (reader);
+
+  filler.instantiate_properties (reader);
   
   std::size_t points_read = 0;
   
@@ -136,10 +317,11 @@ read_ply_point_set(
       for (std::size_t i = 0; i < reader.readers().size (); ++ i)
         reader.readers()[i]->get (stream);
 
-      interpreter.process_line (reader);
+      filler.process_line (reader);
       
       ++ points_read;
     }
+  // Skip remaining lines
 
   return (points_read == reader.m_nb_points);
 }
@@ -205,25 +387,25 @@ read_las_point_set(
   bool okay
     = read_las_points_with_properties
     (stream, point_set.index_back_inserter(),
-     LAS::make_point_reader (point_set.point_push_map()),
-     std::make_pair (point_set.push_property_map (intensity), LAS::Property::Intensity()),
-     std::make_pair (point_set.push_property_map (return_number), LAS::Property::Return_number()),
-     std::make_pair (point_set.push_property_map (number_of_returns), LAS::Property::Number_of_returns()),
-     std::make_pair (point_set.push_property_map (scan_direction_flag), LAS::Property::Scan_direction_flag()),
-     std::make_pair (point_set.push_property_map (edge_of_flight_line), LAS::Property::Edge_of_flight_line()),
-     std::make_pair (point_set.push_property_map (classification), LAS::Property::Classification()),
-     std::make_pair (point_set.push_property_map (synthetic_flag), LAS::Property::Synthetic_flag()),
-     std::make_pair (point_set.push_property_map (keypoint_flag), LAS::Property::Keypoint_flag()),
-     std::make_pair (point_set.push_property_map (withheld_flag), LAS::Property::Withheld_flag()),
-     std::make_pair (point_set.push_property_map (scan_angle), LAS::Property::Scan_angle()),
-     std::make_pair (point_set.push_property_map (user_data), LAS::Property::User_data()),
-     std::make_pair (point_set.push_property_map (point_source_ID), LAS::Property::Point_source_ID()),
-     std::make_pair (point_set.push_property_map (deleted_flag), LAS::Property::Deleted_flag()),
-     std::make_pair (point_set.push_property_map (gps_time), LAS::Property::GPS_time()),
-     std::make_pair (point_set.push_property_map (R), LAS::Property::R()),
-     std::make_pair (point_set.push_property_map (G), LAS::Property::G()),
-     std::make_pair (point_set.push_property_map (B), LAS::Property::B()),
-     std::make_pair (point_set.push_property_map (I), LAS::Property::I()));
+     make_las_point_reader (point_set.point_push_map()),
+     std::make_pair (point_set.push_property_map (intensity), LAS_property::Intensity()),
+     std::make_pair (point_set.push_property_map (return_number), LAS_property::Return_number()),
+     std::make_pair (point_set.push_property_map (number_of_returns), LAS_property::Number_of_returns()),
+     std::make_pair (point_set.push_property_map (scan_direction_flag), LAS_property::Scan_direction_flag()),
+     std::make_pair (point_set.push_property_map (edge_of_flight_line), LAS_property::Edge_of_flight_line()),
+     std::make_pair (point_set.push_property_map (classification), LAS_property::Classification()),
+     std::make_pair (point_set.push_property_map (synthetic_flag), LAS_property::Synthetic_flag()),
+     std::make_pair (point_set.push_property_map (keypoint_flag), LAS_property::Keypoint_flag()),
+     std::make_pair (point_set.push_property_map (withheld_flag), LAS_property::Withheld_flag()),
+     std::make_pair (point_set.push_property_map (scan_angle), LAS_property::Scan_angle()),
+     std::make_pair (point_set.push_property_map (user_data), LAS_property::User_data()),
+     std::make_pair (point_set.push_property_map (point_source_ID), LAS_property::Point_source_ID()),
+     std::make_pair (point_set.push_property_map (deleted_flag), LAS_property::Deleted_flag()),
+     std::make_pair (point_set.push_property_map (gps_time), LAS_property::GPS_time()),
+     std::make_pair (point_set.push_property_map (R), LAS_property::R()),
+     std::make_pair (point_set.push_property_map (G), LAS_property::G()),
+     std::make_pair (point_set.push_property_map (B), LAS_property::B()),
+     std::make_pair (point_set.push_property_map (I), LAS_property::I()));
 
   internal::check_if_property_is_used (point_set, intensity);
   internal::check_if_property_is_used (point_set, return_number);
@@ -380,25 +562,25 @@ write_las_point_set(
   bool okay
     = write_las_points_with_properties
     (stream, point_set.begin(), point_set.end(),
-     LAS::make_point_writer (point_set.point_map()),
-     std::make_pair (intensity, LAS::Property::Intensity()),
-     std::make_pair (return_number, LAS::Property::Return_number()),
-     std::make_pair (number_of_returns, LAS::Property::Number_of_returns()),
-     std::make_pair (scan_direction_flag, LAS::Property::Scan_direction_flag()),
-     std::make_pair (edge_of_flight_line, LAS::Property::Edge_of_flight_line()),
-     std::make_pair (classification, LAS::Property::Classification()),
-     std::make_pair (synthetic_flag, LAS::Property::Synthetic_flag()),
-     std::make_pair (keypoint_flag, LAS::Property::Keypoint_flag()),
-     std::make_pair (withheld_flag, LAS::Property::Withheld_flag()),
-     std::make_pair (scan_angle, LAS::Property::Scan_angle()),
-     std::make_pair (user_data, LAS::Property::User_data()),
-     std::make_pair (point_source_ID, LAS::Property::Point_source_ID()),
-     std::make_pair (deleted_flag, LAS::Property::Deleted_flag()),
-     std::make_pair (gps_time, LAS::Property::GPS_time()),
-     std::make_pair (R, LAS::Property::R()),
-     std::make_pair (G, LAS::Property::G()),
-     std::make_pair (B, LAS::Property::B()),
-     std::make_pair (I, LAS::Property::I()));
+     make_las_point_writer (point_set.point_map()),
+     std::make_pair (intensity, LAS_property::Intensity()),
+     std::make_pair (return_number, LAS_property::Return_number()),
+     std::make_pair (number_of_returns, LAS_property::Number_of_returns()),
+     std::make_pair (scan_direction_flag, LAS_property::Scan_direction_flag()),
+     std::make_pair (edge_of_flight_line, LAS_property::Edge_of_flight_line()),
+     std::make_pair (classification, LAS_property::Classification()),
+     std::make_pair (synthetic_flag, LAS_property::Synthetic_flag()),
+     std::make_pair (keypoint_flag, LAS_property::Keypoint_flag()),
+     std::make_pair (withheld_flag, LAS_property::Withheld_flag()),
+     std::make_pair (scan_angle, LAS_property::Scan_angle()),
+     std::make_pair (user_data, LAS_property::User_data()),
+     std::make_pair (point_source_ID, LAS_property::Point_source_ID()),
+     std::make_pair (deleted_flag, LAS_property::Deleted_flag()),
+     std::make_pair (gps_time, LAS_property::GPS_time()),
+     std::make_pair (R, LAS_property::R()),
+     std::make_pair (G, LAS_property::G()),
+     std::make_pair (B, LAS_property::B()),
+     std::make_pair (I, LAS_property::I()));
 
   if (remove_intensity) point_set.remove_property_map (intensity);
   if (remove_return_number) point_set.remove_property_map (return_number);
