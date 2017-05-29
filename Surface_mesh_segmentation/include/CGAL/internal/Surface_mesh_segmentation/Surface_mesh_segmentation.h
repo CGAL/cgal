@@ -224,7 +224,7 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::face_iterator    face_iterator;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
-  typedef SDF_calculation<Polyhedron, VertexPointPmap, GeomTraits, /*fast_bbox_intersection*/ false >
+  typedef SDF_calculation<Polyhedron, VertexPointPmap, GeomTraits, fast_bbox_intersection>
   SDF_calculation_class;
 
 // member variables
@@ -251,7 +251,7 @@ public:
     // calculate sdf values
     SDF_calculation_class sdf_calculator(mesh, vertex_point_pmap,
                                          false, /* build_kd_ree */
-                                         false, /* use `AABB_tree::first_intersection()` --> set to true to use diagonal */
+                                         true, /* use_diagonal --> set to false to use `AABB_tree::first_intersection()` */
                                          traits);
     sdf_calculator.calculate_sdf_values(faces(mesh).first, faces(mesh).second,
                                         cone_angle, number_of_rays, sdf_pmap);
