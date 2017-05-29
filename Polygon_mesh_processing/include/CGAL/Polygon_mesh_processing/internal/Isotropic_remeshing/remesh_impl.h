@@ -1902,7 +1902,7 @@ private:
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
     Patch_id_to_index_map patch_id_to_index_map_;
-    mutable Halfedge_status_pmap<PolygonMesh> halfedge_status_pmap_;
+    Halfedge_status_pmap<PolygonMesh> halfedge_status_pmap_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
