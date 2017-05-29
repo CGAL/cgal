@@ -10,6 +10,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 #include <CGAL/subdivision_method_3.h>
@@ -30,10 +31,6 @@ public:
 };
 
 typedef Kernel::Point_3 Point;
-
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-
-typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VPMap;
 
 namespace euler =  CGAL::Euler;
 using namespace CGAL::Three;
@@ -104,13 +101,19 @@ private:
   };
 
   int nbs[POLYLINE+1];
+  template<class Facegraph_item>
   void generateCube();
+  template<class Facegraph_item>
   void generatePrism();
+  template<class Facegraph_item>
   void generatePyramid();
+  template<class Facegraph_item>
   void generateSphere();
+  template<class Facegraph_item>
   void generateTetrahedron();
   void generatePoints();
   void generateLines();
+  template<class Facegraph_item>
   void generateGrid();
 }; //end of class Basic_generator_plugin
 
@@ -188,34 +191,53 @@ void Basic_generator_plugin::on_tab_changed()
 //generate
 void Basic_generator_plugin::on_generate_clicked()
 {
+  bool is_polyhedron = mw->property("is_polyhedron_mode").toBool();
   switch(dock_widget->selector_tabWidget->currentIndex())
   {
   case PRISM:
-    generatePrism();
+    if(is_polyhedron)
+      generatePrism<Scene_polyhedron_item>();
+    else
+      generatePrism<Scene_surface_mesh_item>();
     ++nbs[PRISM];
     break;
 
   case SPHERE:
-    generateSphere();
+    if(is_polyhedron)
+      generateSphere<Scene_polyhedron_item>();
+    else
+      generateSphere<Scene_surface_mesh_item>();
     ++nbs[SPHERE];
     break;
 
   case PYRAMID:
-    generatePyramid();
+    if(is_polyhedron)
+      generatePyramid<Scene_polyhedron_item>();
+    else
+      generatePyramid<Scene_surface_mesh_item>();
     ++nbs[PYRAMID];
     break;
 
   case HEXAHEDRON:
-    generateCube();
+    if(is_polyhedron)
+      generateCube<Scene_polyhedron_item>();
+    else
+      generateCube<Scene_surface_mesh_item>();
     ++nbs[HEXAHEDRON];
     break;
 
   case TETRAHEDRON:
-    generateTetrahedron();
+    if(is_polyhedron)
+      generateTetrahedron<Scene_polyhedron_item>();
+    else
+      generateTetrahedron<Scene_surface_mesh_item>();
     ++nbs[TETRAHEDRON];
     break;
   case GRID:
-    generateGrid();
+    if(is_polyhedron)
+      generateGrid<Scene_polyhedron_item>();
+    else
+      generateGrid<Scene_surface_mesh_item>();
     ++nbs[GRID];
     break;
   case POINT_SET:
@@ -233,9 +255,10 @@ void Basic_generator_plugin::on_generate_clicked()
   on_tab_changed();
 }
 //make a non triangle hexahedron
+template<class Facegraph_item>
 void Basic_generator_plugin::generateCube()
 {
-  Polyhedron cube;
+  typename Facegraph_item::Face_graph cube;
   if(dock_widget->tabWidget_2->currentIndex() == 0)
   {
     QString point_texts[8];
@@ -322,11 +345,12 @@ void Basic_generator_plugin::generateCube()
                           Point(list.at(3).toDouble(),list.at(4).toDouble(),list.at(5).toDouble()),
                           cube);
   }
-  Scene_polyhedron_item* cube_item = new Scene_polyhedron_item(cube);
+  Facegraph_item* cube_item = new Facegraph_item(cube);
   cube_item->setName(dock_widget->name_lineEdit->text());
   scene->addItem(cube_item);
 }
 //make a prism
+template<class Facegraph_item>
 void Basic_generator_plugin::generatePrism()
 {
   //gets the precision parameter
@@ -360,7 +384,7 @@ void Basic_generator_plugin::generatePrism()
     }
   }
 
-  Polyhedron prism;
+  typename Facegraph_item::Face_graph prism;
   make_regular_prism(nb_vertices,
                      prism,
                      Point(coords[0], coords[1], coords[2]),
@@ -368,11 +392,12 @@ void Basic_generator_plugin::generatePrism()
                      radius,
                      is_closed);
 
-  Scene_polyhedron_item* prism_item = new Scene_polyhedron_item(prism);
+  Facegraph_item* prism_item = new Facegraph_item(prism);
   prism_item->setName(dock_widget->name_lineEdit->text());
   scene->addItem(prism_item);
 }
 //make a pyramid
+template<class Facegraph_item>
 void Basic_generator_plugin::generatePyramid()
 {
   int nb_vertices = dock_widget->pyramidSpinBox->value();
@@ -405,7 +430,7 @@ void Basic_generator_plugin::generatePyramid()
     }
   }
 
-  Polyhedron pyramid;
+  typename Facegraph_item::Face_graph pyramid;
   make_pyramid(nb_vertices,
                pyramid,
                Point(coords[0], coords[1], coords[2]),
@@ -413,11 +438,12 @@ void Basic_generator_plugin::generatePyramid()
                radius,
                is_closed);
 
-  Scene_polyhedron_item* pyramid_item = new Scene_polyhedron_item(pyramid);
+  Facegraph_item* pyramid_item = new Facegraph_item(pyramid);
   pyramid_item->setName(dock_widget->name_lineEdit->text());
   scene->addItem(pyramid_item);
 }
 //make a sphere
+template<class Facegraph_item>
 void Basic_generator_plugin::generateSphere()
 {
   int precision = dock_widget->SphereSpinBox->value();
@@ -434,14 +460,15 @@ void Basic_generator_plugin::generateSphere()
 
   double radius = list.at(3).toDouble();
   Point center = Point(list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
-  Polyhedron sphere;
+  typename Facegraph_item::Face_graph sphere;
   make_icosahedron(sphere, center, radius);
+  typedef typename boost::property_map<typename Facegraph_item::Face_graph, CGAL::vertex_point_t>::type VPMap;
   if(precision !=0)
     CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere,
                                                   precision);
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
-  BOOST_FOREACH(vertex_descriptor vd, vertices(sphere))
+  BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
   {
     Kernel::Vector_3 vec(get(vpmap, vd), center);
     vec = radius*vec/CGAL::sqrt(vec.squared_length());
@@ -450,14 +477,15 @@ void Basic_generator_plugin::generateSphere()
                                    center.z() + vec.z()));
   }
 
-  Scene_polyhedron_item* sphere_item = new Scene_polyhedron_item(sphere);
+  Facegraph_item* sphere_item = new Facegraph_item(sphere);
   sphere_item->setName(dock_widget->name_lineEdit->text());
   scene->addItem(sphere_item);
 }
 //make a tetrahedron
+template<class Facegraph_item>
 void Basic_generator_plugin::generateTetrahedron()
 {
-  Polyhedron tetrahedron;
+  typename Facegraph_item::Face_graph tetrahedron;
 
   QString point_texts[4];
   Point points[4];
@@ -500,7 +528,7 @@ void Basic_generator_plugin::generateTetrahedron()
                          points[3],
                          tetrahedron);
 
-  Scene_polyhedron_item* tet_item = new Scene_polyhedron_item(tetrahedron);
+  Facegraph_item* tet_item = new Facegraph_item(tetrahedron);
   tet_item->setName(dock_widget->name_lineEdit->text());
   scene->addItem(tet_item);
 }
@@ -634,9 +662,10 @@ struct Point_generator
                  0);
   }
 };
+template<class Facegraph_item>
 void Basic_generator_plugin::generateGrid()
 {
-  Polyhedron grid;
+  typename Facegraph_item::Face_graph grid;
 
   QString points_text;
   Point extrema[2];
@@ -676,7 +705,7 @@ void Basic_generator_plugin::generateGrid()
   Point_generator point_gen(nb_cells[0]+1, nb_cells[1]+1, extrema[0], extrema[1]);
 
   CGAL::make_grid(nb_cells[0], nb_cells[1], grid, point_gen, triangulated);
-  Scene_polyhedron_item* grid_item = new Scene_polyhedron_item(grid);
+  Facegraph_item* grid_item = new Facegraph_item(grid);
   grid_item->setName(dock_widget->name_lineEdit->text());
   scene->addItem(grid_item);
 }

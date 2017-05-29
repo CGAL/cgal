@@ -25,6 +25,8 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
+#include <CGAL/function_objects.h>
+
 
 namespace CGAL {
 
@@ -1003,29 +1005,6 @@ make_icosahedron(
 }
 
 
-/*
- * \ingroup PkgBGLHelperFct
- * \brief creates a point from 2D integer coordinates.
- */
-template<class Graph>
-struct Identity_calculator
-{
-  typedef typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type Point;
-  Identity_calculator(){}
-  //
-  // \brief creates a point
-  // \param i the width coordinate
-  // \param j the height coordinate
-  // \return a point with coordinates (i, j, 0)
-  //
-  Point operator()(const typename boost::graph_traits<Graph>::vertices_size_type& i,
-               const typename boost::graph_traits<Graph>::vertices_size_type& j)const
-  {
-    return Point(i,j,0);
-  }
-
-};
-
 /*!
  * \ingroup PkgBGLHelperFct
  *
@@ -1045,7 +1024,9 @@ struct Identity_calculator
 #ifndef DOXYGEN_RUNNING
 template<class Graph, class CoordinateFunctor>
 #else
-template<class Graph, class CoordinateFunctor = Identity_calculator<Graph> >
+template<class Graph, class CoordinateFunctor = CGAL::Creator_uniform_3<
+           typename boost::graph_traits<Graph>::vertices_size_type,
+           typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type> >
 #endif
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
@@ -1086,20 +1067,20 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
       if(triangulated)
       {
         face[0] = v_vertices[w*i+j];
-        face[1] = v_vertices[w*i+j+1];
-        face[2] = v_vertices[w*(i+1)+ j+1];
+        face[1] = v_vertices[w*(i+1)+ j+1];
+        face[2] = v_vertices[w*i+j+1];
         Euler::add_face(face, g);
         face[0] = v_vertices[w*(i+1)+ j];
-        face[1] = v_vertices[w*i+j];
-        face[2] = v_vertices[w*(i+1)+j+1];
+        face[1] = v_vertices[w*(i+1)+j+1];
+        face[2] = v_vertices[w*i+j];
         Euler::add_face(face, g);
       }
       else
       {
         face[0] = v_vertices[w*i+ j];
-        face[1] = v_vertices[w*i+ j+1];
+        face[1] = v_vertices[w*(i+1)+ j];
         face[2] = v_vertices[w*(i+1)+ j+1];
-        face[3] = v_vertices[w*(i+1)+ j];
+        face[3] = v_vertices[w*i+ j+1];
         Euler::add_face(face, g);
       }
     }
@@ -1115,7 +1096,9 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
           Graph& g,
           bool triangulated = false)
 {
-  return make_grid(w, h, g, Identity_calculator<Graph>(), triangulated);
+  typedef typename boost::graph_traits<Graph>::vertices_size_type Size_type;
+  typedef typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type Point;
+  return make_grid(w, h, g, CGAL::Creator_uniform_3<Size_type, Point>(), triangulated);
 }
 
 namespace internal {
