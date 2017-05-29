@@ -312,7 +312,9 @@ operator<<(std::ostream &os,
   for(int i = 0; i < 4; ++i)
   {
     if(is_ascii(os))
-      os << ' ' << c.surface_patch_index(i);
+      // <PERIODIC>
+      os << ' ' << c.surface_patch_index(i).first
+         << " " << c.surface_patch_index(i).second;
     else
       write(os, c.surface_patch_index(i));
   }
