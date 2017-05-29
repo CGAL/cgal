@@ -105,7 +105,7 @@ namespace internal {
     static void write(std::ostream& stream, PLY_property_tuple& wrappers)
     {
       Properties_header<N-1>::write(stream, wrappers);
-      property_header (stream, std::get<N+1>(wrappers));
+      property_header (stream, cpp11::get<N+1>(wrappers));
     }
   };
   template <>
@@ -114,7 +114,7 @@ namespace internal {
     template <class PLY_property_tuple>
     static void write(std::ostream& stream, PLY_property_tuple& wrappers)
     {
-      property_header (stream, std::get<1>(wrappers));
+      property_header (stream, cpp11::get<1>(wrappers));
     }
   };
 
@@ -188,7 +188,7 @@ namespace internal {
                           ForwardIterator it,
                           cpp11::tuple<PropertyMap, PLY_property<T>... >& current)
   {
-    property_write (stream, it, std::get<0>(current));
+    property_write (stream, it, cpp11::get<0>(current));
     if (get_mode(stream) == IO::ASCII)
       stream << std::endl;
   }
@@ -234,7 +234,7 @@ namespace internal {
                           NextPropertyHandler& next,
                           PropertyHandler&& ... properties)
   {
-    property_write (stream, it, std::get<0>(current));
+    property_write (stream, it, cpp11::get<0>(current));
     if (get_mode(stream) == IO::ASCII)
       stream << " ";
     output_properties (stream, it, next, properties...);

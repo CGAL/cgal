@@ -148,7 +148,7 @@ namespace internal {
     template <class Value_tuple, class LAS_property_tuple>
     static void fill(const LASpoint& r, Value_tuple& values, LAS_property_tuple wrappers)
     {
-      get_value(r, std::get<N>(values), std::get<N+2>(wrappers));
+      get_value(r, cpp11::get<N>(values), cpp11::get<N+2>(wrappers));
       Filler<N-1>::fill(r, values, wrappers);
     }
   };
@@ -166,11 +166,11 @@ namespace internal {
 
   template<class ValueType, class Functor, class Tuple, int ...S>
   ValueType call_functor(Functor f, Tuple t, seq<S...>) {
-    return f(std::get<S>(t) ...);
+    return f(cpp11::get<S>(t) ...);
   }
 
   template <class ValueType, class Functor, typename ... T>
-  ValueType call_functor(Functor f, std::tuple<T...>& t)
+  ValueType call_functor(Functor f, cpp11::tuple<T...>& t)
   {
     return call_functor<ValueType>(f, t, typename gens<sizeof...(T)>::type());
   }
@@ -181,7 +181,7 @@ namespace internal {
     template <class Value_tuple, class LAS_property_tuple>
     static void fill(const LASpoint& r, Value_tuple& values, LAS_property_tuple wrappers)
     {
-      get_value(r, std::get<0>(values), std::get<2>(wrappers));
+      get_value(r, cpp11::get<0>(values), cpp11::get<2>(wrappers));
     }
   };
   
@@ -201,13 +201,13 @@ namespace internal {
             typename Constructor,
             typename ... T>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, T...>& current)
+                           cpp11::tuple<PropertyMap, Constructor, T...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    std::tuple<typename T::type...> values;
+    cpp11::tuple<typename T::type...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
-    PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
-    put (std::get<0>(current), new_element, new_value);
+    PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
+    put (cpp11::get<0>(current), new_element, new_value);
   }
   
   template <typename OutputValueType,
@@ -217,15 +217,15 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, T...>& current,
+                           cpp11::tuple<PropertyMap, Constructor, T...>& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    std::tuple<typename T::type...> values;
+    cpp11::tuple<typename T::type...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
-    PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
-    put (std::get<0>(current), new_element, new_value);
+    PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
+    put (cpp11::get<0>(current), new_element, new_value);
   
     process_properties (reader, new_element, next, properties...);
   }
