@@ -515,6 +515,8 @@ namespace internal {
           Halfedge_status snew = (is_on_patch(hnew) || is_on_patch_border(hnew))
             ? PATCH
             : MESH;
+          // AF: I do not understand why we would call halfedge_added with snew = MESH
+          //     as set_status(,MESH) erases from the set, and status(h) returns MESH in case h is not found
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
           set_patch_id(face(hnew2, mesh_), patch_id);
@@ -1468,6 +1470,8 @@ private:
       }
     }
 
+    // AF: This could become the get of a PM
+    // AF: for a Surface_mesh::Property_map we make MESH the default value
     Halfedge_status status(const halfedge_descriptor& h) const
     {
       typename boost::unordered_map <
@@ -1478,6 +1482,8 @@ private:
       return it->second;
     }
 
+    // AF: This could become the put of a PM
+    // AF: for a Surface_mesh::Property_map we just put s
     void set_status(const halfedge_descriptor& h,
                     const Halfedge_status& s)
     {
@@ -1560,7 +1566,7 @@ private:
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
 
-            //update halfedge_status_map_
+            //update status
             set_status(h_ab, merge_status(h_ab, hf, hfo));
             set_status(h_ca, merge_status(h_ca, hf, hfo));
             if (is_on_patch(h_ca) || is_on_patch_border(h_ca))
@@ -1707,13 +1713,16 @@ private:
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
     {
-      halfedge_status_map_.insert(std::make_pair(h, s));
+      // AF: Can s be MESH?
+      if(s != MESH){
+        set_status(h, s);
+      }
     }
 
     void halfedge_and_opp_removed(const halfedge_descriptor& h)
     {
-      halfedge_status_map_.erase(h);
-      halfedge_status_map_.erase(opposite(h, mesh_));
+      set_status(h,MESH);
+      set_status(opposite(h, mesh_),MESH);
     }
 
     std::size_t nb_valid_halfedges() const
