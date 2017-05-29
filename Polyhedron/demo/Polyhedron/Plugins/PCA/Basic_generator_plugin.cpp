@@ -12,7 +12,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 #include <CGAL/Kernel_traits.h>
 #include "ui_Basic_generator_widget.h"
 
