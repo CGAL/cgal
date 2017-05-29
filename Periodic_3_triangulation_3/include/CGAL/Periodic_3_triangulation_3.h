@@ -2138,10 +2138,10 @@ try_next_cell:
   // test.  We do this using the arrays below.
 
   Offset off[4];
-  const Point* pts[4] = { &(point(c,0)),
-                          &(point(c,1)),
-                          &(point(c,2)),
-                          &(point(c,3)) };
+  const Point* pts[4] = { &(c->vertex(0)->point()),
+                          &(c->vertex(1)->point()),
+                          &(c->vertex(2)->point()),
+                          &(c->vertex(3)->point()) };
 
   if (!simplicity_criterion && is_1_cover() ) {
     for (int i=0; i<4; i++) {
@@ -2152,7 +2152,7 @@ try_next_cell:
   if (!is_1_cover()) {
     // Just fetch the vertices of c as points with offsets
     for (int i=0; i<4; i++) {
-      pts[i] = &(point(c,i));
+      pts[i] = &(c->vertex(i)->point());
       off[i] = get_offset(c,i);
     }
   }
@@ -2300,7 +2300,10 @@ try_next_cell:
   // test.  We do this using the arrays below.
 
   Offset off[4];
-  const Point* pts[4] = { &(point(c,0)), &(point(c,1)), &(point(c,2)), &(point(c,3)) };
+  const Point* pts[4] = { &(c->vertex(0)->point()),
+                          &(c->vertex(1)->point()),
+                          &(c->vertex(2)->point()),
+                          &(c->vertex(3)->point()) };
 
   if (!simplicity_criterion && is_1_cover() ) {
     for (int i=0; i<4; i++) {
@@ -2311,7 +2314,7 @@ try_next_cell:
   if (!is_1_cover()) {
     // Just fetch the vertices of c as points with offsets
     for (int i=0; i<4; i++) {
-      pts[i] = &(point(c,i));
+      pts[i] = &(c->vertex(i)->point());
       off[i] = get_offset(c,i);
     }
   }
@@ -2388,10 +2391,10 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
   if ((cumm_off == 0) && (is_1_cover())) {
     CGAL_triangulation_assertion(off == Offset());
-    const Point& p0 = point(c,0);
-    const Point& p1 = point(c,1);
-    const Point& p2 = point(c,2);
-    const Point& p3 = point(c,3);
+    const Point& p0  = c->vertex(0)->point();
+    const Point& p1  = c->vertex(1)->point();
+    const Point& p2  = c->vertex(2)->point();
+    const Point& p3  = c->vertex(3)->point();
 
     if (((o0 = orientation(q ,p1,p2,p3)) == NEGATIVE) ||
         ((o1 = orientation(p0,q ,p2,p3)) == NEGATIVE) ||
@@ -2404,7 +2407,7 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
     Offset offs[4];
     const Point *p[4];
     for (int i=0; i<4; i++) {
-      p[i] = &(point(c,i));
+      p[i] = &(c->vertex(i)->point());
       offs[i] = get_offset(c,i);
     }
     CGAL_triangulation_assertion(orientation(*p[0], *p[1], *p[2], *p[3],
@@ -2851,7 +2854,8 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
     return vh;
   }
 
-  if ((lt == VERTEX) && (tester.compare_weight(point(c,li), p)==0) ) {
+  if ((lt == VERTEX) &&
+      (tester.compare_weight(c->vertex(li)->point(),p)==0) ) {
     return c->vertex(li);
   }
 
@@ -2981,7 +2985,7 @@ is_valid(bool verbose, int level) const {
     // Check positive orientation:
     const Point *p[4]; Offset off[4];
     for (int i=0; i<4; i++) {
-      p[i] = &(point(cit,i));
+      p[i] = &cit->vertex(i)->point();
       off[i] = get_offset(cit,i);
     }
     if (orientation(*p[0], *p[1], *p[2], *p[3],
@@ -3015,7 +3019,7 @@ bool Periodic_3_triangulation_3<GT,TDS>::is_valid(Cell_handle ch,
   bool error = false;
   const Point *p[4]; Offset off[4];
   for (int i=0; i<4; i++) {
-    p[i] = &(point(ch,i));
+    p[i] = &ch->vertex(i)->point();
     off[i] = get_offset(ch,i);
   }
   if (orientation(*p[0], *p[1], *p[2], *p[3],
@@ -3039,14 +3043,16 @@ is_valid_conflict(ConflictTester& tester, bool verbose, int level) const
       Offset o_vt = get_offset(it->neighbor(i),
                                it->neighbor(i)->index(it));
       if (tester(it,
-                 point(it->neighbor(i)->vertex(it->neighbor(i)->index(it))),
+                 it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point(),
                  o_vt-o_nb)) {
         if (verbose) {
           std::cerr << "non-empty sphere: "
-                    << point(it,0) << '\t' << point(it,1) << '\t'
-                    << point(it,2) << '\t' << point(it,3) << '\n'
-                    << point(it->neighbor(i)->vertex(it->neighbor(i)->index(it)))
-                    << '\t' << o_vt - o_nb
+                    << it->vertex(0)->point()<<'\t'
+                    << it->vertex(1)->point()<<'\t'
+                    << it->vertex(2)->point()<<'\t'
+                    << it->vertex(3)->point()<<'\n'
+                    << it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point()
+                    << '\t'<<o_vt-o_nb
                     << std::endl;
         }
         return false;
@@ -3202,7 +3208,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
     CGAL_triangulation_assertion(
           get_offset(vertices[i]) + combine_offsets(Offset(), vh_off_map[vertices[i]])
        == combine_offsets(get_offset(vertices[i]),vh_off_map[vertices[i]]));
-    TRPoint trp = std::make_pair(point(vertices[i]),
+    TRPoint trp = std::make_pair(vertices[i]->point(),
                                  combine_offsets( get_offset(vertices[i]), vh_off_map[vertices[i]]) );
     VertexE_handle vh = remover.tmp.insert(trp, ch);
     vmap[vh] = vertices[i];
@@ -3810,7 +3816,7 @@ class Periodic_3_triangulation_3<GT,TDS>::Finder
 public:
   Finder(const Self* t, const Point &p) : _t(t), _p(p) {}
   bool operator()(const Vertex_handle v) {
-    return _t->equal(_t->point(v), _p);
+    return _t->equal(v->point(), _p);
   }
 };
 
@@ -4143,7 +4149,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
   if (tr.is_1_cover()) {
     for (Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {
       V[it] = i++;
-      os << tr.point(it);
+      os << it->point();
       if (is_ascii(os))
         os << std::endl;
     }
@@ -4157,9 +4163,9 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
 
       V[it]=i++;
       if (is_ascii(os))
-        os << tr.point(it) << std::endl
+        os << it->point() << std::endl
            << Offset(0,0,0) << std::endl;
-      else os << tr.point(it) << Offset(0,0,0);
+      else os << it->point() << Offset(0,0,0);
       CGAL_triangulation_assertion(tr.virtual_vertices_reverse.find(it)
           != tr.virtual_vertices_reverse.end());
       vv = tr.virtual_vertices_reverse.find(it)->second;
@@ -4169,9 +4175,9 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
         CGAL_triangulation_assertion(vvit != tr.virtual_vertices.end());
         V[vv[j]] = i++;
         if (is_ascii(os))
-          os << tr.point(vv[j]) << std::endl
+          os << vv[j]->point() << std::endl
              << vvit->second.second << std::endl;
-        else os << tr.point(vv[j]) << vvit->second.second;
+        else os << vv[j]->point() << vvit->second.second;
       }
     }
   }
@@ -4221,7 +4227,7 @@ namespace internal {
 template <class GT, class TDS1, class TDS2>
 bool
 test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
-          const Periodic_3_triangulation_3<GT, TDS2>& t2,
+          const Periodic_3_triangulation_3<GT, TDS2>& /* needed_for_deducing_TDS2 */,
           typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle c1,
           typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle c2,
           std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle,
@@ -4277,7 +4283,8 @@ test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
           return false;
       }
       else {
-        if (t1.compare_xyz(t1.point(vn1), t2.point(vn2)) != 0)
+        if (t1.geom_traits().compare_xyz_3_object()(vn1->point(),
+                                                    vn2->point()) != 0)
           return false;
 
         // We register vn1/vn2.
@@ -4342,7 +4349,7 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1>& t1,
   Vertex_handle2 iv2;
   for (Vertex_iterator2 vit2 = t2.vertices_begin() ;
       vit2 != t2.vertices_end(); ++vit2) {
-    if (!t1.equal(t2.point(vit2), t1.point(v1),
+    if (!t1.equal(vit2->point(), v1->point(),
                   t2.get_offset(vit2), t1.get_offset(v1)))
       continue;
     iv2 = static_cast<Vertex_handle2>(vit2);
@@ -4358,9 +4365,9 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1>& t1,
   Vertex_handle1 v2 = c->vertex((c->index(v1)+1)%4);
   Vertex_handle1 v3 = c->vertex((c->index(v1)+2)%4);
   Vertex_handle1 v4 = c->vertex((c->index(v1)+3)%4);
-  Point p2 = t1.point(v2);
-  Point p3 = t1.point(v3);
-  Point p4 = t1.point(v4);
+  Point p2 = v2->point();
+  Point p3 = v3->point();
+  Point p4 = v4->point();
   Offset o2 = t1.get_offset(v2);
   Offset o3 = t1.get_offset(v3);
   Offset o4 = t1.get_offset(v4);
@@ -4371,37 +4378,37 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1>& t1,
                                                           cit != ics.end(); ++cit) {
     int inf = (*cit)->index(iv2);
 
-    if (t1.equal(p2, t2.point((*cit)->vertex((inf+1)%4)),
+    if (t1.equal(p2, (*cit)->vertex((inf+1)%4)->point(),
                  o2, t2.get_offset((*cit)->vertex((inf+1)%4))))
       Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+1)%4)));
-    else if (t1.equal(p2, t2.point((*cit)->vertex((inf+2)%4)),
+    else if (t1.equal(p2, (*cit)->vertex((inf+2)%4)->point(),
                       o2, t2.get_offset((*cit)->vertex((inf+2)%4))))
       Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+2)%4)));
-    else if (t1.equal(p2, t2.point((*cit)->vertex((inf+3)%4)),
+    else if (t1.equal(p2, (*cit)->vertex((inf+3)%4)->point(),
                       o2, t2.get_offset((*cit)->vertex((inf+3)%4))))
       Vmap.insert(std::make_pair(v2, (*cit)->vertex((inf+3)%4)));
     else
       continue; // None matched v2.
 
-    if (t1.equal(p3, t2.point((*cit)->vertex((inf+1)%4)),
+    if (t1.equal(p3, (*cit)->vertex((inf+1)%4)->point(),
                  o3, t2.get_offset((*cit)->vertex((inf+1)%4))))
       Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+1)%4)));
-    else if (t1.equal(p3, t2.point((*cit)->vertex((inf+2)%4)),
+    else if (t1.equal(p3, (*cit)->vertex((inf+2)%4)->point(),
                       o3, t2.get_offset((*cit)->vertex((inf+2)%4))))
       Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+2)%4)));
-    else if (t1.equal(p3, t2.point((*cit)->vertex((inf+3)%4)),
+    else if (t1.equal(p3, (*cit)->vertex((inf+3)%4)->point(),
                       o3, t2.get_offset((*cit)->vertex((inf+3)%4))))
       Vmap.insert(std::make_pair(v3, (*cit)->vertex((inf+3)%4)));
     else
       continue; // None matched v3.
 
-    if (t1.equal(p4, t2.point((*cit)->vertex((inf+1)%4)),
+    if (t1.equal(p4, (*cit)->vertex((inf+1)%4)->point(),
                  o4, t2.get_offset((*cit)->vertex((inf+1)%4))))
       Vmap.insert(std::make_pair(v4,(*cit)->vertex((inf+1)%4)));
-    else if (t1.equal(p4, t2.point((*cit)->vertex((inf+2)%4)),
+    else if (t1.equal(p4, (*cit)->vertex((inf+2)%4)->point(),
                       o4, t2.get_offset((*cit)->vertex((inf+2)%4))))
       Vmap.insert(std::make_pair(v4,(*cit)->vertex((inf+2)%4)));
-    else if (t1.equal(p4, t2.point((*cit)->vertex((inf+3)%4)),
+    else if (t1.equal(p4, (*cit)->vertex((inf+3)%4)->point(),
                       o4, t2.get_offset((*cit)->vertex((inf+3)%4))))
       Vmap.insert(std::make_pair(v4,(*cit)->vertex((inf+3)%4)));
     else
