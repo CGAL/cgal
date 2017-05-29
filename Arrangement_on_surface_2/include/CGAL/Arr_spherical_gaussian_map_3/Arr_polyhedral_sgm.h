@@ -335,7 +335,6 @@ private:
   virtual void handle_new_edge(typename Base::Halfedge_handle edge)
   {
     typedef typename Base::Face_handle          Arr_face_handle;
-    typedef typename Base::Vertex_handle        Arr_vertex_handle;
 
     Arr_face_handle src_face = edge->twin()->face();
     Arr_face_handle trg_face = edge->face();
