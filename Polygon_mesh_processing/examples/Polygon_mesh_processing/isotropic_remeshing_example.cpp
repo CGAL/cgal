@@ -1,3 +1,5 @@
+#define CGAL_PROFILE 1
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -9,6 +11,7 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+//typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
@@ -40,7 +43,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  double target_edge_length = 0.04;
+  double target_edge_length = 0.005;
   unsigned int nb_iter = 3;
 
   std::cout << "Split border...";
@@ -64,6 +67,8 @@ int main(int argc, char* argv[])
       .protect_constraints(true)//i.e. protect border, here
       );
 
+  std::ofstream out("out.off");
+  out << mesh << std::endl;
   std::cout << "Remeshing done." << std::endl;
 
   return 0;

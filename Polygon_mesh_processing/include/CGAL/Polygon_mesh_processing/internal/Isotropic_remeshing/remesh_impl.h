@@ -18,9 +18,11 @@
 //
 // Author(s)     : Jane Tournois
 
+
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
+//#define SM_HALFEDGE_STATUS_PMAP 1
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -164,9 +166,11 @@ namespace internal {
     typedef FaceIndexMap                                        FIMap;
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
-
+#ifdef SM_HALFEDGE_STATUS_PMAP
+    typename PM:: template Property_map<face_descriptor,Patch_id> patch_ids_map;
+#else
     boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
-
+#endif
   public:
     typedef face_descriptor                     key_type;
     typedef Patch_id                            value_type;
@@ -181,18 +185,26 @@ namespace internal {
                             , FIMap fimap)
       : patch_ids_map()
     {
+#ifdef SM_HALFEDGE_STATUS_PMAP
+      patch_ids_map = const_cast<PM&>(pmesh).add_property_map<face_descriptor,Patch_id>("f:pid").first;
+      PMP::connected_components(pmesh,
+        patch_ids_map,
+        PMP::parameters::edge_is_constrained_map(ecmap)
+        .face_index_map(fimap));
+#else    
       PMP::connected_components(pmesh,
         boost::make_assoc_property_map(patch_ids_map),
         PMP::parameters::edge_is_constrained_map(ecmap)
         .face_index_map(fimap));
+#endif
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
     {
-      CGAL_assertion(!m.patch_ids_map.empty());
-      CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
+      //CGAL_assertion(!m.patch_ids_map.empty());
+      //CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
 
-      return m.patch_ids_map.at(f);
+      return m.patch_ids_map[f]; // AF why:  .at(f);
     }
     friend void put(CCMap& m, const key_type& f, const value_type i)
     {
@@ -322,7 +334,9 @@ namespace internal {
       , has_border_(false)
       , input_triangles_()
       , input_patch_ids_()
+#ifndef SM_HALFEDGE_STATUS_PMAP
       , halfedge_status_pmap_(0)
+#endif
       , protect_constraints_(protect_constraints)
       , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
@@ -330,10 +344,16 @@ namespace internal {
       , fimap_(fimap)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
+#ifdef SM_HALFEDGE_STATUS_PMAP
+  halfedge_status_pmap_ = mesh_. template add_property_map<halfedge_descriptor,Halfedge_status>("h:status", MESH).first;
+#endif
     }
 
     ~Incremental_remesher()
     {
+#ifdef SM_HALFEDGE_STATUS_PMAP
+      mesh_.remove_property_map(halfedge_status_pmap_);
+#endif
       if (own_tree_){
         for(int i=0; i < trees.size();++i){
           delete trees[i];
@@ -1216,7 +1236,7 @@ private:
       halfedge_descriptor he = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(he, mesh_);
 
-      if (is_on_mesh(h) && is_on_mesh(hopp))
+      if (is_on_mesh(he) && is_on_mesh(hopp))
         return false;
 
       if (protect_constraints_ && is_constrained(e))
@@ -1915,7 +1935,12 @@ private:
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
     Patch_id_to_index_map patch_id_to_index_map_;
+#ifdef SM_HALFEDGE_STATUS_PMAP
+typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+    typename PolygonMesh:: template Property_map<halfedge_descriptor,Halfedge_status> halfedge_status_pmap_;
+#else
     Halfedge_status_pmap<PolygonMesh> halfedge_status_pmap_;
+#endif
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
