@@ -633,10 +633,8 @@ namespace internal {
       Boost_bimap short_edges;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (!is_collapse_allowed(e))
-          continue;
         double sqlen = sqlength(e);
-        if (sqlen < sq_low)
+        if( (sqlen < sq_low) && is_collapse_allowed(e) )
           short_edges.insert(short_edge(halfedge(e, mesh_), sqlen));
       }
 
@@ -793,10 +791,8 @@ namespace internal {
           //insert new/remaining short edges
           BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(vkept, mesh_))
           {
-            if (!is_collapse_allowed(edge(ht, mesh_)))
-              continue;
             double sqlen = sqlength(ht);
-            if (sqlen < sq_low)
+            if( (sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_)) )
               short_edges.insert(short_edge(ht, sqlen));
           }
         }//end if(collapse_ok)
