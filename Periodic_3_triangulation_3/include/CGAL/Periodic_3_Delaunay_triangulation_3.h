@@ -119,48 +119,48 @@ public:
   using Base::ccw;
   using Base::domain;
   using Base::geom_traits;
+  using Base::insert_dummy_points;
   using Base::int_to_off;
+  using Base::is_1_cover;
+  using Base::is_virtual;
   using Base::number_of_sheets;
   using Base::number_of_vertices;
   using Base::number_of_edges;
   using Base::number_of_facets;
   using Base::number_of_cells;
-  using Base::cells_begin;
-  using Base::cells_end;
+  using Base::next_around_edge;
+  using Base::vertex_triple_index;
+  using Base::mirror_vertex;
+  using Base::orientation;
+  using Base::point;
+  using Base::swap;
+  using Base::tds;
   using Base::vertices_begin;
   using Base::vertices_end;
   using Base::edges_begin;
   using Base::edges_end;
   using Base::facets_begin;
   using Base::facets_end;
-  using Base::tds;
-  using Base::next_around_edge;
-  using Base::vertex_triple_index;
-  using Base::mirror_vertex;
-  using Base::orientation;
-  using Base::insert_dummy_points;
-  using Base::swap;
-  using Base::is_1_cover;
-  using Base::is_virtual;
-  using Base::point;
+  using Base::cells_begin;
+  using Base::cells_end;
 #endif
 
   // For strict-ansi compliance
   using Base::adjacent_vertices;
   using Base::combine_offsets;
+  using Base::construct_point;
+  using Base::convert_to_27_sheeted_covering;
   using Base::draw_dual;
-  using Base::get_offset;
-  using Base::get_original_vertex;
-  using Base::get_location_offset;
-  using Base::neighbor_offset;
   using Base::incident_edges;
   using Base::incident_facets;
   using Base::incident_cells;
   using Base::is_valid_conflict;
+  using Base::get_offset;
+  using Base::get_original_vertex;
+  using Base::get_location_offset;
   using Base::locate;
+  using Base::neighbor_offset;
   using Base::periodic_point;
-  using Base::construct_point;
-  using Base::convert_to_27_sheeted_covering;
 
 private:
   /// This threshold should be chosen such that if all edges are shorter,
