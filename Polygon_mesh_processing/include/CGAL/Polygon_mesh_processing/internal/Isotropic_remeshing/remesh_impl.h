@@ -1393,6 +1393,8 @@ private:
       //with plenty of degenerate triangles (which are common to both stars)
       std::vector<Vector_3> normals_patch1;
       std::vector<Vector_3> normals_patch2;
+      normals_patch1.reserve(8);
+      normals_patch2.reserve(8);
       Patch_id patch1 = -1, patch2 = -1;
       BOOST_FOREACH(halfedge_descriptor hd,
                     boost::range::join(halfedges_around_target(h, mesh_),
