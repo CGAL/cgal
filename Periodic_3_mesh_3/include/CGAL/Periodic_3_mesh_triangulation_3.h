@@ -161,17 +161,18 @@ public:
     return (this->number_of_vertices() == 0) ? -2 : 3;
   }
 
-  /// transform a point (living anywhere in space) into a point living inside
-  /// the canonical iso cuboid and an offset
-  Point canonicalize_point(const Point& p) const
-  {
-    return point(this->periodic_point(p));
-  }
-
   void set_domain(const Iso_cuboid& domain)
   {
     Base::set_domain(domain);
     this->insert_dummy_points();
+  }
+
+  /// transform a point (living anywhere in space) into a point living inside
+  /// the canonical iso cuboid and an offset
+  template<typename P>
+  P canonicalize_point(const P& p) const
+  {
+    return point(construct_periodic_point(p));
   }
 
   Tetrahedron tetrahedron(const Cell_handle c) const
