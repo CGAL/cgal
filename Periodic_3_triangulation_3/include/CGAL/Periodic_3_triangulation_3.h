@@ -797,7 +797,8 @@ public:
   }
   template<typename P> // can be Point or Point_3
   Periodic_segment construct_periodic_3_segment(const P& p1, const P& p2,
-                                                const Offset& o1, const Offset& o2) const {
+                                                const Offset& o1 = Offset(),
+                                                const Offset& o2 = Offset()) const {
     return CGAL::make_array(std::make_pair(construct_point(p1), o1),
                             std::make_pair(construct_point(p2), o2));
   }
