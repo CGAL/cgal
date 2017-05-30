@@ -35,7 +35,11 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
+
 #include <lasreader_las.hpp>
+
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif
 
