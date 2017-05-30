@@ -665,15 +665,15 @@ public:
   // _not_ Point_3 and Periodic_point_3.
   // ---------------------------------------------------------------------------
 
-  // The following point() functions return canonical points, that is points
-  // within the base domain. They are templated by `construct_point` to distingush
-  // between Delaunay and regular triangulations
-
   template <class ConstructPoint>
   Point point(const Periodic_point& pp, ConstructPoint cp) const
   {
     return cp(pp.first, pp.second);
   }
+
+  // The following point() functions return canonical points, that is points
+  // within the base domain. They are templated by `construct_point` to distingush
+  // between Delaunay and regular triangulations
 
   template <class ConstructPoint>
   Point point(Vertex_handle v, ConstructPoint cp) const {
