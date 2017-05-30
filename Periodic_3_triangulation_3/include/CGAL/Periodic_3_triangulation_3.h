@@ -661,7 +661,7 @@ public:
   }
 
   // ---------------------------------------------------------------------------
-  // The next functions return objects of type Point and Periodic_point,
+  // The following functions return objects of type Point and Periodic_point,
   // _not_ Point_3 and Periodic_point_3.
   // ---------------------------------------------------------------------------
 
@@ -775,6 +775,9 @@ public:
   // -*-*-*-*-*-*-*-*-*-*-*-*-*-* SEGMENT -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
   // *************************************************************************
 
+  // Note that an object of type `Segment` is constructed from two objects of type `Point_3`
+  // while an object of type `Periodic_segment` is constructed from two objects of type `Point`
+
   template<typename P> // can be Point or Point_3
   Segment construct_segment(const P& p1, const P& p2) const {
     return geom_traits().construct_segment_3_object()(construct_point(p1),
@@ -822,6 +825,9 @@ public:
   // *************************************************************************
   // -*-*-*-*-*-*-*-*-*-*-*-*-*-* TRIANGLE -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
   // *************************************************************************
+
+  // Note that an object of type `Triangle` is constructed from three objects of type `Point_3`
+  // while an object of type `Periodic_triangle` is constructed from three objects of type `Point`
 
   template<typename P> // can be Point or Point_3
   Triangle construct_triangle(const P& p1, const P& p2, const P& p3) const {
@@ -883,6 +889,9 @@ public:
   // *************************************************************************
   // -*-*-*-*-*-*-*-*-*-*-*-*-*-* TETRAHEDRON -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
   // *************************************************************************
+
+  // Note that an object of type `Tetrahedron` is constructed from four objects of type `Point_3`
+  // while an object of type `Periodic_tetrahedron` is constructed from four objects of type `Point`
 
   template<typename P> // can be Point or Point_3
   Tetrahedron construct_tetrahedron(const P& p1, const P& p2,
