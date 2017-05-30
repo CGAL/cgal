@@ -196,10 +196,7 @@ namespace internal {
     }
     friend void put(CCMap& m, const key_type& f, const value_type i)
     {
-      if (m.patch_ids_map.find(f) == m.patch_ids_map.end())
-        m.patch_ids_map.insert(std::make_pair(f, i));
-      else
-        m.patch_ids_map[f] = i;
+      m.patch_ids_map[f] = i;
     }
   };
 
