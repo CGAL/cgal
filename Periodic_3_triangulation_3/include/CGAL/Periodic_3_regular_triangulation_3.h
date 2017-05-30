@@ -597,7 +597,7 @@ public:
     CGAL_triangulation_expensive_assertion(is_valid());
   }
 
-protected:
+public:
    /** @name Wrapping the traits */ //@{
   bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r)  const
   {
