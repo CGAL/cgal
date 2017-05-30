@@ -841,10 +841,14 @@ namespace internal {
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
         vertex_descriptor vd = target(next(opposite(he, mesh_), mesh_), mesh_);
 
-        int deviation_pre = CGAL::abs(valence(va) - target_valence(va))
-                          + CGAL::abs(valence(vb) - target_valence(vb))
-                          + CGAL::abs(valence(vc) - target_valence(vc))
-                          + CGAL::abs(valence(vd) - target_valence(vd));
+        int vva = valence(va), tvva = target_valence(va);
+        int vvb = valence(vb), tvvb = target_valence(vb);
+        int vvc = valence(vc), tvvc = target_valence(vc);
+        int vvd = valence(vd), tvvd = target_valence(vd);
+        int deviation_pre = CGAL::abs(vva - tvva)
+                          + CGAL::abs(vvb - tvvb)
+                          + CGAL::abs(vvc - tvvc)
+                          + CGAL::abs(vvd - tvvd);
 
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
@@ -852,6 +856,10 @@ namespace internal {
         Patch_id pid = get_patch_id(face(he, mesh_));
 
         CGAL::Euler::flip_edge(he, mesh_);
+        vva -= 1;
+        vvb -= 1;
+        vvc += 1;
+        vvd += 1;
         ++nb_flips;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -868,10 +876,10 @@ namespace internal {
              (vc == target(he, mesh_) && vd == source(he, mesh_))
           || (vd == target(he, mesh_) && vc == source(he, mesh_)));
 
-        int deviation_post = CGAL::abs(valence(va) - target_valence(va))
-                          + CGAL::abs(valence(vb) - target_valence(vb))
-                          + CGAL::abs(valence(vc) - target_valence(vc))
-                          + CGAL::abs(valence(vd) - target_valence(vd));
+        int deviation_post = CGAL::abs(vva - tvva)
+                           + CGAL::abs(vvb - tvvb)
+                           + CGAL::abs(vvc - tvvc)
+                           + CGAL::abs(vvd - tvvd);
 
         //check that mesh does not become non-triangle,
         //nor has inverted faces
