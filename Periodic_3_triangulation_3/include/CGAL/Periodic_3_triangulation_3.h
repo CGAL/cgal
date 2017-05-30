@@ -314,6 +314,8 @@ public:
   const TDS& tds() const { return _tds; }
   TDS& tds() { return _tds; }
 
+  bool is_parallel() const { return false; }
+
   virtual void gather_cell_hidden_points(const Cell_handle /*cit*/, std::vector<Point>& /* hidden_points*/) { }
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted(const std::vector<Point>& /* hidden_points*/) { }
 

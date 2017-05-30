@@ -158,6 +158,7 @@ public:
   using Tr_Base::facets_end;
   using Tr_Base::cells_begin;
   using Tr_Base::cells_end;
+  using Tr_Base::construct_periodic_point;
 #endif
 
   // For strict-ansi compliance
@@ -700,6 +701,16 @@ public:
   Weighted_point construct_weighted_point(const Periodic_weighted_point& pp) const
   {
     return construct_weighted_point(pp.first, pp.second);
+  }
+
+  // overload the base construct_periodic_point for weighted points
+  Periodic_weighted_point construct_periodic_point(const Weighted_point& p) const
+  {
+    const Bare_point& bp = geom_traits().construct_point_3_object()(p);
+    const Periodic_bare_point pbp = Tr_Base::construct_periodic_point(bp);
+    return std::make_pair(geom_traits().construct_weighted_point_3_object()(
+                            pbp.first, p.weight()),
+                          pbp.second);
   }
 
 public:
