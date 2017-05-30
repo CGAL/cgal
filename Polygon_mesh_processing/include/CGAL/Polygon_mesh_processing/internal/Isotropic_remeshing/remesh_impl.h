@@ -43,6 +43,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/range.hpp>
+#include <boost/range/join.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
@@ -1359,22 +1360,15 @@ private:
       //move source at target
       put(vpmap_, vs, get(vpmap_, vt));
 
-      //collect halfedges around vs and vt
-      std::vector<halfedge_descriptor> hedges;
-      BOOST_FOREACH(halfedge_descriptor hd,
-        halfedges_around_target(h, mesh_))
-          hedges.push_back(hd);
-      BOOST_FOREACH(halfedge_descriptor hd,
-        halfedges_around_target(opposite(h, mesh_), mesh_))
-          hedges.push_back(hd);
-
       //collect normals to faces around vs AND vt
       //vertices are at the same location, but connectivity is still be same,
       //with plenty of degenerate triangles (which are common to both stars)
       std::vector<Vector_3> normals_patch1;
       std::vector<Vector_3> normals_patch2;
       Patch_id patch1 = -1, patch2 = -1;
-      BOOST_FOREACH(halfedge_descriptor hd, hedges)
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    boost::range::join(halfedges_around_target(h, mesh_),
+                                       halfedges_around_target(opposite(h, mesh_), mesh_)))
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
