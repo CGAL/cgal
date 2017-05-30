@@ -717,6 +717,10 @@ public:
     return bs;
   }
 
+  Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
+                                     const Offset & offset = Offset(),
+                                     bool perturb = false) const;
+
 #define CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 #include <CGAL/internal/Periodic_3_regular_triangulation_dummy_288.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
@@ -801,10 +805,6 @@ public:
     }
     return nearest;
   }
-
-  Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
-                                     const Offset & offset = Offset(),
-                                     bool perturb = false) const;
 
   size_type number_of_hidden_points () const
   {
