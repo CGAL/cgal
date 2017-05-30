@@ -48,7 +48,6 @@ public:
   typedef Cartesian_converter<EK,K>   Back_from_exact;
   
   typedef typename K::Point_3                         Point_3;
-  typedef typename K::Weighted_point_3                Weighted_point_3;
   typedef typename K::FT                              FT;
   typedef FT                                          result_type;
 
@@ -84,16 +83,7 @@ public:
     return K::Compute_squared_radius_3::operator()(p);
   }
 #endif // CGAL_CFG_MATCHING_BUG_6
-  
-  FT operator()( const Weighted_point_3 & p,
-                 const Weighted_point_3 & q,
-                 const Weighted_point_3 & r,
-                 const Weighted_point_3 & s ) const
-  {
-    typename K::Construct_point_3 cp = K().construct_point_3_object();
-    return this->operator()(cp(p), cp(q), cp(r), cp(s));
-  }
- 
+
   FT operator() ( const Point_3 & p,
                   const Point_3 & q,
                   const Point_3 & r,
