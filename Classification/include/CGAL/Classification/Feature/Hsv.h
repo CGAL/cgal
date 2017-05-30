@@ -55,18 +55,22 @@ namespace Feature {
     For example, such an feature using the channel 0 (hue) with a
     mean of 90 (which corresponds to a green hue) can help to identify
     trees.
+
+    Its default name is the channel followed by the mean value (for
+    example: "hue_180", "saturation_20" or "value_98").
     
     \note The user only needs to provide a map to standard (and more common)
     RGB colors, the conversion to HSV is done internally.
 
-    \tparam Geom_traits model of \cgal Kernel.
+    \tparam GeomTraits model of \cgal Kernel.
     \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    is `RandomAccessIterator` and its value type is the key type of
+    `ColorMap`.
     \tparam ColorMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
     is `CGAL::Classification::RGB_Color`.
   */
-template <typename Geom_traits, typename PointRange, typename ColorMap>
+template <typename GeomTraits, typename PointRange, typename ColorMap>
 class Hsv : public Feature_base
 {
 public:
@@ -101,7 +105,7 @@ public:
     \brief Constructs a feature based on the given color channel,
     mean and standard deviation.
 
-    \param input input range.
+    \param input point range.
     \param color_map property map to access the colors of the input points.
     \param channel chosen HSV channel.
     \param mean mean value of the specified channel.

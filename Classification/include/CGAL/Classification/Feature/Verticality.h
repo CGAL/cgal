@@ -39,19 +39,14 @@ namespace Feature {
     normal vectors if available or eigen analysis that estimates
     tangent planes from local neighborhoods.
 
-    \tparam Geom_traits model of \cgal Kernel.
-    \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
+    Its default name is "verticality".
+
+    \tparam GeomTraits model of \cgal Kernel.
   */
-template <typename Geom_traits>
+template <typename GeomTraits>
 class Verticality : public Feature_base
 {
-  const typename Geom_traits::Vector_3 vertical;
+  const typename GeomTraits::Vector_3 vertical;
   std::vector<float> verticality_feature;
   const Local_eigen_analysis* eigen;
   
@@ -61,7 +56,7 @@ public:
 
     \tparam InputRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
 #if defined(CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES) || defined(DOXYGEN_RUNNING)
@@ -74,7 +69,7 @@ public:
 
     for (std::size_t i = 0; i < input.size(); i++)
     {
-      typename Geom_traits::Vector_3 normal = eigen.normal_vector(i);
+      typename GeomTraits::Vector_3 normal = eigen.normal_vector(i);
       normal = normal / CGAL::sqrt (normal * normal);
       verticality_feature.push_back (1. - CGAL::abs(normal * vertical));
     }
@@ -93,11 +88,12 @@ public:
     \brief Constructs the feature using provided normals of points.
 
     \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    is `RandomAccessIterator` and its value type is the key type of
+    `VectorMap`.
     \tparam VectorMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Vector_3`.
-    \param input input range.
+    is `GeomTraits::Vector_3`.
+    \param input point range.
     \param normal_map property map to access the normal vectors of the input points.
   */
   template <typename PointRange, typename VectorMap>
@@ -108,7 +104,7 @@ public:
     this->set_name ("verticality");
     for (std::size_t i = 0; i < input.size(); i++)
     {
-      typename Geom_traits::Vector_3 normal = get(normal_map, *(input.begin()+i));
+      typename GeomTraits::Vector_3 normal = get(normal_map, *(input.begin()+i));
       normal = normal / CGAL::sqrt (normal * normal);
       verticality_feature.push_back (1. - std::fabs(normal * vertical));
     }
@@ -121,7 +117,7 @@ public:
 #ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     if (eigen != NULL)
     {
-      typename Geom_traits::Vector_3 normal = eigen->normal_vector<Geom_traits>(pt_index);
+      typename GeomTraits::Vector_3 normal = eigen->normal_vector<GeomTraits>(pt_index);
       normal = normal / CGAL::sqrt (normal * normal);
       return (1. - CGAL::abs(normal * vertical));
     }

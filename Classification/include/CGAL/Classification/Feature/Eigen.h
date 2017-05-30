@@ -86,6 +86,8 @@ public:
     \f[
     \frac{\lambda_1 - \lambda_2}{\lambda_1}
     \f]
+
+    Its default name is "linearity".
   */
 class Linearity
 #ifdef DOXYGEN_RUNNING
@@ -100,7 +102,7 @@ public:
 
     \tparam Input model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
@@ -133,6 +135,8 @@ public:
     \f[
     \frac{\lambda_2 - \lambda_3}{\lambda_1}
     \f]
+
+    Its default name is "planarity".
   */
 class Planarity
 #ifdef DOXYGEN_RUNNING
@@ -145,7 +149,7 @@ public:
   /*!
     Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
@@ -179,6 +183,8 @@ public:
     \f[
     \frac{\lambda_3}{\lambda_1}
     \f]
+
+    Its default name is "sphericity".
   */
 class Sphericity
 #ifdef DOXYGEN_RUNNING
@@ -191,7 +197,7 @@ public:
   /*!
     Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
@@ -224,6 +230,8 @@ public:
     \f[
     (\lambda_1 \times \lambda_2 \times \lambda_3)^{\frac{1}{3}}
     \f]
+
+    Its default name is "omnivariance".
   */
 class Omnivariance
 #ifdef DOXYGEN_RUNNING
@@ -236,7 +244,7 @@ public:
   /*!
     Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
@@ -266,6 +274,8 @@ public:
     \f[
     \frac{\lambda_1 - \lambda_3}{\lambda_1}
     \f]
+    
+    Its default name is "anisotropy".
   */
 class Anisotropy
 #ifdef DOXYGEN_RUNNING
@@ -278,7 +288,7 @@ public:
   /*!
     Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
@@ -311,6 +321,8 @@ public:
     \f[
     - \sum_{i=1}^3 \lambda_i \times \log{\lambda_i}
     \f]
+    
+    Its default name is "eigentropy".
   */
 class Eigentropy
 #ifdef DOXYGEN_RUNNING
@@ -323,7 +335,7 @@ public:
   /*!
     Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
@@ -361,6 +373,8 @@ public:
     \f[
     \lambda_1 + \lambda_2 + \lambda_3
     \f]
+
+    Its default name is "sum_eigen".
   */
 class Sum_eigenvalues
 #ifdef DOXYGEN_RUNNING
@@ -373,7 +387,7 @@ public:
   /*!
     Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
@@ -403,6 +417,8 @@ public:
     \f[
     \frac{\lambda_3}{\lambda_1 + \lambda_2 + \lambda_3}
     \f]
+
+    Its default name is "surface_variation".
   */
 class Surface_variation
 #ifdef DOXYGEN_RUNNING
@@ -415,7 +431,7 @@ public:
   /*!
     Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>

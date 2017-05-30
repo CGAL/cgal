@@ -37,9 +37,12 @@ namespace Feature {
     identify noisy parts of the input such as vegetation. This
     feature computes the distance of a point to a locally fitted
     plane.
+
+    Its default name is "distance_to_plane".
     
     \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    is `RandomAccessIterator` and its value type is the key type of
+    `PointMap`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
     is `CGAL::Point_3`.
@@ -62,7 +65,7 @@ public:
   /*!
     \brief Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param point_map property map to access the input points.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */

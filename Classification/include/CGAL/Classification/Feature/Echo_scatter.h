@@ -37,21 +37,24 @@ namespace Feature {
     number) is a useful information provided by most LIDAR sensors. It
     can help to identify trees.
 
-    \tparam Geom_traits model of \cgal Kernel.
+    Its default name is "echo_scatter".
+
+    \tparam GeomTraits model of \cgal Kernel.
     \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    is `RandomAccessIterator` and its value type is the key type of
+    `PointMap`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
+    is `GeomTraits::Point_3`.
     \tparam EchoMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
     is `std::size_t`.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap, typename EchoMap>
+template <typename GeomTraits, typename PointRange, typename PointMap, typename EchoMap>
 class Echo_scatter : public Feature_base
 {
 public:
-  typedef Classification::Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
+  typedef Classification::Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
 private:  
   typedef Classification::Image<float> Image_float;
 
@@ -61,7 +64,7 @@ public:
   /*!
     \brief Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param echo_map property map to access the echo values of the input points.
     \param grid precomputed `Planimetric_grid`.
     \param radius_neighbors radius of local neighborhoods.

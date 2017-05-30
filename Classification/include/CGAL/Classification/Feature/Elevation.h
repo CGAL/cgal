@@ -41,21 +41,24 @@ namespace Feature {
     the distance to the local estimation of the ground. It is useful
     to discriminate the ground from horizontal roofs.
 
-    \tparam Geom_traits model of \cgal Kernel.
+    Its default name is "elevation".
+
+    \tparam GeomTraits model of \cgal Kernel.
     \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    is `RandomAccessIterator` and its value type is the key type of
+    `PointMap`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
+    is `GeomTraits::Point_3`.
 
   */
-template <typename Geom_traits, typename PointRange, typename PointMap>
+template <typename GeomTraits, typename PointRange, typename PointMap>
 class Elevation : public Feature_base
 {
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef Image<float> Image_float;
-  typedef Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
+  typedef Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<float> elevation_feature;
@@ -70,7 +73,7 @@ public:
   /*!
     \brief Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param point_map property map to access the input points.
     \param grid precomputed `Planimetric_grid`.
     \param radius_dtm radius for digital terrain modeling (should be

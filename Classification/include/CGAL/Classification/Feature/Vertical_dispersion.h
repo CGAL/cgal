@@ -42,18 +42,21 @@ namespace Feature {
     feature quantifies the vertical dispersion of the points on a
     local Z-cylinder around the points.
 
-    \tparam Geom_traits model of \cgal Kernel.
+    Its default name is "vertical_dispersion".
+
+    \tparam GeomTraits model of \cgal Kernel.
     \tparam PointRange model of `ConstRange`. Its iterator type
-    is `RandomAccessIterator`.
+    is `RandomAccessIterator` and its value type is the key type of
+    `PointMap`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
+    is `GeomTraits::Point_3`.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap>
+template <typename GeomTraits, typename PointRange, typename PointMap>
 class Vertical_dispersion : public Feature_base
 {
   typedef Classification::Image<float> Image_float;
-  typedef Classification::Planimetric_grid<Geom_traits, PointRange, PointMap> Grid;
+  typedef Classification::Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<float> vertical_dispersion;
@@ -66,7 +69,7 @@ public:
   /*!
     \brief Constructs the feature.
 
-    \param input input range.
+    \param input point range.
     \param point_map property map to access the input points.
     \param grid precomputed `Planimetric_grid`.
     \param radius_neighbors radius of local neighborhoods.
@@ -94,7 +97,7 @@ public:
         Dispersion(i,j)=0;
     
     std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
-    typename Geom_traits::Vector_3 verti (0., 0., 1.);
+    typename GeomTraits::Vector_3 verti (0., 0., 1.);
     
     for (std::size_t j = 0; j < grid.height(); j++){	
       for (std::size_t i = 0; i < grid.width(); i++){
