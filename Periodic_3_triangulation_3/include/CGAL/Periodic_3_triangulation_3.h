@@ -1750,7 +1750,6 @@ protected:
       (std::ostream& os, const Periodic_3_triangulation_3<GT,TDS>& tr);
   //@}
 
-public:
 protected:
   template <class ConstructCircumcenter>
   Periodic_point_3 periodic_circumcenter(Cell_handle c,
