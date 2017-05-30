@@ -22,7 +22,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
-//#define SM_HALFEDGE_STATUS_PMAP 1
+#define SM_HALFEDGE_STATUS_PMAP 1
+//#define SM_FACE_PATCH_ID_PMAP 1
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -156,6 +157,7 @@ namespace internal {
     }
   };
 
+
   template <typename PM,
             typename EdgeIsConstrainedMap,
             typename FaceIndexMap>
@@ -166,7 +168,7 @@ namespace internal {
     typedef FaceIndexMap                                        FIMap;
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
-#ifdef SM_HALFEDGE_STATUS_PMAP
+#ifdef SM_FACE_PATCH_ID_PMAP
     typename PM:: template Property_map<face_descriptor,Patch_id> patch_ids_map;
 #else
     boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
@@ -185,17 +187,20 @@ namespace internal {
                             , FIMap fimap)
       : patch_ids_map()
     {
-#ifdef SM_HALFEDGE_STATUS_PMAP
+#ifdef SM_FACE_PATCH_ID_PMAP
       patch_ids_map = const_cast<PM&>(pmesh).add_property_map<face_descriptor,Patch_id>("f:pid").first;
       PMP::connected_components(pmesh,
         patch_ids_map,
         PMP::parameters::edge_is_constrained_map(ecmap)
         .face_index_map(fimap));
 #else    
-      PMP::connected_components(pmesh,
-        boost::make_assoc_property_map(patch_ids_map),
-        PMP::parameters::edge_is_constrained_map(ecmap)
-        .face_index_map(fimap));
+      std::size_t nc = PMP::connected_components(pmesh,
+                                         boost::make_assoc_property_map(patch_ids_map),
+                                         PMP::parameters::edge_is_constrained_map(ecmap)
+                                         .face_index_map(fimap));
+      if(nc == 1){
+        patch_ids_map.clear();
+      }
 #endif
     }
 
@@ -203,12 +208,17 @@ namespace internal {
     {
       //CGAL_assertion(!m.patch_ids_map.empty());
       //CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
-
-      return m.patch_ids_map[f]; // AF why:  .at(f);
+      if(m.patch_ids_map.empty()){
+        return 0;
+      }
+      return m.patch_ids_map.at(f); // AF why:  .at(f);
     }
+
     friend void put(CCMap& m, const key_type& f, const value_type i)
     {
-      m.patch_ids_map[f] = i;
+      if(! m.patch_ids_map.empty()){
+        m.patch_ids_map[f] = i;
+      }
     }
   };
 
