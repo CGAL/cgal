@@ -182,6 +182,15 @@ This usually converges to a satisfying solution (see Figure \cgalFigureRef{Class
 Example of evolution of the mean intersection-over-union. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
 \cgalFigureEnd
 
+\subsubsection Classification_sowf_result Result
+
+Figure \cgalFigureRef{Classification_sowf_result_fig} shows an example of output on a noisy point set with outliers. The accuracy on this example is 0.97 with a mean intersection-over-union of 0.85 (see section \ref Classification_evaluation).
+
+\cgalFigureBegin{Classification_sowf_result_fig,noise_outliers.png}
+Example of classification on a noisy point set with outliers (left: input, right: input). _Ground_ is orange, _roofs_ are pink, _vegetation_ is green. Outliers are classified with an additional label _outlier_ in black.
+\cgalFigureEnd
+
+
 \subsection Classification_random_forest Random Forest
 
 This second classifier is [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier).
