@@ -666,32 +666,6 @@ protected:
              p, q, r, s, t, o_p, o_q, o_r, o_s, o_t);
   }
 
-  Weighted_point construct_weighted_point(const Weighted_point& p, const Offset &o) const
-  {
-    return geom_traits().construct_weighted_point_3_object()(p, o);
-  }
-  Weighted_point construct_weighted_point(const Periodic_weighted_point& pp) const
-  {
-    return construct_weighted_point(pp.first, pp.second);
-  }
-
-public:
-  Weighted_point point(const Periodic_weighted_point& pp) const
-  {
-    // calls the base function with the correct (weighted) point functor
-    return point(pp, geom_traits().construct_weighted_point_3_object());
-  }
-
-  // unused and undocumented function required to be compatible with Alpha_shape_3
-  //
-  // Note that this returns a canonical version of the point (that is, the copy
-  // of the point that is inthe base domain) and is NOT equal to point(c->vertex(idx))
-  Weighted_point point(Cell_handle c, int idx) const
-  {
-    return point(c, idx, geom_traits().construct_weighted_point_3_object());
-  }
-
-public:
   Oriented_side side_of_oriented_power_sphere(const Weighted_point &p, const Weighted_point &q,
                                               const Weighted_point &r, const Weighted_point &s,
                                               const Weighted_point &t,
@@ -720,6 +694,40 @@ public:
   Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
                                      const Offset & offset = Offset(),
                                      bool perturb = false) const;
+
+  Weighted_point construct_weighted_point(const Weighted_point& p, const Offset &o) const
+  {
+    return geom_traits().construct_weighted_point_3_object()(p, o);
+  }
+  Weighted_point construct_weighted_point(const Periodic_weighted_point& pp) const
+  {
+    return construct_weighted_point(pp.first, pp.second);
+  }
+
+public:
+  /** @name Geometric access functions */
+  /// @{
+
+  // The following point() functions return canonical points, that is points
+  // within the base domain.
+
+  Weighted_point point(const Periodic_weighted_point& pp) const
+  {
+    return point(pp, geom_traits().construct_weighted_point_3_object());
+  }
+
+  Weighted_point point(Vertex_handle v) const
+  {
+    return point(v, geom_traits().construct_weighted_point_3_object());
+  }
+
+  Weighted_point point(Cell_handle c, int idx) const
+  {
+    return point(c, idx, geom_traits().construct_weighted_point_3_object());
+  }
+
+  // end of geometric functions
+  /// @}
 
 #define CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 #include <CGAL/internal/Periodic_3_regular_triangulation_dummy_288.h>
