@@ -1732,7 +1732,7 @@ private:
 
     bool is_on_patch(const vertex_descriptor& v) const
     {
-      if(has_border_){
+      if(! has_border_){
         return true;
       }
       BOOST_FOREACH(halfedge_descriptor h,
