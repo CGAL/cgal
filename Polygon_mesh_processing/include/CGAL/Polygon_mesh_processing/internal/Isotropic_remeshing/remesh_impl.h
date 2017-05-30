@@ -1459,10 +1459,10 @@ private:
       typename boost::property_traits<VertexPointMap>::reference
         p = get(vpmap_, target(hd, mesh_));
       hd = next(hd,mesh_);
-      boost::property_traits<VertexPointMap>::reference
+      typename boost::property_traits<VertexPointMap>::reference
         q = get(vpmap_, target(hd, mesh_));
       hd = next(hd,mesh_);
-      boost::property_traits<VertexPointMap>::reference
+      typename boost::property_traits<VertexPointMap>::reference
         r =get(vpmap_, target(hd, mesh_));
       
       if (GeomTraits().collinear_3_object()(p,q,r))
