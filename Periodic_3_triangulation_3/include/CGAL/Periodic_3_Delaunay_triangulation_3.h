@@ -388,9 +388,7 @@ public:
     CGAL_triangulation_precondition(number_of_vertices() != 0);
     // add newly added edges to too_long_edges, if necessary.
     Point p1,p2;
-    Offset omin;
     std::pair< Vertex_handle, Vertex_handle > edge_to_add;
-    std::pair< Offset, Offset > edge_to_add_off;
     std::list<Vertex_handle> empty_list;
     too_long_edges[v] = empty_list;
     // Iterate over all cells of the new star.
