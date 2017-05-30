@@ -157,6 +157,7 @@ public:
 
   int dimension() const
   {
+    // there can be no degenerate dimensions in a periodic triangulation
     return (this->number_of_vertices() == 0) ? -2 : 3;
   }
 
