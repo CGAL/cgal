@@ -1429,12 +1429,16 @@ private:
         return CGAL::NULL_VECTOR;
 
       halfedge_descriptor hd = halfedge(f, mesh_);
-      typename GeomTraits::Triangle_3
-        tr(get(vpmap_, target(hd, mesh_)),
-           get(vpmap_, target(next(hd, mesh_), mesh_)),
-           get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_)));
-
-      if (tr.is_degenerate())
+      typename boost::property_traits<VertexPointMap>::reference
+        p = get(vpmap_, target(hd, mesh_));
+      hd = next(hd,mesh_);
+      boost::property_traits<VertexPointMap>::reference
+        q = get(vpmap_, target(hd, mesh_));
+      hd = next(hd,mesh_);
+      boost::property_traits<VertexPointMap>::reference
+        r =get(vpmap_, target(hd, mesh_));
+      
+      if (GeomTraits().collinear_3_object()(p,q,r))
         return CGAL::NULL_VECTOR;
       else
         return PMP::compute_face_normal(f, mesh_);
