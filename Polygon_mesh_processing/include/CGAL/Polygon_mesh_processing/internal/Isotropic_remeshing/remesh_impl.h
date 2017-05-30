@@ -1436,6 +1436,9 @@ private:
 
     bool is_corner(const vertex_descriptor& v) const
     {
+      if(! has_border_){
+        return false;
+      }
       unsigned int nb_incident_features = 0;
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
       {
