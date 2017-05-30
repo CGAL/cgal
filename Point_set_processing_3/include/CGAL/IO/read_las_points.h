@@ -49,28 +49,61 @@ namespace CGAL {
   /// \cond SKIP_IN_MANUAL
   namespace LAS_property
   {
+    namespace Id
+    {
+      enum Id
+      {
+        X,
+        Y,
+        Z,
+        Intensity,
+        Return_number,
+        Number_of_returns,
+        Scan_direction_flag,
+        Edge_of_flight_line,
+        Classification,
+        Synthetic_flag,
+        Keypoint_flag,
+        Withheld_flag,
+        Scan_angle,
+        User_data,
+        Point_source_ID,
+        Deleted_flag,
+        GPS_time,
+        R,
+        G,
+        B,
+        I
+      };
+    }
     
-    struct X                   { typedef double type; };
-    struct Y                   { typedef double type; };
-    struct Z                   { typedef double type; };
-    struct Intensity           { typedef unsigned short type; };
-    struct Return_number       { typedef unsigned char type; };
-    struct Number_of_returns   { typedef unsigned char type; };
-    struct Scan_direction_flag { typedef unsigned char type; };
-    struct Edge_of_flight_line { typedef unsigned char type; };
-    struct Classification      { typedef unsigned char type; };
-    struct Synthetic_flag      { typedef unsigned char type; };
-    struct Keypoint_flag       { typedef unsigned char type; };
-    struct Withheld_flag       { typedef unsigned char type; };
-    struct Scan_angle          { typedef float type; };
-    struct User_data           { typedef unsigned char type; };
-    struct Point_source_ID     { typedef unsigned short type; };
-    struct Deleted_flag        { typedef unsigned int type; };
-    struct GPS_time            { typedef double type; };
-    struct R                   { typedef unsigned short type; };
-    struct G                   { typedef unsigned short type; };
-    struct B                   { typedef unsigned short type; };
-    struct I                   { typedef unsigned short type; };
+    template <typename T, Id::Id id>
+    struct Base
+    {
+      typedef T type;
+    };
+
+    typedef Base<double, Id::X> X;
+    typedef Base<double, Id::Y> Y;
+    typedef Base<double, Id::Z> Z;
+    typedef Base<unsigned short, Id::Intensity> Intensity;
+    typedef Base<unsigned char, Id::Return_number> Return_number;
+    typedef Base<unsigned char, Id::Number_of_returns> Number_of_returns;
+    typedef Base<unsigned char, Id::Scan_direction_flag> Scan_direction_flag;
+    typedef Base<unsigned char, Id::Edge_of_flight_line> Edge_of_flight_line;
+    typedef Base<unsigned char, Id::Classification> Classification;
+    typedef Base<unsigned char, Id::Synthetic_flag> Synthetic_flag;
+    typedef Base<unsigned char, Id::Keypoint_flag> Keypoint_flag;
+    typedef Base<unsigned char, Id::Withheld_flag> Withheld_flag;
+    typedef Base<float, Id::Scan_angle> Scan_angle;
+    typedef Base<unsigned char, Id::User_data> User_data;
+    typedef Base<unsigned short, Id::Point_source_ID> Point_source_ID;
+    typedef Base<unsigned int, Id::Deleted_flag> Deleted_flag;
+    typedef Base<double, Id::GPS_time> GPS_time;
+    typedef Base<unsigned short, Id::R> R;
+    typedef Base<unsigned short, Id::G> G;
+    typedef Base<unsigned short, Id::B> B;
+    typedef Base<unsigned short, Id::I> I;
   }
   /// \endcond
 
@@ -189,26 +222,27 @@ namespace internal {
     }
   };
   
-  template <typename OutputValueType, typename PropertyMap, typename T>
+  template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, T>& current);
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current);
 
-  template <typename OutputValueType, typename PropertyMap, typename T,
+  template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, T>& current,
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties);
   
   template <typename OutputValueType,
             typename PropertyMap,
             typename Constructor,
-            typename ... T>
+            typename ... T,
+            LAS_property::Id::Id ... id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, T...>& current)
+                           cpp11::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    cpp11::tuple<typename T::type...> values;
+    cpp11::tuple<T...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
     put (cpp11::get<0>(current), new_element, new_value);
@@ -218,15 +252,16 @@ namespace internal {
             typename PropertyMap,
             typename Constructor,
             typename ... T,
+            LAS_property::Id::Id ... id,
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, T...>& current,
+                           cpp11::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    cpp11::tuple<typename T::type...> values;
+    cpp11::tuple<T...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
     put (cpp11::get<0>(current), new_element, new_value);
@@ -235,23 +270,23 @@ namespace internal {
   }
 
 
-  template <typename OutputValueType, typename PropertyMap, typename T>
+  template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, T>& current)
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current)
   {
-    typename T::type new_value = typename T::type();
+    T new_value = T();
     get_value (reader, new_value, current.second);
     put (current.first, new_element, new_value);
   }
 
-  template <typename OutputValueType, typename PropertyMap, typename T,
+  template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, T>& current,
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
-    typename T::type new_value = typename T::type();
+    T new_value = T();
     get_value (reader, new_value, current.second);
     put (current.first, new_element, new_value);
     process_properties (reader, new_element, next, properties...);
