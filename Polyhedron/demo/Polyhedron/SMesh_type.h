@@ -1,10 +1,7 @@
 #ifndef SMESH_TYPE_H
 #define SMESH_TYPE_H
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/array.hpp>
-#include <set>
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
