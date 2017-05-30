@@ -19,7 +19,7 @@ int main(int argc, char*argv[])
   // Reads a .las point set file with normal vectors and colors
 
   std::vector<PointWithColor> points; // store points
-  std::ifstream in(fname);
+  std::ifstream in(fname, std::ios_base::binary);
 
   if (!in ||
       !CGAL::read_las_points_with_properties
