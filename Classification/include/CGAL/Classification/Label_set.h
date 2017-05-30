@@ -31,7 +31,7 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationLabel
 
-\brief Set of labels (see `Label`) used as input by classification
+\brief Set of `Label` used as input by classification
 algorithms.
 
 */
@@ -50,6 +50,9 @@ public:
 
   /*!
     \brief Adds a label.
+
+    \note Names are not used for identification: two labels in the
+    same set can have the same name (but not the same handle).
 
     \param name name of the label.
 

@@ -65,12 +65,13 @@ namespace Classification {
   of generating a set of generic features at multiple scales to
   increase the reliability of the classification.
 
-  \tparam Geom_traits model of \cgal Kernel.
+  \tparam GeomTraits model of \cgal Kernel.
   \tparam PointRange model of `ConstRange`. Its iterator type is
-  `RandomAccessIterator`.
+  `RandomAccessIterator` and its value type is the key type of
+  `PointMap`.
   \tparam PointMap model of `ReadablePropertyMap` whose key
   type is the value type of the iterator of `PointRange` and value type
-  is `Geom_traits::Point_3`.
+  is `GeomTraits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
   algorithm. Possible values are `Parallel_tag` (default value is %CGAL
   is linked with TBB) or `Sequential_tag` (default value otherwise).
@@ -78,7 +79,7 @@ namespace Classification {
   for matrix diagonalization.
 
 */
-template <typename Geom_traits,
+template <typename GeomTraits,
           typename PointRange,
           typename PointMap,
 #if defined(DOXYGEN_RUNNING)
@@ -93,7 +94,7 @@ class Point_set_feature_generator
 {
   
 public:
-  typedef typename Geom_traits::Iso_cuboid_3             Iso_cuboid_3;
+  typedef typename GeomTraits::Iso_cuboid_3             Iso_cuboid_3;
 
   /// \cond SKIP_IN_MANUAL
   typedef typename PointRange::const_iterator Iterator;
@@ -101,9 +102,9 @@ public:
   /// \endcond
   
   typedef Classification::Planimetric_grid
-  <Geom_traits, PointRange, PointMap>                    Planimetric_grid;
+  <GeomTraits, PointRange, PointMap>                    Planimetric_grid;
   typedef Classification::Point_set_neighborhood
-  <Geom_traits, PointRange, PointMap>                    Neighborhood;
+  <GeomTraits, PointRange, PointMap>                    Neighborhood;
   typedef Classification::Local_eigen_analysis           Local_eigen_analysis;
 
   /// \cond SKIP_IN_MANUAL
@@ -116,7 +117,7 @@ public:
   <PointRange, PointMap>                                 Distance_to_plane;
   typedef Classification::Feature::Eigentropy            Eigentropy;
   typedef Classification::Feature::Elevation
-  <Geom_traits, PointRange, PointMap>                    Elevation;
+  <GeomTraits, PointRange, PointMap>                    Elevation;
   typedef Classification::Feature::Linearity             Linearity;
   typedef Classification::Feature::Omnivariance          Omnivariance;
   typedef Classification::Feature::Planarity             Planarity;
@@ -124,9 +125,9 @@ public:
   typedef Classification::Feature::Sum_eigenvalues       Sum_eigen;
   typedef Classification::Feature::Surface_variation     Surface_variation;
   typedef Classification::Feature::Vertical_dispersion
-  <Geom_traits, PointRange, PointMap>                    Dispersion;
+  <GeomTraits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
-  <Geom_traits>                                          Verticality;
+  <GeomTraits>                                          Verticality;
   
   typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
@@ -256,13 +257,13 @@ public:
     - `CGAL::Classification::Feature::Sphericity`
     - `CGAL::Classification::Feature::Sum_eigenvalues`
     - `CGAL::Classification::Feature::Surface_variation`
-    - `CGAL::Classification::Feature::Vertical_dispersion` based on eigenvalues
+    - The version of `CGAL::Classification::Feature::Vertical_dispersion` based on eigenvalues
 
     If normal vectors are provided (if `VectorMap` is different from
     `CGAL::Default`), the following feature is generated at each
     scale:
 
-    - `CGAL::Classification::Feature::Vertical_dispersion` based on normal vectors
+    - The version of `CGAL::Classification::Feature::Vertical_dispersion` based on normal vectors
 
     If colors are provided (if `ColorMap` is different from
     `CGAL::Default`), the following features are generated at each
@@ -288,7 +289,7 @@ public:
 
     \tparam VectorMap model of `ReadablePropertyMap` whose key type is
     the value type of the iterator of `PointRange` and value type is
-    `Geom_traits::Vector_3`.
+    `GeomTraits::Vector_3`.
     \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
     the value type of the iterator of `PointRange` and value type is
     `CGAL::Classification::RGB_Color`.
@@ -296,7 +297,7 @@ public:
     the value type of the iterator of `PointRange` and value type is
     `std::size_t`.
     \param features the feature set where the features are instantiated.
-    \param input input range.
+    \param input point range.
     \param point_map property map to access the input points.
     \param nb_scales number of scales to compute.
     \param normal_map property map to access the normal vectors of the input points (if any).
@@ -319,7 +320,7 @@ public:
       (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
        boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
 
-    typedef typename Default::Get<VectorMap, typename Geom_traits::Vector_3 >::type
+    typedef typename Default::Get<VectorMap, typename GeomTraits::Vector_3 >::type
       Vmap;
     typedef typename Default::Get<ColorMap, RGB_Color >::type
       Cmap;
@@ -465,7 +466,7 @@ private:
     launch_feature_computation (new Feature_adder_verticality<VectorMap> (this, normal_map, 0));
   }
 
-  void generate_normal_based_features(const CGAL::Default_property_map<Iterator, typename Geom_traits::Vector_3>&)
+  void generate_normal_based_features(const CGAL::Default_property_map<Iterator, typename GeomTraits::Vector_3>&)
   {
     generate_multiscale_feature_variant_0<Verticality> ();
   }
@@ -473,7 +474,7 @@ private:
   template <typename ColorMap>
   struct Feature_adder_color : public Feature_adder
   {
-    typedef Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap> Hsv;
+    typedef Classification::Feature::Hsv<GeomTraits, PointRange, ColorMap> Hsv;
     
     using Feature_adder::generator;
     using Feature_adder::scale;
@@ -522,7 +523,7 @@ private:
   template <typename EchoMap>
   struct Feature_adder_echo : public Feature_adder
   {
-    typedef Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap> Echo_scatter;
+    typedef Classification::Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap> Echo_scatter;
     
     using Feature_adder::generator;
     using Feature_adder::scale;

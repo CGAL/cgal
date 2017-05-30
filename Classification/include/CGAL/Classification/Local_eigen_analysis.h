@@ -128,7 +128,8 @@ public:
     on a local neighborhood.
 
     \tparam PointRange model of `ConstRange`. Its iterator type is
-    `RandomAccessIterator`.
+    `RandomAccessIterator` and its value type is the key type of
+    `PointMap`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
     is `CGAL::Point_3`.
@@ -139,8 +140,8 @@ public:
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
     for matrix diagonalization.
 
-    \param input input range.
-    \param point_map property map to access the input points
+    \param input point range.
+    \param point_map property map to access the input points.
     \param neighbor_query object used to access neighborhoods of points.
   */
   template <typename PointRange,
@@ -206,28 +207,28 @@ public:
 
   /*!
     \brief Returns the estimated unoriented normal vector of the point at position `index`.
-    \tparam Geom_traits model of \cgal Kernel.
+    \tparam GeomTraits model of \cgal Kernel.
   */
-  template <typename Geom_traits>
-  typename Geom_traits::Vector_3 normal_vector (std::size_t index) const
+  template <typename GeomTraits>
+  typename GeomTraits::Vector_3 normal_vector (std::size_t index) const
   {
-    return typename Geom_traits::Vector_3(double(m_smallest_eigenvectors[index][0]),
+    return typename GeomTraits::Vector_3(double(m_smallest_eigenvectors[index][0]),
                                           double(m_smallest_eigenvectors[index][1]),
                                           double(m_smallest_eigenvectors[index][2]));
   }
 
   /*!
     \brief Returns the estimated local tangent plane of the point at position `index`.
-    \tparam Geom_traits model of \cgal Kernel.
+    \tparam GeomTraits model of \cgal Kernel.
   */
-  template <typename Geom_traits>
-  typename Geom_traits::Plane_3 plane (std::size_t index) const
+  template <typename GeomTraits>
+  typename GeomTraits::Plane_3 plane (std::size_t index) const
   {
-    return typename Geom_traits::Plane_3
-      (typename Geom_traits::Point_3 (double(m_centroids[index][0]),
+    return typename GeomTraits::Plane_3
+      (typename GeomTraits::Point_3 (double(m_centroids[index][0]),
                                       double(m_centroids[index][1]),
                                       double(m_centroids[index][2])),
-       typename Geom_traits::Vector_3 (double(m_smallest_eigenvectors[index][0]),
+       typename GeomTraits::Vector_3 (double(m_smallest_eigenvectors[index][0]),
                                        double(m_smallest_eigenvectors[index][1]),
                                        double(m_smallest_eigenvectors[index][2])));
   }
@@ -240,7 +241,7 @@ public:
   /*!
     \brief Returns the sum of eigenvalues of the point at position `index`.
   */
-  const float& sum_of_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
+  float sum_of_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
 
   /// \cond SKIP_IN_MANUAL
   float mean_range() const { return m_mean_range; }

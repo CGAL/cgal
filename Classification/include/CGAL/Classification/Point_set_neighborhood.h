@@ -50,19 +50,20 @@ namespace Classification {
     simplified version of the point set to allow for neighbor queries
     at a higher scale.
 
-    \tparam Geom_traits is a model of \cgal Kernel.
+    \tparam GeomTraits is a model of \cgal Kernel.
     \tparam PointRange model of `ConstRange`. Its iterator type is
-    `RandomAccessIterator`.
+    `RandomAccessIterator` and its value type is the key type of
+    `PointMap`.
     \tparam PointMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `Geom_traits::Point_3`.
+    is `GeomTraits::Point_3`.
   */
-template <typename Geom_traits, typename PointRange, typename PointMap>
+template <typename GeomTraits, typename PointRange, typename PointMap>
 class Point_set_neighborhood
 {
   
-  typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point;
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point;
   
   class My_point_property_map{
     const PointRange* input;
@@ -81,7 +82,7 @@ class Point_set_neighborhood
     { return ppmap[i]; }
   };
 
-  typedef Search_traits_3<Geom_traits> SearchTraits_3;
+  typedef Search_traits_3<GeomTraits> SearchTraits_3;
   typedef Search_traits_adapter <std::size_t, My_point_property_map, SearchTraits_3> Search_traits;
   typedef Sliding_midpoint<Search_traits> Splitter;
   typedef Distance_adapter<std::size_t, My_point_property_map, Euclidean_distance<SearchTraits_3> > Distance;
@@ -172,7 +173,7 @@ public:
   /*!
     \brief Constructs a neighborhood object based on the input range.
 
-    \param input input range.
+    \param input point range.
     \param point_map property map to access the input points.
   */
   Point_set_neighborhood (const PointRange& input,

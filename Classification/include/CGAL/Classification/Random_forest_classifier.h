@@ -21,8 +21,8 @@ namespace Classification {
 */
 class Random_forest_classifier
 {
-  Label_set& m_labels;
-  Feature_set& m_features;
+  const Label_set& m_labels;
+  const Feature_set& m_features;
 
 #if (CV_MAJOR_VERSION < 3)
   CvRTrees* rtree;
@@ -35,8 +35,8 @@ public:
 /*!
   \brief Instantiate the classifier using the sets of `labels` and `features`.
 */
-  Random_forest_classifier (Label_set& labels,
-                            Feature_set& features)
+  Random_forest_classifier (const Label_set& labels,
+                            const Feature_set& features)
     : m_labels (labels), m_features (features)
 #if (CV_MAJOR_VERSION < 3)
     , rtree (NULL)
@@ -60,22 +60,21 @@ public:
     sets up the random trees that produce the most accurate result
     with respect to this ground truth.
 
-    For more details on the parameters of this algorithm, please refer
-    to [the official documentation of OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html).
+    Parameters documentation is copy-pasted from [the official documentation of OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 
-    \note Each label should be assigned at least one ground truth
-    item.
+    \pre At least one ground truth item should be assigned to each
+    label.
 
     \param ground_truth vector of label indices. It should contain for
     each input item, in the same order as the input set, the index of
     the corresponding label in the `Label_set` provided in the
     constructor. Input items that do not have a ground truth
     information should be given the value `std::size_t(-1)`.
-    \param max_depth see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
-    \param min_sample_count see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
-    \param max_categories see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
-    \param max_number_of_trees_in_the_forest see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
-    \param forest_accuracy see [OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html#cvrtparams-cvrtparams).
+    \param max_depth the depth of the tree. A low value will likely underfit and conversely a high value will likely overfit. The optimal value can be obtained using cross validation or other suitable methods.
+    \param min_sample_count minimum samples required at a leaf node for it to be split. A reasonable value is a small percentage of the total data e.g. 1%.
+    \param max_categories Cluster possible values of a categorical variable into K \leq max_categories clusters to find a suboptimal split. If a discrete variable, on which the training procedure tries to make a split, takes more than max_categories values, the precise best subset estimation may take a very long time because the algorithm is exponential. Instead, many decision trees engines (including ML) try to find sub-optimal split in this case by clustering all the samples into max_categories clusters that is some categories are merged together. The clustering is applied only in n>2-class classification problems for categorical variables with N > max_categories possible values. In case of regression and 2-class classification the optimal split can be found efficiently without employing clustering, thus the parameter is not used in these cases.
+    \param max_number_of_trees_in_the_forest The maximum number of trees in the forest (surprise, surprise). Typically the more trees you have the better the accuracy. However, the improvement in accuracy generally diminishes and asymptotes pass a certain number of trees. Also to keep in mind, the number of tree increases the prediction time linearly.
+    \param forest_accuracy Sufficient accuracy (OOB error).
   */
   void train (const std::vector<std::size_t>& ground_truth,
               int max_depth = 20,

@@ -59,8 +59,8 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationClassifiers
 
-  \brief %Classification classifier based on the sum of weighted
-  features with user-defined effects on labels.
+  \brief Classifier based on the sum of weighted features with
+  user-defined effects on labels.
 
   \cgalModels `CGAL::Classification::Classifier`
 */
@@ -68,7 +68,7 @@ class Sum_of_weighted_features_classifier
 {
 public:
 
-  enum Effect /// Defines the effect of an feature on a type.
+  enum Effect /// Defines the effect of a feature on a type.
   {
     FAVORING = 0, ///< High values of the feature favor this type
     NEUTRAL = 1, ///< The feature has no effect on this type
@@ -151,8 +151,8 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
 
 
-  Label_set& m_labels;
-  Feature_set& m_features;
+  const Label_set& m_labels;
+  const Feature_set& m_features;
   std::vector<float> m_weights;
   std::vector<std::vector<Effect> > m_effect_table;
   mutable std::map<Label_handle, std::size_t> m_map_labels;
@@ -172,8 +172,8 @@ public:
   a feature), another classifier object should be instantiated as the
   internal data structures of this one are invalidated.
 */
-  Sum_of_weighted_features_classifier (Label_set& labels,
-                                      Feature_set& features)
+  Sum_of_weighted_features_classifier (const Label_set& labels,
+                                       const Feature_set& features)
     : m_labels (labels), m_features (features),
       m_weights (features.size(), 1.),
       m_effect_table (labels.size(), std::vector<Effect>
@@ -274,10 +274,11 @@ public:
 
     From the set of provided ground truth, this algorithm estimates
     the sets of weights and effects that produce the most accurate
-    result with respect to this ground truth.
+    result with respect to this ground truth. Old weights and effects
+    are discarded.
 
-    \note Each label should be assigned at least one ground truth
-    item.
+    \pre At least one ground truth item should be assigned to each
+    label.
 
     \param ground_truth vector of label indices. It should contain for
     each input item, in the same order as the input set, the index of
@@ -710,7 +711,8 @@ public:
   }
   
   /*!
-    \brief Loads a configuration from the stream `input`.
+    \brief Loads a configuration from the stream `input`. A
+    configuration is a set of weights and effects.
 
     The input file should be in the XML format written by the
     `save_configuration()` method. Labels and features are described
@@ -731,6 +733,10 @@ public:
     \param input input stream.
     \param verbose displays warning if set to `true`. The method is
     silent otherwise.
+
+    \return `true` if all weights and effects found in the
+    configuration file were applicable to the feature set and label
+    set of this classifier, `false` otherwise.
   */
   bool load_configuration (std::istream& input, bool verbose = false)
   {
