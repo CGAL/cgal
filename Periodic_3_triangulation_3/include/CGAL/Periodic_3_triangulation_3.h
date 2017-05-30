@@ -796,9 +796,9 @@ public:
              construct_point(ps[1].first, ps[1].second));
   }
   template<typename P> // can be Point or Point_3
-  Periodic_segment construct_periodic_3_segment(const P& p1, const P& p2,
-                                                const Offset& o1 = Offset(),
-                                                const Offset& o2 = Offset()) const {
+  Periodic_segment construct_periodic_segment(const P& p1, const P& p2,
+                                              const Offset& o1 = Offset(),
+                                              const Offset& o2 = Offset()) const {
     return CGAL::make_array(std::make_pair(construct_point(p1), o1),
                             std::make_pair(construct_point(p2), o2));
   }
@@ -851,11 +851,11 @@ public:
              construct_point(tri[2].first, tri[2].second));
   }
   template<typename P> // can be Point or Point_3
-  Periodic_triangle construct_periodic_3_triangle(const P& p1, const P& p2,
-                                                  const P& p3,
-                                                  const Offset& o1 = Offset(),
-                                                  const Offset& o2 = Offset(),
-                                                  const Offset& o3 = Offset()) const {
+  Periodic_triangle construct_periodic_triangle(const P& p1, const P& p2,
+                                                const P& p3,
+                                                const Offset& o1 = Offset(),
+                                                const Offset& o2 = Offset(),
+                                                const Offset& o3 = Offset()) const {
     return CGAL::make_array(std::make_pair(construct_point(p1), o1),
                             std::make_pair(construct_point(p2), o2),
                             std::make_pair(construct_point(p3), o3));
@@ -920,12 +920,12 @@ public:
              construct_point(tet[3].first, tet[3].second));
   }
   template<typename P> // can be Point or Point_3
-  Periodic_tetrahedron construct_periodic_3_tetrahedron(const P& p1, const P& p2,
-                                                        const P& p3, const P& p4,
-                                                        const Offset& o1 = Offset(),
-                                                        const Offset& o2 = Offset(),
-                                                        const Offset& o3 = Offset(),
-                                                        const Offset& o4 = Offset()) const {
+  Periodic_tetrahedron construct_periodic_tetrahedron(const P& p1, const P& p2,
+                                                      const P& p3, const P& p4,
+                                                      const Offset& o1 = Offset(),
+                                                      const Offset& o2 = Offset(),
+                                                      const Offset& o3 = Offset(),
+                                                      const Offset& o4 = Offset()) const {
     return CGAL::make_array(std::make_pair(construct_point(p1), o1),
                             std::make_pair(construct_point(p2), o2),
                             std::make_pair(construct_point(p3), o3),
