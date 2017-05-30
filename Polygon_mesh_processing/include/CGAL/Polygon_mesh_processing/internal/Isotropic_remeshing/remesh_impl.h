@@ -1194,7 +1194,7 @@ private:
 
     int target_valence(const vertex_descriptor& v) const
     {
-      return (is_border(v, mesh_)) ? 4 : 6;
+      return (has_border_ && is_border(v, mesh_)) ? 4 : 6;
     }
 
     bool is_on_triangle(const halfedge_descriptor& h) const
@@ -1730,6 +1730,9 @@ private:
 
     bool is_on_patch(const vertex_descriptor& v) const
     {
+      if(has_border_){
+        return true;
+      }
       BOOST_FOREACH(halfedge_descriptor h,
                     halfedges_around_target(v, mesh_))
       {
