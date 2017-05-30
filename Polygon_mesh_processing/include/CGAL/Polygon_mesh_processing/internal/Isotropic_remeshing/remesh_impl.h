@@ -322,6 +322,7 @@ namespace internal {
       : mesh_(pmesh)
       , vpmap_(vpmap)
       , own_tree_(own_tree)
+      , has_border_(false)
       , input_triangles_()
       , input_patch_ids_()
       , halfedge_status_pmap_(0)
@@ -1479,8 +1480,10 @@ private:
       BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
       {
         //being part of the border of the mesh is predominant
-        if (is_border(h, mesh_))
+        if (is_border(h, mesh_)){
           set_status(h, MESH_BORDER); //erase previous value if exists
+          has_border_ = true;
+        }
       }
 
       //tag PATCH,       //h and hopp belong to the patch to be remeshed
@@ -1506,12 +1509,16 @@ private:
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
-          if (status(h) == PATCH)
+          if (status(h) == PATCH){
             set_status(h, PATCH_BORDER);
+            has_border_ = true;
+          }
 
           halfedge_descriptor hopp = opposite(h, mesh_);
-          if (status(hopp) == PATCH)
+          if (status(hopp) == PATCH){
             set_status(hopp, PATCH_BORDER);
+            has_border_ = true;
+          }
         }
       }
     }
@@ -1721,6 +1728,9 @@ public:
     }
     bool is_on_patch_border(const vertex_descriptor& v) const
     {
+      if(! has_border_){
+        return false;
+      }
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
       {
         if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
@@ -1899,6 +1909,7 @@ private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
     bool own_tree_;
+    bool has_border_;
     std::vector<AABB_tree*> trees;
     Patch_id_to_index_map patch_id_to_index_map;
     Triangle_list input_triangles_;
