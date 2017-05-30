@@ -496,10 +496,11 @@ public:
   /** @name Wrapping the traits */
   // Note that calling functors with "construct_point(p), offset" and not
   // construct_point(p, offset) is done on purpose. Indeed, construct_point(p)
-  // is not a real construction: it's either the identity or getting the bare point
-  // within a weighted point. However, construct_point(p, offset) is a real
-  // construction. When using filters, the construct_point() must be done
+  // is not a real construction: it's either the identity (when `Point` is `Point_3`)
+  // or getting the bare point within a weighted point. However, construct_point(p, offset)
+  // is a real construction. When using filters, construct_point() must be done
   // within the filtered predicates with the appropriate construct_point_3_object.
+
   template<typename P> // can be Point or Point_3
   Comparison_result compare_xyz(const P& p1, const P& p2) const {
     return geom_traits().compare_xyz_3_object()(construct_point(p1),
@@ -592,16 +593,16 @@ public:
   Point_3 construct_point(const P& p, const Offset& o) const {
     return geom_traits().construct_point_3_object()(p, o);
   }
-  template<typename P> // can be Periodic_point or Periodic_point_3
+  template<typename P> // can be Point or Point_3
   Point_3 construct_point(const std::pair<P, Offset>& pp) const {
     return construct_point(pp.first, pp.second);
   }
 
-  // Given a point `p`, compute its corresponding offset `o` with respect to
-  // the canonical domain.
+  // Given a point `p` in space, compute its offset `o` with respect
+  // to the canonical domain and returns (p, o)
   Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
-    // check that p lies within the domain. If not: translate
+    // Check if p lies within the domain. If not, translate.
     const Iso_cuboid& dom = domain();
     if (!(p.x() < dom.xmin()) && p.x() < dom.xmax() &&
         !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
@@ -664,23 +665,21 @@ public:
   // _not_ Point_3 and Periodic_point_3.
   // ---------------------------------------------------------------------------
 
-  const Point& point(Vertex_handle v) const {
-    return v->point();
-  }
+  // The following point() functions return canonical points, that is points
+  // within the base domain. They are templated by `construct_point` to distingush
+  // between Delaunay and regular triangulations
 
-  const Point& point(Cell_handle c, int i) const {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3 );
-    return c->vertex(i)->point();
-  }
-
-  // templated by `construct_point` to distingush between Delaunay and regular triangulations
   template <class ConstructPoint>
   Point point(const Periodic_point& pp, ConstructPoint cp) const
   {
     return cp(pp.first, pp.second);
   }
 
-  // templated by `construct_point` to distingush between Delaunay and regular triangulations
+  template <class ConstructPoint>
+  Point point(Vertex_handle v, ConstructPoint cp) const {
+    return point(periodic_point(v), cp);
+  }
+
   template <class ConstructPoint>
   Point point(Cell_handle c, int idx, ConstructPoint cp) const
   {
@@ -741,33 +740,33 @@ public:
   Periodic_point periodic_point(const Vertex_handle v) const
   {
     if (is_1_cover())
-      return std::make_pair(point(v), Offset(0,0,0));
+      return std::make_pair(v->point(), Offset(0,0,0));
 
     Virtual_vertex_map_it it = virtual_vertices.find(v);
     if (it == virtual_vertices.end()) {
       // if v is not contained in virtual_vertices, then it is in the
       // original domain.
-      return std::make_pair(point(v), Offset(0,0,0));
+      return std::make_pair(v->point(), Offset(0,0,0));
     } else {
       // otherwise it has to be looked up as well as its offset.
-      return std::make_pair(point(it->second.first), it->second.second);
+      return std::make_pair(it->second.first->point(), it->second.second);
     }
   }
 
   Periodic_point periodic_point(const Cell_handle c, int i) const
   {
     if (is_1_cover())
-      return std::make_pair(point(c, i), int_to_off(c->offset(i)));
+      return std::make_pair(c->vertex(i)->point(), int_to_off(c->offset(i)));
 
     Virtual_vertex_map_it it = virtual_vertices.find(c->vertex(i));
     if (it == virtual_vertices.end()) {
       // if c->vertex(i) is not contained in virtual_vertices, then it
       // is in the original domain.
-      return std::make_pair(point(c, i),
+      return std::make_pair(c->vertex(i)->point(),
                             combine_offsets(Offset(),int_to_off(c->offset(i))) );
     } else {
       // otherwise it has to be looked up as well as its offset.
-      return std::make_pair(point(it->second.first),
+      return std::make_pair(it->second.first->point(),
                             combine_offsets(it->second.second, int_to_off(c->offset(i))) );
     }
   }
@@ -804,8 +803,8 @@ public:
     CGAL_triangulation_precondition( i != j );
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 3 && j >= 0 && j <= 3 );
-    return CGAL::make_array(std::make_pair(point(c,i), get_offset(c,i)),
-                            std::make_pair(point(c,j), get_offset(c,j)));
+    return CGAL::make_array(std::make_pair(c->vertex(i)->point(), get_offset(c,i)),
+                            std::make_pair(c->vertex(j)->point(), get_offset(c,j)));
   }
   Periodic_segment periodic_segment(const Edge& e) const {
     return periodic_segment(e.first,e.second,e.third);
@@ -859,13 +858,13 @@ public:
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 3 );
     if ( (i&1)==0 )
-      return CGAL::make_array(std::make_pair(point(c,(i+2)&3), get_offset(c,(i+2)&3)),
-                              std::make_pair(point(c,(i+1)&3), get_offset(c,(i+1)&3)),
-                              std::make_pair(point(c,(i+3)&3), get_offset(c,(i+3)&3)) );
+      return CGAL::make_array(std::make_pair(c->vertex((i+2)&3)->point(), get_offset(c,(i+2)&3)),
+                              std::make_pair(c->vertex((i+1)&3)->point(), get_offset(c,(i+1)&3)),
+                              std::make_pair(c->vertex((i+3)&3)->point(), get_offset(c,(i+3)&3)) );
 
-    return CGAL::make_array(std::make_pair(point(c,(i+1)&3), get_offset(c,(i+1)&3)),
-                            std::make_pair(point(c,(i+2)&3), get_offset(c,(i+2)&3)),
-                            std::make_pair(point(c,(i+3)&3), get_offset(c,(i+3)&3)) );
+    return CGAL::make_array(std::make_pair(c->vertex((i+1)&3)->point(), get_offset(c,(i+1)&3)),
+                            std::make_pair(c->vertex((i+2)&3)->point(), get_offset(c,(i+2)&3)),
+                            std::make_pair(c->vertex((i+3)&3)->point(), get_offset(c,(i+3)&3)) );
   }
   Periodic_triangle periodic_triangle(const Facet& f) const {
     return periodic_triangle(f.first, f.second);
@@ -926,10 +925,10 @@ public:
   Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c) const
   {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
-    return CGAL::make_array(std::make_pair(point(c,0), get_offset(c,0)),
-                            std::make_pair(point(c,1), get_offset(c,1)),
-                            std::make_pair(point(c,2), get_offset(c,2)),
-                            std::make_pair(point(c,3), get_offset(c,3)) );
+    return CGAL::make_array(std::make_pair(c->vertex(0)->point(), get_offset(c,0)),
+                            std::make_pair(c->vertex(1)->point(), get_offset(c,1)),
+                            std::make_pair(c->vertex(2)->point(), get_offset(c,2)),
+                            std::make_pair(c->vertex(3)->point(), get_offset(c,3)) );
   }
   Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) const
   {
@@ -1749,8 +1748,8 @@ protected:
   {
     CGAL_triangulation_precondition(c != Cell_handle());
 
-    Point_3 p = construct_circumcenter(point(c, 0), point(c, 1),
-                                       point(c, 2), point(c, 3),
+    Point_3 p = construct_circumcenter(c->vertex(0)->point(), c->vertex(1)->point(),
+                                       c->vertex(2)->point(), c->vertex(3)->point(),
                                        get_offset(c, 0), get_offset(c, 1),
                                        get_offset(c, 2), get_offset(c, 3));
 
@@ -4227,7 +4226,7 @@ namespace internal {
 template <class GT, class TDS1, class TDS2>
 bool
 test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
-          const Periodic_3_triangulation_3<GT, TDS2>& /* needed_for_deducing_TDS2 */,
+          const Periodic_3_triangulation_3<GT, TDS2>& t2,
           typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle c1,
           typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle c2,
           std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle,
@@ -4283,8 +4282,8 @@ test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
           return false;
       }
       else {
-        if (t1.geom_traits().compare_xyz_3_object()(vn1->point(),
-                                                    vn2->point()) != 0)
+        if (t1.geom_traits().compare_xyz_3_object()(t1.construct_point(vn1->point()),
+                                                    t2.construct_point(vn2->point())) != 0)
           return false;
 
         // We register vn1/vn2.

@@ -649,21 +649,31 @@ private:
     return (cumm_off == Offset(0,0,0));
   }
   //@}
+
 public:
+  /** @name Geometric access functions */
+  /// @{
+
+  // The following point() functions return canonical points, that is points
+  // within the base domain.
+
   Point point(const Periodic_point& pp) const
   {
-    // calls the base function with the correct (basic) point functor
     return point(pp, geom_traits().construct_point_3_object());
   }
 
-  // unused and undocumented function required to be compatible with Alpha_shape_3
-  //
-  // Note that this returns a canonical point in the base domain and
-  // is NOT equal to point(c->vertex(idx))
+  Point point(Vertex_handle v) const
+  {
+    return point(v, geom_traits().construct_point_3_object());
+  }
+
   Point point(Cell_handle c, int idx) const
   {
     return point(c, idx, geom_traits().construct_point_3_object());
   }
+
+  // end of geometric functions
+  /// @}
 
   Periodic_point periodic_circumcenter(Cell_handle c) const {
     return Base::periodic_circumcenter(c, geom_traits().construct_circumcenter_3_object());
