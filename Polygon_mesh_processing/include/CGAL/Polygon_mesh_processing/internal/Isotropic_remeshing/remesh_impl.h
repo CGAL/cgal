@@ -1219,6 +1219,9 @@ private:
       halfedge_descriptor he = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(he, mesh_);
 
+      if (is_on_mesh(h) && is_on_mesh(hopp))
+        return false;
+
       if (protect_constraints_ && is_constrained(e))
         return false;
       if (is_on_patch(he)) //hopp is also on patch
