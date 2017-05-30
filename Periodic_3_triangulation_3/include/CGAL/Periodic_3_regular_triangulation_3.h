@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
@@ -69,13 +65,13 @@ class Periodic_3_regular_triangulation_3
   typedef Periodic_3_regular_triangulation_3<Gt, Tds>             Self;
 
 public:
-  typedef Periodic_3_triangulation_3<Gt, Tds>   Tr_Base;
+  typedef Periodic_3_triangulation_3<Gt, Tds>      Tr_Base;
 
-  typedef Gt                                    Geometric_traits;
-  typedef Geometric_traits                      Geom_traits;
-  typedef Tds                                   Triangulation_data_structure;
+  typedef Gt                                       Geometric_traits;
+  typedef Geometric_traits                         Geom_traits;
+  typedef Tds                                      Triangulation_data_structure;
 
-  typedef typename Gt::FT                       FT;
+  typedef typename Gt::FT                          FT;
 
   typedef typename Tr_Base::Periodic_segment_3             Periodic_segment_3;
   typedef typename Tr_Base::Periodic_triangle_3            Periodic_triangle_3;
@@ -182,10 +178,14 @@ public:
 #endif
 
 private:
-  struct Cell_handle_hash : public std::unary_function<Cell_handle, std::size_t>
+  struct Cell_handle_hash
+    : public std::unary_function<Cell_handle, std::size_t>
   {
-    std::size_t operator()(const Cell_handle& ch) const { return boost::hash<typename Cell_handle::pointer>()(&*ch); }
+    std::size_t operator()(const Cell_handle& ch) const {
+      return boost::hash<typename Cell_handle::pointer>()(&*ch);
+    }
   };
+
   boost::unordered_set<Cell_handle, Cell_handle_hash> cells_with_too_big_orthoball;
 
   class Cover_manager
@@ -197,30 +197,25 @@ public:
       : tr(tr)
     { }
 
-    void create_initial_triangulation()
-    {
+    void create_initial_triangulation() {
       tr.create_initial_triangulation();
     }
 
     template <class CellIt>
-    void delete_unsatisfying_elements(const CellIt begin, const CellIt end)
-    {
+    void delete_unsatisfying_elements(const CellIt begin, const CellIt end) {
       tr.delete_cells_with_too_big_orthoball(begin, end);
     }
 
     template <class CellIt>
-    void insert_unsatisfying_elements(Vertex_handle v, const CellIt begin, const CellIt end)
-    {
+    void insert_unsatisfying_elements(Vertex_handle v, const CellIt begin, const CellIt end) {
       tr.insert_cells_with_too_big_orthoball(v, begin, end);
     }
 
-    bool can_be_converted_to_1_sheet () const
-    {
+    bool can_be_converted_to_1_sheet () const {
       return tr.can_be_converted_to_1_sheet();
     }
 
-    bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
-    {
+    bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells) {
       return tr.update_cover_data_during_management(new_ch, new_cells);
     }
   };
@@ -236,11 +231,11 @@ public:
   Periodic_3_regular_triangulation_3 (const Periodic_3_regular_triangulation_3& tr)
     : Tr_Base(tr)
   {
-    if (is_1_cover()) {
+    if(is_1_cover())
       tds() = tr.tds();
-    } else {
+    else
       this->copy_multiple_covering(tr);
-    }
+
     CGAL_triangulation_expensive_postcondition(*this == tr);
     CGAL_triangulation_expensive_postcondition( is_valid() );
   }
@@ -259,8 +254,7 @@ public:
   {
     // Write the respective offsets in the vertices to make them
     // automatically copy with the tds.
-    for (Vertex_iterator vit = tr.vertices_begin() ;
-         vit != tr.vertices_end() ; ++vit) {
+    for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit) {
       vit->set_offset(tr.get_offset(vit));
     }
 
@@ -271,8 +265,8 @@ public:
     // domain and initialize the basic structure of
     // virtual_vertices_reverse
     std::list<Vertex_handle> vlist;
-    for (Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit) {
-      if (vit->offset() == Offset()) {
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) {
+      if(vit->offset() == Offset()) {
         vlist.push_back(vit);
         this->virtual_vertices_reverse.insert(
           std::make_pair(vit,std::vector<Vertex_handle>(26)));
@@ -284,9 +278,9 @@ public:
     // Iterate over all vertices that are not in the original domain
     // and construct the respective entries to virtual_vertices and
     // virtual_vertices_reverse
-    for (Vertex_iterator vit2 = vertices_begin() ;
-         vit2 != vertices_end() ; ++vit2) {
-      if (vit2->offset() != Offset()) {
+    for(Vertex_iterator vit2 = vertices_begin();
+         vit2 != vertices_end(); ++vit2) {
+      if(vit2->offset() != Offset()) {
         typename std::list<Vertex_handle>::iterator vlist_it
             = std::find_if(vlist.begin(), vlist.end(),
                            typename Tr_Base::Finder(this,vit2->point()));
@@ -300,11 +294,11 @@ public:
     }
 
     // Cleanup vertex offsets
-    for (Vertex_iterator vit = vertices_begin();
-         vit != vertices_end() ; ++vit)
+    for(Vertex_iterator vit = vertices_begin();
+         vit != vertices_end(); ++vit)
       vit->clear_offset();
-    for (Vertex_iterator vit = tr.vertices_begin() ;
-         vit != tr.vertices_end() ; ++vit)
+    for(Vertex_iterator vit = tr.vertices_begin();
+         vit != tr.vertices_end(); ++vit)
       vit->clear_offset();
 
     insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
@@ -316,7 +310,8 @@ public:
     return *this;
   }
 
-  void swap(Periodic_3_regular_triangulation_3&tr) {
+  void swap(Periodic_3_regular_triangulation_3&tr)
+  {
     std::swap(cells_with_too_big_orthoball, tr.cells_with_too_big_orthoball);
     Tr_Base::swap(tr);
   }
@@ -325,17 +320,17 @@ public:
   {
     CGAL_triangulation_assertion( cells_with_too_big_orthoball.empty() );
 
-    for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
+    for(Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
       cells_with_too_big_orthoball.insert(iter);
   }
 
   template <class CellIt>
   void delete_cells_with_too_big_orthoball(CellIt begin, const CellIt end)
   {
-    for (; begin != end; ++begin)
+    for(; begin != end; ++begin)
     {
       typename boost::unordered_set<Cell_handle>::iterator iter = cells_with_too_big_orthoball.find(*begin);
-      if (iter != cells_with_too_big_orthoball.end())
+      if(iter != cells_with_too_big_orthoball.end())
       {
         cells_with_too_big_orthoball.erase(iter);
       }
@@ -368,9 +363,9 @@ public:
   void insert_cells_with_too_big_orthoball(Vertex_handle /*v*/, CellIt begin, const CellIt end)
   {
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
-    for (; begin != end; ++begin)
+    for(; begin != end; ++begin)
     {
-      if (compare_orthsphere_radius_to_threshold(*begin, threshold) != CGAL::SMALLER)
+      if(compare_orthsphere_radius_to_threshold(*begin, threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(*begin);
       }
@@ -380,9 +375,9 @@ public:
   void insert_cells_with_too_big_orthoball(Cell_iterator begin, Cell_iterator end)
   {
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
-    for (; begin != end; ++begin)
+    for(; begin != end; ++begin)
     {
-      if (compare_orthsphere_radius_to_threshold(begin, threshold) != CGAL::SMALLER)
+      if(compare_orthsphere_radius_to_threshold(begin, threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(begin);
       }
@@ -399,16 +394,18 @@ public:
     bool result = false;
     FT threshold = FT(0.015625) * (domain().xmax() - domain().xmin()) * (domain().xmax() - domain().xmin());
 
-    if (compare_orthsphere_radius_to_threshold(new_ch, threshold) != CGAL::SMALLER)
+    if(compare_orthsphere_radius_to_threshold(new_ch, threshold) != CGAL::SMALLER)
     {
-      if (is_1_cover())
+      if(is_1_cover())
       {
         tds().delete_cells(new_cells.begin(), new_cells.end());
         this->convert_to_27_sheeted_covering();
         result = true;
       }
       else
+      {
         cells_with_too_big_orthoball.insert(new_ch);
+      }
     }
 
     return result;
@@ -417,9 +414,9 @@ public:
   virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
   {
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax() - domain().xmin());
-    for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
+    for(Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
     {
-      if (compare_orthsphere_radius_to_threshold(iter, threshold) != CGAL::SMALLER)
+      if(compare_orthsphere_radius_to_threshold(iter, threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(iter);
       }
@@ -484,16 +481,16 @@ public:
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
                         bool is_large_point_set = false)
   {
-    if (first == last)
+    if(first == last)
       return 0;
 
     CGAL_triangulation_precondition_code
     (
       bool precondition_is_satisfied = true;
       FT upper_bound = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
-      for (InputIterator pc_first = first, pc_last = last; pc_first != pc_last; ++pc_first)
+      for(InputIterator pc_first = first, pc_last = last; pc_first != pc_last; ++pc_first)
       {
-        if (pc_first->weight() < FT(0) || pc_first->weight() >= upper_bound)
+        if(pc_first->weight() < FT(0) || pc_first->weight() >= upper_bound)
         {
           precondition_is_satisfied = false;
           break;
@@ -510,7 +507,7 @@ public:
     size_type n = number_of_vertices();
     // The heuristic discards the existing triangulation so it can only be
     // applied to empty triangulations.
-    if (n != 0)
+    if(n != 0)
       is_large_point_set = false;
 
     std::vector<Weighted_point> points(first, last);
@@ -519,20 +516,20 @@ public:
     std::vector<Vertex_handle> dummy_points_vhs, double_vertices;
     std::vector<Weighted_point> dummy_points;
     typename std::vector<Weighted_point>::iterator pbegin = points.begin();
-    if (is_large_point_set)
+    if(is_large_point_set)
     {
       dummy_points_vhs = insert_dummy_points();
       dummy_points.reserve(dummy_points_vhs.size());
-      for (typename std::vector<Vertex_handle>::iterator iter = dummy_points_vhs.begin(), end_iter = dummy_points_vhs.end(); iter != end_iter; ++iter)
+      for(typename std::vector<Vertex_handle>::iterator iter = dummy_points_vhs.begin(), end_iter = dummy_points_vhs.end(); iter != end_iter; ++iter)
         dummy_points.push_back((*iter)->point());
     }
     else
     {
-      while (!is_1_cover())
+      while(!is_1_cover())
       {
         insert(*pbegin);
         ++pbegin;
-        if (pbegin == points.end())
+        if(pbegin == points.end())
           return number_of_vertices() - n;
       }
     }
@@ -553,22 +550,22 @@ public:
     Cover_manager cover_manager(*this);
     double_vertices = Tr_Base::insert_in_conflict(pbegin, points.end(), hint, tester, hider, cover_manager);
 
-    if (is_large_point_set)
+    if(is_large_point_set)
     {
-      for (unsigned int i = 0; i < dummy_points_vhs.size(); ++i)
+      for(unsigned int i = 0; i < dummy_points_vhs.size(); ++i)
       {
         bool is_hidden = false;
-        for (Cell_iterator iter = this->cells_begin(); iter != this->cells_end(); ++iter)
+        for(Cell_iterator iter = this->cells_begin(); iter != this->cells_end(); ++iter)
         {
           typename Cell::Point_iterator it = std::find(iter->hidden_points_begin(), iter->hidden_points_end(), dummy_points[i]);
-          if (it != iter->hidden_points_end())
+          if(it != iter->hidden_points_end())
           {
             is_hidden = true;
             iter->unhide_point(it);
           }
         }
-        if (!is_hidden)
-          if (std::find(double_vertices.begin(), double_vertices.end(), dummy_points_vhs[i]) == double_vertices.end())
+        if(!is_hidden)
+          if(std::find(double_vertices.begin(), double_vertices.end(), dummy_points_vhs[i]) == double_vertices.end())
             remove(dummy_points_vhs[i]);
       }
     }
@@ -591,9 +588,8 @@ public:
     Tr_Base::remove(v, remover, ct, cover_manager);
 
     // Re-insert the points that v was hiding.
-    for (typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();
-         hi != remover.hidden_points_end();
-         ++hi)
+    for(typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();
+        hi != remover.hidden_points_end(); ++hi)
     {
       insert(*hi);
     }
@@ -681,10 +677,10 @@ protected:
                                     bool perturb = false) const
   {
     Bounded_side bs = ON_UNBOUNDED_SIDE;
-    int i=0;
+    int i = 0;
     // TODO: optimize which copies to check depending on the offsets in
     // the cell.
-    while (bs == ON_UNBOUNDED_SIDE && i<8) {
+    while(bs == ON_UNBOUNDED_SIDE && i<8) {
       bs = _side_of_power_sphere(c,p,combine_offsets(offset,int_to_off(i)),perturb);
       i++;
     }
@@ -735,7 +731,7 @@ public:
 
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
-    if (number_of_vertices() == 0)
+    if(number_of_vertices() == 0)
       return Vertex_handle();
 
     Locate_type lt;
@@ -744,7 +740,7 @@ public:
     typename Gt::Construct_weighted_point_3 p2wp =
       geom_traits().construct_weighted_point_3_object();
     Cell_handle c = locate(p2wp(p), lt, li, lj, start);
-    if (lt == Tr_Base::VERTEX)
+    if(lt == Tr_Base::VERTEX)
       return c->vertex(li);
     const Conflict_tester tester(p2wp(p), this);
     Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
@@ -755,16 +751,16 @@ public:
     Vertex_handle nearest = nearest_vertex_in_cell(c, p, o);
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
-    while (true)
+    while(true)
     {
       Vertex_handle tmp = nearest;
       Offset tmp_off = get_min_dist_offset(p, o, tmp);
       adjacent_vertices(nearest, std::back_inserter(vs));
-      for (typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin(); vsit != vs.end(); ++vsit)
+      for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin(); vsit != vs.end(); ++vsit)
         tmp = (compare_distance(p, tmp->point(), (*vsit)->point(),
                                 o, tmp_off, get_min_dist_offset(p, o, *vsit))
                  == SMALLER) ? tmp : *vsit;
-      if (tmp == nearest)
+      if(tmp == nearest)
         break;
       vs.clear();
       nearest = tmp;
@@ -806,7 +802,7 @@ public:
   {
     CGAL_triangulation_precondition(number_of_vertices() != 0);
     Vertex_handle nearest = c->vertex(0);
-    for (int i=1 ; i<4 ; i++) {
+    for(int i=1; i<4; i++) {
       nearest = (compare_distance(p,nearest->point(),c->vertex(i)->point(),
         o,get_offset(c,c->index(nearest)),get_offset(c,i)) == SMALLER) ?
         nearest : c->vertex(i);
@@ -817,7 +813,7 @@ public:
   size_type number_of_hidden_points () const
   {
     size_type count = 0;
-    for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
+    for(Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
       count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     return count;
   }
@@ -969,7 +965,7 @@ public:
   inline bool
   is_extensible_triangulation_in_1_sheet_h1() const
   {
-    if (!is_1_cover())
+    if(!is_1_cover())
       return can_be_converted_to_1_sheet();
     return is_extensible_triangulation_in_1_sheet_h2();
   }
@@ -979,11 +975,10 @@ public:
   {
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
 
-    for (Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Tr_Base::UNIQUE);
-         tit != this->periodic_tetrahedra_end(Tr_Base::UNIQUE);
-         ++tit)
+    for(Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Tr_Base::UNIQUE);
+        tit != this->periodic_tetrahedra_end(Tr_Base::UNIQUE); ++tit)
     {
-      if (compare_orthsphere_radius_to_threshold(tit->at(0), tit->at(1),
+      if(compare_orthsphere_radius_to_threshold(tit->at(0), tit->at(1),
                                                  tit->at(2), tit->at(3),
                                                  threshold) != CGAL::SMALLER)
         return false;
@@ -998,7 +993,7 @@ OutputIterator
 Periodic_3_regular_triangulation_3<Gt,Tds>::vertices_in_conflict(
     const Weighted_point&p, Cell_handle c, OutputIterator res) const
 {
-  if (number_of_vertices() == 0)
+  if(number_of_vertices() == 0)
     return res;
 
   // Get the facets on the boundary of the hole.
@@ -1007,7 +1002,7 @@ Periodic_3_regular_triangulation_3<Gt,Tds>::vertices_in_conflict(
 
   // Then extract uniquely the vertices.
   std::set<Vertex_handle> vertices;
-  for (typename std::vector<Facet>::const_iterator i = facets.begin();
+  for(typename std::vector<Facet>::const_iterator i = facets.begin();
        i != facets.end(); ++i) {
     vertices.insert(i->first->vertex((i->second+1)&3));
     vertices.insert(i->first->vertex((i->second+2)&3));
@@ -1059,11 +1054,11 @@ Periodic_3_regular_triangulation_3<Gt,Tds>::find_conflicts(
     *cit++ = *ccit;
   }
 
-  for (typename std::vector<Vertex_handle>::iterator
-   voit = this->v_offsets.begin();
-       voit != this->v_offsets.end() ; ++voit) {
+  for(typename std::vector<Vertex_handle>::iterator
+      voit = this->v_offsets.begin(); voit != this->v_offsets.end(); ++voit) {
     (*voit)->clear_offset();
   }
+
   this->v_offsets.clear();
 
   return make_triple(bfit, cit, ifit);
@@ -1089,7 +1084,7 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
   Oriented_side os = ON_NEGATIVE_SIDE;
   os = side_of_oriented_power_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
 
-  if (os != ON_ORIENTED_BOUNDARY || !perturb)
+  if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return (Bounded_side) os;
 
   // We are now in a degenerate case => we do a symbolic perturbation.
@@ -1103,27 +1098,27 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
 
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
-  for (int i=4; i>1; --i) {
-    if (points[i] == &pts[4]) {
+  for(int i=4; i>1; --i) {
+    if(points[i] == &pts[4]) {
       CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
           == POSITIVE);
       // since p0 p1 p2 p3 are non coplanar and positively oriented
       return ON_UNBOUNDED_SIDE;
     }
     Orientation o;
-    if (points[i] == &pts[3] &&
+    if(points[i] == &pts[3] &&
         (o = orientation(p0, p1, p2, q, o0, o1, o2, oq)) != COPLANAR ) {
       return (Bounded_side) o;
     }
-    if (points[i] == &pts[2] &&
+    if(points[i] == &pts[2] &&
         (o = orientation(p0, p1, q, p3, o0, o1, oq, o3)) != COPLANAR ) {
       return (Bounded_side) o;
     }
-    if (points[i] == &pts[1] &&
+    if(points[i] == &pts[1] &&
         (o = orientation(p0, q, p2, p3, o0, oq, o2, o3)) != COPLANAR ) {
       return (Bounded_side) o;
     }
-    if (points[i] == &pts[0] &&
+    if(points[i] == &pts[0] &&
         (o = orientation(q, p1, p2 ,p3, oq, o1, o2, o3)) != COPLANAR ) {
       return (Bounded_side) o;
     }
@@ -1138,20 +1133,20 @@ bool
 Periodic_3_regular_triangulation_3<Gt,Tds>::
 is_valid(bool verbose, int level) const
 {
-  if (!Tr_Base::is_valid(verbose, level)) {
-    if (verbose)
+  if(!Tr_Base::is_valid(verbose, level)) {
+    if(verbose)
       std::cerr << "Regular: invalid base" << std::endl;
     return false;
   }
 
   Conflict_tester tester(this);
-  if (!is_valid_conflict(tester, verbose, level)) {
-    if (verbose)
+  if(!is_valid_conflict(tester, verbose, level)) {
+    if(verbose)
       std::cerr << "Regular: conflict problems" << std::endl;
     return false;
   }
 
-  if (verbose)
+  if(verbose)
     std::cerr << "Regular valid triangulation" << std::endl;
   return true;
 }
@@ -1162,34 +1157,34 @@ Periodic_3_regular_triangulation_3<GT,TDS>::
 is_valid(Cell_handle ch, bool verbose, int level) const
 {
   bool error = false;
-  if (!Tr_Base::is_valid(ch, verbose, level)) {
+  if(!Tr_Base::is_valid(ch, verbose, level)) {
     error = true;
-    if (verbose) {
+    if(verbose) {
       std::cerr << "geometrically invalid cell" << std::endl;
-      for (int i=0; i<4; i++ )
+      for(int i=0; i<4; i++ )
         std::cerr << ch->vertex(i)->point() << ", ";
       std::cerr << std::endl;
     }
   }
 
-  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++ vit) {
+  for(Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++ vit) {
     const Periodic_weighted_point& pwp = periodic_point(vit);
-    for (int i=-1; i<=1; i++) {
-      for (int j=-1; j<=1; j++) {
-        for (int k=-1; k<=1; k++) {
+    for(int i=-1; i<=1; i++) {
+      for(int j=-1; j<=1; j++) {
+        for(int k=-1; k<=1; k++) {
           const Periodic_weighted_point& ofpwp = std::make_pair(pwp.first,
                                                                 pwp.second + Offset(i,j,k));
-          if (periodic_point(ch,0) == ofpwp
+          if(periodic_point(ch,0) == ofpwp
               || periodic_point(ch,1) == ofpwp
               || periodic_point(ch,2) == ofpwp
               || periodic_point(ch,3) == ofpwp)
             continue;
-          if (_side_of_power_sphere(ch, ofpwp.first, ofpwp.second, true)
+          if(_side_of_power_sphere(ch, ofpwp.first, ofpwp.second, true)
               != ON_UNBOUNDED_SIDE) {
             error = true;
-            if (verbose) {
+            if(verbose) {
               std::cerr << "Regular invalid cell" << std::endl;
-              for (int i=0; i<4; i++) {
+              for(int i=0; i<4; i++) {
                 Periodic_weighted_point pp = periodic_point(ch, i);
                 std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
               }
@@ -1208,53 +1203,51 @@ class Periodic_3_regular_triangulation_3<GT,Tds>::Conflict_tester
 {
   // stores a pointer to the triangulation,
   // a point, and an offset
-  const Self *t;
+  const Self* t;
   Weighted_point p;
   // stores the offset of a point in 27-cover
   mutable Offset o;
 
 public:
   /// Constructor
-  Conflict_tester(const Self *_t) : t(_t), p(Weighted_point()) {}
-  Conflict_tester(const Weighted_point &pt, const Self *_t) : t(_t), p(pt) { }
+  Conflict_tester(const Self* _t) : t(_t), p(Weighted_point()) { }
+  Conflict_tester(const Weighted_point& pt, const Self *_t) : t(_t), p(pt) { }
 
   /** The functor
     *
     * gives true if the circumcircle of c contains p
     */
-  bool operator()(const Cell_handle c, const Offset &off) const {
+  bool operator()(const Cell_handle c, const Offset& off) const {
     return (t->_side_of_power_sphere(c, p, t->combine_offsets(o, off), true)
-        == ON_BOUNDED_SIDE);
+             == ON_BOUNDED_SIDE);
   }
 
   bool operator()(const Cell_handle c, const Weighted_point& pt,
-      const Offset &off) const {
+                  const Offset& off) const {
     return (t->_side_of_power_sphere(c, pt, o + off, true) == ON_BOUNDED_SIDE);
   }
 
-  int compare_weight(const Weighted_point& p, const Weighted_point& q) const
-  {
+  int compare_weight(const Weighted_point& p, const Weighted_point& q) const {
     return t->power_test(p, q);
   }
 
-  bool test_initial_cell(Cell_handle c, const Offset &off) const
-  {
+  bool test_initial_cell(Cell_handle c, const Offset& off) const {
     return (operator()(c, off));
   }
 
-  void set_point(const Weighted_point &_p) {
+  void set_point(const Weighted_point& _p) {
     p = _p;
   }
 
-  void set_offset(const Offset &off) const {
+  void set_offset(const Offset& off) const {
     o = off;
   }
 
-  const Offset &get_offset() const {
+  const Offset& get_offset() const {
     return o;
   }
 
-  const Weighted_point &point() const {
+  const Weighted_point& point() const {
     return p;
   }
 
@@ -1263,13 +1256,13 @@ public:
 template < class GT, class Tds>
 class Periodic_3_regular_triangulation_3<GT,Tds>::Point_hider
 {
-  Self *t;
+  Self* t;
   mutable std::vector<Vertex_handle> vertices;
   mutable std::vector<Weighted_point> hidden_points;
   mutable bool is_original_cube;
 
 public:
-  Point_hider(Self *tr) : t(tr), is_original_cube(false) { }
+  Point_hider(Self* tr) : t(tr), is_original_cube(false) { }
 
   void set_original_cube (bool b) const {
     is_original_cube = b;
@@ -1278,14 +1271,14 @@ public:
   template <class InputIterator>
   inline void set_vertices(InputIterator start, InputIterator end) const
   {
-    while (start != end) {
+    while(start != end) {
       std::copy((*start)->hidden_points_begin(),
                 (*start)->hidden_points_end(),
                 std::back_inserter(hidden_points));
 
-      for (int i=0; i<=3; i++) {
+      for(int i=0; i<=3; i++) {
         Vertex_handle v = (*start)->vertex(i);
-        if (v->cell() != Cell_handle()) {
+        if(v->cell() != Cell_handle()) {
           vertices.push_back(v);
           v->set_cell(Cell_handle());
         }
@@ -1300,18 +1293,18 @@ public:
     int li=0, lj=0;
 
     Cell_handle hc = v->cell();
-    for (typename std::vector<Vertex_handle>::iterator
+    for(typename std::vector<Vertex_handle>::iterator
         vi = vertices.begin(); vi != vertices.end(); ++vi) {
-      if ((*vi)->cell() != Cell_handle())
+      if((*vi)->cell() != Cell_handle())
         continue;
-      if (is_original_cube) {
+      if(is_original_cube) {
         hc = t->locate((*vi)->point(), lt, li, lj, hc);
         hc->hide_point((*vi)->point());
       }
       t->delete_vertex(*vi);
     }
     vertices.clear();
-      for (typename std::vector<Weighted_point>::iterator
+      for(typename std::vector<Weighted_point>::iterator
           hp = hidden_points.begin(); hp != hidden_points.end(); ++hp) {
         hc = t->locate(*hp, lt, li, lj, hc);
         hc->hide_point(*hp);
@@ -1329,7 +1322,7 @@ public:
 
   inline void hide_point(Cell_handle c, const Weighted_point& p)
   {
-    if (is_original_cube)
+    if(is_original_cube)
       c->hide_point(p);
   }
 
@@ -1381,9 +1374,9 @@ struct Periodic_3_regular_triangulation_3<GT,Tds>::Vertex_remover
   typedef typename Vertex_triple_FacetE_map::iterator
   Vertex_triple_FacetE_map_it;
 
-  Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
+  Vertex_remover(const Self* t, Triangulation_R3& tmp_) : _t(t),tmp(tmp_) {}
 
-  const Self *_t;
+  const Self* _t;
   Triangulation_R3 &tmp;
 
   void add_hidden_points(Cell_handle ch) {
@@ -1406,7 +1399,7 @@ struct Periodic_3_regular_triangulation_3<GT,Tds>::Vertex_remover
 
 template < class GT, class TDS >
 std::istream &
-operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS> &tr)
+operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS>& tr)
 {
   typedef Periodic_3_regular_triangulation_3<GT,TDS>   P3RT3;
   typedef typename P3RT3::Tr_Base                      Tr_Base;
@@ -1418,6 +1411,7 @@ operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS> &tr)
   CGAL_triangulation_expensive_assertion( tr.is_valid() );
   return is;
 }
-}// namespace CGAL
+
+} // namespace CGAL
 
 #endif
