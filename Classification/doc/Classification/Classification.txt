@@ -39,6 +39,10 @@ Currently, \cgal only provides data structures to handle classification of point
 - [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues
 - [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
 
+Most of these features depend on a scale parameter. \cgal provides a method to estimate the average spacing based on a number of neighbors (see [CGAL::compute_average_spacing()](@ref compute_average_spacing)), which usually provides satisfying results in the absence of noise. In the presence of noise, [CGAL::estimate_global_range_scale()](@ref estimate_global_range_scale) provides an estimation of the smallest scale such that the point set as the local dimension of a surface (this method is both robust to noise and outliers, see \ref Classification_sowf_result).
+
+The eigen analysis can be used to estimate normals. Note however that this analysis (based on Principal Component Analysis) might not be robust to a high level of noise. \cgal also provides more robust normal estimation functions (see for example [CGAL::jet_estimate_normals()](@ref jet_estimate_normals)).
+
 The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual).
 
 \snippet Classification/example_classification.cpp Analysis
@@ -184,10 +188,10 @@ Example of evolution of the mean intersection-over-union. The purple curve is th
 
 \subsubsection Classification_sowf_result Result
 
-Figure \cgalFigureRef{Classification_sowf_result_fig} shows an example of output on a noisy point set with outliers. The accuracy on this example is 0.97 with a mean intersection-over-union of 0.85 (see section \ref Classification_evaluation).
+Figure \cgalFigureRef{Classification_sowf_result_fig} shows an example of output on a defect-laden point set. The accuracy on this example is 0.97 with a mean intersection-over-union of 0.85 (see section \ref Classification_evaluation).
 
 \cgalFigureBegin{Classification_sowf_result_fig,noise_outliers.png}
-Example of classification on a noisy point set with outliers (left: input, right: output). _Ground_ is orange, _roofs_ are pink, _vegetation_ is green. Outliers are classified with an additional label _outlier_ in black.
+Example of classification on a point set with medium noise and outliers (left: input, right: output). _Ground_ is orange, _roofs_ are pink, _vegetation_ is green. Outliers are classified with an additional label _outlier_ in black.
 \cgalFigureEnd
 
 
