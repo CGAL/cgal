@@ -15,7 +15,7 @@
 #include <boost/array.hpp>
 #include <QColor>
 
-#include <CGAL/Polygon_mesh_processing/properties.h>
+#include "properties.h"
 
 
 struct Scene_surface_mesh_item_priv;

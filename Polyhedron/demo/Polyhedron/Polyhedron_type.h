@@ -196,7 +196,7 @@ public:
 };
 
 #include "Polyhedron_type_fwd.h"
-#include <CGAL/Polygon_mesh_processing/properties.h>
+
 inline
 boost::property_map<Polyhedron, boost::vertex_index_t>::type
 get(CGAL::vertex_selection_t, const Polyhedron& p)

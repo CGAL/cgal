@@ -7,7 +7,7 @@
 #include <CGAL/Bbox_3.h>
 #include "CGAL/boost/graph/Graph_with_descriptor_with_graph.h"
 #include <Polyhedron_type.h>
-#include <CGAL/boost/graph/PMP_properties_Surface_mesh.h>
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #include <Scene_c3t3_item.h>
 
@@ -146,6 +146,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
+                                 bool protect_borders,
                                  const double sharp_edges_angle,
                                  const int manifold,
                                  const bool surface_only,
@@ -161,6 +162,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                           edge_size,
                           tet_shape,
                           protect_features,
+                          protect_borders,
                           sharp_edges_angle,
                           manifold,
                           surface_only,
@@ -177,6 +179,7 @@ Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
+                                 bool protect_borders,
                                  const double sharp_edges_angle,
                                  const int manifold,
                                  const bool surface_only,
@@ -192,6 +195,7 @@ Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
                           edge_size,
                           tet_shape,
                           protect_features,
+                          protect_borders,
                           sharp_edges_angle,
                           manifold,
                           surface_only,

@@ -504,6 +504,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  protect_features,
+                                 protect_borders,
                                  sharp_edges_angle,
                                  manifold,
                                  surface_only,

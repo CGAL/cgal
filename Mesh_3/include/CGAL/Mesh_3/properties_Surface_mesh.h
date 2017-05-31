@@ -157,24 +157,6 @@ inline get(CGAL::halfedge_is_feature_t, Surface_mesh<P>& smesh)
   return smesh. template add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
 }
 
- template <typename P>
-CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_selection_t)
- inline get(CGAL::face_selection_t, Surface_mesh<P> & smesh)
-{
- typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template add_property_map<face_descriptor,int>("f:selection").first;
-}
-
-
-
- template <typename P>
-CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_selection_t)
-inline get(CGAL::vertex_selection_t, Surface_mesh<P> & smesh)
-{
-  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template add_property_map<vertex_descriptor,int>("v:selection").first;
-}
-
 
  template <typename P>
 CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_num_feature_edges_t)

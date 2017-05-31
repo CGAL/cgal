@@ -45,7 +45,7 @@
 #include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Polygon_mesh_processing/properties.h>
+#include <CGAL/Mesh_3/properties.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
