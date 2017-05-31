@@ -17,12 +17,12 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_PMP_PROPERTIES_SURFACE_MESH_H
-#define CGAL_PMP_PROPERTIES_SURFACE_MESH_H
+#ifndef CGAL_MESH_3_PROPERTIES_SURFACE_MESH_H
+#define CGAL_MESH_3_PROPERTIES_SURFACE_MESH_H
 
-#include <CGAL/license/Surface_mesh.h>
+#include <CGAL/license/Mesh_3.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/properties.h>
+#include <CGAL/Mesh_3/properties.h>
 
 namespace boost {
 
@@ -133,14 +133,14 @@ inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
 }
 
 
-#define CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(Tag) \
+#define CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(Tag) \
   typename boost::lazy_disable_if<                      \
      boost::is_const<P>,                                \
      Get_pmap_of_surface_mesh<P, Tag >                  \
    >::type
 
 template <typename P>
-CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_patch_id_t<void>)
+CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_patch_id_t<void>)
 inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> & smesh)
 {
   typedef CGAL::Static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
@@ -150,7 +150,7 @@ inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> & smesh)
 
 
 template <typename P>
-CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_is_feature_t)
+CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_is_feature_t)
 inline get(CGAL::halfedge_is_feature_t, Surface_mesh<P>& smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
@@ -158,7 +158,7 @@ inline get(CGAL::halfedge_is_feature_t, Surface_mesh<P>& smesh)
 }
 
  template <typename P>
-CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_selection_t)
+CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_selection_t)
  inline get(CGAL::face_selection_t, Surface_mesh<P> & smesh)
 {
  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
@@ -168,7 +168,7 @@ CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_selection_t)
 
 
  template <typename P>
-CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_selection_t)
+CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_selection_t)
 inline get(CGAL::vertex_selection_t, Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
@@ -177,7 +177,7 @@ inline get(CGAL::vertex_selection_t, Surface_mesh<P> & smesh)
 
 
  template <typename P>
-CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_num_feature_edges_t)
+CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_num_feature_edges_t)
  inline get(CGAL::vertex_num_feature_edges_t, Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
@@ -197,7 +197,7 @@ typename boost::lazy_disable_if<
 
 
  template <typename P>
- CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_time_stamp_t)
+ CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_time_stamp_t)
 inline get(CGAL::vertex_time_stamp_t, Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
@@ -206,7 +206,7 @@ inline get(CGAL::vertex_time_stamp_t, Surface_mesh<P> & smesh)
 
 
  template <typename P>
- CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_time_stamp_t)
+ CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_time_stamp_t)
 inline get(CGAL::halfedge_time_stamp_t, Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
@@ -215,7 +215,7 @@ inline get(CGAL::halfedge_time_stamp_t, Surface_mesh<P> & smesh)
 
 
  template <typename P>
- CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_time_stamp_t)
+ CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_time_stamp_t)
 inline get(CGAL::face_time_stamp_t, Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
@@ -224,6 +224,6 @@ inline get(CGAL::face_time_stamp_t, Surface_mesh<P> & smesh)
 
 } // namespace CGAL
 
-#undef CGAL_PMP_PROPERTY_SURFACE_MESH_RETURN_TYPE
+#undef CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE
 
-#endif //CGAL_PMP_PROPERTIES_SURFACE_MESH_H
+#endif //CGAL_MESH_3_PROPERTIES_SURFACE_MESH_H

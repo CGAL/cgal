@@ -17,10 +17,10 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_PMP_PROPERTIES_POLYHEDRON_3_H
-#define CGAL_PMP_PROPERTIES_POLYHEDRON_3_H
+#ifndef CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
+#define CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
 
-#include <CGAL/license/Polyhedron.h>
+#include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Polygon_mesh_processing/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -244,4 +244,4 @@ struct Polyhedron_property_map<CGAL::vertex_incident_patches_t<Patch_id> >
 
 #undef CGAL_HDS_PARAM_
 
-#endif // CGAL_PMP_PROPERTIES_POLYHEDRON_3_H
+#endif // CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
