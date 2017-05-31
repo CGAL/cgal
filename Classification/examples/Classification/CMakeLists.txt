@@ -38,8 +38,7 @@ if( TBB_FOUND )
 endif()
 
 
-find_package(OpenCV REQUIRED)
-include_directories( ${OpenCV_INCLUDE_DIRS} )
+find_package(OpenCV)
 
 # include for local directory
 include_directories( BEFORE include )
@@ -57,6 +56,11 @@ create_single_source_cgal_program( "example_classification.cpp" )
 create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_feature.cpp" )
 
-create_single_source_cgal_program( "example_random_forest.cpp" )
-target_link_libraries( example_random_forest ${OpenCV_LIBS} )
+if( OpenCV_FOUND )
+  include_directories( ${OpenCV_INCLUDE_DIRS} )
+  create_single_source_cgal_program( "example_random_forest.cpp" )
+  target_link_libraries( example_random_forest ${OpenCV_LIBS} )
+else()
+  message(STATUS "OpenCV not found, random forest example won't be compiled.")
+endif()
 
