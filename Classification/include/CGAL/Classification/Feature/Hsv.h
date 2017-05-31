@@ -56,6 +56,12 @@ namespace Feature {
     mean of 90 (which corresponds to a green hue) can help to identify
     trees.
 
+    \image html trees.png
+
+    <center><em>Left: input point set with colors. Right: HSV feature on hue with
+    a mean of 90 (from low values in white to high values in dark
+    red).</em></center>
+
     Its default name is the channel followed by the mean value (for
     example: "hue_180", "saturation_20" or "value_98").
     
