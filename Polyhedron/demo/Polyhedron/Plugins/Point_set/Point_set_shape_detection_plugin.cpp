@@ -230,7 +230,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       }
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
-      point_item->point_set()->add_normal_map();
       
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
@@ -315,8 +314,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         }
         else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
         {
+          point_item->point_set()->add_normal_map();
           CGAL::Shape_detection_3::Plane<Traits> * plane = dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get());
-
           //set normals for point_item to the plane's normal
           for(Point_set::iterator it = point_item->point_set()->begin(); it != point_item->point_set()->end(); ++it)
             point_item->point_set()->normal(*it) = plane->plane_normal();
