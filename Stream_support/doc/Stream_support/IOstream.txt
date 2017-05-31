@@ -229,11 +229,6 @@ There are a 11 predefined `Color` constants available:
 `DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
 and `YELLOW`.
 
-\section IOstreamManipulators Manipulators for IO of polyhedral surfaces.
-
-There exists plenty of file formats for polyhedral surfaces, which can be
-stored in a `Polyhedron` or a `Surface_mesh`. For the insert and extract
-operators \cgal provides manipulators such as `CGAL::IO::off`, `CGAL::IO:ply`. 
 
 
 \section IOstreamStream Stream Support
