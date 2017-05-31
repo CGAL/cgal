@@ -7,9 +7,6 @@
 /// \ingroup PkgLinearCellComplex
 
 /*! Basic constructions.
-  \code
-  #include <CGAL/Linear_cell_complex_constructors.h>
-  \endcode
 */
 /// \defgroup PkgLinearCellComplexConstructions Constructions for Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
