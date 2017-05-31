@@ -59,7 +59,7 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationClassifiers
 
-  \brief Classifier based on the sum of weighted features with
+  \brief %Classifier based on the sum of weighted features with
   user-defined effects on labels.
 
   \cgalModels `CGAL::Classification::Classifier`
