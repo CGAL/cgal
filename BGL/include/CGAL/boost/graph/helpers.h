@@ -1046,11 +1046,11 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   for(std::size_t k = 0; k < v_vertices.size(); ++k)
     v_vertices[k] = add_vertex(g);
   //assign the coordinates
-  for(typename boost::graph_traits<Graph>::vertices_size_type i = 0; i<w; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type a = 0; a<w; ++a)
   {
-    for(typename boost::graph_traits<Graph>::vertices_size_type j=0; j<h; ++j)
+    for(typename boost::graph_traits<Graph>::vertices_size_type b=0; b<h; ++b)
     {
-      put(vpmap, v_vertices[w*i + j], calculator(i,j));
+      put(vpmap, v_vertices[a+w*b], calculator(a,b,0));
     }
   }
 
@@ -1060,27 +1060,27 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
     face.resize(3);
   else
     face.resize(4);
-  for(typename boost::graph_traits<Graph>::vertices_size_type i = 0; i<w-1; ++i)
+  for(typename boost::graph_traits<Graph>::vertices_size_type a = 0; a<w-1; ++a)
   {
-    for(typename boost::graph_traits<Graph>::vertices_size_type j = 0; j<h-1; ++j)
+    for(typename boost::graph_traits<Graph>::vertices_size_type b = 0; b<h-1; ++b)
     {
       if(triangulated)
       {
-        face[0] = v_vertices[w*i+j];
-        face[1] = v_vertices[w*(i+1)+ j+1];
-        face[2] = v_vertices[w*i+j+1];
+        face[0] = v_vertices[w*b+a];
+        face[1] = v_vertices[w*(b+1)+ a+1];
+        face[2] = v_vertices[w*b+a+1];
         Euler::add_face(face, g);
-        face[0] = v_vertices[w*(i+1)+ j];
-        face[1] = v_vertices[w*(i+1)+j+1];
-        face[2] = v_vertices[w*i+j];
+        face[0] = v_vertices[w*(b+1)+ a];
+        face[1] = v_vertices[w*(b+1)+a+1];
+        face[2] = v_vertices[w*b+a];
         Euler::add_face(face, g);
       }
       else
       {
-        face[0] = v_vertices[w*i+ j];
-        face[1] = v_vertices[w*(i+1)+ j];
-        face[2] = v_vertices[w*(i+1)+ j+1];
-        face[3] = v_vertices[w*i+ j+1];
+        face[0] = v_vertices[w*b+ a];
+        face[1] = v_vertices[w*(b+1)+ a];
+        face[2] = v_vertices[w*(b+1)+ a+1];
+        face[3] = v_vertices[w*b+ a+1];
         Euler::add_face(face, g);
       }
     }

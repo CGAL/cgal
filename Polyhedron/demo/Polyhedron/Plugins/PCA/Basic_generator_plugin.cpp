@@ -655,11 +655,11 @@ struct Point_generator
                   const Point& ur)
     :w(w), h(h), bl(bl), ur(ur)
   {}
-  Point operator()(std::size_t i, std::size_t j) const
+  Point operator()(std::size_t i, std::size_t j, std::size_t k) const
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 0);
+                 k);
   }
 };
 template<class Facegraph_item>
