@@ -3,7 +3,7 @@
 #define POLYHEDRON_DEMO_DETECT_SHARP_EDGES_H
 
 #include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
-#include <CGAL/Polygon_mesh_processing/properties.h>
+#include <CGAL/Mesh_3/properties.h>
 
 namespace CGAL
 {

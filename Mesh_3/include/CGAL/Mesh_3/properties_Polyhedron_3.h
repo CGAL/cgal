@@ -21,7 +21,7 @@
 #define CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
 
 #include <CGAL/license/Mesh_3.h>
-
+#include <CGAL/Mesh_3/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS

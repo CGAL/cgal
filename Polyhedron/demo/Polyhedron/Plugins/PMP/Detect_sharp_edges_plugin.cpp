@@ -9,12 +9,12 @@
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#include <CGAL/boost/graph/PMP_properties_Surface_mesh.h>
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #else
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
-#include <CGAL/boost/graph/PMP_properties_Polyhedron_3.h>
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 
 #include "Polyhedron_demo_detect_sharp_edges.h"
