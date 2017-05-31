@@ -4,6 +4,7 @@
 // CGAL
 // kernel
 #include "Kernel_type.h"
+#include "properties.h"
 
 // surface mesh
 #include <CGAL/Polyhedron_3.h>

@@ -59,28 +59,6 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::halfedge_is_feature_t>
 
 
 template <typename P>
-struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_selection_t>
-{
-
-  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-
-  typedef typename CGAL::Surface_mesh<P>::template Property_map<vertex_descriptor, int> type;
-  typedef type const_type;
-};
-
-
-template <typename P>
-struct property_map<CGAL::Surface_mesh<P>, CGAL::face_selection_t>
-{
-
-  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor face_descriptor;
-
-  typedef typename CGAL::Surface_mesh<P>::template Property_map<face_descriptor, int> type;
-  typedef type const_type;
-};
-
-
-template <typename P>
 struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_num_feature_edges_t>
 {
 
