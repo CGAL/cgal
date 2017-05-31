@@ -485,9 +485,11 @@ namespace internal {
                          bbox.ymin() + Dy * ((y+1) / float(nb_y)),
                          bbox.zmax()));
       }
-    
+
+#ifdef CGAL_CLASSIFICATION_VERBOSE
     std::cerr << "Number of divisions = " << nb_x * nb_y << std::endl;
     std::cerr << " -> Size of division: " << Dx / nb_x << " " << Dy / nb_y << std::endl;
+#endif
 
     std::vector<std::vector<std::size_t> > indices (nb);
     std::vector<std::pair<std::size_t, std::size_t> > input_to_indices(input.size());
