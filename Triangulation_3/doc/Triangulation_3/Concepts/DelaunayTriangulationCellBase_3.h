@@ -3,8 +3,7 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
-The base cell of a Delaunay triangulation 
-has to be a model 
+The base cell of a Delaunay triangulation must be a model
 of the concept `DelaunayTriangulationCellBase_3`, which refines 
 the concept `TriangulationCellBase_3` by adding 
 in the cell an operator that computes its circumcenter. 

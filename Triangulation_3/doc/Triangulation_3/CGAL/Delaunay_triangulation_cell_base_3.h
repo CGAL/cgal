@@ -46,5 +46,5 @@ const Point& circumcenter(const Traits& gt = Traits()) const;
 
 /// @}
 
-}; /* end Regular_triangulation_cell_base_3 */
+}; /* end Delaunay_triangulation_cell_base_3 */
 } /* end namespace CGAL */
