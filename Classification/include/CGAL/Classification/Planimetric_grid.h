@@ -68,6 +68,9 @@ private:
   Planimetric_grid* m_lower_scale;
   std::size_t m_current_scale;
 
+  std::size_t m_width;
+  std::size_t m_height;
+  std::vector<bool> m_has_points;
   
 public:
 
@@ -195,10 +198,10 @@ public:
                     float grid_resolution)
     : m_resolution (grid_resolution), m_lower_scale(NULL), m_current_scale(0)
   {
-    std::size_t width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
-    std::size_t height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
+    m_width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
+    m_height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
 
-    m_grid = Image_indices (width, height);
+    m_grid = Image_indices (m_width, m_height);
 
     for (std::size_t i = 0; i < input.size(); ++ i)
     {
@@ -215,6 +218,20 @@ public:
     : m_resolution (lower_scale->resolution() * 2), m_lower_scale (lower_scale)
   {
     m_current_scale = lower_scale->m_current_scale + 1;
+
+    m_width = (m_lower_scale->width() + 1) / 2;
+    m_height = (m_lower_scale->height() + 1) / 2;
+    
+    m_has_points.reserve(m_width * m_height);
+    for (std::size_t x = 0; x < m_width; ++ x)
+      for (std::size_t y = 0; y < m_height; ++ y)
+      {
+        m_has_points[x * m_height + y]
+          = (m_lower_scale->has_points(x*2, y*2)
+             || m_lower_scale->has_points(x*2, y*2 + 1)
+             || m_lower_scale->has_points(x*2 + 1, y*2 + 1)
+             || m_lower_scale->has_points(x*2 + 1, y*2));
+      }
 //    std::cerr << "Grid size = " << width() << " " << height() << std::endl;
   }
   /// \endcond
@@ -233,20 +250,14 @@ public:
   */
   std::size_t width() const
   {
-    if (m_current_scale == 0)
-      return m_grid.width();
-    else
-      return (m_lower_scale->width() + 1) / 2;
+    return m_width;
   }
   /*!
     \brief Returns the number of cells along the Y-axis.
   */
   std::size_t height() const
   {
-    if (m_current_scale == 0)
-      return m_grid.height();
-    else
-      return (m_lower_scale->height() + 1) / 2;
+    return m_height;
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -289,10 +300,7 @@ public:
       return (!(m_grid(x,y).empty()));
     }
     else
-      return (m_lower_scale->has_points(x*2, y*2)
-              || m_lower_scale->has_points(x*2, y*2 + 1)
-              || m_lower_scale->has_points(x*2 + 1, y*2 + 1)
-              || m_lower_scale->has_points(x*2 + 1, y*2));
+      return m_has_points[x * m_height + y];
   }
 
   /*!
