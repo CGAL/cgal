@@ -663,6 +663,8 @@ public:
   // ---------------------------------------------------------------------------
   // The following functions return objects of type Point and Periodic_point,
   // _not_ Point_3 and Periodic_point_3.
+  // They are templated by `construct_point` to distingush between Delaunay and
+  // regular triangulations
   // ---------------------------------------------------------------------------
 
   template <class ConstructPoint>
@@ -671,9 +673,9 @@ public:
     return cp(pp.first, pp.second);
   }
 
-  // The following point() functions return canonical points, that is points
-  // within the base domain. They are templated by `construct_point` to distingush
-  // between Delaunay and regular triangulations
+  // The following functions return the "real" position in space (unrestrained
+  // to the original periodic domain) of the vertices v and c->vertex(idx),
+  // respectively
 
   template <class ConstructPoint>
   Point point(Vertex_handle v, ConstructPoint cp) const {

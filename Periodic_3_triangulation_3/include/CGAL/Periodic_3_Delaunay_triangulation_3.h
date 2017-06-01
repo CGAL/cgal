@@ -653,13 +653,14 @@ public:
   /** @name Geometric access functions */
   /// @{
 
-  // The following point() functions return canonical points, that is points
-  // within the base domain.
-
   Point point(const Periodic_point& pp) const
   {
     return point(pp, geom_traits().construct_point_3_object());
   }
+
+  // The following functions return the "real" position in space (unrestrained
+  // to the original periodic domain) of the vertices v and c->vertex(idx),
+  // respectively
 
   Point point(Vertex_handle v) const
   {
