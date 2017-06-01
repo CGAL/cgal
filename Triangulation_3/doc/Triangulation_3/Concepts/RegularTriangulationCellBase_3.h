@@ -36,7 +36,6 @@ and an operator to compute its weighted circumcenter.
 \cgalRefines `TriangulationCellBase_3`
 
 \cgalHasModel CGAL::Regular_triangulation_cell_base_3 
-\cgalHasModel CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3
 
 \sa `RegularTriangulationTraits_3`
 
