@@ -3,9 +3,9 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
-The vertex base used by the geometric triangulation must store a point. 
-So we list here the additional requirements compared to a vertex base usable 
-for the triangulation data structure. 
+The base vertex of a regular triangulation must be a model of the concept
+`RegularTriangulationVertexBase_3`, which refines the concept `TriangulationDSVertexBase_3`
+by adding a geometric point member.
 
 \cgalRefines `TriangulationDSVertexBase_3` 
 
