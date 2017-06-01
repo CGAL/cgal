@@ -1003,9 +1003,8 @@ void Viewer::drawVisualHints()
 
         // Axis viewport size, in pixels
         const int size = 100;
-        //TODO: Find a fix for Retina screens.
-        glViewport(width()-size, height()-size, size, size);
-        glScissor(width()-size, height()-size, size, size);
+        glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
+        glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_Axis.size() / 3));
         // The viewport and the scissor are restored.
         glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
