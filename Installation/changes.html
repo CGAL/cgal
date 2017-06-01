@@ -215,6 +215,12 @@ and <code>src/</code> directories).
         </li>
       </ul>
     </li>
+    <li>
+      Introduced a new concept, <code>RegularTriangulationCellBaseWithWeightedCircumcenter_3</code>,
+      which describes the requirements on a cell of a regular triangulation that
+      caches its circumcenter. The existing class <code>Regular_triangulation_cell_base_with_weighted_circumcenter_3</code>
+      is the default model of this concept.
+    </li>
   </ul>
   <h3>dD Triangulations</h3>
   <ul>
@@ -231,6 +237,12 @@ and <code>src/</code> directories).
       The type of the surface center in the concept <code>MeshCellBase_3</code>
       has been changed from <code>Triangulation::Point</code> to
       <code>TriangulationTraits::Point_3</code> to reflect that it is a weightless point.
+    </li>
+    <li><b>Breaking change</b>:
+      The function <code>invalidate_circumcenter()</code> of the concept <code>MeshCellBase_3</code>
+      is renamed to <code>invalidate_weighted_circumcenter_cache()</code>
+      and moved to the new concept <code>RegularTriangulationCellBaseWithWeightedCircumcenter_3</code>,
+      which the concept <code>MeshCellBase_3</code> now refines.
     </li>
   <ul>
 <!-- Surface Reconstruction -->
