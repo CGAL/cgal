@@ -4,7 +4,8 @@
 
 The concept `MeshCellBase_3` describes the requirements 
 for the `Cell` type of the triangulation 
-used in the 3D mesh generation process. The type `MeshCellBase_3` refines the concept `RegularTriangulationCellBase_3`
+used in the 3D mesh generation process. The type `MeshCellBase_3`
+refines the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 and must be copy constructible. 
 The concept `MeshCellBase_3` 
 includes a way to store and retrieve 
@@ -39,7 +40,7 @@ and `is_facet_visited(1)` in parallel must be safe)
 Moreover, the parallel algorithms require an erase counter in 
 each cell (see below).
 
-\cgalRefines `RegularTriangulationCellBase_3`
+\cgalRefines `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 \cgalRefines `CopyConstructible`
 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
@@ -151,13 +152,6 @@ void set_facet_surface_center_index(int i, Index index);
 Returns the surface center index of `facet(i)`.
 */
 Index get_facet_surface_center_index(int i);
-
-/*!
-Invalidates the circumcenter value stored in the cell.
-This value is usually stored in the cell, but the optimizers need to be able to 
-invalidate this cache value.
-*/
-void invalidate_circumcenter();
 
 /// Get the erase counter. 
 /// Only required by the parallel algorithms.
