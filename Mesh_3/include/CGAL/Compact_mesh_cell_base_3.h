@@ -60,7 +60,7 @@ class Compact_mesh_cell_base_3_base
 protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0)
-    , circumcenter_(NULL)
+    , weighted_circumcenter_(NULL)
   {}
 
 public:
@@ -103,11 +103,11 @@ public:
     return ( (bits_ & (1 << facet)) != 0 );
   }
 
-  /// Precondition circumcenter_ == NULL
+  /// Precondition weighted_circumcenter_ == NULL
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    CGAL_precondition(circumcenter_ == NULL);
-    circumcenter_ = cc;
+    CGAL_precondition(weighted_circumcenter_ == NULL);
+    weighted_circumcenter_ = cc;
   }
 
 private:
@@ -121,7 +121,7 @@ private:
 #endif
 
 protected:
-  mutable Point_3* circumcenter_;
+  mutable Point_3* weighted_circumcenter_;
 };
 
 
@@ -137,7 +137,7 @@ protected:
   Compact_mesh_cell_base_3_base()
   {
     bits_ = 0;
-    circumcenter_ = NULL;
+    weighted_circumcenter_ = NULL;
   }
 
 public:
@@ -186,11 +186,11 @@ public:
     return ( (bits_ & char(1 << facet)) != 0 );
   }
 
-  /// If the circumcenter is already set (circumcenter_ != NULL),
+  /// If the circumcenter is already set (weighted_circumcenter_ != NULL),
   /// this function "deletes" cc
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    if (circumcenter_.compare_and_swap(cc, NULL) != NULL)
+    if (weighted_circumcenter_.compare_and_swap(cc, NULL) != NULL)
       delete cc;
   }
 
@@ -201,7 +201,7 @@ private:
   tbb::atomic<char> bits_;
 
 protected:
-  mutable tbb::atomic<Point_3*> circumcenter_;
+  mutable tbb::atomic<Point_3*> weighted_circumcenter_;
 };
 
 #endif // CGAL_LINKED_WITH_TBB
@@ -218,7 +218,7 @@ class Compact_mesh_cell_base_3
 {
   typedef typename GT::FT FT;
   typedef Compact_mesh_cell_base_3_base<GT,typename TDS::Concurrency_tag> Base;
-  using Base::circumcenter_;
+  using Base::weighted_circumcenter_;
 
 public:
   typedef TDS                          Triangulation_data_structure;
@@ -252,9 +252,9 @@ public:
 public:
   void invalidate_weighted_circumcenter_cache() const
   {
-    if (circumcenter_) {
-      delete circumcenter_;
-      circumcenter_ = NULL;
+    if (weighted_circumcenter_) {
+      delete weighted_circumcenter_;
+      weighted_circumcenter_ = NULL;
     }
   }
 
@@ -336,8 +336,8 @@ public:
 
   ~Compact_mesh_cell_base_3()
   {
-    if(circumcenter_ != NULL){
-      delete circumcenter_;
+    if(weighted_circumcenter_ != NULL){
+      delete weighted_circumcenter_;
     }
   }
 
@@ -482,7 +482,7 @@ public:
   {
     BOOST_STATIC_ASSERT(boost::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
-    if (circumcenter_ == NULL) {
+    if (weighted_circumcenter_ == NULL) {
       this->try_to_set_circumcenter(
         new Point_3(gt.construct_weighted_circumcenter_3_object()
                         (this->vertex(0)->point(),
@@ -494,9 +494,9 @@ public:
                                 (this->vertex(0)->point(),
                                  this->vertex(1)->point(),
                                  this->vertex(2)->point(),
-                                 this->vertex(3)->point()) == *circumcenter_);
+                                 this->vertex(3)->point()) == *weighted_circumcenter_);
     }
-    return *circumcenter_;
+    return *weighted_circumcenter_;
   }
 
   const Point_3& weighted_circumcenter() const
