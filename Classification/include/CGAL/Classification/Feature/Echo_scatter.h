@@ -98,22 +98,19 @@ public:
           for(std::size_t k = squareXmin; k <= squareXmax; k++){
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
 									
-              if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))<=(float)0.5*radius_neighbors/grid.resolution()){
-                std::vector<std::size_t> indices;
-                grid.indices(k,l,std::back_inserter(indices));
-                if(indices.size()>0){
-									
-                  for(std::size_t t=0; t<indices.size();t++){
-												
-                    std::size_t ip = indices[t]; 
-                    if(get(echo_map, *(input.begin()+ip)) > 1)
-                      NB_echo_sup++;
-                  }
-									
-                  NB_echo_total=NB_echo_total+indices.size();
-									
+              if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))<=(float)0.5*radius_neighbors/grid.resolution())
+              {
+                typename Grid::iterator end = grid.indices_end(k,l);
+                std::size_t nb = 0;
+                for (typename Grid::iterator it = grid.indices_begin(k,l); it != end; ++ it)
+                {
+                  ++ nb;
+                  if(get(echo_map, *(input.begin()+(*it))) > 1)
+                    NB_echo_sup++;
                 }
-							
+
+                NB_echo_total=NB_echo_total+nb;
+
               }
 						
             }
