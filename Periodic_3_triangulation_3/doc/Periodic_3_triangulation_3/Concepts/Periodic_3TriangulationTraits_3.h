@@ -201,6 +201,11 @@ Set the fundamental domain. This is necessary to evaluate predicates correctly.
 */
 void set_domain(const Iso_cuboid_3& domain);
 
+/*!
+Returns the fundamental domain.
+*/
+const Iso_cuboid_3& get_domain() const;
+
 /// @}
 
 /// \name Operations
