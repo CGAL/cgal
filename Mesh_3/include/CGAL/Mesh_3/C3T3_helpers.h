@@ -2143,7 +2143,7 @@ private:
                             CellForwardIterator cells_end) const
   {
     while(cells_begin != cells_end) {
-      (*cells_begin)->invalidate_circumcenter();
+      (*cells_begin)->invalidate_weighted_circumcenter_cache();
       ++cells_begin;
     }
   }
