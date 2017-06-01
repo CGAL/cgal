@@ -56,16 +56,17 @@ Note that the returned point has no weight.
 /// @{
 
 /*!
-Computes the weighted circumcenter of the tetrahedron, or retrieves it if already 
-computed.
+Computes the weighted circumcenter of the tetrahedron, or retrieves it if it has
+already been computed.
 
 The returned point has no weight.
 */ 
 const Point_3& weighted_circumcenter(const Traits&gt = Traits()) const;
 
 /*!
-Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and other.
-Should be preferred to an assignment or copy constructor when other is deleted after that.
+Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and `other`.
+This function should be preferred to an assignment or the copy constructor
+if `other` is deleted thereafter.
 */
 void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw();
 
