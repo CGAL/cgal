@@ -83,9 +83,10 @@ private:
     
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
+      std::vector<std::size_t> neighbors;
       for (std::size_t i = r.begin(); i != r.end(); ++ i)
       {
-        std::vector<std::size_t> neighbors;
+        neighbors.clear();
         m_neighbor_query (get(m_point_map, *(m_input.begin()+i)), std::back_inserter (neighbors));
 
         std::vector<typename PointMap::value_type> neighbor_points;
