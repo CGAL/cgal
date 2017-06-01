@@ -25,6 +25,8 @@
 
 #include <CGAL/Classification/Image.h>
 
+#include <boost/iterator/iterator_facade.hpp>
+
 namespace CGAL {
 
 namespace Classification {
@@ -64,8 +66,116 @@ private:
   std::vector<std::size_t> m_x;
   std::vector<std::size_t> m_y;
   Planimetric_grid* m_lower_scale;
+  std::size_t m_current_scale;
+
   
 public:
+
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type iterator;
+#else
+  class iterator
+    : public boost::iterator_facade<iterator, std::size_t, std::forward_iterator_tag>
+  {
+  public:
+    friend class boost::iterator_core_access;
+    
+    iterator(const Planimetric_grid* lowest_scale,
+             std::size_t scale,
+             std::size_t large_x,
+             std::size_t large_y,
+             bool end = false)
+      : m_lowest_scale (lowest_scale)
+      , m_idx(0)
+    {
+      std::size_t size = 1;
+
+      while (scale != 0)
+      {
+        size *= 2;
+        -- scale;
+      }
+
+      std::size_t xmin = large_x * size;
+      m_xmax = (large_x + 1) * size;
+      m_ymin = large_y * size;
+      m_ymax = (large_y + 1) * size;
+      
+      m_pos_x = xmin;
+      m_pos_y = m_ymin;
+
+      bool found_one = false;
+      for (std::size_t x = xmin; x < m_xmax; ++ x)
+      {
+        for (std::size_t y = m_ymin; y < m_ymax; ++ y)
+          if (m_lowest_scale->has_points(x,y))
+          {
+            m_pos_x = x;
+            m_pos_y = y;
+            found_one = true;
+            break;
+          }
+        if(found_one)
+          break;
+      }
+
+      if (end && found_one)
+      {
+        m_pos_x = m_xmax;
+        m_pos_y = m_ymax;
+      }
+    }
+
+    void increment()
+    {
+      ++ m_idx;
+      if (m_idx == m_lowest_scale->m_grid(m_pos_x, m_pos_y).size())
+      {
+        m_idx = 0;
+        do
+        {
+          ++ m_pos_y;
+          if (m_pos_y == m_ymax)
+          {
+            m_pos_y = m_ymin;
+            
+            ++ m_pos_x;
+            if (m_pos_x == m_xmax) // end() reached
+            {
+              m_pos_y = m_ymax; // put y to max so that this == end()
+              break;
+            }
+              
+          }
+        }
+        while (!(m_lowest_scale->has_points(m_pos_x, m_pos_y)));
+      }
+    }
+
+    bool equal (const iterator& other) const
+    {
+      return (m_pos_x == other.m_pos_x &&
+              m_pos_y == other.m_pos_y &&
+              m_idx == other.m_idx);
+    }
+
+    std::size_t& dereference() const
+    {
+      return const_cast<std::size_t&>(m_lowest_scale->m_grid(m_pos_x, m_pos_y)[m_idx]);
+    }
+
+  private:
+
+    const Planimetric_grid* m_lowest_scale;
+    std::size_t m_xmin, m_xmax, m_ymin, m_ymax;
+
+    std::size_t m_size;
+    std::size_t m_idx;
+    std::size_t m_pos_x;
+    std::size_t m_pos_y;
+
+  };
+#endif
 
   /// \cond SKIP_IN_MANUAL
   Planimetric_grid () { }
@@ -83,7 +193,7 @@ public:
                     PointMap point_map,
                     const Iso_cuboid_3& bbox,
                     float grid_resolution)
-    : m_resolution (grid_resolution), m_lower_scale(NULL)
+    : m_resolution (grid_resolution), m_lower_scale(NULL), m_current_scale(0)
   {
     std::size_t width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
     std::size_t height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
@@ -104,6 +214,7 @@ public:
   Planimetric_grid (Planimetric_grid* lower_scale)
     : m_resolution (lower_scale->resolution() * 2), m_lower_scale (lower_scale)
   {
+    m_current_scale = lower_scale->m_current_scale + 1;
 //    std::cerr << "Grid size = " << width() << " " << height() << std::endl;
   }
   /// \endcond
@@ -122,7 +233,7 @@ public:
   */
   std::size_t width() const
   {
-    if (m_lower_scale == NULL)
+    if (m_current_scale == 0)
       return m_grid.width();
     else
       return (m_lower_scale->width() + 1) / 2;
@@ -132,40 +243,38 @@ public:
   */
   std::size_t height() const
   {
-    if (m_lower_scale == NULL)
+    if (m_current_scale == 0)
       return m_grid.height();
     else
       return (m_lower_scale->height() + 1) / 2;
   }
 
-  /*!
-    \brief Stores the indices of the points lying in the cell at
-    position `(x,y)` in `output`.
-  */
-  template <typename OutputIterator>
-  void indices(std::size_t x, std::size_t y, OutputIterator output) const
+  /// \cond SKIP_IN_MANUAL
+  const Planimetric_grid* lowest_scale() const
   {
-    if (m_lower_scale == NULL)
-    {
-      if (x >= m_grid.width() || y >= m_grid.height())
-        return;
-      std::copy (m_grid(x,y).begin(), m_grid(x,y).end(), output);
-    }
+    if (m_current_scale == 0)
+      return this;
     else
-    {
-      m_lower_scale->indices(x*2, y*2, output);
-      m_lower_scale->indices(x*2, y*2 + 1, output);
-      m_lower_scale->indices(x*2 + 1, y*2 + 1, output);
-      m_lower_scale->indices(x*2 + 1, y*2, output);
-    }
+      return m_lower_scale->lowest_scale();
   }
-  
+  /// \end
+
+  iterator indices_begin(std::size_t x, std::size_t y) const
+  {
+    return iterator (lowest_scale(), m_current_scale, x, y);
+  }
+
+  iterator indices_end(std::size_t x, std::size_t y) const
+  {
+    return iterator (lowest_scale(), m_current_scale, x, y, true);
+  }
+
   /*!
     \brief Returns `false` if the cell at position `(x,y)` is empty, `true` otherwise.
   */
   bool has_points(std::size_t x, std::size_t y) const
   {
-    if (m_lower_scale == NULL)
+    if (m_current_scale == 0)
     {
       if (x >= m_grid.width() || y >= m_grid.height())
         return false;

@@ -97,14 +97,16 @@ public:
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
       {
-        std::vector<std::size_t> indices;
-        grid.indices(i,j,std::back_inserter(indices));
-        if (indices.empty())
-          continue;
         float mean = 0.;
-        for (std::size_t k = 0; k < indices.size(); ++ k)
-          mean += get(point_map, *(input.begin()+indices[k])).z();
-        mean /= indices.size();
+        std::size_t nb = 0;
+        typename Grid::iterator end = grid.indices_end(i,j);
+        for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
+        {
+          mean += get(point_map, *(input.begin()+(*it))).z();
+          ++ nb;
+        }
+
+        mean /= nb;
         dem(i,j) = mean;
       }
 
