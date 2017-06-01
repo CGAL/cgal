@@ -89,6 +89,7 @@ private:
         m_neighbor_query (get(m_point_map, *(m_input.begin()+i)), std::back_inserter (neighbors));
 
         std::vector<typename PointMap::value_type> neighbor_points;
+        neighbor_points.reserve(neighbors.size());
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(m_point_map, *(m_input.begin()+neighbors[j])));
 
