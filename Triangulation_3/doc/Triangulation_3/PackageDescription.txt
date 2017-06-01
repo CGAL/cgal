@@ -79,6 +79,7 @@ is opposite to the vertex with the same index. See
 - `DelaunayTriangulationCellBase_3`
 - `RegularTriangulationVertexBase_3`
 - `RegularTriangulationCellBase_3`
+- `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 - `TriangulationDataStructure_3`
 - `WeightedPoint`
 

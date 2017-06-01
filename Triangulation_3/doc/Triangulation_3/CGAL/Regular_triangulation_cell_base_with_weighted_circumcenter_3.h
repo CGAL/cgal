@@ -20,7 +20,7 @@ circumcenter.
 be a model of `RegularTriangulationCellBase_3`.
 It has the default value `Regular_triangulation_cell_base_3<RT>`.
 
-\cgalModels `RegularTriangulationCellBase_3`
+\cgalModels `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
@@ -41,13 +41,13 @@ typedef Traits::Weighted_point_3 Point;
 /*! \name Access function 
 
 As a model of the concept `RegularTriangulationCellBase_3`, 
-`Regular_triangulation_cell_base_3` 
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3`
 provides a `weighted_circumcenter()` member fonction. 
 
 In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
 of the cell.
-This `Point_3` is computed by the `Construct_weighted_circumcenter_3` constructor of the traits class
-when this function is first called.
+This `Point_3` is computed using the `Construct_weighted_circumcenter_3` functor
+of the traits class when this function is first called and its value is stored.
 In the next calls, the cached value is returned.
 
 Note that the returned point has no weight.
