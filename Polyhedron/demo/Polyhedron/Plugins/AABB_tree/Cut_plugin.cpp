@@ -738,7 +738,6 @@ private:
   mutable std::vector<float> tex_map;
   mutable Cut_planes_types m_cut_plane;
   mutable std::vector<QOpenGLBuffer> buffers;
-
   template <typename Tree, typename SM_Tree>
   void compute_distance_function(QMap<QObject*, Tree*> *trees, QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
   {
@@ -746,31 +745,31 @@ private:
     m_max_distance_function = FT(0);
 
     FT diag = scene_diag();
+    std::vector<Tree*> closed_trees;
+    std::vector<SM_Tree*> closed_sm_trees;
 #ifndef CGAL_LINKED_WITH_TBB
     const GLdouble* m = frame->matrix();
-    Simple_kernel::Aff_transformation_3 t = Simple_kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
+    Simple_kernel::Aff_transformation_3 transfo = Simple_kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
         m[1], m[5], m[9], m[13],
         m[2], m[6], m[10], m[14]);
     const FT dx = 2*diag;
     const FT dy = 2*diag;
     const FT z (0);
     const FT fd =  FT(1);
-    Tree *min_tree = NULL;
-    std::vector<Tree*> closed_trees;
-    Q_FOREACH(Tree *tree, trees->values())
-    if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
-      closed_trees.push_back(tree);
+    Tree *min_tree = NULL ;
+    SM_Tree *min_sm_tree = NULL;
     for(int i=0 ; i<m_grid_size ; ++i)
     {
       FT x = -diag/fd + FT(i)/FT(m_grid_size) * dx;
       for(int j=0 ; j<m_grid_size ; ++j)
       {
         FT y = -diag/fd + FT(j)/FT(m_grid_size) * dy;
-
-        Simple_kernel::Point_3 query = t( Simple_kernel::Point_3(x,y,z) );
+        const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+        Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
+        Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
-
-        Q_FOREACH(Tree *tree, closed_trees)
+        bool is_min_sm = false;
+        Q_FOREACH(Tree *tree, *trees)
         {
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
@@ -780,17 +779,29 @@ private:
               min_tree = tree;
           }
         }
-        if(min == DBL_MAX)
-          return;
+        Q_FOREACH(SM_Tree *tree, *sm_trees)
+        {
+          FT dist = CGAL::sqrt( tree->squared_distance(query) );
+          if(dist < min)
+          {
+            min = dist;
+            is_min_sm = true;
+            if(is_signed)
+              min_sm_tree = tree;
+          }
+        }
         m_distance_function[i][j] = Point_distance(query,min);
         m_max_distance_function = (std::max)(min, m_max_distance_function);
-      }
-    }
-    if(is_signed)
-    {
-      for(int i=0 ; i<m_grid_size ; ++i)
-        for(int j=0 ; j<m_grid_size ; ++j)
+
+
+        if(is_signed)
         {
+          if(!min_tree && !min_sm_tree)
+          {
+            m_distance_function[i][j] = Point_distance(query,DBL_MAX);
+            m_max_distance_function = DBL_MAX;//(std::max)(min, m_max_distance_function);
+            continue;
+          }
           typedef typename Tree::size_type size_type;
           Simple_kernel::Vector_3 random_vec = random_vector();
 
@@ -799,15 +810,15 @@ private:
 
           // get sign through ray casting (random vector)
           Simple_kernel::Ray_3  ray(p, random_vec);
-          size_type nbi = min_tree->number_of_intersected_primitives(ray);
+          size_type nbi = (is_min_sm) ? min_sm_tree->number_of_intersected_primitives(ray)
+                                      : min_tree->number_of_intersected_primitives(ray);
 
           FT sign ( (nbi&1) == 0 ? 1 : -1);
           m_distance_function[i][j].second = sign * unsigned_distance;
         }
+      }
     }
 #else
-    std::vector<Tree*> closed_trees;
-    std::vector<SM_Tree*> closed_sm_trees;
     Q_FOREACH(Tree *tree, trees->values())
     if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
       closed_trees.push_back(tree);
