@@ -243,5 +243,5 @@ Construct_tetrahedron_3 construct_tetrahedron_3_object();
 
 /// @}
 
-}; /* end Periodic_3DelaunayTriangulationTraits_3 */
+}; /* end Periodic_3TriangulationTraits_3 */
 
