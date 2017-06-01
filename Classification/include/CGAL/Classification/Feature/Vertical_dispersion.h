@@ -22,6 +22,7 @@
 
 #include <vector>
 
+#include <CGAL/number_utils.h>
 #include <CGAL/Classification/Image.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <boost/algorithm/minmax_element.hpp>
@@ -101,6 +102,7 @@ public:
     typename GeomTraits::Vector_3 verti (0., 0., 1.);
 
     std::vector<float> hori;
+
     for (std::size_t j = 0; j < grid.height(); j++){	
       for (std::size_t i = 0; i < grid.width(); i++){
 						
@@ -113,16 +115,19 @@ public:
         std::size_t squareYmin = (j < square ? 0 : j - square);
         std::size_t squareYmax = (std::min) (grid.height()-1, j + square);
 
+        float bound = (float)0.5*radius_neighbors/grid.resolution();
+        bound = CGAL::square(bound);
         for(std::size_t k = squareXmin; k <= squareXmax; k++)
           for(std::size_t l = squareYmin; l <= squareYmax; l++)
           {
-            if(CGAL::sqrt(pow((float)k-i,2)+pow((float)l-j,2))
-               <=(float)0.5*radius_neighbors/grid.resolution())
+            if(CGAL::square((float)(k-i))+ CGAL::square((float)(l-j))
+               <= bound)
             {
               for (typename Grid::iterator it = grid.indices_begin(k,l); it != grid.indices_end(k,l); ++ it)
                 hori.push_back (get(point_map, *(input.begin()+(*it))).z());
             }
           }
+      
         if (hori.empty())
           continue;
               

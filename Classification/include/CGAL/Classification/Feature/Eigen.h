@@ -259,7 +259,7 @@ public:
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-    return (std::pow (std::fabs(ev[0] * ev[1] * ev[2]), 0.333333333));
+    return (std::pow (CGAL::abs(ev[0] * ev[1] * ev[2]), 0.333333333));
   }
   /// \endcond
 };
