@@ -239,8 +239,8 @@ public:
 
 public:
   /** @name Creation */ //@{
-  Periodic_3_triangulation_3(const Iso_cuboid& domain,
-                             const Geometric_traits& gt)
+  Periodic_3_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0, 1,1,1),
+                             const Geometric_traits& gt = Geometric_traits())
     : _gt(gt), _tds()
   {
     set_domain(domain);
