@@ -154,11 +154,11 @@ test_directory()
       START=`date +%s`
       run_local_cgal_test &
 
-      TIMEOUT=1200
+      TIME_PERIOD=1200
       if [ "$1" = "Polyhedron_Demo" ]; then
-        TIMEOUT=5400
+        TIME_PERIOD=2400
       fi
-      if wait_for_process "$!" "$TIMEOUT" "5"
+      if wait_for_process "$!" "$TIME_PERIOD" "5"
       then
 	if [ -f test_failure  ] ; then
             exit_failure=`cat test_failure`
