@@ -105,7 +105,8 @@ public:
           mean += get(point_map, *(input.begin()+(*it))).z();
           ++ nb;
         }
-
+        if (nb == 0)
+          continue;
         mean /= nb;
         dem(i,j) = mean;
       }
