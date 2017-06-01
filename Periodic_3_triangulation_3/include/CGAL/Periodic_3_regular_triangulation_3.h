@@ -705,14 +705,14 @@ public:
 public:
   /** @name Geometric access functions */
   /// @{
-
-  // The following point() functions return canonical points, that is points
-  // within the base domain.
-
   Weighted_point point(const Periodic_weighted_point& pp) const
   {
     return point(pp, geom_traits().construct_weighted_point_3_object());
   }
+
+  // The following functions return the "real" position in space (unrestrained
+  // to the original periodic domain) of the vertices v and c->vertex(idx),
+  // respectively
 
   Weighted_point point(Vertex_handle v) const
   {
