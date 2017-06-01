@@ -24,6 +24,7 @@
 
 #include <CGAL/Classification/Image.h>
 #include <CGAL/Classification/Planimetric_grid.h>
+#include <boost/algorithm/minmax_element.hpp>
 
 namespace CGAL {
 
@@ -125,20 +126,16 @@ public:
         if (hori.empty())
           continue;
               
-        std::sort (hori.begin(), hori.end());
+        std::vector<float>::iterator min_it, max_it;
+        boost::tie(min_it, max_it)
+          = boost::minmax_element (hori.begin(), hori.end());
 
-        std::size_t nb_layers = 1;
-
-        std::vector<bool> occupy (1 + (std::size_t)((hori.back() - hori.front()) / grid.resolution()), false);
+        std::vector<bool> occupy (1 + (std::size_t)((*max_it - *min_it) / grid.resolution()), false);
               
-        std::size_t last_index = 0;
         for (std::size_t k = 0; k < hori.size(); ++ k)
         {
-          std::size_t index = (std::size_t)((hori[k] - hori.front()) / grid.resolution());
+          std::size_t index = (std::size_t)((hori[k] - *min_it) / grid.resolution());
           occupy[index] = true;
-          if (index > last_index + 1)
-            ++ nb_layers;
-          last_index = index;
         }
 
         std::size_t nb_occ = 0;
