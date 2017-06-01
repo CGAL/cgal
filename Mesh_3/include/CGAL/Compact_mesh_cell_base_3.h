@@ -250,7 +250,7 @@ public:
   typedef const Point*                      Point_const_iterator;
 
 public:
-  void invalidate_circumcenter() const
+  void invalidate_weighted_circumcenter_cache() const
   {
     if (circumcenter_) {
       delete circumcenter_;
@@ -457,20 +457,20 @@ public:
   void set_vertex(int i, Vertex_handle v)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
-    invalidate_circumcenter();
+    invalidate_weighted_circumcenter_cache();
     V[i] = v;
   }
 
   void set_vertices()
   {
-    invalidate_circumcenter();
+    invalidate_weighted_circumcenter_cache();
     V[0] = V[1] = V[2] = V[3] = Vertex_handle();
   }
 
   void set_vertices(Vertex_handle v0, Vertex_handle v1,
                     Vertex_handle v2, Vertex_handle v3)
   {
-    invalidate_circumcenter();
+    invalidate_weighted_circumcenter_cache();
     V[0] = v0;
     V[1] = v1;
     V[2] = v2;
