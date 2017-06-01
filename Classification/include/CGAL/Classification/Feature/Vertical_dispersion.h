@@ -98,13 +98,14 @@ public:
     
     std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
     typename GeomTraits::Vector_3 verti (0., 0., 1.);
-    
+
+    std::vector<float> hori;
     for (std::size_t j = 0; j < grid.height(); j++){	
       for (std::size_t i = 0; i < grid.width(); i++){
 						
         if(!(grid.has_points(i,j)))
           continue;
-        std::vector<float> hori;
+        hori.clear();
             
         std::size_t squareXmin = (i < square ? 0 : i - square);
         std::size_t squareXmax = (std::min) (grid.width()-1, i + square);
