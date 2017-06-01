@@ -72,7 +72,7 @@ private:
 public:
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type iterator;
+  typedef unspecified_type iterator; ///< A forward iterator with value type `std::size_t`.
 #else
   class iterator
     : public boost::iterator_facade<iterator, std::size_t, std::forward_iterator_tag>
@@ -257,13 +257,21 @@ public:
     else
       return m_lower_scale->lowest_scale();
   }
-  /// \end
+  /// \endcond
 
+  /*!
+    \brief Returns the begin iterator on the indices of the points
+    lying in the cell at position `(x,y)`.
+  */
   iterator indices_begin(std::size_t x, std::size_t y) const
   {
     return iterator (lowest_scale(), m_current_scale, x, y);
   }
 
+  /*!
+    \brief Returns the past-the-end iterator on the indices of the points
+    lying in the cell at position `(x,y)`.
+  */
   iterator indices_end(std::size_t x, std::size_t y) const
   {
     return iterator (lowest_scale(), m_current_scale, x, y, true);
