@@ -8,7 +8,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
-#include <CGAL/boost/graph/PMP_properties_Surface_mesh.h>
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Timer.h>
