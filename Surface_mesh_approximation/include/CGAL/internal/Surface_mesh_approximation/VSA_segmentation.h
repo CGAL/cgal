@@ -285,11 +285,25 @@ private:
     }
 
     // update seed
-    std::vector<FT> distance_min(proxies.size(), FT(100000.0));
-    //std::vector<FT> distance_min(proxies.size(), FT::max());
+    std::vector<std::size_t> facet_px_idx;
+    facet_px_idx.reserve(num_faces(mesh));
+    std::vector<FT> facet_px_err;
+    facet_px_err.reserve(num_faces(mesh));
     for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
       std::size_t px_idx = seg_pmap[*fitr];
-      FT err = fit_error(*fitr, proxies[px_idx]);
+      facet_px_idx.push_back(px_idx);
+      facet_px_err.push_back(fit_error(*fitr, proxies[px_idx]));
+    }
+    FT max_facet_error = facet_px_err.front();
+    for (std::size_t i = 0; i < facet_px_err.size(); ++i) {
+      if (max_facet_error < facet_px_err[i])
+        max_facet_error = facet_px_err[i];
+    }
+    std::vector<FT> distance_min(proxies.size(), max_facet_error);
+    std::size_t fidx = 0;
+    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr, ++fidx) {
+      std::size_t px_idx = facet_px_idx[fidx];
+      FT err = facet_px_err[fidx];
       if (err < distance_min[px_idx]) {
         proxies[px_idx].seed = *fitr;
         distance_min[px_idx] = err;
