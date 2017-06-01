@@ -178,6 +178,25 @@ public:
     }
   }
 
+  template<typename FacetSegmentMap>
+  void partition_incre(const std::size_t number_of_segments, const std::size_t number_of_iterations, FacetSegmentMap &seg_pmap) {
+    // random_seed(number_of_segments);
+    random_seed(number_of_segments / 2);
+
+    for (std::size_t i = 0; i < number_of_iterations; ++i) {
+      flooding(seg_pmap);
+      fitting(seg_pmap);
+    }
+
+    while (proxies.size() < number_of_segments) {
+      insert_proxy(seg_pmap);
+      for (std::size_t i = 0; i < number_of_iterations; ++i) {
+        flooding(seg_pmap);
+        fitting(seg_pmap);
+      }
+    }
+  }
+
 private:
   void random_seed(const std::size_t initial_px) {
     proxies.clear();
@@ -276,6 +295,40 @@ private:
         distance_min[px_idx] = err;
       }
     }
+  }
+
+  // insert proxy at the facet with the maximum fitting error in the proxy with maximum error
+  template <typename FacetSegmentMap>
+  void insert_proxy(FacetSegmentMap &seg_pmap) {
+    std::vector<FT> px_error(proxies.size(), FT(0.0));
+    std::vector<FT> max_facet_error(proxies.size(), FT(0.0));
+    std::vector<face_descriptor> max_facet(proxies.size());
+    face_iterator fitr, fend;
+    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
+      std::size_t px_idx = seg_pmap[*fitr];
+      FT err = fit_error(*fitr, proxies[px_idx]);
+      px_error[px_idx] += err;
+
+      if (err > max_facet_error[px_idx]) {
+        max_facet_error[px_idx] = err;
+        max_facet[px_idx] = *fitr;
+      }
+    }
+
+    FT max_px_error = px_error.front();
+    std::size_t max_px_idx = 0;
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      if (px_error[i] > max_px_error) {
+        max_px_error = px_error[i];
+        max_px_idx = i;
+      }
+    }
+
+    // create new proxy
+    PlaneProxy new_px;
+    new_px.normal = normal_pmap[max_facet[max_px_idx]];
+    new_px.seed = max_facet[max_px_idx];
+    proxies.push_back(new_px);
   }
 };
 }
