@@ -26,13 +26,13 @@ public:
 
 /*!
 */
-typedef Periodic_3RegularTriangulationTraits_3::Point_3 Bare_point;
+typedef TDS::Point_3 Bare_point;
 
 /*!
 The type for points
 `p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$
 */
-typedef Periodic_3RegularTriangulationTraits_3::Weighted_point_3 Weighted_point;
+typedef TDS::Weighted_point_3 Weighted_point;
 
 /// @}
 

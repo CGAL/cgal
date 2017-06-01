@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Periodic_3_triangulation_3` represents a 3-dimensional
 triangulation of a point set in \f$ \mathbb T_c^3\f$.
 
-\tparam PT must be a model of the concept `Periodic_3TriangulationTraits_3`.
+\tparam Traits must be a model of the concept `Periodic_3TriangulationTraits_3`.
 
 \tparam TDS must be a model of the concept `TriangulationDataStructure_3`
 with some additional functionality in cells and vertices.
@@ -17,7 +17,7 @@ Its default value is
 \sa `Periodic_3_Delaunay_triangulation_3`
 \sa `Periodic_3_regular_triangulation_3`
 */
-template< typename PT, typename TDS >
+template< typename Traits, typename TDS >
 class Periodic_3_triangulation_3 {
 public:
 
@@ -28,7 +28,7 @@ public:
 /*!
 
 */
-typedef PT Geometric_traits;
+typedef Traits Geom_traits;
 
 /*!
 
@@ -38,13 +38,13 @@ typedef TDS Triangulation_data_structure;
 /*!
 
 */
-typedef Geometric_traits::Periodic_3_offset_3
+typedef Geom_traits::Periodic_3_offset_3
 Offset;
 
 /*!
-A type representing an axis-aligned cuboid. It must be a model of `PT::Iso_cuboid_3`. Used to represent the original domain.
+A type representing an axis-aligned cuboid. It must be a model of `Traits::Iso_cuboid_3`. Used to represent the original domain.
 */
-typedef Geometric_traits::Iso_cuboid_3 Iso_cuboid;
+typedef Geom_traits::Iso_cuboid_3 Iso_cuboid;
 
 /*!
 Integer triple to
@@ -55,8 +55,8 @@ typedef array<int,3> Covering_sheets;
 /*!
 The point type of the triangulation.
 
-\note This type is equal to `Geometric_traits::Point_3` when considering periodic
-Delaunay triangulations and to `Geometric_traits::Weighted_point_3` when
+\note This type is equal to `Geom_traits::Point_3` when considering periodic
+Delaunay triangulations and to `Geom_traits::Weighted_point_3` when
 considering periodic weighted Delaunay triangulations.
 */
 typedef TDS::Vertex::Point Point;
@@ -64,22 +64,22 @@ typedef TDS::Vertex::Point Point;
 /*!
 The geometric basic 3D point type.
 */
-typedef Geometric_traits::Point_3 Point_3;
+typedef Geom_traits::Point_3 Point_3;
 
 /*!
 
 */
-typedef Geometric_traits::Segment_3 Segment;
+typedef Geom_traits::Segment_3 Segment;
 
 /*!
 
 */
-typedef Geometric_traits::Triangle_3 Triangle;
+typedef Geom_traits::Triangle_3 Triangle;
 
 /*!
 
 */
-typedef Geometric_traits::Tetrahedron_3 Tetrahedron;
+typedef Geom_traits::Tetrahedron_3 Tetrahedron;
 
 /*!
 Represents a point-offset pair. The point in the pair lies in the original domain.
@@ -313,9 +313,8 @@ Introduces an empty triangulation `t` with `domain` as
 original domain.
 \pre `domain` is a cube.
 */
-Periodic_3_triangulation_3
-(const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),
-const Geometric_traits & traits = Geometric_traits());
+Periodic_3_triangulation_3(const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),
+                           const Geom_traits & traits = Geom_traits());
 
 /*!
 Copy constructor. All vertices and faces are duplicated.
@@ -356,15 +355,15 @@ equal, and the tetrahedra corresponding to each pair of cells are equal (up to
 a permutation of their vertices).
 \relates Periodic_3_triangulation_3
 */
-template < class PT, class TDS1, class TDS2 >
-bool operator==(const Periodic_3_triangulation_3<PT, TDS1> & t1, const Periodic_3_triangulation_3<PT, TDS2> & t2);
+template < class Traits, class TDS1, class TDS2 >
+bool operator==(const Periodic_3_triangulation_3<Traits, TDS1> & t1, const Periodic_3_triangulation_3<Traits, TDS2> & t2);
 
 /*!
 The opposite of `operator==`.
 \relates Periodic_3_triangulation_3
 */
-template < class PT, class TDS1, class TDS2 >
-bool operator!=(const Periodic_3_triangulation_3<PT, TDS1> & t1, const Periodic_3_triangulation_3<PT, TDS2> & t2);
+template < class Traits, class TDS1, class TDS2 >
+bool operator!=(const Periodic_3_triangulation_3<Traits, TDS1> & t1, const Periodic_3_triangulation_3<Traits, TDS2> & t2);
 
 /// @}
 
@@ -374,7 +373,7 @@ bool operator!=(const Periodic_3_triangulation_3<PT, TDS1> & t1, const Periodic_
 /*!
 Returns a const reference to the geometric traits object.
 */
-const Geometric_traits & geom_traits() const;
+const Geom_traits & geom_traits() const;
 
 /*!
 Returns a const reference to the triangulation data structure.
@@ -481,6 +480,11 @@ covering management. Especially a premature conversion to the
 triangulation later.
 */
 void convert_to_27_sheeted_covering() const;
+
+/// @}
+
+/// \name Constant-time access functions
+/// @{
 
 /*!
 Returns the number of vertices. Counts all vertices that are
@@ -641,14 +645,14 @@ Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) co
 /// @{
 
 /*!
-Converts the periodic point of type `PP` to a `Point_3`. The type `PP` can be either
-`Periodic_point` or `Periodic_point_3`.
+Converts the periodic point of type `PP` to a `%Point_3`.
+The type PP can be either `Periodic_point` or `Periodic_point_3`.
 */
 template<typename PP>
 Point_3 construct_point(const PP & pp) const;
 
 /*!
-Converts the `Point` `p` to a `Point_3`.
+Converts the `Point` `p` to a `%Point_3`.
 */
 Point_3 construct_point(const Point & p) const;
 
