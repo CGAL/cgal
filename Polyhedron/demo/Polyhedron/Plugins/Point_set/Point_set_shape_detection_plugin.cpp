@@ -174,22 +174,27 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     // Shapes to be searched for are registered by using the template Shape_factory
     if(dialog.detect_plane()){
       groups[0] = new Scene_group_item("Planes");
+      groups[0]->setRenderingMode(Points);
       shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
     }
     if(dialog.detect_cylinder()){
       groups[1] = new Scene_group_item("Cylinders");
+      groups[1]->setRenderingMode(Points);
       shape_detection.add_shape_factory<CGAL::Shape_detection_3::Cylinder<Traits> >();
     }
     if(dialog.detect_torus()){
       groups[2] = new Scene_group_item("Torus");
+      groups[2]->setRenderingMode(Points);
       shape_detection.add_shape_factory< CGAL::Shape_detection_3::Torus<Traits> >();
     }
     if(dialog.detect_cone()){
       groups[3] = new Scene_group_item("Cones");
+      groups[3]->setRenderingMode(Points);
       shape_detection.add_shape_factory< CGAL::Shape_detection_3::Cone<Traits> >();
     }
     if(dialog.detect_sphere()){
       groups[4] = new Scene_group_item("Spheres");
+      groups[4]->setRenderingMode(Points);
       shape_detection.add_shape_factory< CGAL::Shape_detection_3::Sphere<Traits> >();
     }
 
