@@ -1497,7 +1497,18 @@ void Scene_c3t3_item_priv::computeSpheres()
     if(red)
       c = QColor(Qt::red);
     else
-      c = spheres->color().darker(250);
+      c = QColor::fromHsv(120, 200,200,255);
+    switch(vit->in_dimension())
+    {
+    case 0:
+      c = QColor::fromHsv((c.hue()+120)%360, c.saturation(),c.lightness(), c.alpha());
+      break;
+    case 1:
+      break;
+    default:
+      c.setRgb(50,50,50,255);
+    }
+
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     Kernel::Point_3 center(vit->point().point().x()+offset.x,
     vit->point().point().y()+offset.y,
