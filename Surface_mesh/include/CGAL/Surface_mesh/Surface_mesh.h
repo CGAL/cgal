@@ -1995,11 +1995,7 @@ private: //------------------------------------------------------- private data
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
-    if(file_format(os) == IO::OFF){
-      write_off(os, sm);
-    } else {
-      std::cerr << "For Surface_mesh we only support the OFF file format" << std::endl;
-    }
+    write_off(os, sm);
     return os;
   }
 
