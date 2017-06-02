@@ -648,6 +648,19 @@ protected:
       return AFTER;
   }
 
+  // used as functor in std::sort in Delaunay and regular triangulations
+  struct Perturbation_order
+  {
+    bool operator()(const Point* p, const Point* q) const {
+      return t->compare_xyz(*p, *q) == SMALLER;
+    }
+
+    Perturbation_order(const Self *tr)
+      : t(tr) {}
+
+    const Self *t;
+  };
+
   void init_tds()
     {
       infinite = _tds.insert_increase_dimension();
