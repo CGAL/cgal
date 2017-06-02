@@ -1497,7 +1497,7 @@ void Scene_c3t3_item_priv::computeSpheres()
     if(red)
       c = QColor(Qt::red);
     else
-      c = QColor::fromHsv(120, 200,200,255);
+      c = spheres->color();
     switch(vit->in_dimension())
     {
     case 0:
@@ -1669,6 +1669,7 @@ void Scene_c3t3_item::show_spheres(bool b)
       d->spheres->setName("Protecting spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+      connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
       scene->addItem(d->spheres);
       scene->changeGroup(d->spheres, this);
       lockChild(d->spheres);
@@ -2041,6 +2042,13 @@ void Scene_c3t3_item::itemAboutToBeDestroyed(Scene_item *item)
     d=0;
   }
 
+}
+void Scene_c3t3_item::on_spheres_color_changed()
+{
+  if(!d->spheres)
+    return;
+  d->spheres->clear_spheres();
+  d->computeSpheres();
 }
 
 #include "Scene_c3t3_item.moc"

@@ -45,7 +45,9 @@ public:
   void computeElements() const;
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
-
+  void setColor(QColor c) Q_DECL_OVERRIDE;
+Q_SIGNALS:
+  void on_color_changed();
 protected:
   friend struct Scene_spheres_item_priv;
   Scene_spheres_item_priv* d;
