@@ -48,7 +48,7 @@ FT sphere(const Point& p)
 const FT PI = std::acos(-1.);
 
 FT schwarz_p(const Point& p) {
-  const FT x2=std::cos( p.x() * 2*PI ),
+  const FT x2 = std::cos( p.x() * 2*PI ),
   y2=std::cos( p.y() * 2*PI ),
   z2=std::cos( p.z() * 2*PI );
   return x2 + y2 + z2;
@@ -201,7 +201,7 @@ Point canonicalize_point(const Point& p) {
 FT cylinder(const Point& p) {
   Point p_ = canonicalize_point( p );
   const FT x2 = (p_.y() - 0.5)*(p_.y() - 0.5),
-  y2=(p_.z() - 0.5)*(p_.z() - 0.5);
+           y2 = (p_.z() - 0.5)*(p_.z() - 0.5);
   return x2 + y2 - 0.1;
 }
 

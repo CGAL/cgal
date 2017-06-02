@@ -42,12 +42,12 @@ const FT PI = std::acos(-1.);
 
 // Function
 FT sphere_function (const Point& p)
-{ return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.2; }
+{ return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - 0.2; }
 
 FT schwarz_p(const Point& p) {
-  const FT x2=std::cos( p.x() * 2*PI ),
-  y2=std::cos( p.y() * 2*PI ),
-  z2=std::cos( p.z() * 2*PI );
+  const FT x2 = std::cos( p.x() * 2*PI ),
+           y2 = std::cos( p.y() * 2*PI ),
+           z2 = std::cos( p.z() * 2*PI );
   return x2 + y2 + z2;
 }
 
@@ -56,6 +56,8 @@ typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
 
 int main(int argc, char** argv)
 {
+  // 'int' because the 'schwarz_p' function is periodic over the domain only if
+  // the length of the side of the domain is an integer
   int domain_size = 1;
 
   if (argc > 1)
@@ -74,11 +76,8 @@ int main(int argc, char** argv)
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
   // Output
-  std::ofstream medit_file( (std::string("schwarz_p_.mesh").data()) );
-
+  std::ofstream medit_file("out_implicit_shape.mesh");
   P3M3_IO::write_complex_to_medit(medit_file, c3t3);
-
-  medit_file.close();
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;
