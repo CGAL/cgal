@@ -298,9 +298,9 @@ public:
     const Cell_handle c = facet.first;
     const int i = facet.second;
     std::cerr << "Facet ("
-              << c->vertex((i+1)&3)->point() << " , "
-              << c->vertex((i+2)&3)->point() << " , "
-              << c->vertex((i+3)&3)->point() << ") : refinement point is "
+              << r_tr_.point(c, (i+1)&3) << " , "
+              << r_tr_.point(c, (i+2)&3) << " , "
+              << r_tr_.point(c, (i+3)&3) << ") : refinement point is "
               << get_facet_surface_center(facet) << std::endl;
 #endif
     CGAL_assertion (this->is_facet_on_surface(facet));
@@ -1437,17 +1437,17 @@ before_insertion_impl(const Facet& facet,
       % display_dual(facet)
       % 0 // dummy: %4% no longer used
       % group(setprecision(17), point)
-      % group(setprecision(17), facet.first->vertex((facet.second + 1)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 2)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 3)&3)->point())
-      % facet.first->vertex(0)->point()
-      % facet.first->vertex(1)->point()
-      % facet.first->vertex(2)->point()
-      % facet.first->vertex(3)->point()
-      % source_other_side.first->vertex(0)->point()
-      % source_other_side.first->vertex(1)->point()
-      % source_other_side.first->vertex(2)->point()
-      % source_other_side.first->vertex(3)->point();
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 1)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 2)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 3)&3))
+      % r_tr_.point(facet.first, 0)
+      % r_tr_.point(facet.first, 1)
+      % r_tr_.point(facet.first, 2)
+      % r_tr_.point(facet.first, 3)
+      % r_tr_.point(source_other_side.first, 0)
+      % r_tr_.point(source_other_side.first, 1)
+      % r_tr_.point(source_other_side.first, 2)
+      % r_tr_.point(source_other_side.first, 3);
 
     CGAL_error_msg(error_msg.str().c_str());
   }
@@ -1583,6 +1583,8 @@ compute_facet_properties(const Facet& facet,
       r_tr_.geom_traits().is_degenerate_3_object();
   typename Gt::Compare_xyz_3 compare_xyz =
       r_tr_.geom_traits().compare_xyz_3_object();
+  typename Gt::Construct_segment_3 construct_segment =
+      r_tr_.geom_traits().construct_segment_3_object();
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
@@ -1679,7 +1681,7 @@ template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 bool
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_facet_encroached(const Facet& facet,
-                    const Weighted_point& point) const
+                    const Weighted_point& wpoint) const
 {
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
   {
