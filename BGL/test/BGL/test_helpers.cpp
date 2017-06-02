@@ -76,10 +76,10 @@ int main()
   assert(CGAL::is_valid(m));
   m.clear();
   CGAL::make_grid(3,3,m);
-  assert(num_faces(m) == 4);
+  assert(num_faces(m) == 9);
   assert(CGAL::is_quad_mesh(m));
   assert(CGAL::is_valid(m));
 
-  std::cerr << "done" << std::endl; 
+  std::cerr << "done" << std::endl;
   return 0;
 }
