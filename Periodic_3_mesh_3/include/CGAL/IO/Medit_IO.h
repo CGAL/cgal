@@ -13,14 +13,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Mikhail Bogdanov
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_3_MESH_3_IO_FILE_MEDIT_H
 #define CGAL_PERIODIC_3_MESH_3_IO_FILE_MEDIT_H
+
+#include <boost/unordered_map.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <sstream>
 
 namespace CGAL {
 
@@ -75,90 +78,147 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
 // can be visualized using medit.
 // Writing the triangulation to 8 domains.
 template <class Stream, class C3t3>
-Stream& write_complex_to_medit(Stream &out, C3t3 &c3t3,
+Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
                                unsigned occurence_count = 8)
 {
+  std::cout << "write complex to medit" << std::endl;
+
+  // if:
+  // -"1": only draws a single instance of the domain
+  // -"2": draws 2 occurences of the domain, displaying an additional domain on
+  //       the (Ox) axis
+  // -"4": draws 4 occurences of the domain, displaying an additional domain on
+  //       the (Ox) and (Oy) axes
+  // -"8": draws 3 occurences of the domain, displaying an additional domain on
+  //       the (Ox), (Oy), and (Oz) axes
+  assert(occurence_count == 1 || occurence_count == 2 ||
+         occurence_count == 4 || occurence_count == 8);
+
   typedef typename C3t3::Triangulation           Triangulation;
   typedef Triangulation                          Tr;
 
-  typedef typename Triangulation::Triangle       Triangle;
-  typedef typename Triangulation::Tetrahedron    Tetrahedron;
+  typedef typename Tr::Bare_point                Bare_point;
+  typedef typename Tr::Weighted_point            Weighted_point;
 
+  typedef typename C3t3::Vertex_handle           Vertex_handle;
+
+  typedef typename Tr::Vertex_iterator           Vertex_iterator;
   typedef typename C3t3::Facet_iterator          Facet_iterator;
   typedef typename C3t3::Cell_iterator           Cell_iterator;
 
-  Triangulation& t = c3t3.triangulation();
+  typedef typename Tr::Offset                    Offset;
+
+  const Triangulation& tr = c3t3.triangulation();
+
+  // number of reproductions over the different axes
+  int Ox_rn = 1 + (((occurence_count - 1) >> 0) & 1);
+  int Oy_rn = 1 + (((occurence_count - 1) >> 1) & 1);
+  int Oz_rn = 1 + (((occurence_count - 1) >> 2) & 1);
+
+  std::cout << Ox_rn << " instances on OX" << std::endl;
+  std::cout << Oy_rn << " instances on OY" << std::endl;
+  std::cout << Oz_rn << " instances on OZ" << std::endl;
+
+  int number_of_vertices = static_cast<int>(tr.number_of_vertices());
   int number_of_facets = static_cast<int>(c3t3.number_of_facets());
   int number_of_cells = static_cast<int>(c3t3.number_of_cells());
-  int number_of_vertices = 3 * number_of_facets + 4 * number_of_cells;
+
   out << std::setprecision(17);
-  out << "MeshVersionFormatted 1\nDimension 3\nVertices"
-      << "\n" << number_of_vertices * occurence_count
+
+  out << "MeshVersionFormatted 1\n"
+      << "Dimension 3\n"
+      << "Vertices\n"
+      << (Ox_rn + 1) * (Oy_rn + 1) * (Oz_rn + 1) * number_of_vertices
       << std::endl;
 
-  for(unsigned j = 0; j < occurence_count; j++ ) {
-    for (Facet_iterator it =c3t3.facets_begin(); it!=c3t3.facets_end(); it++) {
-      Triangle tri = t.construct_triangle(canonicalize_triangle<Tr>(
-                                            t.periodic_triangle(*it)));
-      for(int i = 0; i < 3; i++) {
-        out << tri[i].x() + (j&1) << " "
-            << tri[i].y() + ((j&2) >> 1) << " "
-            << tri[i].z() + ((j&4) >> 2) << " "
-            << 32*j + 1 << std::endl;
+  // Build the set of points that are needed to draw all canonical elements.
+
+  // On each axis, we repeat n+1 times the point, where 'n' is the number of
+  // instances of the mesh that will be printed over that axis. This is because
+  // a cell 'c' might have point(c,i) that is equal to v with an offset 2
+
+  boost::unordered_map<Vertex_handle, int> V;
+  int inum = 1;
+
+  for(int i=0; i<=Oz_rn; i++)
+  {
+    for(int j=0; j<=Oy_rn; j++)
+    {
+      for(int k=0; k<=Ox_rn; k++)
+      {
+        for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit)
+        {
+          if(i == 0 && j == 0 && k == 0)
+            V[vit] = inum++;
+
+          const Offset off(k, j, i);
+          const Weighted_point& p = vit->point();
+          const Bare_point bp = tr.construct_point(p, off);
+
+          int id;
+          if(i >= 1 || j >= 1 || k >= 1)
+            id = 7;
+          else
+            id = tr.off_to_int(off);
+
+          out << CGAL::to_double(bp.x()) << ' '
+              << CGAL::to_double(bp.y()) << ' '
+              << CGAL::to_double(bp.z()) << ' '
+              << 32 * id + 1
+              << '\n';
+        }
       }
     }
   }
 
-  for(unsigned j = 0; j < occurence_count; j++ ) {
-    for (Cell_iterator it = c3t3.cells_begin(); it !=c3t3.cells_end(); it++) {
-      Tetrahedron tet = t.construct_tetrahedron(canonicalize_tetrahedron<Tr>(
-                                                  t.periodic_tetrahedron(it)));
-      for(int i = 0; i < 4; i++) {
-        out << tet[i].x() + (j&1) << " "
-            << tet[i].y() + ((j&2) >> 1) << " "
-            << tet[i].z() + ((j&4) >> 2) << " "
-            << 32*j + 1 << std::endl;
-      }
-    }
-  }
-
-  int first_vertex = 1;
   out << "Triangles\n"
-      << number_of_facets * occurence_count
+      << occurence_count * number_of_facets
       << std::endl;
-  const int number_of_vertices_on_facets = number_of_facets * 3;
-  for(unsigned j = 0; j < occurence_count; j++ ) {
+  for(unsigned j=0; j<occurence_count; j++)
+  {
+    for(Facet_iterator fit = c3t3.facets_begin(); fit != c3t3.facets_end(); ++fit)
+    {
+      for (int i=0; i<4; i++)
+      {
+        if (i == fit->second)
+          continue;
 
-    for( int i = 0; i < number_of_facets; i++) {
-      out << i * 3 + j * number_of_vertices_on_facets + first_vertex  << " "
-          << i * 3+1 + j * number_of_vertices_on_facets + first_vertex << " "
-          << i * 3+2 + j * number_of_vertices_on_facets + first_vertex << " "
-          << 128 * j + 1 << std::endl;
+        Vertex_handle v = (*fit).first->vertex(i);
+        const Offset off = tr.int_to_off(j);
+        const Offset combined_off = tr.combine_offsets(
+                                      off, tr.int_to_off((*fit).first->offset(i)));
+        const int vector_offset = combined_off.x() +
+                                  combined_off.y() * (Ox_rn + 1) +
+                                  combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
+        out << vector_offset * number_of_vertices + V[v] << " ";
+      }
+      out << 128 * j + 1  << '\n';
     }
   }
 
-  const int shift = number_of_vertices_on_facets * occurence_count;
   out << "Tetrahedra\n"
-      << number_of_cells * occurence_count
+      << occurence_count * number_of_cells
       << std::endl;
-  const int number_of_vertices_on_cells = number_of_cells * 4;
-  for(unsigned j = 0; j < occurence_count; j++ ) {
+  for(unsigned j=0; j<occurence_count; j++)
+  {
+    for(Cell_iterator cit = c3t3.cells_begin(); cit !=c3t3.cells_end(); cit++)
+    {
+      for(int i=0; i<4; ++i)
+      {
+        const Offset off = tr.int_to_off(j);
+        const Offset combined_off = tr.combine_offsets(
+                                      off, tr.int_to_off(cit->offset(i)));
+        const int vector_offset = combined_off.x() +
+                                  combined_off.y() * (Ox_rn + 1) +
+                                  combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
 
-    Cell_iterator it = c3t3.cells_begin();
-
-    for (int i = 0; i < number_of_cells; i++) {
-      out << i * 4 +     j * number_of_vertices_on_cells + first_vertex + shift << " "
-          << i * 4 + 1 + j * number_of_vertices_on_cells + first_vertex + shift << " "
-          << i * 4 + 2 + j * number_of_vertices_on_cells + first_vertex + shift << " "
-          << i * 4 + 3 + j * number_of_vertices_on_cells + first_vertex + shift << " "
-          << it->subdomain_index() << std::endl;
-      //  << 128 * j + 64 + 1 << std::endl;
-
-      it++;
+        out << vector_offset * number_of_vertices + V[cit->vertex(i)] << " ";
+      }
+      out << cit->subdomain_index() << '\n';
     }
   }
 
-  out << "0\nEnd";
+  out << "End" << std::endl;
   return out;
 }
 
