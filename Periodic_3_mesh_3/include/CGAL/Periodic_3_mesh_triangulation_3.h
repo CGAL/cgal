@@ -135,7 +135,7 @@ public:
                                               const Geometric_traits& gt = Geometric_traits())
     : Base(domain, gt)
   {
-    this->insert_dummy_points();
+    insert_dummy_points();
   }
 
   /// Concurrency related
@@ -175,13 +175,13 @@ public:
   int dimension() const
   {
     // there can be no degenerate dimensions in a periodic triangulation
-    return (this->number_of_vertices() == 0) ? -2 : 3;
+    return (number_of_vertices() == 0) ? -2 : 3;
   }
 
   void set_domain(const Iso_cuboid& domain)
   {
     Base::set_domain(domain);
-    this->insert_dummy_points();
+    insert_dummy_points();
   }
 
   /// transform a bare point (living anywhere in space) into the canonical
@@ -352,7 +352,7 @@ public:
 
     clear_v_offsets();
 
-    CGAL_triangulation_precondition( this->number_of_vertices() != 0);
+    CGAL_triangulation_precondition( number_of_vertices() != 0);
 
     const Weighted_point canonic_p = canonicalize_point(p);
 
