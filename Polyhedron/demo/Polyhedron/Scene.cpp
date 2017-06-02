@@ -148,9 +148,9 @@ Scene::erase(Scene::Item_id index)
     item->parentGroup()->removeChild(item);
 
   //removes the item from all groups that contain it
+  m_entries.removeAll(item);
   Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
-    m_entries.removeAll(item);
     selected_item = -1;
     //re-creates the Scene_view
     Q_FOREACH(Scene_item* item, m_entries)
@@ -193,9 +193,9 @@ Scene::erase(QList<int> indices)
   Q_FOREACH(Scene_item* item, to_be_removed) {
       if(item->parentGroup())
         item->parentGroup()->removeChild(item);
+      m_entries.removeAll(item);
     Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
-    m_entries.removeAll(item);
   }
   clear();
   index_map.clear();

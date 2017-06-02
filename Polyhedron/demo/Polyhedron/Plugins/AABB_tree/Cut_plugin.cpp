@@ -39,6 +39,17 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
+#else
+  struct HackRange{
+    HackRange(const std::size_t& first, const std::size_t& last)
+      :first(first), last(last)
+    {}
+    std::size_t begin() const{ return first; }
+    std::size_t end() const{ return last; }
+  private:
+    std::size_t first;
+    std::size_t last;
+  };
 #endif // CGAL_LINKED_WITH_TBB
 
 typedef CGAL::Simple_cartesian<double> Simple_kernel;
@@ -62,7 +73,7 @@ Simple_kernel::Vector_3 random_vector()
     return Simple_kernel::Vector_3(x,y,z);
 }
 
-#ifdef CGAL_LINKED_WITH_TBB
+
 //functor for tbb parallelization
 template <typename Tree, typename SM_Tree>
 class FillGridSize {
@@ -83,7 +94,8 @@ public:
     trees(trees), sm_trees(sm_trees), is_signed(is_signed), frame(frame)
   {
   }
-  void operator()(const tbb::blocked_range<std::size_t>& r) const
+  template<typename Range>
+  void operator()(Range& r) const
   {
     const GLdouble* m = frame->matrix();
     Simple_kernel::Aff_transformation_3 transfo = Simple_kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
@@ -157,7 +169,6 @@ public:
     }
   }
 };
-#endif
 
 const int slow_distance_grid_size = 100;
 const int fast_distance_grid_size = 20;
@@ -739,6 +750,8 @@ private:
   mutable Cut_planes_types m_cut_plane;
   mutable std::vector<QOpenGLBuffer> buffers;
   template <typename Tree, typename SM_Tree>
+
+
   void compute_distance_function(QMap<QObject*, Tree*> *trees, QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
   {
 
@@ -747,84 +760,17 @@ private:
     FT diag = scene_diag();
     std::vector<Tree*> closed_trees;
     std::vector<SM_Tree*> closed_sm_trees;
-#ifndef CGAL_LINKED_WITH_TBB
-    const GLdouble* m = frame->matrix();
-    Simple_kernel::Aff_transformation_3 transfo = Simple_kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
-        m[1], m[5], m[9], m[13],
-        m[2], m[6], m[10], m[14]);
-    const FT dx = 2*diag;
-    const FT dy = 2*diag;
-    const FT z (0);
-    const FT fd =  FT(1);
-    Tree *min_tree = NULL ;
-    SM_Tree *min_sm_tree = NULL;
-    for(int i=0 ; i<m_grid_size ; ++i)
-    {
-      FT x = -diag/fd + FT(i)/FT(m_grid_size) * dx;
-      for(int j=0 ; j<m_grid_size ; ++j)
-      {
-        FT y = -diag/fd + FT(j)/FT(m_grid_size) * dy;
-        const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-        Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
-        Point query = transfo( Point(x,y,z))-offset;
-        FT min = DBL_MAX;
-        bool is_min_sm = false;
-        Q_FOREACH(Tree *tree, *trees)
-        {
-          FT dist = CGAL::sqrt( tree->squared_distance(query) );
-          if(dist < min)
-          {
-            min = dist;
-            if(is_signed)
-              min_tree = tree;
-          }
-        }
-        Q_FOREACH(SM_Tree *tree, *sm_trees)
-        {
-          FT dist = CGAL::sqrt( tree->squared_distance(query) );
-          if(dist < min)
-          {
-            min = dist;
-            is_min_sm = true;
-            if(is_signed)
-              min_sm_tree = tree;
-          }
-        }
-        m_distance_function[i][j] = Point_distance(query,min);
-        m_max_distance_function = (std::max)(min, m_max_distance_function);
-
-
-        if(is_signed)
-        {
-          if(!min_tree && !min_sm_tree)
-          {
-            m_distance_function[i][j] = Point_distance(query,DBL_MAX);
-            m_max_distance_function = DBL_MAX;//(std::max)(min, m_max_distance_function);
-            continue;
-          }
-          typedef typename Tree::size_type size_type;
-          Simple_kernel::Vector_3 random_vec = random_vector();
-
-          const Simple_kernel::Point_3& p = m_distance_function[i][j].first;
-          const FT unsigned_distance = m_distance_function[i][j].second;
-
-          // get sign through ray casting (random vector)
-          Simple_kernel::Ray_3  ray(p, random_vec);
-          size_type nbi = (is_min_sm) ? min_sm_tree->number_of_intersected_primitives(ray)
-                                      : min_tree->number_of_intersected_primitives(ray);
-
-          FT sign ( (nbi&1) == 0 ? 1 : -1);
-          m_distance_function[i][j].second = sign * unsigned_distance;
-        }
-      }
-    }
-#else
     Q_FOREACH(Tree *tree, trees->values())
     if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
       closed_trees.push_back(tree);
     Q_FOREACH(SM_Tree *sm_tree, sm_trees->values())
     if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
       closed_sm_trees.push_back(sm_tree);
+#ifndef CGAL_LINKED_WITH_TBB
+    FillGridSize<Tree, SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, closed_sm_trees, is_signed, frame);
+    HackRange range(0, static_cast<std::size_t>(m_grid_size*m_grid_size));
+    f(range);
+#else
     FillGridSize<Tree, SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, closed_sm_trees, is_signed, frame);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
 #endif
