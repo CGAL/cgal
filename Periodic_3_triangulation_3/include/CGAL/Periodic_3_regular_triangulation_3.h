@@ -703,8 +703,8 @@ public:
     return construct_weighted_point(pp.first, pp.second);
   }
 
-  // overload the base construct_periodic_point for weighted points
-  Periodic_weighted_point construct_periodic_point(const Weighted_point& p) const
+  // same as the base construct_periodic_point(), but for weighted points
+  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p) const
   {
     const Bare_point& bp = geom_traits().construct_point_3_object()(p);
     const Periodic_bare_point pbp = Tr_Base::construct_periodic_point(bp);
@@ -894,7 +894,7 @@ private:
 public:
   Periodic_bare_point periodic_weighted_circumcenter(Cell_handle c) const {
     return Tr_Base::periodic_circumcenter(c,
-      geom_traits().construct_weighted_circumcenter_3_object());
+                      geom_traits().construct_weighted_circumcenter_3_object());
   }
 
   /** @name Voronoi diagram */ //@{
