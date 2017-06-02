@@ -575,7 +575,8 @@ class Periodic_3_mesh_triangulation_3
   typedef Regular_triangulation_vertex_base_3<Geom_traits, VbDS> PVb;
 
   typedef Periodic_3_triangulation_ds_cell_base_3<> CbDS;
-  typedef Regular_triangulation_cell_base_3<Geom_traits, CbDS> PCb;
+  typedef Regular_triangulation_cell_base_3<Geom_traits, CbDS> RCb;
+  typedef Regular_triangulation_cell_base_with_weighted_circumcenter_3<Geom_traits, RCb> PCb;
 
   typedef Mesh_vertex_base_3<Geom_traits, MD, PVb> Default_Vb;
   typedef Mesh_cell_base_3<Geom_traits, MD, PCb> Default_Cb;
