@@ -47,6 +47,12 @@
 #include <CGAL/array.h>
 #include <CGAL/tags.h>
 
+#include <cassert>
+#include <iostream>
+#include <iterator>
+#include <utility>
+#include <vector>
+
 namespace CGAL {
 
 /// This class currently provides an interface between the classe
@@ -96,15 +102,26 @@ public:
   typedef typename Base::Conflict_tester  Conflict_tester;
   typedef typename Base::Covering_sheets  Covering_sheets;
 
-  using Base::construct_periodic_point;
+  typedef typename Gt::Ray_3              Ray;
+
   using Base::construct_point;
+  using Base::construct_weighted_point;
   using Base::construct_segment;
+  using Base::construct_triangle;
   using Base::construct_tetrahedron;
+  using Base::construct_periodic_point;
+  using Base::construct_periodic_weighted_point;
+  using Base::construct_periodic_segment;
+  using Base::construct_periodic_triangle;
+  using Base::construct_periodic_tetrahedron;
   using Base::dual;
   using Base::get_offset;
+  using Base::adjacent_vertices;
   using Base::incident_cells;
   using Base::incident_edges;
   using Base::incident_facets;
+  using Base::insert_dummy_points;
+  using Base::number_of_vertices;
   using Base::periodic_tetrahedron;
   using Base::point;
   using Base::tds;
@@ -462,24 +479,29 @@ public:
   }
 
   /// Dual computations
-  Bare_point dual(Cell_handle c) const
-  {
-    // return the canonical point
-    //return canonicalize_point(periodic_circumcenter(c));
-
-    // return the point with respect to the canonical cell c
-    return this->construct_weighted_circumcenter(
-             c->vertex(0)->point(), c->vertex(1)->point(),
-             c->vertex(2)->point(), c->vertex(3)->point(),
-             get_offset(c,0), get_offset(c,1),
-             get_offset(c,2), get_offset(c,3));
-  }
-
   Object dual(const Facet & f) const
   {
     Segment s = construct_segment(Base::dual(f));
     return make_object(s);
   }
+
+  void dual_segment(const Facet& facet, Bare_point& p, Bare_point& q) const {
+    Segment s = construct_segment(Base::dual(facet));
+    p = s.source();
+    q = s.target();
+    return;
+  }
+
+  void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point& q) const
+  {
+    // @fixme
+    return dual_segment(facet, p, q);
+  }
+
+  // dual rays are impossible in a periodic triangulation since there are no
+  // infinite cells, but these functions are still needed for compilation of Mesh_3
+  void dual_ray(const Facet& /*f*/, Ray& /*ray*/) const { assert(false); }
+  void dual_ray_exact(const Facet& /*facet*/, Ray& /*ray*/) const { assert(false); }
 };
 
 namespace details {
