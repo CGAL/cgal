@@ -489,8 +489,7 @@ insert_corners()
     Index p_index = domain_.index_from_corner_index(cit->first);
     
     // Get weight (ball radius is given by size_ function)
-    // <PERIODIC>
-    FT w = CGAL::square(size_(p, 0, p_index));
+    FT w = CGAL::square(query_size(p, 0, p_index));
 
     // the following lines ensure that the weight w is small enough so that
     // corners balls do not intersect
@@ -802,8 +801,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     }
   }
 
-  // <PERIODIC>
-  const FT w_max = CGAL::square(size_(p, dim, index));
+  const FT w_max = CGAL::square(query_size(p, dim, index));
 
   if(w > w_max) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
