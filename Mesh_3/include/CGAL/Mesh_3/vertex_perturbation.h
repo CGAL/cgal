@@ -895,7 +895,7 @@ protected:
              bool *could_lock_zone = NULL) const
   {
     CGAL_precondition(!slivers.empty());
-    
+
     Vector_3 grad_vector = compute_gradient_vector(c3t3, v, slivers);
 
     // Exit if grad_vector is not relevant
@@ -927,7 +927,7 @@ private:
     switch (slivers.size())
     {
       case 1:
-        return -1*compute_gradient_vector(c3t3, slivers.front(),v);
+        return -1*compute_gradient_vector(c3t3, slivers.front(), v);
         break;
       case 2:
       {
@@ -992,9 +992,9 @@ private:
     
     FT a_02 = CGAL::abs(details::angle_in_radian(p1p0, p1p2));
     FT a_03 = CGAL::abs(details::angle_in_radian(p1p0, p1p3));
-    
-    Vector_3 n0 = normal_estimate(c3t3, cell,k3);
-    Vector_3 n1 = normal_estimate(c3t3, cell,k2);
+
+    Vector_3 n0 = normal_estimate(c3t3, cell, k3);
+    Vector_3 n1 = normal_estimate(c3t3, cell, k2);
 
     const FT d_p0p1 = CGAL::sqrt(sq_distance(p0,p1));
     CGAL_assertion(!is_zero(d_p0p1));
@@ -1053,8 +1053,7 @@ private:
     const Bare_point& p3 = wp2p(ch->vertex(k3)->point());
     
     // compute normal and return it
-    Construct_point_3 cp;
-    return normal(cp(p1),cp(p2),cp(p3));
+    return normal(p1, p2, p3);
   }
 };  
   
