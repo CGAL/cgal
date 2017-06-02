@@ -1053,9 +1053,7 @@ private:
     const Bare_point& p3 = wp2p(ch->vertex(k3)->point());
     
     // compute normal and return it
-    // <PERIODIC> (also all the passing of c3t3 by const ref& in the functions)
-    Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-    return normal(cp(p1),cp(p2),cp(p3));
+    return normal(p1, p2, p3);
   }
 };  
   
