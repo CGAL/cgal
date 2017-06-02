@@ -238,9 +238,9 @@ public:
   private:
     /**
      * Returns a point in the intersection of [a,b] with the surface
-     * \c a must be the source point, and \c b the out point. It's important
+     * \c a must be the source point, and \c b the target point. It's important
      * because it drives bisection cuts.
-     * Indeed, the returned point is the first intersection from \c [a,b]
+     * Indeed, the returned point is the first intersection from \c a on \c [a,b]
      * with a subdomain surface.
      */
     Intersection operator()(const Point_3& a, const Point_3& b) const
@@ -290,8 +290,7 @@ public:
       Subdomain_index value_at_p2 = r_domain_.labeling_function()(p2);
       Subdomain_index value_at_mid = r_domain_.labeling_function()(mid, true);
 
-      // If both extremities are in the same subdomain,
-      // there is no intersection.
+      // If both extremities are in the same subdomain, then there is no intersection.
       // This should not happen...
       if( value_at_p1 == value_at_p2 )
       {
