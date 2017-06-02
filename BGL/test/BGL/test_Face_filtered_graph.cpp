@@ -17,7 +17,7 @@ void test_halfedge_around_vertex_iterator(const  Graph& g)
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
-  boost::unordered_map<g_face_descriptor, std::size_t> map(CGAL::num_faces(g));
+  boost::unordered_map<g_face_descriptor, std::size_t> map(num_faces(g));
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
 
 
@@ -398,8 +398,11 @@ int
 main()
 {
   test(sm_data());
+#ifdef CGAL_USE_OPENMESH
+  test(omesh_data());
+#endif
   //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
-  typedef typename CGAL::Face_filtered_graph<SM> SM_Adapter;
+  typedef CGAL::Face_filtered_graph<SM> SM_Adapter;
   typedef SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> SM_FCCMap;
   SM* sm = new SM();
   CGAL::make_tetrahedron(
@@ -432,7 +435,7 @@ main()
   typedef boost::property_map<Polyhedron, CGAL::face_external_index_t>::type FIMap;
   typedef boost::property_map<Polyhedron, CGAL::vertex_external_index_t>::type VIMap;
   typedef boost::property_map<Polyhedron, CGAL::halfedge_external_index_t>::type HIMap;
-  typedef typename CGAL::Face_filtered_graph<Polyhedron, FIMap, VIMap, HIMap> Poly_Adapter;
+  typedef CGAL::Face_filtered_graph<Polyhedron, FIMap, VIMap, HIMap> Poly_Adapter;
   Polyhedron *poly = new Polyhedron();
   CGAL::make_tetrahedron(
         Point_3(1,1,1),
