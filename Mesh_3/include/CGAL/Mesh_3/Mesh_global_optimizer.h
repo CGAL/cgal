@@ -1178,9 +1178,8 @@ sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
     tr_.geom_traits().construct_point_3_object();
 
   const Bare_point circumcenter = tr_.dual(cell);
-  // <PERIODIC>
+
   return ( sq_distance(wp2p(tr_.point(cell, cell->index(v))), circumcenter) );
-  // </PERIODIC>
 }
 
 } // end namespace Mesh_3

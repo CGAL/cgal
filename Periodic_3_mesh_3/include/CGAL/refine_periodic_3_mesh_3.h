@@ -86,15 +86,15 @@ CGAL_PRAGMA_DIAG_POP
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
 void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
-                          const MeshDomain&   domain,
-                          const MeshCriteria& criteria,
-                          const parameters::internal::Exude_options& exude,
-                          const parameters::internal::Perturb_options& perturb,
-                          const parameters::internal::Odt_options& odt,
-                          const parameters::internal::Lloyd_options& lloyd,
-                          bool reset_c3t3,
-                          const parameters::internal::Mesh_3_options&
-                            mesh_options = parameters::internal::Mesh_3_options())
+                                   const MeshDomain& domain,
+                                   const MeshCriteria& criteria,
+                                   const parameters::internal::Exude_options& exude,
+                                   const parameters::internal::Perturb_options& perturb,
+                                   const parameters::internal::Odt_options& odt,
+                                   const parameters::internal::Lloyd_options& lloyd,
+                                   bool reset_c3t3,
+                                   const parameters::internal::Mesh_3_options&
+                                     mesh_options = parameters::internal::Mesh_3_options())
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 

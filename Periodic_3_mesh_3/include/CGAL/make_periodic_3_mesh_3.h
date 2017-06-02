@@ -311,7 +311,7 @@ void projection_of_points(C3T3& c3t3,
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
 void make_periodic_3_mesh_3_impl(C3T3& c3t3,
-                                 const MeshDomain&   domain,
+                                 const MeshDomain& domain,
                                  const MeshCriteria& criteria,
                                  const parameters::internal::Exude_options& exude,
                                  const parameters::internal::Perturb_options& perturb,

@@ -898,37 +898,42 @@ public:
   }
 
   /** @name Voronoi diagram */ //@{
+  // cell dual
   Bare_point dual(Cell_handle c) const {
     return Tr_Base::construct_point(periodic_weighted_circumcenter(c));
   }
 
+  // facet dual
   bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment_3& ps) const {
     return Tr_Base::canonical_dual_segment(c, i, ps,
       geom_traits().construct_weighted_circumcenter_3_object());
   }
 
-  Periodic_segment_3 dual(const Facet & f) const {
-    return dual( f.first, f.second );
-  }
-
-  Periodic_segment_3 dual(Cell_handle c, int i) const{
+  Periodic_segment_3 dual(Cell_handle c, int i) const
+  {
     Periodic_segment_3 ps;
     canonical_dual_segment(c,i,ps);
     return ps;
   }
 
-  template <class OutputIterator>
-  OutputIterator dual(const Edge & e, OutputIterator points) const {
-    return Tr_Base::dual(e.first, e.second, e.third, points);
+  Periodic_segment_3 dual(const Facet & f) const {
+    return dual(f.first, f.second);
   }
 
+  // edge dual
   template <class OutputIterator>
-  OutputIterator dual(Cell_handle c, int i, int j,
-      OutputIterator points) const {
+  OutputIterator dual(Cell_handle c, int i, int j, OutputIterator points) const
+  {
     Tr_Base::dual(c, i, j, points, geom_traits().construct_weighted_circumcenter_3_object());
     return points;
   }
 
+  template <class OutputIterator>
+  OutputIterator dual(const Edge & e, OutputIterator points) const {
+    return dual(e.first, e.second, e.third, points);
+  }
+
+  // vertex dual
   template <class OutputIterator>
   OutputIterator dual(Vertex_handle v, OutputIterator points) const {
     Tr_Base::dual(v, points, geom_traits().construct_weighted_circumcenter_3_object());
@@ -954,7 +959,7 @@ public:
 
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
-  find_conflicts(const Weighted_point &p, Cell_handle c,
+  find_conflicts(const Weighted_point& p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit) const
   {
     Triple<OutputIteratorBoundaryFacets,OutputIteratorCells,Emptyset_iterator>
@@ -966,7 +971,7 @@ public:
             class OutputIteratorInternalFacets>
   Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
          OutputIteratorInternalFacets>
-  find_conflicts(const Weighted_point &p, Cell_handle c,
+  find_conflicts(const Weighted_point& p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit) const;
 

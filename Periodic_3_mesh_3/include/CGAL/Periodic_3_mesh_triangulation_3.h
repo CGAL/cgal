@@ -205,7 +205,7 @@ public:
   Since there are no infinite cells in a periodic triangulation, this
   function is simply a wrapper around `incident_cells`
 
-\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+  \pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
   */
   template<class OutputIterator>
   OutputIterator

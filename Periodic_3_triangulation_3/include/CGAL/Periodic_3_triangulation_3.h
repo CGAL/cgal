@@ -1598,21 +1598,18 @@ public:
   }
 
   template <class OutputIterator>
-  OutputIterator incident_edges(
-      Vertex_handle v, OutputIterator edges) const {
+  OutputIterator incident_edges(Vertex_handle v, OutputIterator edges) const {
     return _tds.incident_edges(v, edges);
   }
 
   template <class OutputIterator>
-  OutputIterator adjacent_vertices(
-      Vertex_handle v, OutputIterator vertices) const {
+  OutputIterator adjacent_vertices(Vertex_handle v, OutputIterator vertices) const {
     return _tds.adjacent_vertices(v, vertices);
   }
 
   //deprecated, don't use anymore
   template <class OutputIterator>
-  OutputIterator incident_vertices(
-      Vertex_handle v, OutputIterator vertices) const {
+  OutputIterator incident_vertices(Vertex_handle v, OutputIterator vertices) const {
     return _tds.adjacent_vertices(v, vertices);
   }
 
@@ -1715,7 +1712,7 @@ public:
 
   Offset combine_offsets(const Offset& o_c, const Offset& o_t) const
   {
-    Offset o_ct(_cover[0]*o_t.x(),_cover[1]*o_t.y(),_cover[2]*o_t.z());
+    Offset o_ct(_cover[0]*o_t.x(), _cover[1]*o_t.y(), _cover[2]*o_t.z());
     return o_c + o_ct;
   }
 
@@ -1824,7 +1821,8 @@ protected:
     Offset o1 = -p1.second;
     Offset o2 = combine_offsets(-p2.second,-off);
     Offset cumm_off((std::min)(o1.x(),o2.x()),
-                    (std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
+                    (std::min)(o1.y(),o2.y()),
+                    (std::min)(o1.z(),o2.z()));
     const Periodic_point_3 pp1 = std::make_pair(construct_point(p1), o1-cumm_off);
     const Periodic_point_3 pp2 = std::make_pair(construct_point(p2), o2-cumm_off);
     ps = CGAL::make_array(pp1, pp2);
@@ -1850,6 +1848,7 @@ protected:
       *points++ = dual;
       ++ccit;
     } while(ccit != cstart);
+
     return points;
   }
 
@@ -1867,6 +1866,7 @@ protected:
       Point_3 dual = construct_point(std::make_pair(dual_orig, -off));
       *points++ = dual;
     }
+
     return points;
   }
 
@@ -1887,6 +1887,7 @@ protected:
       os << so.target() << '\n';
     }
     CGAL_triangulation_assertion( i == number_of_facets() );
+
     return os;
   }
 
@@ -2386,8 +2387,6 @@ try_next_cell:
  *
  * lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
  */
-// TODO: currently off is not used. It could probably be optimized
-// using off.
 template < class GT, class TDS >
 inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
     const Point& q, const Offset& off, Cell_handle c,
