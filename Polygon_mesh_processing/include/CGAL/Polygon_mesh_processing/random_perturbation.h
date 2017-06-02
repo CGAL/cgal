@@ -60,9 +60,9 @@ namespace internal {
       if (!get(vcmap, v) && !is_border(v, pmesh))
       {
         const Point_3& p = get(vpmap, v);
-        const Point_3 np(p.x() + FT(rng.get_double(0., max_size)),
-                         p.y() + FT(rng.get_double(0., max_size)),
-                         p.z() + FT(rng.get_double(0., max_size)));
+        const Point_3 np(p.x() + FT(rng.get_double(-max_size, max_size)),
+                         p.y() + FT(rng.get_double(-max_size, max_size)),
+                         p.z() + FT(rng.get_double(-max_size, max_size)));
         put(vpmap, v, np);
       }
     }
