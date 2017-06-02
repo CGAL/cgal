@@ -221,9 +221,11 @@ protected:
     typedef typename Tr::Bare_point     Bare_point;
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
+    typedef typename Geom_traits::Construct_circumcenter_3 Construct_circumcenter_3;
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
 
     Radius sq_radius = tr_.geom_traits().compute_squared_radius_3_object();
+    Construct_circumcenter_3 circumcenter = tr_.geom_traits().construct_circumcenter_3_object();
     Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
 
     const Bare_point& p = wp2p(tr_.point(ch, 0));
@@ -232,7 +234,7 @@ protected:
     const Bare_point& s = wp2p(tr_.point(ch, 3));
 
     const FT size = sq_radius(p, q, r, s);
-    const FT sq_bound = CGAL::square( size_(ch->circumcenter(), 3,
+    const FT sq_bound = CGAL::square( size_(circumcenter(p, q, r, s), 3,
                                             Index(ch->subdomain_index())) );
 
     if ( size > sq_bound )
