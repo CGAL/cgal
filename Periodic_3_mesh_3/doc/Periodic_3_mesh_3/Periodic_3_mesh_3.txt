@@ -3,7 +3,7 @@ namespace CGAL {
 
 \mainpage User Manual
 \anchor Chapter_3D_Periodic_Mesh_Generation
-\anchor userchaptermesh3
+\anchor userchapterperiodic3mesh3
 \authors Mikhail Bogdanov, Monique Teillaud, Aymeric Pellé, Mael Rouxel-Labbé
 
 \section Periodic_3_mMesh_3_section_intro Introduction
