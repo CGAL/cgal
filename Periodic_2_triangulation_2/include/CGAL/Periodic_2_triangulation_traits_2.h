@@ -102,10 +102,11 @@ public:
   const Iso_rectangle_2* _domain;
 };
 
-template < typename K, typename Construct_point_3_base>
-class Periodic_2_construct_point_2 : public Construct_point_3_base
+template < typename K, typename Construct_point_2_base>
+class Periodic_2_construct_point_2 : public Construct_point_2_base
 {
-  typedef K Kernel;
+  typedef Construct_point_2_base           Base;
+  typedef K                                Kernel;
 
 public:
   typedef typename Kernel::Point_2         Point;
@@ -116,7 +117,7 @@ public:
 
   Periodic_2_construct_point_2(const Iso_rectangle_2 & dom) : _dom(dom) { }
 
-  using Construct_point_3_base::operator();
+  using Base::operator();
 
   Point operator() ( const Point& p, const Offset& o ) const
   {
@@ -125,7 +126,7 @@ public:
   }
 
 private:
-  Iso_rectangle_2 _dom;
+  const Iso_rectangle_2& _dom;
 };
 
 
