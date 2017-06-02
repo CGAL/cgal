@@ -184,12 +184,18 @@ public:
     this->insert_dummy_points();
   }
 
-  /// transform a point (living anywhere in space) into a point living inside
-  /// the canonical iso cuboid and an offset
-  template<typename P>
-  P canonicalize_point(const P& p) const
+  /// transform a bare point (living anywhere in space) into the canonical
+  /// instance of the same bare point that lives inside the base domain
+  Bare_point canonicalize_point(const Bare_point& p) const
   {
-    return point(construct_periodic_point(p));
+    return construct_point(construct_periodic_point(p));
+  }
+
+  /// transform a weighted point (living anywhere in space) into the canonical
+  /// instance of the same weighted point that lives inside the base domain
+  Weighted_point canonicalize_point(const Weighted_point& p) const
+  {
+    return construct_weighted_point(construct_periodic_weighted_point(p));
   }
 
   Tetrahedron tetrahedron(const Cell_handle c) const
@@ -258,11 +264,11 @@ public:
   }
 
   /// Call `CGAL::side_of_power_sphere` with a canonicalized point
-  Bounded_side side_of_power_sphere(const Cell_handle& c, const Bare_point& p,
+  Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
                                     bool perturb = false) const
   {
-    Bare_point point = canonicalize_point(p);
-    return Base::side_of_power_sphere(c, point, Offset(), perturb);
+    Weighted_point canonical_p = canonicalize_point(p);
+    return Base::side_of_power_sphere(c, canonical_p, Offset(), perturb);
   }
 
   /// \name Locate functions
