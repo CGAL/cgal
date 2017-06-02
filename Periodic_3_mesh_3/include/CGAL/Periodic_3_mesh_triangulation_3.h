@@ -254,6 +254,34 @@ public:
     return incident_facets(v, facets);
   }
 
+  // Periodic triangulations cannot be used in parallel (yet), but the functions below
+  // are required for compilation. Note that they could already be implemented
+  // and put in P3T3.h but to make it clear that it's not supposed to be parallel,
+  // they are put here and left empty.
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_edges_threadsafe(Vertex_handle /* v */, OutputIterator edges) const
+  {
+    assert(false); // not yet supported
+    return edges;
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_facets_threadsafe(Vertex_handle /* v */, OutputIterator facets) const
+  {
+    assert(false); // not yet supported
+    return facets;
+  }
+
+  template <typename OutputIterator>
+  void
+  incident_cells_threadsafe(Vertex_handle /* v */, OutputIterator /* cells */) const
+  {
+    assert(false); // not yet supported
+  }
+
   void clear_v_offsets() const
   {
     for (typename std::vector<Vertex_handle>::iterator voit = this->v_offsets.begin();
