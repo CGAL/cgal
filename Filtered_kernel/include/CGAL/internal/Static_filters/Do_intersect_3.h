@@ -264,7 +264,7 @@ public:
       }
 
       double double_tmp_result = (distance - ssr);
-      double max2 = fabs(ssr);
+      double max2 = CGAL::abs(ssr);
   
       if ((max1 < 3.33558365626356687717e-147) || (max2 < 1.11261183279326254436e-293)){
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
