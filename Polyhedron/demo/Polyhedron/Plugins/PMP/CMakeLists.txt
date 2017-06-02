@@ -97,3 +97,6 @@ polyhedron_demo_plugin(detect_sharp_edges_sm_plugin Detect_sharp_edges_plugin)
 target_link_libraries(detect_sharp_edges_sm_plugin scene_surface_mesh_item)
 target_compile_definitions(detect_sharp_edges_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
+polyhedron_demo_plugin(random_perturbation_plugin Random_perturbation_plugin)
+target_link_libraries(random_perturbation_plugin scene_polyhedron_item)
+
