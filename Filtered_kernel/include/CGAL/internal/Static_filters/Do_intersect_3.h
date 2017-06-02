@@ -181,7 +181,6 @@ public:
     return Base::operator()(r,b);
   }
 
-
   result_type 
   operator()(const Bbox_3& b, const Sphere_3 &s) const
   {
@@ -202,7 +201,7 @@ public:
     if (fit_in_double(get_approx(c).x(), scx) &&
         fit_in_double(get_approx(c).y(), scy) &&
         fit_in_double(get_approx(c).z(), scz) &&
-        fit_in_double(s.squared_radius(), srr) &&
+        fit_in_double(s.squared_radius(), ssr) &&
         fit_in_double(b.xmin(), bxmin) &&
         fit_in_double(b.ymin(), bymin) &&
         fit_in_double(b.zmin(), bzmin) &&
@@ -242,7 +241,7 @@ public:
       {
         double scy_bymax = scy - bymax;
         if(max1 < scy_bymax)
-          max1 = scx_bymax;
+          max1 = scy_bymax;
 
         distance += square(scy_bymax);
       }
@@ -267,29 +266,34 @@ public:
       double double_tmp_result = (distance - ssr);
       double max2 = fabs(ssr);
   
-      if ((max1 < 3.33558365626356687717e-147) || (max2 < 1.11261183279326254436e-293))
+      if ((max1 < 3.33558365626356687717e-147) || (max2 < 1.11261183279326254436e-293)){
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
         return Base::operator()(s,b);
-      if ((max1 > 1.67597599124282407923e+153) || (max2 > 2.80889552322236673473e+306))
+      }
+      if ((max1 > 1.67597599124282407923e+153) || (max2 > 2.80889552322236673473e+306)){
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
         return Base::operator()(s,b);
+      }
 
       double eps = 1.99986535548615598560e-15 * (std::max) (max2, (max1 * max1));
-      int int_tmp_result;
   
       if (double_tmp_result > eps)
-        int_tmp_result = 1;
+        return false;
       else 
       {
         if (double_tmp_result < -eps)
-          int_tmp_result = -1;
-        else 
+          return true;
+        else {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(s,b);
+        }
       }
 
       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-      return int_tmp_result;
     }
     return Base::operator()(s,b);
   }
+
 
   // Computes the epsilon for Bbox_3_Segment_3_do_intersect.
   static double compute_epsilon_bbox_segment_3()
