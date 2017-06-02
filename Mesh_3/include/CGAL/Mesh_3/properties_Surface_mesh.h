@@ -23,6 +23,7 @@
 #include <CGAL/license/Mesh_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Mesh_3/properties.h>
+#include <set>
 
 namespace boost {
 
