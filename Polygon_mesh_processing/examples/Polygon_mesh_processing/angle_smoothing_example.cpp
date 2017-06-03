@@ -28,10 +28,13 @@ int main(int argc, char* argv[]){
 
 
 
+    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 
-    CGAL::Polygon_mesh_processing::Angle_remesher<Mesh> remesher(mesh);
-    remesher.angle_relaxation();
 
+
+    std::ofstream output("data/smoothed_polygon.off");
+    output << mesh;
+    output.close();
 
 
 
