@@ -2,11 +2,7 @@
 #define ANGLE_SMOOTHING_H
 
 
-#include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
-#include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/boost/graph/iterator.h>
-
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -31,6 +27,7 @@ class Angle_remesher
 
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::Vector_3 Vector;
+    typedef typename GeomTraits::Segment_3 Segment;
 
 
 public:
@@ -44,13 +41,26 @@ public:
     {
 
         std::map<vertex_descriptor, Point> barycenters;
+        boost::vector_property_map<Vector> n_map;
 
-        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+
+        for(vertex_descriptor v : vertices(mesh_))
         {
+
 
             if(!is_border(v, mesh_))
             {
                 std::cout<<"processing vertex: "<< v << std::endl;
+
+
+
+                // compute normal to v
+                Vector vn = compute_vertex_normal(v, mesh_,
+                                                  Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
+                                                  .geom_traits(GeomTraits()));
+                n_map[v] = vn;
+
+
 
                 // gather incident lines to a map
                 // <halfedge around v, <incident halfedges to halfedge around v>>
@@ -82,42 +92,49 @@ public:
 
                 for(it = he_map.begin(); it != he_map.end(); ++it)
                 {
-
+                    // find midpoint
                     He_pair he_pair = it->second;
                     Point eq_d_p1 = get(vpmap_, target(he_pair.first, mesh_));
                     Point eq_d_p2 = get(vpmap_, source(he_pair.second, mesh_));
                     Point m = CGAL::midpoint(eq_d_p1, eq_d_p2);
 
-                    Point s = get(vpmap_, source(he_pair.first, mesh_));
+                    // get common vertex around which the edge is rotated
+                    halfedge_descriptor main_he = it->first;
+                    Point s = get(vpmap_, target(main_he, mesh_));
+
+                    // create segment which bisects angle
                     typename GeomTraits::Segment_3 bisector(s, m);
 
-                    // scale
-                    halfedge_descriptor main_he = it->first;
-                    double len = CGAL::sqrt(sqlength(main_he));
-                    typename GeomTraits::Aff_transformation_3 t_scale(CGAL::SCALING, len);
-                    bisector = bisector.transform(t_scale);
-
-                    // translate
-                    Vector vec(bisector.source(), s);
-                    typename GeomTraits::Aff_transformation_3 t_translate(CGAL::TRANSLATION, vec);
-                    bisector = bisector.transform(t_translate);
+                    // correct segment position and length
+                    correct_position(bisector, main_he);
 
                     move += Vector(bisector.target(), bisector.source());
 
                 }
 
-
                 barycenters[v] = get(vpmap_, v) + (move / (double)he_map.size());
 
 
-            } // if is not on border
+            } // not on border
         } // for each v
 
 
 
-        // perform moves
+        // compute locations to tangent plane
         typedef typename std::map<vertex_descriptor, Point>::value_type VP;
-        for(const VP& vp : barycenters)
+        std::map<vertex_descriptor, Point> new_locations;
+        for(const VP& vp: barycenters)
+        {
+            Point q = vp.second;
+            Point p = get(vpmap_, vp.first);
+            Vector n = n_map[vp.first];
+
+            new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
+        }
+
+
+        // perform moves
+        for(const VP& vp : new_locations)
         {
             std::cout << "from: "<< get(vpmap_, vp.first);
             put(vpmap_, vp.first, vp.second);
@@ -153,6 +170,23 @@ private:
       vertex_descriptor v1 = target(h, mesh_);
       vertex_descriptor v2 = source(h, mesh_);
       return sqlength(v1, v2);
+    }
+
+
+    void correct_position(Segment& bisector, const halfedge_descriptor& he_c)
+    {
+        // common vertex
+        Point s = get(vpmap_, target(he_c, mesh_));
+
+        // scale
+        typename GeomTraits::Aff_transformation_3 t_scale(CGAL::SCALING, CGAL::sqrt(sqlength(he_c)));
+        bisector = bisector.transform(t_scale);
+
+        // translate
+        Vector vec(bisector.source(), s);
+        typename GeomTraits::Aff_transformation_3 t_translate(CGAL::TRANSLATION, vec);
+        bisector = bisector.transform(t_translate);
+
     }
 
 
