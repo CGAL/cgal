@@ -246,7 +246,7 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                                                         Construct_visitor;
   typedef typename Construct_visitor::Traits_2          Construct_traits;
 
-  const GeomTraits * geom_traits = arr.geometry_traits();
+  const GeomTraits* geom_traits = arr.geometry_traits();
   Construct_visitor visitor(&arr);
 
   /* We would like to avoid copy construction of the geometry traits class.
@@ -265,7 +265,7 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                            const Construct_traits&, Construct_traits>::type
     traits(*geom_traits);
 
-  // Define a sweep-line instance and perform the sweep:
+  // Define a surface-sweep instance and perform the sweep:
   Surface_sweep_2<typename Construct_visitor::Traits_2, Construct_visitor,
                   typename Construct_visitor::Subcurve,
                   typename Construct_visitor::Event>
@@ -310,7 +310,7 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                            const Construct_traits&, Construct_traits>::type
     traits(*geom_traits);
 
-  // Define a sweep-line instance and perform the sweep.
+  // Define a surface-sweep instance and perform the sweep.
   Surface_sweep_2<typename Construct_visitor::Traits_2, Construct_visitor,
                   typename Construct_visitor::Subcurve,
                   typename Construct_visitor::Event>
@@ -337,7 +337,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                                                         Ex_x_monotone_curve_2;
   typedef typename Insert_visitor::Traits_2::Point_2    Ex_point_2;
 
-  const GeomTraits * geom_traits = arr.geometry_traits();
+  const GeomTraits* geom_traits = arr.geometry_traits();
   Insert_visitor visitor(&arr);
 
   /* We would like to avoid copy construction of the geometry traits class.
@@ -367,7 +367,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                     std::back_inserter(ex_pts),
                     &traits);
 
-  // Define a basic sweep-line instance and perform the sweep.
+  // Define a basic surface-sweep instance and perform the sweep.
   Surface_sweep_2<typename Insert_visitor::Traits_2, Insert_visitor,
                   typename Insert_visitor::Subcurve,
                   typename Insert_visitor::Event>
@@ -786,12 +786,12 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
                                    InputIterator end_xcurves)
 {
   const GeomTraits* geom_traits = arr.geometry_traits();
-  typedef typename TopTraits::Surface_sweep_non_intersecting_construction_visitor
+  typedef typename TopTraits::Surface_sweep_no_intersection_construction_visitor
                                                             Construct_visitor;
   Construct_visitor visitor(&arr);
   typename Construct_visitor::Traits_2 traits(*geom_traits);
 
-  // Define a basic sweep-line instance (which is not supposed to handle
+  // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
   No_intersection_surface_sweep_2<typename Construct_visitor::Traits_2,
                                    Construct_visitor,
@@ -815,7 +815,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
                                    PInputIterator begin_points,
                                    PInputIterator end_points)
 {
-  typedef typename TopTraits::Surface_sweep_non_intersecting_construction_visitor
+  typedef typename TopTraits::Surface_sweep_no_intersection_construction_visitor
                                                         Construct_visitor;
   typedef typename Construct_visitor::Traits_2          Construct_traits;
 
@@ -838,7 +838,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
                            const Construct_traits&, Construct_traits>::type
     traits(*geom_traits);
 
-  // Define a basic sweep-line instance (which is not supposed to handle
+  // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
   No_intersection_surface_sweep_2<typename Construct_visitor::Traits_2,
                                    Construct_visitor,
@@ -862,14 +862,14 @@ void non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeomTraits,
                                        PInputIterator begin_points,
                                        PInputIterator end_points)
 {
-  typedef typename TopTraits::Surface_sweep_non_intersecting_insertion_visitor
+  typedef typename TopTraits::Surface_sweep_no_intersection_insertion_visitor
                                                         Insert_visitor;
   typedef typename Insert_visitor::Traits_2             Insert_traits;
   typedef typename Insert_visitor::Traits_2::X_monotone_curve_2
                                                         Ex_x_monotone_curve_2;
   typedef typename Insert_visitor::Traits_2::Point_2    Ex_point_2;
 
-  const GeomTraits * geom_traits = arr.geometry_traits();
+  const GeomTraits* geom_traits = arr.geometry_traits();
   Insert_visitor visitor(&arr);
 
   /* We would like to avoid copy construction of the geometry traits class.
@@ -899,7 +899,7 @@ void non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeomTraits,
                     std::back_inserter(ex_pts),
                     &traits);
 
-  // Define a basic sweep-line instance and perform the sweep.
+  // Define a basic surface-sweep instance and perform the sweep.
   No_intersection_surface_sweep_2<typename Insert_visitor::Traits_2,
                                   Insert_visitor,
                                   typename Insert_visitor::Subcurve,
@@ -1168,7 +1168,7 @@ bool is_valid(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   typedef GeomTraits                                        Geometry_traits_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2    X_monotone_curve_2;
 
-  // Define the sweep-line types:
+  // Define the surface-sweep types:
   typedef Surface_sweep_do_curves_x_visitor<Geometry_traits_2> Visitor;
   typedef Surface_sweep_2<Geometry_traits_2, Visitor>          Surface_sweep_2;
 

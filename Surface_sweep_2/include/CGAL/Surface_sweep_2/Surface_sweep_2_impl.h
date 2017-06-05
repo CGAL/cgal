@@ -138,6 +138,7 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
       if (is_overlap) {
         // Handle overlaps.
         this->m_visitor->before_handle_event(this->m_currentEvent);
+        std::cout << "X1" << std::endl;
         this->m_visitor->add_subcurve(sub_cv1, sc);
         CGAL_SL_PRINT_ERASE(*sl_pos);
         this->m_statusLine.erase(sl_pos);

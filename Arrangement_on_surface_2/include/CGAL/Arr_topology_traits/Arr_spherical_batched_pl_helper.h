@@ -22,7 +22,6 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
  * Definition of the Arr_spherical_batched_pl_helper class-template.
  */
@@ -36,21 +35,23 @@ namespace CGAL {
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_>
+template <typename Traits_, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_spherical_batched_pl_helper {
 public:
-  typedef Traits_                                      Traits_2;
-  typedef Arrangement_                                 Arrangement_2;
+  typedef Traits_                                       Traits_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typedef Surface_sweep_empty_visitor<Traits_2>        Base_visitor;
-  typedef typename Base_visitor::Event                 Event;
-  typedef typename Base_visitor::Subcurve              Subcurve;
-  typedef typename Event::Subcurve_iterator            Subcurve_iterator;
+  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
+                                                        Base_visitor;
+  typedef typename Event::Subcurve_iterator             Subcurve_iterator;
 
 protected:
-  typedef typename Arrangement_2::Topology_traits      Topology_traits;
+  typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
   // Data members:
   //! The topology-traits class.
@@ -77,8 +78,8 @@ public:
   /*! A notification invoked after the sweep-line finishes handling the given
    * event.
    */
-  void after_handle_event(Event* event) {
-
+  void after_handle_event(Event* event)
+  {
     if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
       Arr_curve_end ind = ((event->number_of_left_curves() == 0) &&
                            (event->number_of_right_curves() != 0)) ?
@@ -124,9 +125,6 @@ public:
                      ARR_LEFT_TO_RIGHT);
       m_spherical_face = sc->last_curve().halfedge_handle()->face();
     }
-
-
-    return;
   }
   //@}
 

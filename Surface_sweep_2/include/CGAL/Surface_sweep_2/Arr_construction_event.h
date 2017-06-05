@@ -46,27 +46,31 @@ namespace CGAL {
  * Inherits from `Surface_sweep_event`.
  * \sa `Surface_sweep_event`
  */
-template <typename Traits_, typename Subcurve_, typename Arrangement_>
+template <typename GeometryTraits_2, typename Subcurve_, typename Arrangement_,
+          template <typename, typename>
+          class SurfaceSweepEvent = Surface_sweep_event>
 class Arr_construction_event :
-  public Surface_sweep_event<Traits_, Subcurve_> {
+    public SurfaceSweepEvent<GeometryTraits_2, Subcurve_>
+{
 public:
-  typedef Traits_                                         Traits_2;
-  typedef Subcurve_                                       Subcurve;
-  typedef Arrangement_                                    Arrangement_2;
-  typedef typename Arrangement_2::Vertex_handle           Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle         Halfedge_handle;
+  typedef GeometryTraits_2                            Traits_2;
+  typedef Subcurve_                                   Subcurve;
+  typedef Arrangement_                                Arrangement_2;
 
-  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                      Point_2;
+  typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
 
-  typedef Surface_sweep_event<Traits_2, Subcurve>         Base;
+  typedef typename Traits_2::X_monotone_curve_2       X_monotone_curve_2;
+  typedef typename Traits_2::Point_2                  Point_2;
 
-  typedef Arr_construction_event<Traits_2, Subcurve, Halfedge_handle>
-                                                          Self;
+  typedef SurfaceSweepEvent<Traits_2, Subcurve>       Base;
 
-  typedef typename Base::Subcurve_container         Subcurve_container;
-  typedef typename Base::Subcurve_iterator          Subcurve_iterator;
-  typedef typename Base::Subcurve_reverse_iterator  Subcurve_reverse_iterator;
+  typedef Arr_construction_event<Traits_2, Subcurve, Halfedge_handle,
+                                 SurfaceSweepEvent>   Self;
+
+  typedef typename Base::Subcurve_container           Subcurve_container;
+  typedef typename Base::Subcurve_iterator            Subcurve_iterator;
+  typedef typename Base::Subcurve_reverse_iterator    Subcurve_reverse_iterator;
 
 protected:
   // Data members:
@@ -101,7 +105,7 @@ public:
   {
     std::pair<bool,Subcurve_iterator> res = Base::add_curve_to_right(curve, tr);
 
-    if (res.second != this->m_rightCurves.end() && res.first == false)
+    if (res.second != this->right_curves_end() && res.first == false)
       ++m_right_curves_counter;
 
     return res;
@@ -134,10 +138,10 @@ public:
     skip--;  // now 'skip' holds the amount of the right curves of the event
              // that are already inserted to the planar map  - 1 (minus 1)
 
-    Subcurve_iterator iter = this->m_rightCurves.end();
+    Subcurve_iterator iter = this->right_curves_end();
     size_t num_left_curves = this->number_of_left_curves();
 
-    for (--iter; iter != this->m_rightCurves.begin() ; --iter, ++counter) {
+    for (--iter; iter != this->right_curves_begin() ; --iter, ++counter) {
       if (curve == (*iter)) {
         m_isCurveInArr[counter] = true;
 
@@ -161,13 +165,13 @@ public:
    *  to the right fo the event that were already were inserted to the
    * arrangement.
    */
-  bool is_curve_largest (Subcurve *curve)
+  bool is_curve_largest(Subcurve *curve)
   {
     int counter = 0;
 
     Subcurve_reverse_iterator  rev_iter;
-    for (rev_iter = this->m_rightCurves.rbegin();
-         rev_iter != this->m_rightCurves.rend() && curve != (*rev_iter) ;
+    for (rev_iter = this->right_curves_rbegin();
+         rev_iter != this->right_curves_rend() && curve != (*rev_iter) ;
          ++rev_iter, ++ counter)
     {
       if (m_isCurveInArr[counter] == true) return false;
@@ -178,26 +182,26 @@ public:
   /*! Resize the bit-vector indicating whether the incident curves are already
    * in the arrangement, and set all flags to false.
    */
-  void init_subcurve_in_arrangement_flags (size_t n)
-  { m_isCurveInArr.resize (n, false); }
+  void init_subcurve_in_arrangement_flags(size_t n)
+  { m_isCurveInArr.resize(n, false); }
 
   /*! Check if the i'th subcurve is in the arrangement. */
-  bool is_subcurve_in_arrangement (unsigned int i) const
+  bool is_subcurve_in_arrangement(unsigned int i) const
   { return (m_isCurveInArr[i]); }
 
   /*! Set the flag indicating whether the i'th subcurve is in the arrangement.
    */
-  void set_subcurve_in_arrangement (unsigned int i, bool flag)
+  void set_subcurve_in_arrangement(unsigned int i, bool flag)
   { m_isCurveInArr[i] = flag; }
 
   /*! Set the halfedge handle. */
-  void set_halfedge_handle (Halfedge_handle h) { m_halfedge = h; }
+  void set_halfedge_handle(Halfedge_handle h) { m_halfedge = h; }
 
   /*! Get the halfedge handle. */
   Halfedge_handle halfedge_handle() const { return m_halfedge; }
 
   /*! Set the vertex handle. */
-  void set_vertex_handle (Vertex_handle v) { m_vertex = v; }
+  void set_vertex_handle(Vertex_handle v) { m_vertex = v; }
 
   /*! Get the vertex handle. */
   Vertex_handle vertex_handle() const { return m_vertex; }

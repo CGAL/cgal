@@ -21,12 +21,15 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
-/*!
- * Definition of the Arr_insertion_sl_visitor class-template.
+/*! Definition of the Arr_insertion_sl_visitor class-template.
+ *
+ * This class can be further split into two, where one derives from the other,
+ * such that the derived class handles the case of inserting curves into a
+ * non-empty arrangement, and the base class handles the case of inserting
+ * curves into a empty arrangement.
  */
 
-#include <CGAL/Surface_sweep_2/Arr_basic_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_sl_visitor.h>
 
 namespace CGAL {
 
@@ -36,12 +39,12 @@ namespace CGAL {
  */
 template <typename Helper_>
 class Arr_insertion_sl_visitor :
-  public Arr_basic_insertion_sl_visitor<Helper_>
+  public Arr_no_intersection_insertion_sl_visitor<Helper_>
 {
 public:
   typedef Helper_                                       Helper;
 
-  typedef Arr_basic_insertion_sl_visitor<Helper>        Base;
+  typedef Arr_no_intersection_insertion_sl_visitor<Helper> Base;
 
   typedef typename Base::Traits_2                       Traits_2;
   typedef typename Base::Arrangement_2                  Arrangement_2;
@@ -57,22 +60,23 @@ private:
   X_monotone_curve_2 sub_cv2;         // (used for splitting curves).
 
 public:
+  /*! A notification invoked when a new subcurve is created. */
+  void add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc);
+
   /*! Constructor. */
   Arr_insertion_sl_visitor(Arrangement_2* arr) : Base(arr) {}
 
   /// \name Edge-split functions (to be overridden by the child visitor).
   //@{
 
-  /*!
-   * Check if the halfedge associated with the given subcurve will be split
+  /*! Check if the halfedge associated with the given subcurve will be split
    * at the given event.
    * \param sc The subcurve.
    * \param event The event.
    */
   virtual bool is_split_event(Subcurve* sc, Event* event);
 
-  /*!
-   * Split the given edge edge.
+  /*! Split the given edge edge.
    * \param he The edge to split.
    * \param sc The associated subcurve.
    * \param The split point.
@@ -94,18 +98,14 @@ public:
 template <typename Hlpr>
 bool Arr_insertion_sl_visitor<Hlpr>::is_split_event(Subcurve* sc, Event* event)
 {
-  if (sc->last_curve().halfedge_handle() == Halfedge_handle(NULL))
-    return false;
+  if (sc->last_curve().halfedge_handle() == Halfedge_handle(NULL)) return false;
 
   if (! sc->originating_subcurve1()) {
     return (reinterpret_cast<Event*>(sc->left_event()) !=
             this->current_event());
   }
-  return
-    (this->is_split_event
-     (reinterpret_cast<Subcurve*>(sc->originating_subcurve1()), event) ||
-     this->is_split_event
-     (reinterpret_cast<Subcurve*>(sc->originating_subcurve2()), event));
+  return (this->is_split_event(sc->originating_subcurve1(), event) ||
+          this->is_split_event(sc->originating_subcurve2(), event));
   }
 
 //-----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ Arr_insertion_sl_visitor<Hlpr>::split_edge(Halfedge_handle he, Subcurve* sc,
   // Make sure that the halfedge associated with sc is the directed from
   // right to left, since we always "look" above , and the incident face
   // is on the left of the  halfedge
-  CGAL_assertion (he->direction() == ARR_RIGHT_TO_LEFT);
+  CGAL_assertion(he->direction() == ARR_RIGHT_TO_LEFT);
 
   this->traits()->split_2_object()(he->curve(), pt, sub_cv2, sub_cv1);
   Halfedge_handle new_he =
@@ -130,6 +130,27 @@ Arr_insertion_sl_visitor<Hlpr>::split_edge(Halfedge_handle he, Subcurve* sc,
     last_event_on_sc->set_halfedge_handle(new_he->next());
 
   return new_he;
+}
+
+//-----------------------------------------------------------------------------
+// A notification invoked when a new subcurve is created.
+//
+template <typename Hlpr>
+void Arr_insertion_sl_visitor<Hlpr>::
+add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
+{
+  if (Base::add_subcurve_(cv, sc)) return;
+
+  // sc is an overlap Subcurve of existing edge and new curve,
+  // which means that the edeg will have to be modified
+  if (sc->originating_subcurve1()) {
+    this->m_arr->modify_edge
+      (this->current_event()->halfedge_handle()->next()->twin(), cv.base());
+  }
+
+  Halfedge_handle next_ccw_he =
+    this->current_event()->halfedge_handle()->next()->twin();
+  this->current_event()->set_halfedge_handle(next_ccw_he);
 }
 
 } //namespace CGAL

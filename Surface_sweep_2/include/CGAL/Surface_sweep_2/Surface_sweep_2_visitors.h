@@ -20,7 +20,6 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
  * Definition of the basic sweep-line visitors, for the usage of the global
  * sweep-line functions.
@@ -208,8 +207,8 @@ public:
   template <typename CurveIterator>
   void sweep(CurveIterator begin, CurveIterator end)
   {
-    std::vector<X_monotone_curve_2>  curves_vec;
-    std::vector<Point_2>             points_vec;
+    std::vector<X_monotone_curve_2> curves_vec;
+    std::vector<Point_2> points_vec;
 
     curves_vec.reserve(std::distance(begin,end));
     make_x_monotone(begin, end,

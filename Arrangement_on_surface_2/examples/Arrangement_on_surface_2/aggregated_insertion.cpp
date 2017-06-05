@@ -17,21 +17,21 @@ typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 int main ()
 {
   // Construct the arrangement of five intersecting segments.
-  Arrangement_2           arr;
-  std::list<Segment_2>    segments;
+  Arrangement_2 arr;
+  std::list<Segment_2> segments;
 
-  segments.push_back (Segment_2 (Point_2(1, 0), Point_2(2, 4)));
-  segments.push_back (Segment_2 (Point_2(5, 0), Point_2(5, 5)));
-  segments.push_back (Segment_2 (Point_2(1, 0), Point_2(5, 3)));  
-  segments.push_back (Segment_2 (Point_2(0, 2), Point_2(6, 0)));
-  segments.push_back (Segment_2 (Point_2(3, 0), Point_2(5, 5)));
+  segments.push_back(Segment_2(Point_2(1, 0), Point_2(2, 4)));
+  segments.push_back(Segment_2(Point_2(5, 0), Point_2(5, 5)));
+  segments.push_back(Segment_2(Point_2(1, 0), Point_2(5, 3)));
+  segments.push_back(Segment_2(Point_2(0, 2), Point_2(6, 0)));
+  segments.push_back(Segment_2(Point_2(3, 0), Point_2(5, 5)));
 
-  insert (arr, segments.begin(), segments.end());
+  insert(arr, segments.begin(), segments.end());
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return 0;

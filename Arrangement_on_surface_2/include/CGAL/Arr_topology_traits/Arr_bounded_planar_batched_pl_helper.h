@@ -20,7 +20,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-/*!
+/*! \file
  * Definition of the Arr_bounded_planar_batched_pl_helper class-template.
  */
 

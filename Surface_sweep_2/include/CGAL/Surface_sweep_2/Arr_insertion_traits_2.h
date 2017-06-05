@@ -20,7 +20,6 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*!
  * Defintion of the Arr_insertion_traits_2<Traits,Arrangement> class.
  */
@@ -69,7 +68,7 @@ public:
 public:
 
   /*! Constructor with a traits class. */
-  Arr_insertion_traits_2 (const Traits_2& tr) :
+  Arr_insertion_traits_2(const Traits_2& tr) :
     Base (tr)
   {}
 
@@ -79,8 +78,8 @@ public:
   class Intersect_2 {
   protected:
     //! The base operators.
-    Base_intersect_2      m_base_intersect;
-    Halfedge_handle       invalid_he;
+    Base_intersect_2 m_base_intersect;
+    Halfedge_handle invalid_he;
 
     /*! Constructor.
      * The constructor is declared private to allow only the functor
@@ -106,7 +105,7 @@ public:
       {
         // The curves are interior-disjoint as both of them are already in
         //  the arrangement.
-        return (oi);
+        return oi;
       }
 
       OutputIterator oi_end = m_base_intersect(cv1.base(), cv2.base(), oi);

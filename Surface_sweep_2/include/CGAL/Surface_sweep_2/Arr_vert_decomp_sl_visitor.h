@@ -19,7 +19,7 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-/*!
+/*! \file
  * Definition of the Arr_vert_decomp_sl_visitor class-template.
  */
 
@@ -31,11 +31,11 @@ namespace CGAL {
  * A sweep-line visitor for performing vertical decomposition on an
  * arrangement embedded on a surface.
  */
-template <typename Helper_, typename OutputIterator_>
+template <typename Helper_, typename OutputIterator>
 class Arr_vert_decomp_sl_visitor : public Helper_::Base_visitor {
 public:
   typedef Helper_                                       Helper;
-  typedef OutputIterator_                               OutputIterator;
+  typedef OutputIterator                                Output_iterator;
 
   typedef typename Helper::Traits_2                     Traits_2;
   typedef typename Helper::Arrangement_2                Arrangement_2;
@@ -53,7 +53,7 @@ protected:
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   //typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
-                                      Halfedge_around_vertex_const_circulator;
+    Halfedge_around_vertex_const_circulator;
 
   // Data members:
   Helper m_helper;                      // The helper class.
@@ -68,16 +68,14 @@ protected:
   CGAL::Object m_prev_obj_below;        // The object this vertex sees below it.
   CGAL::Object m_prev_obj_above;        // The object this vertex sees above it.
 
-  OutputIterator* m_out;                // An output iterator for the result.
+  Output_iterator* m_out;               // An output iterator for the result.
 
 public:
-  /*!
-   * Constructor.
+  /*! Constructor.
    * \param arr The arrangement.
    * \param oi A pointer to the output iterator that will store the result.
    */
-  Arr_vert_decomp_sl_visitor(const Arrangement_2* arr,
-                             OutputIterator* oi) :
+  Arr_vert_decomp_sl_visitor(const Arrangement_2* arr, OutputIterator* oi) :
     m_helper(arr),
     m_traits(arr->geometry_traits()),
     invalid_vh(),
@@ -87,8 +85,7 @@ public:
   /* A notification issued before the sweep process starts. */
   void before_sweep();
 
-  /*!
-   * A notification invoked after the sweep-line finishes handling the given
+  /*! A notification invoked after the sweep-line finishes handling the given
    * event.
    * \param event The event.
    * \param above An iterator to the sweep-line subcurves lying right above
@@ -99,8 +96,7 @@ public:
                           Status_line_iterator above,
                           bool on_above);
 
-  /*!
-   * A notification issued when the sweep process is over.
+  /*! A notification issued when the sweep process is over.
    */
   void after_sweep();
 };
@@ -132,7 +128,7 @@ after_handle_event(Event* event,
                    Status_line_iterator above, bool /* on_above */)
 {
   // Notify the helper on the event.
-  m_helper.after_handle_event (event);
+  m_helper.after_handle_event(event);
 
   // We are only interested in events associated with valid points:
   if (! event->is_closed()) return true;
@@ -181,12 +177,11 @@ after_handle_event(Event* event,
       bool  vert_connected = false;
 
       if (! vh->is_isolated()) {
-        Halfedge_around_vertex_const_circulator   circ, first;
+        Halfedge_around_vertex_const_circulator circ, first;
 
         first = circ = vh->incident_halfedges();
         do {
-          if (circ->source() == m_prev_vh)
-            vert_connected = true;
+          if (circ->source() == m_prev_vh) vert_connected = true;
           ++circ;
         } while (! vert_connected && circ != first);
       }
@@ -265,8 +260,8 @@ after_handle_event(Event* event,
     // We can now create the entry for the previous vertex, as we are not
     // going to change the identity of the features below or above it.
     if (m_prev_vh != Vertex_const_handle()) {
-      *(*m_out) = Vert_entry (m_prev_vh, Vert_pair(m_prev_obj_below,
-                                                   m_prev_obj_above));
+      *(*m_out) = Vert_entry(m_prev_vh, Vert_pair(m_prev_obj_below,
+                                                  m_prev_obj_above));
       ++(*m_out);
     }
 
@@ -288,8 +283,8 @@ void Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_sweep()
 {
   // Create an entry for the last vertex (the xy-largest one).
   if (m_prev_vh != invalid_vh) {
-    *(*m_out) = Vert_entry (m_prev_vh, Vert_pair (m_prev_obj_below,
-                                                  m_prev_obj_above));
+    *(*m_out) = Vert_entry(m_prev_vh, Vert_pair(m_prev_obj_below,
+                                                m_prev_obj_above));
     ++(*m_out);
   }
 }

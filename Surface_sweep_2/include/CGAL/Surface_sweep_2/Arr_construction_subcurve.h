@@ -57,9 +57,11 @@ namespace CGAL {
  * - The index for a subcurve that may represent a hole
  * - Indices of all halfedge below the curve that may represent a hole.
  */
-template <typename GeometryTraits_2, typename Subcurve_>
+template <typename GeometryTraits_2,
+          template <typename, typename> class SurfaceSweepSubcurve,
+          typename Subcurve_>
 class Arr_construction_subcurve_base :
-    public Surface_sweep_subcurve<GeometryTraits_2, Subcurve_>
+    public SurfaceSweepSubcurve<GeometryTraits_2, Subcurve_>
 {
 public:
   typedef GeometryTraits_2                              Traits_2;
@@ -69,7 +71,7 @@ public:
   typedef void*                                         Event_ptr;
   typedef std::list<unsigned int>                       Halfedge_indices_list;
 
-  typedef Surface_sweep_subcurve<Traits_2, Subcurve>    Base;
+  typedef SurfaceSweepSubcurve<Traits_2, Subcurve>      Base;
 
   /*! Construct deafult. */
   Arr_construction_subcurve_base() :
@@ -116,24 +118,29 @@ protected:
  * Inherits from `Surface_sweep_subcurve`
  * \sa `Surface_sweep_subcurve`
  */
-template <typename GeometryTraits_2, typename Subcurve_ = Default>
+template <typename GeometryTraits_2,
+          template <typename, typename>
+          class SurfaceSweepSubcurve = Surface_sweep_subcurve,
+          typename Subcurve_ = Default>
 class Arr_construction_subcurve :
-    public Arr_construction_subcurve_base
-           <GeometryTraits_2,
-            typename Default::Get<Subcurve_,
-                                  Arr_construction_subcurve
-                                  <GeometryTraits_2, Subcurve_> >::type>
+  public Arr_construction_subcurve_base
+         <GeometryTraits_2,
+          SurfaceSweepSubcurve,
+          typename Default::Get<Subcurve_,
+                                Arr_construction_subcurve<GeometryTraits_2,
+                                                          SurfaceSweepSubcurve,
+                                                          Subcurve_> >::type>
 {
 public:
   typedef GeometryTraits_2                              Traits_2;
 
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
 
-  typedef Arr_construction_subcurve<Traits_2, Subcurve_>
+  typedef Arr_construction_subcurve<Traits_2, SurfaceSweepSubcurve, Subcurve_>
                                                         Self;
   typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef Arr_construction_subcurve_base<Traits_2, Subcurve>
-                                                        Base;
+  typedef Arr_construction_subcurve_base<Traits_2, SurfaceSweepSubcurve,
+                                         Subcurve>      Base;
 
   typedef typename Base::Event_ptr                      Event_ptr;
   typedef typename Base::Halfedge_indices_list          Halfedge_indices_list;

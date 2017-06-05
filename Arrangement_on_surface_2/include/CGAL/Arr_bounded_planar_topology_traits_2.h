@@ -40,25 +40,26 @@
 namespace CGAL {
 
 // Forward declaration:
-template <typename GeomTraits_, typename TopTraits_>
+template <typename GeometryTraits_2, typename TopTraits_>
 class Arrangement_on_surface_2;
 
 /*! \class Arr_bounded_planar_topology_traits_2
  * A topology-traits class that encapsulates the embedding of 2D arrangements
  * of bounded curves on the plane.
  */
-template <typename GeomTraits_,
-          typename Dcel_ = Arr_default_dcel<GeomTraits_> >
+template <typename GeometryTraits_2,
+          typename Dcel_ = Arr_default_dcel<GeometryTraits_2> >
 class Arr_bounded_planar_topology_traits_2 :
-  public Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_>
+  public Arr_planar_topology_traits_base_2<GeometryTraits_2, Dcel_>
 {
 private:
-  typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_> Base;
+  typedef Arr_planar_topology_traits_base_2<GeometryTraits_2, Dcel_> Base;
 
 public:
   ///! \name The geometry-traits types.
   //@{
-  typedef GeomTraits_                                     Geometry_traits_2;
+  typedef GeometryTraits_2                                Geometry_traits_2;
+
   typedef typename Base::Point_2                          Point_2;
   typedef typename Base::X_monotone_curve_2               X_monotone_curve_2;
   //@}
@@ -188,7 +189,6 @@ public:
   //@}
 
 private:
-
   /// \name Auxiliary type definitions.
   //@{
   typedef Arrangement_on_surface_2<Geometry_traits_2, Self>     Arr;
@@ -201,24 +201,35 @@ private:
                                                  CSubcurve>     CHelper;
 
   // Type definition for the basic insertion sweep-line visitor.
-  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  BInsTraits;
-  typedef Arr_construction_subcurve<BInsTraits>                 BISubcurve;
-  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>   BIEvent;
-  typedef Arr_bounded_planar_insertion_helper<BInsTraits, Arr, BIEvent,
-                                              BISubcurve>       BIHelper;
+  // The second parameter of Arr_construction_subcurve is the base class of
+  // Arr_construction_subcurve. By default Arr_construction_subcurve derives
+  // from Surface_sweep_subcurve, which is suitable for general curves
+  // including overlapping curves. Here we bypass Surface_sweep_subcurve and
+  // force Arr_construction_subcurve to derive directly from
+  // No_overlap_surface_sweep_subcurve (which is the base class of
+  // Surface_sweep_subcurve).
+  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  NxITraits;
+  typedef Arr_construction_subcurve<NxITraits,
+                                    No_overlap_surface_sweep_subcurve>
+                                                                NxISubcurve;
+  typedef Arr_construction_event<NxITraits, NxISubcurve, Arr,
+                                 No_overlap_surface_sweep_event>
+                                                                NxIEvent;
+  typedef Arr_bounded_planar_insertion_helper<NxITraits, Arr, NxIEvent,
+                                              NxISubcurve>      NxIHelper;
 
   // Type definition for the insertion sweep-line visitor.
-  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        InsTraits;
-  typedef Arr_construction_subcurve<InsTraits>                  ISubcurve;
-  typedef Arr_construction_event<InsTraits, ISubcurve, Arr>     IEvent;
-  typedef Arr_bounded_planar_insertion_helper<InsTraits, Arr, IEvent,
-                                              ISubcurve>        IHelper;
+  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        ITraits;
+  typedef Arr_construction_subcurve<ITraits>                    ISubcurve;
+  typedef Arr_construction_event<ITraits, ISubcurve, Arr>       IEvent;
+  typedef Arr_bounded_planar_insertion_helper<ITraits, Arr, IEvent, ISubcurve>
+                                                                IHelper;
 
   // Type definition for the batched point-location sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
   typedef No_overlap_surface_sweep_subcurve<BplTraits>          BplSubcurve;
-  typedef No_overlap_surface_sweep_event<BplTraits, BplSubcurve> PblEvent;
-  typedef Arr_bounded_planar_batched_pl_helper<BplTraits, Arr, PblEvent,
+  typedef No_overlap_surface_sweep_event<BplTraits, BplSubcurve> BplEvent;
+  typedef Arr_bounded_planar_batched_pl_helper<BplTraits, Arr, BplEvent,
                                                BplSubcurve>     BplHelper;
 
   // Type definition for the vertical decomposition sweep-line visitor.
@@ -229,52 +240,55 @@ private:
                                                 VdSubcurve>     VdHelper;
 
   // Type definition for the overlay sweep-line visitor.
-  template <typename ExGeomTraits_, typename ArrangementA_,
-            typename ArrangementB_>
+  template <typename ExtendedGeometryTraits, typename ArrangementA,
+            typename ArrangementB>
   struct _Overlay_helper : public Arr_bounded_planar_overlay_helper
-      <ExGeomTraits_, ArrangementA_, ArrangementB_, Arr,
-       Arr_construction_event<ExGeomTraits_,
-                              Arr_overlay_subcurve<ExGeomTraits_>,
-                              Arr>,
-       Arr_overlay_subcurve<ExGeomTraits_> >
+    <ExtendedGeometryTraits, ArrangementA, ArrangementB, Arr,
+     Arr_construction_event<ExtendedGeometryTraits,
+                            Arr_overlay_subcurve<ExtendedGeometryTraits>,
+                            Arr>,
+     Arr_overlay_subcurve<ExtendedGeometryTraits> >
   {
+    typedef ExtendedGeometryTraits                      Ex_geom_traits;
+    typedef ArrangementA                                Arrangement_a;
+    typedef ArrangementB                                Arrangement_b;
+
     typedef Arr_bounded_planar_overlay_helper
-              <ExGeomTraits_, ArrangementA_, ArrangementB_, Arr,
-               Arr_construction_event<ExGeomTraits_,
-                                      Arr_overlay_subcurve<ExGeomTraits_>,
-                                      Arr>,
-               Arr_overlay_subcurve<ExGeomTraits_> >     Base;
+      <Ex_geom_traits, Arrangement_a, Arrangement_b, Arr,
+       Arr_construction_event<Ex_geom_traits,
+                              Arr_overlay_subcurve<Ex_geom_traits>,
+                              Arr>,
+       Arr_overlay_subcurve<Ex_geom_traits> >           Base;
 
-    typedef typename Base::Traits_2                      Traits_2;
-    typedef typename Base::Arrangement_red_2             Arrangement_red_2;
-    typedef typename Base::Arrangement_blue_2            Arrangement_blue_2;
-    typedef typename Base::Arrangement_2                 Arrangement_2;
-    typedef typename Base::Event                         Event;
-    typedef typename Base::Subcurve                      Subcurve;
-    typedef typename Base::Construction_helper           Construction_helper;
+    typedef typename Base::Traits_2                     Traits_2;
+    typedef typename Base::Arrangement_red_2            Arrangement_red_2;
+    typedef typename Base::Arrangement_blue_2           Arrangement_blue_2;
+    typedef typename Base::Arrangement_2                Arrangement_2;
+    typedef typename Base::Event                        Event;
+    typedef typename Base::Subcurve                     Subcurve;
+    typedef typename Base::Construction_helper          Construction_helper;
 
-    _Overlay_helper(const ArrangementA_* arr_a, const ArrangementB_* arr_b) :
+    _Overlay_helper(const Arrangement_a* arr_a, const Arrangement_b* arr_b) :
       Base(arr_a, arr_b)
     {}
   };
   //@}
 
 public:
-
   ///! \name Visitor types.
   //@{
 
   typedef Arr_construction_sl_visitor<CHelper>
-                             Surface_sweep_construction_visitor;
+    Surface_sweep_construction_visitor;
 
   typedef Arr_insertion_sl_visitor<IHelper>
-                             Surface_sweep_insertion_visitor;
+    Surface_sweep_insertion_visitor;
 
   typedef Surface_sweep_construction_visitor
-                             Surface_sweep_non_intersecting_construction_visitor;
+    Surface_sweep_no_intersection_construction_visitor;
 
-  typedef Arr_basic_insertion_sl_visitor<BIHelper>
-                             Surface_sweep_non_intersecting_insertion_visitor;
+  typedef Arr_no_intersection_insertion_sl_visitor<NxIHelper>
+    Surface_sweep_no_intersection_insertion_visitor;
 
   template <typename OutputIterator_>
   struct Surface_sweep_batched_point_location_visitor :
@@ -310,29 +324,27 @@ public:
     {}
   };
 
-  template <typename ArrangementA_, typename ArrangementB_,
-            typename OverlayTraits_>
+  template <typename ArrangementA, typename ArrangementB,
+            typename OverlayTraits>
   struct Surface_sweep_overlay_visitor :
-    public Arr_overlay_sl_visitor <
-      _Overlay_helper<
-        Arr_overlay_traits_2<Arr_traits_basic_adaptor_2<Geometry_traits_2>,
-                             ArrangementA_,
-                             ArrangementB_>,
-        ArrangementA_,
-        ArrangementB_>,
-      OverlayTraits_>
+    public Arr_overlay_sl_visitor<_Overlay_helper<
+                                    Arr_overlay_traits_2<
+                                      Arr_traits_basic_adaptor_2<
+                                        Geometry_traits_2>,
+                                      ArrangementA, ArrangementB>,
+                                    ArrangementA, ArrangementB>,
+                                  OverlayTraits>
   {
-    typedef ArrangementA_                            ArrangementA_2;
-    typedef ArrangementB_                            ArrangementB_2;
+    typedef ArrangementA                             Arrangement_a;
+    typedef ArrangementB                             Arrangement_b;
     typedef Arr                                      Arrangement_result_2;
-    typedef OverlayTraits_                           Overlay_traits;
+    typedef OverlayTraits                            Overlay_traits;
 
     typedef Arr_overlay_traits_2<
-              Arr_traits_basic_adaptor_2<Geometry_traits_2>,
-              ArrangementA_2,
-              ArrangementB_2>                        Geom_ovl_traits_2;
+      Arr_traits_basic_adaptor_2<Geometry_traits_2>,
+      Arrangement_a, Arrangement_b>                  Geom_ovl_traits_2;
 
-    typedef _Overlay_helper<Geom_ovl_traits_2, ArrangementA_2, ArrangementB_2>
+    typedef _Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
                                                      Ovl_helper;
 
     typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits>
@@ -342,39 +354,36 @@ public:
     typedef typename Base::Event                     Event;
     typedef typename Base::Subcurve                  Subcurve;
 
-    Surface_sweep_overlay_visitor(const ArrangementA_2* arrA,
-                                  const ArrangementB_2* arrB,
+    Surface_sweep_overlay_visitor(const Arrangement_a* arr_a,
+                                  const Arrangement_b* arr_b,
                                   Arrangement_result_2* arr_res,
                                   Overlay_traits* overlay_tr) :
-      Base(arrA, arrB, arr_res, overlay_tr)
+      Base(arr_a, arr_b, arr_res, overlay_tr)
     {}
   };
 
   typedef Arr_inc_insertion_zone_visitor<Arr>
-                                        Zone_insertion_visitor;
+    Zone_insertion_visitor;
 
   typedef Arr_walk_along_line_point_location<Arr>
-                                        Default_point_location_strategy;
+    Default_point_location_strategy;
 
   typedef Arr_walk_along_line_point_location<Arr>
-                                        Default_vertical_ray_shooting_strategy;
+    Default_vertical_ray_shooting_strategy;
   //@}
 
   ///! \name Topology-traits methods.
   //@{
 
-  /*!
-   * Initialize an empty DCEL structure.
+  /*! Initialize an empty DCEL structure.
    */
   void init_dcel();
 
-  /*!
-   * Make the necessary updates after the DCEL structure have been updated.
+  /*! Make the necessary updates after the DCEL structure have been updated.
    */
   void dcel_updated();
 
-  /*!
-   * Check if the given vertex is associated with the given curve end.
+  /*! Check if the given vertex is associated with the given curve end.
    * \param v The vertex.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
@@ -406,8 +415,7 @@ public:
     }
   }
 
-  /*!
-   * Given a curve end with boundary conditions and a face that contains the
+  /*! Given a curve end with boundary conditions and a face that contains the
    * interior of the curve, find a place for a boundary vertex that will
    * represent the curve end along the face boundary.
    * \param f The face.
@@ -429,8 +437,7 @@ public:
     return Object();
   }
 
-  /*!
-   * Locate the predecessor halfedge for the given curve around a given
+  /*! Locate the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
    * \param v The vertex.
    * \param cv The x-monotone curve.
@@ -452,8 +459,7 @@ public:
     return NULL;
   }
 
-  /*!
-   * Locate a DCEL feature that contains the given curve end.
+  /*! Locate a DCEL feature that contains the given curve end.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
    * \param ps_x The boundary condition of the curve end in x.
@@ -471,8 +477,7 @@ public:
     return Object();
   }
 
-  /*!
-   * Split a fictitious edge using the given vertex.
+  /*! Split a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
    * \param v The split vertex.
    * \pre e is a fictitious halfedge.
@@ -486,24 +491,21 @@ public:
     return NULL;
   }
 
-  /*!
-   * Determine whether the given face is unbounded.
+  /*! Determine whether the given face is unbounded.
    * \param f The face.
    * \return Whether f is unbounded.
    * There is only one unbounded face in the arrangement:
    */
   bool is_unbounded(const Face* f) const { return (f == unb_face); }
 
-  /*!
-   * Determine whether the given boundary vertex is redundant.
+  /*! Determine whether the given boundary vertex is redundant.
    * \param v The vertex.
    * \return Whether v is redundant, and should be erased.
    * There are no redundant vertices.
    */
   bool is_redundant(const Vertex*) const { return false; }
 
-  /*!
-   * Erase the given redundant vertex by merging a fictitious edge.
+  /*! Erase the given redundant vertex by merging a fictitious edge.
    * The function does not free the vertex v itself.
    * \param v The vertex.
    * \pre v is a redundant vertex.
@@ -555,8 +557,7 @@ public:
   /// \name Additional predicates, specialized for this topology-traits class.
   //@{
 
-  /*!
-   * Compare the given vertex and the given point.
+  /*! Compare the given vertex and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
@@ -564,8 +565,7 @@ public:
   virtual Comparison_result compare_x(const Point_2& p, const Vertex* v) const
   { return (this->m_geom_traits->compare_x_2_object()(p, v->point())); }
 
-  /*!
-   * Compare the given vertex and the given point.
+  /*! Compare the given vertex and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
@@ -573,8 +573,7 @@ public:
   virtual Comparison_result compare_xy(const Point_2& p, const Vertex* v) const
   { return (this->m_geom_traits->compare_xy_2_object()(p, v->point())); }
 
-  /*!
-   * Compare the relative y-position of the given point and the given edge
+  /*! Compare the relative y-position of the given point and the given edge
    * (which may be fictitious).
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).

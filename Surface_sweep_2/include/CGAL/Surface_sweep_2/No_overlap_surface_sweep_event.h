@@ -50,6 +50,7 @@ template <typename GeometryTraits_2, typename Subcurve_>
 class No_overlap_surface_sweep_event {
 public:
   typedef GeometryTraits_2                              Traits_2;
+
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Traits_2::Point_2                    Point_2;
 
@@ -149,6 +150,10 @@ public:
   /*! Add a subcurve to the container of left curves (without checks). */
   void push_back_curve_to_left(Subcurve* curve)
   { m_left_curves.push_back(curve); }
+
+  /*! Add a subcurve to the container of right curves (without checks). */
+  void push_back_curve_to_right(Subcurve* curve)
+  { m_right_curves.push_back(curve); }
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>

@@ -20,7 +20,6 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
  * The topology traits for great spherical arcs embedded on a sphere for the
  * arrangement package.
@@ -35,7 +34,7 @@
 #include <CGAL/Surface_sweep_2/Arr_construction_subcurve.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
-#include <CGAL/Surface_sweep_2/Arr_basic_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_sl_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
 #include <CGAL/Surface_sweep_2/Arr_insertion_sl_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
@@ -318,49 +317,57 @@ private:
   typedef Arr_construction_event<Geometry_traits_2, CSubcurve, Arr>
                                                                 CEvent;
   typedef Arr_spherical_construction_helper<Geometry_traits_2, Arr,
-    CEvent,CSubcurve>                                           CHelper;
+                                            CEvent,CSubcurve>   CHelper;
 
   // Type definition for the basic insertion sweep-line visitor.
-  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  BInsTraits;
-  typedef Arr_construction_subcurve<BInsTraits>                 BISubcurve;
-  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>   BIEvent;
-  typedef Arr_spherical_insertion_helper<BInsTraits, Arr, BIEvent, BISubcurve>
-                                                                BIHelper;
+  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  NxITraits;
+  typedef Arr_construction_subcurve<NxITraits,
+                                    No_overlap_surface_sweep_subcurve>
+                                                                NxISubcurve;
+  typedef Arr_construction_event<NxITraits, NxISubcurve, Arr,
+                                 No_overlap_surface_sweep_event>
+                                                                NxIEvent;
+  typedef Arr_spherical_insertion_helper<NxITraits, Arr, NxIEvent, NxISubcurve>
+                                                                NxIHelper;
 
   // Type definition for the insertion sweep-line visitor.
-  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        InsTraits;
-  typedef Arr_construction_subcurve<InsTraits>                  ISubcurve;
-  typedef Arr_construction_event<InsTraits,ISubcurve,Arr>       IEvent;
-  typedef Arr_spherical_insertion_helper<InsTraits, Arr, IEvent, ISubcurve>
+  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        ITraits;
+  typedef Arr_construction_subcurve<ITraits>                    ISubcurve;
+  typedef Arr_construction_event<ITraits, ISubcurve, Arr>       IEvent;
+  typedef Arr_spherical_insertion_helper<ITraits, Arr, IEvent, ISubcurve>
                                                                 IHelper;
 
   // Type definition for the batched point-location sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
-  typedef Arr_spherical_batched_pl_helper<BplTraits, Arr>       BplHelper;
+  typedef No_overlap_surface_sweep_subcurve<BplTraits>          BplSubcurve;
+  typedef No_overlap_surface_sweep_event<BplTraits, BplSubcurve> PblEvent;
+  typedef Arr_spherical_batched_pl_helper<BplTraits, Arr, PblEvent,
+                                          BplSubcurve>          BplHelper;
 
   // Type definition for the vertical decomposition sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
   typedef Arr_spherical_vert_decomp_helper<VdTraits, Arr>       VdHelper;
 
   // Type definition for the overlay sweep-line visitor.
-  template <typename ExGeomTraits_, typename ArrangementA_,
-            typename ArrangementB_>
+  template <typename ExtendedGeometryTraits_2, typename ArrangementA,
+            typename ArrangementB>
   struct _Overlay_helper :
-    public Arr_spherical_overlay_helper
-    <ExGeomTraits_, ArrangementA_, ArrangementB_, Arr,
-     Arr_construction_event<ExGeomTraits_,
-                            Arr_overlay_subcurve<ExGeomTraits_>, Arr>,
-     Arr_overlay_subcurve<ExGeomTraits_> >
+    public Arr_spherical_overlay_helper<
+      ExtendedGeometryTraits_2, ArrangementA, ArrangementB, Arr,
+      Arr_construction_event<ExtendedGeometryTraits_2,
+                             Arr_overlay_subcurve<ExtendedGeometryTraits_2>,
+                             Arr>,
+      Arr_overlay_subcurve<ExtendedGeometryTraits_2> >
   {
-    typedef ExGeomTraits_                               Ex_geomt_raits;
-    typedef ArrangementA_                               Arrangement_a;
-    typedef ArrangementB_                               Arrangement_b;
+    typedef ExtendedGeometryTraits_2                    Ex_geom_traits;
+    typedef ArrangementA                                Arrangement_a;
+    typedef ArrangementB                                Arrangement_b;
 
-    typedef Arr_overlay_subcurve<Ex_geomt_raits>        Overlay_subcurve;
-    typedef Arr_construction_event<Ex_geomt_raits, Overlay_subcurve, Arr>
+    typedef Arr_overlay_subcurve<Ex_geom_traits>        Overlay_subcurve;
+    typedef Arr_construction_event<Ex_geom_traits, Overlay_subcurve, Arr>
                                                         Construction_event;
 
-    typedef Arr_spherical_overlay_helper<Ex_geomt_raits,
+    typedef Arr_spherical_overlay_helper<Ex_geom_traits,
                                          Arrangement_a, Arrangement_b, Arr,
                                          Construction_event, Overlay_subcurve>
                                                         Base;
@@ -390,16 +397,16 @@ public:
     Surface_sweep_insertion_visitor;
 
   typedef Surface_sweep_construction_visitor
-    Surface_sweep_non_intersecting_construction_visitor;
+    Surface_sweep_no_intersection_construction_visitor;
 
-  typedef Arr_basic_insertion_sl_visitor<BIHelper>
-    Surface_sweep_non_intersecting_insertion_visitor;
+  typedef Arr_no_intersection_insertion_sl_visitor<NxIHelper>
+    Surface_sweep_no_intersection_insertion_visitor;
 
-  template <typename OutputIterator_>
+  template <typename OutputIterator>
   struct Surface_sweep_batched_point_location_visitor :
-    public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
+    public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator>
   {
-    typedef OutputIterator_                                     Output_iterator;
+    typedef OutputIterator                                      Output_iterator;
 
     typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator> Base;
     typedef typename Base::Traits_2                             Traits_2;
@@ -407,43 +414,44 @@ public:
     typedef typename Base::Subcurve                             Subcurve;
 
     Surface_sweep_batched_point_location_visitor(const Arr* arr,
-                                              Output_iterator& oi) :
+                                                 Output_iterator& oi) :
       Base(arr, oi)
     {}
   };
 
-  template <typename OutputIterator_>
+  template <typename OutputIterator>
   struct Surface_sweep_vertical_decomposition_visitor :
-    public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
+    public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator>
   {
-    typedef OutputIterator_                                     Output_iterator;
-    typedef Arr_vert_decomp_sl_visitor<VdHelper,Output_iterator>  Base;
+    typedef OutputIterator                                      Output_iterator;
+    typedef Arr_vert_decomp_sl_visitor<VdHelper,Output_iterator> Base;
 
     typedef typename Base::Traits_2                             Traits_2;
     typedef typename Base::Event                                Event;
     typedef typename Base::Subcurve                             Subcurve;
 
     Surface_sweep_vertical_decomposition_visitor(const Arr* arr,
-                                              Output_iterator* oi) :
+                                                 Output_iterator* oi) :
       Base(arr, oi)
     {}
   };
 
-  template <typename ArrangementA_, typename ArrangementB_,
-            typename OverlayTraits_>
+  template <typename ArrangementA, typename ArrangementB,
+            typename OverlayTraits>
   struct Surface_sweep_overlay_visitor :
-    public Arr_overlay_sl_visitor
-    <_Overlay_helper<Arr_overlay_traits_2<Geometry_traits_2,ArrangementA_,
-                                          ArrangementB_>,
-                     ArrangementA_, ArrangementB_>, OverlayTraits_>
+    public Arr_overlay_sl_visitor<_Overlay_helper<Arr_overlay_traits_2<
+                                                    Geometry_traits_2,
+                                                    ArrangementA,
+                                                    ArrangementB>,
+                                                  ArrangementA, ArrangementB>,
+                                  OverlayTraits>
   {
-    typedef ArrangementA_                               Arrangement_a;
-    typedef ArrangementB_                               Arrangement_b;
+    typedef ArrangementA                                Arrangement_a;
+    typedef ArrangementB                                Arrangement_b;
     typedef Arr                                         Arrangement_result_2;
-    typedef OverlayTraits_                              Overlay_traits;
+    typedef OverlayTraits                               Overlay_traits;
 
-    typedef Arr_overlay_traits_2<Geometry_traits_2,
-                                 Arrangement_a,
+    typedef Arr_overlay_traits_2<Geometry_traits_2, Arrangement_a,
                                  Arrangement_b>         Geom_ovl_traits_2;
 
     typedef _Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
@@ -501,8 +509,7 @@ public:
                                    bool& swap_predecessors) const;
 
 
-  /*!
-   * Given signs of two ccbs that show up when splitting upon insertion of
+  /*! Given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determine what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb
@@ -569,8 +576,7 @@ public:
                                      Arr_parameter_space ps_x,
                                      Arr_parameter_space ps_y);
 
-  /*!
-   * Locate the predecessor halfedge for the given curve around a given
+  /*! Locate the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
    * \param v The vertex.
    * \param cv The x-monotone curve.
