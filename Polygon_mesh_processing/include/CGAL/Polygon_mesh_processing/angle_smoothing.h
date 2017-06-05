@@ -83,7 +83,10 @@ public:
                     halfedge_descriptor main_he = it->first;
                     He_pair he_pair = it->second;
                     std::cout<< "main: " << main_he;
-                    std::cout<< " - incident: "<< he_pair.first <<" and " << he_pair.second <<std::endl;
+                    std::cout<< " - incident: "<< he_pair.first;
+                    std::cout<<" ("<<source(he_pair.first, mesh_)<<"->"<< target(he_pair.first, mesh_)<<")";
+                    std::cout<<" and " << he_pair.second;
+                    std::cout<<" ("<<source(he_pair.second, mesh_)<<"->"<< target(he_pair.second, mesh_)<<")"<<std::endl;
                 }
 
 
@@ -178,14 +181,24 @@ private:
         // common vertex
         Point s = get(vpmap_, target(he_c, mesh_));
 
+
         // scale
-        typename GeomTraits::Aff_transformation_3 t_scale(CGAL::SCALING, CGAL::sqrt(sqlength(he_c)));
+        double scale_factor = CGAL::sqrt(  sqlength(he_c) / bisector.squared_length() );
+        typename GeomTraits::Aff_transformation_3 t_scale(CGAL::SCALING, scale_factor);
         bisector = bisector.transform(t_scale);
+
 
         // translate
         Vector vec(bisector.source(), s);
         typename GeomTraits::Aff_transformation_3 t_translate(CGAL::TRANSLATION, vec);
         bisector = bisector.transform(t_translate);
+
+
+        double tol = 10e-15;
+        double target_length = CGAL::sqrt(sqlength(he_c));
+        double bisector_length = CGAL::sqrt(bisector.squared_length());
+        CGAL_assertion(   ( target_length - tol    <   bisector_length     ) &&
+                          ( bisector_length        <   target_length + tol )    );
 
     }
 
