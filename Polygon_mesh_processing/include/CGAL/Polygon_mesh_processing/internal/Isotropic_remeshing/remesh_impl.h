@@ -22,7 +22,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
-#define SM_HALFEDGE_STATUS_PMAP 1
+//#define SM_HALFEDGE_STATUS_PMAP 1
 //#define SM_FACE_PATCH_ID_PMAP 1
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -1957,7 +1957,6 @@ private:
     Patch_id_list input_patch_ids_;
     Patch_id_to_index_map patch_id_to_index_map_;
 #ifdef SM_HALFEDGE_STATUS_PMAP
-typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typename PolygonMesh:: template Property_map<halfedge_descriptor,Halfedge_status> halfedge_status_pmap_;
 #else
     Halfedge_status_pmap<PolygonMesh> halfedge_status_pmap_;
