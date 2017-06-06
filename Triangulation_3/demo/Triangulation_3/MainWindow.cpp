@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget* parent)
   // addAboutDemo(QString htmlResourceName) is also a function in DemoMainWindow
   //   it will add a menu action "About Demo..." to Help menu
   //   when the action is invoked, it will popup a messageBox showing the given html
-  this->addAboutDemo( "documentation/about.html" );
+  this->addAboutDemo( ":/documentation/documentation/about.html" );
 
 }
 
@@ -214,14 +214,9 @@ void MainWindow::on_actionClear_Scene_triggered()
 void MainWindow::popupAboutCGAL()
 {
   // read contents from .html file
-  QFile about_CGAL( "documentation/about_CGAL.html" );
-  about_CGAL.open(QIODevice::ReadOnly);
+  QFile about_CGAL(":/documentation/documentation/about.html");
+  about_CGAL.open(QIODevice::ReadOnly|QIODevice::Text);
   QString about_CGAL_txt = QTextStream(&about_CGAL).readAll();
-#ifdef CGAL_VERSION_STR
-  about_CGAL_txt.replace("<!--CGAL_VERSION-->",
-                         QString(" (version %1, svn r%2)")
-                         .arg(CGAL_VERSION_STR).arg(CGAL_SVN_REVISION));
-#endif
 
   // popup a message box
   QMessageBox mb(QMessageBox::NoIcon,
@@ -233,8 +228,8 @@ void MainWindow::popupAboutCGAL()
   // set links to be accessible by mouse or keyboard
   QLabel* mb_label = mb.findChild<QLabel*>("qt_msgbox_label");
   if(mb_label) {
-    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() | 
-                                      ::Qt::LinksAccessibleByMouse | 
+    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() |
+                                      ::Qt::LinksAccessibleByMouse |
                                       ::Qt::LinksAccessibleByKeyboard);
   } else {
     std::cerr << "Cannot find child \"qt_msgbox_label\" in QMessageBox\n"
