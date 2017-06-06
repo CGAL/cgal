@@ -733,7 +733,6 @@ protected:
 
 private:
   // Disabled copy constructor & assignment operator
-  typedef Polyhedral_complex_mesh_domain_3 Self;
   Polyhedral_complex_mesh_domain_3(const Self& src);
   Self& operator=(const Self& src);
 
