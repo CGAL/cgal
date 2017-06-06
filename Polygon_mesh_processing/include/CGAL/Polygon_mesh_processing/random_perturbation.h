@@ -47,7 +47,7 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
   template<typename GT, typename PM, typename VCMap, typename VPMap>
-  void random_perturbation_impl(PM& pmesh,
+  void random_perturbation_impl(PM& tmesh,
                                 const double& max_size,
                                 VCMap vcmap,
                                 VPMap vpmap,
@@ -61,14 +61,14 @@ namespace internal {
     typedef CGAL::AABB_traits<GT, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
-    Tree tree(faces(pmesh).first, faces(pmesh).second, pmesh);
+    Tree tree(faces(tmesh).first, faces(tmesh).second, tmesh);
     tree.accelerate_distance_queries();
 
     CGAL::Random rng(seed);
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+    BOOST_FOREACH(vertex_descriptor v, vertices(tmesh))
     {
-      if (!get(vcmap, v) && !is_border(v, pmesh))
+      if (!get(vcmap, v) && !is_border(v, tmesh))
       {
         const Point_3& p = get(vpmap, v);
         const Point_3 np(p.x() + FT(rng.get_double(-max_size, max_size)),
@@ -85,28 +85,37 @@ namespace internal {
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief perturbs the locations of vertices of a polygon mesh.
-
+* @brief randomly perturbs the locations of vertices of a triangulated surface mesh.
+* Note that depending on the chosen parameters, inversions and self-intersections may happen.
+*
+* @tparam TriangleMesh model of `MutableFaceGraph`.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param tmesh the triangulated surface mesh to be perturbed
+* @param perturbation_max_size the maximal length of moves that can be applied to
+*        vertices of `tmesh`.
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
 *    Exact constructions kernels are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during remeshing
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 */
-template<typename PolygonMesh, typename NamedParameters>
-void random_perturbation(PolygonMesh& pmesh
+template<typename TriangleMesh, typename NamedParameters>
+void random_perturbation(TriangleMesh& tmesh
                        , const double& perturbation_max_size
                        , const NamedParameters& np)
 {
-  typedef PolygonMesh PM;
+  typedef TriangleMesh PM;
   using boost::get_param;
   using boost::choose_param;
 
@@ -124,7 +133,7 @@ void random_perturbation(PolygonMesh& pmesh
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+                             get_property_map(vertex_point, tmesh));
 
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
@@ -134,7 +143,7 @@ void random_perturbation(PolygonMesh& pmesh
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::No_constraint_pmap<vertex_descriptor>());
 
-  internal::random_perturbation_impl<GT>(pmesh,
+  internal::random_perturbation_impl<GT>(tmesh,
                                          perturbation_max_size,
                                          vcmap,
                                          vpmap,
@@ -147,11 +156,11 @@ void random_perturbation(PolygonMesh& pmesh
 #endif
 }
 
-template<typename PolygonMesh>
-void random_perturbation(PolygonMesh& pmesh
+template<typename TriangleMesh>
+void random_perturbation(TriangleMesh& tmesh
                        , const double& perturbation_max_size)
 {
-  random_perturbation(pmesh,
+  random_perturbation(tmesh,
                       perturbation_max_size,
                       parameters::all_default());
 }
