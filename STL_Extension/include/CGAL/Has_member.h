@@ -22,6 +22,9 @@
 // Macro used to check if a type T has a member named `X`
 // It generates a class has_X<T> where has_X<T>::value is a boolean
 // See example in Concurrent_compact_container.h
+// Note: this macro is similar to BOOST_TTI_HAS_MEMBER_FUNCTION
+//       which was introduced in Boost 1.54 (CGAL supports version 1.48 and
+//       later at this time - June 2017)
 #define CGAL_GENERATE_MEMBER_DETECTOR(X)                                      \
 template<typename T> class has_##X {                                          \
     struct Fallback { int X; };                                               \
