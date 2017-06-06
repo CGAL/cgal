@@ -151,7 +151,7 @@ void random_perturbation(TriangleMesh& tmesh
 
 #ifdef CGAL_PMP_RANDOM_PERTURBATION_VERBOSE
   t.stop();
-  std::cout << "Perturbation done (;
+  std::cout << "Perturbation done (";
   std::cout << t.time() << " sec )." << std::endl;
 #endif
 }
