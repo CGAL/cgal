@@ -1,6 +1,10 @@
 #ifndef CGAL_VSA_SEGMENTATION_H
 #define CGAL_VSA_SEGMENTATION_H
 
+#include <CGAL/boost/graph/helpers.h>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/foreach.hpp>
+
 #include <vector>
 #include <cmath>
 #include <map>
@@ -32,6 +36,7 @@ private:
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Plane_3 Plane;
   typedef typename GeomTraits::Construct_normal_3 Construct_normal_3;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
@@ -48,6 +53,18 @@ private:
   //typedef boost::associative_property_map<std::map<face_descriptor, std::size_t> > FacetSegmentMap;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef boost::associative_property_map<std::map<vertex_descriptor, int> > VertexStatusPMap;
+  typedef boost::associative_property_map<std::map<halfedge_descriptor, int> > HalfedgeStatusPMap;
+
+  enum Vertex_status {
+    NO_ANCHOR = -1 // vertex v has no anchor attached
+  };
+
+  enum Halfedge_status {
+    OFF_BORDER, // halfedge h is off proxy border
+    CANDIDATE, // halfedge h is on proxy border, waiting to be visited
+    ON_BORDER // halfedge h is on proxy border
+  };
 
 public:
   struct PlaneProxy {
@@ -98,6 +115,32 @@ public:
     Construct_sum_of_vectors_3 sum_functor;
   };
 
+  // Anchor
+  struct Anchor {
+    // construct an anchor from vertex and the incident proxies
+    Anchor(const vertex_descriptor &vtx_, const Point &vtx_pt_, const std::set<std::size_t> &px_set_)
+    : vtx(vtx_) {
+      FT avgx(0), avgy(0), avgz(0), sum_area(0);
+      for (std::set<std::size_t>::iterator pxitr = px_set_.begin();
+        pxitr != px_set_.end(); ++pxitr) {
+        std::size_t px_idx = *pxitr;
+        // TODO: Plane px_plane(proxies[px_idx].center, proxies[px_idx].normal);
+        Plane px_plane;
+        Point proj = px_plane.projection(vtx_pt_);
+        // TODO: FT area = proxies[px_idx];
+        FT area = FT(0.0);
+        avgx += proj.x() * area;
+        avgy += proj.y() * area;
+        avgz += proj.z() * area;
+        sum_area += area;
+      }
+      pos = Point(avgx / sum_area, avgy / sum_area, avgz / sum_area);
+    }
+
+    vertex_descriptor vtx; // The associated vertex
+    Point pos; // The position of the anchor
+  };
+
 // member variables
 private:
   const Polyhedron &mesh;
@@ -115,6 +158,13 @@ private:
   FacetNormalMap normal_pmap;
   std::map<face_descriptor, FT> facet_areas;
   FacetAreaMap area_pmap;
+
+  std::map<vertex_descriptor, int> vertex_status_map;
+  VertexStatusPMap vertex_status_pmap;
+  std::map<halfedge_descriptor, int> halfedge_status_map;
+  HalfedgeStatusPMap halfedge_status_pmap;
+
+  std::vector<Anchor> anchors;
 
   L21Metric fit_error;
   //L21Metric<FacetNormalMap, FacetAreaMap> fit_error;
@@ -142,6 +192,8 @@ public:
     area_functor(traits.compute_squared_area_3_object()),
     normal_pmap(facet_normals),
     area_pmap(facet_areas),
+    vertex_status_pmap(vertex_status_map),
+    halfedge_status_pmap(halfedge_status_map),
     fit_error(traits, normal_pmap, area_pmap) {
     // CGAL_precondition(is_pure_triangle(mesh));
     // construct facet normal map
@@ -165,6 +217,16 @@ public:
       const Point p3 = get(vertex_point_map, target(prev(halfedge(*fitr, mesh), mesh), mesh));
       FT area(std::sqrt(to_double(area_functor(p2, p1, p3))));
       facet_areas.insert(std::pair<face_descriptor, FT>(*fitr, area));
+    }
+
+    // tag all vertex without anchor
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
+      vertex_status_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
+    }
+
+    // tag all halfedge off proxy border
+    BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
+      halfedge_status_map.insert(std::pair<halfedge_descriptor, int>(h, static_cast<int>(OFF_BORDER)));
     }
   }
 
@@ -195,6 +257,16 @@ public:
         fitting(seg_pmap);
       }
     }
+  }
+
+  // extract the approximated mesh from a partition
+  template<typename FacetSegmentMap>
+  void extract_mesh(FacetSegmentMap &seg_pmap) {
+    find_anchors(seg_pmap);
+    tag_halfedges_status(seg_pmap);
+    find_edges(seg_pmap);
+
+    pseudo_CDT();
   }
 
 private:
@@ -344,6 +416,52 @@ private:
     new_px.seed = max_facet[max_px_idx];
     proxies.push_back(new_px);
   }
+
+  template<typename FacetSegmentMap>
+  void find_anchors(FacetSegmentMap &seg_pmap) {
+    anchors.clear();
+
+    vertex_iterator vitr, vend;
+    for (boost::tie(vitr, vend) = vertices(mesh); vitr != vend; ++vitr) {
+      std::set<std::size_t> px_set;
+      std::size_t border_count = 0;
+
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(*vitr, mesh)) {
+        if (CGAL::is_border_edge(h, mesh)) {
+          ++border_count;
+          if (!CGAL::is_border(h, mesh))
+            px_set.insert(seg_pmap[face(h, mesh)]);
+        }
+        else if (seg_pmap[face(h, mesh)] != seg_pmap[face(opposite(h, mesh), mesh)]) {
+          ++border_count;
+          px_set.insert(seg_pmap[face(h, mesh)]);
+        }
+      }
+      if (border_count >= 3) {
+        // make an anchor and attach it to the vertex
+        vertex_status_pmap[*vitr] = static_cast<int>(anchors.size());
+        anchors.push_back(Anchor(*vitr, vertex_point_map[*vitr], px_set));
+      }
+    }
+  }
+
+  template<typename FacetSegmentMap>
+  void tag_halfedges_status(FacetSegmentMap &seg_pmap) {
+    BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
+      if (!CGAL::is_border(h, mesh)
+        && (CGAL::is_border(opposite(h, mesh), mesh)
+          || seg_pmap[face(h, mesh)] != seg_pmap[face(opposite(h, mesh), mesh)])) {
+        halfedge_status_pmap[h] = static_cast<int>(ON_BORDER);
+      }
+    }
+  }
+
+  template<typename FacetSegmentMap>
+  void find_edges(FacetSegmentMap &seg_pmap) {
+
+  }
+
+  void pseudo_CDT() {}
 };
 }
 }
