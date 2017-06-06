@@ -223,14 +223,15 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
           except:
             sys.stderr.write("Error while copying documentation\n")
             raise
-          try:
-            #copy documentation from master
-            if args.do_copy_results:
-              tgt=os.path.join(log_target, 'master')
-              shutil.copytree(args.master_dir, tgt, symlinks=True)
-          except:
-            sys.stderr.write("Error while copying master documentation\n")
-            raise
+          if args.master_dir:
+            try:
+              #copy documentation from master
+              if args.do_copy_results:
+                tgt=os.path.join(log_target, 'master')
+                shutil.copytree(args.master_dir, tgt, symlinks=True)
+            except:
+              sys.stderr.write("Error while copying master documentation\n")
+              raise
 
         except:
           sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
