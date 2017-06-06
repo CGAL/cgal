@@ -101,7 +101,7 @@ create_single_source_cgal_program( "corefinement_consecutive_bool_op.cpp" )
 create_single_source_cgal_program( "corefinement_difference_remeshed.cpp" )
 create_single_source_cgal_program( "corefinement_mesh_union.cpp" )
 create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
-
+create_single_source_cgal_program( "random_perturbation_SM_example.cpp" )
 
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
