@@ -444,11 +444,12 @@ operator()(const bool refine)
     std::cerr << "refine_balls() done. Nb of points in triangulation: "
               << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
+
+    debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
+
     CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
  }
   
-  // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
-
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << std::endl;
 #endif
