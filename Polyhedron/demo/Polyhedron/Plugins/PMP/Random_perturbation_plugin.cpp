@@ -45,7 +45,7 @@ public:
     actionRandomPerturbation_->setProperty("subMenuName", "Polygon Mesh Processing");
     if (actionRandomPerturbation_) {
       connect(actionRandomPerturbation_, SIGNAL(triggered()),
-        this, SLOT(random_perturbation()));
+        this, SLOT(random_perturb()));
     }
   }
 
@@ -65,7 +65,7 @@ public:
   }
 
 public Q_SLOTS:
-  void random_perturbation()
+  void random_perturb()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_polyhedron_item* poly_item =
@@ -90,9 +90,10 @@ public Q_SLOTS:
       time.start();
 
       std::cout << "Perturbation..." << std::endl;
-      CGAL::Polygon_mesh_processing::random_perturbation(
-        *poly_item->polyhedron(),
-         max_move);
+
+      namespace PMP = CGAL::Polygon_mesh_processing;
+      PMP::random_perturbation(*poly_item->polyhedron(),
+                               max_move);
 
       poly_item->invalidateOpenGLBuffers();
       Q_EMIT poly_item->itemChanged();
