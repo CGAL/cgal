@@ -349,10 +349,10 @@ public:
   {
     std::stringstream sstr;
     sstr << "Facet { " << std::endl
-    << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-    << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+    << "  4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
     << "}" << std::endl;
 
     return sstr.str();
