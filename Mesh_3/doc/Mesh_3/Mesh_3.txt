@@ -667,7 +667,7 @@ View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1
 
 In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain. 
 The surfaces inside the domain may be closed surfaces as well as surfaces with boundaries. In the case of a closed surface
-the volume delimited by this surface is also considered as inside the domain. That is different from the example in the 
+the volume delimited by this surface is also considered as inside the domain. 
 previous subsection.
 
  
