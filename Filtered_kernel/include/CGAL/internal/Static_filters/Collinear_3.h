@@ -46,8 +46,7 @@ public:
 
   typedef typename Base::result_type  result_type;
   result_type 
-  operator()(const Point_3 &p, const Point_3 &q,
-	     const Point_3 &r, const Point_3 &s) const
+  operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r) const
   {
     CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Collinear_3", tmp);
 
