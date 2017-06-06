@@ -28,6 +28,10 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+
 #include <CGAL/Random.h>
 
 #include <boost/foreach.hpp>
@@ -50,8 +54,15 @@ namespace internal {
                                 const int seed)
   {
     typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
-    typedef typename GT::Point_3 Point_3;
-    typedef typename GT::FT      FT;
+    typedef typename GT::Point_3    Point_3;
+    typedef typename GT::FT         FT;
+
+    typedef CGAL::AABB_face_graph_triangle_primitive<PM> Primitive;
+    typedef CGAL::AABB_traits<GT, Primitive> Traits;
+    typedef CGAL::AABB_tree<Traits> Tree;
+
+    Tree tree(faces(pmesh).first, faces(pmesh).second, pmesh);
+    tree.accelerate_distance_queries();
 
     CGAL::Random rng(seed);
 
@@ -63,7 +74,9 @@ namespace internal {
         const Point_3 np(p.x() + FT(rng.get_double(-max_size, max_size)),
                          p.y() + FT(rng.get_double(-max_size, max_size)),
                          p.z() + FT(rng.get_double(-max_size, max_size)));
-        put(vpmap, v, np);
+        const Point_3 closest = tree.closest_point(np); //project on input surface
+
+        put(vpmap, v, closest);
       }
     }
   }
