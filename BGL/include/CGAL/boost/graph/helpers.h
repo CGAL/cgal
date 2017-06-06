@@ -738,7 +738,7 @@ bool is_degenerate_triangle_face(
  * \ingroup PkgBGLHelperFct
  * \brief Creates a triangulated regular prism
  * having `nb_vertices` vertices in each of its bases and adds it to the graph `g`.
- * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, 0.5*`height`, 0)
+ * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, `height`, 0)
  * \param nb_vertices the number of vertices per base. It must be greater than or equal to 3.
  * \param g the graph in which the regular prism will be created.
  * \param base_center the center of the circle in which the lower base is inscribed.
@@ -832,7 +832,7 @@ make_regular_prism(
  * \ingroup PkgBGLHelperFct
  * \brief Creates a pyramid having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
- * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0.5*`height`, 0)
+ * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0`, 0)
  * \param nb_vertices the number of vertices in the base. It must be greater than or equal to 3.
  * \param g the graph in which the pyramid will be created
  * \param base_center the center of the circle in which the base is inscribed.
@@ -1016,7 +1016,7 @@ make_icosahedron(
  * \param g the graph in which the grid will be created.
  * \param calculator the functor that will assign coordinates to the grid vertices.
  * \param triangulated decides if a cell is composed of one quad or two triangles.
- * If `triangulated` is `true`, the diagonal of the cells is oriented from (0,0) to (1,1)
+ * If `triangulated` is `true`, the diagonal of each cell is oriented from (0,0) to (1,1)
  * in the cell coordinates.
  *
  * \tparam CoordinateFunctor that takes two `boost::graph_traits<Graph>::%vertices_size_type`
