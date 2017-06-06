@@ -1010,6 +1010,9 @@ make_icosahedron(
  *
  * \brief Creates a row major ordered grid with `i` cells along the width and `j` cells
  * along the height and adds it to the graph `g`.
+ *
+ * \param i the number of cells along the width.
+ * \param j the number of cells along the height.
  * \param g the graph in which the grid will be created.
  * \param calculator the functor that will assign coordinates to the grid vertices.
  * \param triangulated decides if a cell is composed of one quad or two triangles.
