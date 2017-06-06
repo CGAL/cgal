@@ -234,16 +234,16 @@ typedef std::vector<std::string> Position_vector;
 int main(int, char**)
 {
   std::map<std::string, Function> functions;
-  functions["schwarz_p"] = &schwarz_p;
-  functions["schwarz_p_transl"] = &schwarz_p_transl;
-  functions["gyroid"] = &gyroid;
+  functions["D_prime"] = &D_prime;
+  functions["G_prime"] = &G_prime;
   functions["diamond"] = &diamond;
   functions["double_p"] = &double_p;
-  functions["G_prime"] = &G_prime;
+  functions["gyroid"] = &gyroid;
   functions["lidinoid"] = &lidinoid;
-  functions["D_prime"] = &D_prime;
-  functions["split_p"] = &split_p;
+  functions["schwarz_p"] = &schwarz_p;
+  functions["schwarz_p_transl"] = &schwarz_p_transl;
   functions["segments"] = &segments;
+  functions["split_p"] = &split_p;
 
   std::map<std::string, Position_vector> v_vps;
   v_vps["in"] = make_vps_in();

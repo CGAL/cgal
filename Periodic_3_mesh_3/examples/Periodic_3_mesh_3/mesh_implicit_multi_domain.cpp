@@ -16,6 +16,8 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
+#include <CGAL/number_type_config.h>
+
 namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
 // Kernel
@@ -45,31 +47,27 @@ typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria,
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-const FT PI = 3.14159265358979;
-
 // Function
 FT sphere_function_1 (const Point& p)
-{ return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.15; }
+{ return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - 0.15; }
 
 FT sphere_function_2 (const Point& p)
-{ return CGAL::squared_distance(p, Point(0.66, 0.5, 0.5))-0.2; }
+{ return CGAL::squared_distance(p, Point(0.66, 0.5, 0.5)) - 0.2; }
 
 FT schwarz_p(const Point& p)
 {
-  const FT x2=std::cos( p.x() * 2*PI ),
-  y2=std::cos( p.y() * 2*PI ),
-  z2=std::cos( p.z() * 2*PI );
+  const FT x2 = std::cos( p.x() * 2 * CGAL_PI ),
+           y2 = std::cos( p.y() * 2 * CGAL_PI ),
+           z2 = std::cos( p.z() * 2 * CGAL_PI );
   return x2 + y2 + z2;
 }
 
 int main(int argc, char** argv)
 {
   int domain_size = 1;
-  std::string index = ".";
 
   if (argc > 1)
   {
-    index = argv[1];
     if (argc > 2)
       domain_size = atof(argv[2]);
   }
@@ -94,7 +92,7 @@ int main(int argc, char** argv)
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
   // Output
-  std::ofstream medit_file( (std::string("output_") + index + ".mesh").data() );
+  std::ofstream medit_file("output_multi_domain.mesh");
 
   P3M3_IO::write_complex_to_medit(medit_file, c3t3, 1);
 
