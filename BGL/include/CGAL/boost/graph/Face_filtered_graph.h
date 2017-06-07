@@ -93,6 +93,12 @@ struct Face_filtered_graph
   typedef typename boost::graph_traits<Graph>::edge_descriptor                edge_descriptor;
   /// Face descriptor type
   typedef typename boost::graph_traits<Graph>::face_descriptor                face_descriptor;
+  /// Size type
+  #ifndef DOXYGEN_RUNNING
+  typedef boost::dynamic_bitset<>::size_type size_type;
+  #else
+  typedef unspecified_type size_type;
+  #endif
 
   // non documented types
   typedef typename boost::property_traits< FIMap >::value_type face_index_type;
@@ -376,20 +382,17 @@ struct Face_filtered_graph
     return selected_halfedges[get(himap, h)];
   }
   ///returns the number of selected faces
-  typename boost::graph_traits<Graph>::
-  faces_size_type number_of_faces()const
+  size_type number_of_faces()const
   {
     return selected_faces.count();
   }
 ///returns the number of selected vertices.
-  typename boost::graph_traits<Graph>::
-  vertices_size_type number_of_vertices()const
+  size_type number_of_vertices()const
   {
     return selected_vertices.count();
   }
 ///returns the number of selected halfedges.
-  typename boost::graph_traits<Graph>::
-  halfedges_size_type number_of_halfedges()const
+  size_type number_of_halfedges()const
   {
     return selected_halfedges.count();
   }
@@ -544,10 +547,10 @@ struct graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >
   typedef typename BGTG::directed_category directed_category;
   typedef typename BGTG::edge_parallel_category edge_parallel_category;
   typedef typename BGTG::traversal_category traversal_category;
-  typedef typename BGTG::vertices_size_type vertices_size_type;
-  typedef typename BGTG::edges_size_type edges_size_type;
-  typedef typename BGTG::halfedges_size_type halfedges_size_type;
-  typedef typename BGTG::faces_size_type faces_size_type;
+  typedef typename boost::dynamic_bitset<>::size_type vertices_size_type;
+  typedef typename boost::dynamic_bitset<>::size_type edges_size_type;
+  typedef typename boost::dynamic_bitset<>::size_type halfedges_size_type;
+  typedef typename boost::dynamic_bitset<>::size_type faces_size_type;
   typedef typename BGTG::degree_size_type degree_size_type;
 
   static vertex_descriptor null_vertex()
@@ -633,7 +636,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits<Graph>::vertices_size_type
+typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap>::size_type
 num_vertices(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.number_of_vertices();
@@ -643,7 +646,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits<Graph>::edges_size_type
+typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap>::size_type
 num_edges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.number_of_halfedges()/2;
@@ -679,7 +682,8 @@ out_degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap,
            const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   CGAL_assertion(in_CC(v, w));
-  return std::distance(out_edges(v, w).first ,out_edges(v, w).second);
+  return static_cast<typename boost::graph_traits<Graph>::degree_size_type>(
+    std::distance(out_edges(v, w).first ,out_edges(v, w).second) );
 }
 
 template<typename Graph,
@@ -691,7 +695,8 @@ in_degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, 
           const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   CGAL_assertion(in_CC(v, w));
-  return std::distance(in_edges(v, w).first ,in_edges(v, w).second);
+  return static_cast<typename boost::graph_traits<Graph>::degree_size_type>(
+    std::distance(in_edges(v, w).first ,in_edges(v, w).second) );
 }
 
 template<typename Graph,
@@ -982,7 +987,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits<Graph>::halfedges_size_type
+typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap>::size_type
 num_halfedges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return w.number_of_halfedges();
@@ -1040,7 +1045,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-typename boost::graph_traits<Graph>::vertices_size_type
+typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap>::size_type
 num_faces(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return w.number_of_faces();
