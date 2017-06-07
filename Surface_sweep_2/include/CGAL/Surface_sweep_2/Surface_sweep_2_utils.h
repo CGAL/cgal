@@ -21,13 +21,11 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
  * Auxiliary functions for the usage of the various sweep-line visitors.
  */
 
 #include <CGAL/basic.h>
-
 #include <CGAL/Object.h>
 #include <CGAL/assertions.h>
 #include <vector>
@@ -35,9 +33,9 @@
 #include <CGAL/Arr_enums.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
-/*!
- * Subdivide a range of input curves into x-monotone objects.
+/*! Subdivide a range of input curves into x-monotone objects.
  * \param begin The first input curve (of type Curve_2).
  * \param end A part-the-end iterator for the input curves.
  * \param x_curves Output: The x-monotone subcurves
@@ -49,43 +47,38 @@ template <typename Traits,
           typename CurveInputIter,
           typename XCurveOutIter,
           typename PointOutIter>
-void make_x_monotone (CurveInputIter begin, CurveInputIter end,
-                      XCurveOutIter x_curves,
-                      PointOutIter iso_points,
-                      const Traits * tr)
+void make_x_monotone(CurveInputIter begin, CurveInputIter end,
+                     XCurveOutIter x_curves,
+                     PointOutIter iso_points,
+                     const Traits * tr)
 {
   // Split the input curves into x-monotone objects.
-  std::size_t          num_of_curves = std::distance(begin, end);
-  std::vector<Object>  object_vec;
-  CurveInputIter       iter;
+  std::size_t num_of_curves = std::distance(begin, end);
+  std::vector<Object> object_vec;
+  CurveInputIter iter;
 
-  object_vec.reserve (num_of_curves);
-  for (iter = begin; iter != end; ++iter)
-  {
-    tr->make_x_monotone_2_object()(*iter,
-                                   std::back_inserter(object_vec));
+  object_vec.reserve(num_of_curves);
+  for (iter = begin; iter != end; ++iter) {
+    tr->make_x_monotone_2_object()(*iter, std::back_inserter(object_vec));
   }
 
   // Transform each object to either a point or an x-monotone curve.
   typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
   typedef typename Traits::Point_2               Point_2;
 
-  const X_monotone_curve_2 *xcv;
-  const Point_2            *pt;
-  unsigned int              i;
+  const X_monotone_curve_2* xcv;
+  const Point_2* pt;
+  unsigned int i;
 
-  for (i = 0 ; i < object_vec.size() ; ++i)
-  {
+  for (i = 0 ; i < object_vec.size() ; ++i) {
     xcv = object_cast<X_monotone_curve_2> (&(object_vec[i]));
 
-    if (xcv != NULL)
-    {
+    if (xcv != NULL) {
       // The object is an x-monotone curve.
       *x_curves = *xcv;
       ++x_curves;
     }
-    else
-    {
+    else {
       // The object is an isolated point.
       pt = object_cast<Point_2> (&(object_vec[i]));
       CGAL_assertion (pt != NULL);
@@ -94,12 +87,9 @@ void make_x_monotone (CurveInputIter begin, CurveInputIter end,
       ++iso_points;
     }
   }
-
-  return;
 }
 
-/*!
- * Given an arrangement and two ranges of x-monotone curves and isolated
+/*! Given an arrangement and two ranges of x-monotone curves and isolated
  * points, representing objects that should be inserted into the arrangement,
  * create two output sets of extended x-monotone curves and isolated points,
  * including the arrangement edges and isolated vertices.
@@ -124,12 +114,12 @@ template <typename Arrangement,
           typename PointInputIter,
           typename XCurveOutIter,
           typename PointOutIter>
-void prepare_for_sweep (Arrangement& arr,
-                        XCurveInputIter xcvs_begin, XCurveInputIter xcvs_end,
-                        PointInputIter pts_begin, PointInputIter pts_end,
-                        XCurveOutIter x_curves,
-                        PointOutIter iso_points,
-                        const ExTraits * /* ex_tr */)
+void prepare_for_sweep(Arrangement& arr,
+                       XCurveInputIter xcvs_begin, XCurveInputIter xcvs_end,
+                       PointInputIter pts_begin, PointInputIter pts_end,
+                       XCurveOutIter x_curves,
+                       PointOutIter iso_points,
+                       const ExTraits * /* ex_tr */)
 {
   typedef typename Arrangement::Vertex_iterator       Vertex_iterator;
   typedef typename Arrangement::Edge_iterator         Edge_iterator;
@@ -140,17 +130,15 @@ void prepare_for_sweep (Arrangement& arr,
   typedef typename ExTraits::Point_2                  Ex_point_2;
 
   // Go over the input objects and copy them to the output iterators.
-  XCurveInputIter   xcv_it;
-  PointInputIter    pt_it;
+  XCurveInputIter xcv_it;
+  PointInputIter pt_it;
 
-  for (xcv_it = xcvs_begin; xcv_it != xcvs_end; ++xcv_it)
-  {
+  for (xcv_it = xcvs_begin; xcv_it != xcvs_end; ++xcv_it) {
     *x_curves = Ex_x_monotone_curve_2 (*xcv_it);
     ++x_curves;
   }
 
-  for (pt_it = pts_begin; pt_it != pts_end; ++pt_it)
-  {
+  for (pt_it = pts_begin; pt_it != pts_end; ++pt_it) {
     *iso_points = Ex_point_2 (*pt_it);
     ++iso_points;
   }
@@ -161,12 +149,9 @@ void prepare_for_sweep (Arrangement& arr,
   Edge_iterator     eit;
   Halfedge_handle   he;
 
-  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
-  {
-    if (eit->direction() == ARR_LEFT_TO_RIGHT)
-      he = eit->twin();
-    else
-      he = eit;
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
+    if (eit->direction() == ARR_LEFT_TO_RIGHT) he = eit->twin();
+    else he = eit;
 
     *x_curves = Ex_x_monotone_curve_2 (he->curve(), he);
     ++x_curves;
@@ -178,20 +163,16 @@ void prepare_for_sweep (Arrangement& arr,
   Vertex_iterator   vit;
   Vertex_handle     v;
 
-   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-   {
+   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
      v = vit;
-     if (v->is_isolated())
-     {
+     if (v->is_isolated()) {
        *iso_points = Ex_point_2 (v->point(), v);
        ++iso_points;
      }
    }
-
-   return;
 }
 
-
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

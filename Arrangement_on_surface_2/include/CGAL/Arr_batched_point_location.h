@@ -30,6 +30,8 @@
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 /*! Issue a batched point-location query on an arrangement given an input
  * range of points.
  * \param arr The arrangement.
@@ -52,14 +54,16 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
        PointsIterator points_begin, PointsIterator points_end,
        OutputIterator oi)
 {
-  typedef GeometryTraits_2                              Geom_traits_2;
-  typedef TopologyTraits                                Top_traits;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef TopologyTraits                                Topology_traits;
 
+  typedef Geometry_traits_2                             Gt2;
+  typedef Topology_traits                               Tt;
 
   // Arrangement types:
-  typedef Arrangement_on_surface_2<Geom_traits_2, Top_traits>  Arr_2;
-  typedef typename Top_traits::template
-          Surface_sweep_batched_point_location_visitor<OutputIterator>
+  typedef Arrangement_on_surface_2<Gt2, Tt>             Arr_2;
+  typedef typename Tt::template
+    Surface_sweep_batched_point_location_visitor<OutputIterator>
                                                         Bpl_visitor;
 
   typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
@@ -68,7 +72,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   typedef typename Arr_2::Vertex_const_handle           Vertex_const_handle;
   typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
 
-  typedef typename Bpl_visitor::Traits_2                Bpl_traits_2;
+  typedef typename Bpl_visitor::Geometry_traits_2       Bpl_traits_2;
   typedef typename Bpl_traits_2::X_monotone_curve_2     Bpl_x_monotone_curve_2;
   typedef typename Bpl_traits_2::Point_2                Bpl_point_2;
 
@@ -99,7 +103,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   }
 
   // Obtain a extended traits-class object.
-  const Geom_traits_2* geom_traits = arr.geometry_traits();
+  const Gt2* geom_traits = arr.geometry_traits();
 
   /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
@@ -113,15 +117,16 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Geom_traits_2, Bpl_traits_2>,
+  typename boost::mpl::if_<boost::is_same<Gt2, Bpl_traits_2>,
                            const Bpl_traits_2&, Bpl_traits_2>::type
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.
   Bpl_visitor visitor(&arr, oi);
-  No_intersection_surface_sweep_2<typename Bpl_visitor::Traits_2, Bpl_visitor,
-                                  typename Bpl_visitor::Subcurve,
-                                  typename Bpl_visitor::Event>
+  Ss2::No_intersection_surface_sweep_2<typename Bpl_visitor::Geometry_traits_2,
+                                       Bpl_visitor,
+                                       typename Bpl_visitor::Subcurve,
+                                       typename Bpl_visitor::Event>
     surface_sweep(&ex_traits, &visitor);
   surface_sweep.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
                       iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.

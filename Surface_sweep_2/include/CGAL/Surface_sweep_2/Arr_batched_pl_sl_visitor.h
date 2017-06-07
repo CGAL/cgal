@@ -20,7 +20,8 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-/*!
+/*! \file
+ *
  * Definition of the Arr_batched_pl_sl_visitor class-template.
  */
 
@@ -33,6 +34,7 @@
 namespace CGAL {
 
 /*! \class Arr_batched_pl_sl_visitor
+ *
  * A surface-sweep visitor for performing batched point-location queries on an
  * arrangement embedded on a surface.
  */
@@ -42,7 +44,7 @@ public:
   typedef Helper_                                       Helper;
   typedef OutputIterator_                               OutputIterator;
 
-  typedef typename Helper::Traits_2                     Traits_2;
+  typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
   typedef typename Helper::Arrangement_2                Arrangement_2;
   typedef typename Helper::Event                        Event;
   typedef typename Helper::Subcurve                     Subcurve;
@@ -176,6 +178,6 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
   return true;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

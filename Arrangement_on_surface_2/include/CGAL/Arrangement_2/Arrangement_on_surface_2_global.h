@@ -33,11 +33,11 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
-#include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Arrangement_zone_2.h>
 #include <CGAL/Arrangement_2/Arr_compute_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_visitors.h>
 #include <CGAL/assertions.h>
@@ -45,6 +45,8 @@
 #include <CGAL/IO/Arr_iostream.h>
 
 namespace CGAL {
+
+namespace Ss2 = Surface_sweep_2;
 
 //-----------------------------------------------------------------------------
 // Insert a curve into the arrangement (incremental insertion).
@@ -244,7 +246,7 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 {
   typedef typename TopTraits::Surface_sweep_construction_visitor
                                                         Construct_visitor;
-  typedef typename Construct_visitor::Traits_2          Construct_traits;
+  typedef typename Construct_visitor::Geometry_traits_2 Construct_traits;
 
   const GeomTraits* geom_traits = arr.geometry_traits();
   Construct_visitor visitor(&arr);
@@ -253,7 +255,7 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Construct_visitor::Traits_2 is the same as the type
+   * If the type Construct_visitor::Geometry_traits_2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
    * the later as a single parameter to the constructor.
@@ -266,9 +268,10 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep:
-  Surface_sweep_2<typename Construct_visitor::Traits_2, Construct_visitor,
-                  typename Construct_visitor::Subcurve,
-                  typename Construct_visitor::Event>
+  Ss2::Surface_sweep_2<typename Construct_visitor::Geometry_traits_2,
+                       Construct_visitor,
+                       typename Construct_visitor::Subcurve,
+                       typename Construct_visitor::Event>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves);
 }
@@ -289,7 +292,7 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 {
   typedef typename TopTraits::Surface_sweep_construction_visitor
                                                         Construct_visitor;
-  typedef typename Construct_visitor::Traits_2          Construct_traits;
+  typedef typename Construct_visitor::Geometry_traits_2 Construct_traits;
 
   const GeomTraits* geom_traits = arr.geometry_traits();
   Construct_visitor visitor(&arr);
@@ -298,7 +301,7 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Construct_visitor::Traits_2 is the same as the type
+   * If the type Construct_visitor::Geometry_traits_2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
    * the later as a single parameter to the constructor.
@@ -311,9 +314,10 @@ void insert_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep.
-  Surface_sweep_2<typename Construct_visitor::Traits_2, Construct_visitor,
-                  typename Construct_visitor::Subcurve,
-                  typename Construct_visitor::Event>
+  Ss2::Surface_sweep_2<typename Construct_visitor::Geometry_traits_2,
+                       Construct_visitor,
+                       typename Construct_visitor::Subcurve,
+                       typename Construct_visitor::Event>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves, begin_points, end_points);
 }
@@ -332,10 +336,9 @@ void insert_non_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 {
   typedef typename TopTraits::Surface_sweep_insertion_visitor
                                                         Insert_visitor;
-  typedef typename Insert_visitor::Traits_2             Insert_traits;
-  typedef typename Insert_visitor::Traits_2::X_monotone_curve_2
-                                                        Ex_x_monotone_curve_2;
-  typedef typename Insert_visitor::Traits_2::Point_2    Ex_point_2;
+  typedef typename Insert_visitor::Geometry_traits_2    Insert_traits;
+  typedef typename Insert_traits::X_monotone_curve_2    Ex_x_monotone_curve_2;
+  typedef typename Insert_traits::Point_2               Ex_point_2;
 
   const GeomTraits* geom_traits = arr.geometry_traits();
   Insert_visitor visitor(&arr);
@@ -344,7 +347,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Construct_visitor::Traits_2 is the same as the type
+   * If the type Construct_visitor::Geometry_traits_2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
    * the later as a single parameter to the constructor.
@@ -360,17 +363,18 @@ void insert_non_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   std::list<Ex_x_monotone_curve_2> ex_cvs;
   std::list<Ex_point_2> ex_pts;
 
-  prepare_for_sweep(arr,
-                    begin_xcurves, end_xcurves,   // the x-monotone curves
-                    begin_points, end_points,     // the points (if any)
-                    std::back_inserter(ex_cvs),
-                    std::back_inserter(ex_pts),
-                    &traits);
+  Ss2::prepare_for_sweep(arr,
+                         begin_xcurves, end_xcurves,   // the x-monotone curves
+                         begin_points, end_points,     // the points (if any)
+                         std::back_inserter(ex_cvs),
+                         std::back_inserter(ex_pts),
+                         &traits);
 
   // Define a basic surface-sweep instance and perform the sweep.
-  Surface_sweep_2<typename Insert_visitor::Traits_2, Insert_visitor,
-                  typename Insert_visitor::Subcurve,
-                  typename Insert_visitor::Event>
+  Ss2::Surface_sweep_2<typename Insert_visitor::Geometry_traits_2,
+                       Insert_visitor,
+                       typename Insert_visitor::Subcurve,
+                       typename Insert_visitor::Event>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(ex_cvs.begin(), ex_cvs.end(),ex_pts.begin(), ex_pts.end());
 }
@@ -411,9 +415,10 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   std::list<X_monotone_curve_2> xcurves;
   std::list<Point_2> iso_points;
 
-  make_x_monotone(begin, end,
-                  std::back_inserter(xcurves), std::back_inserter(iso_points),
-                  geom_traits);
+  Ss2::make_x_monotone(begin, end,
+                       std::back_inserter(xcurves),
+                       std::back_inserter(iso_points),
+                       geom_traits);
 
   if (arr.is_empty())
     insert_empty(arr, xcurves.begin(), xcurves.end(),
@@ -789,14 +794,15 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
   typedef typename TopTraits::Surface_sweep_no_intersection_construction_visitor
                                                             Construct_visitor;
   Construct_visitor visitor(&arr);
-  typename Construct_visitor::Traits_2 traits(*geom_traits);
+  typename Construct_visitor::Geometry_traits_2 traits(*geom_traits);
 
   // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
-  No_intersection_surface_sweep_2<typename Construct_visitor::Traits_2,
-                                   Construct_visitor,
-                                   typename Construct_visitor::Subcurve,
-                                   typename Construct_visitor::Event>
+  Ss2::No_intersection_surface_sweep_2<
+    typename Construct_visitor::Geometry_traits_2,
+    Construct_visitor,
+    typename Construct_visitor::Subcurve,
+    typename Construct_visitor::Event>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves);
 }
@@ -817,7 +823,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
 {
   typedef typename TopTraits::Surface_sweep_no_intersection_construction_visitor
                                                         Construct_visitor;
-  typedef typename Construct_visitor::Traits_2          Construct_traits;
+  typedef typename Construct_visitor::Geometry_traits_2 Construct_traits;
 
   const GeomTraits * geom_traits = arr.geometry_traits();
   Construct_visitor visitor(&arr);
@@ -826,7 +832,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Construct_visitor::Traits_2 is the same as the type
+   * If the type Construct_visitor::Geometry_traits_2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
    * the later as a single parameter to the constructor.
@@ -840,10 +846,11 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeomTraits,
 
   // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
-  No_intersection_surface_sweep_2<typename Construct_visitor::Traits_2,
-                                   Construct_visitor,
-                                   typename Construct_visitor::Subcurve,
-                                   typename Construct_visitor::Event>
+  Ss2::No_intersection_surface_sweep_2<
+    typename Construct_visitor::Geometry_traits_2,
+    Construct_visitor,
+    typename Construct_visitor::Subcurve,
+    typename Construct_visitor::Event>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves, begin_points, end_points);
 }
@@ -864,10 +871,9 @@ void non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeomTraits,
 {
   typedef typename TopTraits::Surface_sweep_no_intersection_insertion_visitor
                                                         Insert_visitor;
-  typedef typename Insert_visitor::Traits_2             Insert_traits;
-  typedef typename Insert_visitor::Traits_2::X_monotone_curve_2
-                                                        Ex_x_monotone_curve_2;
-  typedef typename Insert_visitor::Traits_2::Point_2    Ex_point_2;
+  typedef typename Insert_visitor::Geometry_traits_2    Insert_traits;
+  typedef typename Insert_traits::X_monotone_curve_2    Ex_x_monotone_curve_2;
+  typedef typename Insert_traits::Point_2               Ex_point_2;
 
   const GeomTraits* geom_traits = arr.geometry_traits();
   Insert_visitor visitor(&arr);
@@ -876,7 +882,7 @@ void non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeomTraits,
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Construct_visitor::Traits_2 is the same as the type
+   * If the type Construct_visitor::Geometry_traits_2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
    * the later as a single parameter to the constructor.
@@ -892,18 +898,19 @@ void non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeomTraits,
   std::list<Ex_x_monotone_curve_2> ex_cvs;
   std::list<Ex_point_2> ex_pts;
 
-  prepare_for_sweep(arr,
-                    begin_xcurves, end_xcurves,   // the x-monotone curves
-                    begin_points, end_points,     // the points (if any)
-                    std::back_inserter(ex_cvs),
-                    std::back_inserter(ex_pts),
-                    &traits);
+  Ss2::prepare_for_sweep(arr,
+                         begin_xcurves, end_xcurves,   // the x-monotone curves
+                         begin_points, end_points,     // the points (if any)
+                         std::back_inserter(ex_cvs),
+                         std::back_inserter(ex_pts),
+                         &traits);
 
   // Define a basic surface-sweep instance and perform the sweep.
-  No_intersection_surface_sweep_2<typename Insert_visitor::Traits_2,
-                                  Insert_visitor,
-                                  typename Insert_visitor::Subcurve,
-                                  typename Insert_visitor::Event>
+  Ss2::No_intersection_surface_sweep_2<
+    typename Insert_visitor::Geometry_traits_2,
+    Insert_visitor,
+    typename Insert_visitor::Subcurve,
+    typename Insert_visitor::Event>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(ex_cvs.begin(), ex_cvs.end(), ex_pts.begin(), ex_pts.end());
 }
@@ -1166,11 +1173,14 @@ bool is_valid(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>   Arr;
   typedef GeomTraits                                        Geometry_traits_2;
+
   typedef typename Geometry_traits_2::X_monotone_curve_2    X_monotone_curve_2;
 
   // Define the surface-sweep types:
-  typedef Surface_sweep_do_curves_x_visitor<Geometry_traits_2> Visitor;
-  typedef Surface_sweep_2<Geometry_traits_2, Visitor>          Surface_sweep_2;
+  typedef Ss2::Surface_sweep_do_curves_x_visitor<Geometry_traits_2>
+                                                        Visitor;
+  typedef Ss2::Surface_sweep_2<Geometry_traits_2, Visitor>
+                                                        Surface_sweep_2;
 
   // Define the arrangement iterator and circulator types:
   typedef typename Arr::Edge_const_iterator           Edge_const_iterator;

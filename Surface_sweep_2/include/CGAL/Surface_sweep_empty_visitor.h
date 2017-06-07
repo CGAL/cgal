@@ -20,42 +20,47 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Definition of the Surface_sweep_empty_visitor class-template.
  */
 
 #include <CGAL/No_intersection_surface_sweep_2.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
+#include <CGAL/Surface_sweep_2/Default_event.h>
+#include <CGAL/Surface_sweep_2/Default_subcurve.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
 /*! \class
+ *
  * An empty surface-sweep visitor that does nothing. It is used as a base-class
  * for other concrete visitors that produce some output.
  */
-template <typename Traits_,
-          typename Subcurve_ = Surface_sweep_subcurve<Traits_>,
-          typename Event_ = Surface_sweep_event<Traits_, Subcurve_>,
+template <typename GeometryTraits_2,
+          typename Subcurve_ = Default_subcurve<GeometryTraits_2>,
+          typename Event_ = Default_event<GeometryTraits_2, Subcurve_>,
           typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Surface_sweep_empty_visitor {
 public:
-  typedef Traits_                                       Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
   typedef Allocator_                                    Allocator;
 
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                    Point_2;
-
-  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event, Allocator>
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Surface_sweep_empty_visitor<Gt2, Subcurve, Event, Allocator>
                                                         Self;
 
-private:
   // we want to hide the Surface_sweep type
-  typedef No_intersection_surface_sweep_2<Traits_2, Self, Subcurve, Event,
+  typedef No_intersection_surface_sweep_2<Gt2, Self, Subcurve, Event,
                                           Allocator>    Surface_sweep;
 
   typedef typename Surface_sweep::Status_line_iterator  Base_status_line_iter;
+
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
 public:
   /*! \class
@@ -212,7 +217,7 @@ public:
   Event* current_event() { return (this->_surface_sweep()->current_event()); }
 
   /*! Get the geometry-traits class. */
-  const Traits_2* traits() { return (this->_surface_sweep()->traits()); }
+  const Gt2* traits() { return (this->_surface_sweep()->traits()); }
 
 private:
   /*! Get the sweep-line object. */
@@ -223,6 +228,7 @@ private:
   { return (reinterpret_cast<const Surface_sweep*>(m_surface_sweep)); }
 };
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

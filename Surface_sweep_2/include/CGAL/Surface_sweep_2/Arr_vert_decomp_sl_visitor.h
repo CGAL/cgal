@@ -37,7 +37,7 @@ public:
   typedef Helper_                                       Helper;
   typedef OutputIterator                                Output_iterator;
 
-  typedef typename Helper::Traits_2                     Traits_2;
+  typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
   typedef typename Helper::Arrangement_2                Arrangement_2;
   typedef typename Helper::Event                        Event;
   typedef typename Helper::Subcurve                     Subcurve;

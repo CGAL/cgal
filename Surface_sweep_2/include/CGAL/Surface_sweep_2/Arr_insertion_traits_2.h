@@ -20,7 +20,8 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-/*!
+/*! \file
+ *
  * Defintion of the Arr_insertion_traits_2<Traits,Arrangement> class.
  */
 
@@ -29,35 +30,43 @@
 namespace CGAL {
 
 /*! \class
+ *
  * A meta-traits class that stores a halfedge handle with every x-monotone
  * curve, and a vertex handle with each point. This information is used to
  * speed up the aggregated insertion process.
  */
-template <typename Traits_, typename Arrangement_>
+template <typename GeometryTraits_2, typename Arrangement_2_>
 class Arr_insertion_traits_2 :
-  public Arr_basic_insertion_traits_2<Traits_, Arrangement_>
+  public Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_2_>
 {
 public:
-  typedef Traits_                                               Traits_2;
-  typedef Arr_basic_insertion_traits_2<Traits_, Arrangement_>   Base;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Arrangement_2_                                Arrangement_2;
 
-  typedef typename Traits_2::Intersect_2              Base_intersect_2;
-  typedef typename Traits_2::Split_2                  Base_split_2;
-  typedef typename Base::Base_x_monotone_curve_2      Base_x_monotone_curve_2;
-  typedef typename Base::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Base::Halfedge_handle              Halfedge_handle;
-  typedef typename Base::Base_point_2                 Base_point_2;
-  typedef typename Base::Point_2                      Point_2;
-  typedef typename Base::Multiplicity                 Multiplicity;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arrangement_2                                 Arr2;
+  typedef Arr_basic_insertion_traits_2<Gt2, Arr2>       Base;
+
+public:
+
+  typedef typename Gt2::Intersect_2                     Base_intersect_2;
+  typedef typename Gt2::Split_2                         Base_split_2;
+  typedef typename Base::Base_x_monotone_curve_2        Base_x_monotone_curve_2;
+  typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
+  typedef typename Base::Halfedge_handle                Halfedge_handle;
+  typedef typename Base::Base_point_2                   Base_point_2;
+  typedef typename Base::Point_2                        Point_2;
+  typedef typename Base::Multiplicity                   Multiplicity;
 
   typedef typename Base::Has_left_category            Has_left_category;
   typedef typename Base::Has_do_intersect_category    Has_do_intersect_category;
 
   // should be ok, as basic_insertion (=Base) completes incomplete tags
-  typedef typename Base::Left_side_category       Left_side_category;
-  typedef typename Base::Bottom_side_category     Bottom_side_category;
-  typedef typename Base::Top_side_category        Top_side_category;
-  typedef typename Base::Right_side_category      Right_side_category;
+  typedef typename Base::Left_side_category             Left_side_category;
+  typedef typename Base::Bottom_side_category           Bottom_side_category;
+  typedef typename Base::Top_side_category              Top_side_category;
+  typedef typename Base::Right_side_category            Right_side_category;
 
   /* Insertion is implemented as sweep-line visitor. The sweep-line algorithm
    * never performs merging of curves. Therefore, AreMergeable_2 and
@@ -66,9 +75,8 @@ public:
   typedef Tag_false                                   Has_merge_category;
 
 public:
-
   /*! Constructor with a traits class. */
-  Arr_insertion_traits_2(const Traits_2& tr) :
+  Arr_insertion_traits_2(const Gt2& tr) :
     Base (tr)
   {}
 
@@ -92,7 +100,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_insertion_traits_2<Traits_2, Arrangement_>;
+    friend class Arr_insertion_traits_2<Gt2, Arrangement_2>;
 
   public:
     template<typename OutputIterator>
@@ -163,7 +171,7 @@ public:
     Split_2(const Base_split_2& base) : m_base_split (base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_insertion_traits_2<Traits_2, Arrangement_>;
+    friend class Arr_insertion_traits_2<Gt2, Arrangement_2>;
 
   public:
     void operator()(const X_monotone_curve_2& cv, const Point_2 & p,
@@ -180,6 +188,6 @@ public:
   { return (Split_2 (this->m_base_traits->split_2_object())); }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

@@ -21,8 +21,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
-/*!
+/*! \file
+ *
  * Definition of the Arr_unb_planar_insertion_helper class-template.
  */
 
@@ -31,53 +31,56 @@
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 /*! \class Arr_unb_planar_insertion_helper
+ *
  * A helper class for the insertion sweep-line visitors, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
  */
-template <class Traits_, class Arrangement_, class Event_, class Subcurve_>
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_unb_planar_insertion_helper :
-  public Arr_unb_planar_construction_helper<Traits_, Arrangement_,
+  public Arr_unb_planar_construction_helper<GeometryTraits_2, Arrangement_,
                                             Event_, Subcurve_>
 {
 public:
-  typedef Traits_                                      Traits_2;
-  typedef Arrangement_                                 Arrangement_2;
-  typedef Event_                                       Event;
-  typedef Subcurve_                                    Subcurve;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                   Point_2;
-
-
-  typedef Arr_unb_planar_construction_helper<Traits_2, Arrangement_2, Event,
-                                             Subcurve> Base;
-
-  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
-                                                       Base_visitor;
-
-  typedef Arr_unb_planar_insertion_helper<Traits_2, Arrangement_2, Event,
-                                          Subcurve>    Self;
-
-  typedef Arr_construction_sl_visitor<Self>            Parent_visitor;
-
-  typedef typename Arrangement_2::Face_handle          Face_handle;
-
-  typedef typename Base::Indices_list                  Indices_list;
-  typedef typename Base::Halfedge_indices_map          Halfedge_indices_map;
-
-protected:
-
-  typedef typename Base::Topology_traits               Topology_traits;
-  typedef typename Base::Vertex_handle                 Vertex_handle;
-  typedef typename Base::Halfedge_handle               Halfedge_handle;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arr_unb_planar_insertion_helper<Gt2, Arrangement_2, Event, Subcurve>
+                                                        Self;
+  typedef Arr_unb_planar_construction_helper<Gt2, Arrangement_2, Event,
+                                             Subcurve>  Base;
 
 public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+                                                        Base_visitor;
+
+  typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
+
+  typedef typename Arrangement_2::Face_handle           Face_handle;
+
+  typedef typename Base::Indices_list                   Indices_list;
+  typedef typename Base::Halfedge_indices_map           Halfedge_indices_map;
+
+protected:
+  typedef typename Base::Topology_traits                Topology_traits;
+  typedef typename Base::Vertex_handle                  Vertex_handle;
+  typedef typename Base::Halfedge_handle                Halfedge_handle;
+
+public:
   /*! Constructor. */
-  Arr_unb_planar_insertion_helper (Arrangement_2 *arr) :
-    Base (arr)
+  Arr_unb_planar_insertion_helper(Arrangement_2* arr) :
+    Base(arr)
   {}
 
   /*! Destructor. */
@@ -93,7 +96,7 @@ public:
    * A notification invoked before the sweep-line starts handling the given
    * event.
    */
-  virtual void before_handle_event (Event* event);
+  virtual void before_handle_event(Event* event);
   //@}
 };
 
@@ -105,16 +108,13 @@ public:
 // A notification issued before the sweep process starts.
 //
 template <class Tr, class Arr, class Evnt, class Sbcv>
-void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
+void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep()
 {
   // Obtain the four fictitious vertices that form the "corners" of the
   // fictitious face in the DCEL.
-  Vertex_handle   v_bl =
-    Vertex_handle (this->m_top_traits->bottom_left_vertex());
-  Vertex_handle   v_tl =
-    Vertex_handle (this->m_top_traits->top_left_vertex());
-  Vertex_handle   v_br =
-    Vertex_handle (this->m_top_traits->bottom_right_vertex());
+  Vertex_handle v_bl = Vertex_handle (this->m_top_traits->bottom_left_vertex());
+  Vertex_handle v_tl = Vertex_handle (this->m_top_traits->top_left_vertex());
+  Vertex_handle v_br = Vertex_handle (this->m_top_traits->bottom_right_vertex());
 
   // Get the fictitous halfedges incident to these vertices, and lying on
   // the left, right, top and bottom edges of the fictitious face.
@@ -142,8 +142,7 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
   this->m_rh = v_br->incident_halfedges();
   if (this->m_rh->source()->parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
     this->m_rh = this->m_rh->twin();
-  else
-    this->m_rh = this->m_rh->next();
+  else this->m_rh = this->m_rh->next();
 
   CGAL_assertion_code (
     Face_handle fict_face = Face_handle (this->m_top_traits->fictitious_face());
@@ -171,15 +170,13 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 //
 template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::
-before_handle_event (Event* event)
+before_handle_event(Event* event)
 {
-  if (event->is_closed())
-    return;
+  if (event->is_closed()) return;
 
   // In case the event lies at inifinity, check whether its incident curve
   // is already in the arrangement.
-  if (event->curve().halfedge_handle() == Halfedge_handle())
-  {
+  if (event->curve().halfedge_handle() == Halfedge_handle()) {
     // The curve is not in the arrangement, use the base construction helper
     // to handle the event:
     Base::before_handle_event (event);
@@ -190,28 +187,23 @@ before_handle_event (Event* event)
   // so we have to update the fictitious halfedges.
   const Arr_parameter_space ps_x = event->parameter_space_in_x();
 
-  if (ps_x == ARR_LEFT_BOUNDARY)
-  {
+  if (ps_x == ARR_LEFT_BOUNDARY) {
     // The event lies on the left fictitious halfedge.
     this->m_lh = this->m_lh->twin()->next()->twin();
     this->m_prev_minus_inf_x_event = NULL;
   }
-  else if (ps_x == ARR_RIGHT_BOUNDARY)
-  {
+  else if (ps_x == ARR_RIGHT_BOUNDARY) {
     // The event lies on the right fictitious halfedge.
     this->m_rh = this->m_rh->twin()->prev()->twin();
   }
-  else
-  {
+  else {
     const Arr_parameter_space ps_y = event->parameter_space_in_y();
 
-    if (ps_y == ARR_BOTTOM_BOUNDARY)
-    {
+    if (ps_y == ARR_BOTTOM_BOUNDARY) {
       // The event lies on the bottom fictitious halfedge.
       this->m_bh = this->m_bh->twin()->prev()->twin();
     }
-    else
-    {
+    else {
       // The event lies on the top fictitious halfedge.
       CGAL_assertion (ps_y == ARR_TOP_BOUNDARY);
       this->m_th = this->m_th->twin()->next()->twin();
@@ -222,7 +214,6 @@ before_handle_event (Event* event)
   return;
 }
 
-
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

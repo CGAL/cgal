@@ -24,7 +24,7 @@
 
 /*! \file
  *
- * Defintion of the Surface_sweep_subcurve class, which is an extended curve
+ * Defintion of the Default_subcurve class, which is an extended curve
  * type, referred to as Subcurve, used by the surface-sweep framework.
  *
  * The surface-sweep framework is implemented as a template that is
@@ -32,26 +32,26 @@
  * instance types of Subcurve and Event must be available when the
  * surface-sweep template is instantiated.
  *
- * Surface_sweep_subcurve derives from an instance of the
- * No_overlap_surface_sweep_subcurve class template. The user is allowed to
- * introduce new types that derive from an instance of the
- * Surface_sweep_subcurve class template. However, some of the fields of this
- * template depends on the Subcurve type.  We use the curiously recurring
- * template pattern (CRTP) idiom to force the correct matching of these types.
+ * Default_subcurve derives from an instance of the No_overlap_subcurve class
+ * template. The user is allowed to introduce new types that derive from an
+ * instance of the Default_subcurve class template. However, some of the fields
+ * of this template depends on the Subcurve type.  We use the curiously
+ * recurring template pattern (CRTP) idiom to force the correct matching of
+ * these types.
  */
 
 #include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
-#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_subcurve.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
-/*! \class Surface_sweep_subcurve_base
+/*! \class Default_subcurve_base
  *
- * This is the base class of the Surface_sweep_subcurve class template used by
+ * This is the base class of the Default_subcurve class template used by
  * the (CRTP) idiom.
  * \tparam GeometryTraits_2 the geometry traits.
  * \tparam Subcurve_ the subcurve actual type.
@@ -61,26 +61,30 @@ namespace CGAL {
  *   an overlap, otherwise thay are both NULL.
  */
 template <typename GeometryTraits_2, typename Subcurve_>
-class Surface_sweep_subcurve_base :
-    public No_overlap_surface_sweep_subcurve<GeometryTraits_2, Subcurve_>
+class Default_subcurve_base :
+    public No_overlap_subcurve<GeometryTraits_2, Subcurve_>
 {
 public:
-  typedef GeometryTraits_2                              Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef No_overlap_surface_sweep_subcurve<Traits_2, Subcurve> Base;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef No_overlap_subcurve<Gt2, Subcurve>            Base;
+
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
   /*! Construct default.
    */
-  Surface_sweep_subcurve_base() :
+  Default_subcurve_base() :
     m_orig_subcurve1(NULL),
     m_orig_subcurve2(NULL)
   {}
 
   /*! Construct from a curve.
    */
-  Surface_sweep_subcurve_base(const X_monotone_curve_2& curve) :
+  Default_subcurve_base(const X_monotone_curve_2& curve) :
     Base(curve),
     m_orig_subcurve1(NULL),
     m_orig_subcurve2(NULL)
@@ -91,44 +95,49 @@ protected:
   Subcurve* m_orig_subcurve2;           // (relevant only in case of overlaps).
 };
 
-/*! \class Surface_sweep_subcurve
+/*! \class Default_subcurve
  *
  * This is a class template that wraps a traits curve of type
  * X_monotone_curve_2.  It contains data that is used when applying the sweep
  * algorithm on a set of x-monotone curves. This class derives from the
- * No_overlap_surface_sweep_subcurve class template.
+ * No_overlap_subcurve class template.
  * \tparam GeometryTraits_2 the geometry traits.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
  *         overriden it implies that the type is
- *         No_overlap_surface_sweep_subcurve
+ *         No_overlap_subcurve
  */
 template <typename GeometryTraits_2, typename Subcurve_ = Default>
-class Surface_sweep_subcurve :
-    public Surface_sweep_subcurve_base
-           <GeometryTraits_2,
-            typename Default::Get<Subcurve_,
-                                  Surface_sweep_subcurve
-                                  <GeometryTraits_2, Subcurve_> >::type>
+class Default_subcurve :
+  public Default_subcurve_base<GeometryTraits_2,
+                               typename Default::Get<Subcurve_,
+                                                     Default_subcurve<
+                                                       GeometryTraits_2,
+                                                       Subcurve_> >::type>
 {
 public:
-  typedef GeometryTraits_2                                Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
-  typedef Surface_sweep_subcurve<Traits_2, Subcurve_>     Self;
-  typedef typename Default::Get<Subcurve_, Self>::type    Subcurve;
-  typedef Surface_sweep_subcurve_base<Traits_2, Subcurve> Base;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Default_subcurve<Gt2, Subcurve_>              Self;
+  typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
+  typedef Default_subcurve_base<Gt2, Subcurve>          Base;
+
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
 public:
   /*! Construct default.
    */
-  Surface_sweep_subcurve() {}
+  Default_subcurve() {}
 
   /*! Construct from a curve.
    */
-  Surface_sweep_subcurve(const X_monotone_curve_2& curve) : Base(curve) {}
+  Default_subcurve(const X_monotone_curve_2& curve) : Base(curve) {}
 
   /*! Destruct.
    */
-  ~Surface_sweep_subcurve() {}
+  ~Default_subcurve() {}
 
   /*! Get the subcurves that originate an overlap. */
   Subcurve* originating_subcurve1() { return Base::m_orig_subcurve1; }
@@ -254,16 +263,17 @@ public:
 };
 
 #ifdef CGAL_SL_VERBOSE
-  template<class Traits>
-  void Surface_sweep_subcurve<Traits>::Print() const
-  {
-    std::cout << "Curve " << this
-              << "  (" << this->last_curve() << ") "
-              << " [sc1: " << this->originating_subcurve1()
-              << ", sc2: " << this->originating_subcurve2() << "]";
-  }
+template <typename GeometryTraits_2>
+void Default_subcurve<GeometryTraits_2>::Print() const
+{
+  std::cout << "Curve " << this
+            << "  (" << this->last_curve() << ") "
+            << " [sc1: " << this->originating_subcurve1()
+            << ", sc2: " << this->originating_subcurve2() << "]";
+}
 #endif
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

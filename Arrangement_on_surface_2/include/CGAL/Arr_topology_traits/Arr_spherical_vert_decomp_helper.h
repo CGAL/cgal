@@ -22,34 +22,43 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
+ *
  * Definition of the Arr_spherical_vert_decomp_helper class-template.
  */
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 #include <CGAL/Surface_sweep_empty_visitor.h>
 
 /*! \class Arr_spherical_vert_decomp_helper
+ *
  * A helper class for the vertical decomposition sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_>
+template <typename GeometryTraits_2, typename Arrangement_>
 class Arr_spherical_vert_decomp_helper {
 public:
-  typedef Traits_                                      Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef Arrangement_                                 Arrangement_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Arrangement_                                  Arrangement_2;
 
-  typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
-  typedef typename Arrangement_2::Vertex_const_handle  Vertex_const_handle;
+private:
+  typedef Geometry_traits_2                             Gt2;
 
-  typedef Surface_sweep_empty_visitor<Traits_2>        Base_visitor;
-  typedef typename Base_visitor::Event                 Event;
-  typedef typename Base_visitor::Subcurve              Subcurve;
+public:
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2>         Base_visitor;
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+
+  typedef typename Base_visitor::Event                  Event;
+  typedef typename Base_visitor::Subcurve               Subcurve;
 
 protected:
-  typedef typename Arrangement_2::Topology_traits      Topology_traits;
+  typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
   const Topology_traits* m_top_traits;        // The topology traits.
   Vertex_const_handle m_north_pole;           // The north pole.
@@ -159,6 +168,6 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
   }
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

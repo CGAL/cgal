@@ -17,13 +17,13 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_SURFACE_SWEEP_FUNCTORS_H
-#define CGAL_SURFACE_SWEEP_FUNCTORS_H
+#ifndef CGAL_SURFACE_SWEEP_2_FUNCTORS_H
+#define CGAL_SURFACE_SWEEP_2_FUNCTORS_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
+ *
  * Comparison functors used by the sweep-line algorithm.
  */
 
@@ -33,31 +33,35 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
 /*! \class
  * A functor used to compare events and event points in an xy-lexicographic
  * order. Used to maintain the order of the event queue (the X-structure)
  * in the sweep-line algorithm.
  */
-template <typename Traits_, typename Event_>
+template <typename GeometryTraits_2, typename Event_>
 class Compare_events {
 public:
-  typedef Traits_                                   Traits_2;
-  typedef Event_                                    Event;
-
-  typedef typename Traits_2::Point_2                Point_2;
-  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
-
-  // should be ok, as Traits_2 is supposed to be the adaptor
-  typedef typename Traits_2::Left_side_category     Left_side_category;
-  typedef typename Traits_2::Bottom_side_category   Bottom_side_category;
-  typedef typename Traits_2::Top_side_category      Top_side_category;
-  typedef typename Traits_2::Right_side_category    Right_side_category;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Event_                                        Event;
 
 private:
+  typedef Geometry_traits_2                             Gt2;
+public:
 
+  typedef typename Gt2::Point_2                         Point_2;
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+
+  // should be ok, as Gt2 is supposed to be the adaptor
+  typedef typename Gt2::Left_side_category              Left_side_category;
+  typedef typename Gt2::Bottom_side_category            Bottom_side_category;
+  typedef typename Gt2::Top_side_category               Top_side_category;
+  typedef typename Gt2::Right_side_category             Right_side_category;
+
+private:
   // Data members:
-  const Traits_2* m_traits;                 // The geometric-traits object.
+  const Gt2* m_traits;                 // The geometric-traits object.
 
   Arr_parameter_space m_ps_in_x;            // Storing curve information when
   Arr_parameter_space m_ps_in_y;            // comparing a curve end with
@@ -65,7 +69,7 @@ private:
 
 public:
   /*! Cosntructor. */
-  Compare_events (const Traits_2* traits) :
+  Compare_events(const Gt2* traits) :
     m_traits(traits)
   {}
 
@@ -95,21 +99,20 @@ public:
       return (CGAL::opposite(this->operator()(e2->point(), e1)));
     }
 
-    return (_compare_curve_end_with_event (e1->curve(), _curve_end(e1),
-                                           e1->parameter_space_in_x(),
-                                           e1->parameter_space_in_y(),
-                                           e2));
+    return (_compare_curve_end_with_event(e1->curve(), _curve_end(e1),
+                                          e1->parameter_space_in_x(),
+                                          e1->parameter_space_in_y(),
+                                          e2));
   }
 
   /*! Compare a point, which should be inserted into the event queue,
    * with an existing event point.
    */
-  Comparison_result operator() (const Point_2& pt, const Event* e2) const
+  Comparison_result operator()(const Point_2& pt, const Event* e2) const
   {
     const bool  on_boundary2 = e2->is_on_boundary();
 
-    if (! on_boundary2)
-    {
+    if (! on_boundary2) {
       // If e2 is a normal event, just compare pt and the event point.
       return (m_traits->compare_xy_2_object() (pt, e2->point()));
     }
@@ -270,23 +273,28 @@ private:
   }
 };
 
-template <class Traits, class Subcurve> class Surface_sweep_event;
+template <typename Traits, typename Subcurve> class Default_event;
 
 /*! \typename
  * A functor used to compare curves and curve endpoints by their vertical
  * y-order. Used to maintain the order of the status line (the Y-structure)
  * in the sweep-line algorithm.
  */
-template <typename Traits_, typename Subcurve_>
+template <typename GeometryTraits_2, typename Subcurve_>
 class Curve_comparer {
 public:
-  typedef Traits_                                        Traits_2;
-  typedef Subcurve_                                      Subcurve;
-  typedef Arr_traits_basic_adaptor_2<Traits_2>           Traits_adaptor_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_adaptor_2::Point_2 Point_2;
-  typedef typename Traits_adaptor_2::X_monotone_curve_2  X_monotone_curve_2;
-  typedef Surface_sweep_event<Traits_2, Subcurve>        Event;
+private:
+  typedef Geometry_traits_2                             Gt2;
+
+public:
+  typedef Arr_traits_basic_adaptor_2<Gt2>               Traits_adaptor_2;
+
+  typedef typename Traits_adaptor_2::Point_2            Point_2;
+  typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef Surface_sweep_2::Default_event<Gt2, Subcurve> Event;
 
 private:
   const Traits_adaptor_2* m_traits;     // A geometric-traits object.
@@ -355,6 +363,7 @@ public:
 
 };
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

@@ -22,7 +22,8 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-/*!
+/*! \file
+ *
  * Defintion of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
  */
 
@@ -34,43 +35,47 @@
 
 namespace CGAL {
 
-/*!
- * A basic meta-traits class that stores a halfedge handle with every
+/*! A basic meta-traits class that stores a halfedge handle with every
  * x-monotone curve, and a vertex handle with each point. This information is
  * used to speed up the aggregated insertion process.
  */
-template <typename Traits_, typename Arrangement_>
+template <typename GeometryTraits_2, typename Arrangement_>
 class Arr_basic_insertion_traits_2 {
 public:
-  typedef Traits_                                   Traits_2;
-  typedef Arrangement_                              Arrangement_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Arrangement_                                  Arrangement_2;
 
-  typedef typename Arrangement_2::Halfedge_handle   Halfedge_handle;
-  typedef typename Arrangement_2::Vertex_handle     Vertex_handle;
-  typedef typename Traits_2::X_monotone_curve_2     Base_x_monotone_curve_2;
-  typedef typename Traits_2::Point_2                Base_point_2;
-  typedef typename Traits_2::Construct_min_vertex_2 Base_construct_min_vertex_2;
-  typedef typename Traits_2::Construct_max_vertex_2 Base_construct_max_vertex_2;
-  typedef typename Traits_2::Compare_x_2            Base_compare_x_2;
-  typedef typename Traits_2::Compare_xy_2           Base_compare_xy_2;
-  typedef typename Traits_2::Compare_y_at_x_2       Base_compare_y_at_x_2;
-  typedef typename Traits_2::Compare_y_at_x_right_2 Base_compare_y_at_x_right_2;
-  typedef typename Traits_2::Equal_2                Base_equal_2;
-  typedef typename Traits_2::Is_vertical_2          Base_is_vertical_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
 
-  typedef typename Traits_2::Multiplicity           Multiplicity;
+public:
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
 
-  typedef typename Traits_2::Has_do_intersect_category
-                                                    Has_do_intersect_category;
+  typedef typename Gt2::X_monotone_curve_2     Base_x_monotone_curve_2;
+  typedef typename Gt2::Point_2                Base_point_2;
+  typedef typename Gt2::Construct_min_vertex_2 Base_construct_min_vertex_2;
+  typedef typename Gt2::Construct_max_vertex_2 Base_construct_max_vertex_2;
+  typedef typename Gt2::Compare_x_2            Base_compare_x_2;
+  typedef typename Gt2::Compare_xy_2           Base_compare_xy_2;
+  typedef typename Gt2::Compare_y_at_x_2       Base_compare_y_at_x_2;
+  typedef typename Gt2::Compare_y_at_x_right_2 Base_compare_y_at_x_right_2;
+  typedef typename Gt2::Equal_2                Base_equal_2;
+  typedef typename Gt2::Is_vertical_2          Base_is_vertical_2;
+
+  typedef typename Gt2::Multiplicity           Multiplicity;
+
+  typedef typename Gt2::Has_do_intersect_category
+                                               Has_do_intersect_category;
 
 
-  typedef typename internal::Arr_complete_left_side_category< Traits_2 >::Category
+  typedef typename internal::Arr_complete_left_side_category< Gt2>::Category
                                                     Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category< Traits_2 >::Category
+  typedef typename internal::Arr_complete_bottom_side_category< Gt2>::Category
                                                     Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category< Traits_2 >::Category
+  typedef typename internal::Arr_complete_top_side_category< Gt2>::Category
                                                     Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category< Traits_2 >::Category
+  typedef typename internal::Arr_complete_right_side_category< Gt2>::Category
                                                     Right_side_category;
 
   /* Insertion is implemented as surface-sweep visitor. The surface-sweep
@@ -80,11 +85,11 @@ public:
 
 protected:
   //! The base traits.
-  const Traits_2* m_base_traits;
+  const Gt2* m_base_traits;
 
 public:
   /*! Constructor. */
-  Arr_basic_insertion_traits_2(const Traits_2& tr) :
+  Arr_basic_insertion_traits_2(const Gt2& tr) :
     m_base_traits(&tr)
   {}
 
@@ -228,7 +233,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Point_2 operator()(const X_monotone_curve_2& xcv)
@@ -285,7 +290,7 @@ public:
 
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Point_2 operator()(const X_monotone_curve_2& xcv)
@@ -334,7 +339,7 @@ public:
     Compare_xy_2(const Base_compare_xy_2& base) : m_base_cmp_xy(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
@@ -368,7 +373,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Comparison_result operator()(const Point_2& p,
@@ -397,7 +402,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
@@ -428,7 +433,7 @@ public:
     Equal_2(const Base_equal_2& base) : m_base_eq(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     /*! Check if two curves are the same. */
@@ -458,7 +463,7 @@ public:
     Compare_x_2(const Base_compare_x_2& base) : m_base_cmp_x(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
@@ -482,7 +487,7 @@ public:
     Is_vertical_2(const Base_is_vertical_2& base) : m_base_is_vert(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     bool operator()(const X_monotone_curve_2& xcv) const
@@ -501,7 +506,7 @@ public:
   class Parameter_space_in_x_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param tr The base traits class. It must be passed, to handle non
@@ -510,10 +515,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Parameter_space_in_x_2(const Traits_2* tr) : m_base(tr) {}
+    Parameter_space_in_x_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
@@ -537,7 +542,7 @@ public:
   class Is_on_x_identification_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param tr The base traits class. It must be passed, to handle non
@@ -546,10 +551,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_on_x_identification_2(const Traits_2* tr) : m_base(tr) {}
+    Is_on_x_identification_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     bool operator()(const Point_2& p) const
@@ -569,7 +574,7 @@ public:
   class Compare_y_on_boundary_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -578,10 +583,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_on_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_y_on_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     /*! Use tag dispatching to avoid compilation errors in case the functor
@@ -602,7 +607,7 @@ public:
   class Compare_y_near_boundary_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -611,10 +616,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_near_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_y_near_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     /*! Use tag dispatching to avoid compilation errors in case the functor
@@ -643,7 +648,7 @@ public:
   class Parameter_space_in_y_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param tr The base traits class. It must be passed, to handle non
@@ -652,10 +657,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Parameter_space_in_y_2(const Traits_2* tr) : m_base(tr) {}
+    Parameter_space_in_y_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
@@ -680,7 +685,7 @@ public:
   class Is_on_y_identification_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param tr The base traits class. It must be passed, to handle non
@@ -689,10 +694,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_on_y_identification_2(const Traits_2* tr) : m_base(tr) {}
+    Is_on_y_identification_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     bool operator()(const Point_2& p) const
@@ -712,7 +717,7 @@ public:
   class Compare_x_at_limit_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -721,10 +726,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_at_limit_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_at_limit_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     /*! Use tag dispatching to avoid compilation errors in case the functor
@@ -760,7 +765,7 @@ public:
   class Compare_x_near_limit_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -769,10 +774,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_near_limit_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_near_limit_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     /*! Use tag dispatching to avoid compilation errors in case the functor
@@ -800,7 +805,7 @@ public:
   {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -809,10 +814,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_on_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_on_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     /*! Use tag dispatching to avoid compilation errors in case the functor
@@ -855,7 +860,7 @@ public:
   class Compare_x_near_boundary_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -864,10 +869,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_near_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_near_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
     /*! Use tag dispatching to avoid compilation errors in case the functor

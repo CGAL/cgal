@@ -20,7 +20,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-/*!
+/*! \file
+ *
  * Definition of the Arr_bounded_planar_construction_helper class-template.
  */
 
@@ -30,34 +31,39 @@
 namespace CGAL {
 
 /*! \class Arr_bounded_planar_construction_helper
+ *
  * A helper class for the construction sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_, typename Event_,
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
           typename Subcurve_>
 class Arr_bounded_planar_construction_helper {
 public:
-  typedef Traits_                                      Traits_2;
-  typedef Arrangement_                                 Arrangement_2;
-  typedef Event_                                       Event;
-  typedef Subcurve_                                    Subcurve;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                   Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
 
-  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
-                                                       Base_visitor;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
-  typedef typename Arrangement_2::Face_handle          Face_handle;
-  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
+  typedef Surface_sweep_2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+                                                        Base_visitor;
 
-  typedef typename Subcurve::Halfedge_indices_list     Indices_list;
-  typedef Unique_hash_map<Halfedge_handle,
-                          Indices_list>                Halfedge_indices_map;
+  typedef typename Arrangement_2::Face_handle           Face_handle;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+
+  typedef typename Subcurve::Halfedge_indices_list      Indices_list;
+  typedef Unique_hash_map<Halfedge_handle, Indices_list>
+                                                        Halfedge_indices_map;
 
 protected:
-  typedef typename Arrangement_2::Topology_traits      Topology_traits;
+  typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
   // Data members:
   Topology_traits* m_top_traits;        // The topology-traits class.
@@ -123,6 +129,6 @@ public:
   Face_handle top_face() const { return m_unb_face; }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

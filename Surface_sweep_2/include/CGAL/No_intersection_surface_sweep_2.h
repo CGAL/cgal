@@ -20,6 +20,7 @@
 #define CGAL_BASIC_SWEEP_LINE_2_H
 
 /*! \file
+ *
  * Definition of the No_intersection_surface_sweep_2 class.
  */
 
@@ -29,8 +30,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
-#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_subcurve.h>
-#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
+#include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_tags.h>
@@ -101,6 +102,7 @@
 #endif
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
 /*! \class No_intersection_surface_sweep_2
  * A class that implements the sweep line algorithm for general x-monotone
@@ -109,20 +111,24 @@ namespace CGAL {
  * The x-montone curve type and the point type are defined by the traits class
  * that is one of the template parameters.
  */
-template <typename Traits_,
+template <typename GeometryTraits_2,
           typename Visitor_,
-          typename Subcurve_ = No_overlap_surface_sweep_subcurve<Traits_>,
-          typename Event_ = No_overlap_surface_sweep_event<Traits_, Subcurve_>,
+          typename Subcurve_ = No_overlap_subcurve<GeometryTraits_2>,
+          typename Event_ = No_overlap_event<GeometryTraits_2, Subcurve_>,
           typename Allocator_ = CGAL_ALLOCATOR(int)>
 class No_intersection_surface_sweep_2 {
 public:
-  typedef Traits_                                         Traits_2;
-  typedef Visitor_                                        Visitor;
-  typedef Event_                                          Event;
-  typedef Subcurve_                                       Subcurve;
-  typedef Allocator_                                      Allocator;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Visitor_                                      Visitor;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
+  typedef Allocator_                                    Allocator;
 
-  typedef Arr_traits_basic_adaptor_2<Traits_2>            Traits_adaptor_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+
+public:
+  typedef Arr_traits_basic_adaptor_2<Gt2>                 Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2              Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2   X_monotone_curve_2;
 
@@ -139,12 +145,13 @@ public:
 
 protected:
   typedef typename Arr_are_all_sides_oblivious_tag<
-                     Left_side_category, Bottom_side_category,
-                     Top_side_category, Right_side_category >::result
+    Left_side_category, Bottom_side_category,
+    Top_side_category, Right_side_category >::result
     Are_all_sides_oblivious_category;
 
 public:
-  typedef CGAL::Compare_events<Traits_adaptor_2, Event> Compare_events;
+  typedef CGAL::Surface_sweep_2::Compare_events<Traits_adaptor_2, Event>
+                                                        Compare_events;
   typedef Multiset<Event*, Compare_events, Allocator>   Event_queue;
   typedef typename Event_queue::iterator                Event_queue_iterator;
 
@@ -155,7 +162,7 @@ public:
 
   typedef typename Event::Attribute                     Attribute;
 
-  typedef class Curve_comparer<Traits_2, Subcurve> Compare_curves;
+  typedef class Curve_comparer<Gt2, Subcurve> Compare_curves;
   typedef Multiset<Subcurve*, Compare_curves, Allocator>
                                                         Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
@@ -233,7 +240,7 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  No_intersection_surface_sweep_2(const Traits_2* traits, Visitor* visitor);
+  No_intersection_surface_sweep_2(const Gt2* traits, Visitor* visitor);
 
   /*! Destructor. */
   virtual ~No_intersection_surface_sweep_2();
@@ -353,7 +360,7 @@ public:
   Event* current_event() { return m_currentEvent; }
 
   /*! Get the traits object */
-  const Traits_2* traits() { return m_traits; }
+  const Gt2* traits() { return m_traits; }
 
 protected:
   /*! Perform the main sweep-line loop. */
@@ -559,7 +566,8 @@ protected:
   #include <CGAL/Surface_sweep_2/Surface_sweep_2_debug.h>
 #endif
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #include <CGAL/Surface_sweep_2/No_intersection_surface_sweep_2_impl.h>
 

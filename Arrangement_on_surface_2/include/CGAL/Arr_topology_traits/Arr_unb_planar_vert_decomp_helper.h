@@ -21,14 +21,18 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
+ *
  * Definition of the Arr_unb_planar_vert_decomp_helper class-template.
  */
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 #include <CGAL/Surface_sweep_empty_visitor.h>
 
 /*! \class Arr_unb_planar_vert_decomp_helper
+ *
  * A helper class for the vertical decomposition sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
@@ -37,15 +41,18 @@ template <typename Traits_, typename Arrangement_, typename Event_,
           typename Subcurve_>
 class Arr_unb_planar_vert_decomp_helper {
 public:
-  typedef Traits_                                       Traits_2;
+  typedef Traits_                                       Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
 
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+private:
+  typedef Geometry_traits_2                             Gt2;
 
-  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
+public:
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
                                                         Base_visitor;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
@@ -63,7 +70,7 @@ public:
    * \param arr The arrangement.
    */
   Arr_unb_planar_vert_decomp_helper(const Arrangement_2* arr) :
-    m_top_traits (arr->topology_traits())
+    m_top_traits(arr->topology_traits())
   {}
 
   /// \name Notification functions.
@@ -100,7 +107,7 @@ before_sweep()
   // bounding rectangle. We start from the leftmost halfedge, which is
   // incident to the top-left vertex and directed from right to left.
   Vertex_const_handle v_tl =
-    Vertex_const_handle (m_top_traits->top_left_vertex());
+    Vertex_const_handle(m_top_traits->top_left_vertex());
 
   m_top_fict = v_tl->incident_halfedges();
   if (m_top_fict->direction() == ARR_LEFT_TO_RIGHT)
@@ -108,7 +115,7 @@ before_sweep()
 
   CGAL_assertion_code (
     Vertex_const_handle v_tr =
-      Vertex_const_handle (m_top_traits->top_right_vertex());
+      Vertex_const_handle(m_top_traits->top_right_vertex());
   );
   CGAL_assertion
     ((m_top_fict->source() == v_tr) ||
@@ -164,6 +171,6 @@ after_handle_event(Event* event)
   }
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

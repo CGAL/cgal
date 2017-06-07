@@ -20,7 +20,6 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
  * Definition of the global Arr_overlay_2() function.
  */
@@ -40,8 +39,7 @@
 
 namespace CGAL {
 
-/*!
- * Compute the overlay of two input arrangements.
+/*! Compute the overlay of two input arrangements.
  * \param arr1 The first arrangement.
  * \param arr2 The second arrangement.
  * \param arr_res Output: The resulting arrangement.
@@ -57,13 +55,13 @@ namespace CGAL {
  *               overlay operations of pairs of DCEL features from
  *               TopTraitsA and TopTraitsB to the resulting ResDcel.
  */
-template <class GeomTraitsA,
-          class GeomTraitsB,
-          class GeomTraitsRes,
-          class TopTraitsA,
-          class TopTraitsB,
-          class TopTraitsRes,
-          class OverlayTraits>
+template <typename GeomTraitsA,
+          typename GeomTraitsB,
+          typename GeomTraitsRes,
+          typename TopTraitsA,
+          typename TopTraitsB,
+          typename TopTraitsRes,
+          typename OverlayTraits>
 void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
              const Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>& arr2,
              Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>& arr_res,
@@ -91,7 +89,7 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
     Surface_sweep_overlay_visitor<ArrA, ArrB, OverlayTraits>
                                                       Ovl_visitor;
 
-  typedef typename Ovl_visitor::Traits_2              Ovl_traits_2;
+  typedef typename Ovl_visitor::Geometry_traits_2     Ovl_traits_2;
   typedef typename Ovl_traits_2::X_monotone_curve_2   Ovl_x_monotone_curve_2;
   typedef typename Ovl_traits_2::Point_2              Ovl_point_2;
 
@@ -146,14 +144,15 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typedef Arr_traits_basic_adaptor_2< GeomTraitsRes > Geom_traits_adaptor_2;
+  typedef Arr_traits_basic_adaptor_2<GeomTraitsRes>     Geom_traits_adaptor_2;
   typename boost::mpl::if_<boost::is_same< Geom_traits_adaptor_2, Ovl_traits_2>,
                            const Ovl_traits_2&, Ovl_traits_2>::type
     ex_traits(*traits_adaptor);
 
   Ovl_visitor visitor(&arr1, &arr2, &arr_res, &ovl_tr);
-  Surface_sweep_2<Ovl_traits_2, Ovl_visitor,
-               typename Ovl_visitor::Subcurve, typename Ovl_visitor::Event>
+  Ss2::Surface_sweep_2<Ovl_traits_2, Ovl_visitor,
+                       typename Ovl_visitor::Subcurve,
+                       typename Ovl_visitor::Event>
     sweep_line(&ex_traits, &visitor);
 
   // In case both arrangement do not contain isolated vertices, go on and
@@ -208,12 +207,12 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
  * \param arr2 The second arrangement.
  * \param arr_res Output: The resulting arrangement.
  */
-template <class GeomTraitsA,
-          class GeomTraitsB,
-          class GeomTraitsRes,
-          class TopTraitsA,
-          class TopTraitsB,
-          class TopTraitsRes>
+template <typename GeomTraitsA,
+          typename GeomTraitsB,
+          typename GeomTraitsRes,
+          typename TopTraitsA,
+          typename TopTraitsB,
+          typename TopTraitsRes>
 void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
              const Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>& arr2,
              Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>& arr_res)

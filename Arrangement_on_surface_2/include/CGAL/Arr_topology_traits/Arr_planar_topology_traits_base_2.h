@@ -20,8 +20,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
+ *
  * Definition of the Arr_planar_topology_traits_base_2<GeomTraits> class.
  */
 
@@ -46,6 +46,7 @@
 namespace CGAL {
 
 /*! \class Arr_planar_topology_traits_base_2
+ *
  * A base topology-traits class that encapsulates the embedding of 2D
  * arrangements of bounded or unbounded curves on the plane.
  */
@@ -369,6 +370,6 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   return ((n_ray_intersections % 2) != 0);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

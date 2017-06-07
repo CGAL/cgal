@@ -24,12 +24,14 @@
  * Definition of the Arr_overlay_subcurve class-template.
  */
 
-#include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
+#include <CGAL/Surface_sweep_2/Default_subcurve.h>
+#include <CGAL/Surface_sweep_2/Default_event.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_subcurve.h>
 
 namespace CGAL {
 
 /*! \class
+ *
  * Representation of a subcurve in the overlay process. A subcurve can
  * originate from a "red" arrangement or from a "blue" arrangement that are
  * overlaid one on top of the other. It stores information of the halfedge
@@ -38,33 +40,36 @@ namespace CGAL {
  */
 template <typename GeometryTraits_2>
 class Arr_overlay_subcurve :
-    public Arr_construction_subcurve<GeometryTraits_2,
-                                     Surface_sweep_subcurve,
-                                     Arr_overlay_subcurve<GeometryTraits_2> >
+  public Arr_construction_subcurve<GeometryTraits_2,
+                                   Surface_sweep_2::Default_subcurve,
+                                   Arr_overlay_subcurve<GeometryTraits_2> >
 {
 public:
+  typedef GeometryTraits_2                              Geometry_traits_2;
 
-  typedef  GeometryTraits_2                             Traits_2;
-  typedef typename Traits_2::Point_2                    Point_2;
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arr_overlay_subcurve<Gt2>                     Self;
+  typedef Arr_construction_subcurve<Gt2, Surface_sweep_2::Default_subcurve,
+                                    Self>               Base;
 
-  typedef Arr_overlay_subcurve<Traits_2>                Self;
-  typedef Arr_construction_subcurve<Traits_2, Surface_sweep_subcurve, Self>
-                                                        Base;
+public:
+  typedef typename Gt2::Point_2                         Point_2;
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
-  typedef typename Traits_2::Color                      Color;
+  typedef typename Gt2::Color                           Color;
 
-  typedef typename Traits_2::Halfedge_handle_red        Halfedge_handle_red;
-  typedef typename Traits_2::Face_handle_red            Face_handle_red;
+  typedef typename Gt2::Halfedge_handle_red             Halfedge_handle_red;
+  typedef typename Gt2::Face_handle_red                 Face_handle_red;
   typedef typename Face_handle_red::value_type          Face_red;
 
-  typedef typename Traits_2::Halfedge_handle_blue       Halfedge_handle_blue;
-  typedef typename Traits_2::Face_handle_blue           Face_handle_blue;
+  typedef typename Gt2::Halfedge_handle_blue            Halfedge_handle_blue;
+  typedef typename Gt2::Face_handle_blue                Face_handle_blue;
   typedef typename Face_handle_blue::value_type         Face_blue;
 
-  typedef Surface_sweep_event<Traits_2, Self>           Event;
+  typedef Surface_sweep_2::Default_event<Gt2, Self>     Event;
 
 protected:
   // Data members:

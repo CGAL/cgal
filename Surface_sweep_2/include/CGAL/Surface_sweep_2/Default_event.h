@@ -17,20 +17,21 @@
 //             Ron Wein <wein@post.tau.ac.il>
 //             Efi Fogel <efif@gmail.com>
 
-#ifndef CGAL_SURFACE_SWEEP_EVENT_H
-#define CGAL_SURFACE_SWEEP_EVENT_H
+#ifndef CGAL_SURFACE_SWEEP_2_EVENT_H
+#define CGAL_SURFACE_SWEEP_2_EVENT_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
- * Defintion of the Surface_sweep_event class.
+ * Defintion of the Default_event class.
  */
 
-#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/No_overlap_event.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
-/*! \class Surface_sweep_event
+/*! \class Default_event
  *
  * A class associated with an event in a sweep line algorithm.
  * An intersection point in the sweep line algorithm is refered to as an event.
@@ -47,15 +48,18 @@ namespace CGAL {
  *
  */
 template <typename GeometryTraits_2, typename Subcurve_>
-class Surface_sweep_event :
-    public No_overlap_surface_sweep_event<GeometryTraits_2, Subcurve_>
+class Default_event :
+    public No_overlap_event<GeometryTraits_2, Subcurve_>
 {
 public:
-  typedef GeometryTraits_2                              Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
 
-  typedef No_overlap_surface_sweep_event<Traits_2, Subcurve> Base;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef No_overlap_event<Gt2, Subcurve>               Base;
 
+public:
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
   typedef typename Base::Point_2                        Point_2;
 
@@ -71,7 +75,7 @@ public:
 
 public:
   /*! Default constructor. */
-  Surface_sweep_event() {}
+  Default_event() {}
 
   /*! Add a subcurve to the container of left curves. */
   void add_curve_to_left(Subcurve* curve)
@@ -98,7 +102,7 @@ public:
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
-  add_curve_to_right(Subcurve* curve, const Traits_2* tr)
+  add_curve_to_right(Subcurve* curve, const Gt2* tr)
   {
     if (! this->has_right_curves()) {
       this->push_back_curve_to_right(curve);
@@ -168,6 +172,7 @@ public:
   }
 };
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

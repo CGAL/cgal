@@ -22,10 +22,11 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Definition of the Arr_construction_event class-template.
  */
 
-#include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/Default_event.h>
 #include <CGAL/assertions.h>
 #include <vector>
 
@@ -48,28 +49,30 @@ namespace CGAL {
  */
 template <typename GeometryTraits_2, typename Subcurve_, typename Arrangement_,
           template <typename, typename>
-          class SurfaceSweepEvent = Surface_sweep_event>
+          class SurfaceSweepEvent = Surface_sweep_2::Default_event>
 class Arr_construction_event :
-    public SurfaceSweepEvent<GeometryTraits_2, Subcurve_>
+  public SurfaceSweepEvent<GeometryTraits_2, Subcurve_>
 {
 public:
-  typedef GeometryTraits_2                            Traits_2;
-  typedef Subcurve_                                   Subcurve;
-  typedef Arrangement_                                Arrangement_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Subcurve_                                     Subcurve;
+  typedef Arrangement_                                  Arrangement_2;
 
-  typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
 
-  typedef typename Traits_2::X_monotone_curve_2       X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                  Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef SurfaceSweepEvent<Gt2, Subcurve>              Base;
+  typedef Arr_construction_event<Gt2, Subcurve, Halfedge_handle,
+                                 SurfaceSweepEvent>     Self;
 
-  typedef SurfaceSweepEvent<Traits_2, Subcurve>       Base;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
-  typedef Arr_construction_event<Traits_2, Subcurve, Halfedge_handle,
-                                 SurfaceSweepEvent>   Self;
-
-  typedef typename Base::Subcurve_container           Subcurve_container;
-  typedef typename Base::Subcurve_iterator            Subcurve_iterator;
+  typedef typename Base::Subcurve_container             Subcurve_container;
+  typedef typename Base::Subcurve_iterator              Subcurve_iterator;
   typedef typename Base::Subcurve_reverse_iterator    Subcurve_reverse_iterator;
 
 protected:
@@ -101,7 +104,7 @@ public:
 
   /*! Add a curve to the right of the event. */
   std::pair<bool, Subcurve_iterator>
-  add_curve_to_right(Subcurve* curve, const Traits_2* tr)
+  add_curve_to_right(Subcurve* curve, const Gt2* tr)
   {
     std::pair<bool,Subcurve_iterator> res = Base::add_curve_to_right(curve, tr);
 

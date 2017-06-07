@@ -21,7 +21,6 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
  * Definition of the Arr_overlay_sl_visitor class-template.
  */
@@ -38,6 +37,7 @@
 namespace CGAL {
 
 /*! \class Arr_overlay_sl_visitor
+ *
  * A sweep-line visitor for overlaying a "red" arrangement and a "blue"
  * arrangement, creating a result arrangement. All three arrangements are
  * embedded on the same type of surface and use the same geometry traits.
@@ -47,67 +47,73 @@ class Arr_overlay_sl_visitor : public
   Arr_construction_sl_visitor<typename OverlayHelper_::Construction_helper>
 {
 public:
-  typedef OverlayHelper_                                   Overlay_helper;
-  typedef OverlayTraits_                                   Overlay_traits;
+  typedef OverlayHelper_                                Overlay_helper;
+  typedef OverlayTraits_                                Overlay_traits;
 
-  typedef typename Overlay_helper::Traits_2                Traits_2;
-  typedef typename Overlay_helper::Event                   Event;
-  typedef typename Overlay_helper::Subcurve                Subcurve;
+  typedef typename Overlay_helper::Geometry_traits_2    Geometry_traits_2;
+  typedef typename Overlay_helper::Event                Event;
+  typedef typename Overlay_helper::Subcurve             Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2            X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                       Point_2;
+  typedef typename Overlay_helper::Arrangement_red_2    Arrangement_red_2;
+  typedef typename Overlay_helper::Arrangement_blue_2   Arrangement_blue_2;
+
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arrangement_red_2                             Ar2;
+  typedef Arrangement_blue_2                            Ab2;
+
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
   // The input arrangements (the "red" and the "blue" one):
-  typedef typename Overlay_helper::Arrangement_red_2       Arrangement_red_2;
-  typedef typename Arrangement_red_2::Halfedge_const_handle
-                                                           Halfedge_handle_red;
-  typedef typename Arrangement_red_2::Face_const_handle    Face_handle_red;
-  typedef typename Arrangement_red_2::Vertex_const_handle  Vertex_handle_red;
+  typedef typename Ar2::Halfedge_const_handle           Halfedge_handle_red;
+  typedef typename Ar2::Face_const_handle               Face_handle_red;
+  typedef typename Ar2::Vertex_const_handle             Vertex_handle_red;
 
-  typedef typename Overlay_helper::Arrangement_blue_2      Arrangement_blue_2;
-  typedef typename Arrangement_blue_2::Halfedge_const_handle
-                                                           Halfedge_handle_blue;
-  typedef typename Arrangement_blue_2::Face_const_handle   Face_handle_blue;
-  typedef typename Arrangement_blue_2::Vertex_const_handle Vertex_handle_blue;
+  typedef typename Ab2::Halfedge_const_handle           Halfedge_handle_blue;
+  typedef typename Ab2::Face_const_handle               Face_handle_blue;
+  typedef typename Ab2::Vertex_const_handle             Vertex_handle_blue;
 
   // The resulting arrangement:
-  typedef typename Overlay_helper::Arrangement_2           Arrangement_2;
-  typedef typename Arrangement_2::Halfedge_handle          Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle              Face_handle;
-  typedef typename Arrangement_2::Vertex_handle            Vertex_handle;
+  typedef typename Overlay_helper::Arrangement_2        Arrangement_2;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle           Face_handle;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
-  typedef typename Arrangement_2::Outer_ccb_iterator       Outer_ccb_iterator;
+  typedef typename Arrangement_2::Outer_ccb_iterator    Outer_ccb_iterator;
 
   // The base construction visitor:
-  typedef typename Overlay_helper::Construction_helper     Construction_helper;
+  typedef typename Overlay_helper::Construction_helper  Construction_helper;
   typedef Arr_construction_sl_visitor<Construction_helper> Base;
 
   typedef typename Base::Event_subcurve_iterator
     Event_subcurve_iterator;
   typedef typename Base::Event_subcurve_reverse_iterator
     Event_subcurve_reverse_iterator;
-  typedef typename Base::Status_line_iterator             Status_line_iterator;
+  typedef typename Base::Status_line_iterator           Status_line_iterator;
 
 protected:
-  typedef typename Traits_2::Cell_handle_red              Cell_handle_red;
-  typedef typename Traits_2::Optional_cell_red            Optional_cell_red;
-  typedef typename Traits_2::Cell_handle_blue             Cell_handle_blue;
-  typedef typename Traits_2::Optional_cell_blue           Optional_cell_blue;
+  typedef typename Gt2::Cell_handle_red                 Cell_handle_red;
+  typedef typename Gt2::Optional_cell_red               Optional_cell_red;
+  typedef typename Gt2::Cell_handle_blue                Cell_handle_blue;
+  typedef typename Gt2::Optional_cell_blue              Optional_cell_blue;
 
   typedef std::pair<Halfedge_handle_red, Halfedge_handle_blue>
-                                                          Halfedge_info;
-  typedef Unique_hash_map<Halfedge_handle,Halfedge_info>  Halfedge_map;
+                                                        Halfedge_info;
+  typedef Unique_hash_map<Halfedge_handle, Halfedge_info>
+                                                        Halfedge_map;
 
-  typedef std::pair<Cell_handle_red, Cell_handle_blue>    Handle_info;
+  typedef std::pair<Cell_handle_red, Cell_handle_blue>  Handle_info;
   typedef boost::unordered_map<Vertex_handle, Handle_info, Handle_hash_function>
-                                                          Vertex_map;
+                                                        Vertex_map;
 
   // Side categoties:
-  typedef typename Traits_2::Left_side_category           Left_side_category;
-  typedef typename Traits_2::Bottom_side_category         Bottom_side_category;
-  typedef typename Traits_2::Top_side_category            Top_side_category;
-  typedef typename Traits_2::Right_side_category          Right_side_category;
+  typedef typename Gt2::Left_side_category              Left_side_category;
+  typedef typename Gt2::Bottom_side_category            Bottom_side_category;
+  typedef typename Gt2::Top_side_category               Top_side_category;
+  typedef typename Gt2::Right_side_category             Right_side_category;
 
   typedef typename Arr_has_identified_sides<Left_side_category,
                                             Bottom_side_category>::result
@@ -130,8 +136,8 @@ protected:
                                         // and blue halfedges that induce it.
 public:
   /*! Constructor */
-  Arr_overlay_sl_visitor(const Arrangement_red_2* red_arr,
-                         const Arrangement_blue_2* blue_arr,
+  Arr_overlay_sl_visitor(const Ar2* red_arr,
+                         const Ab2* blue_arr,
                          Arrangement_2* res_arr,
                          Overlay_traits* overlay_traits):
     Base(res_arr),
@@ -440,9 +446,9 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
 
   if (sc_above == NULL) {
     if (rev_iter != event->right_curves_rend()) {
-      if ((*rev_iter)->color() == Traits_2::BLUE)
+      if ((*rev_iter)->color() == Gt2::BLUE)
         (*rev_iter)->set_red_top_face(m_overlay_helper.red_top_face());
-      else if ((*rev_iter)->color() == Traits_2::RED)
+      else if ((*rev_iter)->color() == Gt2::RED)
         (*rev_iter)->set_blue_top_face(m_overlay_helper.blue_top_face());
 
       (*rev_iter)->set_subcurve_above(NULL);
@@ -503,7 +509,7 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event(Event* e,
 
   if (pt.is_red_cell_empty()) {
     CGAL_assertion(! pt.is_blue_cell_empty());
-    CGAL_assertion(sc->color() == Traits_2::RED);
+    CGAL_assertion(sc->color() == Gt2::RED);
 
     Halfedge_handle_red red_he = sc->red_halfedge_handle();
     pt.set_red_cell(boost::make_optional(Cell_handle_red(red_he)));
@@ -814,7 +820,7 @@ insert_isolated_vertex(const Point_2& pt,
         red_face = m_overlay_helper.red_top_face();
       }
       else {
-        if (sc_above->color() != Traits_2::BLUE) {
+        if (sc_above->color() != Gt2::BLUE) {
           red_face = sc_above->red_halfedge_handle()->face();
         }
         else {
@@ -850,7 +856,7 @@ insert_isolated_vertex(const Point_2& pt,
         blue_face = m_overlay_helper.blue_top_face();
       }
       else {
-        if (sc_above->color() != Traits_2::RED) {
+        if (sc_above->color() != Gt2::RED) {
           blue_face = sc_above->blue_halfedge_handle()->face();
         }
         else {
@@ -1050,7 +1056,7 @@ Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::_create_edge(Subcurve* sc,
   if (new_he->direction() != ARR_RIGHT_TO_LEFT) new_he = new_he->twin();
 
   // Examine the various cases for the creation of a new edge.
-  if (sc->color() == Traits_2::RB_OVERLAP) {
+  if (sc->color() == Gt2::RB_OVERLAP) {
     // The new edge represents an overlap between a red halfedge and a blue
     // halfedge.
     Halfedge_handle_red   red_he = sc->red_halfedge_handle();
@@ -1058,7 +1064,7 @@ Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::_create_edge(Subcurve* sc,
 
     m_overlay_traits->create_edge(red_he, blue_he, new_he);
   }
-  else if (sc->color() == Traits_2::RED) {
+  else if (sc->color() == Gt2::RED) {
     // We have a red edge on a blue face.
     Halfedge_handle_red   red_he = sc->red_halfedge_handle();
     Subcurve* sc_above = sc->subcurve_above();
@@ -1067,7 +1073,7 @@ Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::_create_edge(Subcurve* sc,
     m_overlay_traits->create_edge(red_he, blue_f, new_he);
   }
   else {
-    CGAL_assertion(sc->color() == Traits_2::BLUE);
+    CGAL_assertion(sc->color() == Gt2::BLUE);
 
     // We have a blue edge on a red face.
     Halfedge_handle_blue  blue_he = sc->blue_halfedge_handle();

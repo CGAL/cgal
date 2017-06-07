@@ -23,10 +23,12 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Member-function definitions for the No_intersection_surface_sweep_2 class.
  */
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
 //-----------------------------------------------------------------------------
 // Constructor.
@@ -56,7 +58,7 @@ No_intersection_surface_sweep_2(Visitor* visitor) :
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 No_intersection_surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
-No_intersection_surface_sweep_2(const Traits_2* traits, Visitor* visitor) :
+No_intersection_surface_sweep_2(const Gt2* traits, Visitor* visitor) :
   m_traits(static_cast<const Traits_adaptor_2*>(traits)),
   m_traitsOwner(false),
   m_statusLineCurveLess(m_traits, &m_currentEvent),
@@ -779,6 +781,7 @@ _add_curve(Event* e, Subcurve* sc, Attribute type)
   e->add_curve_to_left(sc);
 }
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

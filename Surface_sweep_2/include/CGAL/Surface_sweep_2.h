@@ -22,6 +22,7 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Definition of the Surface_sweep_2 class.
  */
 
@@ -30,13 +31,15 @@
 #include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_curve_pair.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_subcurve.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/Default_subcurve.h>
+#include <CGAL/Surface_sweep_2/Default_event.h>
 #include <CGAL/Arrangement_2/Open_hash.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
 /*! \class
+ *
  * Surface_sweep_2 is a class that implements the sweep line algorithm based
  * on the algorithm of Bentley and Ottmann.
  * It extends the algorithm to support not only segments but general x-monotone
@@ -75,24 +78,27 @@ namespace CGAL {
  *
  */
 
-template <typename Traits_, typename Visitor_,
-          typename Subcurve_ = Surface_sweep_subcurve<Traits_>,
-          typename Event_ = Surface_sweep_event<Traits_, Subcurve_>,
+template <typename GeometryTraits_2, typename Visitor_,
+          typename Subcurve_ = Default_subcurve<GeometryTraits_2>,
+          typename Event_ = Default_event<GeometryTraits_2, Subcurve_>,
           typename Allocator_ = CGAL_ALLOCATOR(int) >
 class Surface_sweep_2 :
-    public No_intersection_surface_sweep_2<Traits_, Visitor_, Subcurve_,
-                                            Event_, Allocator_>
+  public No_intersection_surface_sweep_2<GeometryTraits_2, Visitor_, Subcurve_,
+                                         Event_, Allocator_>
 {
 public:
-  typedef Traits_                                       Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Visitor_                                      Visitor;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
   typedef Allocator_                                    Allocator;
 
-  typedef No_intersection_surface_sweep_2<Traits_2, Visitor, Subcurve, Event,
-                                           Allocator>   Base;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef No_intersection_surface_sweep_2<Gt2, Visitor, Subcurve, Event,
+                                          Allocator>    Base;
 
+public:
   typedef typename Base::Traits_adaptor_2               Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
@@ -142,7 +148,7 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Surface_sweep_2(const Traits_2* traits, Visitor* visitor) :
+  Surface_sweep_2(const Gt2* traits, Visitor* visitor) :
     Base(traits, visitor),
     m_curves_pair_set(0)
   {}
@@ -225,7 +231,8 @@ protected:
   void _fix_finished_overlap_subcurve(Subcurve* sc);
 };
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 // The member-function definitions can be found in:
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_impl.h>

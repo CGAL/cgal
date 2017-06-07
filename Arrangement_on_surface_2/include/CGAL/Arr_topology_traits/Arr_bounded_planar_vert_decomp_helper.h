@@ -20,35 +20,44 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
+ *
  * Definition of the Arr_bounded_planar_vert_decomp_helper class-template.
  */
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 #include <CGAL/Surface_sweep_empty_visitor.h>
 
 /*! \class Arr_bounded_planar_vert_decomp_helper
+ *
  * A helper class for the vertical decomposition sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_, typename Event_,
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
           typename Subcurve_>
 class Arr_bounded_planar_vert_decomp_helper {
 public:
-  typedef Traits_                                       Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
 
+private:
+  typedef Geometry_traits_2                             Gt2;
+
+public:
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
+public:
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
                                                         Base_visitor;
 
-protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
+protected:
   // Data members:
   const Topology_traits* m_top_traits;  // The topology-traits class.
   Face_const_handle m_unb_face;         // The unbounded arrangement face.

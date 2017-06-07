@@ -23,31 +23,38 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
+ *
  * Definition of the Arr_spherical_batched_pl_helper class-template.
  */
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 #include <CGAL/Surface_sweep_empty_visitor.h>
 
 /*! \class Arr_spherical_batched_pl_helper
+ *
  * A helper class for the batched point-location sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_, typename Event_,
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
           typename Subcurve_>
 class Arr_spherical_batched_pl_helper {
 public:
-  typedef Traits_                                       Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
 
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+private:
+  typedef Geometry_traits_2                             Gt2;
 
-  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
+public:
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
                                                         Base_visitor;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Event::Subcurve_iterator             Subcurve_iterator;
 
 protected:
@@ -132,6 +139,6 @@ public:
   Face_const_handle top_face() const { return m_spherical_face; }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

@@ -17,20 +17,21 @@
 //             Ron Wein <wein@post.tau.ac.il>
 //             Efi Fogel <efif@gmail.com>
 
-#ifndef CGAL_NO_OVERLAP_SURFACE_SWEEP_EVENT_H
-#define CGAL_NO_OVERLAP_SURFACE_SWEEP_EVENT_H
+#ifndef CGAL_SURFACE_SWEEP_2_NO_OVERLAP_EVENT_H
+#define CGAL_SURFACE_SWEEP_2_NO_OVERLAP_EVENT_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
- * Defintion of the No_overlap_surface_sweep_event class.
+ * Defintion of the No_overlap_event class.
  */
 
 #include <list>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
-/*! \class No_overlap_surface_sweep_event
+/*! \class No_overlap_event
  *
  * A class associated with an event in a surface-sweep algorithm.
  * An intersection point in the sweep line algorithm is refered to as an event.
@@ -47,25 +48,27 @@ namespace CGAL {
  *
  */
 template <typename GeometryTraits_2, typename Subcurve_>
-class No_overlap_surface_sweep_event {
+class No_overlap_event {
 public:
-  typedef GeometryTraits_2                              Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                    Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
 
-  typedef typename internal::Arr_complete_left_side_category<Traits_2>::Category
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
+
+  typedef typename internal::Arr_complete_left_side_category<Gt2>::Category
                                                         Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category<Traits_2>::Category
+  typedef typename internal::Arr_complete_bottom_side_category<Gt2>::Category
                                                         Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category<Traits_2>::Category
+  typedef typename internal::Arr_complete_top_side_category<Gt2>::Category
                                                         Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category<Traits_2>::Category
+  typedef typename internal::Arr_complete_right_side_category<Gt2>::Category
                                                         Right_side_category;
 
-  typedef Subcurve_                                     Subcurve;
-  //template<typename SC>
-  //struct SC_container { typedef std::list<SC> other; };
   typedef std::list<Subcurve*>                          Subcurve_container;
   typedef typename Subcurve_container::iterator         Subcurve_iterator;
   typedef typename Subcurve_container::const_iterator   Subcurve_const_iterator;
@@ -105,7 +108,7 @@ protected:
 
 public:
   /*! Default constructor. */
-  No_overlap_surface_sweep_event() :
+  No_overlap_event() :
     m_type(0),
     m_ps_x(static_cast<char>(ARR_INTERIOR)),
     m_ps_y(static_cast<char>(ARR_INTERIOR)),
@@ -157,7 +160,7 @@ public:
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
-  add_curve_to_right(Subcurve* curve, const Traits_2* tr)
+  add_curve_to_right(Subcurve* curve, const Gt2* tr)
   {
     if (m_right_curves.empty()) {
       m_right_curves.push_back(curve);
@@ -406,52 +409,51 @@ public:
 };
 
 #ifdef CGAL_SL_VERBOSE
-  template<typename Traits, typename Subcurve>
-  void No_overlap_surface_sweep_event<Traits, Subcurve>::Print()
-  {
-    std::cout << "\tEvent info: "  << "\n" ;
-    if (this->is_closed())
-      std::cout << "\t" << m_point << "\n" ;
-    else {
-      std::cout << "\t";
-      Arr_parameter_space ps_x = this->parameter_space_in_x();
-      Arr_parameter_space ps_y = this->parameter_space_in_y();
+template <typename Traits, typename Subcurve>
+void No_overlap_event<Traits, Subcurve>::Print()
+{
+  std::cout << "\tEvent info: "  << "\n" ;
+  if (this->is_closed()) std::cout << "\t" << m_point << "\n" ;
+  else {
+    std::cout << "\t";
+    Arr_parameter_space ps_x = this->parameter_space_in_x();
+    Arr_parameter_space ps_y = this->parameter_space_in_y();
 
-      switch (ps_x) {
-       case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; break;
-       case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; break;
+    switch (ps_x) {
+     case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; break;
+     case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; break;
+     case ARR_INTERIOR:
+     default:
+      switch (ps_y) {
+       case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; break;
+       case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; break;
        case ARR_INTERIOR:
-       default:
-        switch (ps_y) {
-         case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; break;
-         case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; break;
-         case ARR_INTERIOR:
-         default:
-          CGAL_error();
-        }
+       default: CGAL_error();
       }
     }
-    std::cout << "\n";
-
-    std::cout << "\tLeft curves: \n" ;
-    Subcurve_iterator iter;
-    for (iter = m_left_curves.begin(); iter != m_left_curves.end(); ++iter) {
-      std::cout << "\t";
-      (*iter)->Print();
-      std::cout << "\n";
-    }
-    std::cout << std::endl;
-    std::cout << "\tRight curves: \n" ;
-    for (iter = m_right_curves.begin(); iter != m_right_curves.end(); ++iter) {
-      std::cout << "\t";
-      (*iter)->Print();
-      std::cout << "\n";
-    }
-
-    std::cout << std::endl;
   }
+  std::cout << "\n";
+
+  std::cout << "\tLeft curves: \n" ;
+  Subcurve_iterator iter;
+  for (iter = m_left_curves.begin(); iter != m_left_curves.end(); ++iter) {
+    std::cout << "\t";
+    (*iter)->Print();
+    std::cout << "\n";
+  }
+  std::cout << std::endl;
+  std::cout << "\tRight curves: \n" ;
+  for (iter = m_right_curves.begin(); iter != m_right_curves.end(); ++iter) {
+    std::cout << "\t";
+    (*iter)->Print();
+    std::cout << "\n";
+  }
+
+  std::cout << std::endl;
+}
 #endif // CGAL_SL_VERBOSE
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

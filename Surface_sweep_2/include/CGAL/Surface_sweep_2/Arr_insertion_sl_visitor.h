@@ -46,7 +46,7 @@ public:
 
   typedef Arr_no_intersection_insertion_sl_visitor<Helper> Base;
 
-  typedef typename Base::Traits_2                       Traits_2;
+  typedef typename Base::Geometry_traits_2              Geometry_traits_2;
   typedef typename Base::Arrangement_2                  Arrangement_2;
   typedef typename Base::Event                          Event;
   typedef typename Base::Subcurve                       Subcurve;

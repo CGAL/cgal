@@ -39,23 +39,27 @@ namespace CGAL {
 template <typename Helper_>
 class Arr_no_intersection_insertion_sl_visitor : public Helper_::Parent_visitor {
 public:
-  typedef Helper_                                      Helper;
+  typedef Helper_                                       Helper;
 
-  typedef typename Helper::Traits_2                    Traits_2;
-  typedef typename Helper::Arrangement_2               Arrangement_2;
-  typedef typename Helper::Parent_visitor              Base;
-  typedef typename Helper::Event                       Event;
-  typedef typename Helper::Subcurve                    Subcurve;
+  typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
+  typedef typename Helper::Arrangement_2                Arrangement_2;
+  typedef typename Helper::Parent_visitor               Base;
+  typedef typename Helper::Event                        Event;
+  typedef typename Helper::Subcurve                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                   Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
 protected:
-  typedef typename Base::Status_line_iterator          Status_line_iterator;
-  typedef typename Base::Vertex_handle                 Vertex_handle;
-  typedef typename Base::Halfedge_handle               Halfedge_handle;
-  typedef typename Base::Face_handle                   Face_handle;
-  typedef typename Base::Event_subcurve_iterator       Event_subcurve_iterator;
+  typedef typename Base::Status_line_iterator           Status_line_iterator;
+  typedef typename Base::Vertex_handle                  Vertex_handle;
+  typedef typename Base::Halfedge_handle                Halfedge_handle;
+  typedef typename Base::Face_handle                    Face_handle;
+  typedef typename Base::Event_subcurve_iterator        Event_subcurve_iterator;
   typedef typename Base::Event_subcurve_reverse_iterator
     Event_subcurve_reverse_iterator;
 

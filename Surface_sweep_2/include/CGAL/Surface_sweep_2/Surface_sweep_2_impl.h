@@ -21,12 +21,13 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 /*! \file
+ *
  * Member-function definitions of the Surface_sweep_2 class-template.
  */
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
 //-----------------------------------------------------------------------------
 // Initialize the data structures for the sweep-line algorithm.
@@ -944,6 +945,7 @@ _add_curve(Event* e, Subcurve* sc, Attribute type)
   e->add_curve_to_left(sc);
 }
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif

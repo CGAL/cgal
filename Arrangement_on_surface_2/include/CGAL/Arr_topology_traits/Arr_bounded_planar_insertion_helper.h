@@ -20,8 +20,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
-/*!
+/*! \file
+ *
  * Definition of the Arr_bounded_planar_insertion_helper class-template.
  */
 
@@ -30,35 +30,40 @@
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 /*! \class Arr_bounded_planar_insertion_helper
+ *
  * A helper class for the insertion sweep-line visitors, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <class Traits_, class Arrangement_, class Event_, class Subcurve_>
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_bounded_planar_insertion_helper :
-  public Arr_bounded_planar_construction_helper<Traits_, Arrangement_,
+  public Arr_bounded_planar_construction_helper<GeometryTraits_2, Arrangement_,
                                                 Event_, Subcurve_>
 {
 public:
-
-  typedef Traits_                                       Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                    Point_2;
-
-  typedef Arr_bounded_planar_construction_helper<Traits_2, Arrangement_2,
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arr_bounded_planar_insertion_helper<Gt2, Arrangement_2, Event,
+                                              Subcurve> Self;
+  typedef Arr_bounded_planar_construction_helper<Gt2, Arrangement_2,
                                                  Event, Subcurve>
                                                         Base;
 
-  typedef Surface_sweep_empty_visitor<Traits_2, Subcurve, Event>
-                                                        Base_visitor;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
-  typedef Arr_bounded_planar_insertion_helper<Traits_2, Arrangement_2, Event,
-                                              Subcurve> Self;
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+                                                        Base_visitor;
 
   typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
 
@@ -75,6 +80,6 @@ public:
   {}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

@@ -21,8 +21,8 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
-/*!
+/*! \file
+ *
  * Defintion of the Arr_overlay_traits_2 class-template.
  */
 
@@ -35,60 +35,60 @@
 namespace CGAL {
 
 /*! \class
+ *
  * A meta-traits class that stores a red or a blue halfedge handle with every
  * x-monotone curve, and a red or blue vertex handle with each point. This
  * information is used to speed up the overlay of a red arrangement and a blue
  * arrangement one on top of the other.
  */
-template <typename GeometryTraits_, typename ArrangementRed_,
-          typename ArrangementBlue_>
+template <typename GeometryTraits_2, typename ArrangementRed_2,
+          typename ArrangementBlue_2>
 class Arr_overlay_traits_2 {
 public:
-  typedef GeometryTraits_                           Traits_2;
-  typedef ArrangementRed_                           Arrangement_red_2;
-  typedef ArrangementBlue_                          Arrangement_blue_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef ArrangementRed_2                              Arrangement_red_2;
+  typedef ArrangementBlue_2                             Arrangement_blue_2;
 
-  typedef typename Arrangement_red_2::Face_const_handle
-                                                    Face_handle_red;
-  typedef typename Arrangement_blue_2::Face_const_handle
-                                                    Face_handle_blue;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arrangement_red_2                             Ar2;
+  typedef Arrangement_blue_2                            Ab2;
 
-  typedef typename Arrangement_red_2::Halfedge_const_handle
-                                                    Halfedge_handle_red;
-  typedef typename Arrangement_blue_2::Halfedge_const_handle
-                                                    Halfedge_handle_blue;
+public:
+  typedef typename Ar2::Face_const_handle               Face_handle_red;
+  typedef typename Ab2::Face_const_handle               Face_handle_blue;
 
-  typedef typename Arrangement_red_2::Vertex_const_handle
-                                                    Vertex_handle_red;
-  typedef typename Arrangement_blue_2::Vertex_const_handle
-                                                    Vertex_handle_blue;
+  typedef typename Ar2::Halfedge_const_handle           Halfedge_handle_red;
+  typedef typename Ab2::Halfedge_const_handle           Halfedge_handle_blue;
 
-  typedef typename Traits_2::X_monotone_curve_2     Base_x_monotone_curve_2;
-  typedef typename Traits_2::Point_2                Base_point_2;
-  typedef typename Traits_2::Multiplicity           Multiplicity;
+  typedef typename Ar2::Vertex_const_handle             Vertex_handle_red;
+  typedef typename Ab2::Vertex_const_handle             Vertex_handle_blue;
 
-  typedef typename Traits_2::Compare_x_2            Base_compare_x_2;
-  typedef typename Traits_2::Compare_xy_2           Base_compare_xy_2;
-  typedef typename Traits_2::Construct_min_vertex_2 Base_construct_min_vertex_2;
-  typedef typename Traits_2::Construct_max_vertex_2 Base_construct_max_vertex_2;
-  typedef typename Traits_2::Is_vertical_2          Base_is_vertical_2;
-  typedef typename Traits_2::Compare_y_at_x_2       Base_compare_y_at_x_2;
-  typedef typename Traits_2::Compare_y_at_x_right_2 Base_compare_y_at_x_right_2;
-  typedef typename Traits_2::Intersect_2            Base_intersect_2;
-  typedef typename Traits_2::Split_2                Base_split_2;
-  typedef typename Traits_2::Equal_2                Base_equal_2;
+  typedef typename Gt2::X_monotone_curve_2          Base_x_monotone_curve_2;
+  typedef typename Gt2::Point_2                     Base_point_2;
+  typedef typename Gt2::Multiplicity                Multiplicity;
 
-  typedef typename Traits_2::Has_do_intersect_category
-                                                    Has_do_intersect_category;
+  typedef typename Gt2::Compare_x_2                 Base_compare_x_2;
+  typedef typename Gt2::Compare_xy_2                Base_compare_xy_2;
+  typedef typename Gt2::Construct_min_vertex_2      Base_construct_min_vertex_2;
+  typedef typename Gt2::Construct_max_vertex_2      Base_construct_max_vertex_2;
+  typedef typename Gt2::Is_vertical_2               Base_is_vertical_2;
+  typedef typename Gt2::Compare_y_at_x_2            Base_compare_y_at_x_2;
+  typedef typename Gt2::Compare_y_at_x_right_2      Base_compare_y_at_x_right_2;
+  typedef typename Gt2::Intersect_2                 Base_intersect_2;
+  typedef typename Gt2::Split_2                     Base_split_2;
+  typedef typename Gt2::Equal_2                     Base_equal_2;
 
-  typedef typename internal::Arr_complete_left_side_category<Traits_2>::Category
-                                                    Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category<Traits_2>::Category
-                                                    Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category<Traits_2>::Category
-                                                    Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category<Traits_2>::Category
-                                                    Right_side_category;
+  typedef typename Gt2::Has_do_intersect_category   Has_do_intersect_category;
+
+  typedef typename internal::Arr_complete_left_side_category<Gt2>::Category
+                                                        Left_side_category;
+  typedef typename internal::Arr_complete_bottom_side_category<Gt2>::Category
+                                                        Bottom_side_category;
+  typedef typename internal::Arr_complete_top_side_category<Gt2>::Category
+                                                        Top_side_category;
+  typedef typename internal::Arr_complete_right_side_category<Gt2>::Category
+                                                        Right_side_category;
 
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
    * never uses Compare_y_at_x_left_2, and it never performs merging of curves.
@@ -121,28 +121,28 @@ public:
   { return boost::make_optional(Cell_handle_blue(handle_blue)); }
 
 private:
-  const Traits_2* m_base_traits;        // The base traits object.
+  const Gt2* m_base_traits;        // The base traits object.
 
 public:
   /*! Default constructor. */
   Arr_overlay_traits_2() {}
 
   /*! Constructor from a base traits class. */
-  Arr_overlay_traits_2(const Traits_2& base_tr) : m_base_traits(&base_tr) {}
+  Arr_overlay_traits_2(const Gt2& base_tr) : m_base_traits(&base_tr) {}
 
-  const Traits_2* base_traits() const { return m_base_traits; }
+  const Gt2* base_traits() const { return m_base_traits; }
 
   /*! \class
    * Nested extension of the x-monotone curve type.
    */
   class Ex_x_monotone_curve_2 {
   public:
-    typedef Base_x_monotone_curve_2     Base;
+    typedef Base_x_monotone_curve_2             Base;
 
   protected:
-    Base                  m_base_xcv;               // The base curve.
-    Halfedge_handle_red   m_red_halfedge_handle;    // The red halfedge.
-    Halfedge_handle_blue  m_blue_halfedge_handle;   // The blue halfedge.
+    Base m_base_xcv;                              // The base curve.
+    Halfedge_handle_red m_red_halfedge_handle;    // The red halfedge.
+    Halfedge_handle_blue m_blue_halfedge_handle;  // The blue halfedge.
 
   public:
     /*! Default constructor. */
@@ -214,8 +214,8 @@ public:
     /*! Get the color of the subcurve. */
     Color color() const
     {
-      Halfedge_handle_red     null_red_he;
-      Halfedge_handle_blue    null_blue_he;
+      Halfedge_handle_red null_red_he;
+      Halfedge_handle_blue null_blue_he;
 
       if ((m_red_halfedge_handle != null_red_he) &&
           (m_blue_halfedge_handle == null_blue_he))
@@ -247,7 +247,7 @@ public:
    */
   class Ex_point_2 {
   public:
-    typedef Base_point_2    Base;
+    typedef Base_point_2                        Base;
 
   protected:
     Base m_base_pt;                     // The base point.
@@ -356,8 +356,7 @@ public:
     Intersect_2(const Arr_overlay_traits_2* traits) : m_traits(traits) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     template<class OutputIterator>
@@ -410,7 +409,7 @@ public:
       const Arr_parameter_space bx2 = ps_x_op(xcv2, ARR_MIN_END);
       const Arr_parameter_space by2 = ps_y_op(xcv2, ARR_MIN_END);
 
-      const Traits_2* m_base_tr = m_traits->base_traits();
+      const Gt2* m_base_tr = m_traits->base_traits();
 
       if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR) &&
           (bx2 == ARR_INTERIOR) && (by2 == ARR_INTERIOR))
@@ -504,8 +503,7 @@ public:
     Split_2(const Base_split_2& base) : m_base_split(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
@@ -546,8 +544,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Point_2 operator()(const X_monotone_curve_2& xcv)
@@ -604,8 +601,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Point_2 operator()(const X_monotone_curve_2& xcv) const
@@ -657,8 +653,7 @@ public:
     Is_vertical_2(const Base_is_vertical_2& base) : m_base_is_vert(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     bool operator()(const X_monotone_curve_2& xcv) const
@@ -685,8 +680,7 @@ public:
     Equal_2(const Base_equal_2& base) : m_base_equal(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     bool operator()(const Point_2& p1, const Point_2& p2) const
@@ -715,8 +709,7 @@ public:
     Compare_x_2(const Base_compare_x_2& base) : m_base_cmp_x(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
@@ -741,8 +734,7 @@ public:
     Compare_xy_2(const Base_compare_xy_2& base) : m_base_cmp_xy(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
@@ -797,8 +789,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const Point_2& p,
@@ -828,8 +819,7 @@ public:
     {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
@@ -853,18 +843,17 @@ public:
   class Parameter_space_in_x_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Parameter_space_in_x_2(const Traits_2* tr) : m_base(tr) {}
+    Parameter_space_in_x_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
@@ -888,18 +877,17 @@ public:
   class Is_on_x_identification_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_on_x_identification_2(const Traits_2* tr) : m_base(tr) {}
+    Is_on_x_identification_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Arr_parameter_space operator()(const Point_2& p) const
@@ -919,7 +907,7 @@ public:
   class Compare_y_on_boundary_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
@@ -928,11 +916,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_on_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_y_on_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const Point_2& pt1, const Point_2& pt2) const
@@ -949,7 +936,7 @@ public:
   class Compare_y_near_boundary_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
@@ -958,11 +945,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_near_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_y_near_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
@@ -989,18 +975,17 @@ public:
   class Parameter_space_in_y_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Parameter_space_in_y_2(const Traits_2* tr) : m_base(tr) {}
+    Parameter_space_in_y_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
@@ -1024,18 +1009,17 @@ public:
   class Is_on_y_identification_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_on_y_identification_2(const Traits_2* tr) : m_base(tr) {}
+    Is_on_y_identification_2(const Gt2* tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Arr_parameter_space operator()(const Point_2& p) const
@@ -1055,7 +1039,7 @@ public:
   class Compare_x_at_limit_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
@@ -1064,11 +1048,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_at_limit_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_at_limit_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const Point_2& p,
@@ -1096,7 +1079,7 @@ public:
   class Compare_x_near_limit_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
@@ -1105,11 +1088,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_near_limit_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_near_limit_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
@@ -1131,7 +1113,7 @@ public:
   class Compare_x_on_boundary_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
@@ -1140,11 +1122,10 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_on_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_on_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const Point_2& pt1, const Point_2& pt2) const
@@ -1178,7 +1159,7 @@ public:
   class Compare_x_near_boundary_2 {
   protected:
     //! The base traits.
-    const Traits_2* m_base;
+    const Gt2* m_base;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
@@ -1187,18 +1168,18 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_near_boundary_2(const Traits_2* base) : m_base(base) {}
+    Compare_x_near_boundary_2(const Gt2* base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
+    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
-      return m_base->compare_x_near_boundary_2_object()(xcv1.base(), xcv2.base(),
+      return m_base->compare_x_near_boundary_2_object()(xcv1.base(),
+                                                        xcv2.base(),
 							ce);
     }
   };
@@ -1208,6 +1189,6 @@ public:
   { return Compare_x_near_boundary_2(m_base_traits); }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

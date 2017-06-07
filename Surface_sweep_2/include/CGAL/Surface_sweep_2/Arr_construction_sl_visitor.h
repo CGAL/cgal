@@ -21,12 +21,12 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
-
 #ifndef CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
 #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 0
 #endif
 
-/*!
+/*! \file
+ *
  * Definition of the Arr_construction_sl_visitor class-template.
  */
 
@@ -51,32 +51,36 @@ struct Integer_hash_function {
 template <typename Helper_>
 class Arr_construction_sl_visitor : public Helper_::Base_visitor {
 public:
-  typedef Helper_                                      Helper;
+  typedef Helper_                                       Helper;
 
-  typedef typename Helper::Traits_2                    Traits_2;
-  typedef typename Helper::Arrangement_2               Arrangement_2;
-  typedef typename Helper::Base_visitor                Base;
-  typedef typename Helper::Event                       Event;
-  typedef typename Helper::Subcurve                    Subcurve;
+  typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
+  typedef typename Helper::Arrangement_2                Arrangement_2;
+  typedef typename Helper::Base_visitor                 Base;
+  typedef typename Helper::Event                        Event;
+  typedef typename Helper::Subcurve                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                   Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
 protected:
-  typedef typename Arrangement_2::Topology_traits      Topology_traits;
-  typedef typename Arrangement_2::Vertex_handle        Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle          Face_handle;
+  typedef typename Arrangement_2::Topology_traits       Topology_traits;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle           Face_handle;
 
-  typedef typename Base::Event_subcurve_iterator       Event_subcurve_iterator;
+  typedef typename Base::Event_subcurve_iterator        Event_subcurve_iterator;
   typedef typename Base::Event_subcurve_reverse_iterator
     Event_subcurve_reverse_iterator;
-  typedef typename Base::Status_line_iterator          Status_line_iterator;
+  typedef typename Base::Status_line_iterator           Status_line_iterator;
 
-  typedef typename Helper::Indices_list                Indices_list;
-  typedef typename Helper::Halfedge_indices_map        Halfedge_indices_map;
+  typedef typename Helper::Indices_list                 Indices_list;
+  typedef typename Helper::Halfedge_indices_map         Halfedge_indices_map;
   typedef Unique_hash_map<unsigned int, Vertex_handle, Integer_hash_function>
-                                                       Iso_vertices_map;
+                                                        Iso_vertices_map;
 
 protected:
   Helper m_helper;                          // The helper class.

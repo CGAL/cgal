@@ -17,14 +17,14 @@
 //             Ron Wein <wein@post.tau.ac.il>
 //             Efi Fogel <efifogel@gmail.com>
 
-#ifndef CGAL_NO_OVERLAP_SURFACE_SWEEP_SUBCURVE_H
-#define CGAL_NO_OVERLAP_SURFACE_SWEEP_SUBCURVE_H
+#ifndef CGAL_SURFACE_SWEEP_2_NO_OVERLAP_SUBCURVE_H
+#define CGAL_SURFACE_SWEEP_2_NO_OVERLAP_SUBCURVE_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
  *
- * Defintion of the No_overlap_surface_sweep_subcurve class, which is an
+ * Defintion of the No_overlap_subcurve class, which is an
  * extended curve type, referred to as Subcurve, used by the surface-sweep
  * framework.
  *
@@ -33,7 +33,7 @@
  * instance types of Subcurve and Event must be available when the
  * surface-sweep template is instantiated.
  *
- * No_overlap_surface_sweep_subcurve is the most basic type. The user is allowed
+ * No_overlap_subcurve is the most basic type. The user is allowed
  * to introduce new types that derive from the basic type. However, some of the
  * fields of the basic type depends on the Subcurve type.  We use the curiously
  * recurring template pattern (CRTP) idiom to force the correct matching of
@@ -41,16 +41,17 @@
  */
 
 #include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
-#include <CGAL/Surface_sweep_2/No_overlap_surface_sweep_event.h>
+#include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
-/*! \class No_overlap_surface_sweep_subcurve_base
+/*! \class No_overlap_subcurve_base
  *
- * This is the base class of the No_overlap_surface_sweep_subcurve class
+ * This is the base class of the No_overlap_subcurve class
  * template used by the (CRTP) idiom.
  * \tparam GeometryTraits_2 the geometry traits.
  * \tparam Subcurve_ the subcurve actual type.
@@ -61,18 +62,21 @@ namespace CGAL {
  * - an iterator that points to the location of the subcurve in the status line.
  */
 template <typename GeometryTraits_2, typename Subcurve_>
-class No_overlap_surface_sweep_subcurve_base {
+class No_overlap_subcurve_base {
 public:
-  typedef GeometryTraits_2                              Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
 
-  typedef Curve_comparer<Traits_2, Subcurve>            Compare_curves;
+private:
+  typedef Geometry_traits_2                             Gt2;
+
+public:
+  typedef Curve_comparer<Gt2, Subcurve>                 Compare_curves;
   typedef Multiset<Subcurve*, Compare_curves, CGAL_ALLOCATOR(int)>
                                                         Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
 
-  typedef No_overlap_surface_sweep_event<Traits_2, Subcurve>
-                                                        Event;
+  typedef No_overlap_event<Gt2, Subcurve>               Event;
 
 protected:
   Status_line_iterator m_hint;      // The location of the subcurve in the
@@ -81,12 +85,12 @@ protected:
   Event* m_right_event;             // The event associated with the right end
 };
 
-/*! \class No_overlap_surface_sweep_subcurve
+/*! \class No_overlap_subcurve
  *
  * This is a class template that wraps a traits curve of type
  * X_monotone_curve_2.  It contains data that is used when applying the sweep
  * algorithm on a set of x-monotone curves. This class derives from the
- * No_overlap_surface_sweep_subcurve_base class template.
+ * No_overlap_subcurve_base class template.
  *
  * The information contained in this class (in addition to the information
  * contaisn in its base) is:
@@ -95,26 +99,28 @@ protected:
  * \tparam GeometryTraits_2 the geometry traits.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
  *         overriden it implies that the type is
- *         No_overlap_surface_sweep_subcurve.
+ *         No_overlap_subcurve.
  */
 template <typename GeometryTraits_2, typename Subcurve_ = Default>
-class No_overlap_surface_sweep_subcurve :
-    public No_overlap_surface_sweep_subcurve_base
+class No_overlap_subcurve :
+    public No_overlap_subcurve_base
            <GeometryTraits_2,
             typename Default::Get<Subcurve_,
-                                  No_overlap_surface_sweep_subcurve
+                                  No_overlap_subcurve
                                   <GeometryTraits_2, Subcurve_> >::type>
 {
 public:
-  typedef GeometryTraits_2                              Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
 
-  typedef No_overlap_surface_sweep_subcurve<Traits_2, Subcurve_>
-                                                        Self;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef No_overlap_subcurve<Gt2, Subcurve_>           Self;
   typedef typename Default::Get<Subcurve_, Self >::type Subcurve;
+  typedef No_overlap_subcurve_base<Gt2, Subcurve>       Base;
 
-  typedef No_overlap_surface_sweep_subcurve_base<Traits_2, Subcurve>
-                                                        Base;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+
   typedef typename Base::Status_line_iterator           Status_line_iterator;
   typedef typename Base::Event                          Event;
 
@@ -126,12 +132,12 @@ protected:
 
 public:
   /*! Construct default. */
-  No_overlap_surface_sweep_subcurve() {}
+  No_overlap_subcurve() {}
 
   /*! Construct from a curve.
    * \param curve the input x-monotone curve.
    */
-  No_overlap_surface_sweep_subcurve(const X_monotone_curve_2& curve) :
+  No_overlap_subcurve(const X_monotone_curve_2& curve) :
     m_last_curve(curve)
   {}
 
@@ -139,7 +145,7 @@ public:
   void init(const X_monotone_curve_2& curve) { m_last_curve = curve; }
 
   /*! Destruct. */
-  ~No_overlap_surface_sweep_subcurve() {}
+  ~No_overlap_subcurve() {}
 
   /*! Get the last intersecing curve so far (const version). */
   const X_monotone_curve_2& last_curve() const { return m_last_curve; }
@@ -167,11 +173,13 @@ public:
 
   /*! Set the event that corresponds to the left end of the subcurve. */
   template <typename SweepEvent>
-  void set_left_event(SweepEvent* event) { Base::m_left_event = (Event*)event; }
+  void set_left_event(SweepEvent* event)
+  { Base::m_left_event = (Event*)event; }
 
   /*! Set the event that corresponds to the right end of the subcurve. */
   template <typename SweepEvent>
-  void set_right_event(SweepEvent* event) { Base::m_right_event = (Event*)event; }
+  void set_right_event(SweepEvent* event)
+  { Base::m_right_event = (Event*)event; }
 
   /*! Get the location of the subcurve in the status line .*/
   Status_line_iterator hint() const { return Base::m_hint; }
@@ -185,14 +193,14 @@ public:
 };
 
 #ifdef CGAL_SL_VERBOSE
-  template<class Traits>
-  void No_overlap_surface_sweep_subcurve<Traits>::Print() const
-  {
-    std::cout << "Curve " << this
-              << "  (" << last_curve() << ") "
-  }
+template <typename Traits>
+void No_overlap_subcurve<Traits>::Print() const
+{
+  std::cout << "Curve " << this << "  (" << last_curve() << ") ";
+}
 #endif
 
-} //namespace CGAL
+} // namespace CGAL
+} // namespace Surface_sweep_2
 
 #endif
