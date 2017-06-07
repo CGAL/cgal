@@ -1040,7 +1040,7 @@ _side_of_sphere(const Cell_handle& c, const Point& q,
   os= side_of_oriented_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
 
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
-    return (Bounded_side) os;
+    return enum_cast<Bounded_side>(os);
 
   //We are now in a degenerate case => we do a symbolic perturbation.
   // We sort the points lexicographically.
