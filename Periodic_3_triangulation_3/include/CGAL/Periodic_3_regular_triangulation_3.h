@@ -649,30 +649,22 @@ public:
     return geom_traits().compare_power_distance_3_object()(p, q, r, o_p, o_q, o_r);
   }
 
-  Oriented_side power_test(const Weighted_point &p, const Weighted_point &q) const
+  Oriented_side power_side_of_oriented_power_sphere(const Weighted_point &p,
+                                                    const Weighted_point &q) const
   {
     CGAL_triangulation_precondition(this->equal(p, q));
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q);
   }
-  Oriented_side power_test(const Weighted_point &p, const Weighted_point &q,
-                           const Weighted_point &r, const Weighted_point &s,
-                           const Weighted_point &t,
-                           const Offset &o_p, const Offset &o_q,
-                           const Offset &o_r, const Offset &o_s,
-                           const Offset &o_t) const
+
+  Oriented_side power_side_of_oriented_power_sphere(const Weighted_point &p, const Weighted_point &q,
+                                                    const Weighted_point &r, const Weighted_point &s,
+                                                    const Weighted_point &t,
+                                                    const Offset &o_p, const Offset &o_q,
+                                                    const Offset &o_r, const Offset &o_s,
+                                                    const Offset &o_t) const
   {
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(
-             p, q, r, s, t, o_p, o_q, o_r, o_s, o_t);
-  }
-
-  Oriented_side side_of_oriented_power_sphere(const Weighted_point &p, const Weighted_point &q,
-                                              const Weighted_point &r, const Weighted_point &s,
-                                              const Weighted_point &t,
-                                              const Offset &o_p, const Offset &o_q,
-                                              const Offset &o_r, const Offset &o_s,
-                                              const Offset &o_t) const
-  {
-    return power_test(p,q,r,s,t,o_p,o_q,o_r,o_s,o_t);
+             p,q,r,s,t, o_p,o_q,o_r,o_s,o_t);
   }
 
   Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
@@ -1216,16 +1208,17 @@ public:
     */
   bool operator()(const Cell_handle c, const Offset& off) const {
     return (t->_side_of_power_sphere(c, p, t->combine_offsets(o, off), true)
-             == ON_BOUNDED_SIDE);
+              == ON_BOUNDED_SIDE);
   }
 
   bool operator()(const Cell_handle c, const Weighted_point& pt,
                   const Offset& off) const {
-    return (t->_side_of_power_sphere(c, pt, o + off, true) == ON_BOUNDED_SIDE);
+    return (t->_side_of_power_sphere(c, pt, t->combine_offsets(o, off), true)
+              == ON_BOUNDED_SIDE);
   }
 
   int compare_weight(const Weighted_point& p, const Weighted_point& q) const {
-    return t->power_test(p, q);
+    return t->power_side_of_oriented_power_sphere(p, q);
   }
 
   bool test_initial_cell(Cell_handle c, const Offset& off) const {
