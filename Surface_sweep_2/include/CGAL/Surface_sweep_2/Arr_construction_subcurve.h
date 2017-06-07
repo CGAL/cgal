@@ -109,6 +109,44 @@ protected:
                              // Indices of all halfedge below the curve that
                              // may represent a hole.
 
+public:
+  /*! Initialize the curve. */
+  void init(const X_monotone_curve_2& curve) { Base::init(curve); }
+
+  /*! Set the event associated with the left end of the subcurve. */
+  template <typename SweepEvent>
+  void set_left_event(SweepEvent* left)
+  {
+    Base::set_left_event(left);
+    set_last_event(left);
+  }
+
+  /*! Set the last event on the subcurve. */
+  void set_last_event(Event_ptr e) { m_last_event = e; }
+
+  /*! Get the last event. */
+  Event_ptr last_event() const { return m_last_event; }
+
+  /*! Get the subcurve index. */
+  unsigned int index() const { return m_index; }
+
+  /*! Set the subcurve index. */
+  void set_index(unsigned int i) { m_index = i; }
+
+  /*! Check if the index is valid. */
+  bool has_valid_index() const { return (m_index != 0); }
+
+  /*! Add an index of a halfedge below the subcurve. */
+  void add_halfedge_index(unsigned int i) { m_halfedge_indices.push_back(i); }
+
+  /*! Clear the indices of the halfedges below the subcurve. */
+  void clear_halfedge_indices() { m_halfedge_indices.clear(); }
+
+  /*! Check if there are any halfedges below the subcurve. */
+  bool has_halfedge_indices() const { return (!m_halfedge_indices.empty()); }
+
+  /*! Get the indices of the halfedges below the subcurve. */
+  Halfedge_indices_list& halfedge_indices_list() { return m_halfedge_indices; }
 };
 
 /*! \class Arr_construction_subcurve
@@ -128,13 +166,13 @@ template <typename GeometryTraits_2,
           class SurfaceSweepSubcurve = Ss2::Default_subcurve,
           typename Subcurve_ = Default>
 class Arr_construction_subcurve :
-  public Arr_construction_subcurve_base
-         <GeometryTraits_2,
-          SurfaceSweepSubcurve,
-          typename Default::Get<Subcurve_,
-                                Arr_construction_subcurve<GeometryTraits_2,
-                                                          SurfaceSweepSubcurve,
-                                                          Subcurve_> >::type>
+  public Arr_construction_subcurve_base<
+    GeometryTraits_2,
+    SurfaceSweepSubcurve,
+    typename Default::Get<Subcurve_,
+                          Arr_construction_subcurve<GeometryTraits_2,
+                                                    SurfaceSweepSubcurve,
+                                                    Subcurve_> >::type>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
@@ -160,47 +198,6 @@ public:
   Arr_construction_subcurve(X_monotone_curve_2& curve) :
     Base(curve)
   {}
-
-  /*! Initialize the curve. */
-  void init(const X_monotone_curve_2& curve) { Base::init(curve); }
-
-  /*! Set the event associated with the left end of the subcurve. */
-  template<class SweepEvent>
-  void set_left_event(SweepEvent* left)
-  {
-    Base::set_left_event(left);
-    set_last_event(left);
-  }
-
-  /*! Set the last event on the subcurve. */
-  void set_last_event(Event_ptr e) { Base::m_last_event = e; }
-
-  /*! Get the last event. */
-  Event_ptr last_event() const { return Base::m_last_event; }
-
-  /*! Get the subcurve index. */
-  unsigned int index() const { return Base::m_index; }
-
-  /*! Set the subcurve index. */
-  void set_index(unsigned int i) { Base::m_index = i; }
-
-  /*! Check if the index is valid. */
-  bool has_valid_index() const { return (Base::m_index != 0); }
-
-  /*! Add an index of a halfedge below the subcurve. */
-  void add_halfedge_index(unsigned int i)
-  { Base::m_halfedge_indices.push_back(i); }
-
-  /*! Clear the indices of the halfedges below the subcurve. */
-  void clear_halfedge_indices() { Base::m_halfedge_indices.clear(); }
-
-  /*! Check if there are any halfedges below the subcurve. */
-  bool has_halfedge_indices() const
-  { return (!Base::m_halfedge_indices.empty()); }
-
-  /*! Get the indices of the halfedges below the subcurve. */
-  Halfedge_indices_list& halfedge_indices_list()
-  { return Base::m_halfedge_indices; }
 };
 
 

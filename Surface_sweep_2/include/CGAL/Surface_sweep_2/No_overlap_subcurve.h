@@ -83,6 +83,36 @@ protected:
                                     // status line (the Y-structure).
   Event* m_left_event;              // The event associated with the left end.
   Event* m_right_event;             // The event associated with the right end
+
+public:
+  /*! Check whether the given event is the matches the right-end event.
+   */
+  template <typename SweepEvent>
+  bool is_end_point(const SweepEvent* event) const
+  { return (m_right_event == (Event*)event); }
+
+  /*! Obtain the event that corresponds to the left end of the subcurve.
+   */
+  Event* left_event() const { return m_left_event; }
+
+  /*! Obtain the event that corresponds to the right end of the subcurve.
+   */
+  Event* right_event() const { return m_right_event; }
+
+  /*! Set the event that corresponds to the left end of the subcurve. */
+  template <typename SweepEvent>
+  void set_left_event(SweepEvent* event) { m_left_event = (Event*)event; }
+
+  /*! Set the event that corresponds to the right end of the subcurve. */
+  template <typename SweepEvent>
+  void set_right_event(SweepEvent* event) { m_right_event = (Event*)event; }
+
+  /*! Obtain the location of the subcurve in the status line .*/
+  Status_line_iterator hint() const { return m_hint; }
+
+  /*! Set the location of the subcurve in the status line .*/
+  void set_hint(Status_line_iterator hint) { m_hint = hint; }
+
 };
 
 /*! \class No_overlap_subcurve
@@ -103,11 +133,11 @@ protected:
  */
 template <typename GeometryTraits_2, typename Subcurve_ = Default>
 class No_overlap_subcurve :
-    public No_overlap_subcurve_base
-           <GeometryTraits_2,
-            typename Default::Get<Subcurve_,
-                                  No_overlap_subcurve
-                                  <GeometryTraits_2, Subcurve_> >::type>
+  public No_overlap_subcurve_base<
+    GeometryTraits_2,
+    typename Default::Get<Subcurve_,
+                          No_overlap_subcurve<GeometryTraits_2,
+                                              Subcurve_> >::type>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
@@ -156,36 +186,6 @@ public:
   /*! Set the last intersecing curve so far.
    */
   void set_last_curve(const X_monotone_curve_2& cv) { m_last_curve = cv; }
-
-  /*! Check if the given event is the matches the right-end event.
-   */
-  template <typename SweepEvent>
-  bool is_end_point(const SweepEvent* event) const
-  { return (Base::m_right_event == (Event*)event); }
-
-  /*! Get the event that corresponds to the left end of the subcurve.
-   */
-  Event* left_event() const { return Base::m_left_event; }
-
-  /*! Get the event that corresponds to the right end of the subcurve.
-   */
-  Event* right_event() const { return Base::m_right_event; }
-
-  /*! Set the event that corresponds to the left end of the subcurve. */
-  template <typename SweepEvent>
-  void set_left_event(SweepEvent* event)
-  { Base::m_left_event = (Event*)event; }
-
-  /*! Set the event that corresponds to the right end of the subcurve. */
-  template <typename SweepEvent>
-  void set_right_event(SweepEvent* event)
-  { Base::m_right_event = (Event*)event; }
-
-  /*! Get the location of the subcurve in the status line .*/
-  Status_line_iterator hint() const { return Base::m_hint; }
-
-  /*! Set the location of the subcurve in the status line .*/
-  void set_hint(Status_line_iterator hint) { Base::m_hint = hint; }
 
 #ifdef CGAL_SL_VERBOSE
   void Print() const;

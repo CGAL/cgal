@@ -93,75 +93,31 @@ public:
 protected:
   Subcurve* m_orig_subcurve1;           // The overlapping hierarchy
   Subcurve* m_orig_subcurve2;           // (relevant only in case of overlaps).
-};
-
-/*! \class Default_subcurve
- *
- * This is a class template that wraps a traits curve of type
- * X_monotone_curve_2.  It contains data that is used when applying the sweep
- * algorithm on a set of x-monotone curves. This class derives from the
- * No_overlap_subcurve class template.
- * \tparam GeometryTraits_2 the geometry traits.
- * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
- *         overriden it implies that the type is
- *         No_overlap_subcurve
- */
-template <typename GeometryTraits_2, typename Subcurve_ = Default>
-class Default_subcurve :
-  public Default_subcurve_base<GeometryTraits_2,
-                               typename Default::Get<Subcurve_,
-                                                     Default_subcurve<
-                                                       GeometryTraits_2,
-                                                       Subcurve_> >::type>
-{
-public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
-
-private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef Default_subcurve<Gt2, Subcurve_>              Self;
-  typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef Default_subcurve_base<Gt2, Subcurve>          Base;
 
 public:
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-
-public:
-  /*! Construct default.
-   */
-  Default_subcurve() {}
-
-  /*! Construct from a curve.
-   */
-  Default_subcurve(const X_monotone_curve_2& curve) : Base(curve) {}
-
-  /*! Destruct.
-   */
-  ~Default_subcurve() {}
-
   /*! Get the subcurves that originate an overlap. */
-  Subcurve* originating_subcurve1() { return Base::m_orig_subcurve1; }
+  Subcurve* originating_subcurve1() { return m_orig_subcurve1; }
 
-  Subcurve* originating_subcurve2() { return Base::m_orig_subcurve2; }
+  Subcurve* originating_subcurve2() { return m_orig_subcurve2; }
 
   /*! Set the subcurves that originate an overlap. */
   void set_originating_subcurve1(Subcurve* orig_subcurve1)
-  { Base::m_orig_subcurve1 = orig_subcurve1; }
+  { m_orig_subcurve1 = orig_subcurve1; }
 
   void set_originating_subcurve2(Subcurve* orig_subcurve2)
-  { Base::m_orig_subcurve2 = orig_subcurve2; }
+  { m_orig_subcurve2 = orig_subcurve2; }
 
   /*! Get all the leaf-nodes in the hierarchy of overlapping subcurves. */
   template <typename OutputIterator>
   OutputIterator all_leaves(OutputIterator oi)
   {
-    if (Base::m_orig_subcurve1 == NULL) {
+    if (m_orig_subcurve1 == NULL) {
       *oi++ = reinterpret_cast<Subcurve*>(this);
       return oi;
     }
 
-    oi = Base::m_orig_subcurve1->all_leaves(oi);
-    oi = Base::m_orig_subcurve2->all_leaves(oi);
+    oi = m_orig_subcurve1->all_leaves(oi);
+    oi = m_orig_subcurve2->all_leaves(oi);
     return oi;
   }
 
@@ -169,17 +125,17 @@ public:
   bool is_inner_node(Subcurve* s)
   {
     if (this == s) return true;
-    if (Base::m_orig_subcurve1 == NULL) return false;
-    return (Base::m_orig_subcurve1->is_inner_node(s) ||
-            Base::m_orig_subcurve2->is_inner_node(s));
+    if (m_orig_subcurve1 == NULL) return false;
+    return (m_orig_subcurve1->is_inner_node(s) ||
+            m_orig_subcurve2->is_inner_node(s));
   }
 
   /*! Check if the given subcurve is a leaf in the overlapping hierarchy. */
   bool is_leaf(Subcurve* s)
   {
-    if (Base::m_orig_subcurve1 == NULL) return (this == s);
-    return (Base::m_orig_subcurve1->is_leaf(s) ||
-            Base::m_orig_subcurve2->is_leaf(s));
+    if (m_orig_subcurve1 == NULL) return (this == s);
+    return (m_orig_subcurve1->is_leaf(s) ||
+            m_orig_subcurve2->is_leaf(s));
   }
 
   /*! Check if the two hierarchies contain the same leaf nodes. */
@@ -229,19 +185,17 @@ public:
   template <typename OutputIterator>
   OutputIterator distinct_nodes(Subcurve* s, OutputIterator oi)
   {
-    if (Base::m_orig_subcurve1 == NULL) {
+    if (m_orig_subcurve1 == NULL) {
       Subcurve* subcurve = reinterpret_cast<Subcurve*>(this);
       if (s->is_leaf(subcurve)) *oi++ = subcurve;
       return oi;
     }
 
-    if (! s->is_inner_node(Base::m_orig_subcurve1))
-      *oi++ = Base::m_orig_subcurve1;
-    else oi++ = Base::m_orig_subcurve1->distinct_nodes(s, oi);
+    if (! s->is_inner_node(m_orig_subcurve1)) *oi++ = m_orig_subcurve1;
+    else oi++ = m_orig_subcurve1->distinct_nodes(s, oi);
 
-    if (! s->is_inner_node(Base::m_orig_subcurve2))
-      *oi++ = Base::m_orig_subcurve2;
-    else oi++ = Base::m_orig_subcurve2->distinct_nodes(s, oi);
+    if (! s->is_inner_node(m_orig_subcurve2)) *oi++ = m_orig_subcurve2;
+    else oi++ = m_orig_subcurve2->distinct_nodes(s, oi);
 
     return oi;
   }
@@ -249,13 +203,58 @@ public:
   /*! Get the depth of the overlap hierarchy. */
   unsigned int overlap_depth()
   {
-    if (Base::m_orig_subcurve1 == NULL) return (1);
+    if (m_orig_subcurve1 == NULL) return (1);
 
-    unsigned int depth1 = Base::m_orig_subcurve1->overlap_depth();
-    unsigned int depth2 = Base::m_orig_subcurve2->overlap_depth();
+    unsigned int depth1 = m_orig_subcurve1->overlap_depth();
+    unsigned int depth2 = m_orig_subcurve2->overlap_depth();
     if (depth1 > depth2) return (depth1 + 1);
     else return (depth2 + 1);
   }
+};
+
+/*! \class Default_subcurve
+ *
+ * This is a class template that wraps a traits curve of type
+ * X_monotone_curve_2.  It contains data that is used when applying the sweep
+ * algorithm on a set of x-monotone curves. This class derives from the
+ * No_overlap_subcurve class template.
+ * \tparam GeometryTraits_2 the geometry traits.
+ * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
+ *         overriden it implies that the type is
+ *         No_overlap_subcurve
+ */
+template <typename GeometryTraits_2, typename Subcurve_ = Default>
+class Default_subcurve :
+  public Default_subcurve_base<GeometryTraits_2,
+                               typename Default::Get<Subcurve_,
+                                                     Default_subcurve<
+                                                       GeometryTraits_2,
+                                                       Subcurve_> >::type>
+{
+public:
+  typedef GeometryTraits_2                              Geometry_traits_2;
+
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Default_subcurve<Gt2, Subcurve_>              Self;
+  typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
+  typedef Default_subcurve_base<Gt2, Subcurve>          Base;
+
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+
+public:
+  /*! Construct default.
+   */
+  Default_subcurve() {}
+
+  /*! Construct from a curve.
+   */
+  Default_subcurve(const X_monotone_curve_2& curve) : Base(curve) {}
+
+  /*! Destruct.
+   */
+  ~Default_subcurve() {}
 
 #ifdef CGAL_SL_VERBOSE
   void Print() const;
