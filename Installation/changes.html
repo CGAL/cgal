@@ -560,9 +560,11 @@ and <code>src/</code> directories).
     <li>New functions to read from and write to LAS/LAZ files (LIDAR
     format), with or without taking additional properties into
     account.</li>
-    <li>The API of the PLY function to read points with properties is
-    modified for unification with LAS. A new function to write PLY
-    with properties is provided.</li>
+    <li><b>Breaking change:</b> The API of the PLY function to read
+    points with properties is modified for unification with LAS
+    (see <code>CGAL::read_ply_points_with_properties()</code>). A new
+    function to write PLY with properties is provided
+    (<code>CGAL::write_las_points_with_properties()</code>).</li>
   </ul>
 
   <h3>CGAL and the Boost Graph Library (BGL)</h3>
