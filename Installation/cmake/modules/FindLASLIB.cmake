@@ -28,7 +28,7 @@ find_library(LASLIB_LIBRARIES
                   ENV LASLIB_LIB_DIR
             )
 
-if(LASLIB_LIBRARIES)
+if(LASLIB_LIBRARIES AND LASLIB_INCLUDE_DIR)
   set(LASLIB_FOUND TRUE)
   set(LASLIB_USE_FILE "UseLASLIB")
 endif()
