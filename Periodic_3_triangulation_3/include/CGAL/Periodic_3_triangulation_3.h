@@ -2378,14 +2378,9 @@ try_next_cell:
 
 /**
  * returns
- * ON_BOUNDED_SIDE if p inside the cell
- * (for an infinite cell this means that p lies strictly in the half space
- * limited by its finite facet)
- * ON_BOUNDARY if p on the boundary of the cell
- * (for an infinite cell this means that p lies on the *finite* facet)
- * ON_UNBOUNDED_SIDE if p lies outside the cell
- * (for an infinite cell this means that p is not in the preceding
- * two cases)
+ * ON_BOUNDED_SIDE if (q, off) inside the cell
+ * ON_BOUNDARY if (q, off) on the boundary of the cell
+ * ON_UNBOUNDED_SIDE if (q, off) lies outside the cell
  *
  * lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
  */
