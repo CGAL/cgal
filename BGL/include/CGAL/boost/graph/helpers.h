@@ -1070,20 +1070,20 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
       if(triangulated)
       {
         face[0] = v_vertices[w*b+a];
-        face[1] = v_vertices[w*(b+1)+ a+1];
-        face[2] = v_vertices[w*b+a+1];
+        face[1] = v_vertices[w*b+a+1];
+        face[2] = v_vertices[w*(b+1)+a];
         Euler::add_face(face, g);
-        face[0] = v_vertices[w*(b+1)+ a];
+        face[0] = v_vertices[w*b+a+1];
         face[1] = v_vertices[w*(b+1)+a+1];
-        face[2] = v_vertices[w*b+a];
+        face[2] = v_vertices[w*(b+1)+a];
         Euler::add_face(face, g);
       }
       else
       {
         face[0] = v_vertices[w*b+ a];
-        face[1] = v_vertices[w*(b+1)+ a];
+        face[1] = v_vertices[w*b+ a+1];
         face[2] = v_vertices[w*(b+1)+ a+1];
-        face[3] = v_vertices[w*b+ a+1];
+        face[3] = v_vertices[w*(b+1)+ a];
         Euler::add_face(face, g);
       }
     }

@@ -135,9 +135,9 @@ void Basic_generator_plugin::on_tab_changed()
     nb = nbs[PRISM];
     QPixmap pic;
     if(dock_widget->prismCheckBox->isChecked())
-      pic = QPixmap(":/cgal/Polyhedron_3/resources/base.png");
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/prism.png");
     else
-      pic = QPixmap(":/cgal/Polyhedron_3/resources/base_open.png");
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/prism-open.png");
     dock_widget->prism_picLabel->setPixmap(pic);
     dock_widget->prism_picLabel->show();
   }
@@ -297,16 +297,17 @@ void Basic_generator_plugin::generateCube()
       points[i] = Point(coords[0], coords[1], coords[2]);
     }
 
-    CGAL::make_hexahedron(points[0],
-                          points[1],
-                          points[2],
-                          points[3],
+    CGAL::make_hexahedron(
+          points[3],
+        points[2],
+        points[1],
+        points[0],
 
-                          points[4],
-                          points[5],
-                          points[6],
-                          points[7],
-                          cube);
+        points[5],
+        points[4],
+        points[7],
+        points[6],
+        cube);
   }
   else
   {
@@ -665,11 +666,12 @@ struct Point_generator
 template<class Facegraph_item>
 void Basic_generator_plugin::generateGrid()
 {
-  typename Facegraph_item::Face_graph grid;
+  typedef typename Facegraph_item::Face_graph Face_graph;
+  Face_graph grid;
 
   QString points_text;
   Point extrema[2];
-  std::size_t nb_cells[2];
+  typename boost::graph_traits<Face_graph>::vertices_size_type nb_cells[2];
   bool triangulated = dock_widget->grid_checkBox->isChecked();
   points_text= dock_widget->grid_lineEdit->text();
 

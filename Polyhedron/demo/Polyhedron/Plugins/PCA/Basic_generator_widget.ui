@@ -31,7 +31,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>:/cgal/icons/resources/base.png</pixmap>
+           <pixmap resource="../../Polyhedron_3.qrc">:/cgal/Polyhedron_3/resources/prism.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
