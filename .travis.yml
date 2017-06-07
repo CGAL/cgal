@@ -55,7 +55,7 @@ script:
 - cd ./.travis
 - bash -x -e ./build_package.sh $PACKAGE
 compiler: 
-  - clang 
+  - clang-3.6
   - gcc 
 addons: 
   apt:
@@ -63,6 +63,7 @@ addons:
       - sourceline: 'ppa:ppsspp/cmake'
     packages: 
       - zsh
+      - clang-3.6
       - cmake 
       - libboost1.55-dev 
       - libboost-system1.55-dev 
