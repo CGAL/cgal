@@ -55,11 +55,13 @@ struct Polyhedral_complex_tester : public Tester<K>
 {
   void operator()() const
   {
-    typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
+    typedef typename CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
     typedef CGAL::Polyhedral_complex_mesh_domain_3<K> Mesh_domain;
-    typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<
-      Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_segment_index> C3t3;
+      Tr,
+      typename Mesh_domain::Corner_index,
+      typename Mesh_domain::Curve_segment_index> C3t3;
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
     //Input
@@ -86,7 +88,7 @@ struct Polyhedral_complex_tester : public Tester<K>
     domain.detect_features(); //includes detection of borders
 
     //check compilation
-    std::set<K::Point_3> duplicates;
+    std::set<typename K::Point_3> duplicates;
     domain.merge_duplicated_points(duplicates);
     //end check compilation
 
