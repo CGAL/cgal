@@ -250,6 +250,15 @@ public:
     else return (depth2 + 1);
   }
 
+  /*! Get the number of input curves contributing to the subcurve */
+  unsigned int number_of_original_curves() const
+  {
+    if (m_orig_subcurve1 == NULL) return 1;
+    unsigned int d1 = m_orig_subcurve1->number_of_original_curves();
+    unsigned int d2 = m_orig_subcurve2->number_of_original_curves();
+    return d1+d2;
+  }
+
 #ifdef CGAL_SL_VERBOSE
   void Print() const;
 #endif
@@ -262,7 +271,7 @@ public:
     std::cout << "Curve " << this
               << "  (" << m_lastCurve << ") "
               << " [sc1: " << m_orig_subcurve1
-              << ", sc2: " << m_orig_subcurve2 << "]";
+              << ", sc2: " << m_orig_subcurve2 << "]" << " " << number_of_original_curves() ;
   }
 #endif
 
