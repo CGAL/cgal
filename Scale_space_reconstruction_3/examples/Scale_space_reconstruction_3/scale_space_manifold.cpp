@@ -16,7 +16,6 @@ typedef CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother< Kernel > Smoo
 typedef CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher< Kernel >    Mesher;
 
 typedef Reconstruction::Point                                   Point;
-typedef std::vector< Point >                                    Point_collection;
 
 typedef Reconstruction::Facet_const_iterator                    Facet_iterator;
 typedef Mesher::Facet_const_iterator                            Mesher_iterator;
@@ -28,7 +27,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   // Read the data.
-  Point_collection points;
+  std::vector<Point> points;
   std::ifstream in(argv[1]);
   std::cerr << "Reading " << std::flush;
   if( !in || !CGAL::read_off_points( in, std::back_inserter( points ) ) ) {

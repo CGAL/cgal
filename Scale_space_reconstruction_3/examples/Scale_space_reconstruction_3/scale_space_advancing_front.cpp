@@ -43,23 +43,33 @@ int main(int argc, char** argv)
   }
   std::cerr << "done: " << points.size() << " points." << std::endl;
 
+  std::cerr << "Reconstruction ";
+
   CGAL::Timer t;
   t.start();
+  
   // Construct the mesh in a scale space.
   Reconstruction reconstruct (points.points().begin(), points.points().end());
   reconstruct.increase_scale<Smoother> (4);
   reconstruct.reconstruct_surface (Mesher (0.5));
-  std::cerr << "Reconstruction done in " << t.time() << " sec." << std::endl;
+  
+  std::cerr << "done in " << t.time() << " sec." << std::endl;
+  
   t.reset();
+  
   std::ofstream out ("out.off");
   out << "OFF" << std::endl << points.size() << " " << reconstruct.number_of_facets() << " 0" << std::endl;
+  
   for (typename Point_set::iterator it = points.begin(); it != points.end(); ++ it)
     out << points.point(*it) << std::endl;
+  
   for (typename Reconstruction::Facet_iterator it = reconstruct.facets_begin();
        it != reconstruct.facets_end(); ++ it)
     out << "3 " << (*it)[0] << " " << (*it)[1] << " " << (*it)[2] << std::endl;
 
   std::cerr << "Writing result in " << t.time() << " sec." << std::endl;
+  
   std::cerr << "Done." << std::endl;
+  
   return EXIT_SUCCESS;
 }

@@ -13,7 +13,6 @@ typedef CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother< Kernel > Smoo
 typedef CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher< Kernel >    Mesher;
 
 typedef Reconstruction::Point                                   Point;
-typedef std::vector< Point >                                    Point_collection;
 
 typedef Reconstruction::Facet_const_iterator                   Facet_iterator;
 
@@ -33,7 +32,7 @@ void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
 
 int main(int argc, char* argv[]) {
     // Read the data.
-    Point_collection points;
+    std::vector<Point> points;
     if (argc!=2){
       std::cerr << "Error, no input file provided\n";
       return 1;
