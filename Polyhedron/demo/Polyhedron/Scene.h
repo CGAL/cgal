@@ -55,7 +55,7 @@ public:
   CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) Q_DECL_OVERRIDE;
   Q_INVOKABLE int erase(int) Q_DECL_OVERRIDE;
 
-  int erase(QList<int>);
+  int erase(QList<int>) Q_DECL_OVERRIDE;
   int duplicate(int index) Q_DECL_OVERRIDE;
 
   // Accessors (getters)

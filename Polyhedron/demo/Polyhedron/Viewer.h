@@ -40,35 +40,35 @@ public:
   void updateIds(CGAL::Three::Scene_item *)Q_DECL_OVERRIDE;
   //! overload several QGLViewer virtual functions
   //! Draws the scene.
-  void draw();
+  void draw()Q_DECL_OVERRIDE;
   //!This step happens after draw(). It is here that all the useful information is displayed, like the axis system or the informative text.
-  void drawVisualHints();
+  void drawVisualHints()Q_DECL_OVERRIDE;
   //! Deprecated. Does the same as draw().
-  void fastDraw();
-  bool isExtensionFound();
+  void fastDraw()Q_DECL_OVERRIDE;
+  bool isExtensionFound()Q_DECL_OVERRIDE;
   //! Initializes the OpenGL functions and sets the backGround color.
-  void initializeGL();
+  void initializeGL()Q_DECL_OVERRIDE;
   //! Draws the scene "with names" to allow picking.
-  void drawWithNames();
+  void drawWithNames()Q_DECL_OVERRIDE;
   /*! Uses the parameter pixel's coordinates to get the corresponding point
    * in the World frame. If this point is found, emits selectedPoint, selected,
    * and selectionRay signals.
    */
-  void postSelection(const QPoint&);
+  void postSelection(const QPoint&)Q_DECL_OVERRIDE;
   //! Sets the picking matrix to allow the picking.
-  void beginSelection(const QPoint &point);
+  void beginSelection(const QPoint &point)Q_DECL_OVERRIDE;
   //! Sets the pick matrix to Identity once the picking is done.
-  void endSelection(const QPoint &point);
+  void endSelection(const QPoint &point)Q_DECL_OVERRIDE;
   //! Sets the scene for the viewer.
-  void setScene(CGAL::Three::Scene_draw_interface* scene);
+  void setScene(CGAL::Three::Scene_draw_interface* scene)Q_DECL_OVERRIDE;
   //! @returns the antialiasing state.
-  bool antiAliasing() const;
+  bool antiAliasing() const Q_DECL_OVERRIDE;
   //! @returns the fastDrawing state.
-  bool inFastDrawing() const;
+  bool inFastDrawing() const Q_DECL_OVERRIDE;
   //! Implementation of `Viewer_interface::inDrawWithNames()`
-  bool inDrawWithNames() const;
+  bool inDrawWithNames() const Q_DECL_OVERRIDE;
   //! Implementation of `Viewer_interface::attribBuffers()`
-  void attribBuffers(int program_name) const;
+  void attribBuffers(int program_name) const Q_DECL_OVERRIDE;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const Q_DECL_OVERRIDE;
   //!Declares a program names `name`, using `v_shader` as vertex shader and `f_shader` as fragment shader.
@@ -126,22 +126,22 @@ public Q_SLOTS:
   }
 
 protected:
-  void postDraw();
-  void paintEvent(QPaintEvent *);
-  void paintGL();
+  void postDraw()Q_DECL_OVERRIDE;
+  void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
+  void paintGL()Q_DECL_OVERRIDE;
 
   //!Defines the behaviour for the mouse press events
-  void mousePressEvent(QMouseEvent*);
-  void wheelEvent(QWheelEvent *);
+  void mousePressEvent(QMouseEvent*)Q_DECL_OVERRIDE;
+  void wheelEvent(QWheelEvent *)Q_DECL_OVERRIDE;
   //!Defines the behaviour for the key press events
-  void keyPressEvent(QKeyEvent*);
+  void keyPressEvent(QKeyEvent*)Q_DECL_OVERRIDE;
   //!Deal with context menu events
-  void contextMenuEvent(QContextMenuEvent*);
+  void contextMenuEvent(QContextMenuEvent*)Q_DECL_OVERRIDE;
   //!Defines the behaviour for the key release events
-  void keyReleaseEvent(QKeyEvent *);
+  void keyReleaseEvent(QKeyEvent *)Q_DECL_OVERRIDE;
 
 
-  void resizeGL(int w, int h);
+  void resizeGL(int w, int h)Q_DECL_OVERRIDE;
 
 protected:
   friend class Viewer_impl;
