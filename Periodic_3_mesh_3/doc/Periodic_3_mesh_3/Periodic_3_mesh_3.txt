@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage User Manual
 \anchor Chapter_3D_Periodic_Mesh_Generation
 \anchor userchapterperiodic3mesh3
-\authors Mikhail Bogdanov, Monique Teillaud, Aymeric Pellé, Mael Rouxel-Labbé
+\authors Mikhail Bogdanov, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud
 
 \section Periodic_3_mMesh_3_section_intro Introduction
 
@@ -31,8 +31,6 @@ namespace CGAL {
 \subsection Periodic_3_mesh_3ParallelAlgorithms Parallel Algorithms
 
 \section Periodic_3_mesh_3_section_examples Examples
-
-\section Periodic_3_mesh_3Performances Performance
 
 \section Periodic_3_mesh_3DesignAndImpl Design and Implementation History
 
