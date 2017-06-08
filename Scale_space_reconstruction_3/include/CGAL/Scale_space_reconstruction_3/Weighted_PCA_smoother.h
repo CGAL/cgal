@@ -121,10 +121,11 @@ public:
     std::size_t size = std::size_t(end - begin);
     _tree.reserve(size);
     _points.reserve(size);
-    while(begin!=end)
+
+    for (InputIterator it = begin; it != end; ++ it)
     {
-      _points.push_back (*begin);
-      _tree.insert( boost::make_tuple(*(begin ++),i ++) );
+      _points.push_back (*it);
+      _tree.insert( boost::make_tuple(*it,i ++) );
     }
 
     _tree.build();
@@ -141,6 +142,9 @@ public:
     // This can be done concurrently.
     try_parallel (AdvanceSS (_tree, neighbors, _points), 0, _tree.size());
     
+    i = 0;
+    for (InputIterator it = begin; it != end; ++ it)
+      *it = _points[i ++];
   }
   /// \endcond
 
