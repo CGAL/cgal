@@ -1,4 +1,4 @@
-// Copyright (c) 1998  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1998, 2015  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,20 +14,22 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Francois Rebufat
 //                 Manuel Caroli
+//                 Aymeric Pelle
+
+#include "_test_cls_periodic_3_iterator.h"
+#include "_test_cls_periodic_3_circulator.h"
 
 #include <cassert>
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <sstream>
 #include <list>
 #include <vector>
-
-#include "_test_cls_periodic_3_iterator.h"
-#include "_test_cls_periodic_3_circulator.h"
 
 template <class PeriodicTriangulation>
 void
@@ -38,9 +40,9 @@ _test_periodic_3_triangulation_3_constructors(const PeriodicTriangulation &)
   assert(PT_def.is_valid());
 
   PeriodicTriangulation PT_dom(
-      typename PeriodicTriangulation::Iso_cuboid(-1,-2,-3,3,2,1));
+        typename PeriodicTriangulation::Iso_cuboid(-1,-2,-3,3,2,1));
   assert(PT_def.is_valid());
-  
+
   PeriodicTriangulation PT_cp(PT_dom);
   assert(PT_dom.is_valid());
   assert(PT_cp == PT_dom);
@@ -49,7 +51,12 @@ _test_periodic_3_triangulation_3_constructors(const PeriodicTriangulation &)
 template <class PeriodicTriangulation>
 void
 _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
-    bool ex = false, bool hom = false)
+                                     const typename PeriodicTriangulation::Point& pointtt,
+                                     const char* covering_test_HOM_filename,
+                                     const char* covering_test_filename,
+                                     bool ex = false,
+                                     bool hom = false,
+                                     bool test_input_ouput = true)
 {
   typedef PeriodicTriangulation                  P3T3;
 
@@ -64,6 +71,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   typedef typename P3T3::Covering_sheets         Covering_sheets;
   CGAL_USE_TYPE(Covering_sheets);
 
+  typedef typename P3T3::Point_3                 Point_3;
   typedef typename P3T3::Point                   Point;
   typedef typename P3T3::Segment                 Segment;
   typedef typename P3T3::Triangle                Triangle;
@@ -89,7 +97,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   CGAL_USE_TYPE(Cell);
 
   typedef typename P3T3::Vertex_handle           Vertex_handle;
-  typedef typename P3T3::Cell_handle             Cell_handle; 
+  typedef typename P3T3::Cell_handle             Cell_handle;
 
   typedef typename P3T3::size_type               size_type;
   typedef typename P3T3::difference_type         difference_type;
@@ -145,13 +153,21 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   std::cout<<"  non-degenerate, 1-sheeted covering"<<std::endl;
   std::ifstream fin;
-  if (hom) fin.open("data/P3DT3_covering_test_HOM.tri");
-  else fin.open("data/P3DT3_covering_test.tri");
+  if (hom)
+    fin.open(covering_test_HOM_filename);
+  else
+    fin.open(covering_test_filename);
   P3T3 PT1;
   fin >> PT1;
-  PT1.insert(Point(0.711476,-0.0713565,-0.52312));
+//  assert(PT1.number_of_vertices() == 70);
+  assert(PT1.is_valid());
+//  assert(!PT1.is_extensible_triangulation_in_1_sheet_h1());
+//  assert(!PT1.is_extensible_triangulation_in_1_sheet_h2());
+  PT1.insert(pointtt);
+  assert(PT1.is_extensible_triangulation_in_1_sheet_h1());
+  assert(PT1.is_extensible_triangulation_in_1_sheet_h2());
   assert(PT1.number_of_sheets() == CGAL::make_array(1,1,1));
-  assert(PT1.number_of_vertices() == 71);
+//  assert(PT1.number_of_vertices() == 71);
   assert(PT1.is_valid());
 
   std::cout<<"  degenerate, 3-sheeted covering"<<std::endl;
@@ -159,39 +175,41 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   for (int i=0 ; i<6 ; i+=2)
     for (int j=0 ; j<6 ; j+=2)
       for (int k=0 ; k<6 ; k+=2)
-	PT3_deg.insert(Point(i,j,k));
+        PT3_deg.insert(Point(i,j,k));
 
   assert(PT3_deg.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT3_deg.number_of_vertices() == 27);
   assert(PT3_deg.is_valid());
 
   std::cout<<"  degenerate, 1-sheeted covering"<<std::endl;
-  P3T3 PT1_deg(PT3_deg);
-  for (int i=1 ; i<6 ; i+=2)
-    for (int j=1 ; j<6 ; j+=2)
-      for (int k=1 ; k<6 ; k+=2)
-	PT1_deg.insert(Point(i,j,k));
+  P3T3 PT1_deg(Iso_cuboid(0,0,0,4,4,4));;
+  for (unsigned i = 0; i < 8; ++i)
+    for (unsigned j = 0; j < 8; ++j)
+      for (unsigned k = 0; k < 8; ++k)
+        PT1_deg.insert(Point(static_cast<float>(i)*4./8.,static_cast<float>(j)*4./8.,static_cast<float>(k)*4./8.));
 
   assert(PT1_deg.number_of_sheets() == CGAL::make_array(1,1,1));
-  assert(PT1_deg.number_of_vertices() == 54);
+//  assert(PT1_deg.number_of_vertices() == 54);
   assert(PT1_deg.is_valid());
 
   std::cout<<"Constructor"<<std::endl;
-  typename P3T3::FT ft1(-0.1);
-  typename P3T3::FT ft2(0.2);
-  Iso_cuboid domain(ft1,ft1,ft1,ft2,ft2,ft2);
-  std::cout<<"x-length: "<<domain.xmax()-domain.xmin()<<'\t'
-	   <<"y-length: "<<domain.ymax()-domain.ymin()<<'\t'
-	   <<"z-length: "<<domain.zmax()-domain.zmin()<<std::endl;
+
+  // RT used to make it work with homogeneous kernels
+  typename Geometric_traits::RT ft1(1);
+  typename Geometric_traits::RT ft2(2);
+  Iso_cuboid domain(ft1, ft1, ft1, ft2, ft2, ft2, 10);
+  std::cout << "x-length: "<<domain.xmax()-domain.xmin()<<'\t'
+            << "y-length: "<<domain.ymax()-domain.ymin()<<'\t'
+            << "z-length: "<<domain.zmax()-domain.zmin()<<std::endl;
 
   std::cout<<"Comparisons: "
-	   <<(domain.xmax()-domain.xmin() == domain.ymax()-domain.ymin())
-	   <<(domain.xmax()-domain.xmin() == domain.zmax()-domain.zmin())
-	   <<(domain.ymax()-domain.ymin() == domain.zmax()-domain.zmin())
-	   <<((domain.xmax()-domain.xmin()) == (domain.ymax()-domain.ymin()))
-	   <<((domain.xmax()-domain.xmin()) == (domain.zmax()-domain.zmin()))
-	   <<((domain.ymax()-domain.ymin()) == (domain.zmax()-domain.zmin()))
-	   <<std::endl;
+           << (domain.xmax()-domain.xmin() == domain.ymax()-domain.ymin())
+           << (domain.xmax()-domain.xmin() == domain.zmax()-domain.zmin())
+           << (domain.ymax()-domain.ymin() == domain.zmax()-domain.zmin())
+           << ((domain.xmax()-domain.xmin()) == (domain.ymax()-domain.ymin()))
+           << ((domain.xmax()-domain.xmin()) == (domain.zmax()-domain.zmin()))
+           << ((domain.ymax()-domain.ymin()) == (domain.zmax()-domain.zmin()))
+           << std::endl;
 
   P3T3 PT_constr(domain);
 
@@ -219,7 +237,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(PT == PT1_deg);
   assert(PT.is_valid());
   assert(PT3.is_valid());
-  
+
   PT.clear();
   assert(PT.number_of_vertices() == 0);
   assert(PT.number_of_sheets() == CGAL::make_array(3,3,3));
@@ -228,7 +246,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   // operator== and operator!= are tested in the asserts above
 
   std::cout<<"Access"<<std::endl;
- 
+
   Geometric_traits gt = PT.geom_traits();
   Triangulation_data_structure tds = PT.tds();
   assert(P3T3().domain() == Iso_cuboid(0,0,0,1,1,1));
@@ -243,7 +261,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(PT1.number_of_sheets() == CGAL::make_array(1,1,1));
   assert(PT3_deg.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT1_deg.number_of_sheets() == CGAL::make_array(1,1,1));
-  
+
   assert(PT1.is_extensible_triangulation_in_1_sheet_h1());
   assert(!PT3.is_extensible_triangulation_in_1_sheet_h1());
   assert(PT1_deg.is_extensible_triangulation_in_1_sheet_h1());
@@ -274,21 +292,21 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   // Check the Euler relation
   assert(PT1.number_of_vertices() - PT1.number_of_edges()
-      + PT1.number_of_facets() - PT1.number_of_cells() == 0);
+         + PT1.number_of_facets() - PT1.number_of_cells() == 0);
   assert(PT1.number_of_stored_vertices() - PT1.number_of_stored_edges()
-      + PT1.number_of_stored_facets() - PT1.number_of_stored_cells() == 0);
+         + PT1.number_of_stored_facets() - PT1.number_of_stored_cells() == 0);
   assert(PT3.number_of_vertices() - PT3.number_of_edges()
-      + PT3.number_of_facets() - PT3.number_of_cells() == 0);
+         + PT3.number_of_facets() - PT3.number_of_cells() == 0);
   assert(PT3.number_of_stored_vertices() - PT3.number_of_stored_edges()
-      + PT3.number_of_stored_facets() - PT3.number_of_stored_cells() == 0);
+         + PT3.number_of_stored_facets() - PT3.number_of_stored_cells() == 0);
   assert(PT1_deg.number_of_vertices() - PT1_deg.number_of_edges()
-      + PT1_deg.number_of_facets() - PT1_deg.number_of_cells() == 0);
+         + PT1_deg.number_of_facets() - PT1_deg.number_of_cells() == 0);
   assert(PT1_deg.number_of_stored_vertices() - PT1_deg.number_of_stored_edges()
-      + PT1_deg.number_of_stored_facets()-PT1_deg.number_of_stored_cells()==0);
+         + PT1_deg.number_of_stored_facets()-PT1_deg.number_of_stored_cells()==0);
   assert(PT3_deg.number_of_vertices() - PT3_deg.number_of_edges()
-      + PT3_deg.number_of_facets() - PT3_deg.number_of_cells() == 0);
+         + PT3_deg.number_of_facets() - PT3_deg.number_of_cells() == 0);
   assert(PT3_deg.number_of_stored_vertices() - PT3_deg.number_of_stored_edges()
-      + PT3_deg.number_of_stored_facets()-PT3_deg.number_of_stored_cells()==0);
+         + PT3_deg.number_of_stored_facets()-PT3_deg.number_of_stored_cells()==0);
 
   // Checking the number copies of each item in 27-sheeted covering space
   assert(PT1.number_of_cells()    == PT1.number_of_stored_cells());
@@ -317,17 +335,17 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   assert(PT3.periodic_segment(Edge(ch,2,3)).at(0).second != Offset());
   assert(PT3.periodic_segment(ch,2,1).at(1).second != Offset());
-  PT3.segment(PT3.periodic_segment(ch,0,3));
+  PT3.construct_segment(PT3.periodic_segment(ch,0,3));
 
   assert(PT3.periodic_triangle(Facet(ch,0)).at(2).second != Offset());
   assert(PT3.periodic_triangle(ch,2).at(1).second != Offset());
-  PT3.triangle(PT3.periodic_triangle(ch,0));
+  PT3.construct_triangle(PT3.periodic_triangle(ch,0));
 
   assert(PT3.periodic_tetrahedron(ch).at(3).second != Offset());
-  PT3.tetrahedron(PT3.periodic_tetrahedron(ch));
+  PT3.construct_tetrahedron(PT3.periodic_tetrahedron(ch));
 
   std::cout<<"Queries"<<std::endl;
-  
+
   Vertex_handle vh;
   assert(PT3.is_vertex(ch->vertex(0)->point(),vh));
   assert(ch->vertex(0) != vh);
@@ -352,54 +370,54 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(ch->vertex(0) == c->vertex(i));
   assert(ch->vertex(1) == c->vertex(j));
   assert(!PT3.is_edge(ch->vertex(0),
-	  ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c,i,j));
+                      ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c,i,j));
   assert(PT3.is_edge(ch->vertex(0),off0,ch->vertex(1),off1,c,i,j));
   assert(ch->vertex(0) == c->vertex(i));
   assert(ch->vertex(1) == c->vertex(j));
   assert(!PT3.is_edge(ch->vertex(0),off0,ch->vertex(1),off1+Offset(0,0,1),
-	  c,i,j));
+                      c,i,j));
 
   assert(PT3.is_facet(ch->vertex(0),ch->vertex(1),ch->vertex(2), c,i,j,k));
   assert(ch->vertex(0) == c->vertex(i));
   assert(ch->vertex(1) == c->vertex(j));
   assert(ch->vertex(2) == c->vertex(k));
   assert(!PT3.is_facet(ch->vertex(0),ch->vertex(1),
-	  ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c,i,j,k));
+                       ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c,i,j,k));
   assert(PT3.is_facet(ch->vertex(0),off0,ch->vertex(1),off1,ch->vertex(2),off2,
-	  c,i,j,k));
+                      c,i,j,k));
   assert(ch->vertex(0) == c->vertex(i));
   assert(ch->vertex(1) == c->vertex(j));
   assert(ch->vertex(2) == c->vertex(k));
   assert(!PT3.is_facet(ch->vertex(0),off0,ch->vertex(1),off1,
-	  ch->vertex(2),off2+Offset(0,0,1),c,i,j,k));
+                       ch->vertex(2),off2+Offset(0,0,1),c,i,j,k));
 
   c = Cell_handle();
   assert(PT3.is_cell(ch));
   assert(!PT3.is_cell(c));
   assert(PT3.is_cell(ch->vertex(0),ch->vertex(1),ch->vertex(2),ch->vertex(3),
-	  c));
+                     c));
   assert(!PT3.is_cell(ch->vertex(0),ch->vertex(1),ch->vertex(2),
-	  ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c));
+                      ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c));
   assert(PT3.is_cell(ch->vertex(0),ch->vertex(1),ch->vertex(2),ch->vertex(3),
-	  c,i,j,k,l));
+                     c,i,j,k,l));
   assert(ch->vertex(0) == c->vertex(i));
   assert(ch->vertex(1) == c->vertex(j));
   assert(ch->vertex(2) == c->vertex(k));
   assert(ch->vertex(3) == c->vertex(l));
   assert(!PT3.is_cell(ch->vertex(0),ch->vertex(1),ch->vertex(2),
-	  ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c,i,j,k,l));
+                      ch->neighbor(0)->vertex(ch->neighbor(0)->index(ch)),c,i,j,k,l));
   assert(PT3.is_cell(ch->vertex(0),off0,ch->vertex(1),off1,
-	  ch->vertex(2),off2,ch->vertex(3),off3,c,i,j,k,l));
+                     ch->vertex(2),off2,ch->vertex(3),off3,c,i,j,k,l));
   assert(PT3.is_cell(ch->vertex(0),off0,ch->vertex(1),off1,
-	  ch->vertex(2),off2,ch->vertex(3),off3,c));
+                     ch->vertex(2),off2,ch->vertex(3),off3,c));
   assert(ch->vertex(0) == c->vertex(i));
   assert(ch->vertex(1) == c->vertex(j));
   assert(ch->vertex(2) == c->vertex(k));
   assert(ch->vertex(3) == c->vertex(l));
   assert(!PT3.is_cell(ch->vertex(0),off0,ch->vertex(1),off1+Offset(0,0,1),
-	  ch->vertex(2),off2,ch->vertex(3),off3,c,i,j,k,l));
+                      ch->vertex(2),off2,ch->vertex(3),off3,c,i,j,k,l));
   assert(!PT3.is_cell(ch->vertex(0),off0,ch->vertex(1),off1+Offset(0,0,1),
-	  ch->vertex(2),off2,ch->vertex(3),off3,c));
+                      ch->vertex(2),off2,ch->vertex(3),off3,c));
 
   assert(PT3.has_vertex(Facet(ch,0),ch->vertex(1),i));
   assert(PT3.has_vertex(ch,0,ch->vertex(1),i));
@@ -420,14 +438,14 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   std::cout<<"Point location"<<std::endl;
   ch = PT3_deg.inexact_locate(Point(0.5,0.5,0.5));
-  assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
-      == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
-    Point(0,0,0), Point(0,2,0), Point(0,0,2), Point(2,0,0)) );
+  assert( PT3_deg.construct_tetrahedron(PT3_deg.periodic_tetrahedron(ch))
+          == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
+            Point_3(0,0,0), Point_3(0,2,0), Point_3(0,0,2), Point_3(2,0,0)) );
 
   ch = PT3_deg.locate(Point(0.5,0.5,0.5));
-  assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
-      == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
-	  Point(0,0,0), Point(0,2,0), Point(0,0,2), Point(2,0,0)) );
+  assert( PT3_deg.construct_tetrahedron(PT3_deg.periodic_tetrahedron(ch))
+          == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
+            Point_3(0,0,0), Point_3(0,2,0), Point_3(0,0,2), Point_3(2,0,0)) );
 
   Locate_type lt;
   int li,lj;
@@ -435,33 +453,33 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(c == ch);
   assert(lt == P3T3::CELL);
   assert(PT3_deg.side_of_cell(Point(0.5,0.5,0.5),c,lt,li,lj)
-      == CGAL::ON_BOUNDED_SIDE);
+         == CGAL::ON_BOUNDED_SIDE);
   assert(lt == P3T3::CELL);
   assert(PT3_deg.side_of_cell(Point(0.5,0.5,0.5),c->neighbor(0),lt,li,lj)
-      == CGAL::ON_UNBOUNDED_SIDE);
+         == CGAL::ON_UNBOUNDED_SIDE);
 
   c = PT3_deg.locate(Point(2,0.5,0.5),lt,li,lj);
   assert(lt == P3T3::FACET);
-  assert( PT3_deg.triangle(PT3_deg.periodic_triangle(c,li))
-      == PT3_deg.geom_traits().construct_triangle_3_object()(
-	  Point(2,0,2), Point(2,0,0), Point(2,2,0)) );
+  assert( PT3_deg.construct_triangle(PT3_deg.periodic_triangle(c,li))
+          == PT3_deg.geom_traits().construct_triangle_3_object()(
+            Point_3(2,0,2), Point_3(2,0,0), Point_3(2,2,0)) );
   assert(PT3_deg.side_of_cell(Point(2,0.5,0.5),c,lt,li,lj)
-      == CGAL::ON_BOUNDARY);
+         == CGAL::ON_BOUNDARY);
   assert(lt == P3T3::FACET);
-  assert( PT3_deg.triangle(PT3_deg.periodic_triangle(c,li))
-      == PT3_deg.geom_traits().construct_triangle_3_object()(
-	  Point(2,0,2), Point(2,0,0), Point(2,2,0)) );
+  assert( PT3_deg.construct_triangle(PT3_deg.periodic_triangle(c,li))
+          == PT3_deg.geom_traits().construct_triangle_3_object()(
+            Point_3(2,0,2), Point_3(2,0,0), Point_3(2,2,0)) );
 
   c = PT3_deg.locate(Point(2,2,1),lt,li,lj);
   assert(lt == P3T3::EDGE);
-  assert( PT3_deg.segment(PT3_deg.periodic_segment(c,li,lj))
-      == PT3_deg.geom_traits().construct_segment_3_object()(
-	  Point(2,2,0), Point(2,2,2)) );
+  assert( PT3_deg.construct_segment(PT3_deg.periodic_segment(c,li,lj))
+          == PT3_deg.geom_traits().construct_segment_3_object()(
+            Point_3(2,2,0), Point_3(2,2,2)) );
   assert(PT3_deg.side_of_cell(Point(2,2,1),c,lt,li,lj) == CGAL::ON_BOUNDARY);
   assert(lt == P3T3::EDGE);
-  assert( PT3_deg.segment(PT3_deg.periodic_segment(c,li,lj))
-      == PT3_deg.geom_traits().construct_segment_3_object()(
-	  Point(2,2,0), Point(2,2,2)) );
+  assert( PT3_deg.construct_segment(PT3_deg.periodic_segment(c,li,lj))
+          == PT3_deg.geom_traits().construct_segment_3_object()(
+            Point_3(2,2,0), Point_3(2,2,2)) );
 
   c = PT3_deg.locate(Point(2,2,2),lt,li,lj);
   assert(lt == P3T3::VERTEX);
@@ -470,12 +488,12 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(lt == P3T3::VERTEX);
   assert(c->vertex(li)->point() == Point(2,2,2));
 
-   c = P3T3().locate(Point(1,2,3),lt,li,lj);
-   assert(c == Cell_handle());
-   assert(lt == P3T3::EMPTY);
-   assert(P3T3().side_of_cell(Point(1,2,3),c,lt,li,lj)
-       == CGAL::ON_UNBOUNDED_SIDE);
-   assert(lt == P3T3::EMPTY);
+  c = P3T3().locate(Point(1,2,3),lt,li,lj);
+  assert(c == Cell_handle());
+  assert(lt == P3T3::EMPTY);
+  assert(P3T3().side_of_cell(Point(1,2,3),c,lt,li,lj)
+         == CGAL::ON_UNBOUNDED_SIDE);
+  assert(lt == P3T3::EMPTY);
 
   std::cout << "Testing Iterators   "<< std::endl;
 
@@ -511,50 +529,50 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   PT3.incident_cells(PT3.vertices_begin(),std::back_inserter(cellv));
   for (unsigned int n=0 ; n<cellv.size() ; n++) {
     assert( (PT3.vertices_begin() == cellv[n]->vertex(0))
-	|| (PT3.vertices_begin() == cellv[n]->vertex(1))
-	|| (PT3.vertices_begin() == cellv[n]->vertex(2))
-	|| (PT3.vertices_begin() == cellv[n]->vertex(3)) );
+            || (PT3.vertices_begin() == cellv[n]->vertex(1))
+            || (PT3.vertices_begin() == cellv[n]->vertex(2))
+            || (PT3.vertices_begin() == cellv[n]->vertex(3)) );
     assert(PT3.is_cell(cellv[n]));
     assert(PT3.is_cell(cellv[n]->vertex(0),cellv[n]->vertex(1),
-	    cellv[n]->vertex(2),cellv[n]->vertex(3),c));
+                       cellv[n]->vertex(2),cellv[n]->vertex(3),c));
     assert(PT3.is_cell(
-	    cellv[n]->vertex(0),PT3.periodic_point(cellv[n],0).second,
- 	    cellv[n]->vertex(1),PT3.periodic_point(cellv[n],1).second,
- 	    cellv[n]->vertex(2),PT3.periodic_point(cellv[n],2).second,
- 	    cellv[n]->vertex(3),PT3.periodic_point(cellv[n],3).second,c));
+             cellv[n]->vertex(0),PT3.periodic_point(cellv[n],0).second,
+             cellv[n]->vertex(1),PT3.periodic_point(cellv[n],1).second,
+             cellv[n]->vertex(2),PT3.periodic_point(cellv[n],2).second,
+             cellv[n]->vertex(3),PT3.periodic_point(cellv[n],3).second,c));
   }
 
   PT3.incident_facets(PT3.vertices_begin(),std::back_inserter(facetv));
   for (unsigned int n=0 ; n<facetv.size() ; n++) {
     assert( (PT3.vertices_begin()
-	    == facetv[n].first->vertex((facetv[n].second+1)&3))
-	|| (PT3.vertices_begin()
-	    == facetv[n].first->vertex((facetv[n].second+2)&3))
-	|| (PT3.vertices_begin()
-	    == facetv[n].first->vertex((facetv[n].second+3)&3)) );
+             == facetv[n].first->vertex((facetv[n].second+1)&3))
+            || (PT3.vertices_begin()
+                == facetv[n].first->vertex((facetv[n].second+2)&3))
+            || (PT3.vertices_begin()
+                == facetv[n].first->vertex((facetv[n].second+3)&3)) );
     assert(PT3.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
-	    facetv[n].first->vertex((facetv[n].second+2)&3),
-	    facetv[n].first->vertex((facetv[n].second+3)&3),c,i,j,k));
+                        facetv[n].first->vertex((facetv[n].second+2)&3),
+                        facetv[n].first->vertex((facetv[n].second+3)&3),c,i,j,k));
     assert(PT3.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
- 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+1)&3).second,
- 	    facetv[n].first->vertex((facetv[n].second+2)&3),
- 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+2)&3).second,
- 	    facetv[n].first->vertex((facetv[n].second+3)&3),
- 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+3)&3).second,
- 	    c,i,j,k));
+                        PT3.periodic_point(facetv[n].first,(facetv[n].second+1)&3).second,
+                        facetv[n].first->vertex((facetv[n].second+2)&3),
+                        PT3.periodic_point(facetv[n].first,(facetv[n].second+2)&3).second,
+                        facetv[n].first->vertex((facetv[n].second+3)&3),
+                        PT3.periodic_point(facetv[n].first,(facetv[n].second+3)&3).second,
+                        c,i,j,k));
   }
   PT3.incident_edges(PT3.vertices_begin(),std::back_inserter(edgev));
   for (unsigned int n=0 ; n<edgev.size() ; n++) {
     assert( (PT3.vertices_begin()
-	    == edgev[n].first->vertex(edgev[n].second))
-	|| (PT3.vertices_begin()
-	    == edgev[n].first->vertex(edgev[n].third)) );
+             == edgev[n].first->vertex(edgev[n].second))
+            || (PT3.vertices_begin()
+                == edgev[n].first->vertex(edgev[n].third)) );
     assert(PT3.is_edge(edgev[n].first->vertex(edgev[n].second),
-	    edgev[n].first->vertex(edgev[n].third),c,i,j));
+                       edgev[n].first->vertex(edgev[n].third),c,i,j));
     assert(PT3.is_edge(edgev[n].first->vertex(edgev[n].second),
- 	    PT3.periodic_point(edgev[n].first,edgev[n].second).second,
- 	    edgev[n].first->vertex(edgev[n].third),
- 	    PT3.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
+                       PT3.periodic_point(edgev[n].first,edgev[n].second).second,
+                       edgev[n].first->vertex(edgev[n].third),
+                       PT3.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
   }
   PT3.adjacent_vertices(PT3.vertices_begin(),std::back_inserter(vertexv));
   for (unsigned int n=0 ; n<vertexv.size() ; n++) {
@@ -573,50 +591,50 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   PT1.incident_cells(PT1.vertices_begin(),std::back_inserter(cellv));
   for (unsigned int n=0 ; n<cellv.size() ; n++) {
     assert( (PT1.vertices_begin() == cellv[n]->vertex(0))
-	|| (PT1.vertices_begin() == cellv[n]->vertex(1))
-	|| (PT1.vertices_begin() == cellv[n]->vertex(2))
-	|| (PT1.vertices_begin() == cellv[n]->vertex(3)) );
+            || (PT1.vertices_begin() == cellv[n]->vertex(1))
+            || (PT1.vertices_begin() == cellv[n]->vertex(2))
+            || (PT1.vertices_begin() == cellv[n]->vertex(3)) );
     assert(PT1.is_cell(cellv[n]));
     assert(PT1.is_cell(cellv[n]->vertex(0),cellv[n]->vertex(1),
-	    cellv[n]->vertex(2),cellv[n]->vertex(3),c));
+                       cellv[n]->vertex(2),cellv[n]->vertex(3),c));
     assert(PT1.is_cell(
- 	    cellv[n]->vertex(0),PT1.periodic_point(cellv[n],0).second,
- 	    cellv[n]->vertex(1),PT1.periodic_point(cellv[n],1).second,
- 	    cellv[n]->vertex(2),PT1.periodic_point(cellv[n],2).second,
- 	    cellv[n]->vertex(3),PT1.periodic_point(cellv[n],3).second,c));
+             cellv[n]->vertex(0),PT1.periodic_point(cellv[n],0).second,
+             cellv[n]->vertex(1),PT1.periodic_point(cellv[n],1).second,
+             cellv[n]->vertex(2),PT1.periodic_point(cellv[n],2).second,
+             cellv[n]->vertex(3),PT1.periodic_point(cellv[n],3).second,c));
   }
 
   PT1.incident_facets(PT1.vertices_begin(),std::back_inserter(facetv));
   for (unsigned int n=0 ; n<facetv.size() ; n++) {
     assert( (PT1.vertices_begin()
-	    == facetv[n].first->vertex((facetv[n].second+1)&3))
-	|| (PT1.vertices_begin()
-	    == facetv[n].first->vertex((facetv[n].second+2)&3))
-	|| (PT1.vertices_begin()
-	    == facetv[n].first->vertex((facetv[n].second+3)&3)) );
+             == facetv[n].first->vertex((facetv[n].second+1)&3))
+            || (PT1.vertices_begin()
+                == facetv[n].first->vertex((facetv[n].second+2)&3))
+            || (PT1.vertices_begin()
+                == facetv[n].first->vertex((facetv[n].second+3)&3)) );
     assert(PT1.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
-	    facetv[n].first->vertex((facetv[n].second+2)&3),
-	    facetv[n].first->vertex((facetv[n].second+3)&3),c,i,j,k));
-     assert(PT1.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
- 	    PT1.periodic_point(facetv[n].first,(facetv[n].second+1)&3).second,
- 	    facetv[n].first->vertex((facetv[n].second+2)&3),
- 	    PT1.periodic_point(facetv[n].first,(facetv[n].second+2)&3).second,
- 	    facetv[n].first->vertex((facetv[n].second+3)&3),
- 	    PT1.periodic_point(facetv[n].first,(facetv[n].second+3)&3).second,
- 	    c,i,j,k));
+                        facetv[n].first->vertex((facetv[n].second+2)&3),
+                        facetv[n].first->vertex((facetv[n].second+3)&3),c,i,j,k));
+    assert(PT1.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
+                        PT1.periodic_point(facetv[n].first,(facetv[n].second+1)&3).second,
+                        facetv[n].first->vertex((facetv[n].second+2)&3),
+                        PT1.periodic_point(facetv[n].first,(facetv[n].second+2)&3).second,
+                        facetv[n].first->vertex((facetv[n].second+3)&3),
+                        PT1.periodic_point(facetv[n].first,(facetv[n].second+3)&3).second,
+                        c,i,j,k));
   }
   PT1.incident_edges(PT1.vertices_begin(),std::back_inserter(edgev));
   for (unsigned int n=0 ; n<edgev.size() ; n++) {
     assert( (PT1.vertices_begin()
-	    == edgev[n].first->vertex(edgev[n].second))
-	|| (PT1.vertices_begin()
-	    == edgev[n].first->vertex(edgev[n].third)) );
+             == edgev[n].first->vertex(edgev[n].second))
+            || (PT1.vertices_begin()
+                == edgev[n].first->vertex(edgev[n].third)) );
     assert(PT1.is_edge(edgev[n].first->vertex(edgev[n].second),
-	    edgev[n].first->vertex(edgev[n].third),c,i,j));
+                       edgev[n].first->vertex(edgev[n].third),c,i,j));
     assert(PT1.is_edge(edgev[n].first->vertex(edgev[n].second),
- 	    PT1.periodic_point(edgev[n].first,edgev[n].second).second,
- 	    edgev[n].first->vertex(edgev[n].third),
- 	    PT1.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
+                       PT1.periodic_point(edgev[n].first,edgev[n].second).second,
+                       edgev[n].first->vertex(edgev[n].third),
+                       PT1.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
   }
   PT1.adjacent_vertices(PT1.vertices_begin(),std::back_inserter(vertexv));
   for (unsigned int n=0 ; n<vertexv.size() ; n++) {
@@ -630,62 +648,66 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   assert(ch->neighbor(0)->neighbor(PT3.mirror_index(ch,0)) == ch);
   assert(ch->neighbor(0)->neighbor(
-	  ch->neighbor(0)->index(PT3.mirror_vertex(ch,0))) == ch);
+           ch->neighbor(0)->index(PT3.mirror_vertex(ch,0))) == ch);
 
   assert(ch->neighbor(0)->vertex(PT3.mirror_facet(Facet(ch,0)).second)
-      == PT3.mirror_vertex(ch,0));
+         == PT3.mirror_vertex(ch,0));
   assert(PT3.mirror_facet(Facet(ch,0)).first == ch->neighbor(0));
 
-  std::cout << "I/O" << std::endl;
-  std::cout << "  ascii" << std::endl;
-  
-  std::stringstream ss1;
-  std::stringstream ss3;
-  ss1 << PT1;
-  ss3 << PT3;
 
-  P3T3 PT1r, PT3r;
-  ss1 >> PT1r;
-  ss3 >> PT3r;
- 
-  assert(CGAL::is_ascii(ss1));
-  assert(CGAL::is_ascii(ss3));
-  if (!ex) assert(PT1 == PT1r);
-  if (!ex) assert(PT3 == PT3r);
-
-  std::cout << "  binary" << std::endl;
-  
-  PT1r.clear();
-  PT3r.clear();
   // There are problems with the IO of exact number types in binary mode.
-  if (!ex) {
-    std::stringstream ss1b;
-    std::stringstream ss3b;
-    CGAL::set_binary_mode(ss1b);
-    CGAL::set_binary_mode(ss3b);
-    ss1b << PT1;
-    ss3b << PT3;
-    
-    ss1b >> PT1r;
-    ss3b >> PT3r;
-    assert(CGAL::is_binary(ss1b));
-    assert(CGAL::is_binary(ss3b));
+  if(test_input_ouput)
+  {
+    std::cout << "I/O" << std::endl;
+    std::cout << "  ascii" << std::endl;
 
-    assert(PT1 == PT1r);
-    assert(PT3 == PT3r);
+    std::stringstream ss1;
+    std::stringstream ss3;
+    ss1 << PT1;
+    ss3 << PT3;
+
+    P3T3 PT1r, PT3r;
+    ss1 >> PT1r;
+    ss3 >> PT3r;
+
+    assert(CGAL::is_ascii(ss1));
+    assert(CGAL::is_ascii(ss3));
+    if (!ex) assert(PT1 == PT1r);
+    if (!ex) assert(PT3 == PT3r);
+
+    std::cout << "  binary" << std::endl;
+
+    PT1r.clear();
+    PT3r.clear();
+    if (!ex) {
+      std::stringstream ss1b;
+      std::stringstream ss3b;
+      CGAL::set_binary_mode(ss1b);
+      CGAL::set_binary_mode(ss3b);
+      ss1b << PT1;
+      ss3b << PT3;
+
+      ss1b >> PT1r;
+      ss3b >> PT3r;
+      assert(CGAL::is_binary(ss1b));
+      assert(CGAL::is_binary(ss3b));
+
+      assert(PT1 == PT1r);
+      assert(PT3 == PT3r);
+    }
+
+    std::cout << "  pretty" << std::endl;
+
+    PT1r.clear();
+    PT3r.clear();
+    std::stringstream ss1p;
+    std::stringstream ss3p;
+    CGAL::set_pretty_mode(ss1p);
+    CGAL::set_pretty_mode(ss3p);
+    ss1p << PT1;
+    ss3p << PT3;
+
+    assert(CGAL::is_pretty(ss1p));
+    assert(CGAL::is_pretty(ss3p));
   }
-
-  std::cout << "  pretty" << std::endl;
-  
-  PT1r.clear();
-  PT3r.clear();
-  std::stringstream ss1p;
-  std::stringstream ss3p;
-  CGAL::set_pretty_mode(ss1p);
-  CGAL::set_pretty_mode(ss3p);
-  ss1p << PT1;
-  ss3p << PT3;
-
-  assert(CGAL::is_pretty(ss1p));
-  assert(CGAL::is_pretty(ss3p));
 }

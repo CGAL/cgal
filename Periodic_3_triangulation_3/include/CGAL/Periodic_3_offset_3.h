@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -24,18 +24,18 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Cartesian.h>
 
-namespace CGAL { 
+namespace CGAL {
 
-class Periodic_3_offset_3 {
+class Periodic_3_offset_3
+{
   template <class K2>
-  friend std::ostream & operator<<(std::ostream &os, 
-				   const Periodic_3_offset_3 &off);
-  
+  friend std::ostream & operator<<(std::ostream &os,
+                                   const Periodic_3_offset_3 &off);
+
 public:
   Periodic_3_offset_3() : _offx(0), _offy(0), _offz(0) {}
   Periodic_3_offset_3(int x, int y, int z) : _offx(x), _offy(y), _offz(z) {}
@@ -78,13 +78,13 @@ public:
   }
   bool operator==(const Periodic_3_offset_3 &other) const {
     return ((_offx == other._offx) &&
-	    (_offy == other._offy) &&
-	    (_offz == other._offz));
+            (_offy == other._offy) &&
+            (_offz == other._offz));
   }
   bool operator!=(const Periodic_3_offset_3 &other) const {
     return  ((_offx != other._offx) ||
-	     (_offy != other._offy) ||
-	     (_offz != other._offz));
+             (_offy != other._offy) ||
+             (_offz != other._offz));
   }
   bool operator<(const Periodic_3_offset_3 &other) const {
     if (_offx != other._offx)
@@ -104,8 +104,8 @@ public:
   Periodic_3_offset_3 operator-(const Periodic_3_offset_3 &off2) const {
     return Periodic_3_offset_3(_offx-off2.x(), _offy-off2.y(), _offz-off2.z());
   }
-    
-private:    
+
+private:
   int _offx, _offy, _offz;
 };
 
@@ -114,7 +114,7 @@ inline Point_3<K> operator+(const Point_3<K> &p, const Periodic_3_offset_3 &off)
   return (off.is_null() ? p : Point_3<K>(p.x()+off.x(), p.y()+off.y(), p.z()+off.z()));
 }
 
-inline std::ostream 
+inline std::ostream
 &operator<<(std::ostream &os, const Periodic_3_offset_3 &off) {
   if (is_ascii(os))
     os << off.x() << " " << off.y() << " " << off.z();
