@@ -24,7 +24,9 @@ By default, this parameter is instantiated by
 */
 
 template< typename Traits, typename Cb >
-class Regular_triangulation_cell_base_3 : public Cb {
+class Regular_triangulation_cell_base_3
+  : public Cb
+{
 public:
 
 /// \name Types 

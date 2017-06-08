@@ -105,6 +105,7 @@ is opposite to the vertex with the same index. See
 ### Traits Classes ###
 
 - `CGAL::Regular_triangulation_euclidean_traits_3<K,Weight>`
+- `CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>`
 
 ## Enums ##
 

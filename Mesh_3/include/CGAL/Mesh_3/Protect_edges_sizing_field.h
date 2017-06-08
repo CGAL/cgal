@@ -947,7 +947,7 @@ insert_balls(const Vertex_handle& vp,
 
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
-  
+
   // Compute geodesic distance
   const FT pq_geo_signed = domain_.geodesic_distance(p, q, curve_index);
   const CGAL::Sign d_sign = CGAL::sign(pq_geo_signed);
