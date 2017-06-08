@@ -28,6 +28,7 @@
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/IO/write_off_points.h>
 
+#include <CGAL/config.h>
 #ifdef CGAL_CXX11
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>

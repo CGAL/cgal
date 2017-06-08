@@ -22,6 +22,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/config.h>
 #ifndef CGAL_CXX11
 #error CGAL LAS writer requires a C++11 compiler
 #endif

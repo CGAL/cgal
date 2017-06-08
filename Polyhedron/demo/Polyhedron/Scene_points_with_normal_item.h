@@ -9,6 +9,7 @@
 #include "Kernel_type.h"
 #include "Point_set_3.h"
 #include <iostream>
+#include <CGAL/config.h>
 
 struct Scene_points_with_normal_item_priv;
 // point set

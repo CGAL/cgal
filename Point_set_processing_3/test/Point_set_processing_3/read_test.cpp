@@ -4,6 +4,7 @@
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
 
+#include <CGAL/config.h>
 #ifdef CGAL_CXX11
 #include <CGAL/IO/read_ply_points.h>
 #endif
