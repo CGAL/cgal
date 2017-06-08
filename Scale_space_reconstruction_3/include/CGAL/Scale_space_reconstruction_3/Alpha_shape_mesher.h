@@ -218,6 +218,9 @@ public:
   }
   /// \endcond
 
+  /// gives the number of triangles of the surface.
+  std::size_t number_of_triangles() const { return _surface.size(); }
+
   /// gives an iterator to the first triple in the surface.
   Facet_const_iterator surface_begin() const { return _surface.begin(); }
   /// gives an iterator to the first triple in the surface.
@@ -231,6 +234,12 @@ public:
   /** \warning Changes to the surface may change its topology.
    */
   Facet_iterator surface_end() { return _surface.end(); }
+
+
+  /// gives the number of shells of the surface.
+  std::size_t number_of_shells() const {
+    return _shells.size();
+  }
 
   /// gives an iterator to the first triple in a given shell.
   /** \param shell is the index of the shell to access.
