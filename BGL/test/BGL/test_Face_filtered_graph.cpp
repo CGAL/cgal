@@ -363,7 +363,7 @@ void test_mesh(Adapter fga)
   CGAL_assertion(num_halfedges(fga) == 10);
   CGAL_assertion(num_vertices(fga) == 4);
   halfedge_descriptor h = halfedge(*faces(fga).first, fga);
-  vertex_descriptor v = source(h, fga);
+  CGAL_assertion_code( vertex_descriptor v = source(h, fga) );
   //check that next() works inside the patch
   CGAL_assertion(
         next(next(next(h, fga), fga), fga) == h
