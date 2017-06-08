@@ -35,9 +35,14 @@ namespace CGAL {
 
     Performs surface reconstruction as follows:
 
-    - compute the Poisson implicit function
-    - meshes the function with a user-defined precision
-    - outputs the result in a polygon mesh
+    - compute the Poisson implicit function, through a conjugate
+      gradient solver, represented as a piecewise linear function
+      stored on a 3D Delaunay mesh generated via Delaunay refinement
+    - meshes the function with a user-defined precision using another
+      round of Delaunay refinement: it contours the isosurface
+      corresponding to the isovalue of the median of the function
+      values at the input points
+    - outputs the result in a polygon mesh 
 
     This function relies mainly on the size parameter `spacing`. A
     reasonable solution is to use the average spacing of the input
