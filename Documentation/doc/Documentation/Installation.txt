@@ -569,9 +569,9 @@ the \ref PkgPointSetProcessing package.
 
 The \sc{LASlib} web site is <a
 href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
-is usually distributed along with LAStools: for simplicity, <a
-href="https://github.com/CGAL/LAStools">\cgal provides a fork
-with a CMake based install procedure</a>.
+is usually distributed along with LAStools: for simplicity, \cgal
+provides <a href="https://github.com/CGAL/LAStools">a fork with a
+CMake based install procedure</a>.
 
 \section secbuilding Building CGAL 
 
