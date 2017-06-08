@@ -23,25 +23,26 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/read_ply_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/IO/write_off_points.h>
-#include <CGAL/IO/write_ply_points.h>
 
-
+#ifdef CGAL_CXX11
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
-#endif
+#endif // LAS
+#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/write_ply_points.h>
+#endif // CXX11
 
 namespace CGAL {
 
 namespace internal
 {
-  
+
+#ifdef CXX11
 namespace PLY
 {
 
@@ -218,6 +219,7 @@ public:
 };
 
 }
+#endif
 
 }
 
@@ -286,7 +288,7 @@ read_off_point_set(
 }
 
 
-  
+#if defined (CGAL_CXX11) || defined(DOXYGEN_RUNNING)
 /*!
   \ingroup PkgPointSet3IO
  */
@@ -324,6 +326,20 @@ read_ply_point_set(
   // Skip remaining lines
 
   return (points_read == reader.m_nb_points);
+}
+
+/*!
+  \ingroup PkgPointSet3IO
+ */
+template <typename Point, typename Vector>
+bool
+write_ply_point_set(
+  std::ostream& stream, ///< output stream.
+  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+{
+
+  stream << point_set;
+  return true;
 }
 
 #if defined(CGAL_LINKED_WITH_LASLIB) || defined(DOXYGEN_RUNNING)
@@ -604,7 +620,7 @@ write_las_point_set(
   return okay;
 }
   
-#endif
+#endif // LAS
   
 /*!
   \ingroup PkgPointSet3IO
@@ -645,21 +661,6 @@ write_off_point_set(
 }
 
 /*!
-  \ingroup PkgPointSet3IO
- */
-template <typename Point, typename Vector>
-bool
-write_ply_point_set(
-  std::ostream& stream, ///< output stream.
-  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
-{
-
-  stream << point_set;
-  return true;
-}
-
-
-/*!
   
   \ingroup PkgPointSet3IO
 
@@ -668,6 +669,7 @@ write_ply_point_set(
   - XYZ
   - OFF
   - PLY
+  - LAS
 
   The format is detected from the stream. If the stream contains
   normal vectors, the normal map is added to the point set. For PLY
@@ -686,12 +688,14 @@ std::istream& operator>>(std::istream& is,
   is.seekg(0);
   if (line.find("OFF") == 0 || line.find("NOFF") == 0)
     CGAL::read_off_point_set (is, ps);
+#ifdef CGAL_CXX11
   else if (line.find("ply") == 0)
     CGAL::read_ply_point_set (is, ps);
 #ifdef CGAL_LINKED_WITH_LASLIB
-  else if (line == "LASF")
+  else if (line.find("LASF") == 0)
     CGAL::read_las_point_set (is, ps);
-#endif
+#endif // LAS
+#endif // CXX11
   else
     CGAL::read_xyz_point_set (is, ps);
     
