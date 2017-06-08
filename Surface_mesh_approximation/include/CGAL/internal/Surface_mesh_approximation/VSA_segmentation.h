@@ -146,6 +146,15 @@ public:
     Point pos; // The position of the anchor
   };
 
+  // Border
+  struct Border {
+    Border(const halfedge_descriptor &h)
+      : he_head(h), num_anchors(0) {}
+
+    halfedge_descriptor he_head; // The heading halfedge of the border
+    std::size_t num_anchors; // The number of anchors of the border
+  };
+
 // member variables
 private:
   const Polyhedron &mesh;
@@ -170,7 +179,11 @@ private:
   std::map<halfedge_descriptor, int> halfedge_status_map;
   HalfedgeStatusPMap halfedge_status_pmap;
 
+  // All anchors
   std::vector<Anchor> anchors;
+
+  // All borders, some regions may have multiple borders
+  std::vector<Border> borders;
 
   L21Metric fit_error;
   //L21Metric<FacetNormalMap, FacetAreaMap> fit_error;
@@ -212,7 +225,7 @@ public:
       //const Point center = centroid_functor(p1, p2, p3);
       Vector normal = normal_functor(p1, p2, p3);
       normal = scale_functor(normal,
-        FT(1.0 / std::sqrt(to_double(normal.squared_length()))));
+        FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
 
       facet_normals.insert(std::pair<face_descriptor, Vector>(*fitr, normal));
     }
@@ -222,7 +235,7 @@ public:
       const Point p1 = get(vertex_point_pmap, target(halfedge(*fitr, mesh), mesh));
       const Point p2 = get(vertex_point_pmap, target(next(halfedge(*fitr, mesh), mesh), mesh));
       const Point p3 = get(vertex_point_pmap, target(prev(halfedge(*fitr, mesh), mesh), mesh));
-      FT area(std::sqrt(to_double(area_functor(p2, p1, p3))));
+      FT area(std::sqrt(CGAL::to_double(area_functor(p2, p1, p3))));
       facet_areas.insert(std::pair<face_descriptor, FT>(*fitr, area));
     }
 
@@ -271,6 +284,7 @@ public:
   void extract_mesh(FacetSegmentMap &seg_pmap) {
     find_anchors(seg_pmap);
     find_edges(seg_pmap);
+    add_anchors(seg_pmap);
 
     pseudo_CDT();
   }
@@ -357,8 +371,8 @@ private:
       px_areas[px_idx] += area_pmap[*fitr];
     }
     for (std::size_t i = 0; i < proxies.size(); ++i) {
-      Vector norm = scale_functor(px_normals[i], FT(1.0 / to_double(px_areas[i]))); // redundant
-      norm = scale_functor(norm, FT(1.0 / std::sqrt(to_double(norm.squared_length()))));
+      Vector norm = scale_functor(px_normals[i], FT(1.0 / CGAL::to_double(px_areas[i]))); // redundant
+      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
       proxies[i].normal = norm;
     }
 
@@ -468,22 +482,75 @@ private:
       halfedge_descriptor he_start = *he_candidates.begin();
       walk_to_first_anchor(he_start, seg_pmap);
       if (vertex_status_pmap[target(he_start, mesh)] < 0) {
-        // no anchor in this connected border, make an new anchor
+        // no anchor in this connected border, make a new anchor
         std::set<std::size_t> px_set;
         px_set.insert(seg_pmap[face(he_start, mesh)]);
         halfedge_descriptor he_oppo = opposite(he_start, mesh);
         if (!CGAL::is_border(he_oppo, mesh))
           px_set.insert(seg_pmap[face(he_oppo, mesh)]);
         vertex_descriptor vtx = target(he_start, mesh);
+        vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
         anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
       }
 
-      ChordVector chord;
-      walk_to_next_anchor(he_start, chord, seg_pmap);
-      subdivide_chord(chord.begin(), chord.end(), seg_pmap);
+      // a new connected border
+      borders.push_back(Border(he_start));
+      const halfedge_descriptor he_mark = he_start;
+      do {
+        ChordVector chord;
+        walk_to_next_anchor(he_start, chord, seg_pmap);
+        borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), seg_pmap);
 
-      for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
-        he_candidates.erase(*citr);
+        for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
+          he_candidates.erase(*citr);
+        }
+      } while (he_start != he_mark);
+    }
+  }
+
+  // add anchors to the borders with less than 3 anchors
+  template<typename FacetSegmentMap>
+  void add_anchors(const FacetSegmentMap &seg_pmap) {
+    typedef typename std::vector<Border>::iterator BorderIterator;
+    for (BorderIterator bitr = borders.begin(); bitr != borders.end(); ++bitr) {
+      CGAL_assertion(bitr->num_anchors > 1); // 2 anchors at least
+      if (bitr->num_anchors == 2) {
+        const halfedge_descriptor he_mark = bitr->he_head;
+        Point pt_begin = vertex_point_pmap[target(he_mark, mesh)];
+        Point pt_end = pt_begin;
+
+        halfedge_descriptor he = he_mark;
+        ChordVector chord;
+        do {
+          walk_to_next_border_halfedge(he, seg_pmap);
+          if (vertex_status_pmap[target(he, mesh)] < 0)
+            chord.push_back(he);
+          else
+            pt_end = vertex_point_pmap[target(he, mesh)];
+        } while(he != he_mark);
+
+        FT dist_max(0.0);
+        halfedge_descriptor he_max;
+        Vector vec = vector_functor(pt_begin, pt_end);
+        vec = scale_functor(vec,
+          FT(1.0 / std::sqrt(CGAL::to_double(vec.squared_length()))));
+        for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
+          Vector pt_vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
+          FT dist = cross_product(vec, pt_vec).squared_length();
+          dist = FT(std::sqrt(CGAL::to_double(dist)));
+          if (dist > dist_max) {
+            dist_max = dist;
+            he_max = *citr;
+          }
+        }
+
+        std::set<std::size_t> px_set;
+        px_set.insert(seg_pmap[face(he_max, mesh)]);
+        if (!CGAL::is_border(opposite(he_max, mesh), mesh))
+          px_set.insert(seg_pmap[face(opposite(he_max, mesh), mesh)]);
+        vertex_descriptor vtx = target(he_max, mesh);
+        vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
+        anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
       }
     }
   }
@@ -504,7 +571,7 @@ private:
     }
   }
 
-  // walk to the first anchor of the border started with the input halfedge he_start
+  // walk along the proxy border to the first halfedge pointing to a vertex associated with an anchor
   template<typename FacetSegmentMap>
   void walk_to_first_anchor(halfedge_descriptor &he_start, const FacetSegmentMap &seg_pmap) {
     const halfedge_descriptor start_mark = he_start;
@@ -516,7 +583,7 @@ private:
     }
   }
 
-  // starting at a border halfedge with its target vertex associated with an anchor
+  // starting at a border halfedge pointing to a vertex associated with an anchor
   // walk along the proxy border to the next anchor, which may be itself
   template<typename FacetSegmentMap>
   void walk_to_next_anchor(
@@ -536,19 +603,21 @@ private:
     BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(he_start, mesh)) {
       if (CGAL::is_border(h, mesh) || seg_pmap[face(h, mesh)] != px_idx) {
         he_start = opposite(h, mesh);
+        return;
       }
     }
   }
 
   // subdivide a chord in range [chord_begin, chord_end)
+  // returns the number of anchors of the chord apart from the first one
   template<typename FacetSegmentMap>
-  void subdivide_chord(
+  std::size_t subdivide_chord(
     const ChordVectorIterator &chord_begin,
     const ChordVectorIterator &chord_end,
     const FacetSegmentMap &seg_pmap) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
     if (chord_size < 2)
-      return;
+      return 1;
 
     halfedge_descriptor he_start = *chord_begin;
     std::size_t px_left = seg_pmap[face(he_start, mesh)];
@@ -569,8 +638,9 @@ private:
     const Point &pt_end = vertex_point_pmap[target(*chord_last, mesh)];
     if (anchor_begin == anchor_end) {
       // circular chord
-      if (chord_size < 3)
-        return;
+      CGAL_assertion(chord_size > 2);
+      // if (chord_size < 3)
+      //   return;
 
       FT dist_max(0.0);
       for (ChordVectorIterator citr = chord_begin; citr != chord_last; ++citr) {
@@ -610,9 +680,13 @@ private:
       vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
       anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
 
-      subdivide_chord(chord_begin, he_max + 1, seg_pmap);
-      subdivide_chord(he_max + 1, chord_end, seg_pmap);
+      std::size_t num0 = subdivide_chord(chord_begin, he_max + 1, seg_pmap);
+      std::size_t num1 = subdivide_chord(he_max + 1, chord_end, seg_pmap);
+
+      return num0 + num1;
     }
+
+    return 1;
   }
 };
 }
