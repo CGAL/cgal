@@ -111,6 +111,11 @@ public:
   /*! Set the last intersecing curve so far. */
   void set_last_curve(const X_monotone_curve_2& cv) { m_lastCurve = cv; }
 
+  /*! Check if the given event is the matches the left-end event. */
+  template <typename SweepEvent>
+  bool is_start_point(const SweepEvent* event) const
+  { return (m_left_event == (Event*)event); }
+
   /*! Check if the given event is the matches the right-end event. */
   template <typename SweepEvent>
   bool is_end_point(const SweepEvent* event) const

@@ -175,6 +175,10 @@ public:
   void push_back_curve_to_left(Subcurve* curve)
   { m_leftCurves.push_back(curve); }
 
+  /*! Add a subcurve to the container of right curves (without checks). */
+  void push_back_curve_to_right(Subcurve* curve)
+  { m_rightCurves.push_back(curve); }
+
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
   add_curve_to_right(Subcurve* curve, const Traits_2* tr)

@@ -167,22 +167,18 @@ protected:
   /*! Add a subcurve to the right of an event point.
    * \param event The event point.
    * \param curve The subcurve to add.
-   * \return (true) if an overlap occured; (false) otherwise.
    */
-  virtual bool _add_curve_to_right(Event* event, Subcurve* curve,
-                                   bool overlap_exist = false);
+  virtual bool _add_curve_to_right(Event* event, Subcurve* curve);
 
   /*! Fix overlapping subcurves before handling the current event. */
   void _fix_overlap_subcurves();
 
-  /*! Handle overlap at right insertion to event.
-   * \param event The event point.
-   * \param curve The subcurve representing the overlap.
-   * \param iter An iterator for the curves.
-   * \param overlap_exist
+  /*! create an overlap subcurve from overlap_cv between c1 and c2.
+   * \param overlap_cv the overlapping curve.
+   * \param c1 first subcurve contributing to the overlap.
+   * \param c2 second subcurve contributing to the overlap.
    */
-  void _handle_overlap(Event* event, Subcurve* curve,
-                       Event_subcurve_iterator iter, bool overlap_exist);
+  void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve* c1 , Subcurve* c2);
 
   /*! Compute intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that
@@ -207,13 +203,11 @@ protected:
    * \param mult Its multiplicity.
    * \param curve1 The first curve.
    * \param curve2 The second curve.
-   * \param is_overlap Whether the two curves overlap at xp.
    */
   void _create_intersection_point(const Point_2& xp,
                                   unsigned int mult,
                                   Subcurve*& c1,
-                                  Subcurve*& c2,
-                                  bool is_overlap = false);
+                                  Subcurve*& c2);
 
   /*! Fix a subcurve that represents an overlap.
    * \param sc The subcurve.
