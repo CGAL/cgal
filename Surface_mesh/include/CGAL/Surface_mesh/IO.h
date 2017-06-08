@@ -24,6 +24,9 @@
 #include <string>
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
+#include <vector>
+#include <stdexcept>
 
 
 #include <boost/array.hpp>
