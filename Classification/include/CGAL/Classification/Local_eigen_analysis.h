@@ -139,8 +139,11 @@ public:
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` (default value is %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
-    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-    for matrix diagonalization.
+    \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
+    matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
+    is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+    using `Eigen_diagonalize_traits` is provided. Otherwise, the
+    internal implementation `Diagonalize_traits` is used.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -156,7 +159,11 @@ public:
 #else
             typename ConcurrencyTag = CGAL::Sequential_tag,
 #endif
+#if defined(DOXYGEN_RUNNING)
+            typename DiagonalizeTraits>
+#else
             typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float, 3> >
+#endif
     Local_eigen_analysis (const PointRange& input,
                           PointMap point_map,
                           const NeighborQuery& neighbor_query,

@@ -75,8 +75,11 @@ namespace Classification {
   \tparam ConcurrencyTag enables sequential versus parallel
   algorithm. Possible values are `Parallel_tag` (default value is %CGAL
   is linked with TBB) or `Sequential_tag` (default value otherwise).
-  \tparam DiagonalizeTraits model of `DiagonalizeTraits` used
-  for matrix diagonalization.
+  \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
+  matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
+  is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+  using `Eigen_diagonalize_traits` is provided. Otherwise, the
+  internal implementation `Diagonalize_traits` is used.
 
 */
 template <typename GeomTraits,
@@ -89,7 +92,11 @@ template <typename GeomTraits,
 #else
           typename ConcurrencyTag = CGAL::Sequential_tag,
 #endif
+#if defined(DOXYGEN_RUNNING)
+          typename DiagonalizeTraits>
+#else
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
+#endif
 class Point_set_feature_generator
 {
   
@@ -257,13 +264,14 @@ public:
     - `CGAL::Classification::Feature::Sphericity`
     - `CGAL::Classification::Feature::Sum_eigenvalues`
     - `CGAL::Classification::Feature::Surface_variation`
-    - The version of `CGAL::Classification::Feature::Vertical_dispersion` based on eigenvalues
+    - `CGAL::Classification::Feature::Vertical_dispersion`
+    - The version of `CGAL::Classification::Feature::Verticality` based on eigenvalues
 
     If normal vectors are provided (if `VectorMap` is different from
     `CGAL::Default`), the following feature is generated at each
     scale:
 
-    - The version of `CGAL::Classification::Feature::Vertical_dispersion` based on normal vectors
+    - The version of `CGAL::Classification::Feature::Verticality` based on normal vectors
 
     If colors are provided (if `ColorMap` is different from
     `CGAL::Default`), the following features are generated at each

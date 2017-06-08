@@ -35,8 +35,9 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationFeature
 
-\brief Set of features (see `Feature_base`) used as input by classification
-algorithms.
+\brief Set of features (see `Feature_base`) used as input by
+classification algorithms. This class handles both the instantiation,
+the addition and the deletion of features.
 
 */
 class Feature_set
@@ -62,7 +63,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Adds a feature.
+    \brief Instantiates a new feature and adds it to the set.
 
     \tparam Feature type of the feature, inherited from
     `Feature_base`.

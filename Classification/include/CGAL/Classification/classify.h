@@ -292,9 +292,12 @@ namespace internal {
 
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    
     \tparam ItemRange model of `ConstRange`. Its iterator type is
-    `RandomAccessIterator`.  \tparam Classifier model of
-    `Classifier`.
+    `RandomAccessIterator`. Its value type depends on the data that is
+    classified (for example, `CGAL::Point_3` or `CGAL::Triangle_3`).
+
+    \tparam Classifier model of `Classifier`.
 
     \param input input range.
     \param labels set of input labels.
