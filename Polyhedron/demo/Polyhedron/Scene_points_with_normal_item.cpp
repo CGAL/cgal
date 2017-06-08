@@ -537,6 +537,7 @@ void Scene_points_with_normal_item::selectDuplicates()
   Q_EMIT itemChanged();
 }
 
+#ifdef CGAL_CXX11
 #ifdef CGAL_LINKED_WITH_LASLIB
 // Loads point set from .LAS file
 bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
@@ -569,7 +570,7 @@ bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) co
     CGAL::write_las_point_set (stream, *(d->m_points));
 }
 
-#endif
+#endif // LAS
 
 // Loads point set from .PLY file
 bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
@@ -607,6 +608,8 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 
   return true;
 }
+
+#endif // CXX11
 
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)

@@ -22,6 +22,10 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#ifndef CGAL_CXX11
+#error CGAL LAS writer requires a C++11 compiler
+#endif
+
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -159,6 +163,8 @@ namespace internal {
 ///
 /// @sa `make_las_point_writer()`
 ///
+/// @cgalRequiresCPP11
+///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
 /// @tparam PropertyHandler handlers to recover properties.
@@ -234,6 +240,8 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
 ///
 /// @return `true` on success.
+///
+/// @cgalRequiresCPP11
 
 // This variant requires all parameters.
 template < typename ForwardIterator,

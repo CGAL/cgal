@@ -22,6 +22,10 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#ifndef CGAL_CXX11
+#error CGAL LAS reader requires a C++11 compiler
+#endif
+
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -351,6 +355,8 @@ namespace internal {
 ///  - `LAS_property::B` with type `unsigned short`
 ///  - `LAS_property::I` with type `unsigned short`
 ///
+/// @cgalRequiresCPP11
+///
 /// @sa `make_las_point_reader()`
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
@@ -417,6 +423,8 @@ bool read_las_points_with_properties (std::istream& stream,
 ///        It can be omitted if the value type of `OutputIterator` is convertible to `CGAL::Point_3`.
 ///
 /// @return `true` on success.
+///
+/// @cgalRequiresCPP11
 
 // This variant requires all parameters.
 //-----------------------------------------------------------------------------------

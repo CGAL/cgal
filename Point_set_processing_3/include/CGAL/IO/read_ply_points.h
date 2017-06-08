@@ -22,6 +22,9 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#ifndef CGAL_CXX11
+#error CGAL PLY reader requires a C++11 compiler
+#endif
 
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
@@ -556,6 +559,8 @@ namespace internal {
 /// @sa `make_ply_point_reader()`
 /// @sa `make_ply_normal_reader()`
 ///
+/// @cgalRequiresCPP11
+///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
@@ -632,6 +637,8 @@ bool read_ply_points_with_properties (std::istream& stream,
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `CGAL::Vector_3`.
 ///
 /// @return `true` on success.
+///
+/// @cgalRequiresCPP11
 
 // This variant requires all parameters.
 //-----------------------------------------------------------------------------------
@@ -715,6 +722,8 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 ///        It can be omitted if the value type of `OutputIterator` is convertible to `CGAL::Point_3`.
 ///
 /// @return `true` on success.
+///
+/// @cgalRequiresCPP11
 
 // This variant requires all parameters.
 //-----------------------------------------------------------------------------------

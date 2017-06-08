@@ -22,6 +22,9 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#ifndef CGAL_CXX11
+#error CGAL PLY writer requires a C++11 compiler
+#endif
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -270,6 +273,8 @@ namespace internal {
 /// @sa `make_ply_point_writer()`
 /// @sa `make_ply_normal_writer()`
 ///
+/// @cgalRequiresCPP11
+///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PropertyHandler handlers to recover properties.
 ///
@@ -326,6 +331,8 @@ write_ply_points_with_properties(
 /// @tparam VectorMap is a model of `ReadablePropertyMap` with a value type  `CGAL::Vector_3`.
 ///
 /// @return `true` on success.
+///
+/// @cgalRequiresCPP11
 
 // This variant requires all parameters.
 template < typename ForwardIterator,
@@ -379,6 +386,8 @@ write_ply_points_and_normals(
 ///        It can be omitted if the value type of `ForwardIterator` is convertible to `CGAL::Point_3`.
 ///
 /// @return `true` on success.
+///
+/// @cgalRequiresCPP11
 
 // This variant requires all parameters.
 template < typename ForwardIterator,
