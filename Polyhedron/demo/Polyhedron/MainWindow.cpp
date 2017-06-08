@@ -1534,10 +1534,14 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
   QString caption = tr("Save %1 to File...%2").arg(item->name()).arg(ext);
+  //remove `)`
+  ext.chop(1);
+  //remove `(*.`
+  ext = ext.right(ext.size()-3);
   QString filename = 
     QFileDialog::getSaveFileName(this,
                                  caption,
-                                 QString(),
+                                 QString("%1.%2").arg(item->name()).arg(ext),
                                  filters.join(";;"));
   if(filename.isEmpty())
     return;
