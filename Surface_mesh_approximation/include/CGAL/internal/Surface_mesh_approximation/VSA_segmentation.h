@@ -508,50 +508,68 @@ private:
     }
   }
 
-  // add anchors to the borders with less than 3 anchors
+  // add anchors to the borders with only 2 anchors
   template<typename FacetSegmentMap>
   void add_anchors(const FacetSegmentMap &seg_pmap) {
     typedef typename std::vector<Border>::iterator BorderIterator;
     for (BorderIterator bitr = borders.begin(); bitr != borders.end(); ++bitr) {
-      CGAL_assertion(bitr->num_anchors > 1); // 2 anchors at least
-      if (bitr->num_anchors == 2) {
-        const halfedge_descriptor he_mark = bitr->he_head;
-        Point pt_begin = vertex_point_pmap[target(he_mark, mesh)];
-        Point pt_end = pt_begin;
+      if (bitr->num_anchors > 2)
+        continue;
 
-        halfedge_descriptor he = he_mark;
-        ChordVector chord;
-        do {
-          walk_to_next_border_halfedge(he, seg_pmap);
-          if (vertex_status_pmap[target(he, mesh)] < 0)
-            chord.push_back(he);
-          else
+      // 2 initial anchors at least
+      CGAL_assertion(bitr->num_anchors == 2);
+      // borders with only 2 initial anchors
+      const halfedge_descriptor he_mark = bitr->he_head;
+      Point pt_begin = vertex_point_pmap[target(he_mark, mesh)];
+      Point pt_end = pt_begin;
+
+      halfedge_descriptor he = he_mark;
+      ChordVector chord;
+      std::size_t count = 0;
+      do {
+        walk_to_next_border_halfedge(he, seg_pmap);
+        if (vertex_status_pmap[target(he, mesh)] < 0)
+          chord.push_back(he);
+        else {
+          if (count == 0)
             pt_end = vertex_point_pmap[target(he, mesh)];
-        } while(he != he_mark);
-
-        FT dist_max(0.0);
-        halfedge_descriptor he_max;
-        Vector vec = vector_functor(pt_begin, pt_end);
-        vec = scale_functor(vec,
-          FT(1.0 / std::sqrt(CGAL::to_double(vec.squared_length()))));
-        for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
-          Vector pt_vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
-          FT dist = cross_product(vec, pt_vec).squared_length();
-          dist = FT(std::sqrt(CGAL::to_double(dist)));
-          if (dist > dist_max) {
-            dist_max = dist;
-            he_max = *citr;
-          }
+          ++count;
         }
+      } while(he != he_mark);
 
-        std::set<std::size_t> px_set;
-        px_set.insert(seg_pmap[face(he_max, mesh)]);
-        if (!CGAL::is_border(opposite(he_max, mesh), mesh))
-          px_set.insert(seg_pmap[face(opposite(he_max, mesh), mesh)]);
-        vertex_descriptor vtx = target(he_max, mesh);
-        vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
-        anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
+      // anchor count may be increased to more than 2 afterwards
+      // due to the new anchors added by the neighboring border (< 2 anchors)
+      if (count > 2) {
+        bitr->num_anchors = count;
+        continue;
       }
+
+      FT dist_max(0.0);
+      halfedge_descriptor he_max;
+      Vector chord_vec = vector_functor(pt_begin, pt_end);
+      chord_vec = scale_functor(chord_vec,
+        FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
+      for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
+        Vector vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
+        vec = cross_product(chord_vec, vec);
+        FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
+        if (dist > dist_max) {
+          dist_max = dist;
+          he_max = *citr;
+        }
+      }
+
+      std::set<std::size_t> px_set;
+      halfedge_descriptor he_oppo = opposite(he_max, mesh);
+      px_set.insert(seg_pmap[face(he_max, mesh)]);
+      if (!CGAL::is_border(he_oppo, mesh))
+        px_set.insert(seg_pmap[face(he_oppo, mesh)]);
+      vertex_descriptor vtx = target(he_max, mesh);
+      vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
+      anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
+
+      // increase border anchors by one
+      bitr->num_anchors++;
     }
   }
 
