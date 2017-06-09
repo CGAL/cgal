@@ -125,8 +125,8 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   Vd_visitor visitor(&arr, &oi);
   Ss2::No_intersection_surface_sweep_2<typename Vd_visitor::Geometry_traits_2,
                                        Vd_visitor,
-                                       typename Vd_visitor::Subcurve,
-                                       typename Vd_visitor::Event>
+                                       typename Vd_visitor::Event,
+                                       typename Vd_visitor::Subcurve>
     surface_sweep(&ex_traits, &visitor);
   surface_sweep.sweep(xcurves_vec.begin(), xcurves_vec.end(),  // Curves.
                       iso_pts_vec.begin(), iso_pts_vec.end()); // Action points.
@@ -135,6 +135,6 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   return oi;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

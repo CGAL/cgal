@@ -21,6 +21,7 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Definition of the basic sweep-line visitors, for the usage of the global
  * sweep-line functions.
  */
@@ -34,6 +35,7 @@ namespace CGAL {
 namespace Surface_sweep_2 {
 
 /*! \class
+ *
  * A simple sweep-line visitor that reports all intersection points among a
  * set of input curves.
  */
@@ -299,7 +301,7 @@ public:
   bool found_intersection() { return m_found_x; }
 };
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

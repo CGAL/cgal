@@ -51,7 +51,7 @@ private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
                                                         Base_visitor;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
@@ -96,8 +96,7 @@ public:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <typename Tr, typename Arr, typename Event_,
-          typename Subcurve_>
+template <typename Tr, typename Arr, typename Event_, typename Subcurve_>
 void Arr_unb_planar_batched_pl_helper<Tr, Arr, Event_, Subcurve_>::
 before_sweep()
 {
@@ -125,8 +124,7 @@ before_sweep()
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 //
-template <typename Tr, typename Arr, typename Event_,
-          typename Subcurve_>
+template <typename Tr, typename Arr, typename Event_, typename Subcurve_>
 void Arr_unb_planar_batched_pl_helper<Tr, Arr, Event_, Subcurve_>::
 after_handle_event(Event* event)
 {

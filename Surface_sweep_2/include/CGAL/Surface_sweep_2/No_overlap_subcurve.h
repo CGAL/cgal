@@ -41,7 +41,6 @@
  */
 
 #include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
-#include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
@@ -61,22 +60,21 @@ namespace Surface_sweep_2 {
  *   curve.
  * - an iterator that points to the location of the subcurve in the status line.
  */
-template <typename GeometryTraits_2, typename Subcurve_>
+template <typename GeometryTraits_2, typename Event_, typename Subcurve_>
 class No_overlap_subcurve_base {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Curve_comparer<Gt2, Subcurve>                 Compare_curves;
+  typedef Curve_comparer<Gt2, Event, Subcurve>          Compare_curves;
   typedef Multiset<Subcurve*, Compare_curves, CGAL_ALLOCATOR(int)>
                                                         Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
-
-  typedef No_overlap_event<Gt2, Subcurve>               Event;
 
 protected:
   Status_line_iterator m_hint;      // The location of the subcurve in the
@@ -89,7 +87,7 @@ public:
    */
   template <typename SweepEvent>
   bool is_end_point(const SweepEvent* event) const
-  { return (m_right_event == (Event*)event); }
+  { return (m_right_event == event); }
 
   /*! Obtain the event that corresponds to the left end of the subcurve.
    */
@@ -100,19 +98,16 @@ public:
   Event* right_event() const { return m_right_event; }
 
   /*! Set the event that corresponds to the left end of the subcurve. */
-  template <typename SweepEvent>
-  void set_left_event(SweepEvent* event) { m_left_event = (Event*)event; }
+  void set_left_event(Event* event) { m_left_event = event; }
 
   /*! Set the event that corresponds to the right end of the subcurve. */
-  template <typename SweepEvent>
-  void set_right_event(SweepEvent* event) { m_right_event = (Event*)event; }
+  void set_right_event(Event* event) { m_right_event = event; }
 
   /*! Obtain the location of the subcurve in the status line .*/
   Status_line_iterator hint() const { return m_hint; }
 
   /*! Set the location of the subcurve in the status line .*/
   void set_hint(Status_line_iterator hint) { m_hint = hint; }
-
 };
 
 /*! \class No_overlap_subcurve
@@ -131,28 +126,29 @@ public:
  *         overriden it implies that the type is
  *         No_overlap_subcurve.
  */
-template <typename GeometryTraits_2, typename Subcurve_ = Default>
+template <typename GeometryTraits_2, typename Event_,
+          typename Subcurve_ = Default>
 class No_overlap_subcurve :
   public No_overlap_subcurve_base<
-    GeometryTraits_2,
+    GeometryTraits_2, Event_,
     typename Default::Get<Subcurve_,
-                          No_overlap_subcurve<GeometryTraits_2,
+                          No_overlap_subcurve<GeometryTraits_2, Event_,
                                               Subcurve_> >::type>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef No_overlap_subcurve<Gt2, Subcurve_>           Self;
-  typedef typename Default::Get<Subcurve_, Self >::type Subcurve;
-  typedef No_overlap_subcurve_base<Gt2, Subcurve>       Base;
+  typedef No_overlap_subcurve<Gt2, Event, Subcurve_>    Self;
+  typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
+  typedef No_overlap_subcurve_base<Gt2, Event, Subcurve> Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
   typedef typename Base::Status_line_iterator           Status_line_iterator;
-  typedef typename Base::Event                          Event;
 
 protected:
   // Data members:
@@ -200,7 +196,7 @@ void No_overlap_subcurve<Traits>::Print() const
 }
 #endif
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

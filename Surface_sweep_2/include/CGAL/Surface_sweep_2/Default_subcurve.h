@@ -17,8 +17,8 @@
 //             Ron Wein <wein@post.tau.ac.il>
 //             Efi Fogel <efifogel@gmail.com>
 
-#ifndef CGAL_SURFACE_SWEEP_SUBCURVE_H
-#define CGAL_SURFACE_SWEEP_SUBCURVE_H
+#ifndef CGAL_SURFACE_SWEEP_DEFAULT_SUBCURVE_H
+#define CGAL_SURFACE_SWEEP_DEFAULT_SUBCURVE_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
@@ -60,17 +60,18 @@ namespace Surface_sweep_2 {
  * - two pointers to subcurves that are the originating subcurves in case of
  *   an overlap, otherwise thay are both NULL.
  */
-template <typename GeometryTraits_2, typename Subcurve_>
+template <typename GeometryTraits_2, typename Event_, typename Subcurve_>
 class Default_subcurve_base :
-    public No_overlap_subcurve<GeometryTraits_2, Subcurve_>
+  public No_overlap_subcurve<GeometryTraits_2, Event_, Subcurve_>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef No_overlap_subcurve<Gt2, Subcurve>            Base;
+  typedef No_overlap_subcurve<Gt2, Event, Subcurve>     Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -121,7 +122,8 @@ public:
     return oi;
   }
 
-  /*! Check if the given subcurve is a node in the overlapping hierarchy. */
+  /*! Check whether the given subcurve is a node in the overlapping hierarchy.
+   */
   bool is_inner_node(Subcurve* s)
   {
     if (this == s) return true;
@@ -130,7 +132,8 @@ public:
             m_orig_subcurve2->is_inner_node(s));
   }
 
-  /*! Check if the given subcurve is a leaf in the overlapping hierarchy. */
+  /*! Check whether the given subcurve is a leaf in the overlapping hierarchy.
+   */
   bool is_leaf(Subcurve* s)
   {
     if (m_orig_subcurve1 == NULL) return (this == s);
@@ -138,7 +141,7 @@ public:
             m_orig_subcurve2->is_leaf(s));
   }
 
-  /*! Check if the two hierarchies contain the same leaf nodes. */
+  /*! Check whether the two hierarchies contain the same leaf nodes. */
   bool has_same_leaves(Subcurve* s)
   {
     std::list<Subcurve*> my_leaves;
@@ -163,7 +166,7 @@ public:
     return true;
   }
 
-  /*! Check if the two hierarchies contain a common leaf node. */
+  /*! Check whether the two hierarchies contain a common leaf node. */
   bool has_common_leaf(Subcurve* s)
   {
     std::list<Subcurve*> my_leaves;
@@ -223,9 +226,10 @@ public:
  *         overriden it implies that the type is
  *         No_overlap_subcurve
  */
-template <typename GeometryTraits_2, typename Subcurve_ = Default>
+template <typename GeometryTraits_2, typename Event_,
+          typename Subcurve_ = Default>
 class Default_subcurve :
-  public Default_subcurve_base<GeometryTraits_2,
+  public Default_subcurve_base<GeometryTraits_2, Event_,
                                typename Default::Get<Subcurve_,
                                                      Default_subcurve<
                                                        GeometryTraits_2,
@@ -233,12 +237,13 @@ class Default_subcurve :
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Default_subcurve<Gt2, Subcurve_>              Self;
+  typedef Default_subcurve<Gt2, Event, Subcurve_>       Self;
   typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef Default_subcurve_base<Gt2, Subcurve>          Base;
+  typedef Default_subcurve_base<Gt2, Event, Subcurve>   Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -272,7 +277,7 @@ void Default_subcurve<GeometryTraits_2>::Print() const
 }
 #endif
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

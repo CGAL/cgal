@@ -61,7 +61,7 @@ public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
                                                         Base_visitor;
 
   typedef Arr_construction_sl_visitor<Self>             Parent_visitor;

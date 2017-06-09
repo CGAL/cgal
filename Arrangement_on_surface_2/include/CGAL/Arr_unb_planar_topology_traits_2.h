@@ -83,8 +83,8 @@ public:
 
   //! \name Arrangement types
   //!@{
-  typedef Arr_unb_planar_topology_traits_2<Geometry_traits_2, Dcel> Self;
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
+  typedef Arr_unb_planar_topology_traits_2<Gt2, Dcel>   Self;
+  typedef Arr_traits_basic_adaptor_2<Gt2>               Traits_adaptor_2;
   //!@}
 
   ///! \name The side tags
@@ -146,11 +146,11 @@ public:
   ///! \name Construction methods.
   //@{
 
-  /*! Default constructor. */
+  /*! Construct Default. */
   Arr_unb_planar_topology_traits_2();
 
   /*! Constructor with a geometry-traits class. */
-  Arr_unb_planar_topology_traits_2(const Geometry_traits_2* tr);
+  Arr_unb_planar_topology_traits_2(const Gt2* tr);
 
   /*! Assign the contents of another topology-traits class. */
   void assign(const Self& other);
@@ -168,119 +168,119 @@ public:
             this->m_dcel.size_of_halfedges() == 8);
   }
 
-  /*! Check if the given vertex is concrete (associated with a point). */
+  /*! Check whether the given vertex is concrete (associated with a point). */
   bool is_concrete_vertex(const Vertex* v) const
-  {
-    return (! v->has_null_point());
-  }
+  { return (! v->has_null_point()); }
 
-  /*! Get the number of concrete vertices. */
+  /*! Obtain the number of concrete vertices.
+   * \return All vertices not lying at infinity are concrete.
+   */
   Size number_of_concrete_vertices() const
-  {
-    // All vertices not lying at infinity are concrete.
-    return (this->m_dcel.size_of_vertices() - n_inf_verts);
-  }
+  { return (this->m_dcel.size_of_vertices() - n_inf_verts); }
 
   /*! Check if the given vertex is valid (not a fictitious one). */
   bool is_valid_vertex(const Vertex* v) const
   {
     return (! v->has_null_point() ||
-            (v != v_bl && v != v_tl && v != v_br && v != v_tr));
+            ((v != v_bl) && (v != v_tl) && (v != v_br) && (v != v_tr)));
   }
 
-  /*! Get the number of valid vertices. */
+  /*! Obtain the number of valid vertices.
+   * \return All vertices, except the four fictitious one, are valid.
+   */
   Size number_of_valid_vertices() const
-  {
-    // All vertices, except the four fictitious one, are valid.
-    return (this->m_dcel.size_of_vertices() - 4);
-  }
+  { return (this->m_dcel.size_of_vertices() - 4); }
 
-  /*! Check if the given halfedge is valid (not a fictitious one). */
+  /*! Check whether the given halfedge is valid (not a fictitious one). */
   bool is_valid_halfedge(const Halfedge* he) const
-  {
-    return (! he->has_null_curve());
-  }
+  { return (! he->has_null_curve()); }
 
-  /*! Get the number of valid halfedges. */
+  /*! Obtain the number of valid halfedges.
+   * \return the number of valid halfedges, not including fictitious halfedges.
+   * Note that each vertex at infinity induces two fictitious halfedges
+   */
   Size number_of_valid_halfedges() const
-  {
-    // Note that we do not count fictitious halfedges (each vertex at infinity
-    // induces two fictitious halfedges).
-    return (this->m_dcel.size_of_halfedges() - 2*n_inf_verts);
-  }
+  { return (this->m_dcel.size_of_halfedges() - 2*n_inf_verts); }
 
-  /*! Check if the given face is valid (not a fictitious one). */
-  bool is_valid_face (const Face* f) const
-  {
-    return (! f->is_fictitious());
-  }
+  /*! Check whether the given face is valid (not a fictitious one). */
+  bool is_valid_face (const Face* f) const { return (! f->is_fictitious()); }
 
-  /*! Get the number of valid faces. */
+  /*! Obtain the number of valid faces.
+   * \return the number of valid faces, not including ficitious DCEL faces.
+   */
   Size number_of_valid_faces() const
-  {
-    // We do not count the ficitious DCEL face.
-    return (this->m_dcel.size_of_faces() - 1);
-  }
+  { return (this->m_dcel.size_of_faces() - 1); }
   //@}
 
 private:
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>     Arr;
+  typedef Arrangement_on_surface_2<Gt2, Self>                   Arr;
 
-  // Type definition for the constuction surface-sweep visitor.
-  typedef Arr_construction_subcurve<Geometry_traits_2>          CSubcurve;
-  typedef Arr_construction_event<Geometry_traits_2, CSubcurve, Arr>
-                                                                CEvent;
-  typedef Arr_unb_planar_construction_helper<Geometry_traits_2, Arr, CEvent,
-                                             CSubcurve>         CHelper;
+  // Type definition for the construction sweep-line visitor.
+  typedef Arr_construction_event<Gt2, Arr>                      CEvent;
+  typedef Arr_construction_subcurve<Gt2, CEvent>                CSubcurve;
+  typedef Arr_unb_planar_construction_helper<Gt2, Arr, CEvent, CSubcurve>
+                                                                CHelper;
 
-  // Type definition for the basic insertion surface-sweep visitor.
-  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  NxITraits;
-  typedef Arr_construction_subcurve<NxITraits, Ss2::No_overlap_subcurve>
-                                                                NxISubcurve;
-  typedef Arr_construction_event<NxITraits, NxISubcurve, Arr,
-                                 Ss2::No_overlap_event>         NxIEvent;
-  typedef Arr_unb_planar_insertion_helper<NxITraits, Arr, NxIEvent, NxISubcurve>
-                                                                NxIHelper;
+  // Type definition for the no-intersection construction sweep-line visitor.
+  typedef Arr_construction_event<Gt2, Arr, Ss2::No_overlap_event_base,
+                                 Ss2::No_overlap_subcurve>      NxCEvent;
+  typedef Arr_construction_subcurve<Gt2, NxCEvent, Ss2::No_overlap_subcurve>
+                                                                NxCSubcurve;
+  typedef Arr_unb_planar_construction_helper<Gt2, Arr, NxCEvent,
+                                             NxCSubcurve>       NxCHelper;
 
   // Type definition for the insertion surface-sweep visitor.
-  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        ITraits;
-  typedef Arr_construction_subcurve<ITraits>                    ISubcurve;
-  typedef Arr_construction_event<ITraits, ISubcurve, Arr>       IEvent;
+  typedef Arr_insertion_traits_2<Gt2, Arr>                      ITraits;
+  typedef Arr_construction_event<ITraits, Arr>                  IEvent;
+  typedef Arr_construction_subcurve<ITraits, IEvent>            ISubcurve;
   typedef Arr_unb_planar_insertion_helper<ITraits, Arr, IEvent, ISubcurve>
                                                                 IHelper;
 
+  // Type definition for the basic insertion surface-sweep visitor.
+  typedef Arr_basic_insertion_traits_2<Gt2, Arr>                NxITraits;
+  typedef Arr_construction_event<NxITraits, Arr, Ss2::No_overlap_event_base>
+                                                                NxIEvent;
+  typedef Arr_construction_subcurve<NxITraits, NxIEvent,
+                                    Ss2::No_overlap_subcurve>   NxISubcurve;
+  typedef Arr_unb_planar_insertion_helper<NxITraits, Arr, NxIEvent, NxISubcurve>
+                                                                NxIHelper;
+
   // Type definition for the batched point-location surface-sweep visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
-  typedef Ss2::No_overlap_subcurve<BplTraits>                   BplSubcurve;
-  typedef Ss2::No_overlap_event<BplTraits, BplSubcurve>         BplEvent;
+  typedef Ss2::No_overlap_event<BplTraits>                      BplEvent;
+  typedef Ss2::No_overlap_subcurve<BplTraits, BplEvent>         BplSubcurve;
   typedef Arr_unb_planar_batched_pl_helper<BplTraits, Arr, BplEvent,
                                            BplSubcurve>         BplHelper;
 
   // Type definition for the vertical decomposition surface-sweep visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
-  typedef Ss2::No_overlap_subcurve<VdTraits>                    VdSubcurve;
-  typedef Ss2::No_overlap_event<VdTraits, VdSubcurve>           VdEvent;
+  typedef Ss2::No_overlap_event<VdTraits>                       VdEvent;
+  typedef Ss2::No_overlap_subcurve<VdTraits, VdEvent>           VdSubcurve;
   typedef Arr_unb_planar_vert_decomp_helper<VdTraits, Arr, VdEvent, VdSubcurve>
                                                                 VdHelper;
 
   // Type definition for the overlay surface-sweep visitor.
-  template <typename ExGeometryTraits_2, typename ArrangementA,
+  template <typename ExtendedGeometryTraits, typename ArrangementA,
             typename ArrangementB>
-  struct _Overlay_helper : public Arr_unb_planar_overlay_helper
-      <ExGeometryTraits_2, ArrangementA, ArrangementB, Arr,
-       Arr_construction_event<ExGeometryTraits_2,
-                              Arr_overlay_subcurve<ExGeometryTraits_2>,
-                              Arr>,
-       Arr_overlay_subcurve<ExGeometryTraits_2> >
+  struct _Overlay_helper : public Arr_unb_planar_overlay_helper<
+    ExtendedGeometryTraits, ArrangementA, ArrangementB, Arr,
+    Arr_overlay_event<ExtendedGeometryTraits, Arr>,
+    Arr_overlay_subcurve<ExtendedGeometryTraits, Arr_overlay_event<
+                                                   ExtendedGeometryTraits,
+                                                   Arr> > >
   {
-    typedef Arr_unb_planar_overlay_helper<
-      ExGeometryTraits_2, ArrangementA, ArrangementB, Arr,
-      Arr_construction_event<ExGeometryTraits_2,
-                             Arr_overlay_subcurve<ExGeometryTraits_2>,
-                             Arr>,
-      Arr_overlay_subcurve<ExGeometryTraits_2> >        Base;
+    typedef ExtendedGeometryTraits                      Ex_geom_traits;
+    typedef ArrangementA                                Arrangement_a;
+    typedef ArrangementB                                Arrangement_b;
+
+    typedef Arr_overlay_event<Ex_geom_traits, Arr>      Ex_event;
+    typedef Arr_overlay_subcurve<Ex_geom_traits, Ex_event>
+                                                        Ex_subcurve;
+    typedef Arr_unb_planar_overlay_helper<Ex_geom_traits, Arrangement_a,
+                                          Arrangement_b, Arr, Ex_event,
+                                          Ex_subcurve>  Base;
 
     typedef typename Base::Geometry_traits_2            Geometry_traits_2;
     typedef typename Base::Arrangement_red_2            Arrangement_red_2;
@@ -305,7 +305,7 @@ public:
   typedef Arr_insertion_sl_visitor<IHelper>
     Surface_sweep_insertion_visitor;
 
-  typedef Surface_sweep_construction_visitor
+  typedef Arr_construction_sl_visitor<NxCHelper>
     Surface_sweep_no_intersection_construction_visitor;
 
   typedef Arr_no_intersection_insertion_sl_visitor<NxIHelper>
@@ -346,18 +346,18 @@ public:
             typename OverlayTraits>
   struct Surface_sweep_overlay_visitor :
     public Arr_overlay_sl_visitor<_Overlay_helper<Arr_overlay_traits_2<
-                                                    Geometry_traits_2,
+                                                    Gt2,
                                                     ArrangementA, ArrangementB>,
                                                   ArrangementA, ArrangementB>,
                                   OverlayTraits>
   {
     typedef ArrangementA                                Arrangement_a;
     typedef ArrangementB                                Arrangement_b;
-    typedef Arr                                         Arrangement_result_2;
     typedef OverlayTraits                               Overlay_traits;
+    typedef Arr                                         Arrangement_result_2;
 
-    typedef Arr_overlay_traits_2<Geometry_traits_2, Arrangement_a,
-                                 Arrangement_b>         Geom_ovl_traits_2;
+    typedef Arr_overlay_traits_2<Gt2, Arrangement_a, Arrangement_b>
+                                                        Geom_ovl_traits_2;
 
     typedef _Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
                                                         Ovl_helper;
@@ -526,34 +526,34 @@ public:
   /*! This function is used by the "walk" point-location strategy. */
   const Face* initial_face() const { return fict_face; }
 
-  /*! Get the fictitious face (const version). */
+  /*! Obtain the fictitious face (const version). */
   const Face* fictitious_face() const { return fict_face; }
 
-  /*! Get the fictitious face (non-const version). */
+  /*! Obtain the fictitious face (non-const version). */
   Face* fictitious_face() { return fict_face; }
 
-  /*! Get the bottom-left fictitious vertex (const version). */
+  /*! Obtain the bottom-left fictitious vertex (const version). */
   const Vertex* bottom_left_vertex() const { return (v_bl); }
 
-  /*! Get the bottom-left fictitious vertex (non-const version). */
+  /*! Obtain the bottom-left fictitious vertex (non-const version). */
   Vertex* bottom_left_vertex() { return (v_bl); }
 
-  /*! Get the top-left fictitious vertex (const version). */
+  /*! Obtain the top-left fictitious vertex (const version). */
   const Vertex* top_left_vertex() const { return (v_tl); }
 
-  /*! Get the top-left fictitious vertex (non-const version). */
+  /*! Obtain the top-left fictitious vertex (non-const version). */
   Vertex* top_left_vertex() { return (v_tl); }
 
-  /*! Get the bottom-right fictitious vertex (const version). */
+  /*! Obtain the bottom-right fictitious vertex (const version). */
   const Vertex* bottom_right_vertex() const { return (v_br); }
 
-  /*! Get the bottom-right fictitious vertex (non-const version). */
+  /*! Obtain the bottom-right fictitious vertex (non-const version). */
   Vertex* bottom_right_vertex() { return (v_br); }
 
-  /*! Get the top-right fictitious vertex (const version). */
+  /*! Obtain the top-right fictitious vertex (const version). */
   const Vertex* top_right_vertex() const { return (v_tr); }
 
-  /*! Get the top-right fictitious vertex (non-const version). */
+  /*! Obtain the top-right fictitious vertex (non-const version). */
   Vertex* top_right_vertex() { return (v_tr); }
   //@}
 
@@ -592,7 +592,7 @@ protected:
   /// \name Auxiliary functions.
   //@{
 
-  /*! Get the curve associated with a boundary vertex.
+  /*! Obtain the curve associated with a boundary vertex.
    * \param v The vertex as infinity.
    * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
    *                    ARR_MAX_END if it is induced by the curve's maximal end.
@@ -620,7 +620,7 @@ protected:
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_topology_traits_2_impl.h>
 

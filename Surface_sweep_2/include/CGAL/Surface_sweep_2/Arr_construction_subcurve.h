@@ -59,23 +59,24 @@ namespace Ss2 = Surface_sweep_2;
  * - The index for a subcurve that may represent a hole
  * - Indices of all halfedge below the curve that may represent a hole.
  */
-template <typename GeometryTraits_2,
-          template <typename, typename> class SurfaceSweepSubcurve,
+template <typename GeometryTraits_2, typename Event_,
+          template <typename, typename, typename> class SurfaceSweepBaseCurve,
           typename Subcurve_>
 class Arr_construction_subcurve_base :
-  public SurfaceSweepSubcurve<GeometryTraits_2, Subcurve_>
+  public SurfaceSweepBaseCurve<GeometryTraits_2, Event_, Subcurve_>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef SurfaceSweepSubcurve<Gt2, Subcurve>           Base;
+  typedef SurfaceSweepBaseCurve<Gt2, Event, Subcurve>   Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef void*                                         Event_ptr;
+  typedef Event*                                        Event_ptr;
   typedef std::list<unsigned int>                       Halfedge_indices_list;
 
   /*! Construct deafult. */
@@ -124,16 +125,16 @@ public:
   /*! Set the last event on the subcurve. */
   void set_last_event(Event_ptr e) { m_last_event = e; }
 
-  /*! Get the last event. */
+  /*! Obtain the last event. */
   Event_ptr last_event() const { return m_last_event; }
 
-  /*! Get the subcurve index. */
+  /*! Obtain the subcurve index. */
   unsigned int index() const { return m_index; }
 
   /*! Set the subcurve index. */
   void set_index(unsigned int i) { m_index = i; }
 
-  /*! Check if the index is valid. */
+  /*! Check whether the index is valid. */
   bool has_valid_index() const { return (m_index != 0); }
 
   /*! Add an index of a halfedge below the subcurve. */
@@ -145,7 +146,7 @@ public:
   /*! Check if there are any halfedges below the subcurve. */
   bool has_halfedge_indices() const { return (!m_halfedge_indices.empty()); }
 
-  /*! Get the indices of the halfedges below the subcurve. */
+  /*! Obtain the indices of the halfedges below the subcurve. */
   Halfedge_indices_list& halfedge_indices_list() { return m_halfedge_indices; }
 };
 
@@ -161,28 +162,29 @@ public:
  * Inherits from `Surface_sweep_subcurve`
  * \sa `Surface_sweep_subcurve`
  */
-template <typename GeometryTraits_2,
-          template <typename, typename>
-          class SurfaceSweepSubcurve = Ss2::Default_subcurve,
+template <typename GeometryTraits_2, typename Event_,
+          template <typename, typename, typename>
+          class SurfaceSweepBaseCurve = Ss2::Default_subcurve,
           typename Subcurve_ = Default>
 class Arr_construction_subcurve :
   public Arr_construction_subcurve_base<
-    GeometryTraits_2,
-    SurfaceSweepSubcurve,
+    GeometryTraits_2, Event_,
+    SurfaceSweepBaseCurve,
     typename Default::Get<Subcurve_,
-                          Arr_construction_subcurve<GeometryTraits_2,
-                                                    SurfaceSweepSubcurve,
+                          Arr_construction_subcurve<GeometryTraits_2, Event_,
+                                                    SurfaceSweepBaseCurve,
                                                     Subcurve_> >::type>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_construction_subcurve<Gt2, SurfaceSweepSubcurve, Subcurve_>
-                                                        Self;
+  typedef Arr_construction_subcurve<Gt2, Event, SurfaceSweepBaseCurve,
+                                    Subcurve_>          Self;
   typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef Arr_construction_subcurve_base<Gt2, SurfaceSweepSubcurve,
+  typedef Arr_construction_subcurve_base<Gt2, Event, SurfaceSweepBaseCurve,
                                          Subcurve>      Base;
 
 public:
@@ -201,6 +203,6 @@ public:
 };
 
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

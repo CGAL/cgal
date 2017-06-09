@@ -217,6 +217,6 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
   return do_curves_intersect(curves_begin, curves_end, m_traits);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

@@ -30,6 +30,8 @@
 
 namespace CGAL {
 
+namespace Ss2 = Surface_sweep_2;
+
 /*! \class Arr_bounded_planar_construction_helper
  *
  * A helper class for the construction sweep-line visitor, suitable
@@ -52,7 +54,7 @@ public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
-  typedef Surface_sweep_2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
                                                         Base_visitor;
 
   typedef typename Arrangement_2::Face_handle           Face_handle;

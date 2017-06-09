@@ -36,6 +36,7 @@
 #include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_sl_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
 #include <CGAL/Surface_sweep_2/Arr_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_event.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_sl_visitor.h>
@@ -168,8 +169,7 @@ public:
   }
 
 
-  /*!
-   * Given signs of two ccbs that show up when splitting upon insertion of
+  /*! Given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determine what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb

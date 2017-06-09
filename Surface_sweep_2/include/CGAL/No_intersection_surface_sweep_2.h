@@ -30,8 +30,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
-#include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
 #include <CGAL/Surface_sweep_2/No_overlap_event.h>
+#include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_tags.h>
@@ -113,8 +113,8 @@ namespace Surface_sweep_2 {
  */
 template <typename GeometryTraits_2,
           typename Visitor_,
-          typename Subcurve_ = No_overlap_subcurve<GeometryTraits_2>,
-          typename Event_ = No_overlap_event<GeometryTraits_2, Subcurve_>,
+          typename Event_ = No_overlap_event<GeometryTraits_2>,
+          typename Subcurve_ = No_overlap_subcurve<GeometryTraits_2, Event_>,
           typename Allocator_ = CGAL_ALLOCATOR(int)>
 class No_intersection_surface_sweep_2 {
 public:
@@ -162,7 +162,7 @@ public:
 
   typedef typename Event::Attribute                     Attribute;
 
-  typedef class Curve_comparer<Gt2, Subcurve> Compare_curves;
+  typedef class Curve_comparer<Gt2, Event, Subcurve>    Compare_curves;
   typedef Multiset<Subcurve*, Compare_curves, Allocator>
                                                         Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
@@ -566,8 +566,8 @@ protected:
   #include <CGAL/Surface_sweep_2/Surface_sweep_2_debug.h>
 #endif
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #include <CGAL/Surface_sweep_2/No_intersection_surface_sweep_2_impl.h>
 

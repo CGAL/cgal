@@ -307,7 +307,7 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
       return false;
     }
 
-    if ((curve)->is_inner_node(*iter)) {
+    if (curve->is_inner_node(*iter)) {
       *iter = curve;    // replace the current curve with the new one.
       CGAL_SL_PRINT_END_EOL
         ("adding a Curve to the right (curve partially overlaps)");
@@ -321,14 +321,14 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
      * matching left curve, and only if it has, make the switch. If this is
      * the case, then other modifications are necessary. I hope it's not.
      */
-    if ((curve)->has_same_leaves(*iter)) {
+    if (curve->has_same_leaves(*iter)) {
       *iter = curve;    // replace the current curve with the new one.
       CGAL_SL_PRINT_END_EOL
         ("adding a Curve to the right (curve completely overlaps)");
       return false;
     }
 
-    if ((curve)->has_common_leaf(*iter)) {
+    if (curve->has_common_leaf(*iter)) {
       /*! Collect all the distinct nodes of curves including the common nodes.
        * \todo EF, common nodes should be excluded. It is not incorrect to
        * include a common node, because in the recursive call it becomes
@@ -483,9 +483,7 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   // object is a point, we can ignore last intersection (note that in case of
   // an overlap that ends at the common endpoint, we definately want to keep
   // the intersection object).
-  if (reinterpret_cast<Event*>(c1->right_event()) ==
-      reinterpret_cast<Event*>(c2->right_event()))
-  {
+  if (c1->right_event() == c2->right_event()) {
     vector_inserter vi_last = vi_end;
 
     --vi_last;
@@ -758,9 +756,9 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
 
   // Get the right end of overlap_cv (if it is closed from the right).
   Event* right_end;
-  Arr_parameter_space  ps_x_r =
+  Arr_parameter_space ps_x_r =
     this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MAX_END);
-  Arr_parameter_space  ps_y_r =
+  Arr_parameter_space ps_y_r =
     this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MAX_END);
 
   CGAL_assertion(ps_x_r != ARR_LEFT_BOUNDARY);
@@ -945,7 +943,7 @@ _add_curve(Event* e, Subcurve* sc, Attribute type)
   e->add_curve_to_left(sc);
 }
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

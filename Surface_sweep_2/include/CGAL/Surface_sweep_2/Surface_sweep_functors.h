@@ -84,25 +84,25 @@ public:
 
     if (! on_boundary1 && ! on_boundary2) {
       // Both events do not have boundary conditions - just compare the points.
-      return (m_traits->compare_xy_2_object()(e1->point(), e2->point()));
+      return m_traits->compare_xy_2_object()(e1->point(), e2->point());
     }
 
     if (! on_boundary1) {
       // Compare the point associated with the first event with the second
       // boundary event.
-      return ( this->operator()(e1->point(), e2) );
+      return this->operator()(e1->point(), e2);
     }
 
     if (! on_boundary2) {
       // Compare the point associated with the second event with the first
       // boundary event.
-      return (CGAL::opposite(this->operator()(e2->point(), e1)));
+      return CGAL::opposite(this->operator()(e2->point(), e1));
     }
 
-    return (_compare_curve_end_with_event(e1->curve(), _curve_end(e1),
-                                          e1->parameter_space_in_x(),
-                                          e1->parameter_space_in_y(),
-                                          e2));
+    return _compare_curve_end_with_event(e1->curve(), _curve_end(e1),
+                                         e1->parameter_space_in_x(),
+                                         e1->parameter_space_in_y(),
+                                         e2);
   }
 
   /*! Compare a point, which should be inserted into the event queue,
@@ -110,11 +110,11 @@ public:
    */
   Comparison_result operator()(const Point_2& pt, const Event* e2) const
   {
-    const bool  on_boundary2 = e2->is_on_boundary();
+    const bool on_boundary2 = e2->is_on_boundary();
 
     if (! on_boundary2) {
       // If e2 is a normal event, just compare pt and the event point.
-      return (m_traits->compare_xy_2_object() (pt, e2->point()));
+      return m_traits->compare_xy_2_object() (pt, e2->point());
     }
 
     // Get the sign of the event's boundary condition in x. Note that a valid
@@ -122,19 +122,16 @@ public:
     // than any positive boundary event.
     Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
 
-    if (ps_x2 == ARR_LEFT_BOUNDARY)
-      return (LARGER);
-    else if (ps_x2 == ARR_RIGHT_BOUNDARY)
-      return (SMALLER);
+    if (ps_x2 == ARR_LEFT_BOUNDARY) return LARGER;
+    else if (ps_x2 == ARR_RIGHT_BOUNDARY) return SMALLER;
 
     // Get the curve end that e2 represents, and compare the x-position of the
     // given point and this curve end.
-    Arr_curve_end         ind = _curve_end(e2);
+    Arr_curve_end ind = _curve_end(e2);
     Comparison_result res =
       m_traits->compare_x_point_curve_end_2_object()(pt, e2->curve(), ind);
 
-    if (res != EQUAL)
-      return (res);
+    if (res != EQUAL) return res;
 
     // The event and the point has the same x-position. Get the sign of the
     // event's boundary condition in y. Note that a valid point is always
@@ -146,8 +143,7 @@ public:
     return (ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
   }
 
-  /*!
-   * Compare a curve end, which should be inserted into the event queue,
+  /*! Compare a curve end, which should be inserted into the event queue,
    * with an existing event point.
    * Note that the index of the curve end as well as its boundary conditions
    * must be set beforehand using set_index() and set_parameter_space_in_x/y().
@@ -160,11 +156,11 @@ public:
 
   /// \name Set the boundary conditions of a curve end we are about to compare.
   //@{
-  void set_parameter_space_in_x (Arr_parameter_space bx) { m_ps_in_x = bx; }
+  void set_parameter_space_in_x(Arr_parameter_space bx) { m_ps_in_x = bx; }
 
-  void set_parameter_space_in_y (Arr_parameter_space by) { m_ps_in_y = by; }
+  void set_parameter_space_in_y(Arr_parameter_space by) { m_ps_in_y = by; }
 
-  void set_index (Arr_curve_end ind) { m_index = ind; }
+  void set_index(Arr_curve_end ind) { m_index = ind; }
   //@}
 
 private:
@@ -189,12 +185,11 @@ private:
         // Both defined on the left boundary - compare them there.
         CGAL_assertion (ind == ARR_MIN_END);
 
-	return
-	  m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
+	return m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
       }
 
       // The curve end is obviously smaller.
-      return (SMALLER);
+      return SMALLER;
     }
 
     if (ps_x == ARR_RIGHT_BOUNDARY) {
@@ -202,12 +197,11 @@ private:
         // Both defined on the right boundary - compare them there.
         CGAL_assertion (ind == ARR_MAX_END);
 
-        return (m_traits->compare_y_curve_ends_2_object()(cv, e2->curve(),
-                                                          ind));
+        return m_traits->compare_y_curve_ends_2_object()(cv, e2->curve(), ind);
       }
 
       // The curve end is obviously larger.
-      return (LARGER);
+      return LARGER;
     }
 
     // Check if the event has a boundary condition in x. Note that if it
@@ -216,7 +210,7 @@ private:
     if (e2->parameter_space_in_x() == ARR_LEFT_BOUNDARY) return (LARGER);
     if (e2->parameter_space_in_x() == ARR_RIGHT_BOUNDARY) return (SMALLER);
 
-    CGAL_assertion (ps_y != ARR_INTERIOR);
+    CGAL_assertion(ps_y != ARR_INTERIOR);
     Comparison_result res;
 
     Arr_curve_end ind2 = _curve_end(e2);
@@ -227,28 +221,28 @@ private:
       // Compare the x-positions of the two entities.
       res = m_traits->compare_x_curve_ends_2_object()(cv, ind,
                                                       e2->curve(), ind2);
-      if (res != EQUAL) return (res);
+      if (res != EQUAL) return res;
 
       // In case of equal x-positions, the curve end is larger than the event,
       // which lies on the bottom boundary (unless it also lies on the bottom
       // boundary).
-      if (ps_y == ARR_BOTTOM_BOUNDARY) return (EQUAL);
+      if (ps_y == ARR_BOTTOM_BOUNDARY) return EQUAL;
 
       return (LARGER);
     }
 
     if (e2->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
       // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_curve_ends_2_object()(cv, ind,
-                                                      e2->curve(), ind2);
-      if (res != EQUAL) return (res);
+      res =
+        m_traits->compare_x_curve_ends_2_object()(cv, ind, e2->curve(), ind2);
+      if (res != EQUAL) return res;
 
       // In case of equal x-positions, the curve end is smaller than the event,
       // which lies on the top boundary (unless it also lies on the top
       // boundary).
-      if (ps_y == ARR_TOP_BOUNDARY) return (EQUAL);
+      if (ps_y == ARR_TOP_BOUNDARY) return EQUAL;
 
-      return (SMALLER);
+      return SMALLER;
     }
 
     // If we reached here, e2 is not a boundary event and is associated with
@@ -256,7 +250,7 @@ private:
     // end.
     res = m_traits->compare_x_point_curve_end_2_object()(e2->point(), cv, ind);
 
-    if (res != EQUAL) return (CGAL::opposite(res));
+    if (res != EQUAL) return CGAL::opposite(res);
 
     // In case of equal x-positions, is the curve end has a negative boundary
     // sign, then it lies on the bottom boundary below the event. Otherwise,
@@ -273,18 +267,16 @@ private:
   }
 };
 
-template <typename Traits, typename Subcurve> class Default_event;
-
-/*! \typename
- * A functor used to compare curves and curve endpoints by their vertical
+/*! A functor used to compare curves and curve endpoints by their vertical
  * y-order. Used to maintain the order of the status line (the Y-structure)
  * in the sweep-line algorithm.
  */
-template <typename GeometryTraits_2, typename Subcurve_>
+template <typename GeometryTraits_2, typename Event_, typename Subcurve_>
 class Curve_comparer {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
@@ -294,7 +286,6 @@ public:
 
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef Surface_sweep_2::Default_event<Gt2, Subcurve> Event;
 
 private:
   const Traits_adaptor_2* m_traits;     // A geometric-traits object.
@@ -302,10 +293,9 @@ private:
 
 public:
   /*! Constructor. */
-  template <typename Sweep_event>
-  Curve_comparer (const Traits_adaptor_2* t, Sweep_event** e_ptr) :
+  Curve_comparer(const Traits_adaptor_2* t, Event** e_ptr) :
     m_traits(t),
-    m_curr_event(reinterpret_cast<Event**>(e_ptr))
+    m_curr_event(e_ptr)
   {}
 
   /*!
@@ -323,8 +313,8 @@ public:
                   (*m_curr_event)->right_curves_end(),
                   c2) != (*m_curr_event)->right_curves_end())
     {
-      return (m_traits->compare_y_at_x_right_2_object()
-              (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point()));
+      return m_traits->compare_y_at_x_right_2_object()
+              (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point());
     }
 
     Arr_parameter_space ps_x1 =
@@ -344,10 +334,9 @@ public:
     // We use the fact that the two curves are interior disjoint. As c2 is
     // already in the status line, then if c1 left end has a negative boundary
     // condition it obviously above it.
-    CGAL_assertion (ps_x1 != ARR_RIGHT_BOUNDARY);
+    CGAL_assertion(ps_x1 != ARR_RIGHT_BOUNDARY);
 
-    if (ps_x1 == ARR_LEFT_BOUNDARY)
-      return (LARGER);
+    if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
 
     // For similar reasons, if c1 begins on the bottom boundary it is below
     // c2, if it is on the top boundary it is above it.
@@ -355,15 +344,14 @@ public:
     return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
   }
 
-  /*!
-   * Compare the relative y-order of the given point and the given subcurve.
+  /*! Compare the relative y-order of the given point and the given subcurve.
    */
   Comparison_result operator()(const Point_2& pt, const Subcurve* sc) const
-  { return (m_traits->compare_y_at_x_2_object()(pt, sc->last_curve())); }
+  { return m_traits->compare_y_at_x_2_object()(pt, sc->last_curve()); }
 
 };
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

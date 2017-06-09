@@ -67,9 +67,8 @@ private:
 public:
   ///! \name The geometry-traits types.
   //@{
-
-  typedef typename Base::Point_2                         Point_2;
-  typedef typename Base::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Base::Point_2                        Point_2;
+  typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
   //@}
 
   ///! \name The DCEL types.
@@ -198,15 +197,30 @@ public:
 private:
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Gt2, Self>           Arr;
+  typedef Arrangement_on_surface_2<Gt2, Self>                   Arr;
 
-  // Type definition for the constuction sweep-line visitor.
-  typedef Arr_construction_subcurve<Gt2>                CSubcurve;
-  typedef Arr_construction_event<Gt2, CSubcurve, Arr>   CEvent;
+  // Type definition for the construction sweep-line visitor.
+  typedef Arr_construction_event<Gt2, Arr>                      CEvent;
+  typedef Arr_construction_subcurve<Gt2, CEvent>                CSubcurve;
   typedef Arr_bounded_planar_construction_helper<Gt2, Arr, CEvent, CSubcurve>
-                                                        CHelper;
+                                                                CHelper;
 
-  // Type definition for the basic insertion sweep-line visitor.
+  // Type definition for the no-intersection construction sweep-line visitor.
+  typedef Arr_construction_event<Gt2, Arr, Ss2::No_overlap_event_base,
+                                 Ss2::No_overlap_subcurve>      NxCEvent;
+  typedef Arr_construction_subcurve<Gt2, NxCEvent, Ss2::No_overlap_subcurve>
+                                                                NxCSubcurve;
+  typedef Arr_bounded_planar_construction_helper<Gt2, Arr, NxCEvent,
+                                                 NxCSubcurve>   NxCHelper;
+
+  // Type definition for the insertion sweep-line visitor.
+  typedef Arr_insertion_traits_2<Gt2, Arr>                      ITraits;
+  typedef Arr_construction_event<ITraits, Arr>                  IEvent;
+  typedef Arr_construction_subcurve<ITraits, IEvent>            ISubcurve;
+  typedef Arr_bounded_planar_insertion_helper<ITraits, Arr, IEvent, ISubcurve>
+                                                                IHelper;
+
+  // Type definition for the no-intersection insertion sweep-line visitor.
   // The second parameter of Arr_construction_subcurve is the base class of
   // Arr_construction_subcurve. By default Arr_construction_subcurve derives
   // from Surface_sweep_subcurve, which is suitable for general curves
@@ -214,54 +228,48 @@ private:
   // force Arr_construction_subcurve to derive directly from
   // No_overlap_subcurve (which is the base class of Surface_sweep_subcurve).
   typedef Arr_basic_insertion_traits_2<Gt2, Arr>                NxITraits;
-  typedef Arr_construction_subcurve<NxITraits, Ss2::No_overlap_subcurve>
-                                                                NxISubcurve;
-  typedef Arr_construction_event<NxITraits, NxISubcurve, Arr,
-                                 Ss2::No_overlap_event>         NxIEvent;
+  typedef Arr_construction_event<NxITraits, Arr, Ss2::No_overlap_event_base,
+                                 Ss2::No_overlap_subcurve>      NxIEvent;
+  typedef Arr_construction_subcurve<NxITraits, NxIEvent,
+                                    Ss2::No_overlap_subcurve>   NxISubcurve;
   typedef Arr_bounded_planar_insertion_helper<NxITraits, Arr, NxIEvent,
                                               NxISubcurve>      NxIHelper;
 
-  // Type definition for the insertion sweep-line visitor.
-  typedef Arr_insertion_traits_2<Gt2, Arr>                      ITraits;
-  typedef Arr_construction_subcurve<ITraits>                    ISubcurve;
-  typedef Arr_construction_event<ITraits, ISubcurve, Arr>       IEvent;
-  typedef Arr_bounded_planar_insertion_helper<ITraits, Arr, IEvent, ISubcurve>
-                                                                IHelper;
-
   // Type definition for the batched point-location sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
-  typedef Ss2::No_overlap_subcurve<BplTraits>                   BplSubcurve;
-  typedef Ss2::No_overlap_event<BplTraits, BplSubcurve>         BplEvent;
+  typedef Ss2::No_overlap_event<BplTraits>                      BplEvent;
+  typedef Ss2::No_overlap_subcurve<BplTraits, BplEvent>         BplSubcurve;
   typedef Arr_bounded_planar_batched_pl_helper<BplTraits, Arr, BplEvent,
                                                BplSubcurve>     BplHelper;
 
   // Type definition for the vertical decomposition sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
-  typedef Ss2::No_overlap_subcurve<VdTraits>                    VdSubcurve;
-  typedef Ss2::No_overlap_event<VdTraits, VdSubcurve>           VdEvent;
+  typedef Ss2::No_overlap_event<VdTraits>                       VdEvent;
+  typedef Ss2::No_overlap_subcurve<VdTraits, VdEvent>           VdSubcurve;
   typedef Arr_bounded_planar_vert_decomp_helper<VdTraits, Arr, VdEvent,
                                                 VdSubcurve>     VdHelper;
 
   // Type definition for the overlay sweep-line visitor.
   template <typename ExtendedGeometryTraits, typename ArrangementA,
             typename ArrangementB>
-  struct _Overlay_helper : public Arr_bounded_planar_overlay_helper
-    <ExtendedGeometryTraits, ArrangementA, ArrangementB, Arr,
-     Arr_construction_event<ExtendedGeometryTraits,
-                            Arr_overlay_subcurve<ExtendedGeometryTraits>,
-                            Arr>,
-     Arr_overlay_subcurve<ExtendedGeometryTraits> >
+  struct _Overlay_helper : public Arr_bounded_planar_overlay_helper<
+    ExtendedGeometryTraits, ArrangementA, ArrangementB, Arr,
+    Arr_overlay_event<ExtendedGeometryTraits, Arr>,
+    Arr_overlay_subcurve<ExtendedGeometryTraits, Arr_overlay_event<
+                                                   ExtendedGeometryTraits,
+                                                   Arr> > >
   {
     typedef ExtendedGeometryTraits                      Ex_geom_traits;
     typedef ArrangementA                                Arrangement_a;
     typedef ArrangementB                                Arrangement_b;
 
-    typedef Arr_bounded_planar_overlay_helper
-      <Ex_geom_traits, Arrangement_a, Arrangement_b, Arr,
-       Arr_construction_event<Ex_geom_traits,
-                              Arr_overlay_subcurve<Ex_geom_traits>,
-                              Arr>,
-       Arr_overlay_subcurve<Ex_geom_traits> >           Base;
+    typedef Arr_overlay_event<Ex_geom_traits, Arr>      Ex_event;
+    typedef Arr_overlay_subcurve<Ex_geom_traits, Ex_event>
+                                                        Ex_subcurve;
+    typedef Arr_bounded_planar_overlay_helper<Ex_geom_traits, Arrangement_a,
+                                              Arrangement_b, Arr, Ex_event,
+                                              Ex_subcurve>
+                                                        Base;
 
     typedef typename Base::Geometry_traits_2            Geometry_traits_2;
     typedef typename Base::Arrangement_red_2            Arrangement_red_2;
@@ -287,7 +295,7 @@ public:
   typedef Arr_insertion_sl_visitor<IHelper>
     Surface_sweep_insertion_visitor;
 
-  typedef Surface_sweep_construction_visitor
+  typedef Arr_construction_sl_visitor<NxCHelper>
     Surface_sweep_no_intersection_construction_visitor;
 
   typedef Arr_no_intersection_insertion_sl_visitor<NxIHelper>
@@ -299,7 +307,8 @@ public:
   {
     typedef OutputIterator_                             Output_iterator;
 
-    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator> Base;
+    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator>
+                                                        Base;
     typedef typename Base::Geometry_traits_2            Geometry_traits_2;
     typedef typename Base::Event                        Event;
     typedef typename Base::Subcurve                     Subcurve;
@@ -542,18 +551,13 @@ public:
   //@{
 
   /*! This function is used by the "walk" point-location strategy. */
-  const Face* initial_face() const
-  {
-    return (unb_face);
-  }
+  const Face* initial_face() const { return (unb_face); }
 
   /*! Get the unbounded face (const version). */
-  const Face* unbounded_face() const
-  { return (unb_face); }
+  const Face* unbounded_face() const { return (unb_face); }
 
   /*! Get the unbounded face (non-const version). */
-  Face* unbounded_face()
-  { return (unb_face); }
+  Face* unbounded_face() { return (unb_face); }
   //@}
 
   /// \name Additional predicates, specialized for this topology-traits class.
@@ -588,7 +592,7 @@ public:
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_topology_traits_2_impl.h>
 

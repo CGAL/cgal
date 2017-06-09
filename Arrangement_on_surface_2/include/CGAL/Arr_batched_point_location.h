@@ -123,10 +123,9 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   // Define the sweep-line visitor and perform the sweep.
   Bpl_visitor visitor(&arr, oi);
-  Ss2::No_intersection_surface_sweep_2<typename Bpl_visitor::Geometry_traits_2,
-                                       Bpl_visitor,
-                                       typename Bpl_visitor::Subcurve,
-                                       typename Bpl_visitor::Event>
+  Ss2::No_intersection_surface_sweep_2<Bpl_traits_2, Bpl_visitor,
+                                       typename Bpl_visitor::Event,
+                                       typename Bpl_visitor::Subcurve>
     surface_sweep(&ex_traits, &visitor);
   surface_sweep.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
                       iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
@@ -135,6 +134,6 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   return oi;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

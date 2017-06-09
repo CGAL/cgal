@@ -37,24 +37,24 @@ namespace Surface_sweep_2 {
  * for other concrete visitors that produce some output.
  */
 template <typename GeometryTraits_2,
-          typename Subcurve_ = Default_subcurve<GeometryTraits_2>,
-          typename Event_ = Default_event<GeometryTraits_2, Subcurve_>,
+          typename Event_ = Default_event<GeometryTraits_2>,
+          typename Subcurve_ = Default_subcurve<GeometryTraits_2, Event_>,
           typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Surface_sweep_empty_visitor {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
   typedef Allocator_                                    Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Surface_sweep_empty_visitor<Gt2, Subcurve, Event, Allocator>
+  typedef Surface_sweep_empty_visitor<Gt2, Event, Subcurve, Allocator>
                                                         Self;
 
   // we want to hide the Surface_sweep type
-  typedef No_intersection_surface_sweep_2<Gt2, Self, Subcurve, Event,
-                                          Allocator>    Surface_sweep;
+  typedef No_intersection_surface_sweep_2<Gt2, Self, Event, Subcurve, Allocator>
+                                                        Surface_sweep;
 
   typedef typename Surface_sweep::Status_line_iterator  Base_status_line_iter;
 
@@ -183,19 +183,19 @@ public:
                      Subcurve* /* ov_sc */)
   {}
 
-  /*! Get the first subcurve in the status line. */
+  /*! Obtain the first subcurve in the status line. */
   Status_line_iterator status_line_begin()
   { return (this->_surface_sweep()->status_line_begin()); }
 
-  /*! Get a past-the-end iterator for the subcurves in the status line. */
+  /*! Obtain a past-the-end iterator for the subcurves in the status line. */
   Status_line_iterator status_line_end()
   { return (this->_surface_sweep()->status_line_end()); }
 
-  /*! Get the position of the given subcurve in the status line. */
+  /*! Obtain the position of the given subcurve in the status line. */
   Status_line_iterator status_line_position(Subcurve* sc)
   { return (sc->hint()); }
 
-  /*! Get the number of subcurves in the status line. */
+  /*! Obtain the number of subcurves in the status line. */
   unsigned status_line_size() const
   { return (this->_surface_sweep()->status_line_size()); }
 
@@ -210,17 +210,17 @@ public:
   /*! Stop the sweep-line process. */
   void stop_sweep() { this->_surface_sweep()->stop_sweep(); }
 
-  /*! Get the sweep-line object. */
-  void* surface_sweep() { return (m_surface_sweep); }
+  /*! Obtain the sweep-line object. */
+  void* surface_sweep() { return m_surface_sweep; }
 
-  /*! Get the current event. */
+  /*! Obtain the current event. */
   Event* current_event() { return (this->_surface_sweep()->current_event()); }
 
-  /*! Get the geometry-traits class. */
+  /*! Obtain the geometry-traits class. */
   const Gt2* traits() { return (this->_surface_sweep()->traits()); }
 
 private:
-  /*! Get the sweep-line object. */
+  /*! Obtain the sweep-line object. */
   Surface_sweep* _surface_sweep()
   { return (reinterpret_cast<Surface_sweep*>(m_surface_sweep)); }
 
@@ -228,7 +228,7 @@ private:
   { return (reinterpret_cast<const Surface_sweep*>(m_surface_sweep)); }
 };
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

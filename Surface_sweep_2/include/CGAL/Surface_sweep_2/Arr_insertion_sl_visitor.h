@@ -100,10 +100,8 @@ bool Arr_insertion_sl_visitor<Hlpr>::is_split_event(Subcurve* sc, Event* event)
 {
   if (sc->last_curve().halfedge_handle() == Halfedge_handle(NULL)) return false;
 
-  if (! sc->originating_subcurve1()) {
-    return (reinterpret_cast<Event*>(sc->left_event()) !=
-            this->current_event());
-  }
+  if (! sc->originating_subcurve1())
+    return (sc->left_event() != this->current_event());
   return (this->is_split_event(sc->originating_subcurve1(), event) ||
           this->is_split_event(sc->originating_subcurve2(), event));
   }
@@ -125,7 +123,7 @@ Arr_insertion_sl_visitor<Hlpr>::split_edge(Halfedge_handle he, Subcurve* sc,
   Halfedge_handle new_he =
     this->m_arr_access.split_edge_ex(he, pt.base(),
                                      sub_cv1.base(), sub_cv2.base());
-  Event* last_event_on_sc = reinterpret_cast<Event*>(sc->last_event());
+  Event* last_event_on_sc = sc->last_event();
   if (last_event_on_sc->halfedge_handle() == he)
     last_event_on_sc->set_halfedge_handle(new_he->next());
 

@@ -51,7 +51,7 @@ private:
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
                                                         Base_visitor;
 
   typedef typename Arrangement_2::Topology_traits       Topology_traits;

@@ -52,7 +52,7 @@ private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
                                                         Base_visitor;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Event::Subcurve_iterator             Subcurve_iterator;

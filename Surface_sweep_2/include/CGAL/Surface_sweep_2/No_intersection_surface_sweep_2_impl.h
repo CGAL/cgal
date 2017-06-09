@@ -543,7 +543,7 @@ _handle_right_curves()
     CGAL_SL_PRINT_INSERT(sc);
 
     // Insert the curve to the left-curves of the right event.
-    // reinterpret_cast<Event*>(sc->right_event())->add_curve_to_left(sc);
+    // sc->right_event()->add_curve_to_left(sc);
 
     // Insert the curve into the status line.
     Status_line_iterator sl_iter =
@@ -781,7 +781,7 @@ _add_curve(Event* e, Subcurve* sc, Attribute type)
   e->add_curve_to_left(sc);
 }
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

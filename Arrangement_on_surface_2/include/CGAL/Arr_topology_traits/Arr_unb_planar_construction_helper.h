@@ -52,7 +52,7 @@ private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Subcurve, Event>
+  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
                                                         Base_visitor;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
@@ -269,11 +269,9 @@ before_handle_event(Event* event)
     m_rh = m_rh->next();
     return;
 
-  case ARR_INTERIOR:
-    break;
+   case ARR_INTERIOR: break;
 
-  default:
-    CGAL_error();
+   default: CGAL_error();
   }
 
   switch (ps_y) {

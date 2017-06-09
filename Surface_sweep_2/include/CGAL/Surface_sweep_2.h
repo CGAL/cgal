@@ -78,13 +78,14 @@ namespace Surface_sweep_2 {
  *
  */
 
-template <typename GeometryTraits_2, typename Visitor_,
-          typename Subcurve_ = Default_subcurve<GeometryTraits_2>,
-          typename Event_ = Default_event<GeometryTraits_2, Subcurve_>,
+template <typename GeometryTraits_2,
+          typename Visitor_,
+          typename Event_ = Default_event<GeometryTraits_2>,
+          typename Subcurve_ = Default_subcurve<GeometryTraits_2, Event_>,
           typename Allocator_ = CGAL_ALLOCATOR(int) >
 class Surface_sweep_2 :
-  public No_intersection_surface_sweep_2<GeometryTraits_2, Visitor_, Subcurve_,
-                                         Event_, Allocator_>
+  public No_intersection_surface_sweep_2<GeometryTraits_2, Visitor_, Event_,
+                                         Subcurve_, Allocator_>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
@@ -95,7 +96,7 @@ public:
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef No_intersection_surface_sweep_2<Gt2, Visitor, Subcurve, Event,
+  typedef No_intersection_surface_sweep_2<Gt2, Visitor, Event, Subcurve,
                                           Allocator>    Base;
 
 public:
@@ -231,8 +232,8 @@ protected:
   void _fix_finished_overlap_subcurve(Subcurve* sc);
 };
 
-} // namespace CGAL
 } // namespace Surface_sweep_2
+} // namespace CGAL
 
 // The member-function definitions can be found in:
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_impl.h>

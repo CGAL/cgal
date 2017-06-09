@@ -213,8 +213,7 @@ public:
   //@}
 
   /*! Get the last event associated with the given subcurve. */
-  Event* last_event_on_subcurve(Subcurve* sc)
-  { return (reinterpret_cast<Event*>((sc)->last_event())); }
+  Event* last_event_on_subcurve(Subcurve* sc) { return sc->last_event(); }
 
 private:
   /// \name Auxiliary functions.

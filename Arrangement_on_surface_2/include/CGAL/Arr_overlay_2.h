@@ -151,8 +151,8 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
 
   Ovl_visitor visitor(&arr1, &arr2, &arr_res, &ovl_tr);
   Ss2::Surface_sweep_2<Ovl_traits_2, Ovl_visitor,
-                       typename Ovl_visitor::Subcurve,
-                       typename Ovl_visitor::Event>
+                       typename Ovl_visitor::Event,
+                       typename Ovl_visitor::Subcurve>
     sweep_line(&ex_traits, &visitor);
 
   // In case both arrangement do not contain isolated vertices, go on and
@@ -224,6 +224,6 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   overlay(arr1, arr2, arr_res, ovl_traits);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

@@ -30,6 +30,7 @@
 namespace CGAL {
 
 /*! \class Arr_bounded_planar_overlay_helper
+ *
  * A helper class for the overlay sweep-line visitor, suitable for the overlay
  * of Arrangement_on_surface_2 objects instantiated with a topology-traits
  * class for bounded curves in the plane.
@@ -70,14 +71,13 @@ public:
 
 protected:
   // Data members:
-  const typename Ar2::Topology_traits   *m_red_top_traits;
-  const typename Ab2::Topology_traits  *m_blue_top_traits;
+  const typename Ar2::Topology_traits* m_red_top_traits;
+  const typename Ab2::Topology_traits* m_blue_top_traits;
 
-  Face_handle_red        m_red_ubf;    // Red unbounded face.
-  Face_handle_blue       m_blue_ubf;   // Blue unbounded face.
+  Face_handle_red m_red_ubf;            // Red unbounded face.
+  Face_handle_blue m_blue_ubf;          // Blue unbounded face.
 
 public:
-
   /*! Constructor, given the input red and blue arrangements. */
   Arr_bounded_planar_overlay_helper(const Ar2 *red_arr, const Ab2 *blue_arr) :
     m_red_top_traits (red_arr->topology_traits()),
@@ -102,13 +102,13 @@ public:
   void before_handle_event (Event* /* e */) {}
   //@}
 
-  /*! Get the current red top face. */
+  /*! Obtain the current red top face. */
   Face_handle_red red_top_face () const { return m_red_ubf; }
 
-  /*! Get the current blue top face. */
+  /*! Obtain the current blue top face. */
   Face_handle_blue blue_top_face () const { return m_blue_ubf; }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

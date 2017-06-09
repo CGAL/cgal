@@ -21,14 +21,16 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Definition of the Arr_overlay_subcurve class-template.
  */
 
 #include <CGAL/Surface_sweep_2/Default_subcurve.h>
-#include <CGAL/Surface_sweep_2/Default_event.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_subcurve.h>
 
 namespace CGAL {
+
+namespace Ss2 = Surface_sweep_2;
 
 /*! \class
  *
@@ -38,20 +40,22 @@ namespace CGAL {
  * from the opposite color it "sees" from below, so it can be easily located
  * in the proper place in the resulting arrangement.
  */
-template <typename GeometryTraits_2>
+template <typename GeometryTraits_2, typename Event_>
 class Arr_overlay_subcurve :
-  public Arr_construction_subcurve<GeometryTraits_2,
-                                   Surface_sweep_2::Default_subcurve,
-                                   Arr_overlay_subcurve<GeometryTraits_2> >
+  public Arr_construction_subcurve<GeometryTraits_2, Event_,
+                                   Ss2::Default_subcurve,
+                                   Arr_overlay_subcurve<GeometryTraits_2,
+                                                        Event_> >
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Event_                                        Event;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_overlay_subcurve<Gt2>                     Self;
-  typedef Arr_construction_subcurve<Gt2, Surface_sweep_2::Default_subcurve,
-                                    Self>               Base;
+  typedef Arr_overlay_subcurve<Gt2, Event>              Self;
+  typedef Arr_construction_subcurve<Gt2, Event, Ss2::Default_subcurve, Self>
+                                                        Base;
 
 public:
   typedef typename Gt2::Point_2                         Point_2;
@@ -68,8 +72,6 @@ public:
   typedef typename Gt2::Halfedge_handle_blue            Halfedge_handle_blue;
   typedef typename Gt2::Face_handle_blue                Face_handle_blue;
   typedef typename Face_handle_blue::value_type         Face_blue;
-
-  typedef Surface_sweep_2::Default_event<Gt2, Self>     Event;
 
 protected:
   // Data members:
@@ -141,6 +143,6 @@ public:
   }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif
