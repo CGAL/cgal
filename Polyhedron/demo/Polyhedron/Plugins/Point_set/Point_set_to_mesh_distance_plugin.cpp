@@ -68,7 +68,8 @@ struct Distance_computation{
 
 
 template< class Mesh>
-double compute_distances(const Mesh& m, const Point_set & point_set,
+double compute_distances(const Mesh& m,
+                         const Point_set & point_set,
                          std::vector<double>& out)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
@@ -237,6 +238,7 @@ private Q_SLOTS:
       hdist++;
 
     int id=0;
+
     for (Point_set::const_iterator it = pn->point_set()->begin();
          it != pn->point_set()->end(); ++ it)
     {
@@ -256,12 +258,13 @@ private Q_SLOTS:
         blue_map[*it] = static_cast<unsigned char>(thermal_ramp.b(d) * 255);
       ++id;
     }
+    std::sort(distances.begin(), distances.end());
 
-    dock_widget->minLabel->setText(QString("Minimum Distance: %1").arg(0));
-    dock_widget->maxLabel->setText(QString("Maximum Distance: %1").arg(0));
-    dock_widget->fDecileLabel->setText(QString("First Decile: %1").arg(0));
-    dock_widget->lDecildeLabel->setText(QString("Last Decile: %1").arg(0));
-    dock_widget->medianLabel->setText(QString("Median Distance: %1").arg(0));
+    dock_widget->minLabel->setText(QString("%1").arg(distances.front()));
+    dock_widget->maxLabel->setText(QString("%1").arg(distances.back()));
+    dock_widget->fDecileLabel->setText(QString("%1").arg(distances[distances.size()/10]));
+    dock_widget->lDecildeLabel->setText(QString("%1").arg(distances[9*distances.size()/10]));
+    dock_widget->medianLabel->setText(QString("%1").arg(distances[distances.size()/2]));
     pn->invalidateOpenGLBuffers();
     pn->itemChanged();
     QApplication::restoreOverrideCursor();

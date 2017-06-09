@@ -18,38 +18,112 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="minLabel">
-        <property name="text">
-         <string>min</string>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Statistics</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="maxLabel">
-        <property name="text">
-         <string>max</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="fDecileLabel">
-        <property name="text">
-         <string>first decile</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lDecildeLabel">
-        <property name="text">
-         <string>last decile</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="medianLabel">
-        <property name="text">
-         <string>median</string>
-        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="4" column="1">
+          <widget class="QLabel" name="medianLabel">
+           <property name="text">
+            <string>median</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="lDecildeLabel">
+           <property name="text">
+            <string>last decile</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="minLabel">
+           <property name="text">
+            <string>min</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="fDecileLabel">
+           <property name="text">
+            <string>first decile</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="maxLabel">
+           <property name="text">
+            <string>max</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Minimum Distance:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Maximum Distance:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>First Decile:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Last Decile:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Median Distance:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+        <zorder>medianLabel</zorder>
+        <zorder>minLabel</zorder>
+        <zorder>fDecileLabel</zorder>
+        <zorder>maxLabel</zorder>
+        <zorder>lDecildeLabel</zorder>
+        <zorder>medianLabel</zorder>
+        <zorder>minLabel</zorder>
+        <zorder>fDecileLabel</zorder>
+        <zorder>maxLabel</zorder>
+        <zorder>lDecildeLabel</zorder>
+        <zorder>label</zorder>
+        <zorder>label_2</zorder>
+        <zorder>label_3</zorder>
+        <zorder>label_4</zorder>
+        <zorder>label_5</zorder>
        </widget>
       </item>
       <item>
