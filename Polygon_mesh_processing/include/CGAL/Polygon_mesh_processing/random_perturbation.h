@@ -51,7 +51,8 @@ namespace internal {
                                 const double& max_size,
                                 VCMap vcmap,
                                 VPMap vpmap,
-                                const int seed)
+                                const int seed,
+                                const GT& gt)
   {
     typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
     typedef typename GT::Point_3    Point_3;
@@ -66,14 +67,19 @@ namespace internal {
 
     CGAL::Random rng(seed);
 
+    typename GT::Construct_translated_point_3 translate
+      = gt.construct_translated_point_3_object();
+    typename GT::Construct_vector_3 vec
+      = gt.construct_vector_3_object();
+
     BOOST_FOREACH(vertex_descriptor v, vertices(tmesh))
     {
       if (!get(vcmap, v) && !is_border(v, tmesh))
       {
         const Point_3& p = get(vpmap, v);
-        const Point_3 np(p.x() + FT(rng.get_double(-max_size, max_size)),
-                         p.y() + FT(rng.get_double(-max_size, max_size)),
-                         p.z() + FT(rng.get_double(-max_size, max_size)));
+        const Point_3 np = translate(p, vec(FT(rng.get_double(-max_size, max_size)),
+                                            FT(rng.get_double(-max_size, max_size)),
+                                            FT(rng.get_double(-max_size, max_size))));
         const Point_3 closest = tree.closest_point(np); //project on input surface
 
         put(vpmap, v, closest);
@@ -98,7 +104,6 @@ namespace internal {
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*    Exact constructions kernels are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
@@ -130,6 +135,7 @@ void random_perturbation(TriangleMesh& tmesh
 #endif
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
@@ -143,11 +149,12 @@ void random_perturbation(TriangleMesh& tmesh
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::No_constraint_pmap<vertex_descriptor>());
 
-  internal::random_perturbation_impl<GT>(tmesh,
+  internal::random_perturbation_impl(tmesh,
                                          perturbation_max_size,
                                          vcmap,
                                          vpmap,
-                                         0/*seed*/);
+                                         0/*seed*/,
+                                         gt);
 
 #ifdef CGAL_PMP_RANDOM_PERTURBATION_VERBOSE
   t.stop();
