@@ -73,7 +73,6 @@ private:
 
 public:
   struct PlaneProxy {
-    //Point center;
     Vector normal;
     face_descriptor seed;
   };
@@ -122,25 +121,8 @@ public:
 
   // Anchor
   struct Anchor {
-    // construct an anchor from vertex and the incident proxies
-    Anchor(const vertex_descriptor &vtx_, const Point &vtx_pt_, const std::set<std::size_t> &px_set_)
-    : vtx(vtx_) {
-      FT avgx(0), avgy(0), avgz(0), sum_area(0);
-      for (std::set<std::size_t>::iterator pxitr = px_set_.begin();
-        pxitr != px_set_.end(); ++pxitr) {
-        std::size_t px_idx = *pxitr;
-        // TODO: Plane px_plane(proxies[px_idx].center, proxies[px_idx].normal);
-        Plane px_plane;
-        Point proj = px_plane.projection(vtx_pt_);
-        // TODO: FT area = proxies[px_idx];
-        FT area = FT(0.0);
-        avgx += proj.x() * area;
-        avgy += proj.y() * area;
-        avgz += proj.z() * area;
-        sum_area += area;
-      }
-      pos = Point(avgx / sum_area, avgy / sum_area, avgz / sum_area);
-    }
+    Anchor(const vertex_descriptor &vtx_, const Point &pos_)
+    : vtx(vtx_), pos(pos_) {}
 
     vertex_descriptor vtx; // The associated vertex
     Point pos; // The position of the anchor
@@ -168,6 +150,10 @@ private:
   Compute_squared_area_3 area_functor;
 
   std::vector<PlaneProxy> proxies;
+  // proxy auxiliary information
+  std::vector<Point> proxies_center; // proxy center
+  std::vector<FT> proxies_area; // proxy area
+  
   // the lifetime of the container must encompass the use of the adaptor
   std::map<face_descriptor, Vector> facet_normals;
   FacetNormalMap normal_pmap;
@@ -282,11 +268,37 @@ public:
   // extract the approximated mesh from a partition
   template<typename FacetSegmentMap>
   void extract_mesh(FacetSegmentMap &seg_pmap) {
+    compute_proxy_area(seg_pmap);
+    compute_proxy_center(seg_pmap);
+
     find_anchors(seg_pmap);
     find_edges(seg_pmap);
     add_anchors(seg_pmap);
 
     pseudo_CDT();
+  }
+
+  std::vector<Anchor> collect_anchors() {
+    return anchors;
+  }
+
+  template<typename FacetSegmentMap>
+  std::vector<std::vector<std::size_t> >
+  collect_borders(const FacetSegmentMap &seg_pmap) {
+    std::vector<std::vector<std::size_t> > bdrs;
+    for (std::vector<Border>::iterator bitr = borders.begin();
+      bitr != borders.end(); ++bitr) {
+      std::vector<std::size_t> bdr;
+      const halfedge_descriptor he_mark = bitr->he_head;
+      halfedge_descriptor he = he_mark;
+      do {
+        ChordVector chord;
+        walk_to_next_anchor(he, chord, seg_pmap);
+        bdr.push_back(vertex_status_pmap[target(he, mesh)]);
+      } while(he != he_mark);
+      bdrs.push_back(bdr);
+    }
+    return bdrs;
   }
 
 private:
@@ -474,6 +486,7 @@ private:
     }
 
     // pick up one candidate halfedge each time and traverse the connected border
+    borders.clear();
     while (!he_candidates.empty()) {
       halfedge_descriptor he_start = *he_candidates.begin();
       walk_to_first_anchor(he_start, seg_pmap);
@@ -489,11 +502,13 @@ private:
 
       // a new connected border
       borders.push_back(Border(he_start));
+      std::cerr << "#border " << borders.size() << std::endl;
       const halfedge_descriptor he_mark = he_start;
       do {
         ChordVector chord;
         walk_to_next_anchor(he_start, chord, seg_pmap);
         borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), seg_pmap);
+        std::cerr << "#chord_anchor " << borders.back().num_anchors << std::endl;
 
         for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr)
           he_candidates.erase(*citr);
@@ -569,6 +584,41 @@ private:
   }
 
   template<typename FacetSegmentMap>
+  void compute_proxy_center(const FacetSegmentMap &seg_pmap) {
+    proxies_center.clear();
+    proxies_center.swap(std::vector<Point>(proxies.size()));
+    
+    std::vector<Vector> centers(proxies.size(), CGAL::NULL_VECTOR);
+    std::vector<FT> areas(proxies.size(), FT(0.0));
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      const std::size_t px_idx = seg_pmap[f];
+      const halfedge_descriptor he = halfedge(f, mesh);
+      Point pt = CGAL::centroid(
+        vertex_point_pmap[source(he, mesh)],
+        vertex_point_pmap[target(he, mesh)],
+        vertex_point_pmap[target(next(he, mesh), mesh)]);
+      Vector vec = vector_functor(CGAL::ORIGIN, pt);
+      FT area = facet_areas[f];
+      areas[px_idx] += area;
+      centers[px_idx] = sum_functor(centers[px_idx], scale_functor(vec, area));
+    }
+
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      Vector vec = scale_functor(centers[i], FT(1.0) / areas[i]);
+      proxies_center[i] = Point(vec.x(), vec.y(), vec.z());
+    }
+  }
+
+  template<typename FacetSegmentMap>
+  void compute_proxy_area(const FacetSegmentMap &seg_pmap) {
+    std::vector<FT> areas(proxies.size(), FT(0));
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      areas[seg_pmap[f]] += facet_areas[f];
+    }
+    proxies_area.swap(areas);
+  }
+
+  template<typename FacetSegmentMap>
   void tag_halfedges_status(FacetSegmentMap &seg_pmap) {
     BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
       halfedge_status_pmap[h] = static_cast<int>(OFF_BORDER);
@@ -623,7 +673,8 @@ private:
   std::size_t subdivide_chord(
     const ChordVectorIterator &chord_begin,
     const ChordVectorIterator &chord_end,
-    const FacetSegmentMap &seg_pmap) {
+    const FacetSegmentMap &seg_pmap,
+    const FT thre = FT(0.2)) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
     if (chord_size < 2)
       return 1;
@@ -634,16 +685,19 @@ private:
     if (!CGAL::is_border(opposite(he_start, mesh), mesh))
       px_right = seg_pmap[face(opposite(he_start, mesh), mesh)];
 
-    // TODO: proxy_normal_sin, subdivisio_threshold parameters
-    FT thre;
-    FT norm_sin;
+    // suppose the proxy normal angle is acute
+    FT norm_sin(1.0);
+    if (!CGAL::is_border(opposite(he_start, mesh), mesh)) {
+      Vector vec = CGAL::cross_product(proxies[px_left].normal, proxies[px_right].normal);
+      norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
+    }
     FT criterion = thre + FT(1.0);
 
     ChordVectorIterator he_max;
-    std::size_t anchor_begin = vertex_status_pmap[source(he_start, mesh)];
-    std::size_t anchor_end = vertex_status_pmap[target(*chord_end, mesh)];
-    const Point &pt_begin = vertex_point_pmap[source(he_start, mesh)];
     const ChordVectorIterator chord_last = chord_end - 1;
+    std::size_t anchor_begin = vertex_status_pmap[source(he_start, mesh)];
+    std::size_t anchor_end = vertex_status_pmap[target(*chord_last, mesh)];
+    const Point &pt_begin = vertex_point_pmap[source(he_start, mesh)];
     const Point &pt_end = vertex_point_pmap[target(*chord_last, mesh)];
     if (anchor_begin == anchor_end) {
       // circular chord
@@ -703,8 +757,23 @@ private:
 
   // attach anchor to vertex
   void attach_anchor(const vertex_descriptor &vtx, const std::set<std::size_t> &px_set) {
+    // construct an anchor from vertex and the incident proxies
+    FT avgx(0), avgy(0), avgz(0), sum_area(0);
+    const Point vtx_pt = vertex_point_pmap[vtx];
+    for (std::set<std::size_t>::iterator pxitr = px_set.begin();
+      pxitr != px_set.end(); ++pxitr) {
+      std::size_t px_idx = *pxitr;
+      Plane px_plane(proxies_center[px_idx], proxies[px_idx].normal);
+      Point proj = px_plane.projection(vtx_pt);
+      FT area = proxies_area[px_idx];
+      avgx += proj.x() * area;
+      avgy += proj.y() * area;
+      avgz += proj.z() * area;
+      sum_area += area;
+    }
+    Point pos = Point(avgx / sum_area, avgy / sum_area, avgz / sum_area);
     vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
-    anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
+    anchors.push_back(Anchor(vtx, pos));
   }
 
   // attach anchor to the target vertex of the halfedge
