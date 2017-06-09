@@ -43,7 +43,7 @@ namespace CGAL {
 namespace internal
 {
 
-#ifdef CXX11
+#ifdef CGAL_CXX11
 namespace PLY
 {
 
@@ -622,6 +622,7 @@ write_las_point_set(
 }
   
 #endif // LAS
+#endif // CXX11
   
 /*!
   \ingroup PkgPointSet3IO
@@ -661,6 +662,7 @@ write_off_point_set(
    point_set.point_map());
 }
 
+  
 /*!
   
   \ingroup PkgPointSet3IO
