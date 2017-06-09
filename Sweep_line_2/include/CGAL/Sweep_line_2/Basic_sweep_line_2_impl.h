@@ -556,7 +556,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
+_add_curve_to_right(Event* event, Subcurve* curve)
 {
 #if defined(CGAL_NO_ASSERTIONS)
   (void) event->add_curve_to_right(curve, m_traits);
