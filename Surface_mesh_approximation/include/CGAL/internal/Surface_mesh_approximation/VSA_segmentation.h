@@ -441,12 +441,11 @@ private:
   void find_anchors(FacetSegmentMap &seg_pmap) {
     anchors.clear();
 
-    vertex_iterator vitr, vend;
-    for (boost::tie(vitr, vend) = vertices(mesh); vitr != vend; ++vitr) {
+    BOOST_FOREACH(vertex_descriptor vtx, vertices(mesh)) {
       std::set<std::size_t> px_set;
       std::size_t border_count = 0;
 
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(*vitr, mesh)) {
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(vtx, mesh)) {
         if (CGAL::is_border_edge(h, mesh)) {
           ++border_count;
           if (!CGAL::is_border(h, mesh))
@@ -457,11 +456,8 @@ private:
           px_set.insert(seg_pmap[face(h, mesh)]);
         }
       }
-      if (border_count >= 3) {
-        // make an anchor and attach it to the vertex
-        vertex_status_pmap[*vitr] = static_cast<int>(anchors.size());
-        anchors.push_back(Anchor(*vitr, vertex_point_pmap[*vitr], px_set));
-      }
+      if (border_count >= 3)
+        attach_anchor(vtx, px_set);
     }
   }
 
@@ -481,16 +477,14 @@ private:
     while (!he_candidates.empty()) {
       halfedge_descriptor he_start = *he_candidates.begin();
       walk_to_first_anchor(he_start, seg_pmap);
-      if (vertex_status_pmap[target(he_start, mesh)] < 0) {
+      if (!is_anchor_attached(he_start)) {
         // no anchor in this connected border, make a new anchor
         std::set<std::size_t> px_set;
         px_set.insert(seg_pmap[face(he_start, mesh)]);
         halfedge_descriptor he_oppo = opposite(he_start, mesh);
         if (!CGAL::is_border(he_oppo, mesh))
           px_set.insert(seg_pmap[face(he_oppo, mesh)]);
-        vertex_descriptor vtx = target(he_start, mesh);
-        vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
-        anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
+        attach_anchor(he_start, px_set);
       }
 
       // a new connected border
@@ -501,9 +495,8 @@ private:
         walk_to_next_anchor(he_start, chord, seg_pmap);
         borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), seg_pmap);
 
-        for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
+        for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr)
           he_candidates.erase(*citr);
-        }
       } while (he_start != he_mark);
     }
   }
@@ -528,7 +521,7 @@ private:
       std::size_t count = 0;
       do {
         walk_to_next_border_halfedge(he, seg_pmap);
-        if (vertex_status_pmap[target(he, mesh)] < 0)
+        if (!is_anchor_attached(he))
           chord.push_back(he);
         else {
           if (count == 0)
@@ -564,9 +557,7 @@ private:
       px_set.insert(seg_pmap[face(he_max, mesh)]);
       if (!CGAL::is_border(he_oppo, mesh))
         px_set.insert(seg_pmap[face(he_oppo, mesh)]);
-      vertex_descriptor vtx = target(he_max, mesh);
-      vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
-      anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
+      attach_anchor(he_max, px_set);
 
       // increase border anchors by one
       bitr->num_anchors++;
@@ -593,7 +584,7 @@ private:
   template<typename FacetSegmentMap>
   void walk_to_first_anchor(halfedge_descriptor &he_start, const FacetSegmentMap &seg_pmap) {
     const halfedge_descriptor start_mark = he_start;
-    while (vertex_status_pmap[target(he_start, mesh)] < 0) {
+    while (!is_anchor_attached(he_start)) {
       // no anchor attached to the halfedge target
       walk_to_next_border_halfedge(he_start, seg_pmap);
       if (he_start == start_mark) // back to where started, a circular border
@@ -611,7 +602,7 @@ private:
     do {
       walk_to_next_border_halfedge(he_start, seg_pmap);
       chord.push_back(he_start);
-    } while (vertex_status_pmap[target(he_start, mesh)] < 0);
+    } while (!is_anchor_attached(he_start));
   }
 
   // walk to next border halfedge, the input halfedge must be a border halfedge
@@ -694,9 +685,7 @@ private:
       std::set<std::size_t> px_set;
       px_set.insert(px_left);
       px_set.insert(px_right);
-      vertex_descriptor vtx = target(*he_max, mesh);
-      vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
-      anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
+      attach_anchor(*he_max, px_set);
 
       std::size_t num0 = subdivide_chord(chord_begin, he_max + 1, seg_pmap);
       std::size_t num1 = subdivide_chord(he_max + 1, chord_end, seg_pmap);
@@ -706,9 +695,26 @@ private:
 
     return 1;
   }
-};
-}
-}
+
+  // check if halfedge target vertex is attached with an anchor
+  bool is_anchor_attached(const halfedge_descriptor &he) {
+    return vertex_status_pmap[target(he, mesh)] >= 0;
+  }
+
+  // attach anchor to vertex
+  void attach_anchor(const vertex_descriptor &vtx, const std::set<std::size_t> &px_set) {
+    vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
+    anchors.push_back(Anchor(vtx, vertex_point_pmap[vtx], px_set));
+  }
+
+  // attach anchor to the target vertex of the halfedge
+  void attach_anchor(const halfedge_descriptor &he, const std::set<std::size_t> &px_set) {
+    vertex_descriptor vtx = target(he, mesh);
+    attach_anchor(vtx, px_set);
+  }
+}; // end class VSA_segmentation
+} // end namespace internal
+} // end namespace CGAL
 
 #undef CGAL_NOT_TAGGED_ID
 
