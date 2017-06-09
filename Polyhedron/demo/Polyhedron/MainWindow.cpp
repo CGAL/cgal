@@ -905,8 +905,8 @@ void MainWindow::reloadItem() {
   Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
   if(property_item)
     property_item->copyProperties(item);
-  new_item->invalidateOpenGLBuffers();
   scene->replaceItem(scene->item_id(item), new_item, true);
+  new_item->invalidateOpenGLBuffers();
   item->deleteLater();
 }
 
