@@ -1169,29 +1169,57 @@ void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer
       item->printPrimitiveId(point, viewer);
   }
 }
-void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printVertexIds(CGAL::Three::Viewer_interface* viewer)
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
-    //Only call printPrimitiveIds if the item is a Scene_print_item_interface
-    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
+    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printPrimitiveIds(viewer);
+      item->printVertexIds(viewer);
+  }
+}
+
+void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
+{
+  Scene_item *it = item(mainSelectionIndex());
+  if(it)
+  {
+    //Only call printEdgeIds if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
+    if(item)
+      item->printEdgeIds(viewer);
+  }
+}
+
+void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
+{
+  Scene_item *it = item(mainSelectionIndex());
+  if(it)
+  {
+    //Only call printFaceIds if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
+    if(item)
+      item->printFaceIds(viewer);
   }
 }
 void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Three::Scene_item* it)
 {
   if(it)
   {
-    //Only call printPrimitiveIds if the item is a Scene_print_item_interface
-    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
+    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
     if(item)
     {
-      //As this function works as a toggle, the first call hides the ids and the second one  shows them again,
+      //As this function works as a toggle, the first call hides the ids and the second one shows them again,
       //thereby triggering their re-computation.
-      item->printPrimitiveIds(viewer);
-      item->printPrimitiveIds(viewer);
+      item->printVertexIds(viewer);
+      item->printVertexIds(viewer);
+
+      item->printEdgeIds(viewer);
+      item->printEdgeIds(viewer);
+
+      item->printFaceIds(viewer);
+      item->printFaceIds(viewer);
     }
   }
 }

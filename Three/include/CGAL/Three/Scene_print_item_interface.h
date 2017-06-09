@@ -35,9 +35,16 @@ public:
   virtual ~Scene_print_item_interface(){}
  //! Finds the spot the closest to `point` and prints the id of the corresponding Primitive (vertex, edge or face).
  virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*) = 0;
-  //! Prints all the primitive ids if their number is not too high. The limit is
+
+  //! Prints all the vertices ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
- virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const = 0;
+  virtual void printVertexIds(CGAL::Three::Viewer_interface*) const= 0;
+  //! Prints all the edges ids if their number is not too high. The limit is
+  //! editable in the View menu of the application.
+  virtual void printEdgeIds(CGAL::Three::Viewer_interface*) const= 0;
+  //! Prints all the faces ids if their number is not too high. The limit is
+  //! editable in the View menu of the application.
+  virtual void printFaceIds(CGAL::Three::Viewer_interface*) const= 0;
   //! \brief Tests if an id should be displayed or not.
   //!
   //! \returns true if the Id should be displayed

@@ -70,7 +70,9 @@ public:
     bool has_stats()const Q_DECL_OVERRIDE{return true;}
     QString computeStats(int type)Q_DECL_OVERRIDE;
     CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
-    TextListItem* textItems;
+    TextListItem* textVItems;
+    TextListItem* textEItems;
+    TextListItem* textFItems;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);
@@ -131,7 +133,9 @@ public:
     bool isItemMulticolor();
 
     void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
-    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const Q_DECL_OVERRIDE;
+    void printVertexIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    void printEdgeIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    void printFaceIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
     bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
 
 
@@ -166,6 +170,9 @@ public Q_SLOTS:
     void invalidate_aabb_tree();
     void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
     void resetColors();
+    void showVertices(bool);
+    void showEdges(bool);
+    void showFaces(bool);
 
 Q_SIGNALS:
     void selection_done();

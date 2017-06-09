@@ -114,7 +114,9 @@ struct Scene_polyhedron_item_priv{
     is_multicolor = false;
     no_flat = false;
     targeted_id = NULL;
-    all_ids_displayed = false;
+    vertices_displayed = false;
+    edges_displayed = false;
+    faces_displayed = false;
     invalidate_stats();
   }
 
@@ -166,7 +168,9 @@ struct Scene_polyhedron_item_priv{
   int genus;
   bool self_intersect;
   int m_min_patch_id; // the min value of the patch ids initialized in init()
-  mutable bool all_ids_displayed;
+  mutable bool vertices_displayed;
+  mutable bool edges_displayed;
+  mutable bool faces_displayed;
   mutable QList<double> text_ids;
   mutable TextItem* targeted_id;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
@@ -636,9 +640,8 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   normals_flat.shrink_to_fit();
 
   if (viewer->hasText())
-    item->printPrimitiveIds(viewer);
+    viewer->updateIds(item);
   item->are_buffers_filled = true;
-
 }
 
 void
@@ -831,7 +834,9 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
-    textItems = new TextListItem(this);
+    textVItems = new TextListItem(this);
+    textEItems = new TextListItem(this);
+    textFItems = new TextListItem(this);
 
 }
 
@@ -841,7 +846,9 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
-    textItems = new TextListItem(this);
+    textVItems = new TextListItem(this);
+    textEItems = new TextListItem(this);
+    textFItems = new TextListItem(this);
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -850,7 +857,9 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
 {
     cur_shading=FlatPlusEdges;
     is_selected=true;
-    textItems = new TextListItem(this);
+    textVItems = new TextListItem(this);
+    textEItems = new TextListItem(this);
+    textFItems = new TextListItem(this);
 }
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
@@ -864,12 +873,26 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
       //Clears the targeted Id
       if(d)
         v->textRenderer()->removeText(d->targeted_id);
-      //Remove textitems
-      if(textItems)
+      //Remove vertices textitems
+      if(textVItems)
       {
-        v->textRenderer()->removeTextList(textItems);
-        delete textItems;
-        textItems=NULL;
+        v->textRenderer()->removeTextList(textVItems);
+        delete textVItems;
+        textVItems=NULL;
+      }
+      //Remove edges textitems
+      if(textEItems)
+      {
+        v->textRenderer()->removeTextList(textEItems);
+        delete textEItems;
+        textEItems=NULL;
+      }
+      //Remove faces textitems
+      if(textFItems)
+      {
+        v->textRenderer()->removeTextList(textFItems);
+        delete textFItems;
+        textFItems=NULL;
       }
     }
     if(d)
@@ -1043,6 +1066,28 @@ QMenu* Scene_polyhedron_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if(!menuChanged) {
+    menu->addSeparator();
+    QAction* actionPrintVertices=
+        menu->addAction(tr("Display Vertices Ids"));
+    actionPrintVertices->setCheckable(true);
+    actionPrintVertices->setObjectName("actionPrintVertices");
+    connect(actionPrintVertices, SIGNAL(toggled(bool)),
+            this, SLOT(showVertices(bool)));
+
+    QAction* actionPrintEdges=
+        menu->addAction(tr("Display Edges Ids"));
+    actionPrintEdges->setCheckable(true);
+    actionPrintEdges->setObjectName("actionPrintEdges");
+    connect(actionPrintEdges, SIGNAL(toggled(bool)),
+            this, SLOT(showEdges(bool)));
+
+    QAction* actionPrintFaces=
+        menu->addAction(tr("Display Faces Ids"));
+    actionPrintFaces->setCheckable(true);
+    actionPrintFaces->setObjectName("actionPrintFaces");
+    connect(actionPrintFaces, SIGNAL(toggled(bool)),
+            this, SLOT(showFaces(bool)));
+    menu->addSeparator();
 
     QAction* actionShowOnlyFeatureEdges =
         menu->addAction(tr("Show Only &Feature Edges"));
@@ -1282,7 +1327,9 @@ invalidateOpenGLBuffers()
     are_buffers_filled = false;
 
     d->invalidate_stats();
-    if(d->all_ids_displayed)
+    if(d->vertices_displayed ||
+       d->edges_displayed ||
+       d->faces_displayed)
       static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->updateIds(this);
 }
 
@@ -1704,8 +1751,12 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 {
   TextRenderer *renderer = viewer->textRenderer();
   renderer->getLocalTextItems().removeAll(d->targeted_id);
-  renderer->removeTextList(textItems);
-  textItems->clear();
+  renderer->removeTextList(textVItems);
+  renderer->removeTextList(textEItems);
+  renderer->removeTextList(textFItems);
+  textVItems->clear();
+  textEItems->clear();
+  textFItems->clear();
   QFont font;
   font.setBold(true);
 
@@ -1811,8 +1862,8 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         if (d->targeted_id == NULL || d->targeted_id->position() != text_item.position() )
         {
           d->targeted_id = new TextItem(text_item);
-          textItems->append(d->targeted_id);
-          renderer->addTextList(textItems);
+          textVItems->append(d->targeted_id);
+          renderer->addTextList(textVItems);
         }
         else
           d->targeted_id=NULL;
@@ -1821,13 +1872,10 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
     }
   }
 }
-
-void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *viewer) const 
+void Scene_polyhedron_item::printVertexIds(CGAL::Three::Viewer_interface *viewer) const
 {
   TextRenderer *renderer = viewer->textRenderer();
-
-
-  if(!d->all_ids_displayed)
+  if(!d->vertices_displayed)
   {
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     QFont font;
@@ -1837,23 +1885,71 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
     BOOST_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*d->poly))
     {
       const Point& p = Point(vh->point().x(), vh->point().y(), vh->point().z());
-      textItems->append(new TextItem((float)p.x() + offset.x,
+      textVItems->append(new TextItem((float)p.x() + offset.x,
                                      (float)p.y() + offset.y,
                                      (float)p.z() + offset.z,
                                      QString("%1").arg(vh->id()), true, font, Qt::red));
 
     }
+    //add the QList to the render's pool
+    renderer->addTextList(textVItems);
+    if(textVItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+      d->vertices_displayed = !d->vertices_displayed;
+  }
+  else
+  {
+    //clears TextVItems
+    textVItems->clear();
+    renderer->removeTextList(textVItems);
+    if(d->targeted_id)
+    {
+      textVItems->append(d->targeted_id);
+      renderer->addTextList(textVItems);
+    }
+  }
+  d->vertices_displayed = !d->vertices_displayed;
+  viewer->update();
+}
+void Scene_polyhedron_item::printEdgeIds(CGAL::Three::Viewer_interface *viewer) const
+{
+  TextRenderer *renderer = viewer->textRenderer();
+  if(!d->edges_displayed)
+  {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    QFont font;
+    font.setBold(true);
 
     BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*d->poly))
     {
       const Point& p1 = source(e, *d->poly)->point();
       const Point& p2 = target(e, *d->poly)->point();
-      textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2 + offset.x,
+      textEItems->append(new TextItem((float)(p1.x() + p2.x()) / 2 + offset.x,
                                      (float)(p1.y() + p2.y()) / 2 + offset.y,
                                      (float)(p1.z() + p2.z()) / 2 + offset.z,
                                      QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
     }
-
+    //add the QList to the render's pool
+    renderer->addTextList(textEItems);
+    if(textEItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+      d->edges_displayed = !d->edges_displayed;
+  }
+  else
+  {
+    //clears textEItems
+    textEItems->clear();
+    renderer->removeTextList(textEItems);
+  }
+  d->edges_displayed = !d->edges_displayed;
+  viewer->update();
+}
+void Scene_polyhedron_item::printFaceIds(CGAL::Three::Viewer_interface *viewer) const
+{
+  TextRenderer *renderer = viewer->textRenderer();
+  if(!d->faces_displayed)
+  {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    QFont font;
+    font.setBold(true);
     BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
     {
       double x(0), y(0), z(0);
@@ -1866,28 +1962,24 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
         ++total;
       }
 
-      textItems->append(new TextItem((float)x / total + offset.x,
+      textFItems->append(new TextItem((float)x / total + offset.x,
                                      (float)y / total + offset.y,
                                      (float)z / total + offset.z,
                                      QString("%1").arg(fh->id()), true, font, Qt::blue));
     }
     //add the QList to the render's pool
-    renderer->addTextList(textItems);
-    if(textItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
-      d->all_ids_displayed = !d->all_ids_displayed;
+    renderer->addTextList(textFItems);
+    if(textFItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+      d->faces_displayed = !d->faces_displayed;
   }
-  if(d->all_ids_displayed)
+  else
   {
-    //clears TextItems
-    textItems->clear();
-    renderer->removeTextList(textItems);
-    if(d->targeted_id)
-    {
-      textItems->append(d->targeted_id);
-      renderer->addTextList(textItems);
-    }
+    //clears textFItems
+    textFItems->clear();
+    renderer->removeTextList(textFItems);
   }
-  d->all_ids_displayed = !d->all_ids_displayed;
+  d->faces_displayed = !d->faces_displayed;
+  viewer->update();
 }
 
 bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
@@ -1905,7 +1997,6 @@ bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Th
   point = point + v;
   Kernel::Segment_3 query(point, dest);
   return !static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree())->do_intersect(query);
-
 }
 
 
@@ -2104,16 +2195,36 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
                                                                        .arg(new_orientation[1])
                                                                        .arg(new_orientation[2])
                                                                        .arg(new_orientation[3]));
-
       }
     }
   }
 
 }
 
+
 void Scene_polyhedron_item::resetColors()
 {
   setItemIsMulticolor(false);
   invalidateOpenGLBuffers();
   itemChanged();
+}
+void Scene_polyhedron_item::showVertices(bool)
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  printVertexIds(viewer);
+}
+
+void Scene_polyhedron_item::showEdges(bool)
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  printEdgeIds(viewer);
+}
+
+void Scene_polyhedron_item::showFaces(bool)
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  printFaceIds(viewer);
 }
