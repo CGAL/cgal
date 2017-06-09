@@ -173,6 +173,7 @@ public Q_SLOTS:
     void showVertices(bool);
     void showEdges(bool);
     void showFaces(bool);
+    void zoomToId();
 
 Q_SIGNALS:
     void selection_done();

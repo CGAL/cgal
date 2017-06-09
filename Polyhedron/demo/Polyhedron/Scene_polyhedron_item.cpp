@@ -29,6 +29,8 @@
 #include <QDebug>
 #include <QDialog>
 #include <QApplication>
+#include <QInputDialog>
+#include <QMessageBox>
 
 #include <boost/foreach.hpp>
 #include "triangulate_primitive.h"
@@ -1087,6 +1089,13 @@ QMenu* Scene_polyhedron_item::contextMenu()
     actionPrintFaces->setObjectName("actionPrintFaces");
     connect(actionPrintFaces, SIGNAL(toggled(bool)),
             this, SLOT(showFaces(bool)));
+
+    QAction* actionZoomToId=
+        menu->addAction(tr("Zoom to Index"));
+    actionZoomToId->setObjectName("actionZoomToId");
+    connect(actionZoomToId, &QAction::triggered,
+            this, &Scene_polyhedron_item::zoomToId);
+
     menu->addSeparator();
 
     QAction* actionShowOnlyFeatureEdges =
@@ -2099,7 +2108,8 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(aabb_tree) {
 
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const qglviewer::Vec offset =
+        static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     //find clicked facet
     bool found = false;
     const Kernel::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
@@ -2227,4 +2237,148 @@ void Scene_polyhedron_item::showFaces(bool)
   CGAL::Three::Viewer_interface* viewer =
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   printFaceIds(viewer);
+}
+
+void Scene_polyhedron_item::zoomToId()
+{
+  bool ok;
+  QString text = QInputDialog::getText(QApplication::activeWindow(), tr("Zoom to Index"),
+                                       tr("Simplex"), QLineEdit::Normal,
+                                       tr("v0"), &ok);
+  if (ok)
+  {
+    bool is_int;
+    unsigned int id = text.right(text.length()-1).toUInt(&is_int);
+    QString first = text.left(1);
+    if((first != tr("v") &&
+        first != tr("e") &&
+        first != tr("f")) ||
+       !is_int)
+    {
+
+      QMessageBox::warning(QApplication::activeWindow(),
+                         "ERROR",
+                         tr("Input must be of the form [v/e/f][int]")
+                         );
+    }
+    else
+    {
+      CGAL::Three::Viewer_interface* viewer =
+          qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+      const qglviewer::Vec offset =
+          static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
+      Point p;
+      Kernel::Vector_3 normal;
+      if(first == tr("v"))
+      {
+        bool found = false;
+        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices(*d->poly))
+        {
+          if(vh->id() == id)
+          {
+            p = Point(vh->point().x() + offset.x,
+                      vh->point().y() + offset.y,
+                      vh->point().z() + offset.z);
+            normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, *d->poly);
+            found = true;
+            break;
+          }
+        }
+        if(!found)
+        {
+          QMessageBox::warning(QApplication::activeWindow(),
+                             "ERROR",
+                             tr("No vertex with id %1").arg(id)
+                             );
+          return;
+        }
+      }
+      else if(first == tr("e"))
+      {
+        bool found = false;
+        BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*d->poly))
+        {
+          if(halfedge(e, *d->poly)->id()/2 == id)
+          {
+            const Point& p1 = source(e, *d->poly)->point();
+            const Point& p2 = target(e, *d->poly)->point();
+            p = Point((float)(p1.x() + p2.x()) / 2 + offset.x,
+                      (float)(p1.y() + p2.y()) / 2 + offset.y,
+                      (float)(p1.z() + p2.z()) / 2 + offset.z );
+            Kernel::Vector_3 normal1 = CGAL::Polygon_mesh_processing::compute_face_normal(halfedge(e, *d->poly)->face(),
+                                                                                          *d->poly);
+            Kernel::Vector_3 normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(halfedge(e, *d->poly)->opposite()->face(),
+                                                                                          *d->poly);
+            normal = 0.5*normal1+0.5*normal2;
+            found = true;
+            break;
+          }
+        }
+        if(!found)
+        {
+          QMessageBox::warning(QApplication::activeWindow(),
+                             "ERROR",
+                             tr("No edge with id %1").arg(id)
+                             );
+          return;
+        }
+      }
+
+      else if(first == tr("f"))
+      {
+        bool found = false;
+        double x(0), y(0), z(0);
+        int total(0);
+        BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
+        {
+          if(fh->id() != id)
+            continue;
+          BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(fh->halfedge(), *d->poly))
+          {
+            x+=vh->point().x();
+            y+=vh->point().y();
+            z+=vh->point().z();
+            ++total;
+          }
+          p = Kernel::Point_3(x/total + offset.x,
+                              y/total + offset.y,
+                              z/total + offset.z);
+          normal = CGAL::Polygon_mesh_processing::compute_face_normal(
+                fh,
+                *d->poly);
+          found = true;
+          break;
+        }
+        if(!found)
+        {
+          QMessageBox::warning(QApplication::activeWindow(),
+                             "ERROR",
+                             tr("No face with id %1").arg(id)
+                             );
+          return;
+        }
+      }
+      qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
+                                            qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
+      Kernel::Point_3 new_pos = p +
+          qglviewer::Vec(
+            viewer->camera()->position().x - viewer->camera()->sceneCenter().x,
+            viewer->camera()->position().y - viewer->camera()->sceneCenter().y,
+            viewer->camera()->position().z - viewer->camera()->sceneCenter().z)
+          .norm() * normal ;
+
+      viewer->camera()->setSceneCenter(qglviewer::Vec(p.x(),
+                                                      p.y(),
+                                                      p.z()));
+
+      viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
+                                      .arg(new_pos.y())
+                                      .arg(new_pos.z())
+                                      .arg(new_orientation[0])
+                                      .arg(new_orientation[1])
+                                      .arg(new_orientation[2])
+                                      .arg(new_orientation[3]));
+    }
+  }
 }
