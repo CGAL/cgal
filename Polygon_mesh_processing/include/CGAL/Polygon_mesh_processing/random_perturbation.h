@@ -46,11 +46,25 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
+  template<typename GT, typename RNG>
+  typename GT::Vector_3 construct_random_vector_3(const double& max_size,
+                                                  RNG& rng,
+                                                  const GT& gt)
+  {
+    typedef typename GT::FT FT;
+    typename GT::Construct_vector_3 vec = gt.construct_vector_3_object();
+
+    return vec(FT(rng.get_double(-max_size, max_size)),
+               FT(rng.get_double(-max_size, max_size)),
+               FT(rng.get_double(-max_size, max_size)));
+  }
+
   template<typename GT, typename PM, typename VCMap, typename VPMap, typename RNG>
   void random_perturbation_impl(PM& tmesh,
                                 const double& max_size,
                                 VCMap vcmap,
                                 VPMap vpmap,
+                                bool do_project,
                                 RNG& rng,
                                 const GT& gt)
   {
@@ -62,25 +76,26 @@ namespace internal {
     typedef CGAL::AABB_traits<GT, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
-    Tree tree(faces(tmesh).first, faces(tmesh).second, tmesh);
-    tree.accelerate_distance_queries();
-
+    Tree tree;
+    if(do_project)
+    {
+      tree.rebuild(faces(tmesh).first, faces(tmesh).second, tmesh);
+      tree.accelerate_distance_queries();
+    }
     typename GT::Construct_translated_point_3 translate
       = gt.construct_translated_point_3_object();
-    typename GT::Construct_vector_3 vec
-      = gt.construct_vector_3_object();
 
     BOOST_FOREACH(vertex_descriptor v, vertices(tmesh))
     {
       if (!get(vcmap, v) && !is_border(v, tmesh))
       {
         const Point_3& p = get(vpmap, v);
-        const Point_3 np = translate(p, vec(FT(rng.get_double(-max_size, max_size)),
-                                            FT(rng.get_double(-max_size, max_size)),
-                                            FT(rng.get_double(-max_size, max_size))));
-        const Point_3 closest = tree.closest_point(np); //project on input surface
+        const Point_3 np = translate(p, construct_random_vector_3<GT>(max_size, rng, gt));
 
-        put(vpmap, v, closest);
+        if (do_project)
+          put(vpmap, v, tree.closest_point(np)); //project on input surface
+        else
+          put(vpmap, v, np);
       }
     }
   }
@@ -90,6 +105,8 @@ namespace internal {
 /*!
 * \ingroup PMP_meshing_grp
 * @brief randomly perturbs the locations of vertices of a triangulated surface mesh.
+* In the absence of instructions to the contrary in the parameters,
+* the vertices are re-projected to the input surface after vertices geometric perturbation.
 * Note that depending on the chosen parameters, inversions and self-intersections may happen.
 *
 * @tparam TriangleMesh model of `MutableFaceGraph`.
@@ -110,6 +127,8 @@ namespace internal {
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during remeshing
 *  \cgalParamEnd
+*  \cgalParamBegin{do_project} a boolean that sets whether vertices should be reprojected
+*    on the input surface after their coordinates random perturbation
 *  \cgalParambegin{random_seed} an non-negative integer value to seed the random
       number generator, and make the perturbation deterministic
 * \cgalNamedParamsEnd
@@ -150,11 +169,13 @@ void random_perturbation(TriangleMesh& tmesh
                              internal::No_constraint_pmap<vertex_descriptor>());
 
   unsigned int seed = choose_param(get_param(np, internal_np::random_seed), -1);
+  bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
   internal::random_perturbation_impl(tmesh,
           perturbation_max_size,
           vcmap,
           vpmap,
+          do_project,
           ((seed == -1) ? CGAL::Random() : CGAL::Random(seed)),
           gt);
 
