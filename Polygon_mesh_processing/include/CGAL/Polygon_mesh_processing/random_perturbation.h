@@ -46,12 +46,12 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-  template<typename GT, typename PM, typename VCMap, typename VPMap>
+  template<typename GT, typename PM, typename VCMap, typename VPMap, typename RNG>
   void random_perturbation_impl(PM& tmesh,
                                 const double& max_size,
                                 VCMap vcmap,
                                 VPMap vpmap,
-                                const int seed,
+                                RNG& rng,
                                 const GT& gt)
   {
     typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
@@ -64,8 +64,6 @@ namespace internal {
 
     Tree tree(faces(tmesh).first, faces(tmesh).second, tmesh);
     tree.accelerate_distance_queries();
-
-    CGAL::Random rng(seed);
 
     typename GT::Construct_translated_point_3 translate
       = gt.construct_translated_point_3_object();
@@ -112,6 +110,8 @@ namespace internal {
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during remeshing
 *  \cgalParamEnd
+*  \cgalParambegin{random_seed} an non-negative integer value to seed the random
+      number generator, and make the perturbation deterministic
 * \cgalNamedParamsEnd
 *
 */
@@ -149,12 +149,14 @@ void random_perturbation(TriangleMesh& tmesh
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::No_constraint_pmap<vertex_descriptor>());
 
+  unsigned int seed = choose_param(get_param(np, internal_np::random_seed), -1);
+
   internal::random_perturbation_impl(tmesh,
-                                         perturbation_max_size,
-                                         vcmap,
-                                         vpmap,
-                                         0/*seed*/,
-                                         gt);
+          perturbation_max_size,
+          vcmap,
+          vpmap,
+          ((seed == -1) ? CGAL::Random() : CGAL::Random(seed)),
+          gt);
 
 #ifdef CGAL_PMP_RANDOM_PERTURBATION_VERBOSE
   t.stop();
