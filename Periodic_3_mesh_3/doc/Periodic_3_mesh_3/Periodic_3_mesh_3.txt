@@ -1,0 +1,42 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_3D_Periodic_Mesh_Generation
+\anchor userchapterperiodic3mesh3
+\authors Mikhail Bogdanov, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud
+
+\section Periodic_3_mMesh_3_section_intro Introduction
+
+\subsection Periodic_3_mesh_3InputDomain Input Domain
+
+\subsection Periodic_3_mesh_3OutputMesh Output Mesh
+
+\subsection Periodic_3_mesh_3DelaunayRefinement Delaunay Refinement
+
+\subsection Periodic_3_mesh_3Protectionof0and1dimensionalExposed Protection of 0 and 1-dimensional Exposed Features
+
+\section Periodic_3_mesh_3_section_interface Interface
+
+\subsection Periodic_3_mesh_3TheGlobalFunctions The Global Functions
+
+\subsection Periodic_3_mesh_3TheDataStructure The Data Structure
+
+\subsection Periodic_3_mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
+
+\subsection Periodic_3_mesh_3TheMeshingCriteria The Meshing Criteria
+
+\subsection Periodic_3_mesh_3TheOptimizationParameters The Optimization Parameters
+
+\subsection Periodic_3_mesh_3ParallelAlgorithms Parallel Algorithms
+
+\section Periodic_3_mesh_3_section_examples Examples
+
+\section Periodic_3_mesh_3DesignAndImpl Design and Implementation History
+
+\subsection Periodic_3_mesh_3TheoreticalFoundations Theoretical Foundations
+
+\subsection Periodic_3_mesh_3ImplementationHistory Implementation History
+
+*/
+} /* namespace CGAL */

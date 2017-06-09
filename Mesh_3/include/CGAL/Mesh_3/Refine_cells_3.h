@@ -475,10 +475,10 @@ public:
   {
     std::stringstream sstr;
     sstr << "Cell { " << std::endl
-    << "  - " << *ch->vertex(0)  << std::endl
-    << "  - " << *ch->vertex(1)  << std::endl
-    << "  - " << *ch->vertex(2)  << std::endl
-    << "  - " << *ch->vertex(3)  << std::endl
+    << "  " << *ch->vertex(0) << std::endl
+    << "  " << *ch->vertex(1) << std::endl
+    << "  " << *ch->vertex(2) << std::endl
+    << "  " << *ch->vertex(3) << std::endl
     << "}" << std::endl;
 
     return sstr.str();

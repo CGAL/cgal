@@ -6,6 +6,7 @@ Circulator
 Stream_support
 Surface_mesher
 Triangulation_3
+Periodic_3_triangulation_3
 TDS_3
 Polyhedron
 Miscellany
