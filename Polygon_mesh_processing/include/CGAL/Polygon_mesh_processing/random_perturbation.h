@@ -125,12 +125,14 @@ namespace internal {
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
-*    cannot be modified at all during remeshing
+*    cannot be modified at all during perturbation
 *  \cgalParamEnd
 *  \cgalParamBegin{do_project} a boolean that sets whether vertices should be reprojected
 *    on the input surface after their coordinates random perturbation
+*  \cgalParamEnd
 *  \cgalParambegin{random_seed} an non-negative integer value to seed the random
       number generator, and make the perturbation deterministic
+*  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 */

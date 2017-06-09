@@ -48,6 +48,7 @@ CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_u
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
+CGAL_add_named_parameter(do_project_t, do_project, do_project)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
