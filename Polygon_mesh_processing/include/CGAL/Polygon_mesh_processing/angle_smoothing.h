@@ -123,7 +123,7 @@ public:
 
 
 
-        // compute locations to tangent plane
+        // compute locations on tangent plane
         typedef typename std::map<vertex_descriptor, Point>::value_type VP;
         std::map<vertex_descriptor, Point> new_locations;
         for(const VP& vp: barycenters)
