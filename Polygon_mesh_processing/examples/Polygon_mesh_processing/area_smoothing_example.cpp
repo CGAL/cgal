@@ -17,7 +17,7 @@ int main(int argc, char* argv[]){
 
     std::cout<<"hello\n";
 
-    const char* filename = "data/polygon.off";
+    const char* filename = "data/polygon3D.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -28,11 +28,11 @@ int main(int argc, char* argv[]){
 
 
 
-    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
 
 
 
-    std::ofstream output("data/area_smoothed_polygon.off");
+    std::ofstream output("data/area_smoothed_polygon3D.off");
     output << mesh;
     output.close();
 

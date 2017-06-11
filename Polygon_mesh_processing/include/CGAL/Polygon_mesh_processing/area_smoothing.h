@@ -5,15 +5,26 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+//#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
+
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_triangle_primitive.h>
+//#include <CGAL/AABB_face_graph_triangle_primitive.h>
+
+
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
+
 
 
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
+
+
+
+
 
 
 
@@ -28,11 +39,15 @@ class Area_remesher
 
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::Vector_3 Vector;
+    typedef typename GeomTraits::Triangle_3 Triangle;
 
 
-    typedef CGAL::AABB_face_graph_triangle_primitive<PolygonMesh> Primitive;
-    typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
-    typedef CGAL::AABB_tree<Traits> Tree;
+    //typedef CGAL::AABB_face_graph_triangle_primitive<PolygonMesh> Primitive;
+    //typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
+    //typedef CGAL::AABB_tree<Traits> Tree;
+
+
+
 
 
 
@@ -44,13 +59,12 @@ public:
 
 
 
-
     void area_relaxation()
     {
 
-        Tree tree(faces(mesh_).first, faces(mesh_).second, mesh_);
+        //Tree tree(faces(mesh_).first, faces(mesh_).second, mesh_);
         //tree.rebuild(faces(mesh_).first, faces(mesh_).second, mesh_);//
-        tree.accelerate_distance_queries();
+        //tree.accelerate_distance_queries();
 
 
 
@@ -67,15 +81,15 @@ public:
 
 
 
-                 std::cout<<"point before projection: "<<get(vpmap_, v);
+                 //std::cout<<"point before projection: "<<get(vpmap_, v);
 
-                 Point projected = tree.closest_point(get(vpmap_, v));
+                 //Point projected = tree.closest_point(get(vpmap_, v));
 
-                 put(vpmap_, v, tree.closest_point(projected));
+                 //put(vpmap_, v, tree.closest_point(projected));
 
-                 std::cout<<" after projection: "<<get(vpmap_, v)<<std::endl;
+                 //std::cout<<" after projection: "<<get(vpmap_, v)<<std::endl;
 
-                 std::cout<<std::endl;
+                 //std::cout<<std::endl;
 
 
              } // not on border
@@ -95,10 +109,7 @@ public:
 
 
 
-
-private: // NATA PARW APODW KATW
-    PolygonMesh& mesh_;
-    VertexPointMap& vpmap_;
+private:
 
 
 
@@ -275,6 +286,17 @@ private: // NATA PARW APODW KATW
 
 
 
+private:
+    PolygonMesh& mesh_;
+    VertexPointMap& vpmap_;
+
+
+
+
+
+
+
+
 };
 
 
@@ -283,8 +305,15 @@ private: // NATA PARW APODW KATW
 
 
 
-template<typename PolygonMesh, typename NamedParameters>
-void area_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
+
+
+
+
+
+
+
+template<typename PolygonMesh, typename NamedParameters, typename FaceRange>
+void area_remeshing(PolygonMesh& pmesh, const NamedParameters& np, const FaceRange& faces)
 {
 
 
@@ -298,11 +327,78 @@ void area_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
 
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
+
     //bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+
+
+
+
+    //typedef PolygonMesh PM;
+    using PM = PolygonMesh;
+    typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
+    using boost::get_param;
+    using boost::choose_param;
+
+
+    typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+
+    //typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
+    //VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+    //                           get_property_map(vertex_point, pmesh));
+
+    typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
+    FIMap fimap = choose_param(get_param(np, internal_np::face_index),
+                             get_property_map(face_index, pmesh));
+
+    typedef typename boost::lookup_named_param_def <
+        internal_np::edge_is_constrained_t,
+        NamedParameters,
+        internal::Border_constraint_pmap<PM, FaceRange, FIMap>//default
+      > ::type ECMap;
+    ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FaceRange, FIMap> >::value)
+       //avoid constructing the Border_constraint_pmap if it's not used
+      ? choose_param(get_param(np, internal_np::edge_is_constrained)
+                   , internal::Border_constraint_pmap<PM, FaceRange, FIMap>(pmesh, faces, fimap))
+      : choose_param(get_param(np, internal_np::edge_is_constrained)
+                   , internal::Border_constraint_pmap<PM, FaceRange, FIMap>());
+
+    typedef typename boost::lookup_named_param_def <
+        internal_np::vertex_is_constrained_t,
+        NamedParameters,
+        internal::No_constraint_pmap<vertex_descriptor>//default
+      > ::type VCMap;
+    VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                               internal::No_constraint_pmap<vertex_descriptor>());
+
+    typedef typename boost::lookup_named_param_def <
+        internal_np::face_patch_t,
+        NamedParameters,
+        internal::Connected_components_pmap<PM, ECMap, FIMap>//default
+      > ::type FPMap;
+    FPMap fpmap = (boost::is_same<FPMap, internal::Connected_components_pmap<PM, ECMap, FIMap> >::value)
+      ? choose_param(get_param(np, internal_np::face_patch),
+        internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap))
+      : choose_param(get_param(np, internal_np::face_patch),
+        internal::Connected_components_pmap<PM, ECMap, FIMap>());//do not compute cc's
+
+    bool protect = choose_param(get_param(np, internal_np::protect_constraints), false);
+
+
+
+
+
+
+    CGAL::Polygon_mesh_processing::internal::Incremental_remesher<PM, VertexPointMap, GT, ECMap, VCMap, FPMap, FIMap>
+            inc_remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap);
+          inc_remesher.init_remeshing(faces);
 
 
     CGAL::Polygon_mesh_processing::Area_remesher<PolygonMesh, VertexPointMap, GeomTraits> remesher(pmesh, vpmap);
     remesher.area_relaxation();
+
+
+    inc_remesher.project_to_surface();
+
 
 
 }
