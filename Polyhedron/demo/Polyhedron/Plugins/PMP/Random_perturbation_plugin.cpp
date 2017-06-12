@@ -24,6 +24,7 @@
 #include <QString>
 #include <QInputDialog>
 #include <QtPlugin>
+#include <QMessageBox>
 
 #include "ui_Random_perturbation_dialog.h"
 
@@ -122,20 +123,37 @@ public Q_SLOTS:
     }
     else if (selection_item)
     {
+      if (selection_item->selected_vertices.empty())
+      {
+        QMessageBox msg(QMessageBox::Warning,
+          QString("Empty selection"),
+          QString("Selection of vertices is empty.\nPerturbation aborted."),
+          QMessageBox::Ok,
+          this->mw);
+        msg.exec();
+        QApplication::restoreOverrideCursor();
+        return;
+      }
       Polyhedron& pmesh = *selection_item->polyhedron();
       if (ui.deterministic_checkbox->isChecked())
       {
         unsigned int seed = static_cast<unsigned int>(ui.seed_spinbox->value());
-        PMP::random_perturbation(pmesh, max_move,
+        PMP::random_perturbation(
+            selection_item->selected_vertices,
+            pmesh,
+            max_move,
             PMP::parameters::do_project(project)
-            .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
             .random_seed(seed));
       }
       else
       {
-        PMP::random_perturbation(pmesh, max_move,
-            PMP::parameters::do_project(project)
-            .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
+        std::cout << "selection_item->selected_vertices : "
+          << selection_item->selected_vertices.size() << std::endl;
+        PMP::random_perturbation(
+          selection_item->selected_vertices,
+          pmesh,
+          max_move,
+          PMP::parameters::do_project(project));
       }
 
       selection_item->invalidateOpenGLBuffers();
