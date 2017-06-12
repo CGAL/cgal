@@ -196,6 +196,10 @@ void random_perturbation(VertexRange vertices
 #endif
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief same as above, but all non-border vertices of `tmesh` are perturbed.
+*/
 template<typename TriangleMesh, typename NamedParameters>
 void random_perturbation(TriangleMesh& tmesh
                        , const double& perturbation_max_size
