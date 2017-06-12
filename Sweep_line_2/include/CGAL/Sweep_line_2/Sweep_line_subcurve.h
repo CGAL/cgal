@@ -263,6 +263,12 @@ public:
     unsigned int d2 = m_orig_subcurve2->number_of_original_curves();
     return d1+d2;
   }
+  
+  //~ void set_originating_subcurves(Subcurve* c1, Subcurve* c2, Event* right_event)
+  //~ {
+    
+  //~ }
+  
 
 #ifdef CGAL_SL_VERBOSE
   void Print() const;

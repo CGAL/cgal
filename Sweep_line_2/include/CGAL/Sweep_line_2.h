@@ -178,7 +178,7 @@ protected:
    * \param c1 first subcurve contributing to the overlap.
    * \param c2 second subcurve contributing to the overlap.
    */
-  void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve* c1 , Subcurve* c2);
+  void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , Subcurve*& c2);
 
   /*! Compute intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that
