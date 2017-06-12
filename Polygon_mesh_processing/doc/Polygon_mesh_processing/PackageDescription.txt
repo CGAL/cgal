@@ -90,6 +90,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
+- `CGAL::Polygon_mesh_processing::random_perturbation()`
 
 ## Hole Filling Functions ##
 - `CGAL::Polygon_mesh_processing::triangulate_hole()`

@@ -111,8 +111,9 @@ namespace internal {
 * the vertices are re-projected to the input surface after vertices geometric perturbation.
 * Note that depending on the chosen parameters, inversions and self-intersections may happen.
 *
-* @tparam VertexRange range of `boost::graph_traits<TriangleMesh>::vertex_descriptor`,
-*         model of `Range`. Its iterator type is `ForwardIterator`. 
+* @tparam VertexRange model of `Range`, holding
+*         vertices of type `boost::graph_traits<TriangleMesh>::vertex_descriptor`.
+*         Its iterator type is `ForwardIterator`. 
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
@@ -135,7 +136,7 @@ namespace internal {
 *  \cgalParamBegin{do_project} a boolean that sets whether vertices should be reprojected
 *    on the input surface after their coordinates random perturbation
 *  \cgalParamEnd
-*  \cgalParambegin{random_seed} a non-negative integer value to seed the random
+*  \cgalParamBegin{random_seed} a non-negative integer value to seed the random
       number generator, and make the perturbation deterministic
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
