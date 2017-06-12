@@ -59,8 +59,10 @@ namespace internal {
                FT(rng.get_double(-max_size, max_size)));
   }
 
-  template<typename GT, typename PM, typename VCMap, typename VPMap, typename RNG>
-  void random_perturbation_impl(PM& tmesh,
+  template<typename GT, typename VertexRange,
+           typename PM, typename VCMap, typename VPMap, typename RNG>
+  void random_perturbation_impl(VertexRange vrange,
+                                PM& tmesh,
                                 const double& max_size,
                                 VCMap vcmap,
                                 VPMap vpmap,
@@ -85,7 +87,7 @@ namespace internal {
     typename GT::Construct_translated_point_3 translate
       = gt.construct_translated_point_3_object();
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(tmesh))
+    BOOST_FOREACH(vertex_descriptor v, vrange)
     {
       if (!get(vcmap, v) && !is_border(v, tmesh))
       {
@@ -109,10 +111,13 @@ namespace internal {
 * the vertices are re-projected to the input surface after vertices geometric perturbation.
 * Note that depending on the chosen parameters, inversions and self-intersections may happen.
 *
+* @tparam VertexRange range of `boost::graph_traits<TriangleMesh>::vertex_descriptor`,
+*         model of `Range`. Its iterator type is `ForwardIterator`. 
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param tmesh the triangulated surface mesh to be perturbed
+* @param vertices the range of vertices to be perturbed
+* @param tmesh the triangulated surface mesh to which the perturbed vertices belong
 * @param perturbation_max_size the maximal length of moves that can be applied to
 *        vertices of `tmesh`.
 * @param np optional sequence of \ref namedparameters among the ones listed below
@@ -136,8 +141,9 @@ namespace internal {
 * \cgalNamedParamsEnd
 *
 */
-template<typename TriangleMesh, typename NamedParameters>
-void random_perturbation(TriangleMesh& tmesh
+template<typename VertexRange, typename TriangleMesh, typename NamedParameters>
+void random_perturbation(VertexRange vertices
+                       , TriangleMesh& tmesh
                        , const double& perturbation_max_size
                        , const NamedParameters& np)
 {
@@ -173,7 +179,8 @@ void random_perturbation(TriangleMesh& tmesh
   unsigned int seed = choose_param(get_param(np, internal_np::random_seed), -1);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
-  internal::random_perturbation_impl(tmesh,
+  internal::random_perturbation_impl(vertices,
+          tmesh,
           perturbation_max_size,
           vcmap,
           vpmap,
@@ -186,6 +193,23 @@ void random_perturbation(TriangleMesh& tmesh
   std::cout << "Perturbation done (";
   std::cout << t.time() << " sec )." << std::endl;
 #endif
+}
+
+template<typename TriangleMesh, typename NamedParameters>
+void random_perturbation(TriangleMesh& tmesh
+                       , const double& perturbation_max_size
+                       , const NamedParameters& np)
+{
+  random_perturbation(vertices(tmesh), tmesh, perturbation_max_size, np);
+}
+
+template<typename VertexRange, typename TriangleMesh>
+void random_perturbation(VertexRange vertices
+                       , TriangleMesh& tmesh
+                       , const double& perturbation_max_size)
+{
+  random_perturbation(vertices, tmesh, perturbation_max_size,
+                      parameters::all_default());
 }
 
 template<typename TriangleMesh>
