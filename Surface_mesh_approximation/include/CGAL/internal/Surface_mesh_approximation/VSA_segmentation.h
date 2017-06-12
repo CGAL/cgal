@@ -81,10 +81,6 @@ public:
     face_descriptor f;
     std::size_t i;
     FT fit_error;
-
-    bool operator=(const PlaneProxy &px) const {
-      return px.fit_error == this->fit_error;
-    }
   };
 
   struct CompFacet {
@@ -344,11 +340,8 @@ private:
       }
     }
 
-    std::cerr << "multiset" << std::endl;
     while (!facet_candidates.empty()) {
-      // CandidateSet::iterator citr = facet_candidates.begin();
       const FacetToIntegrate &c = *(facet_candidates.begin());
-      // facet_candidates.erase(c); // erase value, crash or freeze every time, even with self defined operatior=() for FacetToIntegrate
       facet_candidates.erase(facet_candidates.begin());
       if (seg_pmap[c.f] == CGAL_NOT_TAGGED_ID) {
         seg_pmap[c.f] = c.i;
@@ -363,42 +356,36 @@ private:
           }
         }
       }
-      // TODO: confusing crash
-      // facet_candidates.erase(c); // erase value, crash after fitting seed updated surprisingly
-      // facet_candidates.erase(*citr); // same surprising crash
-      // facet_candidates.erase(citr); // alright, iterator remains valid even after insertion
     }
-    std::cerr << "-------" << std::endl;
   }
 
   template <typename FacetSegmentMap>
   void fitting(FacetSegmentMap &seg_pmap) {
     // update normal
     std::vector<Vector> px_normals(proxies.size(), CGAL::NULL_VECTOR);
-    std::vector<FT> px_areas(proxies.size(), FT());
-    face_iterator fitr, fend;
-    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
-      std::size_t px_idx = seg_pmap[*fitr];
+    std::vector<FT> px_areas(proxies.size(), FT(0));
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      std::size_t px_idx = seg_pmap[f];
       px_normals[px_idx] = sum_functor(px_normals[px_idx],
-        scale_functor(normal_pmap[*fitr], area_pmap[*fitr]));
-      px_areas[px_idx] += area_pmap[*fitr];
+        scale_functor(normal_pmap[f], area_pmap[f]));
+      px_areas[px_idx] += area_pmap[f];
     }
+    
     for (std::size_t i = 0; i < proxies.size(); ++i) {
       Vector norm = scale_functor(px_normals[i], FT(1.0 / CGAL::to_double(px_areas[i]))); // redundant
       norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
       proxies[i].normal = norm;
     }
-    std::cerr << "normal updated" << std::endl;
 
     // update seed
     std::vector<std::size_t> facet_px_idx;
     facet_px_idx.reserve(num_faces(mesh));
     std::vector<FT> facet_px_err;
     facet_px_err.reserve(num_faces(mesh));
-    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
-      std::size_t px_idx = seg_pmap[*fitr];
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      std::size_t px_idx = seg_pmap[f];
       facet_px_idx.push_back(px_idx);
-      facet_px_err.push_back(fit_error(*fitr, proxies[px_idx]));
+      facet_px_err.push_back(fit_error(f, proxies[px_idx]));
     }
     FT max_facet_error = facet_px_err.front();
     for (std::size_t i = 0; i < facet_px_err.size(); ++i) {
@@ -407,15 +394,15 @@ private:
     }
     std::vector<FT> distance_min(proxies.size(), max_facet_error);
     std::size_t fidx = 0;
-    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr, ++fidx) {
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
       std::size_t px_idx = facet_px_idx[fidx];
       FT err = facet_px_err[fidx];
       if (err < distance_min[px_idx]) {
-        proxies[px_idx].seed = *fitr;
+        proxies[px_idx].seed = f;
         distance_min[px_idx] = err;
       }
+      ++fidx;
     }
-    std::cerr << "seed updated" << std::endl;
   }
 
   // insert proxy at the facet with the maximum fitting error in the proxy with maximum error
@@ -424,15 +411,15 @@ private:
     std::vector<FT> px_error(proxies.size(), FT(0.0));
     std::vector<FT> max_facet_error(proxies.size(), FT(0.0));
     std::vector<face_descriptor> max_facet(proxies.size());
-    face_iterator fitr, fend;
-    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
-      std::size_t px_idx = seg_pmap[*fitr];
-      FT err = fit_error(*fitr, proxies[px_idx]);
+    
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      std::size_t px_idx = seg_pmap[f];
+      FT err = fit_error(f, proxies[px_idx]);
       px_error[px_idx] += err;
 
       if (err > max_facet_error[px_idx]) {
         max_facet_error[px_idx] = err;
-        max_facet[px_idx] = *fitr;
+        max_facet[px_idx] = f;
       }
     }
 
