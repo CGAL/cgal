@@ -254,8 +254,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
         if ((*score)[b] == -1.)
           compute_score(b);
 
-        if ((*nb_points)[a] != (*nb_points)[b])
-          return (*nb_points)[a] > (*nb_points)[b];
+        // if ((*nb_points)[a] != (*nb_points)[b])
+        //   return (*nb_points)[a] > (*nb_points)[b];
         return (*score)[a] > (*score)[b];
       }
     };
@@ -501,7 +501,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
           (std::size_t)((FT)0.01 * m_num_available_points) : 
           m_options.min_points;
       m_options.min_points = (m_options.min_points < 10) ? 10 : m_options.min_points;
-      
+
       // Initializing the shape index
       m_shape_index.assign(m_num_available_points, -1);
 
@@ -510,10 +510,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       //Initialization structures
       int class_index = -1;
 
-#define QUERY_SPHERE
-#ifdef QUERY_SPHERE
       std::vector<std::size_t> neighbors;
-#endif
 
       std::vector<std::size_t> sorted_indices (m_num_total_points);
       std::copy (boost::counting_iterator<std::size_t>(0),
@@ -521,23 +518,16 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
                  sorted_indices.begin());
 #define SORT_INDICES
 #ifdef SORT_INDICES
-//      std::random_shuffle (sorted_indices.begin(), sorted_indices.end());
-
-//      std::size_t nb_sorted = m_num_total_points / m_options.min_points;
       std::sort (sorted_indices.begin(),
-                 sorted_indices.end(), //(sorted_indices.begin() + nb_sorted * 2),
+                 sorted_indices.end(),
                  Sort_by_planarity(m_input_iterator_first, m_point_map, m_index_map,
                                    m_num_total_points, *m_tree, m_options.cluster_epsilon));
-
-//      std::random_shuffle (sorted_indices.begin() + nb_sorted, sorted_indices.end());
 #endif
 
-      std::ofstream log ("log.plot");
       std::vector<double> fits(m_num_total_points, -1.);
       std::size_t m_num_available_points = m_num_total_points;
       for (std::size_t I = 0; I < m_num_total_points; ++ I)
       {
-        log << m_num_available_points << std::endl;
         std::size_t i = sorted_indices[I];
         
         Input_iterator it = m_input_iterator_first + i;
@@ -549,8 +539,11 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
         
         int conti = 0; 	//for accelerate least_square fitting 
 
+        Vector plane_normal = get(m_normal_map, *it);
+        plane_normal = plane_normal / std::sqrt(plane_normal * plane_normal);
+        
         Plane optimal_plane(get(m_point_map, *it),
-                            get(m_normal_map, *it));
+                            plane_normal);
 
         //initialization containers
         std::set<std::size_t> index_container;
@@ -571,7 +564,6 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
             std::size_t point_index = *icfrit;
             Input_iterator pit = m_input_iterator_first + point_index;
 
-#ifdef QUERY_SPHERE
             neighbors.clear();
             Sphere fs (get(m_point_map, *pit), m_options.cluster_epsilon, 0, m_tree->traits());
             m_tree->search (std::back_inserter (neighbors), fs);
@@ -579,17 +571,6 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
             for (std::size_t nb = 0; nb < neighbors.size(); ++ nb)
             {
               std::size_t neighbor_index = neighbors[nb];
-#else
-            Neighbor_search search(*m_tree, get(m_point_map, *pit), 10, 0, true, tr_dist);
-                
-            for (typename Neighbor_search::iterator nit = search.begin();
-                 nit != search.end(); ++ nit)
-            {
-              if (nit->second > m_options.cluster_epsilon * m_options.cluster_epsilon)
-                break;
-                    
-              std::size_t neighbor_index = nit->first;
-#endif
               Input_iterator nbit = m_input_iterator_first + neighbor_index;
                     
               if (m_shape_index[neighbor_index] != -1)
@@ -598,9 +579,11 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
               const Point& neighbor = get(m_point_map, *nbit);
               double distance = CGAL::squared_distance(neighbor, optimal_plane);
 
+              Vector normal = get(m_normal_map, *nbit);
+              normal = normal / std::sqrt (normal * normal);
+
               if (distance > m_options.epsilon * m_options.epsilon
-                  || std::fabs(get (m_normal_map, *nbit)
-                               * optimal_plane.orthogonal_vector()) < m_options.normal_threshold)
+                  || std::fabs(normal * plane_normal) < m_options.normal_threshold)
               {
                 continue;
               }
@@ -608,24 +591,6 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
               m_shape_index[neighbor_index] = class_index;
               propagation = true;
               index_container_current_ring.insert(neighbor_index);
-              conti++;
-              if (conti < 5)
-                continue;
-              
-              if ((conti < 10) || (conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
-              {
-                std::list<Point> listp;
-                for (typename std::set<std::size_t>::iterator icit = index_container.begin();
-                     icit != index_container.end(); ++ icit)
-                  listp.push_back(get (m_point_map, *(m_input_iterator_first + *icit)));
-
-                Plane reajusted_plane;
-                CGAL::linear_least_squares_fitting_3(listp.begin(),
-                                                     listp.end(),
-                                                     reajusted_plane,
-                                                     CGAL::Dimension_tag<0>());
-                optimal_plane = reajusted_plane;
-              }
             }
           }
 
@@ -638,6 +603,28 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
             index_container.insert(*lit);
           }
           index_container_current_ring.clear();
+          
+          conti++;
+          if (index_container.size() < 5)
+            continue;
+          
+          if ((conti < 10) || (conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
+          {
+            std::list<Point> listp;
+            for (typename std::set<std::size_t>::iterator icit = index_container.begin();
+                 icit != index_container.end(); ++ icit)
+              listp.push_back(get (m_point_map, *(m_input_iterator_first + *icit)));
+
+            Plane reajusted_plane;
+            CGAL::linear_least_squares_fitting_3(listp.begin(),
+                                                 listp.end(),
+                                                 reajusted_plane,
+                                                 CGAL::Dimension_tag<0>());
+            optimal_plane = reajusted_plane;
+            Vector previous = plane_normal;
+            plane_normal = optimal_plane.orthogonal_vector();
+            plane_normal = plane_normal / std::sqrt(plane_normal * plane_normal);
+          }
         }
         while (propagation);
 
