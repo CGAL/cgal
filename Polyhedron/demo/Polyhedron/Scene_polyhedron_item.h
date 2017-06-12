@@ -133,9 +133,10 @@ public:
     bool isItemMulticolor();
 
     void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
-    void printVertexIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-    void printEdgeIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-    void printFaceIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    bool printVertexIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    bool printEdgeIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    bool printFaceIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+    void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
     bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
 
 
@@ -173,6 +174,7 @@ public Q_SLOTS:
     void showVertices(bool);
     void showEdges(bool);
     void showFaces(bool);
+    void showPrimitives(bool);
     void zoomToId();
 
 Q_SIGNALS:

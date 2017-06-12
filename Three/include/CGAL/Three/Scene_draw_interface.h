@@ -76,6 +76,8 @@ public:
   virtual void printEdgeIds(CGAL::Three::Viewer_interface*) = 0;
   ///\brief displays all the faces ids if there are less than max_textItems.
   virtual void printFaceIds(CGAL::Three::Viewer_interface*) = 0;
+  ///\brief displays all the primitive ids if there are less than max_textItems.
+  virtual void printAllIds(CGAL::Three::Viewer_interface*) = 0;
 
   //!\brief moves the camera orthogonally to the picked sface.
   //!
