@@ -20,6 +20,8 @@
 #ifndef CGAL_POISSON_SURFACE_RECONSTRUCTION_H
 #define CGAL_POISSON_SURFACE_RECONSTRUCTION_H
 
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
