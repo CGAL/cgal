@@ -233,7 +233,8 @@ public:
     for (Facet_iterator it = _surface.begin(); it != _surface.end(); ++ it)
     {
       Facet t = *it;
-      *(output ++) = {{ (*it)[0], (*it)[1], (*it)[2] }};
+      cpp11::array<std::size_t, 3> f = {{ std::size_t((*it)[0]), std::size_t((*it)[1]), std::size_t((*it)[2]) }};
+      *(output ++) = f;
     }
 //    std::copy (_surface.begin(), _surface.end(), output);
   }

@@ -60,10 +60,10 @@ int main(int argc, char** argv)
   std::ofstream out ("out.off");
   out << "OFF" << std::endl << points.size() << " " << reconstruct.number_of_facets() << " 0" << std::endl;
   
-  for (typename Point_set::iterator it = points.begin(); it != points.end(); ++ it)
+  for (Point_set::iterator it = points.begin(); it != points.end(); ++ it)
     out << points.point(*it) << std::endl;
   
-  for (typename Reconstruction::Facet_iterator it = reconstruct.facets_begin();
+  for (Reconstruction::Facet_iterator it = reconstruct.facets_begin();
        it != reconstruct.facets_end(); ++ it)
     out << "3 " << (*it)[0] << " " << (*it)[1] << " " << (*it)[2] << std::endl;
 
