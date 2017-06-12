@@ -60,12 +60,18 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "structuring_example.cpp" )
 
   # Executables that require C++11
-  list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
-  if(has_cpp11 LESS 0)
+  list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_rvalue_references has_cxx_rvalues)
+  list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_variadic_templates has_cxx_variadic)
+
+  if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
     message(STATUS "NOTICE: LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
   else()
+    set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)    
+
     create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" )
     create_single_source_cgal_program( "write_ply_points_example.cpp" )
+    target_compile_features(read_ply_points_with_colors_example PRIVATE ${needed_cxx_features})
+    target_compile_features(write_ply_points_example PRIVATE ${needed_cxx_features})
     
     find_package(LASLIB)
     if (LASLIB_FOUND)
@@ -74,6 +80,7 @@ if ( CGAL_FOUND )
       include_directories(${LASZIP_INCLUDE_DIR})
       create_single_source_cgal_program( "read_las_example.cpp" )
       target_link_libraries(read_las_example ${LASLIB_LIBRARIES})
+      target_compile_features(read_las_example PRIVATE ${needed_cxx_features})
     else()
       message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
     endif()

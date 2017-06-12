@@ -23,7 +23,7 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/config.h>
-#ifndef CGAL_CXX11
+#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 #error CGAL PLY writer requires a C++11 compiler
 #endif
 

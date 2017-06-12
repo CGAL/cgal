@@ -537,7 +537,7 @@ void Scene_points_with_normal_item::selectDuplicates()
   Q_EMIT itemChanged();
 }
 
-#ifdef CGAL_CXX11
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 #ifdef CGAL_LINKED_WITH_LASLIB
 // Loads point set from .LAS file
 bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)

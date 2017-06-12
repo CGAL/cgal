@@ -29,7 +29,7 @@
 #include <CGAL/IO/write_off_points.h>
 
 #include <CGAL/config.h>
-#ifdef CGAL_CXX11
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
@@ -43,7 +43,7 @@ namespace CGAL {
 namespace internal
 {
 
-#ifdef CGAL_CXX11
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 namespace PLY
 {
 
@@ -289,7 +289,7 @@ read_off_point_set(
 }
 
 
-#if defined (CGAL_CXX11) || defined(DOXYGEN_RUNNING)
+#if (!defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)) || defined(DOXYGEN_RUNNING)
 /*!
   \ingroup PkgPointSet3IO
  */
@@ -691,7 +691,7 @@ std::istream& operator>>(std::istream& is,
   is.seekg(0);
   if (line.find("OFF") == 0 || line.find("NOFF") == 0)
     CGAL::read_off_point_set (is, ps);
-#ifdef CGAL_CXX11
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
   else if (line.find("ply") == 0)
     CGAL::read_ply_point_set (is, ps);
 #ifdef CGAL_LINKED_WITH_LASLIB

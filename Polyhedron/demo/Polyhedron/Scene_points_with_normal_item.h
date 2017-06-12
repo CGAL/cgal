@@ -46,7 +46,7 @@ public:
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   // IO
-#ifdef CGAL_CXX11
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 #ifdef CGAL_LINKED_WITH_LASLIB
   bool read_las_point_set(std::istream& in);
   bool write_las_point_set(std::ostream& out) const;
