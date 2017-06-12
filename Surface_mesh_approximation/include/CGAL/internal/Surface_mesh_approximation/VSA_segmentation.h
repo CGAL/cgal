@@ -81,11 +81,9 @@ public:
     face_descriptor f;
     std::size_t i;
     FT fit_error;
-  };
 
-  struct CompFacet {
-    bool operator()(const FacetToIntegrate &f1, const FacetToIntegrate &f2) const {
-      return f1.fit_error < f2.fit_error;
+    bool operator<(const FacetToIntegrate &rhs) const {
+      return this->fit_error < rhs.fit_error;
     }
   };
 
@@ -318,10 +316,10 @@ private:
 
   template<typename FacetSegmentMap>
   void flooding(FacetSegmentMap &seg_pmap) {
+    typedef std::multiset<FacetToIntegrate> CandidateSet;
+
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       seg_pmap[f] = CGAL_NOT_TAGGED_ID;
-
-    typedef std::multiset<FacetToIntegrate, CompFacet> CandidateSet;
 
     const std::size_t num_proxies = proxies.size();
     CandidateSet facet_candidates;
@@ -411,7 +409,7 @@ private:
     std::vector<FT> px_error(proxies.size(), FT(0.0));
     std::vector<FT> max_facet_error(proxies.size(), FT(0.0));
     std::vector<face_descriptor> max_facet(proxies.size());
-    
+
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
       std::size_t px_idx = seg_pmap[f];
       FT err = fit_error(f, proxies[px_idx]);
