@@ -62,7 +62,7 @@ public:
 
   inline friend
   void
-  put(Static_property_map& pm, const key_type&, const value_type&)
+  put(Static_property_map&, const key_type&, const value_type&)
   {}
 };
 
