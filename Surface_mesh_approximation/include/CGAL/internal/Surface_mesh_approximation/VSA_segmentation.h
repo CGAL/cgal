@@ -81,6 +81,10 @@ public:
     face_descriptor f;
     std::size_t i;
     FT fit_error;
+
+    bool operator=(const PlaneProxy &px) const {
+      return px.fit_error == this->fit_error;
+    }
   };
 
   struct CompFacet {
@@ -202,30 +206,23 @@ public:
     halfedge_status_pmap(halfedge_status_map),
     fit_error(traits, normal_pmap, area_pmap) {
     // CGAL_precondition(is_pure_triangle(mesh));
-    // construct facet normal map
-    face_iterator fitr, fend;
-    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
-      const Point p1 = get(vertex_point_pmap, target(halfedge(*fitr, mesh), mesh));
-      const Point p2 = get(vertex_point_pmap, target(next(halfedge(*fitr, mesh), mesh), mesh));
-      const Point p3 = get(vertex_point_pmap, target(prev(halfedge(*fitr, mesh), mesh), mesh));
+    // construct facet normal & area map
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      const halfedge_descriptor he = halfedge(f, mesh);
+      const Point p1 = get(vertex_point_pmap, source(he, mesh));
+      const Point p2 = get(vertex_point_pmap, target(he, mesh));
+      const Point p3 = get(vertex_point_pmap, target(next(he, mesh), mesh));
       //const Point center = centroid_functor(p1, p2, p3);
       Vector normal = normal_functor(p1, p2, p3);
       normal = scale_functor(normal,
         FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
+      facet_normals.insert(std::pair<face_descriptor, Vector>(f, normal));
 
-      facet_normals.insert(std::pair<face_descriptor, Vector>(*fitr, normal));
+      FT area(std::sqrt(CGAL::to_double(area_functor(p1, p2, p3))));
+      facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
     }
 
-    // construct facet area map
-    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr) {
-      const Point p1 = get(vertex_point_pmap, target(halfedge(*fitr, mesh), mesh));
-      const Point p2 = get(vertex_point_pmap, target(next(halfedge(*fitr, mesh), mesh), mesh));
-      const Point p3 = get(vertex_point_pmap, target(prev(halfedge(*fitr, mesh), mesh), mesh));
-      FT area(std::sqrt(CGAL::to_double(area_functor(p2, p1, p3))));
-      facet_areas.insert(std::pair<face_descriptor, FT>(*fitr, area));
-    }
-
-    // tag all vertex without anchor
+    // initialize all vertex anchor status
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
       vertex_status_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
     }
@@ -325,9 +322,8 @@ private:
 
   template<typename FacetSegmentMap>
   void flooding(FacetSegmentMap &seg_pmap) {
-    face_iterator fitr, fend;
-    for (boost::tie(fitr, fend) = faces(mesh); fitr != fend; ++fitr)
-      seg_pmap[*fitr] = CGAL_NOT_TAGGED_ID;
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
+      seg_pmap[f] = CGAL_NOT_TAGGED_ID;
 
     typedef std::multiset<FacetToIntegrate, CompFacet> CandidateSet;
 
@@ -337,37 +333,42 @@ private:
       face_descriptor f = proxies[i].seed;
       seg_pmap[f] = i;
 
-      Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(f, mesh), mesh), done(facet_circulator);
-      do {
-        if (face(opposite(*facet_circulator, mesh), mesh) != boost::graph_traits<Polyhedron>::null_face()) {
+      BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, mesh), mesh)) {
+        if (fadj != boost::graph_traits<Polyhedron>::null_face()) {
           FacetToIntegrate cand;
-          cand.f = face(opposite(*facet_circulator, mesh), mesh);
-          cand.fit_error = fit_error(cand.f, proxies[i]);
+          cand.f = fadj;
+          cand.fit_error = fit_error(fadj, proxies[i]);
           cand.i = i;
           facet_candidates.insert(cand);
         }
-      } while (++facet_circulator != done);
+      }
     }
 
-    for (CandidateSet::iterator citr = facet_candidates.begin(); citr != facet_candidates.end();) {
-      if (seg_pmap[citr->f] == CGAL_NOT_TAGGED_ID) {
-        seg_pmap[citr->f] = citr->i;
-        Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(citr->f, mesh), mesh), done(facet_circulator);
-        do {
-          face_descriptor oppo_facet = face(opposite(*facet_circulator, mesh), mesh);
-          if (oppo_facet != boost::graph_traits<Polyhedron>::null_face()
-            && seg_pmap[oppo_facet] == CGAL_NOT_TAGGED_ID) {
+    std::cerr << "multiset" << std::endl;
+    while (!facet_candidates.empty()) {
+      // CandidateSet::iterator citr = facet_candidates.begin();
+      const FacetToIntegrate &c = *(facet_candidates.begin());
+      // facet_candidates.erase(c); // erase value, crash or freeze every time, even with self defined operatior=() for FacetToIntegrate
+      facet_candidates.erase(facet_candidates.begin());
+      if (seg_pmap[c.f] == CGAL_NOT_TAGGED_ID) {
+        seg_pmap[c.f] = c.i;
+        BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, mesh), mesh)) {
+          if (fadj != boost::graph_traits<Polyhedron>::null_face()
+            && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
             FacetToIntegrate cand;
-            cand.f = oppo_facet;
-            cand.fit_error = fit_error(oppo_facet, proxies[citr->i]);
-            cand.i = citr->i;
+            cand.f = fadj;
+            cand.fit_error = fit_error(fadj, proxies[c.i]);
+            cand.i = c.i;
             facet_candidates.insert(cand);
           }
-        } while (++facet_circulator != done);
+        }
       }
-      facet_candidates.erase(citr);
-      citr = facet_candidates.begin();
+      // TODO: confusing crash
+      // facet_candidates.erase(c); // erase value, crash after fitting seed updated surprisingly
+      // facet_candidates.erase(*citr); // same surprising crash
+      // facet_candidates.erase(citr); // alright, iterator remains valid even after insertion
     }
+    std::cerr << "-------" << std::endl;
   }
 
   template <typename FacetSegmentMap>
@@ -387,6 +388,7 @@ private:
       norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
       proxies[i].normal = norm;
     }
+    std::cerr << "normal updated" << std::endl;
 
     // update seed
     std::vector<std::size_t> facet_px_idx;
@@ -413,6 +415,7 @@ private:
         distance_min[px_idx] = err;
       }
     }
+    std::cerr << "seed updated" << std::endl;
   }
 
   // insert proxy at the facet with the maximum fitting error in the proxy with maximum error
