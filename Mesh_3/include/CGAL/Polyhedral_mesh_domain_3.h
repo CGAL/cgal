@@ -100,28 +100,6 @@ struct Surface_patch_index_generator
   }
 };
 
-// Compatibility: when `Patch_id` is `Tag_true`, use the `Patch_id`
-// from the `Facet`
-template < class Subdomain_index, class Polyhedron>
-struct Surface_patch_index_generator<Subdomain_index,
-                                     Polyhedron,
-                                     Tag_true>
- : public Surface_patch_index_generator<Subdomain_index,
-                                        Polyhedron,
-                                        typename Polyhedron::Facet::Patch_id>
-{};
-
-// Compatibility: when `Patch_id` is `Tag_false`, treat it as `void`
-template < class Subdomain_index, class Polyhedron>
-struct Surface_patch_index_generator<Subdomain_index,
-                                     Polyhedron,
-                                     Tag_false>
- : public Surface_patch_index_generator<Subdomain_index,
-                                        Polyhedron,
-                                        void>
-{};
-
-
 template < class Subdomain_index, class P, class Patch_id_>
 struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with_graph<Surface_mesh<P> >, Patch_id_>
 {
@@ -164,6 +142,28 @@ struct Surface_patch_index_generator<Subdomain_index,  Graph_with_descriptor_wit
   Surface_patch_index operator()(const Primitive_id&)
   { return Surface_patch_index(0,1); }
 };
+
+// Compatibility: when `Patch_id` is `Tag_true`, use the `Patch_id`
+// from the `Facet`
+template < class Subdomain_index, class Polyhedron>
+struct Surface_patch_index_generator<Subdomain_index,
+                                     Polyhedron,
+                                     Tag_true>
+ : public Surface_patch_index_generator<Subdomain_index,
+                                        Polyhedron,
+                                        typename Polyhedron::Facet::Patch_id>
+{};
+
+// Compatibility: when `Patch_id` is `Tag_false`, treat it as `void`
+template < class Subdomain_index, class Polyhedron>
+struct Surface_patch_index_generator<Subdomain_index,
+                                     Polyhedron,
+                                     Tag_false>
+ : public Surface_patch_index_generator<Subdomain_index,
+                                        Polyhedron,
+                                        void>
+{};
+
 
 // -----------------------------------
 // Index_generator
