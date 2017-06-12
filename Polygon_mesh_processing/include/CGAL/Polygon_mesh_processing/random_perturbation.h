@@ -130,7 +130,7 @@ namespace internal {
 *  \cgalParamBegin{do_project} a boolean that sets whether vertices should be reprojected
 *    on the input surface after their coordinates random perturbation
 *  \cgalParamEnd
-*  \cgalParambegin{random_seed} an non-negative integer value to seed the random
+*  \cgalParambegin{random_seed} a non-negative integer value to seed the random
       number generator, and make the perturbation deterministic
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
