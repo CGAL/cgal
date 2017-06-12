@@ -130,7 +130,7 @@ public:
 
   bool applicable(QAction*) const
   {
-    if(!scene->numberOfEntries() == 2)
+    if(scene->numberOfEntries() != 2)
       return false;
     Scene_polyhedron_item* poly = NULL;
     Scene_surface_mesh_item* sm = NULL;
@@ -195,6 +195,7 @@ private Q_SLOTS:
     if((!poly && ! sm)|| !pn)
       return ;
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item(*pn);
     Color_ramp thermal_ramp;
     thermal_ramp.build_thermal();
     Fcolor_map fred_map;
@@ -205,28 +206,28 @@ private Q_SLOTS:
     Color_map blue_map;
 
     bool r, g, b;
-     if(!pn->point_set()->check_colors())
+     if(!new_item->point_set()->check_colors())
      {
        //bind color pmaps
-       boost::tie(fred_map  , r) = pn->point_set()->add_property_map<double>("red",0);
-       boost::tie(fgreen_map, g)  = pn->point_set()->add_property_map<double>("green",0);
-       boost::tie(fblue_map , b)  = pn->point_set()->add_property_map<double>("blue",0);
+       boost::tie(fred_map  , r) = new_item->point_set()->add_property_map<double>("red",0);
+       boost::tie(fgreen_map, g)  = new_item->point_set()->add_property_map<double>("green",0);
+       boost::tie(fblue_map , b)  = new_item->point_set()->add_property_map<double>("blue",0);
        //bind the new color maps to the right internal members so has_colors() return true in the item.
-       pn->point_set()->check_colors();
+       new_item->point_set()->check_colors();
      }
      else
      {
-       boost::tie(fred_map  , r) =  pn->point_set()->property_map<double>("red");
-       boost::tie(fgreen_map, g) =  pn->point_set()->property_map<double>("green");
-       boost::tie(fblue_map , b) =  pn->point_set()->property_map<double>("blue");
+       boost::tie(fred_map  , r) =  new_item->point_set()->property_map<double>("red");
+       boost::tie(fgreen_map, g) =  new_item->point_set()->property_map<double>("green");
+       boost::tie(fblue_map , b) =  new_item->point_set()->property_map<double>("blue");
        if(!r)
-         red_map = pn->point_set()->property_map<unsigned char>("red").first;
+         red_map = new_item->point_set()->property_map<unsigned char>("red").first;
        if(!g)
-         green_map = pn->point_set()->property_map<unsigned char>("green").first;
+         green_map = new_item->point_set()->property_map<unsigned char>("green").first;
        if(!b)
-         blue_map = pn->point_set()->property_map<unsigned char>("blue").first;
+         blue_map = new_item->point_set()->property_map<unsigned char>("blue").first;
      }
-    Point_set* points = pn->point_set();
+    Point_set* points = new_item->point_set();
     points->collect_garbage();
     std::vector<double> distances(points->size());
     double hdist;
@@ -239,8 +240,8 @@ private Q_SLOTS:
 
     int id=0;
 
-    for (Point_set::const_iterator it = pn->point_set()->begin();
-         it != pn->point_set()->end(); ++ it)
+    for (Point_set::const_iterator it = new_item->point_set()->begin();
+         it != new_item->point_set()->end(); ++ it)
     {
       double d = distances[id]/hdist;
       //if r/g/b is false, it means the associated color map uses unsigned chars instead of doubles.
@@ -265,8 +266,11 @@ private Q_SLOTS:
     dock_widget->fDecileLabel->setText(QString("%1").arg(distances[distances.size()/10]));
     dock_widget->lDecildeLabel->setText(QString("%1").arg(distances[9*distances.size()/10]));
     dock_widget->medianLabel->setText(QString("%1").arg(distances[distances.size()/2]));
-    pn->invalidateOpenGLBuffers();
-    pn->itemChanged();
+    new_item->invalidateOpenGLBuffers();
+    new_item->itemChanged();
+    pn->setVisible(false);
+    new_item->setName(tr("%1 (distance)").arg(pn->name()));
+    scene->addItem(new_item);
     QApplication::restoreOverrideCursor();
   }
   void distance()
