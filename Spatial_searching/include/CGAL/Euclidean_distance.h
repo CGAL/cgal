@@ -57,8 +57,6 @@ namespace CGAL {
     // default constructor
     Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 
-    // During the computation, if the partially-computed distance `pcd` gets greater or equal
-    // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
     inline FT transformed_distance(const Query_item& q, const Point_d& p) const
     {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
@@ -66,25 +64,40 @@ namespace CGAL {
       return transformed_distance_from_coordinates(q, p_begin, p_end);
     }
 
-    // During the computation, if the partially-computed distance `pcd` gets greater or equal
-    // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
     template <typename Coord_iterator>
     inline FT transformed_distance_from_coordinates(const Query_item& q,
       Coord_iterator it_coord_begin, Coord_iterator it_coord_end) const
     {
-      return transformed_distance(q, it_coord_begin, it_coord_end, std::numeric_limits<FT>::max(), D());
+      return transformed_distance(q, it_coord_begin, it_coord_end, D());
     }
 
     // During the computation, if the partially-computed distance `pcd` gets greater or equal
     // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
     template <typename Coord_iterator>
-    inline FT interruptable_transformed_distance(const Query_item& q,
+    inline FT interruptible_transformed_distance(const Query_item& q,
                                    Coord_iterator it_coord_begin, Coord_iterator it_coord_end, 
                                    FT stop_if_geq_to_this) const 
     {
       return transformed_distance(q, it_coord_begin, it_coord_end, stop_if_geq_to_this, D());
     }
-    
+
+    // Dynamic version for runtime dimension, taking iterators on coordinates as parameters
+    template <typename Coord_iterator, typename Dim>
+    inline FT transformed_distance(const Query_item& q,
+      Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
+      Dim) const
+    {
+      FT distance = FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
+      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q), qe = construct_it(q, 1);
+      for (; qit != qe; ++qit, ++it_coord_begin)
+      {
+        FT diff = (*qit) - (*it_coord_begin);
+        distance += diff*diff;
+      }
+      return distance;
+    }
+
     // Dynamic version for runtime dimension, taking iterators on coordinates as parameters
     // During the computation, if the partially-computed distance `pcd` gets greater or equal
     // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
@@ -95,16 +108,16 @@ namespace CGAL {
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
-      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-        qe = construct_it(q, 1);
-      if (qe - qit >= 4)
+      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q), qe = construct_it(q, 1);
+      if (qe - qit >= 6)
       {
         // Every 4 coordinates, the current partially-computed distance
         // is compared to stop_if_geq_to_this
         // Note: the concept SearchTraits specifies that Cartesian_const_iterator_d 
         //       must be a random-access iterator
-        typename SearchTraits::Cartesian_const_iterator_d qe_minus_3 = qe - 3;
-        for (; qit < qe_minus_3; ++qit, ++it_coord_begin) {
+        typename SearchTraits::Cartesian_const_iterator_d qe_minus_5 = qe - 5;
+        for (;;)
+        {
           FT diff = (*qit) - (*it_coord_begin);
           distance += diff*diff;
           ++qit; ++it_coord_begin;
@@ -113,13 +126,16 @@ namespace CGAL {
           ++qit; ++it_coord_begin;
           diff = (*qit) - (*it_coord_begin);
           distance += diff*diff;
+          ++qit; ++it_coord_begin;
+          diff = (*qit) - (*it_coord_begin);
+          distance += diff*diff;
+          ++qit, ++it_coord_begin;
 
           if (distance >= stop_if_geq_to_this)
             return distance;
 
-          ++qit; ++it_coord_begin;
-          diff = (*qit) - (*it_coord_begin);
-          distance += diff*diff;
+          if (qit >= qe_minus_5)
+            break;
         }
       }
       for (; qit != qe; ++qit, ++it_coord_begin)
