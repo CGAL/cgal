@@ -10,7 +10,7 @@ of the underlying regular triangulation of a weighted alpha shape.
 \cgalRefines `RegularTriangulationTraits_3` 
 
 In addition to the requirements described in the concept
-::RegularTriangulationTraits_3, the geometric traits class of a
+`RegularTriangulationTraits_3`, the geometric traits class of a
 regular triangulation plugged in a basic alpha shapes provides the
 following.
 

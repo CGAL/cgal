@@ -34,7 +34,7 @@ the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits:
 \warning The tag `ExactAlphaComparisonTag` is currently ignored (that is, the code will
  behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
 if the traits defines a point type that is not implicitely convertible to the two-dimensional point type
-of a CGAL kernel. This is because we internally use the class Cartesian_converter to switch
+of a CGAL kernel. This is because we internally use the class `Cartesian_converter` to switch
  between the traits and exact CGAL kernels. <br>
 This means for example that it is useless to use the tag `ExactAlphaComparisonTag`
 in conjonction with the traits class `CGAL::Projection_traits_xy_3`: the latter
