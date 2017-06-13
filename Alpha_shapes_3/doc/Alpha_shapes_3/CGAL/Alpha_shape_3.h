@@ -23,14 +23,17 @@ must be model the concepts `AlphaShapeTraits_3`,
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. This is useful
 when the Delaunay triangulation is instantiated with an exact predicates inexact constructions 
 kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_false`\endlink as it induces a small
-overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
-the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
+overhead.
 
-\warning The tag `ExactAlphaComparisonTag` is currently ignored (that is, the code will
+\warning The tag `ExactAlphaComparisonTag` is currently ignored (meaning that the code will
  behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
-if the traits defines a point type that is not implicitely convertible to the three-dimensional point type
-of a CGAL kernel. This is because we internally use the class `Cartesian_converter` to switch
- between the traits and exact CGAL kernels.
+if either condition is met:
+  - `Dt::Geom_traits::FT` is not a floating point number type. Indeed, this strategy
+    does not make sense if the traits class already provides exact constructions.
+
+  - the traits defines a point type that is not implicitely convertible to the three-dimensional point type
+    of a CGAL kernel. This is because we internally use the class `Cartesian_converter` to switch
+    between the traits class and exact CGAL kernels.
 
 Note that this class is used for <I>basic</I>, <I>weighted</I>,
 and <I>periodic</I>Alpha Shapes.
