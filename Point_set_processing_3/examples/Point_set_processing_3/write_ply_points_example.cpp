@@ -20,28 +20,30 @@ typedef CGAL::Nth_of_tuple_property_map<1, PCI> Color_map;
 typedef CGAL::Nth_of_tuple_property_map<2, PCI> Intensity_map;
 
 // Define how a color should be stored
-namespace CGAL
-{
-  std::ostream& operator<< (std::ostream& stream, const CGAL::cpp11::array<unsigned char, 4>& c)
-  {
-    if (CGAL::get_mode(stream) == CGAL::IO::ASCII)
-      stream << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
-    else if (CGAL::get_mode(stream) == CGAL::IO::BINARY)
-      stream.write(reinterpret_cast<const char*>(&c), sizeof(c));
-    else
+namespace CGAL {
+  template< class F > 
+  struct Output_rep< ::Color, F > {
+    const ::Color& c;
+    static const bool is_specialized = true;
+    Output_rep (const ::Color& c) : c(c)
+    { }
+    std::ostream& operator() (std::ostream& out) const
     {
-      std::cerr << "Error: mode pretty not handled." << std::endl;
-      abort();
+      if (is_ascii(out))
+        out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
+      else
+        CGAL::write(out, c);
+      return out;
     }
-    return stream;
-  }
+  }; 
 }
+
 
 int main(int, char**)
 {
   std::vector<PCI> points; // store points
 
-  for (std::size_t i = 0; i < 10; ++ i)
+  for (int i = 0; i < 10; ++ i)
     points.push_back (CGAL::cpp11::make_tuple (Point (i / 10., i / 20., i / 30.),
                                                CGAL::make_array ((unsigned char)(255 / (i + 1)),
                                                                  (unsigned char)(192 / (i + 1)),

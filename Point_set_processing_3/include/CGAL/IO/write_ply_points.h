@@ -169,7 +169,7 @@ namespace internal {
             typename PropertyMap>
   void property_write (std::ostream& stream, ForwardIterator it, PropertyMap map)
   {
-    stream << get (map, *it);
+    stream << CGAL::oformat(get (map, *it));
   }
 
   template <typename ForwardIterator,
