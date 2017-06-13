@@ -520,17 +520,17 @@ construct_vertices()
     if (!regular.is_infinite(c1)) {
       sVor = get_anchor_vor(c1);
       if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
-  vh = add_vertex(Symb_anchor(sDel,sVor));
-  anchors[Symb_anchor(sDel,sVor)] = vh;
-  CGAL_assertion(vh == get_vertex(sDel, sVor));
+        vh = add_vertex(Symb_anchor(sDel,sVor));
+        anchors[Symb_anchor(sDel,sVor)] = vh;
+        CGAL_assertion(vh == get_vertex(sDel, sVor));
       }
     }
     if (!regular.is_infinite(c2)) {
       sVor = get_anchor_vor(c2);
       if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
-  vh = add_vertex(Symb_anchor(sDel,sVor));
-  anchors[Symb_anchor(sDel,sVor)] = vh;
-  CGAL_assertion(vh == get_vertex(sDel, sVor));
+        vh = add_vertex(Symb_anchor(sDel,sVor));
+        anchors[Symb_anchor(sDel,sVor)] = vh;
+        CGAL_assertion(vh == get_vertex(sDel, sVor));
       }
     }
     // anchor dimDel=0, dimVor=2
@@ -538,9 +538,9 @@ construct_vertices()
     for (int i=1; i<4; i++) {
       sDel = get_anchor_del(Rt_Simplex(c1->vertex((fit->second+i)&3)));
       if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
-  vh = add_vertex(Symb_anchor(sDel,sVor));
-  anchors[Symb_anchor(sDel,sVor)] = vh;
-  CGAL_assertion(vh == get_vertex(sDel, sVor));
+        vh = add_vertex(Symb_anchor(sDel,sVor));
+        anchors[Symb_anchor(sDel,sVor)] = vh;
+        CGAL_assertion(vh == get_vertex(sDel, sVor));
       } else {
         vh = get_vertex(sDel, sVor);
       }
@@ -679,20 +679,20 @@ construct_0_cell(Rt_Vertex_handle rt_vh) {
       vh[3] = get_vertex(sDel_v,sVor_c);
       int index = (*adj_cell)->index(rt_vh);
       for (int i=1; i<4; i++) {
-  sVor_f = get_anchor_vor(Rt_Simplex(Rt_Facet(*adj_cell,(index+i)&3)));
-  vh[2] = get_vertex(sDel_v,sVor_f);
+        sVor_f = get_anchor_vor(Rt_Simplex(Rt_Facet(*adj_cell,(index+i)&3)));
+        vh[2] = get_vertex(sDel_v,sVor_f);
 
   for (int j=1; j<4; j++) {
     if (j!=i) {
       sVor_e = get_anchor_vor(
-            Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
+                 Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
       vh[1] = get_vertex(sDel_v,sVor_e);
       if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
         CGAL_assertion(sVor_v != sVor_e);
         CGAL_assertion(sVor_e != sVor_f);
         CGAL_assertion(sVor_f != sVor_c);
         // Tmc_Cell_handle ch =
-    add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
+        add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
       }
     }
   }
@@ -740,8 +740,7 @@ construct_1_cell(const Rt_Finite_edges_iterator &e)
 
           for (int fi=1; fi<4; fi++) {
             if (((index0+fi)&3) != index1) {
-              sVor_f =
-                  get_anchor_vor(Rt_Simplex(Rt_Facet(ccir,(index0+fi)&3)));
+              sVor_f = get_anchor_vor(Rt_Simplex(Rt_Facet(ccir,(index0+fi)&3)));
               if ((sVor_c != sVor_f) && (sVor_f != sVor_e)) {
                 vh[0] = get_vertex(sDel_v, sVor_e);
                 vh[1] = get_vertex(sDel_e, sVor_e);
@@ -813,8 +812,7 @@ construct_2_cell(const Rt_Finite_facets_iterator &fit)
               int index0 = (index+vi)&3;
               int index1 = (index+ei)&3;
               int fi = (6+index-vi-ei)&3;//6-index-index0-index1;
-              sDel_e =
-                  get_anchor_del(Rt_Simplex(Rt_Edge(rt_ch, index0, index1)));
+              sDel_e = get_anchor_del(Rt_Simplex(Rt_Edge(rt_ch, index0, index1)));
               vh[1] = get_vertex(sDel_e, sVor_f);
               //index_12[rt_ch].V[index][(6+index-vi-ei)&3];
               if ((vh[0] != vh[1]) && (vh[1] != vh[2])) {
@@ -1168,7 +1166,7 @@ do_collapse(Tmc_Vertex_handle vh, Tmc_Vertex_handle vh_collapse_to)
   std::vector<Tmc_Cell_handle> incident_cells;
   incident_cells.reserve(32);
   _tmc.incident_cells(vh, std::back_inserter(incident_cells));
-  int i,i2;
+  int i, i2;
   for (typename std::vector<Tmc_Cell_handle>::iterator
        it = incident_cells.begin(); it != incident_cells.end(); it++) {
     i = (*it)->index(vh);
