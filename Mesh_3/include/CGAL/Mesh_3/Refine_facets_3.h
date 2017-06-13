@@ -1681,60 +1681,20 @@ template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 bool
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_facet_encroached(const Facet& facet,
-                    const Weighted_point& wpoint) const
+                    const Weighted_point& point) const
 {
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
-  {
     return false;
-  }
 
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
 
-  // <PERIODIC>
-  typename Gt::Compute_squared_distance_3 distance =
-    r_tr_.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Construct_point_3 wp2p = r_tr_.geom_traits().construct_point_3_object();
+  const Bare_point& center = get_facet_surface_center(facet);
+  const Weighted_point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
 
-  const Bare_point& point = wp2p(wpoint);
-  const Bare_point& center = r_tr_.canonicalize_point(get_facet_surface_center(facet));
-  const Bare_point& reference_point = wp2p(r_tr_.point(cell, (facet_index+1)&3));
-
-  Bare_point surface_centers[27];
-  typedef typename Tr::Offset Offset;
-  for( int i = 0; i < 3; i++ ) {
-    for( int j = 0; j < 3; j++ ) {
-      for( int k = 0; k < 3; k++ ) {
-        surface_centers[9*i+3*j+k] =
-            r_tr_.construct_point(std::make_pair(center, Offset(i-1,j-1,k-1)));
-      }
-    }
-  }
-
-  // facet is encroached if the new point is closer to the center than
+  // the facet is encroached if the new point is closer to the center than
   // any vertex of the facet
-
-  // Mesh_3:
-  //   compare_distance(center, reference_point, point) != CGAL::SMALLER
-
-  typedef typename Gt::FT FT;
-  FT min_distance_to_ref_point = distance(reference_point, center);
-  FT min_distance_to_point = distance(point, center);
-
-  for( int i = 0; i < 27; i++ ) {
-    FT distance_to_ref_point = distance(reference_point, surface_centers[i]);
-    if ( distance_to_ref_point < min_distance_to_ref_point )
-      min_distance_to_ref_point = distance_to_ref_point;
-
-    FT current_distance_to_point = distance(point, surface_centers[i]);
-    if ( current_distance_to_point < min_distance_to_point )
-      min_distance_to_point = current_distance_to_point;
-  }
-
-  assert(min_distance_to_point < 0.5 && min_distance_to_ref_point < 0.5);
-
-  return (!(min_distance_to_ref_point < min_distance_to_point) );
-  // </PERIODIC>
+  return r_tr_.greater_or_equal_power_distance(center, reference_point, point);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>

@@ -299,6 +299,55 @@ public:
     return Base::side_of_power_sphere(c, canonical_p, Offset(), perturb);
   }
 
+  // Warning 1: This is a periodic version that computes the smallest possible
+  // distances between p&q and p&r FOR ANY OFFSETS before comparing these distances
+  //
+  // \pre q and r should be canonical points, meaning that they live in the original domain
+  //
+  // It's main purpose is Periodic_mesh_3
+  bool greater_or_equal_power_distance(const Bare_point& p,
+                                       const Weighted_point& q,
+                                       const Weighted_point& r) const
+  {
+    typename Geom_traits::Compute_power_distance_3 power_distance =
+      geom_traits().compute_power_distance_3_object();
+
+    // q and r are assumed to be in the original domain, but not p
+    const Weighted_point wp = construct_weighted_point(canonicalize_point(p));
+
+    std::vector<Weighted_point> surface_centers(27);
+    typedef typename Tr::Offset Offset;
+    for(int i = 0; i < 3; i++)
+    {
+      for(int j = 0; j < 3; j++)
+      {
+        for(int k = 0; k < 3; k++)
+        {
+          surface_centers[9*i + 3*j + k] =
+            construct_weighted_point(std::make_pair(wp, Offset(i-1, j-1, k-1)));
+        }
+      }
+    }
+
+    typedef typename Gt::FT FT;
+    FT min_distance_to_q = power_distance(wp, q);
+    FT min_distance_to_r = power_distance(wp, r);
+
+    for(int i = 0; i < 27; i++)
+    {
+      FT distance_to_q = power_distance(surface_centers[i], q);
+      if(distance_to_q < min_distance_to_q)
+        min_distance_to_q = distance_to_q;
+
+      FT distance_to_r = power_distance(surface_centers[i], point);
+      if (distance_to_r < min_distance_to_r)
+        min_distance_to_r = distance_to_r;
+    }
+
+    assert(min_distance_to_r < 0.5 && min_distance_to_q < 0.5);
+    return min_distance_to_q >= min_distance_to_r;
+  }
+
   /// \name Locate functions
   ///
   /// Locate points within a periodic triangulation.
