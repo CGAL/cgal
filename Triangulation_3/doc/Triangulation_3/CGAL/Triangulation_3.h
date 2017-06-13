@@ -10,8 +10,8 @@ of points.
 \tparam Traits is the geometric traits class and must be a model of `TriangulationTraits_3`.
 
 \tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
-`Default` may be used, with default type is `Triangulation_data_structure_3<Triangulation_vertex_base_3<Traits>,
-                                                                            Triangulation_cell_base_3<Traits> >`.
+`Default` may be used, with default type `Triangulation_data_structure_3<Triangulation_vertex_base_3<Traits>,
+                                                                         Triangulation_cell_base_3<Traits> >`.
 Any custom type can be used instead of `Triangulation_vertex_base_3`
 and `Triangulation_cell_base_3`, provided that they are models of the
 concepts `TriangulationVertexBase_3` and `TriangulationCellBase_3`,
