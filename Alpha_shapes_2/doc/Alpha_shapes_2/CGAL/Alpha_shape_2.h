@@ -28,18 +28,21 @@ Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face` must be model the conc
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. This is useful 
 when the underlying triangulation is instantiated with an exact predicates inexact constructions 
 kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_false`\endlink as it induces a small 
-overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
-the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
+overhead.
 
-\warning The tag `ExactAlphaComparisonTag` is currently ignored (that is, the code will
+\warning The tag `ExactAlphaComparisonTag` is currently ignored (meaning that the code will
  behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
-if the traits defines a point type that is not implicitely convertible to the two-dimensional point type
-of a CGAL kernel. This is because we internally use the class `Cartesian_converter` to switch
- between the traits and exact CGAL kernels. <br>
-This means for example that it is useless to use the tag `ExactAlphaComparisonTag`
-in conjonction with the traits class `CGAL::Projection_traits_xy_3`: the latter
-camouflages a `CGAL::Point_3` as a `%Point_2` but the exact kernel `EK`
-will not know how to convert from the camouflaged `CGAL::Point_3` to `EK::Point_2`.
+if either condition is met:
+  - `Dt::Geom_traits::FT` is not a floating point number type. Indeed, this strategy
+    does not make sense if the traits class already provides exact constructions.
+
+  - the traits defines a point type that is not implicitely convertible to the two-dimensional point type
+    of a CGAL kernel. This is because we internally use the class `Cartesian_converter` to switch
+    between the traits class and exact CGAL kernels. For example, `ExactAlphaComparisonTag`
+    will be ignored if the traits class `CGAL::Projection_traits_xy_3` is used since
+    this traits class camouflages a `CGAL::Point_3` as a `%Point_2` and `Cartesian_converter`
+    does not know how to convert from the camouflaged `CGAL::Point_3` to the two-dimensional
+    point of an exact kernel.
 
 \cgalHeading{I/O}
 
