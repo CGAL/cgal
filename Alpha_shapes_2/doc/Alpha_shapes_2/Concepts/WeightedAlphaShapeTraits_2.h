@@ -5,13 +5,13 @@
 
 The concept `WeightedAlphaShapeTraits_2` describes the requirements
 for the geometric traits class
-of the underlying Regular triangulation of a weighted alpha shape.
+of the underlying regular triangulation of a weighted alpha shape.
 
 \cgalRefines `RegularTriangulationTraits_2`
 
 In addition to the requirements described in the concept
 ::RegularTriangulationTraits_2, the geometric traits class of a
-Regular triangulation plugged in a basic alpha shapes provides the
+regular triangulation plugged in a basic alpha shapes provides the
 following.
 
 \cgalHasModel All models of `Kernel`.

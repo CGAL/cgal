@@ -209,7 +209,7 @@ public:
         OUTSIDE_CONVEX_HULL, //3
         OUTSIDE_AFFINE_HULL}; //4
 
-  //Tag to distinguish Regular triangulations from others;
+  //Tag to distinguish regular triangulations from others;
   typedef Tag_false  Weighted_tag;
 
 protected:

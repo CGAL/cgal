@@ -145,7 +145,7 @@ namespace CGAL {
     typedef typename Gt::Plane_3       Plane;
     typedef typename Gt::Object_3      Object;
 
-    //Tag to distinguish Delaunay from Regular triangulations
+    //Tag to distinguish Delaunay from regular triangulations
     typedef Tag_true   Weighted_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
@@ -830,7 +830,7 @@ namespace CGAL {
     // DISPLACEMENT
     Vertex_handle move_point(Vertex_handle v, const Weighted_point & p);
 
-    // Displacement works only for Regular triangulation
+    // Displacement works only for regular triangulation
     // without hidden points at any time
     Vertex_handle move_if_no_collision(Vertex_handle v, const Weighted_point & p);
     Vertex_handle move(Vertex_handle v, const Weighted_point & p);
@@ -2470,7 +2470,7 @@ namespace CGAL {
     return insert(p, old_neighbor->cell());
   }
 
-  // Displacement works only for Regular triangulation
+  // Displacement works only for regular triangulation
   // without hidden points at any time
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
@@ -2582,7 +2582,7 @@ namespace CGAL {
       }
     }
     if (verbose)
-      std::cerr << "valid Regular triangulation" << std::endl;
+      std::cerr << "valid regular triangulation" << std::endl;
     return true;
   }
 
