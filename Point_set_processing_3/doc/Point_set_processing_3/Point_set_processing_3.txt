@@ -141,7 +141,8 @@ Output functions `write_ply_points_with_properties()` and
 
 The following example shows how to call
 `write_ply_points_with_properties()` to write a point set with points,
-RGB colors and intensity.
+RGB colors and intensity. Notice that in order to write a complex
+object, users need to provide an overload of `CGAL::Output_rep`.
 
 \cgalExample{Point_set_processing_3/write_ply_points_example.cpp}
 

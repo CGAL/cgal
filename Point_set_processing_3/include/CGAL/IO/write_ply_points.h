@@ -266,10 +266,9 @@ namespace internal {
 ///
 ///  - A `CGAL::cpp11::tuple<PropertyMap, PLY_property<T>...>` if the
 ///  user wants to write a complex object as several %PLY
-///  properties. In that case, and overload of the stream operator
-///  `std::operator<<()` must be provided for
-///  `PropertyMap::value_type` that handles both ASCII and binary
-///  output (see `CGAL::get_mode()`).
+///  properties. In that case, a specialization of `Output_rep` must
+///  be provided for `PropertyMap::value_type` that handles both ASCII
+///  and binary output (see `CGAL::get_mode()`).
 ///
 /// @sa `make_ply_point_writer()`
 /// @sa `make_ply_normal_writer()`
