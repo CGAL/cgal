@@ -523,9 +523,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
                  Sort_by_planarity(m_input_iterator_first, m_point_map, m_index_map,
                                    m_num_total_points, *m_tree, m_options.cluster_epsilon));
 #endif
-
       std::vector<double> fits(m_num_total_points, -1.);
-      std::size_t m_num_available_points = m_num_total_points;
+      m_num_available_points = m_num_total_points;
       for (std::size_t I = 0; I < m_num_total_points; ++ I)
       {
         std::size_t i = sorted_indices[I];
@@ -562,6 +561,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
                icfrit != index_container_former_ring.end(); ++ icfrit)
           {
             std::size_t point_index = *icfrit;
+                              
             Input_iterator pit = m_input_iterator_first + point_index;
 
             neighbors.clear();
@@ -584,9 +584,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
               if (distance > m_options.epsilon * m_options.epsilon
                   || std::fabs(normal * plane_normal) < m_options.normal_threshold)
-              {
                 continue;
-              }
 
               m_shape_index[neighbor_index] = class_index;
               propagation = true;
