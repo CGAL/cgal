@@ -586,7 +586,7 @@ private:
         vertex_point_pmap[target(he, mesh)],
         vertex_point_pmap[target(next(he, mesh), mesh)]);
       Vector vec = vector_functor(CGAL::ORIGIN, pt);
-      FT area = facet_areas[f];
+      FT area = area_pmap[f];
       areas[px_idx] += area;
       centers[px_idx] = sum_functor(centers[px_idx], scale_functor(vec, area));
     }
@@ -601,7 +601,7 @@ private:
   void compute_proxy_area(const FacetSegmentMap &seg_pmap) {
     std::vector<FT> areas(proxies.size(), FT(0));
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      areas[seg_pmap[f]] += facet_areas[f];
+      areas[seg_pmap[f]] += area_pmap[f];
     }
     proxies_area.swap(areas);
   }
