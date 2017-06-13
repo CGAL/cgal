@@ -558,7 +558,7 @@ private:
   }
 
   /// Get mirror facet
-  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); };
+  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); }
   Facet mirror_facet(const Cell_handle& c, const int i) const
   { return mirror_facet(std::make_pair(c,i)); }
 
