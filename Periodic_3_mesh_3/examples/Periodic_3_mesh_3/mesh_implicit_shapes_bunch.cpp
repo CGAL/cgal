@@ -41,6 +41,8 @@ typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria,
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
+static Tr dummy_tr; // default constructs a iso_cuboid (0,0,0,1,1,1)
+
 // Function
 FT sphere(const Point& p)
 { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.2; }
@@ -165,37 +167,12 @@ FT split_p (const Point& p) {
 
 // simple implementation
 Point canonicalize_point(const Point& p) {
-  const FT& xmin = 0., xmax = 1;
-  const FT& ymin = 0., ymax = 1;
-  const FT& zmin = 0., zmax = 1;
+  Point canonical_p = dummy_tr.canonicalize_point(p);
 
-  const FT xsize = xmax - xmin;
-  const FT ysize = ymax - ymin;
-  const FT zsize = zmax - zmin;
-
-  FT x = p.x(), y = p.y(), z = p.z();
-  if(p.x() < xmin) {
-    x += xsize;
-  } else if( !(p.x() < xmax) ) {
-    x -= xsize;
-  }
-
-  if(p.y() < ymin) {
-    y += ysize;
-  } else if( !(p.y() < ymax) ) {
-    y -= ysize;
-  }
-
-  if(p.z() < zmin) {
-    z += zsize;
-  } else if( !(p.z() < zmax) ) {
-    z -= zsize;
-  }
-
-  assert( !(x < xmin) && (x < xmax) );
-  assert( !(y < ymin) && (y < ymax) );
-  assert( !(z < zmin) && (z < zmax) );
-  return Point(x, y, z);
+  assert( !(canonical_p.x() < 0) && (canonical_p.x() < 1) );
+  assert( !(canonical_p.y() < 0) && (canonical_p.y() < 1) );
+  assert( !(canonical_p.z() < 0) && (canonical_p.z() < 1) );
+  return canonical_p;
 }
 
 FT cylinder(const Point& p) {
@@ -214,23 +191,24 @@ int main()
   // Array of the functions
   Function* implicit_function[functions_count] =
   {
-    &double_p,
     &cylinder,
-    &sphere,
+    &D_prime,
+    &diamond,
+    &double_p,
+    &G_prime,
+    &gyroid,
+    &lidinoid,
     &scherk,
     &schwarz_p,
-    &gyroid,
-    &diamond,
-    &G_prime,
-    &lidinoid,
-    &D_prime,
+    &sphere,
     &split_p
   };
 
   for( int i = 0; i < functions_count; i++ )
   {
     // Periodic mesh domain (Warning: Sphere_3 constructor uses squared radius !)
-    Periodic_mesh_domain domain(*implicit_function[i], CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
+    Periodic_mesh_domain domain(*implicit_function[i],
+                                CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
 
     /*
       double kidney_size = 3.;
