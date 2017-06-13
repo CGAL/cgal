@@ -119,7 +119,10 @@
            <string>Fitting tolerance in Euclidean distance</string>
           </property>
           <property name="decimals">
-           <number>3</number>
+           <number>8</number>
+          </property>
+          <property name="minimum">
+           <double>0.000001000000000</double>
           </property>
           <property name="maximum">
            <double>1000000.000000000000000</double>
@@ -206,7 +209,10 @@
            <string>Maximum world distance between points on a shape to be considered as connected</string>
           </property>
           <property name="decimals">
-           <number>2</number>
+           <number>8</number>
+          </property>
+          <property name="minimum">
+           <double>0.000001000000000</double>
           </property>
           <property name="maximum">
            <double>1000000.000000000000000</double>
