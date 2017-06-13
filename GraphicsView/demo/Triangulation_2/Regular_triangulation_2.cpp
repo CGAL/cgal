@@ -83,7 +83,7 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
-  // Add a GraphicItem for the Regular triangulation
+  // Add a GraphicItem for the regular triangulation
   dgi = new CGAL::Qt::RegularTriangulationGraphicsItem<Regular>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),

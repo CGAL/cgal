@@ -16,7 +16,7 @@ to the `Alpha_shape_3` class.
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. See the description
 provided in the documentation of `Alpha_shape_3` for more details. The default value is \link Tag_false `Tag_false`\endlink.
 \tparam WeightedTag is used only if `ExactAlphaComparisonTag` is \link Tag_true `Tag_true`\endlink. It
-must be \link Tag_true `Tag_true`\endlink if the underlying triangulation of the alpha shape to be used is a Regular triangulation
+must be \link Tag_true `Tag_true`\endlink if the underlying triangulation of the alpha shape to be used is a regular triangulation
 and \link Tag_false `Tag_false`\endlink otherwise. The default is \link Tag_false `Tag_false`\endlink.
 
 \cgalModels `AlphaShapeCell_3`

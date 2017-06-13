@@ -47,9 +47,9 @@ const std::string Slab[] = {
 
 const std::string Hmsg[] = {
   "Draw a Delaunay triangulation of a set of points","Draw a Constrained Delaunay triangulation of a set of points and segments",
-  "Draw a Conforming Delaunay triangulation of a set of segments and points",
-  "Draw a Conforming Gabriel triangulation of a set of segments and points",
-  "Draw a Regular triangulation of a set of weighted points (circles, points)"
+  "Draw a conforming Delaunay triangulation of a set of segments and points",
+  "Draw a conforming Gabriel triangulation of a set of segments and points",
+  "Draw a regular triangulation of a set of weighted points (circles, points)"
 };
 
 class triangulationIpelet 

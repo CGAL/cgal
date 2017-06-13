@@ -2864,7 +2864,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   std::copy(tmp_vertices.begin(), tmp_vertices.end(),
       std::back_inserter(vertices));
 
-  // create a Delaunay/Regular triangulation of the points on the boundary
+  // create a Delaunay/regular triangulation of the points on the boundary
   // in Euclidean space and make a map from the vertices in remover.tmp
   // towards the vertices in *this
   
