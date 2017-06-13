@@ -38,7 +38,7 @@ namespace Polygon_mesh_processing {
   template <typename Polyhedron, typename FT, typename Patch_id>
 void detect_features(Polyhedron& p,
                      FT angle_in_deg,
-                     typename boost::property_map<Polyhedron, CGAL::face_patch_id_t<Patch_id> >::type pid_map)
+                     typename boost::property_map<Polyhedron, CGAL::face_patch_id_t<Patch_id> >::type)
 {
   Detect_features_in_polyhedra<Polyhedron, Patch_id> go;
   // AF todo: Add overload for the next three functions so that we use the pid_map
