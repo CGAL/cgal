@@ -6,7 +6,6 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <math.h>
 
 namespace CGAL {
 
@@ -180,8 +179,10 @@ private:
         Vector edge1(s, equidistant_p1);
         Vector edge2(s, equidistant_p2);
 
-        internal::normalize(edge1, GeomTraits());
-        internal::normalize(edge2, GeomTraits());
+        if(edge1 != CGAL::NULL_VECTOR)
+            internal::normalize(edge1, GeomTraits());
+        if(edge2 != CGAL::NULL_VECTOR)
+            internal::normalize(edge2, GeomTraits());
 
         // get bisector!
         Vector bisector = CGAL::NULL_VECTOR;
