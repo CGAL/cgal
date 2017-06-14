@@ -39,6 +39,13 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/IO/OFF_reader.h>
+#include <iostream>
+#include <fstream>
+#endif
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
@@ -758,6 +765,22 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   {
     #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
     std::cout << "Loop on removing deg faces\n";
+    // ensure the mesh is not broken
+    {
+      std::ofstream out("/tmp/out.off");
+      out << tmesh;
+      out.close();
+
+      std::vector<typename Traits::Point_3> points;
+      std::vector<std::vector<std::size_t> > triangles;
+      std::ifstream in("/tmp/out.off");
+      CGAL::read_OFF(in, points, triangles);
+      if (!CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
+      {
+        std::cerr << "ERROR: got a polygon soup!\n";
+        exit(EXIT_FAILURE);
+      }
+    }
     #endif
 
     CGAL_assertion(is_valid_polygon_mesh(tmesh));
@@ -1156,6 +1179,10 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
   typedef typename graph_traits::face_descriptor face_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
+
+
+// TODO: the first thing to do it to collect degenerate faces and no consider then
+// for the self-intersection detection (otherwise we'll get some errors)
 
 // Look for self-intersections in the polyhedron and remove them
   int step=-1;
