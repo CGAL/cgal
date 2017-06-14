@@ -916,7 +916,7 @@ struct Is_constrained_map<SMesh>
     :mesh(mesh)
   {
     icmap = mesh->add_property_map<sm_vertex_descriptor,int>("v:is_control", -1).first;
-    for(std::size_t i=0; i<vec->size(); ++i)
+    for(unsigned int i=0; i<vec->size(); ++i)
     {
       icmap[sm_vertex_descriptor(i)] = (*vec)[i];
     }

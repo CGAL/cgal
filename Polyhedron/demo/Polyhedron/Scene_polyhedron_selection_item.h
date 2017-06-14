@@ -736,7 +736,7 @@ public:
     std::vector<Polyhedron::Point_3> points;
     points.reserve(selected_facets.size());
     VPmap vpm = get(CGAL::vertex_point, *polyhedron());
-    std::size_t counter = 1;
+    unsigned int counter = 1;
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
       BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
         if(get(vertex_selection_map(), target(hb,*polyhedron())) == 0) {
