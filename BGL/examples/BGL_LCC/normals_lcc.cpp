@@ -69,7 +69,7 @@ int main(int, char** argv)
                  Face_index_map;
 
   LCC lcc;
-  CGAL::load_off_for_bgl(lcc, argv[1]);
+  CGAL::read_off(argv[1], lcc);
   
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See

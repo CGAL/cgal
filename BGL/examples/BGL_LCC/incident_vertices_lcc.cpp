@@ -49,7 +49,7 @@ OutputIterator adjacent_vertices_V2(const LCC& g,
 int main(int, char** argv)
 {
   LCC lcc;
-  CGAL::load_off_for_bgl(lcc, argv[1]);
+  CGAL::read_off(argv[1], lcc);
 
   GraphTraits::vertex_iterator vi = vertices(lcc).first;
   std::list<vertex_descriptor> V;

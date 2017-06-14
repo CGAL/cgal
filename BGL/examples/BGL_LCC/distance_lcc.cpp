@@ -18,7 +18,7 @@ typedef boost::graph_traits<LCC>::vertex_iterator   vertex_iterator;
 int main(int, char** argv)
 {
   LCC lcc;
-  CGAL::load_off_for_bgl(lcc, argv[1]);
+  CGAL::read_off(argv[1], lcc);
   
   // This is the vector where the distance gets written to
   std::vector<int> distance(lcc.vertex_attributes().size());  

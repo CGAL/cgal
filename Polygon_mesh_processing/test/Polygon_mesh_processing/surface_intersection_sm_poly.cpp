@@ -29,16 +29,13 @@ template <class TriangleMesh>
 void run(const char* filename1, const char* filename2, const char* msg)
 {
   TriangleMesh mesh1;
-  std::ifstream input(filename1);
-  if ( !input || !(input >> mesh1) ) {
+  if ( !CGAL::read_off(filename1, mesh1) ) {
     std::cerr << filename1 << " is not a valid off file.\n";
     exit(1);
   }
-  input.close();
 
-  input.open(filename2);
   TriangleMesh mesh2;
-  if ( !input || !(input >> mesh2) ) {
+  if ( !CGAL::read_off(filename2, mesh2) ) {
     std::cerr << filename2 << " is not a valid off file.\n";
     exit(1);
   }

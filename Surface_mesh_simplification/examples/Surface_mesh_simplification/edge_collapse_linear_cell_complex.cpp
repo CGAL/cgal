@@ -23,8 +23,7 @@ int main( int argc, char** argv )
   }
 
   LCC lcc;
-  std::ifstream is(argv[1]);
-  CGAL::load_off_for_bgl(lcc, is);
+  CGAL::read_off(argv[1], lcc);
 
   lcc.display_characteristics(std::cout)<<", is_valid="<<CGAL::is_valid(lcc)<<std::endl;
 
@@ -50,7 +49,7 @@ int main( int argc, char** argv )
 
   lcc.display_characteristics(std::cout)<<", is_valid="<<CGAL::is_valid(lcc)<<std::endl;
 
-  CGAL::write_off_for_bgl(lcc, (argc > 2 ? argv[2] : "out.off"));
+  CGAL::write_off((argc > 2 ? argv[2] : "out.off"), lcc);
   return EXIT_SUCCESS;
 }
 // EOF //

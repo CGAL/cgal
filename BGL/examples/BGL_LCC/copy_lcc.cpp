@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   Target1 T1;
   {
     CGAL::copy_face_graph(S, T1);
-    CGAL::write_off(T1, "lcc.off");
+    CGAL::write_off("lcc.off", T1);
   }
 
   S.clear();

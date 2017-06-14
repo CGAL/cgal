@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   LCC mesh;
-  CGAL::load_off_for_bgl(mesh, filename);
+  CGAL::read_off(filename, mesh);
 
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   
   std::ofstream out("filled_LCC.off");
   out.precision(17);
-  CGAL::write_off_for_bgl(mesh, out);
+  CGAL::write_off(out, mesh);
 
   return 0;
 }

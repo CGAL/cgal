@@ -19,7 +19,7 @@ int main()
 {
     // create and read LCC
     LCC mesh;
-    CGAL::load_off_for_bgl(mesh, "data/cactus.off");
+    CGAL::read_off("data/cactus.off", mesh);
 
     // create a property-map for SDF values
     typedef CGAL::Unique_hash_map<Facet_const_handle, double> Facet_double_map;

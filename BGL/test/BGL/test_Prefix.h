@@ -133,7 +133,7 @@ bool read_a_mesh(LCC& lcc, const std::string& str) {
   bool success = in.good();
   if(success)
   {
-    CGAL::load_off_for_bgl(lcc, in);
+    CGAL::read_off(in, lcc);
     assert(lcc.is_valid());
   }
   return success;

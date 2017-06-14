@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
   std::ifstream input(filename1);
 
   LCC mesh1, mesh2;
-  CGAL::load_off_for_bgl(mesh1, filename1);
-  CGAL::load_off_for_bgl(mesh2, filename2);
+  CGAL::read_off(filename1, mesh1);
+  CGAL::read_off(filename2, mesh2);
 
   std::cout << "Number of vertices before corefinement "
             << num_vertices(mesh1) << " and "
@@ -34,10 +34,10 @@ int main(int argc, char* argv[])
             << num_vertices(mesh2) << "\n";
 
   std::ofstream output("mesh1_refined.off");
-  CGAL::write_off_for_bgl(mesh1, output);
+  CGAL::write_off(output, mesh1);
   output.close();
   output.open("mesh2_refined.off");
-  CGAL::write_off_for_bgl(mesh2, output);  
+  CGAL::write_off(output, mesh2);  
   output.close();
 
   return 0;

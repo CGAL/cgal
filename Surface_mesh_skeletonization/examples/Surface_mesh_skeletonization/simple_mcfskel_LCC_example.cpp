@@ -51,7 +51,7 @@ struct Display_polylines{
 int main()
 {
   LCC lcc;
-  CGAL::load_off_for_bgl(lcc, "data/elephant.off");
+  CGAL::read_off("data/elephant.off", lcc);
 
   Skeleton skeleton;
 

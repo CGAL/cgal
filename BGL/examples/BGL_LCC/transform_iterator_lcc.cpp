@@ -42,7 +42,7 @@ struct Source {
 int main(int, char** argv)
 {
   LCC lcc;
-  CGAL::load_off_for_bgl(lcc, argv[1]);
+  CGAL::read_off(argv[1], lcc);
   GraphTraits::vertex_descriptor vd = *(vertices(lcc).first);
 
   typedef boost::transform_iterator<Source<LCC>,halfedge_around_target_iterator> adjacent_vertex_iterator; 

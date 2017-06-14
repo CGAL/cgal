@@ -58,7 +58,7 @@ void fct(const LCC& lcc)
 int main(int, char** argv)
 {
   LCC lcc;  
-  CGAL::load_off_for_bgl(lcc, argv[1]);
+  CGAL::read_off(argv[1], lcc);
 
   fct(lcc);
   return 0;
