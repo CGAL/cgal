@@ -1,4 +1,4 @@
-// Copyright (c) 2014  
+// Copyright (c) 2017
 // INRIA Saclay-Ile de France (France),
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -11,9 +11,6 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
 //
 //
 // Author(s)     : Marc Glisse
@@ -229,7 +226,7 @@ struct MT_boost_mp <T, boost::mpl::int_<boost::multiprecision::number_kind_integ
     NT operator()(const Residue_type& x){
       return NT(x.get_value());
     }
-  };    
+  };
 };
 
 // Split_double
