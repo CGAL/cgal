@@ -694,6 +694,64 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       degenerate_face_set.insert(fd);
   nb_deg_faces+=degenerate_face_set.size();
 
+  // first remove degree 3 vertices that are part of a cap
+  // (only the vertex in the middle of the opposite edge)
+  // This removal does not change the shape of the mesh.
+  if (!degenerate_face_set.empty())
+  {
+    std::set<vertex_descriptor> vertices_to_remove;
+    typename std::set<face_descriptor>::iterator fit=degenerate_face_set.begin();
+    while(fit!=degenerate_face_set.end())
+    {
+      halfedge_descriptor hd=halfedge(*fit, tmesh);
+      const typename Traits::Point_3& p1 = get(vpmap, target(hd, tmesh) );
+      const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
+      const typename Traits::Point_3& p3 = get(vpmap, source(hd, tmesh) );
+
+      CGAL_assertion(p1!=p2 && p1!=p3 && p2!=p3);
+
+      typename Traits::Compare_distance_3 compare_distance = traits.compare_distance_3_object();
+
+      vertex_descriptor vd = boost::graph_traits<TriangleMesh>::null_vertex();
+      if (compare_distance(p1,p2, p1,p3) != CGAL::SMALLER) // p1p2 > p1p3
+      {
+        if (compare_distance(p1,p2, p2,p3) != CGAL::SMALLER) // p1p2 > p2p3
+          // p1p2 is the longest edge, pick p3
+          vd = source(hd, tmesh);
+        else
+          // p2p3 is the longest edge, pick p1
+          vd = target(hd, tmesh);
+      }
+      else
+        if (compare_distance(p1,p3, p2,p3) != CGAL::SMALLER) // p1p3>p2p3
+          // p1p3 is the longest edge, pick p2
+          vd = target(next(hd, tmesh), tmesh);
+        else
+          // p2p3 is the longest edge, pick p1
+          vd = target(hd, tmesh);
+
+      if (degree(vd, tmesh) == 3)
+        vertices_to_remove.insert(vd);
+
+      ++fit;
+    }
+
+    BOOST_FOREACH(vertex_descriptor vd, vertices_to_remove)
+    {
+      halfedge_descriptor hd=halfedge(vd, tmesh);
+      BOOST_FOREACH(halfedge_descriptor hd2, halfedges_around_target(hd, tmesh))
+        if (!is_border(hd2, tmesh))
+          degenerate_face_set.erase( face(hd2, tmesh) );
+      // remove the central vertex and check if the new face is degenerated
+      hd=CGAL::Euler::remove_center_vertex(hd, tmesh);
+      if (is_degenerate_triangle_face(face(hd, tmesh), tmesh, vpmap, traits))
+      {
+        degenerate_face_set.insert( face(hd, tmesh) );
+        /// \todo shall we retest the degree of these vertices?
+      }
+    }
+  }
+
   while (!degenerate_face_set.empty())
   {
     #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
