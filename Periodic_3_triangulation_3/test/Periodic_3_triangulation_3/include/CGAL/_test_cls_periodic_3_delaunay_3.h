@@ -87,7 +87,6 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   typedef CGAL::Creator_uniform_3<double,Point>  Creator;
   CGAL::Random rnd(7);
   CGAL::Random_points_in_cube_3<Point, Creator> in_cube(1, rnd);
-  CGAL::Random_points_in_cube_3<Point, Creator> in_cube_tmp(0.5, rnd);
 
   std::vector<Point> pts_rnd1000;
   for (int i=0 ; i<1000 ; i++)
