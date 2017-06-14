@@ -331,24 +331,24 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   std::vector<Facet> bd_facets;
   std::vector<Cell_handle> conflict_cells;
   std::vector<Facet> int_facets;
-  PT.find_conflicts(Point(-1,-1,1),ch,std::back_inserter(bd_facets),
+  PT.find_conflicts(Point(-1,-1,-1),ch,std::back_inserter(bd_facets),
       std::back_inserter(conflict_cells),std::back_inserter(int_facets));
   for (unsigned int i=0 ; i<bd_facets.size() ; i++) {
-    assert( (PT.side_of_sphere(bd_facets[i].first,Point(-1,-1,1))
-	    == CGAL::ON_BOUNDED_SIDE)
-	^ (PT.side_of_sphere(bd_facets[i].first->neighbor(bd_facets[i].second),
-		Point(-1,-1,1)) == CGAL::ON_BOUNDED_SIDE) );
+    assert((PT.side_of_sphere(bd_facets[i].first, Point(-1,-1,-1))
+             == CGAL::ON_BOUNDED_SIDE)
+            ^ (PT.side_of_sphere(bd_facets[i].first->neighbor(bd_facets[i].second),
+                                 Point(-1,-1,-1)) == CGAL::ON_BOUNDED_SIDE));
   }
   for (unsigned int i=0 ; i<conflict_cells.size() ; i++) {
-    assert( PT.side_of_sphere(conflict_cells[i],Point(-1,-1,1))
-	== CGAL::ON_BOUNDED_SIDE);
+    assert( PT.side_of_sphere(conflict_cells[i], Point(-1,-1,-1))
+            == CGAL::ON_BOUNDED_SIDE);
   }
   for (unsigned int i=0 ; i<int_facets.size() ; i++) {
-    assert((PT.side_of_sphere(int_facets[i].first,Point(-1,-1,1))
-	    == CGAL::ON_BOUNDED_SIDE) );
+    assert((PT.side_of_sphere(int_facets[i].first, Point(-1,-1,-1))
+            == CGAL::ON_BOUNDED_SIDE));
     assert((PT.side_of_sphere(int_facets[i].first->neighbor(
-		    int_facets[i].second),Point(-1,-1,1))
-	    == CGAL::ON_BOUNDED_SIDE) );
+                                int_facets[i].second), Point(-1,-1,-1))
+            == CGAL::ON_BOUNDED_SIDE));
   }
 
   std::cout << "  Gabriel"<< std::endl;
