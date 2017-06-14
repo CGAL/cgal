@@ -84,8 +84,8 @@ public:
     std::cout << "--- test_insert_rnd (" << pt_count << ", " << seed << ')' << std::endl;
 
     CGAL::Random random(seed);
-    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
-    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
+//    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+//    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
