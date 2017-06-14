@@ -1,16 +1,18 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Cartesian_converter.h>
+
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Projection_traits_xy_3.h>
+
 #include <CGAL/algorithm.h>
+
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <list>
-
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Alpha_shape_2.h>
-#include <CGAL/Projection_traits_xy_3.h>
 
 typedef double coord_type;
 
@@ -20,6 +22,40 @@ typedef CGAL::Projection_traits_xy_3<FK> K;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;
+
+// -------------------------------------------------------------------
+// Since K::Point_2 is here in fact CGAL::Point_3<FK>, the basic Cartesian_converter
+// cannot be used (and thus ExactAlphaComparisonTag can't be set to 'true') because
+// it does not know how to convert from CGAL::Point_3<FK> to CGAL::Point_2<EK>.
+
+// Thus, we must provide a specialization for our case
+
+namespace CGAL {
+
+template < class K2, class C >
+class Cartesian_converter<FK, K2, C>
+{
+public:
+  typedef CGAL::Projection_traits_xy_3<FK> Source_kernel;
+  typedef K2                               Target_kernel;
+  typedef C                                Number_type_converter;
+
+  typedef typename Source_kernel::Point_2  SP2;
+  typedef typename Target_kernel::Point_2  TP2;
+
+  TP2 operator()(const SP2& p) const
+  {
+    return TP2(c(p.x()), c(p.y()));
+  }
+
+private:
+  C c;
+};
+
+} // namespace CGAL
+
+// The include is only here because the partial specialization above must be before
+#include <CGAL/Alpha_shape_2.h>
 
 //ExactAlphaComparisonTag is false
 typedef K Gt;
