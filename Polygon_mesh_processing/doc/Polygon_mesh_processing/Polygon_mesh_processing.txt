@@ -342,6 +342,27 @@ iteratively filled, refined and faired to get a faired mesh with no hole.
  Holes in the fork model are filled with triangle patches.
  \cgalFigureEnd
 
+subsection HFPerformance Performance
+
+The hole filling algorithm has a complexity which depends on the
+number of vertices.  While \cgalCite{liepa2003filling} has a running
+time of \f$ O(n^3)\f$ , YY in most cases has running time of \f$ O(n
+\log n)\f$.  We were running `triangulate_refine_and_fair_hole()` for
+the below meshes (and two more meshes with smaller holes.
+
+\cgalFigureBegin{Elephants, elephants-with-hole.png}
+The elephant on the left/right has a hole with 963/7657 vertices.
+\cgalFigureEnd
+
+This takes time
+
+|  # vertices | without Delaunay (sec.) | with Delaunay (sec.)|
+| ----:       | ----:                   | ----:               | 
+  565         | 8.5                     | 0.03                |
+  774         | 21                      | 0.035               |
+  967         | 43                      | 0.06                |
+ 7657         | na                      | 0.4                 |
+
 
 ***************************************
 \section PMPPredicates Predicates
