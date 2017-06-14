@@ -142,7 +142,7 @@ inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
 
 template <typename P>
 CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_patch_id_t<void>)
-inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> & smesh)
+inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> &)
 {
   typedef CGAL::Static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
 

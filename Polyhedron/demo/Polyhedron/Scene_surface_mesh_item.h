@@ -58,7 +58,6 @@ public:
 
   std::vector<QColor>& color_vector();
   void show_feature_edges(bool);
-  virtual void drawEdges() const {}
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
 
@@ -89,7 +88,7 @@ public Q_SLOTS:
               double orig_z,
               double dir_x,
               double dir_y,
-              double dir_z);
+              double dir_z) Q_DECL_OVERRIDE;
   bool intersect_face(double orig_x,
                       double orig_y,
                       double orig_z,
