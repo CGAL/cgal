@@ -694,8 +694,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   }
   #endif
 
-  CGAL_assertion(is_valid_polygon_mesh(tmesh));
-
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   BOOST_FOREACH(face_descriptor fd, faces(tmesh))
@@ -782,8 +780,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       }
     }
     #endif
-
-    CGAL_assertion(is_valid_polygon_mesh(tmesh));
 
     face_descriptor fd = *degenerate_face_set.begin();
 
