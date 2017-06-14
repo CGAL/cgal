@@ -32,7 +32,7 @@
 
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_incremental_builder_for_bgl.h>
+#include <CGAL/boost/graph/cgal_bgl_graph_io.h> // TODO update path when small feature generic load off will be accepted
 #include <CGAL/Dart_iterators.h>
 
 #include <CGAL/boost/graph/helpers.h>
