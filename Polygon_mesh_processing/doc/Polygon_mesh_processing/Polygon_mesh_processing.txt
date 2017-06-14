@@ -346,9 +346,10 @@ iteratively filled, refined and faired to get a faired mesh with no hole.
 
 The hole filling algorithm has a complexity which depends on the
 number of vertices.  While \cgalCite{liepa2003filling} has a running
-time of \f$ O(n^3)\f$ , YY in most cases has running time of \f$ O(n
-\log n)\f$.  We were running `triangulate_refine_and_fair_hole()` for
-the below meshes (and two more meshes with smaller holes.
+time of \f$ O(n^3)\f$ , \cgalCite{zou2013algorithm} in most cases has
+running time of \f$ O(n \log n)\f$.  We were running
+`triangulate_refine_and_fair_hole()` for the below meshes (and two
+more meshes with smaller holes.
 
 \cgalFigureBegin{Elephants, elephants-with-hole.png}
 The elephant on the left/right has a hole with 963/7657 vertices.
