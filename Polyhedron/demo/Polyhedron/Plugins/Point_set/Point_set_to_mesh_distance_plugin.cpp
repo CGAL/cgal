@@ -130,7 +130,7 @@ public:
 
   bool applicable(QAction*) const
   {
-    if(scene->numberOfEntries() != 2)
+    if(scene->selectionIndices().size() != 2)
       return false;
     Scene_polyhedron_item* poly = NULL;
     Scene_surface_mesh_item* sm = NULL;
