@@ -49,14 +49,23 @@ public:
         std::map<vertex_descriptor, Point> barycenters;
         boost::vector_property_map<Vector> n_map;
 
+
         unsigned int count = 0;
+
+
         for(vertex_descriptor v : vertices(mesh_))
         {
 
+            count++;
+            std::cout<<"count: "<<count<<std::endl;
+            if (count == 11375)
+            {
+                std::cerr<<"stop";
+            }
 
             if(!is_border(v, mesh_))
             {
-                //std::cout<<"processing vertex: "<< v << std::endl;
+                std::cout<<"processing vertex: "<< v << std::endl;
 
 
                 // compute normal to v
@@ -165,19 +174,73 @@ private:
     Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
     {
 
-        double tol = 1e-14;
         double precision = 1e-3;
-        double magnifier = 1e+3;
+        double magnifier = 1e+6;
 
         // get common vertex around which the edge is rotated
         Point s = get(vpmap_, target(main_he, mesh_));
 
-        // get "equidistant" points - actualy ther are at equal angles
+        // pv is the vertex that is being moved
+        Point pv = get(vpmap_, source(main_he, mesh_));
+
+        // get "equidistant" points - in fact they are at equal angles
         Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
         Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
 
+        Vector bisector = CGAL::NULL_VECTOR;
         Vector edge1(s, equidistant_p1);
         Vector edge2(s, equidistant_p2);
+
+
+
+        // check degenerate cases
+        if( (edge1 == CGAL::NULL_VECTOR || edge2 == CGAL::NULL_VECTOR) ||
+            (CGAL::collinear(s, pv, equidistant_p1) && CGAL::collinear(s, pv, equidistant_p2)) )
+        {
+            // angle is 0
+            return CGAL::NULL_VECTOR;
+        }
+
+        else
+        {
+            // normal case
+            internal::normalize(edge1, GeomTraits());
+            internal::normalize(edge2, GeomTraits());
+            bisector = edge1 + edge2;
+            double bis_len = bisector.squared_length();
+            double edge_len1 = edge1.squared_length();
+            double edge_len2 = edge2.squared_length();
+
+
+            if ( (CGAL::collinear(s, equidistant_p1, equidistant_p2)) ||
+                 (bisector.squared_length()) < 0.01  )
+            {
+                // except if angle is (almost) 180 degrees, take the perpendicular
+                Vector edge(s, equidistant_p1);
+                Vector normal_vec(-edge.y(), edge.x(), edge.z());
+                Segment b_segment(s, s + normal_vec);
+                Point b_segment_end = b_segment.target();
+
+                if(CGAL::angle(b_segment_end, s, pv) == CGAL::OBTUSE)
+                    b_segment = b_segment.opposite();
+
+                bisector = Vector(b_segment);
+            }
+
+
+        }
+
+
+
+        correct_bisector(bisector, main_he);
+
+
+
+        /*
+        Vector edge1(s, equidistant_p1);
+        Vector edge2(s, equidistant_p2);
+
+
 
         if(edge1 != CGAL::NULL_VECTOR)
             internal::normalize(edge1, GeomTraits());
@@ -194,8 +257,7 @@ private:
         // handle degenerate cases
         if(bisector.squared_length() < precision)
         {
-            // pv is the vertex that is being moved
-            Point pv = get(vpmap_, source(main_he, mesh_));
+
 
             if(s == pv)
             {
@@ -216,15 +278,21 @@ private:
 
         correct_bisector(bisector, main_he);
 
+        */
+
 
         double target_length = CGAL::sqrt(sqlength(main_he));
         double bisector_length = CGAL::sqrt(bisector.squared_length());
 
+#ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
         if( ! ( ( target_length - tol    <   bisector_length     ) &&
                 ( bisector_length        <   target_length + tol ) ) )
         {
             std::cerr<<"problem";
         }
+#endif
+
+        double tol = 1e-;
 
         CGAL_assertion(   ( target_length - tol    <   bisector_length     ) &&
                           ( bisector_length        <   target_length + tol )    );
