@@ -785,7 +785,7 @@ public:
     poly_item->setItemIsMulticolor(b);
   }
 
-  void selection_changed(bool b) Q_DECL_OVERRIDE;
+  void selection_changed(bool b);
 
 Q_SIGNALS:
   void updateInstructions(QString);

@@ -81,7 +81,6 @@ public Q_SLOTS:
 private:
   typedef CGAL::Three::Scene_interface::Item_id Item_id;
   std::vector<QColor> saved_color;
-  bool is_color_vector_read_only;
   Scene_edit_polyhedron_item* convert_to_edit_facegraph(Item_id, Scene_facegraph_item*);
   Scene_facegraph_item* convert_to_plain_facegraph(Item_id, Scene_edit_polyhedron_item*);
   void updateSelectionItems(Scene_facegraph_item* target);
