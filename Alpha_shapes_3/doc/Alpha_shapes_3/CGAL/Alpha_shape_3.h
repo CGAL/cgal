@@ -23,20 +23,21 @@ must be model the concepts `AlphaShapeTraits_3`,
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. This is useful
 when the Delaunay triangulation is instantiated with an exact predicates inexact constructions 
 kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_false`\endlink as it induces a small
-overhead.
-
-\warning The tag `ExactAlphaComparisonTag` is currently ignored (meaning that the code will
+overhead. Note that the tag `ExactAlphaComparisonTag` is currently ignored (meaning that the code will
  behave as if `ExactAlphaComparisonTag` were set to \link Tag_false `Tag_false`\endlink)
-if either condition is met:
-  - `Dt::Geom_traits::FT` is not a floating point number type. Indeed, this strategy
-    does not make sense if the traits class already provides exact constructions.
+if `Dt::Geom_traits::FT` is not a floating point number type as this strategy
+does not make sense if the traits class already provides exact constructions.
 
-  - the traits defines a point type that is not implicitely convertible to the three-dimensional point type
-    of a CGAL kernel. This is because we internally use the class `Cartesian_converter` to switch
-    between the traits class and exact CGAL kernels.
+\warning When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
+the class `Cartesian_converter` is used internally to switch between the traits class
+and exact CGAL kernels. `Cartesian_converter` must thus provide the necessary functor
+to convert a point of the traits class to a point of an exact kernel. However, this
+functor is not necessarily provided by `Cartesian_converter`. In this case, a partial specialization of `Cartesian_converter`
+must be provided by the user. An example of such specialization is given in the
+two-dimensional Alpha Shapes example \ref Alpha_shapes_2/ex_alpha_projection_traits.cpp "ex_alpha_projection_traits.cpp".
 
 Note that this class is used for <I>basic</I>, <I>weighted</I>,
-and <I>periodic</I>Alpha Shapes.
+and <I>periodic</I> Alpha Shapes.
 
 \cgalHeading{I/O}
 
