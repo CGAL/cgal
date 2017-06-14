@@ -6,7 +6,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-
+#include <math.h>
 
 namespace CGAL {
 
@@ -30,6 +30,13 @@ class Angle_remesher
     typedef typename GeomTraits::Segment_3 Segment;
 
 
+
+    // gather incident lines to a map
+    // <one halfedge around v, pair of incident halfedges to this halfedge around v>
+    typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
+    typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
+
+
 public:
     Angle_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap) : mesh_(pmesh), vpmap_(vpmap)
     {}
@@ -43,15 +50,14 @@ public:
         std::map<vertex_descriptor, Point> barycenters;
         boost::vector_property_map<Vector> n_map;
 
-
+        unsigned int count = 0;
         for(vertex_descriptor v : vertices(mesh_))
         {
 
 
             if(!is_border(v, mesh_))
             {
-                std::cout<<"processing vertex: "<< v << std::endl;
-
+                //std::cout<<"processing vertex: "<< v << std::endl;
 
 
                 // compute normal to v
@@ -62,56 +68,40 @@ public:
 
 
 
-                // gather incident lines to a map
-                // <halfedge around v, <incident halfedges to halfedge around v>>
-                typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
-                typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
                 Edges_around_map he_map;
+                typename Edges_around_map::iterator it;
 
-
-                for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
-                {
+                for(halfedge_descriptor hi : halfedges_around_source(v, mesh_)) // or make it around target
                     he_map[hi] = He_pair(next(hi, mesh_), prev(opposite(hi, mesh_) ,mesh_));
-                    //std::cout<<"edges: "<<next(hi, mesh_)<<std::endl;
-                }
 
 
                 // take a look
-                typename Edges_around_map::iterator it;
+                /*
                 for(it = he_map.begin(); it!=he_map.end(); ++it)
                 {
                     halfedge_descriptor main_he = it->first;
                     He_pair he_pair = it->second;
                     std::cout<< "main: " << main_he;
+                    std::cout<<" ("<<source(main_he, mesh_)<<"->"<< target(main_he, mesh_)<<")";
                     std::cout<< " - incident: "<< he_pair.first;
                     std::cout<<" ("<<source(he_pair.first, mesh_)<<"->"<< target(he_pair.first, mesh_)<<")";
                     std::cout<<" and " << he_pair.second;
                     std::cout<<" ("<<source(he_pair.second, mesh_)<<"->"<< target(he_pair.second, mesh_)<<")"<<std::endl;
                 }
+                */
 
 
-
+                // calculate movement
                 Vector move = CGAL::NULL_VECTOR;
 
                 for(it = he_map.begin(); it != he_map.end(); ++it)
                 {
-                    // find midpoint
-                    He_pair he_pair = it->second;
-                    Point eq_d_p1 = get(vpmap_, target(he_pair.first, mesh_));
-                    Point eq_d_p2 = get(vpmap_, source(he_pair.second, mesh_));
-                    Point m = CGAL::midpoint(eq_d_p1, eq_d_p2);
-
-                    // get common vertex around which the edge is rotated
                     halfedge_descriptor main_he = it->first;
-                    Point s = get(vpmap_, target(main_he, mesh_));
+                    He_pair incident_pair = it->second;
 
-                    // create segment which bisects angle
-                    typename GeomTraits::Segment_3 bisector(s, m);
+                    Vector rotated_edge = rotate_edge(main_he, incident_pair);
 
-                    // correct segment position and length
-                    correct_position(bisector, main_he);
-
-                    move += Vector(bisector.target(), bisector.source());
+                    move += rotated_edge;
 
                 }
 
@@ -147,9 +137,6 @@ public:
 
 
 
-
-
-
     }
 
 
@@ -176,31 +163,105 @@ private:
     }
 
 
-    void correct_position(Segment& bisector, const halfedge_descriptor& he_c)
+    Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
     {
-        // common vertex
-        Point s = get(vpmap_, target(he_c, mesh_));
 
+        double tol = 1e-14;
+        double precision = 1e-3;
+        double magnifier = 1e+3;
+
+        // get common vertex around which the edge is rotated
+        Point s = get(vpmap_, target(main_he, mesh_));
+
+        // get "equidistant" points - actualy ther are at equal angles
+        Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
+        Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
+
+        Vector edge1(s, equidistant_p1);
+        Vector edge2(s, equidistant_p2);
+
+        internal::normalize(edge1, GeomTraits());
+        internal::normalize(edge2, GeomTraits());
+
+        // get bisector!
+        Vector bisector = CGAL::NULL_VECTOR;
+
+        // but be aware of stupid numerical errors - check possible overflow?
+        bisector = edge1 * magnifier + edge2 * magnifier;
+
+
+        // handle degenerate cases
+        if(bisector.squared_length() < precision)
+        {
+            // pv is the vertex that is being moved
+            Point pv = get(vpmap_, source(main_he, mesh_));
+
+            if(s == pv)
+            {
+                // s, end_v, and equidistant points are almcollinear.
+                CGAL_assertion(CGAL::collinear(s, pv, equidistant_p1));
+                CGAL_assertion(CGAL::collinear(s, pv, equidistant_p2));
+                return Vector(CGAL::NULL_VECTOR);
+            }
+            else
+            {
+                // s and equidistant points are collinear
+                //CGAL_assertion(CGAL::collinear(s, equidistant_p1, equidistant_p2)); // any overload with some tolerance?
+                Vector n(s, pv);
+                bisector = n;
+            }
+
+        }
+
+        correct_bisector(bisector, main_he);
+
+
+        double target_length = CGAL::sqrt(sqlength(main_he));
+        double bisector_length = CGAL::sqrt(bisector.squared_length());
+
+        if( ! ( ( target_length - tol    <   bisector_length     ) &&
+                ( bisector_length        <   target_length + tol ) ) )
+        {
+            std::cerr<<"problem";
+        }
+
+        CGAL_assertion(   ( target_length - tol    <   bisector_length     ) &&
+                          ( bisector_length        <   target_length + tol )    );
+
+
+        return bisector;
+
+
+    }
+
+
+
+    void correct_bisector(Vector& bisector_vec, const halfedge_descriptor& main_he)
+    {
+
+        // get common vertex around which the edge is rotated
+        Point s = get(vpmap_, target(main_he, mesh_));
+
+        // create a segment to be able to translate - avoid it?
+        Segment bisector(s, s + bisector_vec);
 
         // scale
-        double scale_factor = CGAL::sqrt(  sqlength(he_c) / bisector.squared_length() );
+        double scale_factor = CGAL::sqrt(  sqlength(main_he) / bisector.squared_length() );
         typename GeomTraits::Aff_transformation_3 t_scale(CGAL::SCALING, scale_factor);
         bisector = bisector.transform(t_scale);
-
 
         // translate
         Vector vec(bisector.source(), s);
         typename GeomTraits::Aff_transformation_3 t_translate(CGAL::TRANSLATION, vec);
         bisector = bisector.transform(t_translate);
 
-
-        double tol = 10e-15;
-        double target_length = CGAL::sqrt(sqlength(he_c));
-        double bisector_length = CGAL::sqrt(bisector.squared_length());
-        CGAL_assertion(   ( target_length - tol    <   bisector_length     ) &&
-                          ( bisector_length        <   target_length + tol )    );
+        // take the opposite so that their sum is the overall displacement
+        bisector_vec = -Vector(bisector);
 
     }
+
+
+
 
 
 
