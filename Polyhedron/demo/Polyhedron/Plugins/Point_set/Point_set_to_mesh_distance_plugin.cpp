@@ -201,32 +201,15 @@ private Q_SLOTS:
     Fcolor_map fred_map;
     Fcolor_map fgreen_map;
     Fcolor_map fblue_map;
-    Color_map red_map;
-    Color_map green_map;
-    Color_map blue_map;
 
     bool r, g, b;
-     if(!new_item->point_set()->check_colors())
-     {
-       //bind color pmaps
-       boost::tie(fred_map  , r) = new_item->point_set()->add_property_map<double>("red",0);
-       boost::tie(fgreen_map, g)  = new_item->point_set()->add_property_map<double>("green",0);
-       boost::tie(fblue_map , b)  = new_item->point_set()->add_property_map<double>("blue",0);
-       //bind the new color maps to the right internal members so has_colors() return true in the item.
-       new_item->point_set()->check_colors();
-     }
-     else
-     {
-       boost::tie(fred_map  , r) =  new_item->point_set()->property_map<double>("red");
-       boost::tie(fgreen_map, g) =  new_item->point_set()->property_map<double>("green");
-       boost::tie(fblue_map , b) =  new_item->point_set()->property_map<double>("blue");
-       if(!r)
-         red_map = new_item->point_set()->property_map<unsigned char>("red").first;
-       if(!g)
-         green_map = new_item->point_set()->property_map<unsigned char>("green").first;
-       if(!b)
-         blue_map = new_item->point_set()->property_map<unsigned char>("blue").first;
-     }
+    new_item->point_set()->remove_colors();
+    //bind color pmaps
+    boost::tie(fred_map  , r) = new_item->point_set()->add_property_map<double>("red",0);
+    boost::tie(fgreen_map, g)  = new_item->point_set()->add_property_map<double>("green",0);
+    boost::tie(fblue_map , b)  = new_item->point_set()->add_property_map<double>("blue",0);
+    new_item->point_set()->check_colors();
+
     Point_set* points = new_item->point_set();
     points->collect_garbage();
     std::vector<double> distances(points->size());
@@ -237,30 +220,17 @@ private Q_SLOTS:
       hdist = compute_distances(*sm->face_graph(), *points, distances);
     if(hdist == 0)
       hdist++;
-
-    int id=0;
-
+    int id = 0;
     for (Point_set::const_iterator it = new_item->point_set()->begin();
          it != new_item->point_set()->end(); ++ it)
     {
       double d = distances[id]/hdist;
-      //if r/g/b is false, it means the associated color map uses unsigned chars instead of doubles.
-      if(r)
       fred_map[*it] = thermal_ramp.r(d) ;
-      else
-        red_map[*it]=static_cast<unsigned char>(thermal_ramp.r(d) * 255);
-      if(g)
-        fgreen_map[*it] =  thermal_ramp.g(d);
-      else
-        green_map[*it] = static_cast<unsigned char>(thermal_ramp.g(d) * 255);
-      if(b)
-        fblue_map[*it] = thermal_ramp.b(d);
-      else
-        blue_map[*it] = static_cast<unsigned char>(thermal_ramp.b(d) * 255);
+      fgreen_map[*it] =  thermal_ramp.g(d);
+      fblue_map[*it] = thermal_ramp.b(d);
       ++id;
     }
     std::sort(distances.begin(), distances.end());
-
     dock_widget->minLabel->setText(QString("%1").arg(distances.front()));
     dock_widget->maxLabel->setText(QString("%1").arg(distances.back()));
     dock_widget->fDecileLabel->setText(QString("%1").arg(distances[distances.size()/10]));
@@ -271,6 +241,7 @@ private Q_SLOTS:
     pn->setVisible(false);
     new_item->setName(tr("%1 (distance)").arg(pn->name()));
     scene->addItem(new_item);
+
     QApplication::restoreOverrideCursor();
   }
   void distance()
@@ -290,7 +261,6 @@ private:
   Messages_interface* messageInterface;
   DistanceWidget* dock_widget;
   typedef Point_set::Property_map<double> Fcolor_map;
-  typedef Point_set::Property_map<unsigned char> Color_map;
 
 };
 
