@@ -377,6 +377,7 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
   d->program->setUniformValue("mvp_matrix", mvp_mat);
   d->program->setUniformValue("mv_matrix", mv_mat);
   d->program->setUniformValue("light_pos", light_pos);
+  d->program->setUniformValue("is_clipbox_on", false);
   d->program->setAttributeValue("radius",radius);
   d->program->setAttributeValue("colors", QColor(Qt::red));
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
@@ -428,6 +429,7 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   d->program->setUniformValue("light_spec", specular);
   d->program->setUniformValue("light_amb", ambient);
   d->program->setUniformValue("spec_power", 51.8f);
+  d->program->setUniformValue("is_clipbox_on", false);
   d->program->setAttributeValue("colors", QColor(128,128,128,128));
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->vertex_faces.size()/3));
   vaos[Scene_edit_box_item_priv::Faces]->release();
@@ -453,6 +455,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
   attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
   d->program->bind();
   d->program->setUniformValue("f_matrix", f_matrix);
+  d->program->setUniformValue("is_clipbox_on", false);
   d->program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->vertex_edges.size()/3));
   viewer->glLineWidth(1.0f);
@@ -1179,6 +1182,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
     item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setUniformValue("mvp_matrix", mvp_mat);
+    program->setUniformValue("is_clipbox_on", false);
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertex_faces.size()/3));
     item->vaos[P_Faces]->release();
     program->release();
@@ -1186,6 +1190,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   item->vaos[P_Spheres]->bind();
   pick_sphere_program.bind();
   pick_sphere_program.setUniformValue("mvp_matrix", mvp_mat);
+  program->setUniformValue("is_clipbox_on", false);
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                 static_cast<GLsizei>(vertex_spheres.size()/3),
                                 static_cast<GLsizei>(8));
@@ -1198,6 +1203,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
   program->bind();
   program->setUniformValue("f_matrix", f_matrix);
+  program->setUniformValue("is_clipbox_on", false);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertex_edges.size()/3));
   viewer->glLineWidth(1.0f);
   item->vaos[P_Edges]->release();
@@ -1397,6 +1403,7 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
         (point(6,1) - point(0,1)) * (point(6,1) - point(0,1)) +
         (point(6,2) - point(0,2)) * (point(6,2) - point(0,2))) *0.02 ;
     d->program->setAttributeValue("radius", radius);
+    d->program->setUniformValue("is_clipbox_on", false);
     viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                   static_cast<GLsizei>(d->vertex_spheres.size()/3),
                                   static_cast<GLsizei>(d->hl_vertex.size()/3));
@@ -1413,6 +1420,7 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     d->program->bind();
     d->program->setUniformValue("f_matrix", f_matrix);
     d->program->setAttributeValue("colors", QColor(Qt::yellow));
+    d->program->setUniformValue("is_clipbox_on", false);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
     viewer->glLineWidth(1.0f);
     vaos[Scene_edit_box_item_priv::S_Edges]->release();
@@ -1434,6 +1442,7 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     d->program->setUniformValue("light_spec", specular);
     d->program->setUniformValue("light_amb", ambient);
     d->program->setUniformValue("spec_power", 51.8f);
+    d->program->setUniformValue("is_clipbox_on", false);
     d->program->setAttributeValue("colors", QColor(128,128,0,128));
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
     vaos[Scene_edit_box_item_priv::S_Faces]->release();

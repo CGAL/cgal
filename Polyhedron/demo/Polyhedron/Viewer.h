@@ -82,6 +82,8 @@ public:
   void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
+  void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
+  void disableClippingBox() Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
   void sendMessage(QString);

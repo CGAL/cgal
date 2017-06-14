@@ -40,8 +40,15 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_
       compute_bbox();
       are_buffers_filled = false;
     }
-    double point(short i, short j) const;
+    //      5-----6
+    //  .   |  .  |
+    // 4------7   |
+    // |    | |   |
+    // |    1-|---2
+    // | .    |.
+    // 0------3
 
+    double point(short i, short j) const;
 public Q_SLOTS:
     void highlight();
     void clearHL();

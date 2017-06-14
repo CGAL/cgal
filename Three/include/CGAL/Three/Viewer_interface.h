@@ -146,6 +146,17 @@ public:
   //! @see OpenGL_program_IDs
   //!
   virtual void attribBuffers(int program_name) const = 0;
+  /*! Enables the clipping box. Each Vector4 of `box` contains the equation of a plane of the clipping box.
+   * Everything that is located on the positive side of one of those planes will not be displayed.
+   * @see disableCLippingBox()
+   */
+  virtual void enableClippingBox(QVector4D box[6])=0;
+
+  /*!
+   * Disables the clipping box. The six clipping planes will be ignored.
+   * @see enableClippingBox()
+   */
+  virtual void disableClippingBox()= 0;
 
   //! \brief Returns a program according to name.
   //!
