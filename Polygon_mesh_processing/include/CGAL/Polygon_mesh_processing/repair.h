@@ -650,6 +650,8 @@ std::size_t remove_null_edges(
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
+/// \todo the function might not be able to remove all degenerate faces.
+///       We should probably do something with the return type.
 /// \return number of removed degenerate faces
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
@@ -814,7 +816,19 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         // simply remove the face
         Euler::remove_face(edge_to_flip, tmesh);
       else
-        Euler::flip_edge(edge_to_flip, tmesh);
+      {
+        // condition for the flip to be valid (the edge to be created do not already exists)
+        if ( !halfedge(target(next(edge_to_flip, tmesh), tmesh),
+                       target(next(opposite(edge_to_flip, tmesh), tmesh), tmesh),
+                       tmesh).second )
+        {
+          Euler::flip_edge(edge_to_flip, tmesh);
+        }
+        #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        else
+          std::cout << "  WARNING: flip is not possible\n";
+        #endif
+      }
     }
     else
     {
