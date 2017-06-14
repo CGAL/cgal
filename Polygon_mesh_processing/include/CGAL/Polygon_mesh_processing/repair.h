@@ -937,140 +937,139 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           inside_vertices.insert( source(hd, tmesh) );
       }
 
-      /// preliminary step to check if the operation is possible
+    // preliminary step to check if the operation is possible
+      // sort the boundary points along the common supporting line
+      //    we first need a reference point
+      typedef Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
+      std::pair<
+        typename std::set<vertex_descriptor>::iterator,
+        typename std::set<vertex_descriptor>::iterator > ref_vertices =
+        boost::minmax_element( boundary_vertices.begin(),
+                               boundary_vertices.end(),
+                               Less_vertex(traits, vpmap) );
+
+      //    and then we sort the vertices using this reference point
+      typedef Less_along_ray<Traits> Less_point;
+      typedef std::set<typename Traits::Point_3, Less_point> Sorted_point_set;
+      Sorted_point_set sorted_points( Less_point( traits, get(vpmap, *ref_vertices.first) ) );
+      BOOST_FOREACH(vertex_descriptor v, boundary_vertices)
+        sorted_points.insert( get(vpmap,v) );
+
+      CGAL_assertion( get( vpmap, *ref_vertices.first)==*sorted_points.begin() );
+      CGAL_assertion( get( vpmap, *ref_vertices.second)==*cpp11::prev(sorted_points.end()) );
+
+      const typename Traits::Point_3& xtrm1 = *sorted_points.begin();
+      const typename Traits::Point_3& xtrm2 = *cpp11::prev(sorted_points.end());
+
+      // recover halfedges on the hole, bounded by the reference vertices
+      std::vector<halfedge_descriptor> side_one, side_two;
+
+      // look for the outgoing border halfedge of the first extreme point
+      BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
+        if ( get(vpmap, source(hd, tmesh)) == xtrm1 )
+        {
+          side_one.push_back(hd);
+          break;
+        }
+      CGAL_assertion(side_one.size()==1);
+
+      while( get(vpmap, target(side_one.back(), tmesh)) != xtrm2 )
       {
-        // sort the boundary points along the common supporting line
-        //    we first need a reference point
-        typedef Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
-        std::pair<
-          typename std::set<vertex_descriptor>::iterator,
-          typename std::set<vertex_descriptor>::iterator > ref_vertices =
-          boost::minmax_element( boundary_vertices.begin(),
-                                 boundary_vertices.end(),
-                                 Less_vertex(traits, vpmap) );
-
-        //    and then we sort the vertices using this reference point
-        typedef Less_along_ray<Traits> Less_point;
-        typedef std::set<typename Traits::Point_3, Less_point> Sorted_point_set;
-        Sorted_point_set sorted_points( Less_point( traits, get(vpmap, *ref_vertices.first) ) );
-        BOOST_FOREACH(vertex_descriptor v, boundary_vertices)
-          sorted_points.insert( get(vpmap,v) );
-
-        CGAL_assertion( get( vpmap, *ref_vertices.first)==*sorted_points.begin() );
-        CGAL_assertion( get( vpmap, *ref_vertices.second)==*cpp11::prev(sorted_points.end()) );
-
-        const typename Traits::Point_3& xtrm1 = *sorted_points.begin();
-        const typename Traits::Point_3& xtrm2 = *cpp11::prev(sorted_points.end());
-
-        // recover halfedges on the hole, bounded by the reference vertices
-        std::vector<halfedge_descriptor> side_one, side_two;
-
-        // look for the outgoing border halfedge of the first extreme point
+        vertex_descriptor prev_vertex = target(side_one.back(), tmesh);
         BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
-          if ( get(vpmap, source(hd, tmesh)) == xtrm1 )
+          if ( source(hd, tmesh) == prev_vertex )
           {
             side_one.push_back(hd);
             break;
           }
-        CGAL_assertion(side_one.size()==1);
+      }
 
-        while( get(vpmap, target(side_one.back(), tmesh)) != xtrm2 )
+      // look for the outgoing border halfedge of the first extreme point
+      BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
+        if ( get(vpmap, source(hd, tmesh)) == xtrm2 )
         {
-          vertex_descriptor prev_vertex = target(side_one.back(), tmesh);
-          BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
-            if ( source(hd, tmesh) == prev_vertex )
-            {
-              side_one.push_back(hd);
-              break;
-            }
+          side_two.push_back(hd);
+          break;
         }
+      CGAL_assertion(side_two.size()==1);
 
-        // look for the outgoing border halfedge of the first extreme point
+      while( get(vpmap, target(side_two.back(), tmesh)) != xtrm1 )
+      {
+        vertex_descriptor prev_vertex = target(side_two.back(), tmesh);
         BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
-          if ( get(vpmap, source(hd, tmesh)) == xtrm2 )
+          if ( source(hd, tmesh) == prev_vertex )
           {
             side_two.push_back(hd);
             break;
           }
-        CGAL_assertion(side_two.size()==1);
-
-        while( get(vpmap, target(side_two.back(), tmesh)) != xtrm1 )
-        {
-          vertex_descriptor prev_vertex = target(side_two.back(), tmesh);
-          BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
-            if ( source(hd, tmesh) == prev_vertex )
-            {
-              side_two.push_back(hd);
-              break;
-            }
-        }
-
-        CGAL_assertion( side_one.size()+side_two.size()==boundary_hedges.size() );
-
-        // reverse the order of the second side so as to follow
-        // the same order than side one
-        std::reverse(side_two.begin(), side_two.end());
-        BOOST_FOREACH(halfedge_descriptor& h, side_two)
-          h=opposite(h, tmesh);
-
-        CGAL_assertion( source(side_one.front(), tmesh) == *ref_vertices.first );
-        CGAL_assertion( source(side_two.front(), tmesh) == *ref_vertices.first );
-        CGAL_assertion( target(side_one.back(), tmesh) == *ref_vertices.second );
-        CGAL_assertion( target(side_two.back(), tmesh) == *ref_vertices.second );
-
-        // sort halfedges to make binary_search calls in the container
-        std::sort(boundary_hedges.begin(), boundary_hedges.end());
-
-        typename Sorted_point_set::iterator it_pt = cpp11::next(sorted_points.begin()),
-                                                                 it_pt_end = cpp11::prev(sorted_points.begin());
-
-        bool non_collapsable = false;
-        typename std::vector<halfedge_descriptor>::iterator side_one_it = side_one.begin();
-        typename std::vector<halfedge_descriptor>::iterator side_two_it = side_two.begin();
-
-        for(;it_pt!=it_pt_end;++it_pt)
-        {
-          vertex_descriptor v2 = target(next(opposite(*side_two_it, tmesh), tmesh), tmesh);
-
-          halfedge_descriptor h1 = next(*side_one_it, tmesh);
-          while( !std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h1) )
-          {
-            BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h1, tmesh))
-            {
-              CGAL_assertion (!std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h2));
-
-              if (source(h2, tmesh) == v2)
-              {
-                non_collapsable = true;
-                break;
-              }
-            }
-            if (non_collapsable) break;
-
-            h1=next(opposite(h1, tmesh), tmesh);
-          }
-
-          if (non_collapsable) break;
-
-          CGAL_assertion( get(vpmap, target(*side_one_it, tmesh)) == *it_pt ||
-                          get(vpmap, target(*side_two_it, tmesh)) == *it_pt );
-
-          if ( get(vpmap, target(*side_one_it, tmesh)) == *it_pt )
-            ++side_one_it;
-          if ( get(vpmap, target(*side_two_it, tmesh)) == *it_pt )
-            ++side_two_it;
-        }
-
-        if (non_collapsable){
-          BOOST_FOREACH(face_descriptor f, cc_faces)
-            degenerate_face_set.erase(f);
-          #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
-          std::cout << "  WARNING: cannot remove a connected components of degenerate faces.\n";
-          #endif
-          continue;
-        }
       }
 
+      CGAL_assertion( side_one.size()+side_two.size()==boundary_hedges.size() );
+
+      // reverse the order of the second side so as to follow
+      // the same order than side one
+      std::reverse(side_two.begin(), side_two.end());
+      BOOST_FOREACH(halfedge_descriptor& h, side_two)
+        h=opposite(h, tmesh);
+
+      CGAL_assertion( source(side_one.front(), tmesh) == *ref_vertices.first );
+      CGAL_assertion( source(side_two.front(), tmesh) == *ref_vertices.first );
+      CGAL_assertion( target(side_one.back(), tmesh) == *ref_vertices.second );
+      CGAL_assertion( target(side_two.back(), tmesh) == *ref_vertices.second );
+
+      // sort halfedges to make binary_search calls in the container
+      std::sort(boundary_hedges.begin(), boundary_hedges.end());
+
+      typename Sorted_point_set::iterator it_pt = cpp11::next(sorted_points.begin()),
+                                                               it_pt_end = cpp11::prev(sorted_points.begin());
+
+      bool non_collapsable = false;
+      typename std::vector<halfedge_descriptor>::iterator side_one_it = side_one.begin();
+      typename std::vector<halfedge_descriptor>::iterator side_two_it = side_two.begin();
+
+      for(;it_pt!=it_pt_end;++it_pt)
+      {
+        vertex_descriptor v2 = target(next(opposite(*side_two_it, tmesh), tmesh), tmesh);
+
+        halfedge_descriptor h1 = next(*side_one_it, tmesh);
+        while( !std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h1) )
+        {
+          BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h1, tmesh))
+          {
+            CGAL_assertion (!std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h2));
+
+            if (source(h2, tmesh) == v2)
+            {
+              non_collapsable = true;
+              break;
+            }
+          }
+          if (non_collapsable) break;
+
+          h1=next(opposite(h1, tmesh), tmesh);
+        }
+
+        if (non_collapsable) break;
+
+        CGAL_assertion( get(vpmap, target(*side_one_it, tmesh)) == *it_pt ||
+                        get(vpmap, target(*side_two_it, tmesh)) == *it_pt );
+
+        if ( get(vpmap, target(*side_one_it, tmesh)) == *it_pt )
+          ++side_one_it;
+        if ( get(vpmap, target(*side_two_it, tmesh)) == *it_pt )
+          ++side_two_it;
+      }
+
+      if (non_collapsable){
+        BOOST_FOREACH(face_descriptor f, cc_faces)
+          degenerate_face_set.erase(f);
+        #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        std::cout << "  WARNING: cannot remove a connected components of degenerate faces.\n";
+        #endif
+        continue;
+      }
+
+    // now proceed to the fix
       // update the face and halfedge vertex pointers on the boundary
       BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
       {
@@ -1098,45 +1097,10 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       BOOST_FOREACH(vertex_descriptor v, inside_vertices)
         remove_vertex(v, tmesh);
 
-      // sort the boundary points along the common supporting line
-      //    we first need a reference point
-      typedef Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
-      std::pair<
-        typename std::set<vertex_descriptor>::iterator,
-        typename std::set<vertex_descriptor>::iterator > ref_vertices =
-        boost::minmax_element( boundary_vertices.begin(),
-                               boundary_vertices.end(),
-                               Less_vertex(traits, vpmap) );
-
-      //    and then we sort the vertices using this reference point
-      typedef Less_along_ray<Traits> Less_point;
-      typedef std::set<typename Traits::Point_3, Less_point> Sorted_point_set;
-      Sorted_point_set sorted_points( Less_point( traits, get(vpmap, *ref_vertices.first) ) );
-      BOOST_FOREACH(vertex_descriptor v, boundary_vertices)
-        sorted_points.insert( get(vpmap,v) );
-
-      CGAL_assertion( get( vpmap, *ref_vertices.first)==*sorted_points.begin() );
-      CGAL_assertion( get( vpmap, *ref_vertices.second)==*cpp11::prev(sorted_points.end()) );
-
-      // recover halfedges on the hole, bounded by the reference vertices
-      std::vector<halfedge_descriptor> side_one, side_two;
-      side_one.push_back( next( halfedge(*ref_vertices.first, tmesh), tmesh) );
-      while( target(side_one.back(), tmesh)!=*ref_vertices.second)
-        side_one.push_back( next(side_one.back(), tmesh) );
-      side_two.push_back( next(side_one.back(), tmesh) );
-      while( target(side_two.back(), tmesh)!=*ref_vertices.first )
-        side_two.push_back( next(side_two.back(), tmesh) );
-      // reverse the order of the second side so as to follow
-      // the same order than side one
-      std::reverse(side_two.begin(), side_two.end());
-
       #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
       std::cout << "  side_one.size() " << side_one.size() << "\n";
       std::cout << "  side_two.size() " << side_two.size() << "\n";
       #endif
-
-      BOOST_FOREACH(halfedge_descriptor& h, side_two)
-        h=opposite(h, tmesh);
 
       CGAL_assertion( source(side_one.front(), tmesh) == *ref_vertices.first );
       CGAL_assertion( source(side_two.front(), tmesh) == *ref_vertices.first );
