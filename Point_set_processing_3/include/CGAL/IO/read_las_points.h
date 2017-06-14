@@ -27,6 +27,8 @@
 #error CGAL LAS reader requires a C++11 compiler
 #endif
 
+#include <tuple>
+
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -129,9 +131,9 @@ namespace CGAL {
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-  cpp11::tuple<PointMap,
-               typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-               LAS_property::X, LAS_property::Y, LAS_property::Z >
+  std::tuple<PointMap,
+             typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
+             LAS_property::X, LAS_property::Y, LAS_property::Z >
   make_las_point_reader(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
@@ -216,7 +218,7 @@ namespace internal {
   }
 
   template <class ValueType, class Functor, typename ... T>
-  ValueType call_functor(Functor f, cpp11::tuple<T...>& t)
+  ValueType call_functor(Functor f, std::tuple<T...>& t)
   {
     return call_functor<ValueType>(f, t, typename gens<sizeof...(T)>::type());
   }
@@ -248,10 +250,10 @@ namespace internal {
             typename ... T,
             LAS_property::Id::Id ... id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current)
+                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    cpp11::tuple<T...> values;
+    std::tuple<T...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
     put (cpp11::get<0>(current), new_element, new_value);
@@ -265,12 +267,12 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current,
+                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    cpp11::tuple<T...> values;
+    std::tuple<T...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
     put (cpp11::get<0>(current), new_element, new_value);
@@ -322,7 +324,7 @@ namespace internal {
 ///  read a %LAS property as a scalar value `LAS_property::Tag::type` (for
 ///  example, storing an `int` %LAS property into an `int` variable).
 ///
-///  - A `CGAL::cpp11::tuple<PropertyMap, Constructor,
+///  - A `std::tuple<PropertyMap, Constructor,
 ///  LAS_property::Tag...>` if the user wants to use one or several
 ///  %LAS properties to construct a complex object (for example,
 ///  storing 4 `unsigned short` %LAS properties into a %Color object

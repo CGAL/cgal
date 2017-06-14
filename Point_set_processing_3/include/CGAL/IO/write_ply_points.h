@@ -27,6 +27,8 @@
 #error CGAL PLY writer requires a C++11 compiler
 #endif
 
+#include <tuple>
+
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/IO/read_ply_points.h>
@@ -50,7 +52,7 @@ namespace CGAL {
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-  cpp11::tuple<PointMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
+  std::tuple<PointMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
   make_ply_point_writer(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, PLY_property<double>("x"), PLY_property<double>("y"), PLY_property<double>("z"));
@@ -68,7 +70,7 @@ namespace CGAL {
      \tparam VectorMap the property map used to store vectors.
   */
   template <typename VectorMap>
-  cpp11::tuple<VectorMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
+  std::tuple<VectorMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
   make_ply_normal_writer(VectorMap normal_map)
   {
     return cpp11::make_tuple (normal_map, PLY_property<double>("nx"), PLY_property<double>("ny"), PLY_property<double>("nz"));
@@ -125,7 +127,7 @@ namespace internal {
   template <typename PropertyMap,
             typename ... T>
   void output_property_header (std::ostream& stream,
-                               cpp11::tuple<PropertyMap, PLY_property<T>... >& current)
+                               std::tuple<PropertyMap, PLY_property<T>... >& current)
   {
     Properties_header<sizeof...(T)-1>::write(stream, current); 
   }
@@ -156,7 +158,7 @@ namespace internal {
             typename NextPropertyHandler,
             typename ... PropertyHandler>
   void output_property_header (std::ostream& stream,
-                               cpp11::tuple<PropertyMap, PLY_property<T>... >& current,
+                               std::tuple<PropertyMap, PLY_property<T>... >& current,
                                NextPropertyHandler& next,
                                PropertyHandler&& ... properties)
   {
@@ -190,7 +192,7 @@ namespace internal {
             typename ... T>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          cpp11::tuple<PropertyMap, PLY_property<T>... >& current)
+                          std::tuple<PropertyMap, PLY_property<T>... >& current)
   {
     property_write (stream, it, cpp11::get<0>(current));
     if (get_mode(stream) == IO::ASCII)
@@ -234,7 +236,7 @@ namespace internal {
             typename ... PropertyHandler>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          cpp11::tuple<PropertyMap, PLY_property<T>... >& current,
+                          std::tuple<PropertyMap, PLY_property<T>... >& current,
                           NextPropertyHandler& next,
                           PropertyHandler&& ... properties)
   {
@@ -264,7 +266,7 @@ namespace internal {
 ///  to write a scalar value T as a %PLY property (for example, writing
 ///  an `int` variable as an `int` %PLY property).
 ///
-///  - A `CGAL::cpp11::tuple<PropertyMap, PLY_property<T>...>` if the
+///  - A `std::tuple<PropertyMap, PLY_property<T>...>` if the
 ///  user wants to write a complex object as several %PLY
 ///  properties. In that case, a specialization of `Output_rep` must
 ///  be provided for `PropertyMap::value_type` that handles both ASCII

@@ -27,6 +27,8 @@
 #error CGAL PLY reader requires a C++11 compiler
 #endif
 
+#include <tuple>
+
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -82,10 +84,10 @@ namespace CGAL {
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-  cpp11::tuple<PointMap,
-               typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-               PLY_property<double>, PLY_property<double>, PLY_property<double> >
-  make_ply_point_reader(PointMap point_map)
+  std::tuple<PointMap,
+             typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
+             PLY_property<double>, PLY_property<double>, PLY_property<double> >
+   make_ply_point_reader(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
                               PLY_property<double>("x"), PLY_property<double>("y"), PLY_property<double>("z"));
@@ -103,9 +105,9 @@ namespace CGAL {
      \tparam VectorMap the property map used to store vectors.
   */
   template <typename VectorMap>
-  cpp11::tuple<VectorMap,
-               typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
-               PLY_property<double>, PLY_property<double>, PLY_property<double> >
+  std::tuple<VectorMap,
+             typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
+             PLY_property<double>, PLY_property<double>, PLY_property<double> >
   make_ply_normal_reader(VectorMap normal_map)
   {
     return cpp11::make_tuple (normal_map, typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3(),
@@ -455,7 +457,7 @@ namespace internal {
   }
 
   template <class ValueType, class Functor, typename ... T>
-  ValueType call_functor(Functor f, cpp11::tuple<T...>& t)
+  ValueType call_functor(Functor f, std::tuple<T...>& t)
   {
     return call_functor<ValueType>(f, t, typename gens<sizeof...(T)>::type());
   }
@@ -475,10 +477,10 @@ namespace internal {
             typename Constructor,
             typename ... T>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, PLY_property<T>...>& current)
+                           std::tuple<PropertyMap, Constructor, PLY_property<T>...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    cpp11::tuple<T...> values;
+    std::tuple<T...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
     put (cpp11::get<0>(current), new_element, new_value);
@@ -491,12 +493,12 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           cpp11::tuple<PropertyMap, Constructor, PLY_property<T>...>& current,
+                           std::tuple<PropertyMap, Constructor, PLY_property<T>...>& current,
                            NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
     typedef typename PropertyMap::value_type PmapValueType;
-    cpp11::tuple<T...> values;
+    std::tuple<T...> values;
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(cpp11::get<1>(current), values);
     put (cpp11::get<0>(current), new_element, new_value);
@@ -549,7 +551,7 @@ namespace internal {
 ///  to read a %PLY property as a scalar value T (for example, storing
 ///  an `int` %PLY property into an `int` variable).
 ///
-///  - A `CGAL::cpp11::tuple<PropertyMap, Constructor,
+///  - A `std::tuple<PropertyMap, Constructor,
 ///  PLY_property<T>...>` if the user wants to use one or several PLY
 ///  properties to construct a complex object (for example, storing 3
 ///  `uchar` %PLY properties into a %Color object that can for example

@@ -27,6 +27,8 @@
 #error CGAL LAS writer requires a C++11 compiler
 #endif
 
+#include <tuple>
+
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -59,7 +61,7 @@ namespace CGAL {
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-  cpp11::tuple<PointMap, LAS_property::X, LAS_property::Y, LAS_property::Z >
+  std::tuple<PointMap, LAS_property::X, LAS_property::Y, LAS_property::Z >
   make_las_point_writer(PointMap point_map)
   {
     return cpp11::make_tuple (point_map, LAS_property::X(), LAS_property::Y(), LAS_property::Z());
@@ -157,7 +159,7 @@ namespace internal {
 /// LAS_property::Tag >` used to write a scalar value
 /// `LAS_property::Tag::type` as a %LAS property (for example,
 /// writing an `int` vairable as an `int` %LAS property). An exception
-/// is used for points that are written using a `cpp11::tuple` object.
+/// is used for points that are written using a `std::tuple` object.
 ///
 /// See documentation of `read_las_points_with_properties()` for the
 /// list of available `LAS_property::Tag` classes.
@@ -177,10 +179,10 @@ template <typename ForwardIterator,
 bool write_las_points_with_properties (std::ostream& stream,  ///< output stream.
                                        ForwardIterator first, ///< iterator over the first input point.
                                        ForwardIterator beyond, ///< past-the-end iterator over the input points.
-                                       cpp11::tuple<PointMap,
-                                                    LAS_property::X,
-                                                    LAS_property::Y,
-                                                    LAS_property::Z> point_property,  ///< property handler for points
+                                       std::tuple<PointMap,
+                                       LAS_property::X,
+                                       LAS_property::Y,
+                                       LAS_property::Z> point_property,  ///< property handler for points
                                        PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
   CGAL_point_set_processing_precondition(first != beyond);
