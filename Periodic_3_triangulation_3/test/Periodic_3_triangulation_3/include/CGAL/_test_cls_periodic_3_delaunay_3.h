@@ -105,7 +105,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   pts_rnd10.push_back(Point(-0.255508,  0.816668,   0.823991 ));
 
   // Create a triangulation for testing
-  P3T3 PT(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1,1,1,1));
+  P3T3 PT(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1, 1,1,1));
   assert(PT.number_of_vertices() == 10);
   assert(PT.is_valid());
 
@@ -117,11 +117,11 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT_def.number_of_vertices() == 0);
   assert(PT_def.is_valid());
   
-  P3T3 PT_dom(Iso_cuboid(-1,-2,0,3,2,4));
+  P3T3 PT_dom(Iso_cuboid(-1,-2,0, 3,2,4));
   assert(PT_dom.number_of_vertices() == 0);
   assert(PT_dom.is_valid());
   
-  P3T3 PT_gt(Iso_cuboid(0,0,0,1,1,1),GT());
+  P3T3 PT_gt(Iso_cuboid(0,0,0, 1,1,1), GT());
   assert(PT_gt.number_of_vertices() == 0);
   assert(PT_gt.is_valid());
     
@@ -133,8 +133,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   std::cout << "  Special constructor" << std::endl;
 
-  P3T3 PT_range(pts_rnd10.begin(), pts_rnd10.end(),
-      Iso_cuboid(-1,-1,-1,1,1,1));
+  P3T3 PT_range(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1, 1,1,1));
   assert(PT_range.number_of_vertices() == 10);
   assert(PT_range.is_valid());
   
@@ -214,7 +213,8 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   std::cout << "  Iterator range insertion" << std::endl;
   
-  P3T3 PT_range_ins(Iso_cuboid(-1,-1,-1,1,1,1));
+  // "1.1" because random points are in the cube (-1,-1,-1, 1,1,1)
+  P3T3 PT_range_ins(Iso_cuboid(-1,-1,-1, 1.1,1.1,1.1));
   pts_rnd1000.push_back(Point(-1,-1,-1));
   assert(PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.end(), true)
       == 1001);

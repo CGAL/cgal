@@ -343,7 +343,7 @@ public:
     typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
     CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
-    Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+    Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.6, 0.6, 0.6);
     P3RT3 p3rt3(iso_cuboid);
 
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
@@ -488,13 +488,13 @@ public:
     assert(p3rt3 == p3rt3_b);
   }
 
-  static void test_insert_range (unsigned pt_count, unsigned seed)
+  static void test_insert_range (unsigned pt_count, unsigned /* seed */)
   {
     std::cout << "--- test_insert_range" << std::endl;
 
-    CGAL::Random random(seed);
-    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
-    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
+//    CGAL::Random random(seed);
+//    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+//    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
@@ -693,7 +693,7 @@ public:
     typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
     CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
-    Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+    Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.6, 0.6, 0.6);
     P3RT3 p3rt3(iso_cuboid);
 
     std::vector<Weighted_point_3> points;
