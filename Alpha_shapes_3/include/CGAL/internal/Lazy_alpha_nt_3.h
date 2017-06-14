@@ -12,29 +12,64 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Sébastien Loriot <sebastien.loriot@geometryfactory.com>
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 
 #include <CGAL/license/Alpha_shapes_3.h>
 
-
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Has_conversion.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
+
 #include <iostream>
 
 namespace CGAL {
 
 namespace internal{
+
+// check whether Cartesian_converter can do the following conversions
+//  -- Input_traits::(Weighted_)Point_3 to K2::(Weighted_)Point_3
+//  -- Input_traits::(Weighted_)Point_3 to K3::(Weighted_)Point_3
+//
+template < class Input_traits, class Kernel_approx, class Kernel_exact,
+           class Weighted_tag >
+class Is_traits_point_convertible
+{
+  typedef typename Kernel_traits<typename Input_traits::Point_3>::Kernel   Kernel_input;
+
+  typedef typename Input_traits::Point_3                                   K1P;
+  typedef typename Kernel_approx::Point_3                                  K2P;
+  typedef typename Kernel_exact::Point_3                                   K3P;
+
+public:
+  static const bool value
+    = (Has_conversion<Kernel_input, Kernel_approx, K1P, K2P>::value &&
+       Has_conversion<Kernel_input, Kernel_exact, K1P, K3P>::value);
+};
+
+template < class Input_traits, class Kernel_approx, class Kernel_exact >
+class Is_traits_point_convertible<Input_traits, Kernel_approx, Kernel_exact,
+                                  ::CGAL::Tag_true /* Weighted_tag */>
+{
+  typedef typename Kernel_traits<typename Input_traits::Point_3>::Kernel   Kernel_input;
+
+  typedef typename Input_traits::Weighted_point_3                          K1WP;
+  typedef typename Kernel_approx::Weighted_point_3                         K2WP;
+  typedef typename Kernel_exact::Weighted_point_3                          K3WP;
+
+public:
+  static const bool value
+    = (Has_conversion<Kernel_input, Kernel_approx, K1WP, K2WP>::value &&
+       Has_conversion<Kernel_input, Kernel_exact, K1WP, K3WP>::value);
+};
 
 template <class T>
 struct Input_points_for_lazy_alpha_nt_3
@@ -56,7 +91,7 @@ struct Types_for_alpha_nt_3
 //Point types
   typedef typename Kernel_approx::Point_3                          Approx_point;
   typedef typename Kernel_exact::Point_3                           Exact_point;
-  typedef typename Kernel_input::Point_3                           Input_point;
+  typedef typename Input_traits::Point_3                           Input_point;
 //Constructions 
   typedef typename Kernel_approx::Compute_squared_radius_3         Approx_squared_radius;
   typedef typename Kernel_exact::Compute_squared_radius_3          Exact_squared_radius;
@@ -88,7 +123,7 @@ class Lazy_alpha_nt_3{
   typedef Exact_field_selector<double>::Type                                                    NT_exact;
   typedef CGAL::Simple_cartesian<NT_approx>                                                     Kernel_approx;
   typedef CGAL::Simple_cartesian<NT_exact>                                                      Kernel_exact;
-  typedef typename Kernel_traits<typename Input_traits::Point_2>::Kernel   Kernel_input;
+  typedef typename Kernel_traits<typename Input_traits::Point_3>::Kernel   Kernel_input;
 
 //Helper class for weighted and non-weighted case  
   typedef Types_for_alpha_nt_3<Weighted_tag,Input_traits,Kernel_input,Kernel_approx,Kernel_exact> Types;  
@@ -106,16 +141,25 @@ class Lazy_alpha_nt_3{
   typedef typename Types::Exact_point                                                           Exact_point;
   typedef typename Types::Input_point                                                           Input_point;
 //Convertion functions
-  Approx_point to_approx(const Input_point& wp) const {
+  Approx_point to_approx(const Input_point& wp) const
+  {
+    // The traits class' Point_3 must be convertible using the Cartesian converter
+    CGAL_static_assertion((Is_traits_point_convertible<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+
     To_approx converter;
     return converter(wp);
   }
   
-  Exact_point to_exact(const Input_point& wp) const {
+  Exact_point to_exact(const Input_point& wp) const
+  {
+    // The traits class' Point_3 must be convertible using the Cartesian converter
+    CGAL_static_assertion((Is_traits_point_convertible<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+
     To_exact converter;
     return converter(wp);
   }
-
 
 //members  
   //the members can be updated when calling method exact()
@@ -359,18 +403,9 @@ template <class GeomTraits,class ExactAlphaComparisonTag,class Weighted_tag>
 struct Alpha_nt_selector_3
   : public Alpha_nt_selector_impl_3<
              GeomTraits,
-             // We check for two things in addition to the value of ExactAlphaComparisonTag:
-             // - if the base traits is already exact (then we don't need to do anything,
-             //   and we can simply directly use the traits class)
-             // - if the traits class' Point_3 can be converted to the underlying
-             //   kernel of the traits class, which is a necessary precondition to
-             //   be able to use the Cartesian converter and the exact kernels
+             // If the base traits is already exact then we don't need to do anything,
+             // and we can simply directly use the traits class
              Boolean_tag<boost::is_floating_point<typename GeomTraits::FT>::value &&
-                         boost::is_convertible<
-                           typename GeomTraits::Point_3,
-                           typename Kernel_traits<
-                             typename GeomTraits::Point_3>::Kernel::Point_3
-                         >::value &&
                          ExactAlphaComparisonTag::value >,
              Weighted_tag>
 { };
