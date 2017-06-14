@@ -342,7 +342,7 @@ iteratively filled, refined and faired to get a faired mesh with no hole.
  Holes in the fork model are filled with triangle patches.
  \cgalFigureEnd
 
-subsection HFPerformance Performance
+\subsection HFPerformance Performance
 
 The hole filling algorithm has a complexity which depends on the
 number of vertices.  While \cgalCite{liepa2003filling} has a running
