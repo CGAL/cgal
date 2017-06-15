@@ -107,9 +107,9 @@ namespace internal {
 /*!
 * \ingroup PMP_meshing_grp
 * @brief randomly perturbs the locations of vertices of a triangulated surface mesh.
-* In the absence of instructions to the contrary in the parameters,
-* the vertices are re-projected to the input surface after vertices geometric perturbation.
-* Note that depending on the chosen parameters, inversions and self-intersections may happen.
+* By default, the vertices are re-projected onto the input surface after perturbation.
+* Note that no geometric checks are done after the perturbation
+* (face orientation might become incorrect and self-intersections might be introduced).
 *
 * @tparam VertexRange model of `Range`, holding
 *         vertices of type `boost::graph_traits<TriangleMesh>::vertex_descriptor`.
@@ -118,7 +118,7 @@ namespace internal {
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param vertices the range of vertices to be perturbed
-* @param tmesh the triangulated surface mesh to which the perturbed vertices belong
+* @param tmesh the triangulated surface mesh
 * @param perturbation_max_size the maximal length of moves that can be applied to
 *        vertices of `tmesh`.
 * @param np optional sequence of \ref namedparameters among the ones listed below
