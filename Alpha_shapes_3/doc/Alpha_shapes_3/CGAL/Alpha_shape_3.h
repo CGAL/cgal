@@ -10,6 +10,9 @@ alpha shapes of points in the 3D space for <I>all</I> real
 of the class `Dt`. Each k-dimensional face of Dt is associated with an
 interval that specifies for which values of alpha the face belongs to the alpha shape. 
 
+Note that this class is used for <I>basic</I>, <I>weighted</I>,
+and <I>periodic</I> Alpha Shapes.
+
 The modifying functions `insert` and `remove` will overwrite
 the one inherited from the underlying triangulation class `Dt`.
 At the moment, only the static version is implemented.
@@ -30,14 +33,14 @@ does not make sense if the traits class already provides exact constructions.
 
 \warning When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the class `Cartesian_converter` is used internally to switch between the traits class
-and exact CGAL kernels. `Cartesian_converter` must thus provide the necessary functor
-to convert a point of the traits class to a point of an exact kernel. However, this
-functor is not necessarily provided by `Cartesian_converter`. In this case, a partial specialization of `Cartesian_converter`
+and the %CGAL kernel `CGAL::Simple_cartesian<NT>`, where `NT` can be either `CGAL::Interval_nt` or
+`CGAL::Exact_rational`. `Cartesian_converter` must thus offer the necessary functors
+to convert a three-dimensional point of the traits class to a three-dimensional point
+of `CGAL::Simple_cartesian<NT>`. However, these functors are not necessarily provided by
+the basic `Cartesian_converter`, for example when a custom point is used.
+In this case, a partial specialization of `Cartesian_converter`
 must be provided by the user. An example of such specialization is given in the
 two-dimensional Alpha Shapes example \ref Alpha_shapes_2/ex_alpha_projection_traits.cpp "ex_alpha_projection_traits.cpp".
-
-Note that this class is used for <I>basic</I>, <I>weighted</I>,
-and <I>periodic</I> Alpha Shapes.
 
 \cgalHeading{I/O}
 
