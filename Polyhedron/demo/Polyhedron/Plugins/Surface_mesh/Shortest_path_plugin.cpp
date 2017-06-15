@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QObject>
 #include <QDockWidget>
-//#include <QtConcurrentRun>
+
 #include <map>
 #include <algorithm>
 #include <vector>
@@ -32,7 +32,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #else
 typedef Scene_polyhedron_item Scene_facegraph_item;
 #endif
-typedef Scene_facegraph_item::FaceGraph FaceGraph;
+typedef Scene_facegraph_item::Face_graph FaceGraph;
 
 using namespace CGAL::Three;
 class Polyhedron_demo_shortest_path_plugin :
