@@ -112,7 +112,7 @@ namespace internal {
 * (face orientation might become incorrect and self-intersections might be introduced).
 *
 * @tparam VertexRange model of `Range`, holding
-*         vertices of type `boost::graph_traits<TriangleMesh>::vertex_descriptor`.
+*         vertices of type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
 *         Its iterator type is `ForwardIterator`. 
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 * @tparam NamedParameters a sequence of \ref namedparameters
