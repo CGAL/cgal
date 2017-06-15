@@ -14,7 +14,7 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 // Point with normal, color and intensity
-typedef std::tuple<Point, Vector, Color, int> PNCI;
+typedef CGAL::cpp11::tuple<Point, Vector, Color, int> PNCI;
 typedef CGAL::Nth_of_tuple_property_map<0, PNCI> Point_map;
 typedef CGAL::Nth_of_tuple_property_map<1, PNCI> Normal_map;
 typedef CGAL::Nth_of_tuple_property_map<2, PNCI> Color_map;
@@ -50,9 +50,9 @@ int main(int argc, char*argv[])
   // Display points read
   for (std::size_t i = 0; i < points.size (); ++ i)
     {
-      const Point& p = std::get<0>(points[i]);
-      const Vector& n = std::get<1>(points[i]);
-      const Color& c = std::get<2>(points[i]);
+      const Point& p = get<0>(points[i]);
+      const Vector& n = get<1>(points[i]);
+      const Color& c = get<2>(points[i]);
       int I = get<3>(points[i]);
       std::cerr << "Point (" << p << ") with normal (" << n
                 << "), color (" << int(c[0]) << " " << int(c[1]) << " " << int(c[2])
