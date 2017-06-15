@@ -20,6 +20,9 @@
 #ifndef CGAL_CELL_ATTRIBUTE_H
 #define CGAL_CELL_ATTRIBUTE_H 1
 
+#include <CGAL/tags.h>
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
   template <class, class, class, class>

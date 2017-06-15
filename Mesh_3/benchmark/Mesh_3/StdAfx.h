@@ -274,7 +274,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/utility.h>
-#include <CGAL/Weighted_point.h>
+//#include <CGAL/Weighted_point.h>
 
 // Mesh_3
 /*#include <CGAL_demo/Viewer.h>

@@ -32,6 +32,7 @@
 #include <CGAL/Sphere_3.h>
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
+#include <CGAL/int.h>
 
 namespace CGAL {
 

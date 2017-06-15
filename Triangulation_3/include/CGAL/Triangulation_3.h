@@ -1226,10 +1226,8 @@ protected:
       *the_facet_is_in_its_cz = false;
 
     if (could_lock_zone)
-      *could_lock_zone = true;
-
-    if (could_lock_zone)
     {
+      *could_lock_zone = true;
       if (!this->try_lock_cell(d))
       {
         *could_lock_zone = false;
@@ -2081,6 +2079,20 @@ public:
   finite_incident_edges(Vertex_handle v, OutputIterator edges) const
   {
     return _tds.incident_edges(v, edges, Finite_filter(this));
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
+  {
+      return _tds.incident_edges_threadsafe(v, edges);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  finite_incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
+  {
+    return _tds.incident_edges_threadsafe(v, edges, Finite_filter(this));
   }
 
   size_type degree(Vertex_handle v) const

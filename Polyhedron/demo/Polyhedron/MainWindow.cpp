@@ -57,6 +57,7 @@
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
+#include "Color_map.h"
 using namespace CGAL::Three;
 QScriptValue 
 myScene_itemToScriptValue(QScriptEngine *engine, 
@@ -271,6 +272,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionSelectAllItems, SIGNAL(triggered()),
           this, SLOT(selectAll()));
 
+  connect(ui->actionColorItems, SIGNAL(triggered()),
+          this, SLOT(colorItems()));
+
   // Recent files menu
   this->addRecentFiles(ui->menuFile, ui->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
@@ -351,34 +355,11 @@ MainWindow::MainWindow(QWidget* parent)
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
-  if ( NULL != menuFile )
-  {
-    QList<QAction*> menuFileActions = menuFile->actions();
-
-    // Look for action just after "Load..." action
-    QAction* actionAfterLoad = NULL;
-    for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
-         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
-    {
-      if ( NULL != *it_action && (*it_action)->text().contains("Load") )
-      {
-        ++it_action;
-        if ( it_action != end && NULL != *it_action )
-        {
-          actionAfterLoad = *it_action;
-        }
-      }
-    }
-
-    // Insert "Load implicit function" action
-    if ( NULL != actionAfterLoad )
-    {
-      menuFile->insertAction(actionAfterLoad,actionAddToGroup);
-    }
-  }
-
+  insertActionBeforeLoadPlugin(menuFile, actionAddToGroup);
   statistics_dlg = NULL;
   statistics_ui = new Ui::Statistics_on_item_dialog();
+
+  actionResetDefaultLoaders = new QAction("Reset Default Loaders",this);
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -655,6 +636,7 @@ void MainWindow::updateMenus()
   ui->menuOperations->clear();
   ui->menuOperations->addActions(as);
 }
+
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {
   Q_FOREACH(const PluginNamePair& p, plugins) {
@@ -812,7 +794,7 @@ void MainWindow::message(QString message, QString colorName, QString font) {
   message = "<font color=\"" + colorName + "\" style=\"font-style: " + font + ";\" >" +
     message + "</font><br>";
   message = "[" + QTime::currentTime().toString() + "] " + message;
-  ui->consoleTextEdit->insertHtml(message);
+  ui->consoleTextEdit->append(message);
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
@@ -838,16 +820,15 @@ void MainWindow::updateViewerBBox()
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
 
-   //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
-   //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
+
   qglviewer::Vec 
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax),
     bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
   qglviewer::Vec offset(0,0,0);
-  double l_dist = (std::max)((std::abs)(bbox_center.x + viewer->offset().x),
-                      (std::max)((std::abs)(bbox_center.y + viewer->offset().y),
-                          (std::abs)(bbox_center.z + viewer->offset().z)));
+  double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
+                      (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
+                          (std::abs)(bbox_center.z - viewer->offset().z)));
   if((std::log2)(l_dist) > 13.0 )
     for(int i=0; i<3; ++i)
     {
@@ -1029,7 +1010,12 @@ void MainWindow::open(QString filename)
   if(!ok || load_pair.first.isEmpty()) { return; }
   
   if (load_pair.second)
-     default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
+  {
+    connect(actionResetDefaultLoaders, SIGNAL(triggered()),
+            this, SLOT(reset_default_loaders()));
+    default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
+    insertActionBeforeLoadPlugin(ui->menuFile, actionResetDefaultLoaders);
+  }
   
   
   QSettings settings;
@@ -1039,6 +1025,7 @@ void MainWindow::open(QString filename)
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
+
   selectSceneItem(scene->addItem(scene_item));
 
   CGAL::Three::Scene_group_item* group =
@@ -1349,6 +1336,7 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
+    set_facegraph_mode_adapter(settings.value("polyhedron_mode", true).toBool());
 }
 
 void MainWindow::writeSettings()
@@ -1363,6 +1351,8 @@ void MainWindow::writeSettings()
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
+    //setting polyhedron mode
+    settings.setValue("polyhedron_mode", this->property("is_polyhedron_mode").toBool());
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -1478,11 +1468,19 @@ void MainWindow::on_actionLoad_triggered()
     selectedPlugin = it.value();
   }
 
+  std::size_t nb_files = dialog.selectedFiles().size();
+  std::vector<QColor> colors_;
+  colors_.reserve(nb_files);
+  compute_color_map(QColor(100, 100, 255),//Scene_item's default color
+                    static_cast<unsigned>(nb_files),
+                    std::back_inserter(colors_));
+  std::size_t nb_item = -1;
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
       item = loadItem(info, selectedPlugin);
+      item->setColor(colors_[++nb_item]);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);
       CGAL::Three::Scene_group_item* group =
@@ -1492,6 +1490,7 @@ void MainWindow::on_actionLoad_triggered()
       this->addToRecentFiles(filename);
     } else {
       open(filename);
+      scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
     }
   }
 }
@@ -1621,7 +1620,12 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  
+  if(this->property("is_polyhedron_mode").toBool())
+    prefdiag.polyRadioButton->setChecked(true);
+  else
+    prefdiag.smRadioButton->setChecked(true);
+  connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
+          this, &MainWindow::set_facegraph_mode_adapter);
   
   QStandardItemModel* iStandardModel = new QStandardItemModel(this);
   //add blacklisted plugins
@@ -1945,4 +1949,58 @@ void MainWindow::resetHeader()
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
 }
 
+void MainWindow::reset_default_loaders()
+{
+  default_plugin_selection.clear();
 
+  const char* prop_name = "Menu modified by MainWindow.";
+  QMenu* menu = ui->menuFile;
+  if(!menu)
+    return;
+  bool menuChanged = menu->property(prop_name).toBool();
+  if(!menuChanged) {
+    menu->setProperty(prop_name, true);
+  }
+  QList<QAction*> menuActions = menu->actions();
+  menu->removeAction(actionResetDefaultLoaders);
+}
+
+void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInsert)
+{
+  if(menu)
+  {
+    QList<QAction*> menuActions = menu->actions();
+    if(!menuActions.contains(actionToInsert))
+      menu->insertAction(ui->actionLoadPlugin, actionToInsert);
+  }
+}
+
+void MainWindow::colorItems()
+{
+  std::size_t nb_files = scene->selectionIndices().size();
+  std::vector<QColor> colors_;
+  colors_.reserve(nb_files);
+  compute_color_map(scene->item(scene->selectionIndices().last())->color(),
+                    static_cast<unsigned>(nb_files),
+                    std::back_inserter(colors_));
+  std::size_t nb_item = -1;
+  Q_FOREACH(int id, scene->selectionIndices())
+  {
+    scene->item(id)->setColor(colors_[++nb_item]);
+  }
+  viewer->update();
+}
+// Only used to make the doc clearer. Only the adapter is actueally used in the code,
+// for signal/slots reasons.
+void MainWindow::set_face_graph_default_type(Face_graph_mode m)
+{
+  this->setProperty("is_polyhedron_mode", m);
+}
+
+void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
+{
+  if(is_polyhedron)
+   set_face_graph_default_type(POLYHEDRON);
+  else
+    set_face_graph_default_type(SURFACE_MESH);
+}

@@ -1,12 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Timer.h>
 
 #include <iostream>
@@ -64,6 +61,12 @@ int main()
 {
 
   test_orient<Epic>("data/elephant.off");
+  test_orient<Epic>("data-coref/cube.off");
+  test_orient<Epic>("data/tetra1.off");
+  test_orient<Epic>("data/tetra2.off");
+  test_orient<Epic>("data/tetra3.off");
+  test_orient<Epic>("data/tetra4.off");
+  test_orient<Epic>("data-coref/cube.off");
   test_orient<Epec>("data/elephant.off");
 
   std::cerr << "All done." << std::endl;

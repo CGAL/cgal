@@ -22,13 +22,14 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
 #define CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/orientation.h>
 
 
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <boost/foreach.hpp>
+#include <boost/container/flat_set.hpp>
 
 #include <set>
 #include <map>
@@ -57,7 +58,7 @@ struct Polygon_soup_orienter
 /// Container types
   typedef PointRange                                                     Points;
   typedef PolygonRange                                                 Polygons;
-  typedef std::map<V_ID_pair, std::set<P_ID> >                         Edge_map;
+  typedef std::map<V_ID_pair, boost::container::flat_set<P_ID> >       Edge_map;
   typedef typename Edge_map::iterator                         Edge_map_iterator;
   typedef std::set<V_ID_pair>                                      Marked_edges;
 
@@ -441,7 +442,7 @@ struct Polygon_soup_orienter
 } // namespace internal
 
 /**
- * \ingroup PMP_repairing_grp
+ * \ingroup PMP_orientation_grp
  * tries to consistently orient a soup of polygons in 3D space.
  * When it is not possible to produce a combinatorial manifold surface,
  * some points are duplicated.

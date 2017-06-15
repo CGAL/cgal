@@ -19,7 +19,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_POLYHEDRON_3_H
@@ -37,31 +37,31 @@
 
 namespace CGAL {
 namespace Mesh_3 {
-  
+
 template <typename Refs, typename Tag, typename Point, typename Patch_id>
-class Mesh_polyhedron_vertex : 
+class Mesh_polyhedron_vertex :
 public CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point>
 {
 public:
   typedef std::set<Patch_id> Set_of_indices;
-  
+
 private:
   typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point> Pdv_base;
-  
+
   Set_of_indices indices;
   std::size_t time_stamp_;
 
 public:
   int nb_of_feature_edges;
-  
+
   bool is_corner() const {
     return nb_of_feature_edges > 2;
   }
-  
+
   bool is_feature_vertex() const {
     return nb_of_feature_edges != 0;
   }
-  
+
   void add_incident_patch(const Patch_id i) {
     indices.insert(i);
   }
@@ -77,18 +77,18 @@ public:
     time_stamp_ = ts;
   }
   ///@}
-  
+
   const Set_of_indices&
   incident_patches_ids_set() const {
     return indices;
   }
-  
+
   Mesh_polyhedron_vertex() : Pdv_base(), nb_of_feature_edges(0) {}
   Mesh_polyhedron_vertex(const Point& p) : Pdv_base(p), nb_of_feature_edges(0) {}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
-class Mesh_polyhedron_halfedge : 
+class Mesh_polyhedron_halfedge :
 public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
@@ -96,14 +96,14 @@ private:
   std::size_t time_stamp_;
 
 public:
-  
-  Mesh_polyhedron_halfedge() 
+
+  Mesh_polyhedron_halfedge()
   : feature_edge(false) {};
-  
+
   bool is_feature_edge() const {
     return feature_edge;
   }
-  
+
   void set_feature_edge(const bool b) {
     feature_edge = b;
     this->opposite()->feature_edge = b;
@@ -136,7 +136,7 @@ inline Integral patch_id_default_value(Integral)
 }
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
-class Mesh_polyhedron_face : 
+class Mesh_polyhedron_face :
 public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
 {
 private:
@@ -146,14 +146,14 @@ private:
 public:
 
   typedef Patch_id_ Patch_id;
-  
-  Mesh_polyhedron_face() 
+
+  Mesh_polyhedron_face()
   : patch_id_(patch_id_default_value(Patch_id())) {}
-  
+
   const Patch_id& patch_id() const {
     return patch_id_;
   }
-  
+
   void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
@@ -185,7 +185,7 @@ public:
       Point,
       Patch_id> Vertex;
   };
-  
+
   // wrap face
   template<class Refs, class Traits> struct Face_wrapper
   {
@@ -194,7 +194,7 @@ public:
       CGAL::Tag_false,
       Patch_id> Face;
   };
-  
+
   // wrap halfedge
   template<class Refs, class Traits> struct Halfedge_wrapper
   {
@@ -204,7 +204,7 @@ public:
       CGAL::Tag_true> Halfedge;
   };
 };
-  
+
 } // end namespace Mesh_3
 
 
@@ -214,7 +214,6 @@ struct Mesh_polyhedron_3
   typedef Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> > type;
   typedef type Type;
 };
-
 } // end namespace CGAL
 
 #endif // CGAL_MESH_POLYHEDRON_3_H

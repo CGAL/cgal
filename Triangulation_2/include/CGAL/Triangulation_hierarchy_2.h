@@ -45,12 +45,12 @@ const int   Triangulation_hierarchy_2__minsize  = 20;
 const int   Triangulation_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
-template < class Tr>
+template < class Tr_>
 class Triangulation_hierarchy_2
-  : public Tr
+  : public Tr_
 {
  public:
-  typedef Tr                                   Tr_Base;
+  typedef Tr_                                  Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Tr_Base::Point              Point;
   typedef typename Tr_Base::size_type          size_type;
@@ -189,7 +189,7 @@ public:
   Vertex_handle
   nearest_vertex(const Point& p, Face_handle start = Face_handle()) const
   {
-    return nearest_vertex_dispatch<Tr>(p, start, Weighted_tag());
+    return nearest_vertex_dispatch<Tr_Base>(p, start, Weighted_tag());
   }
 
 private:

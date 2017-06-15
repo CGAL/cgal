@@ -1,7 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
 
 #include <fstream>
@@ -23,6 +21,11 @@ int main(int argc, char* argv[])
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   Triangle_mesh tmesh;
   input >> tmesh;
+  if (!CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cout << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Skeleton skeleton;
   Skeletonization mcs(tmesh);
@@ -66,5 +69,5 @@ int main(int argc, char* argv[])
     BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
-  return 0;
+  return EXIT_SUCCESS;
 }

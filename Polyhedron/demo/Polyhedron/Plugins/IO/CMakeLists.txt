@@ -23,6 +23,8 @@ target_link_libraries(polylines_io_plugin scene_polylines_item)
 
 polyhedron_demo_plugin(selection_io_plugin Selection_io_plugin)
 target_link_libraries(selection_io_plugin scene_polyhedron_selection_item)
+polyhedron_demo_plugin(selection_io_sm_plugin Selection_io_plugin)
+target_link_libraries(selection_io_sm_plugin scene_surface_mesh_selection_item)
 
 polyhedron_demo_plugin(stl_plugin STL_io_plugin)
 target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
@@ -33,6 +35,8 @@ target_link_libraries(surface_mesh_io_plugin scene_surface_mesh_item scene_polyg
 polyhedron_demo_plugin(surf_io_plugin Surf_io_plugin)
 target_link_libraries(surf_io_plugin scene_polyhedron_item)
 
+polyhedron_demo_plugin(surf_to_sm_io_plugin Surf_to_sm_io_plugin)
+target_link_libraries(surf_to_sm_io_plugin scene_surface_mesh_item)
 
 
 find_package(VTK QUIET COMPONENTS

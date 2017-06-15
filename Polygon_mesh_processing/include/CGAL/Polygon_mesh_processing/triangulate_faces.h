@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 #define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 
 #include <CGAL/boost/graph/helpers.h>
@@ -332,7 +332,7 @@ bool  triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descripto
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
@@ -382,7 +382,7 @@ bool triangulate_faces(FaceRange face_range,
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;

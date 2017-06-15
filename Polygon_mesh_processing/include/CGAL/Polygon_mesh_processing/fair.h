@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
@@ -70,7 +70,7 @@ namespace internal {
   based on solving a linear bi-Laplacian system with boundary constraints,
   described in \cgalCite{Botsch2008OnLinearVariational}.
   The optional parameter `fairing_continuity` gives the ability to control the tangential
-  continuity C<sup>\a n</sup> of the output mesh.
+  continuity C<sup> n</sup> of the output mesh.
 
   The region described by `vertices` might contain multiple disconnected components.
   Note that the mesh connectivity is not altered in any way,
@@ -147,13 +147,13 @@ namespace internal {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
-    VPMap vpmap_ = choose_param(get_param(np, vertex_point),
+    VPMap vpmap_ = choose_param(get_param(np, internal_np::vertex_point),
                                 get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_param(get_param(np, sparse_linear_solver), Default_solver()),
-      choose_param(get_param(np, weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
-      choose_param(get_param(np, fairing_continuity), 1),
+      choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver()),
+      choose_param(get_param(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
+      choose_param(get_param(np, internal_np::fairing_continuity), 1),
       vpmap_
       );
   }

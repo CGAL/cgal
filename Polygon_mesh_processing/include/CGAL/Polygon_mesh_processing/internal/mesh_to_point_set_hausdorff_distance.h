@@ -21,7 +21,7 @@
 #ifndef CGAL_MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H
 #define CGAL_MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/distance.h>
 
 
 #include <CGAL/Orthogonal_k_neighbor_search.h>

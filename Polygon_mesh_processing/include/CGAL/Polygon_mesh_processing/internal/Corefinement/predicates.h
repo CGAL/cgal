@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_COREFINEMENT_PREDICATES_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_COREFINEMENT_PREDICATES_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
 
 #include <boost/graph/graph_traits.hpp>

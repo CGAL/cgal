@@ -273,6 +273,8 @@ namespace CGAL {
   ///         besides being default constructible and assignable. 
   ///         In typical use cases it will be a 2D or 3D point type.
   /// \cgalModels `MutableFaceGraph` and `FaceListGraph`
+  ///
+  /// \sa \ref PkgBGLConcepts "Graph Concepts"
 
 template <typename P>
 class Surface_mesh
@@ -328,15 +330,13 @@ public:
     {
     public:
         /// %Default constructor.
-        Vertex_index() : SM_Index<Vertex_index>(-1) {}
+        Vertex_index(){}
 
-        explicit Vertex_index(size_type _idx) : SM_Index<Vertex_index>(_idx) {}
+        Vertex_index(size_type _idx){}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Vertex_index const& v)
-        {
-          return (os << 'v' << (size_type)v );
-        }
+        {}
     };
 #else
   typedef SM_Vertex_index Vertex_index;
@@ -353,14 +353,13 @@ public:
     {
     public:
         /// %Default constructor
-        Halfedge_index() : SM_Index<Halfedge_index>(-1) {}
+        Halfedge_index(){}
 
-        explicit Halfedge_index(size_type _idx) : SM_Index<Halfedge_index>(_idx) {}
+        Halfedge_index(size_type _idx){}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Halfedge_index const& h)
         {
-          return (os << 'h' << (size_type)h );
         }
 
     };
@@ -378,15 +377,13 @@ public:
     {
     public:
         /// %Default constructor
-        Face_index() : SM_Index<Face_index>(-1) {}
+        Face_index(){}
 
-        explicit Face_index(size_type _idx) : SM_Index<Face_index>(_idx) {}
+        Face_index(size_type _idx){}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Face_index const& f)
-        {
-          return (os << 'f' << (size_type)f );
-        }
+        {}
     };
 #else
   typedef SM_Face_index Face_index;
@@ -402,63 +399,16 @@ public:
     {
     public:
         /// %Default constructor
-        Edge_index() : halfedge_(-1) { }
+        Edge_index(){}
 
-        Edge_index(size_type idx) : halfedge_(idx * 2) { }
+        Edge_index(size_type idx){}
 
         /// constructs an `Edge_index` from a halfedge.
-        Edge_index(Halfedge_index he) : halfedge_(he) { }
-        /// @cond CGAL_DOCUMENT_INTERNALS
-        /// returns the internal halfedge.
-        Halfedge_index halfedge() const { return halfedge_; }
-
-        /// returns the underlying index of this index.
-        operator size_type() const { return (size_type)halfedge_ / 2; }
-
-        /// resets index to be invalid (index=-1)
-        void reset() { halfedge_.reset(); }
-
-        /// returns whether the index is valid, i.e., the index is not equal to -1.
-        bool is_valid() const { return halfedge_.is_valid(); }
-
-        /// Are two indices equal?
-        bool operator==(const Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
-
-        /// Are two indices different?
-        bool operator!=(const Edge_index& other) const { return (size_type)(*this) != (size_type)other; }
-
-        /// compares by index.
-        bool operator<(const Edge_index& other) const { return (size_type)(*this) < (size_type)other;}
-
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Edge_index& operator--() { halfedge_ = Halfedge_index((size_type)halfedge_ - 2); return *this; }
-
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Edge_index& operator++() { halfedge_ = Halfedge_index((size_type)halfedge_ + 2); return *this; }
-
-        /// decrements internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Edge_index operator--(int) { Edge_index tmp(*this); halfedge_ = Halfedge_index((size_type)halfedge_ - 2); return tmp; }
-
-        /// increments internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Edge_index operator++(int) { Edge_index tmp(*this); halfedge_ = Halfedge_index((size_type)halfedge_ + 2); return tmp; }
-
-        /// @endcond 
+        Edge_index(Halfedge_index he){}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Edge_index const& e)
-        {
-          return (os << 'e' << (size_type)e << " on " << e.halfedge());
-        }
-    private:
-        Halfedge_index halfedge_;
+        {}
     };
 #else
   typedef SM_Edge_index Edge_index;
@@ -1545,7 +1495,7 @@ public:
         hconn_[h].prev_halfedge_ = nh;
       }
     }
-    /// @endcond  
+    /// @endcond
 
     /// sets the next halfedge of `h` within the face to `nh` and
     /// the previous halfedge of `nh` to `h`.
@@ -1683,7 +1633,7 @@ public:
     ///
     ///  A halfedge, or edge is on the border of a surface mesh
     /// if it is incident to a `null_face()`.  A vertex is on a border
-    /// if it is incident to a border halfedge. While for a halfedge and
+    /// if it is isolated or incident to a border halfedge. While for a halfedge and
     /// edge this is a constant time operation, for a vertex it means
     /// to look at all incident halfedges.  If algorithms operating on a 
     /// surface mesh maintain that the halfedge associated to a border vertex is
@@ -1697,13 +1647,13 @@ public:
     /// With the default value for
     /// `check_all_incident_halfedges` the function iteratates over the incident halfedges.
     /// With `check_all_incident_halfedges == false` the function returns `true`, if the incident
-    /// halfedge associated to vertex `v` is a border halfedge.
+    /// halfedge associated to vertex `v` is a border halfedge, or if the vertex is isolated.
     /// \cgalAdvancedEnd
   bool is_border(Vertex_index v, bool check_all_incident_halfedges = true) const
     {
         Halfedge_index h(halfedge(v));
         if (h == null_halfedge()){
-          return false;
+          return true;
         }
         if(check_all_incident_halfedges){
           Halfedge_around_target_circulator hatc(h,*this), done(hatc);
@@ -1714,7 +1664,7 @@ public:
           }while(++hatc != done);
           return false;
         }
-        return (!(is_valid(h) && is_border(h)));
+        return is_border(h);
     }
 
     /// returns whether `h` is a border halfege, that is if its incident face is `sm.null_face()`.

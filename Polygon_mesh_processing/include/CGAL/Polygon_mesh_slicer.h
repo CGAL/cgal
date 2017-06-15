@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_SLICER_H
 #define CGAL_POLYGON_MESH_SLICER_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
 
 #include <CGAL/AABB_tree.h>

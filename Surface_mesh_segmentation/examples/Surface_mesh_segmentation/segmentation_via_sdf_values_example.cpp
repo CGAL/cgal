@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/mesh_segmentation.h>
 
 #include <CGAL/property_map.h>
@@ -16,8 +15,8 @@ int main()
     // create and read Polyhedron
     Polyhedron mesh;
     std::ifstream input("data/cactus.off");
-    if ( !input || !(input >> mesh) || mesh.empty() ) {
-        std::cerr << "Not a valid off file." << std::endl;
+    if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) ) {
+        std::cerr << "Input is not a triangle mesh" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -37,4 +36,5 @@ int main()
         std::cout << segment_property_map[facet_it] << " ";
     }
     std::cout << std::endl;
+    return EXIT_SUCCESS;
 }

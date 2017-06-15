@@ -107,7 +107,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_in_sphere_3` is an input iterator creating points uniformly
-distributed in an open sphere. The default `Creator` is
+distributed strictly inside a sphere. The default `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
 
 \cgalModels `InputIterator`
@@ -158,7 +158,7 @@ typedef const Point_3& reference;
 
 /*!
 creates an input iterator `g` generating points of type `Point_3` uniformly
-distributed in the open sphere with radius \f$ r\f$,
+distributed strictly inside the sphere with radius \f$ r\f$,
 i.e.\ \f$ |*g| < r\f$ . Three random numbers are needed from
 `rnd` for each point.
 

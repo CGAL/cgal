@@ -26,8 +26,10 @@
 #include "_test_cls_vector_3.h"
 #include "_test_fct_vector_3.h"
 #include "_test_cls_point_3.h"
+#include "_test_cls_weighted_point_3.h"
 #include "_test_fct_point_vector_3.h"
 #include "_test_fct_point_3.h"
+#include "_test_fct_weighted_point_3.h"
 #include "_test_fct_plane_3.h"
 #include "_test_further_fct_point_plane_3.h"
 #include "_test_cls_direction_3.h"
@@ -49,8 +51,10 @@ _test_3(const R& r)
     _test_cls_vector_3(r)
  && _test_fct_vector_3(r)
  && _test_cls_point_3(r)
+ && _test_cls_weighted_point_3(r)
  && _test_fct_point_vector_3(r)
  && _test_fct_point_3(r)
+ && _test_fct_weighted_point_3(r)
  && _test_fct_plane_3(r)
  && _test_further_fct_point_plane_3(r)
  && _test_cls_direction_3(r)

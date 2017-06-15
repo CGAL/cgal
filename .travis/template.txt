@@ -18,7 +18,9 @@ compiler:
   - clang 
   - gcc 
 addons: 
-  apt: 
+  apt:
+    sources:
+      - sourceline: 'ppa:ppsspp/cmake'
     packages: 
       - zsh
       - cmake 
@@ -45,3 +47,7 @@ addons:
       # - libglew1.5-dev 
       # - libipe-dev 
       # - libmpfi-dev 
+notifications:
+  email:
+    on_success: change # default: always
+    on_failure: always # default: always

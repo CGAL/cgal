@@ -22,7 +22,7 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_RAY_3_TRIANGLE_3_TRAVERSAL_TRAITS_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_RAY_3_TRIANGLE_3_TRAVERSAL_TRAITS_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
 
 #include <boost/logic/tribool.hpp>

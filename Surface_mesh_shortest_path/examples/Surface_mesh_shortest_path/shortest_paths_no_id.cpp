@@ -4,17 +4,10 @@
 #include <iterator>
 
 #include <CGAL/Random.h>
-#include <CGAL/Default.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 #include <CGAL/Surface_mesh_shortest_path.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/iterator.h>
 
 #include <boost/lexical_cast.hpp>
 

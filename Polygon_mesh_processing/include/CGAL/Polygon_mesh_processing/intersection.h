@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERSECTION_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERSECTION_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
@@ -85,10 +85,10 @@ surface_intersection(const TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = choose_const_pmap(get_param(np1, boost::vertex_point),
+  Vpm vpm1 = choose_const_pmap(get_param(np1, internal_np::vertex_point),
                                tm1,
                                vertex_point);
-  Vpm vpm2 = choose_const_pmap(get_param(np2, boost::vertex_point),
+  Vpm vpm2 = choose_const_pmap(get_param(np2, internal_np::vertex_point),
                                tm2,
                                vertex_point);
 

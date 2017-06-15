@@ -9,7 +9,6 @@
 /// path are not marked as constrained.
 ///
 /// \ingroup PkgPolygonMeshProcessing
-/// \defgroup PMP_reverse_face_orientations_grp CGAL::reverse_face_orientations()
 
 
 /// \defgroup hole_filling_grp Hole Filling
@@ -104,7 +103,7 @@ and provides a list of the parameters that are used in this package.
 
 ## Orientation Functions ##
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
-- \link PMP_reverse_face_orientations_grp `CGAL::Polygon_mesh_processing::reverse_face_orientations()` \endlink
+- `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 
 ## Combinatorial Repairing Functions ##

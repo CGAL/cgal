@@ -14,7 +14,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 
 #include <QOpenGLShader>
 #include <QDebug>

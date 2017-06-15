@@ -44,7 +44,11 @@ struct Scene_polygon_soup_item_priv{
   }
   ~Scene_polygon_soup_item_priv()
   {
-    delete soup;
+    if(soup)
+    {
+      delete soup;
+      soup = NULL;
+    }
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void) const;
@@ -635,7 +639,7 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 }
 
 bool
-Scene_polygon_soup_item::exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3> *out_surface_mesh)
+Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
 {
   orient();
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
@@ -664,7 +668,7 @@ Scene_polygon_soup_item::toolTip() const
     .arg(d->soup->polygons.size())
     .arg(this->renderingModeName())
     .arg(this->color().name());
-    str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
+    str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
     return str;
 }
 
@@ -846,3 +850,16 @@ const Scene_polygon_soup_item::Points& Scene_polygon_soup_item::points() const {
 bool Scene_polygon_soup_item::isDataColored() { return d->soup->fcolors.size()>0 || d->soup->vcolors.size()>0;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getVColors() const{return d->soup->vcolors;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getFColors() const{return d->soup->fcolors;}
+
+void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
+{
+  Scene_item::itemAboutToBeDestroyed(item);
+  if(d && item == this)
+  {
+    if(d->soup)
+    {
+      delete d->soup;
+      d->soup=NULL;
+    }
+  }
+}

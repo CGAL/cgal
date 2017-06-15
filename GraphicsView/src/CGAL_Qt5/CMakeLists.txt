@@ -1,5 +1,8 @@
 message("Configuring libCGAL_Qt5")
 
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 OLD)
+endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()

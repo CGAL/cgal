@@ -4,6 +4,10 @@ P {
 width: 80ex
 }
 
+A {
+    text-decoration: none;
+}
+
 TABLE.result { font-weight: bold; background-color: white; padding: 1em; table-layout: fixed;}
 
 TABLE.summary TD { white-space: nowrap }
@@ -41,3 +45,18 @@ TD.requirements A:link {color: rgb(0%,0%,100%)}
 TD.requirements A:visited {color: rgb(100%,100%,65%)}
 
 SELECT { font-family: monospace; }
+
+#permalink,#jump_to_results {
+    font-size: 0.5em;
+    font-weight: normal;
+}
+#permalink::before,#jump_to_results::before{
+    content: "("
+}
+#permalink::after,#jump_to_results::after{
+    content: ")"
+}
+
+.package_name {
+    color: black;
+}

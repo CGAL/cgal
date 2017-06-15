@@ -16,7 +16,7 @@ Defined in `<CGAL/boost/graph/graph_traits_Surface_mesh.h>`
 We provide partial specialization for the class `CGAL::Surface_mesh` so that it is a model
 of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>
 and of the concept `MutableFaceGraph`.
 
 The const specialization, `boost::graph_traits< CGAL::Surface_mesh<Traits> const>`
@@ -53,7 +53,7 @@ Defined in `<CGAL/boost/graph/graph_traits_Polyhedron_3.h>`
 We provide partial specialization for the class `CGAL::Polyhedron_3` so that it is a model
 of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>
 and of the concept `MutableFaceGraph`.
 
 The const specialization, `boost::graph_traits< CGAL::Polyhedron_3<Traits> const>`
@@ -148,7 +148,7 @@ Defined in `<CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>`
 We provide partial specialization for the class `OpenMesh::PolyMesh_ArrayKernelT` so that it is a model
 of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>
 and of the concept `MutableFaceGraph`.
 
 The traits class `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` provides the following types:
@@ -181,7 +181,7 @@ Defined in `<CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>`
 We provide partial specialization for the class `OpenMesh::TriMesh_ArrayKernelT` so that it is a model
 of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>
 and of the concept `MutableFaceGraph`.
 
 The traits class `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` provides the following types:
@@ -210,12 +210,22 @@ The traits class `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` provi
 
 \section BGLT2GT Specializations for the 2D Triangulation Classes
 
-Defined in `<CGAL/boost/graph/graph_traits_Triangulation_2.h>` and `<CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>`
+Defined in `<CGAL/boost/graph/graph_traits_Triangulation_2.h>`,
+`<CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>`,
+`<CGAL/boost/graph/graph_traits_Regular_triangulation_2.h>`,
+`<CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>`,
+`<CGAL/boost/graph/graph_traits_Constrained_triangulation_2.h>`,
+`<CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>`, and
+`<CGAL/boost/graph/graph_traits_Triangulation_hierarchy_2.h>`.
 
-We provide partial specialization for the classes `CGAL::Triangulation_2` and `CGAL::Delaunay_triangulation_2`
+We provide partial specialization for the classes 
+`CGAL::Triangulation_2`, `CGAL::Delaunay_triangulation_2`,
+`CGAL::Regular_triangulation_2` `CGAL::Constrained_triangulation_2`, 
+`CGAL::Constrained_Delaunay_triangulation_2`, `CGAL::Constrained_triangulation_plus_2`,
+and `CGAL::Triangulation_hierarchy_2`
 so that they are model of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>.
+<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>.
 
 
 The mapping between vertices and edges of the triangulation and the
@@ -266,7 +276,7 @@ Defined in `<CGAL/boost/graph/graph_traits_Arrangement_2.h>`
 We provide partial specialization for the class  `Arrangement_2`
 so that it is model of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>.
+<A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>.
 
 The const specialization, `boost::graph_traits< CGAL::Arrangement_2<Traits,Dcel> const>`
 is also defined, using the constant handles in the arrangement.

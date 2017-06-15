@@ -28,11 +28,13 @@
 #include <QString>
 #include <QDialog>
 #include <QtPlugin>
+#include <QMessageBox>
 
 #include <vector>
 #include <algorithm>
 #include <queue>
 #include <sstream>
+#include <cmath>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/parallel_for.h"
@@ -369,6 +371,23 @@ public Q_SLOTS:
         {
           if (selection_item->selected_facets.empty() &&
             (!selection_item->selected_edges.empty() || !selection_item->selected_vertices.empty()))
+          {
+            if(protect &&
+               !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
+                 *selection_item->polyhedron(),
+                 selection_item->constrained_edges_pmap(),
+                 get(CGAL::vertex_point, *selection_item->polyhedron()),
+                 4. / 3. * target_length))
+            {
+              QApplication::restoreOverrideCursor();
+              QMessageBox::warning(mw, tr("Error"),
+                                   tr("Isotropic remeshing : protect_constraints cannot be set to"
+                                      " true with constraints larger than 4/3 * target_edge_length."
+                                      " Remeshing aborted."),
+                                   QMessageBox::Ok);
+              return;
+            }
+
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
               faces(*selection_item->polyhedron())
               , target_length
@@ -380,6 +399,7 @@ public Q_SLOTS:
               .number_of_relaxation_steps(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
               .face_patch_map(Patch_id_pmap<face_descriptor>()));
+          }
           else
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
               selection_item->selected_facets
@@ -735,11 +755,16 @@ private:
       .arg(bbox.ymax()-bbox.ymin(), 0, 'g', 3)
       .arg(bbox.zmax()-bbox.zmin(), 0, 'g', 3));
 
-    double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-    ui.edgeLength_dspinbox->setDecimals(3);
-    ui.edgeLength_dspinbox->setSingleStep(0.001);
+    double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
+                                   + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
+                                   + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
+    double log = std::log10(diago_length);
+    unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log)+3);
+
+    ui.edgeLength_dspinbox->setDecimals(nb_decimals);
+    ui.edgeLength_dspinbox->setSingleStep(1e-3);
     ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
-      2.   * diago_length);//max
+                                     2.   * diago_length);//max
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
 
     std::ostringstream oss;

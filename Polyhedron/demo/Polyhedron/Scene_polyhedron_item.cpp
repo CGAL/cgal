@@ -32,6 +32,8 @@
 
 #include <boost/foreach.hpp>
 #include "triangulate_primitive.h"
+#include "Color_map.h"
+
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Polyhedron::Traits Traits;
@@ -94,6 +96,11 @@ struct Scene_polyhedron_item_priv{
   {
     init_default_values();
   }
+  ~Scene_polyhedron_item_priv()
+  {
+    delete poly;
+    delete targeted_id;
+  }
 
   void init_default_values() {
     show_only_feature_edges_m = false;
@@ -112,7 +119,7 @@ struct Scene_polyhedron_item_priv{
   }
 
 
-  void compute_normals_and_vertices(const bool colors_only = false) const;
+  void compute_normals_and_vertices(const bool colors_only = false, const bool draw_two_sides = false) const;
   bool isFacetConvex(Facet_iterator, const Polyhedron::Traits::Vector_3&)const;
 
   void triangulate_convex_facet(Facet_iterator,
@@ -120,14 +127,9 @@ struct Scene_polyhedron_item_priv{
 
   void triangulate_facet(Scene_polyhedron_item::Facet_iterator,
                          const Traits::Vector_3& normal,
-                         const bool colors_only) const;
+                         const bool colors_only, const bool draw_two_sides) const;
   void init();
   void invalidate_stats();
-  void destroy()
-  {
-    delete poly;
-    delete targeted_id;
-  }
   void* get_aabb_tree();
   QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
                                                   Traits::Vector_3 normal);
@@ -153,6 +155,7 @@ struct Scene_polyhedron_item_priv{
   mutable std::vector<unsigned int> idx_faces;
   mutable std::vector<float> positions_facets;
   mutable std::vector<float> normals_gouraud;
+  mutable std::vector<float> normals_flat;
   mutable std::vector<float> color_facets;
   mutable std::size_t nb_facets;
   mutable std::size_t nb_lines;
@@ -160,6 +163,7 @@ struct Scene_polyhedron_item_priv{
   mutable QOpenGLShaderProgram *program;
   unsigned int number_of_null_length_edges;
   unsigned int number_of_degenerated_faces;
+  int genus;
   bool self_intersect;
   int m_min_patch_id; // the min value of the patch ids initialized in init()
   mutable bool all_ids_displayed;
@@ -180,6 +184,7 @@ struct Scene_polyhedron_item_priv{
     Feature_edges_vertices,
     Edges_color,
     Facets_normals_gouraud,
+    Facets_normals_flat,
     NbOfVbos
   };
   // Initialization
@@ -247,6 +252,8 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       int index =0;
       BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
+        if (CGAL::is_degenerate_triangle_face(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
+          continue;
         if(!f->is_triangle())
         {
           Traits::Vector_3 normal = f->plane().orthogonal_vector(); //initialized in compute_normals_and_vertices
@@ -428,11 +435,12 @@ void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
 void
 Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_iterator fit,
                                          const Traits::Vector_3& normal,
-                                         const bool colors_only) const
+                                         const bool colors_only,
+                                         const bool draw_two_sides = false) const
 {
   typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
   const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
+  Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
   double diagonal;
   if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->diagonalBbox();
@@ -476,6 +484,12 @@ Vector offset = Vector(v_offset.x, v_offset.y, v_offset.z);
       push_back_xyz(ffit->vertex(0)->point()+offset, positions_facets);
       push_back_xyz(ffit->vertex(1)->point()+offset, positions_facets);
       push_back_xyz(ffit->vertex(2)->point()+offset, positions_facets);
+      if(!draw_two_sides)
+      {
+        push_back_xyz(normal, normals_flat);
+        push_back_xyz(normal, normals_flat);
+        push_back_xyz(normal, normals_flat);
+      }
     }
   }
 }
@@ -491,7 +505,14 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
 {
     //vao containing the data for the facets
     {
-    program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_FLAT, viewer);
+    if(viewer->property("draw_two_sides").toBool())
+    {
+      program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_FLAT, viewer);
+    }
+    else
+    {
+      program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_WITH_LIGHT, viewer);
+    }
     program->bind();
         //flat
         if(!no_flat)
@@ -503,8 +524,21 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
           program->enableAttributeArray("vertex");
           program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
           item->buffers[Facets_vertices].release();
-          //computed in the fragment shader
-          program->disableAttributeArray("normals");
+          if(viewer->property("draw_two_sides").toBool())
+          {
+            //computed in the fragment shader
+            program->disableAttributeArray("normals");
+          }
+          else
+          {
+           //use computed flat normals
+            item->buffers[Facets_normals_flat].bind();
+            item->buffers[Facets_normals_flat].allocate(normals_flat.data(),
+                                static_cast<int>(normals_flat.size()*sizeof(float)));
+            program->enableAttributeArray("normals");
+            program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+            item->buffers[Facets_normals_flat].release();
+          }
           if(is_multicolor)
           {
             item->buffers[Facets_color].bind();
@@ -598,6 +632,8 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   color_facets.shrink_to_fit();
   normals_gouraud.resize(0);
   normals_gouraud.shrink_to_fit();
+  normals_flat.resize(0);
+  normals_flat.shrink_to_fit();
 
   if (viewer->hasText())
     item->printPrimitiveIds(viewer);
@@ -606,7 +642,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
 }
 
 void
-Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only) const
+Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only, const bool draw_two_sides) const
 {
   const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
@@ -614,6 +650,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
     positions_facets.resize(0);
     positions_lines.resize(0);
     normals_gouraud.resize(0);
+    normals_flat.resize(0);
     color_facets.resize(0);
     idx_faces.resize(0);
     idx_lines.resize(0);
@@ -670,6 +707,8 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
             if(!no_flat)
             {
               push_back_xyz(p+offset, positions_facets);
+              if(!draw_two_sides)
+                push_back_xyz(nf, normals_flat);
             }
 
             idx_faces.push_back(static_cast<unsigned int>(he->vertex()->id()));
@@ -703,6 +742,12 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           push_back_xyz(p0+offset, positions_facets);
           push_back_xyz(p1+offset, positions_facets);
           push_back_xyz(p2+offset, positions_facets);
+          if(!draw_two_sides)
+          {
+            push_back_xyz(nf, normals_flat);
+            push_back_xyz(nf, normals_flat);
+            push_back_xyz(nf, normals_flat);
+          }
         }
         //2nd half-quad
         idx_faces.push_back(static_cast<unsigned int>(f->halfedge()->next()->next()->vertex()->id()));
@@ -718,6 +763,12 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           push_back_xyz(p0+offset, positions_facets);
           push_back_xyz(p1+offset, positions_facets);
           push_back_xyz(p2+offset, positions_facets);
+          if(!draw_two_sides)
+          {
+            push_back_xyz(nf, normals_flat);
+            push_back_xyz(nf, normals_flat);
+            push_back_xyz(nf, normals_flat);
+          }
         }
       }
       else
@@ -728,7 +779,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         }
         else
         {
-          this->triangulate_facet(f, nf, colors_only);
+          this->triangulate_facet(f, nf, colors_only, draw_two_sides);
         }
       }
 
@@ -811,17 +862,23 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
       CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
 
       //Clears the targeted Id
-      v->textRenderer->removeText(d->targeted_id);
+      if(d)
+        v->textRenderer->removeText(d->targeted_id);
       //Remove textitems
-      v->textRenderer->removeTextList(textItems);
-      delete textItems;
+      if(textItems)
+      {
+        v->textRenderer->removeTextList(textItems);
+        delete textItems;
+        textItems=NULL;
+      }
     }
-
-    d->destroy();
-    delete d;
+    if(d)
+    {
+      delete d;
+      d=NULL;
+    }
 }
 
-#include "Color_map.h"
 
 void
 Scene_polyhedron_item_priv::
@@ -860,6 +917,20 @@ invalidate_stats()
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
+  genus = -1;
+}
+
+//vertex_index is the storage for selection
+Scene_polyhedron_item::Vertex_selection_map 
+Scene_polyhedron_item::vertex_selection_map()
+{
+  return get(boost::vertex_index,*d->poly);
+}
+//face_index is the storage for selection
+Scene_polyhedron_item::Face_selection_map 
+Scene_polyhedron_item::face_selection_map()
+{
+  return get(boost::face_index,*d->poly);
 }
 
 Scene_polyhedron_item*
@@ -935,7 +1006,7 @@ Scene_polyhedron_item::toolTip() const
             .arg(d->poly->size_of_facets())
             .arg(this->renderingModeName())
             .arg(this->color().name());
-  str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
+  str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
   return str;
 }
 
@@ -1029,7 +1100,7 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        d->compute_normals_and_vertices();
+        d->compute_normals_and_vertices(false, viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }
@@ -1037,8 +1108,16 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(renderingMode() == Flat || (!d->no_flat && renderingMode() == FlatPlusEdges))
     {
         vaos[Scene_polyhedron_item_priv::Facets]->bind();
-        attribBuffers(viewer, PROGRAM_FLAT);
-        d->program = getShaderProgram(PROGRAM_FLAT);
+        if(viewer->property("draw_two_sides").toBool())
+        {
+          attribBuffers(viewer, PROGRAM_FLAT);
+          d->program = getShaderProgram(PROGRAM_FLAT);
+        }
+        else
+        {
+          attribBuffers(viewer, PROGRAM_WITH_LIGHT);
+          d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
+        }
         d->program->bind();
         if(!d->is_multicolor)
         {
@@ -1082,7 +1161,7 @@ void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
 {
     if (!are_buffers_filled)
     {
-        d->compute_normals_and_vertices();
+        d->compute_normals_and_vertices(false, viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }
@@ -1130,7 +1209,7 @@ void
 Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        d->compute_normals_and_vertices();
+        d->compute_normals_and_vertices(false, viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }
@@ -1487,6 +1566,29 @@ QString Scene_polyhedron_item::computeStats(int type)
     else
       return QString("n/a");
   }
+  case GENUS:
+  {
+    if(!d->poly->is_closed())
+    {
+      return QString("n/a");
+    }
+    else if(d->genus == -1)
+    {
+      std::ptrdiff_t s(d->poly->size_of_vertices()),
+          a(d->poly->size_of_halfedges()/2),
+          f(d->poly->size_of_facets());
+      d->genus = 1.0 - double(s-a+f)/2.0;
+    }
+    if(d->genus < 0)
+    {
+      return QString("n/a");
+    }
+    else
+    {
+      return QString::number(d->genus);
+    }
+
+  }
   case MIN_LENGTH:
     return QString::number(minl);
   case MAX_LENGTH:
@@ -1536,8 +1638,9 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 {
   CGAL::Three::Scene_item::Header_data data;
   //categories
+
   data.categories.append(std::pair<QString,int>(QString("Properties"),9));
-  data.categories.append(std::pair<QString,int>(QString("Faces"),9));
+  data.categories.append(std::pair<QString,int>(QString("Faces"),10));
   data.categories.append(std::pair<QString,int>(QString("Edges"),6));
   data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
@@ -1561,6 +1664,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   data.titles.append(QString("Min Aspect-Ratio"));
   data.titles.append(QString("Max Aspect-Ratio"));
   data.titles.append(QString("Mean Aspect-Ratio"));
+  data.titles.append(QString("Genus"));
   data.titles.append(QString("#Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
@@ -1588,9 +1692,14 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(aabb_tree) {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     //find clicked facet
     bool found = false;
-    const Kernel::Point_3 ray_origin(viewer->camera()->position().x, viewer->camera()->position().y, viewer->camera()->position().z);
+
+    const Kernel::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
+                                     viewer->camera()->position().y - offset.y,
+                                     viewer->camera()->position().z - offset.z);
+
     qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
     qglviewer::Vec dir = point_under - viewer->camera()->position();
     const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
@@ -1633,7 +1742,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         // test the vertices of the closest face
         BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
         {
-          Kernel::Point_3 test=vh->point();
+          Kernel::Point_3 test=Kernel::Point_3(vh->point().x()+offset.x,
+                                               vh->point().y()+offset.y,
+                                               vh->point().z()+offset.z);
           double dist = CGAL::squared_distance(test, pt_under);
           if( dist < min_dist){
             min_dist = dist;
@@ -1644,6 +1755,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         BOOST_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *d->poly))
         {
           Kernel::Point_3 test=CGAL::midpoint(source(e, *d->poly)->point(),target(e, *d->poly)->point());
+          test = Kernel::Point_3(test.x()+offset.x,
+                                 test.y()+offset.y,
+                                 test.z()+offset.z);
           double dist = CGAL::squared_distance(test, pt_under);
           if(dist < min_dist){
             min_dist = dist;
@@ -1662,7 +1776,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
           ++total;
         }
 
-        Kernel::Point_3 test(x/total, y/total, z/total);
+        Kernel::Point_3 test(x/total+offset.x,
+                             y/total+offset.y,
+                             z/total+offset.z);
         double dist = CGAL::squared_distance(test, pt_under);
         if(dist < min_dist){
           min_dist = dist;
@@ -1691,14 +1807,18 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
 
   if(!d->all_ids_displayed)
   {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     QFont font;
     font.setBold(true);
 
     //fills textItems
     BOOST_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*d->poly))
     {
-      const Point& p = vh->point();
-      textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), true, font, Qt::red));
+      const Point& p = Point(vh->point().x(), vh->point().y(), vh->point().z());
+      textItems->append(new TextItem((float)p.x() + offset.x,
+                                     (float)p.y() + offset.y,
+                                     (float)p.z() + offset.z,
+                                     QString("%1").arg(vh->id()), true, font, Qt::red));
 
     }
 
@@ -1706,7 +1826,10 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
     {
       const Point& p1 = source(e, *d->poly)->point();
       const Point& p2 = target(e, *d->poly)->point();
-      textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2, (float)(p1.y() + p2.y()) / 2, (float)(p1.z() + p2.z()) / 2, QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
+      textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2 + offset.x,
+                                     (float)(p1.y() + p2.y()) / 2 + offset.y,
+                                     (float)(p1.z() + p2.z()) / 2 + offset.z,
+                                     QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
     }
 
     BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
@@ -1721,7 +1844,10 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
         ++total;
       }
 
-      textItems->append(new TextItem((float)x / total, (float)y / total, (float)z / total, QString("%1").arg(fh->id()), true, font, Qt::blue));
+      textItems->append(new TextItem((float)x / total + offset.x,
+                                     (float)y / total + offset.y,
+                                     (float)z / total + offset.z,
+                                     QString("%1").arg(fh->id()), true, font, Qt::blue));
     }
     //add the QList to the render's pool
     renderer->addTextList(textItems);
@@ -1744,8 +1870,13 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
 
 bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
-  Kernel::Point_3 src(x,y,z);
-  Kernel::Point_3 dest(viewer->camera()->position().x, viewer->camera()->position().y,viewer->camera()->position().z);
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  Kernel::Point_3 src(x - offset.x,
+                      y - offset.y,
+                      z - offset.z);
+  Kernel::Point_3 dest(viewer->camera()->position().x - offset.x,
+                       viewer->camera()->position().y - offset.y,
+                       viewer->camera()->position().z - offset.z);
   Kernel::Vector_3 v(src,dest);
   v = 0.01*v;
   Kernel::Point_3 point = src;
@@ -1819,6 +1950,7 @@ bool Scene_polyhedron_item::intersect_face(double orig_x,
   return false;
 
 }
+
 bool Scene_polyhedron_item::supportsRenderingMode(RenderingMode m) const
 {
   return (
@@ -1834,4 +1966,125 @@ void Scene_polyhedron_item::set_flat_disabled(bool b)
   d->no_flat = b;
   invalidateOpenGLBuffers();
   itemChanged();
+}
+
+void Scene_polyhedron_item::itemAboutToBeDestroyed(Scene_item *item)
+{
+  Scene_item::itemAboutToBeDestroyed(item);
+  if(d && item == this)
+  {
+    delete d;
+    d=NULL;
+  }
+}
+
+void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *viewer) const
+{
+  typedef Input_facets_AABB_tree Tree;
+  typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Intersection_and_primitive_id;
+
+  Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
+  if(aabb_tree) {
+
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    //find clicked facet
+    bool found = false;
+    const Kernel::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
+                                     viewer->camera()->position().y - offset.y,
+                                     viewer->camera()->position().z - offset.z);
+    qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
+    qglviewer::Vec dir = point_under - viewer->camera()->position();
+    const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
+    const Kernel::Ray_3 ray(ray_origin, ray_dir);
+    typedef std::list<Intersection_and_primitive_id> Intersections;
+    Intersections intersections;
+    aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+
+    if(!intersections.empty()) {
+      Intersections::iterator closest = intersections.begin();
+      const Kernel::Point_3* closest_point =
+          boost::get<Kernel::Point_3>(&closest->first);
+      for(Intersections::iterator
+          it = boost::next(intersections.begin()),
+          end = intersections.end();
+          it != end; ++it)
+      {
+        if(! closest_point) {
+          closest = it;
+        }
+        else {
+          const Kernel::Point_3* it_point =
+              boost::get<Kernel::Point_3>(&it->first);
+          if(it_point &&
+             (ray_dir * (*it_point - *closest_point)) < 0)
+          {
+            closest = it;
+            closest_point = it_point;
+          }
+        }
+      }
+      if(closest_point) {
+        Polyhedron::Facet_handle selected_fh = closest->second;
+        //compute new position and orientation
+        Kernel::Vector_3 face_normal = CGAL::Polygon_mesh_processing::
+            compute_face_normal(selected_fh,
+                                *d->poly,
+                                CGAL::Polygon_mesh_processing::parameters::all_default());
+
+
+        double x(0), y(0), z(0),
+            xmin(std::numeric_limits<double>::infinity()), ymin(std::numeric_limits<double>::infinity()), zmin(std::numeric_limits<double>::infinity()),
+            xmax(-std::numeric_limits<double>::infinity()), ymax(-std::numeric_limits<double>::infinity()), zmax(-std::numeric_limits<double>::infinity());
+        int total(0);
+        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
+        {
+          x+=vh->point().x();
+          y+=vh->point().y();
+          z+=vh->point().z();
+
+          if(vh->point().x() < xmin)
+            xmin = vh->point().x();
+          if(vh->point().y() < ymin)
+            ymin = vh->point().y();
+          if(vh->point().z() < zmin)
+            zmin = vh->point().z();
+
+          if(vh->point().x() > xmax)
+            xmax = vh->point().x();
+          if(vh->point().y() > ymax)
+            ymax = vh->point().y();
+          if(vh->point().z() > zmax)
+            zmax = vh->point().z();
+
+          ++total;
+        }
+        Kernel::Point_3 centroid(x/total + offset.x,
+                                 y/total + offset.y,
+                                 z/total + offset.z);
+
+        qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
+                                              qglviewer::Vec(-face_normal.x(), -face_normal.y(), -face_normal.z()));
+        double max_side = (std::max)((std::max)(xmax-xmin, ymax-ymin),
+                                     zmax-zmin);
+        //put the camera in way we are sure the longest side is entirely visible on the screen
+        //See openGL's frustum definition
+        double factor = max_side/(tan(viewer->camera()->aspectRatio()/
+                                        (viewer->camera()->fieldOfView()/2)));
+
+        Kernel::Point_3 new_pos = centroid + factor*face_normal ;
+        viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(),
+                                                        centroid.y(),
+                                                        centroid.z()));
+        viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
+                                                                       .arg(new_pos.y())
+                                                                       .arg(new_pos.z())
+                                                                       .arg(new_orientation[0])
+                                                                       .arg(new_orientation[1])
+                                                                       .arg(new_orientation[2])
+                                                                       .arg(new_orientation[3]));
+
+      }
+    }
+  }
+
 }

@@ -43,6 +43,11 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
+  if (!CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
  
   CGAL::Side_of_triangle_mesh<Mesh, K> inside(mesh);
 
@@ -68,10 +73,10 @@ int main(int argc, char* argv[])
     if (res == CGAL::ON_BOUNDARY) { ++nb_boundary; }
   }
 
-  std::cerr << "Total query size: " << points.size() << std::endl;
-  std::cerr << "  " << nb_inside << " points inside " << std::endl;
-  std::cerr << "  " << nb_boundary << " points on boundary " << std::endl;
-  std::cerr << "  " << points.size() - nb_inside - nb_boundary << " points outside " << std::endl;
+  std::cout << "Total query size: " << points.size() << std::endl;
+  std::cout << "  " << nb_inside << " points inside " << std::endl;
+  std::cout << "  " << nb_boundary << " points on boundary " << std::endl;
+  std::cout << "  " << points.size() - nb_inside - nb_boundary << " points outside " << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

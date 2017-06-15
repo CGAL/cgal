@@ -30,7 +30,7 @@
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/Object.h>
-#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
@@ -66,10 +66,11 @@ class Regular_triangulation_2
       Weighted_point_mapper_2<Gt>,
       Tds>
 {
-  typedef Regular_triangulation_2<Gt, Tds>                         Self;
-  typedef Weighted_point_mapper_2<Gt>                              RT_traits;
-  typedef Triangulation_2<RT_traits, Tds>                          Base;
+  typedef Regular_triangulation_2<Gt, Tds>     Self;
+  typedef Weighted_point_mapper_2<Gt>          RT_traits;
+  typedef Triangulation_2<RT_traits, Tds>      Base;
 public:
+  typedef Self                                 Triangulation;
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
   typedef typename boost::mpl::eval_if_c<

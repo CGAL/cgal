@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -66,6 +66,7 @@
     <addaction name="actionSetPolyhedronB"/>
     <addaction name="actionSelectAllItems"/>
     <addaction name="actionPreferences"/>
+    <addaction name="actionColorItems"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
@@ -295,7 +296,7 @@
             <x>0</x>
             <y>0</y>
             <width>541</width>
-            <height>176</height>
+            <height>173</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -685,6 +686,26 @@
     <string>Orthographic Projection</string>
    </property>
   </action>
+  <action name="actionColorItems">
+   <property name="text">
+    <string>Set different colors to selected items</string>
+   </property>
+  </action>
+  <action name="actionPolyhedron_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Polyhedron Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>In Polyhedron Mode, the default type for facegraphs is Polyhedron, by opposition to Surface_mesh.</string>
+   </property>
+  </action>
+
  </widget>
  <customwidgets>
   <customwidget>

@@ -53,7 +53,7 @@ struct Weighted_point_mapper_3
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>

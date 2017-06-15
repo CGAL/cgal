@@ -32,7 +32,7 @@ or `Triangulation_3`); however some packages serve special needs:
 
 Compilation and installation
 ============================
-The compilation and installation of CGAL from a sources tarball is
+The compilation and installation of CGAL from a sources tarball are
 described in the
 [CGAL installation manual](http://doc.cgal.org/latest/Manual/installation.html)
 and in the file [INSTALL.md](Installation/INSTALL.md) that is at the root

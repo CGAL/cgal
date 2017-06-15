@@ -4,8 +4,9 @@
 
 #include "config.h"
 #include "Scene.h"
-#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_interface_item.h>
+#include <CGAL/Three/Scene_zoomable_item_interface.h>
 
 #include <QObject>
 #include <QMetaObject>
@@ -91,10 +92,6 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     if(index < 0 || index >= m_entries.size())
         return 0;
 
-    if(emit_item_about_to_be_destroyed) {
-    Q_EMIT itemAboutToBeDestroyed(m_entries[index]);
-    }
-
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     CGAL::Three::Scene_group_item* group =
@@ -116,7 +113,12 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     {
     Q_EMIT updated_bbox();
     }
-  Q_EMIT updated();
+
+    if(emit_item_about_to_be_destroyed) {
+      Q_EMIT itemAboutToBeDestroyed(item);
+    }
+
+    Q_EMIT updated();
     group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
@@ -1286,3 +1288,17 @@ findItems(const CGAL::Three::Scene_interface* scene_interface,
 
 } // end namespace details
                 } // end namespace scene
+
+void Scene::zoomToPosition(QPoint point, Viewer_interface *viewer)
+{
+  for(int i=0; i<numberOfEntries(); ++i)
+  {
+    if(!item(i)->visible())
+      continue;
+    Scene_zoomable_item_interface* zoom_item = qobject_cast<Scene_zoomable_item_interface*>(item(i));
+    if(zoom_item)
+    {
+      zoom_item->zoomToPosition(point, viewer);
+    }
+  }
+}

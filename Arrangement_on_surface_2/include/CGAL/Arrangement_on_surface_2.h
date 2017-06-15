@@ -1024,6 +1024,15 @@ public:
                             _Is_concrete_vertex(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement vertices .
+  */
+  Iterator_range<Prevent_deref<Vertex_iterator> >
+  vertex_handles()
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
+
   /*! Get a const iterator for the first vertex in the arrangement. */
   Vertex_const_iterator vertices_begin() const
   {
@@ -1039,6 +1048,16 @@ public:
                                   _dcel().vertices_end(),
                                   _Is_concrete_vertex(&m_topol_traits)));
   }
+
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement vertices .
+  */
+  Iterator_range<Prevent_deref<Vertex_iterator> >
+  vertex_handles() const
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
+
   //@}
 
   /// \name Traversal functions for the arrangement halfedges.
@@ -1060,6 +1079,15 @@ public:
                               _Is_valid_halfedge(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement halfedges .
+  */
+  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  halfedge_handles()
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+  }
+
   /*! Get a const iterator for the first halfedge in the arrangement. */
   Halfedge_const_iterator halfedges_begin() const
   {
@@ -1074,6 +1102,14 @@ public:
     return (Halfedge_const_iterator(_dcel().halfedges_end(),
                                     _dcel().halfedges_end(),
                                     _Is_valid_halfedge(&m_topol_traits)));
+  }
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement halfedges .
+  */
+  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  halfedge_handles() const
+  {
+    return make_prevent_deref_range(halfedges_begin(), halfedges_end());
   }
   //@}
 
@@ -1094,6 +1130,15 @@ public:
                           _Is_valid_halfedge(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement edges .
+  */
+  Iterator_range<Prevent_deref<Edge_iterator> >
+  edge_handles()
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
+  }
+
   /*! Get a const iterator for the first edge in the arrangement. */
   Edge_const_iterator edges_begin() const
   {
@@ -1106,6 +1151,15 @@ public:
   {
     return (Edge_const_iterator(_dcel().edges_end(), _dcel().edges_end(),
                                 _Is_valid_halfedge(&m_topol_traits)));
+  }
+
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement edges .
+  */
+  Iterator_range<Prevent_deref<Edge_iterator> >
+  edge_handles() const
+  {
+    return make_prevent_deref_range(edges_begin(), edges_end());
   }
   //@}
 
@@ -1126,6 +1180,14 @@ public:
                           _Is_valid_face(&m_topol_traits)));
   }
 
+  /*!
+  returns a range over handles of the arrangement faces .
+  */
+  Iterator_range<Prevent_deref<Face_iterator> >
+  face_handles()
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   /*! Get a const iterator for the first face in the arrangement. */
   Face_const_iterator faces_begin() const
   {
@@ -1140,6 +1202,14 @@ public:
                                 _Is_valid_face(&m_topol_traits)));
   }
 
+  /*!
+  returns a const range (model of `ConstRange`) over handles of the arrangement faces .
+  */
+  Iterator_range<Prevent_deref<Face_iterator> >
+  face_handles() const
+  {
+    return make_prevent_deref_range(faces_begin(), faces_end());
+  }
   //! reference_face (const version).
   /*! The function returns a reference face of the arrangement.
    * All reference faces of arrangements of the same type have a common

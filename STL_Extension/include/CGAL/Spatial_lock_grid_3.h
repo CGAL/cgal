@@ -520,7 +520,7 @@ public:
 
   Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
-    m_tls_thread_ids(init_TLS_thread_ids)
+    m_tls_thread_priorities(init_TLS_thread_priorities)
   {
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
@@ -545,13 +545,13 @@ public:
   template <bool no_spin>
   bool try_lock_cell_impl(int cell_index)
   {
-    unsigned int this_thread_id = m_tls_thread_ids.local();
+    unsigned int this_thread_priority = m_tls_thread_priorities.local();
 
     // NO SPIN
     if (no_spin)
     {
       unsigned int old_value =
-        m_grid[cell_index].compare_and_swap(this_thread_id, 0);
+        m_grid[cell_index].compare_and_swap(this_thread_priority, 0);
       if (old_value == 0)
       {
         get_thread_local_grid()[cell_index] = true;
@@ -565,14 +565,14 @@ public:
       for(;;)
       {
         unsigned int old_value =
-          m_grid[cell_index].compare_and_swap(this_thread_id, 0);
+          m_grid[cell_index].compare_and_swap(this_thread_priority, 0);
         if (old_value == 0)
         {
           get_thread_local_grid()[cell_index] = true;
           m_tls_locked_cells.local().push_back(cell_index);
           return true;
         }
-        else if (old_value > this_thread_id)
+        else if (old_value > this_thread_priority)
         {
           // Another "more prioritary" thread owns the lock, we back off
           return false;
@@ -593,7 +593,7 @@ public:
   }
 
 private:
-  static unsigned int init_TLS_thread_ids()
+  static unsigned int init_TLS_thread_priorities()
   {
     static tbb::atomic<unsigned int> last_id;
     unsigned int id = ++last_id;
@@ -606,7 +606,7 @@ protected:
   std::vector<tbb::atomic<unsigned int> >               m_grid;
 
   typedef tbb::enumerable_thread_specific<unsigned int> TLS_thread_uint_ids;
-  TLS_thread_uint_ids                                   m_tls_thread_ids;
+  TLS_thread_uint_ids                                   m_tls_thread_priorities;
 };
 
 } //namespace CGAL

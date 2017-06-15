@@ -3,7 +3,8 @@
 #include "Scene_polygon_soup_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
 #include "Polyhedron_type.h"
-#include "CGAL/Surface_mesh/Surface_mesh.h"
+
+#include "SMesh_type.h"
 
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
@@ -110,7 +111,7 @@ public:
     Scene_polygon_soup_item();
     ~Scene_polygon_soup_item();
 
-    Scene_polygon_soup_item* clone() const;
+    Scene_polygon_soup_item* clone() const Q_DECL_OVERRIDE;
 
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
@@ -122,19 +123,19 @@ public:
     bool save(std::ostream& out) const;
     std::vector<CGAL::Color> getVColors() const;
     std::vector<CGAL::Color> getFColors() const;
-    QString toolTip() const;
+    QString toolTip() const Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
+    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
     // OpenGL drawing in a display list
-    virtual void draw() const {}
-    virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
-    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-    void invalidateOpenGLBuffers();
-    bool isFinite() const { return true; }
-    bool isEmpty() const;
-    void compute_bbox() const;
+    virtual void draw() const Q_DECL_OVERRIDE{}
+    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+    void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    bool isFinite() const Q_DECL_OVERRIDE{ return true; }
+    bool isEmpty() const Q_DECL_OVERRIDE;
+    void compute_bbox() const Q_DECL_OVERRIDE;
 
     void new_vertex(const double&, const double&, const double&);
     void new_triangle(const std::size_t, const std::size_t, const std::size_t);
@@ -146,11 +147,12 @@ public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
     bool exportAsPolyhedron(Polyhedron*);
-    bool exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3>*);
+    bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;
+    void itemAboutToBeDestroyed(Scene_item *item) Q_DECL_OVERRIDE;
 
 protected:
     friend struct Scene_polygon_soup_item_priv;

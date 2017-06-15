@@ -2,7 +2,10 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Default_diagonalize_traits.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_diagonalize_traits.h>
+#endif
+#include <CGAL/Diagonalize_traits.h>
 
 #include <list>
 
@@ -41,17 +44,29 @@ int main(void)
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<3>(),kernel,
-				 CGAL::Default_diagonalize_traits<FT,3>());
+				 CGAL::Diagonalize_traits<FT,3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<2>(),kernel,
-				 CGAL::Default_diagonalize_traits<FT,3>());
+				 CGAL::Diagonalize_traits<FT,3>());
+#ifdef CGAL_EIGEN3_ENABLED
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<3>(),kernel,
+				 CGAL::Eigen_diagonalize_traits<FT,3>());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<2>(),kernel,
+				 CGAL::Eigen_diagonalize_traits<FT,3>());
+#endif
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<3>(),kernel,
-				 CGAL::Default_diagonalize_traits<FT,3>());
+				 CGAL::Diagonalize_traits<FT,3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<2>(),kernel,
-				 CGAL::Default_diagonalize_traits<FT,3>());
+				 CGAL::Diagonalize_traits<FT,3>());
+#ifdef CGAL_EIGEN3_ENABLED
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<3>(),kernel,
+				 CGAL::Eigen_diagonalize_traits<FT,3>());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<2>(),kernel,
+				 CGAL::Eigen_diagonalize_traits<FT,3>());
+#endif
 
   return 0;
 }

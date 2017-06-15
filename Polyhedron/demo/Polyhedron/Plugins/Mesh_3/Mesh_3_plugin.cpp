@@ -104,11 +104,23 @@ public:
 #endif  
     Q_FOREACH(int ind, scene->selectionIndices()){
       Scene_polyhedron_item* poly_item
-        = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+          = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+      Scene_surface_mesh_item* sm_item
+          = qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
       if (NULL == poly_item)
-        continue;
-      if (a == actionMesh_3) return poly_item->polyhedron()->is_closed();
-      else                   return true;
+      {
+        if(NULL == sm_item)
+          continue;
+      }
+      if (a == actionMesh_3)
+      {
+        if(poly_item)
+          return poly_item->polyhedron()->is_closed();
+        if(sm_item)
+          return is_closed(*sm_item->polyhedron());
+      }
+      else
+        return true;
     }
     return false;
   }
@@ -177,6 +189,7 @@ void Mesh_3_plugin::mesh_3_volume()
 void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 {
   Scene_polyhedron_item* poly_item = NULL;
+  Scene_surface_mesh_item* sm_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
   Scene_image_item* image_item = NULL;
   Scene_polylines_item* polylines_item = NULL;
@@ -185,6 +198,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
     if(poly_item == NULL){
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+    }
+    if(sm_item == NULL){
+      sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -211,6 +227,17 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
       return;
     }
     item = poly_item;
+    features_protection_available = true;
+  }
+  if(NULL != sm_item)
+  {
+    if (!is_triangle_mesh(*sm_item->polyhedron()))
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected Scene_surface_mesh__item is not triangulated."));
+      return;
+    }
+    item = sm_item;
     features_protection_available = true;
   }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -303,6 +330,15 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   connect(ui.noEdgeSizing, SIGNAL(toggled(bool)),
           ui.edgeSizing,   SLOT(setEnabled(bool)));
 
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.sharpEdgesAngle, SLOT(setEnabled(bool)));
+
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.sharpEdgesAngleLabel, SLOT(setEnabled(bool)));
+
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.protectEdges, SLOT(setEnabled(bool)));
+
   // Set default parameters
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
@@ -336,33 +372,53 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
+  ui.protectEdges->setEnabled(features_protection_available);
 
   ui.initializationGroup->setVisible(image_item != NULL && !image_item->isGray());
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
   if (poly_item != NULL)
     ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
+  else if (sm_item != NULL)
+      ui.volumeGroup->setVisible(!surface_only && is_closed(*sm_item->polyhedron()));
   else
     ui.volumeGroup->setVisible(!surface_only);
-  if (poly_item == NULL || polylines_item != NULL) {
+  if ((poly_item == NULL && sm_item == NULL)|| polylines_item != NULL) {
     ui.sharpEdgesAngleLabel->setVisible(false);
     ui.sharpEdgesAngle->setVisible(false);
 
     ui.facetTopology->setEnabled(false);
     ui.facetTopology->setToolTip(tr("<b>Notice:</b> "
                                     "This option is only available with a"
-                                    " polyhedron, when features are detected"
+                                    " polyhedron or a surface mesh, when features are detected"
                                     " automatically"));
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
 
-#if CGAL_CONCURRENT_MESH_3
-  ui.manifoldCheckBox->setEnabled(false);
-  ui.manifoldCheckBox->setToolTip(tr("<b>Notice:</b> The manifold option cannot"
-                                     " be used with the parallel version of "
-                                     "Mesh_3."));
-#endif
+  if (features_protection_available)
+  {
+    if (NULL != poly_item)
+    {
+      if (surface_only)
+      {
+        ui.protectEdges->addItem(QString("Sharp and Boundary edges"));
+        ui.protectEdges->addItem(QString("Boundary edges only"));
+      }
+      else
+        ui.protectEdges->addItem(QString("Sharp edges"));
+    }
+    else if(NULL != image_item)
+    {
+      if(polylines_item != NULL)
+        ui.protectEdges->addItem(QString("Input polylines"));
+      else
+      {
+        CGAL_assertion(!image_item->isGray());
+        ui.protectEdges->addItem(QString("Polylines on cube"));
+      }
+    }
+  }
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -381,7 +437,8 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const double edge_size = !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
-  const bool protect_features = ui.protect->isChecked();
+  const bool protect_features = ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 0);
+  const bool protect_borders = ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 1);
   const double sharp_edges_angle = ui.sharpEdgesAngle->value();
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold =
@@ -418,10 +475,41 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  protect_features,
+                                 protect_borders,//available only for poly_item
                                  sharp_edges_angle,
                                  manifold,
                                  surface_only,
                                  scene);
+  }
+  // Surface_mesh
+  if ( NULL != sm_item )
+  {
+    SMesh* psMesh = sm_item->polyhedron();
+    if (NULL == psMesh)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+    typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
+    SMwgd *pMesh = new SMwgd(*psMesh);
+    Scene_polylines_item::Polylines_container plc;
+
+    thread =    cgal_code_mesh_3(pMesh,
+                                 (polylines_item == NULL)?plc:polylines_item->polylines,
+                                 item->name(),
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 edge_size,
+                                 radius_edge,
+                                 protect_features,
+                                 protect_borders,
+                                 sharp_edges_angle,
+                                 manifold,
+                                 surface_only,
+                                 scene);
+    delete pMesh;
   }
   // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS

@@ -43,7 +43,7 @@ Polygon_2 construct_polygon (const Circle_2& circle)
   return pgn;
 }
 
-// Construct a point from a rectangle.
+// Construct a polygon from a rectangle.
 Polygon_2 construct_polygon (const Point_2& p1, const Point_2& p2,
                              const Point_2& p3, const Point_2& p4)
 {

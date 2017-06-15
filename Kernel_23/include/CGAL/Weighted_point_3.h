@@ -1,9 +1,9 @@
-// Copyright (c) 2016  
+// Copyright (c) 2016, 2017
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,6 @@ public:
   typedef typename R_::Kernel_base::Weighted_point_3  Rep;
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
   typedef typename R_::Point_3              Point_3;
-  typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Point_3 Point;
@@ -73,7 +72,7 @@ public:
   Weighted_point_3() {}
 
   Weighted_point_3(const Origin& o)
-    : Rep(typename R::Construct_point_3()(Return_base_tag(), o))
+    : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), o))
   {}
 
   Weighted_point_3(const Rep& p)
@@ -83,7 +82,6 @@ public:
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), p, 0))
   {}
 
-
   Weighted_point_3(const Point_3& p, const Weight& w)
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), p, w))
   {}
@@ -92,7 +90,7 @@ public:
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), x, y, z))
   {}
 
-  typename cpp11::result_of<typename R::Construct_point_3( Weighted_point_3)>::type 
+  typename cpp11::result_of<typename R::Construct_point_3( Weighted_point_3)>::type
   point() const
   {
     return typename R::Construct_point_3()(*this);

@@ -778,4 +778,9 @@ fitting_line_3(typename DiagonalizeTraits::Covariance_matrix& covariance, // cov
 
 } //namespace CGAL
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/PCA_util_Eigen.h>
+#endif
+
+
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H

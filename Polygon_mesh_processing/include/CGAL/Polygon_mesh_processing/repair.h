@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/repair.h>
 
 
 #include <set>
@@ -126,30 +126,7 @@ struct Less_along_ray{
   }
 };
 
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerated(
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  CGAL_assertion(!is_border(hd, tmesh));
 
-  const typename Traits::Point_3& p1 = get(vpmap, target( hd, tmesh) );
-  const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
-  const typename Traits::Point_3& p3 = get(vpmap, source( hd, tmesh) );
-  return traits.collinear_3_object()(p1, p2, p3);
-}
-
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerated(
-  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  return is_degenerated(halfedge(fd,tmesh), tmesh, vpmap, traits);
-}
 
 ///\cond SKIP_IN_MANUAL
 
@@ -163,7 +140,7 @@ degenerate_faces(const TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(tm))
   {
-    if ( is_degenerated(fd, tm, vpmap, traits) )
+    if ( is_degenerate_triangle_face(fd, tm, vpmap, traits) )
       *out++=fd;
   }
   return out;
@@ -366,10 +343,10 @@ std::size_t remove_null_edges(
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, geom_traits), Traits());
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;
 
@@ -687,10 +664,10 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, geom_traits), Traits());
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
 // First remove edges of length 0
   std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
@@ -698,7 +675,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   BOOST_FOREACH(face_descriptor fd, faces(tmesh))
-    if ( is_degenerated(fd, tmesh, vpmap, traits) )
+    if ( is_degenerate_triangle_face(fd, tmesh, vpmap, traits) )
       degenerate_face_set.insert(fd);
   nb_deg_faces+=degenerate_face_set.size();
 
@@ -778,14 +755,15 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         {
           face_descriptor adjacent_face = face( opposite(hd, tmesh), tmesh );
           if ( adjacent_face==GT::null_face() ||
-               !degenerate_face_set.count(adjacent_face) )
+               degenerate_face_set.count(adjacent_face)==0 )
             boundary_hedges.push_back(hd);
           else
+          {
             if (cc_faces.insert(adjacent_face).second)
-            {
-              inside_hedges.push_back(hd);
               queue.push_back(adjacent_face);
-            }
+            if ( hd < opposite(hd, tmesh) )
+              inside_hedges.push_back(hd);
+          }
         }
       }
 
@@ -853,9 +831,10 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       }
       // remove degenerate faces
       BOOST_FOREACH(face_descriptor f, cc_faces)
+      {
         degenerate_face_set.erase(f);
-      BOOST_FOREACH(face_descriptor f, cc_faces)
         remove_face(f, tmesh);
+      }
       // remove interior edges
       BOOST_FOREACH(halfedge_descriptor h, inside_hedges)
         remove_edge(edge(h, tmesh), tmesh);
@@ -941,7 +920,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           // since we reuse later the halfedge of the first refernce vertex
           // we must set it as we need.
           if ( source(h2,tmesh) == *ref_vertices.first)
-            set_halfedge(*ref_vertices.first, opposite( prev(side_two[hi], tmesh), tmesh), tmesh );
+            set_halfedge(*ref_vertices.first, opposite( h2, tmesh), tmesh );
           // retriangulate the face
           if ( face(h2, tmesh) != GT::null_face())
             Euler::split_face(h2, next(side_two[hi], tmesh), tmesh);

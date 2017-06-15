@@ -52,6 +52,14 @@ class MAINWINDOW_EXPORT MainWindow :
   Q_OBJECT
   Q_INTERFACES(Messages_interface)
 public:
+  //! \brief Global state of the application.
+  //!
+  //! A plugin that outputs a `Facegraph_item` will match the input type for the output.
+  //! But when the input is not a `Facegraph_item`, the plugin will use this state to know what type to use.
+  enum Face_graph_mode{
+    SURFACE_MESH=0,
+    POLYHEDRON
+  };
   /*! \brief The constructor
    * It links the class with its UI file and sets it up.
    * It also saves pointers to viewer and the sceneView.
@@ -88,6 +96,7 @@ public Q_SLOTS:
   void setExpanded(QModelIndex);
   void setCollapsed(QModelIndex);
   bool file_matches_filter(const QString& filters, const QString& filename);
+  void reset_default_loaders();
   //!Prints a dialog containing statistics on the selected polyhedrons.
   void statisticsOnItem();
   /*! Open a file with a given loader, and return true if it was successful.
@@ -135,6 +144,10 @@ public Q_SLOTS:
    * in the sceneView.
    */
   void selectAll();
+  /*!
+   * Assigns a different color to each selected item.
+   */
+  void colorItems();
   /*!
    * Adds the scene_item with the index i in the sceneView to the
    * current selection. Calls itemChanged(i) from the scene.
@@ -212,6 +225,11 @@ public Q_SLOTS:
 
   /// This slot is used to test exception handling in Qt Scripts.
   void throw_exception();
+
+  /*!
+   * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
+   */
+  void set_face_graph_default_type(MainWindow::Face_graph_mode m);
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the sceneView and updates the scene
@@ -322,6 +340,7 @@ protected Q_SLOTS:
 
   //!Resizes the header of the scene view
   void resetHeader();
+
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
   /*! For each objects in the sceneView, loads the associated plugins.
@@ -372,11 +391,13 @@ private:
   QVector<PluginNamePair > plugins;
   //!Called when "Add new group" in the file menu is triggered.
   QAction* actionAddToGroup;
+  QAction* actionResetDefaultLoaders;
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;
+  void insertActionBeforeLoadPlugin(QMenu*, QAction *actionToInsert);
 
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
@@ -391,6 +412,9 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
+
+private Q_SLOTS:
+  void set_facegraph_mode_adapter(bool is_polyhedron);
 };
 
 #endif // ifndef MAINWINDOW_H

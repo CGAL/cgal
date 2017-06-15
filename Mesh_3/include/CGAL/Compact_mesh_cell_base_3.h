@@ -261,7 +261,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
-    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()  
@@ -298,7 +297,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
-    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
@@ -323,7 +321,6 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
-    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()

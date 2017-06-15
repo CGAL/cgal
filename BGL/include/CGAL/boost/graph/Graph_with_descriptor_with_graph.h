@@ -30,10 +30,13 @@ namespace CGAL
 {
 
 
-template<typename Graph,typename Descriptor>
+template<typename Graph_, typename Descriptor_>
 struct Gwdwg_descriptor
 {
 public:
+  typedef Graph_ Graph;
+  typedef Descriptor_ Descriptor;
+
   Graph* graph;
   Descriptor descriptor;
 
@@ -124,9 +127,10 @@ Property maps can be wrapped with `Graph_with_descriptor_with_graph_property_map
 \cgalModels `MutableFaceGraph` if `Graph` is a model of `MutableFaceGraph`
 */
 
-template<typename Graph>
+template<typename Graph_>
 struct Graph_with_descriptor_with_graph
 {
+  typedef Graph_ Graph;
   Graph* graph;
 
   typedef boost::graph_traits<Graph> gt;
@@ -135,11 +139,13 @@ struct Graph_with_descriptor_with_graph
   typedef Gwdwg_descriptor<Graph, typename gt::edge_descriptor> edge_descriptor;
   typedef Gwdwg_descriptor<Graph, typename gt::face_descriptor> face_descriptor;
 
+  Graph_with_descriptor_with_graph()
+    : graph(NULL)
+  {}
+
   Graph_with_descriptor_with_graph(Graph& graph)
     : graph(&graph)
   {}
-private:
-  Graph_with_descriptor_with_graph(const Graph_with_descriptor_with_graph&){} // disable copy-constructor to avoid non-wanted copies
 };
 
 

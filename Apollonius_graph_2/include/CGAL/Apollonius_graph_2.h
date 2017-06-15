@@ -43,7 +43,7 @@
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 
 #include <CGAL/in_place_edge_list.h>
-#include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
+#include <CGAL/internal/TDS_2/edge_list.h>
 #include <CGAL/Apollonius_graph_2/Traits_wrapper_2.h>
 
 #include <CGAL/Apollonius_graph_2/Constructions_C2.h>

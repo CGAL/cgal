@@ -184,7 +184,7 @@ void put(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A>& g, const Key& key, const
   put(pmap, key, value);
 }
 
-} // boost
+} // CGAL
 
 // specialization needs to be repeated for halfedge, vertex, face
 #define CGAL_POLYHEDRON_INDEX_PM(ENTITY, TAG, ACCESSOR)                 \
@@ -199,7 +199,7 @@ void put(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A>& g, const Key& key, const
     typedef type const_type;                                            \
   };                                                                    \
   };                                                                    \
-  }
+  } //CGAL
 
 CGAL_POLYHEDRON_INDEX_PM(halfedge, _index_t, Index)
 CGAL_POLYHEDRON_INDEX_PM(vertex, _index_t, Index)

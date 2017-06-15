@@ -5,6 +5,9 @@
 project( Polyhedron_IO_Demo )
 
 cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 OLD)
+endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()

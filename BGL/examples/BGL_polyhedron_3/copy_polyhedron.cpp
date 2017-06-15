@@ -2,11 +2,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #if defined(CGAL_USE_OPENMESH)
 #include <OpenMesh/Core/IO/MeshIO.hh>
@@ -80,7 +76,7 @@ int main(int argc, char* argv[])
     
     CGAL::copy_face_graph(T1, S, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     std::ofstream out("reverse.off");
-    out << T1;
+    out << S;
   }
   return 0;
 }

@@ -223,7 +223,7 @@ namespace boost {
 
     typedef CGAL::detail::T2_halfedge_descriptor<Triangulation> halfedge_descriptor;
 
-    typedef typename CGAL::Triangulation_2<GT,TDS>::All_halfedges_iterator  halfedge_iterator;
+    typedef typename Triangulation::All_halfedges_iterator  halfedge_iterator;
 
     typedef CGAL::Prevent_deref<typename Triangulation::All_vertices_iterator> vertex_iterator;
     typedef CGAL::Prevent_deref<typename Triangulation::All_faces_iterator> face_iterator;

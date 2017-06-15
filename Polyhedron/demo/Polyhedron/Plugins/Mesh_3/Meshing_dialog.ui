@@ -101,63 +101,10 @@
       <string>Sharp features</string>
      </property>
      <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0">
-      <item row="2" column="2">
-       <widget class="QCheckBox" name="protect">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="protectEdges"/>
       </item>
-      <item row="4" column="2">
-       <widget class="QCheckBox" name="noEdgeSizing">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QDoubleSpinBox" name="edgeSizing">
-        <property name="decimals">
-         <number>4</number>
-        </property>
-        <property name="minimum">
-         <double>0.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="edgeLabel">
-        <property name="text">
-         <string>Edge &amp;size</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>edgeSizing</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="protectLabel">
-        <property name="text">
-         <string>&amp;Protect sharp edges</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>protect</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="sharpEdgesAngleLabel">
         <property name="toolTip">
          <string>For the detection of sharp edges, this is the lower bound on the angle between normals of incident facets of sharp edges</string>
@@ -173,13 +120,69 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="7" column="0">
+       <widget class="QLabel" name="edgeLabel">
+        <property name="text">
+         <string>Edge &amp;size</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>edgeSizing</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QCheckBox" name="noEdgeSizing">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QDoubleSpinBox" name="edgeSizing">
+        <property name="decimals">
+         <number>4</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
        <widget class="QDoubleSpinBox" name="sharpEdgesAngle">
         <property name="maximum">
          <double>180.000000000000000</double>
         </property>
         <property name="value">
          <double>60.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="protectLabel">
+        <property name="text">
+         <string>&amp;Protect sharp edges</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>protect</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="protect">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

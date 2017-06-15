@@ -23,17 +23,15 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Arr_face_map.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_face_index_map.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
+#include <CGAL/Arr_face_index_map.h>
 
 /*! \file
  * Definition of the Arr_face_index_map<Arrangement> class.
+
  */
-
-#if (defined __GNUC__)
-  #warning Arr_face_map.h is DEPRECATED, please include Arr_face_index_map.h instead
-#elif (defined _MSC_VER)
-  #pragma message("Arr_face_map.h is DEPRECATED, please include Arr_face_index_map.h instead")
-#endif
-
-#include <CGAL/Arr_face_index_map.h>
 
 #endif
