@@ -49,7 +49,13 @@ public:
     QAction *actionDegenFaces = new QAction(tr("Select Degenerated Faces"), mw);
     actionDegenFaces->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionDegenFaces, SIGNAL(triggered()), this, SLOT(on_actionDegenFaces_triggered()));
-    _actions <<actionDegenFaces;
+
+    QAction *actionDegenEdges = new QAction(tr("Select Degenerated Edges"), mw);
+    actionDegenEdges->setProperty("subMenuName", "Polygon Mesh Processing");
+    connect(actionDegenEdges, SIGNAL(triggered()), this, SLOT(on_actionDegenEdges_triggered()));
+
+    _actions <<actionDegenFaces
+            <<actionDegenEdges;
 
   }
 
@@ -60,6 +66,7 @@ public:
 
 public Q_SLOTS:
   void on_actionDegenFaces_triggered();
+  void on_actionDegenEdges_triggered();
 private:
   QList<QAction*> _actions;
   Scene_interface *scene;
@@ -86,6 +93,25 @@ bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::face_de
   return !out_faces.empty();
 }
 
+template<class Mesh>
+bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::edge_descriptor> &out_edges)
+{
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor HalfedgeDescriptor;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type Point;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+  Vpm vpm = get(boost::vertex_point, *mesh);
+
+  BOOST_FOREACH(HalfedgeDescriptor h, halfedges(*mesh))
+  {
+    Point s(get(vpm, source(h, *mesh))),
+        t(get(vpm, target(h, *mesh)));
+    CGAL::Vector_3<Kernel> v(s, t);
+    if(v.squared_length() == 0)
+      out_edges.push_back(edge(h, *mesh));
+  }
+  return !out_edges.empty();
+}
 void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
 {
 
@@ -131,6 +157,54 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
   if(!found)
     QMessageBox::information(mw, tr("No degenerated triangle"),
                              tr("None of the selected surfaces has degenerated triangle faces."));
+  QApplication::restoreOverrideCursor();
+}
+
+void Degenerated_faces_plugin::on_actionDegenEdges_triggered()
+{
+
+  typedef boost::graph_traits<Face_graph>::edge_descriptor edge_descriptor;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  bool found = false;
+  std::vector<Scene_facegraph_item*> selected_polys;
+  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  {
+    Scene_facegraph_item* poly_item =
+        qobject_cast<Scene_facegraph_item*>(scene->item(index));
+    if(poly_item)
+    {
+      selected_polys.push_back(poly_item);
+    }
+  }
+  Q_FOREACH(Scene_facegraph_item* poly_item, selected_polys)
+  {
+    Face_graph* pMesh = poly_item->polyhedron();
+    std::vector<edge_descriptor> edges;
+    // add intersecting triangles to a selection_item.
+    if(isDegen(pMesh, edges))
+    {
+      Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(poly_item, mw);
+      for(std::vector<edge_descriptor>::iterator ed = edges.begin();
+          ed != edges.end(); ++ed) {
+        selection_item->selected_edges.insert(*ed);
+
+        selection_item->selected_vertices.insert(source( halfedge(*ed, *selection_item->polyhedron()),
+                                                         *selection_item->polyhedron()));
+        selection_item->selected_vertices.insert(target( halfedge(*ed, *selection_item->polyhedron()),
+                                                         *selection_item->polyhedron()));
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->setName(tr("%1 (selection) (null length edges)").arg(poly_item->name()));
+      poly_item->setRenderingMode(Wireframe);
+      scene->addItem(selection_item);
+      scene->itemChanged(poly_item);
+      scene->itemChanged(selection_item);
+      found = true;
+    }
+  }
+  if(!found)
+    QMessageBox::information(mw, tr("No degenerated edge"),
+                             tr("None of the selected surfaces has degenerated edges."));
   QApplication::restoreOverrideCursor();
 }
 
