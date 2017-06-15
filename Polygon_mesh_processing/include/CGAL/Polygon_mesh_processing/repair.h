@@ -1601,6 +1601,9 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
       std::cout << "DEBUG: Iterative self-intersection removal step " << step
                 << " - non_filled_hole.size() = " << non_filled_hole.size() << std::endl;
 
+    if ( faces_to_remove.empty() && non_filled_hole.empty() )
+      break;
+
     no_hole_was_filled =
       remove_self_intersections_one_step(tm, faces_to_remove, non_filled_hole,step, verbose);
   }
