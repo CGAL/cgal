@@ -22,23 +22,25 @@
 // File Description : 
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
-#define CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
+#define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Polygon_mesh_processing.h>
 
 
 namespace CGAL {
-namespace Mesh_3 {
+namespace Polygon_mesh_processing {
   
-  template <typename Polyhedron>
+  template <typename Polyhedron, typename PatchId_pmap>
   class Detect_features_in_polyhedra;
 
-  template <typename Polyhedron>
-  void detect_features(Polyhedron& p);
+  template <typename Polyhedron, typename FT, typename PatchId_pmap>
+  void detect_features(Polyhedron& p,
+                       FT angle_in_deg,
+                       PatchId_pmap pid_map);
   
-} // end namespace Mesh_3
+} // end namespace Polygon_mesh_processing
   
 } // end namespace CGAL
 
-#endif // CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_FWD_H

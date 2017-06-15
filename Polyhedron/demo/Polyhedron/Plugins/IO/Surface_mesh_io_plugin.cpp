@@ -47,7 +47,7 @@ public:
        return NULL;
      }
 
-     Scene_surface_mesh_item::SMesh *surface_mesh = new Scene_surface_mesh_item::SMesh();
+     SMesh *surface_mesh = new SMesh();
      in >> *surface_mesh;
      if(!in || surface_mesh->is_empty())
      {

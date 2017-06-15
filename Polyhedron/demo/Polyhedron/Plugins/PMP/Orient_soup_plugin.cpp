@@ -93,9 +93,9 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
       << actionDisplayNonManifoldEdges;
 }
 
-void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color> colors)
+void set_vcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
 {
-  typedef Scene_surface_mesh_item::SMesh SMesh;
+  typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
@@ -107,9 +107,9 @@ void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color>
       vcolors[vd] = colors[color_id++];
 }
 
-void set_fcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color> colors)
+void set_fcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
 {
-  typedef Scene_surface_mesh_item::SMesh SMesh;
+  typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
     smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
@@ -179,7 +179,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
                                       .arg(item->name()));
       }
       QApplication::setOverrideCursor(Qt::WaitCursor);
-        Scene_surface_mesh_item::SMesh* smesh = new Scene_surface_mesh_item::SMesh();
+        SMesh* smesh = new SMesh();
         if(item->exportAsSurfaceMesh(smesh)) {
           if(!item->getVColors().empty())
             set_vcolors(smesh,item->getVColors());

@@ -1,11 +1,12 @@
-#ifndef POLYHEDRON_DEMO_PROPERTIES_H
-#define POLYHEDRON_DEMO_PROPERTIES_H
+#ifndef CGAL_POLYHEDRON_DEMO_PROPERTIES_H
+#define CGAL_POLYHEDRON_DEMO_PROPERTIES_H
 
-struct halfedge_is_feature_t {};
-struct face_patch_id_t {};
-struct vertex_selection_t {};
-struct face_selection_t {};
-struct edge_selection_t {};
-struct vertex_num_feature_edges_t {};
-#endif //POLYHEDRON_DEMO_PROPERTIES_H
+namespace CGAL {
 
+enum vertex_selection_t         { vertex_selection};
+enum edge_selection_t           { edge_selection};
+enum face_selection_t           { face_selection};
+
+} // namespace CGAL
+
+#endif

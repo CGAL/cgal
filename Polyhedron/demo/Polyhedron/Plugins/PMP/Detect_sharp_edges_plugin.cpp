@@ -5,13 +5,31 @@
 #include <QInputDialog>
 #include <QtPlugin>
 
-#include "Scene_polyhedron_item.h"
-#include "Scene_polygon_soup_item.h"
-#include "Polyhedron_type.h"
-
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
+
+#else
+#include "Scene_polyhedron_item.h"
+#include "Polyhedron_type.h"
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
+#endif
+
 #include "Polyhedron_demo_detect_sharp_edges.h"
+
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_facegraph_item;
+typedef CGAL::Kernel_traits<Scene_surface_mesh_item::Face_graph::Point>::Kernel Kernel;
+#else
+typedef Scene_polyhedron_item Scene_facegraph_item;
+#endif
+
+typedef Scene_facegraph_item::Face_graph FaceGraph;
+typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+
 
 using namespace CGAL::Three;
 class Polyhedron_demo_detect_sharp_edges_plugin :
@@ -37,8 +55,8 @@ public:
   bool applicable(QAction*) const {
     Q_FOREACH(int index, scene->selectionIndices())
     {
-      Scene_polyhedron_item* item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+      Scene_facegraph_item* item =
+        qobject_cast<Scene_facegraph_item*>(scene->item(index));
       if (item) return true;
     }
     return false;
@@ -53,8 +71,8 @@ void detectSharpEdges(bool input_dialog = false, double angle = 60);
   void detectSharpEdgesWithInputDialog();
 
 protected:
-  Kernel::Vector_3 facet_normal(Polyhedron::Facet_handle f);
-  bool is_sharp(Polyhedron::Halfedge_handle he);
+  Kernel::Vector_3 facet_normal(face_descriptor f);
+  bool is_sharp(halfedge_descriptor he);
 
 private:
   QAction* actionSharEdges;
@@ -71,22 +89,22 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
                                                                  double angle)
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  typedef std::pair<int,Polyhedron*> Poly_tuple;
+  typedef std::pair<int,FaceGraph*> Poly_tuple;
   
   // Get selected items
   QList<Poly_tuple> polyhedrons;
   Q_FOREACH(int index, scene->selectionIndices())
   {
-    Scene_polyhedron_item* item = 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_facegraph_item* item =
+      qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(!item)
       return;
     
-    Polyhedron* pMesh = item->polyhedron();
+    FaceGraph* pMesh = item->polyhedron();
     if(!pMesh)
       return;
     item->show_feature_edges(true);
-    polyhedrons << make_pair(index, pMesh);
+    polyhedrons << std::make_pair(index, pMesh);
   }
 
   QApplication::restoreOverrideCursor();
@@ -105,14 +123,15 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   // Detect edges
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
-
-  CGAL::Mesh_3::Detect_features_in_polyhedra<Polyhedron> detect_features;
   Q_FOREACH(Poly_tuple tuple, polyhedrons)
   {
-    Scene_polyhedron_item* item =
-      qobject_cast<Scene_polyhedron_item*>(scene->item(tuple.first));
-    Polyhedron* pMesh = tuple.second;
+    Scene_facegraph_item* item =
+      qobject_cast<Scene_facegraph_item*>(scene->item(tuple.first));
+    FaceGraph* pMesh = tuple.second;
     if (!pMesh) continue;
+
+    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<FaceGraph,
+        int> detect_features;
 
     // Get sharp features
     detect_features.detect_sharp_edges(*pMesh, angle);

@@ -777,6 +777,7 @@ void clear(FaceGraph& g)
   CGAL_postcondition(num_faces(g) == 0);
 }
 
+
 } // namespace CGAL
 
 // Include "Euler_operations.h" at the end, because its implementation

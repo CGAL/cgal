@@ -34,6 +34,7 @@
 #include "triangulate_primitive.h"
 #include "Color_map.h"
 
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Polyhedron::Traits Traits;
 typedef Polyhedron::Facet Facet;
@@ -251,6 +252,8 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       int index =0;
       BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
+        if (CGAL::is_degenerate_triangle_face(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
+          continue;
         if(!f->is_triangle())
         {
           Traits::Vector_3 normal = f->plane().orthogonal_vector(); //initialized in compute_normals_and_vertices
@@ -915,6 +918,19 @@ invalidate_stats()
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
   genus = -1;
+}
+
+//vertex_index is the storage for selection
+Scene_polyhedron_item::Vertex_selection_map 
+Scene_polyhedron_item::vertex_selection_map()
+{
+  return get(boost::vertex_index,*d->poly);
+}
+//face_index is the storage for selection
+Scene_polyhedron_item::Face_selection_map 
+Scene_polyhedron_item::face_selection_map()
+{
+  return get(boost::face_index,*d->poly);
 }
 
 Scene_polyhedron_item*

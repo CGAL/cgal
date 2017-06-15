@@ -29,6 +29,9 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
     typedef Polyhedron Face_graph;
+    typedef boost::property_map<Face_graph, boost::vertex_index_t>::type Vertex_selection_map;
+    typedef boost::property_map<Face_graph, boost::face_index_t>::type Face_selection_map;
+
     enum STATS {
       NB_VERTICES = 0,
       NB_CONNECTED_COMPOS,
@@ -104,6 +107,10 @@ public:
     bool isFinite() const Q_DECL_OVERRIDE { return true; }
     bool isEmpty() const Q_DECL_OVERRIDE;
     void compute_bbox() const Q_DECL_OVERRIDE;
+    
+    Vertex_selection_map vertex_selection_map();
+    Face_selection_map face_selection_map();
+ 
     std::vector<QColor>& color_vector();
     void set_color_vector_read_only(bool on_off);
     bool is_color_vector_read_only();

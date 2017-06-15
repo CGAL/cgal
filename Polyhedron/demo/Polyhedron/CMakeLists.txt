@@ -236,6 +236,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
+  add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
@@ -246,15 +247,29 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
   
-  add_item(scene_polyhedron_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp)
-  target_link_libraries(scene_polyhedron_item_k_ring_selection scene_polyhedron_item)
- 
+  add_item(scene_surface_mesh_item_decorator Scene_polyhedron_item_decorator.cpp )
+  target_link_libraries(scene_surface_mesh_item_decorator scene_surface_mesh_item)
+  target_compile_definitions(scene_surface_mesh_item_decorator PUBLIC "-DUSE_SURFACE_MESH" )
+    
+  add_item(scene_polyhedron_and_sm_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp)
+  target_link_libraries(scene_polyhedron_and_sm_item_k_ring_selection scene_polyhedron_item scene_surface_mesh_item)
+   
+  add_item(scene_poly_item_k_ring_selection Plugins/PMP/Scene_facegraph_item_k_ring_selection.cpp)
+  target_link_libraries(scene_poly_item_k_ring_selection scene_polyhedron_item)
+
+  add_item(scene_sm_item_k_ring_selection Plugins/PMP/Scene_facegraph_item_k_ring_selection.cpp)
+  target_link_libraries(scene_sm_item_k_ring_selection scene_surface_mesh_item)
+  target_compile_definitions(scene_sm_item_k_ring_selection PUBLIC "-DUSE_SURFACE_MESH" )
+
   add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp)
-  target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
+  target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_poly_item_k_ring_selection)
+
+  add_item(scene_surface_mesh_selection_item Scene_polyhedron_selection_item.cpp)
+  target_link_libraries(scene_surface_mesh_selection_item scene_surface_mesh_item_decorator  scene_sm_item_k_ring_selection)
+  target_compile_definitions(scene_surface_mesh_selection_item PUBLIC "-DUSE_SURFACE_MESH" )
 
   add_item(scene_polyhedron_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
 
-  add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
   
   target_link_libraries(scene_polyhedron_shortest_path_item scene_polyhedron_item_decorator scene_polyhedron_item scene_polylines_item)
 
@@ -263,7 +278,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp)
     add_item(scene_edit_polyhedron_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
            ${editionUI_FILES})
-           target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_polyhedron_item_k_ring_selection
+           target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_surface_mesh_item scene_polyhedron_and_sm_item_k_ring_selection
                scene_basic_objects)
   endif()
 
@@ -345,6 +360,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     TARGETS
     demo_framework
     scene_polyhedron_item
+    scene_surface_mesh_item
     scene_points_with_normal_item
     scene_color_ramp
     scene_implicit_function_item
@@ -352,7 +368,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_basic_objects
     scene_polyhedron_selection_item
     scene_polyhedron_item_decorator
-    scene_polyhedron_item_k_ring_selection
+    scene_polyhedron_and_sm_item_k_ring_selection
+    scene_poly_item_k_ring_selection
+    scene_sm_item_k_ring_selection
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 
