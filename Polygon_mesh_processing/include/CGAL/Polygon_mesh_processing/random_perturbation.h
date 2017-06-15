@@ -180,13 +180,15 @@ void random_perturbation(VertexRange vertices
   unsigned int seed = choose_param(get_param(np, internal_np::random_seed), -1);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
+  CGAL::Random rng = (seed == -1) ? CGAL::Random() : CGAL::Random(seed);
+
   internal::random_perturbation_impl(vertices,
           tmesh,
           perturbation_max_size,
           vcmap,
           vpmap,
           do_project,
-          ((seed == -1) ? CGAL::Random() : CGAL::Random(seed)),
+          rng,
           gt);
 
 #ifdef CGAL_PMP_RANDOM_PERTURBATION_VERBOSE
