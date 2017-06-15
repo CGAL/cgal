@@ -94,7 +94,6 @@ class Q_DECL_EXPORT Clip_polyhedron_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-  typedef Scene_surface_mesh_item::SMesh SMesh;
 public :
   // Adds an action to the menu and configures the widget
   void init(QMainWindow* mw,
