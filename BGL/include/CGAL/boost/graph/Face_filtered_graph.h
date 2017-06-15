@@ -1003,7 +1003,9 @@ face(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMa
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   CGAL_assertion(CGAL::in_CC(h, w));
-  if(in_CC(face(h,w.graph()), w))
+  if(face(h, w.graph()) == boost::graph_traits<Graph>::null_face()) // h is a border hafedge
+    return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_face();
+  else if(in_CC(face(h,w.graph()), w))
     return face(h,w.graph());
   else
     return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_face();
