@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsClasses
 
-\cgalModifBegin
-
 The class `Cell_attribute_with_id` represents an attribute containing (or not) an information, and having an id.
 
 \cgalModels `CellAttribute`
@@ -22,8 +20,6 @@ The class `Cell_attribute_with_id` represents an attribute containing (or not) a
 
 \sa `CGAL::Combinatorial_map<d,Items,Alloc>`
 \sa `CGAL::Generalized_map<d,Items,Alloc>`
-
-\cgalModifEnd
 
 */
 template< typename Map, typename Info_, typename Tag, typename OnMerge, typename OnSplit >

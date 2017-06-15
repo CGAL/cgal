@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgBGLHelper
 
-\cgalModifBegin
-
 The class `Linear_cell_complex_bgl_min_items` defines `void` as the information associated with darts, darts have ids and 0- and 2-attributes are enabled and have ids.
 
 \cgalModels `LinearCellComplexItems`
@@ -31,8 +29,6 @@ struct Linear_cell_complex_bgl_min_items
 \endcode
 
 \sa `CGAL::Linear_cell_complex_min_item`
-
-\cgalModifEnd
 
 */
 class Linear_cell_complex_bgl_min_items {

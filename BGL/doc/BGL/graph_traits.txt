@@ -84,8 +84,6 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function`
 that is the default hash functor of `CGAL::Unique_hash_map`.
 
-\cgalModifBegin
-
 \section BGLLCCGT Specialization for the Linear_cell_complex_for_combinatorial_map Class
 
 Defined in `<CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>`
@@ -142,8 +140,6 @@ For darts, this can be done by defining `Darts_with_id` as `CGAL::Tag_true` in t
 For attributes, it is possible to use `CGAL::Cell_attribute_with_id` and `CGAL::Cell_attribute_with_point_and_id` classes to define your item class using attributes with id.
 
 You can also use the `CGAL::Linear_cell_complex_bgl_min_items` item class, or you can use directly the `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper` class.
-
-\cgalModifEnd
 
 \section BGLOMPAK Specialization for the OpenMesh::PolyMesh_ArrayKernelT Class
 
