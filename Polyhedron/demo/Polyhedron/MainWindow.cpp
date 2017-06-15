@@ -1459,6 +1459,7 @@ void MainWindow::on_actionLoad_triggered()
   dialog.setFileMode(QFileDialog::ExistingFiles);
 
   if(dialog.exec() != QDialog::Accepted) { return; }
+  viewer->update();
   FilterPluginMap::iterator it = 
     filterPluginMap.find(dialog.selectedNameFilter());
   
@@ -1541,6 +1542,8 @@ void MainWindow::on_actionSaveAs_triggered()
                                  filters.join(";;"));
   if(filename.isEmpty())
     return;
+
+  viewer->update();
   save(filename, item);
 }
 
