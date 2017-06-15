@@ -64,7 +64,7 @@ namespace CGAL {
   std::tuple<PointMap, LAS_property::X, LAS_property::Y, LAS_property::Z >
   make_las_point_writer(PointMap point_map)
   {
-    return cpp11::make_tuple (point_map, LAS_property::X(), LAS_property::Y(), LAS_property::Z());
+    return std::make_tuple (point_map, LAS_property::X(), LAS_property::Y(), LAS_property::Z());
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -194,8 +194,8 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
   }
 
   CGAL::Bbox_3 bbox = CGAL::bbox_3
-    (boost::make_transform_iterator (first, CGAL::Property_map_to_unary_function<PointMap>(cpp11::get<0>(point_property))),
-     boost::make_transform_iterator (beyond, CGAL::Property_map_to_unary_function<PointMap>(cpp11::get<0>(point_property))));
+    (boost::make_transform_iterator (first, CGAL::Property_map_to_unary_function<PointMap>(std::get<0>(point_property))),
+     boost::make_transform_iterator (beyond, CGAL::Property_map_to_unary_function<PointMap>(std::get<0>(point_property))));
   
   LASheader header;
   header.x_scale_factor = 1e-9 * (bbox.xmax() - bbox.xmin());
@@ -216,7 +216,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
   // Write positions + normals
   for(ForwardIterator it = first; it != beyond; it++)
   {
-    const typename PointMap::value_type& p = get(cpp11::get<0>(point_property), *it);
+    const typename PointMap::value_type& p = get(std::get<0>(point_property), *it);
     laspoint.set_X ((unsigned int)((p.x() - header.x_offset) / header.x_scale_factor));
     laspoint.set_Y ((unsigned int)((p.y() - header.y_offset) / header.y_scale_factor));
     laspoint.set_Z ((unsigned int)((p.z() - header.z_offset) / header.z_scale_factor));
