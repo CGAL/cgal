@@ -67,7 +67,7 @@ public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
-  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Self>  Surface_sweep_2;
+  typedef typename Base::Surface_sweep_2                Surface_sweep_2;
 
 protected:
   Output_ierator m_out;                 // The output points.
@@ -92,9 +92,7 @@ public:
                     this->traits());
 
     //Perform the sweep
-    Surface_sweep_2* sl =
-      reinterpret_cast<Surface_sweep_2*>(this->surface_sweep());
-
+    Surface_sweep_2* sl = this->surface_sweep();
     sl->sweep(curves_vec.begin(), curves_vec.end(),
               points_vec.begin(), points_vec.end());
   }
@@ -146,7 +144,7 @@ public:
 
   typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
 
-  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Self>  Surface_sweep_2;
+  typedef typename Base::Surface_sweep_2                Surface_sweep_2;
 
 protected:
   // Data members:
@@ -172,9 +170,7 @@ public:
                     this->traits());
 
     // Perform the sweep.
-    Surface_sweep_2* sl =
-      reinterpret_cast<Surface_sweep_2*>(this->surface_sweep());
-
+    Surface_sweep_2* sl = this->surface_sweep();
     sl->sweep(curves_vec.begin(), curves_vec.end(),
               points_vec.begin(), points_vec.end());
   }
@@ -225,7 +221,7 @@ public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
-  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Self>  Surface_sweep_2;
+  typedef typename Base::Surface_sweep_2                Surface_sweep_2;
 
 protected:
   // Data members:
@@ -247,9 +243,7 @@ public:
                     this-> traits());
 
     // Perform the sweep.
-    Surface_sweep_2* sl =
-      reinterpret_cast<Surface_sweep_2*>(this->surface_sweep());
-
+    Surface_sweep_2* sl = this->surface_sweep();
     sl->sweep(curves_vec.begin(), curves_vec.end(),
               points_vec.begin(), points_vec.end());
   }
@@ -286,8 +280,7 @@ public:
   void sweep_xcurves(XCurveIterator begin, XCurveIterator end)
   {
     // Perform the sweep.
-    Surface_sweep_2* sl =
-      reinterpret_cast<Surface_sweep_2*>(this->surface_sweep());
+    Surface_sweep_2* sl = this->surface_sweep();
     sl->sweep(begin, end);
   }
 
@@ -301,9 +294,8 @@ public:
                           bool /* flag */)
   {
     if (m_found_x) {
-      Surface_sweep_2* sl =
-        reinterpret_cast<Surface_sweep_2*>(this->surface_sweep());
-       sl->stop_sweep();
+      Surface_sweep_2* sl = this->surface_sweep();
+      sl->stop_sweep();
     }
     return true;
   }

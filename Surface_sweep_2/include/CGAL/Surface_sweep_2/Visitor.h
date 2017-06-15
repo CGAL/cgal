@@ -76,8 +76,7 @@ public:
   virtual ~Visitor_base() {}
 
   /*! Attach the a sweep-line object. */
-  void attach(const Surface_sweep_2* sl)
-  { m_surface_sweep = (Surface_sweep_2*)(sl); }
+  void attach(Surface_sweep_2* sl) { m_surface_sweep = sl; }
 
   /*!
    * A notification invoked before the sweep-line starts handling the given
