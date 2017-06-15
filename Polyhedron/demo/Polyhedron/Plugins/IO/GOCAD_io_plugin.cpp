@@ -102,7 +102,6 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
   {
 
     // Try to read GOCAD file in a surface_mesh
-    typedef Scene_surface_mesh_item::SMesh SMesh;
     Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh());
     SMesh& P = * const_cast<SMesh*>(item->polyhedron());
 
@@ -158,7 +157,6 @@ bool Polyhedron_demo_gocad_plugin::save(const CGAL::Three::Scene_item* item, QFi
   }
   else
   {
-    typedef Scene_surface_mesh_item::SMesh SMesh;
     SMesh* poly = const_cast<SMesh*>(sm_item->polyhedron());
     write_gocad(*poly, out, qPrintable(fileinfo.baseName()));
   }

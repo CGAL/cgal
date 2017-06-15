@@ -95,7 +95,7 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
     else
     {
       // Try building a surface_mesh
-      Scene_surface_mesh_item::SMesh* SM = new Scene_surface_mesh_item::SMesh();
+      SMesh* SM = new SMesh();
       if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
         CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, *SM);
       if(!SM->is_valid() || SM->is_empty()){
