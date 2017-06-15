@@ -35,13 +35,14 @@ does not make sense if the traits class already provides exact constructions.
 
 \warning When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the class `Cartesian_converter` is used internally to switch between the traits class
-and exact CGAL kernels. `Cartesian_converter` must thus provide the necessary functor
-to convert a point of the traits class to a point of an exact kernel. However, this
-functor is not necessarily provided by `Cartesian_converter`. For example
-when using the traits class `CGAL::Projection_traits_xy_3`, a `CGAL::Point_3`
-is camouflaged as a `%Point_2` and the basic `Cartesian_converter` does not know
+and the %CGAL kernel `CGAL::Simple_cartesian<NT>`, where `NT` can be either `CGAL::Interval_nt` or
+`CGAL::Exact_rational`. `Cartesian_converter` must thus offer the necessary functors
+to convert a two-dimensional point of the traits class to a two-dimensional point
+of `CGAL::Simple_cartesian<NT>`. However, these functors are not necessarily provided by
+the basic `Cartesian_converter`. For example when using the traits class `CGAL::Projection_traits_xy_3`,
+a `CGAL::Point_3` is camouflaged as a `%Point_2` and the basic `Cartesian_converter` does not know
 how to convert from the camouflaged `CGAL::Point_3` to the two-dimensional point
-of an exact kernel. In this case, a partial specialization of `Cartesian_converter`
+of `CGAL::Simple_cartesian<NT>`. In this case, a partial specialization of `Cartesian_converter`
 must be provided by the user. An example of such specialization is given in the example
 \ref Alpha_shapes_2/ex_alpha_projection_traits.cpp "ex_alpha_projection_traits.cpp".
 
