@@ -50,23 +50,14 @@ public:
         boost::vector_property_map<Vector> n_map;
 
 
-        unsigned int count = 0;
-
-
         for(vertex_descriptor v : vertices(mesh_))
         {
 
-            count++;
-            std::cout<<"count: "<<count<<std::endl;
-            if (count == 11375)
-            {
-                std::cerr<<"stop";
-            }
-
             if(!is_border(v, mesh_))
             {
+                #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
                 std::cout<<"processing vertex: "<< v << std::endl;
-
+                #endif
 
                 // compute normal to v
                 Vector vn = compute_vertex_normal(v, mesh_,
@@ -83,8 +74,8 @@ public:
                     he_map[hi] = He_pair(next(hi, mesh_), prev(opposite(hi, mesh_) ,mesh_));
 
 
-                // take a look
-                /*
+
+                #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
                 for(it = he_map.begin(); it!=he_map.end(); ++it)
                 {
                     halfedge_descriptor main_he = it->first;
@@ -96,7 +87,7 @@ public:
                     std::cout<<" and " << he_pair.second;
                     std::cout<<" ("<<source(he_pair.second, mesh_)<<"->"<< target(he_pair.second, mesh_)<<")"<<std::endl;
                 }
-                */
+                #endif
 
 
                 // calculate movement
@@ -137,9 +128,15 @@ public:
         // perform moves
         for(const VP& vp : new_locations)
         {
+            #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
             std::cout << "from: "<< get(vpmap_, vp.first);
+            #endif
+
             put(vpmap_, vp.first, vp.second);
+
+            #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
             std::cout<<" moved at: "<< vp.second << std::endl;
+            #endif
         }
 
 
@@ -174,9 +171,6 @@ private:
     Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
     {
 
-        double precision = 1e-3;
-        double magnifier = 1e+6;
-
         // get common vertex around which the edge is rotated
         Point s = get(vpmap_, target(main_he, mesh_));
 
@@ -207,15 +201,12 @@ private:
             internal::normalize(edge1, GeomTraits());
             internal::normalize(edge2, GeomTraits());
             bisector = edge1 + edge2;
-            double bis_len = bisector.squared_length();
-            double edge_len1 = edge1.squared_length();
-            double edge_len2 = edge2.squared_length();
 
 
             if ( (CGAL::collinear(s, equidistant_p1, equidistant_p2)) ||
-                 (bisector.squared_length()) < 0.01  )
+                 (bisector.squared_length()) < 0.01  ) // sin(theta) = 0.01
             {
-                // except if angle is (almost) 180 degrees, take the perpendicular
+                //angle is (almost) 180 degrees, take the perpendicular
                 Vector edge(s, equidistant_p1);
                 Vector normal_vec(-edge.y(), edge.x(), edge.z());
                 Segment b_segment(s, s + normal_vec);
@@ -231,68 +222,14 @@ private:
         }
 
 
-
         correct_bisector(bisector, main_he);
-
-
-
-        /*
-        Vector edge1(s, equidistant_p1);
-        Vector edge2(s, equidistant_p2);
-
-
-
-        if(edge1 != CGAL::NULL_VECTOR)
-            internal::normalize(edge1, GeomTraits());
-        if(edge2 != CGAL::NULL_VECTOR)
-            internal::normalize(edge2, GeomTraits());
-
-        // get bisector!
-        Vector bisector = CGAL::NULL_VECTOR;
-
-        // but be aware of stupid numerical errors - check possible overflow?
-        bisector = edge1 * magnifier + edge2 * magnifier;
-
-
-        // handle degenerate cases
-        if(bisector.squared_length() < precision)
-        {
-
-
-            if(s == pv)
-            {
-                // s, end_v, and equidistant points are almcollinear.
-                CGAL_assertion(CGAL::collinear(s, pv, equidistant_p1));
-                CGAL_assertion(CGAL::collinear(s, pv, equidistant_p2));
-                return Vector(CGAL::NULL_VECTOR);
-            }
-            else
-            {
-                // s and equidistant points are collinear
-                //CGAL_assertion(CGAL::collinear(s, equidistant_p1, equidistant_p2)); // any overload with some tolerance?
-                Vector n(s, pv);
-                bisector = n;
-            }
-
-        }
-
-        correct_bisector(bisector, main_he);
-
-        */
 
 
         double target_length = CGAL::sqrt(sqlength(main_he));
         double bisector_length = CGAL::sqrt(bisector.squared_length());
 
-#ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
-        if( ! ( ( target_length - tol    <   bisector_length     ) &&
-                ( bisector_length        <   target_length + tol ) ) )
-        {
-            std::cerr<<"problem";
-        }
-#endif
 
-        double tol = 1e-;
+        double tol = 1e-2; // temp; set dependant on the mesh - maybe min of edges
 
         CGAL_assertion(   ( target_length - tol    <   bisector_length     ) &&
                           ( bisector_length        <   target_length + tol )    );
