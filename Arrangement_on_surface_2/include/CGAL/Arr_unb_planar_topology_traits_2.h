@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-//                 Efi Fogel  <efif@post.tau.ac.il>
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
@@ -240,8 +240,8 @@ private:
 
   // Type definition for the basic insertion surface-sweep visitor.
   typedef Arr_basic_insertion_traits_2<Gt2, Arr>                NxITraits;
-  typedef Arr_construction_event<NxITraits, Arr, Ss2::No_overlap_event_base>
-                                                                NxIEvent;
+  typedef Arr_construction_event<NxITraits, Arr, Ss2::No_overlap_event_base,
+                                 Ss2::No_overlap_subcurve>      NxIEvent;
   typedef Arr_construction_subcurve<NxITraits, NxIEvent,
                                     Ss2::No_overlap_subcurve>   NxISubcurve;
   typedef Arr_unb_planar_insertion_helper<NxITraits, Arr, NxIEvent, NxISubcurve>
@@ -311,15 +311,24 @@ public:
   typedef Arr_no_intersection_insertion_sl_visitor<NxIHelper>
     Surface_sweep_no_intersection_insertion_visitor;
 
+  /*! \class Surface_sweep_batched_point_location_visitor
+   */
   template <typename OutputIterator>
   struct Surface_sweep_batched_point_location_visitor :
-    public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator>
+    public Arr_batched_pl_sl_visitor<
+      BplHelper, OutputIterator,
+      Surface_sweep_batched_point_location_visitor<OutputIterator> >
   {
     typedef OutputIterator                              Output_iterator;
-    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator> Base;
-    typedef typename Base::Geometry_traits_2            Geometry_traits_2;
-    typedef typename Base::Event                        Event;
-    typedef typename Base::Subcurve                     Subcurve;
+
+    typedef Surface_sweep_batched_point_location_visitor<Output_iterator>
+                                                        Self;
+    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator, Self>
+                                                        Base;
+
+    typedef typename BplHelper::Geometry_traits_2       Geometry_traits_2;
+    typedef typename BplHelper::Event                   Event;
+    typedef typename BplHelper::Subcurve                Subcurve;
 
     Surface_sweep_batched_point_location_visitor(const Arr* arr,
                                                  Output_iterator& oi) :
@@ -327,12 +336,19 @@ public:
     {}
   };
 
+  /*! \class Surface_sweep_vertical_decomposition_visitor
+   */
   template <typename OutputIterator>
   struct Surface_sweep_vertical_decomposition_visitor :
-    public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator>
+    public Arr_vert_decomp_sl_visitor<
+      VdHelper, OutputIterator,
+      Surface_sweep_vertical_decomposition_visitor<OutputIterator> >
   {
     typedef OutputIterator                              Output_iterator;
-    typedef Arr_vert_decomp_sl_visitor<VdHelper, Output_iterator> Base;
+    typedef Surface_sweep_vertical_decomposition_visitor<Output_iterator>
+                                                        Self;
+    typedef Arr_vert_decomp_sl_visitor<VdHelper, Output_iterator, Self>
+                                                        Base;
     typedef typename Base::Geometry_traits_2            Geometry_traits_2;
     typedef typename Base::Event                        Event;
     typedef typename Base::Subcurve                     Subcurve;
@@ -342,6 +358,8 @@ public:
       Base(arr, oi) {}
   };
 
+  /*! \class Surface_sweep_overlay_visitor
+   */
   template <typename ArrangementA, typename ArrangementB,
             typename OverlayTraits>
   struct Surface_sweep_overlay_visitor :
@@ -349,7 +367,10 @@ public:
                                                     Gt2,
                                                     ArrangementA, ArrangementB>,
                                                   ArrangementA, ArrangementB>,
-                                  OverlayTraits>
+                                  OverlayTraits,
+                                  Surface_sweep_overlay_visitor<ArrangementA,
+                                                                ArrangementB,
+                                                                OverlayTraits> >
   {
     typedef ArrangementA                                Arrangement_a;
     typedef ArrangementB                                Arrangement_b;
@@ -362,9 +383,14 @@ public:
     typedef _Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
                                                         Ovl_helper;
 
-    typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits>  Base;
+    typedef Surface_sweep_overlay_visitor<ArrangementA, ArrangementB,
+                                          OverlayTraits>
+                                                        Self;
+    typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits, Self>
+                                                        Base;
 
-    // typedef typename Base::Traits_2                     Traits_2;
+
+    // typedef typename Base::Geometry_traits_2            Geometry_traits_2;
     typedef typename Base::Event                        Event;
     typedef typename Base::Subcurve                     Subcurve;
 

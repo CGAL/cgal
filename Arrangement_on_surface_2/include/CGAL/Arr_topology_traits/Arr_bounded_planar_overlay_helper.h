@@ -14,6 +14,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BOUNDED_PLANAR_OVERLAY_HELPER_H
 #define CGAL_ARR_BOUNDED_PLANAR_OVERLAY_HELPER_H
@@ -79,7 +80,7 @@ protected:
 
 public:
   /*! Constructor, given the input red and blue arrangements. */
-  Arr_bounded_planar_overlay_helper(const Ar2 *red_arr, const Ab2 *blue_arr) :
+  Arr_bounded_planar_overlay_helper(const Ar2* red_arr, const Ab2* blue_arr) :
     m_red_top_traits (red_arr->topology_traits()),
     m_blue_top_traits (blue_arr->topology_traits())
   {}
@@ -88,25 +89,24 @@ public:
   //@{
 
   /* A notification issued before the sweep process starts. */
-  void before_sweep ()
+  void before_sweep()
   {
     // Get the unbounded faces in both arrangements.
     m_red_ubf = Face_handle_red (m_red_top_traits->unbounded_face());
     m_blue_ubf = Face_handle_blue (m_blue_top_traits->unbounded_face());
-    return;
   }
 
   /*! A notification invoked before the sweep-line starts handling the given
    * event.
    */
-  void before_handle_event (Event* /* e */) {}
+  void before_handle_event(Event* /* e */) {}
   //@}
 
   /*! Obtain the current red top face. */
-  Face_handle_red red_top_face () const { return m_red_ubf; }
+  Face_handle_red red_top_face() const { return m_red_ubf; }
 
   /*! Obtain the current blue top face. */
-  Face_handle_blue blue_top_face () const { return m_blue_ubf; }
+  Face_handle_blue blue_top_face() const { return m_blue_ubf; }
 };
 
 } // namespace CGAL

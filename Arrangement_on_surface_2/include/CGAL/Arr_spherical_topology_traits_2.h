@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
-//                 Eric Berberich    <ericb@post.tau.ac.il>
+// Author(s)     : Efi Fogel <efif@post.tau.ac.il>
+//                 Eric Berberich <ericb@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
@@ -344,8 +344,8 @@ private:
 
   // Type definition for the basic insertion sweep-line visitor.
   typedef Arr_basic_insertion_traits_2<Gt2, Arr>                NxITraits;
-  typedef Arr_construction_event<NxITraits, Arr, Ss2::No_overlap_event_base>
-                                                                NxIEvent;
+  typedef Arr_construction_event<NxITraits, Arr, Ss2::No_overlap_event_base,
+                                 Ss2::No_overlap_subcurve>      NxIEvent;
   typedef Arr_construction_subcurve<NxITraits, NxIEvent,
                                     Ss2::No_overlap_subcurve>   NxISubcurve;
   typedef Arr_spherical_insertion_helper<NxITraits, Arr, NxIEvent, NxISubcurve>
@@ -360,11 +360,10 @@ private:
 
   // Type definition for the vertical decomposition sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
-  // typedef Ss2::No_overlap_event<VdTraits>                       VdEvent;
-  // typedef Ss2::No_overlap_subcurve<VdTraits, VdEvent>           VdSubcurve;
-  // typedef Arr_spherical_vert_decomp_helper<VdTraits, Arr, VdEvent, VdSubcurve>
-  //                                                               VdHelper;
-  typedef Arr_spherical_vert_decomp_helper<VdTraits, Arr>       VdHelper;
+  typedef Ss2::No_overlap_event<VdTraits>                       VdEvent;
+  typedef Ss2::No_overlap_subcurve<VdTraits, VdEvent>           VdSubcurve;
+  typedef Arr_spherical_vert_decomp_helper<VdTraits, Arr, VdEvent, VdSubcurve>
+                                                                VdHelper;
 
   // Type definition for the overlay sweep-line visitor.
   template <typename ExtendedGeometryTraits_2, typename ArrangementA,
@@ -417,17 +416,23 @@ public:
   typedef Arr_no_intersection_insertion_sl_visitor<NxIHelper>
     Surface_sweep_no_intersection_insertion_visitor;
 
+  /*! \class Surface_sweep_batched_point_location_visitor
+   */
   template <typename OutputIterator>
   struct Surface_sweep_batched_point_location_visitor :
-    public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator>
+    public Arr_batched_pl_sl_visitor<
+    BplHelper, OutputIterator,
+    Surface_sweep_batched_point_location_visitor<OutputIterator> >
   {
     typedef OutputIterator                              Output_iterator;
 
-    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator>
+    typedef Surface_sweep_batched_point_location_visitor<Output_iterator>
+                                                        Self;
+    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator, Self>
                                                         Base;
-    typedef typename Base::Geometry_traits_2            Geometry_traits_2;
-    typedef typename Base::Event                        Event;
-    typedef typename Base::Subcurve                     Subcurve;
+    typedef typename BplHelper::Geometry_traits_2       Geometry_traits_2;
+    typedef typename BplHelper::Event                   Event;
+    typedef typename BplHelper::Subcurve                Subcurve;
 
     Surface_sweep_batched_point_location_visitor(const Arr* arr,
                                                  Output_iterator& oi) :
@@ -435,12 +440,19 @@ public:
     {}
   };
 
+  /*! \class Surface_sweep_vertical_decomposition_visitor
+   */
   template <typename OutputIterator>
   struct Surface_sweep_vertical_decomposition_visitor :
-    public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator>
+    public Arr_vert_decomp_sl_visitor<
+      VdHelper, OutputIterator,
+      Surface_sweep_vertical_decomposition_visitor<OutputIterator> >
   {
     typedef OutputIterator                              Output_iterator;
-    typedef Arr_vert_decomp_sl_visitor<VdHelper,Output_iterator> Base;
+    typedef Surface_sweep_vertical_decomposition_visitor<Output_iterator>
+                                                        Self;
+    typedef Arr_vert_decomp_sl_visitor<VdHelper, Output_iterator, Self>
+                                                        Base;
 
     typedef typename Base::Geometry_traits_2            Geometry_traits_2;
     typedef typename Base::Event                        Event;
@@ -460,7 +472,10 @@ public:
                                                     ArrangementA,
                                                     ArrangementB>,
                                                   ArrangementA, ArrangementB>,
-                                  OverlayTraits>
+                                  OverlayTraits,
+                                  Surface_sweep_overlay_visitor<ArrangementA,
+                                                                ArrangementB,
+                                                                OverlayTraits> >
   {
     typedef ArrangementA                                Arrangement_a;
     typedef ArrangementB                                Arrangement_b;
@@ -473,7 +488,10 @@ public:
     typedef _Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
                                                         Ovl_helper;
 
-    typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits>
+    typedef Surface_sweep_overlay_visitor<ArrangementA, ArrangementB,
+                                          OverlayTraits>
+                                                        Self;
+    typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits, Self>
                                                         Base;
 
     // typedef typename Base::Geometry_traits_2            Geometry_traits_2;

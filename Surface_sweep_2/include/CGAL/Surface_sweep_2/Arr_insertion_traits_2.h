@@ -49,7 +49,6 @@ private:
   typedef Arr_basic_insertion_traits_2<Gt2, Arr2>       Base;
 
 public:
-
   typedef typename Gt2::Intersect_2                     Base_intersect_2;
   typedef typename Gt2::Split_2                         Base_split_2;
   typedef typename Base::Base_x_monotone_curve_2        Base_x_monotone_curve_2;
@@ -76,9 +75,7 @@ public:
 
 public:
   /*! Constructor with a traits class. */
-  Arr_insertion_traits_2(const Gt2& tr) :
-    Base (tr)
-  {}
+  Arr_insertion_traits_2(const Gt2& tr) : Base(tr) {}
 
   /*! A functor that compares compares the y-coordinates of two x-monotone
    * curves immediately to the right of their intersection point.
@@ -139,7 +136,7 @@ public:
         }
         else {
           intersect_p =
-            object_cast<std::pair<Base_point_2, unsigned int> > (&(*oi));
+            object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
 
           CGAL_assertion (intersect_p != NULL);
 
@@ -155,13 +152,13 @@ public:
 
   /*! Obtain a Intersect_2 function object */
   Intersect_2 intersect_2_object () const
-  { return (Intersect_2 (this->m_base_traits->intersect_2_object())); }
+  { return (Intersect_2(this->m_base_traits->intersect_2_object())); }
 
   /*! A functor that splits an arc at a point. */
   class Split_2 {
   protected:
     //! The base operator.
-    Base_split_2    m_base_split;
+    Base_split_2 m_base_split;
 
     /*! Constructor.
      * The constructor is declared private to allow only the functor
@@ -183,9 +180,9 @@ public:
     }
   };
 
-  /*! Obtain a plit_2 function object */
+  /*! Obtain a Split_2 function object */
   Split_2 split_2_object() const
-  { return (Split_2 (this->m_base_traits->split_2_object())); }
+  { return (Split_2(this->m_base_traits->split_2_object())); }
 };
 
 } // namespace CGAL

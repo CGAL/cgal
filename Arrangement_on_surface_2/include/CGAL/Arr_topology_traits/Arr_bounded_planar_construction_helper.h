@@ -14,6 +14,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BOUNDED_PLANAR_CONSTRUCTION_HELPER_H
 #define CGAL_ARR_BOUNDED_PLANAR_CONSTRUCTION_HELPER_H
@@ -25,7 +26,7 @@
  * Definition of the Arr_bounded_planar_construction_helper class-template.
  */
 
-#include <CGAL/Surface_sweep_empty_visitor.h>
+#include <CGAL/Surface_sweep_2/Visitor.h>
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
@@ -46,6 +47,7 @@ public:
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
@@ -53,9 +55,6 @@ private:
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
-
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
 
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;

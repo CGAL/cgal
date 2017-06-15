@@ -14,6 +14,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BATCHED_PL_SL_VISITOR_H
 #define CGAL_ARR_BATCHED_PL_SL_VISITOR_H
@@ -27,34 +28,53 @@
 
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Object.h>
-
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <CGAL/Surface_sweep_2/Visitor.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
+
+namespace Ss2 = Surface_sweep_2;
 
 /*! \class Arr_batched_pl_sl_visitor
  *
  * A surface-sweep visitor for performing batched point-location queries on an
  * arrangement embedded on a surface.
  */
-template <typename Helper_, typename OutputIterator_>
-class Arr_batched_pl_sl_visitor : public Helper_::Base_visitor {
+template <typename Helper_, typename OutputIterator, typename Visitor_ = Default>
+class Arr_batched_pl_sl_visitor :
+  public Ss2::Visitor_base<typename Helper_::Geometry_traits_2,
+                           typename Helper_::Event,
+                           typename Helper_::Subcurve,
+                           typename Helper_::Allocator,
+                           typename Default::Get<Visitor_,
+                                                 Arr_batched_pl_sl_visitor<
+                                                   Helper_, OutputIterator,
+                                                   Visitor_> >::type>
+{
 public:
   typedef Helper_                                       Helper;
-  typedef OutputIterator_                               OutputIterator;
+  typedef OutputIterator                                Output_iterator;
 
   typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
-  typedef typename Helper::Arrangement_2                Arrangement_2;
   typedef typename Helper::Event                        Event;
   typedef typename Helper::Subcurve                     Subcurve;
+  typedef typename Helper::Allocator                    Allocator;
 
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arr_batched_pl_sl_visitor<Helper, Output_iterator, Visitor_>
+                                                        Self;
+  typedef typename Default::Get<Visitor_, Self>::type   Visitor;
+  typedef typename Ss2::Visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
+                                                        Base;
+
+public:
+  typedef typename Helper::Arrangement_2                Arrangement_2;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
 protected:
-  typedef typename Helper::Base_visitor                 Base;
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
   typedef Arr_point_location_result<Arrangement_2>      Pl_result;
@@ -62,7 +82,7 @@ protected:
 
   // Data members:
   Helper m_helper;              // The helper class.
-  OutputIterator& m_out;        // An output iterator for the result.
+  Output_iterator& m_out;       // An output iterator for the result.
 
   template<typename T>
   Pl_result_type pl_make_result(T t) { return Pl_result::make_result(t); }
@@ -75,7 +95,7 @@ public:
    * \param arr The arrangement.
    * \param oi A pointer to the output iterator that will store the result.
    */
-  Arr_batched_pl_sl_visitor(const Arrangement_2* arr, OutputIterator& oi) :
+  Arr_batched_pl_sl_visitor(const Arrangement_2* arr, Output_iterator& oi) :
     m_helper(arr),
     m_out(oi)
   {}
@@ -102,8 +122,8 @@ public:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <class Hlpr, class OutIt>
-void Arr_batched_pl_sl_visitor<Hlpr, OutIt>::before_sweep()
+  template <typename Hlpr, typename OutIt, typename Vis>
+  void Arr_batched_pl_sl_visitor<Hlpr, OutIt, Vis>::before_sweep()
 {
   // We just have to notify the helper that the sweep process now starts.
   m_helper.before_sweep();
@@ -113,8 +133,8 @@ void Arr_batched_pl_sl_visitor<Hlpr, OutIt>::before_sweep()
 // A notification invoked after the surface-sweep finishes handling the given
 // event.
 //
-template <class Hlpr, class OutIt>
-bool Arr_batched_pl_sl_visitor<Hlpr, OutIt>::
+template <typename Hlpr, typename OutIt, typename Vis>
+bool Arr_batched_pl_sl_visitor<Hlpr, OutIt, Vis>::
 after_handle_event(Event* event, Status_line_iterator above, bool on_above)
 {
   // Notify the helper on the event.

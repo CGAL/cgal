@@ -66,13 +66,14 @@ public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
+  typedef CGAL_ALLOCATOR(int)                           Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
   typedef Curve_comparer<Gt2, Event, Subcurve>          Compare_curves;
-  typedef Multiset<Subcurve*, Compare_curves, CGAL_ALLOCATOR(int)>
+  typedef Multiset<Subcurve*, Compare_curves, Allocator>
                                                         Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
 
@@ -143,7 +144,8 @@ private:
   typedef Geometry_traits_2                             Gt2;
   typedef No_overlap_subcurve<Gt2, Event, Subcurve_>    Self;
   typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef No_overlap_subcurve_base<Gt2, Event, Subcurve> Base;
+  typedef No_overlap_subcurve_base<Gt2, Event, Subcurve>
+                                                        Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;

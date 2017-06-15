@@ -30,11 +30,16 @@
  * Definition of the Arr_construction_sl_visitor class-template.
  */
 
-#include <CGAL/Arr_accessor.h>
-#include <CGAL/Unique_hash_map.h>
 #include <vector>
 
+#include <CGAL/Arr_accessor.h>
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Surface_sweep_2/Visitor.h>
+#include <CGAL/Default.h>
+
 namespace CGAL {
+
+namespace Ss2 = Surface_sweep_2;
 
 /*! \struct Integer_hash_function
  * An auxiliary hash functor for integers.
@@ -48,25 +53,37 @@ struct Integer_hash_function {
 /*! \class Arr_construction_sl_visitor
  * A sweep-line visitor for constructing an arrangement embedded on a surface.
  */
-template <typename Helper_>
-class Arr_construction_sl_visitor : public Helper_::Base_visitor {
+template <typename Helper_, typename Visitor_ = Default>
+class Arr_construction_sl_visitor :
+  public Ss2::Visitor_base<typename Helper_::Geometry_traits_2,
+                           typename Helper_::Event,
+                           typename Helper_::Subcurve,
+                           typename Helper_::Allocator,
+                           typename Default::Get<Visitor_,
+                                                 Arr_construction_sl_visitor<
+                                                   Helper_, Visitor_> >::type>
+{
 public:
   typedef Helper_                                       Helper;
 
   typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
-  typedef typename Helper::Arrangement_2                Arrangement_2;
-  typedef typename Helper::Base_visitor                 Base;
   typedef typename Helper::Event                        Event;
   typedef typename Helper::Subcurve                     Subcurve;
+  typedef typename Helper::Allocator                    Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
+  typedef Arr_construction_sl_visitor<Helper, Visitor_> Self;
+  typedef typename Default::Get<Visitor_, Self>::type   Visitor;
+  typedef Ss2::Visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
+                                                        Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
 protected:
+  typedef typename Helper::Arrangement_2                Arrangement_2;
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
@@ -75,7 +92,7 @@ protected:
   typedef typename Base::Event_subcurve_iterator        Event_subcurve_iterator;
   typedef typename Base::Event_subcurve_reverse_iterator
     Event_subcurve_reverse_iterator;
-  typedef typename Base::Status_line_iterator           Status_line_iterator;
+  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
 
   typedef typename Helper::Indices_list                 Indices_list;
   typedef typename Helper::Halfedge_indices_map         Halfedge_indices_map;
@@ -251,16 +268,16 @@ private:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 // Notifies the helper that the sweep process now starts.
-template <typename Hlpr>
-void Arr_construction_sl_visitor<Hlpr>::before_sweep()
+template <typename Hlpr, typename Vis>
+void Arr_construction_sl_visitor<Hlpr, Vis>::before_sweep()
 { m_helper.before_sweep(); }
 
 //-----------------------------------------------------------------------------
 // A notification invoked before the sweep-line starts handling the given
 // event.
 //
-template <class Hlpr>
-void Arr_construction_sl_visitor<Hlpr>::before_handle_event(Event* event)
+template <class Hlpr, typename Vis>
+void Arr_construction_sl_visitor<Hlpr, Vis>::before_handle_event(Event* event)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
   std::cout << "CGAL_CSLV before_handle_event" << std::endl;
@@ -273,8 +290,8 @@ void Arr_construction_sl_visitor<Hlpr>::before_handle_event(Event* event)
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 //
-template <typename Hlpr>
-bool Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+bool Arr_construction_sl_visitor<Hlpr, Vis>::
 after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -359,11 +376,8 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
   // to their right endpoint).
   Event_subcurve_iterator  left_it;
   for (left_it = event->left_curves_begin();
-       left_it != event->left_curves_end();
-       ++left_it)
-  {
+       left_it != event->left_curves_end(); ++left_it)
     (*left_it)->set_last_event(event);
-  }
 
   // In case there are no right subcurves, the event can be deallocated.
   if (event->number_of_right_curves() == 0) {
@@ -380,11 +394,8 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
   // to their left endpoint).
   Event_subcurve_iterator  right_it;
   for (right_it = event->right_curves_begin();
-       right_it != event->right_curves_end();
-       ++right_it)
-  {
+       right_it != event->right_curves_end(); ++right_it)
     (*right_it)->set_last_event(event);
-  }
 
   // Mark that the event cannot be deallocated just yet.
   return false;
@@ -393,8 +404,8 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 //-----------------------------------------------------------------------------
 // A notification invoked when a new subcurve is created.
 //
-template <typename Hlpr>
-void Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+void Arr_construction_sl_visitor<Hlpr, Vis>::
 add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -412,33 +423,25 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
   const Halfedge_handle invalid_he;
 
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
-  if (last_event->is_closed()) {
+  if (last_event->is_closed())
     std::cout << "CGAL_CSLG lastevent: " << last_event->point() << std::endl;
-  }
   if (he_left != invalid_he) {
     std::cout << "he_left    : " << &(*he_left) << std::endl;
-    if (!he_left->is_fictitious()) {
+    if (!he_left->is_fictitious())
       std::cout << "he_leftcv  : " << he_left->curve() << std::endl;
-    } else {
-      std::cout << "he_left    : fictitious" << std::endl;
-    }
+    else std::cout << "he_left    : fictitious" << std::endl;
     std::cout << "he_leftdir : " << he_left->direction() << std::endl;
     std::cout << "he_leftfac : " << &(*he_left->face()) << std::endl;
-  } else {
-    std::cout << "he_left    : invalid" << std::endl;
   }
+  else std::cout << "he_left    : invalid" << std::endl;
   if (he_right != invalid_he) {
     std::cout << "he_right   : " << &(*he_right) << std::endl;
-    if (!he_right->is_fictitious()) {
+    if (!he_right->is_fictitious())
       std::cout << "he_rightcv : " << he_right->curve() << std::endl;
-    } else {
-      std::cout << "he_right   : fictitious" << std::endl;
-    }
+    else std::cout << "he_right   : fictitious" << std::endl;
     std::cout << "he_rightdir: " << he_right->direction() << std::endl;
     std::cout << "he_rightfac: " << &(*he_right->face()) << std::endl;
-  } else {
-    std::cout << "he_right   : invalid" << std::endl;
-  }
+  } else std::cout << "he_right   : invalid" << std::endl;
 #endif
 
   // Check whether the previous event on the curve is not in the arrangement
@@ -464,17 +467,14 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
     // Therefore, we use it to insert the subcurve.
     // First, we skip some halfedges around the left vertex to get the true
     // predecessor halfedge for the insertion.
-    for (int i = 0; i < jump; i++)
-      he_left = (he_left->next())->twin();
+    for (int i = 0; i < jump; i++) he_left = (he_left->next())->twin();
 
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
     if (jump != 0) {
       std::cout << "CGAL_CSLV JUMP: " << jump << std::endl;
-      if (!he_left->is_fictitious()) {
+      if (!he_left->is_fictitious())
         std::cout << "he_leftcv  : " << he_left->curve() << std::endl;
-      } else {
-        std::cout << "he_left    : fictitious" << std::endl;
-      }
+      else std::cout << "he_left    : fictitious" << std::endl;
       std::cout << "he_leftdir : " << he_left->direction() << std::endl;
       std::cout << "he_leftfac : " << &(*he_left->face()) << std::endl;
     }
@@ -563,9 +563,9 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Insert the given subcurve in the interior of an arrangement face.
 //
-template <typename Hlpr>
-typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_sl_visitor<Hlpr, Vis>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -612,9 +612,9 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Insert the given subcurve using its two end-vertices.
 //
-template <typename Hlpr>
-typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_sl_visitor<Hlpr, Vis>::
 insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1,
                    Halfedge_handle prev2,
@@ -623,20 +623,14 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
   std::cout << "CGAL_CSLV insert_at_vertices:\ncurve:" << cv << std::endl;
-  if (!prev1->is_fictitious()) {
+  if (!prev1->is_fictitious())
     std::cout << "prev1cv   : " << prev1->curve() << std::endl;
-  }
-  else {
-    std::cout << "prev1     : fictitious" << std::endl;
-  }
+  else std::cout << "prev1     : fictitious" << std::endl;
   std::cout << "prev1dir  : " << prev1->direction() << std::endl;
   std::cout << "prev1fac  : " << &(*prev1->face()) << std::endl;
-  if (!prev2->is_fictitious()) {
+  if (!prev2->is_fictitious())
     std::cout << "prev2cv   : " << prev2->curve() << std::endl;
-  }
-  else {
-    std::cout << "prev2     : fictitious" << std::endl;
-  }
+  else std::cout << "prev2     : fictitious" << std::endl;
   std::cout << "prev2dir  : " << prev2->direction() << std::endl;
   std::cout << "prev2fac  : " << &(*prev2->face()) << std::endl;
 #endif
@@ -716,9 +710,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert the given subcurve from a vertex that corresponds to its right end.
 //
-template <typename Hlpr>
-typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_sl_visitor<Hlpr, Vis>::
 insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev,
                          Subcurve* sc)
@@ -764,20 +758,18 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert the given subcurve from a vertex that corresponds to its left end.
 //
-template <typename Hlpr>
-typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_sl_visitor<Hlpr, Vis>::
 insert_from_left_vertex(const X_monotone_curve_2& cv,
                         Halfedge_handle prev,
                         Subcurve* sc)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
   std::cout << "CGAL_CSLV insert_from_left_vertex:\ncurve:" << cv << std::endl;
-  if (!prev->is_fictitious()) {
+  if (!prev->is_fictitious())
     std::cout << "prevcv    : " << prev->curve() << std::endl;
-  } else {
-    std::cout << "prev      : fictitious" << std::endl;
-  }
+  else std::cout << "prev      : fictitious" << std::endl;
   std::cout << "prevdir   : " << prev->direction() << std::endl;
   std::cout << "prevfac   : " << &(*prev->face()) << std::endl;
 #endif
@@ -812,9 +804,9 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert an isolated vertex into the arrangement.
 //
-template <typename Hlpr>
-typename Arr_construction_sl_visitor<Hlpr>::Vertex_handle
-Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_construction_sl_visitor<Hlpr, Vis>::Vertex_handle
+Arr_construction_sl_visitor<Hlpr, Vis>::
 insert_isolated_vertex(const Point_2& pt, Status_line_iterator /* iter */)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -823,14 +815,15 @@ insert_isolated_vertex(const Point_2& pt, Status_line_iterator /* iter */)
 
   // Insert the isolated vertex in the interior of the current top face, as
   // given by the helper class.
-  return (m_arr->insert_in_face_interior(_point(pt), m_helper.top_face()));
+  return m_arr->insert_in_face_interior(_point(pt), m_helper.top_face());
 }
 
 //-----------------------------------------------------------------------------
 // Reloacte holes and isolated vertices inside a newly created face.
 //
-template <typename Hlpr>
-void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
+template <typename Hlpr, typename Vis>
+void Arr_construction_sl_visitor<Hlpr, Vis>::
+relocate_in_new_face(Halfedge_handle he)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
   std::cout << "CGAL_CSLV relocate" << std::endl;
@@ -909,8 +902,8 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
 //-----------------------------------------------------------------------------
 // Map the given subcurve index to the given halfedge handle.
 //
-template <typename Hlpr>
-void Arr_construction_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+void Arr_construction_sl_visitor<Hlpr, Vis>::
 _map_new_halfedge(unsigned int i, Halfedge_handle he)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -925,6 +918,6 @@ _map_new_halfedge(unsigned int i, Halfedge_handle he)
   m_sc_he_table[i] = he;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

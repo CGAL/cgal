@@ -29,7 +29,7 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-#include <CGAL/Surface_sweep_empty_visitor.h>
+#include <CGAL/Surface_sweep_2/Visitor.h>
 
 /*! \class Arr_unb_planar_vert_decomp_helper
  *
@@ -45,13 +45,12 @@ public:
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
 protected:
@@ -146,8 +145,8 @@ before_sweep()
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 //
-template <typename Tr, typename Arr, typename Event_, typename Subcurve_>
-void Arr_unb_planar_vert_decomp_helper<Tr, Arr, Event_, Subcurve_>::
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_unb_planar_vert_decomp_helper<Tr, Arr, Evnt, Sbcv>::
 after_handle_event(Event* event)
 {
   // If the event is at infinity and occurs on the top edge of the fictitious

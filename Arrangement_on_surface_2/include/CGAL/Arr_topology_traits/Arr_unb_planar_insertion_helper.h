@@ -13,8 +13,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
-//                 Efi Fogel       <efif@post.tau.ac.il>
+//                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_INSERTION_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_INSERTION_HELPER_H
@@ -26,7 +26,6 @@
  * Definition of the Arr_unb_planar_insertion_helper class-template.
  */
 
-#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 
 namespace CGAL {
@@ -61,11 +60,6 @@ private:
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
-
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
-
-  typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
 
   typedef typename Arrangement_2::Face_handle           Face_handle;
 

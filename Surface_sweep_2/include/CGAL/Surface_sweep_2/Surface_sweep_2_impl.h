@@ -32,9 +32,8 @@ namespace Surface_sweep_2 {
 //-----------------------------------------------------------------------------
 // Initialize the data structures for the sweep-line algorithm.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
+template <typename Vis>
+void Surface_sweep_2<Vis>::_init_structures()
 {
   // Initailize the structures maintained by the base sweep-line class.
   Base::_init_structures();
@@ -46,9 +45,8 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 //-----------------------------------------------------------------------------
 // Complete the sweep (complete the data structures).
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
+template <typename Vis>
+void Surface_sweep_2<Vis>::_complete_sweep()
 {
   CGAL_SL_PRINT_START_EOL("completing the sweep");
 
@@ -75,9 +73,8 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 //-----------------------------------------------------------------------------
 // Handle the subcurves to the left of the current event point.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
+template <typename Vis>
+void Surface_sweep_2<Vis>::_handle_left_curves()
 {
   CGAL_SL_PRINT_START("handling left curves at (");
   CGAL_SL_DEBUG(this->PrintEvent(this->m_currentEvent));
@@ -206,9 +203,8 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 //-----------------------------------------------------------------------------
 // Handle the subcurves to the right of the current event point.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
+template <typename Vis>
+void Surface_sweep_2<Vis>::_handle_right_curves()
 {
   CGAL_SL_PRINT_START("handling right curves at (");
   CGAL_SL_DEBUG(this->PrintEvent(this->m_currentEvent));
@@ -285,9 +281,8 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 //-----------------------------------------------------------------------------
 // Add a subcurve to the right of an event point.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-bool Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
+template <typename Vis>
+bool Surface_sweep_2<Vis>::
 _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
 {
   CGAL_SL_PRINT_START("adding a Curve to the right of (");
@@ -365,10 +360,9 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
 //-----------------------------------------------------------------------------
 // Remove a curve from the status line.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
+template <typename Vis>
+void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
+                                                          bool remove_for_good)
 {
   CGAL_SL_PRINT_START("removing a curve from the status line, ");
   CGAL_SL_PRINT_CURVE(leftCurve);
@@ -412,10 +406,8 @@ _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
 //-----------------------------------------------------------------------------
 // Compute intersections between the two given curves.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
-                                                           Subcurve* c2)
+template <typename Vis>
+void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2)
 {
   CGAL_SL_PRINT_START("computing intersection of ");
   CGAL_SL_PRINT_CURVE(c1);
@@ -423,7 +415,7 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   CGAL_SL_PRINT_CURVE(c2);
   CGAL_SL_PRINT_EOL();
 
-  typedef typename Tr::Multiplicity Multiplicity;
+  typedef typename Geometry_traits_2::Multiplicity      Multiplicity;
 
   CGAL_assertion(c1 != c2);
 
@@ -583,13 +575,12 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
 //-----------------------------------------------------------------------------
 // Create an intersection-point event between two curves.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_create_intersection_point(const Point_2& xp,
-                           unsigned int multiplicity,
-                           Subcurve*& c1, Subcurve*& c2,
-                           bool is_overlap)
+template <typename Vis>
+void Surface_sweep_2<Vis>::_create_intersection_point(const Point_2& xp,
+                                                      unsigned int multiplicity,
+                                                      Subcurve*& c1,
+                                                      Subcurve*& c2,
+                                                      bool is_overlap)
 {
   CGAL_SL_PRINT_START_EOL("createing an intersection point netween");
   CGAL_SL_PRINT_CURVE(c1);
@@ -687,9 +678,8 @@ _create_intersection_point(const Point_2& xp,
 //-----------------------------------------------------------------------------
 // Fix overlap Subcurves before handling the current event.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
+template <typename Vis>
+void Surface_sweep_2<Vis>::_fix_overlap_subcurves()
 {
   CGAL_SL_PRINT_START_EOL("fixing overlap subcurves");
 
@@ -727,11 +717,10 @@ void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
  * \param overlap_exist a flag indicates if the overlap X_monotone_curve_2 was
  *         computed already (is true than its stored at sub_cv1 data member).
  */
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
-                bool overlap_exist)
+template <typename Vis>
+void Surface_sweep_2<Vis>::_handle_overlap(Event* event, Subcurve* curve,
+                                           Event_subcurve_iterator iter,
+                                           bool overlap_exist)
 {
   // An overlap occurs:
   CGAL_SL_PRINT_START_EOL("handling overlap at right insertion");
@@ -740,7 +729,7 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
   if (overlap_exist) overlap_cv = sub_cv1;
   else {
     // compute the overlap.
-    std::vector<Object>  obj_vec;
+    std::vector<Object> obj_vec;
     vector_inserter vit(obj_vec);
     this->m_traits->intersect_2_object()(curve->last_curve(),
                                          (*iter)->last_curve(),
@@ -879,10 +868,8 @@ _handle_overlap(Event* event, Subcurve* curve, Event_subcurve_iterator iter,
 // sc - some originating subcurve of a aubcurve that stores an overlap
 // notice thah this function is recursive since an originating subcurve of
 // an overlap can be itself a subcurve that stores overlap and so on.
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_fix_finished_overlap_subcurve(Subcurve* sc)
+template <typename Vis>
+void Surface_sweep_2<Vis>::_fix_finished_overlap_subcurve(Subcurve* sc)
 {
   CGAL_SL_PRINT_START("fixing finished overlap subcurve ");
   CGAL_SL_PRINT_CURVE(sc);
@@ -925,10 +912,8 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
 // add a curve as a right curve or left curve when the event is created
 // or updated.
 //
-template <typename Tr, typename Vis, typename Subcv, typename Evnt,
-          typename Alloc>
-void Surface_sweep_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_add_curve(Event* e, Subcurve* sc, Attribute type)
+template <typename Vis>
+void Surface_sweep_2<Vis>::_add_curve(Event* e, Subcurve* sc, Attribute type)
 {
   if (sc == NULL) return;
 

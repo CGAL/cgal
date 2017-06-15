@@ -119,14 +119,14 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
   // Define the surface-sweep types:
   typedef Ss2::Surface_sweep_points_visitor<Traits, OutputIterator>
                                                                 Visitor;
-  typedef Ss2::Surface_sweep_2<Traits, Visitor>                 Surface_sweep;
+  typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
 
   // Perform the sweep and obtain the intersection points.
   Visitor visitor(points, report_endpoints);
   Surface_sweep surface_sweep(&tr, &visitor);
   visitor.sweep(curves_begin, curves_end);
 
-  return (visitor.output_iterator());
+  return visitor.output_iterator();
 }
 
 template <typename CurveInputIterator, typename OutputIterator>
@@ -139,8 +139,8 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
 
   typename Default_arr_traits<Curve>::Traits   traits;
 
-  return (compute_intersection_points(curves_begin, curves_end, points,
-                                      report_endpoints, traits));
+  return compute_intersection_points(curves_begin, curves_end, points,
+                                     report_endpoints, traits);
 }
 
 /*! Compute all x-monotone subcurves that are disjoint in their interiors
@@ -163,14 +163,14 @@ OutputIterator compute_subcurves(CurveInputIterator curves_begin,
   // Define the surface-sweep types:
   typedef Ss2::Surface_sweep_subcurves_visitor<Traits, OutputIterator>
                                                                 Visitor;
-  typedef Ss2::Surface_sweep_2<Traits, Visitor>                 Surface_sweep;
+  typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
 
   // Perform the sweep and obtain the subcurves.
   Visitor visitor(subcurves, mult_overlaps);
   Surface_sweep surface_sweep(&tr, &visitor);
   visitor.sweep(curves_begin, curves_end);
 
-  return (visitor.output_iterator());
+  return visitor.output_iterator();
 }
 
 template <typename CurveInputIterator, typename OutputIterator>
@@ -197,14 +197,13 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
 {
   // Define the surface-sweep types:
   typedef Ss2::Surface_sweep_do_curves_x_visitor<Traits>        Visitor;
-  typedef Ss2::Surface_sweep_2<Traits, Visitor>                 Surface_sweep;
+  typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
 
   // Perform the sweep and obtain the subcurves.
   Visitor visitor;
   Surface_sweep surface_sweep(&tr, &visitor);
   visitor.sweep(curves_begin, curves_end);
-
-  return (visitor.found_intersection());
+  return visitor.found_intersection();
 }
 
 template <typename CurveInputIterator>

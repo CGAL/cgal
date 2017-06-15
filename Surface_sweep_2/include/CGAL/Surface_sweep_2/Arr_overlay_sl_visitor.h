@@ -22,6 +22,7 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Definition of the Arr_overlay_sl_visitor class-template.
  */
 
@@ -33,6 +34,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
@@ -42,13 +44,18 @@ namespace CGAL {
  * arrangement, creating a result arrangement. All three arrangements are
  * embedded on the same type of surface and use the same geometry traits.
  */
-template <typename OverlayHelper_, typename OverlayTraits_>
-class Arr_overlay_sl_visitor : public
-  Arr_construction_sl_visitor<typename OverlayHelper_::Construction_helper>
+template <typename OverlayHelper, typename OverlayTraits,
+          typename Visitor_ = Default>
+class Arr_overlay_sl_visitor :
+  public Arr_construction_sl_visitor<
+    typename OverlayHelper::Construction_helper,
+    typename Default::Get<Visitor_,
+                          Arr_overlay_sl_visitor<OverlayHelper, OverlayTraits,
+                                                 Visitor_> >::type>
 {
 public:
-  typedef OverlayHelper_                                Overlay_helper;
-  typedef OverlayTraits_                                Overlay_traits;
+  typedef OverlayHelper                                 Overlay_helper;
+  typedef OverlayTraits                                 Overlay_traits;
 
   typedef typename Overlay_helper::Geometry_traits_2    Geometry_traits_2;
   typedef typename Overlay_helper::Event                Event;
@@ -57,10 +64,19 @@ public:
   typedef typename Overlay_helper::Arrangement_red_2    Arrangement_red_2;
   typedef typename Overlay_helper::Arrangement_blue_2   Arrangement_blue_2;
 
+  typedef typename Overlay_helper::Construction_helper  Construction_helper;
+
+
 private:
   typedef Geometry_traits_2                             Gt2;
   typedef Arrangement_red_2                             Ar2;
   typedef Arrangement_blue_2                            Ab2;
+
+  typedef Arr_overlay_sl_visitor<Overlay_helper, Overlay_traits, Visitor_>
+                                                        Self;
+  typedef typename Default::Get<Visitor_, Self>::type   Visitor;
+  typedef Arr_construction_sl_visitor<Construction_helper, Visitor>
+                                                        Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -83,10 +99,6 @@ public:
   typedef typename Arrangement_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
   typedef typename Arrangement_2::Outer_ccb_iterator    Outer_ccb_iterator;
-
-  // The base construction visitor:
-  typedef typename Overlay_helper::Construction_helper  Construction_helper;
-  typedef Arr_construction_sl_visitor<Construction_helper> Base;
 
   typedef typename Base::Event_subcurve_iterator
     Event_subcurve_iterator;
@@ -397,8 +409,8 @@ protected:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::before_sweep()
+  template <typename OvlHlpr, typename OvlTr, typename Vis>
+  void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::before_sweep()
 {
   // Initialize the necessary fields in the base construction visitor.
   // Note that the construction visitor also informs its helper class that
@@ -413,8 +425,9 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::before_sweep()
 // A notification invoked before the sweep-line starts handling the given
 // event.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::before_handle_event(Event* event)
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void
+Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::before_handle_event(Event* event)
 {
   // Let the base construction visitor do the work (and also inform its helper
   // class on the event).
@@ -428,8 +441,8 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::before_handle_event(Event* event)
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 //
-template <typename OvlHlpr, typename OvlTr>
-bool Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+bool Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 after_handle_event(Event* event, Status_line_iterator iter, bool flag)
 {
   // Let the base construction visitor handle the event.
@@ -480,8 +493,8 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
 //-----------------------------------------------------------------------------
 // Update an event that corresponds to a curve endpoint.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 update_event(Event* e,
              const Point_2& end_point,
              const X_monotone_curve_2& /* cv */,
@@ -500,9 +513,9 @@ update_event(Event* e,
 //-----------------------------------------------------------------------------
 // Update an event.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event(Event* e,
-                                                          Subcurve* sc)
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
+                                                               Subcurve* sc)
 {
   // Update the red and blue halfedges associated with the point as necessary.
   Point_2& pt = e->point();
@@ -523,8 +536,9 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event(Event* e,
 //-----------------------------------------------------------------------------
 // Update an event.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event(Event* e,
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void
+Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
                                                           const Point_2& p,
                                                           bool /* is_new */)
 {
@@ -537,8 +551,8 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event(Event* e,
 //-----------------------------------------------------------------------------
 // A notification issued when the sweep process has ended.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::after_sweep()
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::after_sweep()
 {
   // Notify boundary vertices:
   typename Vertex_map::iterator it;
@@ -563,9 +577,9 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::after_sweep()
 //-----------------------------------------------------------------------------
 // Insert the given subcurve in the interior of an arrangement face.
 //
-template <typename OvlHlpr, typename OvlTr>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   // Insert the halfedge using the base construction visitor.
@@ -596,9 +610,9 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Insert the given subcurve given its left end-vertex.
 //
-template <typename OvlHlpr, typename OvlTr>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 insert_from_left_vertex(const X_monotone_curve_2& cv,
                         Halfedge_handle prev,
                         Subcurve* sc)
@@ -628,9 +642,9 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert the given subcurve given its right end-vertex.
 //
-template <typename OvlHlpr, typename OvlTr>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev,
                          Subcurve* sc)
@@ -659,9 +673,9 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert the given subcurve given its two end-vertices.
 //
-template <typename OvlHlpr, typename OvlTr>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1,
                    Halfedge_handle prev2,
@@ -697,17 +711,17 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // Traverse the boundary of the new face, and locate halfedge originated
     // by red or by blue halfedges along its boundary.
     // We stop the traversal earlier if we locate a red and a blue halfedge.
-    const Halfedge_handle_red   invalid_red_he;
-    const Halfedge_handle_blue  invalid_blue_he;
+    const Halfedge_handle_red invalid_red_he;
+    const Halfedge_handle_blue invalid_blue_he;
 
-    Halfedge_handle_red         red_he;
-    Halfedge_handle_blue        blue_he;
+    Halfedge_handle_red red_he;
+    Halfedge_handle_blue blue_he;
 
     CGAL_assertion(new_face->number_of_outer_ccbs() > 0);
     Outer_ccb_iterator occb_it = new_face->outer_ccbs_begin();
     // msvc CL requires the breakdown to the following 2 statements:
-    Ccb_halfedge_circulator     ccb_first = *occb_it;
-    Ccb_halfedge_circulator     ccb_circ = ccb_first;
+    Ccb_halfedge_circulator ccb_first = *occb_it;
+    Ccb_halfedge_circulator ccb_circ = ccb_first;
 
     do {
       // Get the current halfedge on the face boundary and obtain its
@@ -777,9 +791,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert an isolated vertex into the arrangement.
 //
-template <typename OvlHlpr, typename OvlTr>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::Vertex_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Vertex_handle
+Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 insert_isolated_vertex(const Point_2& pt,
                        Status_line_iterator iter)
 {
@@ -879,8 +893,8 @@ insert_isolated_vertex(const Point_2& pt,
 // Map a newly created halfedge in the result arrangement to its originator
 // red and blue halfedges.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 _map_halfedge_and_twin(Halfedge_handle he,
                        Halfedge_handle_red red_he,
                        Halfedge_handle_blue blue_he)
@@ -906,8 +920,8 @@ _map_halfedge_and_twin(Halfedge_handle he,
 //-----------------------------------------------------------------------------
 // Update the boundary vertices map.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
 {
   // Update the red and blue object if the last event on sc is on the boundary.
@@ -943,9 +957,10 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
 //-----------------------------------------------------------------------------
 // Update the boundary vertices map.
 //
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
-_map_boundary_vertices(Event* /* event */, Vertex_handle /* v */, boost::mpl::bool_<false>)
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+_map_boundary_vertices(Event* /* event */, Vertex_handle /* v */,
+                       boost::mpl::bool_<false>)
 {}
 
 /* Notify the overlay traits about a newly created vertex.
@@ -954,8 +969,8 @@ _map_boundary_vertices(Event* /* event */, Vertex_handle /* v */, boost::mpl::bo
  * this case, we postpone the notification for all (contracted and identified)
  * boundary side vertices to the end of the sweep.
  */
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
@@ -1000,8 +1015,8 @@ _create_vertex(Event* event,
 }
 
 /* Notify the overlay traits about a newly created vertex. */
-template <typename OvlHlpr, typename OvlTr>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
@@ -1045,10 +1060,10 @@ _create_vertex(Event* event,
 //-----------------------------------------------------------------------------
 // Update a newly created result edge using the overlay traits.
 //
-template <typename OvlHlpr, typename OvlTr>
-void
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::_create_edge(Subcurve* sc,
-                                                     Halfedge_handle new_he)
+template <typename OvlHlpr, typename OvlTr, typename Vis>
+void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+_create_edge(Subcurve* sc,
+             Halfedge_handle new_he)
 {
   // Note that the "red" and "blue" halfedges are always directed from right
   // to left, so we make sure the overlaid halfedge is also directed from
@@ -1084,6 +1099,6 @@ Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::_create_edge(Subcurve* sc,
   }
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

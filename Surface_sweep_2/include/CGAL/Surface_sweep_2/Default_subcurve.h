@@ -232,7 +232,7 @@ class Default_subcurve :
   public Default_subcurve_base<GeometryTraits_2, Event_,
                                typename Default::Get<Subcurve_,
                                                      Default_subcurve<
-                                                       GeometryTraits_2,
+                                                       GeometryTraits_2, Event_,
                                                        Subcurve_> >::type>
 {
 public:

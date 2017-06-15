@@ -13,6 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BOUNDED_PLANAR_VERT_DEOCMP_HELPER_H
 #define CGAL_ARR_BOUNDED_PLANAR_VERT_DEOCMP_HELPER_H
@@ -28,7 +29,7 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-#include <CGAL/Surface_sweep_empty_visitor.h>
+#include <CGAL/Surface_sweep_2/Visitor.h>
 
 /*! \class Arr_bounded_planar_vert_decomp_helper
  *
@@ -44,17 +45,13 @@ public:
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-
-public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
-
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
 protected:
@@ -73,7 +70,7 @@ public:
   /// \name Notification functions.
   //@{
 
-  /* A notification issued before the sweep process starts. */
+  /*! A notification issued before the sweep process starts. */
   void before_sweep()
   {
     // Get the unbounded face.
@@ -93,6 +90,6 @@ public:
   CGAL::Object bottom_object() const { return CGAL::make_object(m_unb_face); }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

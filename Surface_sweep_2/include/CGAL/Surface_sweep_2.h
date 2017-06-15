@@ -78,28 +78,20 @@ namespace Surface_sweep_2 {
  *
  */
 
-template <typename GeometryTraits_2,
-          typename Visitor_,
-          typename Event_ = Default_event<GeometryTraits_2>,
-          typename Subcurve_ = Default_subcurve<GeometryTraits_2, Event_>,
-          typename Allocator_ = CGAL_ALLOCATOR(int) >
-class Surface_sweep_2 :
-  public No_intersection_surface_sweep_2<GeometryTraits_2, Visitor_, Event_,
-                                         Subcurve_, Allocator_>
-{
+template <typename Visitor_>
+class Surface_sweep_2 : public No_intersection_surface_sweep_2<Visitor_> {
 public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Visitor_                                      Visitor;
-  typedef Event_                                        Event;
-  typedef Subcurve_                                     Subcurve;
-  typedef Allocator_                                    Allocator;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef No_intersection_surface_sweep_2<Gt2, Visitor, Event, Subcurve,
-                                          Allocator>    Base;
+  typedef No_intersection_surface_sweep_2<Visitor>      Base;
 
 public:
+  typedef typename Base::Geometry_traits_2              Geometry_traits_2;
+  typedef typename Base::Event                          Event;
+  typedef typename Base::Subcurve                       Subcurve;
+  typedef typename Base::Allocator                      Allocator;
+
   typedef typename Base::Traits_adaptor_2               Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
@@ -149,7 +141,7 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Surface_sweep_2(const Gt2* traits, Visitor* visitor) :
+  Surface_sweep_2(const Geometry_traits_2* traits, Visitor* visitor) :
     Base(traits, visitor),
     m_curves_pair_set(0)
   {}

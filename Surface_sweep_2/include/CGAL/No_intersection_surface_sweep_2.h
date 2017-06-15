@@ -13,7 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//             Efi Fogel       <efifogel@gmail.com>
+//             Efi Fogel <efifogel@gmail.com>
 //               (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_H
@@ -111,26 +111,23 @@ namespace Surface_sweep_2 {
  * The x-montone curve type and the point type are defined by the traits class
  * that is one of the template parameters.
  */
-template <typename GeometryTraits_2,
-          typename Visitor_,
-          typename Event_ = No_overlap_event<GeometryTraits_2>,
-          typename Subcurve_ = No_overlap_subcurve<GeometryTraits_2, Event_>,
-          typename Allocator_ = CGAL_ALLOCATOR(int)>
+template <typename Visitor_>
 class No_intersection_surface_sweep_2 {
 public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Visitor_                                      Visitor;
-  typedef Event_                                        Event;
-  typedef Subcurve_                                     Subcurve;
-  typedef Allocator_                                    Allocator;
+
+  typedef typename Visitor::Geometry_traits_2           Geometry_traits_2;
+  typedef typename Visitor::Event                       Event;
+  typedef typename Visitor::Subcurve                    Subcurve;
+  typedef typename Visitor::Allocator                   Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Arr_traits_basic_adaptor_2<Gt2>                 Traits_adaptor_2;
-  typedef typename Traits_adaptor_2::Point_2              Point_2;
-  typedef typename Traits_adaptor_2::X_monotone_curve_2   X_monotone_curve_2;
+  typedef Arr_traits_basic_adaptor_2<Gt2>               Traits_adaptor_2;
+  typedef typename Traits_adaptor_2::Point_2            Point_2;
+  typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
 
   typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
   typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;

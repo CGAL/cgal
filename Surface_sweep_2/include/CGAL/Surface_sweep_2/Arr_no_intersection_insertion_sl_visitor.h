@@ -29,6 +29,9 @@
  * inserting non-intersecting curves into a empty arrangement.
  */
 
+#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Default.h>
+
 namespace CGAL {
 
 /*! \class Arr_no_intersection_insertion_sl_visitor
@@ -36,32 +39,40 @@ namespace CGAL {
  * embedded on a surface, where these curves are interior-disjoint from all
  * existing arrangement edges and vertices (so no intersections occur).
  */
-template <typename Helper_>
-class Arr_no_intersection_insertion_sl_visitor : public Helper_::Parent_visitor {
+template <typename Helper_, typename Visitor_ = Default>
+class Arr_no_intersection_insertion_sl_visitor :
+  public Arr_construction_sl_visitor<
+    Helper_,
+    typename Default::Get<Visitor_, Arr_no_intersection_insertion_sl_visitor<
+                                      Helper_, Visitor_> >::type>
+{
 public:
   typedef Helper_                                       Helper;
 
   typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
-  typedef typename Helper::Arrangement_2                Arrangement_2;
-  typedef typename Helper::Parent_visitor               Base;
   typedef typename Helper::Event                        Event;
   typedef typename Helper::Subcurve                     Subcurve;
 
 private:
   typedef Geometry_traits_2                             Gt2;
+  typedef Arr_no_intersection_insertion_sl_visitor<Helper, Visitor_>
+                                                        Self;
+  typedef typename Default::Get<Visitor_, Self>::type   Visitor;
+  typedef Arr_construction_sl_visitor<Helper, Visitor>  Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
 protected:
-  typedef typename Base::Status_line_iterator           Status_line_iterator;
-  typedef typename Base::Vertex_handle                  Vertex_handle;
-  typedef typename Base::Halfedge_handle                Halfedge_handle;
-  typedef typename Base::Face_handle                    Face_handle;
-  typedef typename Base::Event_subcurve_iterator        Event_subcurve_iterator;
+  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
   typedef typename Base::Event_subcurve_reverse_iterator
     Event_subcurve_reverse_iterator;
+
+  typedef typename Helper::Arrangement_2                Arrangement_2;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle           Face_handle;
 
 public:
   /*! Constructor. */
@@ -217,16 +228,16 @@ protected:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 // Notifies the helper that the sweep process now starts.
-template <typename Hlpr>
-void Arr_no_intersection_insertion_sl_visitor<Hlpr>::before_sweep()
+template <typename Hlpr, typename Vis>
+void Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::before_sweep()
 { this->m_helper.before_sweep(); }
 
 //-----------------------------------------------------------------------------
 // A notification invoked before the sweep-line starts handling the given
 // event.
 //
-template <typename Hlpr>
-void Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+void Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 before_handle_event(Event* event)
 {
   // First we notify the helper class on the event.
@@ -319,8 +330,8 @@ before_handle_event(Event* event)
 //-----------------------------------------------------------------------------
 // Add a new curve.
 //
-template <typename Helper_>
-bool Arr_no_intersection_insertion_sl_visitor<Helper_>::
+template <typename Hlpr, typename Vis>
+bool Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 add_subcurve_(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   const Halfedge_handle invalid_he;
@@ -336,8 +347,8 @@ add_subcurve_(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // A notification invoked when a new subcurve is created.
 //
-template <typename Hlpr>
-void Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+void Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   if (add_subcurve_(cv, sc)) return;
@@ -350,9 +361,9 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Insert the given subcurve in the interior of an arrangement face.
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   Event* last_event = this->last_event_on_subcurve(sc);
@@ -375,9 +386,9 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Insert the given subcurve from a vertex that corresponds to its left end.
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
                         Subcurve* sc)
 {
@@ -391,9 +402,9 @@ insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
 //-----------------------------------------------------------------------------
 // Insert the given subcurve from a vertex that corresponds to its right end.
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 insert_from_right_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
                          Subcurve* sc)
 {
@@ -407,9 +418,9 @@ insert_from_right_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
 //-----------------------------------------------------------------------------
 // Insert the given subcurve using its two end-vertices.
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1, Halfedge_handle prev2,
                    Subcurve* sc, bool &new_face_created)
@@ -418,9 +429,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Insert an isolated vertex into the arrangement.
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Vertex_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Vertex_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 insert_isolated_vertex(const Point_2& pt, Status_line_iterator iter)
 {
   // If the isolated vertex is already at the arrangement, return:
@@ -435,9 +446,9 @@ insert_isolated_vertex(const Point_2& pt, Status_line_iterator iter)
 //-----------------------------------------------------------------------------
 // Perform the actual insertion
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   // Check if the vertex to be associated with the left end of the curve has
@@ -496,7 +507,7 @@ _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 
   // Look up and insert the edge in the interior of the incident face of the
   // halfedge we see.
-  Face_handle f = _ray_shoot_up(this->status_line_position(sc));
+  Face_handle f = _ray_shoot_up(sc->hint());
   return (this->m_arr_access.insert_in_face_interior_ex(f, cv.base(),
                                                         ARR_LEFT_TO_RIGHT,
                                                         v1, v2));
@@ -505,9 +516,9 @@ _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Perform the actual insertion
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 _insert_from_left_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev, Subcurve* sc)
 {
@@ -542,9 +553,9 @@ _insert_from_left_vertex(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Perform the actual insertion
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 _insert_from_right_vertex(const X_monotone_curve_2& cv, Halfedge_handle prev,
                           Subcurve* sc)
 {
@@ -579,9 +590,9 @@ _insert_from_right_vertex(const X_monotone_curve_2& cv, Halfedge_handle prev,
 //-----------------------------------------------------------------------------
 // Perform the actual insertion
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     Halfedge_handle prev1, Halfedge_handle prev2,
                     Subcurve* sc, bool& new_face_created)
@@ -624,9 +635,9 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 //-----------------------------------------------------------------------------
 // Locate the face containing the current object in its interior.
 //
-template <typename Hlpr>
-typename Arr_no_intersection_insertion_sl_visitor<Hlpr>::Face_handle
-Arr_no_intersection_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+typename Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::Face_handle
+Arr_no_intersection_insertion_sl_visitor<Hlpr, Vis>::
 _ray_shoot_up(Status_line_iterator iter)
 {
   // Go up the status line and try to locate a curve which is associated
@@ -643,6 +654,6 @@ _ray_shoot_up(Status_line_iterator iter)
   return (this->m_helper.top_face());
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

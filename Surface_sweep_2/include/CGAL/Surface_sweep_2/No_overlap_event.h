@@ -15,7 +15,7 @@
 // Author(s) : Tali Zvi <talizvi@post.tau.ac.il>,
 //             Baruch Zukerman <baruchzu@post.tau.ac.il>
 //             Ron Wein <wein@post.tau.ac.il>
-//             Efi Fogel <efif@gmail.com>
+//             Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_SURFACE_SWEEP_2_NO_OVERLAP_EVENT_H
 #define CGAL_SURFACE_SWEEP_2_NO_OVERLAP_EVENT_H
@@ -23,6 +23,7 @@
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Defintion of the No_overlap_event class.
  */
 

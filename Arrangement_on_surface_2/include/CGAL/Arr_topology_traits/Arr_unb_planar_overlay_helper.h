@@ -119,7 +119,8 @@ public:
 //
 template <typename Tr, typename ArrR, typename ArrB, typename Arr,
           typename Evnt, typename Sbcv>
-void Arr_unb_planar_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::before_sweep()
+void Arr_unb_planar_overlay_helper<Tr, ArrR, ArrB, Arr, Evnt, Sbcv>::
+before_sweep()
 {
   // Get the top-left fictitious vertices in both arrangements.
   v_red_tl = Vertex_handle_red(m_red_top_traits->top_left_vertex());
@@ -155,7 +156,7 @@ void Arr_unb_planar_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::before_sweep()
 //
 template <typename Tr, typename ArrR, typename ArrB, typename Arr,
           typename Evnt, typename Sbcv>
-void Arr_unb_planar_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::
+void Arr_unb_planar_overlay_helper<Tr, ArrR, ArrB, Arr, Evnt, Sbcv>::
 before_handle_event(Event* e)
 {
   // Nothing to do in case the event represents a valid point.

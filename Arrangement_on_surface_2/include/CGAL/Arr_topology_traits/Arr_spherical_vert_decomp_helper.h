@@ -14,7 +14,6 @@
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
-//
 
 #ifndef CGAL_ARR_SPHERICAL_VERT_DECOMP_HELPER_H
 #define CGAL_ARR_SPHERICAL_VERT_DECOMP_HELPER_H
@@ -30,32 +29,30 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-#include <CGAL/Surface_sweep_empty_visitor.h>
-
 /*! \class Arr_spherical_vert_decomp_helper
  *
  * A helper class for the vertical decomposition sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename GeometryTraits_2, typename Arrangement_>
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_spherical_vert_decomp_helper {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2>         Base_visitor;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-
-  typedef typename Base_visitor::Event                  Event;
-  typedef typename Base_visitor::Subcurve               Subcurve;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
@@ -111,8 +108,8 @@ public:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <typename Tr, typename Arr>
-void Arr_spherical_vert_decomp_helper<Tr, Arr>::before_sweep()
+  template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+  void Arr_spherical_vert_decomp_helper<Tr, Arr, Evnt, Sbcv>::before_sweep()
 {
   // Get the north pole and the face that intially contains it.
   m_valid_north_pole = (m_top_traits->north_pole() != NULL);
@@ -133,9 +130,9 @@ void Arr_spherical_vert_decomp_helper<Tr, Arr>::before_sweep()
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 ///
-template <typename Tr, typename Arr>
-void
-Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_vert_decomp_helper<Tr, Arr, Evnt, Sbcv>::
+after_handle_event(Event *event)
 {
   // Ignore events that are not incident to the poles.
   if (event->parameter_space_in_y() == ARR_INTERIOR) return;

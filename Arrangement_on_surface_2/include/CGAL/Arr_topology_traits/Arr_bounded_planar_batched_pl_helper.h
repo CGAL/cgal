@@ -14,6 +14,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BOUNDED_PLANAR_BATCHED_PL_HELPER_H
 #define CGAL_ARR_BOUNDED_PLANAR_BATCHED_PL_HELPER_H
@@ -29,7 +30,7 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-#include <CGAL/Surface_sweep_empty_visitor.h>
+#include <CGAL/Surface_sweep_2/Visitor.h>
 
 /*! \class Arr_bounded_planar_batched_pl_helper
  *
@@ -45,15 +46,13 @@ public:
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
-
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
 protected:

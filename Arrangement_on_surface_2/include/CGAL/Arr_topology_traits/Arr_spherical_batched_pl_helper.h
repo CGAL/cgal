@@ -15,7 +15,6 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
-//
 
 #ifndef CGAL_ARR_SPHERICAL_BATCHED_PL_HELPER_H
 #define CGAL_ARR_SPHERICAL_BATCHED_PL_HELPER_H
@@ -31,8 +30,6 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-#include <CGAL/Surface_sweep_empty_visitor.h>
-
 /*! \class Arr_spherical_batched_pl_helper
  *
  * A helper class for the batched point-location sweep-line visitor, suitable
@@ -47,13 +44,12 @@ public:
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Event::Subcurve_iterator             Subcurve_iterator;
 

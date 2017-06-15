@@ -30,6 +30,7 @@
  */
 
 #include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_sl_visitor.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
@@ -37,23 +38,33 @@ namespace CGAL {
  * A sweep-line visitor for inserting new curves into an existing arrangement
  * embedded on a surface.
  */
-template <typename Helper_>
+template <typename Helper_, typename Visitor_ = Default>
 class Arr_insertion_sl_visitor :
-  public Arr_no_intersection_insertion_sl_visitor<Helper_>
+  public Arr_no_intersection_insertion_sl_visitor<
+    Helper_,
+    typename Default::Get<Visitor_,
+                          Arr_insertion_sl_visitor<Helper_, Visitor_> >::type>
 {
 public:
   typedef Helper_                                       Helper;
 
-  typedef Arr_no_intersection_insertion_sl_visitor<Helper> Base;
+  typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
+  typedef typename Helper::Event                        Event;
+  typedef typename Helper::Subcurve                     Subcurve;
 
-  typedef typename Base::Geometry_traits_2              Geometry_traits_2;
-  typedef typename Base::Arrangement_2                  Arrangement_2;
-  typedef typename Base::Event                          Event;
-  typedef typename Base::Subcurve                       Subcurve;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arr_insertion_sl_visitor<Helper, Visitor_>    Self;
+  typedef typename Default::Get<Visitor_, Self>::type   Visitor;
+  typedef Arr_no_intersection_insertion_sl_visitor<Helper, Visitor>
+                                                        Base;
 
-  typedef typename Base::Halfedge_handle                Halfedge_handle;
-  typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
-  typedef typename Base::Point_2                        Point_2;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
+
+  typedef typename Helper::Arrangement_2                Arrangement_2;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
 
 private:
   X_monotone_curve_2 sub_cv1;         // Auxiliary variables
@@ -95,8 +106,9 @@ public:
 // Check if the halfedge associated with the given subcurve will be split
 // at the given event.
 //
-template <typename Hlpr>
-bool Arr_insertion_sl_visitor<Hlpr>::is_split_event(Subcurve* sc, Event* event)
+template <typename Hlpr, typename Vis>
+bool Arr_insertion_sl_visitor<Hlpr, Vis>::
+is_split_event(Subcurve* sc, Event* event)
 {
   if (sc->last_curve().halfedge_handle() == Halfedge_handle(NULL)) return false;
 
@@ -109,10 +121,10 @@ bool Arr_insertion_sl_visitor<Hlpr>::is_split_event(Subcurve* sc, Event* event)
 //-----------------------------------------------------------------------------
 // Split an edge.
 //
-template <typename Hlpr>
-typename Arr_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_insertion_sl_visitor<Hlpr>::split_edge(Halfedge_handle he, Subcurve* sc,
-                                           const Point_2& pt)
+template <typename Hlpr, typename Vis>
+typename Arr_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_insertion_sl_visitor<Hlpr, Vis>::split_edge(Halfedge_handle he, Subcurve* sc,
+                                                const Point_2& pt)
 {
   // Make sure that the halfedge associated with sc is the directed from
   // right to left, since we always "look" above , and the incident face
@@ -133,8 +145,8 @@ Arr_insertion_sl_visitor<Hlpr>::split_edge(Halfedge_handle he, Subcurve* sc,
 //-----------------------------------------------------------------------------
 // A notification invoked when a new subcurve is created.
 //
-template <typename Hlpr>
-void Arr_insertion_sl_visitor<Hlpr>::
+template <typename Hlpr, typename Vis>
+void Arr_insertion_sl_visitor<Hlpr, Vis>::
 add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   if (Base::add_subcurve_(cv, sc)) return;
@@ -151,6 +163,6 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
   this->current_event()->set_halfedge_handle(next_ccw_he);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

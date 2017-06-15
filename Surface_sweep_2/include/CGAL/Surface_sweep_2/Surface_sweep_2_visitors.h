@@ -13,7 +13,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
+//                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_SURFACE_SWEEP_2_VISITORS_H
 #define CGAL_SURFACE_SWEEP_2_VISITORS_H
@@ -26,45 +27,47 @@
  * sweep-line functions.
  */
 
-#include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
-#include <CGAL/Surface_sweep_empty_visitor.h>
 #include <vector>
 #include <iterator>
+
+#include <CGAL/Surface_sweep_2.h>
+#include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
+#include <CGAL/Surface_sweep_2/Visitor.h>
 
 namespace CGAL {
 namespace Surface_sweep_2 {
 
-/*! \class
+/*! \class Surface_sweep_points_visitor
  *
  * A simple sweep-line visitor that reports all intersection points among a
  * set of input curves.
  */
-template <typename GeometryTraits_2, typename OutputIerator_>
+template <typename GeometryTraits_2, typename OutputIerator>
 class Surface_sweep_points_visitor :
-  public Surface_sweep_empty_visitor<GeometryTraits_2>
+  public Default_visitor<Surface_sweep_points_visitor<GeometryTraits_2,
+                                                      OutputIerator>,
+                         GeometryTraits_2>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef OutputIerator_                                Output_ierator;
+  typedef OutputIerator                                 Output_ierator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
   typedef Surface_sweep_points_visitor<Gt2, Output_ierator>
                                                         Self;
-  typedef Surface_sweep_empty_visitor<Gt2>              Base;
+  typedef Default_visitor<Self, Gt2>                    Base;
 
 public:
   typedef typename Base::Event                          Event;
   typedef typename Base::Subcurve                       Subcurve;
-  typedef typename Base::Event_subcurve_iterator        Event_subcurve_iterator;
-  typedef typename Base::Status_line_iterator           Status_line_iterator;
 
+  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
 
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
-  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Gt2, Self>
-                                                        Surface_sweep_2;
+  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Self>  Surface_sweep_2;
 
 protected:
   Output_ierator m_out;                 // The output points.
@@ -113,22 +116,26 @@ public:
   Output_ierator output_iterator() { return m_out; }
 };
 
-/*! \class
+/*! \class Surface_sweep_subcurves_visitor
+ *
  * A simple sweep-line visitor that reports all non-intersecting
  * x-monotone curves induced by a set of input curves.
  */
-template <typename GeometryTraits_2, typename OutputIerator_>
+template <typename GeometryTraits_2, typename OutputIerator>
 class Surface_sweep_subcurves_visitor :
-  public Surface_sweep_empty_visitor<GeometryTraits_2>
+  public Default_visitor<Surface_sweep_subcurves_visitor<
+                           GeometryTraits_2, OutputIerator>,
+                         GeometryTraits_2>
 {
+public:
   typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef OutputIerator_                                Output_ierator;
+  typedef OutputIerator                                 Output_ierator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
   typedef Surface_sweep_subcurves_visitor<Gt2, Output_ierator>
                                                         Self;
-  typedef Surface_sweep_empty_visitor<Gt2>              Base;
+  typedef Default_visitor<Self, Gt2>                    Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -136,10 +143,10 @@ public:
 
   typedef typename Base::Event                          Event;
   typedef typename Base::Subcurve                       Subcurve;
-  typedef typename Base::Status_line_iterator           Status_line_iterator;
 
-  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Gt2, Self>
-                                                        Surface_sweep_2;
+  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
+
+  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Self>  Surface_sweep_2;
 
 protected:
   // Data members:
@@ -191,31 +198,34 @@ public:
   Output_ierator output_iterator() { return m_out; }
 };
 
-/*! \class
+/*! \class Surface_sweep_do_curves_x_visitor
+ *
  * A simple sweep-line visitor that determines if there are intersections
  * in the interiors of the given curve set.
  */
 template <typename GeometryTraits_2>
 class Surface_sweep_do_curves_x_visitor :
-  public Surface_sweep_empty_visitor<GeometryTraits_2>
+  public Default_visitor<Surface_sweep_do_curves_x_visitor<GeometryTraits_2>,
+                         GeometryTraits_2>
 {
+public:
   typedef GeometryTraits_2                              Geometry_traits_2;
 
 private:
   typedef Geometry_traits_2                             Gt2;
   typedef Surface_sweep_do_curves_x_visitor<Gt2>        Self;
-  typedef Surface_sweep_empty_visitor<Gt2>              Base;
+  typedef Default_visitor<Self, Gt2>                    Base;
 
 public:
+  typedef typename Base::Event                          Event;
+  typedef typename Base::Subcurve                       Subcurve;
+
+  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
+
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
-  typedef typename Base::Event                          Event;
-  typedef typename Base::Subcurve                       Subcurve;
-  typedef typename Base::Status_line_iterator           Status_line_iterator;
-
-  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Gt2, Self>
-                                                        Surface_sweep_2;
+  typedef CGAL::Surface_sweep_2::Surface_sweep_2<Self>  Surface_sweep_2;
 
 protected:
   // Data members:

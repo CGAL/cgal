@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
-//                 Efi Fogel         <efif@post.tau.ac.il>
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 //
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
@@ -277,11 +277,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopTraits>& arr,
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep:
-  Ss2::Surface_sweep_2<Cgt2,
-                       Construct_visitor,
-                       typename Construct_visitor::Event,
-                       typename Construct_visitor::Subcurve>
-    surface_sweep(&traits, &visitor);
+  Ss2::Surface_sweep_2<Construct_visitor> surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves);
 }
 
@@ -324,11 +320,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopTraits>& arr,
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep.
-  Ss2::Surface_sweep_2<Cgt2,
-                       Construct_visitor,
-                       typename Construct_visitor::Event,
-                       typename Construct_visitor::Subcurve>
-    surface_sweep(&traits, &visitor);
+  Ss2::Surface_sweep_2<Construct_visitor> surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves, begin_points, end_points);
 }
 
@@ -383,11 +375,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
                          &traits);
 
   // Define a basic surface-sweep instance and perform the sweep.
-  Ss2::Surface_sweep_2<Igt2,
-                       Insert_visitor,
-                       typename Insert_visitor::Event,
-                       typename Insert_visitor::Subcurve>
-    surface_sweep(&traits, &visitor);
+  Ss2::Surface_sweep_2<Insert_visitor> surface_sweep(&traits, &visitor);
   surface_sweep.sweep(ex_cvs.begin(), ex_cvs.end(),ex_pts.begin(), ex_pts.end());
 }
 
@@ -824,10 +812,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
 
   // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
-  Ss2::No_intersection_surface_sweep_2<Cgt2,
-                                       Construct_visitor,
-                                       typename Construct_visitor::Event,
-                                       typename Construct_visitor::Subcurve>
+  Ss2::No_intersection_surface_sweep_2<Construct_visitor>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves);
 }
@@ -871,10 +856,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
 
   // Define a basic surface-sweep instance (which is not supposed to handle
   // insersections) and perform the sweep.
-  Ss2::No_intersection_surface_sweep_2<Cgt2,
-                                       Construct_visitor,
-                                       typename Construct_visitor::Event,
-                                       typename Construct_visitor::Subcurve>
+  Ss2::No_intersection_surface_sweep_2<Construct_visitor>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(begin_xcurves, end_xcurves, begin_points, end_points);
 }
@@ -931,9 +913,7 @@ void non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2
                          &traits);
 
   // Define a basic surface-sweep instance and perform the sweep.
-  Ss2::No_intersection_surface_sweep_2<Igt2, Insert_visitor,
-                                       typename Insert_visitor::Event,
-                                       typename Insert_visitor::Subcurve>
+  Ss2::No_intersection_surface_sweep_2<Insert_visitor>
     surface_sweep(&traits, &visitor);
   surface_sweep.sweep(ex_cvs.begin(), ex_cvs.end(),
                       ex_pts.begin(), ex_pts.end());
@@ -1210,10 +1190,7 @@ bool is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopTraits>& arr)
 
   // The surface-sweep types:
   typedef Ss2::Surface_sweep_do_curves_x_visitor<Gt2>   Visitor;
-  typedef typename Visitor::Event                       Event;
-  typedef typename Visitor::Subcurve                    Subcurve;
-  typedef Ss2::Surface_sweep_2<Gt2, Visitor, Event, Subcurve>
-                                                        Surface_sweep_2;
+  typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep_2;
 
   // The arrangement iterator and circulator types:
   typedef typename Arr::Edge_const_iterator             Edge_const_iterator;

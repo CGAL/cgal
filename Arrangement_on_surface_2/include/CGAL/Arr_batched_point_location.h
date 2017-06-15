@@ -47,8 +47,8 @@ namespace Ss2 = Surface_sweep_2;
  *                                          Face_const_handle> >.
  *      It represents the arrangement feature containing the point.
  */
-template<typename GeometryTraits_2, typename TopologyTraits,
-         typename PointsIterator, typename OutputIterator>
+template <typename GeometryTraits_2, typename TopologyTraits,
+          typename PointsIterator, typename OutputIterator>
 OutputIterator
 locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
        PointsIterator points_begin, PointsIterator points_end,
@@ -123,9 +123,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   // Define the sweep-line visitor and perform the sweep.
   Bpl_visitor visitor(&arr, oi);
-  Ss2::No_intersection_surface_sweep_2<Bpl_traits_2, Bpl_visitor,
-                                       typename Bpl_visitor::Event,
-                                       typename Bpl_visitor::Subcurve>
+  Ss2::No_intersection_surface_sweep_2<Bpl_visitor>
     surface_sweep(&ex_traits, &visitor);
   surface_sweep.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
                       iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.

@@ -25,7 +25,6 @@
  * Definition of the Arr_spherical_construction_helper class-template.
  */
 
-#include <CGAL/Surface_sweep_empty_visitor.h>
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
@@ -38,14 +37,15 @@ namespace Ss2 = Surface_sweep_2;
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_, typename Event_,
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
           typename Subcurve_>
 class Arr_spherical_construction_helper {
 public:
-  typedef Traits_                                       Geometry_traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
@@ -53,9 +53,6 @@ private:
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
-
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
 
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;

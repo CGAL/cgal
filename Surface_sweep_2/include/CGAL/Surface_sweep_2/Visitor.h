@@ -13,9 +13,10 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_SURFACE_SWEEP_EMPTY_VISITOR_H
-#define CGAL_SURFACE_SWEEP_EMPTY_VISITOR_H
+#ifndef CGAL_SURFACE_SWEEP_2_VISITOR_H
+#define CGAL_SURFACE_SWEEP_2_VISITOR_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
@@ -31,90 +32,52 @@
 namespace CGAL {
 namespace Surface_sweep_2 {
 
-/*! \class
+/*! \class Visitor_base
  *
  * An empty surface-sweep visitor that does nothing. It is used as a base-class
  * for other concrete visitors that produce some output.
  */
-template <typename GeometryTraits_2,
-          typename Event_ = Default_event<GeometryTraits_2>,
-          typename Subcurve_ = Default_subcurve<GeometryTraits_2, Event_>,
-          typename Allocator_ = CGAL_ALLOCATOR(int)>
-class Surface_sweep_empty_visitor {
+template <typename GeometryTraits_2, typename Event_, typename Subcurve_,
+          typename Allocator_, typename Visitor_>
+class Visitor_base {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
   typedef Allocator_                                    Allocator;
+  typedef Visitor_                                      Visitor;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Surface_sweep_empty_visitor<Gt2, Event, Subcurve, Allocator>
+  typedef Visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
                                                         Self;
 
-  // we want to hide the Surface_sweep type
-  typedef No_intersection_surface_sweep_2<Gt2, Self, Event, Subcurve, Allocator>
-                                                        Surface_sweep;
-
-  typedef typename Surface_sweep::Status_line_iterator  Base_status_line_iter;
-
 public:
+  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
+
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
 
-public:
-  /*! \class
-   * A wrapper for the base status-line iterator.
-   */
-  class Status_line_iterator : public Base_status_line_iter {
-  public:
-    typedef Subcurve*                                        value_type;
-    typedef value_type&                                      reference;
-    typedef value_type*                                      pointer;
-    typedef typename Base_status_line_iter::difference_type  difference_type;
-    typedef typename Base_status_line_iter::iterator_category
-                                                             iterator_category;
-    /*! Constructor. */
-    Status_line_iterator() {}
-
-    /*! Constructor from a base iterator. */
-    Status_line_iterator(Base_status_line_iter iter) :
-      Base_status_line_iter(iter)
-    {}
-
-    // Overriden operator*
-    reference operator*()
-    {
-      return (reinterpret_cast<reference>
-              (((Base_status_line_iter*)this)->operator*()));
-    }
-
-    // Overriden operator->
-    pointer operator->()
-    {
-      return (reinterpret_cast<pointer>(Base_status_line_iter::operator->()));
-    }
-  };
-
-  typedef typename Event::Subcurve_iterator          Event_subcurve_iterator;
+  typedef typename Event::Subcurve_iterator             Event_subcurve_iterator;
   typedef typename Event::Subcurve_reverse_iterator
     Event_subcurve_reverse_iterator;
 
+  typedef No_intersection_surface_sweep_2<Visitor>      Surface_sweep_2;
+
 protected:
   // Data members:
-  void* m_surface_sweep;           // The sweep-line object.
+  Surface_sweep_2* m_surface_sweep;           // The sweep-line object.
 
 public:
   /*! Constructor. */
-  Surface_sweep_empty_visitor () :
-    m_surface_sweep(NULL)
-  {}
-
-  /*! Attach the a sweep-line object. */
-  void attach(void* sl) { m_surface_sweep = sl; }
+  Visitor_base () : m_surface_sweep(NULL) {}
 
   /*! Destructor */
-  virtual ~Surface_sweep_empty_visitor() {}
+  virtual ~Visitor_base() {}
+
+  /*! Attach the a sweep-line object. */
+  void attach(const Surface_sweep_2* sl)
+  { m_surface_sweep = (Surface_sweep_2*)(sl); }
 
   /*!
    * A notification invoked before the sweep-line starts handling the given
@@ -185,47 +148,52 @@ public:
 
   /*! Obtain the first subcurve in the status line. */
   Status_line_iterator status_line_begin()
-  { return (this->_surface_sweep()->status_line_begin()); }
+  { return surface_sweep()->status_line_begin(); }
 
   /*! Obtain a past-the-end iterator for the subcurves in the status line. */
   Status_line_iterator status_line_end()
-  { return (this->_surface_sweep()->status_line_end()); }
-
-  /*! Obtain the position of the given subcurve in the status line. */
-  Status_line_iterator status_line_position(Subcurve* sc)
-  { return (sc->hint()); }
+  { return surface_sweep()->status_line_end(); }
 
   /*! Obtain the number of subcurves in the status line. */
   unsigned status_line_size() const
-  { return (this->_surface_sweep()->status_line_size()); }
+  { return surface_sweep()->status_line_size(); }
 
   /*! Check if the status line is empty. */
   bool is_status_line_empty() const
-  { return (this->_surface_sweep()->is_status_line_empty()); }
+  { return surface_sweep()->is_status_line_empty(); }
 
   /*! Deallocate the given event. */
-  void deallocate_event(Event* e)
-  { this->_surface_sweep()->deallocate_event(e); }
+  void deallocate_event(Event* e) { surface_sweep()->deallocate_event(e); }
 
   /*! Stop the sweep-line process. */
-  void stop_sweep() { this->_surface_sweep()->stop_sweep(); }
+  void stop_sweep() { surface_sweep()->stop_sweep(); }
 
   /*! Obtain the sweep-line object. */
-  void* surface_sweep() { return m_surface_sweep; }
+  Surface_sweep_2* surface_sweep() { return m_surface_sweep; }
+
+  /*! Obtain the sweep-line object. */
+  const Surface_sweep_2* surface_sweep() const { return m_surface_sweep; }
 
   /*! Obtain the current event. */
-  Event* current_event() { return (this->_surface_sweep()->current_event()); }
+  Event* current_event() { return surface_sweep()->current_event(); }
 
   /*! Obtain the geometry-traits class. */
-  const Gt2* traits() { return (this->_surface_sweep()->traits()); }
+  const Gt2* traits() { return surface_sweep()->traits(); }
+};
 
-private:
-  /*! Obtain the sweep-line object. */
-  Surface_sweep* _surface_sweep()
-  { return (reinterpret_cast<Surface_sweep*>(m_surface_sweep)); }
-
-  const Surface_sweep* _surface_sweep() const
-  { return (reinterpret_cast<const Surface_sweep*>(m_surface_sweep)); }
+template <typename Visitor_,
+          typename GeometryTraits_2,
+          typename Event_ = Default_event<GeometryTraits_2>,
+          typename Subcurve_ = Default_subcurve<GeometryTraits_2, Event_>,
+          typename Allocator_ = CGAL_ALLOCATOR(int)>
+class Default_visitor : public Visitor_base<GeometryTraits_2, Event_, Subcurve_,
+                                            Allocator_, Visitor_>
+{
+public:
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
+  typedef Allocator_                                    Allocator;
 };
 
 } // namespace Surface_sweep_2

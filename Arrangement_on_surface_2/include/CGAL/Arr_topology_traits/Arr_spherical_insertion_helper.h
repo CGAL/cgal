@@ -25,7 +25,6 @@
  * Definition of the Arr_spherical_insertion_helper class-template.
  */
 
-#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 
 namespace CGAL {
@@ -60,11 +59,6 @@ private:
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Gt2::Point_2                         Point_2;
-
-  typedef Ss2::Surface_sweep_empty_visitor<Gt2, Event, Subcurve>
-                                                        Base_visitor;
-
-  typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
 
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
@@ -231,6 +225,6 @@ Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::top_face() const
   return this->m_spherical_face;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif
