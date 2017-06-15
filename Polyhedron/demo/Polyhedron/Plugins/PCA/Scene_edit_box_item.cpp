@@ -75,6 +75,7 @@ struct Scene_edit_box_item_priv{
     FACE,
     NO_TYPE
   };
+
   Scene_edit_box_item_priv(const Scene_interface *scene_interface, Scene_edit_box_item* ebi)
   {
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
@@ -334,7 +335,10 @@ struct Scene_edit_box_item_priv{
 
 };
 
-
+Scene_edit_box_item::Scene_edit_box_item()
+{
+  d = NULL;
+}
 Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
   :  Scene_item(Scene_edit_box_item_priv::NumberOfVbos,Scene_edit_box_item_priv::NumberOfVaos)
 
@@ -398,43 +402,7 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   for (int i=0; i<16; ++i){
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
-  GLdouble d_mat[16];
-  QMatrix4x4 mvp_mat;
-  viewer->camera()->getModelViewProjectionMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mvp_mat.data()[i] = GLfloat(d_mat[i]);
-  mvp_mat = mvp_mat*f_matrix;
-  QMatrix4x4 mv_mat;
-  viewer->camera()->getModelViewMatrix(d_mat);
-  for (int i=0; i<16; ++i)
-    mv_mat.data()[i] = GLfloat(d_mat[i]);
-  mv_mat = mv_mat*f_matrix;
-  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
-  light_pos = light_pos*f_matrix;
-  QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-  // Diffuse
-  QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-  // Specular
-  QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
 
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  vaos[Scene_edit_box_item_priv::Faces]->bind();
-  d->program = &d->transparent_face_program;
-  d->program->bind();
-  d->program->setUniformValue("mvp_matrix", mvp_mat);
-  d->program->setUniformValue("mv_matrix", mv_mat);
-  d->program->setUniformValue("light_pos", light_pos);
-  d->program->setUniformValue("light_diff",diffuse);
-  d->program->setUniformValue("light_spec", specular);
-  d->program->setUniformValue("light_amb", ambient);
-  d->program->setUniformValue("spec_power", 51.8f);
-  d->program->setUniformValue("is_clipbox_on", false);
-  d->program->setAttributeValue("colors", QColor(128,128,128,128));
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->vertex_faces.size()/3));
-  vaos[Scene_edit_box_item_priv::Faces]->release();
-  d->program->release();
-  glDisable(GL_BLEND);
   drawSpheres(viewer, f_matrix);
 }
 
@@ -1451,4 +1419,54 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     glDisable(GL_BLEND);
 
   }
+}
+void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)const
+{
+  if (!are_buffers_filled)
+  {
+    d->computeElements();
+    d->initializeBuffers(viewer);
+  }
+  QMatrix4x4 f_matrix;
+  for (int i=0; i<16; ++i){
+    f_matrix.data()[i] = (float)d->frame->matrix()[i];
+  }
+
+  GLdouble d_mat[16];
+  QMatrix4x4 mvp_mat;
+  viewer->camera()->getModelViewProjectionMatrix(d_mat);
+  for (int i=0; i<16; ++i)
+    mvp_mat.data()[i] = GLfloat(d_mat[i]);
+  mvp_mat = mvp_mat*f_matrix;
+  QMatrix4x4 mv_mat;
+  viewer->camera()->getModelViewMatrix(d_mat);
+  for (int i=0; i<16; ++i)
+    mv_mat.data()[i] = GLfloat(d_mat[i]);
+  mv_mat = mv_mat*f_matrix;
+  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
+  light_pos = light_pos*f_matrix;
+  QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
+  // Diffuse
+  QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+  // Specular
+  QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  vaos[Scene_edit_box_item_priv::Faces]->bind();
+  d->program = &d->transparent_face_program;
+  d->program->bind();
+  d->program->setUniformValue("mvp_matrix", mvp_mat);
+  d->program->setUniformValue("mv_matrix", mv_mat);
+  d->program->setUniformValue("light_pos", light_pos);
+  d->program->setUniformValue("light_diff",diffuse);
+  d->program->setUniformValue("light_spec", specular);
+  d->program->setUniformValue("light_amb", ambient);
+  d->program->setUniformValue("spec_power", 51.8f);
+  d->program->setUniformValue("is_clipbox_on", false);
+  d->program->setAttributeValue("colors", QColor(128,128,128,128));
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->vertex_faces.size()/3));
+  vaos[Scene_edit_box_item_priv::Faces]->release();
+  d->program->release();
+  glDisable(GL_BLEND);
 }

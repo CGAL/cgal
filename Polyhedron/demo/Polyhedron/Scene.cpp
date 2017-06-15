@@ -6,6 +6,8 @@
 #include "Scene.h"
 
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_print_interface_item.h>
+#include <CGAL/Three/Scene_transparent_interface.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 
 #include  <CGAL/Three/Scene_item.h>
@@ -557,6 +559,50 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             }
         }
     }
+
+    // Transparent OpenGL drawing
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+      CGAL::Three::Scene_item& item = *m_entries[index];
+      CGAL::Three::Scene_transparent_interface* trans_item = qobject_cast<CGAL::Three::Scene_transparent_interface*>(&item);
+      if(!trans_item)
+        continue;
+
+      if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
+      if(item.visible())
+      {
+        if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges )
+        {
+          if(with_names) {
+            glClearDepth(1.0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+          }
+          viewer->glEnable(GL_LIGHTING);
+          viewer->glPointSize(2.f);
+          viewer->glLineWidth(1.0f);
+
+          viewer->glShadeModel(GL_SMOOTH);
+
+          if(viewer)
+            trans_item->drawTransparent(viewer);
+          else
+            item.draw();
+
+          if(with_names) {
+
+            //    read depth buffer at pick location;
+            float depth = 1.0;
+            glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+            if (depth != 1.0)
+            {
+              //add object to list of picked objects;
+              picked_item_IDs[depth] = index;
+            }
+          }
+        }
+      }
+    }
+
     if(with_names)
     {
         QList<float> depths = picked_item_IDs.keys();
