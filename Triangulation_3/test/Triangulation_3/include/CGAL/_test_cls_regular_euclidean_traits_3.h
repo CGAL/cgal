@@ -17,8 +17,11 @@
 // $Date$
 
 // Author(s)     :  Mariette Yvinec
+//                  Mael Rouxel-Labbé
 
 #include <CGAL/use.h>
+
+#include <cassert>
 
 template <class Traits>
 void
@@ -44,11 +47,11 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
 
   typedef typename Traits::
                    Compute_power_distance_to_power_sphere_3
-                   Compute_power_distance_to_power_sphere_3;        
+                   Compute_power_distance_to_power_sphere_3;
 
   CGAL_USE_TYPE(Segment_3);
   Traits traits;
-  Power_side_of_oriented_power_sphere_3 power_test =  
+  Power_side_of_oriented_power_sphere_3 power_test =
     traits.power_side_of_oriented_power_sphere_3_object();
   Compare_power_distance_3 compare_power_distance =
     traits.compare_power_distance_3_object();
@@ -63,7 +66,7 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
     traits.compute_squared_radius_smallest_orthogonal_sphere_3_object();
   Compute_power_distance_to_power_sphere_3  compute_power_distance_to_power_sphere_3 =
     traits.compute_power_distance_to_power_sphere_3_object();
-  
+
 
   // test of Does_simplex_intersect_dual_support_3
   std::cout << "test of Does_simplex_intersect_dual_support_3" << std::endl;
@@ -80,7 +83,6 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   Weighted_point_3 wp03(p0,12.);
   Weighted_point_3 wp04(p0,18.);
   Weighted_point_3 wp05(p0,24.);
-
 
   // test of Construct_weighted_circumcenter_3 and compare_power_distance
   std::cout << "test of Construct_weighted_circumcenter_3" << std::endl;
@@ -125,59 +127,38 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   typedef typename Traits::FT  FT;
   FT ww02 = FT(2)/FT(3);
   Weighted_point_3 wq02(q0, ww02);
- 
-  assert(bounded_power_test(wq0, wq1, wq2)
-         == CGAL::ON_UNBOUNDED_SIDE);
-  assert(bounded_power_test(wq1, wq0, wq2)
-         == CGAL::ON_UNBOUNDED_SIDE);
-  assert(bounded_power_test(wq1, wq2, wq0)
-         == CGAL::ON_BOUNDARY);
-  assert(bounded_power_test(wq1, wq2, wq01)
-         == CGAL::ON_BOUNDED_SIDE);
-  assert(bounded_power_test(wq2, wq1, wq01)
-         == CGAL::ON_BOUNDED_SIDE);
-  assert(bounded_power_test(wq11, wq21, wq0)
-         == CGAL::ON_UNBOUNDED_SIDE);
-  assert(bounded_power_test(wq21, wq11, wq0)
-         == CGAL::ON_UNBOUNDED_SIDE);
 
-  assert(bounded_power_test(wq0, wq1, wq2, wq3)
-         == CGAL::ON_UNBOUNDED_SIDE);
-  assert(bounded_power_test(wq1, wq0, wq2, wq3)
-         == CGAL::ON_UNBOUNDED_SIDE);
-  assert(bounded_power_test(wq1, wq2, wq3, wq0)
-         == CGAL::ON_BOUNDED_SIDE);
-  assert(bounded_power_test(wq1, wq3, wq2, wq0)
-         == CGAL::ON_BOUNDED_SIDE);
-  assert(bounded_power_test(wq11, wq21, wq31, wq02)
-         == CGAL::ON_BOUNDARY);
-  assert(bounded_power_test(wq31, wq21, wq11, wq02)
-         == CGAL::ON_BOUNDARY);
-  
-  assert(bounded_power_test(wq0, wq1, wq2, wq3, wq4)
-         == CGAL::ON_BOUNDARY);
-  assert(bounded_power_test(wq1, wq0, wq2, wq3, wq4)
-         == CGAL::ON_BOUNDARY);
-  assert(bounded_power_test(wq01, wq11, wq21, wq31, wq4)
-         == CGAL::ON_UNBOUNDED_SIDE);
-  assert(bounded_power_test(wq01, wq21, wq11, wq31, wq4)
-         == CGAL::ON_UNBOUNDED_SIDE);
-  assert(bounded_power_test(wq0, wq1, wq2, wq3, wq41)
-         == CGAL::ON_BOUNDED_SIDE);
-  assert(bounded_power_test(wq0, wq1, wq3, wq2, wq41)
-         == CGAL::ON_BOUNDED_SIDE);
-  
+  assert(bounded_power_test(wq0, wq1, wq2) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(bounded_power_test(wq1, wq0, wq2) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(bounded_power_test(wq1, wq2, wq0) == CGAL::ON_BOUNDARY);
+  assert(bounded_power_test(wq1, wq2, wq01) == CGAL::ON_BOUNDED_SIDE);
+  assert(bounded_power_test(wq2, wq1, wq01) == CGAL::ON_BOUNDED_SIDE);
+  assert(bounded_power_test(wq11, wq21, wq0) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(bounded_power_test(wq21, wq11, wq0) == CGAL::ON_UNBOUNDED_SIDE);
+
+  assert(bounded_power_test(wq0, wq1, wq2, wq3) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(bounded_power_test(wq1, wq0, wq2, wq3) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(bounded_power_test(wq1, wq2, wq3, wq0) == CGAL::ON_BOUNDED_SIDE);
+  assert(bounded_power_test(wq1, wq3, wq2, wq0) == CGAL::ON_BOUNDED_SIDE);
+  assert(bounded_power_test(wq11, wq21, wq31, wq02) == CGAL::ON_BOUNDARY);
+  assert(bounded_power_test(wq31, wq21, wq11, wq02) == CGAL::ON_BOUNDARY);
+
+  assert(bounded_power_test(wq0, wq1, wq2, wq3, wq4) == CGAL::ON_BOUNDARY);
+  assert(bounded_power_test(wq1, wq0, wq2, wq3, wq4) == CGAL::ON_BOUNDARY);
+  assert(bounded_power_test(wq01, wq11, wq21, wq31, wq4) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(bounded_power_test(wq01, wq21, wq11, wq31, wq4) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(bounded_power_test(wq0, wq1, wq2, wq3, wq41) == CGAL::ON_BOUNDED_SIDE);
+  assert(bounded_power_test(wq0, wq1, wq3, wq2, wq41) == CGAL::ON_BOUNDED_SIDE);
+
   // test weighted_circumcenter
   // test squared_radius_smallest_orthogonal_sphere
-  // test critical_squared_radius
-  std::cout << "test of  squared_radius_smallest_orthogonal_sphere" 
-            << std::endl;
-   std::cout << "test of critical_squared_radius" << std::endl;
+  std::cout << "test of weighted_circumcenter" << std::endl;
+   std::cout << "test of squared_radius_smallest_orthogonal_sphere" << std::endl;
   Weighted_point_3 wc(weighted_circumcenter(wq11,wq21,wq31,wq41),
                       squared_radius_smallest_orthogonal_sphere(wq11,wq21,wq31,wq41));
   Weighted_point_3 wt(Point_3(1.,1.,1.), 0.);
-  // this test requires a weighted point with a zero weight 
-  assert( power_product(wc,wt) == 
+  // this test requires a weighted point with a zero weight
+  assert( power_product(wc,wt) ==
           compute_power_distance_to_power_sphere_3(wq11,wq21,wq31,wq41,wt));
 
   wc = Weighted_point_3(weighted_circumcenter(wp0,wp1,wp2,wp3),
@@ -187,9 +168,10 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
 
   wc = Weighted_point_3(weighted_circumcenter(wp01,wp1,wp2,wp3),
                         squared_radius_smallest_orthogonal_sphere(wp01,wp1,wp2,wp3));
-  assert( power_product(wc,wt) == 
+
+  assert( power_product(wc,wt) ==
           compute_power_distance_to_power_sphere_3(wp01,wp1,wp2,wp3,wt));
-  
+
   // test power_test
   // null weights
   assert(power_test(wq0,wq1,wq2,wq3,wq4) ==
@@ -199,15 +181,7 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   assert(power_test(wq0,wq1,wq2,wq5) == CGAL::ON_NEGATIVE_SIDE &&
          traits.coplanar_side_of_bounded_circle_3_object()(q0,q1,q2,q5) ==
                                                        CGAL::ON_UNBOUNDED_SIDE);
-  /* 
- assert(power_test(wq5,wq1,wq0) == CGAL::ON_POSITIVE_SIDE &&
-         (Segment_3(wq5,wq1)).has_on(wq0));
-  assert(power_test(wq5,wq1,wq5) == CGAL::ON_ORIENTED_BOUNDARY &&
-         (Segment_3(wq5,wq1)).has_on(wq5));
-  assert(power_test(wq5,wq1,wq6) == CGAL::ON_NEGATIVE_SIDE &&
-         !(Segment_3(wq5,wq1)).has_on(wq6));
-  assert(power_test(wq3,wq2) == CGAL::ON_ORIENTED_BOUNDARY);
-  */
+
   // wc = (1,1,1) -3
   assert(power_test(wp01,wp1,wp2,wp3,wc) == CGAL::ON_NEGATIVE_SIDE);
   Weighted_point_3 wt2(wc.point(), wc.weight()+6);

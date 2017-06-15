@@ -224,7 +224,6 @@
 //#include <CGAL/Mesh_3/Refine_facets_3.h>
 //#include <CGAL/Mesh_3/Refine_tets_visitor.h>
 //#include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
-//#include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 //#include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 //#include <CGAL/Mesh_3/utilities.h>
 //#include <CGAL/Mesh_cell_base_3.h>

@@ -1850,16 +1850,7 @@ namespace CGAL {
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
 
-    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*.
-    // `result_of` is used to go around the way the Lazy kernel works
-    // (simply grabbing it as a `const Bare_point&` would not work)
-    std::sort(points, points + 5,
-      boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
-          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
-        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
-          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
-              == SMALLER);
+    std::sort(points, points + 5, typename Tr_Base::Perturbation_order(this));
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
@@ -1969,16 +1960,7 @@ namespace CGAL {
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
 
-    // boost::bind is used twice, to grab the Bare_point within the Weighted_point*.
-    // `result_of` is used to go around the way the Lazy kernel works
-    // (simply grabbing it as a `const Bare_point&` would not work)
-    std::sort(points, points + 4,
-      boost::bind<Comparison_result>(geom_traits().compare_xyz_3_object(),
-        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
-          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _1)),
-        boost::bind<typename cpp11::result_of<const Construct_point_3(const Weighted_point&)>::type>(
-          cp, boost::bind<const Weighted_point&>(Dereference<Weighted_point>(), _2)))
-              == SMALLER);
+    std::sort(points, points + 4, typename Tr_Base::Perturbation_order(this));
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
