@@ -51,7 +51,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #else
 typedef Scene_facegraph_item Scene_facegraph_item;
 #endif
-typedef Scene_facegraph_item::FaceGraph FaceGraph;
+typedef Scene_facegraph_item::Face_graph FaceGraph;
 
 typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
@@ -736,7 +736,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   QVector<vertex_descriptor> vertices;
   std::vector<Polyhedron::Point_3> points;
   bool use_DT = ui_widget.Use_delaunay_triangulation_check_box->isChecked();
-  //! \todo Is this needed for Surface-Mesh ? If yes how to do it ?
+
 #ifndef USE_SURFACE_MESH
   poly->normalize_border();
 #endif
