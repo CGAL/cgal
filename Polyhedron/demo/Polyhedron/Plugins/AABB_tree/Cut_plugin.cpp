@@ -239,7 +239,6 @@ typedef CGAL::AABB_tree<Edge_traits>                                Edge_tree;
 typedef QMap<QObject*, Facet_tree*>                   Facet_trees;
 typedef QMap<QObject*, Edge_tree*>                    Edge_trees;
 
-typedef Scene_surface_mesh_item::SMesh SMesh;
 typedef CGAL::AABB_face_graph_triangle_primitive<SMesh, PPMAP<SMesh> > Facet_sm_primitive;
 typedef CGAL::AABB_traits<Simple_kernel, Facet_sm_primitive>           Facet_sm_traits;
 typedef CGAL::AABB_tree<Facet_sm_traits>                               Facet_sm_tree;
