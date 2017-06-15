@@ -54,12 +54,16 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #else
 typedef Scene_facegraph_item Scene_facegraph_item;
 #endif
-typedef Scene_facegraph_item::FaceGraph FaceGraph;
+typedef Scene_facegraph_item::Face_graph FaceGraph;
+typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+
 template<class Mesh>
+#ifdef USE_SURFACE_MESH
+void reset_face_ids(Mesh&)
+{}
+#else
 void reset_face_ids(Mesh& mesh)
 {
-#ifdef USE_SURFACE_MESH
-#else
 typename boost::property_map<Mesh, CGAL::face_index_t>::type fim
   = get(CGAL::face_index, mesh);
 
@@ -68,8 +72,8 @@ BOOST_FOREACH(face_descriptor f, faces(mesh))
 {
   put(fim, f, id++);
 }
-#endif
 }
+#endif
 // give a halfedge and a target edge length, put in `out` points
 // which the edge equally spaced such that splitting the edge
 // using the sequence of points make the edges shorter than
@@ -233,7 +237,8 @@ public:
     return false;
   }
 
-  typedef boost::property_map<FaceGraph, CGAL::face_patch_id_t>::type Patch_id_pmap;
+  typedef boost::property_map<FaceGraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+
   void detect_and_split_duplicates(std::vector<Scene_facegraph_item*>& selection,
                                    std::map<FaceGraph*,Edge_set>& edges_to_protect,
                                    double target_length)
@@ -404,9 +409,8 @@ public Q_SLOTS:
               .relax_constraints(smooth_features)
               .number_of_relaxation_steps(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-//              .face_patch_map(Patch_id_pmap<face_descriptor>()));
 
-              .face_patch_map(get(CGAL::face_patch_id, *selection_item->polyhedron())));
+              .face_patch_map(get(CGAL::face_patch_id_t<int>(), *selection_item->polyhedron())));
           }
           else
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
@@ -419,16 +423,17 @@ public Q_SLOTS:
               .relax_constraints(smooth_features)
               .number_of_relaxation_steps(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-              .face_patch_map(get(CGAL::face_patch_id, *selection_item->polyhedron())));
-        }
-        if(!selection_item->polyhedron_item()->isItemMulticolor())
-        {
-          selection_item->polyhedron_item()->setColor(
-                selection_item->polyhedron_item()->color());
+              .face_patch_map(get(CGAL::face_patch_id_t<int>(), *selection_item->polyhedron())));
         }
 #ifdef USE_SURFACE_MESH
+        selection_item->polyhedron_item()->setColor(
+              selection_item->polyhedron_item()->color());
         selection_item->polyhedron_item()->setItemIsMulticolor(false);
         selection_item->polyhedron_item()->polyhedron()->collect_garbage();
+#else
+        if(!selection_item->polyhedron_item()->isItemMulticolor())
+        {
+        }
 #endif
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
@@ -477,7 +482,7 @@ public Q_SLOTS:
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
          .number_of_relaxation_steps(nb_smooth)
-         .face_patch_map(get(CGAL::face_patch_id, *poly_item->polyhedron()))
+         .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
          .edge_is_constrained_map(ecm)
          .relax_constraints(smooth_features));
         }
@@ -657,7 +662,7 @@ private:
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
           .edge_is_constrained_map(ecm)
-          .face_patch_map(get(CGAL::face_patch_id, *poly_item->polyhedron()))
+          .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
           .relax_constraints(smooth_features_));
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " done." << std::endl;
