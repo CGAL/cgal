@@ -1372,6 +1372,10 @@ protected:
   intersection(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
     CGAL_NEF_TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return *this;
+    if (N1.is_empty()) return N1;
+    if (is_space()) return N1;
+    if (N1.is_space()) return *this;
     AND _and;
     SNC_structure rsnc;
     Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
@@ -1396,6 +1400,10 @@ protected:
   join(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
     CGAL_NEF_TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return N1;
+    if (N1.is_empty()) return *this;
+    if (is_space()) return *this;
+    if (N1.is_space()) return N1;
     OR _or;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, OR> tests_impl;
     SNC_structure rsnc;
@@ -1409,6 +1417,10 @@ protected:
   difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/ { 
     CGAL_NEF_TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return *this;
+    if (N1.is_empty()) return *this;
+    if (is_space()) return N1.complement();
+    if (N1.is_space()) return Nef_polyhedron_3(EMPTY);
     DIFF _diff;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, DIFF> tests_impl;
     SNC_structure rsnc;
@@ -1423,6 +1435,10 @@ protected:
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/ {
     CGAL_NEF_TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
+    if (is_empty()) return N1;
+    if (N1.is_empty()) return *this;
+    if (is_space()) return Nef_polyhedron_3(EMPTY);
+    if (N1.is_space()) return Nef_polyhedron_3(EMPTY);
     XOR _xor;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, XOR> tests_impl;
     SNC_structure rsnc;
