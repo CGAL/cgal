@@ -475,10 +475,10 @@ public:
   {
     std::stringstream sstr;
     sstr << "Cell { " << std::endl
-    << "  - " << *ch->vertex(0)  << std::endl
-    << "  - " << *ch->vertex(1)  << std::endl
-    << "  - " << *ch->vertex(2)  << std::endl
-    << "  - " << *ch->vertex(3)  << std::endl
+    << "  " << *ch->vertex(0) << std::endl
+    << "  " << *ch->vertex(1) << std::endl
+    << "  " << *ch->vertex(2) << std::endl
+    << "  " << *ch->vertex(3) << std::endl
     << "}" << std::endl;
 
     return sstr.str();
@@ -558,7 +558,7 @@ private:
   }
 
   /// Get mirror facet
-  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); };
+  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); }
   Facet mirror_facet(const Cell_handle& c, const int i) const
   { return mirror_facet(std::make_pair(c,i)); }
 

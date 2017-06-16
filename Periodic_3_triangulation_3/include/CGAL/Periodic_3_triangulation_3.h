@@ -314,6 +314,8 @@ public:
   const TDS& tds() const { return _tds; }
   TDS& tds() { return _tds; }
 
+  bool is_parallel() const { return false; }
+
   virtual void gather_cell_hidden_points(const Cell_handle /*cit*/, std::vector<Point>& /* hidden_points*/) { }
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted(const std::vector<Point>& /* hidden_points*/) { }
 
@@ -1598,21 +1600,18 @@ public:
   }
 
   template <class OutputIterator>
-  OutputIterator incident_edges(
-      Vertex_handle v, OutputIterator edges) const {
+  OutputIterator incident_edges(Vertex_handle v, OutputIterator edges) const {
     return _tds.incident_edges(v, edges);
   }
 
   template <class OutputIterator>
-  OutputIterator adjacent_vertices(
-      Vertex_handle v, OutputIterator vertices) const {
+  OutputIterator adjacent_vertices(Vertex_handle v, OutputIterator vertices) const {
     return _tds.adjacent_vertices(v, vertices);
   }
 
   //deprecated, don't use anymore
   template <class OutputIterator>
-  OutputIterator incident_vertices(
-      Vertex_handle v, OutputIterator vertices) const {
+  OutputIterator incident_vertices(Vertex_handle v, OutputIterator vertices) const {
     return _tds.adjacent_vertices(v, vertices);
   }
 
@@ -1715,7 +1714,7 @@ public:
 
   Offset combine_offsets(const Offset& o_c, const Offset& o_t) const
   {
-    Offset o_ct(_cover[0]*o_t.x(),_cover[1]*o_t.y(),_cover[2]*o_t.z());
+    Offset o_ct(_cover[0]*o_t.x(), _cover[1]*o_t.y(), _cover[2]*o_t.z());
     return o_c + o_ct;
   }
 
@@ -1824,7 +1823,8 @@ protected:
     Offset o1 = -p1.second;
     Offset o2 = combine_offsets(-p2.second,-off);
     Offset cumm_off((std::min)(o1.x(),o2.x()),
-                    (std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
+                    (std::min)(o1.y(),o2.y()),
+                    (std::min)(o1.z(),o2.z()));
     const Periodic_point_3 pp1 = std::make_pair(construct_point(p1), o1-cumm_off);
     const Periodic_point_3 pp2 = std::make_pair(construct_point(p2), o2-cumm_off);
     ps = CGAL::make_array(pp1, pp2);
@@ -1850,6 +1850,7 @@ protected:
       *points++ = dual;
       ++ccit;
     } while(ccit != cstart);
+
     return points;
   }
 
@@ -1867,6 +1868,7 @@ protected:
       Point_3 dual = construct_point(std::make_pair(dual_orig, -off));
       *points++ = dual;
     }
+
     return points;
   }
 
@@ -1887,6 +1889,7 @@ protected:
       os << so.target() << '\n';
     }
     CGAL_triangulation_assertion( i == number_of_facets() );
+
     return os;
   }
 
@@ -2375,19 +2378,12 @@ try_next_cell:
 
 /**
  * returns
- * ON_BOUNDED_SIDE if p inside the cell
- * (for an infinite cell this means that p lies strictly in the half space
- * limited by its finite facet)
- * ON_BOUNDARY if p on the boundary of the cell
- * (for an infinite cell this means that p lies on the *finite* facet)
- * ON_UNBOUNDED_SIDE if p lies outside the cell
- * (for an infinite cell this means that p is not in the preceding
- * two cases)
+ * ON_BOUNDED_SIDE if (q, off) inside the cell
+ * ON_BOUNDARY if (q, off) on the boundary of the cell
+ * ON_UNBOUNDED_SIDE if (q, off) lies outside the cell
  *
  * lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
  */
-// TODO: currently off is not used. It could probably be optimized
-// using off.
 template < class GT, class TDS >
 inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
     const Point& q, const Offset& off, Cell_handle c,
@@ -3598,13 +3594,10 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
 
   // Create 27 copies of each cell from the respective copies of the
   // vertices and write virtual_cells and virtual_cells_reverse.
-  typedef std::map<Cell_handle, std::pair<Cell_handle, Offset> >
-      Virtual_cell_map;
   typedef std::map<Cell_handle, std::vector<Cell_handle > >
       Virtual_cell_reverse_map;
   typedef typename Virtual_cell_reverse_map::const_iterator VCRMIT;
 
-  Virtual_cell_map virtual_cells;
   Virtual_cell_reverse_map virtual_cells_reverse;
 
   std::list<Cell_handle> original_cells;
@@ -3637,7 +3630,6 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
   for(typename std::list<Cell_handle>::iterator cit = original_cells.begin();
       cit != original_cells.end(); ++cit) {
     Cell_handle c_cp;
-    Vertex_handle v0,v1,v2,v3;
     std::vector<Cell_handle> copies;
     Virtual_vertex_reverse_map_it vvrmit[4];
     Offset vvoff[4];
@@ -3874,10 +3866,6 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
 {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
-//  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
-//  CGAL_triangulation_precondition(side_of_cell(q,o,c,lt,i,j)
-//      != ON_UNBOUNDED_SIDE);
-
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
   if(cumm_off == 0) {
     // default case:
@@ -3903,10 +3891,6 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     const Conflict_tester& tester, Cell_handle c, bool& found) const
 {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
-
-//  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
-//  CGAL_triangulation_precondition(side_of_cell(q,o,c,lt,i,j)
-//      != ON_UNBOUNDED_SIDE);
 
   found = false;
 

@@ -253,10 +253,10 @@ interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
   const FT& vc = cell->vertex(2)->meshing_info();
   const FT& vd = cell->vertex(3)->meshing_info();
 
-  const Bare_point& a = wp2p(cell->vertex(0)->point());
-  const Bare_point& b = wp2p(cell->vertex(1)->point());
-  const Bare_point& c = wp2p(cell->vertex(2)->point());
-  const Bare_point& d = wp2p(cell->vertex(3)->point());
+  const Bare_point& a = wp2p(tr_.point(cell, 0));
+  const Bare_point& b = wp2p(tr_.point(cell, 1));
+  const Bare_point& c = wp2p(tr_.point(cell, 2));
+  const Bare_point& d = wp2p(tr_.point(cell, 3));
 
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,d,b,p));
@@ -298,9 +298,9 @@ interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) cons
   const FT& vb = cell->vertex(k2)->meshing_info();
   const FT& vc = cell->vertex(k3)->meshing_info();
 
-  const Bare_point& a = wp2p(cell->vertex(k1)->point());
-  const Bare_point& b = wp2p(cell->vertex(k2)->point());
-  const Bare_point& c = wp2p(cell->vertex(k3)->point());
+  const Bare_point& a = wp2p(tr_.point(cell, k1));
+  const Bare_point& b = wp2p(tr_.point(cell, k2));
+  const Bare_point& c = wp2p(tr_.point(cell, k3));
 
   const FT abp = area(a,b,p);
   const FT acp = area(a,c,p);
