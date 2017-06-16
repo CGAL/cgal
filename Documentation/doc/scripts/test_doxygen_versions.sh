@@ -38,6 +38,7 @@ mkdir ./build_doc
 cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
 make -j$NB_CORES doc  &> /dev/null
+make -j$NB_CORES doc_and_postprocessing  &> /dev/null
 cd ../ #scripts
 bash compare_testsuites.sh $PWD/build_doc/doc_output
 mv ./doc_data ./doc_ref
@@ -62,6 +63,7 @@ mkdir build_doc
 cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  &> /dev/null
 make -j$NB_CORES doc  &> /dev/null
+make -j$NB_CORES doc_and_postprocessing  &> /dev/null
 cd ../ #scripts
 DOXYGEN_1=$($PATH_TO_1 --version)
 DOXYGEN_2=$($PATH_TO_2 --version)
@@ -82,7 +84,7 @@ if [ $IS_RELEASE = 0 ]; then
   mkdir -p ./build && cd ./build
   cmake ..
   CGAL_NAME="$(cat $PWD/VERSION)"
-  cd ..$ROOT
+  cd $ROOT
   rm -rf ./build
   cd $ROOT/Documentation/doc/scripts
 else
