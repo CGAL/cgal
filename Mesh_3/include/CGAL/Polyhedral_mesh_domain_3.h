@@ -312,7 +312,11 @@ public:
   {
     this->add_primitives(p);
     this->add_primitives(bounding_polyhedron);
-    this->add_primitives_to_bounding_tree(bounding_polyhedron);
+    if(!bounding_polyhedron.empty()) {
+      this->add_primitives_to_bounding_tree(bounding_polyhedron);
+    } else {
+      this->set_surface_only();
+    }
     this->build();
   }
 
@@ -341,7 +345,11 @@ public:
       }
       this->add_primitives(bounding_polyhedron);
     }
-    this->add_primitives_to_bounding_tree(bounding_polyhedron);
+    if(!bounding_polyhedron.empty()) {
+      this->add_primitives_to_bounding_tree(bounding_polyhedron);
+    } else {
+      this->set_surface_only();
+    }
     this->build();
   }
 
@@ -682,8 +690,10 @@ protected:
 
   void build() {
     tree_.build();
+    CGAL_assertion(!tree_.empty());
     if(bounding_tree_ != &tree_ && bounding_tree_ != 0) {
       bounding_tree_->build();
+      CGAL_assertion(!bounding_tree_->empty());
     }
   }
 
