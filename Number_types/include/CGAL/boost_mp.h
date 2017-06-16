@@ -359,6 +359,21 @@ struct Coercion_traits<boost::multiprecision::number<B1, E1>, boost::multiprecis
       }
   };
 };
+// Avoid ambiguity with the specialization for <A,A> ...
+template <class B1, boost::multiprecision::expression_template_option E1>
+struct Coercion_traits<boost::multiprecision::number<B1, E1>, boost::multiprecision::number<B1, E1> >
+{
+  typedef boost::multiprecision::number<B1, E1> Type;
+  typedef Tag_true Are_implicit_interoperable;
+  typedef Tag_true Are_explicit_interoperable;
+  struct Cast{
+    typedef Type result_type;
+    template <class U>
+      Type operator()(const U& x) const {
+	return Type(x);
+      }
+  };
+};
 
 template <class T1, class T2, class T3, class T4, class T5, class U1, class U2, class U3, class U4, class U5>
 struct Coercion_traits <
@@ -367,6 +382,15 @@ boost::multiprecision::detail::expression<U1,U2,U3,U4,U5> >
 : Coercion_traits <
 typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type,
 typename boost::multiprecision::detail::expression<U1,U2,U3,U4,U5>::result_type>
+{ };
+// Avoid ambiguity with the specialization for <A,A> ...
+template <class T1, class T2, class T3, class T4, class T5>
+struct Coercion_traits <
+boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>,
+boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
+: Coercion_traits <
+typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type,
+typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type>
 { };
 
 template <class B, boost::multiprecision::expression_template_option E, class T1, class T2, class T3, class T4, class T5>
@@ -383,10 +407,55 @@ typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type,
 boost::multiprecision::number<B, E> >
 { };
 
-// TODO: coercion with int, long, double...
+// TODO: coercion with expressions, fix existing coercions
 // (double -> rational is implicit only for 1.56+, see ticket #10082)
+// The real solution would be to avoid specializing Coercion_traits for all pairs of number types and let it auto-detect what works, so only broken types need an explicit specialization.
+
+// Ignore types smaller than long
+#define CGAL_COERCE_INT(int) \
+template <class B1, boost::multiprecision::expression_template_option E1> \
+struct Coercion_traits<boost::multiprecision::number<B1, E1>, int> { \
+  typedef boost::multiprecision::number<B1, E1> Type; \
+  typedef Tag_true Are_implicit_interoperable; \
+  typedef Tag_true Are_explicit_interoperable; \
+  struct Cast{ \
+    typedef Type result_type; \
+    template <class U> Type operator()(const U& x) const { return Type(x); } \
+  }; \
+}; \
+template <class B1, boost::multiprecision::expression_template_option E1> \
+struct Coercion_traits<int, boost::multiprecision::number<B1, E1> > \
+: Coercion_traits<boost::multiprecision::number<B1, E1>, int> {}
+
+CGAL_COERCE_INT(short);
+CGAL_COERCE_INT(int);
+CGAL_COERCE_INT(long);
+#undef CGAL_COERCE_INT
+
+// Ignore bounded-precision rationals
+#define CGAL_COERCE_FLOAT(float) \
+template <class B1, boost::multiprecision::expression_template_option E1> \
+struct Coercion_traits<boost::multiprecision::number<B1, E1>, float> { \
+  typedef boost::multiprecision::number<B1, E1> Type; \
+  typedef Boolean_tag<boost::multiprecision::number_category<Type>::value != boost::multiprecision::number_kind_integer> Are_implicit_interoperable; \
+  typedef Are_implicit_interoperable Are_explicit_interoperable; \
+  struct Cast{ \
+    typedef Type result_type; \
+    template <class U> Type operator()(const U& x) const { return Type(x); } \
+  }; \
+}; \
+template <class B1, boost::multiprecision::expression_template_option E1> \
+struct Coercion_traits<float, boost::multiprecision::number<B1, E1> > \
+: Coercion_traits<boost::multiprecision::number<B1, E1>, float> {}
+
+CGAL_COERCE_FLOAT(float);
+CGAL_COERCE_FLOAT(double);
+#undef CGAL_COERCE_FLOAT
+
 
 } //namespace CGAL
+
+#include <CGAL/BOOST_MP_arithmetic_kernel.h>
 
 #endif // BOOST_VERSION
 #endif
