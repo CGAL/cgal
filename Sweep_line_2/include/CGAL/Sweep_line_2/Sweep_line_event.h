@@ -244,6 +244,18 @@ public:
     }
   }
 
+  /*! Remove a curve from the set of right curves. */
+  void remove_curve_from_right(Subcurve* curve)
+  {
+    Subcurve_iterator iter;
+    for (iter = m_rightCurves.begin(); iter!= m_rightCurves.end(); ++iter) {
+      if (curve->has_common_leaf(*iter)) {
+        m_leftCurves.erase(iter);
+        return;
+      }
+    }
+  }
+
   /*! Returns an iterator to the first curve to the left of the event. */
   Subcurve_iterator left_curves_begin() { return (m_leftCurves.begin()); }
 

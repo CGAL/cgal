@@ -722,21 +722,82 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , 
     left_event->add_curve_to_left(c1);
   if (!c2->is_start_point(left_event)) 
     left_event->add_curve_to_left(c2);
+  if (c1->is_start_point(left_event))
+    left_event->remove_curve_from_right(c1);
+  if (c2->is_start_point(left_event))
+    left_event->remove_curve_from_right(c2);
   
-  // Allocate a new Subcurve for the overlap
-  Subcurve* overlap_sc = this->m_subCurveAlloc.allocate(1);
-  this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
-  overlap_sc->set_hint(this->m_statusLine.end());
-  overlap_sc->init(overlap_cv);
-  overlap_sc->set_left_event(left_event);
-  overlap_sc->set_right_event(right_event);
-  m_overlap_subCurves.push_back(overlap_sc);
+  // Allocate the new Subcurve for the overlap
+  Subcurve* first_parent = c1;
+  Subcurve* second_parent = c2;
+
+  std::vector<Subcurve*> all_leaves_first;
+  std::vector<Subcurve*> all_leaves_second;
+  first_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_first));
+  second_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_second));
+  if (all_leaves_second.size() > all_leaves_first.size())
+  {
+    std::swap(first_parent,second_parent);
+    std::swap(all_leaves_first,all_leaves_second);
+  }
+
+  std::vector<Subcurve*> all_leaves_diff;
+  if (!all_leaves_first.empty() && !all_leaves_second.empty())
+  {
+    std::sort(all_leaves_first.begin(), all_leaves_first.end());
+    std::sort(all_leaves_second.begin(), all_leaves_second.end());
+
+    std::set_difference(all_leaves_second.begin(), all_leaves_second.end(),
+                        all_leaves_first.begin(), all_leaves_first.end(),
+                        std::back_inserter(all_leaves_diff));
+  }
+
+  Subcurve* overlap_sc;
+  if (all_leaves_second.size()==all_leaves_diff.size())
+  {
+    CGAL_SL_PRINT_TEXT("Allocate a new subcurve for the overlap (no common subcurves)");
+    CGAL_SL_PRINT_EOL();
+    // no duplicate only one curve is needed
+    overlap_sc = this->m_subCurveAlloc.allocate(1);
+    this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
+    overlap_sc->set_hint(this->m_statusLine.end());
+    overlap_sc->init(overlap_cv);
+    overlap_sc->set_left_event(left_event);
+    overlap_sc->set_right_event(right_event);
+    m_overlap_subCurves.push_back(overlap_sc);
+    // sets the two originating subcurves of overlap_sc
+    overlap_sc->set_originating_subcurve1(c1);
+    overlap_sc->set_originating_subcurve2(c2);
+  }
+  else{
+    if (all_leaves_diff.empty())
+    {
+      CGAL_SL_PRINT_TEXT("One overlapping curve entirely contains the other one");
+      CGAL_SL_PRINT_EOL();
+      overlap_sc=first_parent;
+    }
+    else
+    {
+      // create an overlapping curve per subcurve in second_parent that is not in first_parent
+      for (typename std::vector<Subcurve*>::iterator sc_it=all_leaves_diff.begin();
+                                                     sc_it!=all_leaves_diff.end();
+                                                     ++sc_it)
+      {
+        overlap_sc = this->m_subCurveAlloc.allocate(1); // \todo allocate all at once?
+        this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
+        overlap_sc->set_hint(this->m_statusLine.end());
+        overlap_sc->init(overlap_cv);
+        overlap_sc->set_left_event(left_event);
+        overlap_sc->set_right_event(right_event);
+        m_overlap_subCurves.push_back(overlap_sc);
+        // sets the two originating subcurves of overlap_sc
+        overlap_sc->set_originating_subcurve1(first_parent);
+        overlap_sc->set_originating_subcurve2(*sc_it);
+        first_parent=overlap_sc;
+      }
+    }
+  }
   left_event->set_overlap();
-  // sets the two originating subcurves of overlap_sc
-  overlap_sc->set_originating_subcurve1(c1);
-  overlap_sc->set_originating_subcurve2(c2);
-  // la courbe overlap peut contenir des duplicates... il faudrait appeler la fonction du dessous
-  //~ overlap_sc->set_originating_subcurves(c1, c2, right_event);
 
   CGAL_SL_PRINT_CURVE(c1);
   CGAL_SL_PRINT_TEXT(" + ");

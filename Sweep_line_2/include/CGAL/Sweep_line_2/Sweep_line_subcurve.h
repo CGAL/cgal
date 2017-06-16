@@ -154,16 +154,16 @@ public:
   { m_orig_subcurve2 = orig_subcurve2; }
 
   /*! Get all the leaf-nodes in the hierarchy of overlapping subcurves. */
-  template <typename OutputIterator>
+  template <typename Subcurve, typename OutputIterator>
   OutputIterator all_leaves(OutputIterator oi)
   {
     if (m_orig_subcurve1 == NULL) {
-      *oi++ = this;
+      *oi++ = static_cast<Subcurve*>(this);
       return oi;
     }
 
-    oi = m_orig_subcurve1->all_leaves(oi);
-    oi = m_orig_subcurve2->all_leaves(oi);
+    oi = m_orig_subcurve1->template all_leaves<Subcurve>(oi);
+    oi = m_orig_subcurve2->template all_leaves<Subcurve>(oi);
     return oi;
   }
 
@@ -189,8 +189,8 @@ public:
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
 
-    this->all_leaves(std::back_inserter(my_leaves));
-    s->all_leaves(std::back_inserter(other_leaves));
+    this->template all_leaves<Self>(std::back_inserter(my_leaves));
+    s->template all_leaves<Self>(std::back_inserter(other_leaves));
 
     typename std::list<Self*>::iterator iter;
     for (iter = my_leaves.begin(); iter != my_leaves.end(); ++iter) {
@@ -214,8 +214,8 @@ public:
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
 
-    this->all_leaves(std::back_inserter(my_leaves));
-    s->all_leaves(std::back_inserter(other_leaves));
+    this->template all_leaves<Self>(std::back_inserter(my_leaves));
+    s->template all_leaves<Self>(std::back_inserter(other_leaves));
 
     typename std::list<Self*>::iterator iter;
     for (iter = my_leaves.begin(); iter != my_leaves.end(); ++iter) {
@@ -263,12 +263,6 @@ public:
     unsigned int d2 = m_orig_subcurve2->number_of_original_curves();
     return d1+d2;
   }
-  
-  //~ void set_originating_subcurves(Subcurve* c1, Subcurve* c2, Event* right_event)
-  //~ {
-    
-  //~ }
-  
 
 #ifdef CGAL_SL_VERBOSE
   void Print() const;
