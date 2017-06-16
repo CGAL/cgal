@@ -24,6 +24,7 @@
 #include <CGAL/Modular_traits.h>
 // We can't just include all Boost.Multiprecision here...
 #include <boost/multiprecision/number.hpp>
+#include <boost/type_traits/common_type.hpp>
 
 // TODO: work on the coercions (end of the file)
 
@@ -452,6 +453,29 @@ CGAL_COERCE_FLOAT(float);
 CGAL_COERCE_FLOAT(double);
 #undef CGAL_COERCE_FLOAT
 
+template <>
+class Input_rep<mpq_class> : public IO_rep_is_specialized {
+    mpq_class& q;
+public:
+    Input_rep( mpq_class& qq) : q(qq) {}
+    std::istream& operator()( std::istream& in) const {
+      internal::read_float_or_quotient<mpz_class,mpq_class>(in, q);
+      return in;
+    }
+};
+
+// Copied from leda_rational.h
+namespace internal {
+  // See: Stream_support/include/CGAL/IO/io.h
+  template <typename ET>
+  void read_float_or_quotient(std::istream & is, ET& et);
+
+  template <>
+  inline void read_float_or_quotient(std::istream & is, boost::multiprecision::cpp_rational& et)
+  {
+    internal::read_float_or_quotient<boost::multiprecision::cpp_int,boost::multiprecision::cpp_rational>(is, et);
+  }
+} // namespace internal
 
 } //namespace CGAL
 

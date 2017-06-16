@@ -21,6 +21,7 @@
 #include <CGAL/Get_arithmetic_kernel.h>
 
 #include <CGAL/boost_mp.h>
+#include <boost/multiprecision/cpp_int.hpp>
 
 // FIXME: the could be several kernels based on Boost.Multiprecision.
 

@@ -28,6 +28,7 @@
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/MP_Float.h>
@@ -58,6 +59,14 @@ namespace QP_from_mps_detail {
   struct MPS_type_name<int> {
     static const char *name() { return "integer"; }
   };
+  template<>
+  struct MPS_type_name<boost::multiprecision::cpp_rational> {
+    static const char *name() { return "rational"; }
+  };
+  template<>
+  struct MPS_type_name<boost::multiprecision::cpp_int> {
+    static const char *name() { return "integer"; }
+  };
 #ifdef CGAL_USE_GMPXX
   template<>
   struct MPS_type_name<mpq_class> {
@@ -80,13 +89,19 @@ namespace QP_from_mps_detail {
   template<>
   struct MPS_type_name<CGAL::Quotient<CGAL::MP_Float> > {
     static const char *name() { return "rational"; }
-  }; template<typename IT>
+  };
+
+  template<typename IT>
   struct IT_to_ET {
   };
   
   template<>
   struct IT_to_ET<double> {
     typedef CGAL::MP_Float ET;
+  };
+  template<>
+  struct IT_to_ET<boost::multiprecision::cpp_rational> {
+    typedef boost::multiprecision::cpp_rational ET;
   };
 
 #ifdef CGAL_USE_GMP
