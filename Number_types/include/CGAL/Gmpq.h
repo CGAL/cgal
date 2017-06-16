@@ -156,6 +156,17 @@ namespace Eigen {
       MulCost = 100
     };
   };
+
+  namespace internal {
+    template<>
+      struct significant_decimals_impl<CGAL::Gmpq>
+      {
+	static inline int run()
+	{
+	  return 0;
+	}
+      };
+  }
 }
 
 //since types are included by Gmp_coercion_traits.h:
