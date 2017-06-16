@@ -78,6 +78,9 @@ public:
   qglviewer::Vec BPoint;
   qglviewer::Vec offset;
   bool is_d_pressed;
+  bool extension_is_found;
+
+  TextRenderer *textRenderer;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.
@@ -112,8 +115,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->offset = qglviewer::Vec(0,0,0);
-  textRenderer = new TextRenderer();
-  connect( textRenderer, SIGNAL(sendMessage(QString,int)),
+  d->textRenderer = new TextRenderer();
+  connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
   setShortcut(EXIT_VIEWER, 0);
@@ -233,19 +236,19 @@ void Viewer::initializeGL()
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glDrawArraysInstancedARB : extension not found. Spheres will be displayed as points.";
-      extension_is_found = false;
+      d->extension_is_found = false;
   }
   else
-      extension_is_found = true;
+      d->extension_is_found = true;
 
   glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)this->context()->getProcAddress("glVertexAttribDivisorARB");
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glVertexAttribDivisorARB : extension not found. Spheres will be displayed as points.";
-      extension_is_found = false;
+      d->extension_is_found = false;
   }
   else
-      extension_is_found = true;
+      d->extension_is_found = true;
 
 
   setBackgroundColor(::Qt::white);
@@ -1069,7 +1072,7 @@ void Viewer::drawVisualHints()
     TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,d->fpsString,false, QFont(), Qt::gray);
     if(FPSIsDisplayed())
     {
-      textRenderer->addText(fps_text);
+      d->textRenderer->addText(fps_text);
     }
     //Prints the displayMessage
     QFont font = QFont();
@@ -1077,13 +1080,13 @@ void Viewer::drawVisualHints()
     TextItem *message_text = new TextItem(10 + fm.width(d->message)/2, height()-20, 0, d->message, false, QFont(), Qt::gray );
     if (d->_displayMessage)
     {
-      textRenderer->addText(message_text);
+      d->textRenderer->addText(message_text);
     }
-    textRenderer->draw(this);
+    d->textRenderer->draw(this);
     if(FPSIsDisplayed())
-      textRenderer->removeText(fps_text);
+      d->textRenderer->removeText(fps_text);
     if (d->_displayMessage)
-      textRenderer->removeText(message_text);
+      d->textRenderer->removeText(message_text);
 }
 
 void Viewer::resizeGL(int w, int h)
@@ -1314,7 +1317,7 @@ void Viewer_impl::showDistance(QPoint pixel)
 
         distance_text.append(centerCoord);
         Q_FOREACH(TextItem* ti, distance_text)
-          viewer->textRenderer->addText(ti);
+          textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
                   .arg(APoint.x-offset.x)
                   .arg(APoint.y-offset.y)
@@ -1332,7 +1335,7 @@ void Viewer_impl::clearDistancedisplay()
   distance_is_displayed = false;
   Q_FOREACH(TextItem* ti, distance_text)
   {
-    viewer->textRenderer->removeText(ti);
+    textRenderer->removeText(ti);
     delete ti;
   }
   distance_text.clear();
@@ -1584,5 +1587,15 @@ void Viewer::updateIds(CGAL::Three::Scene_item * item)
 
   d->scene->updatePrimitiveIds(this, item);
   d->scene->updatePrimitiveIds(this, item);
+}
+
+TextRenderer* Viewer::textRenderer()
+{
+  return d->textRenderer;
+}
+
+bool Viewer::isExtensionFound()
+{
+  return d->extension_is_found;
 }
  #include "Viewer.moc"

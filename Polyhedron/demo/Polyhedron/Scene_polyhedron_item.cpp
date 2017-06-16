@@ -863,11 +863,11 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
 
       //Clears the targeted Id
       if(d)
-        v->textRenderer->removeText(d->targeted_id);
+        v->textRenderer()->removeText(d->targeted_id);
       //Remove textitems
       if(textItems)
       {
-        v->textRenderer->removeTextList(textItems);
+        v->textRenderer()->removeTextList(textItems);
         delete textItems;
         textItems=NULL;
       }
@@ -1680,7 +1680,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
-  TextRenderer *renderer = viewer->textRenderer;
+  TextRenderer *renderer = viewer->textRenderer();
   renderer->getLocalTextItems().removeAll(d->targeted_id);
   renderer->removeTextList(textItems);
   textItems->clear();
@@ -1802,7 +1802,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
 void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *viewer) const 
 {
-  TextRenderer *renderer = viewer->textRenderer;
+  TextRenderer *renderer = viewer->textRenderer();
 
 
   if(!d->all_ids_displayed)
@@ -1868,7 +1868,7 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
   d->all_ids_displayed = !d->all_ids_displayed;
 }
 
-bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
+bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   Kernel::Point_3 src(x - offset.x,

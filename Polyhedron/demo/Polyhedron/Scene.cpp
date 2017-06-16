@@ -4,9 +4,13 @@
 
 #include "config.h"
 #include "Scene.h"
+
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/Three/Scene_print_interface_item.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
+
+#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
+
 
 #include <QObject>
 #include <QMetaObject>
@@ -855,7 +859,7 @@ void Scene::moveRowDown()
     }
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
-    return selected_item;
+    return (selectionIndices().size() == 1) ? selected_item : -1;
 }
 
 QList<int> Scene::selectionIndices() const {
@@ -897,10 +901,9 @@ void Scene::itemChanged(Item_id i)
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
-  //  Q_EMIT restoreCollapsedState();
 }
 
-void Scene::itemChanged(CGAL::Three::Scene_item* /* item */)
+void Scene::itemChanged(CGAL::Three::Scene_item*)
 {
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
@@ -1133,18 +1136,13 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
     Q_EMIT updated();
 }
 
-float Scene::get_bbox_length() const
-{
-    return bbox().ymax()-bbox().ymin();
-}
-
 void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer)
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
-    //Only call printPrimitiveId if the item is a Scene_print_interface_item
-    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    //Only call printPrimitiveId if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printPrimitiveId(point, viewer);
   }
@@ -1154,8 +1152,8 @@ void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
-    //Only call printPrimitiveIds if the item is a Scene_print_interface_item
-    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    //Only call printPrimitiveIds if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printPrimitiveIds(viewer);
   }
@@ -1164,8 +1162,8 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
 {
   if(it)
   {
-    //Only call printPrimitiveIds if the item is a Scene_print_interface_item
-    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    //Only call printPrimitiveIds if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
     {
       //As this function works as a toggle, the first call hides the ids and the second one  shows them again,
@@ -1178,9 +1176,12 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
 bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
     CGAL::Three::Scene_item *i = item(mainSelectionIndex());
-    if(i && i->visible())
+    if(!i)
+      return false;
+    Scene_print_item_interface* spit= qobject_cast<Scene_print_item_interface*>(i);
+    if(spit && i->visible())
     {
-        bool res = i->testDisplayId(x,y,z, viewer);
+        bool res = spit->testDisplayId(x,y,z, viewer);
         return res;
     }
     else

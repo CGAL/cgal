@@ -94,7 +94,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     return;
   poly_item->polyhedron()->normalize_border();
   if(poly_item->polyhedron()->size_of_border_halfedges()==0)
-    message->warning("The polyhedorn has no border, therefore the Parameterization cannot apply.");
+    message->warning("The polyhedron has no border, therefore the Parameterization cannot apply.");
   Polyhedron* pMesh = poly_item->polyhedron();
   if(!pMesh)
     return;
