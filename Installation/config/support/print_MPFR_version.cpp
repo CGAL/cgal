@@ -25,6 +25,8 @@
 // Tests if MPFR is available.
 
 #include <iostream>
+#include <cstdio>
+#include <cstddef>
 #include "mpfr.h"
 
 int main()
