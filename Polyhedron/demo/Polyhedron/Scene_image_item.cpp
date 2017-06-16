@@ -214,7 +214,7 @@ add_to_normal(unsigned char v,
 class Vertex_buffer_helper
 {
 public:
-  Vertex_buffer_helper(const Image_accessor& data, bool is_recent);
+  Vertex_buffer_helper(const Image_accessor& data, bool is_ogl_4_3);
   
   void fill_buffer_data();
 
@@ -252,14 +252,14 @@ private:
   Indices indices_;
   std::vector<GLfloat> colors_, normals_, vertices_;
   std::vector<GLuint> quads_;
-  bool is_recent;
+  bool is_ogl_4_3;
 };
 
 int Vertex_buffer_helper::vertex_not_found_ = -1;
 
 Vertex_buffer_helper::
 Vertex_buffer_helper(const Image_accessor& data, bool b)
-  : data_(data), is_recent(b)
+  : data_(data), is_ogl_4_3(b)
 {}
 
 
@@ -374,7 +374,7 @@ Vertex_buffer_helper::push_quad(int pos1, int pos2, int pos3, int pos4)
     quads_.push_back(pos1);
     quads_.push_back(pos2);
     quads_.push_back(pos3);
-    if(!is_recent)
+    if(!is_ogl_4_3)
     {
       quads_.push_back(pos1);
       quads_.push_back(pos3);
@@ -424,7 +424,7 @@ struct Scene_image_item_priv
   {
     item = parent;
     v_box = new std::vector<float>();
-    is_recent = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->isRecent();
+    is_ogl_4_3 = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
     is_hidden = hidden;
     compile_shaders();
     initializeBuffers();
@@ -465,7 +465,7 @@ struct Scene_image_item_priv
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   bool is_hidden;
-  bool is_recent;
+  bool is_ogl_4_3;
   Scene_image_item* item;
 
 //#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
@@ -498,7 +498,7 @@ void Scene_image_item_priv::compile_shaders()
     vao[i].create();
   m_ibo = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
   m_ibo->create();
-  if(!is_recent)
+  if(!is_ogl_4_3)
   {
     //Vertex source code
     const char vertex_source[] =
@@ -755,7 +755,7 @@ Scene_image_item_priv::initializeBuffers()
                                                   m_voxel_scale,
                                                   m_voxel_scale,
                                                   m_voxel_scale);
-    internal::Vertex_buffer_helper helper (image_data_accessor, is_recent);
+    internal::Vertex_buffer_helper helper (image_data_accessor, is_ogl_4_3);
     helper.fill_buffer_data();
     rendering_program.bind();
     vao[0].bind();
@@ -809,7 +809,7 @@ Scene_image_item_priv::draw_gl(Viewer_interface* viewer) const
   if(!is_hidden)
   {
     vao[0].bind();
-    if(!is_recent)
+    if(!is_ogl_4_3)
       viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
     else
       viewer->glDrawElements(GL_LINES_ADJACENCY, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);

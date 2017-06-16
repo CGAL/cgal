@@ -535,7 +535,7 @@ void
 Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the facets
-    if(!viewer->isRecent() && !no_flat)
+    if(!viewer->isOpenGL_4_3() && !no_flat)
     {
       //flat
       if(viewer->property("draw_two_sides").toBool())
@@ -611,7 +611,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   }
   item->vaos[Gouraud_Facets]->release();
   program->release();
-  if(viewer->isRecent())
+  if(viewer->isOpenGL_4_3())
   {
     //modern flat
     program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_FLAT, viewer);
@@ -1188,13 +1188,15 @@ QMenu* Scene_polyhedron_item::contextMenu()
     actionEraseNextFacet->setObjectName("actionEraseNextFacet");
     connect(actionEraseNextFacet, SIGNAL(toggled(bool)),
             this, SLOT(set_erase_next_picked_facet(bool)));
-    QAction* actionDisableFlatShading=
-        menu->addAction(tr("Disable Flat Shading"));
-    actionDisableFlatShading->setCheckable(true);
-    actionDisableFlatShading->setObjectName("actionDisableFlatShading");
-    connect(actionDisableFlatShading, SIGNAL(toggled(bool)),
-            this, SLOT(set_flat_disabled(bool)));
-
+    if(! static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->isOpenGL_4_3())
+    {
+      QAction* actionDisableFlatShading=
+          menu->addAction(tr("Disable Flat Shading"));
+      actionDisableFlatShading->setCheckable(true);
+      actionDisableFlatShading->setObjectName("actionDisableFlatShading");
+      connect(actionDisableFlatShading, SIGNAL(toggled(bool)),
+              this, SLOT(set_flat_disabled(bool)));
+    }
     menu->setProperty(prop_name, true);
   }
 
@@ -1245,14 +1247,14 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        d->compute_normals_and_vertices(viewer->isRecent(),
+        d->compute_normals_and_vertices(viewer->isOpenGL_4_3(),
                                         false,
                                         viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }
 
-    if(viewer->isRecent() &&
+    if(viewer->isOpenGL_4_3() &&
        (renderingMode() == Flat || renderingMode() == FlatPlusEdges))
     {
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->bind();
@@ -1272,7 +1274,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
     }
-    else if(!viewer->isRecent()&&
+    else if(!viewer->isOpenGL_4_3()&&
             (renderingMode() == Flat || renderingMode() == FlatPlusEdges))
     {
       vaos[Scene_polyhedron_item_priv::Facets]->bind();
@@ -1326,7 +1328,7 @@ void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
 {
     if (!are_buffers_filled)
     {
-        d->compute_normals_and_vertices(viewer->isRecent(), false,
+        d->compute_normals_and_vertices(viewer->isOpenGL_4_3(), false,
                                         viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
@@ -1375,7 +1377,7 @@ void
 Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        d->compute_normals_and_vertices(viewer->isRecent(), false, viewer->property("draw_two_sides").toBool());
+        d->compute_normals_and_vertices(viewer->isOpenGL_4_3(), false, viewer->property("draw_two_sides").toBool());
         d->initialize_buffers(viewer);
         compute_bbox();
     }

@@ -43,7 +43,7 @@ public:
   bool _displayMessage;
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
-  bool is_recent;
+  bool is_ogl_4_3;
 
   //! Holds useful data to draw the axis system
   struct AxisData
@@ -246,11 +246,11 @@ void Viewer::initializeGL()
     format.setVersion(2,1);
     new_context->setFormat(format);
     created = new_context->create();
-    d->is_recent = false;
+    d->is_ogl_4_3 = false;
   }
   else
   {
-    d->is_recent = true;
+    d->is_ogl_4_3 = true;
     d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
   }
   CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
@@ -259,7 +259,7 @@ void Viewer::initializeGL()
   context()->makeCurrent();
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
-  if(isRecent())
+  if(isOpenGL_4_3())
   {
    d->_recentFunctions->initializeOpenGLFunctions();
   }
@@ -1674,6 +1674,9 @@ void Viewer::enableClippingBox(QVector4D box[6])
 }
 
 bool Viewer::isRecent() const { return d->is_recent; }
+
+
+bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 
 QOpenGLFunctions_4_3_Compatibility* Viewer::recentFunctions() { return d->_recentFunctions; }
 

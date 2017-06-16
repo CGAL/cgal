@@ -151,7 +151,7 @@ protected:
   double prev_radius;
 
 public:
-  bool isRecent() const;
+  bool isOpenGL_4_3() const;
   QOpenGLFunctions_4_3_Compatibility* recentFunctions();
 
 }; // end class Viewer

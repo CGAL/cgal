@@ -238,11 +238,11 @@ public:
   //! Is used to know if the openGL context is 4.3 or 2.1.
   //! @returns `true` if the context is 4.3.
   //! @returns `false` if the context is 2.1.
-  virtual bool isRecent() const = 0;
+  virtual bool isOpenGL_4_3() const = 0;
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
-  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isRecent()` is `true`
-  //! @returns NULL if `isRecent()` is `false`
+  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
+  //! @returns NULL if `isOpenGL_4_3()` is `false`
   virtual QOpenGLFunctions_4_3_Compatibility* recentFunctions() = 0;
 }; // end class Viewer_interface
 }
