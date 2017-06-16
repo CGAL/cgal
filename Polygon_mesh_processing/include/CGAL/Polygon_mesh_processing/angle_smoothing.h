@@ -1,11 +1,12 @@
 #ifndef ANGLE_SMOOTHING_H
 #define ANGLE_SMOOTHING_H
-
+//#define CGAL_ANGLE_BASE_SMOOTHING_DEBUG
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
 
 namespace CGAL {
 
@@ -18,6 +19,7 @@ namespace Polygon_mesh_processing {
 template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
 class Angle_remesher
 {
+
 
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -49,7 +51,6 @@ public:
         std::map<vertex_descriptor, Point> barycenters;
         boost::vector_property_map<Vector> n_map;
 
-
         for(vertex_descriptor v : vertices(mesh_))
         {
 
@@ -58,6 +59,7 @@ public:
                 #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
                 std::cout<<"processing vertex: "<< v << std::endl;
                 #endif
+
 
                 // compute normal to v
                 Vector vn = compute_vertex_normal(v, mesh_,
@@ -181,43 +183,51 @@ private:
         Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
         Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
 
-        Vector bisector = CGAL::NULL_VECTOR;
         Vector edge1(s, equidistant_p1);
         Vector edge2(s, equidistant_p2);
-
+        Vector s_pv(s, pv);
 
 
         // check degenerate cases
-        if( (edge1 == CGAL::NULL_VECTOR || edge2 == CGAL::NULL_VECTOR) ||
-            (CGAL::collinear(s, pv, equidistant_p1) && CGAL::collinear(s, pv, equidistant_p2)) )
+        double tolerance = 1e-5; // to think about it
+
+        if ( edge1.squared_length()          < tolerance ||
+             edge2.squared_length()          < tolerance ||
+             sqlength(main_he)               < tolerance ||
+             (edge1 - s_pv).squared_length() < tolerance ||
+             (edge2 - s_pv).squared_length() < tolerance   )
         {
-            // angle is 0
             return CGAL::NULL_VECTOR;
         }
 
-        else
+        CGAL_assertion(s_pv.squared_length() > tolerance);
+
+        // get bisector
+        Vector bisector = CGAL::NULL_VECTOR;
+        internal::normalize(edge1, GeomTraits());
+        internal::normalize(edge2, GeomTraits());
+        bisector = edge1 + edge2;
+
+
+        // under 2 degrees deviation consider it flat
+        if( bisector.squared_length() < 0.001 ) // sin(theta) = 0.0316 => theta = 1.83
         {
-            // normal case
-            internal::normalize(edge1, GeomTraits());
-            internal::normalize(edge2, GeomTraits());
-            bisector = edge1 + edge2;
 
+            // angle is (almost) 180 degrees, take the perpendicular
+            Vector normal_vec = find_perpendicular(edge1, s, pv); // normal to edge and found on (s-pv)'s plane
 
-            if ( (CGAL::collinear(s, equidistant_p1, equidistant_p2)) ||
-                 (bisector.squared_length()) < 0.01  ) // sin(theta) = 0.01
+            CGAL_assertion(normal_vec != CGAL::NULL_VECTOR);
+            CGAL_assertion(CGAL::scalar_product(edge1, normal_vec) < tolerance);
+
+            Segment b_segment(s, s + normal_vec);
+            Point b_segment_end = b_segment.target();
+
+            if(CGAL::angle(b_segment_end, s, pv) == CGAL::OBTUSE)
             {
-                //angle is (almost) 180 degrees, take the perpendicular
-                Vector edge(s, equidistant_p1);
-                Vector normal_vec(-edge.y(), edge.x(), edge.z());
-                Segment b_segment(s, s + normal_vec);
-                Point b_segment_end = b_segment.target();
-
-                if(CGAL::angle(b_segment_end, s, pv) == CGAL::OBTUSE)
-                    b_segment = b_segment.opposite();
-
-                bisector = Vector(b_segment);
+                b_segment = b_segment.opposite();
             }
 
+            bisector = Vector(b_segment);
 
         }
 
@@ -229,10 +239,9 @@ private:
         double bisector_length = CGAL::sqrt(bisector.squared_length());
 
 
-        double tol = 1e-2; // temp; set dependant on the mesh - maybe min of edges
 
-        CGAL_assertion(   ( target_length - tol    <   bisector_length     ) &&
-                          ( bisector_length        <   target_length + tol )    );
+        CGAL_assertion(   ( target_length - tolerance    <   bisector_length     ) &&
+                          ( bisector_length        <   target_length + tolerance )    );
 
 
         return bisector;
@@ -241,6 +250,22 @@ private:
     }
 
 
+    Vector find_perpendicular(const Vector& input_vec, const Point& s, const Point& pv)
+    {
+        Vector s_pv(s, pv);
+        Vector aux_normal = CGAL::cross_product(input_vec, s_pv);
+
+        return CGAL::cross_product(aux_normal, input_vec);
+
+    }
+
+    Vector max_vector(const Vector& vec1, const Vector& vec2)
+    {
+        if (vec1.squared_length() > vec2.squared_length())
+            return vec1;
+        else
+            return vec2;
+    }
 
     void correct_bisector(Vector& bisector_vec, const halfedge_descriptor& main_he)
     {
@@ -248,7 +273,7 @@ private:
         // get common vertex around which the edge is rotated
         Point s = get(vpmap_, target(main_he, mesh_));
 
-        // create a segment to be able to translate - avoid it?
+        // create a segment to be able to translate
         Segment bisector(s, s + bisector_vec);
 
         // scale
@@ -328,3 +353,4 @@ void angle_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
 
 
 #endif // ANGLE_SMOOTHING_H
+
