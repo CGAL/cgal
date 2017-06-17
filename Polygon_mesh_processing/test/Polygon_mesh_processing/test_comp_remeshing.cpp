@@ -27,6 +27,7 @@ int main(int argc, char* argv[]){
     std::ofstream output;
 #endif
 
+
     ///
     filename = "data/polygon3D.off";
     input.open(filename);
@@ -40,8 +41,8 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-    //CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
 
 
     input.close();
@@ -66,8 +67,8 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-    //CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
 
 
     input.close();
@@ -77,6 +78,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/cube_quad.off";
@@ -91,8 +93,8 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-    //CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
 
 
     input.close();
@@ -102,6 +104,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/elephant.off";
@@ -116,7 +119,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -138,7 +143,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -160,7 +167,8 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
 
     input.close();
 
@@ -169,6 +177,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/joint_refined.off";
@@ -183,7 +192,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -192,6 +203,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/mannequin-devil.off";
@@ -206,7 +218,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 #ifdef CGAL_TEST_COMP_REMESHING_OUTPUT
@@ -214,6 +228,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/mech-holes-shark.off";
@@ -228,7 +243,8 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
 
     input.close();
 
@@ -237,6 +253,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/non_manifold_vertex.off";
@@ -250,7 +267,10 @@ std::cout<<"case: "<< filename << std::endl;
         std::cerr << "Not a valid .off file." << std::endl;
         return 1;
     }
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+
+   // CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -259,6 +279,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/overlapping_triangles.off";
@@ -273,7 +294,8 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
 
     input.close();
 
@@ -282,6 +304,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/tetra1.off";
@@ -296,7 +319,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -305,6 +330,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/tetra2.off";
@@ -319,7 +345,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -328,6 +356,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/tetra3.off";
@@ -342,7 +371,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -351,6 +382,7 @@ std::cout<<"case: "<< filename << std::endl;
     output << mesh;
     output.close();
 #endif
+
 
     ///
     filename = "data/tetra4.off";
@@ -365,7 +397,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -388,7 +422,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
@@ -398,28 +434,6 @@ std::cout<<"case: "<< filename << std::endl;
     output.close();
 #endif
 
-    ///
-    filename = "data/degtri_nullface.off";
-    input.open(filename);
-
-#ifdef CGAL_TEST_COMP_REMESHING_DEBUG
-std::cout<<"case: "<< filename << std::endl;
-#endif
-
-    if (!input || !(input >> mesh) || mesh.is_empty()) {
-        std::cerr << "Not a valid .off file." << std::endl;
-        return 1;
-    }
-
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-
-    input.close();
-
-#ifdef CGAL_TEST_COMP_REMESHING_OUTPUT
-    output.open("data/degtri_nullface_smoothed.off");
-    output << mesh;
-    output.close();
-#endif
 
     ///
     filename = "data/U.off";
@@ -434,7 +448,9 @@ std::cout<<"case: "<< filename << std::endl;
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+
 
     input.close();
 
