@@ -264,7 +264,7 @@ public:
 
   // extract the approximated mesh from a partition
   template<typename FacetSegmentMap>
-  void extract_mesh(FacetSegmentMap &seg_pmap) {
+  void extract_mesh(FacetSegmentMap &seg_pmap, std::vector<int> &tris) {
     compute_proxy_area(seg_pmap);
     compute_proxy_center(seg_pmap);
 
@@ -272,7 +272,7 @@ public:
     find_edges(seg_pmap);
     add_anchors(seg_pmap);
 
-    pseudo_CDT(seg_pmap);
+    pseudo_CDT(seg_pmap, tris);
   }
 
   std::vector<Anchor> collect_anchors() {
@@ -574,7 +574,8 @@ private:
   }
 
   template<typename FacetSegmentMap>
-  void pseudo_CDT(const FacetSegmentMap &seg_pmap) {
+  void pseudo_CDT(const FacetSegmentMap &seg_pmap,
+    std::vector<int> &tris) {
     // subgraph attached with vertex anchor status and edge weight
     typedef boost::property<boost::vertex_index1_t, int> VertexProperty;
     typedef boost::property<boost::edge_weight_t, FT,
@@ -583,6 +584,8 @@ private:
       boost::listS, boost::vecS,
       boost::undirectedS,
       VertexProperty, EdgeProperty> > SubGraph;
+    typedef boost::property_map<SubGraph, boost::vertex_index1_t>::type VertexIndexPMap;
+    typedef boost::property_map<SubGraph, boost::edge_weight_t>::type EdgeWeightPMap;
     typedef SubGraph::vertex_descriptor sg_vertex_descriptor;
     typedef SubGraph::vertex_iterator sg_vertex_iterator;
     typedef SubGraph::edge_descriptor sg_edge_descriptor;
@@ -593,72 +596,55 @@ private:
     SGVertexMap sg_vertex_map;
     SGVertexPMap sg_vertex_pmap(sg_vertex_map);
 
-    // typedef std::map<sg_edge_descriptor, FT> EdgeWeightMap;
-    // typedef boost::associative_property_map<EdgeWeightMap> EdgeWeightPMap;
-    // EdgeWeightMap edge_weight_map;
-    // EdgeWeightPMap edge_weight_pmap(edge_weight_map);
-
-    // convert the Polyhedron mesh into a SubGraph
     SubGraph gmain;
-    boost::property_map<SubGraph, boost::vertex_index1_t>::type
-      vertex_anchor_pmap = get(boost::vertex_index1, gmain);
-      
+    VertexIndexPMap vertex_anchor_pmap = get(boost::vertex_index1, gmain);
+    EdgeWeightPMap edge_weight_pmap = get(boost::edge_weight, gmain);
+    // mapping the Polyhedron mesh into a SubGraph
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
       // sg_vertex_descriptor sgv = add_vertex(vertex_status_pmap[v], gmain);
       sg_vertex_descriptor sgv = add_vertex(gmain);
       vertex_anchor_pmap[sgv] = vertex_status_pmap[v];
       sg_vertex_map.insert(std::pair<vertex_descriptor, sg_vertex_descriptor>(v, sgv));
     }
-
-    typedef boost::property_map<SubGraph, boost::edge_weight_t>::type EdgeWeightPMap;
-    EdgeWeightPMap edge_weight_pmap = get(boost::edge_weight, gmain);
     BOOST_FOREACH(edge_descriptor e, edges(mesh)) {
       vertex_descriptor vs = source(e, mesh);
       vertex_descriptor vt = target(e, mesh);
       FT len(std::sqrt(CGAL::to_double(
         CGAL::squared_distance(vertex_point_pmap[vs], vertex_point_pmap[vt]))));
-      // add_edge(sg_vertex_pmap[vs], sg_vertex_pmap[vt], len, gmain);
-      sg_edge_descriptor sge = add_edge(sg_vertex_pmap[vs], sg_vertex_pmap[vt], len, gmain).first;
-      // edge_weight_map.insert(std::pair<sg_edge_descriptor, FT>(sge, len));
-      // edge_weight_pmap[sge] = len;
+      add_edge(sg_vertex_pmap[vs], sg_vertex_pmap[vt], len, gmain);
     }
 
     std::vector<std::vector<sg_vertex_descriptor> > vertex_patches(proxies.size());
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
       std::set<std::size_t> px_set;
-      BOOST_FOREACH(face_descriptor f, faces_around_target(halfedge(v, mesh), mesh))
-        px_set.insert(seg_pmap[f]);
+      BOOST_FOREACH(face_descriptor f, faces_around_target(halfedge(v, mesh), mesh)) {
+        if (f != boost::graph_traits<Polyhedron>::null_face())
+          px_set.insert(seg_pmap[f]);
+      }
       BOOST_FOREACH(std::size_t p, px_set)
         vertex_patches[p].push_back(sg_vertex_pmap[v]);
     }
     for (std::size_t px_idx = 0; px_idx < proxies.size(); ++px_idx) {
-      // construct subgraph
-      SubGraph &gsub = gmain.create_subgraph();
-
       // add a super vertex connecting to its boundary anchors into the global graph
       // const sg_vertex_descriptor super_sgv = add_vertex(SUPERVERTEX, gmain);
       const sg_vertex_descriptor super_sgv = add_vertex(gmain);
       vertex_anchor_pmap[super_sgv] = SUPERVERTEX;
-      const sg_vertex_descriptor lg_source = add_vertex(super_sgv, gsub);
       BOOST_FOREACH(sg_vertex_descriptor sgv, vertex_patches[px_idx]) {
-        add_vertex(sgv, gsub);
         if (vertex_anchor_pmap[sgv] >= 0) {
-          sg_edge_descriptor sge = add_edge(super_sgv, sgv, FT(0), gmain).first;
-          // edge_weight_map.insert(std::pair<sg_edge_descriptor, FT>(sge, FT(0)));
-          // edge_weight_pmap[sge] = FT(0);
+          add_edge(super_sgv, sgv, FT(0), gmain);
         }
       }
 
-      // algorithm are applied to the local descriptors
-      // EdgeWeightMap lg_edge_weight_map;
-      // EdgeWeightPMap lg_edge_weight_pmap(lg_edge_weight_map);
-      EdgeWeightPMap lg_edge_weight_pmap = get(boost::edge_weight, gsub);
-      // BOOST_FOREACH(sg_edge_descriptor lge, edges(gsub)) {
-      //   lg_edge_weight_map.insert(
-      //     std::pair<sg_edge_descriptor, FT>(
-      //       lge, edge_weight_pmap[gsub.local_to_global(lge)]));
-      // }
+      // construct subgraph
+      SubGraph &gsub = gmain.create_subgraph();
+      add_vertex(super_sgv, gsub);
+      BOOST_FOREACH(sg_vertex_descriptor sgv, vertex_patches[px_idx])
+        add_vertex(sgv, gsub);
 
+      // algorithm are applied to the local descriptors
+      EdgeWeightPMap lg_edge_weight_pmap = get(boost::edge_weight, gsub);
+
+      const sg_vertex_descriptor lg_source = gsub.global_to_local(super_sgv);
       // vectors to store the predecessors
       std::vector<sg_vertex_descriptor> pred(num_vertices(gsub));
       boost::dijkstra_shortest_paths(gsub, lg_source,
@@ -675,8 +661,52 @@ private:
           curr = pred[curr];
           anchor_idx = vertex_anchor_pmap[gsub.local_to_global(curr)];
         }
-        // put(vertex_anchor_pmap, gsub.local_to_global(lgv), anchor_idx);
         vertex_anchor_pmap[gsub.local_to_global(lgv)] = anchor_idx;
+      }
+    }
+
+    // tag all boundary chord
+    BOOST_FOREACH(const Border &bdr, borders) {
+      const halfedge_descriptor he_mark = bdr.he_head;
+      halfedge_descriptor he = he_mark;
+      do {
+        ChordVector chord;
+        walk_to_next_anchor(he, chord, seg_pmap);
+
+        std::vector<FT> vdist;
+        vdist.push_back(FT(0));
+        BOOST_FOREACH(halfedge_descriptor h, chord) {
+          FT elen = edge_weight_pmap[edge(
+            sg_vertex_pmap[source(h, mesh)],
+            sg_vertex_pmap[target(h, mesh)],
+            gmain).first];
+          vdist.push_back(vdist.back() + elen);
+        }
+
+        FT half_chord_len = vdist.back() / FT(2);
+        const int anchorleft = vertex_status_pmap[source(chord.front(), mesh)];
+        const int anchorright = vertex_status_pmap[target(chord.back(), mesh)];
+        std::vector<FT>::iterator ditr = vdist.begin() + 1;
+        for (ChordVector::iterator hitr = chord.begin();
+          hitr != chord.end() - 1; ++hitr, ++ditr) {
+          if (*ditr < half_chord_len)
+            vertex_anchor_pmap[sg_vertex_pmap[target(*hitr, mesh)]] = anchorleft;
+          else
+            vertex_anchor_pmap[sg_vertex_pmap[target(*hitr, mesh)]] = anchorright;
+        }
+      } while(he != he_mark);
+    }
+
+    // collect triangles
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      halfedge_descriptor he = halfedge(f, mesh);
+      int i = vertex_anchor_pmap[sg_vertex_pmap[source(he, mesh)]];
+      int j = vertex_anchor_pmap[sg_vertex_pmap[target(he, mesh)]];
+      int k = vertex_anchor_pmap[sg_vertex_pmap[target(next(he, mesh), mesh)]];
+      if (i != j && i != k && j != k) {
+        tris.push_back(i);
+        tris.push_back(j);
+        tris.push_back(k);
       }
     }
   }
