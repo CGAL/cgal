@@ -124,10 +124,12 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
       }
       else
       {
+        this->m_currentEvent->push_back_curve_to_left(sc);
+        this->m_currentEvent->set_weak_intersection();
         if (!_add_curve_to_right(this->m_currentEvent, sc))
         {
           // no overlap
-          this->m_currentEvent->push_back_curve_to_left(sc);
+          this->m_visitor->update_event(this->m_currentEvent, sc);
         }
       }
 
