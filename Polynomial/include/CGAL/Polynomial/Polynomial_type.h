@@ -566,9 +566,9 @@ public:
       int d1 = degree();
       int d2 = p2.degree();
       if (d1 > d2) {
-        return sign((*this)[d1]);
+        return CGAL::sign((*this)[d1]);
       } else if (d1 < d2) {
-        return -sign(p2[d2]);
+        return -CGAL::sign(p2[d2]);
       }
 
       for (int i = d1; i >= 0; i--) {
@@ -585,7 +585,7 @@ public:
       CGAL_precondition(degree() >= 0);
 
       if (degree() > 0) {
-        return sign(lcoeff());
+        return CGAL::sign(lcoeff());
       } else {
         return compare((*this)[0], p2);
       }
