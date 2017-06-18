@@ -33,7 +33,7 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
 
 
-    CGAL::Polygon_mesh_processing::internal::Angle_remesher<PolygonMesh, VertexPointMap, Traits> remesher(pmesh, vpmap);
+    CGAL::Polygon_mesh_processing::internal::Compatible_remesher<PolygonMesh, VertexPointMap, Traits> remesher(pmesh, vpmap);
     remesher.init_remeshing(faces);
     remesher.angle_relaxation();
     remesher.project_to_surface();
@@ -61,7 +61,7 @@ void area_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const NamedPara
     //bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
 
-    CGAL::Polygon_mesh_processing::internal::Area_remesher<PolygonMesh, VertexPointMap, GeomTraits> remesher(pmesh, vpmap);
+    CGAL::Polygon_mesh_processing::internal::Compatible_remesher<PolygonMesh, VertexPointMap, GeomTraits> remesher(pmesh, vpmap);
     remesher.init_remeshing(faces);
     remesher.area_relaxation();
 
