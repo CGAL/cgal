@@ -67,7 +67,6 @@ int main()
     if (tmp < sw) sw = tmp;
   }
   // std::cout << sw << std::endl;
-  CGAL::Gmpq res(1,3);
-  if (sw.exact() != res) return -1;
+  if ((3 * sw) != 1) return -1;
   return 0;
 }
