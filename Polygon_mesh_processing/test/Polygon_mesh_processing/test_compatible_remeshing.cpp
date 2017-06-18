@@ -6,8 +6,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/angle_smoothing.h>
-#include <CGAL/Polygon_mesh_processing/area_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/smoothing.h>
 
 
 #define CGAL_TEST_COMP_REMESHING_DEBUG

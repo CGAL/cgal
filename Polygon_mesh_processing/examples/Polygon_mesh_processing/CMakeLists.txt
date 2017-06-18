@@ -101,7 +101,8 @@ create_single_source_cgal_program( "corefinement_consecutive_bool_op.cpp" )
 create_single_source_cgal_program( "corefinement_difference_remeshed.cpp" )
 create_single_source_cgal_program( "corefinement_mesh_union.cpp" )
 create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
-create_single_source_cgal_program( "angle_smoothing_example.cpp")
+create_single_source_cgal_program( "smoothing_example.cpp")
+
 
 
 if(OpenMesh_FOUND)

@@ -4,7 +4,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/angle_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/smoothing.h>
+
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -15,9 +16,7 @@ typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 int main(int argc, char* argv[]){
 
 
-    std::cout<<"hello\n";
-
-    const char* filename = "data/polygon.off";
+    const char* filename = "data/polygon3D.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -28,11 +27,12 @@ int main(int argc, char* argv[]){
 
 
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::angle_remeshing(mesh, faces(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh, faces(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
 
 
 
-    std::ofstream output("data/smoothed_polygon.off");
+    std::ofstream output("data/polygon3D_smoothed.off");
     output << mesh;
     output.close();
 
