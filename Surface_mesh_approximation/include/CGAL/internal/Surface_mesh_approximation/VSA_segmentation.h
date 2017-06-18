@@ -624,6 +624,7 @@ private:
       BOOST_FOREACH(std::size_t p, px_set)
         vertex_patches[p].push_back(sg_vertex_pmap[v]);
     }
+    std::vector<sg_vertex_descriptor> super_vertices(proxies.size());
     for (std::size_t px_idx = 0; px_idx < proxies.size(); ++px_idx) {
       // add a super vertex connecting to its boundary anchors into the global graph
       // const sg_vertex_descriptor super_sgv = add_vertex(SUPERVERTEX, gmain);
@@ -634,9 +635,12 @@ private:
           add_edge(super_sgv, sgv, FT(0), gmain);
         }
       }
-
+      super_vertices[px_idx] = super_sgv;
+    }
+    for (std::size_t px_idx = 0; px_idx < proxies.size(); ++px_idx) {
       // construct subgraph
       SubGraph &gsub = gmain.create_subgraph();
+      const sg_vertex_descriptor super_sgv = super_vertices[px_idx];
       add_vertex(super_sgv, gsub);
       BOOST_FOREACH(sg_vertex_descriptor sgv, vertex_patches[px_idx])
         add_vertex(sgv, gsub);
