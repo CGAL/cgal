@@ -11,7 +11,7 @@
 
 
 #define CGAL_TEST_COMP_REMESHING_DEBUG
-//#define CGAL_TEST_COMP_REMESHING_OUTPUT
+#define CGAL_TEST_COMP_REMESHING_OUTPUT
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -33,6 +33,7 @@ int main(int argc, char* argv[]){
 
 
     std::vector<std::string> filenames = {
+        "data/polygon",
         "data/polygon3D",
         "data/blobby_3cc",
         "data/cube_quad",
@@ -71,8 +72,8 @@ std::cout<<"case: "<< filename << std::endl;
         input.close();
 
 
-        //CGAL::Polygon_mesh_processing::angle_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-        CGAL::Polygon_mesh_processing::area_remeshing(mesh, CGAL::Polygon_mesh_processing::parameters::all_default(), faces(mesh));
+        CGAL::Polygon_mesh_processing::angle_remeshing(mesh, faces(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
+        //CGAL::Polygon_mesh_processing::area_remeshing(mesh, faces(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
 
 
 

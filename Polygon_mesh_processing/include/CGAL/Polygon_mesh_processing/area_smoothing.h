@@ -34,17 +34,11 @@ class Area_remesher
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::Vector_3 Vector;
     typedef typename GeomTraits::Triangle_3 Triangle;
-
     typedef std::vector<Triangle> Triangle_list;
 
-
-    typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> Primitive;
-    typedef CGAL::AABB_traits<GeomTraits, Primitive> AABB_Traits;
+    typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
+    typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
-
-
-
-
 
 
 public:
@@ -142,9 +136,9 @@ private:
                                    get(vpmap_, p3))));
     }
 
-    double element_area_on_the_fly(const Point& P,
-                                   const vertex_descriptor& p2,
-                                   const vertex_descriptor& p3) const
+    double element_area(const Point& P,
+                        const vertex_descriptor& p2,
+                        const vertex_descriptor& p3) const
     {
         return to_double(CGAL::approximate_sqrt(
                              GeomTraits().compute_squared_area_3_object()(
@@ -174,7 +168,6 @@ private:
 
     }
 
-
     double measure_energy(const vertex_descriptor& v, const double& S_av)
     {
         double energy = 0;
@@ -194,7 +187,6 @@ private:
         return to_double( energy / number_of_edges );
     }
 
-
     double measure_energy(const vertex_descriptor& v, const double& S_av, const Point& new_P)
     {
         double energy = 0;
@@ -204,7 +196,7 @@ private:
         {
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
             vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
-            double S = element_area_on_the_fly(new_P, pi, pi1);
+            double S = element_area(new_P, pi, pi1);
 
             energy += (S - S_av)*(S - S_av);
             number_of_edges++;
@@ -381,9 +373,8 @@ private:
 
 
 template<typename PolygonMesh, typename NamedParameters, typename FaceRange>
-void area_remeshing(PolygonMesh& pmesh, const NamedParameters& np, const FaceRange& faces)
+void area_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const NamedParameters& np)
 {
-
 
     using boost::choose_param;
     using boost::get_param;
@@ -402,7 +393,6 @@ void area_remeshing(PolygonMesh& pmesh, const NamedParameters& np, const FaceRan
     CGAL::Polygon_mesh_processing::Area_remesher<PolygonMesh, VertexPointMap, GeomTraits> remesher(pmesh, vpmap);
     remesher.init_remeshing(faces);
     remesher.area_relaxation();
-
 
 
 

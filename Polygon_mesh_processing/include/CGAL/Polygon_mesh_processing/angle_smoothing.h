@@ -1,12 +1,15 @@
 #ifndef ANGLE_SMOOTHING_H
 #define ANGLE_SMOOTHING_H
-//#define CGAL_ANGLE_BASE_SMOOTHING_DEBUG
+//#define CGAL_ANGLE_BASED_SMOOTHING_DEBUG
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
 
 namespace CGAL {
 
@@ -20,17 +23,19 @@ template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
 class Angle_remesher
 {
 
-
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef CGAL::Halfedge_around_source_iterator<PolygonMesh> halfedge_around_source_iterator;
-
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::Vector_3 Vector;
     typedef typename GeomTraits::Segment_3 Segment;
+    typedef typename GeomTraits::Triangle_3 Triangle;
+    typedef std::vector<Triangle> Triangle_list;
 
-
+    typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
+    typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
+    typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
     // gather incident lines to a map
     // <one halfedge around v, pair of incident halfedges to this halfedge around v>
@@ -42,8 +47,23 @@ public:
     Angle_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap) : mesh_(pmesh), vpmap_(vpmap)
     {}
 
+    ~Angle_remesher()
+    {
+        delete tree_ptr_;
+    }
 
+    template<typename FaceRange>
+    void init_remeshing(const FaceRange& face_range)
+    {
+        for (face_descriptor f : face_range)
+        {
 
+            input_triangles_.push_back(triangle(f));
+        }
+
+        tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
+        tree_ptr_->accelerate_distance_queries();
+    }
 
     void angle_relaxation()
     {
@@ -56,10 +76,10 @@ public:
 
             if(!is_border(v, mesh_))
             {
-                #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
-                std::cout<<"processing vertex: "<< v << std::endl;
-                #endif
 
+#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+std::cout<<"processing vertex: "<< v << std::endl;
+#endif
 
                 // compute normal to v
                 Vector vn = compute_vertex_normal(v, mesh_,
@@ -77,19 +97,19 @@ public:
 
 
 
-                #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
-                for(it = he_map.begin(); it!=he_map.end(); ++it)
-                {
-                    halfedge_descriptor main_he = it->first;
-                    He_pair he_pair = it->second;
-                    std::cout<< "main: " << main_he;
-                    std::cout<<" ("<<source(main_he, mesh_)<<"->"<< target(main_he, mesh_)<<")";
-                    std::cout<< " - incident: "<< he_pair.first;
-                    std::cout<<" ("<<source(he_pair.first, mesh_)<<"->"<< target(he_pair.first, mesh_)<<")";
-                    std::cout<<" and " << he_pair.second;
-                    std::cout<<" ("<<source(he_pair.second, mesh_)<<"->"<< target(he_pair.second, mesh_)<<")"<<std::endl;
-                }
-                #endif
+#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+for(it = he_map.begin(); it!=he_map.end(); ++it)
+{
+    halfedge_descriptor main_he = it->first;
+    He_pair he_pair = it->second;
+    std::cout<< "main: " << main_he;
+    std::cout<<" ("<<source(main_he, mesh_)<<"->"<< target(main_he, mesh_)<<")";
+    std::cout<< " - incident: "<< he_pair.first;
+    std::cout<<" ("<<source(he_pair.first, mesh_)<<"->"<< target(he_pair.first, mesh_)<<")";
+    std::cout<<" and " << he_pair.second;
+    std::cout<<" ("<<source(he_pair.second, mesh_)<<"->"<< target(he_pair.second, mesh_)<<")"<<std::endl;
+}
+#endif
 
 
                 // calculate movement
@@ -130,32 +150,50 @@ public:
         // perform moves
         for(const VP& vp : new_locations)
         {
-            #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
-            std::cout << "from: "<< get(vpmap_, vp.first);
-            #endif
 
+#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+std::cout << "from: "<< get(vpmap_, vp.first);
+#endif
             put(vpmap_, vp.first, vp.second);
 
-            #ifdef CGAL_ANGLE_BASE_SMOOTHING_DEBUG
-            std::cout<<" moved at: "<< vp.second << std::endl;
-            #endif
+#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+std::cout<<" moved at: "<< vp.second << std::endl;
+#endif
         }
 
 
+    }
 
+    void project_to_surface()
+    {
+        for( vertex_descriptor v : vertices(mesh_))
+        {
+
+            // to check if is constrained
+
+            if(!is_border(v, mesh_))
+            {
+                Point p_query = get(vpmap_, v);
+                Point projected = tree_ptr_->closest_point(p_query);
+                put(vpmap_, v, projected);
+
+            }
+
+        }
 
     }
 
 
 
-
-
-
 private:
-    PolygonMesh& mesh_;
-    VertexPointMap& vpmap_;
-
-
+    Triangle triangle(face_descriptor f) const
+    {
+        halfedge_descriptor h = halfedge(f, mesh_);
+        vertex_descriptor v1 = target(h, mesh_);
+        vertex_descriptor v2 = target(next(h, mesh_), mesh_);
+        vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
+        return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
+    }
 
     double sqlength(const vertex_descriptor& v1, const vertex_descriptor& v2) const
     {
@@ -210,7 +248,7 @@ private:
 
 
         // under 2 degrees deviation consider it flat
-        if( bisector.squared_length() < 0.001 ) // sin(theta) = 0.0316 => theta = 1.83
+        if( bisector.squared_length() < 0.001 ) // sin(theta) = 0.0316 => theta = 1.83 CHANGE THIS
         {
 
             // angle is (almost) 180 degrees, take the perpendicular
@@ -295,6 +333,12 @@ private:
 
 
 
+private:
+    PolygonMesh& mesh_;
+    VertexPointMap& vpmap_;
+    Triangle_list input_triangles_;
+    Tree* tree_ptr_;
+
 
 };
 
@@ -306,14 +350,9 @@ private:
 
 
 
-template<typename PolygonMesh, typename NamedParameters>
-void angle_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
+template<typename PolygonMesh, typename NamedParameters, typename FaceRange>
+void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {
-
-
-
-    //CGAL_PMP_NP_CLASS np;
-    //np = CGAL::Polygon_mesh_processing::parameters::all_default();
 
     using boost::choose_param;
     using boost::get_param;
@@ -327,8 +366,9 @@ void angle_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
 
 
     CGAL::Polygon_mesh_processing::Angle_remesher<PolygonMesh, VertexPointMap, Traits> remesher(pmesh, vpmap);
+    remesher.init_remeshing(faces);
     remesher.angle_relaxation();
-
+    remesher.project_to_surface();
 
 
 
