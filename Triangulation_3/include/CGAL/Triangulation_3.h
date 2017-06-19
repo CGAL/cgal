@@ -1136,7 +1136,7 @@ public:
       // The function insert(first, last) is overwritten in Regular_triangulation_3.h,
       // so we know that, here, `Point` is not a type of Weighted point.
       // Nevertheless, to make it more generic (that is, allowing the user to pass
-      // a `Point` type that is not GT::Point_3, we still use the spatial sort
+      // a `Point` type that is not GT::Point_3), we still use the spatial sort
       // adapter traits and Construct_point_3 here.
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
       typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
