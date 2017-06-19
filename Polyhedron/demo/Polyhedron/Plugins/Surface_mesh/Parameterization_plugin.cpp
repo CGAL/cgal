@@ -351,7 +351,19 @@ public:
 
   bool applicable(QAction*) const
   {
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    if (scene->selectionIndices().size() == 1)
+    {
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+        || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
+    }
+
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
+    {
+      //if one polyhedron is found in the selection, it's fine
+      if (qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+        return true;
+    }
+    return false;
   }
 
   void closure()
@@ -481,8 +493,22 @@ void Polyhedron_demo_parameterization_plugin::on_nextButton_pressed()
 void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterization_method method)
 {
   // get active polyhedron
-  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_polyhedron_item* poly_item = NULL;
+  CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
+  {
+    poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
+    if(!poly_item)
+    {
+      continue;
+    }
+    else
+    {
+      index = id;
+      break;
+    }
+  }
+
   if(!poly_item)
   {
     messages->error("Selected item is not of the right type.");
