@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Triangle_dontflip_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -31,7 +31,7 @@ int main( int argc, char** argv )
   // left in the surface mesh drops below the specified number (1000)
   SMS::Count_stop_predicate<Surface_mesh> stop(num_halfedges(surface_mesh)/2 - 1);
      
-typedef SMS::Triangle_dontflip_placement<SMS::LindstromTurk_placement<Surface_mesh> > Placement;
+typedef SMS::Bounded_normal_change_placement<SMS::LindstromTurk_placement<Surface_mesh> > Placement;
 
 
   // This the actual call to the simplification algorithm.
