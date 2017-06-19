@@ -22,8 +22,6 @@ void test(const int d, const string & type, const int N)
   typedef typename RTri::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
   typedef typename RTri::Finite_vertex_iterator Finite_vertex_iterator;
 
-  typedef CGAL::Random_points_in_cube_d<Bare_point> Random_points_iterator;
-
   RTri rt(d);
   cerr << "\nBuilding Regular triangulation of (" << type << d << ") dimension with " << N << " points";
   assert(rt.empty());
@@ -121,12 +119,8 @@ void test_inserting_points_at_the_same_position()
   typedef CGAL::Regular_triangulation<FK> RTri;
 
   typedef RTri::Vertex_handle Vertex_handle;
-  typedef RTri::Full_cell_handle Full_cell_handle;
-  typedef RTri::Face Face;
   typedef RTri::Point Point;
   typedef RTri::Bare_point Bare_point;
-  typedef RTri::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
-  typedef RTri::Finite_vertex_iterator Finite_vertex_iterator;
 
   RTri rt(DIM);
 

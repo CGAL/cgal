@@ -220,7 +220,7 @@ export_triangulation_to_off(std::ostream & os,
     return os;
   }
 
-  size_t n = tr.number_of_vertices();
+  std::size_t n = tr.number_of_vertices();
 
   std::stringstream output;
 
@@ -236,9 +236,9 @@ export_triangulation_to_off(std::ostream & os,
     output << std::endl;
     index_of_vertex[it.base()] = i;
   }
-  CGAL_assertion( i == n );
+  CGAL_assertion( static_cast<std::size_t>(i) == n );
 
-  size_t number_of_triangles = 0;
+  std::size_t number_of_triangles = 0;
   if (tr.maximal_dimension() == 2)
   {
     for (Finite_full_cell_iterator fch = tr.finite_full_cells_begin() ;

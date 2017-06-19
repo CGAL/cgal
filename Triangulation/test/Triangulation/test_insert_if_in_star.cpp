@@ -19,8 +19,6 @@ void test(const int d, const string & type, const int N)
   typedef typename RTri::Point Point;
   typedef typename RTri::Bare_point Bare_point;
 
-  typedef CGAL::Random_points_in_cube_d<Bare_point> Random_points_iterator;
-
   RTri rt(d);
   RTri rt_star_only(d);
   cerr << "\nBuilding Regular triangulation of (" << type << d 
@@ -85,7 +83,7 @@ void go(const int N)
   test<Triangulation>(D, "static", N);
 }
 
-int main(int argc, char **argv)
+int main()
 {
   go<2>(100);
   return 0;

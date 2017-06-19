@@ -915,8 +915,8 @@ Delaunay_triangulation<DCTraits, TDS>
         {
           Side_of_oriented_sphere_d side =
             geom_traits().side_of_oriented_sphere_d_object();
-          if (side(Point_const_iterator(ch->vertices_begin()),
-                   Point_const_iterator(ch->vertices_end()),
+          if (side(points_begin(ch),
+                   points_end(ch),
                    opposite_vh->point()) == ON_BOUNDED_SIDE)
           {
             if (verbose)

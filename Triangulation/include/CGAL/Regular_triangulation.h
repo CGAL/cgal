@@ -26,8 +26,6 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Regular_triangulation_traits_adapter.h>
 
-#include <boost/property_map/function_property_map.hpp>
-
 namespace CGAL {
 
 template< typename Traits_, typename TDS_ = Default >
@@ -102,7 +100,7 @@ protected: // DATA MEMBERS
 
 public:
 
-  using typename Base::Rotor;
+  typedef typename Base::Rotor Rotor;
   using Base::maximal_dimension;
   using Base::are_incident_full_cells_valid;
   using Base::coaffine_orientation_predicate;
@@ -453,7 +451,7 @@ private:
 
 private:
   // Some internal types to shorten notation
-  using typename Base::Coaffine_orientation_d;
+  typedef typename Base::Coaffine_orientation_d Coaffine_orientation_d;
   using Base::flat_orientation_;
   typedef Conflict_predicate<Coaffine_orientation_d, Power_side_of_power_sphere_for_non_maximal_dim_d>
       Conflict_pred_in_subspace;
@@ -801,7 +799,7 @@ Regular_triangulation<Traits, TDS>
 template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
-::insert(const Weighted_point & p, Locate_type lt, const Face & f, const Facet & ft, Full_cell_handle s)
+::insert(const Weighted_point & p, Locate_type lt, const Face & f, const Facet &, Full_cell_handle s)
 {
   switch( lt )
   {
@@ -905,7 +903,7 @@ Regular_triangulation<Traits, TDS>
                     Vertex_handle star_center,
                     Locate_type lt, 
                     const Face & f,
-                    const Facet & ft,
+                    const Facet &,
                     Full_cell_handle s)
 {
   switch( lt )

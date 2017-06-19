@@ -32,8 +32,6 @@ void test(const int d, const string & type, const int N)
     typedef typename DC::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
     typedef typename DC::Finite_vertex_iterator Finite_vertex_iterator;
 
-    typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
-
     DC dt(d);
     cerr << "\nBuilding Delaunay triangulation of (" << type << d << ") dimension with " << N << " points";
     assert(dt.empty());
@@ -118,7 +116,7 @@ void go(const int N)
     test<Triangulation>(D, "static", N);
 
     typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK_dyn;
-    typedef CGAL::Delaunay_triangulation<FK> Triangulation_dyn;
+    typedef CGAL::Delaunay_triangulation<FK_dyn> Triangulation_dyn;
     test<Triangulation_dyn>(D, "dynamic", N);
 }
 
