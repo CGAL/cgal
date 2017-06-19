@@ -94,7 +94,6 @@ public:
 
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
-    using Base_traits::Construct_cartesian_const_iterator_d::operator();
     typedef typename Base_traits::Construct_cartesian_const_iterator_d Base;
     
     Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
