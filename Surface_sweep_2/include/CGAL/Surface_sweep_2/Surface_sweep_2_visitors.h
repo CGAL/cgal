@@ -32,7 +32,7 @@
 
 #include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
-#include <CGAL/Surface_sweep_2/Visitor.h>
+#include <CGAL/Surface_sweep_2/Default_visitor.h>
 
 namespace CGAL {
 namespace Surface_sweep_2 {

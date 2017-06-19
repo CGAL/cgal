@@ -29,8 +29,6 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-#include <CGAL/Surface_sweep_2/Visitor.h>
-
 /*! \class Arr_unb_planar_vert_decomp_helper
  *
  * A helper class for the vertical decomposition sweep-line visitor, suitable

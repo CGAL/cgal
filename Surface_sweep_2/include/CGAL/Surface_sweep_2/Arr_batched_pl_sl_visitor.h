@@ -28,7 +28,7 @@
 
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Object.h>
-#include <CGAL/Surface_sweep_2/Visitor.h>
+#include <CGAL/Surface_sweep_2/Default_visitor_base.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
@@ -42,14 +42,15 @@ namespace Ss2 = Surface_sweep_2;
  */
 template <typename Helper_, typename OutputIterator, typename Visitor_ = Default>
 class Arr_batched_pl_sl_visitor :
-  public Ss2::Visitor_base<typename Helper_::Geometry_traits_2,
-                           typename Helper_::Event,
-                           typename Helper_::Subcurve,
-                           typename Helper_::Allocator,
-                           typename Default::Get<Visitor_,
-                                                 Arr_batched_pl_sl_visitor<
-                                                   Helper_, OutputIterator,
-                                                   Visitor_> >::type>
+  public Ss2::Default_visitor_base<typename Helper_::Geometry_traits_2,
+                                   typename Helper_::Event,
+                                   typename Helper_::Subcurve,
+                                   typename Helper_::Allocator,
+                                   typename Default::Get<
+                                     Visitor_,
+                                     Arr_batched_pl_sl_visitor<
+                                       Helper_, OutputIterator,
+                                       Visitor_> >::type>
 {
 public:
   typedef Helper_                                       Helper;
@@ -65,8 +66,8 @@ private:
   typedef Arr_batched_pl_sl_visitor<Helper, Output_iterator, Visitor_>
                                                         Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
-  typedef typename Ss2::Visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
-                                                        Base;
+  typedef typename Ss2::Default_visitor_base<Gt2, Event, Subcurve, Allocator,
+                                             Visitor>   Base;
 
 public:
   typedef typename Helper::Arrangement_2                Arrangement_2;

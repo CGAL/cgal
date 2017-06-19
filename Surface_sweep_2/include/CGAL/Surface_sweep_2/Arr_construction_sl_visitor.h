@@ -34,7 +34,7 @@
 
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Surface_sweep_2/Visitor.h>
+#include <CGAL/Surface_sweep_2/Default_visitor_base.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
@@ -55,13 +55,14 @@ struct Integer_hash_function {
  */
 template <typename Helper_, typename Visitor_ = Default>
 class Arr_construction_sl_visitor :
-  public Ss2::Visitor_base<typename Helper_::Geometry_traits_2,
-                           typename Helper_::Event,
-                           typename Helper_::Subcurve,
-                           typename Helper_::Allocator,
-                           typename Default::Get<Visitor_,
-                                                 Arr_construction_sl_visitor<
-                                                   Helper_, Visitor_> >::type>
+  public Ss2::Default_visitor_base<typename Helper_::Geometry_traits_2,
+                                   typename Helper_::Event,
+                                   typename Helper_::Subcurve,
+                                   typename Helper_::Allocator,
+                                   typename Default::Get<
+                                     Visitor_,
+                                     Arr_construction_sl_visitor<
+                                       Helper_, Visitor_> >::type>
 {
 public:
   typedef Helper_                                       Helper;
@@ -75,7 +76,7 @@ private:
   typedef Geometry_traits_2                             Gt2;
   typedef Arr_construction_sl_visitor<Helper, Visitor_> Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
-  typedef Ss2::Visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
+  typedef Ss2::Default_visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
                                                         Base;
 
 public:

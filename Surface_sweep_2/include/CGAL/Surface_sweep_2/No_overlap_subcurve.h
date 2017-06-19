@@ -29,9 +29,9 @@
  * framework.
  *
  * The surface-sweep framework is implemented as a template that is
- * parameterized, among the other, by the Subcurve and Event types. That is,
- * instance types of Subcurve and Event must be available when the
- * surface-sweep template is instantiated.
+ * parameterized by a visitor; the visitor is parameterized, among the other, by
+ * the Subcurve and Event types. That is, instance types of Subcurve and Event
+ * must be available when the surface-sweep template is instantiated.
  *
  * No_overlap_subcurve is the most basic type. The user is allowed
  * to introduce new types that derive from the basic type. However, some of the

@@ -26,7 +26,6 @@
  * Definition of the Arr_bounded_planar_construction_helper class-template.
  */
 
-#include <CGAL/Surface_sweep_2/Visitor.h>
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
