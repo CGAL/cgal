@@ -54,7 +54,7 @@ of the input complex have to be accurately represented in the mesh.
 The argument `domain` is the sole link through which the domain
 to be discretized is known by the mesh generation algorithm.
 
-\tparam MeshCriteria has to be a model of the concept `Periodic_3MeshCriteria_3`,
+\tparam MeshCriteria has to be a model of the concept `MeshCriteria_3`,
 or a model of the refined concept `MeshCriteriaWithFeatures_3` if the domain
 has exposed features. The argument `criteria` of type `MeshCriteria` specifies the
 size and shape requirements for mesh tetrahedra and surface facets. These criteria

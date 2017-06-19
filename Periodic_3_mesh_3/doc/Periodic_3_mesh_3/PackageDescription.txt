@@ -68,18 +68,10 @@ The following concepts are essentially identical to their equivalent in in the \
 package but are nevertheless defined for clarity:
 
 - `Periodic_3MeshDomain_3`
-- `Periodic_3MeshCriteria_3`
-- `Periodic_3MeshEdgeCriteria_3`
-- `Periodic_3MeshFacetCriteria_3`
-- `Periodic_3MeshCellCriteria_3`
 
 ## Classes ##
 
 - `CGAL::Periodic_3_mesh_triangulation_3<MD, K, Vertex_base, Cell_base>`
-- `CGAL::Periodic_3_mesh_criteria_3<Tr>`
-- `CGAL::Periodic_3_mesh_cell_criteria_3<Tr>`
-- `CGAL::Periodic_3_mesh_facet_criteria_3<Tr>`
-- `CGAL::Periodic_3_mesh_edge_criteria_3<Tr>`
 
 The following classes are models of domain concepts
 and their associated classes:
