@@ -58,9 +58,10 @@ typedef unspecified_type Is_cell_bad;
 /// @{
 
 /*!
-Returns `Is_cell_bad` value of cell `c`. 
-*/ 
-Is_cell_bad operator()(Cell_handle c); 
+Returns the `Is_cell_bad` value of the cell `c`, which lives in the triangulation `tr`.
+The type `Tr` must be identical to the triangulation type used by the mesh generation function.
+*/
+Is_cell_bad operator()(const Tr& tr, Cell_handle c);
 
 /// @}
 

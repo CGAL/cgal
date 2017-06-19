@@ -66,9 +66,10 @@ typedef unspecified_type Is_facet_bad;
 /// @{
 
 /*!
-Returns `Is_facet_bad` value of facet `f`. 
+Returns the `Is_facet_bad` value of the facet `f`, which lives in the triangulation `tr`.
+The type `Tr` must be identical to the triangulation type used by the mesh generation function.
 */ 
-Is_facet_bad operator()(Facet f); 
+Is_facet_bad operator()(const Tr& tr, Facet f);
 
 /*!
 Same as above with `f=(c,i)`. 
