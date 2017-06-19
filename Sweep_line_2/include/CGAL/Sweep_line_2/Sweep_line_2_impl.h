@@ -214,6 +214,33 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
     return;
   }
 
+  // Some overlapping curves that are on the right might not be
+  // on the left (in case of overlap with other curves having common
+  // ancesters). Consequently, an overlapping curve on the right might
+  // not have been split.
+  // SL_SAYS: we should be able to do something better without geometric test
+  // (like having an additional boolean in subcurve)
+  for(  Event_subcurve_iterator cit = this->m_currentEvent->right_curves_begin(),
+                                cit_end = this->m_currentEvent->right_curves_end();
+                                cit!=cit_end; ++cit)
+  {
+    if ( (*cit)->originating_subcurve1()!=NULL &&
+         (Event*)(*cit)->left_event()!=this->m_currentEvent )
+    {
+      // split the subcurve.
+      const X_monotone_curve_2& lastCurve = (*cit)->last_curve();
+
+      if (!this->m_traits->equal_2_object()(
+              this->m_traits->construct_min_vertex_2_object()(lastCurve),
+              this->m_currentEvent->point()))
+      {
+        this->m_traits->split_2_object()(lastCurve, this->m_currentEvent->point(),
+                                       sub_cv1, sub_cv2);
+        (*cit)->set_last_curve(sub_cv2);
+      }
+    }
+  }
+
   // Loop over the curves to the right of the status line and handle them:
   // - If we are at the beginning of the curve, we insert it to the status
   //   line, then we look if it intersects any of its neighbors.
