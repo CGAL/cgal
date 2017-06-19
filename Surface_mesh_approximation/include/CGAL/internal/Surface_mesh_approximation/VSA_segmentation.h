@@ -631,9 +631,8 @@ private:
       global_vanchor_map[superv] = 0;
       global_vtag_map[superv] = 0;
       BOOST_FOREACH(sg_vertex_descriptor v, vpatch) {
-        if (global_vanchor_map[v] >= 0) {
+        if (is_anchor_attached(v, global_vanchor_map))
           add_edge(superv, v, FT(0), gmain);
-        }
       }
       vpatch.push_back(superv);
     }
@@ -655,15 +654,12 @@ private:
       boost::dijkstra_shortest_paths(glocal, source,
         boost::predecessor_map(&pred[0]).weight_map(local_eweight_map));
 
-      // backtrack to the anchor vertex
+      // backtrack to the anchor and tag each vertex in the local patch graph
       BOOST_FOREACH(sg_vertex_descriptor v, vertices(glocal)) {
         sg_vertex_descriptor curr = v;
-        int anchor_idx = local_vanchor_map[curr];
-        while (anchor_idx < 0) {
+        while (!is_anchor_attached(curr, local_vanchor_map))
           curr = pred[curr];
-          anchor_idx = local_vanchor_map[curr];
-        }
-        local_vtag_map[v] = anchor_idx;
+        local_vtag_map[v] = local_vanchor_map[curr];
       }
     }
 
@@ -882,7 +878,16 @@ private:
 
   // check if halfedge target vertex is attached with an anchor
   bool is_anchor_attached(const halfedge_descriptor &he) {
-    return vertex_status_pmap[target(he, mesh)] >= 0;
+    return is_anchor_attached(target(he, mesh), vertex_status_pmap);
+  }
+
+  // check if a vertex is attached with an anchor
+  // suppose anchor index starts with 0
+  template<typename VertexAnchorIndexMap>
+  bool is_anchor_attached(
+    const typename boost::property_traits<VertexAnchorIndexMap>::key_type &v,
+    const VertexAnchorIndexMap &vertex_anchor_map) {
+    return vertex_anchor_map[v] >= 0;
   }
 
   // attach anchor to vertex
