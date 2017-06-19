@@ -308,30 +308,7 @@ _add_curve_to_right(Event* event, Subcurve* curve)
       return false;
     }
 
-    CGAL_assertion(!(curve)->has_same_leaves(*iter)); // SL_SAYS I'm not 100% sure this precondition is valid
-
-    //~ if ((curve)->has_common_leaf(*iter)) {
-      //~ /*! Collect all the distinct nodes of curves including the common nodes.
-       //~ * \todo EF, common nodes should be excluded. It is not incorrect to
-       //~ * include a common node, because in the recursive call it becomes
-       //~ * 'curve', which is an inner node of iter, and it is discarded; see 2
-       //~ * conditions above.
-       //~ */
-      //~ std::list<Base_subcurve*> list_of_sc;
-      //~ curve->distinct_nodes(*iter, std::back_inserter(list_of_sc));
-
-//SL_SAYS
-// the pb here is that the curve that will be put on the right of the right end of the overlapping curve
-// will be the filtered curves and not the overlap that is actually on the right. Two solutions: I manage
-// to pass curve or I pass all the curves of the overlap to the right of the end of the new overlap
-      
-      //~ typename std::list<Base_subcurve*>::iterator  sc_iter;      
-      //~ for (sc_iter = list_of_sc.begin(); sc_iter != list_of_sc.end(); ++sc_iter)
-        //~ _add_curve_to_right(event, static_cast<Subcurve*>(*sc_iter));
-
-      //~ CGAL_SL_PRINT_END_EOL("adding a Curve to the right (common leaf)");
-      //~ return true;
-    //~ }
+    CGAL_assertion(!(curve)->has_same_leaves(*iter));
   }
   std::pair<bool, Event_subcurve_iterator> pair_res =
     event->add_curve_to_right(curve, this->m_traits);
@@ -528,7 +505,6 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
 
   const std::pair<Point_2,Multiplicity>* xp_point;
 
-// SL_SAYS : replace with assertions
   // Efi: why not skipping in a loop?check only one (that is, why not in a loop)?
   if (vi != vi_end) {
     xp_point = object_cast<std::pair<Point_2, Multiplicity> >(&(*vi));
@@ -852,15 +828,7 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
   CGAL_assertion(sc != NULL);
 
   // split 'sc' if necessary and update to event as weak intersection
-  if ((Event*)sc->right_event() != this->m_currentEvent
-    
-  && //SL_SAYS this is a temporary condition while  set_originating_subcurves is not implemented 
-     //(because a curve could be tried to be split several times)
-  !this->m_traits->equal_2_object()(
-    this->m_traits->construct_min_vertex_2_object()(sc->last_curve()),
-    this->m_currentEvent->point())
-
-  ) {
+  if ((Event*)sc->right_event() != this->m_currentEvent) {
     this->m_traits->split_2_object()(sc->last_curve(),
                                      this->m_currentEvent->point(),
                                      sub_cv1, sub_cv2);
