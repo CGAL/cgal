@@ -898,9 +898,14 @@ namespace CGAL {
       side_of_power_segment(Cell_handle c, const Weighted_point &p,
       bool perturb = false) const;
 
+    // Undocumented, needed for Mesh_3 (because of Periodic_3_mesh_3)
     bool greater_or_equal_power_distance(const Bare_point& p,
                                          const Weighted_point& q,
                                          const Weighted_point& r) const;
+
+    // Undocumented, needed for Mesh_3 (because of Periodic_3_mesh_3)
+    typename Geom_traits::FT min_squared_distance(const Bare_point& p,
+                                                  const Bare_point& q) const;
 
     Vertex_handle
       nearest_power_vertex_in_cell(const Bare_point& p,
@@ -2116,6 +2121,14 @@ namespace CGAL {
                                   const Weighted_point& r) const
   {
     return ! less_power_distance(p, q, r);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  typename Regular_triangulation_3<Gt,Tds,Lds>::Geom_traits::FT
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  min_squared_distance(const Bare_point& p, const Bare_point& q) const
+  {
+    return CGAL::squared_distance(p, q);
   }
 
   template < class Gt, class Tds, class Lds >

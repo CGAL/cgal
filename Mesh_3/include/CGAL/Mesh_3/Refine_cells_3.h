@@ -743,7 +743,7 @@ number_of_bad_elements_impl()
     const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell_it));
     if ( subdomain )
     {
-      const Is_cell_bad is_cell_bad = r_criteria_(cell_it);
+      const Is_cell_bad is_cell_bad = r_criteria_(r_tr_, cell_it);
       if( is_cell_bad )
         ++count;
     }
@@ -925,7 +925,7 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 compute_badness(const Cell_handle& cell)
 {
-  const Is_cell_bad is_cell_bad = r_criteria_(cell);
+  const Is_cell_bad is_cell_bad = r_criteria_(r_tr_, cell);
   if( is_cell_bad )
   {
     this->add_bad_element(this->from_cell_to_refinement_queue_element(cell), *is_cell_bad);

@@ -56,12 +56,12 @@ public:
   virtual ~Abstract_criterion() {}
 
   void accept(Visitor_& v) const { do_accept(v); }
-  Badness is_bad(const Handle& h) const { return do_is_bad(h); }
+  Badness is_bad(const Tr& tr, const Handle& h) const { return do_is_bad(tr, h); }
   Self* clone() const { return do_clone(); }
 
 protected:
   virtual void do_accept(Visitor_& v) const = 0;
-  virtual Badness do_is_bad(const Handle& h) const = 0;
+  virtual Badness do_is_bad(const Tr& tr, const Handle& h) const = 0;
   virtual Self* do_clone() const = 0;
 
 };  // end class Abstract_criterion
@@ -93,8 +93,9 @@ public:
 
 
   // Constructor
-  Criterion_visitor(const Handle_& h)
-    : handle_(h)
+  Criterion_visitor(const Tr& tr, const Handle_& h)
+    : tr_(tr)
+    , handle_(h)
     , badness_()
     , criterion_counter_(0) {}
 
@@ -127,7 +128,7 @@ protected:
   {
     typedef typename Abstract_criterion<Tr, Derived>::Badness Badness;
 
-    const Badness badness = criterion.is_bad(handle_);
+    const Badness badness = criterion.is_bad(tr_, handle_);
     if ( badness )
       badness_ = std::make_pair(criterion_counter_, *badness);
 
@@ -135,6 +136,7 @@ protected:
   }
 
 private:
+  const Tr& tr_;
   Handle_ handle_;
   Badness badness_;
   int criterion_counter_;
@@ -171,9 +173,10 @@ public:
     criterion_vector_.push_back(criterion);
   }
 
-  Badness operator()(const typename Visitor_::Handle& h) const
+  Badness operator()(const Tr& tr,
+                     const typename Visitor_::Handle& h) const
   {
-    Visitor_ visitor(h);
+    Visitor_ visitor(tr, h);
 
     typename Criterion_vector::const_iterator it = criterion_vector_.begin();
     for (  ; it != criterion_vector_.end() ; ++it )
