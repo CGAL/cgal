@@ -19,10 +19,70 @@ namespace internal {
 
 
 
+template<typename Descriptor>
+struct No_constraint_pmap
+{
+public:
+  typedef Descriptor                          key_type;
+  typedef bool                                value_type;
+  typedef value_type&                         reference;
+  typedef boost::read_write_property_map_tag  category;
+
+  friend bool get(const No_constraint_pmap& , const key_type& ) {
+    return false;
+  }
+  friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
+};
+
+
+template<typename PolygonMesh, typename EdgeRange>
+struct Edge_constraint_map
+{
+
+    typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+
+    //boost::shared_ptr<std::set<edge_descriptor>> constrained_edges_ptr;
+    std::shared_ptr<std::set<edge_descriptor>> constrained_edges_ptr;
+
+public:
+    typedef edge_descriptor                     key_type;
+    typedef bool                                value_type;
+    typedef value_type&                         reference;
+    typedef boost::read_write_property_map_tag  category;
+
+    Edge_constraint_map() : constrained_edges_ptr(new std::set<edge_descriptor>() )
+    {}
+
+    Edge_constraint_map(const EdgeRange& edges) : constrained_edges_ptr(new std::set<edge_descriptor>() )
+    {
+        for (edge_descriptor e : edges)
+        {
+            constrained_edges_ptr->insert(e);
+        }
+    }
+
+    friend bool exists(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
+    {
+        // assertion on pmesh
+        //return map.constrained_edges_ptr->count(e)!=0;
+        return map.constrained_edges_ptr->find(e) != map.constrained_edges_ptr->end();
+
+    }
+    friend void put(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
+    {
+        map.constrained_edges_ptr->insert(e);
+    }
+    friend void remove(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
+    {
+        map.constrained_edges_ptr->erase(e);
+    }
+
+
+};
 
 
 
-template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
+template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraitMap, typename EdgeConstraintMap, typename GeomTraits>
 class Compatible_remesher
 {
 
@@ -47,7 +107,8 @@ class Compatible_remesher
 
 
 public:
-    Compatible_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap) : mesh_(pmesh), vpmap_(vpmap)
+    Compatible_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraitMap& vcmap, EdgeConstraintMap& ecmap) :
+        mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap)
     {}
 
     ~Compatible_remesher()
@@ -60,12 +121,14 @@ public:
     {
         for (face_descriptor f : face_range)
         {
-
             input_triangles_.push_back(triangle(f));
         }
 
         tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
         tree_ptr_->accelerate_distance_queries();
+
+        //update constrained edges
+        check_constrained_edges();
     }
 
     void angle_relaxation()
@@ -77,7 +140,7 @@ public:
         for(vertex_descriptor v : vertices(mesh_))
         {
 
-            if(!is_border(v, mesh_))
+            if(!is_border(v, mesh_) && !is_constrained(v))
             {
 
 #ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
@@ -214,7 +277,7 @@ std::cout<<" to after projection: "<<get(vpmap_, v)<<std::endl;
 
             // to check if is constrained
 
-            if(!is_border(v, mesh_))
+            if(!is_border(v, mesh_) && !is_constrained(v))
             {
                 Point p_query = get(vpmap_, v);
                 Point projected = tree_ptr_->closest_point(p_query);
@@ -569,13 +632,37 @@ private:
 
     }
 
+    bool is_constrained(const edge_descriptor& e)
+    {
+        exists(ecmap_, e);
+    }
 
+    bool is_constrained(const vertex_descriptor& v)
+    {
+        get(vcmap_, v);
+    }
+
+    void check_constrained_edges()
+    {
+        for(edge_descriptor e : edges(mesh_))
+        {
+            if (is_constrained(e))
+            {
+                vertex_descriptor vs = source(e, mesh_);
+                vertex_descriptor vt = target(e, mesh_);
+                put(vcmap_, vs, true);
+                put(vcmap_, vt, true);
+            }
+        }
+    }
 
 
 
 private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
+    VertexConstraitMap vcmap_;
+    EdgeConstraintMap ecmap_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     unsigned int count_non_convex_energy_;

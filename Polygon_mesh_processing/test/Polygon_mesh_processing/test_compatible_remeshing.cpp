@@ -53,7 +53,6 @@ int main(int argc, char* argv[]){
     };
 
 
-
     for(auto i=0; i!= filenames.size(); ++i)
     {
         filename = filenames[i]+".off";
@@ -71,8 +70,8 @@ std::cout<<"case: "<< filename << std::endl;
         input.close();
 
 
-        CGAL::Polygon_mesh_processing::angle_remeshing(mesh, faces(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
-        //CGAL::Polygon_mesh_processing::area_remeshing(mesh, faces(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::Polygon_mesh_processing::angle_remeshing(mesh, faces(mesh), edges(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::Polygon_mesh_processing::area_remeshing(mesh, faces(mesh), edges(mesh), CGAL::Polygon_mesh_processing::parameters::all_default());
 
 
 
