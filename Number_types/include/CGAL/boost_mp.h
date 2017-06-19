@@ -453,13 +453,15 @@ CGAL_COERCE_FLOAT(float);
 CGAL_COERCE_FLOAT(double);
 #undef CGAL_COERCE_FLOAT
 
+// Because of https://github.com/boostorg/multiprecision/issues/29 , this is not perfect and fails to read some KDS files.
+
 template <>
-class Input_rep<mpq_class> : public IO_rep_is_specialized {
-    mpq_class& q;
+class Input_rep<boost::multiprecision::cpp_rational> : public IO_rep_is_specialized {
+    boost::multiprecision::cpp_rational& q;
 public:
-    Input_rep( mpq_class& qq) : q(qq) {}
-    std::istream& operator()( std::istream& in) const {
-      internal::read_float_or_quotient<mpz_class,mpq_class>(in, q);
+    Input_rep(boost::multiprecision::cpp_rational& qq) : q(qq) {}
+    std::istream& operator()(std::istream& in) const {
+      internal::read_float_or_quotient<boost::multiprecision::cpp_int,boost::multiprecision::cpp_rational>(in, q);
       return in;
     }
 };
