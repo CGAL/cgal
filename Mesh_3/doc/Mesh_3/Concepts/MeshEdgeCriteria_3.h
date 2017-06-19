@@ -46,12 +46,6 @@ typedef unspecified_type FT;
 
 /*!
 
-Returns `true` if edge `e` does not fulfill the criteria. 
-*/ 
-bool operator()(const Edge& e); 
-
-/*!
-
 Returns the value of the sizing field (i.e.\ the maximum edge length) at point `p`. 
 */ 
 FT sizing_field(const Point_3& p); 
