@@ -191,8 +191,6 @@ typedef boost::graph_traits<Seam_mesh>::vertex_descriptor           vertex_descr
 typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor         halfedge_descriptor;
 typedef boost::graph_traits<Seam_mesh>::face_descriptor             face_descriptor;
 
-typedef boost::graph_traits<Seam_mesh>::face_iterator               face_iterator;
-
 typedef boost::unordered_set<Textured_polyhedron::Base::Facet_handle>  Component;
 typedef std::vector<Component>                                         Components;
 
