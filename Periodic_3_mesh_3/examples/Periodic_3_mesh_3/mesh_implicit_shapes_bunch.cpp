@@ -3,17 +3,13 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/Mesh_triangulation_3.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-
-#include <CGAL/Periodic_3_mesh_facet_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_cell_criteria_3.h>
-#include <CGAL/Periodic_3_mesh_criteria_3.h>
-#include <CGAL/IO/Medit_IO.h>
-
 #include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
-#include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/IO/Medit_IO.h>
+#include <CGAL/make_periodic_3_mesh_3.h>
+
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
 
@@ -31,12 +27,7 @@ typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type   Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 
 // Criteria
-typedef CGAL::Mesh_edge_criteria_3<Tr>                    Edge_criteria;
-typedef CGAL::Periodic_3_mesh_facet_criteria_3<Tr>        Periodic_facet_criteria;
-typedef CGAL::Periodic_3_mesh_cell_criteria_3<Tr>         Periodic_cell_criteria;
-typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria,
-                                             Periodic_facet_criteria,
-                                             Periodic_cell_criteria> Periodic_mesh_criteria;
+typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -222,8 +213,7 @@ int main()
        */
 
     // Mesh criteria
-    Periodic_mesh_criteria criteria(domain,
-                                    facet_angle = 30,
+    Periodic_mesh_criteria criteria(facet_angle = 30,
                                     facet_size = 0.05,
                                     facet_distance = 0.025,
                                     cell_radius_edge = 2,

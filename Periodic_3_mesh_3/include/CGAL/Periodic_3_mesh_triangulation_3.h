@@ -72,7 +72,7 @@ public:
 
   typedef Periodic_3_regular_triangulation_3<Gt, Tds>  Base;
 
-  typedef Gt                              Geometric_traits;
+  typedef Gt                              Geom_traits;
   typedef Tds                             Triangulation_data_structure;
 
   typedef typename Base::Cell_iterator    Finite_cells_iterator;
@@ -85,9 +85,12 @@ public:
   typedef typename Base::Facet            Facet;
   typedef typename Base::Edge             Edge;
 
-  typedef typename Base::Bare_point       Bare_point;
-  typedef typename Base::Weighted_point   Weighted_point;
-  typedef typename Base::Periodic_point   Periodic_point;
+  typedef typename Base::FT               FT;
+
+  typedef typename Base::Bare_point                Bare_point;
+  typedef typename Base::Weighted_point            Weighted_point;
+  typedef typename Base::Periodic_bare_point       Periodic_bare_point;
+  typedef typename Base::Periodic_weighted_point   Periodic_weighted_point;
 
   typedef typename Base::Locate_type      Locate_type;
 
@@ -114,8 +117,10 @@ public:
   using Base::construct_periodic_segment;
   using Base::construct_periodic_triangle;
   using Base::construct_periodic_tetrahedron;
+  using Base::domain;
   using Base::dual;
   using Base::get_offset;
+  using Base::geom_traits;
   using Base::adjacent_vertices;
   using Base::incident_cells;
   using Base::incident_edges;
@@ -132,7 +137,7 @@ public:
 
   /// Constructor
   Periodic_3_regular_triangulation_3_mesher_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-                                              const Geometric_traits& gt = Geometric_traits())
+                                              const Geom_traits& gt = Geom_traits())
     : Base(domain, gt)
   {
     insert_dummy_points();
@@ -299,53 +304,68 @@ public:
     return Base::side_of_power_sphere(c, canonical_p, Offset(), perturb);
   }
 
-  // Warning 1: This is a periodic version that computes the smallest possible
-  // distances between p&q and p&r FOR ANY OFFSETS before comparing these distances
-  //
-  // \pre q and r should be canonical points, meaning that they live in the original domain
-  //
-  // It's main purpose is Periodic_mesh_3
-  bool greater_or_equal_power_distance(const Bare_point& p,
-                                       const Weighted_point& q,
-                                       const Weighted_point& r) const
+  // Warning : This is a periodic version that computes the smallest possible
+  // between p and q, REGARDLESS OF OFFSETS
+  FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
-    typename Geom_traits::Compute_power_distance_3 power_distance =
-      geom_traits().compute_power_distance_3_object();
+    const Bare_point cp = canonicalize_point(p);
+    const Bare_point cq = canonicalize_point(q);
+    FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
-    // q and r are assumed to be in the original domain, but not p
-    const Weighted_point wp = construct_weighted_point(canonicalize_point(p));
+    for( int i = 0; i < 3; i++ ) {
+      for( int j = 0; j < 3; j++) {
+        for( int k = 0; k < 3; k++ ) {
+          FT sq_dist = geom_traits().compute_squared_distance_3_object()
+            (cq, construct_point(std::make_pair(cp, Offset(i-1, j-1, k-1))));
 
-    std::vector<Weighted_point> surface_centers(27);
-    typedef typename Tr::Offset Offset;
-    for(int i = 0; i < 3; i++)
-    {
-      for(int j = 0; j < 3; j++)
-      {
-        for(int k = 0; k < 3; k++)
-        {
-          surface_centers[9*i + 3*j + k] =
-            construct_weighted_point(std::make_pair(wp, Offset(i-1, j-1, k-1)));
+          if(sq_dist < min_sq_dist)
+            min_sq_dist = sq_dist;
         }
       }
     }
 
-    typedef typename Gt::FT FT;
-    FT min_distance_to_q = power_distance(wp, q);
-    FT min_distance_to_r = power_distance(wp, r);
+    return min_sq_dist;
+  }
 
-    for(int i = 0; i < 27; i++)
-    {
-      FT distance_to_q = power_distance(surface_centers[i], q);
-      if(distance_to_q < min_distance_to_q)
-        min_distance_to_q = distance_to_q;
+  // Warning: This is a periodic version that computes the smallest possible
+  // distances between p&q and p&r FOR ANY OFFSETS before comparing these distances
+  //
+  // It's main purpose is facet_encroachement checks in Periodic_mesh_3
+  bool greater_or_equal_power_distance(const Bare_point& p,
+                                       const Weighted_point& q,
+                                       const Weighted_point& r) const
+  {
+    typename Geom_traits::Compute_power_product_3 power_distance =
+      geom_traits().compute_power_product_3_object();
 
-      FT distance_to_r = power_distance(surface_centers[i], point);
-      if (distance_to_r < min_distance_to_r)
-        min_distance_to_r = distance_to_r;
+    // canonicalize the points
+    const Weighted_point cp =
+      geom_traits().construct_weighted_point_3_object()(canonicalize_point(p));
+    const Weighted_point cq = canonicalize_point(q);
+    const Weighted_point cr = canonicalize_point(r);
+
+    FT min_power_distance_to_q = std::numeric_limits<FT>::infinity();
+    FT min_power_distance_to_r = std::numeric_limits<FT>::infinity();
+
+    for(int i = 0; i < 3; i++) {
+      for(int j = 0; j < 3; j++) {
+        for(int k = 0; k < 3; k++) {
+          const Weighted_point cp_copy =
+            construct_weighted_point(std::make_pair(cp, Offset(i-1, j-1, k-1)));
+
+          const FT power_distance_to_q = power_distance(cp_copy, cq);
+          if(power_distance_to_q < min_power_distance_to_q)
+            min_power_distance_to_q = power_distance_to_q;
+
+          const FT power_distance_to_r = power_distance(cp_copy, cr);
+          if (power_distance_to_r < min_power_distance_to_r)
+            min_power_distance_to_r = power_distance_to_r;
+        }
+      }
     }
 
-    assert(min_distance_to_r < 0.5 && min_distance_to_q < 0.5);
-    return min_distance_to_q >= min_distance_to_r;
+    assert(min_power_distance_to_r < 0.5 && min_power_distance_to_q < 0.5);
+    return min_power_distance_to_q >= min_power_distance_to_r;
   }
 
   /// \name Locate functions
