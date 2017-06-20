@@ -252,7 +252,7 @@ private:
   // Type definition for the overlay sweep-line visitor.
   template <typename ExtendedGeometryTraits, typename ArrangementA,
             typename ArrangementB>
-  struct _Overlay_helper : public Arr_bounded_planar_overlay_helper<
+  struct Overlay_helper : public Arr_bounded_planar_overlay_helper<
     ExtendedGeometryTraits, ArrangementA, ArrangementB, Arr,
     Arr_overlay_event<ExtendedGeometryTraits, Arr>,
     Arr_overlay_subcurve<ExtendedGeometryTraits, Arr_overlay_event<
@@ -279,7 +279,7 @@ private:
     typedef typename Base::Subcurve                     Subcurve;
     typedef typename Base::Construction_helper          Construction_helper;
 
-    _Overlay_helper(const Arrangement_a* arr_a, const Arrangement_b* arr_b) :
+    Overlay_helper(const Arrangement_a* arr_a, const Arrangement_b* arr_b) :
       Base(arr_a, arr_b)
     {}
   };
@@ -355,11 +355,11 @@ public:
   template <typename ArrangementA, typename ArrangementB,
             typename OverlayTraits>
   struct Surface_sweep_overlay_visitor :
-    public Arr_overlay_sl_visitor<_Overlay_helper<Arr_overlay_traits_2<
-                                                    Arr_traits_basic_adaptor_2<
-                                                      Geometry_traits_2>,
-                                                    ArrangementA, ArrangementB>,
-                                                  ArrangementA, ArrangementB>,
+    public Arr_overlay_sl_visitor<Overlay_helper<Arr_overlay_traits_2<
+                                                   Arr_traits_basic_adaptor_2<
+                                                     Geometry_traits_2>,
+                                                   ArrangementA, ArrangementB>,
+                                                 ArrangementA, ArrangementB>,
                                   OverlayTraits,
                                   Surface_sweep_overlay_visitor<ArrangementA,
                                                                 ArrangementB,
@@ -374,16 +374,15 @@ public:
                                  Arrangement_a, Arrangement_b>
                                                         Geom_ovl_traits_2;
 
-    typedef _Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
+    typedef Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
                                                         Ovl_helper;
 
-    typedef Surface_sweep_overlay_visitor<ArrangementA, ArrangementB,
-                                          OverlayTraits>
+    typedef Surface_sweep_overlay_visitor<Arrangement_a, Arrangement_b,
+                                          Overlay_traits>
                                                         Self;
     typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits, Self>
                                                         Base;
 
-    // typedef typename Base::Geometry_traits_2            Geometry_traits_2;
     typedef typename Base::Event                        Event;
     typedef typename Base::Subcurve                     Subcurve;
 
