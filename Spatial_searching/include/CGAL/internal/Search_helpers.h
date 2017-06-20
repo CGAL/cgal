@@ -18,8 +18,8 @@
 //
 // Author(s)     : Clement Jamin (clement.jamin.pro@gmail.com)
 
-#ifndef CGAL_INTERNAL_DISTANCE_HELPER_H
-#define CGAL_INTERNAL_DISTANCE_HELPER_H
+#ifndef CGAL_INTERNAL_SEARCH_HELPERS_H
+#define CGAL_INTERNAL_SEARCH_HELPERS_H
 
 #include <CGAL/Has_member.h>
 
@@ -145,4 +145,4 @@ private:
 
 }} // namespace CGAL::internal
 
-#endif  // CGAL_INTERNAL_DISTANCE_HELPERS_H
+#endif  // CGAL_INTERNAL_SEARCH_HELPERSS_H
