@@ -777,6 +777,22 @@ void clear(FaceGraph& g)
   CGAL_postcondition(num_faces(g) == 0);
 }
 
+/**
+* \ingroup PkgBGLHelperFct
+*
+* checks whether the graph is empty, by checking that it does not contain any vertex.
+*
+* @tparam FaceGraph model of `FaceGraph`
+*
+* @param g the graph to test
+*
+**/
+template<typename FaceGraph>
+bool empty(const FaceGraph& g)
+{
+  return vertices(g).begin() == vertices(g).end();
+}
+
 
 } // namespace CGAL
 
