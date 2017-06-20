@@ -34,9 +34,9 @@ public:
 
 /*! 
 The type of the point stored in the vertex. It must be 
-the same as the point type `TriangulationTraits::Point` (or its refined 
-concepts) when the `TriangulationVertex` is used in the class 
-`Triangulation<TriangulationTraits_, TriangulationDataStructure_>` (or its derived classes). 
+the same as the point type `TriangulationTraits::Point_d`
+when the `TriangulationVertex` is used in the class 
+`Triangulation<TriangulationTraits, TriangulationDataStructure_>`.
 */ 
 typedef unspecified_type Point; 
 
