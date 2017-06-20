@@ -45,14 +45,12 @@ int main(int argc, char* argv[])
 
   Seam_mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
 
-  // Add the seams
-#if 1
-  // Split the cube in two connected components
+  // Add seams. Below are two different seam selection files (choose one).
+  // 1st: Split the cube in two connected components
+  // 2nd: Seams are all edges incident to a vertex
   SM_halfedge_descriptor smhd = mesh.add_seams("data/two_connected_components.selection.txt");
-#else
-  // Seams are all edges incident to a vertex
-  SM_halfedge_descriptor smhd = mesh.add_seams("data/flatten.selection.txt");
-#endif
+  // SM_halfedge_descriptor smhd = mesh.add_seams("data/flatten.selection.txt");
+
   assert(smhd != SM_halfedge_descriptor());
 
   std::cout << "Added: " << mesh.number_of_seam_edges() << " seam edges" << std::endl;
