@@ -6,7 +6,7 @@
 #include "Scene.h"
 
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/Three/Scene_print_interface_item.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
 #include <CGAL/Three/Scene_transparent_interface.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 

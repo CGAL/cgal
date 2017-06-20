@@ -26,11 +26,15 @@ namespace Three {
   class Viewer_interface;
 
 
-//! Base class to allow an item to print its primitive IDs.
+//! Base class to allow an item to draw transparent faces.
 class Scene_transparent_interface {
 public:
   virtual ~Scene_transparent_interface(){}
- //!Print the ID of the selected primitive.
+ //! Draw transparent faces. It is the last drawing call in the Scene, so all
+ //! the items are already in place and the blending
+ //! takes them all, their points and their edges into account, whatever the
+ //! position of the transparent item is in the scene's entries.
+ //!
  virtual void drawTransparent(CGAL::Three::Viewer_interface*)const = 0;
 };
 }
