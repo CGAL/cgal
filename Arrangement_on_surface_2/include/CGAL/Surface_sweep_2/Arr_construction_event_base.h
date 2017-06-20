@@ -19,7 +19,7 @@
 #ifndef CGAL_ARR_CONSTRUCTION_EVENT_BASE_H
 #define CGAL_ARR_CONSTRUCTION_EVENT_BASE_H
 
-#include <CGAL/license/Surface_sweep_2.h>
+#include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
  *

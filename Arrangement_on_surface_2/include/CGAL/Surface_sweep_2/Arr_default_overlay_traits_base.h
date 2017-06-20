@@ -16,18 +16,19 @@
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 /*! \file
+ *
  * Definition of the internal _Arr_default_overlay_traits_base class template.
  */
 
 #ifndef CGAL_ARR_DEFAULT_OVERLAY_TRAITS_BASE_H
 #define CGAL_ARR_DEFAULT_OVERLAY_TRAITS_BASE_H
 
-#include <CGAL/license/Surface_sweep_2.h>
+#include <CGAL/license/Arrangement_on_surface_2.h>
 
 namespace CGAL {
 
-/*!
- * \class
+/*! \class
+ *
  * An overlay-traits class for computing the overlay of two arrangement that
  * are templated with the default DCEL classes, namely they store no extra
  * data with their DCEL features. The resulting arrangement is also assumed

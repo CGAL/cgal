@@ -19,14 +19,15 @@
 #ifndef CGAL_ARR_INSERTION_SL_VISITOR_H
 #define CGAL_ARR_INSERTION_SL_VISITOR_H
 
-#include <CGAL/license/Surface_sweep_2.h>
+#include <CGAL/license/Arrangement_on_surface_2.h>
 
-/*! Definition of the Arr_insertion_sl_visitor class-template.
+/*! \file
  *
- * This class can be further split into two, where one derives from the other,
- * such that the derived class handles the case of inserting curves into a
- * non-empty arrangement, and the base class handles the case of inserting
- * curves into a empty arrangement.
+ * Definition of the Arr_insertion_sl_visitor class-template. This class can be
+ * further split into two, where one derives from the other, such that the
+ * derived class handles the case of inserting curves into a non-empty
+ * arrangement, and the base class handles the case of inserting curves into a
+ * empty arrangement.
  */
 
 #include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_sl_visitor.h>
@@ -35,6 +36,7 @@
 namespace CGAL {
 
 /*! \class Arr_insertion_sl_visitor
+ *
  * A sweep-line visitor for inserting new curves into an existing arrangement
  * embedded on a surface.
  */

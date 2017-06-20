@@ -18,7 +18,7 @@
 #ifndef CGAL_ARR_INSERTION_TRAITS_2_H
 #define CGAL_ARR_INSERTION_TRAITS_2_H
 
-#include <CGAL/license/Surface_sweep_2.h>
+#include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
  *
@@ -29,7 +29,7 @@
 
 namespace CGAL {
 
-/*! \class
+/*! \class Arr_insertion_traits_2
  *
  * A meta-traits class that stores a halfedge handle with every x-monotone
  * curve, and a vertex handle with each point. This information is used to

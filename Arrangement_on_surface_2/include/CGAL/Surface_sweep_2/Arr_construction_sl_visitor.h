@@ -19,7 +19,7 @@
 #ifndef CGAL_ARR_CONSTRUCTION_SL_VISITOR_H
 #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_H
 
-#include <CGAL/license/Surface_sweep_2.h>
+#include <CGAL/license/Arrangement_on_surface_2.h>
 
 #ifndef CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
 #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 0
