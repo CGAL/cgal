@@ -1,4 +1,4 @@
-// Copyright (c) 2006  GeometryFactory (France). All rights reserved.
+// Copyright (c) 2017  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
@@ -14,10 +14,12 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+// Author(s)     : Andreas Fabri
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_TRIANGLE_DONTFLIP_PLACEMENT_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_TRIANGLE_DONTFLIP_PLACEMENT_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_NORMAL_CHANGE_PLACEMENT_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_NORMAL_CHANGE_PLACEMENT_H
+
+#include <CGAL/license/Surface_mesh_simplification.h>
 
 
 namespace CGAL {
@@ -26,7 +28,7 @@ namespace Surface_mesh_simplification
 {
 
   template<class Placement>
-  class Triangle_dontflip_placement
+  class Bounded_normal_change_placement
 {
 public:
     
@@ -34,7 +36,7 @@ public:
   
 public:
   
-  Triangle_dontflip_placement(const Placement& placement = Placement() )
+  Bounded_normal_change_placement(const Placement& placement = Placement() )
     : mPlacement(placement)
   {}
      
@@ -87,6 +89,6 @@ private:
 
 } //namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_TRIANGLE_DONTFLIP_PLACEMENT_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_NORMAL_CHANGE_PLACEMENT_H
 
  
