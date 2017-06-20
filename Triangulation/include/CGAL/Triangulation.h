@@ -78,12 +78,12 @@ private:
 template <  class TriangulationTraits, class TDS_ = Default >
 class Triangulation
 {
-    typedef typename TriangulationTraits::Dimension Maximal_dimension_;
+    typedef typename TriangulationTraits::Dimension  Maximal_dimension_;
     typedef typename Default::Get<TDS_, Triangulation_data_structure
                     <   Maximal_dimension_,
                         Triangulation_vertex<TriangulationTraits>,
                         Triangulation_full_cell<TriangulationTraits> >
-                        >::type                     TDS;
+                        >::type                      TDS;
     typedef Triangulation<TriangulationTraits, TDS_> Self;
     
 protected:
@@ -138,9 +138,9 @@ public:
     typedef typename TDS::Full_cell                 Full_cell;
     typedef typename TDS::Facet                     Facet;
     typedef typename TDS::Face                      Face;
+    typedef typename TDS::Vertex::Point             Point;
 
     typedef Maximal_dimension_                      Maximal_dimension;
-    typedef typename Geom_traits::Point_d           Point;
 
     typedef typename TDS::Vertex_handle             Vertex_handle;
     typedef typename TDS::Vertex_iterator           Vertex_iterator;

@@ -10,12 +10,12 @@ class `Regular_triangulation` to wrap its first template parameter
 so that the base class `Triangulation` manipulates weighted points instead 
 of bare points.
 
-\tparam K must be a model of the `RegularTriangulationTraits` concept.
+\tparam RTTraits must be a model of the `RegularTriangulationTraits` concept.
 
 In addition to the types described below, the following predicates and functors
 are adapted so that they can be called
 with weighted points instead of bare points as parameters.
-In practice, the functors from the base class `K` are called,
+In practice, the functors from the base class `RTTraits` are called,
 ignoring the weights.
 - `Orientation_d`
 - `Construct_flat_orientation_d`
@@ -28,8 +28,8 @@ ignoring the weights.
 
 */
 
-template <typename K>
-class Regular_triangulation_traits_adapter : public K {
+template <typename RTTraits>
+class Regular_triangulation_traits_adapter : public RTTraits {
 public:
 
   /// \name Types
@@ -39,11 +39,6 @@ public:
   The weighted point type.
   */
   typedef typename K::Weighted_point_d              Point_d;
-
-  /*!
-  The (un-weighted) point type.
-  */
-  typedef typename K::Point_d                       Bare_point_d;
 
   /// @}
 

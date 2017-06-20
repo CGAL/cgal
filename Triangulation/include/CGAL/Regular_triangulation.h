@@ -53,7 +53,7 @@ class Regular_triangulation
     Triangulation_full_cell<RTTraits>
     > >::type                                     TDS;
   typedef Triangulation<RTTraits, TDS>            Base;
-  typedef Regular_triangulation<Traits_, TDS_>             Self;
+  typedef Regular_triangulation<Traits_, TDS_>    Self;
 
   typedef typename RTTraits::Orientation_d                 Orientation_d;
   typedef typename RTTraits::Power_side_of_power_sphere_d  Power_side_of_power_sphere_d;
@@ -73,8 +73,6 @@ public: // PUBLIC NESTED TYPES
   typedef typename Base::Face                     Face;
   
   typedef Maximal_dimension_                      Maximal_dimension;
-  typedef typename RTTraits::Bare_point_d         Bare_point;
-  typedef typename RTTraits::Weighted_point_d     Weighted_point;
 
   typedef typename Base::Point_const_iterator     Point_const_iterator;
   typedef typename Base::Vertex_handle            Vertex_handle;
@@ -95,13 +93,14 @@ public: // PUBLIC NESTED TYPES
   typedef typename Base::Locate_type              Locate_type;
 
   //Tag to distinguish Delaunay from Regular triangulations
-  typedef Tag_true                                  Weighted_tag;
+  typedef Tag_true                                Weighted_tag;
 
 protected: // DATA MEMBERS
 
 
 public:
 
+  typedef typename Base::Point Weighted_point;
   typedef typename Base::Rotor Rotor;
   using Base::maximal_dimension;
   using Base::are_incident_full_cells_valid;

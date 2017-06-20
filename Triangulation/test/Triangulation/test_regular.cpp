@@ -12,33 +12,31 @@
 
 using namespace std;
 
-template<typename RTri>
+template<typename K, typename RTri>
 void test(const int d, const string & type, const int N)
 {
+  typedef typename K::Weighted_point_d Weighted_point;
+  typedef typename K::Point_d Bare_point;
+
   typedef typename RTri::Full_cell_handle Full_cell_handle;
   typedef typename RTri::Face Face;
-  typedef typename RTri::Point Point;
-  typedef typename RTri::Bare_point Bare_point;
   typedef typename RTri::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
   typedef typename RTri::Finite_vertex_iterator Finite_vertex_iterator;
+
+  // Instantiate a random point generator
+  CGAL::Random rng(0);
+  typedef CGAL::Random_points_in_cube_d<Bare_point> Random_points_iterator;
+  Random_points_iterator rand_it(d, 1.0, rng);
 
   RTri rt(d);
   cerr << "\nBuilding Regular triangulation of (" << type << d << ") dimension with " << N << " points";
   assert(rt.empty());
+  
+  // Generate N random points
+  std::vector<Weighted_point> points;
+  for (int i = 0; i < N; ++i)
+    points.push_back(Weighted_point(*rand_it++, rng.get_double(0., 10.)));
 
-  vector<Point> points;
-
-  srand(10);
-  for( int i = 0; i < N; ++i )
-  {
-    vector<double> coords(d);
-    for( int j = 0; j < d; ++j )
-      coords[j] = static_cast<double>(rand() % 100000)/10000;
-    points.push_back(Point(
-      Bare_point(d, coords.begin(), coords.end()), 
-      static_cast<double>(rand() % 100000)/100000
-    ));
-  }
   rt.insert(points.begin(),  points.end());
   cerr << "\nChecking topology and geometry...";
   assert( rt.is_valid(true) );
@@ -84,14 +82,6 @@ void test(const int d, const string & type, const int N)
     cells.clear();
   }
 
-  // Remove all !
-  cerr << "\nBefore removal: " << rt.number_of_vertices() << " vertices. After: ";
-  random_shuffle(points.begin(),  points.end());
-  rt.remove(points.begin(),  points.end());
-  assert( rt.is_valid() );
-  //std::cerr << ((rt.is_valid(true)) ? "VALID!" : "NOT VALID :(") << std::endl;
-  cerr << rt.number_of_vertices() << " vertices.";
-  // assert( rt.empty() ); NOT YET !
   // CLEAR
   rt.clear();
   assert( -1 == rt.current_dimension() );
@@ -105,11 +95,11 @@ void go(const int N)
 {
   typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
   typedef CGAL::Regular_triangulation<FK> Triangulation;
-  test<Triangulation>(D, "static", N);
+  test<FK, Triangulation>(D, "static", N);
 
   typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK_dyn;
   typedef CGAL::Regular_triangulation<FK_dyn> Triangulation_dyn;
-  test<Triangulation_dyn>(D, "dynamic", N);
+  test<FK_dyn, Triangulation_dyn>(D, "dynamic", N);
 }
 
 void test_inserting_points_at_the_same_position()
@@ -119,8 +109,8 @@ void test_inserting_points_at_the_same_position()
   typedef CGAL::Regular_triangulation<FK> RTri;
 
   typedef RTri::Vertex_handle Vertex_handle;
-  typedef RTri::Point Point;
-  typedef RTri::Bare_point Bare_point;
+  typedef FK::Weighted_point_d Weighted_point;
+  typedef FK::Point_d Bare_point;
 
   RTri rt(DIM);
 
@@ -137,31 +127,31 @@ void test_inserting_points_at_the_same_position()
   //=======================
 
   // First point
-  Vertex_handle vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  Vertex_handle vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 0);
   assert(vh != Vertex_handle());
 
   // Same point
-  Vertex_handle vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  Vertex_handle vh2 = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 0);
   assert(vh == vh2);
   
   // Same position, bigger weight
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 1);
   assert(vh != Vertex_handle());
   
   // Same point
-  vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  vh2 = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 1);
   assert(vh == vh2);
 
   // Same position, lower weight
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.1));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.1));
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 2);
   assert(vh == Vertex_handle());
@@ -170,31 +160,31 @@ void test_inserting_points_at_the_same_position()
 
   // New position
   pt[3] = 0.78;
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 2);
   assert(rt.number_of_hidden_vertices() == 2);
   assert(vh != Vertex_handle());
 
   // Same point
-  vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  vh2 = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 2);
   assert(rt.number_of_hidden_vertices() == 2);
   assert(vh == vh2);
 
   // Same position, bigger weight
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 2);
   assert(rt.number_of_hidden_vertices() == 3);
   assert(vh != Vertex_handle());
 
   // Same point
-  vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  vh2 = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 2);
   assert(rt.number_of_hidden_vertices() == 3);
   assert(vh == vh2);
 
   // Same position, lower weight
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.1));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.1));
   assert(rt.number_of_vertices() == 2);
   assert(rt.number_of_hidden_vertices() == 4);
   assert(vh == Vertex_handle());
@@ -203,7 +193,7 @@ void test_inserting_points_at_the_same_position()
 
   // New position
   pt[4] = 1.78;
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.2));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 0.2));
   assert(rt.number_of_vertices() == 3);
   assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
@@ -212,7 +202,7 @@ void test_inserting_points_at_the_same_position()
 
   // New position
   pt[1] = 1.78;
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.8));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 0.8));
   assert(rt.number_of_vertices() == 4);
   assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
@@ -221,7 +211,7 @@ void test_inserting_points_at_the_same_position()
 
   // New position
   pt[2] = 1.78;
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.25));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 0.25));
   assert(rt.number_of_vertices() == 5);
   assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
@@ -230,13 +220,13 @@ void test_inserting_points_at_the_same_position()
 
   // New position
   pt[0] = 12.13;
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.25));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.25));
   assert(rt.number_of_vertices() == 6);
   assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
 
   // Same position, bigger weight
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 6);
   assert(rt.number_of_hidden_vertices() == 5);
   assert(vh != Vertex_handle());
@@ -245,7 +235,7 @@ void test_inserting_points_at_the_same_position()
 
   // New position
   pt[0] = 9.13;
-  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.25));
+  vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.25));
   assert(rt.number_of_vertices() == 7);
   assert(rt.number_of_hidden_vertices() == 5);
   assert(vh != Vertex_handle());

@@ -12,12 +12,12 @@
 
 using namespace std;
 
-template<typename RTri>
+template<typename K, typename RTri>
 void test(const int d, const string & type, const int N)
 {
   typedef typename RTri::Vertex_handle Vertex_handle;
-  typedef typename RTri::Point Point;
-  typedef typename RTri::Bare_point Bare_point;
+  typedef typename K::Weighted_point_d Weighted_point;
+  typedef typename K::Point_d Bare_point;
 
   RTri rt(d);
   RTri rt_star_only(d);
@@ -33,7 +33,7 @@ void test(const int d, const string & type, const int N)
   for( int j = 0; j < d; ++j )
     coords[j] = 0;
   
-  Point p = Point(
+  Weighted_point p = Weighted_point(
     Bare_point(d, coords.begin(), coords.end()), 
     static_cast<double>(rand() % 10000)/100000);
 
@@ -46,7 +46,7 @@ void test(const int d, const string & type, const int N)
     for( int j = 0; j < d; ++j )
       coords[j] = 10.*(rand() % RAND_MAX)/RAND_MAX - 5.;
     
-    p = Point(
+    p = Weighted_point(
       Bare_point(d, coords.begin(), coords.end()), 
       static_cast<double>(rand() % 10000)/1000000);
 
@@ -80,7 +80,7 @@ void go(const int N)
   typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
   typedef CGAL::Regular_triangulation<FK> Triangulation;
   //test<Triangulation>(D, "dynamic", N);
-  test<Triangulation>(D, "static", N);
+  test<FK, Triangulation>(D, "static", N);
 }
 
 int main()
