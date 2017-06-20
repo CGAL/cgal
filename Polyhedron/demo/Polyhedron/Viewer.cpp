@@ -1678,6 +1678,5 @@ bool Viewer::isRecent() const { return d->is_recent; }
 
 bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 
-QOpenGLFunctions_4_3_Compatibility* Viewer::recentFunctions() { return d->_recentFunctions; }
-
+QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
  #include "Viewer.moc"

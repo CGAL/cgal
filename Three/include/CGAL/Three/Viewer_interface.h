@@ -243,7 +243,7 @@ public:
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
   //! @returns NULL if `isOpenGL_4_3()` is `false`
-  virtual QOpenGLFunctions_4_3_Compatibility* recentFunctions() = 0;
+  virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
 }; // end class Viewer_interface
 }
 }
