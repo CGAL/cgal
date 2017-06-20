@@ -23,8 +23,6 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
-
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 
