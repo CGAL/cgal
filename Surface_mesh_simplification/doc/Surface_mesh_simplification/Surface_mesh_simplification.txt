@@ -323,7 +323,7 @@ Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While t
 The class `Bounded_normal_change_placement` is a placement that checks if
 another placement would invert the normal of a face around the stars of the
 two vertices of an edge that is candidate for an edge collapse.  It then
-returns 
+rejects this placement by returning `boost::none`.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 
