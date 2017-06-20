@@ -1673,8 +1673,6 @@ void Viewer::enableClippingBox(QVector4D box[6])
     d->clipbox[i] = box[i];
 }
 
-bool Viewer::isRecent() const { return d->is_recent; }
-
 
 bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 
