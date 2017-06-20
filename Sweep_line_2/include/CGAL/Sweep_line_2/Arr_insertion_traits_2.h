@@ -107,7 +107,8 @@ public:
                                OutputIterator oi)
     {
       if(cv1.halfedge_handle() != invalid_he &&
-         cv2.halfedge_handle() != invalid_he)
+         cv2.halfedge_handle() != invalid_he &&
+         cv1.halfedge_handle()!=cv2.halfedge_handle()) //SL_SAYS check with Efi
       {
         // The curves are interior-disjoint as both of them are already in
         //  the arrangement.
