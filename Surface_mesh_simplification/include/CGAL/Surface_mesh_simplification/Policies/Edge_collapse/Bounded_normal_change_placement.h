@@ -46,6 +46,9 @@ public:
   {
     optional<typename Profile::Point> op = mPlacement(aProfile); 
     if(op){
+      // triangles returns the triangles of the star of the vertices of the edge to collapse
+      // First the two trianges incident to the edge, then the other triangles
+      // The second vertex of each triangle is the vertex that gets placed
        const typename Profile::Triangle_vector& triangles = aProfile.triangles();
        if(triangles.size()>2){
          typedef typename Profile::Point Point;
@@ -53,7 +56,12 @@ public:
          typedef typename Traits::Vector_3 Vector;
          typename Profile::VertexPointMap ppmap = aProfile.vertex_point_map();
          typename Profile::Triangle_vector::const_iterator it = triangles.begin();
-         ++it; ++it;
+         if(aProfile.left_face_exists()){
+           ++it; 
+         }
+         if(aProfile.right_face_exists()){
+           ++it;
+         }
          while(it!= triangles.end()){
            const Profile::Triangle& t = *it;
            Point p = get(ppmap,t.v0);
