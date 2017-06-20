@@ -16,7 +16,8 @@
 // $Id$
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
-//               : Waqar Khan <wkhan@mpi-inf.mpg.de>
+//               : Waqar Khan <wkhan@mpi-inf.mpg.de>,
+//                 Clement Jamin (clement.jamin.pro@gmail.com)
 
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H

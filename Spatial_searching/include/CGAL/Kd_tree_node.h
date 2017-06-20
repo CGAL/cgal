@@ -487,7 +487,7 @@ namespace CGAL {
  {
     friend class Kd_tree<TreeTraits, Splitter, Tag_false, EnablePointsCache>;
     
-    typedef Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Kdt;
+    typedef Kd_tree<TreeTraits, Splitter, Tag_false, EnablePointsCache> Kdt;
 
     typedef Kd_tree_node< TreeTraits, Splitter, Tag_false, EnablePointsCache> Base;
     typedef typename Kdt::Node_handle Node_handle;

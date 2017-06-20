@@ -16,34 +16,17 @@
 // $Id$
 // 
 //
-// Author(s)     : Gael Guennebaud (gael.guennebaud@inria.fr), Hans Tangelder (<hanst@cs.uu.nl>)
+// Author(s)     : Gael Guennebaud (gael.guennebaud@inria.fr),
+//                 Hans Tangelder (<hanst@cs.uu.nl>),
+//                 Clement Jamin (clement.jamin.pro@gmail.com)
 
 #ifndef CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
 #define CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
 
 #include <CGAL/internal/K_neighbor_search.h>
-#include <CGAL/Has_member.h>
-
-#include <boost/mpl/has_xxx.hpp>
+#include <CGAL/internal/Distance_helper.h>
 
 namespace CGAL {
-
-// Helper struct to know at compile-time if there is a cache of the points
-// stored in the tree
-template <typename Tree, bool has_enable_points_cache>
-struct Has_points_cache;
-
-template <typename Tree>
-struct Has_points_cache<Tree, true>
-{
-  static const bool value = Tree::Enable_points_cache::value;
-};
-
-template <typename Tree>
-struct Has_points_cache<Tree, false>
-{
-  static const bool value = false;
-};
 
 template <class SearchTraits, 
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
@@ -60,93 +43,18 @@ public:
 private:
   typename SearchTraits::Cartesian_const_iterator_d query_object_it;
   
+  internal::Distance_helper<Distance> m_distance_helper;
   std::vector<FT> dists;
   int m_dim;
   Tree const& m_tree;
-
-  CGAL_GENERATE_MEMBER_DETECTOR(transformed_distance_from_coordinates);
-  CGAL_GENERATE_MEMBER_DETECTOR(interruptible_transformed_distance);
-  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_Enable_points_cache, Enable_points_cache, false)
-
-  // If transformed_distance_from_coordinates does not exist in `Distance`
-  template <bool has_transformed_distance_from_coordinates = has_transformed_distance_from_coordinates<Distance>::value>
-  FT
-  transformed_distance_from_coordinates(
-    const typename Base::Query_item& q,
-    Point const& p,
-    typename std::vector<FT>::const_iterator it_coord_begin,
-    typename std::vector<FT>::const_iterator it_coord_end)
-  {
-    return this->distance_instance.transformed_distance(q, p);
-  }
-  // ... or if it exists
-  template <>
-  FT
-    transformed_distance_from_coordinates<true>(
-    const typename Base::Query_item& q,
-    Point const& p,
-    typename std::vector<FT>::const_iterator it_coord_begin,
-    typename std::vector<FT>::const_iterator it_coord_end)
-  {
-    return this->distance_instance.transformed_distance_from_coordinates(q, it_coord_begin, it_coord_end);
-  }
-
-  // *** Version with cache ***
-  // If interruptible_transformed_distance does not exist in `Distance`
-  template <bool has_interruptible_distance_computation = has_interruptible_transformed_distance<Distance>::value>
-  FT
-  interruptible_transformed_distance(
-    const typename Base::Query_item& q,
-    Point const& p,
-    typename std::vector<FT>::const_iterator it_coord_begin, 
-    typename std::vector<FT>::const_iterator it_coord_end,
-    FT)
-  {
-    return transformed_distance_from_coordinates(q, p, it_coord_begin, it_coord_end);
-  }
-  // ... or if it exists
-  template <>
-  FT
-  interruptible_transformed_distance<true>(
-    const typename Base::Query_item& q,
-    Point const& p,
-    typename std::vector<FT>::const_iterator it_coord_begin,
-    typename std::vector<FT>::const_iterator it_coord_end,
-    FT stop_if_geq_to_this)
-  {
-    return this->distance_instance.interruptible_transformed_distance(
-      q, it_coord_begin, it_coord_end, stop_if_geq_to_this);
-  }
-
-  // *** Version without cache ***
-  // If interruptible_transformed_distance does not exist in `Distance`
-  template <bool has_interruptible_distance_computation = has_interruptible_transformed_distance<Distance>::value>
-  FT
-  interruptible_transformed_distance(
-    const typename Base::Query_item& q,
-    Point const& p,
-    FT)
-  {
-    return this->distance_instance.transformed_distance(q, p);
-  }
-  // ... or if it exists
-  template <>
-  FT
-  interruptible_transformed_distance<true>(
-    const typename Base::Query_item& q,
-    Point const& p,
-    FT stop_if_geq_to_this)
-  {
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = m_tree.traits().construct_cartesian_const_iterator_d_object();
-    return this->distance_instance.interruptible_transformed_distance(
-      q, construct_it(p), construct_it(p, 0), stop_if_geq_to_this);
-  }
 
 public:
 
   Orthogonal_k_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
-    : Base(q,k,Eps,Search_nearest,d), m_tree(tree)
+  : Base(q,k,Eps,Search_nearest,d), 
+    m_distance_helper(this->distance_instance),
+    m_tree(tree)
   {
     if (tree.empty()) return;
 
@@ -187,7 +95,8 @@ private:
       this->number_of_items_visited++;
           
       FT distance_to_query_object =
-        transformed_distance_from_coordinates(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim);
+        m_distance_helper.transformed_distance_from_coordinates(
+          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim);
       this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
 
       cache_point_begin += m_dim;
@@ -198,7 +107,8 @@ private:
       this->number_of_items_visited++;
 
       FT distance_to_query_object =
-        interruptible_transformed_distance(this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim, worst_dist);
+        m_distance_helper.interruptible_transformed_distance(
+          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim, worst_dist);
 
       if (distance_to_query_object < worst_dist)
       {
@@ -229,7 +139,8 @@ private:
       this->number_of_items_visited++;
 
       FT distance_to_query_object =
-        interruptible_transformed_distance(this->query_object, *it_node_point, worst_dist);
+        m_distance_helper.interruptible_transformed_distance(
+          this->query_object, *it_node_point, worst_dist);
 
       if (distance_to_query_object < worst_dist)
       {
@@ -248,7 +159,7 @@ private:
         static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
       if (node->size() > 0)
-        search_in_leaf<Has_points_cache<Tree, has_Enable_points_cache<Tree>::type::value>::value>(node);
+        search_in_leaf<internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::value>(node);
     }
     else
     {
