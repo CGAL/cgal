@@ -34,7 +34,7 @@ namespace CGAL {
   template < class TreeTraits, class Splitter, class UseExtendedNode, class EnablePointsCache >
   class Kd_tree_node {
 
-    friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>;
+    friend class Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache>;
 
     typedef Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Kdt;
 
@@ -269,9 +269,9 @@ namespace CGAL {
   template < class TreeTraits, class Splitter, class UseExtendedNode, class EnablePointsCache > 
   class Kd_tree_leaf_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode, EnablePointsCache >{
 
-    friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>;
+    friend class Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache>;
     
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::iterator iterator;
+    typedef typename Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache>::iterator iterator;
     typedef Kd_tree_node< TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Base;
     typedef typename TreeTraits::Point_d Point_d;
 
@@ -334,7 +334,7 @@ namespace CGAL {
   template < class TreeTraits, class Splitter, class UseExtendedNode, class EnablePointsCache> 
   class Kd_tree_internal_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode, EnablePointsCache >{
 
-    friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>;
+    friend class Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache>;
 
     typedef Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Kdt;
 
@@ -485,15 +485,17 @@ namespace CGAL {
  class Kd_tree_internal_node<TreeTraits,Splitter,Tag_false,EnablePointsCache> 
    : public Kd_tree_node< TreeTraits, Splitter, Tag_false, EnablePointsCache >
  {
-    friend class Kd_tree<TreeTraits,Splitter,Tag_false,EnablePointsCache>;
+    friend class Kd_tree<TreeTraits, Splitter, Tag_false, EnablePointsCache>;
+    
+    typedef Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Kdt;
 
     typedef Kd_tree_node< TreeTraits, Splitter, Tag_false, EnablePointsCache> Base;
-    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false,EnablePointsCache>::Node_handle Node_handle;
-    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false,EnablePointsCache>::Node_const_handle Node_const_handle;
+    typedef typename Kdt::Node_handle Node_handle;
+    typedef typename Kdt::Node_const_handle Node_const_handle;
 
     typedef typename TreeTraits::FT FT;
-    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false,EnablePointsCache>::Separator Separator;
-    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false,EnablePointsCache>::D D;
+    typedef typename Kdt::Separator Separator;
+    typedef typename Kdt::D D;
 
   private:
     
