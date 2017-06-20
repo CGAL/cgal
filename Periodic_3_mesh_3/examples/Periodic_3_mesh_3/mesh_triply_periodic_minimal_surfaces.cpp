@@ -1,16 +1,16 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Labeled_periodic_3_mesh_domain_3.h>
-#include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/IO/Medit_IO.h>
-
+#include <CGAL/Labeled_periodic_3_mesh_domain_3.h>
+#include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
+
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
 
 #include <algorithm>
 #include <cmath>
@@ -23,6 +23,7 @@ namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
 typedef K::FT                                               FT;
 typedef K::Point_3                                          Point;
 typedef K::Segment_3                                        Segment;

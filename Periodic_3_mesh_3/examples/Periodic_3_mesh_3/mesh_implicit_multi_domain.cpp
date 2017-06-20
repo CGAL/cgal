@@ -3,16 +3,22 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Labeled_periodic_3_mesh_domain_3.h>
-#include <CGAL/Periodic_3_mesh_triangulation_3.h>
 #include <CGAL/IO/Medit_IO.h>
+#include <CGAL/Labeled_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
-#include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/number_type_config.h>
+#include <CGAL/number_type_config.h> // CGAL_PI
+
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
@@ -33,7 +39,6 @@ typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type  Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                        C3t3;
 
 // Criteria
-typedef CGAL::Mesh_edge_criteria_3<Tr>                    Edge_criteria;
 typedef CGAL::Mesh_criteria_3<Tr>                         Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call

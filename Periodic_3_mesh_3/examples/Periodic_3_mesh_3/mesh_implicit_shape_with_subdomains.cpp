@@ -1,26 +1,31 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/IO/Medit_IO.h>
+#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
+#include <CGAL/Implicit_to_labeled_subdomains_function_wrapper.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
-#include <CGAL/Implicit_to_labeled_subdomains_function_wrapper.h>
-#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
-#include <CGAL/IO/Medit_IO.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_constant_domain_field_3.h>
 
-#include <CGAL/number_type_config.h>
+#include <CGAL/number_type_config.h> // CGAL_PI
+
+#include <cmath>
+#include <fstream>
 
 namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
-// Domain
+// Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::FT FT;
-typedef K::Point_3 Point;
+typedef K::FT                                               FT;
+typedef K::Point_3                                          Point;
+
+// Domain
 typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function, K> Function_wrapper;
 typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function,K, Function_wrapper> Periodic_mesh_domain;
