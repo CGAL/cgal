@@ -32,6 +32,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/intersections.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
