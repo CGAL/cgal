@@ -231,18 +231,7 @@ public:
     typedef std::vector<Weighted_point> WP_vec;
     WP_vec points(start, end);
 
-    // Spatial sorting can only be applied to bare points, so we need an adaptor
-    typedef typename Geom_traits::Construct_point_d Construct_point_d;
-    typedef typename boost::result_of<const Construct_point_d(const Weighted_point&)>::type Ret;
-    typedef boost::function_property_map<Construct_point_d, Weighted_point, Ret> fpmap;
-    typedef CGAL::Spatial_sort_traits_adapter_d<Geom_traits, fpmap> Search_traits_d;
-
-    spatial_sort(
-      points.begin(),
-      points.end(),
-      Search_traits_d(
-        boost::make_function_property_map<Weighted_point, Ret, Construct_point_d>(
-          geom_traits().construct_point_d_object()), geom_traits()));
+    spatial_sort(points.begin(), points.end(), geom_traits());
 
     Full_cell_handle hint;
     for(typename WP_vec::const_iterator p = points.begin(); p != points.end(); ++p )
