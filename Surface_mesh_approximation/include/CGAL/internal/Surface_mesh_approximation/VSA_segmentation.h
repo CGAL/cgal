@@ -282,7 +282,7 @@ public:
   std::vector<std::vector<std::size_t> >
   collect_borders(const FacetSegmentMap &seg_pmap) {
     std::vector<std::vector<std::size_t> > bdrs;
-    for (std::vector<Border>::iterator bitr = borders.begin();
+    for (typename std::vector<Border>::iterator bitr = borders.begin();
       bitr != borders.end(); ++bitr) {
       std::vector<std::size_t> bdr;
       const halfedge_descriptor he_mark = bitr->he_head;
@@ -584,11 +584,11 @@ private:
       boost::listS, boost::vecS,
       boost::undirectedS,
       VertexProperty, EdgeProperty> > SubGraph;
-    typedef boost::property_map<SubGraph, boost::vertex_index1_t>::type VertexIndex1Map;
-    typedef boost::property_map<SubGraph, boost::vertex_index2_t>::type VertexIndex2Map;
-    typedef boost::property_map<SubGraph, boost::edge_weight_t>::type EdgeWeightMap;
-    typedef SubGraph::vertex_descriptor sg_vertex_descriptor;
-    typedef SubGraph::edge_descriptor sg_edge_descriptor;
+    typedef typename boost::property_map<SubGraph, boost::vertex_index1_t>::type VertexIndex1Map;
+    typedef typename boost::property_map<SubGraph, boost::vertex_index2_t>::type VertexIndex2Map;
+    typedef typename boost::property_map<SubGraph, boost::edge_weight_t>::type EdgeWeightMap;
+    typedef typename SubGraph::vertex_descriptor sg_vertex_descriptor;
+    typedef typename SubGraph::edge_descriptor sg_edge_descriptor;
     typedef std::vector<sg_vertex_descriptor> VertexVector;
 
     typedef std::map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
@@ -684,8 +684,8 @@ private:
         FT half_chord_len = vdist.back() / FT(2);
         const int anchorleft = vertex_status_pmap[source(chord.front(), mesh)];
         const int anchorright = vertex_status_pmap[target(chord.back(), mesh)];
-        std::vector<FT>::iterator ditr = vdist.begin() + 1;
-        for (ChordVector::iterator hitr = chord.begin();
+        typename std::vector<FT>::iterator ditr = vdist.begin() + 1;
+        for (typename ChordVector::iterator hitr = chord.begin();
           hitr != chord.end() - 1; ++hitr, ++ditr) {
           if (*ditr < half_chord_len)
             global_vtag_map[to_sgv_map[target(*hitr, mesh)]] = anchorleft;
