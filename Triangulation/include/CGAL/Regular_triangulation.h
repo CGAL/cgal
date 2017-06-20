@@ -26,6 +26,8 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Regular_triangulation_traits_adapter.h>
 
+#include <boost/property_map/function_property_map.hpp>
+
 namespace CGAL {
 
 template< typename Traits_, typename TDS_ = Default >
@@ -115,6 +117,7 @@ public:
   using Base::is_infinite;
   using Base::locate;
   using Base::points_begin;
+  using Base::points_end;
   using Base::set_neighbors;
   using Base::new_full_cell;
   using Base::number_of_vertices;
@@ -228,7 +231,18 @@ public:
     typedef std::vector<Weighted_point> WP_vec;
     WP_vec points(start, end);
 
-    spatial_sort(points.begin(), points.end(), geom_traits());
+    // Spatial sorting can only be applied to bare points, so we need an adaptor
+    typedef typename Geom_traits::Construct_point_d Construct_point_d;
+    typedef typename boost::result_of<const Construct_point_d(const Weighted_point&)>::type Ret;
+    typedef boost::function_property_map<Construct_point_d, Weighted_point, Ret> fpmap;
+    typedef CGAL::Spatial_sort_traits_adapter_d<Geom_traits, fpmap> Search_traits_d;
+
+    spatial_sort(
+      points.begin(),
+      points.end(),
+      Search_traits_d(
+        boost::make_function_property_map<Weighted_point, Ret, Construct_point_d>(
+          geom_traits().construct_point_d_object()), geom_traits()));
 
     Full_cell_handle hint;
     for(typename WP_vec::const_iterator p = points.begin(); p != points.end(); ++p )
@@ -1147,8 +1161,8 @@ Regular_triangulation<Traits, TDS>
         {
           Power_side_of_power_sphere_d side = 
             geom_traits().power_side_of_power_sphere_d_object();
-          if (side(Point_const_iterator(ch->vertices_begin()),
-                   Point_const_iterator(ch->vertices_end()),
+          if (side(points_begin(ch),
+                   points_end(ch),
                    opposite_vh->point()) == ON_POSITIVE_SIDE)
           {
             if (verbose)

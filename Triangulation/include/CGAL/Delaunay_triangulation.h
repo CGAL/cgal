@@ -95,7 +95,7 @@ protected: // DATA MEMBERS
 
 public:
 
-    using typename Base::Rotor;
+    typedef typename Base::Rotor Rotor;
     using Base::maximal_dimension;
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
@@ -113,6 +113,7 @@ public:
     using Base::is_infinite;
     using Base::locate;
     using Base::points_begin;
+    using Base::points_end;
     using Base::set_neighbors;
     using Base::new_full_cell;
     using Base::number_of_vertices;
@@ -917,7 +918,7 @@ Delaunay_triangulation<DCTraits, TDS>
             geom_traits().side_of_oriented_sphere_d_object();
           if (side(points_begin(ch),
                    points_end(ch),
-                   opposite_vh->point()) == ON_BOUNDED_SIDE)
+                   opposite_vh->point()) == ON_POSITIVE_SIDE)
           {
             if (verbose)
               CGAL_warning_msg(false, "Non-empty sphere");
