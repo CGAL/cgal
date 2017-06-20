@@ -219,7 +219,8 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
   // ancesters). Consequently, an overlapping curve on the right might
   // not have been split.
   // SL_SAYS: we should be able to do something better without geometric test
-  // (like having an additional boolean in subcurve)
+  // (like having an additional boolean in subcurve that we can set in
+  //  _handle_left_curves() after a split)
   for(  Event_subcurve_iterator cit = this->m_currentEvent->right_curves_begin(),
                                 cit_end = this->m_currentEvent->right_curves_end();
                                 cit!=cit_end; ++cit)
@@ -436,6 +437,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
 
   vector_inserter vi(m_x_objects) ;
   vector_inserter vi_end(m_x_objects);
+
   vi_end =
     this->m_traits->intersect_2_object()(c1->last_curve(), c2->last_curve(), vi);
 
@@ -783,6 +785,9 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , 
     }
     else
     {
+      CGAL_SL_PRINT_TEXT("Allocate new subcurves for the overlap (common subcurves)");
+      CGAL_SL_PRINT_EOL();
+
       // create an overlapping curve per subcurve in second_parent that is not in first_parent
       for (typename std::vector<Subcurve*>::iterator sc_it=all_leaves_diff.begin();
                                                      sc_it!=all_leaves_diff.end();
