@@ -230,12 +230,12 @@ namespace Polygon_mesh_processing {
   }
 
 
-  /// Count the number of borders in the mesh.
-  ///
-  /// @tparam PolygonMesh model of `HalfedgeGraph`.
-  ///
-  /// @param pmesh the polygon mesh to which `faces` belong
-  ///
+  // counts the number of connected components of the boundary of the mesh.
+  //
+  // @tparam PolygonMesh model of `HalfedgeGraph`.
+  //
+  // @param pmesh the polygon mesh to which `faces` belong
+  //
   template<typename PolygonMesh>
   unsigned int number_of_borders(const PolygonMesh& pmesh)
   {
