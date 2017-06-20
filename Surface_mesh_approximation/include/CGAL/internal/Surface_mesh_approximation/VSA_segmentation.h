@@ -2,6 +2,9 @@
 #define CGAL_VSA_SEGMENTATION_H
 
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Kernel/global_functions.h>
+#include <CGAL/squared_distance_3.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -552,7 +555,7 @@ private:
         FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
       for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
         Vector vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
-        vec = cross_product(chord_vec, vec);
+        vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
         if (dist > dist_max) {
           dist_max = dist;
