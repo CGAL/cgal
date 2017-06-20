@@ -24,25 +24,15 @@
 
 // traits class
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 // periodic triangulations
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
-#include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 
 // vertex and cell bases
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
-
-// mesh domain
-#include <CGAL/Implicit_mesh_domain_3.h>
-
-// IO
-#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <CGAL/array.h>
 #include <CGAL/tags.h>
