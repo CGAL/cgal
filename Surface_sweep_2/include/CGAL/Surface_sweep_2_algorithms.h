@@ -27,7 +27,9 @@
  */
 
 #include <CGAL/Surface_sweep_2.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_2_visitors.h>
+#include <CGAL/Surface_sweep_2/Intersection_points_visitor.h>
+#include <CGAL/Surface_sweep_2/Subcurves_visitor.h>
+#include <CGAL/Surface_sweep_2/Do_interior_intersect_visitor.h>
 
 #include <CGAL/Segment_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -117,7 +119,7 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
                                            Traits &tr)
 {
   // Define the surface-sweep types:
-  typedef Ss2::Surface_sweep_points_visitor<Traits, OutputIterator>
+  typedef Ss2::Intersection_points_visitor<Traits, OutputIterator>
                                                                 Visitor;
   typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
 
@@ -161,8 +163,7 @@ OutputIterator compute_subcurves(CurveInputIterator curves_begin,
                                  bool mult_overlaps, Traits& tr)
 {
   // Define the surface-sweep types:
-  typedef Ss2::Surface_sweep_subcurves_visitor<Traits, OutputIterator>
-                                                                Visitor;
+  typedef Ss2::Subcurves_visitor<Traits, OutputIterator>        Visitor;
   typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
 
   // Perform the sweep and obtain the subcurves.
@@ -196,7 +197,7 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
                          CurveInputIterator curves_end, Traits& tr)
 {
   // Define the surface-sweep types:
-  typedef Ss2::Surface_sweep_do_curves_x_visitor<Traits>        Visitor;
+  typedef Ss2::Do_interior_intersect_visitor<Traits>            Visitor;
   typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
 
   // Perform the sweep and obtain the subcurves.

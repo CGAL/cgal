@@ -39,7 +39,7 @@
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_2_visitors.h>
+#include <CGAL/Surface_sweep_2/Do_interior_intersect_visitor.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <CGAL/IO/Arr_iostream.h>
@@ -1189,7 +1189,7 @@ bool is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopTraits>& arr)
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
   // The surface-sweep types:
-  typedef Ss2::Surface_sweep_do_curves_x_visitor<Gt2>   Visitor;
+  typedef Ss2::Do_interior_intersect_visitor<Gt2>       Visitor;
   typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep_2;
 
   // The arrangement iterator and circulator types:
