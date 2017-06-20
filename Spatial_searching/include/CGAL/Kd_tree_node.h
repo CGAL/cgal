@@ -36,19 +36,21 @@ namespace CGAL {
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>;
 
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Node_handle Node_handle;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Node_const_handle Node_const_handle;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Internal_node_handle Internal_node_handle;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Internal_node_const_handle Internal_node_const_handle;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Leaf_node_handle Leaf_node_handle;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Leaf_node_const_handle Leaf_node_const_handle;
+    typedef Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Kdt;
+
+    typedef typename Kdt::Node_handle Node_handle;
+    typedef typename Kdt::Node_const_handle Node_const_handle;
+    typedef typename Kdt::Internal_node_handle Internal_node_handle;
+    typedef typename Kdt::Internal_node_const_handle Internal_node_const_handle;
+    typedef typename Kdt::Leaf_node_handle Leaf_node_handle;
+    typedef typename Kdt::Leaf_node_const_handle Leaf_node_const_handle;
     typedef typename TreeTraits::Point_d Point_d;
 
     typedef typename TreeTraits::FT FT;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Separator Separator;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Point_d_iterator Point_d_iterator;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::iterator iterator;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::D D;
+    typedef typename Kdt::Separator Separator;
+    typedef typename Kdt::Point_d_iterator Point_d_iterator;
+    typedef typename Kdt::iterator iterator;
+    typedef typename Kdt::D D;
 
     bool leaf;
 
@@ -334,13 +336,15 @@ namespace CGAL {
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>;
 
+    typedef Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Kdt;
+
     typedef Kd_tree_node< TreeTraits, Splitter, UseExtendedNode, EnablePointsCache> Base;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Node_handle Node_handle;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Node_const_handle Node_const_handle;
+    typedef typename Kdt::Node_handle Node_handle;
+    typedef typename Kdt::Node_const_handle Node_const_handle;
 
     typedef typename TreeTraits::FT FT;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::Separator Separator;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode,EnablePointsCache>::D D;
+    typedef typename Kdt::Separator Separator;
+    typedef typename Kdt::D D;
 
   private:
     
