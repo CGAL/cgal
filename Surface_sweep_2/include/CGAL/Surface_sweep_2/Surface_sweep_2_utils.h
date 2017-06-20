@@ -16,12 +16,13 @@
 //                 Ron Wein        <wein@post.tau.ac.il>
 //                 Efi Fogel       <efif@post.tau.ac.il>
 
-#ifndef CGAL_SURFACE_SWEEP_2_UTILS
-#define CGAL_SURFACE_SWEEP_2_UTILS
+#ifndef CGAL_SURFACE_SWEEP_2_UTILS_H
+#define CGAL_SURFACE_SWEEP_2_UTILS_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
+ *
  * Auxiliary functions for the usage of the various sweep-line visitors.
  */
 
@@ -50,7 +51,7 @@ template <typename Traits,
 void make_x_monotone(CurveInputIter begin, CurveInputIter end,
                      XCurveOutIter x_curves,
                      PointOutIter iso_points,
-                     const Traits * tr)
+                     const Traits* tr)
 {
   // Split the input curves into x-monotone objects.
   std::size_t num_of_curves = std::distance(begin, end);

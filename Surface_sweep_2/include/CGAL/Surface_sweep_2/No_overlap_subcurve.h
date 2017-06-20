@@ -40,7 +40,7 @@
  * these types.
  */
 
-#include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
+#include <CGAL/Surface_sweep_2/Curve_comparer.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>

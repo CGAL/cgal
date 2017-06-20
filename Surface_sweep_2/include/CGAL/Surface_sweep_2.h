@@ -30,7 +30,7 @@
 
 #include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_curve_pair.h>
+#include <CGAL/Surface_sweep_2/Curve_pair.h>
 #include <CGAL/Surface_sweep_2/Default_subcurve.h>
 #include <CGAL/Surface_sweep_2/Default_event.h>
 #include <CGAL/Arrangement_2/Open_hash.h>
@@ -106,9 +106,11 @@ public:
 
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
-  typedef CGAL::Curve_pair<Subcurve>                    Curve_pair;
-  typedef CGAL::Curve_pair_hasher<Subcurve>             Curve_pair_hasher;
-  typedef CGAL::Equal_curve_pair<Subcurve>              Equal_curve_pair;
+  typedef CGAL::Surface_sweep_2::Curve_pair<Subcurve>   Curve_pair;
+  typedef CGAL::Surface_sweep_2::Curve_pair_hasher<Subcurve>
+                                                        Curve_pair_hasher;
+  typedef CGAL::Surface_sweep_2::Equal_curve_pair<Subcurve>
+                                                        Equal_curve_pair;
   typedef Open_hash<Curve_pair, Curve_pair_hasher, Equal_curve_pair>
                                                         Curve_pair_set;
 

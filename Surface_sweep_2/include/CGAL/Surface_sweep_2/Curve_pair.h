@@ -15,24 +15,27 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 
-#ifndef CGAL_SURFACE_SWEEP_CURVE_PAIR_H
-#define CGAL_SURFACE_SWEEP_CURVE_PAIR_H
+#ifndef CGAL_SURFACE_SWEEP_2_CURVE_PAIR_H
+#define CGAL_SURFACE_SWEEP_2_CURVE_PAIR_H
 
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file
- * Definition of the Curve_pair<Subcurve> class and related functors.
+ *
+ * Definition of the Curve_pair<Subcurve> class template and related functors.
  */
 
 namespace CGAL {
+namespace Surface_sweep_2 {
 
 /*! \class
+ *
  * A pair of subcurves.
  */
 template <typename Subcurve_>
 class Curve_pair {
 public:
-  typedef Subcurve_ Subcurve;
+  typedef Subcurve_                                     Subcurve;
 
 private:
   // Data members:
@@ -118,7 +121,6 @@ public:
   typedef random_access_input_iterator<Container>   Self;
 
 private:
-
   // Data members:
   Container* m_container;               // The container.
   unsigned int m_index;                 // The current index.
@@ -188,6 +190,7 @@ public:
   }
 };
 
-} //namespace CGAL
+} // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

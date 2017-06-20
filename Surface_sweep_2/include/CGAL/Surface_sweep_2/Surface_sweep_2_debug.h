@@ -22,6 +22,9 @@
 
 #include <CGAL/No_intersection_surface_sweep_2.h>
 
+namespace CGAL {
+namespace Surface_sweep_2 {
+
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 //                         DEBUG UTILITIES                                //
@@ -207,5 +210,8 @@ print_event_info(const Event* e)
   decrease_indent();
   print_text("End Event Info", true);
 }
+
+} // namespace Surface_sweep_2
+} // namespace CGAL
 
 #endif

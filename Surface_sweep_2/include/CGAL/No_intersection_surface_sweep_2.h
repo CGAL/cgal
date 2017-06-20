@@ -29,7 +29,8 @@
 #include <CGAL/license/Surface_sweep_2.h>
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
-#include <CGAL/Surface_sweep_2/Surface_sweep_functors.h>
+#include <CGAL/Surface_sweep_2/Event_comparer.h>
+#include <CGAL/Surface_sweep_2/Curve_comparer.h>
 #include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
 #include <CGAL/Multiset.h>
@@ -147,9 +148,9 @@ protected:
     Are_all_sides_oblivious_category;
 
 public:
-  typedef CGAL::Surface_sweep_2::Compare_events<Traits_adaptor_2, Event>
-                                                        Compare_events;
-  typedef Multiset<Event*, Compare_events, Allocator>   Event_queue;
+  typedef CGAL::Surface_sweep_2::Event_comparer<Traits_adaptor_2, Event>
+                                                        Event_comparer;
+  typedef Multiset<Event*, Event_comparer, Allocator>   Event_queue;
   typedef typename Event_queue::iterator                Event_queue_iterator;
 
   typedef typename Event::Subcurve_iterator
@@ -192,7 +193,7 @@ protected:
   Compare_curves m_statusLineCurveLess;
                                     // Comparison functor for the status line.
 
-  Compare_events m_queueEventLess;  // Comparison functor for the event queue.
+  Event_comparer m_queueEventLess;  // Comparison functor for the event queue.
 
   Event_queue* m_queue;             // The event queue (the X-structure).
 
@@ -558,13 +559,13 @@ protected:
 
 };
 
-//DEBUG UTILITIES
+} // namespace Surface_sweep_2
+} // namespace CGAL
+
+// DEBUG UTILITIES
 #ifdef CGAL_SL_VERBOSE
   #include <CGAL/Surface_sweep_2/Surface_sweep_2_debug.h>
 #endif
-
-} // namespace Surface_sweep_2
-} // namespace CGAL
 
 #include <CGAL/Surface_sweep_2/No_intersection_surface_sweep_2_impl.h>
 
