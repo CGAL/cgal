@@ -9,7 +9,7 @@
 #include <iterator>
 #include <vector>
 
-const int D = 10;
+const int D = 4;
 typedef CGAL::Epick_d< CGAL::Dimension_tag<D> >               K;
 typedef CGAL::Delaunay_triangulation<K>                       T;
 // The triangulation uses the default instanciation of the 
@@ -17,11 +17,9 @@ typedef CGAL::Delaunay_triangulation<K>                       T;
 
 int main(int argc, char **argv)
 {
-  int N = 100; // number of points
+  int N = 200; // number of points
   if (argc > 1) 
     N = atoi(argv[1]);
-
-  CGAL::Timer cost;  // timer
 
   // Generate N random points
   typedef CGAL::Random_points_in_cube_d<T::Point> Random_points_iterator;
@@ -34,11 +32,8 @@ int main(int argc, char **argv)
   
   // insert the points in the triangulation, only if they are outside the
   // convex hull
-  std::cout << "  Convex hull of "<<N<<" points in dim " << D << std::flush;
+  std::cout << "Convex hull of " << N << " points in dim " << D << "...\n";
   
-  cost.reset();
-  cost.start();
-
   // Spatial sort points to speed-up localization
   CGAL::spatial_sort(points.begin(), points.end(), t.geom_traits());
 
@@ -62,9 +57,6 @@ int main(int argc, char **argv)
     }
   }
 
-  std::cout << " done in " << cost.time() << " seconds.\n";
-  std::cout << c << " points where actually inserted.\n";
-  CGAL_assertion( t.is_valid() );
-
+  std::cout << c << " points were actually inserted.\n";
   return 0;
 }
