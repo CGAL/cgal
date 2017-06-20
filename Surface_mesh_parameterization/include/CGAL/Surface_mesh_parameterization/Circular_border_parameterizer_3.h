@@ -32,6 +32,8 @@
 
 #include <boost/foreach.hpp>
 
+#include <cmath>
+
 /// \file Circular_border_parameterizer_3.h
 
 namespace CGAL {

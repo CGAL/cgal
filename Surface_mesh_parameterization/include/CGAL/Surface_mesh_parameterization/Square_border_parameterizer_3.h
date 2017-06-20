@@ -33,8 +33,6 @@
 
 #include <cfloat>
 #include <climits>
-#include <fstream>
-#include <string>
 #include <vector>
 
 /// \file Square_border_parameterizer_3.h

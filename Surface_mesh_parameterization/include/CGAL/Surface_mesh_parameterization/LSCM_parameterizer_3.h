@@ -40,7 +40,7 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 
-#include <iostream>
+
 #include <vector>
 
 /// \file LSCM_parameterizer_3.h

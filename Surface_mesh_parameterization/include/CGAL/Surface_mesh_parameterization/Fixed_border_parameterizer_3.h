@@ -40,8 +40,6 @@
 #include <boost/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
-#include <iostream>
-
 /// \file Fixed_border_parameterizer_3.h
 
 namespace CGAL {

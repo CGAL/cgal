@@ -25,6 +25,7 @@
 
 #include <CGAL/assertions.h>
 
+#include <boost/foreach.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_map.hpp>
