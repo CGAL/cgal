@@ -23,12 +23,21 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-  create_single_source_cgal_program( "efficient_RANSAC_basic.cpp" )
+  create_single_source_cgal_program( "shape_detection_basic.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_custom_shape.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_parameters.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_point_access.cpp" )
-  create_single_source_cgal_program( "region_growing.cpp" )
   create_single_source_cgal_program( "plane_regularization.cpp" )
+
+  find_package( TBB REQUIRED )
+  if( TBB_FOUND )
+    include(${TBB_USE_FILE})
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
+
+  create_single_source_cgal_program( "region_growing.cpp" )
+
+
 
 else()
   

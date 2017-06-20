@@ -20,9 +20,12 @@ typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 typedef CGAL::Shape_detection_3::Shape_detection_traits
   <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
+typedef CGAL::Shape_detection_3::Region_growing<Traits>      Region_growing;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
-int main() 
+// This program both works for RANSAC and Region Growing
+template <typename ShapeDetection>
+int run(int argc, char** argv)
 {
   // Points with normals.
   Pwn_vector points;
@@ -30,7 +33,7 @@ int main()
   // Loads point set from a file. 
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  std::ifstream stream("data/cube.pwn");
+  std::ifstream stream((argc > 2) ? argv[2] : ((argc > 1) ? argv[1] : "data/cube.pwn"));
 
   if (!stream || 
     !CGAL::read_xyz_points_and_normals(stream,
@@ -43,19 +46,32 @@ int main()
   }
 
   // Instantiates shape detection engine.
-  Efficient_ransac ransac;
+  ShapeDetection shape_detection;
 
   // Provides the input data.
-  ransac.set_input(points);
+  shape_detection.set_input(points);
 
   // Registers planar shapes via template method.
-  ransac.add_shape_factory<Plane>();
+  shape_detection.template add_shape_factory<Plane>();
 
   // Detects registered shapes with default parameters.
-  ransac.detect();
+  shape_detection.detect();
 
   // Prints number of detected shapes.
-  std::cout << ransac.shapes().end() - ransac.shapes().begin() << " shapes detected." << std::endl;
+  std::cout << shape_detection.shapes().end() - shape_detection.shapes().begin() << " shapes detected." << std::endl;
 
   return EXIT_SUCCESS;
+}
+
+
+int main (int argc, char** argv)
+{
+  if (argc > 1 && std::string(argv[1]) == "-r")
+  {
+    std::cout << "Efficient RANSAC" << std::endl;
+    return run<Efficient_ransac> (argc, argv);
+  }
+
+  std::cout << "Region Growing" << std::endl;
+  return run<Region_growing> (argc, argv);
 }
