@@ -1,10 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 #include <CGAL/boost/graph/Seam_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
