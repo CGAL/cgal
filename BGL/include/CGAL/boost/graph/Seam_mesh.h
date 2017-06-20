@@ -973,13 +973,17 @@ public:
   {
     std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tm_vd_s, tm_vd_t, tm);
     if(!tmed.second) {
+#ifdef SEAM_MESH_DEBUG
       std::cerr << "Warning: Ignored a constraint because it is not a valid edge of the mesh" << std::endl;
+#endif
       return false;
     }
 
     if(!is_border(tmed.first, tm)) { // ignore seams that are also a border edge
       if(get(sem, tmed.first) == true) {
+#ifdef SEAM_MESH_DEBUG
         std::cerr << "Warning: Ignored a constraint because it is already marked as a seam" << std::endl;
+#endif
         return false;
       }
 
@@ -988,7 +992,9 @@ public:
       put(svm, tm_vd_t, true);
       ++number_of_seams;
     } else {
+#ifdef SEAM_MESH_DEBUG
       std::cerr << "Warning: Ignored a constraint because it is on the border of the mesh" << std::endl;
+#endif
       return false;
     }
 
