@@ -648,9 +648,9 @@ private:
         add_vertex(v, glocal);
 
       // most subgraph functions work with local descriptors
-      VertexIndex1Map &local_vanchor_map = get(boost::vertex_index1, glocal);
-      VertexIndex2Map &local_vtag_map = get(boost::vertex_index2, glocal);
-      EdgeWeightMap &local_eweight_map = get(boost::edge_weight, glocal);
+      VertexIndex1Map local_vanchor_map = get(boost::vertex_index1, glocal);
+      VertexIndex2Map local_vtag_map = get(boost::vertex_index2, glocal);
+      EdgeWeightMap local_eweight_map = get(boost::edge_weight, glocal);
 
       const sg_vertex_descriptor source = glocal.global_to_local(vpatch.back());
       VertexVector pred(num_vertices(glocal));
@@ -714,9 +714,8 @@ private:
 
   template<typename FacetSegmentMap>
   void compute_proxy_center(const FacetSegmentMap &seg_pmap) {
-    proxies_center.clear();
-    proxies_center.swap(std::vector<Point>(proxies.size()));
-    
+    proxies_center = std::vector<Point>(proxies.size());
+
     std::vector<Vector> centers(proxies.size(), CGAL::NULL_VECTOR);
     std::vector<FT> areas(proxies.size(), FT(0.0));
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
