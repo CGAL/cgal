@@ -182,10 +182,17 @@ private:
   }
 
   /// Adds a positional constraint on a vertex x_ind, so that x_ind * w = rhs.
-  void addConstraint(Matrix& A, Vector& B, int& id_r, int id_c, double w, Point_2 rhs) const
+  void addConstraint(Matrix& M, Vector& B, int& id_r, int id_c, double w, Point_2 rhs) const
   {
-    A.set_coef(2*id_r, 2*id_c, w, true /*new_coef*/);
-    A.set_coef(2*id_r + 1, 2*id_c + 1, w, true /*new_coef*/);
+    M.set_coef(2*id_r, 2*id_c, w, true /*new_coef*/);
+    M.set_coef(2*id_r + 1, 2*id_c + 1, w, true /*new_coef*/);
+
+    // Since we are filling the big system M.Xf = B with
+    // ( L A' ) ( Xf ) = ( C )
+    // ( A 0  ) ( Xf ) = ( 0 )
+    // we already add the transposed here:
+    M.set_coef(2*id_c, 2*id_r, w, true /*new_coef*/);
+    M.set_coef(2*id_c + 1, 2*id_r + 1, w, true /*new_coef*/);
 
     B[2*id_r] = rhs.x();
     B[2*id_r + 1] = rhs.y();
@@ -198,47 +205,61 @@ private:
   /// linear by requiring that T * x_si - x_ti = T * x_s1 - x_t1.
   void addTransConstraints(int s0, int t0, int s, int t,
                            int& id_r,
-                           const Eigen::Matrix2d& T,
-                           Matrix& A, Vector& B) const
+                           const std::vector<double>& T,
+                           Matrix& M, Vector& B) const
   {
-    // Matlab lines are commented for comparison.
-    // Matlab fills together 2*x-1 and 2*x, but C++ fills 2*x and 2*x+1,
-    // as everything (including loops!) starts at 0 and not 1.
+    // Everything is duplicated since we are filling the big system M.Xf = B with
+    // ( L A' ) ( Xf ) = ( C )
+    // ( A 0  ) ( Xf ) = ( 0 )
 
-    // iterate on both rows ot the 2x2 matrix T
+    // Iterate on both rows ot the 2x2 matrix T
     for(int vert_ind=0; vert_ind<2; ++vert_ind) {
       // building up the equations by summing up the terms
 
+      // Matlab lines are commented for comparison.
+      // Matlab fills together 2*x-1 and 2*x, but C++ fills 2*x and 2*x+1,
+      // as everything (including loops!) starts at 0 and not 1.
+
       // <T(vert_ind,:), x_si>
       // obj.A(end+1, 2*sinds(ind)+[-1,0]) = T(vert_ind,:);
-      A.set_coef(2*id_r + vert_ind, 2*s, T(vert_ind, 0), true /*new_coef*/);
-      A.set_coef(2*id_r + vert_ind, 2*s + 1, T(vert_ind, 1), true /*new_coef*/);
+      M.set_coef(2*id_r + vert_ind, 2*s, T[2 * vert_ind], true /*new_coef*/);
+      M.set_coef(2*id_r + vert_ind, 2*s + 1, T[2 * vert_ind + 1], true /*new_coef*/);
+
+      M.set_coef(2*s, 2*id_r + vert_ind, T[2 * vert_ind], true /*new_coef*/);
+      M.set_coef(2*s + 1, 2*id_r + vert_ind, T[2 * vert_ind + 1], true /*new_coef*/);
 
       // -<T(vert_ind,:), x_s1>
       // obj.A(end, 2*sinds(1)+[-1,0]) = obj.A(end, 2*sinds(1)+[-1,0]) - T(vert_ind,:);
-      A.add_coef(2*id_r + vert_ind, 2*s0, -T(vert_ind, 0));
-      A.add_coef(2*id_r + vert_ind, 2*s0 + 1, -T(vert_ind, 1));
+      M.add_coef(2*id_r + vert_ind, 2*s0, - T[2 * vert_ind]);
+      M.add_coef(2*id_r + vert_ind, 2*s0 + 1, - T[2 * vert_ind + 1]);
+
+      M.add_coef(2*s0, 2*id_r + vert_ind, - T[2 * vert_ind]);
+      M.add_coef(2*s0 + 1, 2*id_r + vert_ind, - T[2 * vert_ind + 1]);
 
       //  - x_ti
       // obj.A(end, 2*tinds(ind)+vert_ind-2) = obj.A(end, 2*tinds(ind)+vert_ind-2)-1;
-      A.add_coef(2*id_r + vert_ind, 2*t + vert_ind, -1);
+      M.add_coef(2*id_r + vert_ind, 2*t + vert_ind, -1);
+
+      M.add_coef(2*t + vert_ind, 2*id_r + vert_ind, -1);
 
       // + x_t1
       // obj.A(end, 2*tinds(1)+vert_ind-2) = obj.A(end, 2*tinds(1)+vert_ind-2)+1;
-      A.add_coef(2*id_r + vert_ind, 2*t0 + vert_ind, 1);
+      M.add_coef(2*id_r + vert_ind, 2*t0 + vert_ind, 1);
+
+      M.add_coef(2*t0 + vert_ind, 2*id_r + vert_ind, 1);
 
       // left hand side is zero
       // obj.b=[obj.b; 0];
       B[2*id_r + vert_ind] = 0;
     }
 
-    ++id_r; // current line index in A is increased
+    ++id_r; // current line index in M is increased
   }
 
   /// Add the constraints from a seam segment to the linear system.
   void constrain_seam_segment(const std::vector<std::pair<int, int> >& seam_segment,
-                              NT ang, int& current_line_id_in_A,
-                              Matrix& A, Vector& B) const
+                              NT ang, int& current_line_id_in_M,
+                              Matrix& M, Vector& B) const
   {
     // check that if there is a common vertex, it is at the beginning
     const bool is_reversed = (seam_segment.back().first == seam_segment.back().second);
@@ -247,10 +268,13 @@ private:
       ang *= -1;
     }
 
-    // the rotation matrix according to the angle 'ang'
-    Eigen::Matrix2d R;
-    R(0,0) = std::cos(2 * CGAL_PI / ang); R(0,1) = - std::sin(2 * CGAL_PI / ang);
-    R(1,0) = std::sin(2 * CGAL_PI / ang); R(1,1) = std::cos(2 * CGAL_PI / ang);
+    // The rotation matrix according to the angle 'ang'. Put in a vector
+    // because we need to access it later and Matrix does not provide read access...
+    std::vector<double> R(4);
+    R[0] = std::cos(2 * CGAL_PI / ang);
+    R[1] = - std::sin(2 * CGAL_PI / ang);
+    R[2] = std::sin(2 * CGAL_PI / ang);
+    R[3] = std::cos(2 * CGAL_PI / ang);
 
     const int s0 = is_reversed ? seam_segment.back().first : seam_segment.front().first;
     const int t0 = is_reversed ? seam_segment.back().second : seam_segment.front().second;
@@ -270,7 +294,7 @@ private:
       CGAL_assertion(s != t);
 
       // sending s to t (and _not_ t to s !)
-      addTransConstraints(t0, s0, t, s, current_line_id_in_A, R, A, B);
+      addTransConstraints(t0, s0, t, s, current_line_id_in_M, R, M, B);
     }
   }
 
@@ -281,7 +305,7 @@ private:
   void AddRotationalConstraint(const SeamMesh& mesh,
                                const ConeMap& cmap,
                                VertexIndexMap vimap,
-                               Matrix& A, Vector& B) const
+                               Matrix& M, Vector& B) const
   {
     // positions of the cones in the plane
     typedef std::vector<Point_2>                      Point_container;
@@ -292,8 +316,16 @@ private:
     typedef std::vector<NT>                           Angle_container;
     const Angle_container& angs = get_angles_at_cones<Angle_container>(orb_type);
 
-    // the index of the line in A that we are filling next
-    int current_line_id_in_A = 0.;
+    // The index of the line in M that we are filling next.
+
+    // Since we are filling the big system M.Xf = B with
+    // ( L A' ) ( Xf ) = ( C )
+    // ( A 0  ) ( Xf ) = ( 0 )
+    // we do not start at 0, but at the first line below the matrix L
+    // (note that this should thus be 2*num_vertices, but in the filling functions
+    // we use 2*line_number to fill two at the time...)
+    int current_line_id_in_M = static_cast<int>(num_vertices(mesh));
+    int initial_line_id = current_line_id_in_M;
 
     // Initialize some variables used in the seam walk
     int start_cone_index = -1; // index of the beginning of the seam
@@ -302,8 +334,8 @@ private:
     CGAL_postcondition(start_cone != vertex_descriptor() && start_cone_index != -1);
 
     // parameterize the initial cone
-    addConstraint(A, B, current_line_id_in_A, start_cone_index,
-                  1. /*entry in A*/, tcoords[0]);
+    addConstraint(M, B, current_line_id_in_M, start_cone_index,
+                  1. /*entry in M*/, tcoords[0]);
 
     // by property of the seam mesh, the canonical halfedge that points to start_cone
     // is on the seam, and is not on the border
@@ -334,8 +366,8 @@ private:
       // If orbifold type IV and it is second cone in flattening, add constraint
       if(orb_type == Parallelogram && cmap.find(hd1_source) != cmap.end()
                                    && segment_index == 1) {
-        addConstraint(A, B, current_line_id_in_A, hd1s_index,
-                      1. /*entry in A*/, tcoords[1]);
+        addConstraint(M, B, current_line_id_in_M, hd1s_index,
+                      1. /*entry in M*/, tcoords[1]);
       }
 
       // Add the pair to the seam segment
@@ -355,14 +387,14 @@ private:
 
         CGAL_assertion(segment_index < angs.size());
         NT ang = angs[segment_index];
-        constrain_seam_segment(seam_segment, ang, current_line_id_in_A, A, B);
+        constrain_seam_segment(seam_segment, ang, current_line_id_in_M, M, B);
 
         // Check if we have reached the end of the seam
         if(is_in_map->second == Second_unique_cone) {
           CGAL_assertion(hd1_target == hd2_target);
         // the last cone of the seam is constrained
-          addConstraint(A, B, current_line_id_in_A, hd1t_index,
-                        1. /*entry in A*/, tcoords.back());
+          addConstraint(M, B, current_line_id_in_M, hd1t_index,
+                        1. /*entry in M*/, tcoords.back());
           break;
         }
 
@@ -375,7 +407,7 @@ private:
       CGAL_postcondition(mesh.has_on_seam(bhd) && is_border(bhd, mesh));
     }
 
-    CGAL_postcondition(current_line_id_in_A == number_of_linear_constraints(mesh));
+    CGAL_postcondition(current_line_id_in_M - initial_line_id == number_of_linear_constraints(mesh));
   }
 
   // MVC computations
@@ -393,17 +425,17 @@ private:
   /// `ij` in the face `ijk`
   void fill_mvc_matrix(const Point_3& pi, int i,
                        const Point_3& pj, int j,
-                       const Point_3& pk, int k, Matrix& L) const
+                       const Point_3& pk, int k, Matrix& M) const
   {
-    // For MVC, the entry of L(i,j) is - [ tan(gamma_ij/2) + tan(delta_ij)/2 ] / |ij|
+    // For MVC, the entry of M(i,j) is - [ tan(gamma_ij/2) + tan(delta_ij)/2 ] / |ij|
     // where gamma_ij and delta_ij are the angles at i around the edge ij
 
     // This function computes the angle alpha at i, and add
-    // -- A(i,j) += tan(alpha / 2) / |ij|
-    // -- A(i,k) += tan(alpha / 2) / |ik|
-    // -- A(i,i) -= A(i,j) + A(i,k)
+    // -- M(i,j) += tan(alpha / 2) / |ij|
+    // -- M(i,k) += tan(alpha / 2) / |ik|
+    // -- M(i,i) -= M(i,j) + M(i,k)
 
-    // The other parts of A(i,j) and A(i,k) will be added when this function
+    // The other parts of M(i,j) and M(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
     // Compute: - tan(alpha / 2)
@@ -416,28 +448,28 @@ private:
     const NT len_ij = CGAL::sqrt(edge_ij * edge_ij);
     CGAL_assertion(len_ij != 0.0); // two points are identical!
     const NT w_ij = w_i_base / len_ij;
-    L.add_coef(2*i, 2*j, w_ij);
-    L.add_coef(2*i +1, 2*j + 1, w_ij);
+    M.add_coef(2*i, 2*j, w_ij);
+    M.add_coef(2*i +1, 2*j + 1, w_ij);
 
     // Set w_ik in matrix
     Vector_3 edge_ik = pi - pk;
     const NT len_ik = CGAL::sqrt(edge_ik * edge_ik);
     CGAL_assertion(len_ik != 0.0); // two points are identical!
     const NT w_ik = w_i_base / len_ik;
-    L.add_coef(2*i, 2*k, w_ik);
-    L.add_coef(2*i + 1, 2*k + 1, w_ik);
+    M.add_coef(2*i, 2*k, w_ik);
+    M.add_coef(2*i + 1, 2*k + 1, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)
     const NT w_ii = - w_ij - w_ik;
-    L.add_coef(2*i, 2*i, w_ii);
-    L.add_coef(2*i + 1, 2*i + 1, w_ii);
+    M.add_coef(2*i, 2*i, w_ii);
+    M.add_coef(2*i + 1, 2*i + 1, w_ii);
   }
 
   /// Compute the mean value Laplacian matrix.
   template<typename VertexIndexMap>
   void mean_value_laplacian(const SeamMesh& mesh,
                             VertexIndexMap vimap,
-                            Matrix& L) const
+                            Matrix& M) const
   {
     const PPM ppmap = get(vertex_point, mesh);
 
@@ -454,9 +486,9 @@ private:
       const int j = get(vimap, vd_j);
       const int k = get(vimap, vd_k);
 
-      fill_mvc_matrix(pi, i, pj, j, pk, k, L);
-      fill_mvc_matrix(pj, j, pk, k, pi, i, L);
-      fill_mvc_matrix(pk, k, pi, i, pj, j, L);
+      fill_mvc_matrix(pi, i, pj, j, pk, k, M);
+      fill_mvc_matrix(pj, j, pk, k, pi, i, M);
+      fill_mvc_matrix(pk, k, pi, i, pj, j, M);
     }
   }
 
@@ -464,7 +496,7 @@ private:
   template<typename VertexIndexMap>
   void cotangent_laplacien(SeamMesh& mesh,
                            VertexIndexMap vimap,
-                           Matrix& L) const
+                           Matrix& M) const
   {
     const PPM ppmap = get(vertex_point, mesh);
 
@@ -489,20 +521,20 @@ private:
       const NT w_ij = 2 * cotan_weight_calculator(hd);
 
       // ij
-      L.set_coef(2*i, 2*j, w_ij, true /* new coef */);
-      L.set_coef(2*i +1, 2*j + 1, w_ij, true /* new coef */);
+      M.set_coef(2*i, 2*j, w_ij, true /* new coef */);
+      M.set_coef(2*i +1, 2*j + 1, w_ij, true /* new coef */);
 
       // ji
-      L.set_coef(2*j, 2*i, w_ij, true /* new coef */);
-      L.set_coef(2*j +1, 2*i + 1, w_ij, true /* new coef */);
+      M.set_coef(2*j, 2*i, w_ij, true /* new coef */);
+      M.set_coef(2*j +1, 2*i + 1, w_ij, true /* new coef */);
 
       // ii
-      L.add_coef(2*i, 2*i, - w_ij);
-      L.add_coef(2*i + 1, 2*i + 1, - w_ij);
+      M.add_coef(2*i, 2*i, - w_ij);
+      M.add_coef(2*i + 1, 2*i + 1, - w_ij);
 
       // jj
-      L.add_coef(2*j, 2*j, - w_ij);
-      L.add_coef(2*j + 1, 2*j + 1, - w_ij);
+      M.add_coef(2*j, 2*j, - w_ij);
+      M.add_coef(2*j + 1, 2*j + 1, - w_ij);
     }
   }
 
@@ -513,7 +545,7 @@ private:
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap) const
   {
-    CGAL_assertion(X.size() == static_cast<int>(2 * num_vertices(mesh)));
+    CGAL_assertion(X.dimension() == static_cast<int>(2 * num_vertices(mesh)));
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       const int index = get(vimap, vd);
@@ -528,83 +560,23 @@ private:
   template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code computeFlattening(const SeamMesh& mesh,
-                               const Matrix& A, const Vector& B,
-                               const Matrix& L,
+                               const Matrix& M, const Vector& B,
                                VertexUVMap uvmap, VertexIndexMap vimap) const
   {
-    CGAL_precondition(A.column_dimension() == L.column_dimension());
-    std::size_t n = L.column_dimension();
-    std::size_t big_n = n + A.row_dimension();
+    CGAL_precondition(M.row_dimension() == M.column_dimension());
+    CGAL_precondition(M.row_dimension() == B.dimension());
 
-    // Fill the large system M.Xf = Bf:
-    // ( L A' ) ( Xf ) = ( B )
-    // ( A 0  ) ( Xf ) = ( 0 )
-    Matrix M(big_n, big_n);
-    Vector Bf(big_n);
+    const std::size_t big_n = M.row_dimension();
+    const std::size_t n = 2 * num_vertices(mesh);
+
     NT D;
     Vector Xf(big_n);
-
-    // full B
-    for(int i=0; i<B.size(); ++i) {
-      Bf[n+i] = B[i];
-    }
-
-    // matrix M
-    for(int k=0; k<L.eigen_object().outerSize(); ++k) {
-      for(typename Eigen::SparseMatrix<double>::InnerIterator
-                                            it(L.eigen_object(), k); it; ++it) {
-        M.set_coef(it.row(), it.col(), it.value(), true /*new_coef*/);
-      }
-    }
-
-    for(int k=0; k<A.eigen_object().outerSize(); ++k) {
-      for(typename Eigen::SparseMatrix<double>::InnerIterator
-                                            it(A.eigen_object(), k); it; ++it) {
-        M.set_coef(it.col(), it.row() + n, it.value(), true /*new_coef*/); // A
-        M.set_coef(it.row() + n, it.col(), it.value(), true /*new_coef*/); // A'
-      }
-    }
-
-#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
-    std::ofstream outM("matrices/M.txt");
-    outM.precision(20);
-    outM << M.row_dimension() << " " << M.column_dimension() << std::endl;
-    for(int k=0; k<M.eigen_object().outerSize(); ++k) {
-      for(typename Eigen::SparseMatrix<double>::InnerIterator
-                                            it(M.eigen_object(), k); it; ++it) {
-        outM <<  it.row() << " " << it.col() << " " << it.value() << '\n';
-      }
-    }
-
-//    std::ofstream outfM("matrices/fullM.txt");
-//    outfM << M.eigen_object() << std::endl;
-
-    std::ofstream outBf("matrices/Bf.txt");
-    outBf.precision(20);
-    outBf << Bf.size() << std::endl;
-    outBf << Bf << std::endl;
-
-#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES_FOR_MATLAB
-    std::ofstream mat_outM("matrices/matrixM.dat");
-    mat_outM.precision(20);
-    for(int k=0; k<M.eigen_object().outerSize(); ++k) {
-      for(typename Eigen::SparseMatrix<double>::InnerIterator
-                                            it(M.eigen_object(), k); it; ++it) {
-        mat_outM <<  it.row()+1 << " " << it.col()+1 << " " << it.value() << '\n';
-      }
-    }
-
-    std::ofstream matoutBf("matrices/vectorB.dat");
-    matoutBf.precision(20);
-    matoutBf << Bf << std::endl;
-#endif
-#endif
 
     CGAL::Timer task_timer;
     task_timer.start();
 
-    SparseLinearAlgebraTraits_d solver;
-    if(!solver.linear_solver(M, Bf, Xf, D)) {
+    Solver_traits solver;
+    if(!solver.linear_solver(M, B, Xf, D)) {
       std::cerr << "Could not solve linear system" << std::endl;
       return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
@@ -619,7 +591,7 @@ private:
     std::ofstream outf("matrices/X.txt");
     for(std::size_t i=0; i<n; ++i) {
       outf << X[i] << " ";
-      outf << X[++i] << std::endl;
+      outf << X[++i] << '\n';
     }
 #endif
 
@@ -682,53 +654,68 @@ public:
       return status;
     }
 
+    const int lcn = number_of_linear_constraints(mesh);
+    const int nbVertices = static_cast<int>(num_vertices(mesh));
+
+    // To avoid concatenating matrices, we will write everything directly
+    // in the big system that we will (eventually solve). It is:
+
+    //  M.Xf = B with
+    // ( L A' ) ( Xf ) = ( C )
+    // ( A 0  ) ( Xf ) = ( 0 )
+
+    // where:
+    // -- L is a (2 * nbVertices, 2 * nbVertices) Laplacian matrix
+    // -- A is a (2 * lcn,        2 * nbVertices) constraint matrix
+    // -- C is a (2 * lcn) right hand side vector
+
+    // Thus M is a (2 * (nbVertices + lcn), 2 * (nbVertices + lcn)) matrix
+    const int total_size = 2 * (lcn + nbVertices);
+    Matrix M(total_size, total_size);
+    Vector B(total_size);
+
     // %%%%%%%%%%%%%%%%%%%%%%%
     //   Boundary conditions
     // %%%%%%%%%%%%%%%%%%%%%%%
-    const int lcn = number_of_linear_constraints(mesh);
-    const int nbVertices = static_cast<int>(num_vertices(mesh));
-    Matrix A(2 * lcn, 2 * nbVertices); // change me 2 * n_of_constraints
-    Vector B(2 * lcn);
 
     // add rotational constraints
-    AddRotationalConstraint(mesh, cmap, vimap, A, B);
-
-#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
-    std::ofstream outA("matrices/A.txt"), outB("matrices/B.txt");
-
-    for(int k=0; k<A.eigen_object().outerSize(); ++k) {
-      for(Eigen::SparseMatrix<double>::InnerIterator it(A.eigen_object(), k); it; ++it) {
-        outA << "(" << it.row() << ", " << it.col() << ") " << it.value() << std::endl;
-      }
-    }
-    outB << B << std::endl;
-#endif
+    AddRotationalConstraint(mesh, cmap, vimap, M, B);
 
     // %%%%%%%%%%%%%%%%%%%%
     //  Energy (Laplacian)
     // %%%%%%%%%%%%%%%%%%%%
-
-    Matrix L(2 * nbVertices, 2 * nbVertices);
     if(weight_type == Cotangent)
-      cotangent_laplacien(mesh, vimap, L);
+      cotangent_laplacien(mesh, vimap, M);
     else // weight_type == Mean_value
-      mean_value_laplacian(mesh, vimap, L);
+      mean_value_laplacian(mesh, vimap, M);
 
 #ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
-    std::ofstream outL("matrices/L.txt");
-    outL.precision(20);
-    outL << L.row_dimension() << " " << L.column_dimension() << std::endl;
-    for(int k=0; k<L.eigen_object().outerSize(); ++k) {
+    std::ofstream outM("matrices/M.txt");
+    outM.precision(20);
+    outM << total_size << " " << total_size << std::endl;
+
+  #ifdef CGAL_EIGEN3_ENABLED
+    for(int k=0; k<M.eigen_object().outerSize(); ++k) {
       for(typename Eigen::SparseMatrix<double>::InnerIterator
-                                            it(L.eigen_object(), k); it; ++it) {
-        outL <<  it.row() << " " << it.col() << " " << it.value() << '\n';
+                                            it(M.eigen_object(), k); it; ++it) {
+        outM <<  it.row() << " " << it.col() << " " << it.value() << '\n';
       }
     }
-#endif
+  #else // !CGAL_EIGEN3_ENABLED
+    for(int k=0; k<M.row_dimension(); k++)
+      for(int l=0; l<M.column_dimension(); l++)
+        outM << k << " " << l << " " << M.get_coef(k, l) << '\n';
+  #endif
+
+    std::ofstream outB("matrices/B.txt");
+    outB.precision(20);
+    outB << total_size << std::endl;
+    outB << B << std::endl;
+#endif // CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
 
     // compute the flattening by solving the boundary conditions
     // while satisfying the convex combination property with L
-    status = computeFlattening(mesh, A, B, L, uvmap, vimap);
+    status = computeFlattening(mesh, M, B, uvmap, vimap);
     if(status != OK)
       return status;
 
