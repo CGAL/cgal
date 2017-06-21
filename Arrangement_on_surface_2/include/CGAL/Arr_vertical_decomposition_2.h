@@ -21,6 +21,10 @@
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
+#include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
+#include <CGAL/Surface_sweep_2/No_overlap_event_base.h>
+#include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
+#include <CGAL/Surface_sweep_2/Arr_vert_decomp_sl_visitor.h>
 
 #include <vector>
 #include <boost/mpl/if.hpp>
@@ -48,24 +52,30 @@ OutputIterator
 decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
           OutputIterator oi)
 {
-  typedef GeometryTraits_2                              Geom_traits_2;
-  typedef TopologyTraits                                Top_traits;
+  typedef GeometryTraits_2                              Gt2;
+  typedef TopologyTraits                                Tt;
+  typedef OutputIterator                                Output_iterator;
 
   // Arrangement types:
-  typedef Arrangement_on_surface_2<Geom_traits_2, Top_traits> Arr_2;
-  typedef typename Top_traits::template
-    Surface_sweep_vertical_decomposition_visitor<OutputIterator>
-                                                        Vd_visitor;
+  typedef Arrangement_on_surface_2<Gt2, Tt>             Arr;
+  typedef typename Arr::Vertex_const_iterator           Vertex_const_iterator;
+  typedef typename Arr::Edge_const_iterator             Edge_const_iterator;
+  typedef typename Arr::Vertex_const_handle             Vertex_const_handle;
+  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Arr::Point_2                         Point_2;
+  typedef typename Arr::Allocator                       Allocator;
 
-  typedef typename Arr_2::Vertex_const_iterator         Vertex_const_iterator;
-  typedef typename Arr_2::Edge_const_iterator           Edge_const_iterator;
-  typedef typename Arr_2::Vertex_const_handle           Vertex_const_handle;
-  typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
-  typedef typename Arr_2::X_monotone_curve_2            X_monotone_curve_2;
-  typedef typename Arr_2::Point_2                       Point_2;
-  typedef typename Vd_visitor::Geometry_traits_2        Vd_traits_2;
-  typedef typename Vd_traits_2::X_monotone_curve_2      Vd_x_monotone_curve_2;
-  typedef typename Vd_traits_2::Point_2                 Vd_point_2;
+  // Surface sweep types:
+  typedef Arr_batched_point_location_traits_2<Arr>      Vgt2;
+  typedef Ss2::No_overlap_event<Vgt2, Allocator>        Vd_event;
+  typedef Ss2::No_overlap_subcurve<Vgt2, Vd_event>      Vd_curve;
+  typedef typename Tt::template
+    Vertical_decomposition_helper<Vd_event, Vd_curve>   Vd_helper;
+  typedef Arr_vert_decomp_sl_visitor<Vd_helper, Output_iterator>
+                                                        Vd_visitor;
+  typedef typename Vgt2::X_monotone_curve_2             Vd_x_monotone_curve_2;
+  typedef typename Vgt2::Point_2                        Vd_point_2;
 
   // Go over all arrangement edges and collect their associated x-monotone
   // curves. To each curve we attach a halfedge handle going from right to
@@ -103,22 +113,21 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   }
 
   // Obtain a extended traits-class object.
-  const Geom_traits_2* geom_traits = arr.geometry_traits();
+  const Gt2* geom_traits = arr.geometry_traits();
 
   /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Vd_traits_2 is the same as the type Geom_traits_2, use a
-   * reference to Geom_traits_2 to avoid constructing a new one.  Otherwise,
+   * If the type Vgt2 is the same as the type Gt2, use a
+   * reference to Gt2 to avoid constructing a new one.  Otherwise,
    * instantiate a local variable of the former and provide the later as a
    * single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Geom_traits_2, Vd_traits_2>,
-                           const Vd_traits_2&, Vd_traits_2>::type
+  typename boost::mpl::if_<boost::is_same<Gt2, Vgt2>, const Vgt2&, Vgt2>::type
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.

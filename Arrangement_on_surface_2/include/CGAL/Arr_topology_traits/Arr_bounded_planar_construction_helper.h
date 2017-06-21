@@ -30,8 +30,6 @@
 
 namespace CGAL {
 
-namespace Ss2 = Surface_sweep_2;
-
 /*! \class Arr_bounded_planar_construction_helper
  *
  * A helper class for the construction sweep-line visitor, suitable

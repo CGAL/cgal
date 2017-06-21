@@ -36,6 +36,7 @@ namespace CGAL {
 namespace Ss2 = Surface_sweep_2;
 
 template <typename GeometryTraits_2, typename Arrangement_,
+          typename Allocator_ = CGAL_ALLOCATOR(int),
           template <typename, typename>
           class SurfaceSweepBaseEvent = Ss2::Default_event_base,
           template <typename, typename, typename>
@@ -46,6 +47,7 @@ class Arr_construction_event :
     Arr_construction_subcurve<GeometryTraits_2,
                               Arr_construction_event<GeometryTraits_2,
                                                      Arrangement_,
+                                                     Allocator_,
                                                      SurfaceSweepBaseEvent,
                                                      SurfaceSweepBaseCurve>,
                               SurfaceSweepBaseCurve>,

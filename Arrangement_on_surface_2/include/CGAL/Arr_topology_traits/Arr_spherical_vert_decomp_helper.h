@@ -27,8 +27,6 @@
 
 namespace CGAL {
 
-namespace Ss2 = Surface_sweep_2;
-
 /*! \class Arr_spherical_vert_decomp_helper
  *
  * A helper class for the vertical decomposition sweep-line visitor, suitable

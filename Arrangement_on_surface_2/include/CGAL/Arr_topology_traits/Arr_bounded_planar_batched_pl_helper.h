@@ -28,8 +28,6 @@
 
 namespace CGAL {
 
-namespace Ss2 = Surface_sweep_2;
-
 /*! \class Arr_bounded_planar_batched_pl_helper
  *
  * A helper class for the batched point-location surface-sweep visitor, suitable

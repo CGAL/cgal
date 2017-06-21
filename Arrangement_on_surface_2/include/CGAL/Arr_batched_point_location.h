@@ -23,6 +23,10 @@
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
+#include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
+#include <CGAL/Surface_sweep_2/No_overlap_event_base.h>
+#include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
+#include <CGAL/Surface_sweep_2/Arr_batched_pl_sl_visitor.h>
 
 #include <vector>
 #include <boost/mpl/if.hpp>
@@ -54,27 +58,30 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
        PointsIterator points_begin, PointsIterator points_end,
        OutputIterator oi)
 {
-  typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef TopologyTraits                                Topology_traits;
-
-  typedef Geometry_traits_2                             Gt2;
-  typedef Topology_traits                               Tt;
+  typedef GeometryTraits_2                              Gt2;
+  typedef TopologyTraits                                Tt;
+  typedef OutputIterator                                Output_iterator;
 
   // Arrangement types:
-  typedef Arrangement_on_surface_2<Gt2, Tt>             Arr_2;
-  typedef typename Tt::template
-    Surface_sweep_batched_point_location_visitor<OutputIterator>
+  typedef Arrangement_on_surface_2<Gt2, Tt>             Arr;
+  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr::Vertex_const_iterator           Vertex_const_iterator;
+  typedef typename Arr::Edge_const_iterator             Edge_const_iterator;
+  typedef typename Arr::Vertex_const_handle             Vertex_const_handle;
+  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr::Allocator                       Allocator;
+
+  // Surface sweep types
+  typedef Arr_batched_point_location_traits_2<Arr>      Bgt2;
+  typedef Ss2::No_overlap_event<Bgt2, Allocator>        Bpl_event;
+  typedef Ss2::No_overlap_subcurve<Bgt2, Bpl_event>     Bpl_curve;
+  typedef typename Tt::template Batched_point_location_helper<Bpl_event,
+                                                              Bpl_curve>
+                                                        Bpl_helper;
+  typedef Arr_batched_pl_sl_visitor<Bpl_helper, Output_iterator>
                                                         Bpl_visitor;
-
-  typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
-  typedef typename Arr_2::Vertex_const_iterator         Vertex_const_iterator;
-  typedef typename Arr_2::Edge_const_iterator           Edge_const_iterator;
-  typedef typename Arr_2::Vertex_const_handle           Vertex_const_handle;
-  typedef typename Arr_2::Halfedge_const_handle         Halfedge_const_handle;
-
-  typedef typename Bpl_visitor::Geometry_traits_2       Bpl_traits_2;
-  typedef typename Bpl_traits_2::X_monotone_curve_2     Bpl_x_monotone_curve_2;
-  typedef typename Bpl_traits_2::Point_2                Bpl_point_2;
+  typedef typename Bgt2::X_monotone_curve_2             Bpl_x_monotone_curve_2;
+  typedef typename Bgt2::Point_2                        Bpl_point_2;
 
   // Go over all arrangement edges and collect their associated x-monotone
   // curves. To each curve we attach a halfedge handle going from right to
@@ -109,16 +116,15 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Bpl_traits_2 is the same as the type Geom_traits_2, use a
-   * reference to Geom_traits_2 to avoid constructing a new one.  Otherwise,
-   * instantiate a local variable of the former and provide the later as a
-   * single parameter to the constructor.
+   * If the type Bgt2 is the same as the type Gt2, use a reference to Gt2
+   * to avoid constructing a new one.  Otherwise, instantiate a local variable
+   * of the former and provide the later as a single parameter to the
+   * constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Bpl_traits_2>,
-                           const Bpl_traits_2&, Bpl_traits_2>::type
+  typename boost::mpl::if_<boost::is_same<Gt2, Bgt2>, const Bgt2&, Bgt2>::type
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.

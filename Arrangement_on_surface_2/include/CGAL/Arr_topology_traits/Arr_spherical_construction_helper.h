@@ -25,11 +25,10 @@
  * Definition of the Arr_spherical_construction_helper class-template.
  */
 
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
-
-namespace Ss2 = Surface_sweep_2;
 
 /*! \class Arr_spherical_construction_helper
  *

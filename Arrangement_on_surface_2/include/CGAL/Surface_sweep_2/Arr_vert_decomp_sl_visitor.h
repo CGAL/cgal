@@ -43,7 +43,7 @@ class Arr_vert_decomp_sl_visitor :
                                    typename Helper_::Allocator,
                                    typename Default::Get<
                                      Visitor_,
-                                     Arr_batched_pl_sl_visitor<
+                                     Arr_vert_decomp_sl_visitor<
                                        Helper_, OutputIterator,
                                        Visitor_> >::type>
 {

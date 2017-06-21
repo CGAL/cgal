@@ -54,12 +54,14 @@ namespace Surface_sweep_2 {
  * x_base, and have x_base derive from No_overlap_event_base; do not use this
  * class in your derivation.
  */
-template <typename GeometryTraits_2>
+template <typename GeometryTraits_2,
+          typename Allocator_ = CGAL_ALLOCATOR(int)>
 class No_overlap_event :
   public No_overlap_event_base<GeometryTraits_2,
                                No_overlap_subcurve<GeometryTraits_2,
                                                    No_overlap_event<
-                                                     GeometryTraits_2> > >
+                                                     GeometryTraits_2,
+                                                     Allocator_> > >
 {
 public:
   /*! Construct default. */

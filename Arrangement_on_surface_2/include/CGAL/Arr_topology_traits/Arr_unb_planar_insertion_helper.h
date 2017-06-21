@@ -30,8 +30,6 @@
 
 namespace CGAL {
 
-namespace Ss2 = Surface_sweep_2;
-
 /*! \class Arr_unb_planar_insertion_helper
  *
  * A helper class for the insertion sweep-line visitors, suitable

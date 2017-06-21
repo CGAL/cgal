@@ -35,11 +35,13 @@ namespace Surface_sweep_2 {
 
 /*! \class Default_event
  */
-template <typename GeometryTraits_2>
+template <typename GeometryTraits_2,
+          typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Default_event :
   public Default_event_base<GeometryTraits_2,
                             Default_subcurve<GeometryTraits_2,
-                                             Default_event<GeometryTraits_2> > >
+                                             Default_event<GeometryTraits_2,
+                                                           Allocator_> > >
 {
 public:
   /*! Construct default. */
