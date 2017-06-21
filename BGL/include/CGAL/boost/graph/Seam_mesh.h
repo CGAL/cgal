@@ -360,13 +360,8 @@ public:
     vertex_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), mesh_(m)
     {
-//      std::cout << "vertex_iterator constructor\n";
-
       if(!is_current_vertex_valid())
         increment();
-
-//      std::cout << *hd << " after increment" << std::endl;
-//      std::cout << "leave vertex_iterator constructor\n";
     }
 
     // constructor for the past the end iterator
@@ -379,30 +374,20 @@ public:
 
     bool is_current_vertex_valid() const
     {
-//      std::cout << *hd << std::endl;
-
       if(hd == end)
         return true;
 
-//      std::cout << CGAL::source(*hd, mesh_->mesh()) << " --> "
-//                << CGAL::target(*hd, mesh_->mesh()) << std::endl;
-
       TM_vertex_descriptor tvd = CGAL::target(*hd, mesh_->mesh());
-//      std::cout << "halfedge pointing at target: " << CGAL::halfedge(tvd, mesh_->mesh()) << std::endl;
       if((!mesh_->has_on_seam(tvd))&& (CGAL::halfedge(tvd, mesh_->mesh()) == *hd)) {
-//        std::cout << "return as vertex not on seam "
-//                  << "and same halfedge as given by the base mesh\n";
         return true;
       }
 
       if(mesh_->has_on_seam(CGAL::edge(*hd, mesh_->mesh()))) {
-//        std::cout <<"return as edge on seam\n";
         return true;
       }
 
       if(mesh_->has_on_seam(tvd) &&
          is_border(CGAL::opposite(*hd, mesh_->mesh()), mesh_->mesh())) {
-//        std::cout <<"return as edge on border and target on seam\n";
         return true;
       }
 
@@ -411,7 +396,6 @@ public:
 
     void increment()
     {
-//      std::cout << "increment\n";
       if(hd == end)
         return;
 
@@ -800,10 +784,6 @@ public:
   std::pair<halfedge_descriptor, bool> halfedge(vertex_descriptor u,
                                                 vertex_descriptor v) const
   {
-//    std::cout << "trying to find an halfedge between: " << std::endl;
-//    std::cout << CGAL::source(u, tm) << " --> " << CGAL::target(u, tm) << std::endl;
-//    std::cout << CGAL::source(v, tm) << " --> " << CGAL::target(v, tm) << std::endl;
-
     halfedge_descriptor hdv(v);
     Halfedge_around_target_circulator<Self> hatcv(hdv, *this), endv = hatcv;
     CGAL_For_all(hatcv, endv) {
@@ -813,10 +793,6 @@ public:
         // found a u next to v in the base mesh 'tm',
         // but we must check that is also the case in the seam mesh 'this'
         // that means that the halfedge 'u' is incident to the source of hd_around_v
-
-//        std::cout << "found a u next to v in tm: " << hd_around_v << std::endl;
-//        std::cout << "which has s/t: " << CGAL::source(hd_around_v, tm) << " "
-//                                       << CGAL::target(hd_around_v, tm) << std::endl;
 
         halfedge_descriptor opp_hd_around_v = opposite(hd_around_v);
         Halfedge_around_target_circulator<Self> hatcu(opp_hd_around_v, *this),
@@ -829,8 +805,6 @@ public:
         }
       }
     }
-
-//    std::cout << "failed to find a good halfedge" << std::endl;
 
     // halfedge doesn't exist
     return std::make_pair(halfedge_descriptor(), false/*invalid*/);
@@ -1099,7 +1073,7 @@ public:
     // Check the file type
     std::string str = filename;
     if(str.substr(str.length() - 14) != ".selection.txt") {
-      std::cout << "Error: seams must be given by a *.selection.txt file" << std::endl;
+      std::cerr << "Error: seams must be given by a *.selection.txt file" << std::endl;
       return tmhd;
     }
 
@@ -1112,7 +1086,9 @@ public:
 
     // skip two lines to get the istream to be at the beginning of the third line
     if(!std::getline(in, line) || !std::getline(in, line)) {
-      std::cout << "Error: could not read input file: " << filename << std::endl;
+#ifdef SEAM_MESH_DEBUG
+      std::cerr << "Error: no seams in input file: " << filename << std::endl;
+#endif
       return tmhd;
     }
 
