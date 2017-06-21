@@ -525,6 +525,10 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 #endif
       std::vector<double> fits(m_num_total_points, -1.);
       m_num_available_points = m_num_total_points;
+      std::vector<std::size_t> index_container;
+      std::vector<std::size_t> index_container_former_ring;
+      std::set<std::size_t> index_container_current_ring;
+      
       for (std::size_t I = 0; I < m_num_total_points; ++ I)
       {
         std::size_t i = sorted_indices[I];
@@ -545,11 +549,14 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
                             plane_normal);
 
         //initialization containers
-        std::set<std::size_t> index_container;
-        index_container.insert(i);
-        std::set<std::size_t> index_container_former_ring;
-        index_container_former_ring.insert(i);
-        std::set<std::size_t> index_container_current_ring;
+
+        index_container.clear();
+        index_container.push_back(i);
+
+        index_container_former_ring.clear();
+        index_container_former_ring.push_back(i);
+
+        index_container_current_ring.clear();
 
         //propagation
         bool propagation = true;
@@ -557,7 +564,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
         {
           propagation = false;
 
-          for (typename std::set<std::size_t>::iterator icfrit = index_container_former_ring.begin();
+          for (typename std::vector<std::size_t>::iterator icfrit = index_container_former_ring.begin();
                icfrit != index_container_former_ring.end(); ++ icfrit)
           {
             std::size_t point_index = *icfrit;
@@ -594,11 +601,13 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
           //update containers
           index_container_former_ring.clear();
+          index_container_former_ring.reserve (index_container_current_ring.size());
+          index_container.reserve (index_container.size() + index_container_current_ring.size());
           for (typename std::set<std::size_t>::iterator lit = index_container_current_ring.begin();
                lit != index_container_current_ring.end(); ++lit)
           {
-            index_container_former_ring.insert(*lit);
-            index_container.insert(*lit);
+            index_container_former_ring.push_back(*lit);
+            index_container.push_back(*lit);
           }
           index_container_current_ring.clear();
           
@@ -609,7 +618,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
           if ((conti < 10) || (conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
           {
             std::list<Point> listp;
-            for (typename std::set<std::size_t>::iterator icit = index_container.begin();
+            for (typename std::vector<std::size_t>::iterator icit = index_container.begin();
                  icit != index_container.end(); ++ icit)
               listp.push_back(get (m_point_map, *(m_input_iterator_first + *icit)));
 
@@ -629,6 +638,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
         if (index_container.size() >= m_options.min_points)
         {
           Shape *p = (Shape *) (*(m_shape_factories.begin()))();
+
+          // BUG something fishy around here
           m_num_available_points -= index_container.size();
           
           p->compute (index_container,  m_input_iterator_first, m_traits,
@@ -643,7 +654,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
         {
           class_index--;
           m_shape_index[i] = -1;
-          for (typename std::set<std::size_t>::iterator icit = index_container.begin();
+          for (typename std::vector<std::size_t>::iterator icit = index_container.begin();
                icit != index_container.end(); ++ icit)
             m_shape_index[*icit] = -1;
         }

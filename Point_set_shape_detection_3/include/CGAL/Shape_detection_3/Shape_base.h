@@ -546,6 +546,26 @@ namespace CGAL {
       (void)max;
     }
 
+    void compute(const std::vector<std::size_t>& indices,
+                 Input_iterator first,
+                 Traits traits,
+                 Point_map point_pmap,
+                 Normal_map normal_pmap,
+                 FT epsilon,
+                 FT normal_threshold) {
+      if (indices.size() < minimum_sample_size())
+        return;
+
+      m_first = first;
+      m_traits = traits;
+      m_point_pmap = point_pmap;
+      m_normal_pmap = normal_pmap;
+      m_epsilon = epsilon;
+      m_normal_threshold = normal_threshold;
+
+      create_shape(indices);
+    }
+    
     void compute(const std::set<std::size_t>& indices,
                  Input_iterator first,
                  Traits traits,
