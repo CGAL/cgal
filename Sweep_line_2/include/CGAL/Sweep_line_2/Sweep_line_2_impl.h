@@ -126,11 +126,8 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
       {
         this->m_currentEvent->push_back_curve_to_left(sc);
         this->m_currentEvent->set_weak_intersection();
-        if (!_add_curve_to_right(this->m_currentEvent, sc))
-        {
-          // no overlap
-          this->m_visitor->update_event(this->m_currentEvent, sc);
-        }
+        this->m_visitor->update_event(this->m_currentEvent, sc);
+        _add_curve_to_right(this->m_currentEvent, sc);
       }
 
       // sc is now on the left
@@ -181,7 +178,6 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
     else {
       // curren event splits the subcurve.
       const X_monotone_curve_2& lastCurve = leftCurve->last_curve();
-
       this->m_traits->split_2_object()(lastCurve, this->m_currentEvent->point(),
                                        sub_cv1, sub_cv2);
       this->m_visitor->add_subcurve(sub_cv1, leftCurve);
@@ -425,7 +421,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   Curve_pair cv_pair(c1,c2);
   if (! (m_curves_pair_set.insert(cv_pair)).second)
   {
-    CGAL_SL_PRINT_END_EOL("end computing intersection (already computed)");
+    CGAL_SL_PRINT_END_EOL("computing intersection (already computed)");
     return;  //the curves have already been checked for intersection
   }
 
