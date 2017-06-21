@@ -10,6 +10,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Unique_hash_map.h>
 
+#include <boost/array.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 

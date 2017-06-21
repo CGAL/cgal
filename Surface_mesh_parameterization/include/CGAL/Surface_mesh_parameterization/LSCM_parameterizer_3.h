@@ -35,8 +35,8 @@
 #include <CGAL/OpenNL/linear_solver.h>
 
 #include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
-
 
 #include <vector>
 

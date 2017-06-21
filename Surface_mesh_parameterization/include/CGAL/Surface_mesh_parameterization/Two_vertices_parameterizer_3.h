@@ -51,13 +51,15 @@ namespace Surface_mesh_parameterization {
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-template<class TriangleMesh>
+template< typename TriangleMesh_ >
 class Two_vertices_parameterizer_3
 {
 // Public types
 public:
+  typedef TriangleMesh_                                            TriangleMesh;
+
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 

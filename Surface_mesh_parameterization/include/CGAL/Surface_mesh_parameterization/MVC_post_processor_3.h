@@ -48,7 +48,6 @@
 
 // @todo Determine the proper name of this file
 // @todo Handle non-simple boundary
-// @todo Make it work with a surface mesh type
 
 namespace CGAL {
 

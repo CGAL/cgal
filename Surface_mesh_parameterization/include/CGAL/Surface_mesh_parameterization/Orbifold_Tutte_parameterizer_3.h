@@ -658,7 +658,7 @@ public:
   /// \pre The seam edges form a set of segments that contains the different cones,
   ///      and starts and ends at two different cones.
   /// \pre The seam edges form a set of segments that is homotopic to a
-  ///      line. Specifically, the paths between cones should not self intersect
+  ///      line. Specifically, the paths between cones must not self intersect
   ///      or intersect other paths (see Figure below).
   ///
   /// \cgalFigureBegin{Surface_mesh_parameterizationfigorbifold, orbifold_path.svg}

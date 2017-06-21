@@ -61,7 +61,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_uniform_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
@@ -449,7 +449,7 @@ protected:
 /// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
 /// \cgalModels `Parameterizer_3`
 ///

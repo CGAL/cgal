@@ -91,7 +91,7 @@ int main(int argc, char * argv[])
     }
   }
 
-  std::cout << mesh.number_of_seam_edges() << " seam edges" << std::endl;
+  std::cout << mesh.number_of_seam_edges() << " seam edges in input" << std::endl;
 
   // Index map of the seam mesh (assuming a single connected component so far)
   typedef boost::unordered_map<vertex_descriptor, int> Indices;

@@ -23,7 +23,6 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
 #include <CGAL/boost/graph/iterator.h>
-
 #include <CGAL/number_utils.h>
 
 #include <boost/foreach.hpp>
@@ -57,12 +56,12 @@ namespace Surface_mesh_parameterization {
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Circular_border_uniform_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
 ///
-template<class TriangleMesh_>
+template< typename TriangleMesh_ >
 class Circular_border_parameterizer_3
 {
 // Public types
@@ -196,13 +195,13 @@ class Circular_border_uniform_parameterizer_3
 public:
   // We have to repeat the types exported by superclass
   /// @cond SKIP_IN_MANUAL
-  typedef TriangleMesh_       TriangleMesh;
+  typedef TriangleMesh_                                                 TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   /// @endcond
 
 // Private types
 private:
-  typedef Circular_border_parameterizer_3<TriangleMesh_>   Base;
+  typedef Circular_border_parameterizer_3<TriangleMesh>    Base;
   typedef typename Base::NT                                NT;
 
 // Protected operations
@@ -231,7 +230,7 @@ protected:
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Circular_border_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Circular_border_uniform_parameterizer_3<TriangleMesh>`
@@ -244,14 +243,14 @@ class Circular_border_arc_length_parameterizer_3
 public:
   // We have to repeat the types exported by superclass
   /// @cond SKIP_IN_MANUAL
-  typedef TriangleMesh_          TriangleMesh;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef TriangleMesh_                                                   TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   /// @endcond
 
 // Private types
 private:
-  typedef Circular_border_parameterizer_3<TriangleMesh_>   Base;
+  typedef Circular_border_parameterizer_3<TriangleMesh>    Base;
 
   typedef typename Base::PPM                               PPM;
   typedef typename Base::NT                                NT;

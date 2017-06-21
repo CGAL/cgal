@@ -63,7 +63,6 @@
 // @todo Handle the case cot = 0 with a local parameterization aligned with the axes
 //       (this produces C2=0 which is problematic to compute a & b)
 // @todo Add distortion measures
-// @todo non-simple border in MVC_post_processor
 // @todo Parallelize the local phase?
 
 namespace CGAL {
@@ -162,11 +161,11 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator        face_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator      vertex_iterator;
 
-  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh>  halfedge_around_target_circulator;
-  typedef CGAL::Halfedge_around_face_circulator<TriangleMesh>    halfedge_around_face_circulator;
+  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh>     halfedge_around_target_circulator;
+  typedef CGAL::Halfedge_around_face_circulator<TriangleMesh>       halfedge_around_face_circulator;
 
-  typedef boost::unordered_set<vertex_descriptor>          Vertex_set;
-  typedef std::vector<face_descriptor>                     Faces_vector;
+  typedef boost::unordered_set<vertex_descriptor>                   Vertex_set;
+  typedef std::vector<face_descriptor>                              Faces_vector;
 
   // Traits subtypes:
   typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
