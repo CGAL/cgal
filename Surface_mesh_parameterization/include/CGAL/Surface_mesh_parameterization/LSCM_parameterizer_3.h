@@ -27,6 +27,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/circulator.h>
+#include <CGAL/Default.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
@@ -62,51 +63,71 @@ namespace Surface_mesh_parameterization {
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam BorderParameterizer_3 is a strategy to parameterize the surface border
-///         and must be a model of `Parameterizer_3`. <br>
-///         Note: The minimum is to parameterize two vertices.
-/// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system. <br>
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
+///
+/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+///         and must be a model of `Parameterizer_3`.<br>
+///         <b>%Default:</b>
+/// \code
+///   Two_vertices_parameterizer_3<TriangleMesh_>
+/// \endcode
+///
+/// \tparam SolverTraits_ must be a model of `SparseLinearAlgebraTraits_d`.<br>
 ///         Note: We may use a symmetric definite positive solver because LSCM
-///         solves the system in the least squares sense.
+///         solves the system in the least squares sense.<br>
+///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
+///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
+///         is provided as default parameter:
+/// \code
+///   CGAL::Eigen_solver_traits<Eigen::BICGSTAB< Eigen::SparseMatrix<double> > >
+/// \endcode
+///         Otherwise, it uses CGAL's wrapping function to the OpenNL library:
+/// \code
+///   OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
+/// \endcode
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits_>`
 ///
-template
-<
-  class TriangleMesh,
-  class BorderParameterizer_3
-    = Two_vertices_parameterizer_3<TriangleMesh>,
-  class SparseLinearAlgebraTraits_d
-#if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
-    // WARNING: at the moment, the choice of SparseLinearAlgebraTraits_d is completely
-    // ignored and `OpenNL::LinearSolver<Sparse_LA>` is used anyway. If you were to
-    // use Eigen solver traits, there is a bug in the line below, though.
-    // Indeed  `Eigen_sparse_symmetric_matrix<double>::EigenType` is a NON SYMMETRIC
-    // Eigen sparse matrix, and thus Sparse_LA::Matrix will be a NON SYMMETRIC matrix
-    // and the whole symmetry aspect will be completely ignored.
-    // @fixme
-    = Eigen_solver_traits<Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
-#else
-    = OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
-#endif
->
+template < class TriangleMesh_,
+           class BorderParameterizer_ = Default,
+           class SolverTraits_ = Default>
 class LSCM_parameterizer_3
 {
-// Public types
 public:
-  /// Export BorderParameterizer_3 template parameter.
-  typedef BorderParameterizer_3           Border_param;
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    BorderParameterizer_,
+    Two_vertices_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
-// Private types
-private:
-  typedef SparseLinearAlgebraTraits_d     Sparse_LA;
+  typedef typename Default::Get<
+    SolverTraits_,
+  #if defined(CGAL_EIGEN3_ENABLED)
+    // WARNING: at the moment, the choice of SolverTraits_ is completely
+    // ignored (see LeastSquaresSolver typedef) and `OpenNL::LinearSolver<SolverTraits_>`
+    // is used anyway. If Eigen solver traits were to be used again, there is a bug
+    // in the line below to be first fixed:
+    // `Eigen_sparse_symmetric_matrix<double>::EigenType` is a NON SYMMETRIC
+    // Eigen sparse matrix, and thus SolverTraits_::Matrix will be a NON SYMMETRIC matrix
+    // and the whole symmetry aspect will be completely ignored.
+    // @fixme
+    CGAL::Eigen_solver_traits<
+            Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+  #else
+    OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
+  #endif
+  >::type                                                     Solver_traits;
+#else
+  typedef Border_parameterizer_                               Border_parameterizer;
+  typedef SolverTraits_                                       Solver_traits;
+#endif
+
+  typedef TriangleMesh_                                       TriangleMesh;
 
 // Private types
 private:
@@ -126,18 +147,18 @@ private:
   typedef typename Kernel::Vector_2                                 Vector_2;
   typedef typename Kernel::Vector_3                                 Vector_3;
 
-  // SparseLinearAlgebraTraits_d subtypes:
-  typedef typename Sparse_LA::Vector      Vector;
-  typedef typename Sparse_LA::Matrix      Matrix;
+  // Solver traits subtypes:
+  typedef typename Solver_traits::Vector                            Vector;
+  typedef typename Solver_traits::Matrix                            Matrix;
 
-  typedef typename OpenNL::LinearSolver<Sparse_LA>     LeastSquaresSolver;
+  typedef typename OpenNL::LinearSolver<Solver_traits>              LeastSquaresSolver;
 
 // Public operations
 public:
   /// Constructor
-  LSCM_parameterizer_3(Border_param border_param = Border_param(),
+  LSCM_parameterizer_3(Border_parameterizer border_param = Border_parameterizer(),
                        ///< %Object that maps the surface's border to 2D space
-                       Sparse_LA sparse_la = Sparse_LA())
+                       Solver_traits sparse_la = Solver_traits())
                        ///< Traits object to access a sparse linear system
     : m_borderParameterizer(border_param), m_linearAlgebra(sparse_la)
   { }
@@ -303,18 +324,18 @@ private:
 // Private accessors
 private:
   /// Get the object that maps the surface's border onto a 2D space.
-  Border_param& get_border_parameterizer() { return m_borderParameterizer; }
+  Border_parameterizer& get_border_parameterizer() { return m_borderParameterizer; }
 
   /// Get the sparse linear algebra (traits object to access the linear system).
-  Sparse_LA& get_linear_algebra_traits() { return m_linearAlgebra; }
+  Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
 
 // Fields
 private:
   /// %Object that maps (at least two) border vertices onto a 2D space
-  Border_param m_borderParameterizer;
+  Border_parameterizer m_borderParameterizer;
 
   /// Traits object to solve a sparse linear system
-  Sparse_LA m_linearAlgebra;
+  Solver_traits m_linearAlgebra;
 };
 
 // Utility for setup_triangle_relations():

@@ -30,14 +30,15 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
-#include <CGAL/Eigen_solver_traits.h>
+#include <CGAL/Default.h>
 #include <CGAL/Timer.h>
 
+#if defined(CGAL_EIGEN3_ENABLED)
+#include <CGAL/Eigen_solver_traits.h>
 #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
 #include <Eigen/UmfPackSupport>
 #endif
-#include <Eigen/Sparse>
-#include <Eigen/SparseLU>
+#endif
 
 #include <boost/array.hpp>
 #include <boost/foreach.hpp>
@@ -96,28 +97,55 @@ enum Weight_type
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceListGraph` and `HalfedgeListGraph`
-/// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system
+/// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceListGraph` and `HalfedgeListGraph`.
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
-/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \tparam SolverTraits_ must be a model of `SparseLinearAlgebraTraits_d`.<br>
+///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
+///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
+///         is provided as default parameter:
+/// \code
+///   CGAL::Eigen_solver_traits<
+///           Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
+/// \endcode
+///         Moreover, if SparseSuite solvers are available, which is greatly preferable for speed,
+///         then the default parameter is:
+/// \code
+///   CGAL::Eigen_solver_traits<
+///           Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
+/// \endcode
 ///
-template
-<
-  typename SeamMesh,
-  typename SparseLinearAlgebraTraits_d
-#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
-    = Eigen_solver_traits<Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
-#else
-    = Eigen_solver_traits<Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
-#endif
->
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_, SolverTraits_>`
+/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_>`
+/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_, SolverTraits_>`
+///
+template < typename SeamMesh,
+           typename SolverTraits_ = Default>
 class Orbifold_Tutte_parameterizer_3
 {
+public:
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    SolverTraits_,
+  #if defined(CGAL_EIGEN3_ENABLED)
+    #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+      CGAL::Eigen_solver_traits<
+        Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
+    #else
+      CGAL::Eigen_solver_traits<
+        Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
+    #endif
+  #else
+    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
+    SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
+  #endif
+  >::type                                                     Solver_traits;
+#else
+  typedef SolverTraits_                                       Solver_traits;
+#endif
+
 private:
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor  halfedge_descriptor;
@@ -126,10 +154,9 @@ private:
   typedef typename boost::graph_traits<SeamMesh>::vertex_iterator      vertex_iterator;
   typedef typename boost::graph_traits<SeamMesh>::face_iterator        face_iterator;
 
-  // SparseLinearAlgebraTraits_d subtypes:
-  typedef SparseLinearAlgebraTraits_d                               Sparse_LA;
-  typedef typename Sparse_LA::Vector                                Vector;
-  typedef typename Sparse_LA::Matrix                                Matrix;
+  // Solver traits subtypes:
+  typedef typename Solver_traits::Vector                               Vector;
+  typedef typename Solver_traits::Matrix                               Matrix;
 
   // Kernel subtypes
   typedef typename internal::Kernel_traits<SeamMesh>::Kernel        Kernel;

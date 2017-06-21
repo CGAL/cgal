@@ -22,7 +22,12 @@
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+
+#include <CGAL/Default.h>
+
+#if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
+#endif
 
 /// \file Barycentric_mapping_parameterizer_3.h
 
@@ -40,57 +45,90 @@ namespace Surface_mesh_parameterization {
 ///
 /// This class is a strategy called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
-/// - provides the template parameters `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d`.
+/// - provides the template parameters `BorderParameterizer_` and `SolverTraits_`.
 /// - implements compute_w_ij() to compute `w_ij = (i,j)`, coefficient of
 ///   the matrix A for `j` neighbor vertex of `i`, based on Tutte Barycentric
 ///   Mapping method.
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`.
-/// \tparam BorderParameterizer_3 is a strategy to parameterize the surface border
-///         and must be a model of `Parameterizer_3`.
-/// \tparam SparseLinearAlgebraTraits_d is a traits class to solve a sparse linear system. <br>
-///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
-///         does not remove border vertices from the system.
-
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
+///
+/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+///         and must be a model of `Parameterizer_3`.<br>
+///         <b>%Default:</b>
+/// \code
+///   Circular_border_arc_length_parameterizer_3<TriangleMesh_>
+/// \endcode
+///
+/// \tparam SolverTraits_ must be a model of `SparseLinearAlgebraTraits_d`.<br>
+///         Note that the system is *not* symmetric because `Fixed_border_parameterizer_3`
+///         does not remove border vertices from the system.<br>
+///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
+///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
+///         is provided as default parameter:
+/// \code
+///      CGAL::Eigen_solver_traits<
+///              Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+///                              Eigen::IncompleteLUT< double > > >
+/// \endcode
 /*!
-\sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
-\sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SparseLinearAlgebraTraits_d>`
+\sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+\sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+\sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+\sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+\sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh_, BorderParameterizer_>`
+\sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh_, BorderParameterizer_, SolverTraits_>`
+\sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits_>`
  */
-template
-<
-  class TriangleMesh,
-  class BorderParameterizer_3
-    = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
-  class SparseLinearAlgebraTraits_d
-    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
-                                          Eigen::IncompleteLUT< double > > >
->
+template < typename TriangleMesh_,
+           typename BorderParameterizer_ = Default,
+           typename SolverTraits_ = Default >
 class Barycentric_mapping_parameterizer_3
-  : public Fixed_border_parameterizer_3<TriangleMesh,
-                                        BorderParameterizer_3,
-                                        SparseLinearAlgebraTraits_d>
+  : public Fixed_border_parameterizer_3<
+      TriangleMesh_,
+      typename Default::Get<
+        BorderParameterizer_,
+        Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type,
+      typename Default::Get<
+        SolverTraits_,
+#if defined(CGAL_EIGEN3_ENABLED)
+        CGAL::Eigen_solver_traits<
+          Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+                          Eigen::IncompleteLUT<double> > > >::type >
+#else
+  #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
+        SolverTraits_>::type > // no parameter provided, and Eigen is not enabled: so don't compile!
+#endif
 {
-// Private types
+public:
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    BorderParameterizer_,
+    Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
+
+  typedef typename Default::Get<
+    SolverTraits_,
+  #if defined(CGAL_EIGEN3_ENABLED)
+    CGAL::Eigen_solver_traits<
+      Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+                      Eigen::IncompleteLUT<double> > >
+  #else
+    SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
+  #endif
+  >::type                                                     Solver_traits;
+#else
+  typedef Border_parameterizer_                               Border_parameterizer;
+  typedef SolverTraits_                                       SolverTraits;
+#endif
+
+  typedef TriangleMesh_                                       TriangleMesh;
+
 private:
   // Superclass
-  typedef Fixed_border_parameterizer_3<TriangleMesh,
-                                      BorderParameterizer_3,
-                                      SparseLinearAlgebraTraits_d>  Base;
-
-// Public types
-public:
-  // We have to repeat the types exported by superclass
-  /// @cond SKIP_IN_MANUAL
-  typedef BorderParameterizer_3           Border_param;
-  typedef SparseLinearAlgebraTraits_d     Sparse_LA;
-  /// @endcond
+  typedef Fixed_border_parameterizer_3<TriangleMesh_,
+                                       Border_parameterizer,
+                                       Solver_traits>  Base;
 
 // Private types
 private:
@@ -100,20 +138,20 @@ private:
 
   typedef typename Base::NT                       NT;
 
-  // SparseLinearAlgebraTraits_d subtypes:
-  typedef typename Sparse_LA::Vector      Vector;
-  typedef typename Sparse_LA::Matrix      Matrix;
+  // Solver traits subtypes:
+  typedef typename Solver_traits::Vector          Vector;
+  typedef typename Solver_traits::Matrix          Matrix;
 
 // Public operations
 public:
   /// Constructor
-  Barycentric_mapping_parameterizer_3(Border_param border_param = Border_param(),
+  Barycentric_mapping_parameterizer_3(Border_parameterizer border_param = Border_parameterizer(),
                                       ///< %Object that maps the surface's border to 2D space.
-                                      Sparse_LA sparse_la = Sparse_LA())
+                                      Solver_traits sparse_la = Solver_traits())
                                       ///< Traits object to access a sparse linear system.
   : Fixed_border_parameterizer_3<TriangleMesh,
-                                 Border_param,
-                                 Sparse_LA>(border_param, sparse_la)
+                                 Border_parameterizer,
+                                 Solver_traits>(border_param, sparse_la)
   { }
 
   // Default copy constructor and operator =() are fine

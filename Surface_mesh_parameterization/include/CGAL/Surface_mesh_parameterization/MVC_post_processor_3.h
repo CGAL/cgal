@@ -25,13 +25,19 @@
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-#include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#endif
+
+#include <CGAL/Default.h>
+
+#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <vector>
@@ -64,25 +70,47 @@ namespace Surface_mesh_parameterization {
 ///
 /// \cgalModels `Parameterizer_3`
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph`.
-/// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
-///         Note: the system is *not* symmetric.
+/// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \tparam SolverTraits_ must be a model of `SparseLinearAlgebraTraits_d`.<br>
+///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
+///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
+///         is provided as default parameter:
+/// \code
+///   CGAL::Eigen_solver_traits<
+///           Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+///                           Eigen::IncompleteLUT< double > > >
+/// \endcode
 ///
-template
-<
-  class TriangleMesh,
-  class SparseLinearAlgebraTraits_d
-    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
-                                          Eigen::IncompleteLUT< double > > >
->
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_, Solver_traits>`
+///
+template < class TriangleMesh_,
+           class SolverTraits_ = Default>
 class MVC_post_processor_3
 {
+public:
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    SolverTraits_,
+  #if defined(CGAL_EIGEN3_ENABLED)
+    CGAL::Eigen_solver_traits<
+      Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+                      Eigen::IncompleteLUT<double> > >
+  #else
+    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
+    SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
+  #endif
+  >::type                                                     Solver_traits;
+#else
+  typedef SolverTraits_                                       Solver_traits;
+#endif
+
+  typedef TriangleMesh_                                       TriangleMesh;
+
 // Private types
 private:
   // This class
-  typedef MVC_post_processor_3<TriangleMesh, SparseLinearAlgebraTraits_d>  Self;
+  typedef MVC_post_processor_3<TriangleMesh, Solver_traits>  Self;
 
 // Private types
 private:
@@ -102,35 +130,33 @@ private:
   typedef typename Kernel::Vector_2                                 Vector_2;
   typedef typename Kernel::Segment_2                                Segment_2;
 
-  // SparseLinearAlgebraTraits_d subtypes:
-  typedef SparseLinearAlgebraTraits_d           Sparse_LA;
-
-  typedef typename Sparse_LA::Vector            Vector;
-  typedef typename Sparse_LA::Matrix            Matrix;
+  // Solver traits subtypes:
+  typedef typename Solver_traits::Vector                            Vector;
+  typedef typename Solver_traits::Matrix                            Matrix;
 
   // Types used for the convexification of the mesh
     // Each triangulation vertex is associated its corresponding vertex_descriptor
   typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor,
-                                                      Kernel>             Vb;
+                                                      Kernel>       Vb;
     // Each triangultaion face is associated a color (inside/outside information)
-  typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>          Fb;
-  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>         Cfb;
-  typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>                   TDS;
-  typedef CGAL::No_intersection_tag                                       Itag;
+  typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>    Fb;
+  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>   Cfb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>             TDS;
+  typedef CGAL::No_intersection_tag                                 Itag;
 
     // Can choose either a triangulation or a Delauany triangulation
-  typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>            CT;
+  typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>                CT;
 //    typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>   CT;
 
 // Private fields
 private:
   /// Traits object to solve a sparse linear system
-  Sparse_LA m_linearAlgebra;
+  Solver_traits m_linearAlgebra;
 
 // Private accessors
 private:
   /// Get the sparse linear algebra (traits object to access the linear system).
-  Sparse_LA& get_linear_algebra_traits() { return m_linearAlgebra; }
+  Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
 
 // Private utility
   /// Print the exterior faces of the constrained triangulation.
@@ -755,7 +781,7 @@ public:
   ///
   /// \param sparse_la %Traits object to access a sparse linear system.
   ///
-  MVC_post_processor_3(Sparse_LA sparse_la = Sparse_LA())
+  MVC_post_processor_3(Solver_traits sparse_la = Solver_traits())
     :
       m_linearAlgebra(sparse_la)
   { }
