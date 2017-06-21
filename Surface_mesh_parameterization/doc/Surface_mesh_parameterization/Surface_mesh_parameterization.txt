@@ -11,7 +11,7 @@ namespace CGAL {
 Mael Rouxel-Labbé
 
 \warning The API and structure of this package have greatly changed with CGAL 4.11.
-Users who wish to use the former API must use a version prior to 4.11</li>.
+Users who wish to use the former API must use a version prior to 4.11.
 Section \ref Surface_mesh_parameterizationBasics gives a gentle introduction to
 the new, much simpler, API.
 
@@ -209,7 +209,7 @@ Different choices exist for such border parameterization methods, described in S
 
 \subsubsection Surface_mesh_parameterizationTutteBarycentric Tutte Barycentric Mapping
 
-`Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Barycentric Mapping parameterization method has been introduced by
 Tutte \cgalCite{t-hdg-63}. In parameter space, each vertex is
@@ -234,7 +234,7 @@ Tutte Barycentric mapping parameterization (the blue line depicts the cut graph)
 
 \subsubsection Surface_mesh_parameterizationDiscreteAuthalic Discrete Authalic Parameterization
 
-`Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Discrete Authalic parameterization method has been introduced by
 Desbrun et al. \cgalCite{cgal:dma-ipsm-02}. It corresponds to
@@ -255,7 +255,7 @@ Discrete Authalic Parameterization (the blue line depicts the cut graph). Rightm
 
 \subsubsection Surface_mesh_parameterizationDiscreteConformal Discrete Conformal Map
 
-`Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 Discrete Conformal Map parameterization has been introduced to the graphics community
 by Eck et al. \cgalCite{cgal:eddhls-maam-95}. It attempts to
@@ -281,7 +281,7 @@ Discrete Conformal Map. Rightmost: parameter space.
 
 \subsubsection Surface_mesh_parameterizationFloaterMean Floater Mean Value Coordinates
 
-`Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Mean Value Coordinates parameterization method has been introduced
 by Floater \cgalCite{cgal:f-mvc-03}. Each vertex in parameter space is
@@ -349,7 +349,7 @@ For free border parameterization methods, the vertices of the border are free to
 
 \subsubsection Surface_mesh_parameterizationLeastSquares Least Squares Conformal Maps
 
-`Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Least Squares Conformal Maps (LSCM) parameterization method has
 been introduced by L&eacute;vy et al. \cgalCite{cgal:lprm-lscm-02}.
@@ -370,7 +370,7 @@ Least Squares Conformal Maps. Rightmost: parameter space.
 
 \subsubsection Surface_mesh_parameterizationARAP As Rigid As Possible Parameterization
 
-`Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 An as-rigid-as-possible parameterization was introduced by Liu et al. \cgalCite{liu2008local}.
 It is a shape-preserving method based on an iterative energy minimization process.
@@ -418,7 +418,7 @@ to a disk.
 
 \subsubsection Surface_mesh_parameterizationOrbi Orbifold Tutte Embeddings
 
-`Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 
 Orbifold-Tutte Planar Embedding was introduced by Aigerman and Lipman \cgalCite{aigerman2015orbifold}
 and is a generalization of Tutte’s embedding to other topologies, and in particular
