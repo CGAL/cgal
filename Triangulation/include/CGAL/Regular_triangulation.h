@@ -26,8 +26,6 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Regular_triangulation_traits_adapter.h>
 
-#include <boost/property_map/function_property_map.hpp>
-
 namespace CGAL {
 
 template< typename Traits_, typename TDS_ = Default >
