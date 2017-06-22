@@ -10,8 +10,6 @@
 
 using namespace CGAL::Three;
 
-typedef Scene_surface_mesh_item::SMesh SMesh;
-
 namespace PMP = CGAL::Polygon_mesh_processing;
 class Polyhedron_demo_corefinement_sm_plugin :
   public QObject,
