@@ -189,18 +189,57 @@ void Mesh_3_plugin::mesh_3_volume()
 void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 {
   Scene_polyhedron_item* poly_item = NULL;
+  Scene_polyhedron_item* bounding_poly_item = NULL;
   Scene_surface_mesh_item* sm_item = NULL;
+  Scene_surface_mesh_item* bounding_sm_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
   Scene_image_item* image_item = NULL;
   Scene_polylines_item* polylines_item = NULL;
 
   Q_FOREACH(int ind, scene->selectionIndices()) {
 
-    if(poly_item == NULL){
+    if(poly_item == NULL)
+    {
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+      if (poly_item != NULL
+          && scene->selectionIndices().size() == 2
+          && bounding_poly_item == NULL)
+      {
+        bounding_poly_item = qobject_cast<Scene_polyhedron_item*>(
+            scene->item(scene->selectionIndices().back()));
+        if (bounding_poly_item != NULL)
+        {
+          //if poly is bounding, and bounding_poly is a non-closed surface
+          if (is_closed(*poly_item->polyhedron())
+            && !is_closed(*bounding_poly_item->polyhedron()))
+          {
+            //todo : check poly_item is inside bounding_poly_item
+            std::swap(poly_item, bounding_poly_item);
+            //now bounding_poly_item is the bounding one
+          }
+        }
+      }
     }
-    if(sm_item == NULL){
+    if(sm_item == NULL)
+    {
       sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
+      if (sm_item != NULL
+          && scene->selectionIndices().size() == 2
+          && bounding_sm_item == NULL)
+      {
+        bounding_sm_item = qobject_cast<Scene_surface_mesh_item*>(
+            scene->item(scene->selectionIndices().back()));
+        if (bounding_sm_item != NULL)
+        {
+          if (is_closed(*sm_item->polyhedron())
+            && !is_closed(*bounding_sm_item->polyhedron()))
+          {
+            //todo : check sm_item is inside bounding_sm_item
+            std::swap(sm_item, bounding_sm_item);
+            //now bounding_sm_item is the bounding one
+          }
+        }
+      }
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -224,6 +263,13 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     {
       QMessageBox::warning(mw, tr(""),
                            tr("Selected Scene_polyhedron_item is not triangulated."));
+      return;
+    }
+    if (NULL != bounding_poly_item
+      && !bounding_poly_item->polyhedron()->is_pure_triangle())
+    {
+      QMessageBox::warning(mw, tr(""),
+        tr("Selected Scene_polyhedron_item is not triangulated."));
       return;
     }
     item = poly_item;
@@ -467,6 +513,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
     thread =    cgal_code_mesh_3(pMesh,
                                  (polylines_item == NULL)?plc:polylines_item->polylines,
+                                 (bounding_poly_item == NULL)?NULL:bounding_poly_item->polyhedron(),
                                  item->name(),
                                  angle,
                                  facet_sizing,
@@ -493,9 +540,12 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
     SMwgd *pMesh = new SMwgd(*psMesh);
     Scene_polylines_item::Polylines_container plc;
+    SMwgd *pBMesh = (bounding_sm_item == NULL) ? NULL
+                    : new SMwgd(*bounding_sm_item->polyhedron());
 
     thread =    cgal_code_mesh_3(pMesh,
                                  (polylines_item == NULL)?plc:polylines_item->polylines,
+                                 pBMesh,
                                  item->name(),
                                  angle,
                                  facet_sizing,

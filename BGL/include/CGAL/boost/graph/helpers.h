@@ -788,9 +788,9 @@ void clear(FaceGraph& g)
 *
 **/
 template<typename FaceGraph>
-bool empty(const FaceGraph& g)
+bool is_empty(const FaceGraph& g)
 {
-  return vertices(g).begin() == vertices(g).end();
+  return boost::begin(vertices(g)) == boost::end(vertices(g));
 }
 
 
