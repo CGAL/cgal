@@ -22,14 +22,15 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
+
 #include <CGAL/utility.h>
 #include <CGAL/Object.h>
+#include <CGAL/internal/boost/function_property_map.hpp>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/property_map/function_property_map.hpp>
 #include <boost/utility/result_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -398,12 +399,12 @@ public:
     // spatial sorting must use bare points, so we need an adapter
     typedef typename Geom_traits::Construct_point_2 Construct_point_2;
     typedef typename boost::result_of<const Construct_point_2(const Weighted_point&)>::type Ret;
-    typedef boost::function_property_map<Construct_point_2, Weighted_point, Ret> fpmap;
+    typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Weighted_point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
 
     spatial_sort(points.begin(), points.end(),
                  Search_traits_2(
-                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_2>(
+                   CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_2>(
                      geom_traits().construct_point_2_object()), geom_traits()));
 
     Face_handle hint;
@@ -465,13 +466,13 @@ private:
     typedef Index_to_Bare_point<Construct_point_2,
                                 std::vector<Weighted_point> > Access_bare_point;
     typedef typename boost::result_of<const Construct_point_2(const Weighted_point&)>::type Ret;
-    typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+    typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_2<Gt, fpmap> Search_traits_2;
 
     Access_bare_point accessor(points, geom_traits().construct_point_2_object());
     spatial_sort(indices.begin(), indices.end(),
                  Search_traits_2(
-                   boost::make_function_property_map<
+                   CGAL::internal::boost_::make_function_property_map<
                      std::size_t, Ret, Access_bare_point>(accessor),
                    geom_traits()));
 

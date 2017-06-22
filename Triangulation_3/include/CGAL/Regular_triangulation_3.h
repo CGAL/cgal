@@ -33,7 +33,6 @@
 #include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/property_map/function_property_map.hpp>
 #include <boost/utility/result_of.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -47,6 +46,7 @@
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/internal/boost/function_property_map.hpp>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
@@ -258,12 +258,12 @@ namespace CGAL {
         // Spatial sorting can only be applied to bare points, so we need an adaptor
         typedef typename Geom_traits::Construct_point_3 Construct_point_3;
         typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-        typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+        typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
         typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
         spatial_sort(points_on_far_sphere.begin(), points_on_far_sphere.end(),
                      Search_traits_3(
-                       boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                       CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                            geom_traits().construct_point_3_object()), geom_traits()));
 
         typename std::vector<Weighted_point>::const_iterator it_p =
@@ -336,12 +336,12 @@ namespace CGAL {
       // kernel creates temporaries and prevent it.
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
       typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-      typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+      typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
       spatial_sort(points.begin(), points.end(),
                    Search_traits_3(
-                     boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                     CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                          geom_traits().construct_point_3_object()), geom_traits()));
 
     // Parallel
@@ -458,13 +458,13 @@ namespace CGAL {
       typedef Index_to_Bare_point<Construct_point_3,
                                   std::vector<Weighted_point> > Access_bare_point;
       typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-      typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+      typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Gt, fpmap> Search_traits_3;
 
       Access_bare_point accessor(points, geom_traits().construct_point_3_object());
       spatial_sort(indices.begin(), indices.end(),
                    Search_traits_3(
-                     boost::make_function_property_map<
+                     CGAL::internal::boost_::make_function_property_map<
                        std::size_t, Ret, Access_bare_point>(accessor),
                      geom_traits()));
 
