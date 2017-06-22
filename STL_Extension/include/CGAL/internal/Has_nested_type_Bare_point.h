@@ -24,7 +24,7 @@ namespace CGAL {
 
   namespace internal {
 
-    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Bare_point, Bare_point, false);
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Bare_point, Bare_point, false)
 
     template<typename Gt>
     struct Bare_point_type
