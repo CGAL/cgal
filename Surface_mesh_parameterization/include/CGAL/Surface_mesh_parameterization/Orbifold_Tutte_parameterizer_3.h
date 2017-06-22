@@ -352,7 +352,7 @@ private:
     // (note that this should thus be 2*num_vertices, but in the filling functions
     // we use 2*line_number to fill two at the time...)
     int current_line_id_in_M = static_cast<int>(num_vertices(mesh));
-    int initial_line_id = current_line_id_in_M;
+    CGAL_assertion_code(int initial_line_id = current_line_id_in_M;)
 
     // Initialize some variables used in the seam walk
     int start_cone_index = -1; // index of the beginning of the seam
