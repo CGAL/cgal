@@ -732,8 +732,9 @@ treat_result(Scene_item& source_item,
   result_item.setRenderingMode(source_item.renderingMode());
   result_item.set_data_item(&source_item);
 
-  source_item.setVisible(false);
-
+  Q_FOREACH(int ind, scene->selectionIndices()) {
+    scene->item(ind)->setVisible(false);
+  }
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   scene->itemChanged(index);
   scene->setSelectedItem(-1);
