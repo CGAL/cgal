@@ -15,6 +15,11 @@ if(EIGEN3_FOUND)
     polyhedron_demo_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES})
     target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item)
 
+
+    polyhedron_demo_plugin(hole_filling_sm_plugin Hole_filling_plugin ${hole_fillingUI_FILES})
+    target_link_libraries(hole_filling_sm_plugin scene_surface_mesh_item scene_polylines_item scene_surface_mesh_selection_item)
+    target_compile_definitions(hole_filling_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
     qt5_wrap_ui( fairingUI_FILES Fairing_widget.ui)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES})
     target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
