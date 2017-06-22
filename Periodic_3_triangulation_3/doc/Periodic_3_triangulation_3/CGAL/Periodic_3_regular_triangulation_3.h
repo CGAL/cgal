@@ -347,18 +347,18 @@ Returns the circumcenter of the four vertices of c.
 Bare_point dual(Cell_handle c) const;
 
 /*!
-Returns the dual of facet `f`, which is a periodic segment.
+Returns the dual of the facet `f`, which is a periodic segment.
 */
 Periodic_segment_3 dual(Facet f) const;
 
 /*!
-same as the previous method for facet `(c,i)`.
+same as the previous method for the facet `(c,i)`.
 \pre \f$ i\in\{0,1,2,3\}\f$
 */
 Periodic_segment_3 dual(Cell_handle c, int i) const;
 
 /*!
-Returns in the output iterator the points of the dual polygon of
+Returns in the output iterator the points of the dual polygon of the
 edge `e` in the same order as the `Facet_circulator` returns
 facets incident to the edge `e`. The points form the dual polygon
 in \f$ \mathbb R^3\f$, so they do not necessarily all lie inside the
@@ -369,7 +369,7 @@ OutputIterator
 dual(Edge e, OutputIterator pts) const;
 
 /*!
-same as the previous method for edge `(c,i,j)`.
+same as the previous method for the edge `(c,i,j)`.
 \pre \f$ i,j\in\{0,1,2,3\}, i\neq j\f$
 */
 template <class OutputIterator>
@@ -377,7 +377,7 @@ OutputIterator
 dual(Cell_handle c, int i, int j, OutputIterator pts) const;
 
 /*!
-Returns in the output iterator the points of the dual polyhedron of
+Returns in the output iterator the points of the dual polyhedron of the
 vertex `v` in no particular order. The points form the dual
 polyhedron in \f$ \mathbb R^3\f$, so they do not necessarily lie all
 inside the original domain.
