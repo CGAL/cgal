@@ -25,6 +25,7 @@
 // traits class
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
+#include <CGAL/internal/Robust_periodic_weighted_circumcenter_traits_3.h>
 
 // periodic triangulations
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
@@ -603,8 +604,9 @@ template<typename K>
 struct Periodic_3_mesh_geom_traits_generator
 {
 private:
-  typedef Periodic_3_regular_triangulation_traits_3<
-            Robust_weighted_circumcenter_filtered_traits_3<K> > Geom_traits;
+  typedef Robust_periodic_weighted_circumcenter_traits_3<
+            Periodic_3_regular_triangulation_traits_3<
+              Robust_weighted_circumcenter_filtered_traits_3<K> > > Geom_traits;
 
 public:
   typedef Geom_traits type;
