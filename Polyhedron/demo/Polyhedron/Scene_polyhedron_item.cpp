@@ -975,8 +975,10 @@ Scene_polyhedron_item::load_obj(std::istream& in)
 bool
 Scene_polyhedron_item::save(std::ostream& out) const
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   out.precision(17);
     out << *(d->poly);
+    QApplication::restoreOverrideCursor();
     return (bool) out;
 }
 
