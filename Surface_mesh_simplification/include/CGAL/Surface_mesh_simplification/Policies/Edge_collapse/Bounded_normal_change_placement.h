@@ -63,7 +63,7 @@ public:
            ++it;
          }
          while(it!= triangles.end()){
-           const Profile::Triangle& t = *it;
+           const typename Profile::Triangle& t = *it;
            Point p = get(ppmap,t.v0);
            Point q = get(ppmap,t.v1);
            Point r = get(ppmap,t.v2);
