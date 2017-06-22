@@ -171,7 +171,6 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
     if(!metadata.isEmpty()) {
       std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
     } else {
-      std::cerr << "\n";
     }
     if(ifs.bad() || ifs.fail()) return 0;
   }
