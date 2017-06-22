@@ -24,7 +24,6 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
@@ -32,7 +31,6 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <map>
 #include <CGAL/internal/boost/function_property_map.hpp>
 
 #include <boost/mpl/identity.hpp>
@@ -41,6 +39,10 @@
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/utility/result_of.hpp>
+
+#include <iostream>
+#include <map>
+#include <vector>
 
 namespace CGAL {
 
