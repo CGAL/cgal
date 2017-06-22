@@ -319,6 +319,7 @@ user might encounter.
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Linear_cell_complex_bgl_min_items`
 - `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper`
+- `CGAL::Face_filtered_graph`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
@@ -345,7 +346,6 @@ user might encounter.
 
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
-- `CGAL::reserve()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`

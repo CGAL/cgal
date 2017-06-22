@@ -17,11 +17,11 @@
 //
 // Author(s)     : Maxime GIMENO
 
-#ifndef SCENE_PRINT_INTERFACE_ITEM_H
-#define SCENE_PRINT_INTERFACE_ITEM_H
+#ifndef SCENE_PRINT_ITEM_INTERFACE_H
+#define SCENE_PRINT_ITEM_INTERFACE_H
 
 #include <CGAL/license/Three.h>
-
+#include <QtPlugin>
 #include <QPoint>
 namespace CGAL
 {
@@ -29,16 +29,24 @@ namespace Three {
   class Viewer_interface;
 
 
-//! Base class to allow an item to print its primitive IDs.
-class Scene_print_interface_item {
+//! An item that wants to print its primitive IDs must derive from this interface.
+class Scene_print_item_interface {
 public:
-  virtual ~Scene_print_interface_item(){}
- //!Print the ID of the selected primitive.
+  virtual ~Scene_print_item_interface(){}
+ //! Finds the spot the closest to `point` and prints the id of the corresponding Primitive (vertex, edge or face).
  virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*) = 0;
- //!Prints the ID of all the primitives.
+  //! Prints all the primitive ids if their number is not too high. The limit is
+  //! editable in the View menu of the application.
  virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const = 0;
+  //! \brief Tests if an id should be displayed or not.
+  //!
+  //! \returns true if the Id should be displayed
+  //! \returns false if the Id should not be displayed (if it is hidden for example)
+  virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const = 0;
 };
 }
 }
-#endif // SCENE_PRINT_INTERFACE_ITEM_H
+
+Q_DECLARE_INTERFACE(CGAL::Three::Scene_print_item_interface, "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
+#endif // SCENE_PRINT_ITEM_INTERFACE_H
 

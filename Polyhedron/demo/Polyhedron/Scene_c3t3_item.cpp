@@ -1497,7 +1497,18 @@ void Scene_c3t3_item_priv::computeSpheres()
     if(red)
       c = QColor(Qt::red);
     else
-      c = spheres->color().darker(250);
+      c = spheres->color();
+    switch(vit->in_dimension())
+    {
+    case 0:
+      c = QColor::fromHsv((c.hue()+120)%360, c.saturation(),c.lightness(), c.alpha());
+      break;
+    case 1:
+      break;
+    default:
+      c.setRgb(50,50,50,255);
+    }
+
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     Kernel::Point_3 center(vit->point().point().x()+offset.x,
     vit->point().point().y()+offset.y,
@@ -1658,6 +1669,7 @@ void Scene_c3t3_item::show_spheres(bool b)
       d->spheres->setName("Protecting spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+      connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
       scene->addItem(d->spheres);
       scene->changeGroup(d->spheres, this);
       lockChild(d->spheres);
@@ -2030,6 +2042,13 @@ void Scene_c3t3_item::itemAboutToBeDestroyed(Scene_item *item)
     d=0;
   }
 
+}
+void Scene_c3t3_item::on_spheres_color_changed()
+{
+  if(!d->spheres)
+    return;
+  d->spheres->clear_spheres();
+  d->computeSpheres();
 }
 
 #include "Scene_c3t3_item.moc"

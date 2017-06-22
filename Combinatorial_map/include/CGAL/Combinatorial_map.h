@@ -289,7 +289,7 @@ namespace CGAL {
       CGAL::cpp11::tuple<> converters;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     template <typename CMap2, typename Converters>
@@ -297,7 +297,7 @@ namespace CGAL {
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
-      return copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     template <typename CMap2, typename Converters, typename DartInfoConverter>
@@ -305,7 +305,7 @@ namespace CGAL {
               const DartInfoConverter& dartinfoconverter)
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     // Copy constructor from a map having exactly the same type.

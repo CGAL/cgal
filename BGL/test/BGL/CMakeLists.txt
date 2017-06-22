@@ -89,6 +89,14 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Face_filtered_graph.cpp" )
+
+
+create_single_source_cgal_program( "test_Face_filtered_graph.cpp" )
+if(OpenMesh_FOUND)
+  target_link_libraries( test_Face_filtered_graph ${OPENMESH_LIBRARIES})
+endif()
+
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
 endif()

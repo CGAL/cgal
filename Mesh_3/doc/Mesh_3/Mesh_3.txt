@@ -654,13 +654,27 @@ Right : the output mesh with added 1D-features at the intersection of subdomains
 \subsubsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 The following code produces a 3D mesh for a domain
-defined by polyhedral surfaces. \cgalFigureRef{figurepolyhedral_domain} 
+defined by a polyhedral surface. \cgalFigureRef{figurepolyhedral_domain} 
 shows the resulting mesh.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain.cpp}
 
 \cgalFigureBegin{figurepolyhedral_domain,polyhedral_domain.jpg,polyhedral_domain_2.jpg}
-View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
+View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files.
+\cgalFigureEnd
+
+\subsubsection Mesh_33DSurfaceInsidePolyhedralDomain Remeshing a Polyhedral Domain with Surfaces
+
+In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain. 
+The surfaces inside the domain may be closed surfaces as well as surfaces with boundaries. In the case of a closed surface
+the volume delimited by this surface is also considered as inside the domain. 
+previous subsection.
+
+ 
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp}
+
+\cgalFigureBegin{figurepolyhedral_domain_with_surface,polyhedral_domain_with_surface.jpg}
+View of 3D meshes produced from a polyhedral domain with a nested surface.
 \cgalFigureEnd
 
 \subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface

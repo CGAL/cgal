@@ -12,7 +12,7 @@ uniform bool is_selected;
 void main(void) {
  if(color.w<0)
  {
-    vec4 my_color = vec4(color.xzy, 1.);
+    vec4 my_color = vec4(color.xyz, 1.);
     highp vec3 L = light_pos.xyz - fP.xyz; 
     highp vec3 V = -fP.xyz; 
     highp vec3 N; 

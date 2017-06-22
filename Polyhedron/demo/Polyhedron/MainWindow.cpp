@@ -141,9 +141,9 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup scene
   scene = new Scene(this);
-  viewer->textRenderer->setScene(scene);
+  viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
-  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
+  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -754,6 +754,9 @@ void MainWindow::viewerShow(float xmin,
   qglviewer::Vec
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
+
+  if(min_ == max_) return viewerShow(xmin, ymin, zmin);
+
 #if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
 #else
@@ -887,8 +890,8 @@ void MainWindow::reloadItem() {
   Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
   if(property_item)
     property_item->copyProperties(item);
-  new_item->invalidateOpenGLBuffers();
   scene->replaceItem(scene->item_id(item), new_item, true);
+  new_item->invalidateOpenGLBuffers();
   item->deleteLater();
 }
 
@@ -1459,6 +1462,7 @@ void MainWindow::on_actionLoad_triggered()
   dialog.setFileMode(QFileDialog::ExistingFiles);
 
   if(dialog.exec() != QDialog::Accepted) { return; }
+  viewer->update();
   FilterPluginMap::iterator it = 
     filterPluginMap.find(dialog.selectedNameFilter());
   
@@ -1534,13 +1538,19 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
   QString caption = tr("Save %1 to File...%2").arg(item->name()).arg(ext);
+  //remove `)`
+  ext.chop(1);
+  //remove `(*.`
+  ext = ext.right(ext.size()-3);
   QString filename = 
     QFileDialog::getSaveFileName(this,
                                  caption,
-                                 QString(),
+                                 QString("%1.%2").arg(item->name()).arg(ext),
                                  filters.join(";;"));
   if(filename.isEmpty())
     return;
+
+  viewer->update();
   save(filename, item);
 }
 
@@ -1926,10 +1936,10 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
   bool valid;
   QString text = QInputDialog::getText(this, tr("Maximum Number of Text Items"),
                                        tr("Maximum Text Items Diplayed:"), QLineEdit::Normal,
-                                       QString("%1").arg(viewer->textRenderer->getMax_textItems()), &ok);
+                                       QString("%1").arg(viewer->textRenderer()->getMax_textItems()), &ok);
   text.toInt(&valid);
   if (ok && valid){
-    viewer->textRenderer->setMax(text.toInt());
+    viewer->textRenderer()->setMax(text.toInt());
     ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
   }
 }
