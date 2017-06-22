@@ -243,15 +243,14 @@ void projection_of_external_points_of_surface(C3T3& c3t3, const MeshDomain& doma
 
   Vertex_set vertex_set;
 
-  find_points_to_project(c3t3, domain, std::insert_iterator<Vertex_set>(vertex_set, vertex_set.begin()));
+  find_points_to_project(c3t3, std::insert_iterator<Vertex_set>(vertex_set, vertex_set.begin()));
 
   std::cout << "nb of points to project" << vertex_set.size() << std::endl;
-
   projection_of_points(c3t3, domain, vertex_set.begin(), vertex_set.end());
 }
 
-template<class C3T3, class MeshDomain, class OutputIterator>
-void find_points_to_project(C3T3& c3t3, const MeshDomain& domain, OutputIterator vertices)
+template<class C3T3, class OutputIterator>
+void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
 {
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef typename C3T3::Cell_handle Cell_handle;
