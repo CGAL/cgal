@@ -41,6 +41,7 @@
 #include <cassert>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <utility>
 #include <vector>
 
@@ -180,18 +181,88 @@ public:
     insert_dummy_points();
   }
 
+  Bare_point snap_to_domain_border(const Bare_point& p) const
+  {
+
+    const FT px = p.x();
+    const FT py = p.y();
+    const FT pz = p.z();
+    const FT dxm = domain().xmin();
+    const FT dym = domain().ymin();
+    const FT dzm = domain().zmin();
+    const FT dxM = domain().xmax();
+    const FT dyM = domain().ymax();
+    const FT dzM = domain().zmax();
+    FT sx = px, sy = py, sz = pz;
+
+    // simply comparing to FT::epsilon() is probably not completely satisfactory
+    const FT eps = std::numeric_limits<FT>::epsilon();
+
+    if(CGAL::abs(px - dxm) < eps) sx = domain().xmin();
+    if(CGAL::abs(px - dxM) < eps) sx = domain().xmax();
+    if(CGAL::abs(py - dym) < eps) sy = domain().ymin();
+    if(CGAL::abs(py - dyM) < eps) sy = domain().ymax();
+    if(CGAL::abs(pz - dzm) < eps) sz = domain().zmin();
+    if(CGAL::abs(pz - dzM) < eps) sz = domain().zmax();
+
+    std::cout << "snapped " << p << " to " << sx << " " << sy << " " << sz << std::endl;
+    return geom_traits().construct_point_3_object()(sx, sy, sz);
+  }
+
+  Weighted_point snap_to_domain_border(const Weighted_point& p) const
+  {
+    const Bare_point snapped_p = snap_to_domain_border(
+                                   geom_traits().construct_point_3_object()(p));
+    return geom_traits().construct_weighted_point_3_object()(snapped_p, p.weight());
+  }
+
   /// transform a bare point (living anywhere in space) into the canonical
   /// instance of the same bare point that lives inside the base domain
+  Bare_point robust_canonicalize_point(const Bare_point& p) const
+  {
+    bool had_to_use_exact = false;
+    Periodic_bare_point pbp = construct_periodic_point(p, had_to_use_exact);
+
+    if(had_to_use_exact)
+    {
+      // the point is close to a border, snap it !
+      Bare_point sp = snap_to_domain_border(p);
+
+      // might have snapped to a 'max' of the domain, which is not in the domain
+      // note: we could snap to 'min' all the time in 'snap_to_domain_border'
+      // but this is clearer like that (and costs very little since we should
+      // not have to use exact computations too often)
+      return canonicalize_point(sp);
+    }
+
+    return construct_point(pbp);
+  }
+
   Bare_point canonicalize_point(const Bare_point& p) const
   {
-    return construct_point(construct_periodic_point(p));
+    return robust_canonicalize_point(p);
   }
 
   /// transform a weighted point (living anywhere in space) into the canonical
   /// instance of the same weighted point that lives inside the base domain
+  Weighted_point robust_canonicalize_point(const Weighted_point& p) const
+  {
+    bool had_to_use_exact = false;
+    Periodic_bare_point pwp = construct_periodic_weighted_point(p, had_to_use_exact);
+
+    if(had_to_use_exact)
+    {
+      // the point is close to a border, snap it !
+      Weighted_point sp = snap_to_domain_border(p);
+      return canonicalize_point(sp);
+    }
+
+    return construct_weighted_point(pwp);
+  }
+
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
-    return construct_weighted_point(construct_periodic_weighted_point(p));
+    return robust_canonicalize_point(p);
   }
 
   Tetrahedron tetrahedron(const Cell_handle c) const
@@ -434,21 +505,20 @@ public:
                  OutputIteratorInternalFacets ifit,
                  bool* could_lock_zone = NULL,
                  const Facet* /* this_facet_must_be_in_the_cz */ = NULL,
-                 bool* /* the_facet_is_in_its_cz */ = NULL ) const
+                 bool* /* the_facet_is_in_its_cz */ = NULL) const
   {
-    assert(could_lock_zone == NULL);
+    CGAL_triangulation_precondition(could_lock_zone == NULL);
+    CGAL_triangulation_precondition(number_of_vertices() != 0);
 
     clear_v_offsets();
 
-    CGAL_triangulation_precondition( number_of_vertices() != 0);
+    Weighted_point canonic_p = canonicalize_point(p);
 
-    const Weighted_point canonic_p = canonicalize_point(p);
-
-    // #warning rewrite these lines
     Locate_type lt;
     int li, lj;
-    locate( p, lt, li, lj, Cell_handle());
-    if(lt == 0 /*Locate_type::VERTEX*/ ) {
+    c = locate(canonic_p, lt, li, lj, c);
+    if(lt == 0 /* Locate_type::VERTEX */) {
+//      assert(false); // why would the refine point be a point of the triangulation ?
       return make_triple(bfit, cit, ifit);
     }
 

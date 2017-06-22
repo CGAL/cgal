@@ -599,67 +599,150 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
+  Periodic_point_3 exact_construct_periodic_point(const Point_3& p) const
+  {
+    typedef typename Geometric_traits::Kernel                    K;
+    typedef typename Exact_kernel_selector<K>::Exact_kernel      EK;
+    typedef typename Exact_kernel_selector<K>::C2E               C2E;
+
+    C2E to_exact;
+
+    typedef Periodic_3_triangulation_traits_3<EK> Exact_traits;
+    Exact_traits etraits(to_exact(domain()));
+
+    Offset transl(0, 0, 0);
+    typename EK::Point_3 ep = to_exact(p);
+    typename EK::Point_3 dp;
+
+    const typename EK::Iso_cuboid_3& dom = etraits.get_domain();
+
+    while(true) /* while not in */
+    {
+      dp = etraits.construct_point_3_object()(ep, transl);
+      std::cout << "dp: " << dp << std::endl;
+
+      if(dp.x() < dom.xmin())
+        transl.x() += 1;
+      else if(dp.y() < dom.ymin())
+        transl.y() += 1;
+      else if(dp.z() < dom.zmin())
+        transl.z() += 1;
+      else if(!(dp.x() < dom.xmax()))
+        transl.x() -= 1;
+      else if(!(dp.y() < dom.ymax()))
+        transl.y() -= 1;
+      else if(!(dp.z() < dom.zmax()))
+        transl.z() -= 1;
+      else
+        break;
+    }
+
+    Periodic_point_3 pp(std::make_pair(p, transl));
+
+    return pp;
+  }
+
   // Given a point `p` in space, compute its offset `o` with respect
   // to the canonical domain and returns (p, o)
-  Periodic_point_3 construct_periodic_point(const Point_3& p) const
+  Periodic_point_3 construct_periodic_point(const Point_3& p,
+                                            bool& had_to_use_exact) const
   {
     // Check if p lies within the domain. If not, translate.
     const Iso_cuboid& dom = domain();
     if(!(p.x() < dom.xmin()) && p.x() < dom.xmax() &&
-        !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
-        !(p.z() < dom.zmin()) && p.z() < dom.zmax())
+       !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
+       !(p.z() < dom.zmin()) && p.z() < dom.zmax())
       return std::make_pair(p, Offset());
 
-    int ox = -1, oy = -1, oz = -1;
-    if(p.x() < dom.xmin())
-      ox = 1;
-    else if(p.x() < dom.xmax())
-      ox = 0;
+    enum Last_change {
+      NO_LAST_CHANGE,
+      INCREASED_X, DECREASED_X, INCREASED_Y, DECREASED_Y, INCREASED_Z, DECREASED_Z
+    };
 
-    if(p.y() < dom.ymin())
-      oy = 1;
-    else if(p.y() < dom.ymax())
-      oy = 0;
+    Last_change lc = NO_LAST_CHANGE;
+    bool in = false;
 
-    if(p.z() < dom.zmin())
-      oz = 1;
-    else if(p.z() < dom.zmax())
-      oz = 0;
+    Offset transl(0, 0, 0);
+    Point_3 dp;
 
-    Offset transl_offx(0, 0, 0);
-    Offset transl_offy(0, 0, 0);
-    Offset transl_offz(0, 0, 0);
-    Point_3 dp(p);
-
-    // Find the right offset such that the translation will yield a
-    // point inside the original domain.
-    while(dp.x() < dom.xmin() || !(dp.x() < dom.xmax()))
+    while(!in)
     {
-      transl_offx.x() += ox;
-      dp = construct_point(std::make_pair(p, transl_offx));
-    }
-    while(dp.y() < dom.ymin() || !(dp.y() < dom.ymax()))
-    {
-      transl_offy.y() += oy;
-      dp = construct_point(std::make_pair(p, transl_offy));
-    }
-    while(dp.z() < dom.zmin() || !(dp.z() < dom.zmax()))
-    {
-      transl_offz.z() += oz;
-      dp = construct_point(std::make_pair(p, transl_offz));
+      dp = construct_point(std::make_pair(p, transl));
+
+      if(dp.x() < dom.xmin())
+      {
+        if(lc == DECREASED_X) // stuck in a loop
+          break;
+
+        lc = INCREASED_X;
+        transl.x() += 1;
+      }
+      else if(dp.y() < dom.ymin())
+      {
+        if(lc == DECREASED_Y) // stuck in a loop
+          break;
+
+        lc = INCREASED_Y;
+        transl.y() += 1;
+      }
+      else if(dp.z() < dom.zmin())
+      {
+        if(lc == DECREASED_Z) // stuck in a loop
+          break;
+
+        lc = INCREASED_Z;
+        transl.z() += 1;
+      }
+      else if(!(dp.x() < dom.xmax()))
+      {
+        if(lc == INCREASED_X) // stuck in a loop
+          break;
+
+        lc = DECREASED_X;
+        transl.x() -= 1;
+      }
+      else if(!(dp.y() < dom.ymax()))
+      {
+        if(lc == INCREASED_Y) // stuck in a loop
+          break;
+
+        lc = DECREASED_Y;
+        transl.y() -= 1;
+      }
+      else if(!(dp.z() < dom.zmax()))
+      {
+        if(lc == INCREASED_Z) // stuck in a loop
+          break;
+
+        lc = DECREASED_Z;
+        transl.z() -= 1;
+      }
+      else
+      {
+        in = true;
+      }
     }
 
-    Offset transl_off(transl_offx.x(), transl_offy.y(), transl_offz.z());
-    Periodic_point_3 pp(std::make_pair(p, transl_off));
+    Periodic_point_3 pp(std::make_pair(p, transl));
 
-    CGAL_triangulation_assertion_code(
-      Point_3 rp = construct_point(pp.first, pp.second);
-    )
-    CGAL_triangulation_assertion(!(rp.x() < dom.xmin()) && rp.x() < dom.xmax());
-    CGAL_triangulation_assertion(!(rp.y() < dom.ymin()) && rp.y() < dom.ymax());
-    CGAL_triangulation_assertion(!(rp.z() < dom.zmin()) && rp.z() < dom.zmax());
+    if(dp.x() < dom.xmin() || !(dp.x() < dom.xmax()) ||
+       dp.y() < dom.ymin() || !(dp.y() < dom.ymax()) ||
+       dp.z() < dom.zmin() || !(dp.z() < dom.zmax()))
+    {
+      // approximate construction does not manage
+      had_to_use_exact = true;
+
+
+      Periodic_point_3 epp = exact_construct_periodic_point(p);
+    }
 
     return pp;
+  }
+
+  Periodic_point_3 construct_periodic_point(const Point_3& p) const
+  {
+    bool useless = false;
+    return construct_periodic_point(p, useless);
   }
 
   // ---------------------------------------------------------------------------
