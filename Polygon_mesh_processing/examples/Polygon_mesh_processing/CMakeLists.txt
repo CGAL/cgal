@@ -90,6 +90,7 @@ create_single_source_cgal_program( "compute_normals_example.cpp" CXX_FEATURES cx
 create_single_source_cgal_program( "point_inside_example.cpp")
 create_single_source_cgal_program( "triangulate_faces_example.cpp")
 create_single_source_cgal_program( "connected_components_example.cpp")
+create_single_source_cgal_program( "face_filtered_graph_example.cpp")
 create_single_source_cgal_program( "polygon_soup_example.cpp")
 create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")

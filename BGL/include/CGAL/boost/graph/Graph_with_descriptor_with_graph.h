@@ -23,6 +23,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/iterator.h>
 #include <boost/iterator/transform_iterator.hpp>
 
 
@@ -325,8 +326,7 @@ edge(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::ver
 
 
 template <class Graph>
-std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_iterator,
-          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_iterator>
 vertices(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::vertex_iterator b,e;
@@ -336,8 +336,7 @@ vertices(const Graph_with_descriptor_with_graph<Graph> & w)
 }
 
 template <class Graph>
-std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::edge_iterator,
-          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::edge_iterator>
 edges(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::edge_iterator b,e;
@@ -347,8 +346,7 @@ edges(const Graph_with_descriptor_with_graph<Graph> & w)
 }
 
 template <class Graph>
-std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::out_edge_iterator,
-          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::out_edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::out_edge_iterator>
 out_edges(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
           const Graph_with_descriptor_with_graph<Graph> & w)
 {
@@ -360,8 +358,7 @@ out_edges(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >
 }
 
 template <class Graph>
-std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::in_edge_iterator,
-          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::in_edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::in_edge_iterator>
 in_edges(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
          const Graph_with_descriptor_with_graph<Graph> & w)
 {
@@ -630,8 +627,7 @@ prev(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::ha
 //
 
 template <class Graph>
-std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::halfedge_iterator,
-          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::halfedge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::halfedge_iterator>
 halfedges(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::halfedge_iterator b,e;
@@ -671,8 +667,7 @@ halfedge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
 
 
 template <class Graph>
-std::pair<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::face_iterator,
-          typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::face_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::face_iterator>
 faces(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::face_iterator b,e;

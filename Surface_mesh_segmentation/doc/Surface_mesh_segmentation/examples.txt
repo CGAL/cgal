@@ -3,3 +3,4 @@
 /// \example Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp
 /// \example Surface_mesh_segmentation/segmentation_via_sdf_values_example.cpp
 /// \example Surface_mesh_segmentation/segmentation_with_facet_ids_example.cpp
+/// \example Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp
