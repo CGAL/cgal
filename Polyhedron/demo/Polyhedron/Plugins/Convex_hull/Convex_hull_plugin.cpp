@@ -93,7 +93,7 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     std::cout << "Convex hull...";
 
     // add convex hull as new polyhedron
-    Scene_surface_mesh_item::SMesh *pConvex_hull  = new Scene_surface_mesh_item::SMesh;
+    SMesh *pConvex_hull  = new SMesh;
     if(selection_item) {
       CGAL::convex_hull_3(
         boost::make_transform_iterator(selection_item->selected_vertices.begin(), Get_point()),
@@ -105,14 +105,14 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
       CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
     }
     else if ( sm_item ){
-      Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
-      typedef boost::property_map<Scene_surface_mesh_item::SMesh,CGAL::vertex_point_t>::type Vpmap;
+      SMesh* pMesh = sm_item->polyhedron();
+      typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type Vpmap;
       
       typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
       Vpmap vpm = get(CGAL::vertex_point,*pMesh);
       
       Vpmap_fct v2p(vpm);
-      boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_iterator b,e;
+      boost::graph_traits<SMesh>::vertex_iterator b,e;
       boost::tie(b,e) = vertices(*pMesh);
       
       CGAL::convex_hull_3(boost::make_transform_iterator(b,v2p),

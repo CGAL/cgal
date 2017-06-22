@@ -259,7 +259,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   CGAL::Bbox_3 cgal_bbox(bbox.xmin(), bbox.ymin(), bbox.zmin(),
     bbox.xmax(), bbox.ymax(), bbox.zmax());
   Polyhedron* poly = (item)?item->polyhedron():NULL;
-  Scene_surface_mesh_item::SMesh* smesh = (sm_item)?sm_item->polyhedron():NULL;
+  SMesh* smesh = (sm_item)?sm_item->polyhedron():NULL;
 
   // continue generating planes while inside bbox
   std::vector<Epic_kernel::Plane_3> planes;

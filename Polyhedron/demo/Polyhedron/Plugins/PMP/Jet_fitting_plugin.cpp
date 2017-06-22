@@ -148,7 +148,7 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
     compute(pMesh, min_curv, max_curv);
   } else {
     
-    Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
+    SMesh* pMesh = sm_item->polyhedron();
     compute(pMesh, min_curv, max_curv);
   }
   scene->addItem(max_curv);

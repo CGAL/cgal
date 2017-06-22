@@ -76,7 +76,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Polyhedron* pMesh = (item)?item->polyhedron():NULL;
-    Scene_surface_mesh_item::SMesh* sMesh = (sm_item)?sm_item->polyhedron():NULL;
+    SMesh* sMesh = (sm_item)?sm_item->polyhedron():NULL;
 
     typedef CGAL::Exact_rational ET;
     typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
@@ -155,11 +155,10 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
       scene->itemChanged(item);
     } else { // sMesh
       // add kernel as new polyhedron
-      typedef Scene_surface_mesh_item::SMesh SMesh;
+      typedef SMesh SMesh;
       SMesh* pKernel = new SMesh;
       
       typedef CGAL::Dual<Polyhedron> Dual;
-      typedef boost::graph_traits<Dual>::face_descriptor dual_face_descriptor;
       typedef boost::graph_traits<Dual>::vertex_descriptor dual_vertex_descriptor;
 
       std::ofstream out("primal.off");

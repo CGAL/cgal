@@ -137,7 +137,7 @@ public Q_SLOTS:
         poly_item->setRenderingMode(FlatPlusEdges);
         scene->setSelectedItem(scene->addItem(poly_item));
       } else {
-        Scene_surface_mesh_item::SMesh* poly = new Scene_surface_mesh_item::SMesh;
+        SMesh* poly = new SMesh;
         CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
                                                                     patch,
                                                                     *poly);

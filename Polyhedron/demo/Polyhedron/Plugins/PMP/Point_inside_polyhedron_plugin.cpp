@@ -31,7 +31,6 @@ using namespace CGAL::Three;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
-typedef Scene_surface_mesh_item::SMesh SMesh;
 
 
 class Polyhedron_demo_point_inside_polyhedron_plugin :

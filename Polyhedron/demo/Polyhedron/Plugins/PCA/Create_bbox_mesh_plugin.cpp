@@ -114,7 +114,7 @@ bbox = Scene_interface::Bbox(
     CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
     item = new Scene_polyhedron_item(p);
   } else {
-    Scene_surface_mesh_item::SMesh* p = new Scene_surface_mesh_item::SMesh;
+    SMesh* p = new SMesh;
     CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
 
     item = new Scene_surface_mesh_item(p);

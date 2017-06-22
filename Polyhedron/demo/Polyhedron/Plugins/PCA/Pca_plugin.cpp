@@ -112,7 +112,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
     Polyhedron* pMesh = item->polyhedron();
     ::triangles(*pMesh,std::back_inserter(triangles));
   } else if(sm_item){
-    Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
+    SMesh* pMesh = sm_item->polyhedron();
     ::triangles(*pMesh,std::back_inserter(triangles));
     }
   if(! triangles.empty()){
@@ -191,7 +191,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
     Polyhedron* pMesh = item->polyhedron();
     bb = ::triangles(*pMesh,std::back_inserter(triangles));
   } else if(sm_item){
-    Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
+    SMesh* pMesh = sm_item->polyhedron();
     bb = ::triangles(*pMesh,std::back_inserter(triangles));
   }
 
@@ -243,7 +243,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
     points[7] = b - u2;
 
     // add best fit line as new polyhedron bar
-    Scene_surface_mesh_item::SMesh* pFit = new Scene_surface_mesh_item::SMesh;
+    SMesh* pFit = new SMesh;
     CGAL::make_hexahedron(points[0],
                           points[1],
                           points[2],
@@ -313,7 +313,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
         points[6] = b - u1;
         points[7] = b - u2;
 
-        Scene_surface_mesh_item::SMesh* pFit = new Scene_surface_mesh_item::SMesh;
+        SMesh* pFit = new SMesh;
         CGAL::make_hexahedron(points[0],
                               points[1],
                               points[2],

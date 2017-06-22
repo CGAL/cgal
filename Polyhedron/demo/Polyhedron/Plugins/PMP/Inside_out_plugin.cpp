@@ -76,7 +76,7 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
       }
     }
     else if(sm_item) {
-      Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
+      SMesh* pMesh = sm_item->polyhedron();
       if(pMesh){
         CGAL::Polygon_mesh_processing::reverse_face_orientations(*pMesh);
         sm_item->invalidateOpenGLBuffers();

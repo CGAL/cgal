@@ -77,7 +77,7 @@ public Q_SLOTS:
     } else {
       Scene_surface_mesh_item* sm_item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-      Scene_surface_mesh_item::SMesh* pMesh = sm_item->polyhedron();
+      SMesh* pMesh = sm_item->polyhedron();
       if(!pMesh) continue;
       if(is_triangle_mesh(*pMesh)) {
       messages->warning(tr("The polyhedron  \"%1\"  is already triangulated.")
