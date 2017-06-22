@@ -593,7 +593,7 @@ private:
     CGAL_precondition(M.row_dimension() == M.column_dimension());
     CGAL_precondition(M.row_dimension() == B.dimension());
 
-    const std::size_t big_n = M.row_dimension();
+    const int big_n = M.row_dimension();
     const std::size_t n = 2 * num_vertices(mesh);
 
     NT D;
