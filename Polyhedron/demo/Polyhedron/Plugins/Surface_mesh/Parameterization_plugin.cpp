@@ -200,12 +200,11 @@ typedef std::vector<SComponent>                                         SCompone
 class UVItem : public QGraphicsItem
 {
 public :
-  UVItem(Textured_polyhedron* t_m,
-         Components* components,
+  UVItem(Components* components,
          std::vector<std::vector<float> >uv_borders,
          QRectF brect)
-    :QGraphicsItem(),
-      texMesh(t_m),
+    :
+      QGraphicsItem(),
       bounding_rect(brect),
       components(components),
       m_borders(uv_borders),
@@ -271,7 +270,6 @@ public :
   void set_current_component(int n){m_current_component = n;}
 
 private:
-  Textured_polyhedron* texMesh;
   QString texMesh_name;
   QRectF bounding_rect;
   Components* components;
@@ -913,8 +911,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     components->at(fccmap[bfit]).insert(tfit);
   }
 
-  UVItem *projection
-      = new UVItem(tpMesh, components, uv_borders, QRectF(min, max));
+  UVItem *projection = new UVItem(components, uv_borders, QRectF(min, max));
   projection->set_item_name(new_item_name);
   Scene_textured_polyhedron_item* new_item = new Scene_textured_polyhedron_item(tpMesh);
   new_item->setName(new_item_name);
