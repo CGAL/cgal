@@ -334,8 +334,8 @@ add_corner(const Point_3& point)
 template <class MD_>
 CGAL::Sign
 Mesh_domain_holder_with_corners_3<MD_>::
-distance_sign(const Point_3& p, const Point_3& q,
-              const Curve_segment_index& index) const
+distance_sign(const Point_3& /* p */, const Point_3& /* q */,
+              const Curve_segment_index& /* index */) const
 {
   assert(false);
   return CGAL::Sign();
