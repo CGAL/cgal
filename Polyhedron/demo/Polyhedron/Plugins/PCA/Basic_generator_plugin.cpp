@@ -50,13 +50,65 @@ public :
     this->mw = mainWindow;
     for(int i=0; i<POLYLINE; ++i)
       nbs[i]=0;
-    QAction* actionGenerator = new QAction("Basic Generator", mw);
-    connect(actionGenerator, SIGNAL(triggered()),
-            this, SLOT(on_actionGenerator_triggered()));
-    _actions << actionGenerator;
+
+
+    QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
+    QMenu* menu = new QMenu(tr("Add &basic objets"), menuFile);
+    QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
+    menuFile->insertMenu(actionLoad, menu);
+
+
+    QAction* actionPrism       = new QAction("Create prism", mw);
+    QAction* actionSphere      = new QAction("Create sphere", mw);
+    QAction* actionPyramid     = new QAction("Create pyramid", mw);
+    QAction* actionHexahedron  = new QAction("Create hexahedron", mw);
+    QAction* actionTetrahedron = new QAction("Create tetrahedron", mw);
+    QAction* actionGrid        = new QAction("Create grid", mw);
+    QAction* actionPointSet    = new QAction("Create point set", mw);
+    QAction* actionPolyline    = new QAction("Create polyline", mw);
+
+
+
+
+    connect(actionPrism, SIGNAL(triggered()),
+            this, SLOT(on_actionPrism_triggered()));
+    _actions << actionPrism;
+
+    connect(actionSphere, SIGNAL(triggered()),
+            this, SLOT(on_actionSphere_triggered()));
+    _actions << actionSphere;
+
+    connect(actionPyramid, SIGNAL(triggered()),
+            this, SLOT(on_actionPyramid_triggered()));
+    _actions << actionPyramid;
+
+    connect(actionHexahedron, SIGNAL(triggered()),
+            this, SLOT(on_actionHexahedron_triggered()));
+    _actions << actionHexahedron;
+
+    connect(actionTetrahedron, SIGNAL(triggered()),
+            this, SLOT(on_actionTetrahedron_triggered()));
+    _actions << actionTetrahedron;
+
+    connect(actionGrid, SIGNAL(triggered()),
+            this, SLOT(on_actionGrid_triggered()));
+    _actions << actionGrid;
+
+    connect(actionPointSet, SIGNAL(triggered()),
+            this, SLOT(on_actionPointSet_triggered()));
+    _actions << actionPointSet;
+
+    connect(actionPolyline, SIGNAL(triggered()),
+            this, SLOT(on_actionPolyline_triggered()));
+    _actions << actionPolyline;
+
+    menu->clear();
     Q_FOREACH(QAction* action, _actions)
-      action->setProperty("subMenuName", "Basic Generation");
-    dock_widget = new GeneratorWidget("Basic Generator", mw);
+    {
+      menu->addAction(action);
+    }
+
+    dock_widget = new GeneratorWidget("Basic Objets", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
     connect(dock_widget->generateButton, &QAbstractButton::clicked,
@@ -73,15 +125,22 @@ public :
 
   bool applicable(QAction*) const
   {
-    //always applicable
-    return true;
+    //not in the Operations menu
+    return false;
   }
   QList<QAction*> actions() const {
     return _actions;
   }
 public Q_SLOTS:
 
-  void on_actionGenerator_triggered();
+  void on_actionPrism_triggered();
+  void on_actionSphere_triggered();
+  void on_actionPyramid_triggered();
+  void on_actionHexahedron_triggered();
+  void on_actionTetrahedron_triggered();
+  void on_actionGrid_triggered();
+  void on_actionPointSet_triggered();
+  void on_actionPolyline_triggered();
   void on_generate_clicked();
   void on_tab_changed();
   void closure(){ dock_widget->hide(); }
@@ -118,10 +177,45 @@ private:
 }; //end of class Basic_generator_plugin
 
 //show the widget
-void Basic_generator_plugin::on_actionGenerator_triggered()
+void Basic_generator_plugin::on_actionPrism_triggered()
 {
-  if(dock_widget->isVisible()) { dock_widget->hide(); }
-  else                         { dock_widget->show(); }
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PRISM);
+}
+void Basic_generator_plugin::on_actionSphere_triggered()
+{
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(SPHERE);
+}
+void Basic_generator_plugin::on_actionPyramid_triggered()
+{
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PYRAMID);
+}
+void Basic_generator_plugin::on_actionHexahedron_triggered()
+{
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(HEXAHEDRON);
+}
+void Basic_generator_plugin::on_actionTetrahedron_triggered()
+{
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(TETRAHEDRON);
+}
+void Basic_generator_plugin::on_actionGrid_triggered()
+{
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(GRID);
+}
+void Basic_generator_plugin::on_actionPointSet_triggered()
+{
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POINT_SET);
+}
+void Basic_generator_plugin::on_actionPolyline_triggered()
+{
+  dock_widget->show();
+  dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POLYLINE);
 }
 void Basic_generator_plugin::on_tab_changed()
 {
@@ -153,9 +247,9 @@ void Basic_generator_plugin::on_tab_changed()
     nb = nbs[PYRAMID];
     QPixmap pic;
     if(dock_widget->pyramidCheckBox->isChecked())
-      pic = QPixmap(":/cgal/Polyhedron_3/resources/base.png");
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/pyramid.png");
     else
-      pic = QPixmap(":/cgal/Polyhedron_3/resources/base_open.png");
+      pic = QPixmap(":/cgal/Polyhedron_3/resources/pyramid-open.png");
     dock_widget->pyramid_picLabel->setPixmap(pic);
     dock_widget->pyramid_picLabel->show();
   }
@@ -348,7 +442,8 @@ void Basic_generator_plugin::generateCube()
   }
   Facegraph_item* cube_item = new Facegraph_item(cube);
   cube_item->setName(dock_widget->name_lineEdit->text());
-  scene->addItem(cube_item);
+  Scene_interface::Item_id id = scene->addItem(cube_item);
+  scene->setSelectedItem(id);
 }
 //make a prism
 template<class Facegraph_item>
@@ -395,7 +490,8 @@ void Basic_generator_plugin::generatePrism()
 
   Facegraph_item* prism_item = new Facegraph_item(prism);
   prism_item->setName(dock_widget->name_lineEdit->text());
-  scene->addItem(prism_item);
+  Scene_interface::Item_id id = scene->addItem(prism_item);
+  scene->setSelectedItem(id);
 }
 //make a pyramid
 template<class Facegraph_item>
@@ -441,7 +537,8 @@ void Basic_generator_plugin::generatePyramid()
 
   Facegraph_item* pyramid_item = new Facegraph_item(pyramid);
   pyramid_item->setName(dock_widget->name_lineEdit->text());
-  scene->addItem(pyramid_item);
+  Scene_interface::Item_id id = scene->addItem(pyramid_item);
+  scene->setSelectedItem(id);
 }
 //make a sphere
 template<class Facegraph_item>
@@ -480,7 +577,8 @@ void Basic_generator_plugin::generateSphere()
 
   Facegraph_item* sphere_item = new Facegraph_item(sphere);
   sphere_item->setName(dock_widget->name_lineEdit->text());
-  scene->addItem(sphere_item);
+  Scene_interface::Item_id id = scene->addItem(sphere_item);
+  scene->setSelectedItem(id);
 }
 //make a tetrahedron
 template<class Facegraph_item>
@@ -531,7 +629,8 @@ void Basic_generator_plugin::generateTetrahedron()
 
   Facegraph_item* tet_item = new Facegraph_item(tetrahedron);
   tet_item->setName(dock_widget->name_lineEdit->text());
-  scene->addItem(tet_item);
+  Scene_interface::Item_id id = scene->addItem(tet_item);
+  scene->setSelectedItem(id);
 }
 //make a point set
 void Basic_generator_plugin::generatePoints()
@@ -584,7 +683,8 @@ void Basic_generator_plugin::generatePoints()
     item->setName(dock_widget->name_lineEdit->text());
     item->setColor(Qt::black);
     item->invalidateOpenGLBuffers();
-    scene->addItem(item);
+    Scene_interface::Item_id id = scene->addItem(item);
+    scene->setSelectedItem(id);
   }
 }
 //make a polyline
@@ -642,7 +742,8 @@ void Basic_generator_plugin::generateLines()
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);
         item->invalidateOpenGLBuffers();
-        scene->addItem(item);
+        Scene_interface::Item_id id = scene->addItem(item);
+        scene->setSelectedItem(id);
     }
 }
 
@@ -709,6 +810,7 @@ void Basic_generator_plugin::generateGrid()
   CGAL::make_grid(nb_cells[0], nb_cells[1], grid, point_gen, triangulated);
   Facegraph_item* grid_item = new Facegraph_item(grid);
   grid_item->setName(dock_widget->name_lineEdit->text());
-  scene->addItem(grid_item);
+  Scene_interface::Item_id id = scene->addItem(grid_item);
+  scene->setSelectedItem(id);
 }
 #include "Basic_generator_plugin.moc"
