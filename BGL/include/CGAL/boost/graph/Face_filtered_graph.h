@@ -43,7 +43,7 @@ namespace CGAL
 {
 
   /*!
-   * \ingroup PkgBGLHelper
+   * \ingroup PkgBGLAdaptors
    *
    * The class `Face_filtered_graph` is an adaptor that creates a filtered view of a graph
    * by restricting it to a subset of faces. Contrary to
