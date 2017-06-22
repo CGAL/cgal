@@ -304,6 +304,11 @@ bool is_Gabriel(const Edge& e);
 Returns the representative of the circumcenter of the four vertices
 of c that lies in the original domain.
 */
+Point canonical_dual(Cell_handle c) const;
+
+/*!
+Returns the circumcenter of the four vertices of c.
+*/
 Point dual(Cell_handle c) const;
 
 /*!

@@ -683,6 +683,10 @@ public:
   /** @name Voronoi diagram */ //@{
   // cell dual
   Point dual(Cell_handle c) const {
+    return Base::construct_point(periodic_circumcenter(c).first);
+  }
+
+  Point canonical_dual(Cell_handle c) const {
     return point(periodic_circumcenter(c));
   }
 

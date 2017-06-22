@@ -338,6 +338,12 @@ The following member functions test the Gabriel property of the faces of the reg
 Returns the representative of the weighted circumcenter of the four vertices
 of c that lies in the original domain `domain`.
 */
+Bare_point canonical_dual(Cell_handle c) const;
+
+/*!
+Returns the circumcenter of the four vertices of c.
+
+*/
 Bare_point dual(Cell_handle c) const;
 
 /*!

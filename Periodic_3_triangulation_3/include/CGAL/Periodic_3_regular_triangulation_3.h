@@ -959,6 +959,10 @@ public:
   /** @name Voronoi diagram */ //@{
   // cell dual
   Bare_point dual(Cell_handle c) const {
+    return Tr_Base::construct_point(periodic_weighted_circumcenter(c).first);
+  }
+
+  Bare_point canonical_dual(Cell_handle c) const {
     return Tr_Base::construct_point(periodic_weighted_circumcenter(c));
   }
 
