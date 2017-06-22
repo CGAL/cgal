@@ -1146,8 +1146,6 @@ private:
                                  const Lt_map ltmap,
                                  const VertexUVMap uvmap) const
   {
-    NT Ef = 0.;
-
     const Lt_matrix& ltm = get(ltmap, fd); // the (current) optimal linear transformation
     NT a = ltm.first;
     NT b = ltm.second;
