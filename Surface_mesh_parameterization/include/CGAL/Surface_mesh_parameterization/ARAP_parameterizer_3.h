@@ -592,12 +592,10 @@ private:
     typedef Algebraic_kernel_d_2::Solve_2             Solve_2;
     typedef Algebraic_kernel_d_2::Is_coprime_2        Is_coprime_2;
     typedef Algebraic_kernel_d_2::Make_coprime_2      Make_coprime_2;
-    typedef Algebraic_kernel_d_2::Is_square_free_2    Is_square_free_2;
 
     Algebraic_kernel_d_2 ak_2;
     const Is_coprime_2 is_coprime_2 = ak_2.is_coprime_2_object();
     const Solve_2 solve_2 = ak_2.solve_2_object();
-    const Is_square_free_2 is_square_free_2 = ak_2.is_square_free_2_object();
     const Make_coprime_2 make_coprime_2 = ak_2.make_coprime_2_object();
 
     typename Polynomial_traits_2::Construct_polynomial construct_polynomial_2;
@@ -615,6 +613,8 @@ private:
     Polynomial_2 pol1 = C1q * x + 2 * m_lambda * x * ( x*x + y*y - 1) - C2q;
     Polynomial_2 pol2 = C1q * y + 2 * m_lambda * y * ( x*x + y*y - 1) - C3q;
 
+    CGAL_precondition_code(typedef Algebraic_kernel_d_2::Is_square_free_2    Is_square_free_2;)
+    CGAL_precondition_code(const Is_square_free_2 is_square_free_2 = ak_2.is_square_free_2_object();)
     CGAL_precondition(is_square_free_2(pol1));
     CGAL_precondition(is_square_free_2(pol2));
     if(!is_coprime_2(pol1, pol2)) {
