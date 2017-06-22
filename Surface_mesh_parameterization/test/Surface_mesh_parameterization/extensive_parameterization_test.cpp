@@ -158,7 +158,7 @@ int main(int, char**)
     SMP::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
 
     // Parameterizer
-    typename SMP::ARAP_parameterizer_3<PMesh> parameterizer;
+    SMP::ARAP_parameterizer_3<PMesh> parameterizer;
     SMP::Error_code status = parameterizer.parameterize(pm, hd, uvpm, vipm, vpm);
 
     if(status != SMP::OK) {
@@ -209,7 +209,7 @@ int main(int, char**)
     SMP::internal::Bool_property_map<boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
 
     // Parameterizer
-    typename SMP::Barycentric_mapping_parameterizer_3<SMesh> parameterizer;
+    SMP::Barycentric_mapping_parameterizer_3<SMesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(sm, hd, uvpm, vipm, vpm);
 
@@ -265,7 +265,7 @@ int main(int, char**)
     SMP::internal::Bool_property_map< boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
 
     // Parameterizer
-    typename SMP::ARAP_parameterizer_3<SMesh> parameterizer;
+    SMP::ARAP_parameterizer_3<SMesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(sm, hd, uv_pm, vipm, vpm);
     if(status != SMP::OK) {
@@ -325,7 +325,7 @@ int main(int, char**)
     boost::unordered_set<PM_SE_vertex_descriptor> vs;
     SMP::internal::Bool_property_map<boost::unordered_set<PM_SE_vertex_descriptor> > vpm(vs);
 
-    typename SMP::Discrete_conformal_map_parameterizer_3<PM_Seam_mesh> parameterizer;
+    SMP::Discrete_conformal_map_parameterizer_3<PM_Seam_mesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(mesh, hd, uv_pm, vipm, vpm);
 
@@ -391,7 +391,7 @@ int main(int, char**)
     boost::unordered_set<SM_SE_vertex_descriptor> vs;
     SMP::internal::Bool_property_map<boost::unordered_set<SM_SE_vertex_descriptor> > vpm(vs);
 
-    typename SMP::Discrete_authalic_parameterizer_3<SM_Seam_mesh> parameterizer;
+    SMP::Discrete_authalic_parameterizer_3<SM_Seam_mesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(mesh, hd, uv_pm, vipm, vpm);
     if(status != SMP::OK) {
