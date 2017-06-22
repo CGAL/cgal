@@ -184,7 +184,7 @@ The graph depicts the number of detected shapes (purple) and the coverage (green
 
 \section Point_set_shape_detection_3History History
 
-This package was developed by Sven Oesau
+The efficient RANSAC implementation was developed by Sven Oesau based on a prototype version by Yannick Verdie, with the help of Clément Jamin and under the supervision of Pierre Alliez. Plane regularization and region growing were added by Simon Giraudot based on prototype versions developed by Florent Lafarge.
 
 
 */ 
