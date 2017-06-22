@@ -15,8 +15,8 @@
 \cgalPkgPicture{shapes_detail.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez}
-\cgalPkgDesc{This component implements an efficient RANSAC-based primitive shape detection algorithm for point sets with unoriented normals. Five types of primitive shapes are detected: plane, sphere, cylinder, cone and torus. Other types of shapes can be detected through implementing a class deriving from the base shape class.}
+\cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez, Florent Lafarge, Simon Giraudot}
+\cgalPkgDesc{This component implements two primitive shape detection algorithms: efficient RANSAC and region growing. Planes are detected from point sets with unoriented normals. RANSAC also handles the following shapes: sphere, cylinder, cone and torus. Other types of shapes can be detected through implementing a class deriving from the base shape class.}
 \cgalPkgManuals{Chapter_Point_Set_Shape_Detection, PkgPointSetShapeDetection3}
 \cgalPkgSummaryEnd
 

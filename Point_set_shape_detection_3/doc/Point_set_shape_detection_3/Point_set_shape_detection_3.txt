@@ -83,7 +83,7 @@ This parameter defines the probability to miss the largest candidate shape. A lo
 
 
 \section Point_set_shape_detection_3Usage Examples
-The main classes `Shape_detection_3::Efficient_RANSAC` and `Shape_detection_3::Region_growing` take a template parameter `Shape_detection_3::Shape_detection_traits` that defines the geometric types and input format. Property maps provide a means to interface with user-specific data structures. The first parameter of the `Shape_detection_3::Shape_detection_traits` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Shape_detection_3::Shape_detection_traits` class. The concept behind property maps is detailed in \ref chapterProperty_map "a dedicated chapter".
+The main classes `Shape_detection_3::Efficient_RANSAC` and `Shape_detection_3::Region_growing` take a template parameter `Shape_detection_3::Shape_detection_traits` that defines the geometric types and input format. Property maps provide a means to interface with user-specific data structures. The first parameter of the `Shape_detection_3::Shape_detection_traits` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Shape_detection_3::Shape_detection_traits` class. The concept behind property maps is detailed in \ref chapterProperty_map "CGAL and Propery Maps".
 
 Typical usage consists of five steps:
 
@@ -101,7 +101,7 @@ The following minimal example reads a point set from a file and detects only pla
 
 \subsection Point_set_shape_detection_3Usage_parameters Setting Parameters and Using Different Types of Shape
 
-This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
+This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC::Parameters` class. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
 
 Basic information of the detected shapes is written to the standard output: if the plane is either a plane or a cylinder, specific parameters are recovered, otherwise the general method `info()` is used to get the shape parameters in a string object. Note that specific parameters can be recovered for any of the provided shape.
 
