@@ -250,7 +250,7 @@ public:
     Subcurve_iterator iter;
     for (iter = m_rightCurves.begin(); iter!= m_rightCurves.end(); ++iter) {
       if (curve->has_common_leaf(*iter)) {
-        m_leftCurves.erase(iter);
+        m_rightCurves.erase(iter);
         return;
       }
     }
