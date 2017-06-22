@@ -268,11 +268,9 @@ bool check_input_validity(const SeamMesh& mesh,
 
   // count how many times vertices on a seam appear
   boost::unordered_map<TM_vertex_descriptor, int> seam_vertices_counter;
-  int number_of_seam_edges;
 
   BOOST_FOREACH(halfedge_descriptor hdaf, halfedges_around_face(bhd, mesh)) {
     CGAL_precondition(mesh.has_on_seam(hdaf));
-    ++number_of_seam_edges;
     TM_vertex_descriptor tm_vds = source(hdaf, mesh.mesh());
     TM_vertex_descriptor tm_vdt = target(hdaf, mesh.mesh());
 
