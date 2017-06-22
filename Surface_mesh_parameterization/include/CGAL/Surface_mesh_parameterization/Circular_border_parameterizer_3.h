@@ -165,6 +165,8 @@ public:
 
   /// Indicate if border's shape is convex.
   bool is_border_convex() const { return true; }
+
+  virtual ~Circular_border_parameterizer_3() { }
 };
 
 //
@@ -214,6 +216,9 @@ protected:
     /// Uniform border parameterization: points are equally spaced.
     return 1.;
   }
+
+public:
+  virtual ~Circular_border_uniform_parameterizer_3() { }
 };
 
 //
@@ -270,6 +275,9 @@ protected:
     Vector_3 v = get(ppmap, target) - get(ppmap, source);
     return CGAL::sqrt(v * v);
   }
+
+public:
+  virtual ~Circular_border_arc_length_parameterizer_3() { }
 };
 
 } // namespace Surface_mesh_parameterization

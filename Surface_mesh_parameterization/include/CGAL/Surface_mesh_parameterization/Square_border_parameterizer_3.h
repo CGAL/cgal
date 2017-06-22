@@ -352,6 +352,8 @@ public:
   bool is_border_convex() const { return true; }
 
 public:
+  virtual ~Square_border_parameterizer_3() { }
+
   /// Constructor.
   Square_border_parameterizer_3()
     :
@@ -409,6 +411,8 @@ private:
   typedef typename Base::NT                                     NT;
 
 public:
+  virtual ~Square_border_uniform_parameterizer_3() { }
+
   /// Constructor.
   Square_border_uniform_parameterizer_3() : Base() { }
 
@@ -475,6 +479,8 @@ private:
   typedef typename Base::Vector_3                               Vector_3;
 
 public:
+  virtual ~Square_border_arc_length_parameterizer_3() { }
+
   /// Constructor.
   Square_border_arc_length_parameterizer_3() : Base() { }
 
