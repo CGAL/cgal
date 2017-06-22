@@ -25,15 +25,14 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Hidden_point_memory_policy.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
-#include <boost/utility/enable_if.hpp>
-
 #include <list>
 
-#include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -141,8 +140,8 @@ public:
   template<typename GT_>
   Point_3 circumcenter(const GT_& gt) const
   {
-    BOOST_STATIC_ASSERT(boost::is_same<Point_3,
-      typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
+    CGAL_static_assertion((boost::is_same<Point_3,
+      typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
       return gt.construct_weighted_circumcenter_3_object()
         (this->vertex(0)->point(),
          this->vertex(1)->point(),
@@ -158,8 +157,8 @@ public:
   template<typename GT_>
   Point_3 weighted_circumcenter(const GT_& gt) const
   {
-    BOOST_STATIC_ASSERT(boost::is_same<Point_3,
-      typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
+    CGAL_static_assertion((boost::is_same<Point_3,
+      typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
       return gt.construct_weighted_circumcenter_3_object()
         (this->vertex(0)->point(),
          this->vertex(1)->point(),

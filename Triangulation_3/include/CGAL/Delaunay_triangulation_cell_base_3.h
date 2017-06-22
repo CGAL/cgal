@@ -26,13 +26,12 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
-
+#include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
-#include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
@@ -48,8 +47,8 @@ public:
   template <typename GT_>
   Point circumcenter(const GT_& gt) const
   {
-      BOOST_STATIC_ASSERT(boost::is_same<Point,
-        typename GT_::Construct_circumcenter_3::result_type>::value);
+      CGAL_static_assertion((boost::is_same<Point,
+        typename GT_::Construct_circumcenter_3::result_type>::value));
       return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
                                                   this->vertex(1)->point(),
                                                   this->vertex(2)->point(),
