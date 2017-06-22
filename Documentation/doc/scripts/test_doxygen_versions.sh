@@ -38,7 +38,6 @@ mkdir ./build_doc
 cd ./build_doc
 cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
 make -j$NB_CORES doc  &> /dev/null
-make -j$NB_CORES doc_and_postprocessing  &> /dev/null
 cd ../ #scripts
 bash compare_testsuites.sh $PWD/build_doc/doc_output
 mv ./doc_data ./doc_ref
@@ -77,6 +76,8 @@ cd ./doc_dir
 cmake -DCGAL_DOC_CREATE_LOGS=true -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  &> /dev/null
 make -j$NB_CORES doc  &> /dev/null
 make -j$NB_CORES doc  &> /dev/null
+make -j$NB_CORES doc_and_postprocessing  &> /dev/null
+
 cd .. #scripts
 #get VERSION's content
 if [ $IS_RELEASE = 0 ]; then
