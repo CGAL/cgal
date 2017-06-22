@@ -3979,7 +3979,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
   found = false;
 
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
-  if(cumm_off == 0) {
+  if(cumm_off == 0 && tester(c, Offset())) {
     // default case:
     found = true;
     return Offset();
