@@ -23,6 +23,7 @@
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
+#include <CGAL/Mesh_3/global_parameters.h>
 
 #include <CGAL/Mesh_domain_holder_with_corners_3.h>
 #include <CGAL/refine_periodic_3_mesh_3.h>

@@ -25,28 +25,27 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
+#include <CGAL/Exact_kernel_selector.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/use.h>
-
-#include <CGAL/Triangulation_data_structure_3.h>
+#include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
+#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
-
-#include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
-
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/array.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/use.h>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
@@ -2329,7 +2328,7 @@ try_next_cell:
              ( o[2] != COPLANAR ) ? 2 : 3;
     break;
   default:
-    // Vertex can not lie on four facets
+    // the point cannot lie on four facets
     CGAL_triangulation_assertion(false);
   }
   lo = off_query;
@@ -2610,13 +2609,14 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
 
   tester.set_offset(o);
 
-  // Choose the periodic copy of tester.point() that is inside c.
+  // Choose the periodic copy of tester.point() that is in conflict with c.
   bool found = false;
   Offset current_off = get_location_offset(tester, c, found);
 
   CGAL_triangulation_assertion(side_of_cell(tester.point(),
       combine_offsets(o,current_off),c,lt_assert,i_assert,j_assert)
       != ON_UNBOUNDED_SIDE);
+
   // If the new point is not in conflict with its cell, it is hidden.
   if(!found || !tester.test_initial_cell(c, current_off)) {
     hider.hide_point(c,p);
@@ -2952,7 +2952,7 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
     else
       vstart = vvmit->second.first;
     CGAL_triangulation_assertion(virtual_vertices.find(vstart)
-                                 ==virtual_vertices.end());
+                                 == virtual_vertices.end());
     CGAL_triangulation_assertion(virtual_vertices_reverse.find(vstart)
                                  != virtual_vertices_reverse.end());
   }
@@ -3952,6 +3952,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
   if(cumm_off == 0) {
     // default case:
+    CGAL_triangulation_assertion(tester(c, Offset()));
     return Offset();
   } else {
     // Main idea seems to just test all possibilities.
@@ -3986,9 +3987,9 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     // Main idea seems to just test all possibilities.
     for(int i=0; i<8; i++) {
       if(((cumm_off | (~i))&7) == 7) {
-      if(tester(c,int_to_off(i))) {
-        found = true;
-        return int_to_off(i);
+        if(tester(c,int_to_off(i))) {
+          found = true;
+          return int_to_off(i);
         }
       }
     }
