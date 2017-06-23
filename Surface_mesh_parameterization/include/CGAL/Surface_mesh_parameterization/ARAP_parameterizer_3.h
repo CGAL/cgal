@@ -651,7 +651,7 @@ private:
   {
     CGAL_precondition(!roots.empty());
     NT E_min = (std::numeric_limits<NT>::max)();
-    std::size_t index_arg = 0.;
+    std::size_t index_arg = 0;
     for(std::size_t i=0; i<roots.size(); ++i)
     {
       const NT a = roots[i];
