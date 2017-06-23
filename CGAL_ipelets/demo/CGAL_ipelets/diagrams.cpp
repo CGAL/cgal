@@ -24,7 +24,6 @@
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Object.h>
 #include <CGAL/intersections.h>
