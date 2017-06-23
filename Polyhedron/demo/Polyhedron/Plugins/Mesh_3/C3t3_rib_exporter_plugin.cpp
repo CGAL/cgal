@@ -530,7 +530,7 @@ void
 C3t3_rib_exporter_plugin::
 fill_points_and_edges_map(const C3t3& c3t3)
 {
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
@@ -679,7 +679,7 @@ void
 C3t3_rib_exporter_plugin::
 write_facets(const C3t3& c3t3, std::ofstream& out)
 {
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   for ( C3t3::Facets_in_complex_iterator it = c3t3.facets_in_complex_begin(),
@@ -706,7 +706,7 @@ write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
   typedef Kernel::Oriented_side Side;
 
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   for ( C3t3::Facets_in_complex_iterator it = c3t3.facets_in_complex_begin(),
@@ -738,7 +738,7 @@ void
 C3t3_rib_exporter_plugin::
 write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& out)
 {
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   for ( C3t3::Cells_in_complex_iterator it_cell = c3t3.cells_in_complex_begin(),
@@ -871,7 +871,7 @@ write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofst
 {
   typedef Kernel::Oriented_side Side;
 
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
@@ -919,7 +919,7 @@ write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane
 {
   typedef Kernel::Oriented_side Side;
 
-  typename Geom_traits::Construct_point_3 wp2p
+  Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
