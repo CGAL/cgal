@@ -87,6 +87,10 @@ qt5_wrap_ui( isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
 polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin  ${isotropicRemeshingUI_FILES})
 target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_polyhedron_selection_item)
 
+polyhedron_demo_plugin(isotropic_remeshing_sm_plugin Isotropic_remeshing_plugin  ${isotropicRemeshingUI_FILES})
+target_link_libraries(isotropic_remeshing_sm_plugin  scene_surface_mesh_item scene_surface_mesh_selection_item)
+target_compile_definitions(isotropic_remeshing_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
 polyhedron_demo_plugin(distance_plugin Distance_plugin)
 target_link_libraries(distance_plugin scene_polyhedron_item scene_color_ramp)
 

@@ -6,9 +6,14 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+#else
 #include "Scene_polyhedron_item.h"
-#include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
+#endif
+
+#include "Scene_polyhedron_selection_item.h"
 
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
@@ -44,6 +49,31 @@
 
 #include "ui_Isotropic_remeshing_dialog.h"
 
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_facegraph_item;
+#else
+typedef Scene_facegraph_item Scene_facegraph_item;
+#endif
+typedef Scene_facegraph_item::Face_graph FaceGraph;
+typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+
+template<class Mesh>
+#ifdef USE_SURFACE_MESH
+void reset_face_ids(Mesh&)
+{}
+#else
+void reset_face_ids(Mesh& mesh)
+{
+typename boost::property_map<Mesh, CGAL::face_index_t>::type fim
+  = get(CGAL::face_index, mesh);
+
+unsigned int id = 0;
+BOOST_FOREACH(face_descriptor f, faces(mesh))
+{
+  put(fim, f, id++);
+}
+}
+#endif
 // give a halfedge and a target edge length, put in `out` points
 // which the edge equally spaced such that splitting the edge
 // using the sequence of points make the edges shorter than
@@ -165,11 +195,11 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
-  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
+  typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-  typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Edge_set;
+  typedef boost::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
 public:
@@ -194,52 +224,40 @@ public:
   {
     if (scene->selectionIndices().size() == 1)
     {
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+    return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
     }
 
     Q_FOREACH(int index, scene->selectionIndices())
     {
       //if one polyhedron is found in the selection, it's fine
-      if (qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
+      if (qobject_cast<Scene_facegraph_item*>(scene->item(index)))
         return true;
     }
     return false;
   }
 
-  template <typename FacetHandle>
-  struct Patch_id_pmap
-  {
-    typedef FacetHandle                        key_type;
-    typedef Patch_id                           value_type;
-    typedef Patch_id                           reference;
-    typedef boost::read_write_property_map_tag category;
+  typedef boost::property_map<FaceGraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
 
-    friend value_type get(const Patch_id_pmap&, const key_type& f){
-      return f->patch_id();
-    }
-    friend void put(Patch_id_pmap&, const key_type& f, const value_type i){
-      f->set_patch_id(i);
-    }
-  };
-
-  void detect_and_split_duplicates(std::vector<Scene_polyhedron_item*>& selection,
-                                   std::map<Polyhedron*,Edge_set>& edges_to_protect,
+  void detect_and_split_duplicates(std::vector<Scene_facegraph_item*>& selection,
+                                   std::map<FaceGraph*,Edge_set>& edges_to_protect,
                                    double target_length)
   {
     typedef Polyhedron::Point_3 Point_3;
     typedef std::pair<Point_3,Point_3> Segment_3;
 
     typedef std::map< Segment_3,
-                      std::vector< std::pair<halfedge_descriptor, Polyhedron*> > > MapType;
+                      std::vector< std::pair<halfedge_descriptor, FaceGraph*> > > MapType;
+    typedef boost::property_map<FaceGraph,
+      CGAL::vertex_point_t>::type PointPMap;
     MapType duplicated_edges;
 
-
-    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection){
-      Polyhedron& pmesh = *poly_item->polyhedron();
+    BOOST_FOREACH(Scene_facegraph_item* poly_item, selection){
+      FaceGraph& pmesh = *poly_item->polyhedron();
+      PointPMap pmap = get(boost::vertex_point, pmesh);
       BOOST_FOREACH(edge_descriptor ed, edges(pmesh)){
         halfedge_descriptor hd = halfedge(ed,pmesh);
-        Point_3 p = source(hd,pmesh)->point(), q = target(hd,pmesh)->point();
+        Point_3 p = get(pmap, source(hd,pmesh)), q = get(pmap, target(hd,pmesh));
         Segment_3 s = CGAL::make_sorted_pair(p,q);
         if (s.first==q) hd=opposite(hd,pmesh); // make sure the halfedges are consistently oriented
 
@@ -248,16 +266,16 @@ public:
     }
 
     // consistently split duplicate edges and triangulate incident faces
-    typedef std::pair<face_descriptor, Polyhedron*> Face_and_poly;
+    typedef std::pair<face_descriptor, FaceGraph*> Face_and_poly;
     std::set< Face_and_poly > faces_to_triangulate;
     BOOST_FOREACH(const MapType::value_type& p, duplicated_edges)
       if (p.second.size()>1){
         //collect faces to retriangulate
-        typedef std::pair<halfedge_descriptor, Polyhedron*> Pair_type;
+        typedef std::pair<halfedge_descriptor, FaceGraph*> Pair_type;
         BOOST_FOREACH(const Pair_type& h_and_p, p.second)
         {
           halfedge_descriptor hc=h_and_p.first;
-          Polyhedron* polyc = h_and_p.second;
+          FaceGraph* polyc = h_and_p.second;
 
           if ( !is_border(hc, *polyc) )
             faces_to_triangulate.insert( Face_and_poly(face(hc,*polyc), polyc) );
@@ -285,8 +303,8 @@ public Q_SLOTS:
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-    Scene_polyhedron_item* poly_item =
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_facegraph_item* poly_item =
+      qobject_cast<Scene_facegraph_item*>(scene->item(index));
 
     Scene_polyhedron_selection_item* selection_item =
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
@@ -319,22 +337,15 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-      typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
-      typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-      typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+      typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
+      typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+      typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-      const Polyhedron& pmesh = (poly_item != NULL)
+      const FaceGraph& pmesh = (poly_item != NULL)
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
 
-      boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
-        = get(CGAL::face_index, pmesh);
-      unsigned int id = 0;
-      BOOST_FOREACH(face_descriptor f, faces(pmesh))
-      {
-        put(fim, f, id++);
-      }
-
+     reset_face_ids(pmesh);
       if (selection_item)
       {
         if (edges_only)
@@ -398,7 +409,8 @@ public Q_SLOTS:
               .relax_constraints(smooth_features)
               .number_of_relaxation_steps(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-              .face_patch_map(Patch_id_pmap<face_descriptor>()));
+
+              .face_patch_map(get(CGAL::face_patch_id_t<int>(), *selection_item->polyhedron())));
           }
           else
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
@@ -411,11 +423,18 @@ public Q_SLOTS:
               .relax_constraints(smooth_features)
               .number_of_relaxation_steps(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-              .face_patch_map(Patch_id_pmap<face_descriptor>()));
+              .face_patch_map(get(CGAL::face_patch_id_t<int>(), *selection_item->polyhedron())));
         }
+#ifdef USE_SURFACE_MESH
+        selection_item->polyhedron_item()->setColor(
+              selection_item->polyhedron_item()->color());
+        selection_item->polyhedron_item()->setItemIsMulticolor(false);
+        selection_item->polyhedron_item()->polyhedron()->collect_garbage();
+#else
         if(!selection_item->polyhedron_item()->isItemMulticolor())
-          selection_item->polyhedron_item()->setColor(
-                selection_item->polyhedron_item()->color());
+        {
+        }
+#endif
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
         selection_item->changed_with_poly_item();
@@ -446,16 +465,13 @@ public Q_SLOTS:
         {
           // tricks to use the function detect_and_split_duplicates
           // that uses several poly items
-          std::map<Polyhedron*, Edge_set > edges_to_protect_map;
-          std::vector<Scene_polyhedron_item*> poly_items(1, poly_item);
+          std::map<FaceGraph*, Edge_set > edges_to_protect_map;
+          std::vector<Scene_facegraph_item*> poly_items(1, poly_item);
           Edge_set& edges_to_protect = edges_to_protect_map[poly_item->polyhedron()];
           if (preserve_duplicates)
           {
             detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
-            boost::property_map<Polyhedron, CGAL::face_index_t>::type fim = get(CGAL::face_index, pmesh);
-            unsigned int id = 0;
-            BOOST_FOREACH(face_descriptor f, faces(pmesh))
-              put(fim, f, id++);
+            reset_face_ids(pmesh);
           }
           Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
 
@@ -466,10 +482,14 @@ public Q_SLOTS:
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
          .number_of_relaxation_steps(nb_smooth)
-         .face_patch_map(Patch_id_pmap<face_descriptor>())
+         .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
          .edge_is_constrained_map(ecm)
          .relax_constraints(smooth_features));
         }
+        //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
+#ifdef USE_SURFACE_MESH
+        poly_item->setItemIsMulticolor(false);
+#endif
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
       }
@@ -492,16 +512,16 @@ public Q_SLOTS:
     bool protect = false;
     bool smooth_features = true;
 
-    std::vector<Scene_polyhedron_item*> selection;
+    std::vector<Scene_facegraph_item*> selection;
     BOOST_FOREACH(int index, scene->selectionIndices())
     {
-      Scene_polyhedron_item* poly_item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+      Scene_facegraph_item* poly_item =
+        qobject_cast<Scene_facegraph_item*>(scene->item(index));
 
       if (poly_item == NULL)
       {
         std::cout << scene->item(index)->name().data()
-          << " is not a Polyhedron, remeshing skipped\n";
+          << " is not a FaceGraph, remeshing skipped\n";
         continue;
       }
       else
@@ -542,8 +562,8 @@ public Q_SLOTS:
     int total_time = 0;
 
 
-    //     typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
-    std::map<Polyhedron*,Edge_set > edges_to_protect;
+    //     typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
+    std::map<FaceGraph*,Edge_set > edges_to_protect;
 
     if(preserve_duplicates)
       detect_and_split_duplicates(selection, edges_to_protect, target_length);
@@ -563,7 +583,7 @@ public Q_SLOTS:
 
     Remesh_polyhedron_item remesher(edges_only,
       target_length, nb_iter, protect, smooth_features);
-    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
+    BOOST_FOREACH(Scene_facegraph_item* poly_item, selection)
     {
       QTime time;
       time.start();
@@ -578,8 +598,12 @@ public Q_SLOTS:
     std::cout << "Remeshing of all selected items done in "
       << total_time << " ms" << std::endl;
 
-    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
+    BOOST_FOREACH(Scene_facegraph_item* poly_item, selection)
     {
+#ifdef USE_SURFACE_MESH
+      //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
+      poly_item->setItemIsMulticolor(false);
+#endif
       poly_item->invalidateOpenGLBuffers();
       Q_EMIT poly_item->itemChanged();
     }
@@ -593,9 +617,9 @@ private:
   QMainWindow* mw;
   struct Remesh_polyhedron_item
   {
-    typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
-    typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-    typedef boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
+    typedef boost::graph_traits<FaceGraph>::edge_descriptor     edge_descriptor;
+    typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+    typedef boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
 
     bool edges_only_;
     double target_length_;
@@ -604,15 +628,11 @@ private:
     bool smooth_features_;
 
   protected:
-    void remesh(Scene_polyhedron_item* poly_item,
+    void remesh(Scene_facegraph_item* poly_item,
                 Edge_set& edges_to_protect) const
     {
       //fill face_index property map
-      boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
-        = get(CGAL::face_index, *poly_item->polyhedron());
-      unsigned int id = 0;
-      BOOST_FOREACH(face_descriptor f, faces(*poly_item->polyhedron()))
-      { put(fim, f, id++); }
+      reset_face_ids(*poly_item->polyhedron());
 
       if (edges_only_)
       {
@@ -642,7 +662,7 @@ private:
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
           .edge_is_constrained_map(ecm)
-          .face_patch_map(Patch_id_pmap<face_descriptor>())
+          .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
           .relax_constraints(smooth_features_));
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " done." << std::endl;
@@ -671,7 +691,7 @@ private:
       , smooth_features_(remesh.smooth_features_)
     {}
 
-    void operator()(Scene_polyhedron_item* poly_item,
+    void operator()(Scene_facegraph_item* poly_item,
                     Edge_set& edges_to_protect) const
     {
       remesh(poly_item, edges_to_protect);
@@ -683,14 +703,14 @@ private:
   struct Remesh_polyhedron_item_for_parallel_for
     : RemeshFunctor
   {
-    const std::vector<Scene_polyhedron_item*>& selection_;
-    std::map<Polyhedron*,Edge_set >& edges_to_protect_;
+    const std::vector<Scene_facegraph_item*>& selection_;
+    std::map<FaceGraph*,Edge_set >& edges_to_protect_;
 
   public:
     // Constructor
     Remesh_polyhedron_item_for_parallel_for(
-      const std::vector<Scene_polyhedron_item*>& selection,
-      std::map<Polyhedron*,Edge_set >& edges_to_protect,
+      const std::vector<Scene_facegraph_item*>& selection,
+      std::map<FaceGraph*,Edge_set >& edges_to_protect,
       const bool edges_only,
       const double target_length,
       const unsigned int nb_iter,
@@ -719,7 +739,7 @@ private:
 
   Ui::Isotropic_remeshing_dialog
   remeshing_dialog(QDialog* dialog,
-                   Scene_polyhedron_item* poly_item,
+                   Scene_facegraph_item* poly_item,
                    Scene_polyhedron_selection_item* selection_item = NULL)
   {
     Ui::Isotropic_remeshing_dialog ui;
@@ -795,8 +815,5 @@ private:
   QAction* actionIsotropicRemeshing_;
 
 }; // end Polyhedron_demo_isotropic_remeshing_plugin
-
-//Q_EXPORT_PLUGIN2(Polyhedron_demo_isotropic_remeshing_plugin,
-//                 Polyhedron_demo_isotropic_remeshing_plugin)
 
 #include "Isotropic_remeshing_plugin.moc"
