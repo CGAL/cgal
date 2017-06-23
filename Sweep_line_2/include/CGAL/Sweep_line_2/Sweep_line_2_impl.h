@@ -431,6 +431,97 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   if (load_factor > 6.0f)
     m_curves_pair_set.resize(m_curves_pair_set.size() * 6);
 
+  // handle overlapping curves with common ancesters
+  std::vector<Subcurve*> all_leaves_diff;
+  Subcurve* first_parent=NULL;
+  if (c1->originating_subcurve1()!=NULL || c2->originating_subcurve2()!=NULL)
+  {
+    // get the subcurve leaves of c1 and of c2. Then extact from the smallest set
+    // the subcurves leaves that are not in the other one. If empty, it means that
+    // a subcurves is completely contained in another one.
+    first_parent = c1;
+    Subcurve* second_parent = c2;
+
+    std::vector<Subcurve*> all_leaves_first;
+    std::vector<Subcurve*> all_leaves_second;
+    first_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_first));
+    second_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_second));
+    if (all_leaves_second.size() > all_leaves_first.size())
+    {
+      std::swap(first_parent,second_parent);
+      std::swap(all_leaves_first,all_leaves_second);
+    }
+
+    CGAL_assertion(!all_leaves_first.empty() && !all_leaves_second.empty());
+
+    std::sort(all_leaves_first.begin(), all_leaves_first.end());
+    std::sort(all_leaves_second.begin(), all_leaves_second.end());
+
+    std::set_difference(all_leaves_second.begin(), all_leaves_second.end(),
+                        all_leaves_first.begin(), all_leaves_first.end(),
+                        std::back_inserter(all_leaves_diff));
+
+    if (all_leaves_second.size()==all_leaves_diff.size())
+      all_leaves_diff.clear(); // clear so that it is not used by _create_overlapping_curve()
+    else
+      if (all_leaves_diff.empty())
+      {
+        CGAL_SL_PRINT_TEXT("One overlapping curve entirely contains the other one");
+        CGAL_SL_PRINT_EOL();
+
+        Event* left_event = (Event*) first_parent->left_event();
+        Event* right_event = (Event*) first_parent->right_event();
+
+        if (!second_parent->is_start_point(left_event))
+          left_event->add_curve_to_left(second_parent);
+        else
+          left_event->remove_curve_from_right(second_parent);
+
+        CGAL_SL_PRINT_CURVE(c1);
+        CGAL_SL_PRINT_TEXT(" + ");
+        CGAL_SL_PRINT_CURVE(c2);
+        CGAL_SL_PRINT_TEXT(" => ");
+        CGAL_SL_PRINT_EOL();
+        CGAL_SL_PRINT_TEXT("  ");
+        CGAL_SL_PRINT_CURVE(first_parent);
+        CGAL_SL_PRINT_EOL();
+
+        // Remove second_parent from the left curves of the right end
+        // and add it on the right otherwise
+        if (second_parent->is_end_point(right_event))
+          right_event->remove_curve_from_left(second_parent);
+        else
+          _add_curve_to_right(right_event, second_parent);
+
+        // add the overlapping curve kept of the right of the left end
+        _add_curve_to_right(left_event, first_parent);
+        right_event->add_curve_to_left(first_parent);
+
+        this->m_visitor->found_overlap(c1, c2, first_parent); // SL_SAYS check with Efi
+
+        CGAL_SL_PRINT_END_EOL("computing intersection");
+        return;
+      }
+      else{
+        X_monotone_curve_2 xc = first_parent->last_curve();
+        for (typename std::vector<Subcurve*>::iterator sc_it=all_leaves_diff.begin();
+                                                       sc_it!=all_leaves_diff.end(); ++sc_it)
+        {
+          std::vector<CGAL::Object> inter_res;
+          vector_inserter vi(inter_res) ;
+          vector_inserter vi_end(inter_res);
+
+          this->m_traits->intersect_2_object()(xc, (*sc_it)->last_curve(), vi);
+          CGAL_assertion(inter_res.empty() || inter_res.size()==1); //TMP for debug
+          CGAL_assertion( CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front())!=NULL );// TMP for debug
+          xc = *CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front());
+        }
+        _create_overlapping_curve(xc, c1 , c2, all_leaves_diff, first_parent);
+        return;
+      }
+  }
+
+  // do compute the intersection of the two curves
   vector_inserter vi(m_x_objects) ;
   vector_inserter vi_end(m_x_objects);
 
@@ -562,7 +653,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
       CGAL_assertion(icv != NULL);
       CGAL_SL_PRINT_TEXT("Found an overlap");
       CGAL_SL_PRINT_EOL();
-      _create_overlapping_curve(*icv, c1 , c2);
+      _create_overlapping_curve(*icv, c1 , c2, all_leaves_diff, first_parent);
     }
   }
 
@@ -698,17 +789,13 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
   CGAL_SL_PRINT_END_EOL("Fixing overlap subcurves");
 }
 
-/*! Handle overlap at right insertion to event.
- * \param event the event where that overlap starts (the left end point of the
- *        overlap).
- * \param curve the subcurve that its insertion to the list of right subcurves of
- *        'event' causes the overlap (with *iter).
- * \param iter the existing subcurve at the right subcurves of 'event'
- */
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , Subcurve*& c2)
+_create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
+                          Subcurve*& c1 , Subcurve*& c2,
+                          const std::vector<Subcurve*>& all_leaves_diff,
+                          Subcurve* first_parent)
 {
   // An overlap occurs:
   CGAL_SL_PRINT_START_EOL("creating an overlapping curve");
@@ -747,40 +834,16 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , 
 
   if (!c1->is_start_point(left_event)) 
     left_event->add_curve_to_left(c1);
+  else
+    left_event->remove_curve_from_right(c1);
   if (!c2->is_start_point(left_event)) 
     left_event->add_curve_to_left(c2);
-  if (c1->is_start_point(left_event))
-    left_event->remove_curve_from_right(c1);
-  if (c2->is_start_point(left_event))
+  else
     left_event->remove_curve_from_right(c2);
-  
+
   // Allocate the new Subcurve for the overlap
-  Subcurve* first_parent = c1;
-  Subcurve* second_parent = c2;
-
-  std::vector<Subcurve*> all_leaves_first;
-  std::vector<Subcurve*> all_leaves_second;
-  first_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_first));
-  second_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_second));
-  if (all_leaves_second.size() > all_leaves_first.size())
-  {
-    std::swap(first_parent,second_parent);
-    std::swap(all_leaves_first,all_leaves_second);
-  }
-
-  std::vector<Subcurve*> all_leaves_diff;
-  if (!all_leaves_first.empty() && !all_leaves_second.empty())
-  {
-    std::sort(all_leaves_first.begin(), all_leaves_first.end());
-    std::sort(all_leaves_second.begin(), all_leaves_second.end());
-
-    std::set_difference(all_leaves_second.begin(), all_leaves_second.end(),
-                        all_leaves_first.begin(), all_leaves_first.end(),
-                        std::back_inserter(all_leaves_diff));
-  }
-
   Subcurve* overlap_sc;
-  if (all_leaves_second.size()==all_leaves_diff.size())
+  if (all_leaves_diff.empty())
   {
     CGAL_SL_PRINT_TEXT("Allocate a new subcurve for the overlap (no common subcurves)");
     CGAL_SL_PRINT_EOL();
@@ -797,34 +860,25 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , 
     overlap_sc->set_originating_subcurve2(c2);
   }
   else{
-    if (all_leaves_diff.empty())
-    {
-      CGAL_SL_PRINT_TEXT("One overlapping curve entirely contains the other one");
-      CGAL_SL_PRINT_EOL();
-      overlap_sc=first_parent;
-    }
-    else
-    {
-      CGAL_SL_PRINT_TEXT("Allocate new subcurves for the overlap (common subcurves)");
-      CGAL_SL_PRINT_EOL();
+    CGAL_SL_PRINT_TEXT("Allocate new subcurves for the overlap (common subcurves)");
+    CGAL_SL_PRINT_EOL();
 
-      // create an overlapping curve per subcurve in second_parent that is not in first_parent
-      for (typename std::vector<Subcurve*>::iterator sc_it=all_leaves_diff.begin();
-                                                     sc_it!=all_leaves_diff.end();
-                                                     ++sc_it)
-      {
-        overlap_sc = this->m_subCurveAlloc.allocate(1); // \todo allocate all at once?
-        this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
-        overlap_sc->set_hint(this->m_statusLine.end());
-        overlap_sc->init(overlap_cv);
-        overlap_sc->set_left_event(left_event);
-        overlap_sc->set_right_event(right_event);
-        m_overlap_subCurves.push_back(overlap_sc);
-        // sets the two originating subcurves of overlap_sc
-        overlap_sc->set_originating_subcurve1(first_parent);
-        overlap_sc->set_originating_subcurve2(*sc_it);
-        first_parent=overlap_sc;
-      }
+    // create an overlapping curve per subcurve in second_parent that is not in first_parent
+    for (typename std::vector<Subcurve*>::const_iterator sc_it=all_leaves_diff.begin();
+                                                         sc_it!=all_leaves_diff.end();
+                                                         ++sc_it)
+    {
+      overlap_sc = this->m_subCurveAlloc.allocate(1); // \todo allocate all at once?
+      this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
+      overlap_sc->set_hint(this->m_statusLine.end());
+      overlap_sc->init(overlap_cv);
+      overlap_sc->set_left_event(left_event);
+      overlap_sc->set_right_event(right_event);
+      m_overlap_subCurves.push_back(overlap_sc);
+      // sets the two originating subcurves of overlap_sc
+      overlap_sc->set_originating_subcurve1(first_parent);
+      overlap_sc->set_originating_subcurve2(*sc_it);
+      first_parent=overlap_sc;
     }
   }
   left_event->set_overlap();

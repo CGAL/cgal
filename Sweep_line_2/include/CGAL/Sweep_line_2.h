@@ -177,8 +177,17 @@ protected:
    * \param overlap_cv the overlapping curve.
    * \param c1 first subcurve contributing to the overlap.
    * \param c2 second subcurve contributing to the overlap.
+   * \param all_leaves_diff not empty in case c1 and c2 have common ancesters.
+   *                        It contains the set of curves  not contained in first_parent
+   *                        that are in the other subcurve
+   * \param first_parent only used when c1 and c2 have common ancesters.
+   *                     It is either c1 or c2 (the one having the more leaves)
+   *
    */
-  void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , Subcurve*& c2);
+  void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
+                                 Subcurve*& c1 , Subcurve*& c2,
+                                 const std::vector<Subcurve*>& all_leaves_diff,
+                                 Subcurve* first_parent);
 
   /*! Compute intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that
