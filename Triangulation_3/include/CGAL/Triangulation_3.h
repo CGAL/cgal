@@ -6684,14 +6684,27 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
         using namespace boost;
         std::vector<Point> V1 (t1.points_begin(), t1.points_end());
         std::vector<Point> V2 (t2.points_begin(), t2.points_end());
-        std::sort(V1.begin(), V1.end(),
-                  boost::bind<Comparison_result>(
-                    cmp1, boost::bind<const Point_3&>(cp, _1),
-                          boost::bind<const Point_3&>(cp, _2)) == SMALLER);
-        std::sort(V2.begin(), V2.end(),
-                  boost::bind<Comparison_result>(
-                    cmp2, boost::bind<const Point_3&>(cp, _1),
-                          boost::bind<const Point_3&>(cp, _2)) == SMALLER);
+
+        std::sort(
+          V1.begin(), V1.end(),
+          boost::bind<Comparison_result>(
+            cmp1,
+            boost::bind<
+              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _1),
+            boost::bind<
+              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _2))
+          == SMALLER);
+
+        std::sort(
+          V2.begin(), V2.end(),
+          boost::bind<Comparison_result>(
+            cmp2,
+            boost::bind<
+              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _1),
+            boost::bind<
+              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _2))
+          == SMALLER);
+
         return V1 == V2;
     }
 
