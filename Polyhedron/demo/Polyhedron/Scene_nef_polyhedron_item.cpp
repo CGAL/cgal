@@ -713,7 +713,7 @@ Scene_nef_polyhedron_item::from_polygon_mesh(Scene_polyhedron_item *item)
 Scene_nef_polyhedron_item*
 Scene_nef_polyhedron_item::from_polygon_mesh(Scene_surface_mesh_item* item)
 {
-  Scene_surface_mesh_item::SMesh* sm = item->polyhedron();
+  SMesh* sm = item->polyhedron();
   if(!sm) return 0;
   CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_sm;
   CGAL::copy_face_graph(*sm, exact_sm);
