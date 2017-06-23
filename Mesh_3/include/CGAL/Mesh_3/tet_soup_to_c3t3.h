@@ -105,8 +105,10 @@ void build_finite_cells(Tr& tr,
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
 
-  typename Tr::Geom_traits::Construct_point_3 wp2p =
+  CGAL_assertion_code(
+    typename Tr::Geom_traits::Construct_point_3 wp2p =
       tr.geom_traits().construct_point_3_object();
+  )
 
   // build the finite cells
   for(std::size_t i=0; i<finite_cells.size(); ++i)
