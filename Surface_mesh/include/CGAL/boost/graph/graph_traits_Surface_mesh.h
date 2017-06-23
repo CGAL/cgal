@@ -518,7 +518,7 @@ bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
 }
 
 template<typename P>
-void normalize_border(const CGAL::Surface_mesh<P>& sm)
+void normalize_border(const CGAL::Surface_mesh<P>&)
 {}
 
 } // namespace CGAL
