@@ -23,6 +23,7 @@
 
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 int main()
 {
@@ -38,6 +39,12 @@ int main()
   typedef CGAL::Filtered_kernel<SH>                               FSH;
 
   typedef CGAL::Exact_predicates_exact_constructions_kernel_with_kth_root EPECK;
+
+  CGAL_USE_TYPE(ASC);
+  CGAL_USE_TYPE(FSC);
+  CGAL_USE_TYPE(SH);
+  CGAL_USE_TYPE(FSH);
+  CGAL_USE_TYPE(EPECK);
 
   CGAL_assertion((CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_2>::value));
   CGAL_assertion((CGAL::Has_conversion<SC, SC, SC::Object_2, SC::Object_2>::value));
