@@ -20,6 +20,8 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_H
 #define CGAL_REGULAR_TRIANGULATION_H
 
+#include <CGAL/license/Triangulation.h>
+
 #include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>

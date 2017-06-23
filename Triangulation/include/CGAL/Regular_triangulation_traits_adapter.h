@@ -20,6 +20,8 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_TRAITS_ADAPTER_H
 #define CGAL_REGULAR_TRIANGULATION_TRAITS_ADAPTER_H
 
+#include <CGAL/license/Triangulation.h>
+
 #include <CGAL/basic.h>
 
 #include <boost/iterator/transform_iterator.hpp>
