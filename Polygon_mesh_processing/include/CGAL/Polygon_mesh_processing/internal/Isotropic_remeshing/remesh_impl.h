@@ -1829,7 +1829,7 @@ private:
       typedef typename boost::unordered_map <
         halfedge_descriptor, Halfedge_status>::value_type
           HD_pair;
-      BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
+      BOOST_FOREACH(const HD_pair& hs, halfedge_status_pmap_)
       {
         if(is_on_patch(hs.first))              nb_patch++;
         else if(is_on_patch_border(hs.first))  nb_patch_border++;
