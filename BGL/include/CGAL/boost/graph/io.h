@@ -46,7 +46,7 @@ bool write_off(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
   typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
 
-  typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,g);
+  typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::const_type vpm = get(CGAL::vertex_point,g);
   vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
   faces_size_type nf = static_cast<faces_size_type>(std::distance(faces(g).first, faces(g).second));
 
@@ -143,7 +143,7 @@ bool read_off(std::istream& is,
     std::istringstream iss(line);
     std::string off;
     iss >> off;
-    CGAL_assertion( off == "OFF");
+    CGAL_assertion( off == "OFF" || off == "COFF");
   }
   line = next_non_comment(is);
   {
@@ -165,7 +165,7 @@ bool read_off(std::istream& is,
     line = next_non_comment(is);
     std::istringstream iss(line);
     iss >> nvf;
-    std::vector<faces_size_type> face(nvf);
+    std::vector<vertex_descriptor> face(nvf);
     for(vertices_size_type j = 0; j < nvf; j++){
       faces_size_type fvi;
       iss >> fvi;
