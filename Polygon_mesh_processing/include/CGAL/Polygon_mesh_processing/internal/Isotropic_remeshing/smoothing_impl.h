@@ -41,8 +41,7 @@ struct Edge_constraint_map
 
     typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
 
-    //boost::shared_ptr<std::set<edge_descriptor>> constrained_edges_ptr;
-    std::shared_ptr<std::set<edge_descriptor>> constrained_edges_ptr;
+    boost::shared_ptr<std::set<edge_descriptor>> constrained_edges_ptr;
 
 public:
     typedef edge_descriptor                     key_type;
@@ -61,17 +60,18 @@ public:
         }
     }
 
-    friend bool exists(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
+    friend bool get(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
     {
         // assertion on pmesh
         //return map.constrained_edges_ptr->count(e)!=0;
         return map.constrained_edges_ptr->find(e) != map.constrained_edges_ptr->end();
-
     }
+
     friend void put(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
     {
         map.constrained_edges_ptr->insert(e);
     }
+
     friend void remove(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
     {
         map.constrained_edges_ptr->erase(e);
@@ -243,21 +243,7 @@ std::cout<<" moved at: "<< vp.second << std::endl;
 
                  if (gradient_descent(v))
                  {
-
-#ifdef CGAL_AREA_BASED_REMESHING_DEBUG
-std::cout<<"point moved from: "<<get(vpmap_, v);
-#endif
-                     Point p_query = get(vpmap_, v);
-                     Point projected = tree_ptr_->closest_point(p_query);
-
-                     //do the projection
-                     put(vpmap_, v, projected);
-
-#ifdef CGAL_AREA_BASED_REMESHING_DEBUG
-std::cout<<" to after projection: "<<get(vpmap_, v)<<std::endl;
-#endif
                      moved_points++;
-
                  }
 
              } // not on border
@@ -634,7 +620,7 @@ private:
 
     bool is_constrained(const edge_descriptor& e)
     {
-        exists(ecmap_, e);
+        get(ecmap_, e);
     }
 
     bool is_constrained(const vertex_descriptor& v)

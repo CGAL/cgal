@@ -50,7 +50,7 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const EdgeRange
     */
 
 
-    //vcmap - not sure yet
+    //vcmap
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
     typedef typename boost::lookup_named_param_def <
@@ -60,7 +60,6 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const EdgeRange
       > ::type VCMap;
     VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                                internal::No_constraint_pmap<vertex_descriptor>());
-
 
 
     //create ecmap with Edge_constraint_map struct
@@ -101,11 +100,10 @@ void area_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const EdgeRange
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
 
-    //bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+    //bool do_project_on_the_fly = choose_param(get_param(np, internal_np::do_project_on_the_fly), true);
 
 
-
-    //vcmap - not sure yet
+    //vcmap
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
     typedef typename boost::lookup_named_param_def <
@@ -115,7 +113,6 @@ void area_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const EdgeRange
       > ::type VCMap;
     VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                                internal::No_constraint_pmap<vertex_descriptor>());
-
 
 
     //create ecmap with Edge_constraint_map struct
@@ -135,6 +132,7 @@ void area_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const EdgeRange
     CGAL::Polygon_mesh_processing::internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits> remesher(pmesh, vpmap, vcmap, ecmap);
     remesher.init_remeshing(faces);
     remesher.area_relaxation();
+    remesher.project_to_surface();
 
 
 }
