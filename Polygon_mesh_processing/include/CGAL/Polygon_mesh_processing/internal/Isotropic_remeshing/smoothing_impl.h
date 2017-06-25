@@ -229,7 +229,7 @@ std::cout<<" moved at: "<< vp.second << std::endl;
 
     }
 
-    void area_relaxation()
+    void area_relaxation(const double& precision)
     {
 
         count_non_convex_energy_ = 0; //temp;
@@ -241,7 +241,7 @@ std::cout<<" moved at: "<< vp.second << std::endl;
              if(!is_border(v, mesh_))
              {
 
-                 if (gradient_descent(v))
+                 if (gradient_descent(v, precision))
                  {
                      moved_points++;
                  }
@@ -427,7 +427,7 @@ private:
 
     }
 
-    bool gradient_descent(const vertex_descriptor& v)
+    bool gradient_descent(const vertex_descriptor& v, const double& precision)
     {
 
         double eta = 0.01; //learning rate
@@ -450,7 +450,7 @@ private:
 
         double criterion = to_double( (energy - energy_new) / energy );
 
-        while( criterion  > 0.001 ) // make it a named parameter
+        while( criterion  > precision )
         {
 
             dFdx=0, dFdy=0, dFdz=0;

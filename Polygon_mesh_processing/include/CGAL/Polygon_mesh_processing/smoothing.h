@@ -72,6 +72,9 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
     //nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
+    //gradient descente precision
+    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.001);
+
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();
@@ -92,7 +95,6 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
 
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-  std::cout << std::endl;
   std::cout << "#iter = " << nb_iterations << std::endl;
   std::cout << "Remeshing ..." << std::endl;
   t.reset(); t.start();
@@ -104,7 +106,7 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
         remesher.angle_relaxation();
-        remesher.area_relaxation();
+        remesher.area_relaxation(gd_precision);
         remesher.angle_relaxation();
         remesher.project_to_surface();
     }
