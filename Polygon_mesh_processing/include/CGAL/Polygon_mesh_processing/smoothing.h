@@ -5,6 +5,7 @@
 
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/smoothing_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
