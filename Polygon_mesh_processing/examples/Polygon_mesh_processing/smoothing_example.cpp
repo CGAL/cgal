@@ -7,7 +7,6 @@
 #include <CGAL/Polygon_mesh_processing/smoothing.h>
 
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
@@ -27,14 +26,11 @@ int main(int argc, char* argv[]){
 
 
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh,
-                                                   faces(mesh),
-                                                   edges(mesh),
-                                                   CGAL::Polygon_mesh_processing::parameters::all_default());
-    CGAL::Polygon_mesh_processing::area_remeshing(mesh,
-                                                  faces(mesh),
-                                                  edges(mesh),
-                                                  CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::Polygon_mesh_processing::compatible_remeshing(
+                                    mesh,
+                                    faces(mesh),
+                                    edges(mesh),
+                                    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(3));
 
 
 

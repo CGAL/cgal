@@ -3,12 +3,14 @@
 
 
 #include <fstream>
+#include <math.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
+
 
 
 namespace CGAL {
@@ -131,7 +133,7 @@ public:
         check_constrained_edges();
     }
 
-    void angle_relaxation()
+    void angle_relaxation(bool use_weights)
     {
 
         std::map<vertex_descriptor, Point> barycenters;
@@ -153,15 +155,11 @@ std::cout<<"processing vertex: "<< v << std::endl;
                                                   .geom_traits(GeomTraits()));
                 n_map[v] = vn;
 
-
-
                 Edges_around_map he_map;
                 typename Edges_around_map::iterator it;
 
                 for(halfedge_descriptor hi : halfedges_around_source(v, mesh_)) // or make it around target
-                    he_map[hi] = He_pair(next(hi, mesh_), prev(opposite(hi, mesh_) ,mesh_));
-
-
+                    he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
 #ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
 for(it = he_map.begin(); it!=he_map.end(); ++it)
@@ -177,9 +175,9 @@ for(it = he_map.begin(); it!=he_map.end(); ++it)
 }
 #endif
 
-
                 // calculate movement
                 Vector move = CGAL::NULL_VECTOR;
+                double opposite_weight_factor = 0;
 
                 for(it = he_map.begin(); it != he_map.end(); ++it)
                 {
@@ -188,11 +186,26 @@ for(it = he_map.begin(); it!=he_map.end(); ++it)
 
                     Vector rotated_edge = rotate_edge(main_he, incident_pair);
 
-                    move += rotated_edge;
+                    // calculate angle
+                    double angle = get_angle(incident_pair, vn);
 
+                    //small angles to have more weight
+                    double weight = 1.0 / (angle*angle);
+                    opposite_weight_factor += weight;
+
+                    if(use_weights)
+                        move += weight * rotated_edge;
+                    else
+                        move += rotated_edge;
                 }
 
-                barycenters[v] = get(vpmap_, v) + (move / (double)he_map.size());
+                if(use_weights)
+                    move /= opposite_weight_factor;
+                else
+                    move /= CGAL::to_double(he_map.size());
+
+
+                barycenters[v] = (get(vpmap_, v) + move) ;
 
 
             } // not on border
@@ -510,6 +523,7 @@ private:
         // get "equidistant" points - in fact they are at equal angles
         Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
         Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
+        CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
         Vector edge1(s, equidistant_p1);
         Vector edge2(s, equidistant_p2);
@@ -576,6 +590,28 @@ private:
 
 
     }
+
+    double get_angle(const He_pair& incd_edges, const Vector& vn)
+    {
+
+        Point s = get(vpmap_, source(incd_edges.first, mesh_));
+        Point p1 = get(vpmap_, target(incd_edges.first, mesh_));
+        Point p2 = get(vpmap_, source(incd_edges.second, mesh_));
+        CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
+
+        Vector v1(s, p1);
+        Vector v2(s, p2);
+
+        Vector cp = CGAL::cross_product(v1, v2);
+        double det = CGAL::scalar_product(vn, cp);
+        double dot = CGAL::scalar_product(v1, v2);
+
+        // transform to range [0, 2pi]
+        double res = atan2(-det, -dot) + M_PI;
+
+        return res;
+    }
+
 
     Vector find_perpendicular(const Vector& input_vec, const Point& s, const Point& pv)
     {

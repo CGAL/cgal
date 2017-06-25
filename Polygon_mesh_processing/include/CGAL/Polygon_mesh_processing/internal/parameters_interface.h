@@ -47,6 +47,7 @@ CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_u
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(gradient_descent_precision_t, gradient_descent_precision, gradient_descent_precision)
+CGAL_add_named_parameter(use_weights_t, use_weights, use_weights)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
