@@ -443,7 +443,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   }
 
   // The two subCurves may start at the same point, in that case we ignore the
-  // first intersection point (if we got to that stage, they cannot  overlap).
+  // first intersection point.
 
   const Arr_parameter_space ps_x1 =
     this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
@@ -463,7 +463,8 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
       this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
       this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
   {
-    if (this->m_traits->equal_2_object()
+    if ( object_cast<std::pair<Point_2, Multiplicity> >(&(*vi)) != NULL
+         && this->m_traits->equal_2_object()
         (this->m_traits->construct_min_vertex_2_object()(c1->last_curve()),
          this->m_traits->construct_min_vertex_2_object()(c2->last_curve())))
     {
