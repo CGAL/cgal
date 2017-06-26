@@ -713,14 +713,37 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv, Subcurve*& c1 , 
   // An overlap occurs:
   CGAL_SL_PRINT_START_EOL("creating an overlapping curve");
 
-  // TODO EBEB: This code does not work with overlaps that reach the boundary
-  Point_2 left_end = this->m_traits->construct_min_vertex_2_object()(overlap_cv);
-  Point_2 right_end = this->m_traits->construct_max_vertex_2_object()(overlap_cv);
+  // Get the left end of overlap_cv.
+  Event* left_event;
+  Arr_parameter_space  ps_x_l =
+    this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MIN_END);
+  Arr_parameter_space  ps_y_l =
+    this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MIN_END);
+  if ((ps_x_l != ARR_INTERIOR) || (ps_y_l != ARR_INTERIOR)) {
+    // SL_SAYS check with Efi
+    CGAL_assertion(c1->left_event() == c2->left_event());
+    left_event=(Event*)(c1->left_event());
+  }
+  else{
+    Point_2 left_end = this->m_traits->construct_min_vertex_2_object()(overlap_cv);
+    left_event = this->_push_event(left_end, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR).first;
+  }
   
-  Event* left_event =
-    this->_push_event(left_end, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR).first;
-  Event* right_event =
-    this->_push_event(right_end, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR).first;
+  // Get the right end of overlap_cv.
+  Event* right_event;
+  Arr_parameter_space  ps_x_r =
+    this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MAX_END);
+  Arr_parameter_space  ps_y_r =
+    this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MAX_END);
+  if ((ps_x_r != ARR_INTERIOR) || (ps_y_r != ARR_INTERIOR)) {
+    // SL_SAYS check with Efi
+    CGAL_assertion(c1->right_event() == c2->right_event());
+    right_event = (Event*)(c1->right_event());
+  }
+  else {
+    Point_2 right_end = this->m_traits->construct_max_vertex_2_object()(overlap_cv);
+    right_event = this->_push_event(right_end, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR).first;
+  }
 
   if (!c1->is_start_point(left_event)) 
     left_event->add_curve_to_left(c1);
