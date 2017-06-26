@@ -22,6 +22,7 @@
 
 
 #include <boost/foreach.hpp>
+#include <boost/range/empty.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
@@ -790,7 +791,7 @@ void clear(FaceGraph& g)
 template<typename FaceGraph>
 bool is_empty(const FaceGraph& g)
 {
-  return boost::begin(vertices(g)) == boost::end(vertices(g));
+  return boost::empty(vertices(g));
 }
 
 
