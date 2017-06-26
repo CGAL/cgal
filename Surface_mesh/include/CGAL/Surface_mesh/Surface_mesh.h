@@ -1969,12 +1969,28 @@ private: //------------------------------------------------------- private data
     typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::Face_index Face_index;
 
-    os << "OFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
+    typename Mesh::template Property_map<typename Mesh::Vertex_index, CGAL::Color> vcolors;
+    bool has_vcolors;
+    boost::tie(vcolors, has_vcolors) = sm.template property_map<typename Mesh::Vertex_index, CGAL::Color >("v:color");
+    typename Mesh::template Property_map<typename Mesh::Face_index, CGAL::Color> fcolors;
+    bool has_fcolors;
+    boost::tie(fcolors, has_fcolors) = sm.template property_map<typename Mesh::Face_index, CGAL::Color >("f:color");
+
+    if(!has_fcolors && !has_vcolors)
+      os << "OFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
+    else
+      os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
     reindex.resize(sm.num_vertices());
     int n = 0;
     BOOST_FOREACH(Vertex_index v, sm.vertices()){
-      os << sm.point(v) << '\n';
+      os << sm.point(v);
+      if(has_vcolors)
+      {
+        CGAL::Color color = vcolors[v];
+        os <<" "<< static_cast<int>(color.r())<<" "<< static_cast<int>(color.g())<<" "<< static_cast<int>(color.b());
+      }
+      os << '\n';
       reindex[v]=n++;
     }
 
@@ -1982,6 +1998,11 @@ private: //------------------------------------------------------- private data
       os << sm.degree(f);
       BOOST_FOREACH(Vertex_index v, CGAL::vertices_around_face(sm.halfedge(f),sm)){
         os << " " << reindex[v];
+      }
+      if(has_fcolors)
+      {
+        CGAL::Color color = fcolors[f];
+        os <<" "<< static_cast<int>(color.r())<<" "<< static_cast<int>(color.g())<<" "<< static_cast<int>(color.b());
       }
       os << '\n';
     }

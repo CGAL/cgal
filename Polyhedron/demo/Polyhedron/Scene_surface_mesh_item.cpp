@@ -556,13 +556,15 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   item->buffers[Scene_surface_mesh_item_priv::Smooth_normals].release();
   if(has_vcolors)
   {
-    item->buffers[VColors].bind();
-    item->buffers[VColors].allocate(v_colors.data(),
+    item->buffers[Scene_surface_mesh_item_priv::VColors].bind();
+    item->buffers[Scene_surface_mesh_item_priv::VColors].allocate(v_colors.data(),
                              static_cast<int>(v_colors.size()*sizeof(cgal_gl_data)));
-    //program->enableAttributeArray("colors");
+    program->enableAttributeArray("colors");
     program->setAttributeBuffer("colors",CGAL_GL_DATA,0,3);
-    item->buffers[VColors].release();
+    item->buffers[Scene_surface_mesh_item_priv::VColors].release();
   }
+  else
+    program->disableAttributeArray("colors");
   item->vaos[Scene_surface_mesh_item_priv::Smooth_facets]->release();
   program->release();
 
