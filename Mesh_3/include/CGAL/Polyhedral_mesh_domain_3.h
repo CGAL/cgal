@@ -33,7 +33,7 @@
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 
 #include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
 
