@@ -36,9 +36,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+
 #include <sstream>
 
 #include <CGAL/Default.h>
@@ -267,10 +265,10 @@ public:
   typedef IGT R;
 
 public:
-  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> AABB_primitive;
-  typedef class AABB_traits<IGT,AABB_primitive>         AABB_traits;
-  typedef class AABB_tree<AABB_traits>                  AABB_tree_;
-
+  typedef typename Side_of_triangle_mesh<Polyhedron, IGT> Inside_functor;
+  typedef typename Inside_functor::AABB_tree              AABB_tree_;
+  typedef typename AABB_tree_::AABB_traits                AABB_traits;
+  typedef typename AABB_tree_::Primitive                  AABB_primitive;
   typedef typename AABB_tree_::Primitive_id             AABB_primitive_id;
   typedef typename AABB_tree_::Primitive                Primitive;
   typedef typename AABB_traits::Bounding_box            Bounding_box;
@@ -842,8 +840,7 @@ Is_in_domain::operator()(const Point_3& p) const
 {
   if(r_domain_.bounding_tree_ == 0) return Subdomain();
 
-  CGAL::Side_of_triangle_mesh<Polyhedron, IGT>
-    inside_functor(*(r_domain_.bounding_tree_));
+  Inside_functor inside_functor(*(r_domain_.bounding_tree_));
   Bounded_side side = inside_functor(p);
 
   if(side == CGAL::ON_UNBOUNDED_SIDE) { return Subdomain(); }
