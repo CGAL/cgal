@@ -111,9 +111,10 @@ struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with
   template < typename Primitive_id >
   Surface_patch_index operator()(const Primitive_id& primitive_id)
   {
-    typedef typename boost::property_map<Surface_mesh<P>, face_patch_id_t<Patch_id> >::type Fpim;
-    Fpim fpim = get(face_patch_id_t<Patch_id>(),*((*primitive_id).graph));
-    Surface_patch_index spi =  get(fpim, (*primitive_id).descriptor);
+    typedef typename boost::property_map<Surface_mesh<P>,
+                                         face_patch_id_t<Patch_id> >::type Fpim;
+    Fpim fpim = get(face_patch_id_t<Patch_id>(),*(primitive_id.graph));
+    Surface_patch_index spi =  get(fpim, primitive_id.descriptor);
     return spi;
   }
 };
