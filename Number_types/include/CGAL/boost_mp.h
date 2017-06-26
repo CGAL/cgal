@@ -25,6 +25,8 @@
 // We can't just include all Boost.Multiprecision here...
 #include <boost/multiprecision/number.hpp>
 #include <boost/type_traits/common_type.hpp>
+// ... but we kind of have to :-(
+#include <boost/multiprecision/cpp_int.hpp>
 
 // TODO: work on the coercions (end of the file)
 
