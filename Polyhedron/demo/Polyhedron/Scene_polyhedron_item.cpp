@@ -2421,9 +2421,15 @@ void Scene_polyhedron_item::zoomToId()
             viewer->camera()->position().z - viewer->camera()->sceneCenter().z)
           .norm() * normal ;
 
-      viewer->camera()->setSceneCenter(qglviewer::Vec(p.x(),
-                                                      p.y(),
+#if QGLVIEWER_VERSION >= 0x020502
+      viewer->camera()->setPivotPoint(qglviewer::Vec(p.x(),
+                                                             p.y(),
                                                       p.z()));
+#else
+      viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(p.x(),
+                                                             p.y(),
+                                                      p.z()));
+#endif
 
       viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
                                       .arg(new_pos.y())
@@ -2434,4 +2440,8 @@ void Scene_polyhedron_item::zoomToId()
                                       .arg(new_orientation[3]));
     }
   }
+}
+bool Scene_polyhedron_item::shouldDisplayIds(CGAL::Three::Scene_item *current_item) const
+{
+  return this == current_item;
 }

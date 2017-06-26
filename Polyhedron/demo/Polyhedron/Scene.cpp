@@ -1174,7 +1174,7 @@ void Scene::printVertexIds(CGAL::Three::Viewer_interface* viewer)
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
-    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printVertexIds(viewer);
   }
@@ -1186,7 +1186,7 @@ void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
   if(it)
   {
     //Only call printEdgeIds if the item is a Scene_print_item_interface
-    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printEdgeIds(viewer);
   }
@@ -1198,7 +1198,7 @@ void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
   if(it)
   {
     //Only call printFaceIds if the item is a Scene_print_item_interface
-    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printFaceIds(viewer);
   }
@@ -1210,7 +1210,7 @@ void Scene::printAllIds(CGAL::Three::Viewer_interface* viewer)
   if(it)
   {
     //Only call printFaceIds if the item is a Scene_print_item_interface
-    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printAllIds(viewer);
   }
@@ -1219,7 +1219,7 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
 {
   if(it)
   {
-    Scene_print_item_interface* item= dynamic_cast<Scene_print_item_interface*>(it);
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
     {
       //As this function works as a toggle, the first call hides the ids and the second one shows them again,
