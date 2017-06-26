@@ -17,8 +17,14 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "triangulate_primitive.h"
 
+//#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/File_writer_wavefront.h>
+#include <CGAL/IO/generic_copy_OFF.h>
+#include <CGAL/IO/OBJ_reader.h>
 
 //Used to triangulate the AABB_Tree
 class Primitive
@@ -1131,4 +1137,40 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
     itemChanged();
   }
   d->has_feature_edges = b;
+}
+
+bool
+Scene_surface_mesh_item::save(std::ostream& out) const
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  out.precision(17);
+    out << *(d->smesh_);
+    QApplication::restoreOverrideCursor();
+    return (bool) out;
+}
+
+bool
+Scene_surface_mesh_item::load_obj(std::istream& in)
+{
+  typedef SMesh::Point Point;
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > faces;
+  bool failed = !CGAL::read_OBJ(in,points,faces);
+
+  CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces);
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points,faces,*(d->smesh_));
+  if ( (! failed) && !isEmpty() )
+  {
+    invalidateOpenGLBuffers();
+    return true;
+  }
+  return false;
+}
+
+bool
+Scene_surface_mesh_item::save_obj(std::ostream& out) const
+{
+  CGAL::File_writer_wavefront  writer;
+  CGAL::generic_print_surface_mesh(out, *(d->smesh_), writer);
+  return out.good();
 }
