@@ -149,7 +149,7 @@ bool are_cones_unique(const Cone_container& cones)
   return (n_of_cones == unique_cones.size());
 }
 
-/// Locate the cone tagged 'First_unique_cone' and its index in the seam mesh.
+// Locate the cone tagged 'First_unique_cone' and its index in the seam mesh.
 template<typename vertex_descriptor,
          typename ConeMap,
          typename VertexIndexMap>
@@ -175,7 +175,7 @@ void find_start_cone(const ConeMap& cmap,
   CGAL_postcondition(false);
 }
 
-/// Locate the cone tagged 'First_unique_cone' in the seam mesh.
+// Locate the cone tagged 'First_unique_cone' in the seam mesh.
 template<typename vertex_descriptor,
          typename ConeMap>
 void find_start_cone(const ConeMap& cmap,

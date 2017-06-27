@@ -272,12 +272,12 @@ public:
 
 // Private operations
 private:
-  /// Initialize "A*X = B" linear system after
-  /// (at least two) border vertices are parameterized.
-  ///
-  /// \pre Vertices must be indexed.
-  /// \pre X and B must be allocated and empty.
-  /// \pre At least 2 border vertices must be parameterized.
+  // Initialize "A*X = B" linear system after
+  // (at least two) border vertices are parameterized.
+  //
+  // \pre Vertices must be indexed.
+  // \pre X and B must be allocated and empty.
+  // \pre At least 2 border vertices must be parameterized.
   template <typename UVmap, typename VertexIndexMap, typename VertexParameterizedMap>
   void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                           const boost::unordered_set<vertex_descriptor>& ccvertices,
@@ -306,9 +306,9 @@ private:
     }
   }
 
-  /// Utility for setup_triangle_relations():
-  /// Computes the coordinates of the vertices of a triangle
-  /// in a local 2D orthonormal basis of the triangle's plane.
+  // Utility for setup_triangle_relations():
+  // Computes the coordinates of the vertices of a triangle
+  // in a local 2D orthonormal basis of the triangle's plane.
   void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2, // in
                         Point_2& z0, Point_2& z1, Point_2& z2) const             // out
   {
@@ -338,9 +338,10 @@ private:
     z2 = Point_2(x2, y2);
   }
 
-  /// Create two lines in the linear system per triangle (one for u, one for v).
-  ///
-  /// \pre vertices of `mesh` must be indexed.
+  // Create two lines in the linear system per triangle (one for u, one for v).
+  //
+  // \pre vertices of `mesh` must be indexed.
+  //
   // Implementation note: LSCM equation is:
   //       (Z1 - Z0)(U2 - U0) = (Z2 - Z0)(U1 - U0)
   // where Uk = uk + i.v_k is the complex number corresponding to (u,v) coords
@@ -427,18 +428,18 @@ private:
 
 // Private accessors
 private:
-  /// Get the object that maps the surface's border onto a 2D space.
+  // Get the object that maps the surface's border onto a 2D space.
   Border_parameterizer& get_border_parameterizer() { return m_borderParameterizer; }
 
-  /// Get the sparse linear algebra (traits object to access the linear system).
+  // Get the sparse linear algebra (traits object to access the linear system).
   Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
 
 // Fields
 private:
-  /// %Object that maps (at least two) border vertices onto a 2D space
+  // %Object that maps (at least two) border vertices onto a 2D space
   Border_parameterizer m_borderParameterizer;
 
-  /// Traits object to solve a sparse linear system
+  // Traits object to solve a sparse linear system
   Solver_traits m_linearAlgebra;
 };
 

@@ -404,10 +404,10 @@ protected:
 
 // Fields
 private:
-  /// Object that maps the surface's border onto a 2D space.
+  // Object that maps the surface's border onto a 2D space.
   Border_parameterizer m_borderParameterizer;
 
-  /// Traits object to solve a sparse linear system
+  // Traits object to solve a sparse linear system
   Solver_traits m_linearAlgebra;
 };
 

@@ -30,8 +30,8 @@ namespace Surface_mesh_parameterization {
 
 namespace internal {
 
-//                                                    ->  ->
-/// Return cotangent of (P,Q,R) corner (i.e. cotan of QP, QR angle).
+//                                                   ->  ->
+// Return cotangent of (P,Q,R) corner (i.e. cotan of QP, QR angle).
 template<typename K>
 typename K::FT cotangent(const typename K::Point_3& P,
                          const typename K::Point_3& Q,
@@ -52,8 +52,8 @@ typename K::FT cotangent(const typename K::Point_3& P,
     return 0.0; // undefined
 }
 
-//                                                    ->  ->
-/// Return tangent of (P,Q,R) corner (i.e. tangent of QP, QR angle).
+//                                                   ->  ->
+// Return tangent of (P,Q,R) corner (i.e. tangent of QP, QR angle).
 template<typename K>
 typename K::FT tangent(const typename K::Point_3& P,
                        const typename K::Point_3& Q,
@@ -74,7 +74,7 @@ typename K::FT tangent(const typename K::Point_3& P,
     return 0.0; // undefined
 }
 
-/// Fix sine to be within [-1;1].
+// Fix sine to be within [-1;1].
 template<typename K>
 typename K::FT fix_sine(typename K::FT sine)
 {
@@ -86,8 +86,8 @@ typename K::FT fix_sine(typename K::FT sine)
     return sine;
 }
 
-//                                                       ->  ->
-/// Return angle (in radians) of of (P,Q,R) corner (i.e. QP, QR angle).
+//                                                      ->  ->
+// Return angle (in radians) of of (P,Q,R) corner (i.e. QP, QR angle).
 template<typename K>
 typename K::FT compute_angle_rad(const typename K::Point_3& P,
                                  const typename K::Point_3& Q,

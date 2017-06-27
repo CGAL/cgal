@@ -269,7 +269,6 @@ public:
     return OK;
   }
 
-
   /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with

@@ -87,7 +87,7 @@ protected:
 
 // Private operations
 private:
-  /// Compute the total length of the border
+  // Compute the total length of the border
   NT compute_border_length(const TriangleMesh& mesh,
                            halfedge_descriptor bhd) const
   {

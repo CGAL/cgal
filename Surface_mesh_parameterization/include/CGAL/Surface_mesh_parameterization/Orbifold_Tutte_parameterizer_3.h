@@ -171,7 +171,7 @@ private:
   const Weight_type weight_type;
 
 private:
-  /// Check input's correctness.
+  // Check input's correctness.
   template<typename ConeMap>
   Error_code check_cones(ConeMap cmap) const
   {
@@ -192,8 +192,7 @@ private:
     return OK;
   }
 
-  // Linear system
-  /// Compute the number of linear constraints in the system.
+  // Compute the number of linear constraints in the system.
   int number_of_linear_constraints(const SeamMesh& mesh) const
   {
     if(orb_type == Parallelogram) {
@@ -208,7 +207,7 @@ private:
     }
   }
 
-  /// Adds a positional constraint on a vertex x_ind, so that x_ind * w = rhs.
+  // Adds a positional constraint on a vertex x_ind, so that x_ind * w = rhs.
   void addConstraint(Matrix& M, Vector& B, int& id_r, int id_c, double w, Point_2 rhs) const
   {
     M.set_coef(2*id_r, 2*id_c, w, true /*new_coef*/);
@@ -227,9 +226,9 @@ private:
     ++id_r; // current line index in A is increased
   }
 
-  /// Adds constraints so that T * x_sinds = x_tinds, where T is a 2x2
-  /// matrix, and the Transformation T is modified to affine from
-  /// linear by requiring that T * x_si - x_ti = T * x_s1 - x_t1.
+  // Adds constraints so that T * x_sinds = x_tinds, where T is a 2x2
+  // matrix, and the Transformation T is modified to affine from
+  // linear by requiring that T * x_si - x_ti = T * x_s1 - x_t1.
   void addTransConstraints(int s0, int t0, int s, int t,
                            int& id_r,
                            const std::vector<double>& T,
@@ -283,7 +282,7 @@ private:
     ++id_r; // current line index in M is increased
   }
 
-  /// Add the constraints from a seam segment to the linear system.
+  // Add the constraints from a seam segment to the linear system.
   void constrain_seam_segment(const std::vector<std::pair<int, int> >& seam_segment,
                               NT ang, int& current_line_id_in_M,
                               Matrix& M, Vector& B) const
@@ -325,8 +324,8 @@ private:
     }
   }
 
-  /// Computes the rotational constraint on the border of the mesh.
-  /// Cone constraints are also added.
+  // Computes the rotational constraint on the border of the mesh.
+  // Cone constraints are also added.
   template<typename ConeMap,
            typename VertexIndexMap>
   void AddRotationalConstraint(const SeamMesh& mesh,
@@ -448,8 +447,8 @@ private:
     return weight;
   }
 
-  /// Computes the coefficients of the mean value Laplacian matrix for the edge.
-  /// `ij` in the face `ijk`
+  // Computes the coefficients of the mean value Laplacian matrix for the edge.
+  // `ij` in the face `ijk`
   void fill_mvc_matrix(const Point_3& pi, int i,
                        const Point_3& pj, int j,
                        const Point_3& pk, int k, Matrix& M) const
@@ -492,7 +491,7 @@ private:
     M.add_coef(2*i + 1, 2*i + 1, w_ii);
   }
 
-  /// Compute the mean value Laplacian matrix.
+  // Compute the mean value Laplacian matrix.
   template<typename VertexIndexMap>
   void mean_value_laplacian(const SeamMesh& mesh,
                             VertexIndexMap vimap,
@@ -519,7 +518,7 @@ private:
     }
   }
 
-  /// Compute the system weights using a Cotangent Laplacian.
+  // Compute the system weights using a Cotangent Laplacian.
   template<typename VertexIndexMap>
   void cotangent_laplacien(SeamMesh& mesh,
                            VertexIndexMap vimap,
@@ -565,7 +564,7 @@ private:
     }
   }
 
-  /// Copy the solution into the UV property map.
+  // Copy the solution into the UV property map.
   template <typename VertexIndexMap, typename VertexUVMap>
   void assign_solution(const SeamMesh& mesh,
                        const Vector& X,
@@ -583,7 +582,7 @@ private:
     }
   }
 
-  /// Solves the linear system.
+  // Solves the linear system.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code computeFlattening(const SeamMesh& mesh,

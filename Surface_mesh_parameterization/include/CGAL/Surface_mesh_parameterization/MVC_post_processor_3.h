@@ -57,7 +57,6 @@ namespace Surface_mesh_parameterization {
 // Declaration
 // ------------------------------------------------------------------------------------
 
-// /// \ingroup PkgSurfaceParameterizationMethods
 ///
 /// The class `MVC_post_processor_3` implements
 /// the *Free boundary linear Parameterization* algorithm \cgalCite{kami2005free}.
@@ -149,16 +148,16 @@ private:
 
 // Private fields
 private:
-  /// Traits object to solve a sparse linear system
+  // Traits object to solve a sparse linear system
   Solver_traits m_linearAlgebra;
 
 // Private accessors
 private:
-  /// Get the sparse linear algebra (traits object to access the linear system).
+  // Get the sparse linear algebra (traits object to access the linear system).
   Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
 
 // Private utility
-  /// Print the exterior faces of the constrained triangulation.
+  // Print the exterior faces of the constrained triangulation.
   template <typename CT>
   void output_ct_exterior_faces(const CT& ct) const
   {
@@ -178,7 +177,7 @@ private:
     out << std::endl;
   }
 
-  /// Copy the data from two vectors to the UVmap.
+  // Copy the data from two vectors to the UVmap.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   void assign_solution(const Vector& Xu,
@@ -197,7 +196,7 @@ private:
 
 // Private operations
 private:
-  /// Store the vertices and faces of the mesh in memory.
+  // Store the vertices and faces of the mesh in memory.
   void initialize_containers(const TriangleMesh& mesh,
                              halfedge_descriptor bhd,
                              Vertex_set& vertices,
@@ -210,7 +209,7 @@ private:
                                       boost::make_function_output_iterator(fc));
   }
 
-  /// Checks whether the polygon's border is simple.
+  // Checks whether the polygon's border is simple.
   template <typename VertexUVMap>
   bool is_polygon_simple(const TriangleMesh& mesh,
                          halfedge_descriptor bhd,
@@ -240,8 +239,8 @@ private:
     return true;
   }
 
-  /// Spread the inside / outside coloring from a Face to its neighbors
-  /// depending on whether the common edge is constrained.
+  // Spread the inside / outside coloring from a Face to its neighbors
+  // depending on whether the common edge is constrained.
   template <typename CT>
   void spread(CT& ct,
               const typename CT::Face_handle fh) const
@@ -277,7 +276,7 @@ private:
     }
   }
 
-  /// Triangulate the convex hull of the border of the parameterization.
+  // Triangulate the convex hull of the border of the parameterization.
   template <typename CT,
             typename VertexUVMap>
   Error_code triangulate_convex_hull(const TriangleMesh& mesh,
@@ -311,7 +310,7 @@ private:
     return OK;
   }
 
-  /// Color the (finite) faces of the constrained triangulation with an outside (-1) tag
+  // Color the (finite) faces of the constrained triangulation with an outside (-1) tag
   template <typename CT>
   Error_code color_faces(CT& ct) const
   {
@@ -352,8 +351,8 @@ private:
     return OK;
   }
 
-  //                                                       -> ->
-  /// Return angle (in radians) of of (P,Q,R) corner (i.e. QP,QR angle).
+  //                                                      -> ->
+  // Return angle (in radians) of of (P,Q,R) corner (i.e. QP,QR angle).
   double compute_angle_rad(const Point_2& P,
                            const Point_2& Q,
                            const Point_2& R) const
@@ -368,7 +367,7 @@ private:
     return angle;
   }
 
-  /// Fix vertices that are on the convex hull.
+  // Fix vertices that are on the convex hull.
   template <typename CT,
             typename VertexParameterizedMap>
   void fix_convex_hull_border(const CT& ct,
@@ -440,8 +439,8 @@ private:
     A.add_coef(i, i, w_ii);
   }
 
-  /// Partially fill the matrix coefficients A(i,i), A(i,j) and A(i,k)
-  /// Precondition: i, j, and k are ordered counterclockwise
+  // Partially fill the matrix coefficients A(i,i), A(i,j) and A(i,k)
+  // Precondition: i, j, and k are ordered counterclockwise
   template <typename CT,
             typename VertexUVMap,
             typename VertexIndexMap,
@@ -478,7 +477,7 @@ private:
     fill_linear_system_matrix_mvc_from_points(pi, i, pj, j, pk, k, A);
   }
 
-  /// Add the corresponding coefficients in A for all the edges of the face fh
+  // Add the corresponding coefficients in A for all the edges of the face fh
   template <typename CT,
             typename VertexUVMap,
             typename VertexIndexMap,
@@ -538,7 +537,7 @@ private:
     fill_linear_system_matrix_mvc_from_points(pi, i, pj, j, pk, k, A);
   }
 
-  /// Fill the matrix A in an MVC linear system with the face 'fd' of 'mesh'.
+  // Fill the matrix A in an MVC linear system with the face 'fd' of 'mesh'.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -558,8 +557,8 @@ private:
                                                      uvmap, vimap, vpmap, A);
   }
 
-  /// Compute the matrix A in the MVC linear system using the exterior faces
-  /// of the constrained triangulation 'ct' and the graph 'mesh'.
+  // Compute the matrix A in the MVC linear system using the exterior faces
+  // of the constrained triangulation 'ct' and the graph 'mesh'.
   template <typename CT,
             typename VertexUVMap,
             typename VertexIndexMap,
@@ -601,7 +600,7 @@ private:
     return status;
   }
 
-  /// Compute the right hand side of a MVC linear system.
+  // Compute the right hand side of a MVC linear system.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -624,7 +623,7 @@ private:
     }
   }
 
-  /// Solve the two linear systems A*Xu=Bu and A*Xv=Bv.
+  // Solve the two linear systems A*Xu=Bu and A*Xv=Bv.
   Error_code solve_mvc(const Matrix& A,
                        const Vector& Bu, const Vector& Bv,
                        Vector& Xu, Vector& Xv)
@@ -640,7 +639,7 @@ private:
     return status;
   }
 
-  /// Color the faces with inside/outside information and fix the border.
+  // Color the faces with inside/outside information and fix the border.
   template <typename CT, typename VertexParameterizedMap>
   Error_code prepare_CT_for_parameterization(CT& ct,
                                              VertexParameterizedMap vpmap) const
@@ -658,7 +657,7 @@ private:
     return status;
   }
 
-  /// Run an MVC parameterization on the (2D) ARAP UV map and the convexified mesh.
+  // Run an MVC parameterization on the (2D) ARAP UV map and the convexified mesh.
   template <typename CT,
             typename VertexUVMap,
             typename VertexIndexMap,

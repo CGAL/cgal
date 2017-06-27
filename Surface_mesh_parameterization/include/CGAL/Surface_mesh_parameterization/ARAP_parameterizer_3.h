@@ -202,31 +202,31 @@ private:
 
 // Private fields
 private:
-  /// %Object that maps (at least two) border vertices onto a 2D space
+  // %Object that maps (at least two) border vertices onto a 2D space
   Border_parameterizer m_borderParameterizer;
 
-  /// Traits object to solve a sparse linear system
+  // Traits object to solve a sparse linear system
   Solver_traits m_linearAlgebra;
 
-  /// Controlling parameters
+  // Controlling parameters
   const NT m_lambda;
   const NT m_lambda_tolerance; // used to determine when we switch to full ARAP
 
-  /// Energy minimization parameters
+  // Energy minimization parameters
   const unsigned int m_iterations;
   const NT m_tolerance;
 
 // Private accessors
 private:
-  /// Get the object that maps the surface's border onto a 2D space.
+  // Get the object that maps the surface's border onto a 2D space.
   Border_parameterizer& get_border_parameterizer() { return m_borderParameterizer; }
 
-  /// Get the sparse linear algebra (traits object to access the linear system).
+  // Get the sparse linear algebra (traits object to access the linear system).
   Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
 
 // Private utilities
 private:
-  /// Print the parameterized mesh.
+  // Print the parameterized mesh.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   void output_uvmap(const std::string filename,
@@ -240,7 +240,7 @@ private:
     IO::output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
   }
 
-  /// Print the parameterized mesh.
+  // Print the parameterized mesh.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   void output_uvmap(const std::string filename,
@@ -257,7 +257,7 @@ private:
     output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
   }
 
-  /// Copy the data from two vectors to the UVmap.
+  // Copy the data from two vectors to the UVmap.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   void assign_solution(const Vector& Xu,
@@ -276,7 +276,7 @@ private:
 
 // Private operations
 private:
-  /// Store the vertices and faces of the mesh in memory.
+  // Store the vertices and faces of the mesh in memory.
   Error_code initialize_containers(const TriangleMesh& mesh,
                                    halfedge_descriptor bhd,
                                    Vertex_set& vertices,
@@ -294,7 +294,7 @@ private:
     return OK;
   }
 
-  /// Initialize the UV values with a first parameterization of the input.
+  // Initialize the UV values with a first parameterization of the input.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code compute_initial_uv_map(TriangleMesh& mesh,
@@ -330,8 +330,8 @@ private:
     return status;
   }
 
-  /// Parameterize the border. The number of fixed vertices depends on the value
-  /// of the parameter &lambda;.
+  // Parameterize the border. The number of fixed vertices depends on the value
+  // of the parameter &lambda;.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -367,7 +367,7 @@ private:
     return status;
   }
 
-  /// Compute the cotangent of the angle between the vectors ij and ik.
+  // Compute the cotangent of the angle between the vectors ij and ik.
   void compute_cotangent_angle(const TriangleMesh& mesh,
                                halfedge_descriptor hd,
                                vertex_descriptor vi,
@@ -387,7 +387,7 @@ private:
     put(ctmap, hd, cot);
   }
 
-  /// Fill the map 'ctmap' with the cotangents of the angles of the faces of 'mesh'.
+  // Fill the map 'ctmap' with the cotangents of the angles of the faces of 'mesh'.
   Error_code compute_cotangent_angles(const TriangleMesh& mesh,
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
@@ -414,7 +414,7 @@ private:
     return OK;
   }
 
-  /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  // Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
   NT compute_w_ij(const TriangleMesh& mesh,
                   halfedge_descriptor hd,
                   const Cot_map ctmap) const
@@ -433,13 +433,13 @@ private:
     return weight;
   }
 
-  /// Compute the line i of matrix A
-  /// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
-  /// - compute w_ii = - sum of w_ijs.
-  ///
-  /// \pre Vertices must be indexed.
-  /// \pre Vertex i musn't be already parameterized.
-  /// \pre Line i of A must contain only zeros.
+  // Compute the line i of matrix A
+  // - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
+  // - compute w_ii = - sum of w_ijs.
+  //
+  // \pre Vertices must be indexed.
+  // \pre Vertex i musn't be already parameterized.
+  // \pre Line i of A must contain only zeros.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_matrix(Matrix& A,
                                        const TriangleMesh& mesh,
@@ -480,8 +480,8 @@ private:
     return OK;
   }
 
-  /// Initialize the (constant) matrix A in the linear system "A*X = B",
-  /// after (at least two) border vertices parameterization.
+  // Initialize the (constant) matrix A in the linear system "A*X = B",
+  // after (at least two) border vertices parameterization.
   template <typename VertexIndexMap,
             typename VertexParameterizedMap>
   Error_code initialize_matrix_A(const TriangleMesh& mesh,
@@ -510,7 +510,7 @@ private:
     return status;
   }
 
-  /// Solves the cubic equation a3 x^3 + a2 x^2 + a1 x + a0 = 0.
+  // Solves the cubic equation a3 x^3 + a2 x^2 + a1 x + a0 = 0.
   int solve_cubic_equation(const NT a3, const NT a2, const NT a1, const NT a0,
                            std::vector<NT>& roots) const
   {
@@ -529,7 +529,7 @@ private:
     return roots.size();
   }
 
-  /// Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algeabric kernel.
+  // Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algeabric kernel.
   int solve_cubic_equation_with_AK(const NT a3, const NT a2,
                                    const NT a1, const NT a0,
                                    std::vector<NT>& roots) const
@@ -573,10 +573,10 @@ private:
     return roots.size();
   }
 
-  /// Solve the bivariate system
-  /// { C1 * a + 2 * lambda * a ( a^2 + b^2 - 1 ) = C2
-  /// { C1 * b + 2 * lambda * b ( a^2 + b^2 - 1 ) = C3
-  /// using CGAL's algeabric kernel.
+  // Solve the bivariate system
+  // { C1 * a + 2 * lambda * a ( a^2 + b^2 - 1 ) = C2
+  // { C1 * b + 2 * lambda * b ( a^2 + b^2 - 1 ) = C3
+  // using CGAL's algeabric kernel.
   int solve_bivariate_system(const NT C1, const NT C2, const NT C3,
                              std::vector<NT>& a_roots, std::vector<NT>& b_roots) const
   {
@@ -638,7 +638,7 @@ private:
     return a_roots.size();
   }
 
-  /// Compute the root that gives the lowest face energy.
+  // Compute the root that gives the lowest face energy.
   template <typename VertexUVMap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
@@ -665,7 +665,7 @@ private:
     return index_arg;
   }
 
-  /// Compute the root that gives the lowest face energy.
+  // Compute the root that gives the lowest face energy.
   template <typename VertexUVMap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
@@ -691,7 +691,7 @@ private:
     return index_arg;
   }
 
-  /// Compute the optimal values of the linear transformation matrices Lt.
+  // Compute the optimal values of the linear transformation matrices Lt.
   template <typename VertexUVMap>
   Error_code compute_optimal_Lt_matrices(const TriangleMesh& mesh,
                                          const Faces_vector& faces,
@@ -792,8 +792,8 @@ private:
     return status;
   }
 
-  /// Computes the coordinates of the vertices p0, p1, p2
-  /// in a local 2D orthonormal basis of the triangle's plane.
+  // Computes the coordinates of the vertices p0, p1, p2
+  // in a local 2D orthonormal basis of the triangle's plane.
   void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,  // in
                         Point_2& z0, Point_2& z1, Point_2& z2) const              // out
   {
@@ -821,7 +821,7 @@ private:
     z2 = Point_2(x2, y2);
   }
 
-  /// Compute the local parameterization (2D) of a face and store it in memory.
+  // Compute the local parameterization (2D) of a face and store it in memory.
   void project_face(const TriangleMesh& mesh,
                     vertex_descriptor vi,
                     vertex_descriptor vj,
@@ -846,8 +846,8 @@ private:
     lp.push_back(pvk);
   }
 
-  /// Utility for fill_linear_system_rhs():
-  /// Compute the local isometric parameterization (2D) of the faces of the mesh.
+  // Utility for fill_linear_system_rhs():
+  // Compute the local isometric parameterization (2D) of the faces of the mesh.
   Error_code compute_local_parameterization(const TriangleMesh& mesh,
                                             const Faces_vector& faces,
                                             Local_points& lp,
@@ -884,8 +884,8 @@ private:
     return OK;
   }
 
-  /// Compute the coefficient b_ij = (i, j) of the right hand side vector B,
-  /// for j neighbor vertex of i.
+  // Compute the coefficient b_ij = (i, j) of the right hand side vector B,
+  // for j neighbor vertex of i.
   void compute_b_ij(const TriangleMesh& mesh,
                     halfedge_descriptor hd,
                     const Cot_map ctmap,
@@ -950,12 +950,12 @@ private:
     y += ct_l * ( -b_l * diff_l_x + a_l * diff_l_y );
   }
 
-  /// Compute the line i of right hand side vectors Bu and Bv
-  /// - call compute_b_ij() for each neighbor v_j to compute the B coefficient b_i
-  ///
-  /// \pre Vertices must be indexed.
-  /// \pre Vertex i musn't be already parameterized.
-  /// \pre Lines i of Bu and Bv must be zero.
+  // Compute the line i of right hand side vectors Bu and Bv
+  // - call compute_b_ij() for each neighbor v_j to compute the B coefficient b_i
+  //
+  // \pre Vertices must be indexed.
+  // \pre Vertex i musn't be already parameterized.
+  // \pre Lines i of Bu and Bv must be zero.
   template <typename VertexIndexMap>
   Error_code fill_linear_system_rhs(const TriangleMesh& mesh,
                                     vertex_descriptor vertex,
@@ -995,9 +995,9 @@ private:
     return OK;
   }
 
-  /// Compute the entries of the right hand side of the ARAP linear system.
-  ///
-  /// \pre Vertices must be indexed.
+  // Compute the entries of the right hand side of the ARAP linear system.
+  //
+  // \pre Vertices must be indexed.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -1034,8 +1034,8 @@ private:
     return status;
   }
 
-  /// Compute the right hand side and solve the linear system to obtain the
-  /// new UV coordinates.
+  // Compute the right hand side and solve the linear system to obtain the
+  // new UV coordinates.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -1093,7 +1093,7 @@ private:
   }
 
 
-  /// Compute the current energy of a face, given a linear transformation matrix.
+  // Compute the current energy of a face, given a linear transformation matrix.
   template <typename VertexUVMap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
@@ -1136,7 +1136,7 @@ private:
     return Ef;
   }
 
-  /// Compute the current energy of a face.
+  // Compute the current energy of a face.
   template <typename VertexUVMap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
@@ -1153,7 +1153,7 @@ private:
     return compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, uvmap, a, b);
   }
 
-  /// Compute the current energy of the parameterization.
+  // Compute the current energy of the parameterization.
   template <typename VertexUVMap>
   NT compute_current_energy(const TriangleMesh& mesh,
                             const Faces_vector& faces,
@@ -1176,8 +1176,8 @@ private:
   }
 
 // Post processing functions
-  /// Use the convex virtual boundary algorithm of Karni et al.[2005] to fix
-  /// the (hopefully few) flips in the result.
+  // Use the convex virtual boundary algorithm of Karni et al.[2005] to fix
+  // the (hopefully few) flips in the result.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code post_process(const TriangleMesh& mesh,
@@ -1339,7 +1339,7 @@ public:
   }
 
 public:
-  /// Constructor taking only the parameter &lambda;.
+  /// Constructor taking only the parameter &lambda; .
   ARAP_parameterizer_3(NT lambda)
     :
       m_borderParameterizer(Border_parameterizer()),

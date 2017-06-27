@@ -102,7 +102,7 @@ protected:
 
 // Private operations
 private:
-  /// Compute the total length of the border.
+  // Compute the total length of the border.
   double compute_border_length(const TriangleMesh& mesh,
                                halfedge_descriptor bhd) const
   {
@@ -113,8 +113,8 @@ private:
     return len;
   }
 
-  /// Utility method for parameterize().
-  /// Compute the mesh iterator whose offset is closest to 'value'.
+  // Utility method for parameterize().
+  // Compute the mesh iterator whose offset is closest to 'value'.
   halfedge_around_face_iterator closest_iterator(const TriangleMesh& mesh,
                                                  halfedge_descriptor bhd,
                                                  Offset_map& offset,
@@ -139,8 +139,8 @@ private:
     return best;
   }
 
-  /// Set the corners by splitting the border of the mesh in four
-  /// approximately equal segments.
+  // Set the corners by splitting the border of the mesh in four
+  // approximately equal segments.
   template<typename VertexParameterizedMap>
   halfedge_descriptor compute_offsets_without_given_vertices(const TriangleMesh& mesh,
                                                              halfedge_descriptor bhd,
@@ -185,9 +185,9 @@ private:
     return bhd;
   }
 
-  /// Compute the offset values for all the vertices of the border of
-  /// the mesh. The vertices between two given vertices vi and vj are
-  /// sent to the same side of the square.
+  // Compute the offset values for all the vertices of the border of
+  // the mesh. The vertices between two given vertices vi and vj are
+  // sent to the same side of the square.
   template<typename VertexParameterizedMap>
   halfedge_descriptor compute_offsets(const TriangleMesh& mesh,
                                       halfedge_descriptor bhd,
