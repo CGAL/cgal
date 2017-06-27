@@ -31,12 +31,12 @@
  * instance types of Subcurve and Event must be available when the
  * surface-sweep template is instantiated.
  *
- * Arr_construction_subcurve derives from an instance of the
- * Surface_sweep_subcurve class template. The user is allowed to introduce new
- * types that derive from an instance of the Arr_construction_subcurve class
- * template. However, some of the fields of this template depends on the
- * Subcurve type.  We use the curiously recurring template pattern (CRTP) idiom
- * to force the correct matching of these types.
+ * Arr_construction_subcurve derives from an instance of the Default_subcurve
+ * class template. The user is allowed to introduce new types that derive from
+ * an instance of the Arr_construction_subcurve class template. However, some of
+ * the fields of this template depends on the Subcurve type.  We use the
+ * curiously recurring template pattern (CRTP) idiom to force the correct
+ * matching of these types.
  */
 
 #include <CGAL/Surface_sweep_2/Default_subcurve.h>
@@ -51,28 +51,35 @@ namespace Ss2 = Surface_sweep_2;
  * This is the base class of the Arr_construction_subcurve class template used
  * by the (CRTP) idiom.
  * \tparam GeometryTraits_2 the geometry traits.
- * \tparam
- * Subcurve_ the subcurve actual type.
+ * \tparam Event_ the event type.
+ * \tparam Allocator_ a type of an element that is used to acquire/release
+ *                    memory for elements of the event queue and the status
+ *                    structure, and to construct/destroy the elements in that
+ *                    memory. The type must meet the requirements of Allocator.
+ * \tparam Subcurve_ the subcurve actual type.
  *
  * The information contained in this class last:
  * - ishe  event that was handled on the curve.
  * - The index for a subcurve that may represent a hole
  * - Indices of all halfedge below the curve that may represent a hole.
  */
-template <typename GeometryTraits_2, typename Event_,
-          template <typename, typename, typename> class SurfaceSweepBaseCurve,
+template <typename GeometryTraits_2, typename Event_, typename Allocator_,
+          template <typename, typename, typename, typename>
+          class SurfaceSweepBaseCurve,
           typename Subcurve_>
 class Arr_construction_subcurve_base :
-  public SurfaceSweepBaseCurve<GeometryTraits_2, Event_, Subcurve_>
+    public SurfaceSweepBaseCurve<GeometryTraits_2, Event_, Allocator_, Subcurve_>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
+  typedef Allocator_                                    Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef SurfaceSweepBaseCurve<Gt2, Event, Subcurve>   Base;
+  typedef SurfaceSweepBaseCurve<Gt2, Event, Allocator, Subcurve>
+                                                        Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -164,12 +171,12 @@ public:
  */
 template <typename GeometryTraits_2, typename Event_,
           typename Allocator_ = CGAL_ALLOCATOR(int),
-          template <typename, typename, typename>
+          template <typename, typename, typename, typename>
           class SurfaceSweepBaseCurve = Ss2::Default_subcurve,
           typename Subcurve_ = Default>
 class Arr_construction_subcurve :
   public Arr_construction_subcurve_base<
-    GeometryTraits_2, Event_,
+    GeometryTraits_2, Event_, Allocator_,
     SurfaceSweepBaseCurve,
     typename Default::Get<Subcurve_,
                           Arr_construction_subcurve<GeometryTraits_2, Event_,
@@ -188,8 +195,9 @@ private:
                                     SurfaceSweepBaseCurve, Subcurve_>
                                                         Self;
   typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef Arr_construction_subcurve_base<Gt2, Event, SurfaceSweepBaseCurve,
-                                         Subcurve>      Base;
+  typedef Arr_construction_subcurve_base<Gt2, Event, Allocator,
+                                         SurfaceSweepBaseCurve, Subcurve>
+                                                        Base;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;

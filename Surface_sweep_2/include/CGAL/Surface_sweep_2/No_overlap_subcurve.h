@@ -60,13 +60,14 @@ namespace Surface_sweep_2 {
  *   curve.
  * - an iterator that points to the location of the subcurve in the status line.
  */
-template <typename GeometryTraits_2, typename Event_, typename Subcurve_>
+template <typename GeometryTraits_2, typename Event_, typename Allocator_,
+          typename Subcurve_>
 class No_overlap_subcurve_base {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
-  typedef CGAL_ALLOCATOR(int)                           Allocator;
+  typedef Allocator_                                    Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
@@ -123,28 +124,35 @@ public:
  * - the remaining x-monotone curve that is to the right of the current sweep
  *   line.
  * \tparam GeometryTraits_2 the geometry traits.
+ * \tparam Event_ the event type.
+ * \tparam Allocator_ a type of an element that is used to acquire/release
+ *                    memory for elements of the event queue and the status
+ *                    structure, and to construct/destroy the elements in that
+ *                    memory. The type must meet the requirements of Allocator.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
- *         overriden it implies that the type is
- *         No_overlap_subcurve.
+ *                   overriden it implies that the type is No_overlap_subcurve.
  */
 template <typename GeometryTraits_2, typename Event_,
+          typename Allocator_ = CGAL_ALLOCATOR(int),
           typename Subcurve_ = Default>
 class No_overlap_subcurve :
   public No_overlap_subcurve_base<
-    GeometryTraits_2, Event_,
+    GeometryTraits_2, Event_, Allocator_,
     typename Default::Get<Subcurve_,
                           No_overlap_subcurve<GeometryTraits_2, Event_,
-                                              Subcurve_> >::type>
+                                              Allocator_, Subcurve_> >::type>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Event_                                        Event;
+  typedef Allocator_                                    Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef No_overlap_subcurve<Gt2, Event, Subcurve_>    Self;
+  typedef No_overlap_subcurve<Gt2, Event, Allocator, Subcurve_>
+                                                        Self;
   typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
-  typedef No_overlap_subcurve_base<Gt2, Event, Subcurve>
+  typedef No_overlap_subcurve_base<Gt2, Event, Allocator, Subcurve>
                                                         Base;
 
 public:
@@ -191,11 +199,9 @@ public:
 };
 
 #ifdef CGAL_SL_VERBOSE
-template <typename Traits>
+template <typename Gt2, typename Evt, typename Allocator, typename Scv>
 void No_overlap_subcurve<Traits>::Print() const
-{
-  std::cout << "Curve " << this << "  (" << last_curve() << ") ";
-}
+{ std::cout << "Curve " << this << "  (" << last_curve() << ") "; }
 #endif
 
 } // namespace Surface_sweep_2

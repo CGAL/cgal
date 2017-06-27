@@ -41,8 +41,9 @@ namespace Surface_sweep_2 {
 template <typename Visitor_,
           typename GeometryTraits_2,
           typename Allocator_ = CGAL_ALLOCATOR(int),
-          typename Event_ = Default_event<GeometryTraits_2>,
-          typename Subcurve_ = Default_subcurve<GeometryTraits_2, Event_> >
+          typename Event_ = Default_event<GeometryTraits_2, Allocator_>,
+          typename Subcurve_ = Default_subcurve<GeometryTraits_2, Event_,
+                                                Allocator_> >
 class Default_visitor : public Default_visitor_base<GeometryTraits_2, Event_,
                                                     Subcurve_, Allocator_,
                                                     Visitor_>

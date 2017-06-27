@@ -64,7 +64,8 @@ class No_overlap_event :
                                No_overlap_subcurve<GeometryTraits_2,
                                                    No_overlap_event<
                                                      GeometryTraits_2,
-                                                     Allocator_> > >
+                                                     Allocator_>,
+                                                   Allocator_> >
 {
 public:
   /*! Construct default. */

@@ -24,7 +24,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
-#include <CGAL/Surface_sweep_2/No_overlap_event_base.h>
+#include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
 #include <CGAL/Surface_sweep_2/Arr_batched_pl_sl_visitor.h>
 
@@ -74,7 +74,8 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   // Surface sweep types
   typedef Arr_batched_point_location_traits_2<Arr>      Bgt2;
   typedef Ss2::No_overlap_event<Bgt2, Allocator>        Bpl_event;
-  typedef Ss2::No_overlap_subcurve<Bgt2, Bpl_event>     Bpl_curve;
+  typedef Ss2::No_overlap_subcurve<Bgt2, Bpl_event, Allocator>
+                                                        Bpl_curve;
   typedef typename Tt::template Batched_point_location_helper<Bpl_event,
                                                               Bpl_curve>
                                                         Bpl_helper;

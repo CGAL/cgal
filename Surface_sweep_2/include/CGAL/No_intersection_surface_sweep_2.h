@@ -31,8 +31,6 @@
 #include <CGAL/memory.h>
 #include <CGAL/Surface_sweep_2/Event_comparer.h>
 #include <CGAL/Surface_sweep_2/Curve_comparer.h>
-#include <CGAL/Surface_sweep_2/No_overlap_event.h>
-#include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_tags.h>

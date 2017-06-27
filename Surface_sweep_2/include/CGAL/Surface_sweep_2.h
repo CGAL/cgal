@@ -31,8 +31,6 @@
 #include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Curve_pair.h>
-#include <CGAL/Surface_sweep_2/Default_subcurve.h>
-#include <CGAL/Surface_sweep_2/Default_event.h>
 #include <CGAL/Arrangement_2/Open_hash.h>
 
 namespace CGAL {

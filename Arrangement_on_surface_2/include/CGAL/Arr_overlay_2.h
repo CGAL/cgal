@@ -43,10 +43,13 @@
 namespace CGAL {
 
 /*! Compute the overlay of two input arrangements.
- * \param arr1 The first arrangement.
- * \param arr2 The second arrangement.
- * \param arr Output: The resulting arrangement.
- * \param ovl_tr An overlay-traits class. As arr1, arr2 and res can be
+ * \tparam GeometryTraitsA_2 the geometry traits of the first arrangement.
+ * \tparam GeometryTraitsB_2 the geometry traits of the second arrangement.
+ * \tparam GeometryTraitsRes_2 the geometry traits of the resulting arrangement.
+ * \tparam TopologyTraitsA the topology traits of the first arrangement.
+ * \tparam TopologyTraitsB the topology traits of the second arrangement.
+ * \tparam TopologyTraitsRes the topology traits of the resulting arrangement.
+ * \tparam OverlayTraits An overlay-traits class. As arr1, arr2 and res can be
  *               templated with different geometry-traits class and
  *               different DCELs (encapsulated in the various topology-traits
  *               classes). The geometry-traits of the result arrangement is

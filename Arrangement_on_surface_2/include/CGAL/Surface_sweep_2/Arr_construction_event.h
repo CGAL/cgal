@@ -42,10 +42,13 @@ namespace Ss2 = Surface_sweep_2;
  * 2D arrangement.
  *
  * \tparam GeometryTraits_2 the geometry traits.
+ * \tparam Arrangement_ the type of the costructed arrangement.
  * \tparam Allocator_ a type of an element that is used to acquire/release
  *                    memory for elements of the event queue and the status
  *                    structure, and to construct/destroy the elements in that
  *                    memory. The type must meet the requirements of Allocator.
+ * \tparam SurfaceSweepBaseEvent the base class of the event.
+ * \tparam SurfaceSweepBaseCurve the base class of the subcurve.
  *
  * We exploit the curiously recurring template pattern (CRTP) idiom to establish
  * an interdependency between the curve and the event types, which are template
@@ -64,7 +67,7 @@ template <typename GeometryTraits_2, typename Arrangement_,
           typename Allocator_ = CGAL_ALLOCATOR(int),
           template <typename, typename>
           class SurfaceSweepBaseEvent = Ss2::Default_event_base,
-          template <typename, typename, typename>
+          template <typename, typename, typename, typename>
           class SurfaceSweepBaseCurve = Ss2::Default_subcurve>
 class Arr_construction_event :
   public Arr_construction_event_base<

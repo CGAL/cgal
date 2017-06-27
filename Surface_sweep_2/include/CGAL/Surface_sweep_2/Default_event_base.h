@@ -50,7 +50,7 @@ namespace Surface_sweep_2 {
  */
 template <typename GeometryTraits_2, typename Subcurve_>
 class Default_event_base :
-    public No_overlap_event_base<GeometryTraits_2, Subcurve_>
+  public No_overlap_event_base<GeometryTraits_2, Subcurve_>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;

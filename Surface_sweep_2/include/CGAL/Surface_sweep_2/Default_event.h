@@ -62,7 +62,8 @@ class Default_event :
   public Default_event_base<GeometryTraits_2,
                             Default_subcurve<GeometryTraits_2,
                                              Default_event<GeometryTraits_2,
-                                                           Allocator_> > >
+                                                           Allocator_>,
+                                             Allocator_> >
 {
 public:
   /*! Construct default. */

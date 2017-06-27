@@ -41,8 +41,7 @@ namespace Ss2 = Surface_sweep_2;
  * in the proper place in the resulting arrangement.
  *
  * \tparam GeometryTraits_2 the geometry traits.
- * \tparam Arrangement_ the type of the arrangement that is the resulting
- *                      arrangement the overlay process.
+ * \tparam Event_ the event type.
  * \tparam Allocator_ a type of an element that is used to acquire/release
  *                    memory for elements of the event queue and the status
  *                    structure, and to construct/destroy the elements in that
