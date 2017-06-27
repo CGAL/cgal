@@ -8,8 +8,7 @@
 #include <fstream>
 #include <vector>
 
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
@@ -66,17 +65,14 @@ int main(int argc, char* argv[])
   CGAL::expand_face_selection(seed, mesh, 5, selected, std::back_inserter(patch));
   
   std::cout << " and patch of size " << patch.size() << std::endl;
-  PMP::isotropic_remeshing(
-                           patch,
+  PMP::isotropic_remeshing(patch,
                            target_edge_length,
                            mesh,
                            PMP::parameters::number_of_iterations(nb_iter)
                            .face_patch_map(selected)
                            .protect_constraints(true)//i.e. protect border, here
                            );
-  
-  std::ofstream out("out.off");
-  out << mesh << std::endl;
+
   std::cout << "Remeshing done." << std::endl;
 
   return 0;
