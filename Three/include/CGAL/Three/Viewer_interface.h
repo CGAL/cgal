@@ -23,7 +23,7 @@
 
 #include <CGAL/license/Three.h>
 
-
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 #include <QWidget>
 #include <QPoint>
