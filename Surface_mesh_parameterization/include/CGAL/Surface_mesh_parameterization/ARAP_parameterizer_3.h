@@ -36,6 +36,10 @@
 #include <CGAL/Kernel/Conic_misc.h> // @tmp used for solving conic equations
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
+#ifdef CGAL_USE_GMP
+#include <CGAL/GMP_arithmetic_kernel.h>
+#endif
+
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
 #endif
@@ -529,6 +533,7 @@ private:
     return roots.size();
   }
 
+#ifdef CGAL_USE_GMP
   // Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algeabric kernel.
   int solve_cubic_equation_with_AK(const NT a3, const NT a2,
                                    const NT a1, const NT a0,
@@ -637,6 +642,7 @@ private:
 
     return a_roots.size();
   }
+#endif // CGAL_USE_GMP
 
   // Compute the root that gives the lowest face energy.
   template <typename VertexUVMap>
@@ -753,6 +759,9 @@ private:
       else { // general case
 #define SOLVE_CUBIC_EQUATION
 #ifdef SOLVE_CUBIC_EQUATION
+        // The cubic equation solving approach is less accurate but seems to be working.
+        // The other approach is left in case this one runs into trouble.
+
         CGAL_precondition(C2 != 0.);
         NT C2_denom = 1. / C2;
         NT a3_coeff = 2. * m_lambda * (C2 * C2 + C3 * C3) * C2_denom * C2_denom;
@@ -762,16 +771,19 @@ private:
 
         // The function above is correct up to 10^{-14}, but below can be used
         // if more precision is needed (should never be the case)
+        // Note that it requires GMP
+#ifdef CGAL_USE_GMP
 //        std::vector<NT> roots_with_AK;
 //        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2,
 //                                     roots_with_AK);
+#endif
 
         std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
                                                           ctmap, lp, lpmap, uvmap,
                                                           C2_denom, C3, roots);
         a = roots[ind];
         b = C3 * C2_denom * a;
-#else // solve the bivariate system
+#elif defined(CGAL_USE_GMP) // solve the bivariate system
         std::vector<NT> a_roots;
         std::vector<NT> b_roots;
         solve_bivariate_system(C1, C2, C3, a_roots, b_roots);
@@ -781,6 +793,8 @@ private:
                                                           a_roots, b_roots);
         a = a_roots[ind];
         b = b_roots[ind];
+#else
+  #error "The macro 'SOLVE_CUBIC_EQUATION' must be defined or GMP must be available."
 #endif
       }
 
