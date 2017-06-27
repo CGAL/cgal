@@ -1,11 +1,20 @@
 include( polyhedron_demo_macros )
+
 if(EIGEN3_FOUND)
-  qt5_wrap_ui( parameterizationUI_FILES Parameterization_widget.ui ARAP_dialog.ui OTE_dialog.ui)
-  polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
-  target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
+  find_package(CGAL COMPONENTS Core)
+
+  include(${CGAL_USE_FILE})
+
+  if(CGAL_Core_FOUND)
+    qt5_wrap_ui( parameterizationUI_FILES Parameterization_widget.ui ARAP_dialog.ui OTE_dialog.ui)
+    polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
+    target_link_libraries(parameterization_plugin ${CGAL_Core_LIBRARY} ${CGAL_Core_3RD_PARTY_LIBRARIES} scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
+  else(CGAL_Core_FOUND)
+    message(STATUS "NOTICE: CGAL Core was not found. The Parameterization plugin will not be available.")
+  endif(CGAL_Core_FOUND)
 
 else(EIGEN3_FOUND)
-  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Parameterization plugin will not be available.")
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
 endif(EIGEN3_FOUND)
 
 qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
