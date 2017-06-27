@@ -5,7 +5,7 @@
 
 This concept describes the geometric types and predicates required to build
 a Delaunay triangulation. It corresponds to the first template parameter of the class 
-`CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`.
+`CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`.
 
 \cgalRefines `TriangulationTraits`
 
@@ -32,7 +32,7 @@ defined by the points in range `[start,end)`.
 If the simplex is positively
 oriented, then the positive side of sphere corresponds geometrically
 to its bounded side.
-\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
+\pre If `Dimension`=`CGAL::Dimension_tag<D>`, 
 then `std::distance(start,end)=D+1`.
 The points in range
 `[start,end)` must be affinely independent, i.e., the simplex must
@@ -70,14 +70,16 @@ typedef unspecified_type In_flat_side_of_oriented_sphere_d;
 /// @{
 
 /*!
-The default constructor.
+The default constructor (optional).
+This is not required when an instance of the traits is provided
+to the constructor of `CGAL::Delaunay_triangulation`.
 */
 DelaunayTriangulationTraits();
 
 /// @}
 
 /// \name Operations
-/// The following methods permit access to the traits class's predicates:
+/// The following methods permit access to the traits class's predicates and functors:
 /// @{
 
 /*!

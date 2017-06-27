@@ -26,6 +26,7 @@
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/NewKernel_d/Types/Weighted_point.h>
 
 
 namespace CGAL {
