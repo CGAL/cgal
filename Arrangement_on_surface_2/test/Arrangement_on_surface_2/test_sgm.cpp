@@ -4,7 +4,6 @@
 #include <iostream>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/convex_hull_3.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_traits.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
@@ -26,7 +25,7 @@ int main()
     Point_3(0.0, 0.0, 0.0)
   };
   Gm_polyhedron P1;
-  CGAL::convex_hull_3(points, &points[4], P1);
+  P1.make_tetrahedron(points[0], points[1], points[2], points[3]);
   Gm gm1;
   Gm_initializer gm_initializer1(gm1);
   gm_initializer1(P1);
@@ -38,7 +37,8 @@ int main()
     Kernel::Vector_3 v = CGAL::ORIGIN - *p;
     *p = CGAL::ORIGIN + v;
   }
-  CGAL::convex_hull_3(points, &points[4], P2);
+  P2.make_tetrahedron(points[1], points[0], points[2], points[3]);
+  std::cout << P2 << std::endl;
   Gm gm2;
   Gm_initializer gm_initializer2(gm2);
   gm_initializer2(P2);
@@ -47,6 +47,7 @@ int main()
   // Compute the Minowski sum of the Gaussian maps
   Gm gm;
   gm.minkowski_sum(gm1, gm2);
+  // std::cout << gm << std::endl;
   if (! gm.is_valid()) return -1;
 
   Kernel::FT sw(16);
@@ -56,6 +57,9 @@ int main()
     Gm::Halfedge_around_vertex_const_circulator hec3(it->incident_halfedges());
     Gm::Halfedge_around_vertex_const_circulator hec1 = hec3++;
     Gm::Halfedge_around_vertex_const_circulator hec2 = hec3++;
+    std::cout << (*hec1).face()->point() << ", "
+              << (*hec2).face()->point() << ", "
+              << (*hec3).face()->point() << std::endl;
     Kernel::Plane_3 plane((*hec1).face()->point(), (*hec2).face()->point(),
                           (*hec3).face()->point());
     Kernel::Vector_3 v(CGAL::ORIGIN, plane.projection(CGAL::ORIGIN));
@@ -63,7 +67,6 @@ int main()
     if (tmp < sw) sw = tmp;
   }
   // std::cout << sw << std::endl;
-  CGAL::Gmpq res(1,3);
-  if (sw.exact() != res) return -1;
+  if ((3 * sw) != 1) return -1;
   return 0;
 }
