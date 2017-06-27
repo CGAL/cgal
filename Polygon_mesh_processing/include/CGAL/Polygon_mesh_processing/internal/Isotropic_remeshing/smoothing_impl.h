@@ -408,6 +408,12 @@ private:
 
             Vector vec(get(vpmap_, pi), get(vpmap_, pi1));
 
+            // minimize r:
+            // r = Σ(S-S_av)^2
+            // dr/dx = 2 Σ(S - S_av) dS/dx
+            // area of triangle with respect to (x_a, y_a, z_a) =
+            // (v_z - v_y)x_a + (v_x - v_z)y_a + (y_y - v_x)z_a + constants
+            // vector v is (x_c - x_b, y_c - y_b, z_c - z_b)
             dFdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
             dFdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
             dFdz += (S - S_av) * 0.5 * (vec.y() - vec.x());
@@ -443,12 +449,12 @@ private:
         double relative_energy = precision + 1;
         unsigned int t = 1;
         double eta0 = 0.01;
-        double power_t = 0.25;
-        double eta = eta0 / pow(t, power_t);
+        //double power_t = 0.25;
+        double t0 = 0.001;
+        double eta = eta0 / (1 + t0*t);
 
         while(relative_energy > precision)
         {
-            t++;
             dFdx=0, dFdy=0, dFdz=0;
             compute_derivatives(dFdx, dFdy, dFdz, v, S_av);
 
@@ -487,8 +493,10 @@ private:
             y = y_new;
             z = z_new;
             energy = energy_new;
+            t++;
 
-            eta = eta0 / pow(t, power_t);
+            //eta = eta0 / pow(t, power_t);
+            eta = eta0 / (1 + t0*t);
 
         }
 
