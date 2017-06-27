@@ -142,7 +142,7 @@ private:
   typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>             TDS;
   typedef CGAL::No_intersection_tag                                 Itag;
 
-    // Can choose either a triangulation or a Delauany triangulation
+    // Can choose either a triangulation or a Delaunay triangulation
   typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>                CT;
 //    typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>   CT;
 
