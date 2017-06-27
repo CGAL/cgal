@@ -642,7 +642,7 @@ private:
 
   /// Color the faces with inside/outside information and fix the border.
   template <typename CT, typename VertexParameterizedMap>
-  Error_code prepare_CT_for_parameterization(const CT& ct,
+  Error_code prepare_CT_for_parameterization(CT& ct,
                                              VertexParameterizedMap vpmap) const
   {
     Error_code status = OK;
