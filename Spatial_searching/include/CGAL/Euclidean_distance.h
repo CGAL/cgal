@@ -69,24 +69,44 @@ namespace CGAL {
     inline FT transformed_distance_from_coordinates(const Query_item& q,
       Coord_iterator it_coord_begin, Coord_iterator it_coord_end) const
     {
-      return transformed_distance(q, it_coord_begin, it_coord_end, D());
+      return transformed_distance_from_coordinates(q, it_coord_begin, it_coord_end, D());
     }
 
-    // During the computation, if the partially-computed distance `pcd` gets greater or equal
-    // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
+    // Static dim = 2 loop unrolled
     template <typename Coord_iterator>
-    inline FT interruptible_transformed_distance(const Query_item& q,
-                                   Coord_iterator it_coord_begin, Coord_iterator it_coord_end, 
-                                   FT stop_if_geq_to_this) const 
+    inline FT transformed_distance_from_coordinates(const Query_item& q,
+                                                    Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
+                                                    Dimension_tag<2>) const
     {
-      return transformed_distance(q, it_coord_begin, it_coord_end, stop_if_geq_to_this, D());
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
+      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q);
+      FT distance = square(*qit - *it_coord_begin);
+      qit++; it_coord_begin++;
+      distance += square(*qit - *it_coord_begin);
+      return distance;
     }
 
-    // Dynamic version for runtime dimension, taking iterators on coordinates as parameters
+    // Static dim = 3 loop unrolled
+    template <typename Coord_iterator>
+    inline FT transformed_distance_from_coordinates(const Query_item& q,
+                                                    Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
+                                                    Dimension_tag<3>) const
+    {
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
+      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q);
+      FT distance = square(*qit - *it_coord_begin);
+      qit++; it_coord_begin++;
+      distance += square(*qit - *it_coord_begin);
+      qit++; it_coord_begin++;
+      distance += square(*qit - *it_coord_begin);
+      return distance;
+    }
+
+    // Other cases: static dim > 3 or dynamic dim
     template <typename Coord_iterator, typename Dim>
-    inline FT transformed_distance(const Query_item& q,
-      Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
-      Dim) const
+    inline FT transformed_distance_from_coordinates(const Query_item& q,
+                                                    Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
+                                                    Dim) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
@@ -99,13 +119,12 @@ namespace CGAL {
       return distance;
     }
 
-    // Dynamic version for runtime dimension, taking iterators on coordinates as parameters
     // During the computation, if the partially-computed distance `pcd` gets greater or equal
     // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
-    template <typename Coord_iterator, typename Dim>
-    inline FT transformed_distance(const Query_item& q, 
-                                   Coord_iterator it_coord_begin, Coord_iterator /*unused*/, 
-                                   FT stop_if_geq_to_this, Dim) const
+    template <typename Coord_iterator>
+    inline FT interruptible_transformed_distance(const Query_item& q, 
+                                                 Coord_iterator it_coord_begin, Coord_iterator /*unused*/, 
+                                                 FT stop_if_geq_to_this) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
@@ -146,37 +165,6 @@ namespace CGAL {
       }
       return distance;
     }
-
-    //DIM = 2 loop unrolled
-    template <typename Coord_iterator>
-    inline FT transformed_distance(const Query_item& q, 
-                                   Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
-                                   FT /*unused*/, Dimension_tag<2>) const
-    {
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
-      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q);
-      FT distance = square(*qit - *it_coord_begin);
-      qit++; it_coord_begin++;
-      distance += square(*qit - *it_coord_begin);
-      return distance;
-    }
-
-    //DIM = 3 loop unrolled
-    template <typename Coord_iterator>
-    inline FT transformed_distance(const Query_item& q, 
-                                   Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
-                                   FT /*unused*/, Dimension_tag<3>) const
-    {
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
-      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q);
-      FT distance = square(*qit - *it_coord_begin);
-      qit++; it_coord_begin++;
-      distance += square(*qit - *it_coord_begin);
-      qit++; it_coord_begin++;
-      distance += square(*qit - *it_coord_begin);
-      return distance;
-    }
-
 
 	inline FT min_distance_to_rectangle(const Query_item& q,
 					    const Kd_tree_rectangle<FT,D>& r) const {
