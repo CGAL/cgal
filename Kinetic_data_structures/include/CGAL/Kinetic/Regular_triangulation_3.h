@@ -861,7 +861,7 @@ protected:
       for (typename RCMap::const_iterator it= redundant_cells_.begin();
            it != redundant_cells_.end(); ++it) {
         Point_key pk= it->second;
-        Cell_handle ch= it->first;
+        CGAL_assertion_code(Cell_handle ch= it->first);
         CGAL_assertion(redundant_points_.find(pk) != redundant_points_.end());
         Event_key k= redundant_points_.find(pk)->second;
 
