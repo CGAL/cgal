@@ -112,7 +112,7 @@ bool write_off(const char* fname,
   
   bool is_whitespace(const std::string& s)
   {
-    for(int i=0; i < s.size(); i++){
+    for(unsigned int i=0; i < s.size(); i++){
       if(s[i] != ' ' && s[i] != '\t'){
         return false;
       }
@@ -148,7 +148,6 @@ bool read_off(std::istream& is,
   using namespace internal::read_off;
 
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
   typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
 
