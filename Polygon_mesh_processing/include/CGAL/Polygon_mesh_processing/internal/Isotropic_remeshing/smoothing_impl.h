@@ -50,7 +50,6 @@ public:
     friend bool get(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
     {
         // assertion on pmesh
-        //return map.constrained_edges_ptr->count(e)!=0;
         return map.constrained_edges_ptr->find(e) != map.constrained_edges_ptr->end();
     }
 
@@ -130,7 +129,7 @@ public:
             if(!is_border(v, mesh_) && !is_constrained(v))
             {
 
-#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
 std::cout<<"processing vertex: "<< v << std::endl;
 #endif
 
@@ -146,7 +145,7 @@ std::cout<<"processing vertex: "<< v << std::endl;
                 for(halfedge_descriptor hi : halfedges_around_source(v, mesh_)) // or make it around target
                     he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
-#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
 for(it = he_map.begin(); it!=he_map.end(); ++it)
 {
     halfedge_descriptor main_he = it->first;
@@ -215,12 +214,12 @@ for(it = he_map.begin(); it!=he_map.end(); ++it)
         for(const VP& vp : new_locations)
         {
 
-#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
 std::cout << "from: "<< get(vpmap_, vp.first);
 #endif
             put(vpmap_, vp.first, vp.second);
 
-#ifdef CGAL_ANGLE_BASED_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
 std::cout<<" moved at: "<< vp.second << std::endl;
 #endif
         }
@@ -236,7 +235,7 @@ std::cout<<" moved at: "<< vp.second << std::endl;
         for(vertex_descriptor v : vertices(mesh_))
         {
 
-             if(!is_border(v, mesh_))
+             if(!is_border(v, mesh_) && !is_constrained(v))
              {
 
                  if (gradient_descent(v, precision))
@@ -249,8 +248,10 @@ std::cout<<" moved at: "<< vp.second << std::endl;
 
         }
 
-        //std::cout<<"moved points: "<<moved_points<<" times"<<std::endl;
-        //std::cout<<"non_convex_energy found: "<<count_non_convex_energy_<<" times"<<std::endl;
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+        std::cout<<"moved points: "<<moved_points<<" times"<<std::endl;
+        std::cout<<"non_convex_energy found: "<<count_non_convex_energy_<<" times"<<std::endl;
+#endif
 
     }
 
@@ -388,14 +389,10 @@ private:
         std::vector<double> areas;
         for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
         {
-
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
             vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
             double S = element_area(v, pi, pi1);
-
             areas.push_back(S);
-
-
         }
 
         return areas;
@@ -403,10 +400,8 @@ private:
 
     void compute_derivatives(double& dFdx, double& dFdy, double& dFdz, const vertex_descriptor& v, const double& S_av)
     {
-
         for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
         {
-
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
             vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
             double S = element_area(v, pi, pi1);
@@ -416,19 +411,16 @@ private:
             dFdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
             dFdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
             dFdz += (S - S_av) * 0.5 * (vec.y() - vec.x());
-
         }
 
         dFdx *= 2;
         dFdy *= 2;
         dFdz *= 2;
-
     }
 
     bool gradient_descent(const vertex_descriptor& v, const double& precision)
     {
 
-        double eta = 0.01; //learning rate
         bool move_flag;
         double x, y, z, x_new, y_new, z_new, dFdx, dFdy, dFdz;
         x = get(vpmap_, v).x();
@@ -441,28 +433,34 @@ private:
         // if the adjacent areas are absolutely equal
         if(energy == 0)
             return false;
+
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+        std::ofstream out("data/energy.txt");
+        std::ofstream out("data/coords.txt");
+        std::ofstream out("data/areas.txt");
+#endif
         double energy_new = 0;
+        double relative_energy = precision + 1;
+        unsigned int t = 1;
+        double eta0 = 0.01;
+        double power_t = 0.25;
+        double eta = eta0 / pow(t, power_t);
 
-        //std::ofstream out("data/energy.txt");
-        //std::ofstream out("data/areas.txt");
-
-        double criterion = to_double( (energy - energy_new) / energy );
-
-        while( criterion  > precision )
+        while(relative_energy > precision)
         {
-
+            t++;
             dFdx=0, dFdy=0, dFdz=0;
             compute_derivatives(dFdx, dFdy, dFdz, v, S_av);
 
-            /*
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
             std::vector<double> areas = calc_areas(v);
+            std::cout<<"v= "<<v<<std::endl;
             for(unsigned int i=0; i<areas.size(); ++i)
             {
-                out<<areas[i]<<"\t";
+                std::cout<<areas[i]<<"\t";
             }
-            out<<std::endl;
-            */
-
+            std::cout<<std::endl;
+#endif
 
             x_new = x - eta * dFdx;
             y_new = y - eta * dFdy;
@@ -482,13 +480,15 @@ private:
                 return false;
             }
 
-            criterion = to_double( (energy - energy_new) / energy );
+            relative_energy = to_double( (energy - energy_new) / energy );
 
             // update
             x = x_new;
             y = y_new;
             z = z_new;
             energy = energy_new;
+
+            eta = eta0 / pow(t, power_t);
 
         }
 
