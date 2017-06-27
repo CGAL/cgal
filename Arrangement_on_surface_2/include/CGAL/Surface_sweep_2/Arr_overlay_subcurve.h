@@ -39,23 +39,33 @@ namespace Ss2 = Surface_sweep_2;
  * overlaid one on top of the other. It stores information of the halfedge
  * from the opposite color it "sees" from below, so it can be easily located
  * in the proper place in the resulting arrangement.
+ *
+ * \tparam GeometryTraits_2 the geometry traits.
+ * \tparam Arrangement_ the type of the arrangement that is the resulting
+ *                      arrangement the overlay process.
+ * \tparam Allocator_ a type of an element that is used to acquire/release
+ *                    memory for elements of the event queue and the status
+ *                    structure, and to construct/destroy the elements in that
  */
-template <typename GeometryTraits_2, typename Event_>
+template <typename GeometryTraits_2, typename Event_,
+          typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Arr_overlay_subcurve :
-  public Arr_construction_subcurve<GeometryTraits_2, Event_,
+  public Arr_construction_subcurve<GeometryTraits_2, Event_, Allocator_,
                                    Ss2::Default_subcurve,
                                    Arr_overlay_subcurve<GeometryTraits_2,
-                                                        Event_> >
+                                                        Event_,
+                                                        Allocator_> >
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Event_                                        Event;
+  typedef Allocator_                                    Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_overlay_subcurve<Gt2, Event>              Self;
-  typedef Arr_construction_subcurve<Gt2, Event, Ss2::Default_subcurve, Self>
-                                                        Base;
+  typedef Arr_overlay_subcurve<Gt2, Event, Allocator>   Self;
+  typedef Arr_construction_subcurve<Gt2, Event, Allocator, Ss2::Default_subcurve,
+                                    Self>               Base;
 
 public:
   typedef typename Gt2::Point_2                         Point_2;

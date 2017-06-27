@@ -82,6 +82,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   typedef Arrangement_on_surface_2<Agt2, Att>                   Arr_a;
   typedef Arrangement_on_surface_2<Bgt2, Btt>                   Arr_b;
   typedef Arrangement_on_surface_2<Rgt2, Rtt>                   Arr_res;
+  typedef typename Arr_res::Allocator                           Allocator;
 
   // some type assertions (not all, but better then nothing).
   typedef typename Agt2::Point_2                                A_point;
@@ -99,8 +100,10 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   typedef Arr_traits_basic_adaptor_2<Rgt2>              Gt_adaptor_2;
   typedef Arr_overlay_traits_2<Gt_adaptor_2, Arr_a, Arr_b>
                                                         Ovl_gt2;
-  typedef Arr_overlay_event<Ovl_gt2, Arr_res>           Ovl_event;
-  typedef Arr_overlay_subcurve<Ovl_gt2, Ovl_event>      Ovl_curve;
+  typedef Arr_overlay_event<Ovl_gt2, Arr_res, Allocator>
+                                                        Ovl_event;
+  typedef Arr_overlay_subcurve<Ovl_gt2, Ovl_event, Allocator>
+                                                        Ovl_curve;
   typedef typename TopologyTraitsRes::template
     Overlay_helper<Ovl_gt2, Ovl_event, Ovl_curve, Arr_a, Arr_b>
                                                         Ovl_helper;

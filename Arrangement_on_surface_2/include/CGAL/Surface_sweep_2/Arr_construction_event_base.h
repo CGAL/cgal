@@ -37,18 +37,29 @@ namespace Ss2 = Surface_sweep_2;
 
 /*! \class Arr_construction_event_base
  *
- * Stores the data associated with an event.
- * In addition to the information stored in Surface_sweep_event, when
- * constructing an arrangement, additional information is kept, in
- * order to speed insertion of curves into the planar map.
+ * This template represents an event used by the surface-sweep framework.  It
+ * inherits either from `Default_event_base` (the default) or
+ * 'No_overlap_event_base' depending on whether the curve may overlap or not.
+ * It stores the data associated with an event in addition to the information
+ * stored in its base class. When constructing an arrangement, additional
+ * information is stored, in order to expedite the insertion of curves into the
+ * arrangement.
  *
  * The additional infomation contains the following:
  * - among the left curves of the event, we keep the highest halfedge that
- *   was inserted into the arrangement at any given time and when there no
+ *   was inserted into the arrangement at any given time and when there are no
  *   left curves, we keep the highest halfedge that was inseted to the right.
  *
- * Inherits from `Surface_sweep_event`.
- * \sa `Surface_sweep_event`
+ * \tparam GeometryTraits_2 the geometry traits.
+ * \tparam Allocator_ a type of an element that is used to acquire/release
+ *                    memory for elements of the event queue and the status
+ *                    structure, and to construct/destroy the elements in that
+ *                    memory. The type must meet the requirements of Allocator.
+ * \tparam SurfaceSweepEvent a template, an instance of which is used as the
+ *                           base class.
+ *
+ * \sa `Default_event_base`
+ * \sa `No_overlap_event_base`
  */
 template <typename GeometryTraits_2, typename Subcurve_, typename Arrangement_,
           template <typename, typename>

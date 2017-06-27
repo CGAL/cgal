@@ -33,13 +33,30 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-template <typename GeometryTraits_2, typename Arrangement_>
+/* \class Arr_overlay_event
+ *
+ * This template represents an event used by the surface-sweep framework, where
+ * the input curves for the surface-sweep procedure are extracted from two
+ * arrangements that are overlaid.
+ *
+ * \tparam GeometryTraits_2 the geometry traits.
+ * \tparam Arrangement_ the type of the arrangement that is the resulting
+ *                      arrangement the overlay process.
+ * \tparam Allocator_ a type of an element that is used to acquire/release
+ *                    memory for elements of the event queue and the status
+ *                    structure, and to construct/destroy the elements in that
+ *                    memory. The type must meet the requirements of Allocator.
+ */
+template <typename GeometryTraits_2, typename Arrangement_,
+          typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Arr_overlay_event :
   public Arr_construction_event_base<GeometryTraits_2,
                                      Arr_overlay_subcurve<GeometryTraits_2,
                                                           Arr_overlay_event<
                                                             GeometryTraits_2,
-                                                            Arrangement_> >,
+                                                            Arrangement_,
+                                                            Allocator_>,
+                                                          Allocator_>,
                                      Arrangement_>
 {
 public:

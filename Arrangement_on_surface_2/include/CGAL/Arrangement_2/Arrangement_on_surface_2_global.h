@@ -275,7 +275,8 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   // Surface sweep types
   typedef Arr_construction_event<Gt2, Arr, Allocator>   C_event;
-  typedef Arr_construction_subcurve<Gt2, C_event>       C_curve;
+  typedef Arr_construction_subcurve<Gt2, C_event, Allocator>
+                                                        C_curve;
   typedef typename Tt::template Construction_helper<C_event, C_curve>
                                                         C_helper;
   typedef Arr_construction_sl_visitor<C_helper>         C_visitor;
@@ -329,7 +330,8 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 
   // Surface sweep types
   typedef Arr_construction_event<Gt2, Arr, Allocator>   C_event;
-  typedef Arr_construction_subcurve<Gt2, C_event>       C_curve;
+  typedef Arr_construction_subcurve<Gt2, C_event, Allocator>
+                                                        C_curve;
   typedef typename Tt::template Construction_helper<C_event, C_curve>
                                                         C_helper;
   typedef Arr_construction_sl_visitor<C_helper>         C_visitor;
@@ -381,7 +383,8 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
   // Surface sweep types
   typedef Arr_insertion_traits_2<Gt2, Arr>              Igt2;
   typedef Arr_construction_event<Igt2, Arr, Allocator>  I_event;
-  typedef Arr_construction_subcurve<Igt2, I_event>  I_curve;
+  typedef Arr_construction_subcurve<Igt2, I_event, Allocator>
+                                                        I_curve;
   typedef typename Tt::template Insertion_helper<I_event, I_curve>
                                                         I_helper;
   typedef Arr_insertion_sl_visitor<I_helper>            I_visitor;
@@ -870,7 +873,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
 
   // Surface sweep types
 
-  // The third parameter of Arr_construction_subcurve is the base class of
+  // The forth parameter of Arr_construction_subcurve is the base class of
   // Arr_construction_subcurve. By default Arr_construction_subcurve derives
   // from Default_subcurve, which is suitable for general curves
   // including overlapping curves. Here we bypass Default_subcurve and
@@ -880,7 +883,8 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
                                  Ss2::No_overlap_event_base,
                                  Ss2::No_overlap_subcurve>
                                                         Nxc_event;
-  typedef Arr_construction_subcurve<Gt2, Nxc_event, Ss2::No_overlap_subcurve>
+  typedef Arr_construction_subcurve<Gt2, Nxc_event, Allocator,
+                                    Ss2::No_overlap_subcurve>
                                                         Nxc_curve;
   typedef typename Tt::template No_intersection_construction_helper<Nxc_event,
                                                                     Nxc_curve>
@@ -930,7 +934,8 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
                                  Ss2::No_overlap_event_base,
                                  Ss2::No_overlap_subcurve>
                                                         Nxc_event;
-  typedef Arr_construction_subcurve<Gt2, Nxc_event, Ss2::No_overlap_subcurve>
+  typedef Arr_construction_subcurve<Gt2, Nxc_event, Allocator,
+                                    Ss2::No_overlap_subcurve>
                                                         Nxc_curve;
   typedef typename Tt::template No_intersection_construction_helper<Nxc_event,
                                                                     Nxc_curve>
@@ -982,7 +987,8 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
                                  Ss2::No_overlap_event_base,
                                  Ss2::No_overlap_subcurve>
                                                         Nxi_event;
-  typedef Arr_construction_subcurve<Igt2, Nxi_event, Ss2::No_overlap_subcurve>
+  typedef Arr_construction_subcurve<Igt2, Nxi_event, Allocator,
+                                    Ss2::No_overlap_subcurve>
                                                         Nxi_curve;
   // typedef typename Tt::template No_intersection_insertion_event<Allocator>
   //                                                       Nxi_event;

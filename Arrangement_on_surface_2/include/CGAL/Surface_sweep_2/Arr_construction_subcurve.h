@@ -163,6 +163,7 @@ public:
  * \sa `Surface_sweep_subcurve`
  */
 template <typename GeometryTraits_2, typename Event_,
+          typename Allocator_ = CGAL_ALLOCATOR(int),
           template <typename, typename, typename>
           class SurfaceSweepBaseCurve = Ss2::Default_subcurve,
           typename Subcurve_ = Default>
@@ -172,17 +173,20 @@ class Arr_construction_subcurve :
     SurfaceSweepBaseCurve,
     typename Default::Get<Subcurve_,
                           Arr_construction_subcurve<GeometryTraits_2, Event_,
+                                                    Allocator_,
                                                     SurfaceSweepBaseCurve,
                                                     Subcurve_> >::type>
 {
 public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Event_                                        Event;
+  typedef Allocator_                                    Allocator;
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_construction_subcurve<Gt2, Event, SurfaceSweepBaseCurve,
-                                    Subcurve_>          Self;
+  typedef Arr_construction_subcurve<Gt2, Event, Allocator,
+                                    SurfaceSweepBaseCurve, Subcurve_>
+                                                        Self;
   typedef typename Default::Get<Subcurve_, Self>::type  Subcurve;
   typedef Arr_construction_subcurve_base<Gt2, Event, SurfaceSweepBaseCurve,
                                          Subcurve>      Base;
