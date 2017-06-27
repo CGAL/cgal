@@ -586,17 +586,13 @@ namespace internal {
           Halfedge_status snew = (is_on_patch(hnew) || is_on_patch_border(hnew))
             ? PATCH
             : MESH;
-          // AF: I do not understand why we would call halfedge_added with snew = MESH
-          //     as set_status(,MESH) erases from the set, and status(h) returns MESH 
-          //     in case h is not found
-          // JT: We have to pay attention when recycling faces with potentially a wrong status
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
           set_patch_id(face(hnew2, mesh_), patch_id);
           set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
 
           if (snew == PATCH)
-          {  
+          {
             double sql = sqlength(hnew2);
             if (sql > sq_high)
               long_edges.insert(long_edge(hnew2, sql));
@@ -1966,7 +1962,7 @@ private:
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
-    
+
   };//end class Incremental_remesher
 }//end namespace internal
 }//end namespace Polygon_mesh_processing
