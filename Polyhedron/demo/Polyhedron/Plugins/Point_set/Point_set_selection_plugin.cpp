@@ -252,8 +252,12 @@ protected:
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
       shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
-
+#if QGLVIEWER_VERSION >= 0x020700
+      background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
+#else
       background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
+
+#endif
     }
 
     // mouse events
