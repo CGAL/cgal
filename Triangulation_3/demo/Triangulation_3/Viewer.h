@@ -2,6 +2,7 @@
 #define VIEWER_H
 
 #include "Scene.h"
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
