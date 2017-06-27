@@ -265,7 +265,7 @@ public:
   typedef IGT R;
 
 public:
-  typedef typename Side_of_triangle_mesh<Polyhedron, IGT> Inside_functor;
+  typedef Side_of_triangle_mesh<Polyhedron, IGT>        Inside_functor;
   typedef typename Inside_functor::AABB_tree              AABB_tree_;
   typedef typename AABB_tree_::AABB_traits                AABB_traits;
   typedef typename AABB_tree_::Primitive                  AABB_primitive;
