@@ -252,7 +252,7 @@ private:
     CGAL_precondition(fh_color != 0); // fh must be colored
 
     // look at the three neighbors for potential further spreading
-    for(std::size_t i=0; i<3; ++i)
+    for(int i=0; i<3; ++i)
     {
       // ignore infinite faces and faces that already have a color
       Face_handle neigh_fh = fh->neighbor(i);
