@@ -26,6 +26,8 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/tags.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/predicates/predicates_for_voronoi_intersection_cartesian_2_3.h>
