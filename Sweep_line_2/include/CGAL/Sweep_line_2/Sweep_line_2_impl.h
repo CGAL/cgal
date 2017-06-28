@@ -517,6 +517,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
           xc = *CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front());
         }
         _create_overlapping_curve(xc, c1 , c2, all_leaves_diff, first_parent);
+        CGAL_SL_PRINT_END_EOL("computing intersection (overlap with common ancesters)");
         return;
       }
   }
