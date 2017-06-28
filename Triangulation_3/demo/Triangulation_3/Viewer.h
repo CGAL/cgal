@@ -103,7 +103,7 @@ public:
 #if QGLVIEWER_VERSION >= 0x020700
     update();
 #else
-    updateGL()
+    updateGL();
 
 #endif
 
@@ -205,7 +205,7 @@ public Q_SLOTS:
 #if QGLVIEWER_VERSION >= 0x020700
     update();
 #else
-    updateGL()
+    updateGL();
 
 #endif
   }
@@ -213,7 +213,7 @@ public Q_SLOTS:
                                          #if QGLVIEWER_VERSION >= 0x020700
                                              update();
                                          #else
-                                             updateGL()
+                                             updateGL();
 
                                          #endif
                                            }
@@ -221,7 +221,7 @@ public Q_SLOTS:
                                         #if QGLVIEWER_VERSION >= 0x020700
                                             update();
                                         #else
-                                            updateGL()
+                                            updateGL();
 
                                         #endif
                                           }
@@ -229,7 +229,7 @@ public Q_SLOTS:
                                         #if QGLVIEWER_VERSION >= 0x020700
                                             update();
                                         #else
-                                            updateGL()
+                                            updateGL();
 
                                         #endif
                                           }
@@ -237,7 +237,7 @@ public Q_SLOTS:
                                         #if QGLVIEWER_VERSION >= 0x020700
                                             update();
                                         #else
-                                            updateGL()
+                                            updateGL();
 
                                         #endif
                                           }
@@ -245,7 +245,7 @@ public Q_SLOTS:
                                    #if QGLVIEWER_VERSION >= 0x020700
                                        update();
                                    #else
-                                       updateGL()
+                                       updateGL();
 
                                    #endif
                                      }
@@ -278,7 +278,7 @@ public Q_SLOTS:
 #if QGLVIEWER_VERSION >= 0x020700
     update();
 #else
-    updateGL()
+    updateGL();
 
 #endif
   }

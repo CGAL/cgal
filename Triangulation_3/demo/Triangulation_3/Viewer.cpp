@@ -1803,7 +1803,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
             }
@@ -1825,7 +1825,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
             update();
 #else
-            updateGL()
+            updateGL();
 
 #endif
             break;
@@ -1838,7 +1838,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
             break;
@@ -1860,7 +1860,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
         }
@@ -1903,7 +1903,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
         }//end-if-compute
@@ -1913,7 +1913,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
         // update multiple selection window
         m_rectSel.setBottomRight( event->pos() );
         // redraw
-        //changed(); updateGL();
+        //changed(); updateGL();;
     }//end-if-sel
 
     else if( m_curMode == MOVE && m_isMoving ) {
@@ -1939,7 +1939,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
         }//end-if-compute
 
         // redraw
-        //  changed(); updateGL();
+        //  changed(); updateGL();;
     }//end-if-move
 
     else
@@ -1961,7 +1961,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-ins
@@ -1982,7 +1982,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-inspt
@@ -2002,7 +2002,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-inspt
@@ -2050,7 +2050,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-select
@@ -2083,7 +2083,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
 
@@ -2103,7 +2103,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-findnb
@@ -2134,7 +2134,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-emptysphere
@@ -2164,7 +2164,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-insv
@@ -2191,7 +2191,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-inspt
@@ -2227,7 +2227,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-move
@@ -2269,7 +2269,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-insVertex
@@ -2287,7 +2287,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-escapeIns
@@ -2310,7 +2310,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-del
@@ -2329,7 +2329,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-escapeSel
@@ -2344,7 +2344,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
     }//end-if-showBall
@@ -2358,7 +2358,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
 }
@@ -2445,7 +2445,7 @@ void Viewer::toggleIncremental(bool on) {
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
 }
@@ -2475,7 +2475,7 @@ void Viewer::stopIncremental() {
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
 }
@@ -2540,7 +2540,7 @@ void Viewer::incremental_insert() {
 #if QGLVIEWER_VERSION >= 0x020700
               update();
 #else
-              updateGL()
+              updateGL();
 
 #endif
 }
