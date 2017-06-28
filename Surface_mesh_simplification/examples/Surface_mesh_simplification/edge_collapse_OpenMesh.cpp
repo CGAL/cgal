@@ -20,7 +20,6 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Surface_mesh;
 
 typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
 typedef boost::graph_traits<Surface_mesh>::edge_iterator edge_iterator;
-typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 
 class Constrained_edge_map
 {
@@ -53,36 +52,6 @@ private:
 };
 
 
-class Face_partition_map
-{
-public:
-  typedef boost::read_write_property_map_tag    category;
-  typedef int                                  value_type;
-  typedef int                                  reference;
-  typedef face_descriptor                       key_type;
-
-  Face_partition_map(Surface_mesh& sm)
-    : sm_(sm)
-  {
-    sm_.add_property(constraint);
-  }
-
-  inline friend reference get(const Face_partition_map& em, key_type e)
-  {
-    int i = em.sm_.property(em.constraint,em.sm_.face_handle(e.idx())); 
-    return i;
-  }
-  
-  inline friend void put(const Face_partition_map& em, key_type f, value_type i)
-  {
-    em.sm_.property(em.constraint,em.sm_.face_handle(f.idx())) = i;
-  }
-
-private:
-  Surface_mesh& sm_;
-  OpenMesh::FPropHandleT<int> constraint;
-};
-
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
@@ -90,7 +59,6 @@ int main( int argc, char** argv )
 {
   Surface_mesh surface_mesh;
   Constrained_edge_map constraints_map(surface_mesh);
-  Face_partition_map face_partition_map(surface_mesh);
   if (argc==2)
     OpenMesh::IO::read_mesh(surface_mesh, argv[1]);
   else
@@ -115,11 +83,9 @@ int main( int argc, char** argv )
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
 
-  int r = SMS::parallel_edge_collapse
+  int r = SMS::edge_collapse
             (surface_mesh
-             ,stop
-             , face_partition_map
-             ,1
+            ,stop
              ,CGAL::parameters::halfedge_index_map  (get(CGAL::halfedge_index  ,surface_mesh)) 
                                .vertex_point_map(get(boost::vertex_point, surface_mesh))
                                .edge_is_constrained_map(constraints_map) 
