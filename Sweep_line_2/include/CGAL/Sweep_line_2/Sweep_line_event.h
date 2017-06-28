@@ -155,11 +155,19 @@ public:
         return;
       }
 
-      // Replace the existing curve in case of overlap.
-      // EBEB 2011-10-27: Fixed to detect overlaps correctly
-      if ((curve != *iter) && (curve->has_common_leaf(*iter))) {
+      // Replace the existing curve in case of overlap, only if the set of ancesters
+      // of curve contains the set of ancesters of *iter
+      if ((curve != *iter) && (curve->has_common_leaf(*iter)))
+      {
         //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
-        *iter = curve;
+        if ( curve->number_of_original_curves() > (*iter)->number_of_original_curves() )
+        {
+          CGAL_assertion( curve->are_all_leaves_contained(*iter) );
+          *iter = curve;
+        }
+        else{
+          CGAL_assertion( (*iter)->are_all_leaves_contained(curve) );
+        }
         return;
       }
     }

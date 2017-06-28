@@ -183,6 +183,26 @@ public:
     return (m_orig_subcurve1->is_leaf(s) || m_orig_subcurve2->is_leaf(s));
   }
 
+  /*! Check if other is entirely contained in the hierarchy of subcurves of this*/
+  bool are_all_leaves_contained(Self* other)
+  {
+    std::set<Self*> leaves_of_this;
+    this->template all_leaves<Self>(std::inserter(leaves_of_this, leaves_of_this.begin()));
+    std::vector<Self*> leaves_of_other;
+    other->template all_leaves<Self>(std::back_inserter(leaves_of_other));
+    if (leaves_of_other.size() > leaves_of_this.size())
+      return false;
+    for (typename std::vector<Self*>::iterator it=leaves_of_other.begin();
+                                                   it!=leaves_of_other.end();
+                                                   ++it)
+    {
+      if (leaves_of_this.count(*it)==0)
+        return false;
+    }
+
+    return true;
+  }
+
   /*! Check if the two hierarchies contain the same leaf nodes. */
   bool has_same_leaves(Self* s)
   {
