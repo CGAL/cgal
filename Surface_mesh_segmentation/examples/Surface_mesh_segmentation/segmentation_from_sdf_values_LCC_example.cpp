@@ -56,4 +56,6 @@ int main()
     // This feature is relevant for segmenting the mesh several times with different parameters.
     CGAL::segmentation_from_sdf_values(
       mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
+
+    return EXIT_SUCCESS;
 }
