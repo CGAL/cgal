@@ -190,7 +190,7 @@ namespace internal {
       : patch_ids_map()
     {
 #ifdef SM_FACE_PATCH_ID_PMAP
-      patch_ids_map = const_cast<PM&>(pmesh).add_property_map<face_descriptor,Patch_id>("f:pid").first;
+      patch_ids_map = const_cast<PM&>(pmesh). template add_property_map<face_descriptor,Patch_id>("f:pid").first;
       PMP::connected_components(pmesh,
         patch_ids_map,
         PMP::parameters::edge_is_constrained_map(ecmap)
@@ -282,7 +282,7 @@ namespace internal {
 
     friend type get_status_pmap(const Self&, Surface_mesh<Point>& sm)
     {
-      return sm.add_property_map<halfedge_descriptor, Halfedge_status>("halfedge_status_map", MESH).first;
+      return sm. template add_property_map<halfedge_descriptor, Halfedge_status>("halfedge_status_map", MESH).first;
     }
   };
 
