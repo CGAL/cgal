@@ -87,7 +87,7 @@ bool write_off(const char* fname,
 }
 
 
-  namespace internal { namespace read_off {
+  namespace internal { namespace read_off_tools {
   
   bool is_whitespace(const std::string& s)
   {
@@ -124,7 +124,7 @@ template <typename FaceGraph>
 bool read_off(std::istream& is,
               FaceGraph& g)
 {
-  using namespace internal::read_off;
+  using namespace internal::read_off_tools;
 
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
