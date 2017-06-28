@@ -532,9 +532,10 @@ who worked as an engineer at Inria Sophia-Antipolis under the supervision of
 Pierre Alliez and Bruno Lévy. Bruno Lévy added OpenNL support to the package.
 
 For CGAL 4.11, the package has undergone a major rewrite by Andreas Fabri and
-Mael Rouxel-Labbé. The Orbifold Tutte Embedding and As-Rigid-As-Possible
-parameterization techniques were added and all algorithms are now based on
-the `FaceGraph` API. Additionally, the class `Seam_mesh` was introduced to handle
+Mael Rouxel-Labbé. The As-Rigid-As-Possible parameterization technique was added
+and all algorithms are now based on the `FaceGraph` API. The Orbifold Tutte Embedding
+parameterization technique was also added with the help of its authors, Noam Aigerman
+and Yaron Lipman. Finally, the class `Seam_mesh` was introduced to handle
 virtual borders. The class `Seam_mesh` is also a model of a `FaceGraph`,
 and replaces a wrapper which had a more complicated API.
 
