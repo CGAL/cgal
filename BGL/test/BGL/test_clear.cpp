@@ -16,7 +16,7 @@ void test() {
   assert(num_vertices(m) == 0);
   assert(num_faces(m) == 0);
   assert(num_edges(m) == 0);
-  assert(is_valid(m));
+  assert(CGAL::is_valid(m));
 }
 
 int main()
