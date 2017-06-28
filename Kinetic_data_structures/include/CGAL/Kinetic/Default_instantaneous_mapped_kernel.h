@@ -381,11 +381,6 @@ public:
     };
 
     template<typename F>
-    struct result<F(Weighted_point_3)> {
-      typedef const Point_3& type;
-    };
-
-    template<typename F>
     struct result<F(Point_3)> {
       typedef const Point_3& type;
     };
