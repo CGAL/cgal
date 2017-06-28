@@ -87,19 +87,30 @@ public:
 
 // overloads and specializations in the boost namespace
 namespace boost {
-#if 1
+
 template <typename Point, typename T>
 struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
-  typedef typename SM:: template Property_map<typename SM::vertex_index,T> type;
+  typedef typename SM:: template Property_map<typename SM::Vertex_index,T> type;
   typedef type const_type;
 };
 
+template <typename Point, typename T>
+struct property_map<CGAL::Surface_mesh<Point>, boost::face_property_t<T> >
+{
+  typedef CGAL::Surface_mesh<Point> SM;
+  typedef typename SM:: template Property_map<typename SM::Face_index,T> type;
+  typedef type const_type;
+};
 
-#endif
-
-
+template <typename Point, typename T>
+struct property_map<CGAL::Surface_mesh<Point>, boost::edge_property_t<T> >
+{
+  typedef CGAL::Surface_mesh<Point> SM;
+  typedef typename SM:: template Property_map<typename SM::Edge_index,T> type;
+  typedef type const_type;
+};
 //
 // edge_weight
 //
