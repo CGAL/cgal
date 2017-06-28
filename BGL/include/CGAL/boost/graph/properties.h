@@ -64,6 +64,29 @@ enum face_external_index_t   { face_external_index   } ;
     T t;
   };
 
+
+  template <typename T>
+  struct edge_property_t
+  {
+    edge_property_t(const std::string s, const T& t = T())
+      : s(s), t(t)
+    {}
+    std::string s;
+    T t;
+  };
+
+
+  template <typename T>
+  struct face_property_t
+  {
+    face_property_t(const std::string s, const T& t = T())
+      : s(s), t(t)
+    {}
+    std::string s;
+    T t;
+  };
+
+
 template<typename Graph, typename PropertyTag>
 struct graph_has_property : CGAL::Tag_false {};
   
