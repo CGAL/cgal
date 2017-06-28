@@ -558,6 +558,24 @@ add(boost::vertex_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
   return internal::Dynamic_polyhedron_property_map<SM,vertex_descriptor,V>(V());
 }
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
+typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::edge_property_t<V> >::const_type
+add(boost::edge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
+{
+  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
+  typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
+  return internal::Dynamic_polyhedron_property_map<SM,edge_descriptor,V>(V());
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
+typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::face_property_t<V> >::const_type
+add(boost::face_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
+{
+  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
+  typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
+  return internal::Dynamic_polyhedron_property_map<SM,face_descriptor,V>(V());
+}
+
   template <typename Pmap, class Gt, class I, CGAL_HDS_PARAM_, class A>
 void remove(Pmap pm, Polyhedron_3<Gt, I, HDS, A>&)
 {
