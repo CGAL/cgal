@@ -106,6 +106,10 @@ public:
 
   Subcurve* originating_subcurve2() { return m_orig_subcurve2; }
 
+  const Subcurve* originating_subcurve1() const { return m_orig_subcurve1; }
+
+  const Subcurve* originating_subcurve2() const { return m_orig_subcurve2; }
+
   /*! Set the subcurves that originate an overlap. */
   void set_originating_subcurve1(Subcurve* orig_subcurve1)
   { m_orig_subcurve1 = orig_subcurve1; }
