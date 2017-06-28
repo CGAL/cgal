@@ -21,12 +21,8 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 int main(int argc, char** argv )
 {
   Mesh mesh;
-  std::vector<vertex_descriptor> V;
-  V.push_back(add_vertex(mesh));
-  V.push_back(add_vertex(mesh));
-  V.push_back(add_vertex(mesh));
-  add_face(V.begin(), V.end(), mesh);
-
+  CGAL::make_triangle(Point_3(0,0,0),Point_3(1,0,0),Point_3(1,1,0),mesh);
+  
   typedef boost::property_map<Mesh, boost::vertex_property_t<int> >::type VIM;
   VIM vim = add(boost::vertex_property_t<int>("index"), mesh); 
   put(vim, *(vertices(mesh).first), 7812);
