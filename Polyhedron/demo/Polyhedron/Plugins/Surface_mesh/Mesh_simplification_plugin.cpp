@@ -181,7 +181,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       {
         CGAL::Surface_mesh_simplification::Bounded_normal_change_placement
           <CGAL::Surface_mesh_simplification::LindstromTurk_placement
-           <Polyhedron> > placement;
+           <FaceGraph> > placement;
         
         CGAL::Surface_mesh_simplification::edge_collapse
           (pmesh, stop,
