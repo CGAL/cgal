@@ -354,7 +354,7 @@ Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz.
 The program has been compiled with Visual C++ 2013 compiler with the O2
 option which maximizes speed.
 
-\cgalFigureBegin{Elephants, elephants-with-hole.png}
+\cgalFigureBegin{Elephants, elephants-with-holes.png}
 The elephant on the left/right has a hole with 963/7657 vertices.
 \cgalFigureEnd
 
