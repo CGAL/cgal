@@ -622,8 +622,6 @@ public Q_SLOTS:
                              tr("Degenerated faces have been detected. Problems may occur "
                                 "for operations other tha \"Move point\". "));
       }
-      ui_widget.selectionOrEuler->setVisible(false);
-      ui_widget.edition_groupBox->setVisible(true);
       Q_EMIT save_handleType();
       on_editionBox_changed(ui_widget.editionBox->currentIndex());
       break;
