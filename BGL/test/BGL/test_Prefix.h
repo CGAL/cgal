@@ -148,7 +148,6 @@ std::vector<T> t_data()
     T& s = vs.back();
     if(!read_a_mesh(s, std::string(data[i])))
       throw std::runtime_error(std::string("Failed to read test data: ") + data[i]);
-    assert(s.is_valid());
   }
 
   return vs;
