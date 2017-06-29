@@ -20,6 +20,7 @@
 #ifndef CGAL_BOOST_GRAPH_IO_H
 #define CGAL_BOOST_GRAPH_IO_H
 
+#include <boost/container/flat_map.hpp> // In first to avoid bug #12534 for boost 1.62 (?)
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <iostream>
@@ -28,7 +29,6 @@
 #include <fstream>
 #include <string>
 #include <boost/foreach.hpp>
-#include <boost/container/flat_map.hpp>
 
 namespace CGAL {
 
