@@ -200,7 +200,7 @@ public:
 
 #ifdef CGAL_SL_VERBOSE
 template <typename Gt2, typename Evt, typename Allocator, typename Scv>
-void No_overlap_subcurve<Traits>::Print() const
+void No_overlap_subcurve<Gt2, Evt, Allocator, Scv>::Print() const
 { std::cout << "Curve " << this << "  (" << last_curve() << ") "; }
 #endif
 

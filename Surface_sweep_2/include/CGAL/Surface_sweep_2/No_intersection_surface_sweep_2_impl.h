@@ -661,8 +661,14 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
   // looked for it.
   if (! exist) m_queue->insert_before(pair_res.first, e);
 
-  if (! exist) CGAL_SL_PRINT_NEW_EVENT(pt, e);
-  else CGAL_SL_PRINT_UPDATE_EVENT(pt, e);
+#ifdef CGAL_SL_VERBOSE
+  if (! exist) {
+    CGAL_SL_PRINT_NEW_EVENT(pt, e);
+  }
+  else {
+    CGAL_SL_PRINT_UPDATE_EVENT(pt, e);
+  }
+#endif
 
   // Return the resulting event and a flag indicating whether we have created
   // a new event.

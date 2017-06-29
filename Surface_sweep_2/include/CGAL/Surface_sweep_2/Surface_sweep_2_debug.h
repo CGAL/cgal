@@ -30,10 +30,9 @@ namespace Surface_sweep_2 {
 //                         DEBUG UTILITIES                                //
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-print_text(const char* text, bool do_eol)
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::print_text(const char* text,
+                                                      bool do_eol)
 {
   if (m_need_indent)
     for (uint8_t i = m_indent_size; i != 0; --i) std::cout << " ";
@@ -42,30 +41,24 @@ print_text(const char* text, bool do_eol)
   if (do_eol) print_eol();
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::print_eol()
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::print_eol()
 {
   std::cout << std::endl;
   m_need_indent = true;
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-increase_indent()
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::increase_indent()
 { m_indent_size += 2; }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-decrease_indent()
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::decrease_indent()
 { m_indent_size -= 2; }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-print_start(const char* name, bool do_eol)
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::print_start(const char* name,
+                                                       bool do_eol)
 {
   print_text("Start ");
   print_text(name);
@@ -73,10 +66,9 @@ print_start(const char* name, bool do_eol)
   increase_indent();
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-print_end(const char* name, bool do_eol)
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::print_end(const char* name,
+                                                     bool do_eol)
 {
   decrease_indent();
   print_text("End ");
@@ -84,10 +76,8 @@ print_end(const char* name, bool do_eol)
   if (do_eol) print_eol();
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-print_curve(const Base_subcurve* sc)
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::print_curve(const Subcurve* sc)
 {
   if (m_need_indent)
     for (uint8_t i = m_indent_size; i != 0; --i) std::cout << " ";
@@ -95,10 +85,8 @@ print_curve(const Base_subcurve* sc)
   m_need_indent = false;
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-PrintEventQueue()
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::PrintEventQueue()
 {
   print_text("Event queue: ", true);
   Event_queue_iterator iter = m_queue->begin();
@@ -109,20 +97,16 @@ PrintEventQueue()
   CGAL_SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-PrintSubCurves()
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::PrintSubCurves()
 {
   print_text("Sub curves: ", true);
   for (size_t i = 0; i < m_num_of_subCurves; ++i) m_subCurves[i].Print();
   print_eol();
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-PrintStatusLine()
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::PrintStatusLine()
 {
   if (m_statusLine.size() == 0) {
     print_text("Status line: empty", true);
@@ -149,9 +133,8 @@ PrintStatusLine()
   print_eol();
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::
 PrintOpenBoundaryType(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
   switch (ps_x) {
@@ -169,10 +152,8 @@ PrintOpenBoundaryType(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   }
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-PrintEvent(const Event* e)
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::PrintEvent(const Event* e)
 {
   if (e->is_closed()) std::cout << e->point();
   else {
@@ -183,10 +164,8 @@ PrintEvent(const Event* e)
   }
 }
 
-template <typename Tr, typename Visit, typename Crv, typename Evnt,
-          typename Alloc>
-void No_intersection_surface_sweep_2<Tr, Visit, Crv, Evnt, Alloc>::
-print_event_info(const Event* e)
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::print_event_info(const Event* e)
 {
   print_text("Event Info: ");
   PrintEvent(e);
