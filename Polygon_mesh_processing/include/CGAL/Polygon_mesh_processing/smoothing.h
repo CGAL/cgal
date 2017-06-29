@@ -77,7 +77,7 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
     double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.001);
 
     //use weighted angles
-    bool use_weights = choose_param(get_param(np, internal_np::use_weights), true);
+    bool use_weights = choose_param(get_param(np, internal_np::use_weights), false);
 
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
