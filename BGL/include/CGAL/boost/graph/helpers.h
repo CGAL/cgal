@@ -27,6 +27,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
 #include <CGAL/function_objects.h>
+#include <boost/unordered_set.hpp>
 
 
 namespace CGAL {
@@ -1174,7 +1175,99 @@ bool is_empty(const FaceGraph& g)
   return boost::empty(vertices(g));
 }
 
+/**
+ * \ingroup PkgBGLHelperFct
+ *
+ * Expands a selection of faces so that when they are removed,
+ * `tm` stays manifold.
+ *
+ * @tparam TriangleMesh a model of `MutableFaceGraph` that is triangulated.
+ * @tparam FaceRange a range of `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ * @tparam  IsSelectedPropertyMap a a model of `ReadWritePropertyMap` with
+ * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `bool` as value.
+ *
+ * @param tm the mesh of interest.
+ * @param faces_to_be_deleted a range of faces that will be deleted
+ * @param is_selected a property map containing the selected-or-not status of each face of pmesh.
+ * It will be modified if the face selection must be expanded.
+ *
+ **/
+template<class TriangleMesh, class FaceRange, class IsSelectedPropertyMap>
+void expand_face_selection_for_removal(TriangleMesh& tm,
+                                       const FaceRange& faces_to_be_deleted,
+                                       IsSelectedPropertyMap is_selected)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
+  boost::unordered_set<vertex_descriptor> vertices_to_be_deleted;
+
+  // collect vertices belonging to at least a triangle that will be removed
+  BOOST_FOREACH(face_descriptor fd, faces_to_be_deleted)
+  {
+    halfedge_descriptor h = halfedge(fd, tm);
+    vertices_to_be_deleted.insert( target(h, tm) );
+    vertices_to_be_deleted.insert( target(next(h, tm), tm) );
+    vertices_to_be_deleted.insert( target(prev(h, tm), tm) );
+  }
+
+  while (!vertices_to_be_deleted.empty())
+  {
+    vertex_descriptor vd = *vertices_to_be_deleted.begin();
+    vertices_to_be_deleted.erase( vertices_to_be_deleted.begin() );
+
+    // set hd to the last selected face of a connected component
+    // of selected faces around a vertex
+    halfedge_descriptor hd = halfedge(vd, tm);
+    while( !get(is_selected, face(hd, tm)) )
+    {
+      hd = opposite( next(hd, tm), tm);
+      CGAL_assertion( hd != halfedge(vd, tm) );
+    }
+    halfedge_descriptor start = hd;
+    halfedge_descriptor next_around_vertex = opposite( next(hd, tm), tm);
+    while( get(is_selected, face(next_around_vertex, tm) ) )
+    {
+      hd = next_around_vertex;
+      next_around_vertex = opposite( next(hd, tm), tm);
+      if (hd==start) break;
+    }
+    if ( get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
+
+    while( true )
+    {
+      // collect non-selected faces
+      std::vector<face_descriptor> faces_traversed;
+      do
+      {
+        faces_traversed.push_back(face(next_around_vertex, tm));
+        next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+      }
+      while( !get(is_selected, face(next_around_vertex, tm) ) );
+
+      // go over the connected components of faces to remove
+      do{
+        if (next_around_vertex==start)
+          break;
+        next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+      }
+      while( get(is_selected, face(next_around_vertex, tm) ) );
+
+      if (next_around_vertex==start)
+        break;
+
+      BOOST_FOREACH(face_descriptor fd, faces_traversed)
+      {
+        put(is_selected, fd, true);
+        halfedge_descriptor f_hd = halfedge(fd, tm);
+        vertices_to_be_deleted.insert( target(f_hd, tm) );
+        vertices_to_be_deleted.insert( target( next(f_hd, tm), tm) );
+        vertices_to_be_deleted.insert( target( prev(f_hd, tm), tm) );
+      }
+    }
+  }
+}
 } // namespace CGAL
 
 // Include "Euler_operations.h" at the end, because its implementation
