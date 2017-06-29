@@ -23,6 +23,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL {
 
@@ -521,6 +522,100 @@ reduce_vertex_selection(
   return out;
 }
 
+/**
+ * \ingroup PkgBGLSelectionFct
+ *
+ * Expands a selection of faces so that their removal does not create non manifold vertex.
+ *
+ * @tparam TriangleMesh a model of `FaceGraph` that is triangulated.
+ * @tparam FaceRange a range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
+ * with an iterator type model of `ForwardIterator`.
+ * @tparam  IsSelectedMap a model of `ReadWritePropertyMap` with
+ * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `bool` as value.
+
+ * @param tm the triangle mesh.
+ * @param faces_to_be_deleted the range of selected faces.
+ * @param is_selected a property map containing the selected-or-not status of each face of `tm`.
+ * It must associate `true` to each face of `faces_to_be_deleted` and `false` to any other face of `tm`.
+ * It will be modified if the face selection must be expanded.
+ *
+ **/
+template<class TriangleMesh, class FaceRange, class IsSelectedMap>
+void expand_face_selection_for_removal(TriangleMesh& tm,
+                                       const FaceRange& faces_to_be_deleted,
+                                       IsSelectedMap is_selected)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  boost::unordered_set<vertex_descriptor> vertices_to_be_deleted;
+
+  // collect vertices belonging to at least a triangle that will be removed
+  BOOST_FOREACH(face_descriptor fd, faces_to_be_deleted)
+  {
+    halfedge_descriptor h = halfedge(fd, tm);
+    vertices_to_be_deleted.insert( target(h, tm) );
+    vertices_to_be_deleted.insert( target(next(h, tm), tm) );
+    vertices_to_be_deleted.insert( target(prev(h, tm), tm) );
+  }
+
+  while (!vertices_to_be_deleted.empty())
+  {
+    vertex_descriptor vd = *vertices_to_be_deleted.begin();
+    vertices_to_be_deleted.erase( vertices_to_be_deleted.begin() );
+
+    // set hd to the last selected face of a connected component
+    // of selected faces around a vertex
+    halfedge_descriptor hd = halfedge(vd, tm);
+    while( !get(is_selected, face(hd, tm)) )
+    {
+      hd = opposite( next(hd, tm), tm);
+      CGAL_assertion( hd != halfedge(vd, tm) );
+    }
+    halfedge_descriptor start = hd;
+    halfedge_descriptor next_around_vertex = opposite( next(hd, tm), tm);
+    while( get(is_selected, face(next_around_vertex, tm) ) )
+    {
+      hd = next_around_vertex;
+      next_around_vertex = opposite( next(hd, tm), tm);
+      if (hd==start) break;
+    }
+    if ( get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
+
+    while( true )
+    {
+      // collect non-selected faces
+      std::vector<face_descriptor> faces_traversed;
+      do
+      {
+        faces_traversed.push_back(face(next_around_vertex, tm));
+        next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+      }
+      while( !get(is_selected, face(next_around_vertex, tm) ) );
+
+      // go over the connected components of faces to remove
+      do{
+        if (next_around_vertex==start)
+          break;
+        next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+      }
+      while( get(is_selected, face(next_around_vertex, tm) ) );
+
+      if (next_around_vertex==start)
+        break;
+
+      BOOST_FOREACH(face_descriptor fd, faces_traversed)
+      {
+        put(is_selected, fd, true);
+        halfedge_descriptor f_hd = halfedge(fd, tm);
+        vertices_to_be_deleted.insert( target(f_hd, tm) );
+        vertices_to_be_deleted.insert( target( next(f_hd, tm), tm) );
+        vertices_to_be_deleted.insert( target( prev(f_hd, tm), tm) );
+      }
+    }
+  }
+}
 } //end of namespace CGAL
 
 #endif //CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H

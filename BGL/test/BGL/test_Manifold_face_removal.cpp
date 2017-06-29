@@ -8,8 +8,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/helpers.h>
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
@@ -43,10 +43,18 @@ int main()
                                     faces_to_remove,
                                     boost::make_assoc_property_map(is_selected_map));
 
+  index=0;
   BOOST_FOREACH(Polyhedron::Face_handle fh, faces(poly))
   {
     if (is_selected_map[fh])
-    CGAL::Euler::remove_face(fh->halfedge(), poly);
+    {
+      CGAL::Euler::remove_face(fh->halfedge(), poly);
+      ++index;
+    }
   }
+
+  CGAL_assertion(index == 25);
+  CGAL_assertion(is_valid(poly));
   return 0;
 }
+

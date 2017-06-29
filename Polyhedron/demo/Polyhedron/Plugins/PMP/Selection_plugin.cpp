@@ -27,7 +27,6 @@
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-#include <CGAL/boost/graph/helpers.h>
 #include <Scene.h>
 
 #ifdef USE_SURFACE_MESH
