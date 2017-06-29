@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>316</width>
+    <height>338</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,21 +23,21 @@
          <string>Statistics</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="6" column="1">
+         <item row="7" column="1">
           <widget class="QLabel" name="maxLabel">
            <property name="text">
             <string>max</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="QLabel" name="lDecildeLabel">
            <property name="text">
             <string>last decile</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Minimum Distance:</string>
@@ -47,7 +47,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
             <string>Last Decile:</string>
@@ -57,21 +57,21 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QLabel" name="fDecileLabel">
            <property name="text">
             <string>first decile</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="1" column="1">
           <widget class="QLabel" name="minLabel">
            <property name="text">
             <string>min</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
             <string>Maximum Distance:</string>
@@ -81,7 +81,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
             <string>First Decile:</string>
@@ -91,7 +91,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>Median Distance:</string>
@@ -101,10 +101,20 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QLabel" name="medianLabel">
            <property name="text">
             <string>median</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QPushButton" name="pushButton">
+           <property name="toolTip">
+            <string>Creates a new colored point set. The further a point is from the mesh, the darker it is displayed.</string>
+           </property>
+           <property name="text">
+            <string>Compute Distance</string>
            </property>
           </widget>
          </item>
@@ -119,6 +129,47 @@
         <zorder>maxLabel</zorder>
         <zorder>label_5</zorder>
         <zorder>medianLabel</zorder>
+        <zorder>pushButton</zorder>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Selection</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,0">
+           <item row="0" column="1">
+            <widget class="QDoubleSpinBox" name="distance_spinbox">
+             <property name="toolTip">
+              <string>Points further than this distance will be selected.</string>
+             </property>
+             <property name="decimals">
+              <number>6</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="select_button">
+             <property name="toolTip">
+              <string>Selects the points that are further than the threshold.</string>
+             </property>
+             <property name="text">
+              <string>Select </string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Threshold:</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
@@ -133,30 +184,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>Compute Distance</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
      </layout>
     </item>

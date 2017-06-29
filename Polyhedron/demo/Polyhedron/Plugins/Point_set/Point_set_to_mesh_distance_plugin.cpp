@@ -176,8 +176,33 @@ public:
     addDockWidget(dock_widget);
     connect(dock_widget->pushButton, SIGNAL(clicked(bool)),
             this, SLOT(perform()));
+    connect(dock_widget->select_button, SIGNAL(clicked(bool)),
+            this, SLOT(select()));
   }
 private Q_SLOTS:
+
+  void select()
+  {
+    Scene_points_with_normal_item* item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!item ||
+       !item->point_set()->has_property_map<double>("distance"))
+    {
+      messageInterface->warning("You must select the resulting point set.");
+      return;
+    }
+    PMap distance_map;
+     boost::tie (distance_map, boost::tuples::ignore) = item->point_set()->property_map<double>("distance");
+   double distance = dock_widget->distance_spinbox->value();
+   for (Point_set::iterator it = item->point_set()->begin();
+        it != item->point_set()->end(); ++ it)
+   {
+     if(distance <= distance_map[*it])
+       item->point_set()->select(it);
+   }
+   item->invalidateOpenGLBuffers();
+   item->itemChanged();
+  }
   void perform()
   {
     Scene_polyhedron_item* poly = NULL;
@@ -197,14 +222,16 @@ private Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item(*pn);
     Color_ramp thermal_ramp;
-    thermal_ramp.build_thermal();
-    Fcolor_map fred_map;
-    Fcolor_map fgreen_map;
-    Fcolor_map fblue_map;
+    thermal_ramp.build_blue();
+    PMap distance_map;
+    PMap fred_map;
+    PMap fgreen_map;
+    PMap fblue_map;
 
-    bool r, g, b;
+    bool d, r, g, b;
     new_item->point_set()->remove_colors();
-    //bind color pmaps
+    //bind pmaps
+    boost::tie(distance_map  , d) = new_item->point_set()->add_property_map<double>("distance",0);
     boost::tie(fred_map  , r) = new_item->point_set()->add_property_map<double>("red",0);
     boost::tie(fgreen_map, g)  = new_item->point_set()->add_property_map<double>("green",0);
     boost::tie(fblue_map , b)  = new_item->point_set()->add_property_map<double>("blue",0);
@@ -228,6 +255,7 @@ private Q_SLOTS:
       fred_map[*it] = thermal_ramp.r(d) ;
       fgreen_map[*it] =  thermal_ramp.g(d);
       fblue_map[*it] = thermal_ramp.b(d);
+      distance_map[*it] = distances[id];
       ++id;
     }
     std::sort(distances.begin(), distances.end());
@@ -236,11 +264,13 @@ private Q_SLOTS:
     dock_widget->fDecileLabel->setText(QString("%1").arg(distances[distances.size()/10]));
     dock_widget->lDecildeLabel->setText(QString("%1").arg(distances[9*distances.size()/10]));
     dock_widget->medianLabel->setText(QString("%1").arg(distances[distances.size()/2]));
+    dock_widget->distance_spinbox->setValue(distances[distances.size()/2]);
+    new_item->setPointSize(7);
     new_item->invalidateOpenGLBuffers();
     new_item->itemChanged();
     pn->setVisible(false);
     new_item->setName(tr("%1 (distance)").arg(pn->name()));
-    scene->addItem(new_item);
+    scene->setSelectedItem(scene->addItem(new_item));
 
     QApplication::restoreOverrideCursor();
   }
@@ -260,7 +290,7 @@ private:
   QList<QAction*> _actions;
   Messages_interface* messageInterface;
   DistanceWidget* dock_widget;
-  typedef Point_set::Property_map<double> Fcolor_map;
+  typedef Point_set::Property_map<double> PMap;
 
 };
 
