@@ -43,14 +43,10 @@ int main()
                                     faces_to_remove,
                                     boost::make_assoc_property_map(is_selected_map));
 
-  index = 0;
   BOOST_FOREACH(Polyhedron::Face_handle fh, faces(poly))
   {
     if (is_selected_map[fh])
-      std::cout << " " << index;
     CGAL::Euler::remove_face(fh->halfedge(), poly);
-    ++index;
   }
-  std::cout << "\n";
   return 0;
 }

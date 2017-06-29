@@ -1178,24 +1178,25 @@ bool is_empty(const FaceGraph& g)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * Expands a selection of faces so that when they are removed,
- * `tm` stays manifold.
+ * Expands a selection of faces so that their removal does not create non manifold vertex.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph` that is triangulated.
- * @tparam FaceRange a range of `boost::graph_traits<TriangleMesh>::%face_descriptor`
- * @tparam  IsSelectedPropertyMap a a model of `ReadWritePropertyMap` with
+ * @tparam FaceRange a range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
+ * with an iterator type model of `ForwardIterator`.
+ *
+ * @tparam  IsSelectedMap a a model of `ReadWritePropertyMap` with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `bool` as value.
  *
  * @param tm the mesh of interest.
  * @param faces_to_be_deleted a range of faces that will be deleted
- * @param is_selected a property map containing the selected-or-not status of each face of pmesh.
+ * @param is_selected a property map containing the selected-or-not status of each face of `tm`.
  * It will be modified if the face selection must be expanded.
  *
  **/
-template<class TriangleMesh, class FaceRange, class IsSelectedPropertyMap>
+template<class TriangleMesh, class FaceRange, class IsSelectedMap>
 void expand_face_selection_for_removal(TriangleMesh& tm,
                                        const FaceRange& faces_to_be_deleted,
-                                       IsSelectedPropertyMap is_selected)
+                                       IsSelectedMap is_selected)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
