@@ -320,7 +320,7 @@ results in a self intersection when one edge is collapsed using the Lindstrom-Tu
 Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While the normals of `f1`and `f2` are almost equal, they are opposed after the edge collapse.
 \cgalFigureEnd
 
-The class `Bounded_normal_change_placement` is a placement that checks if
+The class `Surface_mesh_simplification::Bounded_normal_change_placement` is a placement that checks if
 another placement would invert the normal of a face around the stars of the
 two vertices of an edge that is candidate for an edge collapse.  It then
 rejects this placement by returning `boost::none`.
