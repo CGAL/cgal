@@ -46,7 +46,7 @@ public:
   typedef Subcurve_                                     Subcurve;
   typedef typename Subcurve::Allocator                  Allocator;
 
-private:
+protected:
   typedef Geometry_traits_2                             Gt2;
 
 public:
@@ -61,6 +61,11 @@ public:
   typedef Unique_hash_map<Halfedge_handle, Indices_list>
     Halfedge_indices_map;
 
+  // The following should be private. It is declared protected toas a
+  // workaround to a problem with VC. (At least VC 14 exhibits this problem).
+  // When declared private, VC claims that Gt2 is private (within
+  // Arr_spherical_construction_helper; thus, it cannot be access by
+  // Arr_spherical_construction_helper.
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
 

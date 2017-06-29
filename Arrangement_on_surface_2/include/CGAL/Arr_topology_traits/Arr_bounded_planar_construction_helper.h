@@ -46,7 +46,12 @@ public:
   typedef Subcurve_                                     Subcurve;
   typedef typename Subcurve::Allocator                  Allocator;
 
-private:
+  // The following should be private. It is declared 'protected' as a
+  // workaround to a problem with VC. (At least VC 14 exhibits this problem).
+  // When declared private, VC claims that Gt2 is private (within
+  // Arr_bounded_planar_construction_helper); thus, it cannot be access by
+  // Arr_bounded_planar_construction_helper.
+protected:
   typedef Geometry_traits_2                             Gt2;
 
 public:
