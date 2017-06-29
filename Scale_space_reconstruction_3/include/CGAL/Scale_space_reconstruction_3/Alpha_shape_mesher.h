@@ -232,7 +232,7 @@ public:
 
     for (Facet_iterator it = _surface.begin(); it != _surface.end(); ++ it)
     {
-      Facet t = *it;
+      // Facet t = *it;
       cpp11::array<std::size_t, 3> f = {{ std::size_t((*it)[0]), std::size_t((*it)[1]), std::size_t((*it)[2]) }};
       *(output ++) = f;
     }
