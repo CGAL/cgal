@@ -50,8 +50,8 @@ void run(const char* filename1, const char* filename2, const char* msg)
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/XXXXXXX.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/XXXXXXX.off";
+  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
+  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
 
   run<Mesh>(filename1,filename2,"Surface_mesh");
   run<Polyhedron>(filename1,filename2,"Polyhedron_3");
