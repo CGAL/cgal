@@ -172,8 +172,10 @@ for(it = he_map.begin(); it!=he_map.end(); ++it)
 
                     // calculate angle
                     double angle = get_angle(incident_pair, vn);
+                    if(angle < 1e-5) // temp
+                        continue;
 
-                    //small angles to have more weight
+                    //small angles have more weight
                     double weight = 1.0 / (angle*angle);
                     opposite_weight_factor += weight;
 
@@ -183,7 +185,8 @@ for(it = he_map.begin(); it!=he_map.end(); ++it)
                         move += rotated_edge;
                 }
 
-                if(use_weights)
+                // if at least 1 angle was summed
+                if(use_weights && opposite_weight_factor != 0)
                     move /= opposite_weight_factor;
                 else
                     move /= CGAL::to_double(he_map.size());
@@ -398,7 +401,7 @@ private:
         return areas;
     }
 
-    void compute_derivatives(double& dFdx, double& dFdy, double& dFdz, const vertex_descriptor& v, const double& S_av)
+    void compute_derivatives(double& drdx, double& drdy, double& drdz, const vertex_descriptor& v, const double& S_av)
     {
         for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
         {
@@ -412,23 +415,23 @@ private:
             // r = Σ(S-S_av)^2
             // dr/dx = 2 Σ(S - S_av) dS/dx
             // area of triangle with respect to (x_a, y_a, z_a) =
-            // (v_z - v_y)x_a + (v_x - v_z)y_a + (y_y - v_x)z_a + constants
+            // (1/2) [(v_z - v_y)x_a + (v_x - v_z)y_a + (y_y - v_x)z_a + constants]
             // vector v is (x_c - x_b, y_c - y_b, z_c - z_b)
-            dFdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
-            dFdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
-            dFdz += (S - S_av) * 0.5 * (vec.y() - vec.x());
+            drdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
+            drdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
+            drdz += (S - S_av) * 0.5 * (vec.y() - vec.x());
         }
 
-        dFdx *= 2;
-        dFdy *= 2;
-        dFdz *= 2;
+        drdx *= 2;
+        drdy *= 2;
+        drdz *= 2;
     }
 
     bool gradient_descent(const vertex_descriptor& v, const double& precision)
     {
 
         bool move_flag;
-        double x, y, z, x_new, y_new, z_new, dFdx, dFdy, dFdz;
+        double x, y, z, x_new, y_new, z_new, drdx, drdy, drdz;
         x = get(vpmap_, v).x();
         y = get(vpmap_, v).y();
         z = get(vpmap_, v).z();
@@ -455,8 +458,8 @@ private:
 
         while(relative_energy > precision)
         {
-            dFdx=0, dFdy=0, dFdz=0;
-            compute_derivatives(dFdx, dFdy, dFdz, v, S_av);
+            drdx=0, drdy=0, drdz=0;
+            compute_derivatives(drdx, drdy, drdz, v, S_av);
 
 #ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
             std::vector<double> areas = calc_areas(v);
@@ -468,9 +471,9 @@ private:
             std::cout<<std::endl;
 #endif
 
-            x_new = x - eta * dFdx;
-            y_new = y - eta * dFdy;
-            z_new = z - eta * dFdz;
+            x_new = x - eta * drdx;
+            y_new = y - eta * drdy;
+            z_new = z - eta * drdz;
 
             Point moved(x_new, y_new, z_new);
             energy_new = measure_energy(v, S_av, moved);

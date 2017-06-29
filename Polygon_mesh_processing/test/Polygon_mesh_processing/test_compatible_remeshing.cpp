@@ -74,7 +74,7 @@ std::cout<<"case: "<< filename << std::endl;
                                         mesh,
                                         faces(mesh),
                                         edges(mesh),
-                                        CGAL::Polygon_mesh_processing::parameters::number_of_iterations(1));
+                                        CGAL::Polygon_mesh_processing::parameters::number_of_iterations(3));
 
 
 
