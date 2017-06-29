@@ -232,13 +232,13 @@ public Q_SLOTS:
         {
           if(sm_item)
           {
-            CGAL::Polygon_mesh_processing::clip(*(sm_item->polyhedron()),
+            CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                 plane->plane(),
                                                 ui_widget.close_checkBox->isChecked());
           }
           else
           {
-            CGAL::Polygon_mesh_processing::clip(*(poly_item->polyhedron()),
+            CGAL::Polygon_mesh_processing::clip(*(poly_item->face_graph()),
                                                 plane->plane(),
                                                 ui_widget.close_checkBox->isChecked());
           }
@@ -258,7 +258,7 @@ public Q_SLOTS:
           }
         }
       }
-      viewer->updateGL();
+      viewer->update();
     }
     QApplication::restoreOverrideCursor();
   }
