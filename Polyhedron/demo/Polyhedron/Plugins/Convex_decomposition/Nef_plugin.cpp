@@ -110,37 +110,39 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Scene_surface_mesh_item* sm_item =
-    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(!item && !sm_item)
+  {
     return;
+  }
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
-    std::cerr << "Convert facegraph to nef polyhedron...";
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QTime time;
+  time.start();
+  std::cerr << "Convert facegraph to nef polyhedron...";
 
-    Scene_nef_polyhedron_item* new_nef_item;
-    if(item)
-    {
-      new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(item);
-      new_nef_item->setName(tr("%1 (to nef)").arg(item->name()));
-      new_nef_item->setRenderingMode(item->renderingMode());
-      item->setVisible(false);
-    }
-    else
-    {
-      new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(sm_item);
-      new_nef_item->setName(tr("%1 (to nef)").arg(sm_item->name()));
-      new_nef_item->setRenderingMode(sm_item->renderingMode());
-      sm_item->setVisible(false);
-    }
-    scene->itemChanged(index);
-    new_nef_item->invalidateOpenGLBuffers();
-    scene->addItem(new_nef_item);
-    std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-    QApplication::restoreOverrideCursor();
+  Scene_nef_polyhedron_item* new_nef_item;
+  if(item)
+  {
+    new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(item);
+    new_nef_item->setName(tr("%1 (to nef)").arg(item->name()));
+    new_nef_item->setRenderingMode(item->renderingMode());
+    item->setVisible(false);
+  }
+  else
+  {
+    new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(sm_item);
+    new_nef_item->setName(tr("%1 (to nef)").arg(sm_item->name()));
+    new_nef_item->setRenderingMode(sm_item->renderingMode());
+    sm_item->setVisible(false);
+  }
+  scene->itemChanged(index);
+  new_nef_item->invalidateOpenGLBuffers();
+  scene->addItem(new_nef_item);
+  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+  QApplication::restoreOverrideCursor();
 }
 
 
