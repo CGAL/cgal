@@ -20,15 +20,17 @@
 #ifndef CGAL_BOOST_GRAPH_IO_H
 #define CGAL_BOOST_GRAPH_IO_H
 
-#include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/boost/graph/helpers.h>
+#include <boost/container/flat_map.hpp>
+#include <boost/foreach.hpp>
+
 #include <iostream>
 #include <algorithm>
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <boost/foreach.hpp>
-#include <boost/container/flat_map.hpp>
+
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL {
 /*!
