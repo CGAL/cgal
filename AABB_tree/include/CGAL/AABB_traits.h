@@ -466,7 +466,7 @@ private:
   template <typename PM>
   Bounding_box compute_bbox(const Primitive& pr, const PM&)const
   {
-  return get(bbm, pr.id());
+    return get(bbm, pr.id());
   }
 
   Bounding_box compute_bbox(const Primitive& pr, const Default&)const

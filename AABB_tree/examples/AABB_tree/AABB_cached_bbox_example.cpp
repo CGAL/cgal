@@ -81,13 +81,13 @@ void surface_mesh_cache_bbox(char* fname)
 int main(int argc, char* argv[])
 {
   std::cout << "Polyhedron_3" << std::endl;
-  triangle_mesh<Polyhedron_3>(argv[1]);
+  triangle_mesh<Polyhedron_3>((argc>1)?argv[1]:"data/tetrahedron.off");
 
   std::cout << "Surface_mesh" << std::endl;
-  triangle_mesh<Surface_mesh>(argv[1]);
+  triangle_mesh<Surface_mesh>((argc>1)?argv[1]:"data/tetrahedron.off");
 
   std::cout << "Surface_mesh with cached Bbox_3" << std::endl;
-  surface_mesh_cache_bbox(argv[1]);
+  surface_mesh_cache_bbox((argc>1)?argv[1]:"data/tetrahedron.off");
 
   return EXIT_SUCCESS;
 }
