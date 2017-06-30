@@ -23,7 +23,6 @@
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
 //#define SM_HALFEDGE_STATUS_PMAP 1
-//#define SM_FACE_PATCH_ID_PMAP 1
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -41,6 +40,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
@@ -170,11 +170,10 @@ namespace internal {
     typedef FaceIndexMap                                        FIMap;
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
-#ifdef SM_FACE_PATCH_ID_PMAP
-    typename PM:: template Property_map<face_descriptor,Patch_id> patch_ids_map;
-#else
-    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
-#endif
+
+    typename boost::property_map<PM, boost::face_property_t<Patch_id> >::type patch_ids_map;
+    std::size_t nb_cc;//static because we want to access it from get()
+
   public:
     typedef face_descriptor                     key_type;
     typedef Patch_id                            value_type;
@@ -184,43 +183,38 @@ namespace internal {
     Connected_components_pmap()
       : patch_ids_map()
     {}
-    Connected_components_pmap(const PM& pmesh
+    //note pmesh is a non-const ref because add() and remove()
+    //modify the mesh data structure, but not the mesh itself
+    Connected_components_pmap(PM& pmesh
                             , EdgeIsConstrainedMap ecmap
                             , FIMap fimap)
       : patch_ids_map()
     {
-#ifdef SM_FACE_PATCH_ID_PMAP
-      patch_ids_map = const_cast<PM&>(pmesh). template add_property_map<face_descriptor,Patch_id>("f:pid").first;
-      PMP::connected_components(pmesh,
-        patch_ids_map,
-        PMP::parameters::edge_is_constrained_map(ecmap)
-        .face_index_map(fimap));
-#else    
-      std::size_t nc = PMP::connected_components(pmesh,
-                                         boost::make_assoc_property_map(patch_ids_map),
-                                         PMP::parameters::edge_is_constrained_map(ecmap)
-                                         .face_index_map(fimap));
-      if(nc == 1){
-        patch_ids_map.clear();
-      }
-#endif
+      patch_ids_map = add(boost::face_property_t<Patch_id>("patch_id", MESH), pmesh);
+      nb_cc
+        = PMP::connected_components(pmesh,
+                                    patch_ids_map,
+                                    PMP::parameters::edge_is_constrained_map(ecmap)
+                                   .face_index_map(fimap));
+      if(nb_cc == 1)
+        remove(patch_ids_map, pmesh);
+    }
+
+    friend void remove(CCMap m, PM& pmesh)
+    {
+      remove(m.patch_ids_map, pmesh);
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
     {
-      //CGAL_assertion(!m.patch_ids_map.empty());
-      //CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
-      if(m.patch_ids_map.empty()){
+      if (m.nb_cc == 1)
         return 0;
-      }
-      return m.patch_ids_map.at(f); // AF why:  .at(f);
+      return get(m.patch_ids_map, f);
     }
-
     friend void put(CCMap& m, const key_type& f, const value_type i)
     {
-      if(! m.patch_ids_map.empty()){
-        m.patch_ids_map[f] = i;
-      }
+      if (m.nb_cc != 1)
+        put(m.patch_ids_map, f, i);
     }
   };
 
@@ -379,6 +373,10 @@ namespace internal {
 
     ~Incremental_remesher()
     {
+      if (boost::is_same<FacePatchMap,
+        Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> >::value)
+        remove(patch_ids_map_, mesh_);
+
 #ifdef SM_HALFEDGE_STATUS_PMAP
       mesh_.remove_property_map(halfedge_status_pmap_);
 #endif
