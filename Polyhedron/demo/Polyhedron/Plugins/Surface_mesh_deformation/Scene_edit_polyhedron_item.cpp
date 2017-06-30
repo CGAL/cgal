@@ -2110,9 +2110,11 @@ void Scene_edit_polyhedron_item_priv::pivoting_end(Mesh* mesh)
     //translate center of the frame
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     qglviewer::Vec vec= it->frame->position();
+    qglviewer::Quaternion orientation = it->frame->orientation();
     it->refresh(mesh);
     it->frame_initial_center = vec-offset;
     it->frame->setPosition(vec);
+    it->frame->setOrientation(orientation);
     it->frame->blockSignals(false);
   }
 }

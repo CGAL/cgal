@@ -203,7 +203,7 @@ public:
 
     bool oldState = frame->blockSignals(true); // do not let it Q_EMIT modified, which will cause a deformation
                                   // but we are just adjusting the center so it does not require a deformation
-    // frame->setOrientation(qglviewer::Quaternion());
+    frame->setOrientation(qglviewer::Quaternion());
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     frame->setPosition(frame_initial_center+offset);
     frame->blockSignals(oldState);
