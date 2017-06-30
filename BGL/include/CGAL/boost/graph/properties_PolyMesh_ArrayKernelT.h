@@ -59,14 +59,56 @@ public:
     mesh.add_property(h);
   }
   
-  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k)
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                              typename boost::graph_traits<Mesh>::vertex_descriptor k)
   {
     return pm.mesh.property(pm.h,k);
   }
 
-  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k, const value_type& v)
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::face_descriptor k)
+  {
+    return pm.mesh.property(pm.h,k);
+  }
+
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::halfedge_descriptor k)
+  {
+    return pm.mesh.property(pm.h,k);
+  }
+
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::edge_descriptor k)
+  {
+    Mesh::EdgeHandle eh(k.idx());
+    return pm.mesh.property(pm.h,eh);
+  }
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::vertex_descriptor k,
+                         const value_type& v)
   {
     pm.mesh.property(pm.h,k) = v;
+  }
+
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::face_descriptor k,
+                         const value_type& v)
+  {
+    pm.mesh.property(pm.h,k) = v;
+  }
+
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::halfedge_descriptor k,
+                         const value_type& v)
+  {
+    pm.mesh.property(pm.h,k) = v;
+  }
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::edge_descriptor k,
+                         const value_type& v)
+  {
+    Mesh::EdgeHandle eh(k.idx());
+    pm.mesh.property(pm.h,eh) = v;
   }
 
   reference operator[](key_type k)
@@ -399,6 +441,15 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_property_t
 };
 
 template <typename K, typename V>
+struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::halfedge_property_t<V> >
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> SM;
+  typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
+  typedef CGAL::OM_pmap<SM,halfedge_descriptor, V> type;
+  typedef type const_type;
+};
+
+template <typename K, typename V>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_property_t<V> >
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<K> SM;
@@ -426,6 +477,15 @@ add(boost::vertex_property_t<V> vprop, PolyMesh_ArrayKernelT<K>& om)
   typedef PolyMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::vertex_descriptor vertex_descriptor;
   return CGAL::OM_pmap<OM,vertex_descriptor, V>(om);
+}
+
+template <typename K, typename V>
+typename boost::property_map<PolyMesh_ArrayKernelT<K>, boost::halfedge_property_t<V> >::const_type
+add(boost::halfedge_property_t<V> vprop, PolyMesh_ArrayKernelT<K>& om)
+{
+  typedef PolyMesh_ArrayKernelT<K> OM;
+  typedef typename boost::graph_traits<OM>::halfedge_descriptor halfedge_descriptor;
+  return CGAL::OM_pmap<OM,halfedge_descriptor, V>(om);
 }
 
 template <typename K, typename V>

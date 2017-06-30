@@ -231,6 +231,15 @@ struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, boost::edge_property_t<V>
 };
 
 template <typename K, typename V>
+struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, boost::halfedge_property_t<V> >
+{
+  typedef OpenMesh::TriMesh_ArrayKernelT<K> SM;
+  typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
+  typedef CGAL::OM_pmap<SM,halfedge_descriptor, V> type;
+  typedef type const_type;
+};
+
+template <typename K, typename V>
 struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, boost::face_property_t<V> >
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> SM;
@@ -249,6 +258,15 @@ add(boost::vertex_property_t<V> vprop, TriMesh_ArrayKernelT<K>& om)
   typedef TriMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::vertex_descriptor vertex_descriptor;
   return CGAL::OM_pmap<OM,vertex_descriptor, V>(om);
+}
+
+template <typename K, typename V>
+typename boost::property_map<TriMesh_ArrayKernelT<K>, boost::halfedge_property_t<V> >::const_type
+add(boost::halfedge_property_t<V> vprop, TriMesh_ArrayKernelT<K>& om)
+{
+  typedef TriMesh_ArrayKernelT<K> OM;
+  typedef typename boost::graph_traits<OM>::halfedge_descriptor halfedge_descriptor;
+  return CGAL::OM_pmap<OM,halfedge_descriptor, V>(om);
 }
 
 template <typename K, typename V>

@@ -29,5 +29,31 @@ int main(int argc, char** argv )
   std::cout << get(vim, *(vertices(mesh).first)) << std::endl;
   remove(vim,mesh);
 
+  {
+    typedef boost::property_map<Mesh, boost::halfedge_property_t<int> >::type VIM;
+    VIM vim = add(boost::halfedge_property_t<int>("index"), mesh);
+    put(vim, *(halfedges(mesh).first), 7812);
+    
+    std::cout << get(vim, *(halfedges(mesh).first)) << std::endl;
+    remove(vim,mesh);
+  }
+
+  {
+
+    typedef boost::property_map<Mesh, boost::edge_property_t<int> >::type VIM;
+    VIM vim = add(boost::edge_property_t<int>("index"), mesh);
+    put(vim, *(edges(mesh).first), 7812);
+    std::cout << get(vim, *(edges(mesh).first)) << std::endl;
+    remove(vim,mesh);
+  }
+
+  {
+    typedef boost::property_map<Mesh, boost::face_property_t<int> >::type VIM;
+    VIM vim = add(boost::face_property_t<int>("index"), mesh);
+    put(vim, *(faces(mesh).first), 7812);
+    
+    std::cout << get(vim, *(faces(mesh).first)) << std::endl;
+    remove(vim,mesh);
+  }
   return 0;
 }
