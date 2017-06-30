@@ -4,6 +4,7 @@
 #include <CGAL/Three/Scene_item_with_properties.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 #include "Scene_points_with_normal_item_config.h"
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
@@ -12,6 +13,7 @@
 struct Scene_points_with_normal_item_priv;
 // point set
 typedef Point_set_3<Kernel> Point_set;
+typedef CGAL::Surface_mesh<Kernel::Point_3> SMesh;
 
 class QMenu;
 class QAction;
@@ -29,7 +31,10 @@ class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
 public:
   Scene_points_with_normal_item();
   Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy);
-  Scene_points_with_normal_item(const Polyhedron& p);
+
+  Scene_points_with_normal_item(const SMesh& input_mesh);
+  Scene_points_with_normal_item(const Polyhedron& input_mesh);
+
   ~Scene_points_with_normal_item();
   Scene_points_with_normal_item* clone() const Q_DECL_OVERRIDE;
 
