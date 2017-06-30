@@ -43,7 +43,7 @@ namespace CGAL
 {
 
   /*!
-   * \ingroup PkgBGLHelper
+   * \ingroup PkgBGLAdaptors
    *
    * The class `Face_filtered_graph` is an adaptor that creates a filtered view of a graph
    * by restricting it to a subset of faces. Contrary to
@@ -155,7 +155,11 @@ struct Face_filtered_graph
   template <typename FacePatchIndexMap, class FacePatchIndexRange>
   Face_filtered_graph(const Graph& graph,
                       const FacePatchIndexRange& selected_face_patch_indices,
-                            FacePatchIndexMap face_patch_index_map)
+                      FacePatchIndexMap face_patch_index_map
+                      , typename boost::enable_if<
+                      typename boost::has_range_const_iterator<FacePatchIndexRange>::type
+                      >::type* = 0
+                      )
     : _graph(const_cast<Graph&>(graph))
     , fimap(get(CGAL::face_index, graph))
     , vimap(get(boost::vertex_index, graph))
@@ -212,7 +216,7 @@ struct Face_filtered_graph
     , vimap(get(boost::vertex_index, graph))
     , himap(get(CGAL::halfedge_index, graph))
   {
-    set_selected_faces(face_patch_index_map, pid);
+    set_selected_faces(pid, face_patch_index_map);
   }
 
   /*!

@@ -16,7 +16,7 @@ option( CGAL_DONT_OVERRIDE_CMAKE_FLAGS
 
 if ( CGAL_CONFIG_LOADED AND NOT CGAL_DONT_OVERRIDE_CMAKE_FLAGS )
 
-  typed_cache_set ( STRING "Build type: Release or Debug" CMAKE_BUILD_TYPE "${CGAL_BUILD_TYPE_INIT}" )
+  typed_cache_set ( STRING "Build type: Release, Debug, RelWithDebInfo or MinSizeRel" CMAKE_BUILD_TYPE "${CGAL_BUILD_TYPE_INIT}" )
 
   string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
   
@@ -26,9 +26,9 @@ if ( CGAL_CONFIG_LOADED AND NOT CGAL_DONT_OVERRIDE_CMAKE_FLAGS )
     set( CGAL_LINKER_FLAGS_TYPE MODULE )
   endif()
   
-  typed_cache_set ( STRING "C++ compiler flags for both Release and Debug"   CMAKE_CXX_FLAGS                                 "${CGAL_CXX_FLAGS_INIT}"                                                       )
+  typed_cache_set ( STRING "C++ compiler flags for all build types"          CMAKE_CXX_FLAGS                                 "${CGAL_CXX_FLAGS_INIT}"                                                       )
   typed_cache_set ( STRING "C++ compiler flags for ${CGAL_BUILD_TYPE_UPPER}" CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}        "${CGAL_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}_INIT}"                              )
-  typed_cache_set ( STRING "Linker flags for both Release and Debug"         CMAKE_EXE_LINKER_FLAGS                          "${CGAL_${CGAL_LINKER_FLAGS_TYPE}_LINKER_FLAGS_INIT}"                          )
+  typed_cache_set ( STRING "Linker flags for all build types"                CMAKE_EXE_LINKER_FLAGS                          "${CGAL_${CGAL_LINKER_FLAGS_TYPE}_LINKER_FLAGS_INIT}"                          )
   typed_cache_set ( STRING "Linker flags for ${CGAL_BUILD_TYPE_UPPER}"       CMAKE_EXE_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER} "${CGAL_${CGAL_LINKER_FLAGS_TYPE}_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER}_INIT}" )
   
 endif()
@@ -51,9 +51,9 @@ uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS_DEBUG      ${CGAL_EXE_LINKER_FLAGS_DE
 # Set a default build type if none is given
 if ( NOT CMAKE_BUILD_TYPE )
   if( RUNNING_CGAL_AUTO_TEST )
-    typed_cache_set ( STRING "Build type: Release or Debug" CMAKE_BUILD_TYPE Debug   )
+    typed_cache_set ( STRING "Build type: Release, Debug, RelWithDebInfo or MinSizeRel" CMAKE_BUILD_TYPE Debug   )
   else ()
-    typed_cache_set ( STRING "Build type: Release or Debug" CMAKE_BUILD_TYPE Release )
+    typed_cache_set ( STRING "Build type: Release, Debug, RelWithDebInfo or MinSizeRel" CMAKE_BUILD_TYPE Release )
   endif()
 endif()
 
@@ -61,8 +61,9 @@ if( RUNNING_CGAL_AUTO_TEST )
   add_definitions(-DCGAL_TEST_SUITE)
 endif()
 
-if ( NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
-  message( FATAL_ERROR "${CMAKE_BUILD_TYPE} is not a valid build type: only Release or Debug is allowed" )
+if ( NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug"
+     AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel" )
+  message( FATAL_ERROR "${CMAKE_BUILD_TYPE} is not a valid build type: only Release, Debug, RelWithDebInfo or MinSizeRel is allowed" )
 endif()
 
 message( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )

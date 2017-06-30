@@ -187,6 +187,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene.cpp
     Viewer.cpp
     ${ViewerUI_FILES}
+    ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
     Scene_item.cpp
@@ -202,6 +203,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${OPENGL_glu_LIBRARY}
     gl_splat
     )
+  if(CGAL_HEADER_ONLY)
+    target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
+  endif()
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp
@@ -268,14 +272,16 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_surface_mesh_selection_item scene_surface_mesh_item_decorator  scene_sm_item_k_ring_selection)
   target_compile_definitions(scene_surface_mesh_selection_item PUBLIC "-DUSE_SURFACE_MESH" )
 
-  add_item(scene_polyhedron_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
-
-  
+  add_item(scene_polyhedron_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)  
   target_link_libraries(scene_polyhedron_shortest_path_item scene_polyhedron_item_decorator scene_polyhedron_item scene_polylines_item)
+
+  add_item(scene_sm_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
+  target_link_libraries(scene_sm_shortest_path_item scene_surface_mesh_item_decorator scene_surface_mesh_item scene_polylines_item)
 
   if(EIGEN3_FOUND )
     qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp)
+    qt5_use_modules( scene_textured_polyhedron_item Svg )
     add_item(scene_edit_polyhedron_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
            ${editionUI_FILES})
            target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_surface_mesh_item scene_polyhedron_and_sm_item_k_ring_selection
@@ -313,7 +319,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     MainWindow.cpp
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
-    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${statisticsUI_FILES} ${CGAL_Qt5_MOC_FILES})
+    ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${statisticsUI_FILES})
   target_link_libraries(polyhedron_demo demo_framework point_dialog)
   qt5_use_modules(polyhedron_demo Gui OpenGL Xml Widgets Script Svg )
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )

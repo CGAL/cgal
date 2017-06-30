@@ -21,6 +21,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "shortest_paths_multiple_sources.cpp" )
   create_single_source_cgal_program( "shortest_paths_no_id.cpp" )
   create_single_source_cgal_program( "shortest_paths_with_id.cpp" )
+  create_single_source_cgal_program( "shortest_paths.cpp" )
   
   find_package( OpenMesh QUIET )
   if ( OpenMesh_FOUND )

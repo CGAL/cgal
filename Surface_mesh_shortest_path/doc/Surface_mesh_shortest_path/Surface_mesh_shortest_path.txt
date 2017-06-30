@@ -38,7 +38,8 @@ of the input surface mesh.
 
 For efficiency reason, index property maps for vertices, halfedges and faces are internally used. For each simplex
 type the property map must provide an index between 0 and the number of simplices. We recommend to use
-the class `CGAL::Polyhedron_3` as model of `FaceListGraph` with the item class `CGAL::Polyhedron_items_with_id_3`,
+the class `CGAL::Surface_mesh` as model of `FaceListGraph`. 
+If you use the class `CGAL::Polyhedron_3`, you should use it with the item class `CGAL::Polyhedron_items_with_id_3`,
 for which default property maps are provided.
 This item class associates to each simplex an index that provides a \f$O(1)\f$ time access to the indices.
 Note that the initialization of the property maps requires a call to `set_halfedgeds_items_id()`.
@@ -99,6 +100,13 @@ but it will be extremely slow. Indeed, in order to compute the distance along th
 \section Surface_mesh_shortest_pathExamples Examples
 
 \subsection Surface_mesh_shortest_pathSimpleExample Simple Example
+
+The following example shows how to get the shortest path to every vertex from an arbitrary source point on a surface.  
+The shortest path class needs to have an index associated to each vertex, halfedge and face, which is naturally given for the class `Surface_mesh`. 
+
+\cgalExample{Surface_mesh_shortest_path/shortest_paths.cpp}
+
+\subsection Surface_mesh_shortest_pathExampleWithId Example Using Polyhedron_3
 
 The following example shows how to get the shortest path to every vertex from an arbitrary source point on the surface.  Note that this example uses the `Polyhedron_items_with_id_3` item class.  The shortest path class needs to have an index associated to each vertex, halfedge and face. Using this item class provide an efficient direct access to the required indices.
 

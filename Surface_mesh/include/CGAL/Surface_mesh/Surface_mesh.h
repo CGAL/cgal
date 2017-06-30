@@ -2568,7 +2568,6 @@ namespace internal{
 
 } // CGAL
 
-
 namespace std {
 
 #if defined(BOOST_MSVC)

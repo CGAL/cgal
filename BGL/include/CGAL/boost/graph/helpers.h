@@ -22,6 +22,7 @@
 
 
 #include <boost/foreach.hpp>
+#include <boost/range/empty.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
@@ -775,6 +776,22 @@ void clear(FaceGraph& g)
   CGAL_postcondition(num_edges(g) == 0);
   CGAL_postcondition(num_vertices(g) == 0);
   CGAL_postcondition(num_faces(g) == 0);
+}
+
+/**
+* \ingroup PkgBGLHelperFct
+*
+* checks whether the graph is empty, by checking that it does not contain any vertex.
+*
+* @tparam FaceGraph model of `FaceGraph`
+*
+* @param g the graph to test
+*
+**/
+template<typename FaceGraph>
+bool is_empty(const FaceGraph& g)
+{
+  return boost::empty(vertices(g));
 }
 
 

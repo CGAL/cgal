@@ -147,7 +147,7 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const  {
     default: break;
     }
     if(child->renderingMode() == Splatting)
-      child->drawSplats(viewer); break;
+      child->drawSplats(viewer);
   }
   already_drawn = true;
 }

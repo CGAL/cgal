@@ -118,5 +118,17 @@ template <class K1, class K2> struct KO_converter<Sphere_tag,K1,K2>{
     }
 };
 
+template <class K1, class K2> struct KO_converter<Weighted_point_tag,K1,K2>{
+  typedef typename Get_type<K1, Weighted_point_tag>::type	argument_type;
+  typedef typename Get_type<K2, Weighted_point_tag>::type	result_type;
+  template <class C>
+    result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
+      typename Get_functor<K1, Point_drop_weight_tag>::type pdw(k1);
+      typename Get_functor<K1, Point_weight_tag>::type pw(k1);
+      typename Get_functor<K2, Construct_ttag<Weighted_point_tag> >::type cwp(k2);
+      return cwp(conv(pdw(s)),conv(pw(s)));
+    }
+};
+
 }
 #endif

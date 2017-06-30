@@ -20,6 +20,8 @@
         <file>resources/right.png</file>
         <file>resources/up.png</file>
         <file>resources/down.png</file>
+        <file>resources/left_arrow.png</file>
+        <file>resources/right_arrow.png</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>

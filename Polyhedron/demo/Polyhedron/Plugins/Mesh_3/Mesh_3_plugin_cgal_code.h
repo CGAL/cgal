@@ -28,6 +28,7 @@ typedef std::list<std::vector<CGAL::Exact_predicates_inexact_constructions_kerne
 
 Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const Polylines_container& polylines,
+                                 const Polyhedron* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
@@ -44,6 +45,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
 
 Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
                                  const Polylines_container& polylines,
+                                 const SMwgd* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,

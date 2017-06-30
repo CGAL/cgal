@@ -136,6 +136,7 @@ struct Scene_surface_mesh_item_priv{
   mutable bool is_filled;
   mutable bool isinit;
   mutable std::vector<unsigned int> idx_data_;
+  mutable std::map<unsigned int, unsigned int> current_indices; //map im values to ghosts-free values
   std::vector<unsigned int> idx_edge_data_;
   std::vector<unsigned int> idx_feature_edge_data_;
   mutable std::vector<cgal_gl_data> smooth_vertices;
@@ -1115,6 +1116,11 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 {
   if(b)
     d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id").first;
+  else if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+  {
+    d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
+    d->smesh_->remove_property_map(d->fpatch_id_map);
+  }
 }
 
 void Scene_surface_mesh_item::show_feature_edges(bool b)
