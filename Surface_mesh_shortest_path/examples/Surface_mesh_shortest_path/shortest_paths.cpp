@@ -1,21 +1,18 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <iterator>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Random.h>
-
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_shortest_path.h>
 
 #include <boost/lexical_cast.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Triangle_mesh;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Triangle_mesh;
 typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Triangle_mesh> Traits;
 typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
 typedef boost::graph_traits<Triangle_mesh> Graph_traits;
@@ -24,14 +21,10 @@ typedef Graph_traits::face_iterator face_iterator;
 
 int main(int argc, char** argv)
 {
-  // read input polyhedron
   Triangle_mesh tmesh;
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   input >> tmesh;
   input.close();
-
-  // initialize indices of vertices, halfedges and faces
-  CGAL::set_halfedgeds_items_id(tmesh);
 
   // pick up a random face
   const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;
@@ -63,6 +56,5 @@ int main(int argc, char** argv)
       output << " " << points[i];
     output << std::endl;
   }
-
   return 0;
 }
