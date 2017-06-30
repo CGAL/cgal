@@ -149,7 +149,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
     {
       QApplication::setOverrideCursor(Qt::WaitCursor);
       std::list<FaceGraph*> new_polyhedra;
-      typedef typename boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
+      typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
       PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
       int nb_patches = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
                                                           pidmap);
@@ -225,7 +225,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
     if(item && to_skip.find(item) == to_skip.end())
     {
       item->setItemIsMulticolor(true);
-      typedef typename boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
+      typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
       PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
       CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
                                                           pidmap);
