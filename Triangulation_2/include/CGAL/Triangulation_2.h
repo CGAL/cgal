@@ -42,6 +42,7 @@
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
 #include <CGAL/spatial_sort.h>
+#include <CGAL/double.h>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>

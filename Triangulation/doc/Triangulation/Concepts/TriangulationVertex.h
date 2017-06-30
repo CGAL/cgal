@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `TriangulationVertex` describes the requirements on the type used by the 
-class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`, and its derived classes, to 
+class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`, and its derived classes, to 
 represent a vertex. 
 
 \cgalRefines `TriangulationDSVertex` 
@@ -12,7 +12,7 @@ We only list below the additional specific requirements of ::TriangulationVertex
 Compared to ::TriangulationDSVertex, the main difference is the addition of 
 an association of the vertex with a geometric point. 
 
-\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex> `
+\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
 
 Input/Output 
 -------------- 
@@ -20,9 +20,9 @@ Input/Output
 These operators can be used directly and are called by the I/O 
 operator of class `Triangulation`. 
 
-\sa `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>` 
+\sa `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>` 
 \sa `TriangulationFullCell` 
-\sa `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+\sa `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>` 
 
 */
 
@@ -34,9 +34,9 @@ public:
 
 /*! 
 The type of the point stored in the vertex. It must be 
-the same as the point type `TriangulationTraits::Point` (or its refined 
-concepts) when the `TriangulationVertex` is used in the class 
-`Triangulation<TriangulationTraits, TriangulationDataStructure>` (or its derived classes). 
+the same as the point type `TriangulationTraits::Point_d`
+when the `TriangulationVertex` is used in the class 
+`Triangulation<TriangulationTraits, TriangulationDataStructure_>`.
 */ 
 typedef unspecified_type Point; 
 

@@ -22,6 +22,7 @@ target_link_libraries(polylines_io_plugin scene_polylines_item)
 
 polyhedron_demo_plugin(selection_io_plugin Selection_io_plugin)
 target_link_libraries(selection_io_plugin scene_polyhedron_selection_item)
+
 polyhedron_demo_plugin(selection_io_sm_plugin Selection_io_plugin)
 target_link_libraries(selection_io_sm_plugin scene_surface_mesh_selection_item)
 

@@ -1,7 +1,6 @@
 #define CGAL_data_type float
 #define CGAL_GL_data_type GL_FLOAT
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Point_set_3/IO.h>
@@ -27,12 +26,15 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include "Polyhedron_type.h"
+
+
 const std::size_t limit_fast_drawing = 300000; //arbitraty large value
 
 struct Scene_points_with_normal_item_priv
 {
-  Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
-    :m_points(new Point_set)
+  void init_values(Scene_points_with_normal_item* parent)
   {
     item = parent;
     nb_points = 0;
@@ -45,44 +47,51 @@ struct Scene_points_with_normal_item_priv
     point_Slider->setValue(2);
     point_Slider->setMinimum(1);
     point_Slider->setMaximum(25);
+  }
+  Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
+    :m_points(new Point_set)
+  {
+    init_values(parent);
   }
   Scene_points_with_normal_item_priv(const Scene_points_with_normal_item& toCopy, Scene_points_with_normal_item* parent)
     : m_points(new Point_set(*toCopy.d->m_points))
   {
-    item = parent;
-    is_point_slider_moving = false;
-    normal_Slider = new QSlider(Qt::Horizontal);
-    normal_Slider->setValue(20);
-    point_Slider = new QSlider(Qt::Horizontal);
-    point_Slider->setValue(2);
-    point_Slider->setMinimum(1);
-    point_Slider->setMaximum(25);
+    init_values(parent);
   }
-  Scene_points_with_normal_item_priv(const Polyhedron& input_mesh, Scene_points_with_normal_item* parent)
+
+  Scene_points_with_normal_item_priv(const SMesh& input_mesh, Scene_points_with_normal_item* parent)
     : m_points(new Point_set)
   {
-    item = parent;
-    is_point_slider_moving = false;
-    nb_points = 0;
-    nb_selected_points = 0;
-    nb_lines = 0;
-    Polyhedron::Vertex_iterator v;
+   init_values(parent);
+   boost::graph_traits<SMesh>::vertex_iterator v;
     m_points->add_normal_map();
-    for (v = const_cast<Polyhedron&>(input_mesh).vertices_begin();
-         v != const_cast<Polyhedron&>(input_mesh).vertices_end(); v++)
+    for (v = const_cast<SMesh&>(input_mesh).vertices_begin();
+         v != const_cast<SMesh&>(input_mesh).vertices_end(); v++)
     {
-      const Kernel::Point_3& p = v->point();
+      boost::graph_traits<SMesh>::vertex_descriptor vd(*v);
+      const Kernel::Point_3& p = input_mesh.point(vd);
       Kernel::Vector_3 n =
-        CGAL::Polygon_mesh_processing::compute_vertex_normal(v, input_mesh);
+        CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, input_mesh);
       m_points->insert(p,n);
     }
-    normal_Slider = new QSlider(Qt::Horizontal);
-    normal_Slider->setValue(20);
-    point_Slider = new QSlider(Qt::Horizontal);
-    point_Slider->setValue(2);
-    point_Slider->setMinimum(1);
-    point_Slider->setMaximum(25);
   }
+
+  Scene_points_with_normal_item_priv(const Polyhedron& input_mesh, Scene_points_with_normal_item* parent)
+     : m_points(new Point_set)
+   {
+    init_values(parent);
+     Polyhedron::Vertex_iterator v;
+     m_points->add_normal_map();
+     for (v = const_cast<Polyhedron&>(input_mesh).vertices_begin();
+          v != const_cast<Polyhedron&>(input_mesh).vertices_end(); v++)
+     {
+       const Kernel::Point_3& p = v->point();
+       Kernel::Vector_3 n =
+         CGAL::Polygon_mesh_processing::compute_vertex_normal(v, input_mesh);
+       m_points->insert(p,n);
+     }
+   }
+
   ~Scene_points_with_normal_item_priv()
   {
     if(m_points)
@@ -163,6 +172,18 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 }
 
 // Converts polyhedron to point set
+
+Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_mesh)
+    : Scene_item(Scene_points_with_normal_item_priv::NbOfVbos,Scene_points_with_normal_item_priv::NbOfVaos)
+{
+  // Converts Polyhedron vertices to point set.
+  // Computes vertices normal from connectivity.
+  d = new Scene_points_with_normal_item_priv(input_mesh, this);
+  setRenderingMode(PointsPlusNormals);
+  is_selected = true;
+  invalidateOpenGLBuffers();
+}
+
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
     : Scene_item(Scene_points_with_normal_item_priv::NbOfVbos,Scene_points_with_normal_item_priv::NbOfVaos)
 {

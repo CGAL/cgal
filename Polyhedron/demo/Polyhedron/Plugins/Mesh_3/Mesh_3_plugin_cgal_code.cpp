@@ -42,6 +42,7 @@ struct Polyhedral_mesh_domain_selector<SMwgd>
 template<class Mesh>
 Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
                                  const Polylines_container& polylines,
+                                 const Mesh* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
@@ -75,6 +76,8 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
   Polyhedral_mesh_domain* p_domain = NULL;
   if (!surface_only && is_closed(*pMesh))
     p_domain = new Polyhedral_mesh_domain(*pMesh);
+  else if (!surface_only && pBoundingMesh != NULL && is_closed(*pBoundingMesh))
+    p_domain = new Polyhedral_mesh_domain(*pMesh, *pBoundingMesh);
   else
   {
     std::vector<const Mesh*> poly_ptrs_vector(1, pMesh);
@@ -138,6 +141,7 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
 
 Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const Polylines_container& polylines,
+                                 const Polyhedron* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
@@ -154,6 +158,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
 {
   return cgal_code_mesh_3_templated(pMesh,
                           polylines,
+                          pBoundingMesh,
                           filename,
                           facet_angle,
                           facet_sizing,
@@ -171,6 +176,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
 
 Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
                                  const Polylines_container& polylines,
+                                 const SMwgd* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
@@ -187,6 +193,7 @@ Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
 {
   return cgal_code_mesh_3_templated(pMesh,
                           polylines,
+                          pBoundingMesh,
                           filename,
                           facet_angle,
                           facet_sizing,

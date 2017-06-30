@@ -87,13 +87,13 @@ protected:
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
   PolygonMesh& pmesh_;
-  Point_property_map ppmap;
+  Point_property_map ppmap_;
 
 public:
-  
+
   Cotangent_value_Meyer(PolygonMesh& pmesh_, VertexPointMap vpmap_)
     : pmesh_(pmesh_)
-    , ppmap(vpmap_)
+    , ppmap_(vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -101,9 +101,14 @@ public:
     return pmesh_;
   }
 
+  Point_property_map& ppmap()
+  {
+    return ppmap_;
+  }
+
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    return Cotangent_value_Meyer_impl<PolygonMesh>()(v0,v1,v2,ppmap);
+    return Cotangent_value_Meyer_impl<PolygonMesh>()(v0, v1, v2, ppmap());
   }
 };
 
@@ -120,13 +125,13 @@ class Cotangent_value_Meyer_secure
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
   PolygonMesh& pmesh_;
-  Point_property_map ppmap;
+  Point_property_map ppmap_;
 
 public:
-  
+
   Cotangent_value_Meyer_secure(PolygonMesh& pmesh_, VertexPointMap vpmap_)
     : pmesh_(pmesh_)
-    , ppmap(vpmap_)
+    , ppmap_(vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -134,11 +139,16 @@ public:
     return pmesh_;
   }
 
+  Point_property_map& ppmap()
+  {
+    return ppmap_;
+  }
+
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = get(ppmap, v0) - get(ppmap, v1);
-    Vector b = get(ppmap, v2) - get(ppmap, v1);
-    
+    Vector a = get(ppmap(), v0) - get(ppmap(), v1);
+    Vector b = get(ppmap(), v2) - get(ppmap(), v1);
+
     double dot_ab = a*b;
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
@@ -171,6 +181,11 @@ public:
     return CotangentValue::pmesh();
   }
 
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
+  }
+
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
@@ -201,6 +216,11 @@ public:
     return CotangentValue::pmesh();
   }
 
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
+  }
+
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
@@ -227,6 +247,11 @@ public:
   PolygonMesh& pmesh()
   {
     return CotangentValue::pmesh();
+  }
+
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
   }
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -275,6 +300,11 @@ public:
     return CotangentValue::pmesh();
   }
 
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
+  }
+
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::in_edge_iterator in_edge_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -297,9 +327,9 @@ public:
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
 
-      const Point& v0_p = get(this->ppmap, v0);
-      const Point& v1_p = get(this->ppmap, v1);
-      const Point& v_op_p = get(this->ppmap, v_op);
+      const Point& v0_p = get(ppmap(), v0);
+      const Point& v1_p = get(ppmap(), v1);
+      const Point& v_op_p = get(ppmap(), v_op);
 
       // (?) check if there is a better way to predicate triangle is obtuse or not
       CGAL::Angle angle0 = CGAL::angle(v1_p, v0_p, v_op_p);
@@ -349,6 +379,11 @@ public:
   PolygonMesh& pmesh()
   {
     return CotangentValue::pmesh();
+  }
+
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
   }
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -426,6 +461,11 @@ public:
   PolygonMesh& pmesh()
   {
     return CotangentValue::pmesh();
+  }
+
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
   }
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
@@ -506,6 +546,11 @@ public:
     return CotangentValue::pmesh();
   }
 
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
+  }
+
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
@@ -524,6 +569,82 @@ public:
 
     vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
      return CotangentValue::operator()(v0, v_op, v1);
+  }
+};
+
+
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type
+  , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap>
+>
+class Cotangent_weight_with_triangle_area : CotangentValue
+{
+  typedef PolygonMesh                                         PM;
+  typedef VertexPointMap                                      VPMap;
+  typedef typename boost::property_traits<VPMap>::value_type  Point;
+
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PM>::vertex_descriptor     vertex_descriptor;
+
+  Cotangent_weight_with_triangle_area()
+  {}
+public:
+  Cotangent_weight_with_triangle_area(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
+  {}
+
+  PolygonMesh& pmesh()
+  {
+    return CotangentValue::pmesh();
+  }
+
+  VertexPointMap& ppmap()
+  {
+    return CotangentValue::ppmap();
+  }
+
+  double operator()(halfedge_descriptor he)
+  {
+    vertex_descriptor v0 = target(he, pmesh());
+    vertex_descriptor v1 = source(he, pmesh());
+
+     // Only one triangle for border edges
+    if (is_border_edge(he, pmesh()))
+    {
+      halfedge_descriptor he_cw = opposite( next(he, pmesh()) , pmesh() );
+      vertex_descriptor v2 = source(he_cw, pmesh());
+      if (is_border_edge(he_cw, pmesh()) )
+      {
+        halfedge_descriptor he_ccw = prev( opposite(he, pmesh()) , pmesh() );
+        v2 = source(he_ccw, pmesh());
+      }
+
+      const Point& v0_p = get(ppmap(), v0);
+      const Point& v1_p = get(ppmap(), v1);
+      const Point& v2_p = get(ppmap(), v2);
+      double area_t = to_double(CGAL::sqrt(squared_area(v0_p, v1_p, v2_p)));
+
+      return ( CotangentValue::operator()(v0, v2, v1) / area_t );
+    }
+    else
+    {
+      halfedge_descriptor he_cw = opposite( next(he, pmesh()) , pmesh() );
+      vertex_descriptor v2 = source(he_cw, pmesh());
+      halfedge_descriptor he_ccw = prev( opposite(he, pmesh()) , pmesh() );
+      vertex_descriptor v3 = source(he_ccw, pmesh());
+
+      const Point& v0_p = get(ppmap(), v0);
+      const Point& v1_p = get(ppmap(), v1);
+      const Point& v2_p = get(ppmap(), v2);
+      const Point& v3_p = get(ppmap(), v3);
+      double area_t1 = to_double(CGAL::sqrt(squared_area(v0_p, v1_p, v2_p)));
+      double area_t2 = to_double(CGAL::sqrt(squared_area(v0_p, v1_p, v3_p)));
+
+      return ( CotangentValue::operator()(v0, v2, v1) / area_t1
+             + CotangentValue::operator()(v0, v3, v1) / area_t2);
+     }
+
+    return 0.;
   }
 };
 

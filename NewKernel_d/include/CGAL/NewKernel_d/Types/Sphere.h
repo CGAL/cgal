@@ -52,7 +52,6 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
   }
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
-    typedef typename Get_type<R_, Point_tag>::type	Point;
     typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
     typename Get_functor<R_, Squared_distance_tag>::type sd(this->kernel());
 

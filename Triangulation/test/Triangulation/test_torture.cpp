@@ -82,11 +82,7 @@ void test(const int D, const int d, const int N, bool no_transform)
             for( int j = 0; j < d; ++j )
                 coords[i] = coords[i] + (*pit)[j] * aff[j][i];
         }
-#ifdef USE_NEW_KERNEL
-        points.push_back(Point(coords)); // this is for New_kernel_d
-#else
-        points.push_back(Point(D, coords.begin(), coords.end())); // this is for Old_kernel_d
-#endif
+        points.push_back(Point(D, coords.begin(), coords.end()));
     }
     assert( dc.is_valid() );
     cout << " Inserting " << points.size() << " points.";
