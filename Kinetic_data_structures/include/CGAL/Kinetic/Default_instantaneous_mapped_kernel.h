@@ -171,31 +171,22 @@ public:
   static_object(typename CIK::Point_3 ik) const {
     check_static_object();
     typename CIK::Weighted_point_3 k(ik.index());
-    std::cout << "static call with time: " << time_nt_ << std::endl;
-    std::cout << "table dump: " << std::endl;
-    std::cout << *tr_.active_weighted_points_3_table_handle() << std::endl;
-//    std::cout << "static call on Point_3 : " << ik << " index: " << ik << std::endl;
-//    std::cout << "created weighted : " << k << std::endl;
     if (cache_w3_.find(k) == cache_w3_.end()) {
       cache_w3_[k]= Weighted_static_traits_3::to_static(
                       tr_.active_weighted_points_3_table_handle()->at(k),
                       time_nt_, static_kernel());
     }
-    std::cout << "return: " << cache_w3_[k].point() << std::endl;
     return cache_w3_[k].point();
   }
 
   const typename Weighted_static_traits_3::Static_type&
   static_object(typename CIK::Weighted_point_3 k) const {
     check_static_object();
-    std::cout << "static call with time: " << time_nt_ << std::endl;
-    std::cout << "table dump: " << std::endl;
     std::cout << *tr_.active_weighted_points_3_table_handle() << std::endl;
     if (cache_w3_.find(k) == cache_w3_.end()) {
       cache_w3_[k]= Weighted_static_traits_3::to_static(tr_.active_weighted_points_3_table_handle()->at(k),
                 time_nt_, static_kernel());
     }
-    std::cout << "return: " << cache_w3_[k] << std::endl;
     return cache_w3_[k];
   }
 
@@ -387,9 +378,8 @@ public:
 
     const Point_3& operator()(const Point_3& p) const { return p; }
     Point_3 operator()(const Weighted_point_3& wp) const {
-//      std::cout << "call wp2p " << wp << " index: " << wp.index() << std::endl;
-//      std::cout << "return: " << Point_3(wp.index()) << " index: " << Point_3(wp.index()).index() << std::endl;
-      return Point_3(wp.index()); }
+      return Point_3(wp.index());
+    }
   };
 
   Construct_point_2 construct_point_2_object() const { return Construct_point_2(); }
