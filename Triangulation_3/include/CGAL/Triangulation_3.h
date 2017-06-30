@@ -6654,7 +6654,6 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
     typedef typename Triangulation_3<GT, Tds2>::Cell_handle   Cell_handle2;
 
     typedef typename Triangulation_3<GT, Tds1>::Point                       Point;
-    typedef typename Triangulation_3<GT, Tds1>::Point_3                     Point_3;
 
     typedef typename Triangulation_3<GT, Tds1>::Geom_traits::Equal_3        Equal_3;
     typedef typename Triangulation_3<GT, Tds1>::Geom_traits::Compare_xyz_3  Compare_xyz_3;
@@ -6689,9 +6688,9 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
           boost::bind<Comparison_result>(
             cmp1,
             boost::bind<
-              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _1),
+              typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
             boost::bind<
-              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _2))
+              typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
           == SMALLER);
 
         std::sort(
@@ -6699,9 +6698,9 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
           boost::bind<Comparison_result>(
             cmp2,
             boost::bind<
-              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _1),
+              typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
             boost::bind<
-              typename boost::result_of<const Construct_point_3(const Point_3&)>::type>(cp, _2))
+              typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
           == SMALLER);
 
         return V1 == V2;
