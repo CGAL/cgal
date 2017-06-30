@@ -6681,7 +6681,6 @@ operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
     if (dim == 1) {
         // It's enough to test that the points are the same,
         // since the triangulation is uniquely defined in this case.
-        using namespace boost;
         std::vector<Point> V1 (t1.points_begin(), t1.points_end());
         std::vector<Point> V2 (t2.points_begin(), t2.points_end());
 
