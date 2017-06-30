@@ -22,7 +22,6 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
-//#define SM_HALFEDGE_STATUS_PMAP 1
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -190,7 +189,7 @@ namespace internal {
                             , FIMap fimap)
       : patch_ids_map()
     {
-      patch_ids_map = add(boost::face_property_t<Patch_id>("patch_id", MESH), pmesh);
+      patch_ids_map = add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
       nb_cc
         = PMP::connected_components(pmesh,
                                     patch_ids_map,
@@ -215,68 +214,6 @@ namespace internal {
     {
       if (m.nb_cc != 1)
         put(m.patch_ids_map, f, i);
-    }
-  };
-
-
-  template <typename PM>
-  struct Halfedge_status_pmap {
-
-    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-    typedef boost::unordered_map<halfedge_descriptor, Halfedge_status > Halfedge_status_map;
-    typedef boost::shared_ptr<Halfedge_status_map> Halfedge_status_map_ptr;
-    Halfedge_status_map_ptr halfedge_status_map_ptr;
-
-    Halfedge_status_pmap(int)
-      : halfedge_status_map_ptr(new Halfedge_status_map())
-    {}
-      
-    typedef halfedge_descriptor                key_type;
-    typedef Halfedge_status                    value_type;
-    typedef value_type&                        reference;
-    typedef boost::read_write_property_map_tag category;
-
-
-    friend value_type get(const Halfedge_status_pmap& pm, const key_type& h)
-    {
-      typename Halfedge_status_map::const_iterator
-        it = pm.halfedge_status_map_ptr->find(h);
-      if (it == pm.halfedge_status_map_ptr->end())
-        return MESH;
-      return it->second;
-    }
-
-
-    friend void put(Halfedge_status_pmap& pm, const key_type& h, value_type s)
-    {
-      if (s == MESH)
-        pm.halfedge_status_map_ptr->erase(h);
-      else
-        (*(pm.halfedge_status_map_ptr))[h] = s;
-    }
-
-  };
-
-  template <typename PM>
-  struct Helper {
-    typedef Helper<PM> Self;
-    typedef Halfedge_status_pmap<PM> type;
-
-    friend type get_status_pmap(const Self&, PM&)
-    {
-      return type(0);
-    }
-  };
-
-  template <typename Point>
-  struct Helper <Surface_mesh<Point> > {
-    typedef Helper <Surface_mesh<Point> > Self;
-    typedef typename boost::graph_traits<Surface_mesh<Point> >::halfedge_descriptor halfedge_descriptor;
-    typedef typename Surface_mesh<Point>:: template Property_map<halfedge_descriptor, Halfedge_status> type;
-
-    friend type get_status_pmap(const Self&, Surface_mesh<Point>& sm)
-    {
-      return sm. template add_property_map<halfedge_descriptor, Halfedge_status>("halfedge_status_map", MESH).first;
     }
   };
 
@@ -346,6 +283,9 @@ namespace internal {
     typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
     typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
+    typedef typename boost::property_map<
+      PM, boost::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
+
   public:
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
@@ -368,7 +308,9 @@ namespace internal {
       , fimap_(fimap)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
-      halfedge_status_pmap_ = get_status_pmap(Helper<PolygonMesh>(), mesh_);
+      halfedge_status_pmap_ = add(
+        boost::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
+        pmesh);
     }
 
     ~Incremental_remesher()
@@ -377,9 +319,8 @@ namespace internal {
         Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> >::value)
         remove(patch_ids_map_, mesh_);
 
-#ifdef SM_HALFEDGE_STATUS_PMAP
-      mesh_.remove_property_map(halfedge_status_pmap_);
-#endif
+      remove(halfedge_status_pmap_, mesh_);
+
       if (own_tree_){
         for(int i=0; i < trees.size();++i){
           delete trees[i];
@@ -1968,7 +1909,7 @@ private:
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
     Patch_id_to_index_map patch_id_to_index_map_;
-    typename Helper<PolygonMesh>::type halfedge_status_pmap_;
+    Halfedge_status_pmap halfedge_status_pmap_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
