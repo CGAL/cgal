@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -11,23 +11,24 @@
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/helpers.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Surface_mesh<Kernel::Point_3> SM;
+typedef boost::graph_traits<SM>::face_descriptor face_descriptor;
 
 int main()
 {
-  Polyhedron poly;
+  SM sm;
   std::ifstream input("data/head.off");
-  input >> poly;
+  input >> sm;
 
 // define my selection of faces to remove
-  boost::unordered_map<Polyhedron::Face_handle, bool> is_selected_map;
+  boost::unordered_map<face_descriptor, bool> is_selected_map;
 
   const int selection_indices[] = {501, 652, 646, 322, 328, 212, 347, 345, 352, 353, 696, 697, 698, 706, 714, 2892};
   std::set<int> index_set(&selection_indices[0], &selection_indices[0]+16);
 
-  std::vector<Polyhedron::Face_handle> faces_to_remove;
+  std::vector<face_descriptor> faces_to_remove;
   int index = 0;
-  BOOST_FOREACH(Polyhedron::Face_handle fh, faces(poly))
+  BOOST_FOREACH(face_descriptor fh, faces(sm))
   {
     if(index_set.count(index)==0)
       is_selected_map[fh]=false;
@@ -39,22 +40,22 @@ int main()
     ++index;
   }
 
-  expand_face_selection_for_removal(poly,
+  expand_face_selection_for_removal(sm,
                                     faces_to_remove,
                                     boost::make_assoc_property_map(is_selected_map));
 
   index=0;
-  BOOST_FOREACH(Polyhedron::Face_handle fh, faces(poly))
+  BOOST_FOREACH(face_descriptor fh, faces(sm))
   {
     if (is_selected_map[fh])
     {
-      CGAL::Euler::remove_face(fh->halfedge(), poly);
+      CGAL::Euler::remove_face(halfedge(fh, sm), sm);
       ++index;
     }
   }
 
-  CGAL_assertion(index == 25);
-  CGAL_assertion(is_valid(poly));
+  assert(index == 25);
+  assert(is_valid(sm));
   return 0;
 }
 
