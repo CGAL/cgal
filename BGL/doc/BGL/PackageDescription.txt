@@ -10,8 +10,6 @@
  related to it. Models of the concept and their related functions
  must be in the same namespace (they will be found by Koenig lookup).
 
-  
-
 \dot
 digraph example {
   node [shape=record, fontname=Helvetica, fontsize=10];
@@ -54,8 +52,6 @@ Associated Type                               | Description
 `boost::graph_traits<G>::%vertex_iterator`    | %Iterator over all vertices.
 `boost::graph_traits<G>::%vertices_size_type` | Unsigned integer type for number of vertices.
 
-
-
 Valid Expression     |  returns                                       | Description
 -----------------    | ---------------                                | -----------------------
 `vertices(g)`        |  `std::pair<vertex_iterator, vertex_iterator>` | An iterator range over all vertices. 
@@ -70,7 +66,6 @@ Associated Type                               | Description
 -----------------                             | -----------
 `boost::graph_traits<G>::%edge_iterator`      | %Iterator over all edges.
 `boost::graph_traits<G>::%edges_size_type`    | Unsigned integer type for number of edges.
-
 
 Valid Expression  |  returns                                    | Description
 ----------------- | ---------------                             | -----------------------
@@ -130,7 +125,6 @@ Associated Type                                   | Description
 `boost::graph_traits<G>::%halfedge_iterator`      | A `BidirectionalIterator` over all halfedges in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable`.
 `boost::graph_traits<G>::%halfedges_size_type`    | A size type.
 
-
 Valid Expression                      | Returns                                   | Description  
 ------------------------------------- | ------------------------------------------| -----------
 `num_halfedges(g)`                    | `halfedges_size_type`                     | An upper bound of the number of halfedges of the graph.
@@ -148,14 +142,12 @@ Associated Type                              | Description
 -------------------------------------------- | ------------
 `boost::graph_traits<G>::%face_descriptor`   | A `face_descriptor` corresponds to a unique face in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable` and `LessThanComparable`.
 
-
 Valid Expression                       | Returns                                                                  | Description  
 -------------------------------------- | ------------------------------------------------------------------------ | ------------------------
 `face(h, g)`                           | `face_descriptor`                                                        | The face incident to halfedge `h`.
 `halfedge(f, g)`                       | `halfedge_descriptor`                                                    | A halfedge incident to face `f`.
 `degree(f,g)`                          | `degree_size_type`                                                       | The number of halfedges incident to face `f`.
 `boost::graph_traits<G>::%null_face()` | `face_descriptor`                                                        | A special face that is not equal to any other face.
-
 
 \cgalHeading{%MutableFaceGraph}
 
@@ -180,14 +172,10 @@ Associated Type                             | Description
 `boost::graph_traits<G>::%face_iterator`   | %Iterator over all faces.
 `boost::graph_traits<G>::%faces_size_type` | Unsigned integer type for number of faces.
 
-
-
-
 Valid Expression  |  returns                                   | Description
 ----------------- | ---------------                            | -----------------------
 `faces(g)`        |  `std::pair<face_iterator, face_iterator>` | An iterator range over all faces. 
 `num_faces(g)`    |  `faces_size_type`                         | An upper bound of the number of faces of the graph.
-
 
 */
 
@@ -206,6 +194,9 @@ Valid Expression  |  returns                                   | Description
 /// \ingroup PkgBGL
 
 /// \defgroup PkgBGLSelectionFct Selection Functions
+/// \ingroup PkgBGL
+
+/// \defgroup PkgBGLAdaptors Graph adaptors
 /// \ingroup PkgBGL
 
 /// \defgroup PkgBGLEulerOperations Euler Operations
@@ -230,10 +221,10 @@ Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
 Several iterators and circulators are provided that enable, for example,
 to iterate through the  halfedges incident to a given face or vertex.
 
-Starting at a halfedge `h`, applying several times `next(h,g)` brings us back 
-to the halfedge where we started. All halfedges traversed on the way are 
+Starting at a halfedge `h`, applying several times `next(h,g)` brings us back
+to the halfedge where we started. All halfedges traversed on the way are
 incident to the same face.
-Using the composition of the `next(h,g)` and `opposite(h,g)` functions results 
+Using the composition of the `next(h,g)` and `opposite(h,g)` functions results
 in another cycle, namely the cycle of halfedges which are incident to
 the same vertex.
 For convenience, two iterator and circulator types enable iterating through all the halfedges
@@ -254,6 +245,16 @@ Several functions to enlarge or reduce a k-ring selection of vertices, edges, or
 
 */
 
+/*!
+\addtogroup PkgBGLAdaptors
+
+Graph adaptors are classes that build an interface over an existing graph to provide
+new functionalities. For example, `CGAL::Dual` allows to traverse and query
+the dual graph of a graph without actually building the dual. By operating
+almost entirely on the input graph, adaptors can avoid potentially expensive operations,
+both in term of time and memory.
+
+*/
 
 /*!
 \addtogroup PkgBGL
@@ -297,8 +298,9 @@ adapted types are listed here. The pages document which concepts they
 model, the properties they support, and any possible caveats that a
 user might encounter.
 
-- \link BGLSMGT  `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
-- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLSMGT `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
+- \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLSeam_meshGT `boost::graph_traits< CGAL::Seam_mesh<T> >` \endlink
 - \link BGLT2GT `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` \endlink
 - \link BGLArgtGT `boost::graph_traits< CGAL::Arrangement_2<T,DC> >` \endlink
 - \link BGLOMPAK `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` \endlink
@@ -313,10 +315,6 @@ user might encounter.
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
 - `CGAL::set_halfedgeds_items_id()`
-- `CGAL::Dual`
-- `CGAL::Graph_with_descriptor_with_graph`
-- `CGAL::Graph_with_descriptor_with_graph_property_map`
-- `CGAL::Face_filtered_graph`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
@@ -403,12 +401,18 @@ user might encounter.
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
+## Graph Adaptors ##
+- `CGAL::Dual`
+- `CGAL::Face_filtered_graph`
+- `CGAL::Graph_with_descriptor_with_graph`
+- `CGAL::Graph_with_descriptor_with_graph_property_map`
+- `CGAL::Seam_mesh`
 */
 
 /*!
 \addtogroup PkgBGLEulerOperations
 
-We call high level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>. 
+We call high level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>.
 
 
 */

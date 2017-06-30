@@ -17,54 +17,55 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # VisualC++ optimization for applications dealing with large data
-  if (MSVC)
-    # Use /FR to turn on IntelliSense
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
-
-    # Allow Windows applications to use up to 3GB of RAM
-    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
-
-    # Turn off stupid VC++ warnings
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
-    
-    # Print new compilation options
-    message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )
-    message( STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'" )
-    message( STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'" )
-    message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
-  endif()
-
-
-  # Link with Boost.ProgramOptions (optional)
-  find_package(Boost QUIET COMPONENTS program_options)
-  if(Boost_PROGRAM_OPTIONS_FOUND)
-    if( CGAL_AUTO_LINK_ENABLED )
-      message( STATUS "Boost.ProgramOptions library: found" )
-    else()
-      message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
-    endif()
-    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
- endif()
-
- 
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
- 
   if (EIGEN3_FOUND)
     # Executables that require Eigen 3.1
-    include( ${EIGEN3_USE_FILE} ) 
-  create_single_source_cgal_program( "Authalic_parameterization.cpp" )
-  create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )
-  create_single_source_cgal_program( "Simple_parameterization.cpp" )
-  create_single_source_cgal_program( "Square_border_parameterization.cpp" )
+    include( ${EIGEN3_USE_FILE} )
 
-    create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
+# ------------------------------------------------------------------
+# Detect SuiteSparse libraries:
+# If not found automatically, set SuiteSparse_DIR in CMake to the
+# directory where SuiteSparse was built.
+# ------------------------------------------------------------------
 
-  create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
+    set(SuiteSparse_USE_LAPACK_BLAS ON)
+    find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+    if(NOT SuiteSparse_FOUND)
+      set(SuiteSparse_VERBOSE ON)
+      find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+      if(SuiteSparse_FOUND)
+        include_directories(${SuiteSparse_INCLUDE_DIRS})
+      endif(SuiteSparse_FOUND)
+    else(NOT SuiteSparse_FOUND)
+      include(${USE_SuiteSparse})
+    endif(NOT SuiteSparse_FOUND)
+
+    if(SuiteSparse_FOUND)
+      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+      message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
+      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
+      add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
+    else(SuiteSparse_FOUND)
+      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library.")
+    endif(SuiteSparse_FOUND)
+
+# ------------------------------------------------------------------
+#   End of SuiteSparse detection
+# ------------------------------------------------------------------
+
+    create_single_source_cgal_program( "discrete_authalic.cpp" )
+    create_single_source_cgal_program( "lscm.cpp" )
+    create_single_source_cgal_program( "orbifold.cpp" )
+    create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
+    create_single_source_cgal_program( "simple_parameterization.cpp" )
+    create_single_source_cgal_program( "square_border_parameterizer.cpp" )
+    
+    if(SuiteSparse_FOUND)
+      target_link_libraries(orbifold ${SuiteSparse_LIBRARIES})
+    endif()
 
   else(EIGEN3_FOUND)
-    message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
+    message(STATUS "NOTICE: The examples require Eigen 3.1 (or greater) and will not be compiled.")
   endif(EIGEN3_FOUND)
 
 else()

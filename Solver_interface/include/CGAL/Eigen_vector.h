@@ -72,7 +72,7 @@ public:
 
    /// Return the vector's number of coefficients.
    int dimension() const {
-       return this->size();
+       return static_cast<int>(this->size());
    }
 
    /// Get vector wrapped by this object.
