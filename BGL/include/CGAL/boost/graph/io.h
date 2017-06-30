@@ -71,7 +71,7 @@ bool write_off(std::ostream& os,
 
 /*!
    \ingroup PkgBGLIOFct
-    writes the graph `g` in the OFF format.
+    writes the graph `g` in the OFF format into a file named `fname`.
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
   */ 
