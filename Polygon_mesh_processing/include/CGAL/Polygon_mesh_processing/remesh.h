@@ -182,7 +182,7 @@ void isotropic_remeshing(const FaceRange& faces
     ? choose_param(get_param(np, internal_np::face_patch),
       internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap))
     : choose_param(get_param(np, internal_np::face_patch),
-      internal::Connected_components_pmap<PM, ECMap, FIMap>());//do not compute cc's
+      internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh));//do not compute cc's
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
@@ -339,7 +339,7 @@ void split_long_edges(const EdgeRange& edges
     remesher(pmesh, vpmap, false/*protect constraints*/
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
-           , internal::Connected_components_pmap<PM, ECMap, FIMap>()
+           , internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh)
            , fimap
            , false/*need aabb_tree*/);
 

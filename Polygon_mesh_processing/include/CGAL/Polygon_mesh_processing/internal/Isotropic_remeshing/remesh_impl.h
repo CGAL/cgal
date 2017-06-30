@@ -42,6 +42,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
+#include <CGAL/tags.h>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
@@ -179,15 +180,17 @@ namespace internal {
     typedef Patch_id&                           reference;
     typedef boost::read_write_property_map_tag  category;
 
-    Connected_components_pmap()
-      : patch_ids_map()
-    {}
+    Connected_components_pmap(PM& pmesh)
+    {
+      patch_ids_map = add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
+      remove(patch_ids_map, pmesh);
+    }
+
     //note pmesh is a non-const ref because add() and remove()
     //modify the mesh data structure, but not the mesh itself
     Connected_components_pmap(PM& pmesh
                             , EdgeIsConstrainedMap ecmap
                             , FIMap fimap)
-      : patch_ids_map()
     {
       patch_ids_map = add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
       nb_cc
@@ -307,17 +310,17 @@ namespace internal {
       , vcmap_(vcmap)
       , fimap_(fimap)
     {
-      CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
       halfedge_status_pmap_ = add(
         boost::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
         pmesh);
+      CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
 
     ~Incremental_remesher()
     {
-      if (boost::is_same<FacePatchMap,
-        Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> >::value)
-        remove(patch_ids_map_, mesh_);
+      typedef Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> CCPmap;
+      remove_connected_components_pmap
+        (CGAL::Boolean_tag<boost::is_same<FacePatchMap, CCPmap>::value>());
 
       remove(halfedge_status_pmap_, mesh_);
 
@@ -327,7 +330,13 @@ namespace internal {
         }
       }
     }
-    
+
+    void remove_connected_components_pmap(CGAL::Tag_false) {}
+    void remove_connected_components_pmap(CGAL::Tag_true)
+    {
+      remove(patch_ids_map_, mesh_);
+    }
+
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {
@@ -1520,8 +1529,6 @@ private:
       return get(halfedge_status_pmap_,h);
     }
 
-    // AF: This could become the put of a PM
-    // AF: for a Surface_mesh::Property_map we just put s
     void set_status(const halfedge_descriptor& h,
                     const Halfedge_status& s)
     {
@@ -1779,15 +1786,12 @@ private:
       unsigned int nb_patch = 0;
       unsigned int nb_patch_border = 0;
 
-      typedef typename boost::unordered_map <
-        halfedge_descriptor, Halfedge_status>::value_type
-          HD_pair;
-      BOOST_FOREACH(const HD_pair& hs, halfedge_status_pmap_)
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
       {
-        if(is_on_patch(hs.first))              nb_patch++;
-        else if(is_on_patch_border(hs.first))  nb_patch_border++;
-        else if(is_on_mesh(hs.first))          nb_mesh++;
-        else if(is_on_border(hs.first))        nb_border++;
+        if(is_on_patch(h))              nb_patch++;
+        else if(is_on_patch_border(h))  nb_patch_border++;
+        else if(is_on_mesh(h))          nb_mesh++;
+        else if(is_on_border(h))        nb_border++;
         else CGAL_assertion(false);
       }
     }
