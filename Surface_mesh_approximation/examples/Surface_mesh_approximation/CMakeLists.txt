@@ -41,7 +41,7 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "segmentation_vsa_example.cpp" )
+create_single_source_cgal_program( "vsa_example.cpp" )
 # create_single_source_cgal_program( "segmentation_from_sdf_values_SM_example.cpp")
 
 # if(OpenMesh_FOUND)

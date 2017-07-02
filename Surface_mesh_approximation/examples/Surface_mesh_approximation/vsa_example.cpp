@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <CGAL/internal/Surface_mesh_approximation/VSA_segmentation.h>
+#include <CGAL/internal/Surface_mesh_approximation/VSA.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
   typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type PointPropertyMap;
   PointPropertyMap ppmap = get(boost::vertex_point, const_cast<Polyhedron &>(mesh));
 
-  CGAL::internal::VSA_segmentation<Polyhedron, Kernel, PointPropertyMap> vsa_seg(mesh, ppmap, Kernel());
+  CGAL::internal::VSA<Polyhedron, Kernel, PointPropertyMap> vsa_seg(mesh, ppmap, Kernel());
 
   /*for (Polyhedron::Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
     std::cout << segment_property_map[fitr] << '\n';
