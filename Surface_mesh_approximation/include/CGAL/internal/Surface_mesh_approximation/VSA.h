@@ -1,5 +1,5 @@
-#ifndef CGAL_VSA_SEGMENTATION_H
-#define CGAL_VSA_SEGMENTATION_H
+#ifndef CGAL_VSA_H
+#define CGAL_VSA_H
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Kernel/global_functions.h>
@@ -26,18 +26,18 @@ namespace CGAL
 namespace internal
 {
 /**
- * @brief Main entry point for VSA mesh segmentation algorithm.
+ * @brief Main entry point for VSA mesh approximation algorithm.
  *
  * blah blah...
  *
  * @tparam Polyhedron a CGAL polyhedron
- * @tparam GeomTraits a model of SegmentationGeomTraits
+ * @tparam GeomTraits a model of ApproximationGeomTraits
  */
 template <typename Polyhedron,
   typename GeomTraits,
   //typename FacetSegmentMap,
   typename VertexPointPmap>
-  class VSA_segmentation
+  class VSA
 {
 private:
   typedef typename GeomTraits::FT FT;
@@ -190,7 +190,7 @@ public:
    * @pre @a polyhedron.is_pure_triangle()
    * @param mesh `CGAL Polyhedron` on which other functions operate.
    */
-  VSA_segmentation(const Polyhedron &_mesh,
+  VSA(const Polyhedron &_mesh,
     VertexPointPmap _vertex_point_map,
     GeomTraits _traits)
     : mesh(_mesh),
@@ -918,10 +918,10 @@ private:
     vertex_descriptor vtx = target(he, mesh);
     attach_anchor(vtx, px_set);
   }
-}; // end class VSA_segmentation
+}; // end class VSA
 } // end namespace internal
 } // end namespace CGAL
 
 #undef CGAL_NOT_TAGGED_ID
 
-#endif // CGAL_VSA_SEGMENTATION_H
+#endif // CGAL_VSA_H
