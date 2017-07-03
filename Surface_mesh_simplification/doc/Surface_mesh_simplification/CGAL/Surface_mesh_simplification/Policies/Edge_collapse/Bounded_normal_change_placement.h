@@ -24,6 +24,13 @@ public:
 /*!
 Default constructor 
 */ 
+Bounded_normal_change_placement<Placement>(); 
+
+/*!
+Constructor 
+
+@param place is the placement that will be filtered.
+*/ 
 Bounded_normal_change_placement<Placement>(const Placement& place); 
 
 /// @} 
