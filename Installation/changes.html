@@ -152,12 +152,21 @@ and <code>src/</code> directories).
       See the full changelog for details.
     </li>
   </ul>
+  <h3>3D Periodic Triangulations</h3>
+  <ul>
+    <li>
+      Added the class <code>Periodic_3_regular_triangulation_3</code>, which provides functionality
+      for 3D periodic weighted Delaunay triangulations. The construction is fully
+      dynamic: it provides both point insertion and vertex removal.
+    </li>
+  </ul>
   <h3>dD Triangulations</h3>
   <ul>
-      <li>
-          Add a class to compute regular triangulations.
-          Note that the removal of points is not yet supported.
-      </li>
+    <li>
+      Added the class <code>Regular_triangulation</code>, which provides functionality
+      for dD weighted Delaunay triangulations. Note that the removal of points
+      is not yet supported.
+    </li>
   </ul>
 
 <!-- Arithmetic and Algebra -->
@@ -238,11 +247,6 @@ and <code>src/</code> directories).
   </ul>
   <h3>3D Periodic Triangulations</h3>
   <ul>
-    <li>
-      Added the class <code>Periodic_3_regular_triangulation_3</code>, which provides functionality
-      for 3D periodic weighted Delaunay triangulations. The construction is fully
-      dynamic: it provides both point insertion and vertex removal.
-    </li>
     <li>
       Added new locate and geometric access functions for 3D periodic triangulations.
     </li>
