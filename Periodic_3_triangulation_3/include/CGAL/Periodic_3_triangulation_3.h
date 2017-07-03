@@ -373,7 +373,7 @@ public:
     return number_of_facets();
   }
   size_type number_of_finite_edges() const {
-    return number_of_finite_edges();
+    return number_of_edges();
   }
 
   size_type number_of_stored_cells() const {
