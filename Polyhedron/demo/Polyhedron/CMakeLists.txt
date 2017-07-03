@@ -295,7 +295,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   
-  target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
+  target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item scene_surface_mesh_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   target_link_libraries( scene_points_with_normal_item gl_splat)
 

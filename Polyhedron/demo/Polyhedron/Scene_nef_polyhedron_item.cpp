@@ -1,10 +1,10 @@
 #include "Scene_nef_polyhedron_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Nef_type.h"
 #include "Polyhedron_type.h"
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-// #include <CGAL/OFF_to_nef_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Inverse_index.h>
@@ -18,6 +18,9 @@
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 typedef Nef_polyhedron::Traits Traits;
 typedef Nef_polyhedron::Halffacet Facet;
@@ -573,6 +576,11 @@ Scene_nef_polyhedron_item::nef_polyhedron() {
     return d->nef_poly;
 }
 
+Nef_polyhedron*
+Scene_nef_polyhedron_item::nef_polyhedron()const {
+    return d->nef_poly;
+}
+
 bool
 Scene_nef_polyhedron_item::isEmpty() const {
     return (d->nef_poly == 0) || d->nef_poly->is_empty();
@@ -677,30 +685,55 @@ bool Scene_nef_polyhedron_item::is_simple() const
 {
     return d->nef_poly->is_simple();
 }
-
-// [static]
-Scene_nef_polyhedron_item* 
-Scene_nef_polyhedron_item::from_polyhedron(Scene_polyhedron_item* item)
+template<typename FaceGraph>
+struct Halfedge_index_pmap
 {
-    Polyhedron* poly = item->polyhedron();
-    if(!poly) return 0;
 
-    Exact_polyhedron exact_poly;
-    to_exact(*poly, exact_poly);
-    Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_poly);
-    exact_poly.clear();
+};
 
-    return new Scene_nef_polyhedron_item(nef_poly);
+template<typename FaceGraph>
+struct Face_index_pmap
+{
+
+};
+// [static]
+Scene_nef_polyhedron_item*
+Scene_nef_polyhedron_item::from_polygon_mesh(Scene_polyhedron_item *item)
+{
+  //return from_templated_polygon_mesh(item);
+  Polyhedron* poly = item->polyhedron();
+  if(!poly) return 0;
+  CGAL::Polyhedron_3<Exact_Kernel> exact_poly;
+  CGAL::copy_face_graph(*poly, exact_poly);
+  Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_poly);
+
+  return new Scene_nef_polyhedron_item(nef_poly);
 }
 
-Scene_polyhedron_item*
-Scene_nef_polyhedron_item::convert_to_polyhedron() const {
-    Exact_polyhedron exact_poly;
-    d->nef_poly->convert_to_Polyhedron(exact_poly);
-    Polyhedron* poly = new Polyhedron;
-    from_exact(exact_poly, *poly);
-    exact_poly.clear();
-    return new Scene_polyhedron_item(poly);
+Scene_nef_polyhedron_item*
+Scene_nef_polyhedron_item::from_polygon_mesh(Scene_surface_mesh_item* item)
+{
+  SMesh* sm = item->polyhedron();
+  if(!sm) return 0;
+  CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_sm;
+  CGAL::copy_face_graph(*sm, exact_sm);
+  Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_sm);
+
+  return new Scene_nef_polyhedron_item(nef_poly);
+}
+Scene_polyhedron_item* Scene_nef_polyhedron_item::convert_to_polyhedron() const
+{
+  Polyhedron* poly = new Polyhedron();
+  CGAL::convert_nef_polyhedron_to_polygon_mesh(*this->nef_polyhedron(), *poly);
+  CGAL::Polygon_mesh_processing::triangulate_faces(*poly);
+  return new Scene_polyhedron_item(poly);
+}
+Scene_surface_mesh_item* Scene_nef_polyhedron_item::convert_to_surface_mesh() const
+{
+  SMesh* poly = new SMesh();
+  CGAL::convert_nef_polyhedron_to_polygon_mesh(*this->nef_polyhedron(), *poly);
+  CGAL::Polygon_mesh_processing::triangulate_faces(*poly);
+  return new Scene_surface_mesh_item(poly);
 }
 
 Scene_nef_polyhedron_item&
