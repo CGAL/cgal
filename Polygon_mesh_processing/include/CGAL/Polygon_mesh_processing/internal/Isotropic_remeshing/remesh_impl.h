@@ -172,7 +172,7 @@ namespace internal {
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
     typename boost::property_map<PM, boost::face_property_t<Patch_id> >::type patch_ids_map;
-    std::size_t nb_cc;//static because we want to access it from get()
+    std::size_t nb_cc;
 
   public:
     typedef face_descriptor                     key_type;
