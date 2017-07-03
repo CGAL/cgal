@@ -12,10 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
-// $Id$ 
+// $URL$
+// $Id$
 // $Date$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -64,7 +64,7 @@ typedef CGAL::Triangulation_data_structure_3<EAsVb,EAsCb> ETds;
 typedef CGAL::Periodic_3_Delaunay_triangulation_3<EK,ETds> EP3DT3;
 typedef CGAL::Alpha_shape_3<EP3DT3>  EAlpha_shape_3;
 
-int main()
+int main(int, char**)
 {
   CGAL::Timer timer;
   timer.start();

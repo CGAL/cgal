@@ -12,53 +12,41 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
- 
+
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
-// This class gathers optimized predicates written by hand, using
-// a few steps of filtering.  It should work if the initial traits has
-// cartesian coordinates which fit exactly in doubles.
-//
-// Purely static filters code has been removed, since it requires additional
-// logic and is not plug'n play (requires users providing bounds).
-// If it should be provided again, it should probably be separate.
-
-#include <CGAL/basic.h>
-
-#include <CGAL/Kernel/function_objects.h>
-#include <CGAL/Cartesian/function_objects.h>
-
-#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Periodic_3_orientation_3.h>
-
-// TODO :
-// - add more predicates :
+#include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 
-// The K_base argument is supposed to provide exact primitives.
-template < typename Traits >
-class Periodic_3_triangulation_statically_filtered_traits_3 : public Traits
+template< typename K,
+          typename Off = typename CGAL::Periodic_3_offset_3>
+class Periodic_3_triangulation_statically_filtered_traits_3
+    : public Periodic_3_triangulation_filtered_traits_base_3<K, Off>
 {
-  typedef Periodic_3_triangulation_statically_filtered_traits_3<Traits> Self;
+  typedef Periodic_3_triangulation_statically_filtered_traits_3<K, Off> Self;
+  typedef Periodic_3_triangulation_filtered_traits_base_3<K, Off>       Base;
 
 public:
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
-  typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
-    Orientation_3;
+  Periodic_3_triangulation_statically_filtered_traits_3(const Iso_cuboid_3& domain,
+                                                        const K& k)
+    : Base(domain, k)
+  { }
+
+  typedef internal::Static_filters_predicates::Periodic_3_orientation_3<
+            K, typename Base::Orientation_3> Orientation_3;
 
   Orientation_3 orientation_3_object() const {
-    return Orientation_3(&this->_domain,&this->_domain_e,&this->_domain_f);
+    return Orientation_3(&this->_domain,
+                         this->Base::orientation_3_object());
   }
 };
 

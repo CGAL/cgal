@@ -31,13 +31,13 @@
 
 namespace CGAL {
 
-template < class R, class W = typename R::RT>
+template < class K, class W = typename K::RT>
 class Regular_triangulation_euclidean_traits_2
-  : public R
+  : public K
 {
 public:
   Regular_triangulation_euclidean_traits_2() {}
-  Regular_triangulation_euclidean_traits_2(const R& k) : R(k) {}
+  Regular_triangulation_euclidean_traits_2(const K& k) : K(k) {}
 };
 
 } //namespace CGAL
