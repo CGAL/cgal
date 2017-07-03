@@ -37,4 +37,4 @@ public:
 
   /// @}
 
-}; /* end GpsTraitsGeneralPolygon_2 */
+};
