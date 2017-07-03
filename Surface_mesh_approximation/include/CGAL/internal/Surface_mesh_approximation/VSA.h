@@ -281,7 +281,7 @@ public:
    * @tris[out] indexed triangles
    */
   template<typename FacetSegmentMap>
-  void extract_mesh(FacetSegmentMap &seg_pmap, std::vector<int> &tris) {
+  void extract_mesh(const FacetSegmentMap &seg_pmap, std::vector<int> &tris) {
     compute_proxy_area(seg_pmap);
     compute_proxy_center(seg_pmap);
 
@@ -405,7 +405,7 @@ private:
    * @param seg_map facet partition index
    */
   template <typename FacetSegmentMap>
-  void fitting(FacetSegmentMap &seg_pmap) {
+  void fitting(const FacetSegmentMap &seg_pmap) {
     // update normal
     std::vector<Vector> px_normals(proxies.size(), CGAL::NULL_VECTOR);
     std::vector<FT> px_areas(proxies.size(), FT(0));
@@ -456,7 +456,7 @@ private:
    * @param seg_map facet partition index
    */
   template <typename FacetSegmentMap>
-  void insert_proxy(FacetSegmentMap &seg_pmap) {
+  void insert_proxy(const FacetSegmentMap &seg_pmap) {
     std::vector<FT> px_error(proxies.size(), FT(0.0));
     std::vector<FT> max_facet_error(proxies.size(), FT(0.0));
     std::vector<face_descriptor> max_facet(proxies.size());
@@ -494,7 +494,7 @@ private:
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
-  void find_anchors(FacetSegmentMap &seg_pmap) {
+  void find_anchors(const FacetSegmentMap &seg_pmap) {
     anchors.clear();
 
     BOOST_FOREACH(vertex_descriptor vtx, vertices(mesh)) {
@@ -523,7 +523,7 @@ private:
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
-  void find_edges(FacetSegmentMap &seg_pmap) {
+  void find_edges(const FacetSegmentMap &seg_pmap) {
     // tag all proxy border halfedges as candidate
     tag_halfedges_status(seg_pmap);
 
@@ -825,7 +825,7 @@ private:
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
-  void tag_halfedges_status(FacetSegmentMap &seg_pmap) {
+  void tag_halfedges_status(const FacetSegmentMap &seg_pmap) {
     BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
       halfedge_status_pmap[h] = static_cast<int>(OFF_BORDER);
       if (!CGAL::is_border(h, mesh)
