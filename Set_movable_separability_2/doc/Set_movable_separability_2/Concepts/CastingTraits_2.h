@@ -33,7 +33,7 @@ public:
   /// @{
 
   Counterclockwise_in_between_2 counterclockwise_in_between_2_object() const;
-  Counterclockwise_in_between_2 Collinear_2_object() const;
+  Collinear_2 collinear_2_object() const;
 
   /// @}
 
