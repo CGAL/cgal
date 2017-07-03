@@ -16,30 +16,30 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 
-template<typename Polyhedron>
-void angles(Polyhedron* poly, double& mini, double& maxi, double& ave)
+template<typename Mesh>
+void angles(Mesh* poly, double& mini, double& maxi, double& ave)
 {
   using namespace boost::accumulators;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
+  typedef typename CGAL::Kernel_traits< typename boost::property_traits<VPMap>::value_type >::Kernel Traits;
   double rad_to_deg = 180. / CGAL_PI;
 
   accumulator_set< double,
     features< tag::min, tag::max, tag::mean > > acc;
 
-  typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
-    vpmap = get(CGAL::vertex_point, *poly);
+  VPMap vpmap = get(CGAL::vertex_point, *poly);
   BOOST_FOREACH(halfedge_descriptor h, halfedges(*poly))
   {
-    if (face(h, *poly) == boost::graph_traits<Polyhedron>::null_face())
+    if (face(h, *poly) == boost::graph_traits<Mesh>::null_face())
       continue;
 
-    typename Kernel::Point_3 a = get(vpmap, source(h, *poly));
-    typename Kernel::Point_3 b = get(vpmap, target(h, *poly));
-    typename Kernel::Point_3 c = get(vpmap, target(next(h, *poly), *poly));
+    typename Traits::Point_3 a = get(vpmap, source(h, *poly));
+    typename Traits::Point_3 b = get(vpmap, target(h, *poly));
+    typename Traits::Point_3 c = get(vpmap, target(next(h, *poly), *poly));
 
-    typename Kernel::Vector_3 ba(b, a);
-    typename Kernel::Vector_3 bc(b, c);
+    typename Traits::Vector_3 ba(b, a);
+    typename Traits::Vector_3 bc(b, c);
     double cos_angle = (ba * bc)
       / std::sqrt(ba.squared_length() * bc.squared_length());
 
@@ -51,26 +51,27 @@ void angles(Polyhedron* poly, double& mini, double& maxi, double& ave)
   ave = extract_result< tag::mean >(acc);
 }
 
-template<typename Polyhedron>
-void edges_length(Polyhedron* poly,
+template<typename Mesh>
+void edges_length(Mesh* poly,
   double& mini, double& maxi, double& mean, double& mid,
   unsigned int& nb_degen)
 {
   using namespace boost::accumulators;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
+  typedef typename boost::property_traits<VPMap>::value_type  Point;
 
   accumulator_set< double,
     features< tag::min, tag::max, tag::mean , tag::median> > acc;
 
-  typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
-    vpmap = get(CGAL::vertex_point, *poly);
+  VPMap vpmap = get(CGAL::vertex_point, *poly);
   nb_degen = 0;
   BOOST_FOREACH(edge_descriptor e, edges(*poly))
   {
     halfedge_descriptor h = halfedge(e, *poly);
-    typename Kernel::Point_3 a = get(vpmap, source(h, *poly));
-    typename Kernel::Point_3 b = get(vpmap, target(h, *poly));
+    Point a = get(vpmap, source(h, *poly));
+    Point b = get(vpmap, target(h, *poly));
     acc(CGAL::sqrt(CGAL::squared_distance(a, b)));
 
     if (a == b) ++nb_degen;
@@ -82,80 +83,84 @@ void edges_length(Polyhedron* poly,
   mid =  extract_result< tag::median >(acc);
 }
 
-template<typename Polyhedron, typename VPmap>
-unsigned int nb_degenerate_faces(Polyhedron* poly, VPmap vpmap)
+template<typename Mesh, typename VPmap>
+unsigned int nb_degenerate_faces(Mesh* poly, VPmap vpmap)
 {
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+  typedef typename CGAL::Kernel_traits< typename boost::property_traits<VPmap>::value_type >::Kernel Traits;
 
   unsigned int nb = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly))
   {
-    if (CGAL::is_degenerate_triangle_face(f, *poly, vpmap, Kernel()))
+    if (CGAL::is_degenerate_triangle_face(f, *poly, vpmap, Traits()))
       ++nb;
   }
   return nb;
 }
 
-template<typename Polyhedron>
-unsigned int nb_holes(Polyhedron* poly)
+template<typename Mesh>
+unsigned int nb_holes(Mesh* poly)
 {
+  typedef typename boost::property_map<Mesh, boost::halfedge_index_t>::type IDMap;
+  IDMap idmap = get(boost::halfedge_index, *poly);
+
   //gets the number of holes
   //if is_closed is false, then there are borders (= holes)
   int n(0);
-  int i = 0;
 
-  // initialization : keep the original ids in memory and set them to 0
+  // initialization :set all ids to 0 in vector
   std::vector<std::size_t> ids;
-  for (typename Polyhedron::Halfedge_iterator it = poly->halfedges_begin();
-      it != poly->halfedges_end(); ++it)
+  ids.resize(num_halfedges(*poly));
+  for (std::size_t i=0; i< ids.size(); ++i )
   {
-    ids.push_back(it->id());
-    it->id() = 0;
+    ids[i] = 0;
   }
 
-  //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
+  //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges in the vector to 1 to prevent
   // the algorithm from counting them several times.
-  for (typename Polyhedron::Halfedge_iterator it = poly->halfedges_begin();
-       it != poly->halfedges_end();
+  for (typename boost::graph_traits<Mesh>::halfedge_iterator it = halfedges(*poly).begin();
+       it != halfedges(*poly).end();
        ++it)
   {
-    if (it->is_border() && it->id() == 0){
+    typename boost::graph_traits<Mesh>::halfedge_descriptor hd(*it);
+    if (is_border(hd, *poly) && ids[get(idmap, hd)] == 0){
       n++;
-      typename Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+      CGAL::Halfedge_around_face_circulator<Mesh> hf_around_facet(hd, *poly), done(hf_around_facet);
       do {
-        CGAL_assertion(hf_around_facet->id() == 0);
-        hf_around_facet->id() = 1;
-      } while (++hf_around_facet != it->facet_begin());
+        CGAL_assertion(ids[get(idmap, *hf_around_facet)] == 0);
+        ids[get(idmap, *hf_around_facet)] = 1;
+      } while (++hf_around_facet != done);
     }
   }
   //reset the ids to their initial value
-  for (typename Polyhedron::Halfedge_iterator it = poly->halfedges_begin();
-      it != poly->halfedges_end(); ++it)
-  {
-    it->id() = ids[i++];
-  }
+  //for (typename Mesh::Halfedge_iterator it = poly->halfedges_begin();
+  //    it != poly->halfedges_end(); ++it)
+  //{
+  //  it->id() = ids[i++];
+  //}
   return n;
 }
 
-template<typename Polyhedron>
-void faces_area(Polyhedron* poly,
+template<typename Mesh>
+void faces_area(Mesh* poly,
   double& mini, double& maxi, double& mean, double& mid)
 {
   using namespace boost::accumulators;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
+  typedef typename boost::property_traits<VPMap>::value_type Point;
 
   accumulator_set< double,
     features< tag::min, tag::max, tag::mean , tag::median> > acc;
 
-  typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
-    vpmap = get(CGAL::vertex_point, *poly);
+  VPMap vpmap = get(CGAL::vertex_point, *poly);
   BOOST_FOREACH(face_descriptor f, faces(*poly))
   {
     halfedge_descriptor h = halfedge(f, *poly);
-    typename Kernel::Point_3 a = get(vpmap, target(h, *poly));
-    typename Kernel::Point_3 b = get(vpmap, target(next(h, *poly), *poly));
-    typename Kernel::Point_3 c = get(vpmap, target(next(next(h, *poly), *poly), *poly));
+    Point a = get(vpmap, target(h, *poly));
+    Point b = get(vpmap, target(next(h, *poly), *poly));
+    Point c = get(vpmap, target(next(next(h, *poly), *poly), *poly));
     CGAL::squared_area(a,b,c);
     acc(CGAL::sqrt(CGAL::squared_distance(a, b)));
   }
@@ -166,25 +171,27 @@ void faces_area(Polyhedron* poly,
   mid =  extract_result< tag::median >(acc);
 }
 
-template<typename Polyhedron>
-void faces_aspect_ratio(Polyhedron* poly,
+template<typename Mesh>
+void faces_aspect_ratio(Mesh* poly,
   double& min_altitude, double& mini, double& maxi, double& mean)
 {
   using namespace boost::accumulators;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
+  typedef typename CGAL::Kernel_traits< typename boost::property_traits<VPMap>::value_type >::Kernel Traits;
 
 
   accumulator_set< double,
     features< tag::min, tag::max, tag::mean> > acc;
 
   min_altitude = std::numeric_limits<double>::infinity();
-  typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type
     vpmap = get(CGAL::vertex_point, *poly);
   BOOST_FOREACH(face_descriptor f, faces(*poly))
   {
     halfedge_descriptor h = halfedge(f, *poly);
-    typename Kernel::Point_3 points[3];
+    typename Traits::Point_3 points[3];
     points[0] = get(vpmap, target(h, *poly));
     points[1] = get(vpmap, target(next(h, *poly), *poly));
     points[2] = get(vpmap, target(next(next(h, *poly), *poly), *poly));
@@ -193,7 +200,7 @@ void faces_aspect_ratio(Polyhedron* poly,
     double longest_edge = 0;
     for(int i=0; i<3; ++i)
     {
-      double alt = CGAL::sqrt(CGAL::squared_distance(points[(0+i)%3], typename Kernel::Line_3(points[(1+i)%3], points[(2+i)%3])));
+      double alt = CGAL::sqrt(CGAL::squared_distance(points[(0+i)%3], typename Traits::Line_3(points[(1+i)%3], points[(2+i)%3])));
       double edge =  CGAL::sqrt(CGAL::squared_distance(points[(1+i)%3], points[(2+i)%3]));
       if(alt < min_alt) { min_alt = alt; }
       if(edge > longest_edge) { longest_edge = edge; }

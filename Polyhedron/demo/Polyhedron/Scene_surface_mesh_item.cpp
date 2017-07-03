@@ -16,16 +16,19 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "triangulate_primitive.h"
 
-//#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_writer_wavefront.h>
 #include <CGAL/IO/generic_copy_OFF.h>
 #include <CGAL/IO/OBJ_reader.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/statistics_helpers.h>
 
 //Used to triangulate the AABB_Tree
 class Primitive
@@ -77,6 +80,7 @@ struct Scene_surface_mesh_item_priv{
   {
     item = parent;
     has_feature_edges = false;
+    invalidate_stats();
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -84,6 +88,7 @@ struct Scene_surface_mesh_item_priv{
   {
     item = parent;
     has_feature_edges = false;
+    invalidate_stats();
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -96,6 +101,7 @@ struct Scene_surface_mesh_item_priv{
   }
 
   void initialize_colors();
+  void invalidate_stats();
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void addFlatData(Point, EPICK::Vector_3, CGAL::Color *) const;
   void* get_aabb_tree();
@@ -162,6 +168,11 @@ struct Scene_surface_mesh_item_priv{
   mutable SMesh::Property_map<halfedge_descriptor, bool> h_is_feature_map;
 
   Color_vector colors_;
+  double volume, area;
+  unsigned int number_of_null_length_edges;
+  unsigned int number_of_degenerated_faces;
+  int genus;
+  bool self_intersect;
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
@@ -1021,6 +1032,7 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
   delete_aabb_tree(this);
   d->smesh_->collect_garbage();
   are_buffers_filled = false;
+  d->invalidate_stats();
 }
 
 
@@ -1185,4 +1197,249 @@ Scene_surface_mesh_item::save_obj(std::ostream& out) const
   CGAL::File_writer_wavefront  writer;
   CGAL::generic_print_surface_mesh(out, *(d->smesh_), writer);
   return out.good();
+}
+
+void
+Scene_surface_mesh_item_priv::
+invalidate_stats()
+{
+  number_of_degenerated_faces = (unsigned int)(-1);
+  number_of_null_length_edges = (unsigned int)(-1);
+  volume = -std::numeric_limits<double>::infinity();
+  area = -std::numeric_limits<double>::infinity();
+  self_intersect = false;
+  genus = -1;
+}
+
+QString Scene_surface_mesh_item::computeStats(int type)
+{
+  double minl, maxl, meanl, midl;
+  switch (type)
+  {
+  case MIN_LENGTH:
+  case MAX_LENGTH:
+  case MID_LENGTH:
+  case MEAN_LENGTH:
+  case NB_NULL_LENGTH:
+    edges_length(d->smesh_, minl, maxl, meanl, midl, d->number_of_null_length_edges);
+  }
+
+  double mini, maxi, ave;
+  switch (type)
+  {
+  case MIN_ANGLE:
+  case MAX_ANGLE:
+  case MEAN_ANGLE:
+    angles(d->smesh_, mini, maxi, ave);
+  }
+  double min_area, max_area, med_area, mean_area;
+  switch (type)
+  {
+  case MIN_AREA:
+  case MAX_AREA:
+  case MEAN_AREA:
+  case MED_AREA:
+    if(!is_triangle_mesh(*d->smesh_))
+    {
+      return QString("n/a");
+    }
+    faces_area(d->smesh_, min_area, max_area, mean_area, med_area);
+  }
+  double min_altitude, min_ar, max_ar, mean_ar;
+  switch (type)
+  {
+  case MIN_ALTITUDE:
+  case MIN_ASPECT_RATIO:
+  case MAX_ASPECT_RATIO:
+  case MEAN_ASPECT_RATIO:
+    if(!is_triangle_mesh(*d->smesh_))
+    {
+      return QString("n/a");
+    }
+    faces_aspect_ratio(d->smesh_, min_altitude, min_ar, max_ar, mean_ar);
+  }
+
+  switch(type)
+  {
+  case NB_VERTICES:
+    return QString::number(num_vertices(*d->smesh_));
+
+  case NB_FACETS:
+    return QString::number(num_faces(*d->smesh_));
+
+  case NB_CONNECTED_COMPOS:
+  {
+    boost::vector_property_map<int,
+      boost::property_map<SMesh, boost::face_index_t>::type>
+      fccmap(get(boost::face_index, *(d->smesh_)));
+    return QString::number(CGAL::Polygon_mesh_processing::connected_components(*(d->smesh_), fccmap));
+  }
+  case NB_BORDER_EDGES:
+  {
+    int i=0;
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(*d->smesh_))
+    {
+      if(is_border(hd, *d->smesh_))
+        ++i;
+    }
+    return QString::number(i);
+  }
+
+  case NB_EDGES:
+    return QString::number(num_halfedges(*d->smesh_) / 2);
+
+  case NB_DEGENERATED_FACES:
+  {
+    if(is_triangle_mesh(*d->smesh_))
+    {
+      if (d->number_of_degenerated_faces == (unsigned int)(-1))
+        d->number_of_degenerated_faces = nb_degenerate_faces(d->smesh_, get(CGAL::vertex_point, *(d->smesh_)));
+      return QString::number(d->number_of_degenerated_faces);
+    }
+    else
+      return QString("n/a");
+  }
+  case AREA:
+  {
+    if(is_triangle_mesh(*d->smesh_))
+    {
+      if(d->area == -std::numeric_limits<double>::infinity())
+        d->area = CGAL::Polygon_mesh_processing::area(*(d->smesh_));
+      return QString::number(d->area);
+    }
+    else
+      return QString("n/a");
+  }
+  case VOLUME:
+  {
+    if(is_triangle_mesh(*d->smesh_) && is_closed(*d->smesh_))
+    {
+      if (d->volume == -std::numeric_limits<double>::infinity())
+        d->volume = CGAL::Polygon_mesh_processing::volume(*(d->smesh_));
+      return QString::number(d->volume);
+    }
+    else
+      return QString("n/a");
+  }
+  case SELFINTER:
+  {
+    //todo : add a test about cache validity
+    if(is_triangle_mesh(*d->smesh_))
+      d->self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*(d->smesh_));
+    if (d->self_intersect)
+      return QString("Yes");
+    else if(is_triangle_mesh(*d->smesh_))
+      return QString("No");
+    else
+      return QString("n/a");
+  }
+  case GENUS:
+  {
+    if(!is_closed(*d->smesh_))
+    {
+      return QString("n/a");
+    }
+    else if(d->genus == -1)
+    {
+      std::ptrdiff_t s(num_vertices(*d->smesh_)),
+          a(num_halfedges(*d->smesh_)/2),
+          f(num_faces(*d->smesh_));
+      d->genus = 1.0 - double(s-a+f)/2.0;
+    }
+    if(d->genus < 0)
+    {
+      return QString("n/a");
+    }
+    else
+    {
+      return QString::number(d->genus);
+    }
+
+  }
+  case MIN_LENGTH:
+    return QString::number(minl);
+  case MAX_LENGTH:
+    return QString::number(maxl);
+  case MID_LENGTH:
+    return QString::number(midl);
+  case MEAN_LENGTH:
+    return QString::number(meanl);
+  case NB_NULL_LENGTH:
+    return QString::number(d->number_of_null_length_edges);
+
+  case MIN_ANGLE:
+    return QString::number(mini);
+  case MAX_ANGLE:
+    return QString::number(maxi);
+  case MEAN_ANGLE:
+    return QString::number(ave);
+  case HOLES:
+    return QString::number(nb_holes(d->smesh_));
+
+  case MIN_AREA:
+    return QString::number(min_area);
+  case MAX_AREA:
+    return QString::number(max_area);
+  case MED_AREA:
+    return QString::number(med_area);
+  case MEAN_AREA:
+    return QString::number(mean_area);
+  case MIN_ALTITUDE:
+    return QString::number(min_altitude);
+  case MIN_ASPECT_RATIO:
+    return QString::number(min_ar);
+  case MAX_ASPECT_RATIO:
+    return QString::number(max_ar);
+  case MEAN_ASPECT_RATIO:
+    return QString::number(mean_ar);
+  case IS_PURE_TRIANGLE:
+    if(is_triangle_mesh(*d->smesh_))
+      return QString("yes");
+    else
+      return QString("no");
+  }
+  return QString();
+}
+
+CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
+{
+  CGAL::Three::Scene_item::Header_data data;
+  //categories
+
+  data.categories.append(std::pair<QString,int>(QString("Properties"),9));
+  data.categories.append(std::pair<QString,int>(QString("Faces"),10));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
+
+
+  //titles
+  data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("#Connected Components"));
+  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("Pure Triangle"));
+  data.titles.append(QString("#Degenerated Faces"));
+  data.titles.append(QString("Connected Components of the Boundary"));
+  data.titles.append(QString("Area"));
+  data.titles.append(QString("Volume"));
+  data.titles.append(QString("Self-Intersecting"));
+  data.titles.append(QString("#Faces"));
+  data.titles.append(QString("Min Area"));
+  data.titles.append(QString("Max Area"));
+  data.titles.append(QString("Median Area"));
+  data.titles.append(QString("Mean Area"));
+  data.titles.append(QString("Min Altitude"));
+  data.titles.append(QString("Min Aspect-Ratio"));
+  data.titles.append(QString("Max Aspect-Ratio"));
+  data.titles.append(QString("Mean Aspect-Ratio"));
+  data.titles.append(QString("Genus"));
+  data.titles.append(QString("#Edges"));
+  data.titles.append(QString("Minimum Length"));
+  data.titles.append(QString("Maximum Length"));
+  data.titles.append(QString("Median Length"));
+  data.titles.append(QString("Mean Length"));
+  data.titles.append(QString("#Null Length"));
+  data.titles.append(QString("Minimum"));
+  data.titles.append(QString("Maximum"));
+  data.titles.append(QString("Average"));
+  return data;
 }
