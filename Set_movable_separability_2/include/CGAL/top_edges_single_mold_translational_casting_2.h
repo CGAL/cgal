@@ -15,91 +15,95 @@
 // Author(s): Shahar    <shasha94@gmail.com>
 //            Efi Fogel <efif@gmail.com>
 
-#ifndef CGAL_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
-#define CGAL_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+#ifndef CGAL_SMS_2_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_H
+#define CGAL_SMS_2_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_H
 
 #include <iostream>
 #include <list>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/enum.h>
-
-#include "Set_movable_separability_2/Circle_arrangment.h"
-#include "Set_movable_separability_2/Utils.h"
+#include <CGAL/Set_movable_separability_2/Circle_arrangment.h>
+#include <CGAL/Set_movable_separability_2/Utils.h>
 
 namespace CGAL {
+namespace Set_movable_separability_2 {
+namespace Single_mold_translational_casting {
 
-  namespace Set_movable_separability_2 {
+/* Legend:
+ * point = Represented as Direction_2. It is the intersection between the
+ *   fitting Direction_2 and the unit circle
+ *
+ * Arc = Represented as A pair of point. clockwise arc between the first
+ *   point and the second point. (each of its sides might be open or closed)
+ *
+ * SegmentOuterCircle  = Arc that represent all the directions that points
+ *   out from the polygon if it start from the
+ *   fitting segment. This arc is always open half circle.
+ */
 
-    /* Legend:
-     * point = Represented as Direction_2. It is the intersection between the
-     *   fitting Direction_2 and the unit circle
-     *
-     * Arc = Represented as A pair of point. clockwise arc between the first
-     *   point and the second point. (each of its sides might be open or closed)
-     *
-     * SegmentOuterCircle  = Arc that represent all the directions that points
-     *   out from the polygon if it start from the
-     *   fitting segment. This arc is always open half circle.
-     */
+/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ *                               OutputIterator oi,
+ *                               CastingTraits_2& traits)
+ * \param[in] pgn the input polygon that we want to check if is castable or not.
+ * \param[in,out] oi the output iterator to put the top edges in
+ * \param[in] traits the traits to use.
+ * \return all the possible top edges of the polygon and there pullout direction
+ *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+ *   (with no rotation)
+ */
+template <typename CastingTraits_2, typename OutputIterator>
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                         OutputIterator oi, CastingTraits_2& traits)
+{
+  /* Legend
+   * point = Represented as  Direction_2. It is the intersection between the
+   *   fitting Direction_2 and the unit circle
+   *
+   * arc = Represented as A pair of point. clockwise arc between the first
+   *   point and the second point. (each of its sides might be open or closed)
+   */
+  typedef CastingTraits_2                               Traits;
 
-    /*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
-     * \param[in] pgn the input polygon that we want to check if is castable or not.
-     * \param[in,out] oi the output iterator to put the top edges in
-     * \param[in] kernel the kernel to use.
-     * \return all the possible top edges of the polygon and there pullout direction
-     *  a pair of Directions is build this way [firstClockwise,secondClockwise]
-     *   (with no rotation)
-     */
-    template <typename Kernel, typename OutputIterator>
-    OutputIterator
-    top_edges_single_mold_translational_casting_2
-    (const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi, Kernel& kernel)
-    {
-      /* Legend
-       * point = Represented as  Direction_2. It is the intersection between the
-       *   fitting Direction_2 and the unit circle
-       *
-       * arc = Represented as A pair of point. clockwise arc between the first
-       *   point and the second point. (each of its sides might be open or closed)
-       */
-      CGAL_precondition(pgn.is_simple());
-      CGAL_precondition(!internal::is_any_edge_colinear(pgn));
+  CGAL_precondition(pgn.is_simple());
+  CGAL_precondition(!internal::is_any_edge_colinear(pgn));
 
-      auto e_it = pgn.edges_begin();
-      CGAL::Orientation poly_orientation = pgn.orientation();
-      auto segment_outer_circle =
-	  internal::get_segment_outer_circle<Kernel>(*e_it++, poly_orientation);
-      internal::Circle_arrangment<Kernel> circle_arrangment(kernel,
-							    segment_outer_circle,pgn.edges_begin());
+  auto e_it = pgn.edges_begin();
+  CGAL::Orientation poly_orientation = pgn.orientation();
+  auto segment_outer_circle =
+    internal::get_segment_outer_circle<Traits>(*e_it++, poly_orientation);
+  typedef internal::Circle_arrangment<Traits> Circle_arrangment;
+  Circle_arrangment circle_arrangment(traits,
+                                      segment_outer_circle,pgn.edges_begin());
 
-      for (; e_it != pgn.edges_end(); ++e_it) {
-	  segment_outer_circle =
-	      internal::get_segment_outer_circle<Kernel>(*e_it, poly_orientation);
-	  circle_arrangment.add_segment_outer_circle(segment_outer_circle, e_it);
-	  if (circle_arrangment.all_is_covered_twice()) return oi;
-      }
-      circle_arrangment.get_all_1_edges(oi);
-      return oi;
-    }
+  for (; e_it != pgn.edges_end(); ++e_it) {
+    segment_outer_circle =
+      internal::get_segment_outer_circle<Traits>(*e_it, poly_orientation);
+    circle_arrangment.add_segment_outer_circle(segment_outer_circle, e_it);
+    if (circle_arrangment.all_is_covered_twice()) return oi;
+  }
+  circle_arrangment.get_all_1_edges(oi);
+  return oi;
+}
 
-    /*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
-     * \param[in] pgn the input polygon that we want to check if is castable or not.
-     * \param[in,out] oi the output iterator to put the top edges in
-     * \return all the possible top edges of the polygon and there pullout direction
-     *  a pair of Directions is build this way [firstClockwise,secondClockwise]
-     *   (with no rotation)
-     */
-    template <typename Kernel, typename OutputIterator>
-    OutputIterator
-    top_edges_single_mold_translational_casting_2
-    (const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
-    {
-      Kernel kernel;
-      return top_edges_single_mold_translational_casting_2(pgn, oi, kernel);
-    }
+/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ *                               OutputIterator oi)
+ * \param[in] pgn the input polygon that we want to check if is castable or not.
+ * \param[in,out] oi the output iterator to put the top edges in
+ * \return all the possible top edges of the polygon and there pullout direction
+ *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+ *   (with no rotation)
+ */
+template <typename CastingTraits_2, typename OutputIterator>
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                         OutputIterator oi)
+{
+  CastingTraits_2 traits;
+  return top_edges(pgn, oi, traits);
+}
 
-  } // end of namespace Set_movable_separability_2
-} // end of namespace CGAL
+} // namespace Single_mold_translational_casting
+} // namespace Set_movable_separability_2
+} // namespace CGAL
 
 #endif

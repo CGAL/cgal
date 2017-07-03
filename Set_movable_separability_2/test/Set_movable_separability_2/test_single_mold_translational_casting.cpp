@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <utility>
 #include <cctype>
+#include <iterator>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
@@ -16,7 +17,8 @@ typedef Kernel::Direction_2                               Direction_2;
 typedef Kernel::Point_2                                   Point_2;
 
 typedef std::pair<Direction_2, Direction_2>               Direction_range;
-typedef std::pair<size_t, Direction_range>                Top_edge;
+typedef Polygon_2::Edge_const_iterator                    Edge_iter;
+typedef std::pair<Edge_iter, Direction_range>             Top_edge;
 
 namespace SMS = CGAL::Set_movable_separability_2;
 
@@ -56,7 +58,9 @@ bool test_one_file(std::ifstream& inp)
     Direction_2 d1, d2;
     inp >> facet >> d1 >> d2;
     // std::cout << facet << " " << d1 << " " << d2 << std::endl;
-    top_edge = std::make_pair(facet, std::make_pair(d1, d2));
+    Edge_iter it(pgn.edges_begin());
+    std::advance(it, facet);
+    top_edge = std::make_pair(it, std::make_pair(d1, d2));
   }
 
   std::sort(top_edges.begin(), top_edges.end(), Top_edge_comparer());
@@ -73,15 +77,17 @@ bool test_one_file(std::ifstream& inp)
   size_t i(0);
   for (auto it = top_edges.begin(); it != top_edges.end(); ++it, ++exp_it) {
     auto facet = it->first;
+    auto fid = std::distance(pgn.edges_begin(), facet);
     const auto& d1 = it->second.first;
     const auto& d2 = it->second.second;
     auto exp_facet = exp_it->first;
+    auto exp_fid = std::distance(pgn.edges_begin(), exp_facet);
     const auto& exp_d1 = exp_it->second.first;
     const auto& exp_d2 = exp_it->second.second;
-    if ((facet != exp_facet) || (d1 != exp_d1) || (d2 != exp_d2)) {
+    if ((fid != exp_fid) || (d1 != exp_d1) || (d2 != exp_d2)) {
       std::cerr << "Top edge[" << i++ << "]: "
-                << "obtained: " << facet << " " << d1 << " " << d2
-                << ", expected: " << exp_facet << " " << exp_d1 << " " << exp_d2
+                << "obtained: " << fid << " " << d1 << " " << d2
+                << ", expected: " << exp_fid << " " << exp_d1 << " " << exp_d2
                 << std::endl;
       return false;
     }

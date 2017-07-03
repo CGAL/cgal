@@ -21,6 +21,7 @@ if ( CGAL_FOUND )
   endif()
 
 create_single_source_cgal_program( "test_single_mold_translational_casting.cpp" )
+create_single_source_cgal_program( "test_is_pullout_directions_single_mold_translational.cpp" )
 
 else()
 

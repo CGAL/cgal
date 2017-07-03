@@ -1,5 +1,6 @@
 namespace CGAL {
 namespace Set_movable_separability_2 {
+namespace Single_mold_translational_casting {
 
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
@@ -32,13 +33,9 @@ namespace Set_movable_separability_2 {
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator
-top_edges_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits>& pgn, OutputIterator oi,
- CastingTraits_2& traits = CastingTraits_2());
-
-} /* end namesapce Set_movable_separability_2 */
-} /* end namesapce CGAL */
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& pgn,
+                         OutputIterator oi,
+                         CastingTraits_2& traits = CastingTraits_2());
 
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
@@ -62,11 +59,11 @@ top_edges_single_mold_translational_casting_2
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator
-top_edges_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits>& pgn, OutputIterator oi,
- CGAL::Orientation orientation,
- CastingTraits_2& traits = CastingTraits_2());
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& pgn,
+                         OutputIterator oi,
+                         CGAL::Orientation orientation,
+                         CastingTraits_2& traits = CastingTraits_2());
 
-} /* end namesapce Set_movable_separability_2 */
-} /* end namesapce CGAL */
+} // namespace Single_mold_translational_casting
+} // namesapce Set_movable_separability_2
+} // namesapce CGAL

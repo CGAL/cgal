@@ -1,5 +1,6 @@
 namespace CGAL {
 namespace Set_movable_separability_2 {
+namespace Single_mold_translational_casting {
 
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
@@ -16,18 +17,16 @@ namespace Set_movable_separability_2 {
  * \param[in] pgn the input polygon.
  * \param[in] d the inspected direction.
  * \param[in] traits the traits to use.
- * \return a pair of elements, where the first is a Boolean that indicates
- *         whether `pgn` can be pulled out in the `d` direction, and the
- *         second is the index of the corresponding top edge in `pgn`.
+ * \return if `pgn` can be pullout in the `d` direction the iterator of the
+ *         corresponding top edge, otherwise, `pgn.edges_end()`.
  * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
-std::pair<bool, size_t>
-is_pullout_direction_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits_2>& pgn,
- typename CastingTraits_2::Direction_2& d,
- const CastingTraits_2& traits = CastingTraits_2());
+typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
+is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                     const typename CastingTraits_2::Direction_2& d,
+                     const CastingTraits_2& traits = CastingTraits_2());
 
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
@@ -40,19 +39,17 @@ is_pullout_direction_single_mold_translational_casting_2
  * \param[in] d the inspected direction.
  * \param[in] orientation the orientation of `pgn`.
  * \param[in] traits the traits to use.
- * \return a pair of elements, where the first is a Boolean that indicates
- *         whether `pgn` can be pulled out in the `d` direction, and the
- *         second is the index of the corresponding top edge in `pgn`.
+ * \return if `pgn` can be pullout in the `d` direction the iterator of the
+ *         corresponding top edge, otherwise, `pgn.edges_end()`.
  * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
-std::pair<bool, size_t>
-is_pullout_direction_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits_2>& pgn,
- typename CastingTraits_2::Direction_2& d,
- CGAL::Orientation orientation,
- const CastingTraits_2& traits = CastingTraits_2());
+typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
+is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                     const typename CastingTraits_2::Direction_2& d,
+                     CGAL::Orientation orientation,
+                     const CastingTraits_2& traits = CastingTraits_2());
 
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
@@ -69,7 +66,7 @@ is_pullout_direction_single_mold_translational_casting_2
  * a model of the concept `CastingTraits_2`.
  *
  * \param[in] pgn the input polygon.
- * \param[in] i the index of an edge in pgn.
+ * \param[in] it an iterator to an edge in pgn.
  * \param[in] d the tested direction.
  * \param[in] traits the traits to use.
  * \return true if `pgn` can be pulled out in the `d` direction with the
@@ -78,9 +75,10 @@ is_pullout_direction_single_mold_translational_casting_2
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
-bool is_pullout_direction_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i,
- typename CastingTraits_2::Direction_2& d,
+bool is_pullout_direction
+(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& it,
+ const typename CastingTraits_2::Direction_2& d,
  const CastingTraits_2& traits = CastingTraits_2());
 
 /*! \ingroup PkgSetMovableSeparability2Funcs
@@ -91,7 +89,7 @@ bool is_pullout_direction_single_mold_translational_casting_2
  * polygon requires time linear in the number of edges.
  *
  * \param[in] pgn the input polygon.
- * \param[in] i the index of an edge in pgn.
+ * \param[in] it an iterator to an edge in pgn.
  * \param[in] d the tested direction.
  * \param[in] orientation the orientation of `pgn`.
  * \param[in] traits the traits to use.
@@ -101,11 +99,13 @@ bool is_pullout_direction_single_mold_translational_casting_2
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
-bool is_pullout_direction_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i,
- typename CastingTraits_2::Direction_2& d,
+bool is_pullout_direction
+(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& it,
+ const typename CastingTraits_2::Direction_2& d,
  CGAL::Orientation orientation,
  const CastingTraits_2& traits = CastingTraits_2());
 
-} /* end namesapce Set_movable_separability_2 */
-} /* end namesapce CGAL */
+} // namespace Single_mold_translational_casting
+} // namesapce Set_movable_separability_2
+} // namesapce CGAL

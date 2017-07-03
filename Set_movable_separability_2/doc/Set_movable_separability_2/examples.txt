@@ -1,3 +1,5 @@
 /*!
-\example Set_movable_separability_2/single_mold_translational_casting.cpp
+\example Set_movable_separability_2/is_pullout_direction_single_mold_translational_casting.cpp
+\example Set_movable_separability_2/pullout_directions_single_mold_translational_casting.cpp
+\example Set_movable_separability_2/top_edges_single_mold_translational_casting.cpp
 */

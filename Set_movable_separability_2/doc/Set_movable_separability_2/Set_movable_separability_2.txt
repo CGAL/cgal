@@ -89,7 +89,7 @@ The following example computes the top edges and their pullout
 directions of an input polygon read from a file and reports the results.
 
 
-\cgalExample{Set_movable_separability_2/single_mold_translational_casting.cpp}
+\cgalExample{Set_movable_separability_2/top_edges_single_mold_translational_casting.cpp}
 
 This package provides two additional functions, namely,
 `pullout_directions_single_mold_translational_casting_2()` and
