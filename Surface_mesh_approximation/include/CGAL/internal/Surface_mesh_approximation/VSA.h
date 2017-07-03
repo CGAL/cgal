@@ -26,19 +26,17 @@ namespace CGAL
 namespace internal
 {
 /**
- * @brief Main entry point for VSA mesh approximation algorithm.
- *
- * blah blah...
+ * @brief Main class for Variational Shape Approximation algorithm.
  *
  * @tparam Polyhedron a CGAL polyhedron
  * @tparam GeomTraits a model of ApproximationGeomTraits
  */
 template <typename Polyhedron,
   typename GeomTraits,
-  //typename FacetSegmentMap,
   typename VertexPointPmap>
   class VSA
 {
+  // type definitions
 private:
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point;
@@ -60,7 +58,6 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator edge_iterator;
 
-  //typedef boost::associative_property_map<std::map<face_descriptor, std::size_t> > FacetSegmentMap;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
   typedef boost::associative_property_map<std::map<vertex_descriptor, int> > VertexStatusPMap;
@@ -69,22 +66,26 @@ private:
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
 
+  // The attached anchor index of a vertex.
   enum Vertex_status {
-    NO_ANCHOR = -1 // vertex v has no anchor attached
+    NO_ANCHOR = -1 // No anchor attached
   };
 
+  // Halfedge status.
   enum Halfedge_status {
-    OFF_BORDER, // halfedge h is off proxy border
-    CANDIDATE, // halfedge h is on proxy border, waiting to be visited
-    ON_BORDER // halfedge h is on proxy border
+    OFF_BORDER, // In the inside of a region.
+    CANDIDATE, // On the region border, waiting to be visited.
+    ON_BORDER // On proxy border, already visited.
   };
 
 public:
+  // The approximated plane proxy.
   struct PlaneProxy {
     Vector normal;
     face_descriptor seed;
   };
 
+  // The facet candidate to be queued.
   struct FacetToIntegrate {
     face_descriptor f;
     std::size_t i;
@@ -95,14 +96,8 @@ public:
     }
   };
 
-  /*template <typename ShapeProxy,
-    typename FacetNormalMap = boost::associative_property_map<std::map<face_descriptor, Vector> >,
-    typename FacetAreaMap = boost::associative_property_map<std::map<face_descriptor, FT> >>*/
-  /*template <typename FacetNormalMap,
-    typename FacetAreaMap>*/
+  // The l21 metric, compute the fitting error from a facet to a plane proxy.
   struct L21Metric {
-    //L21Metric() {}
-
     L21Metric(GeomTraits traits,
       const FacetNormalMap &normal_pmap,
       const FacetAreaMap &area_pmap)
@@ -125,25 +120,26 @@ public:
     Construct_sum_of_vectors_3 sum_functor;
   };
 
-  // Anchor
+  // The average positioned anchor attached to a vertex.
   struct Anchor {
     Anchor(const vertex_descriptor &vtx_, const Point &pos_)
     : vtx(vtx_), pos(pos_) {}
 
-    vertex_descriptor vtx; // The associated vertex
-    Point pos; // The position of the anchor
+    vertex_descriptor vtx; // The associated vertex.
+    Point pos; // The position of the anchor.
   };
 
-  // Border
+  // The border cycle of a region.
+  // One region may have multiple border cycles.
   struct Border {
     Border(const halfedge_descriptor &h)
       : he_head(h), num_anchors(0) {}
 
-    halfedge_descriptor he_head; // The heading halfedge of the border
-    std::size_t num_anchors; // The number of anchors of the border
+    halfedge_descriptor he_head; // The heading halfedge of the border cylce.
+    std::size_t num_anchors; // The number of anchors on the border.
   };
 
-// member variables
+  // member variables
 private:
   const Polyhedron &mesh;
   const VertexPointPmap &vertex_point_pmap;
@@ -155,40 +151,40 @@ private:
   Compute_scalar_product_3 scalar_product_functor;
   Compute_squared_area_3 area_functor;
 
+  // Proxy and its auxiliary information.
   std::vector<PlaneProxy> proxies;
-  // proxy auxiliary information
-  std::vector<Point> proxies_center; // proxy center
-  std::vector<FT> proxies_area; // proxy area
+  std::vector<Point> proxies_center; // The proxy center.
+  std::vector<FT> proxies_area; // The proxy area.
   
-  // the lifetime of the container must encompass the use of the adaptor
+  // Mesh facet normal and area map.
   std::map<face_descriptor, Vector> facet_normals;
   FacetNormalMap normal_pmap;
   std::map<face_descriptor, FT> facet_areas;
   FacetAreaMap area_pmap;
 
+  // Mesh vertex anchor map and halfedge status map.
   std::map<vertex_descriptor, int> vertex_status_map;
   VertexStatusPMap vertex_status_pmap;
   std::map<halfedge_descriptor, int> halfedge_status_map;
   HalfedgeStatusPMap halfedge_status_pmap;
 
-  // All anchors
+  // All anchors.
   std::vector<Anchor> anchors;
 
-  // All borders, some regions may have multiple borders
+  // All borders cycles.
   std::vector<Border> borders;
 
+  // The error metric.
   L21Metric fit_error;
-  //L21Metric<FacetNormalMap, FacetAreaMap> fit_error;
-  //L21Metric<PlaneProxy> fit_error;
 
-  //boost::associative_property_map<std::map<face_descriptor, std::size_t> > seg_pmap;
-  //boost::property_map<face_descriptor, std::size_t> &seg_pmap;
-
-//member functions
+  //member functions
 public:
   /**
+   * Initialize and prepare for the approximation.
    * @pre @a polyhedron.is_pure_triangle()
-   * @param mesh `CGAL Polyhedron` on which other functions operate.
+   * @param _mesh `CGAL Polyhedron` on which approximation operate.
+   * @param _vertex_point_map vertex point map of the input mesh.
+   * @param _traits geometric trait object.
    */
   VSA(const Polyhedron &_mesh,
     VertexPointPmap _vertex_point_map,
@@ -235,6 +231,13 @@ public:
     }
   }
 
+  /**
+   * Partitions the mesh into the designated number of regions, and stores them in @a seg_map.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param number_of_segments number of designated proxies
+   * @param number_of_iterations number of iterations when fitting the proxy
+   * @param[out] seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void partition(const std::size_t number_of_segments, const std::size_t number_of_iterations, FacetSegmentMap &seg_pmap) {
     random_seed(number_of_segments);
@@ -245,6 +248,13 @@ public:
     }
   }
 
+  /**
+   * Partitions the mesh incrementally into the designated number of regions, and stores them in @a seg_map.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param number_of_segments number of designated proxies
+   * @param number_of_iterations number of iterations when fitting the proxy
+   * @param[out] seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void partition_incre(const std::size_t number_of_segments, const std::size_t number_of_iterations, FacetSegmentMap &seg_pmap) {
     // random_seed(number_of_segments);
@@ -264,7 +274,12 @@ public:
     }
   }
 
-  // extract the approximated mesh from a partition
+  /**
+   * Extracts the approximated triangle mesh from a partition @a seg_pmap, and stores the triangles in @a tris.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   * @tris[out] indexed triangles
+   */
   template<typename FacetSegmentMap>
   void extract_mesh(FacetSegmentMap &seg_pmap, std::vector<int> &tris) {
     compute_proxy_area(seg_pmap);
@@ -277,10 +292,20 @@ public:
     pseudo_CDT(seg_pmap, tris);
   }
 
+  /**
+   * Collect the anchors.
+   * @return vector of anchors
+   */
   std::vector<Anchor> collect_anchors() {
     return anchors;
   }
 
+  /**
+   * Collect the partition @a seg_pmap approximated borders.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   * @return anchor indexes of each border
+   */
   template<typename FacetSegmentMap>
   std::vector<std::vector<std::size_t> >
   collect_borders(const FacetSegmentMap &seg_pmap) {
@@ -301,6 +326,10 @@ public:
   }
 
 private:
+  /**
+   * Random initialize proxies.
+   * @param initial_px number of proxies
+   */
   void random_seed(const std::size_t initial_px) {
     proxies.clear();
     std::size_t number_of_faces = num_faces(mesh);
@@ -322,6 +351,11 @@ private:
     std::cerr << initial_px << ' ' << proxies.size() << std::endl;
   }
 
+  /**
+   * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param[out] seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void flooding(FacetSegmentMap &seg_pmap) {
     typedef std::multiset<FacetToIntegrate> CandidateSet;
@@ -365,6 +399,11 @@ private:
     }
   }
 
+  /**
+   * Calculates and updates the best fitting proxies of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template <typename FacetSegmentMap>
   void fitting(FacetSegmentMap &seg_pmap) {
     // update normal
@@ -411,7 +450,11 @@ private:
     }
   }
 
-  // insert proxy at the facet with the maximum fitting error in the proxy with maximum error
+  /**
+   * Inserts a proxy of a given partition @a seg_pmap at the furthest facet of the region with the maximum fitting error.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template <typename FacetSegmentMap>
   void insert_proxy(FacetSegmentMap &seg_pmap) {
     std::vector<FT> px_error(proxies.size(), FT(0.0));
@@ -445,6 +488,11 @@ private:
     proxies.push_back(new_px);
   }
 
+  /**
+   * Finds the anchors of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void find_anchors(FacetSegmentMap &seg_pmap) {
     anchors.clear();
@@ -469,6 +517,11 @@ private:
     }
   }
 
+  /**
+   * Finds and approximates the edges connecting the anchors of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void find_edges(FacetSegmentMap &seg_pmap) {
     // tag all proxy border halfedges as candidate
@@ -512,7 +565,11 @@ private:
     }
   }
 
-  // add anchors to the borders with only 2 anchors
+  /**
+   * Adds anchors to the border cycles with only 2 anchors of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void add_anchors(const FacetSegmentMap &seg_pmap) {
     typedef typename std::vector<Border>::iterator BorderIterator;
@@ -575,6 +632,12 @@ private:
     }
   }
 
+  /**
+   * Runs the pseudo Constrained Delaunay Triangulation at each region of a given partition @a seg_pmap, and stores the extracted indexed triangles in @a tris.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   * @param tris extracted tirangles, index of anchors
+   */
   template<typename FacetSegmentMap>
   void pseudo_CDT(const FacetSegmentMap &seg_pmap,
     std::vector<int> &tris) {
@@ -712,6 +775,11 @@ private:
     }
   }
 
+  /**
+   * Computes and updates the proxy centers of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void compute_proxy_center(const FacetSegmentMap &seg_pmap) {
     proxies_center = std::vector<Point>(proxies.size());
@@ -737,6 +805,11 @@ private:
     }
   }
 
+  /**
+   * Computes and updates the proxy areas of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void compute_proxy_area(const FacetSegmentMap &seg_pmap) {
     std::vector<FT> areas(proxies.size(), FT(0));
@@ -746,6 +819,11 @@ private:
     proxies_area.swap(areas);
   }
 
+  /**
+   * Tags all the region border halfedges of a given partition @a seg_pmap to CANDIDATE states.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void tag_halfedges_status(FacetSegmentMap &seg_pmap) {
     BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
@@ -758,7 +836,12 @@ private:
     }
   }
 
-  // walk along the proxy border to the first halfedge pointing to a vertex associated with an anchor
+  /**
+   * Walks along the region border to the first halfedge pointing to a vertex associated with an anchor of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param[in/out] he_start region border halfedge
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void walk_to_first_anchor(halfedge_descriptor &he_start, const FacetSegmentMap &seg_pmap) {
     const halfedge_descriptor start_mark = he_start;
@@ -770,8 +853,13 @@ private:
     }
   }
 
-  // starting at a border halfedge pointing to a vertex associated with an anchor
-  // walk along the proxy border to the next anchor, which may be itself
+  /**
+   * Walks along the region border to the next anchor and records the path as @a chord of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param[in/out] he_start starting region border halfedge pointing to a vertex associated with an anchor
+   * @param[out] chord recorded path chord
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void walk_to_next_anchor(
     halfedge_descriptor &he_start,
@@ -783,7 +871,12 @@ private:
     } while (!is_anchor_attached(he_start));
   }
 
-  // walk to next border halfedge, the input halfedge must be a border halfedge
+  /**
+   * Walks to next border halfedge of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param[in/out] he_start region border halfedge
+   * @param seg_map facet partition index
+   */
   template<typename FacetSegmentMap>
   void walk_to_next_border_halfedge(halfedge_descriptor &he_start, const FacetSegmentMap &seg_pmap) {
     const std::size_t px_idx = seg_pmap[face(he_start, mesh)];
@@ -795,8 +888,14 @@ private:
     }
   }
 
-  // subdivide a chord in range [chord_begin, chord_end)
-  // returns the number of anchors of the chord apart from the first one
+  /**
+   * Subdivides a chord recursively in range [@a chord_begin, @a chord_end) of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param chord_begin begin iterator of the chord
+   * @param chord_end end iterator of the chord
+   * @param seg_map facet partition index
+   * @return the number of anchors of the chord apart from the first one
+   */
   template<typename FacetSegmentMap>
   std::size_t subdivide_chord(
     const ChordVectorIterator &chord_begin,
@@ -878,13 +977,20 @@ private:
     return 1;
   }
 
-  // check if halfedge target vertex is attached with an anchor
+  /**
+   * Check if the target vertex of a halfedge is attached with an anchor.
+   * @param he halfedge
+   */
   bool is_anchor_attached(const halfedge_descriptor &he) {
     return is_anchor_attached(target(he, mesh), vertex_status_pmap);
   }
 
-  // check if a vertex is attached with an anchor
-  // suppose anchor index starts with 0
+  /**
+   * Check if a vertex is attached with an anchor.
+   * @tparam VertexAnchorIndexMap `WritablePropertyMap` with `boost::graph_traights<Polyhedron>::vertex_descriptor` as key and `std::size_t` as value type
+   * @param v vertex
+   * @param vertex_anchor_map vertex anchor index map
+   */
   template<typename VertexAnchorIndexMap>
   bool is_anchor_attached(
     const typename boost::property_traits<VertexAnchorIndexMap>::key_type &v,
@@ -892,7 +998,11 @@ private:
     return vertex_anchor_map[v] >= 0;
   }
 
-  // attach anchor to vertex
+  /**
+   * Attachs an anchor to the vertex, the position is area weighted average.
+   * @param vtx vertex
+   * @param px_set proxies around the vertex
+   */
   void attach_anchor(const vertex_descriptor &vtx, const std::set<std::size_t> &px_set) {
     // construct an anchor from vertex and the incident proxies
     FT avgx(0), avgy(0), avgz(0), sum_area(0);
@@ -913,7 +1023,11 @@ private:
     anchors.push_back(Anchor(vtx, pos));
   }
 
-  // attach anchor to the target vertex of the halfedge
+  /**
+   * Attachs an anchor to the target vertex of the halfedge.
+   * @param he halfedge
+   * @param px_set proxies around the target vertex
+   */
   void attach_anchor(const halfedge_descriptor &he, const std::set<std::size_t> &px_set) {
     vertex_descriptor vtx = target(he, mesh);
     attach_anchor(vtx, px_set);
