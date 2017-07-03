@@ -47,7 +47,7 @@ struct Dynamic_polyhedron_property_map {
   typedef boost::read_write_property_map_tag  category;
 
   Dynamic_polyhedron_property_map(const V& default_value = V())
-    : map_(new Map()), default_value(default_value)
+    : map_(new Map()), default_value_(default_value)
   {}
 
   void clear()
@@ -60,7 +60,7 @@ struct Dynamic_polyhedron_property_map {
   {
     typename Map::const_iterator it = m.map_->find(k);
     if(it == m.map_->end()){
-      return m.default();
+      return m.default_value();
     }
     return it->second;
   }
@@ -68,19 +68,19 @@ struct Dynamic_polyhedron_property_map {
 
   friend void put(Dynamic_polyhedron_property_map& m, const key_type& k, const value_type& v)
   {
-    if(v != m.default()){
+    if(v != m.default_value()){
       (*(m.map_))[k] = v;
     }
   }
 
   
-  const V& default() const
+  const V& default_value() const
   {
-    return default_value;
+    return default_value_;
   }
 
 
-  V default_value;
+  V default_value_;
   typedef boost::unordered_map<K,V> Map;
   boost::shared_ptr<Map> map_;
 };
