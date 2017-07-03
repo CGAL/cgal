@@ -23,8 +23,8 @@
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/enum.h>
-#include <CGAL/Set_movable_separability_2/Circle_arrangment.h>
-#include <CGAL/Set_movable_separability_2/Utils.h>
+#include <CGAL/Set_movable_separability_2/internal/Circle_arrangment.h>
+#include <CGAL/Set_movable_separability_2/internal/Utils.h>
 
 namespace CGAL {
 namespace Set_movable_separability_2 {
@@ -42,6 +42,62 @@ namespace Single_mold_translational_casting {
  *   fitting segment. This arc is always open half circle.
  */
 
+/*! \ingroup PkgSetMovableSeparability2Funcs
+ *
+ * Same as above with the additional `orientation` argument.
+ * If the orientation of the polygon is known upon invocation, specify it.
+ * Otherwise, it has to be computed.  Note that finding the orientation of a
+ * polygon requires time linear in the number of edges.
+ *
+ * \param[in] pgn the input polygon.
+ * \param[out] oi the output iterator. Its value type is a pair, where
+ *             (i) the first element in the pair identifies a valid top edge
+ *                 represented by its index the type of which is convertible to
+                   `size_t`, and
+ *             (ii) the second element is a closed range of pullout directions
+ *                  represented as a pair of the extreme directions in the
+ *                  range of type `Kernel::Direction_2`.
+ * \param[in] orientation the orientation of `pgn`.
+ * \param[in] traits the traits to use.
+ * \return the past-the-end iterator of the output container.
+ * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
+ * does not have three consecutive collinear vertices.
+ */
+template <typename CastingTraits_2, typename OutputIterator>
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                         OutputIterator oi,
+                         CGAL::Orientation orientation,
+                         CastingTraits_2& traits)
+{
+  /* Legend
+   * point = Represented as  Direction_2. It is the intersection between the
+   *   fitting Direction_2 and the unit circle
+   *
+   * arc = Represented as A pair of point. clockwise arc between the first
+   *   point and the second point. (each of its sides might be open or closed)
+   */
+  typedef CastingTraits_2                               Traits;
+
+  CGAL_precondition(pgn.is_simple());
+  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
+
+  auto e_it = pgn.edges_begin();
+  auto segment_outer_circle =
+    internal::get_segment_outer_circle<Traits>(*e_it++, orientation);
+  typedef internal::Circle_arrangment<Traits> Circle_arrangment;
+  Circle_arrangment circle_arrangment(traits,
+                                      segment_outer_circle,pgn.edges_begin());
+
+  for (; e_it != pgn.edges_end(); ++e_it) {
+    segment_outer_circle =
+      internal::get_segment_outer_circle<Traits>(*e_it, orientation);
+    circle_arrangment.add_segment_outer_circle(segment_outer_circle, e_it);
+    if (circle_arrangment.all_is_covered_twice()) return oi;
+  }
+  circle_arrangment.get_all_1_edges(oi);
+  return oi;
+}
+
 /*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
  *                               OutputIterator oi,
  *                               CastingTraits_2& traits)
@@ -56,34 +112,25 @@ template <typename CastingTraits_2, typename OutputIterator>
 OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
                          OutputIterator oi, CastingTraits_2& traits)
 {
-  /* Legend
-   * point = Represented as  Direction_2. It is the intersection between the
-   *   fitting Direction_2 and the unit circle
-   *
-   * arc = Represented as A pair of point. clockwise arc between the first
-   *   point and the second point. (each of its sides might be open or closed)
-   */
-  typedef CastingTraits_2                               Traits;
+  CGAL::Orientation orientation = pgn.orientation();
+  return top_edges(pgn, oi, orientation, traits);
+}
 
-  CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn));
-
-  auto e_it = pgn.edges_begin();
-  CGAL::Orientation poly_orientation = pgn.orientation();
-  auto segment_outer_circle =
-    internal::get_segment_outer_circle<Traits>(*e_it++, poly_orientation);
-  typedef internal::Circle_arrangment<Traits> Circle_arrangment;
-  Circle_arrangment circle_arrangment(traits,
-                                      segment_outer_circle,pgn.edges_begin());
-
-  for (; e_it != pgn.edges_end(); ++e_it) {
-    segment_outer_circle =
-      internal::get_segment_outer_circle<Traits>(*e_it, poly_orientation);
-    circle_arrangment.add_segment_outer_circle(segment_outer_circle, e_it);
-    if (circle_arrangment.all_is_covered_twice()) return oi;
-  }
-  circle_arrangment.get_all_1_edges(oi);
-  return oi;
+/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ *                               OutputIterator oi)
+ * \param[in] pgn the input polygon that we want to check if is castable or not.
+ * \param[in,out] oi the output iterator to put the top edges in
+ * \param[in] orientation the orientation of `pgn`.
+ * \return all the possible top edges of the polygon and there pullout direction
+ *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+ *   (with no rotation)
+ */
+template <typename CastingTraits_2, typename OutputIterator>
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                         OutputIterator oi, CGAL::Orientation orientation)
+{
+  CastingTraits_2 traits;
+  return top_edges(pgn, oi, orientation, traits);
 }
 
 /*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
@@ -98,8 +145,9 @@ template <typename CastingTraits_2, typename OutputIterator>
 OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
                          OutputIterator oi)
 {
+  CGAL::Orientation orientation = pgn.orientation();
   CastingTraits_2 traits;
-  return top_edges(pgn, oi, traits);
+  return top_edges(pgn, oi, orientation, traits);
 }
 
 } // namespace Single_mold_translational_casting

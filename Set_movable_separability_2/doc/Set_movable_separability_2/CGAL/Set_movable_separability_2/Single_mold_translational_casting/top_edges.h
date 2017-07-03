@@ -2,7 +2,7 @@ namespace CGAL {
 namespace Set_movable_separability_2 {
 namespace Single_mold_translational_casting {
 
-/*! \ingroup PkgSetMovableSeparability2Funcs
+/*! \ingroup top_edges_grp
  *
  * Given a simple polygon, this function determines whether a cavity (of a mold
  * in the plane) that has the shape of the polygon can be used so that the
@@ -19,47 +19,47 @@ namespace Single_mold_translational_casting {
  * The type that substitutes the template parameter `%CastingTraits_2` must be
  * a model of the concept `CastingTraits_2`.
  *
- * \param[in] pgn the input polygon.
- * \param[out] oi the output iterator. Its value type is a pair, where
+ * \param polygon the input polygon.
+ * \param oi the output iterator. Its dereference type is a pair, where
  *             (i) the first element in the pair identifies a valid top edge
  *                 represented by its index the type of which is convertible to
                    `size_t`, and
  *             (ii) the second element is a closed range of pullout directions
  *                  represented as a pair of the extreme directions in the
  *                  range of type `Kernel::Direction_2`.
- * \param[in] traits the traits to use.
+ * \param traits the traits to use.
  * \return the past-the-end iterator of the output container.
  * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& pgn,
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& polygon,
                          OutputIterator oi,
                          CastingTraits_2& traits = CastingTraits_2());
 
-/*! \ingroup PkgSetMovableSeparability2Funcs
+/*! \ingroup top_edges_grp
  *
  * Same as above with the additional `orientation` argument.
  * If the orientation of the polygon is known upon invocation, specify it.
  * Otherwise, it has to be computed.  Note that finding the orientation of a
  * polygon requires time linear in the number of edges.
  *
- * \param[in] pgn the input polygon.
- * \param[out] oi the output iterator. Its value type is a pair, where
+ * \param polygon the input polygon.
+ * \param oi the output iterator. Its dereference type is a pair, where
  *             (i) the first element in the pair identifies a valid top edge
  *                 represented by its index the type of which is convertible to
                    `size_t`, and
  *             (ii) the second element is a closed range of pullout directions
  *                  represented as a pair of the extreme directions in the
  *                  range of type `Kernel::Direction_2`.
- * \param[in] orientation the orientation of `pgn`.
- * \param[in] traits the traits to use.
+ * \param orientation the orientation of `polygon`.
+ * \param traits the traits to use.
  * \return the past-the-end iterator of the output container.
  * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& pgn,
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& polygon,
                          OutputIterator oi,
                          CGAL::Orientation orientation,
                          CastingTraits_2& traits = CastingTraits_2());

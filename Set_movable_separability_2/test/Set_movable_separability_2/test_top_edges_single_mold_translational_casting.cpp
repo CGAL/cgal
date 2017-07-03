@@ -9,7 +9,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/top_edges_single_mold_translational_casting_2.h>
+#include <CGAL/Set_movable_separability_2/Single_mold_translational_casting/top_edges.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
@@ -21,6 +21,7 @@ typedef Polygon_2::Edge_const_iterator                    Edge_iter;
 typedef std::pair<Edge_iter, Direction_range>             Top_edge;
 
 namespace SMS = CGAL::Set_movable_separability_2;
+namespace casting = SMS::Single_mold_translational_casting;
 
 struct Top_edge_comparer {
   bool operator()(const Top_edge& a,  const Top_edge& b)
@@ -47,7 +48,7 @@ bool test_one_file(std::ifstream& inp)
   // std::cout << pgn << std::endl;
 
   std::vector<Top_edge> top_edges;
-  SMS::top_edges_single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
+  casting::top_edges(pgn, std::back_inserter(top_edges));
 
   size_t exp_num_top_edges;
   inp >> exp_num_top_edges;

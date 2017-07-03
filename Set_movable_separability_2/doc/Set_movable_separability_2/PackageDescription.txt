@@ -1,6 +1,26 @@
 /// \defgroup PkgSetMovableSeparability2 2D Movable Separability of Sets Reference
 
-/// \defgroup PkgSetMovableSeparability2Funcs Free Functions
+/// \defgroup top_edges_grp Top Edges
+/// These function determine whether a cavity (of a mold in the plane)
+/// that has the shape of a given polygon could be casted in the mold
+/// and then pulled out of the mold without colliding into the mold (but
+/// possibly sliding along the mold surface).
+/// \ingroup PkgSetMovableSeparability2
+
+/// \defgroup is_pullout_direction_grp Is Pullout Direction
+/// These functions determine whether a cavity (of a mold in the plane)
+/// that has the shape of a given polygon could be casted in the mold
+/// and then pulled out of the mold in a given direction without colliding
+/// into the mold (but possibly sliding along the mold surface).
+/// \ingroup PkgSetMovableSeparability2
+
+/// \defgroup pullout_directions_grp Pullout Directions
+/// These functions determine whether a cavity (of a mold in the plane)
+/// that has the shape of a given polygon could be casted in the mold
+/// using a given edge as the top edge and then pulled out of the mold
+/// without colliding into the mold (but possibly sliding along the mold
+/// surface). If the polygon is <em>castable</em> this way, the function
+/// computes the closed range of pullout directions.
 /// \ingroup PkgSetMovableSeparability2
 
 /// \defgroup PkgSetMovableSeparability2Concepts Concepts
@@ -28,9 +48,9 @@ This package consists of the implementations of various predicates and operation
 \cgalClassifedRefPages
 
 ## Functions ##
-- `CGAL::top_edges_single_mold_translational_casting_2()`
-- `CGAL::pullout_directions_single_mold_translational_casting_2()`
-- `CGAL::is_pullout_direction_single_mold_translational_casting_2()`
+- `CGAL::top_edges()`
+- `CGAL::pullout_directions()`
+- `CGAL::is_pullout_direction()`
 
 ## Concepts ##
 - `CastingTraits_2`

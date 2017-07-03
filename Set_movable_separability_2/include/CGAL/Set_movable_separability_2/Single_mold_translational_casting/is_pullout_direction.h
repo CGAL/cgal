@@ -22,8 +22,8 @@
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/enum.h>
-#include <CGAL/Set_movable_separability_2/Utils.h>
-#include <CGAL/Set_movable_separability_2/Circle_arrangment.h>
+#include <CGAL/Set_movable_separability_2/internal/Utils.h>
+#include <CGAL/Set_movable_separability_2/internal/Circle_arrangment.h>
 
 namespace CGAL {
 namespace Set_movable_separability_2 {
@@ -40,7 +40,8 @@ namespace Single_mold_translational_casting {
  * a model of the concept `CastingTraits_2`.
  *
  * \param[in] pgn the input polygon.
- * \param[in] i the index of an edge in pgn.
+ * \param[in] it an iterator to an edge in pgn.
+ * \param[in] orientation the orientation of `pgn`.
  * \param[in] d the pullout direction
  * \return if the polygon can be pullout through edge i with direction d
  *
@@ -51,20 +52,19 @@ template <typename CastingTraits_2>
 bool is_pullout_direction
 (const CGAL::Polygon_2<CastingTraits_2>& pgn,
  const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& i,
- const typename CastingTraits_2::Direction_2& d, CastingTraits_2& traits)
+ const typename CastingTraits_2::Direction_2& d,
+ CGAL::Orientation orientation, CastingTraits_2& traits)
 {
   //NOT CHECKED AT ALL
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn));
+  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
 
   auto e_it = pgn.edges_begin();
-  CGAL::Orientation poly_orientation = pgn.orientation();
   auto cc_in_between = traits.counterclockwise_in_between_2_object();
 
   for (; e_it != pgn.edges_end(); ++e_it) {
     auto segment_outer_circle =
-      internal::get_segment_outer_circle<CastingTraits_2>(*e_it,
-                                                          poly_orientation);
+      internal::get_segment_outer_circle<CastingTraits_2>(*e_it, orientation);
     bool isordered = !cc_in_between(d, segment_outer_circle.second,
                                     segment_outer_circle.first);
     if (isordered == (e_it == i)) return false;
@@ -73,7 +73,19 @@ bool is_pullout_direction
   return true;
 }
 
-/*!
+/*! Same as above without the traits argument.
+ */
+template <typename CastingTraits_2>
+bool is_pullout_direction
+(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& i,
+ const typename CastingTraits_2::Direction_2& d, CGAL::Orientation orientation)
+{
+  CastingTraits_2 traits;
+  return is_pullout_direction(pgn, i, d, orientation, traits);
+}
+
+/*! Same as above without the orientation and traits arguments.
  */
 template <typename CastingTraits_2>
 bool is_pullout_direction
@@ -81,8 +93,21 @@ bool is_pullout_direction
  const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& i,
  const typename CastingTraits_2::Direction_2& d)
 {
+  CGAL::Orientation orientation = pgn.orientation();
   CastingTraits_2 traits;
-  return is_pullout_direction(pgn, i, d, traits);
+  return is_pullout_direction(pgn, i, d, orientation, traits);
+}
+
+/*! Same as above without the orientation argument.
+ */
+template <typename CastingTraits_2>
+bool is_pullout_direction
+(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& i,
+ const typename CastingTraits_2::Direction_2& d, CastingTraits_2& traits)
+{
+  CGAL::Orientation orientation = pgn.orientation();
+  return is_pullout_direction(pgn, i, d, orientation, traits);
 }
 
 /*! Given a simple polygon, and a pullout direction (not rotated)
@@ -107,26 +132,23 @@ template <typename CastingTraits_2>
 typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
 is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
                      typename CastingTraits_2::Direction_2& d,
-                     CastingTraits_2& traits)
+                     CGAL::Orientation orientation, CastingTraits_2& traits)
 {
   //NOT CHECKED AT ALL
   typedef CGAL::Polygon_2<CastingTraits_2>              Polygon_2;
   typedef typename Polygon_2::Edge_const_iterator       Edge_iter;
 
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn));
+  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
 
   Edge_iter e_it = pgn.edges_begin();
-  CGAL::Orientation poly_orientation = pgn.orientation();
   auto segment_outer_circle =
-    internal::get_segment_outer_circle<CastingTraits_2>(*e_it++,
-                                                        poly_orientation);
+    internal::get_segment_outer_circle<CastingTraits_2>(*e_it++, orientation);
   auto cc_in_between = traits.counterclockwise_in_between_2_object();
   Edge_iter top_edge= pgn.edges_end();
   for (; e_it != pgn.edges_end(); ++e_it) {
     segment_outer_circle =
-      internal::get_segment_outer_circle<CastingTraits_2>(*e_it,
-                                                          poly_orientation);
+      internal::get_segment_outer_circle<CastingTraits_2>(*e_it, orientation);
     bool isordered = !cc_in_between(d,
                                     segment_outer_circle.second,
                                     segment_outer_circle.first);
@@ -141,15 +163,40 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
   return top_edge;
 }
 
-/*!
+/*! Same as above without the traits argument.
+ */
+template <typename CastingTraits_2>
+typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
+is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                     typename CastingTraits_2::Direction_2& d,
+                     CGAL::Orientation orientation)
+{
+  CastingTraits_2 traits;
+  return is_pullout_direction(pgn, d, orientation, traits);
+}
+
+/*! Same as above without the orientation argument.
+ */
+template <typename CastingTraits_2>
+typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
+is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+                     typename CastingTraits_2::Direction_2& d,
+                     CastingTraits_2& traits)
+{
+  CGAL::Orientation orientation = pgn.orientation();
+  return is_pullout_direction(pgn, d, orientation, traits);
+}
+
+/*! Same as above without the orientation and traits arguments.
  */
 template <typename CastingTraits_2>
 typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
 is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
                      typename CastingTraits_2::Direction_2& d)
 {
+  CGAL::Orientation orientation = pgn.orientation();
   CastingTraits_2 traits;
-  return is_pullout_direction(pgn, d, traits);
+  return is_pullout_direction(pgn, d, orientation, traits);
 }
 
 } // namespace Single_mold_translational_casting

@@ -8,8 +8,6 @@
   \cgalRefines `DefaultConstructible`
   \cgalRefines `PolygonTraits_2`
 
-  \cgalGeneralizes `Kernel`
-
   \cgalHasModel Any CGAL kernel, e.g., CGAL::Exact_predicates_exact_constructions_kernel.
 
 */
@@ -20,11 +18,14 @@ public:
   /// \name Functor Types
   /// @{
 
-  //! The direction type.
+  //! The direction type. Models the concept `Kernel::Direction_2`.
   typedef unspecified_type Direction_2;
 
-  //! models the concept `Kernel::Counterclockwise_in_between_2`.
+  //! Models the concept `Kernel::Counterclockwise_in_between_2`.
   typedef unspecified_type Counterclockwise_in_between_2;
+
+  //! Models the concept `Kernel::Collinear_2`.
+  typedef unspecified_type Collinear_2;
 
   /// @}
 
@@ -32,6 +33,7 @@ public:
   /// @{
 
   Counterclockwise_in_between_2 counterclockwise_in_between_2_object() const;
+  Counterclockwise_in_between_2 Collinear_2_object() const;
 
   /// @}
 

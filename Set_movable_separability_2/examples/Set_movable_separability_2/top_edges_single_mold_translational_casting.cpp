@@ -3,9 +3,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/top_edges_single_mold_translational_casting_2.h>
-#include <CGAL/pullout_directions_single_mold_translational_casting_2.h>
-#include <CGAL/is_pullout_direction_single_mold_translational_casting_2.h>
+#include <CGAL/Set_movable_separability_2/Single_mold_translational_casting/top_edges.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;

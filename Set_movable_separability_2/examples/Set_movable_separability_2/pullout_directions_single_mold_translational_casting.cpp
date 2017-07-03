@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/pullout_directions_single_mold_translational_casting_2.h>
+#include <CGAL/Set_movable_separability_2/Single_mold_translational_casting/pullout_directions.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;

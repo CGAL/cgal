@@ -19,8 +19,8 @@
 #define CGAL_SMS_2_PULLOUT_DIRECTIONS_SINGLE_MOLD_TRANSLATIONAL_CASTING_H
 
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Set_movable_separability_2/Utils.h>
-#include <CGAL/Set_movable_separability_2/Circle_arrangment.h>
+#include <CGAL/Set_movable_separability_2/internal/Utils.h>
+#include <CGAL/Set_movable_separability_2/internal/Circle_arrangment.h>
 
 namespace CGAL {
 namespace Set_movable_separability_2 {
@@ -71,12 +71,12 @@ std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
 pullout_directions
 (const CGAL::Polygon_2<CastingTraits_2>& pgn,
  const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& i,
+ CGAL::Orientation orientation,
  CastingTraits_2& traits)
 {
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn));
+  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
   CGAL_precondition(pgn.edges_end()!=i);
-  CGAL::Orientation poly_orientation = pgn.orientation();
 
   typedef CastingTraits_2 Casting_traits_2;
   //the returned range is [clock_first, clock_second]
@@ -84,7 +84,7 @@ pullout_directions
 
 
   auto segment_outer_circle =
-    internal::get_segment_outer_circle<Casting_traits_2>(*i, poly_orientation);
+    internal::get_segment_outer_circle<Casting_traits_2>(*i, orientation);
   clock_first = segment_outer_circle.first;
   clock_second = segment_outer_circle.second;
   //well theoretically, this is a bug since the current intersection is
@@ -98,8 +98,7 @@ pullout_directions
     if (e_it==i) continue;
     // std::cout << "f " << clock_first << " s " << clock_second << std::endl;
     auto segment_outer_circle =
-      internal::get_segment_outer_circle<Casting_traits_2>(*e_it,
-                                                           poly_orientation);
+      internal::get_segment_outer_circle<Casting_traits_2>(*e_it, orientation);
     // std::cout << "a "<< segment_outer_circle.second << " b "
     //           << segment_outer_circle.first<<std::endl;
 
@@ -183,10 +182,39 @@ std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
                           typename CastingTraits_2::Direction_2> >
 pullout_directions
 (const CGAL::Polygon_2<CastingTraits_2>& pgn,
- const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& i)
+ const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& it,
+ CGAL::Orientation orientation)
 {
   CastingTraits_2 traits;
-  return pullout_directions(pgn, i, traits);
+  return pullout_directions(pgn, it, orientation, traits);
+}
+
+/*! Same as above with the orientation argument.
+ */
+template <typename CastingTraits_2>
+std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
+                          typename CastingTraits_2::Direction_2> >
+pullout_directions
+(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& it,
+ CastingTraits_2& traits)
+{
+  CGAL::Orientation orientation = pgn.orientation();
+  return pullout_directions(pgn, it, orientation, traits);
+}
+
+/*! Same as above with the orientation and traits arguments.
+ */
+template <typename CastingTraits_2>
+std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
+                          typename CastingTraits_2::Direction_2> >
+pullout_directions
+(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ const typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator& it)
+{
+  CGAL::Orientation orientation = pgn.orientation();
+  CastingTraits_2 traits;
+  return pullout_directions(pgn, it, orientation, traits);
 }
 
 } // namespace Single_mold_translational_casting

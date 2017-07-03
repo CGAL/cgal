@@ -20,8 +20,8 @@ if ( CGAL_FOUND )
     add_definitions(-std=c++11)
   endif()
 
-create_single_source_cgal_program( "test_single_mold_translational_casting.cpp" )
-create_single_source_cgal_program( "test_is_pullout_directions_single_mold_translational.cpp" )
+create_single_source_cgal_program( "test_top_edges_single_mold_translational_casting.cpp" )
+create_single_source_cgal_program( "test_is_pullout_directions_single_mold_translational_casting.cpp" )
 
 else()
 
