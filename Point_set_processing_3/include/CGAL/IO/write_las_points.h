@@ -37,6 +37,9 @@
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
 
+#include <lasdefinitions.hpp>
+#include <laswriter_las.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <string>
