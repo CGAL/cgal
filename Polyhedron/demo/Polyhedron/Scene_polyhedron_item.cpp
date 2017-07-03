@@ -2070,8 +2070,8 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
                                      zmax-zmin);
         //put the camera in way we are sure the longest side is entirely visible on the screen
         //See openGL's frustum definition
-        double factor = max_side/(tan(viewer->camera()->aspectRatio()/
-                                        (viewer->camera()->fieldOfView()/2)));
+        double factor = CGAL::abs(max_side/(tan(viewer->camera()->aspectRatio()/
+                                        (viewer->camera()->fieldOfView()/2))));
 
         Kernel::Point_3 new_pos = centroid + factor*face_normal ;
         viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(),
