@@ -28,17 +28,17 @@ template <class Triangulation>
 void
 _test_cls_regular_3(const Triangulation &)
 {
-  typedef Triangulation                      Cls;
-  typedef typename Triangulation::Traits Tr;
-  CGAL_USE_TYPE(Tr);
+  typedef Triangulation                       Cls;
+  typedef typename Triangulation::Geom_traits Gt;
+  CGAL_USE_TYPE(Gt);
 
-  typedef typename Triangulation::Bare_point Bare_point;
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
-  //  typedef  typename Cls::Bare_point Point;
-  typedef  typename Cls::Weighted_point Weighted_point;
 
-  typedef std::list<Weighted_point>                        list_point;
+  typedef typename Cls::Bare_point           Bare_point;
+  typedef typename Cls::Weighted_point       Weighted_point;
+
+  typedef std::list<Weighted_point>           list_point;
 
   // temporary version
 

@@ -136,6 +136,30 @@ and <code>src/</code> directories).
 <!-- Installation (and general changes) -->
 <!-- New packages -->
 <!-- Major and breaking changes -->
+  <h3>2D and 3D Linear Geometry Kernel</h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      The dangerous implicit conversions between weighted points and points in
+      the concept <code>Kernel</code> have been disabled. Constructors offering
+      to build a weighted point from a point (and reversely) are still requested
+      by the concept <code>Kernel</code> but must now be marked with the <code>explicit</code> specifier.
+    </li>
+    <li><b>Breaking change</b>:
+      The removal of implicit conversions between points and weighted points in the
+      concept <code>Kernel</code> has incidentally created various minor
+      breaking changes in the following packages: 2D Alpha Shapes,
+      2D and 3D Triangulations, and 3D Mesh Generation.
+      See the full changelog for details.
+    </li>
+  </ul>
+  <h3>dD Triangulations</h3>
+  <ul>
+      <li>
+          Add a class to compute regular triangulations.
+          Note that the removal of points is not yet supported.
+      </li>
+  </ul>
+
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
 <!-- Geometry Kernels -->
@@ -144,15 +168,83 @@ and <code>src/</code> directories).
 <!-- Cell Complexes and Polyhedra -->
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
-<h3>dD Triangulations</h3>
-<ul>
-    <li>
-        Add a class to compute regular triangulations.
-        Note that the removal of points is not yet supported.
+  <h3> 2D Alpha Shapes </h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      Mirrored the concepts of the 2D alpha shape package with those of the
+      3D Alpha Shapes package. Consequently, a new concept, <code>WeightedAlphaShapeTraits_2</code>,
+      is introduced to provide requirements on the traits class for 2D weighted
+      alpha shapes. All models of the concept <code>Kernel</code> are models of
+      this new concept.
     </li>
-</ul>
+    <li>
+      The concept <code>AlphaShapeTraits_2</code> now provides requirements on
+      the traits class for 2D basic alpha shapes, and refines <code>DelaunayTriangulationTraits_2</code>.
+    </li>
+  </ul>
+  <h3> 2D and 3D Triangulations </h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      Added a new functor requirement, <code>Construct_point_2</code>, to the concepts
+      <code>TriangulationTraits_2</code> and <code>RegularTriangulationTraits_2</code>
+      and a new functor requirement, <code>Construct_point_3</code>, to the concepts
+      <code>TriangulationTraits_3</code> and <code>RegularTriangulationTraits_3</code>.
+      All models of the concept <code>Kernel</code> already provide these functors.
+    </li>
+    <li><b>Breaking change</b>:
+      Introduced the concepts <code>RegularTriangulationVertexBase_2</code> and
+      <code>RegularTriangulationVertexBase_3</code>. These concepts describe
+      the requirements on classes meant to represent a vertex of a regular triangulation.
+      Concepts that previously refined <code>TriangulationVertexBase_2</code> or
+      <code>TriangulationVertexBase_3</code> but described in fact a vertex class
+      used in a regular triangulation, such as the concept <code>MeshVertexBase_3</code> in the 3D mesh
+      generation package, now refine the corresponding new regular vertex concept.
+    <li><b>Breaking change</b>:
+      Uniformized the point type across all vertex and cell concepts. The triangulation
+      point type name is now always <code>Point</code>. Note that this does not change
+      the requirements but only the name: <code>Point</code> is still expected to be equal to
+      <code>Traits::Point_[23]</code> for basic and Delaunay triangulations or to
+      <code>Traits::Weighted_point_[23]</code> for regular triangulations. Consequently:
+      <ul>
+        <li>
+          The concept <code>RegularTriangulationVertexBase_2</code> now requests
+          a <code>Point</code> type (equal to <code>Traits::Weighted_point_2</code>)
+        </li>
+        <li>
+          The concept <code>RegularTriangulationCellBase_3</code> now requests
+          a <code>Point</code> type instead of a <code>Weighted_point</code> type
+          (but still equal to <code>Traits::Weighted_point_3</code>)
+        </li>
+        <li>
+          The concept <code>DelaunayTriangulationCellBase_3</code> now requests
+          a <code>Point</code> type instead of a <code>Point_3</code> type
+          (but still equal to <code>Traits::Point_3</code>).
+        </li>
+      </ul>
+    </li>
+    <li>
+      Introduced a new concept, <code>RegularTriangulationCellBaseWithWeightedCircumcenter_3</code>,
+      which describes the requirements on a cell of a regular triangulation that
+      caches its circumcenter. The existing class <code>Regular_triangulation_cell_base_with_weighted_circumcenter_3</code>
+      is the default model of this concept.
+    </li>
+  </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
+  <h3> 3D Mesh Generation </h3>
+  <ul>
+    <li><b>Breaking change</b>:
+      The type of the surface center in the concept <code>MeshCellBase_3</code>
+      has been changed from <code>Triangulation::Point</code> to
+      <code>TriangulationTraits::Point_3</code> to reflect that it is a weightless point.
+    </li>
+    <li><b>Breaking change</b>:
+      The function <code>invalidate_circumcenter()</code> of the concept <code>MeshCellBase_3</code>
+      is renamed to <code>invalidate_weighted_circumcenter_cache()</code>
+      and moved to the new concept <code>RegularTriangulationCellBaseWithWeightedCircumcenter_3</code>,
+      which the concept <code>MeshCellBase_3</code> now refines.
+    </li>
+  </ul>
 <!-- Surface Reconstruction -->
 <h3>Poisson Surface Reconstruction</h3>
 <ul>

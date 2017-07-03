@@ -62,7 +62,7 @@ unsigned int i)
 template <class F>
 void write_facet(F f, std::ostream &out)
 {
-    std::vector<typename F::first_type::value_type::Point> pts;
+  std::vector<typename F::first_type::value_type::Triangulation_data_structure::Vertex::Point> pts;
     pts.push_back(vertex_of_facet(f,0)->point());
     pts.push_back(vertex_of_facet(f,1)->point());
     pts.push_back(vertex_of_facet(f,2)->point());
@@ -74,7 +74,7 @@ void write_facet(F f, std::ostream &out)
 template <class E>
 void write_edge(const E &e, std::ostream &out)
 {
-    std::vector<typename E::first_type::value_type::Point> pts;
+    std::vector<typename E::first_type::value_type::Triangulation_data_structure::Vertex::Point> pts;
     pts.push_back(vertex_of_edge(e,0)->point());
     pts.push_back(vertex_of_edge(e,1)->point());
     std::sort(pts.begin(), pts.end());
@@ -377,7 +377,7 @@ bool equal_edge(const Edge &e0, const Edge &e1)
 template <class Edge, class Stream>
 void write_edge(const Edge &e, Stream &out)
 {
-    std::vector<typename Edge::first_type::value_type::Geom_traits::Point_3> pts;
+    std::vector<typename Edge::first_type::value_type::Triangulation::Point_3> pts;
     pts.push_back(vertex(e,0)->point());
     pts.push_back(vertex(e,1)->point());
     std::sort(pts.begin(), pts.end());
@@ -391,7 +391,7 @@ void write_edge(const Edge &e, Stream &out)
 /*
   template <class Stream>
   void write_labeled_facet(const Facet &f, Stream &out) const {
-    std::vector<typename Tri::Geom_traits::Point_3> pts;
+    std::vector<typename Tri::Point> pts;
     pts.push_back(vertex(f,0)->point());
     pts.push_back(vertex(f,1)->point());
     pts.push_back(vertex(f,2)->point());
@@ -404,7 +404,7 @@ void write_edge(const Edge &e, Stream &out)
 
 template <class Stream>
 void write_labeled_edge(const Edge &e, Stream &out) const {
-std::vector<typename Tri::Geom_traits::Point_3> pts;
+std::vector<typename Tri::Point> pts;
 pts.push_back(vertex(e,0)->point());
 pts.push_back(vertex(e,1)->point());
 std::sort(pts.begin(), pts.end());

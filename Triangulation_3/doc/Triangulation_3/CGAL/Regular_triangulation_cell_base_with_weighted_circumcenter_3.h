@@ -13,58 +13,60 @@ Note that input/output operators discard this additional information.
 All functions modifying the vertices of the cell invalidate the cached 
 circumcenter. 
 
-\tparam RegularTriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class and must be a model of `RegularTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which 
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
 be a model of `RegularTriangulationCellBase_3`.
-It has the default value `Regular_triangulation_cell_base_3<RegularTriangulationTraits_3>`.
+It has the default value `Regular_triangulation_cell_base_3<RT>`.
 
-\cgalModels `RegularTriangulationCellBase_3`
+\cgalModels `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 \sa `CGAL::Regular_triangulation_cell_base_3`
 
 */
-template< typename RegularTriangulationTraits_3, typename Cb >
+template< typename Traits, typename Cb >
 class Regular_triangulation_cell_base_with_weighted_circumcenter_3 : public Cb {
 public:
 	
 /// \name Types 
 /// @{
-typedef RegularTriangulationTraits_3::Bare_point Bare_point;
+typedef Traits::Point_3 Point_3;
+
+typedef Traits::Weighted_point_3 Point;
 /// @}
 
 /*! \name Access function 
 
 As a model of the concept `RegularTriangulationCellBase_3`, 
-`Regular_triangulation_cell_base_3` 
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3`
 provides a `weighted_circumcenter()` member fonction. 
 
 In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
 of the cell.
-This `Bare_point` is computed by the `Construct_weighted_circumcenter_3` constructor of the traits class
-when this function is first called.
+This `Point_3` is computed using the `Construct_weighted_circumcenter_3` functor
+of the traits class when this function is first called and its value is stored.
 In the next calls, the cached value is returned.
 
-Note that this point has no weight.
+Note that the returned point has no weight.
 */
 
 /// @{
 
 /*!
-Computes the weighted circumcenter of the tetrahedron, or retrieves it if already 
-computed.
+Computes the weighted circumcenter of the tetrahedron, or retrieves it if it has
+already been computed.
 
 The returned point has no weight.
 */ 
-const Bare_point& weighted_circumcenter( 
-	const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
+const Point_3& weighted_circumcenter(const Traits&gt = Traits()) const;
 
 /*!
-Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and other.
-Should be preferred to an assignment or copy constructor when other is deleted after that.
+Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and `other`.
+This function should be preferred to an assignment or the copy constructor
+if `other` is deleted thereafter.
 */
 void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw();
 

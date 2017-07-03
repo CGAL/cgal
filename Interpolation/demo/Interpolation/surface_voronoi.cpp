@@ -206,8 +206,14 @@ int main()
   //define the triangulation:
   Gt traits = Gt(p,normal);
   Regular_triangulation T(traits);
+
   //insert the points:
-  T.insert(points.begin(), points.end());
+  Gt::Construct_weighted_point_2 p2wp = traits.construct_weighted_point_2_object();
+
+  Point_vector::const_iterator pvit = points.begin(), pvend = points.end();
+  for(; pvit!=pvend; ++pvit){
+    T.insert(p2wp(*pvit++));
+  }
 
   char ch;
   gv << CGAL::VIOLET;

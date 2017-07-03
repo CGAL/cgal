@@ -118,11 +118,13 @@ class Sizing_grid
 public:
   typedef typename Tr::Geom_traits Gt;
   typedef typename Gt::FT FT;
-  typedef typename Gt::Point_3 Weighted_point;
-  typedef typename Weighted_point::Point Point;
+
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
+
   typedef typename Gt::Vector_3 Vector;
   typedef Sizing_grid_node<Gt> Node;
-  typedef typename std::pair<Point, FT> Constraint;
+  typedef typename std::pair<Bare_point, FT> Constraint;
   
 private:
   // grid
@@ -155,8 +157,8 @@ private:
       m_pRef_node = pRef_node;
       
       // size = K d(node,v) + init_size(v)
-      const Point& p1 = pNode->point();
-      const Point& p2 = m_pRef_node->point();
+      const Bare_point& p1 = pNode->point();
+      const Bare_point& p2 = m_pRef_node->point();
       FT distance = (FT)std::sqrt(CGAL_NTS to_double(CGAL::squared_distance(p1,p2)));
       m_size = k * distance + m_pRef_node->init_size();
     }

@@ -76,6 +76,7 @@ public:
   Weighted_point_2(const Rep& p)
       : Rep(p) {}
 
+  explicit
   Weighted_point_2(const Point_2& p)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, 0))
   {}
@@ -83,7 +84,6 @@ public:
   Weighted_point_2(const Point_2& p, const Weight& w)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, w))
   {}
-
 
   Weighted_point_2(const FT& x, const FT& y)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), x, y))

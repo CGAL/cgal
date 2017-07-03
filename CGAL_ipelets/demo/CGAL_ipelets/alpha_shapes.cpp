@@ -20,8 +20,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/CGAL_Ipelet_base.h> 
-#include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -32,13 +30,12 @@
 namespace CGAL_alpha_shapes{
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       Kernel;
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Kernel>     Gtw;
-typedef CGAL::Regular_triangulation_vertex_base_2<Gtw>            Rvb;
-typedef CGAL::Alpha_shape_vertex_base_2<Gtw,Rvb>                  Vb;
-typedef CGAL::Regular_triangulation_face_base_2<Gtw>              Rf;
-typedef CGAL::Alpha_shape_face_base_2<Gtw, Rf>                    Fb;
+typedef CGAL::Regular_triangulation_vertex_base_2<Kernel>         Rvb;
+typedef CGAL::Alpha_shape_vertex_base_2<Kernel,Rvb>               Vb;
+typedef CGAL::Regular_triangulation_face_base_2<Kernel>           Rf;
+typedef CGAL::Alpha_shape_face_base_2<Kernel,Rf>                  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>               Tds;
-typedef CGAL::Regular_triangulation_2<Gtw,Tds>                    Regular;
+typedef CGAL::Regular_triangulation_2<Kernel,Tds>                 Regular;
 typedef CGAL::Alpha_shape_2<Regular>                              Alpha_shape_2;
 
 const std::string  sublabel[] = {
@@ -111,9 +108,9 @@ void ASphapeIpelet::protected_run(int fn)
   for (Alpha_shape_2::Finite_faces_iterator it=A.finite_faces_begin();it!=A.finite_faces_end();++it){
     if (A.classify(it)==Alpha_shape_2::INTERIOR){
       std::list<Point_2> LP;
-      LP.push_back(it->vertex(0)->point());
-      LP.push_back(it->vertex(1)->point());
-      LP.push_back(it->vertex(2)->point());
+      LP.push_back(Point_2(it->vertex(0)->point()));
+      LP.push_back(Point_2(it->vertex(1)->point()));
+      LP.push_back(Point_2(it->vertex(2)->point()));
       draw_polyline_in_ipe(LP.begin(),LP.end(),true,false,true);
     }
   }

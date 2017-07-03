@@ -50,11 +50,11 @@ struct Two_list_pointer_event_queue_key: public Item::Handle
 {
   typedef Two_list_pointer_event_queue_key<Item> This;
   typedef typename Item::Handle P;
-  Two_list_pointer_event_queue_key(){};
+  Two_list_pointer_event_queue_key(){}
   Two_list_pointer_event_queue_key(Item  *p): Item::Handle(p){}
   std::ostream& write(std::ostream &out) {
     if (Item::Handle::get()) {
-      out << "(" << Item::Handle::get() << ": " << *Item::Handle::get() << ")";
+      out << "(" /*<< Item::Handle::get()*/ << ": " << *Item::Handle::get() << ")";
     }
     else {
       out << "null";
@@ -104,9 +104,6 @@ std::ostream &operator<<(std::ostream &out, Two_list_pointer_event_queue_key<I> 
   return out;
 }
 
-
-
-
 // The interface for an item stored in the ::Pointer_event_queue
 template <class Priority>
 class Two_list_event_queue_item:
@@ -127,7 +124,7 @@ public:
 
   enum List {FRONT, BACK, INF};
 
-  const Priority& time() const {return time_;};
+  const Priority& time() const {return time_;}
 
   List in_list() const
   {
@@ -136,8 +133,6 @@ public:
   void set_in_list(List lt) {
     front_list_=lt;
   }
-
-  
 
   bool operator<(const This &o) const {
     CGAL::Comparison_result c= CGAL::compare(time(), o.time());
@@ -181,7 +176,6 @@ inline std::ostream& operator<<(std::ostream &out, const Two_list_event_queue_it
   i.write(out);
   return out;
 }
-
 
 // The how a dummy item is stored in the ::Two_list_event_queue
 /*
@@ -332,29 +326,23 @@ class Two_list_pointer_event_queue
 						    internal::Two_list_event_queue_item_allocator<PriorityT>*/ > Queue;
   typedef typename Queue::iterator Iterator;
 
-
-
-
 public:
   typedef PriorityT Priority;
 
   typedef internal::Two_list_pointer_event_queue_key<Item> Key;
 
-
-
-
   //! Construct it with a suggested size of sz.
   Two_list_pointer_event_queue(Priority start_time,
-			       Priority end_time, 
-			       FK, int =0):
+                               Priority end_time,
+                               FK, int =0):
     null_event_(new internal::Two_list_event_queue_item<Priority>()){
     CGAL_precondition(!INF);
     initialize(start_time, end_time);
   }
 
- //! Construct it with a suggested size of sz.
+  //! Construct it with a suggested size of sz.
   Two_list_pointer_event_queue(Priority start_time,
-			       FK, int =0): 
+                               FK, int =0):
     null_event_(new internal::Two_list_event_queue_item<Priority>()){
     CGAL_precondition(INF);
     initialize(start_time);
@@ -364,12 +352,12 @@ public:
     // release pointers
     std::vector<Key> all;
     all.reserve(front_.size()+back_.size());
-    for (typename Queue::iterator it = front_.begin(); 
-	 it != front_.end(); ++it) {
+    for (typename Queue::iterator it = front_.begin();
+         it != front_.end(); ++it) {
       all.push_back(Key(&*it));
     }
-    for (typename Queue::iterator it = back_.begin(); 
-	 it != back_.end(); ++it) {
+    for (typename Queue::iterator it = back_.begin();
+         it != back_.end(); ++it) {
       all.push_back(Key(&*it));
     }
     front_.clear();
@@ -379,12 +367,10 @@ public:
     }
   }
 
-  
   /*template <class E>
   Key insert_at_end(const E & e) {
 
   }*/
-  
 
   bool is_after_end(const Priority &t) const {
     if (INF) return false; 
