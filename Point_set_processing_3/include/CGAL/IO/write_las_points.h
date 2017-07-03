@@ -38,7 +38,9 @@
 #include <boost/cstdint.hpp>
 
 #include <lasdefinitions.hpp>
+#define USE_AS_DLL
 #include <laswriter_las.hpp>
+#undef USE_AS_DLL
 
 #include <iostream>
 #include <sstream>
