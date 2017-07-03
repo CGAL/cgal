@@ -151,7 +151,10 @@ struct Scene_polyhedron_item_priv{
   bool plugin_has_set_color_vector_m;
   bool is_multicolor;
   void killIds();
-  void fillTargetedIds(const Polyhedron::Facet_handle& selected_fh, const Kernel::Point_3 &point_under, const qglviewer::Vec &offset);
+  void fillTargetedIds(const Polyhedron::Facet_handle& selected_fh,
+                       const Kernel::Point_3 &point_under,
+                       CGAL::Three::Viewer_interface *viewer,
+                       const qglviewer::Vec &offset);
   Scene_polyhedron_item* item;
   Polyhedron *poly;
   double volume, area;
@@ -1775,377 +1778,77 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   return data;
 }
 
-template<typename Handle>
-struct KRingPMAP{
-  typedef Handle                             key_type;
-  typedef bool                               value_type;
-  typedef value_type                         reference;
-  typedef boost::read_write_property_map_tag category;
-  std::vector<bool>* vec;
-
-  KRingPMAP(std::vector<bool>* vec)
-    :vec(vec){}
-
-  friend value_type get(const KRingPMAP& map, const key_type& f){
-    return (*map.vec)[f->id()];
-  }
-  friend void put(KRingPMAP& map, const key_type& f, const value_type i){
-    (*map.vec)[f->id()] = i;
-  }
-};
-
-struct EdgeKRingPMAP{
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor key_type;
-  typedef bool                                             value_type;
-  typedef value_type                                       reference;
-  typedef boost::read_write_property_map_tag               category;
-  std::vector<bool>* vec;
-  Polyhedron* poly;
-
-  EdgeKRingPMAP(std::vector<bool>* vec, Polyhedron* poly)
-    :vec(vec), poly(poly){}
-
-  friend value_type get(const EdgeKRingPMAP& map, const key_type& f){
-    return (*map.vec)[halfedge(f, *map.poly)->id()/2];
-  }
-  friend void put(EdgeKRingPMAP& map, const key_type& f, const value_type i){
-    (*map.vec)[halfedge(f, *map.poly)->id()/2] = i;
-  }
-};
-
+#include "id_printing.h"
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
   if(d->all_primitives_displayed)
     return;
-  bool found = false;
-  qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
   typedef Input_facets_AABB_tree Tree;
-  typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Intersection_and_primitive_id;
-
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(!aabb_tree)
     return;
+  Polyhedron::Facet_handle selected_fh;
+  Kernel::Point_3 pt_under;
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-
-  //find clicked facet
-  qglviewer::Vec dir = point_under - viewer->camera()->position();
-  const Kernel::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
-                                   viewer->camera()->position().y - offset.y,
-                                   viewer->camera()->position().z - offset.z);
-
-  const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
-  const Kernel::Ray_3 ray(ray_origin, ray_dir);
-  typedef std::list<Intersection_and_primitive_id> Intersections;
-  Intersections intersections;
-  aabb_tree->all_intersections(ray, std::back_inserter(intersections));
-
-  if(intersections.empty())
-    return;
-  Intersections::iterator closest = intersections.begin();
-  const Kernel::Point_3* closest_point =
-      boost::get<Kernel::Point_3>(&closest->first);
-  for(Intersections::iterator
-      it = boost::next(intersections.begin()),
-      end = intersections.end();
-      it != end; ++it)
-  {
-    if(! closest_point) {
-      closest = it;
-    }
-    else {
-      const Kernel::Point_3* it_point =
-          boost::get<Kernel::Point_3>(&it->first);
-      if(it_point &&
-         (ray_dir * (*it_point - *closest_point)) < 0)
-      {
-        closest = it;
-        closest_point = it_point;
-      }
-    }
-  }
-  if(!closest_point)
-    return;
-  Kernel::Point_3 pt_under(point_under.x, point_under.y, point_under.z);
-  Polyhedron::Facet_handle selected_fh = closest->second;
-  d->fillTargetedIds(selected_fh, pt_under, offset);
+  find_primitive_id(point, aabb_tree, viewer, selected_fh, pt_under);
+  d->fillTargetedIds(selected_fh, pt_under, viewer, offset);
 
 }
 void Scene_polyhedron_item_priv::fillTargetedIds(const Polyhedron::Facet_handle& selected_fh,
                                                  const Kernel::Point_3& pt_under,
+                                                 CGAL::Three::Viewer_interface *viewer,
                                                  const qglviewer::Vec& offset)
 {
-  QFont font;
-  font.setBold(true);
-  std::vector<Polyhedron::Vertex_handle> displayed_vertices;
-  std::vector<boost::graph_traits<Polyhedron>::edge_descriptor> displayed_edges;
-  std::vector<Polyhedron::Facet_handle> displayed_faces;
-  //Test spots around facet to find the closest to point
+  compute_displayed_ids(*poly,
+                        viewer,
+                        selected_fh,
+                        pt_under,
+                        offset,
+                        item->textVItems,
+                        item->textEItems,
+                        item->textFItems,
+                        &targeted_id,
+                        &all_primitives_displayed);
 
-  double min_dist = (std::numeric_limits<double>::max)();
 
-  // test the vertices of the closest face
-  BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *poly))
-  {
-    Kernel::Point_3 test=Kernel::Point_3(vh->point().x()+offset.x,
-                                         vh->point().y()+offset.y,
-                                         vh->point().z()+offset.z);
-    double dist = CGAL::squared_distance(test, pt_under);
-    if( dist < min_dist){
-      min_dist = dist;
-      displayed_vertices.clear();
-      displayed_vertices.push_back(vh);
-    }
-  }
-  QVector3D point(displayed_vertices[0]->point().x(),
-      displayed_vertices[0]->point().y(),
-      displayed_vertices[0]->point().z());
-
-  //test if we want to erase or not
-  BOOST_FOREACH(TextItem* text_item, targeted_id)
-  {
-    if(text_item->position() == point)
-    {
-      //hide and stop
-      killIds();
-      return;
-    }
-  }
-  killIds();
-  // test the midpoint of edges of the closest face
-  BOOST_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *poly))
-  {
-    Kernel::Point_3 test=CGAL::midpoint(source(e, *poly)->point(),target(e, *poly)->point());
-    test = Kernel::Point_3(test.x()+offset.x,
-                           test.y()+offset.y,
-                           test.z()+offset.z);
-    double dist = CGAL::squared_distance(test, pt_under);
-    if(dist < min_dist){
-      min_dist = dist;
-      displayed_vertices.clear();
-      displayed_edges.clear();
-      displayed_edges.push_back(edge(e, *poly));
-    }
-  }
-  // test the centroid of the closest face
-  double x(0), y(0), z(0);
-  int total(0);
-  BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *poly))
-  {
-    x+=vh->point().x();
-    y+=vh->point().y();
-    z+=vh->point().z();
-    ++total;
-  }
-
-  Kernel::Point_3 test(x/total+offset.x,
-                       y/total+offset.y,
-                       z/total+offset.z);
-  double dist = CGAL::squared_distance(test, pt_under);
-  if(dist < min_dist){
-    min_dist = dist;
-    displayed_vertices.clear();
-    displayed_edges.clear();
-    displayed_faces.clear();
-    displayed_faces.push_back(selected_fh);
-  }
-
-  if(!displayed_vertices.empty())
-  {
-    BOOST_FOREACH(Polyhedron::Facet_handle f, CGAL::faces_around_target(displayed_vertices[0]->halfedge(), *poly))
-    {
-      displayed_faces.push_back(f);
-    }
-    BOOST_FOREACH(Polyhedron::Halfedge_handle h, CGAL::halfedges_around_target(displayed_vertices[0]->halfedge(), *poly))
-    {
-      displayed_edges.push_back(edge(h, *poly));
-    }
-  }
-  else if(!displayed_edges.empty())
-  {
-    displayed_vertices.push_back(halfedge(displayed_edges[0], *poly)->vertex());
-    displayed_vertices.push_back(halfedge(displayed_edges[0], *poly)->opposite()->vertex());
-
-    displayed_faces.push_back(halfedge(displayed_edges[0], *poly)->facet());
-    displayed_faces.push_back(halfedge(displayed_edges[0], *poly)->opposite()->facet());
-  }
-
-  else if(!displayed_faces.empty())
-  {
-    BOOST_FOREACH(Polyhedron::Halfedge_handle h, CGAL::halfedges_around_face(displayed_faces[0]->halfedge(), *poly))
-    {
-      displayed_edges.push_back(edge(h, *poly));
-      displayed_vertices.push_back(h->vertex());
-    }
-  }
-  //fill TextItems
-  std::vector<bool> vertex_selection(false);
-  vertex_selection.resize(num_vertices(*poly));
-  KRingPMAP<Polyhedron::Vertex_handle> vpmap(&vertex_selection);
-  BOOST_FOREACH(Polyhedron::Vertex_handle v_h, displayed_vertices)
-      put(vpmap, v_h, true);
-  CGAL::expand_vertex_selection(displayed_vertices,
-                                *poly,
-                                1,
-                                vpmap,
-                                std::back_inserter(displayed_vertices));
-
-  std::vector<bool> edge_selection(false);
-  edge_selection.resize(num_edges(*poly));
-  EdgeKRingPMAP epmap(&edge_selection, poly);
-  BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e_d, displayed_edges)
-      put(epmap, e_d, true);
-  CGAL::expand_edge_selection(displayed_edges,
-                              *poly,
-                              1,
-                              epmap,
-                              std::back_inserter(displayed_edges));
-
-  std::vector<bool> face_selection(false);
-  face_selection.resize(num_faces(*poly));
-  KRingPMAP<Polyhedron::Facet_handle> fpmap(&face_selection);
-  BOOST_FOREACH(Polyhedron::Facet_handle f_h, displayed_faces)
-      put(fpmap, f_h, true);
-  CGAL::expand_face_selection(displayed_faces,
-                              *poly,
-                              1,
-                              fpmap,
-                              std::back_inserter(displayed_faces));
-
-  BOOST_FOREACH(Polyhedron::Vertex_handle vh, displayed_vertices)
-  {
-    Kernel::Point_3 pos=Kernel::Point_3(vh->point().x()+offset.x,
-                                        vh->point().y()+offset.y,
-                                        vh->point().z()+offset.z);
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(vh->id()), true, font, Qt::red);
-    item->textVItems->append(text_item);
-    targeted_id.push_back(text_item);
-  }
   if(vertices_displayed)
     item->showVertices(true);
-  BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, displayed_edges)
-  {
-    Polyhedron::Halfedge_handle h(halfedge(e, *poly));
-    Kernel::Point_3 pos=CGAL::midpoint(source(h, *poly)->point(),target(h, *poly)->point());
-    pos = Kernel::Point_3(pos.x()+offset.x,
-                          pos.y()+offset.y,
-                          pos.z()+offset.z);
-
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(h->id()/2), true, font, Qt::green);
-    item->textEItems->append(text_item);
-  }
   if(edges_displayed)
     item->showEdges(true);
-
-  BOOST_FOREACH(Polyhedron::Facet_handle f, displayed_faces)
-  {
-    double x(0), y(0), z(0);
-    int total(0);
-    BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(f->halfedge(), *poly))
-    {
-      x+=vh->point().x();
-      y+=vh->point().y();
-      z+=vh->point().z();
-      ++total;
-    }
-
-    Kernel::Point_3 pos(x/total+offset.x,
-                        y/total+offset.y,
-                        z/total+offset.z);
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(f->id()), true, font, Qt::blue);
-    item->textFItems->append(text_item);
-  }
   if(faces_displayed)
     item->showFaces(true);
+
 }
 
 bool Scene_polyhedron_item::printVertexIds(CGAL::Three::Viewer_interface *viewer) const
 {
-  TextRenderer *renderer = viewer->textRenderer();
   if(d->vertices_displayed)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    QFont font;
-    font.setBold(true);
-
-    //fills textItems
-    BOOST_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*d->poly))
-    {
-      const Point& p = Point(vh->point().x(), vh->point().y(), vh->point().z());
-      textVItems->append(new TextItem((float)p.x() + offset.x,
-                                     (float)p.y() + offset.y,
-                                     (float)p.z() + offset.z,
-                                     QString("%1").arg(vh->id()), true, font, Qt::red));
-
-    }
-    //add the QList to the render's pool
-    renderer->addTextList(textVItems);
-    if(textVItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
-    {
-      return false;
-    }
+    return ::printVertexIds(*d->poly,
+                            textVItems,
+                            viewer);
   }
   return true;
 }
 
 bool Scene_polyhedron_item::printEdgeIds(CGAL::Three::Viewer_interface *viewer) const
 {
-  TextRenderer *renderer = viewer->textRenderer();
   if(d->edges_displayed)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    QFont font;
-    font.setBold(true);
-
-    BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*d->poly))
-    {
-      const Point& p1 = source(e, *d->poly)->point();
-      const Point& p2 = target(e, *d->poly)->point();
-      textEItems->append(new TextItem((float)(p1.x() + p2.x()) / 2 + offset.x,
-                                     (float)(p1.y() + p2.y()) / 2 + offset.y,
-                                     (float)(p1.z() + p2.z()) / 2 + offset.z,
-                                     QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
-    }
-    //add the QList to the render's pool
-    renderer->addTextList(textEItems);
-    if(textEItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
-    {
-      return false;
-    }
+    return ::printEdgeIds(*d->poly,
+                            textEItems,
+                            viewer);
   }
   return true;
 }
 
 bool Scene_polyhedron_item::printFaceIds(CGAL::Three::Viewer_interface *viewer) const
 {
-  TextRenderer *renderer = viewer->textRenderer();
   if(d->faces_displayed)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    QFont font;
-    font.setBold(true);
-    BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
-    {
-      double x(0), y(0), z(0);
-      int total(0);
-      BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(fh->halfedge(), *d->poly))
-      {
-        x += vh->point().x();
-        y += vh->point().y();
-        z += vh->point().z();
-        ++total;
-      }
-
-      textFItems->append(new TextItem((float)x / total + offset.x,
-                                     (float)y / total + offset.y,
-                                     (float)z / total + offset.z,
-                                     QString("%1").arg(fh->id()), true, font, Qt::blue));
-    }
-    //add the QList to the render's pool
-    renderer->addTextList(textFItems);
-    if(textFItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
-    {
-      return false;
-    }
+    return ::printFaceIds(*d->poly,
+                            textFItems,
+                            viewer);
   }
   return true;
 }
@@ -2154,22 +1857,12 @@ void Scene_polyhedron_item_priv::killIds()
 {
   CGAL::Three::Viewer_interface* viewer =
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
-  TextRenderer *renderer = viewer->textRenderer();
-  BOOST_FOREACH(TextItem* it, item->textVItems->textList())
-    delete it;
-  BOOST_FOREACH(TextItem* it, item->textEItems->textList())
-    delete it;
-  BOOST_FOREACH(TextItem* it, item->textFItems->textList())
-    delete it;
-  item->textVItems->clear();
-  renderer->removeTextList(item->textVItems);
-  item->textEItems->clear();
-  renderer->removeTextList(item->textEItems);
-  item->textFItems->clear();
-  renderer->removeTextList(item->textFItems);
-  targeted_id.clear();
-  all_primitives_displayed = false;
-  viewer->update();
+  deleteIds(viewer,
+            item->textVItems,
+            item->textEItems,
+            item->textFItems,
+            &targeted_id,
+            &all_primitives_displayed);
 }
 
 void Scene_polyhedron_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
@@ -2182,7 +1875,6 @@ void Scene_polyhedron_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
     bool s1(printVertexIds(viewer)),
         s2(printEdgeIds(viewer)),
         s3(printFaceIds(viewer));
-
     if((s1 && s2 && s3))
     {
       d->all_primitives_displayed = true;
@@ -2472,152 +2164,40 @@ void Scene_polyhedron_item::zoomToId()
   QString text = QInputDialog::getText(QApplication::activeWindow(), tr("Zoom to Index"),
                                        tr("Simplex"), QLineEdit::Normal,
                                        tr("v0"), &ok);
-  if (ok)
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  Point p;
+  QString id = text.right(text.length()-1);
+  int return_value = ::zoomToId(*d->poly, text, viewer, selected_fh, p);
+  switch(return_value)
   {
-    bool is_int;
-    unsigned int id = text.right(text.length()-1).toUInt(&is_int);
-    QString first = text.left(1);
-    if((first != tr("v") &&
-        first != tr("e") &&
-        first != tr("f")) ||
-       !is_int)
-    {
-
-      QMessageBox::warning(QApplication::activeWindow(),
-                         "ERROR",
-                         tr("Input must be of the form [v/e/f][int]")
-                         );
-    }
-    else
-    {
-      CGAL::Three::Viewer_interface* viewer =
-          qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
-      const qglviewer::Vec offset =
-          static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-
-      Point p;
-      Kernel::Vector_3 normal;
-      if(first == tr("v"))
-      {
-        bool found = false;
-        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices(*d->poly))
-        {
-          if(vh->id() == id)
-          {
-            p = Point(vh->point().x() + offset.x,
-                      vh->point().y() + offset.y,
-                      vh->point().z() + offset.z);
-            selected_fh = vh->halfedge()->facet();
-            normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, *d->poly);
-            found = true;
-            break;
-          }
-        }
-        if(!found)
-        {
-          QMessageBox::warning(QApplication::activeWindow(),
-                             "ERROR",
-                             tr("No vertex with id %1").arg(id)
-                             );
-          return;
-        }
-      }
-      else if(first == tr("e"))
-      {
-        bool found = false;
-        BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*d->poly))
-        {
-          if(halfedge(e, *d->poly)->id()/2 == id)
-          {
-            const Point& p1 = source(e, *d->poly)->point();
-            const Point& p2 = target(e, *d->poly)->point();
-            p = Point((float)(p1.x() + p2.x()) / 2 + offset.x,
-                      (float)(p1.y() + p2.y()) / 2 + offset.y,
-                      (float)(p1.z() + p2.z()) / 2 + offset.z );
-            Kernel::Vector_3 normal1 = CGAL::Polygon_mesh_processing::compute_face_normal(halfedge(e, *d->poly)->face(),
-                                                                                          *d->poly);
-            Kernel::Vector_3 normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(halfedge(e, *d->poly)->opposite()->face(),
-                                                                                          *d->poly);
-            normal = 0.5*normal1+0.5*normal2;
-            selected_fh = halfedge(e, *d->poly)->facet();
-            found = true;
-            break;
-          }
-        }
-        if(!found)
-        {
-          QMessageBox::warning(QApplication::activeWindow(),
-                             "ERROR",
-                             tr("No edge with id %1").arg(id)
-                             );
-          return;
-        }
-      }
-
-      else if(first == tr("f"))
-      {
-        bool found = false;
-        double x(0), y(0), z(0);
-        int total(0);
-        BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
-        {
-          if(fh->id() != id)
-            continue;
-          BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(fh->halfedge(), *d->poly))
-          {
-            x+=vh->point().x();
-            y+=vh->point().y();
-            z+=vh->point().z();
-            ++total;
-          }
-          p = Kernel::Point_3(x/total + offset.x,
-                              y/total + offset.y,
-                              z/total + offset.z);
-          normal = CGAL::Polygon_mesh_processing::compute_face_normal(
-                fh,
-                *d->poly);
-          selected_fh = fh;
-          found = true;
-          break;
-        }
-        if(!found)
-        {
-          QMessageBox::warning(QApplication::activeWindow(),
-                             "ERROR",
-                             tr("No face with id %1").arg(id)
-                             );
-          return;
-        }
-      }
-      qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
-                                            qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
-      Kernel::Point_3 new_pos = p +
-          qglviewer::Vec(
-            viewer->camera()->position().x - viewer->camera()->sceneCenter().x,
-            viewer->camera()->position().y - viewer->camera()->sceneCenter().y,
-            viewer->camera()->position().z - viewer->camera()->sceneCenter().z)
-          .norm() * normal ;
-
-#if QGLVIEWER_VERSION >= 0x020502
-      viewer->camera()->setPivotPoint(qglviewer::Vec(p.x(),
-                                                             p.y(),
-                                                      p.z()));
-#else
-      viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(p.x(),
-                                                             p.y(),
-                                                      p.z()));
-#endif
-
-      viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
-                                      .arg(new_pos.y())
-                                      .arg(new_pos.z())
-                                      .arg(new_orientation[0])
-                                      .arg(new_orientation[1])
-                                      .arg(new_orientation[2])
-                                      .arg(new_orientation[3]));
-      viewer->update();
-      d->fillTargetedIds(selected_fh, p, offset);
-    }
+  case 1:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("Input must be of the form [v/e/f][int]")
+                       );
+    return;
+  case 2:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("No vertex with id %1").arg(id)
+                       );
+    return;
+  case 3:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("No edge with id %1").arg(id)
+                       );
+    return;
+  case 4:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("No face with id %1").arg(id)
+                       );
+    return;
+  default: //case 0
+    d->fillTargetedIds(selected_fh, p, viewer, viewer->offset());
+    break;
   }
 }
 bool Scene_polyhedron_item::shouldDisplayIds(CGAL::Three::Scene_item *current_item) const
