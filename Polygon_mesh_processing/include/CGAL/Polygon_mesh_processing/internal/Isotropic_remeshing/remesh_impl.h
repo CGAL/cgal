@@ -1520,8 +1520,7 @@ private:
     }
 
 
-    // AF: This could become the get of a PM
-    // AF: for a Surface_mesh::Property_map we make MESH the default value
+    // for a Surface_mesh::Property_map we make MESH the default value
     Halfedge_status status(const halfedge_descriptor& h) const
     {
       return get(halfedge_status_pmap_,h);
