@@ -180,26 +180,24 @@ namespace internal {
     typedef Patch_id&                           reference;
     typedef boost::read_write_property_map_tag  category;
 
-    Connected_components_pmap(PM& pmesh)
-    {
-      patch_ids_map = add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
-      remove(patch_ids_map, pmesh);
-    }
-
     //note pmesh is a non-const ref because add() and remove()
     //modify the mesh data structure, but not the mesh itself
     Connected_components_pmap(PM& pmesh
                             , EdgeIsConstrainedMap ecmap
-                            , FIMap fimap)
+                            , FIMap fimap
+                            , const bool do_init = true)
     {
       patch_ids_map = add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
-      nb_cc
-        = PMP::connected_components(pmesh,
-                                    patch_ids_map,
-                                    PMP::parameters::edge_is_constrained_map(ecmap)
-                                   .face_index_map(fimap));
-      if(nb_cc == 1)
-        remove(patch_ids_map, pmesh);
+      if (do_init)
+      {
+        nb_cc
+          = PMP::connected_components(pmesh,
+                                      patch_ids_map,
+                                      PMP::parameters::edge_is_constrained_map(ecmap)
+                                     .face_index_map(fimap));
+        if(nb_cc == 1)
+          remove(patch_ids_map, pmesh);
+      }
     }
 
     friend void remove(CCMap m, PM& pmesh)
