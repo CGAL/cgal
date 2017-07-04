@@ -492,6 +492,8 @@ public:
   {
     std::cout << "--- test_insert_range" << std::endl;
 
+    // the expect values for number of vertices / hidden points are hardcoded,
+    // thus if the code below is used, the assertions will also need to be changed
 //    CGAL::Random random(seed);
 //    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
 //    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
@@ -536,22 +538,28 @@ public:
     assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
   }
 
-  static void test_construction_and_insert_range (unsigned pt_count, unsigned seed)
+  static void test_construction_and_insert_range (unsigned pt_count, unsigned /* seed */)
   {
     std::cout << "--- test_construction_and_insert_range" << std::endl;
 
-    CGAL::Random random(seed);
-    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
-    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
+    // the expect values for number of vertices / hidden points are hardcoded,
+    // thus if the code below is used, the assertions will also need to be changed
+//    CGAL::Random random(seed);
+//    typedef CGAL::Creator_uniform_3<double, Point_3>  Creator;
+//    CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(0.5, random);
 
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 
     std::vector<Weighted_point_3> points;
     points.reserve(pt_count);
 
+    std::ifstream input_stream("data/p3rt3_point_set__s7_n800");
+
     while (points.size() != pt_count)
     {
-      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
+//      Weighted_point_3 p(*in_cube++, random.get_double(0., 0.015625));
+      Weighted_point_3 p;
+      input_stream >> p;
       points.push_back(p);
     }
 
