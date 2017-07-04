@@ -3275,7 +3275,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
     Cell_handle new_ch = _tds.create_cell();
     new_cells.push_back(new_ch);
     new_ch->set_vertices(vmap[i_ch->vertex(0)], vmap[i_ch->vertex(1)],
-                        vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
+                         vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
     set_offsets(new_ch, vh_off_map[vmap[i_ch->vertex(0)]],
                         vh_off_map[vmap[i_ch->vertex(1)]],
                         vh_off_map[vmap[i_ch->vertex(2)]],

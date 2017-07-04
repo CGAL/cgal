@@ -508,8 +508,8 @@ public:
       input_stream >> p;
       points.push_back(p);
     }
-    std::cout << "--- done " << std::endl;
     p3rt3.insert(points.begin(), points.end(), true);
+    std::cout << "--- done " << std::endl;
 
     for (Vertex_iterator iter = p3rt3.vertices_begin(), end_iter = p3rt3.vertices_end(); iter != end_iter; ++iter)
     {
