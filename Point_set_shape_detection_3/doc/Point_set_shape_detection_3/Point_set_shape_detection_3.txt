@@ -160,7 +160,7 @@ The user can choose to only regularize one or several of these 4 properties (see
 
 \section Point_set_shape_detection_3Performance Performances
 
-\subsection Efficient RANSAC
+\subsection Point_set_shape_detection_3PerformanceRANSAC Efficient RANSAC
  
 The running time and detection performance of the efficient RANSAC depend on the chosen parameters. A selective error tolerance parameter leads to higher running times and smaller shapes, as many shape candidates are generated to find the largest shape. We plot the detection performance against the epsilon error tolerance parameter for detecting planes in a complex scene with 5M points, see \cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. The probability parameter controls the endurance when searching for the largest candidate at each iteration. It barely impacts the number of detected shapes, has a moderate impact on the size of the detected shapes and increases the running times. We plot the performance against the probability parameter, see \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
 
@@ -172,7 +172,7 @@ The graph depicts the number of detected shapes (purple) and the coverage (green
 The graph depicts the time, coverage and number of detected primitives against the search endurance parameter, i.e., the probability to miss the largest shape at each iteration. The number of shapes is stable and the coverage increases when the probability is lowered. The running times increase significantly as many more candidates are generated during each iteration of the algorithm.
 \cgalFigureEnd
 
-\subsection Region Growing
+\subsection Point_set_shape_detection_3PerformanceRegionGrowing Region Growing
 
 Region growing iterates through every single point in the input, which makes it usually slower (although more robust). The main parameter that has an effect on running times is the epsilon used for clustering: internally, range queries are perform using spheres with radius cluster_epsilon. Using larger values means using larger spheres which are more computationally demanding.
 
