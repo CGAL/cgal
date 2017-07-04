@@ -74,6 +74,12 @@ int main (int, char**)
   point_set.collect_garbage();
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
 
+  point_set.remove (*(point_set.begin()));
+  
+  test (point_set.has_garbage(), "point set should have garbage.");
+  point_set.collect_garbage();
+  test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
+  
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
   Point_set::Property_map<Color> color_prop;
   bool garbage;
