@@ -1,12 +1,16 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
-
+#include <CGAL/Mesh_3/properties.h>
 #ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Scene_polyhedron_item.h"
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 
 #include "Scene_points_with_normal_item.h"
@@ -27,10 +31,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-//#include <CGAL/internal/corefinement/connected_components.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
@@ -40,27 +42,15 @@
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-template <typename Item>
-void
-set_item_is_multicolor(Item* item, bool b)
-{
-  item->setItemIsMulticolor(b);
-}
-
 #ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 namespace CGAL {
 
 template<>
-void set_halfedgeds_items_id (Scene_face_graph_item::FaceGraph&)
+void set_halfedgeds_items_id (Scene_face_graph_item::Face_graph&)
 {}
 
 } // namespace CGAL
-
-template <>
-void
-set_item_is_multicolor(Scene_face_graph_item*, bool)
-{}
 
 #else
 typedef Scene_polyhedron_item Scene_face_graph_item;
@@ -455,6 +445,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm
     = get(CGAL::vertex_point,*smesh);
+
   BOOST_FOREACH(boost::graph_traits<Skeleton>::vertex_descriptor v, vertices(skeleton_curve) )
   {
     const Point& skel_pt = skeleton_curve[v].point;
@@ -493,12 +484,14 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   Scene_face_graph_item* item_segmentation = new Scene_face_graph_item(segmented_polyhedron);
   int i=0;
+  typedef boost::property_map<Face_graph, CGAL::face_patch_id_t<int> >::type Fpim;
+  Fpim fpim = get(CGAL::face_patch_id_t<int>(), *segmented_polyhedron);
   BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*segmented_polyhedron))
   {
-    fd->set_patch_id(static_cast<int>(segment_ids[i++] ));
+    put(fpim, fd, static_cast<int>(segment_ids[i++] ));
   }
   scene->item(InputMeshItemIndex)->setVisible(false);
-  set_item_is_multicolor(item_segmentation,true);
+  item_segmentation->setItemIsMulticolor(true);
   item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation"));

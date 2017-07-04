@@ -342,8 +342,7 @@ private:
     iname+=QString::number(target_length);
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
     
-    bool build_polyhedron = false;
-    if (build_polyhedron){
+    if(mw->property("is_polyhedron_mode").toBool()){
       Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
       poly_item->setName(iname);
       cdt2_to_face_graph(cdt,

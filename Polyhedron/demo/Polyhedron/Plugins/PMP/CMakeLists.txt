@@ -18,7 +18,7 @@ if(EIGEN3_FOUND)
     qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
     polyhedron_demo_plugin(hole_filling_sm_plugin Hole_filling_plugin ${hole_fillingUI_FILES})
     target_link_libraries(hole_filling_sm_plugin scene_surface_mesh_item scene_polylines_item scene_polyhedron_selection_item)
-target_compile_definitions(hole_filling_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+    target_compile_definitions(hole_filling_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
     qt5_wrap_ui( fairingUI_FILES Fairing_widget.ui)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES})
@@ -57,15 +57,15 @@ target_link_libraries(mean_curvature_flow_skeleton_plugin
     demo_framework)
     
 
-#Must wait for #1983 to get access to certain properties of sm_item to set the patch_ids
-#qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
-#polyhedron_demo_plugin(mean_curvature_flow_skeleton_sm_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
-#target_link_libraries(mean_curvature_flow_skeleton_sm_plugin
-#    scene_surface_mesh_item
-#    scene_points_with_normal_item
-#    scene_polylines_item
-#    demo_framework)
-#target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
+qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
+polyhedron_demo_plugin(mean_curvature_flow_skeleton_sm_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
+target_link_libraries(mean_curvature_flow_skeleton_sm_plugin
+    scene_surface_mesh_item
+    scene_points_with_normal_item
+    scene_polylines_item
+    demo_framework)
+target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 
 qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
