@@ -36,9 +36,9 @@
 \cgalPkgManuals{Chapter_SetMovableSeparability2,PkgSetMovableSeparability2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.10}
+\cgalPkgSince{4.11}
 \cgalPkgDependsOn{\ref PkgPolygon2Summary}
-\cgalPkgBib{cgal:sf-casting2}
+\cgalPkgBib{cgal:sf-sms2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
@@ -47,7 +47,7 @@ This package consists of the implementations of various predicates and operation
 
 \cgalClassifedRefPages
 
-## Functions ##
+## Casting Functions ##
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::top_edges()`
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::pullout_directions()`
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::is_pullout_direction()`
