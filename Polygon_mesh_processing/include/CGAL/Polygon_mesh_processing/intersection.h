@@ -95,7 +95,55 @@ surface_intersection(const TriangleMesh& tm1,
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
     functor(tm1, tm2, vpm1, vpm2);
-  functor(polyline_output, throw_on_self_intersection, true);
+  polyline_output=functor(polyline_output, throw_on_self_intersection, true);
+  return polyline_output;
+}
+
+/**
+ * \ingroup PMP_corefinement_grp
+ * computes the autointersection of triangles of `tm`. The output is a
+ * set of polylines with all vertices but endpoints being of degree 2.
+ *
+ *
+ * @tparam TriangleMesh a model of `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam OutputIterator an output iterator in which `std::vector` of points
+ *                        can be put. The point type is the one from the
+ *                        vertex property map
+ *
+ * @param tm input triangulated surface mesh
+ * @param polyline_output output iterator of polylines. Each polyline will be
+ *        given as a vector of points
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *    a property map with the points associated to the vertices of `tm`
+ *    \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ */
+template <class OutputIterator,
+          class TriangleMesh,
+          class NamedParameters >
+OutputIterator
+surface_autointersection(const TriangleMesh& tm,
+                         OutputIterator polyline_output,
+                         const NamedParameters& np)
+{
+// Vertex point maps
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters>::const_type Vpm;
+
+  Vpm vpm = choose_const_pmap(get_param(np, internal_np::vertex_point),
+                              tm,
+                              vertex_point);
+
+// surface intersection algorithm call
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
+    functor(tm, vpm);
+
+  polyline_output=functor(polyline_output, true);
   return polyline_output;
 }
 
@@ -111,6 +159,17 @@ surface_intersection(const TriangleMesh& tm1,
     CGAL::Polygon_mesh_processing::parameters::all_default(),
     CGAL::Polygon_mesh_processing::parameters::all_default(),
     throw_on_self_intersection
+  );
+}
+
+template <class OutputIterator,
+          class TriangleMesh >
+OutputIterator
+surface_autointersection(const TriangleMesh& tm,
+                         OutputIterator polyline_output)
+{
+  return surface_autointersection(tm, polyline_output,
+    CGAL::Polygon_mesh_processing::parameters::all_default()
   );
 }
 
