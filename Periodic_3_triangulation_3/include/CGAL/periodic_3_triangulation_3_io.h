@@ -32,7 +32,10 @@ template <class Stream, class Triangulation>
 Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   typedef typename Triangulation::Point Point;
   typedef typename Triangulation::Iso_cuboid Iso_cuboid;
-  int number_of_cells = t.tds().number_of_cells();
+  typedef typename Triangulation::Triangulation_data_structure::size_type size_type;
+
+  size_type number_of_cells = t.tds().number_of_cells();
+
   out << "OFF "
       << "\n" << 4*number_of_cells + 8
       << " "  << 4*number_of_cells + 6
@@ -82,7 +85,7 @@ Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   out << "4 1 7 5 3" << std::endl;
   out << "4 6 0 2 4" << std::endl;
 
-  for (int i=0; i<number_of_cells; i++) {
+  for (size_type i=0; i<number_of_cells; i++) {
     out << "3 " << i*4  +8 << " " << i*4+1+8 << " " << i*4+2+8 << std::endl;
     out << "3 " << i*4  +8 << " " << i*4+1+8 << " " << i*4+3+8 << std::endl;
     out << "3 " << i*4  +8 << " " << i*4+2+8 << " " << i*4+3+8 << std::endl;
