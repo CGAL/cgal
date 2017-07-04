@@ -241,10 +241,8 @@ MainWindow::MainWindow(QWidget* parent)
   // can easily copy-paste its text.
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
-
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
-
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 

@@ -144,8 +144,8 @@ public:
             this, SLOT(on_actionSkeletonize()));
     connect(ui->pushButton_converge, SIGNAL(clicked()),
             this, SLOT(on_actionConverge()));
-    connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox()),
-            this, SLOT(on_actionUpdateBBox()));
+    connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox(bool)),
+            this, SLOT(on_actionUpdateBBox(bool)));
     connect(ui->pushButton_segment, SIGNAL(clicked()),
             this, SLOT(on_actionSegment()));
 
@@ -361,7 +361,7 @@ public Q_SLOTS:
   void on_actionRun();
   void on_actionSkeletonize();
   void on_actionConverge();
-  void on_actionUpdateBBox();
+  void on_actionUpdateBBox(bool);
   void on_actionSegment();
   void on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item*);
 
@@ -408,7 +408,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
   }
 }
 
-void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox()
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox(bool)
 {
   double diag = scene->len_diagonal();
   ui->min_edge_length->setValue(0.002 * diag);

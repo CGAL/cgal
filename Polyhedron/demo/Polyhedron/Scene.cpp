@@ -923,8 +923,6 @@ void Scene::itemVisibilityChanged()
 
 void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
 {
-  Bbox bbox_before = bbox();
-
   if(item->isFinite()
      && !item->isEmpty())
   {
