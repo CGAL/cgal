@@ -35,9 +35,11 @@ function build_demo {
     popd
   fi
   EXTRA_CXX_FLAGS=
-  if [ "$CC" = "clang" ]; then
-    EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
-  fi
+  case "$CC" in
+    clang*)
+      EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
+      ;;
+  esac
   if [ $NEED_3D = 1 ]; then
     QGLVIEWERROOT=$PWD/qglviewer
     export QGLVIEWERROOT
