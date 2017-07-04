@@ -48,9 +48,9 @@ This package consists of the implementations of various predicates and operation
 \cgalClassifedRefPages
 
 ## Functions ##
-- `CGAL::top_edges()`
-- `CGAL::pullout_directions()`
-- `CGAL::is_pullout_direction()`
+- `CGAL::Set_movable_separability_2::Single_mold_translational_casting::top_edges()`
+- `CGAL::Set_movable_separability_2::Single_mold_translational_casting::pullout_directions()`
+- `CGAL::Set_movable_separability_2::Single_mold_translational_casting::is_pullout_direction()`
 
 ## Concepts ##
 - `CastingTraits_2`
