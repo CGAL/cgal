@@ -903,7 +903,8 @@ private:
     const FacetSegmentMap &seg_pmap,
     const FT thre = FT(0.2)) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
-    if (chord_size < 2)
+    // do not subdivide trivial chord
+    if (chord_size < 4)
       return 1;
 
     halfedge_descriptor he_start = *chord_begin;
