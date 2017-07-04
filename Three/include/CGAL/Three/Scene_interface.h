@@ -144,7 +144,7 @@ public:
   //! Updates the information about `item` in the
   //! Geometric Objects list and redraws the scene.
   virtual void itemChanged(CGAL::Three::Scene_item* item) = 0;
-  //! Re computes the scnee's Bbox without recentering it.
+  //! Re computes the scene Bbox without recentering it.
   virtual void itemVisibilityChanged(CGAL::Three::Scene_item*) = 0;
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the Geometric Objects view.
