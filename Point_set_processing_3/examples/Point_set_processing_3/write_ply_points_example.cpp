@@ -32,7 +32,7 @@ namespace CGAL {
       if (is_ascii(out))
         out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
       else
-        CGAL::write(out, c);
+        out.write(reinterpret_cast<const char*>(&c), sizeof(c));
       return out;
     }
   }; 
