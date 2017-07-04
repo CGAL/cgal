@@ -52,7 +52,7 @@ This package consists of the implementations of various predicates and operation
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::pullout_directions()`
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::is_pullout_direction()`
 
-## Concepts ##
+## Casting Concepts ##
 - `CastingTraits_2`
 
 */
