@@ -3,7 +3,7 @@
 #include <QInputDialog>
 #include <fstream>
 
-class Polyhedron_demo_ply_to_xyz_plugin :
+class Polyhedron_demo_ply_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {
@@ -12,7 +12,7 @@ class Polyhedron_demo_ply_to_xyz_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
-  QString name() const { return "ply_to_xyz_plugin"; }
+  QString name() const { return "ply_plugin"; }
   QString nameFilters() const { return "PLY files as Point set (*.ply)"; }
   bool canLoad() const;
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
@@ -21,12 +21,12 @@ public:
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 };
 
-bool Polyhedron_demo_ply_to_xyz_plugin::canLoad() const {
+bool Polyhedron_demo_ply_plugin::canLoad() const {
   return true;
 }
 
 CGAL::Three::Scene_item*
-Polyhedron_demo_ply_to_xyz_plugin::load(QFileInfo fileinfo) {
+Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
   std::ifstream in(fileinfo.filePath().toUtf8(), std::ios_base::binary);
 
   if(!in)
@@ -44,13 +44,13 @@ Polyhedron_demo_ply_to_xyz_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_ply_to_xyz_plugin::canSave(const CGAL::Three::Scene_item* item)
+bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
   // This plugin supports point sets
   return qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
-bool Polyhedron_demo_ply_to_xyz_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
   // Check extension (quietly)
   std::string extension = fileinfo.suffix().toUtf8().data();
@@ -73,11 +73,10 @@ bool Polyhedron_demo_ply_to_xyz_plugin::save(const CGAL::Three::Scene_item* item
   if(!point_set_item)
     return false;
 
-  // Save point set as .xyz
   std::ofstream out(fileinfo.filePath().toUtf8().data());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   return point_set_item->write_ply_point_set(out, (choice == tr("Binary")));
 }
 
 
-#include "PLY_to_xyz_io_plugin.moc"
+#include "PLY_io_plugin.moc"
