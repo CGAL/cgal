@@ -275,6 +275,22 @@ public:
   }
 
   /**
+   * Partitions the mesh into the designated number of regions, and stores them in @a seg_map.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param number_of_segments number of designated proxies
+   * @param number_of_iterations number of iterations when fitting the proxy
+   * @param[out] seg_map facet partition index
+   */
+  template<typename FacetSegmentMap>
+  void partition_hierarchical(const std::size_t number_of_segments, const std::size_t number_of_iterations, FacetSegmentMap &seg_pmap) {
+    hierarchical_seed(number_of_segments, seg_pmap);
+    for (std::size_t i = 0; i < number_of_iterations; ++i) {
+      flooding(seg_pmap);
+      fitting(seg_pmap);
+    }
+  }
+
+  /**
    * Extracts the approximated triangle mesh from a partition @a seg_pmap, and stores the triangles in @a tris.
    * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
@@ -372,11 +388,11 @@ private:
     px0.seed = *f0;
     px1.normal = normal_pmap[*f1];
     px1.seed = *f1;
-    proxies.push_backp(px0);
-    proxies.push_backp(px1);
+    proxies.push_back(px0);
+    proxies.push_back(px1);
 
+    const std::size_t num_steps = 5;
     while (proxies.size() < initial_px) {
-      const std::size_t num_steps = 5;
       for (std::size_t i = 0; i < num_steps; ++i) {
         flooding(seg_pmap);
         fitting(seg_pmap);
@@ -531,50 +547,57 @@ private:
   /**
    * Add proxies by diffusing fitting error into current partitions.
    * Each partition is added with the number of proxies in proportional to its fitting error.
+   * Note that the number of inserted proxies doesn't necessarily equal the requested number.
    * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
    * @param num_proxies_to_be_added added number of proxies
    * @param seg_map facet partition index
+   * @return inserted number of proxies
    */
   template<typename FacetSegmentMap>
-  void insert_proxy_error_diffusion(const std::size_t num_proxies_to_be_added, const FacetSegmentMap &seg_pmap) {
+  std::size_t insert_proxy_error_diffusion(const std::size_t num_proxies_to_be_added, const FacetSegmentMap &seg_pmap) {
     struct ProxyError {
       ProxyError(const std::size_t &id, const FT &er)
         : px_idx(id), fit_error(er) {}
-      const std::size_t px_idx;
-      const FT fit_error;
+      // in ascending order
+      bool operator<(const ProxyError &rhs) const {
+        return fit_error < rhs.fit_error;
+      }
+      std::size_t px_idx;
+      FT fit_error;
     };
 
+    std::cout << "#px " << proxies.size() << std::endl;
     std::vector<FT> err(proxies.size(), FT(0));
     const FT sum_error = fitting_error(seg_pmap, err);
     const FT avg_error = sum_error / FT(static_cast<double>(num_proxies_to_be_added));
 
     std::vector<ProxyError> px_error;
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
+    for (std::size_t i = 0; i < proxies.size(); ++i)
       px_error.push_back(ProxyError(i, err[i]));
-    }
-
     // sort partition by error
-    struct ErrorComp {
-      bool operator<(const ProxyError &lhs, const ProxyError &rhs) const {
-        return lhs.fit_error < rhs.fit_error;
-      }
-    };
-    std::sort(px_error.begin(), px_error.end(), ErrorComp());
+    std::sort(px_error.begin(), px_error.end());
 
-    
     // number of proxies to be added to each region
     std::vector<std::size_t> num_to_add(proxies.size(), 0);
-    FT to_diffuse(0);
+    // residual from previous proxy in range (-0.5, 0.5] * avg_error
+    FT residual(0);
     BOOST_FOREACH(const ProxyError &pxe, px_error) {
-      FT to_add = (to_diffuse + pxe.fit_error) / avg_error;
+      // add error residual from previous proxy
+      // to_add maybe negative but greater than -0.5
+      FT to_add = (residual + pxe.fit_error) / avg_error;
+      // floor_to_add maybe negative but no less than -1
       FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
-      FT diff = to_add - floor_to_add;
-      const std::size_t q_to_add = static_cast<std::size_t>(
-        (diff > FT(0.5)) ? (static_cast<int>(floor_to_add) + 1) : static_cast<int>(floor_to_add));
-      to_diffuse = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
+      const std::size_t q_to_add = static_cast<std::size_t>(CGAL::to_double(
+        ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
+      residual = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
       num_to_add[pxe.px_idx] = q_to_add;
     }
+    for (std::size_t i = 0; i < px_error.size(); ++i)
+      std::cout << "#px_id " << px_error[i].px_idx
+        << ", #fit_error " << px_error[i].fit_error
+        << ", #num_to_add " << num_to_add[px_error[i].px_idx] << std::endl;
 
+    std::size_t num_inserted = 0;
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
       const std::size_t px_id = seg_pmap[f];
       if (proxies[px_id].seed == f)
@@ -586,8 +609,13 @@ private:
         px.seed = f;
         proxies.push_back(px);
         --num_to_add[px_id];
+        ++num_inserted;
       }
     }
+    std::cout << "#requested/inserted "
+      << num_proxies_to_be_added << '/' << num_inserted << std::endl;
+
+    return num_inserted;
   }
 
   /**
@@ -888,8 +916,7 @@ private:
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       sum_error += fit_error(f, proxies[seg_pmap[f]]);
-
-    return FT;
+    return sum_error;
   }
 
   /**
@@ -908,8 +935,7 @@ private:
       px_error[px_idx] += err;
       sum_error += err;
     }
-
-    return FT;
+    return sum_error;
   }
 
   /**
