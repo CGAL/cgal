@@ -58,6 +58,8 @@ public:
   typedef typename K::Tetrahedron_3     Tetrahedron_3;
 
 public:
+  virtual ~Periodic_3_triangulation_traits_base_3() { }
+
   Periodic_3_triangulation_traits_base_3(const Iso_cuboid_3& domain,
                                          const K& k)
     : Base(k)

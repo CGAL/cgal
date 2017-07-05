@@ -57,6 +57,8 @@ private:
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
 public:
+  virtual ~Periodic_3_Delaunay_triangulation_filtered_traits_base_3() { }
+
   Periodic_3_Delaunay_triangulation_filtered_traits_base_3(const Iso_cuboid_3& domain,
                                                            const K& k)
     :

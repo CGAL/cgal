@@ -82,6 +82,8 @@ class Periodic_3_triangulation_filtered_traits_base_3
 public:
   typedef typename K::Iso_cuboid_3                         Iso_cuboid_3;
 
+  virtual ~Periodic_3_triangulation_filtered_traits_base_3() { }
+
   Periodic_3_triangulation_filtered_traits_base_3(const Iso_cuboid_3& domain,
                                                   const K& k)
     :
