@@ -309,8 +309,6 @@ namespace boost
 
 namespace CGAL {
 
-namespace internal {
-
 template <typename Point, typename T>
 struct dynamic_property_map<CGAL::Surface_mesh<Point>, vertex_property_t<T> >
 {
@@ -378,8 +376,6 @@ remove_property(Pmap pm, CGAL::Surface_mesh<P>& sm)
 {
   return sm.remove_property_map(pm);
 }
-
-} // namespace internal
 
 } // namespace CGAL
 

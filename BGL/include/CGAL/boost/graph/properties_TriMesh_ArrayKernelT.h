@@ -214,7 +214,6 @@ put(boost::vertex_point_t p, OpenMesh::TriMesh_ArrayKernelT<K>& g,
 
 
 namespace CGAL {
-namespace internal {
 
 template <typename K, typename V>
 struct dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, vertex_property_t<V> >
@@ -295,7 +294,6 @@ void remove_property(Pmap pm, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   om.remove_property(pm.handle());
 }
-} // namespace internal
 } // namespace CGAL
 
 #endif /* CGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H */

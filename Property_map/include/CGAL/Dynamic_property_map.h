@@ -78,6 +78,9 @@ struct Dynamic_property_map {
   V default_value_;
 };
 
+} // namespace internal
+
+  
 template <typename T>
 struct vertex_property_t
 {
@@ -200,7 +203,7 @@ void remove_property(
 
 
 
-} // namespace internal
+
 } // namespace CGAL
 
 #endif // CGAL_DYNAMIC_PROPERTY_MAP_H

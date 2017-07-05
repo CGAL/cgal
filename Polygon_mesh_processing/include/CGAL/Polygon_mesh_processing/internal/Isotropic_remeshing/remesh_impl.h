@@ -170,8 +170,8 @@ namespace internal {
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
-    typedef CGAL::internal::face_property_t<Patch_id> Face_property_tag;
-    typename CGAL::internal::dynamic_property_map<PM, Face_property_tag >::type patch_ids_map;
+    typedef CGAL::face_property_t<Patch_id> Face_property_tag;
+    typename CGAL::dynamic_property_map<PM, Face_property_tag >::type patch_ids_map;
     std::size_t nb_cc;
 
   public:
@@ -187,7 +187,7 @@ namespace internal {
                             , FIMap fimap
                             , const bool do_init = true)
     {
-      patch_ids_map = CGAL::internal::add_property(Face_property_tag("PMP_patch_id"), pmesh);
+      patch_ids_map = CGAL::add_property(Face_property_tag("PMP_patch_id"), pmesh);
       if (do_init)
       {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -199,14 +199,14 @@ namespace internal {
                                       PMP::parameters::edge_is_constrained_map(ecmap)
                                      .face_index_map(fimap));
         if(nb_cc == 1){
-          CGAL::internal::remove_property(patch_ids_map, pmesh);
+          CGAL::remove_property(patch_ids_map, pmesh);
         }
       }
     }
 
     friend void remove(CCMap m, PM& pmesh)
     {
-      CGAL::internal::remove_property(m.patch_ids_map, pmesh);
+      CGAL::remove_property(m.patch_ids_map, pmesh);
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
@@ -288,8 +288,8 @@ namespace internal {
     typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
     typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
-    typedef typename CGAL::internal::dynamic_property_map<
-      PM, CGAL::internal::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
+    typedef typename CGAL::dynamic_property_map<
+      PM, CGAL::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -312,8 +312,8 @@ namespace internal {
       , vcmap_(vcmap)
       , fimap_(fimap)
     {
-      halfedge_status_pmap_ = CGAL::internal::add_property(
-        CGAL::internal::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
+      halfedge_status_pmap_ = CGAL::add_property(
+        CGAL::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
         pmesh);
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -324,7 +324,7 @@ namespace internal {
       remove_connected_components_pmap
         (CGAL::Boolean_tag<boost::is_same<FacePatchMap, CCPmap>::value>());
 
-      CGAL::internal::remove_property(halfedge_status_pmap_, mesh_);
+      CGAL::remove_property(halfedge_status_pmap_, mesh_);
 
       if (build_tree_){
         for(std::size_t i=0; i < trees.size();++i){
