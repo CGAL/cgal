@@ -5,6 +5,7 @@
 
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/smoothing_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -126,6 +127,27 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
 }
 
 
+
+
+template<typename PolygonMesh, typename NamedParameters>
+void curvature_flow(PolygonMesh& pmesh, NamedParameters& np)
+{
+    using boost::choose_param;
+    using boost::get_param;
+
+    //vpmap
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
+    VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                                 get_const_property_map(CGAL::vertex_point, pmesh));
+
+    internal::Curvature_flow<PolygonMesh, VertexPointMap> curvature_remesher(pmesh, vpmap);
+
+}
+
+void curvature_flow(PolygonMesh& pmesh)
+{
+    curvature_flow(pmesh, parameters::all_default());
+}
 
 
 
