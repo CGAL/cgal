@@ -77,13 +77,15 @@ int main(int, char**)
 
   typedef CGAL::Periodic_3_Delaunay_triangulation_3<PDTT3>   P3TD3_K3;
   _test_periodic_3_triangulation_3_constructors( P3TD3_K3() );
-  _test_cls_periodic_3_triangulation_3(P3TD3_K3(),
-                                       PDTT3::Point(0.711476,-0.0713565,-0.52312),
-                                       "data/P3DT3_covering_test_HOM.tri",
-                                       "data/P3DT3_covering_test.tri",
-                                       false /*not exact*/,
-                                       true /*homogeneous*/,
-                                       false /*do not test input/output*/);
+
+  // commented because it takes too long to test it
+//  _test_cls_periodic_3_triangulation_3(P3TD3_K3(),
+//                                       PDTT3::Point(0.711476,-0.0713565,-0.52312),
+//                                       "data/P3DT3_covering_test_HOM.tri",
+//                                       "data/P3DT3_covering_test.tri",
+//                                       false /*not exact*/,
+//                                       true /*homogeneous*/,
+//                                       false /*do not test input/output*/);
 
   std::cerr << timer.time() << " sec." << std::endl;
   return 0;
