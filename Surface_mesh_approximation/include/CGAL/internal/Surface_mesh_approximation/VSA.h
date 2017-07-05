@@ -352,6 +352,45 @@ private:
   }
 
   /**
+   * Hierarchical initialize proxies.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param initial_px number of proxies
+   * @param[out] seg_map facet partition index
+   */
+  template<typename FacetSegmentMap>
+  void hierarchical_seed(const std::size_t initial_px, FacetSegmentMap &seg_pmap) {
+    if (initial_px == 0)
+      return;
+    if (num_faces(mesh) < 2)
+      return;
+
+    proxies.clear();
+    // generate 2 seeds
+    face_iterator f0 = faces(mesh).first, f1 = ++f0;
+    PlaneProxy px0, px1;
+    px0.normal = normal_pmap[*f0];
+    px0.seed = *f0;
+    px1.normal = normal_pmap[*f1];
+    px1.seed = *f1;
+    proxies.push_backp(px0);
+    proxies.push_backp(px1);
+
+    while (proxies.size() < initial_px) {
+      const std::size_t num_steps = 5;
+      for (std::size_t i = 0; i < num_steps; ++i) {
+        flooding(seg_pmap);
+        fitting(seg_pmap);
+      }
+
+      // add proxies by error diffusion
+      const std::size_t num_proxies = proxies.size();
+      const std::size_t num_proxies_to_be_added =
+        (num_proxies * 2 < initial_px) ? num_proxies : (initial_px - num_proxies);
+      insert_proxy_error_diffusion(num_proxies_to_be_added, seg_pmap);
+    }
+  }
+
+  /**
    * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
    * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
    * @param[out] seg_map facet partition index
@@ -486,6 +525,68 @@ private:
     new_px.normal = normal_pmap[max_facet[max_px_idx]];
     new_px.seed = max_facet[max_px_idx];
     proxies.push_back(new_px);
+  }
+
+  /**
+   * Add proxies by diffusing fitting error into current partitions.
+   * Each partition is added with the number of proxies in proportional to its fitting error.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param num_proxies_to_be_added added number of proxies
+   * @param seg_map facet partition index
+   */
+  template<typename FacetSegmentMap>
+  void insert_proxy_error_diffusion(const std::size_t num_proxies_to_be_added, const FacetSegmentMap &seg_pmap) {
+    struct ProxyError {
+      ProxyError(const std::size_t &id, const FT &er)
+        : px_idx(id), fit_error(er) {}
+      const std::size_t px_idx;
+      const FT fit_error;
+    };
+
+    std::vector<FT> err(proxies.size(), FT(0));
+    const FT sum_error = fitting_error(seg_pmap, err);
+    const FT avg_error = sum_error / FT(static_cast<double>(num_proxies_to_be_added));
+
+    std::vector<ProxyError> px_error;
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      px_error.push_back(ProxyError(i, err[i]));
+    }
+
+    // sort partition by error
+    struct ErrorComp {
+      bool operator<(const ProxyError &lhs, const ProxyError &rhs) const {
+        return lhs.fit_error < rhs.fit_error;
+      }
+    };
+    std::sort(px_error.begin(), px_error.end(), ErrorComp());
+
+    
+    // number of proxies to be added to each region
+    std::vector<std::size_t> num_to_add(proxies.size(), 0);
+    FT to_diffuse(0);
+    BOOST_FOREACH(const ProxyError &pxe, px_error) {
+      FT to_add = (to_diffuse + pxe.fit_error) / avg_error;
+      FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
+      FT diff = to_add - floor_to_add;
+      const std::size_t q_to_add = static_cast<std::size_t>(
+        (diff > FT(0.5)) ? (static_cast<int>(floor_to_add) + 1) : static_cast<int>(floor_to_add));
+      to_diffuse = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
+      num_to_add[pxe.px_idx] = q_to_add;
+    }
+
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      const std::size_t px_id = seg_pmap[f];
+      if (proxies[px_id].seed == f)
+        continue;
+
+      if (num_to_add[px_id] > 0) {
+        PlaneProxy px;
+        px.normal = normal_pmap[f];
+        px.seed = f;
+        proxies.push_back(px);
+        --num_to_add[px_id];
+      }
+    }
   }
 
   /**
@@ -773,6 +874,41 @@ private:
         tris.push_back(k);
       }
     }
+  }
+
+  /**
+   * Computes fitting error of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   * @return total fitting error
+   */
+  template<typename FacetSegmentMap>
+  FT fitting_error(const FacetSegmentMap &seg_pmap) {
+    FT sum_error(0);
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
+      sum_error += fit_error(f, proxies[seg_pmap[f]]);
+
+    return FT;
+  }
+
+  /**
+   * Computes fitting error of a given partition @a seg_pmap.
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @param seg_map facet partition index
+   * @param px_error vector of error of each proxy
+   * @return total fitting error
+   */
+  template<typename FacetSegmentMap>
+  FT fitting_error(const FacetSegmentMap &seg_pmap, std::vector<FT> &px_error) {
+    FT sum_error(0);
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      const std::size_t px_idx = seg_pmap[f];
+      FT err = fit_error(f, proxies[px_idx]);
+      px_error[px_idx] += err;
+      sum_error += err;
+    }
+
+    return FT;
   }
 
   /**
